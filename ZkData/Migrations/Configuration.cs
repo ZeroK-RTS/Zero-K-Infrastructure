@@ -141,45 +141,48 @@ namespace ZkData.Migrations
             db.ForumCategories.AddOrUpdate(
                 x => x.Title,
                 new ForumCategory { Title = "General discussion", ForumMode = ForumMode.General, SortOrder = 1 },
-                new ForumCategory { Title = "News", ForumMode = ForumMode.News, IsLocked = true, SortOrder = 2},
-                new ForumCategory { Title = "Wiki", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 3 },
-                new ForumCategory { Title = "Maps", ForumMode = ForumMode.Maps, IsLocked = true, SortOrder = 4 },
-                new ForumCategory { Title = "Missions", ForumMode = ForumMode.Missions, IsLocked = true, SortOrder = 5 },
-                new ForumCategory { Title = "Battles", ForumMode = ForumMode.SpringBattles, IsLocked = true, SortOrder = 6 },
-                new ForumCategory { Title = "Off topic", ForumMode = ForumMode.Archive, SortOrder = 7 });
+                new ForumCategory { Title = "News", ForumMode = ForumMode.News, IsLocked = true, SortOrder = 9},
+                new ForumCategory { Title = "Wiki", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 10 },
+                new ForumCategory { Title = "Maps", ForumMode = ForumMode.Maps, IsLocked = true, SortOrder = 18 },
+                new ForumCategory { Title = "Missions", ForumMode = ForumMode.Missions, IsLocked = true, SortOrder = 18 },
+                new ForumCategory { Title = "Battles", ForumMode = ForumMode.SpringBattles, IsLocked = true, SortOrder = 19 },
+                new ForumCategory { Title = "Off topic", ForumMode = ForumMode.Archive, SortOrder = 20 });
 
             db.SaveChanges();
 
             var genId = db.ForumCategories.First(x => x.Title == "General discussion").ForumCategoryID;
-            var pwId = db.ForumCategories.First(x => x.Title == "PlanetWars").ForumCategoryID;
             var wikiId = db.ForumCategories.First(x => x.Title == "Wiki").ForumCategoryID;
             var offtopic = db.ForumCategories.First(x => x.Title == "Off topic").ForumCategoryID;
 
             db.ForumCategories.AddOrUpdate(
                 x => x.Title,
-                new ForumCategory { Title = "Help and bugs", ForumMode = ForumMode.General, SortOrder = 1, ParentForumCategoryID = genId },
-                new ForumCategory { Title = "Strategy and tips", ForumMode = ForumMode.General, SortOrder = 2, ParentForumCategoryID = genId },
-                new ForumCategory { Title = "Development", ForumMode = ForumMode.General, SortOrder = 3, ParentForumCategoryID = genId },
-                new ForumCategory { Title = "PlanetWars", ForumMode = ForumMode.General, SortOrder = 4, ParentForumCategoryID = genId},
-                new ForumCategory { Title = "Deutsches Forum", ForumMode = ForumMode.General, SortOrder = 5, ParentForumCategoryID = genId });
+                new ForumCategory { Title = "Help and bugs", ForumMode = ForumMode.General, SortOrder = 2, ParentForumCategoryID = genId },
+                new ForumCategory { Title = "Strategy and tips", ForumMode = ForumMode.General, SortOrder = 3, ParentForumCategoryID = genId },
+                new ForumCategory { Title = "Development", ForumMode = ForumMode.General, SortOrder = 4, ParentForumCategoryID = genId },
+                new ForumCategory { Title = "PlanetWars", ForumMode = ForumMode.General, SortOrder = 5, ParentForumCategoryID = genId},
+                new ForumCategory { Title = "Deutsches Forum", ForumMode = ForumMode.General, SortOrder = 8, ParentForumCategoryID = genId });
+
+            db.SaveChanges();
+
+            var pwId = db.ForumCategories.First(x => x.Title == "PlanetWars").ForumCategoryID;
 
             db.ForumCategories.AddOrUpdate(
                 x => x.Title,
-                new ForumCategory { Title = "Planets", ForumMode = ForumMode.Planets, IsLocked = true, SortOrder = 1, ParentForumCategoryID = pwId },
-                new ForumCategory { Title = "Clans", ForumMode = ForumMode.Clans, SortOrder = 2, IsLocked = true, ParentForumCategoryID = pwId });
+                new ForumCategory { Title = "Planets", ForumMode = ForumMode.Planets, IsLocked = true, SortOrder = 6, ParentForumCategoryID = pwId },
+                new ForumCategory { Title = "Clans", ForumMode = ForumMode.Clans, SortOrder = 7, IsLocked = true, ParentForumCategoryID = pwId });
 
             db.ForumCategories.AddOrUpdate(
                 x => x.Title,
-                new ForumCategory { Title = "Manual", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 1, ParentForumCategoryID = wikiId },
-                new ForumCategory { Title = "Tutorials", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 2, ParentForumCategoryID = wikiId },
-                new ForumCategory { Title = "DeveloperGuide", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 3, ParentForumCategoryID = wikiId },
-                new ForumCategory { Title = "MissionEditor", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 4, ParentForumCategoryID = wikiId },
-                new ForumCategory { Title = "Notes", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 5, ParentForumCategoryID = wikiId },
-                new ForumCategory { Title = "Site", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 6, ParentForumCategoryID = wikiId });
+                new ForumCategory { Title = "Manual", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 11, ParentForumCategoryID = wikiId },
+                new ForumCategory { Title = "Tutorials", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 12, ParentForumCategoryID = wikiId },
+                new ForumCategory { Title = "DeveloperGuide", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 13, ParentForumCategoryID = wikiId },
+                new ForumCategory { Title = "MissionEditor", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 14, ParentForumCategoryID = wikiId },
+                new ForumCategory { Title = "Notes", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 15, ParentForumCategoryID = wikiId },
+                new ForumCategory { Title = "Site", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 16, ParentForumCategoryID = wikiId });
 
             db.ForumCategories.AddOrUpdate(
                 x => x.Title,
-                new ForumCategory { Title = "Archive", ForumMode = ForumMode.Archive, IsLocked = true, SortOrder = 1, ParentForumCategoryID = offtopic });
+                new ForumCategory { Title = "Archive", ForumMode = ForumMode.Archive, IsLocked = true, SortOrder = 21, ParentForumCategoryID = offtopic });
 
 
             db.SaveChanges();

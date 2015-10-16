@@ -85,8 +85,8 @@ namespace ZeroKWeb.Controllers
 
             model.Categories = db.ForumCategories.Where(x => x.ParentForumCategoryID == model.CategoryID).OrderBy(x => x.SortOrder);
 
-            model.Path = GetCategoryPath(model.CategoryID, db);
-            model.CurrentCategory = model.Path.LastOrDefault();
+            model.CurrentCategory = db.ForumCategories.FirstOrDefault(x => x.ForumCategoryID == model.CategoryID);
+            model.Path = model.CurrentCategory?.GetPath() ?? new List<ForumCategory>();
 
             var threads = db.ForumThreads.AsQueryable();
 
@@ -198,8 +198,9 @@ namespace ZeroKWeb.Controllers
                     // post in general by default
             }
 
-            res.Path = GetCategoryPath(categoryID, db);
-            var category = res.Path.LastOrDefault();
+            var category = db.ForumCategories.FirstOrDefault(x => x.ForumCategoryID == categoryID);
+            res.Path = category?.GetPath() ?? new List<ForumCategory>();
+            
             res.CurrentCategory = category;
             if (forumPostID != null)
             {
@@ -467,7 +468,7 @@ namespace ZeroKWeb.Controllers
                 if (cat.ForumMode == ForumMode.SpringBattles) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.First().SpringBattleID });
                 if (cat.ForumMode == ForumMode.Clans) return RedirectToAction("Detail", "Clans", new { id = t.RestrictedClanID });
                 if (cat.ForumMode == ForumMode.Planets) return RedirectToAction("Planet", "Planetwars", new { id = t.Planets.First().PlanetID });
-                if (cat.ForumMode == ForumMode.Wiki) return RedirectToAction("Index", "Wiki", new { node = t.WikiKey });
+                if (cat.ForumMode == ForumMode.Wiki && !string.IsNullOrEmpty(t.WikiKey)) return RedirectToAction("Index", "Wiki", new { node = t.WikiKey });
             }
 
             var res = new ThreadResult();
@@ -475,23 +476,10 @@ namespace ZeroKWeb.Controllers
 
             db.SubmitChanges();
 
-            res.Path = GetCategoryPath(t.ForumCategoryID, db);
+            res.Path = cat?.GetPath() ?? new List<ForumCategory>();
             res.CurrentThread = t;
 
             return View(res);
-        }
-
-        static IEnumerable<ForumCategory> GetCategoryPath(int? categoryID, ZkDataContext db) {
-            var path = new List<ForumCategory>();
-            var id = categoryID;
-            while (id != null)
-            {
-                var cat = db.ForumCategories.SingleOrDefault(x => x.ForumCategoryID == id);
-                path.Add(cat);
-                id = cat.ParentForumCategoryID;
-            }
-            path.Reverse();
-            return path;
         }
 
         [Auth(Role = AuthRole.ZkAdmin)]
@@ -696,7 +684,7 @@ namespace ZeroKWeb.Controllers
         {
             public IEnumerable<ForumCategory> Categories;
             public ForumCategory CurrentCategory;
-            public IEnumerable<ForumCategory> Path;
+            public List<ForumCategory> Path = new List<ForumCategory>();
             public IQueryable<ForumThread> Threads;
             public int? CategoryID { get; set; }
             public string Search { get; set; }
@@ -711,14 +699,14 @@ namespace ZeroKWeb.Controllers
             public ForumThread CurrentThread;
             public ForumPost EditedPost;
             public IEnumerable<ForumPost> LastPosts;
-            public IEnumerable<ForumCategory> Path;
+            public List<ForumCategory> Path = new List<ForumCategory>();
         }
 
         public class ThreadResult
         {
             public ForumThread CurrentThread;
             public int GoToPost;
-            public IEnumerable<ForumCategory> Path;
+            public List<ForumCategory> Path = new List<ForumCategory>();
         }
 
         public class SearchResult

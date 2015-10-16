@@ -11,22 +11,31 @@
     }
 }
 <div id="gposts">
+    @if (!Model.Thread.IsLocked && Model.Thread.ForumCategory.ForumMode != ForumMode.Maps && Model.Thread.ForumCategory.ForumMode != ForumMode.Missions &&Model.Thread.ForumCategory.ForumMode != ForumMode.SpringBattles && Model.Thread.ForumCategory.ForumMode != ForumMode.Clans && Model.Thread.ForumCategory.ForumMode != ForumMode.Planets)
+    {
+        <span class="textbutton" id="@grid.PagerPrefixID">
+            @Html.ActionLink("Post comment", "NewPost", new { threadID = Model.ThreadID })
+        </span>
+    }
+
+
     @using (Ajax.BeginForm("GetPostList", "Forum", new { threadID = Model.ThreadID }, Global.GetAjaxOptions("gposts")))
     {
         <span>
             Filter: @Html.TextBoxFor(x => x.Search)&nbsp;&nbsp;
-            Player: @Html.TextBoxFor(x=>x.User)&nbsp;
+            Player: @Html.TextBoxFor(x => x.User)&nbsp;
             <input type="submit" value="Search" />
         </span>
-        @GridHelpers.RenderTable(Html, grid,"");
+        @GridHelpers.RenderTable(Html, grid, "")
+        ;
     }
 
     @if (Model.GoToPost > 0)
     {
         <script language="javascript" type="text/javascript">
-        $(document).ready(function () {
-            document.getElementById("post@(Model.GoToPost)").scrollIntoView();
-        });
+            $(document).ready(function() {
+                document.getElementById("post@(Model.GoToPost)").scrollIntoView();
+            });
         </script>
     }
 
@@ -34,11 +43,11 @@
         $("input[name='User']").autocomplete({
             minLength: 1,
             delay: 0,
-            source: '@Url.Action("Users", "Autocomplete", new {threadID= Model.ThreadID})',
-            select: function (event, ui) {
+            source: '@Url.Action("Users", "Autocomplete", new { threadID = Model.ThreadID })',
+            select: function(event, ui) {
                 $("input[name='User']").closest('form').submit();
             }
-        }).data('ui-autocomplete')._renderItem = function (ul, item) {
+        }).data('ui-autocomplete')._renderItem = function(ul, item) {
             return $("<li></li>").data("item.autocomplete", item).append($("<a></a>").html(item.label)).appendTo(ul);
         };
 

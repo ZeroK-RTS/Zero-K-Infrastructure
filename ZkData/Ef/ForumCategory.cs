@@ -32,5 +32,18 @@ namespace ZkData
         public virtual ICollection<ForumLastRead> ForumLastReads { get; set; } = new HashSet<ForumLastRead>();
         public virtual ICollection<ForumThread> ForumThreads { get; set; } = new HashSet<ForumThread>();
 
+
+        public List<ForumCategory> GetPath() {
+            var ret = new List<ForumCategory>();
+            ret.Add(this);
+            var p = this.ParentForumCategory;
+            while (p != null)
+            {
+                ret.Add(p);
+                p = p.ParentForumCategory;
+            }
+            ret.Reverse();
+            return ret;
+        }
     }
 }
