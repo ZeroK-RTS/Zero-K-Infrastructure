@@ -20,11 +20,18 @@ namespace ZeroKWeb
         void ZkDataContextOnAfterEntityChange(object sender, DbEntityEntry dbEntityEntry) {
             // Invalidates cache on entity changes
             var post = dbEntityEntry.Entity as ForumPost;
-            if (post != null) cache[GetKey(post)] = null;
-            else
+            if (post != null)
+            {
+                MvcHtmlString dummy;
+                cache.TryRemove(GetKey(post), out dummy);
+            } else
             {
                 var news = dbEntityEntry.Entity as News;
-                if (news != null) cache[GetKey(news)] = null;
+                if (news != null)
+                {
+                    MvcHtmlString dummy;
+                    cache.TryRemove(GetKey(news), out dummy);
+                }
             }
         }
 

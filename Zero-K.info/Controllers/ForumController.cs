@@ -376,6 +376,7 @@ namespace ZeroKWeb.Controllers
 
                 var lastPost = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
 
+                int? gotoPostId = null;
                 //double post preventer
                 if (lastPost == null || lastPost.AuthorAccountID != Global.AccountID || lastPost.Text != text ||
                     (!string.IsNullOrEmpty(title) && title != currentTitle))
@@ -383,7 +384,9 @@ namespace ZeroKWeb.Controllers
                     if (forumPostID != null)
                     {
                         var post = thread.ForumPosts.Single(x => x.ForumPostID == forumPostID);
-                        if (!(post.AuthorAccountID == Global.AccountID || Global.Account.IsZeroKAdmin || (thread.ForumCategory?.ForumMode == ForumMode.Wiki && Global.Account.CanEditWiki()))) throw new ApplicationException("Not authorized to edit the post");
+                        if (
+                            !(post.AuthorAccountID == Global.AccountID || Global.Account.IsZeroKAdmin ||
+                              (thread.ForumCategory?.ForumMode == ForumMode.Wiki && Global.Account.CanEditWiki()))) throw new ApplicationException("Not authorized to edit the post");
                         post.ForumPostEdits.Add(
                             new ForumPostEdit
                             {
@@ -393,7 +396,13 @@ namespace ZeroKWeb.Controllers
                                 NewText = text
                             });
                         post.Text = text;
-                    } else thread.ForumPosts.Add(new ForumPost { AuthorAccountID = Global.AccountID, Text = text, Created = DateTime.UtcNow });
+                    } else
+                    {
+                        var p = new ForumPost { AuthorAccountID = Global.AccountID, Text = text, Created = DateTime.UtcNow };
+                        thread.ForumPosts.Add(p);
+                        db.SaveChanges();
+                        gotoPostId = p.ForumPostID;
+                    }
 
                     thread.LastPost = DateTime.UtcNow;
                     thread.LastPostAccountID = Global.AccountID;
@@ -402,7 +411,7 @@ namespace ZeroKWeb.Controllers
 
                     db.SubmitChanges();
                 }
-                var lastPage = ((thread.PostCount - 1)/PageSize);
+                
                 scope.Complete();
 
                 
@@ -413,7 +422,7 @@ namespace ZeroKWeb.Controllers
                 if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
                 if (forumPostID.HasValue) return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID = forumPostID });
                 if (!string.IsNullOrEmpty(wikiKey)) return RedirectToAction("Index","Wiki",new {node=wikiKey});
-                return RedirectToAction("Thread", new { id = thread.ForumThreadID, page = lastPage });
+                return RedirectToAction("Thread", new { id = thread.ForumThreadID, postId = gotoPostId });
             }
         }
 
