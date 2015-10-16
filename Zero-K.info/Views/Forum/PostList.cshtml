@@ -34,7 +34,7 @@
         $("input[name='User']").autocomplete({
             minLength: 1,
             delay: 0,
-            source: '@Url.Action("Users", "Autocomplete")',
+            source: '@Url.Action("Users", "Autocomplete", new {threadID= Model.ThreadID})',
             select: function (event, ui) {
                 $("input[name='User']").closest('form').submit();
             }

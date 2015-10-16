@@ -16,7 +16,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var ret = new List<AutocompleteItem>();
 
-            ret.AddRange(CompleteUsers(term, db));
+            ret.AddRange(CompleteUsers(term, null, db));
             ret.AddRange(CompleteThreads(term, null, db));
             ret.AddRange(CompleteMissions(term, db));
             ret.AddRange(CompleteMaps(term, db));
@@ -24,8 +24,8 @@ namespace ZeroKWeb.Controllers
             return Json(ret, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult Users(string term) {
-            return Json(CompleteUsers(term, new ZkDataContext()), JsonRequestBehavior.AllowGet);
+        public ActionResult Users(string term, int? threadID) {
+            return Json(CompleteUsers(term, threadID, new ZkDataContext()), JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Maps(string term)
@@ -96,9 +96,11 @@ namespace ZeroKWeb.Controllers
                             });
         }
 
-        IEnumerable<AutocompleteItem> CompleteUsers(string term, ZkDataContext db) {
+        IEnumerable<AutocompleteItem> CompleteUsers(string term, int? threadID, ZkDataContext db) {
             term = term.ToLower();
-            return db.Accounts.Where(x => x.Name.ToLower().Contains(term) && !x.IsDeleted)
+            var acc = db.Accounts.AsQueryable();
+            if (threadID != null) acc = db.ForumThreads.Find(threadID).ForumPosts.Select(x => x.Account).Distinct().AsQueryable();
+            return acc.Where(x => x.Name.ToLower().Contains(term) && !x.IsDeleted)
                     .Take(autocompleteCount)
                     .ToList()
                     .Select(
