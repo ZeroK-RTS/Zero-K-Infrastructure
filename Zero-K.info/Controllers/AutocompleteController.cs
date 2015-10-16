@@ -73,7 +73,7 @@ namespace ZeroKWeb.Controllers
                             new AutocompleteItem
                             {
                                 label = HtmlHelperExtensions.Print(null, x).ToString(),
-                                url = Url.Action("Thread", "Forum", new { id = x.ForumThreadID }),
+                                url = x.WikiKey != null? Url.Action("Index","Wiki", new {node = x.WikiKey}): Url.Action("Thread", "Forum", new { id = x.ForumThreadID }),
                                 value = x.WikiKey ?? x.Title,
                                 id = x.ForumThreadID
                             });

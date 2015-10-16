@@ -7,7 +7,7 @@
     @{Html.RenderPartial("ForumPath", Model.Path);}
 </div>
 
-<h1>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h1>
+<h1>@(!string.IsNullOrEmpty(Model.CurrentThread.WikiKey) ? "["+Model.CurrentThread.WikiKey+"]":"") @Model.CurrentThread.Title</h1>
 
 @if (Global.IsZeroKAdmin)
 {

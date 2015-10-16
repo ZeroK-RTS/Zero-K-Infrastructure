@@ -1427,7 +1427,7 @@
     <Content Include="Views\Maps\MapTileList.cshtml" />
     <Content Include="Views\Maps\Detail.cshtml" />
     <Content Include="Views\Maps\MapTags.cshtml" />
-    <Content Include="Views\Wiki\Index.cshtml" />
+    <Content Include="Views\Wiki\WikiIndex.cshtml" />
     <Content Include="Views\Static\Index.cshtml" />
     <Content Include="Views\Home\HomeIndex.cshtml" />
     <Content Include="Views\Forum\ForumIndex.cshtml" />

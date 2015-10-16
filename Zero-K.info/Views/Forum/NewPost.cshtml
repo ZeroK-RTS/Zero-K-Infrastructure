@@ -1,4 +1,5 @@
-﻿@model ZeroKWeb.Controllers.ForumController.NewPostResult
+﻿@using ZkData
+@model ZeroKWeb.Controllers.ForumController.NewPostResult
 @{
     Page.Title = "New post";
 }
@@ -7,23 +8,26 @@
 
 @if (Model.CurrentThread != null)
 {
-    <h3>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
+    <h1>@(!string.IsNullOrEmpty(Model.CurrentThread.WikiKey) ? "[" + Model.CurrentThread.WikiKey + "]" : "") @Model.CurrentThread.Title</h1>
 }
 else
 {
     <h3>Post new topic</h3>
 }
 
-
 <form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = Model.CurrentThread != null ? (int?)Model.CurrentThread.ForumThreadID : null, categoryID = Model.CurrentCategory.ForumCategoryID, forumPostID = Model.EditedPost != null ? (int?)Model.EditedPost.ForumPostID : null })">
     @if (Model.CanSetTopic)
     {
         @:Title: <input type="text" name="title" cols="50" value="@(Model.EditedPost != null ? Model.EditedPost.ForumThread.Title:null)" /><br />
-}
-
+    }
+    @if (Model.CurrentCategory.ForumMode == ForumMode.Wiki)
+    {
+        @:Wiki Key: <input type="text" name="wikiKey" cols="50" value="@(Model.EditedPost != null ? Model.EditedPost.ForumThread.WikiKey:null)" /><br />
+    }
     <textarea name="text" rows="8" cols="80">@(Model.EditedPost != null ? Model.EditedPost.Text : null)</textarea><br />
     <input class="textbutton" type="submit" value="Submit Post" />
 </form>
+
 @if (Model.LastPosts != null && Model.CurrentThread != null)
 {
     @Html.Action("GetPostList",new {threadID =Model.CurrentThread.ForumThreadID})

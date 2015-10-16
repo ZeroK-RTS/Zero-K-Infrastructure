@@ -173,12 +173,12 @@ namespace ZkData.Migrations
 
             db.ForumCategories.AddOrUpdate(
                 x => x.Title,
-                new ForumCategory { Title = "Manual", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 11, ParentForumCategoryID = wikiId },
-                new ForumCategory { Title = "Tutorials", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 12, ParentForumCategoryID = wikiId },
-                new ForumCategory { Title = "DeveloperGuide", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 13, ParentForumCategoryID = wikiId },
-                new ForumCategory { Title = "MissionEditor", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 14, ParentForumCategoryID = wikiId },
-                new ForumCategory { Title = "Notes", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 15, ParentForumCategoryID = wikiId },
-                new ForumCategory { Title = "Site", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 16, ParentForumCategoryID = wikiId });
+                new ForumCategory { Title = "Manual", ForumMode = ForumMode.Wiki, IsLocked = false, SortOrder = 11, ParentForumCategoryID = wikiId },
+                new ForumCategory { Title = "Tutorials", ForumMode = ForumMode.Wiki, IsLocked = false, SortOrder = 12, ParentForumCategoryID = wikiId },
+                new ForumCategory { Title = "DeveloperGuide", ForumMode = ForumMode.Wiki, IsLocked = false, SortOrder = 13, ParentForumCategoryID = wikiId },
+                new ForumCategory { Title = "MissionEditor", ForumMode = ForumMode.Wiki, IsLocked = false, SortOrder = 14, ParentForumCategoryID = wikiId },
+                new ForumCategory { Title = "Notes", ForumMode = ForumMode.Wiki, IsLocked = false, SortOrder = 15, ParentForumCategoryID = wikiId },
+                new ForumCategory { Title = "Site", ForumMode = ForumMode.Wiki, IsLocked = false, SortOrder = 16, ParentForumCategoryID = wikiId });
 
             db.ForumCategories.AddOrUpdate(
                 x => x.Title,

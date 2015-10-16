@@ -205,7 +205,7 @@ namespace ZeroKWeb.Controllers
             if (forumPostID != null)
             {
                 var post = db.ForumPosts.Single(x => x.ForumPostID == forumPostID);
-                if (!Global.IsZeroKAdmin && Global.AccountID != post.AuthorAccountID) return Content("You cannot edit this post");
+                if (!post.CanEdit(Global.Account)) return Content("You cannot edit this post");
                 res.EditedPost = post;
             }
             if (threadID != null)
@@ -263,6 +263,7 @@ namespace ZeroKWeb.Controllers
                 {
                     currentTitle = thread.Title;
                     thread.Title = title;
+                    thread.WikiKey = wikiKey;
                 }
                 if (thread != null && planetID != null)
                 {
@@ -285,16 +286,28 @@ namespace ZeroKWeb.Controllers
                     thread.Title = "Map " + map.InternalName;
                 }
 
-                if (threadID == null && categoryID.HasValue) // new thread
+                if (threadID == null && category != null) // new thread
                 {
-                    var cat = db.ForumCategories.Single(x => x.ForumCategoryID == categoryID.Value);
-                    if (cat.IsLocked) return Content("Thread is locked");
+                    if (category.IsLocked) return Content("Thread is locked");
+
+                    if (category.ForumMode == ForumMode.Wiki)
+                    {
+                        if (string.IsNullOrEmpty(wikiKey) || !Account.IsValidLobbyName(wikiKey))
+                        {
+                            return Content("You need to set a valid wiki key");
+                        }
+                        if (db.ForumThreads.Any(y => y.WikiKey == wikiKey))
+                        {
+                            return Content("This wiki key already exists");
+                        }
+                    }
 
                     if (string.IsNullOrEmpty(title)) return Content("Title cannot be empty");
                     thread = new ForumThread();
                     thread.CreatedAccountID = Global.AccountID;
                     thread.Title = title;
-                    thread.ForumCategoryID = cat.ForumCategoryID;
+                    thread.WikiKey = wikiKey;
+                    thread.ForumCategoryID = category.ForumCategoryID;
                     db.ForumThreads.InsertOnSubmit(thread);
                 }
 
@@ -354,31 +367,6 @@ namespace ZeroKWeb.Controllers
                     db.ForumThreads.InsertOnSubmit(thread);
                 }
 
-                if (thread == null && category?.ForumMode == ForumMode.Wiki) 
-                {
-                    if (string.IsNullOrEmpty(wikiKey) || !Account.IsValidLobbyName(wikiKey))
-                    {
-                        ViewBag.Error = "You need to set a valid wiki key";
-                        return RedirectToAction("Index","Wiki",new {node=wikiKey});
-                    }
-                    if (db.ForumThreads.Any(y => y.WikiKey == wikiKey))
-                    {
-                        ViewBag.Error = "This wiki key already exists";
-                        return RedirectToAction("Index", "Wiki", new { node = wikiKey });
-                    }
-
-                    thread = new ForumThread
-                    {
-                        Title = title,
-                        CreatedAccountID = Global.AccountID,
-                        LastPostAccountID = Global.AccountID,
-                        ForumCategory = category,
-                        WikiKey = wikiKey
-                    };
-                    
-                    db.ForumThreads.InsertOnSubmit(thread);
-                }
-
 
                 if (thread == null) return Content("Thread not found");
                 if (thread.IsLocked) return Content("Thread is locked");
@@ -393,9 +381,7 @@ namespace ZeroKWeb.Controllers
                     if (forumPostID != null)
                     {
                         var post = thread.ForumPosts.Single(x => x.ForumPostID == forumPostID);
-                        if (
-                            !(post.AuthorAccountID == Global.AccountID || Global.Account.IsZeroKAdmin ||
-                              (thread.ForumCategory?.ForumMode == ForumMode.Wiki && Global.Account.CanEditWiki()))) throw new ApplicationException("Not authorized to edit the post");
+                        if (!post.CanEdit(Global.Account)) throw new ApplicationException("Not authorized to edit the post");
                         post.ForumPostEdits.Add(
                             new ForumPostEdit
                             {
@@ -430,7 +416,6 @@ namespace ZeroKWeb.Controllers
                 if (clanID.HasValue) return RedirectToAction("Detail", "Clans", new { id = clanID });
                 if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
                 if (forumPostID.HasValue) return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID = forumPostID });
-                if (!string.IsNullOrEmpty(wikiKey)) return RedirectToAction("Index","Wiki",new {node=wikiKey});
                 return RedirectToAction("Thread", new { id = thread.ForumThreadID, postId = gotoPostId });
             }
         }
@@ -468,7 +453,6 @@ namespace ZeroKWeb.Controllers
                 if (cat.ForumMode == ForumMode.SpringBattles) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.First().SpringBattleID });
                 if (cat.ForumMode == ForumMode.Clans) return RedirectToAction("Detail", "Clans", new { id = t.RestrictedClanID });
                 if (cat.ForumMode == ForumMode.Planets) return RedirectToAction("Planet", "Planetwars", new { id = t.Planets.First().PlanetID });
-                if (cat.ForumMode == ForumMode.Wiki && !string.IsNullOrEmpty(t.WikiKey)) return RedirectToAction("Index", "Wiki", new { node = t.WikiKey });
             }
 
             var res = new ThreadResult();

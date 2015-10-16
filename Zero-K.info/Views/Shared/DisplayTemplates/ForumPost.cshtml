@@ -28,7 +28,7 @@
                             }
                         </small>
                         <br />
-                        @if (Global.IsZeroKAdmin || Global.AccountID == p.AuthorAccountID)
+                        @if (Model.CanEdit(Global.Account))
                         {
                             <a nicetitle='Edit the post' href='@Url.Action("NewPost", "Forum", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })'><img src="/img/edit_pencil.png" height="22" /></a>
                         }

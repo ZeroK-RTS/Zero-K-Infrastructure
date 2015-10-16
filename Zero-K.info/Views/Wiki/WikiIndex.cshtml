@@ -1,0 +1,19 @@
+﻿@using ZeroKWeb
+@model ZkData.ForumPost
+@{
+    Page.Title =  Model.ForumThread.WikiKey;
+    ViewBag.StaticBackground = true;
+    ViewBag.OpaqueBody = true;
+}
+<h1>[@Model.ForumThread.WikiKey] @Model.ForumThread.Title</h1>
+
+@if (Model.CanEdit(Global.Account))
+{
+    <a href="@Url.Action("NewPost", "Forum", new { threadID = Model.ForumThreadID, forumPostID = Model.ForumPostID })" class="textbutton">Edit</a><br/>
+}
+@Html.BBCodeCached(Model)
+@if (Model.CanEdit(Global.Account))
+{
+    <br/>
+    <a href="@Url.Action("NewPost", "Forum", new { threadID = Model.ForumThreadID,  forumPostID = Model.ForumPostID })" class="textbutton">Edit</a>
+}
