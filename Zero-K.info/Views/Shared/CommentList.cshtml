@@ -4,8 +4,9 @@
   <textarea name="text" rows="8" cols="80"></textarea><br />
   <input class="textbutton" type="submit" value="Submit Comment" />
   </form>
-  @if (Model.Thread != null) {
-    @Html.Partial("~/Views/Forum/PostList.cshtml", Model.Thread.ForumPosts.OrderByDescending(x=>x.ForumPostID))
+  @if (Model.Thread != null)
+  {
+    @Html.Action("GetPostList","Forum", new { threadID = Model.Thread.ForumThreadID })
   }
 </div>
 <!close comments> 

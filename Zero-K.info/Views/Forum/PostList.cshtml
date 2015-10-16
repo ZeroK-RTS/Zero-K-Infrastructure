@@ -1,75 +1,31 @@
 ﻿@using ZeroKWeb
-
-@model IEnumerable<ZkData.ForumPost>
-
+@using ZeroKWeb.Controllers
+@using ZkData
+@model ZeroKWeb.Controllers.ForumController.PostListModel
 @{
-    var penalty = ZkData.Punishment.GetActivePunishment(Global.AccountID, "", 0, x=>x.BanForum);
-    var netVotes = (Global.Account != null ? Global.Account.ForumTotalUpvotes - Global.Account.ForumTotalDownvotes : 0);
+    var grid = new UniGrid<ForumPost>(Model.Data) { PageSize = GlobalConst.ForumPostsPerPage };
+    grid.AddCol("sort", x => Html.DisplayFor(m => x)).SetSort(x =>x.ForumPostID).SetWidth("100%");
+    if (Model.GoToPost != 0)
+    {
+        grid.PageNumber = 1 + ForumController.GetPostPage(Model.Thread.ForumPosts.First(x => x.ForumPostID == Model.GoToPost));
+    }
 }
+<div id="gposts">
+    @using (Ajax.BeginForm("GetPostList", "Forum", new { threadID = Model.ThreadID }, Global.GetAjaxOptions("gposts")))
+    {
+        <span>
+            Filter: @Html.TextBoxFor(x => x.Search)<input type="submit" value="Search"/>
+        </span>
+        @GridHelpers.RenderTable(Html, grid,"");
+    }
 
-@foreach (var p in Model.Take(50)) // TODO HACK limits only to first 50 posts without paging
-{
-    string linkURL = Url.Action("Post", "Forum", new { id = p.ForumPostID }) + "#" + p.ForumPostID;
+    @if (Model.GoToPost > 0)
+    {
+        <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            document.getElementById("post@(Model.GoToPost)").scrollIntoView();
+        });
+        </script>
+    }
+</div>
 
-    <table width='100%'>
-        <tr class="forumRow">
-            <td width='250px' class="forumPostHead" valign="top" >
-                <table>
-                    <tr>
-                        <td>@Html.AccountAvatar(p.Account)
-                        </td>
-                        <td valign='top'>
-                            @Html.PrintAccount(p.Account)<br />
-                            <small><span nicetitle="@p.Created.AddTicks(-(p.Created.Ticks % TimeSpan.TicksPerSecond))">@p.Created.ToAgoString()</span>
-                                @if (p.ForumPostEdits.Any())
-                                {
-                                    var lastEdit = p.ForumPostEdits.OrderByDescending(x => x.EditTime).First();
-                                    <br/>
-                                    <a nicetitle="@lastEdit.EditTime.AddTicks(-(lastEdit.EditTime.Ticks % TimeSpan.TicksPerSecond))" href="@Url.Action("EditHistory", "Forum", new { forumPostID = p.ForumPostID })">
-                                        (edited @lastEdit.EditTime.ToAgoString())</a>
-                                }
-                            </small>
-							<br />
-                            @if (Global.IsZeroKAdmin || Global.AccountID == p.AuthorAccountID)
-                            {
-                                <a nicetitle='Edit the post' href='@Url.Action("NewPost", "Forum", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })'><img src="/img/edit_pencil.png" height="22"/></a>
-                            }
-                            @if (Global.IsZeroKAdmin)
-                            {
-                                <a nicetitle='Delete the post' href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'><img src="/img/delete_trashcan.png" height="22"/></a>
-                            }
-                            <a nicetitle='Link to this post' href="@linkURL"><img src="/img/link.png" height="22"/></a>
-                            @if (p.Account.ContributionsByAccountID.Count() > 0)
-                            {
-                                <br />
-                                 @Html.PrintContributorStar(p.Account) <br />
-                            }
-                        </td>
-                    </tr>
-
-                </table>
-            </td>
-            <td valign="top" class="forumPostText" id="@p.ForumPostID">
-                <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
-                @if (p.Upvotes - p.Downvotes <= ZkData.GlobalConst.PostVoteHideThreshold)
-                {
-                    <small class="js_expand">post score below threshold</small>    //FIXME: figure out a way to color it grey
-                    <div class="collapse width-90">
-                        @Html.BBCodeCached(p)
-                    </div>
-                }
-                else
-                {
-                    @Html.BBCodeCached(p)
-                }
-                @{
-                var divID = "ForumPostVoteForm" + p.ForumPostID;
-                }
-                <br />
-                <div id="@divID" style="float:right">
-                	@Html.PrintPostRating(p, penalty != null || netVotes <= ZkData.GlobalConst.MinNetKarmaToVote)
-                </div>
-            </td>
-        </tr>
-    </table>
-}

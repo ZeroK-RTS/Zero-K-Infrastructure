@@ -1414,7 +1414,7 @@
     <Content Include="Views\Planetwars\PwMatchMaker.cshtml" />
     <Content Include="Views\Planetwars\GalaxyOffline.cshtml" />
     <Content Include="Views\Planetwars\GalaxyOfflinePW12.cshtml" />
-    <Content Include="Views\Forum\ThreadPaginator.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ForumPost.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

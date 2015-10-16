@@ -26,5 +26,5 @@ else
 </form>
 @if (Model.LastPosts != null && Model.CurrentThread != null)
 {
-    @Html.Partial("~/Views/Forum/PostList.cshtml", Model.LastPosts)
+    @Html.Action("GetPostList",new {threadID =Model.CurrentThread.ForumThreadID})
 }

@@ -3,16 +3,16 @@
 @{
     Page.Title = Model.CurrentThread.Title + " - forum thread";
 }
-<span class="infoCell">
+<div class="infoCell">
     @{Html.RenderPartial("ForumPath", Model.Path);}
-</span>
+</div>
 
-<h3>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
+<h1>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h1>
 
 @if (!Model.CurrentThread.IsLocked)
 {
     <br />
-     <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
+    <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
     <br />
 }
 @if (Global.IsZeroKAdmin)
@@ -33,10 +33,8 @@
         </form>
     </div>
 }
-@Html.Partial("~/Views/Forum/ThreadPaginator.cshtml", Model)
 <div style="float:right">@string.Format("{0} posts, {1} views", Model.CurrentThread.PostCount, Model.CurrentThread.ViewCount)</div>
-@Html.Partial("~/Views/Forum/PostList.cshtml", Model.Posts)
-@Html.Partial("~/Views/Forum/ThreadPaginator.cshtml", Model)
+@Html.Action("GetPostList", new { threadID = Model.CurrentThread.ForumThreadID, GoToPost = Model.GoToPost })
 @if (!Model.CurrentThread.IsLocked)
 {
     <br />
@@ -44,11 +42,3 @@
     <br />
 }
 
-@if (Model.GoToPost > 0)
-{
-    <script language="javascript" type="text/javascript">
-        $(document).ready(function () {
-            document.getElementById("post@(Model.GoToPost)").scrollIntoView();
-        });
-    </script>
-}

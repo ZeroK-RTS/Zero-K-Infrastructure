@@ -124,6 +124,35 @@ namespace ZeroKWeb.Controllers
             return View("ForumIndex", model);
         }
 
+
+        public ActionResult GetPostList(PostListModel model) {
+            var db = new ZkDataContext();
+            model = model ?? new PostListModel();
+
+            var thread = db.ForumThreads.First(x => x.ForumThreadID == model.ThreadID && (x.RestrictedClanID == null || x.RestrictedClanID == Global.ClanID));
+
+            var posts = thread.ForumPosts.AsQueryable();
+
+            if (!string.IsNullOrEmpty(model.Search))
+            {
+                posts = Global.ForumPostIndexer.FilterPosts(posts, model.Search);
+            }
+            model.Data = posts.OrderBy(x=>x.ForumPostID);
+            model.Thread = thread;
+
+            return View("PostList", model);
+        }
+
+        public class PostListModel
+        {
+            public int ThreadID { get; set; }
+            public string Search { get; set; }
+            public int GoToPost { get; set; }
+            public ForumThread Thread;
+            public IQueryable<ForumPost> Data;
+        }
+
+
         /// <summary>
         ///     Make a new post or edit an existing one
         /// </summary>
@@ -394,10 +423,8 @@ namespace ZeroKWeb.Controllers
         public ActionResult Post(int id) {
             var db = new ZkDataContext();
             var post = db.ForumPosts.FirstOrDefault(x => x.ForumPostID == id);
-            int? page = GetPostPage(post);
-            if (page == 0) page = null;
             var thread = post.ForumThread;
-            return RedirectToAction("Thread", new { id = thread.ForumThreadID, page });
+            return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID= id });
         }
 
         /// <summary>
@@ -407,22 +434,13 @@ namespace ZeroKWeb.Controllers
         /// <param name="lastSeen">UNUSED</param>
         /// <param name="postID">A specific <see cref="ForumPost" /> ID to go to</param>
         /// <returns></returns>
-        public ActionResult Thread(int id, bool? lastPost, bool? lastSeen, int? postID, int? page) {
+        public ActionResult Thread(int id, int? postID) {
             var db = new ZkDataContext();
             var t = db.ForumThreads.FirstOrDefault(x => x.ForumThreadID == id);
 
             // TODO - indicate thread has been deleted
             if (t == null) return RedirectToAction("Index");
 
-            if (page == null)
-            {
-                if (postID == null) page = 0;
-                else
-                {
-                    var post = t.ForumPosts.FirstOrDefault(x => x.ForumPostID == postID);
-                    page = GetPostPage(post);
-                }
-            }
 
             var cat = t.ForumCategory;
             if (cat != null)
@@ -442,9 +460,6 @@ namespace ZeroKWeb.Controllers
 
             res.Path = GetCategoryPath(t.ForumCategoryID, db);
             res.CurrentThread = t;
-            res.PageCount = ((t.PostCount - 1)/PageSize) + 1;
-            res.Page = page;
-            res.Posts = t.ForumPosts.AsQueryable().Skip((page ?? 0)*PageSize).Take(PageSize).ToList();
 
             return View(res);
         }
@@ -686,10 +701,7 @@ namespace ZeroKWeb.Controllers
         {
             public ForumThread CurrentThread;
             public int GoToPost;
-            public int? Page;
-            public int PageCount;
             public IEnumerable<ForumCategory> Path;
-            public List<ForumPost> Posts;
         }
 
         public class SearchResult

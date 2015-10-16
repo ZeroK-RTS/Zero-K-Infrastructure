@@ -1,0 +1,70 @@
+﻿@using System.Web.Mvc
+@using ZeroKWeb
+@model ZkData.ForumPost
+@{
+    var p = Model;
+    string linkURL = Url.Action("Post", "Forum", new { id = p.ForumPostID }) + "#" + p.ForumPostID;
+}
+
+<table width='100%'>
+    <tr class="forumRow">
+        <td class="forumPostHead" valign="top">
+            <table>
+                <tr>
+                    <td>
+                        @Html.AccountAvatar(p.Account)
+                    </td>
+                    <td valign='top'>
+                        @Html.PrintAccount(p.Account)<br />
+                        <small>
+                            <span nicetitle="@p.Created.AddTicks(-(p.Created.Ticks % TimeSpan.TicksPerSecond))">@p.Created.ToAgoString()</span>
+                            @if (p.ForumPostEdits.Any())
+                            {
+                                var lastEdit = p.ForumPostEdits.OrderByDescending(x => x.EditTime).First();
+                                <br />
+                                <a nicetitle="@lastEdit.EditTime.AddTicks(-(lastEdit.EditTime.Ticks % TimeSpan.TicksPerSecond))" href="@Url.Action("EditHistory", "Forum", new { forumPostID = p.ForumPostID })">
+                                    (edited @lastEdit.EditTime.ToAgoString())
+                                </a>
+                            }
+                        </small>
+                        <br />
+                        @if (Global.IsZeroKAdmin || Global.AccountID == p.AuthorAccountID)
+                        {
+                            <a nicetitle='Edit the post' href='@Url.Action("NewPost", "Forum", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })'><img src="/img/edit_pencil.png" height="22" /></a>
+                        }
+                        @if (Global.IsZeroKAdmin)
+                        {
+                            <a nicetitle='Delete the post' href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'><img src="/img/delete_trashcan.png" height="22" /></a>
+                        }
+                        <a nicetitle='Link to this post' href="@linkURL"><img src="/img/link.png" height="22" /></a>
+                        @if (p.Account.Kudos > 0)
+                        {
+                            <br />
+                            @Html.PrintContributorStar(p.Account) <br />
+                        }
+                    </td>
+                </tr>
+
+            </table>
+        </td>
+        <td valign="top" class="forumPostText" id="@p.ForumPostID">
+            <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
+            @if (p.Upvotes - p.Downvotes <= ZkData.GlobalConst.PostVoteHideThreshold)
+            {
+                <small class="js_expand" style="color:gray">post score below threshold</small>
+                <div class="collapse width-90">
+                    @Html.BBCodeCached(p)
+                </div>
+            }
+            else
+            {
+                @Html.BBCodeCached(p)
+            }
+
+            <br />
+            <div id="@("ForumPostVoteForm" + p.ForumPostID)" style="float:right">
+                @Html.PrintPostRating(p)
+            </div>
+        </td>
+    </tr>
+</table>
