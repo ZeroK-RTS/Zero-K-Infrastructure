@@ -137,6 +137,12 @@ namespace ZeroKWeb.Controllers
             {
                 posts = Global.ForumPostIndexer.FilterPosts(posts, model.Search);
             }
+            if (!string.IsNullOrEmpty(model.User))
+            {
+                var filterAccountID = (db.Accounts.FirstOrDefault(x => x.Name == model.User) ?? db.Accounts.FirstOrDefault(x => x.Name.Contains(model.User)))?.AccountID;
+                if (filterAccountID.HasValue) posts = posts.Where(x => x.AuthorAccountID == filterAccountID);
+            }
+
             model.Data = posts.OrderBy(x=>x.ForumPostID);
             model.Thread = thread;
 
@@ -148,6 +154,7 @@ namespace ZeroKWeb.Controllers
             public int ThreadID { get; set; }
             public string Search { get; set; }
             public int GoToPost { get; set; }
+            public string User { get; set; }
             public ForumThread Thread;
             public IQueryable<ForumPost> Data;
         }
