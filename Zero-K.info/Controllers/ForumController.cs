@@ -211,7 +211,7 @@ namespace ZeroKWeb.Controllers
             {
                 var thread = res.CurrentThread;
                 res.CanSetTopic = (thread.ForumPosts.Count > 0 && thread.ForumPosts.First().ForumPostID == forumPostID &&
-                                   (category.ForumMode == ForumMode.General || category.ForumMode == ForumMode.Wiki));
+                                   (category.ForumMode == ForumMode.General || category.ForumMode == ForumMode.Wiki || category.ForumMode == ForumMode.Archive));
             } else res.CanSetTopic = true;
 
             return View(res);

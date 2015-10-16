@@ -146,7 +146,7 @@ namespace ZkData.Migrations
                 new ForumCategory { Title = "Maps", ForumMode = ForumMode.Maps, IsLocked = true, SortOrder = 4 },
                 new ForumCategory { Title = "Missions", ForumMode = ForumMode.Missions, IsLocked = true, SortOrder = 5 },
                 new ForumCategory { Title = "Battles", ForumMode = ForumMode.SpringBattles, IsLocked = true, SortOrder = 6 },
-                new ForumCategory { Title = "Off topic", ForumMode = ForumMode.General, SortOrder = 7 });
+                new ForumCategory { Title = "Off topic", ForumMode = ForumMode.Archive, SortOrder = 7 });
 
             db.SaveChanges();
 
