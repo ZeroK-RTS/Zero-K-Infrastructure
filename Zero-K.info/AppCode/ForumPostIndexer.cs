@@ -54,7 +54,7 @@ namespace ZeroKWeb
 
         void ZkDataContextOnAfterEntityChange(object sender, DbEntityEntry dbEntityEntry) {
             var post = dbEntityEntry.Entity as ForumPost;
-            if (post != null && dbEntityEntry.State != EntityState.Deleted) IndexPost(post);
+            if (post != null && (dbEntityEntry.State == EntityState.Added || dbEntityEntry.State == EntityState.Modified)) IndexPost(post);
         }
 
         public static string SanitizeWord(string word) {

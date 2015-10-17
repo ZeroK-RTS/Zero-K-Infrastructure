@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Web.Mvc;
 using ZeroKWeb.ForumParser;
@@ -20,7 +21,7 @@ namespace ZeroKWeb
         void ZkDataContextOnAfterEntityChange(object sender, DbEntityEntry dbEntityEntry) {
             // Invalidates cache on entity changes
             var post = dbEntityEntry.Entity as ForumPost;
-            if (post != null)
+            if (post != null && (dbEntityEntry.State == EntityState.Added || dbEntityEntry.State == EntityState.Modified))
             {
                 MvcHtmlString dummy;
                 cache.TryRemove(GetKey(post), out dummy);
