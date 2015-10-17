@@ -52,7 +52,7 @@ namespace ZeroKWeb
             return term.Split(' ', '\t', '\n').Select(SanitizeWord).Where(x => !string.IsNullOrEmpty(x)).Select(GetWordID).Distinct().ToList();
         }
 
-        void ZkDataContextOnAfterEntityChange(object sender, DbEntityEntry dbEntityEntry) {
+        void ZkDataContextOnAfterEntityChange(object sender, ZkDataContext.EntityEntry dbEntityEntry) {
             var post = dbEntityEntry.Entity as ForumPost;
             if (post != null && (dbEntityEntry.State == EntityState.Added || dbEntityEntry.State == EntityState.Modified)) IndexPost(post);
         }

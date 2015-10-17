@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Runtime.Remoting.Messaging;
 using System.Web.Mvc;
 using ZeroKWeb.ForumParser;
 using ZkData;
@@ -18,10 +19,11 @@ namespace ZeroKWeb
 
         ConcurrentDictionary<string,MvcHtmlString>  cache = new ConcurrentDictionary<string, MvcHtmlString>();
 
-        void ZkDataContextOnAfterEntityChange(object sender, DbEntityEntry dbEntityEntry) {
+        void ZkDataContextOnAfterEntityChange(object sender, ZkDataContext.EntityEntry dbEntityEntry) {
             // Invalidates cache on entity changes
             var post = dbEntityEntry.Entity as ForumPost;
-            if (post != null && (dbEntityEntry.State == EntityState.Added || dbEntityEntry.State == EntityState.Modified))
+            if (dbEntityEntry.State != EntityState.Added && dbEntityEntry.State != EntityState.Modified) return;
+            if (post != null)
             {
                 MvcHtmlString dummy;
                 cache.TryRemove(GetKey(post), out dummy);
