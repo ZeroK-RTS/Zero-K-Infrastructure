@@ -169,7 +169,7 @@ namespace ZeroKWeb.Controllers
         /// <param name="forumPostID">The <see cref="ForumPost" /> ID, if editing an existing post</param>
         /// <returns></returns>
         [Auth]
-        public ActionResult NewPost(int? categoryID, int? threadID, int? forumPostID) {
+        public ActionResult NewPost(int? categoryID, int? threadID, int? forumPostID, string wikiKey) {
             var res = new NewPostResult();
             var db = new ZkDataContext();
 
@@ -214,6 +214,8 @@ namespace ZeroKWeb.Controllers
                 res.CanSetTopic = (thread.ForumPosts.Count > 0 && thread.ForumPosts.First().ForumPostID == forumPostID &&
                                    (category.ForumMode == ForumMode.General || category.ForumMode == ForumMode.Wiki || category.ForumMode == ForumMode.Archive));
             } else res.CanSetTopic = true;
+
+            res.WikiKey = wikiKey;
 
             return View(res);
         }
@@ -684,6 +686,7 @@ namespace ZeroKWeb.Controllers
             public ForumPost EditedPost;
             public IEnumerable<ForumPost> LastPosts;
             public List<ForumCategory> Path = new List<ForumCategory>();
+            public string WikiKey;
         }
 
         public class ThreadResult

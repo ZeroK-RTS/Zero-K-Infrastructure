@@ -28,7 +28,7 @@
         {
             <tr>
                 <td>Wiki Key:</td><td>
-                    <input type="text" name="wikiKey" style="width:150px" value="@(Model.EditedPost != null ? Model.EditedPost.ForumThread.WikiKey : null)"/>
+                    <input type="text" name="wikiKey" style="width:150px" value="@(Model.WikiKey ?? (Model.EditedPost != null ? Model.EditedPost.ForumThread.WikiKey : null))"/>
                 </td>
             </tr>
         }
