@@ -479,11 +479,6 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index", new { categoryID = newcat });
         }
 
-        public ActionResult EditHistory(int forumPostID) {
-            var db = new ZkDataContext();
-            var post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
-            return View("EditHistory", post);
-        }
 
         /// <summary>
         ///     Upvote or downvote a post

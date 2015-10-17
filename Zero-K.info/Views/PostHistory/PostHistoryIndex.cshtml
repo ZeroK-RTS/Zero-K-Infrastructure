@@ -1,0 +1,23 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZkData.ForumPost
+
+@{
+    ViewBag.Title = "Post edit history";
+    var grid = new UniGrid<ForumPostEdit>(Model.ForumPostEdits.OrderBy(x => x.ForumPostEditID).AsQueryable(), "Post edit history");
+
+    grid.AddCol("", x=>"").SetRowSelection(x => x.ForumPostEditID).SetWidth("20px");
+    grid.AddCol("Date", x => x.EditTime).SetSort(x => x.EditTime);
+    grid.AddCol("Editor", x => Html.PrintAccount(x.Account)).SetSort(x => x.EditorAccountID);
+    grid.AddCol("Revert", x => Html.ActionLink("Revert before", "RevertBefore", "PostHistory", new { id = x.ForumPostEditID }, new { @class = "textbutton" })).SetWidth("200px");
+}
+<div id="gridder">
+    <h2>@ViewBag.Title</h2>
+    <h3>@Html.Print(Model.ForumThread)</h3>
+
+    @using (Ajax.BeginForm("Index", "PostHistory", Global.GetAjaxOptions("gridder")))
+    {
+        <input type="submit" value="Compare selected" class="textbutton"/>
+        @GridHelpers.RenderTable(Html, grid)
+    }
+</div>

@@ -68,7 +68,7 @@
                                 {
                                     var lastEdit = p.ForumPostEdits.OrderByDescending(x => x.EditTime).First();
                                     <br/>
-                                    <a nicetitle="@lastEdit.EditTime" href="@Url.Action("EditHistory", "Forum", new { forumPostID = p.ForumPostID })">
+                                    <a nicetitle="@lastEdit.EditTime" href="@Url.Action("Index", "PostHistory", new { id = p.ForumPostID })">
                                         (edited @lastEdit.EditTime.ToAgoString())
                                     </a>
                                 }
