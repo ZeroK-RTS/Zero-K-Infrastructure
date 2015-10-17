@@ -574,3 +574,6 @@ span.button_2text
     margin: 4px;
 }
 
+.grid .row_selected {
+    background-color: #2a8eaf;
+}

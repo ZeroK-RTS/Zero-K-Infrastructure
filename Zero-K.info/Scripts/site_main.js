@@ -204,6 +204,6 @@ function GlobalPageInit(root) {
         $(this).stop().animate({ height: $.data(this, "size").height, width: $.data(this, "size").width }, 600);
     });
 
-    $(".js_expand").toggler({speed:0});
+    $(".js_expand").toggler({ speed: 0 });
 }
 
