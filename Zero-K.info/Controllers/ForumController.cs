@@ -600,34 +600,10 @@ namespace ZeroKWeb.Controllers
                     x =>
                         (string.IsNullOrEmpty(username) || x.Account.Name == username && !x.Account.IsDeleted) &&
                         (categoryIDs.Count == 0 || categoryIDs.Contains((int)x.ForumThread.ForumCategoryID)) &&
-                        (x.ForumThread.RestrictedClanID == null || x.ForumThread.RestrictedClanID == Global.ClanID))
-                    .OrderByDescending(x => x.Created)
-                    .ToList();
-            if (firstPostOnly) posts = posts.Where(x => x.ForumThread.ForumPosts.First() == x).ToList();
-            var invalidResults = new List<ForumPost>();
-            if (!string.IsNullOrEmpty(keywords))
-            {
-                var keywordArray = keywords.Split(null as string[], StringSplitOptions.RemoveEmptyEntries);
-                foreach (var p in posts)
-                {
-                    /*  // use this for an OR search
-                    bool success = false;
-                    foreach (string word in keywordArray)
-                    {
-                        if (p.Text.Contains(word))
-                        {
-                            success = true;
-                            break;
-                        }
-                    }
-                    if (!success) invalidResults.Add(p);
-                    */
-                    // AND search
-                    foreach (var word in keywordArray) if (!p.Text.Contains(word)) invalidResults.Add(p);
-                }
-            }
-            posts = posts.Where(x => !invalidResults.Contains(x)).ToList();
-            return View("SearchResults", new SearchResult { Posts = posts.Take(100).ToList(), DisplayAsPosts = resultsAsPosts });
+                        (x.ForumThread.RestrictedClanID == null || x.ForumThread.RestrictedClanID == Global.ClanID));
+            if (firstPostOnly) posts = Global.ForumPostIndexer.FilterPosts(posts, keywords);
+            
+            return View("SearchResults", new SearchResult { Posts = posts.OrderByDescending(x=>x.Created).Take(100).ToList(), DisplayAsPosts = resultsAsPosts });
         }
 
         /// <summary>
