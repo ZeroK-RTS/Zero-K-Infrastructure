@@ -35,12 +35,22 @@
 }(jQuery));
 
 
-function DynDialog(selector, url) {
+function DynDialog(url, title) {
     $.get(url, function(data) {
-        var t = $(selector);
+        var t = $("<div></div>");
         t.html(data);
+        t.appendTo(document.body);
         GlobalPageInit(t);
-        t.dialog("open");
+        t.dialog(
+        {
+            autoOpen: true,
+            show: "fade",
+            hide: "fade",
+            modal: false,
+            title: title,
+            width: 800,
+            buttons: { "Close": function() { $(this).dialog("close"); } }
+        });
     });
 }
 

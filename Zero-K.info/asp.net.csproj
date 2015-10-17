@@ -1421,6 +1421,7 @@
     <Content Include="Views\Planetwars\GalaxyOfflinePW12.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\ForumPost.cshtml" />
     <Content Include="Views\PostHistory\PostHistoryIndex.cshtml" />
+    <None Include="Views\PostHistory\ViewEntry.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

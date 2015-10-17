@@ -417,8 +417,8 @@ namespace ZeroKWeb.Controllers
                 if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
                 if (clanID.HasValue) return RedirectToAction("Detail", "Clans", new { id = clanID });
                 if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
-                if (forumPostID.HasValue) return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID = forumPostID });
-                return RedirectToAction("Thread", new { id = thread.ForumThreadID, postId = gotoPostId });
+                if (forumPostID.HasValue) return RedirectToAction("Thread","Forum", new { id = thread.ForumThreadID, postID = forumPostID });
+                return RedirectToAction("Thread", "Forum", new { id = thread.ForumThreadID, postId = gotoPostId });
             }
         }
 
