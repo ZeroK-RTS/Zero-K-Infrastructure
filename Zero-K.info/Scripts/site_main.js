@@ -134,17 +134,6 @@ function GlobalPageInit(root) {
     s.find(".js_button").button();
     s.find(".js_accordion").accordion();
 
-    // busy loading indicator
-    s.find("#busy").hide() // hide it initially
-        .ajaxStart(function() {
-            isBusy = true;
-            setTimeout("if (isBusy) $('#busy').show('fade');", 4000);
-        })
-        .ajaxStop(function() {
-            isBusy = false;
-            $(this).hide();
-        });
-
     // selection for gird
     s.find(".js_selectrow").click(function() {
         var tr = $(this).closest("tr");
@@ -289,3 +278,15 @@ function GlobalPageInit(root) {
     $(".qtip").remove();
 }
 
+
+// setup busy indicator
+$(function() {
+    $(document).ajaxStart(function () {
+        isBusy = true;
+        setTimeout("if (isBusy) $('#busy').show('fade');", 500);
+    });
+    $(document).ajaxStop(function () {
+        isBusy = false;
+        $("#busy").hide();
+    });
+})
