@@ -43,7 +43,23 @@ namespace ZeroKWeb.Controllers
             return Json(CompleteThreads(term, categoryID, new ZkDataContext()), JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult Clans(string term)
+        {
+            return Json(CompleteClans(term, new ZkDataContext()), JsonRequestBehavior.AllowGet);
+        }
 
+        IEnumerable<AutocompleteItem> CompleteClans(string term, ZkDataContext db) {
+            return
+                db.Clans.Where(x => !x.IsDeleted && (x.ClanName.Contains(term) || x.Shortcut.Contains(term)))
+                    .OrderBy(x => x.ClanName).Take(autocompleteCount).ToList()
+                    .Select(x=>new AutocompleteItem()
+                    {
+                        id = x.ClanID,
+                        url = Url.Action("Detail","Clans", new {id=x.ClanID}),
+                        value = x.ClanName,
+                        label = HtmlHelperExtensions.PrintClan(null, x).ToString()
+                    });
+        }
 
 
         IEnumerable<AutocompleteItem> CompleteMissions(string term, ZkDataContext db) {
