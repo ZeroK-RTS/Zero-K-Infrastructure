@@ -13,8 +13,8 @@
         grid.AddCol("Planets", x => x.Accounts.Sum(y => y.Planets.Count())).SetSort(x => x.Accounts.Sum(y => y.Planets.Count()));
     }
     grid.AddCol("Commanders", x => x.Accounts.Count()).SetSort(x => x.Accounts.Count());
-    grid.AddCol("Level", x => x.Accounts.Average(y => y.Level)).SetSort(x => x.Accounts.Average(y => y.Level));
-    grid.AddCol("Elo", x => x.Accounts.Average(y => y.Elo)).SetSort(x => x.Accounts.Average(y => y.Elo));
+    grid.AddCol("Level", x => x.Accounts.Average(y => (double?)y.Level)).SetSort(x => x.Accounts.Average(y => (double?)y.Level));
+    grid.AddCol("Elo", x => x.Accounts.Average(y => (double?)y.Elo)).SetSort(x => x.Accounts.Average(y => (double?)y.Elo));
     if (GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
     {
         grid.AddCol("PlanetWars Elo", x => x.Accounts.Average(y => y.EloPw)).SetSort(x => x.Accounts.Average(y => y.EloPw));
