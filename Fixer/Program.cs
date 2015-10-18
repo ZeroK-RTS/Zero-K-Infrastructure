@@ -288,7 +288,7 @@ namespace Fixer
         }
 
         public static void DeleteOldUsers() {
-            GlobalConst.Mode = ModeType.Live;
+            //GlobalConst.Mode = ModeType.Live;
             var dbo = new ZkDataContext();
 
             var limit = DateTime.Now.AddMonths(-1);
@@ -332,8 +332,33 @@ namespace Fixer
 
         [STAThread]
         static void Main(string[] args) {
-            //var ret = new ForumWikiParser().ProcessToHtml("[B]bold[/b]", null);
-            DeleteOldUsers();
+            var ret = new ForumWikiParser().ProcessToHtml(@"
+<table>
+    <tr>
+        <td>Kudos</td>
+        <td>Donator star</td>
+    </tr>
+    <tr>
+        <td style=""text-align: left"">100</td>
+        <td style=""text-align: center""><img src='http://zero-k.info/img/stars/star_brown.png' alt='Donator star'/></td>
+    </tr>
+    <tr>
+        <td style=""text-align: left"">500</td>
+        <td style=""text-align: center""><img src='http://zero-k.info/img/stars/star_white.png' alt='Donator star' /></td>
+    </tr>
+    <tr>
+        <td style=""text-align: left"">1000</td>
+        <td style=""text-align: center""><img src='http://zero-k.info/img/stars/star_yellow.png' alt='Donator star' /></td>
+    </tr>
+    <tr>
+        <td style=""text-align: left"">5000</td>
+        <td style=""text-align: center""><img src='http://zero-k.info/img/stars/star_diamond.png' alt='Donator star' /></td>
+    </tr>
+</table>[b]some crap
+[/b]",null);
+
+
+            //DeleteOldUsers();
             return;
 
             /*

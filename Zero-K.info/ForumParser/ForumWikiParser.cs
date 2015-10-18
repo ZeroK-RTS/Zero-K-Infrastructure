@@ -123,19 +123,31 @@ namespace ZeroKWeb.ForumParser
         public static LinkedList<Tag> EliminateUnclosedTags(LinkedList<Tag> input) {
             var openedTagsStack = new Stack<Tag>();
             var toDel = new List<Tag>();
+            int insideHtml = 0;
 
             foreach (var tag in input)
             {
-                if (tag.Mode == OpeningClosingMode.Opening) openedTagsStack.Push(tag);
+                if (tag.Mode == OpeningClosingMode.Opening)
+                {
+                    if (tag is HtmlTag) insideHtml++;
+                    openedTagsStack.Push(tag);
+                }
                 else if (tag.Mode == OpeningClosingMode.Closing)
                 {
                     if (openedTagsStack.Count == 0) toDel.Add(tag);
                     else
                     {
                         var peek = openedTagsStack.Peek();
-                        if (peek.IsClosedBy(tag)) openedTagsStack.Pop();
+                        if (peek.IsClosedBy(tag))
+                        {
+                            if (tag is HtmlTag) insideHtml--;
+                            openedTagsStack.Pop();
+                        }
                         else toDel.Add(tag);
                     }
+                } else if (tag.Mode == OpeningClosingMode.SelfClosed && tag is NewLineTag && insideHtml > 0)
+                {
+                    toDel.Add(tag); // remove newlines from inside html
                 }
             }
 
