@@ -131,7 +131,11 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var ret = db.Accounts.Where(x => !x.IsDeleted).AsQueryable();
 
-            if (!string.IsNullOrEmpty(model.Name)) ret = ret.Where(x => x.Name.Contains(model.Name) || x.SteamName.Contains(model.Name));
+            if (!string.IsNullOrEmpty(model.Name))
+            {
+                var termLower = model.Name.ToLower();
+                ret = ret.Where(x => x.Name.ToLower().Contains(termLower) || x.SteamName.Contains(model.Name));
+            }
             if (Global.IsZeroKAdmin)
             {
                 if (!string.IsNullOrEmpty(model.IP)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == model.IP));

@@ -16,6 +16,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using System.Xml.Serialization;
 //using LobbyClient;
 //using NightWatch;
@@ -286,10 +287,47 @@ namespace Fixer
             using (var tw = new StreamWriter(fs)) js.Serialize(tw, GetMiniBats());
         }
 
+        public static void DeleteOldUsers() {
+            GlobalConst.Mode = ModeType.Test;
+            var dbo = new ZkDataContext();
+            var acid = dbo.Accounts.Where(x=>!x.SpringBattlePlayers.Any(z=>!z.IsSpectator) && x.MissionRunCount == 0 && !x.ForumPosts.Any() && !x.ContributionsByAccountID.Any()).OrderBy(x=>x.AccountID).Select(x => x.AccountID).ToList();
+
+            Console.WriteLine("Deleting: {0}", acid.Count);
+
+            //Console.WriteLine(dbo.Accounts.Where(x=>x.SpringBattlePlayers.Any(y=>y.IsSpectator)  && !x.SpringBattlePlayers.Any(y=>!y.IsSpectator)).Count());
+            
+            foreach (var id in acid)
+            {
+                try
+                {
+                    using (var db = new ZkDataContext())
+                    {
+                        var acc = db.Accounts.Find(id);
+                        db.ForumLastReads.RemoveRange(acc.ForumLastReads);
+                        db.ForumThreadLastReads.RemoveRange(acc.ForumThreadLastReads);
+                        db.SpringBattlePlayers.RemoveRange(acc.SpringBattlePlayers);
+                        db.AbuseReports.RemoveRange(acc.AbuseReportsByAccountID);
+                        db.AbuseReports.RemoveRange(acc.AbuseReportsByReporterAccountID);
+                        db.SaveChanges();
+                        db.Accounts.Remove(acc);
+                        db.SaveChanges();
+                        Console.WriteLine("Deleted: {0}",id);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.ToString());
+                }
+
+            }
+            //db.Accounts
+        }
+
 
         [STAThread]
         static void Main(string[] args) {
             //var ret = new ForumWikiParser().ProcessToHtml("[B]bold[/b]", null);
+            DeleteOldUsers();
             return;
 
             /*

@@ -99,7 +99,7 @@ namespace ZeroKWeb.Controllers
             if (!string.IsNullOrEmpty(model.User))
             {
                 filterAccountID =
-                    (db.Accounts.FirstOrDefault(x => x.Name == model.User) ?? db.Accounts.FirstOrDefault(x => x.Name.Contains(model.User)))?.AccountID;
+                    (db.Accounts.FirstOrDefault(x => x.Name == model.User) ?? db.Accounts.FirstOrDefault(x => x.Name.ToLower().Contains(model.User)))?.AccountID;
             }
             if (filterAccountID.HasValue) threads = threads.Where(x => x.CreatedAccountID == filterAccountID || x.ForumPosts.Any(y => y.AuthorAccountID == filterAccountID));
 
