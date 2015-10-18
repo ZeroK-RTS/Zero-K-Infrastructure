@@ -21,35 +21,38 @@
                         Edit <img src="/img/edit_pencil.png" class="icon16"/>
                     </a>
                 }
-                <a href="@Url.Action("Index","PostHistory",new {id=p.ForumPostID})">view edit history</a>
+                <a href="@Url.Action("Index", "PostHistory", new { id = p.ForumPostID })">view edit history</a>
 
                 <div id="@("ForumPostVoteForm" + p.ForumPostID)" style="float: right">
                     @Html.PrintPostRating(p)
                 </div>
 
+                <div style="clear: both"></div>
+                @{
+                    var edits = Model.ForumPostEdits.Select(x => new { x.Account, x.EditTime }).ToList();
+                    edits.Insert(0, new { p.Account, EditTime = p.Created });
+                }
+                @foreach (var contrib in edits.GroupBy(x => x.Account))
+                {
+                    var count = contrib.Count();
+                    var first = contrib.Min(x => x.EditTime);
+                    var last = contrib.Max(x => x.EditTime);
+                    <table style="float: left; margin-right: 10px">
+                        <tr>
+                            <td>
+                                @Html.AccountAvatar(contrib.Key)
+                            </td>
+                            <td valign='top'>
+                                @Html.PrintAccount(contrib.Key)<br/>
+                                <small>
+                                    Edits: @count<br/>
+                                    First: <span nicetitle="@first">@first.ToAgoString()</span><br/>
+                                    Last: <span nicetitle="@last">@last.ToAgoString()</span>
+                                </small>
+                            </td>
+                        </tr>
 
-            @foreach (var contrib in Model.ForumPostEdits.GroupBy(x => x.Account))
-            {
-                var count = contrib.Count();
-                var first = contrib.Min(x => x.EditTime);
-                var last = contrib.Max(x=>x.EditTime);
-                <table style="clear:both">
-                    <tr>
-                        <td>
-                            @Html.AccountAvatar(contrib.Key)
-                        </td>
-                        <td valign='top'>
-                            @Html.PrintAccount(contrib.Key)<br />
-                            <small>
-                                Edits: @count<br/>
-                                First: <span nicetitle="@first">@first.ToAgoString()</span><br/>
-                                Last: <span nicetitle="@last">@last.ToAgoString()</span>
-                            </small>
-                        </td>
-                    </tr>
-
-                </table>
-
+                    </table>
                 }
             </td>
         </tr>
