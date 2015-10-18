@@ -55,7 +55,7 @@ namespace ZeroKWeb.Controllers
                         sb.AppendFormat("\n {0} ({1})", commit.message, commit.url);
                         count++;
                     }
-                    text = $"[{payload.repository.name}] {payload.sender.login} has pushed {count} commits: {sb}\n";
+                    if (count > 0) text = $"[{payload.repository.name}] {payload.sender.login} has pushed {count} commits: {sb}";
                     break;
             }
 
