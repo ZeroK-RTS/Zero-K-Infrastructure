@@ -32,7 +32,7 @@ namespace ZkData.Migrations
                             db.ForumThreads.Add(thread);
                         }
 
-                        var licho = db.Accounts.First(x => x.Name == "Licho");
+                        var improtOwner = db.Accounts.First(); // note .. meh...
 
                         var title = node;
                         str = Regex.Replace(
@@ -49,7 +49,7 @@ namespace ZkData.Migrations
                         thread.Title = title.Substring(0, Math.Min(300, title.Length));
 
                         thread.WikiKey = node;
-                        thread.AccountByCreatedAccountID = licho;
+                        thread.AccountByCreatedAccountID = improtOwner;
 
                         var post = thread.ForumPosts.OrderBy(x => x.ForumPostID).FirstOrDefault();
                         if (post == null)
@@ -58,7 +58,7 @@ namespace ZkData.Migrations
                             thread.ForumPosts.Add(post);
                         }
                         post.Text = str;
-                        post.Account = licho;
+                        post.Account = improtOwner;
 
                         db.SaveChanges();
                     }
