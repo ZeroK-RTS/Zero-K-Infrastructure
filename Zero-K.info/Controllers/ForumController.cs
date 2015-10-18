@@ -673,6 +673,8 @@ namespace ZeroKWeb.Controllers
             public List<ForumPost> Posts;
         }
 
+
+        [ValidateInput(false)]
         public ActionResult Preview(string text) {
             return View("Preview",(object)text);
         }
