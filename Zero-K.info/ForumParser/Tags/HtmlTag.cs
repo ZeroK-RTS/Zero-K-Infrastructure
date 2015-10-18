@@ -126,7 +126,7 @@ namespace ZeroKWeb.ForumParser
                 var name = attr.Name.ToString();
 
                 if (!validAttrs.Contains(name)) parsed.SetAttributeValue(attr.Name, null);
-                if ((name == "src" || name == "href") && !attr.Value.IsValidLink()) parsed.SetAttributeValue(attr.Name, null);
+                if ((name == "src" || name == "href") && !attr.Value.IsValidLinkOrRelativeUrl()) parsed.SetAttributeValue(attr.Name, null);
             }
 
             text = parsed.ToString(); // turn back to string

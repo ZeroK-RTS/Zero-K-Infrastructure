@@ -340,19 +340,19 @@ namespace Fixer
     </tr>
     <tr>
         <td style=""text-align: left"">100</td>
-        <td style=""text-align: center""><img src='http://zero-k.info/img/stars/star_brown.png' alt='Donator star'/></td>
+        <td style=""text-align: center""><img src='/img/stars/star_brown.png' alt='Donator star'/></td>
     </tr>
     <tr>
         <td style=""text-align: left"">500</td>
-        <td style=""text-align: center""><img src='http://zero-k.info/img/stars/star_white.png' alt='Donator star' /></td>
+        <td style=""text-align: center""><img src='/img/stars/star_white.png' alt='Donator star' /></td>
     </tr>
     <tr>
         <td style=""text-align: left"">1000</td>
-        <td style=""text-align: center""><img src='http://zero-k.info/img/stars/star_yellow.png' alt='Donator star' /></td>
+        <td style=""text-align: center""><img src='/img/stars/star_yellow.png' alt='Donator star' /></td>
     </tr>
     <tr>
         <td style=""text-align: left"">5000</td>
-        <td style=""text-align: center""><img src='http://zero-k.info/img/stars/star_diamond.png' alt='Donator star' /></td>
+        <td style=""text-align: center""><img src='img/stars/star_diamond.png' alt='Donator star' /></td>
     </tr>
 </table>[b]some crap
 [/b]",null);

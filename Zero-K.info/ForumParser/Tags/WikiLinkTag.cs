@@ -25,7 +25,7 @@ namespace ZeroKWeb.ForumParser
             var parts = arguments.Split(new[] { ' ' }, 2);
             var name = parts.Length > 1 ? parts[1] : parts[0];
             var link = parts[0];
-            if (link.IsValidLink()) context.AppendFormat("<a href=\"{0}\">{1}</a>", link, name);
+            if (link.IsValidLinkOrRelativeUrl()) context.AppendFormat("<a href=\"{0}\">{1}</a>", link, name);
             else context.Append(context.Html?.ActionLink(name, "Index", "Wiki", new { node = link }, null));
 
             return self.Next;
@@ -36,7 +36,7 @@ namespace ZeroKWeb.ForumParser
         protected override bool ValidateArgs(ParseContext context, string args) {
             var parts = args.Split(' ');
             if (string.IsNullOrEmpty(parts[0])) return false;
-            using (var db = new ZkDataContext()) return parts[0].IsValidLink() || context.IsWikiKey(parts[0]);
+            using (var db = new ZkDataContext()) return parts[0].IsValidLinkOrRelativeUrl() || context.IsWikiKey(parts[0]);
         }
     }
 }
