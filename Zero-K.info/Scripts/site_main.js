@@ -285,5 +285,7 @@ function GlobalPageInit(root) {
             return $("<li></li>").data("item.autocomplete", item).append($("<a></a>").html(item.label)).appendTo(ul);
         };
     });
+
+    $(".qtip").remove();
 }
 

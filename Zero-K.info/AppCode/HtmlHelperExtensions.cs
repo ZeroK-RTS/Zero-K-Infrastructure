@@ -196,6 +196,16 @@ namespace System.Web.Mvc
             }
         }
 
+        public static MvcHtmlString PrintDate(this HtmlHelper helper, DateTime? dateTime) {
+            return new MvcHtmlString($"<span nicetitle=\"{dateTime}\">{dateTime.ToAgoString()}</span>");    
+        }
+
+        public static MvcHtmlString PrintSeconds(this HtmlHelper helper, int? seconds)
+        {
+            if (seconds != null) return new MvcHtmlString($"<span nicetitle=\"{seconds}\">{TimeSpan.FromSeconds(seconds.Value).ToNiceString()}</span>");
+            else return new MvcHtmlString("");
+        }
+
         /// <summary>
         /// <para>Returns an appropriately formatted link with battle ID, player count, map and icons leading to the battle page</para>
         /// <para>e.g. [Multiplayer icon] B360800 10 on Coagulation Marsh 0.6</para>

@@ -148,7 +148,7 @@ if (col.IsSelector)
    <input type="checkbox" onclick="gridToggleRows('@grid.ID',$(this))" />
 }
     <a href="#" onclick="gridSetSort('@grid.ID','@col.ID');return false;">
-        @col.Description
+        @(new MvcHtmlString(col.Description))
         @if (!string.IsNullOrEmpty(grid.OrderColumn) && col.ID == grid.OrderColumn)
     {
         if (grid.OrderIsDescending)

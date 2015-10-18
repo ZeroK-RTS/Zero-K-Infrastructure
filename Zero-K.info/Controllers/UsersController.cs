@@ -111,34 +111,46 @@ namespace ZeroKWeb.Controllers
         }
 
 
-        public ActionResult Index(string name, string alias, string ip, int? userID = null)
+        public class UsersIndexModel
         {
-            var db = new ZkDataContext();
-            IQueryable<Account> ret = db.Accounts.Where(x=> !x.IsDeleted).AsQueryable();
+            public string Name { get; set; }
+            public string IP { get; set; }
+            public int? UserID { get; set; }
+            public DateTime? RegisteredFrom { get; set; }
+            public DateTime? RegisteredTo { get; set; }
 
-            if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => SqlFunctions.PatIndex("%" + name + "%", x.Name) > 0);
-            if (!string.IsNullOrEmpty(alias)) ret = ret.Where(x => x.Aliases.Contains(alias));
-            if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == ip));
-            if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID));
+            public DateTime? LastLoginFrom { get; set; }
+            public DateTime? LastLoginTo { get; set; }
 
-            return View("UserList", ret.Take(100));
+            public bool IsAdmin { get; set; }
+            public IQueryable<Account> Data;
         }
 
-        /// <summary>
-        /// Lists the newest 200 users to crate an account who also match the specified params
-        /// </summary>
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
-        public ActionResult NewUsers(string name, string ip, int? userID = null)
-        {
+        public ActionResult Index(UsersIndexModel model) {
+            model = model ?? new UsersIndexModel();
             var db = new ZkDataContext();
-            IQueryable<Account> ret = db.Accounts.Where(x => !x.IsDeleted).AsQueryable();
+            var ret = db.Accounts.Where(x => !x.IsDeleted).AsQueryable();
 
-            if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => SqlFunctions.PatIndex("%" + name + "%", x.Name) > 0);
-            if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == ip));
-            if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID));
+            if (!string.IsNullOrEmpty(model.Name)) ret = ret.Where(x => x.Name.Contains(model.Name) || x.SteamName.Contains(model.Name));
+            if (Global.IsZeroKAdmin)
+            {
+                if (!string.IsNullOrEmpty(model.IP)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == model.IP));
+                if (model.UserID.HasValue) ret = ret.Where(x => x.AccountUserIDs.Any(y => y.UserID == model.UserID));
+            }
 
-            return View("NewUsers", ret.OrderByDescending(x=> x.FirstLogin).Take(200));
+            if (model.RegisteredFrom.HasValue) ret = ret.Where(x => x.FirstLogin >= model.RegisteredFrom);
+            if (model.RegisteredTo.HasValue) ret = ret.Where(x => x.FirstLogin <= model.RegisteredTo);
+
+            if (model.LastLoginFrom.HasValue) ret = ret.Where(x => x.LastLogin >= model.LastLoginFrom);
+            if (model.LastLoginTo.HasValue) ret = ret.Where(x => x.LastLogin <= model.LastLoginTo);
+
+            if (model.IsAdmin) ret = ret.Where(x => x.IsZeroKAdmin);
+
+            model.Data = ret.OrderByDescending(x=>x.AccountID);
+
+            return View("UsersIndex", model);
         }
+
 
         /// <summary>
         /// Get user detail page by username or <see cref="Account"/> ID
@@ -332,7 +344,7 @@ namespace ZeroKWeb.Controllers
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {4} for user series {0} ({1} - {2}): {3}",
                 name, startIndex, endIndex, Url.Action("Detail", "Users", new { id = firstAccID }, "http"), Global.Account.Name));
 
-            return Index(name, null, null);
+            return Index(new UsersIndexModel() {Name = name});
         }
 
         public ActionResult MassBanByUserIDSubmit(int userID, double? maxAge, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
@@ -371,7 +383,7 @@ namespace ZeroKWeb.Controllers
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {2} for userID {0} (max age {1})",
                 userID, maxAge, Global.Account.Name));
 
-            return NewUsers(null, null, userID);
+            return RedirectToAction("Index");
         }
 
 

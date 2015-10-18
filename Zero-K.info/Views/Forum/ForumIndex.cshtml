@@ -9,7 +9,7 @@
     grid.AddCol("Title", x => Html.Print(x)).SetSort(x => x.Title);
     grid.AddCol("Author", x => Html.PrintAccount(x.AccountByCreatedAccountID)).SetSort(x => x.AccountByCreatedAccountID.Name).SetWidth("200px");
     grid.AddCol("Posts", x => x.PostCount).SetSort(x => x.PostCount).SetWidth("70px");
-    grid.AddCol("Last", x => x.LastPost.ToAgoString()).SetWidth("150px").SetSort(x => x.LastPost);
+    grid.AddCol("Last", x => Html.PrintDate(x.LastPost)).SetWidth("150px").SetSort(x => x.LastPost);
 }
 
 @helper StickyMark(ForumThread t) {
