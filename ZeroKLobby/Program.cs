@@ -143,7 +143,7 @@ namespace ZeroKLobby
                 WebRequest.DefaultWebProxy = null;
                 ThreadPool.SetMaxThreads(500, 2000);
                 ServicePointManager.Expect100Continue = false;
-                if (Environment.OSVersion.Platform != PlatformID.Unix && !Conf.UseExternalBrowser) { Utils.SetIeCompatibility(); } //set to current IE version
+                if (Environment.OSVersion.Platform != PlatformID.Unix && !Conf.ExternalBrowser) { Utils.SetIeCompatibility(); } //set to current IE version
 
                 LoadConfig();
 
@@ -315,7 +315,7 @@ namespace ZeroKLobby
                     {
                         Trace.TraceInformation("TASC login accepted");
                         Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
-                        if (Environment.OSVersion.Platform == PlatformID.Unix || Conf.UseExternalBrowser)
+                        if (Environment.OSVersion.Platform == PlatformID.Unix || Conf.ExternalBrowser)
                             MainWindow.navigationControl.Path = "battles";
                     };
 
