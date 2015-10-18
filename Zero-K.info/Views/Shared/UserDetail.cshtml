@@ -267,7 +267,7 @@
         if (Model.ForumPosts.Any())
         {
             <div id="usr_forumposts" class="fleft border">
-                <h3>@Html.ActionLink("Posted threads", "Index", "Forum", new { User = Global.Account?.Name }, null)</h3>
+                <h3>@Html.ActionLink("Posted threads", "Index", "Forum", new { User = Model.Name }, null)</h3>
                 <span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
                 <br />
                 @foreach (ForumThread t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Where(x => x != null).Distinct().Take(10))
