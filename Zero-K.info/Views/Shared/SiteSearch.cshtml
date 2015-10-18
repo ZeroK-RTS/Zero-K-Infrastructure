@@ -1,20 +1,6 @@
 ﻿<form action="@Url.Action("SubmitSearch","Forum")" method="POST">
     <div>
-        <input type="text" name="keywords" id="keywords" size="20"/>
+        <input type="text" name="keywords" id="keywords" size="20" data-autocomplete="@Url.Action("Index", "Autocomplete")" data-autocomplete-action="goto"/>
         <input value="Search" type="image" src="/img/search_img.png" style="border: none; vertical-align: middle;"/>
     </div>
 </form>
-
-<script type="text/javascript">
-    $("input[name='keywords']").autocomplete({
-        minLength: 1,
-        delay: 0,
-        source: '@Url.Action("Index", "Autocomplete")',
-        select: function (event, ui) {
-            document.location = ui.item.url;
-        }
-    }).data('ui-autocomplete')._renderItem = function (ul, item) {
-        return $("<li></li>").data("item.autocomplete", item).append($("<a></a>").html(item.label)).appendTo(ul);
-    };
-
-</script>

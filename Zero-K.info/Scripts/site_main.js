@@ -219,7 +219,7 @@ function GlobalPageInit(root) {
 
     s.find("[data-preview]").each(function (i, trigger) {
         var name = $(trigger).data("preview");
-        var txtSource = "textarea[name='" + name + "']";
+        var txtSource = "[name='" + name + "']";
         $(trigger).click(function() {
             $.post("/Forum/Preview", {
                 text: $(txtSource).val()
@@ -264,7 +264,26 @@ function GlobalPageInit(root) {
                 event.preventDefault();
             });
         });
+    });
 
+    s.find("[data-autocomplete]").each(function(i, el) {
+        var url = $(el).data("autocomplete");
+        var action = $(el).data("autocomplete-action");
+
+        $(el).autocomplete({
+            minLength: 1,
+            delay: 0,
+            source: url,
+            select: function (event, ui) {
+                if (action === "submit") {
+                    $(el).closest("form").submit();
+                } else if (action === "goto") {
+                    document.location = ui.item.url;
+                }
+            }
+        }).data('ui-autocomplete')._renderItem = function (ul, item) {
+            return $("<li></li>").data("item.autocomplete", item).append($("<a></a>").html(item.label)).appendTo(ul);
+        };
     });
 }
 
