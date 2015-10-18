@@ -10,7 +10,7 @@
 <h1>@Model.CurrentThread.Title</h1>
 @if (!string.IsNullOrEmpty(Model.CurrentThread.WikiKey))
 {
-    <h2>@("["+Model.CurrentThread.WikiKey+"]")</h2>
+    <h2><a href="@Url.Action("Index", "Wiki", new { node = Model.CurrentThread.WikiKey })">@("[" + Model.CurrentThread.WikiKey + "]")</a></h2>
 }
 
 @if (Global.IsZeroKAdmin)
