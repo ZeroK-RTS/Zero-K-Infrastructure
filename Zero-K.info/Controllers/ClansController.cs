@@ -13,16 +13,22 @@ namespace ZeroKWeb.Controllers
 {
     public class ClansController : Controller
     {
-        //
-        // GET: /Clans/
+        public class ClansModel
+        {
+            public string Search { get; set; }
+            public IQueryable<Clan> Data;
+        }
 
         /// <summary>
         /// Clan list
         /// </summary>
-        public ActionResult Index()
-        {
+        public ActionResult Index(ClansModel model) {
+            model = model ?? new ClansModel();
             var db = new ZkDataContext();
-            return View("ClansIndex", db.Clans.Where(x => !x.IsDeleted && (x.Faction != null && !x.Faction.IsDeleted)).OrderBy(x=>x.ClanName));
+            var ret = db.Clans.Where(x => !x.IsDeleted && (x.Faction != null && !x.Faction.IsDeleted));
+            if (!string.IsNullOrEmpty(model.Search)) ret = ret.Where(x => x.ClanName.Contains(model.Search) || x.Shortcut.Contains(model.Search));
+            model.Data = ret.OrderBy(x => x.ClanName);
+            return View("ClansIndex", model);
         }
 
 

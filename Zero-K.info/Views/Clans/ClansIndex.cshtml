@@ -1,10 +1,10 @@
 ﻿@using ZeroKWeb
 @using ZkData
-@model IQueryable<ZkData.Clan>
+@model ZeroKWeb.Controllers.ClansController.ClansModel
 @{
     Page.Title = "List of PlanetWars clans";
 
-    var grid = new UniGrid<Clan>(Model, "Zero-K clans");
+    var grid = new UniGrid<Clan>(Model.Data, "Zero-K clans");
     grid.AddCol("Name", ClanNameCol).SetSort(x => x.ClanName);
     grid.AddCol("Shortcut", x => Html.PrintClan(x)).SetSort(x => x.Shortcut);
     if (GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
@@ -56,7 +56,10 @@
     }
     @using (Ajax.BeginForm("Index", "Clans", Global.GetAjaxOptions("clans")))
     {
+        <span>
+            Filter: @Html.TextBoxFor(x => x.Search, new { data_autocomplete = Url.Action("Clans", "Autocomplete"), data_autocomplete_action = "goto" })
+            &nbsp;<input type="submit" value="Search"/>
+        </span>
         @GridHelpers.RenderTable(Html, grid)
-        ;
     }
 </div>
