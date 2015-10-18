@@ -22,8 +22,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult Index()
         {
             var db = new ZkDataContext();
-
-            return View(db.Clans.Where(x => !x.IsDeleted && (x.Faction != null && !x.Faction.IsDeleted)));
+            return View("ClansIndex", db.Clans.Where(x => !x.IsDeleted && (x.Faction != null && !x.Faction.IsDeleted)).OrderBy(x=>x.ClanName));
         }
 
 
