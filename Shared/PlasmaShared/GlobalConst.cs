@@ -175,7 +175,7 @@ namespace ZkData
         public const int DefaultBomberCapacity = 10;
         public const int AttackPointsForVictory = 2;
         public const int AttackPointsForDefeat = 1;
-        public const int MaxClanSkilledSize = 999;
+        public static readonly int? MaxClanSkilledSize = null;
         public const int ClanLeaveLimit = 100;
         public const int FactionChannelMinLevel = 10;
         public const bool RotatePWMaps = false;

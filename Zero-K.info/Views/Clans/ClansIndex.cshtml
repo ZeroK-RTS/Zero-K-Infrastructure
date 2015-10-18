@@ -13,11 +13,11 @@
         grid.AddCol("Planets", x => x.Accounts.Sum(y => y.Planets.Count())).SetSort(x => x.Accounts.Sum(y => y.Planets.Count()));
     }
     grid.AddCol("Commanders", x => x.Accounts.Count()).SetSort(x => x.Accounts.Count());
-    grid.AddCol("Level", x => x.Accounts.Average(y => (double?)y.Level)).SetSort(x => x.Accounts.Average(y => (double?)y.Level));
-    grid.AddCol("Elo", x => x.Accounts.Average(y => (double?)y.Elo)).SetSort(x => x.Accounts.Average(y => (double?)y.Elo));
+    grid.AddCol("Level", x => (int?)x.Accounts.Average(y => (double?)y.Level)).SetSort(x => x.Accounts.Average(y => (double?)y.Level));
+    grid.AddCol("Elo", x => (int?)x.Accounts.Average(y => (double?)y.Elo)).SetSort(x => x.Accounts.Average(y => (double?)y.Elo));
     if (GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
     {
-        grid.AddCol("PlanetWars Elo", x => x.Accounts.Average(y => y.EloPw)).SetSort(x => x.Accounts.Average(y => y.EloPw));
+        grid.AddCol("PlanetWars Elo", x => (int?)x.Accounts.Average(y => (double?)y.EloPw)).SetSort(x => x.Accounts.Average(y => (double?)y.EloPw));
     }
     if (Global.Clan == null)
     {
@@ -48,10 +48,12 @@
         <div>
             To take a full part in <a href='@Url.Action("Index", "Planetwars")'>PlanetWars</a> join a clan. <br/>
             You can also @Html.ActionLink("create new clan", "Create", "Clans")<br/>
-            Clan size is normally limited to @GlobalConst.MaxClanSkilledSize people.
+            @if (GlobalConst.MaxClanSkilledSize.HasValue)
+            {
+                <span>Clan size is limited to @GlobalConst.MaxClanSkilledSize people.</span>
+            }
         </div>
     }
-
     @using (Ajax.BeginForm("Index", "Clans", Global.GetAjaxOptions("clans")))
     {
         @GridHelpers.RenderTable(Html, grid)
