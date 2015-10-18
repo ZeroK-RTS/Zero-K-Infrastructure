@@ -1423,6 +1423,7 @@
     <Content Include="Views\PostHistory\PostHistoryIndex.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\DiffPiece.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\Diff.cshtml" />
+    <None Include="Views\Forum\Preview.cshtml" />
     <None Include="Views\PostHistory\ViewEntry.cshtml" />
   </ItemGroup>
   <ItemGroup>

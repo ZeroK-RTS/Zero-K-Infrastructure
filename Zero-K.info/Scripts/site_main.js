@@ -214,6 +214,57 @@ function GlobalPageInit(root) {
         $(this).stop().animate({ height: $.data(this, "size").height, width: $.data(this, "size").width }, 600);
     });
 
-    $(".js_expand").toggler({ speed: 0 });
+    s.find(".js_expand").toggler({ speed: 0 });
+
+
+    s.find("[data-preview]").each(function (i, trigger) {
+        var name = $(trigger).data("preview");
+        var txtSource = "textarea[name='" + name + "']";
+        $(trigger).click(function() {
+            $.post("/Forum/Preview", {
+                text: $(txtSource).val()
+            }, function(data) {
+                var dialogDiv = $("<div></div>");
+                dialogDiv.html(data);
+                dialogDiv.appendTo(document.body);
+                GlobalPageInit(dialogDiv);
+                dialogDiv.dialog(
+                {
+                    autoOpen: true,
+                    show: "fade",
+                    hide: "fade",
+                    modal: false,
+                    title: "Preview",
+                    width: 800,
+                    buttons: {
+                        "Close": function() {
+                            $(this).dialog("close");
+                            dialogDiv.detach();
+                            $(trigger).show();
+                        }
+                    }
+                });
+
+                
+                $(trigger).hide();
+
+                var refresh = function () {
+                    $.post("/Forum/Preview", {
+                        text: $(txtSource).val()
+                    },
+                        function(d2) {
+                            dialogDiv.html(d2);
+                            GlobalPageInit(dialogDiv);
+                        });
+                    if (!$(trigger).is(":visible")) window.setTimeout(refresh, 2000);
+                };
+
+                window.setTimeout(refresh, 2000);
+
+                event.preventDefault();
+            });
+        });
+
+    });
 }
 

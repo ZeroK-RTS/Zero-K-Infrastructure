@@ -20,7 +20,7 @@
         {
             <tr>
                 <td>Title:</td><td>
-                    <input type="text" name="title" style="width:300px" value="@(Model.EditedPost != null ? Model.EditedPost.ForumThread.Title : null)"/>
+                    <input type="text" name="title" style="width: 300px" value="@(Model.EditedPost != null ? Model.EditedPost.ForumThread.Title : null)"/>
                 </td>
             </tr>
         }
@@ -28,16 +28,18 @@
         {
             <tr>
                 <td>Wiki Key:</td><td>
-                    <input type="text" name="wikiKey" style="width:150px" value="@(Model.WikiKey ?? (Model.EditedPost != null ? Model.EditedPost.ForumThread.WikiKey : null))"/>
+                    <input type="text" name="wikiKey" style="width: 150px" value="@(Model.WikiKey ?? (Model.EditedPost != null ? Model.EditedPost.ForumThread.WikiKey : null))"/>
                 </td>
             </tr>
         }
     </table>
     <textarea name="text" style="height: 50vh; width: 100%;">@(Model.EditedPost != null ? Model.EditedPost.Text : null)</textarea><br/>
     <input class="textbutton" type="submit" value="Submit Post"/>
+    <span class="textbutton" data-preview="text">Preview</span>
 </form>
 
 @if (Model.LastPosts != null && Model.CurrentThread != null)
 {
     @Html.Action("GetPostList", new { threadID = Model.CurrentThread.ForumThreadID })
 }
+

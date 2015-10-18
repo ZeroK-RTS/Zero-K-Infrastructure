@@ -672,5 +672,9 @@ namespace ZeroKWeb.Controllers
             public bool DisplayAsPosts;
             public List<ForumPost> Posts;
         }
+
+        public ActionResult Preview(string text) {
+            return View("Preview",(object)text);
+        }
     }
 }
