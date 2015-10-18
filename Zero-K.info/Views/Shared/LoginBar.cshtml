@@ -44,11 +44,11 @@
             &nbsp;
             @if (Global.IsLobbyAccess)
             {
-                <a href="@Url.Action("Logout", "Home")@("@logout")" class="textbutton">Logout</a>
+                <a href="@Url.Action("Logout", "Home")@("@logout")"  nicetitle="Logout"><img src="~/Img/logout.png" style="width:20px" /></a>
             }
             else
             {
-                <a href="@Url.Action("Logout", "Home", new { referer = Request.Url })" class="textbutton">Logout</a>
+                <a href="@Url.Action("Logout", "Home", new { referer = Request.Url })" nicetitle="Logout"><img src="~/Img/logout.png" style="width:20px"/></a>
             }
             
         </span>

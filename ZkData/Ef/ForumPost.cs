@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace ZkData
 {
@@ -20,6 +21,13 @@ namespace ZkData
         public virtual ICollection<ForumPostWord> ForumPostWords { get; set; } = new List<ForumPostWord>();
         public virtual ForumThread ForumThread { get; set; }
         public virtual Account Account { get; set; }
-        
+
+        public bool CanEdit(Account acc) {
+            if (acc == null) return false;
+            if (this.ForumThread.IsLocked) return false;
+            if (this.AuthorAccountID == acc.AccountID || acc.IsZeroKAdmin || (
+                this.ForumThread.ForumCategory.ForumMode == ForumMode.Wiki && acc.CanEditWiki()) && ForumThread.ForumPosts.First().ForumPostID== ForumPostID) return true;
+            else return false;
+        }
     }
 }

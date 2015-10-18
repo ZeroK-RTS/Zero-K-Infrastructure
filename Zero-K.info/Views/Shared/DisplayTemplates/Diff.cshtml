@@ -1,0 +1,44 @@
+﻿@using DiffPlex.DiffBuilder.Model
+@model DiffPlex.DiffBuilder.Model.SideBySideDiffModel
+@{
+    var m = Model;
+    var cnt1 = 1;
+    var cnt2 = 1;
+}
+<div>
+    <table style="table-layout: fixed; width: 100%;">
+        <thead>
+            <tr>
+                <th width="20px"></th>
+                <th style="">Before</th>
+                <th width="20px"></th>
+                <th style="">After</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < m.OldText.Lines.Count; i++)
+            {
+                var ol = m.OldText.Lines[i];
+                var nl = m.NewText.Lines[i];
+                <tr>
+                    <td style="border-right: dotted gray 1px; color: gray" valign="top">@(ol.Type != ChangeType.Imaginary ? cnt1.ToString() : "")</td>
+                    <td style="border-right: dotted gray 1px; text-align: left; word-wrap: break-word;" valign="top">
+                        @Html.Partial("DisplayTemplates/DiffPiece", ol)
+                    </td>
+                    <td style="border-right: dotted gray 1px; color: gray" valign="top">@(nl.Type != ChangeType.Imaginary ? cnt2.ToString() : "")</td>
+                    <td style="text-align: left; word-wrap: break-word;" valign="top">
+                        @Html.Partial("DisplayTemplates/DiffPiece", nl)
+                    </td>
+                </tr>
+                if (ol.Type != ChangeType.Imaginary)
+                {
+                    cnt1++;
+                }
+                if (nl.Type != ChangeType.Imaginary)
+                {
+                    cnt2++;
+                }
+            }
+        </tbody>
+    </table>
+</div>

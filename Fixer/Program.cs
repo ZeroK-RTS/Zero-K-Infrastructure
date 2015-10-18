@@ -289,8 +289,27 @@ namespace Fixer
 
         [STAThread]
         static void Main(string[] args) {
-            var ret = new ForumWikiParser().ProcessToHtml("ha [gifv]http://zooerk.gifv[/gifv] some", null);
+            //var ret = new ForumWikiParser().ProcessToHtml("[B]bold[/b]", null);
             return;
+
+            /*
+            //ImportWiki();
+            var db = new ZkDataContext();
+            var wikis = db.ForumCategories.First(x => x.IsWiki).ForumThreads.Select(x => new { key=x.WikiKey, text= x.ForumPosts.First().Text}).ToList();
+
+            var parser = new ForumWikiParser();
+            for (int i = 0; i < 100; i++)
+            {
+                var sw = Stopwatch.StartNew();
+                foreach (var w in wikis)
+                {
+                    //Console.WriteLine(w.key);
+                    parser.ProcessToHtml(w.text, null);
+                }
+                sw.Stop();
+                Console.WriteLine("total: {0}ms, item: {1:D}ms", sw.ElapsedMilliseconds, sw.ElapsedMilliseconds/wikis.Count);
+            }*/
+
 
 
             //GetGameStats(new DateTime(2014,12,1));

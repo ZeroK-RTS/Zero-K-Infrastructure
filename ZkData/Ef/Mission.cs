@@ -25,6 +25,7 @@ namespace ZkData
         [Required]
         [StringLength(200)]
         [DataMember]
+        [Index(IsUnique = true)]
         public string Name { get; set; }
         [StringLength(100)]
         [DataMember]

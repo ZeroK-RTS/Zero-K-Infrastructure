@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -41,12 +42,8 @@ namespace ZeroKWeb
             }
         }
 
-        public IQueryable<ForumPost> FilterPosts(IQueryable<ForumPost> input, string term)
-        {
-            foreach (var id in SplitTermToWordIDs(term))
-            {
-                input = input.Where(x => x.ForumPostWords.Any(y => y.WordID == id));
-            }
+        public IQueryable<ForumPost> FilterPosts(IQueryable<ForumPost> input, string term) {
+            foreach (var id in SplitTermToWordIDs(term)) input = input.Where(x => x.ForumPostWords.Any(y => y.WordID == id));
             return input;
         }
 
@@ -55,9 +52,9 @@ namespace ZeroKWeb
             return term.Split(' ', '\t', '\n').Select(SanitizeWord).Where(x => !string.IsNullOrEmpty(x)).Select(GetWordID).Distinct().ToList();
         }
 
-        void ZkDataContextOnAfterEntityChange(object sender, DbEntityEntry dbEntityEntry) {
+        void ZkDataContextOnAfterEntityChange(object sender, ZkDataContext.EntityEntry dbEntityEntry) {
             var post = dbEntityEntry.Entity as ForumPost;
-            if (post != null && dbEntityEntry.State != EntityState.Deleted) IndexPost(post);
+            if (post != null && (dbEntityEntry.State == EntityState.Added || dbEntityEntry.State == EntityState.Modified)) IndexPost(post);
         }
 
         public static string SanitizeWord(string word) {

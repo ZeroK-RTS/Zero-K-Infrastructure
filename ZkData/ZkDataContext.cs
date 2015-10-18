@@ -773,14 +773,25 @@ namespace ZkData
         }
 
 
-        public static event EventHandler<DbEntityEntry> BeforeEntityChange;
-        public static event EventHandler<DbEntityEntry> AfterEntityChange;
+        public static event EventHandler<EntityEntry> BeforeEntityChange;
+        public static event EventHandler<EntityEntry> AfterEntityChange;
+
+        public class EntityEntry
+        {
+            public object Entity { get; private set; }
+            public EntityState State { get; private set; }
+            public EntityEntry(object entity, EntityState state) {
+                Entity = entity;
+                State = state;
+            }
+        }
+
 
         public override int SaveChanges()
         {
             try
             {
-                var changes = ChangeTracker.Entries().Where(x => x.State == EntityState.Modified || x.State == EntityState.Added || x.State == EntityState.Deleted).ToList();
+                var changes = ChangeTracker.Entries().Where(x => x.State == EntityState.Modified || x.State == EntityState.Added || x.State == EntityState.Deleted).Select(x=>new EntityEntry(x.Entity, x.State)).ToList();
 
                 foreach (var change in changes)
                 {

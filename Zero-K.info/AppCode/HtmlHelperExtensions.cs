@@ -47,6 +47,16 @@ namespace System.Web.Mvc
             return new MvcHtmlString(new ForumWikiParser().ProcessToHtml(str, helper));
         }
 
+        public static MvcHtmlString BBCodeCached(this HtmlHelper helper, ForumPost post) {
+            return Global.ForumPostCache.GetCachedHtml(post, helper);
+        }
+
+        public static MvcHtmlString BBCodeCached(this HtmlHelper helper, News news)
+        {
+            return Global.ForumPostCache.GetCachedHtml(news, helper);
+        }
+
+
         /// <summary>
         /// Used for boolean dropdown selections on the site; e.g. map search filter
         /// </summary>
@@ -85,7 +95,9 @@ namespace System.Web.Mvc
 
 
         public static MvcHtmlString IncludeWiki(this HtmlHelper helper, string node) {
-            return helper.BBCode(new ZkDataContext().ForumThreads.FirstOrDefault(x=>x.WikiKey==node)?.ForumPosts.OrderBy(x=>x.ForumPostID).FirstOrDefault()?.Text);
+            var post = new ZkDataContext().ForumThreads.FirstOrDefault(x => x.WikiKey == node)?.ForumPosts.OrderBy(x => x.ForumPostID).FirstOrDefault();
+            if (post == null) return null;
+            return Global.ForumPostCache.GetCachedHtml(post, helper);
         }
 
         /// <summary>
@@ -127,7 +139,13 @@ namespace System.Web.Mvc
                 }
             }
 
-            return new MvcHtmlString(string.Format(format, link, HttpUtility.HtmlEncode(thread.Title)));
+            string title = HttpUtility.HtmlEncode(thread.Title);
+            if (!string.IsNullOrEmpty(thread.WikiKey))
+            {
+                title = string.Format("<span style='color:lightblue'>[{0}]</span> {1}", thread.WikiKey, title);
+            }
+
+            return new MvcHtmlString(string.Format(format, link, title));
         }
 
         /// <summary>
@@ -601,7 +619,7 @@ namespace System.Web.Mvc
         ///     <para>The tooltip displays the people who voted for each option</para>
         /// </summary>
         /// <param name="blockPost">Removes the vote links; is true if the viewer's <see cref="Account"/> is banned or has too many net downvotes</param>
-        public static MvcHtmlString PrintPostRating(this HtmlHelper helper, ForumPost post, bool blockPost) {
+        public static MvcHtmlString PrintPostRating(this HtmlHelper helper, ForumPost post, bool blockPost = false) {
             var url = Global.UrlHelper();
             bool noLink = (Global.Account == null || Global.AccountID == post.AuthorAccountID || Global.Account.Level < GlobalConst.MinLevelForForumVote || Global.Account.VotesAvailable <= 0 || blockPost);
             AccountForumVote previousVote = post.AccountForumVotes.SingleOrDefault(x => x.AccountID == Global.AccountID);

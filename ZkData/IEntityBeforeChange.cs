@@ -4,6 +4,6 @@ namespace ZkData
 {
     public interface IEntityBeforeChange
     {
-        void BeforeChange(DbEntityEntry entry);
+        void BeforeChange(ZkDataContext.EntityEntry entry);
     }
 }

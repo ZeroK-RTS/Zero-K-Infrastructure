@@ -89,8 +89,8 @@ namespace ZeroKWeb
         public static ZkLobbyServer.ZkLobbyServer Server { get; private set; }
 
         public static ServerRunner ZkServerRunner { get; private set; }
-
-
+        public static ForumPostCache ForumPostCache { get; private set; }= new ForumPostCache();
+        
         /// <summary>
         /// Converts a given string and its arguments into a CampaignEvent; used for the online SP campaign
         /// </summary>

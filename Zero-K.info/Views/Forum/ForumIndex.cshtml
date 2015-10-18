@@ -7,10 +7,6 @@
     var grid = new UniGrid<ForumThread>(Model.Threads);
     grid.AddCol("", StickyMark).SetSort(x => x.IsPinned).SetWidth("25px");
     grid.AddCol("Title", x => Html.Print(x)).SetSort(x => x.Title);
-    if (Model.CurrentCategory?.ForumMode == ForumMode.Wiki)
-    {
-        grid.AddCol("Wiki", x => x.WikiKey).SetSort(x => x.WikiKey).SetWidth("150px");
-    }
     grid.AddCol("Author", x => Html.PrintAccount(x.AccountByCreatedAccountID)).SetSort(x => x.AccountByCreatedAccountID.Name).SetWidth("200px");
     grid.AddCol("Posts", x => x.PostCount).SetSort(x => x.PostCount).SetWidth("70px");
     grid.AddCol("Last", x => x.LastPost.ToAgoString()).SetWidth("150px").SetSort(x => x.LastPost);
@@ -58,7 +54,7 @@
                     @Html.EditorFor(x => x.OnlyUnread)<span>only unread</span>
                 </label>
             }
-            &nbsp; player: @Html.TextBoxFor(x=>x.User)
+            &nbsp; Player: @Html.TextBoxFor(x=>x.User)
             <button type="submit">Search</button><br/>
 
             @if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)
@@ -81,4 +77,28 @@
             </div>
         }
     }
+
+    <script type="text/javascript">
+        $("input[name='Search']").autocomplete({
+            minLength: 1,
+            delay: 0,
+            source: '@Url.Action("Threads", "Autocomplete", new {categoryID = Model.CategoryID})',
+            select: function (event, ui) {
+                document.location = ui.item.url;
+            }
+        }).data('ui-autocomplete')._renderItem = function (ul, item) {
+            return $("<li></li>").data("item.autocomplete", item).append($("<a></a>").html(item.label)).appendTo(ul);
+        };
+
+        $("input[name='User']").autocomplete({
+            minLength: 1,
+            delay: 0,
+            source: '@Url.Action("Users", "Autocomplete")',
+            select: function (event, ui) {
+                $("input[name='User']").closest('form').submit();
+            }
+        }).data('ui-autocomplete')._renderItem = function (ul, item) {
+            return $("<li></li>").data("item.autocomplete", item).append($("<a></a>").html(item.label)).appendTo(ul);
+        };
+    </script>
 </div>

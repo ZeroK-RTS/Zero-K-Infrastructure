@@ -45,6 +45,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\CookComputing.XmlRpcV2.dll</HintPath>
     </Reference>
+    <Reference Include="DiffPlex, Version=1.2.0.0, Culture=neutral, PublicKeyToken=1d35e91d1bd7bc0f, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiffPlex.1.2.1\lib\portable-net40+sl50+win+wpa81+wp80\DiffPlex.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -122,6 +126,7 @@
   <ItemGroup>
     <Compile Include="AppCode\Auth.cs" />
     <Compile Include="AppCode\AuthServiceClient.cs" />
+    <Compile Include="AppCode\ForumPostCache.cs" />
     <Compile Include="AppCode\ForumPostIndexer.cs" />
     <Compile Include="AppCode\UniGrid\Col.cs" />
     <Compile Include="AppCode\UniGrid\HCol.cs" />
@@ -138,6 +143,7 @@
     <Compile Include="ContentService.svc.cs">
       <DependentUpon>ContentService.svc</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\AutocompleteController.cs" />
     <Compile Include="Controllers\ClansController.cs" />
     <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\FactionsController.cs" />
@@ -247,6 +253,7 @@
     <Compile Include="SpringieService.svc.cs">
       <DependentUpon>SpringieService.svc</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\PostHistoryController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ContentService.svc" />
@@ -1374,7 +1381,6 @@
     <Content Include="Views\Poll\PollUserVotes.cshtml" />
     <Content Include="Views\Users\UserRoleList.cshtml" />
     <Content Include="Views\Forum\PostList.cshtml" />
-    <Content Include="Views\Forum\EditHistory.cshtml" />
     <Content Include="Views\UnitStats\UnitStatsDetail.cshtml" />
     <Content Include="Views\Home\UserTooltip.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\Punishment.cshtml" />
@@ -1413,7 +1419,12 @@
     <Content Include="Views\Planetwars\PwMatchMaker.cshtml" />
     <Content Include="Views\Planetwars\GalaxyOffline.cshtml" />
     <Content Include="Views\Planetwars\GalaxyOfflinePW12.cshtml" />
-    <Content Include="Views\Forum\ThreadPaginator.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\ForumPost.cshtml" />
+    <Content Include="Views\PostHistory\PostHistoryIndex.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\DiffPiece.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Diff.cshtml" />
+    <Content Include="Views\Forum\Preview.cshtml" />
+    <Content Include="Views\PostHistory\ViewEntry.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
@@ -1425,7 +1436,7 @@
     <Content Include="Views\Maps\MapTileList.cshtml" />
     <Content Include="Views\Maps\Detail.cshtml" />
     <Content Include="Views\Maps\MapTags.cshtml" />
-    <Content Include="Views\Wiki\Index.cshtml" />
+    <Content Include="Views\Wiki\WikiIndex.cshtml" />
     <Content Include="Views\Static\Index.cshtml" />
     <Content Include="Views\Home\HomeIndex.cshtml" />
     <Content Include="Views\Forum\ForumIndex.cshtml" />
@@ -1450,7 +1461,7 @@
     <Content Include="Views\Clans\Create.cshtml" />
     <Content Include="Views\Clans\JoinClan.cshtml" />
     <Content Include="Views\Planetwars\Planet.cshtml" />
-    <Content Include="Views\Shared\GoogleSiteSearch.cshtml" />
+    <Content Include="Views\Shared\SiteSearch.cshtml" />
     <Content Include="Views\Shared\TopMenu.cshtml" />
     <Content Include="Views\Shared\PlanetIcon.cshtml" />
     <Content Include="Views\Shared\InfluenceListShort.cshtml" />
@@ -1485,6 +1496,7 @@
   <ItemGroup>
     <Folder Include="Img\news\" />
     <Folder Include="Resources\" />
+    <Folder Include="Views\Autocomplete\" />
     <Folder Include="Views\Github\" />
     <Folder Include="Views\LobbyService\" />
     <Folder Include="Weblobby\" />

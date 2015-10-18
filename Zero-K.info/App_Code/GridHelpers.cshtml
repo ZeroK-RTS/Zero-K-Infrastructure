@@ -54,7 +54,7 @@
             $(".js-disabled").button("disable");
 
             $(".js-grid-selector").each(function() {
-                if ($(this).attr('checked')=='checked') {
+                if ($(this).is(':checked')) {
                     $(this).closest('tr').addClass('row_selected');
                 }
             });
@@ -93,7 +93,7 @@
         }
 
         function gridSelect(gridID, elem) {
-            var checked = elem.attr('checked') == 'checked';
+            var checked = elem.is(':checked');
             var value = elem.val();
             gridData[gridID][value] = checked ? '1' : '0';
             var row = elem.closest('tr');
@@ -109,7 +109,7 @@
 
         function gridToggleRows(gridID,el) {
             var form = getGridForm(gridID);
-            var checked = el.attr('checked') == 'checked';
+            var checked = el.is(':checked');
             form.find('.js-grid-selector').each(function() {
                 if (checked) $(this).attr('checked', 'checked');
                 else $(this).removeAttr('checked');
@@ -145,7 +145,7 @@
 {
 if (col.IsSelector)
 {
-        <input type="checkbox" onclick="gridToggleRows('@grid.ID',$(this))" />
+   <input type="checkbox" onclick="gridToggleRows('@grid.ID',$(this))" />
 }
     <a href="#" onclick="gridSetSort('@grid.ID','@col.ID');return false;">
         @col.Description

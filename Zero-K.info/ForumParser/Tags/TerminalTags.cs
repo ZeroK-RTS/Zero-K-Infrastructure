@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using Microsoft.Ajax.Utilities;
 
@@ -72,7 +73,14 @@ namespace ZeroKWeb.ForumParser
             {
                 // implicit linkification and imagifination
                 if (Text.EndsWith(".png") || Text.EndsWith(".gif") || Text.EndsWith(".jpg") || Text.EndsWith(".jpeg")) context.AppendFormat("<a href=\"{0}\" target=\"_blank\" ><img src=\"{0}\" max-width=\"100%\" height=\"auto\"/></a>", Text);
-                else context.AppendFormat("<a href=\"{0}\">{0}</a>", Text);
+                else if (Text.StartsWith("http://www.youtube.com/watch"))
+                {
+                    var m = Regex.Match(Text,"v=([^&]+)");
+                    if (m.Success)
+                    {
+                        context.AppendFormat("<iframe width=\"420\" height=\"315\" src=\"http://www.youtube.com/embed/{0}\" frameborder=\"0\" hd=\"1\" allowfullscreen=\"1\"></iframe>", m.Groups[1].Value);
+                    }
+                } else context.AppendFormat("<a href=\"{0}\">{0}</a>", Text);
             } else context.Append(HttpUtility.HtmlEncode(Text));
 
             return self.Next;

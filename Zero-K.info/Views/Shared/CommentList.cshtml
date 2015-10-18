@@ -2,10 +2,11 @@
 <div id="comments" class="border-test">
   <form method="post" action="@Url.Action("SubmitPost", "Forum", Model.ActionData ?? new { threadID = Model.Thread.ForumThreadID })">
   <textarea name="text" rows="8" cols="80"></textarea><br />
-  <input class="textbutton" type="submit" value="Submit Comment" />
+  <input class="textbutton" type="submit" value="Submit Comment" /><span class="textbutton" data-preview="text">Preview</span>
   </form>
-  @if (Model.Thread != null) {
-    @Html.Partial("~/Views/Forum/PostList.cshtml", Model.Thread.ForumPosts.OrderByDescending(x=>x.ForumPostID))
+  @if (Model.Thread != null)
+  {
+    @Html.Action("GetPostList","Forum", new { threadID = Model.Thread.ForumThreadID })
   }
 </div>
 <!close comments> 

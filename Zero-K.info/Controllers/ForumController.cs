@@ -85,12 +85,13 @@ namespace ZeroKWeb.Controllers
 
             model.Categories = db.ForumCategories.Where(x => x.ParentForumCategoryID == model.CategoryID).OrderBy(x => x.SortOrder);
 
-            model.Path = GetCategoryPath(model.CategoryID, db);
-            model.CurrentCategory = model.Path.LastOrDefault();
+            model.CurrentCategory = db.ForumCategories.FirstOrDefault(x => x.ForumCategoryID == model.CategoryID);
+            model.Path = model.CurrentCategory?.GetPath() ?? new List<ForumCategory>();
 
             var threads = db.ForumThreads.AsQueryable();
 
             if (model.CategoryID != null) threads = threads.Where(x => x.ForumCategoryID == model.CategoryID);
+            else threads = threads.Where(x => x.ForumCategory.ForumMode != ForumMode.Archive);
 
             threads = threads.Where(x => x.RestrictedClanID == null || x.RestrictedClanID == Global.ClanID);
 
@@ -124,6 +125,42 @@ namespace ZeroKWeb.Controllers
             return View("ForumIndex", model);
         }
 
+
+        public ActionResult GetPostList(PostListModel model) {
+            var db = new ZkDataContext();
+            model = model ?? new PostListModel();
+
+            var thread = db.ForumThreads.First(x => x.ForumThreadID == model.ThreadID && (x.RestrictedClanID == null || x.RestrictedClanID == Global.ClanID));
+
+            var posts = thread.ForumPosts.AsQueryable();
+
+            if (!string.IsNullOrEmpty(model.Search))
+            {
+                posts = Global.ForumPostIndexer.FilterPosts(posts, model.Search);
+            }
+            if (!string.IsNullOrEmpty(model.User))
+            {
+                var filterAccountID = (db.Accounts.FirstOrDefault(x => x.Name == model.User) ?? db.Accounts.FirstOrDefault(x => x.Name.Contains(model.User)))?.AccountID;
+                if (filterAccountID.HasValue) posts = posts.Where(x => x.AuthorAccountID == filterAccountID);
+            }
+
+            model.Data = posts.OrderBy(x=>x.ForumPostID);
+            model.Thread = thread;
+
+            return View("PostList", model);
+        }
+
+        public class PostListModel
+        {
+            public int ThreadID { get; set; }
+            public string Search { get; set; }
+            public int GoToPost { get; set; }
+            public string User { get; set; }
+            public ForumThread Thread;
+            public IQueryable<ForumPost> Data;
+        }
+
+
         /// <summary>
         ///     Make a new post or edit an existing one
         /// </summary>
@@ -132,7 +169,7 @@ namespace ZeroKWeb.Controllers
         /// <param name="forumPostID">The <see cref="ForumPost" /> ID, if editing an existing post</param>
         /// <returns></returns>
         [Auth]
-        public ActionResult NewPost(int? categoryID, int? threadID, int? forumPostID) {
+        public ActionResult NewPost(int? categoryID, int? threadID, int? forumPostID, string wikiKey) {
             var res = new NewPostResult();
             var db = new ZkDataContext();
 
@@ -161,21 +198,24 @@ namespace ZeroKWeb.Controllers
                     // post in general by default
             }
 
-            res.Path = GetCategoryPath(categoryID, db);
-            var category = res.Path.LastOrDefault();
+            var category = db.ForumCategories.FirstOrDefault(x => x.ForumCategoryID == categoryID);
+            res.Path = category?.GetPath() ?? new List<ForumCategory>();
+            
             res.CurrentCategory = category;
             if (forumPostID != null)
             {
                 var post = db.ForumPosts.Single(x => x.ForumPostID == forumPostID);
-                if (!Global.IsZeroKAdmin && Global.AccountID != post.AuthorAccountID) return Content("You cannot edit this post");
+                if (!post.CanEdit(Global.Account)) return Content("You cannot edit this post");
                 res.EditedPost = post;
             }
             if (threadID != null)
             {
                 var thread = res.CurrentThread;
                 res.CanSetTopic = (thread.ForumPosts.Count > 0 && thread.ForumPosts.First().ForumPostID == forumPostID &&
-                                   (category.ForumMode == ForumMode.General || category.ForumMode == ForumMode.Wiki));
+                                   (category.ForumMode == ForumMode.General || category.ForumMode == ForumMode.Wiki || category.ForumMode == ForumMode.Archive));
             } else res.CanSetTopic = true;
+
+            res.WikiKey = wikiKey;
 
             return View(res);
         }
@@ -198,6 +238,7 @@ namespace ZeroKWeb.Controllers
             int? planetID,
             string text,
             string title,
+            string wikiKey,
             int? forumPostID) {
             if (threadID == null && missionID == null && resourceID == null && springBattleID == null && clanID == null && planetID == null &&
                 forumPostID == null && string.IsNullOrWhiteSpace(title)) return Content("Cannot post new thread with blank title");
@@ -215,6 +256,8 @@ namespace ZeroKWeb.Controllers
             using (var scope = new TransactionScope())
             {
                 var thread = db.ForumThreads.SingleOrDefault(x => x.ForumThreadID == threadID);
+                var category = thread?.ForumCategory;
+                if (category == null && categoryID != null) category = db.ForumCategories.FirstOrDefault(x => x.ForumCategoryID == categoryID);
                 string currentTitle = null;
 
                 // update title
@@ -222,6 +265,7 @@ namespace ZeroKWeb.Controllers
                 {
                     currentTitle = thread.Title;
                     thread.Title = title;
+                    thread.WikiKey = wikiKey;
                 }
                 if (thread != null && planetID != null)
                 {
@@ -244,16 +288,28 @@ namespace ZeroKWeb.Controllers
                     thread.Title = "Map " + map.InternalName;
                 }
 
-                if (threadID == null && categoryID.HasValue) // new thread
+                if (threadID == null && category != null) // new thread
                 {
-                    var cat = db.ForumCategories.Single(x => x.ForumCategoryID == categoryID.Value);
-                    if (cat.IsLocked) return Content("Thread is locked");
+                    if (category.IsLocked) return Content("Thread is locked");
+
+                    if (category.ForumMode == ForumMode.Wiki)
+                    {
+                        if (string.IsNullOrEmpty(wikiKey) || !Account.IsValidLobbyName(wikiKey))
+                        {
+                            return Content("You need to set a valid wiki key");
+                        }
+                        if (db.ForumThreads.Any(y => y.WikiKey == wikiKey))
+                        {
+                            return Content("This wiki key already exists");
+                        }
+                    }
 
                     if (string.IsNullOrEmpty(title)) return Content("Title cannot be empty");
                     thread = new ForumThread();
                     thread.CreatedAccountID = Global.AccountID;
                     thread.Title = title;
-                    thread.ForumCategoryID = cat.ForumCategoryID;
+                    thread.WikiKey = wikiKey;
+                    thread.ForumCategoryID = category.ForumCategoryID;
                     db.ForumThreads.InsertOnSubmit(thread);
                 }
 
@@ -313,11 +369,13 @@ namespace ZeroKWeb.Controllers
                     db.ForumThreads.InsertOnSubmit(thread);
                 }
 
+
                 if (thread == null) return Content("Thread not found");
                 if (thread.IsLocked) return Content("Thread is locked");
 
                 var lastPost = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
 
+                int? gotoPostId = null;
                 //double post preventer
                 if (lastPost == null || lastPost.AuthorAccountID != Global.AccountID || lastPost.Text != text ||
                     (!string.IsNullOrEmpty(title) && title != currentTitle))
@@ -325,7 +383,7 @@ namespace ZeroKWeb.Controllers
                     if (forumPostID != null)
                     {
                         var post = thread.ForumPosts.Single(x => x.ForumPostID == forumPostID);
-                        if (post.AuthorAccountID != Global.AccountID && !Global.Account.IsZeroKAdmin) throw new ApplicationException("Not authorized to edit the post");
+                        if (!post.CanEdit(Global.Account)) throw new ApplicationException("Not authorized to edit the post");
                         post.ForumPostEdits.Add(
                             new ForumPostEdit
                             {
@@ -335,7 +393,13 @@ namespace ZeroKWeb.Controllers
                                 NewText = text
                             });
                         post.Text = text;
-                    } else thread.ForumPosts.Add(new ForumPost { AuthorAccountID = Global.AccountID, Text = text, Created = DateTime.UtcNow });
+                    } else
+                    {
+                        var p = new ForumPost { AuthorAccountID = Global.AccountID, Text = text, Created = DateTime.UtcNow };
+                        thread.ForumPosts.Add(p);
+                        db.SaveChanges();
+                        gotoPostId = p.ForumPostID;
+                    }
 
                     thread.LastPost = DateTime.UtcNow;
                     thread.LastPostAccountID = Global.AccountID;
@@ -344,16 +408,17 @@ namespace ZeroKWeb.Controllers
 
                     db.SubmitChanges();
                 }
-                var lastPage = ((thread.PostCount - 1)/PageSize);
+                
                 scope.Complete();
 
+                
                 if (missionID.HasValue) return RedirectToAction("Detail", "Missions", new { id = missionID });
                 if (resourceID.HasValue) return RedirectToAction("Detail", "Maps", new { id = resourceID });
                 if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
                 if (clanID.HasValue) return RedirectToAction("Detail", "Clans", new { id = clanID });
                 if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
-                if (forumPostID.HasValue) return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID = forumPostID });
-                return RedirectToAction("Thread", new { id = thread.ForumThreadID, page = lastPage });
+                if (forumPostID.HasValue) return RedirectToAction("Thread","Forum", new { id = thread.ForumThreadID, postID = forumPostID });
+                return RedirectToAction("Thread", "Forum", new { id = thread.ForumThreadID, postId = gotoPostId });
             }
         }
 
@@ -363,10 +428,8 @@ namespace ZeroKWeb.Controllers
         public ActionResult Post(int id) {
             var db = new ZkDataContext();
             var post = db.ForumPosts.FirstOrDefault(x => x.ForumPostID == id);
-            int? page = GetPostPage(post);
-            if (page == 0) page = null;
             var thread = post.ForumThread;
-            return RedirectToAction("Thread", new { id = thread.ForumThreadID, page });
+            return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID= id });
         }
 
         /// <summary>
@@ -376,22 +439,13 @@ namespace ZeroKWeb.Controllers
         /// <param name="lastSeen">UNUSED</param>
         /// <param name="postID">A specific <see cref="ForumPost" /> ID to go to</param>
         /// <returns></returns>
-        public ActionResult Thread(int id, bool? lastPost, bool? lastSeen, int? postID, int? page) {
+        public ActionResult Thread(int id, int? postID) {
             var db = new ZkDataContext();
             var t = db.ForumThreads.FirstOrDefault(x => x.ForumThreadID == id);
 
             // TODO - indicate thread has been deleted
             if (t == null) return RedirectToAction("Index");
 
-            if (page == null)
-            {
-                if (postID == null) page = 0;
-                else
-                {
-                    var post = t.ForumPosts.FirstOrDefault(x => x.ForumPostID == postID);
-                    page = GetPostPage(post);
-                }
-            }
 
             var cat = t.ForumCategory;
             if (cat != null)
@@ -408,26 +462,10 @@ namespace ZeroKWeb.Controllers
 
             db.SubmitChanges();
 
-            res.Path = GetCategoryPath(t.ForumCategoryID, db);
+            res.Path = cat?.GetPath() ?? new List<ForumCategory>();
             res.CurrentThread = t;
-            res.PageCount = ((t.PostCount - 1)/PageSize) + 1;
-            res.Page = page;
-            res.Posts = t.ForumPosts.AsQueryable().Skip((page ?? 0)*PageSize).Take(PageSize).ToList();
 
             return View(res);
-        }
-
-        static IEnumerable<ForumCategory> GetCategoryPath(int? categoryID, ZkDataContext db) {
-            var path = new List<ForumCategory>();
-            var id = categoryID;
-            while (id != null)
-            {
-                var cat = db.ForumCategories.SingleOrDefault(x => x.ForumCategoryID == id);
-                path.Add(cat);
-                id = cat.ParentForumCategoryID;
-            }
-            path.Reverse();
-            return path;
         }
 
         [Auth(Role = AuthRole.ZkAdmin)]
@@ -441,11 +479,6 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index", new { categoryID = newcat });
         }
 
-        public ActionResult EditHistory(int forumPostID) {
-            var db = new ZkDataContext();
-            var post = db.ForumPosts.First(x => x.ForumPostID == forumPostID);
-            return View("EditHistory", post);
-        }
 
         /// <summary>
         ///     Upvote or downvote a post
@@ -562,34 +595,10 @@ namespace ZeroKWeb.Controllers
                     x =>
                         (string.IsNullOrEmpty(username) || x.Account.Name == username && !x.Account.IsDeleted) &&
                         (categoryIDs.Count == 0 || categoryIDs.Contains((int)x.ForumThread.ForumCategoryID)) &&
-                        (x.ForumThread.RestrictedClanID == null || x.ForumThread.RestrictedClanID == Global.ClanID))
-                    .OrderByDescending(x => x.Created)
-                    .ToList();
-            if (firstPostOnly) posts = posts.Where(x => x.ForumThread.ForumPosts.First() == x).ToList();
-            var invalidResults = new List<ForumPost>();
-            if (!string.IsNullOrEmpty(keywords))
-            {
-                var keywordArray = keywords.Split(null as string[], StringSplitOptions.RemoveEmptyEntries);
-                foreach (var p in posts)
-                {
-                    /*  // use this for an OR search
-                    bool success = false;
-                    foreach (string word in keywordArray)
-                    {
-                        if (p.Text.Contains(word))
-                        {
-                            success = true;
-                            break;
-                        }
-                    }
-                    if (!success) invalidResults.Add(p);
-                    */
-                    // AND search
-                    foreach (var word in keywordArray) if (!p.Text.Contains(word)) invalidResults.Add(p);
-                }
-            }
-            posts = posts.Where(x => !invalidResults.Contains(x)).ToList();
-            return View("SearchResults", new SearchResult { Posts = posts.Take(100).ToList(), DisplayAsPosts = resultsAsPosts });
+                        (x.ForumThread.RestrictedClanID == null || x.ForumThread.RestrictedClanID == Global.ClanID));
+            if (firstPostOnly) posts = Global.ForumPostIndexer.FilterPosts(posts, keywords);
+            
+            return View("SearchResults", new SearchResult { Posts = posts.OrderByDescending(x=>x.Created).Take(100).ToList(), DisplayAsPosts = resultsAsPosts });
         }
 
         /// <summary>
@@ -632,7 +641,7 @@ namespace ZeroKWeb.Controllers
         {
             public IEnumerable<ForumCategory> Categories;
             public ForumCategory CurrentCategory;
-            public IEnumerable<ForumCategory> Path;
+            public List<ForumCategory> Path = new List<ForumCategory>();
             public IQueryable<ForumThread> Threads;
             public int? CategoryID { get; set; }
             public string Search { get; set; }
@@ -647,23 +656,25 @@ namespace ZeroKWeb.Controllers
             public ForumThread CurrentThread;
             public ForumPost EditedPost;
             public IEnumerable<ForumPost> LastPosts;
-            public IEnumerable<ForumCategory> Path;
+            public List<ForumCategory> Path = new List<ForumCategory>();
+            public string WikiKey;
         }
 
         public class ThreadResult
         {
             public ForumThread CurrentThread;
             public int GoToPost;
-            public int? Page;
-            public int PageCount;
-            public IEnumerable<ForumCategory> Path;
-            public List<ForumPost> Posts;
+            public List<ForumCategory> Path = new List<ForumCategory>();
         }
 
         public class SearchResult
         {
             public bool DisplayAsPosts;
             public List<ForumPost> Posts;
+        }
+
+        public ActionResult Preview(string text) {
+            return View("Preview",(object)text);
         }
     }
 }

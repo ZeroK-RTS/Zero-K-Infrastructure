@@ -23,7 +23,7 @@ namespace ZkData
             get { return mode; }
             set { SetMode(value);}
         }
-
+        
         static GlobalConst()
         {
             #if LIVE
@@ -203,7 +203,7 @@ namespace ZkData
         public const int KudosForGold = 1000;
         public const int KudosForDiamond = 5000;
 
-        public const int ForumPostsPerPage = 50;
+        public const int ForumPostsPerPage = 20;
         public const int MinLevelForForumVote = 10;
         public const int MinNetKarmaToVote = -30;
         public const int PostVoteHideThreshold = -6;
@@ -217,12 +217,16 @@ namespace ZkData
         public const int LobbyProtocolPingInterval = 30;
         public const int LobbyProtocolPingTimeout = 60;
 
+        public const int WikiEditLevel = 20;
+
         public static string ResourceBaseUrl;
         public static string SelfUpdaterBaseUrl;
         public static readonly string[] DefaultDownloadMirrors = {};
         public static readonly string EngineDownloadPath = "http://springrts.com/dl/";
         public static string LobbyServerHost;
         public static int LobbyServerPort;
+
+
 
         public static bool IsZkMod(string name)
         {

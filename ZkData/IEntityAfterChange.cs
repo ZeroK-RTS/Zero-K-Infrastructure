@@ -4,6 +4,6 @@ namespace ZkData
 {
     public interface IEntityAfterChange
     {
-        void AfterChange(DbEntityEntry entry);
+        void AfterChange(ZkDataContext.EntityEntry entry);
     }
 }
