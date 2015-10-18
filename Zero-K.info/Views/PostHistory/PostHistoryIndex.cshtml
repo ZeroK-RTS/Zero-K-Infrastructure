@@ -1,4 +1,5 @@
-﻿@using ZeroKWeb
+﻿@using DiffPlex.DiffBuilder.Model
+@using ZeroKWeb
 @using ZkData
 @model ZkData.ForumPost
 
@@ -6,21 +7,18 @@
     ViewBag.Title = "Post edit history";
     var grid = new UniGrid<ForumPostEdit>(Model.ForumPostEdits.OrderBy(x => x.ForumPostEditID).AsQueryable(), "Post edit history");
 
-    grid.AddCol("", x=>"").SetRowSelection(x => x.ForumPostEditID).SetWidth("20px");
+    grid.AddCol("", x => "").SetRowSelection(x => x.ForumPostEditID).SetWidth("20px");
     grid.AddCol("Date", x => x.EditTime).SetSort(x => x.EditTime);
     grid.AddCol("Editor", x => Html.PrintAccount(x.Account)).SetSort(x => x.EditorAccountID);
     grid.AddCol("Before", Before).SetWidth("200px");
     grid.AddCol("After", After).SetWidth("200px");
-
-    @helper Before(ForumPostEdit e) {
-        <a href='#' onclick="DynDialog('@Url.Action("ViewEntry", "PostHistory", new { id = e.ForumPostEditID })', 'Before @e.EditTime - @e.Account.Name')">before</a>
-        @Html.ActionLink("revert", "RevertTo", "PostHistory", new { id = e.ForumPostEditID }, new { @class = "textbutton js_confirm" })
-    }@helper After(ForumPostEdit e)
-    {
-        <a href='#' onclick="DynDialog('@Url.Action("ViewEntry", "PostHistory", new { id = e.ForumPostEditID, isAfter= true })', 'After @e.EditTime - @e.Account.Name')">after</a>
-        @Html.ActionLink("revert", "RevertTo", "PostHistory", new { id = e.ForumPostEditID, isAfter =true }, new { @class = "textbutton js_confirm" })
-    }
-}
+@helper Before(ForumPostEdit e) {
+    <a href='#' onclick="DynDialog('@Url.Action("ViewEntry", "PostHistory", new { id = e.ForumPostEditID })', 'Before @e.EditTime - @e.Account.Name')">before</a>
+    @Html.ActionLink("revert", "RevertTo", "PostHistory", new { id = e.ForumPostEditID }, new { @class = "textbutton js_confirm" })
+}@helper After(ForumPostEdit e) {
+     <a href='#' onclick="DynDialog('@Url.Action("ViewEntry", "PostHistory", new { id = e.ForumPostEditID, isAfter = true })', 'After @e.EditTime - @e.Account.Name')">after</a>
+     @Html.ActionLink("revert", "RevertTo", "PostHistory", new { id = e.ForumPostEditID, isAfter = true }, new { @class = "textbutton js_confirm" })
+ }}
 
 <div id="gridder">
     <h2>@ViewBag.Title</h2>
@@ -28,7 +26,12 @@
 
     @using (Ajax.BeginForm("Index", "PostHistory", Global.GetAjaxOptions("gridder")))
     {
-        <input type="submit" value="Compare selected" class="textbutton"/>
+        <input type="submit" value="Diff selected" class="textbutton"/>
         @GridHelpers.RenderTable(Html, grid)
+    }
+
+    @if (ViewBag.DiffModel != null)
+    {
+        @Html.Partial("DisplayTemplates/Diff", (SideBySideDiffModel)ViewBag.DiffModel)
     }
 </div>

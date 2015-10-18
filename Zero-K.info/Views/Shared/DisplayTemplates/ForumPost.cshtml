@@ -14,10 +14,14 @@
             <td class="forumPostText">
                 @Html.BBCodeCached(p)
                 <br/>
-                
-                <a class="textbutton" href='@Url.Action("NewPost", "Forum", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })'>
-                    Edit <img src="/img/edit_pencil.png" class="icon16"/>
-                </a>
+
+                @if (p.CanEdit(Global.Account))
+                {
+                    <a class="textbutton" href='@Url.Action("NewPost", "Forum", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })'>
+                        Edit <img src="/img/edit_pencil.png" class="icon16"/>
+                    </a>
+                }
+                <a href="@Url.Action("Index","PostHistory",new {id=p.ForumPostID})">view edit history</a>
 
                 <div id="@("ForumPostVoteForm" + p.ForumPostID)" style="float: right">
                     @Html.PrintPostRating(p)
