@@ -2,89 +2,10 @@
 @using ZeroKWeb
 @using ZkData
 @model dynamic
-<h1>Donate to Zero-K</h1>
 
-This game is provided to you completely free. However, we are a non-profit group of volunteers working on this game in our free time and we could use some help paying the server bills :-)<br/>
-If you wish to support us and continued development, you can donate any ammount you want. All donations only serve to cover costs of running server and if excess is generated, to advertise and advance this project.
-<br />
-<br/>
+@Html.IncludeWiki("Donate")
 
-<h2>How do i donate?</h2>
-You can use Paypal, Credit Card or Bitcoin.<br />
-<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=S7LYLK6P63H48&lc=CZ&item_name=Spring%20RTS&item_number=SpringRTS&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted" target="_blank"><img src="http://licho.eu/linked/btn_donateCC_LG.gif"/></a>
-<br />
-For Bitcoin use this target:<br />
-@Html.BBCode("[b]1Fkh88PPvCYgZxR2gfEGPxNQJ5hZxqVFhn[/b]")<br />
-@Html.BBCode("in that case please let @Licho know that you have donated to register Kudos to the correct Player-Account :-)")
-<br />
-Old Thread about donations is <a href="http://zero-k.info/Forum/Thread/867">here</a>
-<br />
-<br />
-
-<h2>What do i get for a donation?</h2>
-Aside for your support for the project, you get Kudos. That is @GlobalConst.EurosToKudos Kudos per 1&euro; donated. <br/>
-Kudos are work in progress. You can trade Kudos for clan/faction icons (displayed ingame), instant XP unlocks for better Commander weapons and unique visual Commander skins and weapons.
-<br />
-You can view a list of Kudos-related unlocks (those in purple) at <a href="/My/UnlockList" >your account's unlock site</a><br />
-<br />
-Also, your account will be decorated:<br />
-<table>
-    <tr>
-        <td>Kudos</td>
-        <td>Donator star</td>
-    </tr>
-    <tr>
-        <td style="text-align: left">
-            100
-        </td>
-        <td style="text-align: center">
-            <img src='/img/stars/star_brown.png' alt='Donator star' />
-        </td>
-    </tr>
-    <tr>
-        <td style="text-align: left">
-            500
-        </td>
-        <td style="text-align: center">
-            <img src='/img/stars/star_white.png' alt='Donator star' />
-        </td>
-    </tr>
-    <tr>
-        <td style="text-align: left">
-            1000
-        </td>
-        <td style="text-align: center">
-            <img src='/img/stars/star_yellow.png' alt='Donator star' />
-        </td>
-    </tr>
-    <tr>
-        <td style="text-align: left">
-            5000
-        </td>
-        <td style="text-align: center">
-            <img src='/img/stars/star_diamond.png' alt='Donator star' />
-        </td>
-    </tr>
-</table>
-
-    <br />
-
-    <!--
-
-
-        You can then spend Kudos on special visual upgrades for Zero-K in the @Html.ActionLink("unlocks menu.","UnlockList","My")<br/>
-        You can also use Kudos to instantly unlock units which would otherwise need XP to unlock over time.<br/>
-        To unlock all units you need 100 Kudos, to unlock all commander items and commanders you need 200 Kudos.<br/>
-        <br/>
-        <ul>
-            <li>If you in total donate at least 100 kudos, you will automatically get a special bronze icon next to your name and your avatar will be bronze framed.</li>
-            <li>If you in total donate at least 300 kudos, you will automatically get a special silver icon next to your name and your avatar will be silver framed, and you will gain ability to change lobby, forum and ingame avatars and icons.</li>
-            <li>If you  in total donate at least 1000 kudos, you will automatically get a special golden icon next to your name and your avatar will be gold framed, and you will gain ability to change lobby, forum and ingame avatars and icons, including ability to upload your own.</li>
-        </ul>
-        <br/>
-        -->
-
-    <h2>Donations jars</h2>
+<h2>Donations jars</h2>
     You can even select where your donation goes! :-)
     <br />
     <table>
@@ -147,49 +68,7 @@ Also, your account will be decorated:<br />
         }
     </table>
 <br />
-<br />
-<h2>Server Details</h2>
-24 GB RAM, 2x4x i7 920, 2TB disk. Traffic is virtually unlimited at 100mbit speed.
-
-<br />
-<br />
-<h2>Recent costs</h2>
-@Html.BBCode("payed in advance by @Licho") <br/>
-<table>
-    <tr>
-        <td>Year</td>
-        <td>Cost</td>
-    </tr>
-    <tr>
-        <td>2009</td>
-        <td>350&euro;</td>
-    </tr>
-    <tr>
-        <td>2010</td>
-        <td>677&euro; (after VAT refund)</td>
-    </tr>
-    <tr>
-        <td>2011</td>
-        <td>650&euro; (after VAT refund)</td>
-    </tr>
-    <tr>
-        <td>2012</td>
-        <td>812&euro; (incl. win license, after VAT refund)</td>
-    </tr>
-    <tr>
-        <td>2013</td>
-        <td>812&euro; (incl. win license, after VAT refund)</td>
-    </tr>
-    <tr>
-        <td>2014</td>
-        <td>pending</td>
-    </tr>
-    <tr>
-        <td>2015</td>
-        <td>pending</td>
-    </tr>
-</table>
-
+@Html.IncludeWiki("ServerCost")
 
 <br />
 <br />
