@@ -288,9 +288,11 @@ namespace Fixer
         }
 
         public static void DeleteOldUsers() {
-            GlobalConst.Mode = ModeType.Test;
+            GlobalConst.Mode = ModeType.Live;
             var dbo = new ZkDataContext();
-            var acid = dbo.Accounts.Where(x=>!x.SpringBattlePlayers.Any(z=>!z.IsSpectator) && x.MissionRunCount == 0 && !x.ForumPosts.Any() && !x.ContributionsByAccountID.Any()).OrderBy(x=>x.AccountID).Select(x => x.AccountID).ToList();
+
+            var limit = DateTime.Now.AddMonths(-1);
+            var acid = dbo.Accounts.Where(x=>!x.IsBot && !x.SpringBattles.Any() && !x.ForumThreads.Any() && !x.SpringBattlePlayers.Any(z=>!z.IsSpectator) && x.MissionRunCount == 0 && !x.ForumPosts.Any() && !x.ContributionsByAccountID.Any() && x.LastLogin <= limit).OrderBy(x=>x.AccountID).Select(x => x.AccountID).ToList();
 
             Console.WriteLine("Deleting: {0}", acid.Count);
 
@@ -308,6 +310,10 @@ namespace Fixer
                         db.SpringBattlePlayers.RemoveRange(acc.SpringBattlePlayers);
                         db.AbuseReports.RemoveRange(acc.AbuseReportsByAccountID);
                         db.AbuseReports.RemoveRange(acc.AbuseReportsByReporterAccountID);
+                        db.AccountRoles.RemoveRange(acc.AccountRolesByAccountID);
+                        db.Ratings.RemoveRange(acc.Ratings);
+                        db.MapRatings.RemoveRange(acc.MapRatings);
+                        db.PollVotes.RemoveRange(acc.PollVotes);
                         db.SaveChanges();
                         db.Accounts.Remove(acc);
                         db.SaveChanges();
@@ -316,7 +322,7 @@ namespace Fixer
                 }
                 catch (Exception ex)
                 {
-                    Trace.TraceError(ex.ToString());
+                    Console.WriteLine(ex.InnerException.InnerException.Message);
                 }
 
             }
