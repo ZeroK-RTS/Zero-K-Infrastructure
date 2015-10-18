@@ -69,7 +69,7 @@ namespace ZeroKWeb.ForumParser
 
             if (context.MatchedString.Length > 2 && letter == '>')
             {
-                var tag = Regex.Match(context.MatchedString, "</?([a-z]+)[ />]").Groups[1].Value;
+                var tag = Regex.Match(context.MatchedString, "</?([a-z0-9]+)[ />]",RegexOptions.IgnoreCase).Groups[1].Value;
 
                 // invalid opening tag
                 if (!validTags.ContainsKey(tag)) return false;
