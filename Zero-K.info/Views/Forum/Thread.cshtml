@@ -7,7 +7,11 @@
     @{Html.RenderPartial("ForumPath", Model.Path);}
 </div>
 
-<h1>@(!string.IsNullOrEmpty(Model.CurrentThread.WikiKey) ? "["+Model.CurrentThread.WikiKey+"]":"") @Model.CurrentThread.Title</h1>
+<h1>@Model.CurrentThread.Title</h1>
+@if (!string.IsNullOrEmpty(Model.CurrentThread.WikiKey))
+{
+    <h2>@("["+Model.CurrentThread.WikiKey+"]")</h2>
+}
 
 @if (Global.IsZeroKAdmin)
 {
