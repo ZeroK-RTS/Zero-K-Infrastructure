@@ -19,6 +19,8 @@
     grid.AddCol("<span nicetitle='Average team size'>ATS</span>", x => string.Format("{0:F1}",x.SpringBattlePlayers.Where(y=>!y.IsSpectator).Average(y=>(double?)y.SpringBattle.PlayerCount))).SetSort(x => x.SpringBattlePlayers.Where(y => !y.IsSpectator).Average(y => (double?)y.SpringBattle.PlayerCount));
 
     grid.AddCol("Ingame", x => Html.PrintSeconds(x.SpringBattlePlayers.Where(y => !y.IsSpectator).Sum(y => (int?)y.SpringBattle.Duration))).SetSort(x => x.SpringBattlePlayers.Where(y => !y.IsSpectator).Sum(y => (int?)y.SpringBattle.Duration));
+
+    grid.PageSize = 15;
 }
 <div id="userIndex">
     <h1>@Page.Title</h1>
