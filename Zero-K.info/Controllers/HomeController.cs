@@ -207,12 +207,12 @@ namespace ZeroKWeb.Controllers
             }
 			var db = new ZkDataContext();
 
-		    var prevMonth = DateTime.UtcNow.AddMonths(-1);
+		    var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
 			var result = new IndexResult()
 			             {
 			             	Spotlight = SpotlightHandler.GetRandom(),
 			             	Top10Players =
-			             		db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > prevMonth)).OrderByDescending(
+			             		db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout)).OrderByDescending(
 			             			x => x.Elo1v1).Take(10)
 			             };
 
