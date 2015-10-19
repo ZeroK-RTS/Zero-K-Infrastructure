@@ -7,12 +7,6 @@
     @{Html.RenderPartial("ForumPath", Model.Path);}
 </div>
 
-<h1>@Model.CurrentThread.Title</h1>
-@if (!string.IsNullOrEmpty(Model.CurrentThread.WikiKey))
-{
-    <h2><a href="@Url.Action("Index", "Wiki", new { node = Model.CurrentThread.WikiKey })">@("[" + Model.CurrentThread.WikiKey + "]")</a></h2>
-}
-
 @if (Global.IsZeroKAdmin)
 {
     var db = new ZkData.ZkDataContext();
@@ -27,5 +21,12 @@
         </form>
     </div>
 }
+
+<h1>@Model.CurrentThread.Title</h1>
+@if (!string.IsNullOrEmpty(Model.CurrentThread.WikiKey))
+{
+    <h2><a href="@Url.Action("Index", "Wiki", new { node = Model.CurrentThread.WikiKey })">@("[" + Model.CurrentThread.WikiKey + "]")</a></h2>
+}
+
 <div style="float:right">@string.Format("{0} posts, {1} views", Model.CurrentThread.PostCount, Model.CurrentThread.ViewCount)</div>
 @Html.Action("GetPostList", new { threadID = Model.CurrentThread.ForumThreadID, GoToPost = Model.GoToPost })
