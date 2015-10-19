@@ -26,7 +26,7 @@
             Player: @Html.TextBoxFor(x => x.User, new { data_autocomplete = Url.Action("Users", "Autocomplete", new { threadID = Model.ThreadID }), data_autocomplete_action = "submit" })&nbsp;
             <input type="submit" value="Search" />
         </span>
-        @GridHelpers.RenderTable(Html, grid, "")
+        @GridHelpers.RenderTable(grid, "")
         ;
     }
 

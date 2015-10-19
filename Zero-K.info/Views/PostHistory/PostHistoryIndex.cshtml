@@ -27,7 +27,7 @@
     @using (Ajax.BeginForm("Index", "PostHistory", Global.GetAjaxOptions("gridder")))
     {
         <input type="submit" value="Diff selected" class="textbutton"/>
-        @GridHelpers.RenderTable(Html, grid)
+        @GridHelpers.RenderTable(grid)
     }
 
     @if (ViewBag.DiffModel != null)

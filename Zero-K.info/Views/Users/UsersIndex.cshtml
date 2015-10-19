@@ -36,7 +36,7 @@
         <table>
             <tr>
                 <td>Name:</td>
-                <td>@Html.TextBoxFor(x => x.Name, new { data_autocomplete = Url.Action("Users", "Autocomplete")})</td>
+                <td>@Html.TextBoxFor(x => x.Name, new { data_autocomplete = Url.Action("Users", "Autocomplete") })</td>
             </tr>
             <tr>
                 <td>Admin:</td>
@@ -44,7 +44,7 @@
             </tr>
             <tr>
                 <td>Registered:</td>
-                <td>@Html.TextBoxFor(x => x.RegisteredFrom, new {@class="js_datepicker"}) - @Html.TextBoxFor(x => x.RegisteredTo, new {@class="js_datepicker"})</td>
+                <td>@Html.TextBoxFor(x => x.RegisteredFrom, new { @class = "js_datepicker" }) - @Html.TextBoxFor(x => x.RegisteredTo, new { @class = "js_datepicker" })</td>
             </tr>
             <tr>
                 <td>Last login:</td>
@@ -65,6 +65,6 @@
         </table>
         <input type="submit" value="Search"/>
 
-        @GridHelpers.RenderTable(Html,grid)
+        @GridHelpers.RenderTable(grid)
     }
 </div>

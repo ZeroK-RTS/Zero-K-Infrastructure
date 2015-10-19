@@ -1,26 +1,27 @@
 ﻿@using System.Web.Mvc
 @using System.Web.Mvc.Html
 @using ZeroKWeb
+@inherits ZeroKWeb.HelperPage
 
-@helper GridJs(IUniGrid grid)
-{
+@helper GridJs(IUniGrid grid) {
     <script type="text/javascript">
-        gridData = typeof (gridData) == 'undefined' ? {}: gridData; // declare griddate if it does not already exist
+        gridData = typeof (gridData) == 'undefined' ? {} : gridData; // declare griddate if it does not already exist
 
         gridData['@grid.ID'] = {};
 
         // fill up griddata with values
-        @foreach (var sel in grid.SelectedKeys) {
+        @foreach (var sel in grid.SelectedKeys)
+        {
             @: gridData['@grid.ID'][@sel] = '1';
         }
 
 
-        $(document).ready(function () {
-            $("#@(grid.ID)_pager_prefix").each(function(i,prefix) {
+        $(document).ready(function() {
+            $("#@(grid.ID)_pager_prefix").each(function(i, prefix) {
                 $(prefix).prependTo($(".@(grid.ID)_pager"));
             });
 
-            $("#@(grid.ID)_pager_suffix").each(function(i,suffix) {
+            $("#@(grid.ID)_pager_suffix").each(function(i, suffix) {
                 $(suffix).appendTo($(".@(grid.ID)_pager"));
             });
 
@@ -30,36 +31,32 @@
         });
     </script>
 }
-@helper Hidden(System.Web.Mvc.HtmlHelper Html, IUniGrid grid)
-{
+@helper Hidden(IUniGrid grid) {
     @Html.Hidden(grid.ID + "order", grid.OrderColumn)
     @Html.Hidden(grid.ID + "desc", grid.OrderIsDescending)
     @Html.Hidden(grid.ID + "page", grid.PageNumber)
 }
-@helper Column(IUniGrid grid, IUniGridCol col)
-{
-if (col.IsSelector)
-{
-   <input type="checkbox" onclick="gridToggleRows('@grid.ID',$(this))" />
-}
-    <a href="#" onclick="gridSetSort('@grid.ID','@col.ID');return false;">
+@helper Column(IUniGrid grid, IUniGridCol col) {
+    if (col.IsSelector)
+    {
+        <input type="checkbox" onclick="gridToggleRows('@grid.ID', $(this))"/>
+    }
+    <a href="#" onclick="gridSetSort('@grid.ID', '@col.ID');return false;">
         @(new MvcHtmlString(col.Description))
         @if (!string.IsNullOrEmpty(grid.OrderColumn) && col.ID == grid.OrderColumn)
-    {
-        if (grid.OrderIsDescending)
         {
-                <img class="icon16" src="~/img/sort_up_green.png" />
-            }
-            else
+            if (grid.OrderIsDescending)
             {
-                <img class="icon16" src="~/img/sort_down_green.png" />
+                <img class="icon16" src="~/img/sort_up_green.png"/>
+            } else
+            {
+                <img class="icon16" src="~/img/sort_down_green.png"/>
             }
         }
     </a>
 }
-@helper Pager(System.Web.Mvc.HtmlHelper Html, IUniGrid grid)
-{
-    <div class='@(grid.ID)_pager grid_pager'>
+@helper Pager(IUniGrid grid) {
+    <div class="@(grid.ID)_pager grid_pager">
         @if (grid.PageCount > 1)
         {
             <a href="#" class="js-grid-first @(grid.PageNumber <= 1 ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', 1);return false;" style="height: 20px"></a>
@@ -73,42 +70,36 @@ if (col.IsSelector)
             <a href="#" class="js-grid-end @(grid.PageNumber >= grid.PageCount ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', @grid.PageCount);return false;" style="height: 20px"></a>
 
             if (grid.AllowCsvExport)
-             {
-                 <span>&nbsp;&nbsp;&nbsp;<a href="#" onclick="gridGetCsv('@grid.ID');return false;" nicetitle="Download as excel - CSV"><img src="~/Img/excel.png" style="height: 25px; border: 0;" /></a></span>
-             }
+            {
+                <span>&nbsp;&nbsp;&nbsp;<a href="#" onclick="gridGetCsv('@grid.ID');return false;" nicetitle="Download as excel - CSV"><img src="~/Img/excel.png" style="border: 0; height: 25px;" /></a></span>
+            }
         }
     </div>
 }
-@helper TableHeader(IUniGrid grid)
-{
+@helper TableHeader(IUniGrid grid) {
     <tr>
         @foreach (var col in grid.BaseCols.Where(x => x.AllowWeb))
         {
-            <th style="width:@col.Width;">
+            <th style="width: @col.Width;">
                 @Column(grid, col)
             </th>
         }
     </tr>
 }
-@helper TableData(IUniGrid grid)
-{
-    @grid.RenderTableRows()
-}
+@helper TableData(IUniGrid grid) { @grid.RenderTableRows() }
 
-@helper RenderTable(System.Web.Mvc.HtmlHelper html, IUniGrid grid, string cssClass = null)
-{
+@helper RenderTable(IUniGrid grid, string cssClass = null) {
     grid.PrepareRenderData();
     if (grid.AllowCsvExport && grid.CsvRequested)
     {
         grid.RenderCsv();
-    }
-    else
+    } else
     {
         <div class="@(cssClass ?? "grid")" id="@grid.ID">
             <div class="grid_title">@grid.Title</div>
             @GridJs(grid)
-            @Pager(html, grid)
-            @Hidden(html, grid)
+            @Pager(grid)
+            @Hidden(grid)
 
             <table class="grid_table">
                 @if (grid.RenderHeaders)
@@ -121,7 +112,7 @@ if (col.IsSelector)
                     @TableData(grid)
                 </tbody>
             </table>
-            @Pager(html, grid)
+            @Pager(grid)
         </div>
     }
 }

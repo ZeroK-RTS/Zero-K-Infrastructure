@@ -97,7 +97,7 @@
 
     @using (Ajax.BeginForm("Index", "Contributions", Global.GetAjaxOptions("contrib")))
     {
-        @GridHelpers.RenderTable(Html, grid)
+        @GridHelpers.RenderTable(grid)
         ;
     }
 

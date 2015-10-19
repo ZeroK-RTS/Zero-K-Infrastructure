@@ -60,6 +60,6 @@
             Filter: @Html.TextBoxFor(x => x.Search, new { data_autocomplete = Url.Action("Clans", "Autocomplete"), data_autocomplete_action = "goto" })
             &nbsp;<input type="submit" value="Search"/>
         </span>
-        @GridHelpers.RenderTable(Html, grid)
+        @GridHelpers.RenderTable(grid)
     }
 </div>
