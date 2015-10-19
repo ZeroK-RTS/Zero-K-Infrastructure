@@ -240,11 +240,13 @@ function GlobalPageInit(root) {
 
                         window.setTimeout(refresh, 2000);
                     },
+                    close: function() {
+                        dialogDiv.detach();
+                        $(trigger).show();
+                    },
                     buttons: {
                         "Close": function() {
                             $(this).dialog("close");
-                            dialogDiv.detach();
-                            $(trigger).show();
                         }
                     }
                 });
