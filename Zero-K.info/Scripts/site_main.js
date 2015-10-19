@@ -225,6 +225,21 @@ function GlobalPageInit(root) {
                     modal: false,
                     title: "Preview (keep open, auto refresh every 2s)",
                     width: 800,
+                    open: function() {
+                        $(trigger).hide();
+                        var refresh = function () {
+                            $.post("/Forum/Preview", {
+                                text: $(txtSource).val()
+                            },
+                                function(d2) {
+                                    dialogDiv.html(d2);
+                                    GlobalPageInit(dialogDiv);
+                                });
+                            if (!$(trigger).is(":visible")) window.setTimeout(refresh, 2000);
+                        };
+
+                        window.setTimeout(refresh, 2000);
+                    },
                     buttons: {
                         "Close": function() {
                             $(this).dialog("close");
@@ -235,20 +250,6 @@ function GlobalPageInit(root) {
                 });
 
                 
-                $(trigger).hide();
-
-                var refresh = function () {
-                    $.post("/Forum/Preview", {
-                        text: $(txtSource).val()
-                    },
-                        function(d2) {
-                            dialogDiv.html(d2);
-                            GlobalPageInit(dialogDiv);
-                        });
-                    if (!$(trigger).is(":visible")) window.setTimeout(refresh, 2000);
-                };
-
-                window.setTimeout(refresh, 2000);
 
                 event.preventDefault();
             });
