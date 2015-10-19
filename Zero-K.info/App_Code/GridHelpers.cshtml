@@ -111,8 +111,8 @@
             var form = getGridForm(gridID);
             var checked = el.is(':checked');
             form.find('.js-grid-selector').each(function() {
-                if (checked) $(this).attr('checked', 'checked');
-                else $(this).removeAttr('checked');
+                if (checked) $(this).prop('checked', true);
+                else $(this).prop('checked',false);
                 gridSelect(gridID, $(this));
             });
         }
