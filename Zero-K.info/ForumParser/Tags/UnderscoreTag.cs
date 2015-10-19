@@ -29,7 +29,7 @@ namespace ZeroKWeb.ForumParser
             if (letter == '_')
             {
                 var lastLit = (context.PreviousTag?.Value as LiteralTag);
-                if (lastLit?.Text.IsValidLinkOrRelativeUrl() == true) return false;
+                if (lastLit?.Text.IsValidLink() == true) return false;
             }
             return base.AcceptsLetter(context, letter);
         }
