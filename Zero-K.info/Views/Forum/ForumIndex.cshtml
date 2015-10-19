@@ -46,35 +46,46 @@
         <br/>
         <br/>
 
-        <div>
-            &nbsp;Filter: @Html.TextBoxFor(x => x.Search, new { data_autocomplete = Url.Action("Threads", "Autocomplete", new { categoryID = Model.CategoryID }), data_autocomplete_action = "goto" })
-            @if (Global.IsAccountAuthorized)
-            {
-                <label>
-                    @Html.EditorFor(x => x.OnlyUnread)<span>only unread</span>
-                </label>
-            }
-            &nbsp; Player: @Html.TextBoxFor(x => x.User, new { data_autocomplete = Url.Action("Users", "Autocomplete"), data_autocomplete_action = "submit" })
-            <button type="submit">Search</button><br/>
+        if (Model.Threads.Any())
+        {
+            <div>
+                <span>
+                    &nbsp;Filter: @Html.TextBoxFor(x => x.Search, new { data_autocomplete = Url.Action("Threads", "Autocomplete", new { categoryID = Model.CategoryID }), data_autocomplete_action = "goto" })
+                    @if (Global.IsAccountAuthorized)
+                    {
+                        <label>
+                            @Html.EditorFor(x => x.OnlyUnread)<span>only unread</span>
+                        </label>
+                    }
+                    &nbsp; Player: @Html.TextBoxFor(x => x.User, new { data_autocomplete = Url.Action("Users", "Autocomplete"), data_autocomplete_action = "submit" })
+                    <button type="submit">Search</button>
+                </span>
+                <br/>
 
-            @if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)
+                @if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)
+                {
+                    <span class="textbutton" id="@grid.PagerPrefixID">
+                        @Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
+                    </span>
+                }
+
+                @if (Global.Account != null)
+                {
+                    <span class="textbutton" style="float: right;" id="@grid.PagerSuffixID">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</span>
+                }
+            </div>
+
+            <div>
+                @GridHelpers.RenderTable(Html, grid)
+            </div>
+        } else
+        {
+            if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)
             {
                 <span class="textbutton" id="@grid.PagerPrefixID">
                     @Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
                 </span>
             }
-
-            @if (Global.Account != null && Model.Threads.Any())
-            {
-                <span class="textbutton" style="float: right;" id="@grid.PagerSuffixID">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</span>
-            }
-        </div>
-
-        if (Model.Threads.Any())
-        {
-            <div>
-                @GridHelpers.RenderTable(Html, grid)
-            </div>
         }
     }
 </div>
