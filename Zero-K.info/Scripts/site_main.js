@@ -278,7 +278,10 @@ function GlobalPageInit(root) {
         };
     });
 
-    $(".qtip").remove();
+    SetupGrid(s);
+
+
+    $(".qtip").remove(); // remove all floating tooltips
 }
 
 

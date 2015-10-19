@@ -16,6 +16,7 @@ public class BundleConfig
             "~/Scripts/jquery.expand.js",
             "~/Scripts/nicetitle.js",
             "~/Scripts/raphael-min.js",
+            "~/Scripts/grid.js",
             "~/Scripts/site_main.js"));
 
         bundles.Add(new StyleBundle("~/bundles/maincss").Include(
