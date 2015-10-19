@@ -12,7 +12,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult Index() {
             var db = new ZkDataContext();
 
-            return View("ContributionsIndex", db.Contributions.OrderByDescending(x=>x.ContributionID));
+            return View("ContributionsIndex", db.Contributions.Where(x=>x.Euros > 0 && !x.IsSpringContribution).OrderByDescending(x=>x.ContributionID));
         }
 
 
