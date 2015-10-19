@@ -353,7 +353,7 @@ namespace ZeroKLobby
         [Category("WebBrowser")]
         [DisplayName("Use external browser (forced on linux)")]
         [Description("Disable internal browser. Opens home, planetwars, maps etc in external browser")]
-        public bool ExternalBrowser { get; set; } = true;
+        public bool UseExternalBrowser { get; set; }
 
         [Category("WebBrowser")]
         [DisplayName("Open new window internally")]
