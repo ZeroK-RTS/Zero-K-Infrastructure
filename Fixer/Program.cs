@@ -332,7 +332,10 @@ namespace Fixer
 
         [STAThread]
         static void Main(string[] args) {
-            var ret = new ForumWikiParser().ProcessToHtml(@"
+            var ret = new ForumWikiParser().TranslateToHtml(@"<a>
+unclosed
+test
+<a>
 <table>
     <tr>
         <td>Kudos</td>

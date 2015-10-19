@@ -44,7 +44,7 @@ namespace System.Web.Mvc
         /// </summary>
         public static MvcHtmlString BBCode(this HtmlHelper helper, string str) {
             if (str == null) return null;
-            return new MvcHtmlString(new ForumWikiParser().ProcessToHtml(str, helper));
+            return new MvcHtmlString(new ForumWikiParser().TranslateToHtml(str, helper));
         }
 
         public static MvcHtmlString BBCodeCached(this HtmlHelper helper, ForumPost post) {
