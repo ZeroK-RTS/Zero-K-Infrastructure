@@ -10,7 +10,9 @@ namespace ZeroKWeb.Controllers
         //
         // GET: /PayPal/
         public ActionResult Index() {
-            return View("ContributionsIndex");
+            var db = new ZkDataContext();
+
+            return View("ContributionsIndex", db.Contributions.OrderByDescending(x=>x.ContributionID));
         }
 
 
