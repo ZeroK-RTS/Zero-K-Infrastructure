@@ -107,7 +107,7 @@ namespace ZeroKWeb.ForumParser
             else if (text.StartsWith("</")) mode = OpeningClosingMode.Closing;
             else mode = OpeningClosingMode.Opening;
 
-            htmlTag = Regex.Match(text, "</?([a-z]+)[ />]").Groups[1].Value;
+            htmlTag = Regex.Match(text, "</?([a-z0-9]+)[ />]", RegexOptions.IgnoreCase).Groups[1].Value;
 
             if (mode == OpeningClosingMode.Closing)
             {
