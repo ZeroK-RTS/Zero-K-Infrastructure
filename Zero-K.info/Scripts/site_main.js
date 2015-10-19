@@ -223,7 +223,7 @@ function GlobalPageInit(root) {
                     show: "fade",
                     hide: "fade",
                     modal: false,
-                    title: "Preview",
+                    title: "Preview (keep open, auto refresh every 2s)",
                     width: 800,
                     buttons: {
                         "Close": function() {
