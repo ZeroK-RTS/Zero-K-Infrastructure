@@ -9,6 +9,7 @@
     grid.AddCol("ID", x => x.AccountID).SetSort(x => x.AccountID);
     grid.AddCol("<span nicetitle='Is admin?'>A</span>", x => x.IsZeroKAdmin ? "<img src='/img/police.png'/>" : "").SetSort(x => x.IsZeroKAdmin);
     grid.AddCol("Name", x => Html.PrintAccount(x)).SetSort(x => x.Name);
+    grid.AddCol("Admin", Html.ActionLink("Adm", "AdminUserDetail", "Users", new { id = x.AccountID }, null));
     //grid.AddCol("Steam", x => x.SteamName).SetSort(x => x.SteamName);
     grid.AddCol("First", x => Html.PrintDate(x.FirstLogin)).SetSort(x => x.FirstLogin);
     grid.AddCol("Last", x => Html.PrintDate(x.LastLogin)).SetSort(x => x.LastLogin);
