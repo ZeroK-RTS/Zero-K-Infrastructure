@@ -116,10 +116,13 @@ namespace ZkData
 
         static string FixScript(Mission mission, ZipArchive archive, string scriptName)
         {
+            string script;
             ZipArchiveEntry entry = archive.GetEntry(scriptName);
-            StreamReader reader = new StreamReader(entry.Open());
-            var script = Encoding.UTF8.GetString(Encoding.Default.GetBytes(reader.ReadToEnd()));
-            script = Regex.Replace(script, "GameType=([^;]+);", (m) => { return string.Format("GameType={0};", mission.NameWithVersion); });
+            using (StreamReader reader = new StreamReader(entry.Open()))
+            {
+                script = Encoding.UTF8.GetString(Encoding.Default.GetBytes(reader.ReadToEnd()));
+                script = Regex.Replace(script, "GameType=([^;]+);", (m) => { return string.Format("GameType={0};", mission.NameWithVersion); });
+            }
             WriteZipArchiveEntry(entry, Encoding.UTF8.GetBytes(script));
             return script;
         }
