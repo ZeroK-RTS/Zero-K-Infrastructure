@@ -16,10 +16,14 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var ret = new List<AutocompleteItem>();
 
-            ret.AddRange(CompleteUsers(term, null, db));
-            ret.AddRange(CompleteThreads(term, null, db));
-            ret.AddRange(CompleteMissions(term, db));
-            ret.AddRange(CompleteMaps(term, db));
+            if (!string.IsNullOrEmpty(term))
+            {
+
+                ret.AddRange(CompleteUsers(term, null, db));
+                ret.AddRange(CompleteThreads(term, null, db));
+                ret.AddRange(CompleteMissions(term, db));
+                ret.AddRange(CompleteMaps(term, db));
+            }
 
             return Json(ret, JsonRequestBehavior.AllowGet);
         }
@@ -49,6 +53,7 @@ namespace ZeroKWeb.Controllers
         }
 
         IEnumerable<AutocompleteItem> CompleteClans(string term, ZkDataContext db) {
+            if (string.IsNullOrEmpty(term)) return new List<AutocompleteItem>();
             return
                 db.Clans.Where(x => !x.IsDeleted && (x.ClanName.Contains(term) || x.Shortcut.Contains(term)))
                     .OrderBy(x => x.ClanName).Take(autocompleteCount).ToList()
@@ -63,6 +68,7 @@ namespace ZeroKWeb.Controllers
 
 
         IEnumerable<AutocompleteItem> CompleteMissions(string term, ZkDataContext db) {
+            if (string.IsNullOrEmpty(term)) return new List<AutocompleteItem>();
             return
                 db.Missions.Where(x => !x.IsDeleted && x.Name.Contains(term))
                     .Take(autocompleteCount)
@@ -79,6 +85,7 @@ namespace ZeroKWeb.Controllers
         }
 
         IEnumerable<AutocompleteItem> CompleteThreads(string term, int? categoryID, ZkDataContext db) {
+            if (string.IsNullOrEmpty(term)) return new List<AutocompleteItem>();
             return
                 db.ForumThreads.Where(x=> x.ForumCategoryID == categoryID || (categoryID==null && x.ForumCategory.ForumMode != ForumMode.Archive)).Where(x => (x.WikiKey != null && x.WikiKey.Contains(term)) || x.Title.Contains(term))
                     .OrderByDescending(x => x.LastPost)
@@ -96,6 +103,7 @@ namespace ZeroKWeb.Controllers
         }
 
         IEnumerable<AutocompleteItem> CompleteMaps(string term, ZkDataContext db) {
+            if (string.IsNullOrEmpty(term)) return new List<AutocompleteItem>();
             return
                 db.Resources.Where(x => x.InternalName.Contains(term) && x.TypeID == ResourceType.Map)
                     .OrderBy(x => x.FeaturedOrder)
@@ -113,6 +121,8 @@ namespace ZeroKWeb.Controllers
         }
 
         IEnumerable<AutocompleteItem> CompleteUsers(string term, int? threadID, ZkDataContext db) {
+            if (string.IsNullOrEmpty(term)) return new List<AutocompleteItem>();
+
             term = term?.ToLower();
             var acc = db.Accounts.AsQueryable();
             if (threadID != null) acc = db.ForumThreads.Find(threadID).ForumPosts.Select(x => x.Account).Distinct().AsQueryable();
