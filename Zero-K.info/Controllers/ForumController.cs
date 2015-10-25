@@ -450,11 +450,11 @@ namespace ZeroKWeb.Controllers
             var cat = t.ForumCategory;
             if (cat != null)
             {
-                if (cat.ForumMode == ForumMode.Missions) return RedirectToAction("Detail", "Missions", new { id = t.Missions.First().MissionID });
-                if (cat.ForumMode == ForumMode.Maps) return RedirectToAction("Detail", "Maps", new { id = t.Resources.First().ResourceID });
-                if (cat.ForumMode == ForumMode.SpringBattles) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.First().SpringBattleID });
-                if (cat.ForumMode == ForumMode.Clans) return RedirectToAction("Detail", "Clans", new { id = t.RestrictedClanID });
-                if (cat.ForumMode == ForumMode.Planets) return RedirectToAction("Planet", "Planetwars", new { id = t.Planets.First().PlanetID });
+                if (cat.ForumMode == ForumMode.Missions && t.Missions.Any()) return RedirectToAction("Detail", "Missions", new { id = t.Missions.First().MissionID });
+                if (cat.ForumMode == ForumMode.Maps && t.Resources.Any()) return RedirectToAction("Detail", "Maps", new { id = t.Resources.First().ResourceID });
+                if (cat.ForumMode == ForumMode.SpringBattles && t.SpringBattles.Any()) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.First().SpringBattleID });
+                if (cat.ForumMode == ForumMode.Clans && t.Clan!=null) return RedirectToAction("Detail", "Clans", new { id = t.RestrictedClanID });
+                if (cat.ForumMode == ForumMode.Planets && t.Planets.Any()) return RedirectToAction("Planet", "Planetwars", new { id = t.Planets.First().PlanetID });
             }
 
             var res = new ThreadResult();
