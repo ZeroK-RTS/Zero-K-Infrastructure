@@ -113,7 +113,7 @@ namespace ZeroKWeb.Controllers
         }
 
         IEnumerable<AutocompleteItem> CompleteUsers(string term, int? threadID, ZkDataContext db) {
-            term = term.ToLower();
+            term = term?.ToLower();
             var acc = db.Accounts.AsQueryable();
             if (threadID != null) acc = db.ForumThreads.Find(threadID).ForumPosts.Select(x => x.Account).Distinct().AsQueryable();
             return acc.Where(x => x.Name.ToLower().Contains(term) && !x.IsDeleted)
