@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
@@ -32,69 +33,95 @@ namespace ZeroKWeb.Controllers
             return View("BattleDetail", bat);
         }
 
+        public class BattleSearchModel
+        {
+            public string Title { get; set; }
+            public string Map { get; set; }
+            public string User1 { get; set; }
+            public string User2 { get; set; }
+            public string User3 { get; set; }
+            public int? PlayersFrom { get; set; }
+            public int? PlayersTo { get; set; }
+            public AgeOption Age { get; set; }
+            public YesNoAny Mission { get; set; }
+            public YesNoAny Bots { get; set; }
+            public int? offset { get; set; }
+            public List<BattleQuickInfo> Data;
+        }
+
+        public enum YesNoAny
+        {
+            Any = 0,
+            Yes = 1,
+            No = 2
+        }
+
+        public enum AgeOption
+        {
+            Any = 0,
+            Today = 1,
+            [Description("This week")]
+            ThisWeek = 2,
+            [Description("This month")]
+            ThisMonth = 3
+        }
+
         /// <summary>
         ///     Returns the main battle replay list; params filter
         /// </summary>
-        public ActionResult Index(
-            string battleTitle,
-            string map,
-            string mod,
-            string user,
-            int? players,
-            int? age,
-            int? duration,
-            bool? mission,
-            bool? bots,
-            int? offset) {
+        public ActionResult Index(BattleSearchModel model) {
             var db = new ZkDataContext();
 
+            model = model ?? new BattleSearchModel();
             var q = db.SpringBattles.Include(x => x.SpringBattlePlayers);
 
-            if (!string.IsNullOrEmpty(battleTitle)) q = q.Where(b => b.Title.Contains(battleTitle));
+            if (!string.IsNullOrEmpty(model.Title)) q = q.Where(b => b.Title.Contains(model.Title));
 
-            if (!string.IsNullOrEmpty(map)) q = q.Where(b => b.ResourceByMapResourceID.InternalName.Contains(map));
+            if (!string.IsNullOrEmpty(model.Map)) q = q.Where(b => b.ResourceByMapResourceID.InternalName == model.Map);
 
-            if (mod == null) mod = "Zero-K";
-            if (!string.IsNullOrEmpty(mod)) q = q.Where(b => b.ResourceByModResourceID.InternalName.Contains(mod));
-
+            
             //if (user == null && Global.IsAccountAuthorized) user = Global.Account.Name;
-            if (!string.IsNullOrEmpty(user))
-            {
-                var aid = (from account in db.Accounts
-                    where account.Name == user
-                    select account.AccountID).FirstOrDefault();
-                if (aid != 0) q = q.Where(b => b.SpringBattlePlayers.Any(p => !p.IsSpectator && p.AccountID == aid));
-            }
+            if (!string.IsNullOrEmpty(model.User1)) q = q.Where(b => b.SpringBattlePlayers.Any(p => !p.IsSpectator && p.Account.Name == model.User1));
+            if (!string.IsNullOrEmpty(model.User2)) q = q.Where(b => b.SpringBattlePlayers.Any(p => !p.IsSpectator && p.Account.Name == model.User2));
+            if (!string.IsNullOrEmpty(model.User3)) q = q.Where(b => b.SpringBattlePlayers.Any(p => !p.IsSpectator && p.Account.Name == model.User3));
 
-            if (players.HasValue) q = q.Where(b => b.SpringBattlePlayers.Where(p => !p.IsSpectator).Count() == players.Value);
 
-            if (age.HasValue)
+            if (model.PlayersFrom.HasValue) q = q.Where(b => b.SpringBattlePlayers.Count(p => !p.IsSpectator) >= model.PlayersFrom);
+            if (model.PlayersTo.HasValue) q = q.Where(b => b.SpringBattlePlayers.Count(p => !p.IsSpectator) <= model.PlayersTo);
+            
+            if (model.Age != AgeOption.Any)
             {
                 var limit = DateTime.UtcNow;
-                switch (age)
+                switch (model.Age)
                 {
-                    case 1:
-                        limit = DateTime.Now.AddHours(-1);
+                    case AgeOption.Today:
+                        limit = DateTime.Now.AddDays(-1);
                         break;
-                    case 2:
+                    case AgeOption.ThisWeek:
                         limit = DateTime.UtcNow.AddDays(-7);
                         break;
-                    case 3:
+                    case AgeOption.ThisMonth:
                         limit = DateTime.UtcNow.AddDays(-31);
                         break;
                 }
                 q = q.Where(b => b.StartTime >= limit);
             }
 
-            if (duration.HasValue) q = q.Where(b => Math.Abs(b.Duration - duration.Value*60) < 300);
+            if (model.Mission != YesNoAny.Any)
+            {
+                var bval = model.Mission == YesNoAny.Yes;
+                q = q.Where(b => b.IsMission == bval);
+            }
 
-            if (mission.HasValue) q = q.Where(b => b.IsMission == mission.Value);
-
-            if (bots.HasValue) q = q.Where(b => b.HasBots == bots.Value);
+            if (model.Bots != YesNoAny.Any)
+            {
+                var bval = model.Bots == YesNoAny.Yes;
+                q = q.Where(b => b.HasBots == bval);
+            }
 
             q = q.OrderByDescending(b => b.StartTime);
 
-            if (offset.HasValue) q = q.Skip(offset.Value);
+            if (model.offset.HasValue) q = q.Skip(model.offset.Value);
             q = q.Take(Global.AjaxScrollCount);
 
             var result =
@@ -113,8 +140,9 @@ namespace ZeroKWeb.Controllers
 
             //if(result.Count == 0)
             //    return Content("");
-            if (offset.HasValue) return View("BattleTileList", result);
-            return View("BattleIndex", result);
+            model.Data = result;
+            if (model.offset.HasValue) return View("BattleTileList", model);
+            return View("BattleIndex", model);
         }
 
         /// <summary>

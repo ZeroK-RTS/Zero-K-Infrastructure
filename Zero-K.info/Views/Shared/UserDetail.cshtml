@@ -250,7 +250,7 @@
         if (Model.SpringBattlePlayers.Any())
         {
             <div id="usr_recentbattles" class="fleft border">
-                <h3>@Html.ActionLink("Last battles", "Index", "Battles", new { user = Model.Name }, null)</h3>
+                <h3>@Html.ActionLink("Last battles", "Index", "Battles", new { User1 = Model.Name }, null)</h3>
                 <span>
                     @Model.SpringBattlePlayers.Count(x => !x.IsSpectator) played, @Model.SpringBattlePlayers.Count(x => x.IsSpectator)
                     watched, @Model.MissionRunCount missions
