@@ -49,8 +49,15 @@ namespace Springie.autohost.Polls
 
                             map = possibleMap;
                             var resource = ah.cache.FindResourceData(new string[] { map }, ResourceType.Map);
-                            question = string.Format("Change map to {0} {2}/Maps/Detail/{1} ?", map, resource[0].ResourceID, GlobalConst.BaseSiteUrl);
-                            return true;
+                            if (resource != null)
+                            {
+                                question = string.Format(
+                                    "Change map to {0} {2}/Maps/Detail/{1} ?",
+                                    map,
+                                    resource[0].ResourceID,
+                                    GlobalConst.BaseSiteUrl);
+                                return true;
+                            }
                         }
                         AutoHost.Respond(tas, spring, e, String.Format("Cannot find such {0}map",serious ? "(non-special) " : ""));
                         return false;
@@ -87,8 +94,11 @@ namespace Springie.autohost.Polls
                             // I have no idea why it can't just work like the above way
                             var resourceList = ah.cache.FindResourceData(new string[] { map }, ResourceType.Map);
                             var resource = resourceList.Find(x => x.InternalName == map);
-                            question = string.Format("Change map to {0} {2}/Maps/Detail/{1} ?", map, resource.ResourceID, GlobalConst.BaseSiteUrl);
-                            return true;
+                            if (resource != null)
+                            {
+                                question = string.Format("Change map to {0} {2}/Maps/Detail/{1} ?", map, resource.ResourceID, GlobalConst.BaseSiteUrl);
+                                return true;
+                            }
                         }
                     }
                     catch (System.Exception ex)
