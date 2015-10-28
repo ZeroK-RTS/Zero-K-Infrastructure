@@ -528,14 +528,17 @@ namespace ZkData
         }
 
 
-        public IEnumerable<Poll> ValidPolls(ZkDataContext db = null)
+        public static IEnumerable<Poll> ValidPolls(Account acc, ZkDataContext db = null)
         {
             if (db == null) db = new ZkDataContext();
+            var clanID = acc?.ClanID;
+            var facID = acc?.FactionID;
+
             return
                 db.Polls.Where(
                     x =>
-                    (x.ExpireBy == null || x.ExpireBy > DateTime.UtcNow) && (x.RestrictClanID == null || x.RestrictClanID == ClanID) &&
-                    (x.RestrictFactionID == null || x.RestrictFactionID == FactionID));
+                    (x.ExpireBy == null || x.ExpireBy > DateTime.UtcNow) && (x.RestrictClanID == null || x.RestrictClanID == clanID) &&
+                    (x.RestrictFactionID == null || x.RestrictFactionID == facID));
         }
 
         public override string ToString()

@@ -105,8 +105,8 @@ namespace ZeroKWeb.Controllers
                                    string filter,
                                    int pageSize = 0,
                                    int page = 0,
-                                   bool partial = false)
-        {
+                                   bool partial = false) {
+
             int accountID = Global.AccountID;
             var db = new ZkDataContext();
             if (Request.IsAjaxRequest()) partial = true;
