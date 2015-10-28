@@ -418,7 +418,7 @@ namespace ZeroKWeb.Controllers
                 if (clanID.HasValue) return RedirectToAction("Detail", "Clans", new { id = clanID });
                 if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
                 if (forumPostID.HasValue) return RedirectToAction("Thread","Forum", new { id = thread.ForumThreadID, postID = forumPostID });
-                return RedirectToAction("Thread", "Forum", new { id = thread.ForumThreadID, postId = gotoPostId });
+                return RedirectToAction("Thread", "Forum", new { id = thread.ForumThreadID, postID = gotoPostId });
             }
         }
 
