@@ -189,6 +189,8 @@ function GlobalPageInit(root) {
                 ajaxScrollOffset = ajaxScrollCount;
                 ajaxScrollEnabled = true;
                 prg.hide();
+                ReplaceHistory(frm.serialize());
+
             });
             return false;
         });
