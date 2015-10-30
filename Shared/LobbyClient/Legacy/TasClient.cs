@@ -1420,6 +1420,7 @@ namespace LobbyClient.Legacy
             int status;
             int.TryParse(args[1], out status);
 
+            if (!existingUsers.ContainsKey(args[0])) return;
             var u = ExistingUsers[args[0]];
             var old = u.Clone();
             u.FromInt(status);
@@ -1457,7 +1458,7 @@ namespace LobbyClient.Legacy
         void OnRemoveUser(string[] args)
         {
             var userName = args[0];
-            var user = ExistingUsers[userName];
+            //var user = ExistingUsers[userName];   // unused; just gives KeyNotFound exceptions
             UserRemoved(this, new TasEventArgs(args));
             ExistingUsers.Remove(userName);
         }
