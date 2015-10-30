@@ -34,7 +34,7 @@ namespace ZkData
             return sb.ToString();
         }
 
-        static void WriteZipArchiveEntry(ZipArchiveEntry entry, byte[] toWrite)
+        static void WriteZipArchiveEntry(ZipArchiveEntry entry, string toWrite)
         {
             using (StreamWriter writer = new StreamWriter(entry.Open()))
             {
@@ -49,8 +49,8 @@ namespace ZkData
 
             using (var zf = ZipFile.Open(tempName, ZipArchiveMode.Update))
             {
-                var modinfoEntry = zf.CreateEntry("modinfo.lua");
-                WriteZipArchiveEntry(modinfoEntry, Encoding.UTF8.GetBytes(GetModInfo(mission.NameWithVersion, mission.Mod, mission.Name, "ZK")));
+                var modinfoEntry = zf.GetEntry("modinfo.lua");
+                WriteZipArchiveEntry(modinfoEntry, GetModInfo(mission.NameWithVersion, mission.Mod, mission.Name, "ZK"));
                 FixScript(mission, zf, "script.txt");
                 var script = FixScript(mission, zf, GlobalConst.MissionScriptFileName);
                 modInfo.MissionScript = script;
@@ -120,10 +120,10 @@ namespace ZkData
             ZipArchiveEntry entry = archive.GetEntry(scriptName);
             using (StreamReader reader = new StreamReader(entry.Open()))
             {
-                script = Encoding.UTF8.GetString(Encoding.Default.GetBytes(reader.ReadToEnd()));
+                script = reader.ReadToEnd();
                 script = Regex.Replace(script, "GameType=([^;]+);", (m) => { return string.Format("GameType={0};", mission.NameWithVersion); });
             }
-            WriteZipArchiveEntry(entry, Encoding.UTF8.GetBytes(script));
+            WriteZipArchiveEntry(entry, script);
             return script;
         }
     }
