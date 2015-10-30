@@ -141,9 +141,9 @@ namespace ZkLobbyServer
                         }
                     }
                 } catch (SocketException sockEx) {
-                    Trace.TraceError("VPN check socket error: {0}", sockEx);
+                    Trace.TraceError("VPN check socket error for user {0}: {1}",acc.Name, sockEx);
                 } catch (Exception ex) {
-                    Trace.TraceError("VPN check error: {0}", ex);
+                    Trace.TraceError("VPN check error for user {0}: {1}", acc.Name, ex);
                 }
 
                 return new LoginResponse { ResultCode = LoginResponse.Code.Ok };
