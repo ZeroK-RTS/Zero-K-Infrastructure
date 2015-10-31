@@ -1265,7 +1265,6 @@
     <Content Include="Img\soldier.png" />
     <Content Include="Img\napoleon.png" />
     <Content Include="Img\zk_logo_orig.png" />
-    <Content Include="LobbyStart.inc" />
     <Content Include="lobby\index.html" />
     <Content Include="ResourceList.aspx" />
     <Content Include="ErrorReports.aspx" />

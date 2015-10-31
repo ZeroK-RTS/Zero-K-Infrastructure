@@ -158,6 +158,8 @@ namespace ZeroKWeb.Controllers
         }
 
         static CurrentLobbyStats cachedStats = new CurrentLobbyStats();
+        static List<Account>  cachedTopTen = new List<Account>();
+	    static DateTime lastTopTenCheck = DateTime.MinValue;
         static DateTime lastStatsCheck = DateTime.MinValue;
 
         public class CurrentLobbyStats
@@ -207,13 +209,12 @@ namespace ZeroKWeb.Controllers
             }
 			var db = new ZkDataContext();
 
-		    var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
-			var result = new IndexResult()
+		    
+
+            var result = new IndexResult()
 			             {
 			             	Spotlight = SpotlightHandler.GetRandom(),
-			             	Top10Players =
-			             		db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout)).OrderByDescending(
-			             			x => x.Elo1v1).Take(10)
+			             	Top10Players = GetCachedtopTen()
 			             };
 
 			result.LobbyStats = GetCachedLobbyStats();
@@ -250,9 +251,25 @@ namespace ZeroKWeb.Controllers
 			return View("HomeIndex",result);
 		}
 
+	    static List<Account> GetCachedtopTen() {
+            var db = new ZkDataContext();
+	        if (DateTime.UtcNow.Subtract(lastTopTenCheck).TotalMinutes > 10)
+	        {
+                lastTopTenCheck = DateTime.UtcNow;
+	            
+                var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
+	            cachedTopTen =
+	                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout))
+	                    .OrderByDescending(x => x.Elo1v1)
+	                    .Take(10)
+	                    .ToList();
+                
+	        }
+	        return cachedTopTen;
+	    }
 
-		
-		public ActionResult NotLoggedIn()
+
+	    public ActionResult NotLoggedIn()
 		{
 			return View();
 		}
