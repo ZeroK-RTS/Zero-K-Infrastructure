@@ -117,7 +117,7 @@ function GlobalPageInit(root) {
 
     s.find(".js_dialog").dialog(
         {
-            autoOpen: false,
+            autoOpen: true,
             show: "fade",
             hide: "fade",
             modal: false,
