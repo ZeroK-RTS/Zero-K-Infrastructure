@@ -18,7 +18,7 @@ namespace ZeroKWeb
 				spotlights = new List<UnitSpotlight>();
 				try
 				{
-					var unitData = new WebClient().DownloadString("http://packages.springrts.com/zkmanual/featured.txt");
+					var unitData = new WebClient().DownloadString("http://manual.zero-k.info/featured.txt");
 					foreach (var line in unitData.Lines())
 					{
 						var parts = line.Split('\t');
