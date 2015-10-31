@@ -27,13 +27,13 @@ namespace ZeroKWeb.Controllers
             return Content("");
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult BlockedVPNs()
         {
             return View("BlockedVPNs");
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult AddBlockedCompany(string companyName, string comment)
         {
             ZkDataContext db = new ZkDataContext();
@@ -50,7 +50,7 @@ namespace ZeroKWeb.Controllers
             return  RedirectToAction("BlockedVPNs");
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult AddBlockedHost(string hostname, string comment)
         {
             ZkDataContext db = new ZkDataContext();
@@ -67,7 +67,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("BlockedVPNs");
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult RemoveBlockedCompany(int companyID)
         {
             ZkDataContext db = new ZkDataContext();
@@ -80,7 +80,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("BlockedVPNs");
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult RemoveBlockedHost(int hostID)
         {
             ZkDataContext db = new ZkDataContext();
@@ -91,6 +91,34 @@ namespace ZeroKWeb.Controllers
             var str = string.Format("{0} removed blocked VPN host: {1}", Global.Account.Name, name);
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
             return RedirectToAction("BlockedVPNs");
+        }
+
+        public class ChatHistoryModel
+        {
+            public string Channel { get; set; } = "zk";
+            public SayPlace Place { get; set; } = SayPlace.Channel;
+            public DateTime? TimeFrom { get; set; }
+            public DateTime? TimeTo { get; set; }
+            public string User { get; set; }
+            public string Text { get; set; }
+            public IQueryable<LobbyChatHistory> Data;
+        }
+
+        [Auth(Role = AuthRole.ZkAdmin)]
+        public ActionResult ChatHistory(ChatHistoryModel model) {
+            model = model ?? new ChatHistoryModel();
+
+            var db = new ZkDataContext();
+            var ret = db.LobbyChatHistories.Where(x=>x.SayPlace == model.Place).AsQueryable();
+            if (!string.IsNullOrEmpty(model.Channel)) ret = ret.Where(x => x.Target == model.Channel);
+            if (!string.IsNullOrEmpty(model.User)) ret = ret.Where(x => x.User == model.User);
+            if (model.TimeFrom.HasValue) ret = ret.Where(x => x.Time >= model.TimeFrom);
+            if (model.TimeTo.HasValue) ret = ret.Where(x => x.Time >= model.TimeTo);
+            if (!string.IsNullOrEmpty(model.Text)) ret = ret.Where(x => x.Text.Contains(model.Text));
+            
+            model.Data = ret.OrderByDescending(x => x.Time);
+
+            return View("LobbyChatHistory", model);
         }
 
     }

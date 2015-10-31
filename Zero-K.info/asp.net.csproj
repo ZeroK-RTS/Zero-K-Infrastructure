@@ -1426,6 +1426,7 @@
     <Content Include="Views\Shared\DisplayTemplates\Diff.cshtml" />
     <Content Include="Views\Forum\Preview.cshtml" />
     <Content Include="Views\PostHistory\ViewEntry.cshtml" />
+    <Content Include="Views\Lobby\LobbyChatHistory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

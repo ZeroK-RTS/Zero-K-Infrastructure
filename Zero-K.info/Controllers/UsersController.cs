@@ -14,7 +14,7 @@ namespace ZeroKWeb.Controllers
     {
         //
         // GET: /Users/
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult ChangeHideCountry(int accountID, bool hideCountry)
         {
             var db = new ZkDataContext();
@@ -27,7 +27,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult ChangeAccountDeleted(int accountID, bool isDeleted)
         {
             var db = new ZkDataContext();
@@ -44,7 +44,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }     
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult ChangePermissions(int accountID, int adminAccountID, int springieLevel, bool zkAdmin, bool vpnException)
         {
             var db = new ZkDataContext();
@@ -84,7 +84,7 @@ namespace ZeroKWeb.Controllers
 
 
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult AdminUserDetail(int id)
         {
             var db = new ZkDataContext();
@@ -92,7 +92,7 @@ namespace ZeroKWeb.Controllers
             return View("AdminUserDetail", user);
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult ReportLog ()
         {
             return View("ReportLog");
@@ -178,7 +178,7 @@ namespace ZeroKWeb.Controllers
         /// </summary>
         /// <param name="accountID"><see cref="Account"/> ID of the person being punished</param>
         /// <param name="reason">Displayed reason for the penalty</param>
-        [Auth(Role = AuthRole.ZkAdmin | AuthRole.LobbyAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult Punish(int accountID,
                                    string reason,
                                    bool deleteXP,
@@ -277,7 +277,7 @@ namespace ZeroKWeb.Controllers
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin|AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult RemovePunishment(int punishmentID) {
             var db = new ZkDataContext();
             var todel = db.Punishments.First(x => x.PunishmentID == punishmentID);
@@ -300,13 +300,13 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = todel.AccountID });
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult MassBan()
         {
             return View("MassBan");
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin|AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult MassBanSubmit(string name, int startIndex, int endIndex, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
         {
             ZkDataContext db = new ZkDataContext();

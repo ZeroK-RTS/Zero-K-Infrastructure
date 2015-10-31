@@ -33,7 +33,7 @@ namespace ZeroKWeb.Controllers
         /// </summary>
         /// <param name="nn">The existing <see cref="News"/> item, if editing</param>
         /// <remarks>Also makes or edits a <see cref="ForumThread"/> and its starting <see cref="ForumPost"/></remarks>
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
 		public ActionResult PostNews(News nn, HttpPostedFileBase image)
 		{
 			if (string.IsNullOrEmpty(nn.Title) || string.IsNullOrEmpty(nn.Text)) return Content("Empty text!");
