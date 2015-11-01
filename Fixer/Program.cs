@@ -330,36 +330,10 @@ namespace Fixer
         }
 
 
-        [STAThread]
         static void Main(string[] args) {
-            var ret = new ForumWikiParser().TranslateToHtml(@"<a>
-unclosed
-test
-<a>
-<table>
-    <tr>
-        <td>Kudos</td>
-        <td>Donator star</td>
-    </tr>
-    <tr>
-        <td style=""text-align: left"">100</td>
-        <td style=""text-align: center""><img src='/img/stars/star_brown.png' alt='Donator star'/></td>
-    </tr>
-    <tr>
-        <td style=""text-align: left"">500</td>
-        <td style=""text-align: center""><img src='/img/stars/star_white.png' alt='Donator star' /></td>
-    </tr>
-    <tr>
-        <td style=""text-align: left"">1000</td>
-        <td style=""text-align: center""><img src='/img/stars/star_yellow.png' alt='Donator star' /></td>
-    </tr>
-    <tr>
-        <td style=""text-align: left"">5000</td>
-        <td style=""text-align: center""><img src='img/stars/star_diamond.png' alt='Donator star' /></td>
-    </tr>
-</table>[b]some crap
-[/b]",null);
 
+            MigrateDatabase();
+            return;
 
             //DeleteOldUsers();
             return;
@@ -500,8 +474,9 @@ test
 
         static void MigrateDatabase()
         {
-            var cloner = new DbCloner("zero-k_ef", "zero-k_test",
-                "Data Source=omega.licho.eu,100;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true");
+            GlobalConst.Mode = ModeType.Test;
+            var cloner = new DbCloner("zero-k", "zero-k_test", GlobalConst.ZkDataContextConnectionString);
+            cloner.LogEvent += s => { Console.WriteLine(s); };
             cloner.CloneAllTables();
         }
 

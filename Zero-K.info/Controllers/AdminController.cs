@@ -15,8 +15,11 @@ namespace ZeroKWeb.Controllers
             if (GlobalConst.Mode == ModeType.Test)
             {
                 var cloner = new DbCloner("zero-k", "zero-k_test", GlobalConst.ZkDataContextConnectionString);
+                cloner.LogEvent += s => { Response.Write(s); Response.Flush(); };
                 cloner.CloneAllTables();
-                return Content("DONE! Database copied");
+                Response.Write("DONE! Database copied");
+                Response.Flush();
+                return Content("");
             } else return Content("Not allowed!");
         }
     }
