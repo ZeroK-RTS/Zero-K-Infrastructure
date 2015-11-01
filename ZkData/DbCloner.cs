@@ -29,8 +29,7 @@ namespace ZkData
                     using (var reader = com.ExecuteReader()) {
                         while (reader.Read()) {
                             var name = reader.GetString(1);
-                            tables.Add(name);
-                            //if (!name.StartsWith("__")) yield return name;
+                            if (!name.StartsWith("__")) tables.Add(name);
                         }
                     }
                 }
