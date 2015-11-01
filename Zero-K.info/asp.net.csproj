@@ -129,6 +129,7 @@
     <Compile Include="AppCode\ForumPostCache.cs" />
     <Compile Include="AppCode\ForumPostIndexer.cs" />
     <Compile Include="AppCode\HelperPage.cs" />
+    <Compile Include="AppCode\MemCache.cs" />
     <Compile Include="AppCode\UniGrid\Col.cs" />
     <Compile Include="AppCode\UniGrid\HCol.cs" />
     <Compile Include="AppCode\ModStatsDb.designer.cs">
