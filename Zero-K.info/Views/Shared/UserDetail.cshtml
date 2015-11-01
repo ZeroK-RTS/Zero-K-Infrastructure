@@ -322,11 +322,12 @@
     {
         <div class="admin">
             <h3>Admin extras</h3>
-            @if (GlobalConst.Mode == ModeType.Test && Global.IsZeroKAdmin)
+            @if (GlobalConst.Mode == ModeType.Test)
             {
                 <a href="@Url.Action("ResetDB", "Admin")" class="js_confirm">Reset database (copy from live)</a><br/>
             }
-            <a href="@Url.Action("ChatHistory","Lobby")">Lobby chat history</a><br />
+            <a href="@Url.Action("ChatHistory", "Lobby")">Lobby chat history</a><br/>
+            <a href="@Url.Action("TraceLogs", "Admin")">Infrastructure trace logs</a><br/>
             <a href="@Url.Content("~/ResourceList.aspx")">Resource list</a><br />
             <a href="@Url.Action("BlockedVPNs", "Lobby")">Blocked VPNs</a><br />
             <a href="@Url.Action("ReportLog", "Users")">Abuse report log</a><br />

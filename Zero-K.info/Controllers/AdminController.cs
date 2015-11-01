@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -21,6 +22,30 @@ namespace ZeroKWeb.Controllers
                 Response.Flush();
                 return Content("");
             } else return Content("Not allowed!");
+        }
+
+        public class TraceLogIndex
+        {
+            public DateTime? TimeFrom { get; set; }
+            public DateTime? TimeTo { get; set; }
+            public string Text { get; set; }
+            public List<TraceEventType> Types { get; set; } = new List<TraceEventType>();
+            public IQueryable<LogEntry> Data;
+        }
+
+        [Auth(Role = AuthRole.ZkAdmin)]
+        public ActionResult TraceLogs(TraceLogIndex model) {
+            model = model ?? new TraceLogIndex();
+            var db = new ZkDataContext();
+            var ret = db.LogEntries.AsQueryable();
+
+            if (model.TimeFrom != null) ret = ret.Where(x => x.Time >= model.TimeFrom);
+            if (model.TimeTo != null) ret = ret.Where(x => x.Time <= model.TimeTo);
+            if (!string.IsNullOrEmpty(model.Text)) ret = ret.Where(x => x.Message.Contains(model.Text));
+            if (model.Types?.Count > 0) ret = ret.Where(x => model.Types.Contains(x.TraceEventType));
+
+            model.Data = ret.OrderByDescending(x => x.LogEntryID);
+            return View("TraceLogs", model);
         }
     }
 }

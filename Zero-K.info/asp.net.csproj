@@ -1428,6 +1428,7 @@
     <Content Include="Views\Forum\Preview.cshtml" />
     <Content Include="Views\PostHistory\ViewEntry.cshtml" />
     <Content Include="Views\Lobby\LobbyChatHistory.cshtml" />
+    <Content Include="Views\Admin\TraceLogs.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
@@ -1499,7 +1500,6 @@
   <ItemGroup>
     <Folder Include="Img\news\" />
     <Folder Include="Resources\" />
-    <Folder Include="Views\Admin\" />
     <Folder Include="Views\Autocomplete\" />
     <Folder Include="Views\Github\" />
     <Folder Include="Views\LobbyService\" />
