@@ -38,12 +38,12 @@
                     var edits = Model.ForumPostEdits.Select(x => new { x.Account, x.EditTime }).ToList();
                     edits.Insert(0, new { p.Account, EditTime = p.Created });
                 }
-                @foreach (var contrib in edits.GroupBy(x => x.Account))
+                @foreach (var contrib in edits.GroupBy(x => x.Account).OrderBy(x=>x.Max(y=>y.EditTime)))
                 {
                     var count = contrib.Count();
                     var first = contrib.Min(x => x.EditTime);
                     var last = contrib.Max(x => x.EditTime);
-                    <table style="float: left; margin-right: 10px">
+                    <table style="float: left; margin-right: 10px; opacity: 0.5;">
                         <tr>
                             <td>
                                 @Html.AccountAvatar(contrib.Key)

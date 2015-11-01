@@ -5,7 +5,7 @@
 
 @{
     ViewBag.Title = "Post edit history";
-    var grid = new UniGrid<ForumPostEdit>(Model.ForumPostEdits.OrderBy(x => x.ForumPostEditID).AsQueryable(), "Post edit history");
+    var grid = new UniGrid<ForumPostEdit>(Model.ForumPostEdits.OrderByDescending(x => x.ForumPostEditID).AsQueryable(), "Post edit history");
 
     grid.AddCol("", x => "").SetRowSelection(x => x.ForumPostEditID).SetWidth("20px");
     grid.AddCol("Date", x => x.EditTime).SetSort(x => x.EditTime);
@@ -26,6 +26,7 @@
 
     @using (Ajax.BeginForm("Index", "PostHistory", Global.GetAjaxOptions("gridder")))
     {
+        <span>To display differences between versions, select one or more edits in the list using checkboxes and click "diff selected"</span><br/>
         <input type="submit" value="Diff selected" class="textbutton"/>
         @GridHelpers.RenderTable(grid)
     }
