@@ -50,6 +50,8 @@ namespace ZkData
             using (var zf = ZipFile.Open(tempName, ZipArchiveMode.Update))
             {
                 var modinfoEntry = zf.GetEntry("modinfo.lua");
+                modinfoEntry.Delete();
+                modinfoEntry = zf.CreateEntry("modinfo.lua");
                 WriteZipArchiveEntry(modinfoEntry, GetModInfo(mission.NameWithVersion, mission.Mod, mission.Name, "ZK"));
                 FixScript(mission, zf, "script.txt");
                 var script = FixScript(mission, zf, GlobalConst.MissionScriptFileName);
