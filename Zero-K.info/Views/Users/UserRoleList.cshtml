@@ -3,16 +3,18 @@
 @model ZkData.Account
 
 @{
-    var db = new ZkDataContext();
     int index = 0;
 }
 
 @foreach (var entry in Model.AccountRolesByAccountID.OrderBy(x=>x.RoleType.DisplayOrder)) {
-    <span>
+    if (entry.RoleType.IsClanOnly || GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
+    {
+        <span>
         @Html.PrintRoleType(entry.RoleType) of @(entry.RoleType.IsClanOnly ? Html.PrintClan(entry.Clan) : Html.PrintFaction(entry.Faction, false))
     </span>
-    @Html.DisplayFor(x => entry)
-    <br/>
+        @Html.DisplayFor(x => entry)
+        <br/>
+    }
 }
 @if (Model.FactionID != null && Model.FactionID == Global.FactionID && !Model.Faction.IsDeleted)
 {
