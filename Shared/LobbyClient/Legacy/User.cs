@@ -16,8 +16,6 @@ namespace LobbyClient.Legacy
     [Obsolete]
     public class User
     {
-        public static readonly Dictionary<string, string> CountryNames = new Dictionary<string, string>();
-
         /// <summary>
         /// times (in hours) to reach given rank
         /// </summary>
@@ -31,31 +29,11 @@ namespace LobbyClient.Legacy
 		
 		//This is only called once
         static User() {
-            Assembly assembly = Assembly.GetAssembly(typeof(User));
-            //Stream countryNames = assembly.GetManifestResourceStream(typeof(User), "Resources.CountryNames.txt"); //Fixme: GetManifestResourceStream with only 1 argument do not work in MonoDevelop
-            Stream countryNames = assembly.GetManifestResourceStream("Resources.CountryNames.txt");
-            var reader = new StreamReader(countryNames);
-
-            string line;
-            while ((line = reader.ReadLine()) != null) {
-                string[] parts = line.Split('\t');
-                CountryNames.Add(parts[0], parts[1]);
-            }
         }
 
         public DateTime? AwaySince { get; protected set; }
         public string Clan { get; private set; }
         public string Avatar { get; private set; }
-        public string Country {
-            get { return country; }
-            set {
-                country = value;
-                string name;
-                if (CountryNames.TryGetValue(country, out name)) CountryName = name;
-                else CountryName = "Unknown";
-            }
-        }
-
 
         public string CountryName { get; protected set; }
 
@@ -88,6 +66,7 @@ namespace LobbyClient.Legacy
         public bool IsZeroKAdmin { get; protected set; }
 
         public string DisplayName { get; protected set; }
+        public string Country { get; set; }
 
         public User Clone() {
             return (User)MemberwiseClone();
