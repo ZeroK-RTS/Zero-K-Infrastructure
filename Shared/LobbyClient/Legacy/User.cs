@@ -16,56 +16,22 @@ namespace LobbyClient.Legacy
     [Obsolete]
     public class User
     {
-        /// <summary>
-        /// times (in hours) to reach given rank
-        /// </summary>
-        public static readonly int[] RankLimits = { 0, 5, 15, 30, 100, 300, 1000, 3000, 5000 }; // last two are just a guess
         public int LobbyID;
-        public int SpringieLevel = 1;
-
-        public ulong? SteamID;
-
-        string country;
 		
 		//This is only called once
         static User() {
         }
 
         public DateTime? AwaySince { get; protected set; }
-        public string Clan { get; private set; }
-        public string Avatar { get; private set; }
-
-        public string CountryName { get; protected set; }
-
         public int Cpu { get; set; }
-        public int EffectiveElo { get; private set; }
-        public Dictionary<string, string> Extensions { get; private set; }
-        public string Faction { get; private set; }
         public DateTime? InGameSince { get; protected set; }
         public bool IsAdmin { get; protected set; }
         public bool IsAway { get; set; }
         public bool IsBot { get; protected set; }
         public bool IsInBattleRoom { get; set; }
         public bool IsInGame { get; set; }
-        public bool BanMute { get; set; }
-        public bool BanLobby { get; set; }
-
-        public int Level { get; private set; }
-
-        public bool IsZkLobbyUser { get { return Cpu == GlobalConst.ZkLobbyUserCpu || Cpu == GlobalConst.ZkSpringieManagedCpu || Cpu == GlobalConst.ZkLobbyUserCpuLinux; } }
-        public bool IsZkLinuxUser { get { return Cpu == GlobalConst.ZkLobbyUserCpuLinux; } }
-        public bool IsSpringieManaged { get { return Cpu == GlobalConst.ZkSpringieManagedCpu; } }
-
-        public bool ISSwlUser { get { return Cpu == 7777 || Cpu == 7778 || Cpu == 7779; } }
-        public bool IsNotaLobby { get { return Cpu == GlobalConst.NotaLobbyLinuxCpu || Cpu == GlobalConst.NotaLobbyWindowsCpu || Cpu == GlobalConst.NotaLobbyMacCpu; } }
-
-        public bool IsFlobby { get { return Cpu == 4607052 || Cpu == 4607063 || Cpu == 4607053; } }
-
         public string Name { get; protected set; }
         public int Rank { get; protected set; }
-        public bool IsZeroKAdmin { get; protected set; }
-
-        public string DisplayName { get; protected set; }
         public string Country { get; set; }
 
         public User Clone() {
