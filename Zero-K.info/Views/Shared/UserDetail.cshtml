@@ -180,14 +180,14 @@
             {
                 @:Clan: @Html.PrintClan(Model.Clan)
             }
-            @if (Model.Faction != null && GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
+            @if (Model.Faction != null || Model.Clan != null)
             {
                 <br />
                 @Html.Partial("~/Views/Users/UserRoleList.cshtml", Model)
             }
 
         </div>
-                    }
+    }
 
 
     @if (Global.IsZeroKAdmin)
