@@ -423,5 +423,19 @@ namespace ZeroKWeb.Controllers
             db.SaveChanges();
             return Content(string.Format("{0} password set to {1}", acc.Name, newPassword));
         }
+
+        [Auth]
+        public ActionResult ChangePassword(int accountID, string oldPassword, string newPassword)
+        {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Find(accountID);
+            var hashed = Utils.HashLobbyPassword(oldPassword);
+            acc = AuthServiceClient.VerifyAccountHashed(acc.Name, hashed);
+            if (acc == null) return Content("Invalid password");
+            acc.SetPasswordPlain(newPassword);
+            db.SaveChanges();
+            return Content("Old: " + oldPassword + "; new: " + newPassword);
+            // RedirectToAction("Logout", "Home");
+        }
     }
 }
