@@ -425,13 +425,13 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult ChangePassword(int accountID, string oldPassword, string newPassword)
+        public ActionResult ChangePassword(string oldPassword, string newPassword)
         {
             var db = new ZkDataContext();
-            var acc = db.Accounts.Find(accountID);
+            var acc = db.Accounts.Find(Global.AccountID);
             var hashed = Utils.HashLobbyPassword(oldPassword);
-            acc = AuthServiceClient.VerifyAccountHashed(acc.Name, hashed);
-            if (acc == null) return Content("Invalid password");
+            if (!acc.VerifyPassword(hashed)) return Content("Invalid password");
+            if (string.IsNullOrWhiteSpace(newPassword)) return Content("New password cannot be blank");
             acc.SetPasswordPlain(newPassword);
             db.SaveChanges();
             return Content("Old: " + oldPassword + "; new: " + newPassword);
