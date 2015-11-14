@@ -434,8 +434,8 @@ namespace ZeroKWeb.Controllers
             if (string.IsNullOrWhiteSpace(newPassword)) return Content("New password cannot be blank");
             acc.SetPasswordPlain(newPassword);
             db.SaveChanges();
-            return Content("Old: " + oldPassword + "; new: " + newPassword);
-            // RedirectToAction("Logout", "Home");
+            //return Content("Old: " + oldPassword + "; new: " + newPassword);
+            return RedirectToAction("Logout", "Home");
         }
     }
 }
