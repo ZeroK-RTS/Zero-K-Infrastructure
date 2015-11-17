@@ -1,0 +1,96 @@
+@import ~weblobby/style/chili
+
+
+#zkHomeScreen > #mainMenu button, #zkHomeScreen > #chatButton
+	border: none
+	font-weight: bold
+
+%transformBg
+	content: ''
+	position: absolute
+	top: 0
+	right: 0
+	bottom: 0
+	left: 0
+	z-index: -1
+
+// http://lea.verou.me/2013/10/slanted-tabs-with-css-3d-transforms/
+#zkHomeScreen > #chatButton
+	background: transparent
+	position: absolute
+	bottom: 0
+	right: 0
+	color: #ffc
+	padding: 0.2em 0.2em 0 0.6em
+	font-size: 2em
+	&::before
+		@extend %transformBg
+		background-color: #585
+		transform: perspective(10px) rotateX(2deg);
+		transform-origin: bottom right
+		border-top-left-radius: 6px
+
+$menuButtonsMargin: 20px
+
+// TODO: Make them follow the sketch in style.
+#zkHomeScreen > #mainMenu button
+	font-size: 3.6em
+	display: block
+	background: transparent
+	color: #E2E2C1
+	position: relative
+	margin-bottom: $menuButtonsMargin
+	padding: 0.1em 0.3em
+	&::before
+		@extend %transformBg
+		+chiliBorder
+		background-color: rgba(50, 50, 50, 0.2)
+		background-clip: padding-box
+		transform: perspective(40px) rotateX(-2deg);
+		transform-origin: bottom left
+	&:hover::before
+		+chiliBox
+
+#zkHomeScreen > #mainMenu
+	float: left
+	margin-left: 4em
+	margin-top: 12em
+	.underbutton
+		font-size: 1.5em
+		position: relative
+		left: 1em
+		width: 14.5em
+		padding-bottom: 0.3em
+		margin-top: -$menuButtonsMargin
+		&::before
+			@extend %transformBg
+			transform: perspective(10px) rotateX(-2deg);
+			transform-origin: bottom
+
+#zkHomeScreen > #content
+	float: right
+
+#zkHomeScreen > .chatDiv
+	$width: 42vw
+	position: absolute
+	display: none
+	right: -$width
+	bottom: 3em
+	height: 45vh
+	width: $width
+	transition-property: right
+	transition-duration: 200ms
+	&.show
+		right: 0
+	&.display
+		display: block
+
+#zkHomeScreen
+	overflow: hidden
+	position: absolute
+	top: 0
+	bottom: 0
+	right: 0
+	left: 0
+	z-index: -1
+	background: rgba(0, 0, 0, 0.5)
