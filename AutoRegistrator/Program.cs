@@ -34,9 +34,9 @@ namespace AutoRegistrator
         [STAThread]
         static void Main()
         {
-            Trace.Listeners.Add(new ConsoleTraceListener());
-            Paths = new SpringPaths(null);
-            Scanner = new SpringScanner(Paths);
+            //Trace.Listeners.Add(new ConsoleTraceListener());
+            Paths = new SpringPaths(null,@"c:\temp\spring");
+            Scanner = new SpringScanner(Paths) { UseUnitSync = true};
             
             Scanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("New resource found: {0}", e.Item.InternalName);
             Scanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Resource removed: {0}", e.Item.InternalName);
@@ -47,9 +47,13 @@ namespace AutoRegistrator
             Scanner.Start();
             Downloader = new PlasmaDownloader.PlasmaDownloader(new Config(), Scanner, Paths);
             Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
-            Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
+            Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             Downloader.PackagesChanged += Downloader_PackagesChanged;
+            Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
 
+
+            var fs = new WebFolderSyncer();
+            fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory,"maps"));
             while (true) {Thread.Sleep(10000);}
             /*Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -61,17 +65,12 @@ namespace AutoRegistrator
         static void Downloader_PackagesChanged(object sender, EventArgs e)
         {
             foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag.Keys)) {
-                if (ver.EndsWith(":test") || ver.EndsWith(":latest")) {
-                    if (!Downloader.PackageDownloader.SelectedPackages.Contains(ver))
-                    {
-                        Trace.TraceInformation("Selecting package: {0}",ver);
-                        Downloader.PackageDownloader.SelectPackage(ver);
-                        Downloader.GetResource(DownloadType.MOD, ver);
-                    }
-
+                if (ver == "zk:stable" || ver =="zk:test") {
+                   Downloader.GetResource(DownloadType.MOD, ver)?.WaitHandle.WaitOne();
                 }
             }
 
+            
             var waiting = false;
             do
             {
@@ -110,9 +109,13 @@ namespace AutoRegistrator
                                     var mu = new MissionUpdater();
                                     Mod modInfo = null;
                                     Scanner.MetaData.GetMod(mis.NameWithVersion, m => { modInfo = m; }, (er) => { });
-                                    mis.Revision++;
-                                    mu.UpdateMission(db, mis, modInfo);
-                                    db.SubmitChanges();
+
+                                    if (modInfo != null)
+                                    {
+                                        mis.Revision++;
+                                        mu.UpdateMission(db, mis, modInfo);
+                                        db.SubmitChanges();
+                                    }
                                 }
 
                             }

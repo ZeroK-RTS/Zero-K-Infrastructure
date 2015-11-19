@@ -40,22 +40,23 @@ namespace ZkData.UnitSyncLib
 		public UnitSync(SpringPaths springPaths)
 		{
             paths = springPaths;
-			//originalDirectory = Directory.GetCurrentDirectory();
             //Getting the directory of this application instead of the non-constant currentDirectory. Reference: http://stackoverflow.com/questions/52797/how-do-i-get-the-path-of-the-assembly-the-code-is-in
             originalDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            System.Diagnostics.Trace.TraceInformation("UnitSync: Directory: {0}", paths.UnitSyncDirectory);
-            System.Diagnostics.Trace.TraceInformation("UnitSync: ZKL: {0}", originalDirectory);           
+            Trace.TraceInformation("UnitSync: Directory: {0}", paths.UnitSyncDirectory);
+            Trace.TraceInformation("UnitSync: ZKL: {0}", originalDirectory);           
             Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
-            //originalEnvironmentVariable = Environment.GetEnvironmentVariable("SPRING_DATADIR", EnvironmentVariableTarget.Process);
-            //Environment.SetEnvironmentVariable("SPRING_DATADIR", paths.WritableDirectory, EnvironmentVariableTarget.Process);//no longer needed since SpringPath already set SPRING_DATADIR
-		    if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed.");
+
+		    if (paths.UnitSyncDirectory != paths.WritableDirectory)
+		    {
+                File.WriteAllText(Path.Combine(paths.UnitSyncDirectory,"springsettings.cfg"), $"SpringData={paths.DataDirectoriesJoined}\n");
+		    }
+
+            if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed.");
 			Version = NativeMethods.GetSpringVersion();
             var writ = NativeMethods.GetWritableDataDirectory();
-            System.Diagnostics.Trace.TraceInformation("UnitSync Version: {0}", Version);
-            //System.Diagnostics.Trace.TraceInformation("UnitSync new SPRING_DATADIR: {0}", paths.WritableDirectory);
-            //System.Diagnostics.Trace.TraceInformation("UnitSync original SPRING_DATADIR: {0}", originalEnvironmentVariable);
+            Trace.TraceInformation("UnitSync Version: {0}, directory: {1}", Version, writ);
 			TraceErrors();
-            System.Diagnostics.Trace.TraceInformation("UnitSync Initialized");
+            Trace.TraceInformation("UnitSync Initialized");
 		}
 
 		~UnitSync()
@@ -67,8 +68,6 @@ namespace ZkData.UnitSyncLib
 		{
 			if (!disposed)
 			{
-				Directory.SetCurrentDirectory(originalDirectory);
-                //Environment.SetEnvironmentVariable("SPRING_DATADIR", originalEnvironmentVariable, EnvironmentVariableTarget.Process); //restore original path??
 				try
 				{
 					NativeMethods.UnInit();
@@ -77,7 +76,8 @@ namespace ZkData.UnitSyncLib
 				{
 					// do nothing, already thrown on init
 				}
-				disposed = true;
+                Directory.SetCurrentDirectory(originalDirectory);
+                disposed = true;
                 System.Diagnostics.Trace.TraceInformation("UnitSync Disposed");
 			}
 			GC.SuppressFinalize(this);
