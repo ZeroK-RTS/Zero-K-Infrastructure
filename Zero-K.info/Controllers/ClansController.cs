@@ -13,17 +13,22 @@ namespace ZeroKWeb.Controllers
 {
     public class ClansController : Controller
     {
-        //
-        // GET: /Clans/
+        public class ClansModel
+        {
+            public string Search { get; set; }
+            public IQueryable<Clan> Data;
+        }
 
         /// <summary>
         /// Clan list
         /// </summary>
-        public ActionResult Index()
-        {
+        public ActionResult Index(ClansModel model) {
+            model = model ?? new ClansModel();
             var db = new ZkDataContext();
-
-            return View(db.Clans.Where(x => !x.IsDeleted && (x.Faction != null && !x.Faction.IsDeleted)));
+            var ret = db.Clans.Where(x => !x.IsDeleted && (x.Faction != null && !x.Faction.IsDeleted));
+            if (!string.IsNullOrEmpty(model.Search)) ret = ret.Where(x => x.ClanName.Contains(model.Search) || x.Shortcut.Contains(model.Search));
+            model.Data = ret.OrderBy(x => x.ClanName);
+            return View("ClansIndex", model);
         }
 
 
@@ -65,7 +70,7 @@ namespace ZeroKWeb.Controllers
             if (clan.Accounts.Count() > GlobalConst.ClanLeaveLimit) return null; // "This clan is too big to leave";
 
             RoleType leader = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople && x.IsClanOnly);
-
+            bool isLeader = acc.AccountRolesByAccountID.Any(x => x.RoleType == leader);
             // remove role
             db.AccountRoles.DeleteAllOnSubmit(acc.AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).ToList());
 
@@ -92,7 +97,7 @@ namespace ZeroKWeb.Controllers
                 clan.IsDeleted = true;
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} is disbanded", clan));
             }
-            else if (acc.AccountRolesByAccountID.Any(x => x.RoleType == leader))  // clan leader
+            else if (isLeader)
             {
                 var otherClanMember = clan.Accounts.FirstOrDefault(x => x.AccountID != accountID);
                 if (otherClanMember != null)

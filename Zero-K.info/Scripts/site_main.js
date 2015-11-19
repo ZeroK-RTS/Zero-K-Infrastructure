@@ -117,7 +117,7 @@ function GlobalPageInit(root) {
 
     s.find(".js_dialog").dialog(
         {
-            autoOpen: false,
+            autoOpen: true,
             show: "fade",
             hide: "fade",
             modal: false,
@@ -133,17 +133,6 @@ function GlobalPageInit(root) {
     s.find(":button").button();
     s.find(".js_button").button();
     s.find(".js_accordion").accordion();
-
-    // busy loading indicator
-    s.find("#busy").hide() // hide it initially
-        .ajaxStart(function() {
-            isBusy = true;
-            setTimeout("if (isBusy) $('#busy').show('fade');", 4000);
-        })
-        .ajaxStop(function() {
-            isBusy = false;
-            $(this).hide();
-        });
 
     // selection for gird
     s.find(".js_selectrow").click(function() {
@@ -176,7 +165,8 @@ function GlobalPageInit(root) {
             // chrome needs scrolLTop out of jquery by the page. Object Opera, IE, Firefox take the original dom property
             //var scrollTop = el.scrollTop;
             //if (scrollTop == null || scrollTop == 0)
-              var scrollTop = page.scrollTop();
+            var scrollTop = page.scrollTop();
+            if (scrollTop == 0) scrollTop = el.scrollTop;
             if (el.scrollHeight - (scrollTop + el.clientHeight) < 50) {
                 ajaxScrollEnabled = false;
                 prg.show();
@@ -199,6 +189,8 @@ function GlobalPageInit(root) {
                 ajaxScrollOffset = ajaxScrollCount;
                 ajaxScrollEnabled = true;
                 prg.hide();
+                ReplaceHistory(frm.serialize());
+
             });
             return false;
         });
@@ -219,7 +211,7 @@ function GlobalPageInit(root) {
 
     s.find("[data-preview]").each(function (i, trigger) {
         var name = $(trigger).data("preview");
-        var txtSource = "textarea[name='" + name + "']";
+        var txtSource = "[name='" + name + "']";
         $(trigger).click(function() {
             $.post("/Forum/Preview", {
                 text: $(txtSource).val()
@@ -234,37 +226,76 @@ function GlobalPageInit(root) {
                     show: "fade",
                     hide: "fade",
                     modal: false,
-                    title: "Preview",
+                    title: "Preview (keep open, auto refresh every 2s)",
                     width: 800,
+                    open: function() {
+                        $(trigger).hide();
+                        var refresh = function () {
+                            $.post("/Forum/Preview", {
+                                text: $(txtSource).val()
+                            },
+                                function(d2) {
+                                    dialogDiv.html(d2);
+                                    GlobalPageInit(dialogDiv);
+                                });
+                            if (!$(trigger).is(":visible")) window.setTimeout(refresh, 2000);
+                        };
+
+                        window.setTimeout(refresh, 2000);
+                    },
+                    close: function() {
+                        dialogDiv.detach();
+                        $(trigger).show();
+                    },
                     buttons: {
                         "Close": function() {
                             $(this).dialog("close");
-                            dialogDiv.detach();
-                            $(trigger).show();
                         }
                     }
                 });
 
                 
-                $(trigger).hide();
-
-                var refresh = function () {
-                    $.post("/Forum/Preview", {
-                        text: $(txtSource).val()
-                    },
-                        function(d2) {
-                            dialogDiv.html(d2);
-                            GlobalPageInit(dialogDiv);
-                        });
-                    if (!$(trigger).is(":visible")) window.setTimeout(refresh, 2000);
-                };
-
-                window.setTimeout(refresh, 2000);
 
                 event.preventDefault();
             });
         });
-
     });
+
+    s.find("[data-autocomplete]").each(function(i, el) {
+        var url = $(el).data("autocomplete");
+        var action = $(el).data("autocomplete-action");
+
+        $(el).autocomplete({
+            minLength: 1,
+            delay: 0,
+            source: url,
+            select: function (event, ui) {
+                if (action === "submit") {
+                    $(el).closest("form").submit();
+                } else if (action === "goto") {
+                    document.location = ui.item.url;
+                }
+            }
+        }).data('ui-autocomplete')._renderItem = function (ul, item) {
+            return $("<li></li>").data("item.autocomplete", item).append($("<a></a>").html(item.label)).appendTo(ul);
+        };
+    });
+
+    SetupGrid(s);
+
+
+    $(".qtip").remove(); // remove all floating tooltips
 }
 
+
+// setup busy indicator
+$(function() {
+    $(document).ajaxStart(function () {
+        isBusy = true;
+        setTimeout("if (isBusy) $('#busy').show('fade');", 500);
+    });
+    $(document).ajaxStop(function () {
+        isBusy = false;
+        $("#busy").hide();
+    });
+})

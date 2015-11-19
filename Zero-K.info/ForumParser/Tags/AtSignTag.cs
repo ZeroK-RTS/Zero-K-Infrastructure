@@ -6,7 +6,8 @@ using ZkData;
 
 namespace ZeroKWeb.ForumParser
 {
-    public class AtSignTag: ScanningTag
+    public class 
+        AtSignTag: ScanningTag
     {
         public override string Match { get; } = "@";
 

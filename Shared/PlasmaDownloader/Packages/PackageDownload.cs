@@ -104,37 +104,43 @@ namespace PlasmaDownloader.Packages
 				wr.Method = "POST";
 				wr.Proxy = null;
 				var zippedArray = bitArray.GetByteArray().Compress();
-				var requestStream = wr.GetRequestStream();
-				requestStream.Write(zippedArray, 0, zippedArray.Length);
-				requestStream.Close();
+			    using (var requestStream = wr.GetRequestStream())
+			    {
+			        requestStream.Write(zippedArray, 0, zippedArray.Length);
+			        requestStream.Close();
 
-				var response = wr.GetResponse();
-				Length = (int)(response.ContentLength + fileListWebGet.Length);
-				var responseStream = response.GetResponseStream();
+			        using (var response = wr.GetResponse())
+			        {
+			            Length = (int)(response.ContentLength + fileListWebGet.Length);
+			            var responseStream = response.GetResponseStream();
 
-				var numberBuffer = new byte[4];
-				var cnt = 0;
-				while (responseStream.ReadExactly(numberBuffer, 0, 4))
-				{
-					if (IsAborted) break;
-					var sizeLength = (int)SdpArchive.ParseUint32(numberBuffer);
-					var buf = new byte[sizeLength];
+			            var numberBuffer = new byte[4];
+			            var cnt = 0;
+			            while (responseStream.ReadExactly(numberBuffer, 0, 4))
+			            {
+			                if (IsAborted) break;
+			                var sizeLength = (int)SdpArchive.ParseUint32(numberBuffer);
+			                var buf = new byte[sizeLength];
 
-					if (!responseStream.ReadExactly(buf, 0, sizeLength, ref doneAll))
-					{
-						Trace.TraceError("{0} download failed - unexpected endo fo stream", Name);
-						return false;
-					}
-					pool.PutToStorage(buf, hashesToDownload[cnt]);
-					cnt++;
-				}
-				if (cnt != hashesToDownload.Count)
-				{
-					Trace.TraceError("{0} download failed - unexpected endo fo stream", Name);
-					return false;
-				}
-				Trace.TraceInformation("{0} download complete - {1}", Name, Utils.PrintByteLength(Length));
-				return true;
+			                if (!responseStream.ReadExactly(buf, 0, sizeLength, ref doneAll))
+			                {
+			                    Trace.TraceError("{0} download failed - unexpected endo fo stream", Name);
+			                    return false;
+			                }
+			                pool.PutToStorage(buf, hashesToDownload[cnt]);
+			                cnt++;
+			            }
+
+			            if (cnt != hashesToDownload.Count)
+			            {
+			                Trace.TraceError("{0} download failed - unexpected endo fo stream", Name);
+			                return false;
+			            }
+			            Trace.TraceInformation("{0} download complete - {1}", Name, Utils.PrintByteLength(Length));
+			        }
+			    }
+
+			    return true;
 			}
 			catch (Exception ex)
 			{

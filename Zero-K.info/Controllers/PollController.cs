@@ -170,7 +170,7 @@ namespace ZeroKWeb.Controllers
             var optionID = Convert.ToInt32(key.Substring(6));
 
             var db = new ZkDataContext();
-            var poll = Global.Account.ValidPolls(db).Single(x => x.PollID == pollID);
+            var poll = Account.ValidPolls(Global.Account, db).Single(x => x.PollID == pollID);
 
             if (!poll.PollOptions.Any(x => x.OptionID == optionID)) return Content("Invalid option");
 
@@ -203,7 +203,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult UserVotes(int id)
         {
             var db = new ZkDataContext();
-            var acc = db.Accounts.Single(x => x.AccountID == id);
+            var acc = id > 0 ? db.Accounts.Find(id) : null;
             return View("PollUserVotes", acc);
         }
     }

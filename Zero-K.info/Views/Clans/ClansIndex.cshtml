@@ -1,0 +1,65 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZeroKWeb.Controllers.ClansController.ClansModel
+@{
+    Page.Title = "List of PlanetWars clans";
+
+    var grid = new UniGrid<Clan>(Model.Data, "Zero-K clans");
+    grid.AddCol("Name", ClanNameCol).SetSort(x => x.ClanName);
+    grid.AddCol("Shortcut", x => Html.PrintClan(x)).SetSort(x => x.Shortcut);
+    if (GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
+    {
+        grid.AddCol("Faction", x => Html.PrintFaction(x.Faction)).SetSort(x => x.Faction.Name);
+        grid.AddCol("Planets", x => x.Accounts.Sum(y => y.Planets.Count())).SetSort(x => x.Accounts.Sum(y => y.Planets.Count()));
+    }
+    grid.AddCol("Commanders", x => x.Accounts.Count()).SetSort(x => x.Accounts.Count());
+    grid.AddCol("Level", x => (int?)x.Accounts.Average(y => (double?)y.Level)).SetSort(x => x.Accounts.Average(y => (double?)y.Level));
+    grid.AddCol("Elo", x => (int?)x.Accounts.Average(y => (double?)y.Elo)).SetSort(x => x.Accounts.Average(y => (double?)y.Elo));
+    if (GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
+    {
+        grid.AddCol("PlanetWars Elo", x => (int?)x.Accounts.Average(y => (double?)y.EloPw)).SetSort(x => x.Accounts.Average(y => (double?)y.EloPw));
+    }
+    if (Global.Clan == null)
+    {
+        grid.AddCol("", JoinClanCol);
+    }
+}
+
+@helper ClanNameCol(Clan c) {
+    <a href='@Url.Action("Detail", new { id = c.ClanID })' nicetitle="$clan$@c.ClanID">
+        <img src="@c.GetImageUrl()"/>@c.ClanName</a>
+}
+
+@helper JoinClanCol(Clan c) {
+    if (c.CanJoin(Global.Account))
+    {
+        <span class="textbutton">@Html.ActionLink("Join now!", "JoinClan", new { id = c.ClanID }, new { @class = "delete" })</span>
+        @(string.IsNullOrEmpty(c.Password) ? "" : "password")
+    }
+}
+
+<div id="clans">
+    @Html.Partial("FactionList")
+
+    <br/>
+
+    @if (Global.Clan == null)
+    {
+        <div>
+            To take a full part in <a href='@Url.Action("Index", "Planetwars")'>PlanetWars</a> join a clan. <br/>
+            You can also @Html.ActionLink("create new clan", "Create", "Clans")<br/>
+            @if (GlobalConst.MaxClanSkilledSize.HasValue)
+            {
+                <span>Clan size is limited to @GlobalConst.MaxClanSkilledSize people.</span>
+            }
+        </div>
+    }
+    @using (Ajax.BeginForm("Index", "Clans", Global.GetAjaxOptions("clans")))
+    {
+        <span>
+            Filter: @Html.TextBoxFor(x => x.Search, new { data_autocomplete = Url.Action("Clans", "Autocomplete"), data_autocomplete_action = "goto" })
+            &nbsp;<input type="submit" value="Search"/>
+        </span>
+        @GridHelpers.RenderTable(grid)
+    }
+</div>

@@ -25,17 +25,22 @@ namespace ZeroKWeb.ForumParser
         }
 
 
-        public string ProcessToHtml(string input, HtmlHelper html) {
-            var tags = ParseToTags(input);
+        public string TranslateToHtml(string input, HtmlHelper html) {
+            var tags = Parse(input);
             return RenderTags(tags, html);
         }
+
 
         /// <summary>
         ///     Parses input string to tag list
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public LinkedList<Tag> ParseToTags(string input) {
+        public LinkedList<Tag> Parse(string input) {
+            return RemoveNewlinesInHtml(EliminateUnclosedTags(SplitIntoTags(input)));
+        }
+
+        LinkedList<Tag> SplitIntoTags(string input) {
             var candidates = new List<Tag>();
             if (string.IsNullOrEmpty(input)) return new LinkedList<Tag>();
 
@@ -120,7 +125,7 @@ namespace ZeroKWeb.ForumParser
         /// </summary>
         /// <param name="input">parsed tags</param>
         /// <returns></returns>
-        public static LinkedList<Tag> EliminateUnclosedTags(LinkedList<Tag> input) {
+        static LinkedList<Tag> EliminateUnclosedTags(LinkedList<Tag> input) {
             var openedTagsStack = new Stack<Tag>();
             var toDel = new List<Tag>();
 
@@ -147,6 +152,24 @@ namespace ZeroKWeb.ForumParser
                 input.Find(pop).Value = new LiteralTag(pop.Text);
             }
 
+            return input;
+        }
+
+
+        /// <summary>
+        ///     Removes newlines from within html tags
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        static LinkedList<Tag> RemoveNewlinesInHtml(LinkedList<Tag> input) {
+            var htmlLevel = 0;
+
+            foreach (var tag in input)
+            {
+                if (tag.Mode == OpeningClosingMode.Opening && tag is HtmlTag) htmlLevel++;
+                else if (tag.Mode == OpeningClosingMode.Closing && tag is HtmlTag) htmlLevel--;
+                else if (tag is NewLineTag) if (htmlLevel > 0) input.Find(tag).Value = new LiteralTag(tag.Text);
+            }
             return input;
         }
 

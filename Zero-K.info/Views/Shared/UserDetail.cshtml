@@ -10,9 +10,9 @@
     }
 }
 
-@if (Model.AccountID == Global.AccountID)
+@if (Model.AccountID == Global.AccountID && Global.AccountID > 0)
 {
-    foreach (Poll p in Global.Account.ValidPolls().Where(x => x.IsHeadline && (x.RoleTargetAccountID == null || !x.PollVotes.Any(y => y.AccountID == Global.AccountID))))
+    foreach (Poll p in Account.ValidPolls(Global.Account).Where(x => x.IsHeadline && (x.RoleTargetAccountID == null || !x.PollVotes.Any(y => y.AccountID == Global.AccountID))))
     {
         Html.RenderAction("Index", "Poll", new { pollID = p.PollID });
     }
@@ -180,14 +180,14 @@
             {
                 @:Clan: @Html.PrintClan(Model.Clan)
             }
-            @if (Model.Faction != null && GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
+            @if (Model.Faction != null || Model.Clan != null)
             {
                 <br />
                 @Html.Partial("~/Views/Users/UserRoleList.cshtml", Model)
             }
 
         </div>
-                    }
+    }
 
 
     @if (Global.IsZeroKAdmin)
@@ -250,7 +250,7 @@
         if (Model.SpringBattlePlayers.Any())
         {
             <div id="usr_recentbattles" class="fleft border">
-                <h3>@Html.ActionLink("Last battles", "Index", "Battles", new { user = Model.Name }, null)</h3>
+                <h3>@Html.ActionLink("Last battles", "Index", "Battles", new { User1 = Model.Name }, null)</h3>
                 <span>
                     @Model.SpringBattlePlayers.Count(x => !x.IsSpectator) played, @Model.SpringBattlePlayers.Count(x => x.IsSpectator)
                     watched, @Model.MissionRunCount missions
@@ -267,7 +267,7 @@
         if (Model.ForumPosts.Any())
         {
             <div id="usr_forumposts" class="fleft border">
-                <h3>@Html.ActionLink("Posted threads", "Index", "Forum", new { User = Global.Account?.Name }, null)</h3>
+                <h3>@Html.ActionLink("Posted threads", "Index", "Forum", new { User = Model.Name }, null)</h3>
                 <span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
                 <br />
                 @foreach (ForumThread t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Where(x => x != null).Distinct().Take(10))
@@ -318,10 +318,29 @@
         }
     }
 
+    @if (Global.AccountID == Model.AccountID)
+    {
+        <h3 class="js_expand">Account maintenance</h3>
+        <div id="accountMaint" class="collapse width-90">
+            <h4>Change password</h4>
+            <form method="post" action="@Url.Action("ChangePassword", "Users")">
+                Old password: @Html.Password("oldPassword")<br />
+                New password: @Html.Password("newPassword")<br />
+                <input type="submit" />
+            </form>
+        </div>
+    }
+
     @if (Global.IsZeroKAdmin && Global.AccountID == Model.AccountID)
     {
         <div class="admin">
             <h3>Admin extras</h3>
+            @if (GlobalConst.Mode == ModeType.Test)
+            {
+                <a href="@Url.Action("ResetDB", "Admin")" class="js_confirm">Reset database (copy from live)</a><br/>
+            }
+            <a href="@Url.Action("ChatHistory", "Lobby")">Lobby chat history</a><br/>
+            <a href="@Url.Action("TraceLogs", "Admin")">Infrastructure trace logs</a><br/>
             <a href="@Url.Content("~/ResourceList.aspx")">Resource list</a><br />
             <a href="@Url.Action("BlockedVPNs", "Lobby")">Blocked VPNs</a><br />
             <a href="@Url.Action("ReportLog", "Users")">Abuse report log</a><br />

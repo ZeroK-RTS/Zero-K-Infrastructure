@@ -135,31 +135,6 @@ namespace ZeroKWeb.Controllers
 			return Content(ret);
 		}
 
-
-        public static CurrentLobbyStats GetCachedLobbyStats()
-        {
-            if (DateTime.UtcNow.Subtract(lastStatsCheck).TotalMinutes < 2) return cachedStats;
-            else
-            {
-                lastStatsCheck = DateTime.UtcNow;
-                try
-                {
-                    var ret = GetCurrentLobbyStats();
-
-                    cachedStats = ret;
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError("Error getting lobby stats: {0}", ex);
-                }
-
-                return cachedStats;
-            }
-        }
-
-        static CurrentLobbyStats cachedStats = new CurrentLobbyStats();
-        static DateTime lastStatsCheck = DateTime.MinValue;
-
         public class CurrentLobbyStats
         {
             public int UsersIdle;
@@ -174,18 +149,21 @@ namespace ZeroKWeb.Controllers
         static CurrentLobbyStats GetCurrentLobbyStats()
         {
             var ret = new CurrentLobbyStats();
-            ret.UsersIdle = Global.Server.ConnectedUsers.Values.Count(x => !x.User.IsBot && !x.User.IsInGame && !x.User.IsInBattleRoom);
-
-            foreach (var b in Global.Server.Battles.Values)
+            if (Global.Server != null)
             {
-                foreach (var u in b.Users.Values.Select(x => x.LobbyUser))
+                ret.UsersIdle = Global.Server.ConnectedUsers.Values.Count(x => !x.User.IsBot && !x.User.IsInGame && !x.User.IsInBattleRoom);
+
+                foreach (var b in Global.Server.Battles.Values)
                 {
-                    if (u.IsBot) continue;
-                    if (u.IsInGame) ret.UsersFighting++;
-                    else if (u.IsInBattleRoom) ret.UsersWaiting++;
+                    foreach (var u in b.Users.Values.Select(x => x.LobbyUser))
+                    {
+                        if (u.IsBot) continue;
+                        if (u.IsInGame) ret.UsersFighting++;
+                        else if (u.IsInBattleRoom) ret.UsersWaiting++;
+                    }
+                    if (b.IsInGame) ret.BattlesRunning++;
+                    else ret.BattlesWaiting++;
                 }
-                if (b.IsInGame) ret.BattlesRunning++;
-                else ret.BattlesWaiting++;
             }
 
             var lastMonth = DateTime.Now.AddDays(-31);
@@ -207,16 +185,24 @@ namespace ZeroKWeb.Controllers
             }
 			var db = new ZkDataContext();
 
-		    var prevMonth = DateTime.UtcNow.AddMonths(-1);
-			var result = new IndexResult()
+		    
+            var result = new IndexResult()
 			             {
 			             	Spotlight = SpotlightHandler.GetRandom(),
-			             	Top10Players =
-			             		db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > prevMonth)).OrderByDescending(
-			             			x => x.Elo1v1).Take(10)
+			             	Top10Players = MemCache.GetCached("top10",
+			             	    () =>
+			             	    {
+                                     var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
+                                     return db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout))
+                                             .OrderByDescending(x => x.Elo1v1)
+                                             .Take(10)
+                                             .ToList();
+
+                                 },60*10)
 			             };
 
-			result.LobbyStats = GetCachedLobbyStats();
+			result.LobbyStats =  MemCache.GetCached("lobby_stats", GetCurrentLobbyStats, 60*2);
+
 			result.News = db.News.Where(x => x.Created < DateTime.UtcNow).OrderByDescending(x => x.Created);
 			if (Global.Account != null) {
 				result.Headlines =
@@ -251,8 +237,7 @@ namespace ZeroKWeb.Controllers
 		}
 
 
-		
-		public ActionResult NotLoggedIn()
+	    public ActionResult NotLoggedIn()
 		{
 			return View();
 		}

@@ -128,11 +128,6 @@ ul {list-style-type: circle;}
 	text-align: center;
 }
 
-.text-left{text-align: left;}
-.text-right{text-align: right;}
-.text-center{text-align: center;}
-.text-justify{text-align: justify;}
-
 .block{display: block;}
 .inline{display: inline;}
 .hide{display: none;}

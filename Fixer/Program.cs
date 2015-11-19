@@ -16,6 +16,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using System.Xml.Serialization;
 //using LobbyClient;
 //using NightWatch;
@@ -180,8 +181,22 @@ namespace Fixer
             return false;
         }
 
+
+        public static void RenameAccount(int accountID, string newName)
+        {
+            var db = new ZkDataContext();
+            Account acc = db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
+            string oldName = acc.Name;
+            acc.SetName(newName);
+            Console.WriteLine("Renaming {0} to {1}", oldName, newName);
+            db.SubmitChanges();
+        }
+
         public static void FixStuff()
         {
+            //RenameAccount(359399, "IcyIcyIce2");
+            //RenameAccount(235316, "IcyIcyIce");
+
             //AddClanLeader(530, 5806);
             //
             //UpdateMissionProgression(13);
@@ -286,11 +301,56 @@ namespace Fixer
             using (var tw = new StreamWriter(fs)) js.Serialize(tw, GetMiniBats());
         }
 
+        public static void DeleteOldUsers() {
+            //GlobalConst.Mode = ModeType.Live;
+            var dbo = new ZkDataContext();
 
-        [STAThread]
+            var limit = DateTime.Now.AddMonths(-1);
+            var acid = dbo.Accounts.Where(x=>!x.IsBot && !x.SpringBattles.Any() && !x.ForumThreads.Any() && !x.SpringBattlePlayers.Any(z=>!z.IsSpectator) && x.MissionRunCount == 0 && !x.ForumPosts.Any() && !x.ContributionsByAccountID.Any() && x.LastLogin <= limit).OrderBy(x=>x.AccountID).Select(x => x.AccountID).ToList();
+
+            Console.WriteLine("Deleting: {0}", acid.Count);
+
+            //Console.WriteLine(dbo.Accounts.Where(x=>x.SpringBattlePlayers.Any(y=>y.IsSpectator)  && !x.SpringBattlePlayers.Any(y=>!y.IsSpectator)).Count());
+            
+            foreach (var id in acid)
+            {
+                try
+                {
+                    using (var db = new ZkDataContext())
+                    {
+                        var acc = db.Accounts.Find(id);
+                        db.ForumLastReads.RemoveRange(acc.ForumLastReads);
+                        db.ForumThreadLastReads.RemoveRange(acc.ForumThreadLastReads);
+                        db.SpringBattlePlayers.RemoveRange(acc.SpringBattlePlayers);
+                        db.AbuseReports.RemoveRange(acc.AbuseReportsByAccountID);
+                        db.AbuseReports.RemoveRange(acc.AbuseReportsByReporterAccountID);
+                        db.AccountRoles.RemoveRange(acc.AccountRolesByAccountID);
+                        db.Ratings.RemoveRange(acc.Ratings);
+                        db.MapRatings.RemoveRange(acc.MapRatings);
+                        db.PollVotes.RemoveRange(acc.PollVotes);
+                        db.SaveChanges();
+                        db.Accounts.Remove(acc);
+                        db.SaveChanges();
+                        Console.WriteLine("Deleted: {0}",id);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.InnerException.InnerException.Message);
+                }
+
+            }
+            //db.Accounts
+        }
+
+
         static void Main(string[] args) {
-            //var ret = new ForumWikiParser().ProcessToHtml("[B]bold[/b]", null);
-            return;
+            FixStuff();
+            //MigrateDatabase();
+            //return;
+
+            //DeleteOldUsers();
+            //return;
 
             /*
             //ImportWiki();
@@ -338,7 +398,6 @@ namespace Fixer
             //AddClanLeader();
             //return;
             //TestPwMatch();
-            FixStuff();
 
             //var guid = Guid.NewGuid().ToString();
 
@@ -428,8 +487,9 @@ namespace Fixer
 
         static void MigrateDatabase()
         {
-            var cloner = new DbCloner("zero-k_ef", "zero-k_test",
-                "Data Source=omega.licho.eu,100;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true");
+            GlobalConst.Mode = ModeType.Test;
+            var cloner = new DbCloner("zero-k", "zero-k_test", GlobalConst.ZkDataContextConnectionString);
+            cloner.LogEvent += s => { Console.WriteLine(s); };
             cloner.CloneAllTables();
         }
 

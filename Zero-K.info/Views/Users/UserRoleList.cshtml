@@ -3,26 +3,28 @@
 @model ZkData.Account
 
 @{
-    var db = new ZkDataContext();
     int index = 0;
 }
 
 @foreach (var entry in Model.AccountRolesByAccountID.OrderBy(x=>x.RoleType.DisplayOrder)) {
-    <span>
+    if (entry.RoleType.IsClanOnly || GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
+    {
+        <span>
         @Html.PrintRoleType(entry.RoleType) of @(entry.RoleType.IsClanOnly ? Html.PrintClan(entry.Clan) : Html.PrintFaction(entry.Faction, false))
     </span>
-    @Html.DisplayFor(x => entry)
-    <br/>
+        @Html.DisplayFor(x => entry)
+        <br/>
+    }
 }
 @if (Model.FactionID != null && Model.FactionID == Global.FactionID && !Model.Faction.IsDeleted)
 {
     foreach (var grp in new ZkDataContext().RoleTypes.Where(x => (x.RestrictFactionID == null || x.RestrictFactionID == Global.FactionID) && !x.AccountRoles.Any(y=>y.AccountID == Model.AccountID)).GroupBy(x => x.IsClanOnly)) {
         
-        if (!grp.Key)
+        if (!grp.Key && GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
         {
             <span>Possible faction roles: </span>
         }
-        else {
+        else if(grp.Key) {
             <span>Possible clan roles: </span>
         }
         <small>

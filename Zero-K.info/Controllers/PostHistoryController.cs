@@ -24,29 +24,34 @@ namespace ZeroKWeb.Views.Forum
             var db = new ZkDataContext();
             var post = db.ForumPosts.Find(id);
 
-            if (grSel!=null && grSel.Any())
-            {
-                string txt1;
-                string txt2;
-                ForumPostEdit edit1;
-                ForumPostEdit edit2;
+            string txt1;
+            string txt2;
 
+            if (grSel != null && grSel.Any())
+            {
                 if (grSel.Count > 1)
                 {
-                    edit1 = db.ForumPostEdits.Find(grSel.Min());
-                    edit2 = db.ForumPostEdits.Find(grSel.Max());
-                    txt1 = edit1.NewText;
-                    txt2 = edit2.NewText;
+                    txt1 = db.ForumPostEdits.Find(grSel.Min()).NewText;
+                    txt2 = db.ForumPostEdits.Find(grSel.Max()).NewText;
                 } else
                 {
-                    edit1 = edit2 = db.ForumPostEdits.Find(grSel.First());
-                    txt1 = edit1.OriginalText;
-                    txt2 = edit1.NewText;
+                    var edit = db.ForumPostEdits.Find(grSel.First());
+                    txt1 = edit.OriginalText;
+                    txt2 = edit.NewText;
                 }
 
                 var sd = new SideBySideDiffBuilder(new Differ());
                 ViewBag.DiffModel = sd.BuildDiffModel(txt1, txt2);
+            } else
+            {
+                var edit = post.ForumPostEdits.OrderByDescending(x => x.ForumPostEditID).FirstOrDefault();
+                if (edit != null)
+                {
+                    var sd = new SideBySideDiffBuilder(new Differ());
+                    ViewBag.DiffModel = sd.BuildDiffModel(edit.OriginalText, edit.NewText);
+                }
             }
+
 
             return View("PostHistoryIndex", post);
         }

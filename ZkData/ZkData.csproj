@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DbCloner.cs" />
     <Compile Include="Ef\ForumPostWord.cs" />
     <Compile Include="Ef\Word.cs" />
     <Compile Include="Ef\LobbyChatHistory.cs" />

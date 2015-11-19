@@ -761,6 +761,7 @@ namespace ZkData
                 .HasMany(e => e.ChildUnlocks)
                 .WithOptional(e => e.ParentUnlock)
                 .HasForeignKey(e => e.RequiredUnlockID);
+
         }
 
         static ZkDataContext()

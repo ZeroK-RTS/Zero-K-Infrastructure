@@ -28,8 +28,12 @@ namespace ZeroKWeb.ForumParser
         public override bool? AcceptsLetter(ParseContext context, char letter) {
             if (letter == '_')
             {
-                var lastLit = (context.PreviousTag?.Value as LiteralTag);
-                if (lastLit?.Text.IsValidLink() == true) return false;
+                if (context.PreviousTag?.Value is SpaceTag || context.PreviousTag?.Value is NewLineTag || context.NextChar == ' ' ||
+                    context.NextChar == '\r' || context.NextChar == '\n')
+                {
+                    var lastLit = (context.PreviousTag?.Value as LiteralTag);
+                    if (lastLit?.Text.IsValidLink() == true) return false;
+                } else return false;
             }
             return base.AcceptsLetter(context, letter);
         }

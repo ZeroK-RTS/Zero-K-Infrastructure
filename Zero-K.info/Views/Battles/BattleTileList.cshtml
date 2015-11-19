@@ -1,9 +1,9 @@
-﻿@model IList<ZeroKWeb.Controllers.BattleQuickInfo>
+﻿@model ZeroKWeb.Controllers.BattlesController.BattleSearchModel
 
 @{
   Layout = "";
 }
-@foreach (var m in Model) {
+@foreach (var m in Model.Data) {
   var players = m.Players.Count(p => !p.IsSpectator);
   var specs = m.Players.Count(p => p.IsSpectator);
 	<a href='@Url.Action("Detail", new { id = m.Battle.SpringBattleID })'>

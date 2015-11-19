@@ -62,8 +62,7 @@ namespace ZeroKWeb
         }
 
         public void IndexPost(ForumPost post) {
-            var words =
-                ForumWikiParser.EliminateUnclosedTags(parser.ParseToTags(post.Text))
+            var words = parser.Parse(post.Text)
                     .Where(x => x is LiteralTag && x.Text?.Length < 100)
                     .Select(x => SanitizeWord(x.Text))
                     .Where(x => !string.IsNullOrEmpty(x))

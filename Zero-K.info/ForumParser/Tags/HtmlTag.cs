@@ -69,7 +69,7 @@ namespace ZeroKWeb.ForumParser
 
             if (context.MatchedString.Length > 2 && letter == '>')
             {
-                var tag = Regex.Match(context.MatchedString, "</?([a-z]+)[ />]").Groups[1].Value;
+                var tag = Regex.Match(context.MatchedString, "</?([a-z0-9]+)[ />]",RegexOptions.IgnoreCase).Groups[1].Value;
 
                 // invalid opening tag
                 if (!validTags.ContainsKey(tag)) return false;
@@ -107,7 +107,7 @@ namespace ZeroKWeb.ForumParser
             else if (text.StartsWith("</")) mode = OpeningClosingMode.Closing;
             else mode = OpeningClosingMode.Opening;
 
-            htmlTag = Regex.Match(text, "</?([a-z]+)[ />]").Groups[1].Value;
+            htmlTag = Regex.Match(text, "</?([a-z0-9]+)[ />]", RegexOptions.IgnoreCase).Groups[1].Value;
 
             if (mode == OpeningClosingMode.Closing)
             {
@@ -126,7 +126,7 @@ namespace ZeroKWeb.ForumParser
                 var name = attr.Name.ToString();
 
                 if (!validAttrs.Contains(name)) parsed.SetAttributeValue(attr.Name, null);
-                if ((name == "src" || name == "href") && !attr.Value.IsValidLink()) parsed.SetAttributeValue(attr.Name, null);
+                if ((name == "src" || name == "href") && !attr.Value.IsValidLinkOrRelativeUrl()) parsed.SetAttributeValue(attr.Name, null);
             }
 
             text = parsed.ToString(); // turn back to string

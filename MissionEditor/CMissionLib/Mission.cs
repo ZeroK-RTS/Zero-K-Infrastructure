@@ -675,8 +675,8 @@ namespace CMissionLib
 			sb.AppendFormat("  description   =	[[{0}]],\n", "Mission Mutator"); // the real description might break archivecache.lua
 			sb.AppendFormat("  modtype       =	[[{0}]],\n", hideFromModList ? 0 : 1);
 			sb.AppendFormat("  shortname     =	[[{0}]],\n", mod.ShortName);
-			sb.AppendFormat("  shortgame     =	[[{0}]],\n", mod.ShortGame);
-			sb.AppendFormat("  shortbasename =	[[{0}]],\n", mod.ShortBaseName);
+			//sb.AppendFormat("  shortgame     =	[[{0}]],\n", mod.ShortGame);
+			//sb.AppendFormat("  shortbasename =	[[{0}]],\n", mod.ShortBaseName);
 			sb.AppendLine("  depend = {");
 			sb.AppendFormat("    [[{0}]]\n", Mod.Name);
 			sb.AppendLine("  },");

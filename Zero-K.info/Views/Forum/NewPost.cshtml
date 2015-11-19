@@ -8,8 +8,13 @@
 
 @if (Model.CurrentThread != null)
 {
-    <h1>@(!string.IsNullOrEmpty(Model.CurrentThread.WikiKey) ? "[" + Model.CurrentThread.WikiKey + "]" : "") @Model.CurrentThread.Title</h1>
-} else
+    <h1>@Model.CurrentThread.Title</h1>
+    if (!string.IsNullOrEmpty(Model.CurrentThread.WikiKey))
+    {
+        <h2><a href="@Url.Action("Index", "Wiki", new { node = Model.CurrentThread.WikiKey })">@("[" + Model.CurrentThread.WikiKey + "]")</a></h2>
+    }
+}
+else
 {
     <h3>Post new topic</h3>
 }

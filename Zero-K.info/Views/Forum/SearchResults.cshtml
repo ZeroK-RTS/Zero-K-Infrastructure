@@ -58,7 +58,7 @@ else
 				<td>@Html.PrintAccount(t.AccountByCreatedAccountID)</td>
 				<td>@t.PostCount</td>
 				<td>@t.ViewCount</td>
-				<td>@t.LastPost.ToAgoString() <br /> @Html.PrintAccount(t.AccountByLastPostAccountID)</td>
+				<td>@Html.PrintDate(t.LastPost) <br /> @Html.PrintAccount(t.AccountByLastPostAccountID)</td>
 			</tr>
 			tog = !tog;
 		}

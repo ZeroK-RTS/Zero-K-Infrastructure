@@ -20,8 +20,10 @@ niceTitlesJS.initNiceTitles = function () {
 niceTitlesJS.ieFixTitleField = function () {
     $("[title]").each(
       function (index) {
-          $(this).attr("nicetitle", $(this).attr("title"));
-          $(this).removeAttr("title");
+          if (!$(this).hasClass("js_dialog")) {
+              $(this).attr("nicetitle", $(this).attr("title"));
+              $(this).removeAttr("title");
+          }
       }
     );
 }

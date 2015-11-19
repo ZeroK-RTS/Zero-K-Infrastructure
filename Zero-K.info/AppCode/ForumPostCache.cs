@@ -52,7 +52,7 @@ namespace ZeroKWeb
             else
             {
                 var parser =new ForumWikiParser();
-                parsed = new MvcHtmlString(parser.ProcessToHtml(post.Text, html));
+                parsed = new MvcHtmlString(parser.TranslateToHtml(post.Text, html));
                 cache[GetKey(post)] = parsed;
             }
             return parsed;
@@ -65,7 +65,7 @@ namespace ZeroKWeb
             else
             {
                 var parser = new ForumWikiParser();
-                parsed = new MvcHtmlString(parser.ProcessToHtml(post.Text, html));
+                parsed = new MvcHtmlString(parser.TranslateToHtml(post.Text, html));
                 cache[GetKey(post)] = parsed;
             }
             return parsed;

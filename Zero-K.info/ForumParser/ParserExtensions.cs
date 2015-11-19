@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using Antlr.Runtime.Misc;
 
 namespace ZeroKWeb.ForumParser
 {
@@ -13,7 +13,7 @@ namespace ZeroKWeb.ForumParser
         }
 
 
-        public static string GetOriginalContentWhileCondition(this LinkedListNode<Tag> node, Func<LinkedListNode<Tag>, bool> whileCondition) {
+        public static string GetOriginalContentWhileCondition(this LinkedListNode<Tag> node, Antlr.Runtime.Misc.Func<LinkedListNode<Tag>, bool> whileCondition) {
             var sb = new StringBuilder();
             while (node != null && whileCondition(node))
             {
@@ -35,13 +35,13 @@ namespace ZeroKWeb.ForumParser
             return node.GetOriginalContentWhileCondition(x => !(x.Value is SpaceTag) && !(x.Value is NewLineTag));
         }
 
-        public static LinkedListNode<Tag> TranslateWhile(this LinkedListNode<Tag> startNode, TranslateContext context, Func<LinkedListNode<Tag>, bool> condition) {
+        public static LinkedListNode<Tag> TranslateWhile(this LinkedListNode<Tag> startNode, TranslateContext context, Antlr.Runtime.Misc.Func<LinkedListNode<Tag>, bool> condition) {
             var n = startNode;
             while (n != null && condition(n)) n = n.Value.Translate(context, n);
             return n;
         }
 
-        public static LinkedListNode<Tag> FirstNode(this LinkedListNode<Tag> startNode, Func<LinkedListNode<Tag>, bool> condition) {
+        public static LinkedListNode<Tag> FirstNode(this LinkedListNode<Tag> startNode, Antlr.Runtime.Misc.Func<LinkedListNode<Tag>, bool> condition) {
             while (startNode != null)
             {
                 if (condition(startNode)) return startNode;
@@ -50,7 +50,7 @@ namespace ZeroKWeb.ForumParser
             return null;
         }
 
-        public static LinkedListNode<Tag> FirstNodeReverse(this LinkedListNode<Tag> startNode, Func<LinkedListNode<Tag>, bool> condition) {
+        public static LinkedListNode<Tag> FirstNodeReverse(this LinkedListNode<Tag> startNode, Antlr.Runtime.Misc.Func<LinkedListNode<Tag>, bool> condition) {
             while (startNode != null)
             {
                 if (condition(startNode)) return startNode;
@@ -78,6 +78,13 @@ namespace ZeroKWeb.ForumParser
         public static bool IsValidLink(this string content) {
             if (string.IsNullOrEmpty(content)) return false;
             return linkMatcher.IsMatch(content);
+        }
+
+        public static bool IsValidLinkOrRelativeUrl(this string content)
+        {
+            if (string.IsNullOrEmpty(content)) return false;
+            Uri parsed;
+            return linkMatcher.IsMatch(content) || Uri.TryCreate(content, UriKind.Relative, out parsed);
         }
 
         public static char ToLower(this char high) {

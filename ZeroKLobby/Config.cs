@@ -43,7 +43,7 @@ namespace ZeroKLobby
 
 
 
-        StringCollection autoJoinChannels = new StringCollection() { KnownGames.GetDefaultGame().Channel };
+        StringCollection autoJoinChannels = new StringCollection() { };
         bool connectOnStartup = true;
         Color fadeColor = Color.Gray;
         StringCollection friends = new StringCollection(); // lacks events for adding friends immediatly
