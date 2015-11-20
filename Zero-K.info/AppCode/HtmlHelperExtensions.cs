@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Web.Mvc.Html;
 using System.Web.WebPages;
 using ZeroKWeb;
+using ZeroKWeb.ForumParser;
 using ZkData;
 
 namespace System.Web.Mvc
@@ -41,121 +42,20 @@ namespace System.Web.Mvc
         /// <summary>
         /// Uses regexes to turn a string into BBcode
         /// </summary>
-        // todo all calls must provide helper!
         public static MvcHtmlString BBCode(this HtmlHelper helper, string str) {
             if (str == null) return null;
-
-            str = HttpUtility.HtmlEncode(str);
-            str = ProcessAtSignTags(str);
-
-            Regex exp;
-            // format the bold tags: [b][/b]
-            // becomes: <strong></strong>
-            exp = new Regex(@"\[b\]((.|\n)+?)\[/b\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<strong>$1</strong>");
-
-            // format the quote tags: [quote][/quote] and [q][/q]
-            // becomes: stuff
-            exp = new Regex(@"\[(quote|q)\]((.|\n)+?)\[/(quote|q)\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str,
-            	"<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\">"+
-            	"<tbody><tr><td style=\"border: 1px inset;\">"+
-            	"<em>quote:<br/>$2</em>"+
-            	"</td></tr></tbody>"+
-            	"</table>");
-            
-            // format the italic tags: [i][/i]
-            // becomes: <em></em>
-            exp = new Regex(@"\[i\]((.|\n)+?)\[/i\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<em>$1</em>");
-
-            // format the underline tags: [u][/u]
-            // becomes: <u></u>
-            exp = new Regex(@"\[u\]((.|\n)+?)\[/u\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<u>$1</u>");
-
-            // format the strike tags: [s][/s]
-            // becomes: <strike></strike>
-            exp = new Regex(@"\[s\]((.|\n)+?)\[/s\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<strike>$1</strike>");
-
-                        // format the url tags: [url=www.website.com]my site[/url]
-            // becomes: <a href="www.website.com">my site</a>
-            exp = new Regex(@"\[url\=([^\]]+)\]([^\]]+)\[/url\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\">$2</a>");
-
-            // format the img tags: [img]www.website.com/img/image.jpeg[/img]
-            // becomes: <img src="www.website.com/img/image.jpeg" />
-            exp = new Regex(@"\[img\]([^\[]+)\[/img\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\" ><img src=\"$1\" max-width=\"100%\" height=\"auto\"/></a>");
-
-            // format img tags with alt: [img=www.website.com/img/image.jpeg]this is the alt text[/img]
-            // becomes: <img src="www.website.com/img/image.jpeg" alt="this is the alt text" />
-            exp = new Regex(@"\[img\=([^\]]+)\]([^\]]+)\[/img\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<a href=\"$1\" target=\"_blank\" ><img src=\"$1\" alt=\"$2\" max-width=\"100%\" height=\"auto\" /></a>");
-
-            //format the colour tags: [color=red][/color]
-            // becomes: <font color="red"></font>
-            // supports UK English and US English spelling of colour/color
-            exp = new Regex(@"\[(color|colour)\=([^\]]+)\]([^\]]+)\[/(color|colour)\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<font color=\"$2\">$3</font>");
-
-            // format the size tags: [size=3][/size]
-            // becomes: <font size="+3"></font>
-            exp = new Regex(@"\[size\=([^\]]+)\]([^\]]+)\[/size\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, "<font size=\"+$1\">$2</font>");
-
-            str = Regex.Replace(str, @"(^|[\s])((mailto|spring|http|https|ftp|ftps)\://\S+)", @"$1<a href='$2'>$2</a>");
-
-            // lastly, replace any new line characters with <br />
-            str = str.Replace("\r\n", "<br/>\r\n");
-            
-
-            // embed player to display videos (supported: mp4, 3gp, webm, ogg, ogv, gifv)
-            exp = new Regex(@"\[vid\](https?\:\/\/)((\w|-|_|\.|\/)+\.)(mp4|webm|ogg|ogv|3gp|gifv)\[/vid\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, 
-                "<div class=\"video-container\">"+
-                    "<video preload=\"auto\" height=\"auto\" width=\"auto\" controls=\"controls\">" +
-                        "<source type=\"video/webm\" src=\"$1$2" + "webm\">"+
-                        "<source type=\"video/mp4\" src=\"$1$2" + "mp4\">" +
-                        "<source type=\"video/ogg\" src=\"$1$2" + "ogg\">" +
-                        "<source type=\"video/ogv\" src=\"$1$2" + "ogv\">" +
-                        "<source type=\"video/3gp\" src=\"$1$2" +"3gp\">" +
-                        "Your browser does not support the video tag. Find out if your Browser is supported at www.w3schools.com/tags/tag_video.asp" +
-                    "</video>"+
-                "</div>");
-
-            // embed player to display gifv (supported: gifv)
-            exp = new Regex(@"\[gifv\](https?\:\/\/)((\w|-|_|\.|\/)+\.)(gifv|mp4|webm|gif)\[/gifv\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str,
-                "<div class=\"video-container\">" +
-                    "<video preload=\"auto\" height=\"auto\" width=\"auto\" autoplay=\"autoplay\" muted=\"muted\" loop=\"loop\" >" +
-                        "<source type=\"video/webm\" src=\"$1$2webm\">" +
-                        "<source type=\"video/mp4\" src=\"$1$2mp4\">" +
-                        "Your browser does not support the video tag. Find out if your Browser is supported at www.w3schools.com/tags/tag_video.asp" +
-                    "</video>" +
-                "</div>");
-            		
-            // spoiler tags: [spoiler]spoiler_text[/spoiler]
-            // becomes: [Spoiler] and onClick displays the inner Content "spoiler_text" 
-            // (taken from jquery.expand.js -> "post score below threshold")
-            exp = new Regex(@"\[spoiler\]([^\[]+)\[/spoiler\]", RegexOptions.IgnoreCase);
-            str = exp.Replace(str, 
-            	"<small class=\"expand\">" + 
-		"<a nicetitle-processed=\"Expand/Collapse\" style=\"display:block\" href=\"#\">[Spoiler]</a>" + 
-		"</small>" + 
-		"<div style=\"display: none;\" class=\"collapse\">" +
-                "$1" +
-                "</div>");
-            			
-            if (helper != null) {
-                // todo remove condition in the future
-                exp = new Regex(@"\[poll\]([0-9]+)\[/poll\]", RegexOptions.IgnoreCase);
-                str = exp.Replace(str, m => helper.Action("Index", "Poll", new { pollID = m.Groups[1].Value }).ToHtmlString());
-            }
-
-            return new MvcHtmlString(str);
+            return new MvcHtmlString(new ForumWikiParser().TranslateToHtml(str, helper));
         }
+
+        public static MvcHtmlString BBCodeCached(this HtmlHelper helper, ForumPost post) {
+            return Global.ForumPostCache.GetCachedHtml(post, helper);
+        }
+
+        public static MvcHtmlString BBCodeCached(this HtmlHelper helper, News news)
+        {
+            return Global.ForumPostCache.GetCachedHtml(news, helper);
+        }
+
 
         /// <summary>
         /// Used for boolean dropdown selections on the site; e.g. map search filter
@@ -195,7 +95,9 @@ namespace System.Web.Mvc
 
 
         public static MvcHtmlString IncludeWiki(this HtmlHelper helper, string node) {
-            return new MvcHtmlString(WikiHandler.LoadWiki(node, "", true));
+            var post = new ZkDataContext().ForumThreads.FirstOrDefault(x => x.WikiKey == node)?.ForumPosts.OrderBy(x => x.ForumPostID).FirstOrDefault();
+            if (post == null) return null;
+            return Global.ForumPostCache.GetCachedHtml(post, helper);
         }
 
         /// <summary>
@@ -237,7 +139,13 @@ namespace System.Web.Mvc
                 }
             }
 
-            return new MvcHtmlString(string.Format(format, link, HttpUtility.HtmlEncode(thread.Title)));
+            string title = HttpUtility.HtmlEncode(thread.Title);
+            if (!string.IsNullOrEmpty(thread.WikiKey))
+            {
+                title = string.Format("<span style='color:lightblue'>[{0}]</span> {1}", thread.WikiKey, title);
+            }
+
+            return new MvcHtmlString(string.Format(format, link, title));
         }
 
         /// <summary>
@@ -286,6 +194,16 @@ namespace System.Web.Mvc
                             clanStr,
                             dudeStr));
             }
+        }
+
+        public static MvcHtmlString PrintDate(this HtmlHelper helper, DateTime? dateTime) {
+            return new MvcHtmlString($"<span nicetitle=\"{dateTime}\">{dateTime.ToAgoString()}</span>");    
+        }
+
+        public static MvcHtmlString PrintSeconds(this HtmlHelper helper, int? seconds)
+        {
+            if (seconds != null) return new MvcHtmlString($"<span nicetitle=\"{seconds}\">{TimeSpan.FromSeconds(seconds.Value).ToNiceString()}</span>");
+            else return new MvcHtmlString("");
         }
 
         /// <summary>
@@ -711,7 +629,7 @@ namespace System.Web.Mvc
         ///     <para>The tooltip displays the people who voted for each option</para>
         /// </summary>
         /// <param name="blockPost">Removes the vote links; is true if the viewer's <see cref="Account"/> is banned or has too many net downvotes</param>
-        public static MvcHtmlString PrintPostRating(this HtmlHelper helper, ForumPost post, bool blockPost) {
+        public static MvcHtmlString PrintPostRating(this HtmlHelper helper, ForumPost post, bool blockPost = false) {
             var url = Global.UrlHelper();
             bool noLink = (Global.Account == null || Global.AccountID == post.AuthorAccountID || Global.Account.Level < GlobalConst.MinLevelForForumVote || Global.Account.VotesAvailable <= 0 || blockPost);
             AccountForumVote previousVote = post.AccountForumVotes.SingleOrDefault(x => x.AccountID == Global.AccountID);
@@ -859,129 +777,31 @@ namespace System.Web.Mvc
             if (timeSpan.TotalHours < 2) return string.Format("{0} minutes", (int)timeSpan.TotalMinutes);
             if (timeSpan.TotalDays < 2) return string.Format("{0} hours", (int)timeSpan.TotalHours);
             if (timeSpan.TotalDays < 60) return string.Format("{0} days", (int)timeSpan.TotalDays);
-            return string.Format("{0} months", (int)(timeSpan.TotalDays/30));
+            if (timeSpan.TotalDays < 365*2) return string.Format("{0} months", (int)(timeSpan.TotalDays / 30));
+            return string.Format("{0} years", (int)(timeSpan.TotalDays/365));
         }
+
+
+        public static MvcHtmlString EnumCheckboxesFor<TModel, TEnum>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, IList<TEnum>>> expression, IList<TEnum> hideList = null)
+        {
+            var listing = (IList<TEnum>)ModelMetadata.FromLambdaExpression(expression, htmlHelper.ViewData).Model;
+            var name = ExpressionHelper.GetExpressionText(expression);
+            var sb = new StringBuilder();
+            foreach (var val in Enum.GetValues(typeof(TEnum)))
+            {
+                if (hideList != null && hideList.Contains((TEnum)val)) continue;
+                var isSelected = listing == null;
+                if (listing != null) isSelected = listing.Contains((TEnum)val);
+                sb.AppendFormat("<label><input type='checkbox' name='{0}' value='{1}' {2}/>{3}</label>",
+                                name,
+                                (int)val,
+                                isSelected ? "checked='checked'" : "",
+                                Utils.Description((Enum)val));
+
+            }
+
+            return new MvcHtmlString(sb.ToString());
+        }
+
     }
 }
-
-// backup
-//    public static class HtmlHelperExtensions
-//    {
-//        public static MvcHtmlString AccountAvatar(this HtmlHelper helper, Account account) {
-//            return new MvcHtmlString(string.Format("<img src='/img/avatars/{0}.png' class='avatar'>", account.Avatar));
-//        }
-//
-//        // todo all calls must provide helper!
-//        public static MvcHtmlString BBCode(this HtmlHelper helper, string str) {
-//            if (str == null) return null;
-//            Regex exp;
-//            MatchCollection matches;
-//
-//            str = HttpContext.Current.Server.HtmlEncode(str);
-//            str = ProcessAtSignTags(str);
-//
-//            // remove javascript
-//            exp = new Regex("(\\<script(.+?)\\</script\\>)|(\\<style(.+?)\\</style\\>)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-//            str = exp.Replace(str, "");
-//
-//            // format the bold tags: [b][/b]
-//            // becomes: <strong></strong>
-//            exp = new Regex(@"\[b\]((.|\n)+?)\[/b\]", RegexOptions.IgnoreCase);
-//            str = exp.Replace(str, "<strong>$1</strong>");
-//
-//            // format the quote tags: [quote][/quote]
-//            // becomes: stuff
-//            exp = new Regex(@"\[quote\]((.|\n)+?)\[/quote\]", RegexOptions.IgnoreCase);
-//            str = exp.Replace(str,
-//                              "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br/>$1</em></td></tr></tbody></table>");
-//
-//            // format the italic tags: [i][/i]
-//            // becomes: <em></em>
-//            exp = new Regex(@"\[i\]((.|\n)+?)\[/i\]", RegexOptions.IgnoreCase);
-//            str = exp.Replace(str, "<em>$1</em>");
-//
-//            // format the underline tags: [u][/u]
-//            // becomes: <u></u>
-//            exp = new Regex(@"\[u\]((.|\n)+?)\[/u\]", RegexOptions.IgnoreCase);
-//            str = exp.Replace(str, "<u>$1</u>");
-//
-//            // format the strike tags: [s][/s]
-//            // becomes: <strike></strike>
-//            exp = new Regex(@"\[s\]((.|\n)+?)\[/s\]", RegexOptions.IgnoreCase);
-//            str = exp.Replace(str, "<strike>$1</strike>");
-//
-//            // format the url tags: [url=www.website.com]my site[/url]
-//            // becomes: <a href="www.website.com">my site</a>
-//            exp = new Regex(@"\[url\=([^\]]+)\]([^\]]+)\[/url\]", RegexOptions.IgnoreCase);
-//            str = exp.Replace(str, "<a href=\"$1\">$2</a>");
-//
-//            // format the img tags: [img]www.website.com/img/image.jpeg[/img]
-//            // becomes: <img src="www.website.com/img/image.jpeg" />
-//            exp = new Regex(@"\[img\]([^\[]+)\[/img\]", RegexOptions.IgnoreCase);
-//            matches = exp.Matches(str);
-//            foreach (Match match in matches)
-//            {
-//                string[] names = exp.GetGroupNames();
-//                string url = match.Groups[names[1]].Value;
-//                str = exp.Replace(str, ZeroKWeb.BBCodeHandler.Image(null, url), 1);
-//            }
-//
-//            // format img tags with alt: [img=www.website.com/img/image.jpeg]this is the alt text[/img]
-//            // becomes: <img src="www.website.com/img/image.jpeg" alt="this is the alt text" />
-//            exp = new Regex(@"\[img\=([^\]]+)\]([^\]]+)\[/img\]", RegexOptions.IgnoreCase);
-//            matches = exp.Matches(str);
-//            foreach (Match match in matches)
-//            {
-//                string[] names = exp.GetGroupNames();
-//                string url = match.Groups[names[1]].Value;
-//                string alt = match.Groups[names[2]].Value;
-//                str = exp.Replace(str, ZeroKWeb.BBCodeHandler.Image(null, url, alt), 1);
-//            }
-//
-//            //format the colour tags: [color=red][/color]
-//            // becomes: <font color="red"></font>
-//            // supports UK English and US English spelling of colour/color
-//            exp = new Regex(@"\[color\=([^\]]+)\]([^\]]+)\[/color\]", RegexOptions.IgnoreCase);
-//            matches = exp.Matches(str);
-//            foreach (Match match in matches)
-//            {
-//                string[] names = exp.GetGroupNames();
-//                string color = match.Groups[names[1]].Value;
-//                string inner = match.Groups[names[2]].Value;
-//                str = exp.Replace(str, ZeroKWeb.BBCodeHandler.Color(null, color, inner), 1);
-//            }
-//            exp = new Regex(@"\[colour\=([^\]]+)\]([^\]]+)\[/colour\]", RegexOptions.IgnoreCase);
-//            matches = exp.Matches(str);
-//            foreach (Match match in matches)
-//            {
-//                string[] names = exp.GetGroupNames();
-//                string color = match.Groups[names[1]].Value;
-//                string inner = match.Groups[names[2]].Value;
-//                str = exp.Replace(str, ZeroKWeb.BBCodeHandler.Color(null, color, inner), 1);
-//            }
-//
-//            // format the size tags: [size=3][/size]
-//            // becomes: <font size="+3"></font>
-//            exp = new Regex(@"\[size\=([^\]]+)\]([^\]]+)\[/size\]", RegexOptions.IgnoreCase);
-//            matches = exp.Matches(str);
-//            foreach (Match match in matches)
-//            {
-//                string[] names = exp.GetGroupNames();
-//                string size = "+" + match.Groups[names[1]].Value;
-//                string inner = match.Groups[names[2]].Value;
-//                str = exp.Replace(str, ZeroKWeb.BBCodeHandler.Size(null, size, inner), 1);
-//            }
-//
-//            str = Regex.Replace(str, @"(^|[\s])((mailto|spring|http|https|ftp|ftps)\://\S+)", @"$1<a href='$2'>$2</a>");
-//
-//            // lastly, replace any new line characters with <br/>
-//            str = str.Replace("\r\n", "<br/>\r\n");
-//
-//            if (helper != null) {
-//                // todo remove condition in the future
-//                exp = new Regex(@"\[poll\]([0-9]+)\[/poll\]", RegexOptions.IgnoreCase);
-//                str = exp.Replace(str, m => helper.Action("Index", "Poll", new { pollID = m.Groups[1].Value }).ToHtmlString());
-//            }
-//
-//            return new MvcHtmlString(str);
-//        }

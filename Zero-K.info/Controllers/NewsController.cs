@@ -33,7 +33,7 @@ namespace ZeroKWeb.Controllers
         /// </summary>
         /// <param name="nn">The existing <see cref="News"/> item, if editing</param>
         /// <remarks>Also makes or edits a <see cref="ForumThread"/> and its starting <see cref="ForumPost"/></remarks>
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
 		public ActionResult PostNews(News nn, HttpPostedFileBase image)
 		{
 			if (string.IsNullOrEmpty(nn.Title) || string.IsNullOrEmpty(nn.Text)) return Content("Empty text!");
@@ -71,7 +71,7 @@ namespace ZeroKWeb.Controllers
                                      Created = news.Created,
                                      CreatedAccountID = news.AuthorAccountID,
                                      Title = news.Title,
-                                     ForumCategoryID = db.ForumCategories.Single(x => x.IsNews).ForumCategoryID
+                                     ForumCategoryID = db.ForumCategories.Single(x => x.ForumMode == ForumMode.News).ForumCategoryID
                                  };
 
                     

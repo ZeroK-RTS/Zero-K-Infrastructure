@@ -48,10 +48,13 @@ local lastFinishedUnits = {} -- key: teamID, value: unitID
 local allowTransfer = false
 local factoryExpectedUnits = {} -- key: factoryID, value: {unitDefID, groups: group set}
 local repeatFactoryGroups = {} -- key: factoryID, value: group set
-local objectives = {}	-- [index] = {id, title, description, color, target}	-- important: widget must be able to access on demand
+local ghosts = {} -- key: incrementing index, value: unit details  -- TODO
+local objectives = {}	-- [index] = {id, title, description, color, unitsOrPositions = {}}	-- important: widget must be able to access on demand
+local unitsWithObjectives = {}
 local wantUpdateDisabledUnits = false
 
 _G.displayedCountdowns = displayedCountdowns
+_G.lastFinishedUnits = lastFinishedUnits
 _G.factoryExpectedUnits = factoryExpectedUnits
 _G.repeatFactoryGroups = repeatFactoryGroups
 
@@ -62,6 +65,7 @@ GG.mission = {
   unitGroups = unitGroups,
   triggers = triggers,
   allTriggers = allTriggers,
+  ghosts = ghosts,
   objectives = objectives,
   cheatingWasEnabled = cheatingWasEnabled,
   allowTransfer = allowTransfer,
@@ -500,6 +504,18 @@ local actionsTable = {
           for unitID in pairs(FindUnitsInGroup(action.args.group)) do
             Spring.DestroyUnit(unitID, true, not action.args.explode)
           end
+          
+          for i=#ghosts,1,-1 do
+            local ghost = ghosts[i]
+            for group in pairs(ghost.groups) do
+              if (group == action.args.group) then
+                SendToUnsynced("GhostRemovedEvent", i)
+                table.remove(ghosts, i)
+                break
+              end
+            end
+          end
+          
         end,
   ExecuteTriggersAction = function(action)
           for _, triggerIndex in ipairs(action.args.triggers) do
@@ -672,27 +688,29 @@ local actionsTable = {
           local gameframe = Spring.GetGameFrame()
           for _, unit in ipairs(action.args.units) do
             if Spring.GetTeamInfo(unit.player) then
+              local ud = UnitDefNames[unit.unitDefName]
+              local isBuilding = ud.isBuilding or ud.isFactory or not ud.canMove
+              local cardinalHeading = "n"
+              if unit.heading > 45 and unit.heading <= 135 then
+                cardinalHeading = "e"
+              elseif unit.heading > 135 and unit.heading <= 225 then
+                cardinalHeading = "s"
+              elseif unit.heading > 225 and unit.heading <= 315 then
+                cardinalHeading = "w"
+              end
+              
               if unit.isGhost then
                 for group in pairs(unit.groups) do
                   unit[#unit + 1] = group
                 end
+                unit.cardinalHeading = cardinalHeading
+                unit.isBuilding = isBuilding
+                local ghostID = #ghosts+1
+                ghosts[ghostID] = unit
                 _G.ghostEventArgs = unit
-                SendToUnsynced("GhostEvent")
+                SendToUnsynced("GhostEvent", ghostID)
                 _G.ghostEventArgs = nil
               else
-                local ud = UnitDefNames[unit.unitDefName]
-                local isBuilding = ud.isBuilding or ud.isFactory or not ud.canMove
-                local cardinalHeading = "n"
-                --if isBuilding then
-                  if unit.heading > 45 and unit.heading <= 135 then
-                    cardinalHeading = "e"
-                  elseif unit.heading > 135 and unit.heading <= 225 then
-                    cardinalHeading = "s"
-                  elseif unit.heading > 225 and unit.heading <= 315 then
-                    cardinalHeading = "w"
-                  end
-                --end
-                
                 -- ZK mex placement
                 if ud.customParams.ismex and GG.metalSpots then
                   local function GetClosestMetalSpot(x, z)
@@ -916,7 +934,7 @@ local actionsTable = {
           end
         end,
   AddObjectiveAction = function(action)
-          objectives[#objectives+1] = {id = action.args.id, title = action.args.title, description = action.args.description, status = "Incomplete"}
+          objectives[#objectives+1] = {id = action.args.id, title = action.args.title, description = action.args.description, status = "Incomplete", unitsOrPositions = {}}
           UnsyncedEventFunc(action)
         end,
   ModifyObjectiveAction = function(action)
@@ -934,6 +952,32 @@ local actionsTable = {
               end
               
               obj.status = action.args.status or obj.status
+              break
+            end
+          end
+          UnsyncedEventFunc(action)
+        end,
+  AddUnitsToObjectiveAction = function(action)
+          for i=1,#objectives do
+            local obj = objectives[i]
+            if obj.id == action.args.id then
+              local groupName = action.args.group
+              local units = FindUnitsInGroup(groupName)
+              for unitID in pairs(units) do
+                obj.unitsOrPositions[#obj.unitsOrPositions + 1] = unitID
+                unitsWithObjectives[unitID] = true
+              end
+              action.args.units = units
+              break
+            end
+          end
+          UnsyncedEventFunc(action)
+        end,
+  AddPointToObjectiveAction = function(action)
+          for i=1,#objectives do
+            local obj = objectives[i]
+            if obj.id == action.args.id then
+              obj.unitsOrPositions[#obj.unitsOrPositions + 1] = {action.args.x, action.args.y}
               break
             end
           end
@@ -979,6 +1023,8 @@ local unsyncedActions = {
   ClearConvoMessageQueueAction = true,
   AddObjectiveAction = true,
   ModifyObjectiveAction = true,
+  AddUnitsToObjectiveAction = true,
+  AddPointToObjectiveAction = true,
   SoundAction = true,
   MusicAction = true,
   MusicLoopAction = true,
@@ -1311,6 +1357,19 @@ function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
   unitGroups[unitID] = nil
   factoryExpectedUnits[unitID] = nil
   repeatFactoryGroups[unitID] = nil
+  
+  if unitsWithObjectives[unitID] then
+    for i=1, #objectives do
+      local obj = objectives[i]
+      for j=#obj.unitsOrPositions, 1, -1 do
+        unitOrPos = obj.unitsOrPositions[j]
+        if unitOrPos == unitID then
+          table.remove(obj.unitsOrPositions, j)
+        end
+      end
+    end
+    unitsWithObjectives[unitID] = nil
+  end
 end
 
 
@@ -1532,20 +1591,36 @@ function gadget:Load(zip)
     counters = data.counters
     countdowns = data.countdowns
     displayedCountdowns = data.displayedCountdowns
-    unitGroups = data.unitGroups
-    repeatFactoryGroups = data.repeatFactoryGroups
-    factoryExpectedUnits = data.factoryExpectedUnits
+    unitGroups = GG.SaveLoad.GetNewUnitIDKeys(data.unitGroups)
+    repeatFactoryGroups = GG.SaveLoad.GetNewUnitIDKeys(data.repeatFactoryGroups)
+    factoryExpectedUnits = GG.SaveLoad.GetNewUnitIDKeys(data.factoryExpectedUnits)
     triggers = data.triggers
-    allTriggers = data.triggers
+    allTriggers = data.allTriggers
     objectives = data.objectives
     cheatingWasEnabled = data.cheatingWasEnabled
     allowTransfer = data.allowTransfer
-    GG.mission.cheatingWasEnabled = cheatingWasEnabled
-    GG.mission.allowTransfer = allowTransfer
+    
+    lastFinishedUnits = {}
+    for teamID, unitID in pairs(data.lastFinishedUnits) do
+      lastFinishedUnits[teamID] = GG.SaveLoad.GetNewUnitID(unitID)
+    end
+    
+    GG.mission = {
+      scores = scores,
+      counters = counters,
+      countdowns = countdowns,
+      unitGroups = unitGroups,
+      triggers = triggers,
+      allTriggers = allTriggers,
+      objectives = objectives,
+      cheatingWasEnabled = cheatingWasEnabled,
+      allowTransfer = allowTransfer,
+    }
     gameStarted = true 
   end
   
   SendToUnsynced("SendMissionObjectives")
+  -- TODO transmit ghosts as well
 end
 
 --------------------------------------------------------------------------------
@@ -1583,29 +1658,38 @@ end
 
 
 local ghosts = {}
+local cardinalHeadings = {s = 0, w = 90, n = 180, e = 270}
 
-function GhostEvent()
+function GhostEvent(_, ghostID)
   local ghost= {}
   local ghostSynced = SYNCED.ghostEventArgs
   for k, v in spairs(ghostSynced) do
     ghost[k] = v
   end
-  ghosts[ghost] = true
+  ghosts[ghostID] = ghost
   local _, _, _, teamID = Spring.GetPlayerInfo(ghost.player)
   ghost.unitDefID = UnitDefNames[ghost.unitDefName].id
   ghost.teamID = teamID
+  if ghost.isBuilding then
+    local ch = ghost.cardinalHeading or "n"
+    ghost.heading = cardinalHeadings[ch] or ghost.heading
+  end
 end
 
+function GhostRemovedEvent(_,ghostID)
+  table.remove(ghosts, ghostID)
+end
 
 local startTime = Spring.GetTimer()
 
 function gadget:DrawWorld()
-  for ghost in pairs(ghosts) do
+  for ghostID, ghost in pairs(ghosts) do
     gl.PushMatrix()
     local t = Spring.DiffTimers(Spring.GetTimer(), startTime)
     local alpha = (math.sin(t*6)+1)/6+1/3 -- pulse
     gl.Color(0.7, 0.7, 1, alpha)
     gl.Translate(ghost.x, Spring.GetGroundHeight(ghost.x, ghost.y), ghost.y)
+    gl.Rotate(ghost.heading, 0, 1, 0)
     gl.DepthTest(true)
     gl.UnitShape(ghost.unitDefID, ghost.teamID)
     gl.PopMatrix()
@@ -1621,7 +1705,7 @@ end
 
 function gadget:UnitFinished(unitID, unitDefID, unitTeam)
   local x, y, z = Spring.GetUnitPosition(unitID)
-  for ghost in pairs(ghosts) do
+  for ghostID, ghost in pairs(ghosts) do
     if unitDefID == ghost.unitDefID and getDistance(x, z, ghost.x, ghost.y) < 100 then -- ghost.y is no typo
       local groups = {}
       for i=1, #ghost do
@@ -1634,7 +1718,7 @@ function gadget:UnitFinished(unitID, unitDefID, unitTeam)
         teamID = ghost.teamID,
       }
       Spring.SendLuaRulesMsg(magic..table.show(args))
-      ghosts[ghost] = nil
+      ghosts[ghostID] = nil
       break
     end
   end
@@ -1662,6 +1746,7 @@ end
 function gadget:Initialize()
   gadgetHandler:AddSyncAction('MissionEvent', WrapToLuaUI)
   gadgetHandler:AddSyncAction('GhostEvent', GhostEvent)
+  gadgetHandler:AddSyncAction('GhostRemovedEvent', GhostRemovedEvent)
   gadgetHandler:AddSyncAction('ScoreEvent', ScoreEvent)
   gadgetHandler:AddSyncAction('SendMissionObjectives', SendMissionObjectives)
   for _,callIn in pairs(callInList) do
@@ -1673,6 +1758,7 @@ end
 function gadget:Shutdown()
   gadgetHandler:RemoveSyncAction('MissionEvent')
   gadgetHandler:RemoveSyncAction('GhostEvent')
+  gadgetHandler:RemoveSyncAction('GhostRemovedEvent')
   gadgetHandler:RemoveSyncAction('ScoreEvent')
   gadgetHandler:RemoveSyncAction('SendMissionObjectives')
 end
@@ -1686,7 +1772,8 @@ function gadget:Save(zip)
   local toSave = MakeRealTable(SYNCED.mission)
   toSave.displayedCountdowns = MakeRealTable(SYNCED.displayedCountdowns)
   toSave.factoryExpectedUnits = MakeRealTable(SYNCED.factoryExpectedUnits)
-  toSave.repeatFactoryGroups = MakeRealTable(SYNCED.repeatFactoryGroups)  
+  toSave.repeatFactoryGroups = MakeRealTable(SYNCED.repeatFactoryGroups)
+  toSave.lastFinishedUnits = MakeRealTable(SYNCED.repeatFactoryGroups)
   
   GG.SaveLoad.WriteSaveData(zip, SAVE_FILE, toSave)
 end

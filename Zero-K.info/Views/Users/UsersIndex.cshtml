@@ -1,0 +1,70 @@
+﻿@using ZkData
+@using ZeroKWeb
+@model ZeroKWeb.Controllers.UsersController.UsersIndexModel
+           
+@{
+    Page.Title = "Zero-K users";
+    var grid = new UniGrid<Account>(Model.Data, "Zero-K players");
+
+    grid.AddCol("ID", x => x.AccountID).SetSort(x => x.AccountID);
+    grid.AddCol("<span nicetitle='Is admin?'>A</span>", x => x.IsZeroKAdmin ? "<img src='/img/police.png'/>" : "").SetSort(x => x.IsZeroKAdmin);
+    grid.AddCol("Name", x => Html.PrintAccount(x)).SetSort(x => x.Name);
+    //grid.AddCol("Steam", x => x.SteamName).SetSort(x => x.SteamName);
+    grid.AddCol("First", x => Html.PrintDate(x.FirstLogin)).SetSort(x => x.FirstLogin);
+    grid.AddCol("Last", x => Html.PrintDate(x.LastLogin)).SetSort(x => x.LastLogin);
+    grid.AddCol("Level", x => x.Level).SetSort(x => x.Level);
+    grid.AddCol("Played", x => x.SpringBattlePlayers.Count(y => !y.IsSpectator)).SetSort(x => x.SpringBattlePlayers.Count(y => !y.IsSpectator));
+    grid.AddCol("Specced", x => x.SpringBattlePlayers.Count(y => y.IsSpectator)).SetSort(x => x.SpringBattlePlayers.Count(y => y.IsSpectator));
+    grid.AddCol("Posts", x => x.ForumPosts.Count()).SetSort(x => x.ForumPosts.Count());
+    grid.AddCol("<span nicetitle='Average team size'>ATS</span>", x => string.Format("{0:F1}",x.SpringBattlePlayers.Where(y=>!y.IsSpectator).Average(y=>(double?)y.SpringBattle.PlayerCount))).SetSort(x => x.SpringBattlePlayers.Where(y => !y.IsSpectator).Average(y => (double?)y.SpringBattle.PlayerCount));
+
+    grid.AddCol("Ingame", x => Html.PrintSeconds(x.SpringBattlePlayers.Where(y => !y.IsSpectator).Sum(y => (int?)y.SpringBattle.Duration))).SetSort(x => x.SpringBattlePlayers.Where(y => !y.IsSpectator).Sum(y => (int?)y.SpringBattle.Duration));
+
+    grid.PageSize = 15;
+}
+<div id="userIndex">
+    <h1>@Page.Title</h1>
+    @if (Global.IsZeroKAdmin)
+    {
+        <div class="admin">
+            @Html.ActionLink("Mass ban", "MassBan")
+        </div>
+    }
+
+    @using (Ajax.BeginForm("Index", "Users", Global.GetAjaxOptions("userIndex")))
+    {
+        <table>
+            <tr>
+                <td>Name:</td>
+                <td>@Html.TextBoxFor(x => x.Name, new { data_autocomplete = Url.Action("Users", "Autocomplete") })</td>
+            </tr>
+            <tr>
+                <td>Admin:</td>
+                <td>@Html.CheckBoxFor(x => x.IsAdmin)</td>
+            </tr>
+            <tr>
+                <td>Registered:</td>
+                <td>@Html.TextBoxFor(x => x.RegisteredFrom, new { @class = "js_datepicker" }) - @Html.TextBoxFor(x => x.RegisteredTo, new { @class = "js_datepicker" })</td>
+            </tr>
+            <tr>
+                <td>Last login:</td>
+                <td>@Html.TextBoxFor(x => x.LastLoginFrom, new { @class = "js_datepicker" }) - @Html.TextBoxFor(x => x.LastLoginTo, new { @class = "js_datepicker" })</td>
+            </tr>
+
+            @if (Global.IsZeroKAdmin)
+            {
+                <tr>
+                    <td class="admin">IP:</td>
+                    <td>@Html.EditorFor(x => x.IP)</td>
+                </tr>
+                <tr>
+                    <td class="admin">UserID:</td>
+                    <td>@Html.EditorFor(x => x.UserID)</td>
+                </tr>
+            }
+        </table>
+        <input type="submit" value="Search"/>
+
+        @GridHelpers.RenderTable(grid)
+    }
+</div>

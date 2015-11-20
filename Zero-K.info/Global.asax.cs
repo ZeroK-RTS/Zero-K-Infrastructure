@@ -90,6 +90,9 @@ namespace ZeroKWeb
 
         protected void Application_Start()
         {
+            ViewEngines.Engines.Clear();
+            ViewEngines.Engines.Add(new RazorViewEngine() { FileExtensions = new[] { "cshtml" } }); // this should speed up rendering a bit
+
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AreaRegistration.RegisterAllAreas();
             RegisterRoutes(RouteTable.Routes);
@@ -102,6 +105,7 @@ namespace ZeroKWeb
             var ip = Context.Request.ServerVariables["REMOTE_ADDR"];
             return ip;
         }
+
 
 
         static bool ValidateSiteAuthToken(Account acc, string token)

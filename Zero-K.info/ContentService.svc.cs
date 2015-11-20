@@ -45,7 +45,7 @@ namespace ZeroKWeb
         
         public List<string> GetEloTop10()
         {
-            DateTime lastMonth = DateTime.UtcNow.AddMonths(-1);
+            DateTime lastMonth = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
             using (var db = new ZkDataContext())
 
                 return
@@ -167,7 +167,7 @@ namespace ZeroKWeb
 
                 var mission = db.Missions.Single(x => x.Name == missionName);
 
-                if (score != 0)
+                if (score != 0 || mission.RequiredForMultiplayer)
                 {
                     var scoreEntry = mission.MissionScores.FirstOrDefault(x => x.AccountID == acc.AccountID);
                     if (scoreEntry == null)
@@ -190,8 +190,23 @@ namespace ZeroKWeb
                         scoreEntry.GameSeconds = gameSeconds;
                     }
                 }
+
                 acc.CheckLevelUp();
                 db.SubmitChanges();
+
+                if (!acc.CanPlayMultiplayer)
+                {
+                    if (
+                        db.Missions.Where(x => x.RequiredForMultiplayer)
+                            .All(y => y.MissionScores.Any(z => z.AccountID == acc.AccountID && z.Score != 0)))
+                    {
+                        acc.CanPlayMultiplayer = true;
+                        db.SaveChanges();
+                        Global.Server.PublishAccountUpdate(acc);
+                        Global.Server.GhostPm(acc.Name, "Congratulations! You are now authorized to play MultiPlayer games!");
+                    }
+                }
+
 
                 // ====================
                 // campaign stuff

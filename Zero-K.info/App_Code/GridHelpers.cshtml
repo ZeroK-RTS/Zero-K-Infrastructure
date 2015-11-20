@@ -1,0 +1,118 @@
+﻿@using System.Web.Mvc
+@using System.Web.Mvc.Html
+@using ZeroKWeb
+@inherits ZeroKWeb.HelperPage
+
+@helper GridJs(IUniGrid grid) {
+    <script type="text/javascript">
+        gridData = typeof (gridData) == 'undefined' ? {} : gridData; // declare griddate if it does not already exist
+
+        gridData['@grid.ID'] = {};
+
+        // fill up griddata with values
+        @foreach (var sel in grid.SelectedKeys)
+        {
+            @: gridData['@grid.ID'][@sel] = '1';
+        }
+
+
+        $(document).ready(function() {
+            $("#@(grid.ID)_pager_prefix").each(function(i, prefix) {
+                $(prefix).prependTo($(".@(grid.ID)_pager"));
+            });
+
+            $("#@(grid.ID)_pager_suffix").each(function(i, suffix) {
+                $(suffix).appendTo($(".@(grid.ID)_pager"));
+            });
+
+
+            // copy griddata to hidden fields for submission
+            gridFormHookSelections('@grid.ID', getGridForm('@grid.ID'));
+        });
+    </script>
+}
+@helper Hidden(IUniGrid grid) {
+    @Html.Hidden(grid.ID + "order", grid.OrderColumn)
+    @Html.Hidden(grid.ID + "desc", grid.OrderIsDescending)
+    @Html.Hidden(grid.ID + "page", grid.PageNumber)
+}
+@helper Column(IUniGrid grid, IUniGridCol col) {
+    if (col.IsSelector)
+    {
+        <input type="checkbox" onclick="gridToggleRows('@grid.ID', $(this))"/>
+    }
+    <a href="#" onclick="gridSetSort('@grid.ID', '@col.ID');return false;">
+        @(new MvcHtmlString(col.Description))
+        @if (!string.IsNullOrEmpty(grid.OrderColumn) && col.ID == grid.OrderColumn)
+        {
+            if (grid.OrderIsDescending)
+            {
+                <img class="icon16" src="~/img/sort_up_green.png"/>
+            } else
+            {
+                <img class="icon16" src="~/img/sort_down_green.png"/>
+            }
+        }
+    </a>
+}
+@helper Pager(IUniGrid grid) {
+    <div class="@(grid.ID)_pager grid_pager">
+        @if (grid.PageCount > 1)
+        {
+            <a href="#" class="js-grid-first @(grid.PageNumber <= 1 ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', 1);return false;" style="height: 20px"></a>
+            <a href="#" class="js-grid-prev @(grid.PageNumber <= 1 ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', @(grid.PageNumber - 1));return false;" style="height: 20px"></a>
+            <span>
+                Page
+                <input type="text" onblur="return gridSetPage('@grid.ID', $(this).val())" style="width: 40px" value="@grid.PageNumber" />
+                of @grid.PageCount (@grid.RecordCount records)
+            </span>
+            <a href="#" class="js-grid-next @(grid.PageNumber >= grid.PageCount ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', @(grid.PageNumber + 1));return false;" style="height: 20px"></a>
+            <a href="#" class="js-grid-end @(grid.PageNumber >= grid.PageCount ? "js-disabled" : "")" onclick="gridSetPage('@grid.ID', @grid.PageCount);return false;" style="height: 20px"></a>
+
+            if (grid.AllowCsvExport)
+            {
+                <span>&nbsp;&nbsp;&nbsp;<a href="#" onclick="gridGetCsv('@grid.ID');return false;" nicetitle="Download as excel - CSV"><img src="~/Img/excel.png" style="border: 0; height: 25px;" /></a></span>
+            }
+        }
+    </div>
+}
+@helper TableHeader(IUniGrid grid) {
+    <tr>
+        @foreach (var col in grid.BaseCols.Where(x => x.AllowWeb))
+        {
+            <th style="width: @col.Width;">
+                @Column(grid, col)
+            </th>
+        }
+    </tr>
+}
+@helper TableData(IUniGrid grid) { @grid.RenderTableRows() }
+
+@helper RenderTable(IUniGrid grid, string cssClass = null) {
+    grid.PrepareRenderData();
+    if (grid.AllowCsvExport && grid.CsvRequested)
+    {
+        grid.RenderCsv();
+    } else
+    {
+        <div class="@(cssClass ?? "grid")" id="@grid.ID">
+            <div class="grid_title">@grid.Title</div>
+            @GridJs(grid)
+            @Pager(grid)
+            @Hidden(grid)
+
+            <table class="grid_table">
+                @if (grid.RenderHeaders)
+                {
+                    <thead>
+                        @TableHeader(grid)
+                    </thead>
+                }
+                <tbody>
+                    @TableData(grid)
+                </tbody>
+            </table>
+            @Pager(grid)
+        </div>
+    }
+}

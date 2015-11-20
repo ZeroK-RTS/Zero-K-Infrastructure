@@ -6,7 +6,7 @@
 } else {
   Page.Title = "Campaign Events";
 }
-@using (Ajax.BeginForm("CampaignEvents", new { planetID = Model.PlanetID, partial = Model.Partial, pageSize = Model.PageSize }, new AjaxOptions() { InsertionMode = InsertionMode.Replace, UpdateTargetId = "events", LoadingElementId = "ajaxScrollProgress" })) {
+@using (Ajax.BeginForm("CampaignEvents", new { planetID = Model.PlanetID, partial = Model.Partial, pageSize = Model.PageSize }, new AjaxOptions() { InsertionMode = InsertionMode.Replace, UpdateTargetId = "events", LoadingElementId = "busy" })) {
   <div id='events'>
     @if (!Model.Partial) {
       <h3>

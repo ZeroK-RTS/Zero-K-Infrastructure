@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using PlasmaDownloader;
+using PlasmaShared;
 using ZkData.UnitSyncLib;
 using LobbyClient;
 using System.Globalization;
@@ -29,9 +30,9 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         List<SpringScanner.CacheItem> modCache;
         List<SpringScanner.CacheItem> mapCache;
         List<Mod> modCache_folder; //mods in *.sdd folder located in datadir/games
-        private List<BotBattleStatus> Bots;
+        private List<BotBattleStatus> Bots = new List<BotBattleStatus>();
         Map currentMap;
-        private List<UserBattleStatus> allUser;
+        private List<UserBattleStatus> allUser = new List<UserBattleStatus>();
         private PlayerListItem myItem;
         private Ai[] aiList;
         private Mod currentMod;
@@ -1208,45 +1209,18 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 infoLabel.Text = "Add bots";
         }
 
-        private string Get_Startscript() //From LobbyClient/Battle.cs
+        private BattleContext Get_StartContext() //From LobbyClient/Battle.cs
         {
-            var script = new StringBuilder();
-            //see https://github.com/spring/spring/blob/master/doc/StartScriptFormat.txt
-            //startscript are saved in default data directory as script.txt
-            script.AppendLine("[GAME]");
-            script.AppendLine("{");
-            var mapName = map_comboBox.SelectedItem;
-            var gameName = game_comboBox.SelectedItem;
-            script.AppendFormat("  MapName={0};\n", mapName);
-            script.AppendFormat("  GameType={0};\n", gameName);
-            script.AppendFormat("  GameStartDelay={0};\n", 4);
-            script.AppendFormat("  ScriptName={0};\n", "Commanders");
-            script.AppendFormat("  StartPosType={0};\n", currentMod.IsMission ? 3 : 2);
-            script.AppendLine();
-            script.AppendFormat("  HostIP={0};\n", "127.0.0.1");
-            script.AppendFormat("  HostPort={0};\n", "0"); //0 mean auto. Different value will have problem with AIs
-            script.AppendFormat("  SourcePort={0};\n", 0);
-            script.AppendFormat("  AutohostIP={0};\n", "127.0.0.1");
-            script.AppendFormat("  AutohostPort={0};\n", "0"); //0 mean auto
-            script.AppendLine();
-            script.AppendFormat("  MyPlayerName={0};\n", myItem.UserName);
-            script.AppendFormat("  MyPasswd={0};\n", myItem.UserBattleStatus.ScriptPassword);
-            script.AppendLine();
-            script.AppendFormat("  IsHost={0};\n", 1);
-            script.AppendFormat("  NumPlayers={0};\n", allUser.Count);
-            script.AppendFormat("  NumTeams={0};\n", allUser.Where(u => !u.IsSpectator).ToList().Count);
-            script.AppendFormat("  NumAllyTeams={0};\n", allUser.GroupBy(i => i.AllyNumber).Select(team => team.Key).Distinct().ToList().Count);
-            var modCacheItem = modCache.FirstOrDefault(x => x.InternalName == (string)gameName);
-            string modHash = "0";
-            if (modCacheItem!=null)
-                modHash = modCacheItem.Md5.ToString();
-            script.AppendFormat("  ModHash={0};\n", modHash);
-            script.AppendFormat("  MapHash={0};\n", mapCache.FirstOrDefault(x => x.InternalName == (string)mapName).Md5.ToString());
+            return new BattleContext() {
+                Map = map_comboBox.SelectedItem.ToString(),
+                Mod = game_comboBox.SelectedItem.ToString(),
+                IsMission = currentMod.IsMission,
+                Players = allUser.Where(x=>!Bots.Contains(x)).Select(x=>x.ToPlayerTeam()).ToList(),
+                Bots = Bots.Select(x=>x.ToBotTeam()).ToList(),
+                Rectangles = Rectangles,
+                EngineVersion = engine_comboBox.SelectedItem.ToString()
+            };
 
-
-            LobbyClient.Battle.GeneratePlayerSection(new List<UserBattleStatus>(),allUser,script,Bots,Rectangles,ModOptions,null,null);
-            //Clipboard.SetText(script.ToString());
-            return script.ToString();
         }
 
         private void Event_Startbutton_Click(object sender, EventArgs e)
@@ -1255,21 +1229,22 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 Set_InfoLabel();
             else
             {
-                var script = currentMod.IsMission ? currentMod.MissionScript : Get_Startscript();
                 if (spring.IsRunning) spring.ExitGame();
-                TasClient client = new TasClient("SkirmishTab", null, "127.0.0.1");
                 spring.SpringExited += Event_SpringExited;
                 infoLabel.Text = "Spring starting ...";
-                spring.StartGame(client, null, null, script, Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);
+                spring.HostGame(Get_StartContext(), "127.0.0.1", 7452, myItem.UserName);
             }
         }
 
         private void Event_SpringExited(object sender, EventArgs<bool> e)
         {
-            if (infoLabel.Text.StartsWith("Spring starting"))
-                infoLabel.Text = "";
-            if (e.Data)
-                infoLabel.Text = "Spring crashed"; 
+            this.Invoke(new Action(()=>
+            {
+                if (infoLabel.Text.StartsWith("Spring starting"))
+                    infoLabel.Text = "";
+                if (e.Data)
+                    infoLabel.Text = "Spring crashed";
+            }));
 
             spring.SpringExited -= Event_SpringExited;
         }

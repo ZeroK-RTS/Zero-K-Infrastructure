@@ -18,7 +18,7 @@
             <tr class="forumRow">
                 <td valign="top" class="forumPostText" id="@p.ForumPostID">
                     <a href="@linkURL">@linkText</a><br />
-                    <small><span nicetitle="@p.Created.AddTicks(-(p.Created.Ticks % TimeSpan.TicksPerSecond))">@p.Created.ToAgoString()</span></small><br />
+                    <small><span nicetitle="@p.Created">@p.Created.ToAgoString()</span></small><br />
                     @(p.Text.Substring(0,isOver200?200:p.Text.Length) + (isOver200 ? "..." : ""))
                 </td>
             </tr>
@@ -58,7 +58,7 @@ else
 				<td>@Html.PrintAccount(t.AccountByCreatedAccountID)</td>
 				<td>@t.PostCount</td>
 				<td>@t.ViewCount</td>
-				<td>@t.LastPost.ToAgoString() <br /> @Html.PrintAccount(t.AccountByLastPostAccountID)</td>
+				<td>@Html.PrintDate(t.LastPost) <br /> @Html.PrintAccount(t.AccountByLastPostAccountID)</td>
 			</tr>
 			tog = !tog;
 		}

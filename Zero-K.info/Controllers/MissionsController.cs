@@ -28,7 +28,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
-        [Auth(Role = AuthRole.ZkAdmin | AuthRole.LobbyAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult Delete(int id)
         {
             var db = new ZkDataContext();
@@ -48,7 +48,7 @@ namespace ZeroKWeb.Controllers
                         new MissionDetailData
                         {
                             Mission = mission,
-                            TopScores = mission.MissionScores.OrderByDescending(x => x.Score).AsQueryable(),
+                            TopScores = mission.MissionScores.Where(x=> x.Score > 0).OrderByDescending(x => x.Score).AsQueryable(),
                             MyRating = mission.Ratings.SingleOrDefault(x => x.AccountID == Global.AccountID) ?? new Rating(),
                         });
         }
@@ -149,7 +149,7 @@ namespace ZeroKWeb.Controllers
             return File(Encoding.UTF8.GetBytes(m.Script), "application/octet-stream", "script.txt");
         }
 
-        [Auth(Role = AuthRole.ZkAdmin | AuthRole.LobbyAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult Undelete(int id)
         {
             var db = new ZkDataContext();

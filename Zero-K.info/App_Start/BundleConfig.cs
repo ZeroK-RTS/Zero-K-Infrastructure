@@ -5,18 +5,19 @@ public class BundleConfig
     public static void RegisterBundles(BundleCollection bundles)
     {
         bundles.Add(new ScriptBundle("~/bundles/main").Include(
-            "~/Scripts/MicrosoftAjax.js",
-            "~/Scripts/MicrosoftMvcAjax.js",
-            "~/Scripts/jquery-1.5.2.min.js",
-            "~/Scripts/jquery-ui-1.8.14.custom.min.js",
-            "~/Scripts/jquery.ui.stars.js",
-            "~/Scripts/jquery.tablesorter.min.js",
-            "~/Scripts/jquery.qtip.pack.js",
-            "~/Scripts/site_main.js",
-            "~/Scripts/base.js",
+            "~/Scripts/jquery-{version}.js",
+            "~/Scripts/jquery.unobtrusive-ajax.js",
             "~/Scripts/browser-css.js",
+            "~/Scripts/jquery-ui.min.js",
+            "~/Scripts/jquery.ui.stars.js",
+            "~/Scripts/jquery.qtip.min.js",
+            "~/Scripts/jquery.ba-bbq.js",
+            "~/Scripts/jquery.history.js",
+            "~/Scripts/jquery.expand.js",
             "~/Scripts/nicetitle.js",
-            "~/Scripts/raphael-min.js"));
+            "~/Scripts/raphael-min.js",
+            "~/Scripts/grid.js",
+            "~/Scripts/site_main.js"));
 
         bundles.Add(new StyleBundle("~/bundles/maincss").Include(
             "~/Styles/fonts.css",
@@ -27,7 +28,9 @@ public class BundleConfig
             "~/Styles/jquery.ui.stars.css",
             "~/Styles/style.css",
             "~/Styles/jquery.qtip.min.css",
-            "~/Styles/dark-hive/jquery-ui-1.8.14.custom.css",
+            "~/Styles/dark-hive/jquery-ui.css",
             "~/Styles/nicetitle.css"));
+
+        
     }
 }

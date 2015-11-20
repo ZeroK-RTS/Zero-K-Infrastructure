@@ -26,7 +26,7 @@
         {
             <tr><td>Faction:</td>
                 <td>@Html.DropDownListFor(x => x.FactionID, new ZkDataContext().Factions.Where(x => !x.IsDeleted).Shuffle().Select(x => new SelectListItem { Text = x.Name, Value = x.FactionID.ToString(), Selected = x.FactionID == Model.FactionID }))  <a href='/Wiki/PlanetWarsFactions'>read more</a>
-                    <br />No faction? @Html.CheckBox("noFaction")
+                    <br />No faction? @Html.CheckBox("noFaction", (Model.ClanID != 0 && Model.Faction == null))
                 </td>
             </tr>
         }

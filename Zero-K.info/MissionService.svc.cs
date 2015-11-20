@@ -118,7 +118,7 @@ namespace ZeroKWeb
 			else
 			{
 				mission.CreatedTime = DateTime.UtcNow;
-                mission.ForumThread = new ForumThread() { Title = mission.Name, ForumCategory = db.ForumCategories.FirstOrDefault(x=>x.IsMissions), CreatedAccountID = acc.AccountID, LastPostAccountID= acc.AccountID };
+                mission.ForumThread = new ForumThread() { Title = mission.Name, ForumCategory = db.ForumCategories.FirstOrDefault(x=>x.ForumMode==ForumMode.Missions), CreatedAccountID = acc.AccountID, LastPostAccountID= acc.AccountID };
                 mission.ForumThread.UpdateLastRead(acc.AccountID, true);
 				db.Missions.InsertOnSubmit(mission);
 			}

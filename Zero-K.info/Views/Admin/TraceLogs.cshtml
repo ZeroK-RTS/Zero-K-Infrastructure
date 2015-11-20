@@ -1,0 +1,28 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZeroKWeb.Controllers.AdminController.TraceLogIndex
+
+@{
+    Page.Title = "Infrastructure trace logs";
+    var grid = new UniGrid<LogEntry>(Model.Data);
+    grid.AddCol("ID", x => x.LogEntryID).SetSort(x => x.LogEntryID);
+    grid.AddCol("Time", x => x.Time).SetSort(x => x.Time);
+    grid.AddCol("Type", x => x.TraceEventType).SetSort(x => x.TraceEventType);
+    grid.AddCol("Message", x => x.Message).SetSort(x => x.Message);
+
+}
+<div id="grid">
+    <h1>@Page.Title</h1>
+
+    @using (Ajax.BeginForm("TraceLogs", Global.GetAjaxOptions("grid")))
+    {
+        <table>
+            <tr><td>Time</td><td>@Html.TextBoxFor(x=>x.TimeFrom,new {@class="js_datepicker"}) - @Html.TextBoxFor(x=>x.TimeTo,new {@class="js_datepicker"})</td></tr>
+            <tr><td>Type</td><td>@Html.EnumCheckboxesFor(x => x.Types)</td></tr>
+            <tr><td>Text</td><td>@Html.EditorFor(x=>x.Text)</td></tr>
+        </table>
+        <input type="submit" value="Search"/>
+
+        @GridHelpers.RenderTable(grid)
+    }
+</div>

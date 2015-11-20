@@ -1,9 +1,13 @@
 ﻿@model IEnumerable<ZkData.ForumCategory>
 
-<b>
-@Html.ActionLink("Forum index",  "Index")&nbsp; &gt; 
-@foreach (var cat in Model) {
-  @Html.ActionLink(cat.Title, "Index", new {categoryID = cat.ForumCategoryID }) 
-  @:&nbsp; &gt;
+@if (Model != null)
+{
+    <h2>
+        @Html.ActionLink("Forum index", "Index")&nbsp; &gt;
+        @foreach (var cat in Model)
+        {
+            @Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID })
+            @:&nbsp; &gt;
+        }
+    </h2>
 }
-</b>

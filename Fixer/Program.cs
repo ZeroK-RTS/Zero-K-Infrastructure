@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Linq;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -15,14 +16,18 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using System.Xml.Serialization;
 //using LobbyClient;
 //using NightWatch;
 using LobbyClient;
 using Microsoft.Linq.Translations;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PlasmaShared;
 using ZkData.UnitSyncLib;
 using ZeroKWeb;
+using ZeroKWeb.ForumParser;
 using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
 
@@ -176,8 +181,22 @@ namespace Fixer
             return false;
         }
 
+
+        public static void RenameAccount(int accountID, string newName)
+        {
+            var db = new ZkDataContext();
+            Account acc = db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
+            string oldName = acc.Name;
+            acc.SetName(newName);
+            Console.WriteLine("Renaming {0} to {1}", oldName, newName);
+            db.SubmitChanges();
+        }
+
         public static void FixStuff()
         {
+            //RenameAccount(359399, "IcyIcyIce2");
+            //RenameAccount(235316, "IcyIcyIce");
+
             //AddClanLeader(530, 5806);
             //
             //UpdateMissionProgression(13);
@@ -246,28 +265,113 @@ namespace Fixer
         {
             //GlobalConst.Mode = ModeType.Live;
             var db = new ZkDataContext();
-            var bats = db.SpringBattles.Where(x => x.StartTime >= from && x.Duration >= 60*5).ToList();
+            var bats = db.SpringBattles.Where(x => x.StartTime >= from && x.Duration >= 60 * 5).ToList();
             Console.WriteLine("Battles from {0}", from);
             var total = bats.Count;
-            Console.WriteLine("Total: {0}",total);
-            var breakdown = bats.GroupBy(x => x.PlayerCount).OrderBy(x => x.Key).Select(x => new {
+            Console.WriteLine("Total: {0}", total);
+            var breakdown = bats.GroupBy(x => x.PlayerCount).OrderBy(x => x.Key).Select(x => new
+            {
                 Size = x.Key,
                 Count = x.Count()
             }).ToList();
 
-            foreach (var b in breakdown) {
-                Console.WriteLine("Size: {0}    Battles: {1}",b.Size,b.Count);    
+            foreach (var b in breakdown)
+            {
+                Console.WriteLine("Size: {0}    Battles: {1}", b.Size, b.Count);
             }
-            
 
-            
+
+
         }
 
 
 
-        [STAThread]
-        static void Main(string[] args)
+
+        public class MiniBat
         {
+            public int ID;
+            public int Duration;
+            public int MapID;
+            public List<List<int>> Players = new List<List<int>>();
+        }
+
+        public static void SaveMiniBats(string path) {
+            var js = JsonSerializer.Create();
+            using (var fs = File.OpenWrite(path)) 
+            using (var tw = new StreamWriter(fs)) js.Serialize(tw, GetMiniBats());
+        }
+
+        public static void DeleteOldUsers() {
+            //GlobalConst.Mode = ModeType.Live;
+            var dbo = new ZkDataContext();
+
+            var limit = DateTime.Now.AddMonths(-1);
+            var acid = dbo.Accounts.Where(x=>!x.IsBot && !x.SpringBattles.Any() && !x.ForumThreads.Any() && !x.SpringBattlePlayers.Any(z=>!z.IsSpectator) && x.MissionRunCount == 0 && !x.ForumPosts.Any() && !x.ContributionsByAccountID.Any() && x.LastLogin <= limit).OrderBy(x=>x.AccountID).Select(x => x.AccountID).ToList();
+
+            Console.WriteLine("Deleting: {0}", acid.Count);
+
+            //Console.WriteLine(dbo.Accounts.Where(x=>x.SpringBattlePlayers.Any(y=>y.IsSpectator)  && !x.SpringBattlePlayers.Any(y=>!y.IsSpectator)).Count());
+            
+            foreach (var id in acid)
+            {
+                try
+                {
+                    using (var db = new ZkDataContext())
+                    {
+                        var acc = db.Accounts.Find(id);
+                        db.ForumLastReads.RemoveRange(acc.ForumLastReads);
+                        db.ForumThreadLastReads.RemoveRange(acc.ForumThreadLastReads);
+                        db.SpringBattlePlayers.RemoveRange(acc.SpringBattlePlayers);
+                        db.AbuseReports.RemoveRange(acc.AbuseReportsByAccountID);
+                        db.AbuseReports.RemoveRange(acc.AbuseReportsByReporterAccountID);
+                        db.AccountRoles.RemoveRange(acc.AccountRolesByAccountID);
+                        db.Ratings.RemoveRange(acc.Ratings);
+                        db.MapRatings.RemoveRange(acc.MapRatings);
+                        db.PollVotes.RemoveRange(acc.PollVotes);
+                        db.SaveChanges();
+                        db.Accounts.Remove(acc);
+                        db.SaveChanges();
+                        Console.WriteLine("Deleted: {0}",id);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.InnerException.InnerException.Message);
+                }
+
+            }
+            //db.Accounts
+        }
+
+
+        static void Main(string[] args) {
+            FixStuff();
+            //MigrateDatabase();
+            //return;
+
+            //DeleteOldUsers();
+            //return;
+
+            /*
+            //ImportWiki();
+            var db = new ZkDataContext();
+            var wikis = db.ForumCategories.First(x => x.IsWiki).ForumThreads.Select(x => new { key=x.WikiKey, text= x.ForumPosts.First().Text}).ToList();
+
+            var parser = new ForumWikiParser();
+            for (int i = 0; i < 100; i++)
+            {
+                var sw = Stopwatch.StartNew();
+                foreach (var w in wikis)
+                {
+                    //Console.WriteLine(w.key);
+                    parser.ProcessToHtml(w.text, null);
+                }
+                sw.Stop();
+                Console.WriteLine("total: {0}ms, item: {1:D}ms", sw.ElapsedMilliseconds, sw.ElapsedMilliseconds/wikis.Count);
+            }*/
+
+
+
             //GetGameStats(new DateTime(2014,12,1));
             //Thread.Sleep(10000);
             //var ns = new NubSimulator();
@@ -294,7 +398,6 @@ namespace Fixer
             //AddClanLeader();
             //return;
             //TestPwMatch();
-            FixStuff();
 
             //var guid = Guid.NewGuid().ToString();
 
@@ -347,6 +450,21 @@ namespace Fixer
             //DuplicateFinder.GetDuplicates();
         }
 
+        static IEnumerable<MiniBat> GetMiniBats() {
+
+            foreach (var bid in new ZkDataContext().SpringBattles.Where(x => !x.IsMission && !x.HasBots).Select(x=>x.SpringBattleID))
+            {
+                using (var db = new ZkDataContext())
+                {
+                    var b = db.SpringBattles.Find(bid);
+                    var bat = new MiniBat() { ID = b.SpringBattleID, Duration = b.Duration, MapID = b.MapResourceID, Players = new List<List<int>>() };
+
+                    foreach (var team in b.SpringBattlePlayers.GroupBy(x => x.AllyNumber).OrderByDescending(x => x.First().IsInVictoryTeam))bat.Players.Add(team.Select(x => x.AccountID).ToList());
+                    yield return bat;
+                }
+            }
+        }
+
         static void CountPlayers()
         {
             var db = new ZkDataContext();
@@ -369,8 +487,9 @@ namespace Fixer
 
         static void MigrateDatabase()
         {
-            var cloner = new DbCloner("zero-k_ef", "zero-k_test",
-                "Data Source=omega.licho.eu,100;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true");
+            GlobalConst.Mode = ModeType.Test;
+            var cloner = new DbCloner("zero-k", "zero-k_test", GlobalConst.ZkDataContextConnectionString);
+            cloner.LogEvent += s => { Console.WriteLine(s); };
             cloner.CloneAllTables();
         }
 
@@ -389,14 +508,14 @@ namespace Fixer
                 else p.TeamSize = 3;
                 num++;
             }
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
         }
 
         public static void RecalculateKudos()
         {
             var db = new ZkDataContext();
             foreach (var acc in db.Accounts.Where(x => x.KudosPurchases.Any() || x.ContributionsByAccountID.Any())) acc.Kudos = acc.KudosGained - acc.KudosSpent;
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
         }
 
 

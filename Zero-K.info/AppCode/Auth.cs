@@ -8,7 +8,6 @@ using ZkData;
 public enum AuthRole
 {
 	ZkAdmin = 1,
-	LobbyAdmin = 2
 }
 
 public class AuthAttribute: AuthorizeAttribute

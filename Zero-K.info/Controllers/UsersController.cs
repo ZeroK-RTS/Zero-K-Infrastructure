@@ -14,7 +14,7 @@ namespace ZeroKWeb.Controllers
     {
         //
         // GET: /Users/
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult ChangeHideCountry(int accountID, bool hideCountry)
         {
             var db = new ZkDataContext();
@@ -27,7 +27,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult ChangeAccountDeleted(int accountID, bool isDeleted)
         {
             var db = new ZkDataContext();
@@ -44,7 +44,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }     
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult ChangePermissions(int accountID, int adminAccountID, int springieLevel, bool zkAdmin, bool vpnException)
         {
             var db = new ZkDataContext();
@@ -84,7 +84,7 @@ namespace ZeroKWeb.Controllers
 
 
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult AdminUserDetail(int id)
         {
             var db = new ZkDataContext();
@@ -92,7 +92,7 @@ namespace ZeroKWeb.Controllers
             return View("AdminUserDetail", user);
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult ReportLog ()
         {
             return View("ReportLog");
@@ -111,34 +111,50 @@ namespace ZeroKWeb.Controllers
         }
 
 
-        public ActionResult Index(string name, string alias, string ip, int? userID = null)
+        public class UsersIndexModel
         {
-            var db = new ZkDataContext();
-            IQueryable<Account> ret = db.Accounts.Where(x=> !x.IsDeleted).AsQueryable();
+            public string Name { get; set; }
+            public string IP { get; set; }
+            public int? UserID { get; set; }
+            public DateTime? RegisteredFrom { get; set; }
+            public DateTime? RegisteredTo { get; set; }
 
-            if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => SqlFunctions.PatIndex("%" + name + "%", x.Name) > 0);
-            if (!string.IsNullOrEmpty(alias)) ret = ret.Where(x => x.Aliases.Contains(alias));
-            if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == ip));
-            if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID));
+            public DateTime? LastLoginFrom { get; set; }
+            public DateTime? LastLoginTo { get; set; }
 
-            return View("UserList", ret.Take(100));
+            public bool IsAdmin { get; set; }
+            public IQueryable<Account> Data;
         }
 
-        /// <summary>
-        /// Lists the newest 200 users to crate an account who also match the specified params
-        /// </summary>
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
-        public ActionResult NewUsers(string name, string ip, int? userID = null)
-        {
+        public ActionResult Index(UsersIndexModel model) {
+            model = model ?? new UsersIndexModel();
             var db = new ZkDataContext();
-            IQueryable<Account> ret = db.Accounts.Where(x => !x.IsDeleted).AsQueryable();
+            var ret = db.Accounts.Where(x => !x.IsDeleted).AsQueryable();
 
-            if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => SqlFunctions.PatIndex("%" + name + "%", x.Name) > 0);
-            if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == ip));
-            if (userID != null && userID != 0) ret = ret.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID));
+            if (!string.IsNullOrEmpty(model.Name))
+            {
+                var termLower = model.Name.ToLower();
+                ret = ret.Where(x => x.Name.ToLower().Contains(termLower) || x.SteamName.Contains(model.Name));
+            }
+            if (Global.IsZeroKAdmin)
+            {
+                if (!string.IsNullOrEmpty(model.IP)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == model.IP));
+                if (model.UserID.HasValue) ret = ret.Where(x => x.AccountUserIDs.Any(y => y.UserID == model.UserID));
+            }
 
-            return View("NewUsers", ret.OrderByDescending(x=> x.FirstLogin).Take(200));
+            if (model.RegisteredFrom.HasValue) ret = ret.Where(x => x.FirstLogin >= model.RegisteredFrom);
+            if (model.RegisteredTo.HasValue) ret = ret.Where(x => x.FirstLogin <= model.RegisteredTo);
+
+            if (model.LastLoginFrom.HasValue) ret = ret.Where(x => x.LastLogin >= model.LastLoginFrom);
+            if (model.LastLoginTo.HasValue) ret = ret.Where(x => x.LastLogin <= model.LastLoginTo);
+
+            if (model.IsAdmin) ret = ret.Where(x => x.IsZeroKAdmin);
+
+            model.Data = ret.OrderByDescending(x=>x.AccountID);
+
+            return View("UsersIndex", model);
         }
+
 
         /// <summary>
         /// Get user detail page by username or <see cref="Account"/> ID
@@ -162,7 +178,7 @@ namespace ZeroKWeb.Controllers
         /// </summary>
         /// <param name="accountID"><see cref="Account"/> ID of the person being punished</param>
         /// <param name="reason">Displayed reason for the penalty</param>
-        [Auth(Role = AuthRole.ZkAdmin | AuthRole.LobbyAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult Punish(int accountID,
                                    string reason,
                                    bool deleteXP,
@@ -253,7 +269,7 @@ namespace ZeroKWeb.Controllers
                                                Time = DateTime.UtcNow,
                                                Text = text
                                            });
-            db.SubmitAndMergeChanges();
+            db.SaveChanges();
 
             var str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name, Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), text);
 
@@ -261,33 +277,36 @@ namespace ZeroKWeb.Controllers
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin|AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult RemovePunishment(int punishmentID) {
             var db = new ZkDataContext();
             var todel = db.Punishments.First(x => x.PunishmentID == punishmentID);
-            db.Punishments.DeleteOnSubmit(todel);
-            db.SubmitAndMergeChanges();
 
             Account acc = todel.AccountByAccountID;
             string punisherName = "<unknown>";
+            string reason = todel.Reason ?? "<unknown reason>";
             if (todel.CreatedAccountID != null)
             {
                 Account adminAcc = db.Accounts.Find((int)todel.CreatedAccountID);
-                punisherName = adminAcc.Name;
+                if (adminAcc != null) punisherName = adminAcc.Name;
             }
+
+            db.Punishments.DeleteOnSubmit(todel);
+            db.SaveChanges();
+
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName));
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason));
 
             return RedirectToAction("Detail", "Users", new { id = todel.AccountID });
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin | AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult MassBan()
         {
             return View("MassBan");
         }
 
-        [Auth(Role = AuthRole.LobbyAdmin|AuthRole.ZkAdmin)]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult MassBanSubmit(string name, int startIndex, int endIndex, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
         {
             ZkDataContext db = new ZkDataContext();
@@ -329,7 +348,7 @@ namespace ZeroKWeb.Controllers
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {4} for user series {0} ({1} - {2}): {3}",
                 name, startIndex, endIndex, Url.Action("Detail", "Users", new { id = firstAccID }, "http"), Global.Account.Name));
 
-            return Index(name, null, null);
+            return Index(new UsersIndexModel() {Name = name});
         }
 
         public ActionResult MassBanByUserIDSubmit(int userID, double? maxAge, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
@@ -368,7 +387,7 @@ namespace ZeroKWeb.Controllers
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {2} for userID {0} (max age {1})",
                 userID, maxAge, Global.Account.Name));
 
-            return NewUsers(null, null, userID);
+            return RedirectToAction("Index");
         }
 
 
@@ -388,7 +407,6 @@ namespace ZeroKWeb.Controllers
                 acc.FirstLogin,
                 acc.LastLogin,
                 acc.LobbyVersion,
-                acc.Language,
                 acc.Email,
                 acc.Country,
                 acc.EffectiveElo,
@@ -404,6 +422,20 @@ namespace ZeroKWeb.Controllers
             acc.SetPasswordPlain(newPassword);
             db.SaveChanges();
             return Content(string.Format("{0} password set to {1}", acc.Name, newPassword));
+        }
+
+        [Auth]
+        public ActionResult ChangePassword(string oldPassword, string newPassword)
+        {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Find(Global.AccountID);
+            var hashed = Utils.HashLobbyPassword(oldPassword);
+            if (!acc.VerifyPassword(hashed)) return Content("Invalid password");
+            if (string.IsNullOrWhiteSpace(newPassword)) return Content("New password cannot be blank");
+            acc.SetPasswordPlain(newPassword);
+            db.SaveChanges();
+            //return Content("Old: " + oldPassword + "; new: " + newPassword);
+            return RedirectToAction("Logout", "Home");
         }
     }
 }

@@ -1,168 +1,124 @@
 @using ZeroKWeb
-<!doctype html>
+<!DOCTYPE html>
 <html>
-    <head>
-        <meta name="description" content="Zero-K is a FREE multiplatform, open-source RTS game which aims to be dynamic and action-packed." />
-        <meta name="keywords" content="zk, 0k, Zero K, zero-k, game, rts, Real Time Strategy, awesome, robot, mech, online, space, 4x, free, open source, foss, spring, planetwars, planet wars" />
-        <meta property="fb:page_id" content="182143538491008" />
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>
-            @if (!string.IsNullOrEmpty(Page.Title)) {
-                @Page.Title<text> - </text>
-            }
-            Zero-K</title>
-        <!--Google Button-->
-        <script type="text/javascript" src="https://apis.google.com/js/plusone.js"> </script>
-        <!-- Google Box -->
-        <link href="https://plus.google.com/101714190573821742332" rel="publisher" />
-        <script type="text/javascript">
-            window.___gcfg = { lang: 'en' };
-            (function() {
-                var po = document.createElement("script");
-                po.type = "text/javascript";
-                po.async = true;
-                po.src = "https://apis.google.com/js/plusone.js";
-                var s = document.getElementsByTagName("script")[0];
-                s.parentNode.insertBefore(po, s);
-            })();
-        </script>
+<head>
+    <meta name="description" content="Zero-K is a FREE multiplatform, open-source RTS game which aims to be dynamic and action-packed." />
+    <meta name="keywords" content="zk, 0k, Zero K, zero-k, game, rts, Real Time Strategy, awesome, robot, mech, online, space, 4x, free, open source, foss, spring, planetwars, planet wars" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        @if (!string.IsNullOrEmpty(Page.Title))
+        {
+            @Page.Title<text> - </text>
+        }
+        Zero-K
+    </title>
 
-        <!--Google +1-->
-        <script type="text/javascript">
-            (function() {
-                var po = document.createElement('script');
-                po.type = 'text/javascript';
-                po.async = true;
-                po.src = 'https://apis.google.com/js/plusone.js';
-                var s = document.getElementsByTagName('script')[0];
-                s.parentNode.insertBefore(po, s);
-            })();
-        </script>
-        <link rel="icon" href='@Href("~/img/favicon.png")'/>
-        @System.Web.Optimization.Styles.Render("~/bundles/maincss")
-        @System.Web.Optimization.Scripts.Render("~/bundles/main")
-        
-        @RenderSection("head", false)
-        @if (!Global.IsLobbyAccess && ViewBag.Minimal != true && Request["minimalDesign"] != "1" && !Global.IsWebLobbyAccess) {
-            //******should instead check cookie for design mode and choose style accordingly******
-            if (ViewBag.StaticBackground == true) {
-                <style type="text/css">
-                    html { background: #000 url("/img/bg_bluehex.gif") fixed; }
-                </style>
-            }
-            else {
-                string[] files = Directory.GetFiles(Server.MapPath("~/img/screenshots"));
-                // What we're doing here is generating a number unique to each date
-                // We use this to seed the RNG so that it picks a new background once per day
-                int date = Convert.ToInt32(DateTime.Now.ToString("MMddyyyy"));
-                var random = new Random(date);
-                string file = Path.GetFileName(files[random.Next(files.Length)]);
-                <style type="text/css">
+    <link rel="icon" href='@Href("~/img/favicon.png")' />
+    @System.Web.Optimization.Styles.Render("~/bundles/maincss")
+    @System.Web.Optimization.Scripts.Render("~/bundles/main")
+
+    @RenderSection("head", false)
+
+    @if (ViewBag.Minimal == null && !Global.IsLobbyAccess)
+    {
+        //******should instead check cookie for design mode and choose style accordingly******
+        if (ViewBag.StaticBackground == true)
+        {
+            <style type="text/css">
+                html {
+                    background: #000 url("/img/bg_bluehex.gif") fixed;
+                }
+            </style>
+        }
+        else
+        {
+            string[] files = Directory.GetFiles(Server.MapPath("~/img/screenshots"));
+            // What we're doing here is generating a number unique to each date
+            // We use this to seed the RNG so that it picks a new background once per day
+            int date = Convert.ToInt32(DateTime.Now.ToString("MMddyyyy"));
+            var random = new Random(date);
+            string file = Path.GetFileName(files[random.Next(files.Length)]);
+            <style type="text/css">
                     html {
                         background: #000 url("/img/screenshots/@file") no-repeat scroll 50% 0;
                         background-attachment: fixed;
                     }
-                </style>
-            }
+            </style>
         }
-    </head>
-    <body class="">
-        <script type="text/javascript">
-
-            var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', 'UA-20510497-1']);
-            _gaq.push(['_trackPageview']);
-
-            (function() {
-                var ga = document.createElement('script');
-                ga.type = 'text/javascript';
-                ga.async = true;
-                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                var s = document.getElementsByTagName('script')[0];
-                s.parentNode.insertBefore(ga, s);
-            })();
-        </script>
-
-        <div id='ajaxScrollProgress' class="border">
-            Loading...<img src='/img/Loader.gif' class="vcenter"/></div>
-        @if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1" && !Global.IsWebLobbyAccess)
-        {
-            <div id="fadetoblack">
+    }
+</head>
+<body class="">
+    <div id='busy' class="border">Loading...<img src='/img/Loader.gif' class="vcenter" /></div>
+    @if (ViewBag.Error != null)
+    {
+        <h3 style="color:red">@ViewBag.Error</h3>
+    }
+    @if (ViewBag.Minimal == null && !Global.IsLobbyAccess)
+    {
+        <div id="fadetoblack">
+        </div>
+        <div id="mainContentWrapper" class="wrapper">
+            <div id="header" style="text-align:center">
+                <a href="/">
+                    <img src="/img/zk_logo.png" height="150px" alt="Zero K" />
+                </a>
             </div>
-            <div id="mainContentWrapper" class="wrapper">
-                <div id="header" class="text-center">
-                    <a href="/">
-                        <img src="/img/zk_logo.png" height="150px" alt="Zero K" /></a>
-                </div>
+            <div class="border" id="menu" style="padding: 0">
+                @Html.Partial("TopMenu")
+            </div>
+
+            <div class="border relative">
+                @Html.Partial("LoginBar")
+            </div>
+
+
+            <div id="renderbody" @if (ViewBag.NoBorder == null) { <text> class="border" </text>   } @if (ViewBag.OpaqueBody == true) { <text> style="opacity: 1" </text>   }>
+                @RenderBody()
+            </div>
+
+            <div id="footer" class="border">
+                <span class="center">
+                    Zero-K is a free real time strategy (RTS), that aims to be the
+                    best open source multi-platform strategy game available :-)
+                </span>
+            </div>
+            <!close footer>
+        </div>
+    }
+    else
+    {
+        <div id="simplestyle">
+            @if (!Global.IsWebLobbyAccess)
+            {
                 <div class="border" id="menu" style="padding: 0">
                     @Html.Partial("TopMenu")
                 </div>
-                <!close navigation>
-                <div class="border relative">
+                <div class="border relative" style="padding: 0 10px 0 10px;">
                     @Html.Partial("LoginBar")
                 </div>
-                <!close login>
-
-                <div id="renderbody" @if (ViewBag.NoBorder == null) {
-                                         <text>class="border"</text>
-                                     } @if (ViewBag.OpaqueBody == true) {
-                                           <text> style="opacity: 1"</text>
-                                       }>
-                    @RenderBody()
-                </div>
-                @if (Global.IsAccountAuthorized) {
-                    <div>
-                        <br/>
-                        <h3>Advertisement</h3>
-                        <script type="text/javascript">
-                            google_ad_client = "ca-pub-9694351454481658";
-                            /* podelne */
-                            google_ad_slot = "9206337938";
-                            google_ad_width = 728;
-                            google_ad_height = 90;
-
-                        </script>
-                        <script type="text/javascript"
-                                src="http://pagead2.googlesyndication.com/pagead/show_ads.js"> </script>
-                    </div>
-                }
-
-                <div id="footer" class="border">
-                    <span class="center">Zero-K is a free real time strategy (RTS), that aims to be the
-                        best open source multi-platform strategy game available :-) </span>
-                </div>
-                <!close footer>
-            </div>
-@*<!close wrapper>*@
-        }
-        else {
-            <div id="simplestyle">
-                @if (!Global.IsWebLobbyAccess) {
-                    <div class="border" id="menu" style="padding: 0">
-                        @Html.Partial("TopMenu")
-                    </div>
-                    <div class="border relative" style="padding: 0 10px 0 10px;" >
-                        @Html.Partial("LoginBar")
-                    </div>
-                }
-                @RenderBody()
-            </div>
-            <br/>
-            if (Global.IsAccountAuthorized) {
-                <div style="clear:both;">
-                    <h3>Advertisement</h3>
-                    <script type="text/javascript"> 
-                        google_ad_client = "ca-pub-9694351454481658";
-                        /* podelne */
-                        google_ad_slot = "9206337938";
-                        google_ad_width = 728;
-                        google_ad_height = 90;
-                    </script>
-                    <script type="text/javascript"
-                            src="http://pagead2.googlesyndication.com/pagead/show_ads.js"> </script>
-                </div>
             }
-        }
+            @RenderBody()
+        </div>
+    }
 
-    </body>
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-20510497-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+
+        $(function () {
+            GlobalPageInit();
+        });
+    </script>
+
+</body>
 </html>

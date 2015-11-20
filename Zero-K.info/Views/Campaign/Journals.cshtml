@@ -13,14 +13,6 @@
         journals.Add(journalsByCategory.Key ?? "Uncategorized", journalsByCategory.ToList());
     }
 }
-<script type="text/javascript" src='@Href("~/Scripts/jquery.expand.js")' > </script>
-<script type="text/javascript">
-    $(function () {
-        $("h3.expand").toggler({ method: "slideToggle", speed: "fast" });
-        $("h4.expand").toggler({ method: "slideToggle", speed: "fast" });
-    });
-</script>
-
 <h1>
     Campaign @Model.Name
 </h1>
@@ -37,11 +29,11 @@
 {
     foreach (var kvp in journals)
     {
-        <h3 class="expand">@kvp.Key</h3>
+        <h3 class="js_expand">@kvp.Key</h3>
         <div id="@kvp.Key" class="collapse width-90">
             @foreach( CampaignJournal journal in kvp.Value)
             {
-                <h4 class="expand">@journal.Title</h4>
+                <h4 class="js_expand">@journal.Title</h4>
                 <div id="@journal.Title" class="collapse width-90">
                     <div class="journal">
                         @Html.BBCode(journal.Text)

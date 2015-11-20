@@ -1,15 +1,17 @@
-﻿@using ZeroKWeb
+﻿@using System.Web.Mvc.Html
+@using ZeroKWeb
+@using ZkData
 @model ZkData.Account
 <h2>Voting details for @Html.PrintAccount(Model)</h2>
 
-@foreach (var p in Model.ValidPolls().OrderByDescending(x => x.PollID))
+@foreach (var p in Account.ValidPolls(Global.Account).OrderByDescending(x => x.PollID))
 {
     <div style="@(p.IsHeadline ? " border: 1px solid green" : ""); margin:2px; padding:1px">
     @Html.Partial("PollView", p)
 
     @if (!p.IsAnonymous)
     {
-        var vote = p.PollVotes.FirstOrDefault(x => x.AccountID == Model.AccountID);
+        var vote = Model != null? p.PollVotes.FirstOrDefault(x => x.AccountID == Model.AccountID) :null;
         if (vote != null)
         {
             if (!p.IsAnonymous)
@@ -42,7 +44,7 @@
             <input type="text" name="question" style="width: 600px"/><br/>
             Answers (one per line):<br/>
             <textarea name="answers" rows="6" style="width: 600px"></textarea><br/>
-            <input type="submit" value="add" class="delete" />
+            <input type="submit" value="add" class="js_confirm" />
 
         </form>
     </div>

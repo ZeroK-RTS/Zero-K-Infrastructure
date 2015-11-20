@@ -25,6 +25,7 @@ namespace ZkData
         [Required]
         [StringLength(200)]
         [DataMember]
+        [Index(IsUnique = true)]
         public string Name { get; set; }
         [StringLength(100)]
         [DataMember]
@@ -104,6 +105,8 @@ namespace ZkData
         public int? RatingPollID { get; set; }
         [DataMember]
         public int? DifficultyRatingPollID { get; set; }
+
+        public bool RequiredForMultiplayer { get; set; }
 
         public virtual Account Account { get; set; }
         public virtual ICollection<CampaignPlanet> CampaignPlanets { get; set; }

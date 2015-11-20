@@ -1,0 +1,17 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZkData.ForumPost
+@{
+    Page.Title =  Model.ForumThread.WikiKey;
+    ViewBag.StaticBackground = true;
+    ViewBag.OpaqueBody = true;
+}
+<h1>@Model.ForumThread.Title</h1>
+@Html.BBCodeCached(Model)
+
+@if (Model.CanEdit(Global.Account))
+{
+    <br/>
+    <a href="@Url.Action("NewPost", "Forum", new { threadID = Model.ForumThreadID, forumPostID = Model.ForumPostID })" class="textbutton">Edit <img src="~/Img/edit_pencil.png" class="icon16"/></a>
+    <span>&nbsp;<b>[@Model.ForumThread.WikiKey]</b></span>
+}

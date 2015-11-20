@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
+using Newtonsoft.Json;
+using PlasmaShared;
 using ZkData;
 
 namespace LobbyClient
@@ -304,6 +306,12 @@ namespace LobbyClient
         public string Text;
         public bool Ring;
         public DateTime? Time;
+        
+        /// <summary>
+        /// Do not relay to old spring
+        /// </summary>
+        [JsonIgnore] 
+        public bool AllowRelay = true; // a bit ugly, move to other place, its only needed in Said event in server internals
     }
 
     [Message(Origin.Client)]

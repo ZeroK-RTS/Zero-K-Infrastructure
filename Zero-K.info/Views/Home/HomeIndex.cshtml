@@ -1,0 +1,142 @@
+@using ZeroKWeb
+@using ZkData
+@model ZeroKWeb.Controllers.HomeController.IndexResult
+@{
+    ViewBag.NoBorder = true;
+    var s = Model.Spotlight;
+    var stat = @Model.LobbyStats;
+}
+
+@if (!Global.IsLobbyAccess)
+{
+    <div class="border">
+        @(stat.UsersIdle + stat.UsersWaiting + stat.UsersFighting) players online: @stat.UsersFighting of them fighting in @stat.BattlesRunning battles, @stat.UsersWaiting waiting for battle, @stat.UsersIdle idling in chat (@stat.UsersLastMonth played this month)
+    </div>
+}
+
+<div id="content" class="fleft width-70">
+    <div id="features" class="border">
+        @if (Global.IsAccountAuthorized)
+        {
+            Html.RenderPartial("UserDetail", Global.Account);
+        }
+        else
+        {
+            <div align="center">
+                <br /><h3>Welcome to Zero-K</h3><br />
+                <div align="left">Zero-K is a free, multiplatform, open-source RTS game where massive robot armies fight an endless conflict. It has a powerful interface allowing players precision control over high level economic, strategic and tactical decisions. Units interact intuitively using real projectile and movement physics. It boasts over 100 diverse units including Vehicles, Tanks, Hovercraft, Planes, Gunships, Ships, Spiders walkers and dozens of different robots offering unique strategies and constantly moving combat.</div><br />
+                <iframe width="560" height="315" src="http://www.youtube.com/embed/vkZaLLyhEgI" frameborder="0" hd="1" allowfullscreen></iframe><br /><br />
+                <div class="button_2">
+                    <a href="/Wiki/Download" style="vertical-align:middle;"><span class="button_2text">Download now!</span></a>
+                </div>
+                <div>
+                    <small>or just <a href="/Wiki/Media">view the media</a></small>
+                </div>
+            </div><br />
+            @Html.IncludeWiki("Features")
+        }
+    </div>
+    @foreach (var n in Model.Headlines)
+    {
+        <div class="js_dialog" title="News headlines">
+            <h1>@n.Title</h1>
+            @if (n.ImageRelativeUrl != null)
+            {
+                <img src="@n.ImageRelativeUrl" style="float:left; width:800px; margin: 6px;" />
+            }
+
+            <p>@Html.BBCodeCached(n)</p>
+            <small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)</small>
+        </div>
+    }
+
+
+    <div id="news" class="border">
+        @foreach (var n in Model.News.Take(4))
+        {
+            <h1>@n.Title</h1>
+            if (n.ThumbRelativeUrl != null)
+            {
+                <a href="@n.ImageRelativeUrl"><img src="@n.ThumbRelativeUrl" style="float:left; width:120px; margin: 6px;" /></a>
+            }
+            <p>@Html.BBCodeCached(n)</p>
+            <small>
+                Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)
+                @if (Global.IsZeroKAdmin)
+                {
+                    <span class="admin">
+                        @Html.ActionLink("Edit", "Detail", "News", new { id = n.NewsID }, null)
+                    </span>
+                }
+
+            </small>
+            <br /><br />
+        }
+        <a href="@Url.Action("Index", "News")"><img src="/img/rss.png" width="25" alt="rss" /> RSS feed</a> | <a href='/Forum?categoryID=13'>news archive</a>
+        @if (Global.IsZeroKAdmin)
+        {
+            <div class="admin">
+                @Html.Partial("/Views/News/NewsDetail.cshtml", new News() { Created = DateTime.UtcNow, HeadlineUntil = DateTime.UtcNow.AddDays(7) })
+            </div>
+        }
+
+    </div>
+</div>
+<div id="sidebar" class="fright width-30">
+    @if (!Global.IsAccountAuthorized && !Global.IsLobbyAccess)
+    {
+        <a onclick="window.location='/Wiki/Download';"><span class="downloadbutton"><span class="buttonSpan"></span><!--<img src="/img/downloadBlue.png" alt="Download" width="45" height="45" style="vertical-align:middle;" />--> Download</span></a>
+    }
+
+
+    <div id="unit" class="border relative text-left">
+        <img src="http://packages.springrts.com/zkmanual/unitpics/@(s.Unitname).png" width="64" height="51" class="fright" />
+        <h2><a href='/Wiki/Manual'>Manual:</a></h2>
+        <h3>@s.Name</h3>
+        <p>@s.Title</p>
+        <p>@s.Description</p>
+    </div>
+
+    <div class="border">
+        <h2><a href='@Url.Action("Index","Forum", new {OnlyUnread= true})'>Forums</a></h2>
+        @foreach (var t in Model.NewThreads)
+        {
+            @Html.Print(t.ForumThread)<br />
+        }
+    </div>
+
+    <div id="topten" class="border">
+        <h2><a href='@Url.Action("Index","Ladders")'>Top Players</a></h2>
+        <table cellpadding='0' cellspacing='0'>
+            <tr>
+                <th width="30" align="left">#</th>
+                <th width="200" align="left">Name</th>
+                <th>ELO</th>
+            </tr>
+            @{var cnt = 1;}
+            @foreach (var a in Model.Top10Players)
+            {
+                <tr>
+                    <td>@(cnt++)</td>
+                    <td><small>@Html.PrintAccount(a)</small></td>
+                    <td>@Math.Round(a.Effective1v1Elo)</td>
+                </tr>
+            }
+        </table>
+    </div>
+
+    <div class="border">
+        <h2>Social Media</h2>
+        <a href="https://www.facebook.com/ZeroK.RTS"><img src="https://www.facebookbrand.com/img/assets/asset.f.logo.lg.png" class="icon32"/></a>
+        <a href="https://github.com/ZeroK-RTS"><img src="http://civicio.files.wordpress.com/2013/03/github.png?w=256&h=256" class="icon32"></a>
+        <a href="http://steamcommunity.com/groups/0-K"><img src="https://upload.wikimedia.org/wikipedia/en/4/48/Steam_Icon_2014.png" class="icon32" /></a>
+        <a href="@Url.Action("Index", "News")"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png" class="icon32"/></a>
+        <a href="https://plus.google.com/+Zero-kInfo/"><img src="https://plus.google.com/favicon.ico" class="icon32"/></a>
+        <a href="http://twitter.com/ZeroKTeam"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Twitter_Logo_Mini.svg/220px-Twitter_Logo_Mini.svg.png" class="icon32"/></a>
+    </div>
+    <div class="border">
+        <h2>Links</h2>
+        @Html.IncludeWiki("Links")
+    </div>
+
+</div>

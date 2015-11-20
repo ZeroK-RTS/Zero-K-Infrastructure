@@ -8,9 +8,9 @@ using System.Net.Mime;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
-using ZkData;
 using SharpCompress.Archive;
 using SharpCompress.Common;
+using ZkData;
 
 namespace PlasmaDownloader
 {

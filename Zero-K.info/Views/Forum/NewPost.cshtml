@@ -1,25 +1,50 @@
-﻿@model ZeroKWeb.Controllers.ForumController.NewPostResult
+﻿@using ZkData
+@model ZeroKWeb.Controllers.ForumController.NewPostResult
 @{
-  Page.Title = "New post";
+    Page.Title = "New post";
 }
 
-@{Html.RenderPartial("ForumPath", Model.Path);}
+@{ Html.RenderPartial("ForumPath", Model.Path); }
 
-@if (Model.CurrentThread != null) {
-  <h3>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
-} else {
-  <h3>Post new topic</h3>
+@if (Model.CurrentThread != null)
+{
+    <h1>@Model.CurrentThread.Title</h1>
+    if (!string.IsNullOrEmpty(Model.CurrentThread.WikiKey))
+    {
+        <h2><a href="@Url.Action("Index", "Wiki", new { node = Model.CurrentThread.WikiKey })">@("[" + Model.CurrentThread.WikiKey + "]")</a></h2>
+    }
 }
-
+else
+{
+    <h3>Post new topic</h3>
+}
 
 <form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = Model.CurrentThread != null ? (int?)Model.CurrentThread.ForumThreadID : null, categoryID = Model.CurrentCategory.ForumCategoryID, forumPostID = Model.EditedPost != null ? (int?)Model.EditedPost.ForumPostID : null })">
-@if (Model.CanSetTopic) {
-  @:Title: <input type="text" name="title" cols="50" value="@(Model.EditedPost != null ? Model.EditedPost.ForumThread.Title:null)"/><br/>
+    <table>
+        @if (Model.CanSetTopic)
+        {
+            <tr>
+                <td>Title:</td><td>
+                    <input type="text" name="title" style="width: 300px" value="@(Model.EditedPost != null ? Model.EditedPost.ForumThread.Title : null)"/>
+                </td>
+            </tr>
+        }
+        @if (Model.CanSetTopic && Model.CurrentCategory.ForumMode == ForumMode.Wiki)
+        {
+            <tr>
+                <td>Wiki Key:</td><td>
+                    <input type="text" name="wikiKey" style="width: 150px" value="@(Model.WikiKey ?? (Model.EditedPost != null ? Model.EditedPost.ForumThread.WikiKey : null))"/>
+                </td>
+            </tr>
+        }
+    </table>
+    <textarea name="text" style="height: 50vh; width: 100%;">@(Model.EditedPost != null ? Model.EditedPost.Text : null)</textarea><br/>
+    <input class="textbutton" type="submit" value="Submit Post"/>
+    <span class="textbutton" data-preview="text">Preview</span>
+</form>
+
+@if (Model.LastPosts != null && Model.CurrentThread != null)
+{
+    @Html.Action("GetPostList", new { threadID = Model.CurrentThread.ForumThreadID })
 }
 
-<textarea name="text" rows="8" cols="80">@(Model.EditedPost != null ? Model.EditedPost.Text:null)</textarea><br />
-<input  class="textbutton" type="submit" value="Submit Post" />
-</form>
-@if (Model.LastPosts != null && Model.CurrentThread != null) {
-  @Html.Partial("~/Views/Forum/PostList.cshtml", Model.LastPosts)
-}

@@ -18,6 +18,11 @@ namespace ZkLobbyServer
 
         public ZkServerTraceListener(ZkLobbyServer zkLobbyServer = null)
         {
+            using (var db = new ZkDataContext())
+            {
+                var oldEntry = DateTime.UtcNow.AddDays(-14);
+                db.Database.ExecuteSqlCommand("delete from LogEntries where Time < {0}", oldEntry);
+            }
             this.ZkLobbyServer = zkLobbyServer;
         }
 

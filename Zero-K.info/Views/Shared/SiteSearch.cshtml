@@ -1,0 +1,6 @@
+﻿<form action="@Url.Action("SubmitSearch","Forum")" method="POST">
+    <div>
+        <input type="text" name="keywords" id="keywords" size="20" data-autocomplete="@Url.Action("Index", "Autocomplete")" data-autocomplete-action="goto"/>
+        <input value="Search" type="image" src="/img/search_img.png" style="border: none; vertical-align: middle;"/>
+    </div>
+</form>

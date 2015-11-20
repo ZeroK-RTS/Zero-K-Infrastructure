@@ -9,19 +9,10 @@ namespace ZkData
     public class Resource
     {
         
-        public Resource()
-        {
-            MapRatings = new HashSet<MapRating>();
-            Planets = new HashSet<Planet>();
-            ResourceContentFiles = new HashSet<ResourceContentFile>();
-            ResourceDependencies = new HashSet<ResourceDependency>();
-            SpringBattlesByMapResourceID = new HashSet<SpringBattle>();
-            SpringBattlesByModID = new HashSet<SpringBattle>();
-        }
-
         public int ResourceID { get; set; }
         [Required]
         [StringLength(255)]
+        [Index(IsUnique = true)]
         public string InternalName { get; set; }
         public ResourceType TypeID { get; set; }
         public DateTime? LastLinkCheck { get; set; }
@@ -59,14 +50,13 @@ namespace ZkData
         
         public virtual Account Account { get; set; }
         public virtual ForumThread ForumThread { get; set; }
-        public virtual ICollection<MapRating> MapRatings { get; set; }
+        public virtual ICollection<MapRating> MapRatings { get; set; } = new HashSet<MapRating>();
         public virtual Mission Mission { get; set; }
-        public virtual ICollection<Planet> Planets { get; set; }
-        public virtual ICollection<ResourceContentFile> ResourceContentFiles { get; set; }
-        public virtual ICollection<ResourceDependency> ResourceDependencies { get; set; }
-        public virtual ICollection<SpringBattle> SpringBattlesByModID { get; set; }
-        public virtual ICollection<SpringBattle> SpringBattlesByMapResourceID { get; set; }
-
+        public virtual ICollection<Planet> Planets { get; set; } = new HashSet<Planet>();
+        public virtual ICollection<ResourceContentFile> ResourceContentFiles { get; set; } = new HashSet<ResourceContentFile>();
+        public virtual ICollection<ResourceDependency> ResourceDependencies { get; set; } = new HashSet<ResourceDependency>();
+        public virtual ICollection<SpringBattle> SpringBattlesByModID { get; set; } = new HashSet<SpringBattle>();
+        public virtual ICollection<SpringBattle> SpringBattlesByMapResourceID { get; set; } = new HashSet<SpringBattle>();
 
 
         [NotMapped]

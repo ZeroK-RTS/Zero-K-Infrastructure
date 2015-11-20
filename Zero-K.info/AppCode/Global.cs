@@ -8,6 +8,7 @@ using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Globalization;
 using System.Linq;
+using System.Web.Mvc.Ajax;
 using System.Web.Routing;
 using JetBrains.Annotations;
 using LobbyClient;
@@ -53,21 +54,6 @@ namespace ZeroKWeb
                 else return 0;
             }
         }
-        public static string DisplayLanguage
-        {
-            get { return ResolveLanguage(); }
-        }
-        public static UserLanguage DisplayLanguageAsEnum
-        {
-            get
-            {
-                try {
-                    return (UserLanguage)Enum.Parse(typeof(UserLanguage), DisplayLanguage, true);
-                } catch (Exception ex) {
-                    return UserLanguage.auto;
-                }
-            }
-        }
         public static int FactionID
         {
             get
@@ -103,8 +89,8 @@ namespace ZeroKWeb
         public static ZkLobbyServer.ZkLobbyServer Server { get; private set; }
 
         public static ServerRunner ZkServerRunner { get; private set; }
-
-
+        public static ForumPostCache ForumPostCache { get; private set; }= new ForumPostCache();
+        
         /// <summary>
         /// Converts a given string and its arguments into a CampaignEvent; used for the online SP campaign
         /// </summary>
@@ -230,8 +216,9 @@ namespace ZeroKWeb
                 if (Server != null) {
                     foreach (var clan in orgArgs.OfType<Clan>().Where(x => x != null)) Server.GhostSay(
                         new Say() { User = GlobalConst.NightwatchName, IsEmote = true, Place = SayPlace.Channel,Target = clan.GetClanChannel(), Text = ev.PlainText});
-                    foreach (var faction in orgArgs.OfType<Faction>().Where(x => x != null)) Server.GhostSay(
-                         new Say() { User = GlobalConst.NightwatchName, IsEmote = true, Place = SayPlace.Channel, Target = faction.Shortcut, Text = ev.PlainText });
+                    foreach (var faction in orgArgs.OfType<Faction>().Where(x => x != null))
+                        Server.GhostSay(
+                            new Say() { User = GlobalConst.NightwatchName, IsEmote = true, Place = SayPlace.Channel, Target = faction.Shortcut, Text = ev.PlainText });
                 }
             } catch (Exception ex) {
                 Trace.TraceError("Error sending event to channels: {0}", ex);
@@ -257,6 +244,7 @@ namespace ZeroKWeb
             var listener = new ZkServerTraceListener();
             Trace.Listeners.Add(listener);
 
+            ForumPostIndexer = new ForumPostIndexer();
             ZkServerRunner = new ServerRunner(mvcApplication.Server.MapPath("~"));
             Server = ZkServerRunner.ZkLobbyServer;
             ZkServerRunner.Run();
@@ -267,7 +255,12 @@ namespace ZeroKWeb
             if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Server);
         }
 
-        public static void StopApplication() {}
+        public static ForumPostIndexer ForumPostIndexer { get; private set; }
+
+        public static void StopApplication()
+        {
+            ZkServerRunner.Stop();
+        }
 
         public static UrlHelper UrlHelper()
         {
@@ -310,22 +303,14 @@ namespace ZeroKWeb
             }
         }
 
-        static string ResolveLanguage()
+
+        public static AjaxOptions GetAjaxOptions(string targetID, bool updateHistory = true)
         {
-            if (IsAccountAuthorized) {
-                var db = new ZkDataContext();
-                var acc = db.Accounts.Single(x => x.AccountID == AccountID);
-                var manualLanguage = acc == null ? null : acc.Language;
-
-                if (!String.IsNullOrEmpty(manualLanguage)) return manualLanguage;
-            }
-
-            var ri = ResolveCountry();
-            if (ri != null && !String.IsNullOrEmpty(ri.TwoLetterISORegionName)) return ri.TwoLetterISORegionName;
-
-            return "en";
+            var ret = new AjaxOptions { UpdateTargetId = targetID, OnComplete = string.Format("GlobalPageInit($('#{0}'))", targetID), };
+            if (updateHistory) ret.OnSuccess = string.Format("ReplaceHistory($('#{0}').find('form').serialize())", targetID);
+            return ret;
         }
-
+        
         static void SetupPaypalInterface()
         {
             PayPalInterface = new PayPalInterface();

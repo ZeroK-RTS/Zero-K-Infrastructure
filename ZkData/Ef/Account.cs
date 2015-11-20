@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.Principal;
+using System.Text;
 using System.Threading.Tasks;
 using LobbyClient;
 using Microsoft.Linq.Translations;
@@ -94,6 +95,7 @@ namespace ZkData
         public double Elo1v1Weight { get; set; }
         public double EloPw { get; set; }
         public bool IsBot { get; set; }
+        public bool CanPlayMultiplayer { get; set; } = true;
        
         [NotMapped]
         public string NewPasswordPlain {set {SetPasswordPlain(value);}}
@@ -125,8 +127,6 @@ namespace ZkData
         public double PwWarpProduced { get; set; }
         public double PwWarpUsed { get; set; }
         public double PwAttackPoints { get; set; }
-        [StringLength(2)]
-        public string Language { get; set; }
         public bool HasVpnException { get; set; }
         public int Kudos { get; set; }
         public int ForumTotalUpvotes { get; set; }
@@ -528,14 +528,17 @@ namespace ZkData
         }
 
 
-        public IEnumerable<Poll> ValidPolls(ZkDataContext db = null)
+        public static IEnumerable<Poll> ValidPolls(Account acc, ZkDataContext db = null)
         {
             if (db == null) db = new ZkDataContext();
+            var clanID = acc?.ClanID;
+            var facID = acc?.FactionID;
+
             return
                 db.Polls.Where(
                     x =>
-                    (x.ExpireBy == null || x.ExpireBy > DateTime.UtcNow) && (x.RestrictClanID == null || x.RestrictClanID == ClanID) &&
-                    (x.RestrictFactionID == null || x.RestrictFactionID == FactionID));
+                    (x.ExpireBy == null || x.ExpireBy > DateTime.UtcNow) && (x.RestrictClanID == null || x.RestrictClanID == clanID) &&
+                    (x.RestrictFactionID == null || x.RestrictFactionID == facID));
         }
 
         public override string ToString()
@@ -546,21 +549,21 @@ namespace ZkData
 
         public void SetName(string value)
         {
-            if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(value) && Name!=value)
+            if (!String.IsNullOrEmpty(Name) && !String.IsNullOrEmpty(value) && Name!=value)
             {
                 List<string> aliases = null;
-                if (!string.IsNullOrEmpty(Aliases)) aliases = new List<string>(Aliases.Split(','));
+                if (!String.IsNullOrEmpty(Aliases)) aliases = new List<string>(Aliases.Split(','));
                 else aliases = new List<string>();
 
                 if (!aliases.Contains(Name)) aliases.Add(Name);
-                Aliases = string.Join(",", aliases.ToArray());
+                Aliases = String.Join(",", aliases.ToArray());
             }
             Name = value;
         }
 
         public void SetAvatar()
         {
-            if (string.IsNullOrEmpty(Avatar))
+            if (String.IsNullOrEmpty(Avatar))
             {
                 var rand = new Random();
                 var avatars = ZkData.Avatar.GetCachedList();
@@ -577,16 +580,38 @@ namespace ZkData
         public bool IsInRole(string role)
         {
             if (role == "ZkAdmin") return IsZeroKAdmin;
-            else return string.IsNullOrEmpty(role);
+            else return String.IsNullOrEmpty(role);
         }
 
         [NotMapped]
         public IIdentity Identity { get { return this; } }
+        public bool CanEditWiki() => Level >= GlobalConst.WikiEditLevel;
 
         public int GetEffectiveSpringieLevel()
         {
             if (PunishmentsByAccountID.Any(x => x.SetRightsToZero && !x.IsExpired)) return 0;
             return SpringieLevel;
+        }
+
+        public static bool IsValidLobbyName(string name)
+        {
+            return !string.IsNullOrEmpty(name) && name.All(ValidLobbyNameCharacter);
+        }
+
+        public static bool ValidLobbyNameCharacter(char c) {
+            if (c >= 'a' && c <= 'z') return true;
+            if (c >= 'A' && c <= 'Z') return true;
+            if (c >= '0' && c <= '9') return true;
+            if (c == '_') return true;
+            if (c == '[' || c == ']') return true;
+            return false;
+        }
+
+        public static string StripInvalidLobbyNameChars(string name) {
+            if (string.IsNullOrEmpty(name)) return name;
+            var sb = new StringBuilder();
+            foreach (var c in name.Where(ValidLobbyNameCharacter)) sb.Append(c);
+            return sb.ToString();
         }
     }
 }

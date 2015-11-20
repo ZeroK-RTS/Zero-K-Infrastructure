@@ -13,7 +13,6 @@ using System.Xml;
 using System.Xml.Serialization;
 using CMissionLib.Actions;
 using CMissionLib.Conditions;
-using Ionic.Zip;
 using Microsoft.SqlServer.Server;
 using MissionEditor2;
 using ZkData.UnitSyncLib;
@@ -21,6 +20,7 @@ using CMissionLib.UnitSyncLib;
 using ZkData;
 using Map = CMissionLib.UnitSyncLib.Map;
 using Mod = CMissionLib.UnitSyncLib.Mod;
+using System.IO.Compression;
 
 namespace CMissionLib
 {
@@ -324,8 +324,13 @@ namespace CMissionLib
 				File.WriteAllText("modinfo.txt", modInfo);
 				//File.WriteAllText("mission.lua", luaMissionData);
 			}
-			var textEncoding = Encoding.GetEncoding("iso-8859-1"); // ASCIIEncoding()
-			using (var zip = new ZipFile())
+			var textEncoding = Encoding.UTF8; // ASCIIEncoding()
+			
+			string directory = Path.GetDirectoryName(mutatorPath);
+			if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+			if (File.Exists(mutatorPath)) File.Delete(mutatorPath);
+			
+			using (var zip = ZipFile.Open(mutatorPath, ZipArchiveMode.Update, Encoding.UTF8))
 			{
 				if (!String.IsNullOrEmpty(ContentFolderPath) && Directory.Exists(ContentFolderPath)) zip.SafeAddDirectory(ContentFolderPath);
 
@@ -333,11 +338,11 @@ namespace CMissionLib
 				var basePath = Path.Combine(assemblyLocation, "MissionBase");
 				zip.SafeAddDirectory(basePath);
 
-				zip.SafeAddEntry("modinfo.lua", textEncoding.GetBytes(modInfo));
-				zip.SafeAddEntry("mission.lua", textEncoding.GetBytes(luaMissionData));
-				zip.SafeAddEntry("script.txt", textEncoding.GetBytes(script));
-				zip.SafeAddEntry(GlobalConst.MissionScriptFileName, textEncoding.GetBytes(script));
-				zip.SafeAddEntry("slots.lua", textEncoding.GetBytes(GetLuaSlots().ToString()));
+				zip.SafeAddEntry("modinfo.lua", modInfo);
+				zip.SafeAddEntry("mission.lua", luaMissionData);
+				zip.SafeAddEntry("script.txt", script);
+				zip.SafeAddEntry(GlobalConst.MissionScriptFileName, script);
+				zip.SafeAddEntry("slots.lua", GetLuaSlots().ToString());
 				zip.SafeAddEntry("dependencies.txt", String.Join(";", Mod.Dependencies)); // FIXME
 
 				{
@@ -356,7 +361,7 @@ namespace CMissionLib
 				}
 
 				// disable scripts by hiding them with a blank file
-				var blank = textEncoding.GetBytes("-- intentionally left blank --");
+				var blank = "-- intentionally left blank --";
 				foreach (var widget in disabledWidgets.Distinct()) zip.SafeAddEntry("LuaUI/Widgets/" + widget, blank);
 				foreach (var gadget in disabledGadgets.Distinct()) zip.SafeAddEntry("LuaRules/Gadgets/" + gadget, blank);
 
@@ -421,10 +426,6 @@ namespace CMissionLib
                         }
                     }
 				}
-                string directory = Path.GetDirectoryName(mutatorPath);
-                if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
-
-				zip.Save(mutatorPath);
 			}
 		}
 
@@ -439,15 +440,10 @@ namespace CMissionLib
 			else
 			{
 				var projectFileName = "project.mission.xml";
-				using (var zip = ZipFile.Read(path))
+				using (var zip = ZipFile.OpenRead(path))
 				{
-					var entry = zip.First(e => e.FileName == projectFileName);
-					using (var memoryStream = new MemoryStream())
-					{
-						entry.Extract(memoryStream);
-						memoryStream.Position = 0;
-						return (Mission)new NetDataContractSerializer().ReadObject(memoryStream);
-					}
+					var entry = zip.Entries.First(e => Path.GetFileName(e.Name) == projectFileName);
+					return (Mission)new NetDataContractSerializer().ReadObject(entry.Open());
 				}
 			}
 		}
@@ -679,8 +675,8 @@ namespace CMissionLib
 			sb.AppendFormat("  description   =	[[{0}]],\n", "Mission Mutator"); // the real description might break archivecache.lua
 			sb.AppendFormat("  modtype       =	[[{0}]],\n", hideFromModList ? 0 : 1);
 			sb.AppendFormat("  shortname     =	[[{0}]],\n", mod.ShortName);
-			sb.AppendFormat("  shortgame     =	[[{0}]],\n", mod.ShortGame);
-			sb.AppendFormat("  shortbasename =	[[{0}]],\n", mod.ShortBaseName);
+			//sb.AppendFormat("  shortgame     =	[[{0}]],\n", mod.ShortGame);
+			//sb.AppendFormat("  shortbasename =	[[{0}]],\n", mod.ShortBaseName);
 			sb.AppendLine("  depend = {");
 			sb.AppendFormat("    [[{0}]]\n", Mod.Name);
 			sb.AppendLine("  },");

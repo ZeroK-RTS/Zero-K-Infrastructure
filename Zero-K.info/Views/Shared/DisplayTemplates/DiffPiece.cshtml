@@ -1,0 +1,33 @@
+﻿@using DiffPlex.DiffBuilder.Model
+@model DiffPlex.DiffBuilder.Model.DiffPiece
+@{
+    var p = Model;
+}
+@if (p.SubPieces.Any())
+{
+    foreach (var s in p.SubPieces)
+    {
+        @Html.Partial("DisplayTemplates/DiffPiece", s)
+    }
+} else
+{
+    if (string.IsNullOrEmpty(p.Text))
+    {
+        p.Text = "\\n";
+    }
+    switch (p.Type)
+    {
+        case ChangeType.Deleted:
+            <span style="color: hotpink">@p.Text</span>
+            break;
+        case ChangeType.Inserted:
+            <span style="color: lightgreen">@p.Text</span>
+            break;
+        case ChangeType.Imaginary:
+            break;
+        case ChangeType.Unchanged:
+        case ChangeType.Modified:
+            <span>@p.Text</span>
+            break;
+    }
+}

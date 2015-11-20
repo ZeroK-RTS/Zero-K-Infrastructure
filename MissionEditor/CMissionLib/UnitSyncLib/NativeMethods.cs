@@ -82,6 +82,22 @@ namespace CMissionLib.UnitSyncLib
                 return Marshal.PtrToStringAnsi(RawGetMapName(index));
             }
 
+            public static string GetMapFileName(int index)
+            {
+                return Marshal.PtrToStringAnsi(RawGetMapFileName(index));
+            }
+
+            public static int GetMapIndex(string mapName)
+            {
+                int mapCount = GetMapCount();
+                for (int i=0; i<mapCount; i++)
+                {
+                    string name = GetMapName(i);
+                    if (name == mapName) return i;
+                }
+                return -1;
+            }
+
             [DllImport(UnitSyncName)]
             public static extern int GetMapOptionCount([In] [MarshalAs(UnmanagedType.LPStr)] string mapName);
 
@@ -531,6 +547,9 @@ namespace CMissionLib.UnitSyncLib
 
             [DllImport(UnitSyncName, EntryPoint = "GetMapName")]
             static extern IntPtr RawGetMapName(int index);
+
+            [DllImport(UnitSyncName, EntryPoint = "GetMapFileName")]
+            static extern IntPtr RawGetMapFileName(int index);
 
             [DllImport(UnitSyncName, EntryPoint = "GetModValidMap")]
             static extern IntPtr RawGetModValidMap(int index);

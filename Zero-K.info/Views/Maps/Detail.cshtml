@@ -24,16 +24,20 @@
 <div class="">
     <div id="maps" class="relative fleft" style="width: @(size.Width)px; height: @(3*size.Height+10)px; margin: 10px;">
         <a href='/Resources/@(m.MinimapName)' class="">
-            <img src='/Resources/@(m.MinimapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
+            <img src='/Resources/@(m.MinimapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='js_zoom' />
         </a>
         <a href='/Resources/@(m.HeightmapName)' class="">
-            <img src='/Resources/@(m.HeightmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
+            <img src='/Resources/@(m.HeightmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='js_zoom' />
         </a>
         <a href='/Resources/@(m.MetalmapName)' class="">
-            <img src='/Resources/@(m.MetalmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
+            <img src='/Resources/@(m.MetalmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='js_zoom' />
         </a>
     </div>
-    <h2>@m.InternalName</h2>
+    <h2>@m.InternalName 
+	@if (m.FeaturedOrder != null) {
+		<img src="/img/star_40.png" title="Featured" alt="Featured">
+	}
+	</h2>
     @if (planet!=null) {
         <h2>Planet @Html.PrintPlanet(planet)</h2>
     }
@@ -69,26 +73,6 @@
         <table style="font-size: small">
             <tr>
                 <td>Size: </td><td>@m.MapWidth x @m.MapHeight</td>
-            </tr>
-            <tr>
-                <td>Wind:</td>
-                <td>@mi.MinWind - @mi.MaxWind</td>
-            </tr>
-            <tr>
-                <td>Metal:</td>
-                <td>@mi.MaxMetal</td>
-            </tr>
-            <tr>
-                <td>Tidal:</td>
-                <td>@mi.TidalStrength</td>
-            </tr>
-            <tr>
-                <td>Gravity:</td>
-                <td>@mi.Gravity</td>
-            </tr>
-            <tr>
-                <td>Extractor radius:</td>
-                <td>@mi.ExtractorRadius</td>
             </tr>
         </table>
     }

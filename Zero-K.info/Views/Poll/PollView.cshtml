@@ -1,4 +1,4 @@
- @using ZkData
+ @using ZeroKWeb @using ZkData
 @model Poll
 @{
     var p = Model;
@@ -9,7 +9,7 @@
   }
   
   }
-@using (Ajax.BeginForm("PollVote", new { pollID = @p.PollID }, new AjaxOptions() { UpdateTargetId = divID, InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId = "ajaxScrollProgress" }))
+@using (Ajax.BeginForm("PollVote", new { pollID = @p.PollID }, new AjaxOptions() { UpdateTargetId = divID, InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId = "busy" }))
 {
 
     <div id="@divID">
@@ -41,10 +41,11 @@
                 { 
                     <tr>
                         <td>
-                            <input type="submit" name="option@(option.OptionID)" value="Vote" 
-                                   title="@(p.IsAnonymous? "":"$polloption$" +option.OptionID)" 
-						
-                                />
+                            @if (Global.IsAccountAuthorized)
+                            {
+                                <input type="submit" name="option@(option.OptionID)" value="Vote"
+                                       title="@(p.IsAnonymous ? "" : "$polloption$" + option.OptionID)"/>
+                            }
                         </td>
                         <td>
                             @Html.BBCode(option.OptionText)

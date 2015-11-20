@@ -2,8 +2,8 @@
 
 html
 {
-    /*background: #000 url("../img/bg_bluehex.gif") fixed;*/
-    background: #000;
+	/*background: #000 url("/img/bg_bluehex.gif") fixed;*/
+	background: #000;
 	color: #ede;
 	font-family: font, sans-serif;
 	font-size: 1em;
@@ -17,24 +17,28 @@ html
 
 body
 {
-    background: none;
-    width: 100%;
-    top: 0;
-    padding: 0;
-    margin: 0;
-    border: 0;
+	background: none;
+	width: 100%;
+	top: 0;
+	padding: 0;
+	margin: 0;
+	border: 0;
+}
+
+pre {
+	white-space: pre-wrap;
 }
 
 #fadetoblack
 {
 	background: url("/img/fade.png") repeat-y 50% 0;
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    height: 100%;
-    width: 100%;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	height: 100%;
+	width: 100%;
 }
 
 .wrapper
@@ -46,7 +50,6 @@ body
 	margin-right: auto;
 	border-top: 0;
 	border-bottom: 0;
-	text-align: justify;
 	z-index:0;
 }
 
@@ -58,8 +61,8 @@ div#footer
 
 .floatingheader
 {
-    position:fixed;
-    top:10px;
+	position:fixed;
+	top:10px;
 	margin-left: auto;
 	margin-right: auto;
 	z-index:100;
@@ -67,8 +70,8 @@ div#footer
 
 .floatingfooter
 {
-    position:fixed;
-    bottom:-10px;
+	position:fixed;
+	bottom:-10px;
 	margin-left: auto;
 	margin-right: auto;
 	z-index:100;
@@ -76,8 +79,8 @@ div#footer
 
 ul.forumtab
 {
-    list-style-image: url("/img/bullet.png");
-    padding-left: 15px;
+	list-style-image: url("/img/bullet.png");
+	padding-left: 15px;
 }
 
 hr.pretty
@@ -89,10 +92,10 @@ hr.pretty
 
 div#simplestyle
 {
-    margin: 10px;
+	margin: 10px;
 }
 
-div#ajaxScrollProgress
+div#busy
 {
 	background: #190c02; /*bgcolor of load.gif*/
 	position: fixed;
@@ -122,34 +125,34 @@ div#ajaxScrollProgress
 {
 	margin: 10px;
 	padding: 5px;
-    border-style: solid;
+	border-style: solid;
 	border-radius: 15px;
 	border-image:url("/styles/dark-hive/images/tech_button.png") 24 fill / 15px stretch;
 	background: #333;
-    box-shadow: 0 0 3px 3px #000;
+	box-shadow: 0 0 3px 3px #000;
 	-moz-box-shadow: 0 0 3px 3px #000;
-    -webkit-box-shadow: 0 0 3px 3px #000;
+	-webkit-box-shadow: 0 0 3px 3px #000;
 }
 
 .ie .border
 {
-    padding: 13px;
+	padding: 13px;
 	border: 1px solid #38bfec;
 }
 
 /* Download-Button on Homepage */
 .buttonSpan
 {
-    height: 45px;
-    width: 45px;
-    background-image: url("/img/downloadBlue45.png");
-    display: inline-block;
-    vertical-align:middle;
+	height: 45px;
+	width: 45px;
+	background-image: url("/img/downloadBlue45.png");
+	display: inline-block;
+	vertical-align:middle;
 }
 
 .buttonSpan:hover
 {
-    background-image: url("/img/downloadBlue45_2.png");
+	background-image: url("/img/downloadBlue45_2.png");
 }
 
 .textbutton
@@ -159,21 +162,21 @@ div#ajaxScrollProgress
 	color: #38bfec;
 	border-radius: 5px;
 	border: 1px solid #2a8eaf;
-    box-shadow: 0 0 2px 2px #38bfec;
-	padding: 2px;
-	padding-left: 6px;
-	padding-right: 6px;
-	margin: 4px 1px 4px 1px;
+	box-shadow: 0 0 2px 2px #38bfec;
+	padding: 0.4em 1em;
+	margin: 4px 1px;
 	cursor: pointer;
-    text-align: center;
-    font-family: skir, sans-serif;
+	text-align: center;
+	font-family: skir, sans-serif;
+	font-size: medium;
+	vertical-align: middle;
 }
 
 .textbutton:hover
 {
 	color: #fff;
-    box-shadow: 0 0 2px 2px #fff;
-    text-decoration: none;
+	box-shadow: 0 0 2px 2px #fff;
+	text-decoration: none;
 }
 
 .downloadbutton
@@ -184,31 +187,31 @@ div#ajaxScrollProgress
 	color: #38bfec;
 	border-radius: 5px;
 	border: 1px solid #2a8eaf;
-    box-shadow: 0 0 2px 2px #38bfec;
-	padding: 15px 0 15px 0;
+	box-shadow: 0 0 2px 2px #38bfec;
+	padding: 15px 0;
 	margin: 10px;
 	cursor: pointer;
-    text-align: center;
-    font-family: skir, sans-serif;
-    font-size: 200%;
+	text-align: center;
+	font-family: skir, sans-serif;
+	font-size: 200%;
 }
 
 .downloadbutton:hover
 {
 	color: #fff;
-    box-shadow: 0 0 2px 2px #fff;
+	box-shadow: 0 0 2px 2px #fff;
 }
 
 .downloadbutton:active
 {
 	color: #cbd3d4;
-    box-shadow: 0 0 2px 2px #cbd3d4;
+	box-shadow: 0 0 2px 2px #cbd3d4;
 }
 
 div.button_2
 {
-    position:static;
-    display:inline-block;
+	position:static;
+	display:inline-block;
 	left: 60px;
 	width: 197px;
 	height: 43px;
@@ -220,7 +223,6 @@ div.button_2
 	text-align: center;
 	vertical-align:middle;
 	opacity: 1;
-	
 }
 
 div.button_2:hover {
@@ -229,20 +231,20 @@ div.button_2:hover {
 
 span.button_2text
 {
-    font-family: 'Klavika', Helvetica, Arial, sans-serif;
-    color: #FFF;
-    font-size: large;
-    line-height: 1;
-    text-decoration: none;
-    text-align: center;
-    position: relative;
-    top: 9px;
+	font-family: 'Klavika', Helvetica, Arial, sans-serif;
+	color: #FFF;
+	font-size: large;
+	line-height: 1;
+	text-decoration: none;
+	text-align: center;
+	position: relative;
+	top: 9px;
 }
 
 /* Share */
 #shares 
 {
-    vertical-align:middle;
+	vertical-align:middle;
 }
 
 /* galaxy map
@@ -272,25 +274,6 @@ span.button_2text
 	display: none;
 }
 
-/* Forums
-----------------------------------------------*/
-.forum_row:hover
-{
-	/*
-	background: #444;
-	border: 1px solid #38bfec;
-	*/
-}
-
-.toggleFalse
-{
-	background: url("/img/bg_black_translucent.png");
-}
-
-.toggleTrue
-{
-	background: url("/img/bg_111_translucent.png");
-}
 
 /* Single Player missions
 ----------------------------------------------*/
@@ -373,9 +356,9 @@ span.button_2text
 	padding: 5px;
 	margin: 2px;
 	border-radius: 5px;
-    box-shadow: 0 0 3px 3px #000;
+	box-shadow: 0 0 3px 3px #000;
 	-moz-box-shadow: 0 0 3px 3px #000;
-    -webkit-box-shadow: 0 0 3px 3px #000;
+	-webkit-box-shadow: 0 0 3px 3px #000;
 }
 
 .battle_loser
@@ -384,9 +367,9 @@ span.button_2text
 	padding: 5px;
 	margin: 2px;
 	border-radius: 5px;
-    box-shadow: 0 0 3px 3px #000;
+	box-shadow: 0 0 3px 3px #000;
 	-moz-box-shadow: 0 0 3px 3px #000;
-    -webkit-box-shadow: 0 0 3px 3px #000;
+	-webkit-box-shadow: 0 0 3px 3px #000;
 }
 
 .battle_spec
@@ -428,36 +411,36 @@ span.button_2text
 -----------------------------------------------------------*/
 .field-validation-error
 {
-    color: #ff0000;
+	color: #ff0000;
 }
 
 .field-validation-valid
 {
-    display: none;
+	display: none;
 }
 
 .input-validation-error
 {
-    border: 1px solid #ff0000;
-    background-color: #ffeeee;
+	border: 1px solid #ff0000;
+	background-color: #ffeeee;
 }
 
 .validation-summary-errors
 {
-    font-weight: bold;
-    color: #ff0000;
+	font-weight: bold;
+	color: #ff0000;
 }
 
 .validation-summary-valid
 {
-    display: none;
+	display: none;
 }
 
 /* google wiki */
 .section_anchor 
 {
-  display:none;
-  color: Black;
+	display:none;
+	color: Black;
 }
 
 /* Styles for unitguide
@@ -465,31 +448,31 @@ span.button_2text
 
 .infoCell
 {
-  background-color:#204040;
-  border-style: solid;
-  border-image: url("dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
-  border-radius: 10px;
-  border-color:transparent;
-  max-width: 700px;
-  overflow: hidden;
-  padding:10px;
-  white-space:normal;
+	background-color:#204040;
+	border-style: solid;
+	border-image: url("/styles/dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
+	border-radius: 10px;
+	border-color:transparent;
+	max-width: 700px;
+	overflow: hidden;
+	padding:10px;
+	white-space:normal;
 }
 .unitCell{
-    margin-left: 30px; 
+	margin-left: 30px; 
 }
 .unitname {
-    font-weight:bold;
+	font-weight:bold;
 }
-.unitdesc  {
-    font-style:oblique;
+.unitdesc {
+	font-style:oblique;
 }
 .helptext {
 	font-size:small;
 }
 
 .buildpic {
-    border: 1px solid white;
+	border: 1px solid white;
 }
 .statsnumval {
 	font-weight:bold;
@@ -503,54 +486,92 @@ span.button_2text
 
 .forumRow 
 {
-  width:100%;
+	width:100%;
 }
 
 .forumPostHead 
 {
-  background-color:#204040;
-  width:222px;
-  border-style: solid;
-  border-radius:10px;
-  border-color:transparent;
-  border-image: url("/styles/dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
-  padding:10px;
+	background-color:#204040;
+	width:222px;
+	border-style: solid;
+	border-radius:10px;
+	border-color:transparent;
+	border-image: url("/styles/dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
+	padding:10px;
 }
 
 .forumPostText
 {
-  background-color:#204040;
-  border-style: solid;
-  border-image: url("/styles/dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
-  border-radius: 10px;
-  border-color:transparent;
-  max-width: 700px;
-  overflow: hidden;
-  padding:10px;
-  white-space:normal;
+	background-color:#204040;
+	border-style: solid;
+	border-image: url("/styles/dark-hive/images/tech_button.png") 24 24 24 24 fill / 15px 15px 15px 15px;
+	border-radius: 10px;
+	border-color:transparent;
+	max-width: 700px;
+	overflow: hidden;
+	padding:10px;
+	white-space:normal;
 }
 
 .forumPostText img
 {
-  max-width:100%;
+	max-width:100%;
 }
 
 .journal img {
-  max-width:100%;
+	max-width:100%;
 }
 
 /* planetwars */
 .planetname
 {
-  text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+	text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 .pwlabel 
 {
-  font-size:11px; 
-  font-weight:bold; 
-  margin: 0; 
-  padding:0; 
-  position: absolute;
+	font-size:11px; 
+	font-weight:bold; 
+	margin: 0; 
+	padding:0; 
+	position: absolute;
 }
 
+.wikitable {
+	border-spacing: 0;
+	border: 1px solid #ccc;
+}
+
+.wikitable td {
+	border: 1px solid #ccc; padding: 5px;
+}
+
+
+.grid {
+	margin: 10px;
+	padding: 5px;
+	border-style: solid;
+	border-radius: 15px;
+	border-image: url("/styles/dark-hive/images/tech_button.png") 24 fill / 15px stretch;
+	background: #333;
+	box-shadow: 0 0 3px 3px #000;
+	-moz-box-shadow: 0 0 3px 3px #000;
+	-webkit-box-shadow: 0 0 3px 3px #000;
+	margin: 5px;
+}
+
+.grid_title {
+	text-align: center;
+}
+
+.grid_table {
+	width: 100%;
+}
+
+.grid_pager {
+	margin: 4px;
+}
+
+.grid .row_selected {
+	background-color: #0000cd;
+}

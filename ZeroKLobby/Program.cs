@@ -234,6 +234,22 @@ namespace ZeroKLobby
                     }
                 }
 
+                // write license files
+                try {
+                    var path = Program.SpringPaths.WritableDirectory;
+                    var pathGPL = Utils.MakePath(path, "license_GPLv3");
+                    string gpl = Encoding.UTF8.GetString(License.GPLv3);
+                    if (!File.Exists(pathGPL))
+                        File.WriteAllText(pathGPL, gpl);
+                    var pathMIT = Utils.MakePath(path, "license_MIT");
+                    string mit = Encoding.UTF8.GetString(License.MITlicense);
+                    if (!File.Exists(pathMIT))
+                        File.WriteAllText(pathMIT, mit);
+                } catch (Exception ex)
+                {
+                    Trace.TraceError(ex.ToString());
+                }
+
                 try
                 {
                     if (!Debugger.IsAttached)
@@ -386,20 +402,23 @@ namespace ZeroKLobby
                 //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
 
 
-
-
                 Application.Run(MainWindow);
                 ShutDown();
             }
             catch (Exception ex)
             {
                 ErrorHandling.HandleException(ex, true);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             finally
             {
                 ShutDown();
             }
-            if (ErrorHandling.HasFatalException && !Program.CloseOnNext) Application.Restart();
+            if (ErrorHandling.HasFatalException && !Program.CloseOnNext)
+            {
+                if (Debugger.IsAttached) Debugger.Break();
+                Application.Restart();
+            }
         }
 
         private static int getSpringZKCount = 0;
@@ -485,6 +504,7 @@ namespace ZeroKLobby
             try
             {
                 ErrorHandling.HandleException(e.Exception, true);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             catch { }
         }
@@ -494,6 +514,7 @@ namespace ZeroKLobby
             try
             {
                 ErrorHandling.HandleException((Exception)e.ExceptionObject, e.IsTerminating);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             catch { }
         }
@@ -504,6 +525,7 @@ namespace ZeroKLobby
             try
             {
                 ErrorHandling.HandleException((Exception)e.ExceptionObject, e.IsTerminating);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             catch { }
         }

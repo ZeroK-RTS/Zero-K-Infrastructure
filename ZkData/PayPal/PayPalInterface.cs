@@ -68,7 +68,7 @@ namespace ZkData
                             GlobalConst.BaseSiteUrl));
                     using (var db = new ZkDataContext()) {
                         db.Contributions.First(x => x.ContributionID == contribution.ContributionID).Comment = "VERIFICATION FAILED";
-                        db.SubmitAndMergeChanges();
+                        db.SaveChanges();
                     }
                 }
             } catch (Exception ex) {
@@ -216,11 +216,11 @@ namespace ZkData
                                   ContributionJar = jar
                               };
                     db.Contributions.Add(contrib);
-                    
-                    db.SubmitAndMergeChanges();
+
+                    db.SaveChanges();
 
                     if (acc != null) acc.Kudos = acc.KudosGained - acc.KudosSpent;
-                    db.SubmitAndMergeChanges();
+                    db.SaveChanges();
 
 
                     // technically not needed to sent when account is known, but perhaps its nice to get a confirmation like that

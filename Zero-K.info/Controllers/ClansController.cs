@@ -13,17 +13,22 @@ namespace ZeroKWeb.Controllers
 {
     public class ClansController : Controller
     {
-        //
-        // GET: /Clans/
+        public class ClansModel
+        {
+            public string Search { get; set; }
+            public IQueryable<Clan> Data;
+        }
 
         /// <summary>
         /// Clan list
         /// </summary>
-        public ActionResult Index()
-        {
+        public ActionResult Index(ClansModel model) {
+            model = model ?? new ClansModel();
             var db = new ZkDataContext();
-
-            return View(db.Clans.Where(x => !x.IsDeleted && (x.Faction != null && !x.Faction.IsDeleted)));
+            var ret = db.Clans.Where(x => !x.IsDeleted && (x.Faction != null && !x.Faction.IsDeleted));
+            if (!string.IsNullOrEmpty(model.Search)) ret = ret.Where(x => x.ClanName.Contains(model.Search) || x.Shortcut.Contains(model.Search));
+            model.Data = ret.OrderBy(x => x.ClanName);
+            return View("ClansIndex", model);
         }
 
 
@@ -65,7 +70,7 @@ namespace ZeroKWeb.Controllers
             if (clan.Accounts.Count() > GlobalConst.ClanLeaveLimit) return null; // "This clan is too big to leave";
 
             RoleType leader = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople && x.IsClanOnly);
-
+            bool isLeader = acc.AccountRolesByAccountID.Any(x => x.RoleType == leader);
             // remove role
             db.AccountRoles.DeleteAllOnSubmit(acc.AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).ToList());
 
@@ -92,7 +97,7 @@ namespace ZeroKWeb.Controllers
                 clan.IsDeleted = true;
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} is disbanded", clan));
             }
-            else if (acc.AccountRolesByAccountID.Any(x => x.RoleType == leader))  // clan leader
+            else if (isLeader)
             {
                 var otherClanMember = clan.Accounts.FirstOrDefault(x => x.AccountID != accountID);
                 if (otherClanMember != null)
@@ -188,22 +193,57 @@ namespace ZeroKWeb.Controllers
                 }
 
                 orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
+                string orgImageUrl = Server.MapPath(orgClan.GetImageUrl());
+                string orgBGImageUrl = Server.MapPath(orgClan.GetBGImageUrl());
+                string orgShortcut = orgClan.Shortcut;
+                string newImageUrl = Server.MapPath(clan.GetImageUrl());
+                string newBGImageUrl = Server.MapPath(clan.GetBGImageUrl());
                 orgClan.ClanName = clan.ClanName;
                 orgClan.Shortcut = clan.Shortcut;
                 orgClan.Description = clan.Description;
                 orgClan.SecretTopic = clan.SecretTopic;
                 orgClan.Password = clan.Password;
+                bool shortcutChanged = orgShortcut != clan.Shortcut;
 
                 if (image != null && image.ContentLength > 0)
                 {
                     var im = Image.FromStream(image.InputStream);
                     if (im.Width != 64 || im.Height != 64) im = im.GetResized(64, 64, InterpolationMode.HighQualityBicubic);
-                    im.Save(Server.MapPath(orgClan.GetImageUrl()));
+                    im.Save(newImageUrl);
                 }
+                else if (shortcutChanged)
+                {
+                    //if (System.IO.File.Exists(newImageUrl)) System.IO.File.Delete(newImageUrl);
+                    //System.IO.File.Move(orgImageUrl, newImageUrl);
+                    try {
+                        //var im = Image.FromFile(orgImageUrl);
+                        //im.Save(newImageUrl);
+                        System.IO.File.Copy(orgImageUrl, newImageUrl, true);
+                    } catch (System.IO.FileNotFoundException fnfex) // shouldn't happen but hey
+                    {
+                        return Content("A clan image is required");
+                    }
+                }
+
                 if (bgimage != null && bgimage.ContentLength > 0)
                 {
                     var im = Image.FromStream(bgimage.InputStream);
-                    im.Save(Server.MapPath(orgClan.GetBGImageUrl()));
+                    im.Save(newBGImageUrl);
+                }
+                else if (shortcutChanged)
+                {
+                    //if (System.IO.File.Exists(newBGImageUrl)) System.IO.File.Delete(newBGImageUrl);
+                    //System.IO.File.Move(orgBGImageUrl, newBGImageUrl);
+                    try
+                    {
+                        //var im = Image.FromFile(orgBGImageUrl);
+                        //im.Save(newBGImageUrl);
+                        System.IO.File.Copy(orgBGImageUrl, newBGImageUrl, true);
+                    }
+                    catch (System.IO.FileNotFoundException fnfex)
+                    {
+                        // there wasn't an original background image, do nothing
+                    }
                 }
 
                 if (clan.FactionID != orgClan.FactionID)   

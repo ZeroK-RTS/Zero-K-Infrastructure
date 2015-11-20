@@ -118,11 +118,9 @@ namespace ZkLobbyServer
 
                             List<string> blockedCompanies = db.BlockedCompanies.Select(x => x.CompanyName.ToLower()).ToList();
                             List<string> blockedHosts = db.BlockedHosts.Select(x => x.HostName).ToList();
-                            /*if (acc.Country == "MY")
-                        {
-                            client.Say(SayPlace.User, "KingRaptor", String.Format("USER {0}\nnetname: {1}\norgname: {2}\ndescr: {3}\nabuse-mailbox: {4}",
+                            
+                            Trace.TraceInformation(String.Format("VPN check for USER {0}\nnetname: {1}\norgname: {2}\ndescr: {3}\nabuse-mailbox: {4}",
                                 acc.Name, data["netname"], data["org-name"], data["descr"], data["abuse-mailbox"]), false);
-                        }*/
 
                             bool blockedHost = blockedHosts.Any(x => data["abuse-mailbox"].Contains(x)) ||
                                                (blockedHosts.Any(x => data["notify"].Contains(x)));
@@ -142,8 +140,10 @@ namespace ZkLobbyServer
                             if (blockedHost) return BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, userID);
                         }
                     }
-                } catch (SocketException sockEx) {} catch (Exception ex) {
-                    Trace.TraceError("VPN check error: {0}", ex);
+                } catch (SocketException sockEx) {
+                    Trace.TraceError("VPN check socket error for user {0}: {1}",acc.Name, sockEx);
+                } catch (Exception ex) {
+                    Trace.TraceError("VPN check error for user {0}: {1}", acc.Name, ex);
                 }
 
                 return new LoginResponse { ResultCode = LoginResponse.Code.Ok };

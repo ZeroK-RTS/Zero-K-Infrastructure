@@ -1,0 +1,29 @@
+﻿@model ZeroKWeb.Controllers.BattlesController.BattleSearchModel
+
+@{
+    Page.Title = "Replay Search";
+}
+<form action="@Url.Action("Index")" id="ajaxScrollForm" method="post">
+    Title: @Html.TextBoxFor(x => x.Title)
+    Map: @Html.TextBoxFor(x => x.Map, new { data_autocomplete = Url.Action("Maps", "Autocomplete"), data_autocomplete_action = "submit" })
+    <br/>
+    Players: @Html.TextBoxFor(x => x.User1, new { data_autocomplete = Url.Action("Users", "Autocomplete"), data_autocomplete_action = "submit" })
+            @Html.TextBoxFor(x => x.User2, new { data_autocomplete = Url.Action("Users", "Autocomplete"), data_autocomplete_action = "submit" })
+                @Html.TextBoxFor(x => x.User3, new { data_autocomplete = Url.Action("Users", "Autocomplete"), data_autocomplete_action = "submit" })
+    <br/>
+    Player count: @Html.TextBoxFor(x => x.PlayersFrom) - @Html.TextBoxFor(x => x.PlayersTo)
+    <br/>
+    Age: @Html.EnumDropDownListFor(x => x.Age)
+    Mission: @Html.EnumDropDownListFor(x => x.Mission)
+    Bots: @Html.EnumDropDownListFor(x => x.Bots)
+    <input name="sa" value="Search" type="image" src="/img/search_img.png" style="border: none; vertical-align: middle;"/>
+</form>
+<table>
+    <tr>
+        <td>
+            <div id="ajaxScrollTarget">
+                @{ Html.RenderPartial("BattleTileList", Model); }
+            </div>
+        </td>
+    </tr>
+</table>

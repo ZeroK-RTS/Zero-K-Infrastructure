@@ -94,7 +94,7 @@ Download: <select name="isDownloadable">
   Needs tagging: @Html.CheckBox("needsTagging")
 </span>
 <br />
-Name or author: @Html.TextBox("search")
+Name or author: @Html.TextBox("search", null, new {data_autocomplete = Url.Action("Maps", "Autocomplete"), data_autocomplete_action = "submit"})
 <input type="submit" id="submit" value="Search" />
 </form>
 <table width='100%'>

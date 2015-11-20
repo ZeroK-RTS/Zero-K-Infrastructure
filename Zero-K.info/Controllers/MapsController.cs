@@ -208,6 +208,9 @@ namespace ZeroKWeb.Controllers
             rat.AccountID = Global.Account.AccountID;
             rat.Rating = rating;
             db.SubmitChanges();
+
+            db = new ZkDataContext(); // select again so that linked resources work
+            rat = db.MapRatings.First(x => x.ResourceID == rat.ResourceID && x.AccountID == rat.AccountID);
             rat.Resource.MapRatingSum = rat.Resource.MapRatings.Sum(x => x.Rating);
             rat.Resource.MapRatingCount = rat.Resource.MapRatings.Count();
             db.SubmitChanges();

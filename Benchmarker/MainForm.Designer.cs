@@ -35,7 +35,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tbBenchmarkArg = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.cbMultiThread = new System.Windows.Forms.CheckBox();
             this.cmbScripts = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cbConfigs = new System.Windows.Forms.ComboBox();
@@ -107,7 +106,6 @@
             // 
             this.groupBox1.Controls.Add(this.tbBenchmarkArg);
             this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.cbMultiThread);
             this.groupBox1.Controls.Add(this.cmbScripts);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.cbConfigs);
@@ -141,16 +139,6 @@
             this.label6.Size = new System.Drawing.Size(115, 13);
             this.label6.TabIndex = 14;
             this.label6.Text = "--benchmark time (94+)";
-            // 
-            // cbMultiThread
-            // 
-            this.cbMultiThread.AutoSize = true;
-            this.cbMultiThread.Location = new System.Drawing.Point(347, 24);
-            this.cbMultiThread.Name = "cbMultiThread";
-            this.cbMultiThread.Size = new System.Drawing.Size(128, 17);
-            this.cbMultiThread.TabIndex = 13;
-            this.cbMultiThread.Text = "Multi threaded engine";
-            this.cbMultiThread.UseVisualStyleBackColor = true;
             // 
             // cmbScripts
             // 
@@ -473,7 +461,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnGraphs;
-        private System.Windows.Forms.CheckBox cbMultiThread;
         private System.Windows.Forms.TextBox tbBenchmarkArg;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnBisect;

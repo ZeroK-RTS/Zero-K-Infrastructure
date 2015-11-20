@@ -66,7 +66,7 @@ namespace ZeroKWeb.Controllers
 
                 if (!string.IsNullOrEmpty(name))
                 {
-                    if (name.Length > 50) name = name.Substring(0, 50);
+                    if (name.Length > GlobalConst.MaxCommanderNameLength) name = name.Substring(0, GlobalConst.MaxCommanderNameLength);
                     name = Regex.Replace(name, @"[^\u0000-\u007F]", string.Empty); // remove unicode stuff
                     comm.Name = name;
                 }
@@ -249,9 +249,9 @@ namespace ZeroKWeb.Controllers
                         var acc = db.Accounts.Find(Global.AccountID);
                         if (acc.Kudos < unlock.KudosCost) return Content("Not enough kudos to unlock this");
                         acc.KudosPurchases.Add(new KudosPurchase() {Time = DateTime.UtcNow, Unlock = unlock, Account = acc, KudosValue = unlock.KudosCost??0});
-                        db.SubmitAndMergeChanges();
+                        db.SaveChanges();
                         acc.Kudos = acc.KudosGained - acc.KudosSpent;
-                        db.SubmitAndMergeChanges();
+                        db.SaveChanges();
                     }
                     
                     var au = db.AccountUnlocks.SingleOrDefault(x => x.AccountID == Global.AccountID && x.UnlockID == id);
@@ -261,7 +261,7 @@ namespace ZeroKWeb.Controllers
                         db.AccountUnlocks.InsertOnSubmit(au);
                     }
                     else au.Count++;
-                    db.SubmitAndMergeChanges();
+                    db.SaveChanges();
                 }
                 scope.Complete();
             }
@@ -355,19 +355,6 @@ namespace ZeroKWeb.Controllers
 			public IEnumerable<Unlock> FutureUnlocks;
 			public IEnumerable<Unlock> Unlocks;
 		}
-
-				
-		[Auth]
-	    public ActionResult LanguageChange(string language)
-		{
-			var db = new ZkDataContext();
-            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-            
-            language = language.ToLower();
-			acc.Language = language == "auto" ? "" : language;
-			db.SubmitChanges();
 			
-            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
-		}
 	}
 }

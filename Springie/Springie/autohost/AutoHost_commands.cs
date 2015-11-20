@@ -379,6 +379,13 @@ namespace Springie.autohost
             else Respond(e, "Cannot find such map.");
         }
 
+        public void ComMapRemote(TasSayEventArgs e, params string[] words)
+        {
+            if (HasRights("map", e, true)) ComMap(e, words);
+            else if (HasRights("votemap", e, true)) RunCommand(e, "votemap", words);
+            else Respond(e, "You do not have rights to change map");
+        }
+
         public void ComPlanet(TasSayEventArgs e, params string[] words)
         {
             if (spring.IsRunning)
@@ -513,13 +520,13 @@ namespace Springie.autohost
                 Respond(e, "Cannot rehost while game is running");
                 return;
             }*/
-            if (words.Length == 0) OpenBattleRoom(null, null, false);
+            if (words.Length == 0) OpenBattleRoom(null, null);
             else
             {
                 string[] mods;
                 int[] indexes;
                 if (FilterMods(words, out mods, out indexes) == 0) Respond(e, "cannot find such game");
-                else OpenBattleRoom(mods[0], null, false);
+                else OpenBattleRoom(mods[0], null);
             }
         }
 

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using LobbyClient;
 using ZkData;
+using TasClient = LobbyClient.Legacy.TasClient;
+using TasEventArgs = LobbyClient.Legacy.TasEventArgs;
+using TasSayEventArgs = LobbyClient.Legacy.TasSayEventArgs;
 
 namespace ZkLobbyServer
 {
@@ -11,41 +14,25 @@ namespace ZkLobbyServer
     /// </summary>
     public class ChatRelay
     {
-        ZkLobbyServer state;
-        LobbyClient.Legacy.TasClient springTas;
-        List<string> channels;
+        readonly List<string> channels;
+        readonly TasClient springTas;
+        readonly ZkLobbyServer zkServer;
 
-        public ChatRelay(ZkLobbyServer state, string password, List<string> channels)
+        public ChatRelay(ZkLobbyServer zkServer, string password, List<string> channels)
         {
-            this.state = state;
-            this.springTas = new LobbyClient.Legacy.TasClient(null, "ChatRelay", 0);
+            this.zkServer = zkServer;
+            this.springTas = new TasClient(null, "ChatRelay", 0);
             this.channels = channels;
-            springTas.LoginAccepted += OnLoginAccepted;
-            springTas.Said += OnSaid;
-            state.Said += OnSaid;
+            springTas.LoginAccepted += OnSpringTasLoginAccepted;
+            springTas.Said += OnSpringTasSaid;
+            zkServer.Said += OnZkServerSaid;
 
             SetupSpringTasConnection(password);
         }
 
-        void OnSaid(object sender, LobbyClient.Legacy.TasSayEventArgs args)
+        void OnZkServerSaid(object sender, Say say)
         {
-            var tas = (LobbyClient.Legacy.TasClient)sender;
-            if (args.Place == LobbyClient.Legacy.TasSayEventArgs.Places.Channel && channels.Contains(args.Channel) && args.UserName != tas.UserName) {
-                state.GhostSay(new Say() {
-                    Place = SayPlace.Channel,
-                    Text = args.Text,
-                    IsEmote = args.IsEmote,
-                    Time = DateTime.UtcNow,
-                    Target = args.Channel,
-                    User = args.UserName,
-                });
-            }
-        }
-
-        void OnLoginAccepted(object sender, LobbyClient.Legacy.TasEventArgs e)
-        {
-            var tas = (LobbyClient.Legacy.TasClient)sender;
-            foreach (var chan in channels) if (!tas.JoinedChannels.ContainsKey(chan)) tas.JoinChannel(chan);
+            if (say.AllowRelay && say.Place == SayPlace.Channel && channels.Contains(say.Target)) springTas.Say(TasClient.SayPlace.Channel, say.Target, string.Format("<{0}> {1}", say.User, say.Text), say.IsEmote);
         }
 
         void SetupSpringTasConnection(string password)
@@ -54,16 +41,28 @@ namespace ZkLobbyServer
                 Thread.Sleep(5000);
                 springTas.Login(GlobalConst.NightwatchName, password);
             });
-            springTas.Connect(GlobalConst.OldSpringLobbyHost, GlobalConst.OldSpringLobbyPort);
             springTas.Connected += (sender, args) => springTas.Login(GlobalConst.NightwatchName, password);
+            springTas.Connect(GlobalConst.OldSpringLobbyHost, GlobalConst.OldSpringLobbyPort);
         }
 
-        void OnSaid(object sender, Say say)
+        void OnSpringTasLoginAccepted(object sender, TasEventArgs e)
         {
-            if (say.Place == SayPlace.Channel && channels.Contains(say.Target)) {
-                springTas.Say(LobbyClient.Legacy.TasClient.SayPlace.Channel, say.Target, string.Format("<{0}> {1}", say.User, say.Text), say.IsEmote);
+            foreach (var chan in channels) if (!springTas.JoinedChannels.ContainsKey(chan)) springTas.JoinChannel(chan);
+        }
+
+        void OnSpringTasSaid(object sender, TasSayEventArgs args)
+        {
+            if (args.Place == TasSayEventArgs.Places.Channel && channels.Contains(args.Channel) && args.UserName != springTas.UserName) {
+                zkServer.GhostSay(new Say() {
+                    Place = SayPlace.Channel,
+                    Text = args.Text,
+                    IsEmote = args.IsEmote,
+                    Time = DateTime.UtcNow,
+                    Target = args.Channel,
+                    User = args.UserName,
+                    AllowRelay = false
+                });
             }
         }
-
     }
 }

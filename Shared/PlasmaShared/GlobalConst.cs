@@ -23,7 +23,7 @@ namespace ZkData
             get { return mode; }
             set { SetMode(value);}
         }
-
+        
         static GlobalConst()
         {
             #if LIVE
@@ -52,10 +52,10 @@ namespace ZkData
                 case ModeType.Test:
                     BaseSiteUrl = "http://test.zero-k.info";
                     ZkDataContextConnectionString =
-                        "Data Source=omega.licho.eu,100;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
+                        "Data Source=test.zero-k.info;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
                     SpringieNode = "omega";
 
-                    LobbyServerHost = "lobby.zero-k.info";
+                    LobbyServerHost = "test.zero-k.info";
                     LobbyServerPort = 8202;
 
                     OldSpringLobbyPort = 7000;
@@ -63,10 +63,10 @@ namespace ZkData
                 case ModeType.Live:
                     BaseSiteUrl = "http://zero-k.info";
                     ZkDataContextConnectionString =
-                        "Data Source=omega.licho.eu,100;Initial Catalog=zero-k_ef;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
+                        "Data Source=zero-k.info;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
                     SpringieNode = "omega";
 
-                    LobbyServerHost = "lobby.zero-k.info";
+                    LobbyServerHost = "zero-k.info";
                     LobbyServerPort = 8200;
 
                     OldSpringLobbyPort = 8200;
@@ -122,12 +122,15 @@ namespace ZkData
         public const int ZkLobbyUserCpuLinux = 6668;
         public const int CommanderProfileCount = 6;
         public const int NumCommanderLevels = 5;
+        public const int MaxCommanderNameLength = 20;
 
         public const string DefaultEngineOverride = "100.0"; // hack for ZKL using tasclient's engine - override here for missions etc
 
         public const int MinDurationForXP = 240;    // seconds
         public const int MinDurationForElo = 60;
         public const int MinDurationForPlanetwars = 0;
+
+        public const int LadderActivityDays = 7;
 
         public const int XpForMissionOrBots = 25;
         public const int XpForMissionOrBotsVictory = 50;
@@ -173,7 +176,7 @@ namespace ZkData
         public const int DefaultBomberCapacity = 10;
         public const int AttackPointsForVictory = 2;
         public const int AttackPointsForDefeat = 1;
-        public const int MaxClanSkilledSize = 999;
+        public static readonly int? MaxClanSkilledSize = null;
         public const int ClanLeaveLimit = 100;
         public const int FactionChannelMinLevel = 10;
         public const bool RotatePWMaps = false;
@@ -201,7 +204,7 @@ namespace ZkData
         public const int KudosForGold = 1000;
         public const int KudosForDiamond = 5000;
 
-        public const int ForumPostsPerPage = 50;
+        public const int ForumPostsPerPage = 20;
         public const int MinLevelForForumVote = 10;
         public const int MinNetKarmaToVote = -30;
         public const int PostVoteHideThreshold = -6;
@@ -215,12 +218,16 @@ namespace ZkData
         public const int LobbyProtocolPingInterval = 30;
         public const int LobbyProtocolPingTimeout = 60;
 
+        public const int WikiEditLevel = 20;
+
         public static string ResourceBaseUrl;
         public static string SelfUpdaterBaseUrl;
         public static readonly string[] DefaultDownloadMirrors = {};
         public static readonly string EngineDownloadPath = "http://springrts.com/dl/";
         public static string LobbyServerHost;
         public static int LobbyServerPort;
+
+
 
         public static bool IsZkMod(string name)
         {

@@ -79,6 +79,9 @@ namespace ZeroKWeb.SpringieInterface
                     if (user != null) {
                         var userParams = new List<SpringBattleStartSetup.ScriptKeyValuePair>();
                         ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { LobbyID = p.LobbyID, Parameters = userParams });
+                        
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "LobbyID", Value = user.AccountID.ToString() });
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "CountryCode", Value = user.Country });
 
                         bool userBanMuted = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanMute);
                         if (userBanMuted) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "muted", Value = "1" });
@@ -86,6 +89,8 @@ namespace ZeroKWeb.SpringieInterface
                                        { Key = "faction", Value = user.Faction != null ? user.Faction.Shortcut : "" });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair
                                        { Key = "clan", Value = user.Clan != null ? user.Clan.Shortcut : "" });
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair
+                                       { Key = "clanfull", Value = user.Clan != null ? user.Clan.ClanName : "" });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "level", Value = user.Level.ToString() });
                         double elo =  mode == AutohostMode.Planetwars ? user.EffectivePwElo : (is1v1 ? user.Effective1v1Elo : user.EffectiveElo);
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "elo", Value = Math.Round(elo).ToString() }); // elo for ingame is just ordering for auto /take

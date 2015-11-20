@@ -119,7 +119,7 @@ namespace ZeroKLobby.MicroLobby
 
             minuteTimer = new Timer(60000) { AutoReset = true };
             minuteTimer.Elapsed += (s, e) => {
-                if (DateTime.Now.Minute == 0) this.Invoke(new Action(() => AddLine(new ChimeLine())));
+                if (DateTime.Now.Minute == 0 && this.IsHandleCreated && !this.IsDisposed) this.Invoke(new Action(() => AddLine(new ChimeLine())));
             };
             minuteTimer.Start();
 
