@@ -25,9 +25,12 @@ module.exports = React.createClass({
 		} else {
 			this.setState({ chatOpen: !this.state.chatOpen });
 		}
+		
+		new Audio(`sounds/panel_move.wav`).play();
 	},
 	handleMenu: function(what){
 		this.setState({ currentContent: what });
+		new Audio(`sounds/button_click.wav`).play();
 	},
 	renderContent: function(){
 		switch (this.state.currentContent) {
