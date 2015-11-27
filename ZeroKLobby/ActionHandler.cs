@@ -28,7 +28,8 @@ namespace ZeroKLobby
         /// <returns>true if change allowed</returns>
         public static bool ChangeDesiredSpectatorState(bool state)
         {
-            return Program.BattleBar.ChangeDesiredSpectatorState(state);
+            Program.MainWindow.BattleRoomPage.ChangeDesiredSpectatorState(state);
+            return true;
         }
 
         /// <summary>
@@ -96,7 +97,7 @@ namespace ZeroKLobby
 
             //Program.JugglerBar.Deactivate();
 
-            Program.BattleBar.StartManualBattle(battleID, password);
+            TasClientActions.StartManualBattle(battleID, password);
         }
 
 
@@ -355,7 +356,7 @@ namespace ZeroKLobby
 
         public static void StopBattle()
         {
-            Program.BattleBar.Stop();
+            TasClientActions.LeaveBattle();
         }
 
 

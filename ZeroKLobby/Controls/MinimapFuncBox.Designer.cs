@@ -56,21 +56,20 @@
             // minimapSplitContainer1.Panel1
             // 
             this.minimapSplitContainer1.Panel1.Controls.Add(this.layoutPanel);
-            this.minimapSplitContainer1.Panel1MinSize = 10;
+            this.minimapSplitContainer1.Panel1MinSize = 50;
             // 
             // minimapSplitContainer1.Panel2
             // 
             this.minimapSplitContainer1.Panel2.Controls.Add(this.mapPanel);
-            this.minimapSplitContainer1.Panel2MinSize = 10;
+            this.minimapSplitContainer1.Panel2MinSize = 50;
             this.minimapSplitContainer1.Size = new System.Drawing.Size(0, 0);
-            this.minimapSplitContainer1.SplitterDistance = 10;
+            this.minimapSplitContainer1.SplitterDistance = 50;
             this.minimapSplitContainer1.SplitterWidth = 6;
             this.minimapSplitContainer1.TabIndex = 1;
             // 
             // layoutPanel
             // 
             this.layoutPanel.AutoSize = true;
-            this.layoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.layoutPanel.ColumnCount = 4;
             this.layoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.layoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
@@ -83,11 +82,11 @@
             this.layoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.layoutPanel.Location = new System.Drawing.Point(0, 0);
             this.layoutPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.layoutPanel.MinimumSize = new System.Drawing.Size(36, 35);
+            this.layoutPanel.MinimumSize = new System.Drawing.Size(36, 100);
             this.layoutPanel.Name = "layoutPanel";
             this.layoutPanel.RowCount = 1;
             this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.layoutPanel.Size = new System.Drawing.Size(36, 38);
+            this.layoutPanel.Size = new System.Drawing.Size(36, 100);
             this.layoutPanel.TabIndex = 2;
             // 
             // btnGameOptions
@@ -182,7 +181,7 @@
             this.mapPanel.Location = new System.Drawing.Point(0, 0);
             this.mapPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.mapPanel.Name = "mapPanel";
-            this.mapPanel.Size = new System.Drawing.Size(0, 38);
+            this.mapPanel.Size = new System.Drawing.Size(0, 10);
             this.mapPanel.TabIndex = 2;
             // 
             // MinimapFuncBox

@@ -30,7 +30,14 @@ namespace ZeroKLobby.MicroLobby
         
         public bool IsTopicVisible {
             get { return topicPanel.Visible; }
-            set {
+            set
+            {
+                if (this.IsInDesignMode())
+                {
+                    topicPanel.Visible = value;
+                    return;
+                }
+
                 //Note: topic window doesn't have listener to any resize event. This is minor issues.
                 float height = topicBox.LineSize;
                 height *= topicBox.TotalDisplayLines + 1;
@@ -38,7 +45,10 @@ namespace ZeroKLobby.MicroLobby
                 height += topicBox.Margin.Top + topicBox.Margin.Bottom;
                 topicPanel.Height = (int)height;
                 topicPanel.Visible = value;
-                if (value) Program.Conf.Topics.Remove(ChannelName);
+                if (value && Program.Conf.Topics.ContainsKey(ChannelName))
+                {
+                    Program.Conf.Topics.Remove(ChannelName);
+                }
                 else {
                     Channel channel;
                     if (Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel)) Program.Conf.Topics[channel.Name] = channel.Topic.SetDate;
@@ -54,8 +64,7 @@ namespace ZeroKLobby.MicroLobby
         public ChatControl(string name) {
             InitializeComponent();
 
-            var isDesignMode = Process.GetCurrentProcess().ProcessName == "devenv"; // workaround for this.DesignMode not working in constructor
-            if (isDesignMode) return;
+            if (this.IsInDesignMode()) return;
 
             var extras = new BitmapButton();
             extras.Text = "Extras";

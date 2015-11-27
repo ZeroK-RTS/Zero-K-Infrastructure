@@ -332,16 +332,7 @@ namespace ZeroKLobby.Notifications
 
         public void StartManualBattle(int battleID, string password)
         {
-            Trace.TraceInformation("Joining battle {0}", battleID);
-            var tas = Program.TasClient;
-            if (tas.MyBattle != null)
-            {
-                Battle battle;
-                if (tas.ExistingBattles.TryGetValue(battleID, out battle)) tas.Say(SayPlace.Battle, "", string.Format("Going to {0} zk://@join_player:{1}", battle.Title, battle.Founder.Name), true);
-                tas.LeaveBattle();
-            }
-            if (!string.IsNullOrEmpty(password)) Program.TasClient.JoinBattle(battleID, password);
-            else Program.TasClient.JoinBattle(battleID);
+            TasClientActions.StartManualBattle(battleID, password);
         }
 
 
@@ -352,12 +343,13 @@ namespace ZeroKLobby.Notifications
 
         public void Stop()
         {
-            Trace.TraceInformation("Closing current battle");
+            
             isVisible = false;
-            client.LeaveBattle();
+
+            TasClientActions.LeaveBattle();
 
             Program.NotifySection.RemoveBar(this);
-            Program.MainWindow.navigationControl.Path = "battles";
+
         }
 
         void AutoRespond()

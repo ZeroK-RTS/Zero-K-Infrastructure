@@ -14,6 +14,7 @@ using System.Xml.Serialization;
 using LobbyClient;
 using Microsoft.Win32;
 using SpringDownloader.Notifications;
+using ZeroKLobby.BattleRoom;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZkData;
@@ -26,7 +27,6 @@ namespace ZeroKLobby
         static NewVersionBar NewVersionBar;
         static Mutex mutex;
         public static AutoJoinManager AutoJoinManager;
-        public static BattleBar BattleBar { get; private set; }
         public static BattleIconManager BattleIconManager { get; private set; }
         public static BrowserInterop BrowserInterop { get; private set; }
         public static bool CloseOnNext;
@@ -351,7 +351,6 @@ namespace ZeroKLobby
 
                 Application.AddMessageFilter(new ScrollMessageFilter());
 
-                BattleBar = new BattleBar();
                 NewVersionBar = new NewVersionBar(SelfUpdater);
                 VoteBar = new VoteBar();
                 PwBar = new PwBar();

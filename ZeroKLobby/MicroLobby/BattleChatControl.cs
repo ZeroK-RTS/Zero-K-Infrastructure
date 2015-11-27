@@ -28,7 +28,9 @@ namespace ZeroKLobby.MicroLobby
 
 
 	    public BattleChatControl(): base("Battle")
-		{
+	    {
+	        if (this.IsInDesignMode()) return;
+
 			Program.TasClient.Said += TasClient_Said;
 			Program.TasClient.BattleJoined += TasClient_BattleJoined;
 			Program.TasClient.BattleUserLeft += TasClient_BattleUserLeft;
@@ -49,14 +51,17 @@ namespace ZeroKLobby.MicroLobby
 			ChatLine += (s, e) => { if (Program.TasClient.IsLoggedIn) Program.TasClient.Say(SayPlace.Battle, null, e.Data, false); };
 			playerBox.IsBattle = true;
 
-            minimapFuncBox = new ZeroKLobby.Controls.MinimapFuncBox();
+            minimapFuncBox = new ZeroKLobby.Controls.MinimapFuncBox
+            {
+                Dock = DockStyle.Fill
+            };
 
 			minimapBox = new PictureBox { Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.CenterImage };
 			minimapBox.Cursor = Cursors.Hand;
 			minimapBox.Click +=
 				(s, e) => { if (Program.TasClient.MyBattle != null) Program.MainWindow.navigationControl.Path = string.Format("{1}/Maps/DetailName?name={0}", Program.TasClient.MyBattle.MapName, GlobalConst.BaseSiteUrl); };
 
-            //playerBoxSearchBarContainer.Controls.Add(battleFuncBox);
+            // playerBoxSearchBarContainer.Controls.Add(battleFuncBox);
             playerListMapSplitContainer.Panel2.Controls.Add(minimapFuncBox);
             minimapFuncBox.mapPanel.Controls.Add(minimapBox);
 
@@ -184,7 +189,7 @@ namespace ZeroKLobby.MicroLobby
 		void DrawMinimap()
 		{
 		    try {
-		        if (minimap == null || Program.TasClient.MyBattle == null) return;
+		        if (minimap == null || Program.TasClient.MyBattle == null || this.IsInDesignMode()) return;
 		        var boxColors = new[]
 		                        {
 		                            Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta, Color.Gray, Color.Lime, Color.Maroon,

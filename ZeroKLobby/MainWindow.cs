@@ -15,6 +15,7 @@ using LobbyClient;
 using NAudio.Wave;
 using PlasmaDownloader;
 using SpringDownloader.Notifications;
+using ZeroKLobby.BattleRoom;
 using ZeroKLobby.Controls;
 using ZeroKLobby.MainPages;
 using ZeroKLobby.MicroLobby;
@@ -32,7 +33,8 @@ namespace ZeroKLobby
             SinglePlayer,
             MultiPlayer,
             Skirmish,
-            CustomBattles
+            CustomBattles,
+            BattleRoom
         }
 
         Mp3FileReader audioReader;
@@ -105,7 +107,7 @@ namespace ZeroKLobby
 
         void MainWindow_Load(object sender, EventArgs e)
         {
-            if (Debugger.IsAttached) Text = "==== DEBUGGING ===";
+            if (Debugger.IsAttached) Text = "==== DEBUGGING ====";
             else Text = "Zero-K launcher";
             Text += " " + Assembly.GetEntryAssembly().GetName().Version;
 
@@ -129,6 +131,12 @@ namespace ZeroKLobby
             }
         }
 
+        public BattleRoomPage BattleRoomPage
+        {
+            get { return (BattleRoomPage)pages[MainPages.BattleRoom]; }
+        }
+
+
         void SetupMainPages()
         {
             pages[MainPages.Home] = new HomePage();
@@ -136,6 +144,7 @@ namespace ZeroKLobby
             pages[MainPages.Skirmish] = new SkirmishControl();
             pages[MainPages.MultiPlayer] = new MultiPlayerPage();
             pages[MainPages.CustomBattles] = new BattleListTab();
+            pages[MainPages.BattleRoom] = new BattleRoomPage();
 
             foreach (var c in pages.Values) switchPanel1.SetupTabPage(c);
             SwitchPage(MainPages.Home, false);

@@ -35,21 +35,21 @@
             this.elevationRadioButton = new System.Windows.Forms.RadioButton();
             this.normalRadioButton = new System.Windows.Forms.RadioButton();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.skirmPlayerBox = new ZeroKLobby.MicroLobby.PlayerListBox();
             this.lblSide = new System.Windows.Forms.Label();
             this.sideCB = new System.Windows.Forms.ComboBox();
+            this.gameOptionButton = new ZeroKLobby.BitmapButton();
             this.infoLabel = new System.Windows.Forms.Label();
+            this.editTeamButton = new ZeroKLobby.BitmapButton();
+            this.addAIButton = new ZeroKLobby.BitmapButton();
             this.spectateCheckBox = new System.Windows.Forms.CheckBox();
+            this.startbutton = new ZeroKLobby.BitmapButton();
             this.map_comboBox = new System.Windows.Forms.ComboBox();
             this.lblEngine = new System.Windows.Forms.Label();
             this.game_comboBox = new System.Windows.Forms.ComboBox();
             this.lblGame = new System.Windows.Forms.Label();
             this.engine_comboBox = new System.Windows.Forms.ComboBox();
             this.lbMap = new System.Windows.Forms.Label();
-            this.skirmPlayerBox = new ZeroKLobby.MicroLobby.PlayerListBox();
-            this.gameOptionButton = new ZeroKLobby.BitmapButton();
-            this.editTeamButton = new ZeroKLobby.BitmapButton();
-            this.addAIButton = new ZeroKLobby.BitmapButton();
-            this.startbutton = new ZeroKLobby.BitmapButton();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -68,14 +68,14 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
+            // 
+            // splitContainer1.Panel2
+            // 
             this.splitContainer1.Panel2.Controls.Add(this.minimapPanel);
             this.splitContainer1.Panel2.Controls.Add(this.metalmapRadioButton);
             this.splitContainer1.Panel2.Controls.Add(this.elevationRadioButton);
             this.splitContainer1.Panel2.Controls.Add(this.normalRadioButton);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
             this.splitContainer1.Size = new System.Drawing.Size(830, 487);
             this.splitContainer1.SplitterDistance = 445;
             this.splitContainer1.TabIndex = 0;
@@ -160,9 +160,24 @@
             this.splitContainer2.Panel2.Controls.Add(this.lblGame);
             this.splitContainer2.Panel2.Controls.Add(this.engine_comboBox);
             this.splitContainer2.Panel2.Controls.Add(this.lbMap);
-            this.splitContainer2.Size = new System.Drawing.Size(381, 487);
+            this.splitContainer2.Size = new System.Drawing.Size(445, 487);
             this.splitContainer2.SplitterDistance = 213;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // skirmPlayerBox
+            // 
+            this.skirmPlayerBox.BackColor = System.Drawing.Color.White;
+            this.skirmPlayerBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.skirmPlayerBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.skirmPlayerBox.FormattingEnabled = true;
+            this.skirmPlayerBox.HoverItem = null;
+            this.skirmPlayerBox.IntegralHeight = false;
+            this.skirmPlayerBox.IsBattle = false;
+            this.skirmPlayerBox.ItemHeight = 10;
+            this.skirmPlayerBox.Location = new System.Drawing.Point(0, 0);
+            this.skirmPlayerBox.Name = "skirmPlayerBox";
+            this.skirmPlayerBox.Size = new System.Drawing.Size(445, 213);
+            this.skirmPlayerBox.TabIndex = 0;
             // 
             // lblSide
             // 
@@ -185,115 +200,6 @@
             this.sideCB.Size = new System.Drawing.Size(112, 21);
             this.sideCB.TabIndex = 27;
             // 
-            // infoLabel
-            // 
-            this.infoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.infoLabel.AutoSize = true;
-            this.infoLabel.Location = new System.Drawing.Point(84, 246);
-            this.infoLabel.Name = "infoLabel";
-            this.infoLabel.Size = new System.Drawing.Size(35, 13);
-            this.infoLabel.TabIndex = 25;
-            this.infoLabel.Text = "label1";
-            // 
-            // spectateCheckBox
-            // 
-            this.spectateCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.spectateCheckBox.AutoSize = true;
-            this.spectateCheckBox.Location = new System.Drawing.Point(3, 221);
-            this.spectateCheckBox.Name = "spectateCheckBox";
-            this.spectateCheckBox.Size = new System.Drawing.Size(69, 17);
-            this.spectateCheckBox.TabIndex = 22;
-            this.spectateCheckBox.Text = "Spectate";
-            this.spectateCheckBox.UseVisualStyleBackColor = true;
-            this.spectateCheckBox.CheckedChanged += new System.EventHandler(this.Event_SpectateCheckBox_CheckedChanged);
-            // 
-            // map_comboBox
-            // 
-            this.map_comboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.map_comboBox.DropDownHeight = 200;
-            this.map_comboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.map_comboBox.DropDownWidth = 200;
-            this.map_comboBox.FormattingEnabled = true;
-            this.map_comboBox.IntegralHeight = false;
-            this.map_comboBox.Location = new System.Drawing.Point(52, 50);
-            this.map_comboBox.Name = "map_comboBox";
-            this.map_comboBox.Size = new System.Drawing.Size(326, 21);
-            this.map_comboBox.TabIndex = 20;
-            this.map_comboBox.SelectedIndexChanged += new System.EventHandler(this.Event_ComboBox_SelectedIndexChanged);
-            // 
-            // lblEngine
-            // 
-            this.lblEngine.AutoSize = true;
-            this.lblEngine.Location = new System.Drawing.Point(3, 6);
-            this.lblEngine.Name = "lblEngine";
-            this.lblEngine.Size = new System.Drawing.Size(43, 13);
-            this.lblEngine.TabIndex = 15;
-            this.lblEngine.Text = "Engine:";
-            // 
-            // game_comboBox
-            // 
-            this.game_comboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.game_comboBox.DropDownHeight = 200;
-            this.game_comboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.game_comboBox.DropDownWidth = 200;
-            this.game_comboBox.FormattingEnabled = true;
-            this.game_comboBox.IntegralHeight = false;
-            this.game_comboBox.Location = new System.Drawing.Point(52, 27);
-            this.game_comboBox.Name = "game_comboBox";
-            this.game_comboBox.Size = new System.Drawing.Size(326, 21);
-            this.game_comboBox.TabIndex = 19;
-            this.game_comboBox.SelectedIndexChanged += new System.EventHandler(this.Event_ComboBox_SelectedIndexChanged);
-            // 
-            // lblGame
-            // 
-            this.lblGame.AutoSize = true;
-            this.lblGame.Location = new System.Drawing.Point(8, 30);
-            this.lblGame.Name = "lblGame";
-            this.lblGame.Size = new System.Drawing.Size(38, 13);
-            this.lblGame.TabIndex = 16;
-            this.lblGame.Text = "Game:";
-            // 
-            // engine_comboBox
-            // 
-            this.engine_comboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.engine_comboBox.DropDownHeight = 200;
-            this.engine_comboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.engine_comboBox.DropDownWidth = 200;
-            this.engine_comboBox.FormattingEnabled = true;
-            this.engine_comboBox.IntegralHeight = false;
-            this.engine_comboBox.Location = new System.Drawing.Point(52, 3);
-            this.engine_comboBox.Name = "engine_comboBox";
-            this.engine_comboBox.Size = new System.Drawing.Size(326, 21);
-            this.engine_comboBox.TabIndex = 18;
-            this.engine_comboBox.SelectedIndexChanged += new System.EventHandler(this.Event_ComboBox_SelectedIndexChanged);
-            // 
-            // lbMap
-            // 
-            this.lbMap.AutoSize = true;
-            this.lbMap.Location = new System.Drawing.Point(15, 53);
-            this.lbMap.Name = "lbMap";
-            this.lbMap.Size = new System.Drawing.Size(31, 13);
-            this.lbMap.TabIndex = 17;
-            this.lbMap.Text = "Map:";
-            // 
-            // skirmPlayerBox
-            // 
-            this.skirmPlayerBox.BackColor = System.Drawing.Color.White;
-            this.skirmPlayerBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.skirmPlayerBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.skirmPlayerBox.FormattingEnabled = true;
-            this.skirmPlayerBox.HoverItem = null;
-            this.skirmPlayerBox.IntegralHeight = false;
-            this.skirmPlayerBox.IsBattle = false;
-            this.skirmPlayerBox.ItemHeight = 10;
-            this.skirmPlayerBox.Location = new System.Drawing.Point(0, 0);
-            this.skirmPlayerBox.Name = "skirmPlayerBox";
-            this.skirmPlayerBox.Size = new System.Drawing.Size(381, 213);
-            this.skirmPlayerBox.TabIndex = 0;
-            // 
             // gameOptionButton
             // 
             this.gameOptionButton.BackColor = System.Drawing.Color.Transparent;
@@ -312,6 +218,16 @@
             this.gameOptionButton.Text = "Game Option";
             this.gameOptionButton.UseVisualStyleBackColor = true;
             this.gameOptionButton.Click += new System.EventHandler(this.Event_GameOptionButton_Click);
+            // 
+            // infoLabel
+            // 
+            this.infoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.infoLabel.AutoSize = true;
+            this.infoLabel.Location = new System.Drawing.Point(84, 246);
+            this.infoLabel.Name = "infoLabel";
+            this.infoLabel.Size = new System.Drawing.Size(35, 13);
+            this.infoLabel.TabIndex = 25;
+            this.infoLabel.Text = "label1";
             // 
             // editTeamButton
             // 
@@ -351,6 +267,18 @@
             this.addAIButton.UseVisualStyleBackColor = true;
             this.addAIButton.Click += new System.EventHandler(this.Event_AddAIButton_Click);
             // 
+            // spectateCheckBox
+            // 
+            this.spectateCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.spectateCheckBox.AutoSize = true;
+            this.spectateCheckBox.Location = new System.Drawing.Point(3, 221);
+            this.spectateCheckBox.Name = "spectateCheckBox";
+            this.spectateCheckBox.Size = new System.Drawing.Size(69, 17);
+            this.spectateCheckBox.TabIndex = 22;
+            this.spectateCheckBox.Text = "Spectate";
+            this.spectateCheckBox.UseVisualStyleBackColor = true;
+            this.spectateCheckBox.CheckedChanged += new System.EventHandler(this.Event_SpectateCheckBox_CheckedChanged);
+            // 
             // startbutton
             // 
             this.startbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -371,9 +299,80 @@
             this.startbutton.UseVisualStyleBackColor = true;
             this.startbutton.Click += new System.EventHandler(this.Event_Startbutton_Click);
             // 
+            // map_comboBox
+            // 
+            this.map_comboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.map_comboBox.DropDownHeight = 200;
+            this.map_comboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.map_comboBox.DropDownWidth = 200;
+            this.map_comboBox.FormattingEnabled = true;
+            this.map_comboBox.IntegralHeight = false;
+            this.map_comboBox.Location = new System.Drawing.Point(68, 50);
+            this.map_comboBox.Name = "map_comboBox";
+            this.map_comboBox.Size = new System.Drawing.Size(374, 21);
+            this.map_comboBox.TabIndex = 20;
+            this.map_comboBox.SelectedIndexChanged += new System.EventHandler(this.Event_ComboBox_SelectedIndexChanged);
+            // 
+            // lblEngine
+            // 
+            this.lblEngine.AutoSize = true;
+            this.lblEngine.Location = new System.Drawing.Point(3, 6);
+            this.lblEngine.Name = "lblEngine";
+            this.lblEngine.Size = new System.Drawing.Size(43, 13);
+            this.lblEngine.TabIndex = 15;
+            this.lblEngine.Text = "Engine:";
+            // 
+            // game_comboBox
+            // 
+            this.game_comboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.game_comboBox.DropDownHeight = 200;
+            this.game_comboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.game_comboBox.DropDownWidth = 200;
+            this.game_comboBox.FormattingEnabled = true;
+            this.game_comboBox.IntegralHeight = false;
+            this.game_comboBox.Location = new System.Drawing.Point(68, 27);
+            this.game_comboBox.Name = "game_comboBox";
+            this.game_comboBox.Size = new System.Drawing.Size(374, 21);
+            this.game_comboBox.TabIndex = 19;
+            this.game_comboBox.SelectedIndexChanged += new System.EventHandler(this.Event_ComboBox_SelectedIndexChanged);
+            // 
+            // lblGame
+            // 
+            this.lblGame.AutoSize = true;
+            this.lblGame.Location = new System.Drawing.Point(8, 30);
+            this.lblGame.Name = "lblGame";
+            this.lblGame.Size = new System.Drawing.Size(38, 13);
+            this.lblGame.TabIndex = 16;
+            this.lblGame.Text = "Game:";
+            // 
+            // engine_comboBox
+            // 
+            this.engine_comboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.engine_comboBox.DropDownHeight = 200;
+            this.engine_comboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.engine_comboBox.DropDownWidth = 200;
+            this.engine_comboBox.FormattingEnabled = true;
+            this.engine_comboBox.IntegralHeight = false;
+            this.engine_comboBox.Location = new System.Drawing.Point(68, 3);
+            this.engine_comboBox.Name = "engine_comboBox";
+            this.engine_comboBox.Size = new System.Drawing.Size(374, 21);
+            this.engine_comboBox.TabIndex = 18;
+            this.engine_comboBox.SelectedIndexChanged += new System.EventHandler(this.Event_ComboBox_SelectedIndexChanged);
+            // 
+            // lbMap
+            // 
+            this.lbMap.AutoSize = true;
+            this.lbMap.Location = new System.Drawing.Point(15, 53);
+            this.lbMap.Name = "lbMap";
+            this.lbMap.Size = new System.Drawing.Size(31, 13);
+            this.lbMap.TabIndex = 17;
+            this.lbMap.Text = "Map:";
+            // 
             // SkirmishControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.splitContainer1);
@@ -384,8 +383,8 @@
             this.Load += new System.EventHandler(this.SkirmishControl_Load);
             this.Resize += new System.EventHandler(this.Event_SkirmishControl_Resize);
             this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);

@@ -123,7 +123,14 @@
     </Compile>
     <Compile Include="CachedResourceManager.cs" />
     <Compile Include="ChatToSpeech.cs" />
+    <Compile Include="ControlExtensions.cs" />
     <Compile Include="Controls\FrameBorderRenderer.cs" />
+    <Compile Include="Controls\MatchQueueControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MatchQueueControl.Designer.cs">
+      <DependentUpon>MatchQueueControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MinimapFuncBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -163,6 +170,12 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>License.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MainPages\BattleRoomPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MainPages\BattleRoomPage.Designer.cs">
+      <DependentUpon>BattleRoomPage.cs</DependentUpon>
     </Compile>
     <Compile Include="MainPages\HomePage.cs">
       <SubType>UserControl</SubType>
@@ -212,6 +225,7 @@
     <Compile Include="MainPages\SkirmishControl.Designer.cs">
       <DependentUpon>SkirmishControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="MicroLobby\TasClientActions.cs" />
     <Compile Include="MicroLobby\TextColoringPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -528,6 +542,9 @@
       <LastGenOutput>Configs.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MatchQueueControl.resx">
+      <DependentUpon>MatchQueueControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\MinimapFuncBox.resx">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -551,6 +568,9 @@
     <EmbeddedResource Include="License.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>License.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainPages\BattleRoomPage.resx">
+      <DependentUpon>BattleRoomPage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainPages\HomePage.resx">
       <DependentUpon>HomePage.cs</DependentUpon>
