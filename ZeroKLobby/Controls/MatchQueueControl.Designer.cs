@@ -28,47 +28,72 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.DescriptionLabel = new System.Windows.Forms.Label();
+            this.TimerLabel = new System.Windows.Forms.Label();
+            this.QueueNumbersLabel = new System.Windows.Forms.Label();
+            this.LeaveQueueButton = new ZeroKLobby.BitmapButton();
             this.SuspendLayout();
             // 
-            // label1
+            // DescriptionLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(351, 96);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(136, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "You Are in Queue for Battle";
+            this.DescriptionLabel.AutoSize = true;
+            this.DescriptionLabel.Location = new System.Drawing.Point(3, 31);
+            this.DescriptionLabel.Name = "DescriptionLabel";
+            this.DescriptionLabel.Size = new System.Drawing.Size(136, 13);
+            this.DescriptionLabel.TabIndex = 0;
+            this.DescriptionLabel.Text = "You Are in Queue for Battle";
             // 
-            // label2
+            // TimerLabel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(402, 145);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(34, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "02:12";
+            this.TimerLabel.AutoSize = true;
+            this.TimerLabel.Location = new System.Drawing.Point(47, 58);
+            this.TimerLabel.Name = "TimerLabel";
+            this.TimerLabel.Size = new System.Drawing.Size(34, 13);
+            this.TimerLabel.TabIndex = 1;
+            this.TimerLabel.Text = "02:12";
             // 
-            // label3
+            // QueueNumbersLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(374, 187);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(86, 52);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "People in Queue\r\n1v1:         3\r\nTeams:    5\r\nPlanetwars: 3";
+            this.QueueNumbersLabel.AutoSize = true;
+            this.QueueNumbersLabel.Location = new System.Drawing.Point(446, 31);
+            this.QueueNumbersLabel.Name = "QueueNumbersLabel";
+            this.QueueNumbersLabel.Size = new System.Drawing.Size(151, 26);
+            this.QueueNumbersLabel.TabIndex = 2;
+            this.QueueNumbersLabel.Text = "People in Queue\r\n1v1: 3 Teams: 5 Planetwars: 3";
+            this.QueueNumbersLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // LeaveQueueButton
+            // 
+            this.LeaveQueueButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.LeaveQueueButton.BackColor = System.Drawing.Color.Transparent;
+            this.LeaveQueueButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.LeaveQueueButton.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.LeaveQueueButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.LeaveQueueButton.FlatAppearance.BorderSize = 0;
+            this.LeaveQueueButton.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
+            this.LeaveQueueButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.LeaveQueueButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.LeaveQueueButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.LeaveQueueButton.ForeColor = System.Drawing.Color.White;
+            this.LeaveQueueButton.Location = new System.Drawing.Point(776, 31);
+            this.LeaveQueueButton.Name = "LeaveQueueButton";
+            this.LeaveQueueButton.Size = new System.Drawing.Size(203, 49);
+            this.LeaveQueueButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.LeaveQueueButton.TabIndex = 4;
+            this.LeaveQueueButton.Text = "Leave Queue";
+            this.LeaveQueueButton.UseVisualStyleBackColor = false;
             // 
             // MatchQueueControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.BackColor = System.Drawing.Color.Transparent;
+            this.Controls.Add(this.LeaveQueueButton);
+            this.Controls.Add(this.QueueNumbersLabel);
+            this.Controls.Add(this.TimerLabel);
+            this.Controls.Add(this.DescriptionLabel);
+            this.DoubleBuffered = true;
             this.Name = "MatchQueueControl";
-            this.Size = new System.Drawing.Size(971, 531);
+            this.Size = new System.Drawing.Size(1020, 112);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -76,8 +101,9 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label DescriptionLabel;
+        private System.Windows.Forms.Label TimerLabel;
+        private System.Windows.Forms.Label QueueNumbersLabel;
+        private BitmapButton LeaveQueueButton;
     }
 }

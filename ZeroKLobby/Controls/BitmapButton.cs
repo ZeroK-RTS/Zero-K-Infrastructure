@@ -85,7 +85,12 @@ namespace ZeroKLobby
 
         protected override void OnPaint(PaintEventArgs pevent)
         {
-            BackgroundImage =  FrameBorderRenderer.Instance.GetImageWithCache(DisplayRectangle, ButtonStyle, mouseOver ? FrameBorderRenderer.StyleType.DarkHiveHover : (FrameBorderRenderer.StyleType?)null);
+            if (!this.IsInDesignMode())
+            {
+                BackgroundImage = FrameBorderRenderer.Instance.GetImageWithCache(DisplayRectangle,
+                    ButtonStyle,
+                    mouseOver ? FrameBorderRenderer.StyleType.DarkHiveHover : (FrameBorderRenderer.StyleType?)null);
+            }
             base.OnPaint(pevent);
         }
     }

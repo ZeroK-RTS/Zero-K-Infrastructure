@@ -37,6 +37,7 @@
             this.btnHide = new ZeroKLobby.BitmapButton();
             this.lbRightPanelTitle = new System.Windows.Forms.Label();
             this.navigationControl1 = new ZeroKLobby.HeadlessTabControl();
+            this.matchQueueControl = new ZeroKLobby.Controls.MatchQueueControl();
             this.switchPanel1 = new ZeroKLobby.Controls.SwitchPanel();
             this.btnWindowed = new ZeroKLobby.BitmapButton();
             this.btnSnd = new ZeroKLobby.BitmapButton();
@@ -107,9 +108,9 @@
             this.panelRight.Controls.Add(this.btnHide);
             this.panelRight.Controls.Add(this.lbRightPanelTitle);
             this.panelRight.Controls.Add(this.navigationControl1);
-            this.panelRight.Location = new System.Drawing.Point(602, 12);
+            this.panelRight.Location = new System.Drawing.Point(600, 104);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(772, 748);
+            this.panelRight.Size = new System.Drawing.Size(774, 656);
             this.panelRight.TabIndex = 10;
             this.panelRight.Visible = false;
             // 
@@ -152,18 +153,28 @@
             this.navigationControl1.Margin = new System.Windows.Forms.Padding(0);
             this.navigationControl1.Name = "navigationControl1";
             this.navigationControl1.SelectedIndex = 0;
-            this.navigationControl1.Size = new System.Drawing.Size(731, 691);
+            this.navigationControl1.Size = new System.Drawing.Size(733, 599);
             this.navigationControl1.TabIndex = 1;
+            // 
+            // matchQueueControl
+            // 
+            this.matchQueueControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.matchQueueControl.BackColor = System.Drawing.Color.Transparent;
+            this.matchQueueControl.Location = new System.Drawing.Point(600, 0);
+            this.matchQueueControl.Name = "matchQueueControl";
+            this.matchQueueControl.Size = new System.Drawing.Size(774, 98);
+            this.matchQueueControl.TabIndex = 15;
             // 
             // switchPanel1
             // 
             this.switchPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.switchPanel1.Location = new System.Drawing.Point(12, 63);
+            this.switchPanel1.Location = new System.Drawing.Point(12, 104);
             this.switchPanel1.Name = "switchPanel1";
             this.switchPanel1.SelectedIndex = 0;
-            this.switchPanel1.Size = new System.Drawing.Size(1359, 688);
+            this.switchPanel1.Size = new System.Drawing.Size(1359, 647);
             this.switchPanel1.TabIndex = 9;
             // 
             // btnWindowed
@@ -222,6 +233,7 @@
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(1386, 816);
             this.Controls.Add(this.connectBar);
+            this.Controls.Add(this.matchQueueControl);
             this.Controls.Add(this.lbMainPageTitle);
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.flowLayoutPanel1);
@@ -256,6 +268,6 @@
         public System.Windows.Forms.Label lbMainPageTitle;
         public Controls.RightPanel panelRight;
         public Notifications.ConnectBar connectBar;
-
+        private Controls.MatchQueueControl matchQueueControl;
     }
 }

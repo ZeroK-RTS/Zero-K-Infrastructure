@@ -28,7 +28,13 @@ namespace ZeroKLobby
         public readonly static  Font GeneralFont = new Font("Microsoft Sans Serif", 14, GraphicsUnit.Pixel);
         public readonly static Font GeneralFontBig = new Font("Microsoft Sans Serif", 15, FontStyle.Bold, GraphicsUnit.Pixel);
         public readonly static Font GeneralFontSmall = new Font("Microsoft Sans Serif", 9, GraphicsUnit.Pixel);
-        
+
+
+        public static readonly Font ToolbarFontBig;
+        public static readonly Font ToolbarFont;
+        public static readonly Font ToolbarFontSmall;
+
+
         static readonly PrivateFontCollection pfc = new PrivateFontCollection();
 
         static Config()
@@ -38,7 +44,14 @@ namespace ZeroKLobby
                 pfc.AddFontFile("Sm.ttf");
                 MenuFont = new Font(pfc.Families[0], 20, GraphicsUnit.Pixel);
             }
+
+            ToolbarFontBig = new Font(MenuFont.FontFamily, 14);
+            ToolbarFont = new Font(MenuFont.FontFamily, 12);
+            ToolbarFontSmall = new Font(MenuFont.FontFamily, 9);
+
         }
+
+
 
 
 

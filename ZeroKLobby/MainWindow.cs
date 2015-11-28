@@ -83,6 +83,7 @@ namespace ZeroKLobby
             lbMainPageTitle.Font = Config.MenuFont;
             lbRightPanelTitle.Font = Config.MenuFont;
 
+            if (this.IsInDesignMode()) return;
 
             SetupMainPages();
             SetupSystray();
