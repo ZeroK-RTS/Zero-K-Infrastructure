@@ -33,5 +33,10 @@ namespace ZeroKLobby.MainPages
         {
             Program.MainWindow.SwitchPage(MainWindow.MainPages.CustomBattles,false);
         }
+
+        private void btnJoinQueue_Click(object sender, EventArgs e)
+        {
+            Program.MainWindow.SwitchPage(MainWindow.MainPages.JoinQueue, false);
+        }
     }
 }

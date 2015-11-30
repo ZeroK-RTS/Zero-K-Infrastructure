@@ -184,6 +184,12 @@
       <DependentUpon>HomePage.cs</DependentUpon>
     </Compile>
     <Compile Include="MainPages\IMainPage.cs" />
+    <Compile Include="MainPages\JoinQueuePage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MainPages\JoinQueuePage.Designer.cs">
+      <DependentUpon>JoinQueuePage.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainPages\MultiPlayerPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -574,6 +580,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainPages\HomePage.resx">
       <DependentUpon>HomePage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainPages\JoinQueuePage.resx">
+      <DependentUpon>JoinQueuePage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainPages\MultiPlayerPage.resx">
       <DependentUpon>MultiPlayerPage.cs</DependentUpon>

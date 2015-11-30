@@ -210,10 +210,16 @@ namespace LobbyClient
 
         
         public event EventHandler<ChangeTopic> ChannelTopicChanged = delegate { };
-        
-        
-        
- 
+
+        public event EventHandler<EventArgs<List<string>>> ClientHasJoinedParty = delegate { };
+
+        public event EventHandler<EventArgs<String>> PartyMemberHasJoined = delegate { };
+        public event EventHandler<EventArgs<String>> PartyMemberHasLeft = delegate { };
+        public event EventHandler<EventArgs<String>> ClientHasBeenInvitedToParty = delegate { };
+
+
+
+
 
         public TasClient(string appName, Login.ClientTypes? clientTypes = null, string ipOverride = null)
         {

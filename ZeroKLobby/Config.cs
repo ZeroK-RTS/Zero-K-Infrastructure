@@ -34,20 +34,37 @@ namespace ZeroKLobby
         public static readonly Font ToolbarFont;
         public static readonly Font ToolbarFontSmall;
 
+        public static readonly Font MainPageFontBig;
+        public static readonly Font MainPageFont;
+        public static readonly Font MainPageFontSmall;
+
 
         static readonly PrivateFontCollection pfc = new PrivateFontCollection();
 
         static Config()
         {
+            FontFamily fancyFont;
+
             // TODO copy out from resources
-            if (File.Exists("Sm.ttf")) {
+            if (File.Exists("Sm.ttf"))
+            {
                 pfc.AddFontFile("Sm.ttf");
-                MenuFont = new Font(pfc.Families[0], 20, GraphicsUnit.Pixel);
+                fancyFont = pfc.Families[0];
+            }
+            else
+            {
+                fancyFont = FontFamily.GenericSansSerif;
             }
 
-            ToolbarFontBig = new Font(MenuFont.FontFamily, 14);
-            ToolbarFont = new Font(MenuFont.FontFamily, 12);
-            ToolbarFontSmall = new Font(MenuFont.FontFamily, 9);
+            MenuFont = new Font(fancyFont, 20, GraphicsUnit.Pixel);
+
+            ToolbarFontBig = new Font(fancyFont, 14, GraphicsUnit.Pixel);
+            ToolbarFont = new Font(fancyFont, 12, GraphicsUnit.Pixel);
+            ToolbarFontSmall = new Font(fancyFont, 9, GraphicsUnit.Pixel);
+
+            MainPageFontBig = new Font(fancyFont, 14, GraphicsUnit.Pixel);
+            MainPageFont = new Font(fancyFont, 12, GraphicsUnit.Pixel);
+            MainPageFontSmall = new Font(fancyFont, 9, GraphicsUnit.Pixel);
 
         }
 

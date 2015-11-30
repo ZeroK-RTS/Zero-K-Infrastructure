@@ -103,6 +103,7 @@
             this.btnJoinQueue.TabIndex = 16;
             this.btnJoinQueue.Text = "Join queue (recommended)";
             this.btnJoinQueue.UseVisualStyleBackColor = false;
+            this.btnJoinQueue.Click += new System.EventHandler(this.btnJoinQueue_Click);
             // 
             // MultiPlayerPage
             // 

@@ -34,7 +34,8 @@ namespace ZeroKLobby
             MultiPlayer,
             Skirmish,
             CustomBattles,
-            BattleRoom
+            BattleRoom,
+            JoinQueue
         }
 
         Mp3FileReader audioReader;
@@ -146,6 +147,7 @@ namespace ZeroKLobby
             pages[MainPages.MultiPlayer] = new MultiPlayerPage();
             pages[MainPages.CustomBattles] = new BattleListTab();
             pages[MainPages.BattleRoom] = new BattleRoomPage();
+            pages[MainPages.JoinQueue] = new JoinQueuePage();
 
             foreach (var c in pages.Values) switchPanel1.SetupTabPage(c);
             SwitchPage(MainPages.Home, false);
