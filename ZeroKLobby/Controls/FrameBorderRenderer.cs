@@ -129,6 +129,8 @@ namespace ZeroKLobby
 
         public void RenderToGraphics(Graphics g, Rectangle r, StyleType styleType)
         {
+            g.TranslateTransform(r.X, r.Y);
+
             FrameStyle style = Styles[styleType];
             TextureBrush northBrush;
             TextureBrush southBrush;
@@ -173,6 +175,7 @@ namespace ZeroKLobby
             using (eastBrush)
             using (westBrush) {
                 g.InterpolationMode = style.Interpolation;
+
                 g.DrawImage(style.NW, 0, 0, nw.Width, nw.Height);
                 g.DrawImage(style.NE, r.Width - ne.Width - 1, 0, ne.Width, ne.Height);
                 g.DrawImage(style.SE, r.Width - se.Width - 1, r.Height - se.Height - 1, se.Width, se.Height);
@@ -197,6 +200,8 @@ namespace ZeroKLobby
 
                 if (final != style.FillBrush) final.Dispose();
             }
+
+            g.TranslateTransform(-r.X, -r.Y);
         }
 
         static void FillRectangleTiled(Graphics g, TextureBrush brush, int x, int y, int w, int h)
