@@ -142,7 +142,8 @@ namespace ZeroKLobby.MicroLobby
             if (Button != null)
             {
                 font = boldFont;
-                System.Windows.Forms.ButtonRenderer.DrawButton(g, bounds, Button, font, false, PushButtonState.Normal);
+                FrameBorderRenderer.Instance.RenderToGraphics(g, bounds, FrameBorderRenderer.StyleType.DarkHive);
+                TextRenderer.DrawText(g, Button, font, bounds, foreColor, TextFormatFlags.HorizontalCenter);
                 return;
             }
 
