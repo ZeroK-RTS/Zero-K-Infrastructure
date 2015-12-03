@@ -422,20 +422,12 @@ namespace ZeroKLobby
             set { springServerPort = value; }
         }
 
-
-        [Category("Chat")]
-        [DisplayName("Color: Default text")]
-        [Description("Color for the text on chat window and on playerlist")]
-        [XmlIgnore]
         public Color TextColor
         {
-            get { return Color.FromArgb(TextColorInt); }
-            set
-            {
-                TextColorInt = value.ToArgb();
-                UpdateFadeColor();
-            }
+            get { return Color.White; }
         }
+
+
         [Browsable(false)]
         public int TextColorInt = Color.White.ToArgb();
 
