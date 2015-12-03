@@ -28,8 +28,7 @@ namespace ZeroKLobby.BattleRoom
 
         public void ChangeDesiredSpectatorState(bool state)
         {
-            // TODO: Implement (Check function of the same name in BattleBar)
-            throw new NotImplementedException();
+            Program.TasClient.ChangeMyBattleStatus(state);
         }
     }
 }
