@@ -18,8 +18,8 @@ namespace ZeroKLobby.BattleRoom
 
         public void GoBack()
         {
-            // TODO: Make the player leave the battle
             Program.MainWindow.SwitchPage(MainWindow.MainPages.MultiPlayer, false);
+            Program.TasClient.LeaveBattle();
         }
 
         public string Title { get { return "Battle"; } }
