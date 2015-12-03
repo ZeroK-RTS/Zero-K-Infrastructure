@@ -15,7 +15,6 @@ namespace ZeroKLobby.MicroLobby
 
     public partial class ChatTab : UserControl, INavigatable
     {
-        BattleChatControl battleChatControl;
         readonly ToolTabs toolTabs = new ToolTabs { Dock = DockStyle.Fill };
         string focusWhenJoin;
 
@@ -26,10 +25,8 @@ namespace ZeroKLobby.MicroLobby
         {
             SuspendLayout();
             InitializeComponent();
-            if (Process.GetCurrentProcess().ProcessName == "devenv") return; // detect design mode, workaround for non-working this.DesignMode 
+            if (this.IsInDesignMode()) return;
             Controls.Add(toolTabs);
-
-            AddBattleControl();
 
             Program.TasClient.ChannelJoined += client_ChannelJoined;
             Program.TasClient.Said += client_Said;
@@ -110,18 +107,10 @@ namespace ZeroKLobby.MicroLobby
         {
             return toolTabs.GetNextTabPath();
         }
+
         public string GetPrevTabPath()
         {
             return toolTabs.GetPrevTabPath();
-        }
-
-
-
-
-        void AddBattleControl()
-        {
-            if (battleChatControl == null || battleChatControl.IsDisposed) battleChatControl = new BattleChatControl { Dock = DockStyle.Fill };
-            if (toolTabs.GetChannelTab("Battle") == null) toolTabs.AddTab("Battle", "Battle", battleChatControl, ZklResources.battle, "Current battle room", 3);
         }
 
 
@@ -241,12 +230,10 @@ namespace ZeroKLobby.MicroLobby
         void TasClient_ConnectionLost(object sender, TasEventArgs e)
         {
             toolTabs.DisposeAllTabs();
-            AddBattleControl();
         }
 
         void TasClient_LoginAccepted(object sender, TasEventArgs e)
         {
-            AddBattleControl();
             foreach (var friendName in Program.FriendManager.Friends) CreatePrivateMessageControl(friendName);
             foreach (var channel in Program.AutoJoinManager.Channels) Program.TasClient.JoinChannel(channel, Program.AutoJoinManager.GetPassword(channel));
             var lang = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
