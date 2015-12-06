@@ -125,12 +125,6 @@
     <Compile Include="CachedResourceManager.cs" />
     <Compile Include="ChatToSpeech.cs" />
     <Compile Include="ControlExtensions.cs" />
-    <Compile Include="Controls\CustomScrollableControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\CustomScrollableControl.Designer.cs">
-      <DependentUpon>CustomScrollableControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\CustomScrollbar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -562,9 +556,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Configs.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\CustomScrollableControl.resx">
-      <DependentUpon>CustomScrollableControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\MatchQueueControl.resx">
       <DependentUpon>MatchQueueControl.cs</DependentUpon>

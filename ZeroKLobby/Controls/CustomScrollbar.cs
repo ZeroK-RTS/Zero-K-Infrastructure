@@ -236,15 +236,15 @@ namespace ZeroKLobby.Controls
                 e.Graphics.DrawImage(UpArrowImage, new Rectangle(new Point(0, 0), new Size(this.Width, UpArrowImage.Height)));
             }
 
-            Brush oBrush = new SolidBrush(moChannelColor);
-            Brush oWhiteBrush = new SolidBrush(Color.FromArgb(255, 255, 255));
+            Brush channelBrush = new SolidBrush(moChannelColor);
+            Brush channelBorderBrush = new SolidBrush(Color.FromArgb(255, 255, 255));
 
             //draw channel left and right border colors
-            e.Graphics.FillRectangle(oWhiteBrush, new Rectangle(0, UpArrowImage.Height, 1, (this.Height - DownArrowImage.Height)));
-            e.Graphics.FillRectangle(oWhiteBrush, new Rectangle(this.Width - 1, UpArrowImage.Height, 1, (this.Height - DownArrowImage.Height)));
+            e.Graphics.FillRectangle(channelBorderBrush, new Rectangle(0, UpArrowImage.Height, 1, (this.Height - DownArrowImage.Height)));
+            e.Graphics.FillRectangle(channelBorderBrush, new Rectangle(this.Width - 1, UpArrowImage.Height, 1, (this.Height - DownArrowImage.Height)));
 
             //draw channel
-            e.Graphics.FillRectangle(oBrush, new Rectangle(1, UpArrowImage.Height, this.Width - 2, (this.Height - DownArrowImage.Height)));
+            e.Graphics.FillRectangle(channelBrush, new Rectangle(1, UpArrowImage.Height, this.Width - 2, (this.Height - DownArrowImage.Height)));
 
             //draw thumb
             int nTrackHeight = (this.Height - (UpArrowImage.Height + DownArrowImage.Height));
@@ -292,7 +292,7 @@ namespace ZeroKLobby.Controls
 
             nTop += nSpanHeight;
             //draw bottom
-            e.Graphics.DrawImage(ThumbBottomImage, new Rectangle(1, nTop, this.Width - 2, nSpanHeight));
+            e.Graphics.DrawImage(ThumbBottomImage, new Rectangle(1, nTop, this.Width - 2, ThumbBottomImage.Height));
 
             if (DownArrowImage != null)
             {
