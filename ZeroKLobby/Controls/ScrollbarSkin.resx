@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,52 +117,38 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="customScrollbar.DownArrowImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAA8AAAASCAIAAAAL/BNYAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAAFJJREFUOE9jcGvaIhHeQwwCqhyBqv///w9nY4qgqAZKQABcGsqHiWAxGwLQ2BCE
-        rhqIoEpgAFkKi2oggipEVQpE2FUDEaZSIMKpGisaIaqbtgAAiYxJHHLW6qcAAAAASUVORK5CYII=
-</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="downarrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\downarrow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="customScrollbar.ThumbBottomImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAA0AAAABCAIAAACKS7NQAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAABBJREFUGFdjuGNgQBgZGAAASeMQDU+F8T4AAAAASUVORK5CYII=
-</value>
+  <data name="ThumbBottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ThumbBottom.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="customScrollbar.ThumbBottomSpanImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAA0AAAABCAIAAACKS7NQAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAABBJREFUGFdjuGNgQBgZGAAASeMQDU+F8T4AAAAASUVORK5CYII=
-</value>
+  <data name="ThumbMiddle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ThumbMiddle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="customScrollbar.ThumbMiddleImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAA0AAAAoCAIAAACq6OeuAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAACZJREFUOE9jKN96nxg0qg47GlWHHY2qw45G1WFHo+qwo8Gtbut9AMh5JpXagz/z
-        AAAAAElFTkSuQmCC
-</value>
+  <data name="ThumbSpanBottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ThumbSpanBottom.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="customScrollbar.ThumbTopImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAA0AAAABCAIAAACKS7NQAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAABBJREFUGFdjKN96nzDaeh8ADioakAcKacgAAAAASUVORK5CYII=
-</value>
+  <data name="ThumbSpanTop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ThumbSpanTop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="customScrollbar.ThumbTopSpanImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAA0AAAABCAIAAACKS7NQAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAABBJREFUGFdjKN96nzDaeh8ADioakAcKacgAAAAASUVORK5CYII=
-</value>
+  <data name="ThumbTop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ThumbTop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="customScrollbar.UpArrowImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAA8AAAASCAIAAAAL/BNYAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAAKRJREFUOE+tksERgyAQRVOEiBVZAovteNOY2Iz9kV34KBI0OhPmHZa/zx1GeLT9
-        UtvpCmx6m2bZd29G2YkJNYfKzg1Jos0z2smAE27YlRlv2Ir+dRLnXJYczmY1rDQs2xDjSlu5DcVLqJIP
-        YOvuVWxj75OG4h/UVq4ttEOxsiZ8o7CV2RlFtBlg1yQnOWebzVXW+4YfFmx5dL/Y2VeAnY05ou2XD8ch
-        SDftjNloAAAAAElFTkSuQmCC
-</value>
+  <data name="uparrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\uparrow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="scroll_bottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\scroll_bottom.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="scroll_mid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\scroll_mid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="scroll_top" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\scroll_top.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tech_scrollbar" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tech_scrollbar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

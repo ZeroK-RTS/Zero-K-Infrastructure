@@ -107,10 +107,16 @@ namespace ZeroKLobby.MicroLobby
         public BattleListControl()
         {
             InitializeComponent();
-            AutoScroll = true;
+
+            if (this.IsInDesignMode()) return;
+
+            AutoScroll = false;
             SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
             //BackColor = Color.White;
             //BackColor = Color;
+
+            VScroll = false;
+            VerticalScroll.Visible = false;
 
             FilterText = Program.Conf.BattleFilter;
             Disposed += BattleListControl_Disposed;

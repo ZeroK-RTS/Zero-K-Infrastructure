@@ -91,6 +91,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Speech" />
@@ -124,6 +125,15 @@
     <Compile Include="CachedResourceManager.cs" />
     <Compile Include="ChatToSpeech.cs" />
     <Compile Include="ControlExtensions.cs" />
+    <Compile Include="Controls\CustomScrollableControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CustomScrollableControl.Designer.cs">
+      <DependentUpon>CustomScrollableControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CustomScrollbar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\FrameBorderRenderer.cs" />
     <Compile Include="Controls\MatchQueueControl.cs">
       <SubType>UserControl</SubType>
@@ -139,6 +149,11 @@
     </Compile>
     <Compile Include="Controls\RightPanel.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ScrollbarSkin.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ScrollbarSkin.resx</DependentUpon>
     </Compile>
     <Compile Include="Controls\SoundPalette.cs" />
     <Compile Include="Controls\SwitchPanel.cs">
@@ -548,11 +563,18 @@
       <LastGenOutput>Configs.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CustomScrollableControl.resx">
+      <DependentUpon>CustomScrollableControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\MatchQueueControl.resx">
       <DependentUpon>MatchQueueControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\MinimapFuncBox.resx">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ScrollbarSkin.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ScrollbarSkin.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="DarkHive.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -574,6 +596,9 @@
     <EmbeddedResource Include="License.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>License.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainPages\BattleListControl.resx">
+      <DependentUpon>BattleListControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainPages\BattleRoomPage.resx">
       <DependentUpon>BattleRoomPage.cs</DependentUpon>
@@ -1853,6 +1878,17 @@
     <None Include="Resources\DarkHiveGlow\NE.png" />
     <None Include="Resources\DarkHiveGlow\N.png" />
     <None Include="Resources\DarkHiveGlow\E.png" />
+    <None Include="Resources\tech_scrollbar.png" />
+    <None Include="Resources\scroll_bottom.png" />
+    <None Include="Resources\scroll_mid.png" />
+    <None Include="Resources\scroll_top.png" />
+    <None Include="Resources\downarrow.png" />
+    <None Include="Resources\ThumbBottom.png" />
+    <None Include="Resources\ThumbMiddle.png" />
+    <None Include="Resources\ThumbSpanBottom.png" />
+    <None Include="Resources\ThumbSpanTop.png" />
+    <None Include="Resources\ThumbTop.png" />
+    <None Include="Resources\uparrow.png" />
     <Content Include="Resources\ZK_logo_128.ico" />
     <Content Include="Resources\ZK_logo_128.png" />
   </ItemGroup>

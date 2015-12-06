@@ -19,7 +19,7 @@ namespace ZeroKLobby.MicroLobby
 
             SuspendLayout(); //pause
 
-            if (DesignMode) return;
+            if (this.IsInDesignMode()) return;
             var lookingGlass = new PictureBox
             {
                 Width = (int)20,
@@ -37,12 +37,39 @@ namespace ZeroKLobby.MicroLobby
             hidePasswordedBox.Checked = Program.Conf.HidePasswordedBattles;
 
             // battle list
-            battleListControl = new BattleListControl() { Dock = DockStyle.Fill };
+            battleListControl = new BattleListControl() { Dock = DockStyle.Fill, VerticalScroll = { Visible = false}};
+
+
+            this.battleListControl.SizeChanged += BattleListControl_SizeChanged;
+
+            this.battleListControl.MouseWheel += BattleListControl_MouseWheel;
+            this.customScrollbar.Scroll += CustomScrollbar_Scroll;
+
             battlePanel.Controls.Add(battleListControl);
             ResumeLayout();
         }
 
+        private void BattleListControl_SizeChanged(object sender, EventArgs e)
+        {
+            this.customScrollbar.Maximum = this.battleListControl.VerticalScroll.Maximum;
+            this.customScrollbar.Minimum = this.battleListControl.VerticalScroll.Minimum;
+            this.customScrollbar.LargeChange = this.battleListControl.VerticalScroll.LargeChange;
+            this.customScrollbar.SmallChange = this.battleListControl.VerticalScroll.SmallChange;
+        }
 
+        private void CustomScrollbar_Scroll(object sender, EventArgs e)
+        {
+            battleListControl.AutoScrollPosition = new Point(0, this.customScrollbar.Value);
+            this.customScrollbar.Invalidate();
+            Application.DoEvents();
+        }
+
+        private void BattleListControl_MouseWheel(object sender, MouseEventArgs e)
+        {
+            customScrollbar.Value = this.battleListControl.VerticalScroll.Value;
+            this.customScrollbar.Invalidate();
+            Application.DoEvents();
+        }
 
         public bool TryNavigate(params string[] path) {
             if (path.Length == 0) return false;

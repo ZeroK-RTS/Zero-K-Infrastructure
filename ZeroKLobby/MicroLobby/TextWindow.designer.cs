@@ -1,3 +1,5 @@
+using ZeroKLobby.Controls;
+
 namespace ZeroKLobby.MicroLobby
 {
     partial class TextWindow
@@ -28,7 +30,7 @@ namespace ZeroKLobby.MicroLobby
         /// </summary>
         private void InitializeComponent()
         {
-            this.vScrollBar = new System.Windows.Forms.VScrollBar();
+            this.vScrollBar = new CustomScrollbar();
             this.SuspendLayout();
             // 
             // vScrollBar
@@ -56,7 +58,7 @@ namespace ZeroKLobby.MicroLobby
 
         #endregion
 
-        private System.Windows.Forms.VScrollBar vScrollBar;
+        private CustomScrollbar vScrollBar;
 
 
 

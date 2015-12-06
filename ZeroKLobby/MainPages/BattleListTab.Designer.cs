@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BattleListTab));
             this.panel1 = new System.Windows.Forms.Panel();
             this.hidePasswordedBox = new System.Windows.Forms.CheckBox();
             this.showOfficialBox = new System.Windows.Forms.CheckBox();
@@ -36,7 +37,9 @@
             this.searchLabel = new System.Windows.Forms.Label();
             this.searchBox = new System.Windows.Forms.TextBox();
             this.battlePanel = new System.Windows.Forms.Panel();
+            this.customScrollbar = new ZeroKLobby.Controls.CustomScrollbar();
             this.panel1.SuspendLayout();
+            this.battlePanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -62,7 +65,7 @@
             this.hidePasswordedBox.Location = new System.Drawing.Point(584, 11);
             this.hidePasswordedBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.hidePasswordedBox.Name = "hidePasswordedBox";
-            this.hidePasswordedBox.Size = new System.Drawing.Size(159, 24);
+            this.hidePasswordedBox.Size = new System.Drawing.Size(109, 17);
             this.hidePasswordedBox.TabIndex = 7;
             this.hidePasswordedBox.Text = "Hide Passworded";
             this.hidePasswordedBox.UseVisualStyleBackColor = true;
@@ -74,7 +77,7 @@
             this.showOfficialBox.Location = new System.Drawing.Point(756, 11);
             this.showOfficialBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.showOfficialBox.Name = "showOfficialBox";
-            this.showOfficialBox.Size = new System.Drawing.Size(118, 24);
+            this.showOfficialBox.Size = new System.Drawing.Size(82, 17);
             this.showOfficialBox.TabIndex = 6;
             this.showOfficialBox.Text = "Official Only";
             this.showOfficialBox.UseVisualStyleBackColor = true;
@@ -86,7 +89,7 @@
             this.hideEmptyBox.Location = new System.Drawing.Point(454, 11);
             this.hideEmptyBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.hideEmptyBox.Name = "hideEmptyBox";
-            this.hideEmptyBox.Size = new System.Drawing.Size(117, 24);
+            this.hideEmptyBox.Size = new System.Drawing.Size(80, 17);
             this.hideEmptyBox.TabIndex = 5;
             this.hideEmptyBox.Text = "Hide Empty";
             this.hideEmptyBox.UseVisualStyleBackColor = true;
@@ -98,7 +101,7 @@
             this.hideFullBox.Location = new System.Drawing.Point(345, 11);
             this.hideFullBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.hideFullBox.Name = "hideFullBox";
-            this.hideFullBox.Size = new System.Drawing.Size(97, 24);
+            this.hideFullBox.Size = new System.Drawing.Size(67, 17);
             this.hideFullBox.TabIndex = 4;
             this.hideFullBox.Text = "Hide Full";
             this.hideFullBox.UseVisualStyleBackColor = true;
@@ -110,7 +113,7 @@
             this.searchLabel.Location = new System.Drawing.Point(4, 11);
             this.searchLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.searchLabel.Name = "searchLabel";
-            this.searchLabel.Size = new System.Drawing.Size(60, 20);
+            this.searchLabel.Size = new System.Drawing.Size(41, 13);
             this.searchLabel.TabIndex = 3;
             this.searchLabel.Text = "Search";
             // 
@@ -119,18 +122,34 @@
             this.searchBox.Location = new System.Drawing.Point(69, 8);
             this.searchBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.searchBox.Name = "searchBox";
-            this.searchBox.Size = new System.Drawing.Size(265, 26);
+            this.searchBox.Size = new System.Drawing.Size(265, 20);
             this.searchBox.TabIndex = 2;
             this.searchBox.TextChanged += new System.EventHandler(this.searchBox_TextChanged);
             // 
             // battlePanel
             // 
+            this.battlePanel.Controls.Add(this.customScrollbar);
             this.battlePanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.battlePanel.Location = new System.Drawing.Point(0, 48);
             this.battlePanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.battlePanel.Name = "battlePanel";
             this.battlePanel.Size = new System.Drawing.Size(1096, 664);
             this.battlePanel.TabIndex = 1;
+            // 
+            // customScrollbar1
+            // 
+            this.customScrollbar.ChannelColor = System.Drawing.Color.DodgerBlue;
+            this.customScrollbar.Dock = System.Windows.Forms.DockStyle.Right;
+            this.customScrollbar.LargeChange = 10;
+            this.customScrollbar.Location = new System.Drawing.Point(1081, 0);
+            this.customScrollbar.Maximum = 100;
+            this.customScrollbar.Minimum = 0;
+            this.customScrollbar.MinimumSize = new System.Drawing.Size(15, 92);
+            this.customScrollbar.Name = "customScrollbar";
+            this.customScrollbar.Size = new System.Drawing.Size(15, 664);
+            this.customScrollbar.SmallChange = 1;
+            this.customScrollbar.TabIndex = 0;
+            this.customScrollbar.Value = 0;
             // 
             // BattleListTab
             // 
@@ -142,6 +161,7 @@
             this.Size = new System.Drawing.Size(1096, 712);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.battlePanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -156,6 +176,7 @@
         private System.Windows.Forms.TextBox searchBox;
         private System.Windows.Forms.Panel battlePanel;
         private System.Windows.Forms.CheckBox hidePasswordedBox;
+        private Controls.CustomScrollbar customScrollbar;
 
         public string Title { get { return "Custom battles"; } }
     }

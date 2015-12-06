@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ZeroKLobby {
+namespace ZeroKLobby.Controls {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace ZeroKLobby {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class DarkHiveGlow {
+    internal class ScrollbarSkin {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal DarkHiveGlow() {
+        internal ScrollbarSkin() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace ZeroKLobby {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ZeroKLobby.DarkHiveGlow", typeof(DarkHiveGlow).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ZeroKLobby.Controls.ScrollbarSkin", typeof(ScrollbarSkin).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -63,9 +63,9 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap E {
+        internal static System.Drawing.Bitmap downarrow {
             get {
-                object obj = ResourceManager.GetObject("E", resourceCulture);
+                object obj = ResourceManager.GetObject("downarrow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap N {
+        internal static System.Drawing.Bitmap scroll_bottom {
             get {
-                object obj = ResourceManager.GetObject("N", resourceCulture);
+                object obj = ResourceManager.GetObject("scroll_bottom", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap NE {
+        internal static System.Drawing.Bitmap scroll_mid {
             get {
-                object obj = ResourceManager.GetObject("NE", resourceCulture);
+                object obj = ResourceManager.GetObject("scroll_mid", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap NW {
+        internal static System.Drawing.Bitmap scroll_top {
             get {
-                object obj = ResourceManager.GetObject("NW", resourceCulture);
+                object obj = ResourceManager.GetObject("scroll_top", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,9 +103,9 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap S {
+        internal static System.Drawing.Bitmap tech_scrollbar {
             get {
-                object obj = ResourceManager.GetObject("S", resourceCulture);
+                object obj = ResourceManager.GetObject("tech_scrollbar", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,9 +113,9 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap SE {
+        internal static System.Drawing.Bitmap ThumbBottom {
             get {
-                object obj = ResourceManager.GetObject("SE", resourceCulture);
+                object obj = ResourceManager.GetObject("ThumbBottom", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -123,9 +123,9 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap SW {
+        internal static System.Drawing.Bitmap ThumbMiddle {
             get {
-                object obj = ResourceManager.GetObject("SW", resourceCulture);
+                object obj = ResourceManager.GetObject("ThumbMiddle", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -133,9 +133,39 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap W {
+        internal static System.Drawing.Bitmap ThumbSpanBottom {
             get {
-                object obj = ResourceManager.GetObject("W", resourceCulture);
+                object obj = ResourceManager.GetObject("ThumbSpanBottom", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ThumbSpanTop {
+            get {
+                object obj = ResourceManager.GetObject("ThumbSpanTop", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ThumbTop {
+            get {
+                object obj = ResourceManager.GetObject("ThumbTop", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap uparrow {
+            get {
+                object obj = ResourceManager.GetObject("uparrow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -37,6 +37,7 @@ using JetBrains.Annotations;
 using ZkData;
 using ZeroKLobby;
 using System.Collections.Generic;
+using ZeroKLobby.Controls;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -1543,7 +1544,7 @@ namespace ZeroKLobby.MicroLobby
 
         void OnScroll(object sender, EventArgs e)
         {
-            var scrollBar = (VScrollBar)sender;
+            var scrollBar = (CustomScrollbar)sender;
             scrollBar.Value = Math.Max(scrollBar.Value , 1); //Note: Math.Max is used for clamping value (to avoid OutOfRange message in MONO)
 
             Invalidate();
