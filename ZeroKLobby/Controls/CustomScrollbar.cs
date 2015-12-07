@@ -383,7 +383,6 @@ namespace ZeroKLobby.Controls
                         float fValue = fPerc * (Maximum - LargeChange);
 
                         moValue = (int)fValue;
-                        Debug.WriteLine(moValue.ToString());
 
                         if (ValueChanged != null)
                             ValueChanged(this, new EventArgs());
@@ -415,7 +414,6 @@ namespace ZeroKLobby.Controls
                         float fValue = fPerc * (Maximum - LargeChange);
 
                         moValue = (int)fValue;
-                        Debug.WriteLine(moValue.ToString());
 
                         if (ValueChanged != null)
                             ValueChanged(this, new EventArgs());
@@ -479,7 +477,6 @@ namespace ZeroKLobby.Controls
                     float fPerc = (float)moThumbTop / (float)nPixelRange;
                     float fValue = fPerc * (Maximum - LargeChange);
                     moValue = (int)fValue;
-                    Debug.WriteLine(moValue.ToString());
 
                     Application.DoEvents();
 
