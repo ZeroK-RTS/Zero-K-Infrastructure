@@ -90,6 +90,8 @@ namespace ZeroKWeb
 
         public static ServerRunner ZkServerRunner { get; private set; }
         public static ForumPostCache ForumPostCache { get; private set; }= new ForumPostCache();
+
+        public static AutoRegistrator AutoRegistrator { get; private set; }
         
         /// <summary>
         /// Converts a given string and its arguments into a CampaignEvent; used for the online SP campaign
@@ -247,6 +249,8 @@ namespace ZeroKWeb
             ForumPostIndexer = new ForumPostIndexer();
             ZkServerRunner = new ServerRunner(mvcApplication.Server.MapPath("~"));
             Server = ZkServerRunner.ZkLobbyServer;
+            AutoRegistrator = new AutoRegistrator();
+            AutoRegistrator.RunMainAsync();
             ZkServerRunner.Run();
             listener.ZkLobbyServer = Server;
 
