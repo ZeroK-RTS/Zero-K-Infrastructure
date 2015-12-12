@@ -95,7 +95,14 @@ namespace ZeroKLobby.MicroLobby
 			base.OnResize(e);
             if (finishLoad && minimapFuncBox.minimapSplitContainer1.Height > 1)
             {
-                minimapFuncBox.minimapSplitContainer1.SplitterDistance = Math.Min((int)23,minimapFuncBox.minimapSplitContainer1.Height); //always show button fully
+                var splitContainer = minimapFuncBox.minimapSplitContainer1;
+
+                var splitterDistance = Math.Min((int)23, minimapFuncBox.minimapSplitContainer1.Height);  //always show button fully
+
+                // SplitterDistance must be between Panel1MinSize and Width - Panel2MinSize.
+                splitterDistance = Math.Min(splitterDistance, splitContainer.Width - splitContainer.Panel2MinSize + 1);
+                splitterDistance = Math.Max(splitterDistance, splitContainer.Panel1MinSize - 1);
+                minimapFuncBox.minimapSplitContainer1.SplitterDistance = splitterDistance;
                 DrawMinimap();
             }
 		}
@@ -169,7 +176,7 @@ namespace ZeroKLobby.MicroLobby
 		            newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team * 2 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = team, Height = 25 });
 		        }
 
-		        newList = newList.OrderBy(x => x.ToString()).ToList();
+		        newList = newList.OrderBy(x => x.GetSortingKey()).ToList();
 		    }
             
 		    playerBox.BeginUpdate();

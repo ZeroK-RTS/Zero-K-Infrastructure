@@ -73,10 +73,9 @@ namespace ZeroKLobby.MicroLobby
                 contextMenu = LineDehighlighter(contextMenu, null);
                 contextMenu.Show(extras, new Point(0, 0));
             };
-            ChatBox.Controls.Add(extras);
 
-            playerBox.DrawMode = DrawMode.OwnerDrawVariable;
-            playerBox.MeasureItem += (s, e) => { }; // needed for ListBox.OnMeasureItem
+
+            ChatBox.Controls.Add(extras);
             playerBox.BackColor = Program.Conf.BgColor;
             playerBox.ForeColor = Program.Conf.TextColor;
             playerBox_zklclick.AttachTo(playerBox);
@@ -91,7 +90,7 @@ namespace ZeroKLobby.MicroLobby
             ChannelName = name;
             if (!DesignMode) HistoryManager.InsertLastLines(ChannelName, ChatBox);
 
-            playerBox.Sorted = true;
+            playerBox.IsSorted = true;
             var lookingGlass = new PictureBox { Width = 20, Height = 20, Image = ZklResources.search, SizeMode = PictureBoxSizeMode.CenterImage };
             searchBarContainer.Controls.Add(lookingGlass);
             Program.ToolTip.SetText(lookingGlass, "Enter name or country shortcut to find");
@@ -281,8 +280,8 @@ namespace ZeroKLobby.MicroLobby
                     playerListItem.IsGrayedOut = true;
                 }
             }
-            playerBox.Sorted = false;
-            playerBox.Sorted = true;
+            playerBox.IsSorted = false;
+            playerBox.IsSorted = true;
             playerBox.EndUpdate();
         }
 
@@ -528,8 +527,8 @@ namespace ZeroKLobby.MicroLobby
                     item.IsGrayedOut = false;
                 }
                 SortByTeam();
-                playerBox.Sorted = false;
-                playerBox.Sorted = true;
+                playerBox.IsSorted = false;
+                playerBox.IsSorted = true;
                 playerBox.EndUpdate();
             }
         }

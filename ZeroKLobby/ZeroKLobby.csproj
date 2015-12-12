@@ -141,6 +141,12 @@
     <Compile Include="Controls\MinimapFuncBox.Designer.cs">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PlayerListControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PlayerListControl.Designer.cs">
+      <DependentUpon>PlayerListControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\RightPanel.cs">
       <SubType>Component</SubType>
     </Compile>

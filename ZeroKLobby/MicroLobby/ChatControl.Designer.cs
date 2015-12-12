@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using ZkData;
 using ZeroKLobby;
+using ZeroKLobby.Controls;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -42,7 +43,7 @@ namespace ZeroKLobby.MicroLobby
             this.playerBoxSearchBarContainer = new System.Windows.Forms.Panel();
             this.searchBarContainer = new System.Windows.Forms.Panel();
             this.playerSearchBox = new System.Windows.Forms.TextBox();
-            this.playerBox = new ZeroKLobby.MicroLobby.PlayerListBox();
+            this.playerBox = new PlayerListControl();
             this.sendBox = new ZeroKLobby.MicroLobby.SendBox();
             this.topicPanel = new System.Windows.Forms.Panel();
             this.topicBox = new ZeroKLobby.MicroLobby.ChatBox();
@@ -116,9 +117,7 @@ namespace ZeroKLobby.MicroLobby
             // 
             this.playerBox.BackColor = System.Drawing.Color.DimGray;
             this.playerBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.playerBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.playerBox.ForeColor = System.Drawing.Color.White;
-            this.playerBox.FormattingEnabled = true;
             this.playerBox.HoverItem = null;
             this.playerBox.IsBattle = false;
             this.playerBox.Location = new System.Drawing.Point(0, 20);
@@ -252,7 +251,7 @@ namespace ZeroKLobby.MicroLobby
 
         protected SplitContainer playerListMapSplitContainer;
         protected Panel playerBoxSearchBarContainer;
-        public PlayerListBox playerBox;
+        public PlayerListControl playerBox;
         private Panel searchBarContainer;
         protected TextBox playerSearchBox;
         private Panel topicPanel;

@@ -301,7 +301,7 @@ namespace ZeroKLobby.MicroLobby
                             x = 0;
                             y += scaledIconHeight;
                         }
-                        PainBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
+                        this.PaintBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
                     }
 
                     x = 0;
@@ -309,7 +309,7 @@ namespace ZeroKLobby.MicroLobby
                 }
 
                 PaintDivider(g, ref x, ref y, "Custom battles");
-                PainOpenBattleButton(g, ref x, ref y, scaledMapCellWidth, scaledIconWidth);
+                this.PaintOpenBattleButton(g, ref x, ref y, scaledMapCellWidth, scaledIconWidth);
 
                 foreach (BattleIcon t in view.Where(b => !b.Battle.IsQueue && !b.IsInGame))
                 {
@@ -318,7 +318,7 @@ namespace ZeroKLobby.MicroLobby
                         x = 0;
                         y += scaledIconHeight;
                     }
-                    PainBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
+                    this.PaintBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
                 }
                 x = 0;
                 y += scaledIconHeight;
@@ -332,7 +332,7 @@ namespace ZeroKLobby.MicroLobby
                         x = 0;
                         y += scaledIconHeight;
                     }
-                    PainBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
+                    this.PaintBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
                 }
 
 
@@ -360,7 +360,7 @@ namespace ZeroKLobby.MicroLobby
             y += 4;
         }
 
-        void PainOpenBattleButton(Graphics g, ref int x, ref int y, int scaledMapCellWidth, int scaledIconWidth)
+        void PaintOpenBattleButton(Graphics g, ref int x, ref int y, int scaledMapCellWidth, int scaledIconWidth)
         {
             g.DrawImage(ZklResources.border,
                 x + (int)3,
@@ -372,7 +372,7 @@ namespace ZeroKLobby.MicroLobby
             x += scaledIconWidth;
         }
 
-        void PainBattle(BattleIcon t, Graphics g, ref int x, ref int y, int scaledIconWidth, int scaledIconHeight)
+        void PaintBattle(BattleIcon t, Graphics g, ref int x, ref int y, int scaledIconWidth, int scaledIconHeight)
         {
             battleIconPositions[t] = new Point(x, y);
             if (g.VisibleClipBounds.IntersectsWith(new RectangleF(x, y, scaledIconWidth, scaledIconHeight))) g.DrawImageUnscaled(t.Image, x, y);

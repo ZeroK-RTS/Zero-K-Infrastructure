@@ -436,7 +436,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 if (haveChanges) requestMinimapRefresh = true; // Refresh_MinimapImage();
             }
 
-            newList = newList.OrderBy(x => x.ToString()).ToList();
+            newList = newList.OrderBy(x => x.GetSortingKey()).ToList();
 
             allUser.Clear();
             allUser.Add(myItem.offlineUserBattleStatus);

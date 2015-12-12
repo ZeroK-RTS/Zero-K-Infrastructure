@@ -107,7 +107,7 @@ namespace ZeroKLobby.MicroLobby
             boldFont.Dispose();
         }
 
-        public void DrawPlayerLine(Graphics g, Rectangle bounds, Color foreColor,  bool grayedOut, bool isBattle)
+        public void DrawPlayerLine(Graphics g, Rectangle bounds, Color textColor,  bool grayedOut, bool isBattle)
         {
 
             g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -115,7 +115,7 @@ namespace ZeroKLobby.MicroLobby
 
             var x = 0;
 
-            if (grayedOut) foreColor = Program.Conf.FadeColor;
+            if (grayedOut) textColor = Program.Conf.FadeColor;
 
             Action<Image> drawImage = image =>
                 {
@@ -123,9 +123,9 @@ namespace ZeroKLobby.MicroLobby
                     x += 19;
                 };
 
-            Action<string, Color> drawText = (text, fore) =>
+            Action<string, Color> drawText = (text, color) =>
                 {
-                    TextRenderer.DrawText(g, text, font, new Point(bounds.Left + x, bounds.Top), fore);
+                    TextRenderer.DrawText(g, text, font, new Point(bounds.Left + x, bounds.Top), color, TextFormatFlags.PreserveGraphicsTranslateTransform);
                     x += TextRenderer.MeasureText(g, text, font).Width;
                 };
 
@@ -134,7 +134,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 font = boldFont;
                 if (Title == "Search results:") drawImage(ZklResources.search);
-                TextRenderer.DrawText(g, Title, font, bounds, foreColor, TextFormatFlags.HorizontalCenter);
+                TextRenderer.DrawText(g, Title, font, bounds, textColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.PreserveGraphicsTranslateTransform);
                 return;
             }
 
@@ -143,7 +143,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 font = boldFont;
                 FrameBorderRenderer.Instance.RenderToGraphics(g, bounds, FrameBorderRenderer.StyleType.DarkHive);
-                TextRenderer.DrawText(g, Button, font, bounds, foreColor, TextFormatFlags.HorizontalCenter);
+                TextRenderer.DrawText(g, Button, font, bounds, textColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.PreserveGraphicsTranslateTransform);
                 return;
             }
 
@@ -161,7 +161,7 @@ namespace ZeroKLobby.MicroLobby
                     }
                 }
                 x += bounds.Bottom - bounds.Top + 2;
-                drawText(slotText, foreColor);
+                drawText(slotText, textColor);
                 return;
             }
 
@@ -172,7 +172,7 @@ namespace ZeroKLobby.MicroLobby
                 x += 19;
                 drawImage(ZklResources.robot);
                 var botDisplayName = MissionSlot == null ? bot.aiLib : MissionSlot.TeamName;
-                drawText(botDisplayName + " (" + bot.owner + ")", foreColor);
+                drawText(botDisplayName + " (" + bot.owner + ")", textColor);
                 return;
             }
 
@@ -182,7 +182,7 @@ namespace ZeroKLobby.MicroLobby
 
             if (UserName != null && user == null)
             {
-                drawText(UserName + " has left.", foreColor);
+                drawText(UserName + " has left.", textColor);
                 return;
             }
 
@@ -209,14 +209,14 @@ namespace ZeroKLobby.MicroLobby
             }
 
             var userDisplayName = MissionSlot == null ? user.Name : String.Format("{1}: {0}", MissionSlot.TeamName, user.Name);
-            drawText(userDisplayName, foreColor);
+            drawText(userDisplayName, textColor);
             var top10 = Program.SpringieServer.GetTop10Rank(user.Name);
             if (top10 > 0)
             {
                 var oldProgression = x;
                 drawImage(ZklResources.cup);
                 x = oldProgression;
-                TextRenderer.DrawText(g, top10.ToString(), boldFont, new Point(bounds.Left + x + 1, bounds.Top), Color.Black, Color.Transparent);
+                TextRenderer.DrawText(g, top10.ToString(), boldFont, new Point(bounds.Left + x + 1, bounds.Top), Color.Black, Color.Transparent, TextFormatFlags.PreserveGraphicsTranslateTransform);
                 x += 16;
             }
 
@@ -241,7 +241,7 @@ namespace ZeroKLobby.MicroLobby
             }
         }
 
-        public override string ToString()
+        public string GetSortingKey()
         {
             if (SortCategory < (int)SortCats.Uncategorized)
                 return SortCategory.ToString("00000") + UserName??string.Empty; //for ChatControl's search-filter only
