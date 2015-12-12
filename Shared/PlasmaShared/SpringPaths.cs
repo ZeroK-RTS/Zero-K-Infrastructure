@@ -150,7 +150,7 @@ namespace ZkData
 
             Environment.SetEnvironmentVariable("SPRING_DATADIR", DataDirectoriesJoined, EnvironmentVariableTarget.Process);
             Environment.SetEnvironmentVariable("SPRING_WRITEDIR", WritableDirectory, EnvironmentVariableTarget.Process);
-            //Environment.SetEnvironmentVariable("SPRING_ISOLATED", WritableDirectory, EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("SPRING_ISOLATED", WritableDirectory, EnvironmentVariableTarget.Process);
             Environment.SetEnvironmentVariable("SPRING_NOCOLOR", "1", EnvironmentVariableTarget.Process);
             
             if (ov != springVersion  && SpringVersionChanged != null) SpringVersionChanged(this, EventArgs.Empty);

@@ -94,9 +94,6 @@ namespace ZkData.UnitSyncLib
 			map.Minimap = GetMinimap(map);
 			map.Heightmap = GetHeightMap(map.Name);
 			map.Metalmap = GetMetalMap(map.Name);
-
-            // TODO dependencies
-            // TODO replicate in CMissionlib sigh
 			return map;
 		}
 
@@ -155,7 +152,8 @@ namespace ZkData.UnitSyncLib
 			          	Author = mapInfo.author,
 			          	Size = new Size(mapInfo.width, mapInfo.height),
 			          	Positions = mapInfo.positions,
-			          };
+                        Dependencies = GetMapDependencies(mapName).Where(x => x != mapName && !string.IsNullOrEmpty(x)).ToArray(),
+                      };
 			map.Options = GetMapOptions(map.Name, map.ArchiveName).ToArray();
 			NativeMethods.RemoveAllArchives();
 			TraceErrors();
@@ -466,7 +464,18 @@ namespace ZkData.UnitSyncLib
 			return ret;
 		}
 
-		string GetModNameFromArchive(string archiveName)
+        IEnumerable<string> GetMapDependencies(string mapName)
+        {
+            if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
+
+            var ret = new List<string>();
+            var count = NativeMethods.GetMapArchiveCount(mapName);
+            for (var i = 0; i < count; i++) ret.Add(GetMapNameFromArchive(Path.GetFileName(NativeMethods.GetMapArchiveName(i))));
+            return ret;
+        }
+
+
+        string GetModNameFromArchive(string archiveName)
 		{
 			string modName = null;
 			for (var i = NativeMethods.GetPrimaryModCount() - 1; i >= 0; i--) //check from last because modname is sorted by version and latest version should be last. ArchiveScanner.cpp line 1007
