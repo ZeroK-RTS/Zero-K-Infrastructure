@@ -45,13 +45,7 @@ namespace ZkData.UnitSyncLib
             Trace.TraceInformation("UnitSync: Directory: {0}", paths.UnitSyncDirectory);
             Trace.TraceInformation("UnitSync: ZKL: {0}", originalDirectory);           
             Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
-
-		    if (paths.UnitSyncDirectory != paths.WritableDirectory)
-		    {
-                File.WriteAllText(Path.Combine(paths.UnitSyncDirectory,"springsettings.cfg"), $"SpringData={paths.DataDirectoriesJoined}\n");
-		    }
-
-            if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed.");
+            if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed. " + NativeMethods.GetNextError());
 			Version = NativeMethods.GetSpringVersion();
             var writ = NativeMethods.GetWritableDataDirectory();
             Trace.TraceInformation("UnitSync Version: {0}, directory: {1}", Version, writ);
