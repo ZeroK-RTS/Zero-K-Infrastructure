@@ -57,8 +57,8 @@ namespace LobbyClient
 		{
 			UserName = userName;
 			BattleID = battleID;
-		    if (scriptPassword == null) ScriptPassword = userName;
-			//ScriptPassword = scriptPassword;
+            if (scriptPassword == null) ScriptPassword = userName;
+            else ScriptPassword = scriptPassword;
 		}
 	}
 

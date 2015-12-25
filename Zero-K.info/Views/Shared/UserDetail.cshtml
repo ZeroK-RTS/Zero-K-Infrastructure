@@ -318,6 +318,19 @@
         }
     }
 
+    @if (Global.AccountID == Model.AccountID)
+    {
+        <h3 class="js_expand">Account maintenance</h3>
+        <div id="accountMaint" class="collapse width-90">
+            <h4>Change password</h4>
+            <form method="post" action="@Url.Action("ChangePassword", "Users")">
+                Old password: @Html.Password("oldPassword")<br />
+                New password: @Html.Password("newPassword")<br />
+                <input type="submit" />
+            </form>
+        </div>
+    }
+
     @if (Global.IsZeroKAdmin && Global.AccountID == Model.AccountID)
     {
         <div class="admin">

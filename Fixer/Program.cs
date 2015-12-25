@@ -181,8 +181,22 @@ namespace Fixer
             return false;
         }
 
+
+        public static void RenameAccount(int accountID, string newName)
+        {
+            var db = new ZkDataContext();
+            Account acc = db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
+            string oldName = acc.Name;
+            acc.SetName(newName);
+            Console.WriteLine("Renaming {0} to {1}", oldName, newName);
+            db.SubmitChanges();
+        }
+
         public static void FixStuff()
         {
+            //RenameAccount(359399, "IcyIcyIce2");
+            //RenameAccount(235316, "IcyIcyIce");
+
             //AddClanLeader(530, 5806);
             //
             //UpdateMissionProgression(13);
@@ -331,12 +345,12 @@ namespace Fixer
 
 
         static void Main(string[] args) {
-
-            MigrateDatabase();
-            return;
+            FixStuff();
+            //MigrateDatabase();
+            //return;
 
             //DeleteOldUsers();
-            return;
+            //return;
 
             /*
             //ImportWiki();
@@ -384,7 +398,6 @@ namespace Fixer
             //AddClanLeader();
             //return;
             //TestPwMatch();
-            FixStuff();
 
             //var guid = Guid.NewGuid().ToString();
 

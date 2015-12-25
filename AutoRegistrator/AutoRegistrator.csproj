@@ -66,8 +66,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="AutoRegistrator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebFolderSync.cs" />
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

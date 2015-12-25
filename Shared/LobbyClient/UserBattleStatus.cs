@@ -27,7 +27,7 @@ namespace LobbyClient
 		public string Name;
 		
         
-        public string ScriptPassword; // HACK reimplement this
+        public string ScriptPassword;
 		
         public SyncStatuses SyncStatus = SyncStatuses.Unknown;
 
@@ -117,12 +117,13 @@ namespace LobbyClient
 
 	    public PlayerTeam ToPlayerTeam()
 	    {
-	        return new PlayerTeam() {
-	            AllyID = this.AllyNumber,
-	            Name = this.Name,
-	            LobbyID = this.LobbyUser.AccountID,
-	            TeamID = this.TeamNumber,
-	            IsSpectator = this.IsSpectator
+            return new PlayerTeam() {
+                AllyID = this.AllyNumber,
+                Name = this.Name,
+                LobbyID = this.LobbyUser.AccountID,
+                TeamID = this.TeamNumber,
+                IsSpectator = this.IsSpectator,
+                ScriptPassword = this.ScriptPassword
 	        };
 	    }
 	} ;

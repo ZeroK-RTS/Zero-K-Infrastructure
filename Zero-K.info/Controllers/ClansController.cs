@@ -70,7 +70,7 @@ namespace ZeroKWeb.Controllers
             if (clan.Accounts.Count() > GlobalConst.ClanLeaveLimit) return null; // "This clan is too big to leave";
 
             RoleType leader = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople && x.IsClanOnly);
-
+            bool isLeader = acc.AccountRolesByAccountID.Any(x => x.RoleType == leader);
             // remove role
             db.AccountRoles.DeleteAllOnSubmit(acc.AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).ToList());
 
@@ -97,7 +97,7 @@ namespace ZeroKWeb.Controllers
                 clan.IsDeleted = true;
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} is disbanded", clan));
             }
-            else if (acc.AccountRolesByAccountID.Any(x => x.RoleType == leader))  // clan leader
+            else if (isLeader)
             {
                 var otherClanMember = clan.Accounts.FirstOrDefault(x => x.AccountID != accountID);
                 if (otherClanMember != null)

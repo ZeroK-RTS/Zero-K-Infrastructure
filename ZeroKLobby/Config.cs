@@ -22,7 +22,7 @@ namespace ZeroKLobby
         public const string LogFile = "ZeroKLobbyErrors.txt";
 
 
-        StringCollection autoJoinChannels = new StringCollection() { KnownGames.GetDefaultGame().Channel };
+        StringCollection autoJoinChannels = new StringCollection() { };
         bool connectOnStartup = true;
         Color fadeColor = Color.Gray;
         StringCollection friends = new StringCollection(); // lacks events for adding friends immediatly
