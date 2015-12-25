@@ -110,7 +110,6 @@ namespace LobbyClient
         public Dictionary<string, Channel> JoinedChannels { get { return joinedChannels; } }
 
         public Battle MyBattle { get; protected set; }
-        //public int MyBattleID { get { return MyBattle != null ? MyBattle.BattleID : 0; } }
 
 
         public UserBattleStatus MyBattleStatus
@@ -652,9 +651,9 @@ namespace LobbyClient
             Battle battle;
             ExistingBattles.TryGetValue(bat.BattleID, out battle);
             if (user != null && battle != null) {
-                battle.Users[user.Name] = new UserBattleStatus(user.Name, user);
+                battle.Users[user.Name] = new UserBattleStatus(user.Name, user, bat.ScriptPassword);
                 user.IsInBattleRoom = true;
-                BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID));
+                BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID, bat.ScriptPassword));
                 if (user.Name == UserName) {
                     MyBattle = battle;
                     if (battle.Founder.Name == UserName) BattleOpened(this, battle);
