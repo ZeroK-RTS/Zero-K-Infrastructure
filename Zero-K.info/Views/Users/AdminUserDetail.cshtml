@@ -110,8 +110,6 @@
 
     <h2>Modify user rating</h2>
     <form method="post" action="@Url.Action("ChangeElo", "Users", new { accountID = Model.AccountID, adminAccountID = Global.AccountID })">
-        Team Elo: @Html.TextBox("elo", Model.Elo)
-        1v1 Elo: @Html.TextBox("elo1v1", Model.Elo1v1)
         Team newbie malus: @Html.TextBox("eloweight", Model.EloWeight)
         1v1 newbie malus: @Html.TextBox("eloweight1v1", Model.Elo1v1Weight)
         Malus 6 is max (normal experienced player)
