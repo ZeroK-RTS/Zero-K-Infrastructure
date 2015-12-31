@@ -83,20 +83,12 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth(Role = AuthRole.ZkAdmin)]
-        public ActionResult ChangeElo(int accountID, int adminAccountID, int elo, int elo1v1, int eloweight, int eloweight1v1)
+        public ActionResult ChangeElo(int accountID, int adminAccountID, int eloweight, int eloweight1v1)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
             Account adminAcc = db.Accounts.Single(x => x.AccountID == adminAccountID);
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Elo rating changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
-            if (acc.Elo != elo) {
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Team Elo: {0} -> {1}", acc.Elo, elo));
-                acc.Elo = elo;
-            }
-            if (acc.Elo1v1 != elo1v1) {
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - 1v1 Elo: {0} -> {1}", acc.Elo1v1, elo1v1));
-                acc.Elo1v1 = elo1v1;
-            }
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Fake elo malus changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
             if (acc.EloWeight != eloweight) {
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Team Elo Weight: {0} -> {1}", acc.EloWeight, eloweight));
                 acc.EloWeight = eloweight;
