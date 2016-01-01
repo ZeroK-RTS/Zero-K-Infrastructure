@@ -336,6 +336,7 @@ namespace LobbyClient
     {
         public int BattleID;
         public string User;
+        public string ScriptPassword;
     }
 
 
@@ -344,6 +345,10 @@ namespace LobbyClient
     {
         public string Password;
         public int BattleID;
+        /// <summary>
+        /// Only sent to the battle host and the joining client.
+        /// </summary>
+        public string ScriptPassword;
     }
 
     [Message(Origin.Client)]
@@ -360,6 +365,7 @@ namespace LobbyClient
         public string Name;
         public SyncStatuses? Sync;
         public int? TeamNumber;
+        public string ScriptPassword;
     }
 
 
