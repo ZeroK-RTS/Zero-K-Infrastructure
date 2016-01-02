@@ -17,6 +17,14 @@ namespace ZeroKWeb.Controllers
 		//
 		// GET: /My/
 
+        public static bool IsUnlockValidForSlot(Unlock unlock, CommanderSlot slot)
+        {
+            if (slot.UnlockType == UnlockTypes.WeaponBoth)
+                return (unlock.UnlockType == UnlockTypes.Weapon || unlock.UnlockType == UnlockTypes.WeaponManualFire);
+
+            return unlock.UnlockType == slot.UnlockType;
+        }
+
         /// <summary>
         /// Add, modify or delete a <see cref="Commander"/>
         /// </summary>
@@ -87,7 +95,7 @@ namespace ZeroKWeb.Controllers
 							Unlock unlock = db.Unlocks.Single(x => x.UnlockID == unlockId);
 
 							if (!unlocks.Any(x => x.UnlockID == unlock.UnlockID)) return Content("WTF get lost!");
-							if (slot.MorphLevel < unlock.MorphLevel || slot.UnlockType != unlock.UnlockType) return Content(string.Format("WTF cannot use {0} in slot {1}", unlock.Name, slot.CommanderSlotID));
+							if (slot.MorphLevel < unlock.MorphLevel || !IsUnlockValidForSlot(unlock, slot)) return Content(string.Format("WTF cannot use {0} in slot {1}", unlock.Name, slot.CommanderSlotID));
 							if (!string.IsNullOrEmpty(unlock.LimitForChassis))
 							{
 								var validChassis = unlock.LimitForChassis.Split(',');
