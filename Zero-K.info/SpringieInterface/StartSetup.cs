@@ -135,7 +135,7 @@ namespace ZeroKWeb.SpringieInterface
                                         {
                                             c.Name = c.CommanderID.ToString();
                                         }
-                                        commProfiles.Add(c.Name, commProfile);
+                                        commProfiles.Add("c" + c.CommanderID, commProfile);
 
                                         // process decoration icons
                                         LuaTable decorations = new LuaTable();
