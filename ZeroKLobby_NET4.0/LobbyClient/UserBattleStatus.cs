@@ -26,7 +26,7 @@ namespace LobbyClient
 		public string Name;
 		
         
-        public string ScriptPassword; // HACK reimplement this
+        public string ScriptPassword;
 		
         public SyncStatuses SyncStatus = SyncStatuses.Unknown;
 
@@ -44,6 +44,7 @@ namespace LobbyClient
                 if (u.TeamNumber.HasValue) TeamNumber = u.TeamNumber.Value;
                 if (u.IsSpectator.HasValue) IsSpectator = u.IsSpectator.Value;
                 if (u.Sync.HasValue) SyncStatus = u.Sync.Value;
+                if (u.ScriptPassword != null) ScriptPassword = u.ScriptPassword;
 	        }
 	    }
 
@@ -54,8 +55,9 @@ namespace LobbyClient
 	            AllyNumber = AllyNumber,
 	            IsSpectator = IsSpectator,
 	            Sync = SyncStatus,
-	            TeamNumber = TeamNumber
-	        };
+	            TeamNumber = TeamNumber,
+                ScriptPassword = ScriptPassword
+            };
 	    }
 
 

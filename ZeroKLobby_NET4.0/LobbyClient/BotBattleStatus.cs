@@ -33,7 +33,7 @@ namespace LobbyClient
                 if (u.AllyNumber.HasValue) AllyNumber = u.AllyNumber.Value;
                 if (u.TeamNumber.HasValue) TeamNumber = u.TeamNumber.Value;
                 if (u.AiLib != null) aiLib = u.AiLib;
-                if (u.Owner != null) owner = u.Owner;
+                //if (u.Owner != null) owner = u.Owner;
             }
         }
 
