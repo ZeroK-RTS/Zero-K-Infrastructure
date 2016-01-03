@@ -200,11 +200,11 @@ namespace ZeroKWeb.SpringieInterface
                             }
                             else userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "jokecomm", Value = "1" });
 
-                            userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commProfileIDs", Value = commProfileIDs.ToBase64String() });
+                            userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanders", Value = commProfileIDs.ToBase64String() });
                         }
                     }
                 }
-                ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commProfiles", Value = commProfiles.ToBase64String() });
+                ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanders", Value = commProfiles.ToBase64String() });
 
                 // set PW structures
                 if (mode == AutohostMode.Planetwars)
