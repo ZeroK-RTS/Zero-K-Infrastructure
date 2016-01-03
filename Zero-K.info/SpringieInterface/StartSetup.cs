@@ -25,7 +25,7 @@ namespace ZeroKWeb.SpringieInterface
                     context.Players = ret.BalanceTeamsResult.Players;
                 }
                 
-                var commanderTypes = new LuaTable();
+                var commProfiles = new LuaTable();
                 var db = new ZkDataContext();
                 
                 // calculate to whom to send extra comms
@@ -122,8 +122,8 @@ namespace ZeroKWeb.SpringieInterface
                             userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "unlocks", Value = pu.ToBase64String() });
 
                             if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "extracomm", Value = "1" });
-
-                            LuaTable commProfiles = new LuaTable();
+                            
+                            LuaTable commProfileIDs = new LuaTable();
 
                             if (!userCommandersBanned) {
                                 // set up commander data
@@ -136,6 +136,7 @@ namespace ZeroKWeb.SpringieInterface
                                             c.Name = c.CommanderID.ToString();
                                         }
                                         commProfiles.Add("c" + c.CommanderID, commProfile);
+                                        commProfileIDs.Add("c" + c.CommanderID);
 
                                         // process decoration icons
                                         LuaTable decorations = new LuaTable();
@@ -199,10 +200,11 @@ namespace ZeroKWeb.SpringieInterface
                             }
                             else userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "jokecomm", Value = "1" });
 
-                            userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanders", Value = commProfiles.ToBase64String() });
+                            userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commProfileIDs", Value = commProfileIDs.ToBase64String() });
                         }
                     }
                 }
+                ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commProfiles", Value = commProfiles.ToBase64String() });
 
                 // set PW structures
                 if (mode == AutohostMode.Planetwars)
