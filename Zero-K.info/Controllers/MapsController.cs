@@ -235,7 +235,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", new { id = res.ResourceID });
         }
 
-        [Auth]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult Tag(int id,
                                 int? sea,
                                 int? hills,
@@ -262,12 +262,10 @@ namespace ZeroKWeb.Controllers
             r.MapIs1v1 = is1v1;
             r.MapIsFfa = ffa;
             r.MapIsChickens = chickens;
-            if (Global.Account.IsZeroKAdmin) {
-                r.MapIsSupported = supported;
-                r.FeaturedOrder = featuredOrder;
-                r.MapFFAMaxTeams = ffaTeams;
-                r.MapSpringieCommands = springieCommands;
-            }
+            r.MapIsSupported = supported;
+            r.FeaturedOrder = featuredOrder;
+            r.MapFFAMaxTeams = ffaTeams;
+            r.MapSpringieCommands = springieCommands;
             db.SubmitChanges();
             var order = 1;
             if (featuredOrder.HasValue) foreach (var map in db.Resources.Where(x => x.FeaturedOrder != null).OrderBy(x => x.FeaturedOrder)) map.FeaturedOrder = order++;
