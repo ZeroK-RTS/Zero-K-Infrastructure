@@ -157,6 +157,10 @@
     <Compile Include="Migrations\201510160933494_AddDbIndexes.Designer.cs">
       <DependentUpon>201510160933494_AddDbIndexes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601081601531_DynamicComms.cs" />
+    <Compile Include="Migrations\201601081601531_DynamicComms.Designer.cs">
+      <DependentUpon>201601081601531_DynamicComms.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="Enums\TreatyState.cs" />
@@ -352,6 +356,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201510160933494_AddDbIndexes.resx">
       <DependentUpon>201510160933494_AddDbIndexes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601081601531_DynamicComms.resx">
+      <DependentUpon>201601081601531_DynamicComms.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
