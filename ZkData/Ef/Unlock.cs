@@ -33,6 +33,7 @@ namespace ZkData
         public int MorphLevel { get; set; }
         public int MaxModuleCount { get; set; }
         public int? MetalCost { get; set; }
+        public string RequiredInstalledUnlockIDs { get; set; }
         public int XpCost { get; set; }
         public int? MetalCostMorph2 { get; set; }
         public int? MetalCostMorph3 { get; set; }

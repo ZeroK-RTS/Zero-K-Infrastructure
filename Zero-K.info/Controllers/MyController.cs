@@ -20,9 +20,27 @@ namespace ZeroKWeb.Controllers
         public static bool IsUnlockValidForSlot(Unlock unlock, CommanderSlot slot)
         {
             if (slot.UnlockType == UnlockTypes.WeaponBoth)
-                return (unlock.UnlockType == UnlockTypes.Weapon || unlock.UnlockType == UnlockTypes.WeaponManualFire);
+            {
+                if (unlock.UnlockType != UnlockTypes.Weapon && unlock.UnlockType != UnlockTypes.WeaponManualFire)
+                    return false;
+            }
+            else if (unlock.UnlockType != slot.UnlockType)
+                return false;
 
-            return unlock.UnlockType == slot.UnlockType;
+            if (unlock.NeededLevel > slot.MorphLevel) return false;
+
+            return true;
+        }
+
+        public static bool IsPrerequisiteUnlockPresent(Commander comm, Unlock unlock)
+        {
+            if (!string.IsNullOrEmpty(unlock.RequiredInstalledUnlockIDs))
+            {
+                var requiredUnlockIDs = unlock.RequiredInstalledUnlockIDs.Split(',').Select(int.Parse);
+                if (!comm.CommanderModules.Any(x => requiredUnlockIDs.Contains(x.ModuleUnlockID)))
+                    return false;
+            }
+            return true;
         }
 
         /// <summary>
@@ -101,6 +119,8 @@ namespace ZeroKWeb.Controllers
 								var validChassis = unlock.LimitForChassis.Split(',');
 								if (!validChassis.Contains(comm.Unlock.Code)) return Content(string.Format("{0} cannot be used in commander {1}", unlock.Name, comm.Unlock.Name));
 							}
+                            if (!IsPrerequisiteUnlockPresent(comm, unlock))
+                                return Content(string.Format("{0} missing prerequisite module", unlock.Name));
 
 							var comSlot = comm.CommanderModules.SingleOrDefault(x => x.SlotID == slotId);
 							if (comSlot == null)
@@ -173,6 +193,9 @@ namespace ZeroKWeb.Controllers
                         comm.CommanderDecorations.Remove(comm.CommanderDecorations.SingleOrDefault(x => x.SlotID == decSlotId));
                     }
                 }
+
+                // cleanup invalid modules?
+
 
 				db.SubmitChanges();
 				foreach (var unlock in comm.CommanderModules.GroupBy(x => x.Unlock))
