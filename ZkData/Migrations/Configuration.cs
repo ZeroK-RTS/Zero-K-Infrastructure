@@ -182,7 +182,7 @@ namespace ZkData.Migrations
 
             db.ForumCategories.AddOrUpdate(
                 x => x.Title,
-                new ForumCategory { Title = "Archive", ForumMode = ForumMode.Archive, IsLocked = true, SortOrder = 21, ParentForumCategoryID = offtopic });
+                new ForumCategory { Title = "Asylum", ForumMode = ForumMode.Archive, IsLocked = false, SortOrder = 21, ParentForumCategoryID = offtopic });
 
 
             db.SaveChanges();
