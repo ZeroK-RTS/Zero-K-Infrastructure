@@ -335,8 +335,9 @@ namespace ZeroKWeb.Controllers
             if (chicken.HasValue) ret = ret.Where(x => x.MapIsChickens == chicken);
             if (ffa.HasValue) ret = ret.Where(x => x.MapIsFfa == ffa);
 
-            if (featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x => x.ResourceID);
-            else ret = ret.OrderByDescending(x => x.ResourceID);
+            //if (featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x => x.ResourceID);
+            //else ret = ret.OrderByDescending(x => x.ResourceID);
+            ret = ret.OrderByDescending(x => x.ResourceID);
             if (offset != null) ret = ret.Skip(offset.Value);
             ret = ret.Take(Global.AjaxScrollCount);
             return db;
