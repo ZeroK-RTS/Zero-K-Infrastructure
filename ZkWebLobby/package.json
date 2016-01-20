@@ -7,7 +7,7 @@
 		"watch": "webpack-dev-server --hot --inline --progress --colors"
 	},
 	"dependencies": {
-		"weblobby": "https://github.com/springweblobby/swl-website/archive/cb8866a.tar.gz",
+		"weblobby": "https://github.com/springweblobby/swl-website/archive/86c31e9.tar.gz",
 		"react": "0.14.x",
 		"react-dom": "0.14.x",
 		"react-addons-linked-state-mixin": "0.14.x",

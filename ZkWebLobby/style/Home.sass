@@ -36,14 +36,22 @@ $menuButtonsMargin: 20px
 		+chiliBox
 
 #zkMainMenu
-	//float: left
-	margin-left: 4em
-	margin-top: 12em
+	padding-left: 4em
+	padding-top: 12em
 	> div
 		float: left
 	.submenu
 		font-size: 0.8em
 		margin-left: 10em
+		padding-right: 1.5em
+		overflow: hidden
+		white-space: nowrap
+		position: relative
+		left: -6em
+	.submenu.show
+		left: 0
+		transition-property: left
+		transition-duration: 450ms
 	.underbutton
 		font-size: 1.5em
 		position: relative
@@ -55,3 +63,12 @@ $menuButtonsMargin: 20px
 			@extend %transformBg
 			transform: perspective(10px) rotateX(-2deg);
 			transform-origin: bottom
+
+#background
+	background: url('/img/thug_bandit_shooting.jpg')
+	position: absolute
+	top: 0
+	right: 0
+	bottom: 0
+	left: 0
+	z-index: -1
