@@ -275,17 +275,17 @@ namespace ZeroKLobby.MicroLobby
 
                 if (Program.TasClient.MyBattle != null)
                 {
-                    var battleStatus = Program.TasClient.MyBattle.Users[user.Name];
-                    var myStatus = Program.TasClient.MyBattleStatus;
-
                     if (isBattle)
                     {
+
                         contextMenu.MenuItems.Add("-");
 
                         if (!Program.TasClient.MyBattle.IsQueue)
                         {
                             if (user.Name != Program.TasClient.UserName)
                             {
+                                var battleStatus = Program.TasClient.MyBattle.Users[user.Name];
+                                var myStatus = Program.TasClient.MyBattleStatus;
                                 var allyWith = new MenuItem("Ally")
                                                {
                                                    Enabled =

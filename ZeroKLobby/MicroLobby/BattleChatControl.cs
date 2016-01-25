@@ -376,17 +376,17 @@ namespace ZeroKLobby.MicroLobby
 		{
 			if (mea.Button == MouseButtons.Left)
 			{
-				if (playerBox.HoverItem != null)
+				if (this.playerBox.HoverItem != null)
 				{
-					if (playerBox.HoverItem.IsSpectatorsTitle) ActionHandler.Spectate();
-					else if (playerBox.HoverItem.SlotButton != null) ActionHandler.JoinSlot(playerBox.HoverItem.MissionSlot);
-					else if (playerBox.HoverItem.Button!=null) ActionHandler.JoinAllyTeam(playerBox.HoverItem.AllyTeam.Value);
+					if (this.playerBox.HoverItem.IsSpectatorsTitle) ActionHandler.Spectate();
+					else if (this.playerBox.HoverItem.SlotButton != null) ActionHandler.JoinSlot(this.playerBox.HoverItem.MissionSlot);
+					else if (this.playerBox.HoverItem.Button!=null) ActionHandler.JoinAllyTeam(this.playerBox.HoverItem.AllyTeam.Value);
 				}
 			}
 
 			if (mea.Button == MouseButtons.Right || !Program.Conf.LeftClickSelectsPlayer)
 			{
-				if (playerBox.HoverItem == null && mea.Button == MouseButtons.Right)
+				if (this.playerBox.HoverItem == null && mea.Button == MouseButtons.Right)
 				{ //right click on empty space
 					var cm = ContextMenus.GetPlayerContextMenu(Program.TasClient.MyUser, true);
 					Program.ToolTip.Visible = false;
@@ -401,12 +401,12 @@ namespace ZeroKLobby.MicroLobby
 				}
                 //NOTE: code that display player's context menu on Left-mouse-click is in ChatControl.playerBox_MouseClick();
 			}
-			if (playerBox.HoverItem != null)
+			if (this.playerBox.HoverItem != null)
 			{
-				if (playerBox.HoverItem.BotBattleStatus != null)
+				if (this.playerBox.HoverItem.BotBattleStatus != null)
 				{
-					playerBox.SelectedItem = playerBox.HoverItem;
-					var cm = ContextMenus.GetBotContextMenu(playerBox.HoverItem.BotBattleStatus.Name);
+					playerBox.SelectedItem = this.playerBox.HoverItem;
+					var cm = ContextMenus.GetBotContextMenu(this.playerBox.HoverItem.BotBattleStatus.Name);
 					Program.ToolTip.Visible = false;
 				    try {
 				        cm.Show(playerBox, mea.Location);

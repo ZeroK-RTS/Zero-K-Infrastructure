@@ -493,7 +493,7 @@ namespace ZeroKLobby.MicroLobby
                     Program.MainWindow.navigationControl.Path = "chat/user/" + playerListItem.User.Name;
             } else 
             {
-                var item = playerBox.HoverItem;
+                var item = this.playerBox.HoverItem;
                 if (item != null && item.UserName != null) {
                     playerBox.SelectedItem = item;
                     if (item.User != null && !Program.Conf.LeftClickSelectsPlayer) ShowPlayerContextMenu(item.User, playerBox, mea.Location);
