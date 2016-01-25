@@ -54,7 +54,7 @@ namespace ZeroKLobby.Controls
 
         public int TopIndex = 0; // TODO: Implement
 
-        public PlayerListItem HoverItem = null; // TODO: Implement
+        PlayerListItem hoverItem = null; // TODO: Implement
 
         public string[] GetUserNames()
         {
@@ -86,6 +86,16 @@ namespace ZeroKLobby.Controls
 
         public PlayerListItem SelectedItem { get; set; }
 
+        public PlayerListItem HoverItem
+        {
+            get { return this.hoverItem; }
+            set
+            {
+                this.hoverItem = value;
+                Program.ToolTip.SetUser(this, HoverItem?.UserName);
+            }
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             if (this.IsInDesignMode()) return;
@@ -106,15 +116,7 @@ namespace ZeroKLobby.Controls
         {
             var currentDrawY = 0;
 
-            IEnumerable<PlayerListItem> itemsToPaint;
-            if (this.IsSorted)
-            {
-                itemsToPaint = Items.OrderBy(user => user.GetSortingKey()).ToArray();
-            }
-            else
-            {
-                itemsToPaint = Items;
-            }
+            var itemsToPaint = GetItemsToPaintInOrder();
 
             foreach (var item in this.Items)
             {
@@ -127,12 +129,69 @@ namespace ZeroKLobby.Controls
             this.AutoScrollMinSize = new Size(0, maxDrawY);
         }
 
+        IEnumerable<PlayerListItem> GetItemsToPaintInOrder()
+        {
+            if (this.IsSorted)
+            {
+                return Items.OrderBy(user => user.GetSortingKey()).ToArray();
+            }
+            else
+            {
+                return Items;
+            }
+        }
+
         void PaintItem(int currentDrawY, PlayerListItem item, Graphics graphics)
         {
             var currentDrawPosition = new Point(0, currentDrawY);
             var itemSize = new Size(ClientSize.Width, item.Height);
             var itemBounds = new Rectangle(currentDrawPosition, itemSize);
-            item.DrawPlayerLine(graphics, itemBounds, Color.White, item.IsGrayedOut, this.IsBattle);
+            item.DrawPlayerLine(graphics, itemBounds, Color.White, item.IsGrayedOut, IsBattle);
+        }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+            isMouseDown = true;
+            UpdateHoverItem(e);
+        }
+
+        void UpdateHoverItem(MouseEventArgs mouseEventArgs)
+        {
+            var cursorPoint = new Point(mouseEventArgs.X, mouseEventArgs.Y);
+
+            // No need to update if the cursor hasn't moved.
+            if (cursorPoint == previousCursorLocation) return;
+            previousCursorLocation = cursorPoint;
+
+            var currentMeasureY = 0;
+
+            var itemsToPaint = GetItemsToPaintInOrder();
+
+            foreach (var item in this.Items)
+            {
+                currentMeasureY += item.Height;
+                if (cursorPoint.Y < currentMeasureY)
+                {
+                    HoverItem = item; // Found it!
+                    return;
+                }
+            }
+
+            HoverItem = null; // The cursor is hovering over an empty area of control.
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            base.OnMouseUp(e);
+            this.isMouseDown = false;
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+            this.isMouseDown = false;
+            if (!this.isMouseDown) UpdateHoverItem(e);
         }
 
 
@@ -143,5 +202,7 @@ namespace ZeroKLobby.Controls
 
         public ObservableCollection<PlayerListItem> Items = new ObservableCollection<PlayerListItem>();
         bool isUpdating = false;
+        bool isMouseDown;
+        private Point previousCursorLocation;
     }
 }
