@@ -142,6 +142,8 @@
     <Compile Include="AppCode\UniGrid\UniGrid.cs" />
     <Compile Include="AppCode\UniGrid\UniGridCol.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="AutoRegistrator\AutoRegistrator.cs" />
+    <Compile Include="AutoRegistrator\WebFolderSync.cs" />
     <Compile Include="ContentService.svc.cs">
       <DependentUpon>ContentService.svc</DependentUpon>
     </Compile>
@@ -1483,6 +1485,10 @@
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
       <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>
       <Name>LobbyClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Shared\PlasmaDownloader\PlasmaDownloader.csproj">
+      <Project>{F3F74776-46A9-4415-B76E-CEEC771C2ABA}</Project>
+      <Name>PlasmaDownloader</Name>
     </ProjectReference>
     <ProjectReference Include="..\Shared\PlasmaShared\PlasmaShared.csproj">
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>

@@ -11,8 +11,6 @@ namespace ZeroKWeb.SpringieInterface
 {
     public class StartSetup
     {
-        static bool listOnlyThatLevelsModules = false;  // may cause bugs
-
         /// <summary>
         /// Sets up all the things that Springie needs to know for the battle: how to balance, who to get extra commanders, what PlanetWars structures to create, etc.
         /// </summary>
@@ -27,7 +25,7 @@ namespace ZeroKWeb.SpringieInterface
                     context.Players = ret.BalanceTeamsResult.Players;
                 }
                 
-                var commanderTypes = new LuaTable();
+                var commProfiles = new LuaTable();
                 var db = new ZkDataContext();
                 
                 // calculate to whom to send extra comms
@@ -124,19 +122,21 @@ namespace ZeroKWeb.SpringieInterface
                             userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "unlocks", Value = pu.ToBase64String() });
 
                             if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "extracomm", Value = "1" });
-
-                            var pc = new LuaTable();
+                            
+                            LuaTable commProfileIDs = new LuaTable();
 
                             if (!userCommandersBanned) {
                                 // set up commander data
                                 foreach (Commander c in user.Commanders.Where(x => x.Unlock != null && x.ProfileNumber <= GlobalConst.CommanderProfileCount)) {
                                     try {
+                                        LuaTable commProfile = new LuaTable();
+                                        
                                         if (string.IsNullOrEmpty(c.Name) || c.Name.Any(x => x == '"') )
                                         {
                                             c.Name = c.CommanderID.ToString();
                                         }
-                                        LuaTable morphTable = new LuaTable();
-                                        pc["[\"" + c.Name + "\"]"] = morphTable;
+                                        commProfiles.Add("c" + c.CommanderID, commProfile);
+                                        commProfileIDs.Add("c" + c.CommanderID);
 
                                         // process decoration icons
                                         LuaTable decorations = new LuaTable();
@@ -168,50 +168,23 @@ namespace ZeroKWeb.SpringieInterface
                                             }
                                             else decorations.Add(d.Code);
                                         }
+
+                                        commProfile["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length));
+                                        commProfile["chassis"] = c.Unlock.Code;
+                                        commProfile["decorations"] = decorations;
                                         
-
-                                        string prevKey = null;
-                                        for (int i = 0; i <= GlobalConst.NumCommanderLevels; i++) {
-                                            string key = string.Format("c{0}_{1}_{2}", user.AccountID, c.ProfileNumber, i);
-                                            morphTable.Add(key);    // TODO: maybe don't specify morph series in player data, only starting unit
-
-                                            var comdef = new LuaTable();
-                                            commanderTypes[key] = comdef;
-
-                                            comdef["chassis"] = c.Unlock.Code + i;
-
-                                            var modules = new LuaTable();
-                                            comdef["modules"] = modules;
+                                        var modules = new LuaTable();
+                                        commProfile["modules"] = modules;
                                             
-                                            comdef["decorations"] = decorations;
+                                        for (int i=1; i<=GlobalConst.NumCommanderLevels; i++)
+                                        {
+                                            LuaTable modulesForLevel = new LuaTable();
+                                            modules.Add(modulesForLevel);
 
-                                            comdef["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length)) + " level " + i;
-
-                                            //if (i < GlobalConst.NumCommanderLevels)
-                                            //{
-                                            //    comdef["next"] = string.Format("c{0}_{1}_{2}", user.AccountID, c.ProfileNumber, i+1);
-                                            //}
-                                            //comdef["owner"] = user.Name;
-
-                                            if (i > 0)
-                                            {
-                                                comdef["cost"] = c.GetTotalMorphLevelCost(i);
-
-                                                if (listOnlyThatLevelsModules)
-                                                {
-                                                    if (prevKey != null) comdef["prev"] = prevKey;
-                                                    prevKey = key;
-                                                    foreach (Unlock m in
-                                                        c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel == i && x.Unlock != null).OrderBy(
-                                                            x => x.Unlock.UnlockType).ThenBy(x => x.SlotID).Select(x => x.Unlock)) modules.Add(m.Code);
-                                                }
-                                                else
-                                                {
-                                                    foreach (Unlock m in
-                                                        c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel <= i && x.Unlock != null).OrderBy(
-                                                            x => x.Unlock.UnlockType).ThenBy(x => x.SlotID).Select(x => x.Unlock)) modules.Add(m.Code);
-                                                }
-                                            }
+                                            foreach (Unlock m in
+                                                c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel == i && x.Unlock != null).OrderBy(
+                                                    x => x.Unlock.UnlockType).ThenBy(x => x.SlotID).Select(x => x.Unlock))
+                                                modulesForLevel.Add(m.Code);
                                         }
                                     } catch (Exception ex) {
                                         Trace.TraceError(ex.ToString());
@@ -227,12 +200,11 @@ namespace ZeroKWeb.SpringieInterface
                             }
                             else userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "jokecomm", Value = "1" });
 
-                            userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanders", Value = pc.ToBase64String() });
+                            userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanders", Value = commProfileIDs.ToBase64String() });
                         }
                     }
                 }
-
-                ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanderTypes", Value = commanderTypes.ToBase64String() });
+                ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanders", Value = commProfiles.ToBase64String() });
 
                 // set PW structures
                 if (mode == AutohostMode.Planetwars)

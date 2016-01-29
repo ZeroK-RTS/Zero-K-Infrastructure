@@ -310,6 +310,12 @@ namespace ZkData.UnitSyncLib
                 return Marshal.PtrToStringAnsi(RawGetWritableDataDirectory());
             }
 
+            public static string GetDataDirectory(int index)
+            {
+                return Marshal.PtrToStringAnsi(RawGetDataDirectory(index));
+            }
+
+
             [DllImport(UnitSyncName)]
             [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool Init([MarshalAs(UnmanagedType.I1)] bool isServer, int id);	
@@ -612,6 +618,12 @@ namespace ZkData.UnitSyncLib
 
             [DllImport(UnitSyncName, EntryPoint = "GetWritableDataDirectory")]
             static extern IntPtr RawGetWritableDataDirectory();
+
+            [DllImport(UnitSyncName)]
+            public static extern int GetDataDirectoryCount();
+
+            [DllImport(UnitSyncName, EntryPoint = "GetDataDirectory")]
+            static extern IntPtr RawGetDataDirectory(int index);
 
             [DllImport(UnitSyncName, EntryPoint = "lpErrorLog")]
             static extern IntPtr RawlpErrorLog();

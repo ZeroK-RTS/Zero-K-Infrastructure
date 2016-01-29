@@ -13,30 +13,26 @@ using ZkData;
 
 namespace AutoRegistrator
 {
-    public static class Program
+    public class AutoRegistrator
     {
 
-        public static SpringPaths Paths;
-        public static SpringScanner Scanner;
-        public static PlasmaDownloader.PlasmaDownloader Downloader;
+        public SpringPaths Paths;
+        public SpringScanner Scanner;
+        public PlasmaDownloader.PlasmaDownloader Downloader;
 
         public class Config: IPlasmaDownloaderConfig {
             public int RepoMasterRefresh { get { return 20; } }
             public string PackageMasterUrl { get { return " http://repos.springrts.com/"; } }
         }
-
-
-
-
+        
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        [STAThread]
-        static void Main()
+        public void Main()
         {
-            Trace.Listeners.Add(new ConsoleTraceListener());
-            Paths = new SpringPaths(null);
-            Scanner = new SpringScanner(Paths);
+            //Trace.Listeners.Add(new ConsoleTraceListener());
+            Paths = new SpringPaths(null, @"c:\Users\admin\Documents\My Games\Spring");
+            Scanner = new SpringScanner(Paths) { UseUnitSync = true};
             
             Scanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("New resource found: {0}", e.Item.InternalName);
             Scanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Resource removed: {0}", e.Item.InternalName);
@@ -47,9 +43,19 @@ namespace AutoRegistrator
             Scanner.Start();
             Downloader = new PlasmaDownloader.PlasmaDownloader(new Config(), Scanner, Paths);
             Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
-            Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
+            Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             Downloader.PackagesChanged += Downloader_PackagesChanged;
+            Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
+            Downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
 
+            foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x=>x.VersionsByTag).Where(x=>x.Key.StartsWith("spring-features")))
+            {
+                Downloader.GetResource(DownloadType.UNKNOWN, ver.Value.InternalName)?.WaitHandle.WaitOne();
+            }
+
+
+            var fs = new WebFolderSyncer();
+            fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory,"maps"));
             while (true) {Thread.Sleep(10000);}
             /*Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -58,18 +64,15 @@ namespace AutoRegistrator
 
         static object Locker = new object();
 
-        static void Downloader_PackagesChanged(object sender, EventArgs e)
+        void Downloader_PackagesChanged(object sender, EventArgs e)
         {
             foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag.Keys)) {
-                if (ver.EndsWith(":test") || ver.EndsWith(":latest")) {
-                    {
-                        Trace.TraceInformation("Selecting package: {0}",ver);
-                        Downloader.GetResource(DownloadType.MOD, ver);
-                    }
-
+                if (ver == "zk:stable" || ver =="zk:test") {
+                   Downloader.GetResource(DownloadType.MOD, ver)?.WaitHandle.WaitOne();
                 }
             }
 
+            
             var waiting = false;
             do
             {
@@ -108,9 +111,13 @@ namespace AutoRegistrator
                                     var mu = new MissionUpdater();
                                     Mod modInfo = null;
                                     Scanner.MetaData.GetMod(mis.NameWithVersion, m => { modInfo = m; }, (er) => { });
-                                    mis.Revision++;
-                                    mu.UpdateMission(db, mis, modInfo);
-                                    db.SubmitChanges();
+
+                                    if (modInfo != null)
+                                    {
+                                        mis.Revision++;
+                                        mu.UpdateMission(db, mis, modInfo);
+                                        db.SubmitChanges();
+                                    }
                                 }
 
                             }

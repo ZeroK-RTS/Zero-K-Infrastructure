@@ -366,6 +366,10 @@ namespace LobbyClient
     {
         public int BattleID;
         public string User;
+        /// <summary>
+        /// Only sent to the battle host and the joining client.
+        /// </summary>
+        public string ScriptPassword;
     }
 
 

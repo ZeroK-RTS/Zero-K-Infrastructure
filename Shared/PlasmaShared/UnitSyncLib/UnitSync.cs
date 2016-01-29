@@ -40,22 +40,17 @@ namespace ZkData.UnitSyncLib
 		public UnitSync(SpringPaths springPaths)
 		{
             paths = springPaths;
-			//originalDirectory = Directory.GetCurrentDirectory();
             //Getting the directory of this application instead of the non-constant currentDirectory. Reference: http://stackoverflow.com/questions/52797/how-do-i-get-the-path-of-the-assembly-the-code-is-in
             originalDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            System.Diagnostics.Trace.TraceInformation("UnitSync: Directory: {0}", paths.UnitSyncDirectory);
-            System.Diagnostics.Trace.TraceInformation("UnitSync: ZKL: {0}", originalDirectory);           
+            Trace.TraceInformation("UnitSync: Directory: {0}", paths.UnitSyncDirectory);
+            Trace.TraceInformation("UnitSync: ZKL: {0}", originalDirectory);           
             Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
-            //originalEnvironmentVariable = Environment.GetEnvironmentVariable("SPRING_DATADIR", EnvironmentVariableTarget.Process);
-            //Environment.SetEnvironmentVariable("SPRING_DATADIR", paths.WritableDirectory, EnvironmentVariableTarget.Process);//no longer needed since SpringPath already set SPRING_DATADIR
-		    if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed.");
+            if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed. " + NativeMethods.GetNextError());
 			Version = NativeMethods.GetSpringVersion();
             var writ = NativeMethods.GetWritableDataDirectory();
-            System.Diagnostics.Trace.TraceInformation("UnitSync Version: {0}", Version);
-            //System.Diagnostics.Trace.TraceInformation("UnitSync new SPRING_DATADIR: {0}", paths.WritableDirectory);
-            //System.Diagnostics.Trace.TraceInformation("UnitSync original SPRING_DATADIR: {0}", originalEnvironmentVariable);
+            Trace.TraceInformation("UnitSync Version: {0}, directory: {1}", Version, writ);
 			TraceErrors();
-            System.Diagnostics.Trace.TraceInformation("UnitSync Initialized");
+            Trace.TraceInformation("UnitSync Initialized");
 		}
 
 		~UnitSync()
@@ -67,8 +62,6 @@ namespace ZkData.UnitSyncLib
 		{
 			if (!disposed)
 			{
-				Directory.SetCurrentDirectory(originalDirectory);
-                //Environment.SetEnvironmentVariable("SPRING_DATADIR", originalEnvironmentVariable, EnvironmentVariableTarget.Process); //restore original path??
 				try
 				{
 					NativeMethods.UnInit();
@@ -77,7 +70,8 @@ namespace ZkData.UnitSyncLib
 				{
 					// do nothing, already thrown on init
 				}
-				disposed = true;
+                Directory.SetCurrentDirectory(originalDirectory);
+                disposed = true;
                 System.Diagnostics.Trace.TraceInformation("UnitSync Disposed");
 			}
 			GC.SuppressFinalize(this);
@@ -100,9 +94,6 @@ namespace ZkData.UnitSyncLib
 			map.Minimap = GetMinimap(map);
 			map.Heightmap = GetHeightMap(map.Name);
 			map.Metalmap = GetMetalMap(map.Name);
-
-            // TODO dependencies
-            // TODO replicate in CMissionlib sigh
 			return map;
 		}
 
@@ -161,7 +152,8 @@ namespace ZkData.UnitSyncLib
 			          	Author = mapInfo.author,
 			          	Size = new Size(mapInfo.width, mapInfo.height),
 			          	Positions = mapInfo.positions,
-			          };
+                        Dependencies = GetMapDependencies(mapName).Where(x => x != mapName && !string.IsNullOrEmpty(x)).ToArray(),
+                      };
 			map.Options = GetMapOptions(map.Name, map.ArchiveName).ToArray();
 			NativeMethods.RemoveAllArchives();
 			TraceErrors();
@@ -472,7 +464,18 @@ namespace ZkData.UnitSyncLib
 			return ret;
 		}
 
-		string GetModNameFromArchive(string archiveName)
+        IEnumerable<string> GetMapDependencies(string mapName)
+        {
+            if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
+
+            var ret = new List<string>();
+            var count = NativeMethods.GetMapArchiveCount(mapName);
+            for (var i = 0; i < count; i++) ret.Add(GetMapNameFromArchive(Path.GetFileName(NativeMethods.GetMapArchiveName(i))));
+            return ret;
+        }
+
+
+        string GetModNameFromArchive(string archiveName)
 		{
 			string modName = null;
 			for (var i = NativeMethods.GetPrimaryModCount() - 1; i >= 0; i--) //check from last because modname is sorted by version and latest version should be last. ArchiveScanner.cpp line 1007

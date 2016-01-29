@@ -117,7 +117,7 @@
                 <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
                 @if (p.Upvotes - p.Downvotes <= GlobalConst.PostVoteHideThreshold)
                 {
-                    <small class="js_expand" style="color: gray">post score below threshold</small>
+                    <small class="js_expand" style="color: gray">This post has been downvoted below -5 and collapsed, click here to expand</small>
                     <div class="collapse width-90">
                         @Html.BBCodeCached(p)
                     </div>

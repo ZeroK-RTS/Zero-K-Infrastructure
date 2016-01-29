@@ -596,8 +596,10 @@ namespace ZeroKWeb.Controllers
                         (string.IsNullOrEmpty(username) || x.Account.Name == username && !x.Account.IsDeleted) &&
                         (categoryIDs.Count == 0 || categoryIDs.Contains((int)x.ForumThread.ForumCategoryID)) &&
                         (x.ForumThread.RestrictedClanID == null || x.ForumThread.RestrictedClanID == Global.ClanID));
-            if (firstPostOnly) posts = Global.ForumPostIndexer.FilterPosts(posts, keywords);
-            
+            if (firstPostOnly)
+                posts = posts.Where(x => x.ForumThread.ForumPosts.FirstOrDefault() == x);
+            posts = Global.ForumPostIndexer.FilterPosts(posts, keywords);
+
             return View("SearchResults", new SearchResult { Posts = posts.OrderByDescending(x=>x.Created).Take(100).ToList(), DisplayAsPosts = resultsAsPosts });
         }
 

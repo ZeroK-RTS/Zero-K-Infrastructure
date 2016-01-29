@@ -27,6 +27,8 @@ namespace ZkLobbyServer
 
         public bool IsLoggedIn { get { return User != null && User.AccountID != 0; } }
 
+        public static Random random = new Random(); // for script password generation
+
 
         public override string ToString()
         {
@@ -420,7 +422,11 @@ namespace ZkLobbyServer
                 }
                 battle.Users[Name] = ubs;
                 MyBattle = battle;
-                await state.Broadcast(state.ConnectedUsers.Values, new JoinedBattle() { BattleID = battle.BattleID, User = Name });
+                string scriptPassword = "script" + random.Next();
+                await state.Broadcast(new string[] { Name, battle.FounderName },
+                    new JoinedBattle() { BattleID = battle.BattleID, User = Name, ScriptPassword = scriptPassword });
+                await state.Broadcast(state.ConnectedUsers.Keys.Where(x => x != Name && x != battle.FounderName),
+                    new JoinedBattle() { BattleID = battle.BattleID, User = Name });
                 await RecalcSpectators(battle);
                 await state.Broadcast(battle.Users.Keys.Where(x => x != Name), battle.Users[Name].ToUpdateBattleStatus());// send my UBS to others in battle
 
@@ -535,7 +541,18 @@ namespace ZkLobbyServer
             if (battle != null)
             {
                 BotBattleStatus ubs;
-                if (!battle.Bots.TryGetValue(add.Name, out ubs)) ubs = new BotBattleStatus(add.Name, Name, add.AiLib);
+                if (!battle.Bots.TryGetValue(add.Name, out ubs))
+                {
+                    if (battle.Bots.Count < 50)
+                    {
+                        ubs = new BotBattleStatus(add.Name, Name, add.AiLib);
+                    }
+                    else
+                    {
+                        await Respond("Maximal number of bots reached");
+                        return;
+                    }
+                }
                 else if (ubs.owner != Name && !User.IsAdmin && User != battle.Founder)
                 {
                     await Respond(string.Format("No permissions to edit bot {0}", add.Name));
