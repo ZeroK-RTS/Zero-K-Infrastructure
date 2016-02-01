@@ -204,7 +204,7 @@ namespace ZeroKWeb.SpringieInterface
                         }
                     }
                 }
-                ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanders", Value = commProfiles.ToBase64String() });
+                ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commandertypes", Value = commProfiles.ToBase64String() });
 
                 // set PW structures
                 if (mode == AutohostMode.Planetwars)
