@@ -172,6 +172,7 @@ namespace ZeroKLobby
                         return;
                     }
                     MessageBox.Show("Move failed, please copy Zero-K.exe to a writable folder");
+                    return;
                 }
 
 
