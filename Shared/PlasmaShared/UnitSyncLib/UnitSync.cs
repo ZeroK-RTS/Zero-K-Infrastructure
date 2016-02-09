@@ -45,12 +45,21 @@ namespace ZkData.UnitSyncLib
             Trace.TraceInformation("UnitSync: Directory: {0}", paths.UnitSyncDirectory);
             Trace.TraceInformation("UnitSync: ZKL: {0}", originalDirectory);           
             Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
+		    Environment.CurrentDirectory = paths.UnitSyncDirectory;
+		    var settingsPath = Path.Combine(paths.UnitSyncDirectory, "springsettings.cfg");
+		    File.WriteAllText(settingsPath, $"SpringData={paths.DataDirectoriesJoined}\n");
             if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed. " + NativeMethods.GetNextError());
-			Version = NativeMethods.GetSpringVersion();
+
+            Version = NativeMethods.GetSpringVersion();
             var writ = NativeMethods.GetWritableDataDirectory();
-            Trace.TraceInformation("UnitSync Version: {0}, directory: {1}", Version, writ);
-			TraceErrors();
+		    var read = NativeMethods.GetDataDirectories();
+            Trace.TraceInformation("UnitSync version: {0}", Version);
+            Trace.TraceInformation("UnitSync READ: {0}", string.Join(",",read));
+            Trace.TraceInformation("UnitSync WRITE: {0}", writ);
+            
+            TraceErrors();
             Trace.TraceInformation("UnitSync Initialized");
+            
 		}
 
 		~UnitSync()
@@ -71,6 +80,7 @@ namespace ZkData.UnitSyncLib
 					// do nothing, already thrown on init
 				}
                 Directory.SetCurrentDirectory(originalDirectory);
+			    Environment.CurrentDirectory = originalDirectory;
                 disposed = true;
                 System.Diagnostics.Trace.TraceInformation("UnitSync Disposed");
 			}
