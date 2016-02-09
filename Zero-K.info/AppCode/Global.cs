@@ -251,8 +251,8 @@ namespace ZeroKWeb
             Server = ZkServerRunner.ZkLobbyServer;
             if (GlobalConst.Mode != ModeType.Test)
             {
-                //AutoRegistrator = new AutoRegistrator();
-                //AutoRegistrator.RunMainAsync();
+                AutoRegistrator = new AutoRegistrator();
+                AutoRegistrator.RunMainAsync();
             }
             ZkServerRunner.Run();
             listener.ZkLobbyServer = Server;

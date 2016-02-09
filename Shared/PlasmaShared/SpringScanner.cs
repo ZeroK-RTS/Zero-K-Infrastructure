@@ -460,7 +460,7 @@ namespace ZkData
             }
         }
 
-        void InitialScan()
+        public void InitialScan()
         {
             CacheFile loadedCache = null;
             if (File.Exists(cachePath))

@@ -27,10 +27,13 @@ namespace ZkData
         public bool SafeMode { get; set; }
         public event EventHandler SpringVersionChanged;
         public string DataDirectoriesJoined => string.Join(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";", DataDirectories.Distinct());
-        
-        public SpringPaths(string springPath, string writableFolderOverride = null)
+
+        private bool useMultipleDataFolders;
+
+        public SpringPaths(string springPath, string writableFolderOverride = null, bool useMultipleDataFolders = true)
         {
             this.writableFolderOverride = writableFolderOverride;
+            this.useMultipleDataFolders = useMultipleDataFolders;
             SetEnginePath(springPath);
         }
 
@@ -120,7 +123,8 @@ namespace ZkData
         public void SetEnginePath(string springPath) {
             if (springPath == null) springPath = "";
 
-            dataDirectories = new List<string> { GetMySpringDocPath(), springPath };
+
+            dataDirectories = useMultipleDataFolders ? new List<string> { GetMySpringDocPath(), springPath } : new List<string>() {springPath};
             if (!string.IsNullOrEmpty(writableFolderOverride))
             {
                 if (!Directory.Exists(writableFolderOverride))

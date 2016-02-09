@@ -70,8 +70,8 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -142,8 +142,6 @@
     <Compile Include="AppCode\UniGrid\UniGrid.cs" />
     <Compile Include="AppCode\UniGrid\UniGridCol.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="AutoRegistrator\AutoRegistrator.cs" />
-    <Compile Include="AutoRegistrator\WebFolderSync.cs" />
     <Compile Include="ContentService.svc.cs">
       <DependentUpon>ContentService.svc</DependentUpon>
     </Compile>
@@ -1482,6 +1480,10 @@
     <Content Include="Views\Battles\BattleIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Autoregistrator\Autoregistrator.csproj">
+      <Project>{01FAEBBC-02E0-42FE-972C-F17045BA3807}</Project>
+      <Name>Autoregistrator</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
       <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>
       <Name>LobbyClient</Name>
