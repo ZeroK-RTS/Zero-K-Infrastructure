@@ -1085,9 +1085,9 @@
     <Content Include="Img\screenshots\CA_pretty_map.jpg" />
     <Content Include="Img\screenshots\chickens.jpg" />
     <Content Include="Img\screenshots\dante_and_bantha.jpg" />
-    <Content Include="Img\screenshots\firestorm.png" />
+    <Content Include="Img\screenshots\firestorm.jpg" />
     <Content Include="Img\screenshots\gauss2.jpg" />
-    <Content Include="Img\screenshots\glaiveline.png" />
+    <Content Include="Img\screenshots\glaiveline.jpg" />
     <Content Include="Img\screenshots\Hovers.jpg" />
     <Content Include="Img\screenshots\moonscape.jpg" />
     <Content Include="Img\screenshots\mountain.jpg" />
@@ -1098,10 +1098,10 @@
     <Content Include="Img\screenshots\seabattle.jpg" />
     <Content Include="Img\screenshots\seaview1.jpg" />
     <Content Include="Img\screenshots\seaview2.jpg" />
-    <Content Include="Img\screenshots\sethsravine.png" />
+    <Content Include="Img\screenshots\sethsravine.jpg" />
     <Content Include="Img\screenshots\sumo.jpg" />
     <Content Include="Img\screenshots\tropical.jpg" />
-    <Content Include="Img\screenshots\warrior_temple_foot.png" />
+    <Content Include="Img\screenshots\warrior_temple_foot.jpg" />
     <Content Include="Img\search_img.png" />
     <Content Include="Img\sort_down_green.png" />
     <Content Include="Img\sort_up_green.png" />
