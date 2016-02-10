@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Neo.IronLua;
-using ZkData.UnitSyncLib;
 
 namespace PlasmaShared.UnitSyncLib
 {
     public class ArchiveCache
     {
-        public List<ArchiveEntry> Archives { get; private set; }
-
         public ArchiveCache(string unitsyncWritableFolder) {
             Archives = new List<ArchiveEntry>();
 
-            DirectoryInfo di = new DirectoryInfo(Path.Combine(unitsyncWritableFolder, "cache"));
+            var di = new DirectoryInfo(Path.Combine(unitsyncWritableFolder, "cache"));
             var fi = di.GetFiles("ArchiveCache*.lua").OrderByDescending(x => x.LastWriteTime).FirstOrDefault();
             if (fi != null)
             {
@@ -26,11 +19,11 @@ namespace PlasmaShared.UnitSyncLib
                 using (var file = fi.OpenText())
                 {
                     dynamic result = luaEnv.DoChunk(file, "dummy.lua");
-                    foreach (dynamic archive in result.archives)
+                    foreach (var archive in result.archives)
                     {
                         var v = archive.Value;
 
-                        var newEntry = new ArchiveEntry()
+                        var newEntry = new ArchiveEntry
                         {
                             FileName = v.name,
                             FilePath = v.path,
@@ -42,19 +35,14 @@ namespace PlasmaShared.UnitSyncLib
                             Mutator = v.mutator
                         };
 
-                        if (v.archivedata.depend != null)
-                        {
-                            foreach (dynamic dep in v.archivedata.depend)
-                            {
-                                newEntry.Dependencies.Add(dep.Value);
-                            }
-                        }
+                        if (v.archivedata.depend != null) foreach (var dep in v.archivedata.depend) newEntry.Dependencies.Add(dep.Value);
 
                         Archives.Add(newEntry);
-                        
                     }
                 }
             }
         }
+
+        public List<ArchiveEntry> Archives { get; }
     }
 }
