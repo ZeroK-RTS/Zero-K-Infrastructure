@@ -24,28 +24,32 @@ namespace PlasmaShared.UnitSyncLib
                     {
                         var v = archive.Value;
 
-                        var newEntry = new ResourceInfo()
+                        if (v.archivedata != null)
                         {
-                            ArchiveName = v.name,
-                            ArchivePath = v.path,
-                            Name = v.archivedata.name,
-                            Author = v.archivedata.author,
-                            Description = v.description,
-                            Mutator = v.mutator,
-                            ShortGame = v.shortgame,
-                            Game = v.game,
-                            ShortName = v.shortname,
-                            PrimaryModVersion = v.version,
-                        };
-                        if (v.modtype != null) newEntry.ModType = v.modtype;
-                        if (v.checksum != null)
-                        {
-                            uint temp;
-                            if (uint.TryParse(v.checksum, out temp)) newEntry.CheckSum = temp;
-                        }
-                        if (v.archivedata.depend != null) foreach (var dep in v.archivedata.depend) newEntry.Dependencies.Add(dep.Value);
 
-                        Archives.Add(newEntry);
+                            var newEntry = new ResourceInfo()
+                            {
+                                ArchiveName = v.name,
+                                ArchivePath = v.path,
+                                Name = v.archivedata.name,
+                                Author = v.archivedata.author,
+                                Description = v.description,
+                                Mutator = v.mutator,
+                                ShortGame = v.shortgame,
+                                Game = v.game,
+                                ShortName = v.shortname,
+                                PrimaryModVersion = v.version,
+                            };
+                            if (v.modtype != null) newEntry.ModType = v.modtype;
+                            if (v.checksum != null)
+                            {
+                                uint temp;
+                                if (uint.TryParse(v.checksum, out temp)) newEntry.CheckSum = temp;
+                            }
+                            if (v.archivedata.depend != null) foreach (var dep in v.archivedata.depend) newEntry.Dependencies.Add(dep.Value);
+
+                            Archives.Add(newEntry);
+                        }
                     }
                 }
             }
