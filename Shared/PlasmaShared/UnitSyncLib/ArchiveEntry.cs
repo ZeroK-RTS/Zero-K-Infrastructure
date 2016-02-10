@@ -8,6 +8,7 @@ namespace PlasmaShared.UnitSyncLib
         public string FileName;
         public string FilePath;
         public string Author;
+        public long CheckSum;
         public List<string> Dependencies = new List<string>();
     }
 }

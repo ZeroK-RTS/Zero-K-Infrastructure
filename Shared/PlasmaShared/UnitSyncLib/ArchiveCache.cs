@@ -35,6 +35,7 @@ namespace PlasmaShared.UnitSyncLib
                             FilePath = v.path,
                             InternalName = v.archivedata.name,
                             Author = v.archivedata.author,
+                            CheckSum = v.checksum
                         };
 
                         if (v.archivedata.depend != null)
@@ -50,7 +51,6 @@ namespace PlasmaShared.UnitSyncLib
                     }
                 }
             }
-
         }
     }
 }
