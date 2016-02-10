@@ -10,6 +10,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml.Serialization;
+using Neo.IronLua;
+using PlasmaShared.UnitSyncLib;
 using ZkData;
 
 namespace ZkData.UnitSyncLib
@@ -37,32 +39,44 @@ namespace ZkData.UnitSyncLib
 
         SpringPaths paths;
 
+        static object unitsyncInitLocker = new object();
+
+	    private ArchiveCache archiveCache;
+
 		public UnitSync(SpringPaths springPaths)
 		{
-            paths = springPaths;
-            //Getting the directory of this application instead of the non-constant currentDirectory. Reference: http://stackoverflow.com/questions/52797/how-do-i-get-the-path-of-the-assembly-the-code-is-in
-            originalDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            Trace.TraceInformation("UnitSync: Directory: {0}", paths.UnitSyncDirectory);
-            Trace.TraceInformation("UnitSync: ZKL: {0}", originalDirectory);           
-            Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
-		    Environment.CurrentDirectory = paths.UnitSyncDirectory;
-		    var settingsPath = Path.Combine(paths.UnitSyncDirectory, "springsettings.cfg");
-		    File.WriteAllText(settingsPath, $"SpringData={paths.DataDirectoriesJoined}\n");
-            if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed. " + NativeMethods.GetNextError());
+		    lock (unitsyncInitLocker)
+		    {
+		        paths = springPaths;
+		        //Getting the directory of this application instead of the non-constant currentDirectory. Reference: http://stackoverflow.com/questions/52797/how-do-i-get-the-path-of-the-assembly-the-code-is-in
+		        originalDirectory = AppDomain.CurrentDomain.BaseDirectory;
+		        Trace.TraceInformation("UnitSync: Directory: {0}", paths.UnitSyncDirectory);
+		        Trace.TraceInformation("UnitSync: ZKL: {0}", originalDirectory);
+		        Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
+		        Environment.CurrentDirectory = paths.UnitSyncDirectory;
+		        var settingsPath = Path.Combine(paths.UnitSyncDirectory, "springsettings.cfg");
+		        File.WriteAllText(settingsPath, $"SpringData={paths.DataDirectoriesJoined}\n");
+		        if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed. " + NativeMethods.GetNextError());
 
-            Version = NativeMethods.GetSpringVersion();
-            var writ = NativeMethods.GetWritableDataDirectory();
-		    var read = NativeMethods.GetDataDirectories();
-            Trace.TraceInformation("UnitSync version: {0}", Version);
-            Trace.TraceInformation("UnitSync READ: {0}", string.Join(",",read));
-            Trace.TraceInformation("UnitSync WRITE: {0}", writ);
-            
-            TraceErrors();
-            Trace.TraceInformation("UnitSync Initialized");
-            
+		        Version = NativeMethods.GetSpringVersion();
+		        var writ = NativeMethods.GetWritableDataDirectory();
+		        var read = NativeMethods.GetDataDirectories();
+		        Trace.TraceInformation("UnitSync version: {0}", Version);
+		        Trace.TraceInformation("UnitSync READ: {0}", string.Join(",", read));
+		        Trace.TraceInformation("UnitSync WRITE: {0}", writ);
+
+		        TraceErrors();
+
+                archiveCache = new ArchiveCache(writ);
+
+                Trace.TraceInformation("UnitSync Initialized");
+                
+		    }
+
 		}
 
-		~UnitSync()
+
+	    ~UnitSync()
 		{
 			Dispose();
 		}
