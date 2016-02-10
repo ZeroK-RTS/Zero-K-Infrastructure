@@ -375,14 +375,7 @@ namespace ZkData
             {
                 unitSyncReInitCounter++;
                 Trace.TraceInformation("GetUnitSyncData");
-
-                var map = unitSync.GetMapFromFileName(filename);
-                if (map != null)
-                {
-                    ret = map;
-                    if (map.Minimap == null || map.Metalmap == null || map.Heightmap == null) throw new Exception("Map bitmap is null");
-                }
-                else ret = unitSync.GetModFromFileName(filename);
+                ret = unitSync.GetResourceFromFileName(filename);
             }
             catch (Exception ex)
             {
@@ -591,7 +584,7 @@ namespace ZkData
             if (info != null)
             {
                 workItem.CacheItem.InternalName = info.Name;
-                workItem.CacheItem.ResourceType = info is Map ? ResourceType.Map : ResourceType.Mod;
+                workItem.CacheItem.ResourceType = info.ResourceType;
 
                 CacheItemAdd(workItem.CacheItem);
 
@@ -632,7 +625,7 @@ namespace ZkData
                             if (map != null && map.Dependencies!=null) dependencies.AddRange(map.Dependencies);
 
                              e = service.RegisterResource(PlasmaServiceVersion, springPaths.SpringVersion, workItem.CacheItem.Md5.ToString(),
-                                workItem.CacheItem.Length, info is Map ? ResourceType.Map : ResourceType.Mod, workItem.CacheItem.FileName, info.Name,
+                                workItem.CacheItem.Length, info.ResourceType, workItem.CacheItem.FileName, info.Name,
                                 serializedData, dependencies, minimap, metalMap, heightMap,
                                 ms.ToArray());
                         } catch (Exception ex) {

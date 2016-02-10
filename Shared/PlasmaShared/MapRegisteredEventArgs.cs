@@ -11,7 +11,7 @@ namespace ZkData
         public byte[] MetalMap { get; set; }
         public byte[] Minimap { get; set; }
         public byte[] SerializedData { get; set; }
-
+        
         public MapRegisteredEventArgs(string mapName, Map map, byte[] minimap, byte[] metalMap, byte[] heightMap, byte[] serializedData)
         {
             MapName = mapName;

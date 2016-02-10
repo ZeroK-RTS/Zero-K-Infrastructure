@@ -10,7 +10,9 @@ namespace ZkData.UnitSyncLib
 	[Serializable]
 	public class Mod: ResourceInfo
 	{
-		public bool IsMission { get { return !string.IsNullOrEmpty(MissionScript); } }
+        public override ResourceType ResourceType { get; } = ResourceType.Mod;
+
+        public bool IsMission { get { return !string.IsNullOrEmpty(MissionScript); } }
 		public string MissionScript { get; set; }
 		public List<MissionSlot> MissionSlots = new List<MissionSlot>();
 		public Ai[] ModAis { get; set; }

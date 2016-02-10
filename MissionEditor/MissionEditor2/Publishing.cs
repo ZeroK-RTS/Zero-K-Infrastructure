@@ -84,7 +84,7 @@ namespace MissionEditor2
 					Mod mod;
 					using (var unitSync = new ZkData.UnitSyncLib.UnitSync(paths))
 					{
-						mod = unitSync.GetModFromFileName(mission.Mod.ArchiveName);
+						mod = (Mod)unitSync.GetResourceFromFileName(mission.Mod.ArchiveName);
 						if (mod == null) throw new Exception("Mod metadata not extracted: mod not found");
 					}
 					info.Mutator = File.ReadAllBytes(tempPath);

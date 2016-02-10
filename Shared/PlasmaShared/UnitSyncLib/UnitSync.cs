@@ -65,6 +65,7 @@ namespace ZkData.UnitSyncLib
 
                 TraceErrors();
                 Trace.TraceInformation("UnitSync Initialized");
+
             }
         }
 
@@ -108,10 +109,27 @@ namespace ZkData.UnitSyncLib
             return map;
         }
 
-        public Map GetMapFromFileName(string filePath) {
+        public ResourceInfo GetResourceFromFileName(string filePath) {
             var archiveCache = new ArchiveCache(unitsyncWritableFolder);
             var ae = archiveCache.Archives.FirstOrDefault(x => x.ArchiveName == Path.GetFileName(filePath));
-            return ae != null ? GetMap(ae) : null;
+            if (ae == null) return null;
+            try
+            {
+                return GetMap(ae);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Not a map: {0}" ,ex);
+            }
+            try
+            {
+                return GetMod(ae);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Not a mod: {0}", ex);
+            }
+            return ae;
         }
 
 
@@ -196,11 +214,6 @@ namespace ZkData.UnitSyncLib
             return mod;
         }
 
-        public Mod GetModFromFileName(string filePath) {
-            var archiveCache = new ArchiveCache(unitsyncWritableFolder);
-            var ae = archiveCache.Archives.FirstOrDefault(x => x.ArchiveName == Path.GetFileName(filePath));
-            return ae != null ? GetMod(ae) : null;
-        }
 
         public ResourceInfo GetArchiveEntryByInternalName(string name) {
             var archiveCache = new ArchiveCache(unitsyncWritableFolder);

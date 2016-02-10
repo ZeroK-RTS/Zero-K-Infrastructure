@@ -7,6 +7,8 @@ namespace ZkData.UnitSyncLib
     [Serializable]
     public class Map: ResourceInfo, ICloneable
     {
+        public override ResourceType ResourceType { get; } = ResourceType.Map;
+
         [NonSerialized]
         Image heightMap;
 
