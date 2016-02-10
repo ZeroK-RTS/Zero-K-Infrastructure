@@ -290,7 +290,7 @@ namespace ZkData
             File.WriteAllBytes(GetMinimapPath(name), data);
         }
 
-        public static byte[] SerializeAndCompressMetaData(IResourceInfo info)
+        public static byte[] SerializeAndCompressMetaData(ResourceInfo info)
         {
             var serializedStream = new MemoryStream();
             new XmlSerializer(info.GetType()).Serialize(serializedStream, info);

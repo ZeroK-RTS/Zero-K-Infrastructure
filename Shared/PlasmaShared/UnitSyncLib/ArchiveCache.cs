@@ -2,13 +2,14 @@
 using System.IO;
 using System.Linq;
 using Neo.IronLua;
+using ZkData;
 
 namespace PlasmaShared.UnitSyncLib
 {
     public class ArchiveCache
     {
         public ArchiveCache(string unitsyncWritableFolder) {
-            Archives = new List<ArchiveEntry>();
+            Archives = new List<ResourceInfo>();
 
             var di = new DirectoryInfo(Path.Combine(unitsyncWritableFolder, "cache"));
             var fi = di.GetFiles("ArchiveCache*.lua").OrderByDescending(x => x.LastWriteTime).FirstOrDefault();
@@ -23,18 +24,25 @@ namespace PlasmaShared.UnitSyncLib
                     {
                         var v = archive.Value;
 
-                        var newEntry = new ArchiveEntry
+                        var newEntry = new ResourceInfo()
                         {
-                            FileName = v.name,
-                            FilePath = v.path,
-                            InternalName = v.archivedata.name,
+                            ArchiveName = v.name,
+                            ArchivePath = v.path,
+                            Name = v.archivedata.name,
                             Author = v.archivedata.author,
-                            CheckSum = v.checksum,
                             Description = v.description,
-                            ModType = v.modtype,
-                            Mutator = v.mutator
+                            Mutator = v.mutator,
+                            ShortGame = v.shortgame,
+                            Game = v.game,
+                            ShortName = v.shortname,
+                            PrimaryModVersion = v.version,
                         };
-
+                        if (v.modtype != null) newEntry.ModType = v.modtype;
+                        if (v.checksum != null)
+                        {
+                            uint temp;
+                            if (uint.TryParse(v.checksum, out temp)) newEntry.CheckSum = temp;
+                        }
                         if (v.archivedata.depend != null) foreach (var dep in v.archivedata.depend) newEntry.Dependencies.Add(dep.Value);
 
                         Archives.Add(newEntry);
@@ -43,6 +51,6 @@ namespace PlasmaShared.UnitSyncLib
             }
         }
 
-        public List<ArchiveEntry> Archives { get; }
+        public List<ResourceInfo> Archives { get; }
     }
 }

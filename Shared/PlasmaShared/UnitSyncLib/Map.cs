@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 namespace ZkData.UnitSyncLib
 {
     [Serializable]
-    public class Map: IResourceInfo, ICloneable
+    public class Map: ResourceInfo, ICloneable
     {
         [NonSerialized]
         Image heightMap;
@@ -16,16 +16,12 @@ namespace ZkData.UnitSyncLib
         [NonSerialized]
         Bitmap minimap;
 
-        public string Author { get; set; }
-
-        public string Description { get; set; }
         public int ExtractorRadius { get; set; }
         public int Gravity { get; set; }
 
         [XmlIgnore]
         public Image Heightmap { get { return heightMap; } set { heightMap = value; } }
 
-        public string HumanName { get; set; }
         public float MaxMetal { get; set; }
         public int MaxWind { get; set; }
 
@@ -36,42 +32,27 @@ namespace ZkData.UnitSyncLib
         public Bitmap Minimap { get { return minimap; } set { minimap = value; } }
 
         public int MinWind { get; set; }
-        public string Name { get; set; }
-        public string[] Dependencies { get; set; }
 
         public Option[] Options { get; set; }
         public StartPos[] Positions { get; set; }
         public Size Size { get; set; }
         public int TidalStrength { get; set; }
 
-        public Map(string name)
-        {
-            Name = name;
-            HumanName = GetHumanName(name);
+
+        public Map(ResourceInfo res) {
+            res.FillTo(this);
         }
 
         public Map() {}
-
-
+        
         public static string GetHumanName(string mapName)
         {
             if (mapName == null) throw new ArgumentNullException("mapName");
             return mapName.Replace('_', ' ').Replace(' ', ' ');
         }
 
-        public override string ToString()
-        {
-            return HumanName;
-        }
+        public override string ToString() => GetHumanName(Name);
 
-        public object Clone()
-        {
-            return MemberwiseClone();
-        }
-
-
-        string IResourceInfo.Name { get { return Name; } set { Name = value; } }
-
-        public string ArchiveName { get; set; }
+        public object Clone() => MemberwiseClone();
     }
 }

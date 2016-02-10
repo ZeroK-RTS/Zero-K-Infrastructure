@@ -139,7 +139,7 @@ namespace ZkData
         public event EventHandler<ProgressEventArgs> WorkProgressChanged = delegate { };
         public event EventHandler<ProgressEventArgs> WorkStarted = delegate { };
         public event EventHandler WorkStopped = delegate { };
-        public event EventHandler<CancelEventArgs<IResourceInfo>> UploadUnitsyncData = delegate { }; // raised before attempting to upload unitsync data
+        public event EventHandler<CancelEventArgs<ResourceInfo>> UploadUnitsyncData = delegate { }; // raised before attempting to upload unitsync data
         public event EventHandler<CancelEventArgs<CacheItem>> RetryResourceCheck = delegate { }; // raised before attempting to reconnect to server to check for resource info
 
         public SpringScanner(SpringPaths springPaths)
@@ -368,9 +368,9 @@ namespace ZkData
             return string.Format("{0}/{1}", folder, Path.GetFileName(file));
         }
 
-        IResourceInfo GetUnitSyncData(string filename)
+        ResourceInfo GetUnitSyncData(string filename)
         {
-            IResourceInfo ret = null;
+            ResourceInfo ret = null;
             try
             {
                 unitSyncReInitCounter++;
@@ -595,7 +595,7 @@ namespace ZkData
 
                 CacheItemAdd(workItem.CacheItem);
 
-                var args = new CancelEventArgs<IResourceInfo>(info);
+                var args = new CancelEventArgs<ResourceInfo>(info);
                 UploadUnitsyncData.Invoke(this,args);
                 if (args.Cancel) return;
 

@@ -37,10 +37,10 @@ namespace ZkData.UnitSyncLib
         };
         private static readonly object unitsyncInitLocker = new object();
         private readonly string originalDirectory;
-        private readonly ArchiveCache archiveCache;
         private bool disposed;
         private int? loadedArchiveIndex;
         private readonly SpringPaths paths;
+        private string unitsyncWritableFolder;
 
         public UnitSync(SpringPaths springPaths) {
             lock (unitsyncInitLocker)
@@ -57,16 +57,13 @@ namespace ZkData.UnitSyncLib
                 if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed. " + NativeMethods.GetNextError());
 
                 Version = NativeMethods.GetSpringVersion();
-                var writ = NativeMethods.GetWritableDataDirectory();
+                unitsyncWritableFolder = NativeMethods.GetWritableDataDirectory();
                 var read = NativeMethods.GetDataDirectories();
                 Trace.TraceInformation("UnitSync version: {0}", Version);
                 Trace.TraceInformation("UnitSync READ: {0}", string.Join(",", read));
-                Trace.TraceInformation("UnitSync WRITE: {0}", writ);
+                Trace.TraceInformation("UnitSync WRITE: {0}", unitsyncWritableFolder);
 
                 TraceErrors();
-
-                archiveCache = new ArchiveCache(writ);
-
                 Trace.TraceInformation("UnitSync Initialized");
             }
         }
@@ -102,7 +99,7 @@ namespace ZkData.UnitSyncLib
         }
 
 
-        private Map GetMap(ArchiveEntry ae) {
+        private Map GetMap(ResourceInfo ae) {
             var map = GetMapNoBitmaps(ae);
             if (map == null) return map;
             map.Minimap = GetMinimap(map);
@@ -112,29 +109,25 @@ namespace ZkData.UnitSyncLib
         }
 
         public Map GetMapFromFileName(string filePath) {
-            var ae = archiveCache.Archives.FirstOrDefault(x => x.FileName == Path.GetFileName(filePath));
+            var archiveCache = new ArchiveCache(unitsyncWritableFolder);
+            var ae = archiveCache.Archives.FirstOrDefault(x => x.ArchiveName == Path.GetFileName(filePath));
             return ae != null ? GetMap(ae) : null;
         }
 
 
-        private Map GetMapNoBitmaps(ArchiveEntry ae) {
+        private Map GetMapNoBitmaps(ResourceInfo ae) {
             NativeMethods.RemoveAllArchives();
             var mapInfo = GetMapInfo(ae, DefaultMapInfoVersion);
-            var map = new Map(ae.InternalName)
+            var map = new Map(ae)
             {
-                ArchiveName = Path.GetFileName(ae.FileName),
-                Name = ae.InternalName,
-                Description = ae.Description,
                 TidalStrength = mapInfo.tidalStrength,
                 Gravity = mapInfo.gravity,
                 MaxMetal = mapInfo.maxMetal,
                 ExtractorRadius = mapInfo.extractorRadius,
                 MinWind = mapInfo.minWind,
                 MaxWind = mapInfo.maxWind,
-                Author = ae.Author,
                 Size = new Size(mapInfo.width, mapInfo.height),
                 Positions = mapInfo.positions,
-                Dependencies = ae.Dependencies.ToArray()
             };
             map.Options = GetMapOptions(map.Name, map.ArchiveName).ToArray();
             NativeMethods.RemoveAllArchives();
@@ -151,30 +144,21 @@ namespace ZkData.UnitSyncLib
         }
 
 
-        public Mod GetMod(ArchiveEntry ae) {
+        public Mod GetMod(ResourceInfo ae) {
             if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
             NativeMethods.RemoveAllArchives();
             NativeMethods.GetPrimaryModCount(); // pre-requisite for the following calls
-            NativeMethods.AddAllArchives(ae.FileName);
-            var modIndex = NativeMethods.GetPrimaryModIndex(ae.InternalName);
+            NativeMethods.AddAllArchives(ae.Name);
+            var modIndex = NativeMethods.GetPrimaryModIndex(ae.Name);
             string[] sides;
 
-            var mod = new Mod
+            var mod = new Mod(ae)
             {
-                Name = ae.InternalName,
-                ArchiveName = ae.FileName,
-                UnitDefs = GetUnitList(ae.InternalName).Select(ui => new UnitInfo(ui.Name, ui.FullName)).ToArray(),
-                Description = ae.Description,
-                Game = NativeMethods.GetPrimaryModGame(modIndex),
-                Mutator = ae.Mutator,
-                ShortGame = NativeMethods.GetPrimaryModShortGame(modIndex),
-                ShortName = NativeMethods.GetPrimaryModShortName(modIndex),
-                PrimaryModVersion = NativeMethods.GetPrimaryModVersion(modIndex),
-                StartUnits = new SerializableDictionary<string, string>(GetStartUnits(ae.InternalName, out sides)),
+                UnitDefs = GetUnitList(ae.Name).Select(ui => new UnitInfo(ui.Name, ui.FullName)).ToArray(),
+                StartUnits = new SerializableDictionary<string, string>(GetStartUnits(ae.Name, out sides)),
                 Sides = sides,
-                Options = GetModOptions(ae.FileName).ToArray(),
+                Options = GetModOptions(ae.ArchiveName).ToArray(),
                 SideIcons = GetSideIcons(sides).ToArray(),
-                Dependencies = ae.Dependencies.ToArray(),
                 ModAis = GetAis().Where(ai => ai.IsLuaAi).ToArray()
             };
 
@@ -213,12 +197,14 @@ namespace ZkData.UnitSyncLib
         }
 
         public Mod GetModFromFileName(string filePath) {
-            var ae = archiveCache.Archives.FirstOrDefault(x => x.FileName == Path.GetFileName(filePath));
+            var archiveCache = new ArchiveCache(unitsyncWritableFolder);
+            var ae = archiveCache.Archives.FirstOrDefault(x => x.ArchiveName == Path.GetFileName(filePath));
             return ae != null ? GetMod(ae) : null;
         }
 
-        public ArchiveEntry GetArchiveEntryByInternalName(string name) {
-            return archiveCache.Archives.FirstOrDefault(x => x.InternalName == name);
+        public ResourceInfo GetArchiveEntryByInternalName(string name) {
+            var archiveCache = new ArchiveCache(unitsyncWritableFolder);
+            return archiveCache.Archives.FirstOrDefault(x => x.Name == name);
         }
 
         /// <summary>
@@ -338,11 +324,11 @@ namespace ZkData.UnitSyncLib
         }
 
 
-        private MapInfo GetMapInfo(ArchiveEntry ae, int mapInfoVersion) {
+        private MapInfo GetMapInfo(ResourceInfo ae, int mapInfoVersion) {
             if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
             if (!new[] { 0, 1 }.Contains(mapInfoVersion)) throw new ArgumentOutOfRangeException("mapInfoVersion", "must be 0 or 1.");
             var mapInfo = new MapInfo { author = new string(' ', AuthorBufferSize), description = new string(' ', DescriptionBufferSize) };
-            if (!NativeMethods.GetMapInfoEx(ae.InternalName, ref mapInfo, mapInfoVersion)) throw new UnitSyncException("Error getting map information.");
+            if (!NativeMethods.GetMapInfoEx(ae.Name, ref mapInfo, mapInfoVersion)) throw new UnitSyncException("Error getting map information.");
             TestMapInfo(mapInfo);
             return mapInfo;
         }

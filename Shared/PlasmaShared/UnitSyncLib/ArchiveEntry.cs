@@ -2,7 +2,7 @@
 
 namespace PlasmaShared.UnitSyncLib
 {
-    public class ArchiveEntry
+    /*public class ArchiveEntry
     {
         public string Author;
         public uint CheckSum;
@@ -13,5 +13,5 @@ namespace PlasmaShared.UnitSyncLib
         public string InternalName;
         public int ModType;
         public string Mutator;
-    }
+    }*/
 }
