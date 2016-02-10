@@ -8,7 +8,10 @@ namespace PlasmaShared.UnitSyncLib
         public string FileName;
         public string FilePath;
         public string Author;
-        public long CheckSum;
+        public uint CheckSum;
         public List<string> Dependencies = new List<string>();
+        public string Description;
+        public int ModType;
+        public string Mutator;
     }
 }

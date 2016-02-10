@@ -29,13 +29,17 @@ namespace PlasmaShared.UnitSyncLib
                     foreach (dynamic archive in result.archives)
                     {
                         var v = archive.Value;
+
                         var newEntry = new ArchiveEntry()
                         {
                             FileName = v.name,
                             FilePath = v.path,
                             InternalName = v.archivedata.name,
                             Author = v.archivedata.author,
-                            CheckSum = v.checksum
+                            CheckSum = v.checksum,
+                            Description = v.description,
+                            ModType = v.modtype,
+                            Mutator = v.mutator
                         };
 
                         if (v.archivedata.depend != null)

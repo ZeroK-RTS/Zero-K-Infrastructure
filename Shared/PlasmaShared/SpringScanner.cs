@@ -209,13 +209,7 @@ namespace ZkData
             else
             {
                 VerifyUnitSync();
-
-                if (unitSync != null)
-                {
-                    if (unitSync.GetMapNames().Any(x => x == name)) return true;
-                    if (unitSync.GetModNames().Any(x => x == name)) return true;
-                }
-                return false;
+                return unitSync?.GetArchiveEntryByInternalName(name) != null;
             }
         }
 
@@ -382,7 +376,7 @@ namespace ZkData
                 unitSyncReInitCounter++;
                 Trace.TraceInformation("GetUnitSyncData");
 
-                var map = unitSync.GetMapFromArchive(filename);
+                var map = unitSync.GetMapFromFileName(filename);
                 if (map != null)
                 {
                     ret = map;

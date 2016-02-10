@@ -25,9 +25,7 @@ namespace ZkData.UnitSyncLib
 		const int MaxUnits = 2000;
 		bool disposed;
 		int? loadedArchiveIndex;
-		Dictionary<uint, string> maps;
 		readonly string originalDirectory;
-        //readonly string originalEnvironmentVariable;
 
 		public static string[] DependencyExceptions = new[]
 		                                              {
@@ -36,11 +34,8 @@ namespace ZkData.UnitSyncLib
 		                                              };
 
         public string Version { get; set; }
-
         SpringPaths paths;
-
         static object unitsyncInitLocker = new object();
-
 	    private ArchiveCache archiveCache;
 
 		public UnitSync(SpringPaths springPaths)
@@ -106,14 +101,10 @@ namespace ZkData.UnitSyncLib
 			return GetInfoMap(mapName, "height", 1);
 		}
 
-		public Map GetMap(string mapName)
-		{
-            return GetMap(mapName, GetMapArchive(mapName));
-		}
 
-		public Map GetMap(string mapName, string archiveName)
+	    private Map GetMap(ArchiveEntry ae)
 		{
-			var map = GetMapNoBitmaps(mapName, archiveName);
+			var map = GetMapNoBitmaps(ae);
 			if (map == null) return map;
 			map.Minimap = GetMinimap(map);
 			map.Heightmap = GetHeightMap(map.Name);
@@ -121,62 +112,31 @@ namespace ZkData.UnitSyncLib
 			return map;
 		}
 
-		public Map GetMapFromArchive(string archiveName)
-		{
-			var mapName = GetMapNameFromArchive(archiveName);
-			return mapName == null ? null : GetMap(mapName, archiveName);
+		public Map GetMapFromFileName(string filePath) {
+		    var ae = archiveCache.Archives.FirstOrDefault(x => x.FileName == Path.GetFileName(filePath));
+		    return ae != null ? GetMap(ae) : null;
 		}
 
-		public Map GetMapFromArchiveNoBitmaps(string archiveName)
-		{
-			var mapName = GetMapNameFromArchive(archiveName);
-			return mapName == null ? null : GetMapNoBitmaps(mapName, archiveName);
-		}
 
-		public Dictionary<uint, string> GetMapHashes()
+	    private Map GetMapNoBitmaps(ArchiveEntry ae)
 		{
-			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
-			if (maps != null) return maps;
-			var mapCount = NativeMethods.GetMapCount();
-			if (mapCount < 0) throw new UnitSyncException(NativeMethods.GetNextError());
-			maps = (from mapIndex in Enumerable.Range(0, mapCount)
-			        let name = NativeMethods.GetMapName(mapIndex)
-			        let checksum = NativeMethods.GetMapChecksum(mapIndex)
-			        group name by checksum).ToDictionary(group => group.Key, group => group.First());
-			return maps;
-		}
-
-		public string[] GetMapNames()
-		{
-			return GetMapHashes().Values.Distinct().ToArray();
-		}
-
-		public Map GetMapNoBitmaps(string mapName)
-		{
-			return GetMapNoBitmaps(mapName, GetMapArchive(mapName));
-		}
-
-		public Map GetMapNoBitmaps(string mapName, string archiveName)
-		{
-			if (mapName == null || archiveName == null) return null;
 			NativeMethods.RemoveAllArchives();
-			var checksum = maps.First(kvp => kvp.Value == mapName).Key;
-			var mapInfo = GetMapInfo(checksum);
-			var map = new Map(mapName)
+			var mapInfo = GetMapInfo(ae, DefaultMapInfoVersion);
+			var map = new Map(ae.InternalName)
 			          {
-			          	ArchiveName = Path.GetFileName(archiveName),
-			          	Name = mapName,
-			          	Description = mapInfo.description,
+			          	ArchiveName = Path.GetFileName(ae.FileName),
+			          	Name = ae.InternalName,
+			          	Description = ae.Description,
 			          	TidalStrength = mapInfo.tidalStrength,
 			          	Gravity = mapInfo.gravity,
 			          	MaxMetal = mapInfo.maxMetal,
 			          	ExtractorRadius = mapInfo.extractorRadius,
 			          	MinWind = mapInfo.minWind,
 			          	MaxWind = mapInfo.maxWind,
-			          	Author = mapInfo.author,
+			          	Author = ae.Author,
 			          	Size = new Size(mapInfo.width, mapInfo.height),
 			          	Positions = mapInfo.positions,
-                        Dependencies = GetMapDependencies(mapName).Where(x => x != mapName && !string.IsNullOrEmpty(x)).ToArray(),
+                        Dependencies = ae.Dependencies.ToArray(),
                       };
 			map.Options = GetMapOptions(map.Name, map.ArchiveName).ToArray();
 			NativeMethods.RemoveAllArchives();
@@ -259,11 +219,9 @@ namespace ZkData.UnitSyncLib
 			return modName != null ? GetMod(modName) : null;
 		}
 
-		public IEnumerable<string> GetModNames()
-		{
-			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
-			for (var i = 0; i < NativeMethods.GetPrimaryModCount(); i++) yield return NativeMethods.GetPrimaryModName(i);
-		}
+	    public ArchiveEntry GetArchiveEntryByInternalName(string name) {
+	        return archiveCache.Archives.FirstOrDefault(x => x.InternalName == name);
+	    }
 
 		/// <summary>
 		/// Use when processing a new archive
@@ -393,58 +351,17 @@ namespace ZkData.UnitSyncLib
 			return Path.GetFileName(archivePath);
 		}
 
-		uint GetMapChecksum(string mapName)
+
+		MapInfo GetMapInfo(ArchiveEntry ae, int mapInfoVersion)
 		{
 			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
-			try
-			{
-				return GetMapHashes().Single(kvp => kvp.Value == mapName).Key;
-			}
-			catch (InvalidOperationException)
-			{
-				throw new UnitSyncException("Map not found");
-			}
-		}
-
-		MapInfo GetMapInfo(string mapName, int mapInfoVersion)
-		{
-			return GetMapInfo(GetMapChecksum(mapName), mapInfoVersion);
-		}
-
-		MapInfo GetMapInfo(uint checksum)
-		{
-			return GetMapInfo(checksum, DefaultMapInfoVersion);
-		}
-
-		MapInfo GetMapInfo(uint checksum, int mapInfoVersion)
-		{
-			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
-			if (maps == null) GetMapHashes();
-			var mapName = maps[checksum];
 			if (!new[] { 0, 1 }.Contains(mapInfoVersion)) throw new ArgumentOutOfRangeException("mapInfoVersion", "must be 0 or 1.");
-			if (!GetMapHashes().ContainsValue(mapName)) throw new UnitSyncException(String.Format("Map not found ({0}).", mapName));
 			var mapInfo = new MapInfo { author = new String(' ', AuthorBufferSize), description = new String(' ', DescriptionBufferSize) };
-			if (!NativeMethods.GetMapInfoEx(mapName, ref mapInfo, mapInfoVersion)) throw new UnitSyncException("Error getting map information.");
+			if (!NativeMethods.GetMapInfoEx(ae.InternalName, ref mapInfo, mapInfoVersion)) throw new UnitSyncException("Error getting map information.");
 			TestMapInfo(mapInfo);
 			return mapInfo;
 		}
 
-		MapInfo GetMapInfo(string mapName)
-		{
-			return GetMapInfo(mapName, DefaultMapInfoVersion);
-		}
-
-		MapInfo GetMapInfoFromArchive(string mapArchive)
-		{
-			return GetMapInfo(GetMapArchive(Path.GetFileName(mapArchive)));
-		}
-
-		string GetMapNameFromArchive(string archiveName)
-		{
-			var name = GetMapHashes().Values.FirstOrDefault(mapName => GetMapArchive(mapName) == archiveName);
-			TraceErrors();
-			return name;
-		}
 
 		IEnumerable<Option> GetMapOptions(string mapName, string archiveName)
 		{
@@ -471,12 +388,6 @@ namespace ZkData.UnitSyncLib
 			return modArchive;
 		}
 
-		Dictionary<string, string> GetModArchives()
-		{
-			var archives = new Dictionary<string, string>();
-			foreach (var modName in GetModNames()) archives[GetModArchiveName(modName)] = modName;
-			return archives;
-		}
 
 		IEnumerable<string> GetModDependencies(int modIndex)
 		{
@@ -487,17 +398,6 @@ namespace ZkData.UnitSyncLib
 			for (var i = 0; i < count; i++) ret.Add(GetModNameFromArchive(Path.GetFileName(NativeMethods.GetPrimaryModArchiveList(i))));
 			return ret;
 		}
-
-        IEnumerable<string> GetMapDependencies(string mapName)
-        {
-            if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
-
-            var ret = new List<string>();
-            var count = NativeMethods.GetMapArchiveCount(mapName);
-            for (var i = 0; i < count; i++) ret.Add(GetMapNameFromArchive(Path.GetFileName(NativeMethods.GetMapArchiveName(i))));
-            return ret;
-        }
-
 
         string GetModNameFromArchive(string archiveName)
 		{
@@ -538,7 +438,6 @@ namespace ZkData.UnitSyncLib
 
 		Bitmap GetSquareMinimap(string mapName, int mipLevel)
 		{
-			if (!GetMapHashes().ContainsValue(mapName)) throw new UnitSyncException(string.Format("Map not found ({0}).", mapName));
 			if (mipLevel < 0 || mipLevel > MaxMipLevel) throw new ArgumentOutOfRangeException("mipLevel", string.Format("Mip level must range from 0 to {0}.", MaxMipLevel));
 
 			var size = 1024 >> mipLevel;
