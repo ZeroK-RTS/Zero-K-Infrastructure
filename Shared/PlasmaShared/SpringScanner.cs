@@ -620,13 +620,9 @@ namespace ZkData
                     Task.Factory.StartNew(() => {
                         ReturnValue e;
                         try {
-                            var dependencies = new List<string>();
-                            if (mod!= null && mod.Dependencies!=null) dependencies.AddRange(mod.Dependencies);
-                            if (map != null && map.Dependencies!=null) dependencies.AddRange(map.Dependencies);
-
                              e = service.RegisterResource(PlasmaServiceVersion, springPaths.SpringVersion, workItem.CacheItem.Md5.ToString(),
                                 workItem.CacheItem.Length, info.ResourceType, workItem.CacheItem.FileName, info.Name,
-                                serializedData, dependencies, minimap, metalMap, heightMap,
+                                serializedData, info.Dependencies, minimap, metalMap, heightMap,
                                 ms.ToArray());
                         } catch (Exception ex) {
                             Trace.TraceError("Error uploading data to server: {0}", ex);
@@ -650,7 +646,7 @@ namespace ZkData
                             MetaData.SaveMetadata(mapName, mapArgs.SerializedData);
                             MapRegistered(this, mapArgs);
                         }
-                        else
+                        else if (userState != null)
                         {
                             var kvp = (KeyValuePair<Mod, byte[]>)userState;
                             var modInfo = kvp.Key;

@@ -48,6 +48,7 @@ namespace ZeroKWeb
         public void Main()
         {
             Paths = new SpringPaths(null, @"c:\temp\testf", false);
+            Paths.MakeFolders();
             Scanner = new SpringScanner(Paths) { UseUnitSync = true};
             
             Scanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("New resource found: {0}", e.Item.InternalName);
@@ -70,7 +71,6 @@ namespace ZeroKWeb
             }
 
             Scanner.Start();
-
 
             var fs = new WebFolderSyncer();
             fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory,"maps"));
