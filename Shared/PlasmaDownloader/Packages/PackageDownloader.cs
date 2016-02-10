@@ -8,7 +8,6 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Cache;
-using System.Net.Http;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;

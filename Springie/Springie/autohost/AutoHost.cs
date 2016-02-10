@@ -894,6 +894,11 @@ namespace Springie.autohost
             if (e1.BattleID != tas.MyBattleID) return;
             string name = e1.UserName;
 
+            kickedPlayers.RemoveAll(x => x.TimeOfKicked <= DateTime.UtcNow.AddMinutes(-5));
+            if (kickedPlayers.Any(y=>y.Name == name)) ComKick(TasSayEventArgs.Default, new [] { name});
+
+            
+
             string welc = config.Welcome;
             if (!string.IsNullOrEmpty(welc)) {
                 welc = welc.Replace("%1", name);

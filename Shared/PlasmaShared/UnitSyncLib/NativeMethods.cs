@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace ZkData.UnitSyncLib
@@ -313,6 +314,13 @@ namespace ZkData.UnitSyncLib
             public static string GetDataDirectory(int index)
             {
                 return Marshal.PtrToStringAnsi(RawGetDataDirectory(index));
+            }
+
+            public static List<string> GetDataDirectories()
+            {
+                var ret = new List<string>();
+                for (int i =0; i < GetDataDirectoryCount(); i++) ret.Add(GetDataDirectory(i));
+                return ret;
             }
 
 

@@ -10,7 +10,7 @@ namespace ZeroKLobby.MicroForms
         static Timer countDown;
         static int counter = 0;
 
-        public static void SpringScanner_UploadUnitsyncData(object sender, ZkData.CancelEventArgs<ZkData.IResourceInfo> e)
+        public static void SpringScanner_UploadUnitsyncData(object sender, ZkData.CancelEventArgs<ZkData.ResourceInfo> e)
         {
             if (thisInstance != null)
                 thisInstance.Dispose();

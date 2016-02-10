@@ -20,6 +20,7 @@ namespace ZeroKWeb.Controllers
         /// Used to start a <see cref="Mission"/>, replay or such in ZKL or Weblobby
         /// </summary>
         /// <param name="link"></param>
+        [NoCache]
         public async Task<ActionResult> SendCommand(string link) {
             if (Global.Account == null) return Content("You must be logged in to the site");
             if (!Global.Server.IsLobbyConnected(Global.Account.Name)) return Content("Your lobby program is not running");

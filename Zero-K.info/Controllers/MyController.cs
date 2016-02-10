@@ -27,7 +27,7 @@ namespace ZeroKWeb.Controllers
             else if (unlock.UnlockType != slot.UnlockType)
                 return false;
 
-            if (unlock.NeededLevel > slot.MorphLevel) return false;
+            if (unlock.MorphLevel > slot.MorphLevel) return false;
 
             return true;
         }

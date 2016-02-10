@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ZeroKWeb.ForumParser
 {
@@ -24,8 +26,10 @@ namespace ZeroKWeb.ForumParser
 
             // to bolden text - find second star tag
             var node = self.Next;
-            while (node != null && !(node.Value is NewLineTag) && node.Value.Mode == OpeningClosingMode.SelfClosed && !(node.Value is TableCellTag))
+            while (node != null && !(node.Value is NewLineTag) && !(node.Value is SpaceTag) && node.Value.Mode == OpeningClosingMode.SelfClosed && !(node.Value is TableCellTag))
             {
+                if (node.Value is LiteralTag && node.Value.Text.All(Char.IsNumber)) break; 
+
                 if (node.Value is StarTag)
                 {
                     context.Append("<strong>");

@@ -240,8 +240,11 @@ namespace ZeroKWeb
                         if (!string.IsNullOrEmpty(map.Author)) resource.AuthorName = map.Author;
                         else
                         {
-                            var m = Regex.Match(map.Description, "by ([\\w]+)", RegexOptions.IgnoreCase);
-                            if (m.Success) resource.AuthorName = m.Groups[1].Value;
+                            if (!string.IsNullOrEmpty(map.Description))
+                            {
+                                var m = Regex.Match(map.Description, "by ([\\w]+)", RegexOptions.IgnoreCase);
+                                if (m.Success) resource.AuthorName = m.Groups[1].Value;
+                            }
                         }
                     }
 
