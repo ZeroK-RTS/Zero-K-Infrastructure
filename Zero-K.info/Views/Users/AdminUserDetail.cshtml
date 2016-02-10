@@ -108,6 +108,14 @@
     Password reset: <form method="post" action="@Url.Action("SetPassword", "Users", new { accountID = Model.AccountID })">@Html.TextBox("newPassword")<input type="submit" /></form>
     <br/>
 
+    <h2>Modify user rating</h2>
+    <form method="post" action="@Url.Action("ChangeElo", "Users", new { accountID = Model.AccountID, adminAccountID = Global.AccountID })">
+        Team newbie malus: @Html.TextBox("eloweight", Model.EloWeight)
+        1v1 newbie malus: @Html.TextBox("eloweight1v1", Model.Elo1v1Weight)
+        Malus 6 is max (normal experienced player)
+        <input type="submit" />
+    </form>
+
     <h2>Modify user permissions</h2>
     <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID, adminAccountID = Global.AccountID })">
         Springie level: @Html.TextBox("springieLevel", Model.SpringieLevel)
