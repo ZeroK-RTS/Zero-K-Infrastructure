@@ -40,7 +40,10 @@ namespace ZeroKWeb
                             Trace.TraceWarning("Download of file {0} failed: {1}", file,ex.Message);
                             File.Delete(tempFile);
                         }
-                        File.Move(tempFile, targetFile);
+                        try
+                        {
+                            File.Move(tempFile, targetFile);
+                        } catch { }
                     }
                 }
             }
