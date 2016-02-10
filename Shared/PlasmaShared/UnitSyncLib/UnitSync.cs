@@ -91,7 +91,7 @@ namespace ZkData.UnitSyncLib
                 Directory.SetCurrentDirectory(originalDirectory);
 			    Environment.CurrentDirectory = originalDirectory;
                 disposed = true;
-                System.Diagnostics.Trace.TraceInformation("UnitSync Disposed");
+                Trace.TraceInformation("UnitSync Disposed");
 			}
 			GC.SuppressFinalize(this);
 		}
@@ -155,37 +155,35 @@ namespace ZkData.UnitSyncLib
 		}
 
 
-		public Mod GetMod(string modName)
+		public Mod GetMod(ArchiveEntry ae)
 		{
 			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
-			if (modName == null) throw new ArgumentNullException("modName");
 			NativeMethods.RemoveAllArchives();
 			NativeMethods.GetPrimaryModCount(); // pre-requisite for the following calls
-			var archiveName = GetModArchiveName(modName);
-			NativeMethods.AddAllArchives(archiveName);
-			int modIndex = NativeMethods.GetPrimaryModIndex(modName);
+			NativeMethods.AddAllArchives(ae.FileName);
+			int modIndex = NativeMethods.GetPrimaryModIndex(ae.InternalName);
 			string[] sides;
       
 			var mod = new Mod
 			          {
-			          	Name = modName,
-			          	ArchiveName = archiveName,
-			          	UnitDefs = GetUnitList(modName).Select(ui => new UnitInfo(ui.Name, ui.FullName)).ToArray(),
-			          	Description = NativeMethods.GetPrimaryModDescription(modIndex),
+			          	Name = ae.InternalName,
+			          	ArchiveName = ae.FileName,
+			          	UnitDefs = GetUnitList(ae.InternalName).Select(ui => new UnitInfo(ui.Name, ui.FullName)).ToArray(),
+			          	Description = ae.Description,
 			          	Game = NativeMethods.GetPrimaryModGame(modIndex),
-			          	Mutator = NativeMethods.GetPrimaryModMutator(modIndex),
+			          	Mutator = ae.Mutator,
 			          	ShortGame = NativeMethods.GetPrimaryModShortGame(modIndex),
 			          	ShortName = NativeMethods.GetPrimaryModShortName(modIndex),
 			          	PrimaryModVersion = NativeMethods.GetPrimaryModVersion(modIndex),
-			          	StartUnits = new SerializableDictionary<string, string>(GetStartUnits(modName, out sides)),
+			          	StartUnits = new SerializableDictionary<string, string>(GetStartUnits(ae.InternalName, out sides)),
 			          	Sides = sides,
-			          	Options = GetModOptions(archiveName).ToArray(),
+			          	Options = GetModOptions(ae.FileName).ToArray(),
 			          	SideIcons = GetSideIcons(sides).ToArray(),
-			          	Dependencies = GetModDependencies(modIndex).Where(x => x != modName && !string.IsNullOrEmpty(x)).ToArray(),
+			          	Dependencies = ae.Dependencies.ToArray(),
 			          	ModAis = GetAis().Where(ai => ai.IsLuaAi).ToArray()
 			          };
 
-            System.Diagnostics.Trace.TraceInformation("Mod Information: Description {0}, Game {1}, Mutator {2}, ShortGame {3}, PrimaryModVersion {4}", mod.Description, mod.Game, mod.Mutator, mod.ShortGame,mod.PrimaryModVersion);
+            Trace.TraceInformation("Mod Information: Description {0}, Game {1}, Mutator {2}, ShortGame {3}, PrimaryModVersion {4}", mod.Description, mod.Game, mod.Mutator, mod.ShortGame,mod.PrimaryModVersion);
 
 			var buf = ReadVfsFile(GlobalConst.MissionScriptFileName);
 			if (buf != null && buf.Length > 0) mod.MissionScript = Encoding.UTF8.GetString(buf, 0, buf.Length);
@@ -213,10 +211,10 @@ namespace ZkData.UnitSyncLib
 			return mod;
 		}
 
-		public Mod GetModFromArchive(string archiveName)
+		public Mod GetModFromFileName(string filePath)
 		{
-			string modName = GetModNameFromArchive(archiveName);
-			return modName != null ? GetMod(modName) : null;
+            var ae = archiveCache.Archives.FirstOrDefault(x => x.FileName == Path.GetFileName(filePath));
+            return ae != null ? GetMod(ae) : null;
 		}
 
 	    public ArchiveEntry GetArchiveEntryByInternalName(string name) {
@@ -295,13 +293,6 @@ namespace ZkData.UnitSyncLib
 			for (var i = 0; i < NativeMethods.GetSkirmishAICount(); i++) yield return new Ai { Info = GetAiInfo(i).ToArray(), Options = GetAiOptions(i).ToArray() };
 		}
 
-		string GetArchivePath(string archiveName)
-		{
-			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
-			var result = NativeMethods.GetArchivePath(archiveName);
-			if (result == null) throw new UnitSyncException(NativeMethods.GetNextError());
-			return result;
-		}
 
 		/// <summary>
 		/// Call AddAllArchives before this
@@ -378,42 +369,6 @@ namespace ZkData.UnitSyncLib
 			}
 		}
 
-
-		string GetModArchiveName(string name)
-		{
-			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
-			int modIndex = NativeMethods.GetPrimaryModIndex(name);
-			if (modIndex < 0) throw new UnitSyncException(string.Format("Mod not found ({0}).", name));
-			string modArchive = NativeMethods.GetPrimaryModArchive(modIndex);
-			return modArchive;
-		}
-
-
-		IEnumerable<string> GetModDependencies(int modIndex)
-		{
-			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
-
-			var ret = new List<string>();
-			var count = NativeMethods.GetPrimaryModArchiveCount(modIndex);
-			for (var i = 0; i < count; i++) ret.Add(GetModNameFromArchive(Path.GetFileName(NativeMethods.GetPrimaryModArchiveList(i))));
-			return ret;
-		}
-
-        string GetModNameFromArchive(string archiveName)
-		{
-			string modName = null;
-			for (var i = NativeMethods.GetPrimaryModCount() - 1; i >= 0; i--) //check from last because modname is sorted by version and latest version should be last. ArchiveScanner.cpp line 1007
-				if (GetModArchiveName(NativeMethods.GetPrimaryModName(i)) == archiveName)
-				{
-					modName = NativeMethods.GetPrimaryModName(i); //this archiveName (filename) is matched to the filename of this mod. We found it!
-					break;
-				}
-			return modName;
-
-			//var archives = GetModArchives(); //inefficient because it get all archive first before searching
-			//string modName;
-			//return archives.TryGetValue(archiveName, out modName) ? modName : null;
-		}
 
 		IEnumerable<Option> GetModOptions(string archiveName)
 		{
@@ -623,25 +578,6 @@ namespace ZkData.UnitSyncLib
 			{
 				Trace.TraceWarning("Unitsync error: " + error.TrimEnd());
 				error = NativeMethods.GetNextError();
-			}
-		}
-
-		class ArchiveInfo
-		{
-			public readonly List<string> Dependencies = new List<string>();
-			public string FileName;
-			public string InternalName;
-			public string Replaced;
-			public readonly List<string> Replaces = new List<string>();
-
-			public bool MatchesName(string name)
-			{
-				return InternalName == name || FileName == name || Replaces.Contains(name);
-			}
-
-			public override string ToString()
-			{
-				return InternalName ?? FileName ?? "No Name";
 			}
 		}
 	}

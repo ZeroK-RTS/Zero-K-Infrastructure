@@ -382,7 +382,7 @@ namespace ZkData
                     ret = map;
                     if (map.Minimap == null || map.Metalmap == null || map.Heightmap == null) throw new Exception("Map bitmap is null");
                 }
-                else ret = unitSync.GetModFromArchive(filename);
+                else ret = unitSync.GetModFromFileName(filename);
             }
             catch (Exception ex)
             {

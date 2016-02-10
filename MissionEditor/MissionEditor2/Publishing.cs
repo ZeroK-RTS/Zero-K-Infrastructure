@@ -81,10 +81,10 @@ namespace MissionEditor2
 					if (File.Exists(tempPath)) File.Delete(tempPath);
 					mission.CreateArchive(tempPath);
 
-					ZkData.UnitSyncLib.Mod mod;
+					Mod mod;
 					using (var unitSync = new ZkData.UnitSyncLib.UnitSync(paths))
 					{
-						mod = unitSync.GetModFromArchive(mission.Mod.ArchiveName);
+						mod = unitSync.GetModFromFileName(mission.Mod.ArchiveName);
 						if (mod == null) throw new Exception("Mod metadata not extracted: mod not found");
 					}
 					info.Mutator = File.ReadAllBytes(tempPath);
