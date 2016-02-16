@@ -50,6 +50,10 @@ namespace ZkData.UnitSyncLib
                 originalDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 Trace.TraceInformation("UnitSync: Directory: {0}", paths.UnitSyncDirectory);
                 Trace.TraceInformation("UnitSync: ZKL: {0}", originalDirectory);
+
+                var epath = Environment.GetEnvironmentVariable("PATH");
+                if (epath?.Contains(paths.UnitSyncDirectory) != true) Environment.SetEnvironmentVariable("PATH", epath + ";" + paths.UnitSyncDirectory, EnvironmentVariableTarget.Process);
+
                 Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
                 Environment.CurrentDirectory = paths.UnitSyncDirectory;
                 var settingsPath = Path.Combine(paths.UnitSyncDirectory, "springsettings.cfg");

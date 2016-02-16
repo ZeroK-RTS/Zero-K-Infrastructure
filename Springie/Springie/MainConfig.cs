@@ -11,7 +11,7 @@ namespace Springie
 {
 	public class MainConfig: IPlasmaDownloaderConfig
 	{
-		public static string SpringieVersion = "Springie " + Assembly.GetEntryAssembly().GetName().Version;
+		public static string SpringieVersion = "Springie " + Assembly.GetEntryAssembly()?.GetName().Version;
 	    public const int MapChangeDownloadWait = 120;
 
 

@@ -22,14 +22,14 @@ namespace ZeroKWeb
         }
 
 
-        public Thread RunMainAsync() {
+        public Thread RunMainAsync(string workPath) {
             var thread = new Thread(
                 () =>
                 {
                     rerun:
                     try
                     {
-                        Main();
+                        Main(workPath);
                     }
                     catch (Exception ex)
                     {
@@ -45,9 +45,9 @@ namespace ZeroKWeb
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        public void Main()
+        public void Main(string workPath)
         {
-            Paths = new SpringPaths(null, @"c:\temp\testf", false);
+            Paths = new SpringPaths(null, workPath, false);
             Paths.MakeFolders();
             Scanner = new SpringScanner(Paths) { UseUnitSync = true};
             
@@ -73,8 +73,11 @@ namespace ZeroKWeb
             Scanner.Start();
 
             var fs = new WebFolderSyncer();
-            fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory,"maps"));
-            while (true) {Thread.Sleep(10000);}
+            while (true)
+            {
+                fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory, "maps"));
+                Thread.Sleep(7 * 63 * 1000);
+            }
         }
 
         static object Locker = new object();

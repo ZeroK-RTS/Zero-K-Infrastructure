@@ -13,7 +13,7 @@ namespace Autoregistrator
         static void Main(string[] args) {
             Trace.Listeners.Add(new ConsoleTraceListener());
             var ar = new AutoRegistrator();
-            ar.Main();
+            ar.Main(@"c:\temp\testf");
 
         }
     }

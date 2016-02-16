@@ -100,8 +100,8 @@ namespace PlasmaDownloader
                     if (source != null) {
                         var extension = source.Substring(source.LastIndexOf('.'));
                         var wc = new WebClient() { Proxy = null };
-                        var name = Assembly.GetEntryAssembly().GetName();
-                        wc.Headers.Add("user-agent", string.Format("{0} {1}",name.Name, name.Version));
+                        var assemblyName = Assembly.GetEntryAssembly()?.GetName();
+                        if (assemblyName != null) wc.Headers.Add("user-agent", string.Format("{0} {1}",assemblyName.Name, assemblyName.Version));
                         var target = Path.GetTempFileName() + extension;
                         wc.DownloadProgressChanged += (s, e) =>
                             {

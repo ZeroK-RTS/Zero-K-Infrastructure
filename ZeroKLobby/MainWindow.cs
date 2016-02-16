@@ -287,7 +287,7 @@ namespace ZeroKLobby
         void MainWindow_Load(object sender, EventArgs e) {
             if (Debugger.IsAttached) Text = "==== DEBUGGING ===";
             else Text = "Zero-K lobby";
-            Text += " " + Assembly.GetEntryAssembly().GetName().Version;
+            Text += " " + Assembly.GetEntryAssembly()?.GetName().Version;
 
             Icon = ZklResources.ZkIcon;
             systrayIcon.Icon = ZklResources.ZkIcon;

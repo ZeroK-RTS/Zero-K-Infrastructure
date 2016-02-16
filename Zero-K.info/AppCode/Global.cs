@@ -252,7 +252,7 @@ namespace ZeroKWeb
             if (GlobalConst.Mode != ModeType.Test)
             {
                 AutoRegistrator = new AutoRegistrator();
-                AutoRegistrator.RunMainAsync();
+                AutoRegistrator.RunMainAsync(MapPath("~/autoregistrator"));
             }
             ZkServerRunner.Run();
             listener.ZkLobbyServer = Server;
