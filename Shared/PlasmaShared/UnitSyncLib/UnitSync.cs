@@ -52,7 +52,8 @@ namespace ZkData.UnitSyncLib
                 Trace.TraceInformation("UnitSync: ZKL: {0}", originalDirectory);
 
                 var epath = Environment.GetEnvironmentVariable("PATH");
-                if (epath?.Contains(paths.UnitSyncDirectory) != true) Environment.SetEnvironmentVariable("PATH", epath + ";" + paths.UnitSyncDirectory, EnvironmentVariableTarget.Process);
+                if (epath?.Contains(paths.UnitSyncDirectory) != true) Environment.SetEnvironmentVariable("PATH",
+                    $"{epath}{(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";")}{paths.UnitSyncDirectory}", EnvironmentVariableTarget.Process);
 
                 Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
                 Environment.CurrentDirectory = paths.UnitSyncDirectory;
