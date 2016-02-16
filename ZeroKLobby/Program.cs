@@ -17,6 +17,7 @@ using SpringDownloader.Notifications;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZkData;
+using ZkData.UnitSyncLib;
 
 namespace ZeroKLobby
 {
@@ -180,23 +181,16 @@ namespace ZeroKLobby
 
                 SpringPaths = new SpringPaths(null, writableFolderOverride: contentDir);
                 SpringPaths.MakeFolders();
-                SpringPaths.SetEnginePath(Utils.MakePath(SpringPaths.WritableDirectory, "engine", ZkData.GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion));
 
-                // run unitsync as soon as possible so we don't have to spend several minutes doing it on game start
-                // two problems:
-                // 1) unitsync can only be loaded once, even if in a different directory http://msdn.microsoft.com/en-us/library/ms682586.aspx#factors_that_affect_searching
-                //  so if we do it in SpringVersionChanged it'll be done at startup for GlobalConst.DefaultEngineOverride, then for no other engine version
-                // 2) unitsync can't be unloaded http://stackoverflow.com/questions/1371877/how-to-unload-the-dll-using-c
-                // also see EngineDownload.cs
-                //SpringPaths.SpringVersionChanged += (s, e) =>
-                //{
-                //    //System.Diagnostics.Trace.TraceInformation("SpringPaths version: {0}", SpringPaths.SpringVersion);
-                //    //new PlasmaShared.UnitSyncLib.UnitSync(SpringPaths);
-                //    //SpringScanner.VerifyUnitSync();
-                //    //if (SpringScanner != null) SpringScanner.Dispose();
-                //    //SpringScanner = new SpringScanner(SpringPaths);
-                //    //SpringScanner.Start();
-                //};
+                SpringPaths.SpringVersionChanged += (sender, eventArgs) =>
+                {
+                    ZkData.Utils.StartAsync(() => { new UnitSync(SpringPaths).Dispose(); }); 
+                    // initialize unitsync to avoid slowdowns when starting
+                };
+                
+
+                SpringPaths.SetEnginePath(Utils.MakePath(SpringPaths.WritableDirectory, "engine", ZkData.GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion));
+                
 
                 SaveConfig();
                 if (Conf.CleanCache)
@@ -402,6 +396,8 @@ namespace ZeroKLobby
                 //stopWatch.Stop(); TimeSpan ts = stopWatch.Elapsed; string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
                 //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
 
+                
+
 
                 Application.Run(MainWindow);
                 ShutDown();
@@ -435,8 +431,7 @@ namespace ZeroKLobby
                 return;
 
             // download primary game after rapid list have been downloaded and MainWindow is visible
-            if (!Utils.VerifySpringInstalled(false))
-                Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
+            if (!Utils.VerifySpringInstalled(false)) Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
             var defaultTag = KnownGames.GetDefaultGame().RapidTag;
             if (!Downloader.PackageDownloader.SelectedPackages.Contains(defaultTag))
             {
