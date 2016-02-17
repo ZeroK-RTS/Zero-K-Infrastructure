@@ -1,4 +1,5 @@
- @model IEnumerable<ZkData.AccountUnlock>
+@model IEnumerable<MyController.UnlockCountEntry>
+@using ZeroKWeb.Controllers
 <div>
 @foreach (var au in Model) {
   var unlock = au.Unlock;
