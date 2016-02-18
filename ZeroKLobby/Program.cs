@@ -61,7 +61,6 @@ namespace ZeroKLobby
             return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
         }
 
-        static bool pickInitFolder = false;
 
         internal static void LoadConfig()
         {
@@ -69,7 +68,6 @@ namespace ZeroKLobby
             if (File.Exists(curConfPath)) Conf = Config.Load(curConfPath);
             else
             {
-                pickInitFolder = true;
                 Conf = Config.Load(Path.Combine(SpringPaths.GetMySpringDocPath(), Config.ConfigFileName));
                 Conf.IsFirstRun = true; // treat import as a first run
             }
@@ -150,7 +148,7 @@ namespace ZeroKLobby
 
 
                 var contentDir = !string.IsNullOrEmpty(Conf.DataFolder) ? Conf.DataFolder : StartupPath;
-                if (!Directory.Exists(contentDir) || !SpringPaths.IsDirectoryWritable(contentDir) || pickInitFolder || contentDir.Contains("Local\\Apps"))
+                if (!Directory.Exists(contentDir) || !SpringPaths.IsDirectoryWritable(contentDir) || contentDir.Contains("Local\\Apps"))
                 {
                     var dc = new SelectWritableFolder() { SelectedPath = SpringPaths.GetMySpringDocPath() };
                     if (dc.ShowDialog() != DialogResult.OK) return;
