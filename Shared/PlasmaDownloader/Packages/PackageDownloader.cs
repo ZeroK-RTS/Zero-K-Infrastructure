@@ -148,13 +148,13 @@ namespace PlasmaDownloader.Packages
         }
 
 
-        public bool HasSdpFile(Hash hash) {
+        /*public bool HasSdpFile(Hash hash) {
             // note this only checks writable folder and not all data
             var folder = Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory, "packages");
             if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
             var target = Utils.MakePath(folder, hash + ".sdp");
             return File.Exists(target);
-        }
+        }*/
 
         public Task LoadMasterAndVersions(bool downloadSelected)
         {
@@ -251,7 +251,7 @@ namespace PlasmaDownloader.Packages
         }
 
         PackageDownload CreateDownload(Repository repo, Version versionEntry) {
-            if (HasSdpFile(versionEntry.Hash)) return null; // dont download if present
+            //if (HasSdpFile(versionEntry.Hash)) return null; // dont download if present
 
             var down = new PackageDownload(repo.BaseUrl, versionEntry.InternalName, versionEntry.Hash, plasmaDownloader.SpringPaths);
 
