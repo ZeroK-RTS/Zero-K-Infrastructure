@@ -22,7 +22,7 @@ namespace ZeroKWeb
             this.sitePath = sitePath;
         }
 
-        public Thread RunMainAsync() {
+        public Thread RunMainAndMapSyncAsync() {
             var thread = new Thread(
                 () =>
                 {
@@ -30,6 +30,11 @@ namespace ZeroKWeb
                     try
                     {
                         Main();
+                        while (true)
+                        {
+                            Thread.Sleep(61*7*1000);
+                            SynchronizeMapsFromSpringFiles();
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -79,12 +84,12 @@ namespace ZeroKWeb
 
             Scanner.Start();
 
+            SynchronizeMapsFromSpringFiles();
+        }
+
+        private void SynchronizeMapsFromSpringFiles() {
             var fs = new WebFolderSyncer();
-            while (true)
-            {
-                fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory, "maps"));
-                Thread.Sleep(7 * 63 * 1000);
-            }
+            fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory, "maps"));
         }
 
         static object Locker = new object();
