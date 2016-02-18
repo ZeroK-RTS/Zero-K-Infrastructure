@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using AutoRegistrator;
 using PlasmaDownloader;
 using ZkData;
 using ZkData.UnitSyncLib;
@@ -16,15 +17,19 @@ namespace ZeroKWeb
         public SpringScanner Scanner;
         public PlasmaDownloader.PlasmaDownloader Downloader;
 
+        private string sitePath;
+        public AutoRegistrator(string sitePath) {
+            this.sitePath = sitePath;
+        }
 
-        public Thread RunMainAsync(string workPath) {
+        public Thread RunMainAsync() {
             var thread = new Thread(
                 () =>
                 {
                     rerun:
                     try
                     {
-                        Main(workPath);
+                        Main();
                     }
                     catch (Exception ex)
                     {
@@ -40,9 +45,10 @@ namespace ZeroKWeb
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        public void Main(string workPath)
+        public void Main()
         {
-            Paths = new SpringPaths(null, workPath, false);
+            
+            Paths = new SpringPaths(null, Path.Combine(sitePath, "autoregistrator"), false);
             Paths.MakeFolders();
             Scanner = new SpringScanner(Paths) { UseUnitSync = true};
             
@@ -144,6 +150,10 @@ namespace ZeroKWeb
                         }
                     }
                 }
+
+                var pgen = new SteamDepotGenerator(sitePath, Path.Combine(sitePath, "..", "steamworks", "tools", "ContentBuilder","content"));
+                pgen.Generate(GlobalConst.Mode);
+                pgen.RunBuild();
             }
         }
     }

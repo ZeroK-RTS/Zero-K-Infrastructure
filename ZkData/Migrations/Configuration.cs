@@ -75,6 +75,9 @@ namespace ZkData.Migrations
                     x => x.VarName,
                     new MiscVar { VarName = "NightwatchPassword", VarValue = "dummy" },
                     new MiscVar { VarName = "GithubHookKey", VarValue = "secret" });
+                
+                if (!db.MiscVars.Any(y=>y.VarName=="SteamBuildPassword"))
+                    db.MiscVars.AddOrUpdate(x => x.VarName, new MiscVar { VarName = "SteamBuildPassword", VarValue = "secret" });
 
                 db.Accounts.AddOrUpdate(
                     x => x.Name,

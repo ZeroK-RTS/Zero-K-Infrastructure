@@ -17,8 +17,9 @@ namespace Autoregistrator
             //var ar = new ZeroKWeb.AutoRegistrator();
             //ar.Main(@"c:\temp\testf");
 
-            var spg = new SteamDepotGenerator();
-            spg.Generate(@"c:\work\Zero-K-Infrastructure\Zero-K.info",@"c:\temp\spg", ModeType.Live);
+            var spg = new SteamDepotGenerator(@"c:\work\Zero-K-Infrastructure\Zero-K.info", @"c:\work\steamworks\tools\ContentBuilder\content");
+            //spg.Generate(ModeType.Live);
+            spg.RunBuild();
         }
     }
 }

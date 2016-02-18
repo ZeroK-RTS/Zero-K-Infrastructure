@@ -30,5 +30,11 @@ namespace ZkData
             return GetVarValue(db, "GithubHookKey");
         }
 
+        public string GetSteamBuildPassword(ZkDataContext db = null)
+        {
+            return GetVarValue(db, "SteamBuildPassword");
+        }
+
+
     }
 }
