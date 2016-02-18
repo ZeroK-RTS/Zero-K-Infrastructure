@@ -16,11 +16,6 @@ namespace ZeroKWeb
         public SpringScanner Scanner;
         public PlasmaDownloader.PlasmaDownloader Downloader;
 
-        public class Config: IPlasmaDownloaderConfig {
-            public int RepoMasterRefresh { get { return 20; } }
-            public string PackageMasterUrl { get { return " http://repos.springrts.com/"; } }
-        }
-
 
         public Thread RunMainAsync(string workPath) {
             var thread = new Thread(
@@ -63,8 +58,9 @@ namespace ZeroKWeb
             Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
             Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             Downloader.PackagesChanged += Downloader_PackagesChanged;
-            Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
             Downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
+            Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
+            
             foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x=>x.VersionsByTag).Where(x=>x.Key.StartsWith("spring-features")))
             {
                 Downloader.GetResource(DownloadType.UNKNOWN, ver.Value.InternalName)?.WaitHandle.WaitOne();
