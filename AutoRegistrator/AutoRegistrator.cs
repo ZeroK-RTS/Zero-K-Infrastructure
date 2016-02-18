@@ -42,6 +42,8 @@ namespace ZeroKWeb
         }
 
 
+        private string lastStableVersion;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -66,7 +68,10 @@ namespace ZeroKWeb
             Downloader.PackagesChanged += Downloader_PackagesChanged;
             Downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
             Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
-            
+            Downloader.GetResource(DownloadType.MOD, "zk:test")?.WaitHandle.WaitOne();
+
+            lastStableVersion = Downloader.PackageDownloader.GetByTag("zk:stable").InternalName;
+
             foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x=>x.VersionsByTag).Where(x=>x.Key.StartsWith("spring-features")))
             {
                 Downloader.GetResource(DownloadType.UNKNOWN, ver.Value.InternalName)?.WaitHandle.WaitOne();
@@ -151,9 +156,21 @@ namespace ZeroKWeb
                     }
                 }
 
-                var pgen = new SteamDepotGenerator(sitePath, Path.Combine(sitePath, "..", "steamworks", "tools", "ContentBuilder","content"));
-                pgen.Generate(GlobalConst.Mode);
-                pgen.RunBuild();
+                try
+                {
+                    var newName = Downloader.PackageDownloader.GetByTag("zk:stable").InternalName;
+                    if (lastStableVersion != newName)
+                    {
+                        lastStableVersion = newName;
+                        var pgen = new SteamDepotGenerator(sitePath, Path.Combine(sitePath, "..", "steamworks", "tools", "ContentBuilder", "content"));
+                        pgen.Generate();
+                        pgen.RunBuild();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error building steam package: {0}",ex);
+                }
             }
         }
     }

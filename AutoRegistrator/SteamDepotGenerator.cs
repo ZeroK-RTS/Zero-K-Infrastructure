@@ -23,7 +23,7 @@ namespace AutoRegistrator
             this.siteBase = siteBase;
         }
 
-        public void Generate(ModeType mode) {
+        public void Generate() {
             
             var paths = new SpringPaths(null, targetFolder, false);
             try
@@ -37,10 +37,10 @@ namespace AutoRegistrator
             var downloader = new PlasmaDownloader.PlasmaDownloader(new Config(), null, paths);
             downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
-            var tag = mode == ModeType.Live ? "zk:stable" : "zk:test";
-            downloader.GetResource(DownloadType.MOD, tag)?.WaitHandle.WaitOne();
+            downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
+            downloader.GetResource(DownloadType.MOD, "zk:test")?.WaitHandle.WaitOne();
 
-            CopyResources(siteBase, paths, GetResourceList(downloader.PackageDownloader.GetByTag(tag).InternalName), downloader);
+            CopyResources(siteBase, paths, GetResourceList(downloader.PackageDownloader.GetByTag("zk:stable").InternalName, downloader.PackageDownloader.GetByTag("zk:test").InternalName), downloader);
 
             var zklSource = Path.Combine(siteBase, "lobby", "Zero-K.exe");
             if (File.Exists(zklSource)) File.Copy(zklSource, Path.Combine(targetFolder, "Zero-K.exe"), true);
