@@ -19,7 +19,7 @@ namespace AutoRegistrator
             var paths = new SpringPaths(null, targetFolder, false);
             try
             {
-                Directory.Delete(Path.Combine(paths.WritableDirectory, "pool"), true);
+                //Directory.Delete(Path.Combine(paths.WritableDirectory, "pool"), true);
                 Directory.Delete(Path.Combine(paths.WritableDirectory, "packages"), true);
             } catch { }
             
@@ -31,7 +31,12 @@ namespace AutoRegistrator
             downloader.GetResource(DownloadType.MOD, mode == ModeType.Test ? "zk:test" : "zk:stable")?.WaitHandle.WaitOne();
             CopyResources(siteBase, paths, GetResourceList(), downloader);
 
-            File.Copy(Path.Combine(siteBase,"lobby", "Zero-K.exe"), Path.Combine(targetFolder,"Zero-K.exe"), true);
+            var zklSource = Path.Combine(siteBase, "lobby", "Zero-K.exe");
+            if (File.Exists(zklSource)) File.Copy(zklSource, Path.Combine(targetFolder, "Zero-K.exe"), true);
+            else
+            {
+                new WebClient().DownloadFile(GlobalConst.SelfUpdaterBaseUrl + "/" + "Zero-K.exe", Path.Combine(targetFolder, "Zero-K.exe"));
+            }
         }
 
 
