@@ -63,16 +63,28 @@ namespace AutoRegistrator
                 Trace.TraceInformation("Copying {0}", res.InternalName);
                 if (res.TypeID == ResourceType.Map)
                 {
-                    var fileName = res.ResourceContentFiles.OrderByDescending(x => x.LinkCount).First().FileName;
+                    var fileName = res.ResourceContentFiles.ToList().Where(x=>File.Exists(Path.Combine(sourceMaps, x.FileName))).OrderByDescending(x => x.LinkCount).FirstOrDefault()?.FileName; // get registered file names
+
+                    fileName = fileName?? res.ResourceContentFiles
+                        .SelectMany(x => x.Links.Split('\n'))
+                        .Where(x => x != null).Select(x=> x.Substring(x.LastIndexOf('/')+1, x.Length - x.LastIndexOf('/') - 1)).FirstOrDefault(x => !string.IsNullOrEmpty(x) && File.Exists(Path.Combine(sourceMaps,x))); // get filenames from url
+
+                    if (fileName == null) Trace.TraceError("Cannot find map file: {0}", res.InternalName);
+
+
                     if (!File.Exists(Path.Combine(destMaps, fileName))) File.Copy(Path.Combine(sourceMaps, fileName), Path.Combine(destMaps, fileName));
                 } else if (res.MissionID != null) File.WriteAllBytes(Path.Combine(paths.WritableDirectory, "games", res.Mission.SanitizedFileName), res.Mission.Mutator);
                 else downloader.GetResource(DownloadType.UNKNOWN, res.InternalName)?.WaitHandle.WaitOne();
 
                 foreach (var metaName in new[] { res.MinimapName, res.HeightmapName, res.MetalmapName, res.MetadataName, res.ThumbnailName })
                 {
+                    Trace.TraceInformation("Copying resource: {0}", metaName);
                     var src = Path.Combine(sourceMetadata, metaName);
                     var dst = Path.Combine(targetMetadata, metaName);
-                    if (!File.Exists(dst)) File.Copy(src, dst);
+                    if (!File.Exists(dst) && File.Exists(src))
+                    {
+                        File.Copy(src, dst);
+                    }
                 }
             }
         }
