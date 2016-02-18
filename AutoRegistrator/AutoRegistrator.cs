@@ -161,6 +161,7 @@ namespace ZeroKWeb
                     var newName = Downloader.PackageDownloader.GetByTag("zk:stable").InternalName;
                     if (lastStableVersion != newName)
                     {
+                        Trace.TraceInformation("Generating steam stable package");
                         lastStableVersion = newName;
                         var pgen = new SteamDepotGenerator(sitePath, Path.Combine(sitePath, "..", "steamworks", "tools", "ContentBuilder", "content"));
                         pgen.Generate();
