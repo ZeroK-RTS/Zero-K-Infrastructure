@@ -323,6 +323,14 @@ namespace Springie.autohost
         }
 
 
+        public class KickedPlayer
+        {
+            public string Name;
+            public DateTime TimeOfKicked = DateTime.UtcNow;
+        }
+
+        public List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
+
         public void ComKick(TasSayEventArgs e, string[] words)
         {
             if (words.Length == 0)
@@ -346,6 +354,7 @@ namespace Springie.autohost
                 return;
             }
 
+            kickedPlayers.Add(new KickedPlayer() {Name = usrlist[0]});
             if (spring.IsRunning) spring.Kick(usrlist[0]);
             tas.Kick(usrlist[0]);
         }

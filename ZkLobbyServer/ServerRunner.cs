@@ -31,7 +31,7 @@ namespace ZkLobbyServer
             SynchronizationContext.SetSynchronizationContext(null);
 
             listeners.Add(new TcpTransportServerListener());
-            listeners.Add(new WebSocketTransportServerListener());
+            //listeners.Add(new WebSocketTransportServerListener());
 
             foreach (var listener in listeners) {
                 if (listener.Bind(20)) {

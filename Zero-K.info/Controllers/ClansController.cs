@@ -58,6 +58,19 @@ namespace ZeroKWeb.Controllers
             return View(clan);
         }
 
+        public void AddClanLeader(int accountID, int clanID, ZkDataContext db = null)
+        {
+            if (db == null) db = new ZkDataContext();
+            var leader = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople && x.IsClanOnly);
+            if (leader != null)
+                db.AccountRoles.InsertOnSubmit(new AccountRole()
+                {
+                    AccountID = accountID,
+                    ClanID = clanID,
+                    RoleType = leader,
+                    Inauguration = DateTime.UtcNow
+                });
+        }
 
         /// <summary>
         /// Clan leaving logic (including after kick)
@@ -127,7 +140,9 @@ namespace ZeroKWeb.Controllers
         public ActionResult JoinClan(int id, string password)
         {
             var db = new ZkDataContext();
-            var clan = db.Clans.Single(x => x.ClanID == id && !x.IsDeleted);
+            var clan = db.Clans.Single(x => x.ClanID == id);
+            
+
             if (clan.CanJoin(Global.Account))
             {
                 if (!string.IsNullOrEmpty(clan.Password) && clan.Password != password) return View(clan.ClanID);
@@ -137,6 +152,14 @@ namespace ZeroKWeb.Controllers
                     acc.ClanID = clan.ClanID;
                     acc.FactionID = clan.FactionID;
                     db.Events.InsertOnSubmit(Global.CreateEvent("{0} joins clan {1}", acc, clan));
+
+                    if (clan.IsDeleted) // recreate clan
+                    {
+                        AddClanLeader(acc.AccountID, clan.ClanID, db);
+                        clan.IsDeleted = false;
+                        db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} reformed by {1}", clan, acc));
+                    }
+
                     db.SubmitChanges();
                     return RedirectToAction("Detail", new { id = clan.ClanID });
                 }
@@ -280,8 +303,14 @@ namespace ZeroKWeb.Controllers
                 {
                     if (existingClans.Any(x => !x.IsDeleted)) return Content("Clan with this shortcut or name already exists");
                     Clan deadClan = existingClans.First();
+                    Clan inputClan = clan;
                     clan = deadClan;
                     if (noFaction) clan.FactionID = null;
+                    clan.IsDeleted = false;
+                    clan.ClanName = inputClan.ClanName;
+                    clan.Password = inputClan.Password;
+                    clan.Description = inputClan.Description;
+                    clan.SecretTopic = inputClan.SecretTopic;
                 }
                 else 
                     db.Clans.InsertOnSubmit(clan);
@@ -290,15 +319,7 @@ namespace ZeroKWeb.Controllers
                 acc.ClanID = clan.ClanID;
 
                 // we created a new clan, set self as founder and rights
-                var leader = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople && x.IsClanOnly);
-                if (leader != null)
-                    db.AccountRoles.InsertOnSubmit(new AccountRole()
-                    {
-                        AccountID = acc.AccountID,
-                        Clan = clan,
-                        RoleType = leader,
-                        Inauguration = DateTime.UtcNow
-                    });
+                AddClanLeader(acc.AccountID, clan.ClanID, db);
 
                 db.SubmitChanges(); // needed to get clan id for images
 

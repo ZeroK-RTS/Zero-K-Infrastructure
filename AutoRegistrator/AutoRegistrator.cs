@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Windows.Forms;
-using Ionic.Zlib;
+using AutoRegistrator;
 using PlasmaDownloader;
-using ZkData.UnitSyncLib;
 using ZkData;
+using ZkData.UnitSyncLib;
 
-namespace AutoRegistrator
+namespace ZeroKWeb
 {
     public class AutoRegistrator
     {
@@ -20,18 +17,41 @@ namespace AutoRegistrator
         public SpringScanner Scanner;
         public PlasmaDownloader.PlasmaDownloader Downloader;
 
-        public class Config: IPlasmaDownloaderConfig {
-            public int RepoMasterRefresh { get { return 20; } }
-            public string PackageMasterUrl { get { return " http://repos.springrts.com/"; } }
+        private string sitePath;
+        public AutoRegistrator(string sitePath) {
+            this.sitePath = sitePath;
         }
-        
+
+        public Thread RunMainAsync() {
+            var thread = new Thread(
+                () =>
+                {
+                    rerun:
+                    try
+                    {
+                        Main();
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError("Autoregistrator failure: {0}", ex);
+                        goto rerun;
+                    }
+                });
+            thread.Start();
+            return thread;
+        }
+
+
+        private string lastStableVersion;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         public void Main()
         {
-            //Trace.Listeners.Add(new ConsoleTraceListener());
-            Paths = new SpringPaths(null, @"c:\Users\admin\Documents\My Games\Spring");
+            
+            Paths = new SpringPaths(null, Path.Combine(sitePath, "autoregistrator"), false);
+            Paths.MakeFolders();
             Scanner = new SpringScanner(Paths) { UseUnitSync = true};
             
             Scanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("New resource found: {0}", e.Item.InternalName);
@@ -40,26 +60,31 @@ namespace AutoRegistrator
             SpringScanner.MapRegistered += (s, e) => Trace.TraceInformation("Map registered: {0}", e.MapName);
             SpringScanner.ModRegistered += (s, e) => Trace.TraceInformation("Mod registered: {0}", e.Data.Name);
 
-            Scanner.Start();
+            Scanner.InitialScan();
+
             Downloader = new PlasmaDownloader.PlasmaDownloader(new Config(), Scanner, Paths);
             Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
             Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             Downloader.PackagesChanged += Downloader_PackagesChanged;
-            Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
             Downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
+            Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
+            Downloader.GetResource(DownloadType.MOD, "zk:test")?.WaitHandle.WaitOne();
+
+            lastStableVersion = Downloader.PackageDownloader.GetByTag("zk:stable").InternalName;
 
             foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x=>x.VersionsByTag).Where(x=>x.Key.StartsWith("spring-features")))
             {
                 Downloader.GetResource(DownloadType.UNKNOWN, ver.Value.InternalName)?.WaitHandle.WaitOne();
             }
 
+            Scanner.Start();
 
             var fs = new WebFolderSyncer();
-            fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory,"maps"));
-            while (true) {Thread.Sleep(10000);}
-            /*Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());*/
+            while (true)
+            {
+                fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory, "maps"));
+                Thread.Sleep(7 * 63 * 1000);
+            }
         }
 
         static object Locker = new object();
@@ -129,6 +154,23 @@ namespace AutoRegistrator
                             Trace.TraceError("Failed to update mission {0}: {1}", mis.MissionID, ex);
                         }
                     }
+                }
+
+                try
+                {
+                    var newName = Downloader.PackageDownloader.GetByTag("zk:stable").InternalName;
+                    if (lastStableVersion != newName)
+                    {
+                        Trace.TraceInformation("Generating steam stable package");
+                        lastStableVersion = newName;
+                        var pgen = new SteamDepotGenerator(sitePath, Path.Combine(sitePath, "..", "steamworks", "tools", "ContentBuilder", "content"));
+                        pgen.Generate();
+                        pgen.RunBuild();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error building steam package: {0}",ex);
                 }
             }
         }

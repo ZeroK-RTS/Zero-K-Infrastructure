@@ -30,7 +30,7 @@ namespace ZkData
 
         public TcpTransport(string host, int port, string bindingIp = null)
         {
-            if (bindingIp == null) tcp = new TcpClient();
+            if (bindingIp == null) tcp = new TcpClient(new IPEndPoint(IPAddress.Parse("0.0.0.0"),0));
             else tcp = new TcpClient(new IPEndPoint(IPAddress.Parse(bindingIp), 0));
             RemoteEndpointAddress = host;
             RemoteEndpointPort = port;

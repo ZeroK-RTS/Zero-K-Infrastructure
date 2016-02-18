@@ -52,6 +52,7 @@ namespace CMissionLib.UnitSyncLib
             UnitSyncPath = path;
             originalDirectory = Directory.GetCurrentDirectory();
             Directory.SetCurrentDirectory(path);
+
             if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed.");
             Version = NativeMethods.GetSpringVersion();
             TraceErrors();

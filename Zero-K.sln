@@ -42,6 +42,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkData", "ZkData\ZkData.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkLobbyServer", "ZkLobbyServer\ZkLobbyServer.csproj", "{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autoregistrator", "Autoregistrator\Autoregistrator.csproj", "{01FAEBBC-02E0-42FE-972C-F17045BA3807}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -112,6 +114,10 @@ Global
 		{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}.Debug|x86.Build.0 = Debug|x86
 		{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}.Release|x86.ActiveCfg = Release|x86
 		{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}.Release|x86.Build.0 = Release|x86
+		{01FAEBBC-02E0-42FE-972C-F17045BA3807}.Debug|x86.ActiveCfg = Debug|x86
+		{01FAEBBC-02E0-42FE-972C-F17045BA3807}.Debug|x86.Build.0 = Debug|x86
+		{01FAEBBC-02E0-42FE-972C-F17045BA3807}.Release|x86.ActiveCfg = Release|x86
+		{01FAEBBC-02E0-42FE-972C-F17045BA3807}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
