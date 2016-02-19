@@ -40,7 +40,7 @@ namespace ZkData.UnitSyncLib
         private bool disposed;
         private int? loadedArchiveIndex;
         private readonly SpringPaths paths;
-        private string unitsyncWritableFolder;
+        public string UnitsyncWritableFolder { get; private set; }
 
         public UnitSync(SpringPaths springPaths) {
             lock (unitsyncInitLocker)
@@ -62,11 +62,11 @@ namespace ZkData.UnitSyncLib
                 if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed. " + NativeMethods.GetNextError());
 
                 Version = NativeMethods.GetSpringVersion();
-                unitsyncWritableFolder = NativeMethods.GetWritableDataDirectory();
+                UnitsyncWritableFolder = NativeMethods.GetWritableDataDirectory();
                 var read = NativeMethods.GetDataDirectories();
                 Trace.TraceInformation("UnitSync version: {0}", Version);
                 Trace.TraceInformation("UnitSync READ: {0}", string.Join(",", read));
-                Trace.TraceInformation("UnitSync WRITE: {0}", unitsyncWritableFolder);
+                Trace.TraceInformation("UnitSync WRITE: {0}", UnitsyncWritableFolder);
 
                 TraceErrors();
                 Trace.TraceInformation("UnitSync Initialized");
@@ -115,7 +115,7 @@ namespace ZkData.UnitSyncLib
         }
 
         public ResourceInfo GetResourceFromFileName(string filePath) {
-            var archiveCache = new ArchiveCache(unitsyncWritableFolder);
+            var archiveCache = new ArchiveCache(UnitsyncWritableFolder);
             var ae = archiveCache.Archives.FirstOrDefault(x => x.ArchiveName == Path.GetFileName(filePath));
             if (ae == null) return null;
             try
@@ -221,7 +221,7 @@ namespace ZkData.UnitSyncLib
 
 
         public ResourceInfo GetArchiveEntryByInternalName(string name) {
-            var archiveCache = new ArchiveCache(unitsyncWritableFolder);
+            var archiveCache = new ArchiveCache(UnitsyncWritableFolder);
             return archiveCache.Archives.FirstOrDefault(x => x.Name == name);
         }
 

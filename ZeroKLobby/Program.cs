@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using LobbyClient;
 using Microsoft.Win32;
+using PlasmaShared.UnitSyncLib;
 using SpringDownloader.Notifications;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
@@ -180,10 +181,33 @@ namespace ZeroKLobby
                 SpringPaths = new SpringPaths(null, writableFolderOverride: contentDir);
                 SpringPaths.MakeFolders();
 
+                // speed up spring start
                 SpringPaths.SpringVersionChanged += (sender, eventArgs) =>
                 {
-                    ZkData.Utils.StartAsync(() => { new UnitSync(SpringPaths).Dispose(); }); 
-                    // initialize unitsync to avoid slowdowns when starting
+                    ZkData.Utils.StartAsync(
+                        () =>
+                        {
+                            UnitSync unitSync = null;
+                            try
+                            {
+                                unitSync = new UnitSync(SpringPaths); // initialize unitsync to avoid slowdowns when starting
+
+                                if (unitSync.UnitsyncWritableFolder != SpringPaths.WritableDirectory)
+                                {
+                                    // unitsync created its cache in different folder than is used to start spring -> move it
+                                    var fi = ArchiveCache.GetCacheFile(unitSync.UnitsyncWritableFolder);
+                                    if (fi != null)
+                                    {
+                                        File.Copy(fi.FullName, Path.Combine(SpringPaths.WritableDirectory, fi.Name), true);
+                                    }
+                                }
+                            }
+                            finally
+                            {
+                                unitSync?.Dispose();
+                            }
+                        }); 
+                    
                 };
                 
 
