@@ -197,7 +197,7 @@ namespace ZeroKLobby
         public static void RegisterProtocol() {
             var executableName = Assembly.GetEntryAssembly().Location;
             try {
-                SetProtocolRegistry(Registry.CurrentUser.CreateSubKey("Software\\Classes\\spring"), executableName);
+                SetProtocolRegistry(Registry.CurrentUser.CreateSubKey("Software\\Classes\\zk"), executableName);
             } catch (Exception ex) {
                 Trace.TraceWarning("Error registering protocol: {0}", ex.Message);
             }
