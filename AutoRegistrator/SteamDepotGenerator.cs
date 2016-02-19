@@ -48,6 +48,8 @@ namespace AutoRegistrator
             {
                 new WebClient().DownloadFile(GlobalConst.SelfUpdaterBaseUrl + "/" + "Zero-K.exe", Path.Combine(targetFolder, "Zero-K.exe"));
             }
+
+
         }
 
 
