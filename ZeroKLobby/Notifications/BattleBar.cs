@@ -177,7 +177,8 @@ namespace ZeroKLobby.Notifications
                             if (Utils.VerifySpringInstalled())
                             {
                                 if (spring.IsRunning) spring.ExitGame();
-                                lastScript = spring.ConnectGame(client.MyBattle.Ip, client.MyBattle.HostPort, client.UserName); //use MT tag when in spectator slot
+                                lastScript = spring.ConnectGame(client.MyBattle.Ip, client.MyBattle.HostPort, client.UserName,
+                                    client.MyBattle.Users[client.UserName].ScriptPassword); //use MT tag when in spectator slot
                             }
                         }
                     }
@@ -328,7 +329,7 @@ namespace ZeroKLobby.Notifications
             if (Utils.VerifySpringInstalled())
             {
                 if (spring.IsRunning) spring.ExitGame();
-                if (client.MyBattle != null) spring.ConnectGame(client.MyBattle.Ip,client.MyBattle.HostPort,client.UserName); 
+                if (client.MyBattle != null) spring.ConnectGame(client.MyBattle.Ip, client.MyBattle.HostPort, client.UserName, client.MyBattle.Users[client.UserName].ScriptPassword);
                 else spring.RunLocalScriptGame(lastScript); //rejoining a running game from outside the battleroom???
             }
         }

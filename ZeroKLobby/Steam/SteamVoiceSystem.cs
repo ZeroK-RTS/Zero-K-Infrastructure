@@ -42,11 +42,11 @@ namespace ZeroKLobby
         /// If no packet is loaded this long, send "not talking" event
         /// </summary>
         const int stopTalkingMs = 1000;
-        
+
         /// <summary>
         /// Hotkey to use
         /// </summary>
-        const Keys PushToTalkHotkey = Keys.Alt;
+        const Keys PushToTalkHotkey = (Keys)223; // tilde
 
         /// <summary>
         ///     Control byte added to first position of buffers transmitted over network

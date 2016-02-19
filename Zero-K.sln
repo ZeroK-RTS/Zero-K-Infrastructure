@@ -27,8 +27,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyDesigner", "GalaxyDes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanetWarsReplayCreator", "PlanetWarsReplayCreator\PlanetWarsReplayCreator.csproj", "{83FBD383-4A72-417B-B77E-B35FCFFA6A56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoRegistrator", "AutoRegistrator\AutoRegistrator.csproj", "{A243D9F0-B7FA-4DB9-AD98-DDDE85624049}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{90D90F08-B8EA-4777-BF68-C3DE8DC27427}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarker", "Benchmarker\Benchmarker.csproj", "{67501A5B-B6BB-467E-85DA-22D81C40829C}"
@@ -43,6 +41,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkData", "ZkData\ZkData.csproj", "{61D3BE0A-282D-462C-BA26-06670E5ACB3E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkLobbyServer", "ZkLobbyServer\ZkLobbyServer.csproj", "{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autoregistrator", "Autoregistrator\Autoregistrator.csproj", "{01FAEBBC-02E0-42FE-972C-F17045BA3807}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ZkWebLobby", "ZkWebLobby\ZkWebLobby.xproj", "{90DABCAF-15B9-4E98-B8D0-1121BF627D28}"
 EndProject
@@ -128,12 +128,6 @@ Global
 		{83FBD383-4A72-417B-B77E-B35FCFFA6A56}.Release|Any CPU.ActiveCfg = Release|x86
 		{83FBD383-4A72-417B-B77E-B35FCFFA6A56}.Release|x86.ActiveCfg = Release|x86
 		{83FBD383-4A72-417B-B77E-B35FCFFA6A56}.Release|x86.Build.0 = Release|x86
-		{A243D9F0-B7FA-4DB9-AD98-DDDE85624049}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{A243D9F0-B7FA-4DB9-AD98-DDDE85624049}.Debug|x86.ActiveCfg = Debug|x86
-		{A243D9F0-B7FA-4DB9-AD98-DDDE85624049}.Debug|x86.Build.0 = Debug|x86
-		{A243D9F0-B7FA-4DB9-AD98-DDDE85624049}.Release|Any CPU.ActiveCfg = Release|x86
-		{A243D9F0-B7FA-4DB9-AD98-DDDE85624049}.Release|x86.ActiveCfg = Release|x86
-		{A243D9F0-B7FA-4DB9-AD98-DDDE85624049}.Release|x86.Build.0 = Release|x86
 		{90D90F08-B8EA-4777-BF68-C3DE8DC27427}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{90D90F08-B8EA-4777-BF68-C3DE8DC27427}.Debug|x86.ActiveCfg = Debug|x86
 		{90D90F08-B8EA-4777-BF68-C3DE8DC27427}.Debug|x86.Build.0 = Debug|x86
@@ -158,6 +152,12 @@ Global
 		{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}.Release|Any CPU.ActiveCfg = Release|x86
 		{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}.Release|x86.ActiveCfg = Release|x86
 		{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}.Release|x86.Build.0 = Release|x86
+		{01FAEBBC-02E0-42FE-972C-F17045BA3807}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{01FAEBBC-02E0-42FE-972C-F17045BA3807}.Debug|x86.ActiveCfg = Debug|x86
+		{01FAEBBC-02E0-42FE-972C-F17045BA3807}.Debug|x86.Build.0 = Debug|x86
+		{01FAEBBC-02E0-42FE-972C-F17045BA3807}.Release|Any CPU.ActiveCfg = Release|x86
+		{01FAEBBC-02E0-42FE-972C-F17045BA3807}.Release|x86.ActiveCfg = Release|x86
+		{01FAEBBC-02E0-42FE-972C-F17045BA3807}.Release|x86.Build.0 = Release|x86
 		{90DABCAF-15B9-4E98-B8D0-1121BF627D28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{90DABCAF-15B9-4E98-B8D0-1121BF627D28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90DABCAF-15B9-4E98-B8D0-1121BF627D28}.Debug|x86.ActiveCfg = Debug|Any CPU

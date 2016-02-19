@@ -12,6 +12,7 @@ namespace ZkData
 
         public int CommanderSlotID { get; set; }
         public int MorphLevel { get; set; }
+        public Unlock Chassis { get; set; }
 
         public UnlockTypes UnlockType { get; set; }
         public virtual ICollection<CommanderModule> CommanderModules { get; set; }

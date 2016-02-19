@@ -198,7 +198,7 @@ namespace ZeroKWeb
                 {
                     if (
                         db.Missions.Where(x => x.RequiredForMultiplayer)
-                            .All(y => y.MissionScores.Any(z => z.AccountID == acc.AccountID && z.Score != 0)))
+                            .All(y => y.MissionScores.Any(z => z.AccountID == acc.AccountID)))
                     {
                         acc.CanPlayMultiplayer = true;
                         db.SaveChanges();

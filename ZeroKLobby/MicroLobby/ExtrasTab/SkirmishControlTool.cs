@@ -628,7 +628,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                                 listDepend.Add(value2);
                             }
                             
-                            modInfo.Dependencies = listDepend.ToArray();
+                            modInfo.Dependencies = listDepend;
                             break;
                     }
                 }

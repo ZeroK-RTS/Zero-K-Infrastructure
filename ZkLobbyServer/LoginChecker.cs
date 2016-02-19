@@ -104,7 +104,9 @@ namespace ZkLobbyServer
 
                 try {
                     if (!acc.HasVpnException) {
-                        for (int i = 0; i <= 1; i++) {
+                        //for (int i = 0; i <= 1; i++) {
+                        for (int i = 1; i <= 1; i++)
+                        {
                             var whois = new Whois();
                             Dictionary<string, string> data = whois.QueryByIp(ip, i == 1);
 
@@ -122,22 +124,25 @@ namespace ZkLobbyServer
                             Trace.TraceInformation(String.Format("VPN check for USER {0}\nnetname: {1}\norgname: {2}\ndescr: {3}\nabuse-mailbox: {4}",
                                 acc.Name, data["netname"], data["org-name"], data["descr"], data["abuse-mailbox"]), false);
 
-                            bool blockedHost = blockedHosts.Any(x => data["abuse-mailbox"].Contains(x)) ||
+                            bool shouldBlock = blockedHosts.Any(x => data["abuse-mailbox"].Contains(x)) ||
                                                (blockedHosts.Any(x => data["notify"].Contains(x)));
 
                             foreach (string company in blockedCompanies) {
                                 if (data["netname"].ToLower().Contains(company) || data["org-name"].ToLower().Contains(company) ||
                                     data["descr"].ToLower().Contains(company) || data["role"].ToLower().Contains(company) ||
                                     data["remarks"].ToLower().Contains(company)) {
-                                    blockedHost = true;
+                                    shouldBlock = true;
                                     break;
                                 }
                             }
 
-                            string hostname = Dns.GetHostEntry(ip).HostName;
-                            if (blockedHosts.Any(hostname.Contains)) blockedHost = true;
+                            if (shouldBlock) return BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, userID);
 
-                            if (blockedHost) return BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, userID);
+                            // this can throw a SocketException, so make sure we block login already if we ought to
+                            string hostname = Dns.GetHostEntry(ip).HostName;    
+                            if (blockedHosts.Any(hostname.Contains)) shouldBlock = true;
+
+                            if (shouldBlock) return BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, userID);
                         }
                     }
                 } catch (SocketException sockEx) {

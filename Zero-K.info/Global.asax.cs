@@ -58,6 +58,7 @@ namespace ZeroKWeb
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.IgnoreRoute("Resources/{*pathInfo}");
+            routes.IgnoreRoute("autoregistrator/maps/{*pathInfo}");
             routes.IgnoreRoute("img/{*pathInfo}");
             routes.IgnoreRoute("robots.txt");
 

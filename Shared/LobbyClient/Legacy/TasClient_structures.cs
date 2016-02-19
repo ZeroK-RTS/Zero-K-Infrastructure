@@ -30,38 +30,8 @@ namespace LobbyClient.Legacy
 		}
 	} ;
 
-    [Obsolete]
-	public class BattleInfoEventArgs: EventArgs
-	{
-		public int BattleID { get; private set; }
-		public bool IsLocked { get; private set; }
-		public int MapHash { get; private set; }
-		public string MapName { get; private set; }
-		public int SpectatorCount { get; private set; }
-
-		public BattleInfoEventArgs(int battleID, int spectatorCount, string mapName, int mapHash, bool isLocked)
-		{
-			BattleID = battleID;
-			SpectatorCount = spectatorCount;
-			MapName = mapName;
-			MapHash = mapHash;
-			IsLocked = isLocked;
-		}
-	}
-    [Obsolete]
-	public class BattleUserEventArgs: EventArgs
-	{
-		public int BattleID { get; private set; }
-		public string ScriptPassword { get; private set; }
-		public string UserName { get; private set; }
-
-		public BattleUserEventArgs(string userName, int battleID, string scriptPassword = null)
-		{
-			UserName = userName;
-			BattleID = battleID;
-			ScriptPassword = scriptPassword;
-		}
-	}
+   
+  
     [Obsolete]
     public class KickedFromServerEventArgs : EventArgs
     {
@@ -76,43 +46,7 @@ namespace LobbyClient.Legacy
 		}
     }
 
-    [Obsolete]
-    public class UserLobbyVersionEventArgs: EventArgs {
-        public string Name;
-        public string LobbyVersion;
-        public UserLobbyVersionEventArgs() {}
-
-        public UserLobbyVersionEventArgs(string name, string lobbyVersion)
-        {
-            Name = name;
-            LobbyVersion = lobbyVersion;
-        }
-    }
-    [Obsolete]
-    public class UserIPEventArgs: EventArgs {
-        public string Name;
-        public string IP;
-        public UserIPEventArgs() {}
-
-        public UserIPEventArgs(string name, string ip)
-        {
-            Name = name;
-            IP = ip;
-        }
-    }
-    [Obsolete]
-    public class UserIDEventArgs : EventArgs
-    {
-        public string Name;
-        public long ID;
-        public UserIDEventArgs() { }
-
-        public UserIDEventArgs(string name, long id)
-        {
-            Name = name;
-            ID = id;
-        }
-    }
+   
 
 
     [Obsolete]

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -15,8 +16,9 @@ namespace ZkData
     {
         string springVersion;
         readonly string writableFolderOverride;
+        private List<string> dataDirectories;
         public string Cache { get; private set; }
-        public List<string> DataDirectories { get; private set; }
+        public ReadOnlyCollection<string> DataDirectories => dataDirectories.AsReadOnly();
         public string DedicatedServer { get; private set; }
         public string Executable { get; private set; }
         public string SpringVersion { get { return springVersion; } }
@@ -24,10 +26,14 @@ namespace ZkData
         public string WritableDirectory { get; private set; }
         public bool SafeMode { get; set; }
         public event EventHandler SpringVersionChanged;
+        public string DataDirectoriesJoined => string.Join(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";", DataDirectories.Distinct());
 
-        public SpringPaths(string springPath, string writableFolderOverride = null)
+        private bool useMultipleDataFolders;
+
+        public SpringPaths(string springPath, string writableFolderOverride = null, bool useMultipleDataFolders = true)
         {
             this.writableFolderOverride = writableFolderOverride;
+            this.useMultipleDataFolders = useMultipleDataFolders;
             SetEnginePath(springPath);
         }
 
@@ -117,7 +123,8 @@ namespace ZkData
         public void SetEnginePath(string springPath) {
             if (springPath == null) springPath = "";
 
-            DataDirectories = new List<string> { GetMySpringDocPath(), springPath };
+
+            dataDirectories = useMultipleDataFolders ? new List<string> { GetMySpringDocPath(), springPath } : new List<string>() {springPath};
             if (!string.IsNullOrEmpty(writableFolderOverride))
             {
                 if (!Directory.Exists(writableFolderOverride))
@@ -129,10 +136,10 @@ namespace ZkData
                     catch {}
                     ;
                 }
-                DataDirectories.Insert(0, writableFolderOverride);
+                dataDirectories.Insert(0, writableFolderOverride);
             }
 
-            DataDirectories = DataDirectories.Where(Directory.Exists).Distinct().ToList();
+            dataDirectories = DataDirectories.Where(Directory.Exists).Distinct().ToList();
 
             WritableDirectory = DataDirectories.First(IsDirectoryWritable);
             UnitSyncDirectory = springPath;
@@ -145,15 +152,10 @@ namespace ZkData
             if (springPath != "") springVersion = GetSpringVersion(Executable);
             else springVersion = null;
 
-            if (!string.IsNullOrEmpty(springPath)) DataDirectories.Add(Path.GetDirectoryName(springPath));
-            var ddenv = string.Join(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";", DataDirectories.Distinct());
-            Environment.SetEnvironmentVariable("SPRING_DATADIR", ddenv, EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("SPRING_DATADIR", DataDirectoriesJoined, EnvironmentVariableTarget.Process);
             Environment.SetEnvironmentVariable("SPRING_WRITEDIR", WritableDirectory, EnvironmentVariableTarget.Process);
             Environment.SetEnvironmentVariable("SPRING_ISOLATED", WritableDirectory, EnvironmentVariableTarget.Process);
             Environment.SetEnvironmentVariable("SPRING_NOCOLOR", "1", EnvironmentVariableTarget.Process);
-            System.Diagnostics.Trace.TraceInformation("SpringPaths: SPRING_DATADIR: {0}", ddenv);
-            System.Diagnostics.Trace.TraceInformation("SpringPaths: SPRING_WRITEDIR: {0}", WritableDirectory);
-            System.Diagnostics.Trace.TraceInformation("SpringPaths: SPRING_ISOLATED: {0}", WritableDirectory);
             
             if (ov != springVersion  && SpringVersionChanged != null) SpringVersionChanged(this, EventArgs.Empty);
         }

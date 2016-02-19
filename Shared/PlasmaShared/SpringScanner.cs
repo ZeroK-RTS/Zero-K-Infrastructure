@@ -139,7 +139,7 @@ namespace ZkData
         public event EventHandler<ProgressEventArgs> WorkProgressChanged = delegate { };
         public event EventHandler<ProgressEventArgs> WorkStarted = delegate { };
         public event EventHandler WorkStopped = delegate { };
-        public event EventHandler<CancelEventArgs<IResourceInfo>> UploadUnitsyncData = delegate { }; // raised before attempting to upload unitsync data
+        public event EventHandler<CancelEventArgs<ResourceInfo>> UploadUnitsyncData = delegate { }; // raised before attempting to upload unitsync data
         public event EventHandler<CancelEventArgs<CacheItem>> RetryResourceCheck = delegate { }; // raised before attempting to reconnect to server to check for resource info
 
         public SpringScanner(SpringPaths springPaths)
@@ -209,13 +209,7 @@ namespace ZkData
             else
             {
                 VerifyUnitSync();
-
-                if (unitSync != null)
-                {
-                    if (unitSync.GetMapNames().Any(x => x == name)) return true;
-                    if (unitSync.GetModNames().Any(x => x == name)) return true;
-                }
-                return false;
+                return unitSync?.GetArchiveEntryByInternalName(name) != null;
             }
         }
 
@@ -374,21 +368,14 @@ namespace ZkData
             return string.Format("{0}/{1}", folder, Path.GetFileName(file));
         }
 
-        IResourceInfo GetUnitSyncData(string filename)
+        ResourceInfo GetUnitSyncData(string filename)
         {
-            IResourceInfo ret = null;
+            ResourceInfo ret = null;
             try
             {
                 unitSyncReInitCounter++;
                 Trace.TraceInformation("GetUnitSyncData");
-
-                var map = unitSync.GetMapFromArchive(filename);
-                if (map != null)
-                {
-                    ret = map;
-                    if (map.Minimap == null || map.Metalmap == null || map.Heightmap == null) throw new Exception("Map bitmap is null");
-                }
-                else ret = unitSync.GetModFromArchive(filename);
+                ret = unitSync.GetResourceFromFileName(filename);
             }
             catch (Exception ex)
             {
@@ -460,7 +447,7 @@ namespace ZkData
             }
         }
 
-        void InitialScan()
+        public void InitialScan()
         {
             CacheFile loadedCache = null;
             if (File.Exists(cachePath))
@@ -597,11 +584,11 @@ namespace ZkData
             if (info != null)
             {
                 workItem.CacheItem.InternalName = info.Name;
-                workItem.CacheItem.ResourceType = info is Map ? ResourceType.Map : ResourceType.Mod;
+                workItem.CacheItem.ResourceType = info.ResourceType;
 
                 CacheItemAdd(workItem.CacheItem);
 
-                var args = new CancelEventArgs<IResourceInfo>(info);
+                var args = new CancelEventArgs<ResourceInfo>(info);
                 UploadUnitsyncData.Invoke(this,args);
                 if (args.Cancel) return;
 
@@ -633,13 +620,9 @@ namespace ZkData
                     Task.Factory.StartNew(() => {
                         ReturnValue e;
                         try {
-                            var dependencies = new List<string>();
-                            if (mod!= null && mod.Dependencies!=null) dependencies.AddRange(mod.Dependencies);
-                            if (map != null && map.Dependencies!=null) dependencies.AddRange(map.Dependencies);
-
                              e = service.RegisterResource(PlasmaServiceVersion, springPaths.SpringVersion, workItem.CacheItem.Md5.ToString(),
-                                workItem.CacheItem.Length, info is Map ? ResourceType.Map : ResourceType.Mod, workItem.CacheItem.FileName, info.Name,
-                                serializedData, dependencies, minimap, metalMap, heightMap,
+                                workItem.CacheItem.Length, info.ResourceType, workItem.CacheItem.FileName, info.Name,
+                                serializedData, info.Dependencies, minimap, metalMap, heightMap,
                                 ms.ToArray());
                         } catch (Exception ex) {
                             Trace.TraceError("Error uploading data to server: {0}", ex);
@@ -663,7 +646,7 @@ namespace ZkData
                             MetaData.SaveMetadata(mapName, mapArgs.SerializedData);
                             MapRegistered(this, mapArgs);
                         }
-                        else
+                        else if (userState != null)
                         {
                             var kvp = (KeyValuePair<Mod, byte[]>)userState;
                             var modInfo = kvp.Key;
@@ -784,11 +767,14 @@ namespace ZkData
             }
             else
             {
-                // changed, created, renamed
-                // remove the item if present in the cache, then process the item
-                if (cache.ShortPathIndex.TryGetValue(shortPath, out item)) CacheItemRemove(item);
-                unitSyncReInitCounter = UnitSyncReInitFrequency + 1; // force unitsync re-init
-                AddWork(folder, e.Name, WorkItem.OperationType.Hash, DateTime.Now, true);
+                if (Utils.CanWrite(e.FullPath))
+                {
+                    // changed, created, renamed
+                    // remove the item if present in the cache, then process the item
+                    if (cache.ShortPathIndex.TryGetValue(shortPath, out item)) CacheItemRemove(item);
+                    unitSyncReInitCounter = UnitSyncReInitFrequency + 1; // force unitsync re-init
+                    AddWork(folder, e.Name, WorkItem.OperationType.Hash, DateTime.Now, true);
+                }
             }
         }
 

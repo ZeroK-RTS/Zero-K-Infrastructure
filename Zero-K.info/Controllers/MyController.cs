@@ -17,6 +17,32 @@ namespace ZeroKWeb.Controllers
 		//
 		// GET: /My/
 
+        public static bool IsUnlockValidForSlot(Unlock unlock, CommanderSlot slot)
+        {
+            if (slot.UnlockType == UnlockTypes.WeaponBoth)
+            {
+                if (unlock.UnlockType != UnlockTypes.Weapon && unlock.UnlockType != UnlockTypes.WeaponManualFire)
+                    return false;
+            }
+            else if (unlock.UnlockType != slot.UnlockType)
+                return false;
+
+            if (unlock.MorphLevel > slot.MorphLevel) return false;
+
+            return true;
+        }
+
+        public static bool IsPrerequisiteUnlockPresent(Commander comm, Unlock unlock)
+        {
+            if (!string.IsNullOrEmpty(unlock.RequiredInstalledUnlockIDs))
+            {
+                var requiredUnlockIDs = unlock.RequiredInstalledUnlockIDs.Split(',').Select(int.Parse);
+                if (!comm.CommanderModules.Any(x => requiredUnlockIDs.Contains(x.ModuleUnlockID)))
+                    return false;
+            }
+            return true;
+        }
+
         /// <summary>
         /// Add, modify or delete a <see cref="Commander"/>
         /// </summary>
@@ -87,12 +113,14 @@ namespace ZeroKWeb.Controllers
 							Unlock unlock = db.Unlocks.Single(x => x.UnlockID == unlockId);
 
 							if (!unlocks.Any(x => x.UnlockID == unlock.UnlockID)) return Content("WTF get lost!");
-							if (slot.MorphLevel < unlock.MorphLevel || slot.UnlockType != unlock.UnlockType) return Content(string.Format("WTF cannot use {0} in slot {1}", unlock.Name, slot.CommanderSlotID));
+							if (slot.MorphLevel < unlock.MorphLevel || !IsUnlockValidForSlot(unlock, slot)) return Content(string.Format("WTF cannot use {0} in slot {1}", unlock.Name, slot.CommanderSlotID));
 							if (!string.IsNullOrEmpty(unlock.LimitForChassis))
 							{
 								var validChassis = unlock.LimitForChassis.Split(',');
 								if (!validChassis.Contains(comm.Unlock.Code)) return Content(string.Format("{0} cannot be used in commander {1}", unlock.Name, comm.Unlock.Name));
 							}
+                            if (!IsPrerequisiteUnlockPresent(comm, unlock))
+                                return Content(string.Format("{0} missing prerequisite module", unlock.Name));
 
 							var comSlot = comm.CommanderModules.SingleOrDefault(x => x.SlotID == slotId);
 							if (comSlot == null)
@@ -165,6 +193,9 @@ namespace ZeroKWeb.Controllers
                         comm.CommanderDecorations.Remove(comm.CommanderDecorations.SingleOrDefault(x => x.SlotID == decSlotId));
                     }
                 }
+
+                // cleanup invalid modules?
+
 
 				db.SubmitChanges();
 				foreach (var unlock in comm.CommanderModules.GroupBy(x => x.Unlock))

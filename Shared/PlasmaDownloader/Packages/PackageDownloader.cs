@@ -8,7 +8,6 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Cache;
-using System.Net.Http;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
@@ -55,7 +54,6 @@ namespace PlasmaDownloader.Packages
             this.plasmaDownloader = plasmaDownloader;
             masterUrl = this.plasmaDownloader.Config.PackageMasterUrl;
             LoadRepositories();
-            LoadSelectedPackages();
             if (plasmaDownloader.Config.RepoMasterRefresh > 0)
             {
                 refreshTimer = new Timer(this.plasmaDownloader.Config.RepoMasterRefresh * 1000);
@@ -79,7 +77,6 @@ namespace PlasmaDownloader.Packages
         public void DeselectPackage(string name)
         {
             lock (selectedPackages) selectedPackages.Remove(name);
-            SaveSelectedPackages();
             SelectedPackagesChanged(this, EventArgs.Empty);
         }
 
@@ -149,6 +146,15 @@ namespace PlasmaDownloader.Packages
 
             return null;
         }
+
+
+        /*public bool HasSdpFile(Hash hash) {
+            // note this only checks writable folder and not all data
+            var folder = Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory, "packages");
+            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+            var target = Utils.MakePath(folder, hash + ".sdp");
+            return File.Exists(target);
+        }*/
 
         public Task LoadMasterAndVersions(bool downloadSelected)
         {
@@ -240,13 +246,13 @@ namespace PlasmaDownloader.Packages
             }
             if (isNew)
             {
-                SaveSelectedPackages();
                 SelectedPackagesChanged(this, EventArgs.Empty);
             }
         }
 
-        PackageDownload CreateDownload(Repository repo, Version versionEntry)
-        {
+        PackageDownload CreateDownload(Repository repo, Version versionEntry) {
+            //if (HasSdpFile(versionEntry.Hash)) return null; // dont download if present
+
             var down = new PackageDownload(repo.BaseUrl, versionEntry.InternalName, versionEntry.Hash, plasmaDownloader.SpringPaths);
 
             if (versionEntry.Dependencies != null)
@@ -286,26 +292,6 @@ namespace PlasmaDownloader.Packages
             }
         }
 
-        void LoadSelectedPackages()
-        {
-            try
-            {
-                var path = Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory, "packages", "selected.list");
-                if (File.Exists(path))
-                {
-                    var text = File.ReadAllText(path);
-                    var newPackages = new List<string>();
-                    foreach (var s in text.Split('\n')) if (!string.IsNullOrEmpty(s)) newPackages.Add(s);
-                    lock (selectedPackages) selectedPackages = newPackages;
-                }
-                else
-                    Trace.TraceWarning("PackageDownloader : File don't exist : {0}", path);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceWarning("Unable to load selected packages list: {0}", ex);
-            }
-        }
 
         bool ParseMaster(Stream stream)
         {
@@ -351,28 +337,6 @@ namespace PlasmaDownloader.Packages
             }
         }
 
-        void SaveSelectedPackages()
-        {
-            try
-            {
-                var path = Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory, "packages", "selected.list");
-                var sb = new StringBuilder();
-
-                lock (selectedPackages)
-                {
-                    foreach (var entry in selectedPackages)
-                    {
-                        sb.Append(entry);
-                        sb.Append('\n');
-                    }
-                }
-                File.WriteAllText(path, sb.ToString());
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceWarning("Unable to load selected packages list: {0}", ex);
-            }
-        }
 
         void RefreshTimerElapsed(object sender, ElapsedEventArgs e)
         {
