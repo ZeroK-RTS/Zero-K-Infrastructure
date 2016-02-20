@@ -61,8 +61,6 @@ namespace PlasmaDownloader.Packages
                 refreshTimer.Elapsed += RefreshTimerElapsed;
                 refreshTimer.Start();
             }
-            LoadMasterAndVersions(true);
-
         }
 
         public void Dispose()
