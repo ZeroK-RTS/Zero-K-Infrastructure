@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using PlasmaDownloader;
 using ZeroKWeb;
@@ -49,7 +50,17 @@ namespace AutoRegistrator
                 new WebClient().DownloadFile(GlobalConst.SelfUpdaterBaseUrl + "/" + "Zero-K.exe", Path.Combine(targetFolder, "Zero-K.exe"));
             }
 
+            using (var scanner = new SpringScanner(paths) {UseUnitSync = false})
+            {
+                scanner.InitialScan();
+                scanner.Start();
 
+                while (scanner.GetWorkCost() > 0)
+                {
+                    Trace.TraceInformation("Waiting for scanner to complete");
+                    Thread.Sleep(5000);
+                }
+            }
         }
 
 
