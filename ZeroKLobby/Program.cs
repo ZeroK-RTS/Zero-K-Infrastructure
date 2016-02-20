@@ -50,6 +50,8 @@ namespace ZeroKLobby
         public static SpringieServer SpringieServer = new SpringieServer();
         public static string[] StartupArgs;
         public static string StartupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
+        public static bool IsSteamFolder { get; private set; }
+
         public static TasClient TasClient { get; private set; }
         public static ToolTipHandler ToolTip;
         public static VoteBar VoteBar { get; private set; }
@@ -113,13 +115,13 @@ namespace ZeroKLobby
                             "Program is unable to run", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-
-
+                
                 Directory.SetCurrentDirectory(StartupPath);
+
+                IsSteamFolder = File.Exists(Path.Combine(StartupPath, "steamfolder.txt"));
 
                 SelfUpdater = new SelfUpdater("Zero-K");
 
-                // if (Process.GetProcesses().Any(x => x.ProcessName.StartsWith("spring_"))) return; // dont start if started from installer
                 StartupArgs = args;
 
 
@@ -211,8 +213,7 @@ namespace ZeroKLobby
                 };
                 
 
-                SpringPaths.SetEnginePath(Utils.MakePath(SpringPaths.WritableDirectory, "engine", ZkData.GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion));
-                
+                Downloader.GetAndSwitchEngine(ZkData.GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
 
                 SaveConfig();
 
@@ -371,20 +372,7 @@ namespace ZeroKLobby
                 ConnectBar.MaximumSize = connectbarSize;
                 //End battlebar size hax
 
-                if (!Debugger.IsAttached && !Conf.DisableAutoUpdate) Program.SelfUpdater.StartChecking();
-
-                //if (Conf.IsFirstRun) Utils.OpenWeb(GlobalConst.BaseSiteUrl + "/Wiki/LobbyStart", false);
-
-                // download primary engine & game
-                MainWindow.Paint += GetSpringZK;
-                Downloader.PackageDownloader.MasterManifestDownloaded += GetSpringZK;
-
-
-                // Format and display the TimeSpan value.
-                //stopWatch.Stop(); TimeSpan ts = stopWatch.Elapsed; string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
-                //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
-
-                
+                if (!Debugger.IsAttached && !Conf.DisableAutoUpdate && !IsSteamFolder) Program.SelfUpdater.StartChecking();
 
 
                 Application.Run(MainWindow);
@@ -406,27 +394,6 @@ namespace ZeroKLobby
             }
         }
 
-        private static int getSpringZKCount = 0;
-        private static void GetSpringZK(object sender, EventArgs e)
-        {
-            if (sender is PlasmaDownloader.Packages.PackageDownloader)
-                Downloader.PackageDownloader.MasterManifestDownloaded -= GetSpringZK;
-            if (sender is MainWindow)
-                MainWindow.Paint -= GetSpringZK;
-
-            getSpringZKCount++;
-            if (getSpringZKCount < 2)
-                return;
-
-            // download primary game after rapid list have been downloaded and MainWindow is visible
-            if (!Utils.VerifySpringInstalled(false)) Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
-            var defaultTag = KnownGames.GetDefaultGame().RapidTag;
-            if (!Downloader.PackageDownloader.SelectedPackages.Contains(defaultTag))
-            {
-                Downloader.PackageDownloader.SelectPackage(defaultTag);
-                if (Downloader.PackageDownloader.GetByTag(defaultTag) != null) Downloader.GetResource(PlasmaDownloader.DownloadType.MOD, defaultTag);
-            }
-        }
 
         public static PwBar PwBar { get; private set; }
 
