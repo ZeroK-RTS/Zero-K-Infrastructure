@@ -246,7 +246,7 @@ namespace ZkData
 
         public void SetPasswordHashed(string passwordHash)
         {
-            PasswordBcrypt = BCrypt.Net.BCrypt.HashPassword(passwordHash, 7);
+            PasswordBcrypt = BCrypt.Net.BCrypt.HashPassword(passwordHash, 4);
         }
 
         public void SetPasswordPlain(string passwordPlain)

@@ -85,6 +85,8 @@ namespace ZeroKWeb
             Scanner.Start();
 
             SynchronizeMapsFromSpringFiles();
+
+            while (Scanner.GetWorkCost() > 0) Thread.Sleep(1000);
         }
 
         private void SynchronizeMapsFromSpringFiles() {

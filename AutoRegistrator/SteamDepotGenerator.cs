@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using PlasmaDownloader;
 using ZeroKWeb;
@@ -42,11 +43,61 @@ namespace AutoRegistrator
 
             CopyResources(siteBase, paths, GetResourceList(downloader.PackageDownloader.GetByTag("zk:stable").InternalName, downloader.PackageDownloader.GetByTag("zk:test").InternalName), downloader);
 
+            CopyLobbyProgram();
+            CopyExtraImages();
+            ScanArchives(paths);
+        }
+
+        private void CopyLobbyProgram() {
             var zklSource = Path.Combine(siteBase, "lobby", "Zero-K.exe");
             if (File.Exists(zklSource)) File.Copy(zklSource, Path.Combine(targetFolder, "Zero-K.exe"), true);
-            else
+            else new WebClient().DownloadFile(GlobalConst.SelfUpdaterBaseUrl + "/" + "Zero-K.exe", Path.Combine(targetFolder, "Zero-K.exe"));
+        }
+
+        private void CopyExtraImages() {
+            var db = new ZkDataContext();
+            var configs = Path.Combine(targetFolder, "LuaUI", "Configs");
+            Utils.CheckPath(configs);
+
+            var tpath = Path.Combine(configs, "Avatars");
+            Utils.CheckPath(tpath);
+            Trace.TraceInformation("Copying avatars");
+            var spath = Path.Combine(siteBase, "img", "Avatars");
+            foreach (var file in Directory.GetFiles(spath)) File.Copy(file, Path.Combine(tpath, Path.GetFileName(file)), true);
+
+            Trace.TraceInformation("Copying clan icons");
+            tpath = Path.Combine(configs, "Clans");
+            Utils.CheckPath(tpath);
+            spath = Path.Combine(siteBase, "img", "clans");
+            foreach (var clan in db.Clans.Where(x => !x.IsDeleted))
             {
-                new WebClient().DownloadFile(GlobalConst.SelfUpdaterBaseUrl + "/" + "Zero-K.exe", Path.Combine(targetFolder, "Zero-K.exe"));
+                var fileName = $"{clan.Shortcut}.png";
+                File.Copy(Path.Combine(spath, fileName), Path.Combine(tpath, fileName), true);
+            }
+
+            Trace.TraceInformation("Copying faction icons");
+            tpath = Path.Combine(configs, "Factions");
+            Utils.CheckPath(tpath);
+            spath = Path.Combine(siteBase, "img", "factions");
+
+            foreach (var fac in db.Factions.Where(x => !x.IsDeleted))
+            {
+                var fileName = $"{fac.Shortcut}.png";
+                File.Copy(Path.Combine(spath, fileName), Path.Combine(tpath, fileName), true);
+            }
+        }
+
+        private static void ScanArchives(SpringPaths paths) {
+            using (var scanner = new SpringScanner(paths) { UseUnitSync = false })
+            {
+                scanner.InitialScan();
+                scanner.Start();
+
+                while (scanner.GetWorkCost() > 0)
+                {
+                    Trace.TraceInformation("Waiting for scanner to complete");
+                    Thread.Sleep(5000);
+                }
             }
         }
 
@@ -63,16 +114,28 @@ namespace AutoRegistrator
                 Trace.TraceInformation("Copying {0}", res.InternalName);
                 if (res.TypeID == ResourceType.Map)
                 {
-                    var fileName = res.ResourceContentFiles.OrderByDescending(x => x.LinkCount).First().FileName;
+                    var fileName = res.ResourceContentFiles.ToList().Where(x=>File.Exists(Path.Combine(sourceMaps, x.FileName))).OrderByDescending(x => x.LinkCount).FirstOrDefault()?.FileName; // get registered file names
+
+                    fileName = fileName?? res.ResourceContentFiles
+                        .SelectMany(x => x.Links.Split('\n'))
+                        .Where(x => x != null).Select(x=> x.Substring(x.LastIndexOf('/')+1, x.Length - x.LastIndexOf('/') - 1)).FirstOrDefault(x => !string.IsNullOrEmpty(x) && File.Exists(Path.Combine(sourceMaps,x))); // get filenames from url
+
+                    if (fileName == null) Trace.TraceError("Cannot find map file: {0}", res.InternalName);
+
+
                     if (!File.Exists(Path.Combine(destMaps, fileName))) File.Copy(Path.Combine(sourceMaps, fileName), Path.Combine(destMaps, fileName));
                 } else if (res.MissionID != null) File.WriteAllBytes(Path.Combine(paths.WritableDirectory, "games", res.Mission.SanitizedFileName), res.Mission.Mutator);
                 else downloader.GetResource(DownloadType.UNKNOWN, res.InternalName)?.WaitHandle.WaitOne();
 
                 foreach (var metaName in new[] { res.MinimapName, res.HeightmapName, res.MetalmapName, res.MetadataName, res.ThumbnailName })
                 {
+                    Trace.TraceInformation("Copying resource: {0}", metaName);
                     var src = Path.Combine(sourceMetadata, metaName);
                     var dst = Path.Combine(targetMetadata, metaName);
-                    if (!File.Exists(dst)) File.Copy(src, dst);
+                    if (!File.Exists(dst) && File.Exists(src))
+                    {
+                        File.Copy(src, dst);
+                    }
                 }
             }
         }

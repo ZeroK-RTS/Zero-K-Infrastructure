@@ -36,24 +36,6 @@ namespace ZeroKLobby
         {
             this.path = path;
             Configure(false, DefaultLevel);
-            if (!Program.Conf.ResetUiKeysHack4)
-            {
-                try
-                {
-                    foreach (var f in FileInfos.Where(x => x.RelativePath == "uikeys.txt" || x.RelativePath == "selectkeys.txt"))
-                    {
-                        var target = Path.Combine(path, f.RelativePath);
-                        var data = ReadResourceString(string.Format("{0}{1}", f.Resource, DefaultLevel));
-                        if (data == null) data = ReadResourceString(f.Resource);
-                        File.WriteAllText(target, data);
-                    }
-                }
-                catch (Exception ex) {
-                    Trace.TraceError(string.Format("Error replacing config files: {0}", ex));
-                }
-                Program.Conf.ResetUiKeysHack4 = true;
-                Program.SaveConfig();
-            }
         }
 
         public void Reset() {

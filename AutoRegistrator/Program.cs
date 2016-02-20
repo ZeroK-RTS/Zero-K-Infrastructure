@@ -18,8 +18,8 @@ namespace Autoregistrator
             var sitePath = GlobalConst.SiteDiskPath;
             if (args.Length > 0) sitePath = args[0];
 
-            var ar = new ZeroKWeb.AutoRegistrator(sitePath);
-            ar.Main();
+            //var ar = new ZeroKWeb.AutoRegistrator(sitePath);
+            //ar.Main();
 
             var spg = new SteamDepotGenerator(sitePath, Path.Combine(sitePath,"..","steamworks","tools","ContentBuilder","content"));
             spg.Generate();
