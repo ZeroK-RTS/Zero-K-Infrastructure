@@ -26,7 +26,6 @@ namespace ZeroKLobby
     {
         static readonly object configLock = new object();
         static NewVersionBar NewVersionBar;
-        static Mutex mutex;
         public static AutoJoinManager AutoJoinManager;
         public static BattleBar BattleBar { get; private set; }
         public static BattleIconManager BattleIconManager { get; private set; }
@@ -50,7 +49,7 @@ namespace ZeroKLobby
         public static SpringieServer SpringieServer = new SpringieServer();
         public static string[] StartupArgs;
         public static string StartupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
-        public static bool IsSteamFolder { get; private set; }
+        public static bool IsSteamFolder { get;private set; }
 
         public static TasClient TasClient { get; private set; }
         public static ToolTipHandler ToolTip;
@@ -200,7 +199,7 @@ namespace ZeroKLobby
                                     var fi = ArchiveCache.GetCacheFile(unitSync.UnitsyncWritableFolder);
                                     if (fi != null)
                                     {
-                                        File.Copy(fi.FullName, Path.Combine(SpringPaths.WritableDirectory, fi.Name), true);
+                                        File.Copy(fi.FullName, Path.Combine(SpringPaths.WritableDirectory,"cache", fi.Name), true);
                                     }
                                 }
                             }
@@ -233,33 +232,16 @@ namespace ZeroKLobby
                     Trace.TraceError(ex.ToString());
                 }
 
-                try
-                {
-                    if (!Debugger.IsAttached)
-                    {
-                        var wp = "";
-                        foreach (var c in SpringPaths.WritableDirectory.Where(x => (x >= 'a' && x <= 'z') || (x >= 'A' && x <= 'Z'))) wp += c;
-                        mutex = new Mutex(false, "ZeroKLobby" + wp);
-                        if (!mutex.WaitOne(10000, false))
-                        {
-                            MessageBox.Show(
-                                "Another copy of Zero-K lobby is still running" +
-                                "\nMake sure the other lobby is closed (check task manager) before starting new one",
-                                "There can be only one lobby running",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Stop);
-                            return;
-                        }
-                    }
-                }
-                catch (AbandonedMutexException) { }
 
                 if (Conf.IsFirstRun)
                 {
-                    DialogResult result = MessageBox.Show("Create a desktop icon for Zero-K?", "Zero-K", MessageBoxButtons.YesNo);
-                    if (result == DialogResult.Yes)
+                    if (!IsSteamFolder)
                     {
-                        Utils.CreateDesktopShortcut();
+                        DialogResult result = MessageBox.Show("Create a desktop icon for Zero-K?", "Zero-K", MessageBoxButtons.YesNo);
+                        if (result == DialogResult.Yes)
+                        {
+                            Utils.CreateDesktopShortcut();
+                        }
                     }
                     if (Environment.OSVersion.Platform != PlatformID.Unix)
                         Utils.RegisterProtocol();
@@ -414,11 +396,7 @@ namespace ZeroKLobby
             if (Conf.DiscardPassword == true) { Conf.LobbyPlayerPassword = ""; }
 
             SaveConfig();
-            try
-            {
-                if (!Debugger.IsAttached) mutex.ReleaseMutex();
-            }
-            catch { }
+
             try
             {
                 if (ToolTip != null) ToolTip.Dispose();
