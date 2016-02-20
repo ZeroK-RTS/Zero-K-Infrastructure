@@ -10,8 +10,7 @@ namespace ZeroKLobby
 {
     static class CefWrapper
     {
-        [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "initialize")]
-        static extern void initialize_([MarshalAs(UnmanagedType.LPStr)] string renderProcessExecutable, int argc, IntPtr argv);
+        // Initialize CEF, taking the path for the render subprocess executable and the program arguments.
         public static void Initialize(string renderProcessExecutable, string[] argv)
         {
             List<string> args = argv.ToList();
@@ -22,53 +21,69 @@ namespace ZeroKLobby
             initialize_(renderProcessExecutable, args.Count(), ptr);
             Marshal.FreeHGlobal(ptr);
         }
+        [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "initialize")]
+        static extern void initialize_([MarshalAs(UnmanagedType.LPStr)] string renderProcessExecutable, int argc, IntPtr argv);
 
-        [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "deinitialize")]
-        static extern void deinitialize_();
+        // Deinitialize CEF.
         public static void Deinitialize()
         {
             deinitialize_();
             apiFunctions.Clear();
+            schemaHandler = null;
+            if (schemaHandlerData != IntPtr.Zero)
+                Marshal.FreeHGlobal(schemaHandlerData);
         }
+        [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "deinitialize")]
+        static extern void deinitialize_();
 
+        // Start CEF message loop. This function will block until the window is closed.
         [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "startMessageLoop")]
         public static extern void StartMessageLoop();
 
-        delegate IntPtr ApiFunc(IntPtr jsonArgs);
-        [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "registerApiFunction")]
-        static extern void registerApiFunction_([MarshalAs(UnmanagedType.LPStr)] string name, ApiFunc handler);
-        static void registerApiFunctionJson(string name, Func<string, string> handler)
+        // Execute arbitrary Javascript code in the main frame. Can be called from any thread.
+        [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "executeJavascript")]
+        public static extern void ExecuteJavascript([MarshalAs(UnmanagedType.LPStr)] string code);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        delegate int AppSchemaHandler_([MarshalAs(UnmanagedType.LPStr)] string url, IntPtr mimeType, IntPtr data);
+        public delegate byte[] AppSchemaHandler(string url, out string mimeType);
+        [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "registerAppSchemaHandler")]
+        static extern void registerAppSchemaHandler_(AppSchemaHandler_ handler_);
+        public static void RegisterAppSchemaHandler(AppSchemaHandler handler)
         {
-            ApiFunc func = (strPtr) =>
+            AppSchemaHandler_ handler_ = ((url, mimeTypePtr, dataPtr) =>
             {
-                try
+                string mimeType;
+                byte[] data = handler(url, out mimeType);
+                if (schemaHandlerData != IntPtr.Zero)
+                    Marshal.FreeHGlobal(schemaHandlerData);
+                if (data != null)
                 {
-                    return Marshal.StringToHGlobalAnsi(handler(Marshal.PtrToStringAnsi(strPtr)));
+                    schemaHandlerData = Marshal.AllocHGlobal(data.Length);
+                    Marshal.Copy(data, 0, schemaHandlerData, data.Length);
+                    Marshal.WriteIntPtr(dataPtr, schemaHandlerData);
+                    byte[] mimeTypeBytes = mimeType.Select(c => (byte)c).Take(255).ToArray();
+                    Marshal.Copy(mimeTypeBytes, 0, mimeTypePtr, mimeTypeBytes.Length);
+                    Marshal.WriteByte(mimeTypePtr, mimeTypeBytes.Length, 0);
+                    return data.Length;
                 }
-                catch(ArgumentOutOfRangeException)
+                else
                 {
-                    ExecuteJavascript("throw new Error('" + name + ": Too few arguments');");
-                    return Marshal.StringToHGlobalAnsi("null");
+                    return -1;
                 }
-                catch (FormatException)
-                {
-                    ExecuteJavascript("throw new Error('" + name + ": Wrong argument type');");
-                    return Marshal.StringToHGlobalAnsi("null");
-                }
-                catch (Exception e)
-                {
-                    ExecuteJavascript("throw new Error(\"" + name + ": " + e.Message.Replace("\"", "\\\"").Replace("\n", " ") + "\");");
-                    return Marshal.StringToHGlobalAnsi("null");
-                }
-            };
-            apiFunctions.Add(func);
-            registerApiFunction_(name, func);
+            });
+            schemaHandler = handler_;
+            registerAppSchemaHandler_(handler_);
         }
+
+        // Register a handler for an API function. The function will be accessible to Javascript in the main frame
+        // in the global CefWrapperAPI object. JS code can call the function with a function(result){ ... } callback
+        // as the last argument to retrieve the return value. The callback can be omitted.
+        // The handler will be called on the thread that called startMessageLoop().
 
         // There go the long chains of overloads because C# doesn't have variadic generics (this could be done
         // with reflection and casting delegates to object, but I'd rather have type safety.
 
-        // Func<> overloads.
         public static void RegisterApiFunction<R>(string name, Func<R> func)
         {
             registerApiFunctionJson(name, (jsonArgs) =>
@@ -125,7 +140,7 @@ namespace ZeroKLobby
             });
         }
 
-        // Action<> overloads.
+
         public static void RegisterApiFunction(string name, Action func)
         {
             registerApiFunctionJson(name, (jsonArgs) =>
@@ -189,11 +204,44 @@ namespace ZeroKLobby
             });
         }
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        delegate IntPtr ApiFunc(IntPtr jsonArgs);
+        [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "registerApiFunction")]
+        static extern void registerApiFunction_([MarshalAs(UnmanagedType.LPStr)] string name, ApiFunc handler);
+        static void registerApiFunctionJson(string name, Func<string, string> handler)
+        {
+            ApiFunc func = (strPtr) =>
+            {
+                try
+                {
+                    return Marshal.StringToHGlobalAnsi(handler(Marshal.PtrToStringAnsi(strPtr)));
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    ExecuteJavascript("throw new Error('" + name + ": Too few arguments');");
+                    return Marshal.StringToHGlobalAnsi("null");
+                }
+                catch (FormatException)
+                {
+                    ExecuteJavascript("throw new Error('" + name + ": Wrong argument type');");
+                    return Marshal.StringToHGlobalAnsi("null");
+                }
+                catch (Exception e)
+                {
+                    ExecuteJavascript("throw new Error(\"" + name + ": " + e.Message.Replace("\"", "\\\"").Replace("\n", " ") + "\");");
+                    return Marshal.StringToHGlobalAnsi("null");
+                }
+            };
+            apiFunctions.Add(func);
+            registerApiFunction_(name, func);
+        }
 
-        [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "executeJavascript")]
-        public static extern void ExecuteJavascript([MarshalAs(UnmanagedType.LPStr)] string code);
 
         // Store references to registered functions so they don't get GC'd.
         static List<ApiFunc> apiFunctions = new List<ApiFunc>();
+        static AppSchemaHandler_ schemaHandler = null;
+
+        // Hold on to data returned from schema handler.
+        static IntPtr schemaHandlerData = IntPtr.Zero;
     }
 }

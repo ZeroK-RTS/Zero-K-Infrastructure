@@ -339,6 +339,11 @@ namespace ZeroKLobby
 
                 SpringScanner.Start();
 
+                CefWrapper.RegisterAppSchemaHandler((string url, out string mimeType) =>
+                {
+                    mimeType = "text/html";
+                    return "<h1>It works.</h1>".Select(c => (byte)c).ToArray();
+                });
                 CefWrapper.RegisterApiFunction("getMaps", () =>
                 {
                     return SpringScanner.GetAllMapResource();
