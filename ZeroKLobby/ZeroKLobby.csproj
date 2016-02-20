@@ -115,6 +115,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Buttons.resx</DependentUpon>
     </Compile>
+    <Compile Include="CefWrapper.cs" />
     <Compile Include="ChatToSpeech.cs" />
     <Compile Include="Controls\MinimapFuncBox.cs">
       <SubType>UserControl</SubType>

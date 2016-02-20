@@ -26,7 +26,7 @@ var currentBattle = new (require('weblobby/store/CurrentBattle.js'))(gameInfo,
 window.__java_js_wrapper = _.defer;
 
 window.echo = function(){
-   console.log.apply(console, arguments ); //chrome has issue with direct assigning of this function
+	console.log.apply(console, arguments ); //chrome has issue with direct assigning of this function
 }
 
 // Disable the default context menu on most things if running in the wrapper.

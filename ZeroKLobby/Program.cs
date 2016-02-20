@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -23,22 +23,27 @@ namespace ZeroKLobby
 {
     static class Program
     {
+        // Empty references to allow old UI code to compile.
+        // Those should be eventually removed in zkwl.
+        public static MainWindow MainWindow;
+        public static BattleBar BattleBar;
+        public static BattleIconManager BattleIconManager;
+        public static ToolTipHandler ToolTip;
+        public static ConnectBar ConnectBar;
+        public static NotifySection NotifySection;
+        public static BrowserInterop BrowserInterop;
+        //--------------------------------------------------
+
+
         static readonly object configLock = new object();
-        static NewVersionBar NewVersionBar;
         static Mutex mutex;
         public static AutoJoinManager AutoJoinManager;
-        public static BattleBar BattleBar { get; private set; }
-        public static BattleIconManager BattleIconManager { get; private set; }
-        public static BrowserInterop BrowserInterop { get; private set; }
         public static bool CloseOnNext;
         public static Config Conf = new Config();
-        public static ConnectBar ConnectBar { get; private set; }
         public static PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
         public static EngineConfigurator EngineConfigurator { get; set; }
         public static FriendManager FriendManager;
-        public static MainWindow MainWindow { get; private set; }
         public static ModStore ModStore { get; private set; }
-        public static NotifySection NotifySection { get { return MainWindow.NotifySection; } }
         public static SayCommandHandler SayCommandHandler { get; private set; }
         public static SelfUpdater SelfUpdater { get; set; }
         public static ServerImagesHandler ServerImages { get; private set; }
@@ -50,8 +55,6 @@ namespace ZeroKLobby
         public static string[] StartupArgs;
         public static string StartupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
         public static TasClient TasClient { get; private set; }
-        public static ToolTipHandler ToolTip;
-        public static VoteBar VoteBar { get; private set; }
 
         /// <summary>
         /// windows only: do we have admin token?
@@ -98,10 +101,10 @@ namespace ZeroKLobby
         {
             try
             {
-                //Stopwatch stopWatch = new Stopwatch(); stopWatch.Start();
-
                 Trace.Listeners.Add(new ConsoleTraceListener());
                 Trace.Listeners.Add(new LogTraceListener());
+
+                CefWrapper.Initialize("./render", args);
 
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
@@ -118,7 +121,6 @@ namespace ZeroKLobby
 
                 SelfUpdater = new SelfUpdater("Zero-K");
 
-                // if (Process.GetProcesses().Any(x => x.ProcessName.StartsWith("spring_"))) return; // dont start if started from installer
                 StartupArgs = args;
 
 
@@ -133,16 +135,11 @@ namespace ZeroKLobby
                     Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
                 }
 
-                //HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-
-
-
                 Trace.TraceInformation("Starting with version {0}", SelfUpdater.CurrentVersion);
 
                 WebRequest.DefaultWebProxy = null;
                 ThreadPool.SetMaxThreads(500, 2000);
                 ServicePointManager.Expect100Continue = false;
-                if (Environment.OSVersion.Platform != PlatformID.Unix && !Conf.UseExternalBrowser) { Utils.SetIeCompatibility(); } //set to current IE version
 
                 LoadConfig();
 
@@ -308,8 +305,6 @@ namespace ZeroKLobby
                     {
                         Trace.TraceInformation("TASC login accepted");
                         Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
-                        if (Environment.OSVersion.Platform == PlatformID.Unix || Conf.UseExternalBrowser)
-                            MainWindow.navigationControl.Path = "battles";
                     };
 
                 TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
@@ -328,82 +323,41 @@ namespace ZeroKLobby
                     }
                 };
 
-                TasClient.SiteToLobbyCommandReceived += (eventArgs, o) =>
-                    {
-                        MainWindow.navigationControl.Path = o.Command;
-                        MainWindow.PopupSelf();
-                    };
-
-                ConnectBar = new ConnectBar(TasClient);
                 ModStore = new ModStore();
-                ToolTip = new ToolTipHandler();
-                BrowserInterop = new BrowserInterop(TasClient, Conf);
-                BattleIconManager = new BattleIconManager();
-
-                Application.AddMessageFilter(ToolTip);
-
-
                 SteamHandler = new ZklSteamHandler(TasClient);
                 SteamHandler.Connect();
 
-
-                MainWindow = new MainWindow();
-
-                Application.AddMessageFilter(new ScrollMessageFilter());
-
-
-                if (Conf.StartMinimized) MainWindow.WindowState = FormWindowState.Minimized;
-                else MainWindow.WindowState = FormWindowState.Normal;
-                MainWindow.Size = new Size(Math.Min(SystemInformation.VirtualScreen.Width - 30, MainWindow.Width),
-                                            Math.Min(SystemInformation.VirtualScreen.Height - 30, MainWindow.Height)); //in case user have less space than 1024x768
-
-                BattleBar = new BattleBar();
-                NewVersionBar = new NewVersionBar(SelfUpdater);
-                VoteBar = new VoteBar();
-                PwBar = new PwBar();
-
-                //This make the size of every bar constant (only for height).
-                //We wanted to make them constant because the bar get DPI-scaled twice/thrice/multiple-time (especially for reusable bar). 
-                //Setting maximum height upon creation will hopefully make sure it is not DPI-scaled multiple time.
-                var votebarSize = new Size(0, VoteBar.Height);
-                // Reference: http://stackoverflow.com/questions/5314041/set-minimum-window-size-in-c-sharp-net
-                var newversionbarSize = new Size(0, NewVersionBar.Height);
-                var battlebarSize = new Size(0, BattleBar.Height);
-                var connectbarSize = new Size(0, ConnectBar.Height);
-
-                VoteBar.MinimumSize = votebarSize; //fix minimum size forever
-                VoteBar.MaximumSize = votebarSize; //fix maximum size forever
-                NewVersionBar.MinimumSize = newversionbarSize;
-                NewVersionBar.MaximumSize = newversionbarSize;
-                BattleBar.MinimumSize = battlebarSize;
-                BattleBar.MaximumSize = battlebarSize;
-                ConnectBar.MinimumSize = connectbarSize;
-                ConnectBar.MaximumSize = connectbarSize;
-                //End battlebar size hax
-
                 if (!Debugger.IsAttached && !Conf.DisableAutoUpdate) Program.SelfUpdater.StartChecking();
 
-                //if (Conf.IsFirstRun) Utils.OpenWeb(GlobalConst.BaseSiteUrl + "/Wiki/LobbyStart", false);
+                // TODO: Rewrite for zkwl.
+                //if (Conf.StartMinimized) MainWindow.WindowState = FormWindowState.Minimized;
+                //else MainWindow.WindowState = FormWindowState.Normal;
 
                 // download primary engine & game
-                MainWindow.Paint += GetSpringZK;
+                // (rewrite for zkwl if necessary) MainWindow.Paint += GetSpringZK;
                 Downloader.PackageDownloader.MasterManifestDownloaded += GetSpringZK;
 
+                SpringScanner.Start();
 
-                // Format and display the TimeSpan value.
-                //stopWatch.Stop(); TimeSpan ts = stopWatch.Elapsed; string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
-                //Trace.TraceInformation("1 Runtime {0}", elapsedTime);
+                CefWrapper.RegisterApiFunction("getMaps", () =>
+                {
+                    return SpringScanner.GetAllMapResource();
+                });
+                CefWrapper.RegisterApiFunction("getMods", () =>
+                {
+                    return SpringScanner.GetAllModResource();
+                });
 
-                
+                CefWrapper.StartMessageLoop();
+                CefWrapper.Deinitialize();
 
-
-                Application.Run(MainWindow);
                 ShutDown();
             }
             catch (Exception ex)
             {
                 ErrorHandling.HandleException(ex, true);
                 if (Debugger.IsAttached) Debugger.Break();
+                else MessageBox.Show(ex.Message);
             }
             finally
             {
