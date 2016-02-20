@@ -295,8 +295,6 @@ namespace ZeroKLobby
         }
         [Browsable(false)]
         public int OtherTextColorInt = Color.Black.ToArgb();
-        [Browsable(false)]
-        public bool ResetUiKeysHack4 { get; set; }
 
 
         [Category("Chat")]
