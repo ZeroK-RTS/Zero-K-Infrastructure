@@ -72,7 +72,8 @@ namespace AutoRegistrator
             foreach (var clan in db.Clans.Where(x => !x.IsDeleted))
             {
                 var fileName = $"{clan.Shortcut}.png";
-                File.Copy(Path.Combine(spath, fileName), Path.Combine(tpath, fileName), true);
+                var src = Path.Combine(spath, fileName);
+                if (File.Exists(src)) File.Copy(src, Path.Combine(tpath, fileName), true);
             }
 
             Trace.TraceInformation("Copying faction icons");
@@ -83,7 +84,8 @@ namespace AutoRegistrator
             foreach (var fac in db.Factions.Where(x => !x.IsDeleted))
             {
                 var fileName = $"{fac.Shortcut}.png";
-                File.Copy(Path.Combine(spath, fileName), Path.Combine(tpath, fileName), true);
+                var src = Path.Combine(spath, fileName);
+                if (File.Exists(src)) File.Copy(src, Path.Combine(tpath, fileName), true);
             }
         }
 

@@ -1,0 +1,1 @@
+This file let's Zero-K lobby know that game is managed by steam

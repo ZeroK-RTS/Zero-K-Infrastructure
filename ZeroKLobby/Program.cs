@@ -213,8 +213,7 @@ namespace ZeroKLobby
                 };
                 
 
-                Downloader.GetAndSwitchEngine(ZkData.GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
-
+                
                 SaveConfig();
 
                 
@@ -284,6 +283,7 @@ namespace ZeroKLobby
 
                 Downloader = new PlasmaDownloader.PlasmaDownloader(Conf, SpringScanner, SpringPaths); //rapid
                 Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
+                Downloader.GetAndSwitchEngine(ZkData.GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
 
                 var isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
                 TasClient = new TasClient(string.Format("ZK {0}{1}", SelfUpdater.CurrentVersion, isLinux ? " linux" : ""));
