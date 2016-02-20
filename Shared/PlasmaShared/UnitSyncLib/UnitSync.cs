@@ -40,6 +40,7 @@ namespace ZkData.UnitSyncLib
         private bool disposed;
         private int? loadedArchiveIndex;
         private readonly SpringPaths paths;
+        private string originalPathVariable;
         public string UnitsyncWritableFolder { get; private set; }
 
         public UnitSync(SpringPaths springPaths) {
@@ -47,15 +48,15 @@ namespace ZkData.UnitSyncLib
             {
                 paths = springPaths;
                 //Getting the directory of this application instead of the non-constant currentDirectory. Reference: http://stackoverflow.com/questions/52797/how-do-i-get-the-path-of-the-assembly-the-code-is-in
-                originalDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                originalDirectory = springPaths.WritableDirectory;
                 Trace.TraceInformation("UnitSync: Directory: {0}", paths.UnitSyncDirectory);
                 Trace.TraceInformation("UnitSync: ZKL: {0}", originalDirectory);
 
-                var epath = Environment.GetEnvironmentVariable("PATH");
-                if (epath?.Contains(paths.UnitSyncDirectory) != true) Environment.SetEnvironmentVariable("PATH",
-                    $"{epath}{(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";")}{paths.UnitSyncDirectory}", EnvironmentVariableTarget.Process);
+                originalPathVariable = Environment.GetEnvironmentVariable("PATH");
+                if (originalPathVariable?.Contains(paths.UnitSyncDirectory) != true) Environment.SetEnvironmentVariable("PATH",
+                    $"{originalPathVariable}{(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";")}{paths.UnitSyncDirectory}", EnvironmentVariableTarget.Process);
 
-                Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
+                //Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
                 Environment.CurrentDirectory = paths.UnitSyncDirectory;
                 var settingsPath = Path.Combine(paths.UnitSyncDirectory, "springsettings.cfg");
                 File.WriteAllText(settingsPath, $"SpringData={paths.DataDirectoriesJoined}\n");
@@ -87,8 +88,9 @@ namespace ZkData.UnitSyncLib
                 {
                     // do nothing, already thrown on init
                 }
-                Directory.SetCurrentDirectory(originalDirectory);
+                //Directory.SetCurrentDirectory(originalDirectory);
                 Environment.CurrentDirectory = originalDirectory;
+                Environment.SetEnvironmentVariable("PATH", originalPathVariable, EnvironmentVariableTarget.Process);
                 disposed = true;
                 Trace.TraceInformation("UnitSync Disposed");
             }
