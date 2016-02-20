@@ -27,5 +27,42 @@
 
 	// but exclude all symbol files  
 	// This can be a full path, or a path relative to ContentRoot
-  "FileExclusion" "*.pdb"
+	"FileExclusion" "*.pdb"
+  
+	"FileProperties"
+    {
+        "LocalPath" "cache\\repositories.json"
+        "Attributes" "userconfig" // this file will be modified during runtime
+    }  
+	
+	"FileProperties"
+    {
+        "LocalPath" "cache\\ScannerCache.json"
+        "Attributes" "userconfig" // this file will be modified during runtime
+    }  
+	
+	"FileProperties"
+    {
+        "LocalPath" "cmdcolors.txt"
+        "Attributes" "userconfig" // this file will be modified during runtime
+    }  
+
+	"FileProperties"
+    {
+        "LocalPath" "lups.cfg"
+        "Attributes" "userconfig" // this file will be modified during runtime
+    }  
+
+	"FileProperties"
+    {
+        "LocalPath" "springsettings.cfg"
+        "Attributes" "userconfig" // this file will be modified during runtime
+    }  
+
+	"FileProperties"
+    {
+        "LocalPath" "uikeys.txt"
+        "Attributes" "userconfig" // this file will be modified during runtime
+    }  
+	
 }
