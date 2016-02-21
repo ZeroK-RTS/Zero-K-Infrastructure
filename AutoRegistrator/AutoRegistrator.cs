@@ -90,8 +90,11 @@ namespace ZeroKWeb
         }
 
         private void SynchronizeMapsFromSpringFiles() {
-            var fs = new WebFolderSyncer();
-            fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory, "maps"));
+            if (GlobalConst.Mode == ModeType.Live)
+            {
+                var fs = new WebFolderSyncer();
+                fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory, "maps"));
+            }
         }
 
         static object Locker = new object();
