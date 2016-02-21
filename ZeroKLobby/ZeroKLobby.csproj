@@ -116,7 +116,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Buttons.resx</DependentUpon>
     </Compile>
+    <Compile Include="CachedResourceManager.cs" />
     <Compile Include="ChatToSpeech.cs" />
+    <Compile Include="ControlExtensions.cs" />
     <Compile Include="Controls\CustomScrollbar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -151,6 +153,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="DarkHive.Designer.cs" />
+    <Compile Include="DarkHiveGlow.Designer.cs" />
+    <Compile Include="DarkHiveHover.Designer.cs" />
     <Compile Include="ExtendedWebBrowser.cs" />
     <Compile Include="Controls\ZkSplitContainer.cs">
       <SubType>Component</SubType>
@@ -214,6 +218,8 @@
     <Compile Include="SelectWritableFolder.Designer.cs">
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Shraka.Designer.cs" />
+    <Compile Include="Sounds.Designer.cs" />
     <Compile Include="Steam\SteamClientHelper.cs" />
     <Compile Include="Steam\SteamVoiceSystem.cs" />
     <Compile Include="Configs.Designer.cs">
@@ -364,6 +370,7 @@
       <DependentUpon>Ranks.resx</DependentUpon>
     </Compile>
     <Compile Include="ServerImagesHandler.cs" />
+    <Compile Include="TechPanel.Designer.cs" />
     <Compile Include="ToolTips\BattleTooltipRenderer.cs" />
     <Compile Include="MicroLobby\AskBattlePasswordForm.cs">
       <SubType>Form</SubType>
@@ -513,6 +520,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ScrollbarSkin.resx" />
     <EmbeddedResource Include="DarkHive.resx" />
+    <EmbeddedResource Include="DarkHiveGlow.resx" />
+    <EmbeddedResource Include="DarkHiveHover.resx" />
     <EmbeddedResource Include="Flags.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>
@@ -613,6 +622,9 @@
     <EmbeddedResource Include="SelectWritableFolder.resx">
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Shraka.resx" />
+    <EmbeddedResource Include="Sounds.resx" />
+    <EmbeddedResource Include="TechPanel.resx" />
     <EmbeddedResource Include="ZklResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ZklResources.Designer.cs</LastGenOutput>

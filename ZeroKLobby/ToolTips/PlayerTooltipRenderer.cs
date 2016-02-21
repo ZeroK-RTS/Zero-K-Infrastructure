@@ -21,35 +21,37 @@ namespace ZeroKLobby
         public void Draw(Graphics g, Font font, Color foreColor)
         {
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            var fbrush = new SolidBrush(foreColor);
             User user;
             if (!Program.TasClient.ExistingUsers.TryGetValue(userName, out user)) return;
-            DpiMeasurement.DpiXYMeasurement();
-            var x = DpiMeasurement.ScaleValueX(1);
+            var x = (int)1;
             var y = 0;
             Action newLine = () =>
                 {
-                    x = DpiMeasurement.ScaleValueX(1);
-                    y += DpiMeasurement.ScaleValueY(16);
+                x = (int)1;
+                y += (int)16;
                 };
             Action<string> drawString = (text) =>
                 {
-                    TextRenderer.DrawText(g, text, font, new Point(x, y), foreColor);
-                    x += (int)Math.Ceiling((double)TextRenderer.MeasureText(g, text, font).Width); //Note: TextRenderer measurement already DPI aware
+                    g.DrawString(text, font, fbrush, new Point(x, y));
+                    x += (int)Math.Ceiling(g.MeasureString(text, font).Width); 
                 };
             
             Action<string, Color> drawString2 = (text, color) =>
             {
-                TextRenderer.DrawText(g, text, font, new Point(x, y), color);
-                x += (int)Math.Ceiling((double)TextRenderer.MeasureText(g, text, font).Width); //Note: TextRenderer measurement already DPI aware
+                using (var brush = new SolidBrush(color)) {
+                    g.DrawString(text, font, brush, new Point(x, y));
+                }
+                x += (int)Math.Ceiling((double)g.MeasureString(text, font).Width);
             };
 
 
             Action<Image, int, int> drawImage = (image, w, h) =>
                 {
-                    g.DrawImage(image, x, y, DpiMeasurement.ScaleValueX(w), DpiMeasurement.ScaleValueY(h));
-                    x += DpiMeasurement.ScaleValueX(w + 3);
+                    g.DrawImage(image, x, y, (int)w, (int)h);
+                    x += (int)(w + 3);
                 };
-            using (var boldFont = new Font(font, FontStyle.Bold)) TextRenderer.DrawText(g, user.Name, boldFont, new Point(x, y), foreColor);
+            using (var boldFont = new Font(font, FontStyle.Bold)) g.DrawString(user.Name, boldFont, fbrush, new Point(x, y));
 
             newLine();
 
@@ -104,7 +106,7 @@ namespace ZeroKLobby
                 if (user.AwaySince.HasValue)
                 {
                     drawImage(ZklResources.away, 16, 16);
-                    drawString("User has been idle for " + DateTime.UtcNow.Subtract(user.AwaySince.Value).PrintTimeRemaining() + ".");
+                    drawString("User idle for " + DateTime.UtcNow.Subtract(user.AwaySince.Value).PrintTimeRemaining() + ".");
                     newLine();
                 }
                 if (user.IsInGame)
@@ -126,7 +128,7 @@ namespace ZeroKLobby
                 if (!string.IsNullOrEmpty(user.Avatar))
                 {
                     var image = Program.ServerImages.GetAvatarImage(user);
-                    if (image != null) g.DrawImage(image, DpiMeasurement.ScaleValueX(302 - 65), 0, DpiMeasurement.ScaleValueX(64), DpiMeasurement.ScaleValueY(64));
+                    if (image != null) g.DrawImage(image, (int)(302 - 65), 0, (int)64, (int)64);
                 }
 
             }
@@ -138,6 +140,7 @@ namespace ZeroKLobby
                     if (battleIcon != null) g.DrawImageUnscaled(battleIcon.Image, x, y);
                 }
             }
+            fbrush.Dispose();
 
         }
 
@@ -163,8 +166,7 @@ namespace ZeroKLobby
             if (Program.SpringieServer.GetTop10Rank(user.Name) > 0) h += 16; // top 10
             if (user.IsInBattleRoom) h += 76; // battle icon
 
-            DpiMeasurement.DpiXYMeasurement();
-            return new Size(DpiMeasurement.ScaleValueX(302), DpiMeasurement.ScaleValueY(h));
+            return new Size((int)302, (int)h);
         }
     }
 }

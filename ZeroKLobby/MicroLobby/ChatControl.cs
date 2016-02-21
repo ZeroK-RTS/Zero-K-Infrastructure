@@ -76,7 +76,7 @@ namespace ZeroKLobby.MicroLobby
             playerSearchBox.BackColor = Program.Conf.BgColor;
             playerSearchBox.ForeColor = Program.Conf.TextColor;
 
-            ChatBox.Font = Program.Conf.ChatFont; //make sure this is done before HistoryManager adds text, or text becomes black.
+            ChatBox.Font = Config.ChatFont; //make sure this is done before HistoryManager adds text, or text becomes black.
 
             Name = name;
             ChannelName = name;

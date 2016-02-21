@@ -86,6 +86,7 @@
     <Compile Include="IContentService\ResourceType.cs" />
     <Compile Include="IContentService\ReturnValue.cs" />
     <Compile Include="IContentService\ScriptMissionData.cs" />
+    <Compile Include="ResizedImageCache.cs" />
     <Compile Include="ResourceInfo.cs" />
     <Compile Include="ISpringieService\AhConfig.cs" />
     <Compile Include="ISpringieService\AutohostMode.cs" />

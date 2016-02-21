@@ -324,9 +324,6 @@ namespace ZeroKLobby
 
                 Application.AddMessageFilter(new ScrollMessageFilter());
 
-
-                if (Conf.StartMinimized) MainWindow.WindowState = FormWindowState.Minimized;
-                else MainWindow.WindowState = FormWindowState.Normal;
                 MainWindow.Size = new Size(Math.Min(SystemInformation.VirtualScreen.Width - 30, MainWindow.Width),
                                             Math.Min(SystemInformation.VirtualScreen.Height - 30, MainWindow.Height)); //in case user have less space than 1024x768
 
