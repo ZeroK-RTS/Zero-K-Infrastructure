@@ -154,7 +154,7 @@ namespace PlasmaDownloader.Packages
             return File.Exists(target);
         }*/
 
-        public Task LoadMasterAndVersions(bool downloadSelected)
+        public Task LoadMasterAndVersions(bool downloadSelected = false)
         {
             return Task.Factory.StartNew(() =>
             {

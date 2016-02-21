@@ -99,7 +99,6 @@ namespace ZeroKLobby
         {
             try
             {
-                GlobalConst.Mode =ModeType.Live;
                 //Stopwatch stopWatch = new Stopwatch(); stopWatch.Start();
 
                 Trace.Listeners.Add(new ConsoleTraceListener());
