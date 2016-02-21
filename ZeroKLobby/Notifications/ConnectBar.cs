@@ -24,46 +24,51 @@ namespace ZeroKLobby.Notifications
 		{
 			client = tasClient;
 
-			
-			client.ConnectionLost += (s, e) =>
-				{
-					canRegister = false;
-					{
-						if (!client.WasDisconnectRequested) lbState.Text = "disconnected due to network problem, autoreconnecting...";
-						else
-						{
-							lbState.Text = "disconnected";
-							tasClientConnectCalled = false;
-						}
-						Program.NotifySection.AddBar(this);
-					}
-				};
 
-			client.Connected += (s, e) =>
-				{
-					canRegister = false;
-					Program.NotifySection.RemoveBar(this);
-					lbState.Text = "Connected, logging in ...";
-                    if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) LoginWithDialog("Please enter your name and password", true);
-					else client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
-				};
+            client.ConnectionLost += (s, e) => {
+                {
+                        if (!client.WasDisconnectRequested) lbState.Text ="disconnected, reconnecting...";
+                        else
+                        {
+                            lbState.Text = "disconnected";
+                            tasClientConnectCalled = false;
+                        }
+                        Program.NotifySection.AddBar(this);
+                }
+            };
 
-			client.LoginAccepted += (s, e) => Program.NotifySection.RemoveBar(this);
+            client.Connected += (s, e) => {
+                lbState.Text = "Connected, logging in ...";
+                if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) LoginWithDialog("Please choose your name and password.\nThis will create a new account if it does not exist.");
+                else client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
+            };
 
-			client.LoginDenied += (s, e) =>
-				{
-                    if (e.ResultCode == LoginResponse.Code.InvalidName && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword) && canRegister)
-					{
-						lbState.Text = "Registering new account";
-						client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
-					}
-					else LoginWithDialog(string.Format("Login denied: {0} {1}",e.ResultCode, e.Reason), false);
-				};
+            client.LoginAccepted += (s, e) => Program.NotifySection.RemoveBar(this);
 
-			client.RegistrationDenied += (s, e) => LoginWithDialog(string.Format("Registration denied: {0} {1}", e.ResultCode.Description(), e.Reason), true);
+            client.LoginDenied += (s, e) => {
+                if (e.ResultCode == LoginResponse.Code.InvalidName && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword))
+                {
+                    if (
+                        MessageBox.Show(string.Format("Account '{0}' does not exist yet, do you want to create it?", Program.Conf.LobbyPlayerName), "Confirm account registration",
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        lbState.Text = "Registering a new account";
+                        client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
+                    }
+                    else
+                    {
+                        LoginWithDialog(string.Format("Login denied: {0} {1}", e.ResultCode.Description(), e.Reason));
+                    }
+                }
+                else
+                {
+                    LoginWithDialog(string.Format("Login denied: {0} {1}\nChoose a different name to create new account.", e.ResultCode.Description(), e.Reason));
+                }
+            };
+
+            client.RegistrationDenied += (s, e) => LoginWithDialog(string.Format("Registration denied: {0} {1}", e.ResultCode.Description(), e.Reason));
 
             client.RegistrationAccepted += (s, e) => client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
-
 		}
 
 

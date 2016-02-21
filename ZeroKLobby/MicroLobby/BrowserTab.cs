@@ -17,6 +17,7 @@ namespace ZeroKLobby
         bool finishNavigation = true;
         readonly string pathHead;
 
+
         public BrowserTab(string head, bool autoStartOnLogin)
         {
             pathHead = head;

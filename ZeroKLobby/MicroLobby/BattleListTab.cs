@@ -20,7 +20,7 @@ namespace ZeroKLobby.MicroLobby
             Paint -= BattleListTab_Enter; //using "Paint" instead of "Enter" event because "Enter" is too lazy in Mono (have to click control)
             SuspendLayout(); //pause
             InitializeComponent();
-
+            
             if (DesignMode) return;
             DpiMeasurement.DpiXYMeasurement(this);
             var lookingGlass = new PictureBox
@@ -101,6 +101,6 @@ namespace ZeroKLobby.MicroLobby
         {
             if (battleListControl != null) battleListControl.HidePassworded = hidePasswordedBox.Checked;
         }
-
+       
     }
 }
