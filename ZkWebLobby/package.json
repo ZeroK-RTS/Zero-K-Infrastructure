@@ -13,6 +13,7 @@
 		"react-addons-linked-state-mixin": "0.14.x",
 		"classnames": "2.x",
 		"lodash": "3.x",
+		"reflux": "0.2.5",
 		"object-assign": "*"
 	},
 	"devDependencies": {

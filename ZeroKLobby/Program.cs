@@ -55,6 +55,7 @@ namespace ZeroKLobby
         public static string[] StartupArgs;
         public static string StartupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
         public static TasClient TasClient { get; private set; }
+        public static Spring RunningSpring { get; private set; }
 
         /// <summary>
         /// windows only: do we have admin token?
@@ -104,7 +105,7 @@ namespace ZeroKLobby
                 Trace.Listeners.Add(new ConsoleTraceListener());
                 Trace.Listeners.Add(new LogTraceListener());
 
-                CefWrapper.Initialize("./render", args);
+                CefWrapper.Initialize(AppDomain.CurrentDomain.BaseDirectory + "/render", args);
 
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
@@ -344,13 +345,54 @@ namespace ZeroKLobby
                     mimeType = "text/html";
                     return "<h1>It works.</h1>".Select(c => (byte)c).ToArray();
                 });
-                CefWrapper.RegisterApiFunction("getMaps", () =>
+                CefWrapper.RegisterApiFunction("getEngines", () =>
                 {
-                    return SpringScanner.GetAllMapResource();
+                    return new List<string> { "100.0" }; // TODO: stub
                 });
                 CefWrapper.RegisterApiFunction("getMods", () =>
                 {
                     return SpringScanner.GetAllModResource();
+                });
+                CefWrapper.RegisterApiFunction("getMaps", () =>
+                {
+                    return SpringScanner.GetAllMapResource();
+                });
+                CefWrapper.RegisterApiFunction("downloadEngine", (string engine) =>
+                {
+                    // Don't let GetAndSwitchEngine() touch the main SpringPaths.
+                    var path = new SpringPaths(SpringPaths.GetEngineFolderByVersion(engine), writableFolderOverride: contentDir);
+                    Downloader.GetAndSwitchEngine(engine, path);
+                });
+                CefWrapper.RegisterApiFunction("downloadMod", (string game) =>
+                {
+                    Downloader.GetResource(PlasmaDownloader.DownloadType.MOD, game);
+                });
+                CefWrapper.RegisterApiFunction("downloadMap", (string map) =>
+                {
+                    Downloader.GetResource(PlasmaDownloader.DownloadType.MAP, map);
+                });
+                CefWrapper.RegisterApiFunction("startSpringScript", (string engineVer, string script) =>
+                {
+                    if (RunningSpring != null)
+                        return null;
+                    // Ultimately we should get rid of the concept of a "current set engine", but for now let's work around it.
+                    var path = new SpringPaths(SpringPaths.GetEngineFolderByVersion(engineVer), writableFolderOverride: contentDir);
+                    RunningSpring = new Spring(path);
+                    RunningSpring.SpringExited += (obj, evt) =>
+                    {
+                        CefWrapper.ExecuteJavascript("on_spring_exit(" + (evt.Data ? "true" : "false") + ");");
+                        RunningSpring = null;
+                    };
+                    try
+                    {
+                        RunningSpring.StartSpring(script);
+                        return null;
+                    }
+                    catch(Exception e)
+                    {
+                        RunningSpring = null;
+                        return e.Message;
+                    }
                 });
 
                 CefWrapper.StartMessageLoop();

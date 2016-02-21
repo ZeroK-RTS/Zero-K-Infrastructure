@@ -3,7 +3,9 @@
 require('style/Home.sass');
 var _ = require('lodash');
 var React = require('react');
-var Battle = require('weblobby/act/Battle.js');
+// 'weblobby/act/Battle.js' fails because webpack considers it a different module caching-wise.
+// Having to omit weblobby/ is inconsistent, find a way to deal with it.
+var Battle = require('act/Battle.js'); 
 var ModalWindow = require('weblobby/comp/ModalWindow.jsx');
 var Server = require('weblobby/act/LobbyServer.js');
 var ConState = require('weblobby/store/LobbyServerCommon.js').ConnectionState;

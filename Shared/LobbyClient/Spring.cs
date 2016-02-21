@@ -300,7 +300,7 @@ namespace LobbyClient
             return null;
         }
 
-        void StartSpring(string script)
+        public void StartSpring(string script)
         {
             scriptPath = Path.GetTempFileName();
             File.WriteAllText(scriptPath, script);
