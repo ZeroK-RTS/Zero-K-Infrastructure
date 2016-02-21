@@ -163,6 +163,13 @@ namespace ZeroKLobby
             return String.Format("{0:D}:{1:D2}:{2:D2}", secs/3600, secs/60%60, secs%60);
         }
 
+        public static void RegisterProtocol() {
+            var executableName = Assembly.GetEntryAssembly().Location;
+            try {
+                SetProtocolRegistry(Registry.CurrentUser.CreateSubKey("Software\\Classes\\zk"), executableName);
+            } catch (Exception ex) {
+                Trace.TraceWarning("Error registering protocol: {0}", ex.Message);
+            }
 
         public static void SafeStart(string path, string args = null) {
             try {

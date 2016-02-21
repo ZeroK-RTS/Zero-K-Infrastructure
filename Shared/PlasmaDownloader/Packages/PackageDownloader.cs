@@ -37,10 +37,14 @@ namespace PlasmaDownloader.Packages
         readonly PlasmaDownloader plasmaDownloader;
         readonly Timer refreshTimer;
         List<Repository> repositories = new List<Repository>();
+        List<string> selectedPackages = new List<string>();
 
         public List<Repository> Repositories { get { return repositories; } }
 
+        public List<string> SelectedPackages { get { return selectedPackages; } }
+
         public event EventHandler PackagesChanged = delegate { };
+        public event EventHandler SelectedPackagesChanged = delegate { };
         public event EventHandler MasterManifestDownloaded = delegate { };
 
         public DateTime MasterLastModified;
@@ -57,8 +61,6 @@ namespace PlasmaDownloader.Packages
                 refreshTimer.Elapsed += RefreshTimerElapsed;
                 refreshTimer.Start();
             }
-            LoadMasterAndVersions();
-
         }
 
         public void Dispose()
@@ -68,6 +70,12 @@ namespace PlasmaDownloader.Packages
                 refreshTimer.Stop();
                 refreshTimer.Elapsed -= RefreshTimerElapsed;
             }
+        }
+
+        public void DeselectPackage(string name)
+        {
+            lock (selectedPackages) selectedPackages.Remove(name);
+            SelectedPackagesChanged(this, EventArgs.Empty);
         }
 
 
@@ -122,6 +130,7 @@ namespace PlasmaDownloader.Packages
                     if (repo.VersionsByTag.TryGetValue(name, out versionEntry))
                     {
                         // find by package name
+                        SelectPackage(versionEntry.Name); // select it if it was requested by direct package name
                         return CreateDownload(repo, versionEntry);
                     }
 
@@ -136,7 +145,16 @@ namespace PlasmaDownloader.Packages
             return null;
         }
 
-        public Task LoadMasterAndVersions()
+
+        /*public bool HasSdpFile(Hash hash) {
+            // note this only checks writable folder and not all data
+            var folder = Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory, "packages");
+            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+            var target = Utils.MakePath(folder, hash + ".sdp");
+            return File.Exists(target);
+        }*/
+
+        public Task LoadMasterAndVersions(bool downloadSelected)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -188,7 +206,14 @@ namespace PlasmaDownloader.Packages
 
                     Task.WaitAll(waiting.ToArray()); //wait until all "repositories" element finish downloading.
 
-                    
+                    if (downloadSelected) {
+                        foreach (var result in waiting.Select(x => x.Result)) {
+                            if (result.HasChanged) hasChanged = true;
+                            if (result.ChangedVersions != null) foreach (var ver in result.ChangedVersions) if (selectedPackages.Contains(ver.Name)) 
+                                Utils.StartAsync(()=> { plasmaDownloader.GetResource(DownloadType.UNKNOWN, ver.Name); });
+                        }
+                    }
+
                     if (hasChanged)
                     {
                         SaveRepositories();
@@ -206,8 +231,26 @@ namespace PlasmaDownloader.Packages
             });
         }
 
-        PackageDownload CreateDownload(Repository repo, Version versionEntry)
+        public void SelectPackage(string key)
         {
+            var isNew = false;
+            lock (selectedPackages)
+            {
+                if (!selectedPackages.Contains(key))
+                {
+                    isNew = true;
+                    selectedPackages.Add(key);
+                }
+            }
+            if (isNew)
+            {
+                SelectedPackagesChanged(this, EventArgs.Empty);
+            }
+        }
+
+        PackageDownload CreateDownload(Repository repo, Version versionEntry) {
+            //if (HasSdpFile(versionEntry.Hash)) return null; // dont download if present
+
             var down = new PackageDownload(repo.BaseUrl, versionEntry.InternalName, versionEntry.Hash, plasmaDownloader.SpringPaths);
 
             if (versionEntry.Dependencies != null)
@@ -295,7 +338,7 @@ namespace PlasmaDownloader.Packages
 
         void RefreshTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            LoadMasterAndVersions();
+            LoadMasterAndVersions(true);
         }
 
         [Serializable]

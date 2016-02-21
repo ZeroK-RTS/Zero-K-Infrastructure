@@ -146,7 +146,7 @@ namespace ZkData
 
             Executable = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring" : "spring.exe");
             DedicatedServer = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring-dedicated" : "spring-dedicated.exe");
-            Cache = Utils.MakePath(WritableDirectory, "cache", "SD");
+            Cache = Utils.MakePath(WritableDirectory, "cache");
 
             var ov = springVersion;
             if (springPath != "") springVersion = GetSpringVersion(Executable);

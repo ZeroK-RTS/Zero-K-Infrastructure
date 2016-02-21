@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using AutoRegistrator;
 using PlasmaDownloader;
 using ZkData;
 using ZkData.UnitSyncLib;
@@ -16,13 +17,12 @@ namespace ZeroKWeb
         public SpringScanner Scanner;
         public PlasmaDownloader.PlasmaDownloader Downloader;
 
-        public class Config: IPlasmaDownloaderConfig {
-            public int RepoMasterRefresh { get { return 20; } }
-            public string PackageMasterUrl { get { return " http://repos.springrts.com/"; } }
+        private string sitePath;
+        public AutoRegistrator(string sitePath) {
+            this.sitePath = sitePath;
         }
 
-
-        public Thread RunMainAsync() {
+        public Thread RunMainAndMapSyncAsync() {
             var thread = new Thread(
                 () =>
                 {
@@ -30,6 +30,11 @@ namespace ZeroKWeb
                     try
                     {
                         Main();
+                        while (true)
+                        {
+                            Thread.Sleep(61*7*1000);
+                            SynchronizeMapsFromSpringFiles();
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -42,12 +47,15 @@ namespace ZeroKWeb
         }
 
 
+        private string lastStableVersion;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         public void Main()
         {
-            Paths = new SpringPaths(null, @"c:\temp\testf", false);
+            
+            Paths = new SpringPaths(null, Path.Combine(sitePath, "autoregistrator"), false);
             Paths.MakeFolders();
             Scanner = new SpringScanner(Paths) { UseUnitSync = true};
             
@@ -63,8 +71,12 @@ namespace ZeroKWeb
             Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
             Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             Downloader.PackagesChanged += Downloader_PackagesChanged;
-            Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
             Downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
+            Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
+            Downloader.GetResource(DownloadType.MOD, "zk:test")?.WaitHandle.WaitOne();
+
+            lastStableVersion = Downloader.PackageDownloader.GetByTag("zk:stable").InternalName;
+
             foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x=>x.VersionsByTag).Where(x=>x.Key.StartsWith("spring-features")))
             {
                 Downloader.GetResource(DownloadType.UNKNOWN, ver.Value.InternalName)?.WaitHandle.WaitOne();
@@ -72,9 +84,14 @@ namespace ZeroKWeb
 
             Scanner.Start();
 
+            SynchronizeMapsFromSpringFiles();
+
+            while (Scanner.GetWorkCost() > 0) Thread.Sleep(1000);
+        }
+
+        private void SynchronizeMapsFromSpringFiles() {
             var fs = new WebFolderSyncer();
-            fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory,"maps"));
-            while (true) {Thread.Sleep(10000);}
+            fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory, "maps"));
         }
 
         static object Locker = new object();
@@ -144,6 +161,23 @@ namespace ZeroKWeb
                             Trace.TraceError("Failed to update mission {0}: {1}", mis.MissionID, ex);
                         }
                     }
+                }
+
+                try
+                {
+                    var newName = Downloader.PackageDownloader.GetByTag("zk:stable").InternalName;
+                    if (lastStableVersion != newName)
+                    {
+                        Trace.TraceInformation("Generating steam stable package");
+                        lastStableVersion = newName;
+                        var pgen = new SteamDepotGenerator(sitePath, Path.Combine(sitePath, "..", "steamworks", "tools", "ContentBuilder", "content"));
+                        pgen.Generate();
+                        pgen.RunBuild();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error building steam package: {0}",ex);
                 }
             }
         }

@@ -767,11 +767,14 @@ namespace ZkData
             }
             else
             {
-                // changed, created, renamed
-                // remove the item if present in the cache, then process the item
-                if (cache.ShortPathIndex.TryGetValue(shortPath, out item)) CacheItemRemove(item);
-                unitSyncReInitCounter = UnitSyncReInitFrequency + 1; // force unitsync re-init
-                AddWork(folder, e.Name, WorkItem.OperationType.Hash, DateTime.Now, true);
+                if (Utils.CanWrite(e.FullPath))
+                {
+                    // changed, created, renamed
+                    // remove the item if present in the cache, then process the item
+                    if (cache.ShortPathIndex.TryGetValue(shortPath, out item)) CacheItemRemove(item);
+                    unitSyncReInitCounter = UnitSyncReInitFrequency + 1; // force unitsync re-init
+                    AddWork(folder, e.Name, WorkItem.OperationType.Hash, DateTime.Now, true);
+                }
             }
         }
 
