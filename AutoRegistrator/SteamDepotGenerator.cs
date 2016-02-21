@@ -25,7 +25,7 @@ namespace AutoRegistrator
         }
 
         public void Generate() {
-            
+            Utils.CheckPath(targetFolder);
             var paths = new SpringPaths(null, targetFolder, false);
             try
             {
