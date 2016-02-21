@@ -75,7 +75,7 @@ namespace ZeroKLobby
 
         StringCollection autoJoinChannels = new StringCollection() { };
         bool connectOnStartup = true;
-        Color fadeColor = Color.Gray;
+        public readonly Color FadeColor = Color.LightGray;
         StringCollection friends = new StringCollection(); // lacks events for adding friends immediatly
         int idleTime = 5;
         StringCollection ignoredUsers = new StringCollection();
@@ -140,6 +140,8 @@ namespace ZeroKLobby
         [DisplayName("Disable Bubble On Channel Highlight")]
         [Description("Disable the system tray bubble when someone says your name in a public channel.")]
         public bool DisableChannelBubble { get; set; }
+
+
         [Category("Chat")]
         [DisplayName("Disable Bubble On Private Message")]
         public bool DisablePmBubble { get; set; }
@@ -164,16 +166,7 @@ namespace ZeroKLobby
         [Description("Disable ZKL tooltip that display tips on buttons and options.")]
         public bool DisableTextTooltip { get; set; }
 
-        [Category("Chat")]
-        [DisplayName("Color: Emote")]
-        [XmlIgnore]
-        public Color EmoteColor
-        {
-            get { return Color.FromArgb(EmoteColorInt); }
-            set { EmoteColorInt = value.ToArgb(); }
-        }
-        [Browsable(false)]
-        public int EmoteColorInt = Color.FromArgb(178, 0, 178).ToArgb();
+        public readonly Color EmoteColor = Color.FromArgb(178, 0, 178);
 
         [Category("General")]
         [DisplayName("Enable voice chat (push to talk)")]
@@ -188,13 +181,7 @@ namespace ZeroKLobby
             )]
         public bool EnableUnitSyncPrompt { get; set; }
 
-        [XmlIgnore]
-        [Browsable(false)]
-        public Color FadeColor
-        {
-            get { return fadeColor; }
-            set { fadeColor = value; }
-        }
+
         [Category("Chat")]
         [DisplayName("Friend List")]
         [Description("List of friends.")]
@@ -254,44 +241,20 @@ namespace ZeroKLobby
         public bool IsFirstRun = true;
 
 
-        [Category("Chat")]
-        [DisplayName("Color: Joins")]
-        [XmlIgnore]
-        public Color JoinColor
-        {
-            get { return Color.FromArgb(JoinColorInt); }
-            set { JoinColorInt = value.ToArgb(); }
-        }
-        [Browsable(false)]
-        public int JoinColorInt = Color.FromArgb(42, 140, 42).ToArgb();
+        public readonly Color JoinColor = Color.FromArgb(42, 140, 42);
 
-        [Category("Chat")]
-        [DisplayName("Color: Leaves")]
-        [XmlIgnore]
-        public Color LeaveColor
-        {
-            get { return Color.FromArgb(LeaveColorInt); }
-            set { LeaveColorInt = value.ToArgb(); }
-        }
-        [Browsable(false)]
-        public int LeaveColorInt = Color.FromArgb(102, 54, 31).ToArgb();
+        
+        public readonly Color LeaveColor = Color.FromArgb(102, 54, 31);
+        
+
         [Category("Chat")]
         [DisplayName("Disable Context Menu on Leftclick")]
         [Description("Only right clicking shows context menu. Left clicking on a playername will select them in the player list.")]
         public bool LeftClickSelectsPlayer { get; set; }
 
 
-        [Category("Chat")]
-        [DisplayName("Color: Links")]
-        [XmlIgnore]
-        public Color LinkColor
-        {
-            get { return Color.FromArgb(LinkColorInt); }
-            set { LinkColorInt = value.ToArgb(); }
-        }
-        [Browsable(false)]
-        public int LinkColorInt = Color.Blue.ToArgb();
-
+        public Color LinkColor = Color.DodgerBlue;
+    
         [Category("Account")]
         [DisplayName("Lobby Player Name")]
         [Description("Player name from lobby (tasclient), needed for many features")]
@@ -347,22 +310,8 @@ namespace ZeroKLobby
         [Description("Tell ZKL to forget your Password and re-ask it each time it start. (Note: If ZKL crashed or forced to exit this might fail)")]
         public bool DiscardPassword { get; set; }
 
-        [Category("Chat")]
-        [DisplayName("Color: Notice")]
-        [XmlIgnore]
-        public Color NoticeColor
-        {
-            get { return Color.FromArgb(NoticeColorInt); }
-            set { NoticeColorInt = value.ToArgb(); }
-        }
-        [Browsable(false)]
-        public int NoticeColorInt = Color.Red.ToArgb();
-
-
+        public readonly Color NoticeColor = Color.Red;
         public readonly Color TooltipColor = Color.White;
-
-
-        [Browsable(false)]
         public int OtherTextColorInt = Color.Black.ToArgb();
 
 
@@ -418,15 +367,8 @@ namespace ZeroKLobby
             set { springServerPort = value; }
         }
 
-        public Color TextColor
-        {
-            get { return Color.White; }
-        }
-
-
-        [Browsable(false)]
-        public int TextColorInt = Color.White.ToArgb();
-
+        public readonly Color TextColor = Color.White;
+        
         /// <summary>
         /// Keeps datetime of last topic change for each channel
         /// </summary>
@@ -450,7 +392,6 @@ namespace ZeroKLobby
                 var xs = new XmlSerializer(typeof(Config));
                 try {
                     conf = (Config)xs.Deserialize(new StringReader(File.ReadAllText(path)));
-                    conf.UpdateFadeColor();
                     conf.SpringServerHost = GlobalConst.LobbyServerHost;
                     conf.springServerPort = GlobalConst.LobbyServerPort;
 
@@ -460,7 +401,6 @@ namespace ZeroKLobby
                 }
             }
             conf = new Config { IsFirstRun = true };
-            conf.UpdateFadeColor();
             return conf;
         }
 
@@ -477,12 +417,6 @@ namespace ZeroKLobby
             } catch (Exception ex) {
                 Trace.TraceError("Error saving config: {0}", ex);
             }
-        }
-
-
-        public void UpdateFadeColor()
-        {
-            FadeColor = Color.FromArgb((TextColor.R + BgColor.R)/2, (TextColor.G + BgColor.G)/2, (TextColor.B + BgColor.B)/2);
         }
 
 
