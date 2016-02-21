@@ -7,16 +7,35 @@ using System.Windows.Forms;
 
 namespace ZeroKLobby
 {
-    class HeadlessTabControl:TabControl
+    public class HeadlessTabControl:TabControl
     {
+        public HeadlessTabControl()
+        {
+           SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint,true);
+            SetRegion();
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            SetRegion();
+            base.OnPaint(e);
+        }
+
+        protected override void OnPaintBackground(PaintEventArgs pevent)
+        {
+            SetRegion();
+            base.OnPaintBackground(pevent);
+        }
+
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
-            Region = new Region(new Rectangle(4, this.ItemSize.Height + 4, Width - 8, Height - this.ItemSize.Height - 8)); //Note: the margin (+-4) doesn't seem to be effected by DPI scaling
+            SetRegion();
         }
 
-        protected override void OnClick(EventArgs e) {
+        void SetRegion()
+        {
+            Region = new Region(new Rectangle(4, this.ItemSize.Height + 4, Width - 8, Height - this.ItemSize.Height - 8));
         }
-
     }
 }

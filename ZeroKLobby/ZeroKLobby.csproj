@@ -93,6 +93,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Speech" />
@@ -116,12 +117,40 @@
       <DependentUpon>Buttons.resx</DependentUpon>
     </Compile>
     <Compile Include="ChatToSpeech.cs" />
+    <Compile Include="Controls\CustomScrollbar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FrameBorderRenderer.cs" />
+    <Compile Include="Controls\MatchQueueControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MatchQueueControl.designer.cs">
+      <DependentUpon>MatchQueueControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MinimapFuncBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\MinimapFuncBox.Designer.cs">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PlayerListControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PlayerListControl.designer.cs">
+      <DependentUpon>PlayerListControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RightPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ScrollbarSkin.Designer.cs" />
+    <Compile Include="Controls\SoundPalette.cs" />
+    <Compile Include="Controls\SwitchPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TransparentTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DarkHive.Designer.cs" />
     <Compile Include="ExtendedWebBrowser.cs" />
     <Compile Include="Controls\ZkSplitContainer.cs">
       <SubType>Component</SubType>
@@ -476,9 +505,14 @@
       <LastGenOutput>Configs.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MatchQueueControl.resx">
+      <DependentUpon>MatchQueueControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\MinimapFuncBox.resx">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ScrollbarSkin.resx" />
+    <EmbeddedResource Include="DarkHive.resx" />
     <EmbeddedResource Include="Flags.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>
@@ -1656,7 +1690,44 @@
   <ItemGroup>
     <None Include="Resources\voice_talking.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Resources\Buttons\back.png" />
+    <Content Include="Resources\Buttons\down.png" />
+    <Content Include="Resources\Buttons\downloads.png" />
+    <Content Include="Resources\Buttons\exit.png" />
+    <Content Include="Resources\Buttons\extras.png" />
+    <Content Include="Resources\Buttons\left.png" />
+    <Content Include="Resources\Buttons\link.png" />
+    <Content Include="Resources\Buttons\mp.png" />
+    <Content Include="Resources\Buttons\qb.png" />
+    <Content Include="Resources\Buttons\soundOff.png" />
+    <Content Include="Resources\Buttons\soundOn.png" />
+    <Content Include="Resources\Buttons\sp.png" />
+    <Content Include="Resources\Buttons\win_max.png" />
+    <Content Include="Resources\Buttons\win_min.png" />
+    <Content Include="Resources\downarrow.png" />
+    <Content Include="Resources\scroll_bottom.png" />
+    <Content Include="Resources\scroll_mid.png" />
+    <Content Include="Resources\scroll_top.png" />
+    <Content Include="Resources\tech_scrollbar.png" />
+    <Content Include="Resources\ThumbBottom.png" />
+    <Content Include="Resources\ThumbMiddle.png" />
+    <Content Include="Resources\ThumbSpanBottom.png" />
+    <Content Include="Resources\ThumbSpanTop.png" />
+    <Content Include="Resources\ThumbTop.png" />
+    <Content Include="Resources\uparrow.png" />
+    <Content Include="Resources\ZK_logo_128.ico" />
+    <Content Include="Resources\ZK_logo_128.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\BgImages\" />
+    <Folder Include="Resources\DarkHiveGlow\" />
+    <Folder Include="Resources\DarkHiveHover\" />
+    <Folder Include="Resources\DarkHive\" />
+    <Folder Include="Resources\Shraka\" />
+    <Folder Include="Resources\Sounds\" />
+    <Folder Include="Resources\TechPanel\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>

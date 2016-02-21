@@ -393,6 +393,42 @@ namespace ZeroKLobby
             return (int)(output + 0.5d); //equivalent to Round(output)
         }
 
+        public static void RenderControlBgImage(this Control destination, Control source, PaintEventArgs e)
+        {
+            var loc = source.PointToClient(destination.Parent.PointToScreen(destination.Location));
+            if (source.BackgroundImage != null) e.Graphics.DrawImage(source.BackgroundImage, e.ClipRectangle, loc.X + e.ClipRectangle.X, loc.Y + e.ClipRectangle.Y, e.ClipRectangle.Width, e.ClipRectangle.Height, GraphicsUnit.Pixel);
+        }
+
+        public static Control FindParentWithBgImage(this Control source)
+        {
+            var p = source.Parent;
+            while (p != null)
+            {
+                if (p.BackgroundImage != null) return p;
+                p = p.Parent;
+            }
+            return null;
+        }
+
+        public static bool RenderParentsBackgroundImage(this Control source, PaintEventArgs e)
+        {
+            try
+            {
+                var par = source.FindParentWithBgImage();
+                if (par != null)
+                {
+                    source.RenderControlBgImage(par, e);
+                    return true;
+                }
+                else return false;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error rendering background image: {0}", ex);
+            }
+            return false;
+        }
+
 
 
     }

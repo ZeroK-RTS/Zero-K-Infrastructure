@@ -81,7 +81,7 @@ namespace ZeroKLobby
 
             ButtonList = new List<ButtonInfo>() //normal arrangement
             {
-                new ButtonInfo() { Label = "HOME", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon= Buttons.home, Height = 32,Width = 80 },
+                new ButtonInfo() { Label = "HOME", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon= Buttons.left, Height = 32,Width = 80 },
                 new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat, Height = 32, Width = 65 },
                 new ButtonInfo()
                 {
