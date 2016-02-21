@@ -116,7 +116,7 @@ namespace ZeroKLobby.Notifications
 		{
 			do
 			{
-                var loginForm = new LoginForm(register);
+                var loginForm = new LoginForm();
 				loginForm.InfoText = text;
 				if (loginForm.ShowDialog() == DialogResult.Cancel) 
 				{
@@ -125,7 +125,6 @@ namespace ZeroKLobby.Notifications
 					lbState.Text = "Login cancelled, press button on left to login again";
 					return;
 				}
-				canRegister = loginForm.CanRegister;
 				Program.Conf.LobbyPlayerName = loginForm.LoginValue;
 				Program.Conf.LobbyPlayerPassword = loginForm.PasswordValue;
 				if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) MessageBox.Show("Please fill player name and password", "Missing information", MessageBoxButtons.OK, MessageBoxIcon.Information); 

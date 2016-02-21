@@ -11,7 +11,7 @@ using ZkData.UnitSyncLib;
 
 namespace ZeroKLobby.MicroLobby
 {
-    public class PlayerListItem : IDisposable
+    public class PlayerListItem: IDisposable
     {
         /// <summary>
         /// Important values used to make sure playerlist shows name in correct order during searching and/or in battleroom
@@ -20,7 +20,7 @@ namespace ZeroKLobby.MicroLobby
         {
             SearchTitle = 0,
             SearchMatchedPlayer = 1,
-            SearchNoMatchTitle = 2,
+            SearchNoMatchTitle =2,
             SearchNoMatchPlayer = 3,
             //others
             Uncategorized = 4,
@@ -50,14 +50,14 @@ namespace ZeroKLobby.MicroLobby
         public string SlotButton;
         public int SortCategory { get; set; }
         public string Title { get; set; }
-        public bool IsZeroKBattle
+        public bool IsZeroKBattle 
         {
             get
             {
                 if (isOfflineMode) return isZK;
-                return Program.TasClient.MyBattle != null && KnownGames.GetGame(Program.TasClient.MyBattle.ModName) != null
+                return Program.TasClient.MyBattle != null && KnownGames.GetGame(Program.TasClient.MyBattle.ModName) != null 
                     && KnownGames.GetGame(Program.TasClient.MyBattle.ModName).IsPrimary;
-            }
+            } 
         }
 
         public User User
@@ -77,8 +77,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 if (isOfflineMode) return offlineUserBattleStatus;
                 var bat = Program.TasClient.MyBattle;
-                if (bat != null && UserName != null)
-                {
+                if (bat != null && UserName != null) {
                     UserBattleStatus ubs;
                     if (bat.Users.TryGetValue(UserName, out ubs)) return ubs;
                 }
@@ -91,7 +90,7 @@ namespace ZeroKLobby.MicroLobby
 
         public PlayerListItem()
         {
-            height = (int)font.Size * 2;
+            height = (int)font.Size*2;
             SortCategory = (int)SortCats.Uncategorized;
         }
 
@@ -108,7 +107,7 @@ namespace ZeroKLobby.MicroLobby
             boldFont.Dispose();
         }
 
-        public void DrawPlayerLine(Graphics g, Rectangle bounds, Color textColor, bool grayedOut, bool isBattle)
+        public void DrawPlayerLine(Graphics g, Rectangle bounds, Color textColor,  bool grayedOut, bool isBattle)
         {
 
             g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -119,16 +118,16 @@ namespace ZeroKLobby.MicroLobby
             if (grayedOut) textColor = Program.Conf.FadeColor;
 
             Action<Image> drawImage = image =>
-            {
-                g.DrawImage(image, bounds.Left + x, bounds.Top, 16, 16);
-                x += 19;
-            };
+                {
+                    g.DrawImage(image, bounds.Left + x, bounds.Top, 16, 16);
+                    x += 19;
+                };
 
             Action<string, Color> drawText = (text, color) =>
-            {
-                TextRenderer.DrawText(g, text, font, new Point(bounds.Left + x, bounds.Top), color, TextFormatFlags.PreserveGraphicsTranslateTransform);
-                x += TextRenderer.MeasureText(g, text, font).Width;
-            };
+                {
+                    TextRenderer.DrawText(g, text, font, new Point(bounds.Left + x, bounds.Top), color, TextFormatFlags.PreserveGraphicsTranslateTransform);
+                    x += TextRenderer.MeasureText(g, text, font).Width;
+                };
 
             // is section header
             if (Title != null)
@@ -232,13 +231,11 @@ namespace ZeroKLobby.MicroLobby
                         drawText(string.Format("Wrong alliance ({0} instead of {1}).", userStatus.AllyNumber, MissionSlot.AllyID),
                                  Color.Red);
 
-            if (user.SteamID != null)
-            {
+            if (user.SteamID != null) {
                 bool isEnabled;
                 bool isTalking;
                 Program.SteamHandler.Voice.GetUserVoiceInfo(user.SteamID.Value, out isEnabled, out isTalking);
-                if (isEnabled)
-                {
+                if (isEnabled) {
                     drawImage(isTalking ? ZklResources.voice_talking : ZklResources.voice_off);
                 }
             }
@@ -247,7 +244,7 @@ namespace ZeroKLobby.MicroLobby
         public string GetSortingKey()
         {
             if (SortCategory < (int)SortCats.Uncategorized)
-                return SortCategory.ToString("00000") + UserName ?? string.Empty; //for ChatControl's search-filter only
+                return SortCategory.ToString("00000") + UserName??string.Empty; //for ChatControl's search-filter only
 
             var name = string.Empty;
             if (MissionSlot != null)

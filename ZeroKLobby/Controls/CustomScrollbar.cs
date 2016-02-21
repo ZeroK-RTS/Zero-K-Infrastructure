@@ -510,6 +510,8 @@ namespace ZeroKLobby.Controls
     internal class ScrollbarControlDesigner : System.Windows.Forms.Design.ControlDesigner
     {
 
+
+
         public override SelectionRules SelectionRules
         {
             get

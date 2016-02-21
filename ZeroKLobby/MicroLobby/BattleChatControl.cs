@@ -28,7 +28,9 @@ namespace ZeroKLobby.MicroLobby
 
 
 	    public BattleChatControl(): base("Battle")
-		{
+	    {
+	        if (this.IsInDesignMode()) return;
+
 			Program.TasClient.Said += TasClient_Said;
 			Program.TasClient.BattleJoined += TasClient_BattleJoined;
 			Program.TasClient.BattleUserLeft += TasClient_BattleUserLeft;
@@ -49,14 +51,17 @@ namespace ZeroKLobby.MicroLobby
 			ChatLine += (s, e) => { if (Program.TasClient.IsLoggedIn) Program.TasClient.Say(SayPlace.Battle, null, e.Data, false); };
 			playerBox.IsBattle = true;
 
-            minimapFuncBox = new ZeroKLobby.Controls.MinimapFuncBox();
+            minimapFuncBox = new ZeroKLobby.Controls.MinimapFuncBox
+            {
+                Dock = DockStyle.Fill
+            };
 
 			minimapBox = new PictureBox { Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.CenterImage };
 			minimapBox.Cursor = Cursors.Hand;
 			minimapBox.Click +=
 				(s, e) => { if (Program.TasClient.MyBattle != null) Program.MainWindow.navigationControl.Path = string.Format("{1}/Maps/DetailName?name={0}", Program.TasClient.MyBattle.MapName, GlobalConst.BaseSiteUrl); };
 
-            //playerBoxSearchBarContainer.Controls.Add(battleFuncBox);
+            // playerBoxSearchBarContainer.Controls.Add(battleFuncBox);
             playerListMapSplitContainer.Panel2.Controls.Add(minimapFuncBox);
             minimapFuncBox.mapPanel.Controls.Add(minimapBox);
 
@@ -88,10 +93,16 @@ namespace ZeroKLobby.MicroLobby
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize(e);
-            if (finishLoad)
+            if (finishLoad && minimapFuncBox.minimapSplitContainer1.Height > 1)
             {
-                DpiMeasurement.DpiXYMeasurement(this);
-                minimapFuncBox.minimapSplitContainer1.SplitterDistance = Math.Min(DpiMeasurement.ScaleValueY(23),minimapFuncBox.minimapSplitContainer1.Height); //always show button fully
+                var splitContainer = minimapFuncBox.minimapSplitContainer1;
+
+                var splitterDistance = Math.Min((int)23, minimapFuncBox.minimapSplitContainer1.Height);  //always show button fully
+
+                // SplitterDistance must be between Panel1MinSize and Width - Panel2MinSize.
+                splitterDistance = Math.Min(splitterDistance, splitContainer.Width - splitContainer.Panel2MinSize + 1);
+                splitterDistance = Math.Max(splitterDistance, splitContainer.Panel1MinSize - 1);
+                minimapFuncBox.minimapSplitContainer1.SplitterDistance = splitterDistance;
                 DrawMinimap();
             }
 		}
@@ -165,7 +176,7 @@ namespace ZeroKLobby.MicroLobby
 		            newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team * 2 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = team, Height = 25 });
 		        }
 
-		        newList = newList.OrderBy(x => x.ToString()).ToList();
+		        newList = newList.OrderBy(x => x.GetSortingKey()).ToList();
 		    }
             
 		    playerBox.BeginUpdate();
@@ -185,7 +196,7 @@ namespace ZeroKLobby.MicroLobby
 		void DrawMinimap()
 		{
 		    try {
-		        if (minimap == null || Program.TasClient.MyBattle == null) return;
+		        if (minimap == null || Program.TasClient.MyBattle == null || this.IsInDesignMode()) return;
 		        var boxColors = new[]
 		                        {
 		                            Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta, Color.Gray, Color.Lime, Color.Maroon,
@@ -195,7 +206,7 @@ namespace ZeroKLobby.MicroLobby
 		        // todo remove minimapSize and use minimap image directly when plasmaserver stuff fixed
 		        var yScale = (double)minimapBox.Height/minimapSize.Height;
 		        var scale = Math.Min(xScale, yScale);
-		        minimapBox.Image = minimap.GetResized((int)(scale*minimapSize.Width), (int)(scale*minimapSize.Height), InterpolationMode.HighQualityBicubic);
+		        minimapBox.Image = minimap.GetResized((int)(scale*minimapSize.Width), (int)(scale*minimapSize.Height));
 		        using (var g = Graphics.FromImage(minimapBox.Image)) {
 		            g.TextRenderingHint = TextRenderingHint.AntiAlias;
 		            g.SmoothingMode = SmoothingMode.HighQuality;
@@ -223,7 +234,7 @@ namespace ZeroKLobby.MicroLobby
 		                    format.Alignment = StringAlignment.Center;
 		                    format.LineAlignment = StringAlignment.Center;
 
-		                    using (var font = new Font("Arial", 13f, FontStyle.Bold)) g.DrawStringWithOutline((allyTeam + 1).ToString(), font, Brushes.White, Brushes.Black, numberRect, format, 5);
+		                    using (var font = new Font(Config.GeneralFontBig, FontStyle.Bold)) g.DrawStringWithOutline((allyTeam + 1).ToString(), font, Brushes.White, Brushes.Black, numberRect, format, 5);
 		                }
 		            }
 		        }
@@ -365,17 +376,17 @@ namespace ZeroKLobby.MicroLobby
 		{
 			if (mea.Button == MouseButtons.Left)
 			{
-				if (playerBox.HoverItem != null)
+				if (this.playerBox.HoverItem != null)
 				{
-					if (playerBox.HoverItem.IsSpectatorsTitle) ActionHandler.Spectate();
-					else if (playerBox.HoverItem.SlotButton != null) ActionHandler.JoinSlot(playerBox.HoverItem.MissionSlot);
-					else if (playerBox.HoverItem.Button!=null) ActionHandler.JoinAllyTeam(playerBox.HoverItem.AllyTeam.Value);
+					if (this.playerBox.HoverItem.IsSpectatorsTitle) ActionHandler.Spectate();
+					else if (this.playerBox.HoverItem.SlotButton != null) ActionHandler.JoinSlot(this.playerBox.HoverItem.MissionSlot);
+					else if (this.playerBox.HoverItem.Button!=null) ActionHandler.JoinAllyTeam(this.playerBox.HoverItem.AllyTeam.Value);
 				}
 			}
 
 			if (mea.Button == MouseButtons.Right || !Program.Conf.LeftClickSelectsPlayer)
 			{
-				if (playerBox.HoverItem == null && mea.Button == MouseButtons.Right)
+				if (this.playerBox.HoverItem == null && mea.Button == MouseButtons.Right)
 				{ //right click on empty space
 					var cm = ContextMenus.GetPlayerContextMenu(Program.TasClient.MyUser, true);
 					Program.ToolTip.Visible = false;
@@ -390,12 +401,12 @@ namespace ZeroKLobby.MicroLobby
 				}
                 //NOTE: code that display player's context menu on Left-mouse-click is in ChatControl.playerBox_MouseClick();
 			}
-			if (playerBox.HoverItem != null)
+			if (this.playerBox.HoverItem != null)
 			{
-				if (playerBox.HoverItem.BotBattleStatus != null)
+				if (this.playerBox.HoverItem.BotBattleStatus != null)
 				{
-					playerBox.SelectedItem = playerBox.HoverItem;
-					var cm = ContextMenus.GetBotContextMenu(playerBox.HoverItem.BotBattleStatus.Name);
+					playerBox.SelectedItem = this.playerBox.HoverItem;
+					var cm = ContextMenus.GetBotContextMenu(this.playerBox.HoverItem.BotBattleStatus.Name);
 					Program.ToolTip.Visible = false;
 				    try {
 				        cm.Show(playerBox, mea.Location);

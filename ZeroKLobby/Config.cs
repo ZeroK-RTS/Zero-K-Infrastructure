@@ -298,8 +298,6 @@ namespace ZeroKLobby
         [Browsable(false)]
         public string PackageMasterUrl { get { return "http://repos.springrts.com/"; } }
 
-        [Browsable(false)]
-        public bool InterceptPopup { get; set; } = true;
 
         public bool UseExternalBrowser { get; set; } = false;
         public bool SingleInstance { get; set; } = false;
