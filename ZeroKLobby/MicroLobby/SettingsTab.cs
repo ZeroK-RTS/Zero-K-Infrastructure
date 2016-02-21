@@ -45,7 +45,6 @@ namespace ZeroKLobby.MicroLobby
             Program.ToolTip.SetText(lobbyLogButton, "Diagnostic log for ZKL lobby client ( Useful to report things such as: download issue or lobby issue)");
             Program.ToolTip.SetText(gameLogButton, "Diagnostic log for Spring engine (Useful to report things such as: ingame graphic bug or game crash)");
             Program.ToolTip.SetText(btnDefaults, "Local data reset?");
-            Program.ToolTip.SetText(btnOfflineSkirmish, "Create custom offline game versus AI");
 		}
 
 
@@ -111,7 +110,9 @@ namespace ZeroKLobby.MicroLobby
 			return false;
 		}
 
-		public string GetTooltip(params string[] path)
+	    public string Title { get { return "Settings"; } }
+
+	    public string GetTooltip(params string[] path)
 		{
 			return null;
 		}
@@ -128,8 +129,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			RefreshConfig();
             //make sure the split start at 203 (relative to any DPI scale)
-            DpiMeasurement.DpiXYMeasurement(this);
-            int splitDistance = DpiMeasurement.ScaleValueY(203);//DpiMeasurement is a static class stored in ZeroKLobby\Util.cs
+	        int splitDistance = (int)203;//DpiMeasurement is a static class stored in ZeroKLobby\Util.cs
             splitContainerAtMid.SplitterDistance = splitDistance;
 		}
 
@@ -181,7 +181,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			var menu = new ContextMenu();
 			var joinItem = new MenuItem("Ask in the ZK channel (#zk)");
-			joinItem.Click += (s, e) => NavigationControl.Instance.Path = "chat/channel/zk";
+			joinItem.Click += (s, e) => Program.MainWindow.navigationControl.Path = "chat/channel/zk";
 			menu.MenuItems.Add(joinItem);
 			var helpForumItem = new MenuItem("Ask in the Help Forum");
 			helpForumItem.Click += helpForumItem_Click;
@@ -191,7 +191,7 @@ namespace ZeroKLobby.MicroLobby
 			{
 				var item = new MenuItem(admin.Name + (admin.IsAway ? " (Idle)" : String.Empty));
 				var adminName = admin.Name;
-				item.Click += (s, e) => NavigationControl.Instance.Path = "chat/user/" + adminName;
+				item.Click += (s, e) => Program.MainWindow.navigationControl.Path = "chat/user/" + adminName;
 				adminsItem.MenuItems.Add(item);
 			}
 			menu.MenuItems.Add(adminsItem);
@@ -295,8 +295,7 @@ namespace ZeroKLobby.MicroLobby
         {
             if (Program.MainWindow!=null && Program.MainWindow.WindowState == FormWindowState.Minimized) return;
 			//prevent splitter from being dragged when window resize
-            DpiMeasurement.DpiXYMeasurement(this); //this measurement use cached value. It won't cost anything if another measurement was already done in other control element
-            int splitDistance = DpiMeasurement.ScaleValueY(203);//DpiMeasurement is a static class stored in ZeroKLobby\Util.cs
+            int splitDistance = (int)203;//DpiMeasurement is a static class stored in ZeroKLobby\Util.cs
             splitDistance = Math.Min(splitDistance, splitContainerAtMid.Width - splitContainerAtMid.Panel2MinSize);
             splitContainerAtMid.SplitterDistance = splitDistance; //must obey minimum size constraint
         }
@@ -304,6 +303,11 @@ namespace ZeroKLobby.MicroLobby
         private void btnOfflineSkirmish_Click(object sender, EventArgs e)
         {
             Program.MainWindow.navigationControl.Path = "zk://extra/skirmish";
+        }
+
+        private void btnServerSocket_Click(object sender, EventArgs e)
+        {
+            Program.MainWindow.navigationControl.Path = "zk://server";
         }
 	}
 }

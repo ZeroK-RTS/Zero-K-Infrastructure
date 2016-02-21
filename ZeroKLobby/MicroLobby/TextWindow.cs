@@ -37,6 +37,7 @@ using JetBrains.Annotations;
 using ZkData;
 using ZeroKLobby;
 using System.Collections.Generic;
+using ZeroKLobby.Controls;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -407,10 +408,18 @@ namespace ZeroKLobby.MicroLobby
             ScrollWindow(e.Delta > 0);
         }
 
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+            //this.RenderParentsBackgroundImage(e);
+            //base.OnPaintBackground(e);
+        }
+
         protected override void OnPaint([NotNull] PaintEventArgs e)
         {
             if (e == null) throw new ArgumentNullException("e");
-            base.OnPaint(e);
+            //base.OnPaint(e);
+
+            ///BackgroundImage = BgImages.bg_battle;
             if (!e.ClipRectangle.IsEmpty) OnDisplayText(e);
         }
 
@@ -752,12 +761,11 @@ namespace ZeroKLobby.MicroLobby
 
                     //g.Clear(IrcColor.colors[backColor]);
 
-                    if (BackgroundImage != null)
-                    {
+                    if (!this.RenderParentsBackgroundImage(e)) {
                         g.FillRectangle(new SolidBrush(TextColor.GetColor(backColor)), displayRect);
-                        g.DrawImage(BackgroundImage, displayRect.Left, displayRect.Top, displayRect.Width, displayRect.Height);
+                    } else {
+                        g.FillRectangle(new SolidBrush(Color.FromArgb(100,0,0,0)), displayRect);
                     }
-                    else g.FillRectangle(new SolidBrush(TextColor.GetColor(backColor)), displayRect);
 
                     g.InterpolationMode = InterpolationMode.Low;
                     g.SmoothingMode = SmoothingMode.HighSpeed;
@@ -787,7 +795,7 @@ namespace ZeroKLobby.MicroLobby
 
                         var underline = false;
                         var isInUrl = false;
-                        var font = new Font(Font.Name, Font.Size, Font.Style);
+                        var font = new Font(Font.Name, Font.Size, Font.Style, Font.Unit);
 
                         var redline = -1;
                         if (ShowUnreadLine)
@@ -832,7 +840,7 @@ namespace ZeroKLobby.MicroLobby
                             {
                                 underline = false;
                                 font.SafeDispose();
-                                font = new Font(Font.Name, Font.Size, Font.Style);
+                                font = new Font(Font.Name, Font.Size, Font.Style, Font.Unit);
                             }
 
                             if (line.Length > 0)
@@ -908,7 +916,7 @@ namespace ZeroKLobby.MicroLobby
                                                 line.Remove(0, 1);
                                                 i = -1;
                                                 font.SafeDispose();
-                                                font = new Font(Font.Name, Font.Size, Font.Style | FontStyle.Underline);
+                                                font = new Font(Font.Name, Font.Size, Font.Style | FontStyle.Underline, Font.Unit);
                                                 isInUrl = true;
                                                 break;
 
@@ -938,7 +946,7 @@ namespace ZeroKLobby.MicroLobby
                                                 line.Remove(0, 1);
                                                 i = -1;
                                                 font.SafeDispose();
-                                                font = new Font(Font.Name, Font.Size, Font.Style);
+                                                font = new Font(Font.Name, Font.Size, Font.Style, Font.Unit);
                                                 isInUrl = false;
                                                 break;
                                             case TextColor.UnderlineChar:
@@ -969,8 +977,8 @@ namespace ZeroKLobby.MicroLobby
 
                                                 underline = !underline;
                                                 font.SafeDispose();
-                                                if (underline) font = new Font(Font.Name, Font.Size, Font.Style | FontStyle.Underline);
-                                                else {font = new Font(Font.Name, Font.Size, Font.Style);}
+                                                if (underline) font = new Font(Font.Name, Font.Size, Font.Style | FontStyle.Underline, Font.Unit);
+                                                else {font = new Font(Font.Name, Font.Size, Font.Style, Font.Unit);}
                                                 break;
                                             case TextColor.NewColorChar:
                                                 //draw whats previously in the string
@@ -1175,7 +1183,7 @@ namespace ZeroKLobby.MicroLobby
                         e.Graphics.DrawImageUnscaled(buffer, 0, 0);
                     }
                     // var coords = displayRect
-                    ButtonRenderer.DrawButton(g,
+                    System.Windows.Forms.ButtonRenderer.DrawButton(g,
                                               new Rectangle(displayRect.Right - 200, displayRect.Top - 50, 100, 30),
                                               "Hide",
                                               Font,
@@ -1536,7 +1544,7 @@ namespace ZeroKLobby.MicroLobby
 
         void OnScroll(object sender, EventArgs e)
         {
-            var scrollBar = (VScrollBar)sender;
+            var scrollBar = (CustomScrollbar)sender;
             scrollBar.Value = Math.Max(scrollBar.Value , 1); //Note: Math.Max is used for clamping value (to avoid OutOfRange message in MONO)
 
             Invalidate();

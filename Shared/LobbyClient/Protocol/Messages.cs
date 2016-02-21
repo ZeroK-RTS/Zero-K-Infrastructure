@@ -531,4 +531,93 @@ namespace LobbyClient
     }
 
 
+
+#region Party Commands
+
+
+    [Message(Origin.Client)]
+    public class CreateParty
+    {
+        public string LeaderName;
+    }
+
+    [Message(Origin.Client)]
+    public class InviteUserToParty
+    {
+        public string Username;
+    }
+
+    [Message(Origin.Client)]
+    public class InviteSteamFriendToParty
+    {
+        public string SteamID;
+    }
+
+
+    [Message(Origin.Server)]
+    public class ClientHasJoinedParty
+    {
+        public List<string> UsersInParty;
+    }
+
+    [Message(Origin.Client)]
+    public class LeaveParty
+    {
+    }
+
+    [Message(Origin.Server)]
+    public class LeftParty
+    {
+    }
+
+    [Message(Origin.Server)]
+    public class PartyMemberHasdJoined
+    {
+        public string UserName;
+    }
+
+    [Message(Origin.Server)]
+    public class PartyMemberHasLeft
+    {
+        public string UserName;
+    }
+
+    [Message(Origin.Client)]
+    public class SetMyPartyMemberReadyStatus
+    {
+        public bool IsPlayerReady;
+    }
+
+    [Message(Origin.Server)]
+    public class ClientHasBeenInvitedToParty
+    {
+        public string InvitingUserName;
+        public int PartyID;
+    }
+
+
+    [Message(Origin.Client)]
+    public class AcceptPartyInvitation
+    {
+        public int PartyID;
+    }
+
+    #endregion
+
+
+#region Matchmaker Commands
+
+    [Message(Origin.Client)]
+    public class JoinQueue
+    {
+        public bool JoinOneVsOne;
+        public bool JoinTeams;
+    }
+
+    [Message(Origin.Client)]
+    public class LeaveQueue
+    {
+    }
+
+#endregion
 }

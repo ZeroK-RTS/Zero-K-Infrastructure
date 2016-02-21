@@ -28,7 +28,8 @@ namespace ZeroKLobby
         /// <returns>true if change allowed</returns>
         public static bool ChangeDesiredSpectatorState(bool state)
         {
-            return Program.BattleBar.ChangeDesiredSpectatorState(state);
+            Program.MainWindow.BattleRoomPage.ChangeDesiredSpectatorState(state);
+            return true;
         }
 
         /// <summary>
@@ -88,7 +89,7 @@ namespace ZeroKLobby
             battleJoinHandler = ((s, e) =>
               {
                   Program.TasClient.BattleJoined -= battleJoinHandler;
-                  if (Program.TasClient.MyBattle == null || !Program.TasClient.MyBattle.IsQueue) NavigationControl.Instance.Path = "chat/battle";
+                  if (Program.TasClient.MyBattle == null || !Program.TasClient.MyBattle.IsQueue) Program.MainWindow.navigationControl.Path = "chat/battle";
               });
 
 
@@ -96,7 +97,7 @@ namespace ZeroKLobby
 
             //Program.JugglerBar.Deactivate();
 
-            Program.BattleBar.StartManualBattle(battleID, password);
+            TasClientActions.StartManualBattle(battleID, password);
         }
 
 
@@ -157,10 +158,7 @@ namespace ZeroKLobby
                 switch (command)
                 {
                     case "logout":
-                        Program.TasClient.RequestDisconnect();
-                        Program.Conf.LobbyPlayerName = "";
-                        Program.Conf.LobbyPlayerPassword = "";
-                        Program.ConnectBar.TryToConnectTasClient();
+                        Program.MainWindow.connectBar.DoLogout();
                         break;
 
                     case "start_mission":
@@ -307,7 +305,7 @@ namespace ZeroKLobby
 
                       Program.TasClient.BattleJoined += battleJoined;
                       JoinBattle(battle.BattleID, password);
-                      NavigationControl.Instance.Path = "chat/battle";
+                      Program.MainWindow.navigationControl.Path = "chat/battle";
                   }
               };
 
@@ -358,7 +356,7 @@ namespace ZeroKLobby
 
         public static void StopBattle()
         {
-            Program.BattleBar.Stop();
+            TasClientActions.LeaveBattle();
         }
 
 

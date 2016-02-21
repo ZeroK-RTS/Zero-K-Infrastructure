@@ -13,6 +13,8 @@ namespace ZeroKLobby.Controls
         {
             InitializeComponent();
 
+            if (this.IsInDesignMode()) return;
+
             Program.ToolTip.SetText(btnGameOptions, "List available map/mod-options");
             Program.ToolTip.SetText(btnMapList, "List featured maps");
             Program.ToolTip.SetText(btnChangeTeam, "Create or move to new team");

@@ -22,6 +22,8 @@ namespace ZeroKLobby
         {
             var x = 1;
             var y = 0;
+            var fbrush = new SolidBrush(foreColor);
+
             Action newLine = () =>
                 {
                     x = 1;
@@ -29,15 +31,15 @@ namespace ZeroKLobby
                 };
             Action<string> drawString = text =>
                 {
-                    TextRenderer.DrawText(g, text, font, new Point(x, y), foreColor);
-                    x += (int)Math.Ceiling((double)TextRenderer.MeasureText(g, text, font).Width);
+                    g.DrawString(text, font, fbrush, new Point(x, y));
+                    x += (int)Math.Ceiling((double)g.MeasureString(text, font).Width);
                 };
             Action<Image, int, int> drawImage = (image, w, h) =>
                 {
                     g.DrawImage(image, x, y, w, h);
                     x += w + 3;
                 };
-            using (var boldFont = new Font(font, FontStyle.Bold)) TextRenderer.DrawText(g, Map.GetHumanName(mapName), boldFont, new Point(x, y), foreColor);
+            using (var boldFont = new Font(font, FontStyle.Bold)) g.DrawString(Map.GetHumanName(mapName), boldFont, fbrush, new Point(x, y));
 
             if (map != null)
             {
@@ -81,6 +83,7 @@ namespace ZeroKLobby
                     newLine();
                 }
             }
+            fbrush.Dispose();
         }
 
         public Size? GetSize(Font font)

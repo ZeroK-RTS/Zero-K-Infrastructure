@@ -114,6 +114,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ResharperAttribs.cs" />
+    <Compile Include="ResizedImageCache.cs" />
     <Compile Include="SdpArchive.cs" />
     <Compile Include="SelfUpdater.cs" />
     <Compile Include="SerializableDictionary.cs" />

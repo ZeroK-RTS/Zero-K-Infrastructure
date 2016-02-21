@@ -51,11 +51,6 @@ namespace PlasmaDownloader
             remove { packageDownloader.PackagesChanged -= value; }
         }
 
-        public event EventHandler SelectedPackagesChanged {
-            add { packageDownloader.SelectedPackagesChanged += value; }
-            remove { packageDownloader.SelectedPackagesChanged -= value; }
-        }
-
         public PlasmaDownloader(IPlasmaDownloaderConfig config, SpringScanner scanner, SpringPaths springPaths) {
             SpringPaths = springPaths;
             Config = config;
@@ -193,14 +188,14 @@ namespace PlasmaDownloader
                     //Wait until refresh is done
                     do System.Threading.Thread.Sleep(500); while (packageDownloader.isRefreshing);
                 else
-                    packageDownloader.LoadMasterAndVersions(false).Wait();
+                    packageDownloader.LoadMasterAndVersions().Wait();
 
                 return;
             }
             //package is stale?
             if (DateTime.Now.Subtract(packageDownloader.LastRefresh).TotalMinutes >= 2)
             {
-                packageDownloader.LoadMasterAndVersions(false).Wait();
+                packageDownloader.LoadMasterAndVersions().Wait();
                 return;
             }
         }

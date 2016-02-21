@@ -29,13 +29,11 @@ namespace ZkData
         // ok its ugly hardcoded, but service stub itself has it hardcoed :)
 
         readonly string resourceFolder;
-        readonly SpringScanner scanner;
         readonly WebClient webClientForMap = new WebClient() { Proxy = null };
         readonly WebClient webClientForMod = new WebClient() { Proxy = null };
 
-        public MetaDataCache(SpringPaths springPaths, SpringScanner scanner)
+        public MetaDataCache(SpringPaths springPaths)
         {
-            this.scanner = scanner;
             resourceFolder = Utils.MakePath(springPaths.Cache, "Resources");
             Utils.CheckPath(resourceFolder);
         }

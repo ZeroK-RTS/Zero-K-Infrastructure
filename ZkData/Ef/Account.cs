@@ -240,6 +240,7 @@ namespace ZkData
 
         public bool VerifyPassword(string passwordHash)
         {
+            if (PasswordBcrypt == null) return false;
             return BCrypt.Net.BCrypt.Verify(passwordHash, PasswordBcrypt);
         }
 

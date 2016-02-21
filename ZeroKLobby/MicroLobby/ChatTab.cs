@@ -15,7 +15,6 @@ namespace ZeroKLobby.MicroLobby
 
     public partial class ChatTab : UserControl, INavigatable
     {
-        BattleChatControl battleChatControl;
         readonly ToolTabs toolTabs = new ToolTabs { Dock = DockStyle.Fill };
         string focusWhenJoin;
 
@@ -26,10 +25,8 @@ namespace ZeroKLobby.MicroLobby
         {
             SuspendLayout();
             InitializeComponent();
-            if (Process.GetCurrentProcess().ProcessName == "devenv") return; // detect design mode, workaround for non-working this.DesignMode 
+            if (this.IsInDesignMode()) return;
             Controls.Add(toolTabs);
-
-            AddBattleControl();
 
             Program.TasClient.ChannelJoined += client_ChannelJoined;
             Program.TasClient.Said += client_Said;
@@ -45,6 +42,7 @@ namespace ZeroKLobby.MicroLobby
             foreach (var channel in Program.TasClient.JoinedChannels.Values.Where(c => !IsIgnoredChannel(c.Name))) CreateChannelControl(channel.Name);
             toolTabs.SelectChannelTab("Battle");
             ResumeLayout();
+            Title = "Chat";
         }
 
         public void CloseChannelTab(string key)
@@ -109,18 +107,10 @@ namespace ZeroKLobby.MicroLobby
         {
             return toolTabs.GetNextTabPath();
         }
+
         public string GetPrevTabPath()
         {
             return toolTabs.GetPrevTabPath();
-        }
-
-
-
-
-        void AddBattleControl()
-        {
-            if (battleChatControl == null || battleChatControl.IsDisposed) battleChatControl = new BattleChatControl { Dock = DockStyle.Fill };
-            if (toolTabs.GetChannelTab("Battle") == null) toolTabs.AddTab("Battle", "Battle", battleChatControl, ZklResources.battle, "Current battle room", 3);
         }
 
 
@@ -240,12 +230,10 @@ namespace ZeroKLobby.MicroLobby
         void TasClient_ConnectionLost(object sender, TasEventArgs e)
         {
             toolTabs.DisposeAllTabs();
-            AddBattleControl();
         }
 
         void TasClient_LoginAccepted(object sender, TasEventArgs e)
         {
-            AddBattleControl();
             foreach (var friendName in Program.FriendManager.Friends) CreatePrivateMessageControl(friendName);
             foreach (var channel in Program.AutoJoinManager.Channels) Program.TasClient.JoinChannel(channel, Program.AutoJoinManager.GetPassword(channel));
             var lang = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
@@ -279,6 +267,7 @@ namespace ZeroKLobby.MicroLobby
                 if (path[1] == "battle")
                 {
                     toolTabs.SelectChannelTab("Battle");
+                    Title = "Joined battle chat";
                 }
             }
             if (path.Length == 3 && !String.IsNullOrEmpty(path[1]) && !String.IsNullOrEmpty(path[2]))
@@ -288,12 +277,14 @@ namespace ZeroKLobby.MicroLobby
                 {
                     var userName = path[2];
                     OpenPrivateMessageChannel(userName);
+                    Title = "Private chat with "+ userName;
 
                 }
                 else if (type == "channel")
                 {
                     var channelName = path[2];
                     OpenChannel(channelName);
+                    Title = "Chat " + channelName;
                 }
             }
             return true;
@@ -314,18 +305,6 @@ namespace ZeroKLobby.MicroLobby
             return false;
         }
 
-        public string GetTooltip(params string[] path)
-        {
-            return null;
-        }
-
-        public void Reload()
-        {
-
-        }
-
-        public bool CanReload { get { return false; } }
-
-        public bool IsBusy { get { return false; } }
+        public string Title { get; private set; }
     }
 }

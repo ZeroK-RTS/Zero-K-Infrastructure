@@ -23,12 +23,10 @@ namespace ZeroKLobby.Notifications
         string lastBattleFounder;
         string lastScript;
 
-        readonly Random random = new Random();
         object speech;
         readonly Spring spring;
         bool suppressSpecChange = false;
         readonly Timer timer = new Timer();
-        object voice;
         string queueLabelFormatter = "";
         DateTime queueTarget;
 
@@ -134,9 +132,8 @@ namespace ZeroKLobby.Notifications
                     else engineVersionNeeded = null;
 
                     if (gameBox.Image != null) gameBox.Image.Dispose();
-                    DpiMeasurement.DpiXYMeasurement(this);
-                    int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
-                    int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
+                int scaledIconHeight = (int)BattleIcon.Height;
+                    int scaledIconWidth = (int)BattleIcon.Width;
                     gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
                     using (var g = Graphics.FromImage(gameBox.Image))
                     {
@@ -292,7 +289,7 @@ namespace ZeroKLobby.Notifications
 
             BattleChatControl.BattleLine += (s, e) => picoChat.AddLine(e.Data);
 
-            picoChat.MouseClick += (s, e) => NavigationControl.Instance.Path = "chat/battle";
+            picoChat.MouseClick += (s, e) => Program.MainWindow.navigationControl.Path = "chat/battle";
         }
 
         protected override void OnSizeChanged(EventArgs e)
@@ -336,16 +333,7 @@ namespace ZeroKLobby.Notifications
 
         public void StartManualBattle(int battleID, string password)
         {
-            Trace.TraceInformation("Joining battle {0}", battleID);
-            var tas = Program.TasClient;
-            if (tas.MyBattle != null)
-            {
-                Battle battle;
-                if (tas.ExistingBattles.TryGetValue(battleID, out battle)) tas.Say(SayPlace.Battle, "", string.Format("Going to {0} zk://@join_player:{1}", battle.Title, battle.Founder.Name), true);
-                tas.LeaveBattle();
-            }
-            if (!string.IsNullOrEmpty(password)) Program.TasClient.JoinBattle(battleID, password);
-            else Program.TasClient.JoinBattle(battleID);
+            TasClientActions.StartManualBattle(battleID, password);
         }
 
 
@@ -356,12 +344,13 @@ namespace ZeroKLobby.Notifications
 
         public void Stop()
         {
-            Trace.TraceInformation("Closing current battle");
+            
             isVisible = false;
-            client.LeaveBattle();
+
+            TasClientActions.LeaveBattle();
 
             Program.NotifySection.RemoveBar(this);
-            NavigationControl.Instance.Path = "battles";
+
         }
 
         void AutoRespond()
@@ -491,7 +480,7 @@ namespace ZeroKLobby.Notifications
 
         public void DetailClicked(NotifyBarContainer container)
         {
-            NavigationControl.Instance.Path = "chat/battle";
+            Program.MainWindow.navigationControl.Path = "chat/battle";
             if (IsHostGameRunning()) Rejoin();
             else client.Say(SayPlace.Battle, "", "!start", false);
         }
@@ -500,9 +489,8 @@ namespace ZeroKLobby.Notifications
         {
             if (e.Data.Battle == Program.TasClient.MyBattle)
             {
-                DpiMeasurement.DpiXYMeasurement(this);
-                int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
-                int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
+                int scaledIconHeight = (int)BattleIcon.Height;
+                int scaledIconWidth = (int)BattleIcon.Width;
                 if (gameBox.Image == null) gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
                 using (var g = Graphics.FromImage(gameBox.Image))
                 {

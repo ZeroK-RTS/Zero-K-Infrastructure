@@ -36,7 +36,7 @@ namespace Benchmarker
             else {
                 Trace.TraceInformation("Using optirun {0} to start the game (OPTIRUN env var defined)", optirun);
                 process.StartInfo.FileName = optirun;
-                arg.Add(string.Format("\"{0}\"", ( paths.Executable)));
+                arg.Add(string.Format("\"{0}\"", (paths.Executable)));
             }
 
 

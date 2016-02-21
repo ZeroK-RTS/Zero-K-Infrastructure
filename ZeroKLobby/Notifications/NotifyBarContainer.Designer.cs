@@ -48,7 +48,6 @@
             this.btnDetail.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDetail.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnDetail.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.btnDetail.ForeColor = System.Drawing.Color.White;
             this.btnDetail.Location = new System.Drawing.Point(3, 23);
             this.btnDetail.Name = "btnDetail";

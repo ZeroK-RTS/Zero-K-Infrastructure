@@ -1,3 +1,5 @@
+using ZeroKLobby.Controls;
+
 namespace ZeroKLobby.MicroLobby
 {
     partial class TextWindow
@@ -28,7 +30,7 @@ namespace ZeroKLobby.MicroLobby
         /// </summary>
         private void InitializeComponent()
         {
-            this.vScrollBar = new System.Windows.Forms.VScrollBar();
+            this.vScrollBar = new CustomScrollbar();
             this.SuspendLayout();
             // 
             // vScrollBar
@@ -48,7 +50,6 @@ namespace ZeroKLobby.MicroLobby
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.Controls.Add(this.vScrollBar);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "TextWindow";
             this.Size = new System.Drawing.Size(295, 239);
             this.ResumeLayout(false);
@@ -57,7 +58,7 @@ namespace ZeroKLobby.MicroLobby
 
         #endregion
 
-        private System.Windows.Forms.VScrollBar vScrollBar;
+        private CustomScrollbar vScrollBar;
 
 
 

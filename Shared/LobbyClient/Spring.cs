@@ -68,6 +68,11 @@ namespace LobbyClient
         //private string lobbyUserName;
 
 
+        /// <summary>
+        /// Executes when any instance of spring starts
+        /// </summary>
+        public static EventHandler AnySpringStarted = (sender, args) => { };
+
         private readonly SpringPaths paths;
 
 
@@ -349,7 +354,11 @@ namespace LobbyClient
             process.BeginErrorReadLine();
 
             //process.StandardInput.Write(script);
-            if (IsRunning && SpringStarted != null) SpringStarted(this, EventArgs.Empty);
+            if (IsRunning)
+            {
+                SpringStarted?.Invoke(this, EventArgs.Empty);
+                AnySpringStarted?.Invoke(this, EventArgs.Empty);
+            }
         }
 
 
