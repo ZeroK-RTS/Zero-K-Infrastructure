@@ -16,6 +16,7 @@ var chatStore = new (require('weblobby/store/Chat.js'))(lobbyServer, process);
 var afkStatus = new (require('weblobby/store/AfkStatus.js'))(lobbyServer, process);
 var currentBattle = new (require('weblobby/store/CurrentBattle.js'))(gameInfo,
 	lobbyServer, chatStore, process);
+var musicPlaylist = new (require('store/MusicPlaylist.js'))(process);
 
 window.echo = function(){
 	console.log.apply(console, arguments ); //chrome has issue with direct assigning of this function
