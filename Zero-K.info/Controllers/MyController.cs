@@ -60,7 +60,7 @@ namespace ZeroKWeb.Controllers
 			using (var scope = new TransactionScope())
 			{
 
-				var unlocks = db.AccountUnlocks.Where(x => x.AccountID == Global.AccountID);
+				var unlocks = GetUserUnlockCountsListIncludingFree(db);
 
 				Commander comm = db.Commanders.SingleOrDefault(x => x.ProfileNumber == profileNumber && x.AccountID == Global.AccountID);
 				if (comm != null)
@@ -81,7 +81,7 @@ namespace ZeroKWeb.Controllers
 
 				if (comm.Unlock == null)
 				{
-					var chassisUnlock = unlocks.FirstOrDefault(x => x.UnlockID == chassis);
+					var chassisUnlock = unlocks.FirstOrDefault(x => x.Unlock.UnlockID == chassis);
 					if ((chassis == null || chassisUnlock == null)) return GetCommanderProfileView(db, profileNumber);
 					else
 					{
@@ -112,7 +112,7 @@ namespace ZeroKWeb.Controllers
 							CommanderSlot slot = db.CommanderSlots.Single(x => x.CommanderSlotID == slotId);
 							Unlock unlock = db.Unlocks.Single(x => x.UnlockID == unlockId);
 
-							if (!unlocks.Any(x => x.UnlockID == unlock.UnlockID)) return Content("WTF get lost!");
+							if (!unlocks.Any(x => x.Unlock.UnlockID == unlock.UnlockID)) return Content("WTF get lost!");
 							if (slot.MorphLevel < unlock.MorphLevel || !IsUnlockValidForSlot(unlock, slot)) return Content(string.Format("WTF cannot use {0} in slot {1}", unlock.Name, slot.CommanderSlotID));
 							if (!string.IsNullOrEmpty(unlock.LimitForChassis))
 							{
@@ -153,7 +153,7 @@ namespace ZeroKWeb.Controllers
                             CommanderDecorationSlot decSlot = db.CommanderDecorationSlots.Single(x => x.CommanderDecorationSlotID == slotId);
                             Unlock unlock = db.Unlocks.Single(x => x.UnlockID == unlockId);
 
-                            if (!unlocks.Any(x => x.UnlockID == unlock.UnlockID)) return Content("WTF get lost!");
+                            if (!unlocks.Any(x => x.Unlock.UnlockID == unlock.UnlockID)) return Content("WTF get lost!");
                             if (!string.IsNullOrEmpty(unlock.LimitForChassis))
                             {
                                 var validChassis = unlock.LimitForChassis.Split(',');
@@ -201,7 +201,7 @@ namespace ZeroKWeb.Controllers
 				foreach (var unlock in comm.CommanderModules.GroupBy(x => x.Unlock))
 				{
 					if (unlock.Key == null) continue;
-					var owned = unlocks.Where(x => x.UnlockID == unlock.Key.UnlockID).Sum(x => (int?)x.Count) ?? 0;
+					var owned = unlocks.Where(x => x.Unlock.UnlockID == unlock.Key.UnlockID).Sum(x => (int?)x.Count) ?? 0;
 					if (owned < unlock.Count())
 					{
 						var toRemove = unlock.Count() - owned;
@@ -234,8 +234,7 @@ namespace ZeroKWeb.Controllers
 			var ret = new CommandersModel();
 			ret.Unlocks =
 				GetUserUnlockCountsListIncludingFree(db).Where(
-					x => x.Unlock.UnlockType != UnlockTypes.Unit).ToList
-					();
+					x => x.Unlock.UnlockType != UnlockTypes.Unit).ToList();
 			ret.Account = Global.Account;
 			return View(ret);
 		}
@@ -340,7 +339,7 @@ namespace ZeroKWeb.Controllers
 		Dictionary<Unlock, int> GetUserUnlockCountsDictIncludingFree(ZkDataContext db)
 		{
 			Dictionary<ZkData.Unlock, int> unlocks = Global.Account.AccountUnlocks.Select(x => new {x.Unlock, x.Count}).ToDictionary(x=> x.Unlock, x=> x.Count);
-			foreach (Unlock unlock in db.Unlocks.Where(x=> x.XpCost <= 0 && x.NeededLevel <= Global.Account.Level && x.IsKudosOnly == false))
+			foreach (Unlock unlock in db.Unlocks.Where(x=> x.XpCost <= 0 && x.NeededLevel <= Global.Account.Level && x.IsKudosOnly != true))
 			{
 				unlocks.Add(unlock, unlock.MaxModuleCount);
 			}
@@ -366,7 +365,7 @@ namespace ZeroKWeb.Controllers
 			// unlocks we already have at least one of
 			var anyUnlockSet = new HashSet<int>(db.AccountUnlocks.Where(x => x.AccountID == Global.AccountID && x.Count > 0).Select(x => x.UnlockID));
 
-			var freeUnlocks = db.Unlocks.Where(x => x.XpCost <= 0 && x.IsKudosOnly == false).Select(x=> x.UnlockID);
+			var freeUnlocks = db.Unlocks.Where(x => x.XpCost <= 0 && x.NeededLevel <= Global.Account.Level && x.IsKudosOnly != true).Select(x=> x.UnlockID);
 			maxedUnlockSet.UnionWith(freeUnlocks);
 			anyUnlockSet.UnionWith(freeUnlocks);
 
@@ -374,7 +373,7 @@ namespace ZeroKWeb.Controllers
 				db.Unlocks.Where(
 					x =>
 					x.NeededLevel <= Global.Account.Level && !maxedUnlockSet.Contains(x.UnlockID)
-                    && ((x.KudosCost != null && x.KudosCost <= Global.Account.Kudos) || ((x.IsKudosOnly == null || x.IsKudosOnly == false) && x.XpCost <= Global.Account.AvailableXP))
+                    && ((x.KudosCost != null && x.KudosCost <= Global.Account.Kudos) || ((x.IsKudosOnly != true) && x.XpCost <= Global.Account.AvailableXP))
 					&& (x.RequiredUnlockID == null || anyUnlockSet.Contains(x.RequiredUnlockID ?? 0))
                     ).OrderBy(x => x.NeededLevel).ThenBy(x => x.XpCost).ThenBy(x => x.UnlockType).ToList();
 			unlocks = temp;
