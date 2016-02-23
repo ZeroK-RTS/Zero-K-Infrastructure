@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using LobbyClient;
 using Microsoft.Win32;
+using PlasmaShared.UnitSyncLib;
 using SpringDownloader.Notifications;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
@@ -32,11 +33,12 @@ namespace ZeroKLobby
         public static ConnectBar ConnectBar;
         public static NotifySection NotifySection;
         public static BrowserInterop BrowserInterop;
+        public static PwBar PwBar;
+        static NewVersionBar NewVersionBar;
         //--------------------------------------------------
 
 
         static readonly object configLock = new object();
-        static Mutex mutex;
         public static AutoJoinManager AutoJoinManager;
         public static bool CloseOnNext;
         public static Config Conf = new Config();
@@ -54,6 +56,8 @@ namespace ZeroKLobby
         public static SpringieServer SpringieServer = new SpringieServer();
         public static string[] StartupArgs;
         public static string StartupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
+        public static bool IsSteamFolder { get;private set; }
+
         public static TasClient TasClient { get; private set; }
         public static Spring RunningSpring { get; private set; }
 
@@ -116,9 +120,10 @@ namespace ZeroKLobby
                             "Program is unable to run", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-
-
+                
                 Directory.SetCurrentDirectory(StartupPath);
+
+                IsSteamFolder = File.Exists(Path.Combine(StartupPath, "steamfolder.txt"));
 
                 SelfUpdater = new SelfUpdater("Zero-K");
 
@@ -178,53 +183,40 @@ namespace ZeroKLobby
                 SpringPaths = new SpringPaths(null, writableFolderOverride: contentDir);
                 SpringPaths.MakeFolders();
 
+                // speed up spring start
                 SpringPaths.SpringVersionChanged += (sender, eventArgs) =>
                 {
-                    ZkData.Utils.StartAsync(() => { new UnitSync(SpringPaths).Dispose(); }); 
-                    // initialize unitsync to avoid slowdowns when starting
+                    ZkData.Utils.StartAsync(
+                        () =>
+                        {
+                            UnitSync unitSync = null;
+                            try
+                            {
+                                unitSync = new UnitSync(SpringPaths); // initialize unitsync to avoid slowdowns when starting
+
+                                if (unitSync.UnitsyncWritableFolder != SpringPaths.WritableDirectory)
+                                {
+                                    // unitsync created its cache in different folder than is used to start spring -> move it
+                                    var fi = ArchiveCache.GetCacheFile(unitSync.UnitsyncWritableFolder);
+                                    if (fi != null)
+                                    {
+                                        File.Copy(fi.FullName, Path.Combine(SpringPaths.WritableDirectory,"cache", fi.Name), true);
+                                    }
+                                }
+                            }
+                            finally
+                            {
+                                unitSync?.Dispose();
+                            }
+                        }); 
+                    
                 };
                 
 
-                SpringPaths.SetEnginePath(Utils.MakePath(SpringPaths.WritableDirectory, "engine", ZkData.GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion));
                 
-
                 SaveConfig();
-                if (Conf.CleanCache)
-                {
-                    try
-                    {
-                        var path = Program.SpringPaths.WritableDirectory;
-                        bool backupChatlogs = false;
-                        string sdPath = Utils.MakePath(path, "cache", "SD");
-                        string chatHistoryPath = Utils.MakePath(sdPath, "ChatHistory");
-                        string backupPath = Utils.MakePath(path, "_chatlogBackup");
-                        // save chatlogs and such
-                        if (Directory.Exists(chatHistoryPath))
-                        {
-                            if (Directory.Exists(backupPath))
-                                Directory.Delete(backupPath, true);
-                            Directory.Move(chatHistoryPath, backupPath);
-                            backupChatlogs = true;
-                        }
-                        Directory.Delete(Utils.MakePath(path, "cache"), true);
-                        if (backupChatlogs)
-                        {
-                            if (!Directory.Exists(sdPath))
-                                Directory.CreateDirectory(sdPath);
-                            Directory.Move(backupPath, chatHistoryPath);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceError(ex.ToString());
-                    }
-                    finally
-                    {
-                        Conf.CleanCache = false;
-                        SaveConfig();
-                    }
-                }
 
+                
                 // write license files
                 try {
                     var path = Program.SpringPaths.WritableDirectory;
@@ -241,33 +233,16 @@ namespace ZeroKLobby
                     Trace.TraceError(ex.ToString());
                 }
 
-                try
-                {
-                    if (!Debugger.IsAttached)
-                    {
-                        var wp = "";
-                        foreach (var c in SpringPaths.WritableDirectory.Where(x => (x >= 'a' && x <= 'z') || (x >= 'A' && x <= 'Z'))) wp += c;
-                        mutex = new Mutex(false, "ZeroKLobby" + wp);
-                        if (!mutex.WaitOne(10000, false))
-                        {
-                            MessageBox.Show(
-                                "Another copy of Zero-K lobby is still running" +
-                                "\nMake sure the other lobby is closed (check task manager) before starting new one",
-                                "There can be only one lobby running",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Stop);
-                            return;
-                        }
-                    }
-                }
-                catch (AbandonedMutexException) { }
 
                 if (Conf.IsFirstRun)
                 {
-                    DialogResult result = MessageBox.Show("Create a desktop icon for Zero-K?", "Zero-K", MessageBoxButtons.YesNo);
-                    if (result == DialogResult.Yes)
+                    if (!IsSteamFolder)
                     {
-                        Utils.CreateDesktopShortcut();
+                        DialogResult result = MessageBox.Show("Create a desktop icon for Zero-K?", "Zero-K", MessageBoxButtons.YesNo);
+                        if (result == DialogResult.Yes)
+                        {
+                            Utils.CreateDesktopShortcut();
+                        }
                     }
                     if (Environment.OSVersion.Platform != PlatformID.Unix)
                         Utils.RegisterProtocol();
@@ -291,6 +266,7 @@ namespace ZeroKLobby
 
                 Downloader = new PlasmaDownloader.PlasmaDownloader(Conf, SpringScanner, SpringPaths); //rapid
                 Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
+                Downloader.GetAndSwitchEngine(ZkData.GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
 
                 var isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
                 TasClient = new TasClient(string.Format("ZK {0}{1}", SelfUpdater.CurrentVersion, isLinux ? " linux" : ""));
@@ -328,16 +304,7 @@ namespace ZeroKLobby
                 SteamHandler = new ZklSteamHandler(TasClient);
                 SteamHandler.Connect();
 
-                if (!Debugger.IsAttached && !Conf.DisableAutoUpdate) Program.SelfUpdater.StartChecking();
-
-                // TODO: Rewrite for zkwl.
-                //if (Conf.StartMinimized) MainWindow.WindowState = FormWindowState.Minimized;
-                //else MainWindow.WindowState = FormWindowState.Normal;
-
-                // download primary engine & game
-                // (rewrite for zkwl if necessary) MainWindow.Paint += GetSpringZK;
-                Downloader.PackageDownloader.MasterManifestDownloaded += GetSpringZK;
-
+                if (!Debugger.IsAttached && !Conf.DisableAutoUpdate && !IsSteamFolder) Program.SelfUpdater.StartChecking();
                 SpringScanner.Start();
 
                 // Unused for now since it has trouble playing html5 media from a custom scheme.
@@ -440,30 +407,6 @@ namespace ZeroKLobby
             }
         }
 
-        private static int getSpringZKCount = 0;
-        private static void GetSpringZK(object sender, EventArgs e)
-        {
-            if (sender is PlasmaDownloader.Packages.PackageDownloader)
-                Downloader.PackageDownloader.MasterManifestDownloaded -= GetSpringZK;
-            if (sender is MainWindow)
-                MainWindow.Paint -= GetSpringZK;
-
-            getSpringZKCount++;
-            if (getSpringZKCount < 2)
-                return;
-
-            // download primary game after rapid list have been downloaded and MainWindow is visible
-            if (!Utils.VerifySpringInstalled(false)) Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
-            var defaultTag = KnownGames.GetDefaultGame().RapidTag;
-            if (!Downloader.PackageDownloader.SelectedPackages.Contains(defaultTag))
-            {
-                Downloader.PackageDownloader.SelectPackage(defaultTag);
-                if (Downloader.PackageDownloader.GetByTag(defaultTag) != null) Downloader.GetResource(PlasmaDownloader.DownloadType.MOD, defaultTag);
-            }
-        }
-
-        public static PwBar PwBar { get; private set; }
-
         internal static void SaveConfig()
         {
             lock (configLock)
@@ -481,11 +424,7 @@ namespace ZeroKLobby
             if (Conf.DiscardPassword == true) { Conf.LobbyPlayerPassword = ""; }
 
             SaveConfig();
-            try
-            {
-                if (!Debugger.IsAttached) mutex.ReleaseMutex();
-            }
-            catch { }
+
             try
             {
                 if (ToolTip != null) ToolTip.Dispose();

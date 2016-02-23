@@ -17,6 +17,7 @@ namespace ZeroKLobby
         bool finishNavigation = true;
         readonly string pathHead;
 
+
         public BrowserTab(string head, bool autoStartOnLogin)
         {
             pathHead = head;
@@ -26,17 +27,7 @@ namespace ZeroKLobby
                 base.Navigate(head);
             };
             base.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(browser_DocumentCompleted); //This will call "UpdateURL()" when page finish loading
-            base.NewWindow3 += BrowserTab_NewWindow3;
             this.ScriptErrorsSuppressed = true;
-        }
-
-        void BrowserTab_NewWindow3(object sender, NewWindow3EventArgs e)
-        {
-            if (Program.Conf.InterceptPopup) //any new window to be redirected internally?
-            {
-                NavigationControl.Instance.Path = e.Url.ToString();
-                e.Cancel = true;
-            }
         }
 
         //protected override void OnNewWindow(System.ComponentModel.CancelEventArgs e) //This block "Open In New Window" button.

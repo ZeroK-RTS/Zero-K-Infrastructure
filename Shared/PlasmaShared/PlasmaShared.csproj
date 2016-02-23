@@ -86,6 +86,7 @@
     <Compile Include="IContentService\ResourceType.cs" />
     <Compile Include="IContentService\ReturnValue.cs" />
     <Compile Include="IContentService\ScriptMissionData.cs" />
+    <Compile Include="ResizedImageCache.cs" />
     <Compile Include="ResourceInfo.cs" />
     <Compile Include="ISpringieService\AhConfig.cs" />
     <Compile Include="ISpringieService\AutohostMode.cs" />
@@ -125,7 +126,6 @@
     <Compile Include="TcpTransport.cs" />
     <Compile Include="UnitSyncLib\ArchiveCache.cs" />
     <Compile Include="UnitSyncLib\ArchiveEntry.cs" />
-    <Compile Include="WebSocketClientTransport.cs" />
     <Compile Include="UnitSyncLib\Ai.cs" />
     <Compile Include="UnitSyncLib\AiInfoPair.cs" />
     <Compile Include="UnitSyncLib\DependencyMissingException.cs" />
@@ -167,9 +167,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Services" />
-    <Reference Include="WebSocket4Net">
-      <HintPath>..\..\packages\WebSocket4Net.0.12\lib\net45\WebSocket4Net.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

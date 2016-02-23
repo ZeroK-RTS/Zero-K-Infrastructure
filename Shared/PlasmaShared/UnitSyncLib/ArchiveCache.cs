@@ -8,11 +8,16 @@ namespace PlasmaShared.UnitSyncLib
 {
     public class ArchiveCache
     {
+        public static FileInfo GetCacheFile(string writableFolder) {
+            var di = new DirectoryInfo(Path.Combine(writableFolder, "cache"));
+            return di.GetFiles("ArchiveCache*.lua").OrderByDescending(x => x.LastWriteTime).FirstOrDefault();
+        }
+            
+
         public ArchiveCache(string unitsyncWritableFolder) {
             Archives = new List<ResourceInfo>();
 
-            var di = new DirectoryInfo(Path.Combine(unitsyncWritableFolder, "cache"));
-            var fi = di.GetFiles("ArchiveCache*.lua").OrderByDescending(x => x.LastWriteTime).FirstOrDefault();
+            var fi = GetCacheFile(unitsyncWritableFolder);
             if (fi != null)
             {
                 var lua = new Lua();

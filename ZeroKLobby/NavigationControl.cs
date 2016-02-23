@@ -81,7 +81,7 @@ namespace ZeroKLobby
 
             ButtonList = new List<ButtonInfo>() //normal arrangement
             {
-                new ButtonInfo() { Label = "HOME", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon= Buttons.home, Height = 32,Width = 80 },
+                new ButtonInfo() { Label = "HOME", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon= Buttons.left, Height = 32,Width = 80 },
                 new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat, Height = 32, Width = 65 },
                 new ButtonInfo()
                 {
@@ -126,11 +126,6 @@ namespace ZeroKLobby
                 }
                 var home = AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl, true), "hm");
                 tabControl.SelectTab(home);
-                if (Program.Conf.InterceptPopup) 
-                {
-                    AddTabPage(new BrowserTab("http", false), "other"); //a tab with generic match that match 100% of random URL (block new window)
-                    ButtonList.Add(new ButtonInfo() { Label = "OTHER", TargetPath = "http", Height = 32, Width = 65,});
-                }
                 reloadButton1.Visible = true;
             }
             var battles = new BattleListTab();

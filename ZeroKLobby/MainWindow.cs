@@ -91,31 +91,9 @@ namespace ZeroKLobby
                 Program.Downloader.DownloadAdded += TorrentManager_DownloadAdded;
                 timer1.Start();
             }
-            ReloadPosition();
         }
 
-        private void ReloadPosition()
-        {
-			MinimumSize = new Size(200, 300); //so splitcontainer in SettingTab dont throw exception when pushed too close together
-            Size windowSize = Program.Conf.windowSize.IsEmpty ? Size : Program.Conf.windowSize; //Note: default MainWindow size is 1024x768 defined in MainWindow.Designer.cs
-            windowSize = new Size(Math.Min(SystemInformation.VirtualScreen.Width - 30, windowSize.Width),
-                           Math.Min(SystemInformation.VirtualScreen.Height - 30, windowSize.Height)); //in case user have less space than 1024x768
-            Point windowLocation = Program.Conf.windowLocation.IsEmpty ? DesktopLocation : Program.Conf.windowLocation;
-            windowLocation = new Point(Math.Min(SystemInformation.VirtualScreen.Width - windowSize.Width / 2, windowLocation.X),
-                                 Math.Min(SystemInformation.VirtualScreen.Height - windowSize.Height / 2, windowLocation.Y)); //in case user changed resolution
-            windowLocation = new Point(Math.Max(0 - windowSize.Width / 2, windowLocation.X),
-                                        Math.Max(0 - windowSize.Height / 2, windowLocation.Y));
-            StartPosition = FormStartPosition.Manual; //use manual to allow programmatic re-positioning
-            Size = windowSize;
-            DesktopLocation = windowLocation;
-        }
         
-        private void SavePosition()
-        {
-            Program.Conf.windowSize = Size;
-            Program.Conf.windowLocation = DesktopLocation;
-        }
-
         public void DisplayLog() {
             if (!FormLog.Instance.Visible) {
                 FormLog.Instance.Visible = true;
@@ -199,18 +177,7 @@ namespace ZeroKLobby
                     catch (Exception ex) {
                         Trace.TraceError("Error exclamation play: {0}", ex); // Is this how it's done?
                     }
-                } else { // Unix folk may decide for beep sound themselves
-                    try {
-                        System.Diagnostics.Process proc = new System.Diagnostics.Process();
-                        proc.EnableRaisingEvents=false; 
-                        proc.StartInfo.FileName = Program.Conf.SndPlayCmd;
-                        proc.StartInfo.Arguments = Program.Conf.SndPlayPath;
-                        proc.Start();
-                    }
-                    catch (Exception ex) {
-                        Trace.TraceError("Error external UNIX play: {0}", ex); // Is this how it's done?
-                    }
-                }
+                } 
             }
         }
 
@@ -279,9 +246,7 @@ namespace ZeroKLobby
 
 
         void Window_StateChanged(object sender, EventArgs e) {
-            if (lastState != WindowState && WindowState == FormWindowState.Normal) SavePosition();
             if (WindowState != FormWindowState.Minimized) lastState = WindowState;
-            else if (Program.Conf.MinimizeToTray) Visible = false;
         }
 
         void MainWindow_Load(object sender, EventArgs e) {
@@ -293,9 +258,6 @@ namespace ZeroKLobby
             systrayIcon.Icon = ZklResources.ZkIcon;
 
             Program.SpringScanner.Start();
-
-            if (Program.Conf.StartMinimized) WindowState = FormWindowState.Minimized;
-            else WindowState = Program.Conf.LastWindowState;
 
             if (Program.StartupArgs != null && Program.StartupArgs.Length > 0) navigationControl.Path = Program.StartupArgs[0];
 
@@ -333,8 +295,6 @@ namespace ZeroKLobby
         {
             Program.CloseOnNext = true;
             if (Program.TasClient != null) Program.TasClient.RequestDisconnect();
-            if (WindowState != FormWindowState.Minimized) Program.Conf.LastWindowState = WindowState;
-            if (WindowState == FormWindowState.Normal) SavePosition();
             Program.SaveConfig();
             WindowState = FormWindowState.Minimized;
             systrayIcon.Visible = false;
