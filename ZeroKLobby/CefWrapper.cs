@@ -36,19 +36,22 @@ namespace ZeroKLobby
         [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "deinitialize")]
         static extern void deinitialize_();
 
-        // Start CEF message loop. This function will block until the window is closed.
+        // Open url in a browser window and start CEF message loop. This function will block until the window
+        // is closed. bgColor is a string describing the default background color of the browser window in CSS
+        // format, like "black" or "rgb(20, 50, 100)". If fullscreen is true the window will be shown in
+        // borderless fullscreen mode.
         [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "startMessageLoop")]
-        public static extern void StartMessageLoop();
+        public static extern void StartMessageLoop([MarshalAs(UnmanagedType.LPStr)] string url, [MarshalAs(UnmanagedType.LPStr)] string bgColor, bool fullscreen);
 
         // Execute arbitrary Javascript code in the main frame. Can be called from any thread.
         [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "executeJavascript")]
         public static extern void ExecuteJavascript([MarshalAs(UnmanagedType.LPStr)] string code);
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        delegate int AppSchemaHandler_([MarshalAs(UnmanagedType.LPStr)] string url, IntPtr mimeType, IntPtr data);
+        // Register the handler to be used with cef:// URLs.
+        // The handler should set type to the appropriate mime type for the request. If the returned mime type
+        // is empty, the library will try to guess one based on the extension.
+        // The handler will be called on a separate IO thread, not the one that called startMessageLoop().
         public delegate byte[] AppSchemaHandler(string url, out string mimeType);
-        [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "registerAppSchemaHandler")]
-        static extern void registerAppSchemaHandler_(AppSchemaHandler_ handler_);
         public static void RegisterAppSchemaHandler(AppSchemaHandler handler)
         {
             AppSchemaHandler_ handler_ = ((url, mimeTypePtr, dataPtr) =>
@@ -56,7 +59,10 @@ namespace ZeroKLobby
                 string mimeType;
                 byte[] data = handler(url, out mimeType);
                 if (schemaHandlerData != IntPtr.Zero)
+                {
                     Marshal.FreeHGlobal(schemaHandlerData);
+                    schemaHandlerData = IntPtr.Zero;
+                }
                 if (data != null)
                 {
                     schemaHandlerData = Marshal.AllocHGlobal(data.Length);
@@ -75,6 +81,10 @@ namespace ZeroKLobby
             schemaHandler = handler_;
             registerAppSchemaHandler_(handler_);
         }
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        delegate int AppSchemaHandler_([MarshalAs(UnmanagedType.LPStr)] string url, IntPtr mimeType, IntPtr data);
+        [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "registerAppSchemaHandler")]
+        static extern void registerAppSchemaHandler_(AppSchemaHandler_ handler_);
 
         // Register a handler for an API function. The function will be accessible to Javascript in the main frame
         // in the global CefWrapperAPI object. JS code can call the function with a function(result){ ... } callback

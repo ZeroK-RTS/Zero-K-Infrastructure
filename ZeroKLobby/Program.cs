@@ -105,7 +105,7 @@ namespace ZeroKLobby
                 Trace.Listeners.Add(new ConsoleTraceListener());
                 Trace.Listeners.Add(new LogTraceListener());
 
-                CefWrapper.Initialize(AppDomain.CurrentDomain.BaseDirectory + "/render", args);
+                CefWrapper.Initialize(StartupPath + "/render", args);
 
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
@@ -340,11 +340,33 @@ namespace ZeroKLobby
 
                 SpringScanner.Start();
 
-                CefWrapper.RegisterAppSchemaHandler((string url, out string mimeType) =>
+                // Unused for now since it has trouble playing html5 media from a custom scheme.
+                /*CefWrapper.RegisterAppSchemaHandler((string urlStr, out string mimeType) =>
                 {
-                    mimeType = "text/html";
-                    return "<h1>It works.</h1>".Select(c => (byte)c).ToArray();
-                });
+                    mimeType = ""; // let CEF decide
+                    try
+                    {
+                        Uri url = new Uri(urlStr);
+                        if (url.Host == "app")
+                        {
+                            if (url.LocalPath == "/")
+                            {
+                                mimeType = "text/html";
+                                return File.ReadAllBytes(StartupPath + "/zkwl/index.html");
+                            }
+                            return File.ReadAllBytes(StartupPath + "/zkwl/" + url.LocalPath);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        Trace.TraceError("Failed to get " + urlStr + ": " + e.Message);
+                        return null;
+                    }
+                });*/
                 CefWrapper.RegisterApiFunction("getEngines", () =>
                 {
                     return new List<string> { "100.0" }; // TODO: stub
@@ -395,7 +417,8 @@ namespace ZeroKLobby
                     }
                 });
 
-                CefWrapper.StartMessageLoop();
+                Uri fileUrl = new Uri(StartupPath + "/zkwl/index.html");
+                CefWrapper.StartMessageLoop(fileUrl.AbsoluteUri, "black", true);
                 CefWrapper.Deinitialize();
 
                 ShutDown();
