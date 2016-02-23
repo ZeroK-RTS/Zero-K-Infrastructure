@@ -19,6 +19,7 @@ using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZkData;
 using ZkData.UnitSyncLib;
+using Newtonsoft.Json;
 
 namespace ZeroKLobby
 {
@@ -305,6 +306,25 @@ namespace ZeroKLobby
                 SteamHandler.Connect();
 
                 if (!Debugger.IsAttached && !Conf.DisableAutoUpdate && !IsSteamFolder) Program.SelfUpdater.StartChecking();
+
+                EventHandler<ProgressEventArgs> workHandler = (s, e) =>
+                {
+                    CefWrapper.ExecuteJavascript("on_spring_scanner_work(" + JsonConvert.SerializeObject(e) + ");");
+                };
+                SpringScanner.WorkStarted += workHandler;
+                SpringScanner.WorkProgressChanged += workHandler;
+                SpringScanner.WorkStopped += (s, e) =>
+                {
+                    CefWrapper.ExecuteJavascript("on_spring_scanner_work(null);");
+                };
+                SpringScanner.LocalResourceAdded += (s, e) =>
+                {
+                    CefWrapper.ExecuteJavascript("on_spring_scanner_add(" + JsonConvert.SerializeObject(e.Item) + ")");
+                };
+                SpringScanner.LocalResourceRemoved += (s, e) =>
+                {
+                    CefWrapper.ExecuteJavascript("on_spring_scanner_remove(" + JsonConvert.SerializeObject(e.Item) + ")");
+                };
                 SpringScanner.Start();
 
                 // Unused for now since it has trouble playing html5 media from a custom scheme.

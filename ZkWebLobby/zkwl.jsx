@@ -7,6 +7,7 @@ var _ = require('lodash');
 var React = require('react');
 var ReactDOM = require('react-dom');
 var App = require('weblobby/comp/App.jsx');
+var Zkl = require('store/Zkl.js');
 
 document.addEventListener('DOMContentLoaded', function(){
 
@@ -22,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function(){
 	var musicPlaylist = new (require('store/MusicPlaylist.js'))(process);
 
 	// Disable the default context menu on most things if running in the wrapper.
-	CefWrapperAPI && document.addEventListener('contextmenu', function(evt){
+	Zkl && document.addEventListener('contextmenu', function(evt){
 		if (evt.button === 2 && !(evt.target instanceof HTMLInputElement)) {
 			evt.preventDefault();
 		}

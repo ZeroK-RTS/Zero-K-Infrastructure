@@ -6,6 +6,7 @@ var React = require('react');
 // 'weblobby/act/Battle.js' fails because webpack considers it a different module caching-wise.
 // Having to omit weblobby/ is inconsistent, find a way to deal with it.
 var Battle = require('act/Battle.js'); 
+var Log = require('act/Log.js');
 var ModalWindow = require('weblobby/comp/ModalWindow.jsx');
 var Server = require('weblobby/act/LobbyServer.js');
 var ConState = require('weblobby/store/LobbyServerCommon.js').ConnectionState;
@@ -27,17 +28,9 @@ module.exports = React.createClass({
 		var modname = _(gameInfo.games).keys().filter(function(name){
 			return !!name.match(/^Zero-K v/);
 		}).last();
-		if (!modname) {
-			Log.infoBox('Downloading updates...');
-			Process.downloadGame('zk:stable');
-			if (!_.contains(gameInfo.engines, engine))
-				Process.downloadEngine(engine);
-			this.props.onToggleDownloads();
-			return;
-		}
 		Battle.openLocalBattle('Skirmish' + (bot ? ' vs ' + bot : ''), function(){
 			this.setEngine(engine);
-			this.setGame(modname);
+			modname && this.setGame(modname);
 			this.setMap(_.sample(_.keys(gameInfo.maps)) || '');
 			bot && this.addBot({
 				team: 2,

@@ -32,6 +32,31 @@ module.exports = function(){ return Reflux.createStore({
 			mapSearchInProgress: false,
 		});
 
+		window.on_spring_scanner_work = function(work){
+			// Ignore unitsync work items because by the time we get to them we already
+			// have the info and it just keeps pointlessly trying to upload in a loop.
+			// There's a corener case where ContentService is unreachable and ZKL is trying
+			// to build the cache from scratch, but that should be very rare.
+			if (work && !work.WorkName.match('UnitSync')) {
+				this.setState({
+					currentOperation: 'Scanning game resources ' +
+						Math.round(work.WorkDone / work.WorkTotal * 100) + '%'
+				});
+			} else {
+				this.setState({ currentOperation: null });
+			}
+		}.bind(this);
+
+		// The cost of querying the full list is trivial so we just do that.
+		var springScannerChange = function(item){
+			if (item.ResourceType === 0)
+				this.loadMaps();
+			else if (item.ResourceType === 1)
+				this.loadGames();
+		}.bind(this);
+		window.on_spring_scanner_add = springScannerChange;
+		window.on_spring_scanner_remove = springScannerChange;
+
 		this.loadEngines();
 		this.loadGames();
 		this.loadMaps();
