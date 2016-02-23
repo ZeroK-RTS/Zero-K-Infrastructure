@@ -30,45 +30,51 @@ var currentBattle = new (require('weblobby/store/CurrentBattle.js'))(gameInfo,
 	lobbyServer, chatStore, process);
 var musicPlaylist = new (require('store/MusicPlaylist.js'))(process);
 
+var runApp = _.once(function(){
+	ReactDOM.render(<App
+		serverStore={lobbyServer}
+		gameInfoStore={gameInfo}
+		processStore={process}
+		chatStore={chatStore}
+		currentBattleStore={currentBattle}
+	/>, document.getElementById('main'));
+
+	var overlay = document.getElementById('loadingOverlay');
+	overlay.parentNode.removeChild(overlay);
+});
+
 // Don't run until intro music and video are fully loaded.
 var mediaReady = 0;
 var introVideo = document.getElementById('introVideo');
 var titleMusic = musicPlaylist.audio;
 
-var run = function run(){
+var killIntro = _.once(function(){
+	introVideo.parentNode.removeChild(introVideo);
+});
+introVideo.addEventListener('ended', killIntro);
+introVideo.addEventListener('click', killIntro);
+
+var playMedia = function playMedia(){
 
 	mediaReady++;
 	if (mediaReady < 2)
 		return;
-	titleMusic.removeEventListener('suspend', run);
+
+	titleMusic.removeEventListener('suspend', playMedia);
 	introVideo.play();
 	Settings.playTitleMusic && titleMusic.play();
 
-	var killIntro = function(){
-		introVideo.parentNode && introVideo.parentNode.removeChild(introVideo);
-	};
-	introVideo.addEventListener('ended', killIntro);
-	introVideo.addEventListener('click', killIntro);
 	// A hack to make it cut to the menu at the right place in the title song.
 	// Make it actually track how far into the song it is.
 	setTimeout(killIntro, 9200);
 
 	// Only render the main app after the video started playing or it may flicker still.
-	setTimeout(function(){
+	setTimeout(runApp, 500);
+}
 
-		ReactDOM.render(<App
-			serverStore={lobbyServer}
-			gameInfoStore={gameInfo}
-			processStore={process}
-			chatStore={chatStore}
-			currentBattleStore={currentBattle}
-		/>, document.getElementById('main'));
+// Fallback in case media failed to play.
+setTimeout(runApp, 15000);
+setTimeout(killIntro, 15000);
 
-		var overlay = document.getElementById('loadingOverlay');
-		overlay.parentNode.removeChild(overlay);
-
-	}, 500);
-};
-
-introVideo.addEventListener('suspend', run);
-titleMusic.addEventListener('suspend', run);
+titleMusic.addEventListener('suspend', playMedia);
+introVideo.addEventListener('suspend', playMedia);
