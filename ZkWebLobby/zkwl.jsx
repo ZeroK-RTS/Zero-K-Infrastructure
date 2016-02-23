@@ -8,28 +8,42 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var App = require('weblobby/comp/App.jsx');
 var Zkl = require('store/Zkl.js');
+var Settings = require('store/Settings.js');
 
-document.addEventListener('DOMContentLoaded', function(){
+// Disable the default context menu on most things if running in the wrapper.
+Zkl && document.addEventListener('contextmenu', function(evt){
+	if (evt.button === 2 && !(evt.target instanceof HTMLInputElement)) {
+		evt.preventDefault();
+	}
+});
 
-	// Create stores.
-	var gameInfo = new (require('store/ZkGameInfo.js'))();
-	var process = new (require('store/ZkProcess.js'))(gameInfo);
-	var sound = new (require('weblobby/store/Sound.js'))();
-	var lobbyServer = new (require('weblobby/store/LobbyServer.js'))();
-	var chatStore = new (require('weblobby/store/Chat.js'))(lobbyServer, process);
-	var afkStatus = new (require('weblobby/store/AfkStatus.js'))(lobbyServer, process);
-	var currentBattle = new (require('weblobby/store/CurrentBattle.js'))(gameInfo,
-		lobbyServer, chatStore, process);
-	var musicPlaylist = new (require('store/MusicPlaylist.js'))(process);
+window.echo = console.log.bind(console); // faster to write than console.log
 
-	// Disable the default context menu on most things if running in the wrapper.
-	Zkl && document.addEventListener('contextmenu', function(evt){
-		if (evt.button === 2 && !(evt.target instanceof HTMLInputElement)) {
-			evt.preventDefault();
-		}
-	});
+// Create stores.
+var gameInfo = new (require('store/ZkGameInfo.js'))();
+var process = new (require('store/ZkProcess.js'))(gameInfo);
+var sound = new (require('weblobby/store/Sound.js'))();
+var lobbyServer = new (require('weblobby/store/LobbyServer.js'))();
+var chatStore = new (require('weblobby/store/Chat.js'))(lobbyServer, process);
+var afkStatus = new (require('weblobby/store/AfkStatus.js'))(lobbyServer, process);
+var currentBattle = new (require('weblobby/store/CurrentBattle.js'))(gameInfo,
+	lobbyServer, chatStore, process);
+var musicPlaylist = new (require('store/MusicPlaylist.js'))(process);
 
-	var introVideo = document.getElementById('introVideo');
+// Don't run until intro music and video are fully loaded.
+var mediaReady = 0;
+var introVideo = document.getElementById('introVideo');
+var titleMusic = musicPlaylist.audio;
+
+var run = function run(){
+
+	mediaReady++;
+	if (mediaReady < 2)
+		return;
+	titleMusic.removeEventListener('suspend', run);
+	introVideo.play();
+	Settings.playTitleMusic && titleMusic.play();
+
 	var killIntro = function(){
 		introVideo.parentNode && introVideo.parentNode.removeChild(introVideo);
 	};
@@ -37,13 +51,11 @@ document.addEventListener('DOMContentLoaded', function(){
 	introVideo.addEventListener('click', killIntro);
 	// A hack to make it cut to the menu at the right place in the title song.
 	// Make it actually track how far into the song it is.
-	setTimeout(killIntro, 9800);
-
-	var overlay = document.getElementById('loadingOverlay');
-	overlay.parentNode.removeChild(overlay);
+	setTimeout(killIntro, 9200);
 
 	// Only render the main app after the video started playing or it may flicker still.
 	setTimeout(function(){
+
 		ReactDOM.render(<App
 			serverStore={lobbyServer}
 			gameInfoStore={gameInfo}
@@ -51,9 +63,12 @@ document.addEventListener('DOMContentLoaded', function(){
 			chatStore={chatStore}
 			currentBattleStore={currentBattle}
 		/>, document.getElementById('main'));
-	}, 500);
-});
 
-window.echo = function(){
-	console.log.apply(console, arguments ); //chrome has issue with direct assigning of this function
-}
+		var overlay = document.getElementById('loadingOverlay');
+		overlay.parentNode.removeChild(overlay);
+
+	}, 500);
+};
+
+introVideo.addEventListener('suspend', run);
+titleMusic.addEventListener('suspend', run);

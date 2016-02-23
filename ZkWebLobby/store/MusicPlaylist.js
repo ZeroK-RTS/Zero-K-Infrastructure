@@ -9,10 +9,9 @@ var menuTheme = require('sounds/Rise of the Machines.ogg');
 module.exports = function(process){ return Reflux.createStore({
 	init: function(){
 		this.audio = new Audio(menuTheme);
+		this.audio.loop = true;
 		this.listenTo(process, this.updateProcess, this.updateProcess);
 		this.listenTo(Settings, this.settingChanged);
-		if (Settings.playTitleMusic)
-			this.play();
 	},
 	updateProcess: function(state){
 		if (state.springRunning && !this.audio.paused)
@@ -30,9 +29,7 @@ module.exports = function(process){ return Reflux.createStore({
 	},
 	play: function(){
 		// Restart from the beginning, sudden unpausing would be jarring.
-		this.audio.pause();
-		this.audio = new Audio(menuTheme);
-		this.audio.loop = true;
+		this.audio.load(menuTheme);
 		this.audio.play();
 	},
 	stop: function(){
