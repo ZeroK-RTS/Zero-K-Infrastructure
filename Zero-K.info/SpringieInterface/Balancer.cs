@@ -18,7 +18,7 @@ namespace ZeroKWeb.SpringieInterface
             FactionWise
         }
 
-        const double MaxCbalanceDifference = 100;
+        const double MaxCbalanceDifference = 70;
         const double MaxTeamSizeDifferenceRatio = 2;
         readonly List<BalanceTeam> teams = new List<BalanceTeam>();
 
