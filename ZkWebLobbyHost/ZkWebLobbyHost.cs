@@ -46,9 +46,9 @@ namespace ZkWebLobbyHost
             var springScanner = new SpringScanner(springPaths);
 
             var downloader = new PlasmaDownloader.PlasmaDownloader(new DownloaderConfig(), springScanner, springPaths); //rapid
-            //downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride);
+            downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride);
 
-            //springScanner.Start();
+            springScanner.Start();
 
             var fileUrl = new Uri(startupPath + "/zkwl/index.html");
 
