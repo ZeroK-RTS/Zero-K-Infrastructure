@@ -144,11 +144,14 @@ namespace ZeroKLobby
                 WebRequest.DefaultWebProxy = null;
                 ThreadPool.SetMaxThreads(500, 2000);
                 ServicePointManager.Expect100Continue = false;
-                if (Environment.OSVersion.Platform != PlatformID.Unix && !Conf.UseExternalBrowser) { Utils.SetIeCompatibility(); } //set to current IE version
-
                 LoadConfig();
                 if (Conf.IsFirstRun) Conf.RunWebLobby = Directory.Exists("zkwl");
-                if (!Conf.RunWebLobby) Trace.Listeners.Add(new LogTraceListener());
+                if (!Conf.RunWebLobby)
+                {
+                    Trace.Listeners.Add(new LogTraceListener());
+                    
+                    if (Environment.OSVersion.Platform != PlatformID.Unix && !Conf.UseExternalBrowser) Utils.SetIeCompatibility();//set to current IE version
+                }
 
                 var contentDir = !string.IsNullOrEmpty(Conf.DataFolder) ? Conf.DataFolder : StartupPath;
                 if (!Directory.Exists(contentDir) || !SpringPaths.IsDirectoryWritable(contentDir) || contentDir.Contains("Local\\Apps"))
@@ -324,7 +327,6 @@ namespace ZeroKLobby
                 }
 
                 SteamHandler = new ZklSteamHandler(TasClient);
-                SteamHandler.Connect();
 
 
                 if (!Conf.RunWebLobby)
@@ -367,7 +369,7 @@ namespace ZeroKLobby
 
                 if (!Conf.RunWebLobby)
                 {
-
+                    SteamHandler.Connect();
                     Application.Run(MainWindow);
                 } else
                 {
@@ -447,13 +449,15 @@ namespace ZeroKLobby
                             
                             CefWrapper.StartMessageLoop(fileUrl.AbsoluteUri, "black", true);
                             CefWrapper.Deinitialize();
-                            //Program.ShutDown();
+                            Program.ShutDown();
                         });
+
+                    SpringScanner.InitialScan();
                     cefThread.Start();
                     SpringScanner.Start();
+                    SteamHandler.Connect();
+                    Application.Run();
                     cefThread.Join();
-                    
-                    //Application.Run();
                 }
 
 
