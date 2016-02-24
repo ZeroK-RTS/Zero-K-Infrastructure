@@ -283,7 +283,7 @@ namespace ZeroKLobby
                         Trace.TraceInformation("TASC login accepted");
                         Trace.TraceInformation("Server is using Spring version {0}", TasClient.ServerSpringVersion);
                         if (Environment.OSVersion.Platform == PlatformID.Unix || Conf.UseExternalBrowser)
-                            MainWindow.navigationControl.Path = "battles";
+                            if (MainWindow != null) MainWindow.navigationControl.Path = "battles";
                     };
 
                 TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
@@ -304,19 +304,22 @@ namespace ZeroKLobby
 
                 TasClient.SiteToLobbyCommandReceived += (eventArgs, o) =>
                     {
-                        MainWindow.navigationControl.Path = o.Command;
-                        MainWindow.PopupSelf();
+                        if (MainWindow != null)
+                        {
+                            MainWindow.navigationControl.Path = o.Command;
+                            MainWindow.PopupSelf();
+                        }
                     };
 
+
+                ModStore = new ModStore();
 
                 if (!Conf.RunWebLobby) {
                     
                     ConnectBar = new ConnectBar(TasClient);
-                    ModStore = new ModStore();
                     ToolTip = new ToolTipHandler();
                     BrowserInterop = new BrowserInterop(TasClient, Conf);
                     BattleIconManager = new BattleIconManager();
-
                     Application.AddMessageFilter(ToolTip);
                 }
 
@@ -369,7 +372,7 @@ namespace ZeroKLobby
                 } else
                 {
                     Uri fileUrl = new Uri(StartupPath + "/zkwl/index.html");
-                    new Thread(
+                    var cefThread = new Thread(
                         () =>
                         {
                             CefWrapper.Initialize(StartupPath + "/render", args);
@@ -441,16 +444,16 @@ namespace ZeroKLobby
                                     return e.Message;
                                 }
                             });
-
-
-                            SpringScanner.Start();
-
+                            
                             CefWrapper.StartMessageLoop(fileUrl.AbsoluteUri, "black", true);
                             CefWrapper.Deinitialize();
-                            Program.ShutDown();
-                        }).Start();
+                            //Program.ShutDown();
+                        });
+                    cefThread.Start();
+                    SpringScanner.Start();
+                    cefThread.Join();
                     
-                    Application.Run();
+                    //Application.Run();
                 }
 
 
