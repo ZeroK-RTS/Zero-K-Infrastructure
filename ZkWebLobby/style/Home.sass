@@ -1,0 +1,59 @@
+@import ~weblobby/style/globals
+@import ~weblobby/style/chili
+
+@mixin menuButton
+	border-image: url('../images/button_angled_slopes.png') 27 74 fill / 27px 74px repeat
+	border-style: solid
+
+$menuButtonsMargin: 20px
+
+#zkMainMenu .menu button, #zkMainMenu .submenu button
+	+menuButton
+	font-size: 3.6em
+	font-family: $titleFont
+	font-variant: small-caps
+	display: block
+	color: #E2E2C1
+	position: relative
+	margin-bottom: $menuButtonsMargin
+	padding: 0.1em 0.5em
+	background-clip: padding-box
+	// No background color spilling over the slopes.
+	border-bottom-right-radius: 30px
+	border-top-left-radius: 30px
+	&:hover
+		text-shadow: none
+		background-color: rgba(70, 70, 50, 0.4)
+
+#zkMainMenu
+	padding-left: 4em
+	padding-top: 12em
+	> div
+		float: left
+	.submenu
+		font-size: 0.8em
+		margin-left: 10em
+		padding-right: 1.5em
+		overflow: hidden
+		white-space: nowrap
+		position: relative
+		left: -7em
+		//opacity: 0
+		button
+			padding: 0.15em 0.6em
+	.submenu.show
+		left: 0
+		// Opacity transitions are laggy in QWebKit. Reenable in Chromium Embedded.
+		//opacity: 1.0
+		//transition-property: left, opacity
+		transition-property: left, opacity
+		transition-duration: 500ms
+
+#background
+	background: url('../images/thug_bandit_shooting.jpg')
+	position: absolute
+	top: 0
+	right: 0
+	bottom: 0
+	left: 0
+	z-index: -1

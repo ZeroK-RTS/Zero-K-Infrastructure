@@ -1,0 +1,30 @@
+{
+	"name": "zkwl",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"build": "webpack --progress --colors",
+		"watch": "webpack-dev-server --hot --inline --progress --colors"
+	},
+	"dependencies": {
+		"weblobby": "https://github.com/springweblobby/swl-website/archive/86c31e9.tar.gz",
+		"react": "0.14.x",
+		"react-dom": "0.14.x",
+		"react-addons-linked-state-mixin": "0.14.x",
+		"classnames": "2.x",
+		"lodash": "3.x",
+		"reflux": "0.2.5",
+		"object-assign": "*"
+	},
+	"devDependencies": {
+		"webpack": "1.x",
+		"webpack-dev-server": "1.x",
+		"node-sass": "3.x",
+		"jsx-loader": "0.x",
+		"sass-loader": "3.x",
+		"css-loader": "^0.18.0",
+		"file-loader": "0.x",
+		"url-loader": "0.x",
+		"extract-text-webpack-plugin": "0.x"
+	}
+}
