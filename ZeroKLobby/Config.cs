@@ -282,11 +282,6 @@ namespace ZeroKLobby
         public int SpringServerPort { get; set; } = GlobalConst.LobbyServerPort;
 
 
-        [Category("General")]
-        [DisplayName("Run ZKWL GUI instead")]
-        public bool RunWebLobby { get; set; }
-
-
         [Browsable(false)]
         public bool UseSafeMode { get; set; }
 
