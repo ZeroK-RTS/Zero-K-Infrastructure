@@ -117,6 +117,7 @@
       <DependentUpon>Buttons.resx</DependentUpon>
     </Compile>
     <Compile Include="CachedResourceManager.cs" />
+    <Compile Include="CefWrapper.cs" />
     <Compile Include="ChatToSpeech.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="Controls\CustomScrollbar.cs">

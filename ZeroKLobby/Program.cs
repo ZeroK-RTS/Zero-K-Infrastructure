@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
@@ -13,6 +14,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using LobbyClient;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 using PlasmaShared.UnitSyncLib;
 using SpringDownloader.Notifications;
 using ZeroKLobby.MicroLobby;
@@ -101,10 +103,8 @@ namespace ZeroKLobby
             try
             {
                 //Stopwatch stopWatch = new Stopwatch(); stopWatch.Start();
-
                 Trace.Listeners.Add(new ConsoleTraceListener());
-                Trace.Listeners.Add(new LogTraceListener());
-
+                
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
                     var ver = GetNetVersionFromRegistry();
@@ -118,7 +118,7 @@ namespace ZeroKLobby
                 Directory.SetCurrentDirectory(StartupPath);
 
                 IsSteamFolder = File.Exists(Path.Combine(StartupPath, "steamfolder.txt"));
-
+                
                 SelfUpdater = new SelfUpdater("Zero-K");
 
                 StartupArgs = args;
@@ -147,7 +147,8 @@ namespace ZeroKLobby
                 if (Environment.OSVersion.Platform != PlatformID.Unix && !Conf.UseExternalBrowser) { Utils.SetIeCompatibility(); } //set to current IE version
 
                 LoadConfig();
-
+                if (Conf.IsFirstRun) Conf.RunWebLobby = Directory.Exists("zkwl");
+                if (!Conf.RunWebLobby) Trace.Listeners.Add(new LogTraceListener());
 
                 var contentDir = !string.IsNullOrEmpty(Conf.DataFolder) ? Conf.DataFolder : StartupPath;
                 if (!Directory.Exists(contentDir) || !SpringPaths.IsDirectoryWritable(contentDir) || contentDir.Contains("Local\\Apps"))
@@ -259,7 +260,7 @@ namespace ZeroKLobby
                     SpringScanner.UploadUnitsyncData += MicroForms.UnitSyncUploadPrompt.SpringScanner_UploadUnitsyncData;
                     SpringScanner.RetryResourceCheck += MicroForms.UnitSyncRetryPrompt.SpringScanner_RetryGetResourceInfo;
                 }
-
+                
                 SpringScanner.MapRegistered += (s, e) => Trace.TraceInformation("Map registered: {0}", e.MapName);
                 SpringScanner.ModRegistered += (s, e) => Trace.TraceInformation("Mod registered: {0}", e.Data.Name);
 
@@ -307,54 +308,152 @@ namespace ZeroKLobby
                         MainWindow.PopupSelf();
                     };
 
-                ConnectBar = new ConnectBar(TasClient);
-                ModStore = new ModStore();
-                ToolTip = new ToolTipHandler();
-                BrowserInterop = new BrowserInterop(TasClient, Conf);
-                BattleIconManager = new BattleIconManager();
 
-                Application.AddMessageFilter(ToolTip);
+                if (!Conf.RunWebLobby) {
+                    
+                    ConnectBar = new ConnectBar(TasClient);
+                    ModStore = new ModStore();
+                    ToolTip = new ToolTipHandler();
+                    BrowserInterop = new BrowserInterop(TasClient, Conf);
+                    BattleIconManager = new BattleIconManager();
 
+                    Application.AddMessageFilter(ToolTip);
+                }
 
                 SteamHandler = new ZklSteamHandler(TasClient);
                 SteamHandler.Connect();
 
 
-                MainWindow = new MainWindow();
+                if (!Conf.RunWebLobby)
+                {
+                    MainWindow = new MainWindow();
 
-                Application.AddMessageFilter(new ScrollMessageFilter());
+                    Application.AddMessageFilter(new ScrollMessageFilter());
 
-                MainWindow.Size = new Size(Math.Min(SystemInformation.VirtualScreen.Width - 30, MainWindow.Width),
-                                            Math.Min(SystemInformation.VirtualScreen.Height - 30, MainWindow.Height)); //in case user have less space than 1024x768
+                    MainWindow.Size = new Size(
+                        Math.Min(SystemInformation.VirtualScreen.Width - 30, MainWindow.Width),
+                        Math.Min(SystemInformation.VirtualScreen.Height - 30, MainWindow.Height)); //in case user have less space than 1024x768
 
-                BattleBar = new BattleBar();
-                NewVersionBar = new NewVersionBar(SelfUpdater);
-                VoteBar = new VoteBar();
-                PwBar = new PwBar();
+                    BattleBar = new BattleBar();
+                    NewVersionBar = new NewVersionBar(SelfUpdater);
+                    VoteBar = new VoteBar();
+                    PwBar = new PwBar();
 
-                //This make the size of every bar constant (only for height).
-                //We wanted to make them constant because the bar get DPI-scaled twice/thrice/multiple-time (especially for reusable bar). 
-                //Setting maximum height upon creation will hopefully make sure it is not DPI-scaled multiple time.
-                var votebarSize = new Size(0, VoteBar.Height);
-                // Reference: http://stackoverflow.com/questions/5314041/set-minimum-window-size-in-c-sharp-net
-                var newversionbarSize = new Size(0, NewVersionBar.Height);
-                var battlebarSize = new Size(0, BattleBar.Height);
-                var connectbarSize = new Size(0, ConnectBar.Height);
+                    //This make the size of every bar constant (only for height).
+                    //We wanted to make them constant because the bar get DPI-scaled twice/thrice/multiple-time (especially for reusable bar). 
+                    //Setting maximum height upon creation will hopefully make sure it is not DPI-scaled multiple time.
+                    var votebarSize = new Size(0, VoteBar.Height);
+                    // Reference: http://stackoverflow.com/questions/5314041/set-minimum-window-size-in-c-sharp-net
+                    var newversionbarSize = new Size(0, NewVersionBar.Height);
+                    var battlebarSize = new Size(0, BattleBar.Height);
+                    var connectbarSize = new Size(0, ConnectBar.Height);
 
-                VoteBar.MinimumSize = votebarSize; //fix minimum size forever
-                VoteBar.MaximumSize = votebarSize; //fix maximum size forever
-                NewVersionBar.MinimumSize = newversionbarSize;
-                NewVersionBar.MaximumSize = newversionbarSize;
-                BattleBar.MinimumSize = battlebarSize;
-                BattleBar.MaximumSize = battlebarSize;
-                ConnectBar.MinimumSize = connectbarSize;
-                ConnectBar.MaximumSize = connectbarSize;
-                //End battlebar size hax
+                    VoteBar.MinimumSize = votebarSize; //fix minimum size forever
+                    VoteBar.MaximumSize = votebarSize; //fix maximum size forever
+                    NewVersionBar.MinimumSize = newversionbarSize;
+                    NewVersionBar.MaximumSize = newversionbarSize;
+                    BattleBar.MinimumSize = battlebarSize;
+                    BattleBar.MaximumSize = battlebarSize;
+                    ConnectBar.MinimumSize = connectbarSize;
+                    ConnectBar.MaximumSize = connectbarSize;
+                    //End battlebar size hax
+                }
+
 
                 if (!Debugger.IsAttached && !Conf.DisableAutoUpdate && !IsSteamFolder) Program.SelfUpdater.StartChecking();
 
+                if (!Conf.RunWebLobby)
+                {
 
-                Application.Run(MainWindow);
+                    Application.Run(MainWindow);
+                } else
+                {
+                    Uri fileUrl = new Uri(StartupPath + "/zkwl/index.html");
+                    new Thread(
+                        () =>
+                        {
+                            CefWrapper.Initialize(StartupPath + "/render", args);
+                            EventHandler<ProgressEventArgs> workHandler = (s, e) =>
+                            {
+                                CefWrapper.ExecuteJavascript("on_spring_scanner_work(" + JsonConvert.SerializeObject(e) + ");");
+                            };
+                            SpringScanner.WorkStarted += workHandler;
+                            SpringScanner.WorkProgressChanged += workHandler;
+                            SpringScanner.WorkStopped += (s, e) =>
+                            {
+                                CefWrapper.ExecuteJavascript("on_spring_scanner_work(null);");
+                            };
+                            SpringScanner.LocalResourceAdded += (s, e) =>
+                            {
+                                CefWrapper.ExecuteJavascript("on_spring_scanner_add(" + JsonConvert.SerializeObject(e.Item) + ")");
+                            };
+                            SpringScanner.LocalResourceRemoved += (s, e) =>
+                            {
+                                CefWrapper.ExecuteJavascript("on_spring_scanner_remove(" + JsonConvert.SerializeObject(e.Item) + ")");
+                            };
+
+                            CefWrapper.RegisterApiFunction("getEngines", () =>
+                            {
+                                return new List<string> { "100.0" }; // TODO: stub
+                            });
+                            CefWrapper.RegisterApiFunction("getMods", () =>
+                            {
+                                return SpringScanner.GetAllModResource();
+                            });
+                            CefWrapper.RegisterApiFunction("getMaps", () =>
+                            {
+                                return SpringScanner.GetAllMapResource();
+                            });
+                            CefWrapper.RegisterApiFunction("downloadEngine", (string engine) =>
+                            {
+                                // Don't let GetAndSwitchEngine() touch the main SpringPaths.
+                                var path = new SpringPaths(SpringPaths.GetEngineFolderByVersion(engine), writableFolderOverride: contentDir);
+                                Downloader.GetAndSwitchEngine(engine, path);
+                            });
+                            CefWrapper.RegisterApiFunction("downloadMod", (string game) =>
+                            {
+                                Downloader.GetResource(PlasmaDownloader.DownloadType.MOD, game);
+                            });
+                            CefWrapper.RegisterApiFunction("downloadMap", (string map) =>
+                            {
+                                Downloader.GetResource(PlasmaDownloader.DownloadType.MAP, map);
+                            });
+                            CefWrapper.RegisterApiFunction("startSpringScript", (string engineVer, string script) =>
+                            {
+                                if (RunningSpring != null)
+                                    return null;
+                                // Ultimately we should get rid of the concept of a "current set engine", but for now let's work around it.
+                                var path = new SpringPaths(SpringPaths.GetEngineFolderByVersion(engineVer), writableFolderOverride: contentDir);
+                                RunningSpring = new Spring(path);
+                                RunningSpring.SpringExited += (obj, evt) =>
+                                {
+                                    CefWrapper.ExecuteJavascript("on_spring_exit(" + (evt.Data ? "true" : "false") + ");");
+                                    RunningSpring = null;
+                                };
+                                try
+                                {
+                                    RunningSpring.StartSpring(script);
+                                    return null;
+                                }
+                                catch (Exception e)
+                                {
+                                    RunningSpring = null;
+                                    return e.Message;
+                                }
+                            });
+
+
+                            SpringScanner.Start();
+
+                            CefWrapper.StartMessageLoop(fileUrl.AbsoluteUri, "black", true);
+                            CefWrapper.Deinitialize();
+                            Program.ShutDown();
+                        }).Start();
+                    
+                    Application.Run();
+                }
+
+
                 ShutDown();
             }
             catch (Exception ex)
@@ -372,6 +471,8 @@ namespace ZeroKLobby
                 Application.Restart();
             }
         }
+
+        public static Spring RunningSpring { get; set; }
 
 
         public static PwBar PwBar { get; private set; }
