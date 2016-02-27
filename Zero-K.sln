@@ -44,7 +44,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkLobbyServer", "ZkLobbySer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autoregistrator", "Autoregistrator\Autoregistrator.csproj", "{01FAEBBC-02E0-42FE-972C-F17045BA3807}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkWebLobbyHost", "ZkWebLobbyHost\ZkWebLobbyHost.csproj", "{9EE4DA19-3413-4EFB-B895-369EF9989C59}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkWebLobby", "ZkWebLobby\ZkWebLobby.csproj", "{9EE4DA19-3413-4EFB-B895-369EF9989C59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

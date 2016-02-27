@@ -7,8 +7,8 @@
     <ProjectGuid>{9EE4DA19-3413-4EFB-B895-369EF9989C59}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ZkWebLobbyHost</RootNamespace>
-    <AssemblyName>ZkWebLobbyHost</AssemblyName>
+    <RootNamespace>ZkWebLobby</RootNamespace>
+    <AssemblyName>ZkWebLobby</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -46,7 +46,6 @@
     <Compile Include="CefWrapper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ZkWebLobbyHost.cs" />
     <None Include=".bin\git.cmd" />
     <None Include=".bin\node.cmd" />
     <None Include=".bin\npm.cmd" />

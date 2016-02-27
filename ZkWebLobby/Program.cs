@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 using LobbyClient;
 using Newtonsoft.Json;
 using PlasmaDownloader;
@@ -9,11 +10,13 @@ using ZeroKLobby;
 using ZkData;
 using ZkData.UnitSyncLib;
 
-namespace ZkWebLobbyHost
+namespace ZkWebLobby
 {
-    public class ZkWebLobbyHost
+    internal static class Program
     {
-        public void Run(string startupPath, params string[] args) {
+        //[STAThread]
+        private static void Main(params string[] args) {
+            var startupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
             var springPaths = new SpringPaths(null, startupPath);
             Spring runningSpring = null;
             springPaths.MakeFolders();
@@ -66,7 +69,7 @@ namespace ZkWebLobbyHost
             CefWrapper.RegisterApiFunction(
                 "getEngines",
                 () => {
-                          return new List<string> { "100.0" }; // TODO: stub
+                    return new List<string> { "100.0" }; // TODO: stub
                 });
             CefWrapper.RegisterApiFunction("getMods", () => { return springScanner.GetAllModResource(); });
             CefWrapper.RegisterApiFunction("getMaps", () => { return springScanner.GetAllMapResource(); });
@@ -112,7 +115,7 @@ namespace ZkWebLobbyHost
             springScanner.Dispose();
         }
 
-        public class DownloaderConfig: IPlasmaDownloaderConfig
+        public class DownloaderConfig : IPlasmaDownloaderConfig
         {
             public string PackageMasterUrl => "http://repos.springrts.com/";
             public int RepoMasterRefresh => 0;
