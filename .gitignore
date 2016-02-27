@@ -197,3 +197,6 @@ ZkLobbyMultiplatformInstaller/Zero-K-Online-Install
 ZkLobbyMultiplatformInstaller/Zero-K-Offline-Install.exe
 ZkLobbyMultiplatformInstaller/Zero-K-Online-Install.exe
 ModelBase/.vs/config/applicationhost.config
+
+# Binaries installed by NuGet
+.bin

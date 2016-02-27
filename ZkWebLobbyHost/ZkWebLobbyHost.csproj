@@ -47,6 +47,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ZkWebLobbyHost.cs" />
+    <None Include=".bin\git.cmd" />
+    <None Include=".bin\node.cmd" />
+    <None Include=".bin\npm.cmd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -65,10 +68,18 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+       Other similar extension points exist, see Microsoft.Common.targets. -->
+  <ItemGroup>
+    <!-- Include zkwl stuff -->
+    <Content Include="zkwl\*.*;zkwl\comp\*;zkwl\store\*;zkwl\act\*;zkwl\style\*;zkwl\images\**\*;zkwl\sounds\**\*" Exclude="zkwl\node_modules\**\*;zkwl\build\**\*" />
+  </ItemGroup>
+  <Target Name="BeforeBuild" Inputs="@(Content)" Outputs="zkwl\build\zkwl.bundle.js">
+    <Message Text="Installing NPM packages..." Importance="high" />
+    <Exec Command="..\.bin\npm install" WorkingDirectory="zkwl" />
+    <Message Text="Building site..." Importance="high" />
+    <Exec Command="..\.bin\npm run build" WorkingDirectory="zkwl" />
   </Target>
   <Target Name="AfterBuild">
+    <Exec Command="xcopy /ED zkwl\build\* $(OutputPath)\zkwl\" />
   </Target>
-  -->
 </Project>
