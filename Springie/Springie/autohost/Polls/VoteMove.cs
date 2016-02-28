@@ -16,7 +16,7 @@ namespace Springie.autohost.Polls
 
         protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount)
         {
-            winCount = (tas.MyBattle != null) ? tas.MyBattle.Users.Count : 1;
+            winCount = (tas.MyBattle != null) ? (tas.MyBattle.Users.Count - 1) : 1;
             question = null;
             if (words.Length < 1)
             {
