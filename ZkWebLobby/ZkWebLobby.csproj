@@ -46,9 +46,6 @@
     <Compile Include="CefWrapper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include=".bin\git.cmd" />
-    <None Include=".bin\node.cmd" />
-    <None Include=".bin\npm.cmd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +76,6 @@
     <Exec Command="..\.bin\npm run build" WorkingDirectory="zkwl" />
   </Target>
   <Target Name="AfterBuild">
-    <Exec Command="xcopy /ED zkwl\build\* $(OutputPath)\zkwl\" />
+    <Exec Command="xcopy /EDY zkwl\build\* $(OutputPath)\zkwl\" />
   </Target>
 </Project>

@@ -29,6 +29,7 @@ var afkStatus = new (require('weblobby/store/AfkStatus.js'))(lobbyServer, proces
 var currentBattle = new (require('weblobby/store/CurrentBattle.js'))(gameInfo,
 	lobbyServer, chatStore, process);
 var musicPlaylist = new (require('store/MusicPlaylist.js'))(process);
+var pastebin = new (require('weblobby/store/LogPastebin.js'))();
 
 var runApp = _.once(function(){
 	ReactDOM.render(<App
@@ -37,6 +38,7 @@ var runApp = _.once(function(){
 		processStore={process}
 		chatStore={chatStore}
 		currentBattleStore={currentBattle}
+		logPastebinStore={pastebin}
 	/>, document.getElementById('main'));
 
 	var overlay = document.getElementById('loadingOverlay');

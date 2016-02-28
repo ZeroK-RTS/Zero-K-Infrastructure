@@ -46,16 +46,12 @@ namespace ZkWebLobby
                     });
             };
 
+            CefWrapper.Initialize(startupPath + "/render", args);
+
+
             var springScanner = new SpringScanner(springPaths);
-
-            var downloader = new PlasmaDownloader.PlasmaDownloader(new DownloaderConfig(), springScanner, springPaths); //rapid
-            downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride);
-
             springScanner.Start();
 
-            var fileUrl = new Uri(startupPath + "/zkwl/index.html");
-
-            CefWrapper.Initialize(startupPath + "/render", args);
             EventHandler<ProgressEventArgs> workHandler =
                 (s, e) => { CefWrapper.ExecuteJavascript("on_spring_scanner_work(" + JsonConvert.SerializeObject(e) + ");"); };
             springScanner.WorkStarted += workHandler;
@@ -65,6 +61,22 @@ namespace ZkWebLobby
                 (s, e) => { CefWrapper.ExecuteJavascript("on_spring_scanner_add(" + JsonConvert.SerializeObject(e.Item) + ")"); };
             springScanner.LocalResourceRemoved +=
                 (s, e) => { CefWrapper.ExecuteJavascript("on_spring_scanner_remove(" + JsonConvert.SerializeObject(e.Item) + ")"); };
+
+
+            var downloader = new PlasmaDownloader.PlasmaDownloader(new DownloaderConfig(), springScanner, springPaths); //rapid
+            downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride);
+            
+            // ZKL's downloader doesn't send events to monitor download progress, so we have to poll it.
+            // TODO: make the downloader send progress events to allow for smoother progress reporting.
+            Timer pollDownloads = new Timer();
+            pollDownloads.Interval = 250;
+            pollDownloads.Tick += (s, e) => {
+                CefWrapper.ExecuteJavascript("on_downloads_change(" + JsonConvert.SerializeObject(downloader.Downloads) + ")");
+            };
+            // Through some WinAPI dark magic it manages to use the message pump in the window that is run by CEF.
+            // Can this be dangerous?
+            pollDownloads.Start();
+
 
             CefWrapper.RegisterApiFunction(
                 "getEngines",
@@ -108,6 +120,7 @@ namespace ZkWebLobby
                     }
                 });
 
+            var fileUrl = new Uri(startupPath + "/zkwl/index.html");
             CefWrapper.StartMessageLoop(fileUrl.AbsoluteUri, "black", true);
             CefWrapper.Deinitialize();
 
