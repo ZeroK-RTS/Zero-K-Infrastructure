@@ -47,6 +47,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include=".bin\node.cmd" />
+    <None Include=".bin\npm.cmd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
