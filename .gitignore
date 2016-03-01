@@ -200,3 +200,4 @@ ModelBase/.vs/config/applicationhost.config
 
 # Binaries installed by NuGet
 .bin
+.vs/config/applicationhost.config
