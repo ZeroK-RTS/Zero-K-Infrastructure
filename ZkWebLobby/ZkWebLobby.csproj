@@ -46,6 +46,7 @@
     <Compile Include="CefWrapper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include=".bin\node.cmd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
