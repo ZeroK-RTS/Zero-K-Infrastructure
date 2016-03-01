@@ -1673,5 +1673,4 @@ copy /Y "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"</PostBuildEvent>
     <RegisterForComInterop>False</RegisterForComInterop>
     <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

@@ -233,5 +233,4 @@
     <None Include="Web References\ModStats\StatsCollector.disco" />
   </ItemGroup>
   <ItemGroup />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>
