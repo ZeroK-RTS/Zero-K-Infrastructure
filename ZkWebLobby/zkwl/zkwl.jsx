@@ -45,38 +45,26 @@ var runApp = _.once(function(){
 	overlay.parentNode.removeChild(overlay);
 });
 
-// Don't run until intro music and video are fully loaded.
-var mediaReady = 0;
 var introVideo = document.getElementById('introVideo');
-var titleMusic = musicPlaylist.audio;
 
 var killIntro = _.once(function(){
 	introVideo.parentNode.removeChild(introVideo);
 });
 introVideo.addEventListener('ended', killIntro);
 introVideo.addEventListener('click', killIntro);
+introVideo.addEventListener('playing', runApp);
+// Give the video time to load. I would use canplay/canplaythrough/suspend if
+// Chrome deigned to actually fire them.
+setTimeout(function(){ introVideo.play(); }, 800);
 
-var playMedia = function playMedia(){
-
-	mediaReady++;
-	if (mediaReady < 2)
-		return;
-
-	titleMusic.removeEventListener('suspend', playMedia);
-	introVideo.play();
-	Settings.playTitleMusic && titleMusic.play();
-
-	// A hack to make it cut to the menu at the right place in the title song.
-	// Make it actually track how far into the song it is.
-	setTimeout(killIntro, 9200);
-
-	// Only render the main app after the video started playing or it may flicker still.
-	setTimeout(runApp, 500);
-}
+var audioTime = function audioTime(){
+	if (musicPlaylist.audio.currentTime > 8.5) {
+		killIntro();
+		musicPlaylist.audio.removeEventListener(audioTime);
+	}
+};
+musicPlaylist.audio.addEventListener('timeupdate', audioTime);
 
 // Fallback in case media failed to play.
 setTimeout(runApp, 15000);
 setTimeout(killIntro, 15000);
-
-titleMusic.addEventListener('suspend', playMedia);
-introVideo.addEventListener('suspend', playMedia);
