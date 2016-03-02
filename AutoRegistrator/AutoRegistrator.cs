@@ -67,7 +67,8 @@ namespace ZeroKWeb
 
             Scanner.InitialScan();
 
-            Downloader = new PlasmaDownloader.PlasmaDownloader(new Config(), Scanner, Paths);
+            Downloader = new PlasmaDownloader.PlasmaDownloader(Scanner, Paths);
+            Downloader.PackageDownloader.SetMasterRefreshTimer(20);
             Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
             Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             Downloader.PackagesChanged += Downloader_PackagesChanged;

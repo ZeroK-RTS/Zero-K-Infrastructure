@@ -29,11 +29,11 @@ namespace PlasmaDownloader.Packages
 
     public class PackageDownloader : IDisposable
     {
-        public bool isRefreshing;
-        public bool refreshed;
         string masterContent;
         public DateTime LastRefresh;
-        readonly string masterUrl;
+        const string MasterUrl = "http://repos.springrts.com/";
+
+
         readonly PlasmaDownloader plasmaDownloader;
         readonly Timer refreshTimer;
         List<Repository> repositories = new List<Repository>();
@@ -49,18 +49,28 @@ namespace PlasmaDownloader.Packages
 
         public DateTime MasterLastModified;
 
+
+        public void SetMasterRefreshTimer(int seconds) {
+            if (seconds == 0)
+            {
+                refreshTimer.Stop();
+            } else
+            {
+                refreshTimer.Interval = seconds*1000;
+                refreshTimer.Start();
+            }
+        }
+
+
         public PackageDownloader(PlasmaDownloader plasmaDownloader)
         {
             this.plasmaDownloader = plasmaDownloader;
-            masterUrl = this.plasmaDownloader.Config.PackageMasterUrl;
             LoadRepositories();
-            if (plasmaDownloader.Config.RepoMasterRefresh > 0)
-            {
-                refreshTimer = new Timer(this.plasmaDownloader.Config.RepoMasterRefresh * 1000);
-                refreshTimer.AutoReset = true;
-                refreshTimer.Elapsed += RefreshTimerElapsed;
-                refreshTimer.Start();
-            }
+            refreshTimer = new Timer();
+            refreshTimer.Stop();
+            refreshTimer.AutoReset = true;
+            refreshTimer.Elapsed += RefreshTimerElapsed;
+            refreshTimer.Stop();
         }
 
         public void Dispose()
@@ -120,6 +130,13 @@ namespace PlasmaDownloader.Packages
 
         internal PackageDownload GetPackageDownload(string name)
         {
+            var down = new PackageDownload(name, plasmaDownloader);
+            down.Start();
+            return down;
+        }
+
+
+        public Tuple<Repository, Version> FindAndSelectEntry(string name) {
             List<Repository> repositoriesCopy;
             lock (repositories) repositoriesCopy = Repositories.ToList();
             foreach (var repo in repositoriesCopy)
@@ -131,45 +148,39 @@ namespace PlasmaDownloader.Packages
                     {
                         // find by package name
                         SelectPackage(versionEntry.Name); // select it if it was requested by direct package name
-                        return CreateDownload(repo, versionEntry);
+                        return Tuple.Create(repo, versionEntry);
                     }
 
                     if (repo.VersionsByInternalName.TryGetValue(name, out versionEntry))
                     {
                         // find by internal name
-                        return CreateDownload(repo, versionEntry);
+                        return Tuple.Create(repo, versionEntry);
                     }
                 }
             }
-
             return null;
         }
 
 
-        /*public bool HasSdpFile(Hash hash) {
-            // note this only checks writable folder and not all data
-            var folder = Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory, "packages");
-            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-            var target = Utils.MakePath(folder, hash + ".sdp");
-            return File.Exists(target);
-        }*/
+        private Task refreshing;
+
+        const int RefreshMasterMinMinutes = 2;
 
         public Task LoadMasterAndVersions(bool downloadSelected)
         {
-            return Task.Factory.StartNew(() =>
+            lock (this) if (refreshing != null) return refreshing; else refreshing = Task.Factory.StartNew(() =>
             {
-                if (isRefreshing) return;
+                if (DateTime.Now.Subtract(LastRefresh).TotalMinutes < RefreshMasterMinMinutes) return;
+
                 LastRefresh = DateTime.Now;
-                isRefreshing = true;
 
                 try
                 {
-                    if (refreshTimer != null) refreshTimer.Stop();
                     var hasChanged = false;
 
                     try
                     {
-                        var repoList = Utils.DownloadFile(masterUrl + "/repos.gz", MasterLastModified);
+                        var repoList = Utils.DownloadFile(MasterUrl + "/repos.gz", MasterLastModified);
                         try
                         {
                             if (repoList.WasModified)
@@ -186,7 +197,7 @@ namespace PlasmaDownloader.Packages
                     }
                     catch (Exception ex)
                     {
-                        Trace.TraceWarning("Error loading package master from " + masterUrl);
+                        Trace.TraceWarning("Error loading package master from " + MasterUrl);
                     }
 
                     // update all repositories 
@@ -222,13 +233,12 @@ namespace PlasmaDownloader.Packages
                 }
                 finally
                 {
-                    isRefreshing = false;
-                    refreshed = true;
+                    refreshing = null;
                     LastRefresh = DateTime.Now;
                     Utils.StartAsync(() => MasterManifestDownloaded(this, EventArgs.Empty));
-                    if (refreshTimer != null) refreshTimer.Start();
                 }
             });
+            return refreshing;
         }
 
         public void SelectPackage(string key)
@@ -248,25 +258,6 @@ namespace PlasmaDownloader.Packages
             }
         }
 
-        PackageDownload CreateDownload(Repository repo, Version versionEntry) {
-            //if (HasSdpFile(versionEntry.Hash)) return null; // dont download if present
-
-            var down = new PackageDownload(repo.BaseUrl, versionEntry.InternalName, versionEntry.Hash, plasmaDownloader.SpringPaths);
-
-            if (versionEntry.Dependencies != null)
-            {
-                foreach (var dept in versionEntry.Dependencies)
-                {
-                    if (!string.IsNullOrEmpty(dept))
-                    {
-                        var dd = plasmaDownloader.GetResource(DownloadType.UNKNOWN, dept);
-                        if (dd != null) down.AddNeededDownload(dd);
-                    }
-                }
-            }
-            down.Start();
-            return down;
-        }
 
 
         void LoadRepositories()

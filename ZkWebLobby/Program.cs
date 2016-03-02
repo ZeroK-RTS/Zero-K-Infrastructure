@@ -63,7 +63,7 @@ namespace ZkWebLobby
                 (s, e) => { CefWrapper.ExecuteJavascript("on_spring_scanner_remove(" + JsonConvert.SerializeObject(e.Item) + ")"); };
 
 
-            var downloader = new PlasmaDownloader.PlasmaDownloader(new DownloaderConfig(), springScanner, springPaths); //rapid
+            var downloader = new PlasmaDownloader.PlasmaDownloader(springScanner, springPaths); //rapid
             downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride);
             
             // ZKL's downloader doesn't send events to monitor download progress, so we have to poll it.
@@ -128,10 +128,5 @@ namespace ZkWebLobby
             springScanner.Dispose();
         }
 
-        public class DownloaderConfig : IPlasmaDownloaderConfig
-        {
-            public string PackageMasterUrl => "http://repos.springrts.com/";
-            public int RepoMasterRefresh => 0;
-        }
     }
 }

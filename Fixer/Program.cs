@@ -24,6 +24,8 @@ using LobbyClient;
 using Microsoft.Linq.Translations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PlasmaDownloader;
+using PlasmaDownloader.Packages;
 using PlasmaShared;
 using ZkData.UnitSyncLib;
 using ZeroKWeb;
@@ -345,7 +347,18 @@ namespace Fixer
 
 
         static void Main(string[] args) {
-            FixStuff();
+            var path = new SpringPaths(null, @"c:\temp\ttt", false);
+            path.MakeFolders();
+            var down = new PlasmaDownloader.PlasmaDownloader(null, path);
+            var d = down.GetResource(DownloadType.MOD, "zk:test");
+            //d.WaitHandle.WaitOne();
+            while (d.IsComplete != true)
+            {
+                Console.WriteLine("{0} : {1} : {2}" , d.IsComplete, d.TotalProgress, d.TimeRemaining);
+                Thread.Sleep(1000);
+            }
+
+            //FixStuff();
             //MigrateDatabase();
             //return;
 

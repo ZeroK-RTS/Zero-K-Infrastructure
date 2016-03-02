@@ -32,7 +32,6 @@ namespace PlasmaDownloader
         private readonly SpringScanner scanner;
         private TorrentDownloader torrentDownloader;
 
-        public IPlasmaDownloaderConfig Config { get; private set; }
 
         public IEnumerable<Download> Downloads {
             get { return downloads.AsReadOnly(); }
@@ -56,9 +55,8 @@ namespace PlasmaDownloader
             remove { packageDownloader.SelectedPackagesChanged -= value; }
         }
 
-        public PlasmaDownloader(IPlasmaDownloaderConfig config, SpringScanner scanner, SpringPaths springPaths) {
+        public PlasmaDownloader(SpringScanner scanner, SpringPaths springPaths) {
             SpringPaths = springPaths;
-            Config = config;
             this.scanner = scanner;
             //torrentDownloader = new TorrentDownloader(this);
             packageDownloader = new PackageDownloader(this);
@@ -107,11 +105,7 @@ namespace PlasmaDownloader
 
             if (scanner != null && scanner.HasResource(name)) return null;
             
-            if (type == DownloadType.MOD || type == DownloadType.UNKNOWN)
-            {
-                RefreshAndWaitRapidIfNeeded();
-            }
-            
+           
             lock (downloads) {
 
                 if (type == DownloadType.DEMO) {
@@ -119,9 +113,6 @@ namespace PlasmaDownloader
                     var targetName = target.Segments.Last();
                     var filePath = Utils.MakePath(SpringPaths.WritableDirectory, "demos", targetName);
                     if (File.Exists(filePath)) return null;
-                    try {
-                        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-                    } catch {}
                     var down = new WebFileDownload(name, filePath, null);
                     downloads.Add(down);
                     DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down)); //create dowload bar (handled by MainWindow.cs)
@@ -157,7 +148,7 @@ namespace PlasmaDownloader
 
         public Download GetDependenciesOnly(string resourceName)
         {
-            RefreshAndWaitRapidIfNeeded();
+            packageDownloader.LoadMasterAndVersions(false).Wait();
             var dep = packageDownloader.GetPackageDependencies(resourceName);
             if (dep == null)
             {
@@ -185,24 +176,5 @@ namespace PlasmaDownloader
             return null;
         }
 
-        void RefreshAndWaitRapidIfNeeded() //2 minute anti-spam
-        {
-            if (!packageDownloader.refreshed) //edge case: we are unusually early?
-            {
-                if (packageDownloader.isRefreshing)
-                    //Wait until refresh is done
-                    do System.Threading.Thread.Sleep(500); while (packageDownloader.isRefreshing);
-                else
-                    packageDownloader.LoadMasterAndVersions(false).Wait();
-
-                return;
-            }
-            //package is stale?
-            if (DateTime.Now.Subtract(packageDownloader.LastRefresh).TotalMinutes >= 2)
-            {
-                packageDownloader.LoadMasterAndVersions(false).Wait();
-                return;
-            }
-        }
     }
 }

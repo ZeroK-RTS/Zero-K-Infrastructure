@@ -15,7 +15,7 @@ using ZkData;
 
 namespace ZeroKLobby
 {
-    public class Config : ICloneable, IPlasmaDownloaderConfig
+    public class Config : ICloneable
     {
         public const string ConfigFileName = "ZeroKLobbyConfig.xml";
         public const string LogFile = "ZeroKLobbyErrors.txt";

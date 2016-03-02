@@ -35,7 +35,7 @@ namespace AutoRegistrator
             
 
             paths.MakeFolders();
-            var downloader = new PlasmaDownloader.PlasmaDownloader(new Config(), null, paths);
+            var downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
             downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
             downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();

@@ -53,7 +53,8 @@ namespace Springie
             timer.AutoReset = true;
             timer.Start();
 
-            Downloader = new PlasmaDownloader.PlasmaDownloader(Config, null, paths);
+            Downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
+            Downloader.PackageDownloader.SetMasterRefreshTimer(60);
         }
 
         public int GetFreeHostingPort()
