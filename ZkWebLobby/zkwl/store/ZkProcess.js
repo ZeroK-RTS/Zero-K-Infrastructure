@@ -24,11 +24,11 @@ module.exports = function(gameInfoStore){ return Reflux.createStore({
 		window.on_downloads_change = function(downloads){
 			this.setState({
 				downloads: _.reduce(downloads, function(acc, dl){
-					if (!dl.IsComplete) {
+					if (!dl.IsComplete && !dl.IsAborted) {
 						acc[dl.Name] = {
 							name: dl.Name,
 							type: zklDownloadTypes[dl.TypeOfResource],
-							downloaded: dl.TotalProgress,
+							downloaded: (dl.TotalProgress / 100.0) * dl.TotalLength,
 							total: dl.TotalLength,
 						};
 					}
@@ -41,13 +41,14 @@ module.exports = function(gameInfoStore){ return Reflux.createStore({
 		return this.state;
 	},
 	setState: function(s){
-		_.merge(this.state, s);
+		_.extend(this.state, s);
 		this.trigger(this.state);
 	},
 
 	downloadEngine: Zkl.downloadEngine,
 	downloadGame: Zkl.downloadMod,
 	downloadMap: Zkl.downloadMap,
+	cancelDownload: Zkl.abortDownload,
 
 	launchSpringScript: function(ver, script){
 		Zkl.startSpringScript(ver, this.scriptify(script), function(err){
@@ -57,6 +58,7 @@ module.exports = function(gameInfoStore){ return Reflux.createStore({
 				Log.errorBox('Could not launch Spring engine: ' + err);
 		}.bind(this));
 	},
+	killSpring: _.noop,
 
 	scriptify: function scriptify(obj, tab){
 		tab = tab || '';
@@ -68,10 +70,5 @@ module.exports = function(gameInfoStore){ return Reflux.createStore({
 			else
 				return tab + key + ' = ' + val + ';';
 		}).join('\n') + '\n';
-	},
-
-	cancelDownload: function(name){
-	},
-	killSpring: function(){
 	},
 })};

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Windows.Forms;
 using LobbyClient;
@@ -67,7 +68,6 @@ namespace ZkWebLobby
             downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride);
             
             // ZKL's downloader doesn't send events to monitor download progress, so we have to poll it.
-            // TODO: make the downloader send progress events to allow for smoother progress reporting.
             Timer pollDownloads = new Timer();
             pollDownloads.Interval = 250;
             pollDownloads.Tick += (s, e) => {
@@ -95,6 +95,12 @@ namespace ZkWebLobby
                 });
             CefWrapper.RegisterApiFunction("downloadMod", (string game) => { downloader.GetResource(DownloadType.MOD, game); });
             CefWrapper.RegisterApiFunction("downloadMap", (string map) => { downloader.GetResource(DownloadType.MAP, map); });
+            CefWrapper.RegisterApiFunction(
+                "abortDownload",
+                (string name) =>
+                {
+                    downloader.Downloads.FirstOrDefault(d => d.Name == name)?.Abort();
+                });
             CefWrapper.RegisterApiFunction(
                 "startSpringScript",
                 (string engineVer, string script) =>
