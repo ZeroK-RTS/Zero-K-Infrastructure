@@ -347,16 +347,12 @@ namespace Fixer
 
 
         static void Main(string[] args) {
-            var path = new SpringPaths(null, @"c:\temp\ttt", false);
-            path.MakeFolders();
-            var down = new PlasmaDownloader.PlasmaDownloader(null, path);
-            var d = down.GetResource(DownloadType.MOD, "zk:test");
-            //d.WaitHandle.WaitOne();
-            while (d.IsComplete != true)
-            {
-                Console.WriteLine("{0} : {1} : {2}" , d.IsComplete, d.TotalProgress, d.TimeRemaining);
-                Thread.Sleep(1000);
-            }
+            //var str = File.ReadAllText(@"[f=0002448]");
+            var fw = new ForumWikiParser();
+            var result= fw.TranslateToHtml("[f=0002448]", null);
+
+
+            return;
 
             //FixStuff();
             //MigrateDatabase();

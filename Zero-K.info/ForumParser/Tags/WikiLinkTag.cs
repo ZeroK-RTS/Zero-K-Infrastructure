@@ -36,7 +36,7 @@ namespace ZeroKWeb.ForumParser
         protected override bool ValidateArgs(ParseContext context, string args) {
             var parts = args.Split(' ');
             if (string.IsNullOrEmpty(parts[0])) return false;
-            using (var db = new ZkDataContext()) return parts[0].IsValidLink() || context.IsWikiKey(parts[0]);
+            return parts[0].IsValidLink() || context.IsWikiKey(parts[0]);
         }
     }
 }
