@@ -71,7 +71,7 @@
     <!-- Include zkwl stuff -->
     <Content Include="zkwl\*.*;zkwl\comp\*;zkwl\store\*;zkwl\act\*;zkwl\style\*;zkwl\images\**\*;zkwl\sounds\**\*" Exclude="zkwl\node_modules\**\*;zkwl\build\**\*" />
   </ItemGroup>
-  <Target Name="AfterBuild">
+  <Target Name="AfterBuild" Inputs="@(Content)" Outputs="zkwl\build\zkwl.bundle.js">
     <Message Text="Installing NPM packages..." Importance="high" />
     <Exec Command="..\.bin\npm install" WorkingDirectory="zkwl" />
     <Message Text="Building site..." Importance="high" />
