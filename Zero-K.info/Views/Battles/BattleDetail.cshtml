@@ -103,7 +103,7 @@
         var css = ViewBag.ShowWinners ? (win ? "battle_winner" : "battle_loser") : "battle_spec";
         var label = ViewBag.ShowWinners ? (win ? "Won!" : "Lost") : "";
         <div class='fleft @css'>
-            <span style="font-size: 130%; font-family: Skir;">Team @(grp.Key + 1) @label</span><br/>
+            <span style="font-size: 130%">Team @(grp.Key + 1) @label</span><br/>
             @if (ViewBag.ShowWinners)
             {
                 <small>XP gained: @(win ? @Model.WinnerTeamXpChange : @Model.LoserTeamXpChange)</small>
@@ -131,7 +131,7 @@
         </div>
     }
     <div class="fleft battle_spec">
-        <span style="font-size: 130%; font-family: Skir;">Spectators</span><br/>
+        <span style="font-size: 130%">Spectators</span><br/>
         @foreach (var u in Model.SpringBattlePlayers.Where(x => x.IsSpectator))
         {
             <small>@Html.PrintAccount(u.Account)</small><br/>

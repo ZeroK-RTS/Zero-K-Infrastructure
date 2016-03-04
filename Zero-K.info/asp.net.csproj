@@ -1347,18 +1347,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Img\factions\ships.xcf" />
-    <None Include="PetitaMedium.eot" />
-    <None Include="PetitaMedium.ttf" />
     <None Include="Properties\PublishProfiles\Profile1.pubxml" />
-    <None Include="RevoPop.eot" />
-    <None Include="RevoPop.ttf" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
-    <None Include="Skir.eot" />
-    <None Include="Skir.ttf" />
     <None Include="SM.eot" />
     <None Include="SM.ttf" />
-    <None Include="tomorrow.eot" />
-    <None Include="tomorrow.TTF" />
     <Content Include="Views\Planetwars\Index.cshtml" />
     <Content Include="Views\Planetwars\Galaxy.cshtml" />
     <Content Include="Web.config">
