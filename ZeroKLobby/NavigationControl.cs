@@ -81,29 +81,25 @@ namespace ZeroKLobby
 
             ButtonList = new List<ButtonInfo>() //normal arrangement
             {
-                new ButtonInfo() { Label = "HOME", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon= Buttons.left, Height = 32,Width = 80 },
-                new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= ZklResources.chat, Height = 32, Width = 65 },
+                new ButtonInfo() { Label = "WEB", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon= Buttons.extras, Height = 70,Width = 200 },
                 new ButtonInfo()
                 {
                     Label = "SINGLEPLAYER",
                     TargetPath = string.Format("{0}/Missions", GlobalConst.BaseSiteUrl),
-                    Icon = Buttons.spherebot,
-                    Width = 125,
-                    Height = 32,
+                    Icon = Buttons.sp,
+                    Width = 250,
+                    Height = 70,
                 },
                 new ButtonInfo()
                 {
                     Label = "MULTIPLAYER",
-                    TargetPath = "battles", Icon =  ZklResources.battle,
-                    Width = 115,
-                    Height = 32,
+                    TargetPath = "battles", Icon =  Buttons.mp,
+                    Width = 250,
+                    Height = 70,
                 },
-                
-                new ButtonInfo() { Label = "PLANETWARS", TargetPath = string.Format("{0}/Planetwars/", GlobalConst.BaseSiteUrl), Height = 32,  },
-                new ButtonInfo() { Label = "MAPS", TargetPath = string.Format("{0}/Maps/", GlobalConst.BaseSiteUrl), Icon = Buttons.map, Height = 32, Width = 75 },
-                new ButtonInfo() { Label = "REPLAYS", TargetPath = string.Format("{0}/Battles/", GlobalConst.BaseSiteUrl), Icon = Buttons.video_icon, Height = 32, Width = 95 },
-                new ButtonInfo() { Label = "FORUM", TargetPath = string.Format("{0}/Forum/", GlobalConst.BaseSiteUrl), Height = 32, Width = 65, },
-                new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings", Icon = Buttons.settings, Height = 32, Width = 100, Dock = DockStyle.Right},
+                new ButtonInfo() { Label = "CHAT", TargetPath = "chat", Icon= Buttons.chat, Height = 70, Width = 200 },
+
+                new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings", Icon = Buttons.settings, Height = 70, Width = 250, Dock = DockStyle.Right},
                
             };
 
@@ -136,7 +132,6 @@ namespace ZeroKLobby
             AddTabPage(new MicroLobby.ExtrasTab.ExtrasTab(), "Extra");
             
             foreach (var but in ButtonList) flowLayoutPanel1.Controls.Add(but.GetButton());
-            flowLayoutPanel1.Controls.Add(logoutButton);
             flowLayoutPanel1.BringToFront();
             ResumeLayout();
         }

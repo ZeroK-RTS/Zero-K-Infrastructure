@@ -441,7 +441,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                             format.Alignment = StringAlignment.Center;
                             format.LineAlignment = StringAlignment.Center;
 
-                            using (var font = new Font("Arial", 13f, FontStyle.Bold)) g.DrawStringWithOutline((allyTeam + 1).ToString(), font, Brushes.White, Brushes.Black, numberRect, format, 5);
+                            g.DrawStringWithOutline((allyTeam + 1).ToString(), Config.GeneralFontBig, Brushes.White, Brushes.Black, numberRect, format, 5);
                         }
                     }
                 }

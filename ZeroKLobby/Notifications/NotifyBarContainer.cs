@@ -25,7 +25,7 @@ namespace ZeroKLobby.Notifications
             //Note: control-element is already DPI-scaled and might be DPI-scaled again, and we dont need more scaling
             //Set size to control-element's maximum size (if defined in Program.cs). If not defined then use current height (hopefully the control-element is only used once)
             Height = (control.MaximumSize.Height > 0 ? control.MaximumSize.Height : control.Height) + DpiMeasurement.ScaleValueY(28);
-            lbTitle = new Label() { Font = new Font("Microsoft Sans Serif", 13.25F, FontStyle.Bold), ForeColor = Color.DarkCyan, AutoSize = true };
+            lbTitle = new Label() { Font = Config.GeneralFontBig, ForeColor = Color.DarkCyan, AutoSize = true };
             tableLayoutPanel1.Controls.Add(lbTitle, 1, 0);
 
             tableLayoutPanel1.Controls.Add(control, 1, 1);

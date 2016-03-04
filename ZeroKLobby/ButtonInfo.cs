@@ -25,7 +25,7 @@ namespace ZeroKLobby
                 var changed = isSelected != value;
                 isSelected = value;
                 //button.BackColor = isSelected ? Color.PowderBlue : SystemColors.ButtonFace;
-                button.ForeColor = isSelected ? Color.Aqua: Color.White;
+                button.ForeColor = isSelected ? Color.White : Color.FromArgb(0x38, 0xbf, 0xec);
                 if (changed) InvokePropertyChanged("IsSelected");
             }
         }
@@ -61,6 +61,7 @@ namespace ZeroKLobby
             button.Height = Height;
             button.Width = Width;
             button.TextAlign = ContentAlignment.MiddleCenter;
+            button.Font = Config.MenuFont;
             button.Text = Label;
             button.Margin = new Padding(0, 0, 0, 3);
             button.Cursor = Cursors.Hand;

@@ -45,6 +45,7 @@ namespace ZeroKLobby
         public Platform MyOS = Platform.Windows; // Which will most likely to be the case for most community
 
         public MainWindow() {
+            Font = Config.GeneralFont;
             InitializeComponent();
             //Invalidate(true);
             Instance = this;

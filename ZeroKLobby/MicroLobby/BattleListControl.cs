@@ -30,7 +30,7 @@ namespace ZeroKLobby.MicroLobby
 
         List<BattleIcon> view = new List<BattleIcon>();
         static Pen dividerPen = new Pen(Color.DarkCyan, 3) {DashStyle = DashStyle.Dash};
-        static Font dividerFont = new Font("Segoe UI", 15.25F, FontStyle.Bold);
+        static Font dividerFont = Config.GeneralFontBig;
         static SolidBrush dividerFontBrush = new SolidBrush(Program.Conf.TextColor);
 
 

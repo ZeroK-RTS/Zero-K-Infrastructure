@@ -19,11 +19,11 @@ namespace ZeroKLobby
     {
         public const string ConfigFileName = "ZeroKLobbyConfig.xml";
         public const string LogFile = "ZeroKLobbyErrors.txt";
-        public static readonly Font MenuFont = new Font("Verdana", 20, GraphicsUnit.Pixel);
-        public static readonly Font ChatFont = new Font("Microsoft Sans Serif", 14, GraphicsUnit.Pixel);
-        public static readonly Font GeneralFont = new Font("Microsoft Sans Serif", 14, GraphicsUnit.Pixel);
-        public static readonly Font GeneralFontBig = new Font("Microsoft Sans Serif", 15, FontStyle.Bold, GraphicsUnit.Pixel);
-        public static readonly Font GeneralFontSmall = new Font("Microsoft Sans Serif", 9, GraphicsUnit.Pixel);
+        public static readonly Font MenuFont;
+        public static readonly Font ChatFont;
+        public static readonly Font GeneralFont;
+        public static readonly Font GeneralFontBig;
+        public static readonly Font GeneralFontSmall;
 
 
         public static readonly Font ToolbarFontBig;
@@ -72,7 +72,20 @@ namespace ZeroKLobby
             }
             else fancyFont = FontFamily.GenericSansSerif;
 
-            MenuFont = new Font(fancyFont, 20, GraphicsUnit.Pixel);
+            FontFamily sansFont;
+            if (File.Exists("OpenSans-Regular.ttf"))
+            {
+                pfc.AddFontFile("OpenSans-Semibold.ttf");
+                sansFont = pfc.Families[0];
+            }  else sansFont = FontFamily.GenericSansSerif;
+
+
+            ChatFont = new Font(sansFont, 14, GraphicsUnit.Pixel);
+            GeneralFont = new Font(sansFont, 14, GraphicsUnit.Pixel);
+            GeneralFontBig = new Font(sansFont, 15, FontStyle.Bold, GraphicsUnit.Pixel);
+            GeneralFontSmall = new Font(sansFont, 9, GraphicsUnit.Pixel);
+    
+            MenuFont = new Font(fancyFont, 15, GraphicsUnit.Pixel);
 
             ToolbarFontBig = new Font(fancyFont, 14, GraphicsUnit.Pixel);
             ToolbarFont = new Font(fancyFont, 12, GraphicsUnit.Pixel);
