@@ -101,7 +101,7 @@ namespace ZeroKLobby
                 //Stopwatch stopWatch = new Stopwatch(); stopWatch.Start();
                 Trace.Listeners.Add(new ConsoleTraceListener());
 
-                if (Environment.OSVersion.Platform != PlatformID.Unix)
+               if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
                     var ver = GetNetVersionFromRegistry();
                     if (ver < 378675)
@@ -115,6 +115,10 @@ namespace ZeroKLobby
                 }
 
                 Directory.SetCurrentDirectory(StartupPath);
+
+                // extract fonts
+                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.SM.ttf", "SM.ttf");
+                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.OpenSans-Semibold.ttf", "OpenSans-Semibold.ttf");
 
                 IsSteamFolder = File.Exists(Path.Combine(StartupPath, "steamfolder.txt"));
 
@@ -171,6 +175,8 @@ namespace ZeroKLobby
                     MessageBox.Show("Move failed, please copy Zero-K.exe to a writable folder");
                     return;
                 }
+
+                
 
                 SpringPaths = new SpringPaths(null, contentDir);
                 SpringPaths.MakeFolders();
