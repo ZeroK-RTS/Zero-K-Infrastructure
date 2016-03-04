@@ -5,8 +5,8 @@ html
 	/*background: #000 url("/img/bg_bluehex.gif") fixed;*/
 	background: #000;
 	color: #ede;
-	font-family: font, sans-serif;
-	font-size: 1em;
+	font-family: os, sans-serif;
+	font-size: 15px;
 	height: 100%;
 	width: 100%;
 	padding: 0;
@@ -167,7 +167,7 @@ div#busy
 	margin: 4px 1px;
 	cursor: pointer;
 	text-align: center;
-	font-family: font, sans-serif;
+	font-family: os, sans-serif;
 	font-size: medium;
 	vertical-align: middle;
 }
@@ -192,7 +192,7 @@ div#busy
 	margin: 10px;
 	cursor: pointer;
 	text-align: center;
-	font-family: font, sans-serif;
+	font-family: os, sans-serif;
 	font-size: 200%;
 }
 

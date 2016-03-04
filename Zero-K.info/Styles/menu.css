@@ -6,7 +6,7 @@ div#menu a /*menu bar*/
 	display: block;
 	position: relative; /* tooltips use "absolute" position, so parent must not be static */
 	font-family: sm, sans-serif;
-	font-size: 14px;
+	font-size: 15px;
 }
 
 div#menu a span {display:none;} /*menu text sayings*/
@@ -30,7 +30,7 @@ div#menu a:hover span
 	-moz-box-shadow: 0 0 10px #fff;
 	-webkit-box-shadow: 0 0 10px #fff;
 	
-	font-family: sans-serif;
+	font-family: os, sans-serif;
 	font-weight: bold;
 }
 

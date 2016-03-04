@@ -80,8 +80,8 @@ namespace ZeroKLobby
             }  else sansFont = FontFamily.GenericSansSerif;
 
 
-            ChatFont = new Font(sansFont, 14, GraphicsUnit.Pixel);
-            GeneralFont = new Font(sansFont, 14, GraphicsUnit.Pixel);
+            ChatFont = new Font(sansFont, 15, GraphicsUnit.Pixel);
+            GeneralFont = new Font(sansFont, 15, GraphicsUnit.Pixel);
             GeneralFontBig = new Font(sansFont, 15, FontStyle.Bold, GraphicsUnit.Pixel);
             GeneralFontSmall = new Font(sansFont, 9, GraphicsUnit.Pixel);
     

@@ -1278,6 +1278,8 @@
     <Content Include="MissionService.svc" />
     <Content Include="ResourceDetail.aspx" />
     <Content Include="Scripts\browser-css.js" />
+    <Content Include="OpenSans-Semibold.ttf" />
+    <Content Include="OpenSans-Semibold.eot" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\grid.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
