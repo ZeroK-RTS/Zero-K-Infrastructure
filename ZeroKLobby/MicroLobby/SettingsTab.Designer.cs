@@ -240,12 +240,12 @@
             this.btnDefaults.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDefaults.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDefaults.ForeColor = System.Drawing.Color.White;
-            this.btnDefaults.Location = new System.Drawing.Point(136, 88);
+            this.btnDefaults.Location = new System.Drawing.Point(130, 88);
             this.btnDefaults.Name = "btnDefaults";
-            this.btnDefaults.Size = new System.Drawing.Size(75, 23);
+            this.btnDefaults.Size = new System.Drawing.Size(115, 23);
             this.btnDefaults.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnDefaults.TabIndex = 35;
-            this.btnDefaults.Text = "Clear";
+            this.btnDefaults.Text = "Reset ingame settings";
             this.btnDefaults.UseVisualStyleBackColor = true;
             this.btnDefaults.Click += new System.EventHandler(this.btnDefaults_Click);
             // 
