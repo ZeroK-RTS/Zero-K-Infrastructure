@@ -149,7 +149,7 @@ namespace ZeroKLobby
                 if (Environment.OSVersion.Platform != PlatformID.Unix && !Conf.UseExternalBrowser) Utils.SetIeCompatibility(); //set to current IE version
 
                 var contentDir = !string.IsNullOrEmpty(Conf.DataFolder) ? Conf.DataFolder : StartupPath;
-                if (!Directory.Exists(contentDir) || !SpringPaths.IsDirectoryWritable(contentDir) || contentDir.Contains("Local\\Apps"))
+                if (!Directory.Exists(contentDir) || !SpringPaths.IsDirectoryWritable(contentDir) || contentDir.Contains("Local\\Apps") || (!IsSteamFolder && Conf.IsFirstRun))
                 {
                     var dc = new SelectWritableFolder { SelectedPath = SpringPaths.GetMySpringDocPath() };
                     if (dc.ShowDialog() != DialogResult.OK) return;
@@ -161,9 +161,7 @@ namespace ZeroKLobby
                 if (!SpringPaths.IsDirectoryWritable(StartupPath) || StartupPath.Contains("Local\\Apps"))
                 {
                     MessageBox.Show(
-                        string.Format(
-                            "Please use the newly created desktop icon to start Zero-K not this one.\r\nZero-K.exe will be moved to {0}",
-                            contentDir),
+                        string.Format("Please use the newly created desktop icon to start Zero-K not this one.\r\nZero-K.exe will be moved to {0}", contentDir),
                         "Startup directory is not writable!");
                     var newTarget = Path.Combine(contentDir, "Zero-K.exe");
                     if (SelfUpdater.CheckForUpdate(newTarget, true))
