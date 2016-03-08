@@ -301,5 +301,18 @@ namespace ZeroKLobby
             systrayIcon.Visible = false;
             Hide();
         }
+
+        protected override void OnActivated(EventArgs e) {
+            base.OnActivated(e);
+            if (FormBorderStyle == FormBorderStyle.None) TopMost = true;
+        }
+
+        protected override void OnDeactivate(EventArgs e)
+        {
+            base.OnDeactivate(e);
+            TopMost = false;
+        }
+
+
     }
 }

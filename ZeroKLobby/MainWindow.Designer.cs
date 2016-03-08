@@ -1,4 +1,6 @@
-﻿namespace ZeroKLobby
+﻿using System.Windows.Forms;
+
+namespace ZeroKLobby
 {
     partial class MainWindow
     {
@@ -28,6 +30,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.WindowState = FormWindowState.Maximized;
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.notifySection1 = new SpringDownloader.Notifications.NotifySection();
             this.navigationControl1 = new ZeroKLobby.NavigationControl();
@@ -53,28 +56,32 @@
             // 
             this.notifySection1.AutoSize = true;
             this.notifySection1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.notifySection1.BackColor = System.Drawing.Color.Transparent;
             this.notifySection1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.notifySection1.Location = new System.Drawing.Point(1, 767);
+            this.notifySection1.Location = new System.Drawing.Point(0, 768);
+            this.notifySection1.Margin = new System.Windows.Forms.Padding(0);
             this.notifySection1.Name = "notifySection1";
             this.notifySection1.Size = new System.Drawing.Size(1024, 1);
             this.notifySection1.TabIndex = 0;
             // 
             // navigationControl1
             // 
+            this.navigationControl1.BackColor = System.Drawing.Color.Black;
             this.navigationControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.navigationControl1.Location = new System.Drawing.Point(3, 3);
+            this.navigationControl1.Location = new System.Drawing.Point(0, 0);
+            this.navigationControl1.Margin = new System.Windows.Forms.Padding(0);
             this.navigationControl1.Name = "navigationControl1";
             this.navigationControl1.Path = "";
-            this.navigationControl1.Size = new System.Drawing.Size(1024, 766);
+            this.navigationControl1.Size = new System.Drawing.Size(1024, 768);
             this.navigationControl1.TabIndex = 1;
             // 
             // MainWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1024, 768);
             this.Controls.Add(this.tableLayoutPanel2);
-            this.Padding = new System.Windows.Forms.Padding(0);
+            this.DoubleBuffered = true;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "MainWindow";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);
             this.Load += new System.EventHandler(this.MainWindow_Load);

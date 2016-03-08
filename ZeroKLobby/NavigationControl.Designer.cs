@@ -37,6 +37,7 @@
             this.btnForward = new ZeroKLobby.BitmapButton();
             this.btnBack = new ZeroKLobby.BitmapButton();
             this.tabControl = new ZeroKLobby.HeadlessTabControl();
+            ((System.ComponentModel.ISupportInitialize)(this.isBusyIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // urlBox
@@ -53,13 +54,13 @@
             this.flowLayoutPanel1.AutoScroll = true;
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanel1.BackColor = System.Drawing.Color.DimGray;
+            this.flowLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel1.MinimumSize = new System.Drawing.Size(300, 28);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
-            this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanel1.MinimumSize = new System.Drawing.Size(300, 28);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(13);
             this.flowLayoutPanel1.Size = new System.Drawing.Size(703, 28);
             this.flowLayoutPanel1.TabIndex = 5;
             this.flowLayoutPanel1.WrapContents = false;
@@ -79,12 +80,14 @@
             this.goButton1.BackColor = System.Drawing.Color.Transparent;
             this.goButton1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("goButton1.BackgroundImage")));
             this.goButton1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.goButton1.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.goButton1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.goButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.goButton1.ForeColor = System.Drawing.Color.White;
             this.goButton1.Location = new System.Drawing.Point(362, 34);
             this.goButton1.Name = "goButton1";
             this.goButton1.Size = new System.Drawing.Size(35, 23);
+            this.goButton1.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.goButton1.TabIndex = 6;
             this.goButton1.Text = "Go";
             this.goButton1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -96,12 +99,14 @@
             this.reloadButton1.BackColor = System.Drawing.Color.Transparent;
             this.reloadButton1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("reloadButton1.BackgroundImage")));
             this.reloadButton1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.reloadButton1.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.reloadButton1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.reloadButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.reloadButton1.ForeColor = System.Drawing.Color.White;
             this.reloadButton1.Location = new System.Drawing.Point(403, 34);
             this.reloadButton1.Name = "reloadButton1";
             this.reloadButton1.Size = new System.Drawing.Size(58, 23);
+            this.reloadButton1.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.reloadButton1.TabIndex = 7;
             this.reloadButton1.Text = "Refresh";
             this.reloadButton1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -114,12 +119,14 @@
             this.btnForward.BackColor = System.Drawing.Color.Transparent;
             this.btnForward.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnForward.BackgroundImage")));
             this.btnForward.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnForward.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnForward.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnForward.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnForward.ForeColor = System.Drawing.Color.White;
             this.btnForward.Location = new System.Drawing.Point(85, 34);
             this.btnForward.Name = "btnForward";
             this.btnForward.Size = new System.Drawing.Size(75, 23);
+            this.btnForward.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnForward.TabIndex = 4;
             this.btnForward.Text = "Forward";
             this.btnForward.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -131,12 +138,14 @@
             this.btnBack.BackColor = System.Drawing.Color.Transparent;
             this.btnBack.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBack.BackgroundImage")));
             this.btnBack.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnBack.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
             this.btnBack.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnBack.ForeColor = System.Drawing.Color.White;
             this.btnBack.Location = new System.Drawing.Point(4, 34);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(75, 23);
+            this.btnBack.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.btnBack.TabIndex = 3;
             this.btnBack.Text = "Back";
             this.btnBack.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -149,8 +158,8 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Location = new System.Drawing.Point(0, 42);
             this.tabControl.Margin = new System.Windows.Forms.Padding(0);
-            this.tabControl.Padding = new System.Drawing.Point(0);
             this.tabControl.Name = "tabControl";
+            this.tabControl.Padding = new System.Drawing.Point(0, 0);
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(703, 185);
             this.tabControl.TabIndex = 0;
@@ -170,10 +179,10 @@
             this.Controls.Add(this.urlBox);
             this.Controls.Add(this.tabControl);
             this.Margin = new System.Windows.Forms.Padding(0);
-            this.Padding = new System.Windows.Forms.Padding(0);
             this.Name = "NavigationControl";
             this.Size = new System.Drawing.Size(703, 219);
             this.Resize += new System.EventHandler(this.NavigationControl_Resize);
+            ((System.ComponentModel.ISupportInitialize)(this.isBusyIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

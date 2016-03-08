@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using ZeroKLobby.Controls;
 using ZeroKLobby.MapDownloader;
 using ZeroKLobby.MicroLobby;
 using ZkData;
@@ -132,6 +134,33 @@ namespace ZeroKLobby
             AddTabPage(new MicroLobby.ExtrasTab.ExtrasTab(), "Extra");
             
             foreach (var but in ButtonList) flowLayoutPanel1.Controls.Add(but.GetButton());
+            var minMaxButton = new BitmapButton()
+            {
+                ButtonStyle = FrameBorderRenderer.StyleType.DarkHive, SoundType = SoundPalette.SoundType.Click,
+                Height = 70, Width = 70, Image = Buttons.win_min.GetResizedWithCache(60,60)
+            };
+            minMaxButton.Click += (sender, args) =>
+            {
+                var mw = Program.MainWindow;
+                if (mw != null)
+                {
+                    if (mw.WindowState == FormWindowState.Maximized)
+                    {
+                        mw.WindowState = FormWindowState.Normal;
+                        mw.FormBorderStyle = FormBorderStyle.Sizable;
+                        mw.TopMost = false;
+                        minMaxButton.Image = Buttons.win_max.GetResizedWithCache(60, 60);
+                    } else
+                    {
+                        mw.WindowState = FormWindowState.Maximized;
+                        mw.FormBorderStyle = FormBorderStyle.None;
+                        mw.TopMost = true;
+                        minMaxButton.Image = Buttons.win_min.GetResizedWithCache(60, 60);
+                    }
+                }
+            };
+
+            flowLayoutPanel1.Controls.Add(minMaxButton);
             flowLayoutPanel1.BringToFront();
             ResumeLayout();
         }
@@ -225,6 +254,17 @@ namespace ZeroKLobby
                 }
             }
             return null;
+        }
+
+        protected override void OnPaintBackground(PaintEventArgs e) {
+            BackColor = Color.Black;
+            //this.RenderParentsBackgroundImage(e);
+            base.OnPaintBackground(e);
+            FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, Bounds, FrameBorderRenderer.StyleType.Shraka);
+            var b = Bounds;
+            b.Intersect(new Rectangle(Bounds.X + 10, Bounds.Y + 10, Bounds.Width - 20, Bounds.Height - 20));
+            FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, b, FrameBorderRenderer.StyleType.TechPanel);
+
         }
 
 
