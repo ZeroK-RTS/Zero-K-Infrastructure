@@ -6,6 +6,7 @@ namespace ZeroKLobby.Controls
 {
     internal class ZklTextBox: UserControl
     {
+        private const int BorderSize = 2;
         private readonly TextBox textBox = new TextBox();
 
         public ZklTextBox() {
@@ -13,12 +14,14 @@ namespace ZeroKLobby.Controls
             ZklBaseControl.Init(textBox);
             textBox.BorderStyle = BorderStyle.None;
             textBox.ForeColor = Config.TextColor;
-
-            Paint += UserControl1_Paint;
-            Resize += UserControl1_Resize;
-
+            textBox.KeyDown += (sender, args) => { OnKeyDown(args); };
+            textBox.KeyUp += (sender, args) => { OnKeyUp(args); };
+            textBox.MouseDown += (sender, args) => { OnMouseDown(args); };
+            textBox.MouseUp += (sender, args) => { OnMouseUp(args); };
+            textBox.Click += (sender, args) => { OnClick(args); };
             Controls.Add(textBox);
         }
+
 
         public override Font Font { get { return textBox.Font; } set { textBox.Font = value; } }
 
@@ -28,13 +31,15 @@ namespace ZeroKLobby.Controls
             textBox.SelectAll();
         }
 
-        private void UserControl1_Resize(object sender, EventArgs e) {
-            textBox.Size = new Size(Width - 4, Height - 4);
-            textBox.Location = new Point(2, 2);
+        protected override void OnResize(EventArgs e) {
+            base.OnResize(e);
+            textBox.Size = new Size(Width - BorderSize*2, Height - BorderSize*2);
+            textBox.Location = new Point(BorderSize, BorderSize);
         }
 
-        private void UserControl1_Paint(object sender, PaintEventArgs e) {
-            using (var pen = new Pen(Config.TextBoxBorderColor, 2)) e.Graphics.DrawRectangle(pen, ClientRectangle);
+        protected override void OnPaint(PaintEventArgs e) {
+            base.OnPaint(e);
+            using (var pen = new Pen(Config.TextBoxBorderColor, BorderSize)) e.Graphics.DrawRectangle(pen, ClientRectangle);
         }
     }
 }
