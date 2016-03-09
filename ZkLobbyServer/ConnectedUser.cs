@@ -428,7 +428,7 @@ namespace ZkLobbyServer
                 await state.Broadcast(state.ConnectedUsers.Keys.Where(x => x != Name && x != battle.FounderName),
                     new JoinedBattle() { BattleID = battle.BattleID, User = Name });
                 await RecalcSpectators(battle);
-                await state.Broadcast(battle.Users.Keys.Where(x => x != Name), battle.Users[Name].ToUpdateBattleStatus());// send my UBS to others in battle
+                await state.Broadcast(battle.Users.Keys.Where(x => x != Name), ubs.ToUpdateBattleStatus());// send my UBS to others in battle
 
                 foreach (var u in battle.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await SendCommand(u); // send other's status to self
                 foreach (var u in battle.Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await SendCommand(u);
