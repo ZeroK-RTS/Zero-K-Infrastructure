@@ -72,7 +72,6 @@ namespace ZeroKLobby
             reloadButton1.BackColor = Color.Transparent;
             //this.reloadButton1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("reloadButton1.BackgroundImage")));
             reloadButton1.BackgroundImageLayout = ImageLayout.Stretch;
-            reloadButton1.ButtonStyle = FrameBorderRenderer.StyleType.DarkHive;
             reloadButton1.Cursor = Cursors.Hand;
             reloadButton1.FlatStyle = FlatStyle.Flat;
             reloadButton1.ForeColor = Color.White;
@@ -80,6 +79,7 @@ namespace ZeroKLobby
             reloadButton1.Name = "reloadButton1";
             reloadButton1.Size = new Size(58, 23);
             reloadButton1.SoundType = SoundPalette.SoundType.Click;
+
             reloadButton1.TabIndex = 7;
             reloadButton1.Text = "Refresh";
             reloadButton1.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -89,6 +89,7 @@ namespace ZeroKLobby
             // 
             // btnForward
             // 
+
             btnForward.BackColor = Color.Transparent;
             //this.btnForward.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnForward.BackgroundImage")));
             btnForward.BackgroundImageLayout = ImageLayout.Stretch;
@@ -101,10 +102,12 @@ namespace ZeroKLobby
             btnForward.Size = new Size(75, 23);
             btnForward.SoundType = SoundPalette.SoundType.Click;
             btnForward.TabIndex = 4;
-            btnForward.Text = "Forward";
             btnForward.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnForward.UseVisualStyleBackColor = true;
             btnForward.Click += btnForward_Click;
+            btnForward.ButtonStyle = FrameBorderRenderer.StyleType.IconOnly;
+            btnForward.Image = ZklResources.smurf;
+
             // 
             // btnBack
             // 
@@ -156,7 +159,7 @@ namespace ZeroKLobby
             PerformLayout();
 
             isBusyTimer.Interval = 120; //timer tick to update "isBusyIcon" every 120 ms.
-            isBusyTimer.Tick += (sender, args) => { Cursor = CurrentNavigatable.IsBusy ? Cursors.AppStarting : DefaultCursor; };
+            isBusyTimer.Tick += (sender, args) => { Application.UseWaitCursor = CurrentNavigatable.IsBusy; };
             isBusyTimer.Start();
 
             ButtonList = new List<ButtonInfo> //normal arrangement
@@ -439,7 +442,7 @@ namespace ZeroKLobby
         private void urlBox_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyData == Keys.Return)
             {
-                goButton1_Click(sender, e);
+                NavigateToUrlBoxText();
                 e.Handled = true;
             }
         }
@@ -473,7 +476,7 @@ namespace ZeroKLobby
             if (navig != null && navig.CanReload) navig.Reload();
         }
 
-        private void goButton1_Click(object sender, EventArgs e) {
+        private void NavigateToUrlBoxText() {
             var navig = CurrentNavigatable;
             var urlString = urlBox.Text;
             if (navig != null && navig.CanReload && (urlString.StartsWith("http") || urlString.StartsWith("www.") || urlString.StartsWith("file://")))
@@ -514,7 +517,7 @@ namespace ZeroKLobby
             //double click time: http://msdn.microsoft.com/en-us/library/system.windows.forms.systeminformation.doubleclicktime(v=vs.110).aspx
             if (DateTime.Now.Ticks - lastClick <= systemDoubleClickTime) clickCount = clickCount + 1;
             else clickCount = 1;
-            if (clickCount%3 == 0) urlBox.SelectAll(); //select all text when triple click
+            if (clickCount > 1) urlBox.SelectAll(); //select all text when double+ click
             lastClick = DateTime.Now.Ticks;
         }
 

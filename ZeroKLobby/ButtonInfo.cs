@@ -26,6 +26,8 @@ namespace ZeroKLobby
                 isSelected = value;
                 //button.BackColor = isSelected ? Color.PowderBlue : SystemColors.ButtonFace;
                 button.ForeColor = isSelected ? Color.White : Color.FromArgb(0x38, 0xbf, 0xec);
+                if (isSelected) button.ButtonStyle = FrameBorderRenderer.StyleType.DarkHiveGlow; else 
+                    button.ButtonStyle = FrameBorderRenderer.StyleType.DarkHive;
                 if (changed) InvokePropertyChanged("IsSelected");
             }
         }
@@ -65,7 +67,7 @@ namespace ZeroKLobby
             button.Text = Label;
             button.Margin = new Padding(0, 0, 0, 3);
             button.Cursor = Cursors.Hand;
-            button.ButtonStyle =FrameBorderRenderer.StyleType.TechPanel; 
+            button.ButtonStyle = FrameBorderRenderer.StyleType.DarkHive; 
             //button.Dock = Dock;
             if (Icon != null) {
                 button.Image = Icon;

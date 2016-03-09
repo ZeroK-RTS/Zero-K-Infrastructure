@@ -88,8 +88,7 @@ namespace ZeroKLobby
             if (!this.IsInDesignMode())
             {
                 BackgroundImage = FrameBorderRenderer.Instance.GetImageWithCache(DisplayRectangle,
-                    ButtonStyle,
-                    mouseOver ? FrameBorderRenderer.StyleType.DarkHiveHover : (FrameBorderRenderer.StyleType?)null);
+                    ButtonStyle, mouseOver ? FrameBorderRenderer.StyleType.DarkHiveHover : (FrameBorderRenderer.StyleType?)null);
             }
             base.OnPaint(pevent);
         }
