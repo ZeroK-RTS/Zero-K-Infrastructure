@@ -77,12 +77,12 @@ namespace ZeroKLobby.MicroLobby
 
             ChatBox.Controls.Add(extras);
             playerBox.BackColor = Config.BgColor;
-            playerBox.ForeColor = Program.Conf.TextColor;
+            playerBox.ForeColor = Config.TextColor;
             playerBox_zklclick.AttachTo(playerBox);
             playerBox_zklclick.MouseClick += PlayerBox_MouseClick;
 
             playerSearchBox.BackColor = Config.BgColor;
-            playerSearchBox.ForeColor = Program.Conf.TextColor;
+            playerSearchBox.ForeColor = Config.TextColor;
 
             ChatBox.Font = Config.ChatFont; //make sure this is done before HistoryManager adds text, or text becomes black.
 

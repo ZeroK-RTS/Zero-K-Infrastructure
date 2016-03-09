@@ -69,10 +69,10 @@ namespace ZeroKLobby.MicroLobby
         }
         public static Font ModFont = Config.GeneralFontSmall;
 
-        public static Brush TextBrush = new SolidBrush(Color.White); //  Program.Conf.TextColor
+        public static Brush TextBrush = new SolidBrush(Color.White); //  Config.TextColor
         public static Font TitleFont = Config.GeneralFont;
         public static Font QueueFont = Config.GeneralFont;
-        public static Brush QueueBrush = new SolidBrush(Program.Conf.TextColor);
+        public static Brush QueueBrush = new SolidBrush(Config.TextColor);
         public static Brush QueueBrushOutline = new SolidBrush(Config.BgColor);
 
         public BattleIcon(Battle battle)

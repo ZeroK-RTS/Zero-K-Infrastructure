@@ -155,6 +155,9 @@
     <Compile Include="Controls\TransparentTabPage.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\ZklTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="DarkHive.Designer.cs" />
     <Compile Include="DarkHiveGlow.Designer.cs" />
     <Compile Include="DarkHiveHover.Designer.cs" />

@@ -37,12 +37,14 @@ namespace ZeroKLobby
         private static readonly PrivateFontCollection pfc = new PrivateFontCollection();
 
         public static readonly Color BgColor = Color.FromArgb(255, 0, 30, 40);
+        public static readonly Color TextBoxBorderColor = Color.FromArgb(255, 0, 30, 40);
+
         public readonly Color EmoteColor = Color.FromArgb(178, 0, 178);
         public readonly Color FadeColor = Color.LightGray;
         public readonly Color JoinColor = Color.FromArgb(42, 140, 42);
         public readonly Color LeaveColor = Color.FromArgb(102, 54, 31);
         public readonly Color NoticeColor = Color.Red;
-        public readonly Color TextColor = Color.White;
+        public static Color TextColor = Color.White;
         public readonly Color TooltipColor = Color.White;
 
 

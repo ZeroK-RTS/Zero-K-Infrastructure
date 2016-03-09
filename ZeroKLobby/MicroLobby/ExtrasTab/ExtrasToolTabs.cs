@@ -49,9 +49,9 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         public ExtrasToolTabs()
         {
             toolStrip.BackColor = Config.BgColor;
-            toolStrip.ForeColor = Program.Conf.TextColor;
+            toolStrip.ForeColor = Config.TextColor;
             BackColor = Config.BgColor;
-            ForeColor = Program.Conf.TextColor;
+            ForeColor = Config.TextColor;
 
             //set colour for overflow button:
             var ovrflwBtn = toolStrip.OverflowButton;

@@ -1,32 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace ZeroKLobby.Controls
 {
-    public class ZklBaseControl:UserControl
+    public class ZklBaseControl: UserControl
     {
-        public ZklBaseControl():base() {
-            Font = Config.GeneralFont;
-            BackColor = Config.BgColor;
+        public ZklBaseControl() {
+            Init(this);
             DoubleBuffered = true;
             AutoScaleMode = AutoScaleMode.None;
+        }
+
+        public static void Init(Control control) {
+            control.Font = Config.GeneralFont;
+            control.BackColor = Config.BgColor;
         }
     }
 
     public class ZklBaseForm: Form
     {
-        public ZklBaseForm() : base()
-        {
-            Font = Config.GeneralFont;
-            BackColor = Config.BgColor;
+        public ZklBaseForm() {
+            Init(this);
             DoubleBuffered = true;
-            FormBorderStyle = FormBorderStyle.None;
-            AutoScaleMode = AutoScaleMode.None;
+        }
+
+        public static void Init(Form form) {
+            form.Font = Config.GeneralFont;
+            form.BackColor = Config.BgColor;
+            form.FormBorderStyle = FormBorderStyle.None;
+            form.AutoScaleMode = AutoScaleMode.None;
         }
     }
-
 }

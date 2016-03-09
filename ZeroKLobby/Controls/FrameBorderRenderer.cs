@@ -15,7 +15,8 @@ namespace ZeroKLobby
             Shraka,
             DarkHiveGlow,
             TechPanel,
-            TechPanelHollow
+            TechPanelHollow,
+            IconOnly
         }
 
         public static FrameBorderRenderer Instance = new FrameBorderRenderer();
@@ -117,7 +118,8 @@ namespace ZeroKLobby
                     FillOffsetTopLeft = new Size(-20, -20),
                     Interpolation = InterpolationMode.NearestNeighbor
                 }
-            }
+            },
+            { StyleType.IconOnly, new FrameStyle { FillBrush = new SolidBrush(Color.Transparent) } }
         };
 
 

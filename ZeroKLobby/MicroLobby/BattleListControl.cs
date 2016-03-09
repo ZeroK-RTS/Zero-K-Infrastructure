@@ -31,7 +31,7 @@ namespace ZeroKLobby.MicroLobby
         List<BattleIcon> view = new List<BattleIcon>();
         static Pen dividerPen = new Pen(Color.DarkCyan, 3) {DashStyle = DashStyle.Dash};
         static Font dividerFont = Config.GeneralFontBig;
-        static SolidBrush dividerFontBrush = new SolidBrush(Program.Conf.TextColor);
+        static SolidBrush dividerFontBrush = new SolidBrush(Config.TextColor);
 
 
         public string FilterText
