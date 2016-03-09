@@ -119,6 +119,9 @@
     <Compile Include="CachedResourceManager.cs" />
     <Compile Include="ChatToSpeech.cs" />
     <Compile Include="ControlExtensions.cs" />
+    <Compile Include="Controls\ZklBaseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Controls\CustomScrollbar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -240,9 +243,6 @@
     <Compile Include="Lines\SelfJoinedBattleLine.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainWindow.Designer.cs">
-      <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroLobby\BattleListControl.cs">
       <SubType>Component</SubType>
@@ -550,10 +550,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\PwBar.resx">
       <DependentUpon>PwBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainWindow.resx">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\BattleListTab.resx">
       <DependentUpon>BattleListTab.cs</DependentUpon>

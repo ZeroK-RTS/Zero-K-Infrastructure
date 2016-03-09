@@ -108,7 +108,7 @@ namespace ZeroKLobby.MicroLobby
             InitializeComponent();
             AutoScroll = true;
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
-            BackColor = Program.Conf.BgColor;
+            BackColor = Config.BgColor;
             FilterText = Program.Conf.BattleFilter;
             Disposed += BattleListControl_Disposed;
             Program.BattleIconManager.BattleAdded += HandleBattle;

@@ -23,7 +23,7 @@ namespace ZeroKLobby.MicroLobby
         Bitmap playersBoxImage;
         static Size playersBoxSize = new Size(214, 32);
         Image resizedMinimap;
-        public static Brush BackBrush = new SolidBrush(Program.Conf.BgColor);
+        public static Brush BackBrush = new SolidBrush(Config.BgColor);
 
         public Battle Battle { get; private set; }
         public Bitmap Image
@@ -73,7 +73,7 @@ namespace ZeroKLobby.MicroLobby
         public static Font TitleFont = Config.GeneralFont;
         public static Font QueueFont = Config.GeneralFont;
         public static Brush QueueBrush = new SolidBrush(Program.Conf.TextColor);
-        public static Brush QueueBrushOutline = new SolidBrush(Program.Conf.BgColor);
+        public static Brush QueueBrushOutline = new SolidBrush(Config.BgColor);
 
         public BattleIcon(Battle battle)
         {

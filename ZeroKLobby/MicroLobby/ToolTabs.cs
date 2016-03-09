@@ -50,9 +50,9 @@ namespace ZeroKLobby.MicroLobby
 
         public ToolTabs()
         {
-        	toolStrip.BackColor = Program.Conf.BgColor;
+        	toolStrip.BackColor = Config.BgColor;
         	toolStrip.ForeColor = Program.Conf.TextColor;
-            BackColor = Program.Conf.BgColor; //for any child control to inherit it
+            BackColor = Config.BgColor; //for any child control to inherit it
             ForeColor = Program.Conf.TextColor;
 
             //set colour for overflow button:
