@@ -33,6 +33,7 @@ namespace ZeroKLobby
 
         public MainWindow() {
             WindowState = FormWindowState.Maximized;
+
             tableLayoutPanel2 = new TableLayoutPanel();
             NotifySection = new NotifySection();
             navigationControl = new NavigationControl();

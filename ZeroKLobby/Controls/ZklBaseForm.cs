@@ -7,9 +7,20 @@ using System.Windows.Forms;
 
 namespace ZeroKLobby.Controls
 {
-    public class ZklBaseForm:Form
+    public class ZklBaseControl:UserControl
     {
-        public ZklBaseForm():base() {
+        public ZklBaseControl():base() {
+            Font = Config.GeneralFont;
+            BackColor = Config.BgColor;
+            DoubleBuffered = true;
+            AutoScaleMode = AutoScaleMode.None;
+        }
+    }
+
+    public class ZklBaseForm: Form
+    {
+        public ZklBaseForm() : base()
+        {
             Font = Config.GeneralFont;
             BackColor = Config.BgColor;
             DoubleBuffered = true;
@@ -17,4 +28,5 @@ namespace ZeroKLobby.Controls
             AutoScaleMode = AutoScaleMode.None;
         }
     }
+
 }
