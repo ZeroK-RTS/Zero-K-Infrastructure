@@ -240,7 +240,7 @@ namespace ZeroKLobby
 
             chatTab = new ChatTab();
             
-            lastTabPaths[chatTab] = string.Format("chat/channel/{0}", Program.Conf != null ? Program.Conf.AutoJoinChannels.OfType<string>().FirstOrDefault():"zk");
+            lastTabPaths[chatTab] = string.Format("chat/channel/zk");
             AddTabPage(chatTab, "Chat");
             if (Environment.OSVersion.Platform != PlatformID.Unix && !Program.Conf.UseExternalBrowser) {
                 if (!Program.Conf.SingleInstance) //run in multiple TAB?
