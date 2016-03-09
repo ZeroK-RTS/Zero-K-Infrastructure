@@ -371,6 +371,11 @@
     </Compile>
     <Compile Include="ServerImagesHandler.cs" />
     <Compile Include="TechPanel.Designer.cs" />
+    <Compile Include="TechPanelHollow.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TechPanelHollow.resx</DependentUpon>
+    </Compile>
     <Compile Include="ToolTips\BattleTooltipRenderer.cs" />
     <Compile Include="MicroLobby\AskBattlePasswordForm.cs">
       <SubType>Form</SubType>
@@ -625,6 +630,10 @@
     <EmbeddedResource Include="Shraka.resx" />
     <EmbeddedResource Include="Sounds.resx" />
     <EmbeddedResource Include="TechPanel.resx" />
+    <EmbeddedResource Include="TechPanelHollow.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TechPanelHollow.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="ZklResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ZklResources.Designer.cs</LastGenOutput>
@@ -1723,6 +1732,14 @@
     <Content Include="Resources\scroll_bottom.png" />
     <Content Include="Resources\scroll_mid.png" />
     <Content Include="Resources\scroll_top.png" />
+    <None Include="Resources\TechPanelHollow\SW.png" />
+    <None Include="Resources\TechPanelHollow\SE.png" />
+    <None Include="Resources\TechPanelHollow\NW.png" />
+    <None Include="Resources\TechPanelHollow\NE.png" />
+    <None Include="Resources\TechPanelHollow\S.png" />
+    <None Include="Resources\TechPanelHollow\N.png" />
+    <None Include="Resources\TechPanelHollow\W.png" />
+    <None Include="Resources\TechPanelHollow\E.png" />
     <Content Include="Resources\tech_scrollbar.png" />
     <Content Include="Resources\ThumbBottom.png" />
     <Content Include="Resources\ThumbMiddle.png" />

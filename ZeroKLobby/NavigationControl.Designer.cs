@@ -1,4 +1,6 @@
-﻿namespace ZeroKLobby
+﻿using System.Windows.Forms;
+
+namespace ZeroKLobby
 {
     partial class NavigationControl
     {

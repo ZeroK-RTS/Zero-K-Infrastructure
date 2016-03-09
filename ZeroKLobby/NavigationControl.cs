@@ -260,10 +260,15 @@ namespace ZeroKLobby
             BackColor = Color.Black;
             //this.RenderParentsBackgroundImage(e);
             base.OnPaintBackground(e);
-            FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, Bounds, FrameBorderRenderer.StyleType.Shraka);
+            FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, Bounds, FrameBorderRenderer.StyleType.TechPanel);
+            //var nb = new Rectangle(tabControl.Left, tabControl.Top+23, tabControl.Width, tabControl.Height-23);
+            //new LinearGradientBrush(new Rectangle(0, 0, 1, 1), Color.FromArgb(255, 19, 65, 73), Color.FromArgb(255, 0, 0, 0), 90)
+
+            //nb.Inflate(7,6);
+            //FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, nb, FrameBorderRenderer.StyleType.Shraka);
             var b = Bounds;
-            b.Intersect(new Rectangle(Bounds.X + 10, Bounds.Y + 10, Bounds.Width - 20, Bounds.Height - 20));
-            FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, b, FrameBorderRenderer.StyleType.TechPanel);
+            //b.Intersect(new Rectangle(Bounds.X + 10, Bounds.Y + 10, Bounds.Width - 20, Bounds.Height - 20));
+            //FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, b, FrameBorderRenderer.StyleType.TechPanel);
 
         }
 
@@ -318,9 +323,9 @@ namespace ZeroKLobby
             //resize the content area (which show chat & internal browser) according to Nav bar's height
             int heightPlusButton = height + btnBack.Height - tabControl.ItemSize.Height;
             int freeHeight = windowHeight - heightPlusButton;
-            tabControl.Location = new System.Drawing.Point(tabControl.Location.X, heightPlusButton);
-            tabControl.Height = freeHeight;
-            tabControl.Width = windowWidth;
+            tabControl.Location = new System.Drawing.Point(10, heightPlusButton + 10);
+            tabControl.Height = freeHeight - 20;
+            tabControl.Width = windowWidth - 20;
         }
 
         public INavigatable CurrentNavigatable { get { return tabControl.SelectedTab.Controls.OfType<INavigatable>().FirstOrDefault(); } }

@@ -36,7 +36,7 @@ namespace ZeroKLobby
         /// If true, lobby wont remember subpath for this button and instead go directly to target location
         /// </summary>
         public string TargetPath;
-        Button button;
+        BitmapButton button;
         public bool Visible { get; set; }
         public DockStyle Dock { get; set; }
 
@@ -65,6 +65,7 @@ namespace ZeroKLobby
             button.Text = Label;
             button.Margin = new Padding(0, 0, 0, 3);
             button.Cursor = Cursors.Hand;
+            button.ButtonStyle =FrameBorderRenderer.StyleType.TechPanel; 
             //button.Dock = Dock;
             if (Icon != null) {
                 button.Image = Icon;

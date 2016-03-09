@@ -1,11 +1,22 @@
 using System.Collections.Concurrent;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace PlasmaShared
 {
     public class ResizedImageCache
     {
+        public static readonly Bitmap EmptyBitmap;
+
+        static ResizedImageCache() {
+            EmptyBitmap = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
+            using (var g = Graphics.FromImage(EmptyBitmap))
+            {
+                g.Clear(Color.Transparent);
+            }
+        }
+
         public class CacheKey
         {
             public Image Image;
@@ -47,6 +58,7 @@ namespace PlasmaShared
 
         public Image GetResizedWithCache(Image source, int width, int height, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
         {
+            if (source == null || width <= 0 || height <= 0) return EmptyBitmap;
             var key = new CacheKey(source, width, height);
             return cachedImages.GetOrAdd(key, (k) => {
                 var resized = new Bitmap(k.Width, k.Height);
