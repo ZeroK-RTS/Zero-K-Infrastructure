@@ -42,17 +42,13 @@ namespace ZeroKLobby
             // tableLayoutPanel2
             // 
             tableLayoutPanel2.ColumnCount = 1;
+            tableLayoutPanel2.RowCount = 2;
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel2.Controls.Add(NotifySection, 0, 1);
             tableLayoutPanel2.Controls.Add(navigationControl, 0, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
-            tableLayoutPanel2.Location = new Point(0, 0);
-            tableLayoutPanel2.Name = "tableLayoutPanel2";
-            tableLayoutPanel2.RowCount = 2;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
-            tableLayoutPanel2.Size = new Size(1024, 768);
-            tableLayoutPanel2.TabIndex = 0;
             // 
             // notifySection1
             // 
@@ -60,42 +56,26 @@ namespace ZeroKLobby
             NotifySection.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             NotifySection.BackColor = Color.Transparent;
             NotifySection.Dock = DockStyle.Fill;
-            NotifySection.Location = new Point(0, 768);
-            NotifySection.Margin = new Padding(0);
-            NotifySection.Name = "notifySection1";
-            NotifySection.Size = new Size(1024, 1);
-            NotifySection.TabIndex = 0;
             // 
             // navigationControl1
             // 
             navigationControl.BackColor = Color.Black;
             navigationControl.Dock = DockStyle.Fill;
-            navigationControl.Location = new Point(0, 0);
-            navigationControl.Margin = new Padding(0);
-            navigationControl.Name = "navigationControl1";
-            navigationControl.Path = "";
-            navigationControl.Size = new Size(1024, 768);
-            navigationControl.TabIndex = 1;
             // 
             // MainWindow
             // 
-            AutoScaleMode = AutoScaleMode.None;
-            ClientSize = new Size(1024, 768);
             Controls.Add(tableLayoutPanel2);
-            DoubleBuffered = true;
-            FormBorderStyle = FormBorderStyle.None;
-            Name = "MainWindow";
+            MinimumSize = new Size(1280,1024);
+
+
             FormClosing += MainWindow_FormClosing;
             Load += MainWindow_Load;
             SizeChanged += Window_StateChanged;
             tableLayoutPanel2.ResumeLayout(false);
             tableLayoutPanel2.PerformLayout();
             ResumeLayout(false);
-
-
-            //Invalidate(true);
+            
             Instance = this;
-            //systrayIcon.BalloonTipClicked += systrayIcon_BalloonTipClicked;
 
             btnExit = new ToolStripMenuItem { Name = "btnExit", Size = new Size(92, 22), Text = "Exit" };
             btnExit.Click += btnExit_Click;
