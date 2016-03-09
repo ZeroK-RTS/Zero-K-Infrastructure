@@ -30,7 +30,7 @@ namespace ZeroKLobby
         private readonly int systemDoubleClickTime = SystemInformation.DoubleClickTime*10000;
 
         private readonly HeadlessTabControl tabControl;
-        private readonly TextBox urlBox;
+        private readonly ZklTextBox urlBox;
 
         public NavigationControl() {
             SuspendLayout();
@@ -45,7 +45,6 @@ namespace ZeroKLobby
             // urlBox
             // 
             urlBox.Location = new Point(166, 34);
-            urlBox.Name = "urlBox";
             urlBox.Size = new Size(190, 20);
             urlBox.TabIndex = 2;
             urlBox.Font = Config.GeneralFontSmall;

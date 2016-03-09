@@ -120,7 +120,7 @@
     <Compile Include="ChatToSpeech.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="Controls\ZklBaseForm.cs">
-      <SubType>Form</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\CustomScrollbar.cs">
       <SubType>UserControl</SubType>
@@ -156,7 +156,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\ZklTextBox.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DarkHive.Designer.cs" />
     <Compile Include="DarkHiveGlow.Designer.cs" />

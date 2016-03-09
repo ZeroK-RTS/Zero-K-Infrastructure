@@ -138,7 +138,6 @@ namespace ZeroKLobby
                 }
 
                 //HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-
                 Trace.TraceInformation("Starting with version {0}", SelfUpdater.CurrentVersion);
 
                 WebRequest.DefaultWebProxy = null;
@@ -160,17 +159,13 @@ namespace ZeroKLobby
 
                 if (!SpringPaths.IsDirectoryWritable(StartupPath) || StartupPath.Contains("Local\\Apps"))
                 {
-                    MessageBox.Show(
-                        string.Format("Please use the newly created desktop icon to start Zero-K not this one.\r\nZero-K.exe will be moved to {0}", contentDir),
-                        "Startup directory is not writable!");
                     var newTarget = Path.Combine(contentDir, "Zero-K.exe");
                     if (SelfUpdater.CheckForUpdate(newTarget, true))
                     {
                         Conf.Save(Path.Combine(contentDir, Config.ConfigFileName));
                         Process.Start(newTarget);
                         return;
-                    }
-                    MessageBox.Show("Move failed, please copy Zero-K.exe to a writable folder");
+                    } MessageBox.Show("Move failed, please copy Zero-K.exe to a writable folder");
                     return;
                 }
 
@@ -227,8 +222,7 @@ namespace ZeroKLobby
                 {
                     if (!IsSteamFolder)
                     {
-                        var result = MessageBox.Show("Create a desktop icon for Zero-K?", "Zero-K", MessageBoxButtons.YesNo);
-                        if (result == DialogResult.Yes) Utils.CreateDesktopShortcut();
+                        Utils.CreateDesktopShortcut();
                     }
                     if (Environment.OSVersion.Platform != PlatformID.Unix) Utils.RegisterProtocol();
                 }
