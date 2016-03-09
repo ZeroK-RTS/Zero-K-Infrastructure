@@ -7,6 +7,7 @@ using System.Linq;
 using System.Speech.Synthesis;
 using System.Text.RegularExpressions;
 using LobbyClient;
+using ZkData;
 
 namespace ZeroKLobby
 {
@@ -40,6 +41,19 @@ namespace ZeroKLobby
                 {
                     if (text.Contains("ENABLE TTS")) isSpeechEnabled = true;
                     else if (text.Contains("DISABLE TTS")) isSpeechEnabled = false;
+                    else if (text.Contains("TTS VOLUME"))
+                    {
+                        var m = Regex.Match(text, "TTS VOLUME ([0-9]+)");
+                        if (m.Success)
+                        {
+                            int volume;
+                            if (int.TryParse(m.Groups[1].Value, out volume))
+                            {
+                                volume = volume.Clamp(0, 100);
+                                speechSynthesizer.Volume = volume;
+                            }
+                        }
+                    }
                 }
                 if (isSpeechEnabled)
                 {
@@ -57,6 +71,7 @@ namespace ZeroKLobby
                             if (voices.Count > 1) speechSynthesizer.SelectVoice(voices[name.GetHashCode() % voices.Count].VoiceInfo.Name);
 
                             sayText = new string(sayText.ToCharArray().Where(c => (char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || c == '-' || c=='?' || c=='!')).ToArray());
+                            
                             
                             speechSynthesizer.SpeakAsync(sayText);
                         }
