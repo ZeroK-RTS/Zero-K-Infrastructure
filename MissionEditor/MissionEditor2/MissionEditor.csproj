@@ -30,8 +30,8 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://zero-k.info/missioneditor/</InstallUrl>
-    <SupportUrl>http://code.google.com/p/zero-k/</SupportUrl>
-    <ErrorReportUrl>http://code.google.com/p/zero-k/issues/entry</ErrorReportUrl>
+    <SupportUrl>http://zero-k.info/Wiki/MissionEditorCompatibility</SupportUrl>
+    <ErrorReportUrl>https://github.com/ZeroK-RTS/Zero-K-Infrastructure/issues/new</ErrorReportUrl>
     <ProductName>Zero-K Mission Editor</ProductName>
     <PublisherName>Zero-K</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
