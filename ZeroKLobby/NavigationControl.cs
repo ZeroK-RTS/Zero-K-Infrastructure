@@ -23,7 +23,6 @@ namespace ZeroKLobby
         private readonly Stack<NavigationStep> forwardStack = new Stack<NavigationStep>();
         private readonly Timer isBusyTimer = new Timer();
         private readonly Dictionary<INavigatable, string> lastTabPaths = new Dictionary<INavigatable, string>();
-        private readonly BitmapButton reloadButton1;
         private readonly int systemDoubleClickTime = SystemInformation.DoubleClickTime*10000;
 
         private readonly HeadlessTabControl tabControl;
@@ -39,7 +38,6 @@ namespace ZeroKLobby
             urlBox = new ZklTextBox();
             BorderStyle = BorderStyle.None;
             var flowLayoutPanel1 = new FlowLayoutPanel();
-            reloadButton1 = new BitmapButton();
             btnForward = new BitmapButton();
             btnBack = new BitmapButton();
             tabControl = new HeadlessTabControl();
@@ -76,26 +74,6 @@ namespace ZeroKLobby
             flowLayoutPanel1.MinimumSize = new Size(300, 28);
             flowLayoutPanel1.Padding = new Padding(13);
             flowLayoutPanel1.WrapContents = false;
-            // 
-            // reloadButton1
-            // 
-            reloadButton1.BackColor = Color.Transparent;
-            //this.reloadButton1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("reloadButton1.BackgroundImage")));
-            reloadButton1.BackgroundImageLayout = ImageLayout.Stretch;
-            reloadButton1.Cursor = Cursors.Hand;
-            reloadButton1.FlatStyle = FlatStyle.Flat;
-            reloadButton1.ForeColor = Color.White;
-            reloadButton1.Location = new Point(403, 34);
-            reloadButton1.Name = "reloadButton1";
-            reloadButton1.Size = new Size(58, 23);
-            reloadButton1.SoundType = SoundPalette.SoundType.Click;
-
-            reloadButton1.TabIndex = 7;
-            reloadButton1.Text = "Refresh";
-            reloadButton1.TextImageRelation = TextImageRelation.ImageBeforeText;
-            reloadButton1.UseVisualStyleBackColor = true;
-            reloadButton1.Visible = false;
-            reloadButton1.Click += reloadButton1_Click;
             // 
             // btnForward
             // 
@@ -145,7 +123,6 @@ namespace ZeroKLobby
             // 
             // NavigationControl
             // 
-            Controls.Add(reloadButton1);
             table.Controls.Add(flowLayoutPanel1, 0, 0);
 
             Controls.Add(btnForward);
@@ -317,7 +294,6 @@ namespace ZeroKLobby
                 }
                 var home = AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl, true), "hm");
                 tabControl.SelectTab(home);
-                reloadButton1.Visible = true;
             }
             var battles = new BattleListTab();
             AddTabPage(battles, "Battles");
@@ -414,7 +390,6 @@ namespace ZeroKLobby
                 if (navigatable != null && navigatable.TryNavigate(path))
                 {
                     tabControl.SelectTab(tabPage);
-                    reloadButton1.Visible = navigatable.CanReload;
                     lastTabPaths[navigatable] = string.Join("/", path);
                     return new NavigationStep { Path = path };
                 }
