@@ -279,10 +279,10 @@ namespace ZeroKLobby
                 if (!Program.Conf.SingleInstance) //run in multiple TAB?
                 {
                     AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Maps", false), "Maps");
-                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Missions", false), "sp");
+                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Missions", true), "sp");
                     AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Battles", false), "rp");
                     AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Planetwars", false), "pw");
-                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Forum", true), "fm");
+                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Forum", false), "fm");
                 }
                 var home = AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl, true), "hm");
                 tabControl.SelectTab(home);
@@ -390,12 +390,13 @@ namespace ZeroKLobby
         }
 
         protected override void OnPaintBackground(PaintEventArgs e) {
-            e.Graphics.Clear(Color.FromArgb(255, 10, 30, 40));
+            //e.Graphics.Clear(Color.FromArgb(255, 10, 30, 40));
             using (var lb = new LinearGradientBrush(table.Bounds, Color.FromArgb(255, 19, 65, 73), Color.FromArgb(255, 10, 30, 40), 90)) 
                 e.Graphics.FillRectangle(lb, table.Bounds);
 
-            //using (var lb = new LinearGradientBrush(table.Bounds, Color.FromArgb(255, 19, 65, 73), Color.FromArgb(255, 10, 30, 40), 90))
-                //e.Graphics.FillRectangle(lb, table.Bounds);
+            var rect = new Rectangle(0, table.Bounds.Bottom, Width, Height - table.Bounds.Height);
+            using (var lb = new LinearGradientBrush(rect, Color.FromArgb(255, 10, 30, 40), Color.FromArgb(255, 0, 0, 0), 90))
+                e.Graphics.FillRectangle(lb, rect);
         }
 
 

@@ -21,11 +21,12 @@ namespace ZeroKLobby
         public BrowserTab(string head, bool autoStartOnLogin)
         {
             pathHead = head;
-            if (Program.TasClient != null && autoStartOnLogin==true) Program.TasClient.LoginAccepted += (sender, args) =>
-            {
-                HintNewNavigation(head);
-                base.Navigate(head);
-            };
+            if (Program.TasClient != null && autoStartOnLogin == true)
+                Program.TasClient.LoginAccepted += (sender, args) =>
+                {
+                    HintNewNavigation(head);
+                    base.Navigate(head);
+                };
             base.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(browser_DocumentCompleted); //This will call "UpdateURL()" when page finish loading
             this.ScriptErrorsSuppressed = true;
         }
