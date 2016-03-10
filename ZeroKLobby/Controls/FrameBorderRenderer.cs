@@ -49,7 +49,8 @@ namespace ZeroKLobby
                     SW = DarkHive.SW,
                     E = DarkHive.E,
                     W = DarkHive.W,
-                    FillBrush = new SolidBrush(Color.FromArgb(179, 0, 0, 0))
+                    FillBrush = new SolidBrush(Color.FromArgb(179, 0, 0, 0)),
+                    HoverStyle = StyleType.DarkHiveHover
                 }
             },
             {
@@ -80,7 +81,7 @@ namespace ZeroKLobby
                     E = TechPanel.E,
                     W = TechPanel.W,
                     FillBrush = new SolidBrush(Color.FromArgb(255, 0, 0, 0)),
-                    Interpolation = InterpolationMode.NearestNeighbor
+                    Interpolation = InterpolationMode.NearestNeighbor,
                 }
             },
             {
@@ -257,6 +258,8 @@ namespace ZeroKLobby
             public Image SE;
             public Image SW;
             public Image W;
+
+            public StyleType? HoverStyle;
         }
 
         /// <summary>
