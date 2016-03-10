@@ -13,30 +13,32 @@ namespace ZeroKLobby
 {
     public class NavigationControl: ZklBaseControl
     {
+        private const int TabButtonHeight = 70;
+        private const int TopRightMiniIconSize = 32;
+        private const int TopRightMiniIconMargin = 6;
+        private const int TopRightSpace = 200;
         private readonly Stack<NavigationStep> backStack = new Stack<NavigationStep>();
-        private readonly Stack<NavigationStep> forwardStack = new Stack<NavigationStep>();
-        private readonly Dictionary<INavigatable, string> lastTabPaths = new Dictionary<INavigatable, string>();
-
-        private NavigationStep _currentPage;
         private readonly BitmapButton btnBack;
         private readonly BitmapButton btnForward;
-
-
-        private int clickCount;
-        private readonly FlowLayoutPanel flowLayoutPanel1;
+        private readonly Stack<NavigationStep> forwardStack = new Stack<NavigationStep>();
         private readonly Timer isBusyTimer = new Timer();
-        private long lastClick;
+        private readonly Dictionary<INavigatable, string> lastTabPaths = new Dictionary<INavigatable, string>();
         private readonly BitmapButton reloadButton1;
         private readonly int systemDoubleClickTime = SystemInformation.DoubleClickTime*10000;
 
         private readonly HeadlessTabControl tabControl;
         private readonly ZklTextBox urlBox;
 
+        private NavigationStep _currentPage;
+
+        private int clickCount;
+        private long lastClick;
+
         public NavigationControl() {
             SuspendLayout();
             urlBox = new ZklTextBox();
             BorderStyle = BorderStyle.None;
-            flowLayoutPanel1 = new FlowLayoutPanel();
+            var flowLayoutPanel1 = new FlowLayoutPanel();
             reloadButton1 = new BitmapButton();
             btnForward = new BitmapButton();
             btnBack = new BitmapButton();
@@ -50,21 +52,29 @@ namespace ZeroKLobby
             urlBox.Font = Config.GeneralFontSmall;
             urlBox.KeyDown += urlBox_KeyDown;
             urlBox.MouseDown += urlBox_MouseDown;
+
+            var table = new TableLayoutPanel();
+            table.RowCount = 1;
+            table.ColumnCount = 2;
+            table.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            table.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, TopRightSpace));
+            table.Dock = DockStyle.Top;
+            table.AutoSize = true;
+            table.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
+            Controls.Add(table);
+
+
             // 
             // flowLayoutPanel1
             // 
-            flowLayoutPanel1.AutoScroll = true;
+            flowLayoutPanel1.AutoScroll = false;
             flowLayoutPanel1.AutoSize = true;
             flowLayoutPanel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             flowLayoutPanel1.BackColor = Color.Transparent;
             flowLayoutPanel1.Dock = DockStyle.Top;
-            flowLayoutPanel1.Location = new Point(0, 0);
-            flowLayoutPanel1.Margin = new Padding(0);
             flowLayoutPanel1.MinimumSize = new Size(300, 28);
-            flowLayoutPanel1.Name = "flowLayoutPanel1";
             flowLayoutPanel1.Padding = new Padding(13);
-            flowLayoutPanel1.Size = new Size(703, 28);
-            flowLayoutPanel1.TabIndex = 5;
             flowLayoutPanel1.WrapContents = false;
             // 
             // reloadButton1
@@ -130,23 +140,14 @@ namespace ZeroKLobby
             // 
             // tabControl
             // 
-            tabControl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            tabControl.Location = new Point(0, 42);
-            tabControl.Margin = new Padding(0);
-            tabControl.Name = "tabControl";
-            tabControl.Padding = new Point(0, 0);
-            tabControl.SelectedIndex = 0;
-            tabControl.Size = new Size(703, 185);
-            tabControl.TabIndex = 0;
+            tabControl.Dock = DockStyle.Fill;
             tabControl.Selecting += tabControl_Selecting;
             // 
             // NavigationControl
             // 
-            AutoScaleDimensions = new SizeF(96F, 96F);
-            AutoScaleMode = AutoScaleMode.Dpi;
-            BackColor = Color.DimGray;
             Controls.Add(reloadButton1);
-            Controls.Add(flowLayoutPanel1);
+            table.Controls.Add(flowLayoutPanel1, 0, 0);
+
             Controls.Add(btnForward);
             Controls.Add(btnBack);
             Controls.Add(urlBox);
@@ -154,7 +155,6 @@ namespace ZeroKLobby
             Margin = new Padding(0);
             Name = "NavigationControl";
             Size = new Size(703, 219);
-            Resize += NavigationControl_Resize;
             ResumeLayout(false);
             PerformLayout();
 
@@ -162,68 +162,26 @@ namespace ZeroKLobby
             isBusyTimer.Tick += (sender, args) => { Application.UseWaitCursor = CurrentNavigatable.IsBusy; };
             isBusyTimer.Start();
 
-            ButtonList = new List<ButtonInfo> //normal arrangement
-            {
-                new ButtonInfo { Label = "WEB", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon = Buttons.extras, Height = 70, Width = 200 },
-                new ButtonInfo
-                {
-                    Label = "SINGLEPLAYER",
-                    TargetPath = string.Format("{0}/Missions", GlobalConst.BaseSiteUrl),
-                    Icon = Buttons.sp,
-                    Width = 250,
-                    Height = 70
-                },
-                new ButtonInfo { Label = "MULTIPLAYER", TargetPath = "battles", Icon = Buttons.mp, Width = 250, Height = 70 },
-                new ButtonInfo { Label = "CHAT", TargetPath = "chat", Icon = Buttons.chat, Height = 70, Width = 200 },
-                new ButtonInfo
-                {
-                    Label = "SETTINGS",
-                    TargetPath = "settings",
-                    Icon = Buttons.settings,
-                    Height = 70,
-                    Width = 250,
-                    Dock = DockStyle.Right
-                }
-            };
-
             Instance = this;
 
-            tabControl.TabPages.Clear();
+            SetupTabButtons(flowLayoutPanel1);
+            InitializeTabPageContent();
 
-            ChatTab = new ChatTab();
+            
 
-            lastTabPaths[ChatTab] = "chat/channel/zk";
-            AddTabPage(ChatTab, "Chat");
-            if (Environment.OSVersion.Platform != PlatformID.Unix && !Program.Conf.UseExternalBrowser)
-            {
-                if (!Program.Conf.SingleInstance) //run in multiple TAB?
-                {
-                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Maps", false), "Maps");
-                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Missions", false), "sp");
-                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Battles", false), "rp");
-                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Planetwars", false), "pw");
-                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Forum", true), "fm");
-                }
-                var home = AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl, true), "hm");
-                tabControl.SelectTab(home);
-                reloadButton1.Visible = true;
-            }
-            var battles = new BattleListTab();
-            AddTabPage(battles, "Battles");
-            AddTabPage(new SettingsTab(), "Settings");
-            AddTabPage(new ServerTab(), "Server");
-            AddTabPage(new DownloaderTab(), "Rapid");
-            AddTabPage(new ExtrasTab(), "Extra");
-
-            foreach (var but in ButtonList) flowLayoutPanel1.Controls.Add(but.GetButton());
             var minMaxButton = new BitmapButton
             {
-                ButtonStyle = FrameBorderRenderer.StyleType.DarkHive,
+                ButtonStyle = FrameBorderRenderer.StyleType.IconOnly,
                 SoundType = SoundPalette.SoundType.Click,
-                Height = 70,
-                Width = 70,
-                Image = Buttons.win_min.GetResizedWithCache(60, 60)
+                Height = TopRightMiniIconSize,
+                Width = TopRightMiniIconSize,
+                Top = 0,
+                Margin = new Padding(TopRightMiniIconMargin),
+                Image = Buttons.win_min.GetResizedWithCache(32, 32)
             };
+            minMaxButton.Anchor = AnchorStyles.Right | AnchorStyles.Top;
+            minMaxButton.Left = Width - 70 - 5;
+
             minMaxButton.Click += (sender, args) =>
             {
                 var mw = Program.MainWindow;
@@ -245,12 +203,40 @@ namespace ZeroKLobby
                 }
             };
 
+            table.Controls.Add(minMaxButton, 1, 0);
+            //Controls.Add(minMaxButton);            
 
-            
+            //flowLayoutPanel1.Controls.Add(minMaxButton);
+            //flowLayoutPanel1.BringToFront();
 
-            flowLayoutPanel1.Controls.Add(minMaxButton);
-            flowLayoutPanel1.BringToFront();
             ResumeLayout();
+        }
+
+        private static void SetupTabButtons(Control control) {
+            ButtonList = new List<ButtonInfo> //normal arrangement
+            {
+                new ButtonInfo { Label = "WEB", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon = Buttons.extras, Height = TabButtonHeight, Width = 200 },
+                new ButtonInfo
+                {
+                    Label = "SINGLEPLAYER",
+                    TargetPath = string.Format("{0}/Missions", GlobalConst.BaseSiteUrl),
+                    Icon = Buttons.sp,
+                    Width = 250,
+                    Height = TabButtonHeight
+                },
+                new ButtonInfo { Label = "MULTIPLAYER", TargetPath = "battles", Icon = Buttons.mp, Width = 250, Height = TabButtonHeight },
+                new ButtonInfo { Label = "CHAT", TargetPath = "chat", Icon = Buttons.chat, Height = TabButtonHeight, Width = 200 }
+                /*new ButtonInfo
+                {
+                    Label = "SETTINGS",
+                    TargetPath = "settings",
+                    Icon = Buttons.settings,
+                    Height = 70,
+                    Width = 250,
+                    Dock = DockStyle.Right
+                }*/
+            };
+            foreach (var but in ButtonList) control.Controls.Add(but.GetButton());
         }
 
         private static List<ButtonInfo> ButtonList { get; set; }
@@ -282,7 +268,7 @@ namespace ZeroKLobby
                 if (navigable != null) navigable.Hilite(HiliteLevel.None, Path); //cancel hilite ChatTab's tab (if meet some condition)
             }
         }
-        public ChatTab ChatTab { get; }
+        public ChatTab ChatTab { get; private set; }
         public static NavigationControl Instance { get; private set; }
 
         public string Path
@@ -313,6 +299,33 @@ namespace ZeroKLobby
         }
 
         public INavigatable CurrentNavigatable { get { return tabControl.SelectedTab.Controls.OfType<INavigatable>().FirstOrDefault(); } }
+
+        private void InitializeTabPageContent() {
+            tabControl.TabPages.Clear();
+            ChatTab = new ChatTab();
+            lastTabPaths[ChatTab] = "chat/channel/zk";
+            AddTabPage(ChatTab, "Chat");
+            if (Environment.OSVersion.Platform != PlatformID.Unix && !Program.Conf.UseExternalBrowser)
+            {
+                if (!Program.Conf.SingleInstance) //run in multiple TAB?
+                {
+                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Maps", false), "Maps");
+                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Missions", false), "sp");
+                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Battles", false), "rp");
+                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Planetwars", false), "pw");
+                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Forum", true), "fm");
+                }
+                var home = AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl, true), "hm");
+                tabControl.SelectTab(home);
+                reloadButton1.Visible = true;
+            }
+            var battles = new BattleListTab();
+            AddTabPage(battles, "Battles");
+            AddTabPage(new SettingsTab(), "Settings");
+            AddTabPage(new ServerTab(), "Server");
+            AddTabPage(new DownloaderTab(), "Rapid");
+            AddTabPage(new ExtrasTab(), "Extra");
+        }
 
         public INavigatable GetInavigatableByPath(string path) {
             //get which TAB has which PathHead (header)
@@ -447,29 +460,6 @@ namespace ZeroKLobby
             }
         }
 
-        private void NavigationControl_Resize(object sender, EventArgs e) {
-            // todo  instead add flowlayoutpanel or tablelayout panel to entire navigation form and let i size elements as needed
-
-            var windowWidth = Size.Width;
-            var windowHeight = Size.Height;
-
-            //this make back/forward/reload button follow Nav bar's height (this is not really important if Nav bar height remain constant)
-            //NOTE: tweak here if not satisfy with Go/Forward/Backward button position. This override designer.
-            flowLayoutPanel1.Width = windowWidth;
-            var height = flowLayoutPanel1.Size.Height;
-            btnBack.Location = new Point(btnBack.Location.X, height);
-            btnForward.Location = new Point(btnForward.Location.X, height);
-            urlBox.Location = new Point(urlBox.Location.X, height);
-            reloadButton1.Location = new Point(reloadButton1.Location.X, height);
-
-            //resize the content area (which show chat & internal browser) according to Nav bar's height
-            var heightPlusButton = height + btnBack.Height - tabControl.ItemSize.Height;
-            var freeHeight = windowHeight - heightPlusButton;
-            tabControl.Location = new Point(10, heightPlusButton + 10);
-            tabControl.Height = freeHeight - 20;
-            tabControl.Width = windowWidth - 20;
-        }
-
         private void reloadButton1_Click(object sender, EventArgs e) //make webpage refresh
         {
             var navig = CurrentNavigatable;
@@ -488,7 +478,7 @@ namespace ZeroKLobby
                     var webbrowser = CurrentNavigatable as BrowserTab;
                     webbrowser.Navigate(urlString); //navigate to new page in current TAB
                     webbrowser.HintNewNavigation(urlString);
-                        //we hint the BrowserTab's this way because it have trouble differentiating between Advertisement's URL and urlBox's URL
+                    //we hint the BrowserTab's this way because it have trouble differentiating between Advertisement's URL and urlBox's URL
                 }
             } else Path = urlString;
         }
