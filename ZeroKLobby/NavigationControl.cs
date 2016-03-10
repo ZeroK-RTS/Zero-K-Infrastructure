@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using ZeroKLobby.Controls;
@@ -23,21 +24,23 @@ namespace ZeroKLobby
         private readonly int systemDoubleClickTime = SystemInformation.DoubleClickTime*10000;
 
         private readonly HeadlessTabControl tabControl;
-        private readonly ZklTextBox urlBox;
+        private ZklTextBox urlBox;
 
         private NavigationStep _currentPage;
 
         private int clickCount;
         private long lastClick;
+        private FlowLayoutPanel flowLayoutPanel;
+        private TableLayoutPanel table;
 
         public NavigationControl() {
             SuspendLayout();
             
             BorderStyle = BorderStyle.None;
-            var flowLayoutPanel1 = new FlowLayoutPanel();
+            flowLayoutPanel = new FlowLayoutPanel();
             tabControl = new HeadlessTabControl();
 
-            var table = new TableLayoutPanel();
+            table = new TableLayoutPanel();
             table.RowCount = 1;
             table.ColumnCount = 2;
             table.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
@@ -45,6 +48,7 @@ namespace ZeroKLobby
             table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             table.Dock = DockStyle.Top;
             table.AutoSize = true;
+            table.BackColor = Color.Transparent;
             table.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
             Controls.Add(table);
@@ -54,47 +58,23 @@ namespace ZeroKLobby
                 FlowDirection = FlowDirection.RightToLeft,
                 AutoSize = true,
                 AutoSizeMode = AutoSizeMode.GrowAndShrink,
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Fill,
+                BackColor = Color.Transparent,
             };
             table.Controls.Add(miniIconPanel, 1,0);
 
-
-            // url box
-            urlBox = new ZklTextBox
-            {
-                Size = new Size(140, 20),
-                TabIndex = 1,
-                Font = Config.GeneralFontSmall,
-                Margin = new Padding(10)
-            };
-            urlBox.KeyDown += urlBox_KeyDown;
-            urlBox.MouseDown += urlBox_MouseDown;
-
-
-
-            // flowLayoutPanel1
-            // 
-            flowLayoutPanel1.AutoScroll = false;
-            flowLayoutPanel1.AutoSize = true;
-            flowLayoutPanel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            flowLayoutPanel1.BackColor = Color.Transparent;
-            flowLayoutPanel1.Dock = DockStyle.Top;
-            flowLayoutPanel1.Padding = new Padding(13);
-            flowLayoutPanel1.WrapContents = false;
-            // 
-            // btnForward
-            // 
-
-            // 
-            // tabControl
-            // 
-            //tabControl.Dock = DockStyle.Bottom;
-            // 
-            // NavigationControl
-            // 
-            table.Controls.Add(flowLayoutPanel1, 0, 0);
-            //table.Controls.Add(tabControl, 0,1);
             
+            
+            flowLayoutPanel.AutoScroll = false;
+            flowLayoutPanel.AutoSize = true;
+            flowLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            flowLayoutPanel.BackColor = Color.Transparent;
+            flowLayoutPanel.Dock = DockStyle.Top;
+            flowLayoutPanel.Padding = new Padding(13);
+            flowLayoutPanel.WrapContents = false;
+    
+            table.Controls.Add(flowLayoutPanel, 0, 0);
+    
             Margin = new Padding(0);
             Name = "NavigationControl";
             Size = new Size(703, 219);
@@ -105,22 +85,32 @@ namespace ZeroKLobby
 
             Instance = this;
 
-            SetupTabButtons(flowLayoutPanel1);
-            InitializeTabPageContent();
-
-            ResumeLayout(false);
+            SetupTabButtons(flowLayoutPanel);
+            CreateTopRightMiniIcons(miniIconPanel);
             PerformLayout();
+            ResumeLayout(false);
 
             tabControl.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom;
-            tabControl.Top = flowLayoutPanel1.Bottom+8;
-            tabControl.Left = 8;
-            tabControl.Width = Width-16;
-            tabControl.Height = Height - flowLayoutPanel1.Height-16;
-            tabControl.Selecting += tabControl_Selecting;
+            tabControl.Top = flowLayoutPanel.Bottom+10;
+            tabControl.Left = 10;
+            tabControl.Width = Width-20;
+            tabControl.Height = Height - flowLayoutPanel.Height-20;
 
             Controls.Add(tabControl);
 
+            InitializeTabPageContent();
+        }
 
+        private void CreateTopRightMiniIcons(FlowLayoutPanel miniIconPanel) {
+            urlBox = new ZklTextBox
+            {
+                Size = new Size(140, 20),
+                TabIndex = 1,
+                Font = Config.GeneralFontSmall,
+                Margin = new Padding(10)
+            };
+            urlBox.KeyDown += urlBox_KeyDown;
+            urlBox.MouseDown += urlBox_MouseDown;
 
             var minMaxButton = new BitmapButton
             {
@@ -141,7 +131,6 @@ namespace ZeroKLobby
                 Image = Buttons.exit.GetResizedWithCache(TopRightMiniIconSize, TopRightMiniIconSize),
             };
             exitButton.Click += (sender, args) => Program.MainWindow?.Exit();
-
 
             var backButton = new BitmapButton()
             {
@@ -184,6 +173,13 @@ namespace ZeroKLobby
             };
             settingsButton.Click += (sender, args) => { Path = "settings"; };
 
+            Program.ToolTip.SetText(exitButton,"Exit");
+            Program.ToolTip.SetText(minMaxButton, "Fullscreen on/off");
+            Program.ToolTip.SetText(settingsButton, "Settings");
+            Program.ToolTip.SetText(sndButton, "Music on/off");
+            Program.ToolTip.SetText(forwardButton, "Go forward");
+            Program.ToolTip.SetText(backButton, "Go back");
+
             miniIconPanel.Controls.Add(exitButton);
             miniIconPanel.Controls.Add(minMaxButton);
             miniIconPanel.Controls.Add(settingsButton);
@@ -191,8 +187,6 @@ namespace ZeroKLobby
             miniIconPanel.Controls.Add(urlBox);
             miniIconPanel.Controls.Add(forwardButton);
             miniIconPanel.Controls.Add(backButton);
-
-            ResumeLayout();
         }
 
         private static void SetupTabButtons(Control control) {
@@ -209,15 +203,7 @@ namespace ZeroKLobby
                 },
                 new ButtonInfo { Label = "MULTIPLAYER", TargetPath = "battles", Icon = Buttons.mp, Width = 250, Height = TabButtonHeight },
                 new ButtonInfo { Label = "CHAT", TargetPath = "chat", Icon = Buttons.chat, Height = TabButtonHeight, Width = 200 }
-                /*new ButtonInfo
-                {
-                    Label = "SETTINGS",
-                    TargetPath = "settings",
-                    Icon = Buttons.settings,
-                    Height = 70,
-                    Width = 250,
-                    Dock = DockStyle.Right
-                }*/
+         
             };
             foreach (var but in ButtonList) control.Controls.Add(but.GetButton());
         }
@@ -404,28 +390,16 @@ namespace ZeroKLobby
         }
 
         protected override void OnPaintBackground(PaintEventArgs e) {
-            BackColor = Color.Black;
-            //this.RenderParentsBackgroundImage(e);
-            base.OnPaintBackground(e);
-            FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, Bounds, FrameBorderRenderer.StyleType.TechPanel);
-            //var nb = new Rectangle(tabControl.Left, tabControl.Top+23, tabControl.Width, tabControl.Height-23);
-            //new LinearGradientBrush(new Rectangle(0, 0, 1, 1), Color.FromArgb(255, 19, 65, 73), Color.FromArgb(255, 0, 0, 0), 90)
+            e.Graphics.Clear(Color.FromArgb(255, 10, 30, 40));
+            using (var lb = new LinearGradientBrush(table.Bounds, Color.FromArgb(255, 19, 65, 73), Color.FromArgb(255, 10, 30, 40), 90)) 
+                e.Graphics.FillRectangle(lb, table.Bounds);
 
-            //nb.Inflate(7,6);
-            //FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, nb, FrameBorderRenderer.StyleType.Shraka);
-            var b = Bounds;
-            //b.Intersect(new Rectangle(Bounds.X + 10, Bounds.Y + 10, Bounds.Width - 20, Bounds.Height - 20));
-            //FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, b, FrameBorderRenderer.StyleType.TechPanel);
+            //using (var lb = new LinearGradientBrush(table.Bounds, Color.FromArgb(255, 19, 65, 73), Color.FromArgb(255, 10, 30, 40), 90))
+                //e.Graphics.FillRectangle(lb, table.Bounds);
         }
 
 
-
-        private void tabControl_Selecting(object sender, TabControlCancelEventArgs e) {
-            //is called from NavigationControl.Designer.cs when Tab is selected
-            //Path = e.TabPage.Text; //this return TAB's name (eg: chat, pw, battle). NOTE: not needed because BUTTON press will call SwitchTab() which also started the navigation
-            //e.Cancel = true;
-        }
-
+        
         private void urlBox_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyData == Keys.Return)
             {
@@ -465,10 +439,6 @@ namespace ZeroKLobby
             }
         }
 
-        private void logoutButton_Click(object sender, EventArgs e) {
-            Program.TasClient.RequestDisconnect();
-            Program.Conf.LobbyPlayerPassword = "";
-        }
 
         private void urlBox_MouseDown(object sender, MouseEventArgs e) {
             //reference: http://stackoverflow.com/questions/5014825/triple-mouse-click-in-c
