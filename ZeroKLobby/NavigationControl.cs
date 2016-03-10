@@ -15,11 +15,8 @@ namespace ZeroKLobby
     {
         private const int TabButtonHeight = 70;
         private const int TopRightMiniIconSize = 32;
-        private const int TopRightMiniIconMargin = 6;
         private const int TopRightSpace = 200;
         private readonly Stack<NavigationStep> backStack = new Stack<NavigationStep>();
-        private readonly BitmapButton btnBack;
-        private readonly BitmapButton btnForward;
         private readonly Stack<NavigationStep> forwardStack = new Stack<NavigationStep>();
         private readonly Timer isBusyTimer = new Timer();
         private readonly Dictionary<INavigatable, string> lastTabPaths = new Dictionary<INavigatable, string>();
@@ -35,35 +32,46 @@ namespace ZeroKLobby
 
         public NavigationControl() {
             SuspendLayout();
-            urlBox = new ZklTextBox();
+            
             BorderStyle = BorderStyle.None;
             var flowLayoutPanel1 = new FlowLayoutPanel();
-            btnForward = new BitmapButton();
-            btnBack = new BitmapButton();
             tabControl = new HeadlessTabControl();
-            // 
-            // urlBox
-            // 
-            urlBox.Location = new Point(166, 34);
-            urlBox.Size = new Size(190, 20);
-            urlBox.TabIndex = 2;
-            urlBox.Font = Config.GeneralFontSmall;
-            urlBox.KeyDown += urlBox_KeyDown;
-            urlBox.MouseDown += urlBox_MouseDown;
 
             var table = new TableLayoutPanel();
             table.RowCount = 1;
             table.ColumnCount = 2;
             table.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, TopRightSpace));
+            table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             table.Dock = DockStyle.Top;
             table.AutoSize = true;
             table.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
             Controls.Add(table);
 
+            var miniIconPanel = new FlowLayoutPanel()
+            {
+                FlowDirection = FlowDirection.RightToLeft,
+                AutoSize = true,
+                AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                Dock = DockStyle.Fill
+            };
+            table.Controls.Add(miniIconPanel, 1,0);
 
-            // 
+
+            // url box
+            urlBox = new ZklTextBox
+            {
+                Size = new Size(140, 20),
+                TabIndex = 1,
+                Font = Config.GeneralFontSmall,
+                Margin = new Padding(10)
+            };
+            urlBox.KeyDown += urlBox_KeyDown;
+            urlBox.MouseDown += urlBox_MouseDown;
+
+
+
             // flowLayoutPanel1
             // 
             flowLayoutPanel1.AutoScroll = false;
@@ -71,69 +79,25 @@ namespace ZeroKLobby
             flowLayoutPanel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             flowLayoutPanel1.BackColor = Color.Transparent;
             flowLayoutPanel1.Dock = DockStyle.Top;
-            flowLayoutPanel1.MinimumSize = new Size(300, 28);
             flowLayoutPanel1.Padding = new Padding(13);
             flowLayoutPanel1.WrapContents = false;
             // 
             // btnForward
             // 
 
-            btnForward.BackColor = Color.Transparent;
-            //this.btnForward.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnForward.BackgroundImage")));
-            btnForward.BackgroundImageLayout = ImageLayout.Stretch;
-            btnForward.ButtonStyle = FrameBorderRenderer.StyleType.DarkHive;
-            btnForward.Cursor = Cursors.Hand;
-            btnForward.FlatStyle = FlatStyle.Flat;
-            btnForward.ForeColor = Color.White;
-            btnForward.Location = new Point(85, 34);
-            btnForward.Name = "btnForward";
-            btnForward.Size = new Size(75, 23);
-            btnForward.SoundType = SoundPalette.SoundType.Click;
-            btnForward.TabIndex = 4;
-            btnForward.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnForward.UseVisualStyleBackColor = true;
-            btnForward.Click += btnForward_Click;
-            btnForward.ButtonStyle = FrameBorderRenderer.StyleType.IconOnly;
-            btnForward.Image = ZklResources.smurf;
-
-            // 
-            // btnBack
-            // 
-            btnBack.BackColor = Color.Transparent;
-            //this.btnBack.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBack.BackgroundImage")));
-            btnBack.BackgroundImageLayout = ImageLayout.Stretch;
-            btnBack.ButtonStyle = FrameBorderRenderer.StyleType.DarkHive;
-            btnBack.Cursor = Cursors.Hand;
-            btnBack.FlatStyle = FlatStyle.Flat;
-            btnBack.ForeColor = Color.White;
-            btnBack.Location = new Point(4, 34);
-            btnBack.Name = "btnBack";
-            btnBack.Size = new Size(75, 23);
-            btnBack.SoundType = SoundPalette.SoundType.Click;
-            btnBack.TabIndex = 3;
-            btnBack.Text = "Back";
-            btnBack.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnBack.UseVisualStyleBackColor = true;
-            btnBack.Click += btnBack_Click;
             // 
             // tabControl
             // 
-            tabControl.Dock = DockStyle.Fill;
-            tabControl.Selecting += tabControl_Selecting;
+            //tabControl.Dock = DockStyle.Bottom;
             // 
             // NavigationControl
             // 
             table.Controls.Add(flowLayoutPanel1, 0, 0);
-
-            Controls.Add(btnForward);
-            Controls.Add(btnBack);
-            Controls.Add(urlBox);
-            Controls.Add(tabControl);
+            //table.Controls.Add(tabControl, 0,1);
+            
             Margin = new Padding(0);
             Name = "NavigationControl";
             Size = new Size(703, 219);
-            ResumeLayout(false);
-            PerformLayout();
 
             isBusyTimer.Interval = 120; //timer tick to update "isBusyIcon" every 120 ms.
             isBusyTimer.Tick += (sender, args) => { Application.UseWaitCursor = CurrentNavigatable.IsBusy; };
@@ -144,7 +108,19 @@ namespace ZeroKLobby
             SetupTabButtons(flowLayoutPanel1);
             InitializeTabPageContent();
 
-            
+            ResumeLayout(false);
+            PerformLayout();
+
+            tabControl.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom;
+            tabControl.Top = flowLayoutPanel1.Bottom+8;
+            tabControl.Left = 8;
+            tabControl.Width = Width-16;
+            tabControl.Height = Height - flowLayoutPanel1.Height-16;
+            tabControl.Selecting += tabControl_Selecting;
+
+            Controls.Add(tabControl);
+
+
 
             var minMaxButton = new BitmapButton
             {
@@ -152,39 +128,69 @@ namespace ZeroKLobby
                 SoundType = SoundPalette.SoundType.Click,
                 Height = TopRightMiniIconSize,
                 Width = TopRightMiniIconSize,
-                Top = 0,
-                Margin = new Padding(TopRightMiniIconMargin),
-                Image = Buttons.win_min.GetResizedWithCache(32, 32)
+                Image = Buttons.win_max.GetResizedWithCache(TopRightMiniIconSize, TopRightMiniIconSize)
             };
-            minMaxButton.Anchor = AnchorStyles.Right | AnchorStyles.Top;
-            minMaxButton.Left = Width - 70 - 5;
+            minMaxButton.Click += (sender, args) => Program.MainWindow?.SwitchFullscreenState();
 
-            minMaxButton.Click += (sender, args) =>
+            var exitButton = new BitmapButton()
             {
-                var mw = Program.MainWindow;
-                if (mw != null)
-                {
-                    if (mw.WindowState == FormWindowState.Maximized)
-                    {
-                        mw.WindowState = FormWindowState.Normal;
-                        mw.FormBorderStyle = FormBorderStyle.Sizable;
-                        mw.TopMost = false;
-                        minMaxButton.Image = Buttons.win_max.GetResizedWithCache(60, 60);
-                    } else
-                    {
-                        mw.WindowState = FormWindowState.Maximized;
-                        mw.FormBorderStyle = FormBorderStyle.None;
-                        mw.TopMost = true;
-                        minMaxButton.Image = Buttons.win_min.GetResizedWithCache(60, 60);
-                    }
-                }
+                ButtonStyle = FrameBorderRenderer.StyleType.IconOnly,
+                SoundType = SoundPalette.SoundType.Click,
+                Height = TopRightMiniIconSize,
+                Width = TopRightMiniIconSize,
+                Image = Buttons.exit.GetResizedWithCache(TopRightMiniIconSize, TopRightMiniIconSize),
+            };
+            exitButton.Click += (sender, args) => Program.MainWindow?.Exit();
+
+
+            var backButton = new BitmapButton()
+            {
+                ButtonStyle = FrameBorderRenderer.StyleType.IconOnly,
+                SoundType = SoundPalette.SoundType.Click,
+                Height = TopRightMiniIconSize,
+                Width = TopRightMiniIconSize,
+                Image = Buttons.left.GetResizedWithCache(TopRightMiniIconSize, TopRightMiniIconSize),
+            };
+            backButton.Click += (sender, args) => { NavigateBack(); };
+
+            var forwardImage = Buttons.left.GetResizedWithCache(TopRightMiniIconSize, TopRightMiniIconSize);
+            forwardImage.RotateFlip(RotateFlipType.RotateNoneFlipX);
+            var forwardButton = new BitmapButton()
+            {
+                ButtonStyle = FrameBorderRenderer.StyleType.IconOnly,
+                SoundType = SoundPalette.SoundType.Click,
+                Height = TopRightMiniIconSize,
+                Width = TopRightMiniIconSize,
+                Image = forwardImage,
+            };
+            forwardButton.Click += (sender, args) => { NavigateForward(); };
+
+            var sndButton = new BitmapButton()
+            {
+                ButtonStyle = FrameBorderRenderer.StyleType.IconOnly,
+                SoundType = SoundPalette.SoundType.Click,
+                Height = TopRightMiniIconSize,
+                Width = TopRightMiniIconSize,
+                Image = Buttons.soundOn.GetResizedWithCache(TopRightMiniIconSize, TopRightMiniIconSize),
             };
 
-            table.Controls.Add(minMaxButton, 1, 0);
-            //Controls.Add(minMaxButton);            
+            var settingsButton = new BitmapButton()
+            {
+                ButtonStyle = FrameBorderRenderer.StyleType.IconOnly,
+                SoundType = SoundPalette.SoundType.Click,
+                Height = TopRightMiniIconSize,
+                Width = TopRightMiniIconSize,
+                Image = Buttons.settings.GetResizedWithCache(TopRightMiniIconSize, TopRightMiniIconSize),
+            };
+            settingsButton.Click += (sender, args) => { Path = "settings"; };
 
-            //flowLayoutPanel1.Controls.Add(minMaxButton);
-            //flowLayoutPanel1.BringToFront();
+            miniIconPanel.Controls.Add(exitButton);
+            miniIconPanel.Controls.Add(minMaxButton);
+            miniIconPanel.Controls.Add(settingsButton);
+            miniIconPanel.Controls.Add(sndButton);
+            miniIconPanel.Controls.Add(urlBox);
+            miniIconPanel.Controls.Add(forwardButton);
+            miniIconPanel.Controls.Add(backButton);
 
             ResumeLayout();
         }
@@ -413,13 +419,6 @@ namespace ZeroKLobby
         }
 
 
-        private void btnBack_Click(object sender, EventArgs e) {
-            NavigateBack();
-        }
-
-        private void btnForward_Click(object sender, EventArgs e) {
-            NavigateForward();
-        }
 
         private void tabControl_Selecting(object sender, TabControlCancelEventArgs e) {
             //is called from NavigationControl.Designer.cs when Tab is selected
@@ -435,11 +434,6 @@ namespace ZeroKLobby
             }
         }
 
-        private void reloadButton1_Click(object sender, EventArgs e) //make webpage refresh
-        {
-            var navig = CurrentNavigatable;
-            if (navig != null && navig.CanReload) navig.Reload();
-        }
 
         private void NavigateToUrlBoxText() {
             var navig = CurrentNavigatable;

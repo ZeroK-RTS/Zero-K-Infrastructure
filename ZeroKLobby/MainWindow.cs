@@ -220,6 +220,25 @@ namespace ZeroKLobby
             }
         }
 
+        public void SwitchFullscreenState()
+        {
+            if (WindowState == FormWindowState.Maximized)
+            {
+                WindowState = FormWindowState.Normal;
+                FormBorderStyle = FormBorderStyle.Sizable;
+                TopMost = false;
+            }
+            else
+            {
+                WindowState = FormWindowState.Maximized;
+                FormBorderStyle = FormBorderStyle.None;
+                TopMost = true;
+            }
+
+        }
+
+
+
         /// <summary>
         ///     Flashes window if its not foreground - until it is foreground
         /// </summary>
