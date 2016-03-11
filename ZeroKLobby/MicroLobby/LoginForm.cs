@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using ZeroKLobby.Controls;
 
 namespace ZeroKLobby.MicroLobby
 {
-	public partial class LoginForm: Form
+	public partial class LoginForm: ZklBaseForm
 	{
 		public string InfoText { set { lbInfo.Text = value; } }
 
@@ -23,12 +24,7 @@ namespace ZeroKLobby.MicroLobby
 
 	    protected override void OnPaintBackground(PaintEventArgs e)
 	    {
-            //base.OnPaintBackground(e);
-	        /*if (Environment.OSVersion.Platform != PlatformID.Unix) {
-	            using (var br = new SolidBrush(Color.FromArgb(255,0,255,255))) {
-	                e.Graphics.FillRectangle(br, e.ClipRectangle);
-	            }
-	        }*/
+	        this.RenderControlBgImage(Program.MainWindow.navigationControl.CurrentNavigatable as Control, e);
             FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, DisplayRectangle, FrameBorderRenderer.StyleType.Shraka);
 	    }
 
@@ -36,6 +32,7 @@ namespace ZeroKLobby.MicroLobby
 		public LoginForm()
 		{
             Font = Config.GeneralFontBig;
+            //BackColor = Color.Transparent;
             InitializeComponent();
 		    //AllowTransparency = true;
 		    //TransparencyKey = Color.FromArgb(255, 255, 255, );

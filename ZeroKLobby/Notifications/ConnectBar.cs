@@ -123,7 +123,7 @@ namespace ZeroKLobby.Notifications
 			{
                 var loginForm = new LoginForm();
 				loginForm.InfoText = text;
-				if (loginForm.ShowDialog() == DialogResult.Cancel) 
+				if (loginForm.ShowDialog(Program.MainWindow) == DialogResult.Cancel) 
 				{
 					tasClientConnectCalled = false;
 					client.RequestDisconnect();

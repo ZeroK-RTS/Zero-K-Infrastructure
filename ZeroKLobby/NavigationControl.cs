@@ -23,7 +23,7 @@ namespace ZeroKLobby
         private readonly Dictionary<INavigatable, string> lastTabPaths = new Dictionary<INavigatable, string>();
         private readonly int systemDoubleClickTime = SystemInformation.DoubleClickTime*10000;
 
-        private readonly HeadlessTabControl tabControl;
+        public readonly HeadlessTabControl tabControl;
         private ZklTextBox urlBox;
 
         private NavigationStep _currentPage;
