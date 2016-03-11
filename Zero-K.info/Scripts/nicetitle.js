@@ -40,7 +40,7 @@ niceTitlesJS.installNiceTitleListener = function () {
             position:
             { //Show the tooltip relative the the element that fired the event
                 my: 'left top',
-                at: 'right top',
+                at: 'right middle',
                 target: 'event',
                 //Dont let the tool tip go off the window
                 viewport: $(window),

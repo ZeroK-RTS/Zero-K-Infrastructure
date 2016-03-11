@@ -1,44 +1,39 @@
- .nicetitle, .ui-tooltip, .qtip
-{
+.nicetitle, .ui-tooltip, .qtip {
     background: #000 url("/img/border-1.png") repeat-x;
-    position: absolute;
-    padding: 8px;
-    top: 0px;
-    left: 0px;
-    font-size: 0.9em;
-    font-family: os, sans-serif;
-    font-weight:normal;
     border: 1px solid #38bfec;
     border-radius: 3px;
+    font-family: os, sans-serif;
+    font-size: 80%;
+    font-weight: normal;
+    left: 0px;
     max-width: 400px;
     opacity: .9;
-	z-index:-2;
+    padding: 8px;
+    position: absolute;
+    top: 0px;
+    z-index: -2;
+    color: white;
 }
+
 div.nicetitle p {
-    margin: 0; padding: 0 3px;
+    margin: 0;
+    padding: 0 3px;
 }
+
 div.nicetitle p.destination {
     font-size: x-small;
-    text-align: left;
     padding-top: 3px;
+    text-align: left;
 }
 
 .ui-tooltip-titlebar,
-.ui-tooltip-content
-{ font-size: 0.9em;
-  background: none;
-  color: #FFF;
-  border: none;
-  }
+.ui-tooltip-content {
+    background: none;
+    border: none;
+}
 
-	.ui-tooltip-titlebar
-	{ 
-	}
+.ui-tooltip-titlebar { }
 
-	.ui-tooltip-titlebar .ui-tooltip-icon
-	{
-	  background: none;
-	}
-	
-	.ui-tooltip-titlebar .ui-state-hover{
-	}
+.ui-tooltip-titlebar .ui-tooltip-icon { background: none; }
+
+.ui-tooltip-titlebar .ui-state-hover { }
