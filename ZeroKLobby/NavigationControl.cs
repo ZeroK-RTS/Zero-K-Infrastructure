@@ -285,8 +285,7 @@ namespace ZeroKLobby
                     AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Planetwars", false), "pw");
                     AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Forum", false), "fm");
                 }
-                var home = AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl, true), "hm");
-                tabControl.SelectTab(home);
+                AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl, true), "hm");
             }
             var battles = new BattleListTab();
             AddTabPage(battles, "Battles");
@@ -294,6 +293,9 @@ namespace ZeroKLobby
             AddTabPage(new ServerTab(), "Server");
             AddTabPage(new DownloaderTab(), "Rapid");
             AddTabPage(new ExtrasTab(), "Extra");
+            var home = AddTabPage(new WelcomeTab(), "Welcome");
+
+            tabControl.SelectTab(home);
         }
 
         public INavigatable GetInavigatableByPath(string path) {

@@ -93,6 +93,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel" />
@@ -109,6 +110,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionHandler.cs" />
+    <Compile Include="BgImages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BgImages.resx</DependentUpon>
+    </Compile>
     <Compile Include="BrowserInterop.cs" />
     <Compile Include="ButtonInfo.cs" />
     <Compile Include="Buttons.Designer.cs">
@@ -500,6 +506,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WelcomeTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="WindowsApi.cs" />
     <Compile Include="ZklResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -507,6 +516,10 @@
       <DependentUpon>ZklResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Steam\ZklSteamHandler.cs" />
+    <EmbeddedResource Include="BgImages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>BgImages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Buttons.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
@@ -1706,6 +1719,7 @@
     <None Include="Resources\voice_talking.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\BgImages\bg_battle.jpg" />
     <Content Include="Resources\Buttons\back.png" />
     <Content Include="Resources\Buttons\down.png" />
     <Content Include="Resources\Buttons\downloads.png" />
@@ -1743,7 +1757,6 @@
     <Content Include="Resources\ZK_logo_128.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\BgImages\" />
     <Folder Include="Resources\DarkHiveGlow\" />
     <Folder Include="Resources\DarkHiveHover\" />
     <Folder Include="Resources\DarkHive\" />

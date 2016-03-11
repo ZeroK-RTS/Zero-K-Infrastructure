@@ -110,7 +110,6 @@ namespace ZeroKLobby.MicroLobby
 			return false;
 		}
 
-	    public string Title { get { return "Settings"; } }
 
 	    public string GetTooltip(params string[] path)
 		{
