@@ -61,14 +61,14 @@
             // 
             this.tbLogin.Location = new System.Drawing.Point(237, 123);
             this.tbLogin.Name = "tbLogin";
-            this.tbLogin.Size = new System.Drawing.Size(146, 20);
+            this.tbLogin.Size = new System.Drawing.Size(146, 24);
             this.tbLogin.TabIndex = 1;
             // 
             // tbPassword
             // 
             this.tbPassword.Location = new System.Drawing.Point(237, 184);
             this.tbPassword.Name = "tbPassword";
-            this.tbPassword.Size = new System.Drawing.Size(146, 20);
+            this.tbPassword.Size = new System.Drawing.Size(146, 24);
             this.tbPassword.TabIndex = 2;
             this.tbPassword.UseSystemPasswordChar = true;
             // 
@@ -108,7 +108,7 @@
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Location = new System.Drawing.Point(109, 126);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(65, 13);
+            this.label1.Size = new System.Drawing.Size(89, 18);
             this.label1.TabIndex = 6;
             this.label1.Text = "Login name:";
             // 
@@ -118,7 +118,7 @@
             this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Location = new System.Drawing.Point(121, 187);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 13);
+            this.label2.Size = new System.Drawing.Size(79, 18);
             this.label2.TabIndex = 7;
             this.label2.Text = "Password:";
             // 
@@ -137,7 +137,6 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSubmit);
             this.ForeColor = System.Drawing.Color.White;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "LoginForm";

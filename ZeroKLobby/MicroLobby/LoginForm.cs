@@ -22,9 +22,10 @@ namespace ZeroKLobby.MicroLobby
             }
         }
 
-	    protected override void OnPaintBackground(PaintEventArgs e)
-	    {
-	        this.RenderControlBgImage(Program.MainWindow.navigationControl.CurrentNavigatable as Control, e);
+	    protected override void OnPaintBackground(PaintEventArgs e) {
+	        var page = Program.MainWindow.navigationControl.CurrentNavigatable as Control;
+            if (page?.BackgroundImage != null) this.RenderControlBgImage(page, e); else 
+                e.Graphics.Clear(Config.BgColor);
             FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, DisplayRectangle, FrameBorderRenderer.StyleType.Shraka);
 	    }
 
@@ -50,6 +51,8 @@ namespace ZeroKLobby.MicroLobby
                 Program.SteamHandler.SteamHelper.SteamOnline += SteamApiOnSteamOnline;
 		    }
 		    tbPassword.Text = Program.Conf.LobbyPlayerPassword;
+
+            
         }
 
 	    void SteamApiOnSteamOnline()

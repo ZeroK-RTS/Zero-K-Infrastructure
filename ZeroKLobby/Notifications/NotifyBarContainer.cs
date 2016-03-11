@@ -47,6 +47,8 @@ namespace ZeroKLobby.Notifications
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
+            FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics,ClientRectangle, FrameBorderRenderer.StyleType.TechPanel);
+            /*
             base.OnPaintBackground(e);
             try
             {
@@ -55,7 +57,7 @@ namespace ZeroKLobby.Notifications
             catch (Exception ex)
             {
                 Trace.TraceError("Error rendering bar background: {0}",ex);
-            }
+            }*/
         }
 
 

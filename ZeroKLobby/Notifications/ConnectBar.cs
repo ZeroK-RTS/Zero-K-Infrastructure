@@ -3,6 +3,7 @@ using System.Drawing.Drawing2D;
 using System.Threading;
 using System.Windows.Forms;
 using LobbyClient;
+using ZeroKLobby.Controls;
 using ZeroKLobby.MicroLobby;
 using ZkData;
 
@@ -11,7 +12,7 @@ namespace ZeroKLobby.Notifications
 	/// <summary>
 	/// Handles connection to tasclient
 	/// </summary>
-	class ConnectBar: UserControl, INotifyBar
+	class ConnectBar: ZklBaseControl, INotifyBar
 	{
 		bool canRegister = false;
 		readonly TasClient client;
@@ -91,7 +92,8 @@ namespace ZeroKLobby.Notifications
 			}
 		}
 
-		void InitializeComponent()
+
+	    void InitializeComponent()
 		{
             this.lbState = new System.Windows.Forms.Label();
             this.SuspendLayout();
