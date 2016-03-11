@@ -162,6 +162,7 @@ namespace ZeroKLobby
                 Width = TopRightMiniIconSize,
                 Image = Buttons.soundOn.GetResizedWithCache(TopRightMiniIconSize, TopRightMiniIconSize),
             };
+            sndButton.Click += (sender, args) => Program.MainWindow?.SwitchMusicOnOff();
 
             var settingsButton = new BitmapButton()
             {

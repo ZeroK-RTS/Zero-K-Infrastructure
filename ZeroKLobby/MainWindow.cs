@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Media;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using NAudio.Wave;
 using PlasmaDownloader;
 using SpringDownloader.Notifications;
 using ZeroKLobby.Controls;
@@ -30,6 +32,8 @@ namespace ZeroKLobby
         private bool closeForReal;
         private FormWindowState lastState = FormWindowState.Normal;
         private readonly TableLayoutPanel tableLayoutPanel2;
+        private DirectSoundOut waveOut;
+        private Mp3FileReader audioReader;
 
         public MainWindow() {
             WindowState = FormWindowState.Maximized;
@@ -98,6 +102,7 @@ namespace ZeroKLobby
                 Program.Downloader.DownloadAdded += TorrentManager_DownloadAdded;
                 timer1.Start();
             }
+
         }
 
         public NavigationControl navigationControl { get; }
@@ -310,6 +315,31 @@ namespace ZeroKLobby
 
             if (Program.Conf.ConnectOnStartup) Program.ConnectBar.TryToConnectTasClient();
             else NotifySection.AddBar(Program.ConnectBar);
+
+            if (Environment.OSVersion.Platform != PlatformID.Unix)
+            {
+                waveOut = new DirectSoundOut();
+                audioReader = new Mp3FileReader(new MemoryStream(Sounds.menu_music_ROM));
+                waveOut.Init(audioReader);
+
+                SwitchMusicOnOff(true);
+            }
+        }
+
+
+        public void SwitchMusicOnOff(bool? state = null) {
+            if (Environment.OSVersion.Platform != PlatformID.Unix)
+            {
+                if (state == false || (state == null && waveOut.PlaybackState == PlaybackState.Playing))
+                {
+                    waveOut.Stop();
+                }
+                else if(state == true || (state == null && waveOut.PlaybackState!= PlaybackState.Playing))
+                {
+                    audioReader.Position = 0;
+                    waveOut.Play();
+                }
+            }
         }
 
         private void TorrentManager_DownloadAdded(object sender, EventArgs<Download> e) {
