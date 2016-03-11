@@ -80,7 +80,7 @@ namespace ZeroKLobby
                     SW = TechPanel.SW,
                     E = TechPanel.E,
                     W = TechPanel.W,
-                    FillBrush = new SolidBrush(Color.FromArgb(255, 0, 0, 0)),
+                    FillBrush = new SolidBrush(Color.FromArgb(255, 19, 65, 73)),
                     Interpolation = InterpolationMode.NearestNeighbor,
                 }
             },
