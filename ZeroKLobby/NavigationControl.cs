@@ -394,8 +394,8 @@ namespace ZeroKLobby
             using (var lb = new LinearGradientBrush(table.Bounds, Color.FromArgb(255, 19, 65, 73), Color.FromArgb(255, 10, 30, 40), 90)) 
                 e.Graphics.FillRectangle(lb, table.Bounds);
 
-            var rect = new Rectangle(0, table.Bounds.Bottom, Width, Height - table.Bounds.Height);
-            using (var lb = new LinearGradientBrush(rect, Color.FromArgb(255, 10, 30, 40), Color.FromArgb(255, 0, 0, 0), 90))
+            var rect = new Rectangle(0, table.Bounds.Height, Width, Height - table.Bounds.Height);
+            using (var lb = new LinearGradientBrush(new Rectangle(rect.X,rect.Y-1, rect.Width, rect.Height+1), Color.FromArgb(255, 10, 30, 40), Color.FromArgb(255, 0, 0, 0), 90))
                 e.Graphics.FillRectangle(lb, rect);
         }
 
