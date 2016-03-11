@@ -47,7 +47,8 @@ namespace ZeroKLobby.Notifications
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
-            FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics,ClientRectangle, FrameBorderRenderer.StyleType.TechPanel);
+            e.Graphics.Clear(Config.BgColor);
+            FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, Bounds, FrameBorderRenderer.StyleType.TechPanel);
             /*
             base.OnPaintBackground(e);
             try

@@ -84,7 +84,7 @@ namespace ZeroKLobby.Notifications
 			{
 				if (!tasClientConnectCalled && !client.IsConnected && !client.IsLoggedIn)
 				{
-					Program.NotifySection.AddBar(this);
+					//Program.NotifySection.AddBar(this);
 					tasClientConnectCalled = true;
 					lbState.Text = "Trying to connect ...";
 					client.Connect(Program.Conf.SpringServerHost, Program.Conf.SpringServerPort);
