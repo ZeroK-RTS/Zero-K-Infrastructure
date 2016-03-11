@@ -21,6 +21,7 @@ namespace ZeroKLobby
         public BrowserTab(string head, bool autoStartOnLogin)
         {
             pathHead = head;
+            base.DocumentText = "<html><body style='background-color:black;'></body></html>";
             if (Program.TasClient != null && autoStartOnLogin == true)
                 Program.TasClient.LoginAccepted += (sender, args) =>
                 {
