@@ -176,8 +176,8 @@ namespace ZeroKLobby
                     var scr = Screen.GetWorkingArea(new Point((int)point.X, (int)point.Y));
 
                     //need screen0's bounds because SetDesktopLocation is relative to screen0.
-                    var scr1 = Screen.AllScreens[0].WorkingArea;
-                    var scr1B = Screen.AllScreens[0].Bounds;
+                    var scr1 = Screen.PrimaryScreen.WorkingArea;
+                    var scr1B = Screen.PrimaryScreen.Bounds;
 
                     var nx = Math.Min(mp.X + 14 + scr1B.X - scr1.X, scr.Right - tooltip.Width - 2);
                     var ny = Math.Min(mp.Y + 14 + scr1B.Y - scr1.Y, scr.Bottom - tooltip.Height - 2);

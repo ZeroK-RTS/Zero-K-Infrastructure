@@ -30,7 +30,7 @@ namespace ZeroKLobby
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             SetStyle(ControlStyles.Selectable,false);
 
-            ButtonStyle = FrameBorderRenderer.StyleType.TechPanel;
+            ButtonStyle = FrameBorderRenderer.StyleType.DarkHive;
             SoundType = SoundPalette.SoundType.Click;
         }
 
