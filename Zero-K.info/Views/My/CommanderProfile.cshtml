@@ -30,9 +30,9 @@ Commander name: @Html.TextBox("name", c != null ? HttpContext.Current.Server.Htm
             }
             else
             {
-	    		@Html.DropDownList("m" + slot.CommanderSlotID, Model.Unlocks.Where(x => MyController.IsUnlockValidForSlot(x, slot)
-                    && MyController.IsPrerequisiteUnlockPresent(c, x)).Select(x => new SelectListItem()
-                    { Text = x.Name, Value = x.UnlockID.ToString(), Selected = c != null ? c.CommanderModules.Any(y => y.ModuleUnlockID == x.UnlockID && y.SlotID == slot.CommanderSlotID) : false }).Union(new SelectListItem[] 
+	    		@Html.DropDownList("m" + slot.CommanderSlotID, Model.Unlocks.Where(x => MyController.IsUnlockValidForSlot(x.Unlock, slot)
+                    && MyController.IsPrerequisiteUnlockPresent(c, x.Unlock)).Select(x => new SelectListItem()
+                    { Text = x.Unlock.Name, Value = x.Unlock.UnlockID.ToString(), Selected = c != null ? c.CommanderModules.Any(y => y.ModuleUnlockID == x.Unlock.UnlockID && y.SlotID == slot.CommanderSlotID) : false }).Union(new SelectListItem[] 
                     { new SelectListItem() { Text = "", Value = "", Selected = c != null ? !c.CommanderModules.Any(y => y.SlotID == slot.CommanderSlotID) : true } }), 
                     new { onchange = "document.getElementById(\"commanderUpdate" + Model.ProfileID + "\").click()" })
             }
@@ -53,9 +53,9 @@ Commander name: @Html.TextBox("name", c != null ? HttpContext.Current.Server.Htm
         }
         else
         {
-	    	@Html.DropDownList("d" + decSlot.CommanderDecorationSlotID, Model.Unlocks.Where(x => x.UnlockType == UnlockTypes.Decoration).Select(x => new SelectListItem() { 
-                Text = x.Name, Value = x.UnlockID.ToString(), Selected = c != null ? 
-                c.CommanderDecorations.Any(y => y.DecorationUnlockID == x.UnlockID && y.SlotID == decSlot.CommanderDecorationSlotID) : false }).Union(new SelectListItem[] 
+	    	@Html.DropDownList("d" + decSlot.CommanderDecorationSlotID, Model.Unlocks.Where(x => x.Unlock.UnlockType == UnlockTypes.Decoration).Select(x => new SelectListItem() { 
+                Text = x.Unlock.Name, Value = x.Unlock.UnlockID.ToString(), Selected = c != null ? 
+                c.CommanderDecorations.Any(y => y.DecorationUnlockID == x.Unlock.UnlockID && y.SlotID == decSlot.CommanderDecorationSlotID) : false }).Union(new SelectListItem[] 
                 { new SelectListItem() { Text = "", Value = "", Selected = c != null ? !c.CommanderDecorations.Any(y => y.SlotID == decSlot.CommanderDecorationSlotID) : true } }), 
                 new { onchange = "document.getElementById(\"commanderUpdate" + Model.ProfileID + "\").click()" })
         }
@@ -65,5 +65,6 @@ Commander name: @Html.TextBox("name", c != null ? HttpContext.Current.Server.Htm
 }
 else
 { 
-	@:Chassis: @Html.DropDownList("chassis", Model.Unlocks.Where(x => x.UnlockType == ZkData.UnlockTypes.Chassis).Select(x => new SelectListItem() { Text = x.Name, Value = x.UnlockID.ToString(), Selected = (c != null ? c.ChassisUnlockID == x.UnlockID : false) }))
+	@:Chassis: @Html.DropDownList("chassis", Model.Unlocks.Where(x => x.Unlock.UnlockType == ZkData.UnlockTypes.Chassis).Select(x => new SelectListItem()
+          { Text = x.Unlock.Name, Value = x.Unlock.UnlockID.ToString(), Selected = (c != null ? c.ChassisUnlockID == x.Unlock.UnlockID : false) }))
 }
