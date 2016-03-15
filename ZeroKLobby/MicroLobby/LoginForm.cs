@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using ZeroKLobby.Controls;
@@ -32,9 +31,9 @@ namespace ZeroKLobby.MicroLobby
                 Text = "OK"
             };
             btnSubmit.Click += btnSubmit_Click;
-            
+
             tbLogin = new ZklTextBox { Location = new Point(237, 123), Size = new Size(146, 24), TabIndex = 1 };
-            
+
             tbPassword = new ZklTextBox
             {
                 Location = new Point(237, 184),
@@ -53,7 +52,6 @@ namespace ZeroKLobby.MicroLobby
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
-
             btnCancel = new BitmapButton
             {
                 ButtonStyle = FrameBorderRenderer.StyleType.DarkHive,
@@ -64,7 +62,6 @@ namespace ZeroKLobby.MicroLobby
                 Text = "Cancel"
             };
             btnCancel.Click += btnCancel_Click;
-
 
             label1 = new Label
             {
@@ -84,7 +81,6 @@ namespace ZeroKLobby.MicroLobby
                 Text = "Password:"
             };
 
-
             AcceptButton = btnSubmit;
             AutoScaleMode = AutoScaleMode.None;
             BackColor = Color.DimGray;
@@ -100,13 +96,11 @@ namespace ZeroKLobby.MicroLobby
             ForeColor = Color.White;
             MaximizeBox = false;
             MinimizeBox = false;
-            Name = "LoginForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Zero-K Login/Register";
             Load += LoginForm_Load;
             ResumeLayout(false);
             PerformLayout();
-
 
             tbLogin.Text = Program.Conf.LobbyPlayerName;
             if (string.IsNullOrEmpty(tbLogin.Text))
@@ -116,7 +110,8 @@ namespace ZeroKLobby.MicroLobby
             }
             tbPassword.Text = Program.Conf.LobbyPlayerPassword;
 
-            Invalidate();
+            tbLogin.TextBox.PreviewKeyDown += onKeyPress;
+            tbPassword.TextBox.PreviewKeyDown += onKeyPress;
         }
 
         public string InfoText { set { lbInfo.Text = value; } }
@@ -125,6 +120,11 @@ namespace ZeroKLobby.MicroLobby
         public string LoginValue { get { return tbLogin.Text; } }
 
         public string PasswordValue { get { return tbPassword.Text; } }
+
+        private void onKeyPress(object sender, PreviewKeyDownEventArgs args) {
+            if (args.KeyCode == Keys.Enter) btnSubmit_Click(this, args);
+            if (args.KeyCode == Keys.Escape) btnCancel_Click(this, args);
+        }
 
         protected override void OnPaintBackground(PaintEventArgs e) {
             var page = Program.MainWindow.navigationControl.CurrentNavigatable as Control;
@@ -155,7 +155,6 @@ namespace ZeroKLobby.MicroLobby
 
         private void LoginForm_Load(object sender, EventArgs e) {
             Icon = ZklResources.ZkIcon;
-            Invalidate();
         }
     }
 }
