@@ -352,18 +352,6 @@
     <Compile Include="Notifications\GenericBar.Designer.cs">
       <DependentUpon>GenericBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="Notifications\NewVersionBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Notifications\NewVersionBar.Designer.cs">
-      <DependentUpon>NewVersionBar.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Notifications\ScannerBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Notifications\ScannerBar.Designer.cs">
-      <DependentUpon>ScannerBar.cs</DependentUpon>
-    </Compile>
     <Compile Include="Notifications\VoteBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -440,12 +428,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Notifications\INotifyBar.cs" />
-    <Compile Include="Notifications\DownloadBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Notifications\DownloadBar.designer.cs">
-      <DependentUpon>DownloadBar.cs</DependentUpon>
-    </Compile>
     <Compile Include="MicroLobby\PlayerListBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -606,9 +588,6 @@
     <EmbeddedResource Include="Notifications\ReplayBar.resx">
       <DependentUpon>ReplayBar.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\ScannerBar.resx">
-      <DependentUpon>ScannerBar.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Notifications\SinglePlayerBar.resx">
       <DependentUpon>SinglePlayerBar.cs</DependentUpon>
     </EmbeddedResource>
@@ -709,9 +688,6 @@
     <EmbeddedResource Include="Notifications\GenericBar.resx">
       <DependentUpon>GenericBar.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\NewVersionBar.resx">
-      <DependentUpon>NewVersionBar.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\SettingsTab.resx">
       <DependentUpon>SettingsTab.cs</DependentUpon>
     </EmbeddedResource>
@@ -728,8 +704,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\PrivateMessageControl.resx">
       <DependentUpon>PrivateMessageControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\DownloadBar.resx">
     </EmbeddedResource>
     <None Include="Resources\Conf\lups0.cfg" />
     <None Include="Resources\Conf\lups1.cfg" />

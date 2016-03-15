@@ -24,7 +24,6 @@ namespace ZeroKLobby
         private readonly ToolStripMenuItem btnExit;
 
         private readonly NotifyIcon systrayIcon;
-        private readonly Timer timer1 = new Timer();
         private readonly ContextMenuStrip trayStrip;
 
         private string baloonTipPath;
@@ -94,14 +93,6 @@ namespace ZeroKLobby
             systrayIcon.MouseDown += systrayIcon_MouseDown;
             systrayIcon.BalloonTipClicked += systrayIcon_BalloonTipClicked;
 
-            if (Program.Downloader != null)
-            {
-                timer1.Interval = 250;
-                timer1.Tick += timer1_Tick;
-
-                Program.Downloader.DownloadAdded += TorrentManager_DownloadAdded;
-                timer1.Start();
-            }
 
             if (Debugger.IsAttached) SwitchFullscreenState(false);
         }
@@ -265,25 +256,6 @@ namespace ZeroKLobby
         }
 
 
-        private void UpdateDownloads() {
-            try
-            {
-                if (Program.Downloader != null && !Program.CloseOnNext)
-                {
-                    // remove aborted
-                    foreach (var pane in
-                        new List<INotifyBar>(Program.NotifySection.Bars).OfType<DownloadBar>()
-                            .Where(x => x.Download.IsAborted || x.Download.IsComplete == true)) Program.NotifySection.RemoveBar(pane);
-
-                    // update existing
-                    foreach (var pane in new List<INotifyBar>(Program.NotifySection.Bars).OfType<DownloadBar>()) pane.UpdateInfo();
-                }
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Error updating transfers: {0}", ex);
-            }
-        }
 
         private void UpdateSystrayToolTip() {
             var sb = new StringBuilder();
@@ -343,10 +315,6 @@ namespace ZeroKLobby
             }
         }
 
-        private void TorrentManager_DownloadAdded(object sender, EventArgs<Download> e) {
-            Invoke(new Action(() => Program.NotifySection.AddBar(new DownloadBar(e.Data))));
-        }
-
         private void btnExit_Click(object sender, EventArgs e) {
             Exit();
         }
@@ -363,10 +331,6 @@ namespace ZeroKLobby
         }
 
 
-        private void timer1_Tick(object sender, EventArgs e) {
-            UpdateDownloads();
-            UpdateSystrayToolTip();
-        }
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e) {
             Program.CloseOnNext = true;

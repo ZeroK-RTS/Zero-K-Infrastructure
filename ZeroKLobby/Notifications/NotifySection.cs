@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using ZeroKLobby;
+using ZeroKLobby.Controls;
 using ZeroKLobby.Notifications;
 
 namespace SpringDownloader.Notifications
 {
-	public partial class NotifySection: UserControl
+	public partial class NotifySection: ZklBaseControl
 	{
         readonly Timer uiUpdate = new Timer();
-		ScannerBar scannerBar;
 		public IEnumerable<INotifyBar> Bars { get { return Controls.OfType<NotifyBarContainer>().Select(x => x.BarContent); } }
 
 		public NotifySection()
@@ -40,13 +40,6 @@ namespace SpringDownloader.Notifications
             }
 		}
 
-		void NotifySection_Load(object sender, EventArgs e)
-		{
-			scannerBar = new ScannerBar(Program.SpringScanner);
-            var scannerBarSize = new System.Drawing.Size(0, scannerBar.Height);
-            scannerBar.MinimumSize = scannerBarSize; //fix minimum size forever
-            scannerBar.MaximumSize = scannerBarSize; //fix maximum size forever (workaround for DPI bug in Windows)
-		}
 
         private void timedUpdate_Tick(object sender, EventArgs e)
         {

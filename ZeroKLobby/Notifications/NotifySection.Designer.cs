@@ -38,7 +38,6 @@
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "NotifySection";
             this.Size = new System.Drawing.Size(418, 10);
-            this.Load += new System.EventHandler(this.NotifySection_Load);
             this.ResumeLayout(false);
 
         }

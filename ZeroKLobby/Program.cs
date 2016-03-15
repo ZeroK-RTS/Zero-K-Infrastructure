@@ -22,7 +22,6 @@ namespace ZeroKLobby
     internal static class Program
     {
         private static readonly object configLock = new object();
-        private static NewVersionBar NewVersionBar;
         public static AutoJoinManager AutoJoinManager;
         public static bool CloseOnNext;
         public static Config Conf = new Config();
@@ -310,7 +309,6 @@ namespace ZeroKLobby
                     Math.Min(SystemInformation.VirtualScreen.Height - 30, MainWindow.Height)); //in case user have less space than 1024x768
 
                 BattleBar = new BattleBar();
-                NewVersionBar = new NewVersionBar(SelfUpdater);
                 VoteBar = new VoteBar();
                 PwBar = new PwBar();
 
@@ -319,14 +317,11 @@ namespace ZeroKLobby
                 //Setting maximum height upon creation will hopefully make sure it is not DPI-scaled multiple time.
                 var votebarSize = new Size(0, VoteBar.Height);
                 // Reference: http://stackoverflow.com/questions/5314041/set-minimum-window-size-in-c-sharp-net
-                var newversionbarSize = new Size(0, NewVersionBar.Height);
                 var battlebarSize = new Size(0, BattleBar.Height);
                 var connectbarSize = new Size(0, ConnectBar.Height);
 
                 VoteBar.MinimumSize = votebarSize; //fix minimum size forever
                 VoteBar.MaximumSize = votebarSize; //fix maximum size forever
-                NewVersionBar.MinimumSize = newversionbarSize;
-                NewVersionBar.MaximumSize = newversionbarSize;
                 BattleBar.MinimumSize = battlebarSize;
                 BattleBar.MaximumSize = battlebarSize;
                 ConnectBar.MinimumSize = connectbarSize;
