@@ -147,7 +147,7 @@ namespace ZeroKLobby
                 if (Environment.OSVersion.Platform != PlatformID.Unix && !Conf.UseExternalBrowser) Utils.SetIeCompatibility(); //set to current IE version
 
                 var contentDir = !string.IsNullOrEmpty(Conf.DataFolder) ? Conf.DataFolder : StartupPath;
-                if (!Directory.Exists(contentDir) || !SpringPaths.IsDirectoryWritable(contentDir) || contentDir.Contains("Local\\Apps") || (!IsSteamFolder && Conf.IsFirstRun))
+                if (!Directory.Exists(contentDir) || !SpringPaths.IsDirectoryWritable(contentDir))
                 {
                     var dc = new SelectWritableFolder { SelectedPath = SpringPaths.GetMySpringDocPath() };
                     if (dc.ShowDialog() != DialogResult.OK) return;
@@ -156,7 +156,7 @@ namespace ZeroKLobby
                 if (Conf.DataFolder != StartupPath) Conf.DataFolder = contentDir;
                 else Conf.DataFolder = null;
 
-                if (!SpringPaths.IsDirectoryWritable(StartupPath) || StartupPath.Contains("Local\\Apps"))
+                if (!SpringPaths.IsDirectoryWritable(StartupPath))
                 {
                     var newTarget = Path.Combine(contentDir, "Zero-K.exe");
                     if (SelfUpdater.CheckForUpdate(newTarget, true))
