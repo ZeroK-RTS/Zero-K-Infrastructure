@@ -295,12 +295,14 @@ namespace ZeroKLobby
                 audioReader = new Mp3FileReader(new MemoryStream(Sounds.menu_music_ROM));
                 waveOut.Init(audioReader);
 
-                SwitchMusicOnOff(true);
+                SwitchMusicOnOff(Program.Conf.PlayMusic);
             }
         }
 
 
         public void SwitchMusicOnOff(bool? state = null) {
+            if (state == null) Program.Conf.PlayMusic = waveOut.PlaybackState != PlaybackState.Playing;
+
             if (Environment.OSVersion.Platform != PlatformID.Unix)
             {
                 if (state == false || (state == null && waveOut.PlaybackState == PlaybackState.Playing))

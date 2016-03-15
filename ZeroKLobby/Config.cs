@@ -314,6 +314,7 @@ namespace ZeroKLobby
 
         public bool UseExternalBrowser { get; set; } = false;
         public bool SingleInstance { get; set; } = false;
+        public bool PlayMusic { get; set; } = true;
 
         private static IsolatedStorageFile GetIsolatedStorage()
         {
