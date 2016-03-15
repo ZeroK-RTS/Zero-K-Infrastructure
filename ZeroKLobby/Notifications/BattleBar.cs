@@ -83,7 +83,11 @@ namespace ZeroKLobby.Notifications
                     }
                 };
 
-            spring.SpringStarted += (s, e) => { client.ChangeMyUserStatus(isInGame: true); };
+            spring.SpringStarted += (s, e) =>
+            {
+                Program.MainWindow.SwitchMusicOnOff(false);
+                client.ChangeMyUserStatus(isInGame: true);
+            };
 
             client.Rang += (s, e) =>
                 {

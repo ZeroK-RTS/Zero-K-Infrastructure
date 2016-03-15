@@ -112,7 +112,6 @@ namespace ZeroKLobby
             typeof(UITypeEditor))]
         public StringCollection AutoJoinChannels { get; set; } = new StringCollection();
 
-
         [Browsable(false)]
         public string BattleFilter { get; set; }
 

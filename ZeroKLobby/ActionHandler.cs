@@ -330,17 +330,20 @@ namespace ZeroKLobby
 
         public static void StartMission(string name)
         {
+            Program.MainWindow.SwitchMusicOnOff(false);
             Program.NotifySection.AddBar(new MissionBar(name));
         }
 
 
         public static void StartReplay(string url, string mod, string map, string engine)
         {
+            Program.MainWindow.SwitchMusicOnOff(false);
             Program.NotifySection.AddBar(new ReplayBar(url, mod, map, engine));
         }
 
         public static void StartScriptMission(string name)
         {
+            Program.MainWindow.SwitchMusicOnOff(false);
             try
             {
                 var serv = GlobalConst.GetContentService();

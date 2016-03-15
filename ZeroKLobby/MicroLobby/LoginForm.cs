@@ -9,8 +9,6 @@ namespace ZeroKLobby.MicroLobby
     {
         private readonly BitmapButton btnCancel;
         private readonly BitmapButton btnSubmit;
-        private readonly Label label1;
-        private readonly Label label2;
         private readonly Label lbInfo;
 
         private readonly ZklTextBox tbLogin;
@@ -36,7 +34,7 @@ namespace ZeroKLobby.MicroLobby
 
             tbPassword = new ZklTextBox
             {
-                Location = new Point(237, 184),
+                Location = new Point(237, 164),
                 Size = new Size(146, 24),
                 TabIndex = 2,
                 TextBox = { UseSystemPasswordChar = true }
@@ -63,20 +61,20 @@ namespace ZeroKLobby.MicroLobby
             };
             btnCancel.Click += btnCancel_Click;
 
-            label1 = new Label
+            var label1 = new Label
             {
                 AutoSize = true,
                 BackColor = Color.Transparent,
-                Location = new Point(109, 126),
+                Location = new Point(112, 126),
                 Size = new Size(89, 18),
                 Text = "Login name:"
             };
 
-            label2 = new Label
+            var label2 = new Label
             {
                 AutoSize = true,
                 BackColor = Color.Transparent,
-                Location = new Point(121, 187),
+                Location = new Point(121, 167),
                 Size = new Size(79, 18),
                 Text = "Password:"
             };
