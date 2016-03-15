@@ -9,6 +9,8 @@ namespace ZeroKLobby.Controls
         private const int BorderSize = 2;
         private readonly TextBox textBox = new TextBox();
 
+        public TextBox TextBox => textBox;
+
         public ZklTextBox() {
             ZklBaseControl.Init(this);
             ZklBaseControl.Init(textBox);

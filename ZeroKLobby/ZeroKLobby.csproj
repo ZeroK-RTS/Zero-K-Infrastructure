@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ZeroKLobby</RootNamespace>
     <AssemblyName>Zero-K</AssemblyName>
-    <ApplicationIcon>SpringDownloader.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\ZK_logo_128.ico</ApplicationIcon>
     <ManifestCertificateThumbprint>FC2212B55F1B9944395B70DF91CE4D38FC17189D</ManifestCertificateThumbprint>
     <ManifestKeyFile>SpringDownloader_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
@@ -1645,13 +1645,7 @@
     <None Include="Resources\PlayerStates\unready.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ZK_logo_square.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\SpringDownloader.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="SpringDownloader.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Images\logout.png" />

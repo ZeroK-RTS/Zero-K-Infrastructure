@@ -104,7 +104,6 @@ namespace ZeroKLobby
             }
 
             if (Debugger.IsAttached) SwitchFullscreenState(false);
-
         }
 
         public NavigationControl navigationControl { get; }
