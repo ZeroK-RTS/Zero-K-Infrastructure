@@ -18,15 +18,16 @@ namespace ZeroKLobby
         readonly string pathHead;
 
 
-        public BrowserTab(string head, bool autoStartOnLogin)
+        public BrowserTab(string head, bool autoStartOnLogin, string autoStartUrl = null)
         {
+            
             pathHead = head;
             base.DocumentText = "<html><body style='background-color:black;'></body></html>";
             if (Program.TasClient != null && autoStartOnLogin == true)
                 Program.TasClient.LoginAccepted += (sender, args) =>
                 {
-                    HintNewNavigation(head);
-                    base.Navigate(head);
+                    HintNewNavigation(autoStartUrl ?? head);
+                    base.Navigate(autoStartUrl ?? head);
                 };
             base.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(browser_DocumentCompleted); //This will call "UpdateURL()" when page finish loading
             this.ScriptErrorsSuppressed = true;

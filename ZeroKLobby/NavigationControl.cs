@@ -197,7 +197,7 @@ namespace ZeroKLobby
                 new ButtonInfo
                 {
                     Label = "SINGLEPLAYER",
-                    TargetPath = string.Format("{0}/Missions", GlobalConst.BaseSiteUrl),
+                    TargetPath = string.Format("{0}/Missions?no_menu=1", GlobalConst.BaseSiteUrl),
                     Icon = Buttons.sp,
                     Width = 250,
                     Height = TabButtonHeight
@@ -280,7 +280,7 @@ namespace ZeroKLobby
                 if (!Program.Conf.SingleInstance) //run in multiple TAB?
                 {
                     AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Maps", false), "Maps");
-                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Missions", true), "sp");
+                    AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Missions", true, GlobalConst.BaseSiteUrl + "/Missions?no_menu=1"), "sp");
                     AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Battles", false), "rp");
                     AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Planetwars", false), "pw");
                     AddTabPage(new BrowserTab(GlobalConst.BaseSiteUrl + "/Forum", false), "fm");

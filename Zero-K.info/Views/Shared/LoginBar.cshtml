@@ -36,7 +36,9 @@
             {
                 <span> | @Html.PrintFaction(Global.Account.Faction, false)</span>
             }
-            <span nicetitle="Metagame currency that you can get by donating to Zero-K. You can use it to get access to unique commander decorations"> | Kudos: @Global.Account.Kudos </span>
+            @if (Global.Account.Kudos > 0) {
+                <span nicetitle="Metagame currency that you can get by donating to Zero-K. You can use it to get access to unique commander decorations"> | Kudos: @Global.Account.Kudos </span>
+            }
             @if (GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
             {
                 <span> | @Html.PrintMetal(Global.Account) | @Html.PrintDropships(Global.Account) | @Html.PrintBombers(Global.Account) | @Html.PrintWarps(Global.Account)</span>
