@@ -360,12 +360,15 @@ namespace ZeroKLobby.Notifications
 
         public void Stop()
         {
-            Trace.TraceInformation("Closing current battle");
-            isVisible = false;
-            client.LeaveBattle();
+            if (isVisible)
+            {
+                Trace.TraceInformation("Closing current battle");
+                isVisible = false;
+                client.LeaveBattle();
 
-            Program.NotifySection.RemoveBar(this);
-            NavigationControl.Instance.Path = "battles";
+                Program.NotifySection.RemoveBar(this);
+                NavigationControl.Instance.Path = "battles";
+            }
         }
 
         void AutoRespond()
