@@ -218,6 +218,8 @@ namespace ZeroKLobby
                     Trace.TraceError(ex.ToString());
                 }
 
+
+                
                 if (Conf.IsFirstRun)
                 {
                     if (!IsSteamFolder)

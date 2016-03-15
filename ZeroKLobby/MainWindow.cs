@@ -103,6 +103,8 @@ namespace ZeroKLobby
                 timer1.Start();
             }
 
+            if (Debugger.IsAttached) SwitchFullscreenState(false);
+
         }
 
         public NavigationControl navigationControl { get; }
@@ -225,15 +227,15 @@ namespace ZeroKLobby
             }
         }
 
-        public void SwitchFullscreenState()
+        public void SwitchFullscreenState(bool? fullscreen = null)
         {
-            if (WindowState == FormWindowState.Maximized)
+            if (fullscreen != true &&  WindowState == FormWindowState.Maximized)
             {
                 WindowState = FormWindowState.Normal;
                 FormBorderStyle = FormBorderStyle.Sizable;
                 TopMost = false;
             }
-            else
+            else if (fullscreen != false && WindowState != FormWindowState.Maximized)
             {
                 WindowState = FormWindowState.Maximized;
                 FormBorderStyle = FormBorderStyle.None;

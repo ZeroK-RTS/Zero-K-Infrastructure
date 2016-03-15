@@ -423,9 +423,6 @@
     <Compile Include="MicroLobby\LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MicroLobby\LoginForm.Designer.cs">
-      <DependentUpon>LoginForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="MicroLobby\PrivateMessageControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -731,9 +728,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\PrivateMessageControl.resx">
       <DependentUpon>PrivateMessageControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\LoginForm.resx">
-      <DependentUpon>LoginForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\DownloadBar.resx">
     </EmbeddedResource>
