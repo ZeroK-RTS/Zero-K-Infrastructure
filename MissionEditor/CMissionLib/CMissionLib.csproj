@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action.cs" />
+    <Compile Include="Actions\TimeBasedAction.cs" />
     <Compile Include="Actions\GUI\BeautyShotAction.cs" />
     <Compile Include="Actions\GUI\AddUnitsToObjectiveAction.cs" />
     <Compile Include="Actions\GUI\AddPointToObjectiveAction.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="CompositeObservableCollection.cs" />
     <Compile Include="Condition.cs" />
     <Compile Include="Conditions\CutsceneSkippedCondition.cs" />
+    <Compile Include="Conditions\TimeBasedCondition.cs" />
     <Compile Include="Conditions\UnitEnteredLOSCondition.cs" />
     <Compile Include="Conditions\GamePreloadCondition.cs" />
     <Compile Include="Conditions\CountdownTickCondition.cs" />
@@ -167,6 +169,7 @@
     <Compile Include="Conditions\UnitIsVisibleCondition.cs" />
     <Compile Include="Conditions\UnitsAreInAreaCondition.cs" />
     <Compile Include="Conditions\UnitSelectedCondition.cs" />
+    <Compile Include="ITimeSpan.cs" />
     <Compile Include="Objective.cs" />
     <Compile Include="Cylinder.cs" />
     <Compile Include="Actions\Logic\DefeatAction.cs" />

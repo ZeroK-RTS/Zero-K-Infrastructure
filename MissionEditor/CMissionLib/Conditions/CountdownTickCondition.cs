@@ -5,10 +5,9 @@ using System.Runtime.Serialization;
 namespace CMissionLib.Conditions
 {
 	[DataContract]
-	public class CountdownTickCondition : Condition
+	public class CountdownTickCondition : TimeBasedCondition
 	{
 		string countdown;
-		TimeSpan time;
 
 		public CountdownTickCondition(string countdown)
 			: base()
@@ -27,62 +26,12 @@ namespace CMissionLib.Conditions
 			}
 		}
 
-		[DataMember]
-		public TimeSpan Time
-		{
-			get { return time; }
-			set
-			{
-				time = value;
-				RaiseTimeChanged();
-			}
-		}
-
-		public double Seconds
-		{
-			get { return time.TotalSeconds; }
-			set
-			{
-				time = TimeSpan.FromSeconds(value);
-				RaiseTimeChanged();
-			}
-		}
-
-		public double Minutes
-		{
-			get { return time.TotalMinutes; }
-			set
-			{
-				time = TimeSpan.FromMinutes(value);
-				RaiseTimeChanged();
-			}
-		}
-
-
-		public double Frames // 30 gameframes per second
-		{
-			get { return time.TotalSeconds*30; }
-			set
-			{
-				time = TimeSpan.FromSeconds(value/30);
-				RaiseTimeChanged();
-			}
-		}
-
-		void RaiseTimeChanged()
-		{
-			RaisePropertyChanged("Seconds");
-			RaisePropertyChanged("Time");
-			RaisePropertyChanged("Minutes");
-			RaisePropertyChanged("Frames");
-		}
-
 		public override LuaTable GetLuaTable(Mission mission)
 		{
 			var map = new Dictionary<object, object>
 				{
 					{"countdown",  Countdown??string.Empty},
-					{"frames", Math.Floor(Frames)},
+					{"frames", Frames},
 				};
 			return new LuaTable(map);
 		}
