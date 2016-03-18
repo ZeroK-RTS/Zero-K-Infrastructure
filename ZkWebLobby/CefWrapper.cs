@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Newtonsoft.Json;
@@ -244,6 +245,17 @@ namespace ZeroKLobby
             };
             apiFunctions.Add(func);
             registerApiFunction_(name, func);
+        }
+
+        // Convert a utf8 string mangled by the marshaller into a proper utf8 string.
+        public static string unmangleUtf8(string str)
+        {
+            return Encoding.UTF8.GetString(Encoding.Default.GetBytes(str));
+        }
+        // Mangle a string so it gets marshalled into utf8 on the C side.
+        public static string mangleUtf8(string str)
+        {
+            return Encoding.Default.GetString(Encoding.UTF8.GetBytes(str));
         }
 
 

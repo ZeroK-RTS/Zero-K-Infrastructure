@@ -21,6 +21,7 @@ namespace ZkWebLobby
             var springPaths = new SpringPaths(null, startupPath);
             Spring runningSpring = null;
             springPaths.MakeFolders();
+            TcpTransport connection = null;
 
             // speed up spring start
             springPaths.SpringVersionChanged += (sender, eventArgs) =>
@@ -66,7 +67,7 @@ namespace ZkWebLobby
 
             var downloader = new PlasmaDownloader.PlasmaDownloader(springScanner, springPaths); //rapid
             downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride);
-            
+
             // ZKL's downloader doesn't send events to monitor download progress, so we have to poll it.
             Timer pollDownloads = new Timer();
             pollDownloads.Interval = 250;
@@ -125,6 +126,20 @@ namespace ZkWebLobby
                         return e.Message;
                     }
                 });
+            CefWrapper.RegisterApiFunction(
+                "connect",
+                (string host, int port) =>
+                {
+                    if (connection != null) connection.RequestClose();
+                    connection = new TcpTransport(host, port);
+                    connection.ConnectAndRun(
+                        async (s) => CefWrapper.ExecuteJavascript($"on_lobby_message({CefWrapper.mangleUtf8(JsonConvert.SerializeObject(s))})"),
+                        async () => { },
+                        async (requested) => CefWrapper.ExecuteJavascript($"on_connection_closed({CefWrapper.mangleUtf8(JsonConvert.SerializeObject(requested))})")
+                        );
+                });
+            CefWrapper.RegisterApiFunction("disconnect", () => connection?.RequestClose());
+            CefWrapper.RegisterApiFunction("sendLobbyMessage", (string msg) => connection?.SendLine(CefWrapper.unmangleUtf8(msg) + '\n'));
 
             var fileUrl = new Uri(startupPath + "/zkwl/index.html");
             CefWrapper.StartMessageLoop(fileUrl.AbsoluteUri, "black", true);
