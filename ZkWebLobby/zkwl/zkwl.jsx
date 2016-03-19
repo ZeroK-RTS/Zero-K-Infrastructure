@@ -19,19 +19,19 @@ Zkl && document.addEventListener('contextmenu', function(evt){
 
 window.echo = console.log.bind(console); // faster to write than console.log
 
-// Create stores.
-var gameInfo = new (require('store/ZkGameInfo.js'))();
-var process = new (require('store/ZkProcess.js'))(gameInfo);
-var sound = new (require('weblobby/store/Sound.js'))();
-var lobbyServer = new (require('store/LobbyServer.js'))();
-var chatStore = new (require('weblobby/store/Chat.js'))(lobbyServer, process);
-var afkStatus = new (require('weblobby/store/AfkStatus.js'))(lobbyServer, process);
-var currentBattle = new (require('weblobby/store/CurrentBattle.js'))(gameInfo,
-	lobbyServer, chatStore, process);
-var musicPlaylist = new (require('store/MusicPlaylist.js'))(process);
-var pastebin = new (require('weblobby/store/LogPastebin.js'))();
-
 var runApp = _.once(function(){
+	// Create stores.
+	var gameInfo = new (require('store/ZkGameInfo.js'))();
+	var process = new (require('store/ZkProcess.js'))(gameInfo);
+	var sound = new (require('weblobby/store/Sound.js'))();
+	var lobbyServer = new (require('store/LobbyServer.js'))();
+	var chatStore = new (require('weblobby/store/Chat.js'))(lobbyServer, process);
+	var afkStatus = new (require('weblobby/store/AfkStatus.js'))(lobbyServer, process);
+	var currentBattle = new (require('weblobby/store/CurrentBattle.js'))(gameInfo,
+		lobbyServer, chatStore, process);
+	var musicPlaylist = new (require('store/MusicPlaylist.js'))(process);
+	var pastebin = new (require('weblobby/store/LogPastebin.js'))();
+
 	ReactDOM.render(<App
 		serverStore={lobbyServer}
 		gameInfoStore={gameInfo}

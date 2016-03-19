@@ -86,6 +86,7 @@ namespace ZkWebLobby
                 });
             CefWrapper.RegisterApiFunction("getMods", () => { return springScanner.GetAllModResource(); });
             CefWrapper.RegisterApiFunction("getMaps", () => { return springScanner.GetAllMapResource(); });
+
             CefWrapper.RegisterApiFunction(
                 "downloadEngine",
                 (string engine) =>
@@ -102,6 +103,7 @@ namespace ZkWebLobby
                 {
                     downloader.Downloads.FirstOrDefault(d => d.Name == name)?.Abort();
                 });
+
             CefWrapper.RegisterApiFunction(
                 "startSpringScript",
                 (string engineVer, string script) =>
@@ -126,6 +128,7 @@ namespace ZkWebLobby
                         return e.Message;
                     }
                 });
+
             CefWrapper.RegisterApiFunction(
                 "connect",
                 (string host, int port) =>
@@ -133,13 +136,25 @@ namespace ZkWebLobby
                     if (connection != null) connection.RequestClose();
                     connection = new TcpTransport(host, port);
                     connection.ConnectAndRun(
-                        async (s) => CefWrapper.ExecuteJavascript($"on_lobby_message({CefWrapper.mangleUtf8(JsonConvert.SerializeObject(s))})"),
+                        async (s) => CefWrapper.ExecuteJavascript(
+                            $"on_lobby_message({CefWrapper.mangleUtf8(JsonConvert.SerializeObject(s))})"),
                         async () => { },
-                        async (requested) => CefWrapper.ExecuteJavascript($"on_connection_closed({CefWrapper.mangleUtf8(JsonConvert.SerializeObject(requested))})")
+                        async (requested) => CefWrapper.ExecuteJavascript(
+                            $"on_connection_closed({CefWrapper.mangleUtf8(JsonConvert.SerializeObject(requested))})")
                         );
                 });
             CefWrapper.RegisterApiFunction("disconnect", () => connection?.RequestClose());
             CefWrapper.RegisterApiFunction("sendLobbyMessage", (string msg) => connection?.SendLine(CefWrapper.unmangleUtf8(msg) + '\n'));
+
+            CefWrapper.RegisterApiFunction(
+                "readConfig",
+                () =>
+                {
+                    try { return JsonConvert.DeserializeObject(File.ReadAllText(startupPath + "/config.json")); }
+                    catch(FileNotFoundException) { return null; }
+                });
+            CefWrapper.RegisterApiFunction("saveConfig", (object conf) => File.WriteAllText(startupPath + "/config.json",
+                JsonConvert.SerializeObject(conf, Formatting.Indented)));
 
             var fileUrl = new Uri(startupPath + "/zkwl/index.html");
             CefWrapper.StartMessageLoop(fileUrl.AbsoluteUri, "black", true);
