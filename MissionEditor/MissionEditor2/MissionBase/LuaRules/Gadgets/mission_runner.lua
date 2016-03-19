@@ -771,14 +771,27 @@ local actionsTable = {
         end,
   DefeatAction = function(action)
 	  local aiAllyTeams = {}
+          local playerAllyTeams = {}
           local teams = Spring.GetTeamList()
+          local gaiaTeam = Spring.GetGaiaTeamID()
           for i=1,#teams do
-            local unitTeam = teams[i]
-            local _, _, _, isAI, _, allyTeam = Spring.GetTeamInfo(unitTeam)
-            if isAI then
+            local team = teams[i]
+            local _, _, _, isAI, _, allyTeam = Spring.GetTeamInfo(team)
+            if (gaiaTeam == team) then
+              -- do nothing
+            elseif not isAI then
+              playerAllyTeams[allyTeam] = true
+            end
+          end
+          for i=1,#teams do
+            local team = teams[i]
+            local _, spectator, _, isAI, _, allyTeam = Spring.GetTeamInfo(team)
+            if (gaiaTeam == team) then
+              -- do nothing
+            elseif isAI and not playerAllyTeams[allyTeam] then
               aiAllyTeams[#aiAllyTeams+1] = allyTeam
             else
-              Spring.KillTeam(unitTeam)
+              Spring.KillTeam(team)
             end
           end
 	  Spring.GameOver(aiAllyTeams)
@@ -786,10 +799,13 @@ local actionsTable = {
   VictoryAction = function(action)
 	  local humanAllyTeams = {}
           local teams = Spring.GetTeamList()
+          local gaiaTeam = Spring.GetGaiaTeamID()
           for i=1,#teams do
             local unitTeam = teams[i]
             local _, _, _, isAI, _, allyTeam = Spring.GetTeamInfo(unitTeam)
-            if not isAI then
+            if (gaiaTeam == team) then
+              -- do nothing
+            elseif not isAI then
               humanAllyTeams[#humanAllyTeams+1] = allyTeam
             end
           end
