@@ -32,20 +32,40 @@ namespace Springie.autohost.Polls
                     ah.FilterMaps(words, out vals, out indexes);
                     if (vals.Length > 0)
                     {
-                        bool serious = ah.config.Mode == AutohostMode.Serious;
-                        var db = serious ? new ZkDataContext() : null;
+                        var db = new ZkDataContext();
 
                         foreach (string possibleMap in vals)
                         {
-                            if (serious)
+                            try
                             {
-                                try
-                                {
-                                    var mapEntry = db.Resources.FirstOrDefault(x => x.InternalName == possibleMap);
-                                    if (mapEntry != null && mapEntry.MapIsSpecial == true) continue;
+                                var mapEntry = db.Resources.FirstOrDefault(x => x.InternalName == possibleMap);
+
+                                if (mapEntry == null) continue;
+                                if (mapEntry.MapIsSupported == false) continue;
+
+                                if (ah.config.Mode != AutohostMode.None && mapEntry.FeaturedOrder == null) {
+                                    AutoHost.Respond(tas, spring, e, String.Format("{0} is not in the multiplayer map pool (low quality). You can play it in a private game", possibleMap));
+                                    continue;
                                 }
-                                catch (Exception ex) { }    // meh
+                                if (ah.config.Mode != AutohostMode.None && mapEntry.MapIsSpecial == true) {
+                                    AutoHost.Respond(tas, spring, e, String.Format("{0} is not in the multiplayer map pool (has custom settings). You can play it in a private game", possibleMap));
+                                    continue;
+                                }
+
+                                if (ah.config.Mode == AutohostMode.Game1v1 && mapEntry.MapIs1v1 == false) {
+                                    AutoHost.Respond(tas, spring, e, String.Format("{0} is not in the 1v1 map pool", possibleMap));
+                                    continue;
+                                }
+                                if (ah.config.Mode == AutohostMode.GameFFA && mapEntry.MapIsFFA == false) {
+                                    AutoHost.Respond(tas, spring, e, String.Format("{0} is not in the FFA map pool", possibleMap));
+                                    continue;
+                                }
+                                if (ah.config.Mode == AutohostMode.Teams && mapEntry.MapIsTeams == false) {
+                                    AutoHost.Respond(tas, spring, e, String.Format("{0} is not in the teamgame map pool", possibleMap));
+                                    continue;
+                                }
                             }
+                            catch (Exception ex) { }    // meh
 
                             map = possibleMap;
                             var resource = ah.cache.FindResourceData(new string[] { map }, ResourceType.Map);
@@ -59,7 +79,7 @@ namespace Springie.autohost.Polls
                                 return true;
                             }
                         }
-                        AutoHost.Respond(tas, spring, e, String.Format("Cannot find such {0}map",serious ? "(non-special) " : ""));
+                        AutoHost.Respond(tas, spring, e, String.Format("Cannot find a valid map"));
                         return false;
                     }
                     else

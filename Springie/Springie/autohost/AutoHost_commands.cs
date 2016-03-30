@@ -378,9 +378,9 @@ namespace Springie.autohost
             int[] indexes;
             if (FilterMaps(words, out vals, out indexes) > 0)
             {
-                SayBattle("changing map to " + vals[0]);
+                SayBattle("Changing map to " + vals[0]);
                 var mapi = cache.GetResourceDataByInternalName(vals[0]);
-                if (mapi != null)
+                if (mapi != null && mapi.MapIsSupported == true)
                 {
                     tas.ChangeMap(mapi.InternalName);
                 }
