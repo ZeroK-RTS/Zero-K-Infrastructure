@@ -55,7 +55,7 @@ namespace ZeroKWeb.SpringieInterface
                 };
             }
 
-            if (clanWise == null && (config.AutohostMode == AutohostMode.Generic || config.AutohostMode == AutohostMode.Teams)) clanWise = true;
+            if (clanWise == null && (config.AutohostMode == AutohostMode.Generic || config.AutohostMode == AutohostMode.Teams || config.AutohostMode == AutohostMode.Serious)) clanWise = true;
 
             var res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);
 
