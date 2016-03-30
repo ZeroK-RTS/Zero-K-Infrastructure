@@ -1,4 +1,5 @@
 using LobbyClient;
+using System.Linq;
 
 namespace Springie.autohost.Polls
 {
@@ -34,6 +35,18 @@ namespace Springie.autohost.Polls
 
         protected override void SuccessAction() {
             ah.ComForceSpectator(TasSayEventArgs.Default, new[] { player });
+        }
+
+         protected override bool AllowVote(TasSayEventArgs e)
+        {
+            if (tas.MyBattle == null) return false;
+            var entry = tas.MyBattle.Users.Values.FirstOrDefault(x => x.Name == e.UserName);
+            if (entry == null || entry.IsSpectator)
+            {
+                ah.Respond(e, string.Format("Only players can vote"));
+                return false;
+            }
+            else return true;
         }
     }
 }
