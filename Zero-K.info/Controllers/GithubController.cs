@@ -52,7 +52,7 @@ namespace ZeroKWeb.Controllers
                     dynamic commits = payload.commits;
                     foreach (dynamic commit in commits)
                     {
-                        sb.AppendFormat("\n {0} ({1})", commit.message, commit.url);
+                        sb.AppendFormat("\n {0} ( {1} )", commit.message, commit.url);
                         count++;
                     }
                     if (count > 0) text = $"[{payload.repository.name}] {payload.sender.login} has pushed {count} commits: {sb}";
