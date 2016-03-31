@@ -42,7 +42,7 @@ namespace Springie.autohost.Polls
                                 try
                                 {
                                     var mapEntry = db.Resources.FirstOrDefault(x => x.InternalName == possibleMap);
-                                    if (mapEntry != null && mapEntry.MapIsSpecial == true) continue;
+                                    if (mapEntry != null && (mapEntry.MapIsSpecial == true || mapEntry.FeaturedOrder == null)) continue;
                                 }
                                 catch (Exception ex) { }    // meh
                             }
