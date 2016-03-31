@@ -380,7 +380,7 @@ namespace Springie.autohost
             {
                 SayBattle("Changing map to " + vals[0]);
                 var mapi = cache.GetResourceDataByInternalName(vals[0]);
-                if (mapi != null && mapi.MapIsSupported == true)
+                if (mapi != null)
                 {
                     tas.ChangeMap(mapi.InternalName);
                 }
