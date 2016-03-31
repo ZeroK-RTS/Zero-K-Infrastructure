@@ -431,12 +431,21 @@ namespace ZeroKWeb.SpringieInterface
                     }
                         break;
                     case AutohostMode.Generic: {
-                        var map = db.Resources.Single(x => x.InternalName == context.Map);
-                        res = new Balancer().LegacyBalance(
-                            allyCount ?? map.MapFFAMaxTeams ?? 2,
-                            clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise,
-                            context);
-                        res.DeleteBots = true;
+                        if (allyCount == null && res.Bots != null && res.Bots.Any())
+                        {
+                            res.Players = context.Players.ToList();
+                            res.Bots = context.Bots.Where(x => x.Owner != context.AutohostName).ToList();
+                            foreach (var p in res.Players) p.AllyID = 0;
+                            foreach (var b in res.Bots) b.AllyID = 1;
+                        } else
+                        {
+                            var map = db.Resources.Single(x => x.InternalName == context.Map);
+                            res = new Balancer().LegacyBalance(
+                                allyCount ?? map.MapFFAMaxTeams ?? 2,
+                                clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise,
+                                context);
+                            res.DeleteBots = false;
+                        }
                         return res;
                     }
 
