@@ -137,7 +137,7 @@ namespace ZeroKWeb.Controllers
 
             var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
             var top50Accounts =
-                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && !y.IsSpectator))
+                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount == 2 && y.SpringBattle.HasBots == false && !y.IsSpectator))
                     .Include(x => x.Clan)
                     .Include(x => x.Faction)
                     .OrderByDescending(x => x.Effective1v1Elo)
@@ -146,7 +146,7 @@ namespace ZeroKWeb.Controllers
                     .ToList();
 
             var top50Teams =
-                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && !y.IsSpectator))
+                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount > 2 && y.SpringBattle.HasBots == false && !y.IsSpectator))
                     .Include(x => x.Clan)
                     .Include(x => x.Faction)
                     .OrderByDescending(x => x.EffectiveElo)
