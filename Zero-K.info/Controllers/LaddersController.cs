@@ -78,7 +78,7 @@ namespace ZeroKWeb.Controllers
 
             var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             var validAwards =
-                db.SpringBattles.Where(x => x.StartTime >= monthStart && !x.ResourceByMapResourceID.InternalName.Contains("SpeedMetal"))
+                db.SpringBattles.Where(x => x.StartTime >= monthStart && x.HasBots == false && x.ResourceByMapResourceID.FeaturedOrder != null && x.ResourceByMapResourceID.MapIsSpecial == false)
                     .SelectMany(x => x.AccountBattleAwards)
                     .GroupBy(x => x.AwardKey);
 
@@ -137,7 +137,7 @@ namespace ZeroKWeb.Controllers
 
             var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
             var top50Accounts =
-                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount == 2 && y.SpringBattle.HasBots == false && y.EloChange != null && Math.Abs(y.EloChange) > 0 && !y.IsSpectator))
+                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount == 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator))
                     .Include(x => x.Clan)
                     .Include(x => x.Faction)
                     .OrderByDescending(x => x.Effective1v1Elo)
@@ -146,7 +146,7 @@ namespace ZeroKWeb.Controllers
                     .ToList();
 
             var top50Teams =
-                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount > 2 && y.SpringBattle.HasBots == false && y.EloChange != null && Math.Abs(y.EloChange) > 0 && !y.IsSpectator))
+                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount > 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator))
                     .Include(x => x.Clan)
                     .Include(x => x.Faction)
                     .OrderByDescending(x => x.EffectiveElo)
