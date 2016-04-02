@@ -37,14 +37,16 @@ namespace Springie.autohost.Polls
 
                         foreach (string possibleMap in vals)
                         {
-                            if (serious)
+                            if (serious) // not sure if serious...
                             {
                                 try
                                 {
                                     var mapEntry = db.Resources.FirstOrDefault(x => x.InternalName == possibleMap);
                                     if (mapEntry != null && (mapEntry.MapIsSpecial == true || mapEntry.FeaturedOrder == null)) continue;
                                 }
-                                catch (Exception ex) { }    // meh
+                                catch (Exception ex) {
+                                	Trace.TraceError(ex.ToString());
+                                }
                             }
 
                             map = possibleMap;
