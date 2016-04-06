@@ -32,8 +32,15 @@ namespace Springie.autohost.Polls
                     ah.FilterMaps(words, out vals, out indexes);
                     if (vals.Length > 0)
                     {
-                        bool serious = ah.config.Mode == AutohostMode.Serious;
-                        var db = serious ? new ZkDataContext() : null;
+                    	bool serious;
+                    	ZkDataContext db;
+                        try {
+                        	serious = ah.config.Mode == AutohostMode.Serious;
+                        	db = serious ? new ZkDataContext() : null;
+                        }
+                        catch (Exception ex) {
+                        	Trace.TraceError(ex.ToString());
+                        }
 
                         foreach (string possibleMap in vals)
                         {
