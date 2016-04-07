@@ -3,13 +3,13 @@ using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
+using ZeroKLobby.Controls;
 using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class PwBar: UserControl, INotifyBar
+    public partial class PwBar: INotifyBar
     {
-        NotifyBarContainer container;
         DateTime deadline;
         readonly Label headerLabel = new Label();
         readonly TasClient tas;
@@ -116,9 +116,7 @@ namespace ZeroKLobby.Notifications
             };
         }
 
-        public void AddedToContainer(NotifyBarContainer container)
-        {
-            this.container = container;
+            /*this.container = container;
             container.btnDetail.Enabled = false;
             container.btnDetail.Text = "PlanetWars";
             container.btnStop.Enabled = false;
@@ -126,15 +124,8 @@ namespace ZeroKLobby.Notifications
             //container.btnDetail.Visible = false;
             container.Title = "PlanetWars match maker";
             container.TitleTooltip = "You need at least two people to attack a planet and at least one to defend a planet";
+            */
 
-        }
-
-        public void CloseClicked(NotifyBarContainer container)
-        {
-            Program.NotifySection.RemoveBar(this);
-        }
-
-        public void DetailClicked(NotifyBarContainer container) {}
 
         public Control GetControl()
         {

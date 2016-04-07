@@ -346,12 +346,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MicroLobby\MyCol.cs" />
-    <Compile Include="Notifications\GenericBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Notifications\GenericBar.Designer.cs">
-      <DependentUpon>GenericBar.cs</DependentUpon>
-    </Compile>
     <Compile Include="Notifications\VoteBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -427,7 +421,9 @@
     <Compile Include="Notifications\ConnectBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Notifications\INotifyBar.cs" />
+    <Compile Include="Notifications\INotifyBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="MicroLobby\PlayerListBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -476,12 +472,6 @@
     </Compile>
     <Compile Include="MicroLobby\DownloaderTab.Designer.cs">
       <DependentUpon>DownloaderTab.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Notifications\NotifyBarContainer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Notifications\NotifyBarContainer.Designer.cs">
-      <DependentUpon>NotifyBarContainer.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -577,10 +567,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\MissionBar.resx">
       <DependentUpon>MissionBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\NotifyBarContainer.resx">
-      <DependentUpon>NotifyBarContainer.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\NotifySection.resx">
       <DependentUpon>NotifySection.cs</DependentUpon>
@@ -684,9 +670,6 @@
     </None>
     <EmbeddedResource Include="MicroLobby\HostDialog.resx">
       <DependentUpon>HostDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\GenericBar.resx">
-      <DependentUpon>GenericBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\SettingsTab.resx">
       <DependentUpon>SettingsTab.cs</DependentUpon>

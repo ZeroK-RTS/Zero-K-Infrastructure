@@ -7,12 +7,13 @@ using System.Windows;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
+using ZeroKLobby.Controls;
 using ZkData;
 using ZkData.UnitSyncLib;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class MissionBar : UserControl, INotifyBar
+    public partial class MissionBar : INotifyBar
     {
         readonly string missionName;
 
@@ -23,20 +24,11 @@ namespace ZeroKLobby.Notifications
         }
 
 
-        NotifyBarContainer container;
-
-        public void AddedToContainer(NotifyBarContainer container) {
-            this.container = container;
-            container.Title = "Loading a singleplayer mission";
-            container.TitleTooltip = "Please await resource download";
+        public void AddedToContainer() {
+            //Title = "Loading a singleplayer mission";
+            //container.TitleTooltip = "Please await resource download";
         }
 
-        public void CloseClicked(NotifyBarContainer container) {
-            Program.NotifySection.RemoveBar(this);
-        }
-
-        public void DetailClicked(NotifyBarContainer container) {
-        }
 
         public Control GetControl() {
             return this;
@@ -66,7 +58,7 @@ namespace ZeroKLobby.Notifications
                                                                    Program.MainWindow.InvokeFunc(() =>
                                                                    {
                                                                        label1.Text = string.Format("{0} is not a valid mission", missionName);
-                                                                       container.btnStop.Enabled = true;
+                                                                       //container.btnStop.Enabled = true;
                                                                    });
                                                                }
 
@@ -79,7 +71,7 @@ namespace ZeroKLobby.Notifications
                                                                Program.MainWindow.InvokeFunc(() =>
                                                                {
                                                                    label1.Text = string.Format("Download of metadata failed: {0}", error.Message);
-                                                                   container.btnStop.Enabled = true;
+                                                                   //container.btnStop.Enabled = true;
                                                                });
                                                                metaWait.Set();
                                                            });
@@ -100,7 +92,7 @@ namespace ZeroKLobby.Notifications
                     {
                         label1.Text = string.Format("Download of {0} failed", missionName);
 
-                        container.btnStop.Enabled = true;
+                        //container.btnStop.Enabled = true;
                     });
                 }
 

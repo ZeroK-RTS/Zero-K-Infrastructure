@@ -7,14 +7,14 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
+using ZeroKLobby.Controls;
 using ZeroKLobby.MicroLobby;
 using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class BattleBar : UserControl, INotifyBar
+    public partial class BattleBar : INotifyBar
     {
-        NotifyBarContainer barContainer;
         readonly TasClient client;
         bool desiredSpectatorState = false;
         string engineVersionNeeded;
@@ -101,11 +101,15 @@ namespace ZeroKLobby.Notifications
                     }
                 };
 
+
+
             client.BattleJoined += (s, e) =>
                 {
                     if (!isVisible) ManualBattleStarted();
-                    if (IsHostGameRunning()) barContainer.btnDetail.Text = "Rejoin";
-                    else barContainer.btnDetail.Text = "Start";
+                    //if (IsHostGameRunning()) barContainer.btnDetail.Text = "Rejoin";
+                    //else barContainer.btnDetail.Text = "Start";
+                    
+                    
                     //client.ChangeMyUserStatus(false, false);
                     var battle = client.MyBattle;
                     lastBattleFounder = battle.Founder.Name;
@@ -114,21 +118,21 @@ namespace ZeroKLobby.Notifications
 
                     if (battle.IsQueue)
                     {
-                        barContainer.Title = string.Format("Joined {0} Quick Match Queue", battle.QueueName);
-                        barContainer.TitleTooltip = "Please await people, game will start automatically";
+                        Title = string.Format("Joined {0} Quick Match Queue", battle.QueueName);
+                        TitleTooltip = "Please await people, game will start automatically";
                         lbQueue.Visible = true;
                         radioPlay.Visible = false;
                         radioSpec.Visible = false;
-                        barContainer.btnDetail.Visible = false;
+                        btnDetail.Visible = false;
                     }
                     else
                     {
-                        barContainer.Title = string.Format("Joined battle room hosted by {0}", battle.Founder.Name);
-                        barContainer.TitleTooltip = "Use button on the left side to start a game";
+                        Title = string.Format("Joined battle room hosted by {0}", battle.Founder.Name);
+                        TitleTooltip = "Use button on the left side to start a game";
                         lbQueue.Visible = false;
                         radioPlay.Visible = true;
                         radioSpec.Visible = true;
-                        barContainer.btnDetail.Visible = true;
+                        btnDetail.Visible = true;
                     }
 
                     Program.Downloader.GetResource(DownloadType.MAP, battle.MapName);
@@ -169,13 +173,13 @@ namespace ZeroKLobby.Notifications
                     RefreshTooltip();
                 };
 
-            client.MyBattleHostExited += (s, e) => { barContainer.btnDetail.Text = "Start"; };
+            client.MyBattleHostExited += (s, e) => { btnDetail.Text = "Start"; };
 
             client.MyBattleStarted += (s, e) =>
                 {
                     try
                     {
-                        barContainer.btnDetail.Text = "Rejoin";
+                        btnDetail.Text = "Rejoin";
                         if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced)
                         {
                             if (Utils.VerifySpringInstalled())
@@ -197,7 +201,7 @@ namespace ZeroKLobby.Notifications
                 {
                     if (client.MyBattleStatus != null)
                     {
-                        barContainer.btnDetail.Enabled = client.MyBattleStatus.SyncStatus == SyncStatuses.Synced;
+                        btnDetail.Enabled = client.MyBattleStatus.SyncStatus == SyncStatuses.Synced;
 
                         if (client.MyBattleStatus.IsSpectator && radioPlay.Checked) ChangeGuiSpectatorWithoutEvent(false); // i was spectated
                         if (!client.MyBattleStatus.IsSpectator && radioSpec.Checked) ChangeGuiSpectatorWithoutEvent(true); //i was unspectated
@@ -206,7 +210,7 @@ namespace ZeroKLobby.Notifications
 
             client.BattleClosed += (s, e) =>
                 {
-                    barContainer.btnDetail.Text = "Start";
+                    btnDetail.Text = "Start";
                     if (gameBox.Image != null) gameBox.Image.Dispose();
                     gameBox.Image = null;
                     RefreshTooltip();
@@ -480,7 +484,7 @@ namespace ZeroKLobby.Notifications
         {
             return this;
         }
-        public void AddedToContainer(NotifyBarContainer container)
+        /*public void AddedToContainer(tainer container)
         {
             barContainer = container;
             container.btnDetail.Image = ZklResources.battle;
@@ -501,7 +505,7 @@ namespace ZeroKLobby.Notifications
             NavigationControl.Instance.Path = "chat/battle";
             if (IsHostGameRunning()) Rejoin();
             else client.Say(SayPlace.Battle, "", "!start", false);
-        }
+        }*/
 
         void BattleIconManager_BattleChanged(object sender, EventArgs<BattleIcon> e)
         {

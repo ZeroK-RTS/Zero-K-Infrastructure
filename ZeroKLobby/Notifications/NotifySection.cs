@@ -11,7 +11,7 @@ namespace SpringDownloader.Notifications
 	public partial class NotifySection: ZklBaseControl
 	{
         readonly Timer uiUpdate = new Timer();
-		public IEnumerable<INotifyBar> Bars { get { return Controls.OfType<NotifyBarContainer>().Select(x => x.BarContent); } }
+		public IEnumerable<INotifyBar> Bars { get { return Controls.OfType<INotifyBar>(); } }
 
 		public NotifySection()
 		{
@@ -25,17 +25,17 @@ namespace SpringDownloader.Notifications
 		{
 			if (!Bars.Contains(bar))
 			{
-				Controls.Add(new NotifyBarContainer(bar));
+				Controls.Add((Control)bar);
                 uiUpdate.Start(); //accumulate update for 50ms because Linux Mono have trouble with multiple add/remove bar spam.
 			}
 		}
 
 		public void RemoveBar(object bar)
 		{
-			var container = Controls.OfType<NotifyBarContainer>().FirstOrDefault(x => x.BarContent == bar);
+			var container = Controls.OfType<INotifyBar>().FirstOrDefault(x => x == bar);
             if (container != null)
             {
-                Controls.Remove(container);
+                Controls.Remove((Control)container);
                 uiUpdate.Start(); //accumulate update for 50ms because Linux Mono have trouble with multiple add/remove bar spam.
             }
 		}

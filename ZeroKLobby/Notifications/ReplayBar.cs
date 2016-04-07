@@ -9,10 +9,11 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using PlasmaDownloader;
+using ZeroKLobby.Controls;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class ReplayBar : UserControl, INotifyBar
+    public partial class ReplayBar : INotifyBar
     {
         readonly string demoUrl;
         readonly string engineVersion;
@@ -28,21 +29,12 @@ namespace ZeroKLobby.Notifications
             this.engineVersion = engineVersion;
             InitializeComponent();
         }
-
-
-      NotifyBarContainer container;
-        public void AddedToContainer(NotifyBarContainer container) {
+        /*
+      public void AddedToContainer(NotifyBarContainer container) {
             this.container = container;
             container.Title = "Replay preparing";
             container.TitleTooltip = "Please await downloads";
-        }
-
-        public void CloseClicked(NotifyBarContainer container) {
-            Program.NotifySection.RemoveBar(this);
-        }
-
-        public void DetailClicked(NotifyBarContainer container) {
-        }
+        }*/
 
         public Control GetControl() {
             return this;
@@ -76,7 +68,7 @@ namespace ZeroKLobby.Notifications
                     Program.MainWindow.InvokeFunc(() =>
                     {
                         label1.Text = string.Format("Download of {0} failed", demoUrl);
-                        container.btnStop.Enabled = true;
+                        //container.btnStop.Enabled = true;
                     });
                     return;
                 }
@@ -103,7 +95,7 @@ namespace ZeroKLobby.Notifications
                     Program.MainWindow.InvokeFunc(() =>
                     {
                         label1.Text = string.Format("Error starting replay {0}", demoUrl);
-                        container.btnStop.Enabled = true;
+                        //container.btnStop.Enabled = true;
                     });
                 }
             });

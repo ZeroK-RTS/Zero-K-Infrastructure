@@ -1,9 +1,10 @@
 ﻿using System.Windows.Forms;
+using ZeroKLobby.Controls;
 using ZeroKLobby.MicroLobby;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class WarningBar: UserControl, INotifyBar
+    public partial class WarningBar: INotifyBar
     {
         private string title;
 
@@ -23,19 +24,13 @@ namespace ZeroKLobby.Notifications
         }
 
 
-        public void AddedToContainer(NotifyBarContainer container)
+/*        public void AddedToContainer(NotifyBarContainer container)
         {
             container.btnDetail.Enabled = false;
             container.btnDetail.BackgroundImage = ZklResources.warning;
             container.Title = title;
-        }
+        }*/
 
-        public void CloseClicked(NotifyBarContainer container)
-        {
-            Program.NotifySection.RemoveBar(this);
-        }
-
-        public void DetailClicked(NotifyBarContainer container) {}
 
         public Control GetControl()
         {

@@ -3,13 +3,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LobbyClient;
+using ZeroKLobby.Controls;
 using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class VoteBar: UserControl, INotifyBar
+    public partial class VoteBar: INotifyBar
     {
-        NotifyBarContainer container;
         readonly TasClient tas;
         bool isSpad = false;
 
@@ -135,19 +135,12 @@ namespace ZeroKLobby.Notifications
             tas.BattleClosed += (sender, args) => { Program.NotifySection.RemoveBar(this); isSpad = false; };
         }
 
-        public void AddedToContainer(NotifyBarContainer container) {
-            this.container = container;
+            /*this.container = container;
             container.btnDetail.Enabled = false;
             container.btnDetail.Text = "Vote";
             container.Title = "Battle poll";
-            container.TitleTooltip = "Vote using buttons on the left side";
-        }
+            container.TitleTooltip = "Vote using buttons on the left side";*/
 
-        public void CloseClicked(NotifyBarContainer container) {
-            Program.NotifySection.RemoveBar(this);
-        }
-
-        public void DetailClicked(NotifyBarContainer container) {}
 
         public Control GetControl() {
             return this;

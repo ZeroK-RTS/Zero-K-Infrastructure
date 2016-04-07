@@ -6,11 +6,12 @@ using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
 using PlasmaShared;
+using ZeroKLobby.Controls;
 using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
-	public partial class SinglePlayerBar: UserControl, INotifyBar
+	public partial class SinglePlayerBar:INotifyBar
 	{
 		readonly string modInternalName;
 		readonly List<Download> neededDownloads = new List<Download>();
@@ -74,20 +75,11 @@ namespace ZeroKLobby.Notifications
 		}
 
 
-		public void AddedToContainer(NotifyBarContainer container)
-		{
-			container.btnDetail.Enabled = false;
+		/*	container.btnDetail.Enabled = false;
 			container.btnDetail.Text = "SinglePlayer";
 		    container.Title = "Loading a single player mission";
-            container.TitleTooltip = "Please await resource download";
-		}
+            container.TitleTooltip = "Please await resource download";*/
 
-		public void CloseClicked(NotifyBarContainer container)
-		{
-			CloseBar();
-		}
-
-		public void DetailClicked(NotifyBarContainer container) {}
 
 		public Control GetControl()
 		{

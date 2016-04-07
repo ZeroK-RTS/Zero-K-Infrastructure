@@ -11,7 +11,7 @@ namespace ZeroKLobby.Notifications
     /// <summary>
     ///     Handles connection to tasclient
     /// </summary>
-    internal class ConnectBar: ZklBaseControl, INotifyBar
+    internal class ConnectBar: INotifyBar
     {
         private static bool tasClientConnectCalled;
         private readonly TasClient client;
@@ -81,7 +81,7 @@ namespace ZeroKLobby.Notifications
             InitializeComponent();
         }
 
-        public void AddedToContainer(NotifyBarContainer container) {
+/*        public void AddedToContainer(NotifyBarContainer container) {
             container.btnDetail.ImageAlign = ContentAlignment.TopCenter;
             container.btnDetail.Text = "Connect";
 
@@ -96,14 +96,9 @@ namespace ZeroKLobby.Notifications
             container.btnStop.Visible = false;
             container.Title = "Connecting to server";
             container.TitleTooltip = "Check website for server status";
-        }
+        }*/
 
 
-        public void CloseClicked(NotifyBarContainer container) {}
-
-        public void DetailClicked(NotifyBarContainer container) {
-            TryToConnectTasClient();
-        }
 
         public Control GetControl() {
             return this;
