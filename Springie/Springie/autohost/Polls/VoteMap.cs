@@ -32,38 +32,19 @@ namespace Springie.autohost.Polls
                     ah.FilterMaps(words, out vals, out indexes);
                     if (vals.Length > 0)
                     {
-                    	bool serious = false;
-                    	ZkDataContext db = null;
-                        try {
-                        	serious = ah.config.Mode == AutohostMode.Serious;
-                        	db = serious ? new ZkDataContext() : null;
-                        }
-                        catch (Exception ex) {
-                        	Trace.TraceError(ex.ToString());
-                        }
-
+                    	bool serious = ah.config.Mode == AutohostMode.Serious;
                         foreach (string possibleMap in vals)
                         {
-                            if (serious) // not sure if serious...
-                            {
-                                try
-                                {
-                                    var mapEntry = db.Resources.FirstOrDefault(x => x.InternalName == possibleMap);
-                                    if (mapEntry != null && (mapEntry.MapIsSpecial == true || mapEntry.FeaturedOrder == null)) continue;
-                                }
-                                catch (Exception ex) {
-                                	Trace.TraceError(ex.ToString());
-                                }
-                            }
-
                             map = possibleMap;
-                            var resource = ah.cache.FindResourceData(new string[] { map }, ResourceType.Map);
-                            if (resource != null)
+                            var resourceList = ah.cache.FindResourceData(new string[] { map }, ResourceType.Map);
+                            if (resourceList != null)
                             {
+                            	var resource = resourceList[0];
+                            	if (serious && (resource.MapIsSpecial == true || resource.FeaturedOrder == null)) continue;
                                 question = string.Format(
                                     "Change map to {0} {2}/Maps/Detail/{1} ?",
                                     map,
-                                    resource[0].ResourceID,
+                                    resource.ResourceID,
                                     GlobalConst.BaseSiteUrl);
                                 return true;
                             }
