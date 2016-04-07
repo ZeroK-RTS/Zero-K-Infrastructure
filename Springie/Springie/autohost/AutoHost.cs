@@ -944,8 +944,10 @@ namespace Springie.autohost
                 SayBattle("boss has left the battle");
                 bossName = "";
             }
-        }
 
+			// repick map after everyone (except the autohost) leaves to prevent someone from setting trololo everywhere
+			if (tas.MyBattle != null && tas.MyBattle.Users.Count == 1) ServerVerifyMap(true);
+        }
 
         // login accepted - join channels
 
