@@ -33,7 +33,7 @@ namespace Springie.autohost.Polls
                     if (vals.Length > 0)
                     {
                     	bool serious = false;
-                    	ZkDataContext db = new ZkDataContext();
+                    	ZkDataContext db = null;
                         try {
                         	serious = ah.config.Mode == AutohostMode.Serious;
                         	db = serious ? new ZkDataContext() : null;
