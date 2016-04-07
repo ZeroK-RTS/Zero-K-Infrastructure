@@ -26,6 +26,11 @@ namespace ZeroKWeb
                  InternalName = r.InternalName,
                  ResourceType = r.TypeID,
                  Dependencies = r.ResourceDependencies.Select(x => x.NeedsInternalName).ToList(),
+                 MapIs1v1 = r.MapIs1v1,
+                 MapIsTeams = r.MapIsTeams,
+                 MapIsFfa = r.MapIsFfa,
+                 MapIsSpecial = r.MapIsSpecial,
+                 MapIsSupported = r.MapIsSupported,
                  FeaturedOrder = r.FeaturedOrder,
              };
              return ret;
