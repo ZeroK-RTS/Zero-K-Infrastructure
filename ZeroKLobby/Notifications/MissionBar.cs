@@ -13,7 +13,7 @@ using ZkData.UnitSyncLib;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class MissionBar : INotifyBar
+    public partial class MissionBar : ZklNotifyBar
     {
         readonly string missionName;
 

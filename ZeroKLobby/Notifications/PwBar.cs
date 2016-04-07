@@ -8,7 +8,7 @@ using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class PwBar: INotifyBar
+    public partial class PwBar: ZklNotifyBar
     {
         DateTime deadline;
         readonly Label headerLabel = new Label();

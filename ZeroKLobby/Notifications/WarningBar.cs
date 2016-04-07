@@ -4,7 +4,7 @@ using ZeroKLobby.MicroLobby;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class WarningBar: INotifyBar
+    public partial class WarningBar: ZklNotifyBar
     {
         private string title;
 

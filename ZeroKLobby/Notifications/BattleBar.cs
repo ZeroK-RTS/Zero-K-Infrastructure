@@ -13,7 +13,7 @@ using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class BattleBar : INotifyBar
+    public partial class BattleBar : ZklNotifyBar
     {
         readonly TasClient client;
         bool desiredSpectatorState = false;

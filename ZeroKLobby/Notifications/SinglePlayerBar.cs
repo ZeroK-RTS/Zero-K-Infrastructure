@@ -11,7 +11,7 @@ using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
-	public partial class SinglePlayerBar:INotifyBar
+	public partial class SinglePlayerBar:ZklNotifyBar
 	{
 		readonly string modInternalName;
 		readonly List<Download> neededDownloads = new List<Download>();

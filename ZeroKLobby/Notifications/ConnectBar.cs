@@ -11,7 +11,7 @@ namespace ZeroKLobby.Notifications
     /// <summary>
     ///     Handles connection to tasclient
     /// </summary>
-    internal class ConnectBar: INotifyBar
+    internal class ConnectBar: ZklNotifyBar
     {
         private static bool tasClientConnectCalled;
         private readonly TasClient client;

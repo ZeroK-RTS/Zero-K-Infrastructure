@@ -8,7 +8,7 @@ using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class VoteBar: INotifyBar
+    public partial class VoteBar: ZklNotifyBar
     {
         readonly TasClient tas;
         bool isSpad = false;

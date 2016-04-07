@@ -13,7 +13,7 @@ using ZeroKLobby.Controls;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class ReplayBar : INotifyBar
+    public partial class ReplayBar : ZklNotifyBar
     {
         readonly string demoUrl;
         readonly string engineVersion;

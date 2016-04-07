@@ -421,7 +421,7 @@
     <Compile Include="Notifications\ConnectBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Notifications\INotifyBar.cs">
+    <Compile Include="Notifications\ZklNotifyBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MicroLobby\PlayerListBox.cs">

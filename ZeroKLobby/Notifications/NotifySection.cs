@@ -10,42 +10,29 @@ namespace SpringDownloader.Notifications
 {
 	public partial class NotifySection: ZklBaseControl
 	{
-        readonly Timer uiUpdate = new Timer();
-		public IEnumerable<INotifyBar> Bars { get { return Controls.OfType<INotifyBar>(); } }
+		public IEnumerable<ZklNotifyBar> Bars { get { return Controls.OfType<ZklNotifyBar>(); } }
 
-		public NotifySection()
-		{
-			InitializeComponent();
+	    public NotifySection() {
+	        InitializeComponent();
+	    }
 
-            uiUpdate.Interval =100; //timer tick to add micro delay to Layout update.
-            uiUpdate.Tick += timedUpdate_Tick;
-		}
-
-		public void AddBar(INotifyBar bar)
+	    public void AddBar(ZklNotifyBar bar)
 		{
 			if (!Bars.Contains(bar))
 			{
-				Controls.Add((Control)bar);
-                uiUpdate.Start(); //accumulate update for 50ms because Linux Mono have trouble with multiple add/remove bar spam.
+				Controls.Add(bar);
 			}
 		}
 
 		public void RemoveBar(object bar)
 		{
-			var container = Controls.OfType<INotifyBar>().FirstOrDefault(x => x == bar);
+			var container = Controls.OfType<ZklNotifyBar>().FirstOrDefault(x => x == bar);
             if (container != null)
             {
-                Controls.Remove((Control)container);
-                uiUpdate.Start(); //accumulate update for 50ms because Linux Mono have trouble with multiple add/remove bar spam.
+                Controls.Remove(container);
             }
 		}
 
 
-        private void timedUpdate_Tick(object sender, EventArgs e)
-        {
-            uiUpdate.Stop(); //finish size update, stop timer.
-            Height = Controls.OfType<Control>().Sum(x => x.Height);
-			Program.MainWindow.Invalidate(true);
-        }
 	}
 }
