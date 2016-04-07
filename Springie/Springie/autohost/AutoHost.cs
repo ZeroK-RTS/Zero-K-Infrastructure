@@ -169,7 +169,6 @@ namespace Springie.autohost
             spring.SpringExited += spring_SpringExited;
             spring.GameOver += spring_GameOver;
 
-            spring.SpringExited += spring_SpringExited;
             spring.SpringStarted += spring_SpringStarted;
             spring.PlayerSaid += spring_PlayerSaid;
             spring.BattleStarted += spring_BattleStarted;
@@ -886,7 +885,8 @@ namespace Springie.autohost
                 if (!string.IsNullOrEmpty(SpawnConfig.Handle)) tas.Say(SayPlace.User, SpawnConfig.Owner, SpawnConfig.Handle, true);
                     tas.Say(SayPlace.User, SpawnConfig.Owner, "I'm here! Ready to serve you! Join me!", true);
             }
-            else ServerVerifyMap(true);
+
+			if (!hostedMod.IsMission) ServerVerifyMap(true);
         }
 
 
