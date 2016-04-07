@@ -32,8 +32,8 @@ namespace Springie.autohost.Polls
                     ah.FilterMaps(words, out vals, out indexes);
                     if (vals.Length > 0)
                     {
-                    	bool serious;
-                    	ZkDataContext db;
+                    	bool serious = false;
+                    	ZkDataContext db = new ZkDataContext();
                         try {
                         	serious = ah.config.Mode == AutohostMode.Serious;
                         	db = serious ? new ZkDataContext() : null;
