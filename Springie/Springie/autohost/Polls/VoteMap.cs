@@ -36,14 +36,15 @@ namespace Springie.autohost.Polls
                         foreach (string possibleMap in vals)
                         {
                             map = possibleMap;
-                            var resource = ah.cache.FindResourceData(new string[] { map }, ResourceType.Map);
-                            if (resource != null)
+                            var resourceList = ah.cache.FindResourceData(new string[] { map }, ResourceType.Map);
+                            if (resourceList != null)
                             {
+                            	var resource = resourceList[0];
                             	if (serious && (resource.MapIsSpecial == true || resource.FeaturedOrder == null)) continue;
                                 question = string.Format(
                                     "Change map to {0} {2}/Maps/Detail/{1} ?",
                                     map,
-                                    resource[0].ResourceID,
+                                    resource.ResourceID,
                                     GlobalConst.BaseSiteUrl);
                                 return true;
                             }
