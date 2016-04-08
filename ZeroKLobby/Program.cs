@@ -312,22 +312,7 @@ namespace ZeroKLobby
                 VoteBar = new VoteBar();
                 PwBar = new PwBar();
 
-                //This make the size of every bar constant (only for height).
-                //We wanted to make them constant because the bar get DPI-scaled twice/thrice/multiple-time (especially for reusable bar). 
-                //Setting maximum height upon creation will hopefully make sure it is not DPI-scaled multiple time.
-                var votebarSize = new Size(0, VoteBar.Height);
-                // Reference: http://stackoverflow.com/questions/5314041/set-minimum-window-size-in-c-sharp-net
-                var battlebarSize = new Size(0, BattleBar.Height);
-                var connectbarSize = new Size(0, ConnectBar.Height);
-
-                VoteBar.MinimumSize = votebarSize; //fix minimum size forever
-                VoteBar.MaximumSize = votebarSize; //fix maximum size forever
-                BattleBar.MinimumSize = battlebarSize;
-                BattleBar.MaximumSize = battlebarSize;
-                ConnectBar.MinimumSize = connectbarSize;
-                ConnectBar.MaximumSize = connectbarSize;
-                //End battlebar size hax
-
+           
                 if (!Debugger.IsAttached && !Conf.DisableAutoUpdate && !IsSteamFolder) SelfUpdater.StartChecking();
 
                 SteamHandler.Connect();

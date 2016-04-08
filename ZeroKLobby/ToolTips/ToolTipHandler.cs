@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Threading;
+using Timer = System.Timers.Timer;
 
 namespace ZeroKLobby
 {
@@ -27,7 +29,7 @@ namespace ZeroKLobby
         private Point lastMousePos;
         private string lastText;
         private bool lastVisible = true;
-        private Timer uiTimer;
+        private System.Timers.Timer uiTimer;
         const int timerFPS = 70;
 
         public DateTime LastUserAction = DateTime.Now;
@@ -48,8 +50,9 @@ namespace ZeroKLobby
 
         public ToolTipHandler() {
             uiTimer = new Timer();
-            uiTimer.Interval = 1000 / timerFPS;
-            uiTimer.Tick += uiTimer_Tick;
+            uiTimer.Interval = 14;
+            uiTimer.AutoReset = true;
+            uiTimer.Elapsed += uiTimer_Tick;
             uiTimer.Start();
         }
 
@@ -248,17 +251,35 @@ namespace ZeroKLobby
         }
 
         int frameCount = 0;
+
+        private int inTimerCode = 0;
+
         private void uiTimer_Tick(object sender, EventArgs e)
         {
             if (!Visible) return;
 
-            frameCount++;
-            bool invalidate = (requestRefresh || (frameCount >= timerFPS));
-            if (mouseMoving || invalidate)
+            try
             {
-                RefreshToolTip(invalidate);
-                requestRefresh = false;
-                if (invalidate) frameCount = 0;
+                if (Interlocked.Exchange(ref inTimerCode, 1) == 0)
+                {
+                    if (Program.MainWindow != null && Program.MainWindow.InvokeRequired)
+                        Program.MainWindow.InvokeFunc(
+                            () =>
+                            {
+                                frameCount++;
+                                bool invalidate = (requestRefresh || (frameCount >= timerFPS));
+                                if (mouseMoving || invalidate)
+                                {
+                                    RefreshToolTip(invalidate);
+                                    requestRefresh = false;
+                                    if (invalidate) frameCount = 0;
+                                }
+                            });
+                }
+            }
+            finally
+            {
+                Interlocked.Exchange(ref inTimerCode, 0);
             }
         }
     }

@@ -93,7 +93,6 @@ namespace ZeroKLobby
             systrayIcon.MouseDown += systrayIcon_MouseDown;
             systrayIcon.BalloonTipClicked += systrayIcon_BalloonTipClicked;
 
-
             if (Debugger.IsAttached) SwitchFullscreenState(false);
         }
 

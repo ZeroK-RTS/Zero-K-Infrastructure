@@ -80,7 +80,7 @@ namespace ZeroKLobby
             Size = new Size(703, 219);
 
             isBusyTimer.Interval = 120; //timer tick to update "isBusyIcon" every 120 ms.
-            isBusyTimer.Tick += (sender, args) => { Application.UseWaitCursor = CurrentNavigatable.IsBusy; };
+            isBusyTimer.Tick += (sender, args) => { Application.UseWaitCursor = CurrentNavigatable?.IsBusy == true; };
             isBusyTimer.Start();
 
             Instance = this;
@@ -178,8 +178,8 @@ namespace ZeroKLobby
             Program.ToolTip.SetText(minMaxButton, "Fullscreen on/off");
             Program.ToolTip.SetText(settingsButton, "Settings");
             Program.ToolTip.SetText(sndButton, "Music on/off");
-            Program.ToolTip.SetText(forwardButton, "Go forward");
-            Program.ToolTip.SetText(backButton, "Go back");
+            Program.ToolTip.SetText(forwardButton, "Forward");
+            Program.ToolTip.SetText(backButton, "Back");
 
             miniIconPanel.Controls.Add(exitButton);
             miniIconPanel.Controls.Add(minMaxButton);
