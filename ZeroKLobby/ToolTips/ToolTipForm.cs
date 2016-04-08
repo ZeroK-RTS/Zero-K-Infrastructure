@@ -146,7 +146,10 @@ namespace ZeroKLobby
                 {
                     e.Graphics.FillRectangle(bgbrush,e.ClipRectangle);
                 }
-                FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, DisplayRectangle, FrameBorderRenderer.StyleType.TechPanel);
+
+                if (DisplayRectangle.Width > 100 && DisplayRectangle.Height > 100)
+                    FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, DisplayRectangle, FrameBorderRenderer.StyleType.TechPanel);
+                else FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, DisplayRectangle, FrameBorderRenderer.StyleType.TechPanelHollow);
             } catch (Exception ex) {
                 Trace.TraceError("Error rendering tooltip bg: {0}",ex);
             }
