@@ -1,8 +1,6 @@
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using LobbyClient;
-using ZeroKLobby.Controls;
 using ZeroKLobby.MicroLobby;
 using ZkData;
 
@@ -14,11 +12,12 @@ namespace ZeroKLobby.Notifications
     internal class ConnectBar: ZklNotifyBar
     {
         private static bool tasClientConnectCalled;
+        private readonly bool canRegister = false;
         private readonly TasClient client;
         private readonly object tryConnectLocker = new object();
-        private readonly bool canRegister = false;
-
+        private BitmapButton btnDetail;
         private Label lbState;
+
 
         public ConnectBar(TasClient tasClient): this() {
             client = tasClient;
@@ -43,11 +42,7 @@ namespace ZeroKLobby.Notifications
                 else client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
             };
 
-            client.LoginAccepted += (s, e) =>
-            {
-                Program.NotifySection.RemoveBar(this);
-                //Program.MainWindow.navigationControl.Path = "battles";
-            };
+            client.LoginAccepted += (s, e) => { Program.NotifySection.RemoveBar(this); };
 
             client.LoginDenied += (s, e) =>
             {
@@ -81,28 +76,6 @@ namespace ZeroKLobby.Notifications
             InitializeComponent();
         }
 
-/*        public void AddedToContainer(NotifyBarContainer container) {
-            container.btnDetail.ImageAlign = ContentAlignment.TopCenter;
-            container.btnDetail.Text = "Connect";
-
-            const int newSize = 20;
-            var image = new Bitmap(newSize, newSize);
-            using (var g = Graphics.FromImage(image))
-            {
-                g.InterpolationMode = InterpolationMode.High;
-                g.DrawImage(ZklResources.redlight, 0, 0, newSize, newSize);
-            }
-            container.btnDetail.Image = image;
-            container.btnStop.Visible = false;
-            container.Title = "Connecting to server";
-            container.TitleTooltip = "Check website for server status";
-        }*/
-
-
-
-        public Control GetControl() {
-            return this;
-        }
 
         public void TryToConnectTasClient() {
             lock (tryConnectLocker)
@@ -117,29 +90,29 @@ namespace ZeroKLobby.Notifications
             }
         }
 
-
         private void InitializeComponent() {
-            lbState = new Label();
             SuspendLayout();
-            // 
-            // lbState
-            // 
-            lbState.AutoSize = true;
-            lbState.Location = new Point(14, 19);
-            lbState.Name = "lbState";
-            lbState.Size = new Size(225, 13);
-            lbState.TabIndex = 0;
-            lbState.Text = "Connect to the Spring multiplayer lobby server.";
-            // 
-            // ConnectBar
-            // 
-            BackColor = Color.Transparent;
+
+            btnDetail = new BitmapButton { Text = "Connect", Left = 10, Top = 10, Width = 100, Height = 60, Font = Config.GeneralFontBig };
+            btnDetail.Click += (sender, args) => TryToConnectTasClient();
+            Controls.Add(btnDetail);
+
+            lbState = new Label
+            {
+                AutoSize = true,
+                Location = new Point(120, 30),
+                Name = "lbState",
+                ForeColor = Config.TextColor,
+                BackColor = Color.Transparent,
+                Text = "Connect to the Spring multiplayer lobby server."
+            };
+
             Controls.Add(lbState);
-            MinimumSize = new Size(300, 60);
-            Name = "ConnectBar";
-            Size = new Size(364, 60);
+            AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            Size = new Size(300, 80);
+
             ResumeLayout(false);
-            PerformLayout();
         }
 
         private void LoginWithDialog(string text) {

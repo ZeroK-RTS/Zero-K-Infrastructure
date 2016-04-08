@@ -1,50 +1,26 @@
+using System.Drawing;
 using System.Windows.Forms;
 using ZeroKLobby.Controls;
 
 namespace ZeroKLobby.Notifications
 {
-    public class ZklNotifyBar:ZklBaseControl
+    public class ZklNotifyBar : ZklBaseControl
     {
-        public ZklNotifyBar() {
-            SuspendLayout(); //suspend layout until all bar element is finish set up
-            //btnDetail.Click += detail_Click;
-            //btnStop.Click += stop_Click;
-            //btnStop.Image = ZklResources.Remove;
-
-            //Note: control-element is already DPI-scaled and might be DPI-scaled again, and we dont need more scaling
-            //Set size to control-element's maximum size (if defined in Program.cs). If not defined then use current height (hopefully the control-element is only used once)
-            //Height = (control.MaximumSize.Height > 0 ? control.MaximumSize.Height : control.Height) + DpiMeasurement.ScaleValueY(28);
-            /*lbTitle = new Label() { Font = Config.GeneralFontBig, ForeColor = Color.DarkCyan, AutoSize = true };
-            tableLayoutPanel1.Controls.Add(lbTitle, 1, 0);
-
-            tableLayoutPanel1.Controls.Add(control, 1, 1);
-            control.Dock = DockStyle.Fill;*/
+        public ZklNotifyBar()
+        {
             Dock = DockStyle.Top;
-            //BarContent.AddedToContainer(this);
-            //ResumeLayout();
         }
 
-        public string Title { get; set; }
+        public virtual string Title { get; set; }
 
-        public string TitleTooltip { get; set; }
+        public virtual string TitleTooltip { get; set; }
 
-        public Button btnDetail { get; set; } = new BitmapButton();
+        public virtual BitmapButton btnDetail { get; set; } = new BitmapButton();
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
-            e.Graphics.Clear(Config.BgColor);
+            e.Graphics.Clear(Color.Black);
             FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, Bounds, FrameBorderRenderer.StyleType.TechPanel);
-            /*
-            base.OnPaintBackground(e);
-            try
-            {
-                if (ClientRectangle.Width > 0 && ClientRectangle.Height > 0) using (var brush = new LinearGradientBrush(ClientRectangle, Color.WhiteSmoke, Color.SteelBlue, 90F)) e.Graphics.FillRectangle(brush, ClientRectangle);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Error rendering bar background: {0}",ex);
-            }*/
         }
-
     }
 }

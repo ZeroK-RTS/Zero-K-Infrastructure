@@ -678,9 +678,6 @@
     <EmbeddedResource Include="Notifications\WarningBar.resx">
       <DependentUpon>WarningBar.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\ConnectBar.resx">
-      <DependentUpon>ConnectBar.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\AskBattlePasswordForm.resx">
       <DependentUpon>AskBattlePasswordForm.cs</DependentUpon>
       <SubType>Designer</SubType>
