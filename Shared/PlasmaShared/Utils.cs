@@ -375,6 +375,15 @@ namespace ZkData
             else return source.Replace("\r\n", "\n").Split('\n');
         }
 
+        public static IEnumerable<string> SplitEvery(this string s, int length)
+        {
+            return s.Where((c, index) => index % length == 0)
+                   .Select((c, index) => String.Concat(
+                        s.Skip(index * length).Take(length)
+                     )
+                   );
+        }
+
         /// <summary>
         /// Creates paths in a cross-platform way.
         /// </summary>

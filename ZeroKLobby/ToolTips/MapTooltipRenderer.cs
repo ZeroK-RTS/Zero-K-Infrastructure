@@ -50,22 +50,13 @@ namespace ZeroKLobby
                 drawString(string.Format("Size: {0}x{1}", map.Size.Width/512, map.Size.Height/512));
                 newLine();
 
-                drawString(string.Format("Wind: {0} - {1}", map.MinWind, map.MaxWind));
-                newLine();
+                if (!string.IsNullOrEmpty(map.Author))
+                {
+                    drawString($"Author: {map.Author}");
+                    newLine();
+                }
 
-                drawString("Gravity: " + map.Gravity);
-                newLine();
-
-                drawString("Tidal: " + map.TidalStrength);
-                newLine();
-
-                drawString("Max metal: " + map.MaxMetal);
-                newLine();
-
-                drawString("Extractor radius: " + map.ExtractorRadius);
-                newLine();
-
-                foreach (var line in map.Description.Lines())
+                foreach (var line in map.Description.Lines().Select(s=>s.SplitEvery(33)).SelectMany(s=>s))
                 {
                     drawString(line);
                     newLine();
