@@ -20,7 +20,7 @@ namespace ZeroKLobby.Notifications
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             e.Graphics.Clear(Color.Black);
-            FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, Bounds, FrameBorderRenderer.StyleType.TechPanel);
+            FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, Bounds, FrameBorderRenderer.StyleType.TechPanelHollow);
         }
     }
 }

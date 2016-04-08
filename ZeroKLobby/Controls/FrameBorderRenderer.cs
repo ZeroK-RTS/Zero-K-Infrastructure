@@ -115,8 +115,8 @@ namespace ZeroKLobby
                     E = TechPanelHollow.E,
                     W = TechPanelHollow.W,
                     FillBrush = new LinearGradientBrush(new Rectangle(0, 0, 1, 1), Color.FromArgb(255, 19, 65, 73), Color.FromArgb(255, 0, 0, 0), 90),
-                    FillOffsetBottomRight = new Size(-20, -20),
-                    FillOffsetTopLeft = new Size(-20, -20),
+                    FillOffsetBottomRight = new Size(-5, -5),
+                    FillOffsetTopLeft = new Size(-5, -5),
                     Interpolation = InterpolationMode.NearestNeighbor
                 }
             },
