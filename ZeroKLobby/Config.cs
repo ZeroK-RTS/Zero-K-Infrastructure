@@ -38,6 +38,8 @@ namespace ZeroKLobby
 
         public static readonly Color BgColor = Color.FromArgb(255, 0, 30, 40);
         public static readonly Color TextBoxBorderColor = Color.FromArgb(255, 0, 128, 128);
+        public static readonly Color MenuTextColor = Color.FromArgb(0x38, 0xbf, 0xec);
+
 
         public readonly Color EmoteColor = Color.FromArgb(178, 0, 178);
         public readonly Color FadeColor = Color.LightGray;

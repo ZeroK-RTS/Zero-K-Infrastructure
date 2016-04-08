@@ -25,7 +25,7 @@ namespace ZeroKLobby
                 var changed = isSelected != value;
                 isSelected = value;
                 //button.BackColor = isSelected ? Color.PowderBlue : SystemColors.ButtonFace;
-                button.ForeColor = isSelected ? Color.White : Color.FromArgb(0x38, 0xbf, 0xec);
+                button.ForeColor = isSelected ? Color.White : Config.MenuTextColor;
                 if (isSelected) button.ButtonStyle = FrameBorderRenderer.StyleType.DarkHiveGlow; else 
                     button.ButtonStyle = FrameBorderRenderer.StyleType.DarkHive;
                 if (changed) InvokePropertyChanged("IsSelected");
@@ -65,6 +65,7 @@ namespace ZeroKLobby
             button.TextAlign = ContentAlignment.MiddleCenter;
             button.Font = Config.MenuFont;
             button.Text = Label;
+            button.ForeColor = Config.MenuTextColor;
             button.Margin = new Padding(0, 0, 0, 3);
             button.Cursor = Cursors.Hand;
             button.ButtonStyle = FrameBorderRenderer.StyleType.DarkHive; 
