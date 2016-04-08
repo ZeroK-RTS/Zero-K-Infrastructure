@@ -71,6 +71,10 @@ namespace ZeroKWeb.SpringieInterface
                     string awardType = partsSpace[1];
                     string awardText = partsSpace[2];
 
+                    // prevent hax: tourney cups and event coins are never given automatically
+                    if (awardType != null && (awardType == "gold" || awardType == "silver" || awardType == "bronze")) continue;
+                    if (awardType != null && (awardType == "goldcoin" || awardType == "silvercoin" || awardType == "bronzecoin")) continue;
+
                     SpringBattlePlayer player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name);
                     if (player != null)
                     {
