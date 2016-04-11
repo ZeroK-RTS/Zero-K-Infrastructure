@@ -262,9 +262,6 @@
     <Compile Include="MicroLobby\BattleListTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MicroLobby\BattleListTab.Designer.cs">
-      <DependentUpon>BattleListTab.cs</DependentUpon>
-    </Compile>
     <Compile Include="MicroLobby\BrowserTab.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -533,9 +530,6 @@
     <EmbeddedResource Include="Notifications\PwBar.resx">
       <DependentUpon>PwBar.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\BattleListTab.resx">
-      <DependentUpon>BattleListTab.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ChatControl.resx">
       <DependentUpon>ChatControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -595,7 +589,9 @@
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Shraka.resx" />
-    <EmbeddedResource Include="Sounds.resx" />
+    <EmbeddedResource Include="Sounds.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="TechPanel.resx" />
     <EmbeddedResource Include="TechPanelHollow.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -1560,9 +1556,6 @@
     <None Include="Resources\soldier.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\springlogo_glass.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\star.png" />
   </ItemGroup>
   <ItemGroup>
@@ -1597,9 +1590,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\PlayerStates\unready.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SpringDownloader.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Images\logout.png" />
@@ -1677,6 +1667,7 @@
     <Content Include="Resources\Buttons\win_max.png" />
     <Content Include="Resources\Buttons\win_min.png" />
     <Content Include="Resources\downarrow.png" />
+    <None Include="Resources\Sounds\scificlick.wav" />
     <Content Include="Resources\scroll_bottom.png" />
     <Content Include="Resources\scroll_mid.png" />
     <Content Include="Resources\scroll_top.png" />
@@ -1703,7 +1694,6 @@
     <Folder Include="Resources\DarkHiveHover\" />
     <Folder Include="Resources\DarkHive\" />
     <Folder Include="Resources\Shraka\" />
-    <Folder Include="Resources\Sounds\" />
     <Folder Include="Resources\TechPanel\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

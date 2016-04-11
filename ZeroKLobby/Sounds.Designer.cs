@@ -68,7 +68,19 @@ namespace ZeroKLobby {
                 return ResourceManager.GetStream("button_click", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream scificlick
+        {
+            get
+            {
+                return ResourceManager.GetStream("scificlick", resourceCulture);
+            }
+        }
+
+
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>

@@ -127,4 +127,7 @@
   <data name="panel_move" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Sounds\panel_move.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="scificlick" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\sounds\scificlick.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

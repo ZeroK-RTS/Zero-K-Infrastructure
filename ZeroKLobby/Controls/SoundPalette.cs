@@ -15,7 +15,8 @@ namespace ZeroKLobby.Controls
         {
             None = 0,
             Click = 1,
-            Servo =2 
+            Servo =2,
+            BigClick =3,
         }
 
 
@@ -26,10 +27,13 @@ namespace ZeroKLobby.Controls
                 Stream sound;
                 switch (type) {
                     case SoundType.Click:
-                        sound = Sounds.button_click;
+                        sound = Sounds.scificlick;
                         break;
                     case SoundType.Servo:
                         sound = Sounds.panel_move;
+                        break;
+                    case SoundType.BigClick:
+                        sound = Sounds.button_click;
                         break;
                     default:
                         sound = null;
