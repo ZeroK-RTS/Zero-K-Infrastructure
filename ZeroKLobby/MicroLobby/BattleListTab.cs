@@ -26,15 +26,6 @@ namespace ZeroKLobby.MicroLobby
             ResumeLayout();
         }
 
-        void BattleListTab_Enter(object sender, EventArgs e) //lazy initialization
-        {
-            Paint -= BattleListTab_Enter; //using "Paint" instead of "Enter" event because "Enter" is too lazy in Mono (have to click control)
-            
-            InitializeComponent();
-
-            if (DesignMode) return;
-            
-        }
 
         public bool TryNavigate(params string[] path) {
             if (path.Length == 0) return false;

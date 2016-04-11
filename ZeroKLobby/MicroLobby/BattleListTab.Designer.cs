@@ -74,6 +74,7 @@ namespace ZeroKLobby.MicroLobby
             this.battlePanel.Name = "battlePanel";
             this.battlePanel.Size = new System.Drawing.Size(731, 432);
             this.battlePanel.TabIndex = 1;
+
             // 
             // BattleListTab
             // 
