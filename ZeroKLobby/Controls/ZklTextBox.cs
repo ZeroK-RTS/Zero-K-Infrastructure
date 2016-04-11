@@ -21,6 +21,7 @@ namespace ZeroKLobby.Controls
             textBox.MouseDown += (sender, args) => { OnMouseDown(args); };
             textBox.MouseUp += (sender, args) => { OnMouseUp(args); };
             textBox.Click += (sender, args) => { OnClick(args); };
+            textBox.TextChanged += (sender, args) => { OnTextChanged(args); };
             Controls.Add(textBox);
         }
 
