@@ -2,47 +2,38 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
+using ZeroKLobby.Controls;
 using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
-    public partial class BattleListTab: UserControl, INavigatable
+    public partial class BattleListTab: ZklBaseControl, INavigatable
     {
         BattleListControl battleListControl;
 
         public BattleListTab() 
         {
-            Paint += BattleListTab_Enter; 
-        }
-
-        void BattleListTab_Enter(object sender, EventArgs e) //lazy initialization
-        {
-            Paint -= BattleListTab_Enter; //using "Paint" instead of "Enter" event because "Enter" is too lazy in Mono (have to click control)
-            SuspendLayout(); //pause
             InitializeComponent();
-            
-            if (DesignMode) return;
-            DpiMeasurement.DpiXYMeasurement(this);
-            var lookingGlass = new PictureBox
-            {
-                Width =  DpiMeasurement.ScaleValueY(20),
-                Height = DpiMeasurement.ScaleValueY(20),
-                Image = ZklResources.search,
-                SizeMode = PictureBoxSizeMode.CenterImage,
-                Dock = DockStyle.Left
-            };
-            Program.ToolTip.SetText(lookingGlass, "Search game, description, map or player");
-            Program.ToolTip.SetText(searchBox, "Search game, description, map or player");
-            
-            hideEmptyBox.Checked = Program.Conf.HideEmptyBattles;
-            hideFullBox.Checked = Program.Conf.HideNonJoinableBattles;
-            showOfficialBox.Checked = Program.Conf.ShowOfficialBattles;
-            hidePasswordedBox.Checked = Program.Conf.HidePasswordedBattles;
+
+            SuspendLayout(); 
+
+            Program.ToolTip.SetText(searchBox, "Search game, map or player");
+            Program.ToolTip.SetText(searchLabel, "Search game, map or player");
 
             // battle list
             battleListControl = new BattleListControl() { Dock = DockStyle.Fill };
             battlePanel.Controls.Add(battleListControl);
             ResumeLayout();
+        }
+
+        void BattleListTab_Enter(object sender, EventArgs e) //lazy initialization
+        {
+            Paint -= BattleListTab_Enter; //using "Paint" instead of "Enter" event because "Enter" is too lazy in Mono (have to click control)
+            
+            InitializeComponent();
+
+            if (DesignMode) return;
+            
         }
 
         public bool TryNavigate(params string[] path) {
@@ -85,22 +76,6 @@ namespace ZeroKLobby.MicroLobby
             battleListControl.FilterText = searchBox.Text;
         }
 
-        void showEmptyBox_CheckedChanged(object sender, EventArgs e) {
-            if (battleListControl != null) battleListControl.HideEmpty = hideEmptyBox.Checked;
-        }
-
-        void showFullBox_CheckedChanged(object sender, EventArgs e) {
-            if (battleListControl != null) battleListControl.HideFull = hideFullBox.Checked;
-        }
-
-        void showOfficialButton_CheckedChanged(object sender, EventArgs e) {
-            if (battleListControl != null) battleListControl.ShowOfficial = showOfficialBox.Checked;
-        }
-
-        private void hidePasswordedBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (battleListControl != null) battleListControl.HidePassworded = hidePasswordedBox.Checked;
-        }
        
     }
 }

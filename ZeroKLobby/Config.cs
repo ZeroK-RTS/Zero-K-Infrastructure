@@ -191,12 +191,7 @@ namespace ZeroKLobby
         public string HostBattle_SpringieCommands { get; set; }
         [Browsable(false)]
         public string HostBattle_Title { get; set; }
-        [Browsable(false)]
-        public bool HideEmptyBattles { get; set; } = false;
-        [Browsable(false)]
-        public bool HideNonJoinableBattles { get; set; } = false;
-        [Browsable(false)]
-        public bool HidePasswordedBattles { get; set; } = false;
+
 
         [Category("Quickmatching")]
         [DisplayName("Idle User Time")]
@@ -277,8 +272,6 @@ namespace ZeroKLobby
         [Description("Show a notification in chat channels every hour.")]
         public bool ShowHourlyChimes { get; set; } = true;
 
-        [Browsable(false)]
-        public bool ShowOfficialBattles { get; set; } = true;
 
         [Browsable(false)]
         public string SkirmisherEngine { get; set; }

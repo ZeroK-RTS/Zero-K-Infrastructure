@@ -193,17 +193,25 @@ namespace ZeroKLobby
         private static void SetupTabButtons(Control control) {
             ButtonList = new List<ButtonInfo> //normal arrangement
             {
-                new ButtonInfo { Label = "WEB", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon = Buttons.extras, Height = TabButtonHeight, Width = 200 },
                 new ButtonInfo
                 {
-                    Label = "SINGLEPLAYER",
+                    Label = "MISSION",
                     TargetPath = string.Format("{0}/Missions?no_menu=1", GlobalConst.BaseSiteUrl),
                     Icon = Buttons.sp,
-                    Width = 250,
+                    Width = 200,
+                    Height = TabButtonHeight
+                },
+                new ButtonInfo
+                {
+                    Label = "SKIRMISH",
+                    TargetPath = "extra/skirmish",
+                    Icon = Buttons.sp,
+                    Width = 200,
                     Height = TabButtonHeight
                 },
                 new ButtonInfo { Label = "MULTIPLAYER", TargetPath = "battles", Icon = Buttons.mp, Width = 250, Height = TabButtonHeight },
-                new ButtonInfo { Label = "CHAT", TargetPath = "chat", Icon = Buttons.chat, Height = TabButtonHeight, Width = 200 }
+                new ButtonInfo { Label = "WEB", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon = Buttons.extras, Height = TabButtonHeight, Width = 150 },
+                new ButtonInfo { Label = "CHAT", TargetPath = "chat", Icon = Buttons.chat, Height = TabButtonHeight, Width = 150 }
          
             };
             foreach (var but in ButtonList) control.Controls.Add(but.GetButton());
