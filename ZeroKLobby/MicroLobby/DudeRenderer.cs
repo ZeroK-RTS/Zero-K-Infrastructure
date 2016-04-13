@@ -24,6 +24,7 @@ namespace ZeroKLobby.MicroLobby
                     if (myBattle)
                     {
                         g.DrawImage(ZklResources.jimi, x, y, ZklResources.jimi.Width, ZklResources.jimi.Height);
+                        g.DrawImage(ZklResources.user, x, y, ZklResources.user.Width, ZklResources.user.Height);
                         x += ZklResources.jimi.Width;
                     }
 
