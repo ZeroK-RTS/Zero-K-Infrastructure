@@ -24,7 +24,7 @@ namespace ZeroKLobby
         private static readonly object configLock = new object();
         public static AutoJoinManager AutoJoinManager;
         public static bool CloseOnNext;
-        public static Config Conf = new Config();
+        public static Config Conf;
         public static FriendManager FriendManager;
         public static SpringieServer SpringieServer = new SpringieServer();
         public static string[] StartupArgs;
@@ -118,6 +118,8 @@ namespace ZeroKLobby
                 // extract fonts
                 EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.SM.ttf", "SM.ttf");
                 EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.OpenSans-Semibold.ttf", "OpenSans-Semibold.ttf");
+
+                Conf = new Config();
 
                 IsSteamFolder = File.Exists(Path.Combine(StartupPath, "steamfolder.txt"));
 

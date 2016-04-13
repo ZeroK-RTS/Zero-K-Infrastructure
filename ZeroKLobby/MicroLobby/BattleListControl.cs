@@ -225,7 +225,7 @@ namespace ZeroKLobby.MicroLobby
                     y += scaledIconHeight;
                 }
 
-                PaintDivider(g, ref x, ref y, "Custom battles");
+                PaintDivider(g, ref x, ref y, "Open battles");
                 PainOpenBattleButton(g, ref x, ref y, scaledMapCellWidth, scaledIconWidth);
 
                 foreach (BattleIcon t in view.Where(b => !b.Battle.IsQueue && !b.IsInGame))
