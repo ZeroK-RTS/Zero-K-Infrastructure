@@ -11,7 +11,7 @@ namespace ZeroKLobby.MicroLobby
     {
         public const int Height = 75;
         public const int Width = 300;
-        const int minimapSize = 58;
+        const int minimapSize = 52;
         bool dirty;
 
         bool disposed;
@@ -110,7 +110,7 @@ namespace ZeroKLobby.MicroLobby
 
             using (Graphics g = Graphics.FromImage(finishedMinimap))
             {
-                g.DrawImage(resizedMinimap, (int)6, (int)5);
+                g.DrawImage(resizedMinimap, (int)10, (int)9);
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 int x = (int)10;
                 int y = (int)(minimapSize - 20);
@@ -149,7 +149,7 @@ namespace ZeroKLobby.MicroLobby
 
                 if (Battle.IsPassworded) drawIcon(ZklResources._lock);
 
-                g.DrawImage(ZklResources.border, 0, 0, (int)70, (int)70);
+                g.DrawImage(ZklResources.border, 4,4, (int)64, (int)64);
             }
         }
 

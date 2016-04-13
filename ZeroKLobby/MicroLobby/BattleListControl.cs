@@ -263,16 +263,16 @@ namespace ZeroKLobby.MicroLobby
 
         void PaintDivider(Graphics g, ref int x, ref int y, string text)
         {
-            y += 3;
+            y += 8;
 
-            g.DrawLine(dividerPen, 5, y + 2, Width - 10, y + 2);
-            y += 4;
+            //g.DrawLine(dividerPen, 5, y + 2, Width - 10, y + 2);
+            //y += 4;
             g.DrawString(text, dividerFont, dividerFontBrush,new RectangleF(10,y , Width-20,30),new StringFormat()
             {
                 LineAlignment = StringAlignment.Center,Alignment = StringAlignment.Center
             }  );
             y += 24;
-            g.DrawLine(dividerPen, 5, y + 2, Width - 10, y + 2);
+            //g.DrawLine(dividerPen, 5, y + 2, Width - 10, y + 2);
             y += 4;
         }
 
