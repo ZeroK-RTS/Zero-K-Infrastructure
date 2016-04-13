@@ -904,7 +904,11 @@ namespace Springie.autohost
                 welc = welc.Replace("%1", name);
                 welc = welc.Replace("%2", GetUserLevel(name).ToString());
                 welc = welc.Replace("%3", MainConfig.SpringieVersion);
-                SayBattlePrivate(name, welc);
+                
+                string [] split = welc.Split(new Char [] {'\n'});
+                foreach (string s in split) {
+                        SayBattlePrivate(name, s);
+                }
             }
             if (spring.IsRunning) {
                 spring.AddUser(e1.UserName, e1.ScriptPassword);
