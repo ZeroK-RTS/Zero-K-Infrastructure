@@ -82,7 +82,7 @@
     @if (!ZeroKWeb.Global.IsLobbyAccess) {
         <div style="font-size: small">
             @if (m.ResourceContentFiles.Where(x => x.LinkCount > 0).Any()) {
-	            Manual downloads:<br />
+	            <text>Manual downloads:</text><br />
 	            foreach (var l in m.ResourceContentFiles.Where(x => x.LinkCount > 0).Select(x => x.Links).SelectMany(x => x.Split('\n')).Shuffle()) {
 	                <a href='@l'>@l</a><br />
 	            }
