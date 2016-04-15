@@ -239,6 +239,9 @@ namespace ZkData
                     winner.EloChange = (float)scoreWin;
                     loser.EloChange = (float)scoreLose;
 
+                    WinnerTeamXpChange = (int)(20 + (300 + 600 * (1 - eWin)) / 4.0);
+                    LoserTeamXpChange = (int)(20 + (200 + 400 * (1 - eLose)) / 3.0);
+
                     winnerAcc.Xp += WinnerTeamXpChange.Value;
                     loserAcc.Xp += LoserTeamXpChange.Value;
 
