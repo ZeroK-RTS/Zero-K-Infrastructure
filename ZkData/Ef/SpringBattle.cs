@@ -231,8 +231,8 @@ namespace ZkData
                     var eWin = 1 / (1 + Math.Pow(10, (loserElo - winnerElo) / 400));
                     var eLose = 1 / (1 + Math.Pow(10, (winnerElo - loserElo) / 400));
 
-                    var scoreWin = 32 * (1 - eWin);
-                    var scoreLose = 32 * (0 - eLose);
+                    var scoreWin = (32 * winnerAcc.EloInv1v1Weight) * (1 - eWin);
+                    var scoreLose = (32 * loserAcc.EloInv1v1Weight) * (0 - eLose);
 
                     winnerAcc.Elo1v1 += scoreWin;
                     loserAcc.Elo1v1 += scoreLose;
