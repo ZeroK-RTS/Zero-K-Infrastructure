@@ -81,9 +81,15 @@
     Downloads: @m.DownloadCount<br />
     @if (!ZeroKWeb.Global.IsLobbyAccess) {
         <div style="font-size: small">
-            Manual downloads:<br />
-            @foreach (var l in m.ResourceContentFiles.Where(x => x.LinkCount > 0).Select(x => x.Links).SelectMany(x => x.Split('\n')).Shuffle()) {
-                <a href='@l'>@l</a><br />
+            @if (m.ResourceContentFiles.Where(x => x.LinkCount > 0).Any()) {
+	            Manual downloads:<br />
+	            @foreach (var l in m.ResourceContentFiles.Where(x => x.LinkCount > 0).Select(x => x.Links).SelectMany(x => x.Split('\n')).Shuffle()) {
+	                <a href='@l'>@l</a><br />
+	            }
+            }
+            else
+            {
+            	<font color="#FF0000"><b>WARNING, THIS MAP IS NOT AND WILL NOT BE DOWNLOADABLE.</b></font><br />
             }
         </div>
     }
