@@ -179,7 +179,9 @@ namespace ZeroKLobby.Notifications
                 {
                     try
                     {
-                        btnDetail.Text = "Rejoin";
+                        if (client.MyBattle.Users[client.UserName].ScriptPassword == null) btnDetail.Text = "Watch";
+                        else btnDetail.Text = "Rejoin";
+
                         if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced)
                         {
                             if (Utils.VerifySpringInstalled())
