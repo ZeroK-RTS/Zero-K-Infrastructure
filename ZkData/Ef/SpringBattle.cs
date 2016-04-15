@@ -145,6 +145,7 @@ namespace ZkData
             var sumCount = losers.Count + winners.Count;
             var scoreWin = Math.Sqrt(sumCount / 2.0) * 32 * (1 - eWin) / winnerInvW;
             var scoreLose = Math.Sqrt(sumCount / 2.0) * 32 * (0 - eLose) / loserInvW;
+                
 
             var sumW = winnerW + loserW;
 
@@ -231,14 +232,14 @@ namespace ZkData
                     var eWin = 1 / (1 + Math.Pow(10, (loserElo - winnerElo) / 400));
                     var eLose = 1 / (1 + Math.Pow(10, (winnerElo - loserElo) / 400));
 
-                    var scoreWin = (32 * winnerAcc.EloInv1v1Weight) * (1 - eWin);
-                    var scoreLose = (32 * loserAcc.EloInv1v1Weight) * (0 - eLose);
+                    var scoreWin = 32 * (1 - eWin);
+                    var scoreLose = 32 * (0 - eLose);
 
                     winnerAcc.Elo1v1 += scoreWin;
                     loserAcc.Elo1v1 += scoreLose;
                     winner.EloChange = (float)scoreWin;
                     loser.EloChange = (float)scoreLose;
-
+                    
                     WinnerTeamXpChange = (int)(20 + (300 + 600 * (1 - eWin)) / 4.0);
                     LoserTeamXpChange = (int)(20 + (200 + 400 * (1 - eLose)) / 3.0);
 
