@@ -97,4 +97,15 @@ module.exports = function(){ return Reflux.createStore({
 			});
 		}.bind(this));
 	},
+	loadMapThumbnails: _.throttle(function(maps){
+		// Cloning the whole object is wasteful, but whatever.
+		var newMaps = _.cloneDeep(this.state.maps);
+		maps.forEach(function(map){
+			if (!newMaps[map])
+				newMaps[map] = {};
+			if (!newMaps[map].thumbnail)
+				newMaps[map].thumbnail = getMapThumbnail(map);
+		});
+		this.setState({ maps: newMaps });
+	}, 5000),
 })};
