@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 var Reflux = require('reflux');
-var Settings = require('weblobby/store/Settings.js');
+var Settings = require('store/Settings.js');
 
 var menuTheme = require('sounds/Rise of the Machines.ogg');
 
@@ -14,6 +14,7 @@ module.exports = function(process){ return Reflux.createStore({
 		this.listenTo(Settings, this.settingChanged);
 	},
 	updateProcess: function(state){
+		// This also triggers the music on startup.
 		if (state.springRunning && !this.audio.paused)
 			this.stop();
 		else if (!state.springRunning && this.audio.paused && Settings.playTitleMusic)
