@@ -37,7 +37,8 @@ namespace ZeroKLobby
             if (string.IsNullOrEmpty(text) || isError || voices == null) return;
             try
             {
-                if (text.Contains(Program.Conf.LobbyPlayerName))
+                if (text.Contains(Program.Conf.LobbyPlayerName)
+                && !text.Contains(">") && !text.Contains("added point")) // prevent other people's chat from affecting TTS
                 {
                     if (text.Contains("ENABLE TTS")) isSpeechEnabled = true;
                     else if (text.Contains("DISABLE TTS")) isSpeechEnabled = false;
