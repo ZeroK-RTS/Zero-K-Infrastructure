@@ -39,13 +39,15 @@ namespace ZeroKLobby
             {
                 if (text.Contains(Program.Conf.LobbyPlayerName))
                 {
+                    // things to remember: Spring can add its frame number info at the beginning
+
                     var m = Regex.Match(text, "^(\[f=\d+\] ?)?[^ ]+ ENABLE TTS$");
                     if (m.Success) isSpeechEnabled = true;
 
                     m = Regex.Match(text, "^(\[f=\d+\] ?)?[^ ]+ DISABLE TTS$");
                     if (m.Success) isSpeechEnabled = false;
 
-                    m = Regex.Match(text, "^(\[f=\d+\] ?)?[^ ]+ TTS VOLUME ([0-9]+)");
+                    m = Regex.Match(text, "^(\[f=\d+\] ?)?[^ ]+ TTS VOLUME ([0-9]+)$");
                     if (m.Success)
                     {
                         int volume;
