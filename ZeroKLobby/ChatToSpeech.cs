@@ -37,22 +37,22 @@ namespace ZeroKLobby
             if (string.IsNullOrEmpty(text) || isError || voices == null) return;
             try
             {
-                if (text.Contains(Program.Conf.LobbyPlayerName)
-                && !text.Contains(">") && !text.Contains("added point")) // prevent other people's chat from affecting TTS
+                if (text.Contains(Program.Conf.LobbyPlayerName))
                 {
-                    if (text.Contains("ENABLE TTS")) isSpeechEnabled = true;
-                    else if (text.Contains("DISABLE TTS")) isSpeechEnabled = false;
-                    else if (text.Contains("TTS VOLUME"))
+                    var m = Regex.Match(text, "^(\[f=\d+\] ?)?[^ ]+ ENABLE TTS$");
+                    if (m.Success) isSpeechEnabled = true;
+
+                    m = Regex.Match(text, "^(\[f=\d+\] ?)?[^ ]+ DISABLE TTS$");
+                    if (m.Success) isSpeechEnabled = false;
+
+                    m = Regex.Match(text, "^(\[f=\d+\] ?)?[^ ]+ TTS VOLUME ([0-9]+)");
+                    if (m.Success)
                     {
-                        var m = Regex.Match(text, "TTS VOLUME ([0-9]+)");
-                        if (m.Success)
+                        int volume;
+                        if (int.TryParse(m.Groups[2].Value, out volume))
                         {
-                            int volume;
-                            if (int.TryParse(m.Groups[1].Value, out volume))
-                            {
-                                volume = volume.Clamp(0, 100);
-                                speechSynthesizer.Volume = volume;
-                            }
+                            volume = volume.Clamp(0, 100);
+                            speechSynthesizer.Volume = volume;
                         }
                     }
                 }
