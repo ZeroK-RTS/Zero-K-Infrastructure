@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -142,11 +143,14 @@ namespace ZeroKLobby.Controls
             }
         }
 
+
+        SolidBrush backgroundBrush = new SolidBrush(Config.BgColor);
         void PaintItem(int currentDrawY, PlayerListItem item, Graphics graphics)
         {
             var currentDrawPosition = new Point(0, currentDrawY);
             var itemSize = new Size(ClientSize.Width, item.Height);
             var itemBounds = new Rectangle(currentDrawPosition, itemSize);
+            graphics.FillRectangle(backgroundBrush, itemBounds);
             item.DrawPlayerLine(graphics, itemBounds, Color.White, item.IsGrayedOut, IsBattle);
         }
 
@@ -196,10 +200,9 @@ namespace ZeroKLobby.Controls
             if (!this.isMouseDown) UpdateHoverItem(e);
         }
 
-
+        
         protected override void OnPaintBackground(PaintEventArgs e)
         {
-            this.RenderParentsBackgroundImage(e);
         }
 
         public ObservableCollection<PlayerListItem> Items = new ObservableCollection<PlayerListItem>();

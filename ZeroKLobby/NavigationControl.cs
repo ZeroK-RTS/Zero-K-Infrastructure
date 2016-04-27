@@ -406,12 +406,12 @@ namespace ZeroKLobby
                 e.Graphics.FillRectangle(lb, table.Bounds);
 
             var rect = new Rectangle(0, table.Bounds.Height, Width, Height - table.Bounds.Height);
-            using (var lb = new LinearGradientBrush(new Rectangle(rect.X,rect.Y-1, rect.Width, rect.Height+1), Color.FromArgb(255, 10, 30, 40), Color.FromArgb(255, 0, 0, 0), 90))
+            using (var lb = new LinearGradientBrush(new Rectangle(rect.X, rect.Y - 1, rect.Width, rect.Height + 1), Color.FromArgb(255, 10, 30, 40), Color.FromArgb(255, 0, 0, 0), 90))
                 e.Graphics.FillRectangle(lb, rect);
         }
 
 
-        
+
         private void urlBox_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyData == Keys.Return)
             {

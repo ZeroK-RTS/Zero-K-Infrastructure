@@ -32,7 +32,7 @@ namespace ZeroKLobby.MicroLobby
 
         Font font = Config.ChatFont;
 
-        int height = 16;
+        int height = 20;
         /// <summary>
         /// PlayerListItem will avoid using TasClient when this flag is true.
         /// </summary>
@@ -90,7 +90,6 @@ namespace ZeroKLobby.MicroLobby
 
         public PlayerListItem()
         {
-            height = (int)font.Size*2;
             SortCategory = (int)SortCats.Uncategorized;
         }
 
@@ -109,7 +108,6 @@ namespace ZeroKLobby.MicroLobby
 
         public void DrawPlayerLine(Graphics g, Rectangle bounds, Color textColor,  bool grayedOut, bool isBattle)
         {
-
             g.TextRenderingHint = TextRenderingHint.SystemDefault;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
