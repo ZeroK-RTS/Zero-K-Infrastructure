@@ -119,7 +119,7 @@ namespace ZeroKLobby.Controls
 
             var itemsToPaint = GetItemsToPaintInOrder();
 
-            foreach (var item in this.Items)
+            foreach (var item in itemsToPaint)
             {
                 this.PaintItem(currentDrawY, item, graphics);
                 currentDrawY += item.Height;
@@ -170,7 +170,7 @@ namespace ZeroKLobby.Controls
 
             var itemsToPaint = GetItemsToPaintInOrder();
 
-            foreach (var item in this.Items)
+            foreach (var item in itemsToPaint)
             {
                 currentMeasureY += item.Height;
                 if (cursorPoint.Y < currentMeasureY)
