@@ -32,17 +32,21 @@ namespace ZeroKLobby
                 y += (int)16;
                 };
             Action<string> drawString = (text) =>
-                {
+            {
+                y -= 3;
                     g.DrawString(text, font, fbrush, new Point(x, y));
-                    x += (int)Math.Ceiling(g.MeasureString(text, font).Width); 
-                };
+                    x += (int)Math.Ceiling(g.MeasureString(text, font).Width);
+                y += 3;
+            };
             
             Action<string, Color> drawString2 = (text, color) =>
             {
+                y -= 3;
                 using (var brush = new SolidBrush(color)) {
                     g.DrawString(text, font, brush, new Point(x, y));
                 }
                 x += (int)Math.Ceiling((double)g.MeasureString(text, font).Width);
+                y += 3;
             };
 
 
@@ -52,7 +56,7 @@ namespace ZeroKLobby
                     x += (int)(w + 3);
                 };
             using (var boldFont = new Font(font, FontStyle.Bold)) g.DrawString(user.Name, boldFont, fbrush, new Point(x, y));
-
+            y += 3;
             newLine();
 
             if (!user.IsBot)
@@ -69,8 +73,10 @@ namespace ZeroKLobby
             Image flag;
             if (Images.CountryFlags.TryGetValue(user.Country, out flag) && flag != null)
             {
-                drawString("Country: ");
+                //drawString("Country: ");
+                y += 2;
                 drawImage(flag, flag.Width, flag.Height);
+                y -= 2;
                 drawString(CountryNames.GetName(user.Country));
                 newLine();
             }
@@ -134,6 +140,7 @@ namespace ZeroKLobby
             }
             if (user.IsInBattleRoom)
             {
+                if (y < 70) y = 70; 
                 var battle = Program.TasClient.ExistingBattles.Values.FirstOrDefault(b => b.Users.ContainsKey(user.Name));
                 if (battle != null) {
                     var battleIcon = Program.BattleIconManager.GetBattleIcon(battle.BattleID);
@@ -150,7 +157,7 @@ namespace ZeroKLobby
             User user;
             if (!Program.TasClient.ExistingUsers.TryGetValue(userName, out user)) return null;
             var h = 0;
-            h += 16; // name
+            h += 16+3; // name
             h += 16; // flag
             if (user.IsBot) h += 16; // bot icon
             if (user.IsAdmin) h += 16; // admin icon

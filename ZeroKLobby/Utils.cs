@@ -128,7 +128,7 @@ namespace ZeroKLobby
         public static Color GetFactionColor(string faction) {
             Color color;
             if (faction != null && FactionColors.TryGetValue(faction, out color)) return color;
-            return Color.Black;
+            return Config.TextColor;
         }
 
         public static Control GetHoveredControl(this Control parent) {
