@@ -18,11 +18,12 @@ namespace ZeroKLobby.Controls
         public PlayerListControl()
         {
             InitializeComponent();
-
+            
             SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
             AutoScroll = false;
 
             if (this.IsInDesignMode()) return;
+            ZklBaseControl.Init(this);
 
             this.Items.CollectionChanged += Items_CollectionChanged;
             this.Scroll += PlayerListControl_Scroll;
@@ -163,8 +164,9 @@ namespace ZeroKLobby.Controls
             // No need to update if the cursor hasn't moved.
             if (cursorPoint == previousCursorLocation) return;
             previousCursorLocation = cursorPoint;
+            
 
-            var currentMeasureY = 0;
+            var currentMeasureY = +AutoScrollPosition.Y;
 
             var itemsToPaint = GetItemsToPaintInOrder();
 
