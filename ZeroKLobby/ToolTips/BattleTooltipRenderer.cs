@@ -44,10 +44,12 @@ namespace ZeroKLobby
                     y += 16;
                 };
             Action<string> drawString = text =>
-                {
+            {
+                    y -= 3;
                     g.DrawString(text, font,fbrush, new Point(x, y));
                     x += (int)Math.Ceiling((double)g.MeasureString(text, font).Width);
-                };
+                    y += 3;
+            };
             Action<Image, int, int> drawImage = (image, w, h) =>
                 {
                     g.DrawImage(image, x, y, w, h);
