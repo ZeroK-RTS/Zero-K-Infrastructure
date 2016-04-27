@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace ZeroKLobby.Controls
 {
-    internal class ZklTextBox: UserControl
+    public class ZklTextBox: UserControl
     {
         private const int BorderSize = 2;
         private readonly TextBox textBox = new TextBox();

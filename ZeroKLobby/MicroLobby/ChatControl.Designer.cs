@@ -42,7 +42,7 @@ namespace ZeroKLobby.MicroLobby
             this.playerListMapSplitContainer = new System.Windows.Forms.SplitContainer();
             this.playerBoxSearchBarContainer = new System.Windows.Forms.Panel();
             this.searchBarContainer = new System.Windows.Forms.Panel();
-            this.playerSearchBox = new System.Windows.Forms.TextBox();
+            this.playerSearchBox = new ZklTextBox();
             this.playerBox = new PlayerListControl();
             this.sendBox = new ZeroKLobby.MicroLobby.SendBox();
             this.topicPanel = new System.Windows.Forms.Panel();
@@ -253,7 +253,7 @@ namespace ZeroKLobby.MicroLobby
         protected Panel playerBoxSearchBarContainer;
         public PlayerListControl playerBox;
         private Panel searchBarContainer;
-        protected TextBox playerSearchBox;
+        protected ZklTextBox playerSearchBox;
         private Panel topicPanel;
         private BitmapButton hideButton;
         private ChatBox topicBox;
