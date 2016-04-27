@@ -124,8 +124,8 @@ namespace ZeroKLobby.MicroLobby
                 };
 
             Action<string, Color> drawText = (text, color) =>
-                {
-                    TextRenderer.DrawText(g, text, font, new Point(bounds.Left + x, bounds.Top), color, TextFormatFlags.PreserveGraphicsTranslateTransform);
+            {
+                    TextRenderer.DrawText(g, text, font, new Point(bounds.Left + x, bounds.Top-2), color, TextFormatFlags.PreserveGraphicsTranslateTransform);
                     x += TextRenderer.MeasureText(g, text, font).Width;
                 };
 
@@ -216,7 +216,7 @@ namespace ZeroKLobby.MicroLobby
                 var oldProgression = x;
                 drawImage(ZklResources.cup);
                 x = oldProgression;
-                TextRenderer.DrawText(g, top10.ToString(), boldFont, new Point(bounds.Left + x + 1, bounds.Top), Color.Black, Color.Transparent, TextFormatFlags.PreserveGraphicsTranslateTransform);
+                //TextRenderer.DrawText(g, top10.ToString(), boldFont, new Point(bounds.Left + x - 2, bounds.Top - 2), Config.TextColor, Color.Transparent, TextFormatFlags.PreserveGraphicsTranslateTransform);
                 x += 16;
             }
 
