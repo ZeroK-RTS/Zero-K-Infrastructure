@@ -37,10 +37,11 @@ using JetBrains.Annotations;
 using ZkData;
 using ZeroKLobby;
 using System.Collections.Generic;
+using ZeroKLobby.Controls;
 
 namespace ZeroKLobby.MicroLobby
 {
-    public partial class TextWindow: UserControl
+    public partial class TextWindow: ZklBaseControl
     {
         private const int defaultMaxLines = 495; //about 10 pages
         private const int HardMaximumLines = 29950; //absolute maximum to avoid extreme case.
@@ -787,7 +788,7 @@ namespace ZeroKLobby.MicroLobby
 
                         var underline = false;
                         var isInUrl = false;
-                        var font = new Font(Font.Name, Font.Size, Font.Style);
+                        var font = new Font(Font, FontStyle.Regular);
 
                         var redline = -1;
                         if (ShowUnreadLine)
@@ -832,7 +833,7 @@ namespace ZeroKLobby.MicroLobby
                             {
                                 underline = false;
                                 font.SafeDispose();
-                                font = new Font(Font.Name, Font.Size, Font.Style);
+                                font = new Font(Font, FontStyle.Regular);
                             }
 
                             if (line.Length > 0)
@@ -908,7 +909,7 @@ namespace ZeroKLobby.MicroLobby
                                                 line.Remove(0, 1);
                                                 i = -1;
                                                 font.SafeDispose();
-                                                font = new Font(Font.Name, Font.Size, Font.Style | FontStyle.Underline);
+                                                font = new Font(Font, FontStyle.Underline);
                                                 isInUrl = true;
                                                 break;
 
@@ -938,7 +939,7 @@ namespace ZeroKLobby.MicroLobby
                                                 line.Remove(0, 1);
                                                 i = -1;
                                                 font.SafeDispose();
-                                                font = new Font(Font.Name, Font.Size, Font.Style);
+                                                font = new Font(Font, FontStyle.Regular);
                                                 isInUrl = false;
                                                 break;
                                             case TextColor.UnderlineChar:
@@ -969,8 +970,8 @@ namespace ZeroKLobby.MicroLobby
 
                                                 underline = !underline;
                                                 font.SafeDispose();
-                                                if (underline) font = new Font(Font.Name, Font.Size, Font.Style | FontStyle.Underline);
-                                                else {font = new Font(Font.Name, Font.Size, Font.Style);}
+                                                if (underline) font = new Font(Font, FontStyle.Underline);
+                                                else {font = new Font(Font, FontStyle.Regular);}
                                                 break;
                                             case TextColor.NewColorChar:
                                                 //draw whats previously in the string

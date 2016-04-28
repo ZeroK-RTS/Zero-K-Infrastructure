@@ -7,13 +7,14 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
+using ZeroKLobby.Controls;
 using ZeroKLobby.Lines;
 using ZkData;
 using Timer = System.Timers.Timer;
 
 namespace ZeroKLobby.MicroLobby
 {
-    public partial class ChatControl: UserControl
+    public partial class ChatControl: ZklBaseControl
     {
         ZKLMouseClick playerBox_zklclick = new ZKLMouseClick();
 

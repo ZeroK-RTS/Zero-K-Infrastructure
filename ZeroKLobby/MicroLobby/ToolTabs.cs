@@ -201,16 +201,16 @@ namespace ZeroKLobby.MicroLobby
             {
                     case HiliteLevel.None:
                     button.BackColor = Color.Empty;
-                    button.Font = new Font(oldFont.FontFamily, oldFont.SizeInPoints, FontStyle.Regular, oldFont.Unit, oldFont.GdiCharSet);
+                    button.Font = new Font(oldFont, FontStyle.Regular);
                     //oldFont.Dispose();
                     break;
                     case HiliteLevel.Bold:
                     button.BackColor = Color.Empty;
-                    button.Font = new Font(oldFont.FontFamily, oldFont.SizeInPoints, FontStyle.Bold | FontStyle.Italic, oldFont.Unit, oldFont.GdiCharSet);
+                    button.Font = new Font(oldFont, FontStyle.Bold | FontStyle.Italic);
                     //oldFont.Dispose();
                     break;
                     case HiliteLevel.Flash:
-                    button.Font = new Font(oldFont.FontFamily, oldFont.SizeInPoints, FontStyle.Bold, oldFont.Unit, oldFont.GdiCharSet);
+                    button.Font = new Font(oldFont, FontStyle.Bold);
                     //oldFont.Dispose();
 
                     break;
