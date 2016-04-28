@@ -103,7 +103,7 @@ namespace ZeroKLobby.Controls
             if (this.IsInDesignMode()) return;
             try
             {
-                base.OnPaint(e);
+                //base.OnPaint(e);
                 var graphics = e.Graphics;
                 graphics.TranslateTransform(AutoScrollPosition.X, AutoScrollPosition.Y);
                 PaintAllItems(graphics);
@@ -129,6 +129,8 @@ namespace ZeroKLobby.Controls
             var maxDrawY = currentDrawY;
 
             this.AutoScrollMinSize = new Size(0, maxDrawY);
+
+            graphics.FillRectangle(backgroundBrush, new Rectangle(0,maxDrawY, Bounds.Width, Bounds.Height-maxDrawY));
         }
 
         IEnumerable<PlayerListItem> GetItemsToPaintInOrder()
@@ -203,6 +205,7 @@ namespace ZeroKLobby.Controls
         
         protected override void OnPaintBackground(PaintEventArgs e)
         {
+            
         }
 
         public ObservableCollection<PlayerListItem> Items = new ObservableCollection<PlayerListItem>();
