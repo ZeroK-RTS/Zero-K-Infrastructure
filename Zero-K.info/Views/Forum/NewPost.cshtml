@@ -41,6 +41,7 @@ else
     <textarea name="text" style="height: 50vh; width: 100%;">@(Model.EditedPost != null ? Model.EditedPost.Text : null)</textarea><br/>
     <input class="textbutton" type="submit" value="Submit Post"/>
     <span class="textbutton" data-preview="text">Preview</span>
+    <a href="http://zero-k.info/Wiki/formatting" target="_blank" style="float: right">Forum and Wiki formatting guide</a>
 </form>
 
 @if (Model.LastPosts != null && Model.CurrentThread != null)
