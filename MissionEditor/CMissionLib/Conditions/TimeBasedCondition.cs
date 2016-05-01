@@ -9,8 +9,7 @@ namespace CMissionLib.Conditions
 		public TimeBasedCondition() : base() {}
 
         protected int frames;
-
-        [DataMember]
+        
         public double Seconds
         {
             get { return frames / 30.0; }
@@ -20,8 +19,7 @@ namespace CMissionLib.Conditions
                 RaiseTimeChanged();
             }
         }
-
-        [DataMember]
+        
         public double Minutes
         {
             get { return frames / 30.0 / 60; }
@@ -39,6 +37,17 @@ namespace CMissionLib.Conditions
             set
             {
                 frames = value;
+                RaiseTimeChanged();
+            }
+        }
+        
+        [DataMember]
+        public TimeSpan Time
+        {
+            get { return TimeSpan.FromSeconds(frames / 30.0); }
+            set
+            {
+                frames = (int)(value.TotalSeconds * 30);
                 RaiseTimeChanged();
             }
         }

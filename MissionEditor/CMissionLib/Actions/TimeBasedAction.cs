@@ -9,8 +9,7 @@ namespace CMissionLib.Actions
     {
         //protected static List<String> properties = new List<string>() { "Seconds", "Minutes", "Frames", "Time" };
         protected int frames;
-
-        [DataMember]
+        
         public double Seconds
         {
             get { return frames / 30.0; }
@@ -20,8 +19,7 @@ namespace CMissionLib.Actions
                 RaiseTimeChanged();
             }
         }
-
-        [DataMember]
+        
         public double Minutes
         {
             get { return frames / 30.0 / 60; }
