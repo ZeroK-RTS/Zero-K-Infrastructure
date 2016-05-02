@@ -100,7 +100,7 @@ namespace LobbyClient
             if (String.IsNullOrEmpty(text)) return;
             var lines = text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var s in lines) {
-                var bytes = Encoding.ASCII.GetBytes(s.Substring(0, Math.Min(s.Length, 250))); // take only first 250 characters to prevent crashes
+                var bytes = Encoding.UTF8.GetBytes(s.Substring(0, Math.Min(s.Length, 250))); // take only first 250 characters to prevent crashes
                 if (springTalkPort != 0) udp.Send(bytes, bytes.Length, "127.0.0.1", springTalkPort);
             }
         }
@@ -143,7 +143,7 @@ namespace LobbyClient
                         case SpringEventType.PLAYER_CHAT:
                             sea.PlayerNumber = data[1];
                             sea.Param = data[2];
-                            sea.Text = Encoding.ASCII.GetString(data, 3, data.Length - 3);
+                            sea.Text = Encoding.UTF8.GetString(data, 3, data.Length - 3);
                             break;
 
                         case SpringEventType.PLAYER_DEFEATED:
