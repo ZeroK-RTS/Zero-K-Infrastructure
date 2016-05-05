@@ -243,7 +243,7 @@ namespace ZkLobbyServer
             user.Name = acc.Name;
             user.DisplayName = acc.SteamName;
             user.Avatar = acc.Avatar;
-            user.SpringieLevel = acc.SpringieLevel;
+            user.SpringieLevel = acc.GetEffectiveSpringieLevel();
             user.Level = acc.Level;
             user.EffectiveElo = (int)acc.EffectiveElo;
             user.Effective1v1Elo = (int)acc.Effective1v1Elo;
