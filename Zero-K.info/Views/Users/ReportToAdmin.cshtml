@@ -1,4 +1,6 @@
-﻿@model ZkData.Account
+﻿@using ZeroKWeb
+@using ZkData
+@model ZkData.Account
 @{
     if (Model.AccountID == Global.AccountID) { Page.Title = "Contact administrators"; }
     else { Page.Title = "Report user " + Model.Name; }
