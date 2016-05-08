@@ -1,12 +1,20 @@
 ﻿@model ZkData.Account
 @{
-    Page.Title = "Report user " + Model.Name;
+    if (Model.AccountID == Global.AccountID) { Page.Title = "Contact administrators"; }
+    else { Page.Title = "Report user " + Model.Name; }
 }
-<h2>Report abuse by player @Html.PrintAccount(Model)</h2>
+
+@if (Model.AccountID == Global.AccountID)
+{
+    <h2>Contact the administrators</h2>
+} else {
+    <h2>Report abuse by player @Html.PrintAccount(Model)</h2>
+}
 
 <div>
-    Please describe briefly what has happened. Include link to battle replay or other evidence.<br/>
-    Moderators will look into issue.<br/>
+    Please describe briefly what has happened.
+    Include link to battle replay or other evidence, if related to the issue.<br/>
+    Moderators will look into the issue.<br/>
     <a href="/Wiki/CodeOfConduct">Code of Conduct</a>
 </div>
 
