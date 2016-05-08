@@ -9,7 +9,10 @@
 <div>
     <h3>PENALTY: @p.Reason</h3>
     Issued on: @p.Time (@p.Time.ToAgoString())<br />
-    Issued by: @Html.PrintAccount(p.AccountByCreatedAccountID)<br />
+    @if (Global.IsZeroKAdmin)
+    {
+        <span>Issued by: @Html.PrintAccount(p.AccountByCreatedAccountID)</span><br />
+    }
     @if (p.DeleteInfluence)
     {
         <span>PlanetWars influence deleted</span><br />
