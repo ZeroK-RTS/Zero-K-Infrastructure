@@ -95,9 +95,6 @@ namespace ZeroKWeb.SpringieInterface
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "avatar", Value = user.Avatar });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "admin", Value = (user.IsZeroKAdmin ? "1" : "0") });
 
-                        bool userSpecChatBlocked = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanSpecChat);
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "can_spec_chat", Value = (userSpecChatBlocked ? "0" : "1") });
-
                         if (!p.IsSpectator) {
                             // set valid PW structure attackers
                             if (mode == AutohostMode.Planetwars)
