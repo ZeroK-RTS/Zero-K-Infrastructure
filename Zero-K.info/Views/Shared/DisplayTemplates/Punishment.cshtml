@@ -29,6 +29,10 @@
     {
         <span>Unlocks blocked</span><br />
     }
+    @if (p.BanSpecChat)
+    {
+        <span>Cannot spectator chat</span><br />
+    }
     @if (p.BanMute)
     {
         <span>Muted</span><br />
