@@ -20,7 +20,6 @@ namespace ZkData
         public bool BanUnlocks { get; set; }
         public bool BanSite { get; set; }
         public bool BanLobby { get; set; }
-        public bool BanSpecChat { get; set; }
         [StringLength(1000)]
         public string BanIP { get; set; }
         public bool BanForum { get; set; }
