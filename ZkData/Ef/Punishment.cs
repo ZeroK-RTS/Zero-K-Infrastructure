@@ -18,6 +18,7 @@ namespace ZkData
         public bool BanMute { get; set; }
         public bool BanCommanders { get; set; }
         public bool BanUnlocks { get; set; }
+        public bool BanSpecChat { get; set; }
         public bool BanSite { get; set; }
         public bool BanLobby { get; set; }
         [StringLength(1000)]
