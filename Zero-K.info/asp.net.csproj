@@ -1278,6 +1278,8 @@
     <Content Include="MissionService.svc" />
     <Content Include="ResourceDetail.aspx" />
     <Content Include="Scripts\browser-css.js" />
+    <Content Include="OpenSans-Semibold.ttf" />
+    <Content Include="OpenSans-Semibold.eot" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\grid.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
@@ -1347,18 +1349,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Img\factions\ships.xcf" />
-    <None Include="PetitaMedium.eot" />
-    <None Include="PetitaMedium.ttf" />
     <None Include="Properties\PublishProfiles\Profile1.pubxml" />
-    <None Include="RevoPop.eot" />
-    <None Include="RevoPop.ttf" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
-    <None Include="Skir.eot" />
-    <None Include="Skir.ttf" />
     <None Include="SM.eot" />
     <None Include="SM.ttf" />
-    <None Include="tomorrow.eot" />
-    <None Include="tomorrow.TTF" />
     <Content Include="Views\Planetwars\Index.cshtml" />
     <Content Include="Views\Planetwars\Galaxy.cshtml" />
     <Content Include="Web.config">
@@ -1574,7 +1568,6 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>

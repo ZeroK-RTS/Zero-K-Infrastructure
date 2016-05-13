@@ -1,4 +1,6 @@
+@using WebGrease.Configuration
 @using ZeroKWeb
+@using ZkData
 <!DOCTYPE html>
 <html>
 <head>
@@ -88,7 +90,7 @@
     else
     {
         <div id="simplestyle">
-            @if (!Global.IsWebLobbyAccess)
+            @if (!Global.IsWebLobbyAccess && Request.Params["no_menu"]!="1")
             {
                 <div class="border" id="menu" style="padding: 0">
                     @Html.Partial("TopMenu")

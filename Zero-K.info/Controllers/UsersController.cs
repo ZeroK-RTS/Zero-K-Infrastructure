@@ -208,6 +208,7 @@ namespace ZeroKWeb.Controllers
                                    bool banSite,
                                    bool banLobby,
                                    bool banUnlocks,
+                                   bool banSpecChat,
                                    bool banForum,
                                    bool setRightsToZero,            
                                    string banIP,
@@ -229,6 +230,7 @@ namespace ZeroKWeb.Controllers
                                  BanLobby = banLobby,
                                  BanExpires = DateTime.UtcNow.AddHours(banHours),
                                  BanUnlocks = banUnlocks,
+                                 BanSpecChat = banSpecChat,
                                  BanIP = banIP,
                                  BanForum = banForum,
                                  SetRightsToZero = setRightsToZero,
@@ -243,7 +245,7 @@ namespace ZeroKWeb.Controllers
             // notify lobby of changes and post log message
             try
             {
-                Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
+                if (banLobby == true) Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
 
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Reason: {0} ", reason));

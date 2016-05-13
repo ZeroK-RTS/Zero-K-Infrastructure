@@ -34,6 +34,7 @@ namespace ZkData
         {
             this.writableFolderOverride = writableFolderOverride;
             this.useMultipleDataFolders = useMultipleDataFolders;
+
             SetEnginePath(springPath);
         }
 
@@ -116,7 +117,10 @@ namespace ZkData
             CreateFolder(Utils.MakePath(WritableDirectory, "engine"));
             CreateFolder(Utils.MakePath(WritableDirectory, "packages"));
             CreateFolder(Utils.MakePath(WritableDirectory, "pool"));
-            if (!string.IsNullOrEmpty(Cache)) CreateFolder(Cache);
+            CreateFolder(Utils.MakePath(WritableDirectory, "demos"));
+            CreateFolder(Utils.MakePath(WritableDirectory, "temp"));
+            Cache = Utils.MakePath(WritableDirectory, "cache");
+            CreateFolder(Cache);
         }
 
 
@@ -165,7 +169,17 @@ namespace ZkData
 
         void CreateFolder(string path)
         {
-            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            if (!Directory.Exists(path))
+            {
+                try
+                {
+                    Directory.CreateDirectory(path);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Unable to create folder {0} : {1}", path, ex.Message);
+                }
+            }
         }
 
         

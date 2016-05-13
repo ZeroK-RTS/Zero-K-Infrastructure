@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using ZkData.UnitSyncLib;
 
@@ -6,6 +7,7 @@ namespace ZkData
 {
     [XmlInclude(typeof(Map))]
     [XmlInclude(typeof(Mod))]
+    [Serializable]
     public class ResourceInfo
     {
         public string Author { get; set; }

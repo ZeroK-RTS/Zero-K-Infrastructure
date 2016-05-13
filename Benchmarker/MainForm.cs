@@ -48,7 +48,7 @@ namespace Benchmarker
                 springScanner.Start();
             }
             if (downloader != null)  springDownloader = downloader;
-            else springDownloader = new PlasmaDownloader.PlasmaDownloader(new PlasmaConfig(), springScanner, springPaths);
+            else springDownloader = new PlasmaDownloader.PlasmaDownloader(springScanner, springPaths);
 
             timer = new Timer();
             timer.Tick += (sender, args) =>
@@ -305,9 +305,4 @@ namespace Benchmarker
 
     }
 
-    public class PlasmaConfig: IPlasmaDownloaderConfig
-    {
-        public int RepoMasterRefresh { get { return 60; } }
-        public string PackageMasterUrl { get { return "http://repos.springrts.com/"; } }
-    }
 }

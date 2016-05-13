@@ -448,7 +448,13 @@ namespace LobbyClient
         {
             UserName = userName;
             UserPassword = password;
-            return SendCommand(new Login() { Name = userName, PasswordHash = Utils.HashLobbyPassword(password), ClientType = clientType, UserID = GetMyUserID()});
+            return SendCommand(new Login() {
+                Name = userName,
+                PasswordHash = Utils.HashLobbyPassword(password),
+                ClientType = clientType,
+                UserID = GetMyUserID(),
+                LobbyVersion = appName
+            });
         }
 
 

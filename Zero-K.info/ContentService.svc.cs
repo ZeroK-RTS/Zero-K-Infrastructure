@@ -38,6 +38,7 @@ namespace ZeroKWeb
                     ret = ret.Where(x => SqlFunctions.PatIndex("%" + w1 + "%", x.InternalName) > 0);
                 }
             }
+            ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
             return ret.OrderByDescending(x => -x.FeaturedOrder).Take(400).ToList().Select(PlasmaServer.ToResourceData).ToList();
         }
 

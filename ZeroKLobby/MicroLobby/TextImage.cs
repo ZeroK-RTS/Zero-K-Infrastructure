@@ -11,8 +11,8 @@ namespace ZeroKLobby.MicroLobby
     {
         const int friend = 1;
         public static readonly string Friend = TextColor.EmotChar + friend.ToString("000"); //convert "1" to "001" 
-        const int jimi = 4;
-        public static readonly string Jimi = TextColor.EmotChar + jimi.ToString("000");
+        const int self = 4;
+        public static readonly string Self = TextColor.EmotChar + self.ToString("000");
         const int napoleon = 7;
         public static readonly string Napoleon = TextColor.EmotChar + napoleon.ToString("000");
         const int admin = 2;
@@ -37,11 +37,24 @@ namespace ZeroKLobby.MicroLobby
             bitmaps[friend] = ZklResources.friend;
             bitmaps[admin] = ZklResources.police;
             bitmaps[bot] = ZklResources.robot;
-            bitmaps[jimi] = ZklResources.jimi;
             bitmaps[smurf] = ZklResources.smurf;
             bitmaps[soldier] = ZklResources.soldier;
             bitmaps[napoleon] = ZklResources.napoleon;
             bitmaps[grayuser] = ZklResources.grayuser;
+
+
+
+            var bm = new Bitmap(ZklResources.jimi.Width, ZklResources.jimi.Height);
+            using (var gr = Graphics.FromImage(bm))
+            {
+                gr.DrawImage(ZklResources.jimi, new Point(0, 0));
+                var myUser = Program.TasClient?.MyUser;
+                if (myUser != null)
+                {
+                    gr.DrawImage(GetUserImageRaw(myUser), new Point(0, 0));
+                }
+            }
+            bitmaps[self] = bm;
         }
 
         public static Image GetImage(int imageNumber)
@@ -58,7 +71,7 @@ namespace ZeroKLobby.MicroLobby
         {
             User user;
             if (Program.TasClient.ExistingUsers.TryGetValue(userName, out user)) {
-                if (userName == Program.TasClient.UserName) return ZklResources.jimi;
+                if (userName == Program.TasClient.UserName) return bitmaps[self];
                 if (user.IsBot) return ZklResources.robot;
                 if (Program.FriendManager.Friends.Contains(user.Name)) return ZklResources.friend;
                 if (user.IsAdmin) return ZklResources.police;
@@ -71,12 +84,25 @@ namespace ZeroKLobby.MicroLobby
             return ZklResources.user;
         }
 
+        private static Image GetUserImageRaw(User user) {
+            if (user != null)
+            {
+                if (user.IsBot) return ZklResources.robot;
+                if (Program.FriendManager.Friends.Contains(user.Name)) return ZklResources.friend;
+                if (user.IsAdmin) return ZklResources.police;
+                if (user.EffectiveElo >= 1800) return ZklResources.napoleon;
+                if (user.EffectiveElo >= 1600) return ZklResources.soldier;
+                if (user.EffectiveElo < 1400) return ZklResources.smurf;
+            }
+            return ZklResources.user;
+        }
+
         public static string GetUserImageCode(string userName)
         {
             User user;
             if (Program.TasClient.ExistingUsers.TryGetValue(userName, out user))
             {
-                if (userName == Program.TasClient.UserName) return Jimi;
+                if (userName == Program.TasClient.UserName) return Self;
                 if (user.IsBot) return Robot;
                 if (Program.FriendManager.Friends.Contains(user.Name)) return Friend;
                 if (user.IsAdmin) return Police;

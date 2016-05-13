@@ -19,19 +19,15 @@ namespace ZeroKLobby.MicroLobby
         Point openBattlePosition;
         readonly Regex filterOrSplit = new Regex(@"\||\bOR\b");
         string filterText;
-        bool hideEmpty;
-        bool hideFull;
-        bool hidePassworded;
         object lastTooltip;
         readonly IEnumerable<BattleIcon> model;
         Point previousLocation;
-        bool showOfficial = true;
         readonly bool sortByPlayers;
 
         List<BattleIcon> view = new List<BattleIcon>();
         static Pen dividerPen = new Pen(Color.DarkCyan, 3) {DashStyle = DashStyle.Dash};
-        static Font dividerFont = new Font("Segoe UI", 15.25F, FontStyle.Bold);
-        static SolidBrush dividerFontBrush = new SolidBrush(Program.Conf.TextColor);
+        static Font dividerFont = Config.GeneralFontBig;
+        static SolidBrush dividerFontBrush = new SolidBrush(Config.TextColor);
 
 
         public string FilterText
@@ -47,68 +43,21 @@ namespace ZeroKLobby.MicroLobby
         }
 
 
-        public bool HideEmpty
-        {
-            get { return hideEmpty; }
-            set
-            {
-                if (hideEmpty != value)
-                {
-                    hideEmpty = value;
-                    Program.Conf.HideEmptyBattles = hideEmpty;
-                    Repaint();
-                }
-            }
-        }
+        public bool HideEmpty { get; set; }
 
+        public bool HideFull { get; set; }
 
-        public bool HideFull
-        {
-            get { return hideFull; }
-            set
-            {
-                if (hideFull != value)
-                {
-                    hideFull = value;
-                    Program.Conf.HideNonJoinableBattles = hideFull;
-                    Repaint();
-                }
-            }
-        }
+        public bool HidePassworded { get; set; }
 
-        public bool HidePassworded
-        {
-            get { return hidePassworded; }
-            set
-            {
-                if (hidePassworded != value)
-                {
-                    hidePassworded = value;
-                    Program.Conf.HidePasswordedBattles = hidePassworded;
-                    Repaint();
-                }
-            }
-        }
-        public bool ShowOfficial
-        {
-            get { return showOfficial; }
-            set
-            {
-                if (showOfficial != value)
-                {
-                    showOfficial = value;
-                    Program.Conf.ShowOfficialBattles = showOfficial;
-                    Repaint();
-                }
-            }
-        }
+        public bool ShowOfficial { get; set; }
+
 
         public BattleListControl()
         {
             InitializeComponent();
             AutoScroll = true;
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
-            BackColor = Program.Conf.BgColor;
+            BackColor = Config.BgColor;
             FilterText = Program.Conf.BattleFilter;
             Disposed += BattleListControl_Disposed;
             Program.BattleIconManager.BattleAdded += HandleBattle;
@@ -116,10 +65,6 @@ namespace ZeroKLobby.MicroLobby
             Program.BattleIconManager.RemovedBattle += HandleBattle;
             model = Program.BattleIconManager.BattleIcons;
             sortByPlayers = true;
-            hideEmpty = Program.Conf.HideEmptyBattles;
-            hideFull = Program.Conf.HideNonJoinableBattles;
-            hidePassworded = Program.Conf.HidePasswordedBattles;
-            showOfficial = Program.Conf.ShowOfficialBattles;
 
             Repaint();
         }
@@ -280,7 +225,7 @@ namespace ZeroKLobby.MicroLobby
                     y += scaledIconHeight;
                 }
 
-                PaintDivider(g, ref x, ref y, "Custom battles");
+                PaintDivider(g, ref x, ref y, "Open battles");
                 PainOpenBattleButton(g, ref x, ref y, scaledMapCellWidth, scaledIconWidth);
 
                 foreach (BattleIcon t in view.Where(b => !b.Battle.IsQueue && !b.IsInGame))
@@ -318,16 +263,16 @@ namespace ZeroKLobby.MicroLobby
 
         void PaintDivider(Graphics g, ref int x, ref int y, string text)
         {
-            y += 3;
+            y += 8;
 
-            g.DrawLine(dividerPen, 5, y + 2, Width - 10, y + 2);
-            y += 4;
+            //g.DrawLine(dividerPen, 5, y + 2, Width - 10, y + 2);
+            //y += 4;
             g.DrawString(text, dividerFont, dividerFontBrush,new RectangleF(10,y , Width-20,30),new StringFormat()
             {
                 LineAlignment = StringAlignment.Center,Alignment = StringAlignment.Center
             }  );
             y += 24;
-            g.DrawLine(dividerPen, 5, y + 2, Width - 10, y + 2);
+            //g.DrawLine(dividerPen, 5, y + 2, Width - 10, y + 2);
             y += 4;
         }
 
@@ -365,10 +310,10 @@ namespace ZeroKLobby.MicroLobby
                 view = model.Where(icon => orParts.Any(filterPart => BattleWordFilter(icon.Battle, filterPart.Split(' ')))).ToList();
             }
             IEnumerable<BattleIcon> v = view; // speedup to avoid multiple "toList"
-            if (hideEmpty) v = v.Where(bi => bi.Battle.NonSpectatorCount > 0 || bi.Battle.IsQueue);
-            if (hideFull) v = v.Where(bi => bi.Battle.NonSpectatorCount < bi.Battle.MaxPlayers);
-            if (showOfficial) v = v.Where(bi => bi.Battle.IsOfficial());
-            if (hidePassworded) v = v.Where(bi => !bi.Battle.IsPassworded);
+            if (HideEmpty) v = v.Where(bi => bi.Battle.NonSpectatorCount > 0 || bi.Battle.IsQueue);
+            if (HideFull) v = v.Where(bi => bi.Battle.NonSpectatorCount < bi.Battle.MaxPlayers);
+            if (ShowOfficial) v = v.Where(bi => bi.Battle.IsOfficial());
+            if (HidePassworded) v = v.Where(bi => !bi.Battle.IsPassworded);
 
             view = v.ToList();
         }

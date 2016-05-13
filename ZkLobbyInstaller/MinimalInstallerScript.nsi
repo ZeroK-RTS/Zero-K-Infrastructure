@@ -54,10 +54,10 @@ FunctionEnd
 ;General
 ;Name and file
 Name "Zero-K Lobby downloader"
-OutFile "Zero-K Lobby Setup.exe"
+OutFile "Zero-K.setup.exe"
 
 ;Default installation folder
-InstallDir "$DOCUMENTS\My Games\Spring"
+InstallDir "$DOCUMENTS\My Games\Zero-K"
 
 ;Request application privileges
 RequestExecutionLevel user #not needed (always set to user), because UAC will be controlled by UAC plugin
@@ -65,7 +65,7 @@ RequestExecutionLevel user #not needed (always set to user), because UAC will be
 ;--------------------------------
 ;Interface Settings
 
-!define MUI_ICON "SpringDownloader.ico"
+!define MUI_ICON "ZK_logo_square.ico"
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 
 ;--------------------------------
@@ -168,12 +168,12 @@ Function DownloadAndInstallNet
 		Pop $0
 		${If} $0 == 0
 			${If} ${IsWinXP}
-				MessageBox MB_OK|MB_ICONEXCLAMATION|MB_DEFBUTTON1 "NET Framework 4.0 isn't found in your system.$\n$\nSetup will install NET Framework 4.0"
+				#MessageBox MB_OK|MB_ICONEXCLAMATION|MB_DEFBUTTON1 "NET Framework 4.0 isn't found in your system.$\n$\nSetup will install NET Framework 4.0"
 				DetailPrint "Downloading: http://download.microsoft.com/download/1/B/E/1BE39E79-7E39-46A3-96FF-047F95396215/dotNetFx40_Full_setup.exe"
 				NSISdl::download /TIMEOUT=30000 http://download.microsoft.com/download/1/B/E/1BE39E79-7E39-46A3-96FF-047F95396215/dotNetFx40_Full_setup.exe "$INSTDIR\dotNetFx40_Full_setup.exe"
 
 			${Else}
-				MessageBox MB_OK|MB_ICONEXCLAMATION|MB_DEFBUTTON1 "NET Framework 4.5.1 isn't found in your system.$\n$\nSetup will install NET Framework 4.5.1"
+				#MessageBox MB_OK|MB_ICONEXCLAMATION|MB_DEFBUTTON1 "NET Framework 4.5.2 isn't found in your system.$\n$\nSetup will install NET Framework 4.5.2"
 				DetailPrint "Downloading: http://download.microsoft.com/download/B/4/1/B4119C11-0423-477B-80EE-7A474314B347/NDP452-KB2901954-Web.exe"
 				NSISdl::download /TIMEOUT=30000 http://download.microsoft.com/download/B/4/1/B4119C11-0423-477B-80EE-7A474314B347/NDP452-KB2901954-Web.exe "$INSTDIR\dotNetFx452-KB2901954-Web.exe"
 
@@ -193,7 +193,7 @@ Function DownloadAndInstallNet
 				Banner::destroy
 
 			${Else}
-				Banner::show /NOUNLOAD "Waiting for NET4.5.1 Websetup ..."
+				Banner::show /NOUNLOAD "Waiting for NET4.5.2 Websetup ..."
 				DetailPrint "Running $INSTDIR\dotNetFx452-KB2901954-Web.exe"
 				nsExec::ExecToStack "$INSTDIR\dotNetFx452-KB2901954-Web.exe" /norestart
 				Banner::destroy

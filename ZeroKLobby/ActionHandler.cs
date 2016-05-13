@@ -295,12 +295,6 @@ namespace ZeroKLobby
                                         Program.TasClient.Say(SayPlace.User, myHostName, command, false);
                                     }
                                 }
-                                // random map if we aren't picking a random one
-                                if (springieCommands == null || !springieCommands.Any(x => x.StartsWith("!map")))
-                                {
-                                    HidePM("!map");
-                                    Program.TasClient.Say(SayPlace.User, myHostName, "!map", false);
-                                }
                                 Program.TasClient.BattleJoined -= battleJoined;
                             }
                         };
@@ -330,17 +324,20 @@ namespace ZeroKLobby
 
         public static void StartMission(string name)
         {
+            Program.MainWindow.SwitchMusicOnOff(false);
             Program.NotifySection.AddBar(new MissionBar(name));
         }
 
 
         public static void StartReplay(string url, string mod, string map, string engine)
         {
+            Program.MainWindow.SwitchMusicOnOff(false);
             Program.NotifySection.AddBar(new ReplayBar(url, mod, map, engine));
         }
 
         public static void StartScriptMission(string name)
         {
+            Program.MainWindow.SwitchMusicOnOff(false);
             try
             {
                 var serv = GlobalConst.GetContentService();

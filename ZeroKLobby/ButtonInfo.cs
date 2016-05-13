@@ -25,7 +25,9 @@ namespace ZeroKLobby
                 var changed = isSelected != value;
                 isSelected = value;
                 //button.BackColor = isSelected ? Color.PowderBlue : SystemColors.ButtonFace;
-                button.ForeColor = isSelected ? Color.Aqua: Color.White;
+                button.ForeColor = isSelected ? Color.White : Config.MenuTextColor;
+                if (isSelected) button.ButtonStyle = FrameBorderRenderer.StyleType.DarkHiveGlow; else 
+                    button.ButtonStyle = FrameBorderRenderer.StyleType.DarkHive;
                 if (changed) InvokePropertyChanged("IsSelected");
             }
         }
@@ -36,7 +38,7 @@ namespace ZeroKLobby
         /// If true, lobby wont remember subpath for this button and instead go directly to target location
         /// </summary>
         public string TargetPath;
-        Button button;
+        BitmapButton button;
         public bool Visible { get; set; }
         public DockStyle Dock { get; set; }
 
@@ -61,9 +63,12 @@ namespace ZeroKLobby
             button.Height = Height;
             button.Width = Width;
             button.TextAlign = ContentAlignment.MiddleCenter;
+            button.Font = Config.MenuFont;
             button.Text = Label;
+            button.ForeColor = Config.MenuTextColor;
             button.Margin = new Padding(0, 0, 0, 3);
             button.Cursor = Cursors.Hand;
+            button.ButtonStyle = FrameBorderRenderer.StyleType.DarkHive; 
             //button.Dock = Dock;
             if (Icon != null) {
                 button.Image = Icon;

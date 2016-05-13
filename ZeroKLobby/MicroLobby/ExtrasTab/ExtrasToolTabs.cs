@@ -48,10 +48,10 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         public ExtrasToolTabs()
         {
-            toolStrip.BackColor = Program.Conf.BgColor;
-            toolStrip.ForeColor = Program.Conf.TextColor;
-            BackColor = Program.Conf.BgColor;
-            ForeColor = Program.Conf.TextColor;
+            toolStrip.BackColor = Config.BgColor;
+            toolStrip.ForeColor = Config.TextColor;
+            BackColor = Config.BgColor;
+            ForeColor = Config.TextColor;
 
             //set colour for overflow button:
             var ovrflwBtn = toolStrip.OverflowButton;
@@ -151,16 +151,16 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                     case HiliteLevel.None:
                     button.BackColor = Color.Empty;
-                    button.Font = new Font(oldFont.FontFamily, oldFont.SizeInPoints, FontStyle.Regular, oldFont.Unit, oldFont.GdiCharSet);
+                    button.Font = new Font(oldFont, FontStyle.Regular);
                     //oldFont.Dispose();
                     break;
                     case HiliteLevel.Bold:
                     button.BackColor = Color.Empty;
-                    button.Font = new Font(oldFont.FontFamily, oldFont.SizeInPoints, FontStyle.Bold | FontStyle.Italic, oldFont.Unit, oldFont.GdiCharSet);
+                    button.Font = new Font(oldFont, FontStyle.Bold | FontStyle.Italic);
                     //oldFont.Dispose();
                     break;
                     case HiliteLevel.Flash:
-                    button.Font = new Font(oldFont.FontFamily, oldFont.SizeInPoints, FontStyle.Bold, oldFont.Unit, oldFont.GdiCharSet);
+                    button.Font = new Font(oldFont, FontStyle.Bold);
                     //oldFont.Dispose();
 
                     break;

@@ -28,14 +28,11 @@ namespace ZeroKLobby.MicroLobby
             SpectatorTitle = 101,
             Spectators = 102,
         }
+        readonly Font boldFont = new Font(Config.GeneralFont, FontStyle.Bold);
 
-        //readonly Font boldFont = new Font("Microsoft Sans Serif", 9, FontStyle.Bold);
-        readonly Font boldFont = new Font(Program.Conf.ChatFont.FontFamily, Program.Conf.ChatFont.Size - 2, FontStyle.Bold);
+        Font font = Config.ChatFont;
 
-        //Font font = new Font("Segoe UI", 9, FontStyle.Regular);
-        Font font = new Font(Program.Conf.ChatFont.FontFamily, Program.Conf.ChatFont.Size - 2, FontStyle.Regular);
-
-        int height = 16;
+        int height = 20;
         /// <summary>
         /// PlayerListItem will avoid using TasClient when this flag is true.
         /// </summary>
@@ -93,7 +90,6 @@ namespace ZeroKLobby.MicroLobby
 
         public PlayerListItem()
         {
-            height = (int)font.Size*2;
             SortCategory = (int)SortCats.Uncategorized;
         }
 
@@ -106,19 +102,18 @@ namespace ZeroKLobby.MicroLobby
 
         public void Dispose()
         {
-            font.Dispose();
+            //font.Dispose();
             boldFont.Dispose();
         }
 
-        public void DrawPlayerLine(Graphics g, Rectangle bounds, Color foreColor, Color backColor, bool grayedOut, bool isBattle)
+        public void DrawPlayerLine(Graphics g, Rectangle bounds, Color textColor,  bool grayedOut, bool isBattle)
         {
-
             g.TextRenderingHint = TextRenderingHint.SystemDefault;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
             var x = 0;
 
-            if (grayedOut) foreColor = Program.Conf.FadeColor;
+            if (grayedOut) textColor = Program.Conf.FadeColor;
 
             Action<Image> drawImage = image =>
                 {
@@ -126,9 +121,9 @@ namespace ZeroKLobby.MicroLobby
                     x += 19;
                 };
 
-            Action<string, Color, Color> drawText = (text, fore, back) =>
-                {
-                    TextRenderer.DrawText(g, text, font, new Point(bounds.Left + x, bounds.Top), fore, back);
+            Action<string, Color> drawText = (text, color) =>
+            {
+                    TextRenderer.DrawText(g, text, font, new Point(bounds.Left + x, bounds.Top-2), color, TextFormatFlags.PreserveGraphicsTranslateTransform);
                     x += TextRenderer.MeasureText(g, text, font).Width;
                 };
 
@@ -137,7 +132,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 font = boldFont;
                 if (Title == "Search results:") drawImage(ZklResources.search);
-                TextRenderer.DrawText(g, Title, font, bounds, foreColor, backColor, TextFormatFlags.HorizontalCenter);
+                TextRenderer.DrawText(g, Title, font, bounds, textColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.PreserveGraphicsTranslateTransform);
                 return;
             }
 
@@ -145,7 +140,8 @@ namespace ZeroKLobby.MicroLobby
             if (Button != null)
             {
                 font = boldFont;
-                ButtonRenderer.DrawButton(g, bounds, Button, font, false, PushButtonState.Normal);
+                FrameBorderRenderer.Instance.RenderToGraphics(g, bounds, FrameBorderRenderer.StyleType.DarkHive);
+                TextRenderer.DrawText(g, Button, font, bounds, textColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.PreserveGraphicsTranslateTransform);
                 return;
             }
 
@@ -163,7 +159,7 @@ namespace ZeroKLobby.MicroLobby
                     }
                 }
                 x += bounds.Bottom - bounds.Top + 2;
-                drawText(slotText, foreColor, backColor);
+                drawText(slotText, textColor);
                 return;
             }
 
@@ -174,7 +170,7 @@ namespace ZeroKLobby.MicroLobby
                 x += 19;
                 drawImage(ZklResources.robot);
                 var botDisplayName = MissionSlot == null ? bot.aiLib : MissionSlot.TeamName;
-                drawText(botDisplayName + " (" + bot.owner + ")", foreColor, backColor);
+                drawText(botDisplayName + " (" + bot.owner + ")", textColor);
                 return;
             }
 
@@ -184,7 +180,7 @@ namespace ZeroKLobby.MicroLobby
 
             if (UserName != null && user == null)
             {
-                drawText(UserName + " has left.", foreColor, backColor);
+                drawText(UserName + " has left.", textColor);
                 return;
             }
 
@@ -211,14 +207,14 @@ namespace ZeroKLobby.MicroLobby
             }
 
             var userDisplayName = MissionSlot == null ? user.Name : String.Format("{1}: {0}", MissionSlot.TeamName, user.Name);
-            drawText(userDisplayName, foreColor, backColor);
+            drawText(userDisplayName, textColor);
             var top10 = Program.SpringieServer.GetTop10Rank(user.Name);
             if (top10 > 0)
             {
                 var oldProgression = x;
                 drawImage(ZklResources.cup);
                 x = oldProgression;
-                TextRenderer.DrawText(g, top10.ToString(), boldFont, new Point(bounds.Left + x + 1, bounds.Top), Color.Black, Color.Transparent);
+                //TextRenderer.DrawText(g, top10.ToString(), boldFont, new Point(bounds.Left + x - 2, bounds.Top - 2), Config.TextColor, Color.Transparent, TextFormatFlags.PreserveGraphicsTranslateTransform);
                 x += 16;
             }
 
@@ -231,8 +227,7 @@ namespace ZeroKLobby.MicroLobby
                 if (MissionSlot != null)
                     if (userStatus.AllyNumber != MissionSlot.AllyID)
                         drawText(string.Format("Wrong alliance ({0} instead of {1}).", userStatus.AllyNumber, MissionSlot.AllyID),
-                                 Color.Red,
-                                 backColor);
+                                 Color.Red);
 
             if (user.SteamID != null) {
                 bool isEnabled;
@@ -244,7 +239,7 @@ namespace ZeroKLobby.MicroLobby
             }
         }
 
-        public override string ToString()
+        public string GetSortingKey()
         {
             if (SortCategory < (int)SortCats.Uncategorized)
                 return SortCategory.ToString("00000") + UserName??string.Empty; //for ChatControl's search-filter only

@@ -61,7 +61,6 @@
   <ItemGroup>
     <Compile Include="Download.cs" />
     <Compile Include="EngineDownload.cs" />
-    <Compile Include="IPlasmaDownloaderConfig.cs" />
     <Compile Include="Packages\BitArray.cs" />
     <Compile Include="Packages\StreamExtension.cs" />
     <Compile Include="PlasmaDownloader.cs" />
@@ -116,5 +115,4 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

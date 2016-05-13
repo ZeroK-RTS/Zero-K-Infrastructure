@@ -75,10 +75,10 @@ namespace ZeroKLobby.MicroLobby
             colors[13] = Color.FromArgb(255, 192, 203); //pink 
             colors[14] = Color.FromArgb(128, 128, 128); //grey
             colors[15] = Color.FromArgb(211, 211, 211); //light grey
-            colors[background] = Program.Conf.BgColor;
-            colors[text] = Program.Conf.TextColor;
-            colors[args] = Program.Conf.TextColor;
-            colors[date] = Program.Conf.TextColor;
+            colors[background] = Config.BgColor;
+            colors[text] = Config.TextColor;
+            colors[args] = Config.TextColor;
+            colors[date] = Config.TextColor;
             colors[emote] = Program.Conf.EmoteColor;
             colors[error] = Program.Conf.NoticeColor;
             colors[history] = Program.Conf.FadeColor;

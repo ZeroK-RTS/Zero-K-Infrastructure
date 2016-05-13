@@ -32,7 +32,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.battleTitleBox = new System.Windows.Forms.TextBox();
-            this.passwordBox = new System.Windows.Forms.TextBox();
+            this.passwordBox = new System.Windows.Forms.TextBox() { UseSystemPasswordChar = true };
             this.label4 = new System.Windows.Forms.Label();
             this.okButton = new ZeroKLobby.BitmapButton();
             this.cancelButton = new ZeroKLobby.BitmapButton();

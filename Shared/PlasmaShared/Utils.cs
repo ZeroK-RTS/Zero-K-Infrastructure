@@ -16,6 +16,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using PlasmaShared;
 using Encoder = System.Drawing.Imaging.Encoder;
 
 #endregion
@@ -30,6 +31,13 @@ namespace ZkData
         public static void SafeDispose(this IDisposable o)
         {
             if (o != null) o.Dispose();
+        }
+
+        public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
+        {
+            if (val.CompareTo(min) < 0) return min;
+            else if (val.CompareTo(max) > 0) return max;
+            else return val;
         }
 
 
@@ -222,7 +230,7 @@ namespace ZkData
             }
         }
 
-        public static Bitmap GetResized(this Image original, int newWidth, int newHeight, InterpolationMode mode)
+        public static Bitmap GetResized(this Image original, int newWidth, int newHeight, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
         {
             var resized = new Bitmap(newWidth, newHeight);
             using (var g = Graphics.FromImage(resized))
@@ -231,6 +239,11 @@ namespace ZkData
                 g.DrawImage(original, 0, 0, newWidth, newHeight);
             }
             return resized;
+        }
+
+        public static Image GetResizedWithCache(this Image original, int newWidth, int newHeight, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
+        {
+            return ResizedImageCache.Instance.GetResizedWithCache(original, newWidth, newHeight, mode);
         }
 
 
@@ -360,6 +373,15 @@ namespace ZkData
         {
             if (source == null) return new string[] { };
             else return source.Replace("\r\n", "\n").Split('\n');
+        }
+
+        public static IEnumerable<string> SplitEvery(this string s, int length)
+        {
+            return s.Where((c, index) => index % length == 0)
+                   .Select((c, index) => String.Concat(
+                        s.Skip(index * length).Take(length)
+                     )
+                   );
         }
 
         /// <summary>

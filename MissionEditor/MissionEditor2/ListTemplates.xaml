@@ -292,8 +292,8 @@
                 <Label Grid.Row="4">Frames</Label>
                 <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Countdown, UpdateSourceTrigger=PropertyChanged}" />
                 <CheckBox Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" IsChecked="{Binding Display}" />
-                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.0########}}"/>
+                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.0########}}"/>
                 <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </DataTemplate>
@@ -318,8 +318,8 @@
                 <Label Grid.Row="4">Frames</Label>
                 <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Mission.Countdowns, ElementName=window}" SelectedItem="{Binding Countdown}" />
                 <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{x:Static Actions:ModifyCountdownAction.Modes}" SelectedItem="{Binding Mode}" />
-                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.0########}}" />
+                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.0########}}" />
                 <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </DataTemplate>
@@ -354,8 +354,8 @@
                 <Label Grid.Row="3">Seconds</Label>
                 <Label Grid.Row="4">Frames</Label>
                 <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Mission.Countdowns, ElementName=window}" SelectedItem="{Binding Countdown}" />
-                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.0########}}" />
+                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.0########}}" />
                 <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </DataTemplate>
@@ -379,8 +379,8 @@
                 <Label Grid.Row="3">Seconds</Label>
                 <Label Grid.Row="4">Frames</Label>
                 <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Mission.Countdowns, ElementName=window}" SelectedItem="{Binding Countdown}" />
-                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.0########}}" />
+                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.0########}}" />
                 <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </DataTemplate>

@@ -249,11 +249,8 @@ namespace ZeroKWeb
             ForumPostIndexer = new ForumPostIndexer();
             ZkServerRunner = new ServerRunner(mvcApplication.Server.MapPath("~"));
             Server = ZkServerRunner.ZkLobbyServer;
-            if (GlobalConst.Mode == ModeType.Live)
-            {
-                AutoRegistrator = new AutoRegistrator(MapPath("~"));
-                AutoRegistrator.RunMainAndMapSyncAsync();
-            }
+            AutoRegistrator = new AutoRegistrator(MapPath("~"));
+            AutoRegistrator.RunMainAndMapSyncAsync();
             ZkServerRunner.Run();
             listener.ZkLobbyServer = Server;
 

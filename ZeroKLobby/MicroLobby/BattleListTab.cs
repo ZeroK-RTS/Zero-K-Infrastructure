@@ -1,60 +1,65 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using System.Drawing;
 using System.Windows.Forms;
-using ZkData;
+using ZeroKLobby.Controls;
 
 namespace ZeroKLobby.MicroLobby
 {
-    public partial class BattleListTab: UserControl, INavigatable
+    public class BattleListTab: ZklBaseControl, INavigatable
     {
-        BattleListControl battleListControl;
+        private readonly BattleListControl battleListControl;
+        private readonly Panel battlePanel;
 
-        public BattleListTab() 
-        {
-            Paint += BattleListTab_Enter; 
-        }
+        private readonly Panel panel1;
+        private readonly ZklTextBox searchBox;
+        private readonly Label searchLabel;
 
-        void BattleListTab_Enter(object sender, EventArgs e) //lazy initialization
-        {
-            Paint -= BattleListTab_Enter; //using "Paint" instead of "Enter" event because "Enter" is too lazy in Mono (have to click control)
-            SuspendLayout(); //pause
-            InitializeComponent();
+        public BattleListTab() {
+            SuspendLayout();
+            Size = new Size(731, 463);
 
-            if (DesignMode) return;
-            DpiMeasurement.DpiXYMeasurement(this);
-            var lookingGlass = new PictureBox
+            panel1 = new Panel { BackColor = Color.Transparent, Dock = DockStyle.Top, Location = new Point(0, 0), Size = new Size(731, 31) };
+            searchLabel = new Label { AutoSize = true, Location = new Point(3, 7), Size = new Size(59, 18), Text = "Search:", ForeColor = Config.TextColor, Font = Config.GeneralFont};
+            searchBox = new ZklTextBox { BackColor = Color.FromArgb(0, 30, 40), Location = new Point(68, 4), Size = new Size(178, 24), TabIndex = 1 };
+
+            panel1.Controls.Add(searchLabel);
+            panel1.Controls.Add(searchBox);
+
+            battlePanel = new Panel
             {
-                Width =  DpiMeasurement.ScaleValueY(20),
-                Height = DpiMeasurement.ScaleValueY(20),
-                Image = ZklResources.search,
-                SizeMode = PictureBoxSizeMode.CenterImage,
-                Dock = DockStyle.Left
+                Location = new Point(0, 31),
+                Size = new Size(731, 432),
+                Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right
             };
-            Program.ToolTip.SetText(lookingGlass, "Search game, description, map or player");
-            Program.ToolTip.SetText(searchBox, "Search game, description, map or player");
-            
-            hideEmptyBox.Checked = Program.Conf.HideEmptyBattles;
-            hideFullBox.Checked = Program.Conf.HideNonJoinableBattles;
-            showOfficialBox.Checked = Program.Conf.ShowOfficialBattles;
-            hidePasswordedBox.Checked = Program.Conf.HidePasswordedBattles;
 
             // battle list
-            battleListControl = new BattleListControl() { Dock = DockStyle.Fill };
+            battleListControl = new BattleListControl { Dock = DockStyle.Fill };
             battlePanel.Controls.Add(battleListControl);
+
+            Controls.Add(panel1);
+            Controls.Add(battlePanel);
+
+            Program.ToolTip.SetText(searchBox, "Search game, map or player");
+            Program.ToolTip.SetText(searchBox.TextBox, "Search game, map or player");
+            Program.ToolTip.SetText(searchLabel, "Search game, map or player");
+
+            searchBox.TextChanged += searchBox_TextChanged;
+
             ResumeLayout();
         }
+
 
         public bool TryNavigate(params string[] path) {
             if (path.Length == 0) return false;
             if (path[0] != PathHead) return false;
 
-            if (path.Length == 2 && !String.IsNullOrEmpty(path[1])) {
+            if (path.Length == 2 && !string.IsNullOrEmpty(path[1]))
+            {
                 var gameShortcut = path[1];
                 if (battleListControl == null) Program.Conf.BattleFilter = gameShortcut;
                 else battleListControl.FilterText = gameShortcut;
-            }
-            else {
+            } else
+            {
                 if (battleListControl == null) Program.Conf.BattleFilter = "";
                 else battleListControl.FilterText = "";
             }
@@ -72,35 +77,16 @@ namespace ZeroKLobby.MicroLobby
             return null;
         }
 
-        public void Reload() {
-        }
+        public void Reload() {}
 
         public bool CanReload { get { return false; } }
 
-        public bool IsBusy { get { return false;} }
+        public bool IsBusy { get { return false; } }
 
-        void searchBox_TextChanged(object sender, EventArgs e) {
+        private void searchBox_TextChanged(object sender, EventArgs e) {
             if (!string.IsNullOrEmpty(searchBox.Text)) Program.MainWindow.navigationControl.Path = "battles/" + searchBox.Text;
             else Program.MainWindow.navigationControl.Path = "battles";
             battleListControl.FilterText = searchBox.Text;
         }
-
-        void showEmptyBox_CheckedChanged(object sender, EventArgs e) {
-            if (battleListControl != null) battleListControl.HideEmpty = hideEmptyBox.Checked;
-        }
-
-        void showFullBox_CheckedChanged(object sender, EventArgs e) {
-            if (battleListControl != null) battleListControl.HideFull = hideFullBox.Checked;
-        }
-
-        void showOfficialButton_CheckedChanged(object sender, EventArgs e) {
-            if (battleListControl != null) battleListControl.ShowOfficial = showOfficialBox.Checked;
-        }
-
-        private void hidePasswordedBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (battleListControl != null) battleListControl.HidePassworded = hidePasswordedBox.Checked;
-        }
-
     }
 }

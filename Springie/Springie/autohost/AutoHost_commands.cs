@@ -354,7 +354,7 @@ namespace Springie.autohost
                 return;
             }
 
-            kickedPlayers.Add(new KickedPlayer() {Name = usrlist[0]});
+            if (!kickedPlayers.Any(x => x.Name == usrlist[0])) kickedPlayers.Add(new KickedPlayer() {Name = usrlist[0]});
             if (spring.IsRunning) spring.Kick(usrlist[0]);
             tas.Kick(usrlist[0]);
         }

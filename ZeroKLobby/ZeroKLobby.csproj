@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ZeroKLobby</RootNamespace>
     <AssemblyName>Zero-K</AssemblyName>
-    <ApplicationIcon>SpringDownloader.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\ZK_logo_128.ico</ApplicationIcon>
     <ManifestCertificateThumbprint>FC2212B55F1B9944395B70DF91CE4D38FC17189D</ManifestCertificateThumbprint>
     <ManifestKeyFile>SpringDownloader_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
@@ -93,6 +93,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Speech" />
@@ -108,6 +110,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionHandler.cs" />
+    <Compile Include="BgImages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BgImages.resx</DependentUpon>
+    </Compile>
     <Compile Include="BrowserInterop.cs" />
     <Compile Include="ButtonInfo.cs" />
     <Compile Include="Buttons.Designer.cs">
@@ -115,13 +122,51 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Buttons.resx</DependentUpon>
     </Compile>
+    <Compile Include="CachedResourceManager.cs" />
     <Compile Include="ChatToSpeech.cs" />
+    <Compile Include="ControlExtensions.cs" />
+    <Compile Include="Controls\ZklBaseForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CustomScrollbar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FrameBorderRenderer.cs" />
+    <Compile Include="Controls\MatchQueueControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MatchQueueControl.designer.cs">
+      <DependentUpon>MatchQueueControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MinimapFuncBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\MinimapFuncBox.Designer.cs">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PlayerListControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PlayerListControl.designer.cs">
+      <DependentUpon>PlayerListControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RightPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ScrollbarSkin.Designer.cs" />
+    <Compile Include="Controls\SoundPalette.cs" />
+    <Compile Include="Controls\SwitchPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\TransparentTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ZklTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DarkHive.Designer.cs" />
+    <Compile Include="DarkHiveGlow.Designer.cs" />
+    <Compile Include="DarkHiveHover.Designer.cs" />
     <Compile Include="ExtendedWebBrowser.cs" />
     <Compile Include="Controls\ZkSplitContainer.cs">
       <SubType>Component</SubType>
@@ -185,6 +230,8 @@
     <Compile Include="SelectWritableFolder.Designer.cs">
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Shraka.Designer.cs" />
+    <Compile Include="Sounds.Designer.cs" />
     <Compile Include="Steam\SteamClientHelper.cs" />
     <Compile Include="Steam\SteamVoiceSystem.cs" />
     <Compile Include="Configs.Designer.cs">
@@ -206,9 +253,6 @@
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainWindow.Designer.cs">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="MicroLobby\BattleListControl.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -217,9 +261,6 @@
     </Compile>
     <Compile Include="MicroLobby\BattleListTab.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\BattleListTab.Designer.cs">
-      <DependentUpon>BattleListTab.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroLobby\BrowserTab.cs">
       <SubType>Component</SubType>
@@ -238,9 +279,6 @@
     </Compile>
     <Compile Include="NavigationControl.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="NavigationControl.Designer.cs">
-      <DependentUpon>NavigationControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Notifications\MissionBar.cs">
       <SubType>UserControl</SubType>
@@ -305,24 +343,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MicroLobby\MyCol.cs" />
-    <Compile Include="Notifications\GenericBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Notifications\GenericBar.Designer.cs">
-      <DependentUpon>GenericBar.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Notifications\NewVersionBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Notifications\NewVersionBar.Designer.cs">
-      <DependentUpon>NewVersionBar.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Notifications\ScannerBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Notifications\ScannerBar.Designer.cs">
-      <DependentUpon>ScannerBar.cs</DependentUpon>
-    </Compile>
     <Compile Include="Notifications\VoteBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -335,6 +355,12 @@
       <DependentUpon>Ranks.resx</DependentUpon>
     </Compile>
     <Compile Include="ServerImagesHandler.cs" />
+    <Compile Include="TechPanel.Designer.cs" />
+    <Compile Include="TechPanelHollow.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TechPanelHollow.resx</DependentUpon>
+    </Compile>
     <Compile Include="ToolTips\BattleTooltipRenderer.cs" />
     <Compile Include="MicroLobby\AskBattlePasswordForm.cs">
       <SubType>Form</SubType>
@@ -376,9 +402,6 @@
     <Compile Include="MicroLobby\LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MicroLobby\LoginForm.Designer.cs">
-      <DependentUpon>LoginForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="MicroLobby\PrivateMessageControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -395,12 +418,8 @@
     <Compile Include="Notifications\ConnectBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Notifications\INotifyBar.cs" />
-    <Compile Include="Notifications\DownloadBar.cs">
+    <Compile Include="Notifications\ZklNotifyBar.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Notifications\DownloadBar.designer.cs">
-      <DependentUpon>DownloadBar.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroLobby\PlayerListBox.cs">
       <SubType>Component</SubType>
@@ -451,14 +470,11 @@
     <Compile Include="MicroLobby\DownloaderTab.Designer.cs">
       <DependentUpon>DownloaderTab.cs</DependentUpon>
     </Compile>
-    <Compile Include="Notifications\NotifyBarContainer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Notifications\NotifyBarContainer.Designer.cs">
-      <DependentUpon>NotifyBarContainer.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WelcomeTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="WindowsApi.cs" />
     <Compile Include="ZklResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -466,6 +482,10 @@
       <DependentUpon>ZklResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Steam\ZklSteamHandler.cs" />
+    <EmbeddedResource Include="BgImages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>BgImages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Buttons.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
@@ -476,9 +496,16 @@
       <LastGenOutput>Configs.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MatchQueueControl.resx">
+      <DependentUpon>MatchQueueControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\MinimapFuncBox.resx">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ScrollbarSkin.resx" />
+    <EmbeddedResource Include="DarkHive.resx" />
+    <EmbeddedResource Include="DarkHiveGlow.resx" />
+    <EmbeddedResource Include="DarkHiveHover.resx" />
     <EmbeddedResource Include="Flags.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>
@@ -503,13 +530,6 @@
     <EmbeddedResource Include="Notifications\PwBar.resx">
       <DependentUpon>PwBar.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainWindow.resx">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\BattleListTab.resx">
-      <DependentUpon>BattleListTab.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ChatControl.resx">
       <DependentUpon>ChatControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -528,10 +548,6 @@
     <EmbeddedResource Include="MicroLobby\SpringsettingForm.resx">
       <DependentUpon>SpringsettingForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NavigationControl.resx">
-      <DependentUpon>NavigationControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Notifications\BattleBar.resx">
       <DependentUpon>BattleBar.cs</DependentUpon>
     </EmbeddedResource>
@@ -546,18 +562,11 @@
     <EmbeddedResource Include="Notifications\MissionBar.resx">
       <DependentUpon>MissionBar.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\NotifyBarContainer.resx">
-      <DependentUpon>NotifyBarContainer.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Notifications\NotifySection.resx">
       <DependentUpon>NotifySection.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\ReplayBar.resx">
       <DependentUpon>ReplayBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\ScannerBar.resx">
-      <DependentUpon>ScannerBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\SinglePlayerBar.resx">
       <DependentUpon>SinglePlayerBar.cs</DependentUpon>
@@ -578,6 +587,15 @@
     <Compile Include="Utils.cs" />
     <EmbeddedResource Include="SelectWritableFolder.resx">
       <DependentUpon>SelectWritableFolder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shraka.resx" />
+    <EmbeddedResource Include="Sounds.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TechPanel.resx" />
+    <EmbeddedResource Include="TechPanelHollow.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TechPanelHollow.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="ZklResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -640,18 +658,14 @@
     <Resource Include="Images\add.png" />
     <EmbeddedResource Include="NativeLibs\libCSteamworks.so" />
     <EmbeddedResource Include="NativeLibs\libsteam_api.so" />
+    <EmbeddedResource Include="NativeLibs\OpenSans-Semibold.ttf" />
+    <EmbeddedResource Include="NativeLibs\SM.ttf" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest">
       <SubType>Designer</SubType>
     </None>
     <EmbeddedResource Include="MicroLobby\HostDialog.resx">
       <DependentUpon>HostDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\GenericBar.resx">
-      <DependentUpon>GenericBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\NewVersionBar.resx">
-      <DependentUpon>NewVersionBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\SettingsTab.resx">
       <DependentUpon>SettingsTab.cs</DependentUpon>
@@ -660,20 +674,12 @@
     <EmbeddedResource Include="Notifications\WarningBar.resx">
       <DependentUpon>WarningBar.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\ConnectBar.resx">
-      <DependentUpon>ConnectBar.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\AskBattlePasswordForm.resx">
       <DependentUpon>AskBattlePasswordForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\PrivateMessageControl.resx">
       <DependentUpon>PrivateMessageControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\LoginForm.resx">
-      <DependentUpon>LoginForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\DownloadBar.resx">
     </EmbeddedResource>
     <None Include="Resources\Conf\lups0.cfg" />
     <None Include="Resources\Conf\lups1.cfg" />
@@ -1550,9 +1556,6 @@
     <None Include="Resources\soldier.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\springlogo_glass.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\star.png" />
   </ItemGroup>
   <ItemGroup>
@@ -1587,15 +1590,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\PlayerStates\unready.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ZK_logo_square.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SpringDownloader.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="SpringDownloader.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Images\logout.png" />
@@ -1656,7 +1650,52 @@
   <ItemGroup>
     <None Include="Resources\voice_talking.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\BgImages\bg_battle.jpg" />
+    <Content Include="Resources\Buttons\back.png" />
+    <Content Include="Resources\Buttons\down.png" />
+    <Content Include="Resources\Buttons\downloads.png" />
+    <Content Include="Resources\Buttons\exit.png" />
+    <Content Include="Resources\Buttons\extras.png" />
+    <Content Include="Resources\Buttons\left.png" />
+    <Content Include="Resources\Buttons\link.png" />
+    <Content Include="Resources\Buttons\mp.png" />
+    <Content Include="Resources\Buttons\qb.png" />
+    <Content Include="Resources\Buttons\soundOff.png" />
+    <Content Include="Resources\Buttons\soundOn.png" />
+    <Content Include="Resources\Buttons\sp.png" />
+    <Content Include="Resources\Buttons\win_max.png" />
+    <Content Include="Resources\Buttons\win_min.png" />
+    <Content Include="Resources\downarrow.png" />
+    <None Include="Resources\Sounds\scificlick.wav" />
+    <Content Include="Resources\scroll_bottom.png" />
+    <Content Include="Resources\scroll_mid.png" />
+    <Content Include="Resources\scroll_top.png" />
+    <None Include="Resources\TechPanelHollow\SW.png" />
+    <None Include="Resources\TechPanelHollow\SE.png" />
+    <None Include="Resources\TechPanelHollow\NW.png" />
+    <None Include="Resources\TechPanelHollow\NE.png" />
+    <None Include="Resources\TechPanelHollow\S.png" />
+    <None Include="Resources\TechPanelHollow\N.png" />
+    <None Include="Resources\TechPanelHollow\W.png" />
+    <None Include="Resources\TechPanelHollow\E.png" />
+    <Content Include="Resources\tech_scrollbar.png" />
+    <Content Include="Resources\ThumbBottom.png" />
+    <Content Include="Resources\ThumbMiddle.png" />
+    <Content Include="Resources\ThumbSpanBottom.png" />
+    <Content Include="Resources\ThumbSpanTop.png" />
+    <Content Include="Resources\ThumbTop.png" />
+    <Content Include="Resources\uparrow.png" />
+    <Content Include="Resources\ZK_logo_128.ico" />
+    <Content Include="Resources\ZK_logo_128.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\DarkHiveGlow\" />
+    <Folder Include="Resources\DarkHiveHover\" />
+    <Folder Include="Resources\DarkHive\" />
+    <Folder Include="Resources\Shraka\" />
+    <Folder Include="Resources\TechPanel\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>
@@ -1672,5 +1711,4 @@
 copy /Y "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).pdb"
 copy /Y "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"</PostBuildEvent>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

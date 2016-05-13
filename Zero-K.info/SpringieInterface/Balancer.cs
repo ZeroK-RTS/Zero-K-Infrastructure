@@ -18,7 +18,7 @@ namespace ZeroKWeb.SpringieInterface
             FactionWise
         }
 
-        const double MaxCbalanceDifference = 40;
+        const double MaxCbalanceDifference = 70;
         const double MaxTeamSizeDifferenceRatio = 2;
         readonly List<BalanceTeam> teams = new List<BalanceTeam>();
 
@@ -55,7 +55,7 @@ namespace ZeroKWeb.SpringieInterface
                 };
             }
 
-            if (clanWise == null && (config.AutohostMode == AutohostMode.Generic || config.AutohostMode == AutohostMode.Teams)) clanWise = true;
+            if (clanWise == null && (config.AutohostMode == AutohostMode.Generic || config.AutohostMode == AutohostMode.Teams || config.AutohostMode == AutohostMode.Serious)) clanWise = true;
 
             var res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);
 
@@ -431,21 +431,12 @@ namespace ZeroKWeb.SpringieInterface
                     }
                         break;
                     case AutohostMode.Generic: {
-                        if (allyCount == null && res.Bots != null && res.Bots.Any())
-                        {
-                            res.Players = context.Players.ToList();
-                            res.Bots = context.Bots.Where(x => x.Owner != context.AutohostName).ToList();
-                            foreach (var p in res.Players) p.AllyID = 0;
-                            foreach (var b in res.Bots) b.AllyID = 1;
-                        } else
-                        {
-                            var map = db.Resources.Single(x => x.InternalName == context.Map);
-                            res = new Balancer().LegacyBalance(
-                                allyCount ?? map.MapFFAMaxTeams ?? 2,
-                                clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise,
-                                context);
-                            res.DeleteBots = false;
-                        }
+                        var map = db.Resources.Single(x => x.InternalName == context.Map);
+                        res = new Balancer().LegacyBalance(
+                            allyCount ?? map.MapFFAMaxTeams ?? 2,
+                            clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise,
+                            context);
+                        res.DeleteBots = true;
                         return res;
                     }
 

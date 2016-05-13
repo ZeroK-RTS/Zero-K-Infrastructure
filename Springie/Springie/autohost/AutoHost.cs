@@ -169,7 +169,6 @@ namespace Springie.autohost
             spring.SpringExited += spring_SpringExited;
             spring.GameOver += spring_GameOver;
 
-            spring.SpringExited += spring_SpringExited;
             spring.SpringStarted += spring_SpringStarted;
             spring.PlayerSaid += spring_PlayerSaid;
             spring.BattleStarted += spring_BattleStarted;
@@ -886,7 +885,8 @@ namespace Springie.autohost
                 if (!string.IsNullOrEmpty(SpawnConfig.Handle)) tas.Say(SayPlace.User, SpawnConfig.Owner, SpawnConfig.Handle, true);
                     tas.Say(SayPlace.User, SpawnConfig.Owner, "I'm here! Ready to serve you! Join me!", true);
             }
-            else ServerVerifyMap(true);
+
+			if (!hostedMod.IsMission) ServerVerifyMap(true);
         }
 
 
@@ -904,7 +904,11 @@ namespace Springie.autohost
                 welc = welc.Replace("%1", name);
                 welc = welc.Replace("%2", GetUserLevel(name).ToString());
                 welc = welc.Replace("%3", MainConfig.SpringieVersion);
-                SayBattlePrivate(name, welc);
+                
+                string [] split = welc.Split(new Char [] {'\n'});
+                foreach (string s in split) {
+                        SayBattlePrivate(name, s);
+                }
             }
             if (spring.IsRunning) {
                 spring.AddUser(e1.UserName, e1.ScriptPassword);
@@ -944,8 +948,10 @@ namespace Springie.autohost
                 SayBattle("boss has left the battle");
                 bossName = "";
             }
-        }
 
+			// repick map after everyone (except the autohost) leaves to prevent someone from setting trololo everywhere
+			if (tas.MyBattle != null && tas.MyBattle.Users.Count == 1) ServerVerifyMap(true);
+        }
 
         // login accepted - join channels
 

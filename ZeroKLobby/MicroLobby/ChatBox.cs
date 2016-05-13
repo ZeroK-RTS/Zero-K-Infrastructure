@@ -105,6 +105,7 @@ namespace ZeroKLobby.MicroLobby
 
         private void InitializeComponent()  //minimum size >0 avoid chat window crash
         {
+            Font = Config.ChatFont;
             this.SuspendLayout();
             // 
             // ChatBox

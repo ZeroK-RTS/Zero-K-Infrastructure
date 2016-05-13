@@ -19,13 +19,16 @@ namespace PlasmaDownloader.Packages
 	public class PackageDownload: Download
 	{
 		long doneAll;
-		readonly WebDownload fileListWebGet;
-		readonly SpringPaths paths;
-		readonly Pool pool;
+		readonly WebDownload fileListWebGet = new WebDownload();
+		//readonly SpringPaths paths;
+		//readonly Pool pool;
 		string tempFilelist = "";
-		readonly string urlRoot;
+		//readonly string urlRoot;
+	    private PlasmaDownloader downloader;
+	    private SpringPaths paths;
+	    private string urlRoot;
 
-		public override double IndividualProgress
+	    public override double IndividualProgress
 		{
 			get
 			{
@@ -42,19 +45,13 @@ namespace PlasmaDownloader.Packages
 				}
 			}
 		}
-		public Hash PackageHash { get; protected set; }
+		//public Hash PackageHash { get; protected set; }
 
-		public PackageDownload(string urlRoot, string displayName, Hash hash, SpringPaths paths)
-		{
-			this.paths = paths;
-			this.urlRoot = urlRoot;
-			pool = new Pool(paths);
-
-			PackageHash = hash;
-			Name = displayName;
-			fileListWebGet = new WebDownload();
-		}
-
+	    public PackageDownload(string name, PlasmaDownloader downloader) {
+	        this.Name = name;
+	        this.downloader = downloader;
+	    }
+        
 		public void Start()
 		{
 			Utils.SafeThread(MasterDownloadThread).Start();
@@ -65,7 +62,7 @@ namespace PlasmaDownloader.Packages
 		{
 			SdpArchive fileList;
 			tempFilelist = GetTempFileName();
-			fileListWebGet.Start(urlRoot + "/packages/" + PackageHash + ".sdp");
+			fileListWebGet.Start(urlRoot + "/packages/" + packageHash + ".sdp");
 			fileListWebGet.WaitHandle.WaitOne();
 
 			if (fileListWebGet.Result != null)
@@ -100,7 +97,7 @@ namespace PlasmaDownloader.Packages
 					else bitArray.PushBit(false);
 				}
 
-				var wr = WebRequest.Create(string.Format("{0}/streamer.cgi?{1}", urlRoot, PackageHash));
+				var wr = WebRequest.Create(string.Format("{0}/streamer.cgi?{1}", urlRoot, packageHash));
 				wr.Method = "POST";
 				wr.Proxy = null;
 				var zippedArray = bitArray.GetByteArray().Compress();
@@ -149,12 +146,29 @@ namespace PlasmaDownloader.Packages
 			}
 		}
 
+	    
 
-		void MasterDownloadThread()
+
+        void MasterDownloadThread()
 		{
 			try
 			{
-				var fileList = GetFileList();
+                downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
+			    var entry = downloader.PackageDownloader.FindAndSelectEntry(Name);
+			    if (entry == null)
+			    {
+			        Finish(false);
+			        return;
+			    }
+
+                AddDependencies(entry);
+
+			    this.paths = downloader.SpringPaths;
+			    this.urlRoot = entry.Item1.BaseUrl;
+			    this.packageHash = entry.Item2.Hash;
+                this.pool = new Pool(paths);
+                
+                var fileList = GetFileList();
 				var ok = LoadFiles(fileList);
 
 				var i = 0;
@@ -163,7 +177,7 @@ namespace PlasmaDownloader.Packages
 				{
 					var folder = Utils.MakePath(paths.WritableDirectory, "packages");
 					if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-					var target = Utils.MakePath(folder, PackageHash + ".sdp");
+					var target = Utils.MakePath(folder, packageHash + ".sdp");
 					if (File.Exists(target)) File.Delete(target);
 					File.Move(tempFilelist, target);
 					Finish(true);
@@ -177,5 +191,22 @@ namespace PlasmaDownloader.Packages
 				Finish(false);
 			}
 		}
+
+	    private Hash packageHash;
+	    private Pool pool;
+
+	    private void AddDependencies(Tuple<PackageDownloader.Repository, PackageDownloader.Version> entry) {
+	        if (entry.Item2.Dependencies != null)
+	        {
+	            foreach (var dept in entry.Item2.Dependencies)
+	            {
+	                if (!string.IsNullOrEmpty(dept))
+	                {
+	                    var dd = downloader.GetResource(DownloadType.UNKNOWN, dept);
+	                    if (dd != null) AddNeededDownload(dd);
+	                }
+	            }
+	        }
+	    }
 	}
 }

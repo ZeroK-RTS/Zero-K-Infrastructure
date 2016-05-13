@@ -9,7 +9,7 @@ using ZkData;
 
 namespace Springie
 {
-	public class MainConfig: IPlasmaDownloaderConfig
+	public class MainConfig
 	{
 		public static string SpringieVersion = "Springie " + Assembly.GetEntryAssembly()?.GetName().Version;
 	    public const int MapChangeDownloadWait = 120;
@@ -40,9 +40,6 @@ namespace Springie
 		public int ServerPort { get { return serverPort; } set { serverPort = value; } }
 
 		public string SpringVersion { get; set; }
-
-		public int RepoMasterRefresh { get { return 120; } }
-		public string PackageMasterUrl { get { return "http://repos.springrts.com/"; } }
 
 	    public MainConfig()
 	    {

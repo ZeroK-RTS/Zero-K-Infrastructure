@@ -24,6 +24,8 @@ using LobbyClient;
 using Microsoft.Linq.Translations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PlasmaDownloader;
+using PlasmaDownloader.Packages;
 using PlasmaShared;
 using ZkData.UnitSyncLib;
 using ZeroKWeb;
@@ -345,7 +347,14 @@ namespace Fixer
 
 
         static void Main(string[] args) {
-            FixStuff();
+            //var str = File.ReadAllText(@"[f=0002448]");
+            var fw = new ForumWikiParser();
+            var result= fw.TranslateToHtml("[f=0002448]", null);
+
+
+            return;
+
+            //FixStuff();
             //MigrateDatabase();
             //return;
 

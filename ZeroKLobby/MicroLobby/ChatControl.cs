@@ -7,13 +7,14 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
+using ZeroKLobby.Controls;
 using ZeroKLobby.Lines;
 using ZkData;
 using Timer = System.Timers.Timer;
 
 namespace ZeroKLobby.MicroLobby
 {
-    public partial class ChatControl: UserControl
+    public partial class ChatControl: ZklBaseControl
     {
         ZKLMouseClick playerBox_zklclick = new ZKLMouseClick();
 
@@ -30,7 +31,14 @@ namespace ZeroKLobby.MicroLobby
         
         public bool IsTopicVisible {
             get { return topicPanel.Visible; }
-            set {
+            set
+            {
+                if (this.IsInDesignMode())
+                {
+                    topicPanel.Visible = value;
+                    return;
+                }
+
                 //Note: topic window doesn't have listener to any resize event. This is minor issues.
                 float height = topicBox.LineSize;
                 height *= topicBox.TotalDisplayLines + 1;
@@ -38,7 +46,10 @@ namespace ZeroKLobby.MicroLobby
                 height += topicBox.Margin.Top + topicBox.Margin.Bottom;
                 topicPanel.Height = (int)height;
                 topicPanel.Visible = value;
-                if (value) Program.Conf.Topics.Remove(ChannelName);
+                if (value && Program.Conf.Topics.ContainsKey(ChannelName))
+                {
+                    Program.Conf.Topics.Remove(ChannelName);
+                }
                 else {
                     Channel channel;
                     if (Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel)) Program.Conf.Topics[channel.Name] = channel.Topic.SetDate;
@@ -54,8 +65,7 @@ namespace ZeroKLobby.MicroLobby
         public ChatControl(string name) {
             InitializeComponent();
 
-            var isDesignMode = Process.GetCurrentProcess().ProcessName == "devenv"; // workaround for this.DesignMode not working in constructor
-            if (isDesignMode) return;
+            if (this.IsInDesignMode()) return;
 
             var extras = new BitmapButton();
             extras.Text = "Extras";
@@ -64,29 +74,26 @@ namespace ZeroKLobby.MicroLobby
                 contextMenu = LineDehighlighter(contextMenu, null);
                 contextMenu.Show(extras, new Point(0, 0));
             };
-            ChatBox.Controls.Add(extras);
 
-            playerBox.DrawMode = DrawMode.OwnerDrawVariable;
-            playerBox.MeasureItem += (s, e) => { }; // needed for ListBox.OnMeasureItem
-            playerBox.BackColor = Program.Conf.BgColor;
-            playerBox.ForeColor = Program.Conf.TextColor;
+
+            ChatBox.Controls.Add(extras);
+            playerBox.BackColor = Config.BgColor;
+            playerBox.ForeColor = Config.TextColor;
             playerBox_zklclick.AttachTo(playerBox);
             playerBox_zklclick.MouseClick += PlayerBox_MouseClick;
 
-            playerSearchBox.BackColor = Program.Conf.BgColor;
-            playerSearchBox.ForeColor = Program.Conf.TextColor;
+            playerSearchBox.BackColor = Config.BgColor;
+            playerSearchBox.ForeColor = Config.TextColor;
 
-            ChatBox.Font = Program.Conf.ChatFont; //make sure this is done before HistoryManager adds text, or text becomes black.
+            ChatBox.Font = Config.ChatFont; //make sure this is done before HistoryManager adds text, or text becomes black.
 
             Name = name;
             ChannelName = name;
             if (!DesignMode) HistoryManager.InsertLastLines(ChannelName, ChatBox);
 
-            playerBox.Sorted = true;
-            var lookingGlass = new PictureBox { Width = 20, Height = 20, Image = ZklResources.search, SizeMode = PictureBoxSizeMode.CenterImage };
-            searchBarContainer.Controls.Add(lookingGlass);
-            Program.ToolTip.SetText(lookingGlass, "Enter name or country shortcut to find");
-
+            playerBox.IsSorted = true;
+            var searchLabel = new Label() { Text = "Search" };
+            searchBarContainer.Controls.Add(searchLabel);
             Program.ToolTip.SetText(playerSearchBox, "Enter name or country shortcut to find");
 
             VisibleChanged += ChatControl_VisibleChanged;
@@ -272,8 +279,8 @@ namespace ZeroKLobby.MicroLobby
                     playerListItem.IsGrayedOut = true;
                 }
             }
-            playerBox.Sorted = false;
-            playerBox.Sorted = true;
+            playerBox.IsSorted = false;
+            playerBox.IsSorted = true;
             playerBox.EndUpdate();
         }
 
@@ -482,10 +489,10 @@ namespace ZeroKLobby.MicroLobby
             { //Double click
                 var playerListItem = playerBox.SelectedItem as PlayerListItem;
                 if (playerListItem != null && playerListItem.User != null)
-                    NavigationControl.Instance.Path = "chat/user/" + playerListItem.User.Name;
+                    Program.MainWindow.navigationControl.Path = "chat/user/" + playerListItem.User.Name;
             } else 
             {
-                var item = playerBox.HoverItem;
+                var item = this.playerBox.HoverItem;
                 if (item != null && item.UserName != null) {
                     playerBox.SelectedItem = item;
                     if (item.User != null && !Program.Conf.LeftClickSelectsPlayer) ShowPlayerContextMenu(item.User, playerBox, mea.Location);
@@ -519,8 +526,8 @@ namespace ZeroKLobby.MicroLobby
                     item.IsGrayedOut = false;
                 }
                 SortByTeam();
-                playerBox.Sorted = false;
-                playerBox.Sorted = true;
+                playerBox.IsSorted = false;
+                playerBox.IsSorted = true;
                 playerBox.EndUpdate();
             }
         }
