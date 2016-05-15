@@ -237,6 +237,7 @@ namespace LobbyClient
         public bool IsInBattleRoom;
         public bool IsInGame { get { return InGameSince != null; } }
         public bool BanMute;
+        public bool BanSpecChat;
         public int Level;
         public Login.ClientTypes ClientType;
         public string LobbyVersion;
@@ -265,6 +266,7 @@ namespace LobbyClient
             IsBot = u.IsBot;
             // todo hacky fix IsInBattleRoom = u.IsInBattleRoom;
             BanMute = u.BanMute;
+            BanSpecChat = u.BanSpecChat;
             Level = u.Level;
             ClientType = u.ClientType;
             LobbyVersion = u.LobbyVersion;
