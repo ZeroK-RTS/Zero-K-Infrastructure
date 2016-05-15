@@ -13,6 +13,12 @@ using ZkData.UnitSyncLib;
 
 namespace ZkWebLobby
 {
+    class Config
+    {
+        [JsonProperty("lobbyWindowed")]
+        public bool lobbyWindowed = true;
+    }
+
     internal static class Program
     {
         //[STAThread]
@@ -47,6 +53,9 @@ namespace ZkWebLobby
                         }
                     });
             };
+
+            Config config = null;
+            try { config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(startupPath + "/config.json")); } catch (Exception) { }
 
             CefWrapper.Initialize(startupPath + "/render", args);
 
@@ -156,8 +165,10 @@ namespace ZkWebLobby
             CefWrapper.RegisterApiFunction("saveConfig", (object conf) => File.WriteAllText(startupPath + "/config.json",
                 JsonConvert.SerializeObject(conf, Formatting.Indented)));
 
+            CefWrapper.RegisterApiFunction("setFullscreen", (bool fullscreen) => CefWrapper.SetFullscreen(fullscreen));
+
             var fileUrl = new Uri(startupPath + "/zkwl/index.html");
-            CefWrapper.StartMessageLoop(fileUrl.AbsoluteUri, "black", true);
+            CefWrapper.StartMessageLoop(fileUrl.AbsoluteUri, "black", !config?.lobbyWindowed ?? true);
             CefWrapper.Deinitialize();
 
             downloader.Dispose();

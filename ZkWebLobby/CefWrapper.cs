@@ -44,6 +44,10 @@ namespace ZeroKLobby
         [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "startMessageLoop")]
         public static extern void StartMessageLoop([MarshalAs(UnmanagedType.LPStr)] string url, [MarshalAs(UnmanagedType.LPStr)] string bgColor, bool fullscreen);
 
+        // Change browser window to fullscreen and back. Can only be called after startMessageLoop().
+        [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "setFullscreen")]
+        public static extern void SetFullscreen(bool fullscreen);
+
         // Execute arbitrary Javascript code in the main frame. Can be called from any thread.
         [DllImport("cef_wrapper", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "executeJavascript")]
         public static extern void ExecuteJavascript([MarshalAs(UnmanagedType.LPStr)] string code);
