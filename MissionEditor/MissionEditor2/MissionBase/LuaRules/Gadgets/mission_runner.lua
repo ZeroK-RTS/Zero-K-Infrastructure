@@ -1150,7 +1150,9 @@ local function SendMissionVariables(tbl)
   for k,v in pairs(tbl) do
     str = str .. k .. "=" .. v .. ";"
   end
-  print("MISSIONVARS: "..GG.Base64Encode(str))
+  local str64 = "MISSIONVARS: " .. GG.Base64Encode(str)
+  print(str64)
+  Spring.Echo(str64)
 end
 
 GG.mission.SendMissionVariables = SendMissionVariables
@@ -1745,7 +1747,9 @@ function ScoreEvent()
   local teamID = Spring.GetLocalTeamID()
   local score = Spring.GetTeamRulesParam(teamID, "score") or 0
   if score then
-    print("SCORE: "..GG.Base64Encode(tostring(Spring.GetGameFrame()).."/"..tostring(math.floor(score))))
+    local scoreStr = "SCORE: "..GG.Base64Encode(tostring(Spring.GetGameFrame()).."/"..tostring(math.floor(score)))
+    print(scoreStr)
+    Spring.Echo(scoreStr)
   end
 end
 
