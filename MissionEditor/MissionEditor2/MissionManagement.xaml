@@ -1,6 +1,6 @@
 ﻿<Window x:Class="MissionEditor2.MissionManagement" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Mission Management" Loaded="Window_Loaded" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen"
-        mc:Ignorable="d" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="600" Width="700">
+        mc:Ignorable="d" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="600" Width="800">
     <DockPanel>
         <DockPanel DockPanel.Dock="Top">
             <Label DockPanel.Dock="Left">Search</Label>
@@ -20,8 +20,8 @@
         <DataGrid x:Name="DataGrid" x:FieldModifier="public" AutoGenerateColumns="False" Background="White" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
-                <DataGridTextColumn Header="Author" Binding="{Binding AuthorName}" />
-                <DataGridTextColumn Header="Description" Binding="{Binding Description}" />
+                <!--<DataGridTextColumn Header="Author" Binding="{Binding AuthorName}" />-->
+                <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
                 <DataGridTextColumn Header="Mod" Binding="{Binding Mod}" />
                 <DataGridTextColumn Header="Map" Binding="{Binding Map}" />
             </DataGrid.Columns>

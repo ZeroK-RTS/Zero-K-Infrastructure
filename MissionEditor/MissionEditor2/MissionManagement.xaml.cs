@@ -133,8 +133,7 @@ namespace MissionEditor2
 			var item =
 				DataGrid.ItemsSource.Cast<Mission>().FirstOrDefault(
 					mission =>
-					mission.Name.ToLower().Contains(text.ToLower()) || mission.Description.ToLower().Contains(text.ToLower()) ||
-					mission.AuthorName.ToLower().Contains(text.ToLower()));
+					mission.Name.ToLower().Contains(text.ToLower()) || mission.Description.ToLower().Contains(text.ToLower()));
 
 			if (item == null) return;
 			DataGrid.SelectedItem = item;
