@@ -342,7 +342,8 @@ namespace ZeroKWeb.Controllers
 			Dictionary<ZkData.Unlock, int> unlocks = account.AccountUnlocks.Select(x => new {x.Unlock, x.Count}).ToDictionary(x=> x.Unlock, x=> x.Count);
 			foreach (Unlock unlock in db.Unlocks.Where(x=> x.XpCost <= 0 && x.NeededLevel <= account.Level && x.IsKudosOnly != true))
 			{
-				unlocks.Add(unlock, unlock.MaxModuleCount);
+				if (unlocks.ContainsKey(unlock)) unlocks[unlock] = unlock.MaxModuleCount;
+				else unlocks.Add(unlock, unlock.MaxModuleCount);
 			}
 			return unlocks;
 		}
