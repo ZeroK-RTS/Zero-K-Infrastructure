@@ -9,8 +9,12 @@
 <h3>@u.Name</h3>
 <img src='@u.ImageUrl' alt='@u.Name'/><br/>
 Type: <span style='color:@u.LabelColor;'>@u.UnlockType</span><br/>
-Level: @u.NeededLevel<br/>
-@if (u.IsKudosOnly != true) {
+@if (u.NeededLevel > 0)
+{
+    @:Level: @u.NeededLevel<br />
+}
+
+@if (u.XpCost > 0 && u.IsKudosOnly != true) {
     @:Points: <span style='color:#00FFFF;'>@u.XpCost</span><br/>
 }
 @if (u.KudosCost != null) {
