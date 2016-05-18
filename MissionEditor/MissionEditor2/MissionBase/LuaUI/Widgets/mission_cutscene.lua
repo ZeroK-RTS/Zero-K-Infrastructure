@@ -51,15 +51,16 @@ local displaySkipMessage = false
 local camState = spGetCameraState()
 local posCamDataX = vsx*0.85
 local posCamDataY = vsy*0.3
+local wantUpdateLastDrawMode = false
 
 local lastDrawMode = "normal"
 local lastIconDist = Spring.GetConfigInt("UnitIconDist", 150)
 local useEdgeScroll = Spring.GetConfigInt("WindowedEdgeMove", 1)
 local DRAW_MODE_COMMANDS = {
-  height = "showelevation",
-  metal = "showmetalmap",
-  pathTraversability = "showpathtraversability",
-  los = "togglelos",
+  height = {"showelevation","Overlay_ToggleHeightMap"},
+  metal = {"showmetalmap"},
+  pathTraversability = {"showpathtraversability","Overlay_TogglePathMap"},
+  los = {"togglelos","Overlay_ToggleLOS"}
 }
 
 --------------------------------------------------------------------------------
@@ -77,17 +78,25 @@ local function EnterCutscene(instant, skippable)
   Spring.SelectUnitArray({})
   
   -- set view settings to remove gameplay-oriented stuff
+  local drawMode = spGetMapDrawMode()
   if not wasInCutscene then
     lastIconDist = Spring.GetConfigInt("UnitIconDist", 150)
     Spring.SendCommands("disticon " .. 1000)
     useEdgeScroll = Spring.GetConfigInt("WindowedEdgeMove", 1)
     Spring.SetConfigInt( "WindowedEdgeMove", 0 )
-    local drawMode = spGetMapDrawMode()
-    if drawMode ~= "normal" then
-      local cmd = DRAW_MODE_COMMANDS[drawMode]
-      Spring.SendCommands(cmd)
-      lastDrawMode = drawMode
-    end
+    lastDrawMode = drawMode
+  end
+  if wantUpdateLastDrawMode or (not wasInCutscene) then
+    lastDrawMode = drawMode
+  end
+  
+  if drawMode ~= "normal" then
+    local cmd = DRAW_MODE_COMMANDS[drawMode]
+    --if (cmd and cmd[2] and WG[cmd[2]]) then
+    --  WG[cmd[2]]()
+    --else
+      Spring.SendCommands(cmd[1])
+    --end
   end
   
   if instant then
@@ -98,6 +107,8 @@ local function EnterCutscene(instant, skippable)
     isEnteringCutscene = true
     isExitingCutscene = false
   end
+  
+  wantUpdateLastDrawMode = false
 end
 
 -- restore user's view settings as needed; unhide GUI
@@ -107,7 +118,9 @@ local function RestoreFromCutscene()
   isExitingCutscene = false
   if lastDrawMode ~= "normal" then
     local cmd = DRAW_MODE_COMMANDS[lastDrawMode]
-    Spring.SendCommands(cmd)
+    if (cmd) then
+      Spring.SendCommands(cmd[1])
+    end
   end
   Spring.SendCommands("disticon " .. lastIconDist)
   Spring.SetConfigInt( "WindowedEdgeMove", useEdgeScroll )
@@ -302,6 +315,11 @@ function widget:Shutdown()
   
   gl.DeleteList(drawListCamScreen)
   WG.Cutscene = nil
+end
+
+-- some widgets change view state on start, so reset last draw mode
+function widget:GameStart()
+  wantUpdateLastDrawMode = true
 end
 
 -- block all keypresses that aren't pause or Esc while in cutscene

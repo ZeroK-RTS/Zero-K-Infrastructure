@@ -1150,10 +1150,23 @@ local function SendMissionVariables(tbl)
   for k,v in pairs(tbl) do
     str = str .. k .. "=" .. v .. ";"
   end
-  print("MISSIONVARS: "..GG.Base64Encode(str))
+  local str64 = "MISSIONVARS: " .. GG.Base64Encode(str)
+  print(str64)
+  Spring.Echo(str64)
 end
 
 GG.mission.SendMissionVariables = SendMissionVariables
+
+local function SetAllyTeamLongName(allyTeamID, name)
+  Spring.SetGameRulesParam("allyteam_long_name_" .. allyTeamID, name)
+end
+
+local function SetAllyTeamShortName(allyTeamID, name)
+    Spring.SetGameRulesParam("allyteam_short_name_" .. allyTeamID, name)
+end
+
+GG.mission.SetAllyTeamLongName = SetAllyTeamLongName
+GG.mission.SetAllyTeamShortName = SetAllyTeamShortName
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -1574,6 +1587,26 @@ function gadget:Initialize()
         end
         gadgetHandler:UpdateCallIn(callIn)
     end
+    
+    -- ZK allyteam name API (defaults)
+    local allyTeamsNamed = {}
+    local teams = Spring.GetTeamList()
+    for i=0,#teams do
+      local teamID, leader, _, isAITeam, _, allyTeamID = Spring.GetTeamInfo(i)
+      if leader and (not allyTeamsNamed[allyTeamID]) then
+        local name
+        if isAITeam then
+          name = select(2, Spring.GetAIInfo(teamID))
+        else
+          name = Spring.GetPlayerInfo(leader)
+        end
+        if name then
+          Spring.SetGameRulesParam("allyteam_long_name_"..allyTeamID, name)
+          Spring.SetGameRulesParam("allyteam_short_name_"..allyTeamID, name)
+          allyTeamsNamed[allyTeamID] = true
+        end
+      end
+    end
 end
 
 function gadget:UnitEnteredLos(unitID, unitTeam, allyTeam, unitDefID)
@@ -1745,7 +1778,9 @@ function ScoreEvent()
   local teamID = Spring.GetLocalTeamID()
   local score = Spring.GetTeamRulesParam(teamID, "score") or 0
   if score then
-    print("SCORE: "..GG.Base64Encode(tostring(Spring.GetGameFrame()).."/"..tostring(math.floor(score))))
+    local scoreStr = "SCORE: "..GG.Base64Encode(tostring(Spring.GetGameFrame()).."/"..tostring(math.floor(score)))
+    print(scoreStr)
+    Spring.Echo(scoreStr)
   end
 end
 

@@ -278,6 +278,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
+        [ValidateInput(false)]
         public ActionResult ReportToAdminSubmit(int accountID, string text)
         {
             var db = new ZkDataContext();
