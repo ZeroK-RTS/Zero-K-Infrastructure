@@ -338,8 +338,9 @@ namespace ZeroKWeb.Controllers
 
 		Dictionary<Unlock, int> GetUserUnlockCountsDictIncludingFree(ZkDataContext db)
 		{
-			Dictionary<ZkData.Unlock, int> unlocks = Global.Account.AccountUnlocks.Select(x => new {x.Unlock, x.Count}).ToDictionary(x=> x.Unlock, x=> x.Count);
-			foreach (Unlock unlock in db.Unlocks.Where(x=> x.XpCost <= 0 && x.NeededLevel <= Global.Account.Level && x.IsKudosOnly != true))
+			Account account = db.Accounts.FirstOrDefault(x => x.AccountID == Global.AccountID);
+			Dictionary<ZkData.Unlock, int> unlocks = account.AccountUnlocks.Select(x => new {x.Unlock, x.Count}).ToDictionary(x=> x.Unlock, x=> x.Count);
+			foreach (Unlock unlock in db.Unlocks.Where(x=> x.XpCost <= 0 && x.NeededLevel <= account.Level && x.IsKudosOnly != true))
 			{
 				unlocks.Add(unlock, unlock.MaxModuleCount);
 			}
@@ -359,21 +360,22 @@ namespace ZeroKWeb.Controllers
         /// <param name="future">This stores everything we don't have that is not in the previous list</param>
 		void GetUnlockLists(ZkDataContext db, out List<Unlock> unlocks, out List<Unlock> future)
 		{
+			Account account = db.Accounts.FirstOrDefault(x => x.AccountID == Global.AccountID);
 			// unlocks we already have the maximum of
 			var maxedUnlockSet =
 				new HashSet<int>(db.AccountUnlocks.Where(x => x.AccountID == Global.AccountID && x.Count >= x.Unlock.MaxModuleCount).Select(x => x.UnlockID));
 			// unlocks we already have at least one of
 			var anyUnlockSet = new HashSet<int>(db.AccountUnlocks.Where(x => x.AccountID == Global.AccountID && x.Count > 0).Select(x => x.UnlockID));
 
-			var freeUnlocks = db.Unlocks.Where(x => x.XpCost <= 0 && x.NeededLevel <= Global.Account.Level && x.IsKudosOnly != true).Select(x=> x.UnlockID);
+			var freeUnlocks = db.Unlocks.Where(x => x.XpCost <= 0 && x.NeededLevel <= account.Level && x.IsKudosOnly != true).Select(x=> x.UnlockID);
 			maxedUnlockSet.UnionWith(freeUnlocks);
 			anyUnlockSet.UnionWith(freeUnlocks);
 
 			var temp =
 				db.Unlocks.Where(
 					x =>
-					x.NeededLevel <= Global.Account.Level && !maxedUnlockSet.Contains(x.UnlockID)
-                    && ((x.KudosCost != null && x.KudosCost <= Global.Account.Kudos) || ((x.IsKudosOnly != true) && x.XpCost <= Global.Account.AvailableXP))
+					x.NeededLevel <= account.Level && !maxedUnlockSet.Contains(x.UnlockID)
+					&& ((x.KudosCost != null && x.KudosCost <= account.Kudos) || ((x.IsKudosOnly != true) && x.XpCost <= account.AvailableXP))
 					&& (x.RequiredUnlockID == null || anyUnlockSet.Contains(x.RequiredUnlockID ?? 0))
                     ).OrderBy(x => x.NeededLevel).ThenBy(x => x.XpCost).ThenBy(x => x.UnlockType).ToList();
 			unlocks = temp;
