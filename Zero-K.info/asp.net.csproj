@@ -1280,6 +1280,8 @@
     <Content Include="Scripts\browser-css.js" />
     <Content Include="OpenSans-Semibold.ttf" />
     <Content Include="OpenSans-Semibold.eot" />
+    <Content Include="OpenSans-Regular.eot" />
+    <Content Include="OpenSans-Regular.ttf" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\grid.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
