@@ -439,6 +439,10 @@ namespace Springie.autohost
                     ComRehost(e, words);
                     break;
 
+                case "updaterapidmod":
+                    ComUpdateRapidMod(e, words);
+                    break;
+
                 case "random":
                     ComRandom(e, words);
                     break;
@@ -775,7 +779,7 @@ namespace Springie.autohost
         }
 
 
-        void UpdateRapidMod(string tag) {
+        public void UpdateRapidMod(string tag) {
             if (!string.IsNullOrEmpty(delayedModChange) && !spring.IsRunning) {
                 string latest = delayedModChange;
                 delayedModChange = null;
