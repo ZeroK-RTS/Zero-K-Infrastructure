@@ -75,12 +75,12 @@ namespace ZkLobbyServer
             var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
             using (var db = new ZkDataContext()) {
                 topTeam =
-                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout))
+                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount > 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator))
                         .OrderByDescending(x => x.Elo)
                         .Take(count)
                         .ToList();
                 top1v1 =
-                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout))
+                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount == 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator))
                         .OrderByDescending(x => x.Elo1v1)
                         .Take(count)
                         .ToList();

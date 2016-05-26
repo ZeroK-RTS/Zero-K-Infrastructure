@@ -193,7 +193,7 @@ namespace ZeroKWeb.Controllers
 			             	    () =>
 			             	    {
                                      var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
-                                     return db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout))
+                                     return db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount == 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator))
                                              .OrderByDescending(x => x.Elo1v1)
                                              .Take(10)
                                              .ToList();
