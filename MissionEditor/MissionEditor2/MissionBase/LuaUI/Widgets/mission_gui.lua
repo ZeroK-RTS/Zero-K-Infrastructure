@@ -39,7 +39,7 @@ function MissionEvent(e)
         text = e.message,
         width = e.imageWidth,
         height = e.imageHeight,
-		fontsize = e.fontSize,
+        fontsize = e.fontSize,
         pause = e.pause,
       }
     else
@@ -50,80 +50,80 @@ function MissionEvent(e)
       end
     end
   elseif e.logicType == "GuiMessagePersistentAction" then
-      if WG.ShowPersistentMessageBox then
-	local image
-	if e.image then
-	  image = (e.imageFromArchive and "" or "LuaUI/Images/") .. e.image
-	end
-        WG.ShowPersistentMessageBox(e.message, e.width, e.height, e.fontSize, image or nil)
-      else
-	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
+    if WG.ShowPersistentMessageBox then
+      local image
+      if e.image then
+        image = (e.imageFromArchive and "" or "LuaUI/Images/") .. e.image
       end
+      WG.ShowPersistentMessageBox(e.message, e.width, e.height, e.fontSize, image or nil)
+    else
+      Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
+    end
   elseif e.logicType == "HideGuiMessagePersistentAction" then
-      if WG.HidePersistentMessageBox then
-        WG.HidePersistentMessageBox()
-      end
+    if WG.HidePersistentMessageBox then
+      WG.HidePersistentMessageBox()
+    end
   elseif e.logicType == "ConvoMessageAction" then
-      if WG.AddConvo then
-	local image, sound
-	if e.image then
-	  image = (e.imageFromArchive and "" or "LuaUI/Images/") .. e.image
-	end
-	if e.sound then
-	  sound = (e.soundFromArchive and "" or "LuaUI/Sounds/convo/") .. e.sound
-	end
-        WG.AddConvo(e.message, e.fontSize, image, sound, e.time)
-      else
-	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
+    if WG.AddConvo then
+      local image, sound
+      if e.image then
+        image = (e.imageFromArchive and "" or "LuaUI/Images/") .. e.image
       end
+      if e.sound then
+        sound = (e.soundFromArchive and "" or "LuaUI/Sounds/convo/") .. e.sound
+      end
+      WG.AddConvo(e.message, e.fontSize, image, sound, e.time)
+    else
+      Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
+    end
   elseif e.logicType == "ClearConvoMessageQueueAction" then
-      if WG.ClearConvoQueue then
-        WG.ClearConvoQueue()
-      else
-	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
-      end 
+    if WG.ClearConvoQueue then
+      WG.ClearConvoQueue()
+    else
+      Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
+    end 
   elseif e.logicType == "AddObjectiveAction" then
-      if WG.AddObjective then
-        WG.AddObjective(e.id, e.title, e.description, nil, "Incomplete")
-      else
-	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Objectives widget for action " .. e.logicType)
-      end
+    if WG.AddObjective then
+      WG.AddObjective(e.id, e.title, e.description, nil, "Incomplete")
+    else
+      Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Objectives widget for action " .. e.logicType)
+    end
   elseif e.logicType == "ModifyObjectiveAction" then
-      if WG.ModifyObjective then
-        WG.ModifyObjective(e.id, e.title, e.description, nil, e.status)
-      else
-	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Objectives widget for action " .. e.logicType)
-      end
+    if WG.ModifyObjective then
+      WG.ModifyObjective(e.id, e.title, e.description, nil, e.status)
+    else
+      Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Objectives widget for action " .. e.logicType)
+    end
   elseif e.logicType == "AddUnitsToObjectiveAction" then
-      if WG.AddUnitOrPosToObjective then
-	for unitID in pairs(e.units) do
-	  WG.AddUnitOrPosToObjective(e.id, unitID)
-	end
-      else
-	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing or out-of-date Objectives widget for action " .. e.logicType)
+    if WG.AddUnitOrPosToObjective then
+      for unitID in pairs(e.units) do
+        WG.AddUnitOrPosToObjective(e.id, unitID)
       end
+    else
+      Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing or out-of-date Objectives widget for action " .. e.logicType)
+    end
   elseif e.logicType == "AddPointToObjectiveAction" then
-      if WG.AddUnitOrPosToObjective then
-	WG.AddUnitOrPosToObjective(e.id, {e.x, e.y})
-      else
-	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing or out-of-date Objectives widget for action " .. e.logicType)
-      end
+    if WG.AddUnitOrPosToObjective then
+      WG.AddUnitOrPosToObjective(e.id, {e.x, e.y})
+    else
+      Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing or out-of-date Objectives widget for action " .. e.logicType)
+    end
   elseif e.logicType == "EnterCutsceneAction" then
-      if WG.Cutscene and WG.Cutscene.EnterCutscene then
-        WG.Cutscene.EnterCutscene(e.instant, e.skippable)
-      end
+    if WG.Cutscene and WG.Cutscene.EnterCutscene then
+      WG.Cutscene.EnterCutscene(e.instant, e.skippable)
+    end
   elseif e.logicType == "LeaveCutsceneAction" then
-      if WG.Cutscene and WG.Cutscene.LeaveCutscene then
-        WG.Cutscene.LeaveCutscene(e.instant)
-      end
+    if WG.Cutscene and WG.Cutscene.LeaveCutscene then
+      WG.Cutscene.LeaveCutscene(e.instant)
+    end
   elseif e.logicType == "FadeOutAction" then
-      if WG.Cutscene and WG.Cutscene.FadeOut then
-        WG.Cutscene.FadeOut(e.instant)
-      end
+    if WG.Cutscene and WG.Cutscene.FadeOut then
+      WG.Cutscene.FadeOut(e.instant)
+    end
   elseif e.logicType == "FadeInAction" then
-      if WG.Cutscene and WG.Cutscene.FadeIn then
-        WG.Cutscene.FadeIn(e.instant)
-      end
+    if WG.Cutscene and WG.Cutscene.FadeIn then
+      WG.Cutscene.FadeIn(e.instant)
+    end
   elseif e.logicType == "PauseAction" then
     Spring.SendCommands"pause"
   elseif e.logicType == "MarkerPointAction" then
@@ -167,9 +167,9 @@ function MissionEvent(e)
     end
     if WG.Music and WG.Music.StartTrack then
       if track then
-	WG.Music.StartTrack(track)
+        WG.Music.StartTrack(track)
       else
-	WG.Music.StartTrack()
+        WG.Music.StartTrack()
       end
     elseif track ~= nil then
       Spring.StopSoundStream()
@@ -179,16 +179,16 @@ function MissionEvent(e)
     if WG.Music and WG.Music.StartLoopingTrack then
       local intro, loop = e.trackIntro, e.trackLoop
       if intro and (not e.trackIntroFromArchive) then
-	intro = "LuaUI/Sounds/music/" .. intro
+        intro = "LuaUI/Sounds/music/" .. intro
       end
       if loop and (not e.trackLoopFromArchive) then
-	loop = "LuaUI/Sounds/music/" .. loop
+        loop = "LuaUI/Sounds/music/" .. loop
       end
       
       if e.trackIntro and e.trackLoop then
-	WG.Music.StartLoopingTrack(intro, loop)
+        WG.Music.StartLoopingTrack(intro, loop)
       else
-	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Music Player widget for action " .. e.logicType)
+        Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Music Player widget for action " .. e.logicType)
       end
     end
   elseif e.logicType == "StopMusicAction" then
