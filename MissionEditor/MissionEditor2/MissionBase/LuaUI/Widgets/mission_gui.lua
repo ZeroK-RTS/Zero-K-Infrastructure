@@ -31,12 +31,20 @@ local function PlaySound(fileName, ...)
   end
 end
 
+local function Translate(id, defaultString)
+  if (not id) or (not WG.Translate) or (id == '') then
+    return defaultString
+  end
+  return WG.Translate("missions", id) or defaultString
+end
+
 function MissionEvent(e)
   if e.logicType == "GuiMessageAction" then
+    local message = Translate(e.stringID, e.message)
     if e.image then 
       WG.Message:Show{
         texture = (e.imageFromArchive and "" or "LuaUI/Images/") .. e.image,
-        text = e.message,
+        text = message,
         width = e.imageWidth,
         height = e.imageHeight,
         fontsize = e.fontSize,
@@ -44,9 +52,9 @@ function MissionEvent(e)
       }
     else
       if WG.ShowMessageBox then
-        WG.ShowMessageBox(e.message, e.width, e.height, e.fontSize, e.pause)
+        WG.ShowMessageBox(message, e.width, e.height, e.fontSize, e.pause)
       else
-        WG.Message:Show{text = e.message, width = e.width, height = e.height, fontsize = e.fontSize, pause = e.pause}
+        WG.Message:Show{text = message, width = e.width, height = e.height, fontsize = e.fontSize, pause = e.pause}
       end
     end
   elseif e.logicType == "GuiMessagePersistentAction" then
@@ -55,7 +63,8 @@ function MissionEvent(e)
       if e.image then
         image = (e.imageFromArchive and "" or "LuaUI/Images/") .. e.image
       end
-      WG.ShowPersistentMessageBox(e.message, e.width, e.height, e.fontSize, image or nil)
+      local message = Translate(e.stringID, e.message)
+      WG.ShowPersistentMessageBox(message, e.width, e.height, e.fontSize, image or nil)
     else
       Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
     end
@@ -65,6 +74,7 @@ function MissionEvent(e)
     end
   elseif e.logicType == "ConvoMessageAction" then
     if WG.AddConvo then
+      local message = Translate(e.stringID, e.message)
       local image, sound
       if e.image then
         image = (e.imageFromArchive and "" or "LuaUI/Images/") .. e.image
@@ -72,7 +82,7 @@ function MissionEvent(e)
       if e.sound then
         sound = (e.soundFromArchive and "" or "LuaUI/Sounds/convo/") .. e.sound
       end
-      WG.AddConvo(e.message, e.fontSize, image, sound, e.time)
+      WG.AddConvo(message, e.fontSize, image, sound, e.time)
     else
       Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
     end
@@ -84,13 +94,17 @@ function MissionEvent(e)
     end 
   elseif e.logicType == "AddObjectiveAction" then
     if WG.AddObjective then
-      WG.AddObjective(e.id, e.title, e.description, nil, "Incomplete")
+      local title = Translate(e.titleStringID, e.title)
+      local desc = Translate(e.stringID, e.description)
+      WG.AddObjective(e.id, title, desc, nil, "Incomplete")
     else
       Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Objectives widget for action " .. e.logicType)
     end
   elseif e.logicType == "ModifyObjectiveAction" then
     if WG.ModifyObjective then
-      WG.ModifyObjective(e.id, e.title, e.description, nil, e.status)
+      local title = Translate(e.titleStringID, e.title)
+      local desc = Translate(e.stringID, e.description)
+      WG.ModifyObjective(e.id, title, desc, nil, e.status)
     else
       Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Objectives widget for action " .. e.logicType)
     end
@@ -128,7 +142,8 @@ function MissionEvent(e)
     Spring.SendCommands"pause"
   elseif e.logicType == "MarkerPointAction" then
     local height = Spring.GetGroundHeight(e.x, e.y)
-    Spring.MarkerAddPoint(e.x, height, e.y, e.text)
+    local text = Translate(e.stringID, e.text)
+    Spring.MarkerAddPoint(e.x, height, e.y, text)
     if e.centerCamera then
       Spring.SetCameraTarget(e.x, height, e.y, 1)
     end

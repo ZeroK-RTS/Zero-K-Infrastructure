@@ -5,8 +5,10 @@ using System.Runtime.Serialization;
 namespace CMissionLib.Actions
 {
 	[DataContract]
-	public class MarkerPointAction : Action
+	public class MarkerPointAction : Action, ILocalizable
 	{
+        string stringID;
+
 		public MarkerPointAction(double x, double y)
 			: base()
 		{
@@ -21,7 +23,18 @@ namespace CMissionLib.Actions
 		[DataMember]
 		public double X { get; set; }
 
-		[DataMember]
+        [DataMember]
+        public string StringID
+        {
+            get { return stringID; }
+            set
+            {
+                stringID = value;
+                RaisePropertyChanged("StringID");
+            }
+        }
+
+        [DataMember]
 		public string Text { get; set; }
 
 		[DataMember]
@@ -31,6 +44,7 @@ namespace CMissionLib.Actions
 		{
 			var map = new Dictionary<object, object>
 				{
+                    {"stringID", stringID},
 					{"x", mission.ToIngameX(X)},
 					{"y", mission.ToIngameY(Y)},
 					{"text", Text},

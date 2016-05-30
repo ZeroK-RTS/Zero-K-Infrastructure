@@ -7,8 +7,9 @@ using System.Windows.Media.Imaging;
 namespace CMissionLib.Actions
 {
 	[DataContract]
-	public class ConvoMessageAction : Action
+	public class ConvoMessageAction : Action, ILocalizable
 	{
+        string stringID;
 		string imagePath;
         string soundPath;
 		string message;
@@ -20,7 +21,18 @@ namespace CMissionLib.Actions
 			this.message = message;
 		}
 
-		[DataMember]
+        [DataMember]
+        public string StringID
+        {
+            get { return stringID; }
+            set
+            {
+                stringID = value;
+                RaisePropertyChanged("StringID");
+            }
+        }
+
+        [DataMember]
 		public string Message
 		{
 			get { return message; }
@@ -79,7 +91,8 @@ namespace CMissionLib.Actions
 		{
             Dictionary<object, object> map = new Dictionary<object, object>
 				{
-					{"message", message},
+                    {"stringID", stringID},
+                    {"message", message},
                     {"fontSize", FontSize},
                     {"time", time},
 				};

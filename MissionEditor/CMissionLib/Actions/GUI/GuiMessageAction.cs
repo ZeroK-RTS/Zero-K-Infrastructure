@@ -7,8 +7,9 @@ using System.Windows.Media.Imaging;
 namespace CMissionLib.Actions
 {
 	[DataContract]
-	public class GuiMessageAction : Action
+	public class GuiMessageAction : Action, ILocalizable
 	{
+        string stringID;
 		string imagePath;
 		string message;
 		int width = 400;
@@ -21,7 +22,18 @@ namespace CMissionLib.Actions
 			Pause = true;
 		}
 
-		[DataMember]
+        [DataMember]
+        public string StringID
+        {
+            get { return stringID; }
+            set
+            {
+                stringID = value;
+                RaisePropertyChanged("StringID");
+            }
+        }
+
+        [DataMember]
 		public string Message
 		{
 			get { return message; }
@@ -84,7 +96,8 @@ namespace CMissionLib.Actions
 			{
 				var map = new Dictionary<object, object>
 					{
-						{"message", message},
+                        {"stringID", stringID},
+                        {"message", message},
 						{"width", Width},
                         {"height", Height},
 						{"pause", Pause},

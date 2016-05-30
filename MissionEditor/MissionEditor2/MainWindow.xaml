@@ -195,6 +195,10 @@
                             <Label Grid.Row="1">Pause Game</Label>
                             <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding Pause}" VerticalAlignment="Center" />
                         </Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Message ID</Label>
+                            <TextBox Text="{Binding StringID, UpdateSourceTrigger=PropertyChanged}" MinWidth="96" ToolTip="Optional identifier for internationalization functions"/>
+                        </StackPanel>
                         <DockPanel>
                             <Label DockPanel.Dock="Left">Message Box Width:</Label>
                             <Label DockPanel.Dock="Left" Content="{Binding Width, Mode=TwoWay}" />
@@ -220,6 +224,7 @@
                         </Viewbox>
                         <TextBox Text="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                         <Button Loaded="GuiMessageButtonLoaded" Tag="{Binding}">Select</Button>
+                        
                     </StackPanel>
                 </GroupBox>
                 <GroupBox Grid.Row="1" Header="Description">
@@ -253,6 +258,10 @@
                             <TextBox Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
                                     HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="20" TextWrapping="Wrap" />
                         </Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Message ID</Label>
+                            <TextBox Text="{Binding StringID, UpdateSourceTrigger=PropertyChanged}" MinWidth="96" ToolTip="Optional identifier for internationalization functions"/>
+                        </StackPanel>
                         <DockPanel>
                             <Label DockPanel.Dock="Left">Message Box Width:</Label>
                             <Label DockPanel.Dock="Left" Content="{Binding Width, Mode=TwoWay}" />
@@ -316,6 +325,10 @@
                             <TextBox Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
                                     HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="20" TextWrapping="Wrap" />
                         </Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Message ID</Label>
+                            <TextBox Text="{Binding StringID, UpdateSourceTrigger=PropertyChanged}" MinWidth="96" ToolTip="Optional identifier for internationalization functions"/>
+                        </StackPanel>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -390,6 +403,8 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Label>ID</Label>
                         <TextBox Grid.Column="1" Text="{Binding ID, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="500" MaxLines="1"/>
@@ -398,6 +413,12 @@
                         <Label Grid.Row="2">Description</Label>
                         <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
                                 HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="10" TextWrapping="Wrap" />
+                        <Label Grid.Row="3">Title ID</Label>
+                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding TitleStringID, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="500" MaxLines="1" 
+                                 ToolTip="Optional identifier for internationalization functions"/>
+                        <Label Grid.Row="4">Description ID</Label>
+                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding StringID, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="500" MaxLines="1" 
+                                 ToolTip="Optional identifier for internationalization functions"/>
                     </Grid>
                 </GroupBox>
                 <GroupBox Grid.Row="1" Header="Description">
@@ -427,6 +448,8 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Label>ID</Label>
                         <ComboBox Grid.Column="1" ItemsSource="{Binding Mission.Objectives, ElementName=window}" SelectedItem="{Binding ID}" />
@@ -437,6 +460,12 @@
                                 HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="10" TextWrapping="Wrap" />
                         <Label Grid.Row="3">Status</Label>
                         <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{x:Static Actions:ModifyObjectiveAction.Statuses}" SelectedItem="{Binding Status}" />
+                        <Label Grid.Row="4">Title ID</Label>
+                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding TitleStringID, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="500" MaxLines="1" 
+                                 ToolTip="Optional identifier for internationalization functions"/>
+                        <Label Grid.Row="5">Description ID</Label>
+                        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding StringID, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="500" MaxLines="1" 
+                                 ToolTip="Optional identifier for internationalization functions"/>
                     </Grid>
                 </GroupBox>
                 <GroupBox Grid.Row="1" Header="Description">
