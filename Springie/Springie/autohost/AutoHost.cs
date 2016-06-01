@@ -785,7 +785,7 @@ namespace Springie.autohost
                 delayedModChange = null;
                 config.Mod = latest;
                 SayBattle("Updating to latest mod version: " + latest);
-                if (tas.MyBattle != null) ComRehost(TasSayEventArgs.Default, new[] { latest });
+                if (tas.MyBattle != null) OpenBattleRoom(latest, null);
             }
             else {
                 PackageDownloader.Version version = Program.main.Downloader.PackageDownloader.GetByTag(tag);
@@ -795,7 +795,7 @@ namespace Springie.autohost
                         if (cache.GetResourceDataByInternalName(latest) != null && !spring.IsRunning) {
                             config.Mod = latest;
                             SayBattle("Updating to latest mod version: " + latest);
-                            if (tas.MyBattle != null) ComRehost(TasSayEventArgs.Default, new[] { latest });
+                            if (tas.MyBattle != null) OpenBattleRoom(latest, null);
                         }
                         else delayedModChange = latest;
                     }
