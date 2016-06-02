@@ -706,6 +706,15 @@ namespace Springie.autohost
             tas.StartGame();
         }
 
+        public void ComUpdateRapidMod(TasSayEventArgs e, string[] words)
+        {
+            if (string.IsNullOrEmpty(words[0]))
+            {
+                UpdateRapidMod(config.AutoUpdateRapidTag);
+            }
+            else UpdateRapidMod(words[0]);
+        }
+
         internal static int Filter(string[] source, string[] words, out string[] resultVals, out int[] resultIndexes)
         {
             int i;

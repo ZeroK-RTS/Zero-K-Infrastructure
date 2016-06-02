@@ -5,10 +5,12 @@ using System.Runtime.Serialization;
 namespace CMissionLib.Actions
 {
 	[DataContract]
-	public class ModifyObjectiveAction : Action
+	public class ModifyObjectiveAction : Action, ILocalizable
 	{
         string id;
-		string title;
+        string stringID;
+        string titleStringID;
+        string title;
         string description;
         public static string[] Statuses = new[] { "Complete", "Incomplete", "Failed" };
         string status = Statuses[1];
@@ -68,6 +70,28 @@ namespace CMissionLib.Actions
             }
         }
 
+        [DataMember]
+        public string StringID
+        {
+            get { return stringID; }
+            set
+            {
+                stringID = value;
+                RaisePropertyChanged("StringID");
+            }
+        }
+
+        [DataMember]
+        public string TitleStringID
+        {
+            get { return titleStringID; }
+            set
+            {
+                titleStringID = value;
+                RaisePropertyChanged("TitleStringID");
+            }
+        }
+
         /*
         [DataMember]
         public bool UseCustomColor
@@ -103,7 +127,9 @@ namespace CMissionLib.Actions
 			var map = new Dictionary<object, object>
 				{
 					{"id", ID},
-					{"title", Title},
+                    {"stringID", stringID},
+                    {"titleStringID", titleStringID},
+                    {"title", Title},
                     {"description", Description},
 					{"status", Status},
 				};

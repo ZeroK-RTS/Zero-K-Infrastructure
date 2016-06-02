@@ -33,7 +33,8 @@ module.exports = Reflux.createStore({
 		this.settings = {
 			"Game": {
 				safeMode: { val: false, name: 'Run in safe mode', desc: 'Try this if you get crashes.', type: 'bool' },
-				windowedMode: { val: false, name: 'Run in windowed mode instead of fullscreen', type: 'bool' },
+				lobbyWindowed: { val: false, name: 'Run this launcher in windowed mode', type: 'bool' },
+				windowedMode: { val: false, name: 'Run game in windowed mode', type: 'bool' },
 				resolutionWidth: { val: null, name: 'Screen resolution width', desc: 'Leave empty for default.', type: 'int' },
 				resolutionHeight: { val: null, name: 'Screen resolution height', desc: 'Leave empty for default.', type: 'int' },
 				playTitleMusic: { val: true, name: 'Play music in menu', type: 'bool' },
@@ -75,6 +76,7 @@ module.exports = Reflux.createStore({
 		Zkl.readConfig(function(config){
 			if (config)
 				_.extend(this, config);
+			this.set('playTitleMusic', this.playTitleMusic); // hack but meh who cares
 		}.bind(this));
 	},
 
@@ -82,6 +84,8 @@ module.exports = Reflux.createStore({
 
 	set: function(key, val){
 		this[key] = val;
+		if (key === 'lobbyWindowed')
+			Zkl.setFullscreen(!this.lobbyWindowed);
 		Zkl.saveConfig(_.reduce(
 			_.flatten(_.map(this.settings, _.keys)),
 			function(acc, key){

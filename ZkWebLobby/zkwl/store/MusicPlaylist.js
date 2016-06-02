@@ -14,6 +14,7 @@ module.exports = function(process){ return Reflux.createStore({
 		this.listenTo(Settings, this.settingChanged);
 	},
 	updateProcess: function(state){
+		console.log(Settings.playTitleMusic);
 		// This also triggers the music on startup.
 		if (state.springRunning && !this.audio.paused)
 			this.stop();

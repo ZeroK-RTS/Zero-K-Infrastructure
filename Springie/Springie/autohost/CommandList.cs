@@ -134,6 +134,8 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("rehost", 3, "[<modname>..] - rehosts game, e.g. !rehost abosol 2.23 - rehosts AA2.23"));
 
+            AddMissing(new CommandConfig("updaterapidmod", 3, "[<tag>..] - force update host to mod with specified rapid tag"));
+
             AddMissing(new CommandConfig("maplink",
                                          0,
                                          "[<mapname>..] - looks for maplinks at unknown-files",

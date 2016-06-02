@@ -5,9 +5,11 @@ using System.Runtime.Serialization;
 namespace CMissionLib.Actions
 {
 	[DataContract]
-	public class AddObjectiveAction : Action
+	public class AddObjectiveAction : Action, ILocalizable
 	{
         string id;
+        string stringID;
+        string titleStringID;
 		string title="Objective Name";
         string description="Some text to describe your objective";
         //bool useCustomColor;
@@ -51,6 +53,27 @@ namespace CMissionLib.Actions
             }
         }
 
+        [DataMember]
+        public string StringID {
+            get { return stringID; }
+            set
+            {
+                stringID = value;
+                RaisePropertyChanged("StringID");
+            }
+        }
+
+        [DataMember]
+        public string TitleStringID
+        {
+            get { return titleStringID; }
+            set
+            {
+                titleStringID = value;
+                RaisePropertyChanged("TitleStringID");
+            }
+        }
+
         /*
         [DataMember]
         public bool UseCustomColor
@@ -66,12 +89,14 @@ namespace CMissionLib.Actions
         public int[] Color { get; set; }
          */
 
-		public override LuaTable GetLuaTable(Mission mission)
+        public override LuaTable GetLuaTable(Mission mission)
 		{
 			var map = new Dictionary<object, object>
 				{
 					{"id", ID},
-					{"title", title},
+                    {"stringID", stringID},
+                    {"titleStringID", titleStringID},
+                    {"title", title},
                     {"description", description},
 				};
             //if(useCustomColor)

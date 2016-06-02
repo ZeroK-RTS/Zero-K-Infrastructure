@@ -414,6 +414,8 @@
                         <Label>Message:</Label>
                         <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" MinWidth="100" />
                         <CheckBox IsChecked="{Binding CenterCamera}">Center Camera</CheckBox>
+                        <Label>Message ID:</Label>
+                        <TextBox Text="{Binding StringID, UpdateSourceTrigger=PropertyChanged}" MinWidth="100" ToolTip="Optional identifier for internationalization functions"/>
                     </ToolBar>
                 </ToolBarTray>
                 <DockPanel DockPanel.Dock="Bottom" Background="White">

@@ -66,5 +66,5 @@ var audioTime = function audioTime(){
 musicPlaylist.audio.addEventListener('timeupdate', audioTime);
 
 // Fallback in case media failed to play.
-setTimeout(runApp, 15000);
-setTimeout(killIntro, 15000);
+setTimeout(runApp, 10000);
+setTimeout(killIntro, 10000);

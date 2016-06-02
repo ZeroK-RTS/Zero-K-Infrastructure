@@ -8,7 +8,7 @@
 
 @font-face {
     font-family: os;
-    src: url('/OpenSans-Semibold.eot'); /* IE9 Compat Modes */
-    src: url('/OpenSans-Semibold.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-    url('/OpenSans-Semibold.ttf') format('truetype'); /* Safari, Android, iOS */
+    src: url('/OpenSans-Regular.eot'); /* IE9 Compat Modes */
+    src: url('/OpenSans-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('/OpenSans-Regular.ttf') format('truetype'); /* Safari, Android, iOS */
 }

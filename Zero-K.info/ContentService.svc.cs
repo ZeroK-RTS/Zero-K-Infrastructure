@@ -46,11 +46,11 @@ namespace ZeroKWeb
         
         public List<string> GetEloTop10()
         {
-            DateTime lastMonth = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
+            DateTime ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
             using (var db = new ZkDataContext())
 
                 return
-                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > lastMonth)).OrderByDescending(
+                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount == 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator)).OrderByDescending(
                     x => x.Effective1v1Elo).WithTranslations().Select(x => x.Name).Take(10).ToList();
         }
 
