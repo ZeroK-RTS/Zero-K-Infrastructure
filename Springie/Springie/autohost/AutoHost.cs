@@ -49,6 +49,7 @@ namespace Springie.autohost
         public Mod hostedMod;
         public int hostingPort { get; private set; }
         public Spring spring;
+        public AutohostMode mode;
 
         public SpringPaths springPaths;
         public TasClient tas;
@@ -59,8 +60,9 @@ namespace Springie.autohost
             this.cache = cache;
             SpawnConfig = spawn;
             this.hostingPort = hostingPort;
+            mode = (AutohostMode?)SpawnConfig?.Mode ?? config.Mode;
 
-            
+
             string version = config.SpringVersion ?? Program.main.Config.SpringVersion ?? GlobalConst.DefaultEngineOverride;
             springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(version), Program.main.Config.DataDir);
             
@@ -134,7 +136,7 @@ namespace Springie.autohost
                         if (!String.IsNullOrEmpty(config.AutoUpdateSpringBranch) && timerTick%4 == 0) CheckEngineBranch();
 
                         // auto verify pw map
-                        if (!spring.IsRunning && config.Mode != AutohostMode.None) if (SpawnConfig == null && config.Mode == AutohostMode.Planetwars) ServerVerifyMap(false);
+                        if (!spring.IsRunning && mode != AutohostMode.None) if (SpawnConfig == null && mode == AutohostMode.Planetwars) ServerVerifyMap(false);
 
                         // auto start split vote
                         if (!spring.IsRunning && config.SplitBiggerThan != null && tas.MyBattle != null && config.SplitBiggerThan < tas.MyBattle.NonSpectatorCount) {

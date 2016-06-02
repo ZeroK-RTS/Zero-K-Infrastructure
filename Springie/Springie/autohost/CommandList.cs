@@ -186,7 +186,7 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("spawn",
                                          -2,
-                                         "<configs> - creates new autohost. Example: !spawn mod=ca:stable,title=My PWN game,password=secret",
+                                         "<configs> - creates new autohost. Example: !spawn mod=ca:stable,title=My PWN game,password=secret. The following parameters can be specified: map, mod, title, password, maxplayers, owner, handle, mode. Possible values for mode: 0 - none, 3 - 1v1, 4 - FFA, 5 - coop, 6 - teams, 10 - serious.",
                                          0)
                                          { AllowSpecs = true});
 

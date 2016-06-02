@@ -689,7 +689,7 @@ namespace Springie.autohost
             }
             else
             {
-                if (config != null && config.Mode != AutohostMode.None)
+                if (mode != AutohostMode.None)
                 {
                     if (!RunServerBalance(true, null, null))
                     {
@@ -859,8 +859,10 @@ namespace Springie.autohost
             {
                 if (tas.MyBattle == null) return false;
                 var serv = GlobalConst.GetSpringieService();
+                var context = tas.MyBattle.GetContext();
+                context.mode = mode;
 
-                var balance = serv.BalanceTeams(tas.MyBattle.GetContext(), isGameStart, allyTeams, clanWise);
+                var balance = serv.BalanceTeams(context, isGameStart, allyTeams, clanWise);
                 
                 ApplyBalanceResults(balance);
 

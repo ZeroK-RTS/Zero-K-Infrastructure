@@ -70,8 +70,7 @@ namespace ZkData
         public static AutohostMode GetMode(this BattleContext ctx)
         {
             var conf = GetConfig(ctx);
-            if (conf != null) return conf.AutohostMode;
-            else return AutohostMode.None;
+            return ctx.mode ?? conf?.AutohostMode ?? AutohostMode.None;
         }
 
 
