@@ -50,6 +50,10 @@
                 <td>Last login:</td>
                 <td>@Html.TextBoxFor(x => x.LastLoginFrom, new { @class = "js_datepicker" }) - @Html.TextBoxFor(x => x.LastLoginTo, new { @class = "js_datepicker" })</td>
             </tr>
+            <tr>
+                <td>Country:</td>
+                <td>@Html.TextBoxFor(x => x.Country)</td>
+            </tr>
 
             @if (Global.IsZeroKAdmin)
             {
