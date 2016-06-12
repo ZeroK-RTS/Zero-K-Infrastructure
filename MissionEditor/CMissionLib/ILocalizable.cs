@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace CMissionLib
 {
-    interface ILocalizable
+    // note: add any implementations of this to MissionEditor2.MainWindow.xaml.cs.ExportLocalizationFile() as well
+    public interface ILocalizable
     {
         string StringID { get; set; }
     }
