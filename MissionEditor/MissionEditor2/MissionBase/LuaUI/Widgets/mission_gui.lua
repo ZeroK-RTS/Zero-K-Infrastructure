@@ -38,8 +38,8 @@ local function Translate(id, defaultString)
   return WG.Translate("missions", id) or defaultString
 end
 
-function MissionEvent(e)
-  if e.logicType == "GuiMessageAction" then
+local actionsTable = {
+  ["GuiMessageAction"] = function(e)
     local message = Translate(e.stringID, e.message)
     if e.image then 
       WG.Message:Show{
@@ -57,7 +57,8 @@ function MissionEvent(e)
         WG.Message:Show{text = message, width = e.width, height = e.height, fontsize = e.fontSize, pause = e.pause}
       end
     end
-  elseif e.logicType == "GuiMessagePersistentAction" then
+  end,
+  ["GuiMessagePersistentAction"] = function(e)
     if WG.ShowPersistentMessageBox then
       local image
       if e.image then
@@ -68,11 +69,13 @@ function MissionEvent(e)
     else
       Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
     end
-  elseif e.logicType == "HideGuiMessagePersistentAction" then
+  end,
+  ["HideGuiMessagePersistentAction"] = function(e)
     if WG.HidePersistentMessageBox then
       WG.HidePersistentMessageBox()
     end
-  elseif e.logicType == "ConvoMessageAction" then
+  end,
+  ["ConvoMessageAction"] = function(e)
     if WG.AddConvo then
       local message = Translate(e.stringID, e.message)
       local image, sound
@@ -86,13 +89,15 @@ function MissionEvent(e)
     else
       Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
     end
-  elseif e.logicType == "ClearConvoMessageQueueAction" then
+  end,
+  ["ClearConvoMessageQueueAction"] = function(e)
     if WG.ClearConvoQueue then
       WG.ClearConvoQueue()
     else
       Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
     end 
-  elseif e.logicType == "AddObjectiveAction" then
+  end,
+  ["AddObjectiveAction"] = function(e)
     if WG.AddObjective then
       local title = Translate(e.titleStringID, e.title)
       local desc = Translate(e.stringID, e.description)
@@ -100,7 +105,8 @@ function MissionEvent(e)
     else
       Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Objectives widget for action " .. e.logicType)
     end
-  elseif e.logicType == "ModifyObjectiveAction" then
+  end,
+  ["ModifyObjectiveAction"] = function(e)
     if WG.ModifyObjective then
       local title = Translate(e.titleStringID, e.title)
       local desc = Translate(e.stringID, e.description)
@@ -108,7 +114,8 @@ function MissionEvent(e)
     else
       Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Objectives widget for action " .. e.logicType)
     end
-  elseif e.logicType == "AddUnitsToObjectiveAction" then
+  end,
+  ["AddUnitsToObjectiveAction"] = function(e)
     if WG.AddUnitOrPosToObjective then
       for unitID in pairs(e.units) do
         WG.AddUnitOrPosToObjective(e.id, unitID)
@@ -116,41 +123,50 @@ function MissionEvent(e)
     else
       Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing or out-of-date Objectives widget for action " .. e.logicType)
     end
-  elseif e.logicType == "AddPointToObjectiveAction" then
+  end,
+  ["AddPointToObjectiveAction"] = function(e)
     if WG.AddUnitOrPosToObjective then
       WG.AddUnitOrPosToObjective(e.id, {e.x, e.y})
     else
       Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing or out-of-date Objectives widget for action " .. e.logicType)
     end
-  elseif e.logicType == "EnterCutsceneAction" then
+  end,
+  ["EnterCutsceneAction"] = function(e)
     if WG.Cutscene and WG.Cutscene.EnterCutscene then
       WG.Cutscene.EnterCutscene(e.instant, e.skippable)
     end
-  elseif e.logicType == "LeaveCutsceneAction" then
+  end,
+  ["LeaveCutsceneAction"] = function(e)
     if WG.Cutscene and WG.Cutscene.LeaveCutscene then
       WG.Cutscene.LeaveCutscene(e.instant)
     end
-  elseif e.logicType == "FadeOutAction" then
+  end,
+  ["FadeOutAction"] = function(e)
     if WG.Cutscene and WG.Cutscene.FadeOut then
       WG.Cutscene.FadeOut(e.instant)
     end
-  elseif e.logicType == "FadeInAction" then
+  end,
+  ["FadeInAction"] = function(e)
     if WG.Cutscene and WG.Cutscene.FadeIn then
       WG.Cutscene.FadeIn(e.instant)
     end
-  elseif e.logicType == "PauseAction" then
+  end,
+  ["PauseAction"] = function(e)
     Spring.SendCommands"pause"
-  elseif e.logicType == "MarkerPointAction" then
+  end,
+  ["MarkerPointAction"] = function(e)
     local height = Spring.GetGroundHeight(e.x, e.y)
     local text = Translate(e.stringID, e.text)
     Spring.MarkerAddPoint(e.x, height, e.y, text)
     if e.centerCamera then
       Spring.SetCameraTarget(e.x, height, e.y, 1)
     end
-  elseif e.logicType == "SetCameraPointTargetAction" then
+  end,
+  ["SetCameraPointTargetAction"] = function(e)
     local height = Spring.GetGroundHeight(e.x, e.y)
     Spring.SetCameraTarget(e.x, height, e.y, 1)
-  elseif e.logicType == "SetCameraPosDirAction" then
+  end,
+  ["SetCameraPosDirAction"] = function(e)
     if e.rx then e.rx = math.rad(e.rx) end
     if e.ry then e.ry = math.rad(e.ry) end
     local cam = lastManualCam
@@ -161,21 +177,27 @@ function MissionEvent(e)
     cam.ry = e.ry or cam.ry
     cam.mode = 4
     Spring.SetCameraState(cam, math.max(e.time, 0))
-  elseif e.logicType == "BeautyShotAction" then
+  end,
+  ["BeautyShotAction"] = function(e)
     WG.BeautyShot(e.unitID, e)
-  elseif e.logicType == "SaveCameraStateAction" then
+  end,
+  ["SaveCameraStateAction"] = function(e)
     camState = Spring.GetCameraState()
-  elseif e.logicType == "RestoreCameraStateAction" then
+  end,
+  ["RestoreCameraStateAction"] = function(e)
     Spring.SetCameraState(camState, 1)
-  elseif e.logicType == "ShakeCameraAction" then
+  end,
+  ["ShakeCameraAction"] = function(e)
     if WG.ShakeCamera then
       WG.ShakeCamera(e.strength)
     else
       Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing camera shake widget for action " .. e.logicType)
     end
-  elseif e.logicType == "SoundAction" then
+  end,
+  ["SoundAction"] = function(e)
     PlaySound(e.sound)
-  elseif e.logicType == "MusicAction" then
+  end,
+  ["MusicAction"] = function(e)
     local track = e.track
     if track and (not e.trackFromArchive) then
       track = "LuaUI/Sounds/music/" .. track
@@ -190,7 +212,8 @@ function MissionEvent(e)
       Spring.StopSoundStream()
       Spring.PlaySoundStream(track, 0.5)
     end
-  elseif e.logicType == "MusicLoopAction" then
+  end,
+  ["MusicLoopAction"] = function(e)
     if WG.Music and WG.Music.StartLoopingTrack then
       local intro, loop = e.trackIntro, e.trackLoop
       if intro and (not e.trackIntroFromArchive) then
@@ -206,17 +229,21 @@ function MissionEvent(e)
         Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Music Player widget for action " .. e.logicType)
       end
     end
-  elseif e.logicType == "StopMusicAction" then
+  end,
+  ["StopMusicAction"] = function(e)
     if WG.Music and WG.Music.StopTrack then
       WG.Music.StopTrack(e.noContinue)
     else
       Spring.StopSoundStream()
     end
-  elseif e.logicType == "SunriseAction" then
+  end,
+  ["SunriseAction"] = function(e)
     WG.noonWanted = true
-  elseif e.logicType == "SunsetAction" then
+  end,
+  ["SunsetAction"] = function(e)
     WG.midnightWanted = true
-  elseif e.logicType == "CustomAction2" then
+  end,
+  ["CustomAction2"] = function(e)
     -- workaround to make WG accessible to the customAction
     local func, err = loadstring("local WG = ({...})[1]; " .. e.codeStr)
     if err then
@@ -224,6 +251,14 @@ function MissionEvent(e)
       return
     end
     func(WG)
+  end
+}
+
+function MissionEvent(e)
+  if actionsTable[e.logicType] then
+    actionsTable[e.logicType](e)
+  else
+    Spring.Log(widget:GetInfo().name, LOG.ERROR, "Unable to find action type " .. e.logicType)
   end
 end
 
