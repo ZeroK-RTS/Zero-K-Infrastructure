@@ -9,6 +9,7 @@ namespace ZeroKLobby.Notifications
         public ZklNotifyBar()
         {
             Dock = DockStyle.Top;
+            ForeColor = Config.TextColor;
         }
 
         public virtual string Title { get; set; }
