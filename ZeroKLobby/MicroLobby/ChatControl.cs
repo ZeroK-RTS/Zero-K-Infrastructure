@@ -74,7 +74,7 @@ namespace ZeroKLobby.MicroLobby
                 contextMenu = LineDehighlighter(contextMenu, null);
                 contextMenu.Show(extras, new Point(0, 0));
             };
-
+            extras.Size = new Size(extras.Width, 36);
 
             ChatBox.Controls.Add(extras);
             playerBox.BackColor = Config.BgColor;
@@ -92,8 +92,8 @@ namespace ZeroKLobby.MicroLobby
             if (!DesignMode) HistoryManager.InsertLastLines(ChannelName, ChatBox);
 
             playerBox.IsSorted = true;
-            var searchLabel = new Label() { Text = "Search" };
-            searchBarContainer.Controls.Add(searchLabel);
+            var searchLabel = new Label() { Text = "Search", AutoSize = true };
+            searchBarContainer.Controls.Add(searchLabel, 0, 0);
             Program.ToolTip.SetText(playerSearchBox, "Enter name or country shortcut to find");
 
             VisibleChanged += ChatControl_VisibleChanged;

@@ -41,7 +41,7 @@ namespace ZeroKLobby.MicroLobby
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChatControl));
             this.playerListMapSplitContainer = new System.Windows.Forms.SplitContainer();
             this.playerBoxSearchBarContainer = new System.Windows.Forms.Panel();
-            this.searchBarContainer = new System.Windows.Forms.Panel();
+            this.searchBarContainer = new System.Windows.Forms.TableLayoutPanel();
             this.playerSearchBox = new ZklTextBox();
             this.playerBox = new PlayerListControl();
             this.sendBox = new ZeroKLobby.MicroLobby.SendBox();
@@ -95,12 +95,14 @@ namespace ZeroKLobby.MicroLobby
             // 
             // searchBarContainer
             // 
-            this.searchBarContainer.Controls.Add(this.playerSearchBox);
+            this.searchBarContainer.Controls.Add(this.playerSearchBox, 1, 0);
             this.searchBarContainer.Dock = System.Windows.Forms.DockStyle.Top;
             this.searchBarContainer.Location = new System.Drawing.Point(0, 0);
             this.searchBarContainer.Name = "searchBarContainer";
-            this.searchBarContainer.Size = new System.Drawing.Size(326, 20);
+            this.searchBarContainer.Size = new System.Drawing.Size(326, 24);
             this.searchBarContainer.TabIndex = 0;
+            this.searchBarContainer.ColumnCount = 2;
+            this.searchBarContainer.RowCount = 1;
             // 
             // playerSearchBox
             // 
@@ -109,7 +111,7 @@ namespace ZeroKLobby.MicroLobby
             | System.Windows.Forms.AnchorStyles.Right)));
             this.playerSearchBox.Location = new System.Drawing.Point(20, 0);
             this.playerSearchBox.Name = "playerSearchBox";
-            this.playerSearchBox.Size = new System.Drawing.Size(303, 20);
+            this.playerSearchBox.Size = new System.Drawing.Size(64, 20);
             this.playerSearchBox.TabIndex = 0;
             this.playerSearchBox.TextChanged += new System.EventHandler(this.playerSearchBox_TextChanged);
             // 
@@ -132,7 +134,7 @@ namespace ZeroKLobby.MicroLobby
             this.sendBox.Location = new System.Drawing.Point(0, 773);
             this.sendBox.Multiline = true;
             this.sendBox.Name = "sendBox";
-            this.sendBox.Size = new System.Drawing.Size(800, 20);
+            this.sendBox.Size = new System.Drawing.Size(800, 28);
             this.sendBox.TabIndex = 0;
             // 
             // topicPanel
@@ -252,7 +254,7 @@ namespace ZeroKLobby.MicroLobby
         protected SplitContainer playerListMapSplitContainer;
         protected Panel playerBoxSearchBarContainer;
         public PlayerListControl playerBox;
-        private Panel searchBarContainer;
+        private TableLayoutPanel searchBarContainer;
         protected ZklTextBox playerSearchBox;
         private Panel topicPanel;
         private BitmapButton hideButton;
