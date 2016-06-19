@@ -148,7 +148,6 @@ namespace ZeroKLobby.Notifications
             // 
             this.zkSplitContainer1.Panel2.Controls.Add(this.gameBox);
             this.zkSplitContainer1.Size = new System.Drawing.Size(1358, 80);
-            this.zkSplitContainer1.Panel2MinSize = 320;
             this.zkSplitContainer1.SplitterDistance = 781;
             this.zkSplitContainer1.TabIndex = 16;
             this.zkSplitContainer1.SplitterMoving += new System.Windows.Forms.SplitterCancelEventHandler(this.zkSplitContainer1_SplitterMoving);

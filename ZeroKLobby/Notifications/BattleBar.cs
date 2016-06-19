@@ -45,6 +45,10 @@ namespace ZeroKLobby.Notifications
 
             picoChat.DefaultTooltip = "Last lines from room chat, click to enter full screen chat";
 
+            // because it causes program to fail if set before zkSplitContainer1.Size, where designer insists on putting it
+            // see https://social.msdn.microsoft.com/Forums/windows/en-US/ee6abc76-f35a-41a4-a1ff-5be942ae3425/splitcontainer-panel-minsize-defect?forum=winformsdesigner
+            zkSplitContainer1.Panel2MinSize = 320;
+
             client = Program.TasClient;
             spring = new Spring(Program.SpringPaths);
 
