@@ -40,7 +40,9 @@ namespace ZeroKLobby.Notifications
             this.radioSpec = new System.Windows.Forms.RadioButton();
             this.zkSplitContainer1 = new ZeroKLobby.ZkSplitContainer();
             this.picoChat = new ZeroKLobby.MicroLobby.ChatBox();
+            this.gameBoxAndCloseButtonContainer = new System.Windows.Forms.FlowLayoutPanel();
             this.gameBox = new System.Windows.Forms.PictureBox();
+            this.buttonLeave = new ZeroKLobby.BitmapButton();
             this.lbQueue = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.radioPlaySpecContainer.SuspendLayout();
@@ -48,6 +50,7 @@ namespace ZeroKLobby.Notifications
             this.zkSplitContainer1.Panel1.SuspendLayout();
             this.zkSplitContainer1.Panel2.SuspendLayout();
             this.zkSplitContainer1.SuspendLayout();
+            this.gameBoxAndCloseButtonContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -135,6 +138,7 @@ namespace ZeroKLobby.Notifications
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.zkSplitContainer1.BackColor = System.Drawing.Color.Transparent;
+            this.zkSplitContainer1.IsSplitterFixed = true;
             this.zkSplitContainer1.Location = new System.Drawing.Point(147, 8);
             this.zkSplitContainer1.MinimumSize = new System.Drawing.Size(20, 20);
             this.zkSplitContainer1.Name = "zkSplitContainer1";
@@ -146,7 +150,8 @@ namespace ZeroKLobby.Notifications
             // 
             // zkSplitContainer1.Panel2
             // 
-            this.zkSplitContainer1.Panel2.Controls.Add(this.gameBox);
+            this.zkSplitContainer1.Panel2.Controls.Add(this.gameBoxAndCloseButtonContainer);
+            this.zkSplitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(8, 4, 8, 4);
             this.zkSplitContainer1.Size = new System.Drawing.Size(1358, 80);
             this.zkSplitContainer1.SplitterDistance = 781;
             this.zkSplitContainer1.TabIndex = 16;
@@ -176,6 +181,21 @@ namespace ZeroKLobby.Notifications
             this.picoChat.Size = new System.Drawing.Size(781, 80);
             this.picoChat.TabIndex = 12;
             this.picoChat.TextFilter = null;
+            this.picoChat.Load += new System.EventHandler(this.picoChat_Load);
+            // 
+            // gameBoxAndCloseButtonContainer
+            // 
+            this.gameBoxAndCloseButtonContainer.AutoSize = true;
+            this.gameBoxAndCloseButtonContainer.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.gameBoxAndCloseButtonContainer.Controls.Add(this.gameBox);
+            this.gameBoxAndCloseButtonContainer.Controls.Add(this.buttonLeave);
+            this.gameBoxAndCloseButtonContainer.Dock = System.Windows.Forms.DockStyle.Right;
+            this.gameBoxAndCloseButtonContainer.Location = new System.Drawing.Point(180, 4);
+            this.gameBoxAndCloseButtonContainer.MinimumSize = new System.Drawing.Size(0, 384);
+            this.gameBoxAndCloseButtonContainer.Name = "gameBoxAndCloseButtonContainer";
+            this.gameBoxAndCloseButtonContainer.Size = new System.Drawing.Size(385, 384);
+            this.gameBoxAndCloseButtonContainer.TabIndex = 12;
+            this.gameBoxAndCloseButtonContainer.WrapContents = false;
             // 
             // gameBox
             // 
@@ -187,6 +207,23 @@ namespace ZeroKLobby.Notifications
             this.gameBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.gameBox.TabIndex = 11;
             this.gameBox.TabStop = false;
+            // 
+            // buttonLeave
+            // 
+            this.buttonLeave.BackColor = System.Drawing.Color.Transparent;
+            this.buttonLeave.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.buttonLeave.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.buttonLeave.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.buttonLeave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonLeave.ForeColor = System.Drawing.Color.White;
+            this.buttonLeave.Image = global::ZeroKLobby.Buttons.exit;
+            this.buttonLeave.Location = new System.Drawing.Point(314, 3);
+            this.buttonLeave.Name = "buttonLeave";
+            this.buttonLeave.Size = new System.Drawing.Size(68, 68);
+            this.buttonLeave.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.buttonLeave.TabIndex = 12;
+            this.buttonLeave.Text = "Leave";
+            this.buttonLeave.UseVisualStyleBackColor = false;
             // 
             // lbQueue
             // 
@@ -203,8 +240,8 @@ namespace ZeroKLobby.Notifications
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Transparent;
+            this.btnDetail = this.buttonLeave;
             this.Controls.Add(this.panel1);
-            this.ForeColor = System.Drawing.Color.White;
             this.MinimumSize = new System.Drawing.Size(492, 96);
             this.Name = "BattleBar";
             this.Size = new System.Drawing.Size(1502, 96);
@@ -213,8 +250,10 @@ namespace ZeroKLobby.Notifications
             this.radioPlaySpecContainer.ResumeLayout(false);
             this.zkSplitContainer1.Panel1.ResumeLayout(false);
             this.zkSplitContainer1.Panel2.ResumeLayout(false);
+            this.zkSplitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.zkSplitContainer1)).EndInit();
             this.zkSplitContainer1.ResumeLayout(false);
+            this.gameBoxAndCloseButtonContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gameBox)).EndInit();
             this.ResumeLayout(false);
 
@@ -232,5 +271,7 @@ namespace ZeroKLobby.Notifications
                 private ZkSplitContainer zkSplitContainer1;
                 private System.Windows.Forms.Label lbQueue;
         private System.Windows.Forms.TableLayoutPanel radioPlaySpecContainer;
+        private BitmapButton buttonLeave;
+        private System.Windows.Forms.FlowLayoutPanel gameBoxAndCloseButtonContainer;
     }
 }

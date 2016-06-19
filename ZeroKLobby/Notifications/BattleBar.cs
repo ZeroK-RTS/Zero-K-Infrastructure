@@ -47,7 +47,9 @@ namespace ZeroKLobby.Notifications
 
             // because it causes program to fail if set before zkSplitContainer1.Size, where designer insists on putting it
             // see https://social.msdn.microsoft.com/Forums/windows/en-US/ee6abc76-f35a-41a4-a1ff-5be942ae3425/splitcontainer-panel-minsize-defect?forum=winformsdesigner
-            zkSplitContainer1.Panel2MinSize = 320;
+            zkSplitContainer1.Panel2MinSize = 400;
+
+            buttonLeave.Click += (s, e) => buttonLeave_Click(s,e);
 
             client = Program.TasClient;
             spring = new Spring(Program.SpringPaths);
@@ -309,6 +311,11 @@ namespace ZeroKLobby.Notifications
             picoChat.MouseClick += (s, e) => NavigationControl.Instance.Path = "chat/battle";
         }
 
+        private void buttonLeave_Click(object sender, EventArgs e)
+        {
+            client.LeaveBattle();
+        }
+
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
@@ -533,7 +540,7 @@ namespace ZeroKLobby.Notifications
 
         private void zkSplitContainer1_SplitterMoving(object sender, SplitterCancelEventArgs e)
         {
-            gameBox.Left = 0; //anchor gameBox to zkSplitContainer slider
+            gameBoxAndCloseButtonContainer.Left = 0; //anchor gameBox to zkSplitContainer slider
         }
 
         private void radioPlay_CheckedChanged(object sender, EventArgs e)
@@ -552,6 +559,11 @@ namespace ZeroKLobby.Notifications
             //    desiredSpectatorState = radioSpec.Checked;
             //    client.ChangeMyBattleStatus(spectate: desiredSpectatorState);
             //}
+        }
+
+        private void picoChat_Load(object sender, EventArgs e)
+        {
+
         }
     }
 
