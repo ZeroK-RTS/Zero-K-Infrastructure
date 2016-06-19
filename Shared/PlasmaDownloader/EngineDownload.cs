@@ -52,6 +52,7 @@ namespace PlasmaDownloader
                     var paths = new List<string>();
                     var platform = "win32";
                     var archiveName = "minimal-portable+dedicated.zip";
+                    var archiveNameAlt = "portable.7z";
 
                     if (Environment.OSVersion.Platform == PlatformID.Unix) {
                         var response = Utils.ExecuteConsoleCommand("uname", "-m") ?? "";
@@ -75,6 +76,24 @@ namespace PlasmaDownloader
                                             Name,
                                             archiveName,
                                             platform));
+                    // new format with portable.7z downloads for post 101.0.1-414-g6a6a528 dev versions
+                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{{develop}}{1}_{3}_{2}",
+                                            engineDownloadPath,
+                                            Name,
+                                            archiveNameAlt,
+                                            platform));
+                    // 101.0.1-414-g6a6a528 dev versions and earlier dev versions (now that minimal-portable+dedicated.zip is no longer available)
+                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{1}_{2}",
+                                            engineDownloadPath,
+                                            Name,
+                                            archiveNameAlt,
+                                            platform));
+                    // dunno if this will be the format for 102.0 but may as well put it in now
+                    paths.Add(string.Format("{0}buildbot/default/master/{1}/{3}/spring_{1}_{3}_{2}",
+                                            engineDownloadPath,
+                                            Name,
+                                            archiveNameAlt,
+                                            platform));
                     paths.Add(string.Format("{0}buildbot/default/release/{1}/{3}/spring_{{release}}{1}_{2}",
                                             engineDownloadPath,
                                             Name,
@@ -85,8 +104,6 @@ namespace PlasmaDownloader
                                             Name,
                                             archiveName,
                                             platform));
-                    paths.Add(string.Format("{0}buildbot/default/LockFreeLua/{1}/spring_{{LockFreeLua}}{1}_{2}", engineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/LockFreeLua/{1}/{3}/spring_{{LockFreeLua}}{1}_{2}", engineDownloadPath, Name, archiveName, platform));
 
                     for (var i = 9; i >= -1; i--) {
                         var version = Name;
