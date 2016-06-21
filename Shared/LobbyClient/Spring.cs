@@ -81,10 +81,9 @@ namespace LobbyClient
 
         public DateTime GameExited { get; private set; }
 
-        public DateTime GameStarted
-        {
-            get { return battleResult.StartTime.ToLocalTime(); }
-        }
+        public DateTime GameStarted => battleResult.StartTime.ToLocalTime();
+
+        public DateTime? IngameStartTime => battleResult?.IngameStartTime;
 
         public bool IsRunning
         {

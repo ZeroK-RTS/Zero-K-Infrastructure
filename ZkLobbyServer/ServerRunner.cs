@@ -6,7 +6,6 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using LobbyClient;
-using vtortola.WebSockets;
 using ZkData;
 
 namespace ZkLobbyServer
@@ -31,7 +30,6 @@ namespace ZkLobbyServer
             SynchronizationContext.SetSynchronizationContext(null);
 
             listeners.Add(new TcpTransportServerListener());
-            //listeners.Add(new WebSocketTransportServerListener());
 
             foreach (var listener in listeners) {
                 if (listener.Bind(20)) {
