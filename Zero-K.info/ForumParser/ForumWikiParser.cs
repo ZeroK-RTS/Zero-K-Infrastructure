@@ -90,7 +90,7 @@ namespace ZeroKWeb.ForumParser
                     }
                 }
 
-                if (mc == 0) // we are not matching any nonterminal tags
+                if (mc == 0 || context.Pos == input.Length - 1) // we are not matching any nonterminal tags
                 {
                     ParseTerminals(context);
                     context.ResetNonterminalPos();
