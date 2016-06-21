@@ -131,7 +131,7 @@ namespace ZeroKWeb.ForumParser
 
             foreach (var tag in input)
             {
-                if (tag.Mode == OpeningClosingMode.Opening) openedTagsStack.Push(tag);
+                if (tag.Mode == OpeningClosingMode.Opening && (openedTagsStack.Count == 0 || !openedTagsStack.Peek().EscapesContent)) openedTagsStack.Push(tag);
                 else if (tag.Mode == OpeningClosingMode.Closing)
                 {
                     if (openedTagsStack.Count == 0) toDel.Add(tag);

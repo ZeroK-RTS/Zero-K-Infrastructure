@@ -17,6 +17,8 @@ namespace ZeroKWeb.ForumParser
         public override Tag Create() => new CodeOpenTag();
 
         public override string Match { get; } = "{{{";
+
+        public override bool EscapesContent { get; } = true;
     }
 
     public class CodeCloseTag:ClosingTag
