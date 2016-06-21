@@ -658,7 +658,6 @@
     <Resource Include="Images\add.png" />
     <EmbeddedResource Include="NativeLibs\libCSteamworks.so" />
     <EmbeddedResource Include="NativeLibs\libsteam_api.so" />
-    <EmbeddedResource Include="NativeLibs\OpenSans-Semibold.ttf" />
     <EmbeddedResource Include="NativeLibs\OpenSans-Regular.ttf" />
     <EmbeddedResource Include="NativeLibs\SM.ttf" />
     <None Include="packages.config" />

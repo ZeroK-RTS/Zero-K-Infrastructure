@@ -80,11 +80,6 @@ namespace ZeroKLobby
             {
                 pfc.AddFontFile("OpenSans-Regular.ttf");
                 sansFont = pfc.Families[0];
-            }
-            else if (File.Exists("OpenSans-Semibold.ttf"))
-            {
-                pfc.AddFontFile("OpenSans-Semibold.ttf");
-                sansFont = pfc.Families[0];
             }  else sansFont = FontFamily.GenericSansSerif;
 
 
