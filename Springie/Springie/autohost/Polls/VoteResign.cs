@@ -17,6 +17,7 @@ namespace Springie.autohost.Polls
             {
                 context = spring.StartContext;
 
+                if (DateTime.UtcNow.Subtract(spring.IngameStartTime ?? DateTime.Now).TotalSeconds < GlobalConst.MinDurationForElo)
                 {
                     AutoHost.Respond(tas,spring,e,"You cannot resign so early");
                     question = null;
