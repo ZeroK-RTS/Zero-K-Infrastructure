@@ -1,6 +1,8 @@
+using System;
 using System.Linq;
 using LobbyClient;
 using PlasmaShared;
+using ZkData;
 
 namespace Springie.autohost.Polls
 {
@@ -14,6 +16,14 @@ namespace Springie.autohost.Polls
             if (spring.IsRunning)
             {
                 context = spring.StartContext;
+
+                {
+                    AutoHost.Respond(tas,spring,e,"You cannot resign so early");
+                    question = null;
+                    winCount = 0;
+                    return false;
+                }
+
                 voteStarter = context.Players.FirstOrDefault(x => x.Name == e.UserName && !x.IsSpectator);
                 if (voteStarter != null)
                 {

@@ -78,15 +78,7 @@ namespace LobbyClient
         private Talker talker;
         private readonly Timer timer = new Timer(20000);
         private bool wasKilled = false;
-        public int Duration
-        {
-            get { return battleResult.Duration; }
-        }
 
-        public DateTime GameEnded
-        {
-            get { return battleResult.StartTime.AddSeconds(battleResult.Duration).ToLocalTime(); }
-        }
         public DateTime GameExited { get; private set; }
 
         public DateTime GameStarted
