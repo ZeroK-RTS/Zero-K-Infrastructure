@@ -782,12 +782,15 @@ namespace Springie.autohost
 
 
         public void UpdateRapidMod(string tag) {
-            if (!string.IsNullOrEmpty(delayedModChange) && !spring.IsRunning) {
-                string latest = delayedModChange;
-                delayedModChange = null;
-                config.Mod = latest;
-                SayBattle("Updating to latest mod version: " + latest);
-                if (tas.MyBattle != null) OpenBattleRoom(latest, null);
+            if (!string.IsNullOrEmpty(delayedModChange)) {
+                if (!spring.IsRunning && cache.GetResourceDataByInternalName(delayedModChange) != null )
+                {
+                    string latest = delayedModChange;
+                    delayedModChange = null;
+                    config.Mod = latest;
+                    SayBattle("Updating to latest mod version: " + latest);
+                    if (tas.MyBattle != null) OpenBattleRoom(latest, null);
+                }
             }
             else {
                 PackageDownloader.Version version = Program.main.Downloader.PackageDownloader.GetByTag(tag);
