@@ -56,7 +56,7 @@ namespace PlasmaDownloader
                     var paths = new List<string>();
                     var platform = "win32";
                     var archiveName = "minimal-portable+dedicated.zip";
-                    //var archiveNameAlt = "portable.7z";
+                    var archiveNameAlt = "portable.7z";
 
                     if (Environment.OSVersion.Platform == PlatformID.Unix)
                     {
@@ -87,7 +87,7 @@ namespace PlasmaDownloader
 
 
                     // new format with portable.7z downloads for post 101.0.1-414-g6a6a528 dev versions
-                    /*paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{{develop}}{1}_{3}_{2}",
+                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{{develop}}{1}_{3}_{2}",
                                             engineDownloadPath,
                                             Name,
                                             archiveNameAlt,
@@ -109,7 +109,7 @@ namespace PlasmaDownloader
                                             Name,
                                             archiveName,
                                             platform));
-                                            */
+                                            
 
                     paths.Add(string.Format("{0}buildbot/default/MTsim/{1}/{3}/spring_{{MTsim}}{1}_{2}",
                                             engineDownloadPath,
@@ -190,24 +190,11 @@ namespace PlasmaDownloader
 
                                         try
                                         {
-                                            if (extension == ".7z")
-                                            {
-                                                var proc = Process.Start("7z", string.Format("x -r -y -o\"{1}\" \"{0}\"", target, targetDir));
-                                                if (proc != null) proc.WaitForExit();
-                                                if (proc == null || proc.ExitCode != 0)
-                                                {
-                                                    Trace.TraceWarning("7z extraction failed, fallback to SharpCompress");
-                                                    ExtractArchive(target, targetDir);
-                                                }
-                                            }
-                                            else ExtractArchive(target, targetDir);
+                                            ExtractArchive(target, targetDir);
 
                                             Trace.TraceInformation("Install of {0} complete", Name);
                                             springPaths.SetEnginePath(targetDir);
                                             Finish(true);
-                                            // run unitsync after engine download; for more info see comments in Program.cs
-                                            //new PlasmaShared.UnitSyncLib.UnitSync(springPaths); // put it after Finish() so it doesn't hold up the download bar
-                                            //^ is commented because conflict/non-consensus. See: https://code.google.com/p/zero-k/source/detail?r=12394 for some issue/discussion
                                         }
                                         catch (Exception ex)
                                         {
