@@ -64,9 +64,10 @@ namespace ZeroKLobby.MicroLobby
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public ChatControl(string name) {
             InitializeComponent();
+            ZklBaseControl.Init(searchBarContainer);
 
             if (this.IsInDesignMode()) return;
-
+            
             var extras = new BitmapButton();
             extras.Text = "Extras";
             extras.Click += (s, e) => { 
@@ -92,9 +93,9 @@ namespace ZeroKLobby.MicroLobby
             if (!DesignMode) HistoryManager.InsertLastLines(ChannelName, ChatBox);
 
             playerBox.IsSorted = true;
-            var searchLabel = new Label() { Text = "Search", AutoSize = true };
+            var searchLabel = new Label() { Text = "Search: ", AutoSize = true, Font = Config.GeneralFontSmall, Margin = new Padding(5)};
             searchBarContainer.Controls.Add(searchLabel, 0, 0);
-            Program.ToolTip.SetText(playerSearchBox, "Enter name or country shortcut to find");
+            Program.ToolTip.SetText(playerSearchBox.TextBox, "Enter name or country shortcut to find");
 
             VisibleChanged += ChatControl_VisibleChanged;
 
