@@ -1,0 +1,588 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- This file is a part of DotNetWikiBot Framework, see http://dotnetwikibot.sourceforge.net -->
+<CommonData>
+
+	<ApiOptions lastUpdate="2013-10-17">
+		<format>dump</format>
+		<format>json</format>
+		<format>none</format>
+		<format>php</format>
+		<format>txt</format>
+		<format>wddx</format>
+		<format>xml</format>
+		<format>yaml</format>
+
+		<action>query</action>
+		<action>abusefiltercheckmatch</action>
+		<action>abusefilterchecksyntax</action>
+		<action>abusefilterevalexpression</action>
+		<action>abusefilterunblockautopromote</action>
+		<action>block</action>
+		<action>centralnoticeallocations</action>
+		<action>centralnoticequerycampaign</action>
+		<action>compare</action>
+		<action>createaccount</action>
+		<action>delete</action>
+		<action>deleteglobalaccount</action>
+		<action>edit</action>
+		<action>emailuser</action>
+		<action>expandtemplates</action>
+		<action>fancycaptchareload</action>
+		<action>featuredfeed</action>
+		<action>feedcontributions</action>
+		<action>feedwatchlist</action>
+		<action>filerevert</action>
+		<action>flagconfig</action>
+		<action>help</action>
+		<action>imagerotate</action>
+		<action>import</action>
+		<action>languagesearch</action>
+		<action prefix="lg">login</action>
+		<action>logout</action>
+		<action>mobileview</action>
+		<action>move</action>
+		<action>opensearch</action>
+		<action>options</action>
+		<action>paraminfo</action>
+		<action>parse</action>
+		<action>parsevalue</action>
+		<action>patrol</action>
+		<action>protect</action>
+		<action>purge</action>
+		<action>review</action>
+		<action>reviewactivity</action>
+		<action>rollback</action>
+		<action>rsd</action>
+		<action>scribunto-console</action>
+		<action>setglobalaccountstatus</action>
+		<action>setnotificationtimestamp</action>
+		<action prefix="sm">sitematrix</action>
+		<action>stabilize</action>
+		<action>templatedata</action>
+		<action prefix="tb">titleblacklist</action>
+		<action>tokens</action>
+		<action>transcodereset</action>
+		<action>ulslocalization</action>
+		<action>unblock</action>
+		<action>undelete</action>
+		<action>upload</action>
+		<action>userdailycontribs</action>
+		<action>userrights</action>
+		<action>visualeditor</action>
+		<action>visualeditoredit</action>
+		<action>watch</action>
+
+		<query prefix="abf" tag="filter" attribute="description">list=abusefilters</query>
+		<query prefix="abl" tag="item" attribute="title">list=abuselog</query>
+		<query prefix="ac" tag="c">list=allcategories</query>
+		<query prefix="ai" tag="img" attribute="title">list=allimages</query>
+		<query prefix="al" tag="l" attribute="title">list=alllinks</query>
+		<query prefix="ap" tag="p" attribute="title">list=allpages</query>
+		<query prefix="at" tag="t" attribute="title">list=alltransclusions</query>
+		<query prefix="au" tag="u" attribute="name">list=allusers</query>
+		<query prefix="bl" tag="bl" attribute="title">list=backlinks</query>
+		<query prefix="bk" tag="block" attribute="user">list=blocks</query>
+		<query prefix="cm" tag="cm" attribute="title">list=categorymembers</query>
+		<query prefix="">list=centralnoticelogs</query>
+		<query prefix="cu">list=checkuser</query>
+		<query prefix="cul">list=checkuserlog</query>
+		<query prefix="cp" tag="p" attribute="title">list=configuredpages</query>
+		<query prefix="dr" tag="page" attribute="title">list=deletedrevs</query>
+		<query prefix="ei" tag="ei" attribute="title">list=embeddedin</query>
+		<query prefix="eu" tag="eu" attribute="title">list=exturlusage</query>
+		<query prefix="fa" tag="fa" attribute="title">list=filearchive</query>
+		<query prefix="gc" tag="category" attribute="name">list=gadgetcategories</query>
+		<query prefix="ga" tag="gadget" attribute="id">list=gadgets</query>
+		<query prefix="gs" tag="gs" attribute="title">list=geosearch</query>
+		<query prefix="agu" tag="globaluser" attribute="name">list=globalallusers</query>
+		<query prefix="bg" tag="block" attribute="address">list=globalblocks</query>
+		<query prefix="ggp" tag="globalgroup" attribute="name">list=globalgroups</query>
+		<query prefix="iu" tag="iu" attribute="title">list=imageusage</query>
+		<query prefix="iwbl" tag="iw" attribute="title">list=iwbacklinks</query>
+		<query prefix="lbl" tag="bl" attribute="title">list=langbacklinks</query>
+		<query prefix="le" tag="item" attribute="title">list=logevents</query>
+		<query prefix="or" tag="p" attribute="title">list=oldreviewedpages</query>
+		<query prefix="ppn" tag="p" attribute="propname">list=pagepropnames</query>
+		<query prefix="pwp" tag="page" attribute="title">list=pageswithprop</query>
+		<query prefix="pt" tag="pt" attribute="title">list=protectedtitles</query>
+		<query prefix="qp" tag="page" attribute="title">list=querypage</query>
+		<query prefix="rn" tag="p" attribute="title">list=random</query>
+		<query prefix="rc" tag="rc" attribute="title">list=recentchanges</query>
+		<query prefix="rp" tag="p" attribute="title">list=reviewedpages</query>
+		<query prefix="sr" tag="p" attribute="title">list=search</query>
+		<query prefix="tg" tag="tag" attribute="name">list=tags</query>
+		<query prefix="ur" tag="p" attribute="title">list=unreviewedpages</query>
+		<query prefix="uc" tag="item" attribute="title">list=usercontribs</query>
+		<query prefix="us" tag="r">list=users</query>
+		<query prefix="wl" tag="item" attribute="title">list=watchlist</query>
+		<query prefix="wr" tag="wr" attribute="title">list=watchlistraw</query>
+		<query prefix="ws" tag="wikiset" attribute="name">list=wikisets</query>
+
+		<query prefix="cl" tag="cl" attribute="title">prop=categories</query>
+		<query prefix="categoryinfo" tag="page" attributes="all">prop=categoryinfo</query>
+		<query prefix="co">prop=coordinates</query>
+		<query prefix="df">prop=duplicatefiles</query>
+		<query prefix="el" tag="el">prop=extlinks</query>
+		<query prefix="ex" tag="extract">prop=extracts</query>
+		<query prefix="" tag="page" attributes="all">prop=flagged</query>
+		<query prefix="gu" tag="gu" attribute="url">prop=globalusage</query>
+		<query prefix="ii" tag="ii" attributes="all">prop=imageinfo</query>
+		<query prefix="im" tag="im" attribute="title">prop=images</query>
+		<query prefix="in" tag="page" attributes="all">prop=info</query>
+		<query prefix="iw" tag="iw" attribute="prefix">prop=iwlinks</query>
+		<query prefix="ll" tag="ll" attribute="lang">prop=langlinks</query>
+		<query prefix="pl" tag="pl" attribute="title">prop=links</query>
+		<query prefix="pi">prop=pageimages</query>
+		<query prefix="pp" tag="page" attributes="all">prop=pageprops</query>
+		<query prefix="rv" tag="rev" attribute="revid">prop=revisions</query>
+		<query prefix="ssi">prop=stashimageinfo</query>
+		<query prefix="tl" tag="tl" attribute="title">prop=templates</query>
+		<query prefix="">prop=transcodestatus</query>
+		<query prefix="vi" tag="vi" attributes="all">prop=videoinfo</query>
+
+		<query prefix="am">meta=allmessages</query>
+		<query prefix="gui">meta=globaluserinfo</query>
+		<query prefix="si">meta=siteinfo</query>
+		<query prefix="ui">meta=userinfo</query>
+		<query prefix="wb">meta=wikibase</query>
+
+		<querylog>block</querylog>
+		<querylog>protect</querylog>
+		<querylog>rights</querylog>
+		<querylog>delete</querylog>
+		<querylog>upload</querylog>
+		<querylog>move</querylog>
+		<querylog>import</querylog>
+		<querylog>patrol</querylog>
+		<querylog>merge</querylog>
+		<querylog>suppress</querylog>
+		<querylog>review</querylog>
+		<querylog>stable</querylog>
+		<querylog>spamblacklist</querylog>
+		<querylog>gblblock</querylog>
+		<querylog>renameuser</querylog>
+		<querylog>globalauth</querylog>
+		<querylog>gblrights</querylog>
+		<querylog>abusefilter</querylog>
+		<querylog>newusers</querylog>
+		
+	</ApiOptions>
+
+
+	<RedirectionTags lastUpdate="2013-07-01">
+		<rd lang="aa">REDIRECT</rd>
+		<rd lang="ab">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="ace">ALIH|REDIRECT</rd>
+		<rd lang="af">AANSTUUR|REDIRECT</rd>
+		<rd lang="ak">REDIRECT</rd>
+		<rd lang="als">WEITERLEITUNG|REDIRECT</rd>
+		<rd lang="am">REDIRECT</rd>
+		<rd lang="an">ENDRECERA|REENDRECERA|REDIRECCIÓN|REDIRECCION|REDIRECT</rd>
+		<rd lang="ang">REDIRECT</rd>
+		<rd lang="ar">تحويل|REDIRECT</rd>
+		<rd lang="arc">ܨܘܝܒܐ|REDIRECT</rd>
+		<rd lang="arz">تحويل|REDIRECT</rd>
+		<rd lang="as">পুণঃনিৰ্দেশ|REDIRECT</rd>
+		<rd lang="ast">REDIRECT</rd>
+		<rd lang="av">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="ay">REDIRECCIÓN|REDIRECCION|REDIRECT</rd>
+		<rd lang="az">İSTİQAMƏTLƏNDİRMƏ|İSTİQAMƏTLƏNDİR|REDIRECT</rd>
+		<rd lang="ba">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="bar">WEITERLEITUNG|REDIRECT</rd>
+		<rd lang="bat_smg">PERADRESAVIMAS|REDIRECT</rd>
+		<rd lang="bcl">REDIRECT</rd>
+		<rd lang="be">REDIRECT</rd>
+		<rd lang="be_x_old">перанакіраваньне|REDIRECT</rd>
+		<rd lang="bg">пренасочване|виж|REDIRECT</rd>
+		<rd lang="bh">REDIRECT</rd>
+		<rd lang="bi">REDIRECT</rd>
+		<rd lang="bjn">ALIH|REDIRECT</rd>
+		<rd lang="bm">REDIRECTION|REDIRECT</rd>
+		<rd lang="bn">REDIRECT</rd>
+		<rd lang="bo">REDIRECT</rd>
+		<rd lang="bpy">REDIRECT</rd>
+		<rd lang="br">ADKAS|REDIRECT</rd>
+		<rd lang="bs">PREUSMJERI|REDIRECT</rd>
+		<rd lang="bug">ALIH|REDIRECT</rd>
+		<rd lang="bxr">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="ca">REDIRECT</rd>
+		<rd lang="cbk_zam">REDIRECCIÓN|REDIRECCION|REDIRECT</rd>
+		<rd lang="cdo">REDIRECT</rd>
+		<rd lang="ce">дlасахьажайар'|'хьажайо'|'REDIRECT|перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="ceb">REDIRECT</rd>
+		<rd lang="ch">REDIRECT</rd>
+		<rd lang="cho">REDIRECT</rd>
+		<rd lang="chr">REDIRECT</rd>
+		<rd lang="chy">REDIRECT</rd>
+		<rd lang="ckb">REDIRECT</rd>
+		<rd lang="co">REDIRECT</rd>
+		<rd lang="cr">REDIRECT</rd>
+		<rd lang="crh">REDIRECT</rd>
+		<rd lang="cs">PŘESMĚRUJ|REDIRECT</rd>
+		<rd lang="csb">PATRZ|PRZEKIERUJ|TAM|REDIRECT</rd>
+		<rd lang="cu">ПРѢНАПРАВЛЄНИѤ|REDIRECT</rd>
+		<rd lang="cv">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="cy">ail-cyfeirio|ailgyfeirio|REDIRECT</rd>
+		<rd lang="da">REDIRECT</rd>
+		<rd lang="de">WEITERLEITUNG|REDIRECT</rd>
+		<rd lang="diq">HETENAYIŞ|REDIRECT</rd>
+		<rd lang="dsb">WEITERLEITUNG|REDIRECT</rd>
+		<rd lang="dv">REDIRECT</rd>
+		<rd lang="dz">REDIRECT</rd>
+		<rd lang="ee">REDIRECT</rd>
+		<rd lang="el">ΑΝΑΚΑΤΕΥΘΥΝΣΗ|REDIRECT</rd>
+		<rd lang="eml">RINVIA|RINVIO|RIMANDO|REDIRECT</rd>
+		<rd lang="en">REDIRECT</rd>
+		<rd lang="eo">ALIDIREKTI|ALIDIREKTU|AL|REDIRECT</rd>
+		<rd lang="es">REDIRECCIÓN|REDIRECCION|REDIRECT</rd>
+		<rd lang="et">suuna|REDIRECT</rd>
+		<rd lang="eu">BIRZUZENDU|REDIRECT</rd>
+		<rd lang="ext">REDIRECT</rd>
+		<rd lang="fa">تغییر_مسیر|تغییرمسیر|REDIRECT</rd>
+		<rd lang="ff">REDIRECTION|REDIRECT</rd>
+		<rd lang="fi">OHJAUS|UUDELLEENOHJAUS|REDIRECT</rd>
+		<rd lang="fiu_vro">saadaq|suuna|REDIRECT</rd>
+		<rd lang="fj">REDIRECT</rd>
+		<rd lang="fo">REDIRECT</rd>
+		<rd lang="fr">REDIRECTION|REDIRECT</rd>
+		<rd lang="frp">REDIRÈCCION|REDIRECTION|REDIRECT</rd>
+		<rd lang="frr">WEITERLEITUNG|REDIRECT</rd>
+		<rd lang="fur">RINVIA|RINVIO|RIMANDO|REDIRECT</rd>
+		<rd lang="fy">REDIRECT</rd>
+		<rd lang="ga">athsheoladh|REDIRECT</rd>
+		<rd lang="gag">YÖNNENDİRMÄKLER|YÖNNENDİR|YÖNNENDİRMÄ|YÖNLENDİRME|YÖNLENDİR|REDIRECT</rd>
+		<rd lang="gan">重定向|REDIRECT</rd>
+		<rd lang="gd">REDIRECT</rd>
+		<rd lang="gl">REDIRECCIÓN|REDIRECIONAMENTO|REDIRECT</rd>
+		<rd lang="glk">تغییر_مسیر|تغییرمسیر|REDIRECT</rd>
+		<rd lang="gn">REDIRECCIÓN|REDIRECCION|REDIRECT</rd>
+		<rd lang="got">REDIRECT</rd>
+		<rd lang="gu">REDIRECT</rd>
+		<rd lang="gv">REDIRECT</rd>
+		<rd lang="ha">REDIRECT</rd>
+		<rd lang="hak">REDIRECT</rd>
+		<rd lang="haw">REDIRECT</rd>
+		<rd lang="he">הפניה|REDIRECT</rd>
+		<rd lang="hi">अनुप्रेषित|REDIRECT</rd>
+		<rd lang="hif">REDIRECT</rd>
+		<rd lang="ho">REDIRECT</rd>
+		<rd lang="hr">PREUSMJERI|REDIRECT</rd>
+		<rd lang="hsb">WEITERLEITUNG|REDIRECT</rd>
+		<rd lang="ht">REDIRECTION|REDIRECT</rd>
+		<rd lang="hu">ÁTIRÁNYÍTÁS|REDIRECT</rd>
+		<rd lang="hy">ՎԵՐԱՀՂՈՒՄ|REDIRECT</rd>
+		<rd lang="hz">REDIRECT</rd>
+		<rd lang="ia">REDIRECT</rd>
+		<rd lang="id">ALIH|REDIRECT</rd>
+		<rd lang="ie">REDIRECT</rd>
+		<rd lang="ig">KÚFÙ|REDIRECT</rd>
+		<rd lang="ii">重定向|REDIRECT</rd>
+		<rd lang="ik">REDIRECT</rd>
+		<rd lang="ilo">REDIRECT</rd>
+		<rd lang="io">REDIRECT</rd>
+		<rd lang="is">tilvísun|TILVÍSUN|REDIRECT</rd>
+		<rd lang="it">RINVIA|RINVIO|RIMANDO|REDIRECT</rd>
+		<rd lang="iu">REDIRECT</rd>
+		<rd lang="ja">転送|リダイレクト|＃転送|＃リダイレクト|REDIRECT</rd>
+		<rd lang="jbo">REDIRECT</rd>
+		<rd lang="jv">ALIH|REDIRECT</rd>
+		<rd lang="ka">გადამისამართება|REDIRECT</rd>
+		<rd lang="kaa">AÝDAW|АЙДАУ|REDIRECT</rd>
+		<rd lang="kab">REDIRECT</rd>
+		<rd lang="kbd">REDIRECT</rd>
+		<rd lang="kg">REDIRECT</rd>
+		<rd lang="ki">REDIRECT</rd>
+		<rd lang="kj">REDIRECT</rd>
+		<rd lang="kk">АЙДАУ|REDIRECT</rd>
+		<rd lang="kl">REDIRECT</rd>
+		<rd lang="km">បញ្ជូនបន្ត|ប្ដូរទីតាំងទៅ|ប្តូរទីតាំងទៅ|ប្ដូរទីតាំង|ប្តូរទីតាំង|ប្ដូរចំណងជើង|REDIRECT</rd>
+		<rd lang="kn">REDIRECT</rd>
+		<rd lang="ko">넘겨주기|REDIRECT</rd>
+		<rd lang="koi">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="kr">REDIRECT</rd>
+		<rd lang="krc">джибериу|редирект|перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="ks">REDIRECT</rd>
+		<rd lang="ksh">ÖMLEIDE_OP|ÖMLEIDE|LEIDT_ÖM_OP|ÖMLEIDUNG|WEITERLEITUNG|REDIRECT</rd>
+		<rd lang="ku">BERALÎKIRIN|REDIRECT</rd>
+		<rd lang="kv">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="kw">DASWEDYANS|REDIRECT</rd>
+		<rd lang="ky">REDIRECT</rd>
+		<rd lang="la">REDIRECT</rd>
+		<rd lang="lad">DIRIJAR|DIRECCIÓN|REDIRECCIÓN|REDIRECCION|REDIRECT</rd>
+		<rd lang="lb">VIRULEEDUNG|WEITERLEITUNG|REDIRECT</rd>
+		<rd lang="lbe">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="lez">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="lg">REDIRECT</rd>
+		<rd lang="li">DOORVERWIJZING|REDIRECT</rd>
+		<rd lang="lij">RINVIA|RINVIO|RIMANDO|REDIRECT</rd>
+		<rd lang="lmo">RINVIA|RINVIO|RIMANDO|REDIRECT</rd>
+		<rd lang="ln">REDIRECTION|REDIRECT</rd>
+		<rd lang="lo">REDIRECT</rd>
+		<rd lang="lt">PERADRESAVIMAS|REDIRECT</rd>
+		<rd lang="ltg">REDIRECT</rd>
+		<rd lang="lv">REDIRECT</rd>
+		<rd lang="map_bms">ALIH|REDIRECT</rd>
+		<rd lang="mdf">REDIRECT</rd>
+		<rd lang="mg">FIHODINANA|REDIRECTION|REDIRECT</rd>
+		<rd lang="mh">REDIRECT</rd>
+		<rd lang="mhr">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="mi">REDIRECT</rd>
+		<rd lang="min">ALIH|REDIRECT</rd>
+		<rd lang="mk">пренасочување|види|Пренасочување|ПРЕНАСОЧУВАЊЕ|REDIRECT</rd>
+		<rd lang="ml">തിരിച്ചുവിടുക|തിരിച്ചുവിടൽ|REDIRECT</rd>
+		<rd lang="mn">REDIRECT</rd>
+		<rd lang="mo">REDIRECTEAZA|REDIRECT</rd>
+		<rd lang="mr">पुनर्निर्देशन|पुर्ननिर्देशन|REDIRECT</rd>
+		<rd lang="mrj">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="ms">LENCONG|REDIRECT</rd>
+		<rd lang="mt">RINDIRIZZA|REDIRECT</rd>
+		<rd lang="mus">REDIRECT</rd>
+		<rd lang="mwl">ANCAMINAR|REDIRECIONAMENTO|REDIRECT</rd>
+		<rd lang="my">REDIRECT</rd>
+		<rd lang="myv">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="mzn">بور|تغییرمسیر|تغییر_مسیر|REDIRECT</rd>
+		<rd lang="na">REDIRECT</rd>
+		<rd lang="nah">REDIRECCIÓN|REDIRECCION|REDIRECT</rd>
+		<rd lang="nap">RINVIA|RINVIO|RIMANDO|REDIRECT</rd>
+		<rd lang="nds">wiederleiden|WEITERLEITUNG|REDIRECT</rd>
+		<rd lang="nds_nl">DEURVERWIEZING|DOORVERWIJZING|REDIRECT</rd>
+		<rd lang="ne">REDIRECT</rd>
+		<rd lang="new">REDIRECT</rd>
+		<rd lang="ng">REDIRECT</rd>
+		<rd lang="nl">DOORVERWIJZING|REDIRECT</rd>
+		<rd lang="nn">omdiriger|REDIRECT</rd>
+		<rd lang="no">OMDIRIGERING|REDIRECT</rd>
+		<rd lang="nov">REDIRECT</rd>
+		<rd lang="nrm">REDIRECT</rd>
+		<rd lang="nso">REDIRECT</rd>
+		<rd lang="nv">REDIRECT</rd>
+		<rd lang="ny">REDIRECT</rd>
+		<rd lang="oc">REDIRECCION|REDIRECT</rd>
+		<rd lang="om">REDIRECT</rd>
+		<rd lang="or">ଲେଉଟାଣି|REDIRECT</rd>
+		<rd lang="os">ÆРВИТÆН|ÆРВЫСТ|РАРВЫСТ|перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="pa">ਰੀਡਿਰੈਕਟ|REDIRECT</rd>
+		<rd lang="pag">REDIRECT</rd>
+		<rd lang="pam">REDIRECT</rd>
+		<rd lang="pap">REDIRECT</rd>
+		<rd lang="pcd">REDIRECTION|REDIRECT</rd>
+		<rd lang="pdc">WEITERLEITUNG|REDIRECT</rd>
+		<rd lang="pfl">WEITERLEITUNG|REDIRECT</rd>
+		<rd lang="pi">REDIRECT</rd>
+		<rd lang="pih">REDIRECT</rd>
+		<rd lang="pl">PATRZ|PRZEKIERUJ|TAM|REDIRECT</rd>
+		<rd lang="pms">RINVIA|RINVIO|RIMANDO|REDIRECT</rd>
+		<rd lang="pnt">REDIRECT</rd>
+		<rd lang="pnb">REDIRECT</rd>
+		<rd lang="ps">REDIRECT</rd>
+		<rd lang="pt">REDIRECIONAMENTO|REDIRECT</rd>
+		<rd lang="qu">PUSAPUNA|REDIRECCIÓN|REDIRECCION|REDIRECT</rd>
+		<rd lang="rm">RENVIAMENT|REDIRECT</rd>
+		<rd lang="rmy">REDIRECTEAZA|REDIRECT</rd>
+		<rd lang="rn">REDIRECT</rd>
+		<rd lang="ro">REDIRECTEAZA|REDIRECT</rd>
+		<rd lang="roa_rup">REDIRECT</rd>
+		<rd lang="roa_tara">REDIRECT</rd>
+		<rd lang="ru">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="rue">ПЕРЕНАПРАВЛЕННЯ|ПЕРЕНАПР|перенапр|перенаправление|REDIRECT</rd>
+		<rd lang="rw">REDIRECT</rd>
+		<rd lang="sa">पुनर्निदेशन|अनुप्रेषित|REDIRECT</rd>
+		<rd lang="sah">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="sc">REDIRECT</rd>
+		<rd lang="scn">RINVIA|RINVIO|RIMANDO|REDIRECT</rd>
+		<rd lang="sco">REDIRECT</rd>
+		<rd lang="sd">چوريو|REDIRECT</rd>
+		<rd lang="se">STIVREN|OĐĐASITSTIVREN|REDIRECT</rd>
+		<rd lang="sg">REDIRECTION|REDIRECT</rd>
+		<rd lang="sh">PREUSMJERI|PREUSMERI|REDIRECT</rd>
+		<rd lang="si">යළියොමුව|REDIRECT</rd>
+		<rd lang="simple">REDIRECT</rd>
+		<rd lang="sk">presmeruj|REDIRECT</rd>
+		<rd lang="sl">PREUSMERITEV|REDIRECT</rd>
+		<rd lang="sm">REDIRECT</rd>
+		<rd lang="sn">REDIRECT</rd>
+		<rd lang="so">REDIRECT</rd>
+		<rd lang="sq">RIDREJTO|REDIRECT</rd>
+		<rd lang="sr">Преусмери|преусмери|ПРЕУСМЕРИ|Преусмјери|преусмјери|ПРЕУСМЈЕРИ|redirect|REDIRECT</rd>
+		<rd lang="srn">STIR|DOORVERWIJZING|REDIRECT</rd>
+		<rd lang="ss">REDIRECT</rd>
+		<rd lang="st">REDIRECT</rd>
+		<rd lang="stq">WEITERLEITUNG|REDIRECT</rd>
+		<rd lang="su">ALIH|REDIRECT</rd>
+		<rd lang="sv">OMDIRIGERING|REDIRECT</rd>
+		<rd lang="sw">REDIRECT</rd>
+		<rd lang="szl">PATRZ|PRZEKIERUJ|TAM|REDIRECT</rd>
+		<rd lang="ta">வழிமாற்று|REDIRECT</rd>
+		<rd lang="te">దారిమార్పు|REDIRECT</rd>
+		<rd lang="tet">REDIRECT</rd>
+		<rd lang="tg">REDIRECT</rd>
+		<rd lang="th">เปลี่ยนทาง|REDIRECT</rd>
+		<rd lang="ti">REDIRECT</rd>
+		<rd lang="tk">REDIRECT</rd>
+		<rd lang="tl">REDIRECT</rd>
+		<rd lang="tn">REDIRECT</rd>
+		<rd lang="to">REDIRECT</rd>
+		<rd lang="tpi">REDIRECT</rd>
+		<rd lang="tr">YÖNLENDİRME|YÖNLENDİR|REDIRECT</rd>
+		<rd lang="ts">REDIRECT</rd>
+		<rd lang="tt">ЮНӘЛТҮ|перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="tum">REDIRECT</rd>
+		<rd lang="tw">REDIRECT</rd>
+		<rd lang="ty">REDIRECTION|REDIRECT</rd>
+		<rd lang="udm">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="ug">REDIRECT</rd>
+		<rd lang="uk">ПЕРЕНАПРАВЛЕННЯ|ПЕРЕНАПР|перенапр|перенаправление|REDIRECT</rd>
+		<rd lang="ur">رجوع_مکرر|REDIRECT</rd>
+		<rd lang="uz">YOʻNALTIRISH|YONALTIRISH|REDIRECT</rd>
+		<rd lang="ve">REDIRECT</rd>
+		<rd lang="vec">VARDA|RINVIA|RINVIO|RIMANDO|REDIRECT</rd>
+		<rd lang="vep">suuna|REDIRECT</rd>
+		<rd lang="vi">đổi|REDIRECT</rd>
+		<rd lang="vls">DOORVERWIJZING|REDIRECT</rd>
+		<rd lang="vo">REDIRECT</rd>
+		<rd lang="wa">REDIRECTION|REDIRECT</rd>
+		<rd lang="war">REDIRECT</rd>
+		<rd lang="wo">REDIRECTION|REDIRECT</rd>
+		<rd lang="wuu">重定向|REDIRECT</rd>
+		<rd lang="xal">перенаправление|перенапр|REDIRECT</rd>
+		<rd lang="xh">REDIRECT</rd>
+		<rd lang="xmf">გადამისამართება|REDIRECT</rd>
+		<rd lang="yi">ווייטערפירן|הפניה|REDIRECT</rd>
+		<rd lang="yo">REDIRECT</rd>
+		<rd lang="za">重定向|REDIRECT</rd>
+		<rd lang="zea">DOORVERWIJZING|REDIRECT</rd>
+		<rd lang="zh">重定向|REDIRECT</rd>
+		<rd lang="zh_classical">REDIRECT</rd>
+		<rd lang="zh_min_nan">REDIRECT</rd>
+		<rd lang="zh_yue">REDIRECT</rd>
+		<rd lang="zu">REDIRECT</rd>
+	</RedirectionTags>
+
+
+	<templateModifiers lastUpdate="2010-07-02">
+		<tm>:</tm>
+		<tm>int:</tm>
+		<tm>msg:</tm>
+		<tm>msgnw:</tm>
+		<tm>raw:</tm>
+		<tm>subst:</tm>
+	</templateModifiers>
+
+
+	<mediawikiVariables lastUpdate="2010-07-02">
+		<mv>currentmonth</mv>
+		<mv>currentmonthname</mv>
+		<mv>currentmonthnamegen</mv>
+		<mv>currentmonthabbrev</mv>
+		<mv>currentday2</mv>
+		<mv>currentdayname</mv>
+		<mv>currentyear</mv>
+		<mv>currenttime</mv>
+		<mv>currenthour</mv>
+		<mv>localmonth</mv>
+		<mv>localmonthname</mv>
+		<mv>localmonthnamegen</mv>
+		<mv>localmonthabbrev</mv>
+		<mv>localday</mv>
+		<mv>localday2</mv>
+		<mv>localdayname</mv>
+		<mv>localyear</mv>
+		<mv>localtime</mv>
+		<mv>localhour</mv>
+		<mv>numberofarticles</mv>
+		<mv>numberoffiles</mv>
+		<mv>sitename</mv>
+		<mv>server</mv>
+		<mv>servername</mv>
+		<mv>scriptpath</mv>
+		<mv>pagename</mv>
+		<mv>pagenamee</mv>
+		<mv>fullpagename</mv>
+		<mv>fullpagenamee</mv>
+		<mv>namespace</mv>
+		<mv>namespacee</mv>
+		<mv>currentweek</mv>
+		<mv>currentdow</mv>
+		<mv>localweek</mv>
+		<mv>localdow</mv>
+		<mv>revisionid</mv>
+		<mv>revisionday</mv>
+		<mv>revisionday2</mv>
+		<mv>revisionmonth</mv>
+		<mv>revisionyear</mv>
+		<mv>revisiontimestamp</mv>
+		<mv>subpagename</mv>
+		<mv>subpagenamee</mv>
+		<mv>talkspace</mv>
+		<mv>talkspacee</mv>
+		<mv>subjectspace</mv>
+		<mv>dirmark</mv>
+		<mv>directionmark</mv>
+		<mv>subjectspacee</mv>
+		<mv>talkpagename</mv>
+		<mv>talkpagenamee</mv>
+		<mv>subjectpagename</mv>
+		<mv>subjectpagenamee</mv>
+		<mv>numberofusers</mv>
+		<mv>rawsuffix</mv>
+		<mv>newsectionlink</mv>
+		<mv>numberofpages</mv>
+		<mv>currentversion</mv>
+		<mv>basepagename</mv>
+		<mv>basepagenamee</mv>
+		<mv>urlencode</mv>
+		<mv>currenttimestamp</mv>
+		<mv>localtimestamp</mv>
+		<mv>directionmark</mv>
+		<mv>language</mv>
+		<mv>contentlanguage</mv>
+		<mv>pagesinnamespace</mv>
+		<mv>numberofadmins</mv>
+		<mv>currentday</mv>
+		<mv>numberofarticles:r</mv>
+		<mv>numberofpages:r</mv>
+		<mv>magicnumber</mv>
+		<mv>numberoffiles:r</mv>
+		<mv>numberofusers:r</mv>
+		<mv>numberofadmins:r</mv>
+		<mv>numberofactiveusers</mv>
+		<mv>numberofactiveusers:r</mv>
+	</mediawikiVariables>
+
+
+	<parserFunctions lastUpdate="2010-07-02">
+		<pf>ns:</pf>
+		<pf>localurl:</pf>
+		<pf>localurle:</pf>
+		<pf>urlencode:</pf>
+		<pf>anchorencode:</pf>
+		<pf>fullurl:</pf>
+		<pf>fullurle:</pf>
+		<pf>grammar:</pf>
+		<pf>plural:</pf>
+		<pf>lc:</pf>
+		<pf>lcfirst:</pf>
+		<pf>uc:</pf>
+		<pf>ucfirst:</pf>
+		<pf>formatnum:</pf>
+		<pf>padleft:</pf>
+		<pf>padright:</pf>
+		<pf>#language:</pf>
+		<pf>displaytitle:</pf>
+		<pf>defaultsort:</pf>
+		<pf>#if:</pf>
+		<pf>#if:</pf>
+		<pf>#switch:</pf>
+		<pf>#ifexpr:</pf>
+		<pf>numberingroup:</pf>
+		<pf>pagesinns:</pf>
+		<pf>pagesincat:</pf>
+		<pf>pagesincategory:</pf>
+		<pf>pagesize:</pf>
+		<pf>gender:</pf>
+		<pf>filepath:</pf>
+		<pf>#special:</pf>
+		<pf>#tag:"</pf>
+	</parserFunctions>
+
+</CommonData>

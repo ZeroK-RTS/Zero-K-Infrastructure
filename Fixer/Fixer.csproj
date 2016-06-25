@@ -85,6 +85,7 @@
     <Compile Include="BattleBalanceData.cs" />
     <Compile Include="DuplicateFinder.cs" />
     <Compile Include="NubSimulator.cs" />
+    <Compile Include="WikiPortingMW.cs" />
     <Compile Include="WikiPorting.cs" />
     <Compile Include="PlanetwarsFixer.cs" />
     <Compile Include="ForumFixer.cs" />
@@ -100,6 +101,10 @@
     <ProjectReference Include="..\Benchmarker\Benchmarker.csproj">
       <Project>{67501a5b-b6bb-467e-85da-22d81c40829c}</Project>
       <Name>Benchmarker</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DotNetWikiBot\DotNetWikiBot.csproj">
+      <Project>{016c2b52-afd5-4a3a-a960-e9fb51c014bb}</Project>
+      <Name>DotNetWikiBot</Name>
     </ProjectReference>
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
       <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>

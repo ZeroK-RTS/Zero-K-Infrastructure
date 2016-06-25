@@ -347,11 +347,7 @@ namespace Fixer
 
 
         static void Main(string[] args) {
-            //var str = File.ReadAllText(@"[f=0002448]");
-            var fw = new ForumWikiParser();
-            var result= fw.TranslateToHtml("{{{\r\n    -- find a value in a list\r\n    local found = nil\r\n    for i=1,a.n do\r\n      if a[i] == value then\r\n        found = i      -- save value of `i\'\r\n        break\r\n      end\r\n    end\r\n    print(found)\r\n}}}\r\n\r\n{{{loled.}}}", null);
-
-
+            WikiPortingMW.DoStuff();
             return;
 
             //FixStuff();
