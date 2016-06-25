@@ -57,7 +57,7 @@ namespace Fixer
             text = BBCodeToMediaWiki(text);
 
             Page page = new Page(newWiki, newName);
-            page.LoadTextOnly();
+            page.Load();
 
             bool update = false;
             if (!page.IsEmpty())
@@ -71,7 +71,17 @@ namespace Fixer
             }
             if (newName.StartsWith("Mission Editor", true, System.Globalization.CultureInfo.CurrentCulture))
                 page.AddToCategory("Mission Editor");
-            //page.Save(text, update ? "Ported from ZK wiki by DotNetWikiBot" : null, update);
+            page.Save(text, update ? "Ported from ZK wiki by DotNetWikiBot" : null, update);
+        }
+
+        public static void ReformatPage(string pageName)
+        {
+            Page page = new Page(newWiki, pageName);
+            page.Load();
+            string text = BBCodeToMediaWiki(page.text);
+            if (pageName.StartsWith("Mission Editor", true, System.Globalization.CultureInfo.CurrentCulture))
+                page.AddToCategory("Mission Editor");
+            page.Save(text, "Cleanup by DotNetWikiBot", false);
         }
 
         public static void DoStuff()
@@ -94,7 +104,15 @@ namespace Fixer
             {
                 ConvertPage(toPort[i, 0], toPort[i, 1], true);
             }
-            
+
+            string[] toReformat =
+            {
+                //"Mission Editor Cutscenes Tutorial"
+            };
+            for (int i = 0; i < toReformat.GetLength(0); i++)
+            {
+                ReformatPage(toReformat[i]);
+            }
         }
     }
 }
