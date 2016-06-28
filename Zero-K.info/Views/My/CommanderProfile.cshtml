@@ -3,7 +3,8 @@
 @using ZkData
 
 @{var c = Model.Commander;
-  Layout = null;
+    Layout = null;
+    int slotNum = 1;
 }
 <h2>@(c != null ? c.Name : "Commander " + Model.ProfileID)</h2>
 
@@ -16,26 +17,27 @@ Commander name: @Html.TextBox("name", c != null ? HttpContext.Current.Server.Htm
 	
     foreach (var slots in Model.Slots.GroupBy(x => x.MorphLevel).OrderBy(x => x.Key))
     {
-	<h3>Morph @slots.Key:</h3>
+        <h3>Morph @slots.Key:</h3>
 		@:Metal: @Html.PrintMetal(c.GetTotalMorphLevelCost(slots.Key) - (slots.Key > 1 ? c.GetTotalMorphLevelCost(slots.Key - 1) : 0)) <br />
-	    foreach (var slot in slots)
+        foreach (var slot in slots.OrderByDescending(x => x.UnlockType.ToString())) // cheap hax to make sure weapons go first
         {
             CommanderModule selected = c.CommanderModules.SingleOrDefault(y => y.SlotID == slot.CommanderSlotID);
-	    	<span>Slot @(slot.CommanderSlotID) (@slot.UnlockType):
-	    	@if (selected != null)
+            <span>Slot @(slotNum) (@slot.UnlockType.Description()):
+            @if (selected != null)
             {
-	    		<span style='color:@selected.Unlock.LabelColor' title='$unlock$@selected.ModuleUnlockID'>
-	    			<img src='@selected.Unlock.ImageUrl' width='20' height='20' />@selected.Unlock.Name</span>
-	    		<input type="image" name="deleteSlot@(slot.CommanderSlotID)" src='/img/delete_icon.png' class="vcenter noborder" />
+                <span style='color:@selected.Unlock.LabelColor' title='$unlock$@selected.ModuleUnlockID'>
+                    <img src='@selected.Unlock.ImageUrl' width='20' height='20' />@selected.Unlock.Name</span>
+                <input type="image" name="deleteSlot@(slot.CommanderSlotID)" src='/img/delete_icon.png' class="vcenter noborder" />
             }
             else
             {
-	    		@Html.DropDownList("m" + slot.CommanderSlotID, Model.Unlocks.Where(x => MyController.IsUnlockValidForSlot(x.Unlock, slot)
+                @Html.DropDownList("m" + slot.CommanderSlotID, Model.Unlocks.Where(x => MyController.IsUnlockValidForSlot(x.Unlock, slot)
                     && MyController.IsPrerequisiteUnlockPresent(c, x.Unlock)).Select(x => new SelectListItem()
                     { Text = x.Unlock.Name, Value = x.Unlock.UnlockID.ToString(), Selected = c != null ? c.CommanderModules.Any(y => y.ModuleUnlockID == x.Unlock.UnlockID && y.SlotID == slot.CommanderSlotID) : false }).Union(new SelectListItem[] 
                     { new SelectListItem() { Text = "", Value = "", Selected = c != null ? !c.CommanderModules.Any(y => y.SlotID == slot.CommanderSlotID) : true } }), 
                     new { onchange = "document.getElementById(\"commanderUpdate" + Model.ProfileID + "\").click()" })
             }
+            @slotNum++;
 	    	<br />
 	    	</span>
         }

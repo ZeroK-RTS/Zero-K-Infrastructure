@@ -322,7 +322,7 @@ namespace ZeroKWeb.Controllers
 			                   {
 			                   	ProfileID = profile,
 			                   	Commander = com,
-			                   	Slots = db.CommanderSlots.ToList(),
+			                   	Slots = db.CommanderSlots.Where(x=> x.Chassis == null || x.Chassis.UnlockID == com.Unlock.UnlockID).ToList(),
                                 DecorationSlots = db.CommanderDecorationSlots.ToList(),
 			                   	Unlocks =
 									GetUserUnlockCountsListIncludingFree(db).Where(
