@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ZkData
 {
@@ -15,6 +16,8 @@ namespace ZkData
         public int? ChassisID { get; set; }
 
         public UnlockTypes UnlockType { get; set; }
+
+        [ForeignKey("ChassisID")]
         public virtual Unlock Chassis { get; set; }
         public virtual ICollection<CommanderModule> CommanderModules { get; set; }
     }
