@@ -59,17 +59,6 @@ namespace ZeroKLobby.MicroLobby
 
             if (this.IsInDesignMode()) return;
 
-            var extras = new BitmapButton();
-            extras.Text = "Extras";
-            extras.Click += (s, e) =>
-            {
-                var contextMenu = ContextMenus.GetChannelContextMenu(this);
-                contextMenu = LineDehighlighter(contextMenu, null);
-                contextMenu.Show(extras, new Point(0, 0));
-            };
-            extras.Size = new Size(extras.Width, 36);
-
-            ChatBox.Controls.Add(extras);
 
             ChatBox.Font = Config.ChatFont; //make sure this is done before HistoryManager adds text, or text becomes black.
 
