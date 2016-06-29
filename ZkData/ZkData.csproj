@@ -166,6 +166,10 @@
     <Compile Include="Migrations\201605121148290_AddSpecChatBan2.Designer.cs">
       <DependentUpon>201605121148290_AddSpecChatBan2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201606291158222_CommanderSlotFixChassisReference.cs" />
+    <Compile Include="Migrations\201606291158222_CommanderSlotFixChassisReference.Designer.cs">
+      <DependentUpon>201606291158222_CommanderSlotFixChassisReference.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="Enums\TreatyState.cs" />
@@ -370,6 +374,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201605121148290_AddSpecChatBan2.resx">
       <DependentUpon>201605121148290_AddSpecChatBan2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201606291158222_CommanderSlotFixChassisReference.resx">
+      <DependentUpon>201606291158222_CommanderSlotFixChassisReference.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
