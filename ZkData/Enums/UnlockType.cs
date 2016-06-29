@@ -9,9 +9,9 @@ namespace ZkData
     Weapon = 2,
     Module = 3,
     Decoration = 4,
-    [Description("Manual Weapon")]
+    [Description("Man. Wep")]
     WeaponManualFire = 5,
-    [Description("Flex Weapon")]
+    [Description("Flex Wep")]
     WeaponBoth = 6,
   }
 }
