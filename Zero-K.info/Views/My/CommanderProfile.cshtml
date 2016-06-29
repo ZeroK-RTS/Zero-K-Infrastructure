@@ -37,7 +37,7 @@ Commander name: @Html.TextBox("name", c != null ? HttpContext.Current.Server.Htm
                     { new SelectListItem() { Text = "", Value = "", Selected = c != null ? !c.CommanderModules.Any(y => y.SlotID == slot.CommanderSlotID) : true } }), 
                     new { onchange = "document.getElementById(\"commanderUpdate" + Model.ProfileID + "\").click()" })
             }
-            @slotNum++;
+            @{slotNum = slotNum + 1;}
 	    	<br />
 	    	</span>
         }
