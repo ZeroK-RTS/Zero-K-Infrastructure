@@ -39,12 +39,12 @@ namespace ZeroKLobby.MicroLobby
             button14.BackColor = TextColor.GetColor(13);
             button15.BackColor = TextColor.GetColor(14);
             button16.BackColor = TextColor.GetColor(15);
-            if (sendBox.SelectionLength<=1) sendBox.SelectionStart = 0;
+            if (sendBox.TextBox.SelectionLength<=1) sendBox.TextBox.SelectionStart = 0;
             comboBox1.SelectedItem = "To-line-end";
             ignoreSpaceCheck.Checked = true;
 
             sendBox.dontSendTextOnEnter = true; //pressing enter wont send text
-            sendBox.ScrollBars = ScrollBars.Vertical;
+            sendBox.TextBox.ScrollBars = ScrollBars.Vertical;
             sendBox.dontUseUpDownHistoryKey = true;
             sendBox.CompleteWord += (word) => //autocomplete of username
             {
@@ -61,7 +61,7 @@ namespace ZeroKLobby.MicroLobby
                 return firstResult;
 
             };
-            sendBox.WordWrap = true;
+            sendBox.TextBox.WordWrap = true;
             sendBox.Text = currentSendbox.Text; //copy paste from chat area to coloring panel
             currentSendbox_ = currentSendbox;
             Program.ToolTip.SetText(sendBox, "Tips: press CTRL+R/G/B on chatbox for instant Red,Green or Blue coloring");
@@ -69,7 +69,7 @@ namespace ZeroKLobby.MicroLobby
 
         private void button17_Click(object sender, EventArgs e) //remove color button
         {
-            sendBox.SelectionStart = 0;
+            sendBox.TextBox.SelectionStart = 0;
             sendBox.Text = TextColor.StripAllCodes(sendBox.Text);
             helpLabel.Text = "";
         }
@@ -90,8 +90,8 @@ namespace ZeroKLobby.MicroLobby
 
         private void comboBox1_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            sendBox.SelectionStart = 0;
-            sendBox.SelectionLength = 0;
+            sendBox.TextBox.SelectionStart = 0;
+            sendBox.TextBox.SelectionLength = 0;
             if (comboBox1.SelectedItem == "To-line-end") progressType = 1;
             else if (comboBox1.SelectedItem == "Word-by-word") progressType = 2;
             else if (comboBox1.SelectedItem == "Char-by-char") progressType = 3;
@@ -110,7 +110,7 @@ namespace ZeroKLobby.MicroLobby
                 backgroundColor = buttonNum;
                 return;
             }
-            int selectionStart = sendBox.SelectionStart;
+            int selectionStart = sendBox.TextBox.SelectionStart;
             if (sendBox.Text.Length > 0 && selectionStart < sendBox.Text.Length) //is not at string end
             {
                 helpLabel.Text = "";

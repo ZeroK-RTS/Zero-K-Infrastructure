@@ -22,9 +22,15 @@ namespace ZeroKLobby.Controls
             textBox.MouseUp += (sender, args) => { OnMouseUp(args); };
             textBox.Click += (sender, args) => { OnClick(args); };
             textBox.TextChanged += (sender, args) => { OnTextChanged(args); };
+            textBox.KeyPress += (sender, args) => { OnKeyPress(args); };
+            textBox.PreviewKeyDown += (sender, args) => { OnPreviewKeyDown(args); };
             Controls.Add(textBox);
         }
 
+        public void Select(int start, int length)
+        {
+            textBox.Select(start, length);
+        }
 
         public override Font Font { get { return textBox.Font; } set { textBox.Font = value; } }
 

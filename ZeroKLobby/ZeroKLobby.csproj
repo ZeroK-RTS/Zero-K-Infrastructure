@@ -410,7 +410,7 @@
     </Compile>
     <Compile Include="MicroLobby\SayCommandHandler.cs" />
     <Compile Include="MicroLobby\SendBox.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MicroLobby\ToolTabs.cs">
       <SubType>UserControl</SubType>
@@ -426,9 +426,6 @@
     </Compile>
     <Compile Include="MicroLobby\ChatControl.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\ChatControl.Designer.cs">
-      <DependentUpon>ChatControl.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroLobby\PopupNotify.cs">
       <SubType>Form</SubType>
@@ -529,9 +526,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\PwBar.resx">
       <DependentUpon>PwBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\ChatControl.resx">
-      <DependentUpon>ChatControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ChatTab.resx">
       <DependentUpon>ChatTab.cs</DependentUpon>
