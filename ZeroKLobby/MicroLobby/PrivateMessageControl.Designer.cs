@@ -34,7 +34,6 @@
             // 
             // sendBox
             // 
-            this.sendBox.AcceptsTab = true;
             this.sendBox.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.sendBox.Location = new System.Drawing.Point(0, 389);
             this.sendBox.Multiline = true;
