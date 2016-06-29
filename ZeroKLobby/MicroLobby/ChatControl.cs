@@ -56,6 +56,7 @@ namespace ZeroKLobby.MicroLobby
         {
             InitializeComponent();
             Init(searchBarContainer);
+            Init(playerListMapSplitContainer);
 
             if (this.IsInDesignMode()) return;
 
