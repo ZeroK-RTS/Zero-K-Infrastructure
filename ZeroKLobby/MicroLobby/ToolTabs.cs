@@ -26,6 +26,26 @@ namespace ZeroKLobby.MicroLobby
             }
             else base.OnRenderButtonBackground(e);
         }
+
+        protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
+        {
+            //base.OnRenderToolStripBackground(e);
+        }
+
+        protected override void OnRenderToolStripPanelBackground(ToolStripPanelRenderEventArgs e)
+        {
+            //base.OnRenderToolStripPanelBackground(e);
+        }
+
+        protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
+        {
+            //base.OnRenderToolStripBorder(e);
+        }
+
+        protected override void OnRenderToolStripContentPanelBackground(ToolStripContentPanelRenderEventArgs e)
+        {
+            //base.OnRenderToolStripContentPanelBackground(e);
+        }
     }
 
     public class ToolTabs: ZklBaseControl
@@ -44,11 +64,10 @@ namespace ZeroKLobby.MicroLobby
             Font = Config.GeneralFont,
             Tag = HiliteLevel.None,
             RenderMode = ToolStripRenderMode.Professional,
-            //AutoSize = false,
-            //Width = 155,
             AutoSize = true, //auto reduce space usage
             MaximumSize = new Size(155, 4000),
             MinimumSize = new Size(100, 0),
+            Padding = new Padding(3,0,10,0),
             Renderer = new MyToolTabItemRenderer()
         };
         private ToolStripButton activeButton;
@@ -57,18 +76,17 @@ namespace ZeroKLobby.MicroLobby
 
         public ToolTabs()
         {
-            Init(toolStrip);
-            toolStrip.BackColor = Config.BgColor;
-            toolStrip.ForeColor = Config.TextColor;
+            Controls.Add(panel);
+            Controls.Add(toolStrip);
+
             BackColor = Config.BgColor; //for any child control to inherit it
             ForeColor = Config.TextColor;
+            Init(toolStrip);
 
             //set colour for overflow button:
             var ovrflwBtn = toolStrip.OverflowButton;
             ovrflwBtn.BackColor = Color.DimGray; //note: the colour of arrow on OverFlow button can't be set, that's why we couldn't use User's theme
 
-            Controls.Add(panel);
-            Controls.Add(toolStrip);
 
             var timer = new Timer { Interval = 1000 };
 
