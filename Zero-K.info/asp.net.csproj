@@ -189,6 +189,7 @@
     <Compile Include="ForumParser\Tags\UnderscoreTag.cs" />
     <Compile Include="ForumParser\Tags\UrlTag.cs" />
     <Compile Include="ForumParser\Tags\UTag.cs" />
+    <Compile Include="ForumParser\Tags\YouTubeTag.cs" />
     <Compile Include="ForumParser\Tags\VidTag.cs" />
     <Compile Include="ForumParser\Tags\WikiLinkTag.cs" />
     <Compile Include="ForumParser\Tags\WikiTocTag.cs" />
