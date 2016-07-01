@@ -480,6 +480,9 @@ div#busy
 	padding:10px;
 	white-space:normal;
 }
+.forumPostText:target {
+	background-color: #077;
+}
 
 .forumPostText img
 {
