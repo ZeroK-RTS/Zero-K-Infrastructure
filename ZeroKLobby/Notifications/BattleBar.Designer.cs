@@ -82,7 +82,7 @@ namespace ZeroKLobby.Notifications
             this.panel1.Size = new System.Drawing.Size(1222, 96);
             this.panel1.TabIndex = 15;
             // 
-            // buttonLeave
+            // btnLeave
             // 
             this.btnLeave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnLeave.BackColor = System.Drawing.Color.Transparent;
@@ -134,7 +134,7 @@ namespace ZeroKLobby.Notifications
             this.gameBox.TabIndex = 11;
             this.gameBox.TabStop = false;
             // 
-            // btnDetail
+            // btnStart
             // 
             this.btnStart.BackColor = System.Drawing.Color.Transparent;
             this.btnStart.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;

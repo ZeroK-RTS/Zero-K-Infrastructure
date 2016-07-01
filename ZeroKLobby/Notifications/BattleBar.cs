@@ -60,6 +60,8 @@ namespace ZeroKLobby.Notifications
             Program.ToolTip?.SetText(btnStart, "Start battle");
             Program.ToolTip?.SetText(btnLeave, "Quit battle");
 
+            picoChat.Visible = false;
+
 
             btnStart.Click += btnStart_Click;
             btnLeave.Click += BtnLeaveClick;
@@ -298,6 +300,17 @@ namespace ZeroKLobby.Notifications
                         lbQueue.Text = string.Format(queueLabelFormatter, Math.Round(queueTarget.Subtract(DateTime.Now).TotalSeconds));
                     }
                 };
+
+
+            Program.MainWindow.navigationControl.PageChanged += s =>
+            {
+                if (s != "chat/battle")
+                {
+                    picoChat.Visible = true;
+                }
+                else picoChat.Visible = false;
+            };
+
             timer.Interval = 1000;
             timer.Start();
 
