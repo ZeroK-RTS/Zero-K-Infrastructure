@@ -23,7 +23,6 @@ namespace ZeroKLobby.MicroLobby
         Bitmap playersBoxImage;
         static Size playersBoxSize = new Size(214, 32);
         Image resizedMinimap;
-        public static Brush BackBrush = new SolidBrush(Config.BgColor);
 
         public Battle Battle { get; private set; }
         public Bitmap Image
@@ -32,7 +31,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 if (dirty)
                 {
-                    UpdateImage();
+                    image = GenerateImage();
                     dirty = false;
                 }
                 return image;
@@ -114,9 +113,9 @@ namespace ZeroKLobby.MicroLobby
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 int x = (int)10;
                 int y = (int)(minimapSize - 20);
-                Action<Image> drawIcon = image =>
+                Action<Image> drawIcon = img =>
                 {
-                    g.DrawImage(image, x, y, (int)20, (int)20);
+                    g.DrawImage(img, x, y, (int)20, (int)20);
                     x += (int)30;
                 };
 
@@ -153,12 +152,16 @@ namespace ZeroKLobby.MicroLobby
             }
         }
 
-        Bitmap MakeSolidColorBitmap(Brush brush, int w, int h)
+        Bitmap MakeSolidColorBitmap(int w, int h, bool simplified = false)
         {
             var bitmap = new Bitmap(w, h);
             try
             {
-                using (var g = Graphics.FromImage(bitmap)) FrameBorderRenderer.Instance.RenderToGraphics(g, new Rectangle(0,0,w,h), FrameBorderRenderer.StyleType.DarkHive );
+                using (var g = Graphics.FromImage(bitmap))
+                {
+                    if (simplified) g.Clear(Color.Transparent);
+                    else FrameBorderRenderer.Instance.RenderToGraphics(g, new Rectangle(0,0,w,h), FrameBorderRenderer.StyleType.DarkHive );
+                }
                 //using (Graphics g = Graphics.FromImage(bitmap)) g.FillRectangle(brush, 0, 0, w, h);
             }
             catch
@@ -207,19 +210,19 @@ namespace ZeroKLobby.MicroLobby
                 (int)playersBoxSize.Height);
         }
 
-        void UpdateImage()
+        public Bitmap GenerateImage(bool simplified = false)
         {
             MakeMinimap();
             RenderPlayers();
             int scaledWidth = (int)Width;
             int scaledHeight = (int)Height;
-            image = MakeSolidColorBitmap(BackBrush, scaledWidth, scaledHeight);
+            var image = MakeSolidColorBitmap(scaledWidth, scaledHeight, simplified);
             using (Graphics g = Graphics.FromImage(image))
             {
                 if (disposed)
                 {
-                    image = MakeSolidColorBitmap(BackBrush, scaledWidth, scaledHeight);
-                    return;
+                    image = MakeSolidColorBitmap(scaledWidth, scaledHeight, simplified);
+                    return image;
                 }
                 if (finishedMinimap != null) g.DrawImageUnscaled(finishedMinimap, (int)3, (int)3);
                 else
@@ -257,6 +260,7 @@ namespace ZeroKLobby.MicroLobby
                 }
                 g.ResetClip();
             }
+            return image;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

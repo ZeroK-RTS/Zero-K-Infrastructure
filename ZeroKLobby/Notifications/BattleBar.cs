@@ -46,7 +46,8 @@ namespace ZeroKLobby.Notifications
             picoChat.IRCForeColor = 14; //mirc grey. Unknown use
             picoChat.DefaultTooltip = "Last lines from room chat, click to enter full screen chat";
 
-            Init(gameBox);
+            gameBox.BackColor = Color.Transparent;
+            //Init(gameBox);
 
             // because it causes program to fail if set before zkSplitContainer1.Size, where designer insists on putting it
             // see https://social.msdn.microsoft.com/Forums/windows/en-US/ee6abc76-f35a-41a4-a1ff-5be942ae3425/splitcontainer-panel-minsize-defect?forum=winformsdesigner
@@ -524,13 +525,15 @@ namespace ZeroKLobby.Notifications
         {
             int scaledIconHeight = (int)BattleIcon.Height;
             int scaledIconWidth = (int)BattleIcon.Width;
-            if (gameBox.Image == null) gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
+            if (gameBox.Image == null) gameBox.Image = e.GenerateImage(true);
+            /*Bitmap(scaledIconWidth, scaledIconHeight);
+
             using (var g = Graphics.FromImage(gameBox.Image))
             {
-                g.FillRectangle(Brushes.White, 0, 0, scaledIconWidth, scaledIconHeight);
+                g.FillRectangle(Brushes.Transparent, 0, 0, scaledIconWidth, scaledIconHeight);
                 g.DrawImageUnscaled(e.Image, 0, 0);
                 gameBox.Invalidate();
-            }
+            }*/
         }
 
 
