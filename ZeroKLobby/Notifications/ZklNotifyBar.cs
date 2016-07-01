@@ -15,7 +15,7 @@ namespace ZeroKLobby.Notifications
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             e.Graphics.Clear(Color.Black);
-            FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, Bounds, FrameBorderRenderer.StyleType.TechPanelHollow);
+            FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, DisplayRectangle, FrameBorderRenderer.StyleType.TechPanelHollow);
         }
     }
 }
