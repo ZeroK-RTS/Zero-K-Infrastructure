@@ -148,7 +148,7 @@ namespace ZeroKLobby.MicroLobby
 
                 if (Battle.IsPassworded) drawIcon(ZklResources._lock);
 
-                g.DrawImage(ZklResources.border, 4,4, (int)64, (int)64);
+             //   g.DrawImage(ZklResources.border, 4,4, (int)64, (int)64);
             }
         }
 
