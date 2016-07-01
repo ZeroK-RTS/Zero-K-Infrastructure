@@ -35,23 +35,17 @@ namespace ZeroKLobby.Notifications
             this.lbPlayers = new System.Windows.Forms.Label();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
+            this.buttonLeave = new ZeroKLobby.BitmapButton();
+            this.picoChat = new ZeroKLobby.MicroLobby.ChatBox();
+            this.gameBox = new System.Windows.Forms.PictureBox();
+            this.btnDetail = new ZeroKLobby.BitmapButton();
             this.radioPlaySpecContainer = new System.Windows.Forms.TableLayoutPanel();
             this.radioPlay = new System.Windows.Forms.RadioButton();
             this.radioSpec = new System.Windows.Forms.RadioButton();
-            this.zkSplitContainer1 = new ZeroKLobby.ZkSplitContainer();
-            this.picoChat = new ZeroKLobby.MicroLobby.ChatBox();
-            this.gameBoxAndCloseButtonContainer = new System.Windows.Forms.FlowLayoutPanel();
-            this.gameBox = new System.Windows.Forms.PictureBox();
-            this.buttonLeave = new ZeroKLobby.BitmapButton();
             this.lbQueue = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
-            this.radioPlaySpecContainer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.zkSplitContainer1)).BeginInit();
-            this.zkSplitContainer1.Panel1.SuspendLayout();
-            this.zkSplitContainer1.Panel2.SuspendLayout();
-            this.zkSplitContainer1.SuspendLayout();
-            this.gameBoxAndCloseButtonContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
+            this.radioPlaySpecContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // lbPlayers
@@ -74,8 +68,11 @@ namespace ZeroKLobby.Notifications
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.buttonLeave);
+            this.panel1.Controls.Add(this.picoChat);
+            this.panel1.Controls.Add(this.gameBox);
+            this.panel1.Controls.Add(this.btnDetail);
             this.panel1.Controls.Add(this.radioPlaySpecContainer);
-            this.panel1.Controls.Add(this.zkSplitContainer1);
             this.panel1.Controls.Add(this.lbPlayers);
             this.panel1.Controls.Add(this.lbQueue);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -84,6 +81,74 @@ namespace ZeroKLobby.Notifications
             this.panel1.Padding = new System.Windows.Forms.Padding(0, 8, 0, 8);
             this.panel1.Size = new System.Drawing.Size(1222, 96);
             this.panel1.TabIndex = 15;
+            // 
+            // buttonLeave
+            // 
+            this.buttonLeave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonLeave.BackColor = System.Drawing.Color.Transparent;
+            this.buttonLeave.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.buttonLeave.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.buttonLeave.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.buttonLeave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonLeave.ForeColor = System.Drawing.Color.White;
+            this.buttonLeave.Image = global::ZeroKLobby.Buttons.exit;
+            this.buttonLeave.Location = new System.Drawing.Point(1134, 12);
+            this.buttonLeave.Name = "buttonLeave";
+            this.buttonLeave.Size = new System.Drawing.Size(68, 68);
+            this.buttonLeave.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.buttonLeave.TabIndex = 12;
+            this.buttonLeave.UseVisualStyleBackColor = false;
+            // 
+            // picoChat
+            // 
+            this.picoChat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.picoChat.BackColor = System.Drawing.Color.Transparent;
+            this.picoChat.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picoChat.ChatBackgroundColor = 0;
+            this.picoChat.DefaultTooltip = null;
+            this.picoChat.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.picoChat.HideScroll = true;
+            this.picoChat.IRCForeColor = 0;
+            this.picoChat.LineHighlight = null;
+            this.picoChat.Location = new System.Drawing.Point(537, 8);
+            this.picoChat.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
+            this.picoChat.MinimumSize = new System.Drawing.Size(12, 12);
+            this.picoChat.Name = "picoChat";
+            this.picoChat.NoColorMode = false;
+            this.picoChat.ShowHistory = true;
+            this.picoChat.ShowJoinLeave = false;
+            this.picoChat.ShowUnreadLine = true;
+            this.picoChat.SingleLine = false;
+            this.picoChat.Size = new System.Drawing.Size(591, 80);
+            this.picoChat.TabIndex = 12;
+            this.picoChat.TextFilter = null;
+            // 
+            // gameBox
+            // 
+            this.gameBox.Location = new System.Drawing.Point(217, 8);
+            this.gameBox.Margin = new System.Windows.Forms.Padding(0);
+            this.gameBox.Name = "gameBox";
+            this.gameBox.Size = new System.Drawing.Size(311, 76);
+            this.gameBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.gameBox.TabIndex = 11;
+            this.gameBox.TabStop = false;
+            // 
+            // btnDetail
+            // 
+            this.btnDetail.BackColor = System.Drawing.Color.Transparent;
+            this.btnDetail.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnDetail.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.btnDetail.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnDetail.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDetail.ForeColor = System.Drawing.Color.White;
+            this.btnDetail.Image = global::ZeroKLobby.Buttons.exit;
+            this.btnDetail.Location = new System.Drawing.Point(15, 12);
+            this.btnDetail.Name = "btnDetail";
+            this.btnDetail.Size = new System.Drawing.Size(68, 68);
+            this.btnDetail.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.btnDetail.TabIndex = 13;
+            this.btnDetail.UseVisualStyleBackColor = false;
             // 
             // radioPlaySpecContainer
             // 
@@ -94,7 +159,7 @@ namespace ZeroKLobby.Notifications
             this.radioPlaySpecContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.radioPlaySpecContainer.Controls.Add(this.radioPlay, 0, 0);
             this.radioPlaySpecContainer.Controls.Add(this.radioSpec, 0, 1);
-            this.radioPlaySpecContainer.Location = new System.Drawing.Point(10, 17);
+            this.radioPlaySpecContainer.Location = new System.Drawing.Point(98, 15);
             this.radioPlaySpecContainer.Name = "radioPlaySpecContainer";
             this.radioPlaySpecContainer.RowCount = 2;
             this.radioPlaySpecContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -132,96 +197,6 @@ namespace ZeroKLobby.Notifications
             this.radioSpec.UseVisualStyleBackColor = true;
             this.radioSpec.CheckedChanged += new System.EventHandler(this.radioSpec_CheckedChanged);
             // 
-            // zkSplitContainer1
-            // 
-            this.zkSplitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.zkSplitContainer1.BackColor = System.Drawing.Color.Transparent;
-            this.zkSplitContainer1.IsSplitterFixed = true;
-            this.zkSplitContainer1.Location = new System.Drawing.Point(147, 8);
-            this.zkSplitContainer1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.zkSplitContainer1.Name = "zkSplitContainer1";
-            // 
-            // zkSplitContainer1.Panel1
-            // 
-            this.zkSplitContainer1.Panel1.Controls.Add(this.picoChat);
-            this.zkSplitContainer1.Panel1MinSize = 10;
-            // 
-            // zkSplitContainer1.Panel2
-            // 
-            this.zkSplitContainer1.Panel2.Controls.Add(this.gameBoxAndCloseButtonContainer);
-            this.zkSplitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(8, 4, 8, 4);
-            this.zkSplitContainer1.Size = new System.Drawing.Size(1078, 80);
-            this.zkSplitContainer1.SplitterDistance = 619;
-            this.zkSplitContainer1.TabIndex = 16;
-            this.zkSplitContainer1.SplitterMoving += new System.Windows.Forms.SplitterCancelEventHandler(this.zkSplitContainer1_SplitterMoving);
-            // 
-            // picoChat
-            // 
-            this.picoChat.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.picoChat.BackColor = System.Drawing.Color.White;
-            this.picoChat.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picoChat.ChatBackgroundColor = 0;
-            this.picoChat.DefaultTooltip = null;
-            this.picoChat.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.picoChat.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.picoChat.HideScroll = true;
-            this.picoChat.IRCForeColor = 0;
-            this.picoChat.LineHighlight = null;
-            this.picoChat.Location = new System.Drawing.Point(0, 0);
-            this.picoChat.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
-            this.picoChat.MinimumSize = new System.Drawing.Size(12, 12);
-            this.picoChat.Name = "picoChat";
-            this.picoChat.NoColorMode = false;
-            this.picoChat.ShowHistory = true;
-            this.picoChat.ShowJoinLeave = false;
-            this.picoChat.ShowUnreadLine = true;
-            this.picoChat.SingleLine = false;
-            this.picoChat.Size = new System.Drawing.Size(619, 80);
-            this.picoChat.TabIndex = 12;
-            this.picoChat.TextFilter = null;
-            // 
-            // gameBoxAndCloseButtonContainer
-            // 
-            this.gameBoxAndCloseButtonContainer.AutoSize = true;
-            this.gameBoxAndCloseButtonContainer.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.gameBoxAndCloseButtonContainer.Controls.Add(this.gameBox);
-            this.gameBoxAndCloseButtonContainer.Controls.Add(this.buttonLeave);
-            this.gameBoxAndCloseButtonContainer.Dock = System.Windows.Forms.DockStyle.Right;
-            this.gameBoxAndCloseButtonContainer.Location = new System.Drawing.Point(62, 4);
-            this.gameBoxAndCloseButtonContainer.MinimumSize = new System.Drawing.Size(0, 384);
-            this.gameBoxAndCloseButtonContainer.Name = "gameBoxAndCloseButtonContainer";
-            this.gameBoxAndCloseButtonContainer.Size = new System.Drawing.Size(385, 384);
-            this.gameBoxAndCloseButtonContainer.TabIndex = 12;
-            this.gameBoxAndCloseButtonContainer.WrapContents = false;
-            // 
-            // gameBox
-            // 
-            this.gameBox.Location = new System.Drawing.Point(0, 0);
-            this.gameBox.Margin = new System.Windows.Forms.Padding(0);
-            this.gameBox.Name = "gameBox";
-            this.gameBox.Size = new System.Drawing.Size(311, 76);
-            this.gameBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.gameBox.TabIndex = 11;
-            this.gameBox.TabStop = false;
-            // 
-            // buttonLeave
-            // 
-            this.buttonLeave.BackColor = System.Drawing.Color.Transparent;
-            this.buttonLeave.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.buttonLeave.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
-            this.buttonLeave.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.buttonLeave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonLeave.ForeColor = System.Drawing.Color.White;
-            this.buttonLeave.Image = global::ZeroKLobby.Buttons.exit;
-            this.buttonLeave.Location = new System.Drawing.Point(314, 3);
-            this.buttonLeave.Name = "buttonLeave";
-            this.buttonLeave.Size = new System.Drawing.Size(68, 68);
-            this.buttonLeave.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
-            this.buttonLeave.TabIndex = 12;
-            this.buttonLeave.UseVisualStyleBackColor = false;
-            // 
             // lbQueue
             // 
             this.lbQueue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
@@ -237,21 +212,14 @@ namespace ZeroKLobby.Notifications
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Transparent;
-            this.btnDetail = this.buttonLeave;
             this.Controls.Add(this.panel1);
             this.MinimumSize = new System.Drawing.Size(492, 96);
             this.Name = "BattleBar";
             this.Size = new System.Drawing.Size(1222, 96);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.radioPlaySpecContainer.ResumeLayout(false);
-            this.zkSplitContainer1.Panel1.ResumeLayout(false);
-            this.zkSplitContainer1.Panel2.ResumeLayout(false);
-            this.zkSplitContainer1.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.zkSplitContainer1)).EndInit();
-            this.zkSplitContainer1.ResumeLayout(false);
-            this.gameBoxAndCloseButtonContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gameBox)).EndInit();
+            this.radioPlaySpecContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -265,10 +233,9 @@ namespace ZeroKLobby.Notifications
                 private System.Windows.Forms.Panel panel1;
                 private System.Windows.Forms.RadioButton radioPlay;
                 private System.Windows.Forms.RadioButton radioSpec;
-                private ZkSplitContainer zkSplitContainer1;
                 private System.Windows.Forms.Label lbQueue;
         private System.Windows.Forms.TableLayoutPanel radioPlaySpecContainer;
         private BitmapButton buttonLeave;
-        private System.Windows.Forms.FlowLayoutPanel gameBoxAndCloseButtonContainer;
+        private BitmapButton btnDetail;
     }
 }

@@ -49,10 +49,7 @@ namespace ZeroKLobby.Notifications
             gameBox.BackColor = Color.Transparent;
             //Init(gameBox);
 
-            // because it causes program to fail if set before zkSplitContainer1.Size, where designer insists on putting it
-            // see https://social.msdn.microsoft.com/Forums/windows/en-US/ee6abc76-f35a-41a4-a1ff-5be942ae3425/splitcontainer-panel-minsize-defect?forum=winformsdesigner
-            zkSplitContainer1.Panel2MinSize = 400;
-
+            
             buttonLeave.Click += (s, e) => buttonLeave_Click(s,e);
 
             client = Program.TasClient;
@@ -116,8 +113,8 @@ namespace ZeroKLobby.Notifications
             client.BattleJoined += (s, e) =>
                 {
                     if (!isVisible) ManualBattleStarted();
-                    //if (IsHostGameRunning()) barContainer.btnDetail.Text = "Rejoin";
-                    //else barContainer.btnDetail.Text = "Start";
+                    if (IsHostGameRunning()) btnDetail.Text = "Rejoin";
+                    else btnDetail.Text = "Start";
                     
                     
                     //client.ChangeMyUserStatus(false, false);
@@ -309,12 +306,6 @@ namespace ZeroKLobby.Notifications
             ActionHandler.StopBattle();
         }
 
-        protected override void OnSizeChanged(EventArgs e)
-        {
-            base.OnSizeChanged(e);
-            //picoChat.Width = gameBox.Left - picoChat.Left + 5;
-            zkSplitContainer1.SplitterDistance = (int)(Math.Max(zkSplitContainer1.Width * 0.5, zkSplitContainer1.Width - gameBox.Width)); //make gameBox & miniChatBox to always have >0 size.
-        }
 
         /// <summary>
         /// Changes user's desired spectator state of battle
@@ -523,24 +514,9 @@ namespace ZeroKLobby.Notifications
 
         private void CreateBattleIcon(BattleIcon e)
         {
-            int scaledIconHeight = (int)BattleIcon.Height;
-            int scaledIconWidth = (int)BattleIcon.Width;
             if (gameBox.Image == null) gameBox.Image = e.GenerateImage(true);
-            /*Bitmap(scaledIconWidth, scaledIconHeight);
-
-            using (var g = Graphics.FromImage(gameBox.Image))
-            {
-                g.FillRectangle(Brushes.Transparent, 0, 0, scaledIconWidth, scaledIconHeight);
-                g.DrawImageUnscaled(e.Image, 0, 0);
-                gameBox.Invalidate();
-            }*/
         }
 
-
-        private void zkSplitContainer1_SplitterMoving(object sender, SplitterCancelEventArgs e)
-        {
-            gameBoxAndCloseButtonContainer.Left = 0; //anchor gameBox to zkSplitContainer slider
-        }
 
         private void radioPlay_CheckedChanged(object sender, EventArgs e)
         {

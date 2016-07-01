@@ -16,7 +16,7 @@ namespace ZeroKLobby.Notifications
 
         public virtual string TitleTooltip { get; set; }
 
-        public virtual BitmapButton btnDetail { get; set; } = new BitmapButton();
+        //public virtual BitmapButton btnDetail { get; set; } = new BitmapButton();
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
