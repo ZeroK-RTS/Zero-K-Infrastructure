@@ -146,8 +146,11 @@ namespace ZeroKLobby
         public void InvokeFunc(Action funcToInvoke) {
             try
             {
-                if (InvokeRequired) Invoke(funcToInvoke);
-                else funcToInvoke();
+                if (!IsDisposed)
+                {
+                    if (InvokeRequired) Invoke(funcToInvoke);
+                    else funcToInvoke();
+                }
             }
             catch (Exception ex)
             {

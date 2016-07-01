@@ -82,7 +82,7 @@ namespace ZeroKLobby.Notifications
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(0, 8, 0, 8);
-            this.panel1.Size = new System.Drawing.Size(1502, 96);
+            this.panel1.Size = new System.Drawing.Size(1222, 96);
             this.panel1.TabIndex = 15;
             // 
             // radioPlaySpecContainer
@@ -152,8 +152,8 @@ namespace ZeroKLobby.Notifications
             // 
             this.zkSplitContainer1.Panel2.Controls.Add(this.gameBoxAndCloseButtonContainer);
             this.zkSplitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(8, 4, 8, 4);
-            this.zkSplitContainer1.Size = new System.Drawing.Size(1358, 80);
-            this.zkSplitContainer1.SplitterDistance = 781;
+            this.zkSplitContainer1.Size = new System.Drawing.Size(1078, 80);
+            this.zkSplitContainer1.SplitterDistance = 619;
             this.zkSplitContainer1.TabIndex = 16;
             this.zkSplitContainer1.SplitterMoving += new System.Windows.Forms.SplitterCancelEventHandler(this.zkSplitContainer1_SplitterMoving);
             // 
@@ -178,10 +178,9 @@ namespace ZeroKLobby.Notifications
             this.picoChat.ShowJoinLeave = false;
             this.picoChat.ShowUnreadLine = true;
             this.picoChat.SingleLine = false;
-            this.picoChat.Size = new System.Drawing.Size(781, 80);
+            this.picoChat.Size = new System.Drawing.Size(619, 80);
             this.picoChat.TabIndex = 12;
             this.picoChat.TextFilter = null;
-            this.picoChat.Load += new System.EventHandler(this.picoChat_Load);
             // 
             // gameBoxAndCloseButtonContainer
             // 
@@ -190,7 +189,7 @@ namespace ZeroKLobby.Notifications
             this.gameBoxAndCloseButtonContainer.Controls.Add(this.gameBox);
             this.gameBoxAndCloseButtonContainer.Controls.Add(this.buttonLeave);
             this.gameBoxAndCloseButtonContainer.Dock = System.Windows.Forms.DockStyle.Right;
-            this.gameBoxAndCloseButtonContainer.Location = new System.Drawing.Point(180, 4);
+            this.gameBoxAndCloseButtonContainer.Location = new System.Drawing.Point(62, 4);
             this.gameBoxAndCloseButtonContainer.MinimumSize = new System.Drawing.Size(0, 384);
             this.gameBoxAndCloseButtonContainer.Name = "gameBoxAndCloseButtonContainer";
             this.gameBoxAndCloseButtonContainer.Size = new System.Drawing.Size(385, 384);
@@ -199,7 +198,6 @@ namespace ZeroKLobby.Notifications
             // 
             // gameBox
             // 
-            this.gameBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.gameBox.Location = new System.Drawing.Point(0, 0);
             this.gameBox.Margin = new System.Windows.Forms.Padding(0);
             this.gameBox.Name = "gameBox";
@@ -222,7 +220,6 @@ namespace ZeroKLobby.Notifications
             this.buttonLeave.Size = new System.Drawing.Size(68, 68);
             this.buttonLeave.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.buttonLeave.TabIndex = 12;
-            this.buttonLeave.Text = "Leave";
             this.buttonLeave.UseVisualStyleBackColor = false;
             // 
             // lbQueue
@@ -244,7 +241,7 @@ namespace ZeroKLobby.Notifications
             this.Controls.Add(this.panel1);
             this.MinimumSize = new System.Drawing.Size(492, 96);
             this.Name = "BattleBar";
-            this.Size = new System.Drawing.Size(1502, 96);
+            this.Size = new System.Drawing.Size(1222, 96);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.radioPlaySpecContainer.ResumeLayout(false);

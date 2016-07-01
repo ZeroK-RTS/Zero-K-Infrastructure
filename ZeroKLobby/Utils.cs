@@ -65,7 +65,7 @@ namespace ZeroKLobby
             }
             catch (Exception ex)
             {
-                Trace.TraceError(string.Format("Error setting IE compatibility: {0}", ex));
+                Trace.TraceError(String.Format("Error setting IE compatibility: {0}", ex));
             }
             try //for 32 bit IE on 64 bit windows
             {
@@ -76,7 +76,7 @@ namespace ZeroKLobby
             }
             catch (Exception ex)
             {
-                Trace.TraceError(string.Format("Error setting IE compatibility: {0}", ex));
+                Trace.TraceError(String.Format("Error setting IE compatibility: {0}", ex));
             }
         }
 
@@ -317,82 +317,6 @@ namespace ZeroKLobby
             else return true;
         }
 
-
-        static void SetProtocolRegistry(RegistryKey protocolKey, string executableName) {
-            protocolKey.SetValue("", "URL:Spring Action");
-            protocolKey.SetValue("URL Protocol", "");
-            var defaultIconKey = protocolKey.CreateSubKey("DefaultIcon");
-            defaultIconKey.SetValue("", executableName);
-            var shellKey = protocolKey.CreateSubKey("shell");
-            var openKey = shellKey.CreateSubKey("open");
-            var commandKey = openKey.CreateSubKey("command");
-            commandKey.SetValue("", string.Format("\"{0}\" \"%1\"", executableName));
-        }
-    }
-
-    public static class DpiMeasurement
-    {
-        public static double dpiX = 0;
-        public static double dpiY = 0;
-        public static double scaleDownRatioX = 0;
-        public static double scaleDownRatioY = 0;
-        public static double scaleUpRatioX = 0;
-        public static double scaleUpRatioY = 0;
-
-        public static void DpiXYMeasurement()
-        {
-            if (dpiY == 0 || dpiX == 0)
-            {
-                DpiXYMeasurement(new Control());
-            }
-        }
-        public static void DpiXYMeasurement(Control a) {
-			if (dpiY == 0 || dpiX == 0) {
-                var formGraphics = a.CreateGraphics(); //Reference: http://msdn.microsoft.com/en-us/library/system.drawing.graphics.dpix.aspx
-                dpiY = formGraphics.DpiY; //get current DPI
-				dpiX = formGraphics.DpiX;
-				formGraphics.Dispose();
-				Trace.TraceInformation("System DPI Value: dpiX= {0}, dpiY= {1}", dpiX, dpiY);
-				scaleUpRatioY = dpiY/96.0;
-                //get scaleUP ratio, 96 is the original DPI. Preserve decimal, Reference: http://www.dotnetperls.com/divide
-                scaleDownRatioY = 96.0/dpiY; //get scaleDown ratio (to counter-act DPI virtualization/scaling)
-                scaleUpRatioX = dpiX/96.0;
-                scaleDownRatioX = 96.0/dpiX;
-			}
-        }
-
-        /// <summary>
-        /// Calculate reverse DPI scaling
-        /// </summary>
-        public static int ReverseScaleValueX(double designHeight) {
-            var output = designHeight*scaleDownRatioX;
-            return (int)(output + 0.5d); //equivalent to Round(output)
-        }
-
-        /// <summary>
-        /// Calculate reverse DPI scaling
-        /// </summary>
-        public static int ReverseScaleValueY(double designHeight) {
-            var output = designHeight*scaleDownRatioY;
-            return (int)(output + 0.5d); //equivalent to Round(output)
-        }
-
-        /// <summary>
-        /// Calculate DPI scaling
-        /// </summary>
-        public static int ScaleValueX(double designWidth) {
-            var output = designWidth*scaleUpRatioX;
-            return (int)(output + 0.5d); //equivalent to Round(output)
-        }
-
-        /// <summary>
-        /// Calculate DPI scaling
-        /// </summary>
-        public static int ScaleValueY(double designHeight) {
-            var output = designHeight*scaleUpRatioY;
-            return (int)(output + 0.5d); //equivalent to Round(output)
-        }
-
         public static void RenderControlBgImage(this Control destination, Control source, PaintEventArgs e)
         {
             var loc = source.PointToClient((destination.Parent ?? Program.MainWindow).PointToScreen(destination.Location));
@@ -430,6 +354,15 @@ namespace ZeroKLobby
         }
 
 
-
+        static void SetProtocolRegistry(RegistryKey protocolKey, string executableName) {
+            protocolKey.SetValue("", "URL:Spring Action");
+            protocolKey.SetValue("URL Protocol", "");
+            var defaultIconKey = protocolKey.CreateSubKey("DefaultIcon");
+            defaultIconKey.SetValue("", executableName);
+            var shellKey = protocolKey.CreateSubKey("shell");
+            var openKey = shellKey.CreateSubKey("open");
+            var commandKey = openKey.CreateSubKey("command");
+            commandKey.SetValue("", String.Format("\"{0}\" \"%1\"", executableName));
+        }
     }
 }

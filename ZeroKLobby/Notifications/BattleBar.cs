@@ -40,10 +40,13 @@ namespace ZeroKLobby.Notifications
         {
             InitializeComponent();
 
+            Program.ToolTip.SetText(buttonLeave,"Leave this battle");
+
             picoChat.ChatBackgroundColor = TextColor.background; //same color as Program.Conf.BgColor
             picoChat.IRCForeColor = 14; //mirc grey. Unknown use
-
             picoChat.DefaultTooltip = "Last lines from room chat, click to enter full screen chat";
+
+            Init(gameBox);
 
             // because it causes program to fail if set before zkSplitContainer1.Size, where designer insists on putting it
             // see https://social.msdn.microsoft.com/Forums/windows/en-US/ee6abc76-f35a-41a4-a1ff-5be942ae3425/splitcontainer-panel-minsize-defect?forum=winformsdesigner
@@ -148,21 +151,10 @@ namespace ZeroKLobby.Notifications
                     else engineVersionNeeded = null;
 
                     if (gameBox.Image != null) gameBox.Image.Dispose();
-                    DpiMeasurement.DpiXYMeasurement(this);
-                    int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
-                    int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
-                    gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
-                    using (var g = Graphics.FromImage(gameBox.Image))
-                    {
-                        g.FillRectangle(Brushes.White, 0, 0, scaledIconWidth, scaledIconHeight);
-                        var bi = Program.BattleIconManager.GetBattleIcon(battle.BattleID);
-                        g.DrawImageUnscaled(bi.Image, 0, 0);
-                    }
-                    gameBox.Invalidate();
+                    CreateBattleIcon(Program.BattleIconManager.GetBattleIcon(battle.BattleID));
 
                     RefreshTooltip();
-
-
+                    
                     var team = battle.GetFreeTeamID(client.UserName);
 
                     client.ChangeMyBattleStatus(desiredSpectatorState, HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced, 0, team);
@@ -313,7 +305,7 @@ namespace ZeroKLobby.Notifications
 
         private void buttonLeave_Click(object sender, EventArgs e)
         {
-            client.LeaveBattle();
+            ActionHandler.StopBattle();
         }
 
         protected override void OnSizeChanged(EventArgs e)
@@ -524,16 +516,20 @@ namespace ZeroKLobby.Notifications
         {
             if (e.Data.Battle == Program.TasClient.MyBattle)
             {
-                DpiMeasurement.DpiXYMeasurement(this);
-                int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
-                int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
-                if (gameBox.Image == null) gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
-                using (var g = Graphics.FromImage(gameBox.Image))
-                {
-                    g.FillRectangle(Brushes.White, 0, 0, scaledIconWidth, scaledIconHeight);
-                    g.DrawImageUnscaled(e.Data.Image, 0, 0);
-                    gameBox.Invalidate();
-                }
+                CreateBattleIcon(e.Data);
+            }
+        }
+
+        private void CreateBattleIcon(BattleIcon e)
+        {
+            int scaledIconHeight = (int)BattleIcon.Height;
+            int scaledIconWidth = (int)BattleIcon.Width;
+            if (gameBox.Image == null) gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
+            using (var g = Graphics.FromImage(gameBox.Image))
+            {
+                g.FillRectangle(Brushes.White, 0, 0, scaledIconWidth, scaledIconHeight);
+                g.DrawImageUnscaled(e.Image, 0, 0);
+                gameBox.Invalidate();
             }
         }
 
@@ -561,10 +557,6 @@ namespace ZeroKLobby.Notifications
             //}
         }
 
-        private void picoChat_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 
 

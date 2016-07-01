@@ -198,10 +198,9 @@ namespace ZeroKLobby.MicroLobby
         {
             try
             {
-                DpiMeasurement.DpiXYMeasurement();
-                int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
-                int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
-                int scaledMapCellWidth = DpiMeasurement.ScaleValueX(BattleIcon.MapCellSize.Width);
+                int scaledIconWidth = (int)BattleIcon.Width;
+                int scaledIconHeight = (int)BattleIcon.Height;
+                int scaledMapCellWidth = (int)BattleIcon.MapCellSize.Width;
 
                 base.OnPaint(pe);
                 Graphics g = pe.Graphics;
@@ -279,11 +278,11 @@ namespace ZeroKLobby.MicroLobby
         void PainOpenBattleButton(Graphics g, ref int x, ref int y, int scaledMapCellWidth, int scaledIconWidth)
         {
             g.DrawImage(ZklResources.border,
-                x + DpiMeasurement.ScaleValueX(3),
-                y + DpiMeasurement.ScaleValueY(3),
-                DpiMeasurement.ScaleValueX(70),
-                DpiMeasurement.ScaleValueY(70));
-            g.DrawString("Open a new battle.", BattleIcon.TitleFont, BattleIcon.TextBrush, x + scaledMapCellWidth, y + DpiMeasurement.ScaleValueY(3));
+                x + (int)3,
+                y + (int)3,
+                (int)70,
+                (int)70);
+            g.DrawString("Open a new battle.", BattleIcon.TitleFont, BattleIcon.TextBrush, x + scaledMapCellWidth, y + (int)3);
             openBattlePosition = new Point(x, y);
             x += scaledIconWidth;
         }
@@ -352,11 +351,10 @@ namespace ZeroKLobby.MicroLobby
             {
                 BattleIcon battleIcon = kvp.Key;
                 Point position = kvp.Value;
-                DpiMeasurement.DpiXYMeasurement(this);
                 var battleIconRect = new Rectangle(position.X,
                     position.Y,
-                    DpiMeasurement.ScaleValueX(BattleIcon.Width),
-                    DpiMeasurement.ScaleValueY(BattleIcon.Height));
+                    (int)BattleIcon.Width,
+                    (int)BattleIcon.Height);
                 if (battleIconRect.Contains(x, y) && battleIcon.HitTest(x - position.X, y - position.Y)) return battleIcon.Battle;
             }
             return null;
@@ -366,9 +364,8 @@ namespace ZeroKLobby.MicroLobby
         {
             x -= AutoScrollPosition.X;
             y -= AutoScrollPosition.Y;
-            DpiMeasurement.DpiXYMeasurement(this);
-            return x > openBattlePosition.X + DpiMeasurement.ScaleValueX(3) && x < openBattlePosition.X + DpiMeasurement.ScaleValueX(71) && y > openBattlePosition.Y + DpiMeasurement.ScaleValueY(3) &&
-                   y < openBattlePosition.Y + DpiMeasurement.ScaleValueX(71);
+            return x > openBattlePosition.X + (int)3 && x < openBattlePosition.X + (int)71 && y > openBattlePosition.Y + (int)3 &&
+                   y < openBattlePosition.Y + (int)71;
         }
 
         void Repaint()
