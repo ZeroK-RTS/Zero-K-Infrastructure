@@ -35,10 +35,10 @@ namespace ZeroKLobby.Notifications
             this.lbPlayers = new System.Windows.Forms.Label();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
-            this.buttonLeave = new ZeroKLobby.BitmapButton();
+            this.btnLeave = new ZeroKLobby.BitmapButton();
             this.picoChat = new ZeroKLobby.MicroLobby.ChatBox();
             this.gameBox = new System.Windows.Forms.PictureBox();
-            this.btnDetail = new ZeroKLobby.BitmapButton();
+            this.btnStart = new ZeroKLobby.BitmapButton();
             this.radioPlaySpecContainer = new System.Windows.Forms.TableLayoutPanel();
             this.radioPlay = new System.Windows.Forms.RadioButton();
             this.radioSpec = new System.Windows.Forms.RadioButton();
@@ -68,10 +68,10 @@ namespace ZeroKLobby.Notifications
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.buttonLeave);
+            this.panel1.Controls.Add(this.btnLeave);
             this.panel1.Controls.Add(this.picoChat);
             this.panel1.Controls.Add(this.gameBox);
-            this.panel1.Controls.Add(this.btnDetail);
+            this.panel1.Controls.Add(this.btnStart);
             this.panel1.Controls.Add(this.radioPlaySpecContainer);
             this.panel1.Controls.Add(this.lbPlayers);
             this.panel1.Controls.Add(this.lbQueue);
@@ -84,20 +84,20 @@ namespace ZeroKLobby.Notifications
             // 
             // buttonLeave
             // 
-            this.buttonLeave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonLeave.BackColor = System.Drawing.Color.Transparent;
-            this.buttonLeave.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.buttonLeave.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
-            this.buttonLeave.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.buttonLeave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonLeave.ForeColor = System.Drawing.Color.White;
-            this.buttonLeave.Image = global::ZeroKLobby.Buttons.exit;
-            this.buttonLeave.Location = new System.Drawing.Point(1134, 12);
-            this.buttonLeave.Name = "buttonLeave";
-            this.buttonLeave.Size = new System.Drawing.Size(68, 68);
-            this.buttonLeave.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
-            this.buttonLeave.TabIndex = 12;
-            this.buttonLeave.UseVisualStyleBackColor = false;
+            this.btnLeave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLeave.BackColor = System.Drawing.Color.Transparent;
+            this.btnLeave.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnLeave.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.btnLeave.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnLeave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnLeave.ForeColor = System.Drawing.Color.White;
+            this.btnLeave.Image = global::ZeroKLobby.Buttons.exit;
+            this.btnLeave.Location = new System.Drawing.Point(1134, 12);
+            this.btnLeave.Name = "btnLeave";
+            this.btnLeave.Size = new System.Drawing.Size(68, 68);
+            this.btnLeave.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.btnLeave.TabIndex = 12;
+            this.btnLeave.UseVisualStyleBackColor = false;
             // 
             // picoChat
             // 
@@ -136,19 +136,19 @@ namespace ZeroKLobby.Notifications
             // 
             // btnDetail
             // 
-            this.btnDetail.BackColor = System.Drawing.Color.Transparent;
-            this.btnDetail.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.btnDetail.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
-            this.btnDetail.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnDetail.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDetail.ForeColor = System.Drawing.Color.White;
-            this.btnDetail.Image = global::ZeroKLobby.Buttons.exit;
-            this.btnDetail.Location = new System.Drawing.Point(15, 12);
-            this.btnDetail.Name = "btnDetail";
-            this.btnDetail.Size = new System.Drawing.Size(68, 68);
-            this.btnDetail.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
-            this.btnDetail.TabIndex = 13;
-            this.btnDetail.UseVisualStyleBackColor = false;
+            this.btnStart.BackColor = System.Drawing.Color.Transparent;
+            this.btnStart.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnStart.ButtonStyle = ZeroKLobby.FrameBorderRenderer.StyleType.DarkHive;
+            this.btnStart.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnStart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnStart.ForeColor = System.Drawing.Color.White;
+            this.btnStart.Image = global::ZeroKLobby.ZklResources.battle;
+            this.btnStart.Location = new System.Drawing.Point(15, 12);
+            this.btnStart.Name = "btnStart";
+            this.btnStart.Size = new System.Drawing.Size(68, 68);
+            this.btnStart.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
+            this.btnStart.TabIndex = 13;
+            this.btnStart.UseVisualStyleBackColor = false;
             // 
             // radioPlaySpecContainer
             // 
@@ -235,7 +235,7 @@ namespace ZeroKLobby.Notifications
                 private System.Windows.Forms.RadioButton radioSpec;
                 private System.Windows.Forms.Label lbQueue;
         private System.Windows.Forms.TableLayoutPanel radioPlaySpecContainer;
-        private BitmapButton buttonLeave;
-        private BitmapButton btnDetail;
+        private BitmapButton btnLeave;
+        private BitmapButton btnStart;
     }
 }
