@@ -88,7 +88,7 @@ namespace ZeroKLobby.MicroLobby
             colors[link] = Program.Conf.LinkColor;
             colors[message] = Program.Conf.NoticeColor;
             colors[outgoingCommand] = Color.FromArgb(0, 200, 0); // for debugging
-            colors[username] = Program.Conf.LinkColor;
+            colors[username] = Color.DodgerBlue;    //Program.Conf.LinkColor;   // something makes it the same color as the background if we use Program.Conf.LinkColor
             colors[topic] = Color.Black;
             colors[topicBackground] = Color.FromArgb(255, 255, 225);
         }

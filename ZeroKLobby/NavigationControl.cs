@@ -23,6 +23,8 @@ namespace ZeroKLobby
         private readonly Dictionary<INavigatable, string> lastTabPaths = new Dictionary<INavigatable, string>();
         private readonly int systemDoubleClickTime = SystemInformation.DoubleClickTime*10000;
 
+        public event Action<string> PageChanged = s => { };
+
         public readonly HeadlessTabControl tabControl;
         private ZklTextBox urlBox;
 
@@ -273,6 +275,8 @@ namespace ZeroKLobby
                     if (CurrentPage != null && CurrentPage.ToString() != value) backStack.Push(CurrentPage);
                     CurrentPage = step;
                 } else if (value.StartsWith("http://") || value.StartsWith("https://") || value.StartsWith("file://")) Program.BrowserInterop.OpenUrl(value); //this open external browser
+
+                PageChanged?.Invoke(Path);
             }
         }
 

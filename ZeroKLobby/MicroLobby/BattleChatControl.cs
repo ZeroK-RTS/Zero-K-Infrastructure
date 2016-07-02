@@ -56,8 +56,9 @@ namespace ZeroKLobby.MicroLobby
                 Dock = DockStyle.Fill
             };
 
+
 			minimapBox = new PictureBox { Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.CenterImage };
-			minimapBox.Cursor = Cursors.Hand;
+            minimapBox.Cursor = Cursors.Hand;
 			minimapBox.Click +=
 				(s, e) => { if (Program.TasClient.MyBattle != null) Program.MainWindow.navigationControl.Path = string.Format("{1}/Maps/DetailName?name={0}", Program.TasClient.MyBattle.MapName, GlobalConst.BaseSiteUrl); };
 

@@ -317,22 +317,22 @@ namespace ZeroKWeb.Controllers
 		{
 			var com = db.Commanders.SingleOrDefault(x => x.AccountID == Global.AccountID && x.ProfileNumber == profile);
 
-			return PartialView("CommanderProfile",
-			                   new CommanderProfileModel
-			                   {
-			                   	ProfileID = profile,
-			                   	Commander = com,
-			                   	Slots = db.CommanderSlots.ToList(),
-                                DecorationSlots = db.CommanderDecorationSlots.ToList(),
-			                   	Unlocks =
-									GetUserUnlockCountsListIncludingFree(db).Where(
-			                   			x =>
-			                   			(x.Unlock.UnlockType != UnlockTypes.Unit)).ToList().Where(
-			                   			 	x =>
-			                   			 	(com == null || x.Unlock.LimitForChassis == null || x.Unlock.LimitForChassis.Contains(com.Unlock.Code)) &&
-							   			 	(com == null || x.Count > com.CommanderModules.Count(y => y.ModuleUnlockID == x.Unlock.UnlockID)) &&
-											(com == null || x.Count > com.CommanderDecorations.Count(y => y.DecorationUnlockID == x.Unlock.UnlockID))
-											).ToList()
+            return PartialView("CommanderProfile",
+                               new CommanderProfileModel
+                               {
+                                   ProfileID = profile,
+                                   Commander = com,
+                                   Slots = db.CommanderSlots.ToList().Where(x=> x.ChassisID == null || (com !=null && x.ChassisID == com.ChassisUnlockID)).ToList(),
+                                   DecorationSlots = db.CommanderDecorationSlots.ToList(),
+			                   	   Unlocks =
+								        GetUserUnlockCountsListIncludingFree(db).Where(
+			                   			   x =>
+			                   			   (x.Unlock.UnlockType != UnlockTypes.Unit)).ToList().Where(
+			                   			 	   x =>
+			                   			 	   (com == null || x.Unlock.LimitForChassis == null || x.Unlock.LimitForChassis.Contains(com.Unlock.Code)) &&
+							   			 	   (com == null || x.Count > com.CommanderModules.Count(y => y.ModuleUnlockID == x.Unlock.UnlockID)) &&
+											   (com == null || x.Count > com.CommanderDecorations.Count(y => y.DecorationUnlockID == x.Unlock.UnlockID))
+											   ).ToList()
 			                   });
 		}
 

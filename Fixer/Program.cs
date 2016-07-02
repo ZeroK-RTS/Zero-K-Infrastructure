@@ -347,11 +347,7 @@ namespace Fixer
 
 
         static void Main(string[] args) {
-            //var str = File.ReadAllText(@"[f=0002448]");
-            var fw = new ForumWikiParser();
-            var result= fw.TranslateToHtml("[f=0002448]", null);
-
-
+            WikiPortingMW.DoStuff();
             return;
 
             //FixStuff();

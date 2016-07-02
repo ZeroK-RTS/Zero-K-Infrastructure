@@ -1,4 +1,6 @@
-﻿namespace ZkData
+﻿using System.ComponentModel;
+
+namespace ZkData
 {
   public enum  UnlockTypes
   {
@@ -7,7 +9,9 @@
     Weapon = 2,
     Module = 3,
     Decoration = 4,
+    [Description("Man. Wep")]
     WeaponManualFire = 5,
+    [Description("Flex Wep")]
     WeaponBoth = 6,
   }
 }

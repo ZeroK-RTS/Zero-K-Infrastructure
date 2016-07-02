@@ -40,10 +40,31 @@ namespace ZeroKLobby.Notifications
         {
             InitializeComponent();
 
+            Program.ToolTip.SetText(btnLeave,"Leave this battle");
+
             picoChat.ChatBackgroundColor = TextColor.background; //same color as Program.Conf.BgColor
             picoChat.IRCForeColor = 14; //mirc grey. Unknown use
-
             picoChat.DefaultTooltip = "Last lines from room chat, click to enter full screen chat";
+
+            gameBox.BackColor = Color.Transparent;
+            btnStart.Image = ZklResources.battle.GetResizedWithCache(38, 38);
+            btnStart.ImageAlign = ContentAlignment.MiddleCenter;
+            btnStart.TextImageRelation = TextImageRelation.ImageAboveText;
+            btnStart.Text = "Play";
+
+            btnLeave.Image = Buttons.exit.GetResizedWithCache(38, 38);
+            btnLeave.ImageAlign = ContentAlignment.MiddleCenter;
+            btnLeave.TextImageRelation = TextImageRelation.ImageAboveText;
+            btnLeave.Text = "Leave";
+
+            Program.ToolTip?.SetText(btnStart, "Start battle");
+            Program.ToolTip?.SetText(btnLeave, "Quit battle");
+
+            picoChat.Visible = false;
+
+
+            btnStart.Click += btnStart_Click;
+            btnLeave.Click += BtnLeaveClick;
 
             client = Program.TasClient;
             spring = new Spring(Program.SpringPaths);
@@ -106,8 +127,8 @@ namespace ZeroKLobby.Notifications
             client.BattleJoined += (s, e) =>
                 {
                     if (!isVisible) ManualBattleStarted();
-                    //if (IsHostGameRunning()) barContainer.btnDetail.Text = "Rejoin";
-                    //else barContainer.btnDetail.Text = "Start";
+                    if (IsHostGameRunning()) btnStart.Text = "Rejoin";
+                    else btnStart.Text = "Start";
                     
                     
                     //client.ChangeMyUserStatus(false, false);
@@ -118,21 +139,21 @@ namespace ZeroKLobby.Notifications
 
                     if (battle.IsQueue)
                     {
-                        Title = string.Format("Joined {0} Quick Match Queue", battle.QueueName);
-                        TitleTooltip = "Please await people, game will start automatically";
+                        //Title = string.Format("Joined {0} Quick Match Queue", battle.QueueName);
+                        //TitleTooltip = "Please await people, game will start automatically";
                         lbQueue.Visible = true;
                         radioPlay.Visible = false;
                         radioSpec.Visible = false;
-                        btnDetail.Visible = false;
+                        btnStart.Visible = false;
                     }
                     else
                     {
-                        Title = string.Format("Joined battle room hosted by {0}", battle.Founder.Name);
-                        TitleTooltip = "Use button on the left side to start a game";
+                        //Title = string.Format("Joined battle room hosted by {0}", battle.Founder.Name);
+                        //TitleTooltip = "Use button on the left side to start a game";
                         lbQueue.Visible = false;
                         radioPlay.Visible = true;
                         radioSpec.Visible = true;
-                        btnDetail.Visible = true;
+                        btnStart.Visible = true;
                     }
 
                     Program.Downloader.GetResource(DownloadType.MAP, battle.MapName);
@@ -142,21 +163,10 @@ namespace ZeroKLobby.Notifications
                     else engineVersionNeeded = null;
 
                     if (gameBox.Image != null) gameBox.Image.Dispose();
-                    DpiMeasurement.DpiXYMeasurement(this);
-                    int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
-                    int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
-                    gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
-                    using (var g = Graphics.FromImage(gameBox.Image))
-                    {
-                        g.FillRectangle(Brushes.White, 0, 0, scaledIconWidth, scaledIconHeight);
-                        var bi = Program.BattleIconManager.GetBattleIcon(battle.BattleID);
-                        g.DrawImageUnscaled(bi.Image, 0, 0);
-                    }
-                    gameBox.Invalidate();
+                    CreateBattleIcon(Program.BattleIconManager.GetBattleIcon(battle.BattleID));
 
                     RefreshTooltip();
-
-
+                    
                     var team = battle.GetFreeTeamID(client.UserName);
 
                     client.ChangeMyBattleStatus(desiredSpectatorState, HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced, 0, team);
@@ -173,14 +183,14 @@ namespace ZeroKLobby.Notifications
                     RefreshTooltip();
                 };
 
-            client.MyBattleHostExited += (s, e) => { btnDetail.Text = "Start"; };
+            client.MyBattleHostExited += (s, e) => { btnStart.Text = "Start"; };
 
             client.MyBattleStarted += (s, e) =>
                 {
                     try
                     {
-                        if (client.MyBattle.Users[client.UserName].ScriptPassword == null) btnDetail.Text = "Watch";
-                        else btnDetail.Text = "Rejoin";
+                        if (client.MyBattle.Users[client.UserName].ScriptPassword == null) btnStart.Text = "Watch";
+                        else btnStart.Text = "Rejoin";
 
                         if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced)
                         {
@@ -203,7 +213,7 @@ namespace ZeroKLobby.Notifications
                 {
                     if (client.MyBattleStatus != null)
                     {
-                        btnDetail.Enabled = client.MyBattleStatus.SyncStatus == SyncStatuses.Synced;
+                        btnStart.Enabled = client.MyBattleStatus.SyncStatus == SyncStatuses.Synced;
 
                         if (client.MyBattleStatus.IsSpectator && radioPlay.Checked) ChangeGuiSpectatorWithoutEvent(false); // i was spectated
                         if (!client.MyBattleStatus.IsSpectator && radioSpec.Checked) ChangeGuiSpectatorWithoutEvent(true); //i was unspectated
@@ -212,7 +222,7 @@ namespace ZeroKLobby.Notifications
 
             client.BattleClosed += (s, e) =>
                 {
-                    btnDetail.Text = "Start";
+                    btnStart.Text = "Start";
                     if (gameBox.Image != null) gameBox.Image.Dispose();
                     gameBox.Image = null;
                     RefreshTooltip();
@@ -290,6 +300,17 @@ namespace ZeroKLobby.Notifications
                         lbQueue.Text = string.Format(queueLabelFormatter, Math.Round(queueTarget.Subtract(DateTime.Now).TotalSeconds));
                     }
                 };
+
+
+            Program.MainWindow.navigationControl.PageChanged += s =>
+            {
+                if (s != "chat/battle")
+                {
+                    picoChat.Visible = true;
+                }
+                else picoChat.Visible = false;
+            };
+
             timer.Interval = 1000;
             timer.Start();
 
@@ -305,12 +326,11 @@ namespace ZeroKLobby.Notifications
             picoChat.MouseClick += (s, e) => NavigationControl.Instance.Path = "chat/battle";
         }
 
-        protected override void OnSizeChanged(EventArgs e)
+        private void BtnLeaveClick(object sender, EventArgs e)
         {
-            base.OnSizeChanged(e);
-            //picoChat.Width = gameBox.Left - picoChat.Left + 5;
-            zkSplitContainer1.SplitterDistance = (int)(Math.Max(zkSplitContainer1.Width * 0.5, zkSplitContainer1.Width - gameBox.Width)); //make gameBox & miniChatBox to always have >0 size.
+            ActionHandler.StopBattle();
         }
+
 
         /// <summary>
         /// Changes user's desired spectator state of battle
@@ -481,56 +501,27 @@ namespace ZeroKLobby.Notifications
         }
 
 
-
-        public Control GetControl()
-        {
-            return this;
-        }
-        /*public void AddedToContainer(tainer container)
-        {
-            barContainer = container;
-            container.btnDetail.Image = ZklResources.battle;
-            container.btnDetail.Text = "Start";
-            Program.ToolTip.SetText(container.btnDetail, "Start battle");
-            Program.ToolTip.SetText(container.btnStop, "Quit battle");
-            container.Title = "Joined Battle Room";
-            container.TitleTooltip = "Use button on the left side to start a game";
-        }
-
-        public void CloseClicked(NotifyBarContainer container)
-        {
-            Stop();
-        }
-
-        public void DetailClicked(NotifyBarContainer container)
+       
+        public void btnStart_Click(object sender, EventArgs e)
         {
             NavigationControl.Instance.Path = "chat/battle";
             if (IsHostGameRunning()) Rejoin();
             else client.Say(SayPlace.Battle, "", "!start", false);
-        }*/
+        }
 
         void BattleIconManager_BattleChanged(object sender, EventArgs<BattleIcon> e)
         {
             if (e.Data.Battle == Program.TasClient.MyBattle)
             {
-                DpiMeasurement.DpiXYMeasurement(this);
-                int scaledIconHeight = DpiMeasurement.ScaleValueY(BattleIcon.Height);
-                int scaledIconWidth = DpiMeasurement.ScaleValueX(BattleIcon.Width);
-                if (gameBox.Image == null) gameBox.Image = new Bitmap(scaledIconWidth, scaledIconHeight);
-                using (var g = Graphics.FromImage(gameBox.Image))
-                {
-                    g.FillRectangle(Brushes.White, 0, 0, scaledIconWidth, scaledIconHeight);
-                    g.DrawImageUnscaled(e.Data.Image, 0, 0);
-                    gameBox.Invalidate();
-                }
+                CreateBattleIcon(e.Data);
             }
         }
 
-
-        private void zkSplitContainer1_SplitterMoving(object sender, SplitterCancelEventArgs e)
+        private void CreateBattleIcon(BattleIcon e)
         {
-            gameBox.Left = 0; //anchor gameBox to zkSplitContainer slider
+            if (gameBox.Image == null) gameBox.Image = e.GenerateImage(true);
         }
+
 
         private void radioPlay_CheckedChanged(object sender, EventArgs e)
         {
@@ -549,6 +540,7 @@ namespace ZeroKLobby.Notifications
             //    client.ChangeMyBattleStatus(spectate: desiredSpectatorState);
             //}
         }
+
     }
 
 

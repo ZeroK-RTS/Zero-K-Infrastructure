@@ -23,6 +23,7 @@ using System.Reflection;
 using System.Windows.Input;
 using System.Windows.Media;
 using Mission = CMissionLib.Mission;
+using Newtonsoft.Json;
 
 namespace MissionEditor2
 {
@@ -801,6 +802,7 @@ namespace MissionEditor2
             mission.AddAction("Create Mutator", () => BuildMission());
             mission.AddAction("Create Invisible Mutator", () => BuildMission(true));
             mission.AddAction("Test Mission", TestMission);
+            mission.AddAction("Export Localization File", ExportLocalizationFile);
             mission.AddAction("Publish", ShowMissionManagement);
             mission.AddAction("Settings", ShowMissionSettings);
 
@@ -1233,6 +1235,58 @@ namespace MissionEditor2
 		{
 			Mission.Regions.Remove(region);
 		}
+
+        void AddLocalizationFileEntry(Dictionary<string, string> dict, string key, string value)
+        {
+            if (String.IsNullOrWhiteSpace(key)) return;
+            //if (String.IsNullOrEmpty(value)) return;
+            if (dict.ContainsKey(key)) return;
+            dict.Add(key, value);
+        }
+
+        void ExportLocalizationFile()
+        {
+            var saveFileDialog = new SaveFileDialog { DefaultExt = ".json", Filter = "JSON (*.json)|*.json|All files (*.*)|*.*",
+                RestoreDirectory = true, FileName = "missions.en.json" };
+            var result = saveFileDialog.ShowDialog();
+            if (result == true)
+            {
+                //TODO: actually save the file
+                Dictionary<string, string> texts = new Dictionary<string, string>();
+                foreach (Action action in Mission.AllLogic.Where(x=> x is Action))
+                {
+                    if (action is AddObjectiveAction) {
+                        AddObjectiveAction obj = (AddObjectiveAction)action;
+                        AddLocalizationFileEntry(texts, obj.TitleStringID, obj.Title);
+                        AddLocalizationFileEntry(texts, obj.StringID, obj.Description);
+                    }
+                    else if (action is ModifyObjectiveAction) {
+                        ModifyObjectiveAction obj = (ModifyObjectiveAction)action;
+                        AddLocalizationFileEntry(texts, obj.TitleStringID, obj.Title);
+                        AddLocalizationFileEntry(texts, obj.StringID, obj.Description);
+                    }
+                    else if (action is ConvoMessageAction) {
+                        ConvoMessageAction msg = (ConvoMessageAction)action;
+                        AddLocalizationFileEntry(texts, msg.StringID, msg.Message);
+                    }
+                    else if (action is GuiMessageAction) {
+                        GuiMessageAction msg = (GuiMessageAction)action;
+                        AddLocalizationFileEntry(texts, msg.StringID, msg.Message);
+                    }
+                    else if (action is GuiMessagePersistentAction) {
+                        GuiMessagePersistentAction msg = (GuiMessagePersistentAction)action;
+                        AddLocalizationFileEntry(texts, msg.StringID, msg.Message);
+                    }
+                    else if (action is MarkerPointAction) {
+                        MarkerPointAction msg = (MarkerPointAction)action;
+                        AddLocalizationFileEntry(texts, msg.StringID, msg.Text);
+                    }
+                }
+                string output = JsonConvert.SerializeObject(texts, Formatting.Indented);
+                File.WriteAllText(saveFileDialog.FileName, output);
+            }
+            return;
+        }
 
         void MainWindow_Closing(object sender, CancelEventArgs e)
         {

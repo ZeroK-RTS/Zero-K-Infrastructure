@@ -160,7 +160,7 @@ namespace ZkLobbyServer
         {
             ConnectedUser conus;
             if (ConnectedUsers.TryGetValue(kickeeName, out conus)) {
-                conus.Respond(string.Format("You were kicked by {0} : {1}", kickerName, reason));
+                conus.Respond(string.Format("You were kicked for: {0}", reason));
                 conus.RequestCloseAll();
             }
         }

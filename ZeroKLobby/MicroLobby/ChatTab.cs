@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LobbyClient;
 using ZeroKLobby;
+using ZeroKLobby.Controls;
 using ZeroKLobby.Lines;
 using ZeroKLobby.Notifications;
 using ZkData;
@@ -13,13 +14,28 @@ using ZkData;
 namespace ZeroKLobby.MicroLobby
 {
 
-    public partial class ChatTab : UserControl, INavigatable
+    public partial class ChatTab : ZklBaseControl, INavigatable
     {
         BattleChatControl battleChatControl;
         readonly ToolTabs toolTabs = new ToolTabs { Dock = DockStyle.Fill };
         string focusWhenJoin;
 
 
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // ChatTab
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.Margin = new System.Windows.Forms.Padding(0);
+            this.Padding = new System.Windows.Forms.Padding(0);
+            this.Name = "ChatTab";
+            this.Size = new System.Drawing.Size(596, 444);
+            this.ResumeLayout(false);
+
+        }
 
 
         public ChatTab()

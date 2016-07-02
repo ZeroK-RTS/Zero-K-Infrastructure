@@ -1,57 +1,68 @@
-﻿using System;
+﻿// Contact: Jan Lichovník  licho@licho.eu, tel: +420 604 935 349,  www.itl.cz
+// Last change by: licho  29.06.2016
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using ZeroKLobby.Controls;
 using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
-    public class SendBox : TextBox
+    public class SendBox: ZklTextBox
     {
-        readonly List<string> history = new List<string>();
-        int historyIndex = 0;
-        string ncFirstChunk;
-        IEnumerator ncMatchesEn;
-        string ncSecondChunk;
-        string ncWordToComplete = "";
-        bool nickCompleteMode;
-        bool pressingEnter;
-        public event Func<string, IEnumerable<string>> CompleteWord; //processed by ChatControl.cs
-        public event EventHandler<EventArgs<string>> LineEntered = delegate { };
-        bool isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
-        bool isPreviewingHistory = false;
-        String currentText = String.Empty;
+        private readonly List<string> history = new List<string>();
+
+        private int clickCount = 0;
+        private string currentText = string.Empty;
         /// <summary>
-        ///  use Enter key to create new-line or use Enter key to send text to current active Chat-Control
+        ///     use Enter key to create new-line or use Enter key to send text to current active Chat-Control
         /// </summary>
         public bool dontSendTextOnEnter = false;
         /// <summary>
-        ///  use Up/Down key to cycle thru sent text history or use Up/Down key to move caret
+        ///     use Up/Down key to cycle thru sent text history or use Up/Down key to move caret
         /// </summary>
         public bool dontUseUpDownHistoryKey = false;
+        private int historyIndex = 0;
+        private bool isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
+        private bool isPreviewingHistory = false;
+        private long lastClick = 0;
+        private string ncFirstChunk;
+        private IEnumerator ncMatchesEn;
+        private string ncSecondChunk;
+        private string ncWordToComplete = "";
+        private bool nickCompleteMode;
+        private bool pressingEnter;
+        private int systemDoubleClickTime = SystemInformation.DoubleClickTime*10000;
 
         public SendBox()
         {
-            Multiline = true;
-            WordWrap = false; //long text continue to the right instead of appearing in new line
-            this.Font = Config.ChatFont;
-            this.BackColor = Config.BgColor;
-            this.ForeColor = Config.TextColor;
-            this.KeyDown += SendBox_KeyDown;
-            this.MouseDown += SendBox_MouseDown;
+            TextBox.Multiline = true;
+            TextBox.WordWrap = false; //long text continue to the right instead of appearing in new line
+            TextBox.AcceptsTab = true;
         }
+
+        public int SelectionLength { get { return TextBox.SelectionLength; } set { TextBox.SelectionLength = value; } }
+        public int SelectionStart { get { return TextBox.SelectionStart; } set { TextBox.SelectionStart = value; } }
+        public bool Multiline { get { return TextBox.Multiline; } set { TextBox.Multiline = value; } }
+        public ScrollBars ScrollBars { get { return TextBox.ScrollBars; } set { TextBox.ScrollBars = value; } }
+        public bool WordWrap { get { return TextBox.WordWrap; } set { TextBox.WordWrap = value; } }
+        public event Func<string, IEnumerable<string>> CompleteWord; //processed by ChatControl.cs
+        public event EventHandler<EventArgs<string>> LineEntered = delegate { };
 
         protected override void OnKeyPress(KeyPressEventArgs e)
         {
-            if (e.KeyChar == '\t') 
+            if (e.KeyChar == '\t')
             {
                 if (CompleteNick()) e.Handled = true; //intercept TAB when cursor is at end of a text (for autocomplete) but ignore other cases
             }
             if (e.KeyChar == '\r' && !dontSendTextOnEnter)
             {
                 if (!pressingEnter) SendTextNow(); //send text online
-                e.Handled = true; //block ENTER because we already sent the text, no need to add newline character to textbox. We send it now rather than waiting the newline at OnKeyUp of ENTER (because we dont want this delay).
+                e.Handled = true;
+                    //block ENTER because we already sent the text, no need to add newline character to textbox. We send it now rather than waiting the newline at OnKeyUp of ENTER (because we dont want this delay).
                 pressingEnter = true; //remember that we already pressed ENTER to avoid spamming sendtext due to key repeat.
             }
             base.OnKeyPress(e);
@@ -63,7 +74,7 @@ namespace ZeroKLobby.MicroLobby
             //{
             //    SendTextNow();
             //}
-            if (pressingEnter && e.KeyCode == Keys.Return) pressingEnter = false; 
+            if (pressingEnter && e.KeyCode == Keys.Return) pressingEnter = false;
             base.OnKeyUp(e);
         }
 
@@ -88,7 +99,7 @@ namespace ZeroKLobby.MicroLobby
                         if (historyIndex < 0) historyIndex = 0;
                         if (historyIndex < history.Count) Text = history[historyIndex];
                         if (historyIndex == history.Count) Text = currentText;
-                        SelectionStart = Text.Length;
+                        TextBox.SelectionStart = Text.Length;
                     }
                 }
                 else if (e.KeyCode == Keys.Down)
@@ -110,10 +121,10 @@ namespace ZeroKLobby.MicroLobby
                         if (historyIndex == history.Count) Text = currentText;
                         if (historyIndex > history.Count)
                         {
-                            historyIndex = history.Count+1;
-                            Text = String.Empty;
+                            historyIndex = history.Count + 1;
+                            Text = string.Empty;
                         }
-                        SelectionStart = Text.Length;
+                        TextBox.SelectionStart = Text.Length;
                     }
                 }
                 else
@@ -129,7 +140,7 @@ namespace ZeroKLobby.MicroLobby
             base.OnPreviewKeyDown(e);
         }
 
-        void SendTextNow()
+        private void SendTextNow()
         {
             var line = Text.Replace("\t", "        ").TrimEnd(new[] { '\r', '\n' });
 
@@ -139,15 +150,15 @@ namespace ZeroKLobby.MicroLobby
                 historyIndex = history.Count;
             }
 
-            Text = String.Empty;
+            Text = string.Empty;
             LineEntered(this, new EventArgs<string>(line)); //send text online
         }
 
-        bool CompleteNick()
+        private bool CompleteNick()
         {
             if (CompleteWord == null) return false;
 
-            var ss = SelectionStart; //cursor position
+            var ss = TextBox.SelectionStart; //cursor position
             if (isLinux)
             {
                 ss = ss - 1; //in Linux Mono (not sure which version), OnKeyPress() is called after text is entered when different than in MS Windows
@@ -198,43 +209,43 @@ namespace ZeroKLobby.MicroLobby
 
                 //remake chatbox text
                 Text = ncFirstChunk + nick + ncSecondChunk;
-                SelectionStart = ncFirstChunk.Length + nick.Length;
+                TextBox.SelectionStart = ncFirstChunk.Length + nick.Length;
             }
             return true;
         }
 
-        
+
         //Reference: http://stackoverflow.com/questions/1124639/winforms-textbox-using-ctrl-backspace-to-delete-whole-word (second answer)
         internal void CtrlBackspace()
         {
-            int selStart = SelectionStart;
+            var selStart = TextBox.SelectionStart;
             while (selStart > 0 && Text.Substring(selStart - 1, 1) == " ")
             {
                 selStart--;
             }
-            int prevSpacePos = -1;
+            var prevSpacePos = -1;
             if (selStart != 0)
             {
                 prevSpacePos = Text.LastIndexOf(' ', selStart - 1);
             }
-            Select(prevSpacePos + 1, SelectionStart - prevSpacePos - 1);
-            SelectedText = "";
+            Select(prevSpacePos + 1, TextBox.SelectionStart - prevSpacePos - 1);
+            TextBox.SelectedText = "";
         }
 
-        internal void InsertColorCharacter(string textColor,string backColor)
+        internal void InsertColorCharacter(string textColor, string backColor)
         {
-            if (SelectionLength > 1) //color selection
+            if (TextBox.SelectionLength > 1) //color selection
             {
-                int curSelectionStart = SelectionStart;
-                int selLen = SelectionLength;
-                Text = Text.Insert(curSelectionStart + SelectionLength, "\x03");
+                var curSelectionStart = TextBox.SelectionStart;
+                var selLen = TextBox.SelectionLength;
+                Text = Text.Insert(curSelectionStart + TextBox.SelectionLength, "\x03");
                 Text = Text.Insert(curSelectionStart, "\x03" + textColor + "," + backColor);
-                SelectionStart = curSelectionStart + selLen + 6;
+                TextBox.SelectionStart = curSelectionStart + selLen + 6;
             }
-            else if (SelectionStart > 0) //color previous word
+            else if (TextBox.SelectionStart > 0) //color previous word
             {
-                int end = SelectionStart;
-                int begin = SelectionStart-1;
+                var end = TextBox.SelectionStart;
+                var begin = TextBox.SelectionStart - 1;
                 while (begin > 0 && (Text.Substring(begin, 1) == " " || Text.Substring(begin, 1) == "\t"))
                 {
                     begin = begin - 1;
@@ -245,15 +256,15 @@ namespace ZeroKLobby.MicroLobby
                 }
                 Text = Text.Insert(end, "\x03");
                 Text = Text.Insert(begin, "\x03" + textColor + "," + backColor);
-                SelectionStart = end + 6;
+                TextBox.SelectionStart = end + 6;
             }
         }
 
         //Ctrl+A and Ctrl+Backspace behaviour.
         //Reference: http://stackoverflow.com/questions/14429445/how-can-i-allow-things-such-as-ctrl-a-and-ctrl-backspace-in-a-c-sharp-textbox
 
-        private void SendBox_KeyDown(object sender, KeyEventArgs e)
-        {
+        protected override void OnKeyDown(KeyEventArgs e) { 
+            base.OnKeyDown(e);
             if (e.Control & e.KeyCode == Keys.A)
             {
                 SelectAll();
@@ -262,25 +273,24 @@ namespace ZeroKLobby.MicroLobby
             {
                 e.SuppressKeyPress = true;
                 CtrlBackspace();
-            }else if (e.Control & e.KeyCode == Keys.R)
-                InsertColorCharacter("04","12"); //red on light cyan
-            else if (e.Control & e.KeyCode == Keys.G)
-                InsertColorCharacter("03", "12"); //green on light cyan
-            else if (e.Control & e.KeyCode == Keys.B)
-                InsertColorCharacter("02", "12");//blue on light cyan
+            }
+            else if (e.Control & e.KeyCode == Keys.R) InsertColorCharacter("04", "12"); //red on light cyan
+            else if (e.Control & e.KeyCode == Keys.G) InsertColorCharacter("03", "12"); //green on light cyan
+            else if (e.Control & e.KeyCode == Keys.B) InsertColorCharacter("02", "12"); //blue on light cyan
         }
 
-        private int clickCount = 0;
-        private long lastClick = 0;
-        private int systemDoubleClickTime = SystemInformation.DoubleClickTime * 10000;
-        private void SendBox_MouseDown(object sender, EventArgs e)
-        {   //reference: http://stackoverflow.com/questions/5014825/triple-mouse-click-in-c
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+            //reference: http://stackoverflow.com/questions/5014825/triple-mouse-click-in-c
             //10,000 ticks is a milisecond, therefore 2,000,000 ticks is 200milisecond . http://msdn.microsoft.com/en-us/library/system.datetime.ticks.aspx
             //double click time: http://msdn.microsoft.com/en-us/library/system.windows.forms.systeminformation.doubleclicktime(v=vs.110).aspx
             if (DateTime.Now.Ticks - lastClick <= systemDoubleClickTime) clickCount = clickCount + 1;
             else clickCount = 1;
-            if (clickCount%3 == 0) SelectAll(); //select all text when triple click
+            if (clickCount % 3 == 0) SelectAll(); //select all text when triple click
             lastClick = DateTime.Now.Ticks;
         }
+
     }
 }

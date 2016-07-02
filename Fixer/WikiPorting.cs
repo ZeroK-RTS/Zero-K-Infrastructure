@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Fixer
 {
+    /// <summary>Converts Google Code wiki pages to Github's Markdown format.</summary>
     public static class WikiPorting
     {
         public static string ConvertText(string str)

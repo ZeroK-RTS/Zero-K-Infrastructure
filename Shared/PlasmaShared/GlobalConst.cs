@@ -31,8 +31,8 @@ namespace ZkData
             #elif TEST
                 Mode = ModeType.Test;
             #else
-                Mode = ModeType.Local;
-            #endif
+            Mode = ModeType.Local;
+#endif
         }
 
         static void SetMode(ModeType newMode)
@@ -41,7 +41,7 @@ namespace ZkData
                 case ModeType.Local:
                     BaseSiteUrl = "http://localhost:9739";
                     ZkDataContextConnectionString =
-                        @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true";
+                        @"Data Source=.;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true";
                     SpringieNode = "alpha";
 
                     LobbyServerHost = "localhost";

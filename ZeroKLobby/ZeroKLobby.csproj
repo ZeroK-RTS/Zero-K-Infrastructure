@@ -268,9 +268,6 @@
     <Compile Include="MicroLobby\ChatTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MicroLobby\ChatTab.Designer.cs">
-      <DependentUpon>ChatTab.cs</DependentUpon>
-    </Compile>
     <Compile Include="MicroLobby\SpringsettingForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -410,11 +407,9 @@
     </Compile>
     <Compile Include="MicroLobby\SayCommandHandler.cs" />
     <Compile Include="MicroLobby\SendBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\ToolTabs.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="MicroLobby\ToolTabs.cs" />
     <Compile Include="Notifications\ConnectBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -426,9 +421,6 @@
     </Compile>
     <Compile Include="MicroLobby\ChatControl.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\ChatControl.Designer.cs">
-      <DependentUpon>ChatControl.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroLobby\PopupNotify.cs">
       <SubType>Form</SubType>
@@ -529,12 +521,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\PwBar.resx">
       <DependentUpon>PwBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\ChatControl.resx">
-      <DependentUpon>ChatControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\ChatTab.resx">
-      <DependentUpon>ChatTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ModOptionsControl.resx">
       <DependentUpon>ModOptionsControl.cs</DependentUpon>
@@ -658,7 +644,6 @@
     <Resource Include="Images\add.png" />
     <EmbeddedResource Include="NativeLibs\libCSteamworks.so" />
     <EmbeddedResource Include="NativeLibs\libsteam_api.so" />
-    <EmbeddedResource Include="NativeLibs\OpenSans-Semibold.ttf" />
     <EmbeddedResource Include="NativeLibs\OpenSans-Regular.ttf" />
     <EmbeddedResource Include="NativeLibs\SM.ttf" />
     <None Include="packages.config" />

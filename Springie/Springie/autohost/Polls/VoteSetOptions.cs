@@ -17,7 +17,7 @@ namespace Springie.autohost.Polls
         protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount) {
             winCount = 0;
             question = null;
-            if (ah.config.Mode == PlasmaShared.AutohostMode.Serious)
+            if (ah.mode == PlasmaShared.AutohostMode.Serious)
             {
                 AutoHost.Respond(tas, spring, e, "Serious host, no custom options");
                 return false;

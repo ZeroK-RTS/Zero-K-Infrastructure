@@ -43,8 +43,7 @@ namespace ZeroKLobby.MicroLobby
         void HideAdvanced()
         {
             int designHeight = 235;
-            DpiMeasurement.DpiXYMeasurement(this); //this measurement use cached value. It won't cost anything if another measurement was already done in other control element
-            Height = DpiMeasurement.ScaleValueY(designHeight); //DpiMeasurement is a static class stored in ZeroKLobby\Util.cs
+            Height = (int)designHeight;
             advancedOptionsGroup.Visible = false;
             showAdvancedButton.Text = "Show Advanced Options";
         }
@@ -52,8 +51,7 @@ namespace ZeroKLobby.MicroLobby
         void ShowAdvanced()
         {
             int designHeight = 405;
-            DpiMeasurement.DpiXYMeasurement(this);
-            Height = DpiMeasurement.ScaleValueY(designHeight);
+            Height = (int)designHeight;
             advancedOptionsGroup.Visible = true;
             showAdvancedButton.Text = "Hide Advanced Options";
         }

@@ -92,6 +92,11 @@ namespace LobbyClient.Legacy
 			IsEmote = isEmote;
 			Channel = channel;
 		}
+
+        public override string ToString()
+        {
+            return $"{Channel} {UserName} {Text}";
+        }
 	} ;
 
 	public class TasInputArgs: EventArgs

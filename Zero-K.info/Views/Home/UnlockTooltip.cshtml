@@ -8,7 +8,7 @@
 <span>
 <h3>@u.Name</h3>
 <img src='@u.ImageUrl' alt='@u.Name'/><br/>
-Type: <span style='color:@u.LabelColor;'>@u.UnlockType</span><br/>
+Type: <span style='color:@u.LabelColor;'>@u.UnlockType.Description()</span><br/>
 @if (u.NeededLevel > 0)
 {
     @:Level: @u.NeededLevel<br />

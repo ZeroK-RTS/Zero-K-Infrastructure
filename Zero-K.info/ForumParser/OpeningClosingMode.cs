@@ -4,6 +4,6 @@
     {
         SelfClosed = 0,
         Opening = 1,
-        Closing = 2
+        Closing = 2,
     }
 }

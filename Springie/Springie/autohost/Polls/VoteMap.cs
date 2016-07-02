@@ -32,7 +32,7 @@ namespace Springie.autohost.Polls
                     ah.FilterMaps(words, out vals, out indexes);
                     if (vals.Length > 0)
                     {
-                    	bool serious = ah.config.Mode == AutohostMode.Serious;
+                    	bool serious = ah.mode == AutohostMode.Serious;
                         foreach (string possibleMap in vals)
                         {
                             map = possibleMap;

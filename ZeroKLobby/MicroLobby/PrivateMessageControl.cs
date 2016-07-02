@@ -38,10 +38,6 @@ namespace ZeroKLobby.MicroLobby
         Program.TasClient.UserAdded += TasClient_UserAdded;
         Program.TasClient.UserRemoved += TasClient_UserRemoved;
 
-        var extras = new BitmapButton();
-        extras.Text = "Extras";
-        extras.Click += (s, e) => { ContextMenus.GetPrivateMessageContextMenu(this).Show(extras, new Point(0, 0)); };
-        ChatBox.Controls.Add(extras);
 
         sendBox.CompleteWord += (word) => //autocomplete of username
         {

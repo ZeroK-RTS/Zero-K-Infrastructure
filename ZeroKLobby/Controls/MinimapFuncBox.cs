@@ -7,7 +7,7 @@ using ZkData;
 
 namespace ZeroKLobby.Controls
 {
-    public partial class MinimapFuncBox : UserControl
+    public partial class MinimapFuncBox : ZklBaseControl
     {
         public MinimapFuncBox()
         {

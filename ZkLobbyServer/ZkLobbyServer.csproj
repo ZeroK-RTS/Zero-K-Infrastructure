@@ -72,15 +72,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="vtortola.WebSockets">
-      <HintPath>..\packages\vtortola.WebSocketListener.2.1.7.0\lib\net45\vtortola.WebSockets.dll</HintPath>
-    </Reference>
-    <Reference Include="vtortola.WebSockets.Deflate">
-      <HintPath>..\packages\vtortola.WebSocketListener.2.1.7.0\lib\net45\vtortola.WebSockets.Deflate.dll</HintPath>
-    </Reference>
-    <Reference Include="vtortola.WebSockets.Rfc6455">
-      <HintPath>..\packages\vtortola.WebSocketListener.2.1.7.0\lib\net45\vtortola.WebSockets.Rfc6455.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChannelManager.cs" />
@@ -95,8 +86,6 @@
     <Compile Include="ServerRunner.cs" />
     <Compile Include="ZkLobbyServer.cs" />
     <Compile Include="TcpTransportServerListener.cs" />
-    <Compile Include="WebSocketServerTransport.cs" />
-    <Compile Include="WebSocketTransportServerListener.cs" />
     <Compile Include="ZkServerTraceListener.cs" />
   </ItemGroup>
   <ItemGroup>

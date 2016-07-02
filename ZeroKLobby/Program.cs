@@ -117,7 +117,6 @@ namespace ZeroKLobby
 
                 // extract fonts
                 EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.SM.ttf", "SM.ttf");
-                EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.OpenSans-Semibold.ttf", "OpenSans-Semibold.ttf");
                 EmbeddedResourceExtractor.ExtractFile("ZeroKLobby.NativeLibs.OpenSans-Regular.ttf", "OpenSans-Regular.ttf");
 
                 Conf = new Config();

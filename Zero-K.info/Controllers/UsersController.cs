@@ -135,6 +135,7 @@ namespace ZeroKWeb.Controllers
         {
             public string Name { get; set; }
             public string IP { get; set; }
+            public string Country { get; set; }
             public int? UserID { get; set; }
             public DateTime? RegisteredFrom { get; set; }
             public DateTime? RegisteredTo { get; set; }
@@ -160,6 +161,11 @@ namespace ZeroKWeb.Controllers
             {
                 if (!string.IsNullOrEmpty(model.IP)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == model.IP));
                 if (model.UserID.HasValue) ret = ret.Where(x => x.AccountUserIDs.Any(y => y.UserID == model.UserID));
+            }
+            if (!string.IsNullOrEmpty(model.Country))
+            {
+                var termLower = model.Country.ToLower();
+                ret = ret.Where(x => x.Country.ToLower().Contains(termLower));
             }
 
             if (model.RegisteredFrom.HasValue) ret = ret.Where(x => x.FirstLogin >= model.RegisteredFrom);

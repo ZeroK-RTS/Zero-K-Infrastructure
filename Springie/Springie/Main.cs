@@ -242,23 +242,24 @@ namespace Springie
         public string Handle;
         public string Map;
         public int MaxPlayers;
+        public int Mode;
 
         public SpawnConfig(string owner, Dictionary<string, string> config = null)
         {
             Owner = owner;
             if (config != null)
             {
+                string str;
                 config.TryGetValue("password", out Password);
                 config.TryGetValue("mod", out Mod);
                 config.TryGetValue("title", out Title);
                 config.TryGetValue("engine", out Engine);
                 config.TryGetValue("handle", out Handle);
                 config.TryGetValue("map", out Map);
-                string mp;
-                if (config.TryGetValue("maxplayers", out mp))
-                {
-                    int.TryParse(mp, out MaxPlayers);
-                }
+                if (config.TryGetValue("maxplayers", out str))
+                    int.TryParse(str, out MaxPlayers);
+                if (config.TryGetValue("mode", out str))
+                    int.TryParse(str, out Mode);
             }
         }
 
