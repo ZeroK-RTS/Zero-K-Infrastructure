@@ -153,7 +153,8 @@ local function FindAllLogic(logicType)
   for _, trigger in ipairs(triggers) do
     for _, logicItem in ipairs(trigger.logic) do
       if logicItem.logicType == logicType then
-        logicItems[logicItem] = trigger
+        --logicItems[logicItem] = trigger -- we'll want to iterate this table using pairs, so just to be safe don't use table keys
+        logicItems[#logicItems+1] = {logicItem, trigger}
       end
     end
   end
@@ -353,25 +354,29 @@ do
     end
   end
   
-  for condition in pairs(FindAllLogic"TimeCondition") do
+  for i,logic in pairs(FindAllLogic"TimeCondition") do
+    local condition = logic[1]
     condition.args.period = condition.args.frames
   end
   
-  for condition in pairs(FindAllLogic"UnitCreatedCondition") do
+  for i,logic in pairs(FindAllLogic"UnitCreatedCondition") do
+    local condition = logic[1]
     condition.args.unitDefIDs = {}
     for _, unitName in ipairs(condition.args.units) do
       condition.args.unitDefIDs[UnitDefNames[unitName].id] = true
     end
   end
   
-  for condition in pairs(FindAllLogic"UnitFinishedCondition") do
+  for i,logic in pairs(FindAllLogic"UnitFinishedCondition") do
+    local condition = logic[1]
     condition.args.unitDefIDs = {}
     for _, unitName in ipairs(condition.args.units) do
       condition.args.unitDefIDs[UnitDefNames[unitName].id] = true
     end
   end
   
-  for condition in pairs(FindAllLogic"UnitFinishedInFactoryCondition") do
+  for i,logic in pairs(FindAllLogic"UnitFinishedInFactoryCondition") do
+    local condition = logic[1]
     condition.args.unitDefIDs = {}
     for _, unitName in ipairs(condition.args.units) do
       condition.args.unitDefIDs[UnitDefNames[unitName].id] = true
@@ -386,11 +391,13 @@ do
     end
   end
   
-  for condition in pairs(FindAllLogic("UnitSelectedCondition")) do
+  for i,logic in pairs(FindAllLogic("UnitSelectedCondition")) do
+    local condition = logic[1]
     selectedUnitConditionGroups = MergeSets(selectedUnitConditionGroups, condition.args.groups)
   end
   
-  for condition in pairs(FindAllLogic("UnitIsVisibleCondition")) do
+  for i,logic in pairs(FindAllLogic("UnitIsVisibleCondition")) do
+    local condition = logic[1]
     unitIsVisibleConditionGroups = MergeSets(unitIsVisibleConditionGroups, condition.args.groups)
   end
 end
