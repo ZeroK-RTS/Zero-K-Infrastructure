@@ -217,7 +217,7 @@ namespace ZeroKLobby.MicroLobby
 
             }
             else if (e.Place == SayPlace.MessageBox) Trace.TraceInformation("TASC: {0}", e.Text);
-            if (e.Place == SayPlace.MessageBox) WarningBar.DisplayWarning(e.Text, "Message from server");
+            if (e.Place == SayPlace.MessageBox) WarningBar.DisplayWarning(e.Text);
         }
 
         void FriendManager_FriendAdded(object sender, EventArgs<string> e)
@@ -236,7 +236,7 @@ namespace ZeroKLobby.MicroLobby
 
         void TasClient_ChannelJoinFailed(object sender, JoinChannelResponse joinChannelResponse)
         {
-            WarningBar.DisplayWarning("Channel Joining Error - " + joinChannelResponse.Reason, "Cannot join channel");
+            WarningBar.DisplayWarning("Channel Joining Error - " + joinChannelResponse.Reason);
         }
 
 

@@ -36,18 +36,18 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(18, 15);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.Size = new System.Drawing.Size(46, 18);
             this.label1.TabIndex = 0;
             this.label1.Text = "label1";
             // 
             // MissionBar
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.label1);
             this.Name = "MissionBar";
-            this.Size = new System.Drawing.Size(368, 45);
+            this.Size = new System.Drawing.Size(1222, 45);
             this.Load += new System.EventHandler(this.MissionBar_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

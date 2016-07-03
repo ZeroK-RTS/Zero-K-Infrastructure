@@ -36,18 +36,18 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(24, 16);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(271, 13);
+            this.label1.Size = new System.Drawing.Size(376, 18);
             this.label1.TabIndex = 0;
             this.label1.Text = "Please wait, SinglePlayer is downloading game and map";
             // 
             // SinglePlayerBar
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.label1);
             this.Name = "SinglePlayerBar";
-            this.Size = new System.Drawing.Size(336, 49);
+            this.Size = new System.Drawing.Size(1222, 49);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -36,18 +36,17 @@
             this.pnl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnl.Location = new System.Drawing.Point(0, 0);
             this.pnl.Name = "pnl";
-            this.pnl.Size = new System.Drawing.Size(480, 32);
+            this.pnl.Size = new System.Drawing.Size(1222, 32);
             this.pnl.TabIndex = 0;
             // 
             // PwBar
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.pnl);
-            this.ForeColor = System.Drawing.Color.White;
             this.Name = "PwBar";
-            this.Size = new System.Drawing.Size(480, 32);
+            this.Size = new System.Drawing.Size(1222, 32);
             this.ResumeLayout(false);
 
         }

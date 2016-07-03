@@ -1,41 +1,32 @@
-﻿using System.Windows.Forms;
-using ZeroKLobby.Controls;
-using ZeroKLobby.MicroLobby;
+﻿// Contact: Jan Lichovník  licho@licho.eu, tel: +420 604 935 349,  www.itl.cz
+// Last change by: licho  03.07.2016
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ZeroKLobby.Notifications
 {
     public partial class WarningBar: ZklNotifyBar
     {
-        private string title;
-
         protected WarningBar(string text)
         {
             InitializeComponent();
+            lbText.Font = Config.GeneralFont;
             lbText.Text = text;
         }
 
-        public static WarningBar DisplayWarning(string text, string title="Warning")
+        public static WarningBar DisplayWarning(string text)
         {
             var bar = new WarningBar(text);
-            bar.title = title;
 
             Program.NotifySection.AddBar(bar);
             return bar;
         }
 
-
-/*        public void AddedToContainer(NotifyBarContainer container)
+        private void bitmapButton1_Click(object sender, EventArgs e)
         {
-            container.btnDetail.Enabled = false;
-            container.btnDetail.BackgroundImage = ZklResources.warning;
-            container.Title = title;
-        }*/
-
-
-        public Control GetControl()
-        {
-            return this;
+            Program.NotifySection.RemoveBar(this);
         }
-
     }
 }
