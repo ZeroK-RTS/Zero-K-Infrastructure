@@ -1403,7 +1403,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
         public bool TryNavigate(params string[] path)
         {
-            return true;
+            if (path?.Length > 0 && path?[0] == PathHead) return true;
+            else return false;
         }
 
         public bool Hilite(HiliteLevel level, string path)

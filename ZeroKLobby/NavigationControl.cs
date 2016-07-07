@@ -203,14 +203,14 @@ namespace ZeroKLobby
                     Width = 200,
                     Height = TabButtonHeight
                 },
-                new ButtonInfo
+                /*new ButtonInfo
                 {
                     Label = "SKIRMISH",
                     TargetPath = "skirmish",
                     Icon = Buttons.sp,
                     Width = 200,
                     Height = TabButtonHeight
-                },
+                },*/
                 new ButtonInfo { Label = "MULTIPLAYER", TargetPath = "battles", Icon = Buttons.mp, Width = 250, Height = TabButtonHeight },
                 new ButtonInfo { Label = "WEB", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon = Buttons.extras, Height = TabButtonHeight, Width = 150 },
                 new ButtonInfo { Label = "CHAT", TargetPath = "chat", Icon = Buttons.chat, Height = TabButtonHeight, Width = 150 }
