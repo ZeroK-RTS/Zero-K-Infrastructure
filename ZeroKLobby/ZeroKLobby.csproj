@@ -200,9 +200,6 @@
     <Compile Include="MicroLobby\HexToUnicodeConverter.Designer.cs">
       <DependentUpon>HexToUnicodeConverter.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\ExtrasToolTabs.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="MicroLobby\ExtrasTab\SkirmishControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -214,9 +211,6 @@
     </Compile>
     <Compile Include="MicroLobby\TextColoringPanel.Designer.cs">
       <DependentUpon>TextColoringPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\ExtrasTab.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Notifications\PwBar.cs">
       <SubType>UserControl</SubType>

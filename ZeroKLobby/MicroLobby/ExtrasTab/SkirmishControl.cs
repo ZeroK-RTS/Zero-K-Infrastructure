@@ -17,11 +17,12 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using ZeroKLobby.Controls;
 using ZkData;
 
 namespace ZeroKLobby.MicroLobby.ExtrasTab
 {
-    public partial class SkirmishControl : UserControl
+    public partial class SkirmishControl : ZklBaseControl, INavigatable
     { //Mix match from BattleChatControl.cs, Benchmarker/MainForm.cs, Springie/AutoHost_commands.cs
         private PictureBox minimapBox;
         Image minimap;
@@ -65,6 +66,8 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             //Note: always manually remove "((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();" from
             //splitcontainer, it have history to cause crash in Linux. Unknown reason.
             InitializeComponent();
+
+
             minimapBox = new PictureBox { Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.CenterImage };
             minimapPanel.Controls.Add(minimapBox);
             minimapBox.MouseDown += Event_MinimapBox_MouseDown;
@@ -1395,5 +1398,29 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     //Program.ToolTip.SetMap(minimapBox, (string)map_comboBox.SelectedItem);
             }
         }
+
+        public string PathHead => "skirmish";
+
+        public bool TryNavigate(params string[] path)
+        {
+            return true;
+        }
+
+        public bool Hilite(HiliteLevel level, string path)
+        {
+            return true;
+        }
+
+        public string GetTooltip(params string[] path)
+        {
+            return "Skirmish";
+        }
+
+        public void Reload()
+        {
+        }
+
+        public bool CanReload => false;
+        public bool IsBusy => false;
     }
 }

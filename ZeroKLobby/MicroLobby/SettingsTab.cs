@@ -301,7 +301,7 @@ namespace ZeroKLobby.MicroLobby
 
         private void btnOfflineSkirmish_Click(object sender, EventArgs e)
         {
-            Program.MainWindow.navigationControl.Path = "zk://extra/skirmish";
+            Program.MainWindow.navigationControl.Path = "zk://skirmish";
         }
 
         private void btnServerSocket_Click(object sender, EventArgs e)

@@ -206,7 +206,7 @@ namespace ZeroKLobby
                 new ButtonInfo
                 {
                     Label = "SKIRMISH",
-                    TargetPath = "extra/skirmish",
+                    TargetPath = "skirmish",
                     Icon = Buttons.sp,
                     Width = 200,
                     Height = TabButtonHeight
@@ -304,7 +304,7 @@ namespace ZeroKLobby
             AddTabPage(new SettingsTab(), "Settings");
             AddTabPage(new ServerTab(), "Server");
             AddTabPage(new DownloaderTab(), "Rapid");
-            AddTabPage(new ExtrasTab(), "Extra");
+            AddTabPage(new SkirmishControl(), "Skirmish");
             var home = AddTabPage(new WelcomeTab(), "Welcome");
 
             tabControl.SelectTab(home);
