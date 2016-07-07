@@ -55,7 +55,7 @@
             this.bitmapButton1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.bitmapButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bitmapButton1.ForeColor = System.Drawing.Color.White;
-            this.bitmapButton1.Location = new System.Drawing.Point(917, 12);
+            this.bitmapButton1.Location = new System.Drawing.Point(1147, 12);
             this.bitmapButton1.Name = "bitmapButton1";
             this.bitmapButton1.Size = new System.Drawing.Size(82, 34);
             this.bitmapButton1.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
@@ -72,7 +72,7 @@
             this.Controls.Add(this.bitmapButton1);
             this.Controls.Add(this.lbText);
             this.Name = "WarningBar";
-            this.Size = new System.Drawing.Size(1017, 59);
+            this.Size = new System.Drawing.Size(1247, 59);
             this.ResumeLayout(false);
             this.PerformLayout();
 
