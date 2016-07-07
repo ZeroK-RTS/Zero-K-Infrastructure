@@ -197,7 +197,7 @@ namespace ZeroKLobby.MicroLobby
                     if (e.UserName != Program.TasClient.UserName)
                         Program.TasClient.Say(SayPlace.User,
                                               otherUserName,
-                                              "Sorry, I'm busy and do not receive messages. If you want to ask something, use #zk channel. If you have issue to report use http://code.google.com/p/zero-k/issues/list",
+                                              "Sorry, I'm busy and do not receive messages. If you want to ask something, use #zk channel. If you have issue to report use https://github.com/ZeroK-RTS/Zero-K/issues",
                                               false);
                 }
                 else
