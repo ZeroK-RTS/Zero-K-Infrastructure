@@ -4,11 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using ZeroKLobby.Controls;
 using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
-	public partial class SettingsTab: UserControl, INavigatable
+	public partial class SettingsTab: ZklBaseControl, INavigatable
 	{
 		readonly ContextMenu cmDisplay;
 
