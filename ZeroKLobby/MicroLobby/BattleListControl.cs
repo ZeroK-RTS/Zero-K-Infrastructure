@@ -131,11 +131,10 @@ namespace ZeroKLobby.MicroLobby
             using (var dialog = new HostDialog(filter))
             {
                 if (dialog.ShowDialog() != DialogResult.OK) return;
-                string[] springieCommands = dialog.SpringieCommands.Lines();
 
                 ActionHandler.StopBattle();
 
-                ActionHandler.SpawnAutohost(dialog.GameName, dialog.BattleTitle, dialog.Password, springieCommands);
+                ActionHandler.SpawnAutohost(dialog.GameName, dialog.BattleTitle, dialog.Password, null);
             }
         }
 
@@ -276,7 +275,7 @@ namespace ZeroKLobby.MicroLobby
         }
 
         void PainOpenBattleButton(Graphics g, ref int x, ref int y, int scaledMapCellWidth, int scaledIconWidth)
-        {
+        {   
             g.DrawImage(ZklResources.border,
                 x + (int)3,
                 y + (int)3,

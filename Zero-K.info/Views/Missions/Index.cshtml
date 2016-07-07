@@ -3,47 +3,74 @@
 @{
 	Page.Title = "Singleplayer and missions";
 }
-<span>Design new missions with the <a href='@Url.Action("Index", "Wiki", new {node = "MissionEditorStartPage"})'>
-	Zero-K Mission Editor</a> </span>
 
 <form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
-  <span title="List only featured missions">
-    Official: @Html.CheckBox("featured", true)
-  </span>
-	<span title="Missions for one player">Singleplayer: @Html.CheckBox("sp", true)</span>
-	<span title="Missions where players fight together versus computer">Coop: @Html.CheckBox("coop", true)</span>
-	<span title="Missions where players fight each other">Adversarial: @Html.CheckBox("adversarial", true)</span>
- 	Name or author: @Html.TextBox("search", Model.SearchString)	<input name="sa" value="Search" type="image" src="/img/search_img.png" style="border: none; vertical-align:middle;" />
+    <label>
+        <span title="List only featured missions">
+            @Html.CheckBox("featured", true) official&nbsp;&nbsp;
+        </span>
+    </label>
+    
+    <label>
+        <span title="Missions for one player">@Html.CheckBox("sp", true) singleplayer&nbsp;&nbsp;</span>
+    </label>
+    <label>
+        <span title="Missions where players fight together versus computer">@Html.CheckBox("coop", true) coop&nbsp;&nbsp;</span>
+    </label>
+    <label>
+        <span title="Missions where players fight each other">@Html.CheckBox("adversarial", true) adversarial&nbsp;&nbsp;</span>
+    </label>
+    Name or author: @Html.TextBox("search", Model.SearchString) <input name="sa" value="Search" type="image" src="/img/search_img.png" style="border: none; vertical-align: middle;" />
 </form>
 
+<script type="text/javascript">
+        $(function(){
+         $("#ajaxScrollForm").find("input[type='checkbox']").on('change',function() {
+             $(this).closest('form').submit();
+           });
+        });
+</script>
+
 <table width='100%'>
-	<tr>
-		<td valign='top'>
-			<div id='ajaxScrollTarget'>
-        <b>@Model.Title</b> <br />
-				@{Html.RenderPartial("TileList", Model.LastUpdated);}
-			</div>
-		</td>
-		<td width="250" valign="top" align="left">
-			<h3>Highest rated</h3>
-			<ol>
-				@foreach (var mission in Model.MostRating.Take(15)) {
-					<li><span title='$mission$@mission.MissionID'>@Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })</span></li>
-				}
-			</ol>
-			<h3>Most played</h3>
-			<ol>
-				@foreach (var mission in Model.MostPlayed.Take(15)) {
-					<li><span title='$mission$@mission.MissionID'>@Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })</span></li>
-				}
-			</ol>
+    <tr>
+        <td valign='top'>
+            <div id='ajaxScrollTarget'>
+                <b>@Model.Title</b> <br/>
+                @{Html.RenderPartial("TileList", Model.LastUpdated);}
+            </div>
+        </td>
+        <td width="250" valign="top" align="left">
+            <h3>Highest rated</h3>
+            <ol>
+                @foreach (var mission in Model.MostRating.Take(15))
+                {
+                    <li><span title='$mission$@mission.MissionID'>@Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })</span></li>
+                }
+            </ol>
+            <h3>Most played</h3>
+            <ol>
+                @foreach (var mission in Model.MostPlayed.Take(15))
+                {
+                    <li><span title='$mission$@mission.MissionID'>@Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })</span></li>
+                }
+            </ol>
             <h3>Latest comments</h3>
-			<ul>
-				@foreach (var mission in Model.LastComments.Take(15)) {
-					<li><span title='$mission$@mission.MissionID'>@Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })</span></li>
-				}
-			</ul>
-		</td>
-	</tr>
+            <ul>
+                @foreach (var mission in Model.LastComments.Take(15))
+                {
+                    <li><span title='$mission$@mission.MissionID'>@Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })</span></li>
+                }
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <span>
+                Design new missions with the <a href='@Url.Action("Index", "Wiki", new {node = "MissionEditorStartPage"})'>
+                    Zero-K Mission Editor
+                </a>
+            </span>
+        </td>
+    </tr>
 </table>
 

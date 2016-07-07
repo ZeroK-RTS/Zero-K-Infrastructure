@@ -56,7 +56,7 @@ namespace PlasmaDownloader
                     var paths = new List<string>();
                     var platform = "win32";
                     var archiveName = "minimal-portable+dedicated.zip";
-                    var archiveNameAlt = "portable.7z";
+                    var archiveNameAlt = "minimal-portable.7z";
 
                     if (Environment.OSVersion.Platform == PlatformID.Unix)
                     {

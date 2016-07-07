@@ -15,6 +15,11 @@ namespace ZeroKLobby.Notifications
 
         public VoteBar() {
             InitializeComponent();
+            lbQuestion.Font = Config.GeneralFontBig;
+            lbYes.Font = Config.GeneralFont;
+            lbNo.Font = Config.GeneralFont;
+
+
             tas = Program.TasClient;
             tas.PreviewSaid += (sender, e) =>
                 {

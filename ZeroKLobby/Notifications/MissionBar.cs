@@ -38,7 +38,7 @@ namespace ZeroKLobby.Notifications
         {
             label1.Text = string.Format("Starting mission {0} - please wait", missionName);
 
-            var down = Program.Downloader.GetResource(DownloadType.MOD, missionName);
+            var down = Program.Downloader.GetResource(DownloadType.MISSION, missionName);
             if (down==null)
             {   //okay Mission exist, but lets check for dependency!
                 down = Program.Downloader.GetDependenciesOnly(missionName);
