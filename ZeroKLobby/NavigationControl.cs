@@ -106,7 +106,7 @@ namespace ZeroKLobby
         private void CreateTopRightMiniIcons(FlowLayoutPanel miniIconPanel) {
             urlBox = new ZklTextBox
             {
-                Size = new Size(140, 20),
+                Size = new Size(110, 20),
                 TabIndex = 1,
                 Font = Config.GeneralFontSmall,
                 Margin = new Padding(10)

@@ -69,7 +69,7 @@ namespace ZeroKLobby
             // MainWindow
             // 
             Controls.Add(tableLayoutPanel2);
-            MinimumSize = new Size(1280,1024);
+            MinimumSize = new Size(1024,700);
 
 
             FormClosing += MainWindow_FormClosing;
