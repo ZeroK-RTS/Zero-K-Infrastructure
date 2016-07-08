@@ -12,6 +12,8 @@ namespace ZeroKLobby.MicroLobby
 
         public string GameName { get { return game.FullName; } }
 
+        public string GameRapidTag { get { return game.RapidTag; } }
+
         public string Password { get { return passwordBox.Text; } }
 
         private GameInfo game;
