@@ -1253,6 +1253,7 @@ namespace MissionEditor2
             {
                 //TODO: actually save the file
                 Dictionary<string, string> texts = new Dictionary<string, string>();
+                Dictionary<string, string> textsSorted = new Dictionary<string, string>();
                 foreach (Action action in Mission.AllLogic.Where(x=> x is Action))
                 {
                     if (action is AddObjectiveAction) {
@@ -1282,7 +1283,10 @@ namespace MissionEditor2
                         AddLocalizationFileEntry(texts, msg.StringID, msg.Text);
                     }
                 }
-                string output = JsonConvert.SerializeObject(texts, Formatting.Indented);
+
+                foreach (var kvp in texts.OrderBy(x => x.Key))
+                    textsSorted.Add(kvp.Key, kvp.Value);
+                string output = JsonConvert.SerializeObject(textsSorted, Formatting.Indented);
                 File.WriteAllText(saveFileDialog.FileName, output);
             }
             return;
