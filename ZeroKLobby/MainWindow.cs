@@ -310,11 +310,13 @@ namespace ZeroKLobby
                 if (state == false || (state == null && waveOut.PlaybackState == PlaybackState.Playing))
                 {
                     waveOut.Stop();
+                    NavigationControl.Instance.sndButton.Image = Buttons.soundOff.GetResizedWithCache(NavigationControl.TopRightMiniIconSize, NavigationControl.TopRightMiniIconSize);
                 }
                 else if(state == true || (state == null && waveOut.PlaybackState!= PlaybackState.Playing))
                 {
                     audioReader.Position = 0;
                     waveOut.Play();
+                    NavigationControl.Instance.sndButton.Image = Buttons.soundOn.GetResizedWithCache(NavigationControl.TopRightMiniIconSize, NavigationControl.TopRightMiniIconSize);
                 }
             }
         }

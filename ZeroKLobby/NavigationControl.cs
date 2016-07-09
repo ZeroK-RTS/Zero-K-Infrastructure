@@ -15,7 +15,7 @@ namespace ZeroKLobby
     public class NavigationControl: ZklBaseControl
     {
         private const int TabButtonHeight = 70;
-        private const int TopRightMiniIconSize = 32;
+        public const int TopRightMiniIconSize = 32;
         private const int TopRightSpace = 200;
         private readonly Stack<NavigationStep> backStack = new Stack<NavigationStep>();
         private readonly Stack<NavigationStep> forwardStack = new Stack<NavigationStep>();
@@ -34,6 +34,8 @@ namespace ZeroKLobby
         private long lastClick;
         private FlowLayoutPanel flowLayoutPanel;
         private TableLayoutPanel table;
+
+        public BitmapButton sndButton;
 
         public NavigationControl() {
             SuspendLayout();
@@ -156,7 +158,7 @@ namespace ZeroKLobby
             };
             forwardButton.Click += (sender, args) => { NavigateForward(); };
 
-            var sndButton = new BitmapButton()
+            sndButton = new BitmapButton()
             {
                 ButtonStyle = FrameBorderRenderer.StyleType.IconOnly,
                 SoundType = SoundPalette.SoundType.Click,
