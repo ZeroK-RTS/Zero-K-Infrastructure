@@ -152,6 +152,10 @@ namespace ZeroKLobby
                     else funcToInvoke();
                 }
             }
+            catch (ObjectDisposedException odex)
+            {
+                // race condition circumventing IsDisposed? meh, just swallow it
+            }
             catch (Exception ex)
             {
                 Trace.TraceError("Error invoking: {0}", ex);
