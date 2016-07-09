@@ -49,7 +49,7 @@ namespace ZeroKLobby.Notifications
                 if (e.ResultCode == LoginResponse.Code.InvalidName && !string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword))
                 {
                     if (
-                        MessageBox.Show(new Form { TopMost = true },
+                        MessageBox.Show(NavigationControl.Instance, //new Form { TopMost = true },
                             string.Format("Account '{0}' does not exist yet, do you want to create it?", Program.Conf.LobbyPlayerName),
                             "Confirm account registration",
                             MessageBoxButtons.YesNo,
