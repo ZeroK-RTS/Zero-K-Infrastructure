@@ -215,7 +215,7 @@ namespace ZeroKLobby
                 pi.UseShellExecute = true;
                 Process.Start(pi);
             } catch (Exception ex) {
-                MessageBox.Show(path + ": " + ex.Message, "Opening failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(new Form { TopMost = true }, path + ": " + ex.Message, "Opening failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -308,7 +308,7 @@ namespace ZeroKLobby
         public static bool VerifySpringInstalled(bool showMessageBox = true) {
             if (Program.SpringPaths.SpringVersion == null || !Program.SpringPaths.HasEngineVersion(Program.SpringPaths.SpringVersion)) {
                 if (showMessageBox)
-                    MessageBox.Show("Cannot start yet, please wait until engine downloads",
+                    MessageBox.Show(new Form { TopMost = true }, "Cannot start yet, please wait until engine downloads",
                                     "Engine not prepared yet",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Information);

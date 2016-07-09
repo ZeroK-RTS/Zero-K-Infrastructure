@@ -105,7 +105,7 @@ namespace ZeroKLobby
                     var ver = GetNetVersionFromRegistry();
                     if (ver < 378675)
                     {
-                        MessageBox.Show(
+                        MessageBox.Show(new Form { TopMost = true },
                             "Zero-K launcher needs Microsoft .NET framework 4.5.1\nPlease download and install it first",
                             "Program is unable to run",
                             MessageBoxButtons.OK,
@@ -166,7 +166,7 @@ namespace ZeroKLobby
                         Conf.Save(Path.Combine(contentDir, Config.ConfigFileName));
                         Process.Start(newTarget);
                         return;
-                    } MessageBox.Show("Move failed, please copy Zero-K.exe to a writable folder");
+                    } MessageBox.Show(new Form { TopMost = true }, "Move failed, please copy Zero-K.exe to a writable folder");
                     return;
                 }
 
