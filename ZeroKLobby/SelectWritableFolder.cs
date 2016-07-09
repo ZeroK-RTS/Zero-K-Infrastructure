@@ -24,7 +24,7 @@ namespace ZeroKLobby
             try {
                 Directory.CreateDirectory(tbFolder.Text);
             } catch (Exception ex) {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(this, ex.Message);
             }
         }
 
@@ -42,14 +42,14 @@ namespace ZeroKLobby
         {
             if (!Directory.Exists(tbFolder.Text)) {
                 if (
-                    MessageBox.Show("Folder does not exist, do you want to create it?",
+                    MessageBox.Show(this, "Folder does not exist, do you want to create it?",
                                     "Create folder?",
                                     MessageBoxButtons.YesNo,
                                     MessageBoxIcon.Question) == DialogResult.No) return;
             }
 
             if (!SpringPaths.IsDirectoryWritable(tbFolder.Text)) {
-                MessageBox.Show(string.Format("Directory {0} is not writable", tbFolder.Text));
+                MessageBox.Show(this, string.Format("Directory {0} is not writable", tbFolder.Text));
             }
             else {
                 DialogResult = DialogResult.OK;

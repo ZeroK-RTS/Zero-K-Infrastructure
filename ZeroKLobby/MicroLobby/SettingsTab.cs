@@ -260,7 +260,7 @@ namespace ZeroKLobby.MicroLobby
         private void btnDefaults_Click(object sender, EventArgs e)
         {
             MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button2;
-            if (MessageBox.Show("Do you want to reset configuration to defaults and delete all cached content?", "Local data reset", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, defaultButton) == DialogResult.Yes)
+            if (MessageBox.Show(this, "Do you want to reset configuration to defaults and delete all cached content?", "Local data reset", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, defaultButton) == DialogResult.Yes)
             {
                 Program.EngineConfigurator.Reset();
                 var path = Program.SpringPaths.WritableDirectory;

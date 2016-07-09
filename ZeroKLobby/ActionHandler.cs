@@ -262,7 +262,7 @@ namespace ZeroKLobby
         {
             var hostSpawnerName = SpringieCommand.GetHostSpawnerName(gameName);
             if (hostSpawnerName == null) {
-                MessageBox.Show("Unable to locate AutoHost for given game type", "Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                MessageBox.Show(new Form { TopMost = true }, "Unable to locate AutoHost for given game type", "Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
                 return;
             }
             

@@ -329,7 +329,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 
             var defaultButton = MessageBoxDefaultButton.Button1;
         	var icon = MessageBoxIcon.None;
-        	if (MessageBox.Show("Are you sure you want to permanently delete this replay?",
+        	if (MessageBox.Show(this, "Are you sure you want to permanently delete this replay?",
         	                "Delete File",
                             MessageBoxButtons.YesNo,
                             icon,
@@ -351,7 +351,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
             	var defaultButton = MessageBoxDefaultButton.Button1;
             	var icon = MessageBoxIcon.None;
-            	if (MessageBox.Show("Are you sure you want to permanently delete this replay?",
+            	if (MessageBox.Show(this, "Are you sure you want to permanently delete this replay?",
             	                "Delete File",
                                 MessageBoxButtons.YesNo,
                                 icon,

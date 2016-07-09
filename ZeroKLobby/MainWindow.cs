@@ -69,7 +69,7 @@ namespace ZeroKLobby
             // MainWindow
             // 
             Controls.Add(tableLayoutPanel2);
-            MinimumSize = new Size(1280,1024);
+            MinimumSize = new Size(1024,700);
 
 
             FormClosing += MainWindow_FormClosing;
@@ -151,6 +151,10 @@ namespace ZeroKLobby
                     if (InvokeRequired) Invoke(funcToInvoke);
                     else funcToInvoke();
                 }
+            }
+            catch (ObjectDisposedException odex)
+            {
+                // race condition circumventing IsDisposed? meh, just swallow it
             }
             catch (Exception ex)
             {
@@ -278,7 +282,7 @@ namespace ZeroKLobby
 
         private void MainWindow_Load(object sender, EventArgs e) {
             if (Debugger.IsAttached) Text = "==== DEBUGGING ===";
-            else Text = "Zero-K lobby";
+            else Text = "Zero-K Lobby";
             Text += " " + Assembly.GetEntryAssembly()?.GetName().Version;
 
             Icon = ZklResources.ZkIcon;
@@ -310,11 +314,13 @@ namespace ZeroKLobby
                 if (state == false || (state == null && waveOut.PlaybackState == PlaybackState.Playing))
                 {
                     waveOut.Stop();
+                    NavigationControl.Instance.sndButton.Image = Buttons.soundOff.GetResizedWithCache(NavigationControl.TopRightMiniIconSize, NavigationControl.TopRightMiniIconSize);
                 }
                 else if(state == true || (state == null && waveOut.PlaybackState!= PlaybackState.Playing))
                 {
                     audioReader.Position = 0;
                     waveOut.Play();
+                    NavigationControl.Instance.sndButton.Image = Buttons.soundOn.GetResizedWithCache(NavigationControl.TopRightMiniIconSize, NavigationControl.TopRightMiniIconSize);
                 }
             }
         }

@@ -31,6 +31,7 @@ namespace ZeroKLobby.MicroLobby
             btnSubmit.Click += btnSubmit_Click;
 
             tbLogin = new ZklTextBox { Location = new Point(237, 123), Size = new Size(146, 24), TabIndex = 1 };
+            tbLogin.TextBox.TextChanged += (sender, args) => { tbLogin_TextBox_TextChanged(sender, args); };
 
             tbPassword = new ZklTextBox
             {
@@ -153,6 +154,44 @@ namespace ZeroKLobby.MicroLobby
 
         private void LoginForm_Load(object sender, EventArgs e) {
             Icon = ZklResources.ZkIcon;
+        }
+
+        private void tbLogin_TextBox_TextChanged(object sender, EventArgs e) {
+            if (sender is TextBox)
+            {
+                var textBox = (TextBox)sender;
+                int pos = textBox.SelectionStart;
+                int invalidCount = 0;
+                textBox.Text = StripInvalidLobbyNameChars(textBox.Text, out invalidCount);
+                pos = pos - invalidCount;
+                if (pos < 0) pos = 0;
+                textBox.SelectionStart = pos;   // else typing an invalid character causes caret position to return to start
+            }
+        }
+
+        // adapted from the one in ZkData.Account
+        static string StripInvalidLobbyNameChars(string name, out int invalidCount)
+        {
+            invalidCount = 0;
+            if (string.IsNullOrEmpty(name)) return name;
+            var sb = new System.Text.StringBuilder();
+            foreach (var c in name)
+            {
+                if (ValidLobbyNameCharacter(c)) sb.Append(c);
+                else invalidCount++;
+            }
+            return sb.ToString();
+        }
+
+        // duplicate of the one in ZkData.Account
+        static bool ValidLobbyNameCharacter(char c)
+        {
+            if (c >= 'a' && c <= 'z') return true;
+            if (c >= 'A' && c <= 'Z') return true;
+            if (c >= '0' && c <= '9') return true;
+            if (c == '_') return true;
+            if (c == '[' || c == ']') return true;
+            return false;
         }
     }
 }
