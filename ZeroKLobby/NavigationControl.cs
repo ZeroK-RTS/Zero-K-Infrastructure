@@ -65,10 +65,34 @@ namespace ZeroKLobby
                 Dock = DockStyle.Fill,
                 BackColor = Color.Transparent,
             };
-            table.Controls.Add(miniIconPanel, 1,0);
+            var versionLabel = new Label()
+            {
+                Text = "Zero-K Lobby " + System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version,
+                ForeColor = Color.Gray,
+                TextAlign = ContentAlignment.MiddleRight,
+                Dock = DockStyle.Right,
+                AutoSize = true,
+            };
+            // contains the miniIconPanel and versionLabel
+            var rightHolderPanel = new TableLayoutPanel()
+            {
+                RowCount = 2,
+                ColumnCount = 1,
+                Dock = DockStyle.Right,
+                BackColor = Color.Transparent,
+                Padding = new Padding(0),
+                Margin = new Padding(0),
+                AutoSize = true,
+                AutoSizeMode = AutoSizeMode.GrowAndShrink,
+            };
+            rightHolderPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            rightHolderPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            rightHolderPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            
+            rightHolderPanel.Controls.Add(miniIconPanel);
+            rightHolderPanel.Controls.Add(versionLabel);
+            table.Controls.Add(rightHolderPanel, 1, 0);
 
-            
-            
             flowLayoutPanel.AutoScroll = false;
             flowLayoutPanel.AutoSize = true;
             flowLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
