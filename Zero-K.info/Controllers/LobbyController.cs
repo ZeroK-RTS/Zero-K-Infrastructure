@@ -114,7 +114,7 @@ namespace ZeroKWeb.Controllers
             if (!string.IsNullOrEmpty(model.Channel)) ret = ret.Where(x => x.Target == model.Channel);
             if (!string.IsNullOrEmpty(model.User)) ret = ret.Where(x => x.User == model.User);
             if (model.TimeFrom.HasValue) ret = ret.Where(x => x.Time >= model.TimeFrom);
-            if (model.TimeTo.HasValue) ret = ret.Where(x => x.Time >= model.TimeTo);
+            if (model.TimeTo.HasValue) ret = ret.Where(x => x.Time <= model.TimeTo);
             if (!string.IsNullOrEmpty(model.Text)) ret = ret.Where(x => x.Text.Contains(model.Text));
             
             model.Data = ret.OrderByDescending(x => x.Time);
