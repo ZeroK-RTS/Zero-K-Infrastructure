@@ -46,8 +46,8 @@ namespace ZeroKLobby
             Action<string> drawString = text =>
             {
                     y -= 3;
-                    g.DrawString(text, font,fbrush, new Point(x, y));
-                    x += (int)Math.Ceiling((double)g.MeasureString(text, font).Width);
+                TextRenderer.DrawText(g, text, font, new Point(x, y), Config.TextColor);
+                x += TextRenderer.MeasureText(text, font).Width;
                     y += 3;
             };
             Action<Image, int, int> drawImage = (image, w, h) =>

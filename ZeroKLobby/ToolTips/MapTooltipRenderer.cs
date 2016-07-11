@@ -31,15 +31,15 @@ namespace ZeroKLobby
                 };
             Action<string> drawString = text =>
                 {
-                    g.DrawString(text, font, fbrush, new Point(x, y));
-                    x += (int)Math.Ceiling((double)g.MeasureString(text, font).Width);
+                    TextRenderer.DrawText(g, text, font, new Point(x + 1, y), Config.TextColor);
+                    x += TextRenderer.MeasureText(text, font).Width;
                 };
             Action<Image, int, int> drawImage = (image, w, h) =>
                 {
                     g.DrawImage(image, x, y, w, h);
                     x += w + 3;
                 };
-            using (var boldFont = new Font(font, FontStyle.Bold)) g.DrawString(Map.GetHumanName(mapName), boldFont, fbrush, new Point(x, y));
+            using (var boldFont = new Font(font, FontStyle.Bold)) TextRenderer.DrawText(g, Map.GetHumanName(mapName), boldFont, new Point(x + 1, y), Config.TextColor);
 
             if (map != null)
             {

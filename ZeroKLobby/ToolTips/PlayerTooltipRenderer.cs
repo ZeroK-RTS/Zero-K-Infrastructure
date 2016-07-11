@@ -34,18 +34,16 @@ namespace ZeroKLobby
             Action<string> drawString = (text) =>
             {
                 y -= 3;
-                    g.DrawString(text, font, fbrush, new Point(x, y));
-                    x += (int)Math.Ceiling(g.MeasureString(text, font).Width);
+                TextRenderer.DrawText(g, text, font, new Point(x, y), Config.TextColor);
+                x += TextRenderer.MeasureText(text, font).Width;
                 y += 3;
             };
             
             Action<string, Color> drawString2 = (text, color) =>
             {
                 y -= 3;
-                using (var brush = new SolidBrush(color)) {
-                    g.DrawString(text, font, brush, new Point(x, y));
-                }
-                x += (int)Math.Ceiling((double)g.MeasureString(text, font).Width);
+                TextRenderer.DrawText(g, text, font, new Point(x, y), Config.TextColor);
+                x += TextRenderer.MeasureText(text, font).Width;
                 y += 3;
             };
 
@@ -55,7 +53,7 @@ namespace ZeroKLobby
                     g.DrawImage(image, x, y, (int)w, (int)h);
                     x += (int)(w + 3);
                 };
-            using (var boldFont = new Font(font, FontStyle.Bold)) g.DrawString(user.Name, boldFont, fbrush, new Point(x, y));
+            using (var boldFont = new Font(font, FontStyle.Bold)) TextRenderer.DrawText(g, user.Name, boldFont, new Point(x, y), Config.TextColor);
             y += 3;
             newLine();
 
