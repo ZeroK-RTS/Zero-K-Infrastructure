@@ -25,7 +25,7 @@ namespace ZeroKLobby
             User user;
             if (!Program.TasClient.ExistingUsers.TryGetValue(userName, out user)) return;
             var x = (int)1;
-            var y = 0;
+            var y = 3;
             Action newLine = () =>
                 {
                 x = (int)1;
@@ -33,20 +33,20 @@ namespace ZeroKLobby
                 };
             Action<string> drawString = (text) =>
             {
-                y -= 3;
-                    g.DrawString(text, font, fbrush, new Point(x, y));
-                    x += (int)Math.Ceiling(g.MeasureString(text, font).Width);
-                y += 3;
+                //y -= 3;
+                x += ToolTipHandler.TEXT_X_OFFSET;
+                TextRenderer.DrawText(g, text, font, new Point(x, y + ToolTipHandler.TEXT_Y_OFFSET), Config.TextColor, TextFormatFlags.LeftAndRightPadding);
+                x += TextRenderer.MeasureText(g, text, font).Width;
+                //y += 3;
             };
             
             Action<string, Color> drawString2 = (text, color) =>
             {
-                y -= 3;
-                using (var brush = new SolidBrush(color)) {
-                    g.DrawString(text, font, brush, new Point(x, y));
-                }
-                x += (int)Math.Ceiling((double)g.MeasureString(text, font).Width);
-                y += 3;
+                //y -= 3;
+                x += ToolTipHandler.TEXT_X_OFFSET;
+                TextRenderer.DrawText(g, text, font, new Point(x, y + ToolTipHandler.TEXT_Y_OFFSET), color, TextFormatFlags.LeftAndRightPadding);
+                x += TextRenderer.MeasureText(g, text, font).Width;
+                //y += 3;
             };
 
 
@@ -55,7 +55,7 @@ namespace ZeroKLobby
                     g.DrawImage(image, x, y, (int)w, (int)h);
                     x += (int)(w + 3);
                 };
-            using (var boldFont = new Font(font, FontStyle.Bold)) g.DrawString(user.Name, boldFont, fbrush, new Point(x, y));
+            using (var boldFont = new Font(font, FontStyle.Bold)) TextRenderer.DrawText(g, user.Name, boldFont, new Point(x, y), Config.TextColor, TextFormatFlags.LeftAndRightPadding);
             y += 3;
             newLine();
 
