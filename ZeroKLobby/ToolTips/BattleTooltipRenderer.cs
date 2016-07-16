@@ -44,12 +44,13 @@ namespace ZeroKLobby
                     y += 16;
                 };
             Action<string> drawString = text =>
-            {
-                    y -= 3;
-                TextRenderer.DrawText(g, text, font, new Point(x, y), Config.TextColor);
-                x += TextRenderer.MeasureText(text, font).Width;
-                    y += 3;
-            };
+                {
+                    //y -= 3;
+                    x += ToolTipHandler.TEXT_X_OFFSET;
+                    TextRenderer.DrawText(g, text, font, new Point(x, y + ToolTipHandler.TEXT_Y_OFFSET), Config.TextColor, TextFormatFlags.LeftAndRightPadding);
+                    x += TextRenderer.MeasureText(g, text, font).Width;
+                    //y += 3;
+                };
             Action<Image, int, int> drawImage = (image, w, h) =>
                 {
                     g.DrawImage(image, x, y, w, h);
