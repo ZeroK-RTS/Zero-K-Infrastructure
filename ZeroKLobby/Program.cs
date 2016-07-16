@@ -100,7 +100,9 @@ namespace ZeroKLobby
                 //Stopwatch stopWatch = new Stopwatch(); stopWatch.Start();
                 Trace.Listeners.Add(new ConsoleTraceListener());
 
-               if (Environment.OSVersion.Platform != PlatformID.Unix)
+                Application.SetCompatibleTextRenderingDefault(false);
+
+                if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
                     var ver = GetNetVersionFromRegistry();
                     if (ver < 378675)
@@ -128,7 +130,6 @@ namespace ZeroKLobby
                 StartupArgs = args;
 
                 Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
 
                 if (!Debugger.IsAttached)
                 {

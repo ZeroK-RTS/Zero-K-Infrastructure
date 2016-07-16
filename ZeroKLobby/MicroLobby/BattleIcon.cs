@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using LobbyClient;
+using System.Windows.Forms;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -240,22 +241,21 @@ namespace ZeroKLobby.MicroLobby
                 int y = (int)3;
                 int offset = (int)16;
                 int curMapCellSize = (int)MapCellSize.Width;
-                g.DrawString(Battle.Title, TitleFont, TextBrush, curMapCellSize, y + offset * 0);
-                if (g.MeasureString(mod_and_engine_name, ModFont).Width < scaledWidth - curMapCellSize)
+                TextRenderer.DrawText(g, Battle.Title, TitleFont, new Point(curMapCellSize, y + offset * 0), Config.TextColor);
+                //g.DrawString(Battle.Title, TitleFont, TextBrush, curMapCellSize, y + offset * 0);
+                if (TextRenderer.MeasureText(mod_and_engine_name, ModFont).Width < scaledWidth - curMapCellSize)
                 {
-                    g.DrawString(mod_and_engine_name, ModFont, TextBrush, curMapCellSize, y + offset * 1);
+                    TextRenderer.DrawText(g, mod_and_engine_name, ModFont, new Point(curMapCellSize, y + offset * 1), Config.TextColor);
+                    //g.DrawString(mod_and_engine_name, ModFont, TextBrush, curMapCellSize, y + offset * 1);
                     g.DrawImageUnscaled(playersBoxImage, curMapCellSize, y + offset * 2);
                 }
                 else
                 {
                     int offset_offset = (int)4; //this squishes modName & engine-name and dude-icons together abit
                     int offset_offset2 = (int)6; //this squished modName & engine-name into 2 tight lines
-                    g.DrawString(Battle.ModName, ModFont, TextBrush, curMapCellSize, y + offset * 1 - offset_offset);
-                    g.DrawString(string.Format("{0}{1}", Battle.EngineName, Battle.EngineVersion),
-                        ModFont,
-                        TextBrush,
-                        curMapCellSize,
-                        y + offset * 2 - offset_offset - offset_offset2);
+                    TextRenderer.DrawText(g, Battle.ModName, ModFont, new Point(curMapCellSize, y + offset * 1 - offset_offset), Config.TextColor);
+                    TextRenderer.DrawText(g, string.Format("{0}{1}", Battle.EngineName, Battle.EngineVersion), 
+                        ModFont, new Point(curMapCellSize, y + offset * 2 - offset_offset - offset_offset2), Config.TextColor);
                     g.DrawImageUnscaled(playersBoxImage, curMapCellSize, y + offset * 3 - offset_offset - offset_offset2);
                 }
                 g.ResetClip();

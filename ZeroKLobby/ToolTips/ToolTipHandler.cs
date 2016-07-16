@@ -25,6 +25,9 @@ namespace ZeroKLobby
         const Int32 SWP_NOSENDCHANGING = 0x0400;
         const Int32 SWP_ToolTipOption = SWP_NOACTIVATE | SWP_NOSIZE | SWP_ASYNCWINDOWPOS | SWP_NOCOPYBITS 
             | SWP_DEFERERASE | SWP_NOMOVE | SWP_NOREDRAW | SWP_NOSENDCHANGING; //disable all SetWindowPos() function except Z-ordering
+
+        public const int TEXT_Y_OFFSET = 6;
+        public const int TEXT_X_OFFSET = 3;
         private bool lastActive = true;
         private Point lastMousePos;
         private string lastText;
