@@ -568,7 +568,7 @@ namespace ZeroKLobby.MicroLobby
         int FormatLines(int startLine, int endLine, int line)
         {
             //this formats each line and breaks it up, to fit onto the current display
-            var displayWidth = ClientRectangle.Width - vScrollBar.Width + 50;
+            var displayWidth = ClientRectangle.Width - vScrollBar.Width;
 
             if (displayWidth <= 0) return 0;
 
@@ -641,7 +641,7 @@ namespace ZeroKLobby.MicroLobby
                                     //check if there needs to be a linewrap
                                     using (var g = CreateGraphics())
                                     {
-                                        if (TextRenderer.MeasureText(g, buildString.ToString().StripAllCodes(), Font, new Size(), TextFormatFlags.NoPadding).Width + MeasureTextOffset + emotSpace > displayWidth)
+                                        if (TextRenderer.MeasureText(g, buildString.ToString().StripAllCodes(), Font, new Size()).Width + MeasureTextOffset + emotSpace > displayWidth)
                                         {
                                             if (lineSplit) displayLines[line].Line = lastColor + buildString;
                                             else displayLines[line].Line = buildString.ToString();
