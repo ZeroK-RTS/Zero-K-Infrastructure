@@ -216,7 +216,7 @@ namespace ZeroKLobby.MicroLobby
                             x = 0;
                             y += scaledIconHeight;
                         }
-                        PainBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
+                        PaintBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
                     }
 
                     x = 0;
@@ -224,7 +224,7 @@ namespace ZeroKLobby.MicroLobby
                 }
 
                 PaintDivider(g, ref x, ref y, "Open battles");
-                PainOpenBattleButton(g, ref x, ref y, scaledMapCellWidth, scaledIconWidth);
+                PaintOpenBattleButton(g, ref x, ref y, scaledMapCellWidth, scaledIconWidth);
 
                 foreach (BattleIcon t in view.Where(b => !b.Battle.IsQueue && !b.IsInGame))
                 {
@@ -233,7 +233,7 @@ namespace ZeroKLobby.MicroLobby
                         x = 0;
                         y += scaledIconHeight;
                     }
-                    PainBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
+                    PaintBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
                 }
                 x = 0;
                 y += scaledIconHeight;
@@ -247,7 +247,7 @@ namespace ZeroKLobby.MicroLobby
                         x = 0;
                         y += scaledIconHeight;
                     }
-                    PainBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
+                    PaintBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
                 }
 
 
@@ -265,35 +265,31 @@ namespace ZeroKLobby.MicroLobby
 
             //g.DrawLine(dividerPen, 5, y + 2, Width - 10, y + 2);
             //y += 4;
-            g.DrawString(text, dividerFont, dividerFontBrush,new RectangleF(10,y , Width-20,30),new StringFormat()
-            {
-                LineAlignment = StringAlignment.Center,Alignment = StringAlignment.Center
-            }  );
+            TextRenderer.DrawText(g, text, dividerFont, new Rectangle(10, y, Width - 20, 30), dividerFontBrush.Color);
             y += 24;
             //g.DrawLine(dividerPen, 5, y + 2, Width - 10, y + 2);
             y += 4;
         }
 
-        void PainOpenBattleButton(Graphics g, ref int x, ref int y, int scaledMapCellWidth, int scaledIconWidth)
+        void PaintOpenBattleButton(Graphics g, ref int x, ref int y, int scaledMapCellWidth, int scaledIconWidth)
         {   
             g.DrawImage(ZklResources.border,
                 x + (int)3,
                 y + (int)3,
                 (int)70,
                 (int)70);
-            g.DrawString("Open a new battle.", BattleIcon.TitleFont, BattleIcon.TextBrush, x + scaledMapCellWidth, y + (int)3);
+            //g.DrawString("Open a new battle.", BattleIcon.TitleFont, BattleIcon.TextBrush, x + scaledMapCellWidth, y + (int)3);
+            TextRenderer.DrawText(g, "Open a new battle.", BattleIcon.TitleFont, new Point(x + scaledMapCellWidth, y + 3), Config.TextColor);
             openBattlePosition = new Point(x, y);
             x += scaledIconWidth;
         }
 
-        void PainBattle(BattleIcon t, Graphics g, ref int x, ref int y, int scaledIconWidth, int scaledIconHeight)
+        void PaintBattle(BattleIcon t, Graphics g, ref int x, ref int y, int scaledIconWidth, int scaledIconHeight)
         {
             battleIconPositions[t] = new Point(x, y);
             if (g.VisibleClipBounds.IntersectsWith(new RectangleF(x, y, scaledIconWidth, scaledIconHeight))) g.DrawImageUnscaled(t.Image, x, y);
             x += scaledIconWidth;
         }
-
-
 
 
         void FilterBattles()
