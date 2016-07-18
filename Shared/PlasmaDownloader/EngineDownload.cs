@@ -114,7 +114,7 @@ namespace PlasmaDownloader
 					paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{{develop}}{1}_{3}-{2}",
 						engineDownloadPath,
 						Name,
-						archiveName,
+						archiveNameAlt,
 						platform));
 
                     paths.Add(string.Format("{0}buildbot/default/MTsim/{1}/{3}/spring_{{MTsim}}{1}_{2}",
