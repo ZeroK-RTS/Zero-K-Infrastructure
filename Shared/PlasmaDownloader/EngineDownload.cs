@@ -109,7 +109,13 @@ namespace PlasmaDownloader
                                             Name,
                                             archiveName,
                                             platform));
-                                            
+
+					// maybe just us pr-downloader instead already
+					paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{{develop}}{1}_{3}-{2}",
+						engineDownloadPath,
+						Name,
+						archiveName,
+						platform));
 
                     paths.Add(string.Format("{0}buildbot/default/MTsim/{1}/{3}/spring_{{MTsim}}{1}_{2}",
                                             engineDownloadPath,
