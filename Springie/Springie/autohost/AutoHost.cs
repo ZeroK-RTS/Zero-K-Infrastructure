@@ -728,21 +728,32 @@ namespace Springie.autohost
             activePoll = null;
         }
 
-        void CheckEngineBranch() {
-            string url = String.Format("http://springrts.com/dl/buildbot/default/{0}/LATEST", config.AutoUpdateSpringBranch);
-            try {
-                var wc = new WebClient();
-                string str = wc.DownloadString(url);
-                string bstr = "{" + config.AutoUpdateSpringBranch + "}";
-                if (str.StartsWith(bstr)) str = str.Replace(bstr, "");
-                str = str.Trim('\n', '\r', ' ');
+        string TryCheckEngineBranch(string url){
+            var wc = new WebClient();
+            string str = wc.DownloadString(url);
+            string bstr = "{" + config.AutoUpdateSpringBranch + "}";
+            if (str.StartsWith(bstr)) str = str.Replace(bstr, "");
+            str = str.Trim('\n', '\r', ' ');
 
-                if (springPaths.SpringVersion != str) ComSetEngine(TasSayEventArgs.Default, new[] { str });
-            } catch (Exception ex) {
-                Trace.TraceWarning("Error getting latest engine branch version from {0}: {1}");
-            }
+            return str;
         }
 
+        void CheckEngineBranch() {
+            string url = String.Format("http://springrts.com/dl/buildbot/default/{0}/LATEST_win32", config.AutoUpdateSpringBranch);
+            try {
+                string str = TryCheckEngineBranch(url);
+                if (springPaths.SpringVersion != str) ComSetEngine(TasSayEventArgs.Default, new[] { str });
+            } catch (Exception ex) {
+                Trace.TraceWarning("Error getting latest engine branch version from {0}: {1}",url,ex.Message);
+				url = String.Format("http://springrts.com/dl/buildbot/default/{0}/LATEST", config.AutoUpdateSpringBranch);
+				try{
+					string str = TryCheckEngineBranch(url);
+					if (springPaths.SpringVersion != str) ComSetEngine(TasSayEventArgs.Default, new[] { str });
+				}catch (Exception exx) {
+					Trace.TraceWarning("Error getting latest engine branch version from {0}: {1}",url,exx.Message);
+				}
+            }
+        }
 
         void CheckForBattleExit() {
             if ((DateTime.Now - spring.GameStarted) > TimeSpan.FromSeconds(20)) {
