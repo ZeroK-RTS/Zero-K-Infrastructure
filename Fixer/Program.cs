@@ -346,8 +346,26 @@ namespace Fixer
         }
 
 
-        static void Main(string[] args) {
-            WikiPortingMW.DoStuff();
+        static void Main(string[] args)
+        {
+            var ed = new EngineDownload("102.0.1-19-gfbc1b5b", new SpringPaths(null, @"c:\temp\test"));
+            ed.Start();
+            ed.WaitHandle.WaitOne();
+            /*using (var archive = ArchiveFactory.Open(target))
+            {
+                long done = 0;
+                var totalSize = archive.Entries.Count() + 1;
+                archive.EntryExtractionEnd += (sender, args) =>
+                {
+                    done++;
+                    IndividualProgress = 90 + (10 * done / totalSize);
+                };
+
+                archive.WriteToDirectory(targetDir, ExtractOptions.ExtractFullPath | ExtractOptions.Overwrite);
+            }*/
+
+
+            //WikiPortingMW.DoStuff();
             return;
 
             //FixStuff();

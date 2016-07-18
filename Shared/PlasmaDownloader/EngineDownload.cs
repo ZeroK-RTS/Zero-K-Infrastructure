@@ -8,6 +8,7 @@ using System.Net.Mime;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
+using ManagedLzma.SevenZip;
 using SharpCompress.Archive;
 using SharpCompress.Common;
 using ZkData;
@@ -65,29 +66,17 @@ namespace PlasmaDownloader
                         archiveName = string.Format("minimal-portable-{0}-static.7z", platform);
                     }
 
-                    // special hack for engine 91.0
-                    //if (platform == "linux64" && Name == "91.0") paths.Add("http://springrts.com/dl/spring_91.0.amd64.zip");
-                    //else if (platform == "linux32" && Name == "91.0") paths.Add("http://springrts.com/dl/spring_91.0_portable_linux_i686.zip");
-
                     var engineDownloadPath = GlobalConst.EngineDownloadPath;
-                    paths.Add(string.Format("{0}buildbot/syncdebug/develop/{1}/spring_[syncdebug]{1}_{2}", engineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/master/{1}/spring_{1}_{2}", engineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/spring_{{develop}}{1}_{2}", engineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/release/{1}/spring_{{release}}{1}_{2}", engineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/MTsim/{1}/spring_{{MTsim}}{1}_{2}", engineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/master/{1}/{3}/spring_{1}_{2}", engineDownloadPath, Name, archiveName, platform));
-                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{{develop}}{1}_{2}",
-                                            engineDownloadPath,
-                                            Name,
-                                            archiveName,
-                                            platform));
+
 
                     paths.Add(string.Format("{0}/engine/{2}/{1}.zip", GlobalConst.BaseSiteUrl, Name, platform));
 
-
+                    paths.Add(string.Format("{0}buildbot/default/master/{1}/spring_{1}_{2}", engineDownloadPath, Name, archiveName));
+                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/spring_{{develop}}{1}_{2}", engineDownloadPath, Name, archiveName));
+                    paths.Add(string.Format("{0}buildbot/default/release/{1}/spring_{{release}}{1}_{2}", engineDownloadPath, Name, archiveName));
 
                     // new format with portable.7z downloads for post 101.0.1-414-g6a6a528 dev versions
-                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{{develop}}{1}_{3}_{2}",
+                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{{develop}}{1}_{3}-{2}",
                                             engineDownloadPath,
                                             Name,
                                             archiveNameAlt,
@@ -110,26 +99,22 @@ namespace PlasmaDownloader
                                             archiveName,
                                             platform));
 
-					// maybe just us pr-downloader instead already
-					paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{{develop}}{1}_{3}-{2}",
-						engineDownloadPath,
-						Name,
-						archiveNameAlt,
-						platform));
+                    // maybe just us pr-downloader instead already
+                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{{develop}}{1}_{3}-{2}",
+                        engineDownloadPath,
+                        Name,
+                        archiveNameAlt,
+                        platform));
 
-                    paths.Add(string.Format("{0}buildbot/default/MTsim/{1}/{3}/spring_{{MTsim}}{1}_{2}",
+
+
+                    paths.Add(string.Format("{0}buildbot/syncdebug/develop/{1}/spring_[syncdebug]{1}_{2}", engineDownloadPath, Name, archiveName));
+                    paths.Add(string.Format("{0}buildbot/default/master/{1}/{3}/spring_{1}_{2}", engineDownloadPath, Name, archiveName, platform));
+                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{{develop}}{1}_{2}",
                                             engineDownloadPath,
                                             Name,
                                             archiveName,
                                             platform));
-
-                    for (var i = 9; i >= -1; i--)
-                    {
-                        var version = Name;
-                        // if i==-1 we tested without version number
-                        if (i >= 0) version = string.Format("{0}.{1}", Name, i);
-                        paths.Add(string.Format("{0}spring_{1}.zip", engineDownloadPath, version));
-                    }
 
                     var source = paths.FirstOrDefault(VerifyFile) ?? paths.FirstOrDefault(VerifyFile);
 
@@ -196,21 +181,34 @@ namespace PlasmaDownloader
 
                                         try
                                         {
-                                            if (Environment.OSVersion.Platform == PlatformID.Unix && extension == ".7z")
+                                            if (extension == ".7z")
                                             {
-                                                var proc = Process.Start("7z", string.Format("x -r -y -o\"{1}\" \"{0}\"", target, targetDir));
-                                                if (proc != null) proc.WaitForExit();
-                                                if (proc == null || proc.ExitCode != 0)
+                                                if (Environment.OSVersion.Platform == PlatformID.Unix)
                                                 {
-                                                    Trace.TraceWarning("7z extraction failed, fallback to SharpCompress");
-                                                    ExtractArchive(target, targetDir);
+                                                    var proc = Process.Start("7z", string.Format("x -r -y -o\"{1}\" \"{0}\"", target, targetDir));
+                                                    if (proc != null) proc.WaitForExit();
+                                                    if (proc == null || proc.ExitCode != 0)
+                                                    {
+                                                        Trace.TraceWarning("7z extraction failed, fallback to SharpCompress");
+                                                        Unpack7zArchive(target, targetDir);
+                                                    }
                                                 }
-                                            }
-                                            ExtractArchive(target, targetDir);
+                                                else
+                                                {
+                                                    ExtractZipArchive(target, targetDir);
+                                                }
 
-                                            Trace.TraceInformation("Install of {0} complete", Name);
-                                            springPaths.SetEnginePath(targetDir);
-                                            Finish(true);
+                                                Trace.TraceInformation("Install of {0} complete", Name);
+                                                springPaths.SetEnginePath(targetDir);
+                                                Finish(true);
+                                            }
+                                            else
+                                            {
+                                                ExtractZipArchive(target, targetDir);
+                                                Trace.TraceInformation("Install of {0} complete", Name);
+                                                springPaths.SetEnginePath(targetDir);
+                                                Finish(true);
+                                            }
                                         }
                                         catch (Exception ex)
                                         {
@@ -234,7 +232,7 @@ namespace PlasmaDownloader
                 });
         }
 
-        void ExtractArchive(string target, string targetDir)
+        void ExtractZipArchive(string target, string targetDir)
         {
             using (var archive = ArchiveFactory.Open(target))
             {
@@ -286,5 +284,117 @@ namespace PlasmaDownloader
                 return pa.Length.CompareTo(pb.Length);
             }
         }
+
+        private static void Unpack7zArchive(string archiveFileName, string targetDirectory, string password = null)
+        {
+            Unpack7zArchive(archiveFileName, targetDirectory, password != null ? ManagedLzma.PasswordStorage.Create(password) : null);
+        }
+
+        private static void Unpack7zArchive(string archiveFileName, string targetDirectory, ManagedLzma.PasswordStorage password)
+        {
+            if (!File.Exists(archiveFileName))
+                throw new FileNotFoundException("Archive not found.", archiveFileName);
+
+            // Ensure that the target directory exists.
+            Directory.CreateDirectory(targetDirectory);
+
+            using (var archiveStream = new FileStream(archiveFileName, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete))
+            {
+                var archiveMetadataReader = new ManagedLzma.SevenZip.FileModel.ArchiveFileModelMetadataReader();
+                var archiveFileModel = archiveMetadataReader.ReadMetadata(archiveStream, password);
+                var archiveMetadata = archiveFileModel.Metadata;
+
+                for (int sectionIndex = 0; sectionIndex < archiveMetadata.DecoderSections.Length; sectionIndex++)
+                {
+                    var sectionReader = new ManagedLzma.SevenZip.Reader.DecodedSectionReader(archiveStream, archiveMetadata, sectionIndex, password);
+                    var sectionFiles = archiveFileModel.GetFilesInSection(sectionIndex);
+
+                    // The section reader is constructed from metadata, if the counts do not match there must be a bug somewhere.
+                    System.Diagnostics.Debug.Assert(sectionFiles.Count == sectionReader.StreamCount);
+
+                    // The section reader iterates over all files in the section. NextStream advances the iterator.
+                    for (; sectionReader.CurrentStreamIndex < sectionReader.StreamCount; sectionReader.NextStream())
+                    {
+                        var fileMetadata = sectionFiles[sectionReader.CurrentStreamIndex];
+
+                        // The ArchiveFileModelMetadataReader we used above processes special marker nodes and resolves some conflicts
+                        // in the archive metadata so we don't have to deal with them. In these cases there will be no file metadata
+                        // produced and we should skip the stream. If you want to process these cases manually you should use a different
+                        // MetadataReader subclass or write your own subclass.
+                        if (fileMetadata == null)
+                            continue;
+
+                        // These asserts need to hold, otherwise there's a bug in the mapping the metadata reader produced.
+                        System.Diagnostics.Debug.Assert(fileMetadata.Stream.SectionIndex == sectionIndex);
+                        System.Diagnostics.Debug.Assert(fileMetadata.Stream.StreamIndex == sectionReader.CurrentStreamIndex);
+
+                        // Ensure that the target directory is created.
+                        var filename = Path.Combine(targetDirectory, fileMetadata.FullName);
+                        Directory.CreateDirectory(Path.GetDirectoryName(filename));
+
+                        // NOTE: you can have two using-statements here if you want to be explicit about it, but disposing the
+                        //       stream provided by the section reader is not mandatory, it is owned by the the section reader
+                        //       and will be auto-closed when moving to the next stream or when disposing the section reader.
+                        using (var stream = new FileStream(filename, FileMode.Create, FileAccess.Write, FileShare.Delete))
+                            sectionReader.OpenStream().CopyTo(stream);
+
+                        SetFileAttributes(filename, fileMetadata);
+                    }
+                }
+
+                // Create empty files and empty directories.
+                UnpackArchiveStructure(archiveFileModel.RootFolder, targetDirectory);
+            }
+        }
+
+        private static void UnpackArchiveStructure(ManagedLzma.SevenZip.FileModel.ArchivedFolder folder, string targetDirectory)
+        {
+            if (folder.Items.IsEmpty)
+            {
+                // Empty folders need to be created manually since the unpacking code doesn't try to write into it.
+                Directory.CreateDirectory(targetDirectory);
+            }
+            else
+            {
+                foreach (var item in folder.Items)
+                {
+                    var file = item as ManagedLzma.SevenZip.FileModel.ArchivedFile;
+                    if (file != null)
+                    {
+                        // Files without content are not iterated during normal unpacking so we need to create them manually.
+                        if (file.Stream.IsUndefined)
+                        {
+                            System.Diagnostics.Debug.Assert(file.Length == 0); // If the file has no content then its length should be zero, otherwise something is wrong.
+
+                            var filename = Path.Combine(targetDirectory, file.Name);
+                            using (var stream = new FileStream(filename, FileMode.Create, FileAccess.Write, FileShare.Delete))
+                            {
+                                // Nothing to do, FileMode.Create already truncates the file on opening.
+                            }
+
+                            SetFileAttributes(filename, file);
+                        }
+                    }
+
+                    var subfolder = item as ManagedLzma.SevenZip.FileModel.ArchivedFolder;
+                    if (subfolder != null)
+                        UnpackArchiveStructure(subfolder, Path.Combine(targetDirectory, subfolder.Name));
+                }
+            }
+        }
+
+        private static void SetFileAttributes(string path, ManagedLzma.SevenZip.FileModel.ArchivedFile file)
+        {
+            if (file.Attributes.HasValue)
+            {
+                // When calling File.SetAttributes we need to preserve existing attributes which are not part of the archive
+
+                var attr = File.GetAttributes(path);
+                const FileAttributes kAttrMask = ArchivedAttributesExtensions.FileAttributeMask;
+                attr = (attr & ~kAttrMask) | (file.Attributes.Value.ToFileAttributes() & kAttrMask);
+                File.SetAttributes(path, attr);
+            }
+        }
     }
 }
+
