@@ -739,16 +739,23 @@ namespace Springie.autohost
         }
 
         void CheckEngineBranch() {
+			// TODO: match platform
             string url = String.Format("http://springrts.com/dl/buildbot/default/{0}/LATEST_win32", config.AutoUpdateSpringBranch);
             try {
                 string str = TryCheckEngineBranch(url);
-                if (springPaths.SpringVersion != str) ComSetEngine(TasSayEventArgs.Default, new[] { str });
+				if (springPaths.SpringVersion != str){
+					ComSetEngine(TasSayEventArgs.Default, new[] { str });
+					Trace.TraceInformation("Latest engine on branch {0} is {1}",config.AutoUpdateSpringBranch,str);
+				}
             } catch (Exception ex) {
                 Trace.TraceWarning("Error getting latest engine branch version from {0}: {1}",url,ex.Message);
 				url = String.Format("http://springrts.com/dl/buildbot/default/{0}/LATEST", config.AutoUpdateSpringBranch);
 				try{
 					string str = TryCheckEngineBranch(url);
-					if (springPaths.SpringVersion != str) ComSetEngine(TasSayEventArgs.Default, new[] { str });
+					if (springPaths.SpringVersion != str){
+						Trace.TraceInformation("Latest engine on branch {0} is {1}",config.AutoUpdateSpringBranch,str);
+						ComSetEngine(TasSayEventArgs.Default, new[] { str });
+					}
 				}catch (Exception exx) {
 					Trace.TraceWarning("Error getting latest engine branch version from {0}: {1}",url,exx.Message);
 				}
