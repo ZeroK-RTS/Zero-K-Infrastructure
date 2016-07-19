@@ -252,6 +252,7 @@ namespace ZeroKWeb.Controllers
             try
             {
                 if (banLobby == true) Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
+                if (banMute == true) Global.Server.PublishAccountUpdate(acc);
 
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Reason: {0} ", reason));
