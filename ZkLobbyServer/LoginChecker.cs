@@ -257,6 +257,13 @@ namespace ZkLobbyServer
             user.Faction = acc.Faction != null ? acc.Faction.Shortcut : null;
             user.Clan = acc.Clan != null ? acc.Clan.Shortcut : null;
             user.AccountID = acc.AccountID;
+
+            var banMute = Punishment.GetActivePunishment(acc.AccountID, "", 0, x => x.BanMute, null);
+            if (banMute != null) user.BanMute = true;
+            // note: we do not do "else = false" because this just checks accountID (there can still be active bans per IP or userID)
+
+            var banSpecChat = Punishment.GetActivePunishment(acc.AccountID, "", 0, x => x.BanSpecChat, null);
+            if (banSpecChat != null) user.BanSpecChat = true;
         }
 
         void Talk(string text)
