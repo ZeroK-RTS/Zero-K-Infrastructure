@@ -73,8 +73,8 @@
     <Compile Include="WebMultiDownload.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ManagedLzma, Version=1.0.4.0, Culture=neutral, PublicKeyToken=9d213bf823a71bb8, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ManagedLzma.0.2.0-alpha-5\lib\net45\ManagedLzma.dll</HintPath>
+    <Reference Include="ManagedLzma, Version=1.0.5.0, Culture=neutral, PublicKeyToken=9d213bf823a71bb8, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ManagedLzma.0.2.0-alpha-6\lib\net45\ManagedLzma.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
