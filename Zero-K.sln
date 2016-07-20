@@ -44,6 +44,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkWebLobby", "ZkWebLobby\Zk
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetWikiBot", "DotNetWikiBot\DotNetWikiBot.csproj", "{016C2B52-AFD5-4A3A-A960-E9FB51C014BB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoCleaner", "DemoCleaner\DemoCleaner.csproj", "{74AEBEB6-3861-4484-8008-9EDD100CD635}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -170,6 +172,14 @@ Global
 		{016C2B52-AFD5-4A3A-A960-E9FB51C014BB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{016C2B52-AFD5-4A3A-A960-E9FB51C014BB}.Release|x86.ActiveCfg = Release|Any CPU
 		{016C2B52-AFD5-4A3A-A960-E9FB51C014BB}.Release|x86.Build.0 = Release|Any CPU
+		{74AEBEB6-3861-4484-8008-9EDD100CD635}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74AEBEB6-3861-4484-8008-9EDD100CD635}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74AEBEB6-3861-4484-8008-9EDD100CD635}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{74AEBEB6-3861-4484-8008-9EDD100CD635}.Debug|x86.Build.0 = Debug|Any CPU
+		{74AEBEB6-3861-4484-8008-9EDD100CD635}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74AEBEB6-3861-4484-8008-9EDD100CD635}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74AEBEB6-3861-4484-8008-9EDD100CD635}.Release|x86.ActiveCfg = Release|Any CPU
+		{74AEBEB6-3861-4484-8008-9EDD100CD635}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

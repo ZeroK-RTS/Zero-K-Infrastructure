@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
@@ -16,7 +17,6 @@ namespace ZeroKWeb.Controllers
             return Content("");
         }
         
-        string[] possiblePaths = new string[] { @"c:\projekty\springie_spring\demos-server", @"c:\projekty\springie_spring\demos", @"d:\demos", @"d:\demos-server" };
     
         [OutputCache(Duration = int.MaxValue, VaryByParam = "none")]
         public ActionResult Download(string name) {
@@ -24,7 +24,7 @@ namespace ZeroKWeb.Controllers
                 return Content("");
             }
             else {
-                foreach (var p in possiblePaths) {
+                foreach (var p in GlobalConst.ReplaysPossiblePaths) {
                     var path = Path.Combine(p, name);
                     if (System.IO.File.Exists(path)) return File(System.IO.File.OpenRead(path), "application/octet-stream");
                 }
