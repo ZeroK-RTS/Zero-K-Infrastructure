@@ -24,8 +24,6 @@ namespace ZkData
         public string AutoUpdateRapidTag { get; set; }
         [StringLength(50)]
         public string SpringVersion { get; set; }
-        [StringLength(50)]
-        public string AutoUpdateSpringBranch { get; set; }
         [StringLength(500)]
         public string CommandLevels { get; set; }
         [StringLength(100)]
@@ -69,7 +67,6 @@ namespace ZkData
                 AutoUpdateRapidTag = db.AutoUpdateRapidTag,
                 SpringVersion = db.SpringVersion,
                 SplitBiggerThan = db.SplitBiggerThan,
-                AutoUpdateSpringBranch = db.AutoUpdateSpringBranch,
                 Mode = db.AutohostMode,
                 BattlePassword = db.BattlePassword,
                 CommandLevels = (db.CommandLevels + "").Split('\n').Where(x => !string.IsNullOrEmpty(x)).Select(x => {

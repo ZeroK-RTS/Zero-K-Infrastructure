@@ -132,9 +132,6 @@ namespace Springie.autohost
                         timer.Stop();
                         timerTick++;
 
-                        // auto update engine branch
-                        if (!String.IsNullOrEmpty(config.AutoUpdateSpringBranch) && timerTick%4 == 0) CheckEngineBranch();
-
                         // auto verify pw map
                         if (!spring.IsRunning && mode != AutohostMode.None) if (SpawnConfig == null && mode == AutohostMode.Planetwars) ServerVerifyMap(false);
 
@@ -726,40 +723,6 @@ namespace Springie.autohost
             if (activePoll != null) activePoll.End();
             if (pollTimer != null) pollTimer.Enabled = false;
             activePoll = null;
-        }
-
-        string TryCheckEngineBranch(string url){
-            var wc = new WebClient();
-            string str = wc.DownloadString(url);
-            string bstr = "{" + config.AutoUpdateSpringBranch + "}";
-            if (str.StartsWith(bstr)) str = str.Replace(bstr, "");
-            str = str.Trim('\n', '\r', ' ');
-
-            return str;
-        }
-
-        void CheckEngineBranch() {
-			// TODO: match platform
-            string url = String.Format("http://springrts.com/dl/buildbot/default/{0}/LATEST_win32", config.AutoUpdateSpringBranch);
-            try {
-                string str = TryCheckEngineBranch(url);
-				if (springPaths.SpringVersion != str){
-					ComSetEngine(TasSayEventArgs.Default, new[] { str });
-					Trace.TraceInformation("Latest engine on branch {0} is {1}",config.AutoUpdateSpringBranch,str);
-				}
-            } catch (Exception ex) {
-                Trace.TraceWarning("Error getting latest engine branch version from {0}: {1}",url,ex.Message);
-				url = String.Format("http://springrts.com/dl/buildbot/default/{0}/LATEST", config.AutoUpdateSpringBranch);
-				try{
-					string str = TryCheckEngineBranch(url);
-					if (springPaths.SpringVersion != str){
-						Trace.TraceInformation("Latest engine on branch {0} is {1}",config.AutoUpdateSpringBranch,str);
-						ComSetEngine(TasSayEventArgs.Default, new[] { str });
-					}
-				}catch (Exception exx) {
-					Trace.TraceWarning("Error getting latest engine branch version from {0}: {1}",url,exx.Message);
-				}
-            }
         }
 
         void CheckForBattleExit() {
