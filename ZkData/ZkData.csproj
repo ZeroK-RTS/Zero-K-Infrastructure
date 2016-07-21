@@ -182,6 +182,10 @@
     <Compile Include="Migrations\201607202009200_AddGlacierSupport.Designer.cs">
       <DependentUpon>201607202009200_AddGlacierSupport.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201607211411383_RemoveEngineBranchAutoUpdate.cs" />
+    <Compile Include="Migrations\201607211411383_RemoveEngineBranchAutoUpdate.Designer.cs">
+      <DependentUpon>201607211411383_RemoveEngineBranchAutoUpdate.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="Enums\TreatyState.cs" />
@@ -398,6 +402,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201607202009200_AddGlacierSupport.resx">
       <DependentUpon>201607202009200_AddGlacierSupport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201607211411383_RemoveEngineBranchAutoUpdate.resx">
+      <DependentUpon>201607211411383_RemoveEngineBranchAutoUpdate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
