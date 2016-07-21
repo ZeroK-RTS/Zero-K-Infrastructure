@@ -1,0 +1,46 @@
+﻿@using ZeroKWeb
+@using ZeroKWeb.Controllers
+@model AdminController.EnginesModel
+
+@{
+    Page.Title = "Engine list";
+    var grid = new UniGrid<AdminController.EngineItem>(Model.Data);
+    grid.AddCol("Name", x => x.Name).SetSort(x=>x.Name);
+    grid.AddCol("Platforms", x => string.Join(", ", x.Platforms));
+
+}
+<div id="grid">
+    <h1>@Page.Title</h1>
+
+    <div>
+        @Model.Message
+    </div>
+
+    <form action="@Url.Action("Engines", "Admin")">
+        <div>
+            <h3>Upload a new engine</h3>
+            <table>
+                <tr><td>Name</td><td>@Html.TextBoxFor(x => x.UploadName)</td></tr>
+                @for (int i =0;i< AdminController.EnginePlatforms.Length;i++)
+                {
+                    <tr><td>7z link for @AdminController.EnginePlatforms[i]</td><td>
+                        @Html.TextBox("UploadPlatforms["+i+"]")
+                    </td></tr>
+                }
+                <tr><td colspan="2"><button type="submit" name="upload" value="1" class="js_button">Upload</button></td></tr>
+            </table>
+        </div>
+    </form>
+
+
+    @using (Ajax.BeginForm("Engines", Global.GetAjaxOptions("grid")))
+    {
+        <table>
+            <tr><td>Name</td><td>@Html.TextBoxFor(x=>x.SearchName)</td></tr>
+        </table>
+        <input type="submit" value="Search"/>
+
+        
+        @GridHelpers.RenderTable(grid)
+    }
+</div>
