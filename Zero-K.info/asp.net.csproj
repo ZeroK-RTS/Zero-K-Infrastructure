@@ -264,6 +264,9 @@
     <Compile Include="Controllers\PostHistoryController.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="7za.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ContentService.svc" />
     <Content Include="favicon.png" />
     <Content Include="Img\abuse.png" />
@@ -1584,7 +1587,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>copy /y "$(ProjectDir)\..\packages\7ZipCLI.9.20.0\tools\7za.exe" "$(TargetDir)\"
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -106,7 +106,7 @@ namespace ZeroKWeb.Controllers
                     wc.DownloadFile(link, path7z);
                     var pi = new ProcessStartInfo();
                     pi.WorkingDirectory = temp;
-                    pi.FileName = Path.Combine(Server.MapPath("~"), "bin", "7za.exe");
+                    pi.FileName = Path.Combine(Server.MapPath("~"), "7za.exe");
                     pi.CreateNoWindow = true;
                     pi.UseShellExecute = false;
                     pi.Arguments = "x " + path7z;
