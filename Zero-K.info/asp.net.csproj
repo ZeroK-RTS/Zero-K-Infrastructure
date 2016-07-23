@@ -153,6 +153,7 @@
     <Compile Include="Controllers\AutocompleteController.cs" />
     <Compile Include="Controllers\ClansController.cs" />
     <Compile Include="Controllers\CampaignController.cs" />
+    <Compile Include="Controllers\EnginesController.cs" />
     <Compile Include="Controllers\FactionsController.cs" />
     <Compile Include="Controllers\ContributionsController.cs" />
     <Compile Include="Controllers\GithubController.cs" />
@@ -1433,7 +1434,7 @@
     <Content Include="Views\PostHistory\ViewEntry.cshtml" />
     <Content Include="Views\Lobby\LobbyChatHistory.cshtml" />
     <Content Include="Views\Admin\TraceLogs.cshtml" />
-    <Content Include="Views\Admin\Engines.cshtml" />
+    <Content Include="Views\Engines\EnginesIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
