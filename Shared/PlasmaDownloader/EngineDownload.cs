@@ -27,9 +27,8 @@ namespace PlasmaDownloader
 
         public static List<string> GetEngineList()
         {
-            var comparer = new VersionNumberComparer();
-            var list = new DirectoryInfo(Path.Combine(GlobalConst.SiteDiskPath, "engine", "win32")).GetFiles().Select(x => x.Name).Select(Path.GetFileNameWithoutExtension).OrderBy(x => x, comparer).ToList();
-            return list;
+            var srv = GlobalConst.GetContentService();
+            return srv.GetEngineList(null);
         }
 
         public void Start()
