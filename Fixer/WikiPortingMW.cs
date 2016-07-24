@@ -108,13 +108,12 @@ namespace Fixer
         public static void AddNavbox(Page page, string template)
         {
             string text = page.text;
-            string templateFull = "{{" + template + "}}";
-            if (text.Contains(templateFull))
+            if (page.GetTemplates(false, false).Contains(template))
             {
                 Console.WriteLine("Page {0} already has template {1}", page.title, template);
                 return;
             }
-            text = page.text + "\n" + templateFull;
+            page.AddTemplate("{{" + template + "}}");
             page.Save(text, "Infobox added by DotNetWikiBot", true);
         }
 
