@@ -391,7 +391,7 @@ namespace LobbyClient
                     s = s + "<SPEC> ";
                     break;
                 default:
-                    s = s + "<PRIV " + e.Param + "> ";
+                    s = s + "<PRIV> ";
                     break;
                 }
                 s = s + e.Text;
