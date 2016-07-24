@@ -300,7 +300,9 @@ namespace ZkLobbyServer
                 case SayPlace.Battle:
                     if (MyBattle != null)
                     {
+                        say.Target = MyBattle?.Founder?.Name ?? "";
                         await state.Broadcast(MyBattle?.Users?.Keys, say);
+                        await state.OfflineMessageHandler.StoreChatHistory(say);
                     }
                     break;
 
