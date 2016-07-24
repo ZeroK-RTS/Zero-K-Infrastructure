@@ -377,7 +377,7 @@ namespace LobbyClient
         {
             try
             {
-                if (string.IsNullOrEmpty(e.Text) or string.IsNullOrEmpty(e.PlayerName)) return;
+                if (string.IsNullOrEmpty(e.Text) || string.IsNullOrEmpty(e.PlayerName)) return;
 
                 string s = "CHATLOG:" + e.PlayerName + " ";
                 switch (e.Param) {
