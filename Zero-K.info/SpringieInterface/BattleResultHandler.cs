@@ -88,6 +88,29 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
 
+                // chatlogs
+                foreach (string line in extraData.Where(x => x.StartsWith("CHATLOG")))
+                {
+                    string[] partsSpace = line.Substring(8).Split(new[] { ' ' }, 2);
+                    string name = partsSpace[0];
+                    string chatlog = partsSpace[1];
+
+                    SpringBattlePlayer player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name);
+                    if (player != null)
+                    {
+                        db.LobbyChatHistories.InsertOnSubmit(new LobbyChatHistory
+                                                              {
+                                                                  IsEmote = false,
+                                                                  SayPlace = SayPlace.Game,
+                                                                  User = name,
+                                                                  Ring = false,
+                                                                  Target = "B" + sb.SpringBattleID,
+                                                                  Text = chatlog,
+                                                                  Time = DateTime.UtcNow
+                                                              });
+                    }
+                }
+
                 var text = new StringBuilder();
                 bool isPlanetwars = false;
                 if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Count(x => !x.IsSpectator) >= 2 && sb.Duration >= GlobalConst.MinDurationForPlanetwars)
