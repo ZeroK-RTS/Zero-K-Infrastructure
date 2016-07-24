@@ -5,6 +5,7 @@
 @{
     Page.Title = "Lobby chat history";
     var grid = new UniGrid<LobbyChatHistory>(Model.Data, "History of #" + Model.Channel);
+    grid.AddCol("Target", TargetCol).SetSort(x => x.Target).SetWidth("50px");
     grid.AddCol("Time", x => Html.PrintDate(x.Time)).SetSort(x => x.Time).SetWidth("120px");
     grid.AddCol("User", UserCol).SetSort(x => x.User).SetWidth("200px");
     grid.AddCol("Text", TxtCol).SetSort(x=>x.Text);
@@ -20,6 +21,14 @@
     }
 }
 
+@helper TargetCol(LobbyChatHistory x) {
+    if (x.Target != null)
+    {
+        <span>@x.Target</span>
+    } else {
+        <span>--</span>
+    }
+}
 
 @helper UserCol(LobbyChatHistory x) {
 var acc = Account.AccountByName(new ZkDataContext(), x.User);
