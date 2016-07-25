@@ -41,7 +41,6 @@ namespace DemoCleaner
                 if (!string.IsNullOrEmpty(result.ArchiveId))
                 {
                     battle.GlacierArchiveID = result.ArchiveId;
-                    battle.ReplayFileName = null;
                     Trace.TraceInformation("Spring battle {0} archived as {1}", battle.SpringBattleID, result.ArchiveId);
                 }
             }
@@ -66,7 +65,7 @@ namespace DemoCleaner
                                 if (sb == null) File.Delete(path);
                                 else
                                 {
-                                    if (DateTime.Now.Subtract(sb.StartTime).TotalDays > DemoKeepDays &&
+                                    if (DateTime.Now.Subtract(sb.StartTime).TotalDays > DemoKeepDays && sb.GlacierArchiveID == null && 
                                         (sb.ForumThread == null || sb.ForumThread.PostCount == 0))
                                     {
                                         ArchiveBattle(sb, path);
