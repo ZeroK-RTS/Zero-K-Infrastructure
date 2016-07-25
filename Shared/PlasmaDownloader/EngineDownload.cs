@@ -27,198 +27,92 @@ namespace PlasmaDownloader
 
         public static List<string> GetEngineList()
         {
-            var engineDownloadPath = GlobalConst.EngineDownloadPath;
-            var branchData = new WebClient().DownloadString(string.Format("{0}buildbot/default/", engineDownloadPath));
-
-            var comparer = new VersionNumberComparer();
-
-            var branches = Regex.Matches(branchData,
-                              "<img src=\"/icons/folder.gif\" alt=\"\\[DIR\\]\"></td><td><a href=\"([^\"]+)/\">\\1/</a>",
-                              RegexOptions.IgnoreCase).OfType<Match>().Select(x => x.Groups[1].Value).OrderBy(x => x, comparer).ToList();
-
-            string data = "";
-            foreach (string branch in branches)
-            {
-                data += new WebClient().DownloadString(string.Format("{0}buildbot/default/{1}/", engineDownloadPath, branch));
-            }
-
-            var list =
-                Regex.Matches(data,
-                              "<img src=\"/icons/folder.gif\" alt=\"\\[DIR\\]\"></td><td><a href=\"([^\"]+)/\">\\1/</a>",
-                              RegexOptions.IgnoreCase).OfType<Match>().Select(x => x.Groups[1].Value).OrderBy(x => x, comparer).ToList();
-            return list;
+            var srv = GlobalConst.GetContentService();
+            return srv.GetEngineList(null);
         }
 
         public void Start()
         {
             Utils.StartAsync(() =>
                 {
-                    var paths = new List<string>();
                     var platform = "win32";
-                    var archiveName = "minimal-portable+dedicated.zip";
-                    var archiveNameAlt = "minimal-portable.7z";
 
                     if (Environment.OSVersion.Platform == PlatformID.Unix)
                     {
                         var response = Utils.ExecuteConsoleCommand("uname", "-m") ?? "";
                         platform = response.Contains("64") ? "linux64" : "linux32";
-                        archiveName = string.Format("minimal-portable-{0}-static.7z", platform);
                     }
 
-                    // special hack for engine 91.0
-                    //if (platform == "linux64" && Name == "91.0") paths.Add("http://springrts.com/dl/spring_91.0.amd64.zip");
-                    //else if (platform == "linux32" && Name == "91.0") paths.Add("http://springrts.com/dl/spring_91.0_portable_linux_i686.zip");
+                    var downloadUrl = string.Format("{0}/engine/{2}/{1}.zip", GlobalConst.BaseSiteUrl, Name, platform);
 
-                    var engineDownloadPath = GlobalConst.EngineDownloadPath;
-                    paths.Add(string.Format("{0}buildbot/syncdebug/develop/{1}/spring_[syncdebug]{1}_{2}", engineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/master/{1}/spring_{1}_{2}", engineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/spring_{{develop}}{1}_{2}", engineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/release/{1}/spring_{{release}}{1}_{2}", engineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/MTsim/{1}/spring_{{MTsim}}{1}_{2}", engineDownloadPath, Name, archiveName));
-                    paths.Add(string.Format("{0}buildbot/default/master/{1}/{3}/spring_{1}_{2}", engineDownloadPath, Name, archiveName, platform));
-                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{{develop}}{1}_{2}",
-                                            engineDownloadPath,
-                                            Name,
-                                            archiveName,
-                                            platform));
-
-                    paths.Add(string.Format("{0}/engine/{2}/{1}.zip", GlobalConst.BaseSiteUrl, Name, platform));
-
-
-
-                    // new format with portable.7z downloads for post 101.0.1-414-g6a6a528 dev versions
-                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{{develop}}{1}_{3}_{2}",
-                                            engineDownloadPath,
-                                            Name,
-                                            archiveNameAlt,
-                                            platform));
-                    // 101.0.1-414-g6a6a528 dev versions and earlier dev versions (now that minimal-portable+dedicated.zip is no longer available)
-                    paths.Add(string.Format("{0}buildbot/default/develop/{1}/{3}/spring_{1}_{2}",
-                                            engineDownloadPath,
-                                            Name,
-                                            archiveNameAlt,
-                                            platform));
-                    // dunno if this will be the format for 102.0 but may as well put it in now
-                    paths.Add(string.Format("{0}buildbot/default/master/{1}/{3}/spring_{1}_{3}_{2}",
-                                            engineDownloadPath,
-                                            Name,
-                                            archiveNameAlt,
-                                            platform));
-                    paths.Add(string.Format("{0}buildbot/default/release/{1}/{3}/spring_{{release}}{1}_{2}",
-                                            engineDownloadPath,
-                                            Name,
-                                            archiveName,
-                                            platform));
-                                            
-
-                    paths.Add(string.Format("{0}buildbot/default/MTsim/{1}/{3}/spring_{{MTsim}}{1}_{2}",
-                                            engineDownloadPath,
-                                            Name,
-                                            archiveName,
-                                            platform));
-
-                    for (var i = 9; i >= -1; i--)
+                    if (VerifyFile(downloadUrl))
                     {
-                        var version = Name;
-                        // if i==-1 we tested without version number
-                        if (i >= 0) version = string.Format("{0}.{1}", Name, i);
-                        paths.Add(string.Format("{0}spring_{1}.zip", engineDownloadPath, version));
-                    }
-
-                    var source = paths.FirstOrDefault(VerifyFile) ?? paths.FirstOrDefault(VerifyFile);
-
-                    if (source != null)
-                    {
-                        var extension = source.Substring(source.LastIndexOf('.'));
+                        var extension = downloadUrl.Substring(downloadUrl.LastIndexOf('.'));
                         var wc = new WebClient() { Proxy = null };
                         var assemblyName = Assembly.GetEntryAssembly()?.GetName();
                         if (assemblyName != null) wc.Headers.Add("user-agent", string.Format("{0} {1}", assemblyName.Name, assemblyName.Version));
                         var target = Path.GetTempFileName() + extension;
                         wc.DownloadProgressChanged += (s, e) =>
-                            {
-                                Length = (int)(e.TotalBytesToReceive);
-                                IndividualProgress = 10 + 0.8 * e.ProgressPercentage;
-                            };
+                        {
+                            Length = (int)(e.TotalBytesToReceive);
+                            IndividualProgress = 10 + 0.8*e.ProgressPercentage;
+                        };
                         wc.DownloadFileCompleted += (s, e) =>
+                        {
+                            if (e.Cancelled)
                             {
-                                if (e.Cancelled)
+                                Trace.TraceInformation("Download {0} cancelled", Name);
+                                Finish(false);
+                            }
+                            else if (e.Error != null)
+                            {
+                                Trace.TraceWarning("Error downloading {0}: {1}", Name, e.Error);
+                                Finish(false);
+                            }
+                            else
+                            {
+                                Trace.TraceInformation("Installing {0}", downloadUrl);
+                                var timer = new Timer((o) => { IndividualProgress += (100 - IndividualProgress)/10; }, null, 1000, 1000);
+                                
+                                var targetDir = springPaths.GetEngineFolderByVersion(Name);
+                                if (!Directory.Exists(targetDir)) Directory.CreateDirectory(targetDir);
+
+                                try
                                 {
-                                    Trace.TraceInformation("Download {0} cancelled", Name);
+                                    ExtractZipArchive(target, targetDir);
+                                    Trace.TraceInformation("Install of {0} complete", Name);
+                                    springPaths.SetEnginePath(targetDir);
+                                    Finish(true);
+                                }
+                                catch (Exception ex)
+                                {
+                                    try
+                                    {
+                                        Directory.Delete(targetDir, true);
+                                    }
+                                    catch {}
+                                    Trace.TraceWarning("Install of {0} failed: {1}", Name, ex);
                                     Finish(false);
                                 }
-                                else if (e.Error != null)
+                                finally
                                 {
-                                    Trace.TraceWarning("Error downloading {0}: {1}", Name, e.Error);
-                                    Finish(false);
+                                    timer.Dispose();
                                 }
-                                else
-                                {
-                                    Trace.TraceInformation("Installing {0}", source);
-                                    var timer = new Timer((o) => { IndividualProgress += (100 - IndividualProgress) / 10; }, null, 1000, 1000);
-
-                                    if (extension == ".exe")
-                                    {
-                                        var p = new Process();
-                                        p.StartInfo = new ProcessStartInfo(target,
-                                                                           string.Format("/S /D={0}", springPaths.GetEngineFolderByVersion(Name)));
-                                        p.Exited += (s2, e2) =>
-                                            {
-                                                timer.Dispose();
-                                                if (p.ExitCode != 0)
-                                                {
-                                                    Trace.TraceWarning("Install of {0} failed: {1}", Name, p.ExitCode);
-                                                    Finish(false);
-                                                }
-                                                else
-                                                {
-                                                    Trace.TraceInformation("Install of {0} complete", Name);
-                                                    springPaths.SetEnginePath(springPaths.GetEngineFolderByVersion(Name));
-                                                    Finish(true);
-                                                    // run unitsync after engine download; for more info see comments in Program.cs
-                                                    //new PlasmaShared.UnitSyncLib.UnitSync(springPaths); // put it after Finish() so it doesn't hold up the download bar
-                                                    //^ is commented because conflict/non-consensus. See: https://code.google.com/p/zero-k/source/detail?r=12394 for some issue/discussion
-                                                }
-                                            };
-
-                                        p.EnableRaisingEvents = true;
-                                        p.Start();
-                                    }
-                                    else
-                                    {
-                                        var targetDir = springPaths.GetEngineFolderByVersion(Name);
-                                        if (!Directory.Exists(targetDir)) Directory.CreateDirectory(targetDir);
-
-                                        try
-                                        {
-                                            ExtractArchive(target, targetDir);
-
-                                            Trace.TraceInformation("Install of {0} complete", Name);
-                                            springPaths.SetEnginePath(targetDir);
-                                            Finish(true);
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            try
-                                            {
-                                                Directory.Delete(targetDir, true);
-                                            }
-                                            catch { }
-                                            Trace.TraceWarning("Install of {0} failed: {1}", Name, ex);
-                                            Finish(false);
-                                        }
-                                    }
-                                }
-                            };
-                        Trace.TraceInformation("Downloading {0}", source);
-                        wc.DownloadFileAsync(new Uri(source), target, this);
+                            }
+                        };
+                        Trace.TraceInformation("Downloading {0}", downloadUrl);
+                        wc.DownloadFileAsync(new Uri(downloadUrl), target, this);
                         return;
                     }
-                    Trace.TraceInformation("Cannot find {0}", Name);
-                    Finish(false);
+                    else
+                    {
+                        Trace.TraceInformation("Cannot find {0}", Name);
+                        Finish(false);
+                    }
                 });
         }
 
-        void ExtractArchive(string target, string targetDir)
+        void ExtractZipArchive(string target, string targetDir)
         {
             using (var archive = ArchiveFactory.Open(target))
             {
@@ -270,5 +164,7 @@ namespace PlasmaDownloader
                 return pa.Length.CompareTo(pb.Length);
             }
         }
+
     }
 }
+

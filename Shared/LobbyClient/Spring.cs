@@ -372,7 +372,36 @@ namespace LobbyClient
                 Trace.TraceError("Error while processing '{0}' :{1}", e.Text, ex);
             }
         }
+        
+        private void AddToLogs(Talker.SpringEventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(e.Text) || string.IsNullOrEmpty(e.PlayerName)) return;
 
+                string s = "CHATLOG:" + e.PlayerName + " ";
+                switch (e.Param) {
+                case Talker.TO_EVERYONE:
+                    s = s + "<PUBLIC> ";
+                    break;
+                case Talker.TO_ALLIES:
+                    s = s + "<ALLY> ";
+                    break;
+                case Talker.TO_SPECTATORS:
+                    s = s + "<SPEC> ";
+                    break;
+                default:
+                    s = s + "<PRIV> ";
+                    break;
+                }
+                s = s + e.Text;
+                statsData.Add(s);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error while processing '{0}' :{1}", e.Text, ex);
+            }
+        }
 
         private void ParseInfolog(string text, bool isCrash)
         {
@@ -644,6 +673,7 @@ namespace LobbyClient
 
                     case Talker.SpringEventType.PLAYER_CHAT:
                         if (e.Param == 255) HandleSpecialMessages(e);
+                        else AddToLogs (e);
 
                         // only public chat
                         if (PlayerSaid != null && (e.Param == Talker.TO_EVERYONE || e.Param == Talker.TO_EVERYONE_LEGACY) && !string.IsNullOrEmpty(e.PlayerName)) PlayerSaid(this, new SpringLogEventArgs(e.PlayerName, e.Text));

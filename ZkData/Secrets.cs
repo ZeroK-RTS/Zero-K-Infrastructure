@@ -35,6 +35,12 @@ namespace ZkData
             return GetVarValue(db, "SteamBuildPassword");
         }
 
+        public string GetGlacierSecretKey(ZkDataContext db = null)
+        {
+            return GetVarValue(db, "GlacierSecretKey");
+        }
+
+
 
     }
 }

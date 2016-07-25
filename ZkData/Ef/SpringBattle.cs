@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace ZkData
@@ -28,6 +29,7 @@ namespace ZkData
         public bool HasBots { get; set; }
         public bool IsMission { get; set; }
         [StringLength(500)]
+        [Index]
         public string ReplayFileName { get; set; }
         [StringLength(100)]
         public string EngineVersion { get; set; }
@@ -39,6 +41,9 @@ namespace ZkData
         public string TeamsTitle { get; set; }
         public bool IsFfa { get; set; }
         public int? RatingPollID { get; set; }
+
+        [StringLength(250)]
+        public string GlacierArchiveID { get; set; }
 
         public virtual Account Account { get; set; }
         public virtual ICollection<AccountBattleAward> AccountBattleAwards { get; set; }

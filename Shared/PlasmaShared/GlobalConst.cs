@@ -223,9 +223,10 @@ namespace ZkData
         public static string ResourceBaseUrl;
         public static string SelfUpdaterBaseUrl;
         public static readonly string[] DefaultDownloadMirrors = {};
-        public static readonly string EngineDownloadPath = "http://springrts.com/dl/";
         public static string LobbyServerHost;
         public static int LobbyServerPort;
+
+        public static string[] ReplaysPossiblePaths = { @"c:\projekty\springie_spring\demos-server", @"c:\projekty\springie_spring\demos", @"d:\demos", @"d:\demos-server" };
 
 
 

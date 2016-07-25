@@ -132,9 +132,6 @@ namespace Springie.autohost
                         timer.Stop();
                         timerTick++;
 
-                        // auto update engine branch
-                        if (!String.IsNullOrEmpty(config.AutoUpdateSpringBranch) && timerTick%4 == 0) CheckEngineBranch();
-
                         // auto verify pw map
                         if (!spring.IsRunning && mode != AutohostMode.None) if (SpawnConfig == null && mode == AutohostMode.Planetwars) ServerVerifyMap(false);
 
@@ -727,22 +724,6 @@ namespace Springie.autohost
             if (pollTimer != null) pollTimer.Enabled = false;
             activePoll = null;
         }
-
-        void CheckEngineBranch() {
-            string url = String.Format("http://springrts.com/dl/buildbot/default/{0}/LATEST", config.AutoUpdateSpringBranch);
-            try {
-                var wc = new WebClient();
-                string str = wc.DownloadString(url);
-                string bstr = "{" + config.AutoUpdateSpringBranch + "}";
-                if (str.StartsWith(bstr)) str = str.Replace(bstr, "");
-                str = str.Trim('\n', '\r', ' ');
-
-                if (springPaths.SpringVersion != str) ComSetEngine(TasSayEventArgs.Default, new[] { str });
-            } catch (Exception ex) {
-                Trace.TraceWarning("Error getting latest engine branch version from {0}: {1}");
-            }
-        }
-
 
         void CheckForBattleExit() {
             if ((DateTime.Now - spring.GameStarted) > TimeSpan.FromSeconds(20)) {

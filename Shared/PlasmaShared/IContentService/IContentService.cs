@@ -23,6 +23,11 @@ namespace PlasmaShared
         [OperationContract]
         DownloadFileResult DownloadFile(string internalName);
 
+
+        [OperationContract]
+        List<string> GetEngineList(string platform);
+
+
         [OperationContract]
         List<ResourceData> FindResourceData(string[] words, ResourceType? type = null);
 

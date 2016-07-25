@@ -292,7 +292,7 @@ namespace ZkLobbyServer
                 case SayPlace.User:
                     ConnectedUser connectedUser;
                     if (state.ConnectedUsers.TryGetValue(say.Target, out connectedUser)) await connectedUser.SendCommand(say);
-                    else await state.OfflineMessageHandler.StoreChatHistory(say);
+                    await state.OfflineMessageHandler.StoreChatHistory(say);
                     await SendCommand(say);
 
                     break;
@@ -300,7 +300,9 @@ namespace ZkLobbyServer
                 case SayPlace.Battle:
                     if (MyBattle != null)
                     {
+                        say.Target = MyBattle?.Founder?.Name ?? "";
                         await state.Broadcast(MyBattle?.Users?.Keys, say);
+                        await state.OfflineMessageHandler.StoreChatHistory(say);
                     }
                     break;
 

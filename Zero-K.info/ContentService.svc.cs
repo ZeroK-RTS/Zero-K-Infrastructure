@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.SqlServer;
+using System.IO;
 using System.Linq;
 using Microsoft.Linq.Translations;
+using PlasmaDownloader;
 using PlasmaShared;
 using ZkData;
 
@@ -18,7 +20,15 @@ namespace ZeroKWeb
             return PlasmaServer.DownloadFile(internalName);
         }
 
-        
+        public List<string> GetEngineList(string platform)
+        {
+            var comparer = new EngineDownload.VersionNumberComparer();
+            var list = new DirectoryInfo(Path.Combine(Global.MapPath("~"), "engine", platform ?? "win32")).GetFiles().Select(x => x.Name).Select(Path.GetFileNameWithoutExtension).OrderBy(x => x, comparer).ToList();
+            return list;
+
+        }
+
+
         public List<ResourceData> FindResourceData(string[] words, ResourceType? type = null)
         {
             var db = new ZkDataContext();

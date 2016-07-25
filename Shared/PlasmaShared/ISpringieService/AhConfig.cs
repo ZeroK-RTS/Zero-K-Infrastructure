@@ -15,7 +15,6 @@ namespace PlasmaShared
         public bool AutoSpawnClones;
         public string AutoUpdateRapidTag;
         public string SpringVersion;
-        public string AutoUpdateSpringBranch;
         public string BattlePassword;
         public AutohostMode Mode;
         public CommandLevel[] CommandLevels;
