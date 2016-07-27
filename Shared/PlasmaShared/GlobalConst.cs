@@ -226,7 +226,7 @@ namespace ZkData
         public static string LobbyServerHost;
         public static int LobbyServerPort;
 
-        public static string[] ReplaysPossiblePaths = { @"c:\projekty\springie_spring\demos-server", @"c:\projekty\springie_spring\demos", @"d:\demos", @"d:\demos-server" };
+        public static string[] ReplaysPossiblePaths = { @"c:\projekty\springie_spring\demos-server"};
 
 
 
