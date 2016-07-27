@@ -1,9 +1,11 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using Amazon;
 using Amazon.Glacier;
 using Amazon.Glacier.Model;
@@ -38,10 +40,15 @@ namespace DemoCleaner
             using (var fs = File.OpenRead(path))
             {
                 var result = StoreArchive(fs, $"Spring battle {battle.SpringBattleID}");
-                if (!string.IsNullOrEmpty(result.ArchiveId))
+                if (!string.IsNullOrEmpty(result.ArchiveId) && (result.HttpStatusCode == HttpStatusCode.OK || result.HttpStatusCode == HttpStatusCode.Accepted || result.HttpStatusCode == HttpStatusCode.Created))
                 {
                     battle.GlacierArchiveID = result.ArchiveId;
                     Trace.TraceInformation("Spring battle {0} archived as {1}", battle.SpringBattleID, result.ArchiveId);
+                }
+                else
+                {
+
+                    throw new Exception("Invalid glacier upload: " + result.HttpStatusCode);
                 }
             }
         }
@@ -49,28 +56,54 @@ namespace DemoCleaner
 
         public void CleanAllFiles()
         {
+            if (GlobalConst.Mode != ModeType.Live)
+            {
+                Trace.TraceError("This must be run only against live DB");
+                return;
+            }
+
             foreach (var dir in GlobalConst.ReplaysPossiblePaths)
             {
                 if (Directory.Exists(dir))
                 {
-                    foreach (var path in Directory.GetFiles(dir))
+                    var files = Directory.GetFiles(dir);
+                    files.AsParallel().ForAll(path =>
                     {
                         try
                         {
                             var name = Path.GetFileName(path);
-
                             using (var db = new ZkDataContext())
                             {
                                 var sb = db.SpringBattles.FirstOrDefault(x => x.ReplayFileName == name);
-                                if (sb == null) File.Delete(path);
+                                if (sb == null)
+                                {
+                                    Trace.TraceWarning("deleting unknown: {0}", name);
+                                    File.Delete(path);
+                                }
                                 else
                                 {
-                                    if (DateTime.Now.Subtract(sb.StartTime).TotalDays > DemoKeepDays && sb.GlacierArchiveID == null && 
-                                        (sb.ForumThread == null || sb.ForumThread.PostCount == 0))
+                                    // hack stuff for failed undeletes
+                                    var bytes = File.ReadAllBytes(path);
+                                    if (bytes.Length > 0 && bytes.All(x => x == 0))
                                     {
-                                        ArchiveBattle(sb, path);
-                                        db.SaveChanges();
+                                        Trace.TraceWarning("deleting empty: {0}", path);
                                         File.Delete(path);
+                                    }
+                                    else
+                                    {
+
+                                        if (DateTime.Now.Subtract(sb.StartTime).TotalDays > DemoKeepDays && sb.GlacierArchiveID == null &&
+                                            (sb.ForumThread == null || sb.ForumThread.PostCount == 0))
+                                        {
+                                            Trace.TraceInformation("archiving: {0}", name);
+                                            ArchiveBattle(sb, path);
+                                            db.SaveChanges();
+                                            if (!string.IsNullOrEmpty(sb.GlacierArchiveID)) File.Delete(path);
+                                        }
+                                        else
+                                        {
+                                            Trace.TraceInformation("keeping valid: {0}", name);
+                                        }
                                     }
                                 }
                             }
@@ -79,7 +112,7 @@ namespace DemoCleaner
                         {
                             Trace.TraceError("Error processing demo file {0} : {1}", path, ex);
                         }
-                    }
+                    });
                 }
             }
         }
