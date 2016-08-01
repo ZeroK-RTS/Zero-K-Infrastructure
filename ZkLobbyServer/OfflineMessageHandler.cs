@@ -26,10 +26,7 @@ namespace ZkLobbyServer
                     foreach (var line in toDelete) {
                         db.LobbyChatHistories.DeleteOnSubmit(line);
                     }
-                    try {
-                        db.SubmitChanges();
-                    } catch (Exception e) {
-                    }
+                    db.SubmitChanges();
                 }
             }
         }
