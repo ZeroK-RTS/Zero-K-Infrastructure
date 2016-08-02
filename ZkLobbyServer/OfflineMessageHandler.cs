@@ -22,11 +22,8 @@ namespace ZkLobbyServer
                         .ForEachAsync(async (chatHistory) => { await sender.SendCommand(chatHistory.ToSay()); });
                 
                 if (place == SayPlace.User) { // don't keep PMs longer than needed
-                    var toDelete = db.LobbyChatHistories.Where(x => x.Target == target && x.SayPlace == SayPlace.User).ToList();
-                    foreach (var line in toDelete) {
-                        db.LobbyChatHistories.DeleteOnSubmit(line);
-                    }
-                    db.SubmitChanges();
+                    db.LobbyChatHistories.DeleteAllOnSubmit(db.LobbyChatHistories.Where(x => x.Target == target && x.SayPlace == SayPlace.User).ToList());
+                    db.SaveChanges();
                 }
             }
         }
