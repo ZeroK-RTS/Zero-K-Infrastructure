@@ -97,7 +97,7 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             if (batKick.BattleID == null && MyBattle != null) batKick.BattleID = MyBattle.BattleID;
-            Battle bat;
+            ServerBattle bat;
             if (state.Battles.TryGetValue(batKick.BattleID.Value, out bat))
             {
                 if (bat.Founder != User && !User.IsAdmin)
@@ -126,7 +126,7 @@ namespace ZkLobbyServer
                 return;
             }
 
-            Battle bat;
+            ServerBattle bat;
             if (state.Battles.TryGetValue(forceJoin.BattleID, out bat)) {
                 await state.ForceJoinBattle(forceJoin.Name, bat);
             }
@@ -387,7 +387,7 @@ namespace ZkLobbyServer
             var h = openBattle.Header;
             h.BattleID = battleID;
             h.Founder = Name;
-            var battle = new Battle();
+            var battle = new ServerBattle();
             battle.UpdateWith(h, (n) => state.ConnectedUsers[n].User);
             battle.Users[Name] = new UserBattleStatus(Name, User);
             state.Battles[battleID] = battle;
@@ -409,7 +409,7 @@ namespace ZkLobbyServer
                 return;
             }
 
-            Battle battle;
+            ServerBattle battle;
             if (state.Battles.TryGetValue(join.BattleID, out battle))
             {
                 if (battle.IsPassworded && battle.Password != join.Password)
@@ -445,7 +445,7 @@ namespace ZkLobbyServer
 
             var h = battleUpdate.Header;
             if (h.BattleID == null && MyBattle != null) h.BattleID = MyBattle.BattleID;
-            Battle bat;
+            ServerBattle bat;
             if (!state.Battles.TryGetValue(h.BattleID.Value, out bat))
             {
                 await Respond("No such battle exists");
@@ -507,7 +507,7 @@ namespace ZkLobbyServer
 
             if (leave.BattleID == null && MyBattle != null) leave.BattleID = MyBattle.BattleID;
 
-            Battle battle;
+            ServerBattle battle;
             if (state.Battles.TryGetValue(leave.BattleID.Value, out battle))
             {
                 await LeaveBattle(battle);
@@ -638,7 +638,7 @@ namespace ZkLobbyServer
                 if (state.ConnectedUsers.TryGetValue(u, out connectedUser)) connectedUser.MyBattle = null;
                 await state.Broadcast(state.ConnectedUsers.Values, new LeftBattle() { BattleID = battle.BattleID, User = u });
             }
-            Battle bat;
+            ServerBattle bat;
             state.Battles.TryRemove(battle.BattleID, out bat);
             await state.Broadcast(state.ConnectedUsers.Values, new BattleRemoved() { BattleID = battle.BattleID });
         }
