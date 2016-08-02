@@ -53,6 +53,18 @@ namespace ZkLobbyServer
                 db.LogEntries.Add(new LogEntry() { Time = DateTime.UtcNow, Message = text, TraceEventType = type });
                 await db.SaveChangesAsync();
             }
+
+            // write error and critical logs to server
+            if (type == TraceEventType.Error || type == TraceEventType.Critical) { 
+                var say = new Say() { Place = SayPlace.Channel, Target = "zkerror", Text = text, User = GlobalConst.NightwatchName, Time=DateTime.UtcNow};
+
+                if (ZkLobbyServer != null) {
+                    // server runnin, flush queue and add new say
+                    Say history;
+                    while (queue.TryDequeue(out history)) await ZkLobbyServer.GhostSay(history);
+                    await ZkLobbyServer.GhostSay(say);
+                } else queue.Enqueue(say); // server not running (stuff intiializing) store in queueu
+            }
         }
     }
 }
