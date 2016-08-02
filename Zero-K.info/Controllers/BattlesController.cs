@@ -25,7 +25,7 @@ namespace ZeroKWeb.Controllers
             if (bat.ForumThread != null)
             {
                 bat.ForumThread.UpdateLastRead(Global.AccountID, false);
-                db.SubmitChanges();
+                db.SaveChanges();
             }
 
             if (Global.AccountID != 0 && !showWinners && bat.SpringBattlePlayers.Any(y => y.AccountID == Global.AccountID && !y.IsSpectator)) ViewBag.ShowWinners = true; // show winners if player played thatbattle

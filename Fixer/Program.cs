@@ -132,7 +132,7 @@ namespace Fixer
                             db.ForumThreadLastReads.DeleteAllOnSubmit(todel.ForumThreadLastReads.ToList());
                             db.AccountBattleAwards.DeleteAllOnSubmit(todel.AccountBattleAwards.ToList());
                             db.Accounts.DeleteOnSubmit(todel);
-                            db.SubmitChanges();
+                            db.SaveChanges();
                             Console.WriteLine("Deleted {0}", todel.Name);
                         }
                         catch (Exception ex)
@@ -142,7 +142,7 @@ namespace Fixer
                                 var acc = db2.Accounts.Find(todel.AccountID);
                                 acc.IsDeleted = true;
                                 acc.Name = string.Format("___DELETED___{0}", todel.AccountID); // hacky way to avoid duplicates
-                                db2.SubmitChanges();
+                                db2.SaveChanges();
                             }
                             Console.WriteLine("Failed to delete {0}", todel.Name);
                         }
@@ -191,7 +191,7 @@ namespace Fixer
             string oldName = acc.Name;
             acc.SetName(newName);
             Console.WriteLine("Renaming {0} to {1}", oldName, newName);
-            db.SubmitChanges();
+            db.SaveChanges();
         }
 
         public static void FixStuff()
@@ -249,7 +249,7 @@ namespace Fixer
                     clan.IsDeleted = false;
                 }
             }
-            db.SubmitChanges();
+            db.SaveChanges();
         }
 
         public static void AddClanLeaders()
@@ -595,8 +595,7 @@ namespace Fixer
 
 
             }
-            db.SubmitChanges();
-
+            db.SaveChanges();
         }
 
 
@@ -609,7 +608,7 @@ namespace Fixer
             {
                 mission.Script = Regex.Replace(mission.Script, "GameType=([^;]+);", (m) => { return string.Format("GameType={0};", mission.NameWithVersion); });
             }
-            db.SubmitChanges();
+            db.SaveChanges();
         }
 
         static void GetModuleUsage(int moduleID, List<Commander> comms, ZkDataContext db)
@@ -704,7 +703,7 @@ namespace Fixer
                 }
 
                 //reload DB - this allows the vars submitted this session to be used by the following code
-                db.SubmitChanges();
+                db.SaveChanges();
                 db = new ZkDataContext();
                 acc = db.Accounts.First(x => x.AccountID == accountID);
 
@@ -816,7 +815,7 @@ namespace Fixer
                 {
                     System.Console.WriteLine("{1} - Journal entry unlocked: {0}", uj, uj.CampaignPlanet);
                 }
-                db.SubmitChanges();
+                db.SaveChanges();
             }
         }
 
@@ -892,7 +891,7 @@ namespace Fixer
                     if (eng != b.EngineVersion) b.EngineVersion = eng;
                 }
             }
-            db.SubmitChanges();
+            db.SaveChanges();
         }
 
         public class EloEntry
@@ -1031,7 +1030,7 @@ namespace Fixer
                     Console.WriteLine(b.SpringBattleID);
                     b.CalculateAllElo();
                 }
-                db.SubmitChanges();
+                db.SaveChanges();
             }
         }
 
@@ -1057,7 +1056,7 @@ namespace Fixer
                     }
                 }
             }
-            db.SubmitChanges();
+            db.SaveChanges();
         }
 
         static void FixMaps()
@@ -1066,7 +1065,7 @@ namespace Fixer
             {
                 var db = new ZkDataContext();
                 foreach (var r in db.Resources.Where(x => x.LastChange == null)) r.LastChange = DateTime.UtcNow;
-                db.SubmitChanges();
+                db.SaveChanges();
                 return;
 
                 foreach (var resource in db.Resources.Where(x => x.TypeID == ResourceType.Map))//&&x.MapSizeSquared == null))
@@ -1130,7 +1129,7 @@ namespace Fixer
                     }
                     Console.WriteLine(string.Format("{0}", resource.InternalName));
                 }
-                db.SubmitChanges();
+                db.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -1163,7 +1162,7 @@ namespace Fixer
                     acc.PunishmentsByAccountID.Add(punishment);
                 }
             }
-            db.SubmitChanges();
+            db.SaveChanges();
         }
 
 

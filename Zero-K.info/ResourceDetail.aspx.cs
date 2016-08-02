@@ -75,9 +75,9 @@ namespace ZeroKWeb
 				Utils.SafeDelete(PlasmaServer.GetTorrentPath(todel));
 
 				db.ResourceContentFiles.DeleteOnSubmit(todel);
-				db.SubmitChanges();
+			    db.SaveChanges();
 
-				MessageBox.Show("Deleted " + todel.FileName);
+			    MessageBox.Show("Deleted " + todel.FileName);
 
 			}
 			else

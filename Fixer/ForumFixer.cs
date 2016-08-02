@@ -90,7 +90,7 @@ namespace Fixer
                 DeleteUserVote(accountID, v.ForumPostID, db);
                 System.Console.WriteLine(v.Account.Name + "\t" + v.ForumPostID + "\t" + v.Vote);
             }
-            db.SubmitChanges();
+            db.SaveChanges();
         }
 
         public static void RecountForumVotes()
@@ -111,7 +111,7 @@ namespace Fixer
                 if (delta > 0) poster.ForumTotalUpvotes = poster.ForumTotalUpvotes + delta;
                 else if (delta < 0) poster.ForumTotalDownvotes = poster.ForumTotalDownvotes - delta;
             }
-            db.SubmitChanges();
+            db.SaveChanges();
         }
 
         public static void GetForumVotesByUser(int voterID, int voteeID)

@@ -123,7 +123,7 @@ namespace ZeroKWeb
                 }
             }
             map.MapSpringieCommands = newCommands;
-            db.SubmitChanges();
+            db.SaveChanges();
         }
     }
 }

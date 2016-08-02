@@ -61,7 +61,7 @@ namespace ZeroKWeb.SpringieInterface
                                                });
                 }
 
-                db.SubmitChanges();
+                db.SaveChanges();
 
                 // awards
                 foreach (string line in extraData.Where(x => x.StartsWith("award")))
@@ -151,7 +151,7 @@ namespace ZeroKWeb.SpringieInterface
                 bool noElo = (extraData.FirstOrDefault(x => x.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture)) != null);
                 try
                 {
-                    db.SubmitChanges();
+                    db.SaveChanges();
                 }
                 catch (System.Data.Linq.DuplicateKeyException ex)
                 {

@@ -152,7 +152,7 @@ namespace ZeroKWeb
                                     {
                                         mis.Revision++;
                                         mu.UpdateMission(db, mis, modInfo);
-                                        db.SubmitChanges();
+                                        db.SaveChanges();
                                     }
                                 }
 

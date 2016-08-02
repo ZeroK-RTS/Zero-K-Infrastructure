@@ -772,11 +772,6 @@ namespace ZkData
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<ZkDataContext, Configuration>());
         }
 
-        public void SubmitChanges()
-        {
-            SaveChanges();
-        }
-
 
         public static event EventHandler<EntityEntry> BeforeEntityChange;
         public static event EventHandler<EntityEntry> AfterEntityChange;

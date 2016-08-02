@@ -30,7 +30,7 @@ namespace ZeroKWeb.Controllers
             Faction faction = db.Factions.Single(x => x.FactionID == id);
             if (faction.IsDeleted && !(Global.Account.Clan != null && Global.Account.Clan.FactionID == id)) throw new ApplicationException("Cannot join deleted faction");
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} joins {1}", acc, faction));
-            db.SubmitChanges();
+            db.SaveChanges();
             return RedirectToAction("Index", "Factions");
         }
 
@@ -56,7 +56,7 @@ namespace ZeroKWeb.Controllers
 
 
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves faction {1}", acc, acc.Faction));
-            db.SubmitChanges();
+            db.SaveChanges();
             PlanetwarsController.SetPlanetOwners(db);
 
 

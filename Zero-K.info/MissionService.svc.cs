@@ -24,7 +24,7 @@ namespace ZeroKWeb
 				if (acc == null) throw new ApplicationException("Invalid login name or password");
 				if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("You cannot delete a mission from an other user");
 				prev.IsDeleted = true;
-				db.SubmitChanges();
+			    db.SaveChanges();
 			}
 			else throw new ApplicationException("No such mission found");
 		}
@@ -39,7 +39,7 @@ namespace ZeroKWeb
 				if (acc == null) throw new ApplicationException("Invalid login name or password");
 				if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("You cannot undelete a mission from an other user");
 				prev.IsDeleted = false;
-				db.SubmitChanges();
+			    db.SaveChanges();
 			}
 			else throw new ApplicationException("No such mission found");
 		}
@@ -130,13 +130,13 @@ namespace ZeroKWeb
 			mission.IsDeleted = true;
 			mission.IsCoop = slots.Where(x => x.IsHuman).GroupBy(x => x.AllyID).Count() == 1;
 
-			db.SubmitChanges();
+	        db.SaveChanges();
 
-            var updater = new MissionUpdater();
+	        var updater = new MissionUpdater();
             updater.UpdateMission(db, mission, modInfo);
 
 			mission.IsDeleted = false;
-			db.SubmitChanges();
+	        db.SaveChanges();
 		}
 	}
 }

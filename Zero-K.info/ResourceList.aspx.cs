@@ -53,9 +53,9 @@ namespace ZeroKWeb
 
 				
 				db.Resources.DeleteOnSubmit(todel);
-				db.SubmitChanges();
-				
-				MessageBox.Show("Deleted " +  todel.InternalName);
+			    db.SaveChanges();
+
+			    MessageBox.Show("Deleted " +  todel.InternalName);
         
 			} else {
 				MessageBox.Show("Not logged in");

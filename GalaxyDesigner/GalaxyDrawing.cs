@@ -248,8 +248,8 @@ namespace GalaxyDesigner
 						db.Planets.DeleteAllOnSubmit(gal.Planets);
 					}
 					gal.IsDirty = true;
-					db.SubmitChanges();
-					galaxyNumber = gal.GalaxyID;
+				    db.SaveChanges();
+				    galaxyNumber = gal.GalaxyID;
 
 					var maps = Maps.Shuffle();
 					var cnt = 0;
@@ -272,9 +272,9 @@ namespace GalaxyDesigner
 						clone.PlanetStructures.AddRange(p.PlanetStructures.Select(x => new PlanetStructure() { StructureTypeID = x.StructureTypeID }));
 						gal.Planets.Add(clone);
 					}
-					db.SubmitChanges();
+				    db.SaveChanges();
 
-					var linkList =
+				    var linkList =
 						LinkDrawings.Select(
 							d =>
 							new Link()
@@ -284,8 +284,8 @@ namespace GalaxyDesigner
 								PlanetID2 = db.Planets.Single(x => x.GalaxyID == galaxyNumber && x.Name == d.Planet2.Planet.Name).PlanetID
 							});
 					db.Links.InsertAllOnSubmit(linkList);
-					db.SubmitChanges();
-					// scope.Complete();
+				    db.SaveChanges();
+				    // scope.Complete();
 				}
 				catch (Exception ex)
 				{
