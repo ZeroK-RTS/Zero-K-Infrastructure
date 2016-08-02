@@ -56,6 +56,7 @@ namespace DemoCleaner
 
         public void CleanAllFiles()
         {
+            GlobalConst.Mode = ModeType.Live;
             if (GlobalConst.Mode != ModeType.Live)
             {
                 Trace.TraceError("This must be run only against live DB");
