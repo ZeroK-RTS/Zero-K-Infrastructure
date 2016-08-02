@@ -9,13 +9,7 @@ using PlasmaShared;
 
 namespace LobbyClient
 {
-	public enum SyncStatuses
-	{
-		Unknown = 0,
-		Synced = 1,
-		Unsynced = 2
-	}
-
+	
 	public class UserBattleStatus
 	{
 		public int AllyNumber;
@@ -29,7 +23,6 @@ namespace LobbyClient
         
         public string ScriptPassword;
 		
-        public SyncStatuses SyncStatus = SyncStatuses.Unknown;
 
 		[JsonIgnore]
         public User LobbyUser;
@@ -44,7 +37,6 @@ namespace LobbyClient
                 if (u.AllyNumber.HasValue) AllyNumber = u.AllyNumber.Value;
                 if (u.TeamNumber.HasValue) TeamNumber = u.TeamNumber.Value;
                 if (u.IsSpectator.HasValue) IsSpectator = u.IsSpectator.Value;
-                if (u.Sync.HasValue) SyncStatus = u.Sync.Value;
 	        }
 	    }
 
@@ -54,7 +46,6 @@ namespace LobbyClient
 	            Name = Name,
 	            AllyNumber = AllyNumber,
 	            IsSpectator = IsSpectator,
-	            Sync = SyncStatus,
 	            TeamNumber = TeamNumber
 	        };
 	    }
@@ -84,8 +75,8 @@ namespace LobbyClient
 			if (ReferenceEquals(null, other)) return false;
 			if (ReferenceEquals(this, other)) return true;
 			return other.AllyNumber == AllyNumber && other.IsSpectator.Equals(IsSpectator) &&
-			       other.JoinTime.Equals(JoinTime) && Equals(other.Name, Name) &&
-			       Equals(other.SyncStatus, SyncStatus) &&  other.TeamNumber == TeamNumber;
+			       other.JoinTime.Equals(JoinTime) && Equals(other.Name, Name) 
+			        &&  other.TeamNumber == TeamNumber;
 		}
 
 

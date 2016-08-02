@@ -12,7 +12,6 @@ namespace Springie
 	public class MainConfig
 	{
 		public static string SpringieVersion = "Springie " + Assembly.GetEntryAssembly()?.GetName().Version;
-	    public const int MapChangeDownloadWait = 120;
 
 
 		string executableName = "spring-dedicated.exe";

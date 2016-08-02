@@ -295,14 +295,11 @@ namespace LobbyClient
             return SendCommand(new BattleUpdate() { Header = new BattleHeader() { BattleID = MyBattleID, Map = name } });
         }
 
-        public async Task ChangeMyBattleStatus(bool? spectate = null,
-                                         SyncStatuses? syncStatus = null,
-                                         int? ally = null,
-                                         int? team = null)
+        public async Task ChangeMyBattleStatus(bool? spectate = null,int? ally = null,int? team = null)
         {
             var ubs = MyBattleStatus;
             if (ubs != null) {
-                var status = new UpdateUserBattleStatus() { IsSpectator = spectate, Sync = syncStatus, AllyNumber = ally, TeamNumber = team, Name = UserName};
+                var status = new UpdateUserBattleStatus() { IsSpectator = spectate, AllyNumber = ally, TeamNumber = team, Name = UserName};
                 await SendCommand(status);
             }
         }

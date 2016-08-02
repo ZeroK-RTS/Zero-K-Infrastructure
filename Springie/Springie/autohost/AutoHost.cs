@@ -836,7 +836,6 @@ namespace Springie.autohost
 
 
         void tas_BattleOpened(object sender, Battle battle) {
-            tas.ChangeMyBattleStatus(true, SyncStatuses.Synced);
             if (hostedMod.IsMission) {
                 foreach (MissionSlot slot in hostedMod.MissionSlots.Where(x => !x.IsHuman)) {
                     tas.AddBot(slot.TeamName, slot.AiShortName, slot.AllyID, slot.TeamID);

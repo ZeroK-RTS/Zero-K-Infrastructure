@@ -171,6 +171,7 @@
     <Compile Include="Controls\ZkSplitContainer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="MicroLobby\Extras\SkirmishControlTool.cs" />
     <Compile Include="GlobalHook.cs" />
     <Compile Include="License.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -184,27 +185,13 @@
       <DependentUpon>PromptForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroForms\UnitSyncRetryPrompt.cs" />
-    <Compile Include="MicroLobby\ExtrasTab\LocalReplay.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\LocalReplay.Designer.cs">
-      <DependentUpon>LocalReplay.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\ReplayListItem.cs" />
-    <Compile Include="MicroLobby\ExtrasTab\TableReader.cs" />
-    <Compile Include="MicroLobby\ExtrasTab\SkirmishControlTool.cs" />
     <Compile Include="MicroForms\UnitSyncUploadPrompt.cs" />
+    <Compile Include="MicroLobby\Extras\TableReader.cs" />
     <Compile Include="MicroLobby\HexToUnicodeConverter.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MicroLobby\HexToUnicodeConverter.Designer.cs">
       <DependentUpon>HexToUnicodeConverter.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\SkirmishControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\SkirmishControl.Designer.cs">
-      <DependentUpon>SkirmishControl.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroLobby\TextColoringPanel.cs">
       <SubType>Form</SubType>
@@ -506,12 +493,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\BattleChatControl.resx">
       <DependentUpon>BattleChatControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\ExtrasTab\LocalReplay.resx">
-      <DependentUpon>LocalReplay.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\ExtrasTab\SkirmishControl.resx">
-      <DependentUpon>SkirmishControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\PwBar.resx">
       <DependentUpon>PwBar.cs</DependentUpon>

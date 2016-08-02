@@ -28,7 +28,7 @@ namespace Springie.autohost
             foreach (var p in tas.MyBattle.Users.Values)
             {
                 if (p.IsSpectator) continue;
-                if (p.SyncStatus != SyncStatuses.Synced) usname.Add(p.Name);
+                usname.Add(p.Name);
             }
             return usname.Count == 0;
         }
@@ -555,7 +555,7 @@ namespace Springie.autohost
                 foreach (var p in tas.MyBattle.Users.Values)
                 {
                     if (p.IsSpectator) continue;
-                    if ((p.SyncStatus != SyncStatuses.Synced) && (!spring.IsRunning || !spring.IsPlayerReady(p.Name))) usrlist.Add(p.Name);
+                    if (!spring.IsRunning || !spring.IsPlayerReady(p.Name)|| p.LobbyUser.IsAway) usrlist.Add(p.Name);
                 }
             }
             else

@@ -40,7 +40,7 @@ namespace ZeroKLobby.Notifications
         {
             InitializeComponent();
 
-            Program.ToolTip.SetText(btnLeave,"Leave this battle");
+            Program.ToolTip.SetText(btnLeave, "Leave this battle");
 
             picoChat.ChatBackgroundColor = TextColor.background; //same color as Program.Conf.BgColor
             picoChat.IRCForeColor = 14; //mirc grey. Unknown use
@@ -129,8 +129,8 @@ namespace ZeroKLobby.Notifications
                     if (!isVisible) ManualBattleStarted();
                     if (IsHostGameRunning()) btnStart.Text = "Rejoin";
                     else btnStart.Text = "Start";
-                    
-                    
+
+
                     //client.ChangeMyUserStatus(false, false);
                     var battle = client.MyBattle;
                     lastBattleFounder = battle.Founder.Name;
@@ -166,10 +166,10 @@ namespace ZeroKLobby.Notifications
                     CreateBattleIcon(Program.BattleIconManager.GetBattleIcon(battle.BattleID));
 
                     RefreshTooltip();
-                    
+
                     var team = battle.GetFreeTeamID(client.UserName);
 
-                    client.ChangeMyBattleStatus(desiredSpectatorState, HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced, 0, team);
+                    client.ChangeMyBattleStatus(desiredSpectatorState, 0, team);
                 };
 
 
@@ -177,7 +177,6 @@ namespace ZeroKLobby.Notifications
                 {
                     if (client.MyBattle != null && !Program.SpringScanner.HasResource(client.MyBattle.MapName))
                     {
-                        client.ChangeMyBattleStatus(syncStatus: SyncStatuses.Unsynced);
                         Program.Downloader.GetResource(DownloadType.MAP, client.MyBattle.MapName);
                     }
                     RefreshTooltip();
@@ -192,14 +191,11 @@ namespace ZeroKLobby.Notifications
                         if (client.MyBattle.Users[client.UserName].ScriptPassword == null) btnStart.Text = "Watch";
                         else btnStart.Text = "Rejoin";
 
-                        if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced)
+                        if (Utils.VerifySpringInstalled())
                         {
-                            if (Utils.VerifySpringInstalled())
-                            {
-                                if (spring.IsRunning) spring.ExitGame();
-                                lastScript = spring.ConnectGame(client.MyBattle.Ip, client.MyBattle.HostPort, client.UserName,
-                                    client.MyBattle.Users[client.UserName].ScriptPassword); //use MT tag when in spectator slot
-                            }
+                            if (spring.IsRunning) spring.ExitGame();
+                            lastScript = spring.ConnectGame(client.MyBattle.Ip, client.MyBattle.HostPort, client.UserName,
+                                client.MyBattle.Users[client.UserName].ScriptPassword); //use MT tag when in spectator slot
                         }
                     }
                     catch (Exception ex)
@@ -213,7 +209,7 @@ namespace ZeroKLobby.Notifications
                 {
                     if (client.MyBattleStatus != null)
                     {
-                        btnStart.Enabled = client.MyBattleStatus.SyncStatus == SyncStatuses.Synced;
+                        btnStart.Enabled = true;
 
                         if (client.MyBattleStatus.IsSpectator && radioPlay.Checked) ChangeGuiSpectatorWithoutEvent(false); // i was spectated
                         if (!client.MyBattleStatus.IsSpectator && radioSpec.Checked) ChangeGuiSpectatorWithoutEvent(true); //i was unspectated
@@ -288,9 +284,12 @@ namespace ZeroKLobby.Notifications
                 {
                     if (client.IsLoggedIn)
                     {
-                        if (WindowsApi.IdleTime.TotalMinutes > Program.Conf.IdleTime) {
+                        if (WindowsApi.IdleTime.TotalMinutes > Program.Conf.IdleTime)
+                        {
                             if (!client.MyUser.IsAway) client.ChangeMyUserStatus(isAway: true);
-                        } else {
+                        }
+                        else
+                        {
                             if (client.MyUser.IsAway) client.ChangeMyUserStatus(isAway: false);
                         }
                         CheckMyBattle();
@@ -399,7 +398,7 @@ namespace ZeroKLobby.Notifications
 
         void AutoRespond()
         {
-            if (client.MyBattle != null && client.MyBattleStatus != null && client.MyBattleStatus.SyncStatus != SyncStatuses.Synced)
+            if (client.MyBattle != null && client.MyBattleStatus != null)
             {
                 var moddl = Program.Downloader.Downloads.FirstOrDefault(x => x.Name == client.MyBattle.ModName);
                 var mapdl = Program.Downloader.Downloads.FirstOrDefault(x => x.Name == client.MyBattle.MapName);
@@ -436,16 +435,6 @@ namespace ZeroKLobby.Notifications
             if (battle == null || currentStatus == null) return;
 
 
-            SyncStatuses? sync = null;
-            if (currentStatus.SyncStatus != SyncStatuses.Synced)
-            {
-                if (HasAllResources())
-                {
-                    // if didnt have map and have now, set it
-                    sync = SyncStatuses.Synced;
-                }
-            }
-
             // fix my id
             int? team = null;
 
@@ -455,22 +444,11 @@ namespace ZeroKLobby.Notifications
             }
 
             bool spec = radioSpec.Checked;
-            if ((sync.HasValue && sync != currentStatus.SyncStatus) || (team.HasValue && team != currentStatus.TeamNumber) ||
+            if ((team.HasValue && team != currentStatus.TeamNumber) ||
                 (currentStatus.IsSpectator != spec))
             {
-                client.ChangeMyBattleStatus(spec, sync, null, team);
+                client.ChangeMyBattleStatus(spec, null, team);
             }
-        }
-
-        bool HasAllResources()
-        {
-            if (client != null && client.MyBattle != null)
-            {
-                var battle = client.MyBattle;
-                return Program.SpringScanner.HasResource(battle.MapName) && Program.SpringScanner.HasResource(battle.ModName) &&
-                       (engineVersionNeeded == null || Program.SpringPaths.SpringVersion == engineVersionNeeded);
-            }
-            else return false;
         }
 
 
@@ -501,7 +479,7 @@ namespace ZeroKLobby.Notifications
         }
 
 
-       
+
         public void btnStart_Click(object sender, EventArgs e)
         {
             NavigationControl.Instance.Path = "chat/battle";

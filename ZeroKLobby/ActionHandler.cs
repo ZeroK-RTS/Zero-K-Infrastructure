@@ -129,7 +129,7 @@ namespace ZeroKLobby
         {
             if (ChangeDesiredSpectatorState(false))
             {
-                Program.TasClient.ChangeMyBattleStatus(false,null,slot.AllyID,slot.TeamID);
+                Program.TasClient.ChangeMyBattleStatus(false,slot.AllyID,slot.TeamID);
             }
         }
 
