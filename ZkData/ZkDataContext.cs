@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using ZkData.Migrations;
 
 namespace ZkData
@@ -770,7 +772,8 @@ namespace ZkData
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<ZkDataContext, Configuration>());
         }
 
-        public void SubmitChanges() {
+        public void SubmitChanges()
+        {
             SaveChanges();
         }
 
@@ -782,7 +785,8 @@ namespace ZkData
         {
             public object Entity { get; private set; }
             public EntityState State { get; private set; }
-            public EntityEntry(object entity, EntityState state) {
+            public EntityEntry(object entity, EntityState state)
+            {
                 Entity = entity;
                 State = state;
             }
@@ -793,43 +797,76 @@ namespace ZkData
         {
             try
             {
-                var changes = ChangeTracker.Entries().Where(x => x.State == EntityState.Modified || x.State == EntityState.Added || x.State == EntityState.Deleted).Select(x=>new EntityEntry(x.Entity, x.State)).ToList();
-
-                foreach (var change in changes)
-                {
-                    var ic = change.Entity as IEntityBeforeChange;
-                    ic?.BeforeChange(change);
-                    BeforeEntityChange?.Invoke(this, change);
-                }
-
-                var ret =  base.SaveChanges();
-
-                foreach (var change in changes)
-                {
-                    var ic = change.Entity as IEntityAfterChange;
-                    ic?.AfterChange(change);
-                    AfterEntityChange?.Invoke(this, change);
-                }
-
+                var changes = GetChanges();
+                RunBeforeEntityChangeEvents(changes);
+                var ret = base.SaveChanges();
+                RunAfterEntityChangeEvents(changes);
                 return ret;
 
             }
             catch (DbEntityValidationException e)
             {
+                ProcessEntityValidationErrors(e);
+                throw;
+            }
+        }
 
-                foreach (var eve in e.EntityValidationErrors)
+        private void RunAfterEntityChangeEvents(List<EntityEntry> changes)
+        {
+            foreach (var change in changes)
+            {
+                var ic = change.Entity as IEntityAfterChange;
+                ic?.AfterChange(change);
+                AfterEntityChange?.Invoke(this, change);
+            }
+        }
+
+        private void RunBeforeEntityChangeEvents(List<EntityEntry> changes)
+        {
+            foreach (var change in changes)
+            {
+                var ic = change.Entity as IEntityBeforeChange;
+                ic?.BeforeChange(change);
+                BeforeEntityChange?.Invoke(this, change);
+            }
+        }
+
+        private List<EntityEntry> GetChanges()
+        {
+            return ChangeTracker.Entries().Where(x => x.State == EntityState.Modified || x.State == EntityState.Added || x.State == EntityState.Deleted).Select(x => new EntityEntry(x.Entity, x.State)).ToList();
+        }
+
+        private static void ProcessEntityValidationErrors(DbEntityValidationException e)
+        {
+            foreach (var eve in e.EntityValidationErrors)
+            {
+                Trace.TraceError("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                    eve.Entry.Entity.GetType().Name,
+                    eve.Entry.State);
+
+                foreach (var ve in eve.ValidationErrors)
                 {
-                    Trace.TraceError("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-            eve.Entry.Entity.GetType().Name, eve.Entry.State);
-
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        Trace.TraceError("- Property: \"{0}\", Value: \"{1}\", Error: \"{2}\"",
-                            ve.PropertyName,
-                            eve.Entry.CurrentValues.GetValue<object>(ve.PropertyName),
-                            ve.ErrorMessage);
-                    }
+                    Trace.TraceError("- Property: \"{0}\", Value: \"{1}\", Error: \"{2}\"",
+                        ve.PropertyName,
+                        eve.Entry.CurrentValues.GetValue<object>(ve.PropertyName),
+                        ve.ErrorMessage);
                 }
+            }
+        }
+
+        public override async Task<int> SaveChangesAsync()
+        {
+            try
+            {
+                var changes = GetChanges();
+                RunBeforeEntityChangeEvents(changes);
+                var ret = await base.SaveChangesAsync();
+                RunAfterEntityChangeEvents(changes);
+                return ret;
+            }
+            catch (DbEntityValidationException e)
+            {
+                ProcessEntityValidationErrors(e);
                 throw;
             }
         }
@@ -841,7 +878,7 @@ namespace ZkData
 
         public static Action<ZkDataContext> DataContextCreated = context => { };
 
-        public ZkDataContext(): this(true)
+        public ZkDataContext() : this(true)
         {
         }
 
@@ -850,7 +887,7 @@ namespace ZkData
         {
         }
 
-        
+
         public ZkDataContext(string connectionString, bool migrateToLatest = true)
             : base(connectionString)
         {
@@ -858,7 +895,8 @@ namespace ZkData
             {
                 lock (locker)
                 {
-                    if (!wasDbChecked) {
+                    if (!wasDbChecked)
+                    {
                         Database.CreateIfNotExists();
                         Database.Initialize(false);
                         wasDbChecked = true;
