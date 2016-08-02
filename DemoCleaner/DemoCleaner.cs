@@ -83,28 +83,18 @@ namespace DemoCleaner
                                 }
                                 else
                                 {
-                                    // hack stuff for failed undeletes
-                                    var bytes = File.ReadAllBytes(path);
-                                    if (bytes.Length > 0 && bytes.All(x => x == 0))
+
+                                    if (DateTime.Now.Subtract(sb.StartTime).TotalDays > DemoKeepDays && sb.GlacierArchiveID == null &&
+                                        (sb.ForumThread == null || sb.ForumThread.PostCount == 0))
                                     {
-                                        Trace.TraceWarning("deleting empty: {0}", path);
-                                        File.Delete(path);
+                                        Trace.TraceInformation("archiving: {0}", name);
+                                        ArchiveBattle(sb, path);
+                                        db.SaveChanges();
+                                        if (!string.IsNullOrEmpty(sb.GlacierArchiveID)) File.Delete(path);
                                     }
                                     else
                                     {
-
-                                        if (DateTime.Now.Subtract(sb.StartTime).TotalDays > DemoKeepDays && sb.GlacierArchiveID == null &&
-                                            (sb.ForumThread == null || sb.ForumThread.PostCount == 0))
-                                        {
-                                            Trace.TraceInformation("archiving: {0}", name);
-                                            ArchiveBattle(sb, path);
-                                            db.SaveChanges();
-                                            if (!string.IsNullOrEmpty(sb.GlacierArchiveID)) File.Delete(path);
-                                        }
-                                        else
-                                        {
-                                            Trace.TraceInformation("keeping valid: {0}", name);
-                                        }
+                                        Trace.TraceInformation("keeping valid: {0}", name);
                                     }
                                 }
                             }
