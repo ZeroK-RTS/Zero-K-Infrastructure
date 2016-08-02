@@ -11,7 +11,6 @@ namespace PlasmaShared
         public string Map;
         public string Mod;
         public int MaxPlayers;
-        public int? SplitBiggerThan;
         public bool AutoSpawnClones;
         public string AutoUpdateRapidTag;
         public string SpringVersion;
@@ -19,8 +18,6 @@ namespace PlasmaShared
         public AutohostMode Mode;
         public CommandLevel[] CommandLevels;
         public int? MaxEloDifference;
-        public int? MinToJuggle;
-        public int? MaxToJuggle;
         public AhConfig() {}
     }
 }

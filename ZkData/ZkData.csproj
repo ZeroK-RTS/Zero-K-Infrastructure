@@ -186,6 +186,10 @@
     <Compile Include="Migrations\201607211411383_RemoveEngineBranchAutoUpdate.Designer.cs">
       <DependentUpon>201607211411383_RemoveEngineBranchAutoUpdate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201608021652112_RemoveJuggler.cs" />
+    <Compile Include="Migrations\201608021652112_RemoveJuggler.Designer.cs">
+      <DependentUpon>201608021652112_RemoveJuggler.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="Enums\TreatyState.cs" />
@@ -405,6 +409,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201607211411383_RemoveEngineBranchAutoUpdate.resx">
       <DependentUpon>201607211411383_RemoveEngineBranchAutoUpdate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608021652112_RemoveJuggler.resx">
+      <DependentUpon>201608021652112_RemoveJuggler.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

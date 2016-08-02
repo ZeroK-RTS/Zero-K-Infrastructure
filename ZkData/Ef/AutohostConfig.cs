@@ -39,17 +39,11 @@ namespace ZkData
         public AutohostMode AutohostMode { get; set; }
         public int? MinToStart { get; set; }
         public int? MaxToStart { get; set; }
-        public int? MinToJuggle { get; set; }
-        public int? MaxToJuggle { get; set; }
-        public int? SplitBiggerThan { get; set; }
-        public int? MergeSmallerThan { get; set; }
         public int? MaxEloDifference { get; set; }
-        public bool? DontMoveManuallyJoined { get; set; }
         public int? MinLevel { get; set; }
         public int? MinElo { get; set; }
         public int? MaxLevel { get; set; }
         public int? MaxElo { get; set; }
-        public bool? IsTrollHost { get; set; }
 
         public AhConfig ToAhConfig()
         {
@@ -66,7 +60,6 @@ namespace ZkData
                 AutoSpawnClones = db.AutoSpawn,
                 AutoUpdateRapidTag = db.AutoUpdateRapidTag,
                 SpringVersion = db.SpringVersion,
-                SplitBiggerThan = db.SplitBiggerThan,
                 Mode = db.AutohostMode,
                 BattlePassword = db.BattlePassword,
                 CommandLevels = (db.CommandLevels + "").Split('\n').Where(x => !string.IsNullOrEmpty(x)).Select(x => {
@@ -74,8 +67,6 @@ namespace ZkData
                     return new CommandLevel() { Command = parts[0], Level = int.Parse(parts[1]) };
                 }).ToArray(),
                 MaxEloDifference = db.MaxEloDifference,
-                MinToJuggle = db.MinToJuggle,
-                MaxToJuggle = db.MaxToJuggle
             };
         }
 

@@ -119,7 +119,6 @@
     <Compile Include="autohost\AutoHost_commands.cs" />
     <Compile Include="autohost\CommandConfig.cs" />
     <Compile Include="autohost\CommandList.cs" />
-    <Compile Include="autohost\MatchMakerQueue.cs" />
     <Compile Include="autohost\Polls\AbstractPoll.cs" />
     <Compile Include="autohost\Polls\VotePlanet.cs" />
     <Compile Include="autohost\Polls\VoteResetOptions.cs" />
@@ -134,7 +133,6 @@
     <Compile Include="autohost\Polls\VoteResign.cs" />
     <Compile Include="autohost\Polls\VoteSetOptions.cs" />
     <Compile Include="autohost\Polls\VoteSpec.cs" />
-    <Compile Include="autohost\Polls\VoteSplitPlayers.cs" />
     <Compile Include="MainConfig.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>

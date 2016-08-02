@@ -38,9 +38,6 @@ namespace PlasmaShared
         void MovePlayers(string autohostName, string autohostPassword, List<MovePlayerEntry> moves);
 
         [OperationContract]
-        void SplitAutohost(BattleContext context, string password);
-
-        [OperationContract]
         void StoreBoxes(BattleContext context, List<RectInfo> rects);
     }
 }

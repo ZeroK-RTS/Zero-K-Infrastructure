@@ -44,7 +44,6 @@ namespace Springie.autohost
         public SpawnConfig SpawnConfig { get; private set; }
         public MetaDataCache cache;
         public AhConfig config;
-        public MatchMakerQueue queue;
 
         public Mod hostedMod;
         public int hostingPort { get; private set; }
@@ -116,12 +115,6 @@ namespace Springie.autohost
 
             linkSpringieClient = new ResourceLinkSpringieClient(this);
 
-            // queue autohost
-            if (config != null && config.MinToJuggle != null && SpawnConfig == null)
-            {
-                queue = new MatchMakerQueue(this);
-            }
-
             
             Program.main.Downloader.PackagesChanged += Downloader_PackagesChanged;
 
@@ -135,16 +128,6 @@ namespace Springie.autohost
                         // auto verify pw map
                         if (!spring.IsRunning && mode != AutohostMode.None) if (SpawnConfig == null && mode == AutohostMode.Planetwars) ServerVerifyMap(false);
 
-                        // auto start split vote
-                        if (!spring.IsRunning && config.SplitBiggerThan != null && tas.MyBattle != null && config.SplitBiggerThan < tas.MyBattle.NonSpectatorCount) {
-                            if (DateTime.Now.Subtract(spring.GameExited).TotalSeconds >= GameExitSplitDelay) ComSplitPlayers(TasSayEventArgs.Default, new string[]{});
-                            /*
-                            int cnt = tas.MyBattle.NonSpectatorCount;
-                            if (cnt > lastSplitPlayersCountCalled && cnt%2 == 0) {
-                                StartVote(new VoteSplitPlayers(tas, spring, this), TasSayEventArgs.Default, new string[] { });
-                                lastSplitPlayersCountCalled = cnt;
-                            }*/
-                        }
 
                         // auto rehost to latest mod version
                         if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag) && SpawnConfig == null) UpdateRapidMod(config.AutoUpdateRapidTag);
@@ -542,14 +525,6 @@ namespace Springie.autohost
 
                 case "votesetoptions":
                     StartVote(new VoteSetOptions(tas, spring, this), e, words);
-                    break;
-
-                case "splitplayers":
-                    ComSplitPlayers(e, words);
-                    break;
-
-                case "votesplitplayers":
-                    StartVote(new VoteSplitPlayers(tas, spring, this), e, words);
                     break;
 
                 case "setengine":

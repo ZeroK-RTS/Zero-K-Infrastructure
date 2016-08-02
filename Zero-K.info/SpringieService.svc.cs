@@ -92,13 +92,6 @@ namespace ZeroKWeb
         }
 
         
-        public void SplitAutohost(BattleContext context, string password)
-        {
-            if (AuthServiceClient.VerifyAccountPlain(context.AutohostName, password) == null) throw new Exception("Invalid password");
-            if (context.GetConfig() == null) throw new Exception("Not an autohost");
-            Balancer.SplitAutohost(context);
-        }
-
 
         public void StoreBoxes(BattleContext context, List<RectInfo> rects)
         {
