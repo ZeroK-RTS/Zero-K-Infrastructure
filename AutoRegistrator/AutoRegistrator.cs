@@ -65,12 +65,14 @@ namespace ZeroKWeb
             SpringScanner.MapRegistered += (s, e) => Trace.TraceInformation("Map registered: {0}", e.MapName);
             SpringScanner.ModRegistered += (s, e) => Trace.TraceInformation("Mod registered: {0}", e.Data.Name);
 
-            Scanner.InitialScan();
 
             Downloader = new PlasmaDownloader.PlasmaDownloader(Scanner, Paths);
-            Downloader.PackageDownloader.SetMasterRefreshTimer(20);
             Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
             Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
+            Scanner.InitialScan();
+
+            Downloader.PackageDownloader.SetMasterRefreshTimer(20);
+            
             Downloader.PackagesChanged += Downloader_PackagesChanged;
             Downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
             Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
@@ -174,7 +176,7 @@ namespace ZeroKWeb
                     {
                         Trace.TraceInformation("Generating steam stable package");
                         lastStableVersion = newName;
-                        var pgen = new SteamDepotGenerator(sitePath, Path.Combine(sitePath, "..", "steamworks", "tools", "ContentBuilder", "content"));
+                        var pgen = new SteamDepotGenerator(sitePath, Path.GetFullPath(Path.Combine(sitePath, "..", "steamworks", "tools", "ContentBuilder", "content")));
                         pgen.Generate();
                         pgen.RunBuild();
                     }

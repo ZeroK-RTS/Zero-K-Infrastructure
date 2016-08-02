@@ -63,6 +63,7 @@ namespace AutoRegistrator
             Utils.CheckPath(tpath);
             Trace.TraceInformation("Copying avatars");
             var spath = Path.Combine(siteBase, "img", "Avatars");
+            Utils.CheckPath(spath);
             foreach (var file in Directory.GetFiles(spath)) File.Copy(file, Path.Combine(tpath, Path.GetFileName(file)), true);
 
             Trace.TraceInformation("Copying clan icons");
@@ -90,14 +91,14 @@ namespace AutoRegistrator
         }
 
         private static void ScanArchives(SpringPaths paths) {
-            using (var scanner = new SpringScanner(paths) { UseUnitSync = false })
+            using (var scanner = new SpringScanner(paths) { UseUnitSync = true })
             {
                 scanner.InitialScan();
                 scanner.Start();
 
                 while (scanner.GetWorkCost() > 0)
                 {
-                    Trace.TraceInformation("Waiting for scanner to complete");
+                    Trace.TraceInformation("Waiting for scanner to complete: {0}", scanner.GetWorkCost());
                     Thread.Sleep(5000);
                 }
             }
@@ -119,10 +120,15 @@ namespace AutoRegistrator
                     var fileName = res.ResourceContentFiles.ToList().Where(x=>File.Exists(Path.Combine(sourceMaps, x.FileName))).OrderByDescending(x => x.LinkCount).FirstOrDefault()?.FileName; // get registered file names
 
                     fileName = fileName?? res.ResourceContentFiles
-                        .SelectMany(x => x.Links.Split('\n'))
+                        .Where(x=>x.Links!=null).SelectMany(x => x.Links.Split('\n'))
                         .Where(x => x != null).Select(x=> x.Substring(x.LastIndexOf('/')+1, x.Length - x.LastIndexOf('/') - 1)).FirstOrDefault(x => !string.IsNullOrEmpty(x) && File.Exists(Path.Combine(sourceMaps,x))); // get filenames from url
 
-                    if (fileName == null) Trace.TraceError("Cannot find map file: {0}", res.InternalName);
+                    if (fileName == null)
+                    {
+
+                        Trace.TraceError("Cannot find map file: {0}", res.InternalName);
+                        continue;
+                    }
 
 
                     if (!File.Exists(Path.Combine(destMaps, fileName))) File.Copy(Path.Combine(sourceMaps, fileName), Path.Combine(destMaps, fileName));
