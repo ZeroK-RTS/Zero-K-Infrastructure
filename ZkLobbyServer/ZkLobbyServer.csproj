@@ -84,8 +84,6 @@
     <Compile Include="autohost\Polls\VoteForceStart.cs" />
     <Compile Include="autohost\Polls\VoteKick.cs" />
     <Compile Include="autohost\Polls\VoteMap.cs" />
-    <Compile Include="autohost\Polls\VoteMove.cs" />
-    <Compile Include="autohost\Polls\VotePlanet.cs" />
     <Compile Include="autohost\Polls\VoteResetOptions.cs" />
     <Compile Include="autohost\Polls\VoteResign.cs" />
     <Compile Include="autohost\Polls\VoteSetOptions.cs" />

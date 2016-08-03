@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LobbyClient;
+using ZkLobbyServer;
 
 #endregion
 
@@ -12,19 +13,19 @@ namespace Springie.autohost.Polls
     {
         Dictionary<string,string> scriptTagsFormat;
 
-        public VoteSetOptions(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
+        public VoteSetOptions(Spring spring, ServerBattle ah): base(spring, ah) {}
 
         protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount) {
             winCount = 0;
             question = null;
             if (ah.mode == PlasmaShared.AutohostMode.Serious)
             {
-                AutoHost.Respond(tas, spring, e, "Serious host, no custom options");
+                ah.Respond(e, "Serious host, no custom options");
                 return false;
             }
             if (spring.IsRunning)
             {
-                AutoHost.Respond(tas, spring, e, "Cannot set options while the game is running");
+                ah.Respond(e, "Cannot set options while the game is running");
                 return false;
             }
             else

@@ -32,7 +32,7 @@ namespace ZkLobbyServer
             }
             return usname.Count == 0;
         }
-        
+
 
 
 
@@ -70,7 +70,7 @@ namespace ZkLobbyServer
             }
 
             var counts = new int[16];
-A            allyno = 0;
+            allyno = 0;
 
             foreach (var p in Users.Values)
             {
@@ -107,39 +107,6 @@ A            allyno = 0;
             RunServerBalance(false, teamCount == 0 ? (int?)null : teamCount, false);
         }
 
-        public void ComBoss(TasSayEventArgs e, string[] words)
-        {
-            if (words.Length == 0)
-            {
-                if (bossName == "")
-                {
-                    Respond(e, "there is currently no active boss");
-                    return;
-                }
-                SayBattle("boss " + bossName + " removed");
-                bossName = "";
-                return;
-            }
-            else
-            {
-                string[] usrs;
-                int[] idx;
-                if (FilterUsers(words, out usrs, out idx) == 0)
-                {
-                    Respond(e, "no such player found");
-                    return;
-                }
-
-                if (usrs[0] == tas.UserName)
-                {
-                    Respond(e, "you flatter me, but no");
-                    return;
-                }
-
-                SayBattle("New boss is " + usrs[0]);
-                bossName = usrs[0];
-            }
-        }
 
         public void ComCBalance(TasSayEventArgs e, string[] words)
         {
@@ -149,7 +116,7 @@ A            allyno = 0;
             RunServerBalance(false, teamCount, true);
         }
 
-     
+
         public void ComExit(TasSayEventArgs e, string[] words)
         {
             if (spring.IsRunning) SayBattle("exiting game");
@@ -184,21 +151,17 @@ A            allyno = 0;
                 return;
             }
 
-            tas.ForceSpectator(usrlist[0]);
+            ConnectedUser usr;
+            if (server.ConnectedUsers.TryGetValue(usrlist[0], out usr))
+            {
+                usr.Process(new UpdateUserBattleStatus() { Name = usr.Name, IsSpectator = true });
+            }
             Respond(e, "Forcing " + usrlist[0] + " to spectator");
         }
 
         public void ComForceSpectatorAfk(TasSayEventArgs e, string[] words)
         {
-            var b = tas.MyBattle;
-            if (b != null)
-            {
-                foreach (var u in b.Users.Values)
-                {
-                    User u2;
-                    if (u.Name != tas.UserName && !u.IsSpectator && tas.GetExistingUser(u.Name, out u2)) if (u2.IsAway) ComForceSpectator(e, new[] { u.Name });
-                }
-            }
+            foreach (var u in Users.Values) if (!u.IsSpectator && u.LobbyUser.IsAway) ComForceSpectator(e, new[] { u.Name });
         }
 
         public void ComForceStart(TasSayEventArgs e, string[] words)
@@ -210,16 +173,11 @@ A            allyno = 0;
                 SayBattle("Cannot start, mission slots are not correct");
                 return;
             }
-            /*string usname;
-      if (!AllReadyAndSynced(out usname)) {
-        SayBattle("cannot start, " + usname + " not ready and synced");
-        return;
-      }*/
 
             SayBattle("please wait, game is about to start");
             StopVote();
             lastSplitPlayersCountCalled = 0;
-            tas.StartGame();
+            StartGame();
         }
 
 
@@ -248,14 +206,10 @@ A            allyno = 0;
                 return;
             }
 
-            if (usrlist[0] == tas.UserName)
-            {
-                Respond(e, "won't kick myself, not in suicidal mood today");
-                return;
-            }
 
-            if (!kickedPlayers.Any(x => x.Name == usrlist[0])) kickedPlayers.Add(new KickedPlayer() {Name = usrlist[0]});
+            if (!kickedPlayers.Any(x => x.Name == usrlist[0])) kickedPlayers.Add(new KickedPlayer() { Name = usrlist[0] });
             if (spring.IsRunning) spring.Kick(usrlist[0]);
+            
             tas.Kick(usrlist[0]);
         }
 
@@ -378,7 +332,7 @@ A            allyno = 0;
         // user and rank info
 
 
-   
+
         public void ComStart(TasSayEventArgs e, string[] words)
         {
             if (spring.IsRunning)
@@ -516,9 +470,9 @@ A            allyno = 0;
         }
 
 
-        internal static int FilterUsers(string[] words, TasClient tas, Spring spring, out string[] vals, out int[] indexes)
+        internal static int FilterUsers(string[] words, ServerBattle ah, Spring spring, out string[] vals, out int[] indexes)
         {
-            var b = tas.MyBattle;
+            var b = ah;
             var i = 0;
             var temp = b.Users.Values.Select(u => u.Name).ToList();
             if (spring.IsRunning) foreach (var u in spring.StartContext.Players)
@@ -529,7 +483,7 @@ A            allyno = 0;
         }
 
 
-        public Dictionary<string,string> GetOptionsDictionary(TasSayEventArgs e, string[] words)
+        public Dictionary<string, string> GetOptionsDictionary(TasSayEventArgs e, string[] words)
         {
             var s = Utils.Glue(words);
             var ret = new Dictionary<string, string>();
@@ -558,7 +512,8 @@ A            allyno = 0;
                     {
                         found = true;
                         string res;
-                        if (o.GetPair(val, out res)) {
+                        if (o.GetPair(val, out res))
+                        {
                             ret[key] = val;
                         }
                         else Respond(e, "Value " + val + " is not valid for this option");
@@ -579,13 +534,12 @@ A            allyno = 0;
         {
             try
             {
-                if (tas.MyBattle == null) return false;
                 var serv = GlobalConst.GetSpringieService();
-                var context = tas.MyBattle.GetContext();
+                var context = GetContext();
                 context.mode = mode;
 
                 var balance = serv.BalanceTeams(context, isGameStart, allyTeams, clanWise);
-                
+
                 ApplyBalanceResults(balance);
 
                 return balance.CanStart;
@@ -602,8 +556,8 @@ A            allyno = 0;
             if (!string.IsNullOrEmpty(balance.Message)) SayBattle(balance.Message, false);
             if (balance.Players != null && balance.Players.Count > 0)
             {
-                
-                foreach (var user in tas.MyBattle.Users.Values.Where(x => !x.IsSpectator && !balance.Players.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
+
+                foreach (var user in Users.Values.Where(x => !x.IsSpectator && !balance.Players.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
                 foreach (var user in balance.Players.Where(x => x.IsSpectator)) tas.ForceSpectator(user.Name);
 
                 bool comsharing = false;
@@ -643,9 +597,9 @@ A            allyno = 0;
         void ComHelp(TasSayEventArgs e, string[] words)
         {
             var ulevel = GetUserLevel(e);
-            tas.Say(SayPlace.User, e.UserName, "---", false);
-            foreach (var c in Commands.Commands) if (c.Level <= ulevel) tas.Say(SayPlace.User, e.UserName, " !" + c.Name + " " + c.HelpText, false);
-            tas.Say(SayPlace.User, e.UserName, "---", false);
+            Respond(e, "---");
+            foreach (var c in Commands.Commands) if (c.Level <= ulevel) Respond(e, " !" + c.Name + " " + c.HelpText);
+            Respond(e, "---");
         }
 
 
@@ -702,7 +656,7 @@ A            allyno = 0;
             Respond(e, "I will notify you when the game ends.");
         }
 
-      
+
         void ComSetEngine(TasSayEventArgs e, string[] words)
         {
             if (words.Length != 1)
@@ -730,7 +684,7 @@ A            allyno = 0;
                     }
                     requestedEngineChange = specificVer; //in autohost.cs
                     Respond(e, "Preparing engine change to " + specificVer);
-                    var springCheck = Program.main.Downloader.GetAndSwitchEngine(specificVer,springPaths);//will trigger springPaths.SpringVersionChanged event
+                    var springCheck = Program.main.Downloader.GetAndSwitchEngine(specificVer, springPaths);//will trigger springPaths.SpringVersionChanged event
                     if (springCheck == null) ; //Respond(e, "Engine available");
                     else
                         Respond(e, "Downloading engine. " + springCheck.IndividualProgress + "%");
@@ -833,16 +787,22 @@ A            allyno = 0;
                 {
                     var serv = GlobalConst.GetSpringieService();
 
-                    Task.Factory.StartNew(() => {
+                    Task.Factory.StartNew(() =>
+                    {
                         RecommendedMapResult map;
-                        try {
+                        try
+                        {
                             map = serv.GetRecommendedMap(tas.MyBattle.GetContext(), pickNew);
-                        } catch (Exception ex) {
+                        }
+                        catch (Exception ex)
+                        {
                             Trace.TraceError(ex.ToString());
                             return;
                         }
-                        if (map != null && map.MapName != null && tas.MyBattle != null) {
-                            if (tas.MyBattle.MapName != map.MapName) {
+                        if (map != null && map.MapName != null && tas.MyBattle != null)
+                        {
+                            if (tas.MyBattle.MapName != map.MapName)
+                            {
                                 ComMap(TasSayEventArgs.Default, map.MapName);
                                 SayBattle(map.Message);
                             }
@@ -857,10 +817,10 @@ A            allyno = 0;
             }
         }
 
-      
+
         public void ComAddUser(TasSayEventArgs e, string[] words)
         {
-            if (words.Length != 1) Respond(e,"Specify password");
+            if (words.Length != 1) Respond(e, "Specify password");
             if (spring.IsRunning) spring.AddUser(e.UserName, words[0]);
         }
 

@@ -126,8 +126,8 @@ namespace ZkLobbyServer
             Stop();
             spring.UnsubscribeEvents(this);
             springPaths.UnsubscribeEvents(this);
-            Program.Downloader.UnsubscribeEvents(this);
-            Program.paths.UnsubscribeEvents(this);
+            //Program.Downloader.UnsubscribeEvents(this);
+            //Program.paths.UnsubscribeEvents(this);
             pollTimer.Dispose();
             if (timer != null) timer.Dispose();
             pollTimer = null;
@@ -311,7 +311,7 @@ namespace ZkLobbyServer
                 case "start":
                         int cnt = NonSpectatorCount;
                         if (cnt == 1) ComStart(e, words);
-                        else StartVote(new VoteStart(tas, spring, this), e, words);
+                        else StartVote(new VoteStart(spring, this), e, words);
 
                     break;
 
@@ -329,7 +329,7 @@ namespace ZkLobbyServer
                     break;
 
                 case "modlink":
-                    linkSpringieClient.FindLinks(words, ResourceLinkSpringieClient.FileType.Mod, tas, e);
+                    linkSpringieClient.FindLinks(words, ResourceLinkSpringieClient.FileType.Mod, this, e);
                     break;
 
                 case "ring":
@@ -359,7 +359,7 @@ namespace ZkLobbyServer
                     break;
 
                 case "votemap":
-                    StartVote(new VoteMap(tas, spring, this), e, words);
+                    StartVote(new VoteMap(spring, this), e, words);
                     break;
 
                 case "votekick":
@@ -402,46 +402,21 @@ namespace ZkLobbyServer
                     ComUpdateRapidMod(e, words);
                     break;
 
-                case "random":
-                    ComRandom(e, words);
-                    break;
 
                 case "balance":
                     ComBalance(e, words);
-                    break;
-
-                case "say":
-                    ComSay(e, words);
-                    break;
-
-                case "team":
-                    ComAlly(e, words);
                     break;
 
                 case "resetoptions":
                     ComResetOptions(e, words);
                     break;
 
-                case "helpall":
-                    ComHelpAll(e, words);
-                    break;
-
-                case "springie":
-                    ComSpringie(e, words);
-                    break;
 
                 case "endvote":
                     StopVote(e);
                     SayBattle("poll cancelled");
                     break;
 
-                case "addbox":
-                    ComAddBox(e, words);
-                    break;
-
-                case "clearbox":
-                    ComClearBox(e, words);
-                    break;
 
                 case "cbalance":
                     ComCBalance(e, words);
@@ -451,9 +426,6 @@ namespace ZkLobbyServer
                     ComNotify(e, words);
                     break;
 
-                case "boss":
-                    ComBoss(e, words);
-                    break;
 
                 case "setpassword":
                     ComSetPassword(e, words);
@@ -475,9 +447,6 @@ namespace ZkLobbyServer
                     ComForceSpectatorAfk(e, words);
                     break;
 
-                case "saveboxes":
-                    ComSaveBoxes(e, words);
-                    break;
 
                 case "cheats":
                     if (spring.IsRunning)
@@ -1085,6 +1054,11 @@ namespace ZkLobbyServer
         {
 
 
+        }
+
+        private void StartGame()
+        {
+            throw new NotImplementedException();
         }
     }
 }

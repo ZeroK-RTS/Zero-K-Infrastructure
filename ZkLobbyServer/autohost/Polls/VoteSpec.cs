@@ -1,4 +1,5 @@
 using LobbyClient;
+using ZkLobbyServer;
 
 namespace Springie.autohost.Polls
 {
@@ -6,20 +7,20 @@ namespace Springie.autohost.Polls
     {
         string player;
 
-        public VoteSpec(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
+        public VoteSpec(Spring spring, ServerBattle ah): base(spring, ah) {}
 
         protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount) {
             winCount = 0;
             question = null;
             if (words.Length == 0)
             {
-                AutoHost.Respond(tas, spring, e, "You must specify player name");
+                ah.Respond(e, "You must specify player name");
                 return false;
             }
 
             string[] players;
             int[] indexes;
-            if (AutoHost.FilterUsers(words, tas, spring, out players, out indexes) > 0)
+            if (ah.FilterUsers(words, spring, out players, out indexes) > 0)
             {
                 player = players[0];
                 question = "Spectate " + player + "?";

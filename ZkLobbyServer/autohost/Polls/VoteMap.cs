@@ -5,6 +5,7 @@ using LobbyClient;
 using PlasmaShared;
 using ZkData;
 using System.Linq;
+using ZkLobbyServer;
 
 namespace Springie.autohost.Polls
 {
@@ -12,7 +13,7 @@ namespace Springie.autohost.Polls
     {
         string map;
 
-        public VoteMap(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
+        public VoteMap(Spring spring, ServerBattle ah): base(spring, ah) {}
 
         protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount)
         {
@@ -20,7 +21,7 @@ namespace Springie.autohost.Polls
             question = null;
             if (spring.IsRunning)
             {
-                AutoHost.Respond(tas, spring, e, "Cannot change map while the game is running");
+                ah.Respond(e, "Cannot change map while the game is running");
                 return false;
             }
             else
@@ -49,12 +50,12 @@ namespace Springie.autohost.Polls
                                 return true;
                             }
                         }
-                        AutoHost.Respond(tas, spring, e, String.Format("Cannot find such {0}map",serious ? "(non-special) " : ""));
+                        ah.Respond(e, String.Format("Cannot find such {0}map",serious ? "(non-special) " : ""));
                         return false;
                     }
                     else
                     {
-                        AutoHost.Respond(tas, spring, e, "Cannot find such map");
+                        ah.Respond(e, "Cannot find such map");
                         return false;
                     }
                 }
@@ -62,19 +63,19 @@ namespace Springie.autohost.Polls
                 {
                     try
                     {
-                        if (tas.MyBattle != null && !spring.IsRunning)
+                        if (!spring.IsRunning)
                         {
                             var serv = GlobalConst.GetSpringieService();
                             Task.Factory.StartNew(() => {
                                 RecommendedMapResult foundMap;
                                 try {
-                                    foundMap = serv.GetRecommendedMap(tas.MyBattle.GetContext(), true);
+                                    foundMap = serv.GetRecommendedMap(ah.GetContext(), true);
                                 } catch (Exception ex) {
                                     Trace.TraceError(ex.ToString());
                                     return;
                                 }
-                                if (foundMap != null && foundMap.MapName != null && tas.MyBattle != null) {
-                                    if (tas.MyBattle.MapName != foundMap.MapName) {
+                                if (foundMap != null && foundMap.MapName != null) {
+                                    if (ah.MapName != foundMap.MapName) {
                                         map = foundMap.MapName;
                                     }
                                 }
@@ -93,7 +94,7 @@ namespace Springie.autohost.Polls
                     }
                     catch (System.Exception ex)
                     {
-                        AutoHost.Respond(tas, spring, e, ex.ToString());
+                        ah.Respond(e, ex.ToString());
                         //System.Diagnostics.Trace.TraceError(ex.ToString());
                     }
                     return false;

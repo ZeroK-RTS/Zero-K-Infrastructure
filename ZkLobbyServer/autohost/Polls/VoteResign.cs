@@ -3,6 +3,7 @@ using System.Linq;
 using LobbyClient;
 using PlasmaShared;
 using ZkData;
+using ZkLobbyServer;
 
 namespace Springie.autohost.Polls
 {
@@ -10,7 +11,7 @@ namespace Springie.autohost.Polls
     {
         BattleContext context;
         PlayerTeam voteStarter;
-        public VoteResign(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
+        public VoteResign(Spring spring, ServerBattle ah): base(spring, ah) {}
 
         protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount) {
             if (spring.IsRunning)
@@ -19,7 +20,7 @@ namespace Springie.autohost.Polls
 
                 if (DateTime.UtcNow.Subtract(spring.IngameStartTime ?? DateTime.Now).TotalSeconds < GlobalConst.MinDurationForElo)
                 {
-                    AutoHost.Respond(tas,spring,e,"You cannot resign so early");
+                    ah.Respond(e,"You cannot resign so early");
                     question = null;
                     winCount = 0;
                     return false;
@@ -33,11 +34,11 @@ namespace Springie.autohost.Polls
                     foreach (var p in context.Players.Where(x => x.AllyID == voteStarter.AllyID && !x.IsSpectator))
                     {
                         total++;
-                        if (p.IsIngame || tas.MyBattle.Users.ContainsKey(p.Name))
+                        if (p.IsIngame || ah.Users.ContainsKey(p.Name))
                         {
                             //Note: "ExistingUsers" is empty if users disconnected from lobby but still ingame.
 
-                            bool afk = tas.ExistingUsers.ContainsKey(p.Name) && tas.ExistingUsers[p.Name].IsAway;
+                            bool afk = ah.server.ConnectedUsers.ContainsKey(p.Name) && ah.server.ConnectedUsers[p.Name].User.IsAway;
                             if (!afk) cnt++;
                         }
                     }
@@ -46,7 +47,7 @@ namespace Springie.autohost.Polls
                     return true;
                 }
             }
-            AutoHost.Respond(tas, spring, e, "You cannot resign now");
+            ah.Respond(e, "You cannot resign now");
             question = null;
             winCount = 0;
             return false;

@@ -2,7 +2,6 @@
 
 using System.Diagnostics;
 using System.Reflection;
-using PlasmaDownloader;
 using ZkData;
 
 #endregion

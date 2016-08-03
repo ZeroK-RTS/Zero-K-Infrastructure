@@ -100,7 +100,7 @@ namespace ZkLobbyServer
             ServerBattle bat;
             if (state.Battles.TryGetValue(batKick.BattleID.Value, out bat))
             {
-                if (bat.Founder != User && !User.IsAdmin)
+                if (bat.Founder != User && !User.IsAdmin && User.Name != batKick.Name)
                 {
                     await Respond("No rights to do a kick");
                     return;

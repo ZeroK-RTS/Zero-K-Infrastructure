@@ -1,6 +1,7 @@
 #region using
 
 using LobbyClient;
+using ZkLobbyServer;
 
 #endregion
 
@@ -8,7 +9,7 @@ namespace Springie.autohost.Polls
 {
     public class VoteResetOptions: AbstractPoll
     {
-        public VoteResetOptions(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
+        public VoteResetOptions(Spring spring, ServerBattle ah): base(spring, ah) {}
 
         override protected bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount)
         {

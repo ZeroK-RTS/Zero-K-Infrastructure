@@ -14,12 +14,14 @@ using Springie.autohost;
 
 namespace Springie
 {
+/*
     /// <summary>
     /// Holds and handles autohost instances
     /// </summary>
     /// 
     public class Main
     {
+
         public const string ConfigMain = "main.xml";
         const int ConfigUpdatePeriod = 60;
 
@@ -231,7 +233,7 @@ namespace Springie
             }
         }
     }
-
+    */
     public class SpawnConfig
     {
         public string Mod;
