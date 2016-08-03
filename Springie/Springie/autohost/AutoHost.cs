@@ -22,7 +22,6 @@ namespace Springie.autohost
     public partial class AutoHost
     {
         public const int PollTimeout = 60;
-        const int GameExitSplitDelay = 120;
         public readonly CommandList Commands;
 
         IVotable activePoll;

@@ -74,6 +74,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="autohost\AutoHost_commands.cs" />
+    <Compile Include="autohost\CommandConfig.cs" />
+    <Compile Include="autohost\CommandList.cs" />
+    <Compile Include="autohost\Polls\AbstractPoll.cs" />
+    <Compile Include="autohost\Polls\IVotable.cs" />
+    <Compile Include="autohost\Polls\VoteExit.cs" />
+    <Compile Include="autohost\Polls\VoteForce.cs" />
+    <Compile Include="autohost\Polls\VoteForceStart.cs" />
+    <Compile Include="autohost\Polls\VoteKick.cs" />
+    <Compile Include="autohost\Polls\VoteMap.cs" />
+    <Compile Include="autohost\Polls\VoteMove.cs" />
+    <Compile Include="autohost\Polls\VotePlanet.cs" />
+    <Compile Include="autohost\Polls\VoteResetOptions.cs" />
+    <Compile Include="autohost\Polls\VoteResign.cs" />
+    <Compile Include="autohost\Polls\VoteSetOptions.cs" />
+    <Compile Include="autohost\Polls\VoteSpec.cs" />
+    <Compile Include="autohost\Polls\VoteStart.cs" />
     <Compile Include="ChannelManager.cs" />
     <Compile Include="ChatRelay.cs" />
     <Compile Include="ClientConnection.cs" />
@@ -81,9 +98,14 @@
     <Compile Include="ITransportServerListener.cs" />
     <Compile Include="LoginChecker.cs" />
     <Compile Include="ConnectedUser.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="MainConfig.cs" />
     <Compile Include="OfflineMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerBattle.cs" />
     <Compile Include="ServerRunner.cs" />
+    <Compile Include="utils\ResourceLinkSpringieClient.cs" />
+    <Compile Include="utils\Utils.cs" />
     <Compile Include="ZkLobbyServer.cs" />
     <Compile Include="TcpTransportServerListener.cs" />
     <Compile Include="ZkServerTraceListener.cs" />

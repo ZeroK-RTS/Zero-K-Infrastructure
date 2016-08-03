@@ -23,7 +23,8 @@ namespace ZkData
             get { return mode; }
             set { SetMode(value);}
         }
-        
+        public static string SpringieDataDir { get; set; } = @"c:\projekty\springie_spring"; // todo hack solve
+
         static GlobalConst()
         {
             #if LIVE
