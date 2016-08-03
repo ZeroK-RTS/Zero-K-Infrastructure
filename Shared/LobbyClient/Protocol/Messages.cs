@@ -394,6 +394,7 @@ namespace LobbyClient
         public int? AllyNumber;
         public bool? IsSpectator;
         public string Name;
+        public SyncStatuses? Sync;
         public int? TeamNumber;
     }
 

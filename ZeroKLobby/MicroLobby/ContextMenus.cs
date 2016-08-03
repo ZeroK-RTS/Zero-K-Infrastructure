@@ -7,10 +7,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using LobbyClient;
-using ZeroKLobby.MicroLobby.ExtrasTab;
 using ZkData;
 using ContextMenu = System.Windows.Forms.ContextMenu;
 using ZkData.UnitSyncLib;
+using ZeroKLobby.MicroLobby.ExtrasTab;
 
 namespace ZeroKLobby.MicroLobby
 {

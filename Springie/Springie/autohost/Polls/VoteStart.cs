@@ -18,9 +18,15 @@ namespace Springie.autohost.Polls
 
             if (!spring.IsRunning) {
 
-                var invalid = tas.MyBattle.Users.Values.Where(x => !x.IsSpectator && (x.LobbyUser.IsAway)).ToList();
+                var invalid = tas.MyBattle.Users.Values.Where(x => !x.IsSpectator && (x.SyncStatus != SyncStatuses.Synced || x.LobbyUser.IsAway)).ToList();
                 if (invalid.Count > 0) foreach (var inv in invalid) ah.ComRing(e, new[] { inv.Name }); // ring invalids ot notify them
 
+                // people wihtout map and spring map changed in last 2 minutes, dont allow start yet
+                if (tas.MyBattle.Users.Values.Any(x=>!x.IsSpectator && x.SyncStatus != SyncStatuses.Synced) && DateTime.Now.Subtract(ah.lastMapChange).TotalSeconds < MainConfig.MapChangeDownloadWait) {
+                    var waitTime = (int)(MainConfig.MapChangeDownloadWait - DateTime.Now.Subtract(ah.lastMapChange).TotalSeconds);
+                    AutoHost.Respond(tas, spring, e, string.Format("Map was changed and some players don't have it yet, please wait {0} more seconds", waitTime));
+                    return false;
+                }
 
                 question = "Start game? ";
 
@@ -62,7 +68,7 @@ namespace Springie.autohost.Polls
         protected override void SuccessAction()
         {
             ah.ComForceSpectatorAfk(TasSayEventArgs.Default, new string[]{});
-            foreach (var user in tas.MyBattle.Users.Values.Where(x => !x.IsSpectator && (x.LobbyUser.IsAway))) {
+            foreach (var user in tas.MyBattle.Users.Values.Where(x => !x.IsSpectator && (x.SyncStatus != SyncStatuses.Synced || x.LobbyUser.IsAway))) {
                 ah.ComForceSpectator(TasSayEventArgs.Default, new string[]{user.Name});
             }
             new Thread(()=>

@@ -83,7 +83,6 @@
     <Compile Include="ConnectedUser.cs" />
     <Compile Include="OfflineMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerBattle.cs" />
     <Compile Include="ServerRunner.cs" />
     <Compile Include="ZkLobbyServer.cs" />
     <Compile Include="TcpTransportServerListener.cs" />

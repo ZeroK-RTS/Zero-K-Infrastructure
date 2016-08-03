@@ -164,7 +164,7 @@ namespace LobbyClient
             ret.EngineVersion = EngineVersion;
             ret.IsMission = IsMission;
             ret.Rectangles = new Dictionary<int, BattleRect>(Rectangles);
-            ret.Players = Users.Values.Select(x => x.ToPlayerTeam()).ToList();
+            ret.Players = Users.Values.Where(x => x.SyncStatus != SyncStatuses.Unknown).Select(x => x.ToPlayerTeam()).ToList();
             ret.Bots = Bots.Values.Select(x => x.ToBotTeam()).ToList();
             ret.ModOptions = ModOptions;
             return ret;
