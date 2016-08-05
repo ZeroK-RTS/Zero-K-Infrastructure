@@ -124,7 +124,7 @@ namespace ZkData
         public const int NumCommanderLevels = 5;
         public const int MaxCommanderNameLength = 20;
 
-        public const string DefaultEngineOverride = "100.0"; // hack for ZKL using tasclient's engine - override here for missions etc
+        public const string DefaultEngineOverride = "103.0"; // hack for ZKL using tasclient's engine - override here for missions etc
 
         public const int MinDurationForXP = 240;    // seconds
         public const int MinDurationForElo = 60;
