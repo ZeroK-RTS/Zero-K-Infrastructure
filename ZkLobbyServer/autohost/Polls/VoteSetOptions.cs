@@ -41,8 +41,9 @@ namespace Springie.autohost.Polls
             }
         }
 
-        protected override void SuccessAction() {
-            tas.UpdateModOptions(scriptTagsFormat);
+        protected override void SuccessAction()
+        {
+            ah.server.ConnectedUsers[ah.FounderName].Process(new SetModOptions() { Options = scriptTagsFormat });
         }
     }
 }

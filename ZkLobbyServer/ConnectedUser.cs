@@ -387,7 +387,7 @@ namespace ZkLobbyServer
             var h = openBattle.Header;
             h.BattleID = battleID;
             h.Founder = Name;
-            var battle = new ServerBattle();
+            var battle = new ServerBattle(new MetaDataCache(),new AhConfig(),0, null, this )
             battle.UpdateWith(h, (n) => state.ConnectedUsers[n].User);
             battle.Users[Name] = new UserBattleStatus(Name, User);
             state.Battles[battleID] = battle;

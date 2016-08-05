@@ -13,10 +13,6 @@ namespace Springie.autohost
         {
             AddMissing(new CommandConfig("help", 0, " - lists all commands available specifically to you", 5) { AllowSpecs = true});
 
-            AddMissing(new CommandConfig("random",
-                                         1,
-                                         "<allycount> - assigns people to <allycount> random alliances, e.g. !random - makes 2 random alliances",
-                                         10));
 
             AddMissing(new CommandConfig("balance",
                                          1,
@@ -57,11 +53,9 @@ namespace Springie.autohost
                                          0,
                                          new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
 
-            AddMissing(new CommandConfig("split", 1, "<\"h\"/\"v\"> <percent> - draws with given direction and percentual size, e.g. !split h 15"));
 
             AddMissing(new CommandConfig("transmit", 0, "Internal command transfer to ingame") { AllowSpecs = true});
 
-            AddMissing(new CommandConfig("corners", 1, "<\"a\"/\"b\"> <percent> - draws corners (a or b mode differ in ordering), e.g. !corners a 15"));
 
             AddMissing(new CommandConfig("exit",
                                          3,
@@ -82,12 +76,6 @@ namespace Springie.autohost
                                          "[<playername>..] - starts vote to spectate player, e.g. !votespec Licho",
                                          0,
                                          new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
-
-            AddMissing(new CommandConfig("votesplitplayers",
-                                         2,
-                                         "- starts vote to split the game into 2",
-                                         0,
-                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }) { AllowSpecs = true});
 
             
             AddMissing(new CommandConfig("voteforcestart", 2, " - starts vote to force game to start in lobby"));
@@ -142,8 +130,6 @@ namespace Springie.autohost
                                          5,
                                          new[] { SayPlace.Battle, SayPlace.User }));
 
-            AddMissing(new CommandConfig("team", 3, "<teamnumber> [<playername>..] - forces given player to a team"));
-
             AddMissing(new CommandConfig("adduser", 0, "<pw> - technical command used for mid-game spectator join", 0, new[] { SayPlace.Battle, SayPlace.User }) { AllowSpecs = true});
 
             AddMissing(new CommandConfig("helpall", 0, "- lists all commands known to Springie (sorted by command level)", 5) { AllowSpecs = true});
@@ -159,9 +145,6 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("endvote", 1, "- ends current poll"));
 
-            AddMissing(new CommandConfig("addbox", 1, "<left> <top> <width> <height> [<number>] - adds a new box rectangle"));
-
-            AddMissing(new CommandConfig("clearbox", 1, "[<number>] - removes a box (or removes all boxes if number not specified)"));
 
             AddMissing(new CommandConfig("listoptions", 1, " - lists all mod/map options", 5));
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Timers;
 using LobbyClient;
 using PlasmaShared;
@@ -10,6 +11,8 @@ using Springie.autohost;
 using Springie.autohost.Polls;
 using ZkData;
 using ZkData.UnitSyncLib;
+using Timer = System.Timers.Timer;
+using Utils = Springie.Utils;
 
 namespace ZkLobbyServer
 {
@@ -363,31 +366,31 @@ namespace ZkLobbyServer
                     break;
 
                 case "votekick":
-                    StartVote(new VoteKick(tas, spring, this), e, words);
+                    StartVote(new VoteKick(spring, this), e, words);
                     break;
 
                 case "votespec":
-                    StartVote(new VoteSpec(tas, spring, this), e, words);
+                    StartVote(new VoteSpec(spring, this), e, words);
                     break;
 
                 case "voteresign":
-                    StartVote(new VoteResign(tas, spring, this), e, words);
+                    StartVote(new VoteResign(spring, this), e, words);
                     break;
 
                 case "voteforcestart":
-                    StartVote(new VoteForceStart(tas, spring, this), e, words);
+                    StartVote(new VoteForceStart(spring, this), e, words);
                     break;
 
                 case "voteforce":
-                    StartVote(new VoteForce(tas, spring, this), e, words);
+                    StartVote(new VoteForce(spring, this), e, words);
                     break;
 
                 case "voteexit":
-                    StartVote(new VoteExit(tas, spring, this), e, words);
+                    StartVote(new VoteExit(spring, this), e, words);
                     break;
 
                 case "voteresetoptions":
-                    StartVote(new VoteResetOptions(tas, spring, this), e, words);
+                    StartVote(new VoteResetOptions(spring, this), e, words);
                     break;
 
                 case "predict":
@@ -471,7 +474,7 @@ namespace ZkLobbyServer
                     break;
 
                 case "votesetoptions":
-                    StartVote(new VoteSetOptions(tas, spring, this), e, words);
+                    StartVote(new VoteSetOptions(spring, this), e, words);
                     break;
 
                 case "setengine":
@@ -482,42 +485,12 @@ namespace ZkLobbyServer
                     ComTransmit(e, words);
                     break;
 
-                case "move":
-                    ComMove(e, words);
-                    break;
-
-                case "votemove":
-                    StartVote(new VoteMove(tas, spring, this), e, words);
-                    break;
 
                 case "adduser":
                     ComAddUser(e, words);
                     break;
 
 
-                case "spawn":
-                    {
-                        string args = Utils.Glue(words);
-                        if (String.IsNullOrEmpty(args))
-                        {
-                            Respond(e, "Please specify parameters");
-                            return;
-                        }
-                        var configKeys = new Dictionary<string, string>();
-                        foreach (string f in args.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                        {
-                            string[] parts = f.Split('=');
-                            if (parts.Length == 2) configKeys[parts[0].Trim()] = parts[1].Trim();
-                        }
-                        var sc = new SpawnConfig(e.UserName, configKeys);
-                        if (String.IsNullOrEmpty(sc.Mod))
-                        {
-                            Respond(e, "Please specify at least mod name: !spawn mod=zk:stable");
-                            return;
-                        }
-                        Program.main.SpawnAutoHost(config, sc).Start();
-                    }
-                    break;
             }
         }
 
@@ -529,19 +502,21 @@ namespace ZkLobbyServer
 
         public void SayBattle(string text, bool ingame)
         {
-            if (!String.IsNullOrEmpty(text)) foreach (string line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) SayBattle(tas, spring, line, ingame);
+            if (!String.IsNullOrEmpty(text)) foreach (string line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) SayBattle(spring, line, ingame);
         }
 
 
-        public static void SayBattle(TasClient tas, Spring spring, string text, bool ingame)
+        public static void SayBattle(Spring spring, string text, bool ingame)
         {
-            tas.Say(SayPlace.Battle, "", text, true);
+            throw new NotImplementedException();
+            //tas.Say(SayPlace.Battle, "", text, true);
             if (spring != null && spring.IsRunning && ingame) spring.SayGame(text);
         }
 
         public void SayBattlePrivate(string user, string text)
         {
-            if (!String.IsNullOrEmpty(text)) foreach (string line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(SayPlace.BattlePrivate, user, text, true);
+            throw new NotImplementedException();
+            //if (!String.IsNullOrEmpty(text)) foreach (string line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(SayPlace.BattlePrivate, user, text, true);
         }
 
         public void OpenBattleRoom(string modname, string mapname)
@@ -588,7 +563,7 @@ namespace ZkLobbyServer
             //title = title + string.Format(" [engine{0}]", springPaths.SpringVersion);
 
             // no mod was provided, auto update is on, check if newer version exists, if it does use that instead of config one
-            if (string.IsNullOrEmpty(modname) && !String.IsNullOrEmpty(config.AutoUpdateRapidTag))
+            /*if (string.IsNullOrEmpty(modname) && !String.IsNullOrEmpty(config.AutoUpdateRapidTag))
             {
                 var ver = Program.main.Downloader.PackageDownloader.GetByTag(config.AutoUpdateRapidTag);
 
@@ -616,7 +591,7 @@ namespace ZkLobbyServer
 
             var b = new Battle(engine, password, hostingPort, maxPlayers, mapname, title, modname);
             b.Ip = Program.main.Config.IpOverride;
-            tas.OpenBattle(b);
+            tas.OpenBattle(b);*/
         }
 
 
@@ -642,9 +617,6 @@ namespace ZkLobbyServer
         public void Stop()
         {
             StopVote();
-            tas.ChangeMyUserStatus(false, false);
-            bossName = "";
-            tas.LeaveBattle();
         }
 
         public void StopVote(TasSayEventArgs e = null)
@@ -666,31 +638,7 @@ namespace ZkLobbyServer
             activePoll = null;
         }
 
-        void CheckForBattleExit()
-        {
-            if ((DateTime.Now - spring.GameStarted) > TimeSpan.FromSeconds(20))
-            {
-                /*if (spring.IsRunning && !spring.IsBattleOver)
-                { // don't exit here if game is already over; leave it to the timed exit thread in spring_GameOver
-                    Battle b = tas.MyBattle;
-                    int count = 0;
-                    foreach (UserBattleStatus p in b.Users) {
-                        if (p.IsSpectator) continue;
-
-                        User u;
-                        if (!tas.GetExistingUser(p.Name, out u)) continue;
-                        if (u.IsInGame) count++;
-                    }
-                    if (count < 1) {
-                        SayBattle("closing game, " + count + " active player left in game");
-                        spring.ExitGame();
-                    }
-                }*/
-                // kontrola pro pripad ze by se nevypl spring
-                User us;
-                if (!spring.IsRunning && tas.GetExistingUser(tas.UserName, out us) && us.IsInGame) tas.ChangeMyUserStatus(false, false);
-            }
-        }
+        
 
         /// <summary>
         ///     Gets free slots, first mandatory then optional
@@ -698,7 +646,7 @@ namespace ZkLobbyServer
         /// <returns></returns>
         IEnumerable<MissionSlot> GetFreeSlots()
         {
-            Battle b = tas.MyBattle;
+            Battle b = this;
             return
                 hostedMod.MissionSlots.Where(x => x.IsHuman)
                          .OrderByDescending(x => x.IsRequired)
@@ -708,6 +656,7 @@ namespace ZkLobbyServer
 
         public void UpdateRapidMod(string tag)
         {
+            /*
             if (!string.IsNullOrEmpty(delayedModChange))
             {
                 if (!spring.IsRunning && cache.GetResourceDataByInternalName(delayedModChange) != null)
@@ -736,7 +685,7 @@ namespace ZkLobbyServer
                         else delayedModChange = latest;
                     }
                 }
-            }
+            }*/
         }
 
 
@@ -784,19 +733,19 @@ namespace ZkLobbyServer
 
         void spring_PlayerSaid(object sender, SpringLogEventArgs e)
         {
-            tas.GameSaid(e.Username, e.Line);
+            /*tas.GameSaid(e.Username, e.Line);
             User us;
             tas.ExistingUsers.TryGetValue(e.Username, out us);
             bool isMuted = us != null && us.BanMute;
             if (Program.main.Config.RedirectGameChat && e.Username != tas.UserName && !e.Line.StartsWith("Allies:") &&
-                !e.Line.StartsWith("Spectators:") && !isMuted) tas.Say(SayPlace.Battle, "", "[" + e.Username + "]" + e.Line, false);
+                !e.Line.StartsWith("Spectators:") && !isMuted) tas.Say(SayPlace.Battle, "", "[" + e.Username + "]" + e.Line, false);*/
         }
 
 
         void spring_SpringExited(object sender, EventArgs e)
         {
             StopVote();
-            tas.ChangeMyUserStatus(false, false);
+            /*tas.ChangeMyUserStatus(false, false);
             Battle b = tas.MyBattle;
             foreach (string s in toNotify)
             {
@@ -804,7 +753,7 @@ namespace ZkLobbyServer
                 tas.Say(SayPlace.User, s, "** Game just ended, join me! **", false);
             }
             toNotify.Clear();
-
+            */
             if (SpawnConfig == null && DateTime.Now.Subtract(spring.GameStarted).TotalMinutes > 5) ServerVerifyMap(true);
         }
 
@@ -815,7 +764,7 @@ namespace ZkLobbyServer
             if (hostedMod.IsMission)
             {
                 var service = GlobalConst.GetContentService();
-                foreach (UserBattleStatus u in tas.MyBattle.Users.Values.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, hostedMod.ShortName);
+                foreach (UserBattleStatus u in Users.Values.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, hostedMod.ShortName);
             }
 
             StopVote();
@@ -824,7 +773,7 @@ namespace ZkLobbyServer
 
         void tas_BattleOpened(object sender, Battle battle)
         {
-            tas.ChangeMyBattleStatus(true, SyncStatuses.Synced);
+            /*tas.ChangeMyBattleStatus(true, SyncStatuses.Synced);
             if (hostedMod.IsMission)
             {
                 foreach (MissionSlot slot in hostedMod.MissionSlots.Where(x => !x.IsHuman))
@@ -841,12 +790,13 @@ namespace ZkLobbyServer
                 tas.Say(SayPlace.User, SpawnConfig.Owner, "I'm here! Ready to serve you! Join me!", true);
             }
 
-            if (!hostedMod.IsMission) ServerVerifyMap(true);
+            if (!hostedMod.IsMission) ServerVerifyMap(true);*/
         }
 
 
         void tas_BattleUserJoined(object sender, BattleUserEventArgs e1)
         {
+            /*
             if (e1.BattleID != tas.MyBattleID) return;
             string name = e1.UserName;
 
@@ -899,11 +849,13 @@ namespace ZkLobbyServer
 
             if (SpawnConfig != null && SpawnConfig.Owner == name) // owner joins, set him boss 
                 ComBoss(TasSayEventArgs.Default, new[] { name });
+                */
 
         }
 
         void tas_BattleUserLeft(object sender, BattleUserEventArgs e1)
         {
+            /*
             if (e1.BattleID != tas.MyBattleID) return;
             CheckForBattleExit();
 
@@ -916,43 +868,16 @@ namespace ZkLobbyServer
             }
 
             // repick map after everyone (except the autohost) leaves to prevent someone from setting trololo everywhere
-            if (tas.MyBattle != null && tas.MyBattle.Users.Count == 1) ServerVerifyMap(true);
+            if (tas.MyBattle != null && tas.MyBattle.Users.Count == 1) ServerVerifyMap(true);*/
         }
 
         // login accepted - join channels
-
-        // im connected, let's login
-        void tas_Connected(object sender, Welcome welcome)
-        {
-            tas.Login(GetAccountName(), config.Password);
-        }
-
-
-        void tas_ConnectionLost(object sender, TasEventArgs e)
-        {
-            Stop();
-        }
-
-
-        void tas_LoginAccepted(object sender, TasEventArgs e)
-        {
-            foreach (string c in config.JoinChannels) tas.JoinChannel(c);
-        }
-
-        void tas_LoginDenied(object sender, LoginResponse loginResponse)
-        {
-            if (loginResponse.ResultCode == LoginResponse.Code.InvalidName) tas.Register(GetAccountName(), config.Password);
-            else
-            {
-                CloneNumber++;
-                tas.Login(GetAccountName(), config.Password);
-            }
-        }
 
         public DateTime lastMapChange = DateTime.Now;
 
         void tas_MyBattleMapChanged(object sender, OldNewPair<Battle> oldNewPair)
         {
+            /*
             lastMapChange = DateTime.Now;
 
             Battle b = tas.MyBattle;
@@ -976,23 +901,29 @@ namespace ZkLobbyServer
                 {
                     Trace.TraceError("Error procesing map commands: {0}", ex);
                 }
-            }
+            }*/
         }
 
         public BattleContext slaveContextOverride;
         private ResourceLinkSpringieClient linkSpringieClient;
 
-        public override string ToString()
-        {
-            return string.Format("[{0}]", tas.UserName);
-        }
 
         void tas_MyStatusChangedToInGame(object sender, Battle battle)
         {
             SetupSpring();
-            spring.lobbyUserName = tas.UserName; // hack until removed when springie moves to server
-            spring.lobbyPassword = tas.UserPassword;  // spring class needs this to submit results
-            spring.HostGame(tas.MyBattle.GetContext(), battle.Ip, battle.HostPort);
+            //spring.lobbyUserName = tas.UserName; // hack until removed when springie moves to server
+            //spring.lobbyPassword = tas.UserPassword;  // spring class needs this to submit results
+            spring.HostGame(GetContext(), battle.Ip, battle.HostPort);
+        }
+
+        public ConnectedUser FounderUser
+        {
+            get
+            {
+                ConnectedUser connectedUser = null;
+                server.ConnectedUsers.TryGetValue(FounderName, out connectedUser);
+                return connectedUser;
+            }
         }
 
         void tas_Said(object sender, TasSayEventArgs e)
@@ -1000,8 +931,7 @@ namespace ZkLobbyServer
             if (e.Place == SayPlace.MessageBox) Trace.TraceInformation("{0} server message: {1}", this, e.Text);
 
             if (String.IsNullOrEmpty(e.UserName)) return;
-            if (Program.main.Config.RedirectGameChat && e.Place == SayPlace.Battle &&
-                e.UserName != tas.UserName && e.IsEmote == false && !tas.ExistingUsers[e.UserName].BanMute && !tas.ExistingUsers[e.UserName].BanSpecChat) spring.SayGame(string.Format("<{0}>{1}", e.UserName, e.Text));
+            if (e.Place == SayPlace.Battle &&  e.IsEmote == false && !server.ConnectedUsers[e.UserName].User.BanMute && !server.ConnectedUsers[e.UserName].User.BanSpecChat) spring.SayGame(string.Format("<{0}>{1}", e.UserName, e.Text));
 
             // check if it's command
             if (!e.IsEmote && e.Text.StartsWith("!"))
@@ -1038,17 +968,6 @@ namespace ZkLobbyServer
             }
         }
 
-
-        void tas_UserStatusChanged(object sender, OldNewPair<User> oldNewPair)
-        {
-            if (spring.IsRunning)
-            {
-                Battle b = tas.MyBattle;
-                var name = oldNewPair.New.Name;
-                if (name != tas.UserName && b.Users.ContainsKey(name)) CheckForBattleExit();
-            }
-
-        }
 
         public void ProcessBattleCommand(string text)
         {

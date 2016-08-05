@@ -209,8 +209,8 @@ namespace ZkLobbyServer
 
             if (!kickedPlayers.Any(x => x.Name == usrlist[0])) kickedPlayers.Add(new KickedPlayer() { Name = usrlist[0] });
             if (spring.IsRunning) spring.Kick(usrlist[0]);
-            
-            tas.Kick(usrlist[0]);
+
+            server.ConnectedUsers[FounderName].Process(new KickFromBattle() { BattleID = BattleID, Name = usrlist[0] });
         }
 
 
@@ -236,7 +236,8 @@ namespace ZkLobbyServer
                 var mapi = cache.GetResourceDataByInternalName(vals[0]);
                 if (mapi != null)
                 {
-                    tas.ChangeMap(mapi.InternalName);
+                    throw new NotImplementedException();
+                    //tas.ChangeMap(mapi.InternalName);
                 }
             }
             else Respond(e, "Cannot find such map.");
@@ -292,7 +293,7 @@ namespace ZkLobbyServer
 
         public void ComResetOptions(TasSayEventArgs e, string[] words)
         {
-            SetModOptions(new Dictionary<string, string>());
+            FounderUser.Process(new SetModOptions() { Options = new Dictionary<string, string>() });
             Respond(e, "Game options reset to defaults");
         }
 
@@ -303,7 +304,7 @@ namespace ZkLobbyServer
             if (words.Length == 0)
             {
                 // ringing idle
-                foreach (var p in tas.MyBattle.Users.Values)
+                foreach (var p in Users.Values)
                 {
                     if (p.IsSpectator) continue;
                     if ((p.SyncStatus != SyncStatuses.Synced) && (!spring.IsRunning || !spring.IsPlayerReady(p.Name))) usrlist.Add(p.Name);
@@ -320,7 +321,7 @@ namespace ZkLobbyServer
             var rang = "";
             foreach (var s in usrlist)
             {
-                tas.Ring(SayPlace.BattlePrivate, s);
+                FounderUser.Process(new Say() { User = e.UserName, Text = "wants your attention", IsEmote = true, Ring = true, Place = SayPlace.Battle});
                 rang += s + ", ";
             }
 
@@ -379,7 +380,8 @@ namespace ZkLobbyServer
             SayBattle("please wait, game is about to start");
             StopVote();
             lastSplitPlayersCountCalled = 0;
-            tas.StartGame();
+
+            this.StartGame();
         }
 
         public void ComUpdateRapidMod(TasSayEventArgs e, string[] words)
@@ -456,7 +458,7 @@ namespace ZkLobbyServer
             return FilterMaps(words, this, out vals, out indexes);
         }
 
-        internal static int FilterMods(string[] words, AutoHost ah, out string[] vals, out int[] indexes)
+        internal static int FilterMods(string[] words, ServerBattle ah, out string[] vals, out int[] indexes)
         {
             var result = ah.cache.FindResourceData(words, ResourceType.Mod);
             vals = result.Select(x => x.InternalName).ToArray();
@@ -553,6 +555,8 @@ namespace ZkLobbyServer
 
         public void ApplyBalanceResults(BalanceTeamsResult balance)
         {
+throw new NotImplementedException();
+            /*
             if (!string.IsNullOrEmpty(balance.Message)) SayBattle(balance.Message, false);
             if (balance.Players != null && balance.Players.Count > 0)
             {
@@ -591,7 +595,7 @@ namespace ZkLobbyServer
                         tas.AddBot(b.BotName.Replace(" ", "_"), b.BotAI, b.AllyID, b.TeamID);
                     }
                 }
-            }
+            }*/
         }
 
         void ComHelp(TasSayEventArgs e, string[] words)
@@ -616,9 +620,9 @@ namespace ZkLobbyServer
                     Respond(e, String.Format("This has {0} results, please narrow down your search", count));
                     return;
                 }
-                tas.Say(SayPlace.User, e.UserName, "---", false);
-                for (var i = 0; i < vals.Length; ++i) tas.Say(SayPlace.User, e.UserName, indexes[i] + ": " + vals[i], false);
-                tas.Say(SayPlace.User, e.UserName, "---", false);
+                Respond(e, "---");
+                for (var i = 0; i < vals.Length; ++i) Respond(e, indexes[i] + ": " + vals[i]);
+                Respond( e, "---");
             }
             else Respond(e, "no such map found");
         }
@@ -635,9 +639,9 @@ namespace ZkLobbyServer
                     Respond(e, String.Format("This has {0} results, please narrow down your search", count));
                     return;
                 }
-                tas.Say(SayPlace.User, e.UserName, "---", false);
-                for (var i = 0; i < vals.Length; ++i) tas.Say(SayPlace.User, e.UserName, indexes[i] + ": " + vals[i], false);
-                tas.Say(SayPlace.User, e.UserName, "---", false);
+                Respond(e, "---");
+                for (var i = 0; i < vals.Length; ++i) Respond(e, indexes[i] + ": " + vals[i]);
+                Respond(e, "---");
             }
             else Respond(e, "no such mod found");
         }
@@ -659,6 +663,8 @@ namespace ZkLobbyServer
 
         void ComSetEngine(TasSayEventArgs e, string[] words)
         {
+            throw new NotImplementedException();
+            /*
             if (words.Length != 1)
             {
                 Respond(e, "Specify engine version");
@@ -691,7 +697,7 @@ namespace ZkLobbyServer
 
                     return;
                 }).Start();
-            }
+            }*/
         }
 
 
@@ -722,6 +728,8 @@ namespace ZkLobbyServer
 
         void ComSetOption(TasSayEventArgs e, string[] words)
         {
+            throw new NotImplementedException();
+            /*
             if (spring.IsRunning)
             {
                 Respond(e, "Cannot set options while the game is running");
@@ -732,7 +740,7 @@ namespace ZkLobbyServer
             {
                 tas.UpdateModOptions(ret);
                 Respond(e, "Options set");
-            }
+            }*/
         }
 
         void ComSetPassword(TasSayEventArgs e, string[] words)
@@ -759,7 +767,7 @@ namespace ZkLobbyServer
             if (spring.IsRunning) spring.SayGame(String.Format("[{0}]{1}", e.UserName, "!transmit " + Utils.Glue(words)));
         }
 
-        static int FilterMaps(string[] words, AutoHost ah, out string[] vals, out int[] indexes)
+        static int FilterMaps(string[] words, ServerBattle ah, out string[] vals, out int[] indexes)
         {
             var result = ah.cache.FindResourceData(words, ResourceType.Map);
             vals = result.Select(x => x.InternalName).ToArray();
@@ -770,20 +778,20 @@ namespace ZkLobbyServer
 
         int FilterUsers(string[] words, out string[] vals, out int[] indexes)
         {
-            return FilterUsers(words, tas, spring, out vals, out indexes);
+            return FilterUsers(words, this, spring, out vals, out indexes);
         }
 
 
         void SayLines(TasSayEventArgs e, string what)
         {
-            foreach (var line in what.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(SayPlace.User, e.UserName, line, false);
+            foreach (var line in what.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) Respond(e, line);
         }
 
         public void ServerVerifyMap(bool pickNew)
         {
             try
             {
-                if (tas.MyBattle != null && !spring.IsRunning)
+                if (!spring.IsRunning)
                 {
                     var serv = GlobalConst.GetSpringieService();
 
@@ -792,16 +800,16 @@ namespace ZkLobbyServer
                         RecommendedMapResult map;
                         try
                         {
-                            map = serv.GetRecommendedMap(tas.MyBattle.GetContext(), pickNew);
+                            map = serv.GetRecommendedMap(GetContext(), pickNew);
                         }
                         catch (Exception ex)
                         {
                             Trace.TraceError(ex.ToString());
                             return;
                         }
-                        if (map != null && map.MapName != null && tas.MyBattle != null)
+                        if (map != null && map.MapName != null)
                         {
-                            if (tas.MyBattle.MapName != map.MapName)
+                            if (MapName != map.MapName)
                             {
                                 ComMap(TasSayEventArgs.Default, map.MapName);
                                 SayBattle(map.Message);

@@ -20,7 +20,7 @@ namespace Springie.autohost.Polls
 
             string[] players;
             int[] indexes;
-            if (ah.FilterUsers(words, spring, out players, out indexes) > 0)
+            if (ServerBattle.FilterUsers(words, ah, spring, out players, out indexes) > 0)
             {
                 player = players[0];
                 question = "Spectate " + player + "?";
@@ -28,7 +28,7 @@ namespace Springie.autohost.Polls
             }
             else
             {
-                AutoHost.Respond(tas, spring, e, "Cannot find such player");
+                ah.Respond(e, "Cannot find such player");
                 return false;
             }
         }

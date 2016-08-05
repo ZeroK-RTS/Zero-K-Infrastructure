@@ -1,12 +1,13 @@
 using LobbyClient;
+using ZkLobbyServer;
 
 namespace Springie.autohost.Polls
 {
-    public class VoteKick: AbstractPoll, IVotable
+    public class VoteKick : AbstractPoll, IVotable
     {
         string player;
 
-        public VoteKick(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
+        public VoteKick(Spring spring, ServerBattle ah) : base(spring, ah) { }
 
         protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount)
         {
@@ -20,25 +21,16 @@ namespace Springie.autohost.Polls
 
             string[] players;
             int[] indexes;
-            if (AutoHost.FilterUsers(new[] {words[0]}, tas, spring, out players, out indexes) > 0)
+            if (ServerBattle.FilterUsers(new[] { words[0] }, ah, spring, out players, out indexes) > 0)
             {
-                player = players[0];
-                if (player == tas.UserName)
-                {
-                    ah.Respond(e, "won't kick myself, not in suicidal mood today");
-                    return false;
-                }
-                else
-                {
-                    string reason = (words.Length > 1 && words[1] != "for") ? " for" : "";
-                    for (var i = 1; i < words.Length; i++) reason += " " + words[i];
-                    question = "Kick " + player + reason + "?";
-                    return true;
-                }
+                string reason = (words.Length > 1 && words[1] != "for") ? " for" : "";
+                for (var i = 1; i < words.Length; i++) reason += " " + words[i];
+                question = "Kick " + player + reason + "?";
+                return true;
             }
             else
             {
-                AutoHost.Respond(tas, spring, e, "Cannot find such player");
+                ah.Respond(e, "Cannot find such player");
                 return false;
             }
         }
