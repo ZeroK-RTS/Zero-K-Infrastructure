@@ -33,7 +33,6 @@ namespace Springie.autohost.Polls
                     ah.FilterMaps(words, out vals, out indexes);
                     if (vals.Length > 0)
                     {
-                    	bool serious = ah.mode == AutohostMode.Serious;
                         foreach (string possibleMap in vals)
                         {
                             map = possibleMap;
@@ -41,7 +40,6 @@ namespace Springie.autohost.Polls
                             if (resourceList != null)
                             {
                             	var resource = resourceList[0];
-                            	if (serious && (resource.MapIsSpecial == true || resource.FeaturedOrder == null)) continue;
                                 question = string.Format(
                                     "Change map to {0} {2}/Maps/Detail/{1} ?",
                                     map,
@@ -50,7 +48,7 @@ namespace Springie.autohost.Polls
                                 return true;
                             }
                         }
-                        ah.Respond(e, String.Format("Cannot find such {0}map",serious ? "(non-special) " : ""));
+                        ah.Respond(e, "Cannot find such map");
                         return false;
                     }
                     else

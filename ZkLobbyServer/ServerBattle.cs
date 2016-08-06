@@ -40,7 +40,6 @@ namespace ZkLobbyServer
         public int CloneNumber { get; set; }
 
         public SpawnConfig SpawnConfig { get; private set; }
-        public MetaDataCache cache;
         public AhConfig config;
 
         public Mod hostedMod;
@@ -50,12 +49,11 @@ namespace ZkLobbyServer
 
         private SpringPaths springPaths;
 
-        public ServerBattle(MetaDataCache cache, AhConfig config, int hostingPort, SpawnConfig spawn, ZkLobbyServer server)
+        public ServerBattle()
         {
             this.server = server;
             this.config = config;
             Commands = new CommandList(config);
-            this.cache = cache;
             SpawnConfig = spawn;
             this.hostingPort = hostingPort;
             mode = (AutohostMode?)SpawnConfig?.Mode ?? config.Mode;

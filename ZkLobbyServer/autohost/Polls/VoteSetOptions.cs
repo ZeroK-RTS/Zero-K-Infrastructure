@@ -18,11 +18,6 @@ namespace Springie.autohost.Polls
         protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount) {
             winCount = 0;
             question = null;
-            if (ah.mode == PlasmaShared.AutohostMode.Serious)
-            {
-                ah.Respond(e, "Serious host, no custom options");
-                return false;
-            }
             if (spring.IsRunning)
             {
                 ah.Respond(e, "Cannot set options while the game is running");

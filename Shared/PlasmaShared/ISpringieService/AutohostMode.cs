@@ -20,12 +20,6 @@ namespace PlasmaShared
         
         [Description("Teams")]
         Teams = 6,
-
-        [Description("Generic")]
-        Generic = 7,
-
-        [Description("Serious games")]
-        Serious = 10,
     }
 
 }

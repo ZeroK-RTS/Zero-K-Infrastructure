@@ -233,9 +233,11 @@ namespace ZkLobbyServer
             if (FilterMaps(words, out vals, out indexes) > 0)
             {
                 SayBattle("changing map to " + vals[0]);
-                var mapi = cache.GetResourceDataByInternalName(vals[0]);
+
+                var mapi =  cache.GetResourceDataByInternalName(vals[0]);
                 if (mapi != null)
                 {
+                    FounderUser.Process(new BattleUpdate() {Header = new BattleHeader() {BattleID = BattleID, Map = } })
                     throw new NotImplementedException();
                     //tas.ChangeMap(mapi.InternalName);
                 }

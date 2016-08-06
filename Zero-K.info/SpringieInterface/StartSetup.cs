@@ -30,7 +30,7 @@ namespace ZeroKWeb.SpringieInterface
                 
                 // calculate to whom to send extra comms
                 var accountIDsWithExtraComms = new List<int>();
-                if (mode == AutohostMode.Planetwars || mode == AutohostMode.Generic || mode == AutohostMode.GameFFA ||
+                if (mode == AutohostMode.Planetwars ||  mode == AutohostMode.GameFFA ||
                     mode == AutohostMode.Teams) {
                     IOrderedEnumerable<IGrouping<int, PlayerTeam>> groupedByTeam =
                         context.Players.Where(x => !x.IsSpectator).GroupBy(x => x.AllyID).OrderByDescending(x => x.Count());

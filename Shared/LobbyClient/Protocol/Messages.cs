@@ -335,6 +335,7 @@ namespace LobbyClient
         public int? Port;
         public string Ip;
         public string Founder;
+        public AutohostMode Mode= AutohostMode.None;
     }
 
     [Message(Origin.Server)]

@@ -34,7 +34,7 @@ namespace ZeroKWeb.SpringieInterface
             var playerCount = context.Players.Count(x => !x.IsSpectator);
 
             
-            if (clanWise == null && (config.AutohostMode == AutohostMode.Generic || config.AutohostMode == AutohostMode.Teams || config.AutohostMode == AutohostMode.Serious)) clanWise = true;
+            if (clanWise == null && ( config.AutohostMode == AutohostMode.Teams)) clanWise = true;
 
             var res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);
 
@@ -122,8 +122,7 @@ namespace ZeroKWeb.SpringieInterface
                     (config.MinElo != null && p.account.EffectiveElo < config.MinElo) ||
                     (config.MaxElo != null && p.account.EffectiveElo > config.MaxElo) ||
                     (!p.account.CanPlayMultiplayer &&
-                     (config.AutohostMode == AutohostMode.Serious ||
-                      config.AutohostMode == AutohostMode.Planetwars || config.AutohostMode == AutohostMode.Teams)))
+                     (config.AutohostMode == AutohostMode.Planetwars || config.AutohostMode == AutohostMode.Teams)))
                 {
                     SpecPlayerOnCondition(
                         p.player,
@@ -331,23 +330,7 @@ namespace ZeroKWeb.SpringieInterface
                         if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == true ? BalanceMode.ClanWise : BalanceMode.Normal, context);
                     }
                         break;
-                    case AutohostMode.Generic: {
-                        var map = db.Resources.Single(x => x.InternalName == context.Map);
-                        res = new Balancer().LegacyBalance(
-                            allyCount ?? map.MapFFAMaxTeams ?? 2,
-                            clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise,
-                            context);
-                        res.DeleteBots = true;
-                        return res;
-                    }
-
                     case AutohostMode.Teams:
-                    case AutohostMode.Serious: {
-                        //var map = db.Resources.Single(x => x.InternalName == context.Map);
-                        res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
-                        res.DeleteBots = true;
-                        return res;
-                    }
                     case AutohostMode.Game1v1: {
                         res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
                         res.DeleteBots = true;
