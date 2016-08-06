@@ -171,7 +171,6 @@
     <Compile Include="Conditions\UnitSelectedCondition.cs" />
     <Compile Include="ILocalizable.cs" />
     <Compile Include="ITimeSpan.cs" />
-    <Compile Include="Objective.cs" />
     <Compile Include="Cylinder.cs" />
     <Compile Include="Actions\Logic\DefeatAction.cs" />
     <Compile Include="Actions\DummyAction.cs" />
