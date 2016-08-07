@@ -51,13 +51,7 @@ namespace ZeroKWeb
         }
 
         
-        public List<AhConfig> GetClusterConfigs(string clusterNode)
-        {
-            var db = new ZkDataContext();
-            return db.AutohostConfigs.Where(x => x.ClusterNode == clusterNode).ToList().Select(x => x.ToAhConfig()).ToList();
-        }
-
-        
+       
         public string GetMapCommands(string mapName)
         {
             var db = new ZkDataContext();
@@ -70,14 +64,8 @@ namespace ZeroKWeb
 
         public void MovePlayers(string autohostName, string autohostPassword, List<MovePlayerEntry> moves)
         {
-
-            var db = new ZkDataContext();
             var acc = AuthServiceClient.VerifyAccountPlain(autohostName, autohostPassword);
             if (acc == null) throw new Exception("Invalid password");
-            var name = autohostName.TrimNumbers();
-            var entry = db.AutohostConfigs.SingleOrDefault(x => x.Login == name);
-            if (entry == null) throw new Exception("Not an autohost");
-
             try
             {
                 foreach (var m in moves)

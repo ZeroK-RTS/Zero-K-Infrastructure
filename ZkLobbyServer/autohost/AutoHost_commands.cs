@@ -379,14 +379,6 @@ namespace ZkLobbyServer
             this.StartGame();
         }
 
-        public void ComUpdateRapidMod(TasSayEventArgs e, string[] words)
-        {
-            if (string.IsNullOrEmpty(words[0]))
-            {
-                UpdateRapidMod(config.AutoUpdateRapidTag);
-            }
-            else UpdateRapidMod(words[0]);
-        }
 
         internal static int Filter(string[] source, string[] words, out string[] resultVals, out int[] resultIndexes)
         {
@@ -680,16 +672,20 @@ throw new NotImplementedException();
 
         void ComSetGameTitle(TasSayEventArgs e, string[] words)
         {
+            throw new NotImplementedException();
+            /*
             if (words.Length == 0) Respond(e, "this command needs one parameter - new game title");
             else
             {
                 config.Title = Utils.Glue(words);
                 Respond(e, "game title changed");
-            }
+            }*/
         }
 
         void ComSetMaxPlayers(TasSayEventArgs e, string[] words)
         {
+            throw new NotImplementedException();
+            /*
             if (words.Length == 0) Respond(e, "this command needs one parameter - number of players");
             else
             {
@@ -699,7 +695,7 @@ throw new NotImplementedException();
                 if (plr > Spring.MaxTeams) plr = Spring.MaxTeams;
                 config.MaxPlayers = plr;
                 Respond(e, "server size changed");
-            }
+            }*/
         }
 
 
@@ -722,7 +718,8 @@ throw new NotImplementedException();
 
         void ComSetPassword(TasSayEventArgs e, string[] words)
         {
-            if (words.Length == 0)
+            throw new NotImplementedException();
+            /*if (words.Length == 0)
             {
                 config.Password = "";
                 Respond(e, "password removed");
@@ -731,7 +728,7 @@ throw new NotImplementedException();
             {
                 config.Password = words[0];
                 Respond(e, "password changed");
-            }
+            }*/
         }
 
         void ComTransmit(TasSayEventArgs e, string[] words)

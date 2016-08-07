@@ -30,26 +30,20 @@ namespace ZkLobbyServer
 
         Timer pollTimer;
 
-        readonly Timer timer;
-
-        public AhConfig config;
-
         public Mod hostedMod;
         public int hostingPort { get; private set; }
         public Spring spring;
-        public AutohostMode mode;
+
+        public AutohostMode mode => this.Mode;
 
         private SpringPaths springPaths;
 
         public ServerBattle(ZkLobbyServer server)
         {
             this.server = server;
-            Commands = new CommandList(config);
+            Commands = new CommandList();
             this.hostingPort = hostingPort;
-            mode = config.Mode;
 
-
-            string version = config.SpringVersion ?? server.Engine ?? GlobalConst.DefaultEngineOverride;
             springPaths = new SpringPaths(null, GlobalConst.SpringieDataDir, false);
 
 
@@ -60,33 +54,6 @@ namespace ZkLobbyServer
             pollTimer.Elapsed += pollTimer_Elapsed;
 
             SetupSpring();
-
-
-
-            // hack todo Program.main.Downloader.PackagesChanged += Downloader_PackagesChanged;
-
-            timer = new Timer(15000);
-            timer.Elapsed += (s, e) =>
-            {
-                try
-                {
-                    timer.Stop();
-
-                    // auto rehost to latest mod version
-                    if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag)) UpdateRapidMod(config.AutoUpdateRapidTag);
-
-
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError(ex.ToString());
-                }
-                finally
-                {
-                    timer.Start();
-                }
-            };
-            timer.Start();
 
         }
 
@@ -114,7 +81,6 @@ namespace ZkLobbyServer
             //Program.Downloader.UnsubscribeEvents(this);
             //Program.paths.UnsubscribeEvents(this);
             pollTimer.Dispose();
-            if (timer != null) timer.Dispose();
             pollTimer = null;
         }
 
@@ -369,10 +335,6 @@ namespace ZkLobbyServer
                     ComRehost(e, words);
                     break;
 
-                case "updaterapidmod":
-                    ComUpdateRapidMod(e, words);
-                    break;
-
 
                 case "balance":
                     ComBalance(e, words);
@@ -494,16 +456,16 @@ namespace ZkLobbyServer
             bossName = "";
             lastMapChange = DateTime.Now;
 
-            if (String.IsNullOrEmpty(modname)) modname = config.Mod;
-            if (String.IsNullOrEmpty(mapname)) mapname = config.Map;
+            //if (String.IsNullOrEmpty(modname)) modname = config.Mod;
+            //if (String.IsNullOrEmpty(mapname)) mapname = config.Map;
 
-            string title = config.Title.Replace("%1", MainConfig.SpringieVersion);
+            //string title = config.Title.Replace("%1", MainConfig.SpringieVersion);
 
             string password = null;
-            if (!string.IsNullOrEmpty(config.BattlePassword)) password = config.BattlePassword;
+            //if (!string.IsNullOrEmpty(config.BattlePassword)) password = config.BattlePassword;
 
-            int maxPlayers = config.MaxPlayers;
-            string engine = springPaths.SpringVersion;
+            //int maxPlayers = config.MaxPlayers;
+            //string engine = springPaths.SpringVersion;
 
             //title = title + string.Format(" [engine{0}]", springPaths.SpringVersion);
 
@@ -596,47 +558,6 @@ namespace ZkLobbyServer
                 hostedMod.MissionSlots.Where(x => x.IsHuman)
                          .OrderByDescending(x => x.IsRequired)
                          .Where(x => !b.Users.Values.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !y.IsSpectator));
-        }
-
-
-        public void UpdateRapidMod(string tag)
-        {
-            /*
-            if (!string.IsNullOrEmpty(delayedModChange))
-            {
-                if (!spring.IsRunning && cache.GetResourceDataByInternalName(delayedModChange) != null)
-                {
-                    string latest = delayedModChange;
-                    delayedModChange = null;
-                    config.Mod = latest;
-                    SayBattle("Updating to latest mod version: " + latest);
-                    if (tas.MyBattle != null) OpenBattleRoom(latest, null);
-                }
-            }
-            else
-            {
-                PackageDownloader.Version version = Program.main.Downloader.PackageDownloader.GetByTag(tag);
-                if (version != null)
-                {
-                    string latest = version.InternalName;
-                    if (!String.IsNullOrEmpty(latest) && (tas.MyBattle == null || tas.MyBattle.ModName != latest))
-                    {
-                        if (cache.GetResourceDataByInternalName(latest) != null && !spring.IsRunning)
-                        {
-                            config.Mod = latest;
-                            SayBattle("Updating to latest mod version: " + latest);
-                            if (tas.MyBattle != null) OpenBattleRoom(latest, null);
-                        }
-                        else delayedModChange = latest;
-                    }
-                }
-            }*/
-        }
-
-
-        void Downloader_PackagesChanged(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag)) UpdateRapidMod(config.AutoUpdateRapidTag);
         }
 
 

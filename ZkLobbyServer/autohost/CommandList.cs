@@ -9,7 +9,7 @@ namespace Springie.autohost
     {
         public List<CommandConfig> Commands = new List<CommandConfig>();
 
-        public CommandList(AhConfig config)
+        public CommandList()
         {
             AddMissing(new CommandConfig("help", 0, " - lists all commands available specifically to you", 5) { AllowSpecs = true});
 
@@ -196,17 +196,8 @@ namespace Springie.autohost
                                          })
                                          { AllowSpecs = true});
 
-            AddMissing(new CommandConfig("saveboxes", 4, "- saves boxes for current map"));
             AddMissing(new CommandConfig("move", 4, "<where> - moves players to a new host"));
             AddMissing(new CommandConfig("votemove", 2, "<where> - moves players to a new host") { AllowSpecs = true});
-
-            if (config != null && config.CommandLevels != null)
-            {
-                foreach (var c in config.CommandLevels) {
-                    var entry = Commands.FirstOrDefault(x => x.Name == c.Command);
-                    if (entry != null) entry.Level = c.Level;
-                }
-            }
         }
 
 

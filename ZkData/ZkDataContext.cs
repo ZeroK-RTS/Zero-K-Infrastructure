@@ -25,7 +25,6 @@ namespace ZkData
         public virtual DbSet<AccountRole> AccountRoles { get; set; }
         public virtual DbSet<AccountUnlock> AccountUnlocks { get; set; }
         public virtual DbSet<AccountUserID> AccountUserIDs { get; set; }
-        public virtual DbSet<AutohostConfig> AutohostConfigs { get; set; }
         public virtual DbSet<Avatar> Avatars { get; set; }
         public virtual DbSet<BlockedCompany> BlockedCompanies { get; set; }
         public virtual DbSet<BlockedHost> BlockedHosts { get; set; }

@@ -29,9 +29,6 @@ namespace PlasmaShared
                                                         List<string> extraData);
 
         [OperationContract]
-        List<AhConfig> GetClusterConfigs(string clusterNode);
-
-        [OperationContract]
         string GetMapCommands(string mapName);
 
         [OperationContract]

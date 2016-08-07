@@ -207,7 +207,6 @@
     <Compile Include="Ef\AccountRole.cs" />
     <Compile Include="Ef\AccountUnlock.cs" />
     <Compile Include="Ef\AccountUserID.cs" />
-    <Compile Include="Ef\AutohostConfig.cs" />
     <Compile Include="Ef\Avatar.cs" />
     <Compile Include="Ef\BlockedCompany.cs" />
     <Compile Include="Ef\BlockedHost.cs" />

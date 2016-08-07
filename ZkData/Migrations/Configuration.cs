@@ -99,50 +99,6 @@ namespace ZkData.Migrations
                     },
                     new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, IsZeroKAdmin = true });
 
-                db.AutohostConfigs.AddOrUpdate(
-                    x => x.Login,
-                    new AutohostConfig
-                    {
-                        Login = "Springiee",
-                        Title = "Local springie test",
-                        Password = "dummy",
-                        AutoSpawn = true,
-                        AutoUpdateRapidTag = "zk:stable",
-                        Mod = "zk:stable",
-                        ClusterNode = "alpha",
-                        JoinChannels = "bots",
-                        Map = "Dual Icy Run v3",
-                        SpringVersion = GlobalConst.DefaultEngineOverride,
-                        MaxPlayers = 10
-                    },
-                    new AutohostConfig
-                    {
-                        Login = "Fungiee",
-                        Title = "Local fungicide test",
-                        Password = "dummy",
-                        AutoSpawn = true,
-                        AutoUpdateRapidTag = "zk:stable",
-                        Mod = "zk:stable",
-                        ClusterNode = "alpha",
-                        JoinChannels = "bots",
-                        Map = "Dual Icy Run v3",
-                        SpringVersion = GlobalConst.DefaultEngineOverride,
-                        MaxPlayers = 10
-                    },
-                    new AutohostConfig
-                    {
-                        Login = "Trifliee",
-                        Title = "Local triplicator test",
-                        Password = "dummy",
-                        AutoSpawn = true,
-                        AutoUpdateRapidTag = "zk:test",
-                        Mod = "zk:test",
-                        ClusterNode = "alpha",
-                        JoinChannels = "bots",
-                        Map = "Dual Icy Run v3",
-                        SpringVersion = GlobalConst.DefaultEngineOverride,
-                        MaxPlayers = 10
-                    });
             }
 
             db.ForumCategories.AddOrUpdate(

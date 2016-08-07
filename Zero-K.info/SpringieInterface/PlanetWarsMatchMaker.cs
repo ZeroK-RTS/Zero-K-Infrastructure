@@ -67,7 +67,7 @@ namespace ZeroKWeb
             RunningBattles = new Dictionary<string, AttackOption>();
 
             var db = new ZkDataContext();
-            pwHostName = db.AutohostConfigs.First(x => x.AutohostMode == AutohostMode.Planetwars).Login.TrimNumbers();
+            // todo reimplement pwHostName = db.AutohostConfigs.First(x => x.AutohostMode == AutohostMode.Planetwars).Login.TrimNumbers();
 
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();

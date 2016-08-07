@@ -48,6 +48,8 @@ namespace LobbyClient
         public string EngineVersion { get; set; }
         public int SpectatorCount { get; set; }
         public string Title { get; set; }
+        public AutohostMode Mode { get; set; }
+
 
         public ConcurrentDictionary<string, UserBattleStatus> Users { get; set; }
 
@@ -99,6 +101,7 @@ namespace LobbyClient
             if (h.Title != null) Title = h.Title;
             if (h.Game != null) ModName = h.Game;
             if (h.SpectatorCount != null) SpectatorCount = h.SpectatorCount.Value;
+            if (h.Mode != null) Mode = h.Mode.Value;
         }
 
 
@@ -167,6 +170,7 @@ namespace LobbyClient
             ret.Players = Users.Values.Where(x => x.SyncStatus != SyncStatuses.Unknown).Select(x => x.ToPlayerTeam()).ToList();
             ret.Bots = Bots.Values.Select(x => x.ToBotTeam()).ToList();
             ret.ModOptions = ModOptions;
+            ret.mode = Mode;
             return ret;
         }
 
