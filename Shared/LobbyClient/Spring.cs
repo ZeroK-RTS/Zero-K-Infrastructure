@@ -251,7 +251,7 @@ namespace LobbyClient
                     try
                     {
                         StartContext = context;
-                        startSetup = StartSetup.GetSpringBattleStartSetup(StartContext);
+                        /* todo hack startSetup = StartSetup.GetSpringBattleStartSetup(StartContext);
                         if (startSetup.BalanceTeamsResult != null)
                         {
                             StartContext.Players = startSetup.BalanceTeamsResult.Players;
@@ -261,7 +261,7 @@ namespace LobbyClient
                         foreach (var p in StartContext.Players)
                         {
                             p.IsIngame = true;
-                        }
+                        }*/
                     }
                     catch (Exception ex)
                     {
@@ -543,14 +543,14 @@ namespace LobbyClient
 
                             if (StartContext != null)
                             {
-                                var result = service.SubmitSpringBattleResult(StartContext, lobbyPassword, battleResult, statsPlayers.Values.ToList(), statsData);
+                                /* todo hack var result = service.SubmitSpringBattleResult(StartContext, lobbyPassword, battleResult, statsPlayers.Values.ToList(), statsData);
                                 if (result != null)
                                 {
                                     foreach (var line in result.Split('\n'))
                                     {
                                         // HACK TODO client.Say(SayPlace.Battle, "", line, true);
                                     }
-                                }
+                                }*/
                             }
                         }
                         catch (Exception ex)

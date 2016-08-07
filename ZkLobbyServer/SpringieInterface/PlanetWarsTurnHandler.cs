@@ -21,7 +21,7 @@ public static class PlanetWarsTurnHandler
     /// <param name="players"></param>
     /// <param name="text"></param>
     /// <param name="sb"></param>
-    public static void EndTurn(string mapName, List<string> extraData, ZkDataContext db, int? winNum, List<Account> players, StringBuilder text, SpringBattle sb, List<Account> attackers)
+    public static void EndTurn(string mapName, List<string> extraData, ZkDataContext db, int? winNum, List<Account> players, StringBuilder text, SpringBattle sb, List<Account> attackers, IPlanetwarsEventCreator eventCreator)
     {
         if (extraData == null) extraData = new List<string>();
         Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
@@ -162,7 +162,7 @@ public static class PlanetWarsTurnHandler
         foreach (Account w in attackers)
         {
             w.ProduceMetal(attackerMetal);
-            var ev = Global.CreateEvent("{0} gained {1} metal from battle {2}",
+            var ev = eventCreator.CreateEvent("{0} gained {1} metal from battle {2}",
                                         w,
                                         attackerMetal,
                                         sb);
@@ -173,7 +173,7 @@ public static class PlanetWarsTurnHandler
         foreach (Account w in defenders)
         {
             w.ProduceMetal(defenderMetal);
-            var ev = Global.CreateEvent("{0} gained {1} metal from battle {2}",
+            var ev = eventCreator.CreateEvent("{0} gained {1} metal from battle {2}",
                                         w,
                                         defenderMetal,
                                         sb);
@@ -208,7 +208,7 @@ public static class PlanetWarsTurnHandler
         // paranoia!
         try
         {
-            var mainEvent = Global.CreateEvent("{0} attacked {1} {2} in {3} and {4}. {5}",
+            var mainEvent = eventCreator.CreateEvent("{0} attacked {1} {2} in {3} and {4}. {5}",
                 attacker,
                 planet.Faction,
                 planet,
@@ -242,7 +242,7 @@ public static class PlanetWarsTurnHandler
                         s.IsActive = false;
                         s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate * (GlobalConst.StructureIngameDisableTimeMult - 1));
 
-                        var ev = Global.CreateEvent("{0} has been disabled on {1} planet {2}. {3}", s.StructureType.Name, planet.Faction, planet, sb);
+                        var ev = eventCreator.CreateEvent("{0} has been disabled on {1} planet {2}. {3}", s.StructureType.Name, planet.Faction, planet, sb);
                         db.Events.InsertOnSubmit(ev);
                         text.AppendLine(ev.PlainText);
                     }
@@ -260,7 +260,7 @@ public static class PlanetWarsTurnHandler
             // destroy structures by battle (usually defenses)
             foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.BattleDeletesThis).ToList()) planet.PlanetStructures.Remove(s);
 
-            var ev = Global.CreateEvent("All structures have been disabled on {0} planet {1}. {2}", planet.Faction, planet, sb);
+            var ev = eventCreator.CreateEvent("All structures have been disabled on {0} planet {1}. {2}", planet.Faction, planet, sb);
             db.Events.InsertOnSubmit(ev);
             text.AppendLine(ev.PlainText);
         }
@@ -305,7 +305,7 @@ public static class PlanetWarsTurnHandler
         db.SaveChanges();
 
         db = new ZkDataContext(); // is this needed - attempt to fix setplanetownersbeing buggy
-        PlanetwarsController.SetPlanetOwners(db, sb);
+        SetPlanetOwners(eventCreator, db, sb);
         gal = db.Galaxies.Single(x => x.IsDefault);
 
         planet = gal.Planets.Single(x => x.Resource.InternalName == mapName);
@@ -364,6 +364,200 @@ public static class PlanetWarsTurnHandler
                 text.AppendLine("Map cycler - no maps found");
             }
             db.SaveChanges();
+        }
+    }
+
+    /// <summary>
+    /// Updates shadow influence and new owners
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="sb">optional spring batle that caused this change (for event logging)</param>
+    public static void SetPlanetOwners(IPlanetwarsEventCreator eventCreator, ZkDataContext db = null, SpringBattle sb = null)
+    {
+        if (db == null) db = new ZkDataContext();
+
+        Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
+        foreach (Planet planet in gal.Planets)
+        {
+            if (planet.OwnerAccountID != null) foreach (var ps in planet.PlanetStructures.Where(x => x.OwnerAccountID == null))
+                {
+                    ps.OwnerAccountID = planet.OwnerAccountID;
+                    ps.IsActive = false;
+                    ps.ActivatedOnTurn = null;
+                }
+
+
+            PlanetFaction best = planet.PlanetFactions.OrderByDescending(x => x.Influence).FirstOrDefault();
+            Faction newFaction = planet.Faction;
+            Account newAccount = planet.Account;
+
+            if (best == null || best.Influence < GlobalConst.InfluenceToCapturePlanet)
+            {
+                // planet not capture 
+
+                if (planet.Faction != null)
+                {
+                    var curFacInfluence =
+                        planet.PlanetFactions.Where(x => x.FactionID == planet.OwnerFactionID).Select(x => x.Influence).FirstOrDefault();
+
+                    if (curFacInfluence <= GlobalConst.InfluenceToLosePlanet)
+                    {
+                        // owners have too small influence, planet belong to nobody
+                        newFaction = null;
+                        newAccount = null;
+                    }
+                }
+            }
+            else
+            {
+                if (best.Faction != planet.Faction)
+                {
+                    newFaction = best.Faction;
+
+                    // best attacker without planets
+                    Account candidate =
+                        planet.AccountPlanets.Where(
+                            x => x.Account.FactionID == newFaction.FactionID && x.AttackPoints > 0 && !x.Account.Planets.Any()).OrderByDescending(
+                                x => x.AttackPoints).Select(x => x.Account).FirstOrDefault();
+
+                    if (candidate == null)
+                    {
+                        // best attacker
+                        candidate =
+                            planet.AccountPlanets.Where(x => x.Account.FactionID == newFaction.FactionID && x.AttackPoints > 0).OrderByDescending(
+                                x => x.AttackPoints).ThenBy(x => x.Account.Planets.Count()).Select(x => x.Account).FirstOrDefault();
+                    }
+
+                    // best player without planets
+                    if (candidate == null)
+                    {
+                        candidate =
+                            newFaction.Accounts.Where(x => !x.Planets.Any()).OrderByDescending(x => x.AccountPlanets.Sum(y => y.AttackPoints)).
+                                FirstOrDefault();
+                    }
+
+                    // best with planets 
+                    if (candidate == null)
+                    {
+                        candidate =
+                            newFaction.Accounts.OrderByDescending(x => x.AccountPlanets.Sum(y => y.AttackPoints)).
+                                FirstOrDefault();
+                    }
+
+                    newAccount = candidate;
+                }
+            }
+
+            // change has occured
+            if (newFaction != planet.Faction)
+            {
+                // disable structures 
+                foreach (PlanetStructure structure in planet.PlanetStructures.Where(x => x.StructureType.OwnerChangeDisablesThis))
+                {
+                    structure.IsActive = false;
+                    structure.ActivatedOnTurn = null;
+                    structure.Account = newAccount;
+                }
+
+                // delete structures being lost on planet change
+                foreach (PlanetStructure structure in
+                    planet.PlanetStructures.Where(structure => structure.StructureType.OwnerChangeDeletesThis).ToList()) db.PlanetStructures.DeleteOnSubmit(structure);
+
+                // reset attack points memory
+                foreach (AccountPlanet acp in planet.AccountPlanets) acp.AttackPoints = 0;
+
+                if (newFaction == null)
+                {
+                    Account account = planet.Account;
+                    Clan clan = null;
+                    if (account != null)
+                    {
+                        clan = planet.Account != null ? planet.Account.Clan : null;
+                    }
+
+                    db.Events.InsertOnSubmit(eventCreator.CreateEvent("{0} planet {1} owned by {2} {3} was abandoned. {4}",
+                                                                planet.Faction,
+                                                                planet,
+                                                                account,
+                                                                clan,
+                                                                sb));
+                    if (account != null)
+                    {
+                        eventCreator.GhostPm(planet.Account.Name, string.Format(
+                            "Warning, you just lost planet {0}!! {2}/PlanetWars/Planet/{1}",
+                            planet.Name,
+                            planet.PlanetID,
+                            GlobalConst.BaseSiteUrl));
+                    }
+                }
+                else
+                {
+                    // new real owner
+
+                    // log messages
+                    if (planet.OwnerAccountID == null) // no previous owner
+                    {
+                        db.Events.InsertOnSubmit(eventCreator.CreateEvent("{0} has claimed planet {1} for {2} {3}. {4}",
+                                                                    newAccount,
+                                                                    planet,
+                                                                    newFaction,
+                                                                    newAccount.Clan,
+                                                                    sb));
+                        eventCreator.GhostPm(newAccount.Name, string.Format(
+                            "Congratulations, you now own planet {0}!! {2}/PlanetWars/Planet/{1}",
+                            planet.Name,
+                            planet.PlanetID,
+                            GlobalConst.BaseSiteUrl));
+                    }
+                    else
+                    {
+                        db.Events.InsertOnSubmit(eventCreator.CreateEvent("{0} of {1} {2} has captured planet {3} from {4} of {5} {6}. {7}",
+                                                                    newAccount,
+                                                                    newFaction,
+                                                                    newAccount.Clan,
+                                                                    planet,
+                                                                    planet.Account,
+                                                                    planet.Faction,
+                                                                    planet.Account.Clan,
+                                                                    sb));
+
+                        eventCreator.GhostPm(newAccount.Name, string.Format(
+                            "Congratulations, you now own planet {0}!! {2}/PlanetWars/Planet/{1}",
+                            planet.Name,
+                            planet.PlanetID,
+                            GlobalConst.BaseSiteUrl));
+
+                        eventCreator.GhostPm(planet.Account.Name, string.Format(
+                            "Warning, you just lost planet {0}!! {2}/PlanetWars/Planet/{1}",
+                            planet.Name,
+                            planet.PlanetID,
+                            GlobalConst.BaseSiteUrl));
+                    }
+                }
+
+                planet.Faction = newFaction;
+                planet.Account = newAccount;
+            }
+            ReturnPeacefulDropshipsHome(db, planet);
+        }
+        db.SaveChanges();
+    }
+
+
+    public static void ReturnPeacefulDropshipsHome(ZkDataContext db, Planet planet)
+    {
+        //    return dropshuips home if owner is ceasefired/allied/same faction
+        if (planet.Faction != null)
+        {
+            foreach (PlanetFaction entry in planet.PlanetFactions.Where(x => x.Dropships > 0))
+            {
+                if (entry.FactionID == planet.OwnerFactionID ||
+                    planet.Faction.HasTreatyRight(entry.Faction, x => x.EffectPreventDropshipAttack == true, planet))
+                {
+                    planet.Faction.SpendDropships(-entry.Dropships);
+                    entry.Dropships = 0;
+                }
+            }
         }
     }
 }
