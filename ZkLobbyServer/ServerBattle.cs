@@ -465,7 +465,7 @@ namespace ZkLobbyServer
             //if (!string.IsNullOrEmpty(config.BattlePassword)) password = config.BattlePassword;
 
             //int maxPlayers = config.MaxPlayers;
-            //string engine = springPaths.SpringVersion;
+            ///string engine = springPaths.SpringVersion;
 
             //title = title + string.Format(" [engine{0}]", springPaths.SpringVersion);
 
@@ -620,7 +620,8 @@ namespace ZkLobbyServer
             }
             toNotify.Clear();
             */
-            if (mode != AutohostMode.None && DateTime.Now.Subtract(spring.GameStarted).TotalMinutes > 5) ServerVerifyMap(true);
+            //if (mode != AutohostMode.None && DateTime.Now.Subtract(spring.GameStarted).TotalMinutes > 5) ServerVerifyMap(true);
+            ComMap(TasSayEventArgs.Default);
         }
 
         void spring_SpringStarted(object sender, EventArgs e)

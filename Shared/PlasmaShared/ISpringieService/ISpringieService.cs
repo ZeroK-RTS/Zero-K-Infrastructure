@@ -16,9 +16,6 @@ namespace PlasmaShared
         BalanceTeamsResult BalanceTeams(BattleContext context, bool isGameStart, int? allyCount, bool? clanWise);
 
         [OperationContract]
-        RecommendedMapResult GetRecommendedMap(BattleContext context, bool pickNew);
-
-        [OperationContract]
         SpringBattleStartSetup GetSpringBattleStartSetup(BattleContext context);
 
         [OperationContract]

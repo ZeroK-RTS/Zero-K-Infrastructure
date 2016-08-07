@@ -5,15 +5,16 @@ using LobbyClient;
 using PlasmaShared;
 using ZkData;
 using System.Linq;
+using ZeroKWeb.SpringieInterface;
 using ZkLobbyServer;
 
 namespace Springie.autohost.Polls
 {
-    public class VoteMap: AbstractPoll
+    public class VoteMap : AbstractPoll
     {
         string map;
 
-        public VoteMap(Spring spring, ServerBattle ah): base(spring, ah) {}
+        public VoteMap(Spring spring, ServerBattle ah) : base(spring, ah) { }
 
         protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount)
         {
@@ -26,73 +27,29 @@ namespace Springie.autohost.Polls
             }
             else
             {
-                string[] vals;
-                int[] indexes;
+                Resource mapResource;
                 if (words.Length > 0)
                 {
-                    ah.FilterMaps(words, out vals, out indexes);
-                    if (vals.Length > 0)
-                    {
-                        foreach (string possibleMap in vals)
-                        {
-                            map = possibleMap;
-                       question = string.Format(
-                                    "Change map to {0} {2}/Maps/Detail/{1} ?",
-                                    map,
-                                    resource.ResourceID,
-                                    GlobalConst.BaseSiteUrl);
-                                return true;
-                       }
-                        ah.Respond(e, "Cannot find such map");
-                        return false;
-                    }
-                    else
-                    {
-                        ah.Respond(e, "Cannot find such map");
-                        return false;
-                    }
+                    mapResource = MapPicker.FindResources(ResourceType.Map, words).Take(ServerBattle.MaxMapListLength).FirstOrDefault();
                 }
                 else
                 {
-                    try
-                    {
-                        if (!spring.IsRunning)
-                        {
-                            var serv = GlobalConst.GetSpringieService();
-                            Task.Factory.StartNew(() => {
-                                RecommendedMapResult foundMap;
-                                try {
-                                    foundMap = serv.GetRecommendedMap(ah.GetContext(), true);
-                                } catch (Exception ex) {
-                                    Trace.TraceError(ex.ToString());
-                                    return;
-                                }
-                                if (foundMap != null && foundMap.MapName != null) {
-                                    if (ah.MapName != foundMap.MapName) {
-                                        map = foundMap.MapName;
-                                    }
-                                }
-                            });
-
-                            
-                            // I have no idea why it can't just work like the above way
-                            if (resource != null)
-                            {
-                                question = string.Format("Change map to {0} {2}/Maps/Detail/{1} ?", map, resource.ResourceID, GlobalConst.BaseSiteUrl);
-                                return true;
-                            }
-                        }
-                    }
-                    catch (System.Exception ex)
-                    {
-                        ah.Respond(e, ex.ToString());
-                        //System.Diagnostics.Trace.TraceError(ex.ToString());
-                    }
+                    mapResource = MapPicker.GetRecommendedMap(ah.GetContext());
+                }
+                if (mapResource != null)
+                {
+                    map = mapResource.InternalName;
+                    question = string.Format("Change map to {0} {2}/Maps/Detail/{1} ?", mapResource.InternalName, mapResource.ResourceID, GlobalConst.BaseSiteUrl);
+                    return true;
+                }
+                else
+                {
+                    ah.Respond(e, "Cannot find such map");
                     return false;
                 }
             }
         }
-		
+
         protected override void SuccessAction()
         {
             if (string.IsNullOrEmpty(map))

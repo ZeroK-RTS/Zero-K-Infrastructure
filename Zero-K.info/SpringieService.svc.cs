@@ -28,13 +28,6 @@ namespace ZeroKWeb
         }
 
         
-        public RecommendedMapResult GetRecommendedMap(BattleContext context, bool pickNew)
-        {
-            return MapPicker.GetRecommendedMap(context, pickNew);
-        }
-
-
-        
         public SpringBattleStartSetup GetSpringBattleStartSetup(BattleContext context)
         {
             return StartSetup.GetSpringBattleStartSetup(context);

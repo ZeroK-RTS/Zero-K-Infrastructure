@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
 using PlasmaShared;
+using ZeroKWeb.SpringieInterface;
 using ZkData;
 #endregion
 
@@ -14,7 +15,7 @@ namespace ZkLobbyServer
 {
     public partial class ServerBattle
     {
-        const int MaxMapListLength = 100; //400
+        public const int MaxMapListLength = 100; //400
 
         List<string> engineListCache = new List<string>();
         public const int engineListTimeout = 600; //hold existing enginelist for at least 10 minutes before re-check for update
@@ -221,19 +222,11 @@ namespace ZkLobbyServer
                 Respond(e, "Cannot change map while the game is running");
                 return;
             }
-            if (words.All(String.IsNullOrEmpty))
+            var map = words.Length > 0 ? MapPicker.FindResources(ResourceType.Map, words).FirstOrDefault() : MapPicker.GetRecommendedMap(GetContext());
+            if (map != null)
             {
-                ServerVerifyMap(true);
-                //Respond(e, "You must specify a map name");
-                return;
-            }
-
-            string[] vals;
-            int[] indexes;
-            if (FilterMaps(words, out vals, out indexes) > 0)
-            {
-                SayBattle("changing map to " + vals[0]);
-                FounderUser.Process(new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = vals[0] } });
+                SayBattle("changing map to " + map.InternalName);
+                FounderUser.Process(new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = map.InternalName } });
             }
             else Respond(e, "Cannot find such map.");
         }
@@ -271,11 +264,12 @@ namespace ZkLobbyServer
 
         public void ComRehost(TasSayEventArgs e, string[] words)
         {
+            throw new NotImplementedException();
             /*if (spring.IsRunning)
             {
                 Respond(e, "Cannot rehost while game is running");
                 return;
-            }*/
+            }
             if (words.Length == 0) OpenBattleRoom(null, null);
             else
             {
@@ -283,7 +277,7 @@ namespace ZkLobbyServer
                 int[] indexes;
                 if (FilterMods(words, out mods, out indexes) == 0) Respond(e, "cannot find such game");
                 else OpenBattleRoom(mods[0], null);
-            }
+            }*/
         }
 
         public void ComResetOptions(TasSayEventArgs e, string[] words)
@@ -578,38 +572,23 @@ throw new NotImplementedException();
 
         void ComListMaps(TasSayEventArgs e, string[] words)
         {
-            
-            string[] vals;
-            int[] indexes;
-            int count;
-            if ((count = FilterMaps(words, out vals, out indexes)) > 0)
+            var maps = MapPicker.FindResources(ResourceType.Map, words).Take(MaxMapListLength).ToList();
+            if (maps.Any())
             {
-                if (count > MaxMapListLength)
-                {
-                    Respond(e, String.Format("This has {0} results, please narrow down your search", count));
-                    return;
-                }
                 Respond(e, "---");
-                for (var i = 0; i < vals.Length; ++i) Respond(e, indexes[i] + ": " + vals[i]);
-                Respond( e, "---");
+                foreach (var map in maps) Respond(e, map.ResourceID + ": " + map.InternalName);
+                Respond(e, "---");
             }
             else Respond(e, "no such map found");
         }
 
         void ComListMods(TasSayEventArgs e, string[] words)
         {
-            string[] vals;
-            int[] indexes;
-            int count;
-            if ((count = FilterMods(words, out vals, out indexes)) > 0)
+            var mods = MapPicker.FindResources(ResourceType.Mod, words).Take(MaxMapListLength).ToList();
+            if (mods.Any())
             {
-                if (count > MaxMapListLength)
-                {
-                    Respond(e, String.Format("This has {0} results, please narrow down your search", count));
-                    return;
-                }
                 Respond(e, "---");
-                for (var i = 0; i < vals.Length; ++i) Respond(e, indexes[i] + ": " + vals[i]);
+                foreach (var mod in mods) Respond(e, mod.ResourceID + ": " + mod.InternalName);
                 Respond(e, "---");
             }
             else Respond(e, "no such mod found");
@@ -751,45 +730,6 @@ throw new NotImplementedException();
         {
             foreach (var line in what.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) Respond(e, line);
         }
-
-        public void ServerVerifyMap(bool pickNew)
-        {
-            try
-            {
-                if (!spring.IsRunning)
-                {
-                    var serv = GlobalConst.GetSpringieService();
-
-                    Task.Factory.StartNew(() =>
-                    {
-                        RecommendedMapResult map;
-                        try
-                        {
-                            map = serv.GetRecommendedMap(GetContext(), pickNew);
-                        }
-                        catch (Exception ex)
-                        {
-                            Trace.TraceError(ex.ToString());
-                            return;
-                        }
-                        if (map != null && map.MapName != null)
-                        {
-                            if (MapName != map.MapName)
-                            {
-                                ComMap(TasSayEventArgs.Default, map.MapName);
-                                SayBattle(map.Message);
-                            }
-                        }
-
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.ToString());
-            }
-        }
-
 
         public void ComAddUser(TasSayEventArgs e, string[] words)
         {

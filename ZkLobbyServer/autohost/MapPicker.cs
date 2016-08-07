@@ -3,19 +3,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.SqlServer;
 using System.Linq;
 using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
 {
-    public class MapPicker
+    public static class MapPicker
     {
         /// <summary>
         ///     Picks a map and writes a message if applicable
         /// </summary>
         /// <param name="context">The battle whose map needs selection</param>
-        /// <param name="pickNew">If false and not in PlanetWars, don't pick a new map</param>
         /// <remarks>
         ///     <para>
         ///         For Planetwars, picks the map given by the Planetwars matchmaker; else picks a featured map with the
@@ -27,18 +27,12 @@ namespace ZeroKWeb.SpringieInterface
         ///         a multiple of player count
         ///     </para>
         /// </remarks>
-        public static RecommendedMapResult GetRecommendedMap(BattleContext context, bool pickNew)
+        public static Resource GetRecommendedMap(BattleContext context)
         {
             var mode = context.GetMode();
             var res = new RecommendedMapResult();
             using (var db = new ZkDataContext())
             {
-                if (!pickNew)
-                {
-                    // autohost is not managed or has valid featured map - check disabled
-                    res.MapName = context.Map;
-                    return res;
-                }
                 List<Resource> list = null;
                 var players = context.Players.Count(x => !x.IsSpectator);
                 switch (mode)
@@ -101,10 +95,38 @@ namespace ZeroKWeb.SpringieInterface
                 if (list != null)
                 {
                     var r = new Random();
-                    if (list.Count > 0) res.MapName = list[r.Next(list.Count)].InternalName;
+                    if (list.Count > 0)
+                    {
+                        var resource = list[r.Next(list.Count)];
+                        return resource;
+                    }
                 }
             }
-            return res;
+            return null;
+        }
+
+        
+        public static IQueryable<Resource> FindResources(ResourceType resource, params string[] words)
+        {
+            var db = new ZkDataContext();
+            var ret = db.Resources.AsQueryable();
+            ret = ret.Where(x => x.TypeID == resource);
+
+            string joinedWords = string.Join(" ", words);
+            var test = ret.Where(x => x.InternalName == joinedWords);
+            if (test.Any()) return test.OrderByDescending(x => -x.FeaturedOrder);
+            int i;
+            if (words.Length == 1 && int.TryParse(words[0], out i)) ret = ret.Where(x => x.ResourceID == i);
+            else
+            {
+                foreach (var w in words)
+                {
+                    var w1 = w;
+                    ret = ret.Where(x => SqlFunctions.PatIndex("%" + w1 + "%", x.InternalName) > 0);
+                }
+            }
+            ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
+            return ret.OrderByDescending(x => -x.FeaturedOrder);
         }
     }
 }
