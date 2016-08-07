@@ -25,8 +25,6 @@ namespace ZkLobbyServer
 
         IVotable activePoll;
         string bossName = "";
-        string delayedModChange;
-        int lastSplitPlayersCountCalled;
 
         Timer pollTimer;
 

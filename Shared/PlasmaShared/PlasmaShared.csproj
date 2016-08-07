@@ -95,7 +95,6 @@
     <Compile Include="ISpringieService\BattleResult.cs" />
     <Compile Include="ISpringieService\BotTeam.cs" />
     <Compile Include="ISpringieService\CommandLevel.cs" />
-    <Compile Include="ISpringieService\ISpringieService.cs" />
     <Compile Include="ISpringieService\MovePlayerEntry.cs" />
     <Compile Include="ISpringieService\PlayerJoinResult.cs" />
     <Compile Include="ISpringieService\PlayerTeam.cs" />

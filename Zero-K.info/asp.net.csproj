@@ -200,11 +200,9 @@
     <Compile Include="ForumParser\Tags\WikiTocTag.cs" />
     <Compile Include="ForumParser\TocEntry.cs" />
     <Compile Include="ForumParser\TranslateContext.cs" />
-    <Compile Include="SpringieInterface\Balancer.cs" />
     <Compile Include="AppCode\Global.cs" />
     <Compile Include="AppCode\HtmlHelperExtensions.cs" />
     <Compile Include="AppCode\JsonRequest.cs" />
-    <Compile Include="SpringieInterface\BattleResultHandler.cs" />
     <Compile Include="AppCode\NoCache.cs" />
     <Compile Include="AppCode\SpotlightHandler.cs" />
     <Compile Include="Controllers\BattlesController.cs" />
@@ -254,10 +252,6 @@
     <Compile Include="ResourceDetail.aspx.designer.cs">
       <DependentUpon>ResourceDetail.aspx</DependentUpon>
     </Compile>
-    <Compile Include="SpringieInterface\PlanetWarsMatchMaker.cs" />
-    <Compile Include="SpringieInterface\PlanetWarsTurnHandler.cs" />
-    <Compile Include="SpringieInterface\PlayerJoinHandler.cs" />
-    <Compile Include="SpringieInterface\StartSetup.cs" />
     <Compile Include="SpringieService.svc.cs">
       <DependentUpon>SpringieService.svc</DependentUpon>
     </Compile>

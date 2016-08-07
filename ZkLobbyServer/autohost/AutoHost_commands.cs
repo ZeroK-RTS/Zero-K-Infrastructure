@@ -177,7 +177,6 @@ namespace ZkLobbyServer
 
             SayBattle("please wait, game is about to start");
             StopVote();
-            lastSplitPlayersCountCalled = 0;
             StartGame();
         }
 
@@ -368,7 +367,6 @@ namespace ZkLobbyServer
 
             SayBattle("please wait, game is about to start");
             StopVote();
-            lastSplitPlayersCountCalled = 0;
 
             this.StartGame();
         }
@@ -498,14 +496,10 @@ namespace ZkLobbyServer
         {
             try
             {
-                var serv = GlobalConst.GetSpringieService();
                 var context = GetContext();
                 context.mode = mode;
-
-                var balance = serv.BalanceTeams(context, isGameStart, allyTeams, clanWise);
-
+                var balance = Balancer.BalanceTeams(context, isGameStart, allyTeams, clanWise);
                 ApplyBalanceResults(balance);
-
                 return balance.CanStart;
             }
             catch (Exception ex)

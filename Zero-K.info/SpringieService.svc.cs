@@ -13,7 +13,7 @@ namespace ZeroKWeb
 {
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "SpringieService" in code, svc and config file together.
     // NOTE: In order to launch WCF Test Client for testing this service, please select SpringieService.svc or SpringieService.svc.cs at the Solution Explorer and start debugging.
-    public class SpringieService : ISpringieService
+    public class SpringieService 
     {
         
         public PlayerJoinResult AutohostPlayerJoined(BattleContext context, int accountID)
@@ -72,32 +72,7 @@ namespace ZeroKWeb
             }
         }
 
-        
+      
 
-        public void StoreBoxes(BattleContext context, List<RectInfo> rects)
-        {
-            var db = new ZkDataContext();
-            var map = db.Resources.Single(x => x.InternalName == context.Map && x.TypeID == ResourceType.Map);
-            var orgCommands = map.MapSpringieCommands;
-            var newCommands = "!clearbox\n";
-            foreach (var r in rects.OrderBy(x => x.Number))
-            {
-                if (r.X != 0 || r.Y != 0 || r.Width != 0 || r.Height != 0)
-                {
-                    newCommands += string.Format("!addbox {0} {1} {2} {3} {4}\n", r.X, r.Y, r.Width, r.Height, r.Number + 1);
-                }
-            }
-
-            if (!string.IsNullOrEmpty(orgCommands))
-            {
-                foreach (var line in orgCommands.Lines().Where(x => !string.IsNullOrEmpty(x)))
-                {
-                    if (!line.StartsWith("!addbox") && !line.StartsWith("!clearbox") && !line.StartsWith("!corners") && !line.StartsWith("!split "))
-                        newCommands += line + "\n";
-                }
-            }
-            map.MapSpringieCommands = newCommands;
-            db.SaveChanges();
-        }
     }
 }

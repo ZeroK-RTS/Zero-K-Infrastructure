@@ -245,14 +245,13 @@ namespace LobbyClient
                 statsData.Clear();
 
                 battleGuid = Guid.NewGuid();
-                var service = GlobalConst.GetSpringieService();
                 SpringBattleStartSetup startSetup = null;
                 if (isHosting && GlobalConst.IsZkMod(context.Mod))
                 {
                     try
                     {
                         StartContext = context;
-                        startSetup = service.GetSpringBattleStartSetup(StartContext);
+                        startSetup = StartSetup.GetSpringBattleStartSetup(StartContext);
                         if (startSetup.BalanceTeamsResult != null)
                         {
                             StartContext.Players = startSetup.BalanceTeamsResult.Players;
@@ -528,7 +527,6 @@ namespace LobbyClient
                 {
                     if (isHosting)
                     {
-                        var service = GlobalConst.GetSpringieService();
                         try
                         {
                             battleResult.EngineBattleID = gameId;
