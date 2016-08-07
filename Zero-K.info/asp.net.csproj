@@ -205,7 +205,6 @@
     <Compile Include="AppCode\HtmlHelperExtensions.cs" />
     <Compile Include="AppCode\JsonRequest.cs" />
     <Compile Include="SpringieInterface\BattleResultHandler.cs" />
-    <Compile Include="SpringieInterface\MapPicker.cs" />
     <Compile Include="AppCode\NoCache.cs" />
     <Compile Include="AppCode\SpotlightHandler.cs" />
     <Compile Include="Controllers\BattlesController.cs" />

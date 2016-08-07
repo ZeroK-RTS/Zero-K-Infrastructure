@@ -36,18 +36,13 @@ namespace Springie.autohost.Polls
                         foreach (string possibleMap in vals)
                         {
                             map = possibleMap;
-                            var resourceList = ah.cache.FindResourceData(new string[] { map }, ResourceType.Map);
-                            if (resourceList != null)
-                            {
-                            	var resource = resourceList[0];
-                                question = string.Format(
+                       question = string.Format(
                                     "Change map to {0} {2}/Maps/Detail/{1} ?",
                                     map,
                                     resource.ResourceID,
                                     GlobalConst.BaseSiteUrl);
                                 return true;
-                            }
-                        }
+                       }
                         ah.Respond(e, "Cannot find such map");
                         return false;
                     }
@@ -81,8 +76,6 @@ namespace Springie.autohost.Polls
 
                             
                             // I have no idea why it can't just work like the above way
-                            var resourceList = ah.cache.FindResourceData(new string[] { map }, ResourceType.Map);
-                            var resource = resourceList.Find(x => x.InternalName == map);
                             if (resource != null)
                             {
                                 question = string.Format("Change map to {0} {2}/Maps/Detail/{1} ?", map, resource.ResourceID, GlobalConst.BaseSiteUrl);

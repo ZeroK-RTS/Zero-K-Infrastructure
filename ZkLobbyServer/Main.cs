@@ -234,37 +234,4 @@ namespace Springie
         }
     }
     */
-    public class SpawnConfig
-    {
-        public string Mod;
-        public string Owner;
-        public string Password;
-        public string Title;
-        public string Engine;
-        public string Handle;
-        public string Map;
-        public int MaxPlayers;
-        public int Mode;
-
-        public SpawnConfig(string owner, Dictionary<string, string> config = null)
-        {
-            Owner = owner;
-            if (config != null)
-            {
-                string str;
-                config.TryGetValue("password", out Password);
-                config.TryGetValue("mod", out Mod);
-                config.TryGetValue("title", out Title);
-                config.TryGetValue("engine", out Engine);
-                config.TryGetValue("handle", out Handle);
-                config.TryGetValue("map", out Map);
-                if (config.TryGetValue("maxplayers", out str))
-                    int.TryParse(str, out MaxPlayers);
-                if (config.TryGetValue("mode", out str))
-                    int.TryParse(str, out Mode);
-            }
-        }
-
-
-    }
 }

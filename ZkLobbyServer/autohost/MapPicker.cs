@@ -1,0 +1,110 @@
+// Contact: Jan Lichovník  licho@licho.eu, tel: +420 604 935 349,  www.itl.cz
+// Last change by: licho  07.08.2016
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using PlasmaShared;
+using ZkData;
+
+namespace ZeroKWeb.SpringieInterface
+{
+    public class MapPicker
+    {
+        /// <summary>
+        ///     Picks a map and writes a message if applicable
+        /// </summary>
+        /// <param name="context">The battle whose map needs selection</param>
+        /// <param name="pickNew">If false and not in PlanetWars, don't pick a new map</param>
+        /// <remarks>
+        ///     <para>
+        ///         For Planetwars, picks the map given by the Planetwars matchmaker; else picks a featured map with the
+        ///         appropriate tags
+        ///     </para>
+        ///     <para>For team and chickens games, picks a map of appropriate size based on current player count</para>
+        ///     <para>
+        ///         For FFA, prefer maps that have a number of boxes equal to player count, or at least a number of boxes that is
+        ///         a multiple of player count
+        ///     </para>
+        /// </remarks>
+        public static RecommendedMapResult GetRecommendedMap(BattleContext context, bool pickNew)
+        {
+            var mode = context.GetMode();
+            var res = new RecommendedMapResult();
+            using (var db = new ZkDataContext())
+            {
+                if (!pickNew)
+                {
+                    // autohost is not managed or has valid featured map - check disabled
+                    res.MapName = context.Map;
+                    return res;
+                }
+                List<Resource> list = null;
+                var players = context.Players.Count(x => !x.IsSpectator);
+                switch (mode)
+                {
+                    case AutohostMode.Teams:
+                    case AutohostMode.None:
+                        var ret =
+                            db.Resources.Where(
+                                x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsTeams != false && x.MapIsSpecial != true);
+                        if (players > 11) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16);
+                        else if (players > 8)
+                            ret =
+                                ret.Where(
+                                    x =>
+                                        x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16 &&
+                                        x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 24*24);
+                        else if (players > 5) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 24*24 || x.MapIs1v1 == true);
+                        else ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 16*16 || x.MapIs1v1 == true);
+                        list = ret.ToList();
+
+                        break;
+                    case AutohostMode.Game1v1:
+                        list =
+                            db.Resources.Where(
+                                x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIs1v1 == true && x.MapIsSpecial != true).ToList();
+                        break;
+                    case AutohostMode.GameChickens:
+                        ret =
+                            db.Resources.Where(
+                                x =>
+                                    x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsSpecial != true &&
+                                    (x.MapIsChickens == true || x.MapWaterLevel == 1));
+                        if (players > 5) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16);
+                        else if (players > 4)
+                            ret =
+                                ret.Where(
+                                    x =>
+                                        x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16 &&
+                                        x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 24*24);
+                        else if (players > 2) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 24*24 || x.MapIs1v1 == true);
+                        else ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 16*16 || x.MapIs1v1 == true);
+                        list = ret.ToList();
+
+                        break;
+                    case AutohostMode.GameFFA:
+                        list =
+                            db.Resources.Where(
+                                x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa == true && x.MapFFAMaxTeams == players)
+                                .ToList();
+                        if (!list.Any())
+                            list =
+                                db.Resources.Where(
+                                    x =>
+                                        x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa == true &&
+                                        (players%x.MapFFAMaxTeams == 0)).ToList();
+                        if (!list.Any()) list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa == true).ToList();
+
+                        break;
+                }
+                if (list != null)
+                {
+                    var r = new Random();
+                    if (list.Count > 0) res.MapName = list[r.Next(list.Count)].InternalName;
+                }
+            }
+            return res;
+        }
+    }
+}

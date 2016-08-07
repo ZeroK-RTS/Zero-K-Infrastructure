@@ -17,7 +17,6 @@ namespace PlasmaShared
         public string BattlePassword;
         public AutohostMode Mode;
         public CommandLevel[] CommandLevels;
-        public int? MaxEloDifference;
         public AhConfig() {}
     }
 }

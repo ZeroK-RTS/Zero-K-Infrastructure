@@ -118,17 +118,6 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("updaterapidmod", 3, "[<tag>..] - force update host to mod with specified rapid tag"));
 
-            AddMissing(new CommandConfig("maplink",
-                                         0,
-                                         "[<mapname>..] - looks for maplinks at unknown-files",
-                                         5,
-                                         new[] { SayPlace.Battle, SayPlace.User }));
-
-            AddMissing(new CommandConfig("modlink",
-                                         0,
-                                         "[<modname>..] - looks for modlinks at unknown-files",
-                                         5,
-                                         new[] { SayPlace.Battle, SayPlace.User }));
 
             AddMissing(new CommandConfig("adduser", 0, "<pw> - technical command used for mid-game spectator join", 0, new[] { SayPlace.Battle, SayPlace.User }) { AllowSpecs = true});
 

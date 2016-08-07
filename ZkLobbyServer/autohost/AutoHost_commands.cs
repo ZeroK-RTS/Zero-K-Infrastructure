@@ -233,14 +233,7 @@ namespace ZkLobbyServer
             if (FilterMaps(words, out vals, out indexes) > 0)
             {
                 SayBattle("changing map to " + vals[0]);
-
-                var mapi =  cache.GetResourceDataByInternalName(vals[0]);
-                if (mapi != null)
-                {
-                    FounderUser.Process(new BattleUpdate() {Header = new BattleHeader() {BattleID = BattleID, Map = } })
-                    throw new NotImplementedException();
-                    //tas.ChangeMap(mapi.InternalName);
-                }
+                FounderUser.Process(new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = vals[0] } });
             }
             else Respond(e, "Cannot find such map.");
         }
@@ -356,7 +349,7 @@ namespace ZkLobbyServer
                 return;
             }
 
-            if (SpawnConfig != null)
+            if (mode != AutohostMode.None)
             {
                 int allyno;
                 int alliances;
@@ -454,25 +447,6 @@ namespace ZkLobbyServer
 
             return res.Count;
         }
-
-        public int FilterMaps(string[] words, out string[] vals, out int[] indexes)
-        {
-            return FilterMaps(words, this, out vals, out indexes);
-        }
-
-        internal static int FilterMods(string[] words, ServerBattle ah, out string[] vals, out int[] indexes)
-        {
-            var result = ah.cache.FindResourceData(words, ResourceType.Mod);
-            vals = result.Select(x => x.InternalName).ToArray();
-            indexes = result.Select(x => x.ResourceID).ToArray();
-            return vals.Length;
-        }
-
-        public int FilterMods(string[] words, out string[] vals, out int[] indexes)
-        {
-            return FilterMods(words, this, out vals, out indexes);
-        }
-
 
         internal static int FilterUsers(string[] words, ServerBattle ah, Spring spring, out string[] vals, out int[] indexes)
         {
@@ -612,6 +586,7 @@ throw new NotImplementedException();
 
         void ComListMaps(TasSayEventArgs e, string[] words)
         {
+            
             string[] vals;
             int[] indexes;
             int count;
@@ -768,15 +743,6 @@ throw new NotImplementedException();
             }
             if (spring.IsRunning) spring.SayGame(String.Format("[{0}]{1}", e.UserName, "!transmit " + Utils.Glue(words)));
         }
-
-        static int FilterMaps(string[] words, ServerBattle ah, out string[] vals, out int[] indexes)
-        {
-            var result = ah.cache.FindResourceData(words, ResourceType.Map);
-            vals = result.Select(x => x.InternalName).ToArray();
-            indexes = result.Select(x => x.ResourceID).ToArray();
-            return vals.Length;
-        }
-
 
         int FilterUsers(string[] words, out string[] vals, out int[] indexes)
         {

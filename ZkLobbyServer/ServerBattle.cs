@@ -28,18 +28,10 @@ namespace ZkLobbyServer
         string delayedModChange;
         int lastSplitPlayersCountCalled;
 
-        //ResourceLinkSpringieClient linkSpringieClient;
-
-
         Timer pollTimer;
-        string requestedEngineChange;
+
         readonly Timer timer;
-        int timerTick;
 
-        public string BossName { get { return bossName; } set { bossName = value; } }
-        public int CloneNumber { get; set; }
-
-        public SpawnConfig SpawnConfig { get; private set; }
         public AhConfig config;
 
         public Mod hostedMod;
@@ -49,20 +41,17 @@ namespace ZkLobbyServer
 
         private SpringPaths springPaths;
 
-        public ServerBattle()
+        public ServerBattle(ZkLobbyServer server)
         {
             this.server = server;
-            this.config = config;
             Commands = new CommandList(config);
-            SpawnConfig = spawn;
             this.hostingPort = hostingPort;
-            mode = (AutohostMode?)SpawnConfig?.Mode ?? config.Mode;
+            mode = config.Mode;
 
 
             string version = config.SpringVersion ?? server.Engine ?? GlobalConst.DefaultEngineOverride;
             springPaths = new SpringPaths(null, GlobalConst.SpringieDataDir, false);
 
-            bool isManaged = SpawnConfig == null && config.Mode != AutohostMode.None;
 
 
             pollTimer = new Timer(PollTimeout * 1000);
@@ -72,7 +61,7 @@ namespace ZkLobbyServer
 
             SetupSpring();
 
-            linkSpringieClient = new ResourceLinkSpringieClient(this);
+
 
             // hack todo Program.main.Downloader.PackagesChanged += Downloader_PackagesChanged;
 
@@ -82,14 +71,9 @@ namespace ZkLobbyServer
                 try
                 {
                     timer.Stop();
-                    timerTick++;
-
-                    // auto verify pw map
-                    if (!spring.IsRunning && mode != AutohostMode.None) if (SpawnConfig == null && mode == AutohostMode.Planetwars) ServerVerifyMap(false);
-
 
                     // auto rehost to latest mod version
-                    if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag) && SpawnConfig == null) UpdateRapidMod(config.AutoUpdateRapidTag);
+                    if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag)) UpdateRapidMod(config.AutoUpdateRapidTag);
 
 
                 }
@@ -132,14 +116,8 @@ namespace ZkLobbyServer
             pollTimer.Dispose();
             if (timer != null) timer.Dispose();
             pollTimer = null;
-            linkSpringieClient = null;
         }
 
-        public string GetAccountName()
-        {
-            if (CloneNumber > 0) return config.Login + CloneNumber;
-            else return config.Login;
-        }
 
         /*void fileDownloader_DownloadProgressChanged(object sender, TasEventArgs e)
     {
@@ -325,14 +303,6 @@ namespace ZkLobbyServer
                     break;
 
            
-                case "maplink":
-                    linkSpringieClient.FindLinks(words, ResourceLinkSpringieClient.FileType.Map, this, e);
-                    break;
-
-                case "modlink":
-                    linkSpringieClient.FindLinks(words, ResourceLinkSpringieClient.FileType.Mod, this, e);
-                    break;
-
                 case "ring":
                     ComRing(e, words);
                     break;
@@ -534,29 +504,6 @@ namespace ZkLobbyServer
 
             int maxPlayers = config.MaxPlayers;
             string engine = springPaths.SpringVersion;
-            if (SpawnConfig != null)
-            {
-                modname = SpawnConfig.Mod;
-                if (SpawnConfig.MaxPlayers > 0) maxPlayers = SpawnConfig.MaxPlayers;
-                if (!String.IsNullOrEmpty(SpawnConfig.Map)) mapname = SpawnConfig.Map;
-                title = SpawnConfig.Title;
-                if (!String.IsNullOrEmpty(SpawnConfig.Password)) password = SpawnConfig.Password;
-                if (!String.IsNullOrEmpty(SpawnConfig.Engine)) engine = SpawnConfig.Engine;
-                {
-                    //Something needs to go here to properly tell Springie to use a specific engine version,
-                    //attempted code below may or may not be responsible for recent springie drops, so commenting.
-
-                    //the below may be causing a rehost
-                    //requestedEngineChange = SpawnConfig.Engine;
-
-                    //alternate attempt
-                    /*
-                    Program.main.Downloader.GetAndSwitchEngine(SpawnConfig.Engine);
-                    config.SpringVersion = SpawnConfig.Engine;
-                    springPaths.SetEnginePath(Program.main.paths.GetEngineFolderByVersion(SpawnConfig.Engine));
-                    */
-                }
-            }
 
             //title = title + string.Format(" [engine{0}]", springPaths.SpringVersion);
 
@@ -689,7 +636,7 @@ namespace ZkLobbyServer
 
         void Downloader_PackagesChanged(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag) && SpawnConfig == null) UpdateRapidMod(config.AutoUpdateRapidTag);
+            if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag)) UpdateRapidMod(config.AutoUpdateRapidTag);
         }
 
 
@@ -752,7 +699,7 @@ namespace ZkLobbyServer
             }
             toNotify.Clear();
             */
-            if (SpawnConfig == null && DateTime.Now.Subtract(spring.GameStarted).TotalMinutes > 5) ServerVerifyMap(true);
+            if (mode != AutohostMode.None && DateTime.Now.Subtract(spring.GameStarted).TotalMinutes > 5) ServerVerifyMap(true);
         }
 
         void spring_SpringStarted(object sender, EventArgs e)
@@ -901,9 +848,6 @@ namespace ZkLobbyServer
                 }
             }*/
         }
-
-        public BattleContext slaveContextOverride;
-        private ResourceLinkSpringieClient linkSpringieClient;
 
 
         void tas_MyStatusChangedToInGame(object sender, Battle battle)

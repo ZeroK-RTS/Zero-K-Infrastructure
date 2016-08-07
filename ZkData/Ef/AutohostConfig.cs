@@ -37,13 +37,6 @@ namespace ZkData
         [StringLength(50)]
         public string BattlePassword { get; set; }
         public AutohostMode AutohostMode { get; set; }
-        public int? MinToStart { get; set; }
-        public int? MaxToStart { get; set; }
-        public int? MaxEloDifference { get; set; }
-        public int? MinLevel { get; set; }
-        public int? MinElo { get; set; }
-        public int? MaxLevel { get; set; }
-        public int? MaxElo { get; set; }
 
         public AhConfig ToAhConfig()
         {
@@ -66,7 +59,6 @@ namespace ZkData
                     var parts = x.Split('=');
                     return new CommandLevel() { Command = parts[0], Level = int.Parse(parts[1]) };
                 }).ToArray(),
-                MaxEloDifference = db.MaxEloDifference,
             };
         }
 

@@ -30,31 +30,17 @@ namespace ZeroKWeb.SpringieInterface
         int maxTeamSize;
 
         public static BalanceTeamsResult BalanceTeams(BattleContext context, bool isGameStart, int? allyCount, bool? clanWise) {
-            var config = context.GetConfig();
             var playerCount = context.Players.Count(x => !x.IsSpectator);
 
             
-            if (clanWise == null && ( config.AutohostMode == AutohostMode.Teams)) clanWise = true;
+            if (clanWise == null && ( context.GetMode() == AutohostMode.Teams)) clanWise = true;
 
-            var res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);
+            var res = PerformBalance(context, isGameStart, allyCount, clanWise, playerCount);
 
             if (context.GetMode() != AutohostMode.Planetwars) // planetwars skip other checks
             {
                 if (isGameStart)
                 {
-                    if (playerCount < (config.MinToStart ?? 0))
-                    {
-                        res.Message = string.Format("This host needs at least {0} people to start", config.MinToStart);
-                        res.CanStart = false;
-                        return res;
-                    }
-                    if (playerCount > (config.MaxToStart ?? 99))
-                    {
-                        res.Message = string.Format("This host can only start with at most {0} players", config.MaxToStart);
-                        res.CanStart = false;
-                        return res;
-                    }
-
                     // dont allow to start alone
                     if (playerCount <= 1)
                     {
@@ -99,42 +85,7 @@ namespace ZeroKWeb.SpringieInterface
             return max - min;
         }
         
-
-        /// <summary>
-        ///     Force spec all players who don't meet the Elo or level requirements
-        /// </summary>
-        /// <param name="battleContext"></param>
-        /// <param name="dataContext">The Zero-K database to check <see cref="Account" /> account details against</param>
-        /// <param name="config"></param>
-        /// <param name="actionsDescription"></param>
-        /// <returns>True if no players need to be specced, false otherwise</returns>
-        static bool CheckPlayersMinimumConditions(
-            BattleContext battleContext,
-            ZkDataContext dataContext,
-            AutohostConfig config,
-            ref string actionsDescription) {
-            var ok = true;
-            foreach (var p in
-                battleContext.Players.Where(x => !x.IsSpectator)
-                    .Select(x => new { player = x, account = dataContext.Accounts.First(y => y.AccountID == x.LobbyID) }))
-            {
-                if ((config.MinLevel != null && p.account.Level < config.MinLevel) || (config.MaxLevel != null && p.account.Level > config.MaxLevel) ||
-                    (config.MinElo != null && p.account.EffectiveElo < config.MinElo) ||
-                    (config.MaxElo != null && p.account.EffectiveElo > config.MaxElo) ||
-                    (!p.account.CanPlayMultiplayer &&
-                     (config.AutohostMode == AutohostMode.Planetwars || config.AutohostMode == AutohostMode.Teams)))
-                {
-                    SpecPlayerOnCondition(
-                        p.player,
-                        p.account,
-                        "Sorry, you cannot play here because of skill limits. You can spectate/observe this game however.");
-                    actionsDescription += string.Format("{0} cannot play here because of skill limits\n", p.account.Name);
-                    ok = false;
-                }
-            }
-            return ok;
-        }
-
+        
         /// <summary>
         ///     The function that actually moves players arounds
         /// </summary>
@@ -311,19 +262,12 @@ namespace ZeroKWeb.SpringieInterface
             bool isGameStart,
             int? allyCount,
             bool? clanWise,
-            AutohostConfig config,
             int playerCount) {
             var res = new BalanceTeamsResult();
             var mode = context.GetMode();
 
             using (var db = new ZkDataContext())
             {
-                if (!CheckPlayersMinimumConditions(context, db, config, ref res.Message))
-                {
-                    res.CanStart = false;
-                    return res;
-                }
-
                 switch (mode)
                 {
                     case AutohostMode.None: {
