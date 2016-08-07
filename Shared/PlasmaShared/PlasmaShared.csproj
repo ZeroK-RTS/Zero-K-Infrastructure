@@ -98,8 +98,6 @@
     <Compile Include="ISpringieService\MovePlayerEntry.cs" />
     <Compile Include="ISpringieService\PlayerJoinResult.cs" />
     <Compile Include="ISpringieService\PlayerTeam.cs" />
-    <Compile Include="ISpringieService\RecommendedMapResult.cs" />
-    <Compile Include="ISpringieService\RectInfo.cs" />
     <Compile Include="ISpringieService\SpringBattleStartSetup.cs" />
     <Compile Include="ITransport.cs" />
     <Compile Include="LuaTable.cs" />
