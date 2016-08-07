@@ -252,9 +252,6 @@
     <Compile Include="ResourceDetail.aspx.designer.cs">
       <DependentUpon>ResourceDetail.aspx</DependentUpon>
     </Compile>
-    <Compile Include="SpringieService.svc.cs">
-      <DependentUpon>SpringieService.svc</DependentUpon>
-    </Compile>
     <Compile Include="Controllers\PostHistoryController.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1300,7 +1297,6 @@
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site_main.js" />
-    <Content Include="SpringieService.svc" />
     <Content Include="Styles\base.css" />
     <Content Include="Styles\dark-hive\images\tech_button.png" />
     <Content Include="Styles\dark-hive\images\ui-bg_flat_30_cccccc_40x100.png" />
