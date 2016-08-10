@@ -68,8 +68,8 @@ namespace ZeroKWeb.Controllers
 					if (!string.IsNullOrEmpty(deleteCommander)) // delete commander
 					{
 						db.Commanders.DeleteOnSubmit(comm);
-						db.SubmitChanges();
-						scope.Complete();
+					    db.SaveChanges();
+					    scope.Complete();
 						return GetCommanderProfileView(db, profileNumber);
 					}
 				}
@@ -196,9 +196,8 @@ namespace ZeroKWeb.Controllers
 
                 // cleanup invalid modules?
 
-
-				db.SubmitChanges();
-				foreach (var unlock in comm.CommanderModules.GroupBy(x => x.Unlock))
+			    db.SaveChanges();
+			    foreach (var unlock in comm.CommanderModules.GroupBy(x => x.Unlock))
 				{
 					if (unlock.Key == null) continue;
 					var owned = unlocks.Where(x => x.Unlock.UnlockID == unlock.Key.UnlockID).Sum(x => (int?)x.Count) ?? 0;
@@ -216,8 +215,8 @@ namespace ZeroKWeb.Controllers
 					}
 				}
 
-				db.SubmitChanges();
-				scope.Complete();
+			    db.SaveChanges();
+			    scope.Complete();
 			}
 
 			return GetCommanderProfileView(db, profileNumber);
@@ -251,8 +250,8 @@ namespace ZeroKWeb.Controllers
 		{
 			var db = new ZkDataContext();
 			db.AccountUnlocks.DeleteAllOnSubmit(db.AccountUnlocks.Where(x => x.AccountID == Global.AccountID));
-			db.SubmitChanges();
-			return RedirectToAction("UnlockList");
+            db.SaveChanges();
+            return RedirectToAction("UnlockList");
 		}
 
         /// <summary>

@@ -44,7 +44,7 @@ namespace ZeroKWeb.Controllers
                 CompanyName = companyName,
                 Comment = comment,
             });
-            db.SubmitChanges();
+            db.SaveChanges();
 
             var str = string.Format("{0} added new blocked VPN company: {1}", Global.Account.Name, companyName);
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);
@@ -61,7 +61,7 @@ namespace ZeroKWeb.Controllers
                 HostName = hostname,
                 Comment = comment,
             });
-            db.SubmitChanges();
+            db.SaveChanges();
 
             var str = string.Format("{0} added new blocked VPN host: {1}", Global.Account.Name, hostname);
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str);

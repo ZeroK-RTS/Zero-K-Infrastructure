@@ -42,7 +42,7 @@ namespace ZeroKWeb.Controllers
                 } else if (p.Created > lastPost) lastPost = p.Created;
             }
             thread.LastPost = lastPost;
-            db.SubmitChanges();
+            db.SaveChanges();
         }
 
         [Auth(Role = AuthRole.ZkAdmin)]
@@ -59,10 +59,10 @@ namespace ZeroKWeb.Controllers
             {
                 db.ForumThreadLastReads.DeleteAllOnSubmit(db.ForumThreadLastReads.Where(x => x.ForumThreadID == thread.ForumThreadID).ToList());
                 db.ForumThreads.DeleteOnSubmit(thread);
-                db.SubmitChanges();
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            db.SubmitChanges();
+            db.SaveChanges();
             ResetThreadLastPostTime(threadID);
             return RedirectToAction("Thread", new { id = threadID, page });
         }
@@ -406,7 +406,7 @@ namespace ZeroKWeb.Controllers
                     thread.PostCount = thread.ForumPosts.Count();
                     thread.UpdateLastRead(Global.AccountID, true, thread.LastPost);
 
-                    db.SubmitChanges();
+                    db.SaveChanges();
                 }
                 
                 scope.Complete();
@@ -460,7 +460,7 @@ namespace ZeroKWeb.Controllers
             var res = new ThreadResult();
             res.GoToPost = postID ?? t.UpdateLastRead(Global.AccountID, false);
 
-            db.SubmitChanges();
+            db.SaveChanges();
 
             res.Path = cat?.GetPath() ?? new List<ForumCategory>();
             res.CurrentThread = t;
@@ -475,7 +475,7 @@ namespace ZeroKWeb.Controllers
             thread.ForumCategoryID = newcat;
             thread.IsPinned = isPinned;
             thread.IsLocked = isLocked;
-            db.SubmitChanges();
+            db.SaveChanges();
             return RedirectToAction("Index", new { categoryID = newcat });
         }
 
@@ -534,7 +534,7 @@ namespace ZeroKWeb.Controllers
                 myAcc.VotesAvailable--;
             }
 
-            db.SubmitChanges();
+            db.SaveChanges();
 
             return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID });
         }
@@ -564,7 +564,7 @@ namespace ZeroKWeb.Controllers
             }
             db.AccountForumVotes.DeleteOnSubmit(existingVote);
 
-            db.SubmitChanges();
+            db.SaveChanges();
 
             return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID });
         }
@@ -635,7 +635,7 @@ namespace ZeroKWeb.Controllers
                     } else lastRead.LastRead = DateTime.UtcNow;
                 }
             }
-            db.SubmitChanges();
+            db.SaveChanges();
             return RedirectToAction("Index", new { categoryID });
         }
 

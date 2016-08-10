@@ -52,7 +52,7 @@ namespace ZeroKWeb.Controllers
                 if (clan.ForumThread != null)
                 {
                     clan.ForumThread.UpdateLastRead(Global.AccountID, false);
-                    db.SubmitChanges();
+                    db.SaveChanges();
                 }
             }
             return View(clan);
@@ -104,7 +104,7 @@ namespace ZeroKWeb.Controllers
 
             acc.Clan = null;
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves clan {1}", acc, clan));
-            db.SubmitChanges();
+            db.SaveChanges();
             if (!clan.Accounts.Any())
             {
                 clan.IsDeleted = true;
@@ -119,7 +119,7 @@ namespace ZeroKWeb.Controllers
                 }
             }
 
-            db.SubmitChanges();
+            db.SaveChanges();
             return clan;
         }
 
@@ -160,7 +160,7 @@ namespace ZeroKWeb.Controllers
                         db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} reformed by {1}", clan, acc));
                     }
 
-                    db.SubmitChanges();
+                    db.SaveChanges();
                     return RedirectToAction("Detail", new { id = clan.ClanID });
                 }
             }
@@ -174,7 +174,7 @@ namespace ZeroKWeb.Controllers
             var clan = db.Clans.Single(c => clanID == c.ClanID);
             if (!(Global.Account.HasClanRight(x => x.RightKickPeople) && clan.ClanID == Global.Account.ClanID)) return Content("Unauthorized");
             PerformLeaveClan(accountID);
-            db.SubmitChanges();
+            db.SaveChanges();
             PlanetwarsController.SetPlanetOwners();
             return RedirectToAction("Detail", new { id = clanID });
         }
@@ -282,13 +282,13 @@ namespace ZeroKWeb.Controllers
                         }
                         member.FactionID = clan.FactionID;
                     }
-                    db.SubmitChanges(); // make sure event gets correct details
+                    db.SaveChanges();
                     if (clan.FactionID != null) 
                         db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} moved to faction {1}", orgClan, orgClan.Faction));
                     else
                         db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} left faction {1}", orgClan, oldFaction));
                 }
-                db.SubmitChanges();
+                db.SaveChanges();
             }
             else
             {
@@ -321,7 +321,7 @@ namespace ZeroKWeb.Controllers
                 // we created a new clan, set self as founder and rights
                 AddClanLeader(acc.AccountID, clan.ClanID, db);
 
-                db.SubmitChanges(); // needed to get clan id for images
+                db.SaveChanges();
 
                 if (image != null && image.ContentLength > 0)
                 {
@@ -336,7 +336,7 @@ namespace ZeroKWeb.Controllers
                 }
 
                 db.Events.InsertOnSubmit(Global.CreateEvent("New clan {0} formed by {1}", clan, acc));
-                db.SubmitChanges();
+                db.SaveChanges();
             }
 
             //scope.Complete();

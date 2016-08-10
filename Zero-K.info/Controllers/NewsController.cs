@@ -78,19 +78,19 @@ namespace ZeroKWeb.Controllers
                     
                     thread.ForumPosts.Add(new ForumPost() { Created = news.Created, Text = postText, AuthorAccountID = news.AuthorAccountID });
                     db.ForumThreads.InsertOnSubmit(thread);
-                    db.SubmitChanges();
+                    db.SaveChanges();
                     news.ForumThreadID = thread.ForumThreadID;
                     db.News.InsertOnSubmit(news);
                 }
-			    db.SubmitChanges();
+			    db.SaveChanges();
 
-                // add image to the start of the forum post we made
+			    // add image to the start of the forum post we made
                 // do it down here so it gets the correct news ID
                 if (!String.IsNullOrWhiteSpace(news.ImageRelativeUrl) && news.ForumThread != null)
                 {
                     postText = "[img]" + news.ImageRelativeUrl + "[/img]" + Environment.NewLine + postText;
                     news.ForumThread.ForumPosts.ElementAt(0).Text = postText;
-                    db.SubmitChanges();
+                    db.SaveChanges();
                 }
 
 				if (im != null)

@@ -30,7 +30,7 @@ namespace ZeroKWeb.Controllers
             foreach (var a in answers.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) p.PollOptions.Add(new PollOption() { OptionText = a });
 
             db.Polls.InsertOnSubmit(p);
-            db.SubmitChanges();
+            db.SaveChanges();
             return RedirectToAction("UserVotes", new { id = Global.AccountID });
         }
 
@@ -159,7 +159,7 @@ namespace ZeroKWeb.Controllers
             p.PollOptions.Add(new PollOption() { OptionText = "Yes" });
             p.PollOptions.Add(new PollOption() { OptionText = "No" });
             db.Polls.InsertOnSubmit(p);
-            db.SubmitChanges();
+            db.SaveChanges();
             return RedirectToAction("Detail", "Users", new { id = Global.AccountID });
         }
 
@@ -182,9 +182,9 @@ namespace ZeroKWeb.Controllers
             }
             entry.OptionID = optionID;
 
-            db.SubmitChanges();
+            db.SaveChanges();
             foreach (var opt in poll.PollOptions) opt.Votes = opt.PollVotes.Count(x => x.PollID == poll.PollID);
-            db.SubmitChanges();
+            db.SaveChanges();
 
             return PartialView("PollView", poll);
         }
@@ -195,7 +195,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var p = db.Polls.Single(x => x.PollID == pollid);
             p.IsHeadline = !p.IsHeadline;
-            db.SubmitChanges();
+            db.SaveChanges();
             ;
             return RedirectToAction("UserVotes", new { id = Global.AccountID });
         }

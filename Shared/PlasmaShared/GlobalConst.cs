@@ -124,7 +124,7 @@ namespace ZkData
         public const int NumCommanderLevels = 5;
         public const int MaxCommanderNameLength = 20;
 
-        public const string DefaultEngineOverride = "100.0"; // hack for ZKL using tasclient's engine - override here for missions etc
+        public const string DefaultEngineOverride = "103.0"; // hack for ZKL using tasclient's engine - override here for missions etc
 
         public const int MinDurationForXP = 240;    // seconds
         public const int MinDurationForElo = 60;
@@ -226,7 +226,7 @@ namespace ZkData
         public static string LobbyServerHost;
         public static int LobbyServerPort;
 
-        public static string[] ReplaysPossiblePaths = { @"c:\projekty\springie_spring\demos-server", @"c:\projekty\springie_spring\demos", @"d:\demos", @"d:\demos-server" };
+        public static string[] ReplaysPossiblePaths = { @"c:\projekty\springie_spring\demos-server"};
 
 
 

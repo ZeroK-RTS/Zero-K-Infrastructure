@@ -76,7 +76,7 @@ namespace Fixer
                     f.Dropships = 0;
                     f.Warps = 0;
                 }
-                db.SubmitChanges();
+                db.SaveChanges();
 
                 db.Database.ExecuteSqlCommand("update accounts set pwbombersproduced=0, pwbombersused=0, pwdropshipsproduced=0, pwdropshipsused=0, pwmetalproduced=0, pwmetalused=0, pwattackpoints=0, pwwarpproduced=0, pwwarpused=0, elopw=1500");
                 if (resetclans) db.Database.ExecuteSqlCommand("update accounts set clanid=null");
@@ -114,7 +114,7 @@ namespace Fixer
                 gal.Turn = 0;
                 gal.Started = DateTime.UtcNow;
                 gal.IsDirty = true;
-                db.SubmitChanges();
+                db.SaveChanges();
             }
         }
 
@@ -135,7 +135,7 @@ namespace Fixer
                 planet1.Faction = fac2;
                 planet2.Faction = fac1;
 
-                db.SubmitChanges();
+                db.SaveChanges();
             }
         }
 
@@ -207,7 +207,7 @@ namespace Fixer
                     }
                 }
                 gal.IsDirty = true;
-                db.SubmitChanges();
+                db.SaveChanges();
             }
         }
 
@@ -220,7 +220,7 @@ namespace Fixer
             {
                 p.AddStruct(9);
             }
-            db.SubmitChanges();
+            db.SaveChanges();
         }
 
         public static void StartGalaxy(int galaxyID, params int[] startingPlanets)
@@ -284,7 +284,7 @@ namespace Fixer
 
                 gal.Turn = 0;
                 gal.Started = DateTime.UtcNow;
-                db.SubmitChanges();
+                db.SaveChanges();
             }
         }
 
@@ -398,8 +398,8 @@ namespace Fixer
             // jump gates
             //foreach (var p in gal.Planets.Shuffle().Take(6)) p.AddStruct(warp);
 
-            db.SubmitChanges();
-            db.SubmitChanges();
+            db.SaveChanges();
+            db.SaveChanges();
         }
 
         public static void AddWormholes()
@@ -410,7 +410,7 @@ namespace Fixer
             {
                 p.PlanetStructures.Add(new PlanetStructure() { StructureTypeID = wormhole.StructureTypeID });
             }
-            db.SubmitChanges();
+            db.SaveChanges();
         }
 
         public static void RemoveTechStructures(bool bRefund, bool removeDefs)
@@ -433,7 +433,7 @@ namespace Fixer
                     db.StructureTypes.DeleteOnSubmit(structType);
                 }
             }
-            db.SubmitChanges();
+            db.SaveChanges();
         }
     }
 }

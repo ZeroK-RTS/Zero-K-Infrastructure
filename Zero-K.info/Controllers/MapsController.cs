@@ -207,13 +207,13 @@ namespace ZeroKWeb.Controllers
             rat.ResourceID = id;
             rat.AccountID = Global.Account.AccountID;
             rat.Rating = rating;
-            db.SubmitChanges();
+            db.SaveChanges();
 
             db = new ZkDataContext(); // select again so that linked resources work
             rat = db.MapRatings.First(x => x.ResourceID == rat.ResourceID && x.AccountID == rat.AccountID);
             rat.Resource.MapRatingSum = rat.Resource.MapRatings.Sum(x => x.Rating);
             rat.Resource.MapRatingCount = rat.Resource.MapRatings.Count();
-            db.SubmitChanges();
+            db.SaveChanges();
 
             return Content("");
         }
@@ -222,7 +222,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var res = db.Resources.Single(x => x.ResourceID == resourceID);
             res.MapPlanetWarsIcon = null;
-            db.SubmitChanges();
+            db.SaveChanges();
             return RedirectToAction("Detail", new { id = res.ResourceID });
         }
 
@@ -231,7 +231,7 @@ namespace ZeroKWeb.Controllers
             var res = db.Resources.Single(x => x.ResourceID == resourceID);
             res.MapPlanetWarsIcon = icon;
 
-            db.SubmitChanges();
+            db.SaveChanges();
             return RedirectToAction("Detail", new { id = res.ResourceID });
         }
 
@@ -266,10 +266,10 @@ namespace ZeroKWeb.Controllers
             r.FeaturedOrder = featuredOrder;
             r.MapFFAMaxTeams = ffaTeams;
             r.MapSpringieCommands = springieCommands;
-            db.SubmitChanges();
+            db.SaveChanges();
             var order = 1;
             if (featuredOrder.HasValue) foreach (var map in db.Resources.Where(x => x.FeaturedOrder != null).OrderBy(x => x.FeaturedOrder)) map.FeaturedOrder = order++;
-            db.SubmitChanges();
+            db.SaveChanges();
             return RedirectToAction("Detail", new { id = id });
         }
 
@@ -369,7 +369,7 @@ namespace ZeroKWeb.Controllers
 
             if (res.ForumThread != null) {
                 res.ForumThread.UpdateLastRead(Global.AccountID, false);
-                db.SubmitChanges();
+                db.SaveChanges();
             }
 
             return data;

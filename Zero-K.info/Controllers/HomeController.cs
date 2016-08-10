@@ -212,7 +212,7 @@ namespace ZeroKWeb.Controllers
 
 				if (result.Headlines.Any()) {
 					db.Accounts.Single(x => x.AccountID == Global.AccountID).LastNewsRead = DateTime.UtcNow;
-					db.SubmitChanges();
+				    db.SaveChanges();
 				}
 			} else {
 				result.Headlines = new List<News>();

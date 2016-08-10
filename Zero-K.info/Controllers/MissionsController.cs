@@ -19,11 +19,11 @@ namespace ZeroKWeb.Controllers
             var mis = db.Missions.SingleOrDefault(x => x.MissionID == id);
             mis.FeaturedOrder = featuredOrder;
             if (mis.IsScriptMission && !string.IsNullOrEmpty(script)) mis.Script = script;
-            db.SubmitChanges();
+            db.SaveChanges();
 
             var order = 1;
             if (featuredOrder.HasValue) foreach (var m in db.Missions.Where(x => x.FeaturedOrder != null).OrderBy(x => x.FeaturedOrder)) m.FeaturedOrder = order++;
-            db.SubmitChanges();
+            db.SaveChanges();
 
             return RedirectToAction("Index");
         }
@@ -33,7 +33,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             db.Missions.First(x => x.MissionID == id).IsDeleted = true;
-            db.SubmitChanges();
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -42,7 +42,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var mission = db.Missions.Single(x => x.MissionID == id);
             mission.ForumThread.UpdateLastRead(Global.AccountID, false);
-            db.SubmitChanges();
+            db.SaveChanges();
 
             return View("Detail",
                         new MissionDetailData
@@ -128,12 +128,12 @@ namespace ZeroKWeb.Controllers
             rat.AccountID = Global.Account.AccountID;
             if (difficulty.HasValue) rat.Difficulty = difficulty;
             if (rating.HasValue) rat.Rating1 = rating;
-            db.SubmitChanges();
+            db.SaveChanges();
 
             var mis = db.Missions.Single(x => x.MissionID == id);
             mis.Rating = (float?)mis.Ratings.Average(x => x.Rating1);
             mis.Difficulty = (float?)mis.Ratings.Average(x => x.Difficulty);
-            db.SubmitChanges();
+            db.SaveChanges();
 
             return Content("");
         }
@@ -154,7 +154,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             db.Missions.First(x => x.MissionID == id).IsDeleted = false;
-            db.SubmitChanges();
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
 

@@ -623,15 +623,6 @@ namespace Springie.autohost
             }
         }
 
-        public void ComSplitPlayers(TasSayEventArgs e, string[] words)
-        {
-            if (tas.MyBattle != null && !spring.IsRunning)
-            {
-                this.SayBattle("Splitting room into two by the skill level, keeping clans together");
-                var serv = GlobalConst.GetSpringieService();
-                serv.SplitAutohost(tas.MyBattle.GetContext(), tas.UserPassword);
-            }
-        }
 
 
         public void ComSpringie(TasSayEventArgs e, string[] words)

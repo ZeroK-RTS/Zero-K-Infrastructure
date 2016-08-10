@@ -335,7 +335,7 @@ public static class PlanetWarsTurnHandler
                 });
             }
 
-            db.SubmitChanges();
+            db.SaveChanges();
         }
         catch (Exception ex)
         {

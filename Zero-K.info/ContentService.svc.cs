@@ -129,7 +129,7 @@ namespace ZeroKWeb
             {
                 db.Missions.Single(x => x.Name == missionName).MissionRunCount++;
                 Account.AccountByName(db, login).MissionRunCount++;
-                db.SubmitChanges();
+                db.SaveChanges();
             }
         }
 
@@ -203,7 +203,7 @@ namespace ZeroKWeb
                 }
 
                 acc.CheckLevelUp();
-                db.SubmitChanges();
+                db.SaveChanges();
 
                 if (!acc.CanPlayMultiplayer)
                 {
@@ -310,7 +310,7 @@ namespace ZeroKWeb
                 }
 
                 //reload DB - this allows the vars submitted this session to be used by the following code
-                db.SubmitChanges();
+                db.SaveChanges();
                 db = new ZkDataContext();
                 acc = db.Accounts.First(x => x.AccountID == accountID);
                 planet = db.CampaignPlanets.FirstOrDefault(p => p.MissionID == missionID);
@@ -406,7 +406,7 @@ namespace ZeroKWeb
                         }
                     }
                 }
-                db.SubmitChanges();
+                db.SaveChanges();
                 db = new ZkDataContext();
                 planet = db.CampaignPlanets.FirstOrDefault(p => p.MissionID == missionID);
 
@@ -433,7 +433,7 @@ namespace ZeroKWeb
                     CampaignJournal uj = db.CampaignJournals.FirstOrDefault(x => x.JournalID == ujid && x.CampaignID == campID);
                     db.CampaignEvents.InsertOnSubmit(Global.CreateCampaignEvent(accountID, campID, "{1} - Journal entry unlocked: {0}", uj, uj.CampaignPlanet));
                 }
-                db.SubmitChanges();
+                db.SaveChanges();
             }
         }
     }

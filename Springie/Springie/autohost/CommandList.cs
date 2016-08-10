@@ -90,12 +90,6 @@ namespace Springie.autohost
                                          new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }) { AllowSpecs = true});
 
             
-            AddMissing(new CommandConfig("splitplayers",
-                                         3,
-                                         " - splots players to 2 hosts based on their elo",
-                                         2,
-                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game }));
-
             AddMissing(new CommandConfig("voteforcestart", 2, " - starts vote to force game to start in lobby"));
 
             AddMissing(new CommandConfig("voteforce",

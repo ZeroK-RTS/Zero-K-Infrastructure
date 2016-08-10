@@ -201,3 +201,4 @@ ModelBase/.vs/config/applicationhost.config
 # Binaries installed by NuGet
 .vs/config/applicationhost.config
 ZkLobbyInstaller/Zero-K.setup.exe
+Zero-K.info/engine/win32/*.zip

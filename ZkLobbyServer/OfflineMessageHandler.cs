@@ -20,6 +20,11 @@ namespace ZkLobbyServer
                         .Take(maxCount)
                         .OrderBy(x => x.Time)
                         .ForEachAsync(async (chatHistory) => { await sender.SendCommand(chatHistory.ToSay()); });
+                
+                if (place == SayPlace.User) { // don't keep PMs longer than needed
+                    db.LobbyChatHistories.DeleteAllOnSubmit(db.LobbyChatHistories.Where(x => x.Target == target && x.SayPlace == SayPlace.User).ToList());
+                    db.SaveChanges();
+                }
             }
         }
 

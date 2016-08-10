@@ -17,7 +17,7 @@ namespace ZkLobbyServer
     {
         ChatRelay chatRelay;
         public int BattleCounter;
-        public ConcurrentDictionary<int, Battle> Battles = new ConcurrentDictionary<int, Battle>();
+        public ConcurrentDictionary<int, ServerBattle> Battles = new ConcurrentDictionary<int, ServerBattle>();
         public ChannelManager ChannelManager;
         public int ClientCounter;
         public ConcurrentDictionary<string, ConnectedUser> ConnectedUsers = new ConcurrentDictionary<string, ConnectedUser>();
@@ -90,7 +90,7 @@ namespace ZkLobbyServer
 
         public List<Battle> GetPlanetWarsBattles()
         {
-            return Battles.Values.Where(x => x.Founder.Name.StartsWith("PlanetWars")).ToList();
+            return Battles.Values.Where(x => x.Founder.Name.StartsWith("PlanetWars")).Cast<Battle>().ToList();
         }
 
         public Task GhostChanSay(string channelName, string text, bool isEmote = true, bool isRing = false)
@@ -142,7 +142,7 @@ namespace ZkLobbyServer
                     await Broadcast(ConnectedUsers.Values, say);
                     break;
                 case SayPlace.Battle:
-                    Battle battle;
+                    ServerBattle battle;
                     if (Battles.TryGetValue(battleID.Value, out battle)) await Broadcast(battle.Users.Keys, say);
                     break;
             }

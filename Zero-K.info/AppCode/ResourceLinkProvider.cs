@@ -121,7 +121,7 @@ namespace ZeroKWeb
                     }
                     else foreach (var content in resource.ResourceContentFiles) UpdateLinks(content);
 
-                    db.SubmitChanges();
+                    db.SaveChanges();
 
                     // find best content file - the one with most links
                     var best = resource.ResourceContentFiles.FirstOrDefault(x => x.LinkCount == resource.ResourceContentFiles.Max(y => y.LinkCount));
@@ -134,7 +134,7 @@ namespace ZeroKWeb
                     torrentFileName = PlasmaServer.GetTorrentFileName(data.ContentFile);
                     if (links.Count > 0) resource.DownloadCount++;
                     else resource.NoLinkDownloadCount++;
-                    db.SubmitChanges();
+                    db.SaveChanges();
                     return true;
                 }
                 finally

@@ -140,7 +140,7 @@ namespace ZeroKWeb.Controllers
                                       ActivatedOnTurn = planet.Galaxy.Turn
                                   };
                 db.PlanetStructures.InsertOnSubmit(newBuilding);
-                db.SubmitChanges();
+                db.SaveChanges();
 
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2} planet {3}.",
                                                             Global.Account,
@@ -181,7 +181,7 @@ namespace ZeroKWeb.Controllers
                 if (toDestroy.Account != null) toDestroy.Account.ProduceMetal(refund);
                 else faction.ProduceMetal(refund);
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} has demolished a {1} on {2}.", Global.Account, toDestroy.StructureType, planet));
-                db.SubmitChanges();
+                db.SaveChanges();
                 SetPlanetOwners(db);
             }
 
@@ -324,7 +324,7 @@ namespace ZeroKWeb.Controllers
                     gal.IsDirty = false;
                     gal.Width = im.Width;
                     gal.Height = im.Height;
-                    db.SubmitChanges();
+                    db.SaveChanges();
                 }
             }
             
@@ -347,7 +347,7 @@ namespace ZeroKWeb.Controllers
             if (planet.ForumThread != null)
             {
                 planet.ForumThread.UpdateLastRead(Global.AccountID, false);
-                db.SubmitChanges();
+                db.SaveChanges();
             }
             return View(planet);
         }
@@ -403,7 +403,7 @@ namespace ZeroKWeb.Controllers
                                                                 planet,
                                                                 useWarp == true ? "using warp drives" : ""));
                 }
-                db.SubmitChanges();
+                db.SaveChanges();
             }
             return RedirectToAction("Planet", new { id = planetID });
         }
@@ -621,10 +621,10 @@ namespace ZeroKWeb.Controllers
                     !(Global.Account.FactionID == planet.OwnerFactionID && Global.Account.HasFactionRight(x => x.RightEditTexts) || Global.Account.IsZeroKAdmin))*/
                 if (!Global.Account.IsZeroKAdmin)
                     return Content("Unauthorized");
-                db.SubmitChanges();
+                db.SaveChanges();
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} to {2}", Global.Account, planet, newName));
                 planet.Name = newName;
-                db.SubmitChanges();
+                db.SaveChanges();
                 scope.Complete();
                 return RedirectToAction("Planet", new { id = planet.PlanetID });
             }
@@ -735,7 +735,7 @@ namespace ZeroKWeb.Controllers
                                                             orgAc,
                                                             structure.StructureType,
                                                             planet));
-                db.SubmitChanges();
+                db.SaveChanges();
 
                 return RedirectToAction("Planet", new { id = planetID });
             }

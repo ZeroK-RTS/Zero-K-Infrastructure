@@ -45,7 +45,7 @@ namespace ZeroKWeb
             RemoveResourceFiles(todel);
 
             db.Resources.Remove(todel);
-            db.SubmitChanges();
+            db.SaveChanges();
             return ReturnValue.Ok;
         }
 
@@ -155,7 +155,7 @@ namespace ZeroKWeb
 
                 // new spring version we add its hash
                 StoreMetadata(md5, contentFile.Resource, serializedData, torrentData, minimap, metalMap, heightMap);
-                db.SubmitChanges();
+                db.SaveChanges();
                 return ReturnValue.Ok;
             }
 
@@ -187,8 +187,8 @@ namespace ZeroKWeb
 
             resource.ResourceContentFiles.Add(new ResourceContentFile { FileName = archiveName, Length = length, Md5 = md5 });
             File.WriteAllBytes(GetTorrentPath(internalName, md5), torrentData); // add new torrent file
-          
-            db.SubmitChanges();
+
+            db.SaveChanges();
 
             return ReturnValue.Ok;
         }

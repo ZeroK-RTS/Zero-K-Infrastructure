@@ -22,7 +22,7 @@ namespace ZeroKWeb.Controllers
 
             if (hideCountry) acc.Country = "??";
             // TODO reimplement ? Global.Nightwatch.Tas.SetHideCountry(acc.Name, hideCountry);
-            db.SubmitChanges();
+            db.SaveChanges();
 
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
@@ -39,7 +39,7 @@ namespace ZeroKWeb.Controllers
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - {0} -> {1}", acc.IsDeleted, isDeleted));
                 acc.IsDeleted = isDeleted;
             }
-            db.SubmitChanges();
+            db.SaveChanges();
 
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }     
@@ -75,8 +75,8 @@ namespace ZeroKWeb.Controllers
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - VPN exception: {0} -> {1}", acc.HasVpnException, vpnException));
                 acc.HasVpnException = vpnException;
             }
-            db.SubmitChanges();
-            
+            db.SaveChanges();
+
             Global.Server.PublishAccountUpdate(acc);
             
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
@@ -97,8 +97,8 @@ namespace ZeroKWeb.Controllers
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - 1v1 Elo Weight: {0} -> {1}", acc.Elo1v1Weight, eloweight1v1));
                 acc.Elo1v1Weight = eloweight1v1;
             }
-            db.SubmitChanges();
-            
+            db.SaveChanges();
+
             Global.Server.PublishAccountUpdate(acc);
             
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
@@ -246,7 +246,7 @@ namespace ZeroKWeb.Controllers
                                  UserID = banUserID
                              };
             acc.PunishmentsByAccountID.Add(punishment);
-            db.SubmitChanges();
+            db.SaveChanges();
 
             // notify lobby of changes and post log message
             try
@@ -374,7 +374,7 @@ namespace ZeroKWeb.Controllers
                     }
                 }
             }
-            db.SubmitChanges();
+            db.SaveChanges();
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {4} for user series {0} ({1} - {2}): {3}",
                 name, startIndex, endIndex, Url.Action("Detail", "Users", new { id = firstAccID }, "http"), Global.Account.Name));
 
@@ -413,7 +413,7 @@ namespace ZeroKWeb.Controllers
                     Trace.TraceError(ex.ToString());
                 }
             }
-            db.SubmitChanges();
+            db.SaveChanges();
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {2} for userID {0} (max age {1})",
                 userID, maxAge, Global.Account.Name));
 

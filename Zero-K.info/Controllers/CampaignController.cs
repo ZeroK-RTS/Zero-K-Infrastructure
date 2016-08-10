@@ -76,7 +76,7 @@ namespace ZeroKWeb.Controllers
                     camp.IsDirty = false;
                     camp.MapWidth = im.Width;
                     camp.MapHeight = im.Height;
-                    db.SubmitChanges();
+                    db.SaveChanges();
                 }
             }
             // */
