@@ -184,6 +184,10 @@ namespace ZkData
         public virtual ICollection<SpringBattle> SpringBattles { get; set; }
         public virtual ICollection<SpringBattlePlayer> SpringBattlePlayers { get; set; }
         public virtual ICollection<Event> Events { get; set; }
+        [InverseProperty("Owner")]
+        public virtual ICollection<AccountRelation> RelalationsByOwner { get; set; } = new List<AccountRelation>();
+        [InverseProperty("Target")]
+        public virtual ICollection<AccountRelation> RelalationsByTarget { get; set; } = new List<AccountRelation>();
         public virtual Clan Clan { get; set; }
 
 

@@ -74,7 +74,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbCloner.cs" />
+    <Compile Include="Ef\AccountRelation.cs" />
     <Compile Include="Ef\ForumPostWord.cs" />
+    <Compile Include="Enums\Relation.cs" />
     <Compile Include="Ef\Word.cs" />
     <Compile Include="Ef\LobbyChatHistory.cs" />
     <Compile Include="Enums\DecorationIconPositions.cs" />
@@ -194,6 +196,10 @@
     <Compile Include="Migrations\201608072058387_RemoveAhConfig.cs" />
     <Compile Include="Migrations\201608072058387_RemoveAhConfig.Designer.cs">
       <DependentUpon>201608072058387_RemoveAhConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608211530117_AccountRelations.cs" />
+    <Compile Include="Migrations\201608211530117_AccountRelations.Designer.cs">
+      <DependentUpon>201608211530117_AccountRelations.cs</DependentUpon>
     </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
@@ -419,6 +425,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201608072058387_RemoveAhConfig.resx">
       <DependentUpon>201608072058387_RemoveAhConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608211530117_AccountRelations.resx">
+      <DependentUpon>201608211530117_AccountRelations.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
