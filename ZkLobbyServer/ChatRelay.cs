@@ -39,7 +39,7 @@ namespace ZkLobbyServer
                 if (say.AllowRelay && say.Place == SayPlace.Channel && channels.Contains(say.Target))
                 {
                     if (say.Text.StartsWith("!names")) zkServer.GhostPm(say.User, string.Join(", ", springTas.JoinedChannels[say.Target].ChannelUsers));
-                    springTas.Say(TasClient.SayPlace.Channel, say.Target, string.Format("<{0}> {1}", say.User, say.Text), say.IsEmote);
+                    else springTas.Say(TasClient.SayPlace.Channel, say.Target, string.Format("<{0}> {1}", say.User, say.Text), say.IsEmote);
                 }
             }
             catch (Exception ex)
@@ -77,7 +77,7 @@ namespace ZkLobbyServer
                             true);
                     }
 
-                    zkServer.GhostSay(new Say()
+                    else zkServer.GhostSay(new Say()
                     {
                         Place = SayPlace.Channel,
                         Text = args.Text,
