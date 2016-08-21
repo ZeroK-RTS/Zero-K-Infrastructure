@@ -332,8 +332,6 @@ namespace LobbyClient
         public int? SpectatorCount;
         public string Password;
         public string Title;
-        public int? Port;
-        public string Ip;
         public string Founder;
         public AutohostMode? Mode;
     }
@@ -531,6 +529,23 @@ namespace LobbyClient
             public string PlanetName { get; set; }
 
         }
+    }
+
+
+    [Message(Origin.Client)]
+    public class SetAccountRelation
+    {
+        public string TargetName { get; set; }
+        public Relation Relation { get; set; }
+    }
+
+
+    [Message(Origin.Server)]
+    public class ConnectSpring
+    {
+        public string Ip { get; set; }
+        public int Port { get; set; }
+        public string ScriptPassword { get; set; }
     }
 
 

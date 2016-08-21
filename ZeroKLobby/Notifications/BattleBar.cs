@@ -185,29 +185,29 @@ namespace ZeroKLobby.Notifications
 
             client.MyBattleHostExited += (s, e) => { btnStart.Text = "Start"; };
 
-            client.MyBattleStarted += (s, e) =>
+            client.ConnectSpringReceived += (s, e) =>
+            {
+                try
                 {
-                    try
-                    {
-                        if (client.MyBattle.Users[client.UserName].ScriptPassword == null) btnStart.Text = "Watch";
-                        else btnStart.Text = "Rejoin";
+                    if (client.MyBattle.Users[client.UserName].ScriptPassword == null) btnStart.Text = "Watch";
+                    else btnStart.Text = "Rejoin";
 
-                        if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced)
+                    if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced)
+                    {
+                        if (Utils.VerifySpringInstalled())
                         {
-                            if (Utils.VerifySpringInstalled())
-                            {
-                                if (spring.IsRunning) spring.ExitGame();
-                                lastScript = spring.ConnectGame(client.MyBattle.Ip, client.MyBattle.HostPort, client.UserName,
-                                    client.MyBattle.Users[client.UserName].ScriptPassword); //use MT tag when in spectator slot
-                            }
+                            if (spring.IsRunning) spring.ExitGame();
+                            lastScript = spring.ConnectGame(e.Ip, e.Port, client.UserName, client.MyBattle.Users[client.UserName].ScriptPassword);
+                                //use MT tag when in spectator slot
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(this, "Error starting spring: " + ex.Message);
-                    }
-                    RefreshTooltip();
-                };
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, "Error starting spring: " + ex.Message);
+                }
+                RefreshTooltip();
+            };
 
             client.BattleMyUserStatusChanged += (s, e) =>
                 {
@@ -359,8 +359,8 @@ namespace ZeroKLobby.Notifications
             if (Utils.VerifySpringInstalled())
             {
                 if (spring.IsRunning) spring.ExitGame();
-                if (client.MyBattle != null) spring.ConnectGame(client.MyBattle.Ip, client.MyBattle.HostPort, client.UserName, client.MyBattle.Users[client.UserName].ScriptPassword);
-                else spring.RunLocalScriptGame(lastScript); //rejoining a running game from outside the battleroom???
+                //if (client.MyBattle != null) spring.ConnectGame(client.MyBattle.Ip, client.MyBattle.HostPort, client.UserName, client.MyBattle.Users[client.UserName].ScriptPassword);
+                //else spring.RunLocalScriptGame(lastScript); //rejoining a running game from outside the battleroom???
             }
         }
 

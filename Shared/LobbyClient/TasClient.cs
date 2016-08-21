@@ -204,6 +204,7 @@ namespace LobbyClient
         public event EventHandler<OldNewPair<Battle>> BattleMapChanged = delegate { };
         public event EventHandler<OldNewPair<Battle>> MyBattleMapChanged = delegate { };
         public event EventHandler<Battle> ModOptionsChanged = delegate { };
+        public event EventHandler<ConnectSpring> ConnectSpringReceived = delegate { };
 
         public event EventHandler<SiteToLobbyCommand> SiteToLobbyCommandReceived = delegate { };
 
@@ -469,8 +470,6 @@ namespace LobbyClient
                     new BattleHeader() {
                         Engine = nbattle.EngineVersion,
                         Game = nbattle.ModName,
-                        Ip = nbattle.Ip ?? localIp,
-                        Port = nbattle.HostPort,
                         Map = nbattle.MapName,
                         Password = nbattle.Password,
                         MaxPlayers = nbattle.MaxPlayers,
@@ -897,7 +896,13 @@ namespace LobbyClient
             ChannelTopicChanged(this, changeTopic);
         }
 
-        
+
+        async Task Process(ConnectSpring connectSpring)
+        {
+            ConnectSpringReceived(this, connectSpring);
+        }
+
+
         void InvokeSaid(TasSayEventArgs sayArgs)
         {
             var previewSaidEventArgs = new CancelEventArgs<TasSayEventArgs>(sayArgs);

@@ -76,7 +76,6 @@
     <Compile Include="DbCloner.cs" />
     <Compile Include="Ef\AccountRelation.cs" />
     <Compile Include="Ef\ForumPostWord.cs" />
-    <Compile Include="Enums\Relation.cs" />
     <Compile Include="Ef\Word.cs" />
     <Compile Include="Ef\LobbyChatHistory.cs" />
     <Compile Include="Enums\DecorationIconPositions.cs" />

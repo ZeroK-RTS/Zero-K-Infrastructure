@@ -12,6 +12,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -712,6 +713,24 @@ namespace ZkData
             else if (bynum > 0) for (int i = 0; i < input.Length; ++i) ret[i + bynum] = input[i];
             return ret;
         }
+
+        public static int VerifyUdpPort(int port)
+        {
+            try
+            {
+                var ports = IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().OrderBy(x => x.Port).Select(x => x.Port).ToList();
+                if (ports.Contains(port))
+                {
+                    var blockedPort = ports;
+                    while (ports.Contains(port)) port++;
+                    Trace.TraceWarning("Host port {0} was used, using backup port {1}", blockedPort, port);
+                }
+            }
+            catch { }
+            return port;
+        }
+
+
 
     }
 }

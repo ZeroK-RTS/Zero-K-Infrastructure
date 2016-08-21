@@ -118,8 +118,6 @@ namespace ZkLobbyServer
                                         Game = b.ModName,
                                         Founder = b.Founder.Name,
                                         Map = b.MapName,
-                                        Ip = b.Ip,
-                                        Port = b.HostPort,
                                         Title = b.Title,
                                         SpectatorCount = b.SpectatorCount,
                                         MaxPlayers = b.MaxPlayers,

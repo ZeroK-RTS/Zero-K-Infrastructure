@@ -25,8 +25,6 @@ namespace LobbyClient
         }
         public string FounderName { get; private set; }
 
-        public int HostPort { get; set; }
-        public string Ip { get; set; }
 
         public bool IsInGame { get { return Founder.IsInGame; } }
         public bool IsMission { get { return false; } }
@@ -92,8 +90,6 @@ namespace LobbyClient
             this.getUser = getUser;
             if (h.BattleID != null) BattleID = h.BattleID.Value;
             if (h.Founder != null) FounderName = h.Founder;
-            if (h.Ip != null) Ip = h.Ip;
-            if (h.Port != null) HostPort = h.Port.Value;
             if (h.MaxPlayers != null) MaxPlayers = h.MaxPlayers.Value;
             if (h.Password != null) Password = h.Password;
             if (h.Engine != null) EngineVersion = h.Engine;
@@ -109,18 +105,6 @@ namespace LobbyClient
             : this()
         {
             if (!String.IsNullOrEmpty(password)) Password = password;
-            if (port == 0) HostPort = 8452; else HostPort = port;
-            try
-            {
-                var ports = IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().OrderBy(x => x.Port).Select(x => x.Port).ToList();
-                if (ports.Contains(HostPort))
-                {
-                    var blockedPort = HostPort;
-                    while (ports.Contains(HostPort)) HostPort++;
-                    Trace.TraceWarning("Host port {0} was used, using backup port {1}", blockedPort, HostPort);
-                }
-            }
-            catch { }
 
             EngineVersion = engineVersion;
             MaxPlayers = maxplayers;

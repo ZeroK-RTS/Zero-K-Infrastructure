@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Timers;
 using LobbyClient;
@@ -54,6 +55,7 @@ namespace ZkLobbyServer
             SetupSpring();
 
         }
+
 
 
         void SetupSpring()
@@ -775,7 +777,8 @@ namespace ZkLobbyServer
             SetupSpring();
             //spring.lobbyUserName = tas.UserName; // hack until removed when springie moves to server
             //spring.lobbyPassword = tas.UserPassword;  // spring class needs this to submit results
-            spring.HostGame(GetContext(), battle.Ip, battle.HostPort);
+
+            spring.HostGame(GetContext(), "127.0.0.1", 8452);  // TODO HACK GET PORTS
         }
 
         public ConnectedUser FounderUser
