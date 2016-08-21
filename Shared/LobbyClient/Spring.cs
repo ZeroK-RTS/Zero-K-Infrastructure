@@ -130,6 +130,9 @@ namespace LobbyClient
         public event EventHandler<EventArgs<bool>> SpringExited;
         public event EventHandler SpringStarted;
 
+        public static EventHandler AnySpringStarted;
+        public static EventHandler<EventArgs<bool>> AnySpringExited;
+
         public Spring(SpringPaths springPaths)
         {
             paths = springPaths;
@@ -340,7 +343,11 @@ namespace LobbyClient
             process.BeginErrorReadLine();
 
             //process.StandardInput.Write(script);
-            if (IsRunning && SpringStarted != null) SpringStarted(this, EventArgs.Empty);
+            if (IsRunning)
+            {
+                SpringStarted?.Invoke(this, EventArgs.Empty);
+                AnySpringStarted?.Invoke(this, EventArgs.Empty);
+            }
         }
 
 
@@ -630,7 +637,8 @@ namespace LobbyClient
             if (StartContext != null) foreach (var p in StartContext.Players) p.IsIngame = false;
             IsBattleOver = true;
 
-            if (SpringExited != null) SpringExited(this, new EventArgs<bool>(isCrash));
+            SpringExited?.Invoke(this, new EventArgs<bool>(isCrash));
+            AnySpringExited?.Invoke(this, new EventArgs<bool>(isCrash));
         }
 
 
