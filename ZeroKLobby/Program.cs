@@ -100,7 +100,17 @@ namespace ZeroKLobby
                 //Stopwatch stopWatch = new Stopwatch(); stopWatch.Start();
                 Trace.Listeners.Add(new ConsoleTraceListener());
 
-                Application.SetCompatibleTextRenderingDefault(false);
+                try
+                {
+                    Application.SetCompatibleTextRenderingDefault(false);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Failed to set rendering compatibility: {0}",ex);
+                }
+
+
+
 
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
