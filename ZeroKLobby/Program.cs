@@ -183,8 +183,7 @@ namespace ZeroKLobby
 
                 
 
-                SpringPaths = new SpringPaths(null, contentDir);
-                SpringPaths.MakeFolders();
+                SpringPaths = new SpringPaths(contentDir);
 
                 // speed up spring start
                 SpringPaths.SpringVersionChanged += (sender, eventArgs) =>

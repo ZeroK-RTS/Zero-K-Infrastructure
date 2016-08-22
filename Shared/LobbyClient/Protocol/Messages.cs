@@ -546,6 +546,8 @@ namespace LobbyClient
         public string Ip { get; set; }
         public int Port { get; set; }
         public string ScriptPassword { get; set; }
+        public string Engine { get; set; }
+        public List<string> Resources { get; set; } = new List<string>();
     }
 
 

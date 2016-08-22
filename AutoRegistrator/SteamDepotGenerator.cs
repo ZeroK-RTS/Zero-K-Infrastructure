@@ -26,15 +26,15 @@ namespace AutoRegistrator
 
         public void Generate() {
             Utils.CheckPath(targetFolder);
-            var paths = new SpringPaths(null, targetFolder, false);
+            var paths = new SpringPaths(targetFolder, false);
             try
             {
                 //Directory.Delete(Path.Combine(paths.WritableDirectory, "pool"), true);
                 Directory.Delete(Path.Combine(paths.WritableDirectory, "packages"), true);
+                Directory.CreateDirectory(Path.Combine(paths.WritableDirectory, "packages"));
             } catch { }
             
 
-            paths.MakeFolders();
             var downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
             downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();

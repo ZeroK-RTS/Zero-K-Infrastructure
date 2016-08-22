@@ -44,7 +44,7 @@ namespace ZeroKLobby.Notifications
                 down = Program.Downloader.GetDependenciesOnly(missionName);
             }
 
-            var engine = Program.Downloader.GetAndSwitchEngine(Program.SpringPaths.SpringVersion);
+            var engine = Program.Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride);
 
             ZkData.Utils.StartAsync(() =>
             {
@@ -101,7 +101,7 @@ namespace ZeroKLobby.Notifications
                     if (Utils.VerifySpringInstalled())
                     {
                         var spring = new Spring(Program.SpringPaths);
-                        spring.RunLocalScriptGame(modInfo.MissionScript);
+                        spring.RunLocalScriptGame(modInfo.MissionScript, GlobalConst.DefaultEngineOverride);
 
                         var cs = GlobalConst.GetContentService();
                         cs.NotifyMissionRun(Program.Conf.LobbyPlayerName, missionName);

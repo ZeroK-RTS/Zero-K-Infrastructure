@@ -80,7 +80,6 @@ namespace PlasmaDownloader
                 if (existing != null) return existing;
 
                 if (SpringPaths.HasEngineVersion(version)) {
-                    forSpringPaths.SetEnginePath(SpringPaths.GetEngineFolderByVersion(version));
                     return null;
                 }
                 else {

@@ -209,22 +209,22 @@ namespace LobbyClient
         }
 
 
-        public string ConnectGame(string ip, int port, string myName, string myPassword = null)
+        public string ConnectGame(string ip, int port, string myName, string myPassword, string engine)
         {
             battleResult = new BattleResult();
             lobbyUserName = myName;
             lobbyPassword = myPassword;
             isHosting = false;
             var script=  ScriptGenerator.GenerateConnectScript(ip, port, myName, myPassword);
-            StartSpring(script);
+            StartSpring(script, engine);
             return script;
         }
 
    
         
-        public string HostGame(BattleContext context, string host, int port, string myName = null, string myPassword = null )
+        public string HostGame(BattleContext context, string host, int port, string myName, string myPassword, string engine)
         {
-            if (!File.Exists(paths.Executable) && !File.Exists(paths.DedicatedServer)) throw new ApplicationException(string.Format("Spring or dedicated server executable not found: {0}, {1}", paths.Executable, paths.DedicatedServer));
+            if (!File.Exists(paths.GetSpringExecutablePath(engine)) && !File.Exists(paths.GetDedicatedServerPath(engine))) throw new ApplicationException(string.Format("Spring or dedicated server executable not found: {0}, {1}", paths.GetSpringExecutablePath(engine), paths.GetDedicatedServerPath(engine)));
 
             wasKilled = false;
             string script = null;
@@ -286,42 +286,54 @@ namespace LobbyClient
                 }
                 if (isHosting) timer.Start();
 
-                StartSpring(script);
+                StartSpring(script, StartContext.EngineVersion);
                 return script;
             }
             else Trace.TraceError("Spring already running");
             return null;
         }
 
-        public void StartSpring(string script)
+        public void StartSpring(string script, string engine)
         {
+            
             scriptPath = Path.GetTempFileName();
             File.WriteAllText(scriptPath, script);
 
             LogLines = new StringBuilder();
 
             var optirun = Environment.GetEnvironmentVariable("OPTIRUN");
-
+            
             process = new Process();
             process.StartInfo.CreateNoWindow = true;
+
+            Environment.SetEnvironmentVariable("SPRING_DATADIR", paths.GetJoinedDataDirectoriesWithEngine(engine), EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("SPRING_WRITEDIR", paths.WritableDirectory, EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("SPRING_ISOLATED", paths.WritableDirectory, EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("SPRING_NOCOLOR", "1", EnvironmentVariableTarget.Process);
+
+            process.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = paths.GetJoinedDataDirectoriesWithEngine(engine);
+            process.StartInfo.EnvironmentVariables["SPRING_WRITEDIR"] = paths.WritableDirectory;
+            process.StartInfo.EnvironmentVariables["SPRING_ISOLATED"] = paths.WritableDirectory;
+            process.StartInfo.EnvironmentVariables["SPRING_NOCOLOR"] = "1";
+
             List<string> arg = new List<string>();
 
             if (string.IsNullOrEmpty(optirun)) {
                 if (UseDedicatedServer) {
-                    process.StartInfo.FileName = paths.DedicatedServer;
-                    process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.DedicatedServer);
+                    process.StartInfo.FileName = paths.GetDedicatedServerPath(engine);
+                    process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetDedicatedServerPath(engine));
                 } else {
-                    process.StartInfo.FileName = paths.Executable;
-                    process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
+                    process.StartInfo.FileName = paths.GetSpringExecutablePath(engine);
+                    process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetSpringExecutablePath(engine));
                 }
             } else {
                 Trace.TraceInformation("Using optirun {0} to start the game (OPTIRUN env var defined)", optirun);
                 process.StartInfo.FileName = optirun;
-                arg.Add(string.Format("\"{0}\"", (paths.Executable)));
+                arg.Add(string.Format("\"{0}\"", (paths.GetSpringExecutablePath(engine))));
             }
 
             arg.Add(string.Format("--config \"{0}\"", paths.GetSpringConfigPath()));
-            if (paths.SafeMode) arg.Add("--safemode");
+            if (paths.UseSafeMode) arg.Add("--safemode");
             arg.Add(string.Format("\"{0}\"", scriptPath));
             //Trace.TraceInformation("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
 
@@ -772,8 +784,8 @@ namespace LobbyClient
             process.WaitForExit();
         }
 
-        public void RunLocalScriptGame(string script) {
-            StartSpring(script);
+        public void RunLocalScriptGame(string script, string engine) {
+            StartSpring(script, engine);
         }
     }
 }

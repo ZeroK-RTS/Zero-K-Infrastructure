@@ -17,7 +17,7 @@ using ZkData.UnitSyncLib;
 
 namespace ZkData
 {
-    public class SpringScanner: IDisposable
+    public class SpringScanner : IDisposable
     {
         /// <summary>
         /// auto save cache every X seconds if dirty
@@ -106,11 +106,6 @@ namespace ZkData
         readonly SpringPaths springPaths;
 
         public UnitSync unitSync;
-
-        /// <summary>
-        /// whether an attempt to load unitsync was performed
-        /// </summary>
-        string unitSyncAttemptedFolder;
 
         /// <summary>
         /// number of unitsync operations since the last unitsync initialization
@@ -223,7 +218,7 @@ namespace ZkData
         public List<CacheItem> GetAllModResource()
         {
             var modList = new List<CacheItem>();
-            foreach (var mod in cache.NameIndex) if(mod.Value.ResourceType==ResourceType.Mod) modList.Add(mod.Value);
+            foreach (var mod in cache.NameIndex) if (mod.Value.ResourceType == ResourceType.Mod) modList.Add(mod.Value);
             return modList;
         }
 
@@ -346,12 +341,13 @@ namespace ZkData
 
             if (result == null)
             {
-                if (!UseUnitSync || springPaths.SpringVersion == null)
+                if (!UseUnitSync || springPaths.GetEngineList().Count == 0)
                 {
                     Trace.WriteLine(String.Format("No server resource data for {0}, asking later", work.CacheItem.ShortPath));
                     AddWork(work.CacheItem, WorkItem.OperationType.ReAskServer, DateTime.Now.AddSeconds(UnitsyncMissingReaskQuery), false);
                 }
-                else {
+                else
+                {
                     Trace.WriteLine(String.Format("No server resource data for {0}, queing upload", work.CacheItem.ShortPath));
                     AddWork(work.CacheItem, WorkItem.OperationType.UnitSync, DateTime.Now, false);
                 }
@@ -423,10 +419,13 @@ namespace ZkData
             foreach (var dd in springPaths.DataDirectories)
             {
                 var path = Utils.MakePath(dd, folder);
-                if (Directory.Exists(path)) {
-                    try {
+                if (Directory.Exists(path))
+                {
+                    try
+                    {
                         fileList.AddRange(Directory.GetFiles(path));
-                    } catch {}
+                    }
+                    catch { }
                 }
             }
 
@@ -454,7 +453,7 @@ namespace ZkData
             {
                 try
                 {
-                   loadedCache = JsonConvert.DeserializeObject<CacheFile>(File.ReadAllText(cachePath));
+                    loadedCache = JsonConvert.DeserializeObject<CacheFile>(File.ReadAllText(cachePath));
                 }
                 catch (Exception ex)
                 {
@@ -482,10 +481,13 @@ namespace ZkData
 
         void MainThreadFunction()
         {
-            try {
+            try
+            {
                 InitialScan();
-            } catch (Exception ex) {
-                Trace.TraceError("Error in scanner initial scan: {0}",ex);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error in scanner initial scan: {0}", ex);
             }
 
             try
@@ -494,26 +496,31 @@ namespace ZkData
                 var workDone = 0;
                 while (!isDisposed)
                 {
-                    try {
+                    try
+                    {
                         Thread.Sleep(ScannerCycleTime);
 
-                        if (isCacheDirty && DateTime.Now.Subtract(lastCacheSave).TotalSeconds > DirtyCacheSave) {
+                        if (isCacheDirty && DateTime.Now.Subtract(lastCacheSave).TotalSeconds > DirtyCacheSave)
+                        {
                             lastCacheSave = DateTime.Now;
                             isCacheDirty = false;
                             SaveCache();
                         }
 
                         WorkItem workItem;
-                        while ((workItem = GetNextWorkItem()) != null) {
+                        while ((workItem = GetNextWorkItem()) != null)
+                        {
                             if (isDisposed) return;
 
-                            if (!isWorking) {
+                            if (!isWorking)
+                            {
                                 isWorking = true;
                                 workDone = 0;
                                 workTotal = GetWorkCost();
                                 WorkStarted(this, new ProgressEventArgs(workDone, workTotal, workItem.CacheItem.FileName));
                             }
-                            else {
+                            else
+                            {
                                 workDone++;
                                 workTotal = Math.Max(GetWorkCost(), workTotal);
                                 WorkProgressChanged(this,
@@ -523,18 +530,22 @@ namespace ZkData
                             }
 
                             if (workItem.Operation == WorkItem.OperationType.Hash) PerformHashOperation(workItem);
-                            if (workItem.Operation == WorkItem.OperationType.UnitSync) {
-                                if (springPaths.UnitSyncDirectory != null) PerformUnitSyncOperation(workItem); // if there is no unitsync, retry later
+                            if (workItem.Operation == WorkItem.OperationType.UnitSync)
+                            {
+                                if (springPaths.HasEngineVersion(GlobalConst.DefaultEngineOverride)) PerformUnitSyncOperation(workItem); // if there is no unitsync, retry later
                                 else AddWork(workItem.CacheItem, WorkItem.OperationType.UnitSync, DateTime.Now.AddSeconds(RescheduleServerQuery), false);
                             }
                             if (workItem.Operation == WorkItem.OperationType.ReAskServer) GetResourceData(workItem);
                         }
-                        if (isWorking) {
+                        if (isWorking)
+                        {
                             isWorking = false;
                             WorkStopped(this, EventArgs.Empty);
                         }
-                    } catch (Exception ex) {
-                        Trace.TraceError("Exception in scanning thread: {0}",ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError("Exception in scanning thread: {0}", ex);
                     }
                 }
             }
@@ -589,7 +600,7 @@ namespace ZkData
                 CacheItemAdd(workItem.CacheItem);
 
                 var args = new CancelEventArgs<ResourceInfo>(info);
-                UploadUnitsyncData.Invoke(this,args);
+                UploadUnitsyncData.Invoke(this, args);
                 if (args.Cancel) return;
 
                 var serializedData = MetaDataCache.SerializeAndCompressMetaData(info);
@@ -617,20 +628,26 @@ namespace ZkData
                     if (mod != null) userState = new KeyValuePair<Mod, byte[]>(mod, serializedData);
 
                     Trace.TraceInformation("uploading {0} to server", info.Name);
-                    Task.Factory.StartNew(() => {
+                    Task.Factory.StartNew(() =>
+                    {
                         ReturnValue e;
-                        try {
-                             e = service.RegisterResource(PlasmaServiceVersion, springPaths.SpringVersion, workItem.CacheItem.Md5.ToString(),
-                                workItem.CacheItem.Length, info.ResourceType, workItem.CacheItem.FileName, info.Name,
-                                serializedData, info.Dependencies, minimap, metalMap, heightMap,
-                                ms.ToArray());
-                        } catch (Exception ex) {
+                        try
+                        {
+                            e = service.RegisterResource(PlasmaServiceVersion, null, workItem.CacheItem.Md5.ToString(),
+                               workItem.CacheItem.Length, info.ResourceType, workItem.CacheItem.FileName, info.Name,
+                               serializedData, info.Dependencies, minimap, metalMap, heightMap,
+                               ms.ToArray());
+                        }
+                        catch (Exception ex)
+                        {
                             Trace.TraceError("Error uploading data to server: {0}", ex);
                             return;
-                        } finally {
+                        }
+                        finally
+                        {
                             Interlocked.Decrement(ref itemsSending);
                         }
-                        
+
                         if (e != ReturnValue.Ok)
                         {
                             Trace.TraceWarning("Resource registering failed: {0}", e);
@@ -674,7 +691,8 @@ namespace ZkData
 
         void SaveCache()
         {
-            lock (cache) {
+            lock (cache)
+            {
                 try
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(cachePath));
@@ -703,7 +721,7 @@ namespace ZkData
         /// </summary>
         public void UnInitUnitsync()
         {
-           //upon completion of any work: dispose unitsync. It can be re-initialize again later by VerifyUnitSync()
+            //upon completion of any work: dispose unitsync. It can be re-initialize again later by VerifyUnitSync()
             if (unitSync != null && GetWorkCost() < 1)
             {
                 try
@@ -716,18 +734,13 @@ namespace ZkData
                     Trace.TraceWarning("Error disposing unitsync: {0}", ex);
                 }
             }
-        } 
+        }
 
         /// <summary>VerifyUnitSync() check whether unitSync should be initialized and perform unitSync initialization.
         /// </summary> 
         public void VerifyUnitSync()
         {
             if (unitSyncReInitCounter >= UnitSyncReInitFrequency)
-            {
-                unitSyncAttemptedFolder = null;
-                unitSyncReInitCounter = 0;
-            }
-            if (unitSyncAttemptedFolder != springPaths.UnitSyncDirectory || unitSync==null)
             {
                 if (unitSync != null)
                 {
@@ -740,15 +753,20 @@ namespace ZkData
                     {
                         Trace.TraceWarning("Error disposing unitsync: {0}", ex);
                     }
+
+                    unitSyncReInitCounter = 0;
                 }
-                unitSyncAttemptedFolder = springPaths.UnitSyncDirectory;
-                try
+
+                if (unitSync == null)
                 {
-                    unitSync = new UnitSync(springPaths);
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceWarning("Error initializing unitsync: {0}", ex);
+                    try
+                    {
+                        unitSync = new UnitSync(springPaths);
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceWarning("Error initializing unitsync: {0}", ex);
+                    }
                 }
             }
         }
@@ -805,7 +823,7 @@ namespace ZkData
         }
 
 
-        public class ResourceChangedEventArgs: EventArgs
+        public class ResourceChangedEventArgs : EventArgs
         {
             public CacheItem Item { get; protected set; }
 
@@ -840,7 +858,7 @@ namespace ZkData
         }
     }
 
-    public class ProgressEventArgs: EventArgs
+    public class ProgressEventArgs : EventArgs
     {
         public int WorkDone { get; private set; }
         public string WorkName { get; private set; }

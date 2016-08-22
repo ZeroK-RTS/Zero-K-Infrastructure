@@ -47,6 +47,10 @@ namespace ZkData
         public int? RatingPollID { get; set; }
         [StringLength(2000)]
         public string MapSpringieCommands { get; set; }
+
+        /*[StringLength(100)]
+        [Index]
+        public string RapidTag { get; set; }*/
         
         public virtual Account Account { get; set; }
         public virtual ForumThread ForumThread { get; set; }

@@ -25,9 +25,10 @@ namespace ZkLobbyServer
         public ZkLobbyServer server;
 
         IVotable activePoll;
-        string bossName = "";
-
         Timer pollTimer;
+
+        //static Downloader
+
 
         public Mod hostedMod;
         public int hostingPort { get; private set; }
@@ -43,7 +44,7 @@ namespace ZkLobbyServer
             Commands = new CommandList();
             this.hostingPort = hostingPort;
 
-            springPaths = new SpringPaths(null, GlobalConst.SpringieDataDir, false);
+            springPaths = new SpringPaths(GlobalConst.SpringieDataDir, false);
 
 
 
@@ -52,7 +53,79 @@ namespace ZkLobbyServer
             pollTimer.AutoReset = false;
             pollTimer.Elapsed += pollTimer_Elapsed;
 
+
+            lastMapChange = DateTime.Now;
+
+     
             SetupSpring();
+
+        }
+
+        public void FillDetails()
+        {
+            if (string.IsNullOrEmpty(Title)) Title = $"{FounderName}'s game";
+            if (string.IsNullOrEmpty(EngineName)) EngineName = server.Engine;
+            
+
+            switch (Mode)
+            {
+                case AutohostMode.Game1v1:
+                    MaxPlayers = 2;
+                    break;
+                case AutohostMode.Planetwars:
+                    MaxPlayers = 4;
+                    break;
+                case AutohostMode.GameChickens:
+                    if (MaxPlayers < 2) MaxPlayers = 10;
+                    break;
+                case AutohostMode.GameFFA:
+                    if (MaxPlayers < 3) MaxPlayers = 16;
+                    break;
+                case AutohostMode.Teams:
+                    if (MaxPlayers < 4) MaxPlayers = 16;
+                    break;
+                case AutohostMode.None:
+                    if (MaxPlayers == 0) MaxPlayers = 16;
+                    break;
+            }
+
+            
+
+
+            //if (String.IsNullOrEmpty(modname)) modname = config.Mod;
+            //if (String.IsNullOrEmpty(mapname)) mapname = config.Map;
+
+           
+            // no mod was provided, auto update is on, check if newer version exists, if it does use that instead of config one
+            /*if (string.IsNullOrEmpty(modname) && !String.IsNullOrEmpty(config.AutoUpdateRapidTag))
+            {
+                var ver = Program.main.Downloader.PackageDownloader.GetByTag(config.AutoUpdateRapidTag);
+
+                if (ver != null && cache.GetResourceDataByInternalName(ver.InternalName) != null) modname = config.AutoUpdateRapidTag;
+            }
+
+            PackageDownloader.Version version = Program.main.Downloader.PackageDownloader.GetByTag(modname);
+            if (version != null && version.InternalName != null) modname = version.InternalName;
+
+            hostedMod = new Mod() { Name = modname };
+            cache.GetMod(modname, (m) => { hostedMod = m; }, (m) => { });
+            if (hostedMod.IsMission && !String.IsNullOrEmpty(hostedMod.MissionMap)) mapname = hostedMod.MissionMap;
+
+            //Map mapi = null;
+            //cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
+            //int mint, maxt;
+            if (!springPaths.HasEngineVersion(engine))
+            {
+                Program.main.Downloader.GetAndSwitchEngine(engine, springPaths);
+            }
+            else
+            {
+                springPaths.SetEnginePath(springPaths.GetEngineFolderByVersion(engine));
+            }
+
+            var b = new Battle(engine, password, hostingPort, maxPlayers, mapname, title, modname);
+            b.Ip = Program.main.Config.IpOverride;
+            tas.OpenBattle(b);*/
 
         }
 
@@ -95,7 +168,7 @@ namespace ZkLobbyServer
         public bool GetUserAdminStatus(TasSayEventArgs e)
         {
             if (!server.ConnectedUsers.ContainsKey(e.UserName)) return false;
-            if (!String.IsNullOrEmpty(bossName) && (bossName == e.UserName)) return true;
+            if (FounderName == e.UserName) return true;
             return server.ConnectedUsers[e.UserName].User.IsAdmin;
         }
 
@@ -125,11 +198,8 @@ namespace ZkLobbyServer
         public int GetUserLevel(string name)
         {
             int ret = server.ConnectedUsers[name].User.SpringieLevel;
-            if (!String.IsNullOrEmpty(bossName))
-            {
-                if (name == bossName) ret = Math.Max(GlobalConst.SpringieBossEffectiveRights, ret);
-                else ret += -1;
-            }
+            if (name == FounderName) ret = Math.Max(GlobalConst.SpringieBossEffectiveRights, ret);
+            else ret += -1;
             return ret;
         }
 
@@ -170,10 +240,7 @@ namespace ZkLobbyServer
                             {
                                 if (!hideRightsMessage)
                                 {
-                                    Respond(e,
-                                        String.Format("Sorry, you do not have rights to execute {0}{1}",
-                                            command,
-                                            (!string.IsNullOrEmpty(bossName) ? ", ask boss admin " + bossName : "")));
+                                    Respond(e, $"Sorry, you do not have rights to execute {command}");
                                 }
                                 return false;
                             }
@@ -449,57 +516,6 @@ namespace ZkLobbyServer
             //if (!String.IsNullOrEmpty(text)) foreach (string line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(SayPlace.BattlePrivate, user, text, true);
         }
 
-        public void OpenBattleRoom(string modname, string mapname)
-        {
-            Stop();
-
-            bossName = "";
-            lastMapChange = DateTime.Now;
-
-            //if (String.IsNullOrEmpty(modname)) modname = config.Mod;
-            //if (String.IsNullOrEmpty(mapname)) mapname = config.Map;
-
-            //string title = config.Title.Replace("%1", MainConfig.SpringieVersion);
-
-            string password = null;
-            //if (!string.IsNullOrEmpty(config.BattlePassword)) password = config.BattlePassword;
-
-            //int maxPlayers = config.MaxPlayers;
-            ///string engine = springPaths.SpringVersion;
-
-            //title = title + string.Format(" [engine{0}]", springPaths.SpringVersion);
-
-            // no mod was provided, auto update is on, check if newer version exists, if it does use that instead of config one
-            /*if (string.IsNullOrEmpty(modname) && !String.IsNullOrEmpty(config.AutoUpdateRapidTag))
-            {
-                var ver = Program.main.Downloader.PackageDownloader.GetByTag(config.AutoUpdateRapidTag);
-
-                if (ver != null && cache.GetResourceDataByInternalName(ver.InternalName) != null) modname = config.AutoUpdateRapidTag;
-            }
-
-            PackageDownloader.Version version = Program.main.Downloader.PackageDownloader.GetByTag(modname);
-            if (version != null && version.InternalName != null) modname = version.InternalName;
-
-            hostedMod = new Mod() { Name = modname };
-            cache.GetMod(modname, (m) => { hostedMod = m; }, (m) => { });
-            if (hostedMod.IsMission && !String.IsNullOrEmpty(hostedMod.MissionMap)) mapname = hostedMod.MissionMap;
-
-            //Map mapi = null;
-            //cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
-            //int mint, maxt;
-            if (!springPaths.HasEngineVersion(engine))
-            {
-                Program.main.Downloader.GetAndSwitchEngine(engine, springPaths);
-            }
-            else
-            {
-                springPaths.SetEnginePath(springPaths.GetEngineFolderByVersion(engine));
-            }
-
-            var b = new Battle(engine, password, hostingPort, maxPlayers, mapname, title, modname);
-            b.Ip = Program.main.Config.IpOverride;
-            tas.OpenBattle(b);*/
-        }
 
 
         public void StartVote(IVotable vote, TasSayEventArgs e, string[] words)
@@ -778,7 +794,7 @@ namespace ZkLobbyServer
             //spring.lobbyUserName = tas.UserName; // hack until removed when springie moves to server
             //spring.lobbyPassword = tas.UserPassword;  // spring class needs this to submit results
 
-            spring.HostGame(GetContext(), "127.0.0.1", 8452);  // TODO HACK GET PORTS
+            //spring.HostGame(GetContext(), "127.0.0.1", 8452);  // TODO HACK GET PORTS
         }
 
         public ConnectedUser FounderUser

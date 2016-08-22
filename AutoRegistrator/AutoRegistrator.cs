@@ -55,8 +55,7 @@ namespace ZeroKWeb
         public void Main()
         {
             
-            Paths = new SpringPaths(null, Path.Combine(sitePath, "autoregistrator"), false);
-            Paths.MakeFolders();
+            Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false);
             Scanner = new SpringScanner(Paths) { UseUnitSync = true};
             
             Scanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("New resource found: {0}", e.Item.InternalName);

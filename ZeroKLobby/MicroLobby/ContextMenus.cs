@@ -60,14 +60,14 @@ namespace ZeroKLobby.MicroLobby
             }
 
             addBotItems.Add(new MenuItem("-"));
-            bool enabled = (Environment.OSVersion.Platform != PlatformID.Unix || Program.SpringPaths.SpringVersion != "91.0"); //linux don't have static build for Spring 91
+            bool enabled = true; //linux don't have static build for Spring 91
             MenuItem item3 = new MenuItem("Spring AI" + (enabled ? String.Empty : " (Not available)"));
             item3.Select += (s, e2) =>
             {
                 if (item3.MenuItems.Count == 0)
                 {
                     if (refreshSpringAi)
-                        springAi = SkirmishControlTool.GetSpringAIs(Program.SpringPaths.UnitSyncDirectory); //note: used UnitSyncDirectory because its just same as Engine folder
+                        springAi = SkirmishControlTool.GetSpringAIs(Program.SpringPaths.GetEngineFolderByVersion(GlobalConst.DefaultEngineOverride)); //note: used UnitSyncDirectory because its just same as Engine folder
                     refreshSpringAi = false;
                     MenuItem springAIitem;
                     for (int i = 0; i < springAi.Count; i++)

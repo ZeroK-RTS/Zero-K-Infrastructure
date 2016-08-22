@@ -24,9 +24,8 @@ namespace ZkWebLobby
         //[STAThread]
         private static void Main(params string[] args) {
             var startupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
-            var springPaths = new SpringPaths(null, startupPath);
+            var springPaths = new SpringPaths(startupPath);
             Spring runningSpring = null;
-            springPaths.MakeFolders();
             TcpTransport connection = null;
 
             // speed up spring start
@@ -101,7 +100,7 @@ namespace ZkWebLobby
                 (string engine) =>
                 {
                     // Don't let GetAndSwitchEngine() touch the main SpringPaths.
-                    var path = new SpringPaths(springPaths.GetEngineFolderByVersion(engine), springPaths.WritableDirectory);
+                    var path = new SpringPaths(springPaths.WritableDirectory);
                     downloader.GetAndSwitchEngine(engine, path);
                 });
             CefWrapper.RegisterApiFunction("downloadMod", (string game) => { downloader.GetResource(DownloadType.MOD, game); });
@@ -119,7 +118,7 @@ namespace ZkWebLobby
                 {
                     if (runningSpring != null) return null;
                     // Ultimately we should get rid of the concept of a "current set engine", but for now let's work around it.
-                    var path = new SpringPaths(springPaths.GetEngineFolderByVersion(engineVer), springPaths.WritableDirectory);
+                    var path = new SpringPaths(springPaths.WritableDirectory);
                     runningSpring = new Spring(path);
                     runningSpring.SpringExited += (obj, evt) =>
                     {
@@ -128,7 +127,7 @@ namespace ZkWebLobby
                     };
                     try
                     {
-                        runningSpring.StartSpring(script);
+                        runningSpring.StartSpring(script, engineVer);
                         return null;
                     }
                     catch (Exception e)

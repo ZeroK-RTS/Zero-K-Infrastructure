@@ -43,23 +43,25 @@ namespace ZkData.UnitSyncLib
         private string originalPathVariable;
         public string UnitsyncWritableFolder { get; private set; }
 
-        public UnitSync(SpringPaths springPaths) {
+        public UnitSync(SpringPaths springPaths, string engine = GlobalConst.DefaultEngineOverride) {
             lock (unitsyncInitLocker)
             {
                 paths = springPaths;
                 //Getting the directory of this application instead of the non-constant currentDirectory. Reference: http://stackoverflow.com/questions/52797/how-do-i-get-the-path-of-the-assembly-the-code-is-in
                 originalDirectory = springPaths.WritableDirectory;
-                Trace.TraceInformation("UnitSync: Directory: {0}", paths.UnitSyncDirectory);
+
+                string unitSyncPath = paths.GetEngineFolderByVersion(engine);
+                Trace.TraceInformation("UnitSync: Directory: {0}", unitSyncPath);
                 Trace.TraceInformation("UnitSync: ZKL: {0}", originalDirectory);
 
                 originalPathVariable = Environment.GetEnvironmentVariable("PATH");
-                if (originalPathVariable?.Contains(paths.UnitSyncDirectory) != true) Environment.SetEnvironmentVariable("PATH",
-                    $"{originalPathVariable}{(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";")}{paths.UnitSyncDirectory}", EnvironmentVariableTarget.Process);
+                if (originalPathVariable?.Contains(unitSyncPath) != true) Environment.SetEnvironmentVariable("PATH",
+                    $"{originalPathVariable}{(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";")}{unitSyncPath}", EnvironmentVariableTarget.Process);
 
                 //Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
-                Environment.CurrentDirectory = paths.UnitSyncDirectory;
-                var settingsPath = Path.Combine(paths.UnitSyncDirectory, "springsettings.cfg");
-                File.WriteAllText(settingsPath, $"SpringData={paths.DataDirectoriesJoined}\n");
+                Environment.CurrentDirectory = unitSyncPath;
+                var settingsPath = Path.Combine(unitSyncPath, "springsettings.cfg");
+                File.WriteAllText(settingsPath, $"SpringData={paths.GetJoinedDataDirectoriesWithEngine(engine)}\n");
                 if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed. " + NativeMethods.GetNextError());
 
                 Version = NativeMethods.GetSpringVersion();

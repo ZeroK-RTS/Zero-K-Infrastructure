@@ -159,7 +159,7 @@ namespace ZeroKLobby.Notifications
                     Program.Downloader.GetResource(DownloadType.MAP, battle.MapName);
                     Program.Downloader.GetResource(DownloadType.MOD, battle.ModName);
                     engineVersionNeeded = battle.EngineVersion;
-                    if (engineVersionNeeded != Program.SpringPaths.SpringVersion) Program.Downloader.GetAndSwitchEngine(engineVersionNeeded);
+                    if (!Program.SpringPaths.GetEngineList().Contains(engineVersionNeeded)) Program.Downloader.GetAndSwitchEngine(engineVersionNeeded);
                     else engineVersionNeeded = null;
 
                     if (gameBox.Image != null) gameBox.Image.Dispose();
@@ -197,7 +197,7 @@ namespace ZeroKLobby.Notifications
                         if (Utils.VerifySpringInstalled())
                         {
                             if (spring.IsRunning) spring.ExitGame();
-                            lastScript = spring.ConnectGame(e.Ip, e.Port, client.UserName, client.MyBattle.Users[client.UserName].ScriptPassword);
+                            lastScript = spring.ConnectGame(e.Ip, e.Port, client.UserName, e.ScriptPassword, e.Engine);
                                 //use MT tag when in spectator slot
                         }
                     }
@@ -468,7 +468,7 @@ namespace ZeroKLobby.Notifications
             {
                 var battle = client.MyBattle;
                 return Program.SpringScanner.HasResource(battle.MapName) && Program.SpringScanner.HasResource(battle.ModName) &&
-                       (engineVersionNeeded == null || Program.SpringPaths.SpringVersion == engineVersionNeeded);
+                       (engineVersionNeeded == null || Program.SpringPaths.GetEngineList().Contains(engineVersionNeeded));
             }
             else return false;
         }
