@@ -461,21 +461,10 @@ namespace LobbyClient
 
         Login.ClientTypes clientType = LobbyClient.Login.ClientTypes.ZeroKLobby | (Environment.OSVersion.Platform == PlatformID.Unix ? LobbyClient.Login.ClientTypes.Linux : 0);
 
-        public Task OpenBattle(Battle nbattle)
+        public Task OpenBattle(BattleHeader header)
         {
             if (MyBattle != null) LeaveBattle();
-
-            return SendCommand(new OpenBattle() {
-                Header =
-                    new BattleHeader() {
-                        Engine = nbattle.EngineVersion,
-                        Game = nbattle.ModName,
-                        Map = nbattle.MapName,
-                        Password = nbattle.Password,
-                        MaxPlayers = nbattle.MaxPlayers,
-                        Title = nbattle.Title
-                    }
-            });
+            return SendCommand(new OpenBattle() {Header = header});
         }
 
 

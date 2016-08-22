@@ -33,10 +33,12 @@ namespace ZeroKLobby.MicroLobby
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HostDialog));
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.battleTitleBox = new ZklTextBox();
-            this.passwordBox = new ZklTextBox();
+            this.battleTitleBox = new ZeroKLobby.Controls.ZklTextBox();
+            this.passwordBox = new ZeroKLobby.Controls.ZklTextBox();
             this.okButton = new ZeroKLobby.BitmapButton();
             this.cancelButton = new ZeroKLobby.BitmapButton();
+            this.label3 = new System.Windows.Forms.Label();
+            this.cbType = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // label1
@@ -65,18 +67,22 @@ namespace ZeroKLobby.MicroLobby
             // 
             this.battleTitleBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.battleTitleBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(30)))), ((int)(((byte)(40)))));
+            this.battleTitleBox.ForeColor = System.Drawing.Color.White;
             this.battleTitleBox.Location = new System.Drawing.Point(169, 19);
             this.battleTitleBox.Name = "battleTitleBox";
-            this.battleTitleBox.Size = new System.Drawing.Size(292, 24);
+            this.battleTitleBox.Size = new System.Drawing.Size(299, 24);
             this.battleTitleBox.TabIndex = 3;
             // 
             // passwordBox
             // 
             this.passwordBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.passwordBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(30)))), ((int)(((byte)(40)))));
+            this.passwordBox.ForeColor = System.Drawing.Color.White;
             this.passwordBox.Location = new System.Drawing.Point(169, 45);
             this.passwordBox.Name = "passwordBox";
-            this.passwordBox.Size = new System.Drawing.Size(292, 24);
+            this.passwordBox.Size = new System.Drawing.Size(299, 24);
             this.passwordBox.TabIndex = 4;
             // 
             // okButton
@@ -90,7 +96,7 @@ namespace ZeroKLobby.MicroLobby
             this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.okButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.okButton.ForeColor = System.Drawing.Color.White;
-            this.okButton.Location = new System.Drawing.Point(80, 82);
+            this.okButton.Location = new System.Drawing.Point(87, 120);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(115, 43);
             this.okButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
@@ -110,13 +116,33 @@ namespace ZeroKLobby.MicroLobby
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cancelButton.ForeColor = System.Drawing.Color.White;
-            this.cancelButton.Location = new System.Drawing.Point(316, 82);
+            this.cancelButton.Location = new System.Drawing.Point(323, 120);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(109, 41);
             this.cancelButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.cancelButton.TabIndex = 9;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.BackColor = System.Drawing.Color.Transparent;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(16, 80);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(77, 17);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "Game type";
+            // 
+            // cbType
+            // 
+            this.cbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbType.FormattingEnabled = true;
+            this.cbType.Location = new System.Drawing.Point(169, 75);
+            this.cbType.Name = "cbType";
+            this.cbType.Size = new System.Drawing.Size(299, 26);
+            this.cbType.TabIndex = 11;
             // 
             // HostDialog
             // 
@@ -125,7 +151,9 @@ namespace ZeroKLobby.MicroLobby
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(525, 137);
+            this.ClientSize = new System.Drawing.Size(532, 175);
+            this.Controls.Add(this.cbType);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.passwordBox);
@@ -149,5 +177,7 @@ namespace ZeroKLobby.MicroLobby
         private ZklTextBox passwordBox;
         private BitmapButton okButton;
         private BitmapButton cancelButton;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox cbType;
     }
 }

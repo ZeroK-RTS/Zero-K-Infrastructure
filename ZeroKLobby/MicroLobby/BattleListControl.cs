@@ -134,7 +134,7 @@ namespace ZeroKLobby.MicroLobby
 
                 ActionHandler.StopBattle();
 
-                ActionHandler.SpawnAutohost(dialog.GameRapidTag, dialog.BattleTitle, dialog.Password, null);
+                ActionHandler.SpawnAutohost(title: dialog.BattleTitle, password:dialog.Password, mode: dialog.Mode);
             }
         }
 

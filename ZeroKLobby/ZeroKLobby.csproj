@@ -328,7 +328,6 @@
     <Compile Include="MicroLobby\SettingsTab.Designer.cs">
       <DependentUpon>SettingsTab.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\SpringieCommand.cs" />
     <Compile Include="MicroLobby\TextImage.cs" />
     <Compile Include="MicroLobby\ModOptionsControl.cs">
       <SubType>UserControl</SubType>

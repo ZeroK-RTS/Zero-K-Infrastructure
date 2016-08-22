@@ -39,8 +39,14 @@ namespace Fixer
             tas.UserAdded += (sender, args) => {
                 if (args.Name == name) {
                     tas.JoinChannel("bots");
-                    if (num%16 == 0)
-                        tas.OpenBattle(new Battle("91.0", null, 4955, 16, "SmallDivide", "Test " + ord,"Zero-K v1.3.1.15"));
+                    if (num%16 == 0) tas.OpenBattle(new BattleHeader()
+                    {
+                        Engine = "91.0",
+                        Game  = "Zero-K v1.3.1.15",
+                        Title = "test" + ord,
+                        Map = "SmallDivide",
+                        MaxPlayers = 16,
+                    });
                     else {
                         var bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Title == batname);
                         if (bat != null) tas.JoinBattle(bat.BattleID);
