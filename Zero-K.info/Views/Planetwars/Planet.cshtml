@@ -53,10 +53,10 @@
 @if (autohost != null) { 
 	<b>
 		@if (autohost.IsInGame) {
-			<a href="@Html.PrintSpringLink("@join_player:"+autohost.Founder)">
+			<a href="@Html.PrintSpringLink("@join_player:"+autohost.FounderName)">
 				Battle in progress, JOIN TO WATCH</a>
 	} else {
-			<a href="@Html.PrintSpringLink("@join_player:"+autohost.Founder)">
+			<a href="@Html.PrintSpringLink("@join_player:"+autohost.FounderName)">
 				Battle has @autohost.Users.Count players waiting, JOIN IT</a>
 	}
 	</b>

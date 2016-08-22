@@ -19,14 +19,10 @@ namespace LobbyClient
         public int BattleID { get; set; }
         public ConcurrentDictionary<string, BotBattleStatus> Bots { get; set; }
 
-        public User Founder
-        {
-            get { return getUser(FounderName); }
-        }
         public string FounderName { get; private set; }
 
 
-        public bool IsInGame { get { return Founder.IsInGame; } }
+        public bool IsInGame => RunningSince != null;
         public bool IsMission { get { return false; } }
         public bool IsPassworded { get { return !string.IsNullOrEmpty(Password); } }
 
@@ -47,14 +43,13 @@ namespace LobbyClient
         public string Title { get; set; }
         public AutohostMode Mode { get; set; }
 
+        public DateTime? RunningSince { get; set; }
+
 
         public ConcurrentDictionary<string, UserBattleStatus> Users { get; set; }
 
 
-        public bool IsSpringieManaged
-        {
-            get { return Founder != null && Founder.ClientType == Login.ClientTypes.SpringieManaged; }
-        }
+        public bool IsSpringieManaged => Mode != AutohostMode.None;
 
         public bool IsQueue
         {
@@ -81,12 +76,10 @@ namespace LobbyClient
             Users = new ConcurrentDictionary<string, UserBattleStatus>();
         }
 
-        Func<string, User> getUser;
+       
         
-        
-        public virtual void UpdateWith(BattleHeader h, Func<string, User> getUser)
+        public virtual void UpdateWith(BattleHeader h)
         {
-            this.getUser = getUser;
             if (h.BattleID != null) BattleID = h.BattleID.Value;
             if (h.Founder != null) FounderName = h.Founder;
             if (h.MaxPlayers != null) MaxPlayers = h.MaxPlayers.Value;
@@ -97,6 +90,8 @@ namespace LobbyClient
             if (h.Game != null) ModName = h.Game;
             if (h.SpectatorCount != null) SpectatorCount = h.SpectatorCount.Value;
             if (h.Mode != null) Mode = h.Mode.Value;
+            //if (h.Running != null) IsInGame = h.Running.Value;
+            if (h.RunningSince != null) RunningSince = h.RunningSince;
         }
 
         public virtual BattleHeader GetHeader()
@@ -107,13 +102,15 @@ namespace LobbyClient
                 BattleID = b.BattleID,
                 Engine = b.EngineVersion,
                 Game = b.ModName,
-                Founder = b.Founder.Name,
+                Founder = b.FounderName,
                 Map = b.MapName,
                 Title = b.Title,
                 SpectatorCount = b.SpectatorCount,
                 MaxPlayers = b.MaxPlayers,
                 Password = b.Password != null ? "?" : null,
                 Mode = b.Mode,
+                //Running = b.IsInGame,
+                RunningSince = b.IsInGame ? b.RunningSince : null
             };
         }
 

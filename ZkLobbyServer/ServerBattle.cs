@@ -107,9 +107,11 @@ namespace ZkLobbyServer
         }
 
 
-        public override void UpdateWith(BattleHeader h, Func<string, User> getUser)
+        public override void UpdateWith(BattleHeader h)
         {
-            base.UpdateWith(h, getUser);
+            base.UpdateWith(h);
+            IsInGame = false;// todo hook to spring
+            RunningSince = null; 
             FillDetails();
         }
 

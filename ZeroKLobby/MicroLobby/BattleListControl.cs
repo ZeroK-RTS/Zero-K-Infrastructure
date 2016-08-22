@@ -150,7 +150,7 @@ namespace ZeroKLobby.MicroLobby
                     if (battle.IsPassworded)
                     {
                         // hack dialog Program.FormMain
-                        using (var form = new AskBattlePasswordForm(battle.Founder.Name)) if (form.ShowDialog() == DialogResult.OK) ActionHandler.JoinBattle(battle.BattleID, form.Password);
+                        using (var form = new AskBattlePasswordForm(battle.FounderName)) if (form.ShowDialog() == DialogResult.OK) ActionHandler.JoinBattle(battle.BattleID, form.Password);
                     } else 
                     {
                         ActionHandler.JoinBattle(battle.BattleID, null);    

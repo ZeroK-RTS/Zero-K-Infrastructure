@@ -123,11 +123,11 @@ namespace ZeroKWeb
 
             Battle emptyHost =
                 tas.ExistingBattles.Values.FirstOrDefault(
-                    x => !x.IsInGame && x.Founder.Name.TrimNumbers() == pwHostName && x.Users.Values.All(y => y.IsSpectator || y.Name == x.Founder.Name));
+                    x => !x.IsInGame && x.FounderName.TrimNumbers() == pwHostName && x.Users.Values.All(y => y.IsSpectator || y.Name == x.FounderName));
 
             if (emptyHost != null)
             {
-                var targetHost = emptyHost.Founder.Name;
+                var targetHost = emptyHost.FounderName;
                 RunningBattles[targetHost] = Challenge;
 
                 tas.Say(SayPlace.User, targetHost, "!map " + Challenge.Map, false);
@@ -137,7 +137,7 @@ namespace ZeroKWeb
 
                 // move spectators to battle
                 var pwSpec = FindPwSpecHost();
-                var bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == pwSpec);
+                var bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.FounderName == pwSpec);
                 if (bat != null)
                 {
                     foreach (var b in bat.Users.Values.Where(x => x.Name != pwSpec)) tas.ForceJoinBattle(b.Name, targetHost);
@@ -543,7 +543,7 @@ namespace ZeroKWeb
 
         public string FindPwSpecHost()
         {
-            return tas.ExistingBattles.Values.Select(x => x.Founder.Name).FirstOrDefault(x => x.StartsWith("PlanetWarsSpec"));
+            return tas.ExistingBattles.Values.Select(x => x.FounderName).FirstOrDefault(x => x.StartsWith("PlanetWarsSpec"));
         }
 
         public void RemoveFromRunningBattles(string autohostName)
@@ -553,8 +553,8 @@ namespace ZeroKWeb
             // move spectators out from battle
             var pwSpec = FindPwSpecHost();
 
-            var bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == autohostName);
-            if (bat != null && tas.ExistingBattles.Values.Any(x => x.Founder.Name == pwSpec))
+            var bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.FounderName == autohostName);
+            if (bat != null && tas.ExistingBattles.Values.Any(x => x.FounderName == pwSpec))
             {
                 foreach (var b in bat.Users.Keys.Where(x => x != autohostName)) tas.ForceJoinBattle(b, pwSpec);
             }

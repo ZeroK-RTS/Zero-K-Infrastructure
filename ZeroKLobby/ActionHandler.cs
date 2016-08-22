@@ -117,7 +117,7 @@ namespace ZeroKLobby
                     string password = null;
                     // this could possibly use braces, but I'm crazy
                     if (bat.IsPassworded)
-                        using (var form = new AskBattlePasswordForm(bat.Founder.Name))
+                        using (var form = new AskBattlePasswordForm(bat.FounderName))
                             if (form.ShowDialog() == DialogResult.OK)
                                 password = form.Password;
 

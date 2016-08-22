@@ -132,9 +132,9 @@ namespace ZeroKLobby.Notifications
                     
                     //client.ChangeMyUserStatus(false, false);
                     var battle = client.MyBattle;
-                    lastBattleFounder = battle.Founder.Name;
+                    lastBattleFounder = battle.FounderName;
 
-                    if (battle.Founder.Name.StartsWith("PlanetWars") || battle.Founder.Name.StartsWith("Zk")) ChangeDesiredSpectatorState(false); // TODO pw unpsec hack, remove later
+                    if (battle.FounderName.StartsWith("PlanetWars") || battle.FounderName.StartsWith("Zk")) ChangeDesiredSpectatorState(false); // TODO pw unpsec hack, remove later
 
                     if (battle.IsQueue)
                     {
@@ -241,7 +241,7 @@ namespace ZeroKLobby.Notifications
                             }
                             else if (client.IsLoggedIn && client.MyBattle == null)
                             {
-                                var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == lastBattleFounder && !x.IsPassworded);
+                                var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.FounderName == lastBattleFounder && !x.IsPassworded);
                                 if (bat != null)
                                 {
                                     ActionHandler.JoinBattle(bat.BattleID, null);
@@ -265,7 +265,7 @@ namespace ZeroKLobby.Notifications
             // process special queue message to display in label
             client.Said += (s, e) =>
             {
-                if (e.Place == SayPlace.Battle && client.MyBattle != null && client.MyBattle.Founder.Name == e.UserName && e.Text.StartsWith("Queue"))
+                if (e.Place == SayPlace.Battle && client.MyBattle != null && client.MyBattle.FounderName == e.UserName && e.Text.StartsWith("Queue"))
                 {
                     var t = e.Text.Substring(6);
                     queueLabelFormatter = Regex.Replace(t,
@@ -368,7 +368,7 @@ namespace ZeroKLobby.Notifications
             if (tas.MyBattle != null)
             {
                 Battle battle;
-                if (tas.ExistingBattles.TryGetValue(battleID, out battle)) tas.Say(SayPlace.Battle, "", string.Format("Going to {0} zk://@join_player:{1}", battle.Title, battle.Founder.Name), true);
+                if (tas.ExistingBattles.TryGetValue(battleID, out battle)) tas.Say(SayPlace.Battle, "", string.Format("Going to {0} zk://@join_player:{1}", battle.Title, battle.FounderName), true);
                 tas.LeaveBattle();
             }
             if (!string.IsNullOrEmpty(password)) Program.TasClient.JoinBattle(battleID, password);

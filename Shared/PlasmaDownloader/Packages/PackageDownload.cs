@@ -20,10 +20,7 @@ namespace PlasmaDownloader.Packages
 	{
 		long doneAll;
 		readonly WebDownload fileListWebGet = new WebDownload();
-		//readonly SpringPaths paths;
-		//readonly Pool pool;
 		string tempFilelist = "";
-		//readonly string urlRoot;
 	    private PlasmaDownloader downloader;
 	    private SpringPaths paths;
 	    private string urlRoot;

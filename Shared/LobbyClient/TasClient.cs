@@ -495,7 +495,7 @@ namespace LobbyClient
 
 
         public async Task ForceJoinBattle(string name, string battleHostName) {
-            var battle = ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == battleHostName);
+            var battle = ExistingBattles.Values.FirstOrDefault(x => x.FounderName == battleHostName);
             if (battle != null) await ForceJoinBattle(name, battle.BattleID);
         }
 
@@ -620,20 +620,12 @@ namespace LobbyClient
             }
         }
 
-        User UserGetter(string n)
-        {
-            User us;
-            if (existingUsers.TryGetValue(n, out us)) return us;
-            else return new User() { Name = n };
-        }
-
-
         async Task Process(BattleAdded bat)
         {
             var newBattle = new Battle();
-            newBattle.UpdateWith(bat.Header, UserGetter);
+            newBattle.UpdateWith(bat.Header);
             existingBattles[newBattle.BattleID] = newBattle;
-            newBattle.Founder.IsInBattleRoom = true;
+            //newBattle.Founder.IsInBattleRoom = true;
             
             BattleFound(this, newBattle);
         }
@@ -650,7 +642,7 @@ namespace LobbyClient
                 BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID, bat.ScriptPassword));
                 if (user.Name == UserName) {
                     MyBattle = battle;
-                    if (battle.Founder.Name == UserName) BattleOpened(this, battle);
+                    if (battle.FounderName == UserName) BattleOpened(this, battle);
                     BattleJoined(this, MyBattle);
                 }
             }
@@ -733,7 +725,7 @@ namespace LobbyClient
             if (old == null) UserAdded(this, user);
             if (old != null) {
                 var bat = MyBattle;
-                if (bat != null && bat.Founder.Name == user.Name)
+                if (bat != null && bat.FounderName == user.Name)
                 {
                     if (user.IsInGame && !old.IsInGame) MyBattleStarted(this,bat );
                     if (!user.IsInGame && old.IsInGame) MyBattleHostExited(this, bat);
@@ -865,7 +857,7 @@ namespace LobbyClient
             Battle bat;
             if (existingBattles.TryGetValue(h.BattleID.Value, out bat)) {
                 var org = bat.Clone();
-                bat.UpdateWith(h, UserGetter);
+                bat.UpdateWith(h);
                 var pair = new OldNewPair<Battle>(org, bat);
                 if (org.MapName != bat.MapName) {
                     if (bat == MyBattle) MyBattleMapChanged(this, pair);

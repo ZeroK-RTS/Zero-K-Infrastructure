@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using LobbyClient;
 using MaxMind.Db;
 using MaxMind.GeoIP2;
+using PlasmaShared;
 using ZkData;
 
 namespace ZkLobbyServer
@@ -90,7 +91,7 @@ namespace ZkLobbyServer
 
         public List<Battle> GetPlanetWarsBattles()
         {
-            return Battles.Values.Where(x => x.Founder.Name.StartsWith("PlanetWars")).Cast<Battle>().ToList();
+            return Battles.Values.Where(x => x.mode == AutohostMode.Planetwars).Cast<Battle>().ToList();
         }
 
         public Task GhostChanSay(string channelName, string text, bool isEmote = true, bool isRing = false)
