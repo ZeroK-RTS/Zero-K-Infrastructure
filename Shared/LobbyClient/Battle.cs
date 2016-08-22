@@ -42,7 +42,6 @@ namespace LobbyClient
         public string Password;
 
         public ConcurrentDictionary<int, BattleRect> Rectangles { get; set; }
-        public string EngineName = "spring";
         public string EngineVersion { get; set; }
         public int SpectatorCount { get; set; }
         public string Title { get; set; }
@@ -85,7 +84,7 @@ namespace LobbyClient
         Func<string, User> getUser;
         
         
-        public void UpdateWith(BattleHeader h, Func<string, User> getUser)
+        public virtual void UpdateWith(BattleHeader h, Func<string, User> getUser)
         {
             this.getUser = getUser;
             if (h.BattleID != null) BattleID = h.BattleID.Value;
@@ -98,6 +97,24 @@ namespace LobbyClient
             if (h.Game != null) ModName = h.Game;
             if (h.SpectatorCount != null) SpectatorCount = h.SpectatorCount.Value;
             if (h.Mode != null) Mode = h.Mode.Value;
+        }
+
+        public virtual BattleHeader GetHeader()
+        {
+            var b = this;
+            return new BattleHeader()
+            {
+                BattleID = b.BattleID,
+                Engine = b.EngineVersion,
+                Game = b.ModName,
+                Founder = b.Founder.Name,
+                Map = b.MapName,
+                Title = b.Title,
+                SpectatorCount = b.SpectatorCount,
+                MaxPlayers = b.MaxPlayers,
+                Password = b.Password != null ? "?" : null,
+                Mode = b.Mode,
+            };
         }
 
 

@@ -77,7 +77,7 @@ namespace ZeroKLobby.MicroLobby
                 
                 if(!Utils.VerifySpringInstalled())
                 {
-                	Program.Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride);
+                	Program.Downloader.GetEngine(GlobalConst.DefaultEngineOverride);
                 	this.Close();
                     return;
                 }

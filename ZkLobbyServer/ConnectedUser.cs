@@ -392,9 +392,10 @@ namespace ZkLobbyServer
             battle.Users[Name] = new UserBattleStatus(Name, User);
             state.Battles[battleID] = battle;
             MyBattle = battle;
+            
             h.Password = h.Password != null ? "?" : null; // dont send pw to client
             var clis = state.ConnectedUsers.Values.ToList();
-            await state.Broadcast(clis, new BattleAdded() { Header = h });
+            await state.Broadcast(clis, new BattleAdded() { Header = battle.GetHeader() });
             await state.Broadcast(clis, new JoinedBattle() { BattleID = battleID, User = Name });
         }
 

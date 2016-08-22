@@ -19,6 +19,10 @@ namespace ZkLobbyServer
 {
     public partial class ServerBattle:Battle
     {
+        private static PlasmaDownloader.PlasmaDownloader downloader;
+        private static SpringPaths springPaths;
+
+
         public const int PollTimeout = 60;
         public readonly CommandList Commands;
 
@@ -27,27 +31,26 @@ namespace ZkLobbyServer
         IVotable activePoll;
         Timer pollTimer;
 
-        //static Downloader
-
-
         public Mod hostedMod;
-        public int hostingPort { get; private set; }
         public Spring spring;
 
         public AutohostMode mode => this.Mode;
 
-        private SpringPaths springPaths;
+
+        static ServerBattle()
+        {
+            springPaths = new SpringPaths(GlobalConst.SpringieDataDir, false);
+            downloader = new PlasmaDownloader.PlasmaDownloader(null, springPaths);
+            downloader.PackageDownloader.SetMasterRefreshTimer(60);
+            downloader.PackageDownloader.LoadMasterAndVersions(false);
+            downloader.GetEngine(GlobalConst.DefaultEngineOverride);
+        }
 
         public ServerBattle(ZkLobbyServer server)
         {
             this.server = server;
             Commands = new CommandList();
-            this.hostingPort = hostingPort;
-
-            springPaths = new SpringPaths(GlobalConst.SpringieDataDir, false);
-
-
-
+           
             pollTimer = new Timer(PollTimeout * 1000);
             pollTimer.Enabled = false;
             pollTimer.AutoReset = false;
@@ -56,17 +59,18 @@ namespace ZkLobbyServer
 
             lastMapChange = DateTime.Now;
 
-     
             SetupSpring();
 
+            FillDetails();
         }
 
         public void FillDetails()
         {
             if (string.IsNullOrEmpty(Title)) Title = $"{FounderName}'s game";
-            if (string.IsNullOrEmpty(EngineName)) EngineName = server.Engine;
+            if (string.IsNullOrEmpty(EngineVersion)) EngineVersion = server.Engine;
+            downloader.GetEngine(server.Engine);
             
-
+            
             switch (Mode)
             {
                 case AutohostMode.Game1v1:
@@ -89,46 +93,26 @@ namespace ZkLobbyServer
                     break;
             }
 
-            
+            if (string.IsNullOrEmpty(ModName)) ModName = "zk:stable";
+            if (string.IsNullOrEmpty(MapName)) MapName = "SmallDivide";
+            ModName = downloader.PackageDownloader.GetByTag(ModName)?.InternalName ?? ModName; // resolve rapid
+             
 
-
-            //if (String.IsNullOrEmpty(modname)) modname = config.Mod;
-            //if (String.IsNullOrEmpty(mapname)) mapname = config.Map;
-
-           
-            // no mod was provided, auto update is on, check if newer version exists, if it does use that instead of config one
-            /*if (string.IsNullOrEmpty(modname) && !String.IsNullOrEmpty(config.AutoUpdateRapidTag))
-            {
-                var ver = Program.main.Downloader.PackageDownloader.GetByTag(config.AutoUpdateRapidTag);
-
-                if (ver != null && cache.GetResourceDataByInternalName(ver.InternalName) != null) modname = config.AutoUpdateRapidTag;
-            }
-
-            PackageDownloader.Version version = Program.main.Downloader.PackageDownloader.GetByTag(modname);
-            if (version != null && version.InternalName != null) modname = version.InternalName;
-
-            hostedMod = new Mod() { Name = modname };
+            /*hostedMod = new Mod() { Name = modname };
             cache.GetMod(modname, (m) => { hostedMod = m; }, (m) => { });
-            if (hostedMod.IsMission && !String.IsNullOrEmpty(hostedMod.MissionMap)) mapname = hostedMod.MissionMap;
+            if (hostedMod.IsMission && !String.IsNullOrEmpty(hostedMod.MissionMap)) mapname = hostedMod.MissionMap;*/
 
             //Map mapi = null;
             //cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
             //int mint, maxt;
-            if (!springPaths.HasEngineVersion(engine))
-            {
-                Program.main.Downloader.GetAndSwitchEngine(engine, springPaths);
-            }
-            else
-            {
-                springPaths.SetEnginePath(springPaths.GetEngineFolderByVersion(engine));
-            }
-
-            var b = new Battle(engine, password, hostingPort, maxPlayers, mapname, title, modname);
-            b.Ip = Program.main.Config.IpOverride;
-            tas.OpenBattle(b);*/
-
         }
 
+
+        public override void UpdateWith(BattleHeader h, Func<string, User> getUser)
+        {
+            base.UpdateWith(h, getUser);
+            FillDetails();
+        }
 
 
         void SetupSpring()

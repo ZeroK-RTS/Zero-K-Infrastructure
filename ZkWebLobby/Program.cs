@@ -74,7 +74,7 @@ namespace ZkWebLobby
 
 
             var downloader = new PlasmaDownloader.PlasmaDownloader(springScanner, springPaths); //rapid
-            downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride);
+            downloader.GetEngine(GlobalConst.DefaultEngineOverride);
 
             // ZKL's downloader doesn't send events to monitor download progress, so we have to poll it.
             Timer pollDownloads = new Timer();
@@ -101,7 +101,7 @@ namespace ZkWebLobby
                 {
                     // Don't let GetAndSwitchEngine() touch the main SpringPaths.
                     var path = new SpringPaths(springPaths.WritableDirectory);
-                    downloader.GetAndSwitchEngine(engine, path);
+                    downloader.GetEngine(engine);
                 });
             CefWrapper.RegisterApiFunction("downloadMod", (string game) => { downloader.GetResource(DownloadType.MOD, game); });
             CefWrapper.RegisterApiFunction("downloadMap", (string map) => { downloader.GetResource(DownloadType.MAP, map); });

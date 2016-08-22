@@ -55,7 +55,7 @@ namespace ZeroKLobby.Notifications
             var downDemo = Program.Downloader.GetResource(DownloadType.DEMO, demoUrl);
             if (downDemo != null) waitHandles.Add(downDemo.WaitHandle);
 
-            var downEngine = Program.Downloader.GetAndSwitchEngine(engineVersion);
+            var downEngine = Program.Downloader.GetEngine(engineVersion);
             if (downEngine != null) waitHandles.Add(downEngine.WaitHandle);
 
             ZkData.Utils.StartAsync(() =>

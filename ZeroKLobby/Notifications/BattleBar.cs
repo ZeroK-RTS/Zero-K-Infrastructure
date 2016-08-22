@@ -17,7 +17,6 @@ namespace ZeroKLobby.Notifications
     {
         readonly TasClient client;
         bool desiredSpectatorState = false;
-        string engineVersionNeeded;
 
         bool isVisible;
         string lastBattleFounder;
@@ -158,9 +157,7 @@ namespace ZeroKLobby.Notifications
 
                     Program.Downloader.GetResource(DownloadType.MAP, battle.MapName);
                     Program.Downloader.GetResource(DownloadType.MOD, battle.ModName);
-                    engineVersionNeeded = battle.EngineVersion;
-                    if (!Program.SpringPaths.GetEngineList().Contains(engineVersionNeeded)) Program.Downloader.GetAndSwitchEngine(engineVersionNeeded);
-                    else engineVersionNeeded = null;
+                    Program.Downloader.GetEngine(battle.EngineVersion);
 
                     if (gameBox.Image != null) gameBox.Image.Dispose();
                     CreateBattleIcon(Program.BattleIconManager.GetBattleIcon(battle.BattleID));
@@ -467,8 +464,7 @@ namespace ZeroKLobby.Notifications
             if (client != null && client.MyBattle != null)
             {
                 var battle = client.MyBattle;
-                return Program.SpringScanner.HasResource(battle.MapName) && Program.SpringScanner.HasResource(battle.ModName) &&
-                       (engineVersionNeeded == null || Program.SpringPaths.GetEngineList().Contains(engineVersionNeeded));
+                return Program.SpringScanner.HasResource(battle.MapName) && Program.SpringScanner.HasResource(battle.ModName) && Program.SpringPaths.HasEngineVersion(battle.EngineVersion);
             }
             else return false;
         }
