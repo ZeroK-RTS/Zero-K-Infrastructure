@@ -334,6 +334,7 @@ namespace LobbyClient
         public string Title;
         public string Founder;
         public AutohostMode? Mode;
+        public DateTime? RunningSince;
     }
 
     [Message(Origin.Server)]
