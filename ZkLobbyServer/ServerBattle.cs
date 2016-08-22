@@ -35,9 +35,6 @@ namespace ZkLobbyServer
         public Mod hostedMod;
         public Spring spring;
 
-        public AutohostMode mode => this.Mode;
-
-
         static ServerBattle()
         {
             springPaths = new SpringPaths(GlobalConst.SpringieDataDir, false);
@@ -96,22 +93,13 @@ namespace ZkLobbyServer
             ModName = downloader.PackageDownloader.GetByTag(ModName)?.InternalName ?? ModName; // resolve rapid
 
             if (string.IsNullOrEmpty(MapName)) MapName = MapPicker.GetRecommendedMap(GetContext())?.InternalName ?? "Small_Divide-Remake-v04";
-
-            /*hostedMod = new Mod() { Name = modname };
-            cache.GetMod(modname, (m) => { hostedMod = m; }, (m) => { });
-            if (hostedMod.IsMission && !String.IsNullOrEmpty(hostedMod.MissionMap)) mapname = hostedMod.MissionMap;*/
-
-            //Map mapi = null;
-            //cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
-            //int mint, maxt;
         }
 
 
         public override void UpdateWith(BattleHeader h)
         {
             base.UpdateWith(h);
-            IsInGame = false;// todo hook to spring
-            RunningSince = null; 
+            RunningSince = null;  // todo hook to spring
             FillDetails();
         }
 

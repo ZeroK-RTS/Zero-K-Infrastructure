@@ -342,7 +342,7 @@ namespace ZkLobbyServer
                 return;
             }
 
-            if (mode != AutohostMode.None)
+            if (this.Mode != AutohostMode.None)
             {
                 int allyno;
                 int alliances;
@@ -354,7 +354,7 @@ namespace ZkLobbyServer
             }
             else
             {
-                if (mode != AutohostMode.None)
+                if (this.Mode != AutohostMode.None)
                 {
                     if (!RunServerBalance(true, null, null))
                     {
@@ -497,7 +497,7 @@ namespace ZkLobbyServer
             try
             {
                 var context = GetContext();
-                context.mode = mode;
+                context.mode = Mode;
                 var balance = Balancer.BalanceTeams(context, isGameStart, allyTeams, clanWise);
                 ApplyBalanceResults(balance);
                 return balance.CanStart;

@@ -29,7 +29,7 @@ namespace ZkWebLobby
             TcpTransport connection = null;
 
             // speed up spring start
-            springPaths.SpringVersionChanged += (sender, eventArgs) =>
+            springPaths.SpringVersionChanged += (sender, engine) =>
             {
                 Utils.StartAsync(
                     () =>
@@ -37,7 +37,7 @@ namespace ZkWebLobby
                         UnitSync unitSync = null;
                         try
                         {
-                            unitSync = new UnitSync(springPaths); // initialize unitsync to avoid slowdowns when starting
+                            unitSync = new UnitSync(springPaths, engine); // initialize unitsync to avoid slowdowns when starting
 
                             if (unitSync.UnitsyncWritableFolder != springPaths.WritableDirectory)
                             {
