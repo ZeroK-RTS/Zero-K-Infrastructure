@@ -90,7 +90,7 @@ namespace LobbyClient
             if (h.BattleID != null) BattleID = h.BattleID.Value;
             if (h.Founder != null) FounderName = h.Founder;
             if (h.MaxPlayers != null) MaxPlayers = h.MaxPlayers.Value;
-            if (h.Password != null) Password = h.Password;
+            if (!string.IsNullOrEmpty(h.Password)) Password = h.Password;
             if (h.Engine != null) EngineVersion = h.Engine;
             if (h.Map != null) MapName = h.Map;
             if (h.Title != null) Title = h.Title;
@@ -161,7 +161,7 @@ namespace LobbyClient
         public BattleContext GetContext()
         {
             var ret = new BattleContext();
-            ret.AutohostName = Founder.Name;
+            ret.AutohostName = FounderName;
             ret.Map = MapName;
             ret.Mod = ModName;
             ret.Title = Title;

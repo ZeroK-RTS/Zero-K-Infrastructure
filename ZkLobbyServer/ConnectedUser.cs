@@ -647,16 +647,24 @@ namespace ZkLobbyServer
         public async Task Process(LinkSteam linkSteam)
         {
             await Task.Delay(2000); // steam is slow to get the ticket from client .. wont verify if its checked too soon
-            var steamID = state.SteamWebApi.WebValidateAuthToken(linkSteam.Token);
-            var info = state.SteamWebApi.WebGetPlayerInfo(steamID);
 
-            using (var db = new ZkDataContext())
+            try
             {
-                var acc = await db.Accounts.FindAsync(User.AccountID);
-                acc.SteamID = steamID;
-                acc.SteamName = info.personaname;
-                await db.SaveChangesAsync();
-                await state.PublishAccountUpdate(acc);
+                var steamID = state.SteamWebApi.WebValidateAuthToken(linkSteam.Token);
+                var info = state.SteamWebApi.WebGetPlayerInfo(steamID);
+
+                using (var db = new ZkDataContext())
+                {
+                    var acc = await db.Accounts.FindAsync(User.AccountID);
+                    acc.SteamID = steamID;
+                    acc.SteamName = info.personaname;
+                    await db.SaveChangesAsync();
+                    await state.PublishAccountUpdate(acc);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error linking steam: {0}" ,ex);
             }
         }
     }

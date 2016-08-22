@@ -10,6 +10,7 @@ using PlasmaShared;
 using Springie;
 using Springie.autohost;
 using Springie.autohost.Polls;
+using ZeroKWeb.SpringieInterface;
 using ZkData;
 using ZkData.UnitSyncLib;
 using Timer = System.Timers.Timer;
@@ -60,8 +61,6 @@ namespace ZkLobbyServer
             lastMapChange = DateTime.Now;
 
             SetupSpring();
-
-            FillDetails();
         }
 
         public void FillDetails()
@@ -94,9 +93,9 @@ namespace ZkLobbyServer
             }
 
             if (string.IsNullOrEmpty(ModName)) ModName = "zk:stable";
-            if (string.IsNullOrEmpty(MapName)) MapName = "SmallDivide";
             ModName = downloader.PackageDownloader.GetByTag(ModName)?.InternalName ?? ModName; // resolve rapid
-             
+
+            if (string.IsNullOrEmpty(MapName)) MapName = MapPicker.GetRecommendedMap(GetContext())?.InternalName ?? "Small_Divide-Remake-v04";
 
             /*hostedMod = new Mod() { Name = modname };
             cache.GetMod(modname, (m) => { hostedMod = m; }, (m) => { });
