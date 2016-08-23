@@ -38,14 +38,14 @@ namespace PlasmaShared.UnitSyncLib
                                 ArchivePath = v.path,
                                 Name = v.archivedata.name,
                                 Author = v.archivedata.author,
-                                Description = v.description,
+                                Description = v.archivedata.description,
                                 Mutator = v.mutator,
                                 ShortGame = v.shortgame,
                                 Game = v.game,
                                 ShortName = v.shortname,
                                 PrimaryModVersion = v.version,
                             };
-                            if (v.modtype != null) newEntry.ModType = v.modtype;
+                            if (v.archivedata.modtype != null) newEntry.ModType = v.archivedata.modtype;
                             if (v.checksum != null)
                             {
                                 uint temp;

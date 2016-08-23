@@ -71,7 +71,9 @@ namespace ZkData.UnitSyncLib
                 Trace.TraceInformation("UnitSync READ: {0}", string.Join(",", read));
                 Trace.TraceInformation("UnitSync WRITE: {0}", UnitsyncWritableFolder);
 
+
                 TraceErrors();
+
                 Trace.TraceInformation("UnitSync Initialized");
 
             }
@@ -121,29 +123,17 @@ namespace ZkData.UnitSyncLib
         public ResourceInfo GetResourceFromFileName(string filePath) {
             var archiveCache = new ArchiveCache(UnitsyncWritableFolder);
             var ae = archiveCache.Archives.FirstOrDefault(x => x.ArchiveName == Path.GetFileName(filePath));
+            
             if (ae == null) return null;
-            try
-            {
-                return GetMap(ae);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceWarning("Not a map: {0}" ,ex);
-            }
-            try
-            {
-                return GetMod(ae);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceWarning("Not a mod: {0}", ex);
-            }
+            if (ae.ModType == 1) return GetMod(ae);
+            if (ae.ModType == 3) return GetMap(ae);
             return ae;
         }
 
 
         private Map GetMapNoBitmaps(ResourceInfo ae) {
             NativeMethods.RemoveAllArchives();
+            NativeMethods.AddAllArchives(ae.Name);
             var mapInfo = GetMapInfo(ae, DefaultMapInfoVersion);
             var map = new Map(ae)
             {
@@ -176,7 +166,7 @@ namespace ZkData.UnitSyncLib
             NativeMethods.RemoveAllArchives();
             NativeMethods.GetPrimaryModCount(); // pre-requisite for the following calls
             NativeMethods.AddAllArchives(ae.Name);
-            var modIndex = NativeMethods.GetPrimaryModIndex(ae.Name);
+            //var modIndex = NativeMethods.GetPrimaryModIndex(ae.Name);
             string[] sides;
 
             var mod = new Mod(ae)

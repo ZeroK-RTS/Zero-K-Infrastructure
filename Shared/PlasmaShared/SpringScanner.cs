@@ -159,6 +159,8 @@ namespace ZkData
             Directory.CreateDirectory(springPaths.Cache);
             cachePath = Utils.MakePath(springPaths.Cache, "ScannerCache.json");
             Directory.CreateDirectory(Utils.MakePath(springPaths.Cache, "Resources"));
+
+            if (UseUnitSync) unitSync = new UnitSync(springPaths);
         }
 
         ~SpringScanner()
@@ -203,7 +205,6 @@ namespace ZkData
             }
             else
             {
-                VerifyUnitSync();
                 return unitSync?.GetArchiveEntryByInternalName(name) != null;
             }
         }
@@ -580,7 +581,6 @@ namespace ZkData
         void PerformUnitSyncOperation(WorkItem workItem)
         {
             Trace.TraceInformation("PerformUnitSyncOperation");
-            VerifyUnitSync();
 
             if (unitSync == null)
             {
@@ -590,7 +590,7 @@ namespace ZkData
             }
 
             var info = GetUnitSyncData(workItem.CacheItem.FileName);
-            UnInitUnitsync();
+            //UnInitUnitsync();
 
             if (info != null)
             {
@@ -736,40 +736,6 @@ namespace ZkData
             }
         }
 
-        /// <summary>VerifyUnitSync() check whether unitSync should be initialized and perform unitSync initialization.
-        /// </summary> 
-        public void VerifyUnitSync()
-        {
-            if (unitSyncReInitCounter >= UnitSyncReInitFrequency)
-            {
-                if (unitSync != null)
-                {
-                    try
-                    {
-                        unitSync.Dispose();
-                        unitSync = null;
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceWarning("Error disposing unitsync: {0}", ex);
-                    }
-
-                    unitSyncReInitCounter = 0;
-                }
-
-                if (unitSync == null)
-                {
-                    try
-                    {
-                        unitSync = new UnitSync(springPaths);
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceWarning("Error initializing unitsync: {0}", ex);
-                    }
-                }
-            }
-        }
 
 
         void HandleWatcherChange(object sender, FileSystemEventArgs e)
