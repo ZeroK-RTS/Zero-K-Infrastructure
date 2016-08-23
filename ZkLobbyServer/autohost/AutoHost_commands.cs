@@ -17,10 +17,6 @@ namespace ZkLobbyServer
     {
         public const int MaxMapListLength = 100; //400
 
-        List<string> engineListCache = new List<string>();
-        public const int engineListTimeout = 600; //hold existing enginelist for at least 10 minutes before re-check for update
-        DateTime engineListDate = new DateTime(0);
-
         readonly List<string> toNotify = new List<string>();
 
         public bool AllReadyAndSynced(out List<string> usname)
@@ -192,7 +188,8 @@ namespace ZkLobbyServer
             var map = words.Length > 0 ? MapPicker.FindResources(ResourceType.Map, words).FirstOrDefault() : MapPicker.GetRecommendedMap(GetContext());
             if (map != null)
             {
-                await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = map.InternalName } });
+                UpdateWith(new BattleHeader() {Map = map.InternalName});
+                await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = MapName} });
 
                 await SayBattle("changing map to " + map.InternalName);
             }
@@ -234,11 +231,12 @@ namespace ZkLobbyServer
             var mod = MapPicker.FindResources(ResourceType.Mod, words).FirstOrDefault();
             if (mod != null)
             {
-                await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Game = mod.InternalName } });
+                UpdateWith(new BattleHeader() {Game = mod.InternalName});
+                await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Game = ModName }});
 
                 await SayBattle("changing map to " + mod.InternalName);
             }
-            else await Respond(e, "Cannot find such map.");
+            else await Respond(e, "Cannot find such mod.");
         }
 
         public void ComResetOptions(Say e, string[] words)
@@ -570,43 +568,24 @@ namespace ZkLobbyServer
         }
 
 
-        void ComSetEngine(Say e, string[] words)
+        async Task ComSetEngine(Say e, string[] words)
         {
-            throw new NotImplementedException();
-            /*
-            if (words.Length != 1)
+            var engine = string.Join(" ", words);
+            if (!springPaths.HasEngineVersion(engine))
             {
-                Respond(e, "Specify engine version");
-                return;
-            }
-            else
-            {
-                string partVersion = words[0];
-                string specificVer = null;
-                ZkData.Utils.SafeThread(() =>
+                var serv = GlobalConst.GetContentService(); // TODO this can be done directly, we are in server
+                if (!serv.GetEngineList(null).Any(x=>x == engine))
                 {
-                    specificVer = engineListCache.Find(x => x.StartsWith(partVersion));
-                    if (specificVer == null && DateTime.Now.Subtract(engineListDate).TotalSeconds > engineListTimeout) //no result & old list
-                    {
-                        engineListCache = PlasmaDownloader.EngineDownload.GetEngineList(); //get entire list online
-                        engineListDate = DateTime.Now;
-                        specificVer = engineListCache.Find(x => x.StartsWith(partVersion));
-                    }
-                    if (specificVer == null) //still no result
-                    {
-                        Respond(e, "No such engine version");
-                        return;
-                    }
-                    requestedEngineChange = specificVer; //in autohost.cs
-                    Respond(e, "Preparing engine change to " + specificVer);
-                    var springCheck = Program.main.Downloader.GetAndSwitchEngine(specificVer, springPaths);//will trigger springPaths.SpringVersionChanged event
-                    if (springCheck == null) ; //Respond(e, "Engine available");
-                    else
-                        Respond(e, "Downloading engine. " + springCheck.IndividualProgress + "%");
-
+                    await Respond(e, "Engine not found");
                     return;
-                }).Start();
-            }*/
+                }
+                downloader.GetEngine(engine);
+            }
+
+            UpdateWith(new BattleHeader() { Engine = engine });
+            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Engine = EngineVersion } });
+
+            await SayBattle("Engine changed to " + engine);
         }
 
 
