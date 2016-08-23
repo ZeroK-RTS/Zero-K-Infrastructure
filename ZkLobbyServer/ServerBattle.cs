@@ -67,7 +67,7 @@ namespace ZkLobbyServer
 
         public void FillDetails()
         {
-            if (IsNullOrEmpty(Title)) Title = $"{FounderName}'s game";
+            if (IsNullOrEmpty(Title)) Title = $"{FounderName}'s " + Mode.Description();
             if (IsNullOrEmpty(EngineVersion)) EngineVersion = server.Engine;
             downloader.GetEngine(server.Engine);
             
@@ -293,7 +293,7 @@ namespace ZkLobbyServer
 
            
                 case "ring":
-                    ComRing(e, words);
+                    await ComRing(e, words);
                     break;
 
                 case "kick":
@@ -355,7 +355,7 @@ namespace ZkLobbyServer
                     break;
 
                 case "rehost":
-                    ComRehost(e, words);
+                    await ComRehost(e, words);
                     break;
 
 
@@ -408,14 +408,14 @@ namespace ZkLobbyServer
                     if (spring.IsRunning)
                     {
                         spring.SayGame("/cheat");
-                        SayBattle("Cheats!");
+                        await SayBattle("Cheats!");
                     }
-                    else Respond(e, "Cannot set cheats, game not running");
+                    else await Respond(e, "Cannot set cheats, game not running");
                     break;
 
                 case "hostsay":
                     if (spring.IsRunning) spring.SayGame(Utils.Glue(words));
-                    else Respond(e, "Game not running");
+                    else await Respond(e, "Game not running");
                     break;
 
                 case "listoptions":
@@ -431,7 +431,7 @@ namespace ZkLobbyServer
                     break;
 
                 case "setengine":
-                    ComSetEngine(e, words);
+                    await ComSetEngine(e, words);
                     break;
 
                 case "transmit":

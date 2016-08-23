@@ -30,7 +30,7 @@ namespace ZeroKLobby.MicroLobby
 
             cbType.SelectedIndex = 0;
 
-            battleTitleBox.Text = Program.TasClient.UserName + "'s Battle";
+            battleTitleBox.Text = Program.TasClient.UserName + "'s " + cbType.SelectedItem;
 
             if (Program.Conf.HasHosted)
             {
@@ -65,6 +65,9 @@ namespace ZeroKLobby.MicroLobby
             FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, DisplayRectangle, FrameBorderRenderer.StyleType.Shraka);
         }
 
-
+        private void cbType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            battleTitleBox.Text = Program.TasClient.UserName + "'s " + cbType.SelectedItem;
+        }
     }
 }
