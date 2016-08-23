@@ -4,9 +4,9 @@ namespace Springie.autohost.Polls
 {
     public interface IVotable
     {
-        bool Setup(TasSayEventArgs e, string[] words);
+        bool Setup(Say e, string[] words);
         void End();
-        bool Vote(TasSayEventArgs e, bool vote);
+        bool Vote(Say e, bool vote);
         string Creator { get; }
     }
 }

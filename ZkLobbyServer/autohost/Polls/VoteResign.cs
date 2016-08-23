@@ -13,7 +13,7 @@ namespace Springie.autohost.Polls
         PlayerTeam voteStarter;
         public VoteResign(Spring spring, ServerBattle ah): base(spring, ah) {}
 
-        protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount) {
+        protected override bool PerformInit(Say e, string[] words, out string question, out int winCount) {
             if (spring.IsRunning)
             {
                 context = spring.StartContext;
@@ -26,7 +26,7 @@ namespace Springie.autohost.Polls
                     return false;
                 }
 
-                voteStarter = context.Players.FirstOrDefault(x => x.Name == e.UserName && !x.IsSpectator);
+                voteStarter = context.Players.FirstOrDefault(x => x.Name == e.User && !x.IsSpectator);
                 if (voteStarter != null)
                 {
                     question = string.Format("Resign team {0}?", voteStarter.AllyID + 1);
@@ -53,11 +53,11 @@ namespace Springie.autohost.Polls
             return false;
         }
 
-        protected override bool AllowVote(TasSayEventArgs e)
+        protected override bool AllowVote(Say e)
         {
             if (spring.IsRunning)
             {
-                var entry = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName);
+                var entry = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.User);
                 if (entry == null || entry.IsSpectator || entry.AllyID != voteStarter.AllyID)
                 {
                     ah.Respond(e, string.Format("Only team {0} can vote", voteStarter.AllyID + 1));

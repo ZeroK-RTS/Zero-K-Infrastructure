@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using LobbyClient;
 using PlasmaShared;
@@ -34,6 +35,8 @@ namespace ZkLobbyServer
 
         public Mod hostedMod;
         public Spring spring;
+
+        internal static Say defaultSay = new Say() { Place = SayPlace.Battle, User = "NightWatch"};
 
         static ServerBattle()
         {
@@ -138,34 +141,34 @@ namespace ZkLobbyServer
       }
     }*/
 
-        public bool GetUserAdminStatus(TasSayEventArgs e)
+        public bool GetUserAdminStatus(Say e)
         {
-            if (!server.ConnectedUsers.ContainsKey(e.UserName)) return false;
-            if (FounderName == e.UserName) return true;
-            return server.ConnectedUsers[e.UserName].User.IsAdmin;
+            if (!server.ConnectedUsers.ContainsKey(e.User)) return false;
+            if (FounderName == e.User) return true;
+            return server.ConnectedUsers[e.User].User.IsAdmin;
         }
 
-        public bool GetUserIsSpectator(TasSayEventArgs e)
+        public bool GetUserIsSpectator(Say e)
         {
             if (spring.IsRunning)
             {
-                PlayerTeam user = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName && !x.IsSpectator);
+                PlayerTeam user = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.User && !x.IsSpectator);
                 return ((user == null) || user.IsSpectator);
             }
             else
             {
-                return !Users.Values.Any(x => x.LobbyUser.Name == e.UserName && !x.IsSpectator);
+                return !Users.Values.Any(x => x.LobbyUser.Name == e.User && !x.IsSpectator);
             }
         }
 
-        public int GetUserLevel(TasSayEventArgs e)
+        public int GetUserLevel(Say e)
         {
-            if (!server.ConnectedUsers.ContainsKey(e.UserName))
+            if (!server.ConnectedUsers.ContainsKey(e.User))
             {
                 //Respond(e, string.Format("{0} please reconnect to lobby for right verification", e.UserName));
                 return 0; //1 is default, but we return 0 to avoid right abuse (by Disconnecting from Springie and say thru Spring)
             }
-            return GetUserLevel(e.UserName);
+            return GetUserLevel(e.User);
         }
 
         public int GetUserLevel(string name)
@@ -177,7 +180,7 @@ namespace ZkLobbyServer
         }
 
 
-        public bool HasRights(string command, TasSayEventArgs e, bool hideRightsMessage = false)
+        public bool HasRights(string command, Say e, bool hideRightsMessage = false)
         {
             foreach (CommandConfig c in Commands.Commands)
             {
@@ -227,7 +230,7 @@ namespace ZkLobbyServer
         }
 
 
-        public void RegisterVote(TasSayEventArgs e, bool vote)
+        public void RegisterVote(Say e, bool vote)
         {
             if (activePoll != null)
             {
@@ -240,36 +243,30 @@ namespace ZkLobbyServer
             else Respond(e, "There is no poll going on, start some first");
         }
 
-        public void Respond(TasSayEventArgs e, string text)
+
+        public Task Respond(Say e, string text)
         {
-            Respond(spring, e, text);
+            return Respond(spring, e, text);
         }
 
-        public void Respond(Spring spring, TasSayEventArgs e, string text)
+
+
+        public async Task Respond(Spring spring, Say e, string text)
         {
             var p = SayPlace.User;
-            bool emote = false;
-            if (e.Place == SayPlace.Battle)
+            bool emote = true;
+            if (e.Place == SayPlace.Battle && e.User != null && e.User != "NightWatch")
             {
                 p = SayPlace.BattlePrivate;
-                emote = true;
             }
             if (e.Place == SayPlace.Game && spring.IsRunning) spring.SayGame(text);
-            else this.server.GhostSay(new Say() { Place = SayPlace.Battle, AllowRelay = false, IsEmote = false, Ring = false, Target = null, Text = text });
-                
+            else await server.GhostSay(new Say() { Place = p, AllowRelay = false, IsEmote = emote, Ring = false, Target = null, Text = text, User=e.User }, BattleID);
+
         }
 
-        public void RunCommand(string text)
-        {
-            string[] allwords = text.Substring(1).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (allwords.Length < 1) return;
-            string com = allwords[0];
-            // remove first word (command)
-            string[] words = ZkData.Utils.ShiftArray(allwords, -1);
-            RunCommand(TasSayEventArgs.Default, com, words);
-        }
 
-        public void RunCommand(TasSayEventArgs e, string com, string[] words)
+
+        public async Task RunCommand(Say e, string com, string[] words)
         {
             switch (com)
             {
@@ -491,7 +488,7 @@ namespace ZkLobbyServer
 
 
 
-        public void StartVote(IVotable vote, TasSayEventArgs e, string[] words)
+        public void StartVote(IVotable vote, Say e, string[] words)
         {
             if (vote != null)
             {
@@ -515,11 +512,11 @@ namespace ZkLobbyServer
             StopVote();
         }
 
-        public void StopVote(TasSayEventArgs e = null)
+        public void StopVote(Say e = null)
         {
             if (e != null)
             {
-                string name = e.UserName;
+                string name = e.User;
                 if (name != null && activePoll != null && name != activePoll.Creator)
                 {
                     if (GetUserLevel(name) < GlobalConst.SpringieBossEffectiveRights)
@@ -610,7 +607,7 @@ namespace ZkLobbyServer
             toNotify.Clear();
             */
             //if (mode != AutohostMode.None && DateTime.Now.Subtract(spring.GameStarted).TotalMinutes > 5) ServerVerifyMap(true);
-            ComMap(TasSayEventArgs.Default);
+            ComMap(defaultSay);
         }
 
         void spring_SpringStarted(object sender, EventArgs e)
@@ -780,18 +777,18 @@ namespace ZkLobbyServer
             }
         }
 
-        void tas_Said(object sender, TasSayEventArgs e)
+
+        public async Task ProcessBattleSay(Say say)
         {
-            if (e.Place == SayPlace.MessageBox) Trace.TraceInformation("{0} server message: {1}", this, e.Text);
-
-            if (String.IsNullOrEmpty(e.UserName)) return;
-            if (e.Place == SayPlace.Battle &&  e.IsEmote == false && !server.ConnectedUsers[e.UserName].User.BanMute && !server.ConnectedUsers[e.UserName].User.BanSpecChat) spring.SayGame(string.Format("<{0}>{1}", e.UserName, e.Text));
-
+            ConnectedUser user;
+            server.ConnectedUsers.TryGetValue(say.User, out user);
+            if (say.Place == SayPlace.Battle && !say.IsEmote && user?.User.BanMute != true && user?.User.BanSpecChat != true) spring.SayGame(
+                $"<{say.User}>{say.Text}"); // relay to spring
+            
             // check if it's command
-            if (!e.IsEmote && e.Text.StartsWith("!"))
+            if (!say.IsEmote && say.Text?.Length > 1 && say.Text.StartsWith("!"))
             {
-                if (e.Text.Length < 2) return;
-                string[] allwords = e.Text.Substring(1).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] allwords = say.Text.Substring(1).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 if (allwords.Length < 1) return;
                 string com = allwords[0];
 
@@ -801,32 +798,26 @@ namespace ZkLobbyServer
                 string voteCom = "vote" + com;
                 bool hasVoteVersion = !com.StartsWith("vote") && Commands.Commands.Any(x => x.Name == voteCom);
 
-                if (!HasRights(com, e))
+                if (!HasRights(com, say))
                 {
                     if (hasVoteVersion)
                     {
                         com = voteCom;
-                        if (!HasRights(voteCom, e)) return;
+                        if (!HasRights(voteCom, say)) return;
                     }
                     else return;
                 }
 
 
-                if (e.Place == SayPlace.User)
+                if (say.Place == SayPlace.User)
                 {
                     if (com != "say" && com != "admins" && com != "help" && com != "helpall" && com != "springie" && com != "listoptions" &&
-                        com != "spawn" && com != "predict" && com != "notify" && com != "transmit" && com != "adduser") SayBattle(String.Format("{0} executed by {1}", com, e.UserName));
+                        com != "spawn" && com != "predict" && com != "notify" && com != "transmit" && com != "adduser") SayBattle(
+                            $"{com} executed by {say.User}");
                 }
 
-                RunCommand(e, com, words);
+                await RunCommand(say, com, words);
             }
-        }
-
-
-        public void ProcessBattleCommand(string text)
-        {
-
-
         }
 
         private void StartGame()

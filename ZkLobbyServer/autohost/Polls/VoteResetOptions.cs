@@ -11,7 +11,7 @@ namespace Springie.autohost.Polls
     {
         public VoteResetOptions(Spring spring, ServerBattle ah): base(spring, ah) {}
 
-        override protected bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount)
+        override protected bool PerformInit(Say e, string[] words, out string question, out int winCount)
         {
             winCount = 0;
             question = "Reset options?";
@@ -20,7 +20,7 @@ namespace Springie.autohost.Polls
 
         protected override void SuccessAction()
         {
-            ah.ComResetOptions(TasSayEventArgs.Default, new string[0]);
+            ah.ComResetOptions(ServerBattle.defaultSay, new string[0]);
         }
     }
 }

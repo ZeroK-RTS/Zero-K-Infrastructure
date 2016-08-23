@@ -16,7 +16,7 @@ namespace Springie.autohost.Polls
 
         public VoteMap(Spring spring, ServerBattle ah) : base(spring, ah) { }
 
-        protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount)
+        protected override bool PerformInit(Say e, string[] words, out string question, out int winCount)
         {
             winCount = 0;
             question = null;
@@ -54,11 +54,11 @@ namespace Springie.autohost.Polls
         {
             if (string.IsNullOrEmpty(map))
             {
-                ah.ComMap(TasSayEventArgs.Default, new string[] { });
+                ah.ComMap(ServerBattle.defaultSay, new string[] { });
             }
             else
             {
-                ah.ComMap(TasSayEventArgs.Default, new string[] { map });
+                ah.ComMap(ServerBattle.defaultSay, new string[] { map });
             }
         }
     }

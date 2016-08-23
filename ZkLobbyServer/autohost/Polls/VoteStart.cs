@@ -11,7 +11,7 @@ namespace Springie.autohost.Polls
         
         public VoteStart(Spring spring, ServerBattle ah): base(spring, ah) {}
 
-        protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount)
+        protected override bool PerformInit(Say e, string[] words, out string question, out int winCount)
         {
             winCount = 0;
             question = null;
@@ -53,10 +53,10 @@ namespace Springie.autohost.Polls
             }
         }
 
-        protected override bool AllowVote(TasSayEventArgs e)
+        protected override bool AllowVote(Say e)
         {
             UserBattleStatus entry;
-            ah.Users.TryGetValue(e.UserName, out entry);
+            ah.Users.TryGetValue(e.User, out entry);
             if (entry == null || entry.IsSpectator)
             {
                 ah.Respond(e, string.Format("Only players can vote"));
@@ -67,14 +67,14 @@ namespace Springie.autohost.Polls
 
         protected override void SuccessAction()
         {
-            ah.ComForceSpectatorAfk(TasSayEventArgs.Default, new string[]{});
+            ah.ComForceSpectatorAfk(ServerBattle.defaultSay, new string[]{});
             foreach (var user in ah.Users.Values.Where(x => !x.IsSpectator && (x.SyncStatus != SyncStatuses.Synced || x.LobbyUser.IsAway))) {
-                ah.ComForceSpectator(TasSayEventArgs.Default, new string[]{user.Name});
+                ah.ComForceSpectator(ServerBattle.defaultSay, new string[]{user.Name});
             }
             new Thread(()=>
                 {
                     Thread.Sleep(500); // sleep to register spectating        
-                    ah.ComStart(TasSayEventArgs.Default, new string[] { });
+                    ah.ComStart(ServerBattle.defaultSay, new string[] { });
                 }).Start();
         }
     }

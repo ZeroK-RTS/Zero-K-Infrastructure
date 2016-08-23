@@ -9,7 +9,7 @@ namespace Springie.autohost.Polls
 
         public VoteKick(Spring spring, ServerBattle ah) : base(spring, ah) { }
 
-        protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount)
+        protected override bool PerformInit(Say e, string[] words, out string question, out int winCount)
         {
             question = null;
             winCount = 0;
@@ -37,7 +37,7 @@ namespace Springie.autohost.Polls
 
         protected override void SuccessAction()
         {
-            ah.ComKick(TasSayEventArgs.Default, new[] { player });
+            ah.ComKick(ServerBattle.defaultSay, new[] { player });
         }
 
     }

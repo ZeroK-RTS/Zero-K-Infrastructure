@@ -9,7 +9,7 @@ namespace Springie.autohost.Polls
         public VoteForceStart(Spring spring, ServerBattle ah): base(spring, ah) {}
 
       
-        protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount) {
+        protected override bool PerformInit(Say e, string[] words, out string question, out int winCount) {
             winCount = 0;
             question = null;
             if (!spring.IsRunning)
@@ -25,10 +25,10 @@ namespace Springie.autohost.Polls
             }
         }
 
-        protected override bool AllowVote(TasSayEventArgs e)
+        protected override bool AllowVote(Say e)
         {
             UserBattleStatus entry;
-            ah.Users.TryGetValue(e.UserName, out entry);
+            ah.Users.TryGetValue(e.User, out entry);
             if (entry == null || entry.IsSpectator)
             {
                 ah.Respond(e, "Only players can vote");
@@ -39,7 +39,7 @@ namespace Springie.autohost.Polls
 
 
         protected override void SuccessAction() {
-            ah.ComForceStart(TasSayEventArgs.Default, new string[]{});
+            ah.ComForceStart(ServerBattle.defaultSay, new string[]{});
         }
     }
 }

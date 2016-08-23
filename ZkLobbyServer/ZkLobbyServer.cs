@@ -91,7 +91,7 @@ namespace ZkLobbyServer
 
         public List<Battle> GetPlanetWarsBattles()
         {
-            return Battles.Values.Where(x => x.mode == AutohostMode.Planetwars).Cast<Battle>().ToList();
+            return Battles.Values.Where(x => x.Mode == AutohostMode.Planetwars).Cast<Battle>().ToList();
         }
 
         public Task GhostChanSay(string channelName, string text, bool isEmote = true, bool isRing = false)
@@ -145,6 +145,10 @@ namespace ZkLobbyServer
                 case SayPlace.Battle:
                     ServerBattle battle;
                     if (Battles.TryGetValue(battleID.Value, out battle)) await Broadcast(battle.Users.Keys, say);
+                    break;
+                case SayPlace.BattlePrivate:
+                    ConnectedUser originUser;
+                    if (ConnectedUsers.TryGetValue(say.User, out originUser)) await originUser.SendCommand(say);
                     break;
             }
 

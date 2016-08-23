@@ -10,7 +10,7 @@ namespace Springie.autohost.Polls
         public VoteExit(Spring spring, ServerBattle ah): base(spring, ah) {}
         BattleContext context;
 
-        protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount) {
+        protected override bool PerformInit(Say e, string[] words, out string question, out int winCount) {
             winCount = 0;
             question = null;
             if (spring.IsRunning)
@@ -38,11 +38,11 @@ namespace Springie.autohost.Polls
             }
         }
 
-        protected override bool AllowVote(TasSayEventArgs e)
+        protected override bool AllowVote(Say e)
         {
             if (spring.IsRunning)
             {
-                var entry = context.Players.FirstOrDefault(x => x.Name == e.UserName);
+                var entry = context.Players.FirstOrDefault(x => x.Name == e.User);
                 if (entry == null || entry.IsSpectator)
                 {
                     ah.Respond(e, string.Format("You must be a player in the game"));
@@ -54,7 +54,7 @@ namespace Springie.autohost.Polls
         }
 
         protected override void SuccessAction() {
-            ah.ComExit(TasSayEventArgs.Default, new string[]{});
+            ah.ComExit(ServerBattle.defaultSay, new string[]{});
         }
     }
 }

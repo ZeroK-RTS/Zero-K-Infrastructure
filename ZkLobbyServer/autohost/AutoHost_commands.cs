@@ -100,7 +100,7 @@ namespace ZkLobbyServer
 
 
 
-        public void ComBalance(TasSayEventArgs e, string[] words)
+        public void ComBalance(Say e, string[] words)
         {
             var teamCount = 0;
             if (words.Length > 0) Int32.TryParse(words[0], out teamCount);
@@ -109,7 +109,7 @@ namespace ZkLobbyServer
         }
 
 
-        public void ComCBalance(TasSayEventArgs e, string[] words)
+        public void ComCBalance(Say e, string[] words)
         {
             var teamCount = 2;
             if (words.Length > 0) Int32.TryParse(words[0], out teamCount);
@@ -118,7 +118,7 @@ namespace ZkLobbyServer
         }
 
 
-        public void ComExit(TasSayEventArgs e, string[] words)
+        public void ComExit(Say e, string[] words)
         {
             if (spring.IsRunning) SayBattle("exiting game");
             else Respond(e, "cannot exit, not in game");
@@ -126,17 +126,17 @@ namespace ZkLobbyServer
         }
 
 
-        public void ComForce(TasSayEventArgs e, string[] words)
+        public void ComForce(Say e, string[] words)
         {
             if (spring.IsRunning)
             {
-                SayBattle("forcing game start by " + e.UserName);
+                SayBattle("forcing game start by " + e.User);
                 spring.ForceStart();
             }
             else Respond(e, "cannot force, game not started");
         }
 
-        public void ComForceSpectator(TasSayEventArgs e, string[] words)
+        public void ComForceSpectator(Say e, string[] words)
         {
             if (words.Length == 0)
             {
@@ -160,12 +160,12 @@ namespace ZkLobbyServer
             Respond(e, "Forcing " + usrlist[0] + " to spectator");
         }
 
-        public void ComForceSpectatorAfk(TasSayEventArgs e, string[] words)
+        public void ComForceSpectatorAfk(Say e, string[] words)
         {
             foreach (var u in Users.Values) if (!u.IsSpectator && u.LobbyUser.IsAway) ComForceSpectator(e, new[] { u.Name });
         }
 
-        public void ComForceStart(TasSayEventArgs e, string[] words)
+        public void ComForceStart(Say e, string[] words)
         {
             int allyno;
             int alliances;
@@ -189,7 +189,7 @@ namespace ZkLobbyServer
 
         public List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
 
-        public void ComKick(TasSayEventArgs e, string[] words)
+        public void ComKick(Say e, string[] words)
         {
             if (words.Length == 0)
             {
@@ -214,7 +214,7 @@ namespace ZkLobbyServer
         }
 
 
-        public void ComMap(TasSayEventArgs e, params string[] words)
+        public void ComMap(Say e, params string[] words)
         {
             if (spring.IsRunning)
             {
@@ -230,7 +230,7 @@ namespace ZkLobbyServer
             else Respond(e, "Cannot find such map.");
         }
 
-        public void ComMapRemote(TasSayEventArgs e, params string[] words)
+        public void ComMapRemote(Say e, params string[] words)
         {
             if (HasRights("map", e, true)) ComMap(e, words);
             else if (HasRights("votemap", e, true)) RunCommand(e, "votemap", words);
@@ -238,7 +238,7 @@ namespace ZkLobbyServer
         }
 
 
-        public void ComPredict(TasSayEventArgs e, string[] words)
+        public void ComPredict(Say e, string[] words)
         {
             var b = this;
             var grouping = b.Users.Values.Where(u => !u.IsSpectator).GroupBy(u => u.AllyNumber).ToList();
@@ -261,7 +261,7 @@ namespace ZkLobbyServer
         }
 
 
-        public void ComRehost(TasSayEventArgs e, string[] words)
+        public void ComRehost(Say e, string[] words)
         {
             throw new NotImplementedException();
             /*if (spring.IsRunning)
@@ -279,13 +279,13 @@ namespace ZkLobbyServer
             }*/
         }
 
-        public void ComResetOptions(TasSayEventArgs e, string[] words)
+        public void ComResetOptions(Say e, string[] words)
         {
             FounderUser.Process(new SetModOptions() { Options = new Dictionary<string, string>() });
             Respond(e, "Game options reset to defaults");
         }
 
-        public void ComRing(TasSayEventArgs e, string[] words)
+        public void ComRing(Say e, string[] words)
         {
             var usrlist = new List<string>();
 
@@ -309,7 +309,7 @@ namespace ZkLobbyServer
             var rang = "";
             foreach (var s in usrlist)
             {
-                FounderUser.Process(new Say() { User = e.UserName, Text = "wants your attention", IsEmote = true, Ring = true, Place = SayPlace.Battle});
+                FounderUser.Process(new Say() { User = e.User, Text = "wants your attention", IsEmote = true, Ring = true, Place = SayPlace.Battle});
                 rang += s + ", ";
             }
 
@@ -322,7 +322,7 @@ namespace ZkLobbyServer
 
 
 
-        public void ComStart(TasSayEventArgs e, string[] words)
+        public void ComStart(Say e, string[] words)
         {
             if (spring.IsRunning)
             {
@@ -445,7 +445,7 @@ namespace ZkLobbyServer
         }
 
 
-        public Dictionary<string, string> GetOptionsDictionary(TasSayEventArgs e, string[] words)
+        public Dictionary<string, string> GetOptionsDictionary(Say e, string[] words)
         {
             var s = Utils.Glue(words);
             var ret = new Dictionary<string, string>();
@@ -554,7 +554,7 @@ throw new NotImplementedException();
             }*/
         }
 
-        void ComHelp(TasSayEventArgs e, string[] words)
+        void ComHelp(Say e, string[] words)
         {
             var ulevel = GetUserLevel(e);
             Respond(e, "---");
@@ -564,7 +564,7 @@ throw new NotImplementedException();
 
 
 
-        void ComListMaps(TasSayEventArgs e, string[] words)
+        void ComListMaps(Say e, string[] words)
         {
             var maps = MapPicker.FindResources(ResourceType.Map, words).Take(MaxMapListLength).ToList();
             if (maps.Any())
@@ -576,7 +576,7 @@ throw new NotImplementedException();
             else Respond(e, "no such map found");
         }
 
-        void ComListMods(TasSayEventArgs e, string[] words)
+        void ComListMods(Say e, string[] words)
         {
             var mods = MapPicker.FindResources(ResourceType.Mod, words).Take(MaxMapListLength).ToList();
             if (mods.Any())
@@ -588,7 +588,7 @@ throw new NotImplementedException();
             else Respond(e, "no such mod found");
         }
 
-        void ComListOptions(TasSayEventArgs e, string[] words)
+        void ComListOptions(Say e, string[] words)
         {
             var mod = hostedMod;
             if (mod.Options.Length == 0) Respond(e, "this mod has no options");
@@ -596,14 +596,14 @@ throw new NotImplementedException();
         }
 
 
-        void ComNotify(TasSayEventArgs e, string[] words)
+        void ComNotify(Say e, string[] words)
         {
-            if (!toNotify.Contains(e.UserName)) toNotify.Add(e.UserName);
+            if (!toNotify.Contains(e.User)) toNotify.Add(e.User);
             Respond(e, "I will notify you when the game ends.");
         }
 
 
-        void ComSetEngine(TasSayEventArgs e, string[] words)
+        void ComSetEngine(Say e, string[] words)
         {
             throw new NotImplementedException();
             /*
@@ -643,7 +643,7 @@ throw new NotImplementedException();
         }
 
 
-        void ComSetGameTitle(TasSayEventArgs e, string[] words)
+        void ComSetGameTitle(Say e, string[] words)
         {
             throw new NotImplementedException();
             /*
@@ -655,7 +655,7 @@ throw new NotImplementedException();
             }*/
         }
 
-        void ComSetMaxPlayers(TasSayEventArgs e, string[] words)
+        void ComSetMaxPlayers(Say e, string[] words)
         {
             throw new NotImplementedException();
             /*
@@ -672,7 +672,7 @@ throw new NotImplementedException();
         }
 
 
-        void ComSetOption(TasSayEventArgs e, string[] words)
+        void ComSetOption(Say e, string[] words)
         {
             throw new NotImplementedException();
             /*
@@ -689,7 +689,7 @@ throw new NotImplementedException();
             }*/
         }
 
-        void ComSetPassword(TasSayEventArgs e, string[] words)
+        void ComSetPassword(Say e, string[] words)
         {
             throw new NotImplementedException();
             /*if (words.Length == 0)
@@ -704,14 +704,14 @@ throw new NotImplementedException();
             }*/
         }
 
-        void ComTransmit(TasSayEventArgs e, string[] words)
+        void ComTransmit(Say e, string[] words)
         {
             if (words.Length == 0)
             {
                 Respond(e, "This command needs 1 parameter (transmit text)");
                 return;
             }
-            if (spring.IsRunning) spring.SayGame(String.Format("[{0}]{1}", e.UserName, "!transmit " + Utils.Glue(words)));
+            if (spring.IsRunning) spring.SayGame(String.Format("[{0}]{1}", e.User, "!transmit " + Utils.Glue(words)));
         }
 
         int FilterUsers(string[] words, out string[] vals, out int[] indexes)
@@ -720,15 +720,10 @@ throw new NotImplementedException();
         }
 
 
-        void SayLines(TasSayEventArgs e, string what)
-        {
-            foreach (var line in what.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) Respond(e, line);
-        }
-
-        public void ComAddUser(TasSayEventArgs e, string[] words)
+        public void ComAddUser(Say e, string[] words)
         {
             if (words.Length != 1) Respond(e, "Specify password");
-            if (spring.IsRunning) spring.AddUser(e.UserName, words[0]);
+            if (spring.IsRunning) spring.AddUser(e.User, words[0]);
         }
 
     }

@@ -15,7 +15,7 @@ namespace Springie.autohost.Polls
 
         public VoteSetOptions(Spring spring, ServerBattle ah): base(spring, ah) {}
 
-        protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount) {
+        protected override bool PerformInit(Say e, string[] words, out string question, out int winCount) {
             winCount = 0;
             question = null;
             if (spring.IsRunning)

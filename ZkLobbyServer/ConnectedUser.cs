@@ -37,7 +37,7 @@ namespace ZkLobbyServer
 
         public string Name { get { return User.Name; } }
 
-        public Battle MyBattle;
+        public ServerBattle MyBattle;
 
         public ConnectedUser(ZkLobbyServer state, User user)
         {
@@ -302,6 +302,7 @@ namespace ZkLobbyServer
                     {
                         say.Target = MyBattle?.FounderName ?? "";
                         await state.Broadcast(MyBattle?.Users?.Keys, say);
+                        await MyBattle.ProcessBattleSay(say);
                         await state.OfflineMessageHandler.StoreChatHistory(say);
                     }
                     break;
@@ -312,7 +313,12 @@ namespace ZkLobbyServer
                         ConnectedUser cli;
                         if (MyBattle.Users.ContainsKey(say.Target))
                         {
-                            if (state.ConnectedUsers.TryGetValue(say.Target, out cli)) await cli.SendCommand(say);
+                            if (state.ConnectedUsers.TryGetValue(say.Target, out cli))
+                            {
+                                await cli.SendCommand(say);
+                                await MyBattle.ProcessBattleSay(say);
+                            }
+
                         }
                     }
                     break;
@@ -475,7 +481,6 @@ namespace ZkLobbyServer
                 UserBattleStatus ubs;
                 if (bat.Users.TryGetValue(status.Name, out ubs))
                 {
-
                     // enfoce player count limit
                     if (status.IsSpectator == false && bat.Users[status.Name].IsSpectator == true && bat.Users.Values.Count(x => !x.IsSpectator) >= bat.MaxPlayers)
                     {
@@ -483,7 +488,14 @@ namespace ZkLobbyServer
                         status.IsSpectator = true;
                     }
 
+
+                    
+
                     ubs.UpdateWith(status);
+                    
+
+
+
                     await state.Broadcast(bat.Users.Keys, status);
                     await RecalcSpectators(bat);
                 }

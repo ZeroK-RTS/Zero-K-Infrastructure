@@ -9,7 +9,7 @@ namespace Springie.autohost.Polls
 
         public VoteSpec(Spring spring, ServerBattle ah): base(spring, ah) {}
 
-        protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount) {
+        protected override bool PerformInit(Say e, string[] words, out string question, out int winCount) {
             winCount = 0;
             question = null;
             if (words.Length == 0)
@@ -34,7 +34,7 @@ namespace Springie.autohost.Polls
         }
 
         protected override void SuccessAction() {
-            ah.ComForceSpectator(TasSayEventArgs.Default, new[] { player });
+            ah.ComForceSpectator(ServerBattle.defaultSay, new[] { player });
         }
     }
 }
