@@ -108,10 +108,13 @@ namespace ZeroKWeb.SpringieInterface
         public static IQueryable<Resource> FindResources(ResourceType resource, params string[] words)
         {
             var db = new ZkDataContext();
+            string joinedWords = string.Join(" ", words);
+
+
             var ret = db.Resources.AsQueryable();
             ret = ret.Where(x => x.TypeID == resource);
 
-            string joinedWords = string.Join(" ", words);
+            
             var test = ret.Where(x => x.InternalName == joinedWords);
             if (test.Any()) return test.OrderByDescending(x => -x.FeaturedOrder);
             int i;

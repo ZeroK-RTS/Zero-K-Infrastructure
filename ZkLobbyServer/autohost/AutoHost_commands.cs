@@ -255,22 +255,22 @@ namespace ZkLobbyServer
         }
 
 
-        public void ComRehost(Say e, string[] words)
+        public async Task ComRehost(Say e, string[] words)
         {
-            throw new NotImplementedException();
-            /*if (spring.IsRunning)
+            if (spring.IsRunning)
             {
-                Respond(e, "Cannot rehost while game is running");
+                await Respond(e, "Cannot rehost while game is running");
                 return;
             }
-            if (words.Length == 0) OpenBattleRoom(null, null);
-            else
+
+            var mod = MapPicker.FindResources(ResourceType.Mod, words).FirstOrDefault();
+            if (mod != null)
             {
-                string[] mods;
-                int[] indexes;
-                if (FilterMods(words, out mods, out indexes) == 0) Respond(e, "cannot find such game");
-                else OpenBattleRoom(mods[0], null);
-            }*/
+                await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = mod.InternalName } });
+
+                await SayBattle("changing map to " + mod.InternalName);
+            }
+            else await Respond(e, "Cannot find such map.");
         }
 
         public void ComResetOptions(Say e, string[] words)
@@ -506,7 +506,7 @@ namespace ZkLobbyServer
 
         public void ApplyBalanceResults(BalanceTeamsResult balance)
         {
-throw new NotImplementedException();
+            throw new NotImplementedException();
             /*
             if (!string.IsNullOrEmpty(balance.Message)) SayBattle(balance.Message, false);
             if (balance.Players != null && balance.Players.Count > 0)
