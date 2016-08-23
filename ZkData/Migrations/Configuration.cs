@@ -82,7 +82,7 @@ namespace ZkData.Migrations
                 if (!db.MiscVars.Any(y => y.VarName == "GlacierSecretKey"))
                     db.MiscVars.AddOrUpdate(x => x.VarName, new MiscVar { VarName = "GlacierSecretKey", VarValue = "secret" });
 
-
+                
                 db.Accounts.AddOrUpdate(
                     x => x.Name,
                     new Account
@@ -100,6 +100,14 @@ namespace ZkData.Migrations
                     new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, IsZeroKAdmin = true });
 
             }
+
+            db.Resources.AddOrUpdate(x=>x.RapidTag, new Resource()
+            {
+                InternalName = "Zero-K $VERSION",
+                RapidTag = "zk:dev",
+                FeaturedOrder = 1,
+                TypeID = ResourceType.Mod,
+            });
 
             db.ForumCategories.AddOrUpdate(
                 x => x.Title,

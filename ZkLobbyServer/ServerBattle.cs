@@ -34,7 +34,8 @@ namespace ZkLobbyServer
         IVotable activePoll;
         Timer pollTimer;
 
-        public Mod hostedMod;
+        public Resource HostedMod;
+        public Resource HostedMap;
         public Spring spring;
 
         internal static Say defaultSay = new Say() { Place = SayPlace.Battle, User = "NightWatch"};
@@ -93,10 +94,14 @@ namespace ZkLobbyServer
                     break;
             }
 
-            if (IsNullOrEmpty(ModName)) ModName = "zk:stable";
-            ModName = downloader.PackageDownloader.GetByTag(ModName)?.InternalName ?? ModName; // resolve rapid
 
-            if (IsNullOrEmpty(MapName)) MapName = MapPicker.GetRecommendedMap(GetContext())?.InternalName ?? "Small_Divide-Remake-v04";
+            HostedMod = MapPicker.FindResources(ResourceType.Mod, ModName ?? "zk:stable").FirstOrDefault();
+            HostedMap = MapName != null
+                ? MapPicker.FindResources(ResourceType.Map, MapName).FirstOrDefault()
+                : MapPicker.GetRecommendedMap(GetContext());
+
+            ModName = HostedMod?.InternalName ?? ModName ?? "zk:stable";
+            MapName = HostedMap?.InternalName ?? MapName ?? "Small_Divide-Remake-v04";
         }
 
 
@@ -506,19 +511,6 @@ namespace ZkLobbyServer
 
         
 
-        /// <summary>
-        ///     Gets free slots, first mandatory then optional
-        /// </summary>
-        /// <returns></returns>
-        IEnumerable<MissionSlot> GetFreeSlots()
-        {
-            Battle b = this;
-            return
-                hostedMod.MissionSlots.Where(x => x.IsHuman)
-                         .OrderByDescending(x => x.IsRequired)
-                         .Where(x => !b.Users.Values.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !y.IsSpectator));
-        }
-
 
         void pollTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -587,10 +579,10 @@ namespace ZkLobbyServer
         {
             //lockedUntil = DateTime.MinValue;
             //tas.ChangeLock(false);
-            if (hostedMod.IsMission)
+            if (HostedMod.Mission != null)
             {
                 var service = GlobalConst.GetContentService();
-                foreach (UserBattleStatus u in Users.Values.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, hostedMod.ShortName);
+                foreach (UserBattleStatus u in Users.Values.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, HostedMod.Mission.Name);
             }
 
             StopVote();

@@ -39,35 +39,11 @@ namespace ZkLobbyServer
 
         public bool BalancedTeams(out int allyno, out int alliances)
         {
-            if (hostedMod.IsMission)
+            if (HostedMod.Mission != null)
             {
                 alliances = 0;
                 allyno = 0;
-                SayBattle(String.Format("Mod {0} has {1} mission slots", hostedMod.Name, hostedMod.MissionSlots.Count()));
-                bool err = false;
-                var invalidUser =
-                    Users.Values.FirstOrDefault(
-                        x => !x.IsSpectator && !hostedMod.MissionSlots.Any(y => y.IsHuman && y.TeamID == x.TeamNumber && y.AllyID == x.AllyNumber));
-                if (invalidUser != null)
-                {
-                    SayBattle(String.Format("User {0} is not in proper mission slot", invalidUser.Name));
-                    SayBattle(String.Format("Current slot: {0}", invalidUser.TeamNumber));
-                    err = true;
-                }
-
-                var slot = GetFreeSlots().FirstOrDefault();
-                if (slot == null || !slot.IsRequired) return true;
-                else
-                {
-                    SayBattle(String.Format("Mission slot {0}/{1} (team {2}, id {3}) needs player",
-                                            slot.AllyName,
-                                            slot.TeamName,
-                                            slot.AllyID,
-                                            slot.TeamID));
-                    allyno = slot.AllyID;
-                    err = true;
-                }
-                if (err) return false;
+                // TODO HACK implement mission commshare
             }
 
             var counts = new int[16];
@@ -167,14 +143,6 @@ namespace ZkLobbyServer
 
         public void ComForceStart(Say e, string[] words)
         {
-            int allyno;
-            int alliances;
-            if (hostedMod.IsMission && !BalancedTeams(out allyno, out alliances))
-            {
-                SayBattle("Cannot start, mission slots are not correct");
-                return;
-            }
-
             SayBattle("please wait, game is about to start");
             StopVote();
             StartGame();
@@ -266,7 +234,7 @@ namespace ZkLobbyServer
             var mod = MapPicker.FindResources(ResourceType.Mod, words).FirstOrDefault();
             if (mod != null)
             {
-                await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = mod.InternalName } });
+                await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Game = mod.InternalName } });
 
                 await SayBattle("changing map to " + mod.InternalName);
             }
@@ -440,8 +408,12 @@ namespace ZkLobbyServer
         }
 
 
+
         public Dictionary<string, string> GetOptionsDictionary(Say e, string[] words)
         {
+            return new Dictionary<string, string>();
+            // TODO hack reimplement
+            /*
             var s = Utils.Glue(words);
             var ret = new Dictionary<string, string>();
             var pairs = s.Split(new[] { ',' });
@@ -484,7 +456,7 @@ namespace ZkLobbyServer
                     return ret;
                 }
             }
-            return ret;
+            return ret;*/
         }
 
         public bool RunServerBalance(bool isGameStart, int? allyTeams, bool? clanWise)
@@ -585,9 +557,9 @@ namespace ZkLobbyServer
 
         void ComListOptions(Say e, string[] words)
         {
-            var mod = hostedMod;
+         /*   var mod = hostedMod;
             if (mod.Options.Length == 0) Respond(e, "this mod has no options");
-            else foreach (var opt in mod.Options) Respond(e, opt.ToString());
+            else foreach (var opt in mod.Options) Respond(e, opt.ToString());*/
         }
 
 

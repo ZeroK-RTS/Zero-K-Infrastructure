@@ -104,20 +104,25 @@ namespace ZeroKWeb.SpringieInterface
             return null;
         }
 
-        
-        public static IQueryable<Resource> FindResources(ResourceType resource, params string[] words)
+        public static IQueryable<Resource> FindResources(ResourceType type, string[] words)
+        {
+            return FindResources(type, string.Join(" ", words));
+        }
+
+        public static IQueryable<Resource> FindResources(ResourceType type, string term)
         {
             var db = new ZkDataContext();
-            string joinedWords = string.Join(" ", words);
-
+            
 
             var ret = db.Resources.AsQueryable();
-            ret = ret.Where(x => x.TypeID == resource);
-
+            ret = ret.Where(x => x.TypeID == type);
             
-            var test = ret.Where(x => x.InternalName == joinedWords);
+            var test = ret.Where(x => x.RapidTag == term || x.InternalName == term);
             if (test.Any()) return test.OrderByDescending(x => -x.FeaturedOrder);
+
+
             int i;
+            var words = term.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (words.Length == 1 && int.TryParse(words[0], out i)) ret = ret.Where(x => x.ResourceID == i);
             else
             {
@@ -127,7 +132,6 @@ namespace ZeroKWeb.SpringieInterface
                     ret = ret.Where(x => SqlFunctions.PatIndex("%" + w1 + "%", x.InternalName) > 0);
                 }
             }
-            ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
             return ret.OrderByDescending(x => -x.FeaturedOrder);
         }
     }
