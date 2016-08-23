@@ -214,20 +214,21 @@ namespace ZkLobbyServer
         }
 
 
-        public void ComMap(Say e, params string[] words)
+        public async Task ComMap(Say e, params string[] words)
         {
             if (spring.IsRunning)
             {
-                Respond(e, "Cannot change map while the game is running");
+                await Respond(e, "Cannot change map while the game is running");
                 return;
             }
             var map = words.Length > 0 ? MapPicker.FindResources(ResourceType.Map, words).FirstOrDefault() : MapPicker.GetRecommendedMap(GetContext());
             if (map != null)
             {
-                SayBattle("changing map to " + map.InternalName);
-                FounderUser.Process(new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = map.InternalName } });
+                await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = map.InternalName } });
+
+                await SayBattle("changing map to " + map.InternalName);
             }
-            else Respond(e, "Cannot find such map.");
+            else await Respond(e, "Cannot find such map.");
         }
 
         public void ComMapRemote(Say e, params string[] words)
@@ -281,11 +282,12 @@ namespace ZkLobbyServer
 
         public void ComResetOptions(Say e, string[] words)
         {
-            FounderUser.Process(new SetModOptions() { Options = new Dictionary<string, string>() });
-            Respond(e, "Game options reset to defaults");
+            throw new NotImplementedException();
+            //FounderUser.Process(new SetModOptions() { Options = new Dictionary<string, string>() });
+            //Respond(e, "Game options reset to defaults");
         }
 
-        public void ComRing(Say e, string[] words)
+        public async Task ComRing(Say e, string[] words)
         {
             var usrlist = new List<string>();
 
@@ -309,7 +311,7 @@ namespace ZkLobbyServer
             var rang = "";
             foreach (var s in usrlist)
             {
-                FounderUser.Process(new Say() { User = e.User, Text = "wants your attention", IsEmote = true, Ring = true, Place = SayPlace.Battle});
+                await server.GhostSay(new Say() { User = e.User, Target = s, Text = e.User + " wants your attention", IsEmote = true, Ring = true, Place = SayPlace.User });
                 rang += s + ", ";
             }
 

@@ -148,7 +148,7 @@ namespace ZkLobbyServer
                     break;
                 case SayPlace.BattlePrivate:
                     ConnectedUser originUser;
-                    if (ConnectedUsers.TryGetValue(say.User, out originUser)) await originUser.SendCommand(say);
+                    if (ConnectedUsers.TryGetValue(say.Target, out originUser)) await originUser.SendCommand(say);
                     break;
             }
 

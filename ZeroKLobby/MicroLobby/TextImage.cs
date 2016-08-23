@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using LobbyClient;
 using ZeroKLobby;
+using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -80,7 +81,7 @@ namespace ZeroKLobby.MicroLobby
                 if (user.EffectiveElo < 1400) return ZklResources.smurf;
 
             }
-            else return ZklResources.grayuser;
+            else return userName == GlobalConst.NightwatchName ? ZklResources.robot : ZklResources.grayuser;
             return ZklResources.user;
         }
 
@@ -111,7 +112,7 @@ namespace ZeroKLobby.MicroLobby
                 if (user.EffectiveElo < 1400) return Smurf;
                 return User;
             }
-            else return GrayUser;
+            else return userName == GlobalConst.NightwatchName ? Robot : GrayUser;
             //return String.Empty;
         }
     }

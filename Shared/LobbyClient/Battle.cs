@@ -90,7 +90,6 @@ namespace LobbyClient
             if (h.Game != null) ModName = h.Game;
             if (h.SpectatorCount != null) SpectatorCount = h.SpectatorCount.Value;
             if (h.Mode != null) Mode = h.Mode.Value;
-            //if (h.Running != null) IsInGame = h.Running.Value;
             if (h.RunningSince != null) RunningSince = h.RunningSince;
         }
 

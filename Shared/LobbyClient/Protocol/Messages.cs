@@ -264,14 +264,12 @@ namespace LobbyClient
             InGameSince = u.InGameSince;
             IsAdmin = u.IsAdmin;
             IsBot = u.IsBot;
-            // todo hacky fix IsInBattleRoom = u.IsInBattleRoom;
             BanMute = u.BanMute;
             BanSpecChat = u.BanSpecChat;
             Level = u.Level;
             ClientType = u.ClientType;
             LobbyVersion = u.LobbyVersion;
             DisplayName = u.DisplayName;
-            Name = u.Name;
         }
 
         public override string ToString()

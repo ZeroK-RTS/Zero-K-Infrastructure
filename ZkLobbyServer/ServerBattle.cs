@@ -14,6 +14,7 @@ using Springie.autohost.Polls;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 using ZkData.UnitSyncLib;
+using static System.String;
 using Timer = System.Timers.Timer;
 using Utils = Springie.Utils;
 
@@ -65,8 +66,8 @@ namespace ZkLobbyServer
 
         public void FillDetails()
         {
-            if (string.IsNullOrEmpty(Title)) Title = $"{FounderName}'s game";
-            if (string.IsNullOrEmpty(EngineVersion)) EngineVersion = server.Engine;
+            if (IsNullOrEmpty(Title)) Title = $"{FounderName}'s game";
+            if (IsNullOrEmpty(EngineVersion)) EngineVersion = server.Engine;
             downloader.GetEngine(server.Engine);
             
             
@@ -92,10 +93,10 @@ namespace ZkLobbyServer
                     break;
             }
 
-            if (string.IsNullOrEmpty(ModName)) ModName = "zk:stable";
+            if (IsNullOrEmpty(ModName)) ModName = "zk:stable";
             ModName = downloader.PackageDownloader.GetByTag(ModName)?.InternalName ?? ModName; // resolve rapid
 
-            if (string.IsNullOrEmpty(MapName)) MapName = MapPicker.GetRecommendedMap(GetContext())?.InternalName ?? "Small_Divide-Remake-v04";
+            if (IsNullOrEmpty(MapName)) MapName = MapPicker.GetRecommendedMap(GetContext())?.InternalName ?? "Small_Divide-Remake-v04";
         }
 
 
@@ -246,24 +247,8 @@ namespace ZkLobbyServer
 
         public Task Respond(Say e, string text)
         {
-            return Respond(spring, e, text);
+            return SayBattle(text, e.User);
         }
-
-
-
-        public async Task Respond(Spring spring, Say e, string text)
-        {
-            var p = SayPlace.User;
-            bool emote = true;
-            if (e.Place == SayPlace.Battle && e.User != null && e.User != "NightWatch")
-            {
-                p = SayPlace.BattlePrivate;
-            }
-            if (e.Place == SayPlace.Game && spring.IsRunning) spring.SayGame(text);
-            else await server.GhostSay(new Say() { Place = p, AllowRelay = false, IsEmote = emote, Ring = false, Target = null, Text = text, User=e.User }, BattleID);
-
-        }
-
 
 
         public async Task RunCommand(Say e, string com, string[] words)
@@ -283,11 +268,7 @@ namespace ZkLobbyServer
                     break;
 
                 case "map":
-                    ComMap(e, words);
-                    break;
-
-                case "mapremote":
-                    ComMapRemote(e, words);
+                    await ComMap(e, words);
                     break;
 
                 case "start":
@@ -461,31 +442,23 @@ namespace ZkLobbyServer
             }
         }
 
-
-        public void SayBattle(string text)
+        
+        public async Task SayBattle(string text, string privateUser = null)
         {
-            SayBattle(text, true);
+            if (!IsNullOrEmpty(text))
+                foreach (string line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    if (privateUser == null && spring?.IsRunning == true) spring.SayGame(line);
+                    await server.GhostSay(new Say()
+                    {
+                        User = GlobalConst.NightwatchName,
+                        Text = line,
+                        Place = privateUser != null ? SayPlace.BattlePrivate : SayPlace.Battle,
+                        Target = privateUser,
+                        IsEmote = true
+                    }, BattleID);
+                }
         }
-
-        public void SayBattle(string text, bool ingame)
-        {
-            if (!String.IsNullOrEmpty(text)) foreach (string line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) SayBattle(spring, line, ingame);
-        }
-
-
-        public static void SayBattle(Spring spring, string text, bool ingame)
-        {
-            throw new NotImplementedException();
-            //tas.Say(SayPlace.Battle, "", text, true);
-            if (spring != null && spring.IsRunning && ingame) spring.SayGame(text);
-        }
-
-        public void SayBattlePrivate(string user, string text)
-        {
-            throw new NotImplementedException();
-            //if (!String.IsNullOrEmpty(text)) foreach (string line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(SayPlace.BattlePrivate, user, text, true);
-        }
-
 
 
         public void StartVote(IVotable vote, Say e, string[] words)
@@ -767,7 +740,7 @@ namespace ZkLobbyServer
             //spring.HostGame(GetContext(), "127.0.0.1", 8452);  // TODO HACK GET PORTS
         }
 
-        public ConnectedUser FounderUser
+/*        public ConnectedUser FounderUser
         {
             get
             {
@@ -775,7 +748,7 @@ namespace ZkLobbyServer
                 server.ConnectedUsers.TryGetValue(FounderName, out connectedUser);
                 return connectedUser;
             }
-        }
+        }*/
 
 
         public async Task ProcessBattleSay(Say say)
