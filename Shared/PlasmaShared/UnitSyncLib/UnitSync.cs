@@ -136,17 +136,32 @@ namespace ZkData.UnitSyncLib
             if (ae == null)
             {
                 ReInit();
+                NativeMethods.GetMapCount();
+                NativeMethods.GetPrimaryModCount();
+
                 ae = GetArchiveEntryByArchiveName(filePath);
                 if (ae == null) return null;
             }
             if (ae.ModType == 1) return GetMod(ae);
             if (ae.ModType == 3) return GetMap(ae);
+            if (ae.ModType == 0)
+            {
+                try
+                {
+                    return GetMod(ae);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Error processing mutator {0} : {1}", filePath, ex);
+                }
+            }
             return ae;
         }
 
 
         private Map GetMapNoBitmaps(ResourceInfo ae) {
             NativeMethods.RemoveAllArchives();
+            NativeMethods.GetMapCount();
             NativeMethods.AddAllArchives(ae.Name);
             var mapInfo = GetMapInfo(ae, DefaultMapInfoVersion);
             var map = new Map(ae)
@@ -180,15 +195,14 @@ namespace ZkData.UnitSyncLib
             NativeMethods.RemoveAllArchives();
             NativeMethods.GetPrimaryModCount(); // pre-requisite for the following calls
             NativeMethods.AddAllArchives(ae.Name);
-            //var modIndex = NativeMethods.GetPrimaryModIndex(ae.Name);
             string[] sides;
 
             var mod = new Mod(ae)
             {
-                UnitDefs = GetUnitList(ae.Name).Select(ui => new UnitInfo(ui.Name, ui.FullName)).ToArray(),
-                StartUnits = new SerializableDictionary<string, string>(GetStartUnits(ae.Name, out sides)),
+                UnitDefs = GetUnitList().Select(ui => new UnitInfo(ui.Name, ui.FullName)).ToArray(),
+                StartUnits = new SerializableDictionary<string, string>(GetStartUnits(out sides)),
                 Sides = sides,
-                Options = GetModOptions(ae.ArchiveName).ToArray(),
+                Options = GetModOptions().ToArray(),
                 SideIcons = GetSideIcons(sides).ToArray(),
                 ModAis = GetAis().Where(ai => ai.IsLuaAi).ToArray()
             };
@@ -382,8 +396,7 @@ namespace ZkData.UnitSyncLib
         }
 
 
-        private IEnumerable<Option> GetModOptions(string archiveName) {
-            NativeMethods.AddAllArchives(archiveName);
+        private IEnumerable<Option> GetModOptions() {
             var optionCount = NativeMethods.GetModOptionCount();
             for (var optionIndex = 0; optionIndex < optionCount; optionIndex++)
             {
@@ -413,16 +426,10 @@ namespace ZkData.UnitSyncLib
         }
 
 
-        private Dictionary<string, string> GetStartUnits(string modName, out string[] sides) {
-            if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
-            var modIndex = NativeMethods.GetPrimaryModIndex(modName);
-            if (modIndex < 0) throw new UnitSyncException("Mod not found (" + modName + ").");
-            return GetStartUnits(modIndex, out sides);
-        }
 
-        private Dictionary<string, string> GetStartUnits(int modIndex, out string[] sides) {
+        private Dictionary<string, string> GetStartUnits(out string[] sides) {
             if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
-            LoadModArchive(modIndex);
+
             var startUnits = new Dictionary<string, string>() {};
             var sideCount = NativeMethods.GetSideCount();
             if (sideCount > 0)
@@ -441,18 +448,8 @@ namespace ZkData.UnitSyncLib
             return startUnits;
         }
 
-        private IEnumerable<UnitInfo> GetUnitList(string modName) {
-            var modIndex = NativeMethods.GetPrimaryModIndex(modName);
-            if (modIndex < 0) throw new UnitSyncException(string.Format("Mod not found ({0}).", modName));
-            return GetUnitList(modIndex);
-        }
 
-        private IEnumerable<UnitInfo> GetUnitList(int modIndex) {
-            if (modIndex != loadedArchiveIndex)
-            {
-                NativeMethods.AddAllArchives(NativeMethods.GetPrimaryModArchive(modIndex));
-                loadedArchiveIndex = modIndex;
-            }
+        private IEnumerable<UnitInfo> GetUnitList() {
             for (var i = 0; i <= MaxUnits && NativeMethods.ProcessUnitsNoChecksum() > 0; i++)
             {
                 var error = NativeMethods.GetNextError();

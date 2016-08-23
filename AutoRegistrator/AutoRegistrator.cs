@@ -150,7 +150,7 @@ namespace ZeroKWeb
                             if (!string.IsNullOrEmpty(mis.ModRapidTag))
                             {
                                 var latestMod = Downloader.PackageDownloader.GetByTag(mis.ModRapidTag);
-                                if (latestMod != null && mis.Mod != latestMod.InternalName)
+                                if (latestMod != null && (mis.Mod != latestMod.InternalName || !mis.Resources.Any()))
                                 {
                                     mis.Mod = latestMod.InternalName;
                                     Trace.TraceInformation("Updating mission {0} {1} to {2}", mis.MissionID, mis.Name, mis.Mod);
@@ -195,7 +195,7 @@ namespace ZeroKWeb
         {
             using (var db = new ZkDataContext())
             {
-                foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag.Values))
+                foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByInternalName.Values))
                 {
                     foreach (var toStrip in db.Resources.Where(x => x.RapidTag == ver.Name && x.InternalName != ver.InternalName))
                     {
