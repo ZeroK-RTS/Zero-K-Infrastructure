@@ -515,7 +515,7 @@ namespace ZeroKLobby.Notifications
 
         private void CreateBattleIcon(BattleIcon e)
         {
-            if (gameBox.Image == null) gameBox.Image = e.GenerateImage(true);
+            gameBox.Image = e.GenerateImage(true);
         }
 
 
