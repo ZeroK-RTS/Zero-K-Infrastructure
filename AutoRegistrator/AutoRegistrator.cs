@@ -146,15 +146,10 @@ namespace ZeroKWeb
                                     mis.Mod = latestMod.InternalName;
                                     Trace.TraceInformation("Updating mission {0} {1} to {2}", mis.MissionID, mis.Name, mis.Mod);
                                     var mu = new MissionUpdater();
-                                    Mod modInfo = null;
-                                    Scanner.MetaData.GetMod(mis.NameWithVersion, m => { modInfo = m; }, (er) => { });
 
-                                    if (modInfo != null)
-                                    {
-                                        mis.Revision++;
-                                        mu.UpdateMission(db, mis, modInfo);
-                                        db.SaveChanges();
-                                    }
+                                    mis.Revision++;
+                                    mu.UpdateMission(db, mis, Scanner);
+                                    db.SaveChanges();
                                 }
 
                             }

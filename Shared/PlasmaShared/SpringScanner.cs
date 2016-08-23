@@ -103,15 +103,9 @@ namespace ZkData
 
         readonly IContentService service = GlobalConst.GetContentService();
 
-        readonly SpringPaths springPaths;
+        public SpringPaths SpringPaths { get; private set; }
 
         public UnitSync unitSync;
-
-        /// <summary>
-        /// number of unitsync operations since the last unitsync initialization
-        /// </summary>
-        int unitSyncReInitCounter;
-
 
         /// <summary>
         /// queue of items to process
@@ -139,7 +133,7 @@ namespace ZkData
 
         public SpringScanner(SpringPaths springPaths)
         {
-            this.springPaths = springPaths;
+            this.SpringPaths = springPaths;
             MetaData = new MetaDataCache(springPaths, this);
 
             foreach (var folder in springPaths.DataDirectories)
@@ -289,7 +283,7 @@ namespace ZkData
         string GetFullPath(WorkItem work)
         {
             string fullPath = null;
-            foreach (var directory in springPaths.DataDirectories)
+            foreach (var directory in SpringPaths.DataDirectories)
             {
                 var path = Utils.MakePath(directory, work.CacheItem.ShortPath);
                 if (File.Exists(path))
@@ -342,7 +336,7 @@ namespace ZkData
 
             if (result == null)
             {
-                if (!UseUnitSync || springPaths.GetEngineList().Count == 0)
+                if (!UseUnitSync || SpringPaths.GetEngineList().Count == 0)
                 {
                     Trace.WriteLine(String.Format("No server resource data for {0}, asking later", work.CacheItem.ShortPath));
                     AddWork(work.CacheItem, WorkItem.OperationType.ReAskServer, DateTime.Now.AddSeconds(UnitsyncMissingReaskQuery), false);
@@ -370,7 +364,6 @@ namespace ZkData
             ResourceInfo ret = null;
             try
             {
-                unitSyncReInitCounter++;
                 Trace.TraceInformation("GetUnitSyncData");
                 ret = unitSync.GetResourceFromFileName(filename);
             }
@@ -417,7 +410,7 @@ namespace ZkData
         void InitialFolderScan(string folder, Dictionary<string, bool> foundFiles)
         {
             var fileList = new List<string>();
-            foreach (var dd in springPaths.DataDirectories)
+            foreach (var dd in SpringPaths.DataDirectories)
             {
                 var path = Utils.MakePath(dd, folder);
                 if (Directory.Exists(path))
@@ -533,7 +526,7 @@ namespace ZkData
                             if (workItem.Operation == WorkItem.OperationType.Hash) PerformHashOperation(workItem);
                             if (workItem.Operation == WorkItem.OperationType.UnitSync)
                             {
-                                if (springPaths.HasEngineVersion(GlobalConst.DefaultEngineOverride)) PerformUnitSyncOperation(workItem); // if there is no unitsync, retry later
+                                if (SpringPaths.HasEngineVersion(GlobalConst.DefaultEngineOverride)) PerformUnitSyncOperation(workItem); // if there is no unitsync, retry later
                                 else AddWork(workItem.CacheItem, WorkItem.OperationType.UnitSync, DateTime.Now.AddSeconds(RescheduleServerQuery), false);
                             }
                             if (workItem.Operation == WorkItem.OperationType.ReAskServer) GetResourceData(workItem);
@@ -756,7 +749,6 @@ namespace ZkData
                     // changed, created, renamed
                     // remove the item if present in the cache, then process the item
                     if (cache.ShortPathIndex.TryGetValue(shortPath, out item)) CacheItemRemove(item);
-                    unitSyncReInitCounter = UnitSyncReInitFrequency + 1; // force unitsync re-init
                     AddWork(folder, e.Name, WorkItem.OperationType.Hash, DateTime.Now, true);
                 }
             }

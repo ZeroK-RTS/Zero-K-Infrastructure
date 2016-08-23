@@ -81,6 +81,16 @@ namespace ZkData.UnitSyncLib
 
         public string Version { get; set; }
 
+
+        public void ReInit()
+        {
+            lock (unitsyncInitLocker)
+            {
+                NativeMethods.UnInit();
+                NativeMethods.Init(false, 666);
+            }
+        }
+
         public void Dispose() {
             if (!disposed)
             {
@@ -121,10 +131,14 @@ namespace ZkData.UnitSyncLib
         }
 
         public ResourceInfo GetResourceFromFileName(string filePath) {
-            var archiveCache = new ArchiveCache(UnitsyncWritableFolder);
-            var ae = archiveCache.Archives.FirstOrDefault(x => x.ArchiveName == Path.GetFileName(filePath));
-            
-            if (ae == null) return null;
+            var ae = GetArchiveEntryByArchiveName(filePath);
+
+            if (ae == null)
+            {
+                ReInit();
+                ae = GetArchiveEntryByArchiveName(filePath);
+                if (ae == null) return null;
+            }
             if (ae.ModType == 1) return GetMod(ae);
             if (ae.ModType == 3) return GetMap(ae);
             return ae;
@@ -218,6 +232,13 @@ namespace ZkData.UnitSyncLib
             var archiveCache = new ArchiveCache(UnitsyncWritableFolder);
             return archiveCache.Archives.FirstOrDefault(x => x.Name == name);
         }
+
+        public ResourceInfo GetArchiveEntryByArchiveName(string filePath)
+        {
+            var archiveCache = new ArchiveCache(UnitsyncWritableFolder);
+            return archiveCache.Archives.FirstOrDefault(x => x.ArchiveName == Path.GetFileName(filePath));
+        }
+
 
         /// <summary>
         ///     Use when processing a new archive
@@ -402,15 +423,21 @@ namespace ZkData.UnitSyncLib
         private Dictionary<string, string> GetStartUnits(int modIndex, out string[] sides) {
             if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
             LoadModArchive(modIndex);
+            var startUnits = new Dictionary<string, string>() {};
             var sideCount = NativeMethods.GetSideCount();
-            var startUnits = new Dictionary<string, string>();
-            sides = new string[sideCount];
-            for (var sideIndex = 0; sideIndex < sideCount; sideIndex++)
+            if (sideCount > 0)
             {
-                var sideName = NativeMethods.GetSideName(sideIndex);
-                sides[sideIndex] = sideName;
-                startUnits[sideName] = NativeMethods.GetSideStartUnit(sideIndex);
+
+                sides = new string[sideCount];
+                for (var sideIndex = 0; sideIndex < sideCount; sideIndex++)
+                {
+                    var sideName = NativeMethods.GetSideName(sideIndex);
+                    sides[sideIndex] = sideName;
+                    startUnits[sideName] = NativeMethods.GetSideStartUnit(sideIndex);
+                }
             }
+            else sides = new string[] { };
+
             return startUnits;
         }
 
