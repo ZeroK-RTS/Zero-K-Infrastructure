@@ -256,9 +256,6 @@ namespace ZkLobbyServer
 
             switch (com)
             {
-                case "forcestart":
-                    ComForceStart(e, words);
-                    break;
 
                 case "force":
                     ComForce(e, words);

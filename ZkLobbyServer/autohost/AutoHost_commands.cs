@@ -137,12 +137,6 @@ namespace ZkLobbyServer
             foreach (var u in Users.Values) if (!u.IsSpectator && u.LobbyUser.IsAway) ComForceSpectator(e, new[] { u.Name });
         }
 
-        public void ComForceStart(Say e, string[] words)
-        {
-            SayBattle("please wait, game is about to start");
-            StopVote();
-            StartGame();
-        }
 
 
         public class KickedPlayer

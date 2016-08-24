@@ -23,8 +23,12 @@ namespace ZkLobbyServer
 
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
-            await battle.Respond(e, "---");
-            foreach (var com in ServerBattle.Commands.Values.OrderBy(x=>x.Shortcut)) await battle.Respond(e, $"!{com.Shortcut} - {com.Help}");
+            foreach (var grp in ServerBattle.Commands.Values.GroupBy(x => x.Access).OrderBy(x=>x.Key))
+            {
+                await battle.Respond(e, $"--- {grp.Key} ---");
+                foreach (var com in grp.OrderBy(x=>x.Shortcut)) await battle.Respond(e, $"!{com.Shortcut} {com.Help}");
+                await battle.Respond(e, $"--- {grp.Key} ---");
+            }
             await battle.Respond(e, "---");
         }
     }

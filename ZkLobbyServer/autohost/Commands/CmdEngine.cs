@@ -10,7 +10,7 @@ namespace ZkLobbyServer
     public class CmdEngine : ServerBattleCommand
     {
         private string engine;
-        public override string Help => "[<filters>..] - changes game engine, example !engine 103.0";
+        public override string Help => "[<filters>..] - changes game engine, e.g. !engine 103.0";
         public override string Shortcut => "engine";
         public override BattleCommandAccess Access => BattleCommandAccess.NotIngame;
 

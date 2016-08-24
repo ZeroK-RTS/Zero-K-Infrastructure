@@ -12,7 +12,7 @@ namespace ZkLobbyServer
     public class CmdGame : ServerBattleCommand
     {
         private Resource game;
-        public override string Help => "[<filters>..] - changes serverg game, eg. !game zk:test. Use zk:dev to host local dev version";
+        public override string Help => "[<filters>..] - changes game version, e.g. !game zk:test. Use zk:dev to host local dev version";
         public override string Shortcut => "game";
         public override BattleCommandAccess Access => BattleCommandAccess.NotIngame;
 
@@ -37,7 +37,7 @@ namespace ZkLobbyServer
         {
             if (game != null)
             {
-                await battle.SwitchMap(game.InternalName);
+                await battle.SwitchGame(game.InternalName);
                 await battle.SayBattle("changing game to " + game.InternalName);
             }
             
