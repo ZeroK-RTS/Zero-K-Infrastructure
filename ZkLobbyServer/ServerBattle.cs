@@ -282,12 +282,6 @@ namespace ZkLobbyServer
                     ComCBalance(e, words);
                     break;
 
-
-                case "hostsay":
-                    if (spring.IsRunning) spring.SayGame(Utils.Glue(words));
-                    else await Respond(e, "Game not running");
-                    break;
-
                 case "listoptions":
                     ComListOptions(e, words);
                     break;
