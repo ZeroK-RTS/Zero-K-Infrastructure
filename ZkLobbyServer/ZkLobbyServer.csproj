@@ -89,6 +89,7 @@
     <Compile Include="autohost\Commands\CmdMaxPlayers.cs" />
     <Compile Include="autohost\Commands\CmdRing.cs" />
     <Compile Include="autohost\Commands\CmdTitle.cs" />
+    <Compile Include="autohost\Commands\CmdType.cs" />
     <Compile Include="autohost\Commands\CommandExecutionRight.cs" />
     <Compile Include="autohost\MapPicker.cs" />
     <Compile Include="autohost\Polls\AbstractPoll.cs" />

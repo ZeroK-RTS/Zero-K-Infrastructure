@@ -256,12 +256,6 @@ namespace ZkLobbyServer
 
             switch (com)
             {
-
-                case "force":
-                    ComForce(e, words);
-                    break;
-
-           
                 case "ring":
                     await ComRing(e, words);
                     break;
@@ -697,6 +691,12 @@ namespace ZkLobbyServer
         {
             UpdateWith(new BattleHeader() { MaxPlayers = cnt });
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
+        }
+
+        public async Task SwitchGameType(AutohostMode type)
+        {
+            UpdateWith(new BattleHeader() { Mode = type });
+            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() }); // do a full update - mode can also change map/players
         }
     }
 }
