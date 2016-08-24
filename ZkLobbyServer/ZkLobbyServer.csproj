@@ -92,6 +92,7 @@
     <Compile Include="autohost\Commands\CmdPassword.cs" />
     <Compile Include="autohost\Commands\CmdPredict.cs" />
     <Compile Include="autohost\Commands\CmdRing.cs" />
+    <Compile Include="autohost\Commands\CmdSpec.cs" />
     <Compile Include="autohost\Commands\CmdTitle.cs" />
     <Compile Include="autohost\Commands\CmdType.cs" />
     <Compile Include="autohost\Commands\CommandExecutionRight.cs" />
@@ -102,7 +103,6 @@
     <Compile Include="autohost\Polls\VoteResetOptions.cs" />
     <Compile Include="autohost\Polls\VoteResign.cs" />
     <Compile Include="autohost\Polls\VoteSetOptions.cs" />
-    <Compile Include="autohost\Polls\VoteSpec.cs" />
     <Compile Include="autohost\Polls\VoteStart.cs" />
     <Compile Include="autohost\Commands\ServerBattleCommand.cs" />
     <Compile Include="ChannelManager.cs" />

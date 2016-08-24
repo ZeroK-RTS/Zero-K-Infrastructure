@@ -67,15 +67,6 @@ namespace Springie.autohost.Polls
 
         protected override void SuccessAction()
         {
-            ah.ComForceSpectatorAfk(ServerBattle.defaultSay, new string[]{});
-            foreach (var user in ah.Users.Values.Where(x => !x.IsSpectator && (x.SyncStatus != SyncStatuses.Synced || x.LobbyUser.IsAway))) {
-                ah.ComForceSpectator(ServerBattle.defaultSay, new string[]{user.Name});
-            }
-            new Thread(()=>
-                {
-                    Thread.Sleep(500); // sleep to register spectating        
-                    ah.ComStart(ServerBattle.defaultSay, new string[] { });
-                }).Start();
         }
     }
 }

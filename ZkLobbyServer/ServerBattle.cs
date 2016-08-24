@@ -294,16 +294,6 @@ namespace ZkLobbyServer
                     break;
 
 
-
-                case "spec":
-                    ComForceSpectator(e, words);
-                    break;
-
-                case "specafk":
-                    ComForceSpectatorAfk(e, words);
-                    break;
-
-
                 case "cheats":
                     if (spring.IsRunning)
                     {
@@ -694,6 +684,22 @@ namespace ZkLobbyServer
                 await client.Respond($"You were kicked from battle by {name} : {reason}");
                 await client.Process(new LeaveBattle() { BattleID = BattleID });
             }
+        }
+
+        public class KickedPlayer
+        {
+            public string Name;
+            public DateTime TimeOfKicked = DateTime.UtcNow;
+        }
+
+        public List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
+
+
+        public async Task Spectate(string name)
+        {
+            // TODO rebalance
+            ConnectedUser usr;
+            if (server.ConnectedUsers.TryGetValue(name, out usr)) await usr.Process(new UpdateUserBattleStatus() { Name = usr.Name, IsSpectator = true });
         }
     }
 }

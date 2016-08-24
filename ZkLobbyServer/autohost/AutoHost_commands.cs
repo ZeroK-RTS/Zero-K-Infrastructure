@@ -89,51 +89,7 @@ namespace ZkLobbyServer
             RunServerBalance(false, teamCount, true);
         }
 
-
-
-
-
-        public void ComForceSpectator(Say e, string[] words)
-        {
-            if (words.Length == 0)
-            {
-                Respond(e, "You must specify player name");
-                return;
-            }
-
-            int[] indexes;
-            string[] usrlist;
-            if (FilterUsers(words, out usrlist, out indexes) == 0)
-            {
-                Respond(e, "Cannot find such player");
-                return;
-            }
-
-            ConnectedUser usr;
-            if (server.ConnectedUsers.TryGetValue(usrlist[0], out usr))
-            {
-                usr.Process(new UpdateUserBattleStatus() { Name = usr.Name, IsSpectator = true });
-            }
-            Respond(e, "Forcing " + usrlist[0] + " to spectator");
-        }
-
-        public void ComForceSpectatorAfk(Say e, string[] words)
-        {
-            foreach (var u in Users.Values) if (!u.IsSpectator && u.LobbyUser.IsAway) ComForceSpectator(e, new[] { u.Name });
-        }
-
-
-
-        public class KickedPlayer
-        {
-            public string Name;
-            public DateTime TimeOfKicked = DateTime.UtcNow;
-        }
-
-        public List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
-
-
-
+        
         public void ComResetOptions(Say e, string[] words)
         {
             throw new NotImplementedException();
