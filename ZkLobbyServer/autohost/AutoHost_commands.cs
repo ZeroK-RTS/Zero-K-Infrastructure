@@ -68,15 +68,6 @@ namespace ZkLobbyServer
         }
 
 
-        
-        public void ComResetOptions(Say e, string[] words)
-        {
-            throw new NotImplementedException();
-            //FounderUser.Process(new SetModOptions() { Options = new Dictionary<string, string>() });
-            //Respond(e, "Game options reset to defaults");
-        }
-
-
 
         public void ComStart(Say e, string[] words)
         {
@@ -205,6 +196,8 @@ namespace ZkLobbyServer
         public Dictionary<string, string> GetOptionsDictionary(Say e, string s)
         {
             var ret = new Dictionary<string, string>();
+            if (HostedModInfo == null) return ret; 
+
             var pairs = s.Split(new[] { ',' });
             if (pairs.Length == 0 || pairs[0].Length == 0)
             {
@@ -318,14 +311,6 @@ namespace ZkLobbyServer
             Respond(e, "---");
         }*/
 
-
-
-        void ComListOptions(Say e, string[] words)
-        {
-         /*   var mod = hostedMod;
-            if (mod.Options.Length == 0) Respond(e, "this mod has no options");
-            else foreach (var opt in mod.Options) Respond(e, opt.ToString());*/
-        }
 
         public int FilterUsers(string[] words, out string[] vals, out int[] indexes)
         {
