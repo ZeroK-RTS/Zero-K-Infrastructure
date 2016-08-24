@@ -17,108 +17,6 @@ namespace ZkLobbyServer
     {
         public readonly List<string> toNotify = new List<string>();
 
-        public bool AllReadyAndSynced(out List<string> usname)
-        {
-            usname = new List<string>();
-            foreach (var p in Users.Values)
-            {
-                if (p.IsSpectator) continue;
-                if (p.SyncStatus != SyncStatuses.Synced) usname.Add(p.Name);
-            }
-            return usname.Count == 0;
-        }
-
-
-
-
-        public bool BalancedTeams(out int allyno, out int alliances)
-        {
-            if (HostedMod.Mission != null)
-            {
-                alliances = 0;
-                allyno = 0;
-                // TODO HACK implement mission commshare
-            }
-
-            var counts = new int[16];
-            allyno = 0;
-
-            foreach (var p in Users.Values)
-            {
-                if (p.IsSpectator) continue;
-                counts[p.AllyNumber]++;
-            }
-
-            alliances = counts.Count(x => x > 0);
-
-            var tsize = 0;
-            for (var i = 0; i < counts.Length; ++i)
-            {
-                if (counts[i] != 0)
-                {
-                    if (tsize == 0) tsize = counts[i];
-                    else if (tsize != counts[i])
-                    {
-                        allyno = i;
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-
-
-        public void ComStart(Say e, string[] words)
-        {
-            if (spring.IsRunning)
-            {
-                Respond(e, "Game already running");
-                return;
-            }
-            /*if (activePoll != null)
-            {
-                Respond(e, "Poll is active");
-                return;
-            }*/
-
-            List<string> usname;
-            if (!AllReadyAndSynced(out usname))
-            {
-                SayBattle("cannot start, " + Utils.Glue(usname.ToArray()) + " does not have the map/game yet");
-                return;
-            }
-
-            if (this.Mode != AutohostMode.None)
-            {
-                int allyno;
-                int alliances;
-                if (!BalancedTeams(out allyno, out alliances))
-                {
-                    SayBattle("cannot start, alliance " + (allyno + 1) + " not fair. Use !forcestart to override");
-                    return;
-                }
-            }
-            else
-            {
-                if (this.Mode != AutohostMode.None)
-                {
-                    if (!RunServerBalance(true, null, null))
-                    {
-                        SayBattle("Cannot start a game atm");
-                        return;
-                    }
-
-                }
-            }
-
-            SayBattle("please wait, game is about to start");
-            StopVote();
-
-            this.StartGame();
-        }
-
-
         internal static int Filter(string[] source, string[] words, out string[] resultVals, out int[] resultIndexes)
         {
             int i;
@@ -302,14 +200,6 @@ namespace ZkLobbyServer
                 }
             }*/
         }
-
-/*        void ComHelp(Say e, string[] words)
-        {
-            var ulevel = GetUserLevel(e);
-            Respond(e, "---");
-            foreach (var c in Commands.Commands) if (c.Level <= ulevel) Respond(e, " !" + c.Name + " " + c.HelpText);
-            Respond(e, "---");
-        }*/
 
 
         public int FilterUsers(string[] words, out string[] vals, out int[] indexes)

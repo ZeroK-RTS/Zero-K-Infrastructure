@@ -9,9 +9,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using LobbyClient;
 using PlasmaShared;
-using Springie;
-using Springie.autohost;
-using Springie.autohost.Polls;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 using ZkData.UnitSyncLib;
@@ -570,7 +567,7 @@ namespace ZkLobbyServer
             }
         }
 
-        private void StartGame()
+        public async Task StartGame()
         {
             throw new NotImplementedException();
         }
