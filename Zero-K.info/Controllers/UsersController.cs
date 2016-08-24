@@ -381,6 +381,7 @@ namespace ZeroKWeb.Controllers
             return Index(new UsersIndexModel() {Name = name});
         }
 
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult MassBanByUserIDSubmit(int userID, double? maxAge, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
         {
             ZkDataContext db = new ZkDataContext();
