@@ -148,6 +148,7 @@ namespace ZeroKWeb
         {
             var listener = new ZkServerTraceListener();
             Trace.Listeners.Add(listener);
+            GlobalConst.SiteDiskPath = MapPath("~");
 
             ForumPostIndexer = new ForumPostIndexer();
             ZkServerRunner = new ServerRunner(mvcApplication.Server.MapPath("~"));

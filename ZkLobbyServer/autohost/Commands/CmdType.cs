@@ -16,14 +16,14 @@ namespace ZkLobbyServer
         public override string Shortcut => "type";
         public override BattleCommandAccess Access => BattleCommandAccess.NotIngame;
 
-        private static List<AutohostMode> GetValidTypes() => Enum.GetValues(typeof(AutohostMode)).OfType<AutohostMode>().Where(x => x != AutohostMode.Planetwars).ToList();
+        private static List<AutohostMode> GetValidTypes() => Enum.GetValues(typeof(AutohostMode)).Cast<AutohostMode>().Where(x => x != AutohostMode.Planetwars).ToList();
 
         public override ServerBattleCommand Create() => new CmdType();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            var type = GetValidTypes().FirstOrDefault(x => x.Description().Contains(arguments ?? ""));
-            return $"Change room to {type.Description()}?";
+            mode = GetValidTypes().FirstOrDefault(x => x.Description().Contains(arguments ?? ""));
+            return $"Change room to {mode.Description()}?";
         }
 
 

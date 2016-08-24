@@ -354,8 +354,8 @@ namespace ZkData
 
         public static Mod ServerGetMod(string internalName)
         {
-            var file = $"{GlobalConst.SiteDiskPath}/{internalName}.metadata.xml.gz";
-            if (File.Exists(file)) GetModMetadata(File.ReadAllBytes(file));
+            var file = Path.Combine(GlobalConst.SiteDiskPath, "resources", $"{internalName.EscapePath()}.metadata.xml.gz");
+            if (File.Exists(file)) return GetModMetadata(File.ReadAllBytes(file));
             return null;
         }
     }

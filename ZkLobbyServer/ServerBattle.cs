@@ -563,7 +563,7 @@ namespace ZkLobbyServer
             if (!say.IsEmote && say.Text?.Length > 1 && say.Text.StartsWith("!"))
             {
                 var parts = say.Text.Substring(1).Split(new[] { ' ' }, 2 , StringSplitOptions.RemoveEmptyEntries);
-                await RunCommand(say, parts[0], parts[1]);
+                await RunCommand(say, parts[0], parts.Skip(1).FirstOrDefault());
             }
         }
 
@@ -602,7 +602,7 @@ namespace ZkLobbyServer
 
         public async Task SwitchPassword(string pwd)
         {
-            Password = pwd;
+            Password = pwd ?? "";
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() }); // do a full update to hide pwd properly
         }
 

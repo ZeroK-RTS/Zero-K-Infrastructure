@@ -181,7 +181,7 @@ namespace ZeroKLobby
                         break;
 
                     case "select_map":
-                        if (Program.TasClient.MyBattle != null) Program.TasClient.Say(SayPlace.Battle, null, "!mapremote " + arg, false);
+                        if (Program.TasClient.MyBattle != null) Program.TasClient.Say(SayPlace.Battle, null, "!map " + arg, false);
                         else
                         {
                             SpawnAutohost(map: arg);
