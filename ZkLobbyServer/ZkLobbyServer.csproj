@@ -92,6 +92,7 @@
     <Compile Include="autohost\Commands\CmdGame.cs" />
     <Compile Include="autohost\Commands\CmdMap.cs" />
     <Compile Include="autohost\Commands\CmdMaxPlayers.cs" />
+    <Compile Include="autohost\Commands\CmdN.cs" />
     <Compile Include="autohost\Commands\CmdNotify.cs" />
     <Compile Include="autohost\Commands\CmdPassword.cs" />
     <Compile Include="autohost\Commands\CmdPredict.cs" />
@@ -99,6 +100,8 @@
     <Compile Include="autohost\Commands\CmdSpec.cs" />
     <Compile Include="autohost\Commands\CmdTitle.cs" />
     <Compile Include="autohost\Commands\CmdType.cs" />
+    <Compile Include="autohost\Commands\CmdVote.cs" />
+    <Compile Include="autohost\Commands\CmdY.cs" />
     <Compile Include="autohost\Commands\CommandExecutionRight.cs" />
     <Compile Include="autohost\MapPicker.cs" />
     <Compile Include="autohost\Polls\AbstractPoll.cs" />

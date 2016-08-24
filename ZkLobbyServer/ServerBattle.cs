@@ -202,7 +202,7 @@ namespace ZkLobbyServer
 
         
 
-        public async void RegisterVote(Say e, bool vote)
+        public async Task RegisterVote(Say e, bool vote)
         {
             if (activePoll != null)
             {
@@ -246,55 +246,14 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task RunCommand(Say e, string com, string[] words)
+        public async Task RunCommand(Say e, string com, string arg)
         {
             var cmd = GetCommandByName(com);
             if (cmd != null)
             {
                 var perm = cmd.RunPermissions(this, e.User);
-                if (perm == CommandExecutionRight.Run) await cmd.Run(this, e, string.Join(" ", words));
-                else if (perm == CommandExecutionRight.Vote) await StartVote(cmd, e, string.Join(" ", words));
-            }
-
-            switch (com)
-            {
-                case "vote":
-                    RegisterVote(e, words.Length < 1 || words[0] != "2");
-                    break;
-
-                case "y":
-                    RegisterVote(e, true);
-                    break;
-
-                case "n":
-                    RegisterVote(e, false);
-                    break;
-
-                case "balance":
-                    ComBalance(e, words);
-                    break;
-
-                case "resetoptions":
-                    ComResetOptions(e, words);
-                    break;
-
-                case "cbalance":
-                    ComCBalance(e, words);
-                    break;
-
-                case "listoptions":
-                    ComListOptions(e, words);
-                    break;
-
-                case "setoptions":
-                    ComSetOption(e, words);
-                    break;
-
-                case "adduser":
-                    ComAddUser(e, words);
-                    break;
-
-
+                if (perm == CommandExecutionRight.Run) await cmd.Run(this, e, string.Join(" ", arg));
+                else if (perm == CommandExecutionRight.Vote) await StartVote(cmd, e, string.Join(" ", arg));
             }
         }
 
@@ -591,22 +550,8 @@ namespace ZkLobbyServer
             // check if it's command
             if (!say.IsEmote && say.Text?.Length > 1 && say.Text.StartsWith("!"))
             {
-                string[] allwords = say.Text.Substring(1).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                if (allwords.Length < 1) return;
-                string com = allwords[0];
-
-                // remove first word (command)
-                string[] words = ZkData.Utils.ShiftArray(allwords, -1);
-
-
-                if (say.Place == SayPlace.User)
-                {
-                    if (com != "say" && com != "admins" && com != "help" && com != "helpall" && com != "springie" && com != "listoptions" &&
-                        com != "spawn" && com != "predict" && com != "notify" && com != "transmit" && com != "adduser") SayBattle(
-                            $"{com} executed by {say.User}");
-                }
-
-                await RunCommand(say, com, words);
+                var parts = say.Text.Substring(1).Split(new[] { ' ' }, 2 , StringSplitOptions.RemoveEmptyEntries);
+                await RunCommand(say, parts[0], parts[1]);
             }
         }
 
