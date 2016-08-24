@@ -11,7 +11,6 @@ namespace ZkLobbyServer
 {
     public class CmdBalance : ServerBattleCommand
     {
-        private Resource game;
         public override string Help => "[<teams>] - puts people into teams, respecting their clans and skill if possible";
         public override string Shortcut => "balance";
         public override BattleCommandAccess Access => BattleCommandAccess.NotIngame;
