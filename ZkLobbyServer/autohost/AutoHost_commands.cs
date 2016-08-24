@@ -173,41 +173,6 @@ namespace ZkLobbyServer
             //Respond(e, "Game options reset to defaults");
         }
 
-        public async Task ComRing(Say e, string[] words)
-        {
-            var usrlist = new List<string>();
-
-            if (words.Length == 0)
-            {
-                // ringing idle
-                foreach (var p in Users.Values)
-                {
-                    if (p.IsSpectator) continue;
-                    if ((p.SyncStatus != SyncStatuses.Synced) && (!spring.IsRunning || !spring.IsPlayerReady(p.Name))) usrlist.Add(p.Name);
-                }
-            }
-            else
-            {
-                string[] vals;
-                int[] indexes;
-                FilterUsers(words, out vals, out indexes);
-                usrlist = new List<string>(vals);
-            }
-
-            var rang = "";
-            foreach (var s in usrlist)
-            {
-                await server.GhostSay(new Say() { User = e.User, Target = s, Text = e.User + " wants your attention", IsEmote = true, Ring = true, Place = SayPlace.User });
-                rang += s + ", ";
-            }
-
-            //if (words.Length == 0 && usrlist.Count > 7) SayBattle("ringing all unready");
-            //else SayBattle("ringing " + rang);
-        }
-
-
-        // user and rank info
-
 
 
         public void ComStart(Say e, string[] words)
@@ -488,30 +453,7 @@ namespace ZkLobbyServer
             }*/
         }
 
-        void ComSetPassword(Say e, string[] words)
-        {
-            throw new NotImplementedException();
-            /*if (words.Length == 0)
-            {
-                config.Password = "";
-                Respond(e, "password removed");
-            }
-            else
-            {
-                config.Password = words[0];
-                Respond(e, "password changed");
-            }*/
-        }
 
-        void ComTransmit(Say e, string[] words)
-        {
-            if (words.Length == 0)
-            {
-                Respond(e, "This command needs 1 parameter (transmit text)");
-                return;
-            }
-            if (spring.IsRunning) spring.SayGame(String.Format("[{0}]{1}", e.User, "!transmit " + Utils.Glue(words)));
-        }
 
         public int FilterUsers(string[] words, out string[] vals, out int[] indexes)
         {

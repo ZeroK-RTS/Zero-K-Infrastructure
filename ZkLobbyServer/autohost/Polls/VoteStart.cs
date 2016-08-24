@@ -20,7 +20,7 @@ namespace Springie.autohost.Polls
             if (!spring.IsRunning) {
 
                 var invalid = ah.Users.Values.Where(x => !x.IsSpectator && (x.SyncStatus != SyncStatuses.Synced || x.LobbyUser.IsAway)).ToList();
-                if (invalid.Count > 0) foreach (var inv in invalid) ah.ComRing(e, new[] { inv.Name }); // ring invalids ot notify them
+                if (invalid.Count > 0) foreach (var inv in invalid) ah.RunCommand<CmdRing>(e); // ring invalids ot notify them
 
                 // people wihtout map and spring map changed in last 2 minutes, dont allow start yet
                 if (ah.Users.Values.Any(x=>!x.IsSpectator && x.SyncStatus != SyncStatuses.Synced) && DateTime.Now.Subtract(ah.lastMapChange).TotalSeconds < MainConfig.MapChangeDownloadWait) {

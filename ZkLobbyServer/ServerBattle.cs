@@ -114,10 +114,10 @@ namespace ZkLobbyServer
         }
 
 
-        public void RunCommand<T>(string args = null) where T:ServerBattleCommand, new()
+        public void RunCommand<T>(Say e,string args = null) where T:ServerBattleCommand, new()
         {
             var t = new T();
-            t.Run(this, null, args);
+            t.Run(this, e, args);
         }
 
         public override void UpdateWith(BattleHeader h)
@@ -233,13 +233,15 @@ namespace ZkLobbyServer
 
         public async Task SwitchMap(string internalName)
         {
-            UpdateWith(new BattleHeader() { Map = internalName });
+            MapName = internalName;
+            FillDetails();
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = MapName } });
         }
 
         public async Task SwitchGame(string internalName)
         {
-            UpdateWith(new BattleHeader() { Game = internalName });
+            ModName = internalName;
+            FillDetails();
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Game = ModName } });
         }
 
@@ -256,10 +258,6 @@ namespace ZkLobbyServer
 
             switch (com)
             {
-                case "ring":
-                    await ComRing(e, words);
-                    break;
-
                 case "kick":
                     ComKick(e, words);
                     break;
@@ -305,9 +303,6 @@ namespace ZkLobbyServer
                     break;
 
 
-                case "setpassword":
-                    ComSetPassword(e, words);
-                    break;
 
                 case "spec":
                     ComForceSpectator(e, words);
@@ -339,12 +334,6 @@ namespace ZkLobbyServer
                 case "setoptions":
                     ComSetOption(e, words);
                     break;
-
-
-                case "transmit":
-                    ComTransmit(e, words);
-                    break;
-
 
                 case "adduser":
                     ComAddUser(e, words);
@@ -673,26 +662,36 @@ namespace ZkLobbyServer
 
         public async Task SwitchEngine(string engine)
         {
-            UpdateWith(new BattleHeader() { Engine = engine});
+            EngineVersion = engine;
+            FillDetails();
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Engine = EngineVersion } });
         }
 
         public async Task SwitchTitle(string title)
         {
-            UpdateWith(new BattleHeader() { Title = Title });
+            Title = title;
+            FillDetails();
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Title = Title } });
         }
 
         public async Task SwitchMaxPlayers(int cnt)
         {
-            UpdateWith(new BattleHeader() { MaxPlayers = cnt });
+            MaxPlayers = cnt;
+            FillDetails();
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
         }
 
         public async Task SwitchGameType(AutohostMode type)
         {
-            UpdateWith(new BattleHeader() { Mode = type });
+            Mode = type;
+            FillDetails();
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() }); // do a full update - mode can also change map/players
+        }
+
+        public async Task SwitchPassword(string pwd)
+        {
+            Password = pwd;
+            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() }); // do a full update to hide pwd properly
         }
     }
 }
