@@ -282,14 +282,6 @@ namespace ZkLobbyServer
                     ComCBalance(e, words);
                     break;
 
-                case "cheats":
-                    if (spring.IsRunning)
-                    {
-                        spring.SayGame("/cheat");
-                        await SayBattle("Cheats!");
-                    }
-                    else await Respond(e, "Cannot set cheats, game not running");
-                    break;
 
                 case "hostsay":
                     if (spring.IsRunning) spring.SayGame(Utils.Glue(words));
