@@ -15,8 +15,6 @@ namespace ZkLobbyServer
 {
     public partial class ServerBattle
     {
-        public const int MaxMapListLength = 100; //400
-
         public readonly List<string> toNotify = new List<string>();
 
         public bool AllReadyAndSynced(out List<string> usname)
@@ -69,25 +67,6 @@ namespace ZkLobbyServer
             return true;
         }
 
-
-
-
-        public void ComBalance(Say e, string[] words)
-        {
-            var teamCount = 0;
-            if (words.Length > 0) Int32.TryParse(words[0], out teamCount);
-
-            RunServerBalance(false, teamCount == 0 ? (int?)null : teamCount, false);
-        }
-
-
-        public void ComCBalance(Say e, string[] words)
-        {
-            var teamCount = 2;
-            if (words.Length > 0) Int32.TryParse(words[0], out teamCount);
-            else teamCount = 2;
-            RunServerBalance(false, teamCount, true);
-        }
 
         
         public void ComResetOptions(Say e, string[] words)

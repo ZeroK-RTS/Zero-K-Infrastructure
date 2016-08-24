@@ -79,6 +79,7 @@
     <Compile Include="autohost\Commands\BattleCommandAccess.cs" />
     <Compile Include="autohost\CommandConfig.cs" />
     <Compile Include="autohost\CommandList.cs" />
+    <Compile Include="autohost\Commands\CmdBalance.cs" />
     <Compile Include="autohost\Commands\CmdCheats.cs" />
     <Compile Include="autohost\Commands\CmdEndvote.cs" />
     <Compile Include="autohost\Commands\CmdEngine.cs" />
