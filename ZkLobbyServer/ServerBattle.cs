@@ -695,5 +695,11 @@ namespace ZkLobbyServer
             UpdateWith(new BattleHeader() { Engine = engine});
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Engine = EngineVersion } });
         }
+
+        public async Task SwitchTitle(string title)
+        {
+            UpdateWith(new BattleHeader() { Title = Title });
+            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Title = Title } });
+        }
     }
 }
