@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -14,6 +15,7 @@ using Springie.autohost.Polls;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 using ZkData.UnitSyncLib;
+using ZkLobbyServer.autohost;
 using static System.String;
 using Timer = System.Timers.Timer;
 using Utils = Springie.Utils;
@@ -25,13 +27,12 @@ namespace ZkLobbyServer
         private static PlasmaDownloader.PlasmaDownloader downloader;
         private static SpringPaths springPaths;
 
-
         public const int PollTimeout = 60;
-        public readonly CommandList Commands;
+        public static readonly Dictionary<string, ServerBattleCommand> Commands = new Dictionary<string, ServerBattleCommand>();
 
         public ZkLobbyServer server;
 
-        IVotable activePoll;
+        CommandPoll activePoll;
         Timer pollTimer;
 
         public Resource HostedMod;
@@ -47,12 +48,20 @@ namespace ZkLobbyServer
             downloader.PackageDownloader.SetMasterRefreshTimer(60);
             downloader.PackageDownloader.LoadMasterAndVersions(false);
             downloader.GetEngine(GlobalConst.DefaultEngineOverride);
+
+            Commands =
+                Assembly.GetAssembly(typeof(ServerBattleCommand))
+                    .GetTypes()
+                    .Where(x => !x.IsAbstract && x.IsClass && typeof(ServerBattleCommand).IsAssignableFrom(x))
+                    .Select(x => x.GetConstructor(new Type[] { }).Invoke(new object[] { }))
+                    .Cast<ServerBattleCommand>()
+                    .ToDictionary(x => x.Shortcut, x => x);
+
         }
 
         public ServerBattle(ZkLobbyServer server)
         {
             this.server = server;
-            Commands = new CommandList();
            
             pollTimer = new Timer(PollTimeout * 1000);
             pollTimer.Enabled = false;
@@ -104,6 +113,12 @@ namespace ZkLobbyServer
             MapName = HostedMap?.InternalName ?? MapName ?? "Small_Divide-Remake-v04";
         }
 
+
+        public void RunCommand<T>(string args = null) where T:ServerBattleCommand, new()
+        {
+            var t = new T();
+            t.Run(this, null, args);
+        }
 
         public override void UpdateWith(BattleHeader h)
         {
@@ -185,104 +200,57 @@ namespace ZkLobbyServer
             return ret;
         }
 
+        
 
-        public bool HasRights(string command, Say e, bool hideRightsMessage = false)
-        {
-            foreach (CommandConfig c in Commands.Commands)
-            {
-                if (!c.ListenTo.Contains(e.Place)) continue;
-                if (c.Name == command)
-                {
-                    if (c.Throttling > 0)
-                    {
-                        var diff = (int)DateTime.Now.Subtract(c.lastCall).TotalSeconds;
-                        if (diff < c.Throttling)
-                        {
-                            Respond(e, "AntiSpam - please wait " + (c.Throttling - diff) + " more seconds");
-                            return false;
-                        }
-                    }
-
-                    for (int i = 0; i < c.ListenTo.Length; i++)
-                    {
-                        if (c.ListenTo[i] == e.Place)
-                        {
-                            // command is only for nonspecs
-                            if (!c.AllowSpecs && !GetUserAdminStatus(e) && GetUserIsSpectator(e)) return false;
-
-                            int reqLevel = c.Level;
-                            int ulevel = GetUserLevel(e);
-
-                            if (ulevel >= reqLevel)
-                            {
-                                c.lastCall = DateTime.Now;
-                                return true; // ALL OK
-                            }
-                            else
-                            {
-                                if (!hideRightsMessage)
-                                {
-                                    Respond(e, $"Sorry, you do not have rights to execute {command}");
-                                }
-                                return false;
-                            }
-                        }
-                    }
-                    return false; // place not allowed for this command = ignore command
-                }
-            }
-            if (e.Place != SayPlace.Channel) Respond(e, "Sorry, I don't know command '" + command + "'");
-            return false;
-        }
-
-
-        public void RegisterVote(Say e, bool vote)
+        public async void RegisterVote(Say e, bool vote)
         {
             if (activePoll != null)
             {
-                if (activePoll.Vote(e, vote))
+                if (await activePoll.Vote(e, vote))
                 {
                     pollTimer.Enabled = false;
                     activePoll = null;
                 }
             }
-            else Respond(e, "There is no poll going on, start some first");
+            else await Respond(e, "There is no poll going on, start some first");
         }
 
 
         public Task Respond(Say e, string text)
         {
-            return SayBattle(text, e.User);
+            return SayBattle(text, e?.User);
         }
+
+        public ServerBattleCommand GetCommandByName(string name)
+        {
+            ServerBattleCommand command;
+            if (Commands.TryGetValue(name, out command))
+            {
+                return command.Create();
+            }
+            return null;
+        }
+
+        public async Task SwitchMap(string internalName)
+        {
+            UpdateWith(new BattleHeader() { Map = internalName });
+            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = MapName } });
+        }
+
 
 
         public async Task RunCommand(Say e, string com, string[] words)
         {
+            var cmd = GetCommandByName(com);
+            if (cmd != null)
+            {
+                var perm = cmd.RunPermissions(this, e.User);
+                if (perm == CommandExecutionRight.Run) await cmd.Run(this, e, string.Join(" ", words));
+                else if (perm == CommandExecutionRight.Vote) await StartVote(cmd, e, string.Join(" ", words));
+            }
+
             switch (com)
             {
-                case "listmaps":
-                    ComListMaps(e, words);
-                    break;
-
-                case "listmods":
-                    ComListMods(e, words);
-                    break;
-
-                case "help":
-                    ComHelp(e, words);
-                    break;
-
-                case "map":
-                    await ComMap(e, words);
-                    break;
-
-                case "start":
-                        int cnt = NonSpectatorCount;
-                        if (cnt == 1) ComStart(e, words);
-                        else StartVote(new VoteStart(spring, this), e, words);
-
-                    break;
-
                 case "forcestart":
                     ComForceStart(e, words);
                     break;
@@ -316,38 +284,6 @@ namespace ZkLobbyServer
 
                 case "n":
                     RegisterVote(e, false);
-                    break;
-
-                case "votemap":
-                    StartVote(new VoteMap(spring, this), e, words);
-                    break;
-
-                case "votekick":
-                    StartVote(new VoteKick(spring, this), e, words);
-                    break;
-
-                case "votespec":
-                    StartVote(new VoteSpec(spring, this), e, words);
-                    break;
-
-                case "voteresign":
-                    StartVote(new VoteResign(spring, this), e, words);
-                    break;
-
-                case "voteforcestart":
-                    StartVote(new VoteForceStart(spring, this), e, words);
-                    break;
-
-                case "voteforce":
-                    StartVote(new VoteForce(spring, this), e, words);
-                    break;
-
-                case "voteexit":
-                    StartVote(new VoteExit(spring, this), e, words);
-                    break;
-
-                case "voteresetoptions":
-                    StartVote(new VoteResetOptions(spring, this), e, words);
                     break;
 
                 case "predict":
@@ -426,10 +362,6 @@ namespace ZkLobbyServer
                     ComSetOption(e, words);
                     break;
 
-                case "votesetoptions":
-                    StartVote(new VoteSetOptions(spring, this), e, words);
-                    break;
-
                 case "setengine":
                     await ComSetEngine(e, words);
                     break;
@@ -466,22 +398,20 @@ namespace ZkLobbyServer
         }
 
 
-        public void StartVote(IVotable vote, Say e, string[] words)
+        public async Task StartVote(ServerBattleCommand command, Say e, string args)
         {
-            if (vote != null)
-            {
                 if (activePoll != null)
                 {
-                    Respond(e, "Another poll already in progress, please wait");
+                    await Respond(e, "Another poll already in progress, please wait");
                     return;
                 }
-                if (vote.Setup(e, words))
+                var poll = new CommandPoll(this);
+                if (await poll.Setup(command, e, args))
                 {
-                    activePoll = vote;
+                    activePoll = poll;
                     pollTimer.Interval = PollTimeout * 1000;
                     pollTimer.Enabled = true;
                 }
-            }
         }
 
 
@@ -490,21 +420,9 @@ namespace ZkLobbyServer
             StopVote();
         }
 
-        public void StopVote(Say e = null)
+        public async void StopVote(Say e = null)
         {
-            if (e != null)
-            {
-                string name = e.User;
-                if (name != null && activePoll != null && name != activePoll.Creator)
-                {
-                    if (GetUserLevel(name) < GlobalConst.SpringieBossEffectiveRights)
-                    {
-                        Respond(e, "Sorry, you do not have rights to end this vote");
-                        return;
-                    }
-                }
-            }
-            if (activePoll != null) activePoll.End();
+            if (activePoll != null) await activePoll.End();
             if (pollTimer != null) pollTimer.Enabled = false;
             activePoll = null;
         }
@@ -572,7 +490,6 @@ namespace ZkLobbyServer
             toNotify.Clear();
             */
             //if (mode != AutohostMode.None && DateTime.Now.Subtract(spring.GameStarted).TotalMinutes > 5) ServerVerifyMap(true);
-            ComMap(defaultSay);
         }
 
         void spring_SpringStarted(object sender, EventArgs e)
@@ -745,6 +662,8 @@ namespace ZkLobbyServer
 
         public async Task ProcessBattleSay(Say say)
         {
+            if (say.User == GlobalConst.NightwatchName) return; // ignore self
+
             ConnectedUser user;
             server.ConnectedUsers.TryGetValue(say.User, out user);
             if (say.Place == SayPlace.Battle && !say.IsEmote && user?.User.BanMute != true && user?.User.BanSpecChat != true) spring.SayGame(
@@ -759,19 +678,6 @@ namespace ZkLobbyServer
 
                 // remove first word (command)
                 string[] words = ZkData.Utils.ShiftArray(allwords, -1);
-
-                string voteCom = "vote" + com;
-                bool hasVoteVersion = !com.StartsWith("vote") && Commands.Commands.Any(x => x.Name == voteCom);
-
-                if (!HasRights(com, say))
-                {
-                    if (hasVoteVersion)
-                    {
-                        com = voteCom;
-                        if (!HasRights(voteCom, say)) return;
-                    }
-                    else return;
-                }
 
 
                 if (say.Place == SayPlace.User)

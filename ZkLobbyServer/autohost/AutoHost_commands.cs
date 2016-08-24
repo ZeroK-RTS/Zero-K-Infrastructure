@@ -178,23 +178,7 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task ComMap(Say e, params string[] words)
-        {
-            if (spring.IsRunning)
-            {
-                await Respond(e, "Cannot change map while the game is running");
-                return;
-            }
-            var map = words.Length > 0 ? MapPicker.FindResources(ResourceType.Map, words).FirstOrDefault() : MapPicker.GetRecommendedMap(GetContext());
-            if (map != null)
-            {
-                UpdateWith(new BattleHeader() {Map = map.InternalName});
-                await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = MapName} });
-
-                await SayBattle("changing map to " + map.InternalName);
-            }
-            else await Respond(e, "Cannot find such map.");
-        }
+        
 
 
         public void ComPredict(Say e, string[] words)
@@ -519,39 +503,15 @@ namespace ZkLobbyServer
             }*/
         }
 
-        void ComHelp(Say e, string[] words)
+/*        void ComHelp(Say e, string[] words)
         {
             var ulevel = GetUserLevel(e);
             Respond(e, "---");
             foreach (var c in Commands.Commands) if (c.Level <= ulevel) Respond(e, " !" + c.Name + " " + c.HelpText);
             Respond(e, "---");
-        }
+        }*/
 
 
-
-        void ComListMaps(Say e, string[] words)
-        {
-            var maps = MapPicker.FindResources(ResourceType.Map, words).Take(MaxMapListLength).ToList();
-            if (maps.Any())
-            {
-                Respond(e, "---");
-                foreach (var map in maps) Respond(e, map.ResourceID + ": " + map.InternalName);
-                Respond(e, "---");
-            }
-            else Respond(e, "no such map found");
-        }
-
-        void ComListMods(Say e, string[] words)
-        {
-            var mods = MapPicker.FindResources(ResourceType.Mod, words).Take(MaxMapListLength).ToList();
-            if (mods.Any())
-            {
-                Respond(e, "---");
-                foreach (var mod in mods) Respond(e, mod.ResourceID + ": " + mod.InternalName);
-                Respond(e, "---");
-            }
-            else Respond(e, "no such mod found");
-        }
 
         void ComListOptions(Say e, string[] words)
         {
@@ -660,7 +620,7 @@ namespace ZkLobbyServer
             if (spring.IsRunning) spring.SayGame(String.Format("[{0}]{1}", e.User, "!transmit " + Utils.Glue(words)));
         }
 
-        int FilterUsers(string[] words, out string[] vals, out int[] indexes)
+        public int FilterUsers(string[] words, out string[] vals, out int[] indexes)
         {
             return FilterUsers(words, this, spring, out vals, out indexes);
         }

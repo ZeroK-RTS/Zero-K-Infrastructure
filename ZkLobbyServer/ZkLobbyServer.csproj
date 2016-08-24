@@ -76,21 +76,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="autohost\AutoHost_commands.cs" />
+    <Compile Include="autohost\Commands\BattleCommandAccess.cs" />
     <Compile Include="autohost\CommandConfig.cs" />
     <Compile Include="autohost\CommandList.cs" />
+    <Compile Include="autohost\Commands\CmdHelp.cs" />
+    <Compile Include="autohost\Commands\CmdListGames.cs" />
+    <Compile Include="autohost\Commands\CmdListMaps.cs" />
+    <Compile Include="autohost\Commands\CmdMap.cs" />
+    <Compile Include="autohost\Commands\CmdRing.cs" />
+    <Compile Include="autohost\Commands\CommandExecutionRight.cs" />
     <Compile Include="autohost\MapPicker.cs" />
     <Compile Include="autohost\Polls\AbstractPoll.cs" />
+    <Compile Include="autohost\Polls\CommandPoll.cs" />
     <Compile Include="autohost\Polls\IVotable.cs" />
     <Compile Include="autohost\Polls\VoteExit.cs" />
     <Compile Include="autohost\Polls\VoteForce.cs" />
     <Compile Include="autohost\Polls\VoteForceStart.cs" />
     <Compile Include="autohost\Polls\VoteKick.cs" />
-    <Compile Include="autohost\Polls\VoteMap.cs" />
     <Compile Include="autohost\Polls\VoteResetOptions.cs" />
     <Compile Include="autohost\Polls\VoteResign.cs" />
     <Compile Include="autohost\Polls\VoteSetOptions.cs" />
     <Compile Include="autohost\Polls\VoteSpec.cs" />
     <Compile Include="autohost\Polls\VoteStart.cs" />
+    <Compile Include="autohost\Commands\ServerBattleCommand.cs" />
     <Compile Include="ChannelManager.cs" />
     <Compile Include="ChatRelay.cs" />
     <Compile Include="ClientConnection.cs" />
