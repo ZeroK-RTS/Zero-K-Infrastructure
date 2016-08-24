@@ -202,12 +202,8 @@ namespace ZkLobbyServer
 
 
 
-        public Dictionary<string, string> GetOptionsDictionary(Say e, string[] words)
+        public Dictionary<string, string> GetOptionsDictionary(Say e, string s)
         {
-            return new Dictionary<string, string>();
-            // TODO hack reimplement
-            /*
-            var s = Utils.Glue(words);
             var ret = new Dictionary<string, string>();
             var pairs = s.Split(new[] { ',' });
             if (pairs.Length == 0 || pairs[0].Length == 0)
@@ -227,7 +223,7 @@ namespace ZkLobbyServer
                 var val = parts[1].Trim();
 
                 var found = false;
-                var mod = hostedMod;
+                var mod = HostedModInfo;
                 foreach (var o in mod.Options)
                 {
                     if (o.Key == key)
@@ -249,7 +245,7 @@ namespace ZkLobbyServer
                     return ret;
                 }
             }
-            return ret;*/
+            return ret;
         }
 
         public bool RunServerBalance(bool isGameStart, int? allyTeams, bool? clanWise)

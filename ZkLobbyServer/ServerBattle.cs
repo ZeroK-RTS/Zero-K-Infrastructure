@@ -74,6 +74,8 @@ namespace ZkLobbyServer
             SetupSpring();
         }
 
+        public Mod HostedModInfo;
+
         public void FillDetails()
         {
             if (IsNullOrEmpty(Title)) Title = $"{FounderName}'s " + Mode.Description();
@@ -111,6 +113,19 @@ namespace ZkLobbyServer
 
             ModName = HostedMod?.InternalName ?? ModName ?? "zk:stable";
             MapName = HostedMap?.InternalName ?? MapName ?? "Small_Divide-Remake-v04";
+
+
+            if (HostedMod != null)
+            {
+                try
+                {
+                    HostedModInfo = MetaDataCache.ServerGetMod(HostedMod.InternalName);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Error loading mod metadata for {0} : {1}", HostedMod.InternalName, ex);
+                }
+            }
         }
 
 
