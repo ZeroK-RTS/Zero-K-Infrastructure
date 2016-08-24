@@ -16,6 +16,7 @@ namespace ZkLobbyServer
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
             cmd = arguments;
+            return $"do you want to host say {cmd} ?";
         }
         
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
@@ -23,6 +24,7 @@ namespace ZkLobbyServer
             if (battle.spring.IsRunning)
             {
                 battle.spring.SayGame(cmd);
+                await battle.SayBattle($"Host executing {cmd}");
             }
         }
     }
