@@ -86,6 +86,7 @@
     <Compile Include="autohost\Commands\CmdListMaps.cs" />
     <Compile Include="autohost\Commands\CmdGame.cs" />
     <Compile Include="autohost\Commands\CmdMap.cs" />
+    <Compile Include="autohost\Commands\CmdMaxPlayers.cs" />
     <Compile Include="autohost\Commands\CmdRing.cs" />
     <Compile Include="autohost\Commands\CmdTitle.cs" />
     <Compile Include="autohost\Commands\CommandExecutionRight.cs" />
@@ -94,7 +95,6 @@
     <Compile Include="autohost\CommandPoll.cs" />
     <Compile Include="autohost\Polls\IVotable.cs" />
     <Compile Include="autohost\Polls\VoteExit.cs" />
-    <Compile Include="autohost\Polls\VoteForce.cs" />
     <Compile Include="autohost\Polls\VoteKick.cs" />
     <Compile Include="autohost\Polls\VoteResetOptions.cs" />
     <Compile Include="autohost\Polls\VoteResign.cs" />

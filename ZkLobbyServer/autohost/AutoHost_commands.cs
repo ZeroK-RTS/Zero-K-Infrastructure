@@ -98,15 +98,6 @@ namespace ZkLobbyServer
         }
 
 
-        public void ComForce(Say e, string[] words)
-        {
-            if (spring.IsRunning)
-            {
-                SayBattle("forcing game start by " + e.User);
-                spring.ForceStart();
-            }
-            else Respond(e, "cannot force, game not started");
-        }
 
         public void ComForceSpectator(Say e, string[] words)
         {
@@ -498,34 +489,6 @@ namespace ZkLobbyServer
         {
             if (!toNotify.Contains(e.User)) toNotify.Add(e.User);
             Respond(e, "I will notify you when the game ends.");
-        }
-
-        void ComSetGameTitle(Say e, string[] words)
-        {
-            throw new NotImplementedException();
-            /*
-            if (words.Length == 0) Respond(e, "this command needs one parameter - new game title");
-            else
-            {
-                config.Title = Utils.Glue(words);
-                Respond(e, "game title changed");
-            }*/
-        }
-
-        void ComSetMaxPlayers(Say e, string[] words)
-        {
-            throw new NotImplementedException();
-            /*
-            if (words.Length == 0) Respond(e, "this command needs one parameter - number of players");
-            else
-            {
-                int plr;
-                Int32.TryParse(words[0], out plr);
-                if (plr < 1) plr = 1;
-                if (plr > Spring.MaxTeams) plr = Spring.MaxTeams;
-                config.MaxPlayers = plr;
-                Respond(e, "server size changed");
-            }*/
         }
 
 

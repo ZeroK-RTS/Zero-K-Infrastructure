@@ -274,8 +274,7 @@ namespace ZkLobbyServer
                     ComExit(e, words);
                     break;
 
-
-
+                    
                 case "vote":
                     RegisterVote(e, words.Length < 1 || words[0] != "2");
                     break;
@@ -318,14 +317,6 @@ namespace ZkLobbyServer
 
                 case "setpassword":
                     ComSetPassword(e, words);
-                    break;
-
-                case "setgametitle":
-                    ComSetGameTitle(e, words);
-                    break;
-
-                case "setmaxplayers":
-                    ComSetMaxPlayers(e, words);
                     break;
 
                 case "spec":
@@ -700,6 +691,12 @@ namespace ZkLobbyServer
         {
             UpdateWith(new BattleHeader() { Title = Title });
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Title = Title } });
+        }
+
+        public async Task SwitchMaxPlayers(int cnt)
+        {
+            UpdateWith(new BattleHeader() { MaxPlayers = cnt });
+            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
         }
     }
 }
