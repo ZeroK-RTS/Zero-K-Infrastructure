@@ -164,27 +164,6 @@ namespace ZkLobbyServer
 
 
 
-        public void ComPredict(Say e, string[] words)
-        {
-            var b = this;
-            var grouping = b.Users.Values.Where(u => !u.IsSpectator).GroupBy(u => u.AllyNumber).ToList();
-            bool is1v1 = grouping.Count == 2 && grouping[0].Count() == 1 && grouping[1].Count() == 1;
-            IGrouping<int, UserBattleStatus> oldg = null;
-            foreach (var g in grouping)
-            {
-                if (oldg != null)
-                {
-                    var t1elo = oldg.Average(x => (is1v1 ? x.LobbyUser.Effective1v1Elo : x.LobbyUser.EffectiveElo));
-                    var t2elo = g.Average(x => (is1v1 ? x.LobbyUser.Effective1v1Elo : x.LobbyUser.EffectiveElo));
-                    Respond(e,
-                            String.Format("team {0} has {1}% chance to win over team {2}",
-                                          oldg.Key + 1,
-                                          ZkData.Utils.GetWinChancePercent(t2elo - t1elo),
-                                          g.Key + 1));
-                }
-                oldg = g;
-            }
-        }
 
 
         public void ComResetOptions(Say e, string[] words)

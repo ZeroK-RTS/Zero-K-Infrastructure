@@ -281,10 +281,6 @@ namespace ZkLobbyServer
                     RegisterVote(e, false);
                     break;
 
-                case "predict":
-                    ComPredict(e, words);
-                    break;
-
                 case "balance":
                     ComBalance(e, words);
                     break;
