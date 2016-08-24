@@ -132,32 +132,6 @@ namespace ZkLobbyServer
 
         public List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
 
-        public void ComKick(Say e, string[] words)
-        {
-            if (words.Length == 0)
-            {
-                Respond(e, "You must specify player name");
-                return;
-            }
-
-            int[] indexes;
-            string[] usrlist;
-            if (FilterUsers(words, out usrlist, out indexes) == 0)
-            {
-                if (spring.IsRunning) spring.Kick(Utils.Glue(words));
-                Respond(e, "Cannot find such player");
-                return;
-            }
-
-
-            if (!kickedPlayers.Any(x => x.Name == usrlist[0])) kickedPlayers.Add(new KickedPlayer() { Name = usrlist[0] });
-            if (spring.IsRunning) spring.Kick(usrlist[0]);
-
-            server.ConnectedUsers[FounderName].Process(new KickFromBattle() { BattleID = BattleID, Name = usrlist[0] });
-        }
-
-
-
 
 
         public void ComResetOptions(Say e, string[] words)

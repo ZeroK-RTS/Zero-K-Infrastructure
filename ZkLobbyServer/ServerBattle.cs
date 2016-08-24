@@ -258,11 +258,6 @@ namespace ZkLobbyServer
 
             switch (com)
             {
-                case "kick":
-                    ComKick(e, words);
-                    break;
-
-                    
                 case "vote":
                     RegisterVote(e, words.Length < 1 || words[0] != "2");
                     break;
@@ -688,6 +683,17 @@ namespace ZkLobbyServer
         {
             Password = pwd;
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() }); // do a full update to hide pwd properly
+        }
+
+        public async Task KickFromBattle(string name, string reason)
+        {
+            UserBattleStatus user;
+            if (Users.TryGetValue(name, out user))
+            {
+                var client = server.ConnectedUsers[name];
+                await client.Respond($"You were kicked from battle by {name} : {reason}");
+                await client.Process(new LeaveBattle() { BattleID = BattleID });
+            }
         }
     }
 }

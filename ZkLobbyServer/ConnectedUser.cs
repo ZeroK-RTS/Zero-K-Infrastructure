@@ -105,14 +105,7 @@ namespace ZkLobbyServer
                     await Respond("No rights to do a kick");
                     return;
                 }
-
-                UserBattleStatus user;
-                if (bat.Users.TryGetValue(batKick.Name, out user))
-                {
-                    var client = state.ConnectedUsers[batKick.Name];
-                    await client.Respond(string.Format("You were kicked from battle by {0} : {1}", Name, batKick.Reason));
-                    await client.Process(new LeaveBattle() { BattleID = batKick.BattleID.Value });
-                }
+                await bat.KickFromBattle(batKick.Name, batKick.Reason);
             }
         }
 
