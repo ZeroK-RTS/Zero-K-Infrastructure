@@ -10,7 +10,6 @@ using System.Xml.Serialization;
 using LobbyClient;
 using PlasmaShared;
 using ZkData;
-using Springie.autohost;
 
 namespace Springie
 {
