@@ -178,8 +178,6 @@ namespace ZkLobbyServer
         }
 
 
-        
-
 
         public void ComPredict(Say e, string[] words)
         {
@@ -203,25 +201,6 @@ namespace ZkLobbyServer
             }
         }
 
-
-        public async Task ComRehost(Say e, string[] words)
-        {
-            if (spring.IsRunning)
-            {
-                await Respond(e, "Cannot rehost while game is running");
-                return;
-            }
-
-            var mod = MapPicker.FindResources(ResourceType.Mod, words).FirstOrDefault();
-            if (mod != null)
-            {
-                UpdateWith(new BattleHeader() {Game = mod.InternalName});
-                await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Game = ModName }});
-
-                await SayBattle("changing map to " + mod.InternalName);
-            }
-            else await Respond(e, "Cannot find such mod.");
-        }
 
         public void ComResetOptions(Say e, string[] words)
         {
@@ -526,28 +505,6 @@ namespace ZkLobbyServer
             if (!toNotify.Contains(e.User)) toNotify.Add(e.User);
             Respond(e, "I will notify you when the game ends.");
         }
-
-
-        async Task ComSetEngine(Say e, string[] words)
-        {
-            var engine = string.Join(" ", words);
-            if (!springPaths.HasEngineVersion(engine))
-            {
-                var serv = GlobalConst.GetContentService(); // TODO this can be done directly, we are in server
-                if (!serv.GetEngineList(null).Any(x=>x == engine))
-                {
-                    await Respond(e, "Engine not found");
-                    return;
-                }
-                downloader.GetEngine(engine);
-            }
-
-            UpdateWith(new BattleHeader() { Engine = engine });
-            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Engine = EngineVersion } });
-
-            await SayBattle("Engine changed to " + engine);
-        }
-
 
         void ComSetGameTitle(Say e, string[] words)
         {

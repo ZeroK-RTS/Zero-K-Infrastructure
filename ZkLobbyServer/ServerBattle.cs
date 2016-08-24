@@ -24,8 +24,8 @@ namespace ZkLobbyServer
 {
     public partial class ServerBattle:Battle
     {
-        private static PlasmaDownloader.PlasmaDownloader downloader;
-        private static SpringPaths springPaths;
+        public static PlasmaDownloader.PlasmaDownloader downloader;
+        public static SpringPaths springPaths;
 
         public const int PollTimeout = 60;
         public static readonly Dictionary<string, ServerBattleCommand> Commands = new Dictionary<string, ServerBattleCommand>();
@@ -237,6 +237,11 @@ namespace ZkLobbyServer
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = MapName } });
         }
 
+        public async Task SwitchGame(string internalName)
+        {
+            UpdateWith(new BattleHeader() { Game = internalName });
+            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Game = ModName } });
+        }
 
 
         public async Task RunCommand(Say e, string com, string[] words)
@@ -289,11 +294,6 @@ namespace ZkLobbyServer
                 case "predict":
                     ComPredict(e, words);
                     break;
-
-                case "rehost":
-                    await ComRehost(e, words);
-                    break;
-
 
                 case "balance":
                     ComBalance(e, words);
@@ -362,9 +362,6 @@ namespace ZkLobbyServer
                     ComSetOption(e, words);
                     break;
 
-                case "setengine":
-                    await ComSetEngine(e, words);
-                    break;
 
                 case "transmit":
                     ComTransmit(e, words);
@@ -694,6 +691,12 @@ namespace ZkLobbyServer
         private void StartGame()
         {
             throw new NotImplementedException();
+        }
+
+        public async Task SwitchEngine(string engine)
+        {
+            UpdateWith(new BattleHeader() { Engine = engine});
+            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Engine = EngineVersion } });
         }
     }
 }

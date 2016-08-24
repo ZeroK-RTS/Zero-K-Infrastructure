@@ -58,6 +58,8 @@ namespace ZkLobbyServer
                 {
                     await battle.SayBattle($"Poll: {question} [END:SUCCESS]");
                     ended = true;
+                    if (command.Access == BattleCommandAccess.NotIngame && battle.spring.IsRunning) return true;
+                    if (command.Access == BattleCommandAccess.Ingame && !battle.spring.IsRunning) return true;
                     await command.ExecuteArmed(battle, creator);
                     return true;
                 }

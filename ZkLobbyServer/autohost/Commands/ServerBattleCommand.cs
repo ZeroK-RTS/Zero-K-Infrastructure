@@ -83,7 +83,6 @@ namespace ZkLobbyServer.autohost
                 if (user?.IsSpectator == false) isSpectator = false;
                 count = battle.Users.Count(x => !x.Value.IsSpectator);
             }
-            return CommandExecutionRight.Vote;
 
             var defPerm = hasAdminRights ? CommandExecutionRight.Run : (isSpectator ? CommandExecutionRight.None : CommandExecutionRight.Vote);
             if (defPerm == CommandExecutionRight.None) return defPerm;
