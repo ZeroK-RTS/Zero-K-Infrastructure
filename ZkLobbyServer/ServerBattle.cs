@@ -289,11 +289,6 @@ namespace ZkLobbyServer
                     ComCBalance(e, words);
                     break;
 
-                case "notify":
-                    ComNotify(e, words);
-                    break;
-
-
                 case "cheats":
                     if (spring.IsRunning)
                     {

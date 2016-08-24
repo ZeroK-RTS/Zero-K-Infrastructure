@@ -17,7 +17,7 @@ namespace ZkLobbyServer
     {
         public const int MaxMapListLength = 100; //400
 
-        readonly List<string> toNotify = new List<string>();
+        public readonly List<string> toNotify = new List<string>();
 
         public bool AllReadyAndSynced(out List<string> usname)
         {
@@ -350,13 +350,6 @@ namespace ZkLobbyServer
          /*   var mod = hostedMod;
             if (mod.Options.Length == 0) Respond(e, "this mod has no options");
             else foreach (var opt in mod.Options) Respond(e, opt.ToString());*/
-        }
-
-
-        void ComNotify(Say e, string[] words)
-        {
-            if (!toNotify.Contains(e.User)) toNotify.Add(e.User);
-            Respond(e, "I will notify you when the game ends.");
         }
 
 

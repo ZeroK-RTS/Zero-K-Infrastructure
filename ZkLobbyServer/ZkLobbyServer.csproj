@@ -89,6 +89,7 @@
     <Compile Include="autohost\Commands\CmdGame.cs" />
     <Compile Include="autohost\Commands\CmdMap.cs" />
     <Compile Include="autohost\Commands\CmdMaxPlayers.cs" />
+    <Compile Include="autohost\Commands\CmdNotify.cs" />
     <Compile Include="autohost\Commands\CmdPassword.cs" />
     <Compile Include="autohost\Commands\CmdPredict.cs" />
     <Compile Include="autohost\Commands\CmdRing.cs" />
