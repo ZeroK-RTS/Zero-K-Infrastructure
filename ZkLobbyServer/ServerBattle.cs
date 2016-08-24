@@ -278,13 +278,6 @@ namespace ZkLobbyServer
                     ComResetOptions(e, words);
                     break;
 
-
-                case "endvote":
-                    StopVote(e);
-                    SayBattle("poll cancelled");
-                    break;
-
-
                 case "cbalance":
                     ComCBalance(e, words);
                     break;
