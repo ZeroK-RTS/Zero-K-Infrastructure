@@ -327,26 +327,6 @@ namespace ZkLobbyServer
             else foreach (var opt in mod.Options) Respond(e, opt.ToString());*/
         }
 
-
-        void ComSetOption(Say e, string[] words)
-        {
-            throw new NotImplementedException();
-            /*
-            if (spring.IsRunning)
-            {
-                Respond(e, "Cannot set options while the game is running");
-                return;
-            }
-            var ret = GetOptionsDictionary(e, words);
-            if (ret.Count > 0)
-            {
-                tas.UpdateModOptions(ret);
-                Respond(e, "Options set");
-            }*/
-        }
-
-
-
         public int FilterUsers(string[] words, out string[] vals, out int[] indexes)
         {
             return FilterUsers(words, this, spring, out vals, out indexes);

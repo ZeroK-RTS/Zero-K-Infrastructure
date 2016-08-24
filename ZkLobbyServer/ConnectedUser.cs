@@ -630,8 +630,7 @@ namespace ZkLobbyServer
                     await Respond("You don't have permissions to change mod options here");
                     return;
                 }
-                bat.ModOptions = options.Options;
-                await state.Broadcast(bat.Users.Keys, options);
+                await bat.SetModOptions(options.Options);
             }
         }
 

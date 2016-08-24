@@ -635,5 +635,11 @@ namespace ZkLobbyServer
             ConnectedUser usr;
             if (server.ConnectedUsers.TryGetValue(name, out usr)) await usr.Process(new UpdateUserBattleStatus() { Name = usr.Name, IsSpectator = true });
         }
+
+        public async Task SetModOptions(Dictionary<string, string> options)
+        {
+            ModOptions = options;
+            await server.Broadcast(Users.Keys, options);
+        }
     }
 }
