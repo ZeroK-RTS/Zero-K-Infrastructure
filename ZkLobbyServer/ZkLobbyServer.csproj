@@ -80,6 +80,7 @@
     <Compile Include="autohost\CommandConfig.cs" />
     <Compile Include="autohost\CommandList.cs" />
     <Compile Include="autohost\Commands\CmdEngine.cs" />
+    <Compile Include="autohost\Commands\CmdExit.cs" />
     <Compile Include="autohost\Commands\CmdHelp.cs" />
     <Compile Include="autohost\Commands\CmdListEngines.cs" />
     <Compile Include="autohost\Commands\CmdListGames.cs" />
@@ -97,7 +98,6 @@
     <Compile Include="autohost\Polls\AbstractPoll.cs" />
     <Compile Include="autohost\CommandPoll.cs" />
     <Compile Include="autohost\Polls\IVotable.cs" />
-    <Compile Include="autohost\Polls\VoteExit.cs" />
     <Compile Include="autohost\Polls\VoteKick.cs" />
     <Compile Include="autohost\Polls\VoteResetOptions.cs" />
     <Compile Include="autohost\Polls\VoteResign.cs" />

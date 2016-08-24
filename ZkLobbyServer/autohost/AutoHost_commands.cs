@@ -90,12 +90,6 @@ namespace ZkLobbyServer
         }
 
 
-        public void ComExit(Say e, string[] words)
-        {
-            if (spring.IsRunning) SayBattle("exiting game");
-            else Respond(e, "cannot exit, not in game");
-            spring.ExitGame();
-        }
 
 
 

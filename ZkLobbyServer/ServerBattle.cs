@@ -262,10 +262,6 @@ namespace ZkLobbyServer
                     ComKick(e, words);
                     break;
 
-                case "exit":
-                    ComExit(e, words);
-                    break;
-
                     
                 case "vote":
                     RegisterVote(e, words.Length < 1 || words[0] != "2");
