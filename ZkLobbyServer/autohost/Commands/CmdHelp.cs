@@ -29,7 +29,6 @@ namespace ZkLobbyServer
                 foreach (var com in grp.OrderBy(x=>x.Shortcut)) await battle.Respond(e, $"!{com.Shortcut} {com.Help}");
                 await battle.Respond(e, $"--- {grp.Key} ---");
             }
-            await battle.Respond(e, "---");
         }
     }
 }

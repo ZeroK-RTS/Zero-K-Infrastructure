@@ -11,22 +11,12 @@ namespace Springie.autohost
 
         public CommandList()
         {
-            AddMissing(new CommandConfig("help", 0, " - lists all commands available specifically to you", 5) { AllowSpecs = true});
-
-
             AddMissing(new CommandConfig("balance",
                                          1,
                                          "<allycount> - assigns people to <allycount> rank balanced alliances, e.g. !balance - makes 2 random but balanced alliances",
                                          10));
 
             AddMissing(new CommandConfig("start", 1, " - starts game", 5));
-
-            AddMissing(new CommandConfig("ring",
-                                         1,
-                                         "[<filters>..] - rings all unready or specific player(s), e.g. !ring - rings unready, !ring icho - rings Licho",
-                                         5,
-                                         new[] { SayPlace.User, SayPlace.Battle, SayPlace.Game })
-                                         { AllowSpecs = true});
 
             AddMissing(new CommandConfig("listmaps", 1, "[<filters>..] - lists maps on server, e.g. !listmaps altor div", 10));
 
