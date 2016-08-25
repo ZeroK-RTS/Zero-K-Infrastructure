@@ -17,14 +17,15 @@ namespace ZeroKWeb.SpringieInterface
         public static SpringBattleStartSetup GetSpringBattleStartSetup(BattleContext context) {
             try {
                 AutohostMode mode = context.GetMode();
-                var ret = new SpringBattleStartSetup();
-
+                var ret = new SpringBattleStartSetup(context);
+                
                 if (mode == AutohostMode.Planetwars)
                 {
-                    ret.BalanceTeamsResult = Balancer.BalanceTeams(context, true,null, null);
-                    context.Players = ret.BalanceTeamsResult.Players;
+                    var balance = Balancer.BalanceTeams(context, true,null, null);
+                    context.Players = balance.Players;
+                    context.Bots = balance.Bots;
                 }
-                
+
                 var commProfiles = new LuaTable();
                 var db = new ZkDataContext();
                 

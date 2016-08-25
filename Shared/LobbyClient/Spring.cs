@@ -101,7 +101,7 @@ namespace LobbyClient
                 if (IsRunning) process.PriorityClass = value;
             }
         }
-        public BattleContext StartContext { get; private set; }
+        public BattleContext StartContext => StartSetup.StartContext;
 
         public Spring(SpringPaths springPaths)
         {
@@ -165,21 +165,19 @@ namespace LobbyClient
         public event EventHandler<SpringLogEventArgs> GameOver; // game has ended
 
 
-        public string HostGame(BattleContext context,
+        public string HostGame(SpringBattleStartSetup startSetup,
             string host,
             int port,
             string myName,
             string myPassword,
-            string engine,
-            SpringBattleStartSetup startSetup)
+            string engine)
         {
             if (!File.Exists(paths.GetSpringExecutablePath(engine)) && !File.Exists(paths.GetDedicatedServerPath(engine)))
-                throw new ApplicationException(string.Format("Spring or dedicated server executable not found: {0}, {1}",
-                    paths.GetSpringExecutablePath(engine),
-                    paths.GetDedicatedServerPath(engine)));
+                throw new ApplicationException(
+                    $"Spring or dedicated server executable not found: {paths.GetSpringExecutablePath(engine)}, {paths.GetDedicatedServerPath(engine)}");
 
             wasKilled = false;
-            StartContext = context;
+            StartSetup = startSetup;
             string script = null;
 
             if (!IsRunning)
@@ -200,7 +198,7 @@ namespace LobbyClient
                 statsPlayers.Clear();
                 statsData.Clear();
 
-                if (isHosting && GlobalConst.IsZkMod(context.Mod))
+                if (isHosting && GlobalConst.IsZkMod(StartContext.Mod))
                 {
                     try
                     {
@@ -215,13 +213,7 @@ namespace LobbyClient
                         Trace.TraceError("Error getting start setup: {0}", ex);
                     }
 
-                    script = ScriptGenerator.GenerateHostScript(StartContext,
-                        startSetup,
-                        talker.LoopbackPort,
-                        host,
-                        port,
-                        myName,
-                        myPassword);
+                    script = ScriptGenerator.GenerateHostScript(StartContext, startSetup, talker.LoopbackPort, host, port, myName, myPassword);
 
                     statsPlayers = StartContext.Players.ToDictionary(x => x.Name,
                         x => new BattlePlayerResult
@@ -242,6 +234,8 @@ namespace LobbyClient
             else Trace.TraceError("Spring already running");
             return null;
         }
+
+        public SpringBattleStartSetup StartSetup { get; private set; }
 
 
         public bool IsPlayerReady(string name)

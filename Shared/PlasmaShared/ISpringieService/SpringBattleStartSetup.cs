@@ -1,14 +1,19 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PlasmaShared
 {
     public class SpringBattleStartSetup
     {
+        public BattleContext StartContext;
         public List<ScriptKeyValuePair> ModOptions = new List<ScriptKeyValuePair>();
         public List<UserCustomParameters> UserParameters = new List<UserCustomParameters>();
-        public BalanceTeamsResult BalanceTeamsResult;
 
-        #region Nested type: ScriptKeyValuePair
+
+        public SpringBattleStartSetup(BattleContext startContext)
+        {
+            StartContext = startContext;
+        }
 
         public class ScriptKeyValuePair
         {
@@ -16,17 +21,10 @@ namespace PlasmaShared
             public string Value;
         }
 
-        #endregion
-
-        #region Nested type: UserCustomParameters
-
         public class UserCustomParameters
         {
             public int LobbyID;
             public List<ScriptKeyValuePair> Parameters = new List<ScriptKeyValuePair>();
         }
-
-        
-        #endregion
     }
 }

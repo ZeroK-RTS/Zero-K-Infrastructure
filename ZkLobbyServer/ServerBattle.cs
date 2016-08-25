@@ -320,15 +320,9 @@ namespace ZkLobbyServer
             var ip = "127.0.0.1";
             int port = 8452;
 
-            var startContext = GetContext();
-            var startSetup = StartSetup.GetSpringBattleStartSetup(startContext);
-            if (startSetup.BalanceTeamsResult != null)
-            {
-                startContext.Players = startSetup.BalanceTeamsResult.Players;
-                startContext.Bots = startSetup.BalanceTeamsResult.Bots;
-            }
+            var startSetup = StartSetup.GetSpringBattleStartSetup(GetContext());
 
-            spring.HostGame(startContext, ip, port, null, null, EngineVersion, startSetup);  // TODO HACK GET PORTS
+            spring.HostGame(startSetup, ip, port, null, null, EngineVersion);  // TODO HACK GET PORTS
             RunningSince = DateTime.UtcNow;
             foreach (var us in Users.Values)
             {
