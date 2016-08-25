@@ -221,7 +221,6 @@ namespace LobbyClient
     public class User
     {
         public int AccountID;
-        public int SpringieLevel;
         public ulong? SteamID;
         public DateTime? AwaySince;
         public string Clan;
@@ -252,7 +251,6 @@ namespace LobbyClient
         public void UpdateWith(User u)
         {
             AccountID = u.AccountID;
-            SpringieLevel = u.SpringieLevel;
             SteamID = u.SteamID;
             AwaySince = u.AwaySince;
             Clan = u.Clan;

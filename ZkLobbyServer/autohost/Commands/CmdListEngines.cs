@@ -5,18 +5,17 @@ using System.Threading.Tasks;
 using LobbyClient;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdListEngines : ServerBattleCommand
+    public class CmdListEngines : BattleCommand
     {
         private List<string> engines;
         public override string Help => "[<filters>..] - lists game engines, e.g. !listengines 103.0";
         public override string Shortcut => "listengines";
-        public override BattleCommandAccess Access => BattleCommandAccess.NoCheck;
+        public override AccessType Access => AccessType.NoCheck;
 
-        public override ServerBattleCommand Create() => new CmdListEngines();
+        public override BattleCommand Create() => new CmdListEngines();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {

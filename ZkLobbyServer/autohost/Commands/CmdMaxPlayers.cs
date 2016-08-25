@@ -1,18 +1,17 @@
 ﻿using System.Threading.Tasks;
 using LobbyClient;
 using ZkData;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdMaxPlayers : ServerBattleCommand
+    public class CmdMaxPlayers : BattleCommand
     {
         private int cnt;
         public override string Help => "count - changes room size, e.g. !maxplayers 10";
         public override string Shortcut => "maxplayers";
-        public override BattleCommandAccess Access => BattleCommandAccess.NotIngame;
+        public override AccessType Access => AccessType.NotIngame;
 
-        public override ServerBattleCommand Create() => new CmdMaxPlayers();
+        public override BattleCommand Create() => new CmdMaxPlayers();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {

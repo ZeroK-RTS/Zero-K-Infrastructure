@@ -259,7 +259,6 @@ namespace ZeroKWeb
                 EloWeight = (float)acc.EloWeight,
                 FactionID = acc.FactionID ?? 0,
                 FactionName = acc.Faction != null ? acc.Faction.Name : null,
-                SpringieLevel = acc.GetEffectiveSpringieLevel(),
                 LobbyID = acc.LobbyID ?? 0
             };
         }

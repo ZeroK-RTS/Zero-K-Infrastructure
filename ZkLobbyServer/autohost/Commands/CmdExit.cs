@@ -2,17 +2,16 @@
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdExit : ServerBattleCommand
+    public class CmdExit : BattleCommand
     {
         public override string Help => "exits the game";
         public override string Shortcut => "exit";
-        public override BattleCommandAccess Access => BattleCommandAccess.Ingame;
+        public override AccessType Access => AccessType.Ingame;
 
-        public override ServerBattleCommand Create() => new CmdExit();
+        public override BattleCommand Create() => new CmdExit();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {

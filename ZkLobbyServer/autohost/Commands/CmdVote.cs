@@ -3,17 +3,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
 using ZkData;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdVote : ServerBattleCommand
+    public class CmdVote : BattleCommand
     {
         public override string Help => "<number> - votes for given option, e.g. !vote 1";
         public override string Shortcut => "vote";
-        public override BattleCommandAccess Access => BattleCommandAccess.NoCheck;
+        public override AccessType Access => AccessType.NoCheck;
 
-        public override ServerBattleCommand Create() => new CmdVote();
+        public override BattleCommand Create() => new CmdVote();
 
         private int opt;
 

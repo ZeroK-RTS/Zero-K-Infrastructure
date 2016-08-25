@@ -1,16 +1,15 @@
 using System.Threading.Tasks;
 using LobbyClient;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdHostsay : ServerBattleCommand
+    public class CmdHostsay : BattleCommand
     {
         public override string Help => "says something as host, useful for !hostsay /nocost etc";
         public override string Shortcut => "hostsay";
-        public override BattleCommandAccess Access => BattleCommandAccess.Ingame;
+        public override AccessType Access => AccessType.Ingame;
 
-        public override ServerBattleCommand Create() => new CmdHostsay();
+        public override BattleCommand Create() => new CmdHostsay();
 
         private string cmd;
         public override string Arm(ServerBattle battle, Say e, string arguments = null)

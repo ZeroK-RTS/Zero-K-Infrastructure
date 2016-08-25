@@ -4,17 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
 using ZkData;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdHelp : ServerBattleCommand
+    public class CmdHelp : BattleCommand
     {
         public override string Help => "Lists other commands";
         public override string Shortcut => "help";
-        public override BattleCommandAccess Access => BattleCommandAccess.NoCheck;
+        public override AccessType Access => AccessType.NoCheck;
 
-        public override ServerBattleCommand Create() => new CmdHelp();
+        public override BattleCommand Create() => new CmdHelp();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {

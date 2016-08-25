@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
@@ -14,21 +13,21 @@ namespace ZkLobbyServer
         private Dictionary<string, bool> userVotes = new Dictionary<string, bool>();
         private string question;
         private Say creator;
-        private ServerBattleCommand command;
+        private BattleCommand command;
 
         public CommandPoll(ServerBattle battle)
         {
             this.battle = battle;
         }
 
-        public async Task<bool> Setup(ServerBattleCommand cmd, Say e, string args)
+        public async Task<bool> Setup(BattleCommand cmd, Say e, string args)
         {
             command = cmd.Create();
 
             creator = e;
             question = command.Arm(battle, e, args);
             if (question == null) return false;
-            winCount = battle.Users.Values.Count(x => command.RunPermissions(battle, x.Name) >= CommandExecutionRight.Vote) / 2 + 1;
+            winCount = battle.Users.Values.Count(x => command.GetRunPermissions(battle, x.Name) >= BattleCommand.RunPermission.Vote) / 2 + 1;
             if (winCount <= 0) winCount = 1;
 
             if (winCount <= 0) winCount = (battle.NonSpectatorCount / 2 + 1);
@@ -48,7 +47,7 @@ namespace ZkLobbyServer
 
         public async Task<bool> Vote(Say e, bool vote)
         {
-            if (command.RunPermissions(battle, e.User) >= CommandExecutionRight.Vote)
+            if (command.GetRunPermissions(battle, e.User) >= BattleCommand.RunPermission.Vote)
             {
                 userVotes[e.User] = vote;
                 var yes = userVotes.Count(x => x.Value == true);
@@ -58,8 +57,8 @@ namespace ZkLobbyServer
                 {
                     await battle.SayBattle($"Poll: {question} [END:SUCCESS]");
                     ended = true;
-                    if (command.Access == BattleCommandAccess.NotIngame && battle.spring.IsRunning) return true;
-                    if (command.Access == BattleCommandAccess.Ingame && !battle.spring.IsRunning) return true;
+                    if (command.Access == BattleCommand.AccessType.NotIngame && battle.spring.IsRunning) return true;
+                    if (command.Access == BattleCommand.AccessType.Ingame && !battle.spring.IsRunning) return true;
                     await command.ExecuteArmed(battle, creator);
                     return true;
                 }

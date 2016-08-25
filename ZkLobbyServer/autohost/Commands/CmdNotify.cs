@@ -3,17 +3,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
 using ZkData;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdNotify : ServerBattleCommand
+    public class CmdNotify : BattleCommand
     {
         public override string Help => "notifies you when game ends";
         public override string Shortcut => "notify";
-        public override BattleCommandAccess Access => BattleCommandAccess.NoCheck;
+        public override AccessType Access => AccessType.NoCheck;
 
-        public override ServerBattleCommand Create() => new CmdNotify();
+        public override BattleCommand Create() => new CmdNotify();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {

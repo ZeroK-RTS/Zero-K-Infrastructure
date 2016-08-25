@@ -76,7 +76,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="autohost\AutoHost_commands.cs" />
-    <Compile Include="autohost\Commands\BattleCommandAccess.cs" />
     <Compile Include="autohost\Commands\CmdBalance.cs" />
     <Compile Include="autohost\Commands\CmdCheats.cs" />
     <Compile Include="autohost\Commands\CmdEndvote.cs" />
@@ -106,10 +105,9 @@
     <Compile Include="autohost\Commands\CmdType.cs" />
     <Compile Include="autohost\Commands\CmdVote.cs" />
     <Compile Include="autohost\Commands\CmdY.cs" />
-    <Compile Include="autohost\Commands\CommandExecutionRight.cs" />
     <Compile Include="autohost\MapPicker.cs" />
     <Compile Include="autohost\CommandPoll.cs" />
-    <Compile Include="autohost\Commands\ServerBattleCommand.cs" />
+    <Compile Include="autohost\Commands\BattleCommand.cs" />
     <Compile Include="ChannelManager.cs" />
     <Compile Include="ChatRelay.cs" />
     <Compile Include="ClientConnection.cs" />

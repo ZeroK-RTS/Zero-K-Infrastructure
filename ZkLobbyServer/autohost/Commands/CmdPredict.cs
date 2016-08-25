@@ -2,17 +2,16 @@
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdPredict : ServerBattleCommand
+    public class CmdPredict : BattleCommand
     {
         public override string Help => "predicts chances of victory";
         public override string Shortcut => "predict";
-        public override BattleCommandAccess Access => BattleCommandAccess.NoCheck;
+        public override AccessType Access => AccessType.NoCheck;
 
-        public override ServerBattleCommand Create() => new CmdPredict();
+        public override BattleCommand Create() => new CmdPredict();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {

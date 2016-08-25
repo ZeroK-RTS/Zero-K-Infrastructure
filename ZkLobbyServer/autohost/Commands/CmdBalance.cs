@@ -5,17 +5,16 @@ using LobbyClient;
 using PlasmaShared;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdBalance : ServerBattleCommand
+    public class CmdBalance : BattleCommand
     {
         public override string Help => "[<teams>] - puts people into teams, respecting their clans and skill if possible";
         public override string Shortcut => "balance";
-        public override BattleCommandAccess Access => BattleCommandAccess.NotIngame;
+        public override AccessType Access => AccessType.NotIngame;
 
-        public override ServerBattleCommand Create() => new CmdBalance();
+        public override BattleCommand Create() => new CmdBalance();
         private int? teamCount;
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)

@@ -3,18 +3,17 @@ using System.Threading.Tasks;
 using LobbyClient;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdMap : ServerBattleCommand
+    public class CmdMap : BattleCommand
     {
         private Resource map;
         public override string Help => "[<filters>..] - changes map, e.g. !map altor div changes map to Altored Divide";
         public override string Shortcut => "map";
-        public override BattleCommandAccess Access => BattleCommandAccess.NotIngame;
+        public override AccessType Access => AccessType.NotIngame;
 
-        public override ServerBattleCommand Create() => new CmdMap();
+        public override BattleCommand Create() => new CmdMap();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {

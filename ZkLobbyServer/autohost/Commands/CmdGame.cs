@@ -5,18 +5,17 @@ using System.Threading.Tasks;
 using LobbyClient;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdGame : ServerBattleCommand
+    public class CmdGame : BattleCommand
     {
         private Resource game;
         public override string Help => "[<filters>..] - changes game version, e.g. !game zk:test. Use zk:dev to host local dev version";
         public override string Shortcut => "game";
-        public override BattleCommandAccess Access => BattleCommandAccess.NotIngame;
+        public override AccessType Access => AccessType.NotIngame;
 
-        public override ServerBattleCommand Create() => new CmdGame();
+        public override BattleCommand Create() => new CmdGame();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {

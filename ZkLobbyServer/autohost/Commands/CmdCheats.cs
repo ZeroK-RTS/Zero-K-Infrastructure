@@ -1,16 +1,15 @@
 using System.Threading.Tasks;
 using LobbyClient;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdCheats : ServerBattleCommand
+    public class CmdCheats : BattleCommand
     {
         public override string Help => "enables/disables cheats in game";
         public override string Shortcut => "cheats";
-        public override BattleCommandAccess Access => BattleCommandAccess.Ingame;
+        public override AccessType Access => AccessType.Ingame;
 
-        public override ServerBattleCommand Create() => new CmdCheats();
+        public override BattleCommand Create() => new CmdCheats();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {

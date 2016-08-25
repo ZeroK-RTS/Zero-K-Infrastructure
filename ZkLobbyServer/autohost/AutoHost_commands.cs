@@ -15,8 +15,7 @@ namespace ZkLobbyServer
 {
     public partial class ServerBattle
     {
-        public readonly List<string> toNotify = new List<string>();
-
+     
         internal static int Filter(string[] source, string[] words, out string[] resultVals, out int[] resultIndexes)
         {
             int i;
@@ -205,13 +204,6 @@ namespace ZkLobbyServer
         public int FilterUsers(string[] words, out string[] vals, out int[] indexes)
         {
             return FilterUsers(words, this, spring, out vals, out indexes);
-        }
-
-
-        public void ComAddUser(Say e, string[] words)
-        {
-            if (words.Length != 1) Respond(e, "Specify password");
-            if (spring.IsRunning) spring.AddUser(e.User, words[0]);
         }
 
     }

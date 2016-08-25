@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
 
-namespace ZkLobbyServer.autohost
+namespace ZkLobbyServer
 {
-    public abstract class ServerBattleCommand
+    public abstract class BattleCommand
     {
         /// <summary>
         ///     Help line displayed
@@ -20,13 +21,13 @@ namespace ZkLobbyServer.autohost
         /// <summary>
         ///     Access level for the command
         /// </summary>
-        public abstract BattleCommandAccess Access { get; }
+        public abstract AccessType Access { get; }
 
         /// <summary>
         ///     Creates instance
         /// </summary>
         /// <returns></returns>
-        public abstract ServerBattleCommand Create();
+        public abstract BattleCommand Create();
 
         /// <summary>
         ///     Prepares the command
@@ -62,9 +63,9 @@ namespace ZkLobbyServer.autohost
         /// <param name="battle"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        public virtual CommandExecutionRight RunPermissions(ServerBattle battle, string userName)
+        public virtual RunPermission GetRunPermissions(ServerBattle battle, string userName)
         {
-            if (Access == BattleCommandAccess.NoCheck) return CommandExecutionRight.Run;
+            if (Access == AccessType.NoCheck) return RunPermission.Run;
             
             UserBattleStatus user = null;
             if (userName != null) battle.Users.TryGetValue(userName, out user);
@@ -84,16 +85,56 @@ namespace ZkLobbyServer.autohost
                 count = battle.Users.Count(x => !x.Value.IsSpectator);
             }
 
-            var defPerm = hasAdminRights ? CommandExecutionRight.Run : (isSpectator ? CommandExecutionRight.None : CommandExecutionRight.Vote);
-            if (defPerm == CommandExecutionRight.None) return defPerm;
-            if (defPerm == CommandExecutionRight.Vote && count<=1) defPerm = CommandExecutionRight.Run;
+            var defPerm = hasAdminRights ? RunPermission.Run : (isSpectator ? RunPermission.None : RunPermission.Vote);
+            if (defPerm == RunPermission.None) return defPerm;
+            if (defPerm == RunPermission.Vote && count<=1) defPerm = RunPermission.Run;
 
-                if (Access == BattleCommandAccess.Anywhere) return defPerm;
-            if (Access == BattleCommandAccess.Ingame && s.IsRunning) return defPerm;
-            if (Access == BattleCommandAccess.NotIngame && !s.IsRunning) return defPerm;
-            if (Access == BattleCommandAccess.IngameVote && s.IsRunning) return CommandExecutionRight.Vote;
+                if (Access == AccessType.Anywhere) return defPerm;
+            if (Access == AccessType.Ingame && s.IsRunning) return defPerm;
+            if (Access == AccessType.NotIngame && !s.IsRunning) return defPerm;
+            if (Access == AccessType.IngameVote && s.IsRunning) return RunPermission.Vote;
 
-            return CommandExecutionRight.None;
+            return RunPermission.None;
         }
+
+        public enum AccessType
+        {
+            [Description("At any time, by anyone, no vote needed")]
+            NoCheck = 0,
+
+            /// <summary>
+            /// Can be executed ingame/offgame by non-spectators (vote) or admins or founder (direct)
+            /// </summary>
+            [Description("At any time, by players, might need a vote")]
+            Anywhere = 1,
+
+            /// <summary>
+            /// Can be executed ingame by non-spectators (vote) or admins or founder (direct)
+            /// </summary>
+            [Description("When game running, by players, might need a vote")]
+            Ingame = 2,
+
+            /// <summary>
+            /// Can be executed not-ingame by non-spectators (vote) or admins or founder (direct)
+            /// </summary>
+            [Description("When game not running, by players, might need a vote")]
+            NotIngame = 3,
+
+            /// <summary>
+            /// Can be executed ingame only as a vote by non-spectators or admins or founder
+            /// </summary>
+            [Description("When game running, by players, needs vote")]
+            IngameVote = 4,
+        }
+
+
+        public enum RunPermission
+        {
+            None = 0,
+            Vote = 1,
+            Run = 2
+        }
+
+
     }
 }

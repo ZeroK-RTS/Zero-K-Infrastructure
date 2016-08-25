@@ -1,17 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using LobbyClient;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdResetOptions : ServerBattleCommand
+    public class CmdResetOptions : BattleCommand
     {
         public override string Help => "sets default game/map options";
         public override string Shortcut => "resetoptions";
-        public override BattleCommandAccess Access => BattleCommandAccess.NotIngame;
+        public override AccessType Access => AccessType.NotIngame;
 
-        public override ServerBattleCommand Create() => new CmdResetOptions();
+        public override BattleCommand Create() => new CmdResetOptions();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null) => string.Empty;
 

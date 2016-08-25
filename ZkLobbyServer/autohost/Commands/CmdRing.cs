@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdRing : ServerBattleCommand
+    public class CmdRing : BattleCommand
     {
         public override string Help => "[<filters>..] - rings all unready or specific player(s), e.g. !ring - rings unready, !ring icho - rings Licho";
         public override string Shortcut => "ring";
-        public override BattleCommandAccess Access => BattleCommandAccess.NoCheck;
+        public override AccessType Access => AccessType.NoCheck;
 
         private List<string> userList;
 
-        public override ServerBattleCommand Create() => new CmdRing();
+        public override BattleCommand Create() => new CmdRing();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {

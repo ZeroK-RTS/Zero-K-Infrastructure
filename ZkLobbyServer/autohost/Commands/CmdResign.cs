@@ -7,18 +7,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
 using ZkData;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdResign : ServerBattleCommand
+    public class CmdResign : BattleCommand
     {
         private int alliance;
         public override string Help => "starts a vote to resign game";
         public override string Shortcut => "resign";
-        public override BattleCommandAccess Access => BattleCommandAccess.IngameVote;
+        public override AccessType Access => AccessType.IngameVote;
 
-        public override ServerBattleCommand Create() => new CmdResign();
+        public override BattleCommand Create() => new CmdResign();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
@@ -45,12 +44,12 @@ namespace ZkLobbyServer
             await battle.SayBattle($"Team {alliance + 1} resigned");
         }
 
-        public override CommandExecutionRight RunPermissions(ServerBattle battle, string userName)
+        public override RunPermission GetRunPermissions(ServerBattle battle, string userName)
         {
-            var ret = base.RunPermissions(battle, userName);
+            var ret = base.GetRunPermissions(battle, userName);
 
             // only people from same team can vote
-            if (ret >= CommandExecutionRight.Vote)
+            if (ret >= RunPermission.Vote)
             {
                 if (battle.spring.IsRunning)
                 {
@@ -58,7 +57,7 @@ namespace ZkLobbyServer
                     if (entry != null && !entry.IsSpectator && entry.AllyID == alliance) return ret;
                 }
             }
-            return CommandExecutionRight.None;
+            return RunPermission.None;
         }
     }
 }

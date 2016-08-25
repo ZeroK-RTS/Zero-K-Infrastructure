@@ -3,17 +3,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
 using ZkData;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdListOptions : ServerBattleCommand
+    public class CmdListOptions : BattleCommand
     {
         public override string Help => "lists all game/map options";
         public override string Shortcut => "listoptions";
-        public override BattleCommandAccess Access => BattleCommandAccess.NoCheck;
+        public override AccessType Access => AccessType.NoCheck;
 
-        public override ServerBattleCommand Create() => new CmdListOptions();
+        public override BattleCommand Create() => new CmdListOptions();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null) => String.Empty;
 

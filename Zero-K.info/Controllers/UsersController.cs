@@ -51,21 +51,10 @@ namespace ZeroKWeb.Controllers
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
             Account adminAcc = db.Accounts.Single(x => x.AccountID == adminAccountID);
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
-            if (acc.SpringieLevel != springieLevel)
-            {
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, springieLevel));
-                acc.SpringieLevel = springieLevel;
-            }
            if (acc.IsZeroKAdmin != zkAdmin)
             {
                 //reset chat priviledges to 2 if removing adminhood; remove NW subsciption to admin channel
                 // FIXME needs to also terminate forbidden clan/faction subscriptions
-                if (zkAdmin == false)
-                {
-                    Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Springie rights: {0} -> {1}", acc.SpringieLevel, 2));
-                    acc.SpringieLevel = 2;
-                    
-                }
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Admin status: {0} -> {1}", acc.IsZeroKAdmin, zkAdmin));
                 acc.IsZeroKAdmin = zkAdmin;
                 
@@ -239,7 +228,6 @@ namespace ZeroKWeb.Controllers
                                  BanSpecChat = banSpecChat,
                                  BanIP = banIP,
                                  BanForum = banForum,
-                                 SetRightsToZero = setRightsToZero,
                                  DeleteXP = deleteXP,
                                  DeleteInfluence = deleteInfluence,
                                  CreatedAccountID = Global.AccountID,

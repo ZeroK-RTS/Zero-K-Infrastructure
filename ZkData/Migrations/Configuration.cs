@@ -94,7 +94,6 @@ namespace ZkData.Migrations
                         Elo = 1700,
                         Level = 50,
                         EloWeight = 2,
-                        SpringieLevel = 4,
                         Country = "cz"
                     },
                     new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, IsZeroKAdmin = true });

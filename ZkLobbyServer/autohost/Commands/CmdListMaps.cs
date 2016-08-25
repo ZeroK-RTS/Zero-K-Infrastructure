@@ -5,18 +5,17 @@ using System.Threading.Tasks;
 using LobbyClient;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdListMaps : ServerBattleCommand
+    public class CmdListMaps : BattleCommand
     {
         private List<Resource> maps;
         public override string Help => "[<filters>..] - lists maps on server, e.g. !listmaps altor div";
         public override string Shortcut => "listmaps";
-        public override BattleCommandAccess Access => BattleCommandAccess.NoCheck;
+        public override AccessType Access => AccessType.NoCheck;
 
-        public override ServerBattleCommand Create() => new CmdListMaps();
+        public override BattleCommand Create() => new CmdListMaps();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {

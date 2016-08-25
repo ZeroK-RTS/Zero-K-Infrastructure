@@ -2,16 +2,15 @@
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdEndvote : ServerBattleCommand
+    public class CmdEndvote : BattleCommand
     {
         public override string Help => "- ends current poll";
         public override string Shortcut => "endvote";
-        public override BattleCommandAccess Access => BattleCommandAccess.Anywhere;
-        public override ServerBattleCommand Create() => new CmdEndvote();
+        public override AccessType Access => AccessType.Anywhere;
+        public override BattleCommand Create() => new CmdEndvote();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
@@ -25,10 +24,10 @@ namespace ZkLobbyServer
             await battle.SayBattle("poll cancelled");
         }
 
-        public override CommandExecutionRight RunPermissions(ServerBattle battle, string userName)
+        public override RunPermission GetRunPermissions(ServerBattle battle, string userName)
         {
-            var ret = base.RunPermissions(battle, userName);
-            if (ret == CommandExecutionRight.Vote) return CommandExecutionRight.None; // do not allow vote (ever)
+            var ret = base.GetRunPermissions(battle, userName);
+            if (ret == RunPermission.Vote) return RunPermission.None; // do not allow vote (ever)
             return ret;
         }
     }

@@ -139,9 +139,6 @@ namespace ZkData
         public const double EloWeightLearnFactor = 30;
         public const double EloWeightMalusFactor = -80;
 
-        public const int LevelForElevatedSpringieRights = 20;
-        public const int SpringieBossEffectiveRights = 3;
-
         public const string LoginCookieName = "zk_login";
         public const string ASmallCakeCookieName = "asmallcake";
         public const string ASmallCakeLoginCookieName = "alogin";

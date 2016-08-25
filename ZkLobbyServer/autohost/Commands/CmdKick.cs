@@ -2,17 +2,16 @@
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdKick : ServerBattleCommand
+    public class CmdKick : BattleCommand
     {
         public override string Help => "[<filters>..] - kicks a player";
         public override string Shortcut => "kick";
-        public override BattleCommandAccess Access => BattleCommandAccess.Anywhere;
+        public override AccessType Access => AccessType.Anywhere;
 
-        public override ServerBattleCommand Create() => new CmdKick();
+        public override BattleCommand Create() => new CmdKick();
 
         private string target;
 

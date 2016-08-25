@@ -2,17 +2,16 @@
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
-using ZkLobbyServer.autohost;
 
 namespace ZkLobbyServer
 {
-    public class CmdSpec : ServerBattleCommand
+    public class CmdSpec : BattleCommand
     {
         public override string Help => "[<filters>..] - makes player a spectator. When player not specified, spectates AFK players";
         public override string Shortcut => "spec";
-        public override BattleCommandAccess Access => BattleCommandAccess.NotIngame;
+        public override AccessType Access => AccessType.NotIngame;
 
-        public override ServerBattleCommand Create() => new CmdSpec();
+        public override BattleCommand Create() => new CmdSpec();
 
         private string target;
 

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,31 +11,38 @@ using PlasmaShared;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 using ZkData.UnitSyncLib;
-using ZkLobbyServer.autohost;
 using static System.String;
 using Timer = System.Timers.Timer;
-using Utils = Springie.Utils;
 
 namespace ZkLobbyServer
 {
-    public partial class ServerBattle:Battle
+    public partial class ServerBattle: Battle
     {
+        public const int PollTimeout = 60;
         public static PlasmaDownloader.PlasmaDownloader downloader;
         public static SpringPaths springPaths;
+        public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
 
-        public const int PollTimeout = 60;
-        public static readonly Dictionary<string, ServerBattleCommand> Commands = new Dictionary<string, ServerBattleCommand>();
+        internal static Say defaultSay = new Say() { Place = SayPlace.Battle, User = "NightWatch" };
 
-        public ZkLobbyServer server;
+        public readonly List<string> toNotify = new List<string>();
 
-        CommandPoll activePoll;
-        Timer pollTimer;
+        private CommandPoll activePoll;
+        public Resource HostedMap;
 
         public Resource HostedMod;
-        public Resource HostedMap;
-        public Spring spring;
 
-        internal static Say defaultSay = new Say() { Place = SayPlace.Battle, User = "NightWatch"};
+        public Mod HostedModInfo;
+
+        public List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
+
+        // login accepted - join channels
+
+        public DateTime lastMapChange = DateTime.Now;
+        private Timer pollTimer;
+
+        public ZkLobbyServer server;
+        public Spring spring;
 
         static ServerBattle()
         {
@@ -47,39 +53,46 @@ namespace ZkLobbyServer
             downloader.GetEngine(GlobalConst.DefaultEngineOverride);
 
             Commands =
-                Assembly.GetAssembly(typeof(ServerBattleCommand))
+                Assembly.GetAssembly(typeof(BattleCommand))
                     .GetTypes()
-                    .Where(x => !x.IsAbstract && x.IsClass && typeof(ServerBattleCommand).IsAssignableFrom(x))
+                    .Where(x => !x.IsAbstract && x.IsClass && typeof(BattleCommand).IsAssignableFrom(x))
                     .Select(x => x.GetConstructor(new Type[] { }).Invoke(new object[] { }))
-                    .Cast<ServerBattleCommand>()
+                    .Cast<BattleCommand>()
                     .ToDictionary(x => x.Shortcut, x => x);
-
         }
 
         public ServerBattle(ZkLobbyServer server)
         {
             this.server = server;
-           
-            pollTimer = new Timer(PollTimeout * 1000);
+
+            pollTimer = new Timer(PollTimeout*1000);
             pollTimer.Enabled = false;
             pollTimer.AutoReset = false;
             pollTimer.Elapsed += pollTimer_Elapsed;
-
 
             lastMapChange = DateTime.Now;
 
             SetupSpring();
         }
 
-        public Mod HostedModInfo;
+
+        public void Dispose()
+        {
+            Stop();
+            spring.UnsubscribeEvents(this);
+            springPaths.UnsubscribeEvents(this);
+            //Program.Downloader.UnsubscribeEvents(this);
+            //Program.paths.UnsubscribeEvents(this);
+            pollTimer.Dispose();
+            pollTimer = null;
+        }
 
         public void FillDetails()
         {
             if (IsNullOrEmpty(Title)) Title = $"{FounderName}'s " + Mode.Description();
             if (IsNullOrEmpty(EngineVersion)) EngineVersion = server.Engine;
             downloader.GetEngine(server.Engine);
-            
-            
+
             switch (Mode)
             {
                 case AutohostMode.Game1v1:
@@ -102,7 +115,6 @@ namespace ZkLobbyServer
                     break;
             }
 
-
             HostedMod = MapPicker.FindResources(ResourceType.Mod, ModName ?? "zk:stable").FirstOrDefault();
             HostedMap = MapName != null
                 ? MapPicker.FindResources(ResourceType.Map, MapName).FirstOrDefault()
@@ -110,7 +122,6 @@ namespace ZkLobbyServer
 
             ModName = HostedMod?.InternalName ?? ModName ?? "zk:stable";
             MapName = HostedMap?.InternalName ?? MapName ?? "Small_Divide-Remake-v04";
-
 
             if (HostedMod != null)
             {
@@ -125,94 +136,45 @@ namespace ZkLobbyServer
             }
         }
 
-
-        public void RunCommand<T>(Say e,string args = null) where T:ServerBattleCommand, new()
+        public BattleCommand GetCommandByName(string name)
         {
-            var t = new T();
-            t.Run(this, e, args);
-        }
-
-        public override void UpdateWith(BattleHeader h)
-        {
-            base.UpdateWith(h);
-            RunningSince = null;  // todo hook to spring
-            FillDetails();
-        }
-
-
-        void SetupSpring()
-        {
-            spring?.UnsubscribeEvents(this);
-
-            spring = new Spring(springPaths) { UseDedicatedServer = true };
-
-            spring.SpringExited += spring_SpringExited;
-            spring.GameOver += spring_GameOver;
-
-            spring.SpringStarted += spring_SpringStarted;
-            spring.PlayerSaid += spring_PlayerSaid;
-            spring.BattleStarted += spring_BattleStarted;
-        }
-
-        
-        public void Dispose()
-        {
-            Stop();
-            spring.UnsubscribeEvents(this);
-            springPaths.UnsubscribeEvents(this);
-            //Program.Downloader.UnsubscribeEvents(this);
-            //Program.paths.UnsubscribeEvents(this);
-            pollTimer.Dispose();
-            pollTimer = null;
-        }
-
-
-        /*void fileDownloader_DownloadProgressChanged(object sender, TasEventArgs e)
-    {
-      if (tas.IsConnected) {
-        SayBattle(e.ServerParams[0] + " " + e.ServerParams[1] + "% done");
-      }
-    }*/
-
-        public bool GetUserAdminStatus(Say e)
-        {
-            if (!server.ConnectedUsers.ContainsKey(e.User)) return false;
-            if (FounderName == e.User) return true;
-            return server.ConnectedUsers[e.User].User.IsAdmin;
-        }
-
-        public bool GetUserIsSpectator(Say e)
-        {
-            if (spring.IsRunning)
+            BattleCommand command;
+            if (Commands.TryGetValue(name, out command))
             {
-                PlayerTeam user = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.User && !x.IsSpectator);
-                return ((user == null) || user.IsSpectator);
+                return command.Create();
             }
-            else
+            return null;
+        }
+
+
+
+        public async Task KickFromBattle(string name, string reason)
+        {
+            UserBattleStatus user;
+            if (Users.TryGetValue(name, out user))
             {
-                return !Users.Values.Any(x => x.LobbyUser.Name == e.User && !x.IsSpectator);
+                var client = server.ConnectedUsers[name];
+                await client.Respond($"You were kicked from battle by {name} : {reason}");
+                await client.Process(new LeaveBattle() { BattleID = BattleID });
             }
         }
 
-        public int GetUserLevel(Say e)
+        public async Task ProcessBattleSay(Say say)
         {
-            if (!server.ConnectedUsers.ContainsKey(e.User))
+            if (say.User == GlobalConst.NightwatchName) return; // ignore self
+
+            ConnectedUser user;
+            server.ConnectedUsers.TryGetValue(say.User, out user);
+            if (say.Place == SayPlace.Battle && !say.IsEmote && user?.User.BanMute != true && user?.User.BanSpecChat != true) spring.SayGame($"<{say.User}>{say.Text}"); // relay to spring
+
+            // check if it's command
+            if (!say.IsEmote && say.Text?.Length > 1 && say.Text.StartsWith("!"))
             {
-                //Respond(e, string.Format("{0} please reconnect to lobby for right verification", e.UserName));
-                return 0; //1 is default, but we return 0 to avoid right abuse (by Disconnecting from Springie and say thru Spring)
+                var parts = say.Text.Substring(1).Split(new[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
+                await RunCommand(say, parts[0], parts.Skip(1).FirstOrDefault());
             }
-            return GetUserLevel(e.User);
         }
 
-        public int GetUserLevel(string name)
-        {
-            int ret = server.ConnectedUsers[name].User.SpringieLevel;
-            if (name == FounderName) ret = Math.Max(GlobalConst.SpringieBossEffectiveRights, ret);
-            else ret += -1;
-            return ret;
-        }
-
-        
 
         public async Task RegisterVote(Say e, bool vote)
         {
@@ -233,28 +195,11 @@ namespace ZkLobbyServer
             return SayBattle(text, e?.User);
         }
 
-        public ServerBattleCommand GetCommandByName(string name)
-        {
-            ServerBattleCommand command;
-            if (Commands.TryGetValue(name, out command))
-            {
-                return command.Create();
-            }
-            return null;
-        }
 
-        public async Task SwitchMap(string internalName)
+        public void RunCommand<T>(Say e, string args = null) where T: BattleCommand, new()
         {
-            MapName = internalName;
-            FillDetails();
-            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = MapName } });
-        }
-
-        public async Task SwitchGame(string internalName)
-        {
-            ModName = internalName;
-            FillDetails();
-            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Game = ModName } });
+            var t = new T();
+            t.Run(this, e, args);
         }
 
 
@@ -263,45 +208,67 @@ namespace ZkLobbyServer
             var cmd = GetCommandByName(com);
             if (cmd != null)
             {
-                var perm = cmd.RunPermissions(this, e.User);
-                if (perm == CommandExecutionRight.Run) await cmd.Run(this, e, string.Join(" ", arg));
-                else if (perm == CommandExecutionRight.Vote) await StartVote(cmd, e, string.Join(" ", arg));
+                var perm = cmd.GetRunPermissions(this, e.User);
+                if (perm == BattleCommand.RunPermission.Run) await cmd.Run(this, e, Join(" ", arg));
+                else if (perm == BattleCommand.RunPermission.Vote) await StartVote(cmd, e, Join(" ", arg));
             }
         }
 
-        
+
         public async Task SayBattle(string text, string privateUser = null)
         {
             if (!IsNullOrEmpty(text))
-                foreach (string line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                foreach (var line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     if (privateUser == null && spring?.IsRunning == true) spring.SayGame(line);
-                    await server.GhostSay(new Say()
-                    {
-                        User = GlobalConst.NightwatchName,
-                        Text = line,
-                        Place = privateUser != null ? SayPlace.BattlePrivate : SayPlace.Battle,
-                        Target = privateUser,
-                        IsEmote = true
-                    }, BattleID);
+                    await
+                        server.GhostSay(
+                            new Say()
+                            {
+                                User = GlobalConst.NightwatchName,
+                                Text = line,
+                                Place = privateUser != null ? SayPlace.BattlePrivate : SayPlace.Battle,
+                                Target = privateUser,
+                                IsEmote = true
+                            },
+                            BattleID);
                 }
         }
 
-
-        public async Task StartVote(ServerBattleCommand command, Say e, string args)
+        public async Task SetModOptions(Dictionary<string, string> options)
         {
-                if (activePoll != null)
-                {
-                    await Respond(e, "Another poll already in progress, please wait");
-                    return;
-                }
-                var poll = new CommandPoll(this);
-                if (await poll.Setup(command, e, args))
-                {
-                    activePoll = poll;
-                    pollTimer.Interval = PollTimeout * 1000;
-                    pollTimer.Enabled = true;
-                }
+            ModOptions = options;
+            await server.Broadcast(Users.Keys, options);
+        }
+
+
+        public async Task Spectate(string name)
+        {
+            // TODO rebalance
+            ConnectedUser usr;
+            if (server.ConnectedUsers.TryGetValue(name, out usr)) await usr.Process(new UpdateUserBattleStatus() { Name = usr.Name, IsSpectator = true });
+        }
+
+        public async Task StartGame()
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public async Task StartVote(BattleCommand command, Say e, string args)
+        {
+            if (activePoll != null)
+            {
+                await Respond(e, "Another poll already in progress, please wait");
+                return;
+            }
+            var poll = new CommandPoll(this);
+            if (await poll.Setup(command, e, args))
+            {
+                activePoll = poll;
+                pollTimer.Interval = PollTimeout*1000;
+                pollTimer.Enabled = true;
+            }
         }
 
 
@@ -317,10 +284,75 @@ namespace ZkLobbyServer
             activePoll = null;
         }
 
-        
+        public async Task SwitchEngine(string engine)
+        {
+            EngineVersion = engine;
+            FillDetails();
+            await
+                server.Broadcast(server.ConnectedUsers.Values,
+                    new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Engine = EngineVersion } });
+        }
+
+        public async Task SwitchGame(string internalName)
+        {
+            ModName = internalName;
+            FillDetails();
+            await
+                server.Broadcast(server.ConnectedUsers.Values,
+                    new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Game = ModName } });
+        }
+
+        public async Task SwitchGameType(AutohostMode type)
+        {
+            Mode = type;
+            FillDetails();
+            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
+                // do a full update - mode can also change map/players
+        }
+
+        public async Task SwitchMap(string internalName)
+        {
+            MapName = internalName;
+            FillDetails();
+            await
+                server.Broadcast(server.ConnectedUsers.Values,
+                    new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = MapName } });
+        }
+
+        public async Task SwitchMaxPlayers(int cnt)
+        {
+            MaxPlayers = cnt;
+            FillDetails();
+            await
+                server.Broadcast(server.ConnectedUsers.Values,
+                    new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
+        }
+
+        public async Task SwitchPassword(string pwd)
+        {
+            Password = pwd ?? "";
+            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
+                // do a full update to hide pwd properly
+        }
+
+        public async Task SwitchTitle(string title)
+        {
+            Title = title;
+            FillDetails();
+            await
+                server.Broadcast(server.ConnectedUsers.Values,
+                    new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Title = Title } });
+        }
+
+        public override void UpdateWith(BattleHeader h)
+        {
+            base.UpdateWith(h);
+            RunningSince = null; // todo hook to spring
+            FillDetails();
+        }
 
 
-        void pollTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private void pollTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             try
             {
@@ -328,24 +360,39 @@ namespace ZkLobbyServer
                 if (activePoll != null) activePoll.End();
                 StopVote();
             }
-            catch { }
+            catch {}
             finally
             {
                 pollTimer.Start();
             }
         }
 
-        void spring_BattleStarted(object sender, EventArgs e)
+
+        private void SetupSpring()
+        {
+            spring?.UnsubscribeEvents(this);
+
+            spring = new Spring(springPaths) { UseDedicatedServer = true };
+
+            spring.SpringExited += spring_SpringExited;
+            spring.GameOver += spring_GameOver;
+
+            spring.SpringStarted += spring_SpringStarted;
+            spring.PlayerSaid += spring_PlayerSaid;
+            spring.BattleStarted += spring_BattleStarted;
+        }
+
+        private void spring_BattleStarted(object sender, EventArgs e)
         {
             StopVote();
         }
 
-        void spring_GameOver(object sender, SpringLogEventArgs e)
+        private void spring_GameOver(object sender, SpringLogEventArgs e)
         {
             SayBattle("Game over, exiting");
             // Spring sends GAMEOVER for every player and spec, we only need the first one.
             spring.GameOver -= spring_GameOver;
-            ZkData.Utils.SafeThread(() =>
+            Utils.SafeThread(() =>
             {
                 // Wait for gadgets that send spring autohost messages after gadget:GameOver()
                 // such as awards.lua
@@ -356,7 +403,7 @@ namespace ZkLobbyServer
         }
 
 
-        void spring_PlayerSaid(object sender, SpringLogEventArgs e)
+        private void spring_PlayerSaid(object sender, SpringLogEventArgs e)
         {
             /*tas.GameSaid(e.Username, e.Line);
             User us;
@@ -367,7 +414,7 @@ namespace ZkLobbyServer
         }
 
 
-        void spring_SpringExited(object sender, EventArgs e)
+        private void spring_SpringExited(object sender, EventArgs e)
         {
             StopVote();
             /*tas.ChangeMyUserStatus(false, false);
@@ -382,21 +429,21 @@ namespace ZkLobbyServer
             //if (mode != AutohostMode.None && DateTime.Now.Subtract(spring.GameStarted).TotalMinutes > 5) ServerVerifyMap(true);
         }
 
-        void spring_SpringStarted(object sender, EventArgs e)
+        private void spring_SpringStarted(object sender, EventArgs e)
         {
             //lockedUntil = DateTime.MinValue;
             //tas.ChangeLock(false);
             if (HostedMod.Mission != null)
             {
                 var service = GlobalConst.GetContentService();
-                foreach (UserBattleStatus u in Users.Values.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, HostedMod.Mission.Name);
+                foreach (var u in Users.Values.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, HostedMod.Mission.Name);
             }
 
             StopVote();
         }
 
 
-        void tas_BattleOpened(object sender, Battle battle)
+        private void tas_BattleOpened(object sender, Battle battle)
         {
             /*tas.ChangeMyBattleStatus(true, SyncStatuses.Synced);
             if (hostedMod.IsMission)
@@ -419,7 +466,7 @@ namespace ZkLobbyServer
         }
 
 
-        void tas_BattleUserJoined(object sender, BattleUserEventArgs e1)
+        private void tas_BattleUserJoined(object sender, BattleUserEventArgs e1)
         {
             /*
             if (e1.BattleID != tas.MyBattleID) return;
@@ -475,10 +522,9 @@ namespace ZkLobbyServer
             if (SpawnConfig != null && SpawnConfig.Owner == name) // owner joins, set him boss 
                 ComBoss(TasSayEventArgs.Default, new[] { name });
                 */
-
         }
 
-        void tas_BattleUserLeft(object sender, BattleUserEventArgs e1)
+        private void tas_BattleUserLeft(object sender, BattleUserEventArgs e1)
         {
             /*
             if (e1.BattleID != tas.MyBattleID) return;
@@ -496,11 +542,7 @@ namespace ZkLobbyServer
             if (tas.MyBattle != null && tas.MyBattle.Users.Count == 1) ServerVerifyMap(true);*/
         }
 
-        // login accepted - join channels
-
-        public DateTime lastMapChange = DateTime.Now;
-
-        void tas_MyBattleMapChanged(object sender, OldNewPair<Battle> oldNewPair)
+        private void tas_MyBattleMapChanged(object sender, OldNewPair<Battle> oldNewPair)
         {
             /*
             lastMapChange = DateTime.Now;
@@ -530,7 +572,7 @@ namespace ZkLobbyServer
         }
 
 
-        void tas_MyStatusChangedToInGame(object sender, Battle battle)
+        private void tas_MyStatusChangedToInGame(object sender, Battle battle)
         {
             SetupSpring();
             //spring.lobbyUserName = tas.UserName; // hack until removed when springie moves to server
@@ -539,104 +581,10 @@ namespace ZkLobbyServer
             //spring.HostGame(GetContext(), "127.0.0.1", 8452);  // TODO HACK GET PORTS
         }
 
-/*        public ConnectedUser FounderUser
-        {
-            get
-            {
-                ConnectedUser connectedUser = null;
-                server.ConnectedUsers.TryGetValue(FounderName, out connectedUser);
-                return connectedUser;
-            }
-        }*/
-
-
-        public async Task ProcessBattleSay(Say say)
-        {
-            if (say.User == GlobalConst.NightwatchName) return; // ignore self
-
-            ConnectedUser user;
-            server.ConnectedUsers.TryGetValue(say.User, out user);
-            if (say.Place == SayPlace.Battle && !say.IsEmote && user?.User.BanMute != true && user?.User.BanSpecChat != true) spring.SayGame(
-                $"<{say.User}>{say.Text}"); // relay to spring
-            
-            // check if it's command
-            if (!say.IsEmote && say.Text?.Length > 1 && say.Text.StartsWith("!"))
-            {
-                var parts = say.Text.Substring(1).Split(new[] { ' ' }, 2 , StringSplitOptions.RemoveEmptyEntries);
-                await RunCommand(say, parts[0], parts.Skip(1).FirstOrDefault());
-            }
-        }
-
-        public async Task StartGame()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task SwitchEngine(string engine)
-        {
-            EngineVersion = engine;
-            FillDetails();
-            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Engine = EngineVersion } });
-        }
-
-        public async Task SwitchTitle(string title)
-        {
-            Title = title;
-            FillDetails();
-            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Title = Title } });
-        }
-
-        public async Task SwitchMaxPlayers(int cnt)
-        {
-            MaxPlayers = cnt;
-            FillDetails();
-            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
-        }
-
-        public async Task SwitchGameType(AutohostMode type)
-        {
-            Mode = type;
-            FillDetails();
-            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() }); // do a full update - mode can also change map/players
-        }
-
-        public async Task SwitchPassword(string pwd)
-        {
-            Password = pwd ?? "";
-            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() }); // do a full update to hide pwd properly
-        }
-
-        public async Task KickFromBattle(string name, string reason)
-        {
-            UserBattleStatus user;
-            if (Users.TryGetValue(name, out user))
-            {
-                var client = server.ConnectedUsers[name];
-                await client.Respond($"You were kicked from battle by {name} : {reason}");
-                await client.Process(new LeaveBattle() { BattleID = BattleID });
-            }
-        }
-
         public class KickedPlayer
         {
             public string Name;
             public DateTime TimeOfKicked = DateTime.UtcNow;
-        }
-
-        public List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
-
-
-        public async Task Spectate(string name)
-        {
-            // TODO rebalance
-            ConnectedUser usr;
-            if (server.ConnectedUsers.TryGetValue(name, out usr)) await usr.Process(new UpdateUserBattleStatus() { Name = usr.Name, IsSpectator = true });
-        }
-
-        public async Task SetModOptions(Dictionary<string, string> options)
-        {
-            ModOptions = options;
-            await server.Broadcast(Users.Keys, options);
         }
     }
 }
