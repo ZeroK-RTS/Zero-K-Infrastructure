@@ -89,7 +89,7 @@ namespace LobbyClient
             var aiNum = 0;
 
             foreach (var u in startContext.Players) {
-                ScriptAddUser(script, userNum, u, teamNum, setup.UserParameters.FirstOrDefault(x => x.LobbyID == u.LobbyID));
+                ScriptAddUser(script, userNum, u, teamNum, setup?.UserParameters.FirstOrDefault(x => x.LobbyID == u.LobbyID));
 
                 if (!u.IsSpectator) {
                     ScriptAddTeam(script, teamNum, userNum, u.AllyID);

@@ -222,11 +222,12 @@ namespace LobbyClient
 
    
         
-        public string HostGame(BattleContext context, string host, int port, string myName, string myPassword, string engine)
+        public string HostGame(BattleContext context, string host, int port, string myName, string myPassword, string engine, SpringBattleStartSetup startSetup)
         {
             if (!File.Exists(paths.GetSpringExecutablePath(engine)) && !File.Exists(paths.GetDedicatedServerPath(engine))) throw new ApplicationException(string.Format("Spring or dedicated server executable not found: {0}, {1}", paths.GetSpringExecutablePath(engine), paths.GetDedicatedServerPath(engine)));
 
             wasKilled = false;
+            StartContext = context;
             string script = null;
 
             if (!IsRunning)
@@ -248,23 +249,15 @@ namespace LobbyClient
                 statsData.Clear();
 
                 battleGuid = Guid.NewGuid();
-                SpringBattleStartSetup startSetup = null;
                 if (isHosting && GlobalConst.IsZkMod(context.Mod))
                 {
                     try
                     {
-                        StartContext = context;
-                        /* todo hack startSetup = StartSetup.GetSpringBattleStartSetup(StartContext);
-                        if (startSetup.BalanceTeamsResult != null)
-                        {
-                            StartContext.Players = startSetup.BalanceTeamsResult.Players;
-                            StartContext.Bots = startSetup.BalanceTeamsResult.Bots;
-                        }
                         connectedPlayers.Clear();
                         foreach (var p in StartContext.Players)
                         {
                             p.IsIngame = true;
-                        }*/
+                        }
                     }
                     catch (Exception ex)
                     {

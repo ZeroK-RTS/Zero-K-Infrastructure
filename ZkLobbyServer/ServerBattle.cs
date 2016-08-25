@@ -320,7 +320,39 @@ namespace ZkLobbyServer
 
         public async Task StartGame()
         {
-            throw new NotImplementedException();
+            //spring.lobbyUserName = tas.UserName; // hack until removed when springie moves to server
+            //spring.lobbyPassword = tas.UserPassword;  // spring class needs this to submit results
+            var ip = "127.0.0.1";
+            int port = 8452;
+
+            var startContext = GetContext();
+            var startSetup = StartSetup.GetSpringBattleStartSetup(startContext);
+            if (startSetup.BalanceTeamsResult != null)
+            {
+                startContext.Players = startSetup.BalanceTeamsResult.Players;
+                startContext.Bots = startSetup.BalanceTeamsResult.Bots;
+            }
+
+            spring.HostGame(startContext, ip, port, null, null, EngineVersion, startSetup);  // TODO HACK GET PORTS
+            RunningSince = DateTime.UtcNow;
+            foreach (var us in Users.Values)
+            {
+                if (us != null)
+                {
+                    await
+                        server.Broadcast(Users.Keys,
+                            new ConnectSpring()
+                            {
+                                Engine = EngineVersion,
+                                Ip = ip,
+                                Port = port,
+                                Resources = new List<string>() { MapName, ModName },
+                                ScriptPassword = us.ScriptPassword
+                            });
+                }
+            }
+            await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
+
         }
 
 
@@ -618,14 +650,6 @@ namespace ZkLobbyServer
         }
 
 
-        private void tas_MyStatusChangedToInGame(object sender, Battle battle)
-        {
-            SetupSpring();
-            //spring.lobbyUserName = tas.UserName; // hack until removed when springie moves to server
-            //spring.lobbyPassword = tas.UserPassword;  // spring class needs this to submit results
-
-            //spring.HostGame(GetContext(), "127.0.0.1", 8452);  // TODO HACK GET PORTS
-        }
 
         public class KickedPlayer
         {
