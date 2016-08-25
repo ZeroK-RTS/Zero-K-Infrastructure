@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
 using ZkData;
+using ZkData.UnitSyncLib;
 
 namespace ZkLobbyServer
 {
@@ -25,7 +26,7 @@ namespace ZkLobbyServer
             }
 
             optionsAsString = arguments;
-            options = battle.GetOptionsDictionary(e, arguments);
+            options = GetOptionsDictionary(battle, e, arguments);
             if (options.Count == 0) return null;
             return $"Set options {arguments} ?";
         }
@@ -35,6 +36,54 @@ namespace ZkLobbyServer
         {
             await battle.SetModOptions(options);
             await battle.SayBattle($"options changed {optionsAsString}");
+        }
+
+        private static Dictionary<string, string> GetOptionsDictionary(ServerBattle battle, Say e, string s)
+        {
+            var ret = new Dictionary<string, string>();
+            if (battle.HostedModInfo == null) return ret;
+
+            var pairs = s.Split(new[] { ',' });
+            if (pairs.Length == 0 || pairs[0].Length == 0)
+            {
+                battle.Respond(e, "requires key=value format");
+                return ret;
+            }
+            foreach (var pair in pairs)
+            {
+                var parts = pair.Split(new[] { '=' }, 2);
+                if (parts.Length != 2)
+                {
+                    battle.Respond(e, "requires key=value format");
+                    return ret;
+                }
+                var key = parts[0].Trim(); //Trim() to make "key = value format" ignore whitespace 
+                var val = parts[1].Trim();
+
+                var found = false;
+                var mod = battle.HostedModInfo;
+                foreach (var o in mod.Options)
+                {
+                    if (o.Key == key)
+                    {
+                        found = true;
+                        string res;
+                        if (o.GetPair(val, out res))
+                        {
+                            ret[key] = val;
+                        }
+                        else battle.Respond(e, "Value " + val + " is not valid for this option");
+
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    battle.Respond(e, "No option called " + key + " found");
+                    return ret;
+                }
+            }
+            return ret;
         }
     }
 }

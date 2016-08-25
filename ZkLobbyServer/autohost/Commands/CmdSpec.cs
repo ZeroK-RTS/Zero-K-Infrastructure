@@ -1,19 +1,16 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
 
 namespace ZkLobbyServer
 {
-    public class CmdSpec : BattleCommand
+    public class CmdSpec: BattleCommand
     {
+        private string target;
+        public override AccessType Access => AccessType.NotIngame;
         public override string Help => "[<filters>..] - makes player a spectator. When player not specified, spectates AFK players";
         public override string Shortcut => "spec";
-        public override AccessType Access => AccessType.NotIngame;
-
-        public override BattleCommand Create() => new CmdSpec();
-
-        private string target;
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
@@ -23,17 +20,16 @@ namespace ZkLobbyServer
                 return $"do you want to spectate AFK?";
             }
 
-            int[] indexes;
-            string[] usrlist;
-            var words = arguments.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (battle.FilterUsers(words, out usrlist, out indexes) == 0)
+            target = battle.GetAllUserNames().FirstOrDefault(x => x.Contains(arguments));
+            if (target == null)
             {
                 battle.Respond(e, "Player not found");
                 return null;
             }
-            else target = usrlist[0];
             return $"do you want to spectate {target}?";
         }
+
+        public override BattleCommand Create() => new CmdSpec();
 
 
         public override async Task ExecuteArmed(ServerBattle battle, Say e)

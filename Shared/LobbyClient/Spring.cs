@@ -60,7 +60,7 @@ namespace LobbyClient
 
         private Guid battleGuid;
         private BattleResult battleResult = new BattleResult();
-        private readonly Dictionary<string, bool> connectedPlayers = new Dictionary<string, bool>();
+        public readonly Dictionary<string, bool> connectedPlayers = new Dictionary<string, bool>();
         private bool gameEndedOk = false;
         private Dictionary<string, int> gamePrivateMessages = new Dictionary<string, int>();
         private bool isHosting;

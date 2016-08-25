@@ -75,6 +75,51 @@ namespace ZkLobbyServer
             SetupSpring();
         }
 
+        public void ApplyBalanceResults(BalanceTeamsResult balance)
+        {
+            throw new NotImplementedException();
+            /*
+            if (!string.IsNullOrEmpty(balance.Message)) SayBattle(balance.Message, false);
+            if (balance.Players != null && balance.Players.Count > 0)
+            {
+
+                foreach (var user in Users.Values.Where(x => !x.IsSpectator && !balance.Players.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
+                foreach (var user in balance.Players.Where(x => x.IsSpectator)) tas.ForceSpectator(user.Name);
+
+                bool comsharing = false;
+                bool coopOptExists = tas.MyBattle.ModOptions.Any(x => x.Key.ToLower() == "coop");
+                if (coopOptExists)
+                {
+                    KeyValuePair<string, string> comsharing_modoption = tas.MyBattle.ModOptions.FirstOrDefault(x => x.Key.ToLower() == "coop");
+                    if (comsharing_modoption.Value != "0" && comsharing_modoption.Value != "false") comsharing = true;
+                }
+                foreach (var user in balance.Players.Where(x => !x.IsSpectator))
+                {
+                    tas.ForceTeam(user.Name, comsharing ? user.AllyID : user.TeamID);
+                    tas.ForceAlly(user.Name, user.AllyID);
+                }
+            }
+
+            if (balance.DeleteBots) foreach (var b in tas.MyBattle.Bots.Keys) tas.RemoveBot(b);
+            if (balance.Bots != null && balance.Bots.Count > 0)
+            {
+                foreach (var b in tas.MyBattle.Bots.Values.Where(x => !balance.Bots.Any(y => y.BotName == x.Name && y.Owner == x.owner))) tas.RemoveBot(b.Name);
+
+                foreach (var b in balance.Bots)
+                {
+                    var existing = tas.MyBattle.Bots.Values.FirstOrDefault(x => x.owner == b.Owner && x.Name == b.BotName);
+                    if (existing != null)
+                    {
+                        tas.UpdateBot(existing.Name, b.BotAI, b.AllyID, b.TeamID);
+                    }
+                    else
+                    {
+                        tas.AddBot(b.BotName.Replace(" ", "_"), b.BotAI, b.AllyID, b.TeamID);
+                    }
+                }
+            }*/
+        }
+
 
         public void Dispose()
         {
@@ -136,6 +181,14 @@ namespace ZkLobbyServer
             }
         }
 
+        public List<string> GetAllUserNames()
+        {
+            var ret = Users.Select(x => x.Key).ToList();
+            if (spring.IsRunning) ret.AddRange(spring.StartContext.Players.Select(x => x.Name));
+            ret.AddRange(spring.connectedPlayers.Keys);
+            return ret.Distinct().ToList();
+        }
+
         public BattleCommand GetCommandByName(string name)
         {
             BattleCommand command;
@@ -145,7 +198,6 @@ namespace ZkLobbyServer
             }
             return null;
         }
-
 
 
         public async Task KickFromBattle(string name, string reason)
@@ -215,6 +267,24 @@ namespace ZkLobbyServer
         }
 
 
+        public bool RunServerBalance(bool isGameStart, int? allyTeams, bool? clanWise)
+        {
+            try
+            {
+                var context = GetContext();
+                context.mode = Mode;
+                var balance = Balancer.BalanceTeams(context, isGameStart, allyTeams, clanWise);
+                ApplyBalanceResults(balance);
+                return balance.CanStart;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.ToString());
+                return false;
+            }
+        }
+
+
         public async Task SayBattle(string text, string privateUser = null)
         {
             if (!IsNullOrEmpty(text))
@@ -244,7 +314,6 @@ namespace ZkLobbyServer
 
         public async Task Spectate(string name)
         {
-            // TODO rebalance
             ConnectedUser usr;
             if (server.ConnectedUsers.TryGetValue(name, out usr)) await usr.Process(new UpdateUserBattleStatus() { Name = usr.Name, IsSpectator = true });
         }
@@ -307,7 +376,7 @@ namespace ZkLobbyServer
             Mode = type;
             FillDetails();
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
-                // do a full update - mode can also change map/players
+            // do a full update - mode can also change map/players
         }
 
         public async Task SwitchMap(string internalName)
@@ -332,7 +401,7 @@ namespace ZkLobbyServer
         {
             Password = pwd ?? "";
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
-                // do a full update to hide pwd properly
+            // do a full update to hide pwd properly
         }
 
         public async Task SwitchTitle(string title)
@@ -440,29 +509,6 @@ namespace ZkLobbyServer
             }
 
             StopVote();
-        }
-
-
-        private void tas_BattleOpened(object sender, Battle battle)
-        {
-            /*tas.ChangeMyBattleStatus(true, SyncStatuses.Synced);
-            if (hostedMod.IsMission)
-            {
-                foreach (MissionSlot slot in hostedMod.MissionSlots.Where(x => !x.IsHuman))
-                {
-                    tas.AddBot(slot.TeamName, slot.AiShortName, slot.AllyID, slot.TeamID);
-                }
-            }
-
-            tas_MyBattleMapChanged(this, null); // todo really hacky thing
-
-            if (SpawnConfig != null)
-            {
-                if (!string.IsNullOrEmpty(SpawnConfig.Handle)) tas.Say(SayPlace.User, SpawnConfig.Owner, SpawnConfig.Handle, true);
-                tas.Say(SayPlace.User, SpawnConfig.Owner, "I'm here! Ready to serve you! Join me!", true);
-            }
-
-            if (!hostedMod.IsMission) ServerVerifyMap(true);*/
         }
 
 

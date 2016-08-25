@@ -23,11 +23,8 @@ namespace ZkLobbyServer
                 return null;
             }
 
-            int[] indexes;
-            string[] usrlist;
-            var words = arguments.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (battle.FilterUsers(words, out usrlist, out indexes) == 0) target = arguments;
-            else target = usrlist[0];
+            target = battle.GetAllUserNames().FirstOrDefault(x => x.Contains(arguments));
+            if (target == null) target = arguments;
             return $"do you want to kick {target}?";
         }
 

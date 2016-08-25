@@ -29,13 +29,7 @@ namespace ZkLobbyServer
                     if ((p.SyncStatus != SyncStatuses.Synced || p.IsSpectator) && (!battle.spring.IsRunning || !battle.spring.IsPlayerReady(p.Name))) userList.Add(p.Name);
                 }
             }
-            else
-            {
-                string[] vals;
-                int[] indexes;
-                battle.FilterUsers(arguments.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries), out vals, out indexes);
-                userList = new List<string>(vals);
-            }
+            else userList = battle.GetAllUserNames().Where(x => x.Contains(arguments)).ToList();
 
             return $"do you want to ring {userList.Count} players?";
         }
