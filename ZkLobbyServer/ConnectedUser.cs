@@ -68,29 +68,6 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task Process(SetRectangle rect)
-        {
-            if (!IsLoggedIn) return;
-
-            var bat = MyBattle;
-            if (bat == null || (bat.FounderName != Name && !User.IsAdmin))
-            {
-                await Respond("No rights to set rectangle");
-                return;
-            }
-
-            if (rect.Rectangle == null)
-            {
-                BattleRect org;
-                bat.Rectangles.TryRemove(rect.Number, out org);
-            }
-            else
-            {
-                bat.Rectangles[rect.Number] = rect.Rectangle;
-            }
-            await state.Broadcast(bat.Users.Keys, rect);
-        }
-
 
         public async Task Process(KickFromBattle batKick)
         {
@@ -434,7 +411,6 @@ namespace ZkLobbyServer
 
                 foreach (var u in battle.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await SendCommand(u); // send other's status to self
                 foreach (var u in battle.Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await SendCommand(u);
-                foreach (var u in battle.Rectangles) await SendCommand(new SetRectangle() { Number = u.Key, Rectangle = u.Value });
                 await SendCommand(new SetModOptions() { Options = battle.ModOptions });
             }
         }

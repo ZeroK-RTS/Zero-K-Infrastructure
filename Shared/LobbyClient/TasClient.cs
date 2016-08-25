@@ -198,8 +198,6 @@ namespace LobbyClient
         public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
         public event EventHandler<Battle> MyBattleHostExited = delegate { };
         public event EventHandler<Battle> MyBattleStarted = delegate { };
-        public event EventHandler<SetRectangle> StartRectAdded = delegate { };
-        public event EventHandler<SetRectangle> StartRectRemoved = delegate { };
         public event EventHandler<OldNewPair<Battle>> BattleInfoChanged = delegate { };
         public event EventHandler<OldNewPair<Battle>> BattleMapChanged = delegate { };
         public event EventHandler<OldNewPair<Battle>> MyBattleMapChanged = delegate { };
@@ -245,30 +243,6 @@ namespace LobbyClient
             pingTimer.Elapsed += OnPingTimer;
         }
 
-
-        public async Task AddBattleRectangle(int allyno, BattleRect rect)
-        {
-            {
-                if (allyno < Spring.MaxAllies && allyno >= 0) {
-                    await SendCommand(new SetRectangle() { Number = allyno, Rectangle = rect });
-                }
-            }
-        }
-
-        private async Task Process(SetRectangle rect)
-        {
-            var bat = MyBattle;
-            if (bat != null) {
-                if (rect.Rectangle == null) {
-                    BattleRect org;
-                    bat.Rectangles.TryRemove(rect.Number, out org);
-                    StartRectAdded(this, rect);
-                } else {
-                    bat.Rectangles[rect.Number] = rect.Rectangle;
-                    StartRectRemoved(this, rect);
-                }
-            }
-        }
 
         private async Task Process(SetModOptions options)
         {
@@ -473,13 +447,6 @@ namespace LobbyClient
             return SendCommand(new Register() { Name = username, PasswordHash = Utils.HashLobbyPassword(password) });
         }
 
-        public async Task RemoveBattleRectangle(int allyno)
-        {
-            if (MyBattle.Rectangles.ContainsKey(allyno)) {
-                await SendCommand(new SetRectangle() { Number = allyno, Rectangle = null });
-            }
-        }
-
         public async Task RemoveBot(string name)
         {
             var bat = MyBattle;
@@ -664,7 +631,6 @@ namespace LobbyClient
 
                 if (MyBattle != null && left.BattleID == MyBattleID) {
                     if (UserName == left.User) {
-                        bat.Rectangles.Clear();
                         bat.Bots.Clear();
                         bat.ModOptions.Clear();
                         MyBattle = null;

@@ -37,7 +37,6 @@ namespace LobbyClient
 
         public string Password;
 
-        public ConcurrentDictionary<int, BattleRect> Rectangles { get; set; }
         public string EngineVersion { get; set; }
         public int SpectatorCount { get; set; }
         public string Title { get; set; }
@@ -72,7 +71,6 @@ namespace LobbyClient
         {
             Bots = new ConcurrentDictionary<string, BotBattleStatus>();
             ModOptions = new Dictionary<string, string>();
-            Rectangles = new ConcurrentDictionary<int, BattleRect>();
             Users = new ConcurrentDictionary<string, UserBattleStatus>();
         }
 
@@ -128,15 +126,6 @@ namespace LobbyClient
         }
 
 
-     
-
-
-        public int GetFirstEmptyRectangle()
-        {
-            for (var i = 0; i < Spring.MaxAllies; ++i) if (!Rectangles.ContainsKey(i)) return i;
-            return -1;
-        }
-
         public int GetFreeTeamID(string exceptUser)
         {
             return
@@ -164,7 +153,6 @@ namespace LobbyClient
             ret.Title = Title;
             ret.EngineVersion = EngineVersion;
             ret.IsMission = IsMission;
-            ret.Rectangles = new Dictionary<int, BattleRect>(Rectangles);
             ret.Players = Users.Values.Where(x => x.SyncStatus != SyncStatuses.Unknown).Select(x => x.ToPlayerTeam()).ToList();
             ret.Bots = Bots.Values.Select(x => x.ToBotTeam()).ToList();
             ret.ModOptions = ModOptions;
@@ -177,7 +165,6 @@ namespace LobbyClient
             var clone = (Battle)this.MemberwiseClone();
             clone.Users = new ConcurrentDictionary<string, UserBattleStatus>(this.Users);
             clone.Bots = new ConcurrentDictionary<string, BotBattleStatus>(this.Bots);
-            clone.Rectangles = new ConcurrentDictionary<int, BattleRect>(this.Rectangles);
             clone.ModOptions = new Dictionary<string, string>(ModOptions);
             return clone;
         }

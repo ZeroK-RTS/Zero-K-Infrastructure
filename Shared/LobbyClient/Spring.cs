@@ -43,20 +43,15 @@ namespace LobbyClient
         public delegate void LogLine(string text, bool isError);
 
         public const int MaxAllies = 16;
-        public const int MaxTeams = 32;
 
         public static EventHandler AnySpringStarted;
         public static EventHandler<EventArgs<bool>> AnySpringExited;
         public readonly Dictionary<string, bool> connectedPlayers = new Dictionary<string, bool>();
-        //private string lobbyPassword;
-        //private string lobbyUserName;
-
 
         private readonly SpringPaths paths;
         private readonly List<string> statsData = new List<string>();
         private readonly Timer timer = new Timer(20000);
 
-        private Guid battleGuid;
         private BattleResult battleResult = new BattleResult();
         private bool gameEndedOk = false;
         private Dictionary<string, int> gamePrivateMessages = new Dictionary<string, int>();
@@ -205,7 +200,6 @@ namespace LobbyClient
                 statsPlayers.Clear();
                 statsData.Clear();
 
-                battleGuid = Guid.NewGuid();
                 if (isHosting && GlobalConst.IsZkMod(context.Mod))
                 {
                     try
@@ -224,7 +218,6 @@ namespace LobbyClient
                     script = ScriptGenerator.GenerateHostScript(StartContext,
                         startSetup,
                         talker.LoopbackPort,
-                        battleGuid.ToString(),
                         host,
                         port,
                         myName,

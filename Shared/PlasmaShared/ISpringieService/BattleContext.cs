@@ -14,7 +14,6 @@ namespace PlasmaShared
         public bool IsMission;
         public string EngineVersion;
         public AutohostMode? mode;
-        public Dictionary<int, BattleRect> Rectangles { get; set; } = new Dictionary<int, BattleRect>();
         public IDictionary<string, string> ModOptions { get; set; } = new Dictionary<string, string>();
     }
 }

@@ -421,19 +421,6 @@ namespace LobbyClient
     }
 
     [Message(Origin.Client | Origin.Server)]
-    public class SetRectangle
-    {
-        /// <summary>
-        /// Which ally-team this start-box is for
-        /// </summary>
-        public int Number;
-        /// <summary>
-        /// Start-box coordinates; if not present, removes that ally-team's box
-        /// </summary>
-        public BattleRect Rectangle;
-    }
-
-    [Message(Origin.Client | Origin.Server)]
     public class SetModOptions
     {
         public Dictionary<string,string> Options = new Dictionary<string, string>();

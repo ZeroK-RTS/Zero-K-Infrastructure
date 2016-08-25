@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using LobbyClient.Legacy;
 using PlasmaShared;
 using ZkData.UnitSyncLib;
-using BattleRect = PlasmaShared.BattleRect;
 
 namespace LobbyClient
 {
@@ -40,8 +39,7 @@ namespace LobbyClient
         /// <summary>
         /// Generates script for hosting a game
         /// </summary>
-        public static string GenerateHostScript(BattleContext startContext, SpringBattleStartSetup startSetup, int loopbackListenPort,
-                                                string zkSearchTag, string host, int port, string myname = null, string mypassword = null)
+        public static string GenerateHostScript(BattleContext startContext, SpringBattleStartSetup startSetup, int loopbackListenPort, string host, int port, string myname = null, string mypassword = null)
         {
             var previousCulture = Thread.CurrentThread.CurrentCulture;
             try {
@@ -52,7 +50,7 @@ namespace LobbyClient
                 script.AppendLine("[GAME]");
                 script.AppendLine("{");
 
-                script.AppendFormat("  ZkSearchTag={0};\n", zkSearchTag);
+                script.AppendFormat("  ZkSearchTag={0};\n", Guid.NewGuid());
                 script.AppendFormat("  Mapname={0};\n", startContext.Map);
 
                 script.AppendFormat("  StartPosType={0};\n", startContext.IsMission ? 3 : 2);
@@ -113,15 +111,6 @@ namespace LobbyClient
                 script.AppendFormat("[ALLYTEAM{0}]\n", allyNumber);
                 script.AppendLine("{");
                 script.AppendLine("     NumAllies=0;");
-                BattleRect rect;
-                if (startContext.Rectangles!=null && startContext.Rectangles.TryGetValue(allyNumber, out rect)) {
-                    double left = 0, top = 0, right = 1, bottom = 1;
-                    rect.ToFractions(out left, out top, out right, out bottom);
-                    startboxes.AppendFormat(CultureInfo.InvariantCulture, "[{0}] = ", allyNumber);
-                    startboxes.Append("{ ");
-                    startboxes.AppendFormat(CultureInfo.InvariantCulture, "{0}, {1}, {2}, {3}", left, top, right, bottom);
-                    startboxes.Append(" }, ");
-                }
                 script.AppendLine("}");
             }
 
