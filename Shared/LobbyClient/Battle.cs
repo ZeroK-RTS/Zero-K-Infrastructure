@@ -22,7 +22,7 @@ namespace LobbyClient
         public string FounderName { get; private set; }
 
 
-        public bool IsInGame => RunningSince != null;
+        public bool IsInGame { get; set; }
         public bool IsMission { get { return false; } }
         public bool IsPassworded { get { return !string.IsNullOrEmpty(Password); } }
 
@@ -91,6 +91,7 @@ namespace LobbyClient
             if (h.SpectatorCount != null) SpectatorCount = h.SpectatorCount.Value;
             if (h.Mode != null) Mode = h.Mode.Value;
             if (h.RunningSince != null) RunningSince = h.RunningSince;
+            if (h.IsRunning != null) IsInGame = h.IsRunning.Value;
         }
 
         public virtual BattleHeader GetHeader()
@@ -108,8 +109,8 @@ namespace LobbyClient
                 MaxPlayers = b.MaxPlayers,
                 Password = b.Password != null ? "?" : null,
                 Mode = b.Mode,
-                //Running = b.IsInGame,
-                RunningSince = b.IsInGame ? b.RunningSince : null
+                IsRunning = b.IsInGame,
+                RunningSince = b.IsInGame ? b.RunningSince : null,
             };
         }
 

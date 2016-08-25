@@ -63,7 +63,7 @@ namespace ZeroKLobby.Notifications
                                                                }
 
                                                                else modInfo = mod;
-
+                                                               
                                                                metaWait.Set();
                                                            },
                                                            error =>

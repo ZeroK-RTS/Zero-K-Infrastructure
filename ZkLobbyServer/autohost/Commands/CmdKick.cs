@@ -31,7 +31,6 @@ namespace ZkLobbyServer
 
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
-            if (!battle.kickedPlayers.Any(x => x.Name == target)) battle.kickedPlayers.Add(new ServerBattle.KickedPlayer() { Name = target });
             if (battle.spring.IsRunning) battle.spring.Kick(target);
             await battle.KickFromBattle(target, $"by {e?.User}");
         }

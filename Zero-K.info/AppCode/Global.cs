@@ -151,7 +151,7 @@ namespace ZeroKWeb
             GlobalConst.SiteDiskPath = MapPath("~");
 
             ForumPostIndexer = new ForumPostIndexer();
-            ZkServerRunner = new ServerRunner(mvcApplication.Server.MapPath("~"));
+            ZkServerRunner = new ServerRunner(mvcApplication.Server.MapPath("~"), new PlanetwarsEventCreator());
             Server = ZkServerRunner.ZkLobbyServer;
             AutoRegistrator = new AutoRegistrator(MapPath("~"));
             AutoRegistrator.RunMainAndMapSyncAsync();

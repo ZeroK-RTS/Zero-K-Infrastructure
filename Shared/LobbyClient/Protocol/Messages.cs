@@ -330,6 +330,7 @@ namespace LobbyClient
         public string Title;
         public string Founder;
         public AutohostMode? Mode;
+        public bool? IsRunning;
         public DateTime? RunningSince;
     }
 

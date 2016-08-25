@@ -115,9 +115,7 @@ namespace ZkData
         public static string SiteDiskPath = @"c:\projekty\zero-k.info\www";
 
 
-
         public const int SteamAppID = 334920;
-        public const int ZkSpringieManagedCpu = 6666;
         public const int ZkLobbyUserCpu = 6667;
         public const int ZkLobbyUserCpuLinux = 6668;
         public const int CommanderProfileCount = 6;
@@ -192,9 +190,6 @@ namespace ZkData
 
         public const double EurosToKudos = 10.0;
         public const string TeamEmail = "Zero-K team <team@zero-k.info>";
-        public const int NotaLobbyLinuxCpu = 9999;
-        public const int NotaLobbyWindowsCpu = 9998;
-        public const int NotaLobbyMacCpu = 9997;
 
         public const int KudosForBronze = 100;
         public const int KudosForSilver = 500;

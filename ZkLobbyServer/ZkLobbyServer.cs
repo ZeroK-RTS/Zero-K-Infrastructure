@@ -33,10 +33,12 @@ namespace ZkLobbyServer
         public SteamWebApi SteamWebApi;
 
         public string Version { get; private set; }
+        public IPlanetwarsEventCreator PlanetWarsEventCreator { get; private set; }
 
 
-        public ZkLobbyServer(string geoIPpath)
+        public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator)
         {
+            this.PlanetWarsEventCreator = creator;
             var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();
             Engine = GlobalConst.DefaultEngineOverride;

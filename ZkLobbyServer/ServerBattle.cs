@@ -23,8 +23,6 @@ namespace ZkLobbyServer
         public static SpringPaths springPaths;
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
 
-        internal static Say defaultSay = new Say() { Place = SayPlace.Battle, User = "NightWatch" };
-
         public readonly List<string> toNotify = new List<string>();
 
         private CommandPoll activePoll;
@@ -34,11 +32,10 @@ namespace ZkLobbyServer
 
         public Mod HostedModInfo;
 
-        public List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
+        private List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
 
         // login accepted - join channels
 
-        public DateTime lastMapChange = DateTime.Now;
         private Timer pollTimer;
 
         public ZkLobbyServer server;
@@ -69,9 +66,6 @@ namespace ZkLobbyServer
             pollTimer.Enabled = false;
             pollTimer.AutoReset = false;
             pollTimer.Elapsed += pollTimer_Elapsed;
-
-            lastMapChange = DateTime.Now;
-
             SetupSpring();
         }
 
@@ -205,6 +199,7 @@ namespace ZkLobbyServer
             UserBattleStatus user;
             if (Users.TryGetValue(name, out user))
             {
+                kickedPlayers.Add(new KickedPlayer() {Name = name});
                 var client = server.ConnectedUsers[name];
                 await client.Respond($"You were kicked from battle by {name} : {reason}");
                 await client.Process(new LeaveBattle() { BattleID = BattleID });
@@ -515,32 +510,37 @@ namespace ZkLobbyServer
         }
 
 
-        private void spring_SpringExited(object sender, EventArgs e)
+        private async void spring_SpringExited(object sender, EventArgs e)
         {
             StopVote();
-            /*tas.ChangeMyUserStatus(false, false);
-            Battle b = tas.MyBattle;
+            IsInGame = false;
+            RunningSince = null;
+            await server.Broadcast(server.ConnectedUsers.Keys, new BattleUpdate() { Header = GetHeader() });
+            
             foreach (string s in toNotify)
             {
-                if (b != null && b.Users.ContainsKey(s)) tas.Ring(SayPlace.BattlePrivate, s);
-                tas.Say(SayPlace.User, s, "** Game just ended, join me! **", false);
+                await server.GhostSay(new Say()
+                {
+                    User = GlobalConst.NightwatchName,
+                    Text = $"** {FounderName} 's {Title} just ended, join me! **",
+                    Target = s,
+                    IsEmote = true,
+                    Place = SayPlace.User,
+                    Ring = true,
+                    AllowRelay = false
+                });
             }
             toNotify.Clear();
-            */
-            //if (mode != AutohostMode.None && DateTime.Now.Subtract(spring.GameStarted).TotalMinutes > 5) ServerVerifyMap(true);
         }
 
         private void spring_SpringStarted(object sender, EventArgs e)
         {
-            //lockedUntil = DateTime.MinValue;
-            //tas.ChangeLock(false);
-            if (HostedMod.Mission != null)
+            StopVote();
+            if (HostedMod?.Mission != null)
             {
                 var service = GlobalConst.GetContentService();
-                foreach (var u in Users.Values.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, HostedMod.Mission.Name);
+                foreach (var u in spring.StartContext.Players.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, HostedMod.Mission.Name);
             }
-
-            StopVote();
         }
 
 
@@ -597,8 +597,6 @@ namespace ZkLobbyServer
                 }
             }
 
-            if (SpawnConfig != null && SpawnConfig.Owner == name) // owner joins, set him boss 
-                ComBoss(TasSayEventArgs.Default, new[] { name });
                 */
         }
 

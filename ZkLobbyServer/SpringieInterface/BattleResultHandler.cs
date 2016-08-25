@@ -134,9 +134,9 @@ namespace ZeroKWeb.SpringieInterface
                             } 
                         }
 
-                        // todo hack PlanetWarsTurnHandler.EndTurn(context.Map, extraData, db, winNum, sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).ToList(), text, sb, sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.AllyNumber == 0).Select(x => x.Account).ToList());
+                        PlanetWarsTurnHandler.EndTurn(context.Map, extraData, db, winNum, sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).ToList(), text, sb, sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.AllyNumber == 0).Select(x => x.Account).ToList(), server.PlanetWarsEventCreator);
 
-                        // todo hack Global.PlanetWarsMatchMaker.RemoveFromRunningBattles(context.AutohostName);
+                        // TODO HACK Global.PlanetWarsMatchMaker.RemoveFromRunningBattles(context.AutohostName);
                     }
                     else
                     {
@@ -194,28 +194,6 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 text.AppendLine(string.Format("BATTLE DETAILS AND REPLAY ----> {1}/Battles/Detail/{0} <-----", sb.SpringBattleID, GlobalConst.BaseSiteUrl));
-
-                /*
-                // create debriefing room, join players there and output message
-                string channelName = "B" + sb.SpringBattleID;
-                var joinplayers = new List<string>();
-                joinplayers.AddRange(context.Players.Select(x => x.Name)); // add those who were there at start
-                joinplayers.AddRange(sb.SpringBattlePlayers.Select(x => x.Account.Name)); // add those who played
-                Battle bat = Global.Server.Battles.Values.FirstOrDefault(x => x.Founder.Name == context.AutohostName); // add those in lobby atm
-
-
-                var conf = context.GetConfig();
-                if (bat != null && (conf == null || conf.MinToJuggle == null)) // if not qm room do not join those who are in battle
-                {
-                    List<string> inbatPlayers = bat.Users.Keys.ToList();
-                    joinplayers.RemoveAll(x => inbatPlayers.Contains(x));
-                }
-                foreach (string jp in joinplayers.Distinct().Where(x => x != context.AutohostName)) tas.ForceJoinChannel(jp, channelName);
-                tas.JoinChannel(channelName); // join nightwatch and say it
-                tas.Say(SayPlace.Channel, channelName, text.ToString(), true);
-                tas.LeaveChannel(channelName);*/
-
-                //text.Append(string.Format("Debriefing in #{0} - zk://chat/channel/{0}  ", channelName));
                 return text.ToString();
             }
             catch (Exception ex)
