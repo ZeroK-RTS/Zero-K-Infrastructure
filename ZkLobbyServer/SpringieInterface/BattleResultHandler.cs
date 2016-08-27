@@ -51,7 +51,6 @@ namespace ZeroKWeb.SpringieInterface
                                                {
                                                    AccountID = db.Accounts.First(x => x.AccountID == p.LobbyID).AccountID,
                                                    AllyNumber = p.AllyNumber,
-                                                   CommanderType = p.CommanderType,
                                                    IsInVictoryTeam = p.IsVictoryTeam,
                                                    IsSpectator = p.IsSpectator,
                                                    LoseTime = p.LoseTime

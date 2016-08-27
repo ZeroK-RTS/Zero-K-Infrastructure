@@ -220,8 +220,6 @@ namespace LobbyClient
                         {
                             LobbyID = x.LobbyID,
                             AllyNumber = x.AllyID,
-                            CommanderType = null,
-                            // todo commandertype
                             IsSpectator = x.IsSpectator,
                             IsVictoryTeam = false,
                         });
