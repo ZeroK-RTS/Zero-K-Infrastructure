@@ -33,11 +33,11 @@ namespace ZeroKWeb.SpringieInterface
             var playerCount = context.Players.Count(x => !x.IsSpectator);
 
             
-            if (clanWise == null && ( context.GetMode() == AutohostMode.Teams)) clanWise = true;
+            if (clanWise == null && ( context.Mode == AutohostMode.Teams)) clanWise = true;
 
             var res = PerformBalance(context, isGameStart, allyCount, clanWise, playerCount);
 
-            if (context.GetMode() != AutohostMode.Planetwars) // planetwars skip other checks
+            if (context.Mode != AutohostMode.Planetwars) // planetwars skip other checks
             {
                 if (isGameStart)
                 {
@@ -264,7 +264,7 @@ namespace ZeroKWeb.SpringieInterface
             bool? clanWise,
             int playerCount) {
             var res = new BalanceTeamsResult();
-            var mode = context.GetMode();
+            var mode = context.Mode;
 
             using (var db = new ZkDataContext())
             {
@@ -444,17 +444,8 @@ namespace ZeroKWeb.SpringieInterface
                         .ToDictionary(x => x.AccountID, x => x.AccountIPs.OrderByDescending(y => y.LastLogin).Select(y => y.IP).FirstOrDefault());
                     // lobbyid -> ip mapping
 
-                    var mode = context.GetMode();
-                    // kick same ip specs for starred and non chickens
-                    /*
-                    if (mode != AutohostMode.None && mode != AutohostMode.GameChickens) {
-						foreach (var p in context.Players.Where(x => x.IsSpectator)) {
-							var ip = ipByLobbyID[p.LobbyID];
-							if (context.Players.Any(x => !x.IsSpectator && ipByLobbyID[x.LobbyID] == ip)) Global.Nightwatch.Tas.AdminKickFromLobby(p.Name, "Spectators from same location as players are not allowed here!");
-						}
-					}*/
-
-                    foreach (var grp in context.Players.GroupBy(x => ipByLobbyID[x.LobbyID]).Where(x => x.Count() > 1)) res.Message += string.Format("\nThese people are in same location: {0}", string.Join(", ", grp.Select(x => x.Name)));
+                    foreach (var grp in context.Players.GroupBy(x => ipByLobbyID[x.LobbyID]).Where(x => x.Count() > 1)) res.Message +=
+                        $"\nThese people are in same location: {string.Join(", ", grp.Select(x => x.Name))}";
                 }
             }
             catch (Exception ex)

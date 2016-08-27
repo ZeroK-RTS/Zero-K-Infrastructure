@@ -23,7 +23,7 @@ namespace ZeroKWeb.SpringieInterface
             {
                 var db = new ZkDataContext();
                 Account acc = Account.AccountByName(db, context.AutohostName);
-                AutohostMode mode = context.GetMode();
+                AutohostMode mode = context.Mode;
 
                 if (extraData == null) extraData = new List<string>();
 

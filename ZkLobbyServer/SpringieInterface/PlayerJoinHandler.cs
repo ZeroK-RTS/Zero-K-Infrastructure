@@ -13,7 +13,7 @@ namespace ZeroKWeb.SpringieInterface
         public static PlayerJoinResult AutohostPlayerJoined(BattleContext context, int accountID) {
             var res = new PlayerJoinResult();
             var db = new ZkDataContext();
-            AutohostMode mode = context.GetMode();
+            AutohostMode mode = context.Mode;
 
             if (mode == AutohostMode.Planetwars) {
                 Planet planet = db.Galaxies.Single(x => x.IsDefault).Planets.SingleOrDefault(x => x.Resource.InternalName == context.Map);

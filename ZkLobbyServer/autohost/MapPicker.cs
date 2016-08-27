@@ -29,7 +29,7 @@ namespace ZeroKWeb.SpringieInterface
         /// </remarks>
         public static Resource GetRecommendedMap(BattleContext context)
         {
-            var mode = context.GetMode();
+            var mode = context.Mode;
             using (var db = new ZkDataContext())
             {
                 List<Resource> list = null;

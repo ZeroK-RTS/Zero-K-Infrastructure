@@ -58,13 +58,5 @@ namespace ZkData
         {
             dbSet.Remove(target);
         }
-
-        public static AutohostMode GetMode(this BattleContext ctx)
-        {
-            return ctx.Mode ?? AutohostMode.None;
-        }
-
-
-
 	}
 }
