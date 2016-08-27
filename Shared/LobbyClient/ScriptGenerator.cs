@@ -86,8 +86,12 @@ namespace LobbyClient
             var teamNum = 0;
             var aiNum = 0;
 
-            foreach (var u in startContext.Players) {
-                ScriptAddUser(script, userNum, u, teamNum, setup?.UserParameters.FirstOrDefault(x => x.LobbyID == u.LobbyID));
+            foreach (var u in startContext.Players)
+            {
+                Dictionary<string, string> parameters = new Dictionary<string, string>();
+                setup?.UserParameters.TryGetValue(u.Name, out parameters);
+
+                ScriptAddUser(script, userNum, u, teamNum, parameters);
 
                 if (!u.IsSpectator) {
                     ScriptAddTeam(script, teamNum, userNum, u.AllyID);
@@ -167,7 +171,7 @@ namespace LobbyClient
         }
 
         static void ScriptAddUser(StringBuilder script, int userNum, PlayerTeam pteam, int teamNum,
-                                  SpringBattleStartSetup.UserCustomParameters customParameters)
+                                  Dictionary<string,string> customParameters)
         {
             // PLAYERS
             script.AppendFormat("  [PLAYER{0}]\n", userNum);
@@ -178,7 +182,7 @@ namespace LobbyClient
 
             if (pteam.ScriptPassword != null) script.AppendFormat("     Password={0};\n", pteam.ScriptPassword);
 
-            if (customParameters != null) foreach (var kvp in customParameters.Parameters) script.AppendFormat("     {0}={1};\n", kvp.Key, kvp.Value);
+            if (customParameters != null) foreach (var kvp in customParameters) script.AppendFormat("     {0}={1};\n", kvp.Key, kvp.Value);
             script.AppendLine("  }");
         }
     }

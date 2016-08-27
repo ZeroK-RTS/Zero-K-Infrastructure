@@ -156,7 +156,7 @@ namespace LobbyClient
             ret.Players = Users.Values.Where(x => x.SyncStatus != SyncStatuses.Unknown).Select(x => x.ToPlayerTeam()).ToList();
             ret.Bots = Bots.Values.Select(x => x.ToBotTeam()).ToList();
             ret.ModOptions = ModOptions;
-            ret.mode = Mode;
+            ret.Mode = Mode;
             return ret;
         }
 

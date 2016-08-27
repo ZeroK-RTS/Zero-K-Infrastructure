@@ -61,7 +61,7 @@ namespace ZkData
 
         public static AutohostMode GetMode(this BattleContext ctx)
         {
-            return ctx.mode ?? AutohostMode.None;
+            return ctx.Mode ?? AutohostMode.None;
         }
 
 

@@ -67,37 +67,34 @@ namespace ZeroKWeb.SpringieInterface
 
                     if (attacker == defender) defender = null;
 
-                    ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "attackingFaction", Value = attacker.Shortcut });
-                    if (defender != null) ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "defendingFaction", Value = defender.Shortcut });
-                    ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "planet", Value = planet.Name });
+                    ret.ModOptions["attackingFaction"] = attacker.Shortcut;
+                    if (defender != null) ret.ModOptions["defendingFaction"] = defender.Shortcut;
+                    ret.ModOptions["planet"] = planet.Name;
                 }
 
                 // write player custom keys (level, elo, is muted, etc.)
                 foreach (PlayerTeam p in context.Players) {
                     Account user = db.Accounts.Find(p.LobbyID);
                     if (user != null) {
-                        var userParams = new List<SpringBattleStartSetup.ScriptKeyValuePair>();
-                        ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { LobbyID = p.LobbyID, Parameters = userParams });
+                        var userParams =  new Dictionary<string, string>();
+                        ret.UserParameters[p.Name] = userParams;
                         
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "LobbyID", Value = user.AccountID.ToString() });
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "CountryCode", Value = user.Country });
+                        userParams["LobbyID"] = user.AccountID.ToString();
+                        userParams["CountryCode"] = user.Country;
 
                         bool userBanMuted = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanMute);
-                        if (userBanMuted) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "muted", Value = "1" });
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair
-                                       { Key = "faction", Value = user.Faction != null ? user.Faction.Shortcut : "" });
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair
-                                       { Key = "clan", Value = user.Clan != null ? user.Clan.Shortcut : "" });
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair
-                                       { Key = "clanfull", Value = user.Clan != null ? user.Clan.ClanName : "" });
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "level", Value = user.Level.ToString() });
+                        if (userBanMuted) userParams["muted"] = "1";
+                        userParams["faction"] = user.Faction != null ? user.Faction.Shortcut : "";
+                        userParams["clan"] = user.Clan != null ? user.Clan.Shortcut : "";
+                        userParams["clanfull"] = user.Clan != null ? user.Clan.ClanName : "";
+                        userParams["level"] = user.Level.ToString();
                         double elo =  mode == AutohostMode.Planetwars ? user.EffectivePwElo : (is1v1 ? user.Effective1v1Elo : user.EffectiveElo);
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "elo", Value = Math.Round(elo).ToString() }); // elo for ingame is just ordering for auto /take
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "avatar", Value = user.Avatar });
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "admin", Value = (user.IsZeroKAdmin ? "1" : "0") });
+                        userParams["elo"] = Math.Round(elo).ToString(); // elo for ingame is just ordering for auto /take
+                        userParams["avatar"] = user.Avatar;
+                        userParams["admin"] = user.IsZeroKAdmin ? "1" : "0";
 
                         bool userSpecChatBlocked = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanSpecChat);
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "can_spec_chat", Value = (userSpecChatBlocked ? "0" : "1") });
+                        userParams["can_spec_chat"] = (userSpecChatBlocked ? "0" : "1");
 
                         if (!p.IsSpectator) {
                             // set valid PW structure attackers
@@ -107,7 +104,7 @@ namespace ZeroKWeb.SpringieInterface
                                               defender.HasTreatyRight(user.Faction, x => x.EffectPreventIngamePwStructureDestruction == true, planet);
 
                                 if (!allied && user.Faction != null && (user.Faction == attacker || user.Faction == defender)) {
-                                    userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "canAttackPwStructures", Value = "1" });
+                                    userParams["canAttackPwStructures"] = "1";
                                 }
                             }
 
@@ -123,9 +120,9 @@ namespace ZeroKWeb.SpringieInterface
                                 }
                             }
 
-                            userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "unlocks", Value = pu.ToBase64String() });
+                            userParams["unlocks"] = pu.ToBase64String();
 
-                            if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "extracomm", Value = "1" });
+                            if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams["extracomm"] = "1";
                             
                             LuaTable commProfileIDs = new LuaTable();
 
@@ -202,13 +199,13 @@ namespace ZeroKWeb.SpringieInterface
                                     }
                                 }
                             }
-                            else userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "jokecomm", Value = "1" });
+                            else userParams["jokecomm"] = "1";
 
-                            userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanders", Value = commProfileIDs.ToBase64String() });
+                            userParams["commanders"] = commProfileIDs.ToBase64String();
                         }
                     }
                 }
-                ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanderTypes", Value = commProfiles.ToBase64String() });
+                ret.ModOptions["commanderTypes"] = commProfiles.ToBase64String();
 
                 // set PW structures
                 if (mode == AutohostMode.Planetwars)
@@ -226,8 +223,7 @@ namespace ZeroKWeb.SpringieInterface
                                              { "description", s.StructureType.Description }
                                          });
                     }
-                    ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair
-                                       { Key = "planetwarsStructures", Value = pwStructures.ToBase64String() });
+                    ret.ModOptions["planetwarsStructures"] = pwStructures.ToBase64String();
                 }
 
                 return ret;
