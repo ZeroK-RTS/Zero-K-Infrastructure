@@ -122,7 +122,7 @@ namespace ZkWebLobby
                     runningSpring = new Spring(path);
                     runningSpring.SpringExited += (obj, evt) =>
                     {
-                        CefWrapper.ExecuteJavascript("on_spring_exit(" + (evt.Data ? "true" : "false") + ");");
+                        CefWrapper.ExecuteJavascript("on_spring_exit(" + (evt.IsCrash ? "true" : "false") + ");");
                         runningSpring = null;
                     };
                     try

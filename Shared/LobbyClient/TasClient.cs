@@ -338,12 +338,6 @@ namespace LobbyClient
             }
         }
 
-        public void GameSaid(string username, string text)
-        {
-            InvokeSaid(new TasSayEventArgs(SayPlace.Game, "", username, text, false));
-        }
-
-
         public bool GetExistingUser(string name, out User u)
         {
             return ExistingUsers.TryGetValue(name, out u);

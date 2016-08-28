@@ -314,15 +314,13 @@ namespace ZkLobbyServer
 
         public async Task StartGame()
         {
-            //spring.lobbyUserName = tas.UserName; // hack until removed when springie moves to server
-            //spring.lobbyPassword = tas.UserPassword;  // spring class needs this to submit results
             var ip = "127.0.0.1";
             int port = 8452;
 
-            var startSetup = StartSetup.GetSpringBattleSetupDedicatedServer(GetContext());
+            var startSetup = StartSetup.GetDedicatedServerStartSetup(GetContext());
             
-
             spring.HostGame(startSetup, ip, port, true);  // TODO HACK GET PORTS
+            IsInGame = true;
             RunningSince = DateTime.UtcNow;
             foreach (var us in Users.Values)
             {
@@ -465,7 +463,6 @@ namespace ZkLobbyServer
             spring = new Spring(springPaths);
 
             spring.SpringExited += spring_SpringExited;
-            spring.GameOver += spring_GameOver;
 
             spring.SpringStarted += spring_SpringStarted;
             spring.PlayerSaid += spring_PlayerSaid;
@@ -477,34 +474,24 @@ namespace ZkLobbyServer
             StopVote();
         }
 
-        private void spring_GameOver(object sender, SpringLogEventArgs e)
-        {
-            SayBattle("Game over, exiting");
-            // Spring sends GAMEOVER for every player and spec, we only need the first one.
-            spring.GameOver -= spring_GameOver;
-            Utils.SafeThread(() =>
-            {
-                // Wait for gadgets that send spring autohost messages after gadget:GameOver()
-                // such as awards.lua
-                Thread.Sleep(10000);
-                spring.ExitGame();
-                spring.GameOver += spring_GameOver;
-            }).Start();
-        }
 
 
         private void spring_PlayerSaid(object sender, SpringLogEventArgs e)
         {
-            /*tas.GameSaid(e.Username, e.Line);
-            User us;
-            tas.ExistingUsers.TryGetValue(e.Username, out us);
-            bool isMuted = us != null && us.BanMute;
-            if (Program.main.Config.RedirectGameChat && e.Username != tas.UserName && !e.Line.StartsWith("Allies:") &&
-                !e.Line.StartsWith("Spectators:") && !isMuted) tas.Say(SayPlace.Battle, "", "[" + e.Username + "]" + e.Line, false);*/
+            ProcessBattleSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle }); // process as command
+
+            ConnectedUser user;
+            if (server.ConnectedUsers.TryGetValue(e.Username, out user) && !user.User.BanMute) // relay
+            {
+                if (!e.Line.StartsWith("Allies:") && !e.Line.StartsWith("Spectators:"))
+                {
+                    server.GhostSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle }, BattleID);
+                }
+            }
         }
 
 
-        private async void spring_SpringExited(object sender, EventArgs e)
+        private async void spring_SpringExited(object sender, Spring.SpringBattleContext springBattleContext)
         {
             StopVote();
             IsInGame = false;
@@ -525,6 +512,8 @@ namespace ZkLobbyServer
                 });
             }
             toNotify.Clear();
+
+            await SayBattle(BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server));
         }
 
         private void spring_SpringStarted(object sender, EventArgs e)

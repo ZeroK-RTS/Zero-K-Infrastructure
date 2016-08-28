@@ -1158,14 +1158,13 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             }
         }
 
-        private void Event_SpringExited(object sender, EventArgs<bool> e)
+        private void Event_SpringExited(object sender, Spring.SpringBattleContext springBattleContext)
         {
             this.Invoke(new Action(()=>
             {
                 if (infoLabel.Text.StartsWith("Spring starting"))
                     infoLabel.Text = "";
-                if (e.Data)
-                    infoLabel.Text = "Spring crashed";
+                if (springBattleContext.IsCrash) infoLabel.Text = "Spring crashed";
             }));
 
             spring.SpringExited -= Event_SpringExited;

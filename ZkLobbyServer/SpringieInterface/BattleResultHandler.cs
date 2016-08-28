@@ -14,9 +14,7 @@ namespace ZeroKWeb.SpringieInterface
     /// </summary>
     public class BattleResultHandler
     {
-        public static string SubmitSpringBattleResult(Spring.SpringBattleContext result,
-                                                      List<BattlePlayerResult> players,
-                                                      List<string> extraData, ZkLobbyServer.ZkLobbyServer server)
+        public static string SubmitSpringBattleResult(Spring.SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server)
         {
             try
             {
@@ -24,8 +22,6 @@ namespace ZeroKWeb.SpringieInterface
                 Account acc = Account.AccountByName(db, result.LobbyStartContext.FounderName);
                 var context = result.LobbyStartContext;
                 AutohostMode mode = result.LobbyStartContext.Mode;
-
-                if (extraData == null) extraData = new List<string>();
 
 
                 var sb = new SpringBattle
@@ -37,7 +33,7 @@ namespace ZeroKWeb.SpringieInterface
                              ModResourceID = db.Resources.Single(x => x.InternalName == context.Mod).ResourceID,
                              HasBots = context.Bots.Any(),
                              IsMission = context.IsMission,
-                             PlayerCount = players.Count(x => !x.IsSpectator),
+                             PlayerCount = result.ActualPlayers.Count(x => !x.IsSpectator),
                              StartTime = result.StartTime,
                              Title = context.Title,
                              ReplayFileName = result.ReplayName,
@@ -45,7 +41,7 @@ namespace ZeroKWeb.SpringieInterface
                          };
                 db.SpringBattles.InsertOnSubmit(sb);
 
-                foreach (BattlePlayerResult p in players)
+                foreach (BattlePlayerResult p in result.ActualPlayers)
                 {
                     sb.SpringBattlePlayers.Add(new SpringBattlePlayer
                                                {
@@ -60,7 +56,7 @@ namespace ZeroKWeb.SpringieInterface
                 db.SaveChanges();
 
                 // awards
-                foreach (string line in extraData.Where(x => x.StartsWith("award")))
+                foreach (string line in result.OutputExtras.Where(x => x.StartsWith("award")))
                 {
                     string[] partsSpace = line.Substring(6).Split(new[] { ' ' }, 3);
                     string name = partsSpace[0];
@@ -85,7 +81,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 // chatlogs
-                foreach (string line in extraData.Where(x => x.StartsWith("CHATLOG")))
+                foreach (string line in result.OutputExtras.Where(x => x.StartsWith("CHATLOG")))
                 {
                     string[] partsSpace = line.Substring(8).Split(new[] { ' ' }, 2);
                     string name = partsSpace[0];
@@ -133,7 +129,7 @@ namespace ZeroKWeb.SpringieInterface
                             } 
                         }
 
-                        PlanetWarsTurnHandler.EndTurn(context.Map, extraData, db, winNum, sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).ToList(), text, sb, sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.AllyNumber == 0).Select(x => x.Account).ToList(), server.PlanetWarsEventCreator);
+                        PlanetWarsTurnHandler.EndTurn(context.Map, result.OutputExtras, db, winNum, sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).ToList(), text, sb, sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.AllyNumber == 0).Select(x => x.Account).ToList(), server.PlanetWarsEventCreator);
 
                         // TODO HACK Global.PlanetWarsMatchMaker.RemoveFromRunningBattles(context.AutohostName);
                     }
@@ -144,7 +140,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 }
 
-                bool noElo = (extraData.FirstOrDefault(x => x.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture)) != null);
+                bool noElo = (result.OutputExtras.FirstOrDefault(x => x.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture)) != null);
                 try
                 {
                     db.SaveChanges();

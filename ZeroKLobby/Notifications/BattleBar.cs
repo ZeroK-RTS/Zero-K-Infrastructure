@@ -83,7 +83,7 @@ namespace ZeroKLobby.Notifications
                 {
                     client.ChangeMyUserStatus(isInGame: false);
 
-                    if (e.Data)
+                    if (e.IsCrash)
                     {
                         Program.MainWindow.InvokeFunc(() =>
                             {

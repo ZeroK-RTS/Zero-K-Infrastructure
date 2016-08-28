@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using PlasmaShared;
 using ZkData;
@@ -25,7 +26,7 @@ namespace LobbyClient
         public delegate void LogLine(string text, bool isError);
 
         public static EventHandler AnySpringStarted;
-        public static EventHandler<EventArgs<bool>> AnySpringExited;
+        public static EventHandler<SpringBattleContext> AnySpringExited;
 
         private readonly SpringPaths paths;
         private readonly Timer timer = new Timer(20000);
@@ -106,11 +107,11 @@ namespace LobbyClient
             {
                 if (IsRunning)
                 {
-                    SayGame("/kill"); // todo dont do this if talker does not work (not a host)
+                    SayGame("/kill");
                     process.WaitForExit(20000);
                     if (!IsRunning) return;
 
-                    Console.WriteLine("Terminating Spring process due to /kill timeout");
+                    Trace.TraceWarning("Terminating Spring process due to /kill timeout");
                     Context.WasKilled = true;
                     process.Kill();
 
@@ -209,7 +210,7 @@ namespace LobbyClient
         /// <summary>
         ///     Data is true if exit was crash
         /// </summary>
-        public event EventHandler<EventArgs<bool>> SpringExited;
+        public event EventHandler<SpringBattleContext> SpringExited;
         public event EventHandler SpringStarted;
 
         public void WaitForExit()
@@ -413,8 +414,8 @@ namespace LobbyClient
 
             if (LobbyStartContext != null) foreach (var p in Context.ActualPlayers) p.IsIngame = false;
 
-            SpringExited?.Invoke(this, new EventArgs<bool>(Context.IsCrash));
-            AnySpringExited?.Invoke(this, new EventArgs<bool>(Context.IsCrash));
+            SpringExited?.Invoke(this, Context);
+            AnySpringExited?.Invoke(this, Context);
         }
 
         private void StartSpring(string script)
@@ -548,6 +549,8 @@ namespace LobbyClient
                             GameOver?.Invoke(this, new SpringLogEventArgs(e.PlayerName));
                         }
                         else Trace.TraceWarning("recieved GAMEOVER before STARTPLAYING!");
+
+                        Task.Delay(10000).ContinueWith(x => ExitGame());
                         break;
 
                     case Talker.SpringEventType.PLAYER_READY:
