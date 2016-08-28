@@ -49,7 +49,7 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     sb.SpringBattlePlayers.Add(new SpringBattlePlayer
                                                {
-                                                   AccountID = db.Accounts.First(x => x.AccountID == p.LobbyID).AccountID,
+                                                   AccountID =  Account.AccountByName(db, p.Name).AccountID,
                                                    AllyNumber = p.AllyNumber,
                                                    IsInVictoryTeam = p.IsVictoryTeam,
                                                    IsSpectator = p.IsSpectator,

@@ -7,7 +7,6 @@ namespace PlasmaShared
         public int AllyID;
         public string Name;
         public bool IsSpectator;
-        public bool IsIngame;
         public string ScriptPassword;
     }
 }

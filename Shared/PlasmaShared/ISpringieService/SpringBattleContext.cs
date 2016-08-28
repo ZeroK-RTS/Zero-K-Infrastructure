@@ -6,23 +6,45 @@ namespace PlasmaShared
 {
     public class SpringBattleContext
     {
-        public BattleContext StartContext;
-        public Dictionary<string, string> ModOptions = new Dictionary<string, string>();
-        public Dictionary<string, Dictionary<string, string>> UserParameters = new Dictionary<string, Dictionary<string, string>>();
+        public List<BattlePlayerResult> ActualPlayers = new List<BattlePlayerResult>();
 
         public int Duration;
         public string EngineBattleID;
         public DateTime? IngameStartTime;
-        public DateTime StartTime;
-        public string ReplayName;
+        public Dictionary<string, string> ModOptions = new Dictionary<string, string>();
 
         public List<string> OutputExtras = new List<string>();
-
+        public string ReplayName;
+        public BattleContext StartContext;
+        public DateTime StartTime;
+        public Dictionary<string, Dictionary<string, string>> UserParameters = new Dictionary<string, Dictionary<string, string>>();
 
 
         public SpringBattleContext(BattleContext startContext)
         {
             StartContext = startContext;
+            ActualPlayers =
+                StartContext.Players.Select(
+                    x =>
+                        new BattlePlayerResult(x.Name)
+                        {
+                            AllyNumber = x.AllyID,
+                            IsSpectator = x.IsSpectator,
+                            IsVictoryTeam = false,
+                            IsIngameReady = false,
+                            IsIngame = false,
+                        }).ToList();
+        }
+
+        public BattlePlayerResult GetOrAddPlayer(string name)
+        {
+            var ret = ActualPlayers.FirstOrDefault(y => y.Name == name);
+            if (ret == null)
+            {
+                ret = new BattlePlayerResult(name);
+                ActualPlayers.Add(ret);
+            }
+            return ret;
         }
     }
 }

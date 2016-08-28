@@ -26,7 +26,8 @@ namespace ZkLobbyServer
                 foreach (var p in battle.Users.Values)
                 {
                     if (p.IsSpectator) continue;
-                    if ((p.SyncStatus != SyncStatuses.Synced || p.IsSpectator) && (!battle.spring.IsRunning || !battle.spring.IsPlayerReady(p.Name))) userList.Add(p.Name);
+                    var ingameEntry = battle.spring.Context.ActualPlayers.FirstOrDefault(x => x.Name == p.Name);
+                    if ((p.SyncStatus != SyncStatuses.Synced || p.IsSpectator) || (battle.spring.IsRunning && ingameEntry?.IsSpectator == false && ingameEntry?.IsIngameReady == false)) userList.Add(p.Name);
                 }
             }
             else userList = battle.GetAllUserNames().Where(x => x.Contains(arguments)).ToList();

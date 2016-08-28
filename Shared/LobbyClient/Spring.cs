@@ -61,7 +61,6 @@ namespace LobbyClient
 
         private Process process;
         private string scriptPath;
-        private Dictionary<string, BattlePlayerResult> statsPlayers = new Dictionary<string, BattlePlayerResult>();
         private Talker talker;
         public bool UseDedicatedServer;
         private bool wasKilled = false;
@@ -185,35 +184,9 @@ namespace LobbyClient
 
                 if (isHosting) scriptPath = Utils.MakePath(paths.WritableDirectory, "script_" + myName + ".txt").Replace('\\', '/');
                 else scriptPath = Utils.MakePath(paths.WritableDirectory, "script.txt").Replace('\\', '/');
+                
 
-                statsPlayers.Clear();
-
-                if (isHosting && GlobalConst.IsZkMod(StartContext.Mod))
-                {
-                    try
-                    {
-                        connectedPlayers.Clear();
-                        foreach (var p in StartContext.Players)
-                        {
-                            p.IsIngame = true;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceError("Error getting start setup: {0}", ex);
-                    }
-
-                    script = ScriptGenerator.GenerateHostScript(StartContext, context, talker.LoopbackPort, host, port, myName, myPassword);
-
-                    statsPlayers = StartContext.Players.ToDictionary(x => x.Name,
-                        x => new BattlePlayerResult
-                        {
-                            LobbyID = x.LobbyID,
-                            AllyNumber = x.AllyID,
-                            IsSpectator = x.IsSpectator,
-                            IsVictoryTeam = false,
-                        });
-                }
+                script = ScriptGenerator.GenerateHostScript(StartContext, context, talker.LoopbackPort, host, port, myName, myPassword);
                 if (isHosting) timer.Start();
 
                 StartSpring(script, StartContext.EngineVersion);
@@ -226,9 +199,9 @@ namespace LobbyClient
         public SpringBattleContext Context { get; private set; } = new SpringBattleContext(null);
 
 
-        public bool IsPlayerReady(string name)
+        public bool? IsPlayerReady(string name)
         {
-            return statsPlayers[name].IsIngameReady;
+            return Context.ActualPlayers.Where(x=>x.Name == name).Select(x=>(bool?)x.IsIngameReady).FirstOrDefault();
         }
 
         public void Kick(string name)
@@ -400,8 +373,8 @@ namespace LobbyClient
                 if (text.StartsWith("READY:"))
                 {
                     var name = text.Substring(6);
-                    BattlePlayerResult entry;
-                    if (statsPlayers.TryGetValue(name, out entry)) entry.IsIngameReady = true;
+                    var entry = Context.ActualPlayers.FirstOrDefault(x => x.Name == name);
+                    if (entry != null) entry.IsIngameReady = true;
                 }
                 if (text == "FORCE") ForceStart();
 
@@ -547,9 +520,9 @@ namespace LobbyClient
                             Context.ReplayName = demoFileName;
 
                             // set victory team for all allied with currently alive
-                            foreach (var p in statsPlayers.Values.Where(x => !x.IsSpectator && x.LoseTime == null))
+                            foreach (var p in Context.ActualPlayers.Where(x => !x.IsSpectator && x.LoseTime == null))
                             {
-                                foreach (var q in statsPlayers.Values.Where(x => !x.IsSpectator && x.AllyNumber == p.AllyNumber))
+                                foreach (var q in Context.ActualPlayers.Where(x => !x.IsSpectator && x.AllyNumber == p.AllyNumber))
                                 {
                                     q.IsVictoryTeam = true;
                                 }
@@ -621,51 +594,38 @@ namespace LobbyClient
 
             GameExited = DateTime.Now;
 
-            if (StartContext != null) foreach (var p in StartContext.Players) p.IsIngame = false;
+            if (StartContext != null) foreach (var p in Context.ActualPlayers) p.IsIngame = false;
             IsBattleOver = true;
 
             SpringExited?.Invoke(this, new EventArgs<bool>(isCrash));
             AnySpringExited?.Invoke(this, new EventArgs<bool>(isCrash));
         }
 
-        private void StatsMarkDead(string name, bool isDead)
+        private void MarkPlayerDead(string name, bool isDead)
         {
-            BattlePlayerResult sp;
-            if (statsPlayers.TryGetValue(name, out sp)) sp.LoseTime = isDead ? (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds : (int?)null;
+            var sp = Context.ActualPlayers.FirstOrDefault(x => x.Name == name);
+            if (sp != null) sp.LoseTime = isDead ? (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds : (int?)null;
         }
 
 
         private void talker_SpringEvent(object sender, Talker.SpringEventArgs e)
         {
-            //this.client.Say(SayPlace.Battle, "",string.Format("type:{0} param:{1} player:{2}-{3} text:{4}",e.EventType.ToString(), e.Param,e.PlayerNumber, e.PlayerName, e.Text),false);
             try
             {
                 switch (e.EventType)
                 {
                     case Talker.SpringEventType.PLAYER_JOINED:
-                        if (StartContext != null)
-                        {
-                            foreach (var p in StartContext.Players.Where(x => x.Name == e.PlayerName))
-                            {
-                                connectedPlayers[p.Name] = true;
-                                p.IsIngame = true;
-                            }
-                        }
-                        if (PlayerJoined != null) PlayerJoined(this, new SpringLogEventArgs(e.PlayerName));
+                        var entry = Context?.GetOrAddPlayer(e.PlayerName);
+                        if (entry != null) entry.IsIngame = true;
+                        PlayerJoined?.Invoke(this, new SpringLogEventArgs(e.PlayerName));
                         break;
 
                     case Talker.SpringEventType.PLAYER_LEFT:
-                        if (StartContext != null)
-                        {
-                            foreach (var p in StartContext.Players.Where(x => x.Name == e.PlayerName))
-                            {
-                                connectedPlayers[p.Name] = false;
-                                p.IsIngame = false;
-                            }
-                        }
-                        if (e.Param == 0 && PlayerDisconnected != null) PlayerDisconnected(this, new SpringLogEventArgs(e.PlayerName));
-                        if (PlayerLeft != null) PlayerLeft(this, new SpringLogEventArgs(e.PlayerName));
+                        entry = Context?.GetOrAddPlayer(e.PlayerName);
+                        if (entry != null) entry.IsIngame = false;
 
+                        if (e.Param == 0) PlayerDisconnected?.Invoke(this, new SpringLogEventArgs(e.PlayerName));
+                        PlayerLeft?.Invoke(this, new SpringLogEventArgs(e.PlayerName));
                         break;
 
                     case Talker.SpringEventType.GAME_LUAMSG:
@@ -682,51 +642,41 @@ namespace LobbyClient
                         break;
 
                     case Talker.SpringEventType.PLAYER_DEFEATED:
-                        StatsMarkDead(e.PlayerName, true);
+                        MarkPlayerDead(e.PlayerName, true);
                         if (PlayerLost != null) PlayerLost(this, new SpringLogEventArgs(e.PlayerName));
                         break;
 
                     case Talker.SpringEventType.SERVER_GAMEOVER:
-                        if (StartContext != null) foreach (var p in StartContext.Players) p.IsIngame = false;
+                        foreach (var p in Context.ActualPlayers) p.IsIngame = false;
                         IsBattleOver = true;
 
                         if (Context.IngameStartTime != null)
                         {
                             gameEndedOk = true;
                             Context.Duration = (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds;
-                            if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
+                            GameOver?.Invoke(this, new SpringLogEventArgs(e.PlayerName));
                         }
-                        else
-                        {
-                            //gameover before gamestart
-                            Trace.TraceWarning("recieved GAMEOVER before STARTPLAYING!");
-                        }
-
+                        else Trace.TraceWarning("recieved GAMEOVER before STARTPLAYING!");
                         break;
 
                     case Talker.SpringEventType.PLAYER_READY:
-                        if (e.Param == 1) statsPlayers[e.PlayerName].IsIngameReady = true;
+                        if (e.Param == 1)
+                        {
+                            entry = Context.GetOrAddPlayer(e.PlayerName);
+                            if (entry != null) entry.IsIngameReady = true;
+                        }
                         break;
 
                     case Talker.SpringEventType.SERVER_STARTPLAYING:
                         Context.IngameStartTime = DateTime.UtcNow;
-                        foreach (var p in statsPlayers)
-                        {
-                            p.Value.IsIngameReady = true;
-                        }
+                        foreach (var p in Context.ActualPlayers.Where(x=>!x.IsSpectator)) p.IsIngameReady = true;
 
-                        foreach (var p in StartContext.Players)
-                        {
-                            bool state;
-                            if (!connectedPlayers.TryGetValue(p.Name, out state) || !state) p.IsIngame = false;
-                        }
                         BattleStarted(this, EventArgs.Empty);
                         break;
 
                     case Talker.SpringEventType.SERVER_QUIT:
-                        if (StartContext != null) foreach (var p in StartContext.Players) p.IsIngame = false;
+                        if (StartContext != null) foreach (var p in Context.ActualPlayers) p.IsIngame = false;
                         IsBattleOver = true;
-                        //Program.main.AutoHost.SayBattle("dbg quit ");
                         //if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
                         break;
                 }
