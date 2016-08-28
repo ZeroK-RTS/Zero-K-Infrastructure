@@ -1132,9 +1132,9 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 infoLabel.Text = "Add bots";
         }
 
-        private BattleContext Get_StartContext() //From LobbyClient/Battle.cs
+        private LobbyHostingContext Get_StartContext() //From LobbyClient/Battle.cs
         {
-            return new BattleContext() {
+            return new LobbyHostingContext() {
                 Map = map_comboBox.SelectedItem.ToString(),
                 Mod = game_comboBox.SelectedItem.ToString(),
                 IsMission = currentMod.IsMission,
@@ -1154,7 +1154,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 if (spring.IsRunning) spring.ExitGame();
                 spring.SpringExited += Event_SpringExited;
                 infoLabel.Text = "Spring starting ...";
-                spring.HostGame(new SpringBattleContext(Get_StartContext()), "127.0.0.1", 7452, myItem.UserName, null, engine_comboBox.SelectedItem.ToString());
+                spring.HostGame(Get_StartContext(), "127.0.0.1", 7452, false, myItem.UserName, null);
             }
         }
 

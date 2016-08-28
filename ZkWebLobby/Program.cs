@@ -127,7 +127,7 @@ namespace ZkWebLobby
                     };
                     try
                     {
-                        runningSpring.StartSpring(script, engineVer);
+                        runningSpring.RunLocalScriptGame(script, engineVer);
                         return null;
                     }
                     catch (Exception e)

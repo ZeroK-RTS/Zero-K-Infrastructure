@@ -29,7 +29,7 @@ namespace ZeroKWeb.SpringieInterface
         long iterationsChecked;
         int maxTeamSize;
 
-        public static BalanceTeamsResult BalanceTeams(BattleContext context, bool isGameStart, int? allyCount, bool? clanWise) {
+        public static BalanceTeamsResult BalanceTeams(LobbyHostingContext context, bool isGameStart, int? allyCount, bool? clanWise) {
             var playerCount = context.Players.Count(x => !x.IsSpectator);
 
             
@@ -94,7 +94,7 @@ namespace ZeroKWeb.SpringieInterface
         /// <param name="b"></param>
         /// <param name="unmovablePlayers"></param>
         /// <returns></returns>
-        BalanceTeamsResult LegacyBalance(int teamCount, BalanceMode mode, BattleContext b, params List<Account>[] unmovablePlayers) {
+        BalanceTeamsResult LegacyBalance(int teamCount, BalanceMode mode, LobbyHostingContext b, params List<Account>[] unmovablePlayers) {
             var ret = new BalanceTeamsResult();
 
             try
@@ -258,7 +258,7 @@ namespace ZeroKWeb.SpringieInterface
         /// <param name="playerCount"></param>
         /// <remarks>Also removes bots from team games, and tells people to add bots to a chicken game if absent</remarks>
         static BalanceTeamsResult PerformBalance(
-            BattleContext context,
+            LobbyHostingContext context,
             bool isGameStart,
             int? allyCount,
             bool? clanWise,
@@ -324,7 +324,7 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        BalanceTeamsResult PlanetwarsBalance(BattleContext context) {
+        BalanceTeamsResult PlanetwarsBalance(LobbyHostingContext context) {
             var res = new BalanceTeamsResult();
             res.CanStart = true;
             res.DeleteBots = true;
@@ -370,7 +370,7 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        static void AddPwPlayer(BattleContext context, string matchUser, BalanceTeamsResult res, int allyID) {
+        static void AddPwPlayer(LobbyHostingContext context, string matchUser, BalanceTeamsResult res, int allyID) {
             var player = context.Players.FirstOrDefault(x => x.Name == matchUser);
             if (player == null)
             {
@@ -433,7 +433,7 @@ namespace ZeroKWeb.SpringieInterface
         /// </summary>
         /// <param name="context"></param>
         /// <param name="res">The <see cref="BalanceTeamsResult" /> to write the message to</param>
-        static void VerifySpecCheaters(BattleContext context, BalanceTeamsResult res) {
+        static void VerifySpecCheaters(LobbyHostingContext context, BalanceTeamsResult res) {
             try
             {
                 // find specs with same IP as some player and kick them

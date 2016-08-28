@@ -90,14 +90,13 @@
     <Compile Include="ResourceInfo.cs" />
     <Compile Include="ISpringieService\AutohostMode.cs" />
     <Compile Include="ISpringieService\BalanceTeamsResult.cs" />
-    <Compile Include="ISpringieService\BattleContext.cs" />
+    <Compile Include="ISpringieService\LobbyHostingContext.cs" />
     <Compile Include="ISpringieService\BattlePlayerResult.cs" />
     <Compile Include="ISpringieService\BotTeam.cs" />
     <Compile Include="ISpringieService\CommandLevel.cs" />
     <Compile Include="ISpringieService\MovePlayerEntry.cs" />
     <Compile Include="ISpringieService\PlayerJoinResult.cs" />
     <Compile Include="ISpringieService\PlayerTeam.cs" />
-    <Compile Include="ISpringieService\SpringBattleContext.cs" />
     <Compile Include="ITransport.cs" />
     <Compile Include="LuaTable.cs" />
     <Compile Include="MetaDataCache.cs" />

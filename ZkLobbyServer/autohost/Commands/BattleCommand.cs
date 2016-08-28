@@ -76,8 +76,8 @@ namespace ZkLobbyServer
             int count = 0;
             if (s.IsRunning)
             {
-                if (s.StartContext.Players.Any(x => x.Name == userName && !x.IsSpectator)) isSpectator = false;
-                count = s.StartContext.Players.Count(x=>!x.IsSpectator);
+                if (s.LobbyStartContext.Players.Any(x => x.Name == userName && !x.IsSpectator)) isSpectator = false;
+                count = s.LobbyStartContext.Players.Count(x=>!x.IsSpectator);
             }
             else
             {

@@ -322,7 +322,7 @@ namespace ZkLobbyServer
             var startSetup = StartSetup.GetSpringBattleSetupDedicatedServer(GetContext());
             
 
-            spring.HostGame(startSetup, ip, port, null, null, EngineVersion);  // TODO HACK GET PORTS
+            spring.HostGame(startSetup, ip, port, true);  // TODO HACK GET PORTS
             RunningSince = DateTime.UtcNow;
             foreach (var us in Users.Values)
             {
@@ -533,7 +533,7 @@ namespace ZkLobbyServer
             if (HostedMod?.Mission != null)
             {
                 var service = GlobalConst.GetContentService();
-                foreach (var u in spring.StartContext.Players.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, HostedMod.Mission.Name);
+                foreach (var u in spring.LobbyStartContext.Players.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, HostedMod.Mission.Name);
             }
         }
 

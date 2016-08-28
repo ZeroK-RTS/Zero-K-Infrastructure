@@ -10,7 +10,7 @@ namespace ZeroKWeb.SpringieInterface
         /// <summary>
         /// Writes join messages and tells <see cref="Springie"/> to force spectate player if needed
         /// </summary>
-        public static PlayerJoinResult AutohostPlayerJoined(BattleContext context, int accountID) {
+        public static PlayerJoinResult AutohostPlayerJoined(LobbyHostingContext context, int accountID) {
             var res = new PlayerJoinResult();
             var db = new ZkDataContext();
             AutohostMode mode = context.Mode;

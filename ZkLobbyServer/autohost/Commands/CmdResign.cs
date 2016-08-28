@@ -27,7 +27,7 @@ namespace ZkLobbyServer
                 return null;
             }
 
-            var voteStarter = battle.spring.StartContext?.Players.FirstOrDefault(x => x.Name == e.User && !x.IsSpectator);
+            var voteStarter = battle.spring.LobbyStartContext?.Players.FirstOrDefault(x => x.Name == e.User && !x.IsSpectator);
             if (voteStarter != null)
             {
                 alliance = voteStarter.AllyID;
@@ -40,7 +40,7 @@ namespace ZkLobbyServer
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
             var s = battle.spring;
-            if (s.IsRunning) foreach (var p in s.StartContext.Players.Where(x => x.AllyID == alliance && !x.IsSpectator)) s.ResignPlayer(p.Name);
+            if (s.IsRunning) foreach (var p in s.LobbyStartContext.Players.Where(x => x.AllyID == alliance && !x.IsSpectator)) s.ResignPlayer(p.Name);
             await battle.SayBattle($"Team {alliance + 1} resigned");
         }
 
@@ -53,7 +53,7 @@ namespace ZkLobbyServer
             {
                 if (battle.spring.IsRunning)
                 {
-                    var entry = battle.spring.StartContext.Players.FirstOrDefault(x => x.Name == userName);
+                    var entry = battle.spring.LobbyStartContext.Players.FirstOrDefault(x => x.Name == userName);
                     if (entry != null && !entry.IsSpectator && entry.AllyID == alliance) return ret;
                 }
             }

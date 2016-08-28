@@ -3,7 +3,7 @@ using ZkData;
 
 namespace PlasmaShared
 {
-    public class BattleContext
+    public class LobbyHostingContext
     {
         public string FounderName;
         public string Map;
@@ -14,6 +14,7 @@ namespace PlasmaShared
         public bool IsMission;
         public string EngineVersion;
         public AutohostMode Mode = AutohostMode.None;
-        public IDictionary<string, string> ModOptions { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> ModOptions = new Dictionary<string, string>();
+        public Dictionary<string,Dictionary<string,string>> UserParameters = new Dictionary<string, Dictionary<string, string>>();
     }
 }

@@ -14,16 +14,16 @@ namespace ZeroKWeb.SpringieInterface
     /// </summary>
     public class BattleResultHandler
     {
-        public static string SubmitSpringBattleResult(BattleContext context,
-                                                      SpringBattleContext result,
+        public static string SubmitSpringBattleResult(Spring.SpringBattleContext result,
                                                       List<BattlePlayerResult> players,
                                                       List<string> extraData, ZkLobbyServer.ZkLobbyServer server)
         {
             try
             {
                 var db = new ZkDataContext();
-                Account acc = Account.AccountByName(db, context.FounderName);
-                AutohostMode mode = context.Mode;
+                Account acc = Account.AccountByName(db, result.LobbyStartContext.FounderName);
+                var context = result.LobbyStartContext;
+                AutohostMode mode = result.LobbyStartContext.Mode;
 
                 if (extraData == null) extraData = new List<string>();
 

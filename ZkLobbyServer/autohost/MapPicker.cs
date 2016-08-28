@@ -27,7 +27,7 @@ namespace ZeroKWeb.SpringieInterface
         ///         a multiple of player count
         ///     </para>
         /// </remarks>
-        public static Resource GetRecommendedMap(BattleContext context)
+        public static Resource GetRecommendedMap(LobbyHostingContext context)
         {
             var mode = context.Mode;
             using (var db = new ZkDataContext())
