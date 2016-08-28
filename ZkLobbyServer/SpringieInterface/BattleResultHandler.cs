@@ -15,7 +15,7 @@ namespace ZeroKWeb.SpringieInterface
     public class BattleResultHandler
     {
         public static string SubmitSpringBattleResult(BattleContext context,
-                                                      BattleResult result,
+                                                      SpringBattleContext result,
                                                       List<BattlePlayerResult> players,
                                                       List<string> extraData, ZkLobbyServer.ZkLobbyServer server)
         {

@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using PlasmaShared;
-using PlasmaShared.ModStats;
 using ZkData;
 using Timer = System.Timers.Timer;
 
@@ -49,10 +48,8 @@ namespace LobbyClient
         public readonly Dictionary<string, bool> connectedPlayers = new Dictionary<string, bool>();
 
         private readonly SpringPaths paths;
-        private readonly List<string> statsData = new List<string>();
         private readonly Timer timer = new Timer(20000);
 
-        private BattleResult battleResult = new BattleResult();
         private bool gameEndedOk = false;
         private Dictionary<string, int> gamePrivateMessages = new Dictionary<string, int>();
         private bool isHosting;
@@ -71,9 +68,7 @@ namespace LobbyClient
 
         public DateTime GameExited { get; private set; }
 
-        public DateTime GameStarted => battleResult.StartTime.ToLocalTime();
-
-        public DateTime? IngameStartTime => battleResult?.IngameStartTime;
+        public DateTime? IngameStartTime => Context?.IngameStartTime;
 
         public bool IsBattleOver { get; private set; }
 
@@ -101,7 +96,7 @@ namespace LobbyClient
                 if (IsRunning) process.PriorityClass = value;
             }
         }
-        public BattleContext StartContext => StartSetup.StartContext;
+        public BattleContext StartContext => Context.StartContext;
 
         public Spring(SpringPaths springPaths)
         {
@@ -122,7 +117,6 @@ namespace LobbyClient
 
         public string ConnectGame(string ip, int port, string myName, string myPassword, string engine)
         {
-            battleResult = new BattleResult();
             lobbyUserName = myName;
             lobbyPassword = myPassword;
             isHosting = false;
@@ -165,7 +159,7 @@ namespace LobbyClient
         public event EventHandler<SpringLogEventArgs> GameOver; // game has ended
 
 
-        public string HostGame(SpringBattleStartSetup startSetup,
+        public string HostGame(SpringBattleContext context,
             string host,
             int port,
             string myName,
@@ -177,16 +171,13 @@ namespace LobbyClient
                     $"Spring or dedicated server executable not found: {paths.GetSpringExecutablePath(engine)}, {paths.GetDedicatedServerPath(engine)}");
 
             wasKilled = false;
-            StartSetup = startSetup;
+            Context = context;
             string script = null;
 
             if (!IsRunning)
             {
                 gameEndedOk = false;
                 IsBattleOver = false;
-                //lobbyUserName = client.UserName;
-                //lobbyPassword = client.UserPassword;
-                battleResult = new BattleResult();
 
                 talker = new Talker();
                 talker.SpringEvent += talker_SpringEvent;
@@ -196,7 +187,6 @@ namespace LobbyClient
                 else scriptPath = Utils.MakePath(paths.WritableDirectory, "script.txt").Replace('\\', '/');
 
                 statsPlayers.Clear();
-                statsData.Clear();
 
                 if (isHosting && GlobalConst.IsZkMod(StartContext.Mod))
                 {
@@ -213,7 +203,7 @@ namespace LobbyClient
                         Trace.TraceError("Error getting start setup: {0}", ex);
                     }
 
-                    script = ScriptGenerator.GenerateHostScript(StartContext, startSetup, talker.LoopbackPort, host, port, myName, myPassword);
+                    script = ScriptGenerator.GenerateHostScript(StartContext, context, talker.LoopbackPort, host, port, myName, myPassword);
 
                     statsPlayers = StartContext.Players.ToDictionary(x => x.Name,
                         x => new BattlePlayerResult
@@ -233,7 +223,7 @@ namespace LobbyClient
             return null;
         }
 
-        public SpringBattleStartSetup StartSetup { get; private set; }
+        public SpringBattleContext Context { get; private set; } = new SpringBattleContext(null);
 
 
         public bool IsPlayerReady(string name)
@@ -343,7 +333,7 @@ namespace LobbyClient
             process.EnableRaisingEvents = true;
 
             gamePrivateMessages = new Dictionary<string, int>();
-            battleResult.StartTime = DateTime.UtcNow;
+            Context.StartTime = DateTime.UtcNow;
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
@@ -384,7 +374,8 @@ namespace LobbyClient
                         break;
                 }
                 s = s + e.Text;
-                statsData.Add(s);
+                Context.
+                OutputExtras.Add(s);
             }
             catch (Exception ex)
             {
@@ -414,7 +405,7 @@ namespace LobbyClient
                 }
                 if (text == "FORCE") ForceStart();
 
-                statsData.Add(text);
+                Context.OutputExtras.Add(text);
             }
             catch (Exception ex)
             {
@@ -476,7 +467,7 @@ namespace LobbyClient
 
                     if (line.StartsWith("GameID: ", true, null) && gameId == null) gameId = line.Substring(8).Trim();
 
-                    if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
+                    if (line.StartsWith("STATS:")) Context.OutputExtras.Add(line.Substring(6));
 
                     if (line.Contains("SCORE: ") && !isCheating && StartContext.IsMission)
                     {
@@ -552,8 +543,8 @@ namespace LobbyClient
                     {
                         try
                         {
-                            battleResult.EngineBattleID = gameId;
-                            battleResult.ReplayName = demoFileName;
+                            Context.EngineBattleID = gameId;
+                            Context.ReplayName = demoFileName;
 
                             // set victory team for all allied with currently alive
                             foreach (var p in statsPlayers.Values.Where(x => !x.IsSpectator && x.LoseTime == null))
@@ -580,20 +571,6 @@ namespace LobbyClient
                         catch (Exception ex)
                         {
                             Trace.TraceError("Error sending game result: {0}", ex);
-                        }
-                    }
-
-                    if (statsData.Count > 1)
-                    {
-                        // must be more than 1 line - 1 is player list
-                        var statsService = new StatsCollector { Proxy = null };
-                        try
-                        {
-                            statsService.SubmitGameEx(gameId, StartContext.Mod, StartContext.Map, statsData.ToArray());
-                        }
-                        catch (Exception ex)
-                        {
-                            Trace.TraceError("Error sending game stats: {0}", ex);
                         }
                     }
                 }
@@ -635,7 +612,7 @@ namespace LobbyClient
 
             try
             {
-                File.WriteAllText(Path.Combine(paths.WritableDirectory, string.Format("infolog_{0}.txt", battleResult.EngineBattleID)), logText);
+                File.WriteAllText(Path.Combine(paths.WritableDirectory, string.Format("infolog_{0}.txt", Context.EngineBattleID)), logText);
             }
             catch (Exception ex)
             {
@@ -654,7 +631,7 @@ namespace LobbyClient
         private void StatsMarkDead(string name, bool isDead)
         {
             BattlePlayerResult sp;
-            if (statsPlayers.TryGetValue(name, out sp)) sp.LoseTime = isDead ? (int)DateTime.UtcNow.Subtract(battleResult.IngameStartTime ?? battleResult.StartTime).TotalSeconds : (int?)null;
+            if (statsPlayers.TryGetValue(name, out sp)) sp.LoseTime = isDead ? (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds : (int?)null;
         }
 
 
@@ -713,10 +690,10 @@ namespace LobbyClient
                         if (StartContext != null) foreach (var p in StartContext.Players) p.IsIngame = false;
                         IsBattleOver = true;
 
-                        if (battleResult.IngameStartTime != null)
+                        if (Context.IngameStartTime != null)
                         {
                             gameEndedOk = true;
-                            battleResult.Duration = (int)DateTime.UtcNow.Subtract(battleResult.IngameStartTime ?? battleResult.StartTime).TotalSeconds;
+                            Context.Duration = (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds;
                             if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
                         }
                         else
@@ -732,7 +709,7 @@ namespace LobbyClient
                         break;
 
                     case Talker.SpringEventType.SERVER_STARTPLAYING:
-                        battleResult.IngameStartTime = DateTime.UtcNow;
+                        Context.IngameStartTime = DateTime.UtcNow;
                         foreach (var p in statsPlayers)
                         {
                             p.Value.IsIngameReady = true;
@@ -764,11 +741,11 @@ namespace LobbyClient
         {
             try
             {
-                var timeSinceStart = DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds;
+                var timeSinceStart = DateTime.UtcNow.Subtract(Context.StartTime).TotalSeconds;
                 const int timeToWait = 180; // force start after 180s
                 const int timeToWarn = 120; // warn people after 120s 
 
-                if (isHosting && IsRunning && battleResult.IngameStartTime == null)
+                if (isHosting && IsRunning && Context.IngameStartTime == null)
                 {
                     if (timeSinceStart > timeToWait)
                     {

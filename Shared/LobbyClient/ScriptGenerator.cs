@@ -39,7 +39,7 @@ namespace LobbyClient
         /// <summary>
         /// Generates script for hosting a game
         /// </summary>
-        public static string GenerateHostScript(BattleContext startContext, SpringBattleStartSetup startSetup, int loopbackListenPort, string host, int port, string myname = null, string mypassword = null)
+        public static string GenerateHostScript(BattleContext startContext, SpringBattleContext context, int loopbackListenPort, string host, int port, string myname = null, string mypassword = null)
         {
             var previousCulture = Thread.CurrentThread.CurrentCulture;
             try {
@@ -70,7 +70,7 @@ namespace LobbyClient
                 if (!string.IsNullOrEmpty(myname)) script.AppendFormat("  MyPlayerName={0};\n", myname);
                 if (!string.IsNullOrEmpty(mypassword) || !string.IsNullOrEmpty(myname)) script.AppendFormat("  MyPasswd={0};\n", mypassword??myname);
 
-                GeneratePlayerSection(script, startContext, startSetup);
+                GeneratePlayerSection(script, startContext, context);
 
                 return script.ToString();
             } finally {
@@ -78,7 +78,7 @@ namespace LobbyClient
             }
         }
 
-        static void GeneratePlayerSection(StringBuilder script, BattleContext startContext, SpringBattleStartSetup setup)
+        static void GeneratePlayerSection(StringBuilder script, BattleContext startContext, SpringBattleContext setup)
         {
             // ordinary battle stuff
 

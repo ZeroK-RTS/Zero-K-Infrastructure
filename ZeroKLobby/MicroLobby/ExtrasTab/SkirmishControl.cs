@@ -1154,7 +1154,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 if (spring.IsRunning) spring.ExitGame();
                 spring.SpringExited += Event_SpringExited;
                 infoLabel.Text = "Spring starting ...";
-                spring.HostGame(new SpringBattleStartSetup(Get_StartContext()), "127.0.0.1", 7452, myItem.UserName, null, engine_comboBox.SelectedItem.ToString());
+                spring.HostGame(new SpringBattleContext(Get_StartContext()), "127.0.0.1", 7452, myItem.UserName, null, engine_comboBox.SelectedItem.ToString());
             }
         }
 
