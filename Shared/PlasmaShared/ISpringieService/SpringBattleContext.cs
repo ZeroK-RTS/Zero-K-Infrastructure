@@ -10,6 +10,8 @@ namespace PlasmaShared
 
         public int Duration;
         public string EngineBattleID;
+
+        public bool GameEndedOk;
         public DateTime? IngameStartTime;
         public Dictionary<string, string> ModOptions = new Dictionary<string, string>();
 
@@ -35,6 +37,11 @@ namespace PlasmaShared
                             IsIngame = false,
                         }).ToList();
         }
+
+        public bool IsCheating { get; set; }
+        public int? MissionScore { get; set; }
+        public int MissionFrame { get; set; }
+        public string MissionVars { get; set; }
 
         public BattlePlayerResult GetOrAddPlayer(string name)
         {

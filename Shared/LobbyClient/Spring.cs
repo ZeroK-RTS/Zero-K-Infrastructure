@@ -45,12 +45,10 @@ namespace LobbyClient
 
         public static EventHandler AnySpringStarted;
         public static EventHandler<EventArgs<bool>> AnySpringExited;
-        public readonly Dictionary<string, bool> connectedPlayers = new Dictionary<string, bool>();
 
         private readonly SpringPaths paths;
         private readonly Timer timer = new Timer(20000);
 
-        private bool gameEndedOk = false;
         private Dictionary<string, int> gamePrivateMessages = new Dictionary<string, int>();
         private bool isHosting;
         public string lobbyPassword;
@@ -65,11 +63,12 @@ namespace LobbyClient
         public bool UseDedicatedServer;
         private bool wasKilled = false;
 
+        public SpringBattleContext Context { get; private set; } = new SpringBattleContext(null);
+
         public DateTime GameExited { get; private set; }
 
         public DateTime? IngameStartTime => Context?.IngameStartTime;
 
-        public bool IsBattleOver { get; private set; }
 
         public bool IsRunning
         {
@@ -87,14 +86,6 @@ namespace LobbyClient
             }
         }
 
-
-        public ProcessPriorityClass ProcessPriority
-        {
-            set
-            {
-                if (IsRunning) process.PriorityClass = value;
-            }
-        }
         public BattleContext StartContext => Context.StartContext;
 
         public Spring(SpringPaths springPaths)
@@ -158,12 +149,7 @@ namespace LobbyClient
         public event EventHandler<SpringLogEventArgs> GameOver; // game has ended
 
 
-        public string HostGame(SpringBattleContext context,
-            string host,
-            int port,
-            string myName,
-            string myPassword,
-            string engine)
+        public string HostGame(SpringBattleContext context, string host, int port, string myName, string myPassword, string engine)
         {
             if (!File.Exists(paths.GetSpringExecutablePath(engine)) && !File.Exists(paths.GetDedicatedServerPath(engine)))
                 throw new ApplicationException(
@@ -175,16 +161,12 @@ namespace LobbyClient
 
             if (!IsRunning)
             {
-                gameEndedOk = false;
-                IsBattleOver = false;
-
                 talker = new Talker();
                 talker.SpringEvent += talker_SpringEvent;
                 isHosting = true;
 
                 if (isHosting) scriptPath = Utils.MakePath(paths.WritableDirectory, "script_" + myName + ".txt").Replace('\\', '/');
                 else scriptPath = Utils.MakePath(paths.WritableDirectory, "script.txt").Replace('\\', '/');
-                
 
                 script = ScriptGenerator.GenerateHostScript(StartContext, context, talker.LoopbackPort, host, port, myName, myPassword);
                 if (isHosting) timer.Start();
@@ -196,12 +178,10 @@ namespace LobbyClient
             return null;
         }
 
-        public SpringBattleContext Context { get; private set; } = new SpringBattleContext(null);
-
 
         public bool? IsPlayerReady(string name)
         {
-            return Context.ActualPlayers.Where(x=>x.Name == name).Select(x=>(bool?)x.IsIngameReady).FirstOrDefault();
+            return Context.ActualPlayers.Where(x => x.Name == name).Select(x => (bool?)x.IsIngameReady).FirstOrDefault();
         }
 
         public void Kick(string name)
@@ -218,7 +198,7 @@ namespace LobbyClient
 
         public void ResignPlayer(string name)
         {
-            if (IsRunning) talker.SendText(string.Format("/luarules resignteam {0}", name));
+            if (IsRunning) talker.SendText($"/luarules resignteam {name}");
         }
 
         public void RunLocalScriptGame(string script, string engine)
@@ -255,8 +235,7 @@ namespace LobbyClient
 
             var optirun = Environment.GetEnvironmentVariable("OPTIRUN");
 
-            process = new Process();
-            process.StartInfo.CreateNoWindow = true;
+            process = new Process { StartInfo = { CreateNoWindow = true } };
 
             Environment.SetEnvironmentVariable("SPRING_DATADIR", paths.GetJoinedDataDirectoriesWithEngine(engine), EnvironmentVariableTarget.Process);
             Environment.SetEnvironmentVariable("SPRING_WRITEDIR", paths.WritableDirectory, EnvironmentVariableTarget.Process);
@@ -287,12 +266,12 @@ namespace LobbyClient
             {
                 Trace.TraceInformation("Using optirun {0} to start the game (OPTIRUN env var defined)", optirun);
                 process.StartInfo.FileName = optirun;
-                arg.Add(string.Format("\"{0}\"", paths.GetSpringExecutablePath(engine)));
+                arg.Add($"\"{paths.GetSpringExecutablePath(engine)}\"");
             }
 
-            arg.Add(string.Format("--config \"{0}\"", paths.GetSpringConfigPath()));
+            arg.Add($"--config \"{paths.GetSpringConfigPath()}\"");
             if (paths.UseSafeMode) arg.Add("--safemode");
-            arg.Add(string.Format("\"{0}\"", scriptPath));
+            arg.Add($"\"{scriptPath}\"");
             //Trace.TraceInformation("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
 
             process.StartInfo.Arguments = string.Join(" ", arg);
@@ -347,8 +326,7 @@ namespace LobbyClient
                         break;
                 }
                 s = s + e.Text;
-                Context.
-                OutputExtras.Add(s);
+                Context.OutputExtras.Add(s);
             }
             catch (Exception ex)
             {
@@ -386,7 +364,13 @@ namespace LobbyClient
             }
         }
 
-        private void ParseInfolog(string text, bool isCrash)
+        private void MarkPlayerDead(string name, bool isDead)
+        {
+            var sp = Context.ActualPlayers.FirstOrDefault(x => x.Name == name);
+            if (sp != null) sp.LoseTime = isDead ? (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds : (int?)null;
+        }
+
+        private void ParseInfolog(string text)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -395,12 +379,6 @@ namespace LobbyClient
             }
             try
             {
-                var hasError = false;
-                var isCheating = false;
-                int? score = null;
-                var scoreFrame = 0;
-                string gameId = null;
-                string demoFileName = null;
                 var missionVars = "";
 
                 foreach (var cycleline in text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries))
@@ -428,21 +406,20 @@ namespace LobbyClient
                     {
                         var archiveNameIndex = line.IndexOf("(archive", 11);
                         StartContext.Mod = line.Substring(11, archiveNameIndex - 11).Trim();
-
                         Trace.TraceInformation("Mod name: " + StartContext.Mod);
                     }
 
                     // obsolete? see above where [DedicatedServer] is pruned
-                    if (line.StartsWith("recording demo")) demoFileName = Path.GetFileName(line.Substring(15).Trim()); // 91.0
+                    if (line.StartsWith("recording demo")) Context.ReplayName = Path.GetFileName(line.Substring(15).Trim()); // 91.0
                     //else if (line.StartsWith("[DedicatedServer] recording demo")) demoFileName = Path.GetFileName(line.Substring(33).Trim());    // 95.0 and later
 
                     if (line.StartsWith("Using demofile", true, null)) return; // do nothing if its demo
 
-                    if (line.StartsWith("GameID: ", true, null) && gameId == null) gameId = line.Substring(8).Trim();
+                    if (line.StartsWith("GameID: ", true, null) && Context.EngineBattleID == null) Context.EngineBattleID = line.Substring(8).Trim();
 
                     if (line.StartsWith("STATS:")) Context.OutputExtras.Add(line.Substring(6));
 
-                    if (line.Contains("SCORE: ") && !isCheating && StartContext.IsMission)
+                    if (line.Contains("SCORE: ") && StartContext.IsMission)
                     {
                         var match = Regex.Match(line, "SCORE: ([^ ]+)");
                         if (match.Success)
@@ -453,31 +430,25 @@ namespace LobbyClient
                             data = Encoding.ASCII.GetString(Convert.FromBase64String(match.Groups[1].Value));
                             //Trace.TraceInformation("Score data (decoded) : " + data);
                             var parts = data.Split('/');
-                            score = 0;
+                            var score = 0;
                             if (parts.Length > 1)
                             {
                                 score = Convert.ToInt32(parts[1]);
                                 gameframe = Convert.ToInt32(parts[0]);
                             }
                             else score = Convert.ToInt32(data);
-
-                            scoreFrame = gameframe;
+                            Context.MissionScore = score;
+                            Context.MissionFrame = gameframe;
                         }
                     }
                     if (line.Contains("MISSIONVARS:") && StartContext.IsMission)
                     {
                         var match = Regex.Match(line, "MISSIONVARS: ([^ ]+)");
-                        missionVars = match.Groups[1].Value.Trim();
-                        Trace.TraceInformation(string.Format("Mission variables: {0} (original line: {1})", missionVars, line));
-                    }
-
-                    // obsolete, hanlded by pm messages 
-                    //if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
-
-                    if (line.StartsWith("Cheating!", true, null) || line.StartsWith("Cheating is enabled!", true, null)) isCheating = true;
-
-                    if (line.StartsWith("Error") || line.StartsWith("LuaRules") || line.StartsWith("Internal error") || line.StartsWith("LuaCOB") ||
-                        (line.StartsWith("Failed to load") && !line.Contains("duplicate name"))) hasError = true;
+                        Context.MissionVars = match.Groups[1].Value.Trim();
+                        Trace.TraceInformation($"Mission variables: {missionVars} (original line: {line})");
+                     }
+                    
+                    if (line.StartsWith("Cheating!", true, null) || line.StartsWith("Cheating is enabled!", true, null)) Context.IsCheating = true;
                 }
                 if (score != null || !string.IsNullOrEmpty(missionVars))
                 {
@@ -508,45 +479,6 @@ namespace LobbyClient
                     }
                 }
 
-
-                // submit main stats
-                if (!isCheating && !isCrash && gameEndedOk)
-                {
-                    if (isHosting)
-                    {
-                        try
-                        {
-                            Context.EngineBattleID = gameId;
-                            Context.ReplayName = demoFileName;
-
-                            // set victory team for all allied with currently alive
-                            foreach (var p in Context.ActualPlayers.Where(x => !x.IsSpectator && x.LoseTime == null))
-                            {
-                                foreach (var q in Context.ActualPlayers.Where(x => !x.IsSpectator && x.AllyNumber == p.AllyNumber))
-                                {
-                                    q.IsVictoryTeam = true;
-                                }
-                            }
-
-                            if (StartContext != null)
-                            {
-                                /* TODO HACK complete this
-                                var result = GlobalConst.GetContentService().SubmitSpringBattleResult(StartContext, lobbyPassword, battleResult, statsPlayers.Values.ToList(), statsData);
-                                if (result != null)
-                                {
-                                    foreach (var line in result.Split('\n'))
-                                    {
-                                        client.Say(SayPlace.Battle, "", line, true);
-                                    }
-                                }*/
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Trace.TraceError("Error sending game result: {0}", ex);
-                        }
-                    }
-                }
             }
             catch (Exception ex)
             {
@@ -585,7 +517,7 @@ namespace LobbyClient
 
             try
             {
-                File.WriteAllText(Path.Combine(paths.WritableDirectory, string.Format("infolog_{0}.txt", Context.EngineBattleID)), logText);
+                File.WriteAllText(Path.Combine(paths.WritableDirectory, $"infolog_{Context.EngineBattleID}.txt"), logText);
             }
             catch (Exception ex)
             {
@@ -595,16 +527,9 @@ namespace LobbyClient
             GameExited = DateTime.Now;
 
             if (StartContext != null) foreach (var p in Context.ActualPlayers) p.IsIngame = false;
-            IsBattleOver = true;
 
             SpringExited?.Invoke(this, new EventArgs<bool>(isCrash));
             AnySpringExited?.Invoke(this, new EventArgs<bool>(isCrash));
-        }
-
-        private void MarkPlayerDead(string name, bool isDead)
-        {
-            var sp = Context.ActualPlayers.FirstOrDefault(x => x.Name == name);
-            if (sp != null) sp.LoseTime = isDead ? (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds : (int?)null;
         }
 
 
@@ -648,12 +573,21 @@ namespace LobbyClient
 
                     case Talker.SpringEventType.SERVER_GAMEOVER:
                         foreach (var p in Context.ActualPlayers) p.IsIngame = false;
-                        IsBattleOver = true;
+
+                        // set victory team for all allied with currently alive
+                        foreach (var p in Context.ActualPlayers.Where(x => !x.IsSpectator && x.LoseTime == null))
+                        {
+                            foreach (var q in Context.ActualPlayers.Where(x => !x.IsSpectator && x.AllyNumber == p.AllyNumber))
+                            {
+                                q.IsVictoryTeam = true;
+                            }
+                        }
 
                         if (Context.IngameStartTime != null)
                         {
-                            gameEndedOk = true;
+                            Context.GameEndedOk = true;
                             Context.Duration = (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds;
+
                             GameOver?.Invoke(this, new SpringLogEventArgs(e.PlayerName));
                         }
                         else Trace.TraceWarning("recieved GAMEOVER before STARTPLAYING!");
@@ -669,14 +603,13 @@ namespace LobbyClient
 
                     case Talker.SpringEventType.SERVER_STARTPLAYING:
                         Context.IngameStartTime = DateTime.UtcNow;
-                        foreach (var p in Context.ActualPlayers.Where(x=>!x.IsSpectator)) p.IsIngameReady = true;
+                        foreach (var p in Context.ActualPlayers.Where(x => !x.IsSpectator)) p.IsIngameReady = true;
 
                         BattleStarted(this, EventArgs.Empty);
                         break;
 
                     case Talker.SpringEventType.SERVER_QUIT:
                         if (StartContext != null) foreach (var p in Context.ActualPlayers) p.IsIngame = false;
-                        IsBattleOver = true;
                         //if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
                         break;
                 }

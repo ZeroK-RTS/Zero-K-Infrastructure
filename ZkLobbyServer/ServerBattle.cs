@@ -178,8 +178,7 @@ namespace ZkLobbyServer
         public List<string> GetAllUserNames()
         {
             var ret = Users.Select(x => x.Key).ToList();
-            if (spring.IsRunning) ret.AddRange(spring.StartContext.Players.Select(x => x.Name));
-            ret.AddRange(spring.connectedPlayers.Keys);
+            if (spring.IsRunning) ret.AddRange(spring.Context.ActualPlayers.Select(x => x.Name));
             return ret.Distinct().ToList();
         }
 

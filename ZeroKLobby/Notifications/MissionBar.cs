@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using LobbyClient;
@@ -105,6 +107,38 @@ namespace ZeroKLobby.Notifications
 
                         var cs = GlobalConst.GetContentService();
                         cs.NotifyMissionRun(Program.Conf.LobbyPlayerName, missionName);
+
+                        spring.SpringExited += (o, args) =>
+                        {
+                            if (spring.Context.GameEndedOk && !spring.Context.IsCheating)
+                            {
+                                Trace.TraceInformation("Submitting score for mission " + modInfo.Name);
+                                try
+                                {
+                                    var service = GlobalConst.GetContentService();
+                                    Task.Factory.StartNew(() =>
+                                    {
+                                        try
+                                        {
+                                            service.SubmitMissionScore(Program.Conf.LobbyPlayerName, ZkData.Utils.HashLobbyPassword(Program.Conf.LobbyPlayerPassword), modInfo.Name,
+                                                spring.Context.MissionScore ?? 0,
+                                                spring.Context.MissionFrame / 30,
+                                                spring.Context.MissionVars);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Trace.TraceError("Error sending score: {0}", ex);
+                                        }
+                                    });
+                                }
+                                catch (Exception ex)
+                                {
+                                    Trace.TraceError($"Error sending mission score: {ex}");
+                                }
+                            }
+
+                        };
+
                     }
                     Program.MainWindow.InvokeFunc(() => Program.NotifySection.RemoveBar(this));
                 }
