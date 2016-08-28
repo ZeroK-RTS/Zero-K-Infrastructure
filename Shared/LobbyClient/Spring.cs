@@ -17,26 +17,10 @@ using Timer = System.Timers.Timer;
 
 namespace LobbyClient
 {
-    public class SpringLogEventArgs: EventArgs
-    {
-        public string Line { get; }
-
-        public string Username { get; }
-
-        public SpringLogEventArgs(string username): this(username, "") {}
-
-        public SpringLogEventArgs(string username, string line)
-        {
-            Line = line;
-            Username = username;
-        }
-    };
-
-
     /// <summary>
     ///     represents one install location of spring game
     /// </summary>
-    public class Spring:IDisposable
+    public class Spring: IDisposable
     {
         public delegate void LogLine(string text, bool isError);
 
@@ -47,14 +31,12 @@ namespace LobbyClient
         private readonly Timer timer = new Timer(20000);
 
         private Dictionary<string, int> gamePrivateMessages = new Dictionary<string, int>();
-        private StringBuilder logLines = new StringBuilder();
-
 
         private Process process;
         private string scriptPath;
         private Talker talker;
 
-        public Spring.SpringBattleContext Context { get; private set; }
+        public SpringBattleContext Context { get; private set; }
 
         public DateTime GameExited { get; private set; }
 
@@ -83,6 +65,19 @@ namespace LobbyClient
         {
             paths = springPaths;
             timer.Elapsed += timer_Elapsed;
+        }
+
+        public void Dispose()
+        {
+            talker?.UnsubscribeEvents(this);
+            talker?.Dispose();
+            timer?.Dispose();
+            process?.UnsubscribeEvents(this);
+            Context = null;
+            scriptPath = null;
+            gamePrivateMessages = null;
+            process = null;
+            talker = null;
         }
 
         /// <summary>
@@ -139,9 +134,15 @@ namespace LobbyClient
         public event EventHandler<SpringLogEventArgs> GameOver; // game has ended
 
 
-        public string HostGame(LobbyHostingContext startContext, string host, int port, bool useDedicated, string myName = null, string myPassword = null)
+        public string HostGame(LobbyHostingContext startContext,
+            string host,
+            int port,
+            bool useDedicated,
+            string myName = null,
+            string myPassword = null)
         {
-            if (!File.Exists(paths.GetSpringExecutablePath(startContext.EngineVersion)) && !File.Exists(paths.GetDedicatedServerPath(startContext.EngineVersion)))
+            if (!File.Exists(paths.GetSpringExecutablePath(startContext.EngineVersion)) &&
+                !File.Exists(paths.GetDedicatedServerPath(startContext.EngineVersion)))
                 throw new ApplicationException(
                     $"Spring or dedicated server executable not found: {paths.GetSpringExecutablePath(startContext.EngineVersion)}, {paths.GetDedicatedServerPath(startContext.EngineVersion)}");
 
@@ -210,78 +211,6 @@ namespace LobbyClient
         /// </summary>
         public event EventHandler<EventArgs<bool>> SpringExited;
         public event EventHandler SpringStarted;
-
-        private void StartSpring(string script)
-        {
-            scriptPath = Path.GetTempFileName();
-            File.WriteAllText(scriptPath, script);
-
-            logLines = new StringBuilder();
-
-            var optirun = Environment.GetEnvironmentVariable("OPTIRUN");
-
-            process = new Process { StartInfo = { CreateNoWindow = true } };
-
-            Environment.SetEnvironmentVariable("SPRING_DATADIR", paths.GetJoinedDataDirectoriesWithEngine(Context.EngineVersion), EnvironmentVariableTarget.Process);
-            Environment.SetEnvironmentVariable("SPRING_WRITEDIR", paths.WritableDirectory, EnvironmentVariableTarget.Process);
-            Environment.SetEnvironmentVariable("SPRING_ISOLATED", paths.WritableDirectory, EnvironmentVariableTarget.Process);
-            Environment.SetEnvironmentVariable("SPRING_NOCOLOR", "1", EnvironmentVariableTarget.Process);
-
-            process.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = paths.GetJoinedDataDirectoriesWithEngine(Context.EngineVersion);
-            process.StartInfo.EnvironmentVariables["SPRING_WRITEDIR"] = paths.WritableDirectory;
-            process.StartInfo.EnvironmentVariables["SPRING_ISOLATED"] = paths.WritableDirectory;
-            process.StartInfo.EnvironmentVariables["SPRING_NOCOLOR"] = "1";
-
-            var arg = new List<string>();
-
-            if (string.IsNullOrEmpty(optirun))
-            {
-                if (Context.UseDedicatedServer)
-                {
-                    process.StartInfo.FileName = paths.GetDedicatedServerPath(Context.EngineVersion);
-                    process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetDedicatedServerPath(Context.EngineVersion));
-                }
-                else
-                {
-                    process.StartInfo.FileName = paths.GetSpringExecutablePath(Context.EngineVersion);
-                    process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetSpringExecutablePath(Context.EngineVersion));
-                }
-            }
-            else
-            {
-                Trace.TraceInformation("Using optirun {0} to start the game (OPTIRUN env var defined)", optirun);
-                process.StartInfo.FileName = optirun;
-                arg.Add($"\"{paths.GetSpringExecutablePath(Context.EngineVersion)}\"");
-            }
-
-            arg.Add($"--config \"{paths.GetSpringConfigPath()}\"");
-            if (paths.UseSafeMode) arg.Add("--safemode");
-            arg.Add($"\"{scriptPath}\"");
-            //Trace.TraceInformation("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
-
-            process.StartInfo.Arguments = string.Join(" ", arg);
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            //process.StartInfo.RedirectStandardInput = true;
-            process.Exited += springProcess_Exited;
-            process.ErrorDataReceived += process_ErrorDataReceived;
-            process.OutputDataReceived += process_OutputDataReceived;
-            process.EnableRaisingEvents = true;
-
-            gamePrivateMessages = new Dictionary<string, int>();
-            Context.StartTime = DateTime.UtcNow;
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-
-            //process.StandardInput.Write(script);
-            if (IsRunning)
-            {
-                SpringStarted?.Invoke(this, EventArgs.Empty);
-                AnySpringStarted?.Invoke(this, EventArgs.Empty);
-            }
-        }
 
         public void WaitForExit()
         {
@@ -449,7 +378,7 @@ namespace LobbyClient
 
         private void process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            logLines.AppendLine(e.Data);
+            Context.LogLines.AppendLine(e.Data);
             LogLineAdded(e.Data, false);
         }
 
@@ -468,7 +397,7 @@ namespace LobbyClient
             talker?.Close();
             talker = null;
             Thread.Sleep(1000);
-            var logText = logLines.ToString();
+            var logText = Context.LogLines.ToString();
             if (Context.IsHosting) ParseInfolog(logText);
 
             try
@@ -486,6 +415,78 @@ namespace LobbyClient
 
             SpringExited?.Invoke(this, new EventArgs<bool>(Context.IsCrash));
             AnySpringExited?.Invoke(this, new EventArgs<bool>(Context.IsCrash));
+        }
+
+        private void StartSpring(string script)
+        {
+            scriptPath = Path.GetTempFileName();
+            File.WriteAllText(scriptPath, script);
+
+            var optirun = Environment.GetEnvironmentVariable("OPTIRUN");
+
+            process = new Process { StartInfo = { CreateNoWindow = true } };
+
+            Environment.SetEnvironmentVariable("SPRING_DATADIR",
+                paths.GetJoinedDataDirectoriesWithEngine(Context.EngineVersion),
+                EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("SPRING_WRITEDIR", paths.WritableDirectory, EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("SPRING_ISOLATED", paths.WritableDirectory, EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("SPRING_NOCOLOR", "1", EnvironmentVariableTarget.Process);
+
+            process.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = paths.GetJoinedDataDirectoriesWithEngine(Context.EngineVersion);
+            process.StartInfo.EnvironmentVariables["SPRING_WRITEDIR"] = paths.WritableDirectory;
+            process.StartInfo.EnvironmentVariables["SPRING_ISOLATED"] = paths.WritableDirectory;
+            process.StartInfo.EnvironmentVariables["SPRING_NOCOLOR"] = "1";
+
+            var arg = new List<string>();
+
+            if (string.IsNullOrEmpty(optirun))
+            {
+                if (Context.UseDedicatedServer)
+                {
+                    process.StartInfo.FileName = paths.GetDedicatedServerPath(Context.EngineVersion);
+                    process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetDedicatedServerPath(Context.EngineVersion));
+                }
+                else
+                {
+                    process.StartInfo.FileName = paths.GetSpringExecutablePath(Context.EngineVersion);
+                    process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetSpringExecutablePath(Context.EngineVersion));
+                }
+            }
+            else
+            {
+                Trace.TraceInformation("Using optirun {0} to start the game (OPTIRUN env var defined)", optirun);
+                process.StartInfo.FileName = optirun;
+                arg.Add($"\"{paths.GetSpringExecutablePath(Context.EngineVersion)}\"");
+            }
+
+            arg.Add($"--config \"{paths.GetSpringConfigPath()}\"");
+            if (paths.UseSafeMode) arg.Add("--safemode");
+            arg.Add($"\"{scriptPath}\"");
+            //Trace.TraceInformation("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
+
+            process.StartInfo.Arguments = string.Join(" ", arg);
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            //process.StartInfo.RedirectStandardInput = true;
+            process.Exited += springProcess_Exited;
+            process.ErrorDataReceived += process_ErrorDataReceived;
+            process.OutputDataReceived += process_OutputDataReceived;
+            process.EnableRaisingEvents = true;
+
+            gamePrivateMessages = new Dictionary<string, int>();
+            Context.StartTime = DateTime.UtcNow;
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
+            //process.StandardInput.Write(script);
+            if (IsRunning)
+            {
+                SpringStarted?.Invoke(this, EventArgs.Empty);
+                AnySpringStarted?.Invoke(this, EventArgs.Empty);
+            }
         }
 
 
@@ -602,54 +603,54 @@ namespace LobbyClient
             }
         }
 
-        public void Dispose()
-        {
-            talker?.UnsubscribeEvents(this);
-            talker?.Dispose();
-            timer?.Dispose();
-            process?.UnsubscribeEvents(this);
-            logLines = null;
-            Context = null;
-            scriptPath = null;
-            gamePrivateMessages = null;
-            process = null;
-            talker = null;
-        }
-
         public class SpringBattleContext
         {
-            public LobbyHostingContext LobbyStartContext = new LobbyHostingContext();
             public List<BattlePlayerResult> ActualPlayers = new List<BattlePlayerResult>();
 
             public int Duration;
             public string EngineBattleID;
 
+            public string EngineVersion;
+
             public bool GameEndedOk;
             public DateTime? IngameStartTime;
 
+            public string IpAddress;
+
             public bool IsCheating;
 
+            public bool IsCrash;
+
             public bool IsHosting;
+            public LobbyHostingContext LobbyStartContext = new LobbyHostingContext();
+
+            public StringBuilder LogLines = new StringBuilder();
             public int MissionFrame;
             public int? MissionScore;
             public string MissionVars;
-            public string MyUserName;
             public string MyPassword;
-
-            public string IpAddress;
-            public int Port;
+            public string MyUserName;
 
             public List<string> OutputExtras = new List<string>();
+            public int Port;
             public string ReplayName;
             public DateTime StartTime;
 
-            public bool IsCrash;
+            public bool UseDedicatedServer;
             public bool WasKilled;
 
-            public bool UseDedicatedServer;
 
-            public string EngineVersion;
-           
+            public BattlePlayerResult GetOrAddPlayer(string name)
+            {
+                var ret = ActualPlayers.FirstOrDefault(y => y.Name == name);
+                if (ret == null)
+                {
+                    ret = new BattlePlayerResult(name);
+                    ActualPlayers.Add(ret);
+                }
+                return ret;
+            }
+
 
             public void SetForConnecting(string ip, int port, string myUser, string myPassword, string engineVersion)
             {
@@ -660,16 +661,6 @@ namespace LobbyClient
                 MyUserName = myUser;
                 MyPassword = myPassword;
                 EngineVersion = engineVersion;
-            }
-
-
-            public void SetForSelfHosting(string engineVersion)
-            {
-                UseDedicatedServer = false;
-                IsHosting = true;
-                EngineVersion = engineVersion;
-                IpAddress = "127.0.0.1";
-                Port = 8452;
             }
 
             public void SetForHosting(LobbyHostingContext startContext,
@@ -701,16 +692,13 @@ namespace LobbyClient
             }
 
 
-
-            public BattlePlayerResult GetOrAddPlayer(string name)
+            public void SetForSelfHosting(string engineVersion)
             {
-                var ret = ActualPlayers.FirstOrDefault(y => y.Name == name);
-                if (ret == null)
-                {
-                    ret = new BattlePlayerResult(name);
-                    ActualPlayers.Add(ret);
-                }
-                return ret;
+                UseDedicatedServer = false;
+                IsHosting = true;
+                EngineVersion = engineVersion;
+                IpAddress = "127.0.0.1";
+                Port = 8452;
             }
         }
     }
