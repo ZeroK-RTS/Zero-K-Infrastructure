@@ -6,6 +6,7 @@ namespace PlasmaShared
 {
     public class SpringBattleContext
     {
+        public readonly BattleContext StartContext;
         public List<BattlePlayerResult> ActualPlayers = new List<BattlePlayerResult>();
 
         public int Duration;
@@ -13,14 +14,27 @@ namespace PlasmaShared
 
         public bool GameEndedOk;
         public DateTime? IngameStartTime;
+        public string IpAddress;
+
+        public bool IsCheating;
+
+        public bool IsHosting;
+        public int MissionFrame;
+        public int? MissionScore;
+        public string MissionVars;
         public Dictionary<string, string> ModOptions = new Dictionary<string, string>();
+        public string MyUserName;
 
         public List<string> OutputExtras = new List<string>();
+        public int Port;
         public string ReplayName;
-        public BattleContext StartContext;
         public DateTime StartTime;
-        public Dictionary<string, Dictionary<string, string>> UserParameters = new Dictionary<string, Dictionary<string, string>>();
 
+        public bool IsCrash;
+        public bool WasKilled;
+
+        public bool UseDedicatedServer;
+        public Dictionary<string, Dictionary<string, string>> UserParameters = new Dictionary<string, Dictionary<string, string>>();
 
         public SpringBattleContext(BattleContext startContext)
         {
@@ -37,11 +51,6 @@ namespace PlasmaShared
                             IsIngame = false,
                         }).ToList();
         }
-
-        public bool IsCheating { get; set; }
-        public int? MissionScore { get; set; }
-        public int MissionFrame { get; set; }
-        public string MissionVars { get; set; }
 
         public BattlePlayerResult GetOrAddPlayer(string name)
         {

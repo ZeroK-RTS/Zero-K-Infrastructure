@@ -5,7 +5,7 @@ namespace PlasmaShared
 {
     public class BattleContext
     {
-        public string AutohostName;
+        public string FounderName;
         public string Map;
         public string Mod;
         public List<PlayerTeam> Players = new List<PlayerTeam>();

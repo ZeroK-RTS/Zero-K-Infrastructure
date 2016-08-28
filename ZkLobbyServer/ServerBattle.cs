@@ -319,7 +319,8 @@ namespace ZkLobbyServer
             var ip = "127.0.0.1";
             int port = 8452;
 
-            var startSetup = StartSetup.GetSpringBattleStartSetup(GetContext());
+            var startSetup = StartSetup.GetSpringBattleSetupDedicatedServer(GetContext());
+            
 
             spring.HostGame(startSetup, ip, port, null, null, EngineVersion);  // TODO HACK GET PORTS
             RunningSince = DateTime.UtcNow;
@@ -461,7 +462,7 @@ namespace ZkLobbyServer
         {
             spring?.UnsubscribeEvents(this);
 
-            spring = new Spring(springPaths) { UseDedicatedServer = true };
+            spring = new Spring(springPaths);
 
             spring.SpringExited += spring_SpringExited;
             spring.GameOver += spring_GameOver;

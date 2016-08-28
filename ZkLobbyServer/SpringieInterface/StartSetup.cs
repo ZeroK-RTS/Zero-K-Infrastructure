@@ -13,12 +13,14 @@ namespace ZeroKWeb.SpringieInterface
         ///     Sets up all the things that Springie needs to know for the battle: how to balance, who to get extra commanders,
         ///     what PlanetWars structures to create, etc.
         /// </summary>
-        public static SpringBattleContext GetSpringBattleStartSetup(BattleContext context)
+        public static SpringBattleContext GetSpringBattleSetupDedicatedServer(BattleContext context)
         {
             try
             {
                 var mode = context.Mode;
                 var ret = new SpringBattleContext(context);
+
+                ret.UseDedicatedServer = true;
 
                 if (mode == AutohostMode.Planetwars)
                 {

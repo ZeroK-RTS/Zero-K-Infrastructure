@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using PlasmaShared;
 using ZkData;
@@ -37,11 +36,9 @@ namespace LobbyClient
     /// <summary>
     ///     represents one install location of spring game
     /// </summary>
-    public class Spring
+    public class Spring:IDisposable
     {
         public delegate void LogLine(string text, bool isError);
-
-        public const int MaxAllies = 16;
 
         public static EventHandler AnySpringStarted;
         public static EventHandler<EventArgs<bool>> AnySpringExited;
@@ -50,18 +47,12 @@ namespace LobbyClient
         private readonly Timer timer = new Timer(20000);
 
         private Dictionary<string, int> gamePrivateMessages = new Dictionary<string, int>();
-        private bool isHosting;
-        public string lobbyPassword;
-        public string lobbyUserName;
-
-        public StringBuilder LogLines = new StringBuilder();
+        private StringBuilder logLines = new StringBuilder();
 
 
         private Process process;
         private string scriptPath;
         private Talker talker;
-        public bool UseDedicatedServer;
-        private bool wasKilled = false;
 
         public SpringBattleContext Context { get; private set; } = new SpringBattleContext(null);
 
@@ -107,9 +98,7 @@ namespace LobbyClient
 
         public string ConnectGame(string ip, int port, string myName, string myPassword, string engine)
         {
-            lobbyUserName = myName;
-            lobbyPassword = myPassword;
-            isHosting = false;
+            Context.IsHosting = false;
             var script = ScriptGenerator.GenerateConnectScript(ip, port, myName, myPassword);
             StartSpring(script, engine);
             return script;
@@ -126,7 +115,7 @@ namespace LobbyClient
                     if (!IsRunning) return;
 
                     Console.WriteLine("Terminating Spring process due to /kill timeout");
-                    wasKilled = true;
+                    Context.WasKilled = true;
                     process.Kill();
 
                     process.WaitForExit(1000);
@@ -155,7 +144,6 @@ namespace LobbyClient
                 throw new ApplicationException(
                     $"Spring or dedicated server executable not found: {paths.GetSpringExecutablePath(engine)}, {paths.GetDedicatedServerPath(engine)}");
 
-            wasKilled = false;
             Context = context;
             string script = null;
 
@@ -163,13 +151,12 @@ namespace LobbyClient
             {
                 talker = new Talker();
                 talker.SpringEvent += talker_SpringEvent;
-                isHosting = true;
+                Context.IsHosting = true;
 
-                if (isHosting) scriptPath = Utils.MakePath(paths.WritableDirectory, "script_" + myName + ".txt").Replace('\\', '/');
-                else scriptPath = Utils.MakePath(paths.WritableDirectory, "script.txt").Replace('\\', '/');
+                scriptPath = Utils.MakePath(paths.WritableDirectory, "script_" + myName + ".txt").Replace('\\', '/');
 
                 script = ScriptGenerator.GenerateHostScript(StartContext, context, talker.LoopbackPort, host, port, myName, myPassword);
-                if (isHosting) timer.Start();
+                timer.Start();
 
                 StartSpring(script, StartContext.EngineVersion);
                 return script;
@@ -178,11 +165,6 @@ namespace LobbyClient
             return null;
         }
 
-
-        public bool? IsPlayerReady(string name)
-        {
-            return Context.ActualPlayers.Where(x => x.Name == name).Select(x => (bool?)x.IsIngameReady).FirstOrDefault();
-        }
 
         public void Kick(string name)
         {
@@ -231,7 +213,7 @@ namespace LobbyClient
             scriptPath = Path.GetTempFileName();
             File.WriteAllText(scriptPath, script);
 
-            LogLines = new StringBuilder();
+            logLines = new StringBuilder();
 
             var optirun = Environment.GetEnvironmentVariable("OPTIRUN");
 
@@ -251,7 +233,7 @@ namespace LobbyClient
 
             if (string.IsNullOrEmpty(optirun))
             {
-                if (UseDedicatedServer)
+                if (Context.UseDedicatedServer)
                 {
                     process.StartInfo.FileName = paths.GetDedicatedServerPath(engine);
                     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetDedicatedServerPath(engine));
@@ -419,7 +401,7 @@ namespace LobbyClient
 
                     if (line.StartsWith("STATS:")) Context.OutputExtras.Add(line.Substring(6));
 
-                    if (line.Contains("SCORE: ") && StartContext.IsMission)
+                    if (line.Contains("SCORE: "))
                     {
                         var match = Regex.Match(line, "SCORE: ([^ ]+)");
                         if (match.Success)
@@ -441,44 +423,15 @@ namespace LobbyClient
                             Context.MissionFrame = gameframe;
                         }
                     }
-                    if (line.Contains("MISSIONVARS:") && StartContext.IsMission)
+                    if (line.Contains("MISSIONVARS:"))
                     {
                         var match = Regex.Match(line, "MISSIONVARS: ([^ ]+)");
                         Context.MissionVars = match.Groups[1].Value.Trim();
                         Trace.TraceInformation($"Mission variables: {missionVars} (original line: {line})");
-                     }
-                    
+                    }
+
                     if (line.StartsWith("Cheating!", true, null) || line.StartsWith("Cheating is enabled!", true, null)) Context.IsCheating = true;
                 }
-                if (score != null || !string.IsNullOrEmpty(missionVars))
-                {
-                    Trace.TraceInformation("Submitting score for mission " + StartContext.Mod);
-                    try
-                    {
-                        var service = GlobalConst.GetContentService();
-                        Task.Factory.StartNew(() =>
-                        {
-                            try
-                            {
-                                service.SubmitMissionScore(lobbyUserName,
-                                    Utils.HashLobbyPassword(lobbyPassword),
-                                    StartContext.Mod,
-                                    score ?? 0,
-                                    scoreFrame/30,
-                                    missionVars);
-                            }
-                            catch (Exception ex)
-                            {
-                                Trace.TraceError("Error sending score: {0}", ex);
-                            }
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceError(string.Format("Error sending mission score: {0}", ex));
-                    }
-                }
-
             }
             catch (Exception ex)
             {
@@ -493,13 +446,13 @@ namespace LobbyClient
 
         private void process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            LogLines.AppendLine(e.Data);
+            logLines.AppendLine(e.Data);
             LogLineAdded(e.Data, false);
         }
 
         private void springProcess_Exited(object sender, EventArgs e)
         {
-            var isCrash = process.ExitCode != 0 && !wasKilled;
+            Context.IsCrash = process.ExitCode != 0 && !Context.WasKilled;
             process.UnsubscribeEvents(this);
             try
             {
@@ -512,8 +465,8 @@ namespace LobbyClient
             talker?.Close();
             talker = null;
             Thread.Sleep(1000);
-            var logText = LogLines.ToString();
-            if (isHosting) ParseInfolog(logText, isCrash);
+            var logText = logLines.ToString();
+            if (Context.IsHosting) ParseInfolog(logText);
 
             try
             {
@@ -528,8 +481,8 @@ namespace LobbyClient
 
             if (StartContext != null) foreach (var p in Context.ActualPlayers) p.IsIngame = false;
 
-            SpringExited?.Invoke(this, new EventArgs<bool>(isCrash));
-            AnySpringExited?.Invoke(this, new EventArgs<bool>(isCrash));
+            SpringExited?.Invoke(this, new EventArgs<bool>(Context.IsCrash));
+            AnySpringExited?.Invoke(this, new EventArgs<bool>(Context.IsCrash));
         }
 
 
@@ -628,7 +581,7 @@ namespace LobbyClient
                 const int timeToWait = 180; // force start after 180s
                 const int timeToWarn = 120; // warn people after 120s 
 
-                if (isHosting && IsRunning && Context.IngameStartTime == null)
+                if (Context.IsHosting && IsRunning && Context.IngameStartTime == null)
                 {
                     if (timeSinceStart > timeToWait)
                     {
@@ -636,7 +589,7 @@ namespace LobbyClient
                     }
                     else if (timeSinceStart > timeToWarn)
                     {
-                        SayGame(string.Format("Game will be force started in {0} seconds", Math.Max(20, timeToWait - Math.Round(timeSinceStart))));
+                        SayGame($"Game will be force started in {Math.Max(20, timeToWait - Math.Round(timeSinceStart))} seconds");
                     }
                 }
             }
@@ -644,6 +597,20 @@ namespace LobbyClient
             {
                 Trace.TraceError("Error checking start: {0}", ex);
             }
+        }
+
+        public void Dispose()
+        {
+            talker?.UnsubscribeEvents(this);
+            talker?.Dispose();
+            timer?.Dispose();
+            process?.UnsubscribeEvents(this);
+            logLines = null;
+            Context = null;
+            scriptPath = null;
+            gamePrivateMessages = null;
+            process = null;
+            talker = null;
         }
     }
 }

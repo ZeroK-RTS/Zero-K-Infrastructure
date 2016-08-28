@@ -147,7 +147,7 @@ namespace LobbyClient
         public BattleContext GetContext()
         {
             var ret = new BattleContext();
-            ret.AutohostName = FounderName;
+            ret.FounderName = FounderName;
             ret.Map = MapName;
             ret.Mod = ModName;
             ret.Title = Title;

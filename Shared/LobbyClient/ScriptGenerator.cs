@@ -13,6 +13,8 @@ namespace LobbyClient
 {
     public class ScriptGenerator
     {
+        public const int MaxAllies = 16;
+
         /// <summary>
         /// GEnerates script for connecting to game
         /// </summary>
@@ -111,7 +113,7 @@ namespace LobbyClient
             var startboxes = new StringBuilder();
             startboxes.Append("return { ");
             script.AppendLine();
-            for (var allyNumber = 0; allyNumber < Spring.MaxAllies; allyNumber++) {
+            for (var allyNumber = 0; allyNumber < MaxAllies; allyNumber++) {
                 script.AppendFormat("[ALLYTEAM{0}]\n", allyNumber);
                 script.AppendLine("{");
                 script.AppendLine("     NumAllies=0;");

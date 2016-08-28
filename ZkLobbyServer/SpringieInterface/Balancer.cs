@@ -283,7 +283,7 @@ namespace ZeroKWeb.SpringieInterface
 
                     case AutohostMode.GameChickens: {
                         res.Players = context.Players.ToList();
-                        res.Bots = context.Bots.Where(x => x.Owner != context.AutohostName).ToList();
+                        res.Bots = context.Bots.Where(x => x.Owner != context.FounderName).ToList();
                         foreach (var p in res.Players) p.AllyID = 0;
                         foreach (var b in res.Bots) b.AllyID = 1;
 
