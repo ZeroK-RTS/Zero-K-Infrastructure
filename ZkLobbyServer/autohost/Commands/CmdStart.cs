@@ -16,7 +16,7 @@ namespace ZkLobbyServer
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            battle.RunCommand<CmdRing>(e);
+            battle.RunCommandDirectly<CmdRing>(e);
             return $"start the game?";
         }
 

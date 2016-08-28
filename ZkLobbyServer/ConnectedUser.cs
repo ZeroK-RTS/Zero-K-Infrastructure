@@ -360,19 +360,17 @@ namespace ZkLobbyServer
 
             var battleID = Interlocked.Increment(ref state.BattleCounter);
 
-            var h = openBattle.Header;
-            h.BattleID = battleID;
-            h.Founder = Name;
+            openBattle.Header.BattleID = battleID;
+            openBattle.Header.Founder = Name;
             var battle = new ServerBattle(state);
-            battle.UpdateWith(h);
-            battle.Users[Name] = new UserBattleStatus(Name, User);
+            battle.UpdateWith(openBattle.Header);
             state.Battles[battleID] = battle;
-            MyBattle = battle;
             
-            h.Password = h.Password != null ? "?" : null; // dont send pw to client
-            var clis = state.ConnectedUsers.Values.ToList();
-            await state.Broadcast(clis, new BattleAdded() { Header = battle.GetHeader() });
-            await state.Broadcast(clis, new JoinedBattle() { BattleID = battleID, User = Name });
+            //battle.Users[Name] = new UserBattleStatus(Name, User, Guid.NewGuid().ToString());
+            //MyBattle = battle;
+
+            await state.Broadcast(state.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
+            await Process(new JoinBattle() { BattleID = battleID, Password = openBattle.Header.Password, });
         }
 
 
@@ -394,24 +392,22 @@ namespace ZkLobbyServer
                     await Respond("Invalid password");
                     return;
                 }
-                var ubs = new UserBattleStatus(Name, User);
+                var ubs = new UserBattleStatus(Name, User, Guid.NewGuid().ToString());
                 if (battle.Users.Values.Count(x => !x.IsSpectator) >= battle.MaxPlayers)
                 {
                     ubs.IsSpectator = true;
                 }
                 battle.Users[Name] = ubs;
                 MyBattle = battle;
-                string scriptPassword = "script" + random.Next();
-                await state.Broadcast(new string[] { Name, battle.FounderName },
-                    new JoinedBattle() { BattleID = battle.BattleID, User = Name, ScriptPassword = scriptPassword });
-                await state.Broadcast(state.ConnectedUsers.Keys.Where(x => x != Name && x != battle.FounderName),
-                    new JoinedBattle() { BattleID = battle.BattleID, User = Name });
+
+                await state.Broadcast(state.ConnectedUsers.Keys,  new JoinedBattle() { BattleID = battle.BattleID, User = Name });
                 await RecalcSpectators(battle);
                 await state.Broadcast(battle.Users.Keys.Where(x => x != Name), ubs.ToUpdateBattleStatus());// send my UBS to others in battle
-
                 foreach (var u in battle.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await SendCommand(u); // send other's status to self
                 foreach (var u in battle.Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await SendCommand(u);
                 await SendCommand(new SetModOptions() { Options = battle.ModOptions });
+
+                await battle.ProcessPlayerJoin(ubs);
             }
         }
 

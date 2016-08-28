@@ -18,6 +18,9 @@ namespace ZeroKWeb.SpringieInterface
         {
             try
             {
+                if (!result.GameEndedOk) return "Game didn't end properly";
+                if (result.IsCheating) return "Cheats were enabled during this game";
+
                 var db = new ZkDataContext();
                 Account acc = Account.AccountByName(db, result.LobbyStartContext.FounderName);
                 var context = result.LobbyStartContext;

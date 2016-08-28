@@ -86,7 +86,10 @@ namespace LobbyClient
         /// </summary>
         public void AddUser(string name, string scriptPassword)
         {
-            if (IsRunning) talker.SendText($"/adduser {name} {scriptPassword}");
+            if (IsRunning)
+            {
+                talker.SendText($"/adduser {name} {scriptPassword}");
+            }
         }
 
         public event EventHandler BattleStarted = (sender, args) => { };

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using LobbyClient;
@@ -12,7 +11,6 @@ using ZeroKWeb.SpringieInterface;
 using ZkData;
 using ZkData.UnitSyncLib;
 using static System.String;
-using Timer = System.Timers.Timer;
 
 namespace ZkLobbyServer
 {
@@ -120,8 +118,6 @@ namespace ZkLobbyServer
             Stop();
             spring.UnsubscribeEvents(this);
             springPaths.UnsubscribeEvents(this);
-            //Program.Downloader.UnsubscribeEvents(this);
-            //Program.paths.UnsubscribeEvents(this);
             pollTimer.Dispose();
             pollTimer = null;
         }
@@ -198,7 +194,7 @@ namespace ZkLobbyServer
             UserBattleStatus user;
             if (Users.TryGetValue(name, out user))
             {
-                kickedPlayers.Add(new KickedPlayer() {Name = name});
+                kickedPlayers.Add(new KickedPlayer() { Name = name });
                 var client = server.ConnectedUsers[name];
                 await client.Respond($"You were kicked from battle by {name} : {reason}");
                 await client.Process(new LeaveBattle() { BattleID = BattleID });
@@ -217,7 +213,36 @@ namespace ZkLobbyServer
             if (!say.IsEmote && say.Text?.Length > 1 && say.Text.StartsWith("!"))
             {
                 var parts = say.Text.Substring(1).Split(new[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
-                await RunCommand(say, parts[0], parts.Skip(1).FirstOrDefault());
+                await RunCommandWithPermissionCheck(say, parts[0], parts.Skip(1).FirstOrDefault());
+            }
+        }
+
+        public async Task ProcessPlayerJoin(UserBattleStatus ubs)
+        {
+            kickedPlayers.RemoveAll(x => x.TimeOfKicked <= DateTime.UtcNow.AddMinutes(-5));
+            if (kickedPlayers.Any(y => y.Name != ubs.Name)) await KickFromBattle(ubs.Name, "Banned for five minutes");
+
+            if (spring.IsRunning)
+            {
+                spring.AddUser(ubs.Name, ubs.ScriptPassword);
+                var started = DateTime.UtcNow.Subtract(spring.IngameStartTime ?? DateTime.Now);
+                started = new TimeSpan((int)started.TotalHours, started.Minutes, started.Seconds);
+                await SayBattle($"THIS GAME IS CURRENTLY IN PROGRESS, PLEASE WAIT UNTIL IT ENDS! Running for {started}", ubs.Name);
+                await SayBattle("If you say !notify, I will message you when the current game ends.", ubs.Name);
+            }
+
+            try
+            {
+                var ret = PlayerJoinHandler.AutohostPlayerJoined(GetContext(), ubs.LobbyUser.AccountID);
+                if (ret != null)
+                {
+                    if (!IsNullOrEmpty(ret.PrivateMessage)) await SayBattle(ret.PrivateMessage, ubs.Name);
+                    if (!IsNullOrEmpty(ret.PublicMessage)) await SayBattle(ret.PublicMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                await SayBattle("ServerManage error: " + ex);
             }
         }
 
@@ -242,14 +267,14 @@ namespace ZkLobbyServer
         }
 
 
-        public void RunCommand<T>(Say e, string args = null) where T: BattleCommand, new()
+        public void RunCommandDirectly<T>(Say e, string args = null) where T: BattleCommand, new()
         {
             var t = new T();
             t.Run(this, e, args);
         }
 
 
-        public async Task RunCommand(Say e, string com, string arg)
+        public async Task RunCommandWithPermissionCheck(Say e, string com, string arg)
         {
             var cmd = GetCommandByName(com);
             if (cmd != null)
@@ -315,11 +340,11 @@ namespace ZkLobbyServer
         public async Task StartGame()
         {
             var ip = "127.0.0.1";
-            int port = 8452;
+            var port = 8452;
 
             var startSetup = StartSetup.GetDedicatedServerStartSetup(GetContext());
-            
-            spring.HostGame(startSetup, ip, port, true);  // TODO HACK GET PORTS
+
+            spring.HostGame(startSetup, ip, port, true); // TODO HACK GET PORTS
             IsInGame = true;
             RunningSince = DateTime.UtcNow;
             foreach (var us in Users.Values)
@@ -339,7 +364,6 @@ namespace ZkLobbyServer
                 }
             }
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
-
         }
 
 
@@ -475,7 +499,6 @@ namespace ZkLobbyServer
         }
 
 
-
         private void spring_PlayerSaid(object sender, SpringLogEventArgs e)
         {
             ProcessBattleSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle }); // process as command
@@ -497,19 +520,20 @@ namespace ZkLobbyServer
             IsInGame = false;
             RunningSince = null;
             await server.Broadcast(server.ConnectedUsers.Keys, new BattleUpdate() { Header = GetHeader() });
-            
-            foreach (string s in toNotify)
+
+            foreach (var s in toNotify)
             {
-                await server.GhostSay(new Say()
-                {
-                    User = GlobalConst.NightwatchName,
-                    Text = $"** {FounderName} 's {Title} just ended, join me! **",
-                    Target = s,
-                    IsEmote = true,
-                    Place = SayPlace.User,
-                    Ring = true,
-                    AllowRelay = false
-                });
+                await
+                    server.GhostSay(new Say()
+                    {
+                        User = GlobalConst.NightwatchName,
+                        Text = $"** {FounderName} 's {Title} just ended, join me! **",
+                        Target = s,
+                        IsEmote = true,
+                        Place = SayPlace.User,
+                        Ring = true,
+                        AllowRelay = false
+                    });
             }
             toNotify.Clear();
 
@@ -526,62 +550,6 @@ namespace ZkLobbyServer
             }
         }
 
-
-        private void tas_BattleUserJoined(object sender, BattleUserEventArgs e1)
-        {
-            /*
-            if (e1.BattleID != tas.MyBattleID) return;
-            string name = e1.UserName;
-
-            kickedPlayers.RemoveAll(x => x.TimeOfKicked <= DateTime.UtcNow.AddMinutes(-5));
-            if (kickedPlayers.Any(y => y.Name == name)) ComKick(TasSayEventArgs.Default, new[] { name });
-
-
-
-            string welc = config.Welcome;
-            if (!string.IsNullOrEmpty(welc))
-            {
-                welc = welc.Replace("%1", name);
-                welc = welc.Replace("%2", GetUserLevel(name).ToString());
-                welc = welc.Replace("%3", MainConfig.SpringieVersion);
-
-                string[] split = welc.Split(new Char[] { '\n' });
-                foreach (string s in split)
-                {
-                    SayBattlePrivate(name, s);
-                }
-            }
-            if (spring.IsRunning)
-            {
-                spring.AddUser(e1.UserName, e1.ScriptPassword);
-                TimeSpan started = DateTime.Now.Subtract(spring.GameStarted);
-                started = new TimeSpan((int)started.TotalHours, started.Minutes, started.Seconds);
-                SayBattlePrivate(name, String.Format("THIS GAME IS CURRENTLY IN PROGRESS, PLEASE WAIT UNTIL IT ENDS! Running for {0}", started));
-                SayBattlePrivate(name, "If you say !notify, I will message you when the current game ends.");
-            }
-
-            if (SpawnConfig == null)
-            {
-                try
-                {
-                    var serv = GlobalConst.GetSpringieService();
-                    PlayerJoinResult ret = serv.AutohostPlayerJoined(tas.MyBattle.GetContext(), tas.ExistingUsers[name].AccountID);
-                    if (ret != null)
-                    {
-                        if (!string.IsNullOrEmpty(ret.PrivateMessage)) tas.Say(SayPlace.User, name, ret.PrivateMessage, false);
-                        if (!string.IsNullOrEmpty(ret.PublicMessage)) tas.Say(SayPlace.Battle, "", ret.PublicMessage, true);
-                        if (ret.ForceSpec) tas.ForceSpectator(name);
-                        if (ret.Kick) tas.Kick(name);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SayBattle("ServerManage error: " + ex, false);
-                }
-            }
-
-                */
-        }
 
         private void tas_BattleUserLeft(object sender, BattleUserEventArgs e1)
         {
@@ -629,7 +597,6 @@ namespace ZkLobbyServer
                 }
             }*/
         }
-
 
 
         public class KickedPlayer

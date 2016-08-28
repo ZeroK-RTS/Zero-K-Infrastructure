@@ -598,9 +598,9 @@ namespace LobbyClient
             Battle battle;
             ExistingBattles.TryGetValue(bat.BattleID, out battle);
             if (user != null && battle != null) {
-                battle.Users[user.Name] = new UserBattleStatus(user.Name, user, bat.ScriptPassword);
+                battle.Users[user.Name] = new UserBattleStatus(user.Name, user);
                 user.IsInBattleRoom = true;
-                BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID, bat.ScriptPassword));
+                BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID));
                 if (user.Name == UserName) {
                     MyBattle = battle;
                     if (battle.FounderName == UserName) BattleOpened(this, battle);
