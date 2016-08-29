@@ -23,7 +23,6 @@ namespace ZeroKLobby.MicroLobby
 		readonly PictureBox minimapBox;
         readonly ZeroKLobby.Controls.MinimapFuncBox minimapFuncBox;
 		Size minimapSize;
-        List<MissionSlot> missionSlots;
 		public static event EventHandler<EventArgs<IChatLine>> BattleLine = delegate { };
 
 
@@ -42,7 +41,6 @@ namespace ZeroKLobby.MicroLobby
 			Program.TasClient.BattleBotRemoved += (s, e) => SortByTeam();
 			Program.TasClient.BattleBotUpdated += (s, e) => SortByTeam();
 			Program.TasClient.BattleMapChanged += TasClient_BattleMapChanged;
-			Program.ModStore.ModLoaded += ModStoreModLoaded;
 
 
 			if (Program.TasClient.MyBattle != null) foreach (var user in Program.TasClient.MyBattle.Users.Values) AddUser(user.Name);
@@ -111,7 +109,6 @@ namespace ZeroKLobby.MicroLobby
             playerListMapSplitContainer.Panel2Collapsed = false;
             minimapFuncBox.Visible = true; //show button when joining game 
 			base.Reset();
-			missionSlots = null;
 			minimapBox.Image = null;
 			minimap = null;
 			Program.ToolTip.Clear(minimapBox);
@@ -125,25 +122,13 @@ namespace ZeroKLobby.MicroLobby
 			foreach (var us in PlayerListItems) newList.Add(us);
 
             
-			if (missionSlots != null)
-			{
-				foreach (var slot in missionSlots.Where(s => s.IsHuman))
-				{
-					var playerListItem =
-						newList.FirstOrDefault(p => p.UserBattleStatus != null && !p.UserBattleStatus.IsSpectator && p.UserBattleStatus.TeamNumber == slot.TeamID);
-					if (playerListItem == null) newList.Add(new PlayerListItem { SlotButton = slot.TeamName, MissionSlot = slot });
-					else playerListItem.MissionSlot = slot;
-				}
-			}
-
 			var nonSpecs = PlayerListItems.Where(p => p.UserBattleStatus != null && !p.UserBattleStatus.IsSpectator);
 			var existingTeams = nonSpecs.GroupBy(i => i.UserBattleStatus.AllyNumber).Select(team => team.Key).ToList();
 
 			foreach (var bot in Program.TasClient.MyBattle.Bots.Values)
 			{
-				var missionSlot = GetSlotByTeamID(bot.TeamNumber);
 				newList.Add(new PlayerListItem
-				            { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = bot.AllyNumber, MissionSlot = missionSlot });
+				            { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = bot.AllyNumber });
 				existingTeams.Add(bot.AllyNumber);
 			}
 
@@ -159,7 +144,6 @@ namespace ZeroKLobby.MicroLobby
 		        if (PlayerListItems.Any(i => i.UserBattleStatus != null && i.UserBattleStatus.IsSpectator)) newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = (int)PlayerListItem.SortCats.SpectatorTitle, IsSpectatorsTitle = true, Height = 25 });
 
 		        var buttonTeams = existingTeams.Distinct();
-		        if (missionSlots != null) buttonTeams = buttonTeams.Concat(missionSlots.Select(s => s.AllyID)).Distinct();
 		        foreach (var team in buttonTeams)
 		        {
 		            int numPlayers = nonSpecs.Where(p => p.UserBattleStatus.AllyNumber == team).Count();
@@ -167,11 +151,6 @@ namespace ZeroKLobby.MicroLobby
 		            int numTotal = numPlayers + numBots;
 
 		            var allianceName = "Team " + (team + 1) + (numTotal > 3 ? "  (" + numTotal + ")" : "");
-		            if (missionSlots != null)
-		            {
-		                var slot = missionSlots.FirstOrDefault(s => s.AllyID == team);
-		                if (slot != null) allianceName = slot.AllyName;
-		            }
 		            newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team * 2 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = team, Height = 25 });
 		        }
 
@@ -212,11 +191,6 @@ namespace ZeroKLobby.MicroLobby
 		    }
 		}
 
-		MissionSlot GetSlotByTeamID(int teamID)
-		{
-			if (missionSlots != null) return missionSlots.SingleOrDefault(s => s.TeamID == teamID);
-			return null;
-		}
 
 		void RefreshBattleUser(string userName)
 		{
@@ -257,16 +231,6 @@ namespace ZeroKLobby.MicroLobby
 			                                           		minimapBox.Image = null;
 			                                           		minimap = null;
 			                                           	}));
-		}
-
-		void ModStoreModLoaded(object sender, EventArgs<Mod> e)
-		{
-			if (InvokeRequired) Invoke(new ThreadStart(() => ModStoreModLoaded(sender, e)));
-			else
-			{
-				missionSlots = e.Data.MissionSlots;
-				SortByTeam();
-			}
 		}
 
 
@@ -347,7 +311,6 @@ namespace ZeroKLobby.MicroLobby
 				if (this.playerBox.HoverItem != null)
 				{
 					if (this.playerBox.HoverItem.IsSpectatorsTitle) ActionHandler.Spectate();
-					else if (this.playerBox.HoverItem.SlotButton != null) ActionHandler.JoinSlot(this.playerBox.HoverItem.MissionSlot);
 					else if (this.playerBox.HoverItem.Button!=null) ActionHandler.JoinAllyTeam(this.playerBox.HoverItem.AllyTeam.Value);
 				}
 			}

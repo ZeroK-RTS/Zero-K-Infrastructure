@@ -20,7 +20,6 @@ namespace LobbyClient
             {
                 Name = Name,
                 AllyNumber = AllyNumber,
-                TeamNumber = TeamNumber,
                 Owner = owner,
                 AiLib = aiLib
             };
@@ -32,14 +31,13 @@ namespace LobbyClient
             {
                 if (u.Name != Name) throw new Exception(string.Format("Applying update of {0} to user {1}", u.Name, Name));
                 if (u.AllyNumber.HasValue) AllyNumber = u.AllyNumber.Value;
-                if (u.TeamNumber.HasValue) TeamNumber = u.TeamNumber.Value;
                 if (u.AiLib != null) aiLib = u.AiLib;
             }
         }
 
         public BotTeam ToBotTeam()
         {
-            return new BotTeam() { BotName = this.Name, AllyID = this.AllyNumber, TeamID = this.TeamNumber, Owner = this.owner, BotAI = this.aiLib };
+            return new BotTeam() { BotName = this.Name, AllyID = this.AllyNumber, Owner = this.owner, BotAI = this.aiLib };
         }
     } ;
 }

@@ -388,7 +388,6 @@ namespace LobbyClient
         public bool? IsSpectator;
         public string Name;
         public SyncStatuses? Sync;
-        public int? TeamNumber;
     }
 
 
@@ -397,7 +396,6 @@ namespace LobbyClient
     {
         public int? AllyNumber;
         public string Name;
-        public int? TeamNumber;
         public string AiLib;
         public string Owner;
     }

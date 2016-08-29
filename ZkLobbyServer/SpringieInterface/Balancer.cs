@@ -353,9 +353,6 @@ namespace ZeroKWeb.SpringieInterface
                     res.Players.Add(p);
                 }
 
-                var teamNum = 1;
-                foreach (var p in res.Players) p.TeamID = teamNum++; // normalize teams
-
                 // bots game
                 var cnt = 0;
                 if (planet.PlanetStructures.Any(x => !string.IsNullOrEmpty(x.StructureType.EffectBots)))
@@ -385,7 +382,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
             }
             res.Players.Add(
-                new PlayerTeam { AllyID = allyID, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID, TeamID = player.TeamID });
+                new PlayerTeam { AllyID = allyID, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID});
         }
 
         /// <summary>

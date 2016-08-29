@@ -126,17 +126,6 @@ namespace LobbyClient
         }
 
 
-        public int GetFreeTeamID(string exceptUser)
-        {
-            return
-                Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(
-                    teamID =>
-                    !Users.Values.Where(u => !u.IsSpectator).Any(user => user.Name != exceptUser && user.TeamNumber == teamID) &&
-                    !Bots.Values.Any(x => x.TeamNumber == teamID));
-        }
-
-
-
         public override string ToString()
         {
             return String.Format("{0} {1} ({2}+{3}/{4})", ModName, MapName, NonSpectatorCount, SpectatorCount, MaxPlayers);

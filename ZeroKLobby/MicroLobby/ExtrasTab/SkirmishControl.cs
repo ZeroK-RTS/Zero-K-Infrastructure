@@ -39,8 +39,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         private Mod currentMod;
         private List<string> DisabledUnits;
         private Dictionary<string, string> ModOptions;
-        private List<MissionSlot> missionSlots;
-        private List<MissionSlot> botsMissionSlot;
         private float[,] presetStartPos;
         private List<Ai> springAi;
         private System.Windows.Forms.Timer uiTimer;
@@ -174,8 +172,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             };
             myItem.offlineUserInfo = myUser;
             myItem.offlineUserBattleStatus = myBattleStatus;
-
-            botsMissionSlot = new List<MissionSlot>();
         }
 
         private Download download;
@@ -419,27 +415,11 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             if (!myItem.UserBattleStatus.IsSpectator || Bots.Count > 0) playerListItems.Add(myItem);
             var existingTeams = playerListItems.GroupBy(i => i.UserBattleStatus.AllyNumber).Select(team => team.Key).ToList();
 
-            if (botsMissionSlot.Count > 0)
-            {
-                for (int i = 0; i < botsMissionSlot.Count; i++)
-                {
-                    BotBattleStatus bot = Bots[i];
-                    newList.Add(new PlayerListItem { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = bot.AllyNumber, MissionSlot = botsMissionSlot[i] });
-                    existingTeams.Add(bot.AllyNumber);
-                }
-                for (int i = botsMissionSlot.Count; i < Bots.Count; i++) //include any extra bots added by user
-                {
-                    BotBattleStatus bot = Bots[i];
-                    newList.Add(new PlayerListItem { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = bot.AllyNumber, MissionSlot = null });
-                    existingTeams.Add(bot.AllyNumber);
-                }
-            }
-            else
             {
                 for (int i = 0; i < Bots.Count; i++)
                 {
                     BotBattleStatus bot = Bots[i];
-                    newList.Add(new PlayerListItem { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = bot.AllyNumber, MissionSlot = null });
+                    newList.Add(new PlayerListItem { BotBattleStatus = bot, SortCategory = bot.AllyNumber * 2 + 1 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = bot.AllyNumber });
                     existingTeams.Add(bot.AllyNumber);
                 }
             }
@@ -448,7 +428,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             if (playerListItems.Any(i => i.UserBattleStatus != null && i.UserBattleStatus.IsSpectator)) newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = (int)PlayerListItem.SortCats.SpectatorTitle, IsSpectatorsTitle = true, Height = 25 });
 
             var buttonTeams = existingTeams.Distinct();
-            if (missionSlots != null) buttonTeams = buttonTeams.Concat(missionSlots.Select(s => s.AllyID)).Distinct();
             foreach (var team in buttonTeams)
             {
                 int numPlayers = myItem.UserBattleStatus.IsSpectator ? 0 : 1;
@@ -456,11 +435,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 int numTotal = numPlayers + numBots;
 
                 var allianceName = "Team " + (team + 1) + (numTotal > 3 ? "  (" + numTotal + ")" : "");
-                if (missionSlots != null)
-                {
-                    var slot = missionSlots.FirstOrDefault(s => s.AllyID == team);
-                    if (slot != null) allianceName = slot.AllyName;
-                }
                 newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team * 2 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = team, Height = 25 });
             }
 
@@ -489,25 +463,14 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             Refresh_PlayerBox();
         }
 
-        private MissionSlot Get_SlotByTeamID(int teamID)
-        {
-            if (missionSlots != null) return missionSlots.SingleOrDefault(s => s.TeamID == teamID);
-            return null;
-        }
 
-        private int Get_FreeTeamID(string exceptUser) //from LobbyClient/Battle
-        {
-            return Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(teamID => myItem.offlineUserBattleStatus.TeamNumber != teamID && !Bots.Any(x => x.TeamNumber == teamID));
-        }
-
-        private void Set_MyBattleStatus(int? allyNumber, int? teamNumber, bool? isSpectator)
+        private void Set_MyBattleStatus(int? allyNumber, bool? isSpectator)
         {
             if (allyNumber.HasValue)
             {
                 myItem.AllyTeam = allyNumber.Value;
                 myItem.offlineUserBattleStatus.AllyNumber = allyNumber.Value;
             }
-            if (teamNumber.HasValue) myItem.offlineUserBattleStatus.TeamNumber = teamNumber.Value;
             if (isSpectator.HasValue)
             {
                 myItem.offlineUserBattleStatus.IsSpectator = isSpectator.Value;
@@ -533,16 +496,9 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 if (skirmPlayerBox.HoverItem != null)
                 {
-                    if (skirmPlayerBox.HoverItem.IsSpectatorsTitle)
-                        Set_MyBattleStatus(null, null, true); //spectator
-                    else if (skirmPlayerBox.HoverItem.SlotButton != null) //mission
-                    {
-                        MissionSlot slot = skirmPlayerBox.HoverItem.MissionSlot;
-                        Set_MyBattleStatus(slot.AllyID, slot.TeamID, false);
-                        return;
-                    }
+                    if (skirmPlayerBox.HoverItem.IsSpectatorsTitle) Set_MyBattleStatus(null, true); //spectator
                     else if (skirmPlayerBox.HoverItem.Button!=null) //alliance
-                        Set_MyBattleStatus(skirmPlayerBox.HoverItem.AllyTeam.Value, Get_FreeTeamID(myItem.UserName), false);
+                        Set_MyBattleStatus(skirmPlayerBox.HoverItem.AllyTeam.Value, false);
                 }
             }
             //context menu
@@ -682,7 +638,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                             myItem.AllyTeam = battleStatus.AllyNumber;
                             myItem.offlineUserBattleStatus.AllyNumber = battleStatus.AllyNumber;
                             spectateCheckBox.Checked = false;
-                            myItem.offlineUserBattleStatus.TeamNumber = Get_FreeTeamID(myItem.UserName);
                             Refresh_PlayerBox();
 
                         };
@@ -752,17 +707,15 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             form.Show(); //show menu
         }
 
-        private void Set_BotBattleStatus(string shortname,string ownerName, int? teamNumber, int? allyNumber,int? botColor, string version)
+        private void Set_BotBattleStatus(string shortname,string ownerName, int? allyNumber,int? botColor, string version)
         {
             var aiLib = shortname;
             if (version != null) aiLib = aiLib + "|" + version; //splitter defined in Battle.cs/ScriptAddBot();
             var botNumber = Enumerable.Range(1, 9000).First(j => !Bots.Any(bt => bt.Name == "Bot_" + j));
             BotBattleStatus botStatus = new BotBattleStatus("Bot_" + botNumber,ownerName, aiLib);
             
-            if (teamNumber.HasValue) botStatus.TeamNumber = teamNumber.Value;
-            else botStatus.TeamNumber = Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(x => !allUser.Any(y => y.TeamNumber == x));
             
-            if (allyNumber.HasValue) botStatus.TeamNumber = allyNumber.Value;
+            if (allyNumber.HasValue) botStatus.AllyNumber = allyNumber.Value;
             else botStatus.AllyNumber = Enumerable.Range(0, TasClient.MaxAlliances - 1).FirstOrDefault(x => x != botStatus.AllyNumber);
             
             Bots.Add(botStatus);
@@ -796,7 +749,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     item = new System.Windows.Forms.MenuItem(string.Format("{0} ({1})", shortName, version)); //description too long 
                     item.Click += (s, e2) =>
                     {
-                        Set_BotBattleStatus(shortName, myItem.UserName, null, null, null, version);
+                        Set_BotBattleStatus(shortName, myItem.UserName, null, null, version);
                     };
                     addSpringBot.MenuItems.Add(item);
                 }
@@ -816,7 +769,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     var b = bot; //to maintain reference to object
                     item.Click += (s, e) =>
                     {
-                        Set_BotBattleStatus(b.ShortName, myItem.UserName, null, null, null,b.Version);
+                        Set_BotBattleStatus(b.ShortName, myItem.UserName, null, null,b.Version);
                     };
                     addBotItem.MenuItems.Add(item);
                 }
@@ -841,7 +794,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                         var item = new MenuItem("Join Team " + (allyTeam + 1));
                         item.Click += (s, e) =>
                             {
-                                Set_MyBattleStatus(at, Get_FreeTeamID(user.Name), false);
+                                Set_MyBattleStatus(at,  false);
                             };
                         setAllyTeamItem.MenuItems.Add(item);
                     }
@@ -852,7 +805,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 var newTeamItem = new System.Windows.Forms.MenuItem("Start New Team");
                 newTeamItem.Click += (s, e) =>
                     {
-                        Set_MyBattleStatus(freeAllyTeam, Get_FreeTeamID(myItem.UserName), false);
+                        Set_MyBattleStatus(freeAllyTeam, false);
                     };
                 setAllyTeamItem.MenuItems.Add(newTeamItem);
 
@@ -861,7 +814,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     var specItem = new System.Windows.Forms.MenuItem("Spectate");
                     specItem.Click += (s, e) =>
                         {
-                            Set_MyBattleStatus(null,null,true);
+                            Set_MyBattleStatus(null,true);
                         };
                     setAllyTeamItem.MenuItems.Add(specItem);
                 }
@@ -1002,8 +955,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 ModOptions.Clear();
                 currentMod = mod;
                 aiList = mod.ModAis;
-                missionSlots = mod.MissionSlots;
-                Setup_MissionModInfo(mod);
                 Set_InfoLabel();
             }
             else
@@ -1011,93 +962,10 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 sideCB.Visible = false;
                 currentMod = null;
                 aiList = null;
-                missionSlots = null;
-                myItem.MissionSlot = null;
-                botsMissionSlot.Clear();
                 if (currentMod != null) Refresh_PlayerBox();
             }
         }
 
-        private void Setup_MissionModInfo(Mod mod)
-        {
-            myItem.MissionSlot = null;
-            if (missionSlots.Count == 0) missionSlots = null;
-            if (missionSlots != null)
-            {
-                foreach (MissionSlot slot in missionSlots.Where(s => s.IsHuman))
-                {
-                    myItem.MissionSlot = slot;
-                    Set_MyBattleStatus(slot.AllyID, slot.TeamID, false);
-                    break;
-                }
-
-                botsMissionSlot.Clear();
-                Bots.Clear(); 
-                foreach (var slot in missionSlots.Where(s => s.AiShortName != null))
-                {
-                    botsMissionSlot.Add(slot);
-                    Set_BotBattleStatus(slot.AiShortName, myItem.UserName, slot.TeamID, slot.AllyID, (int)(MyCol)slot.Color,slot.AiVersion);
-                }
-            }
-            else
-            {
-                if (botsMissionSlot.Count > 0)
-                {
-                    Bots.Clear();
-                    botsMissionSlot.Clear();
-                }
-            }
-            if (currentMod.IsMission)
-            {
-                //disable some button for mission mod. playerBox shortcut is disabled in Event_PlayerBox_MouseDown()
-                spectateCheckBox.Enabled = false;
-                addAIButton.Enabled = false;
-                editTeamButton.Enabled = false;
-
-                //get targeted map for mission mod
-                string mapname;
-                var script = mod.MissionScript;
-                if (mod.MissionMap != null)
-                    mapname = mod.MissionMap;
-                else
-                {
-                    var open = script.IndexOf("mapname", 7, script.Length - 8, StringComparison.InvariantCultureIgnoreCase) + 8;
-                    var close = script.IndexOf(';', open);
-                    mapname = script.Substring(open, close - open);
-                    mapname = mapname.Trim(new char[3]{' ','=','\t'});
-                }
-                suppressEvent_SelectedIndexChanged = true;
-                map_comboBox.SelectedItem = mapname;
-                suppressEvent_SelectedIndexChanged = false;
-                int selectedView = normalRadioButton.Checked ? 0 : (elevationRadioButton.Checked ? 1 : 2);
-                Set_MapImages(mapname, selectedView);
-
-                //get customized modoptions
-                {
-                    var open = script.IndexOf("[MODOPTIONS]", 7, script.Length - 8, StringComparison.InvariantCultureIgnoreCase) + 12;
-                    open = script.IndexOf("{", open) + 1;
-                    var close = script.IndexOf("}", open);
-                    var options = script.Substring(open, close - open);
-                    options = options.Trim();
-                    string[] optionList = options.Split(new char[1]{';'}, StringSplitOptions.RemoveEmptyEntries);
-                    string[] keypair;
-                    for (int i = 0; i < optionList.Length; i++)
-                    {
-                        optionList[i] = optionList[i].Trim();
-                        keypair = optionList[i].Split(new char[1] { '=' });
-                        if (keypair[1] != null)
-                            ModOptions.Add(keypair[0], keypair[1]);
-                    }
-                }
-            }
-            else
-            {
-                spectateCheckBox.Enabled = true;
-                addAIButton.Enabled = true;
-                editTeamButton.Enabled = true;
-            }
-            Refresh_PlayerBox();//update playerbox (in case there's mission slot, or when there was mission slot but no longer, or to update some related icons)
-        }
 
         private void Event_SideCB_DrawItem(object sender, DrawItemEventArgs e) //copied from Notification.BattleBar.cs
         {
@@ -1183,7 +1051,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     var item = new System.Windows.Forms.MenuItem("Join Team " + (allyTeam + 1));
                     item.Click += (s, e2) => 
                         {
-                            Set_MyBattleStatus(allyTeam, Get_FreeTeamID(myItem.UserName),false);
+                            Set_MyBattleStatus(allyTeam,false);
                         };
                     menu.MenuItems.Add(item);
                 }
@@ -1197,7 +1065,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     myItem.AllyTeam = freeAllyTeam;
                     myItem.offlineUserBattleStatus.AllyNumber = freeAllyTeam;
                     spectateCheckBox.Checked = false;
-                    myItem.offlineUserBattleStatus.TeamNumber = Get_FreeTeamID(myItem.UserName);
                     Refresh_PlayerBox();
                 };
             menu.MenuItems.Add(newTeamItem);

@@ -74,7 +74,7 @@ namespace ZeroKLobby
         {
             if (ChangeDesiredSpectatorState(false))
             {
-                Program.TasClient.ChangeMyBattleStatus(false, team:Program.TasClient.MyBattle.GetFreeTeamID(Program.TasClient.UserName), ally:allyTeam);
+                Program.TasClient.ChangeMyBattleStatus(false, ally:allyTeam);
             }
         }
 
@@ -123,14 +123,6 @@ namespace ZeroKLobby
 
                     JoinBattle(bat.BattleID, password);
                 }
-            }
-        }
-
-        public static void JoinSlot(MissionSlot slot)
-        {
-            if (ChangeDesiredSpectatorState(false))
-            {
-                Program.TasClient.ChangeMyBattleStatus(false,null,slot.AllyID,slot.TeamID);
             }
         }
 

@@ -46,7 +46,6 @@ namespace ZeroKLobby.MicroLobby
         public int Height { get { return height; } set { height = value; } }
         public bool IsGrayedOut { get; set; }
         public bool IsSpectatorsTitle { get; set; }
-        public MissionSlot MissionSlot { get; set; }
         public string SlotButton;
         public int SortCategory { get; set; }
         public string Title { get; set; }
@@ -145,23 +144,6 @@ namespace ZeroKLobby.MicroLobby
                 return;
             }
 
-            // is player slot
-            if (SlotButton != null)
-            {
-                var slotText = string.Format("Empty Slot: {0} {1}", MissionSlot.TeamName, MissionSlot.IsRequired ? "(Required)" : String.Empty);
-                var color = ((MyCol)MissionSlot.Color);
-                if (!IsZeroKBattle)
-                {
-                    using (var brush = new SolidBrush(Color.FromArgb(color.R, color.G, color.B)))
-                    {
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
-                        g.FillEllipse(brush, x, bounds.Top, bounds.Bottom - bounds.Top, bounds.Bottom - bounds.Top);
-                    }
-                }
-                x += bounds.Bottom - bounds.Top + 2;
-                drawText(slotText, textColor);
-                return;
-            }
 
             // is bot
             if (BotBattleStatus != null)
@@ -169,7 +151,7 @@ namespace ZeroKLobby.MicroLobby
                 var bot = BotBattleStatus;
                 x += 19;
                 drawImage(ZklResources.robot);
-                var botDisplayName = MissionSlot == null ? bot.aiLib : MissionSlot.TeamName;
+                var botDisplayName = bot.aiLib;
                 drawText(botDisplayName + " (" + bot.owner + ")", textColor);
                 return;
             }
@@ -206,7 +188,7 @@ namespace ZeroKLobby.MicroLobby
                 if (clan.Item1 != null) drawImage(clan.Item1);
             }
 
-            var userDisplayName = MissionSlot == null ? user.Name : String.Format("{1}: {0}", MissionSlot.TeamName, user.Name);
+            var userDisplayName = user.Name;
             drawText(userDisplayName, textColor);
             var top10 = Program.SpringieServer.GetTop10Rank(user.Name);
             if (top10 > 0)
@@ -223,11 +205,6 @@ namespace ZeroKLobby.MicroLobby
 
             if (user.IsAway) drawImage(ZklResources.away);
 
-            if (isBattle && !userStatus.IsSpectator)
-                if (MissionSlot != null)
-                    if (userStatus.AllyNumber != MissionSlot.AllyID)
-                        drawText(string.Format("Wrong alliance ({0} instead of {1}).", userStatus.AllyNumber, MissionSlot.AllyID),
-                                 Color.Red);
 
             if (user.SteamID != null) {
                 bool isEnabled;
@@ -245,12 +222,8 @@ namespace ZeroKLobby.MicroLobby
                 return SortCategory.ToString("00000") + UserName??string.Empty; //for ChatControl's search-filter only
 
             var name = string.Empty;
-            if (MissionSlot != null)
-            {
-                SortCategory = MissionSlot.TeamID + (int)PlayerListItem.SortCats.Uncategorized;
-                name = MissionSlot.TeamName;
-            }
-            else if (UserBattleStatus != null)
+
+            if (UserBattleStatus != null)
             {
                 name = UserBattleStatus.Name;
                 if (UserBattleStatus.IsSpectator) SortCategory = (int)PlayerListItem.SortCats.Spectators;

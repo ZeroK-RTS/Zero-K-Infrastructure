@@ -164,9 +164,8 @@ namespace ZeroKLobby.Notifications
 
                     RefreshTooltip();
                     
-                    var team = battle.GetFreeTeamID(client.UserName);
 
-                    client.ChangeMyBattleStatus(desiredSpectatorState, HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced, 0, team);
+                    client.ChangeMyBattleStatus(desiredSpectatorState, HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced, 0);
                 };
 
 
@@ -443,19 +442,11 @@ namespace ZeroKLobby.Notifications
                 }
             }
 
-            // fix my id
-            int? team = null;
-
-            if (battle.Users.Values.Count(x => !x.IsSpectator && x.TeamNumber == currentStatus.TeamNumber) > 1)
-            {
-                team = battle.GetFreeTeamID(client.UserName);
-            }
 
             bool spec = radioSpec.Checked;
-            if ((sync.HasValue && sync != currentStatus.SyncStatus) || (team.HasValue && team != currentStatus.TeamNumber) ||
-                (currentStatus.IsSpectator != spec))
+            if ((sync.HasValue && sync != currentStatus.SyncStatus) || (currentStatus.IsSpectator != spec))
             {
-                client.ChangeMyBattleStatus(spec, sync, null, team);
+                client.ChangeMyBattleStatus(spec, sync);
             }
         }
 

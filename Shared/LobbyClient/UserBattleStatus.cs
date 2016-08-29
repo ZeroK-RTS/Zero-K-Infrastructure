@@ -34,15 +34,12 @@ namespace LobbyClient
 		[JsonIgnore]
         public User LobbyUser;
 
-		public int TeamNumber;
-
 
 	    public void UpdateWith(UpdateUserBattleStatus u)
 	    {
 	        if (u != null) {
                 if (u.Name != Name) throw new Exception(string.Format("Applying update of {0} to user {1}", u.Name, Name));
                 if (u.AllyNumber.HasValue) AllyNumber = u.AllyNumber.Value;
-                if (u.TeamNumber.HasValue) TeamNumber = u.TeamNumber.Value;
                 if (u.IsSpectator.HasValue) IsSpectator = u.IsSpectator.Value;
                 if (u.Sync.HasValue) SyncStatus = u.Sync.Value;
 	        }
@@ -55,7 +52,6 @@ namespace LobbyClient
 	            AllyNumber = AllyNumber,
 	            IsSpectator = IsSpectator,
 	            Sync = SyncStatus,
-	            TeamNumber = TeamNumber
 	        };
 	    }
 
@@ -85,7 +81,7 @@ namespace LobbyClient
 			if (ReferenceEquals(this, other)) return true;
 			return other.AllyNumber == AllyNumber && other.IsSpectator.Equals(IsSpectator) &&
 			       other.JoinTime.Equals(JoinTime) && Equals(other.Name, Name) &&
-			       Equals(other.SyncStatus, SyncStatus) &&  other.TeamNumber == TeamNumber;
+			       Equals(other.SyncStatus, SyncStatus);
 		}
 
 
@@ -121,7 +117,6 @@ namespace LobbyClient
                 AllyID = this.AllyNumber,
                 Name = this.Name,
                 LobbyID = this.LobbyUser.AccountID,
-                TeamID = this.TeamNumber,
                 IsSpectator = this.IsSpectator,
                 ScriptPassword = this.ScriptPassword
 	        };
