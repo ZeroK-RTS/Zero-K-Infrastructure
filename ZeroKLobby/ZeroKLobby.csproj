@@ -200,12 +200,6 @@
     <Compile Include="MicroLobby\HexToUnicodeConverter.Designer.cs">
       <DependentUpon>HexToUnicodeConverter.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\SkirmishControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\SkirmishControl.Designer.cs">
-      <DependentUpon>SkirmishControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="MicroLobby\TextColoringPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -508,9 +502,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ExtrasTab\LocalReplay.resx">
       <DependentUpon>LocalReplay.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\ExtrasTab\SkirmishControl.resx">
-      <DependentUpon>SkirmishControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\PwBar.resx">
       <DependentUpon>PwBar.cs</DependentUpon>

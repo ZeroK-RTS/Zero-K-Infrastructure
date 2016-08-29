@@ -306,7 +306,6 @@ namespace ZeroKLobby
             AddTabPage(new SettingsTab(), "Settings");
             AddTabPage(new ServerTab(), "Server");
             AddTabPage(new DownloaderTab(), "Rapid");
-            AddTabPage(new SkirmishControl(), "Skirmish");
             var home = AddTabPage(new WelcomeTab(), "Welcome");
 
             tabControl.SelectTab(home);
