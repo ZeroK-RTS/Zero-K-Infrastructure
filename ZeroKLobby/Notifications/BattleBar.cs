@@ -20,7 +20,6 @@ namespace ZeroKLobby.Notifications
 
         bool isVisible;
         string lastBattleFounder;
-        string lastScript;
 
         readonly Random random = new Random();
         object speech;
@@ -169,16 +168,14 @@ namespace ZeroKLobby.Notifications
             {
                 try
                 {
-                    if (client.MyBattle.Users[client.UserName].ScriptPassword == null) btnStart.Text = "Watch";
-                    else btnStart.Text = "Rejoin";
+                    btnStart.Text = "Rejoin";
 
                     if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced)
                     {
                         if (Utils.VerifySpringInstalled())
                         {
                             if (spring.IsRunning) spring.ExitGame();
-                            lastScript = spring.ConnectGame(e.Ip, e.Port, client.UserName, e.ScriptPassword, e.Engine);
-                            //use MT tag when in spectator slot
+                            spring.ConnectGame(e.Ip, e.Port, client.UserName, e.ScriptPassword, e.Engine);
                         }
                     }
                 }
@@ -315,16 +312,6 @@ namespace ZeroKLobby.Notifications
             return false;
         }
 
-        public void Rejoin()
-        {
-            if (Utils.VerifySpringInstalled())
-            {
-                if (spring.IsRunning) spring.ExitGame();
-                //if (client.MyBattle != null) spring.ConnectGame(client.MyBattle.Ip, client.MyBattle.HostPort, client.UserName, client.MyBattle.Users[client.UserName].ScriptPassword);
-                //else spring.RunLocalScriptGame(lastScript); //rejoining a running game from outside the battleroom???
-            }
-        }
-
         public void StartManualBattle(int battleID, string password)
         {
             Trace.TraceInformation("Joining battle {0}", battleID);
@@ -426,15 +413,7 @@ namespace ZeroKLobby.Notifications
         }
 
 
-        bool IsHostGameRunning()
-        {
-            if (client != null)
-            {
-                var bat = client.MyBattle;
-                if (bat != null) return bat.IsInGame;
-            }
-            return false;
-        }
+        bool IsHostGameRunning() => client?.MyBattle?.IsInGame == true;
 
 
         void ManualBattleStarted()
@@ -457,7 +436,10 @@ namespace ZeroKLobby.Notifications
         public void btnStart_Click(object sender, EventArgs e)
         {
             NavigationControl.Instance.Path = "chat/battle";
-            if (IsHostGameRunning()) Rejoin();
+            if (IsHostGameRunning())
+            {
+                client.RequestConnectSpring(client?.MyBattle?.BattleID?? 0);
+            }
             else client.Say(SayPlace.Battle, "", "!start", false);
         }
 

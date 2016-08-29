@@ -351,19 +351,23 @@ namespace ZkLobbyServer
             {
                 if (us != null)
                 {
-                    await
-                        server.Broadcast(Users.Keys,
-                            new ConnectSpring()
-                            {
-                                Engine = EngineVersion,
-                                Ip = hostingIp,
-                                Port = hostingPort,
-                                Resources = new List<string>() { MapName, ModName },
-                                ScriptPassword = us.ScriptPassword
-                            });
+                    ConnectedUser user;
+                    if (server.ConnectedUsers.TryGetValue(us.Name, out user)) await user.SendCommand(GetConnectSpringStructure(us));
                 }
             }
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
+        }
+
+        public ConnectSpring GetConnectSpringStructure(UserBattleStatus us)
+        {
+            return new ConnectSpring()
+            {
+                Engine = EngineVersion,
+                Ip = hostingIp,
+                Port = hostingPort,
+                Resources = new List<string>() { MapName, ModName },
+                ScriptPassword = us.ScriptPassword
+            };
         }
 
 

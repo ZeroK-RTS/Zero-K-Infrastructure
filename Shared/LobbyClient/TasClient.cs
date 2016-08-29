@@ -860,5 +860,10 @@ namespace LobbyClient
         {
             return SendCommand(new LinkSteam() { Token = token });
         }
+
+        public Task RequestConnectSpring(int battleID)
+        {
+            return SendCommand(new RequestConnectSpring() { BattleID = battleID });
+        }
     }
 }

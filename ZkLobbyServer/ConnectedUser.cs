@@ -228,6 +228,25 @@ namespace ZkLobbyServer
         }
 
 
+        public async Task Process(RequestConnectSpring connectSpring)
+        {
+            if (!IsLoggedIn) return;
+
+            ServerBattle battle;
+            if (state.Battles.TryGetValue(connectSpring.BattleID, out battle) && battle.IsInGame)
+            {
+                UserBattleStatus ubs;
+                if (!battle.Users.TryGetValue(Name, out ubs))
+                {
+                    await Respond("Not in battle room, join battle room first");
+                    return;
+                }
+                await SendCommand(battle.GetConnectSpringStructure(ubs));
+            }
+            else await Respond("No such running battle found");
+        }
+
+
 
         public async Task Process(Say say)
         {

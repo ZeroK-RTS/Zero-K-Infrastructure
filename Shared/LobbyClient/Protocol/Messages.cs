@@ -55,9 +55,6 @@ namespace LobbyClient
         {
             ZeroKLobby = 1,
             Linux = 2,
-            SpringieManaged = 4,
-            Springie = 8,
-
         }
 
         public ClientTypes ClientType;
@@ -119,9 +116,6 @@ namespace LobbyClient
         public enum Code
         {
             Ok = 0,
-
-            [Description("already connected")]
-            AlreadyConnected = 1,
 
             [Description("invalid name")]
             InvalidName = 2,
@@ -527,6 +521,13 @@ namespace LobbyClient
         public string ScriptPassword { get; set; }
         public string Engine { get; set; }
         public List<string> Resources { get; set; } = new List<string>();
+    }
+
+
+    [Message(Origin.Client)]
+    public class RequestConnectSpring
+    {
+        public int BattleID { get; set; }
     }
 
 
