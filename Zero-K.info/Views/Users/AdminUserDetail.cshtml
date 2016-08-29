@@ -109,7 +109,7 @@
     <br/>
 
     <h2>Modify user rating</h2>
-    <form method="post" action="@Url.Action("ChangeElo", "Users", new { accountID = Model.AccountID, adminAccountID = Global.AccountID })">
+    <form method="post" action="@Url.Action("ChangeElo", "Users", new { accountID = Model.AccountID })">
         Team newbie malus: @Html.TextBox("eloweight", Model.EloWeight)
         1v1 newbie malus: @Html.TextBox("eloweight1v1", Model.Elo1v1Weight)
         Malus 6 is max (normal experienced player)
@@ -117,7 +117,7 @@
     </form>
 
     <h2>Modify user permissions</h2>
-    <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID, adminAccountID = Global.AccountID })">
+    <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID })">
         Zero-K admin: @Html.CheckBox("zkAdmin", Model.IsZeroKAdmin)
         VPN exception: @Html.CheckBox("vpnException", Model.HasVpnException)
         <input type="submit" />
