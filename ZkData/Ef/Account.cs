@@ -23,7 +23,6 @@ namespace ZkData
             EloPw = 1500;
             EloWeight = 1;
             Elo1v1Weight = 1;
-            SpringieLevel = 1;
             FirstLogin = DateTime.UtcNow;
             LastLogin = DateTime.UtcNow;
             LastLogout = DateTime.UtcNow;
@@ -115,7 +114,6 @@ namespace ZkData
         public bool IsDeleted { get; set; }
         [StringLength(50)]
         public string Avatar { get; set; }
-        public int SpringieLevel { get; set; }
         [StringLength(200)]
         public string LobbyVersion { get; set; }
         public double PwDropshipsProduced { get; set; }
@@ -184,6 +182,10 @@ namespace ZkData
         public virtual ICollection<SpringBattle> SpringBattles { get; set; }
         public virtual ICollection<SpringBattlePlayer> SpringBattlePlayers { get; set; }
         public virtual ICollection<Event> Events { get; set; }
+        [InverseProperty("Owner")]
+        public virtual ICollection<AccountRelation> RelalationsByOwner { get; set; } = new List<AccountRelation>();
+        [InverseProperty("Target")]
+        public virtual ICollection<AccountRelation> RelalationsByTarget { get; set; } = new List<AccountRelation>();
         public virtual Clan Clan { get; set; }
 
 
@@ -322,7 +324,6 @@ namespace ZkData
         public void CheckLevelUp()
         {
             if (Xp > GetXpForLevel(Level + 1)) Level++;
-            if (Level == GlobalConst.LevelForElevatedSpringieRights && SpringieLevel == 1) SpringieLevel = 2;
         }
 
         public int GetBomberCapacity()
@@ -587,11 +588,6 @@ namespace ZkData
         public IIdentity Identity { get { return this; } }
         public bool CanEditWiki() => Level >= GlobalConst.WikiEditLevel;
 
-        public int GetEffectiveSpringieLevel()
-        {
-            if (PunishmentsByAccountID.Any(x => x.SetRightsToZero && !x.IsExpired)) return 0;
-            return SpringieLevel;
-        }
 
         public static bool IsValidLobbyName(string name)
         {

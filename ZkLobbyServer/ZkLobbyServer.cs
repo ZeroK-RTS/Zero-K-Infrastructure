@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using LobbyClient;
 using MaxMind.Db;
 using MaxMind.GeoIP2;
+using PlasmaShared;
 using ZkData;
 
 namespace ZkLobbyServer
@@ -32,10 +33,12 @@ namespace ZkLobbyServer
         public SteamWebApi SteamWebApi;
 
         public string Version { get; private set; }
+        public IPlanetwarsEventCreator PlanetWarsEventCreator { get; private set; }
 
 
-        public ZkLobbyServer(string geoIPpath)
+        public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator)
         {
+            this.PlanetWarsEventCreator = creator;
             var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();
             Engine = GlobalConst.DefaultEngineOverride;
@@ -90,7 +93,7 @@ namespace ZkLobbyServer
 
         public List<Battle> GetPlanetWarsBattles()
         {
-            return Battles.Values.Where(x => x.Founder.Name.StartsWith("PlanetWars")).Cast<Battle>().ToList();
+            return Battles.Values.Where(x => x.Mode == AutohostMode.Planetwars).Cast<Battle>().ToList();
         }
 
         public Task GhostChanSay(string channelName, string text, bool isEmote = true, bool isRing = false)
@@ -144,6 +147,10 @@ namespace ZkLobbyServer
                 case SayPlace.Battle:
                     ServerBattle battle;
                     if (Battles.TryGetValue(battleID.Value, out battle)) await Broadcast(battle.Users.Keys, say);
+                    break;
+                case SayPlace.BattlePrivate:
+                    ConnectedUser originUser;
+                    if (ConnectedUsers.TryGetValue(say.Target, out originUser)) await originUser.SendCommand(say);
                     break;
             }
 

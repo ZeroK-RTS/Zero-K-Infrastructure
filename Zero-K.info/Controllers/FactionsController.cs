@@ -29,7 +29,7 @@ namespace ZeroKWeb.Controllers
 
             Faction faction = db.Factions.Single(x => x.FactionID == id);
             if (faction.IsDeleted && !(Global.Account.Clan != null && Global.Account.Clan.FactionID == id)) throw new ApplicationException("Cannot join deleted faction");
-            db.Events.InsertOnSubmit(Global.CreateEvent("{0} joins {1}", acc, faction));
+            db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} joins {1}", acc, faction));
             db.SaveChanges();
             return RedirectToAction("Index", "Factions");
         }
@@ -55,9 +55,9 @@ namespace ZeroKWeb.Controllers
             }
 
 
-            db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves faction {1}", acc, acc.Faction));
+            db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} leaves faction {1}", acc, acc.Faction));
             db.SaveChanges();
-            PlanetwarsController.SetPlanetOwners(db);
+            PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator(), db);
 
 
             using (var db2 = new ZkDataContext())
@@ -66,7 +66,7 @@ namespace ZeroKWeb.Controllers
                 acc2.FactionID = null;
                 db2.SaveChanges();
 
-                PlanetwarsController.SetPlanetOwners(db2);
+                PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator(), db2);
             }
             return faction;
         }
@@ -161,7 +161,7 @@ namespace ZeroKWeb.Controllers
             if (!string.IsNullOrEmpty(propose)) {
                 treaty.TreatyState = TreatyState.Proposed;
                 
-                db.Events.InsertOnSubmit(Global.CreateEvent("{0} proposes a new treaty between {1} and {2} - {3}",treaty.AccountByProposingAccountID, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, treaty));
+                db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} proposes a new treaty between {1} and {2} - {3}",treaty.AccountByProposingAccountID, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, treaty));
 
                 db.SaveChanges();
                 return RedirectToAction("Detail", new { id = treaty.ProposingFactionID});
@@ -178,7 +178,7 @@ namespace ZeroKWeb.Controllers
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             if (treaty.CanCancel(acc)) {
                 treaty.TreatyState = TreatyState.Invalid;
-                db.Events.InsertOnSubmit(Global.CreateEvent("Treaty {0} between {1} and {2} cancelled by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
+                db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("Treaty {0} between {1} and {2} cancelled by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
                 db.SaveChanges();
 
                 return RedirectToAction("Detail", new { id = Global.FactionID });
@@ -197,7 +197,7 @@ namespace ZeroKWeb.Controllers
                 treaty.AccountByProposingAccountID = acc;
                 treaty.FactionByProposingFactionID = acc.Faction;
                 treaty.TreatyState = TreatyState.Invalid;
-                db.Events.InsertOnSubmit(Global.CreateEvent("{0} modified treaty proposal {1} between {2} and {3}", acc, treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID));
+                db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} modified treaty proposal {1} between {2} and {3}", acc, treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID));
                 db.SaveChanges();
 
                 return View("FactionTreatyDefinition", treaty);
@@ -219,7 +219,7 @@ namespace ZeroKWeb.Controllers
             if (treaty.CanAccept(acc) && treaty.ProcessTrade(true)) {
                 treaty.AcceptedAccountID = acc.AccountID;
                 treaty.TreatyState = TreatyState.Accepted;
-                db.Events.InsertOnSubmit(Global.CreateEvent("Treaty {0} between {1} and {2} accepted by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
+                db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("Treaty {0} between {1} and {2} accepted by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
                 db.SaveChanges();
 
                 return RedirectToAction("Detail", new { id = Global.FactionID });

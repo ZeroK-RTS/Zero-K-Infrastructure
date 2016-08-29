@@ -183,11 +183,10 @@ namespace ZeroKLobby
 
                 
 
-                SpringPaths = new SpringPaths(null, contentDir);
-                SpringPaths.MakeFolders();
+                SpringPaths = new SpringPaths(contentDir);
 
                 // speed up spring start
-                SpringPaths.SpringVersionChanged += (sender, eventArgs) =>
+                SpringPaths.SpringVersionChanged += (sender, engine) =>
                 {
                     ZkData.Utils.StartAsync(
                         () =>
@@ -195,7 +194,7 @@ namespace ZeroKLobby
                             UnitSync unitSync = null;
                             try
                             {
-                                unitSync = new UnitSync(SpringPaths); // initialize unitsync to avoid slowdowns when starting
+                                unitSync = new UnitSync(SpringPaths, engine); // initialize unitsync to avoid slowdowns when starting
 
                                 if (unitSync.UnitsyncWritableFolder != SpringPaths.WritableDirectory)
                                 {
@@ -259,7 +258,7 @@ namespace ZeroKLobby
 
                 Downloader = new PlasmaDownloader.PlasmaDownloader(SpringScanner, SpringPaths); //rapid
                 Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
-                Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
+                Downloader.GetEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
 
                 var isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
                 TasClient = new TasClient(string.Format("ZK {0}{1}", SelfUpdater.CurrentVersion, isLinux ? " linux" : ""));

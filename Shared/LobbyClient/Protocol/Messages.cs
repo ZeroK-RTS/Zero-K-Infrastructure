@@ -221,7 +221,6 @@ namespace LobbyClient
     public class User
     {
         public int AccountID;
-        public int SpringieLevel;
         public ulong? SteamID;
         public DateTime? AwaySince;
         public string Clan;
@@ -252,7 +251,6 @@ namespace LobbyClient
         public void UpdateWith(User u)
         {
             AccountID = u.AccountID;
-            SpringieLevel = u.SpringieLevel;
             SteamID = u.SteamID;
             AwaySince = u.AwaySince;
             Clan = u.Clan;
@@ -264,14 +262,12 @@ namespace LobbyClient
             InGameSince = u.InGameSince;
             IsAdmin = u.IsAdmin;
             IsBot = u.IsBot;
-            // todo hacky fix IsInBattleRoom = u.IsInBattleRoom;
             BanMute = u.BanMute;
             BanSpecChat = u.BanSpecChat;
             Level = u.Level;
             ClientType = u.ClientType;
             LobbyVersion = u.LobbyVersion;
             DisplayName = u.DisplayName;
-            Name = u.Name;
         }
 
         public override string ToString()
@@ -332,9 +328,10 @@ namespace LobbyClient
         public int? SpectatorCount;
         public string Password;
         public string Title;
-        public int? Port;
-        public string Ip;
         public string Founder;
+        public AutohostMode? Mode;
+        public bool? IsRunning;
+        public DateTime? RunningSince;
     }
 
     [Message(Origin.Server)]
@@ -368,10 +365,6 @@ namespace LobbyClient
     {
         public int BattleID;
         public string User;
-        /// <summary>
-        /// Only sent to the battle host and the joining client.
-        /// </summary>
-        public string ScriptPassword;
     }
 
 
@@ -421,19 +414,6 @@ namespace LobbyClient
     {
         public bool? IsInGame;
         public bool? IsAfk;
-    }
-
-    [Message(Origin.Client | Origin.Server)]
-    public class SetRectangle
-    {
-        /// <summary>
-        /// Which ally-team this start-box is for
-        /// </summary>
-        public int Number;
-        /// <summary>
-        /// Start-box coordinates; if not present, removes that ally-team's box
-        /// </summary>
-        public BattleRect Rectangle;
     }
 
     [Message(Origin.Client | Origin.Server)]
@@ -530,6 +510,25 @@ namespace LobbyClient
             public string PlanetName { get; set; }
 
         }
+    }
+
+
+    [Message(Origin.Client)]
+    public class SetAccountRelation
+    {
+        public string TargetName { get; set; }
+        public Relation Relation { get; set; }
+    }
+
+
+    [Message(Origin.Server)]
+    public class ConnectSpring
+    {
+        public string Ip { get; set; }
+        public int Port { get; set; }
+        public string ScriptPassword { get; set; }
+        public string Engine { get; set; }
+        public List<string> Resources { get; set; } = new List<string>();
     }
 
 

@@ -58,22 +58,5 @@ namespace ZkData
         {
             dbSet.Remove(target);
         }
-
-        public static AutohostConfig GetConfig(this BattleContext ctx)
-        {
-            if (ctx == null || string.IsNullOrEmpty(ctx.AutohostName)) return null;
-            var db = new ZkDataContext();
-            var name = ctx.AutohostName.TrimNumbers();
-            return db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
-        }
-
-        public static AutohostMode GetMode(this BattleContext ctx)
-        {
-            var conf = GetConfig(ctx);
-            return ctx.mode ?? conf?.AutohostMode ?? AutohostMode.None;
-        }
-
-
-
 	}
 }

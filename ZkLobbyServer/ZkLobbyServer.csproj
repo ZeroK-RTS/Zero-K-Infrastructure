@@ -63,6 +63,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Tpl.Dataflow.4.5.24\lib\portable-net45+win8+wpa81\System.Threading.Tasks.Dataflow.dll</HintPath>
@@ -74,6 +75,38 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="autohost\Commands\CmdBalance.cs" />
+    <Compile Include="autohost\Commands\CmdCheats.cs" />
+    <Compile Include="autohost\Commands\CmdEndvote.cs" />
+    <Compile Include="autohost\Commands\CmdEngine.cs" />
+    <Compile Include="autohost\Commands\CmdExit.cs" />
+    <Compile Include="autohost\Commands\CmdHelp.cs" />
+    <Compile Include="autohost\Commands\CmdHostsay.cs" />
+    <Compile Include="autohost\Commands\CmdKick.cs" />
+    <Compile Include="autohost\Commands\CmdListEngines.cs" />
+    <Compile Include="autohost\Commands\CmdListGames.cs" />
+    <Compile Include="autohost\Commands\CmdListMaps.cs" />
+    <Compile Include="autohost\Commands\CmdGame.cs" />
+    <Compile Include="autohost\Commands\CmdListOptions.cs" />
+    <Compile Include="autohost\Commands\CmdMap.cs" />
+    <Compile Include="autohost\Commands\CmdMaxPlayers.cs" />
+    <Compile Include="autohost\Commands\CmdN.cs" />
+    <Compile Include="autohost\Commands\CmdNotify.cs" />
+    <Compile Include="autohost\Commands\CmdPassword.cs" />
+    <Compile Include="autohost\Commands\CmdPredict.cs" />
+    <Compile Include="autohost\Commands\CmdResetOptions.cs" />
+    <Compile Include="autohost\Commands\CmdResign.cs" />
+    <Compile Include="autohost\Commands\CmdRing.cs" />
+    <Compile Include="autohost\Commands\CmdSetOptions.cs" />
+    <Compile Include="autohost\Commands\CmdSpec.cs" />
+    <Compile Include="autohost\Commands\CmdStart.cs" />
+    <Compile Include="autohost\Commands\CmdTitle.cs" />
+    <Compile Include="autohost\Commands\CmdType.cs" />
+    <Compile Include="autohost\Commands\CmdVote.cs" />
+    <Compile Include="autohost\Commands\CmdY.cs" />
+    <Compile Include="autohost\MapPicker.cs" />
+    <Compile Include="autohost\CommandPoll.cs" />
+    <Compile Include="autohost\Commands\BattleCommand.cs" />
     <Compile Include="ChannelManager.cs" />
     <Compile Include="ChatRelay.cs" />
     <Compile Include="ClientConnection.cs" />
@@ -81,10 +114,19 @@
     <Compile Include="ITransportServerListener.cs" />
     <Compile Include="LoginChecker.cs" />
     <Compile Include="ConnectedUser.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="MainConfig.cs" />
     <Compile Include="OfflineMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerBattle.cs" />
     <Compile Include="ServerRunner.cs" />
+    <Compile Include="SpringieInterface\Balancer.cs" />
+    <Compile Include="SpringieInterface\BattleResultHandler.cs" />
+    <Compile Include="SpringieInterface\PlanetWarsMatchMaker.cs" />
+    <Compile Include="SpringieInterface\PlanetWarsTurnHandler.cs" />
+    <Compile Include="SpringieInterface\PlayerJoinHandler.cs" />
+    <Compile Include="SpringieInterface\StartSetup.cs" />
+    <Compile Include="utils\Utils.cs" />
     <Compile Include="ZkLobbyServer.cs" />
     <Compile Include="TcpTransportServerListener.cs" />
     <Compile Include="ZkServerTraceListener.cs" />
@@ -97,6 +139,10 @@
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
       <Project>{c91cc692-53fc-40b7-8b9a-2a57edee331e}</Project>
       <Name>LobbyClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Shared\PlasmaDownloader\PlasmaDownloader.csproj">
+      <Project>{f3f74776-46a9-4415-b76e-ceec771c2aba}</Project>
+      <Name>PlasmaDownloader</Name>
     </ProjectReference>
     <ProjectReference Include="..\Shared\PlasmaShared\PlasmaShared.csproj">
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>

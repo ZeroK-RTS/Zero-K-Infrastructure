@@ -237,7 +237,7 @@ namespace ZeroKLobby.MicroLobby
                     g.InterpolationMode = InterpolationMode.Default;
                 }
                 g.SetClip(new Rectangle(0, 0, scaledWidth, scaledHeight));
-                String mod_and_engine_name = string.Format("{0}     {1}{2}", Battle.ModName, Battle.EngineName, Battle.EngineVersion);
+                String mod_and_engine_name = string.Format("{0}     spring{1}", Battle.ModName, Battle.EngineVersion);
                 int y = (int)3;
                 int offset = (int)16;
                 int curMapCellSize = (int)MapCellSize.Width;
@@ -254,7 +254,7 @@ namespace ZeroKLobby.MicroLobby
                     int offset_offset = (int)4; //this squishes modName & engine-name and dude-icons together abit
                     int offset_offset2 = (int)6; //this squished modName & engine-name into 2 tight lines
                     TextRenderer.DrawText(g, Battle.ModName, ModFont, new Point(curMapCellSize, y + offset * 1 - offset_offset), Config.TextColor);
-                    TextRenderer.DrawText(g, string.Format("{0}{1}", Battle.EngineName, Battle.EngineVersion), 
+                    TextRenderer.DrawText(g, string.Format("spring{0}", Battle.EngineVersion), 
                         ModFont, new Point(curMapCellSize, y + offset * 2 - offset_offset - offset_offset2), Config.TextColor);
                     g.DrawImageUnscaled(playersBoxImage, curMapCellSize, y + offset * 3 - offset_offset - offset_offset2);
                 }

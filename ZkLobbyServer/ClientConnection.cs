@@ -110,21 +110,7 @@ namespace ZkLobbyServer
                         await
                             SendCommand(new BattleAdded()
                             {
-                                Header =
-                                    new BattleHeader()
-                                    {
-                                        BattleID = b.BattleID,
-                                        Engine = b.EngineVersion,
-                                        Game = b.ModName,
-                                        Founder = b.Founder.Name,
-                                        Map = b.MapName,
-                                        Ip = b.Ip,
-                                        Port = b.HostPort,
-                                        Title = b.Title,
-                                        SpectatorCount = b.SpectatorCount,
-                                        MaxPlayers = b.MaxPlayers,
-                                        Password = b.Password != null ? "?" : null
-                                    }
+                                Header = b.GetHeader()
                             });
 
                         foreach (var u in b.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });

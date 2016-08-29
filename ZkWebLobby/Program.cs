@@ -24,13 +24,12 @@ namespace ZkWebLobby
         //[STAThread]
         private static void Main(params string[] args) {
             var startupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
-            var springPaths = new SpringPaths(null, startupPath);
+            var springPaths = new SpringPaths(startupPath);
             Spring runningSpring = null;
-            springPaths.MakeFolders();
             TcpTransport connection = null;
 
             // speed up spring start
-            springPaths.SpringVersionChanged += (sender, eventArgs) =>
+            springPaths.SpringVersionChanged += (sender, engine) =>
             {
                 Utils.StartAsync(
                     () =>
@@ -38,7 +37,7 @@ namespace ZkWebLobby
                         UnitSync unitSync = null;
                         try
                         {
-                            unitSync = new UnitSync(springPaths); // initialize unitsync to avoid slowdowns when starting
+                            unitSync = new UnitSync(springPaths, engine); // initialize unitsync to avoid slowdowns when starting
 
                             if (unitSync.UnitsyncWritableFolder != springPaths.WritableDirectory)
                             {
@@ -75,7 +74,7 @@ namespace ZkWebLobby
 
 
             var downloader = new PlasmaDownloader.PlasmaDownloader(springScanner, springPaths); //rapid
-            downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride);
+            downloader.GetEngine(GlobalConst.DefaultEngineOverride);
 
             // ZKL's downloader doesn't send events to monitor download progress, so we have to poll it.
             Timer pollDownloads = new Timer();
@@ -101,8 +100,8 @@ namespace ZkWebLobby
                 (string engine) =>
                 {
                     // Don't let GetAndSwitchEngine() touch the main SpringPaths.
-                    var path = new SpringPaths(springPaths.GetEngineFolderByVersion(engine), springPaths.WritableDirectory);
-                    downloader.GetAndSwitchEngine(engine, path);
+                    var path = new SpringPaths(springPaths.WritableDirectory);
+                    downloader.GetEngine(engine);
                 });
             CefWrapper.RegisterApiFunction("downloadMod", (string game) => { downloader.GetResource(DownloadType.MOD, game); });
             CefWrapper.RegisterApiFunction("downloadMap", (string map) => { downloader.GetResource(DownloadType.MAP, map); });
@@ -119,16 +118,16 @@ namespace ZkWebLobby
                 {
                     if (runningSpring != null) return null;
                     // Ultimately we should get rid of the concept of a "current set engine", but for now let's work around it.
-                    var path = new SpringPaths(springPaths.GetEngineFolderByVersion(engineVer), springPaths.WritableDirectory);
+                    var path = new SpringPaths(springPaths.WritableDirectory);
                     runningSpring = new Spring(path);
                     runningSpring.SpringExited += (obj, evt) =>
                     {
-                        CefWrapper.ExecuteJavascript("on_spring_exit(" + (evt.Data ? "true" : "false") + ");");
+                        CefWrapper.ExecuteJavascript("on_spring_exit(" + (evt.IsCrash ? "true" : "false") + ");");
                         runningSpring = null;
                     };
                     try
                     {
-                        runningSpring.StartSpring(script);
+                        runningSpring.RunLocalScriptGame(script, engineVer);
                         return null;
                     }
                     catch (Exception e)

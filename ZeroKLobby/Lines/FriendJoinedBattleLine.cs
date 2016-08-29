@@ -25,7 +25,7 @@ namespace ZeroKLobby.Lines
                            UserName,
                            battle.Title,
                            battle.ModName.Trim(),
-                           battle.Founder);
+                           battle.FounderName);
     }
 
     public DateTime Date { get; private set; }

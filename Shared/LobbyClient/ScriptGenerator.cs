@@ -8,30 +8,27 @@ using System.Threading.Tasks;
 using LobbyClient.Legacy;
 using PlasmaShared;
 using ZkData.UnitSyncLib;
-using BattleRect = PlasmaShared.BattleRect;
 
 namespace LobbyClient
 {
     public class ScriptGenerator
     {
+        public const int MaxAllies = 16;
+
         /// <summary>
         /// GEnerates script for connecting to game
         /// </summary>
-        /// <param name="host"></param>
-        /// <param name="port"></param>
-        /// <param name="userName"></param>
-        /// <param name="password"></param>
         /// <returns></returns>
-        public static string GenerateConnectScript(string host, int port, string userName, string password)
+        public static string GenerateConnectScript(Spring.SpringBattleContext context)
         {
             var sb = new StringBuilder();
             sb.AppendLine("[GAME]");
             sb.AppendLine("{");
-            sb.AppendFormat("HostIP={0};\n", host);
-            sb.AppendFormat("HostPort={0};\n", port);
+            sb.AppendFormat("HostIP={0};\n", context.IpAddress);
+            sb.AppendFormat("HostPort={0};\n", context.Port);
             sb.AppendLine("IsHost=0;");
-            sb.AppendFormat("MyPlayerName={0};\n", userName);
-            sb.AppendFormat("MyPasswd={0};\n", password ?? userName);
+            sb.AppendFormat("MyPlayerName={0};\n", context.MyUserName);
+            sb.AppendFormat("MyPasswd={0};\n", context.MyPassword ?? context.MyPassword);
             sb.AppendLine("}");
             return sb.ToString();
         }
@@ -40,8 +37,7 @@ namespace LobbyClient
         /// <summary>
         /// Generates script for hosting a game
         /// </summary>
-        public static string GenerateHostScript(BattleContext startContext, SpringBattleStartSetup startSetup, int loopbackListenPort,
-                                                string zkSearchTag, string host, int port, string myname = null, string mypassword = null)
+        public static string GenerateHostScript(Spring.SpringBattleContext context, int loopbackListenPort)
         {
             var previousCulture = Thread.CurrentThread.CurrentCulture;
             try {
@@ -52,27 +48,27 @@ namespace LobbyClient
                 script.AppendLine("[GAME]");
                 script.AppendLine("{");
 
-                script.AppendFormat("  ZkSearchTag={0};\n", zkSearchTag);
-                script.AppendFormat("  Mapname={0};\n", startContext.Map);
+                script.AppendFormat("  ZkSearchTag={0};\n", Guid.NewGuid());
+                script.AppendFormat("  Mapname={0};\n", context.LobbyStartContext.Map);
 
-                script.AppendFormat("  StartPosType={0};\n", startContext.IsMission ? 3 : 2);
+                script.AppendFormat("  StartPosType={0};\n", context.LobbyStartContext.IsMission ? 3 : 2);
 
-                script.AppendFormat("  GameType={0};\n", startContext.Mod);
+                script.AppendFormat("  GameType={0};\n", context.LobbyStartContext.Mod);
                 script.AppendFormat("  ModHash=1;\n");
                 script.AppendFormat("  MapHash=1;\n");
 
                 script.AppendFormat("  AutohostPort={0};\n", loopbackListenPort);
                 script.AppendLine();
-                script.AppendFormat("  HostIP={0};\n", host);
-                script.AppendFormat("  HostPort={0};\n", port);
+                script.AppendFormat("  HostIP={0};\n", context.IpAddress);
+                script.AppendFormat("  HostPort={0};\n", context.Port);
                 //script.AppendFormat("  SourcePort={0};\n", 8300);
                 script.AppendFormat("  IsHost=1;\n");
                 script.AppendLine();
 
-                if (!string.IsNullOrEmpty(myname)) script.AppendFormat("  MyPlayerName={0};\n", myname);
-                if (!string.IsNullOrEmpty(mypassword) || !string.IsNullOrEmpty(myname)) script.AppendFormat("  MyPasswd={0};\n", mypassword??myname);
+                if (!string.IsNullOrEmpty(context.MyUserName)) script.AppendFormat("  MyPlayerName={0};\n", context.MyUserName);
+                if (!string.IsNullOrEmpty(context.MyPassword) || !string.IsNullOrEmpty(context.MyUserName)) script.AppendFormat("  MyPasswd={0};\n", context.MyPassword??context.MyUserName);
 
-                GeneratePlayerSection(script, startContext, startSetup);
+                GeneratePlayerSection(script, context);
 
                 return script.ToString();
             } finally {
@@ -80,7 +76,7 @@ namespace LobbyClient
             }
         }
 
-        static void GeneratePlayerSection(StringBuilder script, BattleContext startContext, SpringBattleStartSetup setup)
+        static void GeneratePlayerSection(StringBuilder script, Spring.SpringBattleContext setup)
         {
             // ordinary battle stuff
 
@@ -88,15 +84,19 @@ namespace LobbyClient
             var teamNum = 0;
             var aiNum = 0;
 
-            foreach (var u in startContext.Players) {
-                ScriptAddUser(script, userNum, u, teamNum, setup.UserParameters.FirstOrDefault(x => x.LobbyID == u.LobbyID));
+            foreach (var u in setup.LobbyStartContext.Players)
+            {
+                Dictionary<string, string> parameters = new Dictionary<string, string>();
+                setup?.LobbyStartContext?.UserParameters.TryGetValue(u.Name, out parameters);
+
+                ScriptAddUser(script, userNum, u, teamNum, parameters);
 
                 if (!u.IsSpectator) {
                     ScriptAddTeam(script, teamNum, userNum, u.AllyID);
                     teamNum++;
                 }
 
-                foreach (var b in startContext.Bots.Where(x => x.Owner == u.Name)) {
+                foreach (var b in setup.LobbyStartContext.Bots.Where(x => x.Owner == u.Name)) {
                     ScriptAddBot(script, aiNum, teamNum, userNum, b.BotAI, b.BotName);
                     aiNum++;
                     ScriptAddTeam(script, teamNum, userNum, b.AllyID);
@@ -109,19 +109,10 @@ namespace LobbyClient
             var startboxes = new StringBuilder();
             startboxes.Append("return { ");
             script.AppendLine();
-            for (var allyNumber = 0; allyNumber < Spring.MaxAllies; allyNumber++) {
+            for (var allyNumber = 0; allyNumber < MaxAllies; allyNumber++) {
                 script.AppendFormat("[ALLYTEAM{0}]\n", allyNumber);
                 script.AppendLine("{");
                 script.AppendLine("     NumAllies=0;");
-                BattleRect rect;
-                if (startContext.Rectangles!=null && startContext.Rectangles.TryGetValue(allyNumber, out rect)) {
-                    double left = 0, top = 0, right = 1, bottom = 1;
-                    rect.ToFractions(out left, out top, out right, out bottom);
-                    startboxes.AppendFormat(CultureInfo.InvariantCulture, "[{0}] = ", allyNumber);
-                    startboxes.Append("{ ");
-                    startboxes.AppendFormat(CultureInfo.InvariantCulture, "{0}, {1}, {2}, {3}", left, top, right, bottom);
-                    startboxes.Append(" }, ");
-                }
                 script.AppendLine("}");
             }
 
@@ -133,13 +124,9 @@ namespace LobbyClient
 
             script.AppendFormat("    startboxes={0};\n", startboxes.ToString());
 
-            var options = new Dictionary<string, string>(startContext.ModOptions);
-
-            // replace/add custom modoptions from startsetup (if they exist)
-            if (setup != null && setup.ModOptions != null) foreach (var entry in setup.ModOptions) options[entry.Key] = entry.Value;
 
             // write final options to script
-            foreach (var kvp in options) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
+            foreach (var kvp in setup?.LobbyStartContext?.ModOptions) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
 
             script.AppendLine("  }");
 
@@ -178,7 +165,7 @@ namespace LobbyClient
         }
 
         static void ScriptAddUser(StringBuilder script, int userNum, PlayerTeam pteam, int teamNum,
-                                  SpringBattleStartSetup.UserCustomParameters customParameters)
+                                  Dictionary<string,string> customParameters)
         {
             // PLAYERS
             script.AppendFormat("  [PLAYER{0}]\n", userNum);
@@ -189,7 +176,7 @@ namespace LobbyClient
 
             if (pteam.ScriptPassword != null) script.AppendFormat("     Password={0};\n", pteam.ScriptPassword);
 
-            if (customParameters != null) foreach (var kvp in customParameters.Parameters) script.AppendFormat("     {0}={1};\n", kvp.Key, kvp.Value);
+            if (customParameters != null) foreach (var kvp in customParameters) script.AppendFormat("     {0}={1};\n", kvp.Key, kvp.Value);
             script.AppendLine("  }");
         }
     }

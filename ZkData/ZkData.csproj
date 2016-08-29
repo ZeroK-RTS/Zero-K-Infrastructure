@@ -74,11 +74,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbCloner.cs" />
+    <Compile Include="Ef\AccountRelation.cs" />
     <Compile Include="Ef\ForumPostWord.cs" />
     <Compile Include="Ef\Word.cs" />
     <Compile Include="Ef\LobbyChatHistory.cs" />
     <Compile Include="Enums\DecorationIconPositions.cs" />
     <Compile Include="Enums\DecorationIconTypes.cs" />
+    <Compile Include="IPlanetwarsEventCreator.cs" />
     <Compile Include="IEntityAfterChange.cs" />
     <Compile Include="IEntityBeforeChange.cs" />
     <Compile Include="LogEntry.cs" />
@@ -190,6 +192,26 @@
     <Compile Include="Migrations\201608021652112_RemoveJuggler.Designer.cs">
       <DependentUpon>201608021652112_RemoveJuggler.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201608072058387_RemoveAhConfig.cs" />
+    <Compile Include="Migrations\201608072058387_RemoveAhConfig.Designer.cs">
+      <DependentUpon>201608072058387_RemoveAhConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608211530117_AccountRelations.cs" />
+    <Compile Include="Migrations\201608211530117_AccountRelations.Designer.cs">
+      <DependentUpon>201608211530117_AccountRelations.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608231838560_AddRapidTags.cs" />
+    <Compile Include="Migrations\201608231838560_AddRapidTags.Designer.cs">
+      <DependentUpon>201608231838560_AddRapidTags.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608250945022_RemoveSpringieLevel.cs" />
+    <Compile Include="Migrations\201608250945022_RemoveSpringieLevel.Designer.cs">
+      <DependentUpon>201608250945022_RemoveSpringieLevel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201608251454217_RemovecommanderType.cs" />
+    <Compile Include="Migrations\201608251454217_RemovecommanderType.Designer.cs">
+      <DependentUpon>201608251454217_RemovecommanderType.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="Enums\TreatyState.cs" />
@@ -207,7 +229,6 @@
     <Compile Include="Ef\AccountRole.cs" />
     <Compile Include="Ef\AccountUnlock.cs" />
     <Compile Include="Ef\AccountUserID.cs" />
-    <Compile Include="Ef\AutohostConfig.cs" />
     <Compile Include="Ef\Avatar.cs" />
     <Compile Include="Ef\BlockedCompany.cs" />
     <Compile Include="Ef\BlockedHost.cs" />
@@ -412,6 +433,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201608021652112_RemoveJuggler.resx">
       <DependentUpon>201608021652112_RemoveJuggler.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608072058387_RemoveAhConfig.resx">
+      <DependentUpon>201608072058387_RemoveAhConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608211530117_AccountRelations.resx">
+      <DependentUpon>201608211530117_AccountRelations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608231838560_AddRapidTags.resx">
+      <DependentUpon>201608231838560_AddRapidTags.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608250945022_RemoveSpringieLevel.resx">
+      <DependentUpon>201608250945022_RemoveSpringieLevel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608251454217_RemovecommanderType.resx">
+      <DependentUpon>201608251454217_RemovecommanderType.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

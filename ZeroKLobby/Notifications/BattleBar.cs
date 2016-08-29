@@ -17,7 +17,6 @@ namespace ZeroKLobby.Notifications
     {
         readonly TasClient client;
         bool desiredSpectatorState = false;
-        string engineVersionNeeded;
 
         bool isVisible;
         string lastBattleFounder;
@@ -84,7 +83,7 @@ namespace ZeroKLobby.Notifications
                 {
                     client.ChangeMyUserStatus(isInGame: false);
 
-                    if (e.Data)
+                    if (e.IsCrash)
                     {
                         Program.MainWindow.InvokeFunc(() =>
                             {
@@ -133,9 +132,9 @@ namespace ZeroKLobby.Notifications
                     
                     //client.ChangeMyUserStatus(false, false);
                     var battle = client.MyBattle;
-                    lastBattleFounder = battle.Founder.Name;
+                    lastBattleFounder = battle.FounderName;
 
-                    if (battle.Founder.Name.StartsWith("PlanetWars") || battle.Founder.Name.StartsWith("Zk")) ChangeDesiredSpectatorState(false); // TODO pw unpsec hack, remove later
+                    if (battle.FounderName.StartsWith("PlanetWars") || battle.FounderName.StartsWith("Zk")) ChangeDesiredSpectatorState(false); // TODO pw unpsec hack, remove later
 
                     if (battle.IsQueue)
                     {
@@ -158,9 +157,7 @@ namespace ZeroKLobby.Notifications
 
                     Program.Downloader.GetResource(DownloadType.MAP, battle.MapName);
                     Program.Downloader.GetResource(DownloadType.MOD, battle.ModName);
-                    engineVersionNeeded = battle.EngineVersion;
-                    if (engineVersionNeeded != Program.SpringPaths.SpringVersion) Program.Downloader.GetAndSwitchEngine(engineVersionNeeded);
-                    else engineVersionNeeded = null;
+                    Program.Downloader.GetEngine(battle.EngineVersion);
 
                     if (gameBox.Image != null) gameBox.Image.Dispose();
                     CreateBattleIcon(Program.BattleIconManager.GetBattleIcon(battle.BattleID));
@@ -185,29 +182,29 @@ namespace ZeroKLobby.Notifications
 
             client.MyBattleHostExited += (s, e) => { btnStart.Text = "Start"; };
 
-            client.MyBattleStarted += (s, e) =>
+            client.ConnectSpringReceived += (s, e) =>
+            {
+                try
                 {
-                    try
-                    {
-                        if (client.MyBattle.Users[client.UserName].ScriptPassword == null) btnStart.Text = "Watch";
-                        else btnStart.Text = "Rejoin";
+                    if (client.MyBattle.Users[client.UserName].ScriptPassword == null) btnStart.Text = "Watch";
+                    else btnStart.Text = "Rejoin";
 
-                        if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced)
+                    if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced)
+                    {
+                        if (Utils.VerifySpringInstalled())
                         {
-                            if (Utils.VerifySpringInstalled())
-                            {
-                                if (spring.IsRunning) spring.ExitGame();
-                                lastScript = spring.ConnectGame(client.MyBattle.Ip, client.MyBattle.HostPort, client.UserName,
-                                    client.MyBattle.Users[client.UserName].ScriptPassword); //use MT tag when in spectator slot
-                            }
+                            if (spring.IsRunning) spring.ExitGame();
+                            lastScript = spring.ConnectGame(e.Ip, e.Port, client.UserName, e.ScriptPassword, e.Engine);
+                                //use MT tag when in spectator slot
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(this, "Error starting spring: " + ex.Message);
-                    }
-                    RefreshTooltip();
-                };
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, "Error starting spring: " + ex.Message);
+                }
+                RefreshTooltip();
+            };
 
             client.BattleMyUserStatusChanged += (s, e) =>
                 {
@@ -244,7 +241,7 @@ namespace ZeroKLobby.Notifications
                             }
                             else if (client.IsLoggedIn && client.MyBattle == null)
                             {
-                                var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == lastBattleFounder && !x.IsPassworded);
+                                var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.FounderName == lastBattleFounder && !x.IsPassworded);
                                 if (bat != null)
                                 {
                                     ActionHandler.JoinBattle(bat.BattleID, null);
@@ -268,7 +265,7 @@ namespace ZeroKLobby.Notifications
             // process special queue message to display in label
             client.Said += (s, e) =>
             {
-                if (e.Place == SayPlace.Battle && client.MyBattle != null && client.MyBattle.Founder.Name == e.UserName && e.Text.StartsWith("Queue"))
+                if (e.Place == SayPlace.Battle && client.MyBattle != null && client.MyBattle.FounderName == e.UserName && e.Text.StartsWith("Queue"))
                 {
                     var t = e.Text.Substring(6);
                     queueLabelFormatter = Regex.Replace(t,
@@ -359,8 +356,8 @@ namespace ZeroKLobby.Notifications
             if (Utils.VerifySpringInstalled())
             {
                 if (spring.IsRunning) spring.ExitGame();
-                if (client.MyBattle != null) spring.ConnectGame(client.MyBattle.Ip, client.MyBattle.HostPort, client.UserName, client.MyBattle.Users[client.UserName].ScriptPassword);
-                else spring.RunLocalScriptGame(lastScript); //rejoining a running game from outside the battleroom???
+                //if (client.MyBattle != null) spring.ConnectGame(client.MyBattle.Ip, client.MyBattle.HostPort, client.UserName, client.MyBattle.Users[client.UserName].ScriptPassword);
+                //else spring.RunLocalScriptGame(lastScript); //rejoining a running game from outside the battleroom???
             }
         }
 
@@ -371,7 +368,7 @@ namespace ZeroKLobby.Notifications
             if (tas.MyBattle != null)
             {
                 Battle battle;
-                if (tas.ExistingBattles.TryGetValue(battleID, out battle)) tas.Say(SayPlace.Battle, "", string.Format("Going to {0} zk://@join_player:{1}", battle.Title, battle.Founder.Name), true);
+                if (tas.ExistingBattles.TryGetValue(battleID, out battle)) tas.Say(SayPlace.Battle, "", string.Format("Going to {0} zk://@join_player:{1}", battle.Title, battle.FounderName), true);
                 tas.LeaveBattle();
             }
             if (!string.IsNullOrEmpty(password)) Program.TasClient.JoinBattle(battleID, password);
@@ -467,8 +464,7 @@ namespace ZeroKLobby.Notifications
             if (client != null && client.MyBattle != null)
             {
                 var battle = client.MyBattle;
-                return Program.SpringScanner.HasResource(battle.MapName) && Program.SpringScanner.HasResource(battle.ModName) &&
-                       (engineVersionNeeded == null || Program.SpringPaths.SpringVersion == engineVersionNeeded);
+                return Program.SpringScanner.HasResource(battle.MapName) && Program.SpringScanner.HasResource(battle.ModName) && Program.SpringPaths.HasEngineVersion(battle.EngineVersion);
             }
             else return false;
         }
@@ -519,7 +515,7 @@ namespace ZeroKLobby.Notifications
 
         private void CreateBattleIcon(BattleIcon e)
         {
-            if (gameBox.Image == null) gameBox.Image = e.GenerateImage(true);
+            gameBox.Image = e.GenerateImage(true);
         }
 
 

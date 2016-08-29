@@ -15,8 +15,6 @@ namespace ZkData
         public int AccountID { get; set; }
         public bool IsSpectator { get; set; }
         public bool IsInVictoryTeam { get; set; }
-        [StringLength(50)]
-        public string CommanderType { get; set; }
         public int? LoseTime { get; set; }
         public int AllyNumber { get; set; }
         public float? EloChange { get; set; }

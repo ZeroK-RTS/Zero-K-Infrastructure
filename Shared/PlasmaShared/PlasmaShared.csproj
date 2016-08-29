@@ -70,7 +70,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="AuthTools.cs" />
-    <Compile Include="BattleRect.cs" />
     <Compile Include="ChangeEventArgs.cs" />
     <Compile Include="Diagrams\Diagram.cs" />
     <Compile Include="Diagrams\Node.cs" />
@@ -86,23 +85,18 @@
     <Compile Include="IContentService\ResourceType.cs" />
     <Compile Include="IContentService\ReturnValue.cs" />
     <Compile Include="IContentService\ScriptMissionData.cs" />
+    <Compile Include="Relation.cs" />
     <Compile Include="ResizedImageCache.cs" />
     <Compile Include="ResourceInfo.cs" />
-    <Compile Include="ISpringieService\AhConfig.cs" />
     <Compile Include="ISpringieService\AutohostMode.cs" />
     <Compile Include="ISpringieService\BalanceTeamsResult.cs" />
-    <Compile Include="ISpringieService\BattleContext.cs" />
+    <Compile Include="ISpringieService\LobbyHostingContext.cs" />
     <Compile Include="ISpringieService\BattlePlayerResult.cs" />
-    <Compile Include="ISpringieService\BattleResult.cs" />
     <Compile Include="ISpringieService\BotTeam.cs" />
     <Compile Include="ISpringieService\CommandLevel.cs" />
-    <Compile Include="ISpringieService\ISpringieService.cs" />
     <Compile Include="ISpringieService\MovePlayerEntry.cs" />
     <Compile Include="ISpringieService\PlayerJoinResult.cs" />
     <Compile Include="ISpringieService\PlayerTeam.cs" />
-    <Compile Include="ISpringieService\RecommendedMapResult.cs" />
-    <Compile Include="ISpringieService\RectInfo.cs" />
-    <Compile Include="ISpringieService\SpringBattleStartSetup.cs" />
     <Compile Include="ITransport.cs" />
     <Compile Include="LuaTable.cs" />
     <Compile Include="MetaDataCache.cs" />
@@ -142,11 +136,6 @@
     <Compile Include="UnitSyncLib\UnitSync.cs" />
     <Compile Include="UnitSyncLib\UnitSyncException.cs" />
     <Compile Include="UnitSyncLib\VfsMode.cs" />
-    <Compile Include="Web References\ModStats\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <Compile Include="Whois.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -177,11 +166,6 @@
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Web References\ModStats\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\ModStats\StatsCollector.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -213,24 +197,8 @@
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
-    <WebReferenceUrl Include="http://planet-wars.eu/ModStats/StatsCollector.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\ModStats\</RelPath>
-      <UpdateFromURL>http://planet-wars.eu/ModStats/StatsCollector.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>PlasmaShared_ModStats_StatsCollector</CachedSettingsPropName>
-    </WebReferenceUrl>
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\ModStats\StatsCollector.disco" />
   </ItemGroup>
   <ItemGroup />
 </Project>

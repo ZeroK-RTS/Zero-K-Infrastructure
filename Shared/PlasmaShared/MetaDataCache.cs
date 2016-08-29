@@ -304,7 +304,7 @@ namespace ZkData
             return GetMapMetadata(data);
         }
 
-        Map GetMapMetadata(byte[] data)
+        static Map GetMapMetadata(byte[] data)
         {
             var ret = (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(data.Decompress()));
             ret.Name = ret.Name.Replace(".smf", ""); // hack remove this after server data reset
@@ -312,7 +312,7 @@ namespace ZkData
             return ret;
         }
 
-        Mod GetModMetadata(byte[] data)
+        static Mod GetModMetadata(byte[] data)
         {
             var ret = (Mod)new XmlSerializer(typeof(Mod)).Deserialize(new MemoryStream(data.Decompress()));
 
@@ -349,6 +349,14 @@ namespace ZkData
                 SuccessCallback = successCallback;
                 ErrorCallback = errorCallback;
             }
+        }
+
+
+        public static Mod ServerGetMod(string internalName)
+        {
+            var file = Path.Combine(GlobalConst.SiteDiskPath, "resources", $"{internalName.EscapePath()}.metadata.xml.gz");
+            if (File.Exists(file)) return GetModMetadata(File.ReadAllBytes(file));
+            return null;
         }
     }
 }

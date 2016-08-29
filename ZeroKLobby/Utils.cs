@@ -306,7 +306,7 @@ namespace ZeroKLobby
 
 
         public static bool VerifySpringInstalled(bool showMessageBox = true) {
-            if (Program.SpringPaths.SpringVersion == null || !Program.SpringPaths.HasEngineVersion(Program.SpringPaths.SpringVersion)) {
+            if (!Program.SpringPaths.HasEngineVersion(GlobalConst.DefaultEngineOverride)) {
                 if (showMessageBox)
                     MessageBox.Show(new Form { TopMost = true }, "Cannot start yet, please wait until engine downloads",
                                     "Engine not prepared yet",

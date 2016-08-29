@@ -42,8 +42,6 @@ namespace ZeroKLobby.MicroLobby
 			Program.TasClient.BattleBotRemoved += (s, e) => SortByTeam();
 			Program.TasClient.BattleBotUpdated += (s, e) => SortByTeam();
 			Program.TasClient.BattleMapChanged += TasClient_BattleMapChanged;
-			Program.TasClient.StartRectAdded += (s, e) => DrawMinimap();
-			Program.TasClient.StartRectRemoved += (s, e) => DrawMinimap();
 			Program.ModStore.ModLoaded += ModStoreModLoaded;
 
 
@@ -208,37 +206,6 @@ namespace ZeroKLobby.MicroLobby
 		        var yScale = (double)minimapBox.Height/minimapSize.Height;
 		        var scale = Math.Min(xScale, yScale);
 		        minimapBox.Image = minimap.GetResized((int)(scale*minimapSize.Width), (int)(scale*minimapSize.Height));
-		        using (var g = Graphics.FromImage(minimapBox.Image)) {
-		            g.TextRenderingHint = TextRenderingHint.AntiAlias;
-		            g.SmoothingMode = SmoothingMode.HighQuality;
-		            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-		            foreach (var kvp in Program.TasClient.MyBattle.Rectangles) {
-		                var startRect = kvp.Value;
-		                var allyTeam = kvp.Key;
-		                var left = startRect.Left*minimapBox.Image.Width/BattleRect.Max;
-		                var top = startRect.Top*minimapBox.Image.Height/BattleRect.Max;
-		                var right = startRect.Right*minimapBox.Image.Width/BattleRect.Max;
-		                var bottom = startRect.Bottom*minimapBox.Image.Height/BattleRect.Max;
-		                var width = right - left;
-		                var height = bottom - top;
-		                if (width < 1 || height < 1) continue;
-		                var drawRect = new Rectangle(left, top, width, height);
-		                var color = allyTeam < boxColors.Length
-		                                ? Color.FromArgb(255/2, boxColors[allyTeam].R, boxColors[allyTeam].G, boxColors[allyTeam].B)
-		                                : Color.Black;
-		                using (var brush = new SolidBrush(color)) g.FillRectangle(brush, drawRect);
-		                var middleX = left + width/2;
-		                var middleY = top + height/2;
-		                const int numberSize = 40;
-		                var numberRect = new Rectangle(middleX - numberSize/2, middleY - numberSize/2, numberSize, numberSize);
-		                using (var format = new StringFormat()) {
-		                    format.Alignment = StringAlignment.Center;
-		                    format.LineAlignment = StringAlignment.Center;
-
-		                    using (var font = new Font(Config.GeneralFontBig, FontStyle.Bold)) g.DrawStringWithOutline((allyTeam + 1).ToString(), font, Brushes.White, Brushes.Black, numberRect, format, 5);
-		                }
-		            }
-		        }
 		        minimapBox.Invalidate();
 		    } catch (Exception ex) {
 		        Trace.TraceError("Error updating minimap: {0}",ex);

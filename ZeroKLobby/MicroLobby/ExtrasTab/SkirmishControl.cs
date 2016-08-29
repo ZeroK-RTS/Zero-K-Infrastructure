@@ -37,7 +37,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         private PlayerListItem myItem;
         private Ai[] aiList;
         private Mod currentMod;
-        private Dictionary<int, BattleRect> Rectangles;
         private List<string> DisabledUnits;
         private Dictionary<string, string> ModOptions;
         private List<MissionSlot> missionSlots;
@@ -83,7 +82,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             Setup_MyInfo();
             DisabledUnits = new List<string>();
             ModOptions = new Dictionary<string, string>();
-            Rectangles = new Dictionary<int, BattleRect>();
             springAi = new List<Ai>();
             presetStartPos = new float[25, 4]{
             //  left    right   bottom  top
@@ -114,7 +112,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 {0.40f, 0.50f,  0.40f,  0.50f},//center
             };
 
-            Rectangles.Add(0, new BattleRect(presetStartPos[0, 0], presetStartPos[0, 2], presetStartPos[0, 1], presetStartPos[0, 3]));
             infoLabel.Text = "";
             Refresh_PlayerBox(); //initialize playerlist window
 
@@ -399,55 +396,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                     return;
                 }
                 
-                using (var g = Graphics.FromImage(minimapBox.Image))
-                {
-                    g.TextRenderingHint = TextRenderingHint.AntiAlias;
-                    g.SmoothingMode = SmoothingMode.HighQuality;
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    //var positions = currentMap.Positions != null ? currentMap.Positions.ToList() : new List<StartPos>();
-                    //foreach (var pos in positions)
-                    //{
-                    //    var left = ((pos.z - 1000)/currentMap.Size.Width) * minimapBox.Image.Width / BattleRect.Max;
-                    //    var top = ((pos.x - 1000) / currentMap.Size.Height) * minimapBox.Image.Height / BattleRect.Max;
-                    //    var right = ((pos.z + 1000) / currentMap.Size.Width) * minimapBox.Image.Width / BattleRect.Max;
-                    //    var bottom = ((pos.z + 1000) / currentMap.Size.Height) * minimapBox.Image.Height / BattleRect.Max;
-                    //    var width = right - left;
-                    //    var height = bottom - top;
-                    //    if (width < 1 || height < 1) continue;
-                    //    var drawRect = new Rectangle(left, top, width, height);
-                    //    var color =  Color.Black;
-                    //    using (var brush = new SolidBrush(color)) g.FillRectangle(brush, drawRect);
-
-                    //}
-                    foreach (var kvp in Rectangles)
-                    {
-                        BattleRect startRect = kvp.Value;
-                        var allyTeam = kvp.Key;
-                        var left = startRect.Left * minimapBox.Image.Width / BattleRect.Max;
-                        var top = startRect.Top * minimapBox.Image.Height / BattleRect.Max;
-                        var right = startRect.Right * minimapBox.Image.Width / BattleRect.Max;
-                        var bottom = startRect.Bottom * minimapBox.Image.Height / BattleRect.Max;
-                        var width = right - left;
-                        var height = bottom - top;
-                        if (width < 1 || height < 1) continue;
-                        var drawRect = new Rectangle(left, top, width, height);
-                        var color = allyTeam < boxColors.Length
-                                        ? Color.FromArgb(255 / 2, boxColors[allyTeam].R, boxColors[allyTeam].G, boxColors[allyTeam].B)
-                                        : Color.Black;
-                        using (var brush = new SolidBrush(color)) g.FillRectangle(brush, drawRect);
-                        var middleX = left + width / 2;
-                        var middleY = top + height / 2;
-                        const int numberSize = 40;
-                        var numberRect = new Rectangle(middleX - numberSize / 2, middleY - numberSize / 2, numberSize, numberSize);
-                        using (var format = new StringFormat())
-                        {
-                            format.Alignment = StringAlignment.Center;
-                            format.LineAlignment = StringAlignment.Center;
-
-                            g.DrawStringWithOutline((allyTeam + 1).ToString(), Config.GeneralFontBig, Brushes.White, Brushes.Black, numberRect, format, 5);
-                        }
-                    }
-                }
                 if (invalidate) minimapBox.Invalidate();
             }
             catch (Exception ex)
@@ -499,8 +447,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             // add section headers
             if (playerListItems.Any(i => i.UserBattleStatus != null && i.UserBattleStatus.IsSpectator)) newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = (int)PlayerListItem.SortCats.SpectatorTitle, IsSpectatorsTitle = true, Height = 25 });
 
-            var rectangles2 = new Dictionary<int, BattleRect>();
-
             var buttonTeams = existingTeams.Distinct();
             if (missionSlots != null) buttonTeams = buttonTeams.Concat(missionSlots.Select(s => s.AllyID)).Distinct();
             foreach (var team in buttonTeams)
@@ -508,8 +454,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 int numPlayers = myItem.UserBattleStatus.IsSpectator ? 0 : 1;
                 int numBots = Bots.Where(p => p.AllyNumber == team).Count();
                 int numTotal = numPlayers + numBots;
-
-                rectangles2.Add(team, new BattleRect(presetStartPos[team % 25, 0], presetStartPos[team % 25, 2], presetStartPos[team % 25, 1], presetStartPos[team % 25, 3]));
 
                 var allianceName = "Team " + (team + 1) + (numTotal > 3 ? "  (" + numTotal + ")" : "");
                 if (missionSlots != null)
@@ -520,28 +464,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team * 2 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = team, Height = 25 });
             }
 
-            //copy new startBox position, but keep old one and remove any extras
-            {
-                bool haveChanges = false;
-                List<int> toRemove = new List<int>();
-                foreach (var battleRect in Rectangles)
-                {
-                    if (!rectangles2.ContainsKey(battleRect.Key)) toRemove.Add(battleRect.Key); //remove extra entry
-                    else rectangles2.Remove(battleRect.Key); //keep current entry
-                }
-                for (int i = 0; i < toRemove.Count; i++)
-                {
-                    Rectangles.Remove(toRemove[i]);
-                    haveChanges = true;
-                }
-                foreach (var battleRect in rectangles2)
-                {
-                    Rectangles.Add(battleRect.Key, battleRect.Value); //add missing entry
-                    haveChanges = true;
-                }
-                toRemove = null;
-                if (haveChanges) requestMinimapRefresh = true; // Refresh_MinimapImage();
-            }
 
             newList = newList.OrderBy(x => x.ToString()).ToList();
 
@@ -1032,8 +954,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 else
                     engineFolder = engineFolder + "/" + springVersion;
 
-                if (Program.SpringPaths.HasEngineVersion(springVersion))
-                    Program.SpringPaths.SetEnginePath (engineFolder);
                 spring = new Spring(Program.SpringPaths);
                 
 
@@ -1212,15 +1132,14 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 infoLabel.Text = "Add bots";
         }
 
-        private BattleContext Get_StartContext() //From LobbyClient/Battle.cs
+        private LobbyHostingContext Get_StartContext() //From LobbyClient/Battle.cs
         {
-            return new BattleContext() {
+            return new LobbyHostingContext() {
                 Map = map_comboBox.SelectedItem.ToString(),
                 Mod = game_comboBox.SelectedItem.ToString(),
                 IsMission = currentMod.IsMission,
                 Players = allUser.Where(x=>!Bots.Contains(x)).Select(x=>x.ToPlayerTeam()).ToList(),
                 Bots = Bots.Select(x=>x.ToBotTeam()).ToList(),
-                Rectangles = Rectangles,
                 EngineVersion = engine_comboBox.SelectedItem.ToString()
             };
 
@@ -1235,18 +1154,17 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
                 if (spring.IsRunning) spring.ExitGame();
                 spring.SpringExited += Event_SpringExited;
                 infoLabel.Text = "Spring starting ...";
-                spring.HostGame(Get_StartContext(), "127.0.0.1", 7452, myItem.UserName);
+                spring.HostGame(Get_StartContext(), "127.0.0.1", 7452, false, myItem.UserName, null);
             }
         }
 
-        private void Event_SpringExited(object sender, EventArgs<bool> e)
+        private void Event_SpringExited(object sender, Spring.SpringBattleContext springBattleContext)
         {
             this.Invoke(new Action(()=>
             {
                 if (infoLabel.Text.StartsWith("Spring starting"))
                     infoLabel.Text = "";
-                if (e.Data)
-                    infoLabel.Text = "Spring crashed";
+                if (springBattleContext.IsCrash) infoLabel.Text = "Spring crashed";
             }));
 
             spring.SpringExited -= Event_SpringExited;
@@ -1318,74 +1236,6 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
             {
                 if (!infoLabel.Text.StartsWith("Select map"))
                     infoLabel.Text = "Select map";
-            }
-            else if (mouseIsDown & mouseOnStartBox > -1)
-            {
-                Cursor = Cursors.Cross;
-                BattleRect startRect = Rectangles[mouseOnStartBox];
-
-                //undo the offset due to "Centering" (alignment) of the pictureBox relative to minimapPanel
-                float diffWidth_half = (float)(minimapPanel.Width - minimapBox.Image.Width) / 2;
-                float diffHeight_half = (float)(minimapPanel.Height - minimapBox.Image.Height) / 2;
-                float adjustedX = (e.X - diffWidth_half);
-                float adjustedY = (e.Y - diffHeight_half);
-                //convert pixel count to 0-200 standard used in Spring infrastructure
-                float rectPerImgWidth = (float)BattleRect.Max / minimapBox.Image.Width;
-                float rectPerImgHeight = (float)BattleRect.Max / minimapBox.Image.Height;
-                //clamp position to within map
-                float x = Math.Min(Math.Max (adjustedX * rectPerImgWidth, 10),BattleRect.Max-10);
-                float y = Math.Min(Math.Max (adjustedY * rectPerImgHeight, 10),BattleRect.Max-10);
-                //set our startbox coordinate
-                startRect.Left = (int)(x - 10);
-                startRect.Top = (int)(y - 10);
-                startRect.Right = (int)(x + 10);
-                startRect.Bottom = (int)(y + 10);
-
-                Rectangles[mouseOnStartBox] = startRect;
-
-            }
-            else if (mouseOnStartBox > -1)
-            {
-                BattleRect startRect = Rectangles[mouseOnStartBox];
-
-                float imgWidthPerRect = (float)minimapBox.Image.Width / BattleRect.Max;
-                float imgHeightPerRect = (float)minimapBox.Image.Height/BattleRect.Max;
-
-                var left = startRect.Left * imgWidthPerRect;
-                var top = startRect.Top * imgHeightPerRect;
-                var right = startRect.Right * imgWidthPerRect;
-                var bottom = startRect.Bottom * imgHeightPerRect;
-                int diffWidth_half = (minimapPanel.Width - minimapBox.Image.Width)/2;
-                int diffHeight_half = (minimapPanel.Height - minimapBox.Image.Height)/2;
-                if (e.X < left + diffWidth_half || e.X > right + diffWidth_half || e.Y < top + diffHeight_half || e.Y > bottom + diffHeight_half)
-                {
-                    Cursor = Cursors.Default;
-                    mouseOnStartBox = -1;
-                }
-            }
-            else
-            {
-                float imgWidthPerRect = (float)minimapBox.Image.Width / BattleRect.Max;
-                float imgHeightPerRect = (float)minimapBox.Image.Height / BattleRect.Max;
-                int diffWidth_half = (minimapPanel.Width - minimapBox.Image.Width) / 2;
-                int diffHeight_half = (minimapPanel.Height - minimapBox.Image.Height) / 2;
-
-                foreach (var kvp in Rectangles)
-                {
-                    BattleRect startRect = kvp.Value;
-                    var allyTeam = kvp.Key;
-                    var left = startRect.Left * imgWidthPerRect;
-                    var top = startRect.Top * imgHeightPerRect;
-                    var right = startRect.Right * imgWidthPerRect;
-                    var bottom = startRect.Bottom * imgHeightPerRect;
-                    
-                    if (e.X > left + diffWidth_half && e.X < right + diffWidth_half && e.Y > top + diffHeight_half && e.Y < bottom + diffHeight_half)
-                    {
-                        Cursor = Cursors.Hand;
-                        mouseOnStartBox = allyTeam;
-                        break;
-                    }
-                }
             }
         }
 

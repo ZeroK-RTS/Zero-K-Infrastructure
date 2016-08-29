@@ -1,0 +1,63 @@
+﻿// Contact: Jan Lichovník  licho@licho.eu, tel: +420 604 935 349,  www.itl.cz
+// Last change by: licho  24.08.2016
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LobbyClient;
+using ZkData;
+
+namespace ZkLobbyServer
+{
+    public class CmdResign : BattleCommand
+    {
+        private int alliance;
+        public override string Help => "starts a vote to resign game";
+        public override string Shortcut => "resign";
+        public override AccessType Access => AccessType.IngameVote;
+
+        public override BattleCommand Create() => new CmdResign();
+
+        public override string Arm(ServerBattle battle, Say e, string arguments = null)
+        {
+            if (DateTime.UtcNow.Subtract(battle.spring.IngameStartTime ?? DateTime.Now).TotalSeconds < GlobalConst.MinDurationForElo)
+            {
+                battle.Respond(e, "You cannot resign so early");
+                return null;
+            }
+
+            var voteStarter = battle.spring.LobbyStartContext?.Players.FirstOrDefault(x => x.Name == e.User && !x.IsSpectator);
+            if (voteStarter != null)
+            {
+                alliance = voteStarter.AllyID;
+                return $"Resign team {voteStarter.AllyID + 1}?";
+            }
+            return null;
+        }
+
+
+        public override async Task ExecuteArmed(ServerBattle battle, Say e)
+        {
+            var s = battle.spring;
+            if (s.IsRunning) foreach (var p in s.LobbyStartContext.Players.Where(x => x.AllyID == alliance && !x.IsSpectator)) s.ResignPlayer(p.Name);
+            await battle.SayBattle($"Team {alliance + 1} resigned");
+        }
+
+        public override RunPermission GetRunPermissions(ServerBattle battle, string userName)
+        {
+            var ret = base.GetRunPermissions(battle, userName);
+
+            // only people from same team can vote
+            if (ret >= RunPermission.Vote)
+            {
+                if (battle.spring.IsRunning)
+                {
+                    var entry = battle.spring.LobbyStartContext.Players.FirstOrDefault(x => x.Name == userName);
+                    if (entry != null && !entry.IsSpectator && entry.AllyID == alliance) return ret;
+                }
+            }
+            return RunPermission.None;
+        }
+    }
+}

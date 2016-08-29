@@ -55,7 +55,7 @@ namespace ZeroKLobby.Notifications
             var downDemo = Program.Downloader.GetResource(DownloadType.DEMO, demoUrl);
             if (downDemo != null) waitHandles.Add(downDemo.WaitHandle);
 
-            var downEngine = Program.Downloader.GetAndSwitchEngine(engineVersion);
+            var downEngine = Program.Downloader.GetEngine(engineVersion);
             if (downEngine != null) waitHandles.Add(downEngine.WaitHandle);
 
             ZkData.Utils.StartAsync(() =>
@@ -77,7 +77,7 @@ namespace ZeroKLobby.Notifications
                 try
                 {
                     var optirun = Environment.GetEnvironmentVariable("OPTIRUN"); //get OPTIRUN filename from OS
-                    string springFilename = Program.SpringPaths.Executable; //use springMT or standard
+                    string springFilename = Program.SpringPaths.GetSpringExecutablePath(engineVersion); //use springMT or standard
                     if (string.IsNullOrEmpty(optirun))
                     {
                         Process.Start(springFilename, string.Format("\"{0}\" --config \"{1}\"", path, Program.SpringPaths.GetSpringConfigPath()));

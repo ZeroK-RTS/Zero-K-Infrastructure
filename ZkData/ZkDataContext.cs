@@ -25,7 +25,6 @@ namespace ZkData
         public virtual DbSet<AccountRole> AccountRoles { get; set; }
         public virtual DbSet<AccountUnlock> AccountUnlocks { get; set; }
         public virtual DbSet<AccountUserID> AccountUserIDs { get; set; }
-        public virtual DbSet<AutohostConfig> AutohostConfigs { get; set; }
         public virtual DbSet<Avatar> Avatars { get; set; }
         public virtual DbSet<BlockedCompany> BlockedCompanies { get; set; }
         public virtual DbSet<BlockedHost> BlockedHosts { get; set; }
@@ -87,6 +86,7 @@ namespace ZkData
         public virtual DbSet<LogEntry> LogEntries { get; set; }
         public virtual DbSet<Word> IndexWords { get; set; }
         public virtual DbSet<ForumPostWord> IndexForumPosts { get; set; }
+        public virtual DbSet<AccountRelation> AccountRelations { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -765,6 +765,11 @@ namespace ZkData
                 .WithOptional(e => e.ParentUnlock)
                 .HasForeignKey(e => e.RequiredUnlockID);
 
+            modelBuilder.Entity<AccountRelation>()
+                .HasRequired(x => x.Target)
+                .WithMany(x => x.RelalationsByTarget)
+                .HasForeignKey(x => x.TargetAccountID)
+                .WillCascadeOnDelete(false);
         }
 
         static ZkDataContext()
