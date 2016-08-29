@@ -76,49 +76,42 @@ namespace ZkLobbyServer
             hostingIp = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString() ?? "127.0.0.1";
         }
 
-        public void ApplyBalanceResults(BalanceTeamsResult balance)
+        private async Task ApplyBalanceResults(BalanceTeamsResult balance)
         {
-            throw new NotImplementedException();
-            /*
-            if (!string.IsNullOrEmpty(balance.Message)) SayBattle(balance.Message, false);
+            if (!string.IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
             if (balance.Players != null && balance.Players.Count > 0)
             {
 
-                foreach (var user in Users.Values.Where(x => !x.IsSpectator && !balance.Players.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
-                foreach (var user in balance.Players.Where(x => x.IsSpectator)) tas.ForceSpectator(user.Name);
-
-                bool comsharing = false;
-                bool coopOptExists = tas.MyBattle.ModOptions.Any(x => x.Key.ToLower() == "coop");
-                if (coopOptExists)
+                foreach (var p in balance.Players)
                 {
-                    KeyValuePair<string, string> comsharing_modoption = tas.MyBattle.ModOptions.FirstOrDefault(x => x.Key.ToLower() == "coop");
-                    if (comsharing_modoption.Value != "0" && comsharing_modoption.Value != "false") comsharing = true;
-                }
-                foreach (var user in balance.Players.Where(x => !x.IsSpectator))
-                {
-                    tas.ForceTeam(user.Name, comsharing ? user.AllyID : user.TeamID);
-                    tas.ForceAlly(user.Name, user.AllyID);
+                    UserBattleStatus u;
+                    if (Users.TryGetValue(p.Name, out u))
+                    {
+                        u.IsSpectator = p.IsSpectator;
+                        u.AllyNumber = p.AllyID;
+                    }
                 }
             }
 
-            if (balance.DeleteBots) foreach (var b in tas.MyBattle.Bots.Keys) tas.RemoveBot(b);
+            if (balance.DeleteBots) foreach (var b in Bots.Keys) await server.Broadcast(Users.Keys, new RemoveBot() { Name = b });
+
             if (balance.Bots != null && balance.Bots.Count > 0)
             {
-                foreach (var b in tas.MyBattle.Bots.Values.Where(x => !balance.Bots.Any(y => y.BotName == x.Name && y.Owner == x.owner))) tas.RemoveBot(b.Name);
-
-                foreach (var b in balance.Bots)
+                foreach (var p in balance.Bots)
                 {
-                    var existing = tas.MyBattle.Bots.Values.FirstOrDefault(x => x.owner == b.Owner && x.Name == b.BotName);
-                    if (existing != null)
-                    {
-                        tas.UpdateBot(existing.Name, b.BotAI, b.AllyID, b.TeamID);
-                    }
-                    else
-                    {
-                        tas.AddBot(b.BotName.Replace(" ", "_"), b.BotAI, b.AllyID, b.TeamID);
-                    }
+                    Bots.AddOrUpdate(p.BotName,
+                        s => new BotBattleStatus(s, p.Owner, p.BotAI),
+                        (s, status) =>
+                        {
+                            status.owner = p.Owner;
+                            status.aiLib = p.BotAI;
+                            return status;
+                        });
+
                 }
-            }*/
+            }
+            foreach (var u in Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await server.Broadcast(Users.Keys, u); // send other's status to self
+            foreach (var u in Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await server.Broadcast(Users.Keys, u);
         }
 
 
@@ -295,14 +288,14 @@ namespace ZkLobbyServer
         }
 
 
-        public bool RunServerBalance(bool isGameStart, int? allyTeams, bool? clanWise)
+        public async Task<bool> RunServerBalance(bool isGameStart, int? allyTeams, bool? clanWise)
         {
             try
             {
                 var context = GetContext();
                 context.Mode = Mode;
                 var balance = Balancer.BalanceTeams(context, isGameStart, allyTeams, clanWise);
-                ApplyBalanceResults(balance);
+                await ApplyBalanceResults(balance);
                 return balance.CanStart;
             }
             catch (Exception ex)

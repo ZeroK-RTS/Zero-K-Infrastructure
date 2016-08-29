@@ -36,7 +36,7 @@ namespace ZkLobbyServer
 
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
-            battle.RunServerBalance(false, teamCount, null);
+            await battle.RunServerBalance(false, teamCount, null);
             await battle.SayBattle("Teams were balanced");
         }
     }
