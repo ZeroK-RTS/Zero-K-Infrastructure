@@ -32,8 +32,6 @@ namespace ZkLobbyServer
 
         private List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
 
-        // login accepted - join channels
-
         private Timer pollTimer;
 
         public ZkLobbyServer server;
@@ -549,55 +547,6 @@ namespace ZkLobbyServer
                 foreach (var u in spring.LobbyStartContext.Players.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, HostedMod.Mission.Name);
             }
         }
-
-
-        private void tas_BattleUserLeft(object sender, BattleUserEventArgs e1)
-        {
-            /*
-            if (e1.BattleID != tas.MyBattleID) return;
-            CheckForBattleExit();
-
-            if (spring.IsRunning) spring.SayGame(e1.UserName + " has left the room");
-
-            if (e1.UserName == bossName)
-            {
-                SayBattle("boss has left the battle");
-                bossName = "";
-            }
-
-            // repick map after everyone (except the autohost) leaves to prevent someone from setting trololo everywhere
-            if (tas.MyBattle != null && tas.MyBattle.Users.Count == 1) ServerVerifyMap(true);*/
-        }
-
-        private void tas_MyBattleMapChanged(object sender, OldNewPair<Battle> oldNewPair)
-        {
-            /*
-            lastMapChange = DateTime.Now;
-
-            Battle b = tas.MyBattle;
-            if (b != null)
-            {
-                string mapName = b.MapName.ToLower();
-
-                if (SpawnConfig == null)
-                {
-                    ComResetOptions(TasSayEventArgs.Default, new string[] { });
-                    ComClearBox(TasSayEventArgs.Default, new string[] { });
-                }
-
-                try
-                {
-                    var serv = GlobalConst.GetSpringieService();
-                    string commands = serv.GetMapCommands(mapName);
-                    if (!string.IsNullOrEmpty(commands)) foreach (string c in commands.Split('\n').Where(x => !string.IsNullOrEmpty(x))) RunCommand(c);
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError("Error procesing map commands: {0}", ex);
-                }
-            }*/
-        }
-
 
         public class KickedPlayer
         {
