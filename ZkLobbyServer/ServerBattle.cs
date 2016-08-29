@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Timers;
@@ -35,6 +37,7 @@ namespace ZkLobbyServer
         public Mod HostedModInfo;
 
         private int hostingPort;
+        private string hostingIp;
 
         private List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
 
@@ -70,6 +73,7 @@ namespace ZkLobbyServer
             pollTimer.Elapsed += pollTimer_Elapsed;
             SetupSpring();
             PickHostingPort();
+            hostingIp = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString() ?? "127.0.0.1";
         }
 
         public void ApplyBalanceResults(BalanceTeamsResult balance)
@@ -344,11 +348,10 @@ namespace ZkLobbyServer
 
         public async Task StartGame()
         {
-            var ip = "127.0.0.1";
 
             var startSetup = StartSetup.GetDedicatedServerStartSetup(GetContext());
 
-            spring.HostGame(startSetup, ip, hostingPort, true); // TODO HACK GET PORTS
+            spring.HostGame(startSetup, hostingIp, hostingPort, true);
             IsInGame = true;
             RunningSince = DateTime.UtcNow;
             foreach (var us in Users.Values)
@@ -360,7 +363,7 @@ namespace ZkLobbyServer
                             new ConnectSpring()
                             {
                                 Engine = EngineVersion,
-                                Ip = ip,
+                                Ip = hostingIp,
                                 Port = hostingPort,
                                 Resources = new List<string>() { MapName, ModName },
                                 ScriptPassword = us.ScriptPassword
@@ -472,8 +475,8 @@ namespace ZkLobbyServer
             var port = GlobalConst.UdpHostingPortStart;
             lock (pickPortLock)
             {
-                var reservedPorts = server.Battles.Values.Where(x => x != null).Select(x => x.hostingPort).ToDictionary(x => x, x => true);
-                var usedPorts = IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().Select(x => x.Port).ToDictionary(x => x, x => true);
+                var reservedPorts = server.Battles.Values.Where(x => x != null).Select(x => x.hostingPort).Distinct().ToDictionary(x => x, x => true);
+                var usedPorts = IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().Where(x=>x!=null).Select(x => x.Port).Distinct().ToDictionary(x => x, x => true);
 
                 while (usedPorts.ContainsKey(port) || reservedPorts.ContainsKey(port)) port++;
                 hostingPort = port;
