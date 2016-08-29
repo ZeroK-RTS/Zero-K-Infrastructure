@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using LobbyClient;
 using System.Windows.Forms;
+using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -241,7 +242,8 @@ namespace ZeroKLobby.MicroLobby
                 int y = (int)3;
                 int offset = (int)16;
                 int curMapCellSize = (int)MapCellSize.Width;
-                TextRenderer.DrawText(g, Battle.Title, TitleFont, new Point(curMapCellSize, y + offset * 0), Config.TextColor);
+                TextRenderer.DrawText(g,
+                    $"{Battle.Mode.Description()}: {Battle.Title}", TitleFont, new Point(curMapCellSize, y + offset * 0), Config.TextColor);
                 //g.DrawString(Battle.Title, TitleFont, TextBrush, curMapCellSize, y + offset * 0);
                 if (TextRenderer.MeasureText(mod_and_engine_name, ModFont).Width < scaledWidth - curMapCellSize)
                 {

@@ -30,7 +30,7 @@ namespace ZeroKLobby.MicroLobby
 
             cbType.SelectedIndex = 0;
 
-            battleTitleBox.Text = Program.TasClient.UserName + "'s " + cbType.SelectedItem;
+            battleTitleBox.Text = Program.TasClient.UserName + "'s game";
 
             if (Program.Conf.HasHosted)
             {

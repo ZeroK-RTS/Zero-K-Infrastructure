@@ -16,7 +16,7 @@ namespace ZkLobbyServer
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            if (string.IsNullOrEmpty(arguments)) arguments = $"{battle.FounderName}'s {battle.Mode.Description()}";
+            if (string.IsNullOrEmpty(arguments)) arguments = $"{battle.FounderName}'s game";
             title = arguments;
             return $"Change title to {title}?";
         }
