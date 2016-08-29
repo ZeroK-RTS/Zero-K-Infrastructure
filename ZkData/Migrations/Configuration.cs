@@ -100,7 +100,7 @@ namespace ZkData.Migrations
 
             }
 
-            db.Resources.AddOrUpdate(x=>x.RapidTag, new Resource()
+            db.Resources.AddOrUpdate(x=>x.InternalName, new Resource()
             {
                 InternalName = "Zero-K $VERSION",
                 RapidTag = "zk:dev",
