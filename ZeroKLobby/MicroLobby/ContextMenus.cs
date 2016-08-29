@@ -280,25 +280,22 @@ namespace ZeroKLobby.MicroLobby
                     {
                         contextMenu.MenuItems.Add("-");
 
-                        if (!Program.TasClient.MyBattle.IsQueue)
+                        if (user.Name != Program.TasClient.UserName)
                         {
-                            if (user.Name != Program.TasClient.UserName)
+                            var allyWith = new MenuItem("Ally")
                             {
-                                var allyWith = new MenuItem("Ally")
-                                               {
-                                                   Enabled =
-                                                       !battleStatus.IsSpectator &&
-                                                       (battleStatus.AllyNumber != myStatus.AllyNumber || myStatus.IsSpectator)
-                                               };
-                                allyWith.Click += (s, e) => ActionHandler.JoinAllyTeam(battleStatus.AllyNumber);
-                                contextMenu.MenuItems.Add(allyWith);
-                            }
-                            contextMenu.MenuItems.Add(GetSetAllyTeam(user));
-
-                            contextMenu.MenuItems.Add("-");
-                            contextMenu.MenuItems.Add(GetShowGameOptionsItem());
-                            contextMenu.MenuItems.Add(GetAddBot());
+                                Enabled =
+                                                   !battleStatus.IsSpectator &&
+                                                   (battleStatus.AllyNumber != myStatus.AllyNumber || myStatus.IsSpectator)
+                            };
+                            allyWith.Click += (s, e) => ActionHandler.JoinAllyTeam(battleStatus.AllyNumber);
+                            contextMenu.MenuItems.Add(allyWith);
                         }
+                        contextMenu.MenuItems.Add(GetSetAllyTeam(user));
+
+                        contextMenu.MenuItems.Add("-");
+                        contextMenu.MenuItems.Add(GetShowGameOptionsItem());
+                        contextMenu.MenuItems.Add(GetAddBot());
                     }
                 }
             }

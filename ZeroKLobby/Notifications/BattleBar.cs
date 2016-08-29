@@ -28,8 +28,6 @@ namespace ZeroKLobby.Notifications
         bool suppressSpecChange = false;
         readonly Timer timer = new Timer();
         object voice;
-        string queueLabelFormatter = "";
-        DateTime queueTarget;
 
 
         /// <summary>
@@ -39,7 +37,7 @@ namespace ZeroKLobby.Notifications
         {
             InitializeComponent();
 
-            Program.ToolTip.SetText(btnLeave,"Leave this battle");
+            Program.ToolTip.SetText(btnLeave, "Leave this battle");
 
             picoChat.ChatBackgroundColor = TextColor.background; //same color as Program.Conf.BgColor
             picoChat.IRCForeColor = 14; //mirc grey. Unknown use
@@ -128,32 +126,17 @@ namespace ZeroKLobby.Notifications
                     if (!isVisible) ManualBattleStarted();
                     if (IsHostGameRunning()) btnStart.Text = "Rejoin";
                     else btnStart.Text = "Start";
-                    
-                    
+
+
                     //client.ChangeMyUserStatus(false, false);
                     var battle = client.MyBattle;
                     lastBattleFounder = battle.FounderName;
 
-                    if (battle.FounderName.StartsWith("PlanetWars") || battle.FounderName.StartsWith("Zk")) ChangeDesiredSpectatorState(false); // TODO pw unpsec hack, remove later
-
-                    if (battle.IsQueue)
-                    {
-                        //Title = string.Format("Joined {0} Quick Match Queue", battle.QueueName);
-                        //TitleTooltip = "Please await people, game will start automatically";
-                        lbQueue.Visible = true;
-                        radioPlay.Visible = false;
-                        radioSpec.Visible = false;
-                        btnStart.Visible = false;
-                    }
-                    else
-                    {
-                        //Title = string.Format("Joined battle room hosted by {0}", battle.Founder.Name);
-                        //TitleTooltip = "Use button on the left side to start a game";
-                        lbQueue.Visible = false;
-                        radioPlay.Visible = true;
-                        radioSpec.Visible = true;
-                        btnStart.Visible = true;
-                    }
+                    //Title = string.Format("Joined battle room hosted by {0}", battle.Founder.Name);
+                    //TitleTooltip = "Use button on the left side to start a game";
+                    radioPlay.Visible = true;
+                    radioSpec.Visible = true;
+                    btnStart.Visible = true;
 
                     Program.Downloader.GetResource(DownloadType.MAP, battle.MapName);
                     Program.Downloader.GetResource(DownloadType.MOD, battle.ModName);
@@ -163,7 +146,8 @@ namespace ZeroKLobby.Notifications
                     CreateBattleIcon(Program.BattleIconManager.GetBattleIcon(battle.BattleID));
 
                     RefreshTooltip();
-                    
+
+                    if (Program.TasClient.MyBattle != null) NavigationControl.Instance.Path = "chat/battle";
 
                     client.ChangeMyBattleStatus(desiredSpectatorState, HasAllResources() ? SyncStatuses.Synced : SyncStatuses.Unsynced, 0);
                 };
@@ -194,7 +178,7 @@ namespace ZeroKLobby.Notifications
                         {
                             if (spring.IsRunning) spring.ExitGame();
                             lastScript = spring.ConnectGame(e.Ip, e.Port, client.UserName, e.ScriptPassword, e.Engine);
-                                //use MT tag when in spectator slot
+                            //use MT tag when in spectator slot
                         }
                     }
                 }
@@ -261,39 +245,20 @@ namespace ZeroKLobby.Notifications
                 };
 
 
-            // process special queue message to display in label
-            client.Said += (s, e) =>
-            {
-                if (e.Place == SayPlace.Battle && client.MyBattle != null && client.MyBattle.FounderName == e.UserName && e.Text.StartsWith("Queue"))
-                {
-                    var t = e.Text.Substring(6);
-                    queueLabelFormatter = Regex.Replace(t,
-                        "([0-9]+)s",
-                        m =>
-                        {
-                            var queueSeconds = int.Parse(m.Groups[1].Value);
-                            queueTarget = DateTime.Now.AddSeconds(queueSeconds);
-                            return "{0}s";
-                        });
-                    lbQueue.Text = string.Format(queueLabelFormatter, Math.Round(queueTarget.Subtract(DateTime.Now).TotalSeconds));
-                }
-            };
-
 
             timer.Tick += (s, e) =>
                 {
                     if (client.IsLoggedIn)
                     {
-                        if (WindowsApi.IdleTime.TotalMinutes > Program.Conf.IdleTime) {
+                        if (WindowsApi.IdleTime.TotalMinutes > Program.Conf.IdleTime)
+                        {
                             if (!client.MyUser.IsAway) client.ChangeMyUserStatus(isAway: true);
-                        } else {
+                        }
+                        else
+                        {
                             if (client.MyUser.IsAway) client.ChangeMyUserStatus(isAway: false);
                         }
                         CheckMyBattle();
-                    }
-                    if (client.MyBattle != null && client.MyBattle.IsQueue)
-                    {
-                        lbQueue.Text = string.Format(queueLabelFormatter, Math.Round(queueTarget.Subtract(DateTime.Now).TotalSeconds));
                     }
                 };
 
@@ -488,7 +453,7 @@ namespace ZeroKLobby.Notifications
         }
 
 
-       
+
         public void btnStart_Click(object sender, EventArgs e)
         {
             NavigationControl.Instance.Path = "chat/battle";

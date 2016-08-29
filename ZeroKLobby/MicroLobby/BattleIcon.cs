@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using LobbyClient;
 using System.Windows.Forms;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKLobby.MicroLobby
@@ -72,9 +73,6 @@ namespace ZeroKLobby.MicroLobby
 
         public static Brush TextBrush = new SolidBrush(Color.White); //  Config.TextColor
         public static Font TitleFont = Config.GeneralFont;
-        public static Font QueueFont = Config.GeneralFont;
-        public static Brush QueueBrush = new SolidBrush(Config.TextColor);
-        public static Brush QueueBrushOutline = new SolidBrush(Config.BgColor);
 
         public BattleIcon(Battle battle)
         {
@@ -129,7 +127,7 @@ namespace ZeroKLobby.MicroLobby
                         (int)50,
                         (int)50);
                 }
-                if (Battle.IsOfficial() && Battle.IsSpringieManaged && !Battle.IsQueue)
+                if (Battle.IsOfficial() && Battle.Mode != AutohostMode.None)
                 {
                     g.DrawImage(ZklResources.star,
                         (int)48,
@@ -137,17 +135,6 @@ namespace ZeroKLobby.MicroLobby
                         (int)15,
                         (int)15);
                 }
-                if (Battle.IsOfficial() && Battle.IsQueue)
-                {
-                    g.DrawStringWithOutline(Battle.QueueName.Replace(' ', '\n'),
-                        QueueFont,
-                        QueueBrush,
-                        QueueBrushOutline,
-                        new Rectangle(4, 4, (int)62, (int)62),
-                        new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center},
-                        3);
-                }
-
                 if (Battle.IsPassworded) drawIcon(ZklResources._lock);
 
              //   g.DrawImage(ZklResources.border, 4,4, (int)64, (int)64);

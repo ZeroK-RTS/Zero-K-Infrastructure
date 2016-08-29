@@ -24,7 +24,6 @@ namespace ZeroKLobby.MicroLobby
             SearchNoMatchPlayer = 3,
             //others
             Uncategorized = 4,
-            QueueTitle = 5,
             SpectatorTitle = 101,
             Spectators = 102,
         }
@@ -168,7 +167,7 @@ namespace ZeroKLobby.MicroLobby
 
             if (isBattle)
             {
-                if (userStatus.IsSpectator && (Program.TasClient.MyBattle == null || !Program.TasClient.MyBattle.IsQueue || Program.TasClient.MyBattle.FounderName == userStatus.Name)) drawImage(ZklResources.spec);
+                if (userStatus.IsSpectator && (Program.TasClient.MyBattle == null || Program.TasClient.MyBattle.FounderName == userStatus.Name)) drawImage(ZklResources.spec);
                 else if (userStatus.SyncStatus == SyncStatuses.Synced) drawImage(ZklResources.ready);
                 else drawImage(ZklResources.unready);
             }
