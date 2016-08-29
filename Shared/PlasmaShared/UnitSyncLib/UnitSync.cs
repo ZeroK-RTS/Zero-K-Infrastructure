@@ -43,23 +43,25 @@ namespace ZkData.UnitSyncLib
         private string originalPathVariable;
         public string UnitsyncWritableFolder { get; private set; }
 
-        public UnitSync(SpringPaths springPaths) {
+        public UnitSync(SpringPaths springPaths, string engine = GlobalConst.DefaultEngineOverride) {
             lock (unitsyncInitLocker)
             {
                 paths = springPaths;
                 //Getting the directory of this application instead of the non-constant currentDirectory. Reference: http://stackoverflow.com/questions/52797/how-do-i-get-the-path-of-the-assembly-the-code-is-in
                 originalDirectory = springPaths.WritableDirectory;
-                Trace.TraceInformation("UnitSync: Directory: {0}", paths.UnitSyncDirectory);
+
+                string unitSyncPath = paths.GetEngineFolderByVersion(engine);
+                Trace.TraceInformation("UnitSync: Directory: {0}", unitSyncPath);
                 Trace.TraceInformation("UnitSync: ZKL: {0}", originalDirectory);
 
                 originalPathVariable = Environment.GetEnvironmentVariable("PATH");
-                if (originalPathVariable?.Contains(paths.UnitSyncDirectory) != true) Environment.SetEnvironmentVariable("PATH",
-                    $"{originalPathVariable}{(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";")}{paths.UnitSyncDirectory}", EnvironmentVariableTarget.Process);
+                if (originalPathVariable?.Contains(unitSyncPath) != true) Environment.SetEnvironmentVariable("PATH",
+                    $"{originalPathVariable}{(Environment.OSVersion.Platform == PlatformID.Unix ? ":" : ";")}{unitSyncPath}", EnvironmentVariableTarget.Process);
 
                 //Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
-                Environment.CurrentDirectory = paths.UnitSyncDirectory;
-                var settingsPath = Path.Combine(paths.UnitSyncDirectory, "springsettings.cfg");
-                File.WriteAllText(settingsPath, $"SpringData={paths.DataDirectoriesJoined}\n");
+                Environment.CurrentDirectory = unitSyncPath;
+                var settingsPath = Path.Combine(unitSyncPath, "springsettings.cfg");
+                File.WriteAllText(settingsPath, $"SpringData={paths.GetJoinedDataDirectoriesWithEngine(engine)}\n");
                 if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed. " + NativeMethods.GetNextError());
 
                 Version = NativeMethods.GetSpringVersion();
@@ -69,13 +71,25 @@ namespace ZkData.UnitSyncLib
                 Trace.TraceInformation("UnitSync READ: {0}", string.Join(",", read));
                 Trace.TraceInformation("UnitSync WRITE: {0}", UnitsyncWritableFolder);
 
+
                 TraceErrors();
+
                 Trace.TraceInformation("UnitSync Initialized");
 
             }
         }
 
         public string Version { get; set; }
+
+
+        public void ReInit()
+        {
+            lock (unitsyncInitLocker)
+            {
+                NativeMethods.UnInit();
+                NativeMethods.Init(false, 666);
+            }
+        }
 
         public void Dispose() {
             if (!disposed)
@@ -117,24 +131,29 @@ namespace ZkData.UnitSyncLib
         }
 
         public ResourceInfo GetResourceFromFileName(string filePath) {
-            var archiveCache = new ArchiveCache(UnitsyncWritableFolder);
-            var ae = archiveCache.Archives.FirstOrDefault(x => x.ArchiveName == Path.GetFileName(filePath));
-            if (ae == null) return null;
-            try
+            var ae = GetArchiveEntryByArchiveName(filePath);
+
+            if (ae == null)
             {
-                return GetMap(ae);
+                ReInit();
+                NativeMethods.GetMapCount();
+                NativeMethods.GetPrimaryModCount();
+
+                ae = GetArchiveEntryByArchiveName(filePath);
+                if (ae == null) return null;
             }
-            catch (Exception ex)
+            if (ae.ModType == 1) return GetMod(ae);
+            if (ae.ModType == 3) return GetMap(ae);
+            if (ae.ModType == 0)
             {
-                Trace.TraceWarning("Not a map: {0}" ,ex);
-            }
-            try
-            {
-                return GetMod(ae);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceWarning("Not a mod: {0}", ex);
+                try
+                {
+                    return GetMod(ae);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Error processing mutator {0} : {1}", filePath, ex);
+                }
             }
             return ae;
         }
@@ -142,6 +161,8 @@ namespace ZkData.UnitSyncLib
 
         private Map GetMapNoBitmaps(ResourceInfo ae) {
             NativeMethods.RemoveAllArchives();
+            NativeMethods.GetMapCount();
+            NativeMethods.AddAllArchives(ae.Name);
             var mapInfo = GetMapInfo(ae, DefaultMapInfoVersion);
             var map = new Map(ae)
             {
@@ -174,15 +195,14 @@ namespace ZkData.UnitSyncLib
             NativeMethods.RemoveAllArchives();
             NativeMethods.GetPrimaryModCount(); // pre-requisite for the following calls
             NativeMethods.AddAllArchives(ae.Name);
-            var modIndex = NativeMethods.GetPrimaryModIndex(ae.Name);
             string[] sides;
 
             var mod = new Mod(ae)
             {
-                UnitDefs = GetUnitList(ae.Name).Select(ui => new UnitInfo(ui.Name, ui.FullName)).ToArray(),
-                StartUnits = new SerializableDictionary<string, string>(GetStartUnits(ae.Name, out sides)),
+                UnitDefs = GetUnitList().Select(ui => new UnitInfo(ui.Name, ui.FullName)).ToArray(),
+                StartUnits = new SerializableDictionary<string, string>(GetStartUnits(out sides)),
                 Sides = sides,
-                Options = GetModOptions(ae.ArchiveName).ToArray(),
+                Options = GetModOptions().ToArray(),
                 SideIcons = GetSideIcons(sides).ToArray(),
                 ModAis = GetAis().Where(ai => ai.IsLuaAi).ToArray()
             };
@@ -226,6 +246,13 @@ namespace ZkData.UnitSyncLib
             var archiveCache = new ArchiveCache(UnitsyncWritableFolder);
             return archiveCache.Archives.FirstOrDefault(x => x.Name == name);
         }
+
+        public ResourceInfo GetArchiveEntryByArchiveName(string filePath)
+        {
+            var archiveCache = new ArchiveCache(UnitsyncWritableFolder);
+            return archiveCache.Archives.FirstOrDefault(x => x.ArchiveName == Path.GetFileName(filePath));
+        }
+
 
         /// <summary>
         ///     Use when processing a new archive
@@ -369,8 +396,7 @@ namespace ZkData.UnitSyncLib
         }
 
 
-        private IEnumerable<Option> GetModOptions(string archiveName) {
-            NativeMethods.AddAllArchives(archiveName);
+        private IEnumerable<Option> GetModOptions() {
             var optionCount = NativeMethods.GetModOptionCount();
             for (var optionIndex = 0; optionIndex < optionCount; optionIndex++)
             {
@@ -400,40 +426,30 @@ namespace ZkData.UnitSyncLib
         }
 
 
-        private Dictionary<string, string> GetStartUnits(string modName, out string[] sides) {
-            if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
-            var modIndex = NativeMethods.GetPrimaryModIndex(modName);
-            if (modIndex < 0) throw new UnitSyncException("Mod not found (" + modName + ").");
-            return GetStartUnits(modIndex, out sides);
-        }
 
-        private Dictionary<string, string> GetStartUnits(int modIndex, out string[] sides) {
+        private Dictionary<string, string> GetStartUnits(out string[] sides) {
             if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
-            LoadModArchive(modIndex);
+
+            var startUnits = new Dictionary<string, string>() {};
             var sideCount = NativeMethods.GetSideCount();
-            var startUnits = new Dictionary<string, string>();
-            sides = new string[sideCount];
-            for (var sideIndex = 0; sideIndex < sideCount; sideIndex++)
+            if (sideCount > 0)
             {
-                var sideName = NativeMethods.GetSideName(sideIndex);
-                sides[sideIndex] = sideName;
-                startUnits[sideName] = NativeMethods.GetSideStartUnit(sideIndex);
+
+                sides = new string[sideCount];
+                for (var sideIndex = 0; sideIndex < sideCount; sideIndex++)
+                {
+                    var sideName = NativeMethods.GetSideName(sideIndex);
+                    sides[sideIndex] = sideName;
+                    startUnits[sideName] = NativeMethods.GetSideStartUnit(sideIndex);
+                }
             }
+            else sides = new string[] { };
+
             return startUnits;
         }
 
-        private IEnumerable<UnitInfo> GetUnitList(string modName) {
-            var modIndex = NativeMethods.GetPrimaryModIndex(modName);
-            if (modIndex < 0) throw new UnitSyncException(string.Format("Mod not found ({0}).", modName));
-            return GetUnitList(modIndex);
-        }
 
-        private IEnumerable<UnitInfo> GetUnitList(int modIndex) {
-            if (modIndex != loadedArchiveIndex)
-            {
-                NativeMethods.AddAllArchives(NativeMethods.GetPrimaryModArchive(modIndex));
-                loadedArchiveIndex = modIndex;
-            }
+        private IEnumerable<UnitInfo> GetUnitList() {
             for (var i = 0; i <= MaxUnits && NativeMethods.ProcessUnitsNoChecksum() > 0; i++)
             {
                 var error = NativeMethods.GetNextError();

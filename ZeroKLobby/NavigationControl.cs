@@ -214,7 +214,7 @@ namespace ZeroKLobby
                     Height = TabButtonHeight
                 },*/
                 new ButtonInfo { Label = "MULTIPLAYER", TargetPath = "battles", Icon = Buttons.mp, Width = 250, Height = TabButtonHeight },
-                new ButtonInfo { Label = "WEB", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon = Buttons.extras, Height = TabButtonHeight, Width = 150 },
+                new ButtonInfo { Label = "WEB", TargetPath = GlobalConst.BaseSiteUrl + "/", Icon = Buttons.globe, Height = TabButtonHeight, Width = 150 },
                 new ButtonInfo { Label = "CHAT", TargetPath = "chat", Icon = Buttons.chat, Height = TabButtonHeight, Width = 150 }
          
             };
@@ -306,7 +306,6 @@ namespace ZeroKLobby
             AddTabPage(new SettingsTab(), "Settings");
             AddTabPage(new ServerTab(), "Server");
             AddTabPage(new DownloaderTab(), "Rapid");
-            AddTabPage(new SkirmishControl(), "Skirmish");
             var home = AddTabPage(new WelcomeTab(), "Welcome");
 
             tabControl.SelectTab(home);

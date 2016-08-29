@@ -82,7 +82,7 @@ namespace ZkData.Migrations
                 if (!db.MiscVars.Any(y => y.VarName == "GlacierSecretKey"))
                     db.MiscVars.AddOrUpdate(x => x.VarName, new MiscVar { VarName = "GlacierSecretKey", VarValue = "secret" });
 
-
+                
                 db.Accounts.AddOrUpdate(
                     x => x.Name,
                     new Account
@@ -94,56 +94,19 @@ namespace ZkData.Migrations
                         Elo = 1700,
                         Level = 50,
                         EloWeight = 2,
-                        SpringieLevel = 4,
                         Country = "cz"
                     },
                     new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, IsZeroKAdmin = true });
 
-                db.AutohostConfigs.AddOrUpdate(
-                    x => x.Login,
-                    new AutohostConfig
-                    {
-                        Login = "Springiee",
-                        Title = "Local springie test",
-                        Password = "dummy",
-                        AutoSpawn = true,
-                        AutoUpdateRapidTag = "zk:stable",
-                        Mod = "zk:stable",
-                        ClusterNode = "alpha",
-                        JoinChannels = "bots",
-                        Map = "Dual Icy Run v3",
-                        SpringVersion = GlobalConst.DefaultEngineOverride,
-                        MaxPlayers = 10
-                    },
-                    new AutohostConfig
-                    {
-                        Login = "Fungiee",
-                        Title = "Local fungicide test",
-                        Password = "dummy",
-                        AutoSpawn = true,
-                        AutoUpdateRapidTag = "zk:stable",
-                        Mod = "zk:stable",
-                        ClusterNode = "alpha",
-                        JoinChannels = "bots",
-                        Map = "Dual Icy Run v3",
-                        SpringVersion = GlobalConst.DefaultEngineOverride,
-                        MaxPlayers = 10
-                    },
-                    new AutohostConfig
-                    {
-                        Login = "Trifliee",
-                        Title = "Local triplicator test",
-                        Password = "dummy",
-                        AutoSpawn = true,
-                        AutoUpdateRapidTag = "zk:test",
-                        Mod = "zk:test",
-                        ClusterNode = "alpha",
-                        JoinChannels = "bots",
-                        Map = "Dual Icy Run v3",
-                        SpringVersion = GlobalConst.DefaultEngineOverride,
-                        MaxPlayers = 10
-                    });
             }
+
+            db.Resources.AddOrUpdate(x=>x.InternalName, new Resource()
+            {
+                InternalName = "Zero-K $VERSION",
+                RapidTag = "zk:dev",
+                FeaturedOrder = 1,
+                TypeID = ResourceType.Mod,
+            });
 
             db.ForumCategories.AddOrUpdate(
                 x => x.Title,

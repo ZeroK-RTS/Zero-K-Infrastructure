@@ -200,12 +200,6 @@
     <Compile Include="MicroLobby\HexToUnicodeConverter.Designer.cs">
       <DependentUpon>HexToUnicodeConverter.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\SkirmishControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\ExtrasTab\SkirmishControl.Designer.cs">
-      <DependentUpon>SkirmishControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="MicroLobby\TextColoringPanel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -328,7 +322,6 @@
     <Compile Include="MicroLobby\SettingsTab.Designer.cs">
       <DependentUpon>SettingsTab.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\SpringieCommand.cs" />
     <Compile Include="MicroLobby\TextImage.cs" />
     <Compile Include="MicroLobby\ModOptionsControl.cs">
       <SubType>UserControl</SubType>
@@ -510,9 +503,6 @@
     <EmbeddedResource Include="MicroLobby\ExtrasTab\LocalReplay.resx">
       <DependentUpon>LocalReplay.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\ExtrasTab\SkirmishControl.resx">
-      <DependentUpon>SkirmishControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Notifications\PwBar.resx">
       <DependentUpon>PwBar.cs</DependentUpon>
     </EmbeddedResource>
@@ -580,6 +570,7 @@
     <EmbeddedResource Include="ZklResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ZklResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="NativeLibs\libCSteamworks-x86_64.so" />
     <EmbeddedResource Include="NativeLibs\libsteam_api-x86_64.so" />
@@ -1637,6 +1628,8 @@
     <Content Include="Resources\Buttons\downloads.png" />
     <Content Include="Resources\Buttons\exit.png" />
     <Content Include="Resources\Buttons\extras.png" />
+    <None Include="Resources\Buttons\fight.png" />
+    <None Include="Resources\Buttons\globe.png" />
     <Content Include="Resources\Buttons\left.png" />
     <Content Include="Resources\Buttons\link.png" />
     <Content Include="Resources\Buttons\mp.png" />

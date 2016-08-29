@@ -42,7 +42,6 @@ namespace ZeroKLobby.Notifications
             this.radioPlaySpecContainer = new System.Windows.Forms.TableLayoutPanel();
             this.radioPlay = new System.Windows.Forms.RadioButton();
             this.radioSpec = new System.Windows.Forms.RadioButton();
-            this.lbQueue = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
             this.radioPlaySpecContainer.SuspendLayout();
@@ -74,7 +73,6 @@ namespace ZeroKLobby.Notifications
             this.panel1.Controls.Add(this.btnStart);
             this.panel1.Controls.Add(this.radioPlaySpecContainer);
             this.panel1.Controls.Add(this.lbPlayers);
-            this.panel1.Controls.Add(this.lbQueue);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -142,7 +140,7 @@ namespace ZeroKLobby.Notifications
             this.btnStart.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnStart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnStart.ForeColor = System.Drawing.Color.White;
-            this.btnStart.Image = global::ZeroKLobby.ZklResources.battle;
+            this.btnStart.Image = Buttons.fight;
             this.btnStart.Location = new System.Drawing.Point(15, 12);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(68, 68);
@@ -197,16 +195,6 @@ namespace ZeroKLobby.Notifications
             this.radioSpec.UseVisualStyleBackColor = true;
             this.radioSpec.CheckedChanged += new System.EventHandler(this.radioSpec_CheckedChanged);
             // 
-            // lbQueue
-            // 
-            this.lbQueue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lbQueue.Location = new System.Drawing.Point(3, 3);
-            this.lbQueue.Name = "lbQueue";
-            this.lbQueue.Size = new System.Drawing.Size(141, 73);
-            this.lbQueue.TabIndex = 17;
-            this.lbQueue.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lbQueue.Visible = false;
-            // 
             // BattleBar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
@@ -233,7 +221,6 @@ namespace ZeroKLobby.Notifications
                 private System.Windows.Forms.Panel panel1;
                 private System.Windows.Forms.RadioButton radioPlay;
                 private System.Windows.Forms.RadioButton radioSpec;
-                private System.Windows.Forms.Label lbQueue;
         private System.Windows.Forms.TableLayoutPanel radioPlaySpecContainer;
         private BitmapButton btnLeave;
         private BitmapButton btnStart;

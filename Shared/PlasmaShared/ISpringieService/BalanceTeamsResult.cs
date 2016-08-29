@@ -10,4 +10,5 @@ namespace PlasmaShared
         public string Message;
         public List<PlayerTeam> Players = new List<PlayerTeam>();
     }
+
 }

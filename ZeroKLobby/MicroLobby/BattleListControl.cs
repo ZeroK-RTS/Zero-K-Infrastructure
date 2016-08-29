@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKLobby.MicroLobby
@@ -134,7 +135,7 @@ namespace ZeroKLobby.MicroLobby
 
                 ActionHandler.StopBattle();
 
-                ActionHandler.SpawnAutohost(dialog.GameRapidTag, dialog.BattleTitle, dialog.Password, null);
+                ActionHandler.HostBattle(title: dialog.BattleTitle, password:dialog.Password, mode: dialog.Mode);
             }
         }
 
@@ -150,7 +151,7 @@ namespace ZeroKLobby.MicroLobby
                     if (battle.IsPassworded)
                     {
                         // hack dialog Program.FormMain
-                        using (var form = new AskBattlePasswordForm(battle.Founder.Name)) if (form.ShowDialog() == DialogResult.OK) ActionHandler.JoinBattle(battle.BattleID, form.Password);
+                        using (var form = new AskBattlePasswordForm(battle.FounderName)) if (form.ShowDialog() == DialogResult.OK) ActionHandler.JoinBattle(battle.BattleID, form.Password);
                     } else 
                     {
                         ActionHandler.JoinBattle(battle.BattleID, null);    
@@ -209,24 +210,10 @@ namespace ZeroKLobby.MicroLobby
                 int y = 0;
 
 
-                if (view.Any(b => b.Battle.IsQueue && !b.IsInGame)) {
-                    PaintDivider(g, ref x, ref y, "Match maker queues");
-                    foreach (BattleIcon t in view.Where(b => b.Battle.IsQueue && !b.IsInGame)) {
-                        if (x + scaledIconWidth > Width) {
-                            x = 0;
-                            y += scaledIconHeight;
-                        }
-                        PaintBattle(t, g, ref x, ref y, scaledIconWidth, scaledIconHeight);
-                    }
-
-                    x = 0;
-                    y += scaledIconHeight;
-                }
-
                 PaintDivider(g, ref x, ref y, "Open battles");
                 PaintOpenBattleButton(g, ref x, ref y, scaledMapCellWidth, scaledIconWidth);
 
-                foreach (BattleIcon t in view.Where(b => !b.Battle.IsQueue && !b.IsInGame))
+                foreach (BattleIcon t in view.Where(b => !b.IsInGame))
                 {
                     if (x + scaledIconWidth > Width)
                     {
@@ -304,7 +291,7 @@ namespace ZeroKLobby.MicroLobby
                 view = model.Where(icon => orParts.Any(filterPart => BattleWordFilter(icon.Battle, filterPart.Split(' ')))).ToList();
             }
             IEnumerable<BattleIcon> v = view; // speedup to avoid multiple "toList"
-            if (HideEmpty) v = v.Where(bi => bi.Battle.NonSpectatorCount > 0 || bi.Battle.IsQueue);
+            if (HideEmpty) v = v.Where(bi => bi.Battle.NonSpectatorCount > 0);
             if (HideFull) v = v.Where(bi => bi.Battle.NonSpectatorCount < bi.Battle.MaxPlayers);
             if (ShowOfficial) v = v.Where(bi => bi.Battle.IsOfficial());
             if (HidePassworded) v = v.Where(bi => !bi.Battle.IsPassworded);
@@ -374,7 +361,7 @@ namespace ZeroKLobby.MicroLobby
         void Sort()
         {
             IOrderedEnumerable<BattleIcon> ret = view.OrderBy(x=>x.Battle.IsInGame);
-            ret = ret.OrderByDescending(x => x.Battle.IsSpringieManaged);
+            ret = ret.OrderByDescending(x => x.Battle.Mode != AutohostMode.None);
             if (sortByPlayers) ret = ret.ThenByDescending(bi => bi.Battle.NonSpectatorCount);
             ret = ret.ThenBy(x => x.Battle.Title);
             view = ret.ToList();

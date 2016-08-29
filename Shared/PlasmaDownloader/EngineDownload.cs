@@ -81,7 +81,7 @@ namespace PlasmaDownloader
                                 {
                                     ExtractZipArchive(target, targetDir);
                                     Trace.TraceInformation("Install of {0} complete", Name);
-                                    springPaths.SetEnginePath(targetDir);
+                                    springPaths.NotifyNewEngine(targetDir);
                                     Finish(true);
                                 }
                                 catch (Exception ex)

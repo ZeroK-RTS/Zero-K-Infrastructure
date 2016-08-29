@@ -17,7 +17,7 @@ namespace ZeroKLobby.Lines
                            TextColor.Date,
                            Date.ToShortTimeString(),
                            TextColor.Join,
-                           battle.Founder,
+                           battle.FounderName,
                            battle.Title);
     }
 

@@ -23,13 +23,11 @@ namespace ZeroKLobby.MicroLobby
         {
             var botNumber = Enumerable.Range(1, int.MaxValue).First(i => !Program.TasClient.MyBattle.Bots.Values.Any(
                                 bt => bt.Name == "Bot_" + i));
-            // new team        	
-            var teamNumber = Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(
-                                    x => !Program.TasClient.MyBattle.Users.Values.Any(y => y.TeamNumber == x));
+
             //different alliance than player
             var allyNumber = Enumerable.Range(0, TasClient.MaxAlliances - 1).FirstOrDefault(x => x != Program.TasClient.MyBattleStatus.AllyNumber);
 
-            Program.TasClient.AddBot("Bot_" + botNumber, botShortName, allyNumber, teamNumber);
+            Program.TasClient.AddBot("Bot_" + botNumber, botShortName, allyNumber);
         }
 
         static MenuItem GetAddBot()
@@ -60,14 +58,14 @@ namespace ZeroKLobby.MicroLobby
             }
 
             addBotItems.Add(new MenuItem("-"));
-            bool enabled = (Environment.OSVersion.Platform != PlatformID.Unix || Program.SpringPaths.SpringVersion != "91.0"); //linux don't have static build for Spring 91
+            bool enabled = true; //linux don't have static build for Spring 91
             MenuItem item3 = new MenuItem("Spring AI" + (enabled ? String.Empty : " (Not available)"));
             item3.Select += (s, e2) =>
             {
                 if (item3.MenuItems.Count == 0)
                 {
                     if (refreshSpringAi)
-                        springAi = SkirmishControlTool.GetSpringAIs(Program.SpringPaths.UnitSyncDirectory); //note: used UnitSyncDirectory because its just same as Engine folder
+                        springAi = SkirmishControlTool.GetSpringAIs(Program.SpringPaths.GetEngineFolderByVersion(GlobalConst.DefaultEngineOverride)); //note: used UnitSyncDirectory because its just same as Engine folder
                     refreshSpringAi = false;
                     MenuItem springAIitem;
                     for (int i = 0; i < springAi.Count; i++)
@@ -122,7 +120,7 @@ namespace ZeroKLobby.MicroLobby
                                 var subItem = new System.Windows.Forms.MenuItem("Join Team " + (allyTeam + 1));
                                 subItem.Click += (s, e) =>
                                     {
-                                        Program.TasClient.UpdateBot(botName, botStatus.aiLib, at, botStatus.TeamNumber);
+                                        Program.TasClient.UpdateBot(botName, botStatus.aiLib, at);
                                     };
                                 item.MenuItems.Add(subItem);
                             }
@@ -132,7 +130,7 @@ namespace ZeroKLobby.MicroLobby
                     var newTeamItem = new System.Windows.Forms.MenuItem("New Team");
                     newTeamItem.Click += (s, e) =>
                         {
-                            Program.TasClient.UpdateBot(botName, null, freeAllyTeam, null);
+                            Program.TasClient.UpdateBot(botName, null, freeAllyTeam);
                         };
                     item.MenuItems.Add(newTeamItem);
                     contextMenu.MenuItems.Add(item);
@@ -282,25 +280,22 @@ namespace ZeroKLobby.MicroLobby
                     {
                         contextMenu.MenuItems.Add("-");
 
-                        if (!Program.TasClient.MyBattle.IsQueue)
+                        if (user.Name != Program.TasClient.UserName)
                         {
-                            if (user.Name != Program.TasClient.UserName)
+                            var allyWith = new MenuItem("Ally")
                             {
-                                var allyWith = new MenuItem("Ally")
-                                               {
-                                                   Enabled =
-                                                       !battleStatus.IsSpectator &&
-                                                       (battleStatus.AllyNumber != myStatus.AllyNumber || myStatus.IsSpectator)
-                                               };
-                                allyWith.Click += (s, e) => ActionHandler.JoinAllyTeam(battleStatus.AllyNumber);
-                                contextMenu.MenuItems.Add(allyWith);
-                            }
-                            contextMenu.MenuItems.Add(GetSetAllyTeam(user));
-
-                            contextMenu.MenuItems.Add("-");
-                            contextMenu.MenuItems.Add(GetShowGameOptionsItem());
-                            contextMenu.MenuItems.Add(GetAddBot());
+                                Enabled =
+                                                   !battleStatus.IsSpectator &&
+                                                   (battleStatus.AllyNumber != myStatus.AllyNumber || myStatus.IsSpectator)
+                            };
+                            allyWith.Click += (s, e) => ActionHandler.JoinAllyTeam(battleStatus.AllyNumber);
+                            contextMenu.MenuItems.Add(allyWith);
                         }
+                        contextMenu.MenuItems.Add(GetSetAllyTeam(user));
+
+                        contextMenu.MenuItems.Add("-");
+                        contextMenu.MenuItems.Add(GetShowGameOptionsItem());
+                        contextMenu.MenuItems.Add(GetAddBot());
                     }
                 }
             }

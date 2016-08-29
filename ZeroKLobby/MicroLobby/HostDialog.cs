@@ -2,28 +2,36 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using PlasmaShared;
 using ZeroKLobby.Controls;
+using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
-    public partial class HostDialog: ZklBaseForm
+    public partial class HostDialog : ZklBaseForm
     {
         public string BattleTitle { get { return battleTitleBox.Text; } }
 
-        public string GameName { get { return game.FullName; } }
-
-        public string GameRapidTag { get { return game.RapidTag; } }
-
         public string Password { get { return passwordBox.Text; } }
 
-        private GameInfo game;
-
+        public AutohostMode? Mode => Enum.GetValues(typeof(AutohostMode)).Cast<AutohostMode>().FirstOrDefault(x => x.Description() == cbType.SelectedItem.ToString());
+        
         public HostDialog(GameInfo defaultGame)
         {
             InitializeComponent();
-            battleTitleBox.Text = Program.TasClient.MyUser + "'s Battle";
+            ZklBaseControl.Init(cbType);
 
-            game = defaultGame ?? KnownGames.List.First(x => x.IsPrimary);
+
+            cbType.Items.Add(AutohostMode.GameChickens.Description());
+            cbType.Items.Add(AutohostMode.Teams.Description());
+            cbType.Items.Add(AutohostMode.Game1v1.Description());
+            cbType.Items.Add(AutohostMode.GameFFA.Description());
+            cbType.Items.Add(AutohostMode.None.Description());
+
+            cbType.SelectedIndex = 0;
+
+            battleTitleBox.Text = Program.TasClient.UserName + "'s game";
+
             if (Program.Conf.HasHosted)
             {
                 try
@@ -43,7 +51,6 @@ namespace ZeroKLobby.MicroLobby
         {
             Program.Conf.HasHosted = true;
             Program.Conf.HostBattle_Title = battleTitleBox.Text;
-            //Program.Conf.HostBattle_SpringieCommands = springieCommandsBox.Text;
 
             Program.SaveConfig();
 
@@ -58,6 +65,9 @@ namespace ZeroKLobby.MicroLobby
             FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, DisplayRectangle, FrameBorderRenderer.StyleType.Shraka);
         }
 
-
+        private void cbType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            battleTitleBox.Text = Program.TasClient.UserName + "'s " + cbType.SelectedItem;
+        }
     }
 }

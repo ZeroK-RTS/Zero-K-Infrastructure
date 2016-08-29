@@ -38,10 +38,9 @@ namespace Benchmarker
         }
 
 
-        public MainForm(SpringPaths paths = null, SpringScanner scanner = null, PlasmaDownloader.PlasmaDownloader downloader = null) {
+        public MainForm(SpringPaths paths, SpringScanner scanner = null, PlasmaDownloader.PlasmaDownloader downloader = null) {
             InitializeComponent();
-            if (paths != null) springPaths = paths;
-            else springPaths = new SpringPaths(null, writableFolderOverride: null);
+            springPaths = paths;
             if (scanner != null) springScanner = scanner;
             else {
                 springScanner = new SpringScanner(springPaths);
@@ -66,7 +65,7 @@ namespace Benchmarker
 
             
 
-            tbEngine.Text = springPaths.SpringVersion;
+            tbEngine.Text = GlobalConst.DefaultEngineOverride;
         }
 
 

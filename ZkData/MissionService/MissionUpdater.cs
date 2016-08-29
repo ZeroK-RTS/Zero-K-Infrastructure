@@ -41,11 +41,24 @@ namespace ZkData
                 writer.Write(toWrite);
             }
         }
-  
+
+        public void UpdateMission(ZkDataContext db, Mission mission, SpringScanner scanner)
+        {
+            var file = mission.Mutator.ToArray();
+            var targetPath = Path.Combine(scanner.SpringPaths.WritableDirectory, "games", mission.SanitizedFileName);
+            File.WriteAllBytes(targetPath, file);
+            
+            var modInfo = scanner.unitSync.GetResourceFromFileName(targetPath) as Mod;
+            File.Delete(targetPath);
+            UpdateMission(db, mission, modInfo);
+        }
+
         public void UpdateMission(ZkDataContext db, Mission mission, Mod modInfo) {
             var file = mission.Mutator.ToArray();
             var tempName = Path.GetTempFileName() + ".zip";
             File.WriteAllBytes(tempName, file);
+
+            
 
             using (var zf = ZipFile.Open(tempName, ZipArchiveMode.Update))
             {

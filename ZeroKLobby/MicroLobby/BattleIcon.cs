@@ -5,6 +5,8 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using LobbyClient;
 using System.Windows.Forms;
+using PlasmaShared;
+using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -71,9 +73,6 @@ namespace ZeroKLobby.MicroLobby
 
         public static Brush TextBrush = new SolidBrush(Color.White); //  Config.TextColor
         public static Font TitleFont = Config.GeneralFont;
-        public static Font QueueFont = Config.GeneralFont;
-        public static Brush QueueBrush = new SolidBrush(Config.TextColor);
-        public static Brush QueueBrushOutline = new SolidBrush(Config.BgColor);
 
         public BattleIcon(Battle battle)
         {
@@ -122,13 +121,13 @@ namespace ZeroKLobby.MicroLobby
 
                 if (IsInGame)
                 {
-                    g.DrawImage(ZklResources.boom,
+                    g.DrawImage(Buttons.fight,
                         (int)10,
                         (int)10,
                         (int)50,
                         (int)50);
                 }
-                if (Battle.IsOfficial() && Battle.IsSpringieManaged && !Battle.IsQueue)
+                if (Battle.IsOfficial() && Battle.Mode != AutohostMode.None)
                 {
                     g.DrawImage(ZklResources.star,
                         (int)48,
@@ -136,17 +135,6 @@ namespace ZeroKLobby.MicroLobby
                         (int)15,
                         (int)15);
                 }
-                if (Battle.IsOfficial() && Battle.IsQueue)
-                {
-                    g.DrawStringWithOutline(Battle.QueueName.Replace(' ', '\n'),
-                        QueueFont,
-                        QueueBrush,
-                        QueueBrushOutline,
-                        new Rectangle(4, 4, (int)62, (int)62),
-                        new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center},
-                        3);
-                }
-
                 if (Battle.IsPassworded) drawIcon(ZklResources._lock);
 
              //   g.DrawImage(ZklResources.border, 4,4, (int)64, (int)64);
@@ -237,11 +225,12 @@ namespace ZeroKLobby.MicroLobby
                     g.InterpolationMode = InterpolationMode.Default;
                 }
                 g.SetClip(new Rectangle(0, 0, scaledWidth, scaledHeight));
-                String mod_and_engine_name = string.Format("{0}     {1}{2}", Battle.ModName, Battle.EngineName, Battle.EngineVersion);
+                String mod_and_engine_name = string.Format("{0}     spring{1}", Battle.ModName, Battle.EngineVersion);
                 int y = (int)3;
                 int offset = (int)16;
                 int curMapCellSize = (int)MapCellSize.Width;
-                TextRenderer.DrawText(g, Battle.Title, TitleFont, new Point(curMapCellSize, y + offset * 0), Config.TextColor);
+                TextRenderer.DrawText(g,
+                    $"{Battle.Mode.Description()}: {Battle.Title}", TitleFont, new Point(curMapCellSize, y + offset * 0), Config.TextColor);
                 //g.DrawString(Battle.Title, TitleFont, TextBrush, curMapCellSize, y + offset * 0);
                 if (TextRenderer.MeasureText(mod_and_engine_name, ModFont).Width < scaledWidth - curMapCellSize)
                 {
@@ -254,7 +243,7 @@ namespace ZeroKLobby.MicroLobby
                     int offset_offset = (int)4; //this squishes modName & engine-name and dude-icons together abit
                     int offset_offset2 = (int)6; //this squished modName & engine-name into 2 tight lines
                     TextRenderer.DrawText(g, Battle.ModName, ModFont, new Point(curMapCellSize, y + offset * 1 - offset_offset), Config.TextColor);
-                    TextRenderer.DrawText(g, string.Format("{0}{1}", Battle.EngineName, Battle.EngineVersion), 
+                    TextRenderer.DrawText(g, string.Format("spring{0}", Battle.EngineVersion), 
                         ModFont, new Point(curMapCellSize, y + offset * 2 - offset_offset - offset_offset2), Config.TextColor);
                     g.DrawImageUnscaled(playersBoxImage, curMapCellSize, y + offset * 3 - offset_offset - offset_offset2);
                 }

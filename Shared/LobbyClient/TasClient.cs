@@ -198,12 +198,11 @@ namespace LobbyClient
         public event EventHandler<CancelEventArgs<TasSayEventArgs>> PreviewSaid = delegate { };
         public event EventHandler<Battle> MyBattleHostExited = delegate { };
         public event EventHandler<Battle> MyBattleStarted = delegate { };
-        public event EventHandler<SetRectangle> StartRectAdded = delegate { };
-        public event EventHandler<SetRectangle> StartRectRemoved = delegate { };
         public event EventHandler<OldNewPair<Battle>> BattleInfoChanged = delegate { };
         public event EventHandler<OldNewPair<Battle>> BattleMapChanged = delegate { };
         public event EventHandler<OldNewPair<Battle>> MyBattleMapChanged = delegate { };
         public event EventHandler<Battle> ModOptionsChanged = delegate { };
+        public event EventHandler<ConnectSpring> ConnectSpringReceived = delegate { };
 
         public event EventHandler<SiteToLobbyCommand> SiteToLobbyCommandReceived = delegate { };
 
@@ -245,30 +244,6 @@ namespace LobbyClient
         }
 
 
-        public async Task AddBattleRectangle(int allyno, BattleRect rect)
-        {
-            {
-                if (allyno < Spring.MaxAllies && allyno >= 0) {
-                    await SendCommand(new SetRectangle() { Number = allyno, Rectangle = rect });
-                }
-            }
-        }
-
-        private async Task Process(SetRectangle rect)
-        {
-            var bat = MyBattle;
-            if (bat != null) {
-                if (rect.Rectangle == null) {
-                    BattleRect org;
-                    bat.Rectangles.TryRemove(rect.Number, out org);
-                    StartRectAdded(this, rect);
-                } else {
-                    bat.Rectangles[rect.Number] = rect.Rectangle;
-                    StartRectRemoved(this, rect);
-                }
-            }
-        }
-
         private async Task Process(SetModOptions options)
         {
             var bat = MyBattle;
@@ -279,13 +254,12 @@ namespace LobbyClient
         }
 
 
-        public Task AddBot(string name, string aiDll, int? allyNumber= null, int? teamNumber= null)
+        public Task AddBot(string name, string aiDll, int? allyNumber= null)
         {
             var u = new UpdateBotStatus();
             if (aiDll != null) u.AiLib = aiDll;
             if (name != null) u.Name = name;
             if (allyNumber != null) u.AllyNumber = allyNumber;
-            if (teamNumber != null) u.TeamNumber = teamNumber;
             return SendCommand(u);
         }
 
@@ -297,12 +271,11 @@ namespace LobbyClient
 
         public async Task ChangeMyBattleStatus(bool? spectate = null,
                                          SyncStatuses? syncStatus = null,
-                                         int? ally = null,
-                                         int? team = null)
+                                         int? ally = null)
         {
             var ubs = MyBattleStatus;
             if (ubs != null) {
-                var status = new UpdateUserBattleStatus() { IsSpectator = spectate, Sync = syncStatus, AllyNumber = ally, TeamNumber = team, Name = UserName};
+                var status = new UpdateUserBattleStatus() { IsSpectator = spectate, Sync = syncStatus, AllyNumber = ally, Name = UserName};
                 await SendCommand(status);
             }
         }
@@ -352,20 +325,6 @@ namespace LobbyClient
                 var ubs = new UpdateUserBattleStatus() { Name = username, IsSpectator = spectatorState };
                 await SendCommand(ubs);
             }
-        }
-
-        public async Task ForceTeam(string username, int team)
-        {
-            if (MyBattle != null && MyBattle.Users.ContainsKey(username))
-            {
-                var ubs = new UpdateUserBattleStatus() { Name = username, TeamNumber = team };
-                await SendCommand(ubs);
-            }
-        }
-
-        public void GameSaid(string username, string text)
-        {
-            InvokeSaid(new TasSayEventArgs(SayPlace.Game, "", username, text, false));
         }
 
 
@@ -460,36 +419,16 @@ namespace LobbyClient
 
         Login.ClientTypes clientType = LobbyClient.Login.ClientTypes.ZeroKLobby | (Environment.OSVersion.Platform == PlatformID.Unix ? LobbyClient.Login.ClientTypes.Linux : 0);
 
-        public Task OpenBattle(Battle nbattle)
+        public Task OpenBattle(BattleHeader header)
         {
             if (MyBattle != null) LeaveBattle();
-
-            return SendCommand(new OpenBattle() {
-                Header =
-                    new BattleHeader() {
-                        Engine = nbattle.EngineVersion,
-                        Game = nbattle.ModName,
-                        Ip = nbattle.Ip ?? localIp,
-                        Port = nbattle.HostPort,
-                        Map = nbattle.MapName,
-                        Password = nbattle.Password,
-                        MaxPlayers = nbattle.MaxPlayers,
-                        Title = nbattle.Title
-                    }
-            });
+            return SendCommand(new OpenBattle() {Header = header});
         }
 
 
         public Task Register(string username, string password)
         {
             return SendCommand(new Register() { Name = username, PasswordHash = Utils.HashLobbyPassword(password) });
-        }
-
-        public async Task RemoveBattleRectangle(int allyno)
-        {
-            if (MyBattle.Rectangles.ContainsKey(allyno)) {
-                await SendCommand(new SetRectangle() { Number = allyno, Rectangle = null });
-            }
         }
 
         public async Task RemoveBot(string name)
@@ -507,7 +446,7 @@ namespace LobbyClient
 
 
         public async Task ForceJoinBattle(string name, string battleHostName) {
-            var battle = ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == battleHostName);
+            var battle = ExistingBattles.Values.FirstOrDefault(x => x.FounderName == battleHostName);
             if (battle != null) await ForceJoinBattle(name, battle.BattleID);
         }
 
@@ -592,11 +531,11 @@ namespace LobbyClient
             ChangeMyUserStatus(false, true);
         }
 
-        public async Task UpdateBot(string name, string aiDll, int? allyNumber = null, int? teamNumber = null)
+        public async Task UpdateBot(string name, string aiDll, int? allyNumber = null)
         {
             var bat = MyBattle;
             if (bat != null && bat.Bots.ContainsKey(name)) {
-                await AddBot(name, aiDll, allyNumber, teamNumber);
+                await AddBot(name, aiDll, allyNumber);
             }
         }
 
@@ -632,20 +571,12 @@ namespace LobbyClient
             }
         }
 
-        User UserGetter(string n)
-        {
-            User us;
-            if (existingUsers.TryGetValue(n, out us)) return us;
-            else return new User() { Name = n };
-        }
-
-
         async Task Process(BattleAdded bat)
         {
             var newBattle = new Battle();
-            newBattle.UpdateWith(bat.Header, UserGetter);
+            newBattle.UpdateWith(bat.Header);
             existingBattles[newBattle.BattleID] = newBattle;
-            newBattle.Founder.IsInBattleRoom = true;
+            //newBattle.Founder.IsInBattleRoom = true;
             
             BattleFound(this, newBattle);
         }
@@ -657,12 +588,12 @@ namespace LobbyClient
             Battle battle;
             ExistingBattles.TryGetValue(bat.BattleID, out battle);
             if (user != null && battle != null) {
-                battle.Users[user.Name] = new UserBattleStatus(user.Name, user, bat.ScriptPassword);
+                battle.Users[user.Name] = new UserBattleStatus(user.Name, user);
                 user.IsInBattleRoom = true;
-                BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID, bat.ScriptPassword));
+                BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID));
                 if (user.Name == UserName) {
                     MyBattle = battle;
-                    if (battle.Founder.Name == UserName) BattleOpened(this, battle);
+                    if (battle.FounderName == UserName) BattleOpened(this, battle);
                     BattleJoined(this, MyBattle);
                 }
             }
@@ -684,7 +615,6 @@ namespace LobbyClient
 
                 if (MyBattle != null && left.BattleID == MyBattleID) {
                     if (UserName == left.User) {
-                        bat.Rectangles.Clear();
                         bat.Bots.Clear();
                         bat.ModOptions.Clear();
                         MyBattle = null;
@@ -745,7 +675,7 @@ namespace LobbyClient
             if (old == null) UserAdded(this, user);
             if (old != null) {
                 var bat = MyBattle;
-                if (bat != null && bat.Founder.Name == user.Name)
+                if (bat != null && bat.FounderName == user.Name)
                 {
                     if (user.IsInGame && !old.IsInGame) MyBattleStarted(this,bat );
                     if (!user.IsInGame && old.IsInGame) MyBattleHostExited(this, bat);
@@ -877,7 +807,7 @@ namespace LobbyClient
             Battle bat;
             if (existingBattles.TryGetValue(h.BattleID.Value, out bat)) {
                 var org = bat.Clone();
-                bat.UpdateWith(h, UserGetter);
+                bat.UpdateWith(h);
                 var pair = new OldNewPair<Battle>(org, bat);
                 if (org.MapName != bat.MapName) {
                     if (bat == MyBattle) MyBattleMapChanged(this, pair);
@@ -897,7 +827,13 @@ namespace LobbyClient
             ChannelTopicChanged(this, changeTopic);
         }
 
-        
+
+        async Task Process(ConnectSpring connectSpring)
+        {
+            ConnectSpringReceived(this, connectSpring);
+        }
+
+
         void InvokeSaid(TasSayEventArgs sayArgs)
         {
             var previewSaidEventArgs = new CancelEventArgs<TasSayEventArgs>(sayArgs);

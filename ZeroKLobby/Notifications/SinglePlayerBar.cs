@@ -45,7 +45,7 @@ namespace ZeroKLobby.Notifications
 			if (!Program.SpringScanner.HasResource(modName)) neededDownloads.Add(Program.Downloader.GetResource(DownloadType.MOD, modName));
 			if (!Program.SpringScanner.HasResource(profile.MapName)) neededDownloads.Add(Program.Downloader.GetResource(DownloadType.MAP, profile.MapName));
 			if (profile.ManualDependencies != null) foreach (var entry in profile.ManualDependencies) if (!string.IsNullOrEmpty(entry) && !Program.SpringScanner.HasResource(entry)) neededDownloads.Add(Program.Downloader.GetResource(DownloadType.UNKNOWN, entry));
-			var needEngine = Program.Downloader.GetAndSwitchEngine(Program.SpringPaths.SpringVersion);
+			var needEngine = Program.Downloader.GetEngine(GlobalConst.DefaultEngineOverride);
 			if (needEngine != null) neededDownloads.Add(needEngine);
 				
 			if (neededDownloads.Count > 0) Program.NotifySection.AddBar(new SinglePlayerBar(neededDownloads, profile, modName));
@@ -60,7 +60,7 @@ namespace ZeroKLobby.Notifications
 
 			if (Utils.VerifySpringInstalled())
 			{
-				spring.RunLocalScriptGame(profile.StartScript.Replace("%MOD%", modInternalName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name));
+				spring.RunLocalScriptGame(profile.StartScript.Replace("%MOD%", modInternalName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name), GlobalConst.DefaultEngineOverride);
                 var serv = GlobalConst.GetContentService();
 				serv.NotifyMissionRun(Program.Conf.LobbyPlayerName, profile.Name);
 			}

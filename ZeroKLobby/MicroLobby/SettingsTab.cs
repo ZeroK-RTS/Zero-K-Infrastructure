@@ -276,8 +276,8 @@ namespace ZeroKLobby.MicroLobby
 
         private void cbSafeMode_CheckedChanged(object sender, EventArgs e)
         {
+            Program.SpringPaths.UseSafeMode = cbSafeMode.Checked;
             Program.Conf.UseSafeMode = cbSafeMode.Checked;
-            Program.SpringPaths.SafeMode = cbSafeMode.Checked;
             Program.SaveConfig();
         }
 

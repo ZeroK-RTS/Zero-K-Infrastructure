@@ -19,11 +19,11 @@ namespace ZeroKLobby
         }
 
 
-        private bool GetBattleAndFounder(out Battle battle, out User founder)
+        private bool GetBattle(out Battle battle)
         {
-            founder = null;
+            //founder = null;
             if (Program.TasClient.ExistingBattles.TryGetValue(battleID, out battle)) {
-                founder = battle.Founder;
+                //founder = battle.Founder;
                 return true;
             }
             return false;
@@ -33,7 +33,7 @@ namespace ZeroKLobby
         {
             Battle battle;
             User founder;
-            if (!GetBattleAndFounder(out battle, out founder)) return;
+            if (!GetBattle(out battle)) return;
             var fbrush = new SolidBrush(foreColor);
             var x = 1; // margin
             var y = 3;
@@ -56,8 +56,7 @@ namespace ZeroKLobby
                     g.DrawImage(image, x, y, w, h);
                     x += w + 3;
                 };
-            founder = battle.Founder;
-            drawString("Founder: " + battle.Founder);
+            drawString("Founder: " + battle.FounderName);
             newLine();
             drawString("Map: " + battle.MapName);
             newLine();
@@ -67,11 +66,11 @@ namespace ZeroKLobby
             newLine();
 
 
-            if (founder.IsInGame)
+            if (battle.IsInGame)
             {
-                drawImage(ZklResources.boom, 16, 16);
-                if (founder.InGameSince != null) {
-                    var timeString = DateTime.UtcNow.Subtract(founder.InGameSince.Value).PrintTimeRemaining();
+                drawImage(Buttons.fight, 16, 16);
+                if (battle.RunningSince != null) {
+                    var timeString = DateTime.UtcNow.Subtract(battle.RunningSince.Value).PrintTimeRemaining();
                     drawString("Battle running for " + timeString + ".");
                 }
                 newLine();
@@ -145,14 +144,14 @@ namespace ZeroKLobby
         {
             Battle battle;
             User founder;
-            if (!GetBattleAndFounder(out battle, out founder)) return null;
+            if (!GetBattle(out battle)) return null;
             var h = 0;
             const int line = 16;
             h += line; // founder
             h += line; // map name
             h += line; // counts
             if (battle.IsPassworded) h += line;
-            if (founder.IsInGame) h += line; // "battle has been going on for at least..."
+            if (battle.IsInGame) h += line; // "battle has been going on for at least..."
 
 
             h += line; // blank line

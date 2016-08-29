@@ -13,6 +13,7 @@ namespace ZeroKLobby.Controls
         public static void Init(Control control) {
             control.Font = Config.GeneralFont;
             control.BackColor = Config.BgColor;
+            control.ForeColor = Config.TextColor;
         }
     }
 
