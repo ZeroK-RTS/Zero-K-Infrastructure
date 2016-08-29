@@ -225,10 +225,16 @@ namespace LobbyClient
         public string Faction;
         public DateTime? InGameSince;
         public bool IsAdmin;
-        public bool IsAway { get { return AwaySince != null; } }
+        public bool IsAway => AwaySince != null;
         public bool IsBot;
         public bool IsInBattleRoom;
-        public bool IsInGame { get { return InGameSince != null; } }
+        public bool IsInGame => InGameSince != null;
+
+        [JsonIgnore]
+        public List<int> Friends { get; set; }
+        [JsonIgnore]
+        public List<int> Ignored { get; set; }
+
         public bool BanMute;
         public bool BanSpecChat;
         public int Level;

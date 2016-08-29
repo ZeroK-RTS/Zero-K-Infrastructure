@@ -652,5 +652,38 @@ namespace ZkLobbyServer
             state.Battles.TryRemove(battle.BattleID, out bat);
             await state.Broadcast(state.ConnectedUsers.Values, new BattleRemoved() { BattleID = battle.BattleID });
         }
+
+        public async Task Process(SetAccountRelation rel)
+        {
+            if (!IsLoggedIn) return;
+
+            if (string.IsNullOrEmpty(rel.TargetName)) return;
+
+            using (var db = new ZkDataContext())
+            {
+                var srcAccount = db.Accounts.Find(User.AccountID);
+                var trgtAccount = Account.AccountByName(db, rel.TargetName);
+                if (trgtAccount == null)
+                {
+                    await Respond("No such account found");
+                    return;
+                }
+
+                var entry = srcAccount.RelalationsByOwner.FirstOrDefault(x => x.TargetAccountID == trgtAccount.AccountID);
+                if (rel.Relation == Relation.None && entry != null) db.AccountRelations.Remove(entry);
+                if (rel.Relation != Relation.None)
+                {
+                    if (entry == null)
+                    {
+                        entry = new AccountRelation() { Owner = srcAccount, Target = trgtAccount, Relation = rel.Relation };
+                        srcAccount.RelalationsByOwner.Add(entry);
+                    }
+                    else entry.Relation = rel.Relation;
+                }
+                db.SaveChanges();
+                LoginChecker.UpdateUserFromAccount(User, srcAccount);
+            }
+        }
+
     }
 }

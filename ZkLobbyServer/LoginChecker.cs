@@ -257,6 +257,9 @@ namespace ZkLobbyServer
             user.Clan = acc.Clan != null ? acc.Clan.Shortcut : null;
             user.AccountID = acc.AccountID;
 
+            user.Friends = acc.RelalationsByOwner.Where(x => x.Relation == Relation.Friend).Select(x => x.TargetAccountID).ToList();
+            user.Ignored = acc.RelalationsByOwner.Where(x => x.Relation == Relation.Ignore).Select(x => x.TargetAccountID).ToList();
+
             var banMute = Punishment.GetActivePunishment(acc.AccountID, "", 0, x => x.BanMute, null);
             if (banMute != null) user.BanMute = true;
             // note: we do not do "else = false" because this just checks accountID (there can still be active bans per IP or userID)
