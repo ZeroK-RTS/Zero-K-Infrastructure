@@ -49,6 +49,7 @@ namespace ZkData
                     LobbyServerPort = 8200;
 
                     OldSpringLobbyPort = 7000;
+                    UdpHostingPortStart = 8452;
                     break;
                 case ModeType.Test:
                     BaseSiteUrl = "http://test.zero-k.info";
@@ -60,6 +61,8 @@ namespace ZkData
                     LobbyServerPort = 8202;
 
                     OldSpringLobbyPort = 7000;
+
+                    UdpHostingPortStart = 7452;
                     break;
                 case ModeType.Live:
                     BaseSiteUrl = "http://zero-k.info";
@@ -71,6 +74,8 @@ namespace ZkData
                     LobbyServerPort = 8200;
 
                     OldSpringLobbyPort = 8200;
+
+                    UdpHostingPortStart = 8452;
                     break;
             }
 
@@ -178,6 +183,7 @@ namespace ZkData
         public const bool RequireWormholeToTravel = true;
         public const bool CanChangeClanFaction = true;
         public const double MaxPwEloDifference = 120;
+        
 
         public const PlanetWarsModes PlanetWarsMode = PlanetWarsModes.AllOffline;
 
@@ -211,6 +217,8 @@ namespace ZkData
         public const int LobbyProtocolPingTimeout = 60;
 
         public const int WikiEditLevel = 20;
+
+        public static int UdpHostingPortStart;
 
         public static string ResourceBaseUrl;
         public static string SelfUpdaterBaseUrl;

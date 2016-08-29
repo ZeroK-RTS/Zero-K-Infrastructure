@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Timers;
@@ -21,6 +22,9 @@ namespace ZkLobbyServer
         public static SpringPaths springPaths;
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
 
+
+        private static object pickPortLock = new object();
+
         public readonly List<string> toNotify = new List<string>();
 
         private CommandPoll activePoll;
@@ -29,6 +33,8 @@ namespace ZkLobbyServer
         public Resource HostedMod;
 
         public Mod HostedModInfo;
+
+        private int hostingPort;
 
         private List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
 
@@ -63,6 +69,7 @@ namespace ZkLobbyServer
             pollTimer.AutoReset = false;
             pollTimer.Elapsed += pollTimer_Elapsed;
             SetupSpring();
+            PickHostingPort();
         }
 
         public void ApplyBalanceResults(BalanceTeamsResult balance)
@@ -338,11 +345,10 @@ namespace ZkLobbyServer
         public async Task StartGame()
         {
             var ip = "127.0.0.1";
-            var port = 8452;
 
             var startSetup = StartSetup.GetDedicatedServerStartSetup(GetContext());
 
-            spring.HostGame(startSetup, ip, port, true); // TODO HACK GET PORTS
+            spring.HostGame(startSetup, ip, hostingPort, true); // TODO HACK GET PORTS
             IsInGame = true;
             RunningSince = DateTime.UtcNow;
             foreach (var us in Users.Values)
@@ -355,7 +361,7 @@ namespace ZkLobbyServer
                             {
                                 Engine = EngineVersion,
                                 Ip = ip,
-                                Port = port,
+                                Port = hostingPort,
                                 Resources = new List<string>() { MapName, ModName },
                                 ScriptPassword = us.ScriptPassword
                             });
@@ -459,6 +465,19 @@ namespace ZkLobbyServer
             base.UpdateWith(h);
             RunningSince = null; // todo hook to spring
             FillDetails();
+        }
+
+        private void PickHostingPort()
+        {
+            var port = GlobalConst.UdpHostingPortStart;
+            lock (pickPortLock)
+            {
+                var reservedPorts = server.Battles.Values.Where(x => x != null).Select(x => x.hostingPort).ToDictionary(x => x, x => true);
+                var usedPorts = IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().Select(x => x.Port).ToDictionary(x => x, x => true);
+
+                while (usedPorts.ContainsKey(port) || reservedPorts.ContainsKey(port)) port++;
+                hostingPort = port;
+            }
         }
 
 
