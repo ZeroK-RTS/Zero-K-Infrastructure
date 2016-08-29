@@ -200,7 +200,7 @@ namespace ZeroKLobby.MicroLobby
             }
 
             if (user.IsInGame) drawImage(ZklResources.ingame);
-            else if (!isBattle && user.IsInBattleRoom) drawImage(ZklResources.battle);
+            else if (!isBattle && user.IsInBattleRoom) drawImage(Buttons.fight);
 
             if (user.IsAway) drawImage(ZklResources.away);
 

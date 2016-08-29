@@ -121,7 +121,7 @@ namespace ZeroKLobby.MicroLobby
 
                 if (IsInGame)
                 {
-                    g.DrawImage(ZklResources.boom,
+                    g.DrawImage(Buttons.fight,
                         (int)10,
                         (int)10,
                         (int)50,

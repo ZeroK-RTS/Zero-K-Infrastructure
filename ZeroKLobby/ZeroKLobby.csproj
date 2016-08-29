@@ -570,6 +570,7 @@
     <EmbeddedResource Include="ZklResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ZklResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="NativeLibs\libCSteamworks-x86_64.so" />
     <EmbeddedResource Include="NativeLibs\libsteam_api-x86_64.so" />
@@ -1627,6 +1628,8 @@
     <Content Include="Resources\Buttons\downloads.png" />
     <Content Include="Resources\Buttons\exit.png" />
     <Content Include="Resources\Buttons\extras.png" />
+    <None Include="Resources\Buttons\fight.png" />
+    <None Include="Resources\Buttons\globe.png" />
     <Content Include="Resources\Buttons\left.png" />
     <Content Include="Resources\Buttons\link.png" />
     <Content Include="Resources\Buttons\mp.png" />

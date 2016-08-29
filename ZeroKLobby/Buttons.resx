@@ -193,4 +193,10 @@
   <data name="panel_border_96" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Buttons\panel_border_96.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="fight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Buttons\fight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="globe" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Buttons\globe.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

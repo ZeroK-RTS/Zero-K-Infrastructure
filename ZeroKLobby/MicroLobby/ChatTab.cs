@@ -136,7 +136,7 @@ namespace ZeroKLobby.MicroLobby
         void AddBattleControl()
         {
             if (battleChatControl == null || battleChatControl.IsDisposed) battleChatControl = new BattleChatControl { Dock = DockStyle.Fill };
-            if (toolTabs.GetChannelTab("Battle") == null) toolTabs.AddTab("Battle", "Battle", battleChatControl, ZklResources.battle, "Current battle room", 3);
+            if (toolTabs.GetChannelTab("Battle") == null) toolTabs.AddTab("Battle", "Battle", battleChatControl, Buttons.fight, "Current battle room", 3);
         }
 
 

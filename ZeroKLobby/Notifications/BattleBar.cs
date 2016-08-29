@@ -44,7 +44,7 @@ namespace ZeroKLobby.Notifications
             picoChat.DefaultTooltip = "Last lines from room chat, click to enter full screen chat";
 
             gameBox.BackColor = Color.Transparent;
-            btnStart.Image = ZklResources.battle.GetResizedWithCache(38, 38);
+            btnStart.Image = Buttons.fight.GetResizedWithCache(38, 38);
             btnStart.ImageAlign = ContentAlignment.MiddleCenter;
             btnStart.TextImageRelation = TextImageRelation.ImageAboveText;
             btnStart.Text = "Play";

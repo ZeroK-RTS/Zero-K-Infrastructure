@@ -140,7 +140,7 @@ namespace ZeroKLobby.Notifications
             this.btnStart.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnStart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnStart.ForeColor = System.Drawing.Color.White;
-            this.btnStart.Image = global::ZeroKLobby.ZklResources.battle;
+            this.btnStart.Image = Buttons.fight;
             this.btnStart.Location = new System.Drawing.Point(15, 12);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(68, 68);
