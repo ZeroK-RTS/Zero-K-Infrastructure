@@ -45,11 +45,11 @@ namespace ZeroKWeb.Controllers
         }     
 
         [Auth(Role = AuthRole.ZkAdmin)]
-        public ActionResult ChangePermissions(int accountID, int adminAccountID, int springieLevel, bool zkAdmin, bool vpnException)
+        public ActionResult ChangePermissions(int accountID, int springieLevel, bool zkAdmin, bool vpnException)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
-            Account adminAcc = db.Accounts.Single(x => x.AccountID == adminAccountID);
+            Account adminAcc = Global.Account;
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
             if (acc.SpringieLevel != springieLevel)
             {
@@ -83,11 +83,11 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth(Role = AuthRole.ZkAdmin)]
-        public ActionResult ChangeElo(int accountID, int adminAccountID, int eloweight, int eloweight1v1)
+        public ActionResult ChangeElo(int accountID, int eloweight, int eloweight1v1)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
-            Account adminAcc = db.Accounts.Single(x => x.AccountID == adminAccountID);
+            Account adminAcc = Global.Account
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Fake elo malus changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
             if (acc.EloWeight != eloweight) {
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Team Elo Weight: {0} -> {1}", acc.EloWeight, eloweight));
