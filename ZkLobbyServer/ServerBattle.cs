@@ -126,7 +126,7 @@ namespace ZkLobbyServer
 
         public void FillDetails()
         {
-            if (IsNullOrEmpty(Title)) Title = $"{FounderName}'s " + Mode.Description();
+            if (IsNullOrEmpty(Title)) Title = $"{FounderName}'s game";
             if (IsNullOrEmpty(EngineVersion)) EngineVersion = server.Engine;
             downloader.GetEngine(server.Engine);
 

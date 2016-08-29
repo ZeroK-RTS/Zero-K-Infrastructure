@@ -254,13 +254,12 @@ namespace LobbyClient
         }
 
 
-        public Task AddBot(string name, string aiDll, int? allyNumber= null, int? teamNumber= null)
+        public Task AddBot(string name, string aiDll, int? allyNumber= null)
         {
             var u = new UpdateBotStatus();
             if (aiDll != null) u.AiLib = aiDll;
             if (name != null) u.Name = name;
             if (allyNumber != null) u.AllyNumber = allyNumber;
-            if (teamNumber != null) u.TeamNumber = teamNumber;
             return SendCommand(u);
         }
 
@@ -272,12 +271,11 @@ namespace LobbyClient
 
         public async Task ChangeMyBattleStatus(bool? spectate = null,
                                          SyncStatuses? syncStatus = null,
-                                         int? ally = null,
-                                         int? team = null)
+                                         int? ally = null)
         {
             var ubs = MyBattleStatus;
             if (ubs != null) {
-                var status = new UpdateUserBattleStatus() { IsSpectator = spectate, Sync = syncStatus, AllyNumber = ally, TeamNumber = team, Name = UserName};
+                var status = new UpdateUserBattleStatus() { IsSpectator = spectate, Sync = syncStatus, AllyNumber = ally, Name = UserName};
                 await SendCommand(status);
             }
         }
@@ -329,14 +327,6 @@ namespace LobbyClient
             }
         }
 
-        public async Task ForceTeam(string username, int team)
-        {
-            if (MyBattle != null && MyBattle.Users.ContainsKey(username))
-            {
-                var ubs = new UpdateUserBattleStatus() { Name = username, TeamNumber = team };
-                await SendCommand(ubs);
-            }
-        }
 
         public bool GetExistingUser(string name, out User u)
         {
@@ -541,11 +531,11 @@ namespace LobbyClient
             ChangeMyUserStatus(false, true);
         }
 
-        public async Task UpdateBot(string name, string aiDll, int? allyNumber = null, int? teamNumber = null)
+        public async Task UpdateBot(string name, string aiDll, int? allyNumber = null)
         {
             var bat = MyBattle;
             if (bat != null && bat.Bots.ContainsKey(name)) {
-                await AddBot(name, aiDll, allyNumber, teamNumber);
+                await AddBot(name, aiDll, allyNumber);
             }
         }
 

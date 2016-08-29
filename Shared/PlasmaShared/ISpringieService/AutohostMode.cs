@@ -4,7 +4,7 @@ namespace PlasmaShared
 {
     public enum AutohostMode
     {
-        [Description("Cooperative (vs AI)")]
+        [Description("Cooperative")]
         GameChickens = 5,
 
         [Description("Teams")]
@@ -13,7 +13,7 @@ namespace PlasmaShared
         [Description("1v1")]
         Game1v1 = 3,
 
-        [Description("FFA (free for all)")]
+        [Description("FFA")]
         GameFFA = 4,
 
         [Description("Custom")]

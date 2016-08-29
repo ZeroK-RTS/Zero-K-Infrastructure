@@ -68,7 +68,7 @@ namespace ZeroKLobby
 
             if (battle.IsInGame)
             {
-                drawImage(ZklResources.boom, 16, 16);
+                drawImage(Buttons.fight, 16, 16);
                 if (battle.RunningSince != null) {
                     var timeString = DateTime.UtcNow.Subtract(battle.RunningSince.Value).PrintTimeRemaining();
                     drawString("Battle running for " + timeString + ".");

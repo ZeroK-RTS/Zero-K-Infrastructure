@@ -6,7 +6,6 @@ namespace PlasmaShared
         public string BotAI;
         public string BotName;
         public string Owner;
-        public int TeamID;
     }
 
 

@@ -50,23 +50,6 @@ namespace ZeroKLobby
 
 
         /// <summary>
-        /// Hides the next PM that has a specific string as message
-        /// </summary>
-        public static void HidePM(string text)
-        {
-            EventHandler<CancelEventArgs<TasSayEventArgs>> hideMessage = null;
-            hideMessage = (s, e) =>
-              {
-                  if (e.Data.Place == SayPlace.User && e.Data.Text == text)
-                  {
-                      e.Cancel = true;
-                      Program.TasClient.PreviewSaid -= hideMessage;
-                  }
-              };
-            Program.TasClient.PreviewSaid += hideMessage;
-        }
-
-        /// <summary>
         /// Make this client join an ally team, join a free team, and unspec
         /// </summary>
         /// <param name="allyTeam"></param>
@@ -74,7 +57,7 @@ namespace ZeroKLobby
         {
             if (ChangeDesiredSpectatorState(false))
             {
-                Program.TasClient.ChangeMyBattleStatus(false, team:Program.TasClient.MyBattle.GetFreeTeamID(Program.TasClient.UserName), ally:allyTeam);
+                Program.TasClient.ChangeMyBattleStatus(false, ally:allyTeam);
             }
         }
 
@@ -84,19 +67,6 @@ namespace ZeroKLobby
         /// </summary>
         public static void JoinBattle(int battleID, string password)
         {
-            EventHandler<Battle> battleJoinHandler = null;
-
-            battleJoinHandler = ((s, e) =>
-              {
-                  Program.TasClient.BattleJoined -= battleJoinHandler;
-                  if (Program.TasClient.MyBattle == null || !Program.TasClient.MyBattle.IsQueue) NavigationControl.Instance.Path = "chat/battle";
-              });
-
-
-            Program.TasClient.BattleJoined += battleJoinHandler;
-
-            //Program.JugglerBar.Deactivate();
-
             Program.BattleBar.StartManualBattle(battleID, password);
         }
 
@@ -123,14 +93,6 @@ namespace ZeroKLobby
 
                     JoinBattle(bat.BattleID, password);
                 }
-            }
-        }
-
-        public static void JoinSlot(MissionSlot slot)
-        {
-            if (ChangeDesiredSpectatorState(false))
-            {
-                Program.TasClient.ChangeMyBattleStatus(false,null,slot.AllyID,slot.TeamID);
             }
         }
 
@@ -174,7 +136,7 @@ namespace ZeroKLobby
                         break;
 
                     case "host_mission":
-                        SpawnAutohost(game:arg);
+                        HostBattle(game:arg);
                         break;
                     case "start_script_mission":
                         StartScriptMission(arg);
@@ -184,7 +146,7 @@ namespace ZeroKLobby
                         if (Program.TasClient.MyBattle != null) Program.TasClient.Say(SayPlace.Battle, null, "!map " + arg, false);
                         else
                         {
-                            SpawnAutohost(map: arg);
+                            HostBattle(map: arg);
                         }
                         break;
 
@@ -258,7 +220,7 @@ namespace ZeroKLobby
             currentTranslatorForm.Show();
         }
 
-        public static void SpawnAutohost(string game = null, string title= null, string password = null, string map = null, AutohostMode? mode = null)
+        public static void HostBattle(string game = null, string title= null, string password = null, string map = null, AutohostMode? mode = null)
         {
             Program.TasClient.OpenBattle(new BattleHeader() { Game = game, Title = title, Password = password, Mode =  mode, Map = map});
         }
