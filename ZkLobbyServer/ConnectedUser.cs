@@ -12,7 +12,6 @@ namespace ZkLobbyServer
 {
     public class ConnectedUser: ICommandSender
     {
-        public static Random random = new Random(); // for script password generation
         public ConcurrentDictionary<ClientConnection, bool> Connections = new ConcurrentDictionary<ClientConnection, bool>();
 
         public ServerBattle MyBattle;
@@ -23,9 +22,12 @@ namespace ZkLobbyServer
 
         public string Name { get { return User.Name; } }
 
+        
+        
         public ConnectedUser(ZkLobbyServer state, User user)
         {
             this.state = state;
+            this.User = user;
         }
 
 

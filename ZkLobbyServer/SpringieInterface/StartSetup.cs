@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using PlasmaShared;
@@ -81,7 +82,7 @@ namespace ZeroKWeb.SpringieInterface
                 // write player custom keys (level, elo, is muted, etc.)
                 foreach (var p in context.Players)
                 {
-                    var user = db.Accounts.Find(p.LobbyID);
+                    var user = db.Accounts.Where(x=>x.AccountID == p.LobbyID).Include(x=>x.RelalationsByOwner).FirstOrDefault();
                     if (user != null)
                     {
                         var userParams = new Dictionary<string, string>();
@@ -104,6 +105,9 @@ namespace ZeroKWeb.SpringieInterface
                         var userSpecChatBlocked = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanSpecChat);
                         userParams["can_spec_chat"] = userSpecChatBlocked ? "0" : "1";
 
+                        userParams["ignored"] = string.Join(",", user.RelalationsByOwner.Where(x => x.Relation == Relation.Ignore).Select(x=>x.Target.Name));
+                        userParams["friends"] = string.Join(",", user.RelalationsByOwner.Where(x => x.Relation == Relation.Friend).Select(x=>x.Target.Name));
+                        
                         if (!p.IsSpectator)
                         {
                             // set valid PW structure attackers
