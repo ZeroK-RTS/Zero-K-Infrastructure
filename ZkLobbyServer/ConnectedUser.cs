@@ -22,12 +22,42 @@ namespace ZkLobbyServer
 
         public string Name { get { return User.Name; } }
 
-        
-        
-        public ConnectedUser(ZkLobbyServer state, User user)
+
+        public HashSet<string> Friends { get; set; }
+        public HashSet<string> Ignored { get; set; }
+        public HashSet<string> IgnoredBy { get; set; }
+        public HashSet<string> FriendsBy { get; set; }
+
+
+        public ConnectedUser(ZkLobbyServer server, User user)
         {
-            this.state = state;
+            this.state = server;
             this.User = user;
+
+            LoadFriendsIgnores();
+        }
+
+        public void LoadFriendsIgnores()
+        {
+
+            using (var db = new ZkDataContext())
+            {
+                var rels = db.AccountRelations.Where(x => x.TargetAccountID == User.AccountID || x.OwnerAccountID == User.AccountID).Select(x=>new
+                {
+                    OwnerAccountID = x.OwnerAccountID,
+                    Owner = x.Owner.Name,
+                    Target = x.Target.Name,
+                    Relation = x.Relation
+                }).ToList();
+
+
+                Friends.AddRange(rels.Where(x => x.Relation == Relation.Friend && x.OwnerAccountID == User.AccountID).Select(x => x.Target));
+                FriendsBy.AddRange(rels.Where(x => x.Relation == Relation.Friend && x.OwnerAccountID != User.AccountID).Select(x => x.Owner));
+
+                Ignored.AddRange(rels.Where(x => x.Relation == Relation.Ignore && x.OwnerAccountID == User.AccountID).Select(x => x.Target));
+                IgnoredBy.AddRange(rels.Where(x => x.Relation == Relation.Ignore && x.OwnerAccountID != User.AccountID).Select(x => x.Owner));
+            }
+
         }
 
 
@@ -683,7 +713,10 @@ namespace ZkLobbyServer
                     else entry.Relation = rel.Relation;
                 }
                 db.SaveChanges();
-                LoginChecker.UpdateUserFromAccount(User, srcAccount);
+
+                ConnectedUser connectedUser;
+                if (state.ConnectedUsers.TryGetValue(srcAccount.Name, out connectedUser)) connectedUser.LoadFriendsIgnores();
+                if (state.ConnectedUsers.TryGetValue(trgtAccount.Name, out connectedUser)) connectedUser.LoadFriendsIgnores();
             }
         }
 

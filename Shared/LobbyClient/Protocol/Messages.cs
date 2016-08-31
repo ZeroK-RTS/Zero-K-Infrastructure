@@ -133,6 +133,8 @@ namespace LobbyClient
         /// Additional text (ban reason)
         /// </summary>
         public string Reason;
+
+
     }
 
 
@@ -229,11 +231,6 @@ namespace LobbyClient
         public bool IsBot;
         public bool IsInBattleRoom;
         public bool IsInGame => InGameSince != null;
-
-        [JsonIgnore]
-        public List<int> Friends { get; set; }
-        [JsonIgnore]
-        public List<int> Ignored { get; set; }
 
         public bool BanMute;
         public bool BanSpecChat;

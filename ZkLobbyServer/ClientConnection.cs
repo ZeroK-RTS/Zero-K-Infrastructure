@@ -87,14 +87,14 @@ namespace ZkLobbyServer
 
         public async Task Process(Login login)
         {
-            var user = new User();
-            var response = await Task.Run(() => state.LoginChecker.Login(user, login, this));
+            Account account = null;
+            User user = null;
+            var response = await Task.Run(() => state.LoginChecker.Login(login, this.RemoteEndpointIP, out user));
             if (response.ResultCode == LoginResponse.Code.Ok)
             {
                 connectedUser = state.ConnectedUsers.GetOrAdd(user.Name, (n) => new ConnectedUser(state, user));
                 connectedUser.Connections.TryAdd(this, true);
-                connectedUser.User = user;
-
+                
                 Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
                 
                 await state.Broadcast(state.ConnectedUsers.Values, connectedUser.User); // send self to all

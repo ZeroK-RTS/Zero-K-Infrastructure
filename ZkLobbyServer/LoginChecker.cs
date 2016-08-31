@@ -28,9 +28,10 @@ namespace ZkLobbyServer
         }
 
 
-        public LoginResponse Login(User user, Login login, ClientConnection client)
+
+        public LoginResponse Login(Login login, string ip, out User user)
         {
-            string ip = client.RemoteEndpointIP;
+            user = new User();
             long userID = login.UserID;
             string lobbyVersion = login.LobbyVersion;
 
@@ -257,8 +258,6 @@ namespace ZkLobbyServer
             user.Clan = acc.Clan != null ? acc.Clan.Shortcut : null;
             user.AccountID = acc.AccountID;
 
-            user.Friends = acc.RelalationsByOwner.Where(x => x.Relation == Relation.Friend).Select(x => x.TargetAccountID).ToList();
-            user.Ignored = acc.RelalationsByOwner.Where(x => x.Relation == Relation.Ignore).Select(x => x.TargetAccountID).ToList();
 
             var banMute = Punishment.GetActivePunishment(acc.AccountID, "", 0, x => x.BanMute, null);
             if (banMute != null) user.BanMute = true;
