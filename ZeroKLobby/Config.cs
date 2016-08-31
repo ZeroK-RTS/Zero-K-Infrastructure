@@ -244,8 +244,14 @@ namespace ZeroKLobby
             {
                 try
                 {
-                    var isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
-                    using (var file = isoStore.OpenFile("zkl_password.txt", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) using (var sr = new StreamWriter(file)) sr.Write(value);
+                    var isoStore = GetIsolatedStorage();
+                    using (var file = isoStore.OpenFile("zkl_password.txt", FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+                    using (var sr = new StreamWriter(file))
+                    {
+                        sr.Write(value);
+                        sr.Close();
+                        file.Close();
+                    }
                 }
                 catch (Exception ex)
                 {
