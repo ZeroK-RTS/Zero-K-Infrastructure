@@ -58,7 +58,7 @@ namespace ZeroKLobby.MicroLobby
             Program.FriendManager.FriendRemoved += FriendManager_FriendRemoved;
             Program.TasClient.ChannelJoinFailed += TasClient_ChannelJoinFailed;
 
-            foreach (var channel in Program.TasClient.JoinedChannels.Values.Where(c => !IsIgnoredChannel(c.Name))) CreateChannelControl(channel.Name);
+            foreach (var channel in Program.TasClient.JoinedChannels.Values) CreateChannelControl(channel.Name);
             toolTabs.SelectChannelTab("Battle");
             ResumeLayout();
         }
@@ -100,10 +100,6 @@ namespace ZeroKLobby.MicroLobby
             return pmControl;
         }
 
-        public static bool IsIgnoredChannel(string channelName)
-        {
-            return false;
-        }
 
         public void OpenChannel(string channelName)
         {
@@ -142,7 +138,6 @@ namespace ZeroKLobby.MicroLobby
 
         ChatControl CreateChannelControl(string channelName)
         {
-            if (IsIgnoredChannel(channelName)) return null;
             var existing = GetChannelControl(channelName);
             if (existing != null) return existing;
             var chatControl = new ChatControl(channelName) { Dock = DockStyle.Fill };
@@ -185,7 +180,7 @@ namespace ZeroKLobby.MicroLobby
             }
 
             if (e.Place == SayPlace.Battle && !e.IsEmote && !Program.TasClient.MyUser.IsInGame) Program.MainWindow.NotifyUser("chat/battle", null);
-            if (e.Place == SayPlace.Channel && !IsIgnoredChannel(e.Channel)) Program.MainWindow.NotifyUser("chat/channel/" + e.Channel, null);
+            if (e.Place == SayPlace.Channel) Program.MainWindow.NotifyUser("chat/channel/" + e.Channel, null);
             else if (e.Place == SayPlace.User)
             {
                 var otherUserName = e.UserName == tas.UserName ? e.Channel : e.UserName;
