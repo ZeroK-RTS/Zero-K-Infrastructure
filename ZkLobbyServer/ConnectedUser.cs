@@ -282,7 +282,7 @@ namespace ZkLobbyServer
                     {
                         if (channel.Users.ContainsKey(Name))
                         {
-                            await state.Broadcast(channel.Users.Keys, say);
+                            await state.Broadcast(channel.Users.Keys.Where(x => state.CanChatTo(say.User, x)), say);
                             await state.OfflineMessageHandler.StoreChatHistory(say);
                         }
                     }
@@ -290,7 +290,7 @@ namespace ZkLobbyServer
 
                 case SayPlace.User:
                     ConnectedUser connectedUser;
-                    if (state.ConnectedUsers.TryGetValue(say.Target, out connectedUser)) await connectedUser.SendCommand(say);
+                    if (state.ConnectedUsers.TryGetValue(say.Target, out connectedUser) && state.CanChatTo(say.User, say.Target)) await connectedUser.SendCommand(say);
                     else await state.OfflineMessageHandler.StoreChatHistory(say);
                     await SendCommand(say);
 
@@ -300,7 +300,7 @@ namespace ZkLobbyServer
                     if (MyBattle != null)
                     {
                         say.Target = MyBattle?.FounderName ?? "";
-                        await state.Broadcast(MyBattle?.Users?.Keys, say);
+                        await state.Broadcast(MyBattle?.Users?.Keys.Where(x => state.CanChatTo(say.User, x)), say);
                         await MyBattle.ProcessBattleSay(say);
                         await state.OfflineMessageHandler.StoreChatHistory(say);
                     }
@@ -312,7 +312,7 @@ namespace ZkLobbyServer
                         ConnectedUser cli;
                         if (MyBattle.Users.ContainsKey(say.Target))
                         {
-                            if (state.ConnectedUsers.TryGetValue(say.Target, out cli))
+                            if (state.ConnectedUsers.TryGetValue(say.Target, out cli) && state.CanChatTo(say.User, say.Target))
                             {
                                 await cli.SendCommand(say);
                                 await MyBattle.ProcessBattleSay(say);

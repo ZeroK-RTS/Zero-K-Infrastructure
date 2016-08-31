@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using LobbyClient;
-using MaxMind.Db;
-using MaxMind.GeoIP2;
 using PlasmaShared;
 using ZkData;
 
@@ -16,14 +12,12 @@ namespace ZkLobbyServer
 {
     public class ZkLobbyServer
     {
-        ChatRelay chatRelay;
         public int BattleCounter;
         public ConcurrentDictionary<int, ServerBattle> Battles = new ConcurrentDictionary<int, ServerBattle>();
         public ChannelManager ChannelManager;
+        private ChatRelay chatRelay;
         public int ClientCounter;
         public ConcurrentDictionary<string, ConnectedUser> ConnectedUsers = new ConcurrentDictionary<string, ConnectedUser>();
-        public string Engine { get; set; }
-        public string Game { get; set; }
 
         public LoginChecker LoginChecker;
         public OfflineMessageHandler OfflineMessageHandler = new OfflineMessageHandler();
@@ -31,14 +25,16 @@ namespace ZkLobbyServer
         public EventHandler<Say> Said = delegate { };
         public CommandJsonSerializer Serializer = new CommandJsonSerializer();
         public SteamWebApi SteamWebApi;
+        public string Engine { get; set; }
+        public string Game { get; set; }
+        public IPlanetwarsEventCreator PlanetWarsEventCreator { get; private set; }
 
         public string Version { get; private set; }
-        public IPlanetwarsEventCreator PlanetWarsEventCreator { get; private set; }
 
 
         public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator)
         {
-            this.PlanetWarsEventCreator = creator;
+            PlanetWarsEventCreator = creator;
             var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();
             Engine = GlobalConst.DefaultEngineOverride;
@@ -50,7 +46,7 @@ namespace ZkLobbyServer
         }
 
         /// <summary>
-        /// Broadcast to all targets in paralell
+        ///     Broadcast to all targets in paralell
         /// </summary>
         public async Task Broadcast<T>(IEnumerable<ICommandSender> targets, T data)
         {
@@ -60,15 +56,25 @@ namespace ZkLobbyServer
         }
 
         /// <summary>
-        /// Broadcasts to all connected users in paralell
+        ///     Broadcasts to all connected users in paralell
         /// </summary>
         public Task Broadcast<T>(IEnumerable<string> targetUsers, T data)
         {
-            return Broadcast(targetUsers.Select(x => {
+            return Broadcast(targetUsers.Select(x =>
+            {
                 ConnectedUser cli;
                 ConnectedUsers.TryGetValue(x, out cli);
                 return cli;
-            }), data);
+            }),
+                data);
+        }
+
+        public bool CanChatTo(string origin, string target)
+        {
+            ConnectedUser usr;
+            if (ConnectedUsers.TryGetValue(origin, out usr)) if (usr.IgnoredBy.Contains(target)) return false;
+            if (ConnectedUsers.TryGetValue(target, out usr)) if (usr.Ignored.Contains(origin)) return false;
+            return true;
         }
 
         public async Task ForceJoinBattle(string playerName, string battleHost)
@@ -80,7 +86,8 @@ namespace ZkLobbyServer
         public async Task ForceJoinBattle(string player, Battle bat)
         {
             ConnectedUser connectedUser;
-            if (ConnectedUsers.TryGetValue(player, out connectedUser)) {
+            if (ConnectedUsers.TryGetValue(player, out connectedUser))
+            {
                 if (connectedUser.MyBattle != null) await connectedUser.Process(new LeaveBattle());
                 await connectedUser.Process(new JoinBattle() { BattleID = bat.BattleID, Password = bat.Password });
             }
@@ -99,7 +106,8 @@ namespace ZkLobbyServer
         public Task GhostChanSay(string channelName, string text, bool isEmote = true, bool isRing = false)
         {
             return
-                GhostSay(new Say() {
+                GhostSay(new Say()
+                {
                     User = GlobalConst.NightwatchName,
                     IsEmote = isEmote,
                     Place = SayPlace.Channel,
@@ -113,7 +121,8 @@ namespace ZkLobbyServer
         public Task GhostPm(string name, string text)
         {
             return
-                GhostSay(new Say() {
+                GhostSay(new Say()
+                {
                     User = GlobalConst.NightwatchName,
                     IsEmote = true,
                     Place = SayPlace.User,
@@ -124,21 +133,22 @@ namespace ZkLobbyServer
         }
 
         /// <summary>
-        /// Directly say something possibly as another user (skips all checks)
+        ///     Directly say something possibly as another user (skips all checks)
         /// </summary>
         public async Task GhostSay(Say say, int? battleID = null)
         {
             if (say.Time == null) say.Time = DateTime.UtcNow;
 
-            switch (say.Place) {
+            switch (say.Place)
+            {
                 case SayPlace.Channel:
                     Channel channel;
-                    if (Rooms.TryGetValue(say.Target, out channel)) await Broadcast(channel.Users.Keys, say);
+                    if (Rooms.TryGetValue(say.Target, out channel)) await Broadcast(channel.Users.Keys.Where(x => CanChatTo(say.User, x)), say);
                     await OfflineMessageHandler.StoreChatHistory(say);
                     break;
                 case SayPlace.User:
                     ConnectedUser connectedUser;
-                    if (ConnectedUsers.TryGetValue(say.Target, out connectedUser)) await connectedUser.SendCommand(say);
+                    if (ConnectedUsers.TryGetValue(say.Target, out connectedUser) && CanChatTo(say.User, say.Target)) await connectedUser.SendCommand(say);
                     else await OfflineMessageHandler.StoreChatHistory(say);
                     break;
                 case SayPlace.MessageBox:
@@ -146,11 +156,11 @@ namespace ZkLobbyServer
                     break;
                 case SayPlace.Battle:
                     ServerBattle battle;
-                    if (Battles.TryGetValue(battleID.Value, out battle)) await Broadcast(battle.Users.Keys, say);
+                    if (Battles.TryGetValue(battleID.Value, out battle)) await Broadcast(battle.Users.Keys.Where(x => CanChatTo(say.User, x)), say);
                     break;
                 case SayPlace.BattlePrivate:
                     ConnectedUser originUser;
-                    if (ConnectedUsers.TryGetValue(say.Target, out originUser)) await originUser.SendCommand(say);
+                    if (ConnectedUsers.TryGetValue(say.Target, out originUser) && CanChatTo(say.User, say.Target)) await originUser.SendCommand(say);
                     break;
             }
 
@@ -166,10 +176,28 @@ namespace ZkLobbyServer
         public void KickFromServer(string kickerName, string kickeeName, string reason)
         {
             ConnectedUser conus;
-            if (ConnectedUsers.TryGetValue(kickeeName, out conus)) {
+            if (ConnectedUsers.TryGetValue(kickeeName, out conus))
+            {
                 conus.Respond(string.Format("You were kicked for: {0}", reason));
                 conus.RequestCloseAll();
             }
+        }
+
+        /// <summary>
+        ///     Mark all users as disconnected, fixes chat history repeat
+        /// </summary>
+        public void MarkDisconnectAll()
+        {
+            var db = new ZkDataContext();
+            foreach (var u in ConnectedUsers.Values)
+            {
+                if (u != null && u.IsLoggedIn)
+                {
+                    var acc = db.Accounts.Find(u.User.AccountID);
+                    acc.LastLogout = DateTime.UtcNow;
+                }
+            }
+            db.SaveChanges();
         }
 
         public virtual async Task OnSaid(Say say)
@@ -180,7 +208,8 @@ namespace ZkLobbyServer
         public async Task PublishAccountUpdate(Account acc)
         {
             ConnectedUser conus;
-            if (ConnectedUsers.TryGetValue(acc.Name, out conus)) {
+            if (ConnectedUsers.TryGetValue(acc.Name, out conus))
+            {
                 LoginChecker.UpdateUserFromAccount(conus.User, acc);
                 await Broadcast(ConnectedUsers.Values, conus.User);
             }
@@ -196,27 +225,13 @@ namespace ZkLobbyServer
         {
             // todo persist in db
             Channel chan;
-            if (Rooms.TryGetValue(channel, out chan)) {
+            if (Rooms.TryGetValue(channel, out chan))
+            {
                 chan.Topic.Text = topic;
                 chan.Topic.SetDate = DateTime.UtcNow;
                 chan.Topic.SetBy = author;
                 await Broadcast(chan.Users.Keys, new ChangeTopic() { ChannelName = chan.Name, Topic = chan.Topic });
             }
-        }
-
-        /// <summary>
-        /// Mark all users as disconnected, fixes chat history repeat
-        /// </summary>
-        public void MarkDisconnectAll()
-        {
-            var db = new ZkDataContext();
-            foreach (var u in ConnectedUsers.Values) {
-                if (u != null && u.IsLoggedIn) {
-                    var acc = db.Accounts.Find(u.User.AccountID);
-                    acc.LastLogout = DateTime.UtcNow;
-                }
-            }
-            db.SaveChanges();
         }
     }
 }
