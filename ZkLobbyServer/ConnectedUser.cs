@@ -611,8 +611,13 @@ namespace ZkLobbyServer
                 db.SaveChanges();
 
                 ConnectedUser connectedUser;
-                if (state.ConnectedUsers.TryGetValue(srcAccount.Name, out connectedUser)) connectedUser.LoadFriendsIgnores();
                 if (state.ConnectedUsers.TryGetValue(trgtAccount.Name, out connectedUser)) connectedUser.LoadFriendsIgnores();
+                if (state.ConnectedUsers.TryGetValue(srcAccount.Name, out connectedUser))
+                {
+                    await connectedUser.SendCommand(new FriendList() { Friends = Friends.ToList() });
+                    await connectedUser.SendCommand(new IgnoreList() { Ignores = Ignores.ToList() });
+                    connectedUser.LoadFriendsIgnores();
+                }
             }
         }
 

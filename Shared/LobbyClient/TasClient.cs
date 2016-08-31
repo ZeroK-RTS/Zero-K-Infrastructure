@@ -208,10 +208,16 @@ namespace LobbyClient
 
         
         public event EventHandler<ChangeTopic> ChannelTopicChanged = delegate { };
-        
-        
-        
- 
+
+        public event EventHandler<IReadOnlyCollection<string>> FriendListUpdated = delegate { };
+
+        public event EventHandler<IReadOnlyCollection<string>> IgnoreListUpdated = delegate { };
+
+
+        private List<string> ignores = new List<string>();
+        private List<string> friends = new List<string>();
+        public IReadOnlyCollection<string> Ignores => ignores.AsReadOnly();
+        public IReadOnlyCollection<string> Friends => friends.AsReadOnly();
 
         public TasClient(string appName, Login.ClientTypes? clientTypes = null, string ipOverride = null)
         {
@@ -720,6 +726,20 @@ namespace LobbyClient
             ServerWelcome = welcome;
             Connected(this, welcome);
         }
+
+
+        async Task Process(FriendList friendList)
+        {
+            this.friends = friendList.Friends;
+            FriendListUpdated(this, friends);
+        }
+
+        async Task Process(IgnoreList ignoreList)
+        {
+            this.ignores = ignoreList.Ignores;
+            IgnoreListUpdated(this, Ignores);
+        }
+
 
         async Task Process(JoinChannelResponse response)
         {
