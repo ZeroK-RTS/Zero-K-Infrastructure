@@ -121,7 +121,10 @@ namespace ZkLobbyServer
 
                 await state.OfflineMessageHandler.SendMissedMessages(this, SayPlace.User, Name, user.AccountID);
 
-                foreach (var chan in await state.ChannelManager.GetDefaultChannels(user.AccountID)) {
+                var defChans = await state.ChannelManager.GetDefaultChannels(user.AccountID); 
+                defChans.AddRange(state.Rooms.Where(x=>x.Value.Users.ContainsKey(user.Name)).Select(x=>x.Key)); // add currently connected channels to list too
+                
+                foreach (var chan in defChans.ToList().Distinct()) {
                     await connectedUser.Process(new JoinChannel() {
                         ChannelName = chan,
                         Password = null
