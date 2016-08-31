@@ -74,7 +74,7 @@ namespace ZeroKLobby.MicroLobby
             if (Program.TasClient.ExistingUsers.TryGetValue(userName, out user)) {
                 if (userName == Program.TasClient.UserName) return bitmaps[self];
                 if (user.IsBot) return ZklResources.robot;
-                if (Program.FriendManager.Friends.Contains(user.Name)) return ZklResources.friend;
+                if (Program.TasClient.Friends.Contains(user.Name)) return ZklResources.friend;
                 if (user.IsAdmin) return ZklResources.police;
                 if (user.EffectiveElo >= 1800) return ZklResources.napoleon;
                 if (user.EffectiveElo >= 1600) return ZklResources.soldier;
@@ -89,7 +89,7 @@ namespace ZeroKLobby.MicroLobby
             if (user != null)
             {
                 if (user.IsBot) return ZklResources.robot;
-                if (Program.FriendManager.Friends.Contains(user.Name)) return ZklResources.friend;
+                if (Program.TasClient.Friends.Contains(user.Name)) return ZklResources.friend;
                 if (user.IsAdmin) return ZklResources.police;
                 if (user.EffectiveElo >= 1800) return ZklResources.napoleon;
                 if (user.EffectiveElo >= 1600) return ZklResources.soldier;
@@ -105,7 +105,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 if (userName == Program.TasClient.UserName) return Self;
                 if (user.IsBot) return Robot;
-                if (Program.FriendManager.Friends.Contains(user.Name)) return Friend;
+                if (Program.TasClient.Friends.Contains(user.Name)) return Friend;
                 if (user.IsAdmin) return Police;
                 if (user.EffectiveElo > 1800) return Napoleon;
                 if (user.EffectiveElo > 1600) return Soldier;

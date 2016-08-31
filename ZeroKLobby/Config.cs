@@ -178,13 +178,6 @@ namespace ZeroKLobby
         public bool EnableUnitSyncPrompt { get; set; }
 
 
-        [Category("Chat")]
-        [DisplayName("Friend List")]
-        [Description("List of friends.")]
-        [Browsable(true)]
-        [Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-            typeof(UITypeEditor))]
-        public StringCollection Friends { get; set; } = new StringCollection();
         [Browsable(false)]
         public bool HasHosted { get; set; }
         [Browsable(false)]
@@ -197,15 +190,6 @@ namespace ZeroKLobby
         [DisplayName("Idle User Time")]
         [Description("Idle minutes after which Zero-K launcher assumes the user is gone and quickmatching is stopped.")]
         public int IdleTime { get; set; } = 5;
-
-        [Category("Chat")]
-        [DisplayName("Ignored Users")]
-        [Description("The messages of these users are ignored.")]
-        [Browsable(true)]
-        [Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-            typeof(UITypeEditor))]
-        public StringCollection IgnoredUsers { get; set; } = new StringCollection();
-
 
         [Category("Chat")]
         [DisplayName("Disable Context Menu on Leftclick")]

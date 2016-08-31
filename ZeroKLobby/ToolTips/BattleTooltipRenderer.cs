@@ -62,7 +62,7 @@ namespace ZeroKLobby
             newLine();
             drawString("Players: " + battle.NonSpectatorCount);
             drawString("Spectators: " + battle.SpectatorCount);
-            drawString("Friends: " + battle.Users.Values.Count(u => Program.FriendManager.Friends.Contains(u.Name)));
+            drawString("Friends: " + battle.Users.Values.Count(u => Program.TasClient.Friends.Contains(u.Name)));
             newLine();
 
 

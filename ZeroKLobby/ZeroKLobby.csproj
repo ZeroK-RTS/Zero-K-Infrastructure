@@ -373,7 +373,6 @@
     <Compile Include="MicroLobby\BattleIcon.cs" />
     <Compile Include="MicroLobby\BattleIconManager.cs" />
     <Compile Include="MicroLobby\DudeRenderer.cs" />
-    <Compile Include="MicroLobby\FriendManager.cs" />
     <Compile Include="MicroLobby\GameInfo.cs" />
     <Compile Include="MicroLobby\TextColor.cs" />
     <Compile Include="MicroLobby\TextWindow.cs">

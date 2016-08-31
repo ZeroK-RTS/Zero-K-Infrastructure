@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -54,13 +55,24 @@ namespace ZeroKLobby.MicroLobby
             Program.TasClient.LoginAccepted += TasClient_LoginAccepted;
             Program.TasClient.UserRemoved += TasClient_UserRemoved;
             Program.TasClient.UserAdded += TasClient_UserAdded;
-            Program.FriendManager.FriendAdded += FriendManager_FriendAdded;
-            Program.FriendManager.FriendRemoved += FriendManager_FriendRemoved;
+            Program.TasClient.FriendListUpdated += TasClientOnFriendListUpdated;
             Program.TasClient.ChannelJoinFailed += TasClient_ChannelJoinFailed;
 
             foreach (var channel in Program.TasClient.JoinedChannels.Values) CreateChannelControl(channel.Name);
             toolTabs.SelectChannelTab("Battle");
             ResumeLayout();
+        }
+
+        private void TasClientOnFriendListUpdated(object sender, IReadOnlyCollection<string> friends)
+        {
+            foreach (var friend in friends)
+            {
+                if (GetPrivateMessageControl(friend) == null)
+                {
+                    var pm = CreatePrivateMessageControl(friend);
+                    toolTabs.SelectPrivateTab(friend);
+                }
+            }
         }
 
         public void CloseChannelTab(string key)
@@ -77,7 +89,7 @@ namespace ZeroKLobby.MicroLobby
         public PrivateMessageControl CreatePrivateMessageControl(string userName)
         {
             var pmControl = new PrivateMessageControl(userName) { Dock = DockStyle.Fill };
-            var isFriend = Program.FriendManager.Friends.Contains(userName);
+            var isFriend = Program.TasClient.Friends.Contains(userName);
             User user;
             var isOffline = !Program.TasClient.ExistingUsers.TryGetValue(userName, out user);
             var icon = isOffline ? ZklResources.grayuser : TextImage.GetUserImage(userName);
@@ -174,7 +186,7 @@ namespace ZeroKLobby.MicroLobby
         void client_Said(object sender, TasSayEventArgs e)
         {
             var tas = (TasClient)sender;
-            if (Program.Conf.IgnoredUsers.Contains(e.UserName))
+            if (Program.TasClient.Ignores.Contains(e.UserName))
             {
                 return;
             }
@@ -187,7 +199,7 @@ namespace ZeroKLobby.MicroLobby
 
                 var pmControl = GetPrivateMessageControl(otherUserName);
                 // block non friend messages 
-                if (pmControl == null && Program.Conf.BlockNonFriendPm && !Program.FriendManager.Friends.Contains(otherUserName) && !Program.TasClient.ExistingUsers[e.UserName].IsBot)
+                if (pmControl == null && Program.Conf.BlockNonFriendPm && !Program.TasClient.Friends.Contains(otherUserName) && !Program.TasClient.ExistingUsers[e.UserName].IsBot)
                 {
                     if (e.UserName != Program.TasClient.UserName)
                         Program.TasClient.Say(SayPlace.User,
@@ -213,19 +225,6 @@ namespace ZeroKLobby.MicroLobby
             }
             else if (e.Place == SayPlace.MessageBox) Trace.TraceInformation("TASC: {0}", e.Text);
             if (e.Place == SayPlace.MessageBox) WarningBar.DisplayWarning(e.Text);
-        }
-
-        void FriendManager_FriendAdded(object sender, EventArgs<string> e)
-        {
-            var userName = e.Data;
-            toolTabs.RemovePrivateTab(userName);
-            var pm = CreatePrivateMessageControl(userName);
-            toolTabs.SelectPrivateTab(userName);
-        }
-
-        void FriendManager_FriendRemoved(object sender, EventArgs<string> e)
-        {
-            toolTabs.RemovePrivateTab(e.Data);
         }
 
 
@@ -257,7 +256,7 @@ namespace ZeroKLobby.MicroLobby
         void TasClient_LoginAccepted(object sender, TasEventArgs e)
         {
             AddBattleControl();
-            foreach (var friendName in Program.FriendManager.Friends) CreatePrivateMessageControl(friendName);
+            foreach (var friendName in Program.TasClient.Friends) CreatePrivateMessageControl(friendName);
             foreach (var channel in Program.AutoJoinManager.Channels) Program.TasClient.JoinChannel(channel, Program.AutoJoinManager.GetPassword(channel));
             var lang = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
             if (!string.IsNullOrEmpty(lang)) Program.TasClient.JoinChannel(lang);
@@ -268,7 +267,7 @@ namespace ZeroKLobby.MicroLobby
             var userName = user.Name;
             var pmControl = GetPrivateMessageControl(userName);
             if (pmControl != null)
-                toolTabs.SetIcon(userName, Program.FriendManager.Friends.Contains(userName) ? ZklResources.friend : TextImage.GetUserImage(userName),
+                toolTabs.SetIcon(userName, Program.TasClient.Friends.Contains(userName) ? ZklResources.friend : TextImage.GetUserImage(userName),
                     true);
         }
 

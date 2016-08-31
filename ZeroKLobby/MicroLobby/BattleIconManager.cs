@@ -31,12 +31,21 @@ namespace ZeroKLobby.MicroLobby
             Program.TasClient.BattleUserJoined += TasClient_BattleUserJoined;
             Program.TasClient.BattleUserLeft += TasClient_BattleUserLeft;
             Program.TasClient.UserStatusChanged += TasClient_UserStatusChanged;
-            Program.FriendManager.FriendAdded += HandleFriendChanged;
-            Program.FriendManager.FriendRemoved += HandleFriendChanged;
+            Program.TasClient.FriendListUpdated += TasClientOnFriendListUpdated;
             Program.TasClient.ConnectionLost += TasClient_ConnectionLost;
             Program.TasClient.LoginAccepted += TasClient_LoginAccepted;
             foreach (var battle in Program.TasClient.ExistingBattles.Values.ToList()) AddBattle(battle);
             Running = true;
+        }
+
+        private void TasClientOnFriendListUpdated(object sender, IReadOnlyCollection<string> friends)
+        {
+            foreach (var battle in Program.TasClient.ExistingBattles.Values.Where(b => b.Users.Any(y => friends.Contains(y.Key))))
+            {
+                var battleIcon = GetBattleIcon(battle.BattleID);
+                battleIcon.SetPlayers();
+                BattleChanged(this, new EventArgs<BattleIcon>(battleIcon));
+            }
         }
 
 
@@ -110,17 +119,6 @@ namespace ZeroKLobby.MicroLobby
             var icons = battleIcons.ToArray();
             battleIcons.Clear();
             foreach (var icon in icons) RemovedBattle(this, new EventArgs<BattleIcon>(icon));
-        }
-
-        void HandleFriendChanged(object sender, EventArgs<string> e)
-        {
-            var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Users.ContainsKey(e.Data));
-            if (battle != null)
-            {
-                var battleIcon = GetBattleIcon(battle.BattleID);
-                battleIcon.SetPlayers();
-                BattleChanged(this, new EventArgs<BattleIcon>(battleIcon));
-            }
         }
 
         void TasClient_BattleEnded(object sender, Battle battle)

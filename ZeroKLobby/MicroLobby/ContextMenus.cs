@@ -240,16 +240,16 @@ namespace ZeroKLobby.MicroLobby
                     pmItem.Click += (s, e) => NavigationControl.Instance.Path = "chat/user/" + user.Name;
                     contextMenu.MenuItems.Add(pmItem);
 
-                    if (Program.FriendManager.Friends.Contains(user.Name))
+                    if (Program.TasClient.Friends.Contains(user.Name))
                     {
                         var pinItem = new MenuItem("Unfriend");
-                        pinItem.Click += (s, e) => Program.FriendManager.RemoveFriend(user.Name);
+                        pinItem.Click += (s, e) => Program.TasClient.SetRelation(user.Name, Relation.None);
                         contextMenu.MenuItems.Add(pinItem);
                     }
                     else
                     {
                         var pinItem = new MenuItem("Friend");
-                        pinItem.Click += (s, e) => Program.FriendManager.AddFriend(user.Name);
+                        pinItem.Click += (s, e) => Program.TasClient.SetRelation(user.Name, Relation.Friend);
                         contextMenu.MenuItems.Add(pinItem);
                     }
 
@@ -257,12 +257,12 @@ namespace ZeroKLobby.MicroLobby
                     joinItem.Click += (s, e) => ActionHandler.JoinPlayer(user.Name);
                     contextMenu.MenuItems.Add(joinItem);
 
-                    var ignoreUser = new MenuItem("Ignore User") { Checked = Program.Conf.IgnoredUsers.Contains(user.Name) };
+                    var ignoreUser = new MenuItem("Ignore User") { Checked = Program.TasClient.Ignores.Contains(user.Name) };
                     ignoreUser.Click += (s, e) =>
                         {
                             ignoreUser.Checked = !ignoreUser.Checked;
-                            if (ignoreUser.Checked) Program.Conf.IgnoredUsers.Add(user.Name);
-                            else Program.Conf.IgnoredUsers.Remove(user.Name);
+                            if (ignoreUser.Checked) Program.TasClient.SetRelation(user.Name, Relation.Ignore);
+                            else Program.TasClient.SetRelation(user.Name, Relation.None);
                         };
                     contextMenu.MenuItems.Add(ignoreUser);
 
@@ -325,16 +325,16 @@ namespace ZeroKLobby.MicroLobby
                 details.Click += (s, e) => NavigationControl.Instance.Path = string.Format("{1}/Users/LobbyDetail/{0}", control.UserName, GlobalConst.BaseSiteUrl);
                 contextMenu.MenuItems.Add(details);
 
-                if (Program.FriendManager.Friends.Contains(control.UserName))
+                if (Program.TasClient.Friends.Contains(control.UserName))
                 {
                     var pinItem = new System.Windows.Forms.MenuItem("Unfriend");
-                    pinItem.Click += (s, e) => Program.FriendManager.RemoveFriend(control.UserName);
+                    pinItem.Click += (s, e) => Program.TasClient.SetRelation(control.UserName, Relation.None);
                     contextMenu.MenuItems.Add(pinItem);
                 }
                 else
                 {
                     var pinItem = new System.Windows.Forms.MenuItem("Friend");
-                    pinItem.Click += (s, e) => Program.FriendManager.AddFriend(control.UserName);
+                    pinItem.Click += (s, e) => Program.TasClient.SetRelation(control.UserName,  Relation.Friend);
                     contextMenu.MenuItems.Add(pinItem);
                 }
 

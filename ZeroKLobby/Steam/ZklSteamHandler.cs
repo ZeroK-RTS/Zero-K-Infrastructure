@@ -101,11 +101,7 @@ namespace ZeroKLobby
 
         static void AddFriend(string name)
         {
-            if (Program.MainWindow != null) Program.MainWindow.InvokeFunc(() => Program.FriendManager.AddFriend(name));
-            else
-            {
-                Program.FriendManager.AddFriend(name);
-            }
+            Program.TasClient?.SetRelation(name, Relation.Friend);
         }
 
         void OnLoggedToBothSteamAndTas()

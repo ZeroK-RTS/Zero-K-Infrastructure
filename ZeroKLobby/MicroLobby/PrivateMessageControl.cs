@@ -13,7 +13,7 @@ namespace ZeroKLobby.MicroLobby
   public partial class PrivateMessageControl: UserControl, INotifyPropertyChanged
   {
     DateTime lastAnsweringMessageTime;
-    public bool CanClose { get { return !Program.FriendManager.Friends.Contains(UserName); } }
+    public bool CanClose { get { return !Program.TasClient.Friends.Contains(UserName); } }
 
 
     public Label Label { get; set; }
@@ -65,8 +65,8 @@ namespace ZeroKLobby.MicroLobby
     public void AddLine([NotNull] IChatLine line)
     {
       if (line == null) throw new ArgumentNullException("line");
-      if ((line is SaidLine && Program.Conf.IgnoredUsers.Contains(((SaidLine)line).AuthorName)) ||
-          (line is SaidExLine && Program.Conf.IgnoredUsers.Contains(((SaidExLine)line).AuthorName))) return;
+      if ((line is SaidLine && Program.TasClient.Ignores.Contains(((SaidLine)line).AuthorName)) ||
+          (line is SaidExLine && Program.TasClient.Ignores.Contains(((SaidExLine)line).AuthorName))) return;
 
       ChatBox.AddLine(line);
       HistoryManager.LogLine(UserName, line);

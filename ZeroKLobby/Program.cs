@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security.Principal;
 using System.Text;
@@ -25,7 +26,6 @@ namespace ZeroKLobby
         public static AutoJoinManager AutoJoinManager;
         public static bool CloseOnNext;
         public static Config Conf;
-        public static FriendManager FriendManager;
         public static SpringieServer SpringieServer = new SpringieServer();
         public static string[] StartupArgs;
         public static string StartupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
@@ -240,7 +240,6 @@ namespace ZeroKLobby
                     if (Environment.OSVersion.Platform != PlatformID.Unix) Utils.RegisterProtocol();
                 }
 
-                FriendManager = new FriendManager();
                 AutoJoinManager = new AutoJoinManager();
                 EngineConfigurator = new EngineConfigurator(SpringPaths.WritableDirectory);
 
@@ -289,7 +288,7 @@ namespace ZeroKLobby
                     if (e.Data.UserName != null)
                     {
                         tas.ExistingUsers.TryGetValue(e.Data.UserName, out user);
-                        if ((user != null && user.BanMute) || Conf.IgnoredUsers.Contains(e.Data.UserName)) e.Cancel = true;
+                        if ((user != null && user.BanMute) || TasClient.Ignores.Contains(e.Data.UserName)) e.Cancel = true;
                     }
                 };
 

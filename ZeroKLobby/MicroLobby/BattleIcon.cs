@@ -179,7 +179,7 @@ namespace ZeroKLobby.MicroLobby
             foreach (UserBattleStatus user in Battle.Users.Values)
             {
                 if (user.Name == Program.TasClient.UserName) mes++;
-                if (Program.FriendManager.Friends.Contains(user.Name)) friends++;
+                if (Program.TasClient.Friends.Contains(user.Name)) friends++;
                 else if (user.LobbyUser.IsAdmin) admins++;
             }
 

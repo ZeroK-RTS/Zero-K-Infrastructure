@@ -151,7 +151,7 @@ namespace ZeroKLobby
                         break;
 
                     case "add_friend":
-                        Program.FriendManager.AddFriend(arg);
+                        Program.TasClient.SetRelation(arg, Relation.Friend);
                         break;
 
                     case "join_battle":

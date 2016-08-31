@@ -885,5 +885,10 @@ namespace LobbyClient
         {
             return SendCommand(new RequestConnectSpring() { BattleID = battleID });
         }
+
+        public Task SetRelation(string target, Relation rel)
+        {
+            return SendCommand(new SetAccountRelation() {Relation = rel, TargetName = target});
+        }
     }
 }
