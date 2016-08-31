@@ -18,46 +18,23 @@ namespace ZkLobbyServer
         private ZkLobbyServer state;
         public User User = new User();
 
+
+        public HashSet<string> Friends { get; set; }
+        public HashSet<string> FriendsBy { get; set; }
+        public HashSet<string> Ignored { get; set; }
+        public HashSet<string> IgnoredBy { get; set; }
+
         public bool IsLoggedIn { get { return User != null && User.AccountID != 0; } }
 
         public string Name { get { return User.Name; } }
 
 
-        public HashSet<string> Friends { get; set; }
-        public HashSet<string> Ignored { get; set; }
-        public HashSet<string> IgnoredBy { get; set; }
-        public HashSet<string> FriendsBy { get; set; }
-
-
         public ConnectedUser(ZkLobbyServer server, User user)
         {
-            this.state = server;
-            this.User = user;
+            state = server;
+            User = user;
 
             LoadFriendsIgnores();
-        }
-
-        public void LoadFriendsIgnores()
-        {
-
-            using (var db = new ZkDataContext())
-            {
-                var rels = db.AccountRelations.Where(x => x.TargetAccountID == User.AccountID || x.OwnerAccountID == User.AccountID).Select(x=>new
-                {
-                    OwnerAccountID = x.OwnerAccountID,
-                    Owner = x.Owner.Name,
-                    Target = x.Target.Name,
-                    Relation = x.Relation
-                }).ToList();
-
-
-                Friends.AddRange(rels.Where(x => x.Relation == Relation.Friend && x.OwnerAccountID == User.AccountID).Select(x => x.Target));
-                FriendsBy.AddRange(rels.Where(x => x.Relation == Relation.Friend && x.OwnerAccountID != User.AccountID).Select(x => x.Owner));
-
-                Ignored.AddRange(rels.Where(x => x.Relation == Relation.Ignore && x.OwnerAccountID == User.AccountID).Select(x => x.Target));
-                IgnoredBy.AddRange(rels.Where(x => x.Relation == Relation.Ignore && x.OwnerAccountID != User.AccountID).Select(x => x.Owner));
-            }
-
         }
 
 
@@ -78,6 +55,23 @@ namespace ZkLobbyServer
         public async Task SendLine(string line)
         {
             await Task.WhenAll(Connections.Keys.Select(async (con) => { await con.SendLine(line); }));
+        }
+
+        public void LoadFriendsIgnores()
+        {
+            using (var db = new ZkDataContext())
+            {
+                var rels =
+                    db.AccountRelations.Where(x => x.TargetAccountID == User.AccountID || x.OwnerAccountID == User.AccountID)
+                        .Select(x => new { OwnerAccountID = x.OwnerAccountID, Owner = x.Owner.Name, Target = x.Target.Name, Relation = x.Relation })
+                        .ToList();
+
+                Friends.AddRange(rels.Where(x => x.Relation == Relation.Friend && x.OwnerAccountID == User.AccountID).Select(x => x.Target));
+                FriendsBy.AddRange(rels.Where(x => x.Relation == Relation.Friend && x.OwnerAccountID != User.AccountID).Select(x => x.Owner));
+
+                Ignored.AddRange(rels.Where(x => x.Relation == Relation.Ignore && x.OwnerAccountID == User.AccountID).Select(x => x.Target));
+                IgnoredBy.AddRange(rels.Where(x => x.Relation == Relation.Ignore && x.OwnerAccountID != User.AccountID).Select(x => x.Owner));
+            }
         }
 
 
@@ -587,6 +581,41 @@ namespace ZkLobbyServer
             }
         }
 
+        public async Task Process(SetAccountRelation rel)
+        {
+            if (!IsLoggedIn) return;
+
+            if (string.IsNullOrEmpty(rel.TargetName)) return;
+
+            using (var db = new ZkDataContext())
+            {
+                var srcAccount = db.Accounts.Find(User.AccountID);
+                var trgtAccount = Account.AccountByName(db, rel.TargetName);
+                if (trgtAccount == null)
+                {
+                    await Respond("No such account found");
+                    return;
+                }
+
+                var entry = srcAccount.RelalationsByOwner.FirstOrDefault(x => x.TargetAccountID == trgtAccount.AccountID);
+                if (rel.Relation == Relation.None && entry != null) db.AccountRelations.Remove(entry);
+                if (rel.Relation != Relation.None)
+                {
+                    if (entry == null)
+                    {
+                        entry = new AccountRelation() { Owner = srcAccount, Target = trgtAccount, Relation = rel.Relation };
+                        srcAccount.RelalationsByOwner.Add(entry);
+                    }
+                    else entry.Relation = rel.Relation;
+                }
+                db.SaveChanges();
+
+                ConnectedUser connectedUser;
+                if (state.ConnectedUsers.TryGetValue(srcAccount.Name, out connectedUser)) connectedUser.LoadFriendsIgnores();
+                if (state.ConnectedUsers.TryGetValue(trgtAccount.Name, out connectedUser)) connectedUser.LoadFriendsIgnores();
+            }
+        }
+
         public async Task RecalcSpectators(Battle bat)
         {
             var specCount = bat.Users.Values.Count(x => x.IsSpectator);
@@ -684,41 +713,5 @@ namespace ZkLobbyServer
             state.Battles.TryRemove(battle.BattleID, out bat);
             await state.Broadcast(state.ConnectedUsers.Values, new BattleRemoved() { BattleID = battle.BattleID });
         }
-
-        public async Task Process(SetAccountRelation rel)
-        {
-            if (!IsLoggedIn) return;
-
-            if (string.IsNullOrEmpty(rel.TargetName)) return;
-
-            using (var db = new ZkDataContext())
-            {
-                var srcAccount = db.Accounts.Find(User.AccountID);
-                var trgtAccount = Account.AccountByName(db, rel.TargetName);
-                if (trgtAccount == null)
-                {
-                    await Respond("No such account found");
-                    return;
-                }
-
-                var entry = srcAccount.RelalationsByOwner.FirstOrDefault(x => x.TargetAccountID == trgtAccount.AccountID);
-                if (rel.Relation == Relation.None && entry != null) db.AccountRelations.Remove(entry);
-                if (rel.Relation != Relation.None)
-                {
-                    if (entry == null)
-                    {
-                        entry = new AccountRelation() { Owner = srcAccount, Target = trgtAccount, Relation = rel.Relation };
-                        srcAccount.RelalationsByOwner.Add(entry);
-                    }
-                    else entry.Relation = rel.Relation;
-                }
-                db.SaveChanges();
-
-                ConnectedUser connectedUser;
-                if (state.ConnectedUsers.TryGetValue(srcAccount.Name, out connectedUser)) connectedUser.LoadFriendsIgnores();
-                if (state.ConnectedUsers.TryGetValue(trgtAccount.Name, out connectedUser)) connectedUser.LoadFriendsIgnores();
-            }
-        }
-
     }
 }

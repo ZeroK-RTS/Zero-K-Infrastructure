@@ -93,6 +93,7 @@ namespace ZkLobbyServer
             if (response.ResultCode == LoginResponse.Code.Ok)
             {
                 connectedUser = state.ConnectedUsers.GetOrAdd(user.Name, (n) => new ConnectedUser(state, user));
+                connectedUser.User = user;
                 connectedUser.Connections.TryAdd(this, true);
                 
                 Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
