@@ -20,8 +20,8 @@ namespace ZkLobbyServer
 
 
         public HashSet<string> Friends { get; set; }
-        public HashSet<string> FriendsBy { get; set; }
-        public HashSet<string> Ignored { get; set; }
+        public HashSet<string> FriendBy { get; set; }
+        public HashSet<string> Ignores { get; set; }
         public HashSet<string> IgnoredBy { get; set; }
 
         public bool IsLoggedIn { get { return User != null && User.AccountID != 0; } }
@@ -67,9 +67,9 @@ namespace ZkLobbyServer
                         .ToList();
 
                 Friends.AddRange(rels.Where(x => x.Relation == Relation.Friend && x.OwnerAccountID == User.AccountID).Select(x => x.Target));
-                FriendsBy.AddRange(rels.Where(x => x.Relation == Relation.Friend && x.OwnerAccountID != User.AccountID).Select(x => x.Owner));
+                FriendBy.AddRange(rels.Where(x => x.Relation == Relation.Friend && x.OwnerAccountID != User.AccountID).Select(x => x.Owner));
 
-                Ignored.AddRange(rels.Where(x => x.Relation == Relation.Ignore && x.OwnerAccountID == User.AccountID).Select(x => x.Target));
+                Ignores.AddRange(rels.Where(x => x.Relation == Relation.Ignore && x.OwnerAccountID == User.AccountID).Select(x => x.Target));
                 IgnoredBy.AddRange(rels.Where(x => x.Relation == Relation.Ignore && x.OwnerAccountID != User.AccountID).Select(x => x.Owner));
             }
         }

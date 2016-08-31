@@ -73,7 +73,7 @@ namespace ZkLobbyServer
         {
             ConnectedUser usr;
             if (ConnectedUsers.TryGetValue(origin, out usr)) if (usr.IgnoredBy.Contains(target)) return false;
-            if (ConnectedUsers.TryGetValue(target, out usr)) if (usr.Ignored.Contains(origin)) return false;
+            if (ConnectedUsers.TryGetValue(target, out usr)) if (usr.Ignores.Contains(origin)) return false;
             return true;
         }
 
