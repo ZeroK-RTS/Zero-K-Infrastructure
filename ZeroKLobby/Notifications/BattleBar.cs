@@ -173,7 +173,7 @@ namespace ZeroKLobby.Notifications
 
                     List<Download> downloads = new List<Download>();
                     downloads.Add(Program.Downloader.GetResource(DownloadType.ENGINE, e.Engine));
-                    downloads.Add(Program.Downloader.GetResource(DownloadType.GAME, e.Game));
+                    downloads.Add(Program.Downloader.GetResource(DownloadType.MOD, e.Game));
                     downloads.Add(Program.Downloader.GetResource(DownloadType.MAP, e.Map));
                     downloads = downloads.Where(x => x != null).ToList();
                     if (downloads.Count > 0)

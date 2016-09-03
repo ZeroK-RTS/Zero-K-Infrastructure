@@ -18,7 +18,7 @@ namespace ZeroKLobby.MicroLobby
         public WaitDownloadDialog(IEnumerable<Download> downloads)
         {
             InitializeComponent();
-            this.downloads = downloads.ToList();
+            this.downloads = downloads.Where(x=>x!=null).ToList();
         }
 
         protected override void OnPaintBackground(PaintEventArgs e)
@@ -31,14 +31,14 @@ namespace ZeroKLobby.MicroLobby
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (downloads.All(x => x.IsComplete == true))
+            if (downloads.All(x => x==null || x.IsComplete == true))
             {
                 DialogResult =  DialogResult.OK;
                 timer1.Stop();
                 Close();
             }
 
-            var down = downloads.FirstOrDefault(x => x.IsComplete != true);
+            var down = downloads.FirstOrDefault(x => x!=null && x.IsComplete != true);
             if (down != null)
             {
                 if (down.IsAborted || down.IsComplete == false)
@@ -66,7 +66,7 @@ namespace ZeroKLobby.MicroLobby
 
         private void bitmapButton2_Click(object sender, EventArgs e)
         {
-            var down = downloads.FirstOrDefault(x => x.IsComplete != true);
+            var down = downloads.FirstOrDefault(x => x!=null && x.IsComplete != true);
             if (down != null)
             {
                 var newDown = Program.Downloader.GetResource(down.DownloadType, down.Name);

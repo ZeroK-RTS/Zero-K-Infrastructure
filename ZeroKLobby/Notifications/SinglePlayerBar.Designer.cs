@@ -47,7 +47,7 @@
             this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.label1);
             this.Name = "SinglePlayerBar";
-            this.Size = new System.Drawing.Size(1222, 49);
+            this.Size = new System.Drawing.Size(1261, 49);
             this.ResumeLayout(false);
             this.PerformLayout();
 

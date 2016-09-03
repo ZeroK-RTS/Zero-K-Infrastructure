@@ -240,7 +240,7 @@ namespace ZeroKLobby
         public static void StartMission(string name)
         {
             Program.MainWindow.SwitchMusicOnOff(false);
-            Program.NotifySection.AddBar(new MissionBar(name));
+            new MissionStarter().StartMission(name);
         }
 
 

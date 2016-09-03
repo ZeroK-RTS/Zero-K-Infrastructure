@@ -18,7 +18,6 @@ namespace PlasmaDownloader
         MOD,
         MAP,
         MISSION,
-        GAME,
         UNKNOWN,
         DEMO,
         ENGINE
@@ -146,8 +145,6 @@ namespace PlasmaDownloader
                     down.Start();
                     return down;
                 }
-
-                if (type == DownloadType.GAME) throw new ApplicationException(string.Format("{0} download not supported in this version", type));
 
                 return null;
             }
