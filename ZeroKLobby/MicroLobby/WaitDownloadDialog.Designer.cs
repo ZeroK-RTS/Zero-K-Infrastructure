@@ -127,6 +127,7 @@
             this.Controls.Add(this.btnRetry);
             this.Controls.Add(this.btnCancel);
             this.Name = "WaitDownloadDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "WaitDownloadDialog";
             this.ResumeLayout(false);
             this.PerformLayout();
