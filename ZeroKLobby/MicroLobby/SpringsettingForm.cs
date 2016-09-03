@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LobbyClient;
+using PlasmaDownloader;
 using ZkData;
 
 
@@ -77,7 +78,7 @@ namespace ZeroKLobby.MicroLobby
                 
                 if(!Utils.VerifySpringInstalled())
                 {
-                	Program.Downloader.GetEngine(GlobalConst.DefaultEngineOverride);
+                	Program.Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride);
                 	this.Close();
                     return;
                 }

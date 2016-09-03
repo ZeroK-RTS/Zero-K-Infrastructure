@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
+using PlasmaDownloader;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 
@@ -26,7 +27,7 @@ namespace ZkLobbyServer
                     battle.Respond(e, "Engine not found");
                     return null;
                 }
-                ServerBattle.downloader.GetEngine(engine);
+                ServerBattle.downloader.GetResource(DownloadType.ENGINE, engine);
             }
 
             return $"Change engine to {engine}?";

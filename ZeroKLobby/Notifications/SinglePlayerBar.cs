@@ -45,7 +45,7 @@ namespace ZeroKLobby.Notifications
 			if (!Program.SpringScanner.HasResource(modName)) neededDownloads.Add(Program.Downloader.GetResource(DownloadType.MOD, modName));
 			if (!Program.SpringScanner.HasResource(profile.MapName)) neededDownloads.Add(Program.Downloader.GetResource(DownloadType.MAP, profile.MapName));
 			if (profile.ManualDependencies != null) foreach (var entry in profile.ManualDependencies) if (!string.IsNullOrEmpty(entry) && !Program.SpringScanner.HasResource(entry)) neededDownloads.Add(Program.Downloader.GetResource(DownloadType.UNKNOWN, entry));
-			var needEngine = Program.Downloader.GetEngine(GlobalConst.DefaultEngineOverride);
+			var needEngine = Program.Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride);
 			if (needEngine != null) neededDownloads.Add(needEngine);
 				
 			if (neededDownloads.Count > 0) Program.NotifySection.AddBar(new SinglePlayerBar(neededDownloads, profile, modName));

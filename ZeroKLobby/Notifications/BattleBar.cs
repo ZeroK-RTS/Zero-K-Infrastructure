@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -139,7 +140,7 @@ namespace ZeroKLobby.Notifications
 
                     Program.Downloader.GetResource(DownloadType.MAP, battle.MapName);
                     Program.Downloader.GetResource(DownloadType.MOD, battle.ModName);
-                    Program.Downloader.GetEngine(battle.EngineVersion);
+                    Program.Downloader.GetResource(DownloadType.ENGINE, battle.EngineVersion);
 
                     if (gameBox.Image != null) gameBox.Image.Dispose();
                     CreateBattleIcon(Program.BattleIconManager.GetBattleIcon(battle.BattleID));
@@ -170,14 +171,19 @@ namespace ZeroKLobby.Notifications
                 {
                     btnStart.Text = "Rejoin";
 
-                    if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced)
+                    List<Download> downloads = new List<Download>();
+                    downloads.Add(Program.Downloader.GetResource(DownloadType.ENGINE, e.Engine));
+                    downloads.Add(Program.Downloader.GetResource(DownloadType.GAME, e.Game));
+                    downloads.Add(Program.Downloader.GetResource(DownloadType.MAP, e.Map));
+                    downloads = downloads.Where(x => x != null).ToList();
+                    if (downloads.Count > 0)
                     {
-                        if (Utils.VerifySpringInstalled())
-                        {
-                            if (spring.IsRunning) spring.ExitGame();
-                            spring.ConnectGame(e.Ip, e.Port, client.UserName, e.ScriptPassword, e.Engine);
-                        }
+                        var dd = new WaitDownloadDialog(downloads);
+                        if (dd.ShowDialog(Program.MainWindow) == DialogResult.Cancel) return;
                     }
+                    
+                    if (spring.IsRunning) spring.ExitGame();
+                    spring.ConnectGame(e.Ip, e.Port, client.UserName, e.ScriptPassword, e.Engine);
                 }
                 catch (Exception ex)
                 {
@@ -190,7 +196,7 @@ namespace ZeroKLobby.Notifications
                 {
                     if (client.MyBattleStatus != null)
                     {
-                        btnStart.Enabled = client.MyBattleStatus.SyncStatus == SyncStatuses.Synced;
+                        //btnStart.Enabled = client.MyBattleStatus.SyncStatus == SyncStatuses.Synced;
 
                         if (client.MyBattleStatus.IsSpectator && radioPlay.Checked) ChangeGuiSpectatorWithoutEvent(false); // i was spectated
                         if (!client.MyBattleStatus.IsSpectator && radioSpec.Checked) ChangeGuiSpectatorWithoutEvent(true); //i was unspectated

@@ -20,7 +20,8 @@ namespace PlasmaDownloader
         MISSION,
         GAME,
         UNKNOWN,
-        DEMO
+        DEMO,
+        ENGINE
     }
 
 
@@ -72,32 +73,6 @@ namespace PlasmaDownloader
             packageDownloader.Dispose();
         }
 
-        /// <summary>
-        /// Download requested Spring version, then call NotifyNewEngine() after finishes.
-        /// </summary>
-        public Download GetEngine(string version)
-        {
-            lock (downloads)
-            {
-                downloads.RemoveAll(x => x.IsAborted || x.IsComplete != null); // remove already completed downloads from list}
-                var existing = downloads.SingleOrDefault(x => x.Name == version);
-                if (existing != null) return existing;
-
-                if (SpringPaths.HasEngineVersion(version))
-                {
-                    return null;
-                }
-                else
-                {
-                    var down = new EngineDownload(version, SpringPaths);
-                    downloads.Add(down);
-                    DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
-                    down.Start();
-                    return down;
-                }
-            }
-        }
-
 
         [CanBeNull]
         public Download GetResource(DownloadType type, string name)
@@ -116,6 +91,7 @@ namespace PlasmaDownloader
                 var tagged = PackageDownloader.GetByTag(name);
                 if (tagged != null && scanner.HasResource(tagged.InternalName)) return null; // has it (referenced by tag)
             }
+            if (SpringPaths.HasEngineVersion(name)) return null;
 
 
             lock (downloads)
@@ -128,6 +104,7 @@ namespace PlasmaDownloader
                     var filePath = Utils.MakePath(SpringPaths.WritableDirectory, "demos", targetName);
                     if (File.Exists(filePath)) return null;
                     var down = new WebFileDownload(name, filePath, null);
+                    down.DownloadType = type;
                     downloads.Add(down);
                     DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down)); //create dowload bar (handled by MainWindow.cs)
                     down.Start();
@@ -139,6 +116,7 @@ namespace PlasmaDownloader
                     var down = packageDownloader.GetPackageDownload(name);
                     if (down != null)
                     {
+                        down.DownloadType = type;
                         down.Alias = name;
                         downloads.Add(down);
                         DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
@@ -152,10 +130,21 @@ namespace PlasmaDownloader
                     var down = torrentDownloader.DownloadTorrent(name);
                     if (down != null)
                     {
+                        down.DownloadType = type;
                         downloads.Add(down);
                         DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
                         return down;
                     }
+                }
+
+                if (type == DownloadType.ENGINE)
+                {
+                    var down = new EngineDownload(name, SpringPaths);
+                    down.DownloadType = type;
+                    downloads.Add(down);
+                    DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
+                    down.Start();
+                    return down;
                 }
 
                 if (type == DownloadType.GAME) throw new ApplicationException(string.Format("{0} download not supported in this version", type));

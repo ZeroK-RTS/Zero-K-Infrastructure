@@ -33,7 +33,7 @@ namespace ZeroKLobby.Notifications
                 down = Program.Downloader.GetDependenciesOnly(missionName);
             }
 
-            var engine = Program.Downloader.GetEngine(GlobalConst.DefaultEngineOverride);
+            var engine = Program.Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride);
 
             ZkData.Utils.StartAsync(() =>
             {

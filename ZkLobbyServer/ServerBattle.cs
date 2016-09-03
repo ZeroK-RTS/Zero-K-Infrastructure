@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Timers;
 using LobbyClient;
+using PlasmaDownloader;
 using PlasmaShared;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
@@ -52,7 +53,7 @@ namespace ZkLobbyServer
             downloader = new PlasmaDownloader.PlasmaDownloader(null, springPaths);
             downloader.PackageDownloader.SetMasterRefreshTimer(60);
             downloader.PackageDownloader.LoadMasterAndVersions(false);
-            downloader.GetEngine(GlobalConst.DefaultEngineOverride);
+            downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride);
 
             Commands =
                 Assembly.GetAssembly(typeof(BattleCommand))
@@ -128,7 +129,7 @@ namespace ZkLobbyServer
         {
             if (IsNullOrEmpty(Title)) Title = $"{FounderName}'s game";
             if (IsNullOrEmpty(EngineVersion)) EngineVersion = server.Engine;
-            downloader.GetEngine(server.Engine);
+            downloader.GetResource(DownloadType.ENGINE, server.Engine);
 
             switch (Mode)
             {
@@ -371,7 +372,8 @@ namespace ZkLobbyServer
                 Engine = EngineVersion,
                 Ip = hostingIp,
                 Port = hostingPort,
-                Resources = new List<string>() { MapName, ModName },
+                Map = MapName,
+                Game =  ModName,
                 ScriptPassword = us.ScriptPassword
             };
         }

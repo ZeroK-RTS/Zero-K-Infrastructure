@@ -55,7 +55,7 @@ namespace Benchmarker
             if (StartScript == null) return "Please select a start script - put start scripts in Benchmarks/Scripts folder";
             if (Config == null) return "Please select a config to use - create folders with configs in Benchmarks/Configs folder";
 
-            var de = downloader.GetEngine(Engine);
+            var de = downloader.GetResource(DownloadType.ENGINE, Engine);
             Download dm = null;
 
             if (!string.IsNullOrEmpty(Map)) {
