@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlasmaShared", "Shared\PlasmaShared\PlasmaShared.csproj", "{B24E7FB3-A3FB-4B67-A499-721F9B34A404}"
 EndProject
@@ -43,6 +43,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetWikiBot", "DotNetWikiBot\DotNetWikiBot.csproj", "{016C2B52-AFD5-4A3A-A960-E9FB51C014BB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoCleaner", "DemoCleaner\DemoCleaner.csproj", "{74AEBEB6-3861-4484-8008-9EDD100CD635}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MigrateDatabase", "MigrateDatabase\MigrateDatabase.csproj", "{D60C746C-9968-420C-A6CE-66B7A1D8C33C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -170,6 +172,14 @@ Global
 		{74AEBEB6-3861-4484-8008-9EDD100CD635}.Release|Any CPU.Build.0 = Release|Any CPU
 		{74AEBEB6-3861-4484-8008-9EDD100CD635}.Release|x86.ActiveCfg = Release|Any CPU
 		{74AEBEB6-3861-4484-8008-9EDD100CD635}.Release|x86.Build.0 = Release|Any CPU
+		{D60C746C-9968-420C-A6CE-66B7A1D8C33C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D60C746C-9968-420C-A6CE-66B7A1D8C33C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D60C746C-9968-420C-A6CE-66B7A1D8C33C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D60C746C-9968-420C-A6CE-66B7A1D8C33C}.Debug|x86.Build.0 = Debug|Any CPU
+		{D60C746C-9968-420C-A6CE-66B7A1D8C33C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D60C746C-9968-420C-A6CE-66B7A1D8C33C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D60C746C-9968-420C-A6CE-66B7A1D8C33C}.Release|x86.ActiveCfg = Release|Any CPU
+		{D60C746C-9968-420C-A6CE-66B7A1D8C33C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
