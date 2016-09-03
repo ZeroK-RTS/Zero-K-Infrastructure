@@ -154,7 +154,17 @@ namespace ZkData
             cachePath = Utils.MakePath(springPaths.Cache, "ScannerCache.json");
             Directory.CreateDirectory(Utils.MakePath(springPaths.Cache, "Resources"));
 
-            if (UseUnitSync) unitSync = new UnitSync(springPaths);
+            if (UseUnitSync)
+            {
+                try
+                {
+                    unitSync = new UnitSync(springPaths);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("UnitSync init failed: {0}",ex);
+                }
+            }
         }
 
         ~SpringScanner()
