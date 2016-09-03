@@ -882,16 +882,17 @@ namespace ZkData
         {
         }
 
-        public ZkDataContext(bool migrateToLatest = true)
+        public ZkDataContext(bool? migrateToLatest = null)
             : this(GlobalConst.ZkDataContextConnectionString, migrateToLatest)
         {
         }
 
 
-        public ZkDataContext(string connectionString, bool migrateToLatest = true)
+        public ZkDataContext(string connectionString, bool? migrateToLatest = null)
             : base(connectionString)
         {
-            if (!wasDbChecked && migrateToLatest)
+            migrateToLatest = migrateToLatest ?? GlobalConst.AutoMigrateDatabase;
+            if (!wasDbChecked && migrateToLatest == true)
             {
                 lock (locker)
                 {

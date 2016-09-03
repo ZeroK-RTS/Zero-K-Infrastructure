@@ -50,6 +50,7 @@ namespace ZkData
 
                     OldSpringLobbyPort = 7000;
                     UdpHostingPortStart = 8452;
+                    AutoMigrateDatabase = true;
                     break;
                 case ModeType.Test:
                     BaseSiteUrl = "http://test.zero-k.info";
@@ -63,6 +64,7 @@ namespace ZkData
                     OldSpringLobbyPort = 7000;
 
                     UdpHostingPortStart = 7452;
+                    AutoMigrateDatabase = false;
                     break;
                 case ModeType.Live:
                     BaseSiteUrl = "http://zero-k.info";
@@ -76,6 +78,7 @@ namespace ZkData
                     OldSpringLobbyPort = 8200;
 
                     UdpHostingPortStart = 8452;
+                    AutoMigrateDatabase = false;
                     break;
             }
 
@@ -225,6 +228,8 @@ namespace ZkData
         public static readonly string[] DefaultDownloadMirrors = {};
         public static string LobbyServerHost;
         public static int LobbyServerPort;
+
+        public static bool AutoMigrateDatabase { get; private set; }
 
         public static string[] ReplaysPossiblePaths = { @"c:\projekty\springie_spring\demos-server"};
 
