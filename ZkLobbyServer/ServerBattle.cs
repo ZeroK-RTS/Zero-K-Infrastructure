@@ -341,9 +341,15 @@ namespace ZkLobbyServer
 
         public async Task StartGame()
         {
+            var context = GetContext();
+            var balance = Balancer.BalanceTeams(context, true, null, null);
+            if (!string.IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
+            if (!balance.CanStart) return;
+            
+            context.ApplyBalance(balance);
 
-            var startSetup = StartSetup.GetDedicatedServerStartSetup(GetContext());
-
+            var startSetup = StartSetup.GetDedicatedServerStartSetup(context);
+            
             spring.HostGame(startSetup, hostingIp, hostingPort, true);
             IsInGame = true;
             RunningSince = DateTime.UtcNow;

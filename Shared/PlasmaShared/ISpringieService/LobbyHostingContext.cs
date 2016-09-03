@@ -16,5 +16,12 @@ namespace PlasmaShared
         public AutohostMode Mode = AutohostMode.None;
         public Dictionary<string, string> ModOptions = new Dictionary<string, string>();
         public Dictionary<string,Dictionary<string,string>> UserParameters = new Dictionary<string, Dictionary<string, string>>();
+
+        public void ApplyBalance(BalanceTeamsResult balance)
+        {
+            if (balance.DeleteBots) Bots.Clear();
+            if (balance.Bots?.Count > 0) Bots = balance.Bots;
+            if (balance.Players?.Count > 0) Players = balance.Players;
+        }
     }
 }

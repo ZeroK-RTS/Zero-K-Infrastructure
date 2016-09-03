@@ -105,6 +105,16 @@ namespace LobbyClient
                 userNum++;
             }
 
+            // add unowned bots to last player
+            foreach (var b in setup.LobbyStartContext.Bots.Where(x => !setup.LobbyStartContext.Players.Any(y=>y.Name == x.Owner)))
+            {
+                ScriptAddBot(script, aiNum, teamNum, userNum-1, b.BotAI, b.BotName);
+                aiNum++;
+                ScriptAddTeam(script, teamNum, userNum-1, b.AllyID);
+                teamNum++;
+            }
+
+
             // ALLIANCES AND START BOXES
             var startboxes = new StringBuilder();
             startboxes.Append("return { ");

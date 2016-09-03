@@ -21,15 +21,7 @@ namespace ZeroKWeb.SpringieInterface
             {
                 var mode = context.Mode;
 
-
-                if (mode == AutohostMode.Planetwars)
-                {
-                    var balance = Balancer.BalanceTeams(context, true, null, null);
-                    context.Players = balance.Players;
-                    context.Bots = balance.Bots;
-                }
-
-                var commProfiles = new LuaTable();
+               var commProfiles = new LuaTable();
                 var db = new ZkDataContext();
 
                 // calculate to whom to send extra comms

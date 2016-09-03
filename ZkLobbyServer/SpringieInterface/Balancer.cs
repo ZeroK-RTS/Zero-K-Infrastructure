@@ -35,6 +35,7 @@ namespace ZeroKWeb.SpringieInterface
             
             if (clanWise == null && ( context.Mode == AutohostMode.Teams)) clanWise = true;
 
+
             var res = PerformBalance(context, isGameStart, allyCount, clanWise, playerCount);
 
             if (context.Mode != AutohostMode.Planetwars) // planetwars skip other checks
@@ -52,7 +53,7 @@ namespace ZeroKWeb.SpringieInterface
                                 Message = "You cannot play alone on this host, wait for players or join another game room and play with bots."
                             };
                         }
-                        if (!context.Bots.Any())
+                        if (!res.Bots.Any())
                         {
                             return new BalanceTeamsResult
                             {
@@ -283,19 +284,17 @@ namespace ZeroKWeb.SpringieInterface
 
                     case AutohostMode.GameChickens: {
                         res.Players = context.Players.ToList();
-                        res.Bots = context.Bots.Where(x => x.Owner != context.FounderName).ToList();
+                        res.Bots = context.Bots.ToList();
                         foreach (var p in res.Players) p.AllyID = 0;
                         foreach (var b in res.Bots) b.AllyID = 1;
 
                         if (!res.Bots.Any() && res.Players.Count > 0)
                         {
-                            res.Message = "Add some bot (computer player) as your enemy. Use button on bottom left. Chicken or CAI is recommended.";
-                            res.CanStart = false;
-                            /*else
-                                    {
-                                        res.Bots.Add(new BotTeam() { AllyID = 1, TeamID = 16, BotName = "default_Chicken", BotAI = "Chicken: Normal", });
-                                        res.Message = "Adding a normal chickens bot for you";
-                                    }*/
+                            //res.Message = "Add some bot (computer player) as your enemy. Use button on bottom left. Chicken or CAI is recommended.";
+                            var map = db.Resources.FirstOrDefault(x => x.InternalName == context.Map);
+                            if (map?.MapIsChickens == true) res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "default_Chicken", BotAI = "Chicken: Normal", });
+                            else res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "cai", BotAI = "CAI", });
+                            res.Message = "Adding computer AI player for you";
                         }
                     }
                         break;
