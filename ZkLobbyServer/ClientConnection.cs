@@ -87,14 +87,15 @@ namespace ZkLobbyServer
 
         public async Task Process(Login login)
         {
-            var user = new User();
-            var response = await Task.Run(() => state.LoginChecker.Login(user, login, this));
+            Account account = null;
+            User user = null;
+            var response = await Task.Run(() => state.LoginChecker.Login(login, this.RemoteEndpointIP, out user));
             if (response.ResultCode == LoginResponse.Code.Ok)
             {
                 connectedUser = state.ConnectedUsers.GetOrAdd(user.Name, (n) => new ConnectedUser(state, user));
-                connectedUser.Connections.TryAdd(this, true);
                 connectedUser.User = user;
-
+                connectedUser.Connections.TryAdd(this, true);
+                
                 Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
                 
                 await state.Broadcast(state.ConnectedUsers.Values, connectedUser.User); // send self to all
@@ -110,21 +111,7 @@ namespace ZkLobbyServer
                         await
                             SendCommand(new BattleAdded()
                             {
-                                Header =
-                                    new BattleHeader()
-                                    {
-                                        BattleID = b.BattleID,
-                                        Engine = b.EngineVersion,
-                                        Game = b.ModName,
-                                        Founder = b.Founder.Name,
-                                        Map = b.MapName,
-                                        Ip = b.Ip,
-                                        Port = b.HostPort,
-                                        Title = b.Title,
-                                        SpectatorCount = b.SpectatorCount,
-                                        MaxPlayers = b.MaxPlayers,
-                                        Password = b.Password != null ? "?" : null
-                                    }
+                                Header = b.GetHeader()
                             });
 
                         foreach (var u in b.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });
@@ -134,12 +121,19 @@ namespace ZkLobbyServer
 
                 await state.OfflineMessageHandler.SendMissedMessages(this, SayPlace.User, Name, user.AccountID);
 
-                foreach (var chan in await state.ChannelManager.GetDefaultChannels(user.AccountID)) {
+                var defChans = await state.ChannelManager.GetDefaultChannels(user.AccountID); 
+                defChans.AddRange(state.Rooms.Where(x=>x.Value.Users.ContainsKey(user.Name)).Select(x=>x.Key)); // add currently connected channels to list too
+                
+                foreach (var chan in defChans.ToList().Distinct()) {
                     await connectedUser.Process(new JoinChannel() {
                         ChannelName = chan,
                         Password = null
                     });
                 }
+
+
+                await SendCommand(new FriendList() { Friends = connectedUser.Friends.ToList() });
+                await SendCommand(new IgnoreList() { Ignores = connectedUser.Ignores.ToList() });
             }
             else
             {

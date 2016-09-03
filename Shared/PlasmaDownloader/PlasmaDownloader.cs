@@ -18,13 +18,13 @@ namespace PlasmaDownloader
         MOD,
         MAP,
         MISSION,
-        GAME,
         UNKNOWN,
-        DEMO
+        DEMO,
+        ENGINE
     }
 
 
-    public class PlasmaDownloader: IDisposable
+    public class PlasmaDownloader : IDisposable
     {
         private readonly List<Download> downloads = new List<Download>();
 
@@ -33,11 +33,13 @@ namespace PlasmaDownloader
         private TorrentDownloader torrentDownloader;
 
 
-        public IEnumerable<Download> Downloads {
+        public IEnumerable<Download> Downloads
+        {
             get { return downloads.AsReadOnly(); }
         }
 
-        public PackageDownloader PackageDownloader {
+        public PackageDownloader PackageDownloader
+        {
             get { return packageDownloader; }
         }
 
@@ -45,84 +47,75 @@ namespace PlasmaDownloader
 
         public event EventHandler<EventArgs<Download>> DownloadAdded = delegate { };
 
-        public event EventHandler PackagesChanged {
+        public event EventHandler PackagesChanged
+        {
             add { packageDownloader.PackagesChanged += value; }
             remove { packageDownloader.PackagesChanged -= value; }
         }
 
-        public event EventHandler SelectedPackagesChanged {
+        public event EventHandler SelectedPackagesChanged
+        {
             add { packageDownloader.SelectedPackagesChanged += value; }
             remove { packageDownloader.SelectedPackagesChanged -= value; }
         }
 
-        public PlasmaDownloader(SpringScanner scanner, SpringPaths springPaths) {
+        public PlasmaDownloader(SpringScanner scanner, SpringPaths springPaths)
+        {
             SpringPaths = springPaths;
             this.scanner = scanner;
             //torrentDownloader = new TorrentDownloader(this);
             packageDownloader = new PackageDownloader(this);
         }
 
-        public void Dispose() {
+        public void Dispose()
+        {
             packageDownloader.Dispose();
-        }
-
-        /// <summary>
-        /// Download requested Spring version, then call SetEnginePath() after finishes.
-        /// Parameter "forSpringPaths" allow you to set a custom SpringPath for which to call SetEnginePath() 
-        /// on behalf off (is useful for Autohost which run multiple Spring version but is sharing single downloader)
-        /// </summary>
-        public Download GetAndSwitchEngine(string version, SpringPaths forSpringPaths=null ) {
-            if (forSpringPaths == null) 
-                forSpringPaths = SpringPaths;
-            lock (downloads) {
-                downloads.RemoveAll(x => x.IsAborted || x.IsComplete != null); // remove already completed downloads from list}
-                var existing = downloads.SingleOrDefault(x => x.Name == version);
-                if (existing != null) return existing;
-
-                if (SpringPaths.HasEngineVersion(version)) {
-                    forSpringPaths.SetEnginePath(SpringPaths.GetEngineFolderByVersion(version));
-                    return null;
-                }
-                else {
-                    var down = new EngineDownload(version, forSpringPaths);
-                    downloads.Add(down);
-                    DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
-                    down.Start();
-                    return down;
-                }
-            }
         }
 
 
         [CanBeNull]
-        public Download GetResource(DownloadType type, string name) {
+        public Download GetResource(DownloadType type, string name)
+        {
 
-            lock (downloads) {
+            lock (downloads)
+            {
                 downloads.RemoveAll(x => x.IsAborted || x.IsComplete != null); // remove already completed downloads from list}
                 var existing = downloads.FirstOrDefault(x => x.Name == name || x.Alias == name);
                 if (existing != null) return existing;
             }
 
-            if (scanner != null && scanner.HasResource(name)) return null;
-            
-           
-            lock (downloads) {
+            if (scanner != null)
+            {
+                if (scanner.HasResource(name)) return null;
+                var tagged = PackageDownloader.GetByTag(name);
+                if (tagged != null && scanner.HasResource(tagged.InternalName)) return null; // has it (referenced by tag)
+            }
+            if (SpringPaths.HasEngineVersion(name)) return null;
 
-                if (type == DownloadType.DEMO) {
+
+            lock (downloads)
+            {
+
+                if (type == DownloadType.DEMO)
+                {
                     var target = new Uri(name);
                     var targetName = target.Segments.Last();
                     var filePath = Utils.MakePath(SpringPaths.WritableDirectory, "demos", targetName);
                     if (File.Exists(filePath)) return null;
                     var down = new WebFileDownload(name, filePath, null);
+                    down.DownloadType = type;
                     downloads.Add(down);
                     DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down)); //create dowload bar (handled by MainWindow.cs)
                     down.Start();
                     return down;
                 }
 
-                if (type == DownloadType.MOD || type == DownloadType.UNKNOWN) {
+                if (type == DownloadType.MOD || type == DownloadType.UNKNOWN)
+                {
                     var down = packageDownloader.GetPackageDownload(name);
-                    if (down != null) {
+                    if (down != null)
+                    {
+                        down.DownloadType = type;
                         down.Alias = name;
                         downloads.Add(down);
                         DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
@@ -130,17 +123,28 @@ namespace PlasmaDownloader
                     }
                 }
 
-                if (type == DownloadType.MAP || type == DownloadType.MOD || type == DownloadType.UNKNOWN || type == DownloadType.MISSION) {
+                if (type == DownloadType.MAP || type == DownloadType.MOD || type == DownloadType.UNKNOWN || type == DownloadType.MISSION)
+                {
                     if (torrentDownloader == null) torrentDownloader = new TorrentDownloader(this); //lazy initialization
                     var down = torrentDownloader.DownloadTorrent(name);
-                    if (down != null) {
+                    if (down != null)
+                    {
+                        down.DownloadType = type;
                         downloads.Add(down);
                         DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
                         return down;
                     }
                 }
 
-                if (type == DownloadType.GAME) throw new ApplicationException(string.Format("{0} download not supported in this version", type));
+                if (type == DownloadType.ENGINE)
+                {
+                    var down = new EngineDownload(name, SpringPaths);
+                    down.DownloadType = type;
+                    downloads.Add(down);
+                    DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
+                    down.Start();
+                    return down;
+                }
 
                 return null;
             }

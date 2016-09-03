@@ -29,7 +29,6 @@ namespace ZkData
         public bool DeleteInfluence { get; set; }
         public bool DeleteXP { get; set; }
         public bool SegregateHost { get; set; }
-        public bool SetRightsToZero { get; set; }
 
         public virtual Account AccountByAccountID { get; set; }
         public virtual Account AccountByCreatedAccountID { get; set; }

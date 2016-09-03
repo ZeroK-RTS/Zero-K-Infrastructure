@@ -6,7 +6,7 @@ namespace PlasmaShared
     {
         public List<string> ManualDependencies;
         public string MapName;
-        public string ModTag;
+        public string ModName;
         public string Name;
         public string StartScript;
     }

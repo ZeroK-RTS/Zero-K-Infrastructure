@@ -165,7 +165,7 @@ namespace ZkData
                 LoserTeamXpChange = 0;
             }
 
-            if (noElo || (ResourceByMapResourceID.MapIsSpecial == true) || (ResourceByMapResourceID.MapIsSupported != true))   // silly/unsupported map, just process XP
+            if (noElo || (ResourceByMapResourceID.MapIsSpecial == true) || (ResourceByMapResourceID.MapIsSupported != false))   // silly/unsupported map, just process XP
             {
                 foreach (var r in winners)
                 {

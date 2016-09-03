@@ -109,10 +109,14 @@ namespace ZeroKWeb
             using (var db = new ZkDataContext())
             {
                 var m = db.Missions.Single(x => x.Name == name && x.IsScriptMission);
+                var mod =
+                    db.Resources.Where(x => x.TypeID == ResourceType.Mod && x.RapidTag == m.ModRapidTag)
+                        .OrderByDescending(x => x.ResourceID)
+                        .FirstOrDefault();
                 return new ScriptMissionData()
                 {
                     MapName = m.Map,
-                    ModTag = m.ModRapidTag,
+                    ModName = mod?.InternalName ?? m.ModRapidTag,
                     StartScript = m.Script,
                     ManualDependencies = m.ManualDependencies != null ? new List<string>(m.ManualDependencies.Split('\n')) : null,
                     Name = m.Name
@@ -259,7 +263,6 @@ namespace ZeroKWeb
                 EloWeight = (float)acc.EloWeight,
                 FactionID = acc.FactionID ?? 0,
                 FactionName = acc.Faction != null ? acc.Faction.Name : null,
-                SpringieLevel = acc.GetEffectiveSpringieLevel(),
                 LobbyID = acc.LobbyID ?? 0
             };
         }

@@ -103,12 +103,12 @@ namespace ZeroKWeb.Controllers
             //}
 
             acc.Clan = null;
-            db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves clan {1}", acc, clan));
+            db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} leaves clan {1}", acc, clan));
             db.SaveChanges();
             if (!clan.Accounts.Any())
             {
                 clan.IsDeleted = true;
-                db.Events.InsertOnSubmit(Global.CreateEvent("{0} is disbanded", clan));
+                db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} is disbanded", clan));
             }
             else if (isLeader)
             {
@@ -131,7 +131,7 @@ namespace ZeroKWeb.Controllers
         {
             var clan = PerformLeaveClan(Global.AccountID);
             if (clan == null) return Content("This clan is too big to leave");
-            PlanetwarsController.SetPlanetOwners();
+            PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator());
 
             return RedirectToAction("Index", new { id = clan.ClanID });
         }
@@ -151,13 +151,13 @@ namespace ZeroKWeb.Controllers
                     var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
                     acc.ClanID = clan.ClanID;
                     acc.FactionID = clan.FactionID;
-                    db.Events.InsertOnSubmit(Global.CreateEvent("{0} joins clan {1}", acc, clan));
+                    db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} joins clan {1}", acc, clan));
 
                     if (clan.IsDeleted) // recreate clan
                     {
                         AddClanLeader(acc.AccountID, clan.ClanID, db);
                         clan.IsDeleted = false;
-                        db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} reformed by {1}", clan, acc));
+                        db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("Clan {0} reformed by {1}", clan, acc));
                     }
 
                     db.SaveChanges();
@@ -175,7 +175,7 @@ namespace ZeroKWeb.Controllers
             if (!(Global.Account.HasClanRight(x => x.RightKickPeople) && clan.ClanID == Global.Account.ClanID)) return Content("Unauthorized");
             PerformLeaveClan(accountID);
             db.SaveChanges();
-            PlanetwarsController.SetPlanetOwners();
+            PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator());
             return RedirectToAction("Detail", new { id = clanID });
         }
 
@@ -284,9 +284,9 @@ namespace ZeroKWeb.Controllers
                     }
                     db.SaveChanges();
                     if (clan.FactionID != null) 
-                        db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} moved to faction {1}", orgClan, orgClan.Faction));
+                        db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("Clan {0} moved to faction {1}", orgClan, orgClan.Faction));
                     else
-                        db.Events.InsertOnSubmit(Global.CreateEvent("Clan {0} left faction {1}", orgClan, oldFaction));
+                        db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("Clan {0} left faction {1}", orgClan, oldFaction));
                 }
                 db.SaveChanges();
             }
@@ -335,7 +335,7 @@ namespace ZeroKWeb.Controllers
                     im.Save(Server.MapPath(clan.GetBGImageUrl()));
                 }
 
-                db.Events.InsertOnSubmit(Global.CreateEvent("New clan {0} formed by {1}", clan, acc));
+                db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("New clan {0} formed by {1}", clan, acc));
                 db.SaveChanges();
             }
 

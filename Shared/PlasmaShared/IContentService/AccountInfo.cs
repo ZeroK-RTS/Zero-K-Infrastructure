@@ -19,6 +19,5 @@
         public float EloWeight;
         public string FactionName;
         public int FactionID;
-        public int SpringieLevel;
     }
 }

@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LobbyClient;
+using PlasmaDownloader;
+using ZkData;
 
 
 namespace ZeroKLobby.MicroLobby
@@ -76,12 +78,12 @@ namespace ZeroKLobby.MicroLobby
                 
                 if(!Utils.VerifySpringInstalled())
                 {
-                	Program.Downloader.GetAndSwitchEngine(Program.SpringPaths.SpringVersion);
+                	Program.Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride);
                 	this.Close();
                     return;
                 }
 
-                settingsOptions = new SpringSettings().GetEngineConfigOptions(Program.SpringPaths);
+                settingsOptions = new SpringSettings().GetEngineConfigOptions(Program.SpringPaths, GlobalConst.DefaultEngineOverride);
 
                 var location = 0;
                 foreach (var kvp in settingsOptions) //ref: http://www.dotnetperls.com/dictionary, http://stackoverflow.com/questions/10556205/deserializing-a-json-with-variable-name-value-pairs-into-object-in-c-sharp

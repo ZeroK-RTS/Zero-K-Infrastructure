@@ -294,7 +294,7 @@ namespace ZeroKLobby
             if (bat != null)
             {
                 sb.AppendFormat("Players:{0}+{1}\n", bat.NonSpectatorCount, bat.SpectatorCount);
-                sb.AppendFormat("Battle:{0}\n", bat.Founder);
+                sb.AppendFormat("Battle:{0}\n", bat.FounderName);
             }
             else sb.AppendFormat("idle");
             var str = sb.ToString();

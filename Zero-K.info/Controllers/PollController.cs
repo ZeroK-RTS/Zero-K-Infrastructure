@@ -51,7 +51,7 @@ namespace ZeroKWeb.Controllers
                     {
                         var toDelete = db.AccountRoles.Where(x => x.AccountID == acc.AccountID && x.RoleTypeID == p.RoleTypeID);
                         db.AccountRoles.DeleteAllOnSubmit(toDelete);
-                        db.Events.InsertOnSubmit(Global.CreateEvent("{0} was removed from the {1} role of {2} by a vote - {3} for, {4} against", acc, (object)p.Clan ?? p.Faction, p.RoleType, yes, no));
+                        db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} was removed from the {1} role of {2} by a vote - {3} for, {4} against", acc, (object)p.Clan ?? p.Faction, p.RoleType, yes, no));
 
                         db.SaveChanges();
 
@@ -84,14 +84,14 @@ namespace ZeroKWeb.Controllers
                                         };
                             acc.AccountRolesByAccountID.Add(entry);
                             if (previous == null)
-                                db.Events.InsertOnSubmit(Global.CreateEvent("{0} was elected for the {1} role of {2} by a vote - {3} for, {4} against",
+                                db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} was elected for the {1} role of {2} by a vote - {3} for, {4} against",
                                                    acc,
                                                    (object)p.Clan ?? p.Faction,
                                                    p.RoleType,
                                                    yes,
                                                    no));
 
-                            else db.Events.InsertOnSubmit(Global.CreateEvent("{0} was elected for the {1} role of {2} by a vote, replacing {3} - {4} for, {5} against",
+                            else db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} was elected for the {1} role of {2} by a vote, replacing {3} - {4} for, {5} against",
                                                    acc,
                                                    (object)p.Clan ?? p.Faction,
                                                    p.RoleType,

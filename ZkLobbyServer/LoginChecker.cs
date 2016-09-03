@@ -28,9 +28,10 @@ namespace ZkLobbyServer
         }
 
 
-        public LoginResponse Login(User user, Login login, ClientConnection client)
+
+        public LoginResponse Login(Login login, string ip, out User user)
         {
-            string ip = client.RemoteEndpointIP;
+            user = new User();
             long userID = login.UserID;
             string lobbyVersion = login.LobbyVersion;
 
@@ -246,7 +247,6 @@ namespace ZkLobbyServer
             user.Name = acc.Name;
             user.DisplayName = acc.SteamName;
             user.Avatar = acc.Avatar;
-            user.SpringieLevel = acc.GetEffectiveSpringieLevel();
             user.Level = acc.Level;
             user.EffectiveElo = (int)acc.EffectiveElo;
             user.Effective1v1Elo = (int)acc.Effective1v1Elo;
@@ -257,6 +257,7 @@ namespace ZkLobbyServer
             user.Faction = acc.Faction != null ? acc.Faction.Shortcut : null;
             user.Clan = acc.Clan != null ? acc.Clan.Shortcut : null;
             user.AccountID = acc.AccountID;
+
 
             var banMute = Punishment.GetActivePunishment(acc.AccountID, "", 0, x => x.BanMute, null);
             if (banMute != null) user.BanMute = true;

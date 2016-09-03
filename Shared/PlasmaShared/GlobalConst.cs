@@ -23,7 +23,8 @@ namespace ZkData
             get { return mode; }
             set { SetMode(value);}
         }
-        
+        public static string SpringieDataDir { get; set; } = @"c:\projekty\springie_spring"; // todo hack solve
+
         static GlobalConst()
         {
             #if LIVE
@@ -48,6 +49,8 @@ namespace ZkData
                     LobbyServerPort = 8200;
 
                     OldSpringLobbyPort = 7000;
+                    UdpHostingPortStart = 8452;
+                    AutoMigrateDatabase = true;
                     break;
                 case ModeType.Test:
                     BaseSiteUrl = "http://test.zero-k.info";
@@ -59,6 +62,9 @@ namespace ZkData
                     LobbyServerPort = 8202;
 
                     OldSpringLobbyPort = 7000;
+
+                    UdpHostingPortStart = 7452;
+                    AutoMigrateDatabase = false;
                     break;
                 case ModeType.Live:
                     BaseSiteUrl = "http://zero-k.info";
@@ -70,6 +76,9 @@ namespace ZkData
                     LobbyServerPort = 8200;
 
                     OldSpringLobbyPort = 8200;
+
+                    UdpHostingPortStart = 8452;
+                    AutoMigrateDatabase = false;
                     break;
             }
 
@@ -78,7 +87,6 @@ namespace ZkData
             SelfUpdaterBaseUrl = string.Format("{0}/lobby", BaseSiteUrl);
 
             contentServiceFactory = new ChannelFactory<IContentService>(CreateBasicHttpBinding(), string.Format("{0}/ContentService.svc", BaseSiteUrl));
-            springieServiceFactory = new ChannelFactory<ISpringieService>(CreateBasicHttpBinding(), string.Format("{0}/SpringieService.svc", BaseSiteUrl));
             
             mode = newMode;
         }
@@ -115,9 +123,7 @@ namespace ZkData
         public static string SiteDiskPath = @"c:\projekty\zero-k.info\www";
 
 
-
         public const int SteamAppID = 334920;
-        public const int ZkSpringieManagedCpu = 6666;
         public const int ZkLobbyUserCpu = 6667;
         public const int ZkLobbyUserCpuLinux = 6668;
         public const int CommanderProfileCount = 6;
@@ -138,9 +144,6 @@ namespace ZkData
         public const double EloWeightMax = 6;
         public const double EloWeightLearnFactor = 30;
         public const double EloWeightMalusFactor = -80;
-
-        public const int LevelForElevatedSpringieRights = 20;
-        public const int SpringieBossEffectiveRights = 3;
 
         public const string LoginCookieName = "zk_login";
         public const string ASmallCakeCookieName = "asmallcake";
@@ -183,6 +186,7 @@ namespace ZkData
         public const bool RequireWormholeToTravel = true;
         public const bool CanChangeClanFaction = true;
         public const double MaxPwEloDifference = 120;
+        
 
         public const PlanetWarsModes PlanetWarsMode = PlanetWarsModes.AllOffline;
 
@@ -195,9 +199,6 @@ namespace ZkData
 
         public const double EurosToKudos = 10.0;
         public const string TeamEmail = "Zero-K team <team@zero-k.info>";
-        public const int NotaLobbyLinuxCpu = 9999;
-        public const int NotaLobbyWindowsCpu = 9998;
-        public const int NotaLobbyMacCpu = 9997;
 
         public const int KudosForBronze = 100;
         public const int KudosForSilver = 500;
@@ -220,11 +221,15 @@ namespace ZkData
 
         public const int WikiEditLevel = 20;
 
+        public static int UdpHostingPortStart;
+
         public static string ResourceBaseUrl;
         public static string SelfUpdaterBaseUrl;
         public static readonly string[] DefaultDownloadMirrors = {};
         public static string LobbyServerHost;
         public static int LobbyServerPort;
+
+        public static bool AutoMigrateDatabase { get; private set; }
 
         public static string[] ReplaysPossiblePaths = { @"c:\projekty\springie_spring\demos-server"};
 
@@ -238,18 +243,11 @@ namespace ZkData
 
 
         static ChannelFactory<IContentService> contentServiceFactory;
-        static ChannelFactory<ISpringieService> springieServiceFactory;
 
         public static IContentService GetContentService()
         {
             return contentServiceFactory.CreateChannel();
         }
-
-        public static ISpringieService GetSpringieService()
-        {
-            return springieServiceFactory.CreateChannel();
-        }
-
     }
 
     public enum PlanetWarsModes

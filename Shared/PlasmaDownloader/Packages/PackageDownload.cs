@@ -20,10 +20,7 @@ namespace PlasmaDownloader.Packages
 	{
 		long doneAll;
 		readonly WebDownload fileListWebGet = new WebDownload();
-		//readonly SpringPaths paths;
-		//readonly Pool pool;
 		string tempFilelist = "";
-		//readonly string urlRoot;
 	    private PlasmaDownloader downloader;
 	    private SpringPaths paths;
 	    private string urlRoot;
@@ -153,6 +150,8 @@ namespace PlasmaDownloader.Packages
 		{
 			try
 			{
+                this.paths = downloader.SpringPaths;
+
                 downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
 			    var entry = downloader.PackageDownloader.FindAndSelectEntry(Name);
 			    if (entry == null)
@@ -161,11 +160,17 @@ namespace PlasmaDownloader.Packages
 			        return;
 			    }
 
+                this.urlRoot = entry.Item1.BaseUrl;
+                this.packageHash = entry.Item2.Hash;
+
+                if (File.Exists(Path.Combine(paths.WritableDirectory, "packages", packageHash + ".sdp"))) // SDP exists, abort
+			    {
+			        Finish(true);
+			        return;
+			    }
+
                 AddDependencies(entry);
 
-			    this.paths = downloader.SpringPaths;
-			    this.urlRoot = entry.Item1.BaseUrl;
-			    this.packageHash = entry.Item2.Hash;
                 this.pool = new Pool(paths);
                 
                 var fileList = GetFileList();

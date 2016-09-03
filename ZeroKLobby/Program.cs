@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security.Principal;
 using System.Text;
@@ -9,6 +10,7 @@ using System.Threading;
 using System.Windows.Forms;
 using LobbyClient;
 using Microsoft.Win32;
+using PlasmaDownloader;
 using PlasmaShared.UnitSyncLib;
 using SpringDownloader.Notifications;
 using ZeroKLobby.MicroForms;
@@ -25,7 +27,6 @@ namespace ZeroKLobby
         public static AutoJoinManager AutoJoinManager;
         public static bool CloseOnNext;
         public static Config Conf;
-        public static FriendManager FriendManager;
         public static SpringieServer SpringieServer = new SpringieServer();
         public static string[] StartupArgs;
         public static string StartupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
@@ -183,11 +184,10 @@ namespace ZeroKLobby
 
                 
 
-                SpringPaths = new SpringPaths(null, contentDir);
-                SpringPaths.MakeFolders();
+                SpringPaths = new SpringPaths(contentDir);
 
                 // speed up spring start
-                SpringPaths.SpringVersionChanged += (sender, eventArgs) =>
+                SpringPaths.SpringVersionChanged += (sender, engine) =>
                 {
                     ZkData.Utils.StartAsync(
                         () =>
@@ -195,7 +195,7 @@ namespace ZeroKLobby
                             UnitSync unitSync = null;
                             try
                             {
-                                unitSync = new UnitSync(SpringPaths); // initialize unitsync to avoid slowdowns when starting
+                                unitSync = new UnitSync(SpringPaths, engine); // initialize unitsync to avoid slowdowns when starting
 
                                 if (unitSync.UnitsyncWritableFolder != SpringPaths.WritableDirectory)
                                 {
@@ -241,7 +241,6 @@ namespace ZeroKLobby
                     if (Environment.OSVersion.Platform != PlatformID.Unix) Utils.RegisterProtocol();
                 }
 
-                FriendManager = new FriendManager();
                 AutoJoinManager = new AutoJoinManager();
                 EngineConfigurator = new EngineConfigurator(SpringPaths.WritableDirectory);
 
@@ -259,7 +258,7 @@ namespace ZeroKLobby
 
                 Downloader = new PlasmaDownloader.PlasmaDownloader(SpringScanner, SpringPaths); //rapid
                 Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
-                Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
+                Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
 
                 var isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
                 TasClient = new TasClient(string.Format("ZK {0}{1}", SelfUpdater.CurrentVersion, isLinux ? " linux" : ""));
@@ -290,7 +289,7 @@ namespace ZeroKLobby
                     if (e.Data.UserName != null)
                     {
                         tas.ExistingUsers.TryGetValue(e.Data.UserName, out user);
-                        if ((user != null && user.BanMute) || Conf.IgnoredUsers.Contains(e.Data.UserName)) e.Cancel = true;
+                        if ((user != null && user.BanMute) || TasClient.Ignores.Contains(e.Data.UserName)) e.Cancel = true;
                     }
                 };
 

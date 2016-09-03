@@ -31,12 +31,21 @@ namespace ZeroKLobby.MicroLobby
             Program.TasClient.BattleUserJoined += TasClient_BattleUserJoined;
             Program.TasClient.BattleUserLeft += TasClient_BattleUserLeft;
             Program.TasClient.UserStatusChanged += TasClient_UserStatusChanged;
-            Program.FriendManager.FriendAdded += HandleFriendChanged;
-            Program.FriendManager.FriendRemoved += HandleFriendChanged;
+            Program.TasClient.FriendListUpdated += TasClientOnFriendListUpdated;
             Program.TasClient.ConnectionLost += TasClient_ConnectionLost;
             Program.TasClient.LoginAccepted += TasClient_LoginAccepted;
             foreach (var battle in Program.TasClient.ExistingBattles.Values.ToList()) AddBattle(battle);
             Running = true;
+        }
+
+        private void TasClientOnFriendListUpdated(object sender, IReadOnlyCollection<string> friends)
+        {
+            foreach (var battle in Program.TasClient.ExistingBattles.Values.Where(b => b.Users.Any(y => friends.Contains(y.Key))))
+            {
+                var battleIcon = GetBattleIcon(battle.BattleID);
+                battleIcon.SetPlayers();
+                BattleChanged(this, new EventArgs<BattleIcon>(battleIcon));
+            }
         }
 
 
@@ -50,8 +59,7 @@ namespace ZeroKLobby.MicroLobby
         {
             RemoveBattleIcon(battle);
 
-            var founder = battle.Founder;
-            var battleIcon = new BattleIcon(battle) { IsInGame = founder.IsInGame};
+            var battleIcon = new BattleIcon(battle) { IsInGame = battle.IsInGame};
             try
             {
                 battleIcons.Add(battleIcon);
@@ -113,17 +121,6 @@ namespace ZeroKLobby.MicroLobby
             foreach (var icon in icons) RemovedBattle(this, new EventArgs<BattleIcon>(icon));
         }
 
-        void HandleFriendChanged(object sender, EventArgs<string> e)
-        {
-            var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Users.ContainsKey(e.Data));
-            if (battle != null)
-            {
-                var battleIcon = GetBattleIcon(battle.BattleID);
-                battleIcon.SetPlayers();
-                BattleChanged(this, new EventArgs<BattleIcon>(battleIcon));
-            }
-        }
-
         void TasClient_BattleEnded(object sender, Battle battle)
         {
             RemoveBattleIcon(battle);
@@ -138,10 +135,9 @@ namespace ZeroKLobby.MicroLobby
         void TasClient_BattleInfoChanged(object sender, OldNewPair<Battle> pair)
         {
             var battle = pair.New;
-            var founder = battle.Founder;
             var battleIcon = GetBattleIcon(battle.BattleID);
             battleIcon.SetPlayers();
-            battleIcon.IsInGame = founder.IsInGame;
+            battleIcon.IsInGame = battle.IsInGame;
             BattleChanged(this, new EventArgs<BattleIcon>(battleIcon));
         }
 
@@ -182,9 +178,8 @@ namespace ZeroKLobby.MicroLobby
             if (p == null || p.New == null) return; // paranoid safety; see http://zero-k.info/Forum/Post/142284#142284
             var battle = Program.TasClient.ExistingBattles.Values.FirstOrDefault(b => b.FounderName == p.New.Name);
             if (battle == null) return;
-            var founder = battle.Founder;
             var battleIcon = GetBattleIcon(battle);
-            battleIcon.IsInGame = founder.IsInGame;
+            battleIcon.IsInGame = battle.IsInGame;
             BattleChanged(this, new EventArgs<BattleIcon>(battleIcon));
         }
     }

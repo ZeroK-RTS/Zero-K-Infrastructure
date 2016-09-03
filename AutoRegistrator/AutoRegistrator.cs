@@ -18,11 +18,13 @@ namespace ZeroKWeb
         public PlasmaDownloader.PlasmaDownloader Downloader;
 
         private string sitePath;
-        public AutoRegistrator(string sitePath) {
+        public AutoRegistrator(string sitePath)
+        {
             this.sitePath = sitePath;
         }
 
-        public Thread RunMainAndMapSyncAsync() {
+        public Thread RunMainAndMapSyncAsync()
+        {
             var thread = new Thread(
                 () =>
                 {
@@ -32,7 +34,7 @@ namespace ZeroKWeb
                         Main();
                         while (true)
                         {
-                            Thread.Sleep(61*7*1000);
+                            Thread.Sleep(61 * 7 * 1000);
                             SynchronizeMapsFromSpringFiles();
                         }
                     }
@@ -54,11 +56,10 @@ namespace ZeroKWeb
         /// </summary>
         public void Main()
         {
-            
-            Paths = new SpringPaths(null, Path.Combine(sitePath, "autoregistrator"), false);
-            Paths.MakeFolders();
-            Scanner = new SpringScanner(Paths) { UseUnitSync = true};
-            
+
+            Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false);
+            Scanner = new SpringScanner(Paths) { UseUnitSync = true };
+
             Scanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("New resource found: {0}", e.Item.InternalName);
             Scanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Resource removed: {0}", e.Item.InternalName);
 
@@ -68,11 +69,11 @@ namespace ZeroKWeb
 
             Downloader = new PlasmaDownloader.PlasmaDownloader(Scanner, Paths);
             Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
-            Downloader.GetAndSwitchEngine(GlobalConst.DefaultEngineOverride)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
+            Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             Scanner.InitialScan();
 
             Downloader.PackageDownloader.SetMasterRefreshTimer(20);
-            
+
             Downloader.PackagesChanged += Downloader_PackagesChanged;
             Downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
             Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
@@ -80,7 +81,7 @@ namespace ZeroKWeb
 
             lastStableVersion = Downloader.PackageDownloader.GetByTag("zk:stable").InternalName;
 
-            foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x=>x.VersionsByTag).Where(x=>x.Key.StartsWith("spring-features")))
+            foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag).Where(x => x.Key.StartsWith("spring-features")))
             {
                 Downloader.GetResource(DownloadType.UNKNOWN, ver.Value.InternalName)?.WaitHandle.WaitOne();
             }
@@ -92,7 +93,8 @@ namespace ZeroKWeb
             while (Scanner.GetWorkCost() > 0) Thread.Sleep(1000);
         }
 
-        private void SynchronizeMapsFromSpringFiles() {
+        private void SynchronizeMapsFromSpringFiles()
+        {
             if (GlobalConst.Mode == ModeType.Live)
             {
                 var fs = new WebFolderSyncer();
@@ -104,13 +106,15 @@ namespace ZeroKWeb
 
         void Downloader_PackagesChanged(object sender, EventArgs e)
         {
-            foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag.Keys)) {
-                if (ver == "zk:stable" || ver =="zk:test") {
-                   Downloader.GetResource(DownloadType.MOD, ver)?.WaitHandle.WaitOne();
+            foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag.Keys))
+            {
+                if (ver == "zk:stable" || ver == "zk:test")
+                {
+                    Downloader.GetResource(DownloadType.MOD, ver)?.WaitHandle.WaitOne();
                 }
             }
 
-            
+
             var waiting = false;
             do
             {
@@ -120,7 +124,9 @@ namespace ZeroKWeb
                     waiting = true;
                     var d = downs.First();
                     Trace.TraceInformation("Waiting for: {0} - {1} {2}", d.Name, d.TotalProgress, d.TimeRemaining);
-                } else if (Scanner.GetWorkCost() > 0) {
+                }
+                else if (Scanner.GetWorkCost() > 0)
+                {
                     waiting = true;
                     Trace.TraceInformation("Waiting for scanner: {0}", Scanner.GetWorkCost());
                 }
@@ -129,10 +135,12 @@ namespace ZeroKWeb
             } while (waiting);
 
 
+            UpdateRapidTagsInDb();
+            
 
             lock (Locker)
             {
-                foreach (var id in new ZkDataContext(false).Missions.Where(x => !x.IsScriptMission && x.ModRapidTag != "" && !x.IsDeleted).Select(x=>x.MissionID).ToList())
+                foreach (var id in new ZkDataContext(false).Missions.Where(x => !x.IsScriptMission && x.ModRapidTag != "" && !x.IsDeleted).Select(x => x.MissionID).ToList())
                 {
                     using (var db = new ZkDataContext(false))
                     {
@@ -142,20 +150,15 @@ namespace ZeroKWeb
                             if (!string.IsNullOrEmpty(mis.ModRapidTag))
                             {
                                 var latestMod = Downloader.PackageDownloader.GetByTag(mis.ModRapidTag);
-                                if (latestMod != null && mis.Mod != latestMod.InternalName)
+                                if (latestMod != null && (mis.Mod != latestMod.InternalName || !mis.Resources.Any()))
                                 {
                                     mis.Mod = latestMod.InternalName;
                                     Trace.TraceInformation("Updating mission {0} {1} to {2}", mis.MissionID, mis.Name, mis.Mod);
                                     var mu = new MissionUpdater();
-                                    Mod modInfo = null;
-                                    Scanner.MetaData.GetMod(mis.NameWithVersion, m => { modInfo = m; }, (er) => { });
 
-                                    if (modInfo != null)
-                                    {
-                                        mis.Revision++;
-                                        mu.UpdateMission(db, mis, modInfo);
-                                        db.SaveChanges();
-                                    }
+                                    mis.Revision++;
+                                    mu.UpdateMission(db, mis, Scanner);
+                                    db.SaveChanges();
                                 }
 
                             }
@@ -183,8 +186,28 @@ namespace ZeroKWeb
                 }
                 catch (Exception ex)
                 {
-                    Trace.TraceError("Error building steam package: {0}",ex);
+                    Trace.TraceError("Error building steam package: {0}", ex);
                 }
+            }
+        }
+
+        private void UpdateRapidTagsInDb()
+        {
+            using (var db = new ZkDataContext())
+            {
+                foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByInternalName.Values))
+                {
+                    foreach (var toStrip in db.Resources.Where(x => x.RapidTag == ver.Name && x.InternalName != ver.InternalName))
+                    {
+                        toStrip.RapidTag = Downloader.PackageDownloader.GetByInternalName(toStrip.InternalName)?.Name;
+                    }
+
+                    foreach (var toSet in db.Resources.Where(x => x.RapidTag != ver.Name && x.InternalName == ver.InternalName))
+                    {
+                        toSet.RapidTag = ver.Name;
+                    }
+                }
+                db.SaveChanges();
             }
         }
     }

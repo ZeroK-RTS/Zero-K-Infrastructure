@@ -20,6 +20,8 @@ namespace PlasmaDownloader
         protected List<Download> neededDownloads = new List<Download>();
         readonly List<Download> parents = new List<Download>();
         public DownloadType TypeOfResource { get; internal set; }
+        public DownloadType DownloadType { get; internal set; }
+    
 
         public int AverageSpeed { get { return (int)((TotalProgress/100.0*TotalLength)/DateTime.Now.Subtract(Started).TotalSeconds); } }
         public int CurrentSpeed

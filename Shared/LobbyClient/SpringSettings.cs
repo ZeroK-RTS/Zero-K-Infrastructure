@@ -12,9 +12,9 @@ namespace LobbyClient
 {
     public class SpringSettings
     {
-        public Dictionary<string, EngineConfigEntry> GetEngineConfigOptions(SpringPaths paths, string engine = null)
+        public Dictionary<string, EngineConfigEntry> GetEngineConfigOptions(SpringPaths paths, string engine)
         {
-            Trace.TraceInformation("Extracting configuration from Spring located in {0}", paths.Executable);
+            Trace.TraceInformation("Extracting configuration from Spring located in {0}", paths.GetEngineFolderByVersion(engine));
             var sb = new StringBuilder();
             var p = new Process();
             p.StartInfo.CreateNoWindow = true;
@@ -22,8 +22,8 @@ namespace LobbyClient
             p.StartInfo.Arguments += string.Format("--list-config-vars");
             p.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = paths.WritableDirectory;
             p.StartInfo.EnvironmentVariables.Remove("SPRING_ISOLATED");
-            p.StartInfo.FileName = paths.Executable;
-            p.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
+            p.StartInfo.FileName = paths.GetSpringExecutablePath(engine);
+            p.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetSpringExecutablePath(engine));
             p.StartInfo.RedirectStandardOutput = true;
             p.OutputDataReceived += (sender, args) => sb.AppendLine(args.Data);
             p.Start();

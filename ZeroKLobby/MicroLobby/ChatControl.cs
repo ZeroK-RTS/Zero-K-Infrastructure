@@ -428,8 +428,8 @@ namespace ZeroKLobby.MicroLobby
         public virtual void AddLine(IChatLine line)
         {
             if (ChannelName != "zkadmin" &&
-                ((line is SaidLine && Program.Conf.IgnoredUsers.Contains(((SaidLine)line).AuthorName)) ||
-                 (line is SaidExLine && Program.Conf.IgnoredUsers.Contains(((SaidExLine)line).AuthorName)))) return;
+                ((line is SaidLine && Program.TasClient.Ignores.Contains(((SaidLine)line).AuthorName)) ||
+                 (line is SaidExLine && Program.TasClient.Ignores.Contains(((SaidExLine)line).AuthorName)))) return;
             ChatBox.AddLine(line);
             ChannelLineAdded(this, new ChannelLineArgs() { Channel = ChannelName, Line = line });
             HistoryManager.LogLine(ChannelName, line);
@@ -573,7 +573,7 @@ namespace ZeroKLobby.MicroLobby
                     isMatch = user.IsInBattleRoom;
                     return true;
                 case "FRIEND":
-                    isMatch = Program.FriendManager.Friends.Any(x => x == user.Name);
+                    isMatch = Program.TasClient.Friends.Any(x => x == user.Name);
                     return true;
             }
 

@@ -348,7 +348,7 @@ namespace Fixer
 
         static void Main(string[] args)
         {
-            var ed = new EngineDownload("102.0.1-19-gfbc1b5b", new SpringPaths(null, @"c:\temp\test"));
+            var ed = new EngineDownload("102.0.1-19-gfbc1b5b", new SpringPaths(@"c:\temp\test"));
             ed.Start();
             ed.WaitHandle.WaitOne();
             return;
@@ -1173,7 +1173,7 @@ namespace Fixer
             // Global.PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Global.Nightwatch.Tas);
             var db = new ZkDataContext();
             var gal = db.Galaxies.First(x => x.IsDefault);
-            Global.PlanetWarsMatchMaker.AddAttackOption(gal.Planets.Skip(1).First());
+            // Global.PlanetWarsMatchMaker.AddAttackOption(gal.Planets.Skip(1).First());
             /*
             Utils.StartAsync(() =>
             {

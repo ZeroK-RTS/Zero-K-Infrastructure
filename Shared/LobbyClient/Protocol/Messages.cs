@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Reflection;
+using System.Linq;
 using Newtonsoft.Json;
 using PlasmaShared;
 using ZkData;
@@ -11,72 +9,66 @@ using ZkData;
 namespace LobbyClient
 {
     /// <summary>
-    /// Initial message sent by server to client on connect
+    ///     Initial message sent by server to client on connect
     /// </summary>
     [Message(Origin.Server)]
     public class Welcome
     {
         /// <summary>
-        /// Default suggested engine
+        ///     Default suggested engine
         /// </summary>
         public string Engine;
         /// <summary>
-        /// Default suggested game version
+        ///     Default suggested game version
         /// </summary>
         public string Game;
         /// <summary>
-        /// Lobby server version
+        ///     Lobby server version
         /// </summary>
         public string Version;
     }
 
 
     /// <summary>
-    /// Login request
+    ///     Login request
     /// </summary>
     [Message(Origin.Client)]
     public class Login
     {
-        /// <summary>
-        /// User name
-        /// </summary>
-        public string Name;
-        /// <summary>
-        /// base64(md5(password))
-        /// </summary>
-        public string PasswordHash;
-
-        public long UserID;
-
-        public string LobbyVersion;
-
         [Flags]
         public enum ClientTypes
         {
             ZeroKLobby = 1,
             Linux = 2,
-            SpringieManaged = 4,
-            Springie = 8,
-
         }
 
         public ClientTypes ClientType;
 
+        public string LobbyVersion;
+        /// <summary>
+        ///     User name
+        /// </summary>
+        public string Name;
+        /// <summary>
+        ///     base64(md5(password))
+        /// </summary>
+        public string PasswordHash;
 
+        public long UserID;
     }
 
     /// <summary>
-    /// Registration request
+    ///     Registration request
     /// </summary>
     [Message(Origin.Client)]
     public class Register
     {
         /// <summary>
-        /// User name
+        ///     User name
         /// </summary>
         public string Name;
         /// <summary>
-        /// base64(md5(password))
+        ///     base64(md5(password))
         /// </summary>
         public string PasswordHash;
     }
@@ -102,15 +94,14 @@ namespace LobbyClient
 
             [Description("invalid name characters")]
             InvalidCharacters = 5,
-
         }
 
-        public Code ResultCode;
-
         /// <summary>
-        /// Additional text (ban reason)
+        ///     Additional text (ban reason)
         /// </summary>
         public string Reason;
+
+        public Code ResultCode;
     }
 
     [Message(Origin.Server)]
@@ -119,9 +110,6 @@ namespace LobbyClient
         public enum Code
         {
             Ok = 0,
-
-            [Description("already connected")]
-            AlreadyConnected = 1,
 
             [Description("invalid name")]
             InvalidName = 2,
@@ -133,21 +121,21 @@ namespace LobbyClient
             Banned = 4
         }
 
-        public Code ResultCode;
-
         /// <summary>
-        /// Additional text (ban reason)
+        ///     Additional text (ban reason)
         /// </summary>
         public string Reason;
+
+        public Code ResultCode;
     }
 
 
     [Message(Origin.Server)]
     public class ChannelHeader
     {
+        public string Password;
         public List<string> Users = new List<string>();
         public string ChannelName { get; set; }
-        public string Password;
         public Topic Topic { get; set; }
 
         public ChannelHeader()
@@ -158,9 +146,9 @@ namespace LobbyClient
 
     public class Topic
     {
-        public string Text { get; set; }
         public string SetBy { get; set; }
         public DateTime? SetDate { get; set; }
+        public string Text { get; set; }
     }
 
     [Message(Origin.Client | Origin.Server)]
@@ -168,6 +156,7 @@ namespace LobbyClient
     {
         public string ChannelName { get; set; }
         public Topic Topic { get; set; }
+
         public ChangeTopic()
         {
             Topic = new Topic();
@@ -176,7 +165,7 @@ namespace LobbyClient
 
 
     /// <summary>
-    /// Attempts to join a room
+    ///     Attempts to join a room
     /// </summary>
     [Message(Origin.Client)]
     public class JoinChannel
@@ -209,11 +198,10 @@ namespace LobbyClient
     [Message(Origin.Server)]
     public class JoinChannelResponse
     {
-        public string ChannelName;
-        public bool Success;
-        public string Reason;
-
         public ChannelHeader Channel;
+        public string ChannelName;
+        public string Reason;
+        public bool Success;
     }
 
 
@@ -221,38 +209,42 @@ namespace LobbyClient
     public class User
     {
         public int AccountID;
-        public int SpringieLevel;
-        public ulong? SteamID;
-        public DateTime? AwaySince;
-        public string Clan;
         public string Avatar;
+        public DateTime? AwaySince;
+
+        public bool BanMute;
+        public bool BanSpecChat;
+        public string Clan;
+        public Login.ClientTypes ClientType;
         public string Country;
-        public int EffectiveElo;
+        public string DisplayName;
         public int Effective1v1Elo;
+        public int EffectiveElo;
         public string Faction;
         public DateTime? InGameSince;
         public bool IsAdmin;
-        public bool IsAway { get { return AwaySince != null; } }
         public bool IsBot;
         public bool IsInBattleRoom;
-        public bool IsInGame { get { return InGameSince != null; } }
-        public bool BanMute;
-        public bool BanSpecChat;
         public int Level;
-        public Login.ClientTypes ClientType;
         public string LobbyVersion;
         public string Name;
-        public string DisplayName;
+        public ulong? SteamID;
+        public bool IsAway => AwaySince != null;
+        public bool IsInGame => InGameSince != null;
 
         public User Clone()
         {
             return (User)MemberwiseClone();
         }
 
+        public override string ToString()
+        {
+            return Name;
+        }
+
         public void UpdateWith(User u)
         {
             AccountID = u.AccountID;
-            SpringieLevel = u.SpringieLevel;
             SteamID = u.SteamID;
             AwaySince = u.AwaySince;
             Clan = u.Clan;
@@ -264,19 +256,12 @@ namespace LobbyClient
             InGameSince = u.InGameSince;
             IsAdmin = u.IsAdmin;
             IsBot = u.IsBot;
-            // todo hacky fix IsInBattleRoom = u.IsInBattleRoom;
             BanMute = u.BanMute;
             BanSpecChat = u.BanSpecChat;
             Level = u.Level;
             ClientType = u.ClientType;
             LobbyVersion = u.LobbyVersion;
             DisplayName = u.DisplayName;
-            Name = u.Name;
-        }
-
-        public override string ToString()
-        {
-            return Name;
         }
     }
 
@@ -301,19 +286,18 @@ namespace LobbyClient
     [Message(Origin.Server | Origin.Client)]
     public class Say
     {
-        public SayPlace Place;
-        public string Target;
-        public string User;
-        public bool IsEmote;
-        public string Text;
-        public bool Ring;
-        public DateTime? Time;
-        
         /// <summary>
-        /// Do not relay to old spring
+        ///     Do not relay to old spring
         /// </summary>
-        [JsonIgnore] 
+        [JsonIgnore]
         public bool AllowRelay = true; // a bit ugly, move to other place, its only needed in Said event in server internals
+        public bool IsEmote;
+        public SayPlace Place;
+        public bool Ring;
+        public string Target;
+        public string Text;
+        public DateTime? Time;
+        public string User;
     }
 
     [Message(Origin.Client)]
@@ -326,15 +310,16 @@ namespace LobbyClient
     {
         public int? BattleID;
         public string Engine;
+        public string Founder;
         public string Game;
+        public bool? IsRunning;
         public string Map;
         public int? MaxPlayers;
-        public int? SpectatorCount;
+        public AutohostMode? Mode;
         public string Password;
+        public DateTime? RunningSince;
+        public int? SpectatorCount;
         public string Title;
-        public int? Port;
-        public string Ip;
-        public string Founder;
     }
 
     [Message(Origin.Server)]
@@ -368,18 +353,14 @@ namespace LobbyClient
     {
         public int BattleID;
         public string User;
-        /// <summary>
-        /// Only sent to the battle host and the joining client.
-        /// </summary>
-        public string ScriptPassword;
     }
 
 
     [Message(Origin.Client)]
     public class JoinBattle
     {
-        public string Password;
         public int BattleID;
+        public string Password;
     }
 
     [Message(Origin.Client)]
@@ -395,17 +376,15 @@ namespace LobbyClient
         public bool? IsSpectator;
         public string Name;
         public SyncStatuses? Sync;
-        public int? TeamNumber;
     }
 
 
     [Message(Origin.Client | Origin.Server)]
     public class UpdateBotStatus
     {
+        public string AiLib;
         public int? AllyNumber;
         public string Name;
-        public int? TeamNumber;
-        public string AiLib;
         public string Owner;
     }
 
@@ -419,34 +398,21 @@ namespace LobbyClient
     [Message(Origin.Client)]
     public class ChangeUserStatus
     {
-        public bool? IsInGame;
         public bool? IsAfk;
-    }
-
-    [Message(Origin.Client | Origin.Server)]
-    public class SetRectangle
-    {
-        /// <summary>
-        /// Which ally-team this start-box is for
-        /// </summary>
-        public int Number;
-        /// <summary>
-        /// Start-box coordinates; if not present, removes that ally-team's box
-        /// </summary>
-        public BattleRect Rectangle;
+        public bool? IsInGame;
     }
 
     [Message(Origin.Client | Origin.Server)]
     public class SetModOptions
     {
-        public Dictionary<string,string> Options = new Dictionary<string, string>();
+        public Dictionary<string, string> Options = new Dictionary<string, string>();
     }
 
     [Message(Origin.Client)]
     public class KickFromBattle
     {
-        public string Name;
         public int? BattleID;
+        public string Name;
         public string Reason;
     }
 
@@ -460,23 +426,23 @@ namespace LobbyClient
     [Message(Origin.Client)]
     public class KickFromChannel
     {
-        public string UserName;
         public string ChannelName;
         public string Reason;
+        public string UserName;
     }
 
     [Message(Origin.Client)]
     public class ForceJoinChannel
     {
-        public string UserName;
         public string ChannelName;
+        public string UserName;
     }
 
     [Message(Origin.Client)]
     public class ForceJoinBattle
     {
-        public string Name;
         public int BattleID;
+        public string Name;
     }
 
     [Message(Origin.Client | Origin.Server)]
@@ -505,12 +471,12 @@ namespace LobbyClient
             Defend = 2
         }
 
-        public ModeType Mode { get; set; }
-
         public string AttackerFaction { get; set; }
-        public List<string> DefenderFactions { get; set; }
 
         public int DeadlineSeconds { get; set; }
+        public List<string> DefenderFactions { get; set; }
+
+        public ModeType Mode { get; set; }
 
         public List<VoteOption> Options { get; set; }
 
@@ -528,9 +494,45 @@ namespace LobbyClient
             public int Needed { get; set; }
             public int PlanetID { get; set; }
             public string PlanetName { get; set; }
-
         }
     }
 
 
+    [Message(Origin.Client)]
+    public class SetAccountRelation
+    {
+        public Relation Relation { get; set; }
+        public string TargetName { get; set; }
+    }
+
+
+    [Message(Origin.Server)]
+    public class ConnectSpring
+    {
+        public string Engine { get; set; }
+        public string Ip { get; set; }
+        public int Port { get; set; }
+        public string Map { get; set; }
+        public string Game { get; set; }
+        public string ScriptPassword { get; set; }
+    }
+
+
+    [Message(Origin.Client)]
+    public class RequestConnectSpring
+    {
+        public int BattleID { get; set; }
+    }
+
+    [Message(Origin.Server)]
+    public class FriendList
+    {
+        public List<string> Friends { get; set; } = new List<string>();
+    }
+
+    [Message(Origin.Server)]
+    public class IgnoreList
+    {
+        public List<string> Ignores { get; set; } = new List<string>();
+    }
 }

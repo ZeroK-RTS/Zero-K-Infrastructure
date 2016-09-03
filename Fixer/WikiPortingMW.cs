@@ -119,9 +119,14 @@ namespace Fixer
 
         public static void DoStuff()
         {
-            // !! MAKE SURE YOU REMOVE THE PASSWORD BEFORE COMMITTING !!
-            string username = "KingRaptorBot";
-            string password = "correct horse battery staple";
+            string username = "";
+            string password = "";
+
+            Console.WriteLine("Enter wiki username: ");
+            username = Console.ReadLine();
+            Console.WriteLine("Enter wiki password: ");
+            password = Console.ReadLine();
+            password = password.Trim();
 
             newWiki = new Site(WIKI_URL, username, password);
             string[,] toPort = 
