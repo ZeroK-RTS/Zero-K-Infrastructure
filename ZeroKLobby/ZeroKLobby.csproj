@@ -219,6 +219,7 @@
     <Compile Include="Notifications\PwBar.Designer.cs">
       <DependentUpon>PwBar.cs</DependentUpon>
     </Compile>
+    <Compile Include="ReplayStarter.cs" />
     <Compile Include="SelectWritableFolder.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -277,18 +278,6 @@
     </Compile>
     <Compile Include="Notifications\NotifySection.Designer.cs">
       <DependentUpon>NotifySection.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Notifications\ReplayBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Notifications\ReplayBar.Designer.cs">
-      <DependentUpon>ReplayBar.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Notifications\SinglePlayerBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Notifications\SinglePlayerBar.Designer.cs">
-      <DependentUpon>SinglePlayerBar.cs</DependentUpon>
     </Compile>
     <Compile Include="Flags.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -534,12 +523,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\NotifySection.resx">
       <DependentUpon>NotifySection.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\ReplayBar.resx">
-      <DependentUpon>ReplayBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\SinglePlayerBar.resx">
-      <DependentUpon>SinglePlayerBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\VoteBar.resx">
       <DependentUpon>VoteBar.cs</DependentUpon>

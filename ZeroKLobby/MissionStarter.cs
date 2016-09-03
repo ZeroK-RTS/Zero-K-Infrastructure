@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
+using PlasmaShared;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZkData;
@@ -16,6 +17,33 @@ namespace ZeroKLobby
 {
     public class MissionStarter
     {
+        public void StartScriptMission(string missionName)
+        {
+            var serv = GlobalConst.GetContentService();
+            var profile = serv.GetScriptMissionData(missionName);
+            var downloads = new List<Download>();
+            downloads.Add(Program.Downloader.GetResource(DownloadType.MOD, profile.ModName));
+            downloads.Add(Program.Downloader.GetResource(DownloadType.MAP, profile.MapName));
+            downloads.Add(Program.Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride));
+            if (profile.ManualDependencies != null) foreach (var entry in profile.ManualDependencies) if (!string.IsNullOrEmpty(entry)) downloads.Add(Program.Downloader.GetResource(DownloadType.UNKNOWN, entry));
+
+            downloads = downloads.Where(x => x != null).ToList();
+
+            if (downloads.Count > 0)
+            {
+                var dd = new WaitDownloadDialog(downloads);
+                if (dd.ShowDialog(Program.MainWindow) == DialogResult.Cancel) return;
+            }
+            
+            var spring = new Spring(Program.SpringPaths);
+            var name = Program.Conf.LobbyPlayerName;
+            if (string.IsNullOrEmpty(name)) name = "Player";
+            
+            spring.RunLocalScriptGame(profile.StartScript.Replace("%MOD%", profile.ModName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name), GlobalConst.DefaultEngineOverride);
+            serv.NotifyMissionRun(name, profile.Name);
+        }
+
+
         public void StartMission(string missionName)
         {
             var down = Program.Downloader.GetResource(DownloadType.MISSION, missionName);
@@ -91,7 +119,7 @@ namespace ZeroKLobby
                                 ZkData.Utils.HashLobbyPassword(Program.Conf.LobbyPlayerPassword),
                                 modInfo.Name,
                                 spring.Context.MissionScore ?? 0,
-                                spring.Context.MissionFrame/30,
+                                spring.Context.MissionFrame / 30,
                                 spring.Context.MissionVars);
                         }
                         catch (Exception ex)

@@ -239,32 +239,44 @@ namespace ZeroKLobby
 
         public static void StartMission(string name)
         {
-            Program.MainWindow.SwitchMusicOnOff(false);
-            new MissionStarter().StartMission(name);
+            try
+            {
+                Program.MainWindow.SwitchMusicOnOff(false);
+                new MissionStarter().StartMission(name);
+            } catch (Exception ex)
+            {
+                Trace.TraceError("Problem starting mission {0} : {1}", name, ex);
+                WarningBar.DisplayWarning("Mission start failed: " + ex.Message);
+            }
         }
 
 
         public static void StartReplay(string url, string mod, string map, string engine)
         {
-            Program.MainWindow.SwitchMusicOnOff(false);
-            Program.NotifySection.AddBar(new ReplayBar(url, mod, map, engine));
+            try
+            {
+                Program.MainWindow.SwitchMusicOnOff(false);
+                new ReplayStarter().StartReplay(url, mod, map, engine);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Problem starting replay {0} : {1}", url, ex);
+                WarningBar.DisplayWarning("Replay start failed: " + ex.Message);
+            }
+
         }
 
         public static void StartScriptMission(string name)
         {
-            Program.MainWindow.SwitchMusicOnOff(false);
             try
             {
-                var serv = GlobalConst.GetContentService();
-                SinglePlayerBar.DownloadAndStartMission(serv.GetScriptMissionData(name));
-            }
-            catch (WebException ex)
-            {
-                Trace.TraceWarning("Problem starting script mission {0}: {1}", name, ex);
+                Program.MainWindow.SwitchMusicOnOff(false);
+                new MissionStarter().StartScriptMission(name);
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error starting mission {0}: {1}", name, ex);
+                Trace.TraceError("Problem starting script mission {0} : {1}", name, ex);
+                WarningBar.DisplayWarning("Mission start failed: " + ex.Message);
             }
         }
 
