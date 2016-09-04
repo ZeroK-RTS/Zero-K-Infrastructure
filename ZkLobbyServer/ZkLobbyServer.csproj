@@ -93,6 +93,7 @@
     <Compile Include="autohost\Commands\CmdN.cs" />
     <Compile Include="autohost\Commands\CmdNotify.cs" />
     <Compile Include="autohost\Commands\CmdPassword.cs" />
+    <Compile Include="autohost\Commands\CmdPoll.cs" />
     <Compile Include="autohost\Commands\CmdPredict.cs" />
     <Compile Include="autohost\Commands\CmdResetOptions.cs" />
     <Compile Include="autohost\Commands\CmdResign.cs" />
@@ -115,7 +116,6 @@
     <Compile Include="LoginChecker.cs" />
     <Compile Include="ConnectedUser.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="MainConfig.cs" />
     <Compile Include="OfflineMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerBattle.cs" />

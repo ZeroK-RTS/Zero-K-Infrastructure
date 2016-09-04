@@ -117,7 +117,7 @@ namespace ZeroKLobby
                 }
                 if (user.IsInGame)
                 {
-                    drawImage(ZklResources.ingame, 16, 16);
+                    drawImage(Buttons.fight, 16, 16);
                     if (user.InGameSince != null) {
                         var time = DateTime.UtcNow.Subtract(user.InGameSince.Value).PrintTimeRemaining();
                         drawString("Playing since " + time + " ago.");

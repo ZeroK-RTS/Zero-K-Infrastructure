@@ -186,8 +186,16 @@ namespace ZkLobbyServer
         /// <summary>
         ///     Mark all users as disconnected, fixes chat history repeat
         /// </summary>
-        public void MarkDisconnectAll()
+        public void Shutdown()
         {
+            Broadcast(ConnectedUsers.Values,
+                new Say()
+                {
+                    User = GlobalConst.NightwatchName,
+                    Text = "Zero-K server restarted for upgrade, be back soon",
+                    Place = SayPlace.MessageBox,
+                });
+
             var db = new ZkDataContext();
             foreach (var u in ConnectedUsers.Values)
             {
@@ -198,6 +206,13 @@ namespace ZkLobbyServer
                 }
             }
             db.SaveChanges();
+
+            
+            // close all existing client connections
+            foreach (var usr in ConnectedUsers.Values) if (usr != null) foreach (var con in usr.Connections.Keys) con?.RequestClose();
+
+
+            foreach (var bat in Battles.Values) if (bat !=null && bat.spring.IsRunning) bat.spring.ExitGame();
         }
 
         public virtual async Task OnSaid(Say say)

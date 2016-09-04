@@ -48,6 +48,7 @@ namespace ZkLobbyServer
 
         public void Stop()
         {
+            Trace.TraceInformation("Stopping lobby server");
             foreach (var l in listeners) {
                 try {
                     l.Stop();
@@ -55,8 +56,11 @@ namespace ZkLobbyServer
                 catch { }
             }
 
-            ZkLobbyServer.MarkDisconnectAll();
+            Trace.TraceInformation("Disconnecting clients");
+            ZkLobbyServer.Shutdown();
 
+
+            Trace.TraceInformation("Killing threads");
             foreach (var t in listenThreads) {
                 try {
                     t.Abort();

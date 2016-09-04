@@ -334,11 +334,19 @@ namespace ZeroKLobby
         }
 
         public void NavigateBack() {
-            if (CanGoBack) GoBack();
+            if (CanGoBack)
+            {
+                GoBack();
+                PageChanged?.Invoke(Path);
+            }
         }
 
         public void NavigateForward() {
-            if (CanGoForward) GoForward();
+            if (CanGoForward)
+            {
+                GoForward();
+                PageChanged?.Invoke(Path);
+            }
         }
 
         public void SwitchTab(string targetPath) {
@@ -359,6 +367,7 @@ namespace ZeroKLobby
                 }
             }
             Path = targetPath;
+            PageChanged?.Invoke(Path);
         }
 
 
