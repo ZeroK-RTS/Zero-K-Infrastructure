@@ -43,7 +43,6 @@ namespace ZkData
                     BaseSiteUrl = "http://localhost:9739";
                     ZkDataContextConnectionString =
                         @"Data Source=.;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true";
-                    SpringieNode = "alpha";
 
                     LobbyServerHost = "localhost";
                     LobbyServerPort = 8200;
@@ -56,7 +55,6 @@ namespace ZkData
                     BaseSiteUrl = "http://test.zero-k.info";
                     ZkDataContextConnectionString =
                         "Data Source=test.zero-k.info;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
-                    SpringieNode = "omega";
 
                     LobbyServerHost = "test.zero-k.info";
                     LobbyServerPort = 8202;
@@ -70,8 +68,7 @@ namespace ZkData
                     BaseSiteUrl = "http://zero-k.info";
                     ZkDataContextConnectionString =
                         "Data Source=zero-k.info;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
-                    SpringieNode = "omega";
-
+                    
                     LobbyServerHost = "zero-k.info";
                     LobbyServerPort = 8200;
 
@@ -116,7 +113,6 @@ namespace ZkData
 
         public static string BaseImageUrl;
         public static string BaseSiteUrl;
-        public static string SpringieNode;
 
 
         public const string InfologPathFormat = @"C:\projekty\springie_spring\infolog_{0}.txt";
