@@ -198,6 +198,9 @@ namespace ZkLobbyServer
                 }
             }
             db.SaveChanges();
+
+            // close all existing client connections
+            foreach (var usr in ConnectedUsers.Values) if (usr != null) foreach (var con in usr.Connections.Keys) con?.RequestClose();
         }
 
         public virtual async Task OnSaid(Say say)

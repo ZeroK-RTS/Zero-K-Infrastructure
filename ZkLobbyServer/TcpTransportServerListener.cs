@@ -21,6 +21,9 @@ namespace ZkLobbyServer
             do {
                 try {
                     listener = new TcpListener(new IPEndPoint(IPAddress.Any, GlobalConst.LobbyServerPort));
+                    listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(true, 5));
+                    listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
+
                     listener.Start(1000);
                     ok = true;
                 } catch (Exception ex) {
@@ -46,12 +49,8 @@ namespace ZkLobbyServer
         {
             try
             {
-                LingerOption lo = new LingerOption(false, 0);
-                listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, lo);
-                listener.Server.Shutdown(SocketShutdown.Both);
                 listener.Server.Disconnect(true);
                 listener.Stop();
-                listener.Server.Close();
             }
             catch (Exception ex)
             {
