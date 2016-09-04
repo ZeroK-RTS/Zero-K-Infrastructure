@@ -383,11 +383,8 @@ namespace ZkLobbyServer
                     return;
                 }
                 var ubs = new UserBattleStatus(Name, User, Guid.NewGuid().ToString());
-                if (battle.Users.Values.Count(x => !x.IsSpectator) >= battle.MaxPlayers)
-                {
-                    ubs.IsSpectator = true;
-                }
                 battle.Users[Name] = ubs;
+                battle.ValidateBattleStatus(ubs);
                 MyBattle = battle;
 
                 await state.Broadcast(state.ConnectedUsers.Keys, new JoinedBattle() { BattleID = battle.BattleID, User = Name });
@@ -446,8 +443,9 @@ namespace ZkLobbyServer
                     }
 
                     ubs.UpdateWith(status);
+                    bat.ValidateBattleStatus(ubs);
 
-                    await state.Broadcast(bat.Users.Keys, status);
+                    await state.Broadcast(bat.Users.Keys, ubs.ToUpdateBattleStatus());
                     await RecalcSpectators(bat);
                 }
             }
@@ -493,7 +491,7 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             var battle = MyBattle;
-            if (battle != null)
+            if (battle != null && !battle.IsInGame)
             {
                 BotBattleStatus ubs;
                 if (!battle.Bots.TryGetValue(add.Name, out ubs))
@@ -525,7 +523,7 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             var battle = MyBattle;
-            if (battle != null)
+            if (battle != null && !battle.IsInGame)
             {
                 var bot = battle.Bots[rem.Name];
                 if (bot.owner != Name && !User.IsAdmin && Name != battle.FounderName)
@@ -614,9 +612,9 @@ namespace ZkLobbyServer
                 if (state.ConnectedUsers.TryGetValue(trgtAccount.Name, out connectedUser)) connectedUser.LoadFriendsIgnores();
                 if (state.ConnectedUsers.TryGetValue(srcAccount.Name, out connectedUser))
                 {
+                    connectedUser.LoadFriendsIgnores();
                     await connectedUser.SendCommand(new FriendList() { Friends = Friends.ToList() });
                     await connectedUser.SendCommand(new IgnoreList() { Ignores = Ignores.ToList() });
-                    connectedUser.LoadFriendsIgnores();
                 }
             }
         }
@@ -700,6 +698,13 @@ namespace ZkLobbyServer
                     {
                         BotBattleStatus obs;
                         if (battle.Bots.TryRemove(b.Name, out obs)) await state.Broadcast(battle.Users.Keys, new RemoveBot() { Name = b.Name });
+                    }
+                    if (battle.FounderName == Name)
+                    {
+                        battle.FounderName = battle.BattleID.ToString();
+                        await
+                            state.Broadcast(state.ConnectedUsers.Values,
+                                new BattleUpdate() { Header = new BattleHeader() { BattleID = battle.BattleID, Founder = battle.FounderName } });
                     }
                 }
             }

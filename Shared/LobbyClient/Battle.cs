@@ -19,7 +19,7 @@ namespace LobbyClient
         public int BattleID { get; set; }
         public ConcurrentDictionary<string, BotBattleStatus> Bots { get; set; }
 
-        public string FounderName { get; private set; }
+        public string FounderName { get; set; }
 
 
         public bool IsInGame { get; set; }

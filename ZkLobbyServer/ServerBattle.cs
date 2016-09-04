@@ -79,10 +79,9 @@ namespace ZkLobbyServer
 
         private async Task ApplyBalanceResults(BalanceTeamsResult balance)
         {
-            if (!string.IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
+            if (!IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
             if (balance.Players != null && balance.Players.Count > 0)
             {
-
                 foreach (var p in balance.Players)
                 {
                     UserBattleStatus u;
@@ -92,25 +91,36 @@ namespace ZkLobbyServer
                         u.AllyNumber = p.AllyID;
                     }
                 }
-            }
 
-            if (balance.DeleteBots) foreach (var b in Bots.Keys) await server.Broadcast(Users.Keys, new RemoveBot() { Name = b });
+                foreach (var u in Users.Where(x => !balance.Players.Any(y => y.Name == x.Key))) u.Value.IsSpectator = true;
+            }
+            
+
+            if (balance.DeleteBots)
+            {
+                foreach (var b in Bots.Keys) await server.Broadcast(Users.Keys, new RemoveBot() { Name = b });
+                Bots.Clear();
+            }
 
             if (balance.Bots != null && balance.Bots.Count > 0)
             {
                 foreach (var p in balance.Bots)
                 {
                     Bots.AddOrUpdate(p.BotName,
-                        s => new BotBattleStatus(s, p.Owner, p.BotAI),
+                        s => new BotBattleStatus(p.BotName, p.Owner??FounderName, p.BotAI) {AllyNumber = p.AllyID},
                         (s, status) =>
                         {
-                            status.owner = p.Owner;
+                            status.AllyNumber = p.AllyID;
+                            status.owner = p.Owner ?? FounderName; 
                             status.aiLib = p.BotAI;
+                            status.Name = p.BotName;
                             return status;
                         });
 
                 }
             }
+
+
             foreach (var u in Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await server.Broadcast(Users.Keys, u); // send other's status to self
             foreach (var u in Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await server.Broadcast(Users.Keys, u);
         }
@@ -223,7 +233,7 @@ namespace ZkLobbyServer
         public async Task ProcessPlayerJoin(UserBattleStatus ubs)
         {
             kickedPlayers.RemoveAll(x => x.TimeOfKicked <= DateTime.UtcNow.AddMinutes(-5));
-            if (kickedPlayers.Any(y => y.Name != ubs.Name)) await KickFromBattle(ubs.Name, "Banned for five minutes");
+            if (kickedPlayers.Any(y => y.Name == ubs.Name)) await KickFromBattle(ubs.Name, "Banned for five minutes");
 
             if (spring.IsRunning)
             {
@@ -343,11 +353,13 @@ namespace ZkLobbyServer
         public async Task StartGame()
         {
             var context = GetContext();
-            var balance = Balancer.BalanceTeams(context, true, null, null);
-            if (!string.IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
-            if (!balance.CanStart) return;
-            
-            context.ApplyBalance(balance);
+            if (Mode != AutohostMode.None)
+            {
+                var balance = Balancer.BalanceTeams(context, true, null, null);
+                await ApplyBalanceResults(balance);
+                context.ApplyBalance(balance);
+                if (!balance.CanStart) return;
+            }
 
             var startSetup = StartSetup.GetDedicatedServerStartSetup(context);
             
@@ -579,6 +591,24 @@ namespace ZkLobbyServer
         {
             public string Name;
             public DateTime TimeOfKicked = DateTime.UtcNow;
+        }
+
+        public void ValidateBattleStatus(UserBattleStatus ubs)
+        {
+            if (spring.IsRunning)
+            {
+                var entry = spring.LobbyStartContext.Players.FirstOrDefault(x => x.Name == ubs.Name);
+                if (entry != null)
+                {
+                    ubs.AllyNumber = entry.AllyID;
+                    ubs.IsSpectator = false;
+                }
+                else ubs.IsSpectator = true;
+            } else if (Mode != AutohostMode.None)
+            {
+                ubs.AllyNumber = 0;
+            }
+            if (!ubs.IsSpectator && Users.Values.Count(x => !x.IsSpectator) >= MaxPlayers) ubs.IsSpectator = true;
         }
     }
 }

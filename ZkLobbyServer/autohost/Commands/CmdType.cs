@@ -21,7 +21,7 @@ namespace ZkLobbyServer
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            mode = GetValidTypes().FirstOrDefault(x => x.Description().Contains(arguments ?? ""));
+            mode = GetValidTypes().FirstOrDefault(x => x.Description().ToLower().Contains(arguments?.ToLower() ?? ""));
             return $"Change room to {mode.Description()}?";
         }
 
