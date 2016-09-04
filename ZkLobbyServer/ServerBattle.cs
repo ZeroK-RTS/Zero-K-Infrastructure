@@ -238,7 +238,7 @@ namespace ZkLobbyServer
             if (spring.IsRunning)
             {
                 spring.AddUser(ubs.Name, ubs.ScriptPassword);
-                var started = DateTime.UtcNow.Subtract(spring.IngameStartTime ?? DateTime.Now);
+                var started = DateTime.UtcNow.Subtract(spring.IngameStartTime ?? this.RunningSince ?? DateTime.UtcNow);
                 started = new TimeSpan((int)started.TotalHours, started.Minutes, started.Seconds);
                 await SayBattle($"THIS GAME IS CURRENTLY IN PROGRESS, PLEASE WAIT UNTIL IT ENDS! Running for {started}", ubs.Name);
                 await SayBattle("If you say !notify, I will message you when the current game ends.", ubs.Name);
@@ -608,7 +608,13 @@ namespace ZkLobbyServer
             {
                 ubs.AllyNumber = 0;
             }
-            if (!ubs.IsSpectator && Users.Values.Count(x => !x.IsSpectator) >= MaxPlayers) ubs.IsSpectator = true;
+            if (!ubs.IsSpectator)
+            {
+                var cnt = Users.Values.Count(x => !x.IsSpectator);
+                var isPresent = Users.ContainsKey(ubs.Name);
+                if (isPresent && cnt > MaxPlayers) ubs.IsSpectator = true;
+                if (!isPresent && cnt >= MaxPlayers) ubs.IsSpectator = true;
+            }
         }
     }
 }
