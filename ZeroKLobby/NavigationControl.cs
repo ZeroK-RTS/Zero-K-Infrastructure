@@ -124,7 +124,8 @@ namespace ZeroKLobby
                 Width = TopRightMiniIconSize,
                 Image = Buttons.win_max.GetResizedWithCache(TopRightMiniIconSize, TopRightMiniIconSize)
             };
-            minMaxButton.Click += (sender, args) => Program.MainWindow?.SwitchFullscreenState();
+            minMaxButton.Click += (sender, args) =>
+            { Program.MainWindow?.SwitchFullscreenState(); };
 
             var exitButton = new BitmapButton()
             {

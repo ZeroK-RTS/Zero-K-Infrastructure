@@ -701,7 +701,7 @@ namespace ZkLobbyServer
                     }
                     if (battle.FounderName == Name)
                     {
-                        battle.FounderName = battle.BattleID.ToString();
+                        battle.FounderName = "#" + battle.BattleID.ToString();
                         await
                             state.Broadcast(state.ConnectedUsers.Values,
                                 new BattleUpdate() { Header = new BattleHeader() { BattleID = battle.BattleID, Founder = battle.FounderName } });
