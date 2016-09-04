@@ -93,6 +93,7 @@
     <Compile Include="autohost\Commands\CmdN.cs" />
     <Compile Include="autohost\Commands\CmdNotify.cs" />
     <Compile Include="autohost\Commands\CmdPassword.cs" />
+    <Compile Include="autohost\Commands\CmdPoll.cs" />
     <Compile Include="autohost\Commands\CmdPredict.cs" />
     <Compile Include="autohost\Commands\CmdResetOptions.cs" />
     <Compile Include="autohost\Commands\CmdResign.cs" />

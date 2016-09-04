@@ -34,6 +34,8 @@ namespace ZkLobbyServer
             if (winCount <= 0) winCount = 1;
 
             if (!await Vote(e, true)) await battle.SayBattle($"Poll: {question} [!y=0/{winCount}, !n=0/{winCount}]");
+            else return false;
+
             return true;
         }
 

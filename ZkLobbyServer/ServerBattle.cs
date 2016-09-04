@@ -293,8 +293,8 @@ namespace ZkLobbyServer
             if (cmd != null)
             {
                 var perm = cmd.GetRunPermissions(this, e.User);
-                if (perm == BattleCommand.RunPermission.Run) await cmd.Run(this, e, Join(" ", arg));
-                else if (perm == BattleCommand.RunPermission.Vote) await StartVote(cmd, e, Join(" ", arg));
+                if (perm == BattleCommand.RunPermission.Run) await cmd.Run(this, e, arg);
+                else if (perm == BattleCommand.RunPermission.Vote) await StartVote(cmd, e, arg);
             }
         }
 
