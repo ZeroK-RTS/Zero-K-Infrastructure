@@ -45,6 +45,7 @@
             this.pbYes.ForeColor = System.Drawing.Color.LimeGreen;
             this.pbYes.Location = new System.Drawing.Point(145, 43);
             this.pbYes.Name = "pbYes";
+            this.pbYes.Size = new System.Drawing.Size(1070, 23);
             this.pbYes.TabIndex = 0;
             // 
             // pbNo
@@ -54,6 +55,7 @@
             this.pbNo.ForeColor = System.Drawing.Color.Red;
             this.pbNo.Location = new System.Drawing.Point(145, 70);
             this.pbNo.Name = "pbNo";
+            this.pbNo.Size = new System.Drawing.Size(1070, 23);
             this.pbNo.TabIndex = 1;
             // 
             // lbYes
@@ -136,6 +138,7 @@
             this.Controls.Add(this.pbNo);
             this.Controls.Add(this.pbYes);
             this.Name = "VoteBar";
+            this.Size = new System.Drawing.Size(1256, 117);
             this.ResumeLayout(false);
             this.PerformLayout();
 

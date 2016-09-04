@@ -888,7 +888,9 @@ namespace LobbyClient
 
         public Task SetRelation(string target, Relation rel)
         {
-            return SendCommand(new SetAccountRelation() {Relation = rel, TargetName = target});
+            if (rel == Relation.Friend) if (!friends.Contains(target)) return SendCommand(new SetAccountRelation() {Relation = rel, TargetName = target});
+            if (rel == Relation.Ignore) if (!ignores.Contains(target)) return SendCommand(new SetAccountRelation() { Relation = rel, TargetName = target });
+            return SendCommand(new SetAccountRelation() { Relation = rel, TargetName = target });
         }
     }
 }

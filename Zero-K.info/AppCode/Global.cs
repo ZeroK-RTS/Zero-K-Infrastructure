@@ -146,6 +146,7 @@ namespace ZeroKWeb
 
         public static void StartApplication(MvcApplication mvcApplication)
         {
+            Trace.TraceInformation("Starting Zero-K.info web and application");
             var listener = new ZkServerTraceListener();
             Trace.Listeners.Add(listener);
             GlobalConst.SiteDiskPath = MapPath("~");

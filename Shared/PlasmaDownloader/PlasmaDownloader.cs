@@ -76,7 +76,7 @@ namespace PlasmaDownloader
         [CanBeNull]
         public Download GetResource(DownloadType type, string name)
         {
-
+            if (name == "zk:dev" || name == "Zero-K $VERSION") return null;
             lock (downloads)
             {
                 downloads.RemoveAll(x => x.IsAborted || x.IsComplete != null); // remove already completed downloads from list}

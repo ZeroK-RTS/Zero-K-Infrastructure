@@ -15,7 +15,7 @@ namespace ZeroKLobby.MicroLobby
     {
         protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
         {
-            var rectangle = new Rectangle(0, 0, e.Item.Size.Width - 1, e.Item.Size.Height - 1);
+            var rectangle = new Rectangle(0, 0, e.Item.Size.Width-1, e.Item.Size.Height - 1);
 
             var but = e.Item as ToolStripButton;
             if (but?.Checked == true) FrameBorderRenderer.Instance.RenderToGraphics(e.Graphics, rectangle, FrameBorderRenderer.StyleType.DarkHiveGlow);
@@ -64,9 +64,8 @@ namespace ZeroKLobby.MicroLobby
             Font = Config.GeneralFont,
             Tag = HiliteLevel.None,
             RenderMode = ToolStripRenderMode.Professional,
-            AutoSize = true, //auto reduce space usage
-            MaximumSize = new Size(155, 4000),
-            MinimumSize = new Size(100, 0),
+            AutoSize = false, // needs to be off, otherwise items are small and wont fit text
+            MinimumSize = new Size(170, 0),
             Padding = new Padding(3,0,10,0),
             Renderer = new MyToolTabItemRenderer()
         };
