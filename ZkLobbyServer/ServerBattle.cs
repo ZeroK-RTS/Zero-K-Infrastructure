@@ -220,7 +220,7 @@ namespace ZkLobbyServer
 
             ConnectedUser user;
             server.ConnectedUsers.TryGetValue(say.User, out user);
-            if (say.Place == SayPlace.Battle && !say.IsEmote && user?.User.BanMute != true && user?.User.BanSpecChat != true) spring.SayGame($"<{say.User}>{say.Text}"); // relay to spring
+            if (say.Place == SayPlace.Battle && !say.IsEmote && user?.User.BanMute != true && user?.User.BanSpecChat != true && say.AllowRelay) spring.SayGame($"<{say.User}>{say.Text}"); // relay to spring
 
             // check if it's command
             if (!say.IsEmote && say.Text?.Length > 1 && say.Text.StartsWith("!"))
@@ -538,7 +538,7 @@ namespace ZkLobbyServer
 
         private void spring_PlayerSaid(object sender, SpringLogEventArgs e)
         {
-            ProcessBattleSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle }); // process as command
+            ProcessBattleSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle, AllowRelay = false}); // process as command
 
             ConnectedUser user;
             if (server.ConnectedUsers.TryGetValue(e.Username, out user) && !user.User.BanMute) // relay
