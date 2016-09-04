@@ -343,11 +343,13 @@ namespace ZkLobbyServer
         public async Task StartGame()
         {
             var context = GetContext();
-            var balance = Balancer.BalanceTeams(context, true, null, null);
-            if (!string.IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
-            if (!balance.CanStart) return;
-            
-            context.ApplyBalance(balance);
+            if (Mode != AutohostMode.None)
+            {
+                var balance = Balancer.BalanceTeams(context, true, null, null);
+                if (!string.IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
+                if (!balance.CanStart) return;
+                context.ApplyBalance(balance);
+            }
 
             var startSetup = StartSetup.GetDedicatedServerStartSetup(context);
             
