@@ -608,7 +608,13 @@ namespace ZkLobbyServer
             {
                 ubs.AllyNumber = 0;
             }
-            if (!ubs.IsSpectator && Users.Values.Count(x => !x.IsSpectator) >= MaxPlayers) ubs.IsSpectator = true;
+            if (!ubs.IsSpectator)
+            {
+                var cnt = Users.Values.Count(x => !x.IsSpectator);
+                var isPresent = Users.ContainsKey(ubs.Name);
+                if (isPresent && cnt > MaxPlayers) ubs.IsSpectator = true;
+                if (!isPresent && cnt >= MaxPlayers) ubs.IsSpectator = true;
+            }
         }
     }
 }
