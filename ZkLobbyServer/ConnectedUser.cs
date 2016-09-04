@@ -699,13 +699,13 @@ namespace ZkLobbyServer
                         BotBattleStatus obs;
                         if (battle.Bots.TryRemove(b.Name, out obs)) await state.Broadcast(battle.Users.Keys, new RemoveBot() { Name = b.Name });
                     }
-                    /*if (battle.FounderName == Name)
+                    if (battle.FounderName == Name)
                     {
                         battle.FounderName = "#" + battle.BattleID.ToString();
                         await
                             state.Broadcast(state.ConnectedUsers.Values,
                                 new BattleUpdate() { Header = new BattleHeader() { BattleID = battle.BattleID, Founder = battle.FounderName } });
-                    }*/
+                    }
                 }
             }
         }

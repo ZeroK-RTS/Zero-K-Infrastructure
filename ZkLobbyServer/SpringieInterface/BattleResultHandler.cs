@@ -22,14 +22,14 @@ namespace ZeroKWeb.SpringieInterface
                 if (result.IsCheating) return "Cheats were enabled during this game";
 
                 var db = new ZkDataContext();
-                Account acc = Account.AccountByName(db, result.LobbyStartContext.FounderName);
                 var context = result.LobbyStartContext;
                 AutohostMode mode = result.LobbyStartContext.Mode;
 
 
                 var sb = new SpringBattle
                          {
-                             HostAccountID = acc.AccountID,
+                             HostAccountID = Account.AccountByName(db, result.LobbyStartContext.FounderName)?.AccountID,
+                             Mode = result.LobbyStartContext.Mode,
                              Duration = result.Duration,
                              EngineGameID = result.EngineBattleID,
                              MapResourceID = db.Resources.Single(x => x.InternalName == context.Map).ResourceID,
