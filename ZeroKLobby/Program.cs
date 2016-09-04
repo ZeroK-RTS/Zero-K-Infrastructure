@@ -101,32 +101,6 @@ namespace ZeroKLobby
                 //Stopwatch stopWatch = new Stopwatch(); stopWatch.Start();
                 Trace.Listeners.Add(new ConsoleTraceListener());
 
-                if (!Debugger.IsAttached)
-                {
-                    try
-                    {
-                        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-                        Thread.GetDomain().UnhandledException += UnhandledException;
-                        Application.ThreadException += Application_ThreadException;
-                        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceWarning("Failed to set exception handling :{0}", ex);
-                    }
-                }
-
-
-                try
-                {
-                    //Application.SetCompatibleTextRenderingDefault(false);
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceWarning("Failed to set rendering compatibility: {0}",ex);
-                }
-
-
 
 
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
@@ -156,7 +130,32 @@ namespace ZeroKLobby
 
                 StartupArgs = args;
 
-                Application.EnableVisualStyles();
+                try
+                {
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Failed to set rendering compatibility: {0}", ex);
+                }
+
+                if (!Debugger.IsAttached)
+                {
+                    try
+                    {
+                        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+                        Thread.GetDomain().UnhandledException += UnhandledException;
+                        Application.ThreadException += Application_ThreadException;
+                        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceWarning("Failed to set exception handling :{0}", ex);
+                    }
+                }
+
+
 
 
                 //HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
