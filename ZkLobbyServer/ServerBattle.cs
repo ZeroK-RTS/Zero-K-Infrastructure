@@ -110,6 +110,7 @@ namespace ZkLobbyServer
                         s => new BotBattleStatus(s, p.Owner, p.BotAI),
                         (s, status) =>
                         {
+                            status.AllyNumber = p.AllyID;
                             status.owner = p.Owner;
                             status.aiLib = p.BotAI;
                             return status;

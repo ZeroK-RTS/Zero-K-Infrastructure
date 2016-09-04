@@ -445,7 +445,7 @@ namespace ZkLobbyServer
                     ubs.UpdateWith(status);
                     bat.ValidateBattleStatus(ubs);
 
-                    await state.Broadcast(bat.Users.Keys, status);
+                    await state.Broadcast(bat.Users.Keys, ubs.ToUpdateBattleStatus());
                     await RecalcSpectators(bat);
                 }
             }
