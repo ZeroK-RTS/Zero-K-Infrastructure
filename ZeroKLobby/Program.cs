@@ -119,11 +119,12 @@ namespace ZeroKLobby
 
                 try
                 {
-                    Application.SetCompatibleTextRenderingDefault(false);
+                    Application.EnableVisualStyles();
+                    //Application.SetCompatibleTextRenderingDefault(false);
                 }
                 catch (Exception ex)
                 {
-                    Trace.TraceWarning("Failed to set rendering compatibility: {0}",ex);
+                    Trace.TraceWarning("Failed to set visual styles: {0}",ex);
                 }
 
 
@@ -156,7 +157,7 @@ namespace ZeroKLobby
 
                 StartupArgs = args;
 
-                Application.EnableVisualStyles();
+                
 
 
                 //HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
