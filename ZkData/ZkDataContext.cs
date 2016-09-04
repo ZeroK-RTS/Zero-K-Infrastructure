@@ -293,7 +293,7 @@ namespace ZkData
 
             modelBuilder.Entity<Account>()
                 .HasMany(e => e.SpringBattles)
-                .WithRequired(e => e.Account)
+                .WithOptional(e => e.Account)
                 .HasForeignKey(e => e.HostAccountID)
                 .WillCascadeOnDelete(false);
 

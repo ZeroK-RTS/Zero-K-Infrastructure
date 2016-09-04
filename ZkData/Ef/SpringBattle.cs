@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using PlasmaShared;
 
 namespace ZkData
 {
@@ -18,7 +19,7 @@ namespace ZkData
         public int SpringBattleID { get; set; }
         [StringLength(64)]
         public string EngineGameID { get; set; }
-        public int HostAccountID { get; set; }
+        public int? HostAccountID { get; set; }
         [StringLength(200)]
         public string Title { get; set; }
         public int MapResourceID { get; set; }
@@ -44,6 +45,8 @@ namespace ZkData
 
         [StringLength(250)]
         public string GlacierArchiveID { get; set; }
+
+        public AutohostMode Mode { get; set; } = AutohostMode.None;
 
         public virtual Account Account { get; set; }
         public virtual ICollection<AccountBattleAward> AccountBattleAwards { get; set; }
