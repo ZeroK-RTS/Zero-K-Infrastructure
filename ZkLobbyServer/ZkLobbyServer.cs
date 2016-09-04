@@ -188,6 +188,15 @@ namespace ZkLobbyServer
         /// </summary>
         public void Shutdown()
         {
+            Broadcast(ConnectedUsers.Values,
+                new Say()
+                {
+                    User = GlobalConst.NightwatchName,
+                    Text = "Zero-K server is restarting for upgrade",
+                    Place = SayPlace.MessageBox,
+                    Ring = true,
+                });
+
             var db = new ZkDataContext();
             foreach (var u in ConnectedUsers.Values)
             {
@@ -199,6 +208,7 @@ namespace ZkLobbyServer
             }
             db.SaveChanges();
 
+            
             // close all existing client connections
             foreach (var usr in ConnectedUsers.Values) if (usr != null) foreach (var con in usr.Connections.Keys) con?.RequestClose();
 
