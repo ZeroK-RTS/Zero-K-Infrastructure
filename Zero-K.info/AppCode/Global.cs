@@ -146,19 +146,26 @@ namespace ZeroKWeb
 
         public static void StartApplication(MvcApplication mvcApplication)
         {
-            Trace.TraceInformation("Starting Zero-K.info web and application");
             var listener = new ZkServerTraceListener();
             Trace.Listeners.Add(listener);
+            Trace.TraceInformation("Starting Zero-K.info web and application");
+
             GlobalConst.SiteDiskPath = MapPath("~");
 
-            ForumPostIndexer = new ForumPostIndexer();
             ZkServerRunner = new ServerRunner(mvcApplication.Server.MapPath("~"), new PlanetwarsEventCreator());
             Server = ZkServerRunner.ZkLobbyServer;
+
+            Trace.TraceInformation("Starting lobby server");
+            ZkServerRunner.Run();
+            listener.ZkLobbyServer = Server;
+
+            ForumPostIndexer = new ForumPostIndexer();
+
+            Trace.TraceInformation("Starting autoregistrator");
             AutoRegistrator = new AutoRegistrator(MapPath("~"));
             AutoRegistrator.RunMainAndMapSyncAsync();
-            ZkServerRunner.Run();
 
-            listener.ZkLobbyServer = Server;
+            
 
             SetupPaypalInterface();
 
