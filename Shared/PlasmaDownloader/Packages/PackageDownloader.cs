@@ -70,8 +70,7 @@ namespace PlasmaDownloader.Packages
             refreshTimer.Stop();
             refreshTimer.AutoReset = true;
             refreshTimer.Elapsed += RefreshTimerElapsed;
-            refreshTimer.Stop();
-        }
+         }
 
         public void Dispose()
         {
@@ -166,13 +165,15 @@ namespace PlasmaDownloader.Packages
 
         const int RefreshMasterMinMinutes = 2;
 
+        object loadMasterLocker = new object();
+
         public Task LoadMasterAndVersions(bool downloadSelected)
         {
-            lock (this) if (refreshing != null) return refreshing; else refreshing = Task.Factory.StartNew(() =>
+            lock (loadMasterLocker) if (refreshing != null) return refreshing; else refreshing = Task.Factory.StartNew(() =>
             {
-                if (DateTime.Now.Subtract(LastRefresh).TotalMinutes < RefreshMasterMinMinutes) return;
+                if (DateTime.UtcNow.Subtract(LastRefresh).TotalMinutes < RefreshMasterMinMinutes) return;
 
-                LastRefresh = DateTime.Now;
+                LastRefresh = DateTime.UtcNow;
 
                 try
                 {
@@ -200,6 +201,8 @@ namespace PlasmaDownloader.Packages
                         Trace.TraceWarning("Error loading package master from " + MasterUrl);
                     }
 
+                    Trace.TraceInformation("PackageDownloader Master changed, updating repos");
+
                     // update all repositories 
                     var waiting = new List<Task<Repository.RefreshResponse>>();
                     foreach (var entry in repositories)
@@ -216,6 +219,9 @@ namespace PlasmaDownloader.Packages
                     }
 
                     Task.WaitAll(waiting.ToArray()); //wait until all "repositories" element finish downloading.
+
+
+                    Trace.TraceInformation("PackageDownloader refresh complete");
 
                     if (downloadSelected) {
                         foreach (var result in waiting.Select(x => x.Result)) {
@@ -234,7 +240,7 @@ namespace PlasmaDownloader.Packages
                 finally
                 {
                     refreshing = null;
-                    LastRefresh = DateTime.Now;
+                    LastRefresh = DateTime.UtcNow;
                     Utils.StartAsync(() => MasterManifestDownloaded(this, EventArgs.Empty));
                 }
             });

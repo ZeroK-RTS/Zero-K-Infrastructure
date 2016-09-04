@@ -115,7 +115,7 @@ namespace ZkData
                     await OnCommandReceived(line);
                 }
             } catch (Exception ex) {
-                if (!token.IsCancellationRequested) Trace.TraceWarning("{0} socket disconnected: {1}", this, ex.Message);
+                if (!token.IsCancellationRequested) Trace.TraceInformation("{0} socket disconnected: {1}", this, ex.Message);
             }
             InternalClose();
         }

@@ -12,7 +12,7 @@ namespace ZkLobbyServer
 {
     public class CmdResign : BattleCommand
     {
-        private int alliance;
+        private int? alliance;
         public override string Help => "starts a vote to resign game";
         public override string Shortcut => "resign";
         public override AccessType Access => AccessType.IngameVote;
@@ -21,7 +21,7 @@ namespace ZkLobbyServer
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            if (DateTime.UtcNow.Subtract(battle.spring.IngameStartTime ?? DateTime.Now).TotalSeconds < GlobalConst.MinDurationForElo)
+            if (DateTime.UtcNow.Subtract(battle.spring.IngameStartTime ?? DateTime.UtcNow).TotalSeconds < GlobalConst.MinDurationForElo)
             {
                 battle.Respond(e, "You cannot resign so early");
                 return null;
@@ -32,6 +32,10 @@ namespace ZkLobbyServer
             {
                 alliance = voteStarter.AllyID;
                 return $"Resign team {voteStarter.AllyID + 1}?";
+            }
+            else
+            {
+                battle.Respond(e, "Only players can invoke this");
             }
             return null;
         }
@@ -54,7 +58,7 @@ namespace ZkLobbyServer
                 if (battle.spring.IsRunning)
                 {
                     var entry = battle.spring.LobbyStartContext.Players.FirstOrDefault(x => x.Name == userName);
-                    if (entry != null && !entry.IsSpectator && entry.AllyID == alliance) return ret;
+                    if (entry != null && !entry.IsSpectator && (alliance == null || entry.AllyID == alliance)) return ret;
                 }
             }
             return RunPermission.None;

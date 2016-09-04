@@ -69,7 +69,7 @@ namespace ZkLobbyServer
 
         public async Task OnConnected()
         {
-            Trace.TraceInformation("{0} connected", this);
+            //Trace.TraceInformation("{0} connected", this);
             await SendCommand(new Welcome() { Engine = state.Engine, Game = state.Game, Version = state.Version });
             lastPingFromClient = DateTime.UtcNow;
             timer.Start();
@@ -81,7 +81,7 @@ namespace ZkLobbyServer
             timer.Stop();
             var reason = wasRequested ? "quit" : "connection failed";
             if (!string.IsNullOrEmpty(Name)) await connectedUser.RemoveConnection(this, reason);
-            Trace.TraceInformation("{0} {1}", this, reason);
+            //Trace.TraceInformation("{0} {1}", this, reason);
         }
 
 
@@ -96,7 +96,7 @@ namespace ZkLobbyServer
                 connectedUser.User = user;
                 connectedUser.Connections.TryAdd(this, true);
                 
-                Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
+                //Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
                 
                 await state.Broadcast(state.ConnectedUsers.Values, connectedUser.User); // send self to all
 
@@ -176,7 +176,7 @@ namespace ZkLobbyServer
                 });
             }
 
-            Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
+            //Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
             await SendCommand(response);
         }
 

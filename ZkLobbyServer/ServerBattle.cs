@@ -361,8 +361,11 @@ namespace ZkLobbyServer
                 if (!balance.CanStart) return;
             }
 
+
             var startSetup = StartSetup.GetDedicatedServerStartSetup(context);
-            
+
+            if (!await EnsureEngineIsPresent()) return;
+
             spring.HostGame(startSetup, hostingIp, hostingPort, true);
             IsInGame = true;
             RunningSince = DateTime.UtcNow;
@@ -375,6 +378,23 @@ namespace ZkLobbyServer
                 }
             }
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
+        }
+
+        private async Task<bool> EnsureEngineIsPresent()
+        {
+            var down = downloader.GetResource(DownloadType.ENGINE, EngineVersion);
+            var task = down?.WaitHandle?.AsTask(TimeSpan.FromMinutes(3));
+            if (task != null)
+            {
+                await SayBattle("Host downloading the engine");
+                await task;
+                if (down.IsComplete != true)
+                {
+                    await SayBattle("Host engine download failed");
+                    return false;
+                }
+            }
+            return true;
         }
 
         public ConnectSpring GetConnectSpringStructure(UserBattleStatus us)
@@ -575,6 +595,12 @@ namespace ZkLobbyServer
             toNotify.Clear();
 
             await SayBattle(BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server));
+
+            // put back to proper "slots"
+            foreach (var u in Users.Values) {
+                ValidateBattleStatus(u);
+                await server.Broadcast(Users.Keys, u.ToUpdateBattleStatus());
+            }
         }
 
         private void spring_SpringStarted(object sender, EventArgs e)

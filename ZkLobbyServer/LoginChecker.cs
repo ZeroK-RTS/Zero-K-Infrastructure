@@ -125,8 +125,7 @@ namespace ZkLobbyServer
                             List<string> blockedCompanies = db.BlockedCompanies.Select(x => x.CompanyName.ToLower()).ToList();
                             List<string> blockedHosts = db.BlockedHosts.Select(x => x.HostName).ToList();
                             
-                            Trace.TraceInformation(String.Format("VPN check for USER {0}\nnetname: {1}\norgname: {2}\ndescr: {3}\nabuse-mailbox: {4}",
-                                acc.Name, data["netname"], data["org-name"], data["descr"], data["abuse-mailbox"]), false);
+                            //Trace.TraceInformation($"VPN check for USER {acc.Name}\nnetname: {data["netname"]}\norgname: {data["org-name"]}\ndescr: {data["descr"]}\nabuse-mailbox: {data["abuse-mailbox"]}", false);
 
                             bool shouldBlock = blockedHosts.Any(x => data["abuse-mailbox"].Contains(x)) ||
                                                (blockedHosts.Any(x => data["notify"].Contains(x)));
@@ -143,14 +142,17 @@ namespace ZkLobbyServer
                             if (shouldBlock) return BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, userID);
 
                             // this can throw a SocketException, so make sure we block login already if we ought to
-                            string hostname = Dns.GetHostEntry(ip).HostName;    
-                            if (blockedHosts.Any(hostname.Contains)) shouldBlock = true;
+                            try
+                            {
+                                string hostname = Dns.GetHostEntry(ip)?.HostName;
+                                if (blockedHosts.Any(hostname.Contains)) shouldBlock = true;
 
-                            if (shouldBlock) return BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, userID);
+
+                                if (shouldBlock) return BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, userID);
+                            }
+                            catch (SocketException) {}
                         }
                     }
-                } catch (SocketException sockEx) {
-                    Trace.TraceError("VPN check socket error for user {0}: {1}",acc.Name, sockEx);
                 } catch (Exception ex) {
                     Trace.TraceError("VPN check error for user {0}: {1}", acc.Name, ex);
                 }
@@ -176,7 +178,9 @@ namespace ZkLobbyServer
 
         LoginResponse BlockLogin(string reason, Account acc, string ip, long user_id)
         {
-            Talk(string.Format("Login denied for {0} IP:{1} ID:{2} reason: {3}", acc.Name, ip, user_id, reason));
+            var str = $"Login denied for {acc.Name} IP:{ip} ID:{user_id} reason: {reason}";
+            Talk(str);
+            Trace.TraceInformation(str);
             return new LoginResponse { Reason = reason, ResultCode = LoginResponse.Code.Banned };
         }
 

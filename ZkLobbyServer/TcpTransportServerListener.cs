@@ -44,8 +44,19 @@ namespace ZkLobbyServer
 
         public void Stop()
         {
-            listener.Stop();
-            listener.Server.Close();
+            try
+            {
+                LingerOption lo = new LingerOption(false, 0);
+                listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, lo);
+                listener.Server.Shutdown(SocketShutdown.Both);
+                listener.Server.Disconnect(true);
+                listener.Stop();
+                listener.Server.Close();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Error closing server: {0}",ex);
+            }
         }
     }
 }

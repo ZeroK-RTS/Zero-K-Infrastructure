@@ -560,7 +560,11 @@ namespace LobbyClient
                         if (e.Param == 1)
                         {
                             entry = Context.GetOrAddPlayer(e.PlayerName);
-                            if (entry != null) entry.IsIngameReady = true;
+                            if (entry != null)
+                            {
+                                entry.IsIngameReady = true;
+                                //entry.IsSpectator = false;
+                            }
                         }
                         break;
 
@@ -651,7 +655,7 @@ namespace LobbyClient
                 var ret = ActualPlayers.FirstOrDefault(y => y.Name == name);
                 if (ret == null)
                 {
-                    ret = new BattlePlayerResult(name);
+                    ret = new BattlePlayerResult(name) { IsSpectator = true, };
                     ActualPlayers.Add(ret);
                 }
                 return ret;
