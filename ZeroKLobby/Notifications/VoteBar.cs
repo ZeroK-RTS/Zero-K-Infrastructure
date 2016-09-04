@@ -24,7 +24,7 @@ namespace ZeroKLobby.Notifications
             tas.PreviewSaid += (sender, e) =>
                 {
                     var args = e.Data;
-                    if ((tas.MyBattle != null && args.Place == SayPlace.Battle && args.UserName == tas.MyBattle.FounderName) ||
+                    if ((tas.MyBattle != null && args.Place == SayPlace.Battle && args.UserName == GlobalConst.NightwatchName) ||
                          (args.Place == SayPlace.Channel && args.UserName == GlobalConst.NightwatchName))
                     {
                         //SPRINGIE's
