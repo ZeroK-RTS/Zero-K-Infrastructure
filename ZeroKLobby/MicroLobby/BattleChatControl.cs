@@ -144,6 +144,10 @@ namespace ZeroKLobby.MicroLobby
                 int numTotal = numPlayers + numBots;
 
                 var allianceName = "Team " + (team + 1) + (numTotal > 3 ? "  (" + numTotal + ")" : "");
+                if (Program.TasClient.MyBattle?.Mode != AutohostMode.None && Program.TasClient.MyBattle?.IsInGame != true)
+                    if (team == 0) allianceName = "Players";
+                    else allianceName = "Bots";
+
                 newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team * 2 + (int)PlayerListItem.SortCats.Uncategorized, AllyTeam = team, Height = 25 });
             }
 

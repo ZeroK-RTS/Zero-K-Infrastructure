@@ -45,18 +45,8 @@ namespace ZeroKLobby.MicroLobby
         public int Height { get { return height; } set { height = value; } }
         public bool IsGrayedOut { get; set; }
         public bool IsSpectatorsTitle { get; set; }
-        public string SlotButton;
         public int SortCategory { get; set; }
         public string Title { get; set; }
-        public bool IsZeroKBattle 
-        {
-            get
-            {
-                if (isOfflineMode) return isZK;
-                return Program.TasClient.MyBattle != null && KnownGames.GetGame(Program.TasClient.MyBattle.ModName) != null 
-                    && KnownGames.GetGame(Program.TasClient.MyBattle.ModName).IsPrimary;
-            } 
-        }
 
         public User User
         {
