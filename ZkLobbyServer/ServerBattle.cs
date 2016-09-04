@@ -107,12 +107,13 @@ namespace ZkLobbyServer
                 foreach (var p in balance.Bots)
                 {
                     Bots.AddOrUpdate(p.BotName,
-                        s => new BotBattleStatus(s, p.Owner, p.BotAI),
+                        s => new BotBattleStatus(p.BotName, p.Owner??FounderName, p.BotAI) {AllyNumber = p.AllyID},
                         (s, status) =>
                         {
                             status.AllyNumber = p.AllyID;
-                            status.owner = p.Owner;
+                            status.owner = p.Owner ?? FounderName; 
                             status.aiLib = p.BotAI;
+                            status.Name = p.BotName;
                             return status;
                         });
 
