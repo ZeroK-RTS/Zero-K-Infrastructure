@@ -57,7 +57,7 @@ namespace ZkLobbyServer
             }
 
             Trace.TraceInformation("Disconnecting clients");
-            ZkLobbyServer.MarkDisconnectAll();
+            ZkLobbyServer.Shutdown();
 
 
             Trace.TraceInformation("Killing threads");

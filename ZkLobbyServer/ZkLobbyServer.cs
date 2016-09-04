@@ -186,7 +186,7 @@ namespace ZkLobbyServer
         /// <summary>
         ///     Mark all users as disconnected, fixes chat history repeat
         /// </summary>
-        public void MarkDisconnectAll()
+        public void Shutdown()
         {
             var db = new ZkDataContext();
             foreach (var u in ConnectedUsers.Values)
@@ -201,6 +201,9 @@ namespace ZkLobbyServer
 
             // close all existing client connections
             foreach (var usr in ConnectedUsers.Values) if (usr != null) foreach (var con in usr.Connections.Keys) con?.RequestClose();
+
+
+            foreach (var bat in Battles.Values) if (bat !=null && bat.spring.IsRunning) bat.spring.ExitGame();
         }
 
         public virtual async Task OnSaid(Say say)
