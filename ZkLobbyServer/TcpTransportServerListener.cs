@@ -24,7 +24,7 @@ namespace ZkLobbyServer
                     listener.Start(1000);
                     ok = true;
                 } catch (Exception ex) {
-                    Trace.TraceError("Error binding:{0}", ex);
+                    Trace.TraceError("Error binding port {1} :{0}", ex, GlobalConst.LobbyServerPort);
                     Thread.Sleep(1000);
                 }
             } while (!ok && retryCount-- > 0);

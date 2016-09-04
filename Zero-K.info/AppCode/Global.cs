@@ -156,6 +156,7 @@ namespace ZeroKWeb
             AutoRegistrator = new AutoRegistrator(MapPath("~"));
             AutoRegistrator.RunMainAndMapSyncAsync();
             ZkServerRunner.Run();
+
             listener.ZkLobbyServer = Server;
 
             SetupPaypalInterface();
