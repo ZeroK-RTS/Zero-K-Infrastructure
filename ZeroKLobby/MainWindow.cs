@@ -95,7 +95,7 @@ namespace ZeroKLobby
             systrayIcon.MouseDown += systrayIcon_MouseDown;
             systrayIcon.BalloonTipClicked += systrayIcon_BalloonTipClicked;
 
-            if (Debugger.IsAttached) SwitchFullscreenState(false);
+            if (!Program.Conf.StartMaximized) SwitchFullscreenState(false);
 
             Spring.AnySpringStarted += (sender, args) =>
             {
@@ -260,7 +260,8 @@ namespace ZeroKLobby
                 FormBorderStyle = FormBorderStyle.None;
                 TopMost = true;
             }
-
+            Program.Conf.StartMaximized = WindowState == FormWindowState.Maximized;
+            Program.SaveConfig();
         }
 
 
