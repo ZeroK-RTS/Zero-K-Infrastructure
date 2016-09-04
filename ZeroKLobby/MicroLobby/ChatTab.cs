@@ -144,7 +144,7 @@ namespace ZeroKLobby.MicroLobby
         void AddBattleControl()
         {
             if (battleChatControl == null || battleChatControl.IsDisposed) battleChatControl = new BattleChatControl { Dock = DockStyle.Fill };
-            if (toolTabs.GetChannelTab("Battle") == null) toolTabs.AddTab("Battle", "Battle", battleChatControl, Buttons.fight, "Current battle room", 3);
+            if (toolTabs.GetChannelTab("Battle") == null) toolTabs.AddTab("Battle", "Battle", battleChatControl, ZklResources.game, "Current battle room", 3);
         }
 
 
@@ -155,7 +155,7 @@ namespace ZeroKLobby.MicroLobby
             var chatControl = new ChatControl(channelName) { Dock = DockStyle.Fill };
             var gameInfo = KnownGames.List.FirstOrDefault(x => x.Channel == channelName);
 
-            if (gameInfo != null) toolTabs.AddTab(channelName, gameInfo.FullName, chatControl, ZklResources.game, null, 2);
+            if (gameInfo != null) toolTabs.AddTab(channelName, gameInfo.FullName, chatControl, ZklResources.chat, null, 2);
             else toolTabs.AddTab(channelName, channelName, chatControl, ZklResources.chat, null, 1);
             chatControl.ChatLine += (s, e) => Program.TasClient.Say(SayPlace.Channel, channelName, e.Data, false);
             return chatControl;

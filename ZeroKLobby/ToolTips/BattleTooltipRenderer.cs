@@ -122,7 +122,7 @@ namespace ZeroKLobby
                 if (!user.IsBot)
                 {
                     if (user.IsAway) drawImage(ZklResources.away, 16, 16);
-                    if (user.IsInGame) drawImage(ZklResources.ingame, 16, 16);
+                    if (user.IsInGame) drawImage(Buttons.fight, 16, 16);
                 }
                 newLine();
             }
