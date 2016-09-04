@@ -75,7 +75,7 @@ namespace ZeroKLobby.MicroLobby
                 if (userName == Program.TasClient.UserName) return bitmaps[self];
                 if (user.IsBot) return ZklResources.robot;
                 if (Program.TasClient.Friends.Contains(user.Name)) return ZklResources.friend;
-                if (user.IsAdmin) return ZklResources.police;
+                if (user.IsAdmin || userName == Program.TasClient.MyBattle?.FounderName) return ZklResources.police;
                 if (user.EffectiveElo >= 1800) return ZklResources.napoleon;
                 if (user.EffectiveElo >= 1600) return ZklResources.soldier;
                 if (user.EffectiveElo < 1400) return ZklResources.smurf;
