@@ -192,9 +192,8 @@ namespace ZkLobbyServer
                 new Say()
                 {
                     User = GlobalConst.NightwatchName,
-                    Text = "Zero-K server is restarting for upgrade",
+                    Text = "Zero-K server restarted for upgrade, be back soon",
                     Place = SayPlace.MessageBox,
-                    Ring = true,
                 });
 
             var db = new ZkDataContext();
