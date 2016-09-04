@@ -595,6 +595,12 @@ namespace ZkLobbyServer
             toNotify.Clear();
 
             await SayBattle(BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server));
+
+            // put back to proper "slots"
+            foreach (var u in Users.Values) {
+                ValidateBattleStatus(u);
+                await server.Broadcast(Users.Keys, u.ToUpdateBattleStatus());
+            }
         }
 
         private void spring_SpringStarted(object sender, EventArgs e)
