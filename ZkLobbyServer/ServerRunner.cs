@@ -32,7 +32,7 @@ namespace ZkLobbyServer
             listeners.Add(new TcpTransportServerListener());
 
             foreach (var listener in listeners) {
-                if (listener.Bind(20)) {
+                if (listener.Bind(200)) {
                     ITransportServerListener l = listener;
                     var thread = new Thread(() =>
                     {
