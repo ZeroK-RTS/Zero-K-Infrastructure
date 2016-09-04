@@ -21,10 +21,11 @@ namespace ZkLobbyServer
             do {
                 try {
                     listener = new TcpListener(new IPEndPoint(IPAddress.Any, GlobalConst.LobbyServerPort));
-                    listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(true, 5));
+                    listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(true, 0));
                     listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
 
-                    listener.Start(1000);
+                    listener.Start(100);
+                    Trace.TraceInformation("Listening at port {0}", GlobalConst.LobbyServerPort);
                     ok = true;
                 } catch (Exception ex) {
                     Trace.TraceError("Error binding port {1} :{0}", ex, GlobalConst.LobbyServerPort);
@@ -49,7 +50,9 @@ namespace ZkLobbyServer
         {
             try
             {
+                listener.Server.Shutdown(SocketShutdown.Both);
                 listener.Server.Disconnect(true);
+                listener.Server.Close(0);
                 listener.Stop();
             }
             catch (Exception ex)

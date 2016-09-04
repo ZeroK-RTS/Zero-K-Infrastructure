@@ -60,7 +60,7 @@ namespace ZeroKWeb
             Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false);
             Scanner = new SpringScanner(Paths) { UseUnitSync = true };
 
-            Scanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("Autoregistrator ew resource found: {0}", e.Item.InternalName);
+            Scanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("Autoregistrator new resource found: {0}", e.Item.InternalName);
             Scanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Autoregistrator Resource removed: {0}", e.Item.InternalName);
 
             SpringScanner.MapRegistered += (s, e) => Trace.TraceInformation("Autoregistrator Map registered: {0}", e.MapName);
@@ -108,6 +108,7 @@ namespace ZeroKWeb
         {
             try
             {
+                Trace.TraceInformation("Autoregistrator packages changed");
                 foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag.Keys))
                 {
                     if (ver == "zk:stable" || ver == "zk:test")
@@ -162,6 +163,8 @@ namespace ZeroKWeb
                                         var mu = new MissionUpdater();
 
                                         mis.Revision++;
+
+                                        Scanner.WatchingEnabled = false;
                                         mu.UpdateMission(db, mis, Scanner);
                                         db.SaveChanges();
                                     }
@@ -173,6 +176,10 @@ namespace ZeroKWeb
                             catch (Exception ex)
                             {
                                 Trace.TraceError("Autoregistrator Failed to update mission {0}: {1}", mis.MissionID, ex);
+                            }
+                            finally
+                            {
+                                Scanner.WatchingEnabled = true;
                             }
                         }
                     }

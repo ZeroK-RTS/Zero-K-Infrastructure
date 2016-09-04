@@ -73,6 +73,7 @@ namespace ZkData
                 modInfo.Name = mission.NameWithVersion;
             }
             mission.Mutator = File.ReadAllBytes(tempName);
+            if (string.IsNullOrEmpty(mission.Script)) mission.Script = " "; // tweak for silly update validation
             mission.Script = Regex.Replace(mission.Script, "GameType=([^;]+);", (m) => $"GameType={mission.NameWithVersion};");
             
             File.Delete(tempName);
