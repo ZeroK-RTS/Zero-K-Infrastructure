@@ -101,6 +101,22 @@ namespace ZeroKLobby
                 //Stopwatch stopWatch = new Stopwatch(); stopWatch.Start();
                 Trace.Listeners.Add(new ConsoleTraceListener());
 
+                if (!Debugger.IsAttached)
+                {
+                    try
+                    {
+                        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+                        Thread.GetDomain().UnhandledException += UnhandledException;
+                        Application.ThreadException += Application_ThreadException;
+                        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceWarning("Failed to set exception handling :{0}", ex);
+                    }
+                }
+
+
                 try
                 {
                     Application.SetCompatibleTextRenderingDefault(false);
@@ -142,13 +158,6 @@ namespace ZeroKLobby
 
                 Application.EnableVisualStyles();
 
-                if (!Debugger.IsAttached)
-                {
-                    AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-                    Thread.GetDomain().UnhandledException += UnhandledException;
-                    Application.ThreadException += Application_ThreadException;
-                    Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-                }
 
                 //HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
                 Trace.TraceInformation("Starting with version {0}", SelfUpdater.CurrentVersion);
