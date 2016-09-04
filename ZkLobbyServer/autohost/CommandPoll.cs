@@ -12,7 +12,7 @@ namespace ZkLobbyServer
         private bool ended;
         private Dictionary<string, bool> userVotes = new Dictionary<string, bool>();
         private string question;
-        private Say creator;
+        public Say Creator { get; private set; }
         private BattleCommand command;
 
         public CommandPoll(ServerBattle battle)
@@ -24,7 +24,7 @@ namespace ZkLobbyServer
         {
             command = cmd.Create();
 
-            creator = e;
+            Creator = e;
             question = command.Arm(battle, e, args);
             if (question == null) return false;
             winCount = battle.Users.Values.Count(x => command.GetRunPermissions(battle, x.Name) >= BattleCommand.RunPermission.Vote) / 2 + 1;
@@ -59,7 +59,7 @@ namespace ZkLobbyServer
                     ended = true;
                     if (command.Access == BattleCommand.AccessType.NotIngame && battle.spring.IsRunning) return true;
                     if (command.Access == BattleCommand.AccessType.Ingame && !battle.spring.IsRunning) return true;
-                    await command.ExecuteArmed(battle, creator);
+                    await command.ExecuteArmed(battle, Creator);
                     return true;
                 }
                 else if (no >= winCount)

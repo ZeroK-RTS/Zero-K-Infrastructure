@@ -30,7 +30,7 @@ namespace ZkLobbyServer
 
         public readonly List<string> toNotify = new List<string>();
 
-        private CommandPoll activePoll;
+        public CommandPoll ActivePoll { get; private set; }
         public Resource HostedMap;
 
         public Resource HostedMod;
@@ -262,12 +262,12 @@ namespace ZkLobbyServer
 
         public async Task RegisterVote(Say e, bool vote)
         {
-            if (activePoll != null)
+            if (ActivePoll != null)
             {
-                if (await activePoll.Vote(e, vote))
+                if (await ActivePoll.Vote(e, vote))
                 {
                     pollTimer.Enabled = false;
-                    activePoll = null;
+                    ActivePoll = null;
                 }
             }
             else await Respond(e, "There is no poll going on, start some first");
@@ -413,7 +413,7 @@ namespace ZkLobbyServer
 
         public async Task StartVote(BattleCommand command, Say e, string args)
         {
-            if (activePoll != null)
+            if (ActivePoll != null)
             {
                 await Respond(e, "Another poll already in progress, please wait");
                 return;
@@ -421,7 +421,7 @@ namespace ZkLobbyServer
             var poll = new CommandPoll(this);
             if (await poll.Setup(command, e, args))
             {
-                activePoll = poll;
+                ActivePoll = poll;
                 pollTimer.Interval = PollTimeout*1000;
                 pollTimer.Enabled = true;
             }
@@ -435,9 +435,9 @@ namespace ZkLobbyServer
 
         public async void StopVote(Say e = null)
         {
-            if (activePoll != null) await activePoll.End();
+            if (ActivePoll != null) await ActivePoll.End();
             if (pollTimer != null) pollTimer.Enabled = false;
-            activePoll = null;
+            ActivePoll = null;
         }
 
         public async Task SwitchEngine(string engine)
@@ -526,7 +526,7 @@ namespace ZkLobbyServer
             try
             {
                 pollTimer.Stop();
-                if (activePoll != null) activePoll.End();
+                if (ActivePoll != null) ActivePoll.End();
                 StopVote();
             }
             catch {}
