@@ -383,11 +383,8 @@ namespace ZkLobbyServer
                     return;
                 }
                 var ubs = new UserBattleStatus(Name, User, Guid.NewGuid().ToString());
-                if (battle.Users.Values.Count(x => !x.IsSpectator) >= battle.MaxPlayers)
-                {
-                    ubs.IsSpectator = true;
-                }
                 battle.Users[Name] = ubs;
+                battle.ValidateBattleStatus(ubs);
                 MyBattle = battle;
 
                 await state.Broadcast(state.ConnectedUsers.Keys, new JoinedBattle() { BattleID = battle.BattleID, User = Name });
@@ -446,6 +443,7 @@ namespace ZkLobbyServer
                     }
 
                     ubs.UpdateWith(status);
+                    bat.ValidateBattleStatus(ubs);
 
                     await state.Broadcast(bat.Users.Keys, status);
                     await RecalcSpectators(bat);
@@ -493,7 +491,7 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             var battle = MyBattle;
-            if (battle != null)
+            if (battle != null && !battle.IsInGame)
             {
                 BotBattleStatus ubs;
                 if (!battle.Bots.TryGetValue(add.Name, out ubs))
@@ -525,7 +523,7 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             var battle = MyBattle;
-            if (battle != null)
+            if (battle != null && !battle.IsInGame)
             {
                 var bot = battle.Bots[rem.Name];
                 if (bot.owner != Name && !User.IsAdmin && Name != battle.FounderName)

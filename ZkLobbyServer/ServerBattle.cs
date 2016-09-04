@@ -79,10 +79,9 @@ namespace ZkLobbyServer
 
         private async Task ApplyBalanceResults(BalanceTeamsResult balance)
         {
-            if (!string.IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
+            if (!IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
             if (balance.Players != null && balance.Players.Count > 0)
             {
-
                 foreach (var p in balance.Players)
                 {
                     UserBattleStatus u;
@@ -92,9 +91,16 @@ namespace ZkLobbyServer
                         u.AllyNumber = p.AllyID;
                     }
                 }
-            }
 
-            if (balance.DeleteBots) foreach (var b in Bots.Keys) await server.Broadcast(Users.Keys, new RemoveBot() { Name = b });
+                foreach (var u in Users.Where(x => !balance.Players.Any(y => y.Name == x.Key))) u.Value.IsSpectator = true;
+            }
+            
+
+            if (balance.DeleteBots)
+            {
+                foreach (var b in Bots.Keys) await server.Broadcast(Users.Keys, new RemoveBot() { Name = b });
+                Bots.Clear();
+            }
 
             if (balance.Bots != null && balance.Bots.Count > 0)
             {
@@ -111,6 +117,8 @@ namespace ZkLobbyServer
 
                 }
             }
+
+
             foreach (var u in Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await server.Broadcast(Users.Keys, u); // send other's status to self
             foreach (var u in Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await server.Broadcast(Users.Keys, u);
         }
@@ -346,9 +354,9 @@ namespace ZkLobbyServer
             if (Mode != AutohostMode.None)
             {
                 var balance = Balancer.BalanceTeams(context, true, null, null);
-                if (!string.IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
-                if (!balance.CanStart) return;
+                await ApplyBalanceResults(balance);
                 context.ApplyBalance(balance);
+                if (!balance.CanStart) return;
             }
 
             var startSetup = StartSetup.GetDedicatedServerStartSetup(context);
@@ -581,6 +589,24 @@ namespace ZkLobbyServer
         {
             public string Name;
             public DateTime TimeOfKicked = DateTime.UtcNow;
+        }
+
+        public void ValidateBattleStatus(UserBattleStatus ubs)
+        {
+            if (spring.IsRunning)
+            {
+                var entry = spring.LobbyStartContext.Players.FirstOrDefault(x => x.Name == ubs.Name);
+                if (entry != null)
+                {
+                    ubs.AllyNumber = entry.AllyID;
+                    ubs.IsSpectator = false;
+                }
+                else ubs.IsSpectator = true;
+            } else if (Mode != AutohostMode.None)
+            {
+                ubs.AllyNumber = 0;
+            }
+            if (!ubs.IsSpectator && Users.Values.Count(x => !x.IsSpectator) >= MaxPlayers) ubs.IsSpectator = true;
         }
     }
 }
