@@ -60,15 +60,15 @@ namespace ZeroKWeb
             Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false);
             Scanner = new SpringScanner(Paths) { UseUnitSync = true };
 
-            Scanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("New resource found: {0}", e.Item.InternalName);
-            Scanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Resource removed: {0}", e.Item.InternalName);
+            Scanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("Autoregistrator ew resource found: {0}", e.Item.InternalName);
+            Scanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Autoregistrator Resource removed: {0}", e.Item.InternalName);
 
-            SpringScanner.MapRegistered += (s, e) => Trace.TraceInformation("Map registered: {0}", e.MapName);
-            SpringScanner.ModRegistered += (s, e) => Trace.TraceInformation("Mod registered: {0}", e.Data.Name);
+            SpringScanner.MapRegistered += (s, e) => Trace.TraceInformation("Autoregistrator Map registered: {0}", e.MapName);
+            SpringScanner.ModRegistered += (s, e) => Trace.TraceInformation("Autoregistrator Mod registered: {0}", e.Data.Name);
 
 
             Downloader = new PlasmaDownloader.PlasmaDownloader(Scanner, Paths);
-            Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
+            Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Autoregistrator Download started: {0}", e.Data.Name);
             Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             Scanner.InitialScan();
 
@@ -125,12 +125,12 @@ namespace ZeroKWeb
                     {
                         waiting = true;
                         var d = downs.First();
-                        Trace.TraceInformation("Waiting for: {0} - {1} {2}", d.Name, d.TotalProgress, d.TimeRemaining);
+                        Trace.TraceInformation("Autoregistrator Waiting for: {0} - {1} {2}", d.Name, d.TotalProgress, d.TimeRemaining);
                     }
                     else if (Scanner.GetWorkCost() > 0)
                     {
                         waiting = true;
-                        Trace.TraceInformation("Waiting for scanner: {0}", Scanner.GetWorkCost());
+                        Trace.TraceInformation("Autoregistrator Waiting for scanner: {0}", Scanner.GetWorkCost());
                     }
                     else waiting = false;
                     if (waiting) Thread.Sleep(10000);
@@ -158,7 +158,7 @@ namespace ZeroKWeb
                                     if (latestMod != null && (mis.Mod != latestMod.InternalName || !mis.Resources.Any()))
                                     {
                                         mis.Mod = latestMod.InternalName;
-                                        Trace.TraceInformation("Updating mission {0} {1} to {2}", mis.MissionID, mis.Name, mis.Mod);
+                                        Trace.TraceInformation("Autoregistrator Updating mission {0} {1} to {2}", mis.MissionID, mis.Name, mis.Mod);
                                         var mu = new MissionUpdater();
 
                                         mis.Revision++;
@@ -172,7 +172,7 @@ namespace ZeroKWeb
                             }
                             catch (Exception ex)
                             {
-                                Trace.TraceError("Failed to update mission {0}: {1}", mis.MissionID, ex);
+                                Trace.TraceError("Autoregistrator Failed to update mission {0}: {1}", mis.MissionID, ex);
                             }
                         }
                     }
@@ -182,7 +182,7 @@ namespace ZeroKWeb
                         var newName = Downloader.PackageDownloader.GetByTag("zk:stable").InternalName;
                         if (lastStableVersion != newName)
                         {
-                            Trace.TraceInformation("Generating steam stable package");
+                            Trace.TraceInformation("Autoregistrator Generating steam stable package");
                             lastStableVersion = newName;
                             var pgen = new SteamDepotGenerator(sitePath,
                                 Path.GetFullPath(Path.Combine(sitePath, "..", "steamworks", "tools", "ContentBuilder", "content")));
@@ -192,13 +192,13 @@ namespace ZeroKWeb
                     }
                     catch (Exception ex)
                     {
-                        Trace.TraceError("Error building steam package: {0}", ex);
+                        Trace.TraceError("Autoregistrator Error building steam package: {0}", ex);
                     }
                 }
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error updating packages: {0}",ex);
+                Trace.TraceError("Autoregistrator Error updating packages: {0}", ex);
             }
         }
 
