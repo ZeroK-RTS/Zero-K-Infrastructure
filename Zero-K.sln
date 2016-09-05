@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoCleaner", "DemoCleaner\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MigrateDatabase", "MigrateDatabase\MigrateDatabase.csproj", "{D60C746C-9968-420C-A6CE-66B7A1D8C33C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChobbyLauncher", "ChobbyLauncher\ChobbyLauncher.csproj", "{37034FCF-F0CD-4069-8FD2-8D18E9794AD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -180,6 +182,14 @@ Global
 		{D60C746C-9968-420C-A6CE-66B7A1D8C33C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D60C746C-9968-420C-A6CE-66B7A1D8C33C}.Release|x86.ActiveCfg = Release|Any CPU
 		{D60C746C-9968-420C-A6CE-66B7A1D8C33C}.Release|x86.Build.0 = Release|Any CPU
+		{37034FCF-F0CD-4069-8FD2-8D18E9794AD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37034FCF-F0CD-4069-8FD2-8D18E9794AD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37034FCF-F0CD-4069-8FD2-8D18E9794AD6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{37034FCF-F0CD-4069-8FD2-8D18E9794AD6}.Debug|x86.Build.0 = Debug|Any CPU
+		{37034FCF-F0CD-4069-8FD2-8D18E9794AD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37034FCF-F0CD-4069-8FD2-8D18E9794AD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37034FCF-F0CD-4069-8FD2-8D18E9794AD6}.Release|x86.ActiveCfg = Release|Any CPU
+		{37034FCF-F0CD-4069-8FD2-8D18E9794AD6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -709,13 +709,15 @@ namespace LobbyClient
             // in springsettings.cfg
             var optirun = Environment.GetEnvironmentVariable("OPTIRUN");
 
-            process = new Process { StartInfo = { CreateNoWindow = true } };
+            process = new Process { StartInfo = { CreateNoWindow = true, UseShellExecute = false} };
             
             paths.SetDefaultEnvVars(process.StartInfo, engineVersion);
-            File.WriteAllText(paths.GetSpringConfigPath(), $"DefaultLuaMenu = {internalName}");
+            //File.WriteAllText(Path.Combine(paths.GetEngineFolderByVersion(engineVersion), "springsettings.cfg"), $"DefaultLuaMenu = {internalName}");
+            //File.WriteAllText(paths.GetSpringConfigPath(), $"DefaultLuaMenu = {internalName}");
 
-            process.StartInfo.FileName = paths.GetSpringExecutablePath(Context.EngineVersion);
-            process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetSpringExecutablePath(Context.EngineVersion));
+            process.StartInfo.FileName = paths.GetSpringExecutablePath(engineVersion);
+            process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetSpringExecutablePath(engineVersion));
+            process.StartInfo.Arguments = $"--menu \"{internalName}\"";
 
             process.Start();
         }

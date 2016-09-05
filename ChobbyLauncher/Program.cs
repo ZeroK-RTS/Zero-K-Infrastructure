@@ -16,27 +16,28 @@ namespace ChobbyLauncher
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        [STAThread]
+        
         static void Main()
         {
             var startupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
-            var paths = new SpringPaths(startupPath);
+            var eng = "103.0.1-95-g20ebb8c";
+            var paths = new SpringPaths(startupPath, false);
             var down = new PlasmaDownloader.PlasmaDownloader(new SpringScanner(paths), paths);
             List<Download> downloads = new List<Download>();
-            downloads.Add(down.GetResource(DownloadType.MOD, "chobby:stable"));
-            downloads.Add(down.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride));
+            downloads.Add(down.GetResource(DownloadType.MOD, "chobby:test"));
+            downloads.Add(down.GetResource(DownloadType.ENGINE, eng));
 
+            var handles = downloads.Where(x => x != null).Select(x => x.WaitHandle).ToArray();
+            if (handles.Length > 0) WaitHandle.WaitAll(handles);
 
-            WaitHandle.WaitAll(downloads.Where(x => x != null).Select(x => x.WaitHandle).ToArray());
-
-            var intName = down.PackageDownloader.GetByTag("chobby:stable");
+            var intName = down.PackageDownloader.GetByTag("chobby:test");
 
             var spring = new Spring(paths);
-            spring.LaunchChobby(intName.InternalName);
+            spring.LaunchChobby(intName.InternalName, eng);
 
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+        //    Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new Form1());
 
         }
