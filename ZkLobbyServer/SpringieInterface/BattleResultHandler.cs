@@ -84,7 +84,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 // chatlogs
-                foreach (string line in result.OutputExtras.Where(x => x.StartsWith("CHATLOG")))
+                foreach (string line in result.OutputExtras.Where(x => x?.StartsWith("CHATLOG") == true))
                 {
                     string[] partsSpace = line.Substring(8).Split(new[] { ' ' }, 2);
                     string name = partsSpace[0];
