@@ -430,17 +430,7 @@ namespace LobbyClient
 
             process = new Process { StartInfo = { CreateNoWindow = true } };
 
-            Environment.SetEnvironmentVariable("SPRING_DATADIR",
-                paths.GetJoinedDataDirectoriesWithEngine(Context.EngineVersion),
-                EnvironmentVariableTarget.Process);
-            Environment.SetEnvironmentVariable("SPRING_WRITEDIR", paths.WritableDirectory, EnvironmentVariableTarget.Process);
-            Environment.SetEnvironmentVariable("SPRING_ISOLATED", paths.WritableDirectory, EnvironmentVariableTarget.Process);
-            Environment.SetEnvironmentVariable("SPRING_NOCOLOR", "1", EnvironmentVariableTarget.Process);
-
-            process.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = paths.GetJoinedDataDirectoriesWithEngine(Context.EngineVersion);
-            process.StartInfo.EnvironmentVariables["SPRING_WRITEDIR"] = paths.WritableDirectory;
-            process.StartInfo.EnvironmentVariables["SPRING_ISOLATED"] = paths.WritableDirectory;
-            process.StartInfo.EnvironmentVariables["SPRING_NOCOLOR"] = "1";
+            paths.SetDefaultEnvVars(process.StartInfo, Context.EngineVersion);
 
             var arg = new List<string>();
 
@@ -710,6 +700,24 @@ namespace LobbyClient
                 IpAddress = "127.0.0.1";
                 Port = 8452;
             }
+        }
+
+
+
+        public void LaunchChobby(string internalName, string engineVersion)
+        {
+            // in springsettings.cfg
+            var optirun = Environment.GetEnvironmentVariable("OPTIRUN");
+
+            process = new Process { StartInfo = { CreateNoWindow = true } };
+            
+            paths.SetDefaultEnvVars(process.StartInfo, engineVersion);
+            File.WriteAllText(paths.GetSpringConfigPath(), $"DefaultLuaMenu = {internalName}");
+
+            process.StartInfo.FileName = paths.GetSpringExecutablePath(Context.EngineVersion);
+            process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetSpringExecutablePath(Context.EngineVersion));
+
+            process.Start();
         }
     }
 }
