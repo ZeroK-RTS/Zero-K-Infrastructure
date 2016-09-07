@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using LobbyClient;
 using Neo.IronLua;
 using PlasmaDownloader;
 using ZkData;
@@ -19,7 +18,7 @@ namespace ChobbyLauncher
         /// The main entry point for the application.
         /// </summary>
         
-        static void Main()
+        static void Main(string[] args)
         {
             var rootPath = Path.GetFullPath(Application.ExecutablePath);
 
@@ -35,16 +34,12 @@ namespace ChobbyLauncher
             string engineVersion = null;
 
             var ver = down.PackageDownloader.GetByTag(tag);
-
-            using (var fs = new FileStream(Path.Combine(paths.WritableDirectory, "packages", $"{ver.Hash}.sdp"), FileMode.Open))
+            if (ver != null)
             {
-                var sdp = new SdpArchive(new GZipStream(fs, CompressionMode.Decompress));
-                var modInfoEntry = sdp.Files.FirstOrDefault(x => x.Name.ToLower() == "modinfo.lua");
-                var modInfoFileContent = new Pool(paths).ReadFromStorageDecompressed(modInfoEntry.Hash);
-
+                var mi = ver.ReadFile(paths, "modinfo.lua");
                 var lua = new Lua();
                 var luaEnv = lua.CreateEnvironment();
-                dynamic result = luaEnv.DoChunk(new StreamReader(modInfoFileContent), "dummy.lua");
+                dynamic result = luaEnv.DoChunk(new StreamReader(mi), "dummy.lua");
                 engineVersion = result.engine;
             }
 
@@ -52,8 +47,8 @@ namespace ChobbyLauncher
             var eng = down.GetResource(DownloadType.ENGINE, engineVersion);
             eng?.WaitHandle.WaitOne();
 
-            var spring = new Spring(paths);
-            spring.LaunchChobby(ver.InternalName, engineVersion);
+            var chobbyla = new Chobbyla();
+            chobbyla.LaunchChobby(paths, ver.InternalName, engineVersion);
 
         //    Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);

@@ -703,23 +703,5 @@ namespace LobbyClient
         }
 
 
-
-        public void LaunchChobby(string internalName, string engineVersion)
-        {
-            // in springsettings.cfg
-            var optirun = Environment.GetEnvironmentVariable("OPTIRUN");
-
-            process = new Process { StartInfo = { CreateNoWindow = true, UseShellExecute = false} };
-            
-            paths.SetDefaultEnvVars(process.StartInfo, engineVersion);
-            //File.WriteAllText(Path.Combine(paths.GetEngineFolderByVersion(engineVersion), "springsettings.cfg"), $"DefaultLuaMenu = {internalName}");
-            //File.WriteAllText(paths.GetSpringConfigPath(), $"DefaultLuaMenu = {internalName}");
-
-            process.StartInfo.FileName = paths.GetSpringExecutablePath(engineVersion);
-            process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetSpringExecutablePath(engineVersion));
-            process.StartInfo.Arguments = $"--menu \"{internalName}\"";
-
-            process.Start();
-        }
     }
 }
