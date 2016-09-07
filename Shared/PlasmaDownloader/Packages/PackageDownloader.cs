@@ -27,7 +27,7 @@ namespace PlasmaDownloader.Packages
         public List<PackageDownloader.Repository> Repositories = new List<PackageDownloader.Repository>();
     }
 
-    public class PackageDownloader : IDisposable
+    public class PackageDownloader: IDisposable
     {
         string masterContent;
         public DateTime LastRefresh;
@@ -50,11 +50,13 @@ namespace PlasmaDownloader.Packages
         public DateTime MasterLastModified;
 
 
-        public void SetMasterRefreshTimer(int seconds) {
+        public void SetMasterRefreshTimer(int seconds)
+        {
             if (seconds == 0)
             {
                 refreshTimer.Stop();
-            } else
+            }
+            else
             {
                 refreshTimer.Interval = seconds*1000;
                 refreshTimer.Start();
@@ -70,7 +72,7 @@ namespace PlasmaDownloader.Packages
             refreshTimer.Stop();
             refreshTimer.AutoReset = true;
             refreshTimer.Elapsed += RefreshTimerElapsed;
-         }
+        }
 
         public void Dispose()
         {
@@ -117,11 +119,9 @@ namespace PlasmaDownloader.Packages
                 if (!string.IsNullOrEmpty(repo.BaseUrl))
                 {
                     Version versionEntry;
-                    if (repo.VersionsByTag.TryGetValue(packageNameTag, out versionEntry))
-                        return versionEntry.Dependencies;
+                    if (repo.VersionsByTag.TryGetValue(packageNameTag, out versionEntry)) return versionEntry.Dependencies;
 
-                    if (repo.VersionsByInternalName.TryGetValue(packageNameTag, out versionEntry))
-                        return versionEntry.Dependencies;
+                    if (repo.VersionsByInternalName.TryGetValue(packageNameTag, out versionEntry)) return versionEntry.Dependencies;
                 }
             }
             return null;
@@ -135,7 +135,8 @@ namespace PlasmaDownloader.Packages
         }
 
 
-        public Tuple<Repository, Version> FindAndSelectEntry(string name) {
+        public Tuple<Repository, Version> FindAndSelectEntry(string name)
+        {
             List<Repository> repositoriesCopy;
             lock (repositories) repositoriesCopy = Repositories.ToList();
             foreach (var repo in repositoriesCopy)
@@ -169,81 +170,85 @@ namespace PlasmaDownloader.Packages
 
         public Task LoadMasterAndVersions(bool downloadSelected)
         {
-            lock (loadMasterLocker) if (refreshing != null) return refreshing; else refreshing = Task.Factory.StartNew(() =>
-            {
-                if (DateTime.UtcNow.Subtract(LastRefresh).TotalMinutes < RefreshMasterMinMinutes) return;
-
-                LastRefresh = DateTime.UtcNow;
-
-                try
-                {
-                    var hasChanged = false;
-
-                    try
+            lock (loadMasterLocker)
+                if (refreshing != null) return refreshing;
+                else
+                    refreshing = Task.Factory.StartNew(() =>
                     {
-                        var repoList = Utils.DownloadFile(MasterUrl + "/repos.gz", MasterLastModified);
+                        if (DateTime.UtcNow.Subtract(LastRefresh).TotalMinutes < RefreshMasterMinMinutes) return;
+
+                        LastRefresh = DateTime.UtcNow;
+
                         try
                         {
-                            if (repoList.WasModified)
+                            var hasChanged = false;
+
+                            try
                             {
-                                if (ParseMaster(new GZipStream(new MemoryStream(repoList.Content), CompressionMode.Decompress))) hasChanged = true;
-                                MasterLastModified = repoList.DateModified;
+                                var repoList = Utils.DownloadFile(MasterUrl + "/repos.gz", MasterLastModified);
+                                try
+                                {
+                                    if (repoList.WasModified)
+                                    {
+                                        if (ParseMaster(new GZipStream(new MemoryStream(repoList.Content), CompressionMode.Decompress))) hasChanged = true;
+                                        MasterLastModified = repoList.DateModified;
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Trace.TraceError("Error parsing package master {0}", ex);
+                                }
+
+                            }
+                            catch (Exception ex)
+                            {
+                                Trace.TraceWarning("Error loading package master from " + MasterUrl);
+                            }
+
+                            Trace.TraceInformation("PackageDownloader Master changed, updating repos");
+
+                            // update all repositories 
+                            var waiting = new List<Task<Repository.RefreshResponse>>();
+                            foreach (var entry in repositories)
+                            {
+                                try
+                                {
+                                    var r = entry.Refresh();
+                                    waiting.Add(r);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Trace.TraceError("Could not refresh repository {0}: {1}", entry.BaseUrl, ex);
+                                }
+                            }
+
+                            Task.WaitAll(waiting.ToArray()); //wait until all "repositories" element finish downloading.
+
+
+                            Trace.TraceInformation("PackageDownloader refresh complete");
+
+                            if (downloadSelected)
+                            {
+                                foreach (var result in waiting.Select(x => x.Result))
+                                {
+                                    if (result.HasChanged) hasChanged = true;
+                                    if (result.ChangedVersions != null) foreach (var ver in result.ChangedVersions) if (selectedPackages.Contains(ver.Name)) Utils.StartAsync(() => { plasmaDownloader.GetResource(DownloadType.UNKNOWN, ver.Name); });
+                                }
+                            }
+
+                            if (hasChanged)
+                            {
+                                SaveRepositories();
+                                Utils.StartAsync(() => PackagesChanged(this, EventArgs.Empty));
                             }
                         }
-                        catch (Exception ex)
+                        finally
                         {
-                            Trace.TraceError("Error parsing package master {0}", ex);
+                            refreshing = null;
+                            LastRefresh = DateTime.UtcNow;
+                            Utils.StartAsync(() => MasterManifestDownloaded(this, EventArgs.Empty));
                         }
-
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceWarning("Error loading package master from " + MasterUrl);
-                    }
-
-                    Trace.TraceInformation("PackageDownloader Master changed, updating repos");
-
-                    // update all repositories 
-                    var waiting = new List<Task<Repository.RefreshResponse>>();
-                    foreach (var entry in repositories)
-                    {
-                        try
-                        {
-                            var r = entry.Refresh();
-                            waiting.Add(r);
-                        }
-                        catch (Exception ex)
-                        {
-                            Trace.TraceError("Could not refresh repository {0}: {1}", entry.BaseUrl, ex);
-                        }
-                    }
-
-                    Task.WaitAll(waiting.ToArray()); //wait until all "repositories" element finish downloading.
-
-
-                    Trace.TraceInformation("PackageDownloader refresh complete");
-
-                    if (downloadSelected) {
-                        foreach (var result in waiting.Select(x => x.Result)) {
-                            if (result.HasChanged) hasChanged = true;
-                            if (result.ChangedVersions != null) foreach (var ver in result.ChangedVersions) if (selectedPackages.Contains(ver.Name)) 
-                                Utils.StartAsync(()=> { plasmaDownloader.GetResource(DownloadType.UNKNOWN, ver.Name); });
-                        }
-                    }
-
-                    if (hasChanged)
-                    {
-                        SaveRepositories();
-                        Utils.StartAsync(() => PackagesChanged(this, EventArgs.Empty));
-                    }
-                }
-                finally
-                {
-                    refreshing = null;
-                    LastRefresh = DateTime.UtcNow;
-                    Utils.StartAsync(() => MasterManifestDownloaded(this, EventArgs.Empty));
-                }
-            });
+                    });
             return refreshing;
         }
 
@@ -278,8 +283,7 @@ namespace PlasmaDownloader.Packages
                         repositories = JsonConvert.DeserializeObject<RepositoryCache>(File.ReadAllText(path)).Repositories;
                     }
                 }
-                else
-                    Trace.TraceWarning("PackageDownloader : File don't exist : {0}", path);
+                else Trace.TraceWarning("PackageDownloader : File don't exist : {0}", path);
             }
             catch (Exception ex)
             {
@@ -351,7 +355,7 @@ namespace PlasmaDownloader.Packages
 
             public Dictionary<string, Version> VersionsByTag { get { return versionsByTag; } }
 
-            public Repository() { }
+            public Repository() {}
 
             public Repository(string baseUrl)
             {
@@ -433,6 +437,21 @@ namespace PlasmaDownloader.Packages
                 Name = name;
                 Dependencies = dependencies.ToArray();
                 InternalName = internalName;
+            }
+
+
+            public MemoryStream ReadFile(SpringPaths paths, string namePath)
+            {
+                var sdpPath = Path.Combine(paths.WritableDirectory, "packages", $"{Hash}.sdp");
+                if (File.Exists(sdpPath))
+                {
+                    SdpArchive sdp;
+                    using (var fs = new FileStream(sdpPath, FileMode.Open)) sdp = new SdpArchive(new GZipStream(fs, CompressionMode.Decompress));
+
+                    var entry = sdp.Files.FirstOrDefault(x => x.Name.ToLower() == namePath);
+                    if (entry != null) return new Pool(paths).ReadFromStorageDecompressed(entry.Hash);
+                }
+                return null;
             }
         }
     }
