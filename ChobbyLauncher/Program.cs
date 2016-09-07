@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LobbyClient;
+using Neo.IronLua;
 using PlasmaDownloader;
 using ZkData;
 
@@ -19,22 +21,39 @@ namespace ChobbyLauncher
         
         static void Main()
         {
-            var startupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
-            var eng = "103.0.1-95-g20ebb8c";
+            var rootPath = Path.GetFullPath(Application.ExecutablePath);
+
+            var startupPath = Path.GetDirectoryName(rootPath);
             var paths = new SpringPaths(startupPath, false);
             var down = new PlasmaDownloader.PlasmaDownloader(new SpringScanner(paths), paths);
-            List<Download> downloads = new List<Download>();
-            downloads.Add(down.GetResource(DownloadType.MOD, "chobby:test"));
-            downloads.Add(down.GetResource(DownloadType.ENGINE, eng));
 
-            var handles = downloads.Where(x => x != null).Select(x => x.WaitHandle).ToArray();
-            if (handles.Length > 0) WaitHandle.WaitAll(handles);
+            var tag = "chobby:test";
 
-            var intName = down.PackageDownloader.GetByTag("chobby:test");
+            var chd = down.GetResource(DownloadType.MOD, tag);
+            chd?.WaitHandle.WaitOne();
+
+            string engineVersion = null;
+
+            var ver = down.PackageDownloader.GetByTag(tag);
+
+            using (var fs = new FileStream(Path.Combine(paths.WritableDirectory, "packages", $"{ver.Hash}.sdp"), FileMode.Open))
+            {
+                var sdp = new SdpArchive(new GZipStream(fs, CompressionMode.Decompress));
+                var modInfoEntry = sdp.Files.FirstOrDefault(x => x.Name.ToLower() == "modinfo.lua");
+                var modInfoFileContent = new Pool(paths).ReadFromStorageDecompressed(modInfoEntry.Hash);
+
+                var lua = new Lua();
+                var luaEnv = lua.CreateEnvironment();
+                dynamic result = luaEnv.DoChunk(new StreamReader(modInfoFileContent), "dummy.lua");
+                engineVersion = result.engine;
+            }
+
+            
+            var eng = down.GetResource(DownloadType.ENGINE, engineVersion);
+            eng?.WaitHandle.WaitOne();
 
             var spring = new Spring(paths);
-            spring.LaunchChobby(intName.InternalName, eng);
-
+            spring.LaunchChobby(ver.InternalName, engineVersion);
 
         //    Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
