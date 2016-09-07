@@ -721,7 +721,7 @@ namespace ZkLobbyServer
                 await state.Broadcast(state.ConnectedUsers.Values, new LeftBattle() { BattleID = battle.BattleID, User = u });
             }
             ServerBattle bat;
-            state.Battles.TryRemove(battle.BattleID, out bat);
+            if (state.Battles.TryRemove(battle.BattleID, out bat)) bat.Dispose();
             await state.Broadcast(state.ConnectedUsers.Values, new BattleRemoved() { BattleID = battle.BattleID });
         }
     }

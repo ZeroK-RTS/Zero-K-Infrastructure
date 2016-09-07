@@ -190,5 +190,20 @@ namespace ZkData
                 }
             }
         }
+
+        public static void SetEnvVar(ProcessStartInfo process, string key, string value)
+        {
+            Environment.SetEnvironmentVariable(key, value, EnvironmentVariableTarget.Process);
+            process.EnvironmentVariables[key] = value;
+        }
+
+        public void SetDefaultEnvVars(ProcessStartInfo p, string engineVersion)
+        {
+            SetEnvVar(p, "SPRING_DATADIR", GetJoinedDataDirectoriesWithEngine(engineVersion));
+            SetEnvVar(p, "SPRING_WRITEDIR", WritableDirectory);
+            SetEnvVar(p, "SPRING_ISOLATED", WritableDirectory);
+            SetEnvVar(p, "SPRING_NOCOLOR", "1");
+        }
+
     }
 }

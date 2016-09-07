@@ -133,6 +133,8 @@ namespace ZkLobbyServer
             springPaths.UnsubscribeEvents(this);
             pollTimer.Dispose();
             pollTimer = null;
+            spring = null;
+            ActivePoll = null;
         }
 
         public void FillDetails()

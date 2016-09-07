@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 
 #endregion
@@ -58,8 +59,45 @@ namespace ZkData
 			//File.Move(tempFile, targetFile);
 		}
 
+        public byte[] ReadFromStorage(Hash hash)
+        {
+            var strhash = hash.ToString();
+            var folder = strhash.Substring(0, 2);
+            var name = strhash.Substring(2) + ".gz";
 
-		bool CheckAndAddOneFile(Hash hash)
+            folder = Path.Combine(writePath, folder);
+            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+
+            var targetFile = Path.Combine(folder, name);
+            return File.ReadAllBytes(targetFile);
+        }
+
+
+        public MemoryStream ReadFromStorageDecompressed(Hash hash)
+        {
+            var strhash = hash.ToString();
+            var folder = strhash.Substring(0, 2);
+            var name = strhash.Substring(2) + ".gz";
+
+            folder = Path.Combine(writePath, folder);
+            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+
+            var targetFile = Path.Combine(folder, name);
+            var ms = new MemoryStream();
+            using (var fs = File.OpenRead(targetFile))
+            {
+                using (var gz = new GZipStream(fs, CompressionMode.Decompress))
+                {
+                    gz.CopyTo(ms);
+                }
+            }
+            ms.Seek(0, SeekOrigin.Begin);
+
+            return ms;
+        }
+
+
+        bool CheckAndAddOneFile(Hash hash)
 		{
 			if (readPaths.Any(x => File.Exists(GetStorageFileName(x, hash))))
 			{
