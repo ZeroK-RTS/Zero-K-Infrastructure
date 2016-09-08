@@ -649,7 +649,7 @@ namespace ZeroKLobby.MicroLobby
                                     break;
                                 default:
                                     //check if there needs to be a linewrap
-                                    if (g.MeasureString(buildString.ToString().StripAllCodes(), Font, 0, sf).Width + emotSpace > displayWidth)
+                                    if (MS(g, buildString.ToString().StripAllCodes(), Font) + emotSpace > displayWidth)
                                     {
                                         if (lineSplit) displayLines[line].Line = lastColor + buildString;
                                         else displayLines[line].Line = buildString.ToString();
@@ -1139,7 +1139,6 @@ namespace ZeroKLobby.MicroLobby
         private int MS(Graphics g, string buildString, Font font)
         {
             var ret = TextRenderer.MeasureText(g, buildString, font, Size.Empty, TextFormatFlags.NoPadding).Width;
-            //if (ret > 0) ret += 1;
             return ret;
         }
 
@@ -1265,8 +1264,8 @@ namespace ZeroKLobby.MicroLobby
                     var line = displayLines[lineNumber].Line.StripAllCodes(); //get all character of the line (Note: StripAllCodes() is a function in TextColor.cs)
 
                     //do line-width check once if "x" is greater than line width, else check every character for the correct position where "x" is pointing at. 
-                    //int width = (int)g.MeasureString(line, Font, 0, sf).Width; //<-- you can uncomment this and comment the next line. The bad thing is: it underestimate end position if there's emotIcon, it cut some char during selection
-                    int width = (int)g.MeasureString(lineEmot, Font, 0, sf).Width;
+                    //int width = MS(g, line, Font, 0, sf).Width; //<-- you can uncomment this and comment the next line. The bad thing is: it underestimate end position if there's emotIcon, it cut some char during selection
+                    int width = MS(g, lineEmot, Font);
                     if (x > width)
                     {
                         g.Dispose();
@@ -1286,7 +1285,7 @@ namespace ZeroKLobby.MicroLobby
                             i--; //halt pointer position for this time once (at second try the emot char will be gone, its size is added and continue checking the other stuff)
                             continue;
                         }
-                        float charWidth = g.MeasureString(line[i].ToString(), Font, 0, sf).Width;
+                        float charWidth = MS(g, line[i].ToString(), Font);
                         lookWidth += charWidth;
                         if ((int)lookWidth >= (x + (int)charWidth / 2)) //check whether this character is on cursor position or not.  Note: char checking & x-coordinate is checked from left to right (everything is from left to right)
                         {
@@ -1323,8 +1322,8 @@ namespace ZeroKLobby.MicroLobby
                     var line = displayLines[lineNumber].Line.StripAllCodes();
 
                     //do line-width check once if "x" is greater than line width,
-                    int width = (int)g.MeasureString(line, Font, 0, sf).Width;
-                    //int width = (int)g.MeasureString(lineEmot, Font, 0, sf).Width; / //<-- you can uncomment this and comment the previous line. The bad thing is: will overestimate hyperlinks ending, which make you able to click empty space
+                    int width = MS(g, line, Font);
+                    //int width = MS(g, lineEmot, Font, 0, sf).Width; / //<-- you can uncomment this and comment the previous line. The bad thing is: will overestimate hyperlinks ending, which make you able to click empty space
                     if (x > width)
                     {
                         g.Dispose();
@@ -1357,7 +1356,7 @@ namespace ZeroKLobby.MicroLobby
                             {
                                 // this line wraps from the previous one. 
                                 var prevline = displayLines[lineNumber - 1].Line.StripAllCodes();
-                                int prevwidth = (int)g.MeasureString(prevline, Font, 0, sf).Width;
+                                int prevwidth = MS(g, prevline, Font);
                                 g.Dispose();
                                 return ReturnWord(lineNumber - 1, prevwidth);
                             }
@@ -1378,7 +1377,7 @@ namespace ZeroKLobby.MicroLobby
                             }
                         }
 
-                        lookWidth += g.MeasureString(line[i].ToString(), Font, 0, sf).Width;
+                        lookWidth += MS(g, line[i].ToString(), Font);
                     }
                     if (displayLines[lineNumber].Previous && lineNumber > 0 && space == 0)
                     {
@@ -1386,7 +1385,7 @@ namespace ZeroKLobby.MicroLobby
                         var prevline = displayLines[lineNumber - 1].Line.StripAllCodes();
                         if (prevline[prevline.Length - 1] != ' ')
                         {
-                            int prevwidth = (int)g.MeasureString(prevline, Font, 0, sf).Width;
+                            int prevwidth = MS(g, prevline, Font);
                             g.Dispose();
                             return ReturnWord(lineNumber - 1, prevwidth);
                         }
@@ -1421,26 +1420,6 @@ namespace ZeroKLobby.MicroLobby
             }
             catch (Exception ee)
             {
-                //Try{}catch added in ReturnWord() & ReturnChar() due to a crash:
-                //FATAL: System.Runtime.InteropServices.ExternalException (0x80004005): A generic error occurred in GDI+.
-                //    at System.Drawing.Graphics.MeasureString(String text, Font font, SizeF layoutArea, StringFormat stringFormat)
-                //    at System.Drawing.Graphics.MeasureString(String text, Font font, Int32 width, StringFormat format)
-                //    at ZeroKLobby.MicroLobby.TextWindow.ReturnWord(Int32 lineNumber, Int32 x)
-                //    at ZeroKLobby.MicroLobby.TextWindow.OnMouseMove(MouseEventArgs e)
-                //    at System.Windows.Forms.Control.WmMouseMove(Message& m)
-                //    at System.Windows.Forms.Control.WndProc(Message& m)
-                //    at System.Windows.Forms.ScrollableControl.WndProc(Message& m)
-                //    at System.Windows.Forms.UserControl.WndProc(Message& m)
-                //    at System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
-                //    at System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
-                //    at System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
-                //System: Window 8
-                //Untested possible cause: 
-                // 1) maybe font in Win8 didn't support certain character?
-                //Eliminated possible cause:
-                // 2) Null character from History -- didn't crash
-                // 3) weird player's country flag -- didn't crash, only broke a player tooltip
-
                 Trace.WriteLine(String.Format("TextWindow ReturnWord: lineNumber {0}, x {1}", lineNumber, x));
                 Trace.WriteLine("TextWindow ReturnWord Error:" + ee.Message, ee.StackTrace);
             }
