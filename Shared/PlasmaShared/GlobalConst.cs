@@ -32,8 +32,8 @@ namespace ZkData
             #elif TEST
                 Mode = ModeType.Test;
             #else
-            Mode = ModeType.Live;
-#endif
+                Mode = ModeType.Local;
+            #endif
         }
 
         static void SetMode(ModeType newMode)
