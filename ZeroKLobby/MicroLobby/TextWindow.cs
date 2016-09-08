@@ -522,8 +522,8 @@ namespace ZeroKLobby.MicroLobby
 
                 var g = CreateGraphics();
                 //properly measure for bold characters needed
-                TextFormatFlags sf = TextFormatFlags.Default;
-                textLines[totalLines].Width =  TextRenderer.MeasureText(g, TextColor.StripCodes(newLine), Font, new Size(int.MaxValue,int.MaxValue), sf).Width;
+                TextFormatFlags sf = TextFormatFlags.NoPadding;
+                textLines[totalLines].Width =  MS(g, TextColor.StripCodes(newLine), Font);
 
                 g.Dispose();
 
@@ -732,7 +732,7 @@ namespace ZeroKLobby.MicroLobby
                 using (var buffer = new Bitmap(Width, Height, PixelFormat.Format32bppPArgb))
                 using (var g = Graphics.FromImage(buffer)) //using "using" allow auto dispose
                 {
-                    var sf = TextFormatFlags.Default;
+                    var sf = TextFormatFlags.NoPadding;
 
                     int startY;
                     int startX = 0;
@@ -856,13 +856,13 @@ namespace ZeroKLobby.MicroLobby
 
                                                     if (curBackColor != backColor)
                                                     {
-                                                        textSize = TextRenderer.MeasureText(g, buildString.ToString(), Font, new Size(int.MaxValue,int.MaxValue), sf).Width + 1;
+                                                        textSize = MS(g, buildString.ToString(), Font) + 1;
                                                         var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
                                                         g.FillRectangle(backColorBrush, r); //draw white (or black) rectangle
                                                     }
 
                                                     g.DrawImage(bm, //draw an emoticon
-                                                                startX + TextRenderer.MeasureText(buildString.ToString(), Font, new Size(int.MaxValue,int.MaxValue), sf).Width,
+                                                                startX + MS(g, buildString.ToString(), Font),
                                                                 startY,
                                                                 16,
                                                                 16);
@@ -872,7 +872,7 @@ namespace ZeroKLobby.MicroLobby
                                                                         new Point(startX, startY), TextColor.GetColor(curForeColor), sf);
                                                     
                                                    
-                                                    startX += bm.Width + TextRenderer.MeasureText(g, buildString.ToString(), Font, new Size(Int32.MaxValue, int.MaxValue), sf).Width;
+                                                    startX += bm.Width + MS(g, buildString, Font);
 
                                                     buildString.Clear(); //reset the content (because we already draw it for user)
                                                 }
@@ -880,7 +880,7 @@ namespace ZeroKLobby.MicroLobby
                                             case TextColor.UrlStart:
                                                 if (curBackColor != backColor)
                                                 {
-                                                    textSize = TextRenderer.MeasureText(buildString.ToString(), Font, new Size(int.MaxValue,int.MaxValue), sf).Width + 1;
+                                                    textSize = MS(g, buildString, font) + 1;
                                                     var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
                                                     g.FillRectangle(backColorBrush, r);
                                                 }
@@ -889,7 +889,7 @@ namespace ZeroKLobby.MicroLobby
 
                                                 // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor)); //is slow for slow gpu IMO
 
-                                                startX += TextRenderer.MeasureText(g, buildString.ToString(), font, new Size(int.MaxValue,int.MaxValue), sf).Width; //textSizes[32]
+                                                startX += MS(g, buildString, font); //textSizes[32]
 
                                                 buildString.Clear();
 
@@ -905,18 +905,14 @@ namespace ZeroKLobby.MicroLobby
                                             case TextColor.UrlEnd:
                                                 if (curBackColor != backColor)
                                                 {
-                                                    textSize = TextRenderer.MeasureText(g, buildString.ToString(), font, new Size(int.MaxValue,int.MaxValue), sf).Width + 1;
+                                                    textSize = MS(g, buildString, font) + 1;
                                                     var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
                                                     g.FillRectangle(backColorBrush, r);
                                                 }
                                                 // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor)); //is slow for slow gpu IMO
-                                                using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
-
-                                                    
-                                                }
                                                 TextRenderer.DrawText(g, buildString.ToString(), font, new Point(startX, startY), TextColor.GetColor(curForeColor), sf);
 
-                                                startX += TextRenderer.MeasureText(g, buildString.ToString(), font, new Size(int.MaxValue,int.MaxValue), sf).Width; //textSizes[32]
+                                                startX += MS(g, buildString, font); //textSizes[32]
 
                                                 buildString.Clear();
 
@@ -931,14 +927,14 @@ namespace ZeroKLobby.MicroLobby
                                             case TextColor.UnderlineChar:
                                                 if (curBackColor != backColor)
                                                 {
-                                                    textSize = TextRenderer.MeasureText(g, buildString.ToString(), font, new Size(int.MaxValue,int.MaxValue), sf).Width + 1;
+                                                    textSize = MS(g, buildString, font) + 1;
                                                     var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
                                                     g.FillRectangle(backColorBrush, r);
                                                 }
                                                 
                                                  TextRenderer.DrawText(g, buildString.ToString(), font, new Point(startX, startY), TextColor.GetColor(curForeColor)); //is slow for slow gpu IMO
 
-                                                startX += TextRenderer.MeasureText(g, buildString.ToString(), font, new Size(int.MaxValue,int.MaxValue), sf).Width; //textSizes[32]
+                                                startX += MS(g, buildString, font); //textSizes[32]
 
                                                 buildString.Clear();
 
@@ -956,13 +952,13 @@ namespace ZeroKLobby.MicroLobby
                                                 //draw whats previously in the string
                                                 if (curBackColor != backColor)
                                                 {
-                                                    textSize = TextRenderer.MeasureText(g, buildString.ToString(), font, new Size(int.MaxValue,int.MaxValue), sf).Width + 1;
+                                                    textSize = MS(g, buildString.ToString(), font) + 1;
                                                     var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
                                                     g.FillRectangle(backColorBrush, r);
                                                 }
                                                 TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor)); //is slow for slow gpu IMO
 
-                                                startX += TextRenderer.MeasureText(g, buildString.ToString(), font, new Size(int.MaxValue,int.MaxValue), sf).Width; //textSizes[32]
+                                                startX += MS(g, buildString.ToString(), font); //textSizes[32]
 
                                                 buildString.Clear();
 
@@ -998,7 +994,7 @@ namespace ZeroKLobby.MicroLobby
                                                 {
                                                     if (curBackColor != backColor)
                                                     {
-                                                        textSize = TextRenderer.MeasureText(g, buildString.ToString(), Font, new Size(int.MaxValue,int.MaxValue), sf).Width + 1;
+                                                        textSize = MS(g, buildString.ToString(), Font) + 1;
                                                         var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
                                                         g.FillRectangle(backColorBrush, r);
                                                     }
@@ -1006,13 +1002,13 @@ namespace ZeroKLobby.MicroLobby
 
                                                     TextRenderer.DrawText(g, buildString.ToString(), font, new Point(startX,startY), TextColor.GetColor(curForeColor), sf );
 
-                                                    startX += TextRenderer.MeasureText(g, buildString.ToString(), font, new Size(int.MaxValue,int.MaxValue), sf).Width;
+                                                    startX += MS(g, buildString.ToString(), font);
                                                     int symbolWidth;
                                                     using (var tmpBuffer = new Bitmap(LineSize,LineSize, PixelFormat.Format32bppPArgb))
                                                     using (var tmpG = Graphics.FromImage(tmpBuffer)) //temporary graphic object that can be messed up independently
                                                     {
                                                         var randomChar = ch[0].ToString();
-                                                        symbolWidth = TextRenderer.MeasureText(tmpG, randomChar, font, new Size(int.MaxValue,int.MaxValue), sf).Width;
+                                                        symbolWidth = MS(tmpG, randomChar, font);
                                                         if (symbolWidth > 0) //don't draw when symbol width == 0 (symptom obtained from trial-n-error)
                                                         {
                                                             TextRenderer.DrawText(g, randomChar, font, new Point(startX,startY), TextColor.GetColor(curForeColor), sf);
@@ -1063,7 +1059,7 @@ namespace ZeroKLobby.MicroLobby
                                                     //draw whats previously in the string                                
                                                     if (curBackColor != backColor)
                                                     {
-                                                        textSize = TextRenderer.MeasureText(g, buildString.ToString(), font, new Size(int.MaxValue,int.MaxValue), sf).Width + 1;
+                                                        textSize = MS(g, buildString.ToString(), font) + 1;
                                                         var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
                                                         g.FillRectangle(backColorBrush, r); //draw black (or white) rectangle
                                                     }
@@ -1076,7 +1072,7 @@ namespace ZeroKLobby.MicroLobby
                                                                         TextColor.GetColor(curForeColor), sf);
 
 
-                                                    startX += TextRenderer.MeasureText(g, buildString.ToString(), font, new Size(int.MaxValue,int.MaxValue), sf).Width; //textSizes[32]
+                                                    startX += MS(g, buildString.ToString(), font); //textSizes[32]
 
                                                     buildString.Clear();//reset the content (because we already draw it for user)
 
@@ -1108,7 +1104,7 @@ namespace ZeroKLobby.MicroLobby
                             {
                                 if (curBackColor != backColor)
                                 {
-                                    textSize = TextRenderer.MeasureText(g, buildString.ToString(), font, new Size(int.MaxValue,int.MaxValue), sf).Width + 1;
+                                    textSize = MS(g, buildString.ToString(), font) + 1;
                                     var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
                                     using (var brush = new SolidBrush(TextColor.GetColor(curBackColor))) g.FillRectangle(brush, r);
                                 }
@@ -1139,6 +1135,16 @@ namespace ZeroKLobby.MicroLobby
                 Trace.WriteLine("TextWindow OnDisplayText Error:" + ee.Message, ee.StackTrace);
             }
         }
+
+        private int MS(Graphics g, string buildString, Font font)
+        {
+            var ret = TextRenderer.MeasureText(g, buildString, font, Size.Empty, TextFormatFlags.NoPadding).Width;
+            //if (ret > 0) ret += 1;
+            return ret;
+        }
+
+        private int MS(Graphics g, StringBuilder buildString, Font font) => MS(g, buildString.ToString(), font);
+
 
         static string ParseUrl(string data)
         {
