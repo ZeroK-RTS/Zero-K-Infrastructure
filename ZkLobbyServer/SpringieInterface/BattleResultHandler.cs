@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using LobbyClient;
+using Newtonsoft.Json;
 using PlasmaShared;
 using ZkData;
 
@@ -196,8 +197,9 @@ namespace ZeroKWeb.SpringieInterface
             }
             catch (Exception ex)
             {
-                Trace.TraceError(ex.ToString());
-                return ex.ToString();
+                var data = JsonConvert.SerializeObject(result);
+                Trace.TraceError($"{ex}\nData:\n{data}");
+                return $"{ex}\nData:\n{data}";
             }
         }
         
