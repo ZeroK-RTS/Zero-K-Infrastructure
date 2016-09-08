@@ -9,14 +9,11 @@ namespace ZeroKLobby
 
         public void Draw(Graphics g, Font font, Color foreColor) {
             var size = (Size)GetSize(font);
-
-            using (var fbrush = new SolidBrush(foreColor)) g.DrawString(text, font, fbrush, new Rectangle(0, 0, size.Width, size.Height));
+            TextRenderer.DrawText(g, text, font, new Rectangle(0, 0, size.Width + 20, size.Height + 20), foreColor, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter | TextFormatFlags.WordBreak);
         }
 
         public Size? GetSize(Font font) {
-            var size = TextRenderer.MeasureText(text, font, new Size(300, 40), TextFormatFlags.WordBreak);
-            size.Width += 5; // silly hack for measuretext vs drawstring slight mismatch in sizes (missing last letter in tooltip)
-            size.Height += 5;
+            var size = TextRenderer.MeasureText(text, font, new Size(300, 40), TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter | TextFormatFlags.WordBreak);
             return size;
         }
 

@@ -231,11 +231,9 @@ namespace ZeroKLobby.MicroLobby
                 int curMapCellSize = (int)MapCellSize.Width;
                 TextRenderer.DrawText(g,
                     $"{Battle.Mode.Description()}: {Battle.Title}", TitleFont, new Point(curMapCellSize, y + offset * 0), Config.TextColor);
-                //g.DrawString(Battle.Title, TitleFont, TextBrush, curMapCellSize, y + offset * 0);
                 if (TextRenderer.MeasureText(mod_and_engine_name, ModFont).Width < scaledWidth - curMapCellSize)
                 {
                     TextRenderer.DrawText(g, mod_and_engine_name, ModFont, new Point(curMapCellSize, y + offset * 1), Config.TextColor);
-                    //g.DrawString(mod_and_engine_name, ModFont, TextBrush, curMapCellSize, y + offset * 1);
                     g.DrawImageUnscaled(playersBoxImage, curMapCellSize, y + offset * 2);
                 }
                 else
