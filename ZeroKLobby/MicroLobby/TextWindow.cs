@@ -49,7 +49,7 @@ namespace ZeroKLobby.MicroLobby
         //Regex note: [\w\d:#@%/!;$()~_?\+-=\\\.&]* : include any sort of character 1 or more times
         //Reference: http://en.wikipedia.org/wiki/Regular_expression#Basic_concepts
         public const string WwwMatch = @"(www\.|www\d\.|(https?|ftp|irc|zk):((//)|(\\\\)))+[\w\d:#@%/!;$()~_?\+-=\\\.&]*[^<>()]";
-            //from http://icechat.codeplex.com/SourceControl/latest#532131
+        //from http://icechat.codeplex.com/SourceControl/latest#532131
         //NOTE: using List<T> instead of Array because or resize-able ability. List's "item[index]" access time is O(1) same as Array.
         //If we don't use "foreach" is probably okay.
         //Ref: http://programmers.stackexchange.com/questions/221892/should-i-use-a-list-or-an-array
@@ -64,7 +64,7 @@ namespace ZeroKLobby.MicroLobby
         private bool hideScroll;
         private int MaxDisplayLines = 1;
         private int MaxTextLines = 1;
-            //this size is not fixed. It expand when detected spam, and maintain size when new line are added at slow interval.
+        //this size is not fixed. It expand when detected spam, and maintain size when new line are added at slow interval.
         private long previousAppendText = 0; //timer to check for spam (message from bots or copy-pasting humans).
 
         private string previousWord;
@@ -286,7 +286,7 @@ namespace ZeroKLobby.MicroLobby
                         {
                             startHighLine = -1; // reset selection
                             Program.MainWindow.navigationControl.Path = clickedWord;
-                                //request URL be opened (in internal browser or external depending on which is appropriate)
+                            //request URL be opened (in internal browser or external depending on which is appropriate)
                         }
                         catch (Win32Exception ex)
                         {
@@ -462,7 +462,7 @@ namespace ZeroKLobby.MicroLobby
                 else if (unreadMarker > 0) unreadMarker++;
 
                 newLine = newLine.Replace("\n", " ");
-                    //Tips: don't use newline char for newline, split line into diff row (call AppendText() multiple time) instead
+                //Tips: don't use newline char for newline, split line into diff row (call AppendText() multiple time) instead
                 newLine = newLine.Replace("&#x3;", TextColor.ColorChar.ToString()); //color start. &#x3 is 0x003
                 newLine = newLine.Replace("&#x3", TextColor.ColorChar.ToString()); //color end
                 newLine = ParseUrl(newLine);
@@ -580,6 +580,7 @@ namespace ZeroKLobby.MicroLobby
 
         private int DT(Graphics g, string buildString, Font font, int startX, int startY, int foreColor, int backColor)
         {
+            //buildString = TextColor.StripCodes(buildString);
             var ret = MS(g, buildString, font);
             if (backColor == this.backColor) TextRenderer.DrawText(g, buildString, font, new Point(startX, startY), TextColor.GetColor(foreColor));
             else TextRenderer.DrawText(g, buildString, font, new Point(startX, startY), TextColor.GetColor(foreColor), TextColor.GetColor(backColor));
@@ -674,7 +675,7 @@ namespace ZeroKLobby.MicroLobby
                                 case TextColor.EmotChar:
                                     buildString.Append(curLine.Substring(i, 4)); //make emot icon not disappear for multiline sentences
                                     var emotNumber = Convert.ToInt32(curLine.Substring(i + 1, 3));
-                                        //take account for extra space caused by emotIcon, use it to find an accurate point where to split line
+                                    //take account for extra space caused by emotIcon, use it to find an accurate point where to split line
                                     var bm = TextImage.GetImage(emotNumber);
                                     emotSpace += bm.Width;
 
@@ -766,6 +767,7 @@ namespace ZeroKLobby.MicroLobby
 
         private int MS(Graphics g, string buildString, Font font)
         {
+            //buildString = TextColor.StripCodes(buildString);
             var ret = TextRenderer.MeasureText(g, buildString, font, Size.Empty, TextFormatFlags.NoPadding).Width;
             return ret;
         }
@@ -788,303 +790,296 @@ namespace ZeroKLobby.MicroLobby
             try
             {
                 var g = e.Graphics; //using "using" allow auto dispose
+
+                int startY;
+                var startX = 0;
+                int linesToDraw;
+
+                var buildString = new StringBuilder();
+
+                int curLine;
+                int curForeColor, curBackColor;
+                var pastForeColor = -1;
+                //remember what is the text color before highlighting. Hint: the code is looping from left char to right char
+                char[] ch;
+
+                var displayRect = new Rectangle(0, 0, Width, Height);
+                //Bitmap buffer = new Bitmap(this.Width, this.Height, e.Graphics);
+
+                //g.Clear(IrcColor.colors[backColor]);
+
+                if (BackgroundImage != null)
                 {
-                    var sf = TextFormatFlags.NoPadding;
+                    g.FillRectangle(new SolidBrush(TextColor.GetColor(backColor)), displayRect);
+                    g.DrawImage(BackgroundImage, displayRect.Left, displayRect.Top, displayRect.Width, displayRect.Height);
+                }
+                else g.FillRectangle(new SolidBrush(TextColor.GetColor(backColor)), displayRect);
 
-                    int startY;
-                    var startX = 0;
-                    int linesToDraw;
-
-                    var buildString = new StringBuilder();
-                    int textSize;
-
-                    int curLine;
-                    int curForeColor, curBackColor;
-                    var pastForeColor = -1;
-                        //remember what is the text color before highlighting. Hint: the code is looping from left char to right char
-                    char[] ch;
-
-                    var displayRect = new Rectangle(0, 0, Width, Height);
-                    //Bitmap buffer = new Bitmap(this.Width, this.Height, e.Graphics);
-
-                    //g.Clear(IrcColor.colors[backColor]);
-
-                    if (BackgroundImage != null)
-                    {
-                        g.FillRectangle(new SolidBrush(TextColor.GetColor(backColor)), displayRect);
-                        g.DrawImage(BackgroundImage, displayRect.Left, displayRect.Top, displayRect.Width, displayRect.Height);
-                    }
-                    else g.FillRectangle(new SolidBrush(TextColor.GetColor(backColor)), displayRect);
-
-                    /*g.InterpolationMode = InterpolationMode.Low;
+                /*g.InterpolationMode = InterpolationMode.Low;
                     g.SmoothingMode = SmoothingMode.HighSpeed;
                     g.PixelOffsetMode = PixelOffsetMode.None;
                     g.CompositingQuality = CompositingQuality.HighSpeed;
                     g.TextRenderingHint = TextRenderingHint.SystemDefault;*/
 
-                    if (totalLines == 0) return;
+                if (totalLines == 0) return;
 
-                    else
+                else
+                {
+                    var val = vScrollBar.Value;
+
+                    linesToDraw = Math.Min(showMaxLines, val);
+                    //Math.Min is faster and more readable than if-else, Reference:http://stackoverflow.com/questions/5478877/math-max-vs-inline-if-what-are-the-differences
+
+                    curLine = val - linesToDraw;
+
+                    if (singleLine)
                     {
-                        var val = vScrollBar.Value;
-
-                        linesToDraw = Math.Min(showMaxLines, val);
-                        //Math.Min is faster and more readable than if-else, Reference:http://stackoverflow.com/questions/5478877/math-max-vs-inline-if-what-are-the-differences
-
-                        curLine = val - linesToDraw;
-
-                        if (singleLine)
-                        {
-                            startY = 0;
-                            linesToDraw = 1;
-                            curLine = 0;
-                        }
-                        else startY = Height - LineSize*linesToDraw - LineSize/2;
-
-                        var lineCounter = 0;
-
-                        var underline = false;
-                        var isInUrl = false;
-                        var font = new Font(Font, FontStyle.Regular);
-
-                        var redline = -1;
-                        if (ShowUnreadLine)
-                        {
-                            for (int i = TotalDisplayLines - 1, j = 0; i >= 0; --i)
-                            {
-                                if (!displayLines[i].Previous)
-                                {
-                                    ++j;
-                                    if (j == unreadMarker)
-                                    {
-                                        redline = i;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-
-                        while (lineCounter < linesToDraw) //iterate over all rows
-                        {
-                            int i = 0, j = 0;
-                            var highlight = false;
-                            var oldHighlight = false;
-
-                            if (redline == curLine)
-                            {
-                                using (var p = new Pen(Color.Red))
-                                {
-                                    g.DrawLine(p, 0, startY, Width, startY);
-                                }
-                            }
-
-                            lineCounter++;
-
-                            curForeColor = displayLines[curLine].TextColor;
-                            var line = new StringBuilder();
-
-                            line.Append(displayLines[curLine].Line);
-                            curBackColor = backColor;
-
-                            //check if in a url, cancel underline if not
-                            if (!isInUrl)
-                            {
-                                underline = false;
-                                font.SafeDispose();
-                                font = new Font(Font, FontStyle.Regular);
-                            }
-
-                            if (line.Length > 0)
-                            {
-                                do //iterate over every character in a line
-                                {
-                                    using (var backColorBrush = new SolidBrush(TextColor.GetColor(curBackColor))) //refresh backcolor
-                                    {
-                                        ch = line.ToString().Substring(i, 1).ToCharArray();
-                                        switch (ch[0])
-                                        {
-                                            case TextColor.EmotChar: //this header is added by SaidLine.cs & SaidLineEx.cs
-                                                //draws an emoticon
-                                                //[]001
-                                                var emotNumber = Convert.ToInt32(line.ToString().Substring(i + 1, 3));
-
-                                                line.Remove(0, 3);
-                                                if (!isInUrl)
-                                                {
-                                                    //draw text (that wasn't yet drawn up to *this* point)
-                                                    startX = DT(g, buildString, Font, startX, startY, curForeColor, curBackColor);
-
-                                                    //draw an emoticon
-                                                    g.DrawImage(TextImage.GetImage(emotNumber), startX, startY, 16, 16);
-                                                    startX += 16;
-
-                                                    buildString.Clear(); //reset the content (because we already draw it for user)
-                                                }
-                                                break;
-                                            case TextColor.UrlStart:
-                                                startX = DT(g, buildString, font, startX, startY, curForeColor, curBackColor);
-
-                                                buildString.Clear();
-
-                                                //remove whats drawn from string
-                                                line.Remove(0, i);
-                                                line.Remove(0, 1);
-                                                i = -1;
-                                                font.SafeDispose();
-                                                font = new Font(Font, FontStyle.Underline);
-                                                isInUrl = true;
-                                                break;
-
-                                            case TextColor.UrlEnd:
-                                                startX = DT(g, buildString, font, startX, startY, curForeColor, curBackColor);
-                                                buildString.Clear();
-
-                                                //remove whats drawn from string
-                                                line.Remove(0, i);
-                                                line.Remove(0, 1);
-                                                i = -1;
-                                                font.SafeDispose();
-                                                font = new Font(Font, FontStyle.Regular);
-                                                isInUrl = false;
-                                                break;
-                                            case TextColor.UnderlineChar:
-                                                startX = DT(g, buildString, font, startX, startY, curForeColor, curBackColor);
-                                                buildString.Clear();
-
-                                                //remove whats drawn from string
-                                                line.Remove(0, i);
-                                                line.Remove(0, 1);
-                                                i = -1;
-
-                                                underline = !underline;
-                                                font.SafeDispose();
-                                                if (underline) font = new Font(Font, FontStyle.Underline);
-                                                else
-                                                {
-                                                    font = new Font(Font, FontStyle.Regular);
-                                                }
-                                                break;
-                                            case TextColor.NewColorChar:
-                                                //draw whats previously in the string
-                                                startX = DT(g, buildString, font, startX, startY, curForeColor, curBackColor);
-                                                    //is slow for slow gpu IMO
-                                                buildString.Clear();
-
-                                                //remove whats drawn from string
-                                                line.Remove(0, i);
-
-                                                //get the new fore and back colors
-                                                if (!highlight)
-                                                {
-                                                    curForeColor = Convert.ToInt32(line.ToString().Substring(1, 2));
-                                                    curBackColor = Convert.ToInt32(line.ToString().Substring(3, 2));
-
-                                                    //check to make sure that FC and BC are in range 0-32
-                                                    if (curForeColor > TextColor.colorRange) curForeColor = displayLines[curLine].TextColor;
-                                                    if (curBackColor > TextColor.colorRange) curBackColor = backColor;
-                                                }
-                                                else //if highlighting then:
-                                                {
-                                                    pastForeColor = Convert.ToInt32(line.ToString().Substring(1, 2));
-                                                    //remember what color this text suppose to be (will be restored to the text on the right if highlighting only happen to text on the left) 
-
-                                                    //check to make sure that FC and BC are in range 0-32
-                                                    if (pastForeColor > TextColor.colorRange) pastForeColor = displayLines[curLine].TextColor;
-                                                    //only happen on exceptional case (this is only for safety, no significant whatsoever)
-                                                }
-
-                                                //remove the color codes from the string
-                                                line.Remove(0, 5);
-                                                i = -1;
-                                                break;
-
-                                            default:
-                                                //curLine is "the line being processed here" (not user's line)
-                                                //startHightLine is "the line where highlight start"
-                                                //curHighLine is "the line where highlight end"
-                                                //startHighChar is "the char where highlight start"
-                                                //curHighChar is "the char where highlight end"
-                                                //j is "the char being processed here"
-                                                if (startHighLine >= 0 && //highlight is active
-                                                    ((curLine >= startHighLine && curLine <= curHighLine) ||
-                                                     //processing in between highlight (if highlight is upward)
-                                                     (curLine <= startHighLine && curLine >= curHighLine)))
-                                                    //processing in between highlight (if highlight is downward)
-                                                {
-                                                    if ((curLine > startHighLine && curLine < curHighLine) ||
-                                                        (curLine == startHighLine && j >= startHighChar &&
-                                                         (curLine <= curHighLine && j < curHighChar || curLine < curHighLine)) ||
-                                                        (curLine == curHighLine && j < curHighChar &&
-                                                         (curLine >= startHighLine && j >= startHighChar || curLine > startHighLine)))
-                                                    {
-                                                        highlight = true;
-                                                    }
-                                                    else if ((curLine < startHighLine && curLine > curHighLine) ||
-                                                             (curLine == startHighLine && j < startHighChar &&
-                                                              (curLine >= curHighLine && j >= curHighChar || curLine > curHighLine)) ||
-                                                             (curLine == curHighLine && j >= curHighChar &&
-                                                              (curLine <= startHighLine && j < startHighChar || curLine < startHighLine)))
-                                                    {
-                                                        highlight = true;
-                                                    }
-                                                    else highlight = false;
-                                                }
-                                                else highlight = false;
-                                                ++j;
-
-                                                if (highlight != oldHighlight)
-                                                    //at highlight border (where left & right is highlight or not highlight)
-                                                {
-                                                    oldHighlight = highlight;
-
-
-                                                    //draw text (that wasn't yet drawn up to *this* point)
-                                                    startX = DT(g, buildString, font, startX, startY, curForeColor, curBackColor);
-                                                    buildString.Clear(); //reset the content (because we already draw it for user)
-
-                                                    //remove whats drawn from string
-                                                    line.Remove(0, i);
-                                                    i = 0;
-                                                    if (highlight)
-                                                    {
-                                                        pastForeColor = curForeColor; //remember previous text color
-                                                        curForeColor = TextColor.background; //white (defined in TextColor.cs)
-                                                        curBackColor = TextColor.text; //black (defined in TextColor.cs)
-                                                    }
-                                                    else
-                                                    {
-                                                        curForeColor = pastForeColor; //restore intended text color
-                                                        curBackColor = backColor;
-                                                    }
-                                                }
-                                                buildString.Append(ch[0]);
-                                                break;
-                                        }
-                                        i++;
-                                    }
-                                } while (line.Length > 0 && i != line.Length); //loop character
-                            }
-
-                            //draw anything that is left over                
-                            if (i == line.Length && line.Length > 0) DT(g, buildString, font, startX, startY, curForeColor, curBackColor);
-
-                            startY += LineSize;
-                            startX = 0;
-                            curLine++;
-                            buildString.Clear();
-                        } //loop line
-                        font.Dispose();
-                        //e.Graphics.DrawImageUnscaled(buffer, 0, 0);
+                        startY = 0;
+                        linesToDraw = 1;
+                        curLine = 0;
                     }
-                    // var coords = displayRect
-                    ButtonRenderer.DrawButton(g,
-                        new Rectangle(displayRect.Right - 200, displayRect.Top - 50, 100, 30),
-                        "Hide",
-                        Font,
-                        false,
-                        PushButtonState.Normal);
-                    buildString = null;
+                    else startY = Height - LineSize*linesToDraw - LineSize/2;
+
+                    var lineCounter = 0;
+
+                    var underline = false;
+                    var isInUrl = false;
+                    var font = new Font(Font, FontStyle.Regular);
+
+                    var redline = -1;
+                    if (ShowUnreadLine)
+                    {
+                        for (int i = TotalDisplayLines - 1, j = 0; i >= 0; --i)
+                        {
+                            if (!displayLines[i].Previous)
+                            {
+                                ++j;
+                                if (j == unreadMarker)
+                                {
+                                    redline = i;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    while (lineCounter < linesToDraw) //iterate over all rows
+                    {
+                        int i = 0, j = 0;
+                        var highlight = false;
+                        var oldHighlight = false;
+
+                        if (redline == curLine)
+                        {
+                            using (var p = new Pen(Color.Red))
+                            {
+                                g.DrawLine(p, 0, startY, Width, startY);
+                            }
+                        }
+
+                        lineCounter++;
+
+                        curForeColor = displayLines[curLine].TextColor;
+                        var line = new StringBuilder();
+
+                        line.Append(displayLines[curLine].Line);
+                        curBackColor = backColor;
+
+                        //check if in a url, cancel underline if not
+                        if (!isInUrl)
+                        {
+                            underline = false;
+                            font.SafeDispose();
+                            font = new Font(Font, FontStyle.Regular);
+                        }
+
+                        if (line.Length > 0)
+                        {
+                            do //iterate over every character in a line
+                            {
+                                ch = line.ToString().Substring(i, 1).ToCharArray();
+                                switch (ch[0])
+                                {
+                                    case TextColor.EmotChar: //this header is added by SaidLine.cs & SaidLineEx.cs
+                                        //draws an emoticon
+                                        //[]001
+                                        var emotNumber = Convert.ToInt32(line.ToString().Substring(i + 1, 3));
+
+                                        line.Remove(0, 3);
+                                        if (!isInUrl)
+                                        {
+                                            //draw text (that wasn't yet drawn up to *this* point)
+                                            startX = DT(g, buildString, Font, startX, startY, curForeColor, curBackColor);
+
+                                            //draw an emoticon
+                                            g.DrawImage(TextImage.GetImage(emotNumber), startX, startY, 16, 16);
+                                            startX += 16;
+
+                                            buildString.Clear(); //reset the content (because we already draw it for user)
+                                        }
+                                        break;
+                                    case TextColor.UrlStart:
+                                        startX = DT(g, buildString, font, startX, startY, curForeColor, curBackColor);
+
+                                        buildString.Clear();
+
+                                        //remove whats drawn from string
+                                        line.Remove(0, i);
+                                        line.Remove(0, 1);
+                                        i = -1;
+                                        font.SafeDispose();
+                                        font = new Font(Font, FontStyle.Underline);
+                                        isInUrl = true;
+                                        break;
+
+                                    case TextColor.UrlEnd:
+                                        startX = DT(g, buildString, font, startX, startY, curForeColor, curBackColor);
+                                        buildString.Clear();
+
+                                        //remove whats drawn from string
+                                        line.Remove(0, i);
+                                        line.Remove(0, 1);
+                                        i = -1;
+                                        font.SafeDispose();
+                                        font = new Font(Font, FontStyle.Regular);
+                                        isInUrl = false;
+                                        break;
+                                    case TextColor.UnderlineChar:
+                                        startX = DT(g, buildString, font, startX, startY, curForeColor, curBackColor);
+                                        buildString.Clear();
+
+                                        //remove whats drawn from string
+                                        line.Remove(0, i);
+                                        line.Remove(0, 1);
+                                        i = -1;
+
+                                        underline = !underline;
+                                        font.SafeDispose();
+                                        if (underline) font = new Font(Font, FontStyle.Underline);
+                                        else
+                                        {
+                                            font = new Font(Font, FontStyle.Regular);
+                                        }
+                                        break;
+                                    case TextColor.NewColorChar:
+                                        //draw whats previously in the string
+                                        startX = DT(g, buildString, font, startX, startY, curForeColor, curBackColor);
+                                        //is slow for slow gpu IMO
+                                        buildString.Clear();
+
+                                        //remove whats drawn from string
+                                        line.Remove(0, i);
+
+                                        //get the new fore and back colors
+                                        if (!highlight)
+                                        {
+                                            curForeColor = Convert.ToInt32(line.ToString().Substring(1, 2));
+                                            curBackColor = Convert.ToInt32(line.ToString().Substring(3, 2));
+
+                                            //check to make sure that FC and BC are in range 0-32
+                                            if (curForeColor > TextColor.colorRange) curForeColor = displayLines[curLine].TextColor;
+                                            if (curBackColor > TextColor.colorRange) curBackColor = backColor;
+                                        }
+                                        else //if highlighting then:
+                                        {
+                                            pastForeColor = Convert.ToInt32(line.ToString().Substring(1, 2));
+                                            //remember what color this text suppose to be (will be restored to the text on the right if highlighting only happen to text on the left) 
+
+                                            //check to make sure that FC and BC are in range 0-32
+                                            if (pastForeColor > TextColor.colorRange) pastForeColor = displayLines[curLine].TextColor;
+                                            //only happen on exceptional case (this is only for safety, no significant whatsoever)
+                                        }
+
+                                        //remove the color codes from the string
+                                        line.Remove(0, 5);
+                                        i = -1;
+                                        break;
+
+                                    default:
+                                        //curLine is "the line being processed here" (not user's line)
+                                        //startHightLine is "the line where highlight start"
+                                        //curHighLine is "the line where highlight end"
+                                        //startHighChar is "the char where highlight start"
+                                        //curHighChar is "the char where highlight end"
+                                        //j is "the char being processed here"
+                                        if (startHighLine >= 0 && //highlight is active
+                                            ((curLine >= startHighLine && curLine <= curHighLine) ||
+                                             //processing in between highlight (if highlight is upward)
+                                             (curLine <= startHighLine && curLine >= curHighLine)))
+                                            //processing in between highlight (if highlight is downward)
+                                        {
+                                            if ((curLine > startHighLine && curLine < curHighLine) ||
+                                                (curLine == startHighLine && j >= startHighChar &&
+                                                 (curLine <= curHighLine && j < curHighChar || curLine < curHighLine)) ||
+                                                (curLine == curHighLine && j < curHighChar &&
+                                                 (curLine >= startHighLine && j >= startHighChar || curLine > startHighLine)))
+                                            {
+                                                highlight = true;
+                                            }
+                                            else if ((curLine < startHighLine && curLine > curHighLine) ||
+                                                     (curLine == startHighLine && j < startHighChar &&
+                                                      (curLine >= curHighLine && j >= curHighChar || curLine > curHighLine)) ||
+                                                     (curLine == curHighLine && j >= curHighChar &&
+                                                      (curLine <= startHighLine && j < startHighChar || curLine < startHighLine)))
+                                            {
+                                                highlight = true;
+                                            }
+                                            else highlight = false;
+                                        }
+                                        else highlight = false;
+                                        ++j;
+
+                                        if (highlight != oldHighlight)
+                                            //at highlight border (where left & right is highlight or not highlight)
+                                        {
+                                            oldHighlight = highlight;
+
+
+                                            //draw text (that wasn't yet drawn up to *this* point)
+                                            startX = DT(g, buildString, font, startX, startY, curForeColor, curBackColor);
+                                            buildString.Clear(); //reset the content (because we already draw it for user)
+
+                                            //remove whats drawn from string
+                                            line.Remove(0, i);
+                                            i = 0;
+                                            if (highlight)
+                                            {
+                                                pastForeColor = curForeColor; //remember previous text color
+                                                curForeColor = TextColor.background; //white (defined in TextColor.cs)
+                                                curBackColor = TextColor.text; //black (defined in TextColor.cs)
+                                            }
+                                            else
+                                            {
+                                                curForeColor = pastForeColor; //restore intended text color
+                                                curBackColor = backColor;
+                                            }
+                                        }
+                                        buildString.Append(ch[0]);
+                                        break;
+                                }
+                                i++;
+                            } while (line.Length > 0 && i != line.Length); //loop character
+                        }
+
+                        //draw anything that is left over                
+                        if (i == line.Length && line.Length > 0) DT(g, buildString, font, startX, startY, curForeColor, curBackColor);
+
+                        startY += LineSize;
+                        startX = 0;
+                        curLine++;
+                        buildString.Clear();
+                    } //loop line
+                    font.Dispose();
+                    //e.Graphics.DrawImageUnscaled(buffer, 0, 0);
                 }
+                // var coords = displayRect
+                ButtonRenderer.DrawButton(g,
+                    new Rectangle(displayRect.Right - 200, displayRect.Top - 50, 100, 30),
+                    "Hide",
+                    Font,
+                    false,
+                    PushButtonState.Normal);
+                buildString = null;
             }
             catch (Exception ee)
             {
@@ -1165,9 +1160,8 @@ namespace ZeroKLobby.MicroLobby
                     var fc = int.Parse(m.Value.Remove(0, 1));
 
                     if (currentBackColor > -1) sLine.Insert(m.Index, TextColor.NewColorChar + fc.ToString("00") + currentBackColor.ToString("00"));
-                    else
-                        sLine.Insert(m.Index, TextColor.NewColorChar + fc.ToString("00") + "99");
-                            //note: any background_color > 32 automatically use current backcolor
+                    else sLine.Insert(m.Index, TextColor.NewColorChar + fc.ToString("00") + "99");
+                    //note: any background_color > 32 automatically use current backcolor
                     //sLine.Insert(m.Index, newColorChar.ToString() + fc.ToString("00") + backColor.ToString("00"));
 
                     if (foreColorInd < 32)
@@ -1219,7 +1213,7 @@ namespace ZeroKLobby.MicroLobby
 
                     var lineEmot = displayLines[lineNumber].Line.StripAllCodesExceptEmot();
                     var line = displayLines[lineNumber].Line.StripAllCodes();
-                        //get all character of the line (Note: StripAllCodes() is a function in TextColor.cs)
+                    //get all character of the line (Note: StripAllCodes() is a function in TextColor.cs)
 
                     //do line-width check once if "x" is greater than line width, else check every character for the correct position where "x" is pointing at. 
                     //int width = MS(g, line, Font, 0, sf).Width; //<-- you can uncomment this and comment the next line. The bad thing is: it underestimate end position if there's emotIcon, it cut some char during selection
@@ -1241,7 +1235,7 @@ namespace ZeroKLobby.MicroLobby
                             var bm = TextImage.GetImage(emotNumber);
                             lookWidth += bm.Width;
                             i--;
-                                //halt pointer position for this time once (at second try the emot char will be gone, its size is added and continue checking the other stuff)
+                            //halt pointer position for this time once (at second try the emot char will be gone, its size is added and continue checking the other stuff)
                             continue;
                         }
                         float charWidth = MS(g, line[i].ToString(), Font);
@@ -1307,7 +1301,7 @@ namespace ZeroKLobby.MicroLobby
                             var bm = TextImage.GetImage(emotNumber);
                             lookWidth += bm.Width; //add emot size
                             i--;
-                                //halt pointer position for this time once (at second try the emot char will be gone, its size is added and continue checking the other stuff)
+                            //halt pointer position for this time once (at second try the emot char will be gone, its size is added and continue checking the other stuff)
                             continue;
                         }
 
@@ -1323,7 +1317,7 @@ namespace ZeroKLobby.MicroLobby
                             }
                             g.Dispose();
                             return line.Substring(space, i - space);
-                                //Substring(space, i - space), in example: xxx__Yxxxx_T_xxx OR Yxx_T_xxxxx__xxx (where T is pointing at spaces, Y pointing at 1st letter)
+                            //Substring(space, i - space), in example: xxx__Yxxxx_T_xxx OR Yxx_T_xxxxx__xxx (where T is pointing at spaces, Y pointing at 1st letter)
                         }
 
                         if (line[i] == (char)32) //equal to "space"
@@ -1334,7 +1328,7 @@ namespace ZeroKLobby.MicroLobby
                                 {
                                     foundSpace = true; //current position, in example: xxx__xxxxx_T_xxx (where T is pointing at space on right)
                                     i--;
-                                        //halt pointer position for this time once (at second loop the mid-code will be executed to return the Substring)
+                                    //halt pointer position for this time once (at second loop the mid-code will be executed to return the Substring)
                                 }
                                 else space = i + 1; //i + 1 position, in example: xxx__Yxxxx__xxx (Y at 1st letter after a space)
                             }
@@ -1424,13 +1418,12 @@ namespace ZeroKLobby.MicroLobby
                 {
                     vScrollBar.Minimum = 1;
                     vScrollBar.Maximum = Math.Max(-1 + TotalDisplayLines + vScrollBar.LargeChange, 1);
-                        // maximum value that can be reached through UI is: 1 + Maximum - LargeChange. Ref: http://msdn.microsoft.com/en-us/library/system.windows.forms.scrollbar.maximum(v=vs.110).aspx
+                    // maximum value that can be reached through UI is: 1 + Maximum - LargeChange. Ref: http://msdn.microsoft.com/en-us/library/system.windows.forms.scrollbar.maximum(v=vs.110).aspx
 
                     if (!vScrollBar.Enabled || !vScrollBar.Visible) isBottom = true;
                     if (isBottom || hideScroll || nearBottom) vScrollBar.Value = newValue; //always set to TotalDisplayLines to make scrollbar follow new chat message feed 
-                    else
-                        vScrollBar.Value = vScrollBar.Value + offsetValue;
-                            //this fix scrollbar lost user's position when all text is being shifted upward to make room for new chat message
+                    else vScrollBar.Value = vScrollBar.Value + offsetValue;
+                    //this fix scrollbar lost user's position when all text is being shifted upward to make room for new chat message
                 }
             }
         }
