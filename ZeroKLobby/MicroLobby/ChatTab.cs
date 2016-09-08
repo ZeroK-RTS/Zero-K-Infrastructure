@@ -69,8 +69,8 @@ namespace ZeroKLobby.MicroLobby
             {
                 if (GetPrivateMessageControl(friend) == null)
                 {
-                    var pm = CreatePrivateMessageControl(friend);
-                    toolTabs.SelectPrivateTab(friend);
+                    CreatePrivateMessageControl(friend);
+                    //toolTabs.SelectPrivateTab(friend);
                 }
             }
         }
