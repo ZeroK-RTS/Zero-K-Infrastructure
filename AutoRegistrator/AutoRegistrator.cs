@@ -138,7 +138,11 @@ namespace ZeroKWeb
                 } while (waiting);
 
 
+                Trace.TraceInformation("Autoregistrator waiting done");
+
                 UpdateRapidTagsInDb();
+
+                Trace.TraceInformation("Autoregistrator rapid tags updated");
 
 
                 lock (Locker)
@@ -202,6 +206,8 @@ namespace ZeroKWeb
                         Trace.TraceError("Autoregistrator Error building steam package: {0}", ex);
                     }
                 }
+
+                Trace.TraceInformation("Autoregistrator all done");
             }
             catch (Exception ex)
             {
@@ -215,15 +221,8 @@ namespace ZeroKWeb
             {
                 foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByInternalName.Values))
                 {
-                    foreach (var toStrip in db.Resources.Where(x => x.RapidTag == ver.Name && x.InternalName != ver.InternalName))
-                    {
-                        toStrip.RapidTag = Downloader.PackageDownloader.GetByInternalName(toStrip.InternalName)?.Name;
-                    }
-
-                    foreach (var toSet in db.Resources.Where(x => x.RapidTag != ver.Name && x.InternalName == ver.InternalName))
-                    {
-                        toSet.RapidTag = ver.Name;
-                    }
+                    var entry = db.Resources.FirstOrDefault(x => x.InternalName == ver.InternalName && x.RapidTag != ver.Name);
+                    if (entry != null) entry.RapidTag = ver.Name;
                 }
                 db.SaveChanges();
             }
