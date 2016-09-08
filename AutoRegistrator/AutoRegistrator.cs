@@ -58,7 +58,7 @@ namespace ZeroKWeb
         {
 
             Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false);
-            Scanner = new SpringScanner(Paths) { UseUnitSync = true };
+            Scanner = new SpringScanner(Paths) { UseUnitSync = true, WatchingEnabled = false};
 
             Scanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("Autoregistrator new resource found: {0}", e.Item.InternalName);
             Scanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Autoregistrator Resource removed: {0}", e.Item.InternalName);
@@ -73,7 +73,6 @@ namespace ZeroKWeb
             Scanner.InitialScan();
 
             Downloader.PackageDownloader.SetMasterRefreshTimer(20);
-
             Downloader.PackagesChanged += Downloader_PackagesChanged;
             Downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
             Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
@@ -86,9 +85,7 @@ namespace ZeroKWeb
                 Downloader.GetResource(DownloadType.UNKNOWN, ver.Value.InternalName)?.WaitHandle.WaitOne();
             }
 
-            Scanner.Start();
-
-            SynchronizeMapsFromSpringFiles();
+            Scanner.Start(false);
 
             while (Scanner.GetWorkCost() > 0) Thread.Sleep(1000);
         }
@@ -99,6 +96,7 @@ namespace ZeroKWeb
             {
                 var fs = new WebFolderSyncer();
                 fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory, "maps"));
+                Scanner.Rescan();
             }
         }
 
@@ -117,7 +115,6 @@ namespace ZeroKWeb
                     }
                 }
 
-
                 var waiting = false;
                 do
                 {
@@ -127,8 +124,16 @@ namespace ZeroKWeb
                         waiting = true;
                         var d = downs.First();
                         Trace.TraceInformation("Autoregistrator Waiting for: {0} - {1} {2}", d.Name, d.TotalProgress, d.TimeRemaining);
-                    }
-                    else if (Scanner.GetWorkCost() > 0)
+                    } else waiting = false;
+                    if (waiting) Thread.Sleep(10000);
+                } while (waiting);
+                
+                Trace.TraceInformation("Autoregistrator rescanning");
+                Scanner.Rescan();
+
+                do
+                {
+                    if (Scanner.GetWorkCost() > 0)
                     {
                         waiting = true;
                         Trace.TraceInformation("Autoregistrator Waiting for scanner: {0}", Scanner.GetWorkCost());
@@ -138,7 +143,11 @@ namespace ZeroKWeb
                 } while (waiting);
 
 
+                Trace.TraceInformation("Autoregistrator waiting done");
+
                 UpdateRapidTagsInDb();
+
+                Trace.TraceInformation("Autoregistrator rapid tags updated");
 
 
                 lock (Locker)
@@ -164,7 +173,6 @@ namespace ZeroKWeb
 
                                         mis.Revision++;
 
-                                        Scanner.WatchingEnabled = false;
                                         mu.UpdateMission(db, mis, Scanner);
                                         db.SaveChanges();
                                     }
@@ -176,10 +184,6 @@ namespace ZeroKWeb
                             catch (Exception ex)
                             {
                                 Trace.TraceError("Autoregistrator Failed to update mission {0}: {1}", mis.MissionID, ex);
-                            }
-                            finally
-                            {
-                                Scanner.WatchingEnabled = true;
                             }
                         }
                     }
@@ -202,6 +206,8 @@ namespace ZeroKWeb
                         Trace.TraceError("Autoregistrator Error building steam package: {0}", ex);
                     }
                 }
+
+                Trace.TraceInformation("Autoregistrator all done");
             }
             catch (Exception ex)
             {
@@ -215,15 +221,8 @@ namespace ZeroKWeb
             {
                 foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByInternalName.Values))
                 {
-                    foreach (var toStrip in db.Resources.Where(x => x.RapidTag == ver.Name && x.InternalName != ver.InternalName))
-                    {
-                        toStrip.RapidTag = Downloader.PackageDownloader.GetByInternalName(toStrip.InternalName)?.Name;
-                    }
-
-                    foreach (var toSet in db.Resources.Where(x => x.RapidTag != ver.Name && x.InternalName == ver.InternalName))
-                    {
-                        toSet.RapidTag = ver.Name;
-                    }
+                    var entry = db.Resources.FirstOrDefault(x => x.InternalName == ver.InternalName && x.RapidTag != ver.Name);
+                    if (entry != null) entry.RapidTag = ver.Name;
                 }
                 db.SaveChanges();
             }

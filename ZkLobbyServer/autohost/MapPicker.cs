@@ -118,7 +118,7 @@ namespace ZeroKWeb.SpringieInterface
             ret = ret.Where(x => x.TypeID == type);
             
             var test = ret.Where(x => x.RapidTag == term || x.InternalName == term);
-            if (test.Any()) return test.OrderByDescending(x => -x.FeaturedOrder);
+            if (test.Any()) return test.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x=>x.ResourceID);
 
 
             int i;
