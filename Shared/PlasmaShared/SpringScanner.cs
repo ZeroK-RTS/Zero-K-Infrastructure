@@ -227,9 +227,9 @@ namespace ZkData
             return modList;
         }
 
-        public void Start()
+        public void Start(bool watchingEnabled = true)
         {
-            WatchingEnabled = true;
+            WatchingEnabled = watchingEnabled;
             mainThread = Utils.SafeThread(MainThreadFunction);
             mainThread.Priority = ThreadPriority.BelowNormal;
             mainThread.Start();
@@ -468,6 +468,13 @@ namespace ZkData
 
             if (loadedCache != null) cache = loadedCache;
 
+            Rescan();
+
+            Trace.TraceInformation("Initial scan done");
+        }
+
+        public void Rescan()
+        {
             var foundFiles = new Dictionary<string, bool>();
 
             InitialFolderScan("games", foundFiles);
@@ -477,9 +484,6 @@ namespace ZkData
             Dictionary<string, CacheItem> copy;
             lock (cache) copy = new Dictionary<string, CacheItem>(cache.ShortPathIndex);
             foreach (var pair in copy) if (!foundFiles.ContainsKey(pair.Key)) CacheItemRemove(pair.Value);
-
-
-            Trace.TraceInformation("Initial scan done");
         }
 
 

@@ -58,7 +58,7 @@ namespace ZeroKWeb
         {
 
             Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false);
-            Scanner = new SpringScanner(Paths) { UseUnitSync = true };
+            Scanner = new SpringScanner(Paths) { UseUnitSync = true, WatchingEnabled = false};
 
             Scanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("Autoregistrator new resource found: {0}", e.Item.InternalName);
             Scanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Autoregistrator Resource removed: {0}", e.Item.InternalName);
@@ -73,7 +73,6 @@ namespace ZeroKWeb
             Scanner.InitialScan();
 
             Downloader.PackageDownloader.SetMasterRefreshTimer(20);
-
             Downloader.PackagesChanged += Downloader_PackagesChanged;
             Downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
             Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
@@ -86,9 +85,7 @@ namespace ZeroKWeb
                 Downloader.GetResource(DownloadType.UNKNOWN, ver.Value.InternalName)?.WaitHandle.WaitOne();
             }
 
-            Scanner.Start();
-
-            SynchronizeMapsFromSpringFiles();
+            Scanner.Start(false);
 
             while (Scanner.GetWorkCost() > 0) Thread.Sleep(1000);
         }
@@ -99,6 +96,7 @@ namespace ZeroKWeb
             {
                 var fs = new WebFolderSyncer();
                 fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory, "maps"));
+                Scanner.Rescan();
             }
         }
 
@@ -117,7 +115,6 @@ namespace ZeroKWeb
                     }
                 }
 
-
                 var waiting = false;
                 do
                 {
@@ -127,8 +124,16 @@ namespace ZeroKWeb
                         waiting = true;
                         var d = downs.First();
                         Trace.TraceInformation("Autoregistrator Waiting for: {0} - {1} {2}", d.Name, d.TotalProgress, d.TimeRemaining);
-                    }
-                    else if (Scanner.GetWorkCost() > 0)
+                    } else waiting = false;
+                    if (waiting) Thread.Sleep(10000);
+                } while (waiting);
+                
+                Trace.TraceInformation("Autoregistrator rescanning");
+                Scanner.Rescan();
+
+                do
+                {
+                    if (Scanner.GetWorkCost() > 0)
                     {
                         waiting = true;
                         Trace.TraceInformation("Autoregistrator Waiting for scanner: {0}", Scanner.GetWorkCost());
@@ -168,7 +173,6 @@ namespace ZeroKWeb
 
                                         mis.Revision++;
 
-                                        Scanner.WatchingEnabled = false;
                                         mu.UpdateMission(db, mis, Scanner);
                                         db.SaveChanges();
                                     }
@@ -180,10 +184,6 @@ namespace ZeroKWeb
                             catch (Exception ex)
                             {
                                 Trace.TraceError("Autoregistrator Failed to update mission {0}: {1}", mis.MissionID, ex);
-                            }
-                            finally
-                            {
-                                Scanner.WatchingEnabled = true;
                             }
                         }
                     }
