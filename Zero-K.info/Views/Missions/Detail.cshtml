@@ -38,10 +38,9 @@
       </table>
     </div>
 }
-<!close scores>
+
 <div class="wrapper">
   <div class="border-test width-50">
-    <!info>
     <table>
         <tr>
             <td>
@@ -93,7 +92,6 @@
       <br />
     </span>
   </div>
-  <!close info> <!code for votes>
   <script type="text/javascript">
     $(document).ready(function () {
       $("#rating").stars({
@@ -111,7 +109,6 @@
     });
   </script>
   <div id="votes" class="border-test">
-    <!votes>
     <table>
       <tr>
         <td>
@@ -159,7 +156,6 @@
       </tr>
     </table>
  </div>
-  <!close votes>
   @if (Global.IsZeroKAdmin) {
     <form action='@Url.Action("ChangeFeaturedOrder", "Missions", new { id = m.MissionID })' method="post">
     Featured order: @Html.TextBox("featuredOrder", Model.Mission.FeaturedOrder)
@@ -174,18 +170,8 @@
       <a href='@Url.Action("Undelete", "Missions", new { id = m.MissionID })' >Undelete</a>
     }
   }
-  <!-- FIXME: stupid thing keeps losing its line breaks!! -->
-  <!--@if (m.DescriptionStory != null && m.DescriptionStory != String.Empty)
-  {
-    <br />
-    <br />
-    <h3 class="js_expand">Story</h3>
-    <div id="story" class="collapse width-90">
-        @Html.BBCode(m.DescriptionStory)
-    </div>
-  }-->
 </div>
-<!close wrapper>
+
 @{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.Mission.ForumThread });}
 
 @Html.ActionLink("Back to List", "Index") 
