@@ -1435,13 +1435,7 @@
     <None Include="Resources\Ranks\9.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\battle.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\blue.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\boom.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\border.png" />
@@ -1635,6 +1629,7 @@
     <None Include="Resources\TechPanelHollow\N.png" />
     <None Include="Resources\TechPanelHollow\W.png" />
     <None Include="Resources\TechPanelHollow\E.png" />
+    <None Include="Resources\self_police.png" />
     <Content Include="Resources\tech_scrollbar.png" />
     <Content Include="Resources\ThumbBottom.png" />
     <Content Include="Resources\ThumbMiddle.png" />
