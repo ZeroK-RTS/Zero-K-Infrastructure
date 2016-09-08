@@ -40,7 +40,7 @@ using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
-    public partial class TextWindow: ZklBaseControl
+    public partial class TextWindow : ZklBaseControl
     {
         private const int defaultMaxLines = 495; //about 10 pages
         private const int HardMaximumLines = 29950; //absolute maximum to avoid extreme case.
@@ -164,7 +164,7 @@ namespace ZeroKLobby.MicroLobby
 
         public static Color ColorInvert(Color colorIn)
         {
-            return Color.FromArgb(colorIn.A, (colorIn.R + 128)%256, (colorIn.G + 128)%256, (colorIn.B + 128)%256);
+            return Color.FromArgb(colorIn.A, (colorIn.R + 128) % 256, (colorIn.G + 128) % 256, (colorIn.B + 128) % 256);
         }
 
         public event EventHandler FocusInputRequested = delegate { };
@@ -267,7 +267,7 @@ namespace ZeroKLobby.MicroLobby
             if (e.Button == MouseButtons.Left)
             {
                 //get the current character the mouse is over. 
-                startHighLine = (Height + LineSize/2 - e.Y)/LineSize; //which row
+                startHighLine = (Height + LineSize / 2 - e.Y) / LineSize; //which row
                 startHighLine = TotalDisplayLines - startHighLine; //which row from below
                 startHighLine = startHighLine - (TotalDisplayLines - vScrollBar.Value); //which row considering scroll position
 
@@ -308,7 +308,7 @@ namespace ZeroKLobby.MicroLobby
             if (!SingleLine)
             {
                 // Get the line count from the bottom... (relative to screen)
-                line = (Height + LineSize/2 - e.Y)/LineSize;
+                line = (Height + LineSize / 2 - e.Y) / LineSize;
 
                 // Then, convert it to count from the top. 
                 line = vScrollBar.Value - line;
@@ -317,7 +317,7 @@ namespace ZeroKLobby.MicroLobby
             HoveredWord = ReturnWord(line, e.Location.X).Trim(new char[4] { ' ', '\t', ',', '.' });
 
             //get the current character the mouse is over. 
-            curHighLine = (Height + LineSize/2 - e.Y)/LineSize;
+            curHighLine = (Height + LineSize / 2 - e.Y) / LineSize;
             curHighLine = TotalDisplayLines - curHighLine;
             curHighLine = curHighLine - (TotalDisplayLines - vScrollBar.Value);
             curHighChar = ReturnChar(line, e.Location.X);
@@ -495,7 +495,7 @@ namespace ZeroKLobby.MicroLobby
                 if (needSpace && !isExpanding && (isFull || !isSpam))
                 {
                     //remove old text, create space for new text (recycle existing row)
-                    var toRemove = MaxTextLines/10 + 1; //remove 10% of old text
+                    var toRemove = MaxTextLines / 10 + 1; //remove 10% of old text
 
                     //calculate scrollbar offset:
                     var lineCount = 0;
@@ -533,7 +533,7 @@ namespace ZeroKLobby.MicroLobby
                     if (Height != 0)
                     {
                         TotalDisplayLines = FormatLines(totalLines, 1, 0);
-                        UpdateScrollBar(TotalDisplayLines, vScrollBarOffset*-1);
+                        UpdateScrollBar(TotalDisplayLines, vScrollBarOffset * -1);
                         Invalidate();
                     }
 
@@ -580,10 +580,14 @@ namespace ZeroKLobby.MicroLobby
 
         private int DT(Graphics g, string buildString, Font font, int startX, int startY, int foreColor, int backColor)
         {
+            if (string.IsNullOrEmpty(buildString)) return startX;
+
             //buildString = TextColor.StripCodes(buildString);
+
             var ret = MS(g, buildString, font);
-            if (backColor == this.backColor) TextRenderer.DrawText(g, buildString, font, new Point(startX, startY), TextColor.GetColor(foreColor));
-            else TextRenderer.DrawText(g, buildString, font, new Point(startX, startY), TextColor.GetColor(foreColor), TextColor.GetColor(backColor));
+            if (backColor == this.backColor) TextRenderer.DrawText(g, buildString, font, new Point(startX, startY), TextColor.GetColor(foreColor), TextFormatFlags.NoPadding | TextFormatFlags.SingleLine);
+            else TextRenderer.DrawText(g, buildString, font, new Point(startX, startY), TextColor.GetColor(foreColor), TextColor.GetColor(backColor), TextFormatFlags.NoPadding | TextFormatFlags.SingleLine);
+
             /*
              *                                                         textSize = MS(g, buildString.ToString(), Font) + 1;
                                                         var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
@@ -759,7 +763,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 LineSize = Convert.ToInt32(Font.GetHeight(g));
 
-                showMaxLines = Height/LineSize + 1;
+                showMaxLines = Height / LineSize + 1;
                 vScrollBar.LargeChange = Math.Max(showMaxLines - 3, 1); //include previous 3 lines for continuity
             }
         }
@@ -767,8 +771,9 @@ namespace ZeroKLobby.MicroLobby
 
         private int MS(Graphics g, string buildString, Font font)
         {
+            if (string.IsNullOrEmpty(buildString)) return 0;
             //buildString = TextColor.StripCodes(buildString);
-            var ret = TextRenderer.MeasureText(g, buildString, font, Size.Empty, TextFormatFlags.NoPadding).Width;
+            var ret = TextRenderer.MeasureText(g, buildString, font, Size.Empty, TextFormatFlags.NoPadding | TextFormatFlags.SingleLine).Width;
             return ret;
         }
 
@@ -838,7 +843,7 @@ namespace ZeroKLobby.MicroLobby
                         linesToDraw = 1;
                         curLine = 0;
                     }
-                    else startY = Height - LineSize*linesToDraw - LineSize/2;
+                    else startY = Height - LineSize * linesToDraw - LineSize / 2;
 
                     var lineCounter = 0;
 
@@ -904,19 +909,19 @@ namespace ZeroKLobby.MicroLobby
                                         //draws an emoticon
                                         //[]001
                                         var emotNumber = Convert.ToInt32(line.ToString().Substring(i + 1, 3));
+                                        line.Remove(0, i + 4);
+                                        i = -1;
+                                        
+                                        //draw text (that wasn't yet drawn up to *this* point)
+                                        startX = DT(g, buildString, Font, startX, startY, curForeColor, curBackColor);
 
-                                        line.Remove(0, 3);
-                                        if (!isInUrl)
-                                        {
-                                            //draw text (that wasn't yet drawn up to *this* point)
-                                            startX = DT(g, buildString, Font, startX, startY, curForeColor, curBackColor);
+                                        //draw an emoticon
+                                        g.DrawImage(TextImage.GetImage(emotNumber), startX, startY, 16, 16);
+                                        startX += 16;
 
-                                            //draw an emoticon
-                                            g.DrawImage(TextImage.GetImage(emotNumber), startX, startY, 16, 16);
-                                            startX += 16;
+                                        buildString.Clear(); //reset the content (because we already draw it for user)
 
-                                            buildString.Clear(); //reset the content (because we already draw it for user)
-                                        }
+
                                         break;
                                     case TextColor.UrlStart:
                                         startX = DT(g, buildString, font, startX, startY, curForeColor, curBackColor);
@@ -1006,7 +1011,7 @@ namespace ZeroKLobby.MicroLobby
                                             ((curLine >= startHighLine && curLine <= curHighLine) ||
                                              //processing in between highlight (if highlight is upward)
                                              (curLine <= startHighLine && curLine >= curHighLine)))
-                                            //processing in between highlight (if highlight is downward)
+                                        //processing in between highlight (if highlight is downward)
                                         {
                                             if ((curLine > startHighLine && curLine < curHighLine) ||
                                                 (curLine == startHighLine && j >= startHighChar &&
@@ -1030,7 +1035,7 @@ namespace ZeroKLobby.MicroLobby
                                         ++j;
 
                                         if (highlight != oldHighlight)
-                                            //at highlight border (where left & right is highlight or not highlight)
+                                        //at highlight border (where left & right is highlight or not highlight)
                                         {
                                             oldHighlight = highlight;
 
@@ -1240,8 +1245,8 @@ namespace ZeroKLobby.MicroLobby
                         }
                         float charWidth = MS(g, line[i].ToString(), Font);
                         lookWidth += charWidth;
-                        if ((int)lookWidth >= x + (int)charWidth/2)
-                            //check whether this character is on cursor position or not.  Note: char checking & x-coordinate is checked from left to right (everything is from left to right)
+                        if ((int)lookWidth >= x + (int)charWidth / 2)
+                        //check whether this character is on cursor position or not.  Note: char checking & x-coordinate is checked from left to right (everything is from left to right)
                         {
                             g.Dispose();
                             return i;
@@ -1392,7 +1397,7 @@ namespace ZeroKLobby.MicroLobby
         /// <returns></returns>
         private void UpdateScrollBar(int newValue, int offsetValue)
         {
-            showMaxLines = Height/LineSize + 1;
+            showMaxLines = Height / LineSize + 1;
             if (InvokeRequired)
             {
                 ScrollValueDelegate s = UpdateScrollBar;
