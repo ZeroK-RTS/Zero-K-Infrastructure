@@ -729,8 +729,7 @@ namespace ZeroKLobby.MicroLobby
 
             try
             {
-                using (var buffer = new Bitmap(Width, Height, PixelFormat.Format32bppPArgb))
-                using (var g = Graphics.FromImage(buffer)) //using "using" allow auto dispose
+                var g = e.Graphics; //using "using" allow auto dispose
                 {
                     var sf = TextFormatFlags.NoPadding;
 
@@ -758,19 +757,20 @@ namespace ZeroKLobby.MicroLobby
                     }
                     else g.FillRectangle(new SolidBrush(TextColor.GetColor(backColor)), displayRect);
 
-                    g.InterpolationMode = InterpolationMode.Low;
+                    /*g.InterpolationMode = InterpolationMode.Low;
                     g.SmoothingMode = SmoothingMode.HighSpeed;
                     g.PixelOffsetMode = PixelOffsetMode.None;
                     g.CompositingQuality = CompositingQuality.HighSpeed;
-                    g.TextRenderingHint = TextRenderingHint.SystemDefault;
+                    g.TextRenderingHint = TextRenderingHint.SystemDefault;*/
 
+                    if (totalLines == 0) return;
 
-                    if (totalLines == 0) e.Graphics.DrawImageUnscaled(buffer, 0, 0);
                     else
                     {
                         var val = vScrollBar.Value;
 
-                        linesToDraw = Math.Min(showMaxLines, val); //Math.Min is faster and more readable than if-else, Reference:http://stackoverflow.com/questions/5478877/math-max-vs-inline-if-what-are-the-differences
+                        linesToDraw = Math.Min(showMaxLines, val);
+                            //Math.Min is faster and more readable than if-else, Reference:http://stackoverflow.com/questions/5478877/math-max-vs-inline-if-what-are-the-differences
 
                         curLine = val - linesToDraw;
 
@@ -813,7 +813,8 @@ namespace ZeroKLobby.MicroLobby
 
                             if (redline == curLine)
                             {
-                                using (var p = new Pen(Color.Red)) {
+                                using (var p = new Pen(Color.Red))
+                                {
                                     g.DrawLine(p, 0, startY, Width, startY);
                                 }
                             }
@@ -861,17 +862,21 @@ namespace ZeroKLobby.MicroLobby
                                                         g.FillRectangle(backColorBrush, r); //draw white (or black) rectangle
                                                     }
 
-                                                    g.DrawImage(bm, //draw an emoticon
-                                                                startX + MS(g, buildString.ToString(), Font),
-                                                                startY,
-                                                                16,
-                                                                16);
+                                                    g.DrawImage(bm,
+                                                        //draw an emoticon
+                                                        startX + MS(g, buildString.ToString(), Font),
+                                                        startY,
+                                                        16,
+                                                        16);
 
-                                                    TextRenderer.DrawText(g, buildString.ToString(), //draw text (that wasn't yet drawn up to *this* point)
-                                                                        Font,
-                                                                        new Point(startX, startY), TextColor.GetColor(curForeColor), sf);
-                                                    
-                                                   
+                                                    TextRenderer.DrawText(g,
+                                                        buildString.ToString(),
+                                                        //draw text (that wasn't yet drawn up to *this* point)
+                                                        Font,
+                                                        new Point(startX, startY),
+                                                        TextColor.GetColor(curForeColor),
+                                                        sf);
+
                                                     startX += bm.Width + MS(g, buildString, Font);
 
                                                     buildString.Clear(); //reset the content (because we already draw it for user)
@@ -885,7 +890,12 @@ namespace ZeroKLobby.MicroLobby
                                                     g.FillRectangle(backColorBrush, r);
                                                 }
 
-                                                TextRenderer.DrawText(g, buildString.ToString(),font, new Point(startX,startY), TextColor.GetColor(curForeColor), sf);
+                                                TextRenderer.DrawText(g,
+                                                    buildString.ToString(),
+                                                    font,
+                                                    new Point(startX, startY),
+                                                    TextColor.GetColor(curForeColor),
+                                                    sf);
 
                                                 // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor)); //is slow for slow gpu IMO
 
@@ -910,7 +920,12 @@ namespace ZeroKLobby.MicroLobby
                                                     g.FillRectangle(backColorBrush, r);
                                                 }
                                                 // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor)); //is slow for slow gpu IMO
-                                                TextRenderer.DrawText(g, buildString.ToString(), font, new Point(startX, startY), TextColor.GetColor(curForeColor), sf);
+                                                TextRenderer.DrawText(g,
+                                                    buildString.ToString(),
+                                                    font,
+                                                    new Point(startX, startY),
+                                                    TextColor.GetColor(curForeColor),
+                                                    sf);
 
                                                 startX += MS(g, buildString, font); //textSizes[32]
 
@@ -931,8 +946,12 @@ namespace ZeroKLobby.MicroLobby
                                                     var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
                                                     g.FillRectangle(backColorBrush, r);
                                                 }
-                                                
-                                                 TextRenderer.DrawText(g, buildString.ToString(), font, new Point(startX, startY), TextColor.GetColor(curForeColor)); //is slow for slow gpu IMO
+
+                                                TextRenderer.DrawText(g,
+                                                    buildString.ToString(),
+                                                    font,
+                                                    new Point(startX, startY),
+                                                    TextColor.GetColor(curForeColor)); //is slow for slow gpu IMO
 
                                                 startX += MS(g, buildString, font); //textSizes[32]
 
@@ -946,7 +965,10 @@ namespace ZeroKLobby.MicroLobby
                                                 underline = !underline;
                                                 font.SafeDispose();
                                                 if (underline) font = new Font(Font, FontStyle.Underline);
-                                                else {font = new Font(Font, FontStyle.Regular);}
+                                                else
+                                                {
+                                                    font = new Font(Font, FontStyle.Regular);
+                                                }
                                                 break;
                                             case TextColor.NewColorChar:
                                                 //draw whats previously in the string
@@ -956,7 +978,11 @@ namespace ZeroKLobby.MicroLobby
                                                     var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
                                                     g.FillRectangle(backColorBrush, r);
                                                 }
-                                                TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor)); //is slow for slow gpu IMO
+                                                TextRenderer.DrawText(g,
+                                                    buildString.ToString(),
+                                                    font,
+                                                    new Point((int)startX, startY),
+                                                    TextColor.GetColor(curForeColor)); //is slow for slow gpu IMO
 
                                                 startX += MS(g, buildString.ToString(), font); //textSizes[32]
 
@@ -977,10 +1003,13 @@ namespace ZeroKLobby.MicroLobby
                                                 }
                                                 else //if highlighting then:
                                                 {
-                                                    pastForeColor = Convert.ToInt32(line.ToString().Substring(1, 2)); //remember what color this text suppose to be (will be restored to the text on the right if highlighting only happen to text on the left) 
-                                                    
+                                                    pastForeColor = Convert.ToInt32(line.ToString().Substring(1, 2));
+                                                        //remember what color this text suppose to be (will be restored to the text on the right if highlighting only happen to text on the left) 
+
                                                     //check to make sure that FC and BC are in range 0-32
-                                                    if (pastForeColor > TextColor.colorRange) pastForeColor = displayLines[curLine].TextColor; //only happen on exceptional case (this is only for safety, no significant whatsoever)
+                                                    if (pastForeColor > TextColor.colorRange)
+                                                        pastForeColor = displayLines[curLine].TextColor;
+                                                            //only happen on exceptional case (this is only for safety, no significant whatsoever)
                                                 }
 
                                                 //remove the color codes from the string
@@ -990,7 +1019,8 @@ namespace ZeroKLobby.MicroLobby
 
                                             default:
                                                 //random symbol safety check (symbols to skip drawing)
-                                                if((int)ch[0] > Int16.MaxValue) //random symbol can mess up graphic object "g" in Linux! which cause nothing to be drawn after the symbol
+                                                if ((int)ch[0] > Int16.MaxValue)
+                                                    //random symbol can mess up graphic object "g" in Linux! which cause nothing to be drawn after the symbol
                                                 {
                                                     if (curBackColor != backColor)
                                                     {
@@ -999,26 +1029,36 @@ namespace ZeroKLobby.MicroLobby
                                                         g.FillRectangle(backColorBrush, r);
                                                     }
 
-
-                                                    TextRenderer.DrawText(g, buildString.ToString(), font, new Point(startX,startY), TextColor.GetColor(curForeColor), sf );
+                                                    TextRenderer.DrawText(g,
+                                                        buildString.ToString(),
+                                                        font,
+                                                        new Point(startX, startY),
+                                                        TextColor.GetColor(curForeColor),
+                                                        sf);
 
                                                     startX += MS(g, buildString.ToString(), font);
                                                     int symbolWidth;
-                                                    using (var tmpBuffer = new Bitmap(LineSize,LineSize, PixelFormat.Format32bppPArgb))
-                                                    using (var tmpG = Graphics.FromImage(tmpBuffer)) //temporary graphic object that can be messed up independently
+                                                    using (var tmpBuffer = new Bitmap(LineSize, LineSize, PixelFormat.Format32bppPArgb))
+                                                    using (var tmpG = Graphics.FromImage(tmpBuffer))
+                                                        //temporary graphic object that can be messed up independently
                                                     {
                                                         var randomChar = ch[0].ToString();
                                                         symbolWidth = MS(tmpG, randomChar, font);
                                                         if (symbolWidth > 0) //don't draw when symbol width == 0 (symptom obtained from trial-n-error)
                                                         {
-                                                            TextRenderer.DrawText(g, randomChar, font, new Point(startX,startY), TextColor.GetColor(curForeColor), sf);
+                                                            TextRenderer.DrawText(g,
+                                                                randomChar,
+                                                                font,
+                                                                new Point(startX, startY),
+                                                                TextColor.GetColor(curForeColor),
+                                                                sf);
                                                         }
                                                     }
                                                     startX += symbolWidth;
 
                                                     line.Remove(0, i);
                                                     line.Remove(0, 1);
-                                                    i= -1;
+                                                    i = -1;
 
                                                     buildString.Clear();
 
@@ -1032,18 +1072,24 @@ namespace ZeroKLobby.MicroLobby
                                                 //curHighChar is "the char where highlight end"
                                                 //j is "the char being processed here"
                                                 if (startHighLine >= 0 && //highlight is active
-                                                    ((curLine >= startHighLine && curLine <= curHighLine) || //processing in between highlight (if highlight is upward)
-                                                        (curLine <= startHighLine && curLine >= curHighLine)))  //processing in between highlight (if highlight is downward)
+                                                    ((curLine >= startHighLine && curLine <= curHighLine) ||
+                                                     //processing in between highlight (if highlight is upward)
+                                                     (curLine <= startHighLine && curLine >= curHighLine)))
+                                                    //processing in between highlight (if highlight is downward)
                                                 {
                                                     if ((curLine > startHighLine && curLine < curHighLine) ||
-                                                        (curLine == startHighLine && j >= startHighChar && (curLine <= curHighLine && j < curHighChar || curLine < curHighLine)) ||
-                                                        (curLine == curHighLine && j < curHighChar && (curLine >= startHighLine && j >= startHighChar || curLine > startHighLine)))
+                                                        (curLine == startHighLine && j >= startHighChar &&
+                                                         (curLine <= curHighLine && j < curHighChar || curLine < curHighLine)) ||
+                                                        (curLine == curHighLine && j < curHighChar &&
+                                                         (curLine >= startHighLine && j >= startHighChar || curLine > startHighLine)))
                                                     {
                                                         highlight = true;
                                                     }
                                                     else if ((curLine < startHighLine && curLine > curHighLine) ||
-                                                                (curLine == startHighLine && j < startHighChar && (curLine >= curHighLine && j >= curHighChar || curLine > curHighLine)) ||
-                                                                (curLine == curHighLine && j >= curHighChar && (curLine <= startHighLine && j < startHighChar || curLine < startHighLine)))
+                                                             (curLine == startHighLine && j < startHighChar &&
+                                                              (curLine >= curHighLine && j >= curHighChar || curLine > curHighLine)) ||
+                                                             (curLine == curHighLine && j >= curHighChar &&
+                                                              (curLine <= startHighLine && j < startHighChar || curLine < startHighLine)))
                                                     {
                                                         highlight = true;
                                                     }
@@ -1052,7 +1098,8 @@ namespace ZeroKLobby.MicroLobby
                                                 else highlight = false;
                                                 ++j;
 
-                                                if (highlight != oldHighlight) //at highlight border (where left & right is highlight or not highlight)
+                                                if (highlight != oldHighlight)
+                                                    //at highlight border (where left & right is highlight or not highlight)
                                                 {
                                                     oldHighlight = highlight;
 
@@ -1066,15 +1113,15 @@ namespace ZeroKLobby.MicroLobby
 
                                                     //draw text (that wasn't yet drawn up to *this* point)
                                                     TextRenderer.DrawText(g,
-                                                                        buildString.ToString(),
-                                                                        font,
-                                                                        new Point(startX, startY),
-                                                                        TextColor.GetColor(curForeColor), sf);
-
+                                                        buildString.ToString(),
+                                                        font,
+                                                        new Point(startX, startY),
+                                                        TextColor.GetColor(curForeColor),
+                                                        sf);
 
                                                     startX += MS(g, buildString.ToString(), font); //textSizes[32]
 
-                                                    buildString.Clear();//reset the content (because we already draw it for user)
+                                                    buildString.Clear(); //reset the content (because we already draw it for user)
 
                                                     //remove whats drawn from string
                                                     line.Remove(0, i);
@@ -1118,7 +1165,7 @@ namespace ZeroKLobby.MicroLobby
                             buildString.Clear();
                         } //loop line
                         font.Dispose();
-                        e.Graphics.DrawImageUnscaled(buffer, 0, 0);
+                        //e.Graphics.DrawImageUnscaled(buffer, 0, 0);
                     }
                     // var coords = displayRect
                     ButtonRenderer.DrawButton(g,
