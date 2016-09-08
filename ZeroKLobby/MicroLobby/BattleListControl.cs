@@ -265,7 +265,6 @@ namespace ZeroKLobby.MicroLobby
                 y + (int)3,
                 (int)70,
                 (int)70);
-            //g.DrawString("Open a new battle.", BattleIcon.TitleFont, BattleIcon.TextBrush, x + scaledMapCellWidth, y + (int)3);
             TextRenderer.DrawText(g, "Open a new battle.", BattleIcon.TitleFont, new Point(x + scaledMapCellWidth, y + 3), Config.TextColor);
             openBattlePosition = new Point(x, y);
             x += scaledIconWidth;
