@@ -28,6 +28,7 @@ namespace ZkLobbyServer
         public string Engine { get; set; }
         public string Game { get; set; }
         public IPlanetwarsEventCreator PlanetWarsEventCreator { get; private set; }
+        public MatchMaker MatchMaker { get; private set; }
 
         public string Version { get; private set; }
 
@@ -43,6 +44,7 @@ namespace ZkLobbyServer
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
             chatRelay = new ChatRelay(this, new Secrets().GetNightwatchPassword(), new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai" });
             ChannelManager = new ChannelManager(this);
+            MatchMaker = new MatchMaker(this);
         }
 
         /// <summary>

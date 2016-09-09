@@ -546,7 +546,7 @@ namespace LobbyClient
             public string Name { get; set; }
             public string Description { get; set; }
             public List<string> Maps { get; set; } = new List<string>();
-            public int MaxTeamSize { get; set; }
+            public int MaxFriendCount { get; set; }
         }
         public List<Queue> PossibleQueues { get; set; }
     }
