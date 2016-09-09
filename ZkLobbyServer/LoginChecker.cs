@@ -43,7 +43,11 @@ namespace ZkLobbyServer
             }
 
             int entry;
-            if (connectionAttempts.TryGetValue(ip, out entry) && entry > MaxConnectionAttempts) return false;
+            if (connectionAttempts.TryGetValue(ip, out entry) && entry > MaxConnectionAttempts)
+            {
+                Trace.TraceInformation("Blocking IP {0} due to too many connection attempts", ip);
+                return false;
+            }
             return true;
         }
 
