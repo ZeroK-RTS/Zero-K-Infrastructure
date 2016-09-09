@@ -11,7 +11,7 @@ namespace ZkLobbyServer
     {
         private ConcurrentDictionary<string, UserEntry> mmUsers = new ConcurrentDictionary<string, UserEntry>();
 
-        public List<MatchMakerSetup.Queue> PossibleQueues = new List<MatchMakerSetup.Queue>();
+        private List<MatchMakerSetup.Queue> possibleQueues = new List<MatchMakerSetup.Queue>();
         private ZkLobbyServer server;
 
 
@@ -20,7 +20,7 @@ namespace ZkLobbyServer
             this.server = server;
             using (var db = new ZkDataContext())
             {
-                PossibleQueues.Add(new MatchMakerSetup.Queue()
+                possibleQueues.Add(new MatchMakerSetup.Queue()
                 {
                     Name = "1v1",
                     Description = "Duels with reasonable skill difference",
@@ -34,7 +34,7 @@ namespace ZkLobbyServer
                             .ToList()
                 });
 
-                PossibleQueues.Add(new MatchMakerSetup.Queue()
+                possibleQueues.Add(new MatchMakerSetup.Queue()
                 {
                     Name = "Teams",
                     Description = "Small teams 2v2 to 4v4 with reasonable skill difference",
@@ -53,13 +53,13 @@ namespace ZkLobbyServer
 
         public async Task OnLoginAccepted(ICommandSender client)
         {
-            await client.SendCommand(new MatchMakerSetup() { PossibleQueues = PossibleQueues });
+            await client.SendCommand(new MatchMakerSetup() { PossibleQueues = possibleQueues });
         }
 
         public async Task StartMatchMaker(ConnectedUser user, StartMatchMaker cmd)
         {
             var wantedQueueNames = cmd.Queues?.ToList() ?? new List<string>();
-            var wantedQueues = PossibleQueues.Where(x => wantedQueueNames.Contains(x.Name)).ToList();
+            var wantedQueues = possibleQueues.Where(x => wantedQueueNames.Contains(x.Name)).ToList();
             wantedQueueNames = wantedQueues.Select(x => x.Name).ToList();
 
             if (wantedQueues.Count == 0) // delete
@@ -67,20 +67,20 @@ namespace ZkLobbyServer
                 UserEntry entry;
                 mmUsers.TryRemove(user.Name, out entry);
                 await user.SendCommand(new MatchMakerStatus()); // left queue
-
                 return;
             }
 
-            if ((cmd.InviteFriends != null) && (cmd.InviteFriends.Count > 0))
+            var friends = cmd.InviteFriends;
+            if ((friends != null) && (friends.Count > 0))
             {
-                var notOnline = cmd.InviteFriends.Where(y => !server.ConnectedUsers.ContainsKey(y)).ToList();
+                var notOnline = friends.Where(y => !server.ConnectedUsers.ContainsKey(y)).ToList();
                 if (notOnline.Count > 0)
                 {
                     await user.SendCommand(new MatchMakerStartFailed() { Reason = $"Invite failed, {string.Join(", ", notOnline)} not online" });
                     return;
                 }
 
-                foreach (var f in cmd.InviteFriends)
+                foreach (var f in friends)
                 {
                     ConnectedUser fUser;
                     if (server.ConnectedUsers.TryGetValue(f, out fUser))
@@ -90,7 +90,7 @@ namespace ZkLobbyServer
                             {
                                 Founder = user.Name,
                                 Queues = wantedQueueNames,
-                                InvitedFriends = cmd.InviteFriends,
+                                InvitedFriends = friends,
                                 SecondsRemaining = 20
                             });
 
@@ -100,7 +100,7 @@ namespace ZkLobbyServer
             }
 
             var userEntry = mmUsers.AddOrUpdate(user.Name,
-                (str) => new UserEntry(user.Name, wantedQueues, cmd.InviteFriends),
+                (str) => new UserEntry(user.Name, wantedQueues, friends),
                 (str, usr) =>
                 {
                     usr.UpdateTypes(wantedQueues);
@@ -124,8 +124,8 @@ namespace ZkLobbyServer
 
         public class UserEntry
         {
-            public int EloWidth = 50;
-            public int Size = 1;
+            public int EloWidth = 100;
+            public int Size { get; private set; }
             public List<string> Friends { get; private set; } = new List<string>();
             public string Name { get; private set; }
             public List<MatchMakerSetup.Queue> QueueTypes { get; private set; } = new List<MatchMakerSetup.Queue>();
@@ -137,6 +137,7 @@ namespace ZkLobbyServer
                 Name = name;
                 QueueTypes = queueTypes;
                 Friends = friends;
+                Size = 1 + (friends?.Count ?? 0);
                 WantedGameSizes = GetWantedSizes();
             }
 
