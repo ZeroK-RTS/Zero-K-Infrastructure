@@ -23,126 +23,18 @@ namespace ZeroKWeb.SpringieInterface
                 if (result.IsCheating) return "Cheats were enabled during this game";
 
                 var db = new ZkDataContext();
-                var context = result.LobbyStartContext;
-                AutohostMode mode = result.LobbyStartContext.Mode;
 
+                var sb = SaveSpringBattle(result, db);
 
-                var sb = new SpringBattle
-                         {
-                             HostAccountID = Account.AccountByName(db, result.LobbyStartContext.FounderName)?.AccountID,
-                             Mode = result.LobbyStartContext.Mode,
-                             Duration = result.Duration,
-                             EngineGameID = result.EngineBattleID,
-                             MapResourceID = db.Resources.Single(x => x.InternalName == context.Map).ResourceID,
-                             ModResourceID = db.Resources.Single(x => x.InternalName == context.Mod).ResourceID,
-                             HasBots = context.Bots.Any(),
-                             IsMission = context.IsMission,
-                             PlayerCount = result.ActualPlayers.Count(x => !x.IsSpectator),
-                             StartTime = result.StartTime,
-                             Title = context.Title,
-                             ReplayFileName = result.ReplayName,
-                             EngineVersion = context.EngineVersion,
-                         };
-                db.SpringBattles.InsertOnSubmit(sb);
-
-                foreach (BattlePlayerResult p in result.ActualPlayers)
-                {
-                    sb.SpringBattlePlayers.Add(new SpringBattlePlayer
-                                               {
-                                                   AccountID =  Account.AccountByName(db, p.Name).AccountID,
-                                                   AllyNumber = p.AllyNumber,
-                                                   IsInVictoryTeam = p.IsVictoryTeam,
-                                                   IsSpectator = p.IsSpectator,
-                                                   LoseTime = p.LoseTime
-                                               });
-                }
-
-                db.SaveChanges();
-
-                // awards
-                foreach (string line in result.OutputExtras.Where(x => x?.StartsWith("award") == true))
-                {
-                    string[] partsSpace = line.Substring(6).Split(new[] { ' ' }, 3);
-                    string name = partsSpace[0];
-                    string awardType = partsSpace[1];
-                    string awardText = partsSpace[2];
-
-                    // prevent hax: tourney cups and event coins are never given automatically
-                    if (awardType != null && (awardType == "gold" || awardType == "silver" || awardType == "bronze")) continue;
-                    if (awardType != null && (awardType == "goldcoin" || awardType == "silvercoin" || awardType == "bronzecoin")) continue;
-
-                    SpringBattlePlayer player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name);
-                    if (player != null)
-                    {
-                        db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward
-                                                              {
-                                                                  AccountID = player.AccountID,
-                                                                  SpringBattleID = sb.SpringBattleID,
-                                                                  AwardKey = awardType,
-                                                                  AwardDescription = awardText
-                                                              });
-                    }
-                }
-
-                // chatlogs
-                foreach (string line in result.OutputExtras.Where(x => x?.StartsWith("CHATLOG") == true))
-                {
-                    string[] partsSpace = line.Substring(8).Split(new[] { ' ' }, 2);
-                    string name = partsSpace[0];
-                    string chatlog = partsSpace[1];
-
-                    SpringBattlePlayer player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name);
-                    if (player != null)
-                    {
-                        db.LobbyChatHistories.InsertOnSubmit(new LobbyChatHistory
-                                                              {
-                                                                  IsEmote = false,
-                                                                  SayPlace = SayPlace.Game,
-                                                                  User = name,
-                                                                  Ring = false,
-                                                                  Target = "B" + sb.SpringBattleID,
-                                                                  Text = chatlog,
-                                                                  Time = DateTime.UtcNow
-                                                              });
-                    }
-                }
+                ProcessExtras(result.OutputExtras, sb, db);
 
                 var text = new StringBuilder();
-                bool isPlanetwars = false;
-                if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Count(x => !x.IsSpectator) >= 2 && sb.Duration >= GlobalConst.MinDurationForPlanetwars)
-                {
-                    // test that factions are not intermingled (each faction only has one ally number) - if they are it wasnt actually PW balanced
-                    if (
-                        sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.Account.Faction != null)
-                          .GroupBy(x => x.Account.Faction)
-                          .All(grp => grp.Select(x => x.AllyNumber).Distinct().Count() < 2))
-                    {
-                        isPlanetwars = true;
+                bool isPlanetwars = result.LobbyStartContext.Mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Count(x => !x.IsSpectator) >= 2 &&
+                                    sb.Duration >= GlobalConst.MinDurationForPlanetwars;
 
-                        
-                        List<int> winnerTeams =
-    sb.SpringBattlePlayers.Where(x => x.IsInVictoryTeam && !x.IsSpectator).Select(x => x.AllyNumber).Distinct().ToList();
-                        int? winNum = null;
-                        if (winnerTeams.Count == 1)
-                        {
-                            winNum = winnerTeams[0];
-                            if (winNum > 1)
-                            {
-                                winNum = null;
-                                text.AppendLine("ERROR: Invalid winner");
-                            } 
-                        }
+                if (isPlanetwars) ProcessPlanetWars(result, server, sb, db, text);
 
-                        PlanetWarsTurnHandler.EndTurn(context.Map, result.OutputExtras, db, winNum, sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).ToList(), text, sb, sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.AllyNumber == 0).Select(x => x.Account).ToList(), server.PlanetWarsEventCreator);
 
-                        // TODO HACK Global.PlanetWarsMatchMaker.RemoveFromRunningBattles(context.AutohostName);
-                    }
-                    else
-                    {
-                        text.AppendLine("Battle wasn't PlanetWars balanced, it counts as a normal team game only");
-                    }
-
-                }
 
                 bool noElo = (result.OutputExtras.FirstOrDefault(x => x.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture)) != null);
                 try
@@ -202,6 +94,115 @@ namespace ZeroKWeb.SpringieInterface
                 return $"{ex}\nData:\n{data}";
             }
         }
-        
+
+        private static void ProcessPlanetWars(Spring.SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, SpringBattle sb, ZkDataContext db, StringBuilder text)
+        {
+            List<int> winnerTeams = sb.SpringBattlePlayers.Where(x => x.IsInVictoryTeam && !x.IsSpectator).Select(x => x.AllyNumber).Distinct().ToList();
+            int? winNum = null;
+            if (winnerTeams.Count == 1)
+            {
+                winNum = winnerTeams[0];
+                if (winNum > 1) winNum = null;
+            }
+
+            PlanetWarsTurnHandler.EndTurn(result.LobbyStartContext.Map,
+                result.OutputExtras,
+                db,
+                winNum,
+                sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).ToList(),
+                text,
+                sb,
+                sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.AllyNumber == 0).Select(x => x.Account).ToList(),
+                server.PlanetWarsEventCreator);
+
+            // TODO HACK Global.PlanetWarsMatchMaker.RemoveFromRunningBattles(context.AutohostName);
+        }
+
+        private static SpringBattle SaveSpringBattle(Spring.SpringBattleContext result, ZkDataContext db)
+        {
+            var sb = new SpringBattle
+            {
+                HostAccountID = Account.AccountByName(db, result.LobbyStartContext.FounderName)?.AccountID,
+                Mode = result.LobbyStartContext.Mode,
+                Duration = result.Duration,
+                EngineGameID = result.EngineBattleID,
+                MapResourceID = db.Resources.Single(x => x.InternalName == result.LobbyStartContext.Map).ResourceID,
+                ModResourceID = db.Resources.Single(x => x.InternalName == result.LobbyStartContext.Mod).ResourceID,
+                HasBots = result.LobbyStartContext.Bots.Any(),
+                IsMission = result.LobbyStartContext.IsMission,
+                PlayerCount = result.ActualPlayers.Count(x => !x.IsSpectator),
+                StartTime = result.StartTime,
+                Title = result.LobbyStartContext.Title,
+                ReplayFileName = result.ReplayName,
+                EngineVersion = result.LobbyStartContext.EngineVersion,
+            };
+            db.SpringBattles.InsertOnSubmit(sb);
+
+            foreach (BattlePlayerResult p in result.ActualPlayers)
+            {
+                sb.SpringBattlePlayers.Add(new SpringBattlePlayer
+                {
+                    AccountID = Account.AccountByName(db, p.Name).AccountID,
+                    AllyNumber = p.AllyNumber,
+                    IsInVictoryTeam = p.IsVictoryTeam,
+                    IsSpectator = p.IsSpectator,
+                    LoseTime = p.LoseTime
+                });
+            }
+
+            db.SaveChanges();
+            return sb;
+        }
+
+        private static void ProcessExtras(List<string> extras, SpringBattle sb, ZkDataContext db)
+        {
+            // awards
+            foreach (string line in extras.Where(x => x?.StartsWith("award") == true))
+            {
+                string[] partsSpace = line.Substring(6).Split(new[] { ' ' }, 3);
+                string name = partsSpace[0];
+                string awardType = partsSpace[1];
+                string awardText = partsSpace[2];
+
+                // prevent hax: tourney cups and event coins are never given automatically
+                if (awardType != null && (awardType == "gold" || awardType == "silver" || awardType == "bronze")) continue;
+                if (awardType != null && (awardType == "goldcoin" || awardType == "silvercoin" || awardType == "bronzecoin")) continue;
+
+                SpringBattlePlayer player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name);
+                if (player != null)
+                {
+                    db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward
+                    {
+                        AccountID = player.AccountID,
+                        SpringBattleID = sb.SpringBattleID,
+                        AwardKey = awardType,
+                        AwardDescription = awardText
+                    });
+                }
+            }
+
+            // chatlogs
+            foreach (string line in extras.Where(x => x?.StartsWith("CHATLOG") == true))
+            {
+                string[] partsSpace = line.Substring(8).Split(new[] { ' ' }, 2);
+                string name = partsSpace[0];
+                string chatlog = partsSpace[1];
+
+                SpringBattlePlayer player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name);
+                if (player != null)
+                {
+                    db.LobbyChatHistories.InsertOnSubmit(new LobbyChatHistory
+                    {
+                        IsEmote = false,
+                        SayPlace = SayPlace.Game,
+                        User = name,
+                        Ring = false,
+                        Target = "B" + sb.SpringBattleID,
+                        Text = chatlog,
+                        Time = DateTime.UtcNow
+                    });
+                }
+            }
+        }
     }
 }
