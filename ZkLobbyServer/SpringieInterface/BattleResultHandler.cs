@@ -23,66 +23,19 @@ namespace ZeroKWeb.SpringieInterface
                 if (result.IsCheating) return "Cheats were enabled during this game";
 
                 var db = new ZkDataContext();
+                var text = new StringBuilder();
 
                 var sb = SaveSpringBattle(result, db);
 
                 ProcessExtras(result.OutputExtras, sb, db);
 
-                var text = new StringBuilder();
+
                 bool isPlanetwars = result.LobbyStartContext.Mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Count(x => !x.IsSpectator) >= 2 &&
                                     sb.Duration >= GlobalConst.MinDurationForPlanetwars;
 
                 if (isPlanetwars) ProcessPlanetWars(result, server, sb, db, text);
 
-
-
-                bool noElo = (result.OutputExtras.FirstOrDefault(x => x.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture)) != null);
-                try
-                {
-                    db.SaveChanges();
-                }
-                catch (System.Data.Linq.DuplicateKeyException ex)
-                {
-                    Trace.TraceError(ex.ToString());
-                }
-
-                Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
-
-                sb.CalculateAllElo(noElo, isPlanetwars);
-                foreach (var u in sb.SpringBattlePlayers.Where(x => !x.IsSpectator)) u.Account.CheckLevelUp();
-
-                db.SaveChanges();
-
-                try
-                {
-                    foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account)) server.PublishAccountUpdate(a);
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError("error updating extension data: {0}", ex);
-                }
-
-                foreach (Account account in sb.SpringBattlePlayers.Select(x => x.Account))
-                {
-                    if (account.Level > orgLevels[account.AccountID])
-                    {
-                        try
-                        {
-                            string message =
-                                string.Format("Congratulations {0}! You just leveled up to level {1}. {3}/Users/Detail/{2}",
-                                              account.Name,
-                                              account.Level,
-                                              account.AccountID,
-                                              GlobalConst.BaseSiteUrl);
-                            //text.AppendLine(message);
-                            server.GhostPm(account.Name, message);
-                        }
-                        catch (Exception ex)
-                        {
-                            Trace.TraceError("Error sending level up lobby message: {0}", ex);
-                        }
-                    }
-                }
+                ProcessElos(result, server, db, sb, isPlanetwars);
 
                 text.AppendLine(string.Format("BATTLE DETAILS AND REPLAY ----> {1}/Battles/Detail/{0} <-----", sb.SpringBattleID, GlobalConst.BaseSiteUrl));
                 return text.ToString();
@@ -92,6 +45,56 @@ namespace ZeroKWeb.SpringieInterface
                 var data = JsonConvert.SerializeObject(result);
                 Trace.TraceError($"{ex}\nData:\n{data}");
                 return $"{ex}\nData:\n{data}";
+            }
+        }
+
+        private static void ProcessElos(Spring.SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, ZkDataContext db, SpringBattle sb, bool isPlanetwars)
+        {
+            bool noElo = result.OutputExtras.Any(x => x?.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture) == true);
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (System.Data.Linq.DuplicateKeyException ex)
+            {
+                Trace.TraceError(ex.ToString());
+            }
+
+            Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
+
+            sb.CalculateAllElo(noElo, isPlanetwars);
+            foreach (var u in sb.SpringBattlePlayers.Where(x => !x.IsSpectator)) u.Account.CheckLevelUp();
+
+            db.SaveChanges();
+
+            try
+            {
+                foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account)) server.PublishAccountUpdate(a);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("error updating extension data: {0}", ex);
+            }
+
+            foreach (Account account in sb.SpringBattlePlayers.Select(x => x.Account))
+            {
+                if (account.Level > orgLevels[account.AccountID])
+                {
+                    try
+                    {
+                        string message = string.Format("Congratulations {0}! You just leveled up to level {1}. {3}/Users/Detail/{2}",
+                            account.Name,
+                            account.Level,
+                            account.AccountID,
+                            GlobalConst.BaseSiteUrl);
+                        //text.AppendLine(message);
+                        server.GhostPm(account.Name, message);
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError("Error sending level up lobby message: {0}", ex);
+                    }
+                }
             }
         }
 
