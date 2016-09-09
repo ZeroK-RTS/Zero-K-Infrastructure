@@ -358,9 +358,9 @@ namespace ZkLobbyServer
             if (Mode != AutohostMode.None)
             {
                 var balance = Balancer.BalanceTeams(context, true, null, null);
-                await ApplyBalanceResults(balance);
-                context.ApplyBalance(balance);
+                if (!IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
                 if (!balance.CanStart) return;
+                context.ApplyBalance(balance);
             }
 
 
@@ -597,12 +597,6 @@ namespace ZkLobbyServer
             toNotify.Clear();
 
             await SayBattle(BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server));
-
-            // put back to proper "slots"
-            foreach (var u in Users.Values) {
-                ValidateBattleStatus(u);
-                await server.Broadcast(Users.Keys, u.ToUpdateBattleStatus());
-            }
         }
 
         private void spring_SpringStarted(object sender, EventArgs e)
@@ -623,16 +617,7 @@ namespace ZkLobbyServer
 
         public void ValidateBattleStatus(UserBattleStatus ubs)
         {
-            if (spring.IsRunning)
-            {
-                var entry = spring.LobbyStartContext.Players.FirstOrDefault(x => x.Name == ubs.Name);
-                if (entry != null)
-                {
-                    ubs.AllyNumber = entry.AllyID;
-                    ubs.IsSpectator = false;
-                }
-                else ubs.IsSpectator = true;
-            } else if (Mode != AutohostMode.None)
+            if (Mode != AutohostMode.None)
             {
                 ubs.AllyNumber = 0;
             }
