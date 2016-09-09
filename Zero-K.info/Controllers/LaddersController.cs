@@ -78,7 +78,7 @@ namespace ZeroKWeb.Controllers
 
             var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             var validAwards =
-                db.SpringBattles.Where(x => x.StartTime >= monthStart && x.HasBots == false && x.ResourceByMapResourceID.FeaturedOrder != null && x.ResourceByMapResourceID.MapIsSpecial == false)
+                db.SpringBattles.Where(x => x.StartTime >= monthStart && x.HasBots == false && x.ResourceByMapResourceID.MapSupportLevel>=MapSupportLevel.Supported && x.ResourceByMapResourceID.MapIsSpecial == false)
                     .SelectMany(x => x.AccountBattleAwards)
                     .GroupBy(x => x.AwardKey);
 

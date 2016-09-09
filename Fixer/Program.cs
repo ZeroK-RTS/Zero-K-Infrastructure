@@ -565,7 +565,7 @@ namespace Fixer
         public static void SetFFATeams()
         {
             var db = new ZkDataContext();
-            foreach (var m in db.Resources.Where(x => x.FeaturedOrder != null && x.TypeID == ResourceType.Map))
+            foreach (var m in db.Resources.Where(x => x.MapSupportLevel>=MapSupportLevel.Featured && x.TypeID == ResourceType.Map))
             {
                 var lg = m.SpringBattlesByMapResourceID.Take(100).ToList();
                 double cnt = lg.Count;

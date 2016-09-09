@@ -85,6 +85,7 @@
     <Compile Include="IContentService\ResourceType.cs" />
     <Compile Include="IContentService\ReturnValue.cs" />
     <Compile Include="IContentService\ScriptMissionData.cs" />
+    <Compile Include="MapSupportLevel.cs" />
     <Compile Include="Relation.cs" />
     <Compile Include="ResizedImageCache.cs" />
     <Compile Include="ResourceInfo.cs" />
