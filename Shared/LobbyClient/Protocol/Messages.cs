@@ -581,7 +581,7 @@ namespace LobbyClient
     {
         public string Founder { get; set; }
         public List<string> InvitedFriends { get; set; } = new List<string>();
-        public List<string> OptionKeys { get; set; } = new List<string>();
+        public List<string> Queues { get; set; } = new List<string>();
         public int SecondsRemaining { get; set; }
     }
 
