@@ -311,7 +311,7 @@ namespace LobbyClient
         public void RequestDisconnect()
         {
             WasDisconnectRequested = true;
-            transport.RequestClose();
+            transport?.RequestClose();
         }
 
 
