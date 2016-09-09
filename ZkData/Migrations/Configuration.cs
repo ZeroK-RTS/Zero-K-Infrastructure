@@ -104,7 +104,7 @@ namespace ZkData.Migrations
             {
                 InternalName = "Zero-K $VERSION",
                 RapidTag = "zk:dev",
-                MapSupportLevel = MapSupportLevel.Featured,
+                MapSupportLevel = ZkData.MapSupportLevel.Featured,
                 TypeID = ResourceType.Mod,
             });
 
