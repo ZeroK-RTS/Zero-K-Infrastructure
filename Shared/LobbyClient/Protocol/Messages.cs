@@ -537,44 +537,47 @@ namespace LobbyClient
     }
 
 
+
     [Message(Origin.Server)]
-    public class QueueOption
+    public class MatchMakerSetup
     {
-        public string Key { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public List<string> Maps { get; set; } = new List<string>();
+        public class Queue
+        {
+            public string Name { get; set; }
+            public string Description { get; set; }
+            public List<string> Maps { get; set; } = new List<string>();
+        }
+        public List<Queue> PossibleQueues { get; set; }
     }
 
     [Message(Origin.Client)]
-    public class JoinQueue
+    public class StartMatchMaker
     {
-        public List<string> OptionKeys { get; set; } = new List<string>();
+        public List<string> Queues { get; set; } = new List<string>();
         public List<string> InviteFriends { get; set; } = new List<string>();
     }
 
     [Message(Origin.Server)]
-    public class QueueJoined
+    public class MatchMakerStatus
     {
-        public List<string> OptionKeys { get; set; } = new List<string>();
+        public List<string> JoinedQueues { get; set; } = new List<string>();
         public string Text { get; set; }
     }
 
     [Message(Origin.Server)]
-    public class QueueJoinFailed
+    public class MatchMakerStartOrUpdateFailed
     {
         public string Reason { get; set; }
     }
 
-
     [Message(Origin.Client)]
-    public class LeaveQueue { }
+    public class MatchMakerUpdateQueues
+    {
+        public List<string> Queues { get; set; } = new List<string>();
+    }
 
     [Message(Origin.Server)]
-    public class QueueLeft {}
-
-    [Message(Origin.Server)]
-    public class QueueInvite
+    public class MatchMakerInvite
     {
         public string Founder { get; set; }
         public List<string> InvitedFriends { get; set; } = new List<string>();
@@ -583,7 +586,7 @@ namespace LobbyClient
     }
 
     [Message(Origin.Client)]
-    public class QueueInviteResponse
+    public class MatchMakerInviteResponse
     {
         public bool Accept { get; set; }
     }
