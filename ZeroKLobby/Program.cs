@@ -332,7 +332,12 @@ namespace ZeroKLobby
                 VoteBar = new VoteBar();
                 PwBar = new PwBar();
 
-           
+                SelfUpdater.ProgramUpdated += s =>
+                {
+                    WarningBar.DisplayWarning($"New version of Zero-K launcher downloaded, restart it to apply changes",
+                        "Restart",
+                        Restart);
+                };
                 if (!Debugger.IsAttached && !Conf.DisableAutoUpdate && !IsSteamFolder) SelfUpdater.StartChecking();
 
                 SteamHandler.Connect();
