@@ -149,7 +149,9 @@
                         @if (ZeroKWeb.Global.IsZeroKAdmin)
                         {
                             <tr>
-                                <td>Support level:</td><td>@Html.EnumDropDownListFor(x=>m.MapSupportLevel)</td>
+                                <td>Support level:</td><td>
+                                    @Html.DropDownList("mapSupportLevel", EnumHelper.GetSelectList(typeof(MapSupportLevel), m.MapSupportLevel))
+                                </td>
                             </tr>
                             <tr>
                                 <td>Planetwars image:</td><td valign="middle"><img src='/img/planets/@Model.Resource.MapPlanetWarsIcon' width='@Model.Resource.PlanetWarsIconSize' /> 

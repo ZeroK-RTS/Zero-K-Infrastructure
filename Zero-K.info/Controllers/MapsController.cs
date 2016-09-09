@@ -53,7 +53,7 @@ namespace ZeroKWeb.Controllers
                                   bool? chicken,
                                   int? isDownloadable = 1,
                                   int? special = 0,
-                                  MapSupportLevel? mapSupportLevel = MapSupportLevel.None
+                                  MapSupportLevel? mapSupportLevel = null
                                   ) {
             IQueryable<Resource> ret;
             var db = FilterMaps(search,
@@ -300,7 +300,7 @@ namespace ZeroKWeb.Controllers
                         x.MapWaterLevel == null);
             }
 
-            mapSupportLevel = mapSupportLevel ?? MapSupportLevel.None;
+            mapSupportLevel = mapSupportLevel ?? MapSupportLevel.Featured;
             ret = ret.Where(x => x.MapSupportLevel >= mapSupportLevel);
             if (isDownloadable == 1) ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
             else if (isDownloadable == 0) ret = ret.Where(x => x.ResourceContentFiles.All(y => y.LinkCount <= 0));
@@ -328,7 +328,7 @@ namespace ZeroKWeb.Controllers
 
             //if (featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x => x.ResourceID);
             //else ret = ret.OrderByDescending(x => x.ResourceID);
-            ret = ret.OrderByDescending(x => x.ResourceID);
+            ret = ret.OrderByDescending(x => x.MapSupportLevel).ThenByDescending(x=>x.ResourceID);
             if (offset != null) ret = ret.Skip(offset.Value);
             ret = ret.Take(Global.AjaxScrollCount);
             return db;
