@@ -546,6 +546,7 @@ namespace LobbyClient
             public string Name { get; set; }
             public string Description { get; set; }
             public List<string> Maps { get; set; } = new List<string>();
+            public int MaxTeamSize { get; set; }
         }
         public List<Queue> PossibleQueues { get; set; }
     }
@@ -561,21 +562,17 @@ namespace LobbyClient
     public class MatchMakerStatus
     {
         public List<string> JoinedQueues { get; set; } = new List<string>();
+        public List<string> JoinedFriends { get; set; } = new List<string>();
         public string Text { get; set; }
     }
 
     [Message(Origin.Server)]
-    public class MatchMakerStartOrUpdateFailed
+    public class MatchMakerStartFailed
     {
         public string Reason { get; set; }
     }
 
-    [Message(Origin.Client)]
-    public class MatchMakerUpdateQueues
-    {
-        public List<string> Queues { get; set; } = new List<string>();
-    }
-
+    
     [Message(Origin.Server)]
     public class MatchMakerInvite
     {
