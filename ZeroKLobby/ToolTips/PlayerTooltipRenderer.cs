@@ -86,6 +86,12 @@ namespace ZeroKLobby
                 drawString("Bot");
                 newLine();
             }
+            if (user.Name == Program.TasClient.MyBattle?.FounderName)
+            {
+                drawImage(ZklResources.self_police, 16, 16);
+                drawString("Battle founder");
+                newLine();
+            }
             if (user.IsAdmin)
             {
                 drawImage(ZklResources.police, 16, 16);

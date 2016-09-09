@@ -337,10 +337,10 @@ namespace ZeroKLobby
 
         public void SwitchMusicOnOff(bool? state = null)
         {
-            if (state == null) Program.Conf.PlayMusic = waveOut.PlaybackState != PlaybackState.Playing;
-
-            if (Environment.OSVersion.Platform != PlatformID.Unix)
+            if (Environment.OSVersion.Platform != PlatformID.Unix && waveOut != null)
             {
+                if (state == null) Program.Conf.PlayMusic = waveOut.PlaybackState != PlaybackState.Playing;
+
                 if (state == false || (state == null && waveOut.PlaybackState == PlaybackState.Playing))
                 {
                     waveOut.Stop();

@@ -303,6 +303,16 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap self_police {
+            get {
+                object obj = ResourceManager.GetObject("self_police", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap smurf {
             get {
                 object obj = ResourceManager.GetObject("smurf", resourceCulture);

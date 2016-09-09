@@ -285,7 +285,10 @@ namespace LobbyClient
         private void MarkPlayerDead(string name, bool isDead)
         {
             var sp = Context.ActualPlayers.FirstOrDefault(x => x.Name == name);
-            if (sp != null) sp.LoseTime = isDead ? (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds : (int?)null;
+            if (sp != null && !Context.GameEndedOk)
+            {
+                sp.LoseTime = isDead ? (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds : (int?)null;
+            }
         }
 
         private void ParseInfolog(string text)

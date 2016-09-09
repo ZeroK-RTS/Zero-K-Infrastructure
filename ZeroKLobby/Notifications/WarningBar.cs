@@ -9,24 +9,27 @@ namespace ZeroKLobby.Notifications
 {
     public partial class WarningBar: ZklNotifyBar
     {
-        protected WarningBar(string text)
+        private Action clickAction;
+        protected WarningBar(string text, string buttonText, Action clickAction)
         {
             InitializeComponent();
             lbText.Font = Config.GeneralFont;
             lbText.Text = text;
+            if (!string.IsNullOrEmpty(buttonText)) bitmapButton1.Text = buttonText;
+            this.clickAction = clickAction;
         }
 
-        public static WarningBar DisplayWarning(string text)
+        public static WarningBar DisplayWarning(string text, string buttonText =null, Action buttonAction = null)
         {
-            var bar = new WarningBar(text);
-
-            Program.NotifySection.AddBar(bar);
+            var bar = new WarningBar(text, buttonText, buttonAction);
+            Program.NotifySection?.AddBar(bar);
             return bar;
         }
 
         private void bitmapButton1_Click(object sender, EventArgs e)
         {
             Program.NotifySection.RemoveBar(this);
+            clickAction?.Invoke();
         }
     }
 }

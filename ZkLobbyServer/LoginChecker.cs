@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
@@ -27,6 +28,29 @@ namespace ZkLobbyServer
             geoIP = new DatabaseReader(Path.Combine(geoipPath,"GeoLite2-Country.mmdb"), FileAccessMode.Memory);
         }
 
+        DateTime lastConLogReset = DateTime.UtcNow;
+        ConcurrentDictionary<string, int> connectionAttempts = new ConcurrentDictionary<string, int>();
+        const int MaxConnectionAttempts = 60;
+        const int MaxConnectionAttemptsMinutes = 60;
+
+        private bool VerifyIp(string ip)
+        {
+            if (DateTime.UtcNow.Subtract(lastConLogReset).TotalMinutes > MaxConnectionAttemptsMinutes)
+            {
+                connectionAttempts = new ConcurrentDictionary<string, int>();
+                lastConLogReset = DateTime.UtcNow;
+                return true;
+            }
+
+            int entry;
+            if (connectionAttempts.TryGetValue(ip, out entry) && entry > MaxConnectionAttempts) return false;
+            return true;
+        }
+
+        private void LogIpFailure(string ip)
+        {
+            connectionAttempts.AddOrUpdate(ip, (ipStr) => 1, (ipStr, count) => count + 1);
+        }
 
 
         public LoginResponse Login(Login login, string ip, out User user)
@@ -35,10 +59,21 @@ namespace ZkLobbyServer
             long userID = login.UserID;
             string lobbyVersion = login.LobbyVersion;
 
-            using (var db = new ZkDataContext()) {
+            using (var db = new ZkDataContext())
+            {
+                if (!VerifyIp(ip)) return new LoginResponse() {ResultCode = LoginResponse.Code.Banned, Reason = "Too many conneciton attempts"};
+
                 Account acc = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name);
-                if (acc == null) return new LoginResponse { ResultCode = LoginResponse.Code.InvalidName };
-                if (!acc.VerifyPassword(login.PasswordHash)) return new LoginResponse { ResultCode = LoginResponse.Code.InvalidPassword };
+                if (acc == null)
+                {
+                    LogIpFailure(ip);
+                    return new LoginResponse { ResultCode = LoginResponse.Code.InvalidName };
+                }
+                if (!acc.VerifyPassword(login.PasswordHash))
+                {
+                    LogIpFailure(ip);
+                    return new LoginResponse { ResultCode = LoginResponse.Code.InvalidPassword };
+                }
                 
                 acc.Country = ResolveCountry(ip);
                 if (acc.Country == null || String.IsNullOrEmpty(acc.Country)) acc.Country = "unknown";
@@ -55,6 +90,8 @@ namespace ZkLobbyServer
 
                 db.SaveChanges();
 
+
+                
 
                 var banMute = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanMute, db);
                 if (banMute != null) user.BanMute = true;
@@ -178,6 +215,7 @@ namespace ZkLobbyServer
 
         LoginResponse BlockLogin(string reason, Account acc, string ip, long user_id)
         {
+            LogIpFailure(ip);
             var str = $"Login denied for {acc.Name} IP:{ip} ID:{user_id} reason: {reason}";
             Talk(str);
             Trace.TraceInformation(str);

@@ -31,6 +31,7 @@ namespace ZeroKLobby.MicroLobby
         static Image[] bitmaps;
 
 
+
         static TextImage()
         {
             bitmaps = new Image[9];
@@ -42,7 +43,6 @@ namespace ZeroKLobby.MicroLobby
             bitmaps[soldier] = ZklResources.soldier;
             bitmaps[napoleon] = ZklResources.napoleon;
             bitmaps[grayuser] = ZklResources.grayuser;
-
 
 
             var bm = new Bitmap(ZklResources.jimi.Width, ZklResources.jimi.Height);
@@ -75,7 +75,8 @@ namespace ZeroKLobby.MicroLobby
                 if (userName == Program.TasClient.UserName) return bitmaps[self];
                 if (user.IsBot) return ZklResources.robot;
                 if (Program.TasClient.Friends.Contains(user.Name)) return ZklResources.friend;
-                if (user.IsAdmin || userName == Program.TasClient.MyBattle?.FounderName) return ZklResources.police;
+                if (userName == Program.TasClient.MyBattle?.FounderName) return ZklResources.self_police;
+                if (user.IsAdmin) return ZklResources.police;
                 if (user.EffectiveElo >= 1800) return ZklResources.napoleon;
                 if (user.EffectiveElo >= 1600) return ZklResources.soldier;
                 if (user.EffectiveElo < 1400) return ZklResources.smurf;
@@ -90,6 +91,7 @@ namespace ZeroKLobby.MicroLobby
             {
                 if (user.IsBot) return ZklResources.robot;
                 if (Program.TasClient.Friends.Contains(user.Name)) return ZklResources.friend;
+
                 if (user.IsAdmin) return ZklResources.police;
                 if (user.EffectiveElo >= 1800) return ZklResources.napoleon;
                 if (user.EffectiveElo >= 1600) return ZklResources.soldier;
