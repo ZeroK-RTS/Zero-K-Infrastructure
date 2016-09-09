@@ -60,7 +60,7 @@ namespace ZeroKWeb.SpringieInterface
                 db.SaveChanges();
 
                 // awards
-                foreach (string line in result.OutputExtras.Where(x => x.StartsWith("award")))
+                foreach (string line in result.OutputExtras.Where(x => x?.StartsWith("award") == true))
                 {
                     string[] partsSpace = line.Substring(6).Split(new[] { ' ' }, 3);
                     string name = partsSpace[0];
