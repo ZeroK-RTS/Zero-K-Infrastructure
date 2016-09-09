@@ -211,7 +211,7 @@ namespace ZkLobbyServer
             {
                 kickedPlayers.Add(new KickedPlayer() { Name = name });
                 var client = server.ConnectedUsers[name];
-                await client.Respond($"You were kicked from battle by {name} : {reason}");
+                await client.Respond($"You were kicked from battle: {reason}");
                 await client.Process(new LeaveBattle() { BattleID = BattleID });
             }
         }
