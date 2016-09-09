@@ -535,4 +535,69 @@ namespace LobbyClient
     {
         public List<string> Ignores { get; set; } = new List<string>();
     }
+
+
+    [Message(Origin.Server)]
+    public class QueueOption
+    {
+        public string Key { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public List<string> Maps { get; set; } = new List<string>();
+    }
+
+    [Message(Origin.Client)]
+    public class JoinQueue
+    {
+        public List<string> OptionKeys { get; set; } = new List<string>();
+        public List<string> InviteFriends { get; set; } = new List<string>();
+    }
+
+    [Message(Origin.Server)]
+    public class QueueJoined
+    {
+        public List<string> OptionKeys { get; set; } = new List<string>();
+        public string Text { get; set; }
+    }
+
+    [Message(Origin.Server)]
+    public class QueueJoinFailed
+    {
+        public string Reason { get; set; }
+    }
+
+
+    [Message(Origin.Client)]
+    public class LeaveQueue { }
+
+    [Message(Origin.Server)]
+    public class QueueLeft {}
+
+    [Message(Origin.Server)]
+    public class QueueInvite
+    {
+        public string Founder { get; set; }
+        public List<string> InvitedFriends { get; set; } = new List<string>();
+        public List<string> OptionKeys { get; set; } = new List<string>();
+    }
+
+    [Message(Origin.Client)]
+    public class QueueInviteResponse
+    {
+        public bool Accept { get; set; }
+    }
+
+    [Message(Origin.Server)]
+    public class AreYouReady
+    {
+        public string Text { get; set; }
+        public int SecondsRemaining { get; set; }
+    }
+
+    [Message(Origin.Client)]
+    public class AreYouReadyResponse
+    {
+        public bool Ready { get; set; }
+    }
+
 }
