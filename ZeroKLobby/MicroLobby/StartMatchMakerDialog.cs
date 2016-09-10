@@ -37,7 +37,7 @@ namespace ZeroKLobby.MicroLobby
         void okButton_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
-            Program.TasClient.MatchMakerQueueRequest(flowLayoutPanel1.Controls.OfType<CheckBox>().Select(x => x.Text));
+            Program.TasClient.MatchMakerQueueRequest(flowLayoutPanel1.Controls.OfType<CheckBox>().Where(x=>x.Checked).Select(x => x.Text));
             Close();
         }
 
