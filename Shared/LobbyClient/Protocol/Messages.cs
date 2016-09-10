@@ -546,7 +546,7 @@ namespace LobbyClient
             public string Name { get; set; }
             public string Description { get; set; }
             public List<string> Maps { get; set; } = new List<string>();
-            public int MaxFriendCount { get; set; }
+            public int MaxPartySize { get; set; }
             public int MaxSize { get; set; }
             public int MinSize { get; set; }
         }
@@ -557,14 +557,12 @@ namespace LobbyClient
     public class StartMatchMaker
     {
         public List<string> Queues { get; set; } = new List<string>();
-        public List<string> InviteFriends { get; set; } = new List<string>();
     }
 
     [Message(Origin.Server)]
     public class MatchMakerStatus
     {
         public List<string> JoinedQueues { get; set; } = new List<string>();
-        public List<string> JoinedFriends { get; set; } = new List<string>();
         public string Text { get; set; }
     }
 
@@ -573,22 +571,7 @@ namespace LobbyClient
     {
         public string Reason { get; set; }
     }
-
     
-    [Message(Origin.Server)]
-    public class MatchMakerInvite
-    {
-        public string Founder { get; set; }
-        public List<string> InvitedFriends { get; set; } = new List<string>();
-        public List<string> Queues { get; set; } = new List<string>();
-        public int SecondsRemaining { get; set; }
-    }
-
-    [Message(Origin.Client)]
-    public class MatchMakerInviteResponse
-    {
-        public bool Accept { get; set; }
-    }
 
     [Message(Origin.Server)]
     public class AreYouReady

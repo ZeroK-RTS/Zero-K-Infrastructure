@@ -24,7 +24,7 @@ namespace ZkLobbyServer
                 {
                     Name = "1v1",
                     Description = "Duels with reasonable skill difference",
-                    MaxFriendCount = 0,
+                    MaxPartySize = 1,
                     MinSize = 2,
                     MaxSize = 2,
                     Maps =
@@ -38,7 +38,7 @@ namespace ZkLobbyServer
                 {
                     Name = "Teams",
                     Description = "Small teams 2v2 to 4v4 with reasonable skill difference",
-                    MaxFriendCount = 3,
+                    MaxPartySize = 4,
                     MinSize = 4,
                     MaxSize = 8,
                     Maps =
@@ -70,37 +70,9 @@ namespace ZkLobbyServer
                 return;
             }
 
-            var friends = cmd.InviteFriends;
-            if ((friends != null) && (friends.Count > 0))
-            {
-                var notOnline = friends.Where(y => !server.ConnectedUsers.ContainsKey(y)).ToList();
-                if (notOnline.Count > 0)
-                {
-                    await user.SendCommand(new MatchMakerStartFailed() { Reason = $"Invite failed, {string.Join(", ", notOnline)} not online" });
-                    return;
-                }
-
-                foreach (var f in friends)
-                {
-                    ConnectedUser fUser;
-                    if (server.ConnectedUsers.TryGetValue(f, out fUser))
-                    {
-                        await
-                            fUser.SendCommand(new MatchMakerInvite()
-                            {
-                                Founder = user.Name,
-                                Queues = wantedQueueNames,
-                                InvitedFriends = friends,
-                                SecondsRemaining = 20
-                            });
-
-                        return; // todo handle invite wait time
-                    }
-                }
-            }
 
             var userEntry = mmUsers.AddOrUpdate(user.Name,
-                (str) => new UserEntry(user.Name, wantedQueues, friends),
+                (str) => new UserEntry(user.Name, wantedQueues),
                 (str, usr) =>
                 {
                     usr.UpdateTypes(wantedQueues);
@@ -116,7 +88,6 @@ namespace ZkLobbyServer
             return new MatchMakerStatus()
             {
                 Text = "In queue",
-                JoinedFriends = entry.Friends,
                 JoinedQueues = entry.QueueTypes.Select(x => x.Name).ToList()
             };
         }
@@ -125,19 +96,15 @@ namespace ZkLobbyServer
         public class UserEntry
         {
             public int EloWidth = 100;
-            public int Size { get; private set; }
-            public List<string> Friends { get; private set; } = new List<string>();
             public string Name { get; private set; }
             public List<MatchMakerSetup.Queue> QueueTypes { get; private set; } = new List<MatchMakerSetup.Queue>();
             public List<int> WantedGameSizes { get; private set; } = new List<int>();
 
 
-            public UserEntry(string name, List<MatchMakerSetup.Queue> queueTypes, List<string> friends)
+            public UserEntry(string name, List<MatchMakerSetup.Queue> queueTypes)
             {
                 Name = name;
                 QueueTypes = queueTypes;
-                Friends = friends;
-                Size = 1 + (friends?.Count ?? 0);
                 WantedGameSizes = GetWantedSizes();
             }
 
