@@ -507,7 +507,7 @@ namespace ZkLobbyServer
         public override void UpdateWith(BattleHeader h)
         {
             base.UpdateWith(h);
-            RunningSince = null; // todo hook to spring
+            RunningSince = null;
             FillDetails();
         }
 

@@ -547,8 +547,15 @@ namespace LobbyClient
             public string Description { get; set; }
             public List<string> Maps { get; set; } = new List<string>();
             public int MaxPartySize { get; set; }
+
+            [JsonIgnore]
             public int MaxSize { get; set; }
+
+            [JsonIgnore]
             public int MinSize { get; set; }
+
+            [JsonIgnore]
+            public AutohostMode Mode { get; set; }
         }
         public List<Queue> PossibleQueues { get; set; }
     }

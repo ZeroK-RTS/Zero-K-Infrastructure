@@ -624,7 +624,7 @@ namespace ZkLobbyServer
                 }
 
 
-                state.MatchMaker.RemoveUser(this);
+                await state.MatchMaker.RemoveUser(Name, false);
 
                 await state.Broadcast(state.ConnectedUsers.Values, new UserDisconnected() { Name = Name, Reason = reason });
 
