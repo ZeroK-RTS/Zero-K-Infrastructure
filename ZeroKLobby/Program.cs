@@ -331,6 +331,7 @@ namespace ZeroKLobby
                 BattleBar = new BattleBar();
                 VoteBar = new VoteBar();
                 PwBar = new PwBar();
+                MatchMakerBar = new MatchMakerBar(TasClient);
 
                 SelfUpdater.ProgramUpdated += s =>
                 {
@@ -360,6 +361,8 @@ namespace ZeroKLobby
                 Application.Restart();
             }
         }
+
+        public static MatchMakerBar MatchMakerBar { get; private set; }
 
         internal static void SaveConfig() {
             lock (configLock)

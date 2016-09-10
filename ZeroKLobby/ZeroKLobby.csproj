@@ -225,6 +225,12 @@
     <Compile Include="Notifications\PwBar.Designer.cs">
       <DependentUpon>PwBar.cs</DependentUpon>
     </Compile>
+    <Compile Include="Notifications\MatchMakerBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\MatchMakerBar.Designer.cs">
+      <DependentUpon>MatchMakerBar.cs</DependentUpon>
+    </Compile>
     <Compile Include="ReplayStarter.cs" />
     <Compile Include="SelectWritableFolder.cs">
       <SubType>Form</SubType>
@@ -535,6 +541,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\VoteBar.resx">
       <DependentUpon>VoteBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\MatchMakerBar.resx">
+      <DependentUpon>MatchMakerBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Ranks.resx">
       <Generator>ResXFileCodeGenerator</Generator>

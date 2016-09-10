@@ -383,7 +383,7 @@ namespace LobbyClient
 
         public Task MatchMakerQueueRequest(IEnumerable<string> names)
         {
-            return SendCommand(new MatchMakerQueueRequest() { Queues = names.ToList() });
+            return SendCommand(new MatchMakerQueueRequest() { Queues = names?.ToList() });
         }
 
         public event EventHandler<MatchMakerSetup> MatchMakerSetupReceived = delegate { };

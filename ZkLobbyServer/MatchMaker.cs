@@ -232,7 +232,7 @@ namespace ZkLobbyServer
         {
             return new MatchMakerStatus()
             {
-                Text = $"Searching a good match, {players.Count} people in queues",
+                Text = $"Searching for a good {string.Join(", ",entry.QueueTypes.Select(x=>x.Name))}; {players.Count} people waiting",
                 JoinedQueues = entry.QueueTypes.Select(x => x.Name).ToList()
             };
         }
