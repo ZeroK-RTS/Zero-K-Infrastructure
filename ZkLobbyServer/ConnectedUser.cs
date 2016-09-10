@@ -330,13 +330,6 @@ namespace ZkLobbyServer
         {
             if (!IsLoggedIn) return;
 
-            if (state.Battles.Values.Any(y => y.FounderName == Name))
-            {
-                // already opened a battle 
-                await Respond("You already opened a battle");
-                return;
-            }
-
             if (MyBattle != null)
             {
                 await Respond("You are already in a battle");
