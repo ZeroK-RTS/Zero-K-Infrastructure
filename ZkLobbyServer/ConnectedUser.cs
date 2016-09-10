@@ -79,7 +79,7 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task Process(StartMatchMaker startMatchMaker)
+        public async Task Process(MatchMakerQueueRequest startMatchMaker)
         {
             await state.MatchMaker.StartMatchMaker(this, startMatchMaker);
         }

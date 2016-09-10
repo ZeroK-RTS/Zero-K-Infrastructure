@@ -559,6 +559,7 @@ namespace LobbyClient
         public List<string> Queues { get; set; } = new List<string>();
     }
 
+
     [Message(Origin.Server)]
     public class MatchMakerStatus
     {
@@ -567,11 +568,6 @@ namespace LobbyClient
         public string Text { get; set; }
     }
 
-    [Message(Origin.Server)]
-    public class MatchMakerQueueRequestFailed
-    {
-        public string Reason { get; set; }
-    }
     
 
     [Message(Origin.Server)]
