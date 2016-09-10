@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
@@ -212,6 +213,10 @@ namespace LobbyClient
         public event EventHandler<IReadOnlyCollection<string>> FriendListUpdated = delegate { };
 
         public event EventHandler<IReadOnlyCollection<string>> IgnoreListUpdated = delegate { };
+        public event EventHandler<MatchMakerSetup> MatchMakerSetupReceived = delegate { };
+        public event EventHandler<MatchMakerStatus> MatchMakerStatusUpdated = delegate { };
+
+        public event EventHandler<AreYouReady> AreYouReadyReceived = delegate { };
 
 
         private List<string> ignores = new List<string>();
@@ -527,6 +532,17 @@ namespace LobbyClient
         }
 
 
+        public Task MatchMakerQueueRequest(IEnumerable<string> names)
+        {
+            return SendCommand(new MatchMakerQueueRequest() { Queues = names.ToList() });
+        }
+
+
+        public Task AreYouReadyResponse(bool ready)
+        {
+            return SendCommand(new AreYouReadyResponse() { Ready = ready });
+        }
+
         
      
         /// <summary>
@@ -586,6 +602,29 @@ namespace LobbyClient
             
             BattleFound(this, newBattle);
         }
+
+        async Task Process(MatchMakerSetup setup)
+        {
+            PossibleQueues = setup.PossibleQueues;
+            MatchMakerSetupReceived(this, setup);
+        }
+
+        async Task Process(AreYouReady areYou)
+        {
+            AreYouReadyReceived(this, areYou);
+        }
+
+
+        async Task Process(MatchMakerStatus status)
+        {
+            MatchMakerJoinedQueues = status.JoinedQueues;
+            MatchMakerStatusUpdated(this, status);
+        }
+
+        public List<string> MatchMakerJoinedQueues { get; private set; } = new List<string>();
+
+
+        public List<MatchMakerSetup.Queue> PossibleQueues { get; private set; } = new List<MatchMakerSetup.Queue>();
 
         async Task Process(JoinedBattle bat)
         {
