@@ -123,7 +123,7 @@ namespace LobbyClient
             ret.Title = Title;
             ret.EngineVersion = EngineVersion;
             ret.IsMission = IsMission;
-            ret.Players = Users.Values.Where(x => x.SyncStatus != SyncStatuses.Unknown).Select(x => x.ToPlayerTeam()).ToList();
+            ret.Players = Users.Values.Select(x => x.ToPlayerTeam()).ToList();
             ret.Bots = Bots.Values.Select(x => x.ToBotTeam()).ToList();
             ret.ModOptions = new Dictionary<string, string>(ModOptions);
             ret.Mode = Mode;

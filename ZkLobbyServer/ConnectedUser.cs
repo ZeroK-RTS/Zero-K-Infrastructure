@@ -625,6 +625,9 @@ namespace ZkLobbyServer
                     await RecalcSpectators(b);
                 }
 
+
+                state.MatchMaker.RemoveUser(this);
+
                 await state.Broadcast(state.ConnectedUsers.Values, new UserDisconnected() { Name = Name, Reason = reason });
 
                 ConnectedUser connectedUser;
@@ -649,6 +652,11 @@ namespace ZkLobbyServer
             return SendCommand(new Say() { Place = SayPlace.MessageBox, Target = Name, User = Name, Text = message });
         }
 
+
+        public async Task Process(AreYouReadyResponse response)
+        {
+            await state.MatchMaker.AreYouReadyResponse(this, response);
+        }
 
         public override string ToString()
         {

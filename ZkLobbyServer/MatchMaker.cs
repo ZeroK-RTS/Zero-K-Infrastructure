@@ -2,9 +2,13 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
+using Timer = System.Timers.Timer;
 
 namespace ZkLobbyServer
 {
@@ -15,6 +19,9 @@ namespace ZkLobbyServer
         private List<MatchMakerSetup.Queue> possibleQueues = new List<MatchMakerSetup.Queue>();
         private ZkLobbyServer server;
 
+        private Timer timer;
+
+        const int TimerSeconds = 30;
 
         public MatchMaker(ZkLobbyServer server)
         {
@@ -49,6 +56,103 @@ namespace ZkLobbyServer
                             .ToList()
                 });
             }
+            timer = new Timer(TimerSeconds * 1000);
+            timer.AutoReset = true;
+            timer.Elapsed += TimerOnElapsed;
+            timer.Start();
+        }
+
+
+        private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            var realBattles = ResolveToRealBattles();
+
+            foreach (var bat in realBattles) StartBattle(bat);
+
+            SendMmInvitations();
+        }
+
+        private List<ProposedBattle> ResolveToRealBattles()
+        {
+            var lastMatchedUsers = mmUsers.Values.Where(x => x?.InvitedToPlay == true).ToList();
+
+            // force leave those not ready
+            foreach (var pl in lastMatchedUsers.Where(x => !x.LastReadyResponse))
+            {
+                // todo also ban
+                PlayerEntry entry;
+                mmUsers.TryRemove(pl.Name, out entry);
+                ConnectedUser conUser;
+                if (server.ConnectedUsers.TryGetValue(pl.Name, out conUser)) conUser.SendCommand(new MatchMakerStatus()); // left queue
+            }
+
+            var readyUsers = lastMatchedUsers.Where(x => x.LastReadyResponse).ToList();
+            var realBattles = ProposeBattles(readyUsers);
+            var readyAndStarting = readyUsers.Where(x => realBattles.Any(y => y.Players.Contains(x))).ToList();
+            server.Broadcast(readyUsers.Where(x => !realBattles.Any(y => y.Players.Contains(x))).Select(x => x.Name),
+                new AreYouReady() { Text = "Match failed, someone else was not ready" });
+
+            server.Broadcast(readyAndStarting.Select(x=>x.Name), new AreYouReady() { Text = "Match success, starting soon" });
+
+            
+            server.Broadcast(readyAndStarting.Select(x => x.Name), new MatchMakerStatus() { });
+            foreach (var usr in readyAndStarting)
+            {
+                PlayerEntry entry;
+                mmUsers.TryRemove(usr.Name, out entry);
+            }
+            return realBattles;
+        }
+
+        private void SendMmInvitations()
+        {
+            // generate next battles and send inviatation
+            var proposedBattles = ProposeBattles(mmUsers.Values.Where(x => x != null));
+            var toInvite = proposedBattles.SelectMany(x => x.Players).ToList();
+            foreach (var usr in mmUsers.Values.Where(x => x != null))
+            {
+                if (toInvite.Contains(usr))
+                {
+                    usr.InvitedToPlay = true;
+                    usr.LastReadyResponse = false;
+                }
+                else
+                {
+                    usr.InvitedToPlay = false;
+                    usr.LastReadyResponse = false;
+                }
+            }
+            server.Broadcast(toInvite.Select(x => x.Name),
+                new AreYouReady() { NeedReadyResponse = true, SecondsRemaining = TimerSeconds, Text = "Match found, are you ready?" });
+        }
+
+        private async Task StartBattle(ProposedBattle bat)
+        {
+            var battleID = Interlocked.Increment(ref server.BattleCounter);
+
+            var battle = new ServerBattle(server);
+            battle.UpdateWith(new BattleHeader()
+            {
+                BattleID = battleID,
+                Founder = "#MatchMaker_" + battleID,
+                Engine = server.Engine,
+                Game = server.Game,
+                Mode = bat.Size == 2 ? AutohostMode.Game1v1 : AutohostMode.Teams,
+            });
+            server.Battles[battleID] = battle;
+
+            foreach (var plr in bat.Players)
+            {
+               battle.Users[plr.Name] = new UserBattleStatus(plr.Name, plr.LobbyUser)
+               {
+                   IsSpectator = false,
+                   AllyNumber = 0,
+               };
+            }
+
+            await server.Broadcast(server.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
+            //foreach (var usr in bat.Players) await server.ForceJoinBattle(usr.Name, battle);
+            await battle.StartGame();
         }
 
 
@@ -141,6 +245,8 @@ namespace ZkLobbyServer
             public string Name => LobbyUser.Name;
             public List<MatchMakerSetup.Queue> QueueTypes { get; private set; }
             public List<int> WantedGameSizes { get; private set; }
+            public bool LastReadyResponse;
+            public bool InvitedToPlay;
 
 
             public PlayerEntry(User user, List<MatchMakerSetup.Queue> queueTypes)
@@ -196,6 +302,27 @@ namespace ZkLobbyServer
                 if ((elo - MaxElo > owner.EloWidth) || (MinElo - elo > owner.EloWidth)) return false;
 
                 return true;
+            }
+        }
+
+        public void RemoveUser(ConnectedUser connectedUser)
+        {
+            PlayerEntry entry;
+            mmUsers.TryRemove(connectedUser.Name, out entry);
+        }
+
+        public async Task AreYouReadyResponse(ConnectedUser user, AreYouReadyResponse response)
+        {
+            PlayerEntry entry;
+            if (mmUsers.TryGetValue(user.Name, out entry))
+            {
+                if (response.Ready) entry.LastReadyResponse = true;
+                else
+                {
+                    PlayerEntry ent;
+                    mmUsers.TryRemove(user.Name, out ent);
+                    await user.SendCommand(new MatchMakerStatus());
+                }
             }
         }
     }
