@@ -20,7 +20,7 @@ namespace ZkLobbyServer
 
         private ConcurrentDictionary<string, DateTime> bannedPlayers = new ConcurrentDictionary<string, DateTime>();
         private ConcurrentDictionary<string, PlayerEntry> players = new ConcurrentDictionary<string, PlayerEntry>();
-        private List<MatchMakerSetup.Queue> queues = new List<MatchMakerSetup.Queue>();
+        private List<MatchMakerSetup.Queue> possibleQueues = new List<MatchMakerSetup.Queue>();
         private ZkLobbyServer server;
         private Timer timer;
 
@@ -29,7 +29,7 @@ namespace ZkLobbyServer
             this.server = server;
             using (var db = new ZkDataContext())
             {
-                queues.Add(new MatchMakerSetup.Queue()
+                possibleQueues.Add(new MatchMakerSetup.Queue()
                 {
                     Name = "Teams",
                     Description = "Small teams 2v2 to 4v4 with reasonable skill difference",
@@ -44,7 +44,7 @@ namespace ZkLobbyServer
                             .ToList()
                 });
 
-                queues.Add(new MatchMakerSetup.Queue()
+                possibleQueues.Add(new MatchMakerSetup.Queue()
                 {
                     Name = "1v1",
                     Description = "Duels with reasonable skill difference",
@@ -78,7 +78,7 @@ namespace ZkLobbyServer
 
         public async Task OnLoginAccepted(ICommandSender client)
         {
-            await client.SendCommand(new MatchMakerSetup() { PossibleQueues = queues });
+            await client.SendCommand(new MatchMakerSetup() { PossibleQueues = possibleQueues });
         }
 
         public async Task QueueRequest(ConnectedUser user, MatchMakerQueueRequest cmd)
@@ -90,7 +90,7 @@ namespace ZkLobbyServer
             }
 
             var wantedQueueNames = cmd.Queues?.ToList() ?? new List<string>();
-            var wantedQueues = queues.Where(x => wantedQueueNames.Contains(x.Name)).ToList();
+            var wantedQueues = possibleQueues.Where(x => wantedQueueNames.Contains(x.Name)).ToList();
 
             if (wantedQueues.Count == 0) // delete
             {
@@ -204,7 +204,7 @@ namespace ZkLobbyServer
                 Engine = server.Engine,
                 Game = server.Game,
                 Title = "MatchMaker " + battleID,
-                Mode = bat.Size == 2 ? AutohostMode.Game1v1 : AutohostMode.Teams,
+                Mode = bat.Mode,
             });
             server.Battles[battleID] = battle;
 
@@ -244,11 +244,10 @@ namespace ZkLobbyServer
             var playersBy1v1Elo =
                 otherPlayers.Where(x => x != player).OrderBy(x => Math.Abs(x.LobbyUser.Effective1v1Elo - player.LobbyUser.Effective1v1Elo)).ToList();
 
-            var testedBattles = new List<ProposedBattle>();
-            foreach (var size in player.WantedGameSizes.OrderByDescending(x => x)) testedBattles.Add(new ProposedBattle(size, player));
+            var testedBattles = player.GenerateWantedBattles();
 
             foreach (var other in playersByTeamElo)
-                foreach (var bat in testedBattles.Where(x => x.Size > 2))
+                foreach (var bat in testedBattles.Where(x => x.Mode != AutohostMode.Game1v1))
                     if (bat.CanBeAdded(other))
                     {
                         bat.AddPlayer(other);
@@ -256,7 +255,7 @@ namespace ZkLobbyServer
                     }
 
             foreach (var other in playersBy1v1Elo)
-                foreach (var bat in testedBattles.Where(x => x.Size <= 2))
+                foreach (var bat in testedBattles.Where(x => x.Mode == AutohostMode.Game1v1))
                     if (bat.CanBeAdded(other))
                     {
                         bat.AddPlayer(other);
@@ -276,27 +275,24 @@ namespace ZkLobbyServer
             public User LobbyUser { get; private set; }
             public string Name => LobbyUser.Name;
             public List<MatchMakerSetup.Queue> QueueTypes { get; private set; }
-            public List<int> WantedGameSizes { get; private set; }
 
 
             public PlayerEntry(User user, List<MatchMakerSetup.Queue> queueTypes)
             {
                 QueueTypes = queueTypes;
                 LobbyUser = user;
-                WantedGameSizes = GetWantedSizes();
             }
 
-            public List<int> GetWantedSizes()
+            public List<ProposedBattle> GenerateWantedBattles()
             {
-                var ret = new List<int>();
-                foreach (var qt in QueueTypes) for (var i = qt.MinSize; i <= qt.MaxSize; i++) ret.Add(i);
-                return ret.Distinct().OrderByDescending(x => x).ToList();
+                var ret = new List<ProposedBattle>();
+                foreach (var qt in QueueTypes) for (var i = qt.MaxSize; i >= qt.MinSize; i--) ret.Add(new ProposedBattle(i, this, qt.Mode));
+                return ret;
             }
 
             public void UpdateTypes(List<MatchMakerSetup.Queue> queueTypes)
             {
                 QueueTypes = queueTypes;
-                WantedGameSizes = GetWantedSizes();
             }
         }
 
@@ -308,10 +304,12 @@ namespace ZkLobbyServer
             public int Size;
             public int MaxElo { get; private set; } = int.MinValue;
             public int MinElo { get; private set; } = int.MaxValue;
+            public AutohostMode Mode { get; private set; }
 
-            public ProposedBattle(int size, PlayerEntry initialPlayer)
+            public ProposedBattle(int size, PlayerEntry initialPlayer, AutohostMode mode)
             {
                 Size = size;
+                Mode = mode;
                 owner = initialPlayer;
                 AddPlayer(initialPlayer);
             }
@@ -319,19 +317,25 @@ namespace ZkLobbyServer
             public void AddPlayer(PlayerEntry player)
             {
                 Players.Add(player);
-                var elo = Size > 2 ? player.LobbyUser.EffectiveElo : player.LobbyUser.Effective1v1Elo;
+                var elo = GetElo(player);
                 MinElo = Math.Min(MinElo, elo);
                 MaxElo = Math.Max(MaxElo, elo);
             }
 
             public bool CanBeAdded(PlayerEntry other)
             {
-                if (!other.WantedGameSizes.Contains(Size)) return false;
+                if (!other.GenerateWantedBattles().Any(y => (y.Size == Size) && (y.Mode == Mode))) return false;
 
-                var elo = Size > 2 ? other.LobbyUser.EffectiveElo : other.LobbyUser.Effective1v1Elo;
+                var elo = GetElo(other);
                 if ((elo - MaxElo > owner.EloWidth) || (MinElo - elo > owner.EloWidth)) return false;
 
                 return true;
+            }
+
+            private int GetElo(PlayerEntry entry)
+            {
+                if (Mode == AutohostMode.Game1v1) return entry.LobbyUser.Effective1v1Elo;
+                return entry.LobbyUser.EffectiveElo;
             }
         }
     }
