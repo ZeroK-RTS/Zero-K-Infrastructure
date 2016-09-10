@@ -348,7 +348,7 @@ public static class PlanetWarsTurnHandler
             db = new ZkDataContext();
             gal = db.Galaxies.Single(x => x.IsDefault);
             planet = gal.Planets.Single(x => x.Resource.InternalName == mapName);
-            var mapList = db.Resources.Where(x => x.MapPlanetWarsIcon != null && x.Planets.Where(p => p.GalaxyID == gal.GalaxyID).Count() == 0 && x.FeaturedOrder != null
+            var mapList = db.Resources.Where(x => x.MapPlanetWarsIcon != null && x.Planets.Where(p => p.GalaxyID == gal.GalaxyID).Count() == 0 && x.MapSupportLevel>=MapSupportLevel.Featured
                                                   && x.ResourceID != planet.MapResourceID && x.MapWaterLevel == planet.Resource.MapWaterLevel).ToList();
             if (mapList.Count > 0)
             {

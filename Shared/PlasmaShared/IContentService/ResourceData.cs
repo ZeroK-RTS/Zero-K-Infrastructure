@@ -18,5 +18,6 @@ namespace PlasmaShared
 
         public ResourceData() { }
 
+        public MapSupportLevel MapSupportLevel;
     }
 }

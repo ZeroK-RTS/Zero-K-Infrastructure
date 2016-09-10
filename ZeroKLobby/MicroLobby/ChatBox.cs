@@ -96,10 +96,11 @@ namespace ZeroKLobby.MicroLobby
                     line = new HistoryLine(line.Text);
 
                 var splitText = line.Text.Replace("\r\n", "\n").Replace("\\n", "\n").Split('\n');
+
                 AppendText(splitText[0]);
                 string padding = (line is TopicLine) ? "" : "        "; //padding to avoid player spoofing different player using multi-line & color & formating
                 for (int i = 1; i < splitText.Length;i++ )
-                    AppendText(padding + splitText[i]);
+                    AppendText(padding + splitText[i], line is SaidExLine ? TextColor.emote: TextColor.text);
             }
         }
 

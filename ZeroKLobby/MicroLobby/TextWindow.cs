@@ -147,10 +147,6 @@ namespace ZeroKLobby.MicroLobby
             InitializeDisplayLines();
         }
 
-        public void AppendText(string newLine)
-        {
-            AppendText(newLine, TextColor.text);
-        }
 
         public void ClearTextWindow()
         {
@@ -449,7 +445,7 @@ namespace ZeroKLobby.MicroLobby
             MaxTextLines = MaxTextLines + 1;
         }
 
-        private void AppendText(string newLine, int color)
+        public void AppendText(string newLine, int color = TextColor.text)
         {
             try
             {

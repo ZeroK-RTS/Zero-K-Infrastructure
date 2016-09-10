@@ -196,7 +196,7 @@ namespace GalaxyDesigner
 					}
 				}
 
-				Maps = db.Resources.Where(x => x.MapPlanetWarsIcon != null && x.FeaturedOrder != null).ToList();
+				Maps = db.Resources.Where(x => x.MapPlanetWarsIcon != null && x.MapSupportLevel>=MapSupportLevel.Featured).ToList();
 				StructureTypes = db.StructureTypes.ToList();
 				GalaxyUpdated();
 			}

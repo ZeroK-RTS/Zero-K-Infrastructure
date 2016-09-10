@@ -134,6 +134,8 @@ namespace ZkLobbyServer
 
                 await SendCommand(new FriendList() { Friends = connectedUser.Friends.ToList() });
                 await SendCommand(new IgnoreList() { Ignores = connectedUser.Ignores.ToList() });
+
+                await state.MatchMaker.OnLoginAccepted(this);
             }
             else
             {

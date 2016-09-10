@@ -34,7 +34,7 @@
         </a>
     </div>
     <h2>@m.InternalName 
-	@if (m.FeaturedOrder != null) {
+	@if (m.MapSupportLevel >= MapSupportLevel.Featured) {
 		<img src="/img/star_40.png" title="Featured" alt="Featured">
 	}
 	</h2>
@@ -149,16 +149,10 @@
                         @if (ZeroKWeb.Global.IsZeroKAdmin)
                         {
                             <tr>
-                                <td>Supported:</td><td>@Html.BoolSelect("supported", m.MapIsSupported, "?")</td>
+                                <td>Support level:</td><td>
+                                    @Html.DropDownList("mapSupportLevel", EnumHelper.GetSelectList(typeof(MapSupportLevel), m.MapSupportLevel))
+                                </td>
                             </tr>
-                            <tr>
-                                <td>Featured order:</td><td>@Html.TextBox("featuredOrder", Model.Resource.FeaturedOrder)</td>
-                            </tr>
-                            <tr><td>Springie commands</td><td>
-                                <!-- site down, remove or replace > <a href="http://knorke.darkstars.co.uk/startboxxy.html?map=@(m.InternalName)" target="_blank">Boxxy</a><br/></!-->
-                                @Html.TextArea("springieCommands", m.MapSpringieCommands, 8, 30, null)
-                            </td></tr>    
-        
                             <tr>
                                 <td>Planetwars image:</td><td valign="middle"><img src='/img/planets/@Model.Resource.MapPlanetWarsIcon' width='@Model.Resource.PlanetWarsIconSize' /> 
                                 @Html.ActionLink("pick new", "PlanetImageSelect", new { resourceID = Model.Resource.ResourceID })</td>

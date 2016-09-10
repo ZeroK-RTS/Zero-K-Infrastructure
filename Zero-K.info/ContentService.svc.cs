@@ -37,7 +37,7 @@ namespace ZeroKWeb
             if (type == ResourceType.Mod) ret = ret.Where(x => x.TypeID == ResourceType.Mod);
             string joinedWords = string.Join(" ", words);
             var test = ret.Where(x => x.InternalName == joinedWords);
-            if (test.Any()) return test.OrderByDescending(x => -x.FeaturedOrder).AsEnumerable().Select(PlasmaServer.ToResourceData).ToList();
+            if (test.Any()) return test.OrderByDescending(x => x.MapSupportLevel).AsEnumerable().Select(PlasmaServer.ToResourceData).ToList();
             int i;
             if (words.Length == 1 && int.TryParse(words[0], out i)) ret = ret.Where(x => x.ResourceID == i);
             else
@@ -49,7 +49,7 @@ namespace ZeroKWeb
                 }
             }
             ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
-            return ret.OrderByDescending(x => -x.FeaturedOrder).Take(400).ToList().Select(PlasmaServer.ToResourceData).ToList();
+            return ret.OrderByDescending(x => x.MapSupportLevel).Take(400).ToList().Select(PlasmaServer.ToResourceData).ToList();
         }
 
 

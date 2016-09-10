@@ -28,6 +28,7 @@ namespace ZkLobbyServer
         public string Engine { get; set; }
         public string Game { get; set; }
         public IPlanetwarsEventCreator PlanetWarsEventCreator { get; private set; }
+        public MatchMaker MatchMaker { get; private set; }
 
         public string Version { get; private set; }
 
@@ -43,6 +44,7 @@ namespace ZkLobbyServer
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
             chatRelay = new ChatRelay(this, new Secrets().GetNightwatchPassword(), new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai" });
             ChannelManager = new ChannelManager(this);
+            MatchMaker = new MatchMaker(this);
         }
 
         /// <summary>
@@ -229,6 +231,20 @@ namespace ZkLobbyServer
                 await Broadcast(ConnectedUsers.Values, conus.User);
             }
         }
+
+        public async Task RemoveBattle(Battle battle)
+        {
+            foreach (var u in battle.Users.Keys)
+            {
+                ConnectedUser connectedUser;
+                if (ConnectedUsers.TryGetValue(u, out connectedUser)) connectedUser.MyBattle = null;
+                await Broadcast(ConnectedUsers.Values, new LeftBattle() { BattleID = battle.BattleID, User = u });
+            }
+            ServerBattle bat;
+            if (Battles.TryRemove(battle.BattleID, out bat)) bat.Dispose();
+            await Broadcast(ConnectedUsers.Values, new BattleRemoved() { BattleID = battle.BattleID });
+        }
+
 
         public async Task SendSiteToLobbyCommand(string user, SiteToLobbyCommand command)
         {

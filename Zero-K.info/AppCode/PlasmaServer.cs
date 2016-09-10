@@ -30,8 +30,7 @@ namespace ZeroKWeb
                  MapIsTeams = r.MapIsTeams,
                  MapIsFfa = r.MapIsFfa,
                  MapIsSpecial = r.MapIsSpecial,
-                 MapIsSupported = r.MapIsSupported,
-                 FeaturedOrder = r.FeaturedOrder,
+                 MapSupportLevel = r.MapSupportLevel
              };
              return ret;
          }

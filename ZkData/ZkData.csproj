@@ -216,6 +216,10 @@
     <Compile Include="Migrations\201609040955361_OptionalHostIDAndMode.Designer.cs">
       <DependentUpon>201609040955361_OptionalHostIDAndMode.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201609092030453_MapSupportLevel.cs" />
+    <Compile Include="Migrations\201609092030453_MapSupportLevel.Designer.cs">
+      <DependentUpon>201609092030453_MapSupportLevel.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="Enums\TreatyState.cs" />
@@ -455,6 +459,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609040955361_OptionalHostIDAndMode.resx">
       <DependentUpon>201609040955361_OptionalHostIDAndMode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609092030453_MapSupportLevel.resx">
+      <DependentUpon>201609092030453_MapSupportLevel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

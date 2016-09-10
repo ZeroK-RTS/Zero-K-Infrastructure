@@ -535,4 +535,60 @@ namespace LobbyClient
     {
         public List<string> Ignores { get; set; } = new List<string>();
     }
+
+
+
+    [Message(Origin.Server)]
+    public class MatchMakerSetup
+    {
+        public class Queue
+        {
+            public string Name { get; set; }
+            public string Description { get; set; }
+            public List<string> Maps { get; set; } = new List<string>();
+            public int MaxPartySize { get; set; }
+
+            [JsonIgnore]
+            public int MaxSize { get; set; }
+
+            [JsonIgnore]
+            public int MinSize { get; set; }
+
+            [JsonIgnore]
+            public AutohostMode Mode { get; set; }
+        }
+        public List<Queue> PossibleQueues { get; set; }
+    }
+
+    [Message(Origin.Client)]
+    public class MatchMakerQueueRequest
+    {
+        public List<string> Queues { get; set; } = new List<string>();
+    }
+
+
+    [Message(Origin.Server)]
+    public class MatchMakerStatus
+    {
+        public bool MatchMakerEnabled => JoinedQueues?.Count > 0;
+        public List<string> JoinedQueues { get; set; } = new List<string>();
+        public string Text { get; set; }
+    }
+
+    
+
+    [Message(Origin.Server)]
+    public class AreYouReady
+    {
+        public bool NeedReadyResponse { get; set; }
+        public string Text { get; set; }
+        public int SecondsRemaining { get; set; } = 10;
+    }
+
+    [Message(Origin.Client)]
+    public class AreYouReadyResponse
+    {
+        public bool Ready { get; set; }
+    }
+
 }
