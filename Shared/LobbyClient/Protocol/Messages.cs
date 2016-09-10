@@ -554,7 +554,7 @@ namespace LobbyClient
     }
 
     [Message(Origin.Client)]
-    public class StartMatchMaker
+    public class MatchMakerQueueRequest
     {
         public List<string> Queues { get; set; } = new List<string>();
     }
@@ -568,7 +568,7 @@ namespace LobbyClient
     }
 
     [Message(Origin.Server)]
-    public class MatchMakerStartFailed
+    public class MatchMakerQueueRequestFailed
     {
         public string Reason { get; set; }
     }
