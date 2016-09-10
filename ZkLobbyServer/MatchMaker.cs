@@ -130,7 +130,7 @@ namespace ZkLobbyServer
         {
             var battleID = Interlocked.Increment(ref server.BattleCounter);
 
-            var battle = new ServerBattle(server);
+            var battle = new ServerBattle(server, true);
             battle.UpdateWith(new BattleHeader()
             {
                 BattleID = battleID,
@@ -143,16 +143,18 @@ namespace ZkLobbyServer
 
             foreach (var plr in bat.Players)
             {
-               battle.Users[plr.Name] = new UserBattleStatus(plr.Name, plr.LobbyUser)
-               {
-                   IsSpectator = false,
-                   AllyNumber = 0,
-               };
+                battle.Users[plr.Name] = new UserBattleStatus(plr.Name, plr.LobbyUser)
+                {
+                    IsSpectator = false,
+                    AllyNumber = 0,
+                };
             }
 
-            await server.Broadcast(server.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
-            //foreach (var usr in bat.Players) await server.ForceJoinBattle(usr.Name, battle);
             await battle.StartGame();
+
+            // also join in lobby
+            await server.Broadcast(server.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
+            foreach (var usr in bat.Players) await server.ForceJoinBattle(usr.Name, battle);
         }
 
 

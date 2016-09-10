@@ -18,8 +18,6 @@ namespace ZkLobbyServer
         private ZkLobbyServer state;
         public User User = new User();
         public HashSet<string> FriendBy { get; set; }
-
-
         public HashSet<string> Friends { get; set; }
         public HashSet<string> IgnoredBy { get; set; }
         public HashSet<string> Ignores { get; set; }
@@ -340,7 +338,7 @@ namespace ZkLobbyServer
 
             openBattle.Header.BattleID = battleID;
             openBattle.Header.Founder = Name;
-            var battle = new ServerBattle(state);
+            var battle = new ServerBattle(state, false);
             battle.UpdateWith(openBattle.Header);
             state.Battles[battleID] = battle;
 
@@ -669,7 +667,7 @@ namespace ZkLobbyServer
             if (battle.Users.ContainsKey(Name))
                 if (battle.Users.Count == 1) // last user remove entire battle
                 {
-                    await RemoveBattle(battle);
+                    await state.RemoveBattle(battle);
                 }
                 else
                 {
@@ -682,29 +680,9 @@ namespace ZkLobbyServer
                         BotBattleStatus obs;
                         if (battle.Bots.TryRemove(b.Name, out obs)) await state.Broadcast(battle.Users.Keys, new RemoveBot() { Name = b.Name });
                     }
-                    /*
-                    if (battle.FounderName == Name)
-                    {
-                        battle.FounderName = "#" + battle.BattleID.ToString();
-                        await
-                            state.Broadcast(state.ConnectedUsers.Values,
-                                new BattleUpdate() { Header = new BattleHeader() { BattleID = battle.BattleID, Founder = battle.FounderName } });
-                    }*/
                 }
         }
 
 
-        private async Task RemoveBattle(Battle battle)
-        {
-            foreach (var u in battle.Users.Keys)
-            {
-                ConnectedUser connectedUser;
-                if (state.ConnectedUsers.TryGetValue(u, out connectedUser)) connectedUser.MyBattle = null;
-                await state.Broadcast(state.ConnectedUsers.Values, new LeftBattle() { BattleID = battle.BattleID, User = u });
-            }
-            ServerBattle bat;
-            if (state.Battles.TryRemove(battle.BattleID, out bat)) bat.Dispose();
-            await state.Broadcast(state.ConnectedUsers.Values, new BattleRemoved() { BattleID = battle.BattleID });
-        }
     }
 }

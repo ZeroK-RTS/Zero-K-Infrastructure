@@ -232,6 +232,20 @@ namespace ZkLobbyServer
             }
         }
 
+        private async Task RemoveBattle(Battle battle)
+        {
+            foreach (var u in battle.Users.Keys)
+            {
+                ConnectedUser connectedUser;
+                if (ConnectedUsers.TryGetValue(u, out connectedUser)) connectedUser.MyBattle = null;
+                await Broadcast(ConnectedUsers.Values, new LeftBattle() { BattleID = battle.BattleID, User = u });
+            }
+            ServerBattle bat;
+            if (Battles.TryRemove(battle.BattleID, out bat)) bat.Dispose();
+            await Broadcast(ConnectedUsers.Values, new BattleRemoved() { BattleID = battle.BattleID });
+        }
+
+
         public async Task SendSiteToLobbyCommand(string user, SiteToLobbyCommand command)
         {
             ConnectedUser conUs;

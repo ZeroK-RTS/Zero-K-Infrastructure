@@ -47,6 +47,10 @@ namespace ZkLobbyServer
         public ZkLobbyServer server;
         public Spring spring;
 
+
+        public bool IsMatchMakerBattle { get; private set; }
+
+
         static ServerBattle()
         {
             springPaths = new SpringPaths(GlobalConst.SpringieDataDir, false);
@@ -64,7 +68,7 @@ namespace ZkLobbyServer
                     .ToDictionary(x => x.Shortcut, x => x);
         }
 
-        public ServerBattle(ZkLobbyServer server)
+        public ServerBattle(ZkLobbyServer server, bool isMatchMakerBattle)
         {
             this.server = server;
 
@@ -72,6 +76,7 @@ namespace ZkLobbyServer
             pollTimer.Enabled = false;
             pollTimer.AutoReset = false;
             pollTimer.Elapsed += pollTimer_Elapsed;
+            IsMatchMakerBattle = isMatchMakerBattle;
             SetupSpring();
             PickHostingPort();
             hostingIp = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString() ?? "127.0.0.1";
@@ -578,25 +583,31 @@ namespace ZkLobbyServer
             StopVote();
             IsInGame = false;
             RunningSince = null;
-            await server.Broadcast(server.ConnectedUsers.Keys, new BattleUpdate() { Header = GetHeader() });
-
-            foreach (var s in toNotify)
-            {
-                await
-                    server.GhostSay(new Say()
-                    {
-                        User = GlobalConst.NightwatchName,
-                        Text = $"** {FounderName} 's {Title} just ended, join me! **",
-                        Target = s,
-                        IsEmote = true,
-                        Place = SayPlace.User,
-                        Ring = true,
-                        AllowRelay = false
-                    });
-            }
-            toNotify.Clear();
 
             await SayBattle(BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server));
+            
+            if (IsMatchMakerBattle) await server.RemoveBattle(this);
+            else
+            {
+
+                await server.Broadcast(server.ConnectedUsers.Keys, new BattleUpdate() { Header = GetHeader() });
+
+                foreach (var s in toNotify)
+                {
+                    await
+                        server.GhostSay(new Say()
+                        {
+                            User = GlobalConst.NightwatchName,
+                            Text = $"** {FounderName} 's {Title} just ended, join me! **",
+                            Target = s,
+                            IsEmote = true,
+                            Place = SayPlace.User,
+                            Ring = true,
+                            AllowRelay = false
+                        });
+                }
+            }
+            toNotify.Clear();
         }
 
         private void spring_SpringStarted(object sender, EventArgs e)
