@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using ZeroKLobby.Controls;
+using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -18,16 +19,34 @@ namespace ZeroKLobby.MicroLobby
             SuspendLayout();
             Size = new Size(731, 463);
 
-            panel1 = new Panel { BackColor = Color.Transparent, Dock = DockStyle.Top, Location = new Point(0, 0), Size = new Size(731, 31) };
-            searchLabel = new Label { AutoSize = true, Location = new Point(3, 7), Size = new Size(59, 18), Text = "Search:", ForeColor = Config.TextColor, Font = Config.GeneralFont};
-            searchBox = new ZklTextBox { BackColor = Color.FromArgb(0, 30, 40), Location = new Point(68, 4), Size = new Size(178, 24), TabIndex = 1 };
+            panel1 = new Panel { BackColor = Color.Transparent, Dock = DockStyle.Top, Location = new Point(0, 0), Size = new Size(731, 50) };
+            searchLabel = new Label { AutoSize = true, Location = new Point(203, 17), Size = new Size(59, 18), Text = "Search:", ForeColor = Config.TextColor, Font = Config.GeneralFont};
+            searchBox = new ZklTextBox { BackColor = Color.FromArgb(0, 30, 40), Location = new Point(268, 14), Size = new Size(178, 24), TabIndex = 1 };
+
+
+            var btnMm = new BitmapButton()
+            {
+                Text = "Start MatchMaker",
+                Width = 150,
+                Height = 50,
+                Image = Buttons.mp.GetResizedWithCache(32, 32),
+                TextImageRelation = TextImageRelation.ImageBeforeText
+            };
+            btnMm.Click += (s, e) =>
+            {
+                var mm = new StartMatchMakerDialog();
+                mm.StartPosition = FormStartPosition.CenterScreen;
+                mm.Show(Program.MainWindow);
+            };
+            
+            panel1.Controls.Add(btnMm);
 
             panel1.Controls.Add(searchLabel);
             panel1.Controls.Add(searchBox);
 
             battlePanel = new Panel
             {
-                Location = new Point(0, 31),
+                Location = new Point(0, 50),
                 Size = new Size(731, 432),
                 Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right
             };
