@@ -137,6 +137,7 @@ namespace ZkLobbyServer
                 Founder = "#MatchMaker_" + battleID,
                 Engine = server.Engine,
                 Game = server.Game,
+                Title = "MatchMaker " + battleID,
                 Mode = bat.Size == 2 ? AutohostMode.Game1v1 : AutohostMode.Teams,
             });
             server.Battles[battleID] = battle;

@@ -44,6 +44,8 @@ namespace LobbyClient
 
         public DateTime? RunningSince { get; set; }
 
+        public bool IsMatchMakerBattle { get; protected set; }
+
 
         public ConcurrentDictionary<string, UserBattleStatus> Users { get; set; }
 

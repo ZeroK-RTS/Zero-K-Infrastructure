@@ -232,7 +232,7 @@ namespace ZkLobbyServer
             }
         }
 
-        private async Task RemoveBattle(Battle battle)
+        public async Task RemoveBattle(Battle battle)
         {
             foreach (var u in battle.Users.Keys)
             {

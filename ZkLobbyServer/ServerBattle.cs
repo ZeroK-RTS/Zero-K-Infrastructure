@@ -48,9 +48,6 @@ namespace ZkLobbyServer
         public Spring spring;
 
 
-        public bool IsMatchMakerBattle { get; private set; }
-
-
         static ServerBattle()
         {
             springPaths = new SpringPaths(GlobalConst.SpringieDataDir, false);
