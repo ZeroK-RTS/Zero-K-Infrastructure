@@ -40,8 +40,6 @@ namespace ZeroKWeb.Controllers
         /// Map list; params are for filter
         /// </summary>
         public ActionResult Index(string search,
-                                  bool? supported,                               
-                                  bool? featured,
                                   int? offset,
                                   bool? assymetrical,
                                   int? sea,
@@ -54,11 +52,11 @@ namespace ZeroKWeb.Controllers
                                   bool? ffa,
                                   bool? chicken,
                                   int? isDownloadable = 1,
-                                  int? special = 0) {
+                                  int? special = 0,
+                                  MapSupportLevel? mapSupportLevel = null
+                                  ) {
             IQueryable<Resource> ret;
             var db = FilterMaps(search,
-                                supported,
-                                featured,
                                 offset,
                                 assymetrical,
                                 sea,
@@ -72,6 +70,7 @@ namespace ZeroKWeb.Controllers
                                 chicken,
                                 isDownloadable,
                                 special,
+                                mapSupportLevel,
                                 out ret);
 
             if (!offset.HasValue) {
@@ -107,7 +106,6 @@ namespace ZeroKWeb.Controllers
 
         [EnableCORS]
         public JsonResult JsonSearch(string search,
-                                       bool? featured,
                                        int? offset,
                                        bool? assymetrical,
                                        int? sea,
@@ -120,11 +118,10 @@ namespace ZeroKWeb.Controllers
                                        bool? ffa,
                                        bool? chicken,
                                        int? isDownloadable = 1,
-                                       int? special = 0) {
+                                       int? special = 0,
+                                       MapSupportLevel? mapSupportLevel = null) {
             IQueryable<Resource> ret;
             var db = FilterMaps(search,
-                                null,  // bool supported
-                                featured,
                                 offset,
                                 assymetrical,
                                 sea,
@@ -138,6 +135,7 @@ namespace ZeroKWeb.Controllers
                                 chicken,
                                 isDownloadable,
                                 special,
+                                mapSupportLevel,
                                 out ret);
             var retval =
                 ret.ToList().Select(
@@ -147,7 +145,7 @@ namespace ZeroKWeb.Controllers
                         x.AuthorName,
                         x.InternalName,
                         x.DownloadCount,
-                        x.FeaturedOrder,
+                        x.MapSupportLevel,
                         x.ForumThreadID,
                         x.HeightmapName,
                         x.LastChange,
@@ -241,15 +239,14 @@ namespace ZeroKWeb.Controllers
                                 int? hills,
                                 bool? assymetrical,
                                 string author,
-                                bool? supported,
-                                float? featuredOrder,
                                 bool? isTeams,
                                 bool? is1v1,
                                 bool? ffa,
                                 bool? chickens,
                                 int? ffaTeams,
                                 bool? special,
-                                string springieCommands) {
+                                string springieCommands,
+                                MapSupportLevel mapSupportLevel) {
             var db = new ZkDataContext();
             var r = db.Resources.Single(x => x.ResourceID == id);
             r.TaggedByAccountID = Global.AccountID;
@@ -262,20 +259,14 @@ namespace ZeroKWeb.Controllers
             r.MapIs1v1 = is1v1;
             r.MapIsFfa = ffa;
             r.MapIsChickens = chickens;
-            r.MapIsSupported = supported;
-            r.FeaturedOrder = featuredOrder;
+            r.MapSupportLevel = mapSupportLevel;
             r.MapFFAMaxTeams = ffaTeams;
             r.MapSpringieCommands = springieCommands;
-            db.SaveChanges();
-            var order = 1;
-            if (featuredOrder.HasValue) foreach (var map in db.Resources.Where(x => x.FeaturedOrder != null).OrderBy(x => x.FeaturedOrder)) map.FeaturedOrder = order++;
             db.SaveChanges();
             return RedirectToAction("Detail", new { id = id });
         }
 
         static ZkDataContext FilterMaps(string search,
-                                        bool? supported,
-                                        bool? featured,
                                         int? offset,
                                         bool? assymetrical,
                                         int? sea,
@@ -289,9 +280,9 @@ namespace ZeroKWeb.Controllers
                                         bool? chicken,
                                         int? isDownloadable,
                                         int? special,
+                                        MapSupportLevel? mapSupportLevel,
                                         out IQueryable<Resource> ret) {
             var db = new ZkDataContext();
-            if (featured == null) featured = true;
 
             ret = db.Resources.Where(x => x.TypeID == ResourceType.Map);
             if (!string.IsNullOrEmpty(search)) {
@@ -309,8 +300,8 @@ namespace ZeroKWeb.Controllers
                         x.MapWaterLevel == null);
             }
 
-            if (supported == true) ret = ret.Where(x => x.MapIsSupported == true);
-            if (featured == true) ret = ret.Where(x => x.FeaturedOrder > 0);
+            mapSupportLevel = mapSupportLevel ?? MapSupportLevel.Featured;
+            ret = ret.Where(x => x.MapSupportLevel >= mapSupportLevel);
             if (isDownloadable == 1) ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
             else if (isDownloadable == 0) ret = ret.Where(x => x.ResourceContentFiles.All(y => y.LinkCount <= 0));
             if (special != -1) ret = ret.Where(x => x.MapIsSpecial == (special == 1));
@@ -337,7 +328,7 @@ namespace ZeroKWeb.Controllers
 
             //if (featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x => x.ResourceID);
             //else ret = ret.OrderByDescending(x => x.ResourceID);
-            ret = ret.OrderByDescending(x => x.ResourceID);
+            ret = ret.OrderByDescending(x => x.MapSupportLevel).ThenByDescending(x=>x.ResourceID);
             if (offset != null) ret = ret.Skip(offset.Value);
             ret = ret.Take(Global.AjaxScrollCount);
             return db;

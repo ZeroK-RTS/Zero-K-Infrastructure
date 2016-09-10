@@ -106,7 +106,7 @@ namespace ZeroKWeb.Controllers
             if (string.IsNullOrEmpty(term)) return new List<AutocompleteItem>();
             return
                 db.Resources.Where(x => x.InternalName.Contains(term) && x.TypeID == ResourceType.Map)
-                    .OrderBy(x => x.FeaturedOrder)
+                    .OrderByDescending(x => x.MapSupportLevel)
                     .Take(autocompleteCount)
                     .ToList()
                     .Select(

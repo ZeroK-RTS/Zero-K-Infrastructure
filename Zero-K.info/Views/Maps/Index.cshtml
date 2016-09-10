@@ -1,43 +1,45 @@
 ﻿@model ZeroKWeb.Controllers.MapsController.MapIndexData
 @using ZeroKWeb
+@using ZkData
 @{
   Page.Title = "Maps";
 }
 <form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
-Size:
-<select name="size">
-  <option>Any</option>
-  <option value='1'>Small</option>
-  <option value='2'>Medium</option>
-  <option value='3'>Big</option>
-</select>
-Sea:
-<select name="sea">
-  <option>Any</option>
-  <option value="1">Land</option>
-  <option value="2">Mixed</option>
-  <option value="3">Sea</option>
-</select>
-Hills:
-<select name="hills">
-  <option>Any</option>
-  <option value="1">Flat</option>
-  <option value="2">Hills</option>
-  <option value="3">Mountains</option>
-</select>
-Dimensions:
-<select name="elongated">
-  <option>Any</option>
-  <option value='false'>Square-like</option>
-  <option value='true'>Elongated</option>
-</select>
-Asymmetrical:
-<select name="assymetrical">
-  <option>Any</option>
-  <option value="false">Symmetrical</option>
-  <option value="true">Asymmetrical</option>
-</select>
-<span title='Maps with special features, speedmetal, duck, greenfields etc' style='white-space:nowrap'>
+    Support: @Html.DropDownList("mapSupportLevel", EnumHelper.GetSelectList(typeof(MapSupportLevel), MapSupportLevel.Featured))
+    Size:
+    <select name="size">
+        <option>Any</option>
+        <option value='1'>Small</option>
+        <option value='2'>Medium</option>
+        <option value='3'>Big</option>
+    </select>
+    Sea:
+    <select name="sea">
+        <option>Any</option>
+        <option value="1">Land</option>
+        <option value="2">Mixed</option>
+        <option value="3">Sea</option>
+    </select>
+    Hills:
+    <select name="hills">
+        <option>Any</option>
+        <option value="1">Flat</option>
+        <option value="2">Hills</option>
+        <option value="3">Mountains</option>
+    </select>
+    Dimensions:
+    <select name="elongated">
+        <option>Any</option>
+        <option value='false'>Square-like</option>
+        <option value='true'>Elongated</option>
+    </select>
+    Asymmetrical:
+    <select name="assymetrical">
+        <option>Any</option>
+        <option value="false">Symmetrical</option>
+        <option value="true">Asymmetrical</option>
+    </select>
+    <span title='Maps with special features, speedmetal, duck, greenfields etc' style='white-space: nowrap'>
 Special:
   <select name="special">
     <option value="-1">Any</option>
@@ -45,7 +47,7 @@ Special:
     <option value="1">Special</option>
   </select>
 </span>
-<span title='Maps suitable for team games' style='white-space:nowrap'>
+    <span title='Maps suitable for team games' style='white-space: nowrap'>
 Team:
   <select name="isTeams">
     <option>Any</option>
@@ -53,7 +55,7 @@ Team:
     <option value="false">No teams</option>
   </select>
 </span>
-<span title='Maps suitable for 1v1 games' style='white-space:nowrap'>
+    <span title='Maps suitable for 1v1 games' style='white-space: nowrap'>
 1v1:
   <select name="is1v1">
     <option>Any</option>
@@ -61,7 +63,7 @@ Team:
     <option value="false">No 1v1</option>
   </select>
 </span>
-<span title='Maps suitable for Free-For-All games - multiple teams' style='white-space:nowrap'>
+    <span title='Maps suitable for Free-For-All games - multiple teams' style='white-space: nowrap'>
 FFA:
 <select name="ffa">
   <option>Any</option>
@@ -69,7 +71,7 @@ FFA:
   <option value='true'>FFA</option>
 </select>
 </span>
-<span title='Maps suitable for chicken games?' style='white-space:nowrap'>
+    <span title='Maps suitable for chicken games?' style='white-space: nowrap'>
 Chickens:
   <select name="chicken">
     <option>Any</option>
@@ -78,24 +80,19 @@ Chickens:
   </select>
 </span>
 
-Download: <select name="isDownloadable">
-    <option value='-1'>Any</option>
-    <option value='1' selected>Downloadable</option>
-    <option value='0'>Not verified</option>
-  </select>
-  <br />
-<span title="Search for supported maps">
-  Supported: @Html.CheckBox("supported", false)
-</span>
-<span title="Search for featured maps">
-  Featured: @Html.CheckBox("featured", true)
-</span>
-<span title='Show maps that need to be manually tagged (sea, terrain, FFA etc diagnosed)' style='white-space:nowrap'>
+    Download: <select name="isDownloadable">
+        <option value='-1'>Any</option>
+        <option value='1' selected>Downloadable</option>
+        <option value='0'>Not verified</option>
+    </select>
+    <br/>
+
+    <span title='Show maps that need to be manually tagged (sea, terrain, FFA etc diagnosed)' style='white-space: nowrap'>
   Needs tagging: @Html.CheckBox("needsTagging")
 </span>
-<br />
-Name or author: @Html.TextBox("search", null, new {data_autocomplete = Url.Action("Maps", "Autocomplete"), data_autocomplete_action = "submit"})
-<input type="submit" id="submit" value="Search" />
+    <br/>
+    Name or author: @Html.TextBox("search", null, new { data_autocomplete = Url.Action("Maps", "Autocomplete"), data_autocomplete_action = "submit" })
+    <input type="submit" id="submit" value="Search"/>
 </form>
 <table width='100%'>
   <tr>

@@ -105,7 +105,7 @@ namespace Fixer
             {
                 var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
 
-                var maps = db.Resources.Where(x => x.FeaturedOrder > 0 && x.MapPlanetWarsIcon != null).ToList().Shuffle();
+                var maps = db.Resources.Where(x => x.MapSupportLevel>=MapSupportLevel.Featured && x.MapPlanetWarsIcon != null).ToList().Shuffle();
                 int cnt = 0;
                 foreach (var p in gal.Planets)
                 {

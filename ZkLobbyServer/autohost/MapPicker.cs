@@ -40,7 +40,7 @@ namespace ZeroKWeb.SpringieInterface
                     case AutohostMode.None:
                         var ret =
                             db.Resources.Where(
-                                x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsTeams != false && x.MapIsSpecial != true);
+                                x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= MapSupportLevel.Featured && x.MapIsTeams != false && x.MapIsSpecial != true);
                         if (players > 11) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16);
                         else if (players > 8)
                             ret =
@@ -56,13 +56,13 @@ namespace ZeroKWeb.SpringieInterface
                     case AutohostMode.Game1v1:
                         list =
                             db.Resources.Where(
-                                x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIs1v1 == true && x.MapIsSpecial != true).ToList();
+                                x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= MapSupportLevel.Featured && x.MapIs1v1 == true && x.MapIsSpecial != true).ToList();
                         break;
                     case AutohostMode.GameChickens:
                         ret =
                             db.Resources.Where(
                                 x =>
-                                    x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsSpecial != true &&
+                                    x.TypeID == ResourceType.Map && x.MapSupportLevel >= MapSupportLevel.Featured && x.MapIsSpecial != true &&
                                     (x.MapIsChickens == true || x.MapWaterLevel == 1));
                         if (players > 5) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16);
                         else if (players > 4)
@@ -79,15 +79,15 @@ namespace ZeroKWeb.SpringieInterface
                     case AutohostMode.GameFFA:
                         list =
                             db.Resources.Where(
-                                x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa == true && x.MapFFAMaxTeams == players)
+                                x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= MapSupportLevel.Featured && x.MapIsFfa == true && x.MapFFAMaxTeams == players)
                                 .ToList();
                         if (!list.Any())
                             list =
                                 db.Resources.Where(
                                     x =>
-                                        x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa == true &&
+                                        x.TypeID == ResourceType.Map && x.MapSupportLevel>=MapSupportLevel.Featured && x.MapIsFfa == true &&
                                         (players%x.MapFFAMaxTeams == 0)).ToList();
-                        if (!list.Any()) list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa == true).ToList();
+                        if (!list.Any()) list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.MapSupportLevel>=MapSupportLevel.Featured && x.MapIsFfa == true).ToList();
 
                         break;
                 }
@@ -118,7 +118,7 @@ namespace ZeroKWeb.SpringieInterface
             ret = ret.Where(x => x.TypeID == type);
             
             var test = ret.Where(x => x.RapidTag == term || x.InternalName == term);
-            if (test.Any()) return test.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x=>x.ResourceID);
+            if (test.Any()) return test.OrderByDescending(x => x.MapSupportLevel).ThenByDescending(x=>x.ResourceID);
 
 
             int i;
@@ -132,7 +132,7 @@ namespace ZeroKWeb.SpringieInterface
                     ret = ret.Where(x => SqlFunctions.PatIndex("%" + w1 + "%", x.InternalName) > 0);
                 }
             }
-            return ret.OrderByDescending(x => -x.FeaturedOrder);
+            return ret.OrderByDescending(x => x.MapSupportLevel);
         }
     }
 }

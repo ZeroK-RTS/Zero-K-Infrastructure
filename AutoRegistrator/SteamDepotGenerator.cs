@@ -153,7 +153,7 @@ namespace AutoRegistrator
             
 
             var db = new ZkDataContext();
-            var resources = db.Resources.Where(x => extraNames.Contains(x.InternalName) || (x.TypeID == ResourceType.Map && x.FeaturedOrder != null) || (x.MissionID != null && !x.Mission.IsDeleted && x.Mission.FeaturedOrder !=null)).ToList();
+            var resources = db.Resources.Where(x => extraNames.Contains(x.InternalName) || (x.TypeID == ResourceType.Map && x.MapSupportLevel>=MapSupportLevel.Featured) || (x.MissionID != null && !x.Mission.IsDeleted && x.Mission.FeaturedOrder !=null)).ToList();
             foreach (var res in resources.ToList())
             {
                 foreach (var requestedDependency in res.ResourceDependencies.Select(x => x.NeedsInternalName))

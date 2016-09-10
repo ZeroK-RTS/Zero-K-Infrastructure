@@ -8,7 +8,6 @@ namespace ZkData
 {
     public class Resource
     {
-        
         public int ResourceID { get; set; }
         [Required]
         [StringLength(255)]
@@ -27,7 +26,6 @@ namespace ZkData
         public int? MapHeight { get; set; }
         public int? MapSizeSquared { get; set; }
         public float? MapSizeRatio { get; set; }
-        public bool? MapIsSupported { get; set; }
         public bool? MapIsAssymetrical { get; set; }
         public int? MapHills { get; set; }
         public int? MapWaterLevel { get; set; }
@@ -41,7 +39,9 @@ namespace ZkData
         public int? MapRatingSum { get; set; }
         public int? TaggedByAccountID { get; set; }
         public int? ForumThreadID { get; set; }
-        public float? FeaturedOrder { get; set; }
+
+        public MapSupportLevel MapSupportLevel { get; set; }
+
         [StringLength(50)]
         public string MapPlanetWarsIcon { get; set; }
         public int? RatingPollID { get; set; }

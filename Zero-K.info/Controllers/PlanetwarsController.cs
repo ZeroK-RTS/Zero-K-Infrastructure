@@ -709,7 +709,7 @@ namespace ZeroKWeb.Controllers
                 List<Resource> mapList =
                     db.Resources.Where(
                         x =>
-                            x.MapPlanetWarsIcon != null && x.Planets.Where(p => p.GalaxyID == gal.GalaxyID).Count() == 0 && x.FeaturedOrder != null &&
+                            x.MapPlanetWarsIcon != null && x.Planets.Where(p => p.GalaxyID == gal.GalaxyID).Count() == 0 && x.MapSupportLevel >= MapSupportLevel.Featured &&
                             x.ResourceID != source.MapResourceID).ToList();
                 if (mapList.Count > 0)
                 {
