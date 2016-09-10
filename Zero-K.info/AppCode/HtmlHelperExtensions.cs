@@ -171,8 +171,8 @@ namespace System.Web.Mvc
                 var dudeStr = "";
                 if (account.IsZeroKAdmin) dudeStr = "<img src='/img/police.png'  class='icon16' alt='Admin' />";
                 
-                var clampedLevel = System.Math.max(0, System.Math.min(7, (int)System.Math.floor(System.Math.log(account.Level / 30.0 + 1) * 4.2)));
-                var clampedSkill = System.Math.max(0, System.Math.min(7, (int)System.Math.floor((account.EffectiveElo - 1000.0) / 200)));
+                var clampedLevel = System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor(System.Math.Log(account.Level / 30.0 + 1) * 4.2)));
+                var clampedSkill = System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((account.EffectiveElo - 1000.0) / 200)));
 
                 string color = Faction.FactionColor(account.Faction, Global.FactionID);
                 if (String.IsNullOrEmpty(color)) color = "#B0D0C0";
