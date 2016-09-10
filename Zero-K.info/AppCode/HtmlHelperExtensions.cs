@@ -170,9 +170,9 @@ namespace System.Web.Mvc
                 
                 var dudeStr = "";
                 if (account.IsZeroKAdmin) dudeStr = "<img src='/img/police.png'  class='icon16' alt='Admin' />";
-				
-				var clampedLevel = System.Math.max(0, System.Math.min(7, (int)System.Math.floor(System.Math.log(account.Level / 30.0 + 1) * 4.2)));
-				var clampedSkill = System.Math.max(0, System.Math.min(7, (int)System.Math.floor((account.EffectiveElo - 1000.0) / 200)));
+                
+                var clampedLevel = System.Math.max(0, System.Math.min(7, (int)System.Math.floor(System.Math.log(account.Level / 30.0 + 1) * 4.2)));
+                var clampedSkill = System.Math.max(0, System.Math.min(7, (int)System.Math.floor((account.EffectiveElo - 1000.0) / 200)));
 
                 string color = Faction.FactionColor(account.Faction, Global.FactionID);
                 if (String.IsNullOrEmpty(color)) color = "#B0D0C0";
@@ -183,7 +183,7 @@ namespace System.Web.Mvc
                             "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}_{2}.png'  class='icon16' alt='rank' />{6}{7}<a href='/Users/Detail/{3}' style='color:{4}' nicetitle='$user${3}'>{5}</a>",
                             account.Country != "??" ? account.Country : "unknown",
                             clampedLevel,
-							clampedSkill,
+                            clampedSkill,
                             account.AccountID,
                             colorize ? color : "",
                             account.Name,
