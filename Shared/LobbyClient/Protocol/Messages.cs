@@ -582,7 +582,7 @@ namespace LobbyClient
     {
         public bool NeedReadyResponse { get; set; }
         public string Text { get; set; }
-        public int SecondsRemaining { get; set; }
+        public int SecondsRemaining { get; set; } = 10;
     }
 
     [Message(Origin.Client)]

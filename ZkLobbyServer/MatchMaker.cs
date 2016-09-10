@@ -85,7 +85,7 @@ namespace ZkLobbyServer
         {
             if (IsBanned(user.Name))
             {
-                await user.Respond($"You are banned for {BanMinutes} minutes from MatchMAker because you refused previous match");
+                await user.Respond($"You are banned for {BanMinutes} minutes from MatchMaker because you refused previous match");
                 return;
             }
 
@@ -115,10 +115,10 @@ namespace ZkLobbyServer
             if (players.TryRemove(name, out entry))
             {
                 if (entry.InvitedToPlay) bannedPlayers[entry.Name] = DateTime.UtcNow; // was invited but he is gone now (whatever reason), ban!
-
-                ConnectedUser conUser;
-                if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null)) await conUser.SendCommand(new MatchMakerStatus()); // left queue
             }
+            ConnectedUser conUser;
+            if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null)) await conUser.SendCommand(new MatchMakerStatus()); // left queue
+
         }
 
         private bool IsBanned(string name)
@@ -161,6 +161,13 @@ namespace ZkLobbyServer
                     usr.InvitedToPlay = false;
                     usr.LastReadyResponse = false;
                 }
+
+            foreach (var plr in players.Values.Where(x => x != null))
+            {
+                ConnectedUser connectedUser;
+                if (server.ConnectedUsers.TryGetValue(plr.Name, out connectedUser)) connectedUser?.SendCommand(ToMatchMakerStatus(plr));
+            }
+
             server.Broadcast(toInvite.Select(x => x.Name),
                 new AreYouReady() { NeedReadyResponse = true, SecondsRemaining = TimerSeconds, Text = "Match found, are you ready?" });
         }
@@ -208,13 +215,13 @@ namespace ZkLobbyServer
             });
             server.Battles[battleID] = battle;
 
-            foreach (var plr in bat.Players) battle.Users[plr.Name] = new UserBattleStatus(plr.Name, plr.LobbyUser) { IsSpectator = false, AllyNumber = 0, };
-
-            await battle.StartGame();
+            //foreach (var plr in bat.Players) battle.Users[plr.Name] = new UserBattleStatus(plr.Name, plr.LobbyUser) { IsSpectator = false, AllyNumber = 0, };
 
             // also join in lobby
             await server.Broadcast(server.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
             foreach (var usr in bat.Players) await server.ForceJoinBattle(usr.Name, battle);
+
+            await battle.StartGame();
         }
 
 

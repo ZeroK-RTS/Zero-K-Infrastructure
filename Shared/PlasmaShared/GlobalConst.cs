@@ -32,7 +32,7 @@ namespace ZkData
             #elif TEST
                 Mode = ModeType.Test;
             #else
-            Mode = ModeType.Test;
+            Mode = ModeType.Local;
 #endif
         }
 

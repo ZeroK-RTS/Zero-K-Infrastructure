@@ -200,6 +200,12 @@
     <Compile Include="MicroLobby\HexToUnicodeConverter.Designer.cs">
       <DependentUpon>HexToUnicodeConverter.cs</DependentUpon>
     </Compile>
+    <Compile Include="MicroLobby\AreYouReadyDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\AreYouReadyDialog.Designer.cs">
+      <DependentUpon>AreYouReadyDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="MicroLobby\StartMatchMakerDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -503,6 +509,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ExtrasTab\LocalReplay.resx">
       <DependentUpon>LocalReplay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\AreYouReadyDialog.resx">
+      <DependentUpon>AreYouReadyDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\StartMatchMakerDialog.resx">
       <DependentUpon>StartMatchMakerDialog.cs</DependentUpon>

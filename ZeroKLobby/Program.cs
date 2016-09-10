@@ -289,6 +289,14 @@ namespace ZeroKLobby
                 TasClient.ChannelJoined += (s, e) => { Trace.TraceInformation("TASC channel joined: " + e.Name); };
                 TasClient.ConnectionLost += (s, e) => Trace.TraceInformation("Connection lost");
 
+                TasClient.AreYouReadyReceived += (s, rdy) =>
+                {
+                    var dialog = new AreYouReadyDialog(rdy);
+                    dialog.StartPosition = FormStartPosition.CenterScreen;
+                    MainWindow.NotifyUser("", "Match found", true, true);
+                    dialog.Show(MainWindow);
+                };
+
                 // special handling
                 TasClient.PreviewSaid += (s, e) =>
                 {
@@ -335,9 +343,8 @@ namespace ZeroKLobby
 
                 SelfUpdater.ProgramUpdated += s =>
                 {
-                    WarningBar.DisplayWarning($"New version of Zero-K launcher downloaded, restart it to apply changes",
-                        "Restart",
-                        Restart);
+                    Program.MainWindow.InvokeFunc(
+                        () => WarningBar.DisplayWarning($"New version of Zero-K launcher downloaded, restart it to apply changes", "Restart", Restart));
                 };
                 if (!Debugger.IsAttached && !Conf.DisableAutoUpdate && !IsSteamFolder) SelfUpdater.StartChecking();
 
