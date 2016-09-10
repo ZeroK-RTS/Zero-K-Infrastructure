@@ -51,14 +51,6 @@ namespace ZeroKWeb.SpringieInterface
         private static void ProcessElos(Spring.SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, ZkDataContext db, SpringBattle sb, bool isPlanetwars)
         {
             bool noElo = result.OutputExtras.Any(x => x?.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture) == true);
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (System.Data.Linq.DuplicateKeyException ex)
-            {
-                Trace.TraceError(ex.ToString());
-            }
 
             Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
@@ -145,7 +137,7 @@ namespace ZeroKWeb.SpringieInterface
             {
                 sb.SpringBattlePlayers.Add(new SpringBattlePlayer
                 {
-                    AccountID = Account.AccountByName(db, p.Name).AccountID,
+                    Account = Account.AccountByName(db, p.Name),
                     AllyNumber = p.AllyNumber,
                     IsInVictoryTeam = p.IsVictoryTeam,
                     IsSpectator = p.IsSpectator,
