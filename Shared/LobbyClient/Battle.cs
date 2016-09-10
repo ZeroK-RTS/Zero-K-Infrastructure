@@ -129,6 +129,7 @@ namespace LobbyClient
             ret.Bots = Bots.Values.Select(x => x.ToBotTeam()).ToList();
             ret.ModOptions = new Dictionary<string, string>(ModOptions);
             ret.Mode = Mode;
+            ret.IsMatchMakerGame = IsMatchMakerBattle; 
             return ret;
         }
 
