@@ -77,9 +77,9 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task Process(MatchMakerQueueRequest startMatchMaker)
+        public async Task Process(MatchMakerQueueRequest queueRequest)
         {
-            await state.MatchMaker.StartMatchMaker(this, startMatchMaker);
+            await state.MatchMaker.QueueRequest(this, queueRequest);
         }
 
         public async Task Process(KickFromBattle batKick)
@@ -624,7 +624,7 @@ namespace ZkLobbyServer
                 }
 
 
-                await state.MatchMaker.RemoveUser(Name, false);
+                await state.MatchMaker.RemoveUser(Name);
 
                 await state.Broadcast(state.ConnectedUsers.Values, new UserDisconnected() { Name = Name, Reason = reason });
 

@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Configuration;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -15,12 +14,15 @@ namespace ZkLobbyServer
 {
     public class MatchMaker
     {
+        private const int TimerSeconds = 30;
+
+        private const int BanMinutes = 5;
+
+        private ConcurrentDictionary<string, DateTime> bannedPlayers = new ConcurrentDictionary<string, DateTime>();
         private ConcurrentDictionary<string, PlayerEntry> players = new ConcurrentDictionary<string, PlayerEntry>();
         private List<MatchMakerSetup.Queue> queues = new List<MatchMakerSetup.Queue>();
         private ZkLobbyServer server;
         private Timer timer;
-
-        const int TimerSeconds = 30;
 
         public MatchMaker(ZkLobbyServer server)
         {
@@ -56,7 +58,6 @@ namespace ZkLobbyServer
                             .ToList(),
                     Mode = AutohostMode.Game1v1,
                 });
-
             }
             timer = new Timer(TimerSeconds * 1000);
             timer.AutoReset = true;
@@ -65,95 +66,13 @@ namespace ZkLobbyServer
         }
 
 
-        private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        public async Task AreYouReadyResponse(ConnectedUser user, AreYouReadyResponse response)
         {
-            var realBattles = ResolveToRealBattles();
-
-            foreach (var bat in realBattles) StartBattle(bat);
-
-            SendMmInvitations();
-        }
-
-        private List<ProposedBattle> ResolveToRealBattles()
-        {
-            var lastMatchedUsers = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
-
-            // force leave those not ready
-            foreach (var pl in lastMatchedUsers.Where(x => !x.LastReadyResponse)) RemoveUser(pl.Name);
-
-            var readyUsers = lastMatchedUsers.Where(x => x.LastReadyResponse).ToList();
-            var realBattles = ProposeBattles(readyUsers);
-
-            var readyAndStarting = readyUsers.Where(x => realBattles.Any(y => y.Players.Contains(x))).ToList();
-            var readyAndFailed = readyUsers.Where(x => !realBattles.Any(y => y.Players.Contains(x))).Select(x => x.Name);
-
-            server.Broadcast(readyAndFailed, new AreYouReady() { Text = "Match failed, someone else was not ready" });
-
-
-            server.Broadcast(readyAndStarting.Select(x => x.Name), new AreYouReady() { Text = "Match success, starting soon" });
-            server.Broadcast(readyAndStarting.Select(x => x.Name), new MatchMakerStatus() { });
-
-            foreach (var usr in readyAndStarting)
-            {
-                PlayerEntry entry;
-                players.TryRemove(usr.Name, out entry);
-            }
-
-            return realBattles;
-        }
-
-        private void SendMmInvitations()
-        {
-            // generate next battles and send inviatation
-            var proposedBattles = ProposeBattles(players.Values.Where(x => x != null));
-            var toInvite = proposedBattles.SelectMany(x => x.Players).ToList();
-            foreach (var usr in players.Values.Where(x => x != null))
-            {
-                if (toInvite.Contains(usr))
-                {
-                    usr.InvitedToPlay = true;
-                    usr.LastReadyResponse = false;
-                }
-                else
-                {
-                    usr.InvitedToPlay = false;
-                    usr.LastReadyResponse = false;
-                }
-            }
-            server.Broadcast(toInvite.Select(x => x.Name),
-                new AreYouReady() { NeedReadyResponse = true, SecondsRemaining = TimerSeconds, Text = "Match found, are you ready?" });
-        }
-
-        private async Task StartBattle(ProposedBattle bat)
-        {
-            var battleID = Interlocked.Increment(ref server.BattleCounter);
-
-            var battle = new ServerBattle(server, true);
-            battle.UpdateWith(new BattleHeader()
-            {
-                BattleID = battleID,
-                Founder = "#MatchMaker_" + battleID,
-                Engine = server.Engine,
-                Game = server.Game,
-                Title = "MatchMaker " + battleID,
-                Mode = bat.Size == 2 ? AutohostMode.Game1v1 : AutohostMode.Teams,
-            });
-            server.Battles[battleID] = battle;
-
-            foreach (var plr in bat.Players)
-            {
-                battle.Users[plr.Name] = new UserBattleStatus(plr.Name, plr.LobbyUser)
-                {
-                    IsSpectator = false,
-                    AllyNumber = 0,
-                };
-            }
-
-            await battle.StartGame();
-
-            // also join in lobby
-            await server.Broadcast(server.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
-            foreach (var usr in bat.Players) await server.ForceJoinBattle(usr.Name, battle);
+            PlayerEntry entry;
+            if (players.TryGetValue(user.Name, out entry))
+                if (entry.InvitedToPlay)
+                    if (response.Ready) entry.LastReadyResponse = true;
+                    else await RemoveUser(user.Name);
         }
 
 
@@ -162,8 +81,14 @@ namespace ZkLobbyServer
             await client.SendCommand(new MatchMakerSetup() { PossibleQueues = queues });
         }
 
-        public async Task StartMatchMaker(ConnectedUser user, MatchMakerQueueRequest cmd)
+        public async Task QueueRequest(ConnectedUser user, MatchMakerQueueRequest cmd)
         {
+            if (IsBanned(user.Name))
+            {
+                await user.Respond($"You are banned for {BanMinutes} minutes from MatchMAker because you refused previous match");
+                return;
+            }
+
             var wantedQueueNames = cmd.Queues?.ToList() ?? new List<string>();
             var wantedQueues = queues.Where(x => wantedQueueNames.Contains(x.Name)).ToList();
 
@@ -184,6 +109,26 @@ namespace ZkLobbyServer
             await user.SendCommand(ToMatchMakerStatus(userEntry));
         }
 
+        public async Task RemoveUser(string name)
+        {
+            PlayerEntry entry;
+            if (players.TryRemove(name, out entry))
+            {
+                if (entry.InvitedToPlay) bannedPlayers[entry.Name] = DateTime.UtcNow; // was invited but he is gone now (whatever reason), ban!
+
+                ConnectedUser conUser;
+                if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null)) await conUser.SendCommand(new MatchMakerStatus()); // left queue
+            }
+        }
+
+        private bool IsBanned(string name)
+        {
+            DateTime banEntry;
+            if (bannedPlayers.TryGetValue(name, out banEntry) && (DateTime.UtcNow.Subtract(banEntry).TotalMinutes < BanMinutes)) return true;
+            else bannedPlayers.TryRemove(name, out banEntry);
+            return false;
+        }
+
         private static List<ProposedBattle> ProposeBattles(IEnumerable<PlayerEntry> users)
         {
             var proposedBattles = new List<ProposedBattle>();
@@ -200,10 +145,96 @@ namespace ZkLobbyServer
             return proposedBattles;
         }
 
+        private void ResetAndSendMmInvitations()
+        {
+            // generate next battles and send inviatation
+            var proposedBattles = ProposeBattles(players.Values.Where(x => x != null));
+            var toInvite = proposedBattles.SelectMany(x => x.Players).ToList();
+            foreach (var usr in players.Values.Where(x => x != null))
+                if (toInvite.Contains(usr))
+                {
+                    usr.InvitedToPlay = true;
+                    usr.LastReadyResponse = false;
+                }
+                else
+                {
+                    usr.InvitedToPlay = false;
+                    usr.LastReadyResponse = false;
+                }
+            server.Broadcast(toInvite.Select(x => x.Name),
+                new AreYouReady() { NeedReadyResponse = true, SecondsRemaining = TimerSeconds, Text = "Match found, are you ready?" });
+        }
+
+        private List<ProposedBattle> ResolveToRealBattles()
+        {
+            var lastMatchedUsers = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
+
+            // force leave those not ready
+            foreach (var pl in lastMatchedUsers.Where(x => !x.LastReadyResponse)) RemoveUser(pl.Name);
+
+            var readyUsers = lastMatchedUsers.Where(x => x.LastReadyResponse).ToList();
+            var realBattles = ProposeBattles(readyUsers);
+
+            var readyAndStarting = readyUsers.Where(x => realBattles.Any(y => y.Players.Contains(x))).ToList();
+            var readyAndFailed = readyUsers.Where(x => !realBattles.Any(y => y.Players.Contains(x))).Select(x => x.Name);
+
+            server.Broadcast(readyAndFailed, new AreYouReady() { Text = "Match failed, someone else was not ready" });
+
+            server.Broadcast(readyAndStarting.Select(x => x.Name), new AreYouReady() { Text = "Match success, starting soon" });
+            server.Broadcast(readyAndStarting.Select(x => x.Name), new MatchMakerStatus() { });
+
+            foreach (var usr in readyAndStarting)
+            {
+                PlayerEntry entry;
+                players.TryRemove(usr.Name, out entry);
+            }
+
+            return realBattles;
+        }
+
+        private async Task StartBattle(ProposedBattle bat)
+        {
+            var battleID = Interlocked.Increment(ref server.BattleCounter);
+
+            var battle = new ServerBattle(server, true);
+            battle.UpdateWith(new BattleHeader()
+            {
+                BattleID = battleID,
+                Founder = "#MatchMaker_" + battleID,
+                Engine = server.Engine,
+                Game = server.Game,
+                Title = "MatchMaker " + battleID,
+                Mode = bat.Size == 2 ? AutohostMode.Game1v1 : AutohostMode.Teams,
+            });
+            server.Battles[battleID] = battle;
+
+            foreach (var plr in bat.Players) battle.Users[plr.Name] = new UserBattleStatus(plr.Name, plr.LobbyUser) { IsSpectator = false, AllyNumber = 0, };
+
+            await battle.StartGame();
+
+            // also join in lobby
+            await server.Broadcast(server.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
+            foreach (var usr in bat.Players) await server.ForceJoinBattle(usr.Name, battle);
+        }
+
+
+        private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            var realBattles = ResolveToRealBattles();
+
+            foreach (var bat in realBattles) StartBattle(bat);
+
+            ResetAndSendMmInvitations();
+        }
+
 
         private MatchMakerStatus ToMatchMakerStatus(PlayerEntry entry)
         {
-            return new MatchMakerStatus() { Text = $"Searching a good match, {players.Count} people in queues", JoinedQueues = entry.QueueTypes.Select(x => x.Name).ToList() };
+            return new MatchMakerStatus()
+            {
+                Text = $"Searching a good match, {players.Count} people in queues",
+                JoinedQueues = entry.QueueTypes.Select(x => x.Name).ToList()
+            };
         }
 
         private static ProposedBattle TryToMakeBattle(PlayerEntry player, IList<PlayerEntry> otherPlayers)
@@ -238,14 +269,14 @@ namespace ZkLobbyServer
 
         public class PlayerEntry
         {
+            public bool InvitedToPlay;
+            public bool LastReadyResponse;
             public int EloWidth => (int)Math.Min(400, 100 + DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / 30 * 50);
             public DateTime JoinedTime { get; private set; } = DateTime.UtcNow;
             public User LobbyUser { get; private set; }
             public string Name => LobbyUser.Name;
             public List<MatchMakerSetup.Queue> QueueTypes { get; private set; }
             public List<int> WantedGameSizes { get; private set; }
-            public bool LastReadyResponse;
-            public bool InvitedToPlay;
 
 
             public PlayerEntry(User user, List<MatchMakerSetup.Queue> queueTypes)
@@ -301,32 +332,6 @@ namespace ZkLobbyServer
                 if ((elo - MaxElo > owner.EloWidth) || (MinElo - elo > owner.EloWidth)) return false;
 
                 return true;
-            }
-        }
-
-        public async Task RemoveUser(string name)
-        {
-            PlayerEntry entry;
-            if (players.TryRemove(name,  out entry))
-            {
-                var ban = entry.InvitedToPlay; // if invited to play, ban for 5 mins
-
-                ConnectedUser conUser;
-                if (server.ConnectedUsers.TryGetValue(name, out conUser) && conUser !=null) await conUser.SendCommand(new MatchMakerStatus()); // left queue
-            }
-        }
-
-
-        public async Task AreYouReadyResponse(ConnectedUser user, AreYouReadyResponse response)
-        {
-            PlayerEntry entry;
-            if (players.TryGetValue(user.Name, out entry))
-            {
-                if (entry.InvitedToPlay)
-                {
-                    if (response.Ready) entry.LastReadyResponse = true;
-                    else await RemoveUser(user.Name);
-                }
             }
         }
     }
