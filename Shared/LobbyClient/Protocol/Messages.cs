@@ -562,6 +562,7 @@ namespace LobbyClient
     [Message(Origin.Server)]
     public class MatchMakerStatus
     {
+        public bool MatchMakerEnabled => JoinedQueues?.Count > 0;
         public List<string> JoinedQueues { get; set; } = new List<string>();
         public string Text { get; set; }
     }
@@ -576,6 +577,7 @@ namespace LobbyClient
     [Message(Origin.Server)]
     public class AreYouReady
     {
+        public bool NeedReadyResponse { get; set; }
         public string Text { get; set; }
         public int SecondsRemaining { get; set; }
     }
