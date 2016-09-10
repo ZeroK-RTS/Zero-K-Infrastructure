@@ -57,6 +57,22 @@ namespace ZkLobbyServer
             await client.SendCommand(new MatchMakerSetup() { PossibleQueues = possibleQueues });
         }
 
+        public List<ProposedBattle> ProposeBattles(IEnumerable<PlayerEntry> users)
+        {
+            var proposedBattles = new List<ProposedBattle>();
+
+            var usersByWaitTime = users.OrderBy(x => x.JoinedTime).ToList();
+
+            foreach (var user in usersByWaitTime)
+            {
+                if (proposedBattles.Any(y => y.Players.Contains(user))) continue; // skip already assigned in battles
+                var battle = TryToMakeBattle(user, usersByWaitTime);
+                if (battle != null) proposedBattles.Add(battle);
+            }
+
+            return proposedBattles;
+        }
+
         public async Task StartMatchMaker(ConnectedUser user, MatchMakerQueueRequest cmd)
         {
             var wantedQueueNames = cmd.Queues?.ToList() ?? new List<string>();
@@ -87,15 +103,44 @@ namespace ZkLobbyServer
             return new MatchMakerStatus() { Text = "In queue", JoinedQueues = entry.QueueTypes.Select(x => x.Name).ToList() };
         }
 
+        private ProposedBattle TryToMakeBattle(PlayerEntry player, IList<PlayerEntry> otherPlayers)
+        {
+            var playersByTeamElo =
+                otherPlayers.Where(x => x != player).OrderBy(x => Math.Abs(x.LobbyUser.EffectiveElo - player.LobbyUser.EffectiveElo)).ToList();
+            var playersBy1v1Elo =
+                otherPlayers.Where(x => x != player).OrderBy(x => Math.Abs(x.LobbyUser.Effective1v1Elo - player.LobbyUser.Effective1v1Elo)).ToList();
+
+            var testedBattles = new List<ProposedBattle>();
+            foreach (var size in player.WantedGameSizes.OrderByDescending(x => x)) testedBattles.Add(new ProposedBattle(size, player));
+
+            foreach (var other in playersByTeamElo)
+                foreach (var bat in testedBattles.Where(x => x.Size > 2))
+                    if (bat.CanBeAdded(other))
+                    {
+                        bat.AddPlayer(other);
+                        if (bat.Players.Count == bat.Size) return bat;
+                    }
+
+            foreach (var other in playersBy1v1Elo)
+                foreach (var bat in testedBattles.Where(x => x.Size <= 2))
+                    if (bat.CanBeAdded(other))
+                    {
+                        bat.AddPlayer(other);
+                        if (bat.Players.Count == bat.Size) return bat;
+                    }
+
+            return null;
+        }
+
 
         public class PlayerEntry
         {
-            public int EloWidth = 100;
-            public string Name => LobbyUser.Name;
+            public int EloWidth =>  (int)Math.Min(400, 100  +  DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds/30 * 50);
+            public DateTime JoinedTime { get; private set; } = DateTime.UtcNow;
             public User LobbyUser { get; private set; }
+            public string Name => LobbyUser.Name;
             public List<MatchMakerSetup.Queue> QueueTypes { get; private set; }
             public List<int> WantedGameSizes { get; private set; }
-            public DateTime JoinedTime { get; private set; } = DateTime.UtcNow;
 
 
             public PlayerEntry(User user, List<MatchMakerSetup.Queue> queueTypes)
@@ -122,11 +167,11 @@ namespace ZkLobbyServer
 
         public class ProposedBattle
         {
-            public int Size;
-            public int MinElo { get; private set; }= int.MaxValue;
-            public int MaxElo { get; private set; }= int.MinValue;
-            public List<PlayerEntry> Players = new List<PlayerEntry>();
             private PlayerEntry owner;
+            public List<PlayerEntry> Players = new List<PlayerEntry>();
+            public int Size;
+            public int MaxElo { get; private set; } = int.MinValue;
+            public int MinElo { get; private set; } = int.MaxValue;
 
             public ProposedBattle(int size, PlayerEntry initialPlayer)
             {
@@ -148,62 +193,10 @@ namespace ZkLobbyServer
                 if (!other.WantedGameSizes.Contains(Size)) return false;
 
                 var elo = Size > 2 ? other.LobbyUser.EffectiveElo : other.LobbyUser.Effective1v1Elo;
-                if (elo - MaxElo > owner.EloWidth || MinElo - elo > owner.EloWidth) return false;
+                if ((elo - MaxElo > owner.EloWidth) || (MinElo - elo > owner.EloWidth)) return false;
 
                 return true;
             }
-
         }
-
-        public List<ProposedBattle> ProposeBattles(IEnumerable<PlayerEntry> users)
-        {
-            var ret = new List<ProposedBattle>();
-            var usersByWaitTime = users.OrderBy(x => x.JoinedTime).ToList();
-            foreach (var user in usersByWaitTime)
-            {
-                TryToMakeBattle(user, usersByWaitTime);
-            }
-
-
-            return ret;
-        }
-
-        private ProposedBattle TryToMakeBattle(PlayerEntry player, IList<PlayerEntry> otherPlayers)
-        {
-            var playersByTeamElo = otherPlayers.Where(x => x != player).OrderBy(x => Math.Abs(x.LobbyUser.EffectiveElo - player.LobbyUser.EffectiveElo)).ToList();
-            var playersBy1v1Elo = otherPlayers.Where(x => x != player).OrderBy(x => Math.Abs(x.LobbyUser.EffectiveElo - player.LobbyUser.EffectiveElo)).ToList();
-
-
-            var testedBattles = new List<ProposedBattle>();
-            foreach (var size in player.WantedGameSizes.OrderByDescending(x => x)) testedBattles.Add(new ProposedBattle(size, player));
-
-
-            foreach (var other in playersByTeamElo)
-            {
-                foreach (var bat in testedBattles.Where(x=>x.Size > 2))
-                {
-                    if (bat.CanBeAdded(other))
-                    {
-                        bat.AddPlayer(other);
-                        if (bat.Players.Count == bat.Size) return bat;
-                    }
-                }
-            }
-
-            foreach (var other in playersBy1v1Elo)
-            {
-                foreach (var bat in testedBattles.Where(x => x.Size <= 2))
-                {
-                    if (bat.CanBeAdded(other))
-                    {
-                        bat.AddPlayer(other);
-                        if (bat.Players.Count == bat.Size) return bat;
-                    }
-                }
-            }
-
-            return null;
-        }
-
     }
 }
