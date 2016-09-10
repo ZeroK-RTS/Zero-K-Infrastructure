@@ -50,10 +50,6 @@ namespace ZkLobbyServer
 
         void SetupSpringTasConnection(string password)
         {
-            springTas.LoginDenied += (sender, args) => Utils.StartAsync(() => {
-                Thread.Sleep(5000);
-                springTas.Login(GlobalConst.NightwatchName, password);
-            });
             springTas.Connected += (sender, args) => springTas.Login(GlobalConst.NightwatchName, password);
             springTas.Connect(GlobalConst.OldSpringLobbyHost, GlobalConst.OldSpringLobbyPort);
         }

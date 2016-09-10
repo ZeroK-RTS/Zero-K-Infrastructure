@@ -57,22 +57,6 @@ namespace ZkLobbyServer
             await client.SendCommand(new MatchMakerSetup() { PossibleQueues = possibleQueues });
         }
 
-        public List<ProposedBattle> ProposeBattles(IEnumerable<PlayerEntry> users)
-        {
-            var proposedBattles = new List<ProposedBattle>();
-
-            var usersByWaitTime = users.OrderBy(x => x.JoinedTime).ToList();
-
-            foreach (var user in usersByWaitTime)
-            {
-                if (proposedBattles.Any(y => y.Players.Contains(user))) continue; // skip already assigned in battles
-                var battle = TryToMakeBattle(user, usersByWaitTime);
-                if (battle != null) proposedBattles.Add(battle);
-            }
-
-            return proposedBattles;
-        }
-
         public async Task StartMatchMaker(ConnectedUser user, MatchMakerQueueRequest cmd)
         {
             var wantedQueueNames = cmd.Queues?.ToList() ?? new List<string>();
@@ -97,13 +81,29 @@ namespace ZkLobbyServer
             await user.SendCommand(ToMatchMakerStatus(userEntry));
         }
 
+        private static List<ProposedBattle> ProposeBattles(IEnumerable<PlayerEntry> users)
+        {
+            var proposedBattles = new List<ProposedBattle>();
+
+            var usersByWaitTime = users.OrderBy(x => x.JoinedTime).ToList();
+
+            foreach (var user in usersByWaitTime)
+            {
+                if (proposedBattles.Any(y => y.Players.Contains(user))) continue; // skip already assigned in battles
+                var battle = TryToMakeBattle(user, usersByWaitTime);
+                if (battle != null) proposedBattles.Add(battle);
+            }
+
+            return proposedBattles;
+        }
+
 
         private MatchMakerStatus ToMatchMakerStatus(PlayerEntry entry)
         {
             return new MatchMakerStatus() { Text = "In queue", JoinedQueues = entry.QueueTypes.Select(x => x.Name).ToList() };
         }
 
-        private ProposedBattle TryToMakeBattle(PlayerEntry player, IList<PlayerEntry> otherPlayers)
+        private static ProposedBattle TryToMakeBattle(PlayerEntry player, IList<PlayerEntry> otherPlayers)
         {
             var playersByTeamElo =
                 otherPlayers.Where(x => x != player).OrderBy(x => Math.Abs(x.LobbyUser.EffectiveElo - player.LobbyUser.EffectiveElo)).ToList();
@@ -135,7 +135,7 @@ namespace ZkLobbyServer
 
         public class PlayerEntry
         {
-            public int EloWidth =>  (int)Math.Min(400, 100  +  DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds/30 * 50);
+            public int EloWidth => (int)Math.Min(400, 100 + DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / 30 * 50);
             public DateTime JoinedTime { get; private set; } = DateTime.UtcNow;
             public User LobbyUser { get; private set; }
             public string Name => LobbyUser.Name;
