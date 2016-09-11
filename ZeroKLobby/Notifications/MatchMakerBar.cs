@@ -16,7 +16,7 @@ namespace ZeroKLobby.Notifications
             this.client = client;
             InitializeComponent();
             lbText.Font = Config.GeneralFont;
-            bitmapButton1.Text = "Close";
+            bitmapButton1.Text = "Stop";
 
             client.MatchMakerStatusUpdated += (sender, status) =>
             {
