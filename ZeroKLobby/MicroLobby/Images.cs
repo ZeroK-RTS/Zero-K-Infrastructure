@@ -14,7 +14,7 @@ namespace ZeroKLobby.MicroLobby
 {
     static class Images
     {
-        static Image[,] rankImages = new Image[7, 7];
+        static Image[,] rankImages = new Image[8, 8];
 
         public static Dictionary<string, Image> CountryFlags = new Dictionary<string, Image>();
 
@@ -33,8 +33,8 @@ namespace ZeroKLobby.MicroLobby
 
         public static Image GetRank(int level, int elo)
         {
-            var clampedLevel = System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor(System.Math.Log(level / 30.0 + 1) * 4.2)));
-            var clampedSkill = System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((elo - 1000.0) / 200)));
+            var clampedLevel = System.Math.Max(0, System.Math.Min(rankImages.GetLength(0) - 1, (int)System.Math.Floor(System.Math.Log(level / 30.0 + 1) * 4.2)));
+            var clampedSkill = System.Math.Max(0, System.Math.Min(rankImages.GetLength(1) - 1, (int)System.Math.Floor((elo - 1000.0) / 200)));
             return rankImages[clampedLevel, clampedSkill];
         }
     }
