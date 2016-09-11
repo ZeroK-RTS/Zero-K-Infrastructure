@@ -135,14 +135,19 @@ namespace ZeroKWeb.SpringieInterface
 
             foreach (BattlePlayerResult p in result.ActualPlayers)
             {
-                sb.SpringBattlePlayers.Add(new SpringBattlePlayer
+                var account = Account.AccountByName(db, p.Name);
+                if (account != null)
                 {
-                    Account = Account.AccountByName(db, p.Name),
-                    AllyNumber = p.AllyNumber,
-                    IsInVictoryTeam = p.IsVictoryTeam,
-                    IsSpectator = p.IsSpectator,
-                    LoseTime = p.LoseTime
-                });
+                    sb.SpringBattlePlayers.Add(new SpringBattlePlayer
+                    {
+                        Account = account,
+                        AccountID = account.AccountID,
+                        AllyNumber = p.AllyNumber,
+                        IsInVictoryTeam = p.IsVictoryTeam,
+                        IsSpectator = p.IsSpectator,
+                        LoseTime = p.LoseTime
+                    });
+                }
             }
 
             db.SaveChanges();
@@ -163,7 +168,7 @@ namespace ZeroKWeb.SpringieInterface
                 if (awardType != null && (awardType == "gold" || awardType == "silver" || awardType == "bronze")) continue;
                 if (awardType != null && (awardType == "goldcoin" || awardType == "silvercoin" || awardType == "bronzecoin")) continue;
 
-                SpringBattlePlayer player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name);
+                SpringBattlePlayer player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account?.Name == name);
                 if (player != null)
                 {
                     db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward
@@ -183,7 +188,7 @@ namespace ZeroKWeb.SpringieInterface
                 string name = partsSpace[0];
                 string chatlog = partsSpace[1];
 
-                SpringBattlePlayer player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name);
+                SpringBattlePlayer player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account?.Name == name);
                 if (player != null)
                 {
                     db.LobbyChatHistories.InsertOnSubmit(new LobbyChatHistory

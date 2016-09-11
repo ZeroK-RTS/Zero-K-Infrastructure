@@ -1241,6 +1241,7 @@ namespace MissionEditor2
             if (String.IsNullOrWhiteSpace(key)) return;
             //if (String.IsNullOrEmpty(value)) return;
             if (dict.ContainsKey(key)) return;
+            value = value.Replace("%", "%%");
             dict.Add(key, value);
         }
 
