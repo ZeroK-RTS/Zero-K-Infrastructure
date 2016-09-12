@@ -199,10 +199,16 @@ namespace ZkLobbyServer
             }
         }
 
+
+    
+
         public async Task ProcessPlayerJoin(UserBattleStatus ubs)
         {
-            kickedPlayers.RemoveAll(x => x.TimeOfKicked <= DateTime.UtcNow.AddMinutes(-5));
-            if (kickedPlayers.Any(y => y.Name == ubs.Name)) await KickFromBattle(ubs.Name, "Banned for five minutes");
+            if (IsKicked(ubs.Name))
+            {
+                await KickFromBattle(ubs.Name, "Banned for five minutes");
+                return;
+            }
 
             if (spring.IsRunning)
             {
@@ -226,6 +232,14 @@ namespace ZkLobbyServer
             {
                 await SayBattle("ServerManage error: " + ex);
             }
+        }
+
+        public bool IsKicked(string name)
+        {
+            bool kicked = false;
+            kickedPlayers.RemoveAll(x => x.TimeOfKicked <= DateTime.UtcNow.AddMinutes(-5));
+            if (kickedPlayers.Any(y => y.Name == name)) kicked = true;
+            return kicked;
         }
 
 

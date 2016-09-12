@@ -252,9 +252,19 @@ namespace ZkLobbyServer
                 UserBattleStatus ubs;
                 if (!battle.Users.TryGetValue(Name, out ubs))
                 {
-                    await Respond("Not in battle room, join battle room first");
-                    return;
+                    if (battle.IsPassworded && (battle.Password != connectSpring.Password))
+                    {
+                        await Respond("Invalid password");
+                        return;
+                    }
+
+                    ubs = new UserBattleStatus(Name, User, Guid.NewGuid().ToString());
+                    battle.Users[Name] = ubs;
+                    battle.ValidateBattleStatus(ubs);
+                    await battle.ProcessPlayerJoin(ubs);
                 }
+
+
                 await SendCommand(battle.GetConnectSpringStructure(ubs));
             }
             else await Respond("No such running battle found");

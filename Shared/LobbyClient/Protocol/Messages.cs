@@ -522,6 +522,7 @@ namespace LobbyClient
     public class RequestConnectSpring
     {
         public int BattleID { get; set; }
+        public string Password { get; set; }
     }
 
     [Message(Origin.Server)]
