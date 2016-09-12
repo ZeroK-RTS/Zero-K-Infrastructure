@@ -14,7 +14,7 @@ namespace ZeroKLobby.MicroLobby
 {
     static class Images
     {
-        static Image[] rankImages = new Image[9];
+        static Image[,] rankImages = new Image[8, 8];
 
         public static Dictionary<string, Image> CountryFlags = new Dictionary<string, Image>();
 
@@ -22,15 +22,20 @@ namespace ZeroKLobby.MicroLobby
         static Images()
         {
             foreach (var country in CountryNames.Names.Keys) CountryFlags[country] = (Image)Flags.ResourceManager.GetObject(country.ToLower());
-            for (var i = 0; i < 9; i++) rankImages[i] = (Image)Ranks.ResourceManager.GetObject(string.Format("_{0}",i+1));
+            for (var i = 0; i < rankImages.GetLength(0); i++)
+            {
+                for (var j = 0; j < rankImages.GetLength(1); j++)
+                rankImages[i, j] = (Image)Ranks.ResourceManager.GetObject(string.Format("_{0}_{1}", i, j));
+            }
         }
 
 
 
-        public static Image GetRank(int level)
+        public static Image GetRank(int level, int elo)
         {
-            var rankIndex = level / 10;
-            return rankImages[Math.Min(rankIndex, rankImages.Length - 1)];
+            var clampedLevel = System.Math.Max(0, System.Math.Min(rankImages.GetLength(0) - 1, (int)System.Math.Floor(System.Math.Log(level / 30.0 + 1) * 4.2)));
+            var clampedSkill = System.Math.Max(0, System.Math.Min(rankImages.GetLength(1) - 1, (int)System.Math.Floor((elo - 1000.0) / 200)));
+            return rankImages[clampedLevel, clampedSkill];
         }
     }
 }
