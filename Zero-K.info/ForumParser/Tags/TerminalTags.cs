@@ -84,7 +84,7 @@ namespace ZeroKWeb.ForumParser
                 }
                 else if (Text.StartsWith("http://youtu.be/") || Text.StartsWith("https://youtu.be/"))
                 {
-                    var m = Regex.Match(Text, @"\.be/([^&]+)");
+                    var m = Regex.Match(Text, @"\.be/([^&?]+)");
                     if (m.Success)
                     {
                         context.AppendFormat("<iframe width=\"420\" height=\"315\" src=\"http://www.youtube.com/embed/{0}\" frameborder=\"0\" hd=\"1\" allowfullscreen=\"1\"></iframe>", m.Groups[1].Value);
