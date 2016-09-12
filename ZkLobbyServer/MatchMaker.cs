@@ -73,8 +73,20 @@ namespace ZkLobbyServer
             PlayerEntry entry;
             if (players.TryGetValue(user.Name, out entry))
                 if (entry.InvitedToPlay)
+                {
                     if (response.Ready) entry.LastReadyResponse = true;
                     else await RemoveUser(user.Name);
+
+                    var invitedPeople = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
+
+                    await
+                        server.Broadcast(invitedPeople.Select(x => x.Name),
+                            new AreYouReadyUpdate()
+                            {
+                                QueueReadyCounts = CountQueuedPeople(invitedPeople.Where(x => x.LastReadyResponse)),
+                                QueueRefusedCounts = CountQueuedPeople(invitedPeople.Where(x => !x.LastReadyResponse))
+                            });
+                }
         }
 
 
@@ -115,14 +127,26 @@ namespace ZkLobbyServer
         {
             PlayerEntry entry;
             if (players.TryRemove(name, out entry)) if (entry.InvitedToPlay) bannedPlayers[entry.Name] = DateTime.UtcNow; // was invited but he is gone now (whatever reason), ban!
+
             ConnectedUser conUser;
-            if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null)) await conUser.SendCommand(new MatchMakerStatus()); // left queue
+            if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null))
+            {
+                if (entry?.InvitedToPlay == true)
+                    await
+                        conUser.SendCommand(new AreYouReadyResult()
+                        {
+                            AreYouBanned = true,
+                            IsBattleStarting = false,
+                            Text = "You have refused the offer"
+                        });
+                await conUser.SendCommand(new MatchMakerStatus()); // left queue
+            }
         }
 
-        private Dictionary<string, int> CountQueuedPeople()
+        private Dictionary<string, int> CountQueuedPeople(IEnumerable<PlayerEntry> sumPlayers)
         {
             var ncounts = possibleQueues.ToDictionary(x => x.Name, x => 0);
-            foreach (var plr in players.Values.Where(x => x != null)) foreach (var jq in plr.QueueTypes) ncounts[jq.Name]++;
+            foreach (var plr in sumPlayers.Where(x => x != null)) foreach (var jq in plr.QueueTypes) ncounts[jq.Name]++;
             return ncounts;
         }
 
@@ -173,8 +197,7 @@ namespace ZkLobbyServer
                 if (server.ConnectedUsers.TryGetValue(plr.Name, out connectedUser)) connectedUser?.SendCommand(ToMatchMakerStatus(plr));
             }
 
-            server.Broadcast(toInvite.Select(x => x.Name),
-                new AreYouReady() { NeedReadyResponse = true, SecondsRemaining = TimerSeconds, Text = "Match found, are you ready?" });
+            server.Broadcast(toInvite.Select(x => x.Name), new AreYouReady() { SecondsRemaining = TimerSeconds, Text = "Match found, are you ready?" });
         }
 
         private List<ProposedBattle> ResolveToRealBattles()
@@ -190,9 +213,10 @@ namespace ZkLobbyServer
             var readyAndStarting = readyUsers.Where(x => realBattles.Any(y => y.Players.Contains(x))).ToList();
             var readyAndFailed = readyUsers.Where(x => !realBattles.Any(y => y.Players.Contains(x))).Select(x => x.Name);
 
-            server.Broadcast(readyAndFailed, new AreYouReady() { Text = "Match failed, someone else was not ready" });
+            server.Broadcast(readyAndFailed, new AreYouReadyResult() { Text = "Match failed, not enough people ready", IsBattleStarting = false });
 
-            server.Broadcast(readyAndStarting.Select(x => x.Name), new AreYouReady() { Text = "Match success, starting soon" });
+            server.Broadcast(readyAndStarting.Select(x => x.Name),
+                new AreYouReadyResult() { Text = "Match success, starting soon", IsBattleStarting = true });
             server.Broadcast(readyAndStarting.Select(x => x.Name), new MatchMakerStatus() { });
 
             foreach (var usr in readyAndStarting)
@@ -234,7 +258,7 @@ namespace ZkLobbyServer
         {
             var realBattles = ResolveToRealBattles();
 
-            queuesCounts = CountQueuedPeople();
+            queuesCounts = CountQueuedPeople(players.Values);
 
             foreach (var bat in realBattles) StartBattle(bat);
 

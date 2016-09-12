@@ -20,7 +20,7 @@ namespace ZeroKLobby.MicroLobby
             this.areYou = areYou;
             InitializeComponent();
             lb1.Text = areYou.Text;
-            if (!areYou.NeedReadyResponse)
+            //if (!areYou.NeedReadyResponse)
             {
                 cancelButton.Visible = false;
                 lbTimer.Visible = false;
@@ -33,7 +33,8 @@ namespace ZeroKLobby.MicroLobby
 
         void okButton_Click(object sender, EventArgs e)
         {
-            if (areYou.NeedReadyResponse) Program.TasClient.AreYouReadyResponse(true);
+            //if (areYou.NeedReadyResponse) 
+            Program.TasClient.AreYouReadyResponse(true);
             Close();
         }
 
@@ -47,7 +48,8 @@ namespace ZeroKLobby.MicroLobby
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            if (areYou.NeedReadyResponse) Program.TasClient.AreYouReadyResponse(false);
+            //if (areYou.NeedReadyResponse) 
+            Program.TasClient.AreYouReadyResponse(false);
             Close();
         }
 
