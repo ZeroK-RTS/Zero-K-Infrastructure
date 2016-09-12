@@ -30,6 +30,10 @@ namespace ZeroKLobby.Notifications
 
             client.Connected += (sender, welcome) =>
                 { Program.NotifySection?.RemoveBar(this); };
+
+            client.ConnectionLost += (sender, welcome) =>
+            { Program.NotifySection?.RemoveBar(this); };
+
         }
 
 

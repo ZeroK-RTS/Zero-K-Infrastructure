@@ -84,6 +84,7 @@ namespace ZeroKLobby.MicroLobby
             this.lb1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.lb1.BackColor = System.Drawing.Color.Transparent;
             this.lb1.Location = new System.Drawing.Point(46, 9);
             this.lb1.Name = "lb1";
             this.lb1.Size = new System.Drawing.Size(448, 95);
@@ -94,6 +95,7 @@ namespace ZeroKLobby.MicroLobby
             // lbTimer
             // 
             this.lbTimer.AutoSize = true;
+            this.lbTimer.BackColor = System.Drawing.Color.Transparent;
             this.lbTimer.Location = new System.Drawing.Point(251, 118);
             this.lbTimer.Name = "lbTimer";
             this.lbTimer.Size = new System.Drawing.Size(32, 18);
