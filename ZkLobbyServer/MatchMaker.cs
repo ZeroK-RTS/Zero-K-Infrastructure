@@ -404,9 +404,10 @@ namespace ZkLobbyServer
             public bool CanBeAdded(PlayerEntry other)
             {
                 if (!other.GenerateWantedBattles().Any(y => (y.Size == Size) && (y.Mode == Mode))) return false;
-
+                var widthMultiplier = Math.Max(1.0, 1.0 + (Size - 4)*0.1);
+                
                 var elo = GetElo(other);
-                if ((elo - MaxElo > owner.EloWidth) || (MinElo - elo > owner.EloWidth)) return false;
+                if ((elo - MaxElo > owner.EloWidth * widthMultiplier) || (MinElo - elo > owner.EloWidth * widthMultiplier)) return false;
 
                 return true;
             }
