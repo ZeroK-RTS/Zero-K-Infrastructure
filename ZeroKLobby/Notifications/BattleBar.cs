@@ -109,10 +109,9 @@ namespace ZeroKLobby.Notifications
 
             client.Rang += (s, e) =>
                 {
-                    if (e.User == GlobalConst.NightwatchName)
-                        //Nightwatch RING is from UserController.cs (website code)
-                        MainWindow.Instance.NotifyUser("chat/zkadmin", "New report arrive at zkadmin channel", true, true);
-                    else
+                    if (e.Place == SayPlace.Channel)
+                        MainWindow.Instance.NotifyUser($"chat/{e.Target}", $"Attention needed in {e.Target} channel", true, true);
+                    else 
                     {
                         MainWindow.Instance.NotifyUser("chat/battle", "Someone demands your attention in battle room!", true, true);
                         AutoRespond();
