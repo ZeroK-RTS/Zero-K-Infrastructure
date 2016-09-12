@@ -27,6 +27,9 @@ namespace ZeroKLobby.Notifications
                     Program.NotifySection.AddBar(this);
                 }
             };
+
+            client.Connected += (sender, welcome) =>
+                { Program.NotifySection?.RemoveBar(this); };
         }
 
 
