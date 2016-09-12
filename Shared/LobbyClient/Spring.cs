@@ -546,7 +546,7 @@ namespace LobbyClient
                         }
                         else Trace.TraceWarning("recieved GAMEOVER before STARTPLAYING!");
 
-                        Task.Delay(10000).ContinueWith(x => ExitGame());
+                        Task.Delay(60000).ContinueWith(x => ExitGame());
                         break;
 
                     case Talker.SpringEventType.PLAYER_READY:
