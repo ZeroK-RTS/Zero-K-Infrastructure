@@ -582,13 +582,14 @@ namespace LobbyClient
     [Message(Origin.Server)]
     public class AreYouReady
     {
-        public string Text { get; set; }
         public int SecondsRemaining { get; set; } = 10;
     }
 
     [Message(Origin.Server)]
     public class AreYouReadyUpdate
     {
+        public bool ReadyAccepted { get; set; }
+        public bool LikelyToPlay { get; set; }
         public Dictionary<string, int> QueueReadyCounts { get; set; } = new Dictionary<string, int>();
         public Dictionary<string, int> QueueRefusedCounts { get; set; } = new Dictionary<string, int>();
     }
@@ -596,8 +597,6 @@ namespace LobbyClient
     [Message(Origin.Server)]
     public class AreYouReadyResult
     {
-        public string Text { get; set; }
-
         public bool IsBattleStarting { get; set; }
         public bool AreYouBanned { get; set; }
     }

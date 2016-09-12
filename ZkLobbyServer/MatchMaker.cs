@@ -65,6 +65,8 @@ namespace ZkLobbyServer
             timer.AutoReset = true;
             timer.Elapsed += TimerOnElapsed;
             timer.Start();
+
+            queuesCounts = CountQueuedPeople(players.Values);
         }
 
 
@@ -78,14 +80,23 @@ namespace ZkLobbyServer
                     else await RemoveUser(user.Name);
 
                     var invitedPeople = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
+                    var readyCounts = CountQueuedPeople(invitedPeople.Where(x => x.LastReadyResponse));
+                    var refusedCounts = CountQueuedPeople(invitedPeople.Where(x => !x.LastReadyResponse));
 
-                    await
-                        server.Broadcast(invitedPeople.Select(x => x.Name),
-                            new AreYouReadyUpdate()
-                            {
-                                QueueReadyCounts = CountQueuedPeople(invitedPeople.Where(x => x.LastReadyResponse)),
-                                QueueRefusedCounts = CountQueuedPeople(invitedPeople.Where(x => !x.LastReadyResponse))
-                            });
+                    var proposed = ProposeBattles(invitedPeople.Where(x=>x.LastReadyResponse));
+
+                    await Task.WhenAll(invitedPeople.Select(async (p) =>
+                    {
+                        await
+                            server.SendToUser(p.Name,
+                                new AreYouReadyUpdate()
+                                {
+                                    QueueReadyCounts = readyCounts,
+                                    QueueRefusedCounts = refusedCounts,
+                                    ReadyAccepted = p.LastReadyResponse,
+                                    LikelyToPlay = proposed.Any(y=>y.Players.Contains(p))
+                                });
+                    }));
                 }
         }
 
@@ -137,7 +148,6 @@ namespace ZkLobbyServer
                         {
                             AreYouBanned = true,
                             IsBattleStarting = false,
-                            Text = "You have refused the offer"
                         });
                 await conUser.SendCommand(new MatchMakerStatus()); // left queue
             }
@@ -197,7 +207,7 @@ namespace ZkLobbyServer
                 if (server.ConnectedUsers.TryGetValue(plr.Name, out connectedUser)) connectedUser?.SendCommand(ToMatchMakerStatus(plr));
             }
 
-            server.Broadcast(toInvite.Select(x => x.Name), new AreYouReady() { SecondsRemaining = TimerSeconds, Text = "Match found, are you ready?" });
+            server.Broadcast(toInvite.Select(x => x.Name), new AreYouReady() { SecondsRemaining = TimerSeconds});
         }
 
         private List<ProposedBattle> ResolveToRealBattles()
@@ -213,10 +223,10 @@ namespace ZkLobbyServer
             var readyAndStarting = readyUsers.Where(x => realBattles.Any(y => y.Players.Contains(x))).ToList();
             var readyAndFailed = readyUsers.Where(x => !realBattles.Any(y => y.Players.Contains(x))).Select(x => x.Name);
 
-            server.Broadcast(readyAndFailed, new AreYouReadyResult() { Text = "Match failed, not enough people ready", IsBattleStarting = false });
+            server.Broadcast(readyAndFailed, new AreYouReadyResult() { IsBattleStarting = false });
 
             server.Broadcast(readyAndStarting.Select(x => x.Name),
-                new AreYouReadyResult() { Text = "Match success, starting soon", IsBattleStarting = true });
+                new AreYouReadyResult() { IsBattleStarting = true });
             server.Broadcast(readyAndStarting.Select(x => x.Name), new MatchMakerStatus() { });
 
             foreach (var usr in readyAndStarting)

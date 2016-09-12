@@ -181,7 +181,10 @@ namespace LobbyClient
             Say(SayPlace.User, "ChanServ", string.Format("!topic #{0} {1}", channel, topic.Replace("\n", "\\n")), false);
         }
 
-        public event EventHandler<AreYouReady> AreYouReadyReceived = delegate { };
+        public event EventHandler<AreYouReady> AreYouReadyStarted = delegate { };
+        public event EventHandler<AreYouReadyUpdate> AreYouReadyUpdated = delegate { };
+        public event EventHandler<AreYouReadyResult> AreYouReadyClosed = delegate { };
+
 
 
         public Task AreYouReadyResponse(bool ready)
@@ -652,7 +655,17 @@ namespace LobbyClient
 
         private async Task Process(AreYouReady areYou)
         {
-            AreYouReadyReceived(this, areYou);
+            AreYouReadyStarted(this, areYou);
+        }
+
+        private async Task Process(AreYouReadyUpdate areYou)
+        {
+            AreYouReadyUpdated(this, areYou);
+        }
+
+        private async Task Process(AreYouReadyResult areYou)
+        {
+            AreYouReadyClosed(this, areYou);
         }
 
 

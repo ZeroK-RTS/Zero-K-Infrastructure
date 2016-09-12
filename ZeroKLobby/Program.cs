@@ -289,13 +289,8 @@ namespace ZeroKLobby
                 TasClient.ChannelJoined += (s, e) => { Trace.TraceInformation("TASC channel joined: " + e.Name); };
                 TasClient.ConnectionLost += (s, e) => Trace.TraceInformation("Connection lost");
 
-                TasClient.AreYouReadyReceived += (s, rdy) =>
-                {
-                    var dialog = new AreYouReadyDialog(rdy);
-                    dialog.StartPosition = FormStartPosition.CenterScreen;
-                    MainWindow.NotifyUser("", "Match found", true, true);
-                    dialog.Show(MainWindow);
-                };
+
+                Program.AreYouReadyDialog = new AreYouReadyDialog(TasClient);
 
                 // special handling
                 TasClient.PreviewSaid += (s, e) =>
@@ -368,6 +363,8 @@ namespace ZeroKLobby
                 Application.Restart();
             }
         }
+
+        public static AreYouReadyDialog AreYouReadyDialog { get; private set; }
 
         public static MatchMakerBar MatchMakerBar { get; private set; }
 

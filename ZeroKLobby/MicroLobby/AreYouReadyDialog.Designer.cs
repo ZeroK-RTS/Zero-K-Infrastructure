@@ -75,7 +75,7 @@ namespace ZeroKLobby.MicroLobby
             this.cancelButton.Size = new System.Drawing.Size(109, 41);
             this.cancelButton.SoundType = ZeroKLobby.Controls.SoundPalette.SoundType.Click;
             this.cancelButton.TabIndex = 9;
-            this.cancelButton.Text = "Cancel";
+            this.cancelButton.Text = "Refuse";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
@@ -84,11 +84,11 @@ namespace ZeroKLobby.MicroLobby
             this.lb1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lb1.Location = new System.Drawing.Point(85, 19);
+            this.lb1.Location = new System.Drawing.Point(46, 9);
             this.lb1.Name = "lb1";
-            this.lb1.Size = new System.Drawing.Size(359, 64);
+            this.lb1.Size = new System.Drawing.Size(448, 95);
             this.lb1.TabIndex = 10;
-            this.lb1.Text = "Are you ready to play?";
+            this.lb1.Text = "Are you ready to play?\r\n\r\n";
             this.lb1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lbTimer

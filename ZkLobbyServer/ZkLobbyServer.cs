@@ -71,6 +71,13 @@ namespace ZkLobbyServer
                 data);
         }
 
+
+        public async Task SendToUser<T>(string name, T data)
+        {
+            ConnectedUser conus;
+            if (ConnectedUsers.TryGetValue(name, out conus)) await conus.SendCommand(data);
+        }
+
         public bool CanChatTo(string origin, string target)
         {
             ConnectedUser usr;
