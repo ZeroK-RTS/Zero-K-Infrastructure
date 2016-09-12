@@ -112,7 +112,7 @@ namespace ZeroKLobby
             }
             if (!user.IsBot)
             {
-                drawImage(Images.GetRank(user.Level), 16, 16);
+                drawImage(Images.GetRank(user.Level, user.EffectiveElo), 16, 16);
                 drawString(string.Format("Level: {0}", user.Level));
                 newLine();
                 if (user.AwaySince.HasValue)

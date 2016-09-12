@@ -572,7 +572,9 @@ namespace LobbyClient
     {
         public bool MatchMakerEnabled => JoinedQueues?.Count > 0;
         public List<string> JoinedQueues { get; set; } = new List<string>();
-        public string Text { get; set; }
+        public Dictionary<string,int> QueueCounts { get; set; } = new Dictionary<string, int>();
+        public int CurrentEloWidth { get; set; }
+        public DateTime JoinedTime { get; set; }
     }
 
     
@@ -580,10 +582,24 @@ namespace LobbyClient
     [Message(Origin.Server)]
     public class AreYouReady
     {
-        public bool NeedReadyResponse { get; set; }
-        public string Text { get; set; }
         public int SecondsRemaining { get; set; } = 10;
     }
+
+    [Message(Origin.Server)]
+    public class AreYouReadyUpdate
+    {
+        public bool ReadyAccepted { get; set; }
+        public bool LikelyToPlay { get; set; }
+        public Dictionary<string, int> QueueReadyCounts { get; set; } = new Dictionary<string, int>();
+    }
+
+    [Message(Origin.Server)]
+    public class AreYouReadyResult
+    {
+        public bool IsBattleStarting { get; set; }
+        public bool AreYouBanned { get; set; }
+    }
+
 
     [Message(Origin.Client)]
     public class AreYouReadyResponse

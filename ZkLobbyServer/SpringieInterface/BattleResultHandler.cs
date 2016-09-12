@@ -151,7 +151,8 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             db.SaveChanges();
-            return sb;
+
+            return db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == sb.SpringBattleID); // reselect from db to get proper lazy proxies
         }
 
         private static void ProcessExtras(List<string> extras, SpringBattle sb, ZkDataContext db)

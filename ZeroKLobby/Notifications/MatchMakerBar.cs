@@ -23,10 +23,17 @@ namespace ZeroKLobby.Notifications
                 if (!status.MatchMakerEnabled) Program.NotifySection.RemoveBar(this);
                 else
                 {
+                    lbText.Text = "In queue: " + string.Join(", ", status.JoinedQueues.Select(x=>$"{x} ({status.QueueCounts[x]} people)"));
                     Program.NotifySection.AddBar(this);
-                    lbText.Text = status.Text;
                 }
             };
+
+            client.Connected += (sender, welcome) =>
+                { Program.NotifySection?.RemoveBar(this); };
+
+            client.ConnectionLost += (sender, welcome) =>
+            { Program.NotifySection?.RemoveBar(this); };
+
         }
 
 

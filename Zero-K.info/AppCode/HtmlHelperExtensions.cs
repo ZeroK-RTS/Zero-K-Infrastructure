@@ -170,14 +170,9 @@ namespace System.Web.Mvc
                 
                 var dudeStr = "";
                 if (account.IsZeroKAdmin) dudeStr = "<img src='/img/police.png'  class='icon16' alt='Admin' />";
-                else if (account.EffectiveElo < 1400) dudeStr = "<img src='/img/smurf.png'  class='icon16' alt='Newbie' />";
-                else if (account.EffectiveElo < 1600) dudeStr = "<img src='/img/user.png'  class='icon16' alt='Dude' />";
-                else if (account.EffectiveElo < 1800) dudeStr = "<img src='/img/soldier.png'  class='icon16' alt='Soldier' />";
-                else                                  dudeStr = "<img src='/img/napoleon.png'  class='icon16' alt='Napoleon' />";
-
-                var clampedLevel = account.Level/10 + 1;
-                if (clampedLevel < 1) clampedLevel = 1;
-                if (clampedLevel > 9) clampedLevel = 9;
+                
+                var clampedLevel = System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor(System.Math.Log(account.Level / 30.0 + 1) * 4.2)));
+                var clampedSkill = System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((account.EffectiveElo - 1000.0) / 200)));
 
                 string color = Faction.FactionColor(account.Faction, Global.FactionID);
                 if (String.IsNullOrEmpty(color)) color = "#B0D0C0";
@@ -185,9 +180,10 @@ namespace System.Web.Mvc
                 return
                     new MvcHtmlString(
                         string.Format(
-                            "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}.png'  class='icon16' alt='rank' />{5}{6}<a href='/Users/Detail/{2}' style='color:{3}' nicetitle='$user${2}'>{4}</a>",
+                            "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}_{2}.png'  class='icon16' alt='rank' />{6}{7}<a href='/Users/Detail/{3}' style='color:{4}' nicetitle='$user${3}'>{5}</a>",
                             account.Country != "??" ? account.Country : "unknown",
                             clampedLevel,
+                            clampedSkill,
                             account.AccountID,
                             colorize ? color : "",
                             account.Name,
