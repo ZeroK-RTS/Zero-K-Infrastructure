@@ -18,9 +18,12 @@ using static System.String;
 
 namespace ZkLobbyServer
 {
-    public partial class ServerBattle: Battle
+    public partial class ServerBattle : Battle
     {
         public const int PollTimeout = 60;
+
+
+        private const int MatchMakerAutoCloseDelaySeconds = 20;
         public static PlasmaDownloader.PlasmaDownloader downloader;
         public static SpringPaths springPaths;
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
@@ -29,16 +32,14 @@ namespace ZkLobbyServer
         private static object pickPortLock = new object();
 
         public readonly List<string> toNotify = new List<string>();
-
-        public CommandPoll ActivePoll { get; private set; }
         public Resource HostedMap;
 
         public Resource HostedMod;
 
         public Mod HostedModInfo;
+        private string hostingIp;
 
         private int hostingPort;
-        private string hostingIp;
 
         private List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
 
@@ -46,6 +47,8 @@ namespace ZkLobbyServer
 
         public ZkLobbyServer server;
         public Spring spring;
+
+        public CommandPoll ActivePoll { get; private set; }
 
 
         static ServerBattle()
@@ -69,62 +72,16 @@ namespace ZkLobbyServer
         {
             this.server = server;
 
-            pollTimer = new Timer(PollTimeout*1000);
+            pollTimer = new Timer(PollTimeout * 1000);
             pollTimer.Enabled = false;
             pollTimer.AutoReset = false;
             pollTimer.Elapsed += pollTimer_Elapsed;
             IsMatchMakerBattle = isMatchMakerBattle;
             SetupSpring();
             PickHostingPort();
-            hostingIp = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString() ?? "127.0.0.1";
-        }
-
-        private async Task ApplyBalanceResults(BalanceTeamsResult balance)
-        {
-            if (!IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
-            if (balance.Players != null && balance.Players.Count > 0)
-            {
-                foreach (var p in balance.Players)
-                {
-                    UserBattleStatus u;
-                    if (Users.TryGetValue(p.Name, out u))
-                    {
-                        u.IsSpectator = p.IsSpectator;
-                        u.AllyNumber = p.AllyID;
-                    }
-                }
-
-                foreach (var u in Users.Where(x => !balance.Players.Any(y => y.Name == x.Key))) u.Value.IsSpectator = true;
-            }
-            
-
-            if (balance.DeleteBots)
-            {
-                foreach (var b in Bots.Keys) await server.Broadcast(Users.Keys, new RemoveBot() { Name = b });
-                Bots.Clear();
-            }
-
-            if (balance.Bots != null && balance.Bots.Count > 0)
-            {
-                foreach (var p in balance.Bots)
-                {
-                    Bots.AddOrUpdate(p.BotName,
-                        s => new BotBattleStatus(p.BotName, p.Owner??FounderName, p.BotAI) {AllyNumber = p.AllyID},
-                        (s, status) =>
-                        {
-                            status.AllyNumber = p.AllyID;
-                            status.owner = p.Owner ?? FounderName; 
-                            status.aiLib = p.BotAI;
-                            status.Name = p.BotName;
-                            return status;
-                        });
-
-                }
-            }
-
-
-            foreach (var u in Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await server.Broadcast(Users.Keys, u); // send other's status to self
-            foreach (var u in Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await server.Broadcast(Users.Keys, u);
+            hostingIp =
+                Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString() ??
+                "127.0.0.1";
         }
 
 
@@ -176,7 +133,6 @@ namespace ZkLobbyServer
             MapName = HostedMap?.InternalName ?? MapName ?? "Small_Divide-Remake-v04";
 
             if (HostedMod != null)
-            {
                 try
                 {
                     HostedModInfo = MetaDataCache.ServerGetMod(HostedMod.InternalName);
@@ -185,7 +141,6 @@ namespace ZkLobbyServer
                 {
                     Trace.TraceWarning("Error loading mod metadata for {0} : {1}", HostedMod.InternalName, ex);
                 }
-            }
         }
 
         public List<string> GetAllUserNames()
@@ -198,11 +153,21 @@ namespace ZkLobbyServer
         public BattleCommand GetCommandByName(string name)
         {
             BattleCommand command;
-            if (Commands.TryGetValue(name, out command))
-            {
-                return command.Create();
-            }
+            if (Commands.TryGetValue(name, out command)) return command.Create();
             return null;
+        }
+
+        public ConnectSpring GetConnectSpringStructure(UserBattleStatus us)
+        {
+            return new ConnectSpring()
+            {
+                Engine = EngineVersion,
+                Ip = hostingIp,
+                Port = hostingPort,
+                Map = MapName,
+                Game = ModName,
+                ScriptPassword = us.ScriptPassword
+            };
         }
 
 
@@ -224,10 +189,10 @@ namespace ZkLobbyServer
 
             ConnectedUser user;
             server.ConnectedUsers.TryGetValue(say.User, out user);
-            if (say.Place == SayPlace.Battle && !say.IsEmote && user?.User.BanMute != true && user?.User.BanSpecChat != true && say.AllowRelay) spring.SayGame($"<{say.User}>{say.Text}"); // relay to spring
+            if ((say.Place == SayPlace.Battle) && !say.IsEmote && (user?.User.BanMute != true) && (user?.User.BanSpecChat != true) && say.AllowRelay) spring.SayGame($"<{say.User}>{say.Text}"); // relay to spring
 
             // check if it's command
-            if (!say.IsEmote && say.Text?.Length > 1 && say.Text.StartsWith("!"))
+            if (!say.IsEmote && (say.Text?.Length > 1) && say.Text.StartsWith("!"))
             {
                 var parts = say.Text.Substring(1).Split(new[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
                 await RunCommandWithPermissionCheck(say, parts[0], parts.Skip(1).FirstOrDefault());
@@ -242,7 +207,7 @@ namespace ZkLobbyServer
             if (spring.IsRunning)
             {
                 spring.AddUser(ubs.Name, ubs.ScriptPassword);
-                var started = DateTime.UtcNow.Subtract(spring.IngameStartTime ?? this.RunningSince ?? DateTime.UtcNow);
+                var started = DateTime.UtcNow.Subtract(spring.IngameStartTime ?? RunningSince ?? DateTime.UtcNow);
                 started = new TimeSpan((int)started.TotalHours, started.Minutes, started.Seconds);
                 await SayBattle($"THIS GAME IS CURRENTLY IN PROGRESS, PLEASE WAIT UNTIL IT ENDS! Running for {started}", ubs.Name);
                 await SayBattle("If you say !notify, I will message you when the current game ends.", ubs.Name);
@@ -284,7 +249,7 @@ namespace ZkLobbyServer
         }
 
 
-        public void RunCommandDirectly<T>(Say e, string args = null) where T: BattleCommand, new()
+        public void RunCommandDirectly<T>(Say e, string args = null) where T : BattleCommand, new()
         {
             var t = new T();
             t.Run(this, e, args);
@@ -326,7 +291,7 @@ namespace ZkLobbyServer
             if (!IsNullOrEmpty(text))
                 foreach (var line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    if (privateUser == null && spring?.IsRunning == true) spring.SayGame(line);
+                    if ((privateUser == null) && (spring?.IsRunning == true)) spring.SayGame(line);
                     await
                         server.GhostSay(
                             new Say()
@@ -365,7 +330,6 @@ namespace ZkLobbyServer
                 context.ApplyBalance(balance);
             }
 
-
             var startSetup = StartSetup.GetDedicatedServerStartSetup(context);
 
             if (!await EnsureEngineIsPresent()) return;
@@ -374,44 +338,12 @@ namespace ZkLobbyServer
             IsInGame = true;
             RunningSince = DateTime.UtcNow;
             foreach (var us in Users.Values)
-            {
                 if (us != null)
                 {
                     ConnectedUser user;
                     if (server.ConnectedUsers.TryGetValue(us.Name, out user)) await user.SendCommand(GetConnectSpringStructure(us));
                 }
-            }
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
-        }
-
-        private async Task<bool> EnsureEngineIsPresent()
-        {
-            var down = downloader.GetResource(DownloadType.ENGINE, EngineVersion);
-            var task = down?.WaitHandle?.AsTask(TimeSpan.FromMinutes(3));
-            if (task != null)
-            {
-                await SayBattle("Host downloading the engine");
-                await task;
-                if (down.IsComplete != true)
-                {
-                    await SayBattle("Host engine download failed");
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public ConnectSpring GetConnectSpringStructure(UserBattleStatus us)
-        {
-            return new ConnectSpring()
-            {
-                Engine = EngineVersion,
-                Ip = hostingIp,
-                Port = hostingPort,
-                Map = MapName,
-                Game =  ModName,
-                ScriptPassword = us.ScriptPassword
-            };
         }
 
 
@@ -426,7 +358,7 @@ namespace ZkLobbyServer
             if (await poll.Setup(command, e, args))
             {
                 ActivePoll = poll;
-                pollTimer.Interval = PollTimeout*1000;
+                pollTimer.Interval = PollTimeout * 1000;
                 pollTimer.Enabled = true;
             }
         }
@@ -511,13 +443,89 @@ namespace ZkLobbyServer
             FillDetails();
         }
 
+        public void ValidateBattleStatus(UserBattleStatus ubs)
+        {
+            if (Mode != AutohostMode.None) ubs.AllyNumber = 0;
+            if (!ubs.IsSpectator)
+            {
+                var cnt = Users.Values.Count(x => !x.IsSpectator);
+                var isPresent = Users.ContainsKey(ubs.Name);
+                if (isPresent && (cnt > MaxPlayers)) ubs.IsSpectator = true;
+                if (!isPresent && (cnt >= MaxPlayers)) ubs.IsSpectator = true;
+            }
+        }
+
+        private async Task ApplyBalanceResults(BalanceTeamsResult balance)
+        {
+            if (!IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
+            if ((balance.Players != null) && (balance.Players.Count > 0))
+            {
+                foreach (var p in balance.Players)
+                {
+                    UserBattleStatus u;
+                    if (Users.TryGetValue(p.Name, out u))
+                    {
+                        u.IsSpectator = p.IsSpectator;
+                        u.AllyNumber = p.AllyID;
+                    }
+                }
+
+                foreach (var u in Users.Where(x => !balance.Players.Any(y => y.Name == x.Key))) u.Value.IsSpectator = true;
+            }
+
+            if (balance.DeleteBots)
+            {
+                foreach (var b in Bots.Keys) await server.Broadcast(Users.Keys, new RemoveBot() { Name = b });
+                Bots.Clear();
+            }
+
+            if ((balance.Bots != null) && (balance.Bots.Count > 0))
+                foreach (var p in balance.Bots)
+                    Bots.AddOrUpdate(p.BotName,
+                        s => new BotBattleStatus(p.BotName, p.Owner ?? FounderName, p.BotAI) { AllyNumber = p.AllyID },
+                        (s, status) =>
+                        {
+                            status.AllyNumber = p.AllyID;
+                            status.owner = p.Owner ?? FounderName;
+                            status.aiLib = p.BotAI;
+                            status.Name = p.BotName;
+                            return status;
+                        });
+
+            foreach (var u in Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await server.Broadcast(Users.Keys, u); // send other's status to self
+            foreach (var u in Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await server.Broadcast(Users.Keys, u);
+        }
+
+        private async Task<bool> EnsureEngineIsPresent()
+        {
+            var down = downloader.GetResource(DownloadType.ENGINE, EngineVersion);
+            var task = down?.WaitHandle?.AsTask(TimeSpan.FromMinutes(3));
+            if (task != null)
+            {
+                await SayBattle("Host downloading the engine");
+                await task;
+                if (down.IsComplete != true)
+                {
+                    await SayBattle("Host engine download failed");
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private void PickHostingPort()
         {
             var port = GlobalConst.UdpHostingPortStart;
             lock (pickPortLock)
             {
                 var reservedPorts = server.Battles.Values.Where(x => x != null).Select(x => x.hostingPort).Distinct().ToDictionary(x => x, x => true);
-                var usedPorts = IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().Where(x=>x!=null).Select(x => x.Port).Distinct().ToDictionary(x => x, x => true);
+                var usedPorts =
+                    IPGlobalProperties.GetIPGlobalProperties()
+                        .GetActiveUdpListeners()
+                        .Where(x => x != null)
+                        .Select(x => x.Port)
+                        .Distinct()
+                        .ToDictionary(x => x, x => true);
 
                 while (usedPorts.ContainsKey(port) || reservedPorts.ContainsKey(port)) port++;
                 hostingPort = port;
@@ -533,7 +541,7 @@ namespace ZkLobbyServer
                 if (ActivePoll != null) ActivePoll.End();
                 StopVote();
             }
-            catch {}
+            catch { }
             finally
             {
                 pollTimer.Start();
@@ -562,18 +570,12 @@ namespace ZkLobbyServer
 
         private void spring_PlayerSaid(object sender, SpringLogEventArgs e)
         {
-            ProcessBattleSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle, AllowRelay = false}); // process as command
+            ProcessBattleSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle, AllowRelay = false }); // process as command
 
             ConnectedUser user;
             if (server.ConnectedUsers.TryGetValue(e.Username, out user) && !user.User.BanMute) // relay
-            {
-                if (!e.Line.StartsWith("Allies:") && !e.Line.StartsWith("Spectators:"))
-                {
-                    server.GhostSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle }, BattleID);
-                }
-            }
+                if (!e.Line.StartsWith("Allies:") && !e.Line.StartsWith("Spectators:")) server.GhostSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle }, BattleID);
         }
-
 
         private async void spring_SpringExited(object sender, Spring.SpringBattleContext springBattleContext)
         {
@@ -582,15 +584,18 @@ namespace ZkLobbyServer
             RunningSince = null;
 
             await SayBattle(BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server));
-            
-            if (IsMatchMakerBattle) await server.RemoveBattle(this);
+
+            if (IsMatchMakerBattle)
+            {
+                await SayBattle($"This room will close in {MatchMakerAutoCloseDelaySeconds} seconds");
+                await Task.Delay(MatchMakerAutoCloseDelaySeconds * 1000).ContinueWith((t) => server.RemoveBattle(this));
+                //await server.RemoveBattle(this);
+            }
             else
             {
-
                 await server.Broadcast(server.ConnectedUsers.Keys, new BattleUpdate() { Header = GetHeader() });
 
                 foreach (var s in toNotify)
-                {
                     await
                         server.GhostSay(new Say()
                         {
@@ -602,7 +607,6 @@ namespace ZkLobbyServer
                             Ring = true,
                             AllowRelay = false
                         });
-                }
             }
             toNotify.Clear();
         }
@@ -621,21 +625,6 @@ namespace ZkLobbyServer
         {
             public string Name;
             public DateTime TimeOfKicked = DateTime.UtcNow;
-        }
-
-        public void ValidateBattleStatus(UserBattleStatus ubs)
-        {
-            if (Mode != AutohostMode.None)
-            {
-                ubs.AllyNumber = 0;
-            }
-            if (!ubs.IsSpectator)
-            {
-                var cnt = Users.Values.Count(x => !x.IsSpectator);
-                var isPresent = Users.ContainsKey(ubs.Name);
-                if (isPresent && cnt > MaxPlayers) ubs.IsSpectator = true;
-                if (!isPresent && cnt >= MaxPlayers) ubs.IsSpectator = true;
-            }
         }
     }
 }
