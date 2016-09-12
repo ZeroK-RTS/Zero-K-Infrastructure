@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -63,7 +64,7 @@ namespace ZkLobbyServer
             }
             timer = new Timer(TimerSeconds * 1000);
             timer.AutoReset = true;
-            timer.Elapsed += TimerOnElapsed;
+            timer.Elapsed += TimerTick;
             timer.Start();
 
             queuesCounts = CountQueuedPeople(players.Values);
@@ -80,23 +81,26 @@ namespace ZkLobbyServer
                     else await RemoveUser(user.Name);
 
                     var invitedPeople = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
-                    var readyCounts = CountQueuedPeople(invitedPeople.Where(x => x.LastReadyResponse));
-                    var refusedCounts = CountQueuedPeople(invitedPeople.Where(x => !x.LastReadyResponse));
 
-                    var proposed = ProposeBattles(invitedPeople.Where(x=>x.LastReadyResponse));
-
-                    await Task.WhenAll(invitedPeople.Select(async (p) =>
+                    if (invitedPeople.Count == 0 || invitedPeople.All(x => x.LastReadyResponse)) OnTick();
+                    else
                     {
-                        await
-                            server.SendToUser(p.Name,
-                                new AreYouReadyUpdate()
-                                {
-                                    QueueReadyCounts = readyCounts,
-                                    QueueRefusedCounts = refusedCounts,
-                                    ReadyAccepted = p.LastReadyResponse,
-                                    LikelyToPlay = proposed.Any(y=>y.Players.Contains(p))
-                                });
-                    }));
+                        var readyCounts = CountQueuedPeople(invitedPeople.Where(x => x.LastReadyResponse));
+
+                        var proposedBattles = ProposeBattles(invitedPeople.Where(x => x.LastReadyResponse));
+
+                        await Task.WhenAll(invitedPeople.Select(async (p) =>
+                        {
+                            await
+                                server.SendToUser(p.Name,
+                                    new AreYouReadyUpdate()
+                                    {
+                                        QueueReadyCounts = readyCounts,
+                                        ReadyAccepted = p.LastReadyResponse == true,
+                                        LikelyToPlay = proposedBattles.Any(y => y.Players.Contains(p))
+                                    });
+                        }));
+                    }
                 }
         }
 
@@ -131,7 +135,11 @@ namespace ZkLobbyServer
                     return usr;
                 });
 
+
+            queuesCounts = CountQueuedPeople(players.Values);
             await user.SendCommand(ToMatchMakerStatus(userEntry));
+
+            if (!players.Values.Any(x=>x?.InvitedToPlay == true)) OnTick(); // if nobody is invited, we can do tick now to speed up things
         }
 
         public async Task RemoveUser(string name)
@@ -264,15 +272,36 @@ namespace ZkLobbyServer
         }
 
 
-        private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        private void TimerTick(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            var realBattles = ResolveToRealBattles();
+            OnTick();
+        }
 
-            queuesCounts = CountQueuedPeople(players.Values);
 
-            foreach (var bat in realBattles) StartBattle(bat);
+        private object tickLock = new object();
+        private void OnTick()
+        {
+            lock (tickLock)
+            {
+                try
+                {
+                    timer.Stop();
+                    var realBattles = ResolveToRealBattles();
 
-            ResetAndSendMmInvitations();
+                    queuesCounts = CountQueuedPeople(players.Values);
+
+                    foreach (var bat in realBattles) StartBattle(bat);
+
+                    ResetAndSendMmInvitations();
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("MatchMaker tick error: {0}",ex);
+                } finally
+                {
+                    timer.Start();
+                }
+            }
         }
 
 
