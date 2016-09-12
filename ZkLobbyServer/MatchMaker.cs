@@ -21,6 +21,8 @@ namespace ZkLobbyServer
         private ConcurrentDictionary<string, DateTime> bannedPlayers = new ConcurrentDictionary<string, DateTime>();
         private ConcurrentDictionary<string, PlayerEntry> players = new ConcurrentDictionary<string, PlayerEntry>();
         private List<MatchMakerSetup.Queue> possibleQueues = new List<MatchMakerSetup.Queue>();
+
+        private Dictionary<string, int> queuesCounts = new Dictionary<string, int>();
         private ZkLobbyServer server;
         private Timer timer;
 
@@ -112,13 +114,16 @@ namespace ZkLobbyServer
         public async Task RemoveUser(string name)
         {
             PlayerEntry entry;
-            if (players.TryRemove(name, out entry))
-            {
-                if (entry.InvitedToPlay) bannedPlayers[entry.Name] = DateTime.UtcNow; // was invited but he is gone now (whatever reason), ban!
-            }
+            if (players.TryRemove(name, out entry)) if (entry.InvitedToPlay) bannedPlayers[entry.Name] = DateTime.UtcNow; // was invited but he is gone now (whatever reason), ban!
             ConnectedUser conUser;
             if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null)) await conUser.SendCommand(new MatchMakerStatus()); // left queue
+        }
 
+        private Dictionary<string, int> CountQueuedPeople()
+        {
+            var ncounts = possibleQueues.ToDictionary(x => x.Name, x => 0);
+            foreach (var plr in players.Values.Where(x => x != null)) foreach (var jq in plr.QueueTypes) ncounts[jq.Name]++;
+            return ncounts;
         }
 
         private bool IsBanned(string name)
@@ -229,6 +234,8 @@ namespace ZkLobbyServer
         {
             var realBattles = ResolveToRealBattles();
 
+            queuesCounts = CountQueuedPeople();
+
             foreach (var bat in realBattles) StartBattle(bat);
 
             ResetAndSendMmInvitations();
@@ -239,8 +246,10 @@ namespace ZkLobbyServer
         {
             return new MatchMakerStatus()
             {
-                Text = $"Searching for a good {string.Join(", ",entry.QueueTypes.Select(x=>x.Name))}; {players.Count} people waiting",
-                JoinedQueues = entry.QueueTypes.Select(x => x.Name).ToList()
+                QueueCounts = queuesCounts,
+                JoinedQueues = entry.QueueTypes.Select(x => x.Name).ToList(),
+                CurrentEloWidth = entry.EloWidth,
+                JoinedTime = entry.JoinedTime,
             };
         }
 
