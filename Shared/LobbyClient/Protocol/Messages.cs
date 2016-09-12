@@ -546,6 +546,7 @@ namespace LobbyClient
             public string Name { get; set; }
             public string Description { get; set; }
             public List<string> Maps { get; set; } = new List<string>();
+            public string Game { get; set; }
             public int MaxPartySize { get; set; }
 
             [JsonIgnore]

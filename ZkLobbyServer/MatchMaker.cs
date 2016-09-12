@@ -39,12 +39,14 @@ namespace ZkLobbyServer
                     MaxPartySize = 4,
                     MinSize = 4,
                     MaxSize = 8,
+                    Game = server.Game,
                     Mode = AutohostMode.Teams,
                     Maps =
                         db.Resources.Where(
                                 x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams == true) && (x.TypeID == ResourceType.Map))
                             .Select(x => x.InternalName)
                             .ToList()
+                        
                 });
 
                 possibleQueues.Add(new MatchMakerSetup.Queue()
@@ -54,6 +56,7 @@ namespace ZkLobbyServer
                     MaxPartySize = 1,
                     MinSize = 2,
                     MaxSize = 2,
+                    Game = server.Game,
                     Maps =
                         db.Resources.Where(
                                 x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIs1v1 == true) && (x.TypeID == ResourceType.Map))
