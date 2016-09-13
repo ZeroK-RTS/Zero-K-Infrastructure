@@ -85,7 +85,11 @@ namespace ZkLobbyServer
                 if (entry.InvitedToPlay)
                 {
                     if (response.Ready) entry.LastReadyResponse = true;
-                    else await RemoveUser(user.Name);
+                    else
+                    {
+                        entry.LastReadyResponse = false;
+                        await RemoveUser(user.Name);
+                    }
 
                     var invitedPeople = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
 
