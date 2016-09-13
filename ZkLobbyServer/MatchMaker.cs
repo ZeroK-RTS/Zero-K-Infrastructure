@@ -115,9 +115,11 @@ namespace ZkLobbyServer
 
         public async Task QueueRequest(ConnectedUser user, MatchMakerQueueRequest cmd)
         {
-            if (IsBanned(user.Name))
+            var banTime = BannedSeconds(user.Name);
+            if (banTime != null)
             {
-                await user.Respond($"You are banned for {BanMinutes} minutes from MatchMaker because you refused previous match");
+                await user.SendCommand(new MatchMakerStatus() { BannedSeconds = banTime});
+                await user.Respond($"You are banned for {banTime}s from MatchMaker because you refused previous match");
                 return;
             }
 
@@ -160,7 +162,9 @@ namespace ZkLobbyServer
                             AreYouBanned = true,
                             IsBattleStarting = false,
                         });
-                await conUser.SendCommand(new MatchMakerStatus()); // left queue
+
+                
+                await conUser.SendCommand(new MatchMakerStatus() {BannedSeconds = BannedSeconds(name)}); // left queue
             }
         }
 
@@ -171,12 +175,13 @@ namespace ZkLobbyServer
             return ncounts;
         }
 
-        private bool IsBanned(string name)
+
+        private int? BannedSeconds(string name)
         {
             DateTime banEntry;
-            if (bannedPlayers.TryGetValue(name, out banEntry) && (DateTime.UtcNow.Subtract(banEntry).TotalMinutes < BanMinutes)) return true;
+            if (bannedPlayers.TryGetValue(name, out banEntry) && (DateTime.UtcNow.Subtract(banEntry).TotalMinutes < BanMinutes)) return (int)(BanMinutes*60 - DateTime.UtcNow.Subtract(banEntry).TotalSeconds);
             else bannedPlayers.TryRemove(name, out banEntry);
-            return false;
+            return null;
         }
 
         private static List<ProposedBattle> ProposeBattles(IEnumerable<PlayerEntry> users)

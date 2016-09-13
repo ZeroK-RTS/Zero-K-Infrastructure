@@ -577,6 +577,7 @@ namespace LobbyClient
         public Dictionary<string,int> QueueCounts { get; set; } = new Dictionary<string, int>();
         public int CurrentEloWidth { get; set; }
         public DateTime JoinedTime { get; set; }
+        public int? BannedSeconds { get; set; }
     }
 
     
