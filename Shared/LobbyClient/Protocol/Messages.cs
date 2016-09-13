@@ -594,6 +594,8 @@ namespace LobbyClient
         public bool ReadyAccepted { get; set; }
         public bool LikelyToPlay { get; set; }
         public Dictionary<string, int> QueueReadyCounts { get; set; } = new Dictionary<string, int>();
+        public int? YourBattleSize { get; set; }
+        public int? YourBattleReady { get; set; }
     }
 
     [Message(Origin.Server)]
