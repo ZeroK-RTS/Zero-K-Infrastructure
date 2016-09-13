@@ -21,10 +21,10 @@ namespace ZkLobbyServer
             do {
                 try {
                     listener = new TcpListener(new IPEndPoint(IPAddress.Any, GlobalConst.LobbyServerPort));
-                    listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(true, 5));
-                    listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
+                    listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(GlobalConst.TcpLingerStateEnabled, GlobalConst.TcpLingerStateSeconds));
+                    listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 0);
 
-                    listener.Start(100);
+                    listener.Start(60);
                     Trace.TraceInformation("Listening at port {0}", GlobalConst.LobbyServerPort);
                     ok = true;
                 } catch (Exception ex) {

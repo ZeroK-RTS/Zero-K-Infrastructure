@@ -217,6 +217,9 @@ namespace ZkData
 
         public const int WikiEditLevel = 20;
 
+        public const int TcpLingerStateSeconds = 5;
+        public const bool TcpLingerStateEnabled = true;
+
         public static int UdpHostingPortStart;
 
         public static string ResourceBaseUrl;
