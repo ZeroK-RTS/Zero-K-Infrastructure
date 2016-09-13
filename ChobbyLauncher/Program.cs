@@ -36,7 +36,7 @@ namespace ChobbyLauncher
                 return;
             }
 
-            var paths = new SpringPaths(startupPath, true);
+            var paths = new SpringPaths(startupPath, false);
 
             Application.EnableVisualStyles();
 
