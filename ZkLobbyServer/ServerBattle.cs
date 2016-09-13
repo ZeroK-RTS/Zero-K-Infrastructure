@@ -333,6 +333,7 @@ namespace ZkLobbyServer
             if (server.ConnectedUsers.TryGetValue(name, out usr)) await usr.Process(new UpdateUserBattleStatus() { Name = usr.Name, IsSpectator = true });
         }
 
+
         public async Task StartGame()
         {
             var context = GetContext();
@@ -348,6 +349,11 @@ namespace ZkLobbyServer
 
             if (!await EnsureEngineIsPresent()) return;
 
+            if (IsInGame || spring.IsRunning)
+            {
+                await SayBattle("Game already running");
+                return;
+            }
             spring.HostGame(startSetup, hostingIp, hostingPort, true);
             IsInGame = true;
             RunningSince = DateTime.UtcNow;
