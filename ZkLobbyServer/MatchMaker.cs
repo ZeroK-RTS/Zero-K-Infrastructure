@@ -89,7 +89,7 @@ namespace ZkLobbyServer
 
                     var invitedPeople = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
 
-                    if ((invitedPeople.Count == 0) || invitedPeople.All(x => x.LastReadyResponse)) OnTick();
+                    if ((invitedPeople.Count <= 1) || invitedPeople.All(x => x.LastReadyResponse)) OnTick();
                     else
                     {
                         var readyCounts = CountQueuedPeople(invitedPeople.Where(x => x.LastReadyResponse));
@@ -150,7 +150,7 @@ namespace ZkLobbyServer
             queuesCounts = CountQueuedPeople(players.Values);
             await user.SendCommand(ToMatchMakerStatus(userEntry));
 
-            if (!players.Values.Any(x => x?.InvitedToPlay == true)) OnTick(); // if nobody is invited, we can do tick now to speed up things
+            if (invitationBattles?.Any() != true) OnTick(); // if nobody is invited, we can do tick now to speed up things
         }
 
         public async Task RemoveUser(string name)
