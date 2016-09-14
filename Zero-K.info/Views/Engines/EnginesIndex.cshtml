@@ -7,8 +7,20 @@
     var grid = new UniGrid<EnginesController.EngineItem>(Model.Data);
     grid.AddCol("Name", x => x.Name).SetSort(x => x.Name);
     grid.AddCol("Platforms", x => string.Join(", ", x.Platforms));
-
+    grid.AddCol("Default", DefEngine).SetSort(x => x.IsDefault);
 }
+@helper DefEngine(EnginesController.EngineItem item)
+{
+    if (item.IsDefault)
+    {
+        <b style="color: red">*DEFAULT*</b>
+    }
+    else
+    {
+        @Html.ActionLink("make default", "MakeDefault", new {engine=item.Name});
+    }
+}
+
 <div id="grid">
     <h1>@Page.Title</h1>
 
