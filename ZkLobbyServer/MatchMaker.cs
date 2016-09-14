@@ -134,6 +134,14 @@ namespace ZkLobbyServer
                 return;
             }
 
+            // already invited ignore requests
+            PlayerEntry entry;
+            if (players.TryGetValue(user.Name, out entry) && entry.InvitedToPlay)
+            {
+                await user.SendCommand(ToMatchMakerStatus(entry));
+                return;
+            }
+
             var wantedQueueNames = cmd.Queues?.ToList() ?? new List<string>();
             var wantedQueues = possibleQueues.Where(x => wantedQueueNames.Contains(x.Name)).ToList();
 
