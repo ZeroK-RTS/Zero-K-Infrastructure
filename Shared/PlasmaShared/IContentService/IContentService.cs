@@ -27,6 +27,9 @@ namespace PlasmaShared
         [OperationContract]
         List<string> GetEngineList(string platform);
 
+        [OperationContract]
+        string GetDefaultEngine();
+
 
         [OperationContract]
         List<ResourceData> FindResourceData(string[] words, ResourceType? type = null);
