@@ -23,7 +23,6 @@ namespace ZkLobbyServer
         public const int PollTimeout = 60;
 
 
-        private const int MatchMakerAutoCloseDelaySeconds = 20;
         public static PlasmaDownloader.PlasmaDownloader downloader;
         public static SpringPaths springPaths;
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
@@ -49,6 +48,8 @@ namespace ZkLobbyServer
         public Spring spring;
 
         public CommandPoll ActivePoll { get; private set; }
+
+        private bool isZombie;
 
 
         static ServerBattle()
@@ -275,9 +276,13 @@ namespace ZkLobbyServer
             var cmd = GetCommandByName(com);
             if (cmd != null)
             {
-                var perm = cmd.GetRunPermissions(this, e.User);
-                if (perm == BattleCommand.RunPermission.Run) await cmd.Run(this, e, arg);
-                else if (perm == BattleCommand.RunPermission.Vote) await StartVote(cmd, e, arg);
+                if (isZombie) await Respond(e, "Tthis room is now disabled, please join a new one");
+                else
+                {
+                    var perm = cmd.GetRunPermissions(this, e.User);
+                    if (perm == BattleCommand.RunPermission.Run) await cmd.Run(this, e, arg);
+                    else if (perm == BattleCommand.RunPermission.Vote) await StartVote(cmd, e, arg);
+                }
             }
         }
 
@@ -607,9 +612,9 @@ namespace ZkLobbyServer
 
             if (IsMatchMakerBattle)
             {
-                await SayBattle($"This room will close in {MatchMakerAutoCloseDelaySeconds} seconds");
-                await Task.Delay(MatchMakerAutoCloseDelaySeconds * 1000).ContinueWith((t) => server.RemoveBattle(this));
-                //await server.RemoveBattle(this);
+                isZombie = true;
+                await SayBattle($"This room is now disabled, please join a new game");
+                await SwitchPassword(FounderName);
             }
             else
             {
