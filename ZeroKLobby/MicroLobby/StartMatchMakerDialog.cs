@@ -18,12 +18,13 @@ namespace ZeroKLobby.MicroLobby
             ZklBaseControl.Init(flowLayoutPanel1);
             flowLayoutPanel1.BackColor = Color.Transparent;
             
+
             foreach (var qt in Program.TasClient.PossibleQueues)
             {
                 var cb = new CheckBox();
                 cb.Text = qt.Name;
                 Program.ToolTip.SetText(cb, qt.Description);
-                cb.Checked = true;
+                cb.Checked = Program.Conf.LastMatchMakerQueues?.Contains(qt.Name) == true;
                 ZklBaseControl.Init(cb);
                 cb.Font = Config.GeneralFontBig;
                 cb.Tag = qt;
@@ -37,7 +38,10 @@ namespace ZeroKLobby.MicroLobby
         void okButton_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
-            Program.TasClient.MatchMakerQueueRequest(flowLayoutPanel1.Controls.OfType<CheckBox>().Where(x=>x.Checked).Select(x => x.Text));
+            var queues = flowLayoutPanel1.Controls.OfType<CheckBox>().Where(x => x.Checked).Select(x => x.Text).ToList();
+            Program.TasClient.MatchMakerQueueRequest(queues);
+            Program.Conf.LastMatchMakerQueues = queues;
+            Program.SaveConfig();
             Close();
         }
 

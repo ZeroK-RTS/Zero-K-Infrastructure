@@ -130,7 +130,7 @@ namespace ZkLobbyServer
             if (banTime != null)
             {
                 await user.SendCommand(new MatchMakerStatus() { BannedSeconds = banTime });
-                await user.Respond($"You are banned for {banTime}s from MatchMaker because you refused previous match");
+                await user.Respond($"Please rest and wait for {banTime}s because you refused previous match");
                 return;
             }
 
