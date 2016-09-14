@@ -252,9 +252,10 @@ namespace LobbyClient
             con.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed);
         }
 
-        public event EventHandler<Welcome> Connected = delegate { };
+        public event EventHandler Connected = delegate { };
         public event EventHandler<TasEventArgs> ConnectionLost = delegate { };
         public event EventHandler<ConnectSpring> ConnectSpringReceived = delegate { };
+        public event EventHandler<Welcome> WelcomeReceived = delegate { };
 
 
         public async Task ForceAlly(string username, int ally)
@@ -420,6 +421,7 @@ namespace LobbyClient
             JoinedChannels = new Dictionary<string, Channel>();
             ExistingBattles = new Dictionary<int, Battle>();
             IsLoggedIn = false;
+            Connected(this, EventArgs.Empty);
         }
 
         public async Task OnConnectionClosed(bool wasRequested)
@@ -811,7 +813,7 @@ namespace LobbyClient
         private async Task Process(Welcome welcome)
         {
             ServerWelcome = welcome;
-            Connected(this, welcome);
+            WelcomeReceived(this, welcome);
         }
 
 

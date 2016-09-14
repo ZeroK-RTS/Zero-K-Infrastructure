@@ -15,7 +15,7 @@ namespace ZkData
     {
         static readonly string MissionFileUrl = GlobalConst.BaseSiteUrl + "/Missions/File/{0}";
 
-        string GetModInfo(string missionNameWithVersion, string modName, string nameWithoutVersion, string shortName)
+        string GetModInfo(string missionNameWithVersion, string modRapidTag, string nameWithoutVersion, string shortName)
         {
             const bool hideFromModList = true;
             var sb = new StringBuilder();
@@ -27,7 +27,7 @@ namespace ZkData
             /*sb.AppendFormat("  shortgame     =	[[{0}]],\n", mod.ShortGame);*/
             //sb.AppendFormat("  shortbasename =	[[{0}]],\n", mod.ShortBaseName);
             sb.AppendLine("  depend = {");
-            sb.AppendFormat("    [[{0}]]\n", modName);
+            sb.AppendFormat("    [[rapid://{0}]]\n", modRapidTag);
             sb.AppendLine("  },");
             sb.AppendLine("}");
             sb.AppendLine("return modinfo");
@@ -65,7 +65,7 @@ namespace ZkData
                 var modinfoEntry = zf.GetEntry("modinfo.lua");
                 modinfoEntry.Delete();
                 modinfoEntry = zf.CreateEntry("modinfo.lua");
-                WriteZipArchiveEntry(modinfoEntry, GetModInfo(mission.NameWithVersion, mission.Mod, mission.Name, "ZK"));
+                WriteZipArchiveEntry(modinfoEntry, GetModInfo(mission.NameWithVersion, mission.ModRapidTag, mission.Name, "ZK"));
                 FixScript(mission, zf, "script.txt");
                 var script = FixScript(mission, zf, GlobalConst.MissionScriptFileName);
                 modInfo.MissionScript = script;

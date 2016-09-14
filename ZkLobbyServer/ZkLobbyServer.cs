@@ -25,8 +25,8 @@ namespace ZkLobbyServer
         public EventHandler<Say> Said = delegate { };
         public CommandJsonSerializer Serializer = new CommandJsonSerializer();
         public SteamWebApi SteamWebApi;
-        public string Engine { get; set; }
-        public string Game { get; set; }
+        public string Engine { get; private set; }
+        public string Game { get; private set; }
         public IPlanetwarsEventCreator PlanetWarsEventCreator { get; private set; }
         public MatchMaker MatchMaker { get; private set; }
 
@@ -38,7 +38,7 @@ namespace ZkLobbyServer
             PlanetWarsEventCreator = creator;
             var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();
-            Engine = GlobalConst.DefaultEngineOverride;
+            Engine = MiscVar.DefaultEngine;
             Game = "zk:stable";
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
@@ -270,6 +270,12 @@ namespace ZkLobbyServer
                 chan.Topic.SetBy = author;
                 await Broadcast(chan.Users.Keys, new ChangeTopic() { ChannelName = chan.Name, Topic = chan.Topic });
             }
+        }
+
+        public async Task SetEngine(string engine)
+        {
+            Engine = engine;
+            await Broadcast(ConnectedUsers.Values, new Welcome() { Engine = engine, Game = Game, Version = Version });
         }
     }
 }

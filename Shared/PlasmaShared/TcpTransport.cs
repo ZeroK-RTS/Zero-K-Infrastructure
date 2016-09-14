@@ -26,12 +26,17 @@ namespace ZkData
         public TcpTransport(TcpClient existingTcp)
         {
             this.tcp = existingTcp;
+            tcp.LingerState.Enabled = GlobalConst.TcpLingerStateEnabled;
+            tcp.LingerState.LingerTime = GlobalConst.TcpLingerStateSeconds;
         }
 
         public TcpTransport(string host, int port, string bindingIp = null)
         {
             if (bindingIp == null) tcp = new TcpClient(new IPEndPoint(IPAddress.Parse("0.0.0.0"),0));
             else tcp = new TcpClient(new IPEndPoint(IPAddress.Parse(bindingIp), 0));
+
+            tcp.LingerState.Enabled = GlobalConst.TcpLingerStateEnabled;
+            tcp.LingerState.LingerTime = GlobalConst.TcpLingerStateSeconds;
 
             RemoteEndpointAddress = host;
             RemoteEndpointPort = port;

@@ -448,7 +448,7 @@ namespace PlasmaDownloader.Packages
                     SdpArchive sdp;
                     using (var fs = new FileStream(sdpPath, FileMode.Open)) sdp = new SdpArchive(new GZipStream(fs, CompressionMode.Decompress));
 
-                    var entry = sdp.Files.FirstOrDefault(x => x.Name.ToLower() == namePath);
+                    var entry = sdp.Files.FirstOrDefault(x => x.Name.ToLower() == namePath.ToLower());
                     if (entry != null) return new Pool(paths).ReadFromStorageDecompressed(entry.Hash);
                 }
                 return null;

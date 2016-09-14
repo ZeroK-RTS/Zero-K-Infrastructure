@@ -112,11 +112,7 @@ namespace ZeroKLobby
                 var top10 = Program.SpringieServer.GetTop10Rank(user.Name);
                 if (top10 > 0)
                 {
-                    var oldx = x;
                     drawImage(ZklResources.cup, 16, 16);
-                    x -= 17;
-                    drawString(top10.ToString());
-                    x = oldx + 16;
                 }
 
                 if (!user.IsBot)

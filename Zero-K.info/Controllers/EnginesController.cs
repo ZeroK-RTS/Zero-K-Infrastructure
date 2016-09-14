@@ -5,8 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using SharpCompress.Archive;
 using SharpCompress.Common;
+using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
@@ -30,6 +32,7 @@ namespace ZeroKWeb.Controllers
         {
             public List<string> Platforms { get; set; } = new List<string>();
             public string Name { get; set; }
+            public bool IsDefault { get; set; }
         }
 
         public ActionResult Index(EnginesModel model)
@@ -49,7 +52,7 @@ namespace ZeroKWeb.Controllers
             var items = new List<EngineItem>();
             foreach (var name in new DirectoryInfo(winBasePath).GetFiles().Select(x => x.Name).Select(Path.GetFileNameWithoutExtension))
             {
-                var item = new EngineItem() { Name = name, Platforms = new List<string>() { defaultPlatform } };
+                var item = new EngineItem() { Name = name, Platforms = new List<string>() { defaultPlatform }, IsDefault = name == MiscVar.DefaultEngine};
 
                 foreach (var p in EnginePlatforms.Where(x => x != defaultPlatform))
                 {
@@ -116,6 +119,16 @@ namespace ZeroKWeb.Controllers
                 }
             }
             return "succcess";
+        }
+
+        public ActionResult MakeDefault(string engine)
+        {
+            if (new ContentService().GetEngineList(null).Contains(engine))
+            {
+                MiscVar.DefaultEngine = engine;
+                Global.Server.SetEngine(engine);
+            }
+            return RedirectToAction("Index");
         }
     }
 }

@@ -288,7 +288,11 @@ namespace ZeroKLobby
                 TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
                 TasClient.ChannelJoined += (s, e) => { Trace.TraceInformation("TASC channel joined: " + e.Name); };
                 TasClient.ConnectionLost += (s, e) => Trace.TraceInformation("Connection lost");
-
+                TasClient.WelcomeReceived += (s, e) =>
+                {
+                    Downloader.GetResource(DownloadType.ENGINE, e.Engine);
+                    Downloader.GetResource(DownloadType.MOD, e.Game);
+                };
 
                 Program.AreYouReadyDialog = new AreYouReadyDialog(TasClient);
 

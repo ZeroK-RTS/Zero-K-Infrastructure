@@ -25,7 +25,11 @@ namespace ZeroKWeb
             var comparer = new EngineDownload.VersionNumberComparer();
             var list = new DirectoryInfo(Path.Combine(Global.MapPath("~"), "engine", platform ?? "win32")).GetFiles().Select(x => x.Name).Select(Path.GetFileNameWithoutExtension).OrderBy(x => x, comparer).ToList();
             return list;
+        }
 
+        public string GetDefaultEngine()
+        {
+            return MiscVar.DefaultEngine ?? GlobalConst.DefaultEngineOverride;
         }
 
 

@@ -678,7 +678,7 @@ namespace CMissionLib
 			//sb.AppendFormat("  shortgame     =	[[{0}]],\n", mod.ShortGame);
 			//sb.AppendFormat("  shortbasename =	[[{0}]],\n", mod.ShortBaseName);
 			sb.AppendLine("  depend = {");
-			sb.AppendFormat("    [[{0}]]\n", Mod.Name);
+			sb.AppendFormat("    [[rapid://{0}]]\n", RapidTag ?? "zk:stable");
 			sb.AppendLine("  },");
 			sb.AppendLine("}");
 			sb.AppendLine("return modinfo");

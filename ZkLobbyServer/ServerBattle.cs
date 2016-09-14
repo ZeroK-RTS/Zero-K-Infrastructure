@@ -23,7 +23,6 @@ namespace ZkLobbyServer
         public const int PollTimeout = 60;
 
 
-        private const int MatchMakerAutoCloseDelaySeconds = 20;
         public static PlasmaDownloader.PlasmaDownloader downloader;
         public static SpringPaths springPaths;
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
@@ -50,14 +49,16 @@ namespace ZkLobbyServer
 
         public CommandPoll ActivePoll { get; private set; }
 
+        private bool isZombie;
+
 
         static ServerBattle()
         {
             springPaths = new SpringPaths(GlobalConst.SpringieDataDir, false);
             downloader = new PlasmaDownloader.PlasmaDownloader(null, springPaths);
-            downloader.PackageDownloader.SetMasterRefreshTimer(60);
-            downloader.PackageDownloader.LoadMasterAndVersions(false);
-            downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride);
+            //downloader.PackageDownloader.SetMasterRefreshTimer(60);
+            //downloader.PackageDownloader.LoadMasterAndVersions(false);
+            downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine);
 
             Commands =
                 Assembly.GetAssembly(typeof(BattleCommand))
@@ -199,10 +200,16 @@ namespace ZkLobbyServer
             }
         }
 
+
+    
+
         public async Task ProcessPlayerJoin(UserBattleStatus ubs)
         {
-            kickedPlayers.RemoveAll(x => x.TimeOfKicked <= DateTime.UtcNow.AddMinutes(-5));
-            if (kickedPlayers.Any(y => y.Name == ubs.Name)) await KickFromBattle(ubs.Name, "Banned for five minutes");
+            if (IsKicked(ubs.Name))
+            {
+                await KickFromBattle(ubs.Name, "Banned for five minutes");
+                return;
+            }
 
             if (spring.IsRunning)
             {
@@ -226,6 +233,14 @@ namespace ZkLobbyServer
             {
                 await SayBattle("ServerManage error: " + ex);
             }
+        }
+
+        public bool IsKicked(string name)
+        {
+            bool kicked = false;
+            kickedPlayers.RemoveAll(x => x.TimeOfKicked <= DateTime.UtcNow.AddMinutes(-5));
+            if (kickedPlayers.Any(y => y.Name == name)) kicked = true;
+            return kicked;
         }
 
 
@@ -261,9 +276,13 @@ namespace ZkLobbyServer
             var cmd = GetCommandByName(com);
             if (cmd != null)
             {
-                var perm = cmd.GetRunPermissions(this, e.User);
-                if (perm == BattleCommand.RunPermission.Run) await cmd.Run(this, e, arg);
-                else if (perm == BattleCommand.RunPermission.Vote) await StartVote(cmd, e, arg);
+                if (isZombie) await Respond(e, "Tthis room is now disabled, please join a new one");
+                else
+                {
+                    var perm = cmd.GetRunPermissions(this, e.User);
+                    if (perm == BattleCommand.RunPermission.Run) await cmd.Run(this, e, arg);
+                    else if (perm == BattleCommand.RunPermission.Vote) await StartVote(cmd, e, arg);
+                }
             }
         }
 
@@ -319,6 +338,7 @@ namespace ZkLobbyServer
             if (server.ConnectedUsers.TryGetValue(name, out usr)) await usr.Process(new UpdateUserBattleStatus() { Name = usr.Name, IsSpectator = true });
         }
 
+
         public async Task StartGame()
         {
             var context = GetContext();
@@ -334,6 +354,11 @@ namespace ZkLobbyServer
 
             if (!await EnsureEngineIsPresent()) return;
 
+            if (IsInGame || spring.IsRunning)
+            {
+                await SayBattle("Game already running");
+                return;
+            }
             spring.HostGame(startSetup, hostingIp, hostingPort, true);
             IsInGame = true;
             RunningSince = DateTime.UtcNow;
@@ -587,9 +612,9 @@ namespace ZkLobbyServer
 
             if (IsMatchMakerBattle)
             {
-                await SayBattle($"This room will close in {MatchMakerAutoCloseDelaySeconds} seconds");
-                await Task.Delay(MatchMakerAutoCloseDelaySeconds * 1000).ContinueWith((t) => server.RemoveBattle(this));
-                //await server.RemoveBattle(this);
+                isZombie = true;
+                await SayBattle($"This room is now disabled, please join a new game");
+                await SwitchPassword(FounderName);
             }
             else
             {

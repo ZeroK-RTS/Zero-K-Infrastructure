@@ -43,9 +43,9 @@
             this.lb1.ForeColor = System.Drawing.Color.White;
             this.lb1.Location = new System.Drawing.Point(12, 24);
             this.lb1.Name = "lb1";
-            this.lb1.Size = new System.Drawing.Size(35, 13);
+            this.lb1.Size = new System.Drawing.Size(52, 13);
             this.lb1.TabIndex = 0;
-            this.lb1.Text = "label1";
+            this.lb1.Text = "Initializing";
             // 
             // progressBar1
             // 
@@ -57,11 +57,13 @@
             // timer1
             // 
             this.timer1.Enabled = true;
+            this.timer1.Interval = 200;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // btnCancel
             // 
             this.btnCancel.BackColor = System.Drawing.Color.Transparent;
+            this.btnCancel.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnCancel.BackgroundImage")));
             this.btnCancel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btnCancel.ButtonStyle = ChobbyLauncher.FrameBorderRenderer.StyleType.DarkHive;
             this.btnCancel.Cursor = System.Windows.Forms.Cursors.Hand;

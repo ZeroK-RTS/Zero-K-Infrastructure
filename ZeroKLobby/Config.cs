@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -291,6 +292,9 @@ namespace ZeroKLobby
 
         [Browsable(false)]
         public int RepoMasterRefresh { get { return 0; } }
+
+        [Browsable(false)]
+        public List<string> LastMatchMakerQueues { get; set; } = new List<string>();
 
 
         [Browsable(false)]

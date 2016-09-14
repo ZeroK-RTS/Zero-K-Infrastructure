@@ -522,6 +522,7 @@ namespace LobbyClient
     public class RequestConnectSpring
     {
         public int BattleID { get; set; }
+        public string Password { get; set; }
     }
 
     [Message(Origin.Server)]
@@ -546,6 +547,7 @@ namespace LobbyClient
             public string Name { get; set; }
             public string Description { get; set; }
             public List<string> Maps { get; set; } = new List<string>();
+            public string Game { get; set; }
             public int MaxPartySize { get; set; }
 
             [JsonIgnore]
@@ -575,6 +577,7 @@ namespace LobbyClient
         public Dictionary<string,int> QueueCounts { get; set; } = new Dictionary<string, int>();
         public int CurrentEloWidth { get; set; }
         public DateTime JoinedTime { get; set; }
+        public int? BannedSeconds { get; set; }
     }
 
     
@@ -591,6 +594,8 @@ namespace LobbyClient
         public bool ReadyAccepted { get; set; }
         public bool LikelyToPlay { get; set; }
         public Dictionary<string, int> QueueReadyCounts { get; set; } = new Dictionary<string, int>();
+        public int? YourBattleSize { get; set; }
+        public int? YourBattleReady { get; set; }
     }
 
     [Message(Origin.Server)]
