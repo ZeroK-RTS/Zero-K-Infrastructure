@@ -294,7 +294,7 @@ namespace ZeroKLobby
         public int RepoMasterRefresh { get { return 0; } }
 
         [Browsable(false)]
-        public List<string> LastMatchMakerQueues { get; set; }
+        public List<string> LastMatchMakerQueues { get; set; } = new List<string>();
 
 
         [Browsable(false)]

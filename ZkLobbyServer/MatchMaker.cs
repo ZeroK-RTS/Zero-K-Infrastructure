@@ -17,7 +17,7 @@ namespace ZkLobbyServer
     {
         private const int TimerSeconds = 30;
 
-        private const int BanMinutes = 5;
+        private const int BanSeconds = 30;
 
         private ConcurrentDictionary<string, DateTime> bannedPlayers = new ConcurrentDictionary<string, DateTime>();
 
@@ -175,7 +175,7 @@ namespace ZkLobbyServer
         private int? BannedSeconds(string name)
         {
             DateTime banEntry;
-            if (bannedPlayers.TryGetValue(name, out banEntry) && (DateTime.UtcNow.Subtract(banEntry).TotalMinutes < BanMinutes)) return (int)(BanMinutes * 60 - DateTime.UtcNow.Subtract(banEntry).TotalSeconds);
+            if (bannedPlayers.TryGetValue(name, out banEntry) && (DateTime.UtcNow.Subtract(banEntry).TotalSeconds < BanSeconds)) return (int)(BanSeconds - DateTime.UtcNow.Subtract(banEntry).TotalSeconds);
             else bannedPlayers.TryRemove(name, out banEntry);
             return null;
         }
