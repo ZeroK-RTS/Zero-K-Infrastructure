@@ -56,9 +56,9 @@ namespace ZkLobbyServer
         {
             springPaths = new SpringPaths(GlobalConst.SpringieDataDir, false);
             downloader = new PlasmaDownloader.PlasmaDownloader(null, springPaths);
-            downloader.PackageDownloader.SetMasterRefreshTimer(60);
-            downloader.PackageDownloader.LoadMasterAndVersions(false);
-            downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride);
+            //downloader.PackageDownloader.SetMasterRefreshTimer(60);
+            //downloader.PackageDownloader.LoadMasterAndVersions(false);
+            downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine);
 
             Commands =
                 Assembly.GetAssembly(typeof(BattleCommand))

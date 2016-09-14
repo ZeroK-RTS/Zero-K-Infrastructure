@@ -13,8 +13,6 @@ using ZkData;
 
 namespace AutoRegistrator
 {
-
-
     public class SteamDepotGenerator
     {
         string targetFolder;
@@ -36,7 +34,7 @@ namespace AutoRegistrator
             
 
             var downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
-            downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
+            downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
             downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
             downloader.GetResource(DownloadType.MOD, "zk:test")?.WaitHandle.WaitOne();
