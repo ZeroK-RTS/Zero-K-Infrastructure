@@ -36,11 +36,10 @@ namespace ChobbyLauncher
                 return;
             }
 
-            var paths = new SpringPaths(startupPath, false);
 
             Application.EnableVisualStyles();
 
-            var cf = new ChobbylaForm(chobbyTag, paths) { StartPosition = FormStartPosition.CenterScreen };
+            var cf = new ChobbylaForm(new Chobbyla(startupPath, chobbyTag, null)) { StartPosition = FormStartPosition.CenterScreen };
             cf.ShowDialog();
         }
     }

@@ -16,84 +16,40 @@ namespace ChobbyLauncher
 {
     public partial class ChobbylaForm : Form
     {
-        private string chobbyTag;
-        private Download currentDownload;
-        private SpringPaths paths;
+        private Chobbyla chobbyla;
 
-        public ChobbylaForm(string chobbyTag, SpringPaths paths)
+        public ChobbylaForm(Chobbyla chobbyla)
         {
             InitializeComponent();
-            this.chobbyTag = chobbyTag ?? "chobby:stable";
-            this.paths = paths;
+            DoubleBuffered = true;
+            this.chobbyla = chobbyla;
         }
 
 
         private async void ChobbylaForm_Load(object sender, EventArgs e)
         {
-            lb1.Text = "Checking for self-upgrade";
-
-            var task = new Task<bool>(() => new SelfUpdater().CheckForUpdate());
-            task.Start();
-            await task;
-
-            lb1.Text = "Checking for chobby update";
-
-
-
-            var downloader = new PlasmaDownloader.PlasmaDownloader(new SpringScanner(paths) { WatchingEnabled = false, UseUnitSync = false }, paths);
-            currentDownload = downloader.GetResource(DownloadType.MOD, chobbyTag);
-
-            var asTask = currentDownload?.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
-            if (asTask != null) await asTask;
-            if (currentDownload?.IsComplete == false)
-            {
-                MessageBox.Show(this, $"Download of {currentDownload.Name} has failed");
-                DialogResult = DialogResult.Cancel;
-                Close();
-            }
-
-            var ver = downloader.PackageDownloader.GetByTag(chobbyTag);
-            if (ver != null)
-            {
-                var mi = ver.ReadFile(paths, "modinfo.lua");
-                var lua = new Lua();
-                var luaEnv = lua.CreateEnvironment();
-                dynamic result = luaEnv.DoChunk(new StreamReader(mi), "dummy.lua");
-                var engineVersion = result.engine ?? "103.0.1-95-g20ebb8c";
-
-                lb1.Text = "Downloading engine";
-                currentDownload = downloader.GetResource(DownloadType.ENGINE, engineVersion);
-                var engDlTask = currentDownload?.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
-                if (engDlTask != null) await engDlTask;
-                if (currentDownload?.IsComplete == false)
-                {
-                    MessageBox.Show(this, $"Download of engine {currentDownload.Name} has failed");
-                    DialogResult = DialogResult.Cancel;
-                    Close();
-                }
-
-                lb1.Text = "Starting";
-                var chobbyla = new Chobbyla();
-                chobbyla.LaunchChobby(paths, ver.InternalName, engineVersion);
-                DialogResult = DialogResult.OK;
-                Close();
-            }
-            else
-            {
-                MessageBox.Show(this, "Unexpected failure at reading the chobby rapid package");
-                DialogResult = DialogResult.Cancel;
-                Close();
-            }
+            if (!await chobbyla.Run()) MessageBox.Show(this, chobbyla.Status, "Failed to start", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            Close();
         }
 
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            var cd = currentDownload;
+            if (lb1.Text != chobbyla.Status) lb1.Text = chobbyla.Status;
+            var cd = chobbyla.Download;
             if (cd != null)
             {
                 lb1.Text = $"Downloading {cd.Name}  {cd.CurrentSpeed/1024}kB/s  ETA: {cd.TimeRemaining}";
                 progressBar1.Value = (int)Math.Round(cd.TotalProgress);
+                
+            }
+            if (progressBar1.Value == 0)
+            {
+                if (progressBar1.Style != ProgressBarStyle.Marquee) progressBar1.Style = ProgressBarStyle.Marquee;
+            }
+            else
+            {
+                if (progressBar1.Style != ProgressBarStyle.Continuous) progressBar1.Style = ProgressBarStyle.Continuous;
             }
         }
 
@@ -105,7 +61,7 @@ namespace ChobbyLauncher
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            currentDownload?.Abort();
+            chobbyla.Download?.Abort();
             DialogResult = DialogResult.Cancel;
             Close();
         }
