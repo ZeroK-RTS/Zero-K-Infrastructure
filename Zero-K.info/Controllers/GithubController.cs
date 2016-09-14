@@ -24,7 +24,7 @@ namespace ZeroKWeb.Controllers
             Request.InputStream.CopyTo(ms);
             byte[] data = ms.ToArray();
 
-            var secretKey = new Secrets().GetGithubHookKey(new ZkDataContext());
+            var secretKey = new Secrets().GetGithubHookKey();
             var hash = new HMACSHA1(Encoding.ASCII.GetBytes(secretKey)).ComputeHash(data);
 
             if (!string.Equals(hash.ToHex(), signature, StringComparison.InvariantCultureIgnoreCase)) return Content("Signature does not match");

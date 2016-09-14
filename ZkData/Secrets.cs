@@ -9,10 +9,10 @@ namespace ZkData
 {
     public class Secrets
     {
-        public string GetNightwatchPassword(ZkDataContext db = null) => MiscVar.GetValue("NightwatchPassword");
-        public string GetSteamWebApiKey(ZkDataContext db = null) => MiscVar.GetValue("SteamWebApiKey");
-        public string GetGithubHookKey(ZkDataContext db = null) => MiscVar.GetValue("GithubHookKey");
-        public string GetSteamBuildPassword(ZkDataContext db = null) => MiscVar.GetValue("SteamBuildPassword");
-        public string GetGlacierSecretKey(ZkDataContext db = null) => MiscVar.GetValue("GlacierSecretKey");
+        public string GetNightwatchPassword() => MiscVar.GetValue("NightwatchPassword");
+        public string GetSteamWebApiKey() => MiscVar.GetValue("SteamWebApiKey");
+        public string GetGithubHookKey() => MiscVar.GetValue("GithubHookKey");
+        public string GetSteamBuildPassword() => MiscVar.GetValue("SteamBuildPassword");
+        public string GetGlacierSecretKey() => MiscVar.GetValue("GlacierSecretKey");
     }
 }
