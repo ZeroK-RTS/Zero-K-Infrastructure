@@ -43,9 +43,16 @@ namespace PlasmaDownloader
                         platform = response.Contains("64") ? "linux64" : "linux32";
                     }
 
-                    var downloadUrl = string.Format("{0}/engine/{2}/{1}.zip", GlobalConst.BaseSiteUrl, Name, platform);
 
-                    if (VerifyFile(downloadUrl))
+                    var possibleUrls = new List<string>
+                    {
+                        string.Format("{0}/engine/{2}/{1}.zip", GlobalConst.BaseSiteUrl, Name, platform),
+                        string.Format("{0}/engine/{2}/{1}.zip", "http://zero-k.info", Name, platform), // for non-live deployments also try live server
+                    };
+
+                    var downloadUrl = possibleUrls.Where(VerifyFile).FirstOrDefault();
+                    
+                    if (downloadUrl != null)
                     {
                         var extension = downloadUrl.Substring(downloadUrl.LastIndexOf('.'));
                         var wc = new WebClient() { Proxy = null };
