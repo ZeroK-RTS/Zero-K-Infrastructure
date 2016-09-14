@@ -33,7 +33,9 @@ namespace ZeroKLobby.MicroLobby
 
         public static Image GetRank(int level, int elo)
         {
-            var clampedLevel = System.Math.Max(0, System.Math.Min(rankImages.GetLength(0) - 1, (int)System.Math.Floor(System.Math.Log(level / 30.0 + 1) * 4.2)));
+            var clampedLevel = System.Math.Max(0, System.Math.Min(rankImages.GetLength(0) - 1, (int)System.Math.Floor(
+                (-0.12 / Math.Cosh((level - 61.9) / 7.08) + 1) * 2.93 * Math.Log(Math.Exp(-2.31) * level + 1) - 0.89 / Math.Cosh((level - 28.55) / 3.4))));
+            //0, 5, 10, 20, 35, 50, 75, 100 -> 0, 1, 2, 3, 4, 5, 6, 7
             var clampedSkill = System.Math.Max(0, System.Math.Min(rankImages.GetLength(1) - 1, (int)System.Math.Floor((elo - 1000.0) / 200)));
             return rankImages[clampedLevel, clampedSkill];
         }
