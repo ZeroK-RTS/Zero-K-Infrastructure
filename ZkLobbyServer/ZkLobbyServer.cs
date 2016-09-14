@@ -38,7 +38,7 @@ namespace ZkLobbyServer
             PlanetWarsEventCreator = creator;
             var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();
-            Engine = GlobalConst.DefaultEngineOverride;
+            Engine = MiscVar.DefaultEngine;
             Game = "zk:stable";
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
