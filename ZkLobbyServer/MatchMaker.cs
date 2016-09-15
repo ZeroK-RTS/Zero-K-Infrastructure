@@ -168,14 +168,16 @@ namespace ZkLobbyServer
         public async Task RemoveUser(string name)
         {
             PlayerEntry entry;
-            if (players.TryRemove(name, out entry)) if (entry.InvitedToPlay) bannedPlayers[entry.Name] = DateTime.UtcNow; // was invited but he is gone now (whatever reason), ban!
+            if (players.TryRemove(name, out entry)) {
+                if (entry.InvitedToPlay) bannedPlayers[entry.Name] = DateTime.UtcNow; // was invited but he is gone now (whatever reason), ban!
 
-            ConnectedUser conUser;
-            if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null))
-            {
-                if (entry?.InvitedToPlay == true) await conUser.SendCommand(new AreYouReadyResult() { AreYouBanned = true, IsBattleStarting = false, });
+                ConnectedUser conUser;
+                if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null))
+                {
+                    if (entry?.InvitedToPlay == true) await conUser.SendCommand(new AreYouReadyResult() { AreYouBanned = true, IsBattleStarting = false, });
 
-                await conUser.SendCommand(new MatchMakerStatus() { BannedSeconds = BannedSeconds(name) }); // left queue
+                    await conUser.SendCommand(new MatchMakerStatus() { BannedSeconds = BannedSeconds(name) }); // left queue
+                }
             }
         }
 
