@@ -422,6 +422,7 @@ namespace ZkLobbyServer
         public async Task SwitchGameType(AutohostMode type)
         {
             Mode = type;
+            MapName = null;
             FillDetails();
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
             // do a full update - mode can also change map/players
