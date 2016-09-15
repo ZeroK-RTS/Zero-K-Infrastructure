@@ -21,6 +21,7 @@ namespace ChobbyLauncher
         };
         private string chobbyTag;
         private string engine;
+        private bool isDev;
 
         private SpringPaths paths;
         public Download Download { get; private set; }
@@ -30,7 +31,8 @@ namespace ChobbyLauncher
         public Chobbyla(string rootPath, string chobbyTagOverride, string engineOverride)
         {
             paths = new SpringPaths(rootPath, false);
-            chobbyTag = chobbyTagOverride ?? "chobby:stable";
+            chobbyTag = chobbyTagOverride ?? (GlobalConst.Mode == ModeType.Live ? "chobby:stable" : "chobby:test");
+            isDev = chobbyTag == "dev" || chobbyTag == "chobby:dev";
             engine = engineOverride;
         }
 
@@ -39,69 +41,70 @@ namespace ChobbyLauncher
         {
             try
             {
-                Status = "Checking for self-upgrade";
-
-                var selfUpdater = new SelfUpdater();
-                selfUpdater.ProgramUpdated += delegate { Application.Restart(); };
-                var task = new Task<bool>(() => selfUpdater.CheckForUpdate());
-                task.Start();
-                await task;
-
-                Status = "Checking for chobby update";
-
                 var downloader = new PlasmaDownloader.PlasmaDownloader(new SpringScanner(paths) { WatchingEnabled = false, UseUnitSync = false },
-                    paths);
-                Download = downloader.GetResource(DownloadType.MOD, chobbyTag);
+                     paths);
 
-                var asTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
-                if (asTask != null) await asTask;
-                if (Download?.IsComplete == false)
-                {
-                    Status = $"Download of {Download.Name} has failed";
-                    return false;
-                }
+                PackageDownloader.Version ver = null;
+                string internalName = null;
 
-                var ver = downloader.PackageDownloader.GetByTag(chobbyTag);
-                if (ver != null)
+                if (!isDev)
                 {
-                    if (engine == null)
+                    if (!Debugger.IsAttached)
                     {
-                        Status = "Querying default engine";
-                        try
-                        {
-                            engine = GlobalConst.GetContentService().GetDefaultEngine();
-                        }
-                        catch (Exception ex)
-                        {
-                            Trace.TraceError("Querying default engine failed: {0}", ex);
-                            Status = "Querying default engine has failed";
-                        }
-                        if (engine == null) engine = ExtractEngineFromLua(ver);
-                        if (engine == null) engine = GlobalConst.DefaultEngineOverride;
+                        Status = "Checking for self-upgrade";
+                        var selfUpdater = new SelfUpdater();
+                        selfUpdater.ProgramUpdated += delegate { Application.Restart(); };
+                        var task = new Task<bool>(() => selfUpdater.CheckForUpdate());
+                        task.Start();
+                        await task;
                     }
 
-                    Status = "Downloading engine";
-                    Download = downloader.GetResource(DownloadType.ENGINE, engine);
-                    var engDlTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
-                    if (engDlTask != null) await engDlTask;
+
+
+                    Status = "Checking for chobby update";
+                    Download = downloader.GetResource(DownloadType.MOD, chobbyTag);
+                    var asTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
+                    if (asTask != null) await asTask;
                     if (Download?.IsComplete == false)
                     {
-                        Status = $"Download of engine {Download.Name} has failed";
+                        Status = $"Download of {Download.Name} has failed";
                         return false;
                     }
 
-                    Status = "Extracting default configs";
-                    ExtractDefaultConfigs(paths, ver);
+                    ver = downloader.PackageDownloader.GetByTag(chobbyTag);
+                    if (ver == null)
+                    {
+                        Status = "Rapid package appears to be corrupted, please clear the folder";
+                        return false;
+                    }
 
-                    Status = "Starting";
-                    LaunchChobby(paths, ver.InternalName, engine);
-                    return true;
+                    internalName = ver.InternalName;
                 }
-                else
+                else internalName = "Chobby $VERSION";
+
+
+                engine = engine ?? QueryDefaultEngine() ?? ExtractEngineFromLua(ver) ?? GlobalConst.DefaultEngineOverride;
+
+
+                Status = "Downloading engine";
+                Download = downloader.GetResource(DownloadType.ENGINE, engine);
+                var engDlTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
+                if (engDlTask != null) await engDlTask;
+                if (Download?.IsComplete == false)
                 {
-                    Status = "Unexpected failure at reading the chobby rapid package";
+                    Status = $"Download of engine {Download.Name} has failed";
                     return false;
                 }
+
+                if (!isDev)
+                {
+                    Status = "Extracting default configs";
+                    ExtractDefaultConfigs(paths, ver);
+                }
+                
+                Status = "Starting";
+                LaunchChobby(paths, internalName, engine);
+                return true;
             }
             catch (Exception ex)
             {
@@ -111,27 +114,49 @@ namespace ChobbyLauncher
             }
         }
 
+        private string QueryDefaultEngine()
+        {
+            Status = "Querying default engine";
+            try
+            {
+                return GlobalConst.GetContentService().GetDefaultEngine();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Querying default engine failed: {0}", ex);
+                Status = "Querying default engine has failed";
+            }
+            return null;
+        }
+
         private static void ExtractDefaultConfigs(SpringPaths paths, PackageDownloader.Version ver)
         {
-            foreach (var f in defaultConfigs)
+            if (ver != null)
             {
-                var target = Path.Combine(paths.WritableDirectory, Path.GetFileName(f));
-                if (!File.Exists(target))
+                foreach (var f in defaultConfigs)
                 {
-                    var content = ver.ReadFile(paths, f);
-                    if (content != null) File.WriteAllBytes(target, content.ToArray());
+                    var target = Path.Combine(paths.WritableDirectory, Path.GetFileName(f));
+                    if (!File.Exists(target))
+                    {
+                        var content = ver.ReadFile(paths, f);
+                        if (content != null) File.WriteAllBytes(target, content.ToArray());
+                    }
                 }
             }
         }
 
         private dynamic ExtractEngineFromLua(PackageDownloader.Version ver)
         {
-            var mi = ver.ReadFile(paths, "modinfo.lua");
-            var lua = new Lua();
-            var luaEnv = lua.CreateEnvironment();
-            dynamic result = luaEnv.DoChunk(new StreamReader(mi), "dummy.lua");
-            var engineVersion = result.engine;
-            return engineVersion;
+            if (ver != null)
+            {
+                var mi = ver.ReadFile(paths, "modinfo.lua");
+                var lua = new Lua();
+                var luaEnv = lua.CreateEnvironment();
+                dynamic result = luaEnv.DoChunk(new StreamReader(mi), "dummy.lua");
+                var engineVersion = result.engine;
+                return engineVersion;
+            }
+            return null;
         }
 
 
