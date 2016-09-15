@@ -124,6 +124,7 @@ namespace ZkLobbyServer
                     if (MaxPlayers == 0) MaxPlayers = 16;
                     break;
             }
+            if (MaxPlayers > 32) MaxPlayers = 32;
 
             HostedMod = MapPicker.FindResources(ResourceType.Mod, ModName ?? "zk:stable").FirstOrDefault();
             HostedMap = MapName != null
