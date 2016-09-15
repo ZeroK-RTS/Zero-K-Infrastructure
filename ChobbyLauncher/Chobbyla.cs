@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Neo.IronLua;
 using PlasmaDownloader;
 using PlasmaDownloader.Packages;
@@ -40,7 +41,9 @@ namespace ChobbyLauncher
             {
                 Status = "Checking for self-upgrade";
 
-                var task = new Task<bool>(() => new SelfUpdater().CheckForUpdate());
+                var selfUpdater = new SelfUpdater();
+                selfUpdater.ProgramUpdated += delegate { Application.Restart(); };
+                var task = new Task<bool>(() => selfUpdater.CheckForUpdate());
                 task.Start();
                 await task;
 
