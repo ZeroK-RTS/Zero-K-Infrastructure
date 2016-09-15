@@ -159,7 +159,7 @@ namespace ZeroKWeb.Controllers
                     {
                         if (u.IsBot) continue;
                         if (u.IsInGame) ret.UsersFighting++;
-                        else if (u.IsInBattleRoom) ret.UsersWaiting++;
+                        else ret.UsersWaiting++;
                     }
                     if (b.IsInGame) ret.BattlesRunning++;
                     else ret.BattlesWaiting++;
