@@ -194,7 +194,7 @@ namespace ZkData
         public static void SetEnvVar(ProcessStartInfo process, string key, string value)
         {
             Environment.SetEnvironmentVariable(key, value, EnvironmentVariableTarget.Process);
-            process.EnvironmentVariables[key] = value;
+            if (process != null) process.EnvironmentVariables[key] = value;
         }
 
         public void SetDefaultEnvVars(ProcessStartInfo p, string engineVersion)

@@ -405,6 +405,20 @@ namespace LobbyClient
             talker = null;
             Thread.Sleep(1000);
             var logText = Context.LogLines.ToString();
+
+            if (!string.IsNullOrEmpty(Context.InfoLogFileName))
+            {
+                try
+                {
+                    logText = File.ReadAllText(Context.InfoLogFileName);
+                    File.Delete(Context.InfoLogFileName);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Error reading infolog: {0}",ex.Message);
+                }
+            }
+
             if (Context.IsHosting) ParseInfolog(logText);
 
             try
@@ -433,7 +447,7 @@ namespace LobbyClient
 
             process = new Process { StartInfo = { CreateNoWindow = true } };
 
-            paths.SetDefaultEnvVars(process.StartInfo, Context.EngineVersion);
+            paths.SetDefaultEnvVars(Context.UseDedicatedServer ? null : process.StartInfo, Context.EngineVersion);
 
             var arg = new List<string>();
 
@@ -462,21 +476,41 @@ namespace LobbyClient
             arg.Add($"\"{scriptPath}\"");
             //Trace.TraceInformation("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
 
-            process.StartInfo.Arguments = string.Join(" ", arg);
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            //process.StartInfo.RedirectStandardInput = true;
-            process.Exited += springProcess_Exited;
-            process.ErrorDataReceived += process_ErrorDataReceived;
-            process.OutputDataReceived += process_OutputDataReceived;
-            process.EnableRaisingEvents = true;
 
-            gamePrivateMessages = new Dictionary<string, int>();
             Context.StartTime = DateTime.UtcNow;
+            gamePrivateMessages = new Dictionary<string, int>();
+            process.StartInfo.Arguments = string.Join(" ", arg);
+            process.Exited += springProcess_Exited;
+
+            if (Context.UseDedicatedServer) 
+            {
+                // use shell execute, this prevents handle inheritance and allows 8200 port to be reused if server crashes
+                // alternative: http://stackoverflow.com/questions/3342941/kill-child-process-when-parent-process-is-killed
+                process.StartInfo.FileName = "cmd.exe";
+                process.StartInfo.UseShellExecute = true;
+                process.StartInfo.RedirectStandardOutput = false;
+                process.StartInfo.RedirectStandardError = false;
+                Context.InfoLogFileName = Path.Combine(paths.WritableDirectory, $"{Guid.NewGuid()}.txt"); 
+                process.StartInfo.Arguments = $"/c {paths.GetDedicatedServerPath(Context.EngineVersion)} {process.StartInfo.Arguments} > \"{Context.InfoLogFileName}\"";
+                
+            }
+            else
+            {
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.ErrorDataReceived += process_ErrorDataReceived;
+                process.OutputDataReceived += process_OutputDataReceived;
+                process.EnableRaisingEvents = true;
+            }
+            
             process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
+
+            if (!Context.UseDedicatedServer)
+            {
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+            }
 
             //process.StandardInput.Write(script);
             if (IsRunning)
@@ -641,6 +675,7 @@ namespace LobbyClient
 
             public bool UseDedicatedServer;
             public bool WasKilled;
+            public string InfoLogFileName;
 
 
             public BattlePlayerResult GetOrAddPlayer(string name)
