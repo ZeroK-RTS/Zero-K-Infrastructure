@@ -353,7 +353,7 @@ namespace ZkLobbyServer
             var testedBattles = player.GenerateWantedBattles();
 
             foreach (var other in playersByElo)
-                foreach (var bat in testedBattles.Where(x => x.Mode == AutohostMode.Game1v1))
+                foreach (var bat in testedBattles)
                     if (bat.CanBeAdded(other))
                     {
                         bat.AddPlayer(other);

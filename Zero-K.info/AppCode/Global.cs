@@ -8,6 +8,7 @@ using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Web.Mvc.Ajax;
 using System.Web.Routing;
 using JetBrains.Annotations;
@@ -144,8 +145,12 @@ namespace ZeroKWeb
             }
         }
 
+        private static int isStarted = 0;
+
         public static void StartApplication(MvcApplication mvcApplication)
         {
+            if (Interlocked.Exchange(ref isStarted, 1) == 1) return; // prevent double start
+
             var listener = new ZkServerTraceListener();
             Trace.Listeners.Add(listener);
             Trace.TraceInformation("Starting Zero-K.info web and application");
@@ -164,8 +169,6 @@ namespace ZeroKWeb
             Trace.TraceInformation("Starting autoregistrator");
             AutoRegistrator = new AutoRegistrator(MapPath("~"));
             AutoRegistrator.RunMainAndMapSyncAsync();
-
-            
 
             SetupPaypalInterface();
 
