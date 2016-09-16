@@ -15,7 +15,7 @@ namespace ZeroKWeb.Controllers
         public class GameStats
         {
             public DateTime Day { get; set; }
-            public int PlayersAndSpecs { get; set; }
+            public int Players { get; set; }
             public int MinutesPerPlayer { get; set; }
             public int FirstGamePlayers { get; set; }
         }
@@ -46,7 +46,7 @@ namespace ZeroKWeb.Controllers
                             new GameStats
                             {
                                 Day = x.Key.Value,
-                                PlayersAndSpecs = x.SelectMany(y => y.SpringBattlePlayers).Select(z => z.AccountID).Distinct().Count(),
+                                Players = x.SelectMany(y => y.SpringBattlePlayers.Where(z=>!z.IsSpectator)).Select(z => z.AccountID).Distinct().Count(),
                                 MinutesPerPlayer = x.Sum(y => y.Duration*y.PlayerCount)/60/players,
                                 FirstGamePlayers =
                                     x.SelectMany(y => y.SpringBattlePlayers)
@@ -61,7 +61,6 @@ namespace ZeroKWeb.Controllers
             chart.AddTitle("Daily activity");
             chart.AddLegend("Daily values", "dps");
 
-            chart.AddSeries("unique players+specs", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.PlayersAndSpecs).ToList(), legend: "dps");
             chart.AddSeries("minutes/player", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.MinutesPerPlayer).ToList(), legend: "dps");
             chart.AddSeries("new players", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.FirstGamePlayers).ToList(), legend: "dps");
 
