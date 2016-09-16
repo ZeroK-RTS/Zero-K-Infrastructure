@@ -217,8 +217,6 @@ namespace ZkData
         [NotMapped]
         public double EffectivePwElo { get { return EloPw + (GlobalConst.EloWeightMax - EloWeight) * GlobalConst.EloWeightMalusFactor; } }
 
-        [NotMapped]
-        public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
 
         [NotMapped]
         public int KudosGained { get { return ContributionsByAccountID.Sum(x => x.KudosValue); } }
