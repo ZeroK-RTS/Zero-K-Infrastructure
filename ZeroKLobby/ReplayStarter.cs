@@ -34,6 +34,8 @@ namespace ZeroKLobby
             {
                 var optirun = Environment.GetEnvironmentVariable("OPTIRUN"); //get OPTIRUN filename from OS
                 var springFilename = Program.SpringPaths.GetSpringExecutablePath(engineVersion); //use springMT or standard
+
+                Program.SpringPaths.SetDefaultEnvVars(null, engineVersion);
                 if (string.IsNullOrEmpty(optirun))
                 {
                     Process.Start(springFilename, string.Format("\"{0}\" --config \"{1}\"", path, Program.SpringPaths.GetSpringConfigPath()));
