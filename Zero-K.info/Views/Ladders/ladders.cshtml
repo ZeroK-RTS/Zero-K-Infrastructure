@@ -4,29 +4,38 @@
 @{
     Page.Title = "Award ladders";
     List<LaddersController.AwardItem> awardItems = Model.AwardItems;
-    int playerIndex = 1;
 }
 
 
 
-<table>
+<table style="width: 100%">
+    <tr><td><h2>Top 50 Competitive</h2></td><td><h2>Top 50 Casual</h2></td></tr>
     <tr>
         <td>
-            <h2>Top 50 Competetive Players</h2>
-            <br />
             <span>
                 @foreach (Account acct in Model.Top50Accounts)
                 {
-                    if (playerIndex == 21)
+                    if (acct.CompetitiveRank == 21)
                     {
                         @:</span><br /><span style="font-size: small">
                     }
                     <text>
-                        @(playerIndex) ) @Html.PrintAccount(acct) - @(Math.Round(acct.EffectiveMmElo)) <br />
+                        @(acct.CompetitiveRank) ) @Html.PrintAccount(acct) - @(Math.Round(acct.EffectiveMmElo)) <br />
                     </text>
-                    playerIndex++;
                 }
             </span>
+        </td>
+        <td>
+            @foreach (Account acct in Model.Top50Accounts)
+            {
+                if (acct.CasualRank == 21)
+                {
+                    @:</span><br /><span style="font-size: small">
+                    }
+                <text>
+                    @(acct.CasualRank) ) @Html.PrintAccount(acct) <br />
+                </text>
+            }
         </td>
     </tr>
 </table>

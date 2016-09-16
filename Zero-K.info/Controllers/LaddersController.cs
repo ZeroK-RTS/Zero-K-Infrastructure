@@ -61,6 +61,7 @@ namespace ZeroKWeb.Controllers
             chart.AddTitle("Daily activity");
             chart.AddLegend("Daily values", "dps");
 
+            chart.AddSeries("unique players", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Players).ToList(), legend: "dps");
             chart.AddSeries("minutes/player", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.MinutesPerPlayer).ToList(), legend: "dps");
             chart.AddSeries("new players", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.FirstGamePlayers).ToList(), legend: "dps");
 
@@ -75,11 +76,58 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
+            var awardItems = CalculateAwards(db);
+
+            var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
+
+            // recalc competitive ranking
+            int cnt = 0;
+            foreach (var a in db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.IsMatchMaker && !y.IsSpectator)).OrderByDescending(x=>x.EffectiveMmElo).WithTranslations())
+            {
+                cnt++;
+                a.CompetitiveRank = cnt;
+            }
+            db.SaveChanges();
+
+
+            cnt = 0;
+            foreach (var a in db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && !y.SpringBattle.IsMatchMaker && !y.IsSpectator)).OrderByDescending(x => x.EffectiveElo).WithTranslations())
+            {
+                cnt++;
+                a.CasualRank = cnt;
+            }
+            db.SaveChanges();
+
+
+            var top50Accounts = db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.IsMatchMaker && !y.IsSpectator))
+                    .Include(x => x.Clan)
+                    .Include(x => x.Faction)
+                    .OrderByDescending(x => x.EffectiveMmElo)
+                    .WithTranslations()
+                    .Take(50)
+                    .ToList();
+
+            var top50Casual = db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && !y.SpringBattle.IsMatchMaker && !y.IsSpectator))
+                    .Include(x => x.Clan)
+                    .Include(x => x.Faction)
+                    .OrderByDescending(x => x.EffectiveElo)
+                    .WithTranslations()
+                    .Take(50)
+                    .ToList();
+
+
+            return new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts, Top50Casual = top50Casual };
+        }
+
+
+        private static List<AwardItem> CalculateAwards(ZkDataContext db)
+        {
             var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             var validAwards =
-                db.SpringBattles.Where(x => x.StartTime >= monthStart && x.HasBots == false && x.ResourceByMapResourceID.MapSupportLevel>=MapSupportLevel.Supported && x.ResourceByMapResourceID.MapIsSpecial == false)
-                    .SelectMany(x => x.AccountBattleAwards)
-                    .GroupBy(x => x.AwardKey);
+                db.SpringBattles.Where(
+                    x =>
+                        x.StartTime >= monthStart && x.HasBots == false && x.ResourceByMapResourceID.MapSupportLevel >= MapSupportLevel.Supported &&
+                        x.ResourceByMapResourceID.MapIsSpecial == false).SelectMany(x => x.AccountBattleAwards).GroupBy(x => x.AwardKey);
 
             var awardItems = new List<AwardItem>();
 
@@ -87,8 +135,7 @@ namespace ZeroKWeb.Controllers
             {
                 var awardType = awardsByType.Key;
 
-                var awardCounts =
-                    awardsByType.GroupBy(x => x.Account).Select(x => new { Account = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count);
+                var awardCounts = awardsByType.GroupBy(x => x.Account).Select(x => new { Account = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count);
 
                 var topCountM = awardCounts.First().Count;
                 var topCollectorsM = new List<Account>();
@@ -127,26 +174,18 @@ namespace ZeroKWeb.Controllers
                     AwardTitle = titleName,
                     TopScoreHolderM = db.Accounts.SingleOrDefault(x => x.AccountID == topActID),
                     TopScoreDescM = fullTitleM,
-                    TopScoreBattlePlayerM = db.SpringBattlePlayers.Include(x=>x.SpringBattle).Include(x=>x.SpringBattle.ResourceByMapResourceID).SingleOrDefault(x => x.AccountID == topActID && x.SpringBattleID == topBattleID),
+                    TopScoreBattlePlayerM =
+                        db.SpringBattlePlayers.Include(x => x.SpringBattle)
+                            .Include(x => x.SpringBattle.ResourceByMapResourceID)
+                            .SingleOrDefault(x => x.AccountID == topActID && x.SpringBattleID == topBattleID),
                     TopCollectorsM = topCollectorsM,
                     TopCollectorCountM = topCountM
                 };
                 awardItems.Add(awardItem);
             }
-
-            var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
-            var top50Accounts =
-                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount == 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator))
-                    .Include(x => x.Clan)
-                    .Include(x => x.Faction)
-                    .OrderByDescending(x => x.EffectiveMmElo)
-                    .WithTranslations()
-                    .Take(50)
-                    .ToList();
-
-
-            return new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts };
+            return awardItems;
         }
+
         //
         // GET: /Ladders/
         public ActionResult Index()
@@ -173,6 +212,7 @@ namespace ZeroKWeb.Controllers
         {
             public List<AwardItem> AwardItems;
             public List<Account> Top50Accounts;
+            public List<Account> Top50Casual;
         }
     }
 }

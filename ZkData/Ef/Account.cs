@@ -93,6 +93,8 @@ namespace ZkData
         public double EloMm { get; set; }
         public double EloMmWeight { get; set; }
         public double EloPw { get; set; }
+        public int? CasualRank { get; set; }
+        public int? CompetitiveRank { get; set; }
         public bool IsBot { get; set; }
         public bool CanPlayMultiplayer { get; set; } = true;
        
