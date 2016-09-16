@@ -228,12 +228,19 @@ namespace ZkLobbyServer
             var proposedBattles = new List<ProposedBattle>();
 
             var usersByWaitTime = users.OrderBy(x => x.JoinedTime).ToList();
+            var remainingPlayers = usersByWaitTime.ToList();
 
             foreach (var user in usersByWaitTime)
             {
-                if (proposedBattles.Any(y => y.Players.Contains(user))) continue; // skip already assigned in battles
-                var battle = TryToMakeBattle(user, usersByWaitTime);
-                if (battle != null) proposedBattles.Add(battle);
+                if (remainingPlayers.Contains(user)) // consider only those not yet assigned
+                {
+                    var battle = TryToMakeBattle(user, remainingPlayers);
+                    if (battle != null)
+                    {
+                        proposedBattles.Add(battle);
+                        remainingPlayers.RemoveAll(x => battle.Players.Contains(x));
+                    }
+                }
             }
 
             return proposedBattles;
