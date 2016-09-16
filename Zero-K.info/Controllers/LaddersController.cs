@@ -128,7 +128,7 @@ namespace ZeroKWeb.Controllers
                     AwardTitle = titleName,
                     TopScoreHolderM = db.Accounts.SingleOrDefault(x => x.AccountID == topActID),
                     TopScoreDescM = fullTitleM,
-                    TopScoreBattlePlayerM = db.SpringBattlePlayers.SingleOrDefault(x => x.AccountID == topActID && x.SpringBattleID == topBattleID),
+                    TopScoreBattlePlayerM = db.SpringBattlePlayers.Include(x=>x.SpringBattle).Include(x=>x.SpringBattle.ResourceByMapResourceID).SingleOrDefault(x => x.AccountID == topActID && x.SpringBattleID == topBattleID),
                     TopCollectorsM = topCollectorsM,
                     TopCollectorCountM = topCountM
                 };
@@ -145,16 +145,8 @@ namespace ZeroKWeb.Controllers
                     .Take(50)
                     .ToList();
 
-            var top50casual =
-                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount > 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator))
-                    .Include(x => x.Clan)
-                    .Include(x => x.Faction)
-                    .OrderByDescending(x => x.EffectiveElo)
-                    .WithTranslations()
-                    .Take(50)
-                    .ToList();
 
-            return new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts, Top50Teams = top50casual };
+            return new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts };
         }
         //
         // GET: /Ladders/
@@ -170,19 +162,11 @@ namespace ZeroKWeb.Controllers
             public string AwardTitle;
             public string AwardType;
 
-            //for all time
-            public int TopCollectorCount;
-
-
             //for this month
             public int TopCollectorCountM;
-            public List<Account> TopCollectors;
             public List<Account> TopCollectorsM;
-            public SpringBattlePlayer TopScoreBattlePlayer;
             public SpringBattlePlayer TopScoreBattlePlayerM;
-            public string TopScoreDesc;
             public string TopScoreDescM;
-            public Account TopScoreHolder;
             public Account TopScoreHolderM;
         }
 
@@ -190,7 +174,6 @@ namespace ZeroKWeb.Controllers
         {
             public List<AwardItem> AwardItems;
             public List<Account> Top50Accounts;
-            public List<Account> Top50Teams;
         }
     }
 }

@@ -9,60 +9,50 @@
 
 
 
-<table><tr><td>
-               <h2>Top 50 Competetive Players</h2>
-               <br />
-               <span>
-                   @foreach (Account acct in Model.Top50Accounts) {
-                       if (playerIndex == 21) {
-                           @:</span> <br /> <span style="font-size: small" >
-                       }
-                       <text>
-                           @(playerIndex) ) @Html.PrintAccount(acct) - @(Math.Round(acct.EffectiveMmElo)) <br />
-                       </text>
-                       playerIndex++;
-                   }
-               </span>
-    
-           </td><td>@{
-                        playerIndex = 1;
+<table>
+    <tr>
+        <td>
+            <h2>Top 50 Competetive Players</h2>
+            <br />
+            <span>
+                @foreach (Account acct in Model.Top50Accounts)
+                {
+                    if (playerIndex == 21)
+                    {
+                        @:</span><br /><span style="font-size: small">
                     }
-                    <h2>Top 50 Casual Players</h2>
-                    <br />
-                    <span>
-                        @foreach (Account acct in Model.Top50Teams) {
-                            if (playerIndex == 21) {
-                                @:</span> <br /> <span style="font-size: small" >
-                            }
-                            <text>
-                                @(playerIndex) ) @Html.PrintAccount(acct) - @(Math.Round(acct.EffectiveElo)) <br />
-                            </text>
-                            playerIndex++;
-                        }
-                    </span>
-                    
-
-                </td></tr></table>
+                    <text>
+                        @(playerIndex) ) @Html.PrintAccount(acct) - @(Math.Round(acct.EffectiveMmElo)) <br />
+                    </text>
+                    playerIndex++;
+                }
+            </span>
+        </td>
+    </tr>
+</table>
 
 <br />
 
 <h2>Awards Hall of Fame - @DateTime.Now.ToString("MMMM")</h2>
 <br />
 
-@foreach (LaddersController.AwardItem awardItem in awardItems) {
+@foreach (LaddersController.AwardItem awardItem in awardItems)
+{
     <div style="height: 80px;">
-        <div style="position: absolute; width: 60px;" >
+        <div style="position: absolute; width: 60px;">
             <span title="@awardItem.AwardTitle">
                 <img src="/img/Awards/trophy_@(awardItem.AwardType).png" height="30" alt="@awardItem.AwardType" />
             </span>
         </div>
-        
-        <div style="left: 70px; position: absolute;" >
-            <div style="font-weight: bold;" >
+
+        <div style="left: 70px; position: absolute;">
+            <div style="font-weight: bold;">
                 Top Collector(s) -
                 @{ bool first = true; }
-                @foreach (Account collector in awardItem.TopCollectorsM) {
-                    if (!first) {
+                @foreach (Account collector in awardItem.TopCollectorsM)
+                {
+                    if (!first)
+                    {
                         @:,
                     }
                     first = false;
@@ -70,36 +60,9 @@
                 }
                 - <span style="color: lightgreen;">@awardItem.TopCollectorCountM</span> collected
             </div>
-            <div style="font-weight: bold;" >
-
+            <div style="font-weight: bold;">
                 Top Score - @Html.PrintAccount(awardItem.TopScoreHolderM) - <span style="color: lightgreen;">@awardItem.TopScoreDescM</span> - @Html.PrintBattle(awardItem.TopScoreBattlePlayerM)
             </div>
-            @*
-                <div style="position:absolute; left:20px; font-size:small; " >
-                    <div>
-                        Top Collector(s): 
-                        @{first = true; }
-                        @foreach (var collector in awardItem.TopCollectors)
-                        {
-                            if (!first)
-                            {
-                                @:,
-                            }
-                            first = false;
-                            @Html.PrintAccount(collector)
-                    
-                        }
-                        - <span style="color:lightgreen; ">@awardItem.TopCollectorCount</span> collected
-                    </div>
-                    <div style="font-size:small; ">
-
-                        Top Score: @Html.PrintAccount(awardItem.TopScoreHolder) - <span style="color:lightgreen; ">@awardItem.TopScoreDesc</span> - @Html.PrintBattle(awardItem.TopScoreBattlePlayer)
-                    </div>
-                </div>
-                *@
         </div>
-            
-        
-        
     </div>
-}
+ }
