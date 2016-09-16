@@ -82,9 +82,9 @@ namespace ZeroKWeb.Controllers
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Team Elo Weight: {0} -> {1}", acc.EloWeight, eloweight));
                 acc.EloWeight = eloweight;
             }
-            if (acc.Elo1v1Weight != eloweight1v1) {
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - 1v1 Elo Weight: {0} -> {1}", acc.Elo1v1Weight, eloweight1v1));
-                acc.Elo1v1Weight = eloweight1v1;
+            if (acc.EloMmWeight != eloweight1v1) {
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - 1v1 Elo Weight: {0} -> {1}", acc.EloMmWeight, eloweight1v1));
+                acc.EloMmWeight = eloweight1v1;
             }
             db.SaveChanges();
 
@@ -409,29 +409,6 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
-
-        /// <summary>
-        /// This is a function requested by Pepe Ampere for NOTA veterans
-        /// </summary>
-        public ActionResult Fetch(string name, string password)
-        {
-            var db = new ZkDataContext();
-            var acc = Account.AccountVerify(db, name, password);
-            if (acc == null) return new JsonResult() {JsonRequestBehavior = JsonRequestBehavior.AllowGet};
-            return new JsonResult() { Data = new
-            {
-                acc.AccountID,
-                acc.Name,
-                acc.Aliases,
-                acc.FirstLogin,
-                acc.LastLogin,
-                acc.LobbyVersion,
-                acc.Email,
-                acc.Country,
-                acc.EffectiveElo,
-                acc.IsBot,
-            }, JsonRequestBehavior = JsonRequestBehavior.AllowGet};
-        }
 
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult SetPassword(int accountID, string newPassword)

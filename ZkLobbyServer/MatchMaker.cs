@@ -111,7 +111,8 @@ namespace ZkLobbyServer
                                         ReadyAccepted = p.LastReadyResponse == true,
                                         LikelyToPlay = proposedBattles.Any(y => y.Players.Contains(p)),
                                         YourBattleSize = invitedBattle?.Size,
-                                        YourBattleReady = invitedPeople.Count(x => x.LastReadyResponse && (invitedBattle?.Players.Contains(x) == true))
+                                        YourBattleReady =
+                                            invitedPeople.Count(x => x.LastReadyResponse && (invitedBattle?.Players.Contains(x) == true))
                                     });
                         }));
                     }
@@ -168,7 +169,8 @@ namespace ZkLobbyServer
         public async Task RemoveUser(string name)
         {
             PlayerEntry entry;
-            if (players.TryRemove(name, out entry)) {
+            if (players.TryRemove(name, out entry))
+            {
                 if (entry.InvitedToPlay) bannedPlayers[entry.Name] = DateTime.UtcNow; // was invited but he is gone now (whatever reason), ban!
 
                 ConnectedUser conUser;
@@ -228,13 +230,18 @@ namespace ZkLobbyServer
             var proposedBattles = new List<ProposedBattle>();
 
             var usersByWaitTime = users.OrderBy(x => x.JoinedTime).ToList();
+            var remainingPlayers = usersByWaitTime.ToList();
 
             foreach (var user in usersByWaitTime)
-            {
-                if (proposedBattles.Any(y => y.Players.Contains(user))) continue; // skip already assigned in battles
-                var battle = TryToMakeBattle(user, usersByWaitTime);
-                if (battle != null) proposedBattles.Add(battle);
-            }
+                if (remainingPlayers.Contains(user)) // consider only those not yet assigned
+                {
+                    var battle = TryToMakeBattle(user, remainingPlayers);
+                    if (battle != null)
+                    {
+                        proposedBattles.Add(battle);
+                        remainingPlayers.RemoveAll(x => battle.Players.Contains(x));
+                    }
+                }
 
             return proposedBattles;
         }
@@ -337,22 +344,15 @@ namespace ZkLobbyServer
 
         private static ProposedBattle TryToMakeBattle(PlayerEntry player, IList<PlayerEntry> otherPlayers)
         {
-            var playersByTeamElo =
-                otherPlayers.Where(x => x != player).OrderBy(x => Math.Abs(x.LobbyUser.EffectiveElo - player.LobbyUser.EffectiveElo)).ToList();
-            var playersBy1v1Elo =
-                otherPlayers.Where(x => x != player).OrderBy(x => Math.Abs(x.LobbyUser.Effective1v1Elo - player.LobbyUser.Effective1v1Elo)).ToList();
+            var playersByElo =
+                otherPlayers.Where(x => x != player)
+                    .OrderBy(x => Math.Abs(x.LobbyUser.EffectiveMmElo - player.LobbyUser.EffectiveMmElo))
+                    .ThenBy(x => x.JoinedTime)
+                    .ToList();
 
             var testedBattles = player.GenerateWantedBattles();
 
-            foreach (var other in playersByTeamElo)
-                foreach (var bat in testedBattles.Where(x => x.Mode != AutohostMode.Game1v1))
-                    if (bat.CanBeAdded(other))
-                    {
-                        bat.AddPlayer(other);
-                        if (bat.Players.Count == bat.Size) return bat;
-                    }
-
-            foreach (var other in playersBy1v1Elo)
+            foreach (var other in playersByElo)
                 foreach (var bat in testedBattles.Where(x => x.Mode == AutohostMode.Game1v1))
                     if (bat.CanBeAdded(other))
                     {
@@ -431,11 +431,7 @@ namespace ZkLobbyServer
                 return true;
             }
 
-            private int GetElo(PlayerEntry entry)
-            {
-                if (Mode == AutohostMode.Game1v1) return entry.LobbyUser.Effective1v1Elo;
-                return entry.LobbyUser.EffectiveElo;
-            }
+            private int GetElo(PlayerEntry entry) => entry.LobbyUser.EffectiveMmElo;
         }
     }
 }

@@ -838,7 +838,7 @@ namespace Fixer
             ZkDataContext db = new ZkDataContext();
             Clan clan = db.Clans.FirstOrDefault(x => x.ClanID == clanID);
             var battles = db.SpringBattles.Where(x => x.SpringBattlePlayers.Count(p => p.Account.ClanID == clanID && p.Account.Elo >= minElo && !p.IsSpectator) >= 2
-                && x.StartTime.CompareTo(DateTime.Now.AddMonths(-1)) > 0 && x.ResourceByMapResourceID.MapIsSpecial != true && !x.IsFfa).ToList();
+                && x.StartTime.CompareTo(DateTime.Now.AddMonths(-1)) > 0 && x.ResourceByMapResourceID.MapIsSpecial != true).ToList();
             System.Console.WriteLine(clan.ClanName + ", " + battles.Count);
             foreach (SpringBattle battle in battles)
             {
@@ -907,7 +907,7 @@ namespace Fixer
             Dictionary<Account, EloEntry> PlayerElo = new Dictionary<Account, EloEntry>();
 
             int cnt = 0;
-            foreach (var sb in db.SpringBattles.Where(x => !x.IsMission && !x.HasBots && !x.IsFfa && x.PlayerCount == 2).OrderBy(x => x.SpringBattleID))
+            foreach (var sb in db.SpringBattles.Where(x => !x.IsMission && !x.HasBots && x.PlayerCount == 2).OrderBy(x => x.SpringBattleID))
             {
                 cnt++;
 
@@ -992,7 +992,7 @@ namespace Fixer
             var winPredicted = 0;
 
 
-            foreach (var sb in db.SpringBattles.Where(x => !x.IsMission && !x.HasBots && !x.IsFfa && x.IsEloProcessed && x.PlayerCount >= 8 && !x.Events.Any()).OrderByDescending(x => x.SpringBattleID))
+            foreach (var sb in db.SpringBattles.Where(x => !x.IsMission && !x.HasBots && x.IsEloProcessed && x.PlayerCount >= 8 && !x.Events.Any()).OrderByDescending(x => x.SpringBattleID))
             {
 
                 var losers = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();

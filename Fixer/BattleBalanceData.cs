@@ -142,7 +142,7 @@ namespace Fixer
         public static void AnalyseBalance()
         {
             ZkDataContext db = new ZkDataContext();
-            var games = db.SpringBattles.Where(x => DateTime.Now - x.StartTime < TimeSpan.FromDays(60) && !x.IsFfa && !x.IsMission && !x.HasBots && x.PlayerCount >= 6).ToList();
+            var games = db.SpringBattles.Where(x => DateTime.Now - x.StartTime < TimeSpan.FromDays(60) && !x.IsMission && !x.HasBots && x.PlayerCount >= 6).ToList();
             Console.WriteLine(games.Count);
             List<SpringBattle> games2 = new List<SpringBattle>();
             int numProcessed = 0;

@@ -194,7 +194,7 @@ namespace ZeroKWeb.Controllers
 			             	    {
                                      var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
                                      return db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount == 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator))
-                                             .OrderByDescending(x => x.Elo1v1)
+                                             .OrderByDescending(x => x.EloMm)
                                              .Take(10)
                                              .ToList();
 
@@ -250,7 +250,12 @@ namespace ZeroKWeb.Controllers
 			if (acc == null) return Content("Invalid login name");
 			var hashed = Utils.HashLobbyPassword(password);
 			acc = AuthServiceClient.VerifyAccountHashed(login, hashed);
-			if (acc == null) return Content("Invalid password");
+		    if (acc == null)
+		    {
+                Trace.TraceWarning("Invalid login attempt for {0}", login);
+                System.Threading.Thread.Sleep(new Random().Next(2000));
+                return Content("Invalid password");
+		    }
 			else
 			{
                 // todo replace with safer permanent cookie

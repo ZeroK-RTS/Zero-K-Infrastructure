@@ -10,7 +10,7 @@
 
 
 <table><tr><td>
-               <h2>Top 50 1v1 Players</h2>
+               <h2>Top 50 Competetive Players</h2>
                <br />
                <span>
                    @foreach (Account acct in Model.Top50Accounts) {
@@ -18,7 +18,7 @@
                            @:</span> <br /> <span style="font-size: small" >
                        }
                        <text>
-                           @(playerIndex) ) @Html.PrintAccount(acct) - @(Math.Round(acct.Effective1v1Elo)) <br />
+                           @(playerIndex) ) @Html.PrintAccount(acct) - @(Math.Round(acct.EffectiveMmElo)) <br />
                        </text>
                        playerIndex++;
                    }
@@ -27,7 +27,7 @@
            </td><td>@{
                         playerIndex = 1;
                     }
-                    <h2>Top 50 Team Players</h2>
+                    <h2>Top 50 Casual Players</h2>
                     <br />
                     <span>
                         @foreach (Account acct in Model.Top50Teams) {

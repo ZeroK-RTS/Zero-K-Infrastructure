@@ -19,10 +19,10 @@ namespace ZkData
         public Account()
         {
             Elo = 1500;
-            Elo1v1 = 1500;
+            EloMm = 1500;
             EloPw = 1500;
             EloWeight = 1;
-            Elo1v1Weight = 1;
+            EloMmWeight = 1;
             FirstLogin = DateTime.UtcNow;
             LastLogin = DateTime.UtcNow;
             LastLogout = DateTime.UtcNow;
@@ -90,8 +90,8 @@ namespace ZkData
         public string Aliases { get; set; }
         public double Elo { get; set; }
         public double EloWeight { get; set; }
-        public double Elo1v1 { get; set; }
-        public double Elo1v1Weight { get; set; }
+        public double EloMm { get; set; }
+        public double EloMmWeight { get; set; }
         public double EloPw { get; set; }
         public bool IsBot { get; set; }
         public bool CanPlayMultiplayer { get; set; } = true;
@@ -193,12 +193,12 @@ namespace ZkData
 
         private static readonly CompiledExpression<Account, double> effectiveEloExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveElo).Is(e => e.Elo + (GlobalConst.EloWeightMax - e.EloWeight) * GlobalConst.EloWeightMalusFactor);
 
-        public double EffectiveElo { get { return effectiveEloExpression.Evaluate(this); } }
+        public double EffectiveElo => effectiveEloExpression.Evaluate(this);
 
 
-        private static readonly CompiledExpression<Account, double> effectiveElo1v1Expression = DefaultTranslationOf<Account>.Property(e => e.Effective1v1Elo).Is(e => e.Elo1v1 + (GlobalConst.EloWeightMax - e.Elo1v1Weight) * GlobalConst.EloWeightMalusFactor);
+        private static readonly CompiledExpression<Account, double> effectiveEloMmExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveMmElo).Is(e => e.EloMm + (GlobalConst.EloWeightMax - e.EloMmWeight) * GlobalConst.EloWeightMalusFactor);
 
-        public double Effective1v1Elo { get { return effectiveElo1v1Expression.Evaluate(this); } }
+        public double EffectiveMmElo { get { return effectiveEloMmExpression.Evaluate(this); } }
 
 
         [NotMapped]
@@ -217,8 +217,6 @@ namespace ZkData
         [NotMapped]
         public double EffectivePwElo { get { return EloPw + (GlobalConst.EloWeightMax - EloWeight) * GlobalConst.EloWeightMalusFactor; } }
 
-        [NotMapped]
-        public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
 
         [NotMapped]
         public int KudosGained { get { return ContributionsByAccountID.Sum(x => x.KudosValue); } }
@@ -295,7 +293,7 @@ namespace ZkData
 
         public bool CanPlayerPlanetWars()
         {
-            return FactionID != null && Level >= GlobalConst.MinPlanetWarsLevel && EffectiveElo > GlobalConst.MinPlanetWarsElo;
+            return FactionID != null && Level >= GlobalConst.MinPlanetWarsLevel && EffectiveMmElo > GlobalConst.MinPlanetWarsElo;
         }
 
 

@@ -220,6 +220,14 @@
     <Compile Include="Migrations\201609092030453_MapSupportLevel.Designer.cs">
       <DependentUpon>201609092030453_MapSupportLevel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201609160853006_EloRename.cs" />
+    <Compile Include="Migrations\201609160853006_EloRename.Designer.cs">
+      <DependentUpon>201609160853006_EloRename.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201609160936599_AddMatchMakerFlagToBattles.cs" />
+    <Compile Include="Migrations\201609160936599_AddMatchMakerFlagToBattles.Designer.cs">
+      <DependentUpon>201609160936599_AddMatchMakerFlagToBattles.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="Enums\TreatyState.cs" />
@@ -462,6 +470,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609092030453_MapSupportLevel.resx">
       <DependentUpon>201609092030453_MapSupportLevel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609160853006_EloRename.resx">
+      <DependentUpon>201609160853006_EloRename.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609160936599_AddMatchMakerFlagToBattles.resx">
+      <DependentUpon>201609160936599_AddMatchMakerFlagToBattles.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

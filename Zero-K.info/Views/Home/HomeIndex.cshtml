@@ -122,7 +122,7 @@
                 <tr>
                     <td>@(cnt++)</td>
                     <td><small>@Html.PrintAccount(a)</small></td>
-                    <td>@Math.Round(a.Effective1v1Elo)</td>
+                    <td>@Math.Round(a.EffectiveMmElo)</td>
                 </tr>
             }
         </table>
@@ -130,7 +130,7 @@
 
     <div class="border">
         <h2>Social Media</h2>
-        <a href="https://www.facebook.com/ZeroK.RTS"><img src="https://www.facebookbrand.com/img/assets/asset.f.logo.lg.png" class="icon32"/></a>
+        <a href="https://www.facebook.com/ZeroK.RTS"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/F_icon.svg" class="icon32"/></a>
         <a href="https://github.com/ZeroK-RTS"><img src="https://i.imgur.com/BItG041.png" class="icon32"></a>
         <a href="http://steamcommunity.com/groups/0-K"><img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg" class="icon32" /></a>
         <a href="@Url.Action("Index", "News")"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png" class="icon32"/></a>

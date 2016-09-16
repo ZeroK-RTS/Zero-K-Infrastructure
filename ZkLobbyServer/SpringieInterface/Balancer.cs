@@ -129,7 +129,7 @@ namespace ZeroKWeb.SpringieInterface
                     if (unmovablePlayers != null && unmovablePlayers.Length > i)
                     {
                         var unmovables = unmovablePlayers[i];
-                        team.AddItem(new BalanceItem(unmovablePlayers[i].ToArray()) { CanBeMoved = false });
+                        team.AddItem(new BalanceItem(b.IsMatchMakerGame, unmovablePlayers[i].ToArray()) { CanBeMoved = false });
                         accs.RemoveAll(x => unmovables.Any(y => y.AccountID == x.AccountID));
                     }
                 }
@@ -139,19 +139,19 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     var clanGroups = accs.GroupBy(x => x.ClanID ?? x.AccountID).ToList();
                     if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
-                    else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(x.ToArray())));
+                    else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
                 }
                 if (mode == BalanceMode.FactionWise)
                 {
                     balanceItems.Clear();
                     var factionGroups = accs.GroupBy(x => x.FactionID ?? x.AccountID).ToList();
-                    balanceItems.AddRange(factionGroups.Select(x => new BalanceItem(x.ToArray())));
+                    balanceItems.AddRange(factionGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
                 }
 
                 if (mode == BalanceMode.Normal)
                 {
                     balanceItems.Clear();
-                    balanceItems.AddRange(accs.Select(x => new BalanceItem(x)));
+                    balanceItems.AddRange(accs.Select(x => new BalanceItem(b.IsMatchMakerGame, x)));
                 }
 
                 var sw = new Stopwatch();
@@ -457,9 +457,9 @@ namespace ZeroKWeb.SpringieInterface
             public readonly List<int> LobbyId;
             public bool CanBeMoved = true;
 
-            public BalanceItem(params Account[] accounts) {
+            public BalanceItem(bool isMatchMaker, params Account[] accounts) {
                 LobbyId = accounts.Select(x => x.AccountID).ToList();
-                EloSum = accounts.Sum(x => x.EffectiveElo);
+                EloSum = isMatchMaker ? accounts.Sum(x => x.EffectiveMmElo) : accounts.Sum(x => x.EffectiveElo);
                 Count = accounts.Length;
             }
         }
