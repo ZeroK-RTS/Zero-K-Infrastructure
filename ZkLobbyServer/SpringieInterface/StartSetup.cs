@@ -89,7 +89,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams["clan"] = user.Clan != null ? user.Clan.Shortcut : "";
                         userParams["clanfull"] = user.Clan != null ? user.Clan.ClanName : "";
                         userParams["level"] = user.Level.ToString();
-                        var elo = mode == AutohostMode.Planetwars ? user.EffectivePwElo : (is1v1 ? user.Effective1v1Elo : user.EffectiveElo);
+                        var elo = mode == AutohostMode.Planetwars ? user.EffectivePwElo : (is1v1 ? user.EffectiveMmElo : user.EffectiveElo);
                         userParams["elo"] = Math.Round(elo).ToString(); // elo for ingame is just ordering for auto /take
                         userParams["avatar"] = user.Avatar;
                         userParams["admin"] = user.IsZeroKAdmin ? "1" : "0";

@@ -78,11 +78,5 @@ namespace PlasmaShared
 
         [OperationContract]
         void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds, string missionVars = "");
-
-        [OperationContract]
-        bool VerifyAccountData(string login, string password);
-
-        [OperationContract]
-        AccountInfo GetAccountInfo(string login, string password);
     }
 }

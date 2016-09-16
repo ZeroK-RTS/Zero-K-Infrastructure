@@ -140,7 +140,7 @@ namespace ZeroKWeb.Controllers
                 db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount == 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator))
                     .Include(x => x.Clan)
                     .Include(x => x.Faction)
-                    .OrderByDescending(x => x.Effective1v1Elo)
+                    .OrderByDescending(x => x.EffectiveMmElo)
                     .WithTranslations()
                     .Take(50)
                     .ToList();

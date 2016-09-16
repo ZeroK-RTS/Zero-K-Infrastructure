@@ -196,9 +196,9 @@ namespace ZkData
         public double EffectiveElo { get { return effectiveEloExpression.Evaluate(this); } }
 
 
-        private static readonly CompiledExpression<Account, double> effectiveElo1v1Expression = DefaultTranslationOf<Account>.Property(e => e.Effective1v1Elo).Is(e => e.EloMm + (GlobalConst.EloWeightMax - e.EloMmWeight) * GlobalConst.EloWeightMalusFactor);
+        private static readonly CompiledExpression<Account, double> effectiveEloMmExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveMmElo).Is(e => e.EloMm + (GlobalConst.EloWeightMax - e.EloMmWeight) * GlobalConst.EloWeightMalusFactor);
 
-        public double Effective1v1Elo { get { return effectiveElo1v1Expression.Evaluate(this); } }
+        public double EffectiveMmElo { get { return effectiveEloMmExpression.Evaluate(this); } }
 
 
         [NotMapped]
