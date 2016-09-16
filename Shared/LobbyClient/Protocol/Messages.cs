@@ -219,7 +219,6 @@ namespace LobbyClient
         public string Country;
         public string DisplayName;
         public int EffectiveMmElo;
-        public int EffectiveElo;
         public string Faction;
         public DateTime? InGameSince;
         public bool IsAdmin;
@@ -250,7 +249,6 @@ namespace LobbyClient
             Clan = u.Clan;
             Avatar = u.Avatar;
             Country = u.Country;
-            EffectiveElo = u.EffectiveElo;
             EffectiveMmElo = u.EffectiveMmElo;
             Faction = u.Faction;
             InGameSince = u.InGameSince;

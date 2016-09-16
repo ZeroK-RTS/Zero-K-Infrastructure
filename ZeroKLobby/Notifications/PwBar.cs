@@ -51,7 +51,7 @@ namespace ZeroKLobby.Notifications
 
         void UpdateGui()
         {
-            if (pw != null && !string.IsNullOrEmpty(tas.MyUser.Faction) && tas.MyUser.Level >= GlobalConst.MinPlanetWarsLevel && tas.MyUser.EffectiveElo >= GlobalConst.MinPlanetWarsElo)
+            if (pw != null && !string.IsNullOrEmpty(tas.MyUser.Faction) && tas.MyUser.Level >= GlobalConst.MinPlanetWarsLevel && tas.MyUser.EffectiveMmElo >= GlobalConst.MinPlanetWarsElo)
             {
                 if (pw.Mode == PwMatchCommand.ModeType.Clear) Program.NotifySection.RemoveBar(this);
                 else
