@@ -171,7 +171,7 @@ namespace ZeroKLobby.MicroLobby
 
             if (!user.IsBot)
             {
-                drawImage(Images.GetRank(user.Level, user.EffectiveElo));
+                drawImage(Images.GetRank(user.Level, user.EffectiveMmElo));
 
                 var clan = ServerImagesHandler.GetClanOrFactionImage(user);
                 if (clan.Item1 != null) drawImage(clan.Item1);

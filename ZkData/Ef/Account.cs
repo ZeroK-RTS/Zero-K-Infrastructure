@@ -193,7 +193,7 @@ namespace ZkData
 
         private static readonly CompiledExpression<Account, double> effectiveEloExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveElo).Is(e => e.Elo + (GlobalConst.EloWeightMax - e.EloWeight) * GlobalConst.EloWeightMalusFactor);
 
-        public double EffectiveElo { get { return effectiveEloExpression.Evaluate(this); } }
+        public double EffectiveElo => effectiveEloExpression.Evaluate(this);
 
 
         private static readonly CompiledExpression<Account, double> effectiveEloMmExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveMmElo).Is(e => e.EloMm + (GlobalConst.EloWeightMax - e.EloMmWeight) * GlobalConst.EloWeightMalusFactor);
@@ -295,7 +295,7 @@ namespace ZkData
 
         public bool CanPlayerPlanetWars()
         {
-            return FactionID != null && Level >= GlobalConst.MinPlanetWarsLevel && EffectiveElo > GlobalConst.MinPlanetWarsElo;
+            return FactionID != null && Level >= GlobalConst.MinPlanetWarsLevel && EffectiveMmElo > GlobalConst.MinPlanetWarsElo;
         }
 
 

@@ -5,11 +5,10 @@
 }
 <span style="float:left;">@Html.AccountAvatar(u)</span><b>@Html.PrintAccount(u)</b><br/>
 <b>First Login:</b> @u.FirstLogin.ToAgoString(), <b>Last Login:</b> @u.LastLogin.ToAgoString()<br />
-@if (Global.IsZeroKAdmin) {
-    <div class="admin">
-        <b>Elo (all): </b> @Math.Round(@u.EffectiveElo)
-        <b>Elo (1v1): </b> @Math.Round(@u.EffectiveMmElo)
-    </div>
+<b>Elo (competetive): </b> @Math.Round(@u.EffectiveMmElo)
+@if (u.AccountID == Global.AccountID || Global.IsZeroKAdmin)
+{
+    <b>Elo (casual): </b> @Math.Round(@u.EffectiveElo)
 }
 @if (Model.ContributionsByAccountID.Count() > 0)
 {

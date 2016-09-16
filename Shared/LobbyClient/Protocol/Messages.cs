@@ -218,7 +218,7 @@ namespace LobbyClient
         public Login.ClientTypes ClientType;
         public string Country;
         public string DisplayName;
-        public int Effective1v1Elo;
+        public int EffectiveMmElo;
         public int EffectiveElo;
         public string Faction;
         public DateTime? InGameSince;
@@ -251,7 +251,7 @@ namespace LobbyClient
             Avatar = u.Avatar;
             Country = u.Country;
             EffectiveElo = u.EffectiveElo;
-            Effective1v1Elo = u.Effective1v1Elo;
+            EffectiveMmElo = u.EffectiveMmElo;
             Faction = u.Faction;
             InGameSince = u.InGameSince;
             IsAdmin = u.IsAdmin;

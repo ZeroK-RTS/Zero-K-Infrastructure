@@ -410,29 +410,6 @@ namespace ZeroKWeb.Controllers
         }
 
 
-        /// <summary>
-        /// This is a function requested by Pepe Ampere for NOTA veterans
-        /// </summary>
-        public ActionResult Fetch(string name, string password)
-        {
-            var db = new ZkDataContext();
-            var acc = Account.AccountVerify(db, name, password);
-            if (acc == null) return new JsonResult() {JsonRequestBehavior = JsonRequestBehavior.AllowGet};
-            return new JsonResult() { Data = new
-            {
-                acc.AccountID,
-                acc.Name,
-                acc.Aliases,
-                acc.FirstLogin,
-                acc.LastLogin,
-                acc.LobbyVersion,
-                acc.Email,
-                acc.Country,
-                acc.EffectiveElo,
-                acc.IsBot,
-            }, JsonRequestBehavior = JsonRequestBehavior.AllowGet};
-        }
-
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult SetPassword(int accountID, string newPassword)
         {

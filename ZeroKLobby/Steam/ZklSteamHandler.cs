@@ -48,7 +48,7 @@ namespace ZeroKLobby
                 SteamName = SteamHelper.GetMyName();
                 friends = SteamHelper.GetFriends();
                 SteamID = SteamHelper.GetSteamID();
-                if (tas.IsLoggedIn && tas.MyUser != null && tas.MyUser.EffectiveElo != 0) OnLoggedToBothSteamAndTas();
+                if (tas.IsLoggedIn && tas.MyUser != null) OnLoggedToBothSteamAndTas();
             };
 
 

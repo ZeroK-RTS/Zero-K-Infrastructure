@@ -878,7 +878,7 @@ namespace ZkData
 
         public static Action<ZkDataContext> DataContextCreated = context => { };
 
-        public ZkDataContext() : this(true)
+        public ZkDataContext() : this(null)
         {
         }
 

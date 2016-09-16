@@ -77,9 +77,9 @@ namespace ZeroKLobby.MicroLobby
                 if (Program.TasClient.Friends.Contains(user.Name)) return ZklResources.friend;
                 if (userName == Program.TasClient.MyBattle?.FounderName) return ZklResources.self_police;
                 if (user.IsAdmin) return ZklResources.police;
-                if (user.EffectiveElo >= 1800) return ZklResources.napoleon;
-                if (user.EffectiveElo >= 1600) return ZklResources.soldier;
-                if (user.EffectiveElo < 1400) return ZklResources.smurf;
+                if (user.EffectiveMmElo >= 1800) return ZklResources.napoleon;
+                if (user.EffectiveMmElo >= 1600) return ZklResources.soldier;
+                if (user.EffectiveMmElo < 1400) return ZklResources.smurf;
 
             }
             else return userName == GlobalConst.NightwatchName ? ZklResources.robot : ZklResources.grayuser;
@@ -93,9 +93,9 @@ namespace ZeroKLobby.MicroLobby
                 if (Program.TasClient.Friends.Contains(user.Name)) return ZklResources.friend;
 
                 if (user.IsAdmin) return ZklResources.police;
-                if (user.EffectiveElo >= 1800) return ZklResources.napoleon;
-                if (user.EffectiveElo >= 1600) return ZklResources.soldier;
-                if (user.EffectiveElo < 1400) return ZklResources.smurf;
+                if (user.EffectiveMmElo >= 1800) return ZklResources.napoleon;
+                if (user.EffectiveMmElo >= 1600) return ZklResources.soldier;
+                if (user.EffectiveMmElo < 1400) return ZklResources.smurf;
             }
             return ZklResources.user;
         }
