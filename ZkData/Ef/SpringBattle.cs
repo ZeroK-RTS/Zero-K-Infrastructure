@@ -94,7 +94,28 @@ namespace ZkData
         }
 
 
-        public void CalculateEloGeneric(Func<Account, double> getElo,
+        public override string ToString()
+        {
+            return "B" + SpringBattleID;
+        }
+
+        private void ApplyXpChanges()
+        {
+            foreach (var a in SpringBattlePlayers.Where(x => !x.IsSpectator))
+                if (a.IsInVictoryTeam)
+                {
+                    a.Account.Xp += WinnerTeamXpChange ?? 0;
+                    a.XpChange = WinnerTeamXpChange;
+                }
+                else
+                {
+                    a.Account.Xp += LoserTeamXpChange ?? 0;
+                    a.XpChange = LoserTeamXpChange;
+                }
+        }
+
+
+        private void CalculateEloGeneric(Func<Account, double> getElo,
             Func<Account, double> getWeight,
             Action<Account, double> setElo,
             Action<Account, double> setWeight)
@@ -129,26 +150,26 @@ namespace ZkData
                 loserElo += getElo(r.Account);
             }
 
-            winnerElo = winnerElo / winners.Count;
-            loserElo = loserElo / losers.Count;
+            winnerElo = winnerElo/winners.Count;
+            loserElo = loserElo/losers.Count;
             //winnerElo = winnerElo/winnerW;
             //loserElo = loserElo/loserW;
 
-            var eWin = 1 / (1 + Math.Pow(10, (loserElo - winnerElo) / 400));
-            var eLose = 1 / (1 + Math.Pow(10, (winnerElo - loserElo) / 400));
+            var eWin = 1/(1 + Math.Pow(10, (loserElo - winnerElo)/400));
+            var eLose = 1/(1 + Math.Pow(10, (winnerElo - loserElo)/400));
 
             var sumCount = losers.Count + winners.Count;
-            var scoreWin = Math.Sqrt(sumCount / 2.0) * 32 * (1 - eWin) / winnerInvW;
-            var scoreLose = Math.Sqrt(sumCount / 2.0) * 32 * (0 - eLose) / loserInvW;
+            var scoreWin = Math.Sqrt(sumCount/2.0)*32*(1 - eWin)/winnerInvW;
+            var scoreLose = Math.Sqrt(sumCount/2.0)*32*(0 - eLose)/loserInvW;
 
-            WinnerTeamXpChange = (int)(20 + (300 + 600 * (1 - eWin)) / (3.0 + winners.Count)); // a bit ugly this sets to battle directly
-            LoserTeamXpChange = (int)(20 + (200 + 400 * (1 - eLose)) / (2.0 + losers.Count));
+            WinnerTeamXpChange = (int)(20 + (300 + 600*(1 - eWin))/(3.0 + winners.Count)); // a bit ugly this sets to battle directly
+            LoserTeamXpChange = (int)(20 + (200 + 400*(1 - eLose))/(2.0 + losers.Count));
 
             var sumW = winnerW + loserW;
 
             foreach (var r in winners)
             {
-                var change = (float)(scoreWin * (GlobalConst.EloWeightMax + 1 - getWeight(r.Account)));
+                var change = (float)(scoreWin*(GlobalConst.EloWeightMax + 1 - getWeight(r.Account)));
                 r.Player.EloChange = change;
                 setElo(r.Account, getElo(r.Account) + change);
                 setWeight(r.Account, Account.AdjustEloWeight(getWeight(r.Account), sumW, sumCount));
@@ -156,34 +177,13 @@ namespace ZkData
 
             foreach (var r in losers)
             {
-                var change = (float)(scoreLose * (GlobalConst.EloWeightMax + 1 - getWeight(r.Account)));
+                var change = (float)(scoreLose*(GlobalConst.EloWeightMax + 1 - getWeight(r.Account)));
                 r.Player.EloChange = change;
                 setElo(r.Account, getElo(r.Account) + change);
                 setWeight(r.Account, Account.AdjustEloWeight(getWeight(r.Account), sumW, sumCount));
             }
 
             IsEloProcessed = true;
-        }
-
-
-        public override string ToString()
-        {
-            return "B" + SpringBattleID;
-        }
-
-        private void ApplyXpChanges()
-        {
-            foreach (var a in SpringBattlePlayers.Where(x => !x.IsSpectator))
-                if (a.IsInVictoryTeam)
-                {
-                    a.Account.Xp += WinnerTeamXpChange ?? 0;
-                    a.XpChange = WinnerTeamXpChange;
-                }
-                else
-                {
-                    a.Account.Xp += LoserTeamXpChange ?? 0;
-                    a.XpChange = LoserTeamXpChange;
-                }
         }
     }
 }

@@ -46,7 +46,6 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
 
-                var is1v1 = context.Players.Where(x => !x.IsSpectator).ToList().Count == 2 && context.Bots.Count == 0;
 
                 // write Planetwars details to modoptions (for widget)
                 Faction attacker = null;
@@ -89,7 +88,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams["clan"] = user.Clan != null ? user.Clan.Shortcut : "";
                         userParams["clanfull"] = user.Clan != null ? user.Clan.ClanName : "";
                         userParams["level"] = user.Level.ToString();
-                        var elo = mode == AutohostMode.Planetwars ? user.EffectivePwElo : (is1v1 ? user.EffectiveMmElo : user.EffectiveElo);
+                        var elo = user.EffectiveMmElo;
                         userParams["elo"] = Math.Round(elo).ToString(); // elo for ingame is just ordering for auto /take
                         userParams["avatar"] = user.Avatar;
                         userParams["admin"] = user.IsZeroKAdmin ? "1" : "0";

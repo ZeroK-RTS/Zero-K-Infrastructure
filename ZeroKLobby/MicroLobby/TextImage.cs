@@ -109,9 +109,9 @@ namespace ZeroKLobby.MicroLobby
                 if (user.IsBot) return Robot;
                 if (Program.TasClient.Friends.Contains(user.Name)) return Friend;
                 if (user.IsAdmin) return Police;
-                if (user.EffectiveElo > 1800) return Napoleon;
-                if (user.EffectiveElo > 1600) return Soldier;
-                if (user.EffectiveElo < 1400) return Smurf;
+                if (user.EffectiveMmElo > 1800) return Napoleon;
+                if (user.EffectiveMmElo > 1600) return Soldier;
+                if (user.EffectiveMmElo < 1400) return Smurf;
                 return User;
             }
             else return userName == GlobalConst.NightwatchName ? Robot : GrayUser;
