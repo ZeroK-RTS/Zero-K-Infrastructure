@@ -82,9 +82,9 @@ namespace ZeroKWeb.Controllers
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Team Elo Weight: {0} -> {1}", acc.EloWeight, eloweight));
                 acc.EloWeight = eloweight;
             }
-            if (acc.Elo1v1Weight != eloweight1v1) {
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - 1v1 Elo Weight: {0} -> {1}", acc.Elo1v1Weight, eloweight1v1));
-                acc.Elo1v1Weight = eloweight1v1;
+            if (acc.EloMmWeight != eloweight1v1) {
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - 1v1 Elo Weight: {0} -> {1}", acc.EloMmWeight, eloweight1v1));
+                acc.EloMmWeight = eloweight1v1;
             }
             db.SaveChanges();
 

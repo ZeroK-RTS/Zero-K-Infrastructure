@@ -199,7 +199,7 @@ namespace ZkData
                     r.Player.XpChange = WinnerTeamXpChange;
 
                     r.Account.EloWeight = Account.AdjustEloWeight(r.Account.EloWeight, sumW, sumCount);
-                    r.Account.Elo1v1Weight = Account.AdjustEloWeight(r.Account.Elo1v1Weight, sumW, sumCount);
+                    r.Account.EloMmWeight = Account.AdjustEloWeight(r.Account.EloMmWeight, sumW, sumCount);
                 }
 
                 foreach (var r in losers)
@@ -213,7 +213,7 @@ namespace ZkData
                     r.Player.XpChange = LoserTeamXpChange.Value;
 
                     r.Account.EloWeight = Account.AdjustEloWeight(r.Account.EloWeight, sumW, sumCount);
-                    r.Account.Elo1v1Weight = Account.AdjustEloWeight(r.Account.Elo1v1Weight, sumW, sumCount);
+                    r.Account.EloMmWeight = Account.AdjustEloWeight(r.Account.EloMmWeight, sumW, sumCount);
                 }
             }
 
@@ -234,8 +234,8 @@ namespace ZkData
                     Account winnerAcc = winner.Account;
                     Account loserAcc = loser.Account;
 
-                    var winnerElo = winnerAcc.Elo1v1;
-                    var loserElo = loserAcc.Elo1v1;
+                    var winnerElo = winnerAcc.EloMm;
+                    var loserElo = loserAcc.EloMm;
 
                     var eWin = 1 / (1 + Math.Pow(10, (loserElo - winnerElo) / 400));
                     var eLose = 1 / (1 + Math.Pow(10, (winnerElo - loserElo) / 400));
@@ -243,8 +243,8 @@ namespace ZkData
                     var scoreWin = 32 * (1 - eWin);
                     var scoreLose = 32 * (0 - eLose);
 
-                    winnerAcc.Elo1v1 += scoreWin;
-                    loserAcc.Elo1v1 += scoreLose;
+                    winnerAcc.EloMm += scoreWin;
+                    loserAcc.EloMm += scoreLose;
                     winner.EloChange = (float)scoreWin;
                     loser.EloChange = (float)scoreLose;
                     
@@ -254,10 +254,10 @@ namespace ZkData
                     winnerAcc.Xp += WinnerTeamXpChange.Value;
                     loserAcc.Xp += LoserTeamXpChange.Value;
 
-                    var sumW = winnerAcc.Elo1v1Weight + loserAcc.Elo1v1Weight;
-                    winnerAcc.Elo1v1Weight = Account.AdjustEloWeight(winnerAcc.Elo1v1Weight, sumW, 2);
+                    var sumW = winnerAcc.EloMmWeight + loserAcc.EloMmWeight;
+                    winnerAcc.EloMmWeight = Account.AdjustEloWeight(winnerAcc.EloMmWeight, sumW, 2);
                     winnerAcc.EloWeight = Account.AdjustEloWeight(winnerAcc.EloWeight, sumW, 2);
-                    loserAcc.Elo1v1Weight = Account.AdjustEloWeight(loserAcc.Elo1v1Weight, sumW, 2);
+                    loserAcc.EloMmWeight = Account.AdjustEloWeight(loserAcc.EloMmWeight, sumW, 2);
                     loserAcc.EloWeight = Account.AdjustEloWeight(loserAcc.EloWeight, sumW, 2);
                 }
             }
