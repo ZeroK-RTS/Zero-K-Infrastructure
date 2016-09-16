@@ -124,6 +124,7 @@ namespace ZkLobbyServer
                     if (MaxPlayers == 0) MaxPlayers = 16;
                     break;
             }
+            if (MaxPlayers > 32) MaxPlayers = 32;
 
             HostedMod = MapPicker.FindResources(ResourceType.Mod, ModName ?? "zk:stable").FirstOrDefault();
             HostedMap = MapName != null
@@ -369,6 +370,9 @@ namespace ZkLobbyServer
                     if (server.ConnectedUsers.TryGetValue(us.Name, out user)) await user.SendCommand(GetConnectSpringStructure(us));
                 }
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
+
+            // remove all from MM
+            await Task.WhenAll(startSetup.Players.Where(x => !x.IsSpectator).Select(async x => await server.MatchMaker.RemoveUser(x.Name)));
         }
 
 
@@ -422,6 +426,7 @@ namespace ZkLobbyServer
         public async Task SwitchGameType(AutohostMode type)
         {
             Mode = type;
+            MapName = null;
             FillDetails();
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
             // do a full update - mode can also change map/players
