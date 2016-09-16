@@ -424,9 +424,10 @@ namespace ZkLobbyServer
             {
                 if (!other.GenerateWantedBattles().Any(y => (y.Size == Size) && (y.Mode == Mode))) return false;
                 var widthMultiplier = Math.Max(1.0, 1.0 + (Size - 4) * 0.1);
+                var width = owner.EloWidth*widthMultiplier;
 
                 var elo = GetElo(other);
-                if ((elo - MaxElo > owner.EloWidth * widthMultiplier) || (MinElo - elo > owner.EloWidth * widthMultiplier)) return false;
+                if ((elo - MinElo > width) || (MaxElo - elo > width)) return false;
 
                 return true;
             }
