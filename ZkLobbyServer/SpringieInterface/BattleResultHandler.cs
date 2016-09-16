@@ -29,13 +29,9 @@ namespace ZeroKWeb.SpringieInterface
 
                 ProcessExtras(result.OutputExtras, sb, db);
 
+                if (result.LobbyStartContext.Mode == AutohostMode.Planetwars) ProcessPlanetWars(result, server, sb, db, text);
 
-                bool isPlanetwars = result.LobbyStartContext.Mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Count(x => !x.IsSpectator) >= 2 &&
-                                    sb.Duration >= GlobalConst.MinDurationForPlanetwars;
-
-                if (isPlanetwars) ProcessPlanetWars(result, server, sb, db, text);
-
-                ProcessElos(result, server, db, sb, isPlanetwars);
+                ProcessElos(result, server, db, sb);
 
                 text.AppendLine(string.Format("BATTLE DETAILS AND REPLAY ----> {1}/Battles/Detail/{0} <-----", sb.SpringBattleID, GlobalConst.BaseSiteUrl));
                 return text.ToString();
@@ -48,13 +44,13 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        private static void ProcessElos(Spring.SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, ZkDataContext db, SpringBattle sb, bool isPlanetwars)
+        private static void ProcessElos(Spring.SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, ZkDataContext db, SpringBattle sb)
         {
             bool noElo = result.OutputExtras.Any(x => x?.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture) == true);
 
             Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
-            sb.CalculateAllElo(noElo, isPlanetwars);
+            sb.CalculateAllElo(noElo);
             foreach (var u in sb.SpringBattlePlayers.Where(x => !x.IsSpectator)) u.Account.CheckLevelUp();
 
             db.SaveChanges();
@@ -92,6 +88,8 @@ namespace ZeroKWeb.SpringieInterface
 
         private static void ProcessPlanetWars(Spring.SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, SpringBattle sb, ZkDataContext db, StringBuilder text)
         {
+            if (result.LobbyStartContext.Mode != AutohostMode.Planetwars || sb.PlayerCount < 2 || sb.Duration >= GlobalConst.MinDurationForPlanetwars) return;
+
             List<int> winnerTeams = sb.SpringBattlePlayers.Where(x => x.IsInVictoryTeam && !x.IsSpectator).Select(x => x.AllyNumber).Distinct().ToList();
             int? winNum = null;
             if (winnerTeams.Count == 1)
@@ -130,6 +128,7 @@ namespace ZeroKWeb.SpringieInterface
                 Title = result.LobbyStartContext.Title,
                 ReplayFileName = result.ReplayName,
                 EngineVersion = result.LobbyStartContext.EngineVersion,
+                IsMatchMaker = result.LobbyStartContext.IsMatchMakerGame
             };
             db.SpringBattles.InsertOnSubmit(sb);
 

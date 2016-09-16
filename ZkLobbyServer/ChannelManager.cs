@@ -81,7 +81,7 @@ namespace ZkLobbyServer
                         .ToList();
                 top1v1 =
                     db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount == 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator))
-                        .OrderByDescending(x => x.Elo1v1)
+                        .OrderByDescending(x => x.EloMm)
                         .Take(count)
                         .ToList();
                 lastRefresh = DateTime.UtcNow;

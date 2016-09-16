@@ -132,12 +132,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\FrameBorderRenderer.cs" />
-    <Compile Include="Controls\MatchQueueControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\MatchQueueControl.designer.cs">
-      <DependentUpon>MatchQueueControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\MinimapFuncBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -481,9 +475,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Configs.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MatchQueueControl.resx">
-      <DependentUpon>MatchQueueControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\MinimapFuncBox.resx">
       <DependentUpon>MinimapFuncBox.cs</DependentUpon>

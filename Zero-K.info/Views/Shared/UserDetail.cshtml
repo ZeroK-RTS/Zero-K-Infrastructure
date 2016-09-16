@@ -145,7 +145,7 @@
                 @if (Global.IsZeroKAdmin || (Model.AccountID == Global.AccountID))
                 {
                     <b>Elo (all):</b> @Math.Round(@Model.EffectiveElo)
-                    <b>Elo (1v1):</b> @Math.Round(@Model.Effective1v1Elo)
+                    <b>Elo (1v1):</b> @Math.Round(@Model.EffectiveMmElo)
                     <b>Elo (PW):</b> @Math.Round(@Model.EffectivePwElo)
                     <br />
                     <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)

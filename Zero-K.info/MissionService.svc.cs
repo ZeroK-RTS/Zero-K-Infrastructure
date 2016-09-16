@@ -21,8 +21,13 @@ namespace ZeroKWeb
 			if (prev != null)
 			{
 				var acc = AuthServiceClient.VerifyAccountPlain(author, password);
-				if (acc == null) throw new ApplicationException("Invalid login name or password");
-				if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("You cannot delete a mission from an other user");
+                if (acc == null)
+                {
+                    Trace.TraceWarning("Invalid login attempt for {0}", author);
+                    System.Threading.Thread.Sleep(new Random().Next(2000));
+                    throw new ApplicationException("Cannot verify user account");
+                }
+                if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("You cannot delete a mission from an other user");
 				prev.IsDeleted = true;
 			    db.SaveChanges();
 			}
@@ -36,8 +41,14 @@ namespace ZeroKWeb
 			if (prev != null)
 			{
 				var acc = AuthServiceClient.VerifyAccountPlain(author, password);
-				if (acc == null) throw new ApplicationException("Invalid login name or password");
-				if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("You cannot undelete a mission from an other user");
+                if (acc == null)
+                {
+                    Trace.TraceWarning("Invalid login attempt for {0}", author);
+                    System.Threading.Thread.Sleep(new Random().Next(2000));
+                    throw new ApplicationException("Cannot verify user account");
+                }
+
+                if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("You cannot undelete a mission from an other user");
 				prev.IsDeleted = false;
 			    db.SaveChanges();
 			}
@@ -83,7 +94,12 @@ namespace ZeroKWeb
 			if (Debugger.IsAttached) acc = db.Accounts.SingleOrDefault(x => x.Name == "Testor303");
 			else acc = AuthServiceClient.VerifyAccountPlain(author, password);
 
-			if (acc == null) throw new ApplicationException("Cannot verify user account");
+		    if (acc == null)
+		    {
+                Trace.TraceWarning("Invalid login attempt for {0}", author);
+                System.Threading.Thread.Sleep(new Random().Next(2000));
+                throw new ApplicationException("Cannot verify user account");
+		    }
 
 
             Mission prev = db.Missions.SingleOrDefault(x => x.MissionID == mission.MissionID || (x.Name == mission.Name && x.AccountID == acc.AccountID)); // previous mission by id or name + account

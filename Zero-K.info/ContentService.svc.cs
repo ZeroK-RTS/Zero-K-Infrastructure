@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.SqlServer;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.Linq.Translations;
@@ -65,7 +66,7 @@ namespace ZeroKWeb
 
                 return
                 db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount == 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator)).OrderByDescending(
-                    x => x.Effective1v1Elo).WithTranslations().Select(x => x.Name).Take(10).ToList();
+                    x => x.EffectiveMmElo).WithTranslations().Select(x => x.Name).Take(10).ToList();
         }
 
 
@@ -180,7 +181,11 @@ namespace ZeroKWeb
             using (var db = new ZkDataContext())
             {
                 var acc = AuthServiceClient.VerifyAccountHashed(login, passwordHash);
-                if (acc == null) throw new ApplicationException("Invalid login or password");
+                if (acc == null)
+                {
+                    Trace.TraceWarning("Invalid login attempt for {0}" , login);
+                    System.Threading.Thread.Sleep(new Random().Next(2000));
+                }
 
                 acc.Xp += GlobalConst.XpForMissionOrBots;
 
@@ -236,40 +241,7 @@ namespace ZeroKWeb
 
 
 
-
-        
-        public bool VerifyAccountData(string login, string password)
-        {
-            var acc = AuthServiceClient.VerifyAccountPlain(login, password);
-            if (acc == null) return false;
-            return true;
-        }
-
-        
-        
-        public AccountInfo GetAccountInfo(string login, string password)
-        {
-            var acc = AuthServiceClient.VerifyAccountPlain(login, password);
-            if (acc == null) return null;
-            else return new AccountInfo()
-            {
-                Name = acc.Name,
-                Country = acc.Country,
-                Aliases = acc.Aliases,
-                ZeroKAccountID = acc.AccountID,
-                ZeroKLevel = acc.Level,
-                ClanID = acc.ClanID ?? 0,
-                ClanName = acc.Clan != null ? acc.Clan.ClanName : null,
-                IsZeroKAdmin = acc.IsZeroKAdmin,
-                Avatar = acc.Avatar,
-                Elo = (float)acc.Elo,
-                EffectiveElo = acc.EffectiveElo,
-                EloWeight = (float)acc.EloWeight,
-                FactionID = acc.FactionID ?? 0,
-                FactionName = acc.Faction != null ? acc.Faction.Name : null,
-                LobbyID = acc.LobbyID ?? 0
-            };
-        }
+      
 
 
         public static void ProgressCampaign(int accountID, int missionID, string missionVars = "")
