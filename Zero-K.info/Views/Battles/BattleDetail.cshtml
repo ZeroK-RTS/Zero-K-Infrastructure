@@ -116,7 +116,7 @@
                     @if (ViewBag.ShowWinners)
                     {
                         @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")
-                        if (Global.IsZeroKAdmin && u.EloChange.HasValue)
+                        if ((Global.IsZeroKAdmin || Model.IsMatchMaker) && u.EloChange.HasValue)
                         {
                             @:Elo: @u.EloChange.Value.ToString("F1")
                         }
