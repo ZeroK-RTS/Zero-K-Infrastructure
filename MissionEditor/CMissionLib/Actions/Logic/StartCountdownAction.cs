@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Starts a countdown
+    /// </summary>
 	[DataContract]
 	public class StartCountdownAction : TimeBasedAction
 	{
@@ -27,6 +30,9 @@ namespace CMissionLib.Actions
 			}
 		}
 
+        /// <summary>
+        /// Sets whether to display the countdown text near the bottom of screen
+        /// </summary>
 		[DataMember]
 		public bool Display
 		{

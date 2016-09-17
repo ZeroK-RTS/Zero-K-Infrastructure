@@ -6,6 +6,10 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Gives orders to certain unit groups targeting other unit groups
+    /// </summary>
+    // NOTE: this was never implemented in UI
 	[DataContract]
 	public class GiveTargetedOrdersAction : Action
 	{
@@ -33,6 +37,9 @@ namespace CMissionLib.Actions
 			}
 		}
 
+        /// <summary>
+        /// The unit groups whose members will be given the orders
+        /// </summary>
 		[DataMember]
 		public ObservableCollection<string> Groups
 		{
@@ -55,6 +62,10 @@ namespace CMissionLib.Actions
             }
         }
 
+        /// <summary>
+        /// If true, the first order is added to unit's order queue (as if Shift was pressed)
+        /// Subsequent orders within this action are always queued
+        /// </summary>
         [DataMember]
         public bool Queue
         {

@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib
 {
+    /// <summary>
+    /// Defines a cylinder on the map
+    /// </summary>
 	[DataContract]
 	public class Cylinder : Area
 	{

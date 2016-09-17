@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Enters a cutscene with the specified ID
+    /// </summary>
 	[DataContract]
 	public class EnterCutsceneAction : Action
 	{
@@ -14,6 +17,10 @@ namespace CMissionLib.Actions
 		public EnterCutsceneAction()
 			: base() {}
 
+        /// <summary>
+        /// If true, the letterbox effect reaches its full extent immediately 
+        /// instead of scrolling in from the top/bottom of the screen
+        /// </summary>
         [DataMember]
         public bool Instant
         {

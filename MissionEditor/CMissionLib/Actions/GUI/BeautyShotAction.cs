@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Places the camera at a certain heading and pitch from a member of the specified unit group, and points to it
+    /// </summary>
 	[DataContract]
 	public class BeautyShotAction : Action
 	{
@@ -20,6 +23,9 @@ namespace CMissionLib.Actions
 		[DataMember]
 		public string Group { get; set; }
 
+        /// <summary>
+        /// How many degrees the camera can be pointing away (not directly at) the unit
+        /// </summary>
         [DataMember]
         public double MaxCamOffset
         {

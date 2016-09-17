@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Remove or destroy the members of the selected unit group
+    /// </summary>
 	[DataContract]
 	public class DestroyUnitsAction : Action
 	{
@@ -21,6 +24,9 @@ namespace CMissionLib.Actions
 			}
 		}
 
+        /// <summary>
+        /// If true, units are self-destructed; else they just disappear
+        /// </summary>
 		[DataMember]
 		public bool Explode
 		{

@@ -4,6 +4,10 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Points the camera at the first visible member of the specified unit group it finds
+    /// Does nothing if no group members are in the player's LOS
+    /// </summary>
 	[DataContract]
 	public class SetCameraUnitTargetAction : Action
 	{

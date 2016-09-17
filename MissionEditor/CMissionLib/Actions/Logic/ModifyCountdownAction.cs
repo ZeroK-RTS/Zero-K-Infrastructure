@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Add or remove the specified time to/from the specified countdown
+    /// </summary>
 	[DataContract]
 	public class ModifyCountdownAction : TimeBasedAction
 	{

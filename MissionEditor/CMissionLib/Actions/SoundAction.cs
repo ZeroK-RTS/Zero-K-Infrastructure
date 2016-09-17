@@ -5,6 +5,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Plays a sound
+    /// </summary>
 	[DataContract]
 	public class SoundAction : Action
 	{

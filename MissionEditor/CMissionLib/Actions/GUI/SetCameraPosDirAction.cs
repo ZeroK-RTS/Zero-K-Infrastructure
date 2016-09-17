@@ -4,6 +4,10 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Manually set the camera's position and rotation
+    /// Any unspecified values will be left unchanged
+    /// </summary>
 	[DataContract]
 	public class SetCameraPosDirAction : Action
 	{
@@ -64,6 +68,9 @@ namespace CMissionLib.Actions
                 RaisePropertyChanged("RY");
             }
         }
+        /// <summary>
+        /// camTime argument for <code>Spring.SetCameraState</code>
+        /// </summary>
         [DataMember]
         public double Time
         {

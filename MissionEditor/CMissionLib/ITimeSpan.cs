@@ -5,6 +5,9 @@ using System.Text;
 
 namespace CMissionLib
 {
+    /// <summary>
+    /// Implemented by (most) conditions and actions that specify a period of time
+    /// </summary>
 	public interface ITimeSpan
 	{
         int Frames { get; set; }

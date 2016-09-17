@@ -3,6 +3,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Makes the day/night widget transition to night
+    /// </summary>
 	[DataContract]
 	public class SunsetAction : Action
 	{

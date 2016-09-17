@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Executes the provided string as Lua code
+    /// </summary>
 	[DataContract]
 	public class CustomAction2 : Action
 	{

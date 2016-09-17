@@ -3,6 +3,10 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Clears all queued convo messages (including the one currently being displayed)
+    /// <seealso cref="ConvoMessageAction"/>
+    /// </summary>
 	[DataContract]
 	public class ClearConvoMessageQueueAction : Action
 	{

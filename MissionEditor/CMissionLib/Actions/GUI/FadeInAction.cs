@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Fades screen in from black
+    /// </summary>
 	[DataContract]
 	public class FadeInAction : Action
 	{

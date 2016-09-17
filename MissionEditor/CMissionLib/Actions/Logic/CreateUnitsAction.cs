@@ -6,6 +6,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Creates one or more units at the specified locations
+    /// </summary>
 	[DataContract]
 	public class CreateUnitsAction : Action
 	{
@@ -32,6 +35,11 @@ namespace CMissionLib.Actions
 			}
 		}
 
+        /// <summary>
+        /// If true, units will fall from sky using the orbital drop gadget
+        /// Only applies to units created after game start
+        /// Does not affect chickens
+        /// </summary>
         [DataMember]
         public bool UseOrbitalDrop
         {
@@ -43,6 +51,9 @@ namespace CMissionLib.Actions
             }
         }
 
+        /// <summary>
+        /// CEG to spawn at the location of each spawned unit
+        /// </summary>
         [DataMember]
         public string CEG
         {

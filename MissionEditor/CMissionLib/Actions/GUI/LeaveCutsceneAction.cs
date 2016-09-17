@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Leaves the current cutscene
+    /// </summary>
 	[DataContract]
 	public class LeaveCutsceneAction : Action
 	{
@@ -12,6 +15,10 @@ namespace CMissionLib.Actions
 		public LeaveCutsceneAction()
 			: base() {}
 
+        /// <summary>
+        /// If true, the letterbox effect is removed immediately 
+        /// instead of scrolling out from the top/bottom of the screen
+        /// </summary>
         [DataMember]
         public bool Instant
         {

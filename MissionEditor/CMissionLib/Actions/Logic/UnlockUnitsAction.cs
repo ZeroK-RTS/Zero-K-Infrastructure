@@ -6,6 +6,10 @@ using System.Linq;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Make certain previously locked units buildable again by the specified teams
+    /// <seealso cref="LockUnitsAction"/>
+    /// </summary>
 	[DataContract]
 	public class UnlockUnitsAction : Action
 	{
@@ -19,6 +23,9 @@ namespace CMissionLib.Actions
 		[DataMember]
 		public ObservableCollection<string> Units { get; set; }
 
+        /// <summary>
+        /// Teams for whom the unit will be unlocked; empty set means all teams are affected
+        /// </summary>
         [DataMember]
         public ObservableCollection<Player> Players { get; set; }
 

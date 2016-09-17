@@ -3,6 +3,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Restores the camera to the state stored with <see cref="SaveCameraStateAction"/>
+    /// </summary>
 	[DataContract]
 	public class RestoreCameraStateAction : Action
 	{

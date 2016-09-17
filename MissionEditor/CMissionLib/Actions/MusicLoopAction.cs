@@ -5,6 +5,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Plays the track specified by <c>TrackIntroPath</c> once, then loops <c>TrackLoopPath</c>
+    /// </summary>
 	[DataContract]
 	public class MusicLoopAction : Action
 	{

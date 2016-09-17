@@ -5,6 +5,9 @@ using CMissionLib.UnitSyncLib;
 
 namespace CMissionLib
 {
+    /// <summary>
+    /// Defines a player + team (human or AI)
+    /// </summary>
 	[DataContract]
 	public class Player: PropertyChanged
 	{
@@ -77,7 +80,9 @@ namespace CMissionLib
 			}
 		}
 
-
+        /// <summary>
+        /// Defines the team color
+        /// </summary>
 		[DataMember]
 		public SolidColorBrush ColorBrush
 		{

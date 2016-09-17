@@ -5,6 +5,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Gives build orders to the specified factory
+    /// </summary>
 	[DataContract]
 	public class GiveFactoryOrdersAction : Action
 	{
@@ -13,6 +16,9 @@ namespace CMissionLib.Actions
 		ObservableCollection<string> factoryGroups = new ObservableCollection<string>();
 		bool repeat;
 
+        /// <summary>
+        /// The unit groups of the factories to be ordered
+        /// </summary>
 		[DataMember]
 		public ObservableCollection<string> FactoryGroups
 		{
@@ -24,6 +30,11 @@ namespace CMissionLib.Actions
 			}
 		}
 
+        /// <summary>
+        /// Assign units made by the factories to these groups
+        /// <para>If factory repeat is off, only add the units ordered in this action to groups</para>
+        /// <para>Else, it adds all units built by the factory to the groups</para>
+        /// </summary>
 		[DataMember]
 		public ObservableCollection<string> BuiltUnitsGroups
 		{
@@ -35,6 +46,9 @@ namespace CMissionLib.Actions
 			}
 		}
 
+        /// <summary>
+        /// Units to build
+        /// </summary>
 		[DataMember]
 		public ObservableCollection<string> BuildOrders
 		{

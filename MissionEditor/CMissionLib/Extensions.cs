@@ -12,6 +12,9 @@ using System.Text;
 
 namespace CMissionLib
 {
+    /// <summary>
+    /// Extension functions
+    /// </summary>
 	public static class Extensions
 	{
 		public static void CopyTo(this Stream input, Stream destination)
