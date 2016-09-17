@@ -34,7 +34,7 @@ namespace ZeroKWeb.Controllers
                 "gameStats",
                 () =>
                 {
-                    var start = new DateTime(2011, 2, 3);
+                    var start = DateTime.Now.AddYears(-1); //new DateTime(2011, 2, 3);
                     var end = DateTime.Now.Date;
                     return (from bat in db.SpringBattles
                         where bat.StartTime < end && bat.StartTime > start
