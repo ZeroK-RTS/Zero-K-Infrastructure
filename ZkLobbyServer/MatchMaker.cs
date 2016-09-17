@@ -389,7 +389,7 @@ namespace ZkLobbyServer
             public List<ProposedBattle> GenerateWantedBattles()
             {
                 var ret = new List<ProposedBattle>();
-                foreach (var qt in QueueTypes) for (var i = qt.MaxSize; i >= qt.MinSize; i--) ret.Add(new ProposedBattle(i, this, qt.Mode));
+                foreach (var qt in QueueTypes) for (var i = qt.MaxSize; i >= qt.MinSize; i--) if (i%2 == 0) ret.Add(new ProposedBattle(i, this, qt.Mode));
                 return ret;
             }
 
