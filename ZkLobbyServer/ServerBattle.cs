@@ -97,10 +97,10 @@ namespace ZkLobbyServer
             ActivePoll = null;
         }
 
-        public void FillDetails()
+        public void ValidateAndFillDetails()
         {
             if (IsNullOrEmpty(Title)) Title = $"{FounderName}'s game";
-            if (IsNullOrEmpty(EngineVersion)) EngineVersion = server.Engine;
+            if (IsNullOrEmpty(EngineVersion) || Mode != AutohostMode.None) EngineVersion = server.Engine;
             downloader.GetResource(DownloadType.ENGINE, server.Engine);
 
             switch (Mode)
@@ -408,7 +408,7 @@ namespace ZkLobbyServer
         public async Task SwitchEngine(string engine)
         {
             EngineVersion = engine;
-            FillDetails();
+            ValidateAndFillDetails();
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Engine = EngineVersion } });
@@ -417,7 +417,7 @@ namespace ZkLobbyServer
         public async Task SwitchGame(string internalName)
         {
             ModName = internalName;
-            FillDetails();
+            ValidateAndFillDetails();
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Game = ModName } });
@@ -427,7 +427,7 @@ namespace ZkLobbyServer
         {
             Mode = type;
             MapName = null;
-            FillDetails();
+            ValidateAndFillDetails();
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
             // do a full update - mode can also change map/players
         }
@@ -435,7 +435,7 @@ namespace ZkLobbyServer
         public async Task SwitchMap(string internalName)
         {
             MapName = internalName;
-            FillDetails();
+            ValidateAndFillDetails();
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = MapName } });
@@ -444,7 +444,7 @@ namespace ZkLobbyServer
         public async Task SwitchMaxPlayers(int cnt)
         {
             MaxPlayers = cnt;
-            FillDetails();
+            ValidateAndFillDetails();
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
@@ -460,7 +460,7 @@ namespace ZkLobbyServer
         public async Task SwitchTitle(string title)
         {
             Title = title;
-            FillDetails();
+            ValidateAndFillDetails();
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Title = Title } });
@@ -470,7 +470,7 @@ namespace ZkLobbyServer
         {
             base.UpdateWith(h);
             RunningSince = null;
-            FillDetails();
+            ValidateAndFillDetails();
         }
 
         public void ValidateBattleStatus(UserBattleStatus ubs)
