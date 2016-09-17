@@ -159,8 +159,8 @@ namespace ZkData
             var eLose = 1/(1 + Math.Pow(10, (winnerElo - loserElo)/400));
 
             var sumCount = losers.Count + winners.Count;
-            var scoreWin = Math.Sqrt(sumCount/2.0)*32*(1 - eWin)/winnerInvW;
-            var scoreLose = Math.Sqrt(sumCount/2.0)*32*(0 - eLose)/loserInvW;
+            var scoreWin = Math.Sqrt(sumCount/2.0)*64*(1 - eWin)/winnerInvW;
+            var scoreLose = Math.Sqrt(sumCount/2.0)*64*(0 - eLose)/loserInvW;
 
             WinnerTeamXpChange = (int)(20 + (300 + 600*(1 - eWin))/(3.0 + winners.Count)); // a bit ugly this sets to battle directly
             LoserTeamXpChange = (int)(20 + (200 + 400*(1 - eLose))/(2.0 + losers.Count));
