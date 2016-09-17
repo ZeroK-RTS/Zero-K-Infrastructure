@@ -49,16 +49,20 @@ namespace ZkLobbyServer
 
         public async Task<bool> Vote(Say e, bool vote)
         {
-            if (command.GetRunPermissions(battle, e.User) >= BattleCommand.RunPermission.Vote)
+            if (command.GetRunPermissions(battle, e.User) >= BattleCommand.RunPermission.Vote && !ended)
             {
                 userVotes[e.User] = vote;
                 var yes = userVotes.Count(x => x.Value == true);
                 var no = userVotes.Count(x => x.Value == false);
+
+                if (yes >= winCount) ended = true;
+
                 await battle.SayBattle(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", question, yes, no, winCount));
+
                 if (yes >= winCount)
                 {
-                    await battle.SayBattle($"Poll: {question} [END:SUCCESS]");
                     ended = true;
+                    await battle.SayBattle($"Poll: {question} [END:SUCCESS]");
                     if (command.Access == BattleCommand.AccessType.NotIngame && battle.spring.IsRunning) return true;
                     if (command.Access == BattleCommand.AccessType.Ingame && !battle.spring.IsRunning) return true;
                     await command.ExecuteArmed(battle, Creator);

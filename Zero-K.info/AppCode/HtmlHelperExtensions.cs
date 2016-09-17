@@ -236,7 +236,7 @@ namespace System.Web.Mvc
                                                 url.Action("Detail", "Battles", new { id = battle.SpringBattleID }),
                                                 battle.SpringBattleID,
                                                 battle.PlayerCount,
-                                                PrintMap(helper, battle.ResourceByMapResourceID.InternalName),
+                                                PrintMap(helper, battle.ResourceByMapResourceID?.InternalName),
                                                 icon));
         }
 

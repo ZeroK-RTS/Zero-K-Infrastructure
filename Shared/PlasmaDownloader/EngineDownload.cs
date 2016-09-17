@@ -87,6 +87,7 @@ namespace PlasmaDownloader
                                 try
                                 {
                                     ExtractZipArchive(target, targetDir);
+                                    FixPermissions(targetDir);
                                     Trace.TraceInformation("Install of {0} complete", Name);
                                     springPaths.NotifyNewEngine(targetDir);
                                     Finish(true);
@@ -117,6 +118,22 @@ namespace PlasmaDownloader
                         Finish(false);
                     }
                 });
+        }
+
+        private static void FixPermissions(string targetDir)
+        {
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                var tpath = Path.Combine(targetDir, "spring");
+                try
+                {
+                    Process.Start("chmod u+x " + tpath);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Failed to set execute permissions for {0}, please set it manually. {1}", tpath, ex);
+                }
+            }
         }
 
         void ExtractZipArchive(string target, string targetDir)

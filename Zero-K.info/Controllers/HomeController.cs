@@ -137,12 +137,11 @@ namespace ZeroKWeb.Controllers
 
         public class CurrentLobbyStats
         {
-            public int UsersIdle;
             public int BattlesRunning;
             public int UsersFighting;
-            public int BattlesWaiting;
             public int UsersWaiting;
             public int UsersLastMonth;
+            public int UsersOnline;
         }
 
 
@@ -151,23 +150,26 @@ namespace ZeroKWeb.Controllers
             var ret = new CurrentLobbyStats();
             if (Global.Server != null)
             {
-                ret.UsersIdle = Global.Server.ConnectedUsers.Values.Count(x => !x.User.IsBot && !x.User.IsInGame && !x.User.IsInBattleRoom);
+                ret.UsersOnline = Global.Server.ConnectedUsers.Count;
 
                 foreach (var b in Global.Server.Battles.Values)
                 {
-                    foreach (var u in b.Users.Values.Select(x => x.LobbyUser))
+                    if (b.IsInGame)
                     {
-                        if (u.IsBot) continue;
-                        if (u.IsInGame) ret.UsersFighting++;
-                        else ret.UsersWaiting++;
+                        ret.BattlesRunning++;
+                        ret.UsersFighting += b.NonSpectatorCount;
                     }
-                    if (b.IsInGame) ret.BattlesRunning++;
-                    else ret.BattlesWaiting++;
+                    else
+                    {
+                        ret.UsersWaiting += b.NonSpectatorCount;
+                    }
                 }
+
+                ret.UsersWaiting += Global.Server.MatchMaker.GetTotalWaiting();
             }
 
             var lastMonth = DateTime.Now.AddDays(-31);
-            ret.UsersLastMonth = new ZkDataContext().SpringBattlePlayers.Where(x => x.SpringBattle.StartTime > lastMonth).GroupBy(x => x.AccountID).Count();
+            ret.UsersLastMonth = new ZkDataContext().SpringBattlePlayers.Where(x => x.SpringBattle.StartTime > lastMonth).Select(x => x.AccountID).Distinct().Count();
             return ret;
         }
 

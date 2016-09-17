@@ -15,6 +15,11 @@ namespace ZkLobbyServer
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
+            if (!battle.IsMatchMakerBattle)
+            {
+                battle.Respond(e, "Not a matchmaker battle, cannot predict");
+                return null;
+            }
             return String.Empty;
         }
 
@@ -28,8 +33,8 @@ namespace ZkLobbyServer
             {
                 if (oldg != null)
                 {
-                    var t1elo = oldg.Average(x => (battle.IsMatchMakerBattle ? x.LobbyUser.EffectiveMmElo : x.LobbyUser.EffectiveElo));
-                    var t2elo = g.Average(x => (battle.IsMatchMakerBattle ? x.LobbyUser.EffectiveMmElo : x.LobbyUser.EffectiveElo));
+                    var t1elo = oldg.Average(x => x.LobbyUser.EffectiveMmElo);
+                    var t2elo = g.Average(x => x.LobbyUser.EffectiveMmElo);
                     await battle.Respond(e,
                         $"team {oldg.Key + 1} has {ZkData.Utils.GetWinChancePercent(t2elo - t1elo)}% chance to win over team {g.Key + 1}");
                 }

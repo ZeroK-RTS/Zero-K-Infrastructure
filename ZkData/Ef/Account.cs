@@ -93,6 +93,8 @@ namespace ZkData
         public double EloMm { get; set; }
         public double EloMmWeight { get; set; }
         public double EloPw { get; set; }
+        public int? CasualRank { get; set; }
+        public int? CompetitiveRank { get; set; }
         public bool IsBot { get; set; }
         public bool CanPlayMultiplayer { get; set; } = true;
        
@@ -198,7 +200,7 @@ namespace ZkData
 
         private static readonly CompiledExpression<Account, double> effectiveEloMmExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveMmElo).Is(e => e.EloMm + (GlobalConst.EloWeightMax - e.EloMmWeight) * GlobalConst.EloWeightMalusFactor);
 
-        public double EffectiveMmElo { get { return effectiveEloMmExpression.Evaluate(this); } }
+        public double EffectiveMmElo => effectiveEloMmExpression.Evaluate(this);
 
 
         [NotMapped]
