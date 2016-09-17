@@ -18,7 +18,7 @@ namespace ZkLobbyServer
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            engine = arguments;
+            engine = string.IsNullOrEmpty(arguments) ? battle.server.Engine : arguments;
             if (!ServerBattle.springPaths.HasEngineVersion(engine))
             {
                 var serv = GlobalConst.GetContentService(); // TODO this can be done directly, we are in server
