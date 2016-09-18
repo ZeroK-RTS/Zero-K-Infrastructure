@@ -476,6 +476,12 @@ namespace ZkLobbyServer
         public void ValidateBattleStatus(UserBattleStatus ubs)
         {
             if (Mode != AutohostMode.None) ubs.AllyNumber = 0;
+
+            if (IsMatchMakerBattle)
+            {
+                else ubs.IsSpectator = true;
+            }
+
             if (!ubs.IsSpectator)
             {
                 var cnt = Users.Values.Count(x => !x.IsSpectator);
@@ -644,6 +650,7 @@ namespace ZkLobbyServer
         private void spring_SpringStarted(object sender, EventArgs e)
         {
             StopVote();
+
             if (HostedMod?.Mission != null)
             {
                 var service = GlobalConst.GetContentService();
