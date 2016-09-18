@@ -180,9 +180,12 @@ namespace ZeroKWeb.SpringieInterface
                                             modulesOrdered.Sort(delegate (CommanderModule x, CommanderModule y)
                                             {
                                                 UnlockTypes type1 = x.CommanderSlot.UnlockType;
+                                                UnlockTypes type2 = x.CommanderSlot.UnlockType;
                                                 if (type1 == UnlockTypes.WeaponManualFire || type1 == UnlockTypes.WeaponBoth)
                                                     type1 = UnlockTypes.Weapon;
-                                                int result = type1.CompareTo(y.CommanderSlot.UnlockType);
+                                                if (type2 == UnlockTypes.WeaponManualFire || type2 == UnlockTypes.WeaponBoth)
+                                                    type2 = UnlockTypes.Weapon;
+                                                int result = type1.CompareTo(type2);
                                                 if (result == 0) return x.SlotID.CompareTo(y.SlotID);
                                                 else return result;
                                             });
