@@ -479,6 +479,7 @@ namespace ZkLobbyServer
 
             if (IsMatchMakerBattle)
             {
+                if (spring.LobbyStartContext?.Players.Any(y => y.Name != ubs.Name && !y.IsSpectator) == true) ubs.IsSpectator = false;
                 else ubs.IsSpectator = true;
             }
 
