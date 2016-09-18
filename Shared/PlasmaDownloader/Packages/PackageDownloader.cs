@@ -191,7 +191,6 @@ namespace PlasmaDownloader.Packages
                     Trace.TraceWarning("Error loading package master from " + MasterUrl);
                 }
 
-                Trace.TraceInformation("Updating repos");
 
                 // update all repositories 
                 var waiting = new List<Task<Repository.RefreshResponse>>();
@@ -212,9 +211,9 @@ namespace PlasmaDownloader.Packages
 
                 if (waiting.Any(y => y?.Result.HasChanged == true)) hasChanged = true;
 
-                Trace.TraceInformation("PackageDownloader refresh complete");
                 if (hasChanged)
                 {
+                    Trace.TraceInformation("PackageRefresh complete - packages changed");
                     SaveRepositories();
                     Utils.StartAsync(() => PackagesChanged(this, EventArgs.Empty));
                 }
