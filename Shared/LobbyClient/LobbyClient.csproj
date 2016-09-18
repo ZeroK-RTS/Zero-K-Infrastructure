@@ -77,7 +77,6 @@
     <Compile Include="Legacy\ServerConnection.cs" />
     <Compile Include="ScriptGenerator.cs" />
     <Compile Include="Spring.cs" />
-    <Compile Include="SpringieServer.cs" />
     <Compile Include="SpringLogEventArgs.cs" />
     <Compile Include="SpringSettings.cs" />
     <Compile Include="Talker.cs" />

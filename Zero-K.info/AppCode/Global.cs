@@ -157,7 +157,9 @@ namespace ZeroKWeb
 
             GlobalConst.SiteDiskPath = MapPath("~");
 
-            ZkServerRunner = new ServerRunner(mvcApplication.Server.MapPath("~"), new PlanetwarsEventCreator());
+            LadderCalculator = new LadderCalculator();
+
+            ZkServerRunner = new ServerRunner(mvcApplication.Server.MapPath("~"), new PlanetwarsEventCreator(), LadderCalculator);
             Server = ZkServerRunner.ZkLobbyServer;
 
             Trace.TraceInformation("Starting lobby server");
@@ -170,10 +172,14 @@ namespace ZeroKWeb
             AutoRegistrator = new AutoRegistrator(MapPath("~"));
             AutoRegistrator.RunMainAndMapSyncAsync();
 
+ 
+
             SetupPaypalInterface();
 
             if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Server);
         }
+
+        public static LadderCalculator LadderCalculator { get; private set; }
 
         public static ForumPostIndexer ForumPostIndexer { get; private set; }
 

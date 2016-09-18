@@ -31,6 +31,7 @@ namespace ZkLobbyServer
 
         private object tickLock = new object();
         private Timer timer;
+        private Dictionary<string, int> ingameCounts = new Dictionary<string, int>();
 
         public MatchMaker(ZkLobbyServer server)
         {
@@ -75,6 +76,7 @@ namespace ZkLobbyServer
             timer.Start();
 
             queuesCounts = CountQueuedPeople(players.Values);
+            ingameCounts = CountIngamePeople();
         }
 
 
@@ -204,6 +206,21 @@ namespace ZkLobbyServer
             return ncounts;
         }
 
+        private Dictionary<string, int> CountIngamePeople()
+        {
+            var ncounts = possibleQueues.ToDictionary(x => x.Name, x => 0);
+            foreach (var bat in server.Battles.Values.Where(x => x != null && x.IsMatchMakerBattle && x.IsInGame))
+            {
+                var plrs = bat.spring?.Context?.LobbyStartContext?.Players.Count(x => !x.IsSpectator) ?? 0;
+                if (plrs > 0)
+                {
+                    var type = possibleQueues.FirstOrDefault(x => x.Mode == bat.Mode && x.MinSize <= plrs && x.MaxSize >= plrs); // reverse determine queue type, not stored in batlte, silly?
+                    if (type != null) ncounts[type.Name] += plrs;
+                }
+            }
+            return ncounts;
+        }
+
         private void OnTick()
         {
             lock (tickLock)
@@ -213,9 +230,10 @@ namespace ZkLobbyServer
                     timer.Stop();
                     var realBattles = ResolveToRealBattles();
 
-                    queuesCounts = CountQueuedPeople(players.Values);
-
                     foreach (var bat in realBattles) StartBattle(bat);
+
+                    queuesCounts = CountQueuedPeople(players.Values);
+                    ingameCounts = CountIngamePeople();
 
                     ResetAndSendMmInvitations();
                 }
@@ -268,10 +286,12 @@ namespace ZkLobbyServer
                     usr.LastReadyResponse = false;
                 }
 
-            foreach (var plr in players.Values.Where(x => x != null))
+
+            foreach (var conus in server.ConnectedUsers.Values.Where(x => x != null))
             {
-                ConnectedUser connectedUser;
-                if (server.ConnectedUsers.TryGetValue(plr.Name, out connectedUser)) connectedUser?.SendCommand(ToMatchMakerStatus(plr));
+                PlayerEntry entry;
+                players.TryGetValue(conus.Name, out entry);
+                conus.SendCommand(ToMatchMakerStatus(entry));
             }
 
             server.Broadcast(toInvite.Select(x => x.Name), new AreYouReady() { SecondsRemaining = TimerSeconds });
@@ -338,13 +358,19 @@ namespace ZkLobbyServer
 
         private MatchMakerStatus ToMatchMakerStatus(PlayerEntry entry)
         {
-            return new MatchMakerStatus()
+            var ret = new MatchMakerStatus()
             {
                 QueueCounts = queuesCounts,
-                JoinedQueues = entry.QueueTypes.Select(x => x.Name).ToList(),
-                CurrentEloWidth = entry.EloWidth,
-                JoinedTime = entry.JoinedTime,
+                IngameCounts = ingameCounts,
             };
+            if (entry != null)
+            {
+                ret.JoinedQueues = entry.QueueTypes.Select(x => x.Name).ToList();
+                ret.CurrentEloWidth = entry.EloWidth;
+                ret.JoinedTime = entry.JoinedTime;
+                ret.BannedSeconds = BannedSeconds(entry.Name);
+            }
+            return ret;
         }
 
         private static ProposedBattle TryToMakeBattle(PlayerEntry player, IList<PlayerEntry> otherPlayers)

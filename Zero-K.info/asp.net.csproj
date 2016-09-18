@@ -133,6 +133,7 @@
     <Compile Include="AppCode\ForumPostCache.cs" />
     <Compile Include="AppCode\ForumPostIndexer.cs" />
     <Compile Include="AppCode\HelperPage.cs" />
+    <Compile Include="AppCode\LadderCalculator.cs" />
     <Compile Include="AppCode\MemCache.cs" />
     <Compile Include="AppCode\PlanetwarsEventCreator.cs" />
     <Compile Include="AppCode\UniGrid\Col.cs" />

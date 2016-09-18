@@ -9,15 +9,11 @@ namespace ZkLobbyServer
 {
     public class ChannelManager
     {
-        const int topPlayersRefreshMinutes = 60;
         readonly ConcurrentDictionary<string, Clan> clanChannels = new ConcurrentDictionary<string, Clan>();
         readonly ConcurrentDictionary<string, Faction> factionChannels = new ConcurrentDictionary<string, Faction>();
 
-        DateTime lastRefresh = DateTime.MinValue;
         ZkLobbyServer server;
-        List<Account> top1v1 = new List<Account>();
         readonly List<int> topPlayersExceptions = new List<int> { 5986, 5806 }; // licho, kingraptor
-        List<Account> topTeam = new List<Account>();
 
         public ChannelManager(ZkLobbyServer server)
         {
@@ -63,30 +59,10 @@ namespace ZkLobbyServer
 
         public bool IsTop20(int lobbyID)
         {
-            if (DateTime.UtcNow.Subtract(lastRefresh).TotalMinutes > topPlayersRefreshMinutes) Refresh(20);
-
-            if (topTeam.Any(x => x.AccountID == lobbyID) || top1v1.Any(x => x.AccountID == lobbyID) || topPlayersExceptions.Contains(lobbyID)) return true;
+            if (server.TopPlayerProvider.GetTop50().Take(20).Any(x => x.AccountID == lobbyID) || server.TopPlayerProvider.GetTop50Casual().Take(20).Any(x => x.AccountID == lobbyID) || topPlayersExceptions.Contains(lobbyID)) return true;
             else return false;
         }
 
-
-        public void Refresh(int count = 20)
-        {
-            var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
-            using (var db = new ZkDataContext()) {
-                topTeam =
-                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount > 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator))
-                        .OrderByDescending(x => x.Elo)
-                        .Take(count)
-                        .ToList();
-                top1v1 =
-                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount == 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator))
-                        .OrderByDescending(x => x.EloMm)
-                        .Take(count)
-                        .ToList();
-                lastRefresh = DateTime.UtcNow;
-            }
-        }
 
         bool CanJoin(Account acc, string channel)
         {

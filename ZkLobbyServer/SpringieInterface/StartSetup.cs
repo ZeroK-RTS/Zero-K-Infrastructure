@@ -113,28 +113,10 @@ namespace ZeroKWeb.SpringieInterface
                                 }
                             }
 
-                            var pu = new LuaTable();
-                            var userUnlocksBanned = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanUnlocks);
-                            var userCommandersBanned = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanCommanders);
-
-                            if (!userUnlocksBanned)
-                            {
-                                if (mode != AutohostMode.Planetwars || user.Faction == null) foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
-                                else
-                                {
-                                    foreach (var unlock in
-                                        user.AccountUnlocks.Select(x => x.Unlock)
-                                            .Union(user.Faction.GetFactionUnlocks().Select(x => x.Unlock))
-                                            .Where(x => x.UnlockType == UnlockTypes.Unit)) pu.Add(unlock.Code);
-                                }
-                            }
-
-                            userParams["unlocks"] = pu.ToBase64String();
-
                             if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams["extracomm"] = "1";
 
                             var commProfileIDs = new LuaTable();
-
+                            var userCommandersBanned = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanCommanders);
                             if (!userCommandersBanned)
                             {
                                 // set up commander data
@@ -193,12 +175,28 @@ namespace ZeroKWeb.SpringieInterface
                                         {
                                             var modulesForLevel = new LuaTable();
                                             modules.Add(modulesForLevel);
-
-                                            foreach (var m in
-                                                c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel == i && x.Unlock != null)
-                                                    .OrderBy(x => x.Unlock.UnlockType)
-                                                    .ThenBy(x => x.SlotID)
-                                                    .Select(x => x.Unlock)) modulesForLevel.Add(m.Code);
+                                            var modulesOrdered = c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel == i).ToList();
+                                            var slots = db.CommanderSlots.ToList().Where(x => x.MorphLevel == i && (x.ChassisID == null || (x.ChassisID == c.ChassisUnlockID))).ToList();
+                                            slots.Sort(delegate (CommanderSlot x, CommanderSlot y)
+                                            {
+                                                UnlockTypes type1 = x.UnlockType;
+                                                UnlockTypes type2 = x.UnlockType;
+                                                if (type1 == UnlockTypes.WeaponManualFire || type1 == UnlockTypes.WeaponBoth)
+                                                    type1 = UnlockTypes.Weapon;
+                                                if (type2 == UnlockTypes.WeaponManualFire || type2 == UnlockTypes.WeaponBoth)
+                                                    type2 = UnlockTypes.Weapon;
+                                                int result = type1.CompareTo(type2);
+                                                if (result == 0) return x.CommanderSlotID.CompareTo(y.CommanderSlotID);
+                                                else return result;
+                                            });
+                                            foreach (var slot in slots)
+                                            {
+                                                String value = String.Empty;
+                                                var module = c.CommanderModules.FirstOrDefault(x => x.SlotID == slot.CommanderSlotID);
+                                                if (module != null)
+                                                    value = module.Unlock.Code;
+                                                modulesForLevel.Add(value);
+                                            }
                                         }
                                     }
                                     catch (Exception ex)

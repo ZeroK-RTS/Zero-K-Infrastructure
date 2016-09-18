@@ -27,7 +27,6 @@ namespace ZeroKLobby
         public static AutoJoinManager AutoJoinManager;
         public static bool CloseOnNext;
         public static Config Conf;
-        public static SpringieServer SpringieServer = new SpringieServer();
         public static string[] StartupArgs;
         public static string StartupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
         public static ToolTipHandler ToolTip;

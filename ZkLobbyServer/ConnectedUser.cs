@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ZkLobbyServer
@@ -485,6 +486,12 @@ namespace ZkLobbyServer
             var battle = MyBattle;
             if ((battle != null) && !battle.IsInGame)
             {
+                if (battle.Mode != AutohostMode.None && battle.Mode != AutohostMode.GameChickens)
+                {
+                    await Respond("Sorry, this room type does not support bots, please use cooperative or custom");
+                    return;
+                }
+
                 BotBattleStatus ubs;
                 if (!battle.Bots.TryGetValue(add.Name, out ubs))
                 {
