@@ -60,7 +60,8 @@ namespace ChobbyLauncher
                     }
 
 
-
+                    Status = "Updating rapid packages";
+                    await downloader.PackageDownloader.LoadMasterAndVersions();
                     Status = "Checking for chobby update";
                     Download = downloader.GetResource(DownloadType.MOD, chobbyTag);
                     var asTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
