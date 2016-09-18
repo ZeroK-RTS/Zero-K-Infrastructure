@@ -30,11 +30,14 @@ namespace ZkLobbyServer
         public IPlanetwarsEventCreator PlanetWarsEventCreator { get; private set; }
         public MatchMaker MatchMaker { get; private set; }
 
+        public ITopPlayerProvider TopPlayerProvider { get; private set; }
+
         public string Version { get; private set; }
 
 
-        public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator)
+        public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator, ITopPlayerProvider topPlayerProvider)
         {
+            TopPlayerProvider = topPlayerProvider;
             PlanetWarsEventCreator = creator;
             var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();

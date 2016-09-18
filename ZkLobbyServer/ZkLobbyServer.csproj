@@ -112,6 +112,7 @@
     <Compile Include="ChatRelay.cs" />
     <Compile Include="ClientConnection.cs" />
     <Compile Include="ICommandSender.cs" />
+    <Compile Include="ITopPlayerProvider.cs" />
     <Compile Include="ITransportServerListener.cs" />
     <Compile Include="LoginChecker.cs" />
     <Compile Include="ConnectedUser.cs" />

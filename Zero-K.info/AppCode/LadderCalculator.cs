@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.Linq.Translations;
 using ZkData;
+using ZkLobbyServer;
 
 namespace ZeroKWeb
 {
-    public class LadderCalculator
+    public class LadderCalculator: ITopPlayerProvider
     {
         private const int LadderRefreshMinutes = 30;
 
@@ -19,13 +21,16 @@ namespace ZeroKWeb
 
         public LadderCalculator()
         {
-            timer = new Timer((t) => { ladderModel = ComputeLadder(); }, this, 1000, LadderRefreshMinutes * 60 * 1000);
+            timer = new Timer((t) => { ladderModel = ComputeLadder(); }, this, 5000, LadderRefreshMinutes * 60 * 1000);
         }
 
         public LadderModel GetLadder()
         {
             return ladderModel;
         }
+
+        public List<Account> GetTop50() => ladderModel?.Top50Accounts;
+        public List<Account> GetTop50Casual() => ladderModel?.Top50Casual;
 
 
         private static List<AwardItem> CalculateAwards(ZkDataContext db)
@@ -95,63 +100,76 @@ namespace ZeroKWeb
 
         private static LadderModel ComputeLadder()
         {
-            var db = new ZkDataContext();
-            db.Database.CommandTimeout = 600;
-
-            var awardItems = CalculateAwards(db);
-
-            var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
-
-            // recalc competitive ranking
-            var cnt = 0;
-            foreach (
-                var a in
-                db.Accounts.Where(
-                        x => x.SpringBattlePlayers.Any(y => (y.SpringBattle.StartTime > ladderTimeout) && y.SpringBattle.IsMatchMaker && !y.IsSpectator))
-                    .OrderByDescending(x => x.EffectiveMmElo)
-                    .WithTranslations())
+            try
             {
-                cnt++;
-                a.CompetitiveRank = cnt;
-            }
-            db.SaveChanges();
+                var db = new ZkDataContext();
+                db.Database.CommandTimeout = 600;
 
-            cnt = 0;
-            foreach (
-                var a in
-                db.Accounts.Where(
-                        x => x.SpringBattlePlayers.Any(y => (y.SpringBattle.StartTime > ladderTimeout) && !y.SpringBattle.IsMatchMaker && !y.IsSpectator))
-                    .OrderByDescending(x => x.EffectiveElo)
-                    .WithTranslations())
+                var awardItems = CalculateAwards(db);
+
+                var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
+
+                // recalc competitive ranking
+                var cnt = 0;
+                foreach (var a in
+                    db.Accounts.Where(
+                            x =>
+                                x.SpringBattlePlayers.Any(
+                                    y => (y.SpringBattle.StartTime > ladderTimeout) && y.SpringBattle.IsMatchMaker && !y.IsSpectator))
+                        .OrderByDescending(x => x.EffectiveMmElo)
+                        .WithTranslations())
+                {
+                    cnt++;
+                    a.CompetitiveRank = cnt;
+                }
+                db.SaveChanges();
+
+                cnt = 0;
+                foreach (var a in
+                    db.Accounts.Where(
+                            x =>
+                                x.SpringBattlePlayers.Any(
+                                    y => (y.SpringBattle.StartTime > ladderTimeout) && !y.SpringBattle.IsMatchMaker && !y.IsSpectator))
+                        .OrderByDescending(x => x.EffectiveElo)
+                        .WithTranslations())
+                {
+                    cnt++;
+                    a.CasualRank = cnt;
+                }
+                db.SaveChanges();
+
+                var top50Accounts =
+                    db.Accounts.Where(
+                            x =>
+                                x.SpringBattlePlayers.Any(
+                                    y => (y.SpringBattle.StartTime > ladderTimeout) && y.SpringBattle.IsMatchMaker && !y.IsSpectator))
+                        .Include(x => x.Clan)
+                        .Include(x => x.Faction)
+                        .OrderByDescending(x => x.EffectiveMmElo)
+                        .WithTranslations()
+                        .Take(50)
+                        .ToList();
+
+                var top50Casual =
+                    db.Accounts.Where(
+                            x =>
+                                x.SpringBattlePlayers.Any(
+                                    y => (y.SpringBattle.StartTime > ladderTimeout) && !y.SpringBattle.IsMatchMaker && !y.IsSpectator))
+                        .Include(x => x.Clan)
+                        .Include(x => x.Faction)
+                        .OrderByDescending(x => x.EffectiveElo)
+                        .WithTranslations()
+                        .Take(50)
+                        .ToList();
+
+                return new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts, Top50Casual = top50Casual };
+            }
+            catch (Exception ex)
             {
-                cnt++;
-                a.CasualRank = cnt;
+                Trace.TraceError("Error computing ladder: {0}",ex);
+                return new LadderModel();
             }
-            db.SaveChanges();
-
-            var top50Accounts =
-                db.Accounts.Where(
-                        x => x.SpringBattlePlayers.Any(y => (y.SpringBattle.StartTime > ladderTimeout) && y.SpringBattle.IsMatchMaker && !y.IsSpectator))
-                    .Include(x => x.Clan)
-                    .Include(x => x.Faction)
-                    .OrderByDescending(x => x.EffectiveMmElo)
-                    .WithTranslations()
-                    .Take(50)
-                    .ToList();
-
-            var top50Casual =
-                db.Accounts.Where(
-                        x => x.SpringBattlePlayers.Any(y => (y.SpringBattle.StartTime > ladderTimeout) && !y.SpringBattle.IsMatchMaker && !y.IsSpectator))
-                    .Include(x => x.Clan)
-                    .Include(x => x.Faction)
-                    .OrderByDescending(x => x.EffectiveElo)
-                    .WithTranslations()
-                    .Take(50)
-                    .ToList();
-
-            return new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts, Top50Casual = top50Casual };
         }
-
         public class AwardItem
         {
             public string AwardTitle;
@@ -171,5 +189,6 @@ namespace ZeroKWeb
             public List<Account> Top50Accounts;
             public List<Account> Top50Casual;
         }
+
     }
 }
