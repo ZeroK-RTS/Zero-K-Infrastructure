@@ -179,8 +179,7 @@ namespace ZeroKLobby.MicroLobby
 
             var userDisplayName = user.Name;
             drawText(userDisplayName, textColor);
-            var top10 = Program.SpringieServer.GetTop10Rank(user.Name);
-            if (top10 > 0)
+            if (user.CompetitiveRank.HasValue && user.CompetitiveRank <= 10)
             {
                 var oldProgression = x;
                 drawImage(ZklResources.cup);

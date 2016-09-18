@@ -34,9 +34,6 @@ namespace PlasmaShared
         [OperationContract]
         List<ResourceData> FindResourceData(string[] words, ResourceType? type = null);
 
-        [OperationContract]
-        List<string> GetEloTop10();
-
         /// <summary>
         /// Finds resource by either md5 or internal name
         /// </summary>

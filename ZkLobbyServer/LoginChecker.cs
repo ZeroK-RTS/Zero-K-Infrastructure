@@ -295,6 +295,7 @@ namespace ZkLobbyServer
             user.Avatar = acc.Avatar;
             user.Level = acc.Level;
             user.EffectiveMmElo = (int)acc.EffectiveMmElo;
+            user.CompetitiveRank = acc.CompetitiveRank;
             user.SteamID = (ulong?)acc.SteamID;
             user.IsAdmin = acc.IsZeroKAdmin;
             user.IsBot = acc.IsBot;

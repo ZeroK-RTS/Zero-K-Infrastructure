@@ -109,8 +109,7 @@ namespace ZeroKLobby
                 }*/
                 drawString(player.Name);
 
-                var top10 = Program.SpringieServer.GetTop10Rank(user.Name);
-                if (top10 > 0)
+                if (user.CompetitiveRank.HasValue && user.CompetitiveRank <= 10)
                 {
                     drawImage(ZklResources.cup, 16, 16);
                 }

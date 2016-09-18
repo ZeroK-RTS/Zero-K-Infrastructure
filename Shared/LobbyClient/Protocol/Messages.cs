@@ -219,6 +219,7 @@ namespace LobbyClient
         public string Country;
         public string DisplayName;
         public int EffectiveMmElo;
+        public int? CompetitiveRank;
         public string Faction;
         public DateTime? InGameSince;
         public bool IsAdmin;
@@ -260,6 +261,7 @@ namespace LobbyClient
             ClientType = u.ClientType;
             LobbyVersion = u.LobbyVersion;
             DisplayName = u.DisplayName;
+            CompetitiveRank = u.CompetitiveRank;
         }
     }
 
