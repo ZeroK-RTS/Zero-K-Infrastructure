@@ -74,7 +74,7 @@ namespace ZeroKWeb
 
             Downloader.PackageDownloader.SetMasterRefreshTimer(20);
             Downloader.PackagesChanged += Downloader_PackagesChanged;
-            Downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
+            Downloader.PackageDownloader.LoadMasterAndVersions()?.Wait();
             Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
             Downloader.GetResource(DownloadType.MOD, "zk:test")?.WaitHandle.WaitOne();
 

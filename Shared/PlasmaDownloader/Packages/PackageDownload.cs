@@ -152,7 +152,7 @@ namespace PlasmaDownloader.Packages
 			{
                 this.paths = downloader.SpringPaths;
 
-                downloader.PackageDownloader.LoadMasterAndVersions(false).Wait();
+                downloader.PackageDownloader.LoadMasterAndVersions()?.Wait();
 			    var entry = downloader.PackageDownloader.FindAndSelectEntry(Name);
 			    if (entry == null)
 			    {

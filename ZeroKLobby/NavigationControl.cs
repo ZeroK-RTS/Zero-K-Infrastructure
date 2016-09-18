@@ -5,7 +5,6 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using ZeroKLobby.Controls;
-using ZeroKLobby.MapDownloader;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.MicroLobby.ExtrasTab;
 using ZkData;
@@ -306,7 +305,6 @@ namespace ZeroKLobby
             AddTabPage(battles, "Battles");
             AddTabPage(new SettingsTab(), "Settings");
             AddTabPage(new ServerTab(), "Server");
-            AddTabPage(new DownloaderTab(), "Rapid");
             var home = AddTabPage(new WelcomeTab(), "Welcome");
 
             tabControl.SelectTab(home);

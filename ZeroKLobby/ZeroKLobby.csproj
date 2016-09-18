@@ -444,12 +444,6 @@
     <Compile Include="FormLog.Designer.cs">
       <DependentUpon>FormLog.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\DownloaderTab.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\DownloaderTab.Designer.cs">
-      <DependentUpon>DownloaderTab.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WelcomeTab.cs">
@@ -530,10 +524,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormLog.resx">
       <DependentUpon>FormLog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\DownloaderTab.resx">
-      <DependentUpon>DownloaderTab.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\NotifySection.resx">
