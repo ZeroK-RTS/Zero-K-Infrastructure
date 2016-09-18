@@ -170,10 +170,14 @@ namespace ZeroKWeb
             AutoRegistrator = new AutoRegistrator(MapPath("~"));
             AutoRegistrator.RunMainAndMapSyncAsync();
 
+            LadderCalculator = new LadderCalculator();
+
             SetupPaypalInterface();
 
             if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Server);
         }
+
+        public static LadderCalculator LadderCalculator { get; private set; }
 
         public static ForumPostIndexer ForumPostIndexer { get; private set; }
 

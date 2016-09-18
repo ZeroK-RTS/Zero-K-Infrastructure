@@ -123,7 +123,7 @@ namespace PlasmaDownloader.Packages
         }
 
 
-        public Tuple<Repository, Version> FindAndSelectEntry(string name)
+        public Tuple<Repository, Version> FindEntry(string name)
         {
             List<Repository> repositoriesCopy;
             lock (repositories) repositoriesCopy = Repositories.ToList();

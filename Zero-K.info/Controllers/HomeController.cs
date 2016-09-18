@@ -191,16 +191,7 @@ namespace ZeroKWeb.Controllers
             var result = new IndexResult()
 			             {
 			             	Spotlight = SpotlightHandler.GetRandom(),
-			             	Top10Players = MemCache.GetCached("top10",
-			             	    () =>
-			             	    {
-                                     var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
-                                     return db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount == 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator))
-                                             .OrderByDescending(x => x.EloMm)
-                                             .Take(10)
-                                             .ToList();
-
-                                 },60*10)
+			             	Top10Players = Global.LadderCalculator.GetLadder().Top50Accounts.Take(10).ToList()
 			             };
 
 			result.LobbyStats =  MemCache.GetCached("lobby_stats", GetCurrentLobbyStats, 60*2);

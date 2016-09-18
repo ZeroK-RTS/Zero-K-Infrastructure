@@ -9,6 +9,7 @@ namespace ZkData
     {
         private static ConcurrentDictionary<string, string> cache = new ConcurrentDictionary<string, string>();
         public static string DefaultEngine { get { return GetValue("engine") ?? GlobalConst.DefaultEngineOverride; } set { SetValue("engine", value); } }
+        //public static string LastSteamReleaseVersion { get { return GetValue("steamVersion"); } set { SetValue("steamVersion", value); } }
 
 
         [Key]
