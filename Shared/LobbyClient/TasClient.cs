@@ -25,7 +25,7 @@ namespace LobbyClient
         public const int MaxAlliances = 16;
         public const int MaxTeams = 16;
 
-        private static CommandJsonSerializer CommandJsonSerializer = new CommandJsonSerializer();
+        private static CommandJsonSerializer CommandJsonSerializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<MessageAttribute>());
 
 
         private readonly string appName = "UnknownClient";
