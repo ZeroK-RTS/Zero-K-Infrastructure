@@ -578,6 +578,7 @@ namespace LobbyClient
         public int CurrentEloWidth { get; set; }
         public DateTime JoinedTime { get; set; }
         public int? BannedSeconds { get; set; }
+        public Dictionary<string, int> IngameCounts { get; set; } = new Dictionary<string, int>();
     }
 
     
