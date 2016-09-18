@@ -176,24 +176,26 @@ namespace ZeroKWeb.SpringieInterface
                                             var modulesForLevel = new LuaTable();
                                             modules.Add(modulesForLevel);
                                             var modulesOrdered = c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel == i).ToList();
-                                            // make sure weapons go before other modules
-                                            modulesOrdered.Sort(delegate (CommanderModule x, CommanderModule y)
+                                            var slots = db.CommanderSlots.ToList().Where(x => x.MorphLevel == i && (x.ChassisID == null || (x.ChassisID == c.ChassisUnlockID))).ToList();
+                                            slots.Sort(delegate (CommanderSlot x, CommanderSlot y)
                                             {
-                                                UnlockTypes type1 = x.CommanderSlot.UnlockType;
-                                                UnlockTypes type2 = x.CommanderSlot.UnlockType;
+                                                UnlockTypes type1 = x.UnlockType;
+                                                UnlockTypes type2 = x.UnlockType;
                                                 if (type1 == UnlockTypes.WeaponManualFire || type1 == UnlockTypes.WeaponBoth)
                                                     type1 = UnlockTypes.Weapon;
                                                 if (type2 == UnlockTypes.WeaponManualFire || type2 == UnlockTypes.WeaponBoth)
                                                     type2 = UnlockTypes.Weapon;
                                                 int result = type1.CompareTo(type2);
-                                                if (result == 0) return x.SlotID.CompareTo(y.SlotID);
+                                                if (result == 0) return x.CommanderSlotID.CompareTo(y.CommanderSlotID);
                                                 else return result;
                                             });
-                                            foreach (var m in modulesOrdered)
+                                            foreach (var slot in slots)
                                             {
-                                                if (m.Unlock != null)
-                                                    modulesForLevel.Add(m.Unlock.Code);
-                                                else modulesForLevel.Add("");
+                                                String value = String.Empty;
+                                                var module = c.CommanderModules.FirstOrDefault(x => x.SlotID == slot.CommanderSlotID);
+                                                if (module != null)
+                                                    value = module.Unlock.Code;
+                                                modulesForLevel.Add(value);
                                             }
                                         }
                                     }
