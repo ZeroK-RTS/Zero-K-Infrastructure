@@ -29,38 +29,28 @@ namespace ZeroKWeb.SpringieInterface
         long iterationsChecked;
         int maxTeamSize;
 
-        public static BalanceTeamsResult BalanceTeams(LobbyHostingContext context, bool isGameStart, int? allyCount, bool? clanWise) {
+        public static BalanceTeamsResult BalanceTeams(LobbyHostingContext context, bool isGameStart, int? allyCount, bool? clanWise)
+        {
             var playerCount = context.Players.Count(x => !x.IsSpectator);
 
-            
-            if (clanWise == null && ( context.Mode == AutohostMode.Teams)) clanWise = true;
+
+            if (clanWise == null && (context.Mode == AutohostMode.Teams)) clanWise = true;
 
 
             var res = PerformBalance(context, isGameStart, allyCount, clanWise, playerCount);
 
-            if (context.Mode != AutohostMode.Planetwars) // planetwars skip other checks
+            if (context.Mode != AutohostMode.None && context.Mode != AutohostMode.GameChickens)
             {
                 if (isGameStart)
                 {
                     // dont allow to start alone
                     if (playerCount <= 1)
                     {
-                        if (res.DeleteBots)
+                        return new BalanceTeamsResult
                         {
-                            return new BalanceTeamsResult
-                            {
-                                CanStart = false,
-                                Message = "You cannot play alone on this host, wait for players or join another game room and play with bots."
-                            };
-                        }
-                        if (!res.Bots.Any())
-                        {
-                            return new BalanceTeamsResult
-                            {
-                                CanStart = false,
-                                Message = "Cannot play alone, you can add bots using button on bottom left."
-                            };
-                        }
+                            CanStart = false,
+                            Message = "Sorry this room type needs more human players, open cooperative battle to fight against bots."
+                        };
                     }
                 }
             }
@@ -70,11 +60,13 @@ namespace ZeroKWeb.SpringieInterface
         }
 
 
-        public static List<BalanceTeam> CloneTeams(List<BalanceTeam> t) {
+        public static List<BalanceTeam> CloneTeams(List<BalanceTeam> t)
+        {
             return new List<BalanceTeam>(t.Select(x => x.Clone()));
         }
 
-        public static double GetTeamsDifference(List<BalanceTeam> t) {
+        public static double GetTeamsDifference(List<BalanceTeam> t)
+        {
             if (t.Count == 2) return Math.Abs(t[0].AvgElo - t[1].AvgElo);
             var min = double.MaxValue;
             var max = double.MinValue;
@@ -85,8 +77,8 @@ namespace ZeroKWeb.SpringieInterface
             }
             return max - min;
         }
-        
-        
+
+
         /// <summary>
         ///     The function that actually moves players arounds
         /// </summary>
@@ -95,7 +87,8 @@ namespace ZeroKWeb.SpringieInterface
         /// <param name="b"></param>
         /// <param name="unmovablePlayers"></param>
         /// <returns></returns>
-        BalanceTeamsResult LegacyBalance(int teamCount, BalanceMode mode, LobbyHostingContext b, params List<Account>[] unmovablePlayers) {
+        BalanceTeamsResult LegacyBalance(int teamCount, BalanceMode mode, LobbyHostingContext b, params List<Account>[] unmovablePlayers)
+        {
             var ret = new BalanceTeamsResult();
 
             try
@@ -119,7 +112,7 @@ namespace ZeroKWeb.SpringieInterface
                     return ret;
                 }
 
-                maxTeamSize = (int)Math.Ceiling(accs.Count/(double)teamCount);
+                maxTeamSize = (int)Math.Ceiling(accs.Count / (double)teamCount);
 
                 teams.Clear();
                 for (var i = 0; i < teamCount; i++)
@@ -168,7 +161,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 var minSize = bestTeams.Min(x => x.Count);
                 var maxSize = bestTeams.Max(x => x.Count);
-                var sizesWrong = maxSize/(double)minSize > MaxTeamSizeDifferenceRatio;
+                var sizesWrong = maxSize / (double)minSize > MaxTeamSizeDifferenceRatio;
 
                 // cbalance failed, rebalance using normal
                 if (mode == BalanceMode.ClanWise && (bestTeams == null || GetTeamsDifference(bestTeams) > MaxCbalanceDifference || sizesWrong)) return new Balancer().LegacyBalance(teamCount, BalanceMode.Normal, b, unmovablePlayers);
@@ -263,7 +256,8 @@ namespace ZeroKWeb.SpringieInterface
             bool isGameStart,
             int? allyCount,
             bool? clanWise,
-            int playerCount) {
+            int playerCount)
+        {
             var res = new BalanceTeamsResult();
             var mode = context.Mode;
 
@@ -271,50 +265,56 @@ namespace ZeroKWeb.SpringieInterface
             {
                 switch (mode)
                 {
-                    case AutohostMode.None: {
-                        if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == true ? BalanceMode.ClanWise : BalanceMode.Normal, context);
-                    }
+                    case AutohostMode.None:
+                        {
+                            if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == true ? BalanceMode.ClanWise : BalanceMode.Normal, context);
+                        }
                         break;
                     case AutohostMode.Teams:
-                    case AutohostMode.Game1v1: {
-                        res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
-                        res.DeleteBots = true;
-                    }
+                    case AutohostMode.Game1v1:
+                        {
+                            res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                            res.DeleteBots = true;
+                        }
                         break;
 
-                    case AutohostMode.GameChickens: {
-                        res.Players = context.Players.ToList();
-                        res.Bots = context.Bots.ToList();
-                        foreach (var p in res.Players) p.AllyID = 0;
-                        foreach (var b in res.Bots) b.AllyID = 1;
+                    case AutohostMode.GameChickens:
+                        {
+                            res.Players = context.Players.ToList();
+                            res.Bots = context.Bots.ToList();
+                            foreach (var p in res.Players) p.AllyID = 0;
+                            foreach (var b in res.Bots) b.AllyID = 1;
 
-                        if (!res.Bots.Any() && res.Players.Count > 0)
-                        {
-                            //res.Message = "Add some bot (computer player) as your enemy. Use button on bottom left. Chicken or CAI is recommended.";
-                            var map = db.Resources.FirstOrDefault(x => x.InternalName == context.Map);
-                            if (map?.MapIsChickens == true) res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "default_Chicken", BotAI = "Chicken: Normal", });
-                            else res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "cai", BotAI = "CAI", });
-                            res.Message = "Adding computer AI player for you";
+                            if (!res.Bots.Any() && res.Players.Count > 0)
+                            {
+                                //res.Message = "Add some bot (computer player) as your enemy. Use button on bottom left. Chicken or CAI is recommended.";
+                                var map = db.Resources.FirstOrDefault(x => x.InternalName == context.Map);
+                                if (map?.MapIsChickens == true) res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "default_Chicken", BotAI = "Chicken: Normal", });
+                                else res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "cai", BotAI = "CAI", });
+                                res.Message = "Adding computer AI player for you";
+                            }
                         }
-                    }
                         break;
-                    case AutohostMode.GameFFA: {
-                        var map = db.Resources.Single(x => x.InternalName == context.Map);
-                        if (map.MapFFAMaxTeams != null)
+                    case AutohostMode.GameFFA:
                         {
-                            res = new Balancer().LegacyBalance(
-                                allyCount ?? map.MapFFAMaxTeams.Value,
-                                clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise,
-                                context);
-                        } else
-                        {
-                            res = new Balancer().LegacyBalance(
-                                allyCount ?? map.MapFFAMaxTeams ?? 8,
-                                clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise,
-                                context);
+                            res.DeleteBots = true;
+                            var map = db.Resources.Single(x => x.InternalName == context.Map);
+                            if (map.MapFFAMaxTeams != null)
+                            {
+                                res = new Balancer().LegacyBalance(
+                                    allyCount ?? map.MapFFAMaxTeams.Value,
+                                    clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise,
+                                    context);
+                            }
+                            else
+                            {
+                                res = new Balancer().LegacyBalance(
+                                    allyCount ?? map.MapFFAMaxTeams ?? 8,
+                                    clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise,
+                                    context);
+                            }
+                            return res;
                         }
-                        return res;
-                    }
                     case AutohostMode.Planetwars:
 
                         return new Balancer().PlanetwarsBalance(context);
@@ -323,7 +323,8 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        BalanceTeamsResult PlanetwarsBalance(LobbyHostingContext context) {
+        BalanceTeamsResult PlanetwarsBalance(LobbyHostingContext context)
+        {
             var res = new BalanceTeamsResult();
             res.CanStart = true;
             res.DeleteBots = true;
@@ -366,7 +367,8 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        static void AddPwPlayer(LobbyHostingContext context, string matchUser, BalanceTeamsResult res, int allyID) {
+        static void AddPwPlayer(LobbyHostingContext context, string matchUser, BalanceTeamsResult res, int allyID)
+        {
             var player = context.Players.FirstOrDefault(x => x.Name == matchUser);
             if (player == null)
             {
@@ -381,13 +383,14 @@ namespace ZeroKWeb.SpringieInterface
                 }
             }
             res.Players.Add(
-                new PlayerTeam { AllyID = allyID, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID});
+                new PlayerTeam { AllyID = allyID, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID });
         }
 
         /// <summary>
         ///     Gets the best balance (lowest standard deviation between teams)
         /// </summary>
-        void RecursiveBalance(int itemIndex) {
+        void RecursiveBalance(int itemIndex)
+        {
             if (iterationsChecked > 2000000) return;
 
             if (itemIndex < balanceItems.Count)
@@ -405,8 +408,10 @@ namespace ZeroKWeb.SpringieInterface
                             team.RemoveItem(item);
                         }
                     }
-                } else RecursiveBalance(itemIndex + 1);
-            } else
+                }
+                else RecursiveBalance(itemIndex + 1);
+            }
+            else
             {
                 // end of recursion
                 iterationsChecked++;
@@ -419,7 +424,8 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        static void SpecPlayerOnCondition(PlayerTeam player, Account account, string userMessage, ZkLobbyServer.ZkLobbyServer server) {
+        static void SpecPlayerOnCondition(PlayerTeam player, Account account, string userMessage, ZkLobbyServer.ZkLobbyServer server)
+        {
             player.IsSpectator = true;
             server.GhostPm(account.Name, userMessage);
         }
@@ -429,7 +435,8 @@ namespace ZeroKWeb.SpringieInterface
         /// </summary>
         /// <param name="context"></param>
         /// <param name="res">The <see cref="BalanceTeamsResult" /> to write the message to</param>
-        static void VerifySpecCheaters(LobbyHostingContext context, BalanceTeamsResult res) {
+        static void VerifySpecCheaters(LobbyHostingContext context, BalanceTeamsResult res)
+        {
             try
             {
                 // find specs with same IP as some player and kick them
@@ -457,7 +464,8 @@ namespace ZeroKWeb.SpringieInterface
             public readonly List<int> LobbyId;
             public bool CanBeMoved = true;
 
-            public BalanceItem(bool isMatchMaker, params Account[] accounts) {
+            public BalanceItem(bool isMatchMaker, params Account[] accounts)
+            {
                 LobbyId = accounts.Select(x => x.AccountID).ToList();
                 EloSum = isMatchMaker ? accounts.Sum(x => x.EffectiveMmElo) : accounts.Sum(x => x.EffectiveElo);
                 Count = accounts.Length;
@@ -471,15 +479,17 @@ namespace ZeroKWeb.SpringieInterface
             public int Count { get; private set; }
             public double EloSum { get; private set; }
 
-            public void AddItem(BalanceItem item) {
+            public void AddItem(BalanceItem item)
+            {
                 Items.Add(item);
                 EloSum += item.EloSum;
                 Count += item.Count;
-                if (Count > 0) AvgElo = EloSum/Count;
+                if (Count > 0) AvgElo = EloSum / Count;
                 else AvgElo = 0;
             }
 
-            public BalanceTeam Clone() {
+            public BalanceTeam Clone()
+            {
                 var clone = new BalanceTeam();
                 clone.Items = new List<BalanceItem>(Items);
                 clone.AvgElo = AvgElo;
@@ -488,11 +498,12 @@ namespace ZeroKWeb.SpringieInterface
                 return clone;
             }
 
-            public void RemoveItem(BalanceItem item) {
+            public void RemoveItem(BalanceItem item)
+            {
                 Items.Remove(item);
                 EloSum -= item.EloSum;
                 Count -= item.Count;
-                if (Count > 0) AvgElo = EloSum/Count;
+                if (Count > 0) AvgElo = EloSum / Count;
                 else AvgElo = 0;
             }
         }
