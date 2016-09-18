@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using LobbyClient;
 using PlasmaDownloader;
+using PlasmaShared;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 
@@ -19,6 +20,12 @@ namespace ZkLobbyServer
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
             engine = string.IsNullOrEmpty(arguments) ? battle.server.Engine : arguments;
+            if (battle.Mode != AutohostMode.None && engine != battle.server.Engine)
+            {
+                battle.Respond(e, $"You cannot change engine to version other than {battle.server.Engine} here, use custom room");
+                return null;
+            }
+
             if (!ServerBattle.springPaths.HasEngineVersion(engine))
             {
                 var serv = GlobalConst.GetContentService(); // TODO this can be done directly, we are in server
