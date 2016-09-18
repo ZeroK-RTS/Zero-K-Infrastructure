@@ -70,6 +70,7 @@
     <Compile Include="ChobbylaForm.Designer.cs">
       <DependentUpon>ChobbylaForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ChobbylaLocalListener.cs" />
     <Compile Include="DarkHive.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

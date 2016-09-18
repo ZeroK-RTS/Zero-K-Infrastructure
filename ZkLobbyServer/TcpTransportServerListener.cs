@@ -24,7 +24,7 @@ namespace ZkLobbyServer
                     listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(GlobalConst.TcpLingerStateEnabled, GlobalConst.TcpLingerStateSeconds));
                     listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 0);
 
-                    listener.Start(60);
+                    listener.Start(100);
                     Trace.TraceInformation("Listening at port {0}", GlobalConst.LobbyServerPort);
                     ok = true;
                 } catch (Exception ex) {
