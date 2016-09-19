@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Neo.IronLua;
@@ -104,7 +106,15 @@ namespace ChobbyLauncher
                 }
                 
                 Status = "Starting";
-                LaunchChobby(paths, internalName, engine);
+
+                var listener = ChobbylaLocalListener.Init();
+                var chobyl = new ChobbylaLocalListener();
+                chobyl.Listen(listener);
+
+                IPEndPoint endPoint = (IPEndPoint)listener.Server.LocalEndPoint;
+                var port = endPoint.Port;
+
+                LaunchChobby(paths, internalName, engine, port);
                 return true;
             }
             catch (Exception ex)
@@ -161,11 +171,14 @@ namespace ChobbyLauncher
         }
 
 
-        private void LaunchChobby(SpringPaths paths, string internalName, string engineVersion)
+        private void LaunchChobby(SpringPaths paths, string internalName, string engineVersion, int loopbackPort)
         {
             var process = new Process { StartInfo = { CreateNoWindow = true, UseShellExecute = false } };
 
             paths.SetDefaultEnvVars(process.StartInfo, engineVersion);
+            var widgetFolder = Path.Combine(paths.WritableDirectory, "LuaMenu", "Widgets");
+            if (!Directory.Exists(widgetFolder)) Directory.CreateDirectory(widgetFolder);
+            File.WriteAllText(Path.Combine(widgetFolder, "chobby_wrapper_port.txt"), loopbackPort.ToString());
 
             process.StartInfo.FileName = paths.GetSpringExecutablePath(engineVersion);
             process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetSpringExecutablePath(engineVersion));

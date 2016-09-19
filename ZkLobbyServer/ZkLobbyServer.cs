@@ -23,7 +23,7 @@ namespace ZkLobbyServer
         public OfflineMessageHandler OfflineMessageHandler = new OfflineMessageHandler();
         public ConcurrentDictionary<string, Channel> Rooms = new ConcurrentDictionary<string, Channel>();
         public EventHandler<Say> Said = delegate { };
-        public CommandJsonSerializer Serializer = new CommandJsonSerializer();
+        public CommandJsonSerializer Serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<MessageAttribute>());
         public SteamWebApi SteamWebApi;
         public string Engine { get; private set; }
         public string Game { get; private set; }

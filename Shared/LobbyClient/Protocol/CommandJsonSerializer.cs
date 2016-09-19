@@ -30,9 +30,9 @@ namespace LobbyClient
         readonly Dictionary<string, Type> knownTypes = new Dictionary<string, Type>();
         readonly JsonSerializerSettings settings = new JsonSerializerSettings();
 
-        public CommandJsonSerializer()
+        public CommandJsonSerializer(IEnumerable<Type> types)
         {
-            RegisterTypes(Utils.GetAllTypesWithAttribute<MessageAttribute>().ToArray());
+            RegisterTypes(types.ToArray());
             settings.Formatting = Formatting.None;
             settings.NullValueHandling = NullValueHandling.Ignore;
         }

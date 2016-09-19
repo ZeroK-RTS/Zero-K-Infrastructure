@@ -70,6 +70,7 @@
     <Compile Include="ChobbylaForm.Designer.cs">
       <DependentUpon>ChobbylaForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ChobbylaLocalListener.cs" />
     <Compile Include="DarkHive.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -125,6 +126,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
+      <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>
+      <Name>LobbyClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Shared\PlasmaDownloader\PlasmaDownloader.csproj">
       <Project>{f3f74776-46a9-4415-b76e-ceec771c2aba}</Project>
       <Name>PlasmaDownloader</Name>
