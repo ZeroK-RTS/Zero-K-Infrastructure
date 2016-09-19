@@ -230,10 +230,10 @@ namespace ZkLobbyServer
                     timer.Stop();
                     var realBattles = ResolveToRealBattles();
 
-                    foreach (var bat in realBattles) StartBattle(bat);
-
                     queuesCounts = CountQueuedPeople(players.Values);
                     ingameCounts = CountIngamePeople();
+
+                    foreach (var bat in realBattles) StartBattle(bat);
 
                     ResetAndSendMmInvitations();
                 }

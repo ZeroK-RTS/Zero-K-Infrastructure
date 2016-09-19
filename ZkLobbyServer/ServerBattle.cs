@@ -477,12 +477,6 @@ namespace ZkLobbyServer
         {
             if (Mode != AutohostMode.None) ubs.AllyNumber = 0;
 
-            if (IsMatchMakerBattle)
-            {
-                if (spring.LobbyStartContext?.Players.Any(y => y.Name != ubs.Name && !y.IsSpectator) == true) ubs.IsSpectator = false;
-                else ubs.IsSpectator = true;
-            }
-
             if (!ubs.IsSpectator)
             {
                 var cnt = Users.Values.Count(x => !x.IsSpectator);
