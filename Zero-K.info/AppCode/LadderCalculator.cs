@@ -185,9 +185,9 @@ namespace ZeroKWeb
 
         public class LadderModel
         {
-            public List<AwardItem> AwardItems;
-            public List<Account> Top50Accounts;
-            public List<Account> Top50Casual;
+            public List<AwardItem> AwardItems = new List<AwardItem>();
+            public List<Account> Top50Accounts = new List<Account>();
+            public List<Account> Top50Casual = new List<Account>();
         }
 
     }
