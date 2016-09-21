@@ -259,14 +259,11 @@ namespace ZkLobbyServer
                         return;
                     }
 
-                    ubs = new UserBattleStatus(Name, User, Guid.NewGuid().ToString());
-                    battle.Users[Name] = ubs;
-                    battle.ValidateBattleStatus(ubs);
-                    await battle.ProcessPlayerJoin(ubs);
                 }
+                var pwd = Guid.NewGuid().ToString();
+                battle.spring.AddUser(Name, pwd);
 
-
-                await SendCommand(battle.GetConnectSpringStructure(ubs));
+                await SendCommand(battle.GetConnectSpringStructure(pwd));
             }
             else await Respond("No such running battle found");
         }

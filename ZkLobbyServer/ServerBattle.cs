@@ -164,7 +164,7 @@ namespace ZkLobbyServer
             return null;
         }
 
-        public ConnectSpring GetConnectSpringStructure(UserBattleStatus us)
+        public ConnectSpring GetConnectSpringStructure(string scriptPassword)
         {
             return new ConnectSpring()
             {
@@ -173,7 +173,7 @@ namespace ZkLobbyServer
                 Port = hostingPort,
                 Map = MapName,
                 Game = ModName,
-                ScriptPassword = us.ScriptPassword
+                ScriptPassword = scriptPassword
             };
         }
 
@@ -372,7 +372,7 @@ namespace ZkLobbyServer
                 if (us != null)
                 {
                     ConnectedUser user;
-                    if (server.ConnectedUsers.TryGetValue(us.Name, out user)) await user.SendCommand(GetConnectSpringStructure(us));
+                    if (server.ConnectedUsers.TryGetValue(us.Name, out user)) await user.SendCommand(GetConnectSpringStructure(us.ScriptPassword));
                 }
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
 
