@@ -23,7 +23,7 @@ namespace ZkLobbyServer
         public HashSet<string> IgnoredBy { get; set; }
         public HashSet<string> Ignores { get; set; }
 
-        public bool IsLoggedIn { get { return (User != null) && (User.AccountID != 0); } }
+        public bool IsLoggedIn => (User != null) && (User.AccountID != 0);
 
         public string Name { get { return User.Name; } }
 
@@ -461,7 +461,7 @@ namespace ZkLobbyServer
 
         public async Task Process(ChangeUserStatus userStatus)
         {
-            if (!IsLoggedIn) return;
+            if (!IsLoggedIn || userStatus == null) return;
             var changed = false;
             if ((userStatus.IsInGame != null) && (User.IsInGame != userStatus.IsInGame))
             {

@@ -226,7 +226,7 @@ namespace ZkLobbyServer
 
         void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            if (DateTime.UtcNow.Subtract(lastPingFromClient).TotalSeconds >= GlobalConst.LobbyProtocolPingTimeout) transport.RequestClose();
+            if (DateTime.UtcNow.Subtract(lastPingFromClient).TotalSeconds >= GlobalConst.LobbyProtocolPingTimeout || connectedUser?.IsLoggedIn != true) transport.RequestClose();
             else SendCommand(new Ping() { });
         }
     }
