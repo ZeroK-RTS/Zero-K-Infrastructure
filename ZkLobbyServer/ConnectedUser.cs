@@ -345,19 +345,13 @@ namespace ZkLobbyServer
                 return;
             }
 
-            var battleID = Interlocked.Increment(ref state.BattleCounter);
-
-            openBattle.Header.BattleID = battleID;
-            openBattle.Header.Founder = Name;
-            var battle = new ServerBattle(state, false);
+            var battle = new ServerBattle(state, false, Name);
             battle.UpdateWith(openBattle.Header);
-            state.Battles[battleID] = battle;
+            state.Battles[battle.BattleID] = battle;
 
-            //battle.Users[Name] = new UserBattleStatus(Name, User, Guid.NewGuid().ToString());
-            //MyBattle = battle;
 
             await state.Broadcast(state.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
-            await Process(new JoinBattle() { BattleID = battleID, Password = openBattle.Header.Password, });
+            await Process(new JoinBattle() { BattleID = battle.BattleID, Password = openBattle.Header.Password, });
         }
 
 

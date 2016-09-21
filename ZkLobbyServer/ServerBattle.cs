@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using LobbyClient;
@@ -15,13 +16,14 @@ using ZeroKWeb.SpringieInterface;
 using ZkData;
 using ZkData.UnitSyncLib;
 using static System.String;
+using Timer = System.Timers.Timer;
 
 namespace ZkLobbyServer
 {
-    public partial class ServerBattle : Battle
+    public sealed class ServerBattle : Battle
     {
         public const int PollTimeout = 60;
-
+        public static int BattleCounter;
 
         public static PlasmaDownloader.PlasmaDownloader downloader;
         public static SpringPaths springPaths;
@@ -36,7 +38,7 @@ namespace ZkLobbyServer
         public Resource HostedMod;
 
         public Mod HostedModInfo;
-        private string hostingIp;
+        private static string hostingIp;
 
         private int hostingPort;
 
@@ -56,8 +58,7 @@ namespace ZkLobbyServer
         {
             springPaths = new SpringPaths(GlobalConst.SpringieDataDir, false);
             downloader = new PlasmaDownloader.PlasmaDownloader(null, springPaths);
-            //downloader.PackageDownloader.SetMasterRefreshTimer(60);
-            //downloader.PackageDownloader.LoadMasterAndVersions(false);
+            
             downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine);
 
             Commands =
@@ -67,12 +68,19 @@ namespace ZkLobbyServer
                     .Select(x => x.GetConstructor(new Type[] { }).Invoke(new object[] { }))
                     .Cast<BattleCommand>()
                     .ToDictionary(x => x.Shortcut, x => x);
+
+            hostingIp =
+                Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString() ??
+                "127.0.0.1";
         }
 
-        public ServerBattle(ZkLobbyServer server, bool isMatchMakerBattle)
+        public ServerBattle(ZkLobbyServer server, bool isMatchMakerBattle, string founder)
         {
+            BattleID = Interlocked.Increment(ref BattleCounter);
+            FounderName = founder;
+            if (string.IsNullOrEmpty(FounderName) && isMatchMakerBattle) FounderName = "MatchMaker #" + BattleID;
+            
             this.server = server;
-
             pollTimer = new Timer(PollTimeout * 1000);
             pollTimer.Enabled = false;
             pollTimer.AutoReset = false;
@@ -80,9 +88,6 @@ namespace ZkLobbyServer
             IsMatchMakerBattle = isMatchMakerBattle;
             SetupSpring();
             PickHostingPort();
-            hostingIp =
-                Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString() ??
-                "127.0.0.1";
         }
 
 
@@ -468,8 +473,16 @@ namespace ZkLobbyServer
 
         public override void UpdateWith(BattleHeader h)
         {
+            // following variables cannot be overriden in serverbattle
+            h.BattleID = BattleID;
+            h.Founder = FounderName;
+            h.IsRunning = IsInGame;
+            h.RunningSince = RunningSince;
+            h.SpectatorCount = SpectatorCount;
+            h.IsMatchMaker = IsMatchMakerBattle;
+            
             base.UpdateWith(h);
-            RunningSince = null;
+            
             ValidateAndFillDetails();
         }
 

@@ -73,6 +73,7 @@ namespace LobbyClient
             if (h.Mode != null) Mode = h.Mode.Value;
             if (h.RunningSince != null) RunningSince = h.RunningSince;
             if (h.IsRunning != null) IsInGame = h.IsRunning.Value;
+            if (h.IsMatchMaker != null) IsMatchMakerBattle = h.IsMatchMaker.Value;
         }
 
         public virtual BattleHeader GetHeader()
@@ -92,6 +93,7 @@ namespace LobbyClient
                 Mode = b.Mode,
                 IsRunning = b.IsInGame,
                 RunningSince = b.IsInGame ? b.RunningSince : null,
+                IsMatchMaker = b.IsMatchMakerBattle
             };
         }
 

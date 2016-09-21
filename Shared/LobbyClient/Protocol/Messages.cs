@@ -320,6 +320,7 @@ namespace LobbyClient
         public DateTime? RunningSince;
         public int? SpectatorCount;
         public string Title;
+        public bool? IsMatchMaker;
     }
 
     [Message(Origin.Server)]

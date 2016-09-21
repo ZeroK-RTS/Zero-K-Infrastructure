@@ -12,7 +12,6 @@ namespace ZkLobbyServer
 {
     public class ZkLobbyServer
     {
-        public int BattleCounter;
         public ConcurrentDictionary<int, ServerBattle> Battles = new ConcurrentDictionary<int, ServerBattle>();
         public ChannelManager ChannelManager;
         private ChatRelay chatRelay;
