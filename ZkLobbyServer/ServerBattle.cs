@@ -31,6 +31,7 @@ namespace ZkLobbyServer
 
 
         private static object pickPortLock = new object();
+        private static string hostingIp;
 
         public readonly List<string> toNotify = new List<string>();
         public Resource HostedMap;
@@ -38,9 +39,10 @@ namespace ZkLobbyServer
         public Resource HostedMod;
 
         public Mod HostedModInfo;
-        private static string hostingIp;
 
         private int hostingPort;
+
+        protected bool isZombie;
 
         private List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
 
@@ -51,14 +53,12 @@ namespace ZkLobbyServer
 
         public CommandPoll ActivePoll { get; private set; }
 
-        private bool isZombie;
-
 
         static ServerBattle()
         {
             springPaths = new SpringPaths(GlobalConst.SpringieDataDir, false);
             downloader = new PlasmaDownloader.PlasmaDownloader(null, springPaths);
-            
+
             downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine);
 
             Commands =
@@ -74,11 +74,11 @@ namespace ZkLobbyServer
                 "127.0.0.1";
         }
 
-        public ServerBattle(ZkLobbyServer server,string founder)
+        public ServerBattle(ZkLobbyServer server, string founder)
         {
             BattleID = Interlocked.Increment(ref BattleCounter);
             FounderName = founder;
-            
+
             this.server = server;
             pollTimer = new Timer(PollTimeout * 1000);
             pollTimer.Enabled = false;
@@ -98,54 +98,6 @@ namespace ZkLobbyServer
             pollTimer = null;
             spring = null;
             ActivePoll = null;
-        }
-
-        public void ValidateAndFillDetails()
-        {
-            if (IsNullOrEmpty(Title)) Title = $"{FounderName}'s game";
-            if (IsNullOrEmpty(EngineVersion) || Mode != AutohostMode.None) EngineVersion = server.Engine;
-            downloader.GetResource(DownloadType.ENGINE, server.Engine);
-
-            switch (Mode)
-            {
-                case AutohostMode.Game1v1:
-                    MaxPlayers = 2;
-                    break;
-                case AutohostMode.Planetwars:
-                    MaxPlayers = 4;
-                    break;
-                case AutohostMode.GameChickens:
-                    if (MaxPlayers < 2) MaxPlayers = 10;
-                    break;
-                case AutohostMode.GameFFA:
-                    if (MaxPlayers < 3) MaxPlayers = 16;
-                    break;
-                case AutohostMode.Teams:
-                    if (MaxPlayers < 4) MaxPlayers = 16;
-                    break;
-                case AutohostMode.None:
-                    if (MaxPlayers == 0) MaxPlayers = 16;
-                    break;
-            }
-            if (MaxPlayers > 32) MaxPlayers = 32;
-
-            HostedMod = MapPicker.FindResources(ResourceType.Mod, ModName ?? server.Game ?? "zk:stable").FirstOrDefault();
-            HostedMap = MapName != null
-                ? MapPicker.FindResources(ResourceType.Map, MapName).FirstOrDefault()
-                : MapPicker.GetRecommendedMap(GetContext());
-
-            ModName = HostedMod?.InternalName ?? ModName ?? server.Game ?? "zk:stable";
-            MapName = HostedMap?.InternalName ?? MapName ?? "Small_Divide-Remake-v04";
-
-            if (HostedMod != null)
-                try
-                {
-                    HostedModInfo = MetaDataCache.ServerGetMod(HostedMod.InternalName);
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceWarning("Error loading mod metadata for {0} : {1}", HostedMod.InternalName, ex);
-                }
         }
 
         public List<string> GetAllUserNames()
@@ -173,6 +125,14 @@ namespace ZkLobbyServer
                 Game = ModName,
                 ScriptPassword = scriptPassword
             };
+        }
+
+        public bool IsKicked(string name)
+        {
+            var kicked = false;
+            kickedPlayers.RemoveAll(x => x.TimeOfKicked <= DateTime.UtcNow.AddMinutes(-5));
+            if (kickedPlayers.Any(y => y.Name == name)) kicked = true;
+            return kicked;
         }
 
 
@@ -205,17 +165,6 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task RecalcSpectators()
-        {
-            var specCount = Users.Values.Count(x => x.IsSpectator);
-            if (specCount != SpectatorCount)
-            {
-                SpectatorCount = specCount;
-                await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID } });
-            }
-        }
-
-
         public virtual async Task ProcessPlayerJoin(ConnectedUser user, string joinPassword)
         {
             if (IsPassworded && (Password != joinPassword))
@@ -230,13 +179,15 @@ namespace ZkLobbyServer
                 return;
             }
 
-            if (user.MyBattle != null && user.MyBattle != this)
+            if ((user.MyBattle != null) && (user.MyBattle != this)) await user.Process(new LeaveBattle());
+
+            UserBattleStatus ubs;
+            if (!Users.TryGetValue(user.Name, out ubs))
             {
-                await user.Process(new LeaveBattle());
+                ubs = new UserBattleStatus(user.Name, user.User, Guid.NewGuid().ToString());
+                Users[user.Name] = ubs;
             }
-            
-            var ubs = new UserBattleStatus(user.Name, user.User, Guid.NewGuid().ToString());
-            Users[user.Name] = ubs;
+
             ValidateBattleStatus(ubs);
             user.MyBattle = this;
 
@@ -246,7 +197,6 @@ namespace ZkLobbyServer
             foreach (var u in Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await user.SendCommand(u); // send other's status to self
             foreach (var u in Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await user.SendCommand(u);
             await user.SendCommand(new SetModOptions() { Options = ModOptions });
-            
 
             if (spring.IsRunning)
             {
@@ -272,12 +222,17 @@ namespace ZkLobbyServer
             }
         }
 
-        public bool IsKicked(string name)
+
+        public async Task RecalcSpectators()
         {
-            bool kicked = false;
-            kickedPlayers.RemoveAll(x => x.TimeOfKicked <= DateTime.UtcNow.AddMinutes(-5));
-            if (kickedPlayers.Any(y => y.Name == name)) kicked = true;
-            return kicked;
+            var specCount = Users.Values.Count(x => x.IsSpectator);
+            if (specCount != SpectatorCount)
+            {
+                SpectatorCount = specCount;
+                await
+                    server.Broadcast(server.ConnectedUsers.Values,
+                        new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID } });
+            }
         }
 
 
@@ -312,7 +267,6 @@ namespace ZkLobbyServer
         {
             var cmd = GetCommandByName(com);
             if (cmd != null)
-            {
                 if (isZombie) await Respond(e, "Tthis room is now disabled, please join a new one");
                 else
                 {
@@ -320,7 +274,6 @@ namespace ZkLobbyServer
                     if (perm == BattleCommand.RunPermission.Run) await cmd.Run(this, e, arg);
                     else if (perm == BattleCommand.RunPermission.Vote) await StartVote(cmd, e, arg);
                 }
-            }
         }
 
 
@@ -511,13 +464,61 @@ namespace ZkLobbyServer
             h.RunningSince = RunningSince;
             h.SpectatorCount = SpectatorCount;
             h.IsMatchMaker = IsMatchMakerBattle;
-            
+
             base.UpdateWith(h);
-            
+
             ValidateAndFillDetails();
         }
 
-        public void ValidateBattleStatus(UserBattleStatus ubs)
+        public void ValidateAndFillDetails()
+        {
+            if (IsNullOrEmpty(Title)) Title = $"{FounderName}'s game";
+            if (IsNullOrEmpty(EngineVersion) || (Mode != AutohostMode.None)) EngineVersion = server.Engine;
+            downloader.GetResource(DownloadType.ENGINE, server.Engine);
+
+            switch (Mode)
+            {
+                case AutohostMode.Game1v1:
+                    MaxPlayers = 2;
+                    break;
+                case AutohostMode.Planetwars:
+                    MaxPlayers = 4;
+                    break;
+                case AutohostMode.GameChickens:
+                    if (MaxPlayers < 2) MaxPlayers = 10;
+                    break;
+                case AutohostMode.GameFFA:
+                    if (MaxPlayers < 3) MaxPlayers = 16;
+                    break;
+                case AutohostMode.Teams:
+                    if (MaxPlayers < 4) MaxPlayers = 16;
+                    break;
+                case AutohostMode.None:
+                    if (MaxPlayers == 0) MaxPlayers = 16;
+                    break;
+            }
+            if (MaxPlayers > 32) MaxPlayers = 32;
+
+            HostedMod = MapPicker.FindResources(ResourceType.Mod, ModName ?? server.Game ?? "zk:stable").FirstOrDefault();
+            HostedMap = MapName != null
+                ? MapPicker.FindResources(ResourceType.Map, MapName).FirstOrDefault()
+                : MapPicker.GetRecommendedMap(GetContext());
+
+            ModName = HostedMod?.InternalName ?? ModName ?? server.Game ?? "zk:stable";
+            MapName = HostedMap?.InternalName ?? MapName ?? "Small_Divide-Remake-v04";
+
+            if (HostedMod != null)
+                try
+                {
+                    HostedModInfo = MetaDataCache.ServerGetMod(HostedMod.InternalName);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Error loading mod metadata for {0} : {1}", HostedMod.InternalName, ex);
+                }
+        }
+
+        public virtual void ValidateBattleStatus(UserBattleStatus ubs)
         {
             if (Mode != AutohostMode.None) ubs.AllyNumber = 0;
 
@@ -528,6 +529,33 @@ namespace ZkLobbyServer
                 if (isPresent && (cnt > MaxPlayers)) ubs.IsSpectator = true;
                 if (!isPresent && (cnt >= MaxPlayers)) ubs.IsSpectator = true;
             }
+        }
+
+
+        protected virtual async Task OnSpringExited(Spring.SpringBattleContext springBattleContext)
+        {
+            StopVote();
+            IsInGame = false;
+            RunningSince = null;
+
+            await SayBattle(BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server));
+
+            await server.Broadcast(server.ConnectedUsers.Keys, new BattleUpdate() { Header = GetHeader() });
+
+            foreach (var s in toNotify)
+                await
+                    server.GhostSay(new Say()
+                    {
+                        User = GlobalConst.NightwatchName,
+                        Text = $"** {FounderName} 's {Title} just ended, join me! **",
+                        Target = s,
+                        IsEmote = true,
+                        Place = SayPlace.User,
+                        Ring = true,
+                        AllowRelay = false
+                    });
+
+            toNotify.Clear();
         }
 
         private async Task ApplyBalanceResults(BalanceTeamsResult balance)
@@ -654,36 +682,7 @@ namespace ZkLobbyServer
 
         private async void spring_SpringExited(object sender, Spring.SpringBattleContext springBattleContext)
         {
-            StopVote();
-            IsInGame = false;
-            RunningSince = null;
-
-            await SayBattle(BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server));
-
-            if (IsMatchMakerBattle)
-            {
-                isZombie = true;
-                await SayBattle($"This room is now disabled, please join a new game");
-                await SwitchPassword(FounderName);
-            }
-            else
-            {
-                await server.Broadcast(server.ConnectedUsers.Keys, new BattleUpdate() { Header = GetHeader() });
-
-                foreach (var s in toNotify)
-                    await
-                        server.GhostSay(new Say()
-                        {
-                            User = GlobalConst.NightwatchName,
-                            Text = $"** {FounderName} 's {Title} just ended, join me! **",
-                            Target = s,
-                            IsEmote = true,
-                            Place = SayPlace.User,
-                            Ring = true,
-                            AllowRelay = false
-                        });
-            }
-            toNotify.Clear();
+            await OnSpringExited(springBattleContext);
         }
 
         private void spring_SpringStarted(object sender, EventArgs e)

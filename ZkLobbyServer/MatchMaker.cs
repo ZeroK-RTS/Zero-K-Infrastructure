@@ -330,8 +330,6 @@ namespace ZkLobbyServer
             var battle = new MatchMakerBattle(server, bat);
             server.Battles[battle.BattleID] = battle;
 
-            //foreach (var plr in bat.Players) battle.Users[plr.Name] = new UserBattleStatus(plr.Name, plr.LobbyUser) { IsSpectator = false, AllyNumber = 0, };
-
             // also join in lobby
             await server.Broadcast(server.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
             foreach (var usr in bat.Players) await server.ForceJoinBattle(usr.Name, battle);

@@ -355,11 +355,6 @@ namespace ZkLobbyServer
         public async Task Process(JoinBattle join)
         {
             if (!IsLoggedIn) return;
-            if (MyBattle != null)
-            {
-                await Respond("You are already in other battle");
-                return;
-            }
 
             ServerBattle battle;
             if (state.Battles.TryGetValue(join.BattleID, out battle))
