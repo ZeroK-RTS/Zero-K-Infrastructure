@@ -20,7 +20,7 @@ using Timer = System.Timers.Timer;
 
 namespace ZkLobbyServer
 {
-    public sealed class ServerBattle : Battle
+    public class ServerBattle : Battle
     {
         public const int PollTimeout = 60;
         public static int BattleCounter;
@@ -74,18 +74,16 @@ namespace ZkLobbyServer
                 "127.0.0.1";
         }
 
-        public ServerBattle(ZkLobbyServer server, bool isMatchMakerBattle, string founder)
+        public ServerBattle(ZkLobbyServer server,string founder)
         {
             BattleID = Interlocked.Increment(ref BattleCounter);
             FounderName = founder;
-            if (string.IsNullOrEmpty(FounderName) && isMatchMakerBattle) FounderName = "MatchMaker #" + BattleID;
             
             this.server = server;
             pollTimer = new Timer(PollTimeout * 1000);
             pollTimer.Enabled = false;
             pollTimer.AutoReset = false;
             pollTimer.Elapsed += pollTimer_Elapsed;
-            IsMatchMakerBattle = isMatchMakerBattle;
             SetupSpring();
             PickHostingPort();
         }
@@ -207,15 +205,48 @@ namespace ZkLobbyServer
         }
 
 
-    
-
-        public async Task ProcessPlayerJoin(UserBattleStatus ubs)
+        public async Task RecalcSpectators()
         {
-            if (IsKicked(ubs.Name))
+            var specCount = Users.Values.Count(x => x.IsSpectator);
+            if (specCount != SpectatorCount)
             {
-                await KickFromBattle(ubs.Name, "Banned for five minutes");
+                SpectatorCount = specCount;
+                await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID } });
+            }
+        }
+
+
+        public virtual async Task ProcessPlayerJoin(ConnectedUser user, string joinPassword)
+        {
+            if (IsPassworded && (Password != joinPassword))
+            {
+                await user.Respond("Invalid password");
                 return;
             }
+
+            if (IsKicked(user.Name))
+            {
+                await KickFromBattle(user.Name, "Banned for five minutes");
+                return;
+            }
+
+            if (user.MyBattle != null && user.MyBattle != this)
+            {
+                await user.Process(new LeaveBattle());
+            }
+            
+            var ubs = new UserBattleStatus(user.Name, user.User, Guid.NewGuid().ToString());
+            Users[user.Name] = ubs;
+            ValidateBattleStatus(ubs);
+            user.MyBattle = this;
+
+            await server.Broadcast(server.ConnectedUsers.Keys, new JoinedBattle() { BattleID = BattleID, User = user.Name });
+            await RecalcSpectators();
+            await server.Broadcast(Users.Keys.Where(x => x != user.Name), ubs.ToUpdateBattleStatus()); // send my UBS to others in battle
+            foreach (var u in Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await user.SendCommand(u); // send other's status to self
+            foreach (var u in Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await user.SendCommand(u);
+            await user.SendCommand(new SetModOptions() { Options = ModOptions });
+            
 
             if (spring.IsRunning)
             {

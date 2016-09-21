@@ -327,14 +327,7 @@ namespace ZkLobbyServer
         private async Task StartBattle(ProposedBattle bat)
         {
 
-            var battle = new ServerBattle(server, true, null);
-            battle.UpdateWith(new BattleHeader()
-            {
-                Engine = server.Engine,
-                Game = server.Game,
-                Title = "MatchMaker " + battle.BattleID,
-                Mode = bat.Mode,
-            });
+            var battle = new MatchMakerBattle(server, bat);
             server.Battles[battle.BattleID] = battle;
 
             //foreach (var plr in bat.Players) battle.Users[plr.Name] = new UserBattleStatus(plr.Name, plr.LobbyUser) { IsSpectator = false, AllyNumber = 0, };

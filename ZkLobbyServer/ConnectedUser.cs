@@ -342,7 +342,7 @@ namespace ZkLobbyServer
                 return;
             }
 
-            var battle = new ServerBattle(state, false, Name);
+            var battle = new ServerBattle(state, Name);
             battle.UpdateWith(openBattle.Header);
             state.Battles[battle.BattleID] = battle;
 
@@ -355,7 +355,6 @@ namespace ZkLobbyServer
         public async Task Process(JoinBattle join)
         {
             if (!IsLoggedIn) return;
-
             if (MyBattle != null)
             {
                 await Respond("You are already in other battle");
@@ -365,24 +364,7 @@ namespace ZkLobbyServer
             ServerBattle battle;
             if (state.Battles.TryGetValue(join.BattleID, out battle))
             {
-                if (battle.IsPassworded && (battle.Password != @join.Password))
-                {
-                    await Respond("Invalid password");
-                    return;
-                }
-                var ubs = new UserBattleStatus(Name, User, Guid.NewGuid().ToString());
-                battle.Users[Name] = ubs;
-                battle.ValidateBattleStatus(ubs);
-                MyBattle = battle;
-
-                await state.Broadcast(state.ConnectedUsers.Keys, new JoinedBattle() { BattleID = battle.BattleID, User = Name });
-                await RecalcSpectators(battle);
-                await state.Broadcast(battle.Users.Keys.Where(x => x != Name), ubs.ToUpdateBattleStatus()); // send my UBS to others in battle
-                foreach (var u in battle.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await SendCommand(u); // send other's status to self
-                foreach (var u in battle.Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await SendCommand(u);
-                await SendCommand(new SetModOptions() { Options = battle.ModOptions });
-
-                await battle.ProcessPlayerJoin(ubs);
+                await battle.ProcessPlayerJoin(this, join.Password);
             }
         }
 
@@ -430,7 +412,7 @@ namespace ZkLobbyServer
                     bat.ValidateBattleStatus(ubs);
 
                     await state.Broadcast(bat.Users.Keys, ubs.ToUpdateBattleStatus());
-                    await RecalcSpectators(bat);
+                    await bat.RecalcSpectators();
                 }
             }
         }
@@ -446,7 +428,7 @@ namespace ZkLobbyServer
             if (state.Battles.TryGetValue(leave.BattleID.Value, out battle))
             {
                 await LeaveBattle(battle);
-                await RecalcSpectators(battle);
+                await battle.RecalcSpectators();
             }
         }
 
@@ -604,19 +586,6 @@ namespace ZkLobbyServer
             }
         }
 
-        public async Task RecalcSpectators(Battle bat)
-        {
-            var specCount = bat.Users.Values.Count(x => x.IsSpectator);
-            if (specCount != bat.SpectatorCount)
-            {
-                bat.SpectatorCount = specCount;
-                await
-                    state.Broadcast(state.ConnectedUsers.Values,
-                        new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = bat.BattleID } });
-            }
-        }
-
-
         public async Task RemoveConnection(ClientConnection con, string reason)
         {
             bool dummy;
@@ -628,7 +597,7 @@ namespace ZkLobbyServer
                 foreach (var b in state.Battles.Values.Where(x => x.Users.ContainsKey(Name)))
                 {
                     await LeaveBattle(b);
-                    await RecalcSpectators(b);
+                    await b.RecalcSpectators();
                 }
 
 
