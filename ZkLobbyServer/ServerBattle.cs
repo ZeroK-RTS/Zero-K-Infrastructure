@@ -249,6 +249,21 @@ namespace ZkLobbyServer
             else await Respond(e, "There is no poll going on, start some first");
         }
 
+        public async Task RequestConnectSpring(ConnectedUser conus, string joinPassword)
+        {
+            UserBattleStatus ubs;
+            if (!Users.TryGetValue(conus.Name, out ubs))
+                if (IsPassworded && (Password != joinPassword))
+                {
+                    await conus.Respond("Invalid password");
+                    return;
+                }
+            var pwd = Guid.NewGuid().ToString();
+            spring.AddUser(conus.Name, pwd);
+
+            await conus.SendCommand(GetConnectSpringStructure(pwd));
+        }
+
 
         public Task Respond(Say e, string text)
         {

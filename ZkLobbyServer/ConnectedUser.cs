@@ -250,20 +250,7 @@ namespace ZkLobbyServer
             ServerBattle battle;
             if (state.Battles.TryGetValue(connectSpring.BattleID, out battle) && battle.IsInGame)
             {
-                UserBattleStatus ubs;
-                if (!battle.Users.TryGetValue(Name, out ubs))
-                {
-                    if (battle.IsPassworded && (battle.Password != connectSpring.Password))
-                    {
-                        await Respond("Invalid password");
-                        return;
-                    }
-
-                }
-                var pwd = Guid.NewGuid().ToString();
-                battle.spring.AddUser(Name, pwd);
-
-                await SendCommand(battle.GetConnectSpringStructure(pwd));
+                await battle.RequestConnectSpring(this, connectSpring.Password);
             }
             else await Respond("No such running battle found");
         }
