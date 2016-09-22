@@ -326,21 +326,9 @@ namespace ZkLobbyServer
 
         private async Task StartBattle(ProposedBattle bat)
         {
-            var battleID = Interlocked.Increment(ref server.BattleCounter);
 
-            var battle = new ServerBattle(server, true);
-            battle.UpdateWith(new BattleHeader()
-            {
-                BattleID = battleID,
-                Founder = "#MatchMaker_" + battleID,
-                Engine = server.Engine,
-                Game = server.Game,
-                Title = "MatchMaker " + battleID,
-                Mode = bat.Mode,
-            });
-            server.Battles[battleID] = battle;
-
-            //foreach (var plr in bat.Players) battle.Users[plr.Name] = new UserBattleStatus(plr.Name, plr.LobbyUser) { IsSpectator = false, AllyNumber = 0, };
+            var battle = new MatchMakerBattle(server, bat);
+            server.Battles[battle.BattleID] = battle;
 
             // also join in lobby
             await server.Broadcast(server.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });

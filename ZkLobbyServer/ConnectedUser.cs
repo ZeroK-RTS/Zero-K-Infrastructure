@@ -23,7 +23,7 @@ namespace ZkLobbyServer
         public HashSet<string> IgnoredBy { get; set; }
         public HashSet<string> Ignores { get; set; }
 
-        public bool IsLoggedIn { get { return (User != null) && (User.AccountID != 0); } }
+        public bool IsLoggedIn => (User != null) && (User.AccountID != 0);
 
         public string Name { get { return User.Name; } }
 
@@ -250,23 +250,7 @@ namespace ZkLobbyServer
             ServerBattle battle;
             if (state.Battles.TryGetValue(connectSpring.BattleID, out battle) && battle.IsInGame)
             {
-                UserBattleStatus ubs;
-                if (!battle.Users.TryGetValue(Name, out ubs))
-                {
-                    if (battle.IsPassworded && (battle.Password != connectSpring.Password))
-                    {
-                        await Respond("Invalid password");
-                        return;
-                    }
-
-                    ubs = new UserBattleStatus(Name, User, Guid.NewGuid().ToString());
-                    battle.Users[Name] = ubs;
-                    battle.ValidateBattleStatus(ubs);
-                    await battle.ProcessPlayerJoin(ubs);
-                }
-
-
-                await SendCommand(battle.GetConnectSpringStructure(ubs));
+                await battle.RequestConnectSpring(this, connectSpring.Password);
             }
             else await Respond("No such running battle found");
         }
@@ -345,19 +329,13 @@ namespace ZkLobbyServer
                 return;
             }
 
-            var battleID = Interlocked.Increment(ref state.BattleCounter);
-
-            openBattle.Header.BattleID = battleID;
-            openBattle.Header.Founder = Name;
-            var battle = new ServerBattle(state, false);
+            var battle = new ServerBattle(state, Name);
             battle.UpdateWith(openBattle.Header);
-            state.Battles[battleID] = battle;
+            state.Battles[battle.BattleID] = battle;
 
-            //battle.Users[Name] = new UserBattleStatus(Name, User, Guid.NewGuid().ToString());
-            //MyBattle = battle;
 
             await state.Broadcast(state.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
-            await Process(new JoinBattle() { BattleID = battleID, Password = openBattle.Header.Password, });
+            await Process(new JoinBattle() { BattleID = battle.BattleID, Password = openBattle.Header.Password, });
         }
 
 
@@ -365,33 +343,10 @@ namespace ZkLobbyServer
         {
             if (!IsLoggedIn) return;
 
-            if (MyBattle != null)
-            {
-                await Respond("You are already in other battle");
-                return;
-            }
-
             ServerBattle battle;
             if (state.Battles.TryGetValue(join.BattleID, out battle))
             {
-                if (battle.IsPassworded && (battle.Password != @join.Password))
-                {
-                    await Respond("Invalid password");
-                    return;
-                }
-                var ubs = new UserBattleStatus(Name, User, Guid.NewGuid().ToString());
-                battle.Users[Name] = ubs;
-                battle.ValidateBattleStatus(ubs);
-                MyBattle = battle;
-
-                await state.Broadcast(state.ConnectedUsers.Keys, new JoinedBattle() { BattleID = battle.BattleID, User = Name });
-                await RecalcSpectators(battle);
-                await state.Broadcast(battle.Users.Keys.Where(x => x != Name), ubs.ToUpdateBattleStatus()); // send my UBS to others in battle
-                foreach (var u in battle.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await SendCommand(u); // send other's status to self
-                foreach (var u in battle.Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await SendCommand(u);
-                await SendCommand(new SetModOptions() { Options = battle.ModOptions });
-
-                await battle.ProcessPlayerJoin(ubs);
+                await battle.ProcessPlayerJoin(this, join.Password);
             }
         }
 
@@ -439,7 +394,7 @@ namespace ZkLobbyServer
                     bat.ValidateBattleStatus(ubs);
 
                     await state.Broadcast(bat.Users.Keys, ubs.ToUpdateBattleStatus());
-                    await RecalcSpectators(bat);
+                    await bat.RecalcSpectators();
                 }
             }
         }
@@ -455,13 +410,13 @@ namespace ZkLobbyServer
             if (state.Battles.TryGetValue(leave.BattleID.Value, out battle))
             {
                 await LeaveBattle(battle);
-                await RecalcSpectators(battle);
+                await battle.RecalcSpectators();
             }
         }
 
         public async Task Process(ChangeUserStatus userStatus)
         {
-            if (!IsLoggedIn) return;
+            if (!IsLoggedIn || userStatus == null) return;
             var changed = false;
             if ((userStatus.IsInGame != null) && (User.IsInGame != userStatus.IsInGame))
             {
@@ -613,19 +568,6 @@ namespace ZkLobbyServer
             }
         }
 
-        public async Task RecalcSpectators(Battle bat)
-        {
-            var specCount = bat.Users.Values.Count(x => x.IsSpectator);
-            if (specCount != bat.SpectatorCount)
-            {
-                bat.SpectatorCount = specCount;
-                await
-                    state.Broadcast(state.ConnectedUsers.Values,
-                        new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = bat.BattleID } });
-            }
-        }
-
-
         public async Task RemoveConnection(ClientConnection con, string reason)
         {
             bool dummy;
@@ -637,7 +579,7 @@ namespace ZkLobbyServer
                 foreach (var b in state.Battles.Values.Where(x => x.Users.ContainsKey(Name)))
                 {
                     await LeaveBattle(b);
-                    await RecalcSpectators(b);
+                    await b.RecalcSpectators();
                 }
 
 

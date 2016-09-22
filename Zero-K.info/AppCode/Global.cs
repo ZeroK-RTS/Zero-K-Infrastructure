@@ -158,6 +158,7 @@ namespace ZeroKWeb
             GlobalConst.SiteDiskPath = MapPath("~");
 
             LadderCalculator = new LadderCalculator();
+            LadderCalculator.RecomputeNow();
 
             ZkServerRunner = new ServerRunner(mvcApplication.Server.MapPath("~"), new PlanetwarsEventCreator(), LadderCalculator);
             Server = ZkServerRunner.ZkLobbyServer;
