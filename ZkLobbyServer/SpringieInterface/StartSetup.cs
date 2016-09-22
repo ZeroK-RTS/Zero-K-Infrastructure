@@ -89,7 +89,9 @@ namespace ZeroKWeb.SpringieInterface
                         userParams["clanfull"] = user.Clan != null ? user.Clan.ClanName : "";
                         userParams["level"] = user.Level.ToString();
                         var elo = user.EffectiveMmElo;
-                        userParams["elo"] = Math.Round(elo).ToString(); // elo for ingame is just ordering for auto /take
+                        userParams["elo"] = Math.Round(elo).ToString(); 
+                        userParams["skill_order"] = ((context.IsMatchMakerGame ? user.CompetitiveRank : user.CasualRank) ?? int.MaxValue).ToString(); // send order of skills (For lists). Note this should be improved by sendng normalized list instead of ranks
+
                         userParams["avatar"] = user.Avatar;
                         userParams["admin"] = user.IsZeroKAdmin ? "1" : "0";
 

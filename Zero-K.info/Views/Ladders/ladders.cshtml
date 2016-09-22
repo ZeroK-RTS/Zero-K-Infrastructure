@@ -10,7 +10,7 @@
 
 
 <table style="width: 100%">
-    <tr><td><h2>Top 50 Competitive</h2></td><td><h2>Top 50 Casual</h2></td></tr>
+    <tr><td><h2>Top 50 Competitive (MatchMaker)</h2></td><td><h2>Top 50 Casual (Custom)</h2></td></tr>
     <tr>
         <td>
             <span>
@@ -34,7 +34,7 @@
                     @:</span><br /><span style="font-size: small">
                     }
                 <text>
-                    @(acct.CasualRank) ) @Html.PrintAccount(acct) <br />
+                    @(acct.CasualRank) ) @Html.PrintAccount(acct) - @(Math.Round(acct.EffectiveElo))<br />
                 </text>
             }
         </td>
