@@ -2,8 +2,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using ZkData;
@@ -33,6 +36,13 @@ namespace LobbyClient
             /// Game has ended ()
             SERVER_GAMEOVER = 3,
 
+
+            /// An information message from server (string message)
+            SERVER_MESSAGE = 4,
+
+            /// Server gave out a warning (string warningmessage)
+            SERVER_WARNING = 5,
+
             /// Player has joined the game (uchar playernumber, string Name)
             PLAYER_JOINED = 10,
 
@@ -49,7 +59,12 @@ namespace LobbyClient
             PLAYER_DEFEATED = 14,
 
 
-            GAME_LUAMSG = 20 // todo use this or /wbynum 255  to send data to autohost
+            GAME_LUAMSG = 20, // todo use this or /wbynum 255  to send data to autohost
+
+            //(uchar teamnumber), CTeam::Statistics(in binary form)
+            GAME_TEAMSTATS = 60,
+
+
         };
 
 
@@ -134,6 +149,7 @@ namespace LobbyClient
                             sea.PlayerNumber = data[1];
                             sea.Param = data[2];
                             break;
+
                         case SpringEventType.PLAYER_READY:
                             sea.PlayerNumber = data[1];
                             if (data.Length <= 2) sea.EventType = SpringEventType.PLAYER_DEFEATED; // hack for spring 
@@ -148,6 +164,17 @@ namespace LobbyClient
 
                         case SpringEventType.PLAYER_DEFEATED:
                             sea.PlayerNumber = data[1];
+                            break;
+
+                        case SpringEventType.SERVER_STARTPLAYING:
+                            int msgSize = data[1] + (data[2]<<8) + (data[3]<<16) + (data[4]<<24);
+                            if (msgSize != data.Length) Trace.TraceWarning("Warning spring message size mismatch, expected {0} got {1} on STARTPLAYING", msgSize, data.Length);
+                            sea.GameID = data.Skip(5).Take(16).ToArray().ToHex();
+                            sea.ReplayFileName = Encoding.UTF8.GetString(data, 21, data.Length - 21);
+                            break;
+
+                        case SpringEventType.SERVER_MESSAGE:
+
                             break;
 
                         case SpringEventType.GAME_LUAMSG:
@@ -173,6 +200,8 @@ namespace LobbyClient
             public string PlayerName;
             public byte PlayerNumber;
             public string Text;
+            public string GameID;
+            public string ReplayFileName;
         }
     }
 }

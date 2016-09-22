@@ -596,6 +596,8 @@ namespace LobbyClient
                         break;
 
                     case Talker.SpringEventType.SERVER_STARTPLAYING:
+                        Context.ReplayName = e.ReplayFileName;
+                        Context.EngineBattleID = e.GameID;
                         Context.IngameStartTime = DateTime.UtcNow;
                         foreach (var p in Context.ActualPlayers.Where(x => !x.IsSpectator)) p.IsIngameReady = true;
 
