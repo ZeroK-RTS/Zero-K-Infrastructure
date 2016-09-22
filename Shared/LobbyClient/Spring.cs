@@ -200,6 +200,7 @@ namespace LobbyClient
         {
             try
             {
+                if (text == "/cheat" || text?.StartsWith("/cheat ") == true) Context.IsCheating = true;
                 talker.SendText(text);
             }
             catch (NullReferenceException)
@@ -406,20 +407,7 @@ namespace LobbyClient
             Thread.Sleep(1000);
             var logText = Context.LogLines.ToString();
 
-            if (!string.IsNullOrEmpty(Context.InfoLogFileName))
-            {
-                try
-                {
-                    logText = File.ReadAllText(Context.InfoLogFileName);
-                    File.Delete(Context.InfoLogFileName);
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceWarning("Error reading infolog: {0}",ex.Message);
-                }
-            }
-
-            if (Context.IsHosting) ParseInfolog(logText);
+            if (!Context.UseDedicatedServer && Context.IsHosting) ParseInfolog(logText);
 
             try
             {
@@ -486,13 +474,9 @@ namespace LobbyClient
             {
                 // use shell execute, this prevents handle inheritance and allows 8200 port to be reused if server crashes
                 // alternative: http://stackoverflow.com/questions/3342941/kill-child-process-when-parent-process-is-killed
-                process.StartInfo.FileName = "cmd.exe";
                 process.StartInfo.UseShellExecute = true;
                 process.StartInfo.RedirectStandardOutput = false;
                 process.StartInfo.RedirectStandardError = false;
-                Context.InfoLogFileName = Path.Combine(paths.WritableDirectory, $"{Guid.NewGuid()}.txt"); 
-                process.StartInfo.Arguments = $"/c {paths.GetDedicatedServerPath(Context.EngineVersion)} {process.StartInfo.Arguments} > \"{Context.InfoLogFileName}\"";
-                
             }
             else
             {
@@ -506,6 +490,7 @@ namespace LobbyClient
             
             process.Start();
 
+            
             if (!Context.UseDedicatedServer)
             {
                 process.BeginOutputReadLine();
@@ -677,7 +662,6 @@ namespace LobbyClient
 
             public bool UseDedicatedServer;
             public bool WasKilled;
-            public string InfoLogFileName;
 
 
             public BattlePlayerResult GetOrAddPlayer(string name)
