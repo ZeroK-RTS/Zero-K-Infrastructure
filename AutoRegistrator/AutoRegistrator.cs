@@ -72,7 +72,7 @@ namespace ZeroKWeb
             Downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             Scanner.InitialScan();
 
-            Downloader.PackageDownloader.SetMasterRefreshTimer(20);
+            Downloader.PackageDownloader.SetMasterRefreshTimer(120);
             Downloader.PackagesChanged += Downloader_PackagesChanged;
             Downloader.PackageDownloader.LoadMasterAndVersions()?.Wait();
             Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
