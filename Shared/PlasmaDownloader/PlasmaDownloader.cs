@@ -104,18 +104,6 @@ namespace PlasmaDownloader
                     return down;
                 }
 
-                if (type == DownloadType.MOD || type == DownloadType.UNKNOWN)
-                {
-                    var down = packageDownloader.GetPackageDownload(name);
-                    if (down != null)
-                    {
-                        down.DownloadType = type;
-                        down.Alias = name;
-                        downloads.Add(down);
-                        DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
-                        return down;
-                    }
-                }
 
                 if (type == DownloadType.MAP || type == DownloadType.MOD || type == DownloadType.UNKNOWN || type == DownloadType.MISSION)
                 {
@@ -129,6 +117,20 @@ namespace PlasmaDownloader
                         return down;
                     }
                 }
+
+                if (type == DownloadType.MOD || type == DownloadType.UNKNOWN)
+                {
+                    var down = packageDownloader.GetPackageDownload(name);
+                    if (down != null)
+                    {
+                        down.DownloadType = type;
+                        down.Alias = name;
+                        downloads.Add(down);
+                        DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
+                        return down;
+                    }
+                }
+
 
                 if (type == DownloadType.ENGINE)
                 {
