@@ -284,6 +284,8 @@ namespace LobbyClient
 
             if (string.IsNullOrEmpty(optirun))
             {
+                process.StartInfo.FileName = paths.GetSpringExecutablePath(Context.EngineVersion);
+                process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetSpringExecutablePath(Context.EngineVersion));
             }
             else
             {
