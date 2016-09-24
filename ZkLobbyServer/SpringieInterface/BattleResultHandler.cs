@@ -15,7 +15,7 @@ namespace ZeroKWeb.SpringieInterface
     /// </summary>
     public class BattleResultHandler
     {
-        public static string SubmitSpringBattleResult(Spring.SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server)
+        public static string SubmitSpringBattleResult(SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        private static void ProcessElos(Spring.SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, ZkDataContext db, SpringBattle sb)
+        private static void ProcessElos(SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, ZkDataContext db, SpringBattle sb)
         {
             bool noElo = result.OutputExtras.Any(x => x?.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture) == true);
 
@@ -86,7 +86,7 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        private static void ProcessPlanetWars(Spring.SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, SpringBattle sb, ZkDataContext db, StringBuilder text)
+        private static void ProcessPlanetWars(SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, SpringBattle sb, ZkDataContext db, StringBuilder text)
         {
             if (result.LobbyStartContext.Mode != AutohostMode.Planetwars || sb.PlayerCount < 2 || sb.Duration >= GlobalConst.MinDurationForPlanetwars) return;
 
@@ -111,7 +111,7 @@ namespace ZeroKWeb.SpringieInterface
             // TODO HACK Global.PlanetWarsMatchMaker.RemoveFromRunningBattles(context.AutohostName);
         }
 
-        private static SpringBattle SaveSpringBattle(Spring.SpringBattleContext result, ZkDataContext db)
+        private static SpringBattle SaveSpringBattle(SpringBattleContext result, ZkDataContext db)
         {
             var sb = new SpringBattle
             {

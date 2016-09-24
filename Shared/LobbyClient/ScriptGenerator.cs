@@ -19,7 +19,7 @@ namespace LobbyClient
         /// GEnerates script for connecting to game
         /// </summary>
         /// <returns></returns>
-        public static string GenerateConnectScript(Spring.SpringBattleContext context)
+        public static string GenerateConnectScript(SpringBattleContext context)
         {
             var sb = new StringBuilder();
             sb.AppendLine("[GAME]");
@@ -37,7 +37,7 @@ namespace LobbyClient
         /// <summary>
         /// Generates script for hosting a game
         /// </summary>
-        public static string GenerateHostScript(Spring.SpringBattleContext context, int loopbackListenPort)
+        public static string GenerateHostScript(SpringBattleContext context, int loopbackListenPort)
         {
             var previousCulture = Thread.CurrentThread.CurrentCulture;
             try {
@@ -57,7 +57,7 @@ namespace LobbyClient
                 script.AppendFormat("  ModHash=1;\n");
                 script.AppendFormat("  MapHash=1;\n");
 
-                script.AppendFormat("  AutohostPort={0};\n", loopbackListenPort);
+                if (loopbackListenPort >0) script.AppendFormat("  AutohostPort={0};\n", loopbackListenPort);
                 script.AppendLine();
                 script.AppendFormat("  HostIP={0};\n", context.IpAddress);
                 script.AppendFormat("  HostPort={0};\n", context.Port);
@@ -76,7 +76,7 @@ namespace LobbyClient
             }
         }
 
-        static void GeneratePlayerSection(StringBuilder script, Spring.SpringBattleContext setup)
+        static void GeneratePlayerSection(StringBuilder script, SpringBattleContext setup)
         {
             // ordinary battle stuff
 

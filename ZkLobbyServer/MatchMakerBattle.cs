@@ -39,9 +39,9 @@ namespace ZkLobbyServer
             }
         }
 
-        protected override async Task OnSpringExited(Spring.SpringBattleContext springBattleContext)
+        protected override async Task OnDedicatedExited(SpringBattleContext springBattleContext)
         {
-            await base.OnSpringExited(springBattleContext);
+            await base.OnDedicatedExited(springBattleContext);
             isZombie = true;
             await SayBattle($"This room is now disabled, please join a new game");
             await SwitchPassword(FounderName);
