@@ -124,6 +124,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerBattle.cs" />
     <Compile Include="ServerRunner.cs" />
+    <Compile Include="ServerTextCommands.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />
     <Compile Include="SpringieInterface\BattleResultHandler.cs" />
     <Compile Include="SpringieInterface\PlanetWarsMatchMaker.cs" />
