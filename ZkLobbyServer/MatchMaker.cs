@@ -95,7 +95,11 @@ namespace ZkLobbyServer
 
                     var invitedPeople = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
 
-                    if ((invitedPeople.Count <= 1) || invitedPeople.All(x => x.LastReadyResponse)) OnTick();
+                    if (invitedPeople.Count <= 1)
+                    {
+                        foreach (var p in invitedPeople) p.LastReadyResponse =true; // if we are doing tick because too few people, make sure we count remaining people as readied to not ban them 
+                        OnTick();
+                    } else if (invitedPeople.All(x=>x.LastReadyResponse)) OnTick();
                     else
                     {
                         var readyCounts = CountQueuedPeople(invitedPeople.Where(x => x.LastReadyResponse));
