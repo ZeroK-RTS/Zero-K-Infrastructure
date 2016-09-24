@@ -383,6 +383,17 @@ namespace ZkLobbyServer
                     BannedSeconds = BannedSeconds(name)
                 };
 
+
+                // check for instant battle start
+                if (invitationBattles?.Any() != true && players.Count > 0) // nobody invited atm and some in queue
+                {
+                    var testPlayers = players.Values.Where(x => x != null && x.Name != name).ToList(); // get all currently queued players except for self
+                    var testSelf = new PlayerEntry(conus.User, possibleQueues.ToList()); // readd self but with all queues
+                    testPlayers.Add(testSelf);
+                    var testBattles = ProposeBattles(testPlayers); 
+                    ret.InstantStartQueues = testBattles.Where(x => x.Players.Contains(testSelf)).Select(x => x.QueueType.Name).Distinct().ToList();
+                }
+
                 await conus.SendCommand(ret);
             }
         }
