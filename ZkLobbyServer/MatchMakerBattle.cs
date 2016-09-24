@@ -8,7 +8,7 @@ namespace ZkLobbyServer
 {
     public class MatchMakerBattle : ServerBattle
     {
-        private MatchMaker.ProposedBattle prototype;
+        public MatchMaker.ProposedBattle Prototype { get; private set; }
 
         public MatchMakerBattle(ZkLobbyServer server, MatchMaker.ProposedBattle bat) : base(server, null)
         {
@@ -17,9 +17,9 @@ namespace ZkLobbyServer
             ModName = server.Game;
             FounderName = "MatchMaker #" + BattleID;
             Title = "MatchMaker " + BattleID;
-            Mode = bat.Mode;
+            Mode = bat.QueueType.Mode;
             MaxPlayers = bat.Size;
-            prototype = bat;
+            Prototype = bat;
 
             foreach (var pe in bat.Players) Users[pe.Name] = new UserBattleStatus(pe.Name, pe.LobbyUser, Guid.NewGuid().ToString());
 
@@ -28,7 +28,7 @@ namespace ZkLobbyServer
 
         public override void ValidateBattleStatus(UserBattleStatus ubs)
         {
-            if (prototype.Players.Any(y => y.Name == ubs.Name))
+            if (Prototype.Players.Any(y => y.Name == ubs.Name))
             {
                 ubs.IsSpectator = false;
                 ubs.AllyNumber = 0;

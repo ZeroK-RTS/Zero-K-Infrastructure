@@ -213,13 +213,12 @@ namespace ZkLobbyServer
         private Dictionary<string, int> CountIngamePeople()
         {
             var ncounts = possibleQueues.ToDictionary(x => x.Name, x => 0);
-            foreach (var bat in server.Battles.Values.Where(x => (x != null) && x.IsMatchMakerBattle && x.IsInGame))
+            foreach (var bat in server.Battles.Values.OfType<MatchMakerBattle>().Where(x => (x != null) && x.IsMatchMakerBattle && x.IsInGame))
             {
                 var plrs = bat.spring?.Context?.LobbyStartContext?.Players.Count(x => !x.IsSpectator) ?? 0;
                 if (plrs > 0)
                 {
-                    var type = possibleQueues.FirstOrDefault(x => (x.Mode == bat.Mode) && (x.MinSize <= plrs) && (x.MaxSize >= plrs));
-                    // reverse determine queue type, not stored in batlte, silly?
+                    var type = bat.Prototype?.QueueType;
                     if (type != null) ncounts[type.Name] += plrs;
                 }
             }
@@ -409,7 +408,7 @@ namespace ZkLobbyServer
             public List<ProposedBattle> GenerateWantedBattles()
             {
                 var ret = new List<ProposedBattle>();
-                foreach (var qt in QueueTypes) for (var i = qt.MaxSize; i >= qt.MinSize; i--) if (i % 2 == 0) ret.Add(new ProposedBattle(i, this, qt.Mode));
+                foreach (var qt in QueueTypes) for (var i = qt.MaxSize; i >= qt.MinSize; i--) if (i % 2 == 0) ret.Add(new ProposedBattle(i, this, qt));
                 return ret;
             }
 
@@ -427,13 +426,13 @@ namespace ZkLobbyServer
             public int Size;
             public int MaxElo { get; private set; } = int.MinValue;
             public int MinElo { get; private set; } = int.MaxValue;
-            public AutohostMode Mode { get; private set; }
+            public MatchMakerSetup.Queue QueueType { get; private set; }
 
-            public ProposedBattle(int size, PlayerEntry initialPlayer, AutohostMode mode)
+            public ProposedBattle(int size, PlayerEntry initialPlayer, MatchMakerSetup.Queue queue)
             {
                 Size = size;
-                Mode = mode;
                 owner = initialPlayer;
+                QueueType = queue;
                 AddPlayer(initialPlayer);
             }
 
@@ -447,7 +446,7 @@ namespace ZkLobbyServer
 
             public bool CanBeAdded(PlayerEntry other)
             {
-                if (!other.GenerateWantedBattles().Any(y => (y.Size == Size) && (y.Mode == Mode))) return false;
+                if (!other.GenerateWantedBattles().Any(y => y.Size == Size && y.QueueType == QueueType)) return false;
                 var widthMultiplier = Math.Max(1.0, 1.0 + (Size - 4) * 0.1);
                 var width = owner.EloWidth * widthMultiplier;
 
