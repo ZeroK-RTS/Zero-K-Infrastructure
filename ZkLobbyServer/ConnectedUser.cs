@@ -583,7 +583,7 @@ namespace ZkLobbyServer
                 }
 
 
-                await server.MatchMaker.RemoveUser(Name);
+                await server.MatchMaker.RemoveUser(Name, true);
 
                 await server.Broadcast(server.ConnectedUsers.Values, new UserDisconnected() { Name = Name, Reason = reason });
 

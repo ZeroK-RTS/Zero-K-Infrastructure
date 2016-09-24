@@ -376,7 +376,8 @@ namespace ZkLobbyServer
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
 
             // remove all from MM
-            await Task.WhenAll(startSetup.Players.Where(x => !x.IsSpectator).Select(async x => await server.MatchMaker.RemoveUser(x.Name)));
+            await Task.WhenAll(startSetup.Players.Where(x => !x.IsSpectator).Select(x=>server.MatchMaker.RemoveUser(x.Name, false)));
+            await server.MatchMaker.UpdateAllPlayerStatuses();
         }
 
 
