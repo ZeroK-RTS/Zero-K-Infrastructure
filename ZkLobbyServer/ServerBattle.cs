@@ -49,7 +49,7 @@ namespace ZkLobbyServer
         private Timer pollTimer;
 
         public ZkLobbyServer server;
-        public Spring spring;
+        public DedicatedServer spring;
 
         public CommandPoll ActivePoll { get; private set; }
 
@@ -364,7 +364,7 @@ namespace ZkLobbyServer
                 await SayBattle("Game already running");
                 return;
             }
-            spring.HostGame(startSetup, hostingIp, hostingPort, true);
+            spring.HostGame(startSetup, hostingIp, hostingPort);
             IsInGame = true;
             RunningSince = DateTime.UtcNow;
             foreach (var us in Users.Values)
@@ -376,7 +376,8 @@ namespace ZkLobbyServer
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
 
             // remove all from MM
-            await Task.WhenAll(startSetup.Players.Where(x => !x.IsSpectator).Select(async x => await server.MatchMaker.RemoveUser(x.Name)));
+            await Task.WhenAll(startSetup.Players.Where(x => !x.IsSpectator).Select(x=>server.MatchMaker.RemoveUser(x.Name, false)));
+            await server.MatchMaker.UpdateAllPlayerStatuses();
         }
 
 
@@ -547,7 +548,7 @@ namespace ZkLobbyServer
         }
 
 
-        protected virtual async Task OnSpringExited(Spring.SpringBattleContext springBattleContext)
+        protected virtual async Task OnDedicatedExited(SpringBattleContext springBattleContext)
         {
             StopVote();
             IsInGame = false;
@@ -671,11 +672,11 @@ namespace ZkLobbyServer
         {
             spring?.UnsubscribeEvents(this);
 
-            spring = new Spring(springPaths);
+            spring = new DedicatedServer(springPaths);
 
-            spring.SpringExited += spring_SpringExited;
+            spring.DedicatedServerExited += DedicatedServerExited;
 
-            spring.SpringStarted += spring_SpringStarted;
+            spring.DedicatedServerStarted += DedicatedServerStarted;
             spring.PlayerSaid += spring_PlayerSaid;
             spring.BattleStarted += spring_BattleStarted;
         }
@@ -695,12 +696,12 @@ namespace ZkLobbyServer
                 if (!e.Line.StartsWith("Allies:") && !e.Line.StartsWith("Spectators:")) server.GhostSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle }, BattleID);
         }
 
-        private async void spring_SpringExited(object sender, Spring.SpringBattleContext springBattleContext)
+        private async void DedicatedServerExited(object sender, SpringBattleContext springBattleContext)
         {
-            await OnSpringExited(springBattleContext);
+            await OnDedicatedExited(springBattleContext);
         }
 
-        private void spring_SpringStarted(object sender, EventArgs e)
+        private void DedicatedServerStarted(object sender, EventArgs e)
         {
             StopVote();
 

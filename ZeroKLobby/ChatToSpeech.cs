@@ -87,7 +87,7 @@ namespace ZeroKLobby
             }
         }
 
-        void spring_SpringExited(object sender, Spring.SpringBattleContext springBattleContext)
+        void spring_SpringExited(object sender, SpringBattleContext springBattleContext)
         {
             if (speechSynthesizer!=null) speechSynthesizer.SpeakAsyncCancelAll();
         }

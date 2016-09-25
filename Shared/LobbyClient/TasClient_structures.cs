@@ -24,7 +24,7 @@ namespace LobbyClient
     {
         public ConcurrentDictionary<string, User> Users = new ConcurrentDictionary<string, User>();
         public string Name { get; set; }
-        public Topic Topic { get; set; }
+        public Topic Topic { get; set; } = new Topic();
         public string Password;
     }
 

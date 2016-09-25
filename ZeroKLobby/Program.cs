@@ -265,7 +265,7 @@ namespace ZeroKLobby
 
                 Downloader = new PlasmaDownloader.PlasmaDownloader(SpringScanner, SpringPaths); //rapid
                 Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
-                Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride ?? TasClient.ServerSpringVersion);
+                Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride);
 
                 var isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
                 TasClient = new TasClient(string.Format("ZK {0}{1}", SelfUpdater.CurrentVersion, isLinux ? " linux" : ""));

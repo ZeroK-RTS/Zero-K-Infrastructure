@@ -66,6 +66,7 @@
     <Compile Include="BotBattleStatus.cs" />
     <Compile Include="CountryNames.cs" />
     <Compile Include="Crc.cs" />
+    <Compile Include="DedicatedServer.cs" />
     <Compile Include="Legacy\Channel.cs" />
     <Compile Include="Legacy\SayingEventArgs.cs" />
     <Compile Include="Legacy\TasClient.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="Legacy\ServerConnection.cs" />
     <Compile Include="ScriptGenerator.cs" />
     <Compile Include="Spring.cs" />
+    <Compile Include="Spring.SpringBattleContext.cs" />
     <Compile Include="SpringLogEventArgs.cs" />
     <Compile Include="SpringSettings.cs" />
     <Compile Include="Talker.cs" />

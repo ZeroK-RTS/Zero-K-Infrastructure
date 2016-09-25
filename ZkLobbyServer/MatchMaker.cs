@@ -3,13 +3,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using LobbyClient;
 using PlasmaShared;
 using ZkData;
-using Timer = System.Timers.Timer;
 
 namespace ZkLobbyServer
 {
@@ -20,6 +18,7 @@ namespace ZkLobbyServer
         private const int BanSeconds = 30;
 
         private ConcurrentDictionary<string, DateTime> bannedPlayers = new ConcurrentDictionary<string, DateTime>();
+        private Dictionary<string, int> ingameCounts = new Dictionary<string, int>();
 
         private List<ProposedBattle> invitationBattles = new List<ProposedBattle>();
         private ConcurrentDictionary<string, PlayerEntry> players = new ConcurrentDictionary<string, PlayerEntry>();
@@ -31,7 +30,6 @@ namespace ZkLobbyServer
 
         private object tickLock = new object();
         private Timer timer;
-        private Dictionary<string, int> ingameCounts = new Dictionary<string, int>();
 
         public MatchMaker(ZkLobbyServer server)
         {
@@ -90,12 +88,19 @@ namespace ZkLobbyServer
                     else
                     {
                         entry.LastReadyResponse = false;
-                        await RemoveUser(user.Name);
+                        await RemoveUser(user.Name, true);
                     }
 
                     var invitedPeople = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
 
-                    if ((invitedPeople.Count <= 1) || invitedPeople.All(x => x.LastReadyResponse)) OnTick();
+                    if (invitedPeople.Count <= 1)
+                    {
+                        foreach (var p in invitedPeople)
+                            p.LastReadyResponse = true;
+                        // if we are doing tick because too few people, make sure we count remaining people as readied to not ban them 
+                        OnTick();
+                    }
+                    else if (invitedPeople.All(x => x.LastReadyResponse)) OnTick();
                     else
                     {
                         var readyCounts = CountQueuedPeople(invitedPeople.Where(x => x.LastReadyResponse));
@@ -127,9 +132,10 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task OnLoginAccepted(ICommandSender client)
+        public async Task OnLoginAccepted(ConnectedUser conus)
         {
-            await client.SendCommand(new MatchMakerSetup() { PossibleQueues = possibleQueues });
+            await conus.SendCommand(new MatchMakerSetup() { PossibleQueues = possibleQueues });
+            await UpdatePlayerStatus(conus.Name);
         }
 
         public async Task QueueRequest(ConnectedUser user, MatchMakerQueueRequest cmd)
@@ -137,7 +143,7 @@ namespace ZkLobbyServer
             var banTime = BannedSeconds(user.Name);
             if (banTime != null)
             {
-                await user.SendCommand(new MatchMakerStatus() { BannedSeconds = banTime });
+                await UpdatePlayerStatus(user.Name);
                 await user.Respond($"Please rest and wait for {banTime}s because you refused previous match");
                 return;
             }
@@ -146,7 +152,7 @@ namespace ZkLobbyServer
             PlayerEntry entry;
             if (players.TryGetValue(user.Name, out entry) && entry.InvitedToPlay)
             {
-                await user.SendCommand(ToMatchMakerStatus(entry));
+                await UpdatePlayerStatus(user.Name);
                 return;
             }
 
@@ -155,11 +161,11 @@ namespace ZkLobbyServer
 
             if (wantedQueues.Count == 0) // delete
             {
-                await RemoveUser(user.Name);
+                await RemoveUser(user.Name, true);
                 return;
             }
 
-            var userEntry = players.AddOrUpdate(user.Name,
+            players.AddOrUpdate(user.Name,
                 (str) => new PlayerEntry(user.User, wantedQueues),
                 (str, usr) =>
                 {
@@ -167,13 +173,13 @@ namespace ZkLobbyServer
                     return usr;
                 });
 
-            queuesCounts = CountQueuedPeople(players.Values);
-            await user.SendCommand(ToMatchMakerStatus(userEntry));
 
-            if (invitationBattles?.Any() != true) OnTick(); // if nobody is invited, we can do tick now to speed up things
+            // if nobody is invited, we can do tick now to speed up things
+            if (invitationBattles?.Any() != true) OnTick();
+            else await UpdateAllPlayerStatuses(); // else we just send statuses
         }
 
-        public async Task RemoveUser(string name)
+        public async Task RemoveUser(string name, bool broadcastChanges)
         {
             PlayerEntry entry;
             if (players.TryRemove(name, out entry))
@@ -181,13 +187,18 @@ namespace ZkLobbyServer
                 if (entry.InvitedToPlay) bannedPlayers[entry.Name] = DateTime.UtcNow; // was invited but he is gone now (whatever reason), ban!
 
                 ConnectedUser conUser;
-                if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null))
-                {
-                    if (entry?.InvitedToPlay == true) await conUser.SendCommand(new AreYouReadyResult() { AreYouBanned = true, IsBattleStarting = false, });
+                if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null)) if (entry?.InvitedToPlay == true) await conUser.SendCommand(new AreYouReadyResult() { AreYouBanned = true, IsBattleStarting = false, });
 
-                    await conUser.SendCommand(new MatchMakerStatus() { BannedSeconds = BannedSeconds(name) }); // left queue
-                }
+                if (broadcastChanges) await UpdateAllPlayerStatuses();
             }
+        }
+
+        public async Task UpdateAllPlayerStatuses()
+        {
+            ingameCounts = CountIngamePeople();
+            queuesCounts = CountQueuedPeople(players.Values);
+
+            await Task.WhenAll(server.ConnectedUsers.Keys.Where(x => x != null).Select(UpdatePlayerStatus));
         }
 
 
@@ -199,25 +210,25 @@ namespace ZkLobbyServer
             return null;
         }
 
-        private Dictionary<string, int> CountQueuedPeople(IEnumerable<PlayerEntry> sumPlayers)
-        {
-            var ncounts = possibleQueues.ToDictionary(x => x.Name, x => 0);
-            foreach (var plr in sumPlayers.Where(x => x != null)) foreach (var jq in plr.QueueTypes) ncounts[jq.Name]++;
-            return ncounts;
-        }
-
         private Dictionary<string, int> CountIngamePeople()
         {
             var ncounts = possibleQueues.ToDictionary(x => x.Name, x => 0);
-            foreach (var bat in server.Battles.Values.Where(x => x != null && x.IsMatchMakerBattle && x.IsInGame))
+            foreach (var bat in server.Battles.Values.OfType<MatchMakerBattle>().Where(x => (x != null) && x.IsMatchMakerBattle && x.IsInGame))
             {
                 var plrs = bat.spring?.Context?.LobbyStartContext?.Players.Count(x => !x.IsSpectator) ?? 0;
                 if (plrs > 0)
                 {
-                    var type = possibleQueues.FirstOrDefault(x => x.Mode == bat.Mode && x.MinSize <= plrs && x.MaxSize >= plrs); // reverse determine queue type, not stored in batlte, silly?
+                    var type = bat.Prototype?.QueueType;
                     if (type != null) ncounts[type.Name] += plrs;
                 }
             }
+            return ncounts;
+        }
+
+        private Dictionary<string, int> CountQueuedPeople(IEnumerable<PlayerEntry> sumPlayers)
+        {
+            var ncounts = possibleQueues.ToDictionary(x => x.Name, x => 0);
+            foreach (var plr in sumPlayers.Where(x => x != null)) foreach (var jq in plr.QueueTypes) ncounts[jq.Name]++;
             return ncounts;
         }
 
@@ -230,8 +241,7 @@ namespace ZkLobbyServer
                     timer.Stop();
                     var realBattles = ResolveToRealBattles();
 
-                    queuesCounts = CountQueuedPeople(players.Values);
-                    ingameCounts = CountIngamePeople();
+                    UpdateAllPlayerStatuses();
 
                     foreach (var bat in realBattles) StartBattle(bat);
 
@@ -286,14 +296,6 @@ namespace ZkLobbyServer
                     usr.LastReadyResponse = false;
                 }
 
-
-            foreach (var conus in server.ConnectedUsers.Values.Where(x => x != null))
-            {
-                PlayerEntry entry;
-                players.TryGetValue(conus.Name, out entry);
-                conus.SendCommand(ToMatchMakerStatus(entry));
-            }
-
             server.Broadcast(toInvite.Select(x => x.Name), new AreYouReady() { SecondsRemaining = TimerSeconds });
         }
 
@@ -302,7 +304,7 @@ namespace ZkLobbyServer
             var lastMatchedUsers = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
 
             // force leave those not ready
-            foreach (var pl in lastMatchedUsers.Where(x => !x.LastReadyResponse)) RemoveUser(pl.Name);
+            foreach (var pl in lastMatchedUsers.Where(x => !x.LastReadyResponse)) RemoveUser(pl.Name, false);
 
             var readyUsers = lastMatchedUsers.Where(x => x.LastReadyResponse).ToList();
             var realBattles = ProposeBattles(readyUsers);
@@ -313,7 +315,6 @@ namespace ZkLobbyServer
             server.Broadcast(readyAndFailed, new AreYouReadyResult() { IsBattleStarting = false });
 
             server.Broadcast(readyAndStarting.Select(x => x.Name), new AreYouReadyResult() { IsBattleStarting = true });
-            server.Broadcast(readyAndStarting.Select(x => x.Name), new MatchMakerStatus() { });
 
             foreach (var usr in readyAndStarting)
             {
@@ -326,7 +327,6 @@ namespace ZkLobbyServer
 
         private async Task StartBattle(ProposedBattle bat)
         {
-
             var battle = new MatchMakerBattle(server, bat);
             server.Battles[battle.BattleID] = battle;
 
@@ -343,23 +343,6 @@ namespace ZkLobbyServer
             OnTick();
         }
 
-
-        private MatchMakerStatus ToMatchMakerStatus(PlayerEntry entry)
-        {
-            var ret = new MatchMakerStatus()
-            {
-                QueueCounts = queuesCounts,
-                IngameCounts = ingameCounts,
-            };
-            if (entry != null)
-            {
-                ret.JoinedQueues = entry.QueueTypes.Select(x => x.Name).ToList();
-                ret.CurrentEloWidth = entry.EloWidth;
-                ret.JoinedTime = entry.JoinedTime;
-                ret.BannedSeconds = BannedSeconds(entry.Name);
-            }
-            return ret;
-        }
 
         private static ProposedBattle TryToMakeBattle(PlayerEntry player, IList<PlayerEntry> otherPlayers)
         {
@@ -383,6 +366,39 @@ namespace ZkLobbyServer
         }
 
 
+        private async Task UpdatePlayerStatus(string name)
+        {
+            ConnectedUser conus;
+            if (server.ConnectedUsers.TryGetValue(name, out conus))
+            {
+                PlayerEntry entry;
+                players.TryGetValue(name, out entry);
+                var ret = new MatchMakerStatus()
+                {
+                    QueueCounts = queuesCounts,
+                    IngameCounts = ingameCounts,
+                    JoinedQueues = entry?.QueueTypes.Select(x => x.Name).ToList(),
+                    CurrentEloWidth = entry?.EloWidth,
+                    JoinedTime = entry?.JoinedTime,
+                    BannedSeconds = BannedSeconds(name)
+                };
+
+
+                // check for instant battle start
+                if (invitationBattles?.Any() != true && players.Count > 0) // nobody invited atm and some in queue
+                {
+                    var testPlayers = players.Values.Where(x => x != null && x.Name != name).ToList(); // get all currently queued players except for self
+                    var testSelf = new PlayerEntry(conus.User, possibleQueues.ToList()); // readd self but with all queues
+                    testPlayers.Add(testSelf);
+                    var testBattles = ProposeBattles(testPlayers); 
+                    ret.InstantStartQueues = testBattles.Where(x => x.Players.Contains(testSelf)).Select(x => x.QueueType.Name).Distinct().ToList();
+                }
+
+                await conus.SendCommand(ret);
+            }
+        }
+
+
         public class PlayerEntry
         {
             public bool InvitedToPlay;
@@ -403,7 +419,7 @@ namespace ZkLobbyServer
             public List<ProposedBattle> GenerateWantedBattles()
             {
                 var ret = new List<ProposedBattle>();
-                foreach (var qt in QueueTypes) for (var i = qt.MaxSize; i >= qt.MinSize; i--) if (i%2 == 0) ret.Add(new ProposedBattle(i, this, qt.Mode));
+                foreach (var qt in QueueTypes) for (var i = qt.MaxSize; i >= qt.MinSize; i--) if (i % 2 == 0) ret.Add(new ProposedBattle(i, this, qt));
                 return ret;
             }
 
@@ -421,13 +437,13 @@ namespace ZkLobbyServer
             public int Size;
             public int MaxElo { get; private set; } = int.MinValue;
             public int MinElo { get; private set; } = int.MaxValue;
-            public AutohostMode Mode { get; private set; }
+            public MatchMakerSetup.Queue QueueType { get; private set; }
 
-            public ProposedBattle(int size, PlayerEntry initialPlayer, AutohostMode mode)
+            public ProposedBattle(int size, PlayerEntry initialPlayer, MatchMakerSetup.Queue queue)
             {
                 Size = size;
-                Mode = mode;
                 owner = initialPlayer;
+                QueueType = queue;
                 AddPlayer(initialPlayer);
             }
 
@@ -441,7 +457,7 @@ namespace ZkLobbyServer
 
             public bool CanBeAdded(PlayerEntry other)
             {
-                if (!other.GenerateWantedBattles().Any(y => (y.Size == Size) && (y.Mode == Mode))) return false;
+                if (!other.GenerateWantedBattles().Any(y => y.Size == Size && y.QueueType == QueueType)) return false;
                 var widthMultiplier = Math.Max(1.0, 1.0 + (Size - 4) * 0.1);
                 var width = owner.EloWidth * widthMultiplier;
 

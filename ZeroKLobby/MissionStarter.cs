@@ -25,7 +25,7 @@ namespace ZeroKLobby
                 down = Program.Downloader.GetDependenciesOnly(missionName);
             }
 
-            var engine = Program.Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride);
+            var engine = Program.Downloader.GetResource(DownloadType.ENGINE, Program.TasClient.ServerWelcome.Engine ?? GlobalConst.DefaultEngineOverride);
 
             var metaWait = new EventWaitHandle(false, EventResetMode.ManualReset);
             Mod modInfo = null;
@@ -64,7 +64,7 @@ namespace ZeroKLobby
             metaWait.WaitOne();
 
             var spring = new Spring(Program.SpringPaths);
-            spring.RunLocalScriptGame(modInfo.MissionScript, GlobalConst.DefaultEngineOverride);
+            spring.RunLocalScriptGame(modInfo.MissionScript, Program.TasClient.ServerWelcome.Engine ?? GlobalConst.DefaultEngineOverride);
             var cs = GlobalConst.GetContentService();
             cs.NotifyMissionRun(Program.Conf.LobbyPlayerName, missionName);
             spring.SpringExited += (o, args) => RecordMissionResult(spring, modInfo);
@@ -78,7 +78,7 @@ namespace ZeroKLobby
             var downloads = new List<Download>();
             downloads.Add(Program.Downloader.GetResource(DownloadType.MOD, profile.ModName));
             downloads.Add(Program.Downloader.GetResource(DownloadType.MAP, profile.MapName));
-            downloads.Add(Program.Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride));
+            downloads.Add(Program.Downloader.GetResource(DownloadType.ENGINE, Program.TasClient.ServerWelcome.Engine ?? GlobalConst.DefaultEngineOverride));
             if (profile.ManualDependencies != null) foreach (var entry in profile.ManualDependencies) if (!string.IsNullOrEmpty(entry)) downloads.Add(Program.Downloader.GetResource(DownloadType.UNKNOWN, entry));
 
             downloads = downloads.Where(x => x != null).ToList();
@@ -95,7 +95,7 @@ namespace ZeroKLobby
 
             spring.RunLocalScriptGame(
                 profile.StartScript.Replace("%MOD%", profile.ModName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name),
-                GlobalConst.DefaultEngineOverride);
+                Program.TasClient.ServerWelcome.Engine ?? GlobalConst.DefaultEngineOverride);
             serv.NotifyMissionRun(name, profile.Name);
         }
 

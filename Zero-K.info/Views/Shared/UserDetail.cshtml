@@ -143,10 +143,6 @@
                 <br />
                 
                 <b>Rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")
-                @if (Global.AccountID == Model.AccountID || Global.IsZeroKAdmin)
-                {
-                    <b>Rank (casual):</b> @(Model.CasualRank == null ? "?" : $"{Model.CasualRank}.")
-                }
                 <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
                 <br />
 

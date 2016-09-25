@@ -576,9 +576,11 @@ namespace LobbyClient
         public bool MatchMakerEnabled => JoinedQueues?.Count > 0;
         public List<string> JoinedQueues { get; set; } = new List<string>();
         public Dictionary<string,int> QueueCounts { get; set; } = new Dictionary<string, int>();
-        public int CurrentEloWidth { get; set; }
-        public DateTime JoinedTime { get; set; }
+        public int? CurrentEloWidth { get; set; }
+        public DateTime? JoinedTime { get; set; }
         public int? BannedSeconds { get; set; }
+        public List<string> InstantStartQueues { get; set; } = new List<string>();
+
         public Dictionary<string, int> IngameCounts { get; set; } = new Dictionary<string, int>();
     }
 
