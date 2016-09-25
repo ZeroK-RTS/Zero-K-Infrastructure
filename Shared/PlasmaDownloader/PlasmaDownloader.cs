@@ -105,7 +105,7 @@ namespace PlasmaDownloader
                 }
 
 
-                if (type == DownloadType.MAP || type == DownloadType.MOD || type == DownloadType.UNKNOWN || type == DownloadType.MISSION)
+                if (type == DownloadType.MAP || type == DownloadType.UNKNOWN || type == DownloadType.MISSION)
                 {
                     if (torrentDownloader == null) torrentDownloader = new TorrentDownloader(this); //lazy initialization
                     var down = torrentDownloader.DownloadTorrent(name);
