@@ -16,40 +16,85 @@ namespace ZeroKWeb.SpringieInterface
     /// </summary>
     public class BattleResultHandler
     {
-        public static string SubmitSpringBattleResult(SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server)
+        public static BattleDebriefing SubmitSpringBattleResult(SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server)
         {
+            var ret = new BattleDebriefing();
             try
             {
-                if (!result.GameEndedOk) return "Game didn't end properly";
-                if (result.IsCheating) return "Cheats were enabled during this game";
+                if (!result.GameEndedOk)
+                {
+                    ret.Message = "Game didn't end properly";
+                    return ret;
+                }
+                if (result.IsCheating)
+                {
+                    ret.Message = "Cheats were enabled during this game";
+                    return ret;
+                }
 
                 var db = new ZkDataContext();
                 var text = new StringBuilder();
 
                 var sb = SaveSpringBattle(result, db);
 
+
+
                 ProcessExtras(result.OutputExtras, sb, db);
 
                 if (result.LobbyStartContext.Mode == AutohostMode.Planetwars) ProcessPlanetWars(result, server, sb, db, text);
 
-                ProcessElos(result, server, db, sb);
 
-                text.AppendLine(string.Format("BATTLE DETAILS AND REPLAY ----> {1}/Battles/Detail/{0} <-----", sb.SpringBattleID, GlobalConst.BaseSiteUrl));
-                return text.ToString();
+                Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
+
+                ProcessElos(result, server, db, sb);
+                
+                ret.Url = string.Format("{1}/Battles/Detail/{0}", sb.SpringBattleID, GlobalConst.BaseSiteUrl);
+
+                server.GhostSay(
+                    new Say()
+                    {
+                        Text =
+                            string.Format("BATTLE DETAILS AND REPLAY ----> {0} <-----", ret.Url),
+                        IsEmote = true,
+                        Place = SayPlace.Battle,
+                        User = GlobalConst.NightwatchName
+                    },
+                    result.LobbyStartContext.BattleID);
+
+
+                foreach (var p in sb.SpringBattlePlayers.Where(x=>!x.IsSpectator))
+                {
+                    ret.DebriefingUsers[p.Account.Name] = new BattleDebriefing.DebriefingUser()
+                    {
+                        LoseTime = p.LoseTime,
+                        AllyNumber = p.AllyNumber,
+                        IsInVictoryTeam = p.IsInVictoryTeam,
+                        EloChange = p.EloChange,
+                        XpChange = p.XpChange,
+                        IsLevelUp = orgLevels[p.AccountID] < p.Account.Level,
+                        Awards = sb.AccountBattleAwards.Where(x=>x.AccountID == p.AccountID).Select(x=> new BattleDebriefing.DebriefingAward()
+                        {
+                            Value = x.Value,
+                            Key = x.AwardKey,
+                            Description = x.AwardDescription
+                        }).ToList()
+                    };
+                }
+
+                return ret;
             }
             catch (Exception ex)
             {
                 var data = JsonConvert.SerializeObject(result);
                 Trace.TraceError($"{ex}\nData:\n{data}");
-                return $"{ex}\nData:\n{data}";
+                ret.Message = "Error processing game result: " + ex.Message;
+                return ret;
             }
         }
 
         private static void ProcessElos(SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, ZkDataContext db, SpringBattle sb)
         {
             bool noElo = result.OutputExtras.Any(x => x?.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture) == true);
-
-            Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
             sb.CalculateAllElo(noElo);
             foreach (var u in sb.SpringBattlePlayers.Where(x => !x.IsSpectator)) u.Account.CheckLevelUp();
@@ -63,27 +108,6 @@ namespace ZeroKWeb.SpringieInterface
             catch (Exception ex)
             {
                 Trace.TraceError("error updating extension data: {0}", ex);
-            }
-
-            foreach (Account account in sb.SpringBattlePlayers.Select(x => x.Account))
-            {
-                if (account.Level > orgLevels[account.AccountID])
-                {
-                    try
-                    {
-                        string message = string.Format("Congratulations {0}! You just leveled up to level {1}. {3}/Users/Detail/{2}",
-                            account.Name,
-                            account.Level,
-                            account.AccountID,
-                            GlobalConst.BaseSiteUrl);
-                        //text.AppendLine(message);
-                        server.GhostPm(account.Name, message);
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceError("Error sending level up lobby message: {0}", ex);
-                    }
-                }
             }
         }
 
@@ -174,6 +198,7 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward
                     {
+                        Account = player.Account,
                         AccountID = player.AccountID,
                         SpringBattleID = sb.SpringBattleID,
                         AwardKey = awardType,
