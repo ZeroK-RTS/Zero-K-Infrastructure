@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using LobbyClient;
@@ -126,7 +127,7 @@ namespace ZeroKWeb.SpringieInterface
                 PlayerCount = result.ActualPlayers.Count(x => !x.IsSpectator),
                 StartTime = result.StartTime,
                 Title = result.LobbyStartContext.Title,
-                ReplayFileName = result.ReplayName,
+                ReplayFileName = Path.GetFileName(result.ReplayName),
                 EngineVersion = result.LobbyStartContext.EngineVersion,
                 IsMatchMaker = result.LobbyStartContext.IsMatchMakerGame
             };
