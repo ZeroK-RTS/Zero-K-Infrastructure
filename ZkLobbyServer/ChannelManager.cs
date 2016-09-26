@@ -52,7 +52,7 @@ namespace ZkLobbyServer
 
             var ret = new List<string>() { "zk", GlobalConst.ModeratorChannel, GlobalConst.Top20Channel };
             if (acc.Clan != null) ret.Add(acc.Clan.GetClanChannel());
-            if (acc.Faction != null) ret.Add(acc.Faction.Shortcut);
+            if (acc.Faction != null && GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline) ret.Add(acc.Faction.Shortcut);
 
             return ret.Where(x => CanJoin(acc, x)).ToList();
         }
