@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -130,6 +131,13 @@ namespace ZkLobbyServer
         {
             return queuesCounts?.Sum(x => (int?)x.Value) ?? 0;
         }
+
+        public async Task OnServerGameChanged(string game)
+        {
+            foreach (var pq in possibleQueues) pq.Game = game;
+            await server.Broadcast(new MatchMakerSetup() { PossibleQueues = possibleQueues });
+        }
+
 
 
         public async Task OnLoginAccepted(ConnectedUser conus)

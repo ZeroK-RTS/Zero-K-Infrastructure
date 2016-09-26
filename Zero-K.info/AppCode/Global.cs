@@ -171,6 +171,8 @@ namespace ZeroKWeb
 
             Trace.TraceInformation("Starting autoregistrator");
             AutoRegistrator = new AutoRegistrator(MapPath("~"));
+            AutoRegistrator.NewZkStableRegistered += delegate(object sender, string game)
+                { Server.SetGame(game); };
             AutoRegistrator.RunMainAndMapSyncAsync();
 
  
