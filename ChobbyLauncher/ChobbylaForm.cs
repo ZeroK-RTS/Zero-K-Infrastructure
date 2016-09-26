@@ -28,7 +28,20 @@ namespace ChobbyLauncher
 
         private async void ChobbylaForm_Load(object sender, EventArgs e)
         {
-            if (!await chobbyla.Run()) MessageBox.Show(this, chobbyla.Status, "Failed to start", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            try
+            {
+                if (!await chobbyla.Prepare())
+                {
+                    MessageBox.Show(this, chobbyla.Status, "Failed to start", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    DialogResult = DialogResult.Cancel;
+                }
+                DialogResult = DialogResult.OK;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.ToString(), "Error starting Chobby", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                DialogResult = DialogResult.Cancel;
+            }
             Close();
         }
 
