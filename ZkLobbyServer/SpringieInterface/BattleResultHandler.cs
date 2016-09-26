@@ -49,6 +49,7 @@ namespace ZeroKWeb.SpringieInterface
                 ProcessElos(result, server, db, sb);
                 
                 ret.Url = string.Format("{1}/Battles/Detail/{0}", sb.SpringBattleID, GlobalConst.BaseSiteUrl);
+                ret.ServerBattleID = sb.SpringBattleID;
 
                 server.GhostSay(
                     new Say()

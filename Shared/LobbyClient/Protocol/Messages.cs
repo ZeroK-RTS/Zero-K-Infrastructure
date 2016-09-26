@@ -544,6 +544,7 @@ namespace LobbyClient
         public string Url { get; set; }
         public string Message { get; set; }
         public string ChatChannel { get; set; }
+        public int ServerBattleID { get; set; }
         public Dictionary<string, DebriefingUser> DebriefingUsers { get; set; } = new Dictionary<string, DebriefingUser>();
 
         public class DebriefingUser
