@@ -185,7 +185,7 @@ namespace ChobbyLauncher
             var process = new Process { StartInfo = { CreateNoWindow = true, UseShellExecute = false } };
 
             paths.SetDefaultEnvVars(process.StartInfo, engineVersion);
-            var widgetFolder = Path.Combine(paths.WritableDirectory, "LuaMenu", "Widgets");
+            var widgetFolder = Path.Combine(paths.WritableDirectory);//, "LuaMenu", "Widgets");
             if (!Directory.Exists(widgetFolder)) Directory.CreateDirectory(widgetFolder);
             File.WriteAllText(Path.Combine(widgetFolder, "chobby_wrapper_port.txt"), loopbackPort.ToString());
 

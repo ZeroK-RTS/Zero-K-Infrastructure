@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LobbyClient;
@@ -16,16 +16,9 @@ namespace ChobbyLauncher
     {
         private CommandJsonSerializer serializer;
 
-        public class DummyMessage {}
-
-        public async Task Listen(TcpListener listener)
+        public ChobbylaLocalListener()
         {
-            var tcp = await listener.AcceptTcpClientAsync();
-            TcpTransport transport = new TcpTransport(tcp);
-            await transport.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed);
-
             serializer = new CommandJsonSerializer(new List<Type> { typeof(DummyMessage) });
-
         }
 
         public static TcpListener Init()
@@ -40,16 +33,20 @@ namespace ChobbyLauncher
             return listener;
         }
 
-        private async Task OnConnectionClosed(bool arg)
+        public Thread Listen(TcpListener listener)
         {
-            Trace.TraceInformation("Chobby closed, existing");
-            Application.Exit();
+            var th = new Thread(() =>
+            {
+                SynchronizationContext.SetSynchronizationContext(null);
+                var tcp = listener.AcceptTcpClient();
+                var transport = new TcpTransport(tcp);
+                transport.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed);
+            });
+            th.Start();
+            return th;
         }
 
-        private async Task OnConnected()
-        {
-            Trace.TraceInformation("Chobby connected to wrapper");
-        }
+        public async Task Process(DummyMessage dummy) { }
 
         private async Task OnCommandReceived(string line)
         {
@@ -62,12 +59,19 @@ namespace ChobbyLauncher
             {
                 Trace.TraceError("{0} error processing line {1} : {2}", this, line, ex);
             }
-
         }
 
-        public async Task Process(DummyMessage dummy)
+        private async Task OnConnected()
         {
-            
+            Trace.TraceInformation("Chobby connected to wrapper");
         }
+
+        private async Task OnConnectionClosed(bool arg)
+        {
+            Trace.TraceInformation("Chobby closed, existing");
+            Application.Exit();
+        }
+
+        public class DummyMessage { }
     }
 }
