@@ -52,7 +52,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                var downloader = new PlasmaDownloader.PlasmaDownloader(new SpringScanner(paths) { WatchingEnabled = false, UseUnitSync = false },
+                var downloader = new PlasmaDownloader.PlasmaDownloader(new SpringScanner(paths, false) { WatchingEnabled = false},
                      paths);
 
                 PackageDownloader.Version ver = null;

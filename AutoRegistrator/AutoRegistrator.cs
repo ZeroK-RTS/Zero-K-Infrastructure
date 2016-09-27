@@ -59,7 +59,7 @@ namespace ZeroKWeb
         {
 
             Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false);
-            Scanner = new SpringScanner(Paths) { UseUnitSync = true, WatchingEnabled = false };
+            Scanner = new SpringScanner(Paths, true) { WatchingEnabled = false };
 
             Scanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("Autoregistrator new resource found: {0}", e.Item.InternalName);
             Scanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Autoregistrator Resource removed: {0}", e.Item.InternalName);

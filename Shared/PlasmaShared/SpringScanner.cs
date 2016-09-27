@@ -131,7 +131,7 @@ namespace ZkData
         public event EventHandler<CancelEventArgs<ResourceInfo>> UploadUnitsyncData = delegate { }; // raised before attempting to upload unitsync data
         public event EventHandler<CancelEventArgs<CacheItem>> RetryResourceCheck = delegate { }; // raised before attempting to reconnect to server to check for resource info
 
-        public SpringScanner(SpringPaths springPaths)
+            if (useUnitSync.HasValue) this.UseUnitSync = useUnitSync.Value;
         {
             this.SpringPaths = springPaths;
             MetaData = new MetaDataCache(springPaths, this);
