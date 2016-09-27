@@ -60,6 +60,19 @@ namespace ChobbyLauncher
             }
         }
 
+        public async Task Process(OpenFolder args)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(args.Folder);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error opening folder {0} : {1}", args.Folder, ex);
+            }
+        }
+
+
 
         public async Task SendCommand<T>(T data)
         {

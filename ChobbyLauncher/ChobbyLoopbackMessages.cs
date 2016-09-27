@@ -8,9 +8,16 @@ namespace ChobbyLauncher
 {
     public class ChobbyMessageAttribute : Attribute {}
     
-    [ChobbyMessage()]
+    [ChobbyMessage]
     public class OpenUrl
     {
         public string Url { get; set; }
     }
+
+    [ChobbyMessage]
+    public class OpenFolder
+    {
+        public string Folder { get; set; }
+    }
+
 }
