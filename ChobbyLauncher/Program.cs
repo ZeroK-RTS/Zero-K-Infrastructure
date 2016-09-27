@@ -47,7 +47,7 @@ namespace ChobbyLauncher
                 if (cf.ShowDialog() == DialogResult.OK)
                 {
                     chobbyla.Run().Wait();
-                    Application.Exit();
+                    Environment.Exit(0);
                 }
             }
             catch (Exception ex)
