@@ -44,7 +44,11 @@ namespace ChobbyLauncher
 
                 var chobbyla = new Chobbyla(startupPath, chobbyTag, engineOverride);
                 var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
-                if (cf.ShowDialog() == DialogResult.OK) chobbyla.Run().Wait();
+                if (cf.ShowDialog() == DialogResult.OK)
+                {
+                    chobbyla.Run().Wait();
+                    Application.Exit();
+                }
             }
             catch (Exception ex)
             {
