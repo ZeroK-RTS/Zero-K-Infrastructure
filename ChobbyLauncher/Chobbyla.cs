@@ -31,6 +31,7 @@ namespace ChobbyLauncher
         private int loopbackPort;
         public Download Download { get; private set; }
         public string Status { get; private set; }
+        public Process process { get; private set; }
 
 
         public Chobbyla(string rootPath, string chobbyTagOverride, string engineOverride)
@@ -117,7 +118,7 @@ namespace ChobbyLauncher
                 Status = "Starting";
 
                 var listener = ChobbylaLocalListener.Init();
-                var chobyl = new ChobbylaLocalListener();
+                var chobyl = new ChobbylaLocalListener(this);
                 chobyl.Listen(listener);
 
                 IPEndPoint endPoint = (IPEndPoint)listener.Server.LocalEndPoint;
@@ -182,7 +183,7 @@ namespace ChobbyLauncher
 
         private async Task LaunchChobby(SpringPaths paths, string internalName, string engineVersion, int loopbackPort)
         {
-            var process = new Process { StartInfo = { CreateNoWindow = true, UseShellExecute = false } };
+            process = new Process { StartInfo = { CreateNoWindow = true, UseShellExecute = false } };
 
             paths.SetDefaultEnvVars(process.StartInfo, engineVersion);
             var widgetFolder = Path.Combine(paths.WritableDirectory);//, "LuaMenu", "Widgets");

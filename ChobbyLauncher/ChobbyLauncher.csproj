@@ -90,6 +90,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Shraka.resx</DependentUpon>
     </Compile>
+    <Compile Include="WindowsApi.cs" />
     <EmbeddedResource Include="ChobbylaForm.resx">
       <DependentUpon>ChobbylaForm.cs</DependentUpon>
     </EmbeddedResource>

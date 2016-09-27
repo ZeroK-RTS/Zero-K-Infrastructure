@@ -25,5 +25,10 @@ namespace ChobbyLauncher
     {
     }
 
+    [ChobbyMessage]
+    public class Alert
+    {
+        public string Message { get; set; }
+    }
 
 }

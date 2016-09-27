@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Media;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -17,9 +19,12 @@ namespace ChobbyLauncher
     {
         private CommandJsonSerializer serializer;
         private TcpTransport transport;
+        private Chobbyla chobbyla;
 
-        public ChobbylaLocalListener()
+
+        public ChobbylaLocalListener(Chobbyla chobbyla)
         {
+            this.chobbyla = chobbyla;
             serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<ChobbyMessageAttribute>());
         }
 
@@ -59,6 +64,31 @@ namespace ChobbyLauncher
                 Trace.TraceError("Error opening URL {0} : {1}", args.Url, ex);
             }
         }
+
+        
+        public async Task Process(Alert args)
+        {
+            try
+            {
+
+                if (Environment.OSVersion.Platform != PlatformID.Unix)
+                {
+                    // todo implement for linux with #define NET_WM_STATE_DEMANDS_ATTENTION=42
+                    var info = new WindowsApi.FLASHWINFO();
+                    info.hwnd = chobbyla.process.MainWindowHandle;
+                    info.dwFlags = 0x0000000C | 0x00000003; // flash all until foreground
+                    info.cbSize = Convert.ToUInt32(Marshal.SizeOf(info));
+                    WindowsApi.FlashWindowEx(ref info);
+
+                    SystemSounds.Exclamation.Play();
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error alerting {0} : {1}", args.Message, ex);
+            }
+        }
+
 
 
         public async Task Process(Restart args)
