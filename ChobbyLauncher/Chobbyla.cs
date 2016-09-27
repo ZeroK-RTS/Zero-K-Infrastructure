@@ -84,6 +84,17 @@ namespace ChobbyLauncher
                         return false;
                     }
 
+                    Status = "Checking for game update";
+                    Download = downloader.GetResource(DownloadType.MOD, "zk:stable");
+                    asTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
+                    if (asTask != null) await asTask;
+                    if (Download?.IsComplete == false)
+                    {
+                        Status = $"Download of {Download.Name} has failed";
+                        return false;
+                    }
+
+
                     ver = downloader.PackageDownloader.GetByTag(chobbyTag);
                     if (ver == null)
                     {

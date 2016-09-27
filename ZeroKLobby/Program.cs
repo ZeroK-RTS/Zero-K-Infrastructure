@@ -164,6 +164,10 @@ namespace ZeroKLobby
                 ThreadPool.SetMaxThreads(500, 2000);
                 ServicePointManager.Expect100Continue = false;
                 LoadConfig();
+
+            
+
+
                 Trace.Listeners.Add(new LogTraceListener());
                 if (Environment.OSVersion.Platform != PlatformID.Unix && !Conf.UseExternalBrowser) Utils.SetIeCompatibility(); //set to current IE version
 
@@ -192,6 +196,23 @@ namespace ZeroKLobby
                 
 
                 SpringPaths = new SpringPaths(contentDir);
+
+                if (
+                MessageBox.Show(new Form() { TopMost = true },
+                    "Would you like to try the new lobby program for Zero-K: Chobby?",
+                    "New launcher option available",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    var targetPath = Path.Combine(SpringPaths.WritableDirectory, "Chobby.exe");
+                    if (!File.Exists(targetPath))
+                    {
+                        var wc = new WebClient();
+                        wc.DownloadFile(GlobalConst.BaseSiteUrl + "/lobby/Chobby.exe", targetPath);
+                    }
+                    Process.Start(targetPath);
+                    Environment.Exit(0);
+                }
 
                 // speed up spring start
                 SpringPaths.SpringVersionChanged += (sender, engine) =>
