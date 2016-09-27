@@ -23,8 +23,8 @@ namespace ZeroKWeb.Controllers
         /// <summary>
         /// Gets a chart of game activity since February 2011
         /// </summary>
-	    [OutputCache(Duration = 3600 * 2)]
-        public ActionResult Games()
+	    [OutputCache(Duration = 3600 * 2, VaryByParam = "years")]
+        public ActionResult Games(int years = 1)
         {
 
             var db = new ZkDataContext();
@@ -34,7 +34,7 @@ namespace ZeroKWeb.Controllers
                 "gameStats",
                 () =>
                 {
-                    var start = DateTime.Now.AddYears(-1); //new DateTime(2011, 2, 3);
+                    var start = DateTime.Now.AddYears(-years); //new DateTime(2011, 2, 3);
                     var end = DateTime.Now.Date;
                     return (from bat in db.SpringBattles
                         where bat.StartTime < end && bat.StartTime > start
