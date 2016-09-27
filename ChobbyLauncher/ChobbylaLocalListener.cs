@@ -60,6 +60,21 @@ namespace ChobbyLauncher
             }
         }
 
+
+        public async Task Process(Restart args)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(Application.ExecutablePath);
+                Environment.Exit(0);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error restarting: {0}", ex);
+            }
+        }
+
+
         public async Task Process(OpenFolder args)
         {
             try

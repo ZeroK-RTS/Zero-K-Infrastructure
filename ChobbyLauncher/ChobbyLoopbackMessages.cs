@@ -20,4 +20,10 @@ namespace ChobbyLauncher
         public string Folder { get; set; }
     }
 
+    [ChobbyMessage]
+    public class Restart
+    {
+    }
+
+
 }

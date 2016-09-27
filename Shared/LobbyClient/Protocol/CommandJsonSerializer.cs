@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Newtonsoft.Json;
 using ZkData;
 
@@ -45,7 +46,7 @@ namespace LobbyClient
                 if (parts.Length != 2) throw new Exception(string.Format("Invalid json data {0} : {1}", this, line));
                 Type type;
                 if (!knownTypes.TryGetValue(parts[0], out type)) throw new Exception(string.Format("Invalid json type {0} : {1}", this, parts[0]));
-                return JsonConvert.DeserializeObject(parts[1], type);
+                return JsonConvert.DeserializeObject(parts[1], type) ?? type.GetConstructor(new Type[] {})?.Invoke(null);
             }
             return null;
         }
