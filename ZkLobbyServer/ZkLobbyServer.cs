@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using LobbyClient;
+using PlasmaDownloader;
 using PlasmaShared;
 using ZkData;
 
@@ -34,6 +35,10 @@ namespace ZkLobbyServer
 
         public string Version { get; private set; }
 
+        public PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
+        public SpringPaths SpringPaths { get; private set; }
+
+
 
         public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator, ITopPlayerProvider topPlayerProvider)
         {
@@ -42,7 +47,14 @@ namespace ZkLobbyServer
             var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();
             Engine = MiscVar.DefaultEngine;
-            Game = "zk:stable";
+
+            SpringPaths = new SpringPaths(GlobalConst.SpringieDataDir, false);
+            Downloader = new PlasmaDownloader.PlasmaDownloader(null, SpringPaths);
+            Downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine);
+            Downloader.PackageDownloader.DoMasterRefresh();
+            
+            Game = Downloader.PackageDownloader.GetByTag("zk:stable").InternalName;
+
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
             chatRelay = new ChatRelay(this, new Secrets().GetNightwatchPassword(), new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai" });
@@ -60,6 +72,17 @@ namespace ZkLobbyServer
             var line = Serializer.SerializeToLine(data);
             await Task.WhenAll(targets.Where(x => x != null).Select(async (client) => { await client.SendLine(line); }));
         }
+
+        /// <summary>
+        ///     Broadcast to all connected users in paralell
+        /// </summary>
+        public async Task Broadcast<T>(T data)
+        {
+            //send identical command to many clients
+            var line = Serializer.SerializeToLine(data);
+            await Task.WhenAll(ConnectedUsers.Values.Where(x => x != null).Select(async (client) => { await client.SendLine(line); }));
+        }
+
 
         /// <summary>
         ///     Broadcasts to all connected users in paralell
@@ -279,7 +302,15 @@ namespace ZkLobbyServer
         public async Task SetEngine(string engine)
         {
             Engine = engine;
-            await Broadcast(ConnectedUsers.Values, new Welcome() { Engine = engine, Game = Game, Version = Version });
+            await Broadcast(new Welcome() { Engine = engine, Game = Game, Version = Version });
         }
+
+        public async Task SetGame(string game)
+        {
+            Game = game;
+            await Broadcast(new Welcome() { Engine = Engine, Game = game, Version = Version });
+            await MatchMaker.OnServerGameChanged(game);
+        }
+
     }
 }

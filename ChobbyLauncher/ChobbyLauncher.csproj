@@ -71,6 +71,7 @@
       <DependentUpon>ChobbylaForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ChobbylaLocalListener.cs" />
+    <Compile Include="ChobbyLoopbackMessages.cs" />
     <Compile Include="DarkHive.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -89,6 +90,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Shraka.resx</DependentUpon>
     </Compile>
+    <Compile Include="WindowsApi.cs" />
     <EmbeddedResource Include="ChobbylaForm.resx">
       <DependentUpon>ChobbylaForm.cs</DependentUpon>
     </EmbeddedResource>

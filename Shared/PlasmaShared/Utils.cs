@@ -463,8 +463,16 @@ namespace ZkData
         }
 
 
-    
 
+        public static U Get<T, U>(this IDictionary<T, U> dict, T key)
+    where U : class
+        {
+            U val;
+            dict.TryGetValue(key, out val);
+            return val;
+        }
+
+        
         public static List<T> Shuffle<T>(this IEnumerable<T> source)
         {
             var list = source.ToList();

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Media;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LobbyClient;
@@ -12,20 +14,18 @@ using ZkData;
 
 namespace ChobbyLauncher
 {
+
     public class ChobbylaLocalListener
     {
         private CommandJsonSerializer serializer;
+        private TcpTransport transport;
+        private Chobbyla chobbyla;
 
-        public class DummyMessage {}
 
-        public async Task Listen(TcpListener listener)
+        public ChobbylaLocalListener(Chobbyla chobbyla)
         {
-            var tcp = await listener.AcceptTcpClientAsync();
-            TcpTransport transport = new TcpTransport(tcp);
-            await transport.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed);
-
-            serializer = new CommandJsonSerializer(new List<Type> { typeof(DummyMessage) });
-
+            this.chobbyla = chobbyla;
+            serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<ChobbyMessageAttribute>());
         }
 
         public static TcpListener Init()
@@ -40,16 +40,98 @@ namespace ChobbyLauncher
             return listener;
         }
 
-        private async Task OnConnectionClosed(bool arg)
+        public Thread Listen(TcpListener listener)
         {
-            Trace.TraceInformation("Chobby closed, existing");
-            Application.Exit();
+            var th = new Thread(() =>
+            {
+                SynchronizationContext.SetSynchronizationContext(null);
+                var tcp = listener.AcceptTcpClient();
+                transport = new TcpTransport(tcp);
+                transport.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed);
+            });
+            th.Start();
+            return th;
         }
 
-        private async Task OnConnected()
+        public async Task Process(OpenUrl args)
         {
-            Trace.TraceInformation("Chobby connected to wrapper");
+            try
+            {
+                System.Diagnostics.Process.Start(args.Url);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error opening URL {0} : {1}", args.Url, ex);
+            }
         }
+
+        
+        public async Task Process(Alert args)
+        {
+            try
+            {
+
+                if (Environment.OSVersion.Platform != PlatformID.Unix)
+                {
+                    // todo implement for linux with #define NET_WM_STATE_DEMANDS_ATTENTION=42
+                    var info = new WindowsApi.FLASHWINFO();
+                    info.hwnd = chobbyla.process.MainWindowHandle;
+                    info.dwFlags = 0x0000000C | 0x00000003; // flash all until foreground
+                    info.cbSize = Convert.ToUInt32(Marshal.SizeOf(info));
+                    WindowsApi.FlashWindowEx(ref info);
+
+                    SystemSounds.Exclamation.Play();
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error alerting {0} : {1}", args.Message, ex);
+            }
+        }
+
+
+
+        public async Task Process(Restart args)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(Application.ExecutablePath);
+                Environment.Exit(0);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error restarting: {0}", ex);
+            }
+        }
+
+
+        public async Task Process(OpenFolder args)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(args.Folder);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error opening folder {0} : {1}", args.Folder, ex);
+            }
+        }
+
+
+
+        public async Task SendCommand<T>(T data)
+        {
+            try
+            {
+                var line = serializer.SerializeToLine(data);
+                await transport.SendLine(line);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Wrapper error sending {0} : {1}", data, ex);
+            }
+        }
+
 
         private async Task OnCommandReceived(string line)
         {
@@ -62,12 +144,17 @@ namespace ChobbyLauncher
             {
                 Trace.TraceError("{0} error processing line {1} : {2}", this, line, ex);
             }
-
         }
 
-        public async Task Process(DummyMessage dummy)
+        private async Task OnConnected()
         {
-            
+            Trace.TraceInformation("Chobby connected to wrapper");
+        }
+
+        private async Task OnConnectionClosed(bool arg)
+        {
+            Trace.TraceInformation("Chobby closed connection");
+            //Application.Exit();
         }
     }
 }

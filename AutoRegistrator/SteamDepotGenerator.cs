@@ -89,7 +89,7 @@ namespace AutoRegistrator
         }
 
         private static void ScanArchives(SpringPaths paths) {
-            using (var scanner = new SpringScanner(paths) { UseUnitSync = true })
+            using (var scanner = new SpringScanner(paths, true))
             {
                 scanner.InitialScan();
                 scanner.Start();

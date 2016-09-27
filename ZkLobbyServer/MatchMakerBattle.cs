@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
+using ZeroKWeb.SpringieInterface;
+using ZkData;
 
 namespace ZkLobbyServer
 {
@@ -41,10 +43,20 @@ namespace ZkLobbyServer
 
         protected override async Task OnDedicatedExited(SpringBattleContext springBattleContext)
         {
-            await base.OnDedicatedExited(springBattleContext);
+            StopVote();
+            RunningSince = null;
+            IsInGame = false;
             isZombie = true;
-            await SayBattle($"This room is now disabled, please join a new game");
-            await SwitchPassword(FounderName);
+
+            var debriefingMessage = BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server);
+            debriefingMessage.ChatChannel = "debriefing_" + debriefingMessage.ServerBattleID;
+
+            // join people to channel
+            await Task.WhenAll(spring.Context.ActualPlayers.Select(x => server.ConnectedUsers.Get(x.Name)).Where(x => x != null).Select(x => x.Process(new JoinChannel() { ChannelName = debriefingMessage.ChatChannel })));
+
+
+            await server.Broadcast(Users.Keys, debriefingMessage);
+            await server.RemoveBattle(this);
         }
     }
 }

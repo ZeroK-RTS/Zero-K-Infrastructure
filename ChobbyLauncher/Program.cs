@@ -39,8 +39,23 @@ namespace ChobbyLauncher
 
             Application.EnableVisualStyles();
 
-            var cf = new ChobbylaForm(new Chobbyla(startupPath, chobbyTag, engineOverride)) { StartPosition = FormStartPosition.CenterScreen };
-            cf.ShowDialog();
+            try
+            {
+
+                var chobbyla = new Chobbyla(startupPath, chobbyTag, engineOverride);
+                var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
+                if (cf.ShowDialog() == DialogResult.OK)
+                {
+                    chobbyla.Run().Wait();
+                    Environment.Exit(0);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error starting chobby: {0}", ex);
+                MessageBox.Show(ex.ToString(), "Error starting Chobby", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
         }
     }
 }

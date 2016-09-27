@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Neo.IronLua;
@@ -26,8 +27,11 @@ namespace ChobbyLauncher
         private bool isDev;
 
         private SpringPaths paths;
+        private string internalName;
+        private int loopbackPort;
         public Download Download { get; private set; }
         public string Status { get; private set; }
+        public Process process { get; private set; }
 
 
         public Chobbyla(string rootPath, string chobbyTagOverride, string engineOverride)
@@ -38,16 +42,22 @@ namespace ChobbyLauncher
             engine = engineOverride;
         }
 
+        
 
-        public async Task<bool> Run()
+        public Task Run()
+        {
+            return LaunchChobby(paths, internalName, engine, loopbackPort);
+        }
+
+        public async Task<bool> Prepare()
         {
             try
             {
-                var downloader = new PlasmaDownloader.PlasmaDownloader(new SpringScanner(paths) { WatchingEnabled = false, UseUnitSync = false },
+                var downloader = new PlasmaDownloader.PlasmaDownloader(new SpringScanner(paths, false) { WatchingEnabled = false},
                      paths);
 
                 PackageDownloader.Version ver = null;
-                string internalName = null;
+                internalName = null;
 
                 if (!isDev)
                 {
@@ -108,13 +118,13 @@ namespace ChobbyLauncher
                 Status = "Starting";
 
                 var listener = ChobbylaLocalListener.Init();
-                var chobyl = new ChobbylaLocalListener();
+                var chobyl = new ChobbylaLocalListener(this);
                 chobyl.Listen(listener);
 
                 IPEndPoint endPoint = (IPEndPoint)listener.Server.LocalEndPoint;
-                var port = endPoint.Port;
+                loopbackPort = endPoint.Port;
 
-                LaunchChobby(paths, internalName, engine, port);
+                
                 return true;
             }
             catch (Exception ex)
@@ -171,12 +181,12 @@ namespace ChobbyLauncher
         }
 
 
-        private void LaunchChobby(SpringPaths paths, string internalName, string engineVersion, int loopbackPort)
+        private async Task LaunchChobby(SpringPaths paths, string internalName, string engineVersion, int loopbackPort)
         {
-            var process = new Process { StartInfo = { CreateNoWindow = true, UseShellExecute = false } };
+            process = new Process { StartInfo = { CreateNoWindow = true, UseShellExecute = false } };
 
             paths.SetDefaultEnvVars(process.StartInfo, engineVersion);
-            var widgetFolder = Path.Combine(paths.WritableDirectory, "LuaMenu", "Widgets");
+            var widgetFolder = Path.Combine(paths.WritableDirectory);//, "LuaMenu", "Widgets");
             if (!Directory.Exists(widgetFolder)) Directory.CreateDirectory(widgetFolder);
             File.WriteAllText(Path.Combine(widgetFolder, "chobby_wrapper_port.txt"), loopbackPort.ToString());
 
@@ -184,7 +194,13 @@ namespace ChobbyLauncher
             process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetSpringExecutablePath(engineVersion));
             process.StartInfo.Arguments = $"--menu \"{internalName}\"";
 
+
+            var tcs = new TaskCompletionSource<bool>();
+            process.Exited += (sender, args) => tcs.TrySetResult(true);
+            process.EnableRaisingEvents = true;
             process.Start();
+
+            await tcs.Task;
         }
     }
 }

@@ -201,7 +201,7 @@ namespace ZkLobbyServer
             }
             catch (Exception ex)
             {
-                Trace.TraceError("{0} error sending {1} : {2}", data, ex);
+                Trace.TraceError("{0} error sending {1} : {2}", this, data, ex);
             }
         }
 
@@ -214,7 +214,7 @@ namespace ZkLobbyServer
             }
             catch (Exception ex)
             {
-                Trace.TraceError("{0} error sending {1} : {2}", line, ex);
+                Trace.TraceError("{0} error sending {1} : {2}", this, line, ex);
             }
         }
 

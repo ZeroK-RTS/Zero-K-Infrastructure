@@ -307,6 +307,7 @@ namespace LobbyClient
             process.StartInfo.UseShellExecute = true;
             process.StartInfo.RedirectStandardOutput = false;
             process.StartInfo.RedirectStandardError = false;
+            process.EnableRaisingEvents = true;
 
             process.Start();
 

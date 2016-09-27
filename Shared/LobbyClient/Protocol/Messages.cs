@@ -538,6 +538,34 @@ namespace LobbyClient
         public List<string> Ignores { get; set; } = new List<string>();
     }
 
+    [Message(Origin.Server)]
+    public class BattleDebriefing
+    {
+        public string Url { get; set; }
+        public string Message { get; set; }
+        public string ChatChannel { get; set; }
+        public int ServerBattleID { get; set; }
+        public Dictionary<string, DebriefingUser> DebriefingUsers { get; set; } = new Dictionary<string, DebriefingUser>();
+
+        public class DebriefingUser
+        {
+            public float? EloChange { get; set; }
+            public int? XpChange { get; set; }
+            public bool IsInVictoryTeam { get; set; }
+            public int? LoseTime { get; set; }
+            public int AllyNumber { get; set; }
+            public bool IsLevelUp { get; set; }
+            public object Awards { get; set; }
+        }
+
+        public class DebriefingAward
+        {
+            public string Key { get; set; }
+            public double? Value { get; set; }
+            public string Description { get; set; }
+        }
+    }
+
 
 
     [Message(Origin.Server)]

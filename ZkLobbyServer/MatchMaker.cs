@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -130,6 +131,13 @@ namespace ZkLobbyServer
         {
             return queuesCounts?.Sum(x => (int?)x.Value) ?? 0;
         }
+
+        public async Task OnServerGameChanged(string game)
+        {
+            foreach (var pq in possibleQueues) pq.Game = game;
+            await server.Broadcast(new MatchMakerSetup() { PossibleQueues = possibleQueues });
+        }
+
 
 
         public async Task OnLoginAccepted(ConnectedUser conus)
@@ -403,7 +411,7 @@ namespace ZkLobbyServer
         {
             public bool InvitedToPlay;
             public bool LastReadyResponse;
-            public int EloWidth => (int)Math.Min(400, 100 + DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / 30 * 50);
+            public int EloWidth => (int)Math.Min(400, 100 + DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / 30.0 * 150.0);
             public DateTime JoinedTime { get; private set; } = DateTime.UtcNow;
             public User LobbyUser { get; private set; }
             public string Name => LobbyUser.Name;

@@ -25,8 +25,6 @@ namespace ZkLobbyServer
         public const int PollTimeout = 60;
         public static int BattleCounter;
 
-        public static PlasmaDownloader.PlasmaDownloader downloader;
-        public static SpringPaths springPaths;
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
 
 
@@ -53,14 +51,8 @@ namespace ZkLobbyServer
 
         public CommandPoll ActivePoll { get; private set; }
 
-
         static ServerBattle()
         {
-            springPaths = new SpringPaths(GlobalConst.SpringieDataDir, false);
-            downloader = new PlasmaDownloader.PlasmaDownloader(null, springPaths);
-
-            downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine);
-
             Commands =
                 Assembly.GetAssembly(typeof(BattleCommand))
                     .GetTypes()
@@ -93,7 +85,6 @@ namespace ZkLobbyServer
         {
             Stop();
             spring.UnsubscribeEvents(this);
-            springPaths.UnsubscribeEvents(this);
             pollTimer.Dispose();
             pollTimer = null;
             spring = null;
@@ -490,7 +481,7 @@ namespace ZkLobbyServer
         {
             if (IsNullOrEmpty(Title)) Title = $"{FounderName}'s game";
             if (IsNullOrEmpty(EngineVersion) || (Mode != AutohostMode.None)) EngineVersion = server.Engine;
-            downloader.GetResource(DownloadType.ENGINE, server.Engine);
+            server.Downloader.GetResource(DownloadType.ENGINE, server.Engine);
 
             switch (Mode)
             {
@@ -554,8 +545,8 @@ namespace ZkLobbyServer
             IsInGame = false;
             RunningSince = null;
 
-            await SayBattle(BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server));
-
+            var debriefingMessage = BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server);
+            await server.Broadcast(Users.Keys, debriefingMessage);
             await server.Broadcast(server.ConnectedUsers.Keys, new BattleUpdate() { Header = GetHeader() });
 
             foreach (var s in toNotify)
@@ -617,7 +608,7 @@ namespace ZkLobbyServer
 
         private async Task<bool> EnsureEngineIsPresent()
         {
-            var down = downloader.GetResource(DownloadType.ENGINE, EngineVersion);
+            var down = server.Downloader.GetResource(DownloadType.ENGINE, EngineVersion);
             var task = down?.WaitHandle?.AsTask(TimeSpan.FromMinutes(3));
             if (task != null)
             {
@@ -672,7 +663,7 @@ namespace ZkLobbyServer
         {
             spring?.UnsubscribeEvents(this);
 
-            spring = new DedicatedServer(springPaths);
+            spring = new DedicatedServer(server.SpringPaths);
 
             spring.DedicatedServerExited += DedicatedServerExited;
 

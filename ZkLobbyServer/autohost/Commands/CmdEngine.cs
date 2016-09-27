@@ -26,7 +26,7 @@ namespace ZkLobbyServer
                 return null;
             }
 
-            if (!ServerBattle.springPaths.HasEngineVersion(engine))
+            if (!battle.server.SpringPaths.HasEngineVersion(engine))
             {
                 var serv = GlobalConst.GetContentService(); // TODO this can be done directly, we are in server
                 if (!serv.GetEngineList(null).Any(x => x == engine))
@@ -34,7 +34,7 @@ namespace ZkLobbyServer
                     battle.Respond(e, "Engine not found");
                     return null;
                 }
-                ServerBattle.downloader.GetResource(DownloadType.ENGINE, engine);
+                battle.server.Downloader.GetResource(DownloadType.ENGINE, engine);
             }
 
             return $"Change engine to {engine}?";
