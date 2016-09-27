@@ -12,10 +12,6 @@ using ZkData;
 
 namespace ChobbyLauncher
 {
-    public class Message
-    {
-        public string Text { get; set; }
-    }
 
     public class ChobbylaLocalListener
     {
@@ -24,7 +20,7 @@ namespace ChobbyLauncher
 
         public ChobbylaLocalListener()
         {
-            serializer = new CommandJsonSerializer(new List<Type> { typeof(Message) });
+            serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<ChobbyMessageAttribute>());
         }
 
         public static TcpListener Init()
@@ -46,16 +42,24 @@ namespace ChobbyLauncher
                 SynchronizationContext.SetSynchronizationContext(null);
                 var tcp = listener.AcceptTcpClient();
                 transport = new TcpTransport(tcp);
-                transport.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed).Wait();
+                transport.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed);
             });
             th.Start();
             return th;
         }
 
-        public async Task Process(Message msg)
+        public async Task Process(OpenUrl args)
         {
-            await SendCommand(msg);
+            try
+            {
+                System.Diagnostics.Process.Start(args.Url);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error opening URL {0} : {1}", args.Url, ex);
+            }
         }
+
 
         public async Task SendCommand<T>(T data)
         {
@@ -91,8 +95,8 @@ namespace ChobbyLauncher
 
         private async Task OnConnectionClosed(bool arg)
         {
-            Trace.TraceInformation("Chobby closed, existing");
-            Application.Exit();
+            Trace.TraceInformation("Chobby closed connection");
+            //Application.Exit();
         }
     }
 }
