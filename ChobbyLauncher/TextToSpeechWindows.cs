@@ -11,7 +11,7 @@ using ZkData;
 
 namespace ChobbyLauncher
 {
-    class TextToSpeechWindows:TextToSpeechBase
+    public class TextToSpeechWindows:TextToSpeechBase
     {
         readonly SpeechSynthesizer speechSynthesizer;
         readonly ReadOnlyCollection<InstalledVoice> voices;

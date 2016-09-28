@@ -18,6 +18,7 @@ namespace ChobbyLauncher
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
 
+
             string chobbyTag = null;
             string engineOverride = null;
             if (args.Length > 0)

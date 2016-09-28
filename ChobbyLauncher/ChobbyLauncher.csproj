@@ -64,6 +64,7 @@
     <Compile Include="BitmapButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="TextToSpeechLinux.cs" />
     <Compile Include="TextToSpeechWindows.cs" />
     <Compile Include="Chobbyla.cs" />
     <Compile Include="ChobbylaForm.cs">
@@ -85,7 +86,7 @@
       <DependentUpon>DarkHiveHover.resx</DependentUpon>
     </Compile>
     <Compile Include="FrameBorderRenderer.cs" />
-    <Compile Include="ITextToSpeech.cs" />
+    <Compile Include="TextToSpeechBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shraka.Designer.cs">
