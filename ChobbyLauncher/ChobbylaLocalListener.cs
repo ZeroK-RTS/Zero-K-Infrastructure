@@ -106,6 +106,31 @@ namespace ChobbyLauncher
             }
         }
 
+        public async Task Process(TtsVolume args)
+        {
+            try
+            {
+                tts?.SetVolume(args.Volume);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error setting TTS volume {0}: {1}",args?.Volume, ex);
+            }
+        }
+
+        public async Task Process(TtsSay args)
+        {
+            try
+            {
+                tts?.Say(args.Name ?? "", args.Text);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error speaking TTS {0}, {1}: {2}", args?.Name, args?.Text, ex);
+            }
+        }
+
+
 
         public async Task Process(OpenFolder args)
         {
