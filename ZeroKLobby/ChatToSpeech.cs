@@ -71,7 +71,7 @@ namespace ZeroKLobby
                         bool validText = (name != Program.Conf.LobbyPlayerName && !string.IsNullOrEmpty(text) && !Regex.IsMatch(sayText, "Start [0-9]+$") && !sayText.StartsWith("I choose: "));
                         if (validText && !ban)
                         {
-                            if (voices.Count > 1) speechSynthesizer.SelectVoice(voices[name.GetHashCode() % voices.Count].VoiceInfo.Name);
+                            if (voices.Count > 1) speechSynthesizer.SelectVoice(voices[Math.Abs(name.GetHashCode() % voices.Count)].VoiceInfo.Name);
 
                             sayText = new string(sayText.ToCharArray().Where(c => (char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || c == '-' || c=='?' || c=='!')).ToArray());
                             

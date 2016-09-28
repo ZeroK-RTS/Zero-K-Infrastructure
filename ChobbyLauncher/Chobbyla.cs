@@ -128,13 +128,8 @@ namespace ChobbyLauncher
                 
                 Status = "Starting";
 
-                var listener = ChobbylaLocalListener.Init();
                 var chobyl = new ChobbylaLocalListener(this);
-                chobyl.Listen(listener);
-
-                IPEndPoint endPoint = (IPEndPoint)listener.Server.LocalEndPoint;
-                loopbackPort = endPoint.Port;
-
+                loopbackPort = chobyl.StartListening();
                 
                 return true;
             }

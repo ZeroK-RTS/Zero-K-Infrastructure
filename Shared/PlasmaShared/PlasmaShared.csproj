@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="AuthTools.cs" />
     <Compile Include="ChangeEventArgs.cs" />
+    <Compile Include="CommandJsonSerializer.cs" />
     <Compile Include="Diagrams\Diagram.cs" />
     <Compile Include="Diagrams\Node.cs" />
     <Compile Include="Diagrams\Vector.cs" />
