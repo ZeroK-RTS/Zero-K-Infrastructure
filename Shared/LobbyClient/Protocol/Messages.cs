@@ -8,6 +8,24 @@ using ZkData;
 
 namespace LobbyClient
 {
+    [Flags]
+    public enum Origin
+    {
+        Server = 1,
+        Client = 2
+    }
+
+    [AttributeUsage(AttributeTargets.Class, Inherited = true)]
+    public class MessageAttribute : Attribute
+    {
+        public Origin Direction { get; set; }
+
+        public MessageAttribute(Origin direction)
+        {
+            Direction = direction;
+        }
+    }
+
     /// <summary>
     ///     Initial message sent by server to client on connect
     /// </summary>

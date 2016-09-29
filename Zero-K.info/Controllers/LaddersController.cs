@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using System.Web.UI;
 using Microsoft.Linq.Translations;
 using ZkData;
 
@@ -23,7 +24,7 @@ namespace ZeroKWeb.Controllers
         /// <summary>
         /// Gets a chart of game activity since February 2011
         /// </summary>
-	    [OutputCache(Duration = 3600 * 2, VaryByParam = "years")]
+	    [OutputCache(Duration = 3600 * 2, VaryByParam = "*", Location = OutputCacheLocation.Server)]
         public ActionResult Games(int years = 1)
         {
 

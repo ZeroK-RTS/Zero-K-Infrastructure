@@ -38,8 +38,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkLobbyServer", "ZkLobbySer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autoregistrator", "Autoregistrator\Autoregistrator.csproj", "{01FAEBBC-02E0-42FE-972C-F17045BA3807}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkWebLobby", "ZkWebLobby\ZkWebLobby.csproj", "{9EE4DA19-3413-4EFB-B895-369EF9989C59}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetWikiBot", "DotNetWikiBot\DotNetWikiBot.csproj", "{016C2B52-AFD5-4A3A-A960-E9FB51C014BB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoCleaner", "DemoCleaner\DemoCleaner.csproj", "{74AEBEB6-3861-4484-8008-9EDD100CD635}"
@@ -152,12 +150,6 @@ Global
 		{01FAEBBC-02E0-42FE-972C-F17045BA3807}.Release|Any CPU.ActiveCfg = Release|x86
 		{01FAEBBC-02E0-42FE-972C-F17045BA3807}.Release|x86.ActiveCfg = Release|x86
 		{01FAEBBC-02E0-42FE-972C-F17045BA3807}.Release|x86.Build.0 = Release|x86
-		{9EE4DA19-3413-4EFB-B895-369EF9989C59}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{9EE4DA19-3413-4EFB-B895-369EF9989C59}.Debug|x86.ActiveCfg = Debug|x86
-		{9EE4DA19-3413-4EFB-B895-369EF9989C59}.Debug|x86.Build.0 = Debug|x86
-		{9EE4DA19-3413-4EFB-B895-369EF9989C59}.Release|Any CPU.ActiveCfg = Release|x86
-		{9EE4DA19-3413-4EFB-B895-369EF9989C59}.Release|x86.ActiveCfg = Release|x86
-		{9EE4DA19-3413-4EFB-B895-369EF9989C59}.Release|x86.Build.0 = Release|x86
 		{016C2B52-AFD5-4A3A-A960-E9FB51C014BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{016C2B52-AFD5-4A3A-A960-E9FB51C014BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{016C2B52-AFD5-4A3A-A960-E9FB51C014BB}.Debug|x86.ActiveCfg = Debug|Any CPU

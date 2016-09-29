@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ChobbyLauncher
@@ -20,15 +20,22 @@ namespace ChobbyLauncher
         private CommandJsonSerializer serializer;
         private TcpTransport transport;
         private Chobbyla chobbyla;
+        private TextToSpeechBase tts;
 
 
         public ChobbylaLocalListener(Chobbyla chobbyla)
         {
             this.chobbyla = chobbyla;
             serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<ChobbyMessageAttribute>());
+            tts = TextToSpeechBase.Create();
         }
 
-        public static TcpListener Init()
+
+        /// <summary>
+        /// Starts listening on a new thread
+        /// </summary>
+        /// <returns>listen port</returns>
+        public int StartListening()
         {
             var listener = new TcpListener(new IPEndPoint(IPAddress.Loopback, 0));
             listener.Server.SetSocketOption(SocketOptionLevel.Socket,
@@ -37,11 +44,6 @@ namespace ChobbyLauncher
             listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 0);
             listener.Start();
 
-            return listener;
-        }
-
-        public Thread Listen(TcpListener listener)
-        {
             var th = new Thread(() =>
             {
                 SynchronizationContext.SetSynchronizationContext(null);
@@ -50,7 +52,7 @@ namespace ChobbyLauncher
                 transport.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed);
             });
             th.Start();
-            return th;
+            return ((IPEndPoint)listener.Server.LocalEndPoint).Port;
         }
 
         public async Task Process(OpenUrl args)
@@ -103,6 +105,31 @@ namespace ChobbyLauncher
                 Trace.TraceError("Error restarting: {0}", ex);
             }
         }
+
+        public async Task Process(TtsVolume args)
+        {
+            try
+            {
+                tts?.SetVolume(args.Volume);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error setting TTS volume {0}: {1}",args?.Volume, ex);
+            }
+        }
+
+        public async Task Process(TtsSay args)
+        {
+            try
+            {
+                tts?.Say(args.Name ?? "", args.Text);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error speaking TTS {0}, {1}: {2}", args?.Name, args?.Text, ex);
+            }
+        }
+
 
 
         public async Task Process(OpenFolder args)

@@ -20,15 +20,44 @@ namespace ChobbyLauncher
         public string Folder { get; set; }
     }
 
+    /// <summary>
+    /// Restarts wrapper 
+    /// </summary>
     [ChobbyMessage]
     public class Restart
     {
     }
 
+    /// <summary>
+    /// Flashes spring window
+    /// </summary>
     [ChobbyMessage]
     public class Alert
     {
         public string Message { get; set; }
     }
+
+    /// <summary>
+    /// Sets text to speech volume
+    /// </summary>
+    [ChobbyMessage]
+    public class TtsVolume
+    {
+        /// <summary>
+        /// Min 0, Max 1
+        /// </summary>
+        public double Volume { get; set; }
+    }
+
+    /// <summary>
+    /// Say a text. Name is used as a hint (hashed) for picking a voice
+    /// </summary>
+    [ChobbyMessage]
+    public class TtsSay
+    {
+        public string Name {get; set; }
+        public string Text { get; set; }
+    }
+
 
 }

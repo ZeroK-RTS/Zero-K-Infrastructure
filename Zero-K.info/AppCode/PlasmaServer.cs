@@ -184,10 +184,14 @@ namespace ZeroKWeb
                 // add proper message - file exists with different md5 and same size - cant register cant detect mirrors 
             }
 
-            resource.ResourceContentFiles.Add(new ResourceContentFile { FileName = archiveName, Length = length, Md5 = md5 });
+            var newContentFile = new ResourceContentFile { FileName = archiveName, Length = length, Md5 = md5, Resource = resource};
+            resource.ResourceContentFiles.Add(newContentFile);
+            ResourceLinkProvider.UpdateLinks(newContentFile);
             File.WriteAllBytes(GetTorrentPath(internalName, md5), torrentData); // add new torrent file
 
             db.SaveChanges();
+
+
 
             return ReturnValue.Ok;
         }

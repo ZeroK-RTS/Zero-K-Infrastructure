@@ -1,29 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Newtonsoft.Json;
-using ZkData;
 
-namespace LobbyClient
+namespace PlasmaShared
 {
-    [Flags]
-    public enum Origin
-    {
-        Server = 1,
-        Client = 2
-    }
-    
-    [AttributeUsage(AttributeTargets.Class, Inherited = true)]
-    public class MessageAttribute: Attribute
-    {
-        public Origin Direction { get; set; }
-
-        public MessageAttribute(Origin direction)
-        {
-            Direction = direction;
-        }
-    }
+ 
 
 
     public class CommandJsonSerializer

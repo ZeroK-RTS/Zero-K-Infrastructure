@@ -15,12 +15,12 @@ namespace PlasmaDownloader
 {
     public enum DownloadType
     {
-        MOD,
+        RAPID,
         MAP,
         MISSION,
-        UNKNOWN,
         DEMO,
-        ENGINE
+        ENGINE,
+        NOTKNOWN
     }
 
 
@@ -29,8 +29,8 @@ namespace PlasmaDownloader
         private readonly List<Download> downloads = new List<Download>();
 
         private readonly PackageDownloader packageDownloader;
-        private readonly SpringScanner scanner;
         private TorrentDownloader torrentDownloader;
+        private IResourcePresenceChecker scanner;
 
 
         public IEnumerable<Download> Downloads
@@ -53,10 +53,10 @@ namespace PlasmaDownloader
             remove { packageDownloader.PackagesChanged -= value; }
         }
 
-        public PlasmaDownloader(SpringScanner scanner, SpringPaths springPaths)
+        public PlasmaDownloader(IResourcePresenceChecker checker, SpringPaths paths)
         {
-            SpringPaths = springPaths;
-            this.scanner = scanner;
+            SpringPaths = paths;
+            this.scanner = checker;
             //torrentDownloader = new TorrentDownloader(this);
             packageDownloader = new PackageDownloader(this);
         }
@@ -78,14 +78,22 @@ namespace PlasmaDownloader
                 if (existing != null) return existing;
             }
 
-            if (scanner != null)
-            {
-                if (scanner.HasResource(name)) return null;
-                var tagged = PackageDownloader.GetByTag(name);
-                if (tagged != null && scanner.HasResource(tagged.InternalName)) return null; // has it (referenced by tag)
-            }
+            if (scanner?.HasResource(name) == true) return null;
             if (SpringPaths.HasEngineVersion(name)) return null;
 
+
+            // check rapid to determine type
+            if (type == DownloadType.NOTKNOWN)
+            {
+                if (packageDownloader.GetByInternalName(name) != null || packageDownloader.GetByTag(name) != null) type = DownloadType.RAPID;
+                else
+                {
+                    packageDownloader.LoadMasterAndVersions().Wait();
+                    if (packageDownloader.GetByInternalName(name) != null || packageDownloader.GetByTag(name) != null) type = DownloadType.RAPID;
+                    else type = DownloadType.MAP;
+                } 
+            }
+            
 
             lock (downloads)
             {
@@ -105,7 +113,7 @@ namespace PlasmaDownloader
                 }
 
 
-                if (type == DownloadType.MAP || type == DownloadType.UNKNOWN || type == DownloadType.MISSION)
+                if (type == DownloadType.MAP || type == DownloadType.MISSION)
                 {
                     if (torrentDownloader == null) torrentDownloader = new TorrentDownloader(this); //lazy initialization
                     var down = torrentDownloader.DownloadTorrent(name);
@@ -118,7 +126,7 @@ namespace PlasmaDownloader
                     }
                 }
 
-                if (type == DownloadType.MOD || type == DownloadType.UNKNOWN)
+                if (type == DownloadType.RAPID)
                 {
                     var down = packageDownloader.GetPackageDownload(name);
                     if (down != null)
@@ -130,6 +138,7 @@ namespace PlasmaDownloader
                         return down;
                     }
                 }
+
 
 
                 if (type == DownloadType.ENGINE)
@@ -163,7 +172,7 @@ namespace PlasmaDownloader
                 {
                     if (!string.IsNullOrEmpty(dept))
                     {
-                        var dd = GetResource(DownloadType.UNKNOWN, dept);
+                        var dd = GetResource(DownloadType.NOTKNOWN, dept);
                         if (dd != null)
                         {
                             if (down == null) down = dd;

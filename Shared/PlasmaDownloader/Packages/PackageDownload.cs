@@ -207,7 +207,7 @@ namespace PlasmaDownloader.Packages
 	            {
 	                if (!string.IsNullOrEmpty(dept))
 	                {
-	                    var dd = downloader.GetResource(DownloadType.UNKNOWN, dept);
+	                    var dd = downloader.GetResource(DownloadType, dept);
 	                    if (dd != null) AddNeededDownload(dd);
 	                }
 	            }

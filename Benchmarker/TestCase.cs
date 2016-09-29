@@ -66,7 +66,7 @@ namespace Benchmarker
             if (!string.IsNullOrEmpty(Game)) {
                 var ver = downloader.PackageDownloader.GetByTag(Game);
                 if (ver != null) Game = ver.InternalName;
-                dg = downloader.GetResource(DownloadType.MOD, Game);
+                dg = downloader.GetResource(DownloadType.RAPID, Game);
                 }
 
             if (waitDownload) {

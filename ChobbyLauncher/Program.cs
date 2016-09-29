@@ -18,13 +18,14 @@ namespace ChobbyLauncher
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
 
+
             string chobbyTag = null;
             string engineOverride = null;
             if (args.Length > 0)
             {
                 if (args[0] == "--help" || args[0] == "-h" || args[0] == "/?")
                 {
-                    MessageBox.Show("chobby.exe [rapid_tag] [engine_override] \n\nUse chobby:stable or chobby:test\nTo run local dev version use chobby.exe dev");
+                    MessageBox.Show("chobby.exe [rapid_tag] [engine_override] \n\nUse zkmenu:stable or chobby:test\nTo run local dev version use chobby.exe dev");
                 }
                 chobbyTag = args[0];
                 if (args.Length > 1) engineOverride = args[1];

@@ -35,7 +35,7 @@ namespace PlasmaShared.UnitSyncLib
                             var newEntry = new ResourceInfo()
                             {
                                 ArchiveName = v.name,
-                                ArchivePath = v.path,
+                                ArchiveFolder = v.path,
                                 Name = v.archivedata.name,
                                 Author = v.archivedata.author,
                                 Description = v.archivedata.description,

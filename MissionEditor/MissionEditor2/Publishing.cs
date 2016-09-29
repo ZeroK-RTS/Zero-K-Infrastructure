@@ -73,7 +73,7 @@ namespace MissionEditor2
 				try
 				{
                     var paths = new SpringPaths(Settings.Default.SpringPath);
-                    using (var unitSync = new ZkData.UnitSyncLib.UnitSync(paths))
+                    using (var unitSync = new ZkData.UnitSyncLib.UnitSync(paths, paths.GetEngineList().FirstOrDefault()))
 					{
 						var modPath = Path.Combine(paths.WritableDirectory, "games");
 						tempPath = Path.Combine(modPath, missionFileName);
@@ -82,7 +82,7 @@ namespace MissionEditor2
 					mission.CreateArchive(tempPath);
 
 					Mod mod;
-					using (var unitSync = new ZkData.UnitSyncLib.UnitSync(paths))
+					using (var unitSync = new ZkData.UnitSyncLib.UnitSync(paths, paths.GetEngineList().FirstOrDefault()))
 					{
 						mod = (Mod)unitSync.GetResourceFromFileName(mission.Mod.ArchiveName);
 						if (mod == null) throw new Exception("Mod metadata not extracted: mod not found");

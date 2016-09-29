@@ -171,13 +171,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>License.resx</DependentUpon>
     </Compile>
-    <Compile Include="MicroForms\PromptForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MicroForms\PromptForm.Designer.cs">
-      <DependentUpon>PromptForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MicroForms\UnitSyncRetryPrompt.cs" />
     <Compile Include="MicroLobby\ExtrasTab\LocalReplay.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -187,7 +180,6 @@
     <Compile Include="MicroLobby\ExtrasTab\ReplayListItem.cs" />
     <Compile Include="MicroLobby\ExtrasTab\TableReader.cs" />
     <Compile Include="MicroLobby\ExtrasTab\SkirmishControlTool.cs" />
-    <Compile Include="MicroForms\UnitSyncUploadPrompt.cs" />
     <Compile Include="MicroLobby\HexToUnicodeConverter.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -485,9 +477,6 @@
     <EmbeddedResource Include="License.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>License.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroForms\PromptForm.resx">
-      <DependentUpon>PromptForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\BattleChatControl.resx">
       <DependentUpon>BattleChatControl.cs</DependentUpon>

@@ -176,10 +176,6 @@ namespace ZkData.UnitSyncLib
             [DllImport(UnitSyncName)]
             public static extern int GetOptionStringMaxLen(int index);
 
-            public static string GetOptionStyle(int optIndex)
-            {
-                return Marshal.PtrToStringAnsi(RawGetOptionStyle(optIndex));
-            }
 
             [DllImport(UnitSyncName)]
             public static extern int GetOptionType(int index);

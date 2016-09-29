@@ -37,8 +37,8 @@ namespace ChobbyLauncher
         public Chobbyla(string rootPath, string chobbyTagOverride, string engineOverride)
         {
             paths = new SpringPaths(rootPath, false);
-            chobbyTag = chobbyTagOverride ?? (GlobalConst.Mode == ModeType.Live ? "chobby:stable" : "chobby:test");
-            isDev = chobbyTag == "dev" || chobbyTag == "chobby:dev";
+            chobbyTag = chobbyTagOverride ?? (GlobalConst.Mode == ModeType.Live ? "zkmenu:stable" : "zkmenu:test");
+            isDev = chobbyTag == "dev" || chobbyTag == "chobby:dev" || chobbyTag =="zkmenu:dev";
             engine = engineOverride;
         }
 
@@ -53,8 +53,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                var downloader = new PlasmaDownloader.PlasmaDownloader(new SpringScanner(paths, false) { WatchingEnabled = false},
-                     paths);
+                var downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
 
                 PackageDownloader.Version ver = null;
                 internalName = null;
@@ -72,10 +71,8 @@ namespace ChobbyLauncher
                     }
 
 
-                    Status = "Updating rapid packages";
-                    await downloader.PackageDownloader.LoadMasterAndVersions();
                     Status = "Checking for chobby update";
-                    Download = downloader.GetResource(DownloadType.MOD, chobbyTag);
+                    Download = downloader.GetResource(DownloadType.RAPID, chobbyTag);
                     var asTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
                     if (asTask != null) await asTask;
                     if (Download?.IsComplete == false)
@@ -85,7 +82,7 @@ namespace ChobbyLauncher
                     }
 
                     Status = "Checking for game update";
-                    Download = downloader.GetResource(DownloadType.MOD, "zk:stable");
+                    Download = downloader.GetResource(DownloadType.RAPID, "zk:stable");
                     asTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
                     if (asTask != null) await asTask;
                     if (Download?.IsComplete == false)
@@ -128,13 +125,8 @@ namespace ChobbyLauncher
                 
                 Status = "Starting";
 
-                var listener = ChobbylaLocalListener.Init();
                 var chobyl = new ChobbylaLocalListener(this);
-                chobyl.Listen(listener);
-
-                IPEndPoint endPoint = (IPEndPoint)listener.Server.LocalEndPoint;
-                loopbackPort = endPoint.Port;
-
+                loopbackPort = chobyl.StartListening();
                 
                 return true;
             }

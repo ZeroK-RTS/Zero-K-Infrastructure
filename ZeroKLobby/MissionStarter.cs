@@ -29,7 +29,7 @@ namespace ZeroKLobby
 
             var metaWait = new EventWaitHandle(false, EventResetMode.ManualReset);
             Mod modInfo = null;
-            Program.SpringScanner.MetaData.GetModAsync(missionName,
+            Program.MetaData.GetModAsync(missionName,
                 mod =>
                 {
                     if (!mod.IsMission)
@@ -76,10 +76,10 @@ namespace ZeroKLobby
             var serv = GlobalConst.GetContentService();
             var profile = serv.GetScriptMissionData(missionName);
             var downloads = new List<Download>();
-            downloads.Add(Program.Downloader.GetResource(DownloadType.MOD, profile.ModName));
+            downloads.Add(Program.Downloader.GetResource(DownloadType.RAPID, profile.ModName));
             downloads.Add(Program.Downloader.GetResource(DownloadType.MAP, profile.MapName));
             downloads.Add(Program.Downloader.GetResource(DownloadType.ENGINE, Program.TasClient.ServerWelcome.Engine ?? GlobalConst.DefaultEngineOverride));
-            if (profile.ManualDependencies != null) foreach (var entry in profile.ManualDependencies) if (!string.IsNullOrEmpty(entry)) downloads.Add(Program.Downloader.GetResource(DownloadType.UNKNOWN, entry));
+            if (profile.ManualDependencies != null) foreach (var entry in profile.ManualDependencies) if (!string.IsNullOrEmpty(entry)) downloads.Add(Program.Downloader.GetResource(DownloadType.NOTKNOWN, entry));
 
             downloads = downloads.Where(x => x != null).ToList();
 

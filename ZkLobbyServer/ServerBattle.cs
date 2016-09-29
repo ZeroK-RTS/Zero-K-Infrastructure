@@ -689,7 +689,14 @@ namespace ZkLobbyServer
 
         private async void DedicatedServerExited(object sender, SpringBattleContext springBattleContext)
         {
-            await OnDedicatedExited(springBattleContext);
+            try
+            {
+                await OnDedicatedExited(springBattleContext);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error processing dedi server exited: {0}",ex);
+            }
         }
 
         private void DedicatedServerStarted(object sender, EventArgs e)

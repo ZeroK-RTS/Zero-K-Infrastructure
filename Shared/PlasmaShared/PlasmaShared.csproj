@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="AuthTools.cs" />
     <Compile Include="ChangeEventArgs.cs" />
+    <Compile Include="CommandJsonSerializer.cs" />
     <Compile Include="Diagrams\Diagram.cs" />
     <Compile Include="Diagrams\Node.cs" />
     <Compile Include="Diagrams\Vector.cs" />
@@ -85,7 +86,9 @@
     <Compile Include="IContentService\ResourceType.cs" />
     <Compile Include="IContentService\ReturnValue.cs" />
     <Compile Include="IContentService\ScriptMissionData.cs" />
+    <Compile Include="IResourcePresenceChecker.cs" />
     <Compile Include="MapSupportLevel.cs" />
+    <Compile Include="PlasmaResourceChecker.cs" />
     <Compile Include="Relation.cs" />
     <Compile Include="ResizedImageCache.cs" />
     <Compile Include="ResourceInfo.cs" />
@@ -115,7 +118,6 @@
     <Compile Include="SerializableDictionary.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SpringPaths.cs" />
-    <Compile Include="SpringScanner.cs" />
     <Compile Include="CsvTable.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="TcpTransport.cs" />
@@ -125,6 +127,7 @@
     <Compile Include="UnitSyncLib\AiInfoPair.cs" />
     <Compile Include="UnitSyncLib\DependencyMissingException.cs" />
     <Compile Include="UnitSyncLib\ModMissionSlot.cs" />
+    <Compile Include="UnitsyncResourcePresenceChecker.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="UnitSyncLib\ListOption.cs" />
     <Compile Include="UnitSyncLib\Map.cs" />

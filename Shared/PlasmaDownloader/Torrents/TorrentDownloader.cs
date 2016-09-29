@@ -58,7 +58,7 @@ namespace PlasmaDownloader.Torrents
                     down.FileName = tor.Files[0].Path;
                     //down.Length = (int)tor.Size;
                     down.Length = 1;//workaround for progress bars
-                    down.TypeOfResource = e.resourceType == ResourceType.Map ? DownloadType.MAP : DownloadType.MOD;
+                    down.TypeOfResource = e.resourceType == ResourceType.Map ? DownloadType.MAP : DownloadType.RAPID;
 
 
                     // just 1 link, use normal webdownload
@@ -78,7 +78,7 @@ namespace PlasmaDownloader.Torrents
                     }
                     foreach (var dependency in e.dependencies)
                     {
-                        var dep = plasmaDownloader.GetResource(DownloadType.UNKNOWN, dependency);
+                        var dep = plasmaDownloader.GetResource(DownloadType.NOTKNOWN, dependency);
                         if (dep != null) down.AddNeededDownload(dep);
                     }
                 }
@@ -109,9 +109,7 @@ namespace PlasmaDownloader.Torrents
         string GetDestPath(DownloadType type, string fileName)
         {
             return
-                Utils.GetAlternativeFileName(Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory,
-                                                            type == DownloadType.MAP ? "maps" : "games",
-                                                            fileName));
+                Utils.GetAlternativeFileName(Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory , type== DownloadType.MAP?"maps":"games",fileName));
         }
 
       

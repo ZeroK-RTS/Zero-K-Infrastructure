@@ -15,7 +15,7 @@ namespace ZeroKLobby
         {
             var downloads = new List<Download>();
             downloads.Add(Program.Downloader.GetResource(DownloadType.ENGINE, engineVersion));
-            downloads.Add(Program.Downloader.GetResource(DownloadType.MOD, modName));
+            downloads.Add(Program.Downloader.GetResource(DownloadType.RAPID, modName));
             downloads.Add(Program.Downloader.GetResource(DownloadType.MAP, mapName));
             downloads.Add(Program.Downloader.GetResource(DownloadType.DEMO, demoUrl));
             downloads = downloads.Where(x => x != null).ToList();

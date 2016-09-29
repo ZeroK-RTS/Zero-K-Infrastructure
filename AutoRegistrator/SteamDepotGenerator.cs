@@ -35,15 +35,13 @@ namespace AutoRegistrator
 
             var downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
             downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
-            downloader.PackageDownloader.LoadMasterAndVersions()?.Wait();
-            downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
-            downloader.GetResource(DownloadType.MOD, "zk:test")?.WaitHandle.WaitOne();
+            downloader.GetResource(DownloadType.RAPID, "zk:stable")?.WaitHandle.WaitOne();
+            downloader.GetResource(DownloadType.RAPID, "zk:test")?.WaitHandle.WaitOne();
 
             CopyResources(siteBase, paths, GetResourceList(downloader.PackageDownloader.GetByTag("zk:stable").InternalName, downloader.PackageDownloader.GetByTag("zk:test").InternalName), downloader);
 
             CopyLobbyProgram();
             CopyExtraImages();
-            ScanArchives(paths);
         }
 
         private void CopyLobbyProgram() {
@@ -88,20 +86,6 @@ namespace AutoRegistrator
             }
         }
 
-        private static void ScanArchives(SpringPaths paths) {
-            using (var scanner = new SpringScanner(paths, true))
-            {
-                scanner.InitialScan();
-                scanner.Start();
-
-                while (scanner.GetWorkCost() > 0)
-                {
-                    Trace.TraceInformation("Waiting for scanner to complete: {0}", scanner.GetWorkCost());
-                    Thread.Sleep(5000);
-                }
-            }
-        }
-
 
         private static void CopyResources(string siteBase, SpringPaths paths, List<Resource> resources, PlasmaDownloader.PlasmaDownloader downloader) {
             var destMaps = Path.Combine(paths.WritableDirectory, "maps");
@@ -131,7 +115,7 @@ namespace AutoRegistrator
 
                     if (!File.Exists(Path.Combine(destMaps, fileName))) File.Copy(Path.Combine(sourceMaps, fileName), Path.Combine(destMaps, fileName));
                 } else if (res.MissionID != null) File.WriteAllBytes(Path.Combine(paths.WritableDirectory, "games", res.Mission.SanitizedFileName), res.Mission.Mutator);
-                else downloader.GetResource(DownloadType.UNKNOWN, res.InternalName)?.WaitHandle.WaitOne();
+                else downloader.GetResource(DownloadType.RAPID, res.InternalName)?.WaitHandle.WaitOne();
 
                 foreach (var metaName in new[] { res.MinimapName, res.HeightmapName, res.MetalmapName, res.MetadataName, res.ThumbnailName })
                 {

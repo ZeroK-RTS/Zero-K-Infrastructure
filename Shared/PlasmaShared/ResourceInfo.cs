@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml.Serialization;
 using ZkData.UnitSyncLib;
 
@@ -22,7 +23,8 @@ namespace ZkData
         public uint CheckSum { get; set; }
         public int ModType { get; set; }
         public string Mutator { get; set; }
-        public string ArchivePath { get; set; }
+        public string ArchivePath => Path.Combine(ArchiveFolder, ArchiveName);
+        public string ArchiveFolder { get; set; }
 
         public virtual ResourceType ResourceType { get; } = ResourceType.Helper;
 
@@ -39,7 +41,8 @@ namespace ZkData
             target.CheckSum = CheckSum;
             target.ModType = ModType;
             target.Mutator = Mutator;
-            target.ArchivePath = ArchivePath;
+            target.ArchiveFolder = ArchiveFolder;
+            
         }
     }
 }

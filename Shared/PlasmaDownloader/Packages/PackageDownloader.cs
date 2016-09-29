@@ -32,9 +32,7 @@ namespace PlasmaDownloader.Packages
         string masterContent;
         const string MasterUrl = "http://repos.springrts.com/";
 
-
         readonly PlasmaDownloader plasmaDownloader;
-        readonly Timer refreshTimer;
         List<Repository> repositories = new List<Repository>();
 
         public List<Repository> Repositories { get { return repositories; } }
@@ -44,37 +42,15 @@ namespace PlasmaDownloader.Packages
         public DateTime MasterLastModified;
 
 
-        public void SetMasterRefreshTimer(int seconds)
-        {
-            if (seconds == 0)
-            {
-                refreshTimer.Stop();
-            }
-            else
-            {
-                refreshTimer.Interval = seconds * 1000;
-                refreshTimer.Start();
-            }
-        }
-
-
+        
         public PackageDownloader(PlasmaDownloader plasmaDownloader)
         {
             this.plasmaDownloader = plasmaDownloader;
             LoadRepositories();
-            refreshTimer = new Timer();
-            refreshTimer.Stop();
-            refreshTimer.AutoReset = true;
-            refreshTimer.Elapsed += RefreshTimerElapsed;
         }
 
         public void Dispose()
         {
-            if (refreshTimer != null)
-            {
-                refreshTimer.Stop();
-                refreshTimer.Elapsed -= RefreshTimerElapsed;
-            }
         }
 
 
@@ -198,7 +174,7 @@ namespace PlasmaDownloader.Packages
                 {
                     try
                     {
-                        var r = entry.Refresh();
+                        var r = entry.Refresh(this.plasmaDownloader.SpringPaths.WritableDirectory);
                         waiting.Add(r);
                     }
                     catch (Exception ex)
@@ -297,10 +273,6 @@ namespace PlasmaDownloader.Packages
         }
 
 
-        void RefreshTimerElapsed(object sender, ElapsedEventArgs e)
-        {
-            LoadMasterAndVersions();
-        }
 
         [Serializable]
         public class Repository
@@ -322,7 +294,7 @@ namespace PlasmaDownloader.Packages
                 BaseUrl = baseUrl;
             }
 
-            public Task<RefreshResponse> Refresh()
+            public Task<RefreshResponse> Refresh(string writableRoot)
             {
                 return Task.Factory.StartNew(() =>
                 {
@@ -338,6 +310,10 @@ namespace PlasmaDownloader.Packages
                             res.ChangedVersions = changes;
                             res.HasChanged = true;
                             LastModified = file.DateModified;
+
+                            var targetFolder = Path.Combine(writableRoot, "rapid", new Uri(BaseUrl).Host);
+                            if (!Directory.Exists(targetFolder)) Directory.CreateDirectory(targetFolder);
+                            File.WriteAllBytes(Path.Combine(targetFolder, "versions.gz"), file.Content);
                         }
                     }
                     catch (Exception ex)

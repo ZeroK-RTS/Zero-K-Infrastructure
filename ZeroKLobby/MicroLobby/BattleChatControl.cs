@@ -207,7 +207,7 @@ namespace ZeroKLobby.MicroLobby
             Program.ToolTip.SetMap(minimapBox, mapName);
 
             // todo add check before calling invoke invokes!!!
-            Program.SpringScanner.MetaData.GetMapAsync(mapName,
+            Program.MetaData.GetMapAsync(mapName,
                                                        (map, minimap, heightmap, metalmap) => Program.MainWindow.InvokeFunc(() =>
                                                            {
                                                                if (Program.TasClient.MyBattle == null) return;

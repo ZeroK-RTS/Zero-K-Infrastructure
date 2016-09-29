@@ -138,7 +138,7 @@ namespace ZeroKLobby.Notifications
                     btnStart.Visible = true;
 
                     Program.Downloader.GetResource(DownloadType.MAP, battle.MapName);
-                    Program.Downloader.GetResource(DownloadType.MOD, battle.ModName);
+                    Program.Downloader.GetResource(DownloadType.RAPID, battle.ModName);
                     Program.Downloader.GetResource(DownloadType.ENGINE, battle.EngineVersion);
 
                     if (gameBox.Image != null) gameBox.Image.Dispose();
@@ -172,7 +172,7 @@ namespace ZeroKLobby.Notifications
 
                     List<Download> downloads = new List<Download>();
                     downloads.Add(Program.Downloader.GetResource(DownloadType.ENGINE, e.Engine));
-                    downloads.Add(Program.Downloader.GetResource(DownloadType.MOD, e.Game));
+                    downloads.Add(Program.Downloader.GetResource(DownloadType.RAPID, e.Game));
                     downloads.Add(Program.Downloader.GetResource(DownloadType.MAP, e.Map));
                     downloads = downloads.Where(x => x != null).ToList();
                     if (downloads.Count > 0)
