@@ -348,10 +348,9 @@ namespace Fixer
 
         static void Main(string[] args)
         {
-            var ed = new EngineDownload("102.0.1-19-gfbc1b5b", new SpringPaths(@"c:\temp\test"));
-            ed.Start();
-            ed.WaitHandle.WaitOne();
-            return;
+            var ns = new NubSimulator();
+            ns.SpawnMany();
+            Console.ReadLine();
             /*using (var archive = ArchiveFactory.Open(target))
             {
                 long done = 0;
@@ -398,9 +397,6 @@ namespace Fixer
 
             //GetGameStats(new DateTime(2014,12,1));
             //Thread.Sleep(10000);
-            //var ns = new NubSimulator();
-            //ns.SpawnMany();
-            //Console.ReadLine();
 
             //MigrateDatabase();
             //FixDuplicatedAccounts();

@@ -42,7 +42,7 @@ namespace ZkData
                 case ModeType.Local:
                     BaseSiteUrl = "http://localhost:9739";
                     ZkDataContextConnectionString =
-                        @"Data Source=.;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true";
+                        @"Data Source=.;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=1000;";
 
                     LobbyServerHost = "localhost";
                     LobbyServerPort = 8200;
