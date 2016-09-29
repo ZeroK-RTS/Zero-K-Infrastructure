@@ -13,7 +13,6 @@ using Microsoft.Win32;
 using PlasmaDownloader;
 using PlasmaShared.UnitSyncLib;
 using SpringDownloader.Notifications;
-using ZeroKLobby.MicroForms;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZkData;
@@ -45,7 +44,7 @@ namespace ZeroKLobby
         public static SpringPaths SpringPaths { get; private set; }
 
         public static ZklSteamHandler SteamHandler { get; private set; }
-        public static SpringScanner SpringScanner { get; private set; }
+        public static PlasmaResourceChecker SpringScanner { get; private set; }
         public static bool IsSteamFolder { get; private set; }
 
         public static TasClient TasClient { get; private set; }
@@ -269,21 +268,13 @@ namespace ZeroKLobby
                     if (Environment.OSVersion.Platform != PlatformID.Unix) Utils.RegisterProtocol();
                 }
 
+                MetaData = new MetaDataCache(SpringPaths);
                 AutoJoinManager = new AutoJoinManager();
                 EngineConfigurator = new EngineConfigurator(SpringPaths.WritableDirectory);
 
-                SpringScanner = new SpringScanner(SpringPaths);
+                SpringScanner = new PlasmaResourceChecker(SpringPaths);
                 SpringScanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("New resource found: {0}", e.Item.InternalName);
                 SpringScanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Resource removed: {0}", e.Item.InternalName);
-                if (Conf.EnableUnitSyncPrompt && Environment.OSVersion.Platform != PlatformID.Unix)
-                {
-                    SpringScanner.UploadUnitsyncData += UnitSyncUploadPrompt.SpringScanner_UploadUnitsyncData;
-                    SpringScanner.RetryResourceCheck += UnitSyncRetryPrompt.SpringScanner_RetryGetResourceInfo;
-                }
-
-                SpringScanner.MapRegistered += (s, e) => Trace.TraceInformation("Map registered: {0}", e.MapName);
-                SpringScanner.ModRegistered += (s, e) => Trace.TraceInformation("Mod registered: {0}", e.Data.Name);
-
                 Downloader = new PlasmaDownloader.PlasmaDownloader(SpringScanner, SpringPaths); //rapid
                 Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
                 Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride);
@@ -463,5 +454,7 @@ namespace ZeroKLobby
             }
             catch {}
         }
+
+        public static MetaDataCache MetaData { get; private set; }
     }
 }

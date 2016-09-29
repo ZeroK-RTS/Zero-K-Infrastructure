@@ -17,7 +17,7 @@ using ZkData.UnitSyncLib;
 
 namespace ZkData
 {
-    public class SpringScanner : IDisposable
+    public class SpringScanner : IDisposable, IResourcePresenceChecker
     {
         /// <summary>
         /// auto save cache every X seconds if dirty
@@ -57,10 +57,6 @@ namespace ZkData
         /// </summary>
         const int ScannerCycleTime = 1000;
 
-        /// <summary>
-        /// items before unitsync reinitialization
-        /// </summary>
-        const int UnitSyncReInitFrequency = 50;
 
         CacheFile cache = new CacheFile();
 
@@ -135,7 +131,7 @@ namespace ZkData
         {
             this.SpringPaths = springPaths;
             if (useUnitSync.HasValue) this.UseUnitSync = useUnitSync.Value;
-            MetaData = new MetaDataCache(springPaths, this);
+            MetaData = new MetaDataCache(springPaths);
 
             foreach (var folder in springPaths.DataDirectories)
             {
@@ -185,21 +181,6 @@ namespace ZkData
 
         bool isDisposed;
 
-        public CacheItem FindCacheEntry(string name)
-        {
-            lock (cache)
-            {
-                CacheItem item;
-                if (cache.NameIndex.TryGetValue(name, out item))
-                {
-                    return item;
-                }
-            }
-            return null;
-        }
-
-
-
 
         public bool HasResource(string name)
         {
@@ -214,19 +195,6 @@ namespace ZkData
             }
         }
 
-        public List<CacheItem> GetAllMapResource()
-        {
-            var mapList = new List<CacheItem>();
-            foreach (var map in cache.NameIndex) if (map.Value.ResourceType == ResourceType.Map) mapList.Add(map.Value);
-            return mapList;
-        }
-
-        public List<CacheItem> GetAllModResource()
-        {
-            var modList = new List<CacheItem>();
-            foreach (var mod in cache.NameIndex) if (mod.Value.ResourceType == ResourceType.Mod) modList.Add(mod.Value);
-            return modList;
-        }
 
         public void Start(bool watchingEnabled = true)
         {

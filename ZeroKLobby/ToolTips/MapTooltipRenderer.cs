@@ -15,7 +15,7 @@ namespace ZeroKLobby
         public void SetMapTooltipRenderer(string mapName)
         {
             this.mapName = mapName;
-            Program.SpringScanner.MetaData.GetMapAsync(mapName, (map, minimap, heightmap, metalmap) => { this.map = map; }, (exc) => { });
+            Program.MetaData.GetMapAsync(mapName, (map, minimap, heightmap, metalmap) => { this.map = map; }, (exc) => { });
         }
 
         public void Draw(Graphics g, Font font, Color foreColor)

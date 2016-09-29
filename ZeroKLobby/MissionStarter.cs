@@ -29,7 +29,7 @@ namespace ZeroKLobby
 
             var metaWait = new EventWaitHandle(false, EventResetMode.ManualReset);
             Mod modInfo = null;
-            Program.SpringScanner.MetaData.GetModAsync(missionName,
+            Program.MetaData.GetModAsync(missionName,
                 mod =>
                 {
                     if (!mod.IsMission)

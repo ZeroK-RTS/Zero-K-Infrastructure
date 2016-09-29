@@ -80,7 +80,7 @@ namespace ZeroKLobby.MicroLobby
 
         void LoadMinimap(string mapName, BattleIcon battleIcon)
         {
-            Program.SpringScanner.MetaData.GetMapAsync(mapName,
+            Program.MetaData.GetMapAsync(mapName,
                                                        (map, minimap, heightmap, metalmap) =>
                                                        	{
 																													if (map != null && map.Name != battleIcon.Battle.MapName) return;

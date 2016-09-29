@@ -256,7 +256,7 @@ namespace ZeroKLobby.MicroLobby
       }
 
       Program.TasClient.ModOptionsChanged += (s, e) => SetModOptions(e.ModOptions);
-      Program.SpringScanner.MetaData.GetModAsync(Program.TasClient.MyBattle.ModName,
+      Program.MetaData.GetModAsync(Program.TasClient.MyBattle.ModName,
                                                  mod => { if (!Disposing && IsHandleCreated && !IsDisposed) Invoke(new Action(() => HandleMod(mod))); },
                                                  exception => { });
     }

@@ -170,14 +170,6 @@ namespace ZeroKLobby
         [Description("Needs steam running")]
         public bool EnableVoiceChat { get; set; }
 
-        [Category("Devving")]
-        [DisplayName("Enable UnitSync Dialog Box")]
-        [Description(
-            "Allow ZKL to process new mod/map information without connecting to server, " +
-            "and give user the choice to keep this information only in local cache rather than sharing it with server. This option is meant to be used with Skirmisher Tab. This option is force disabled on Linux"
-            )]
-        public bool EnableUnitSyncPrompt { get; set; }
-
 
         [Browsable(false)]
         public bool HasHosted { get; set; }

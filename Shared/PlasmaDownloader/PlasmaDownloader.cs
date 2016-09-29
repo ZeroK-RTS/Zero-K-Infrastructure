@@ -29,8 +29,8 @@ namespace PlasmaDownloader
         private readonly List<Download> downloads = new List<Download>();
 
         private readonly PackageDownloader packageDownloader;
-        private readonly SpringScanner scanner;
         private TorrentDownloader torrentDownloader;
+        private IResourcePresenceChecker scanner;
 
 
         public IEnumerable<Download> Downloads
@@ -53,10 +53,10 @@ namespace PlasmaDownloader
             remove { packageDownloader.PackagesChanged -= value; }
         }
 
-        public PlasmaDownloader(SpringScanner scanner, SpringPaths springPaths)
+        public PlasmaDownloader(IResourcePresenceChecker checker, SpringPaths paths)
         {
-            SpringPaths = springPaths;
-            this.scanner = scanner;
+            SpringPaths = paths;
+            this.scanner = checker;
             //torrentDownloader = new TorrentDownloader(this);
             packageDownloader = new PackageDownloader(this);
         }

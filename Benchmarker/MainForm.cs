@@ -17,7 +17,7 @@ namespace Benchmarker
         string lastUsedBatchFolder = null;
         readonly PlasmaDownloader.PlasmaDownloader springDownloader;
         readonly SpringPaths springPaths;
-        readonly SpringScanner springScanner;
+        readonly IResourcePresenceChecker springScanner;
         Batch testedBatch;
         BatchRunResult batchResult;
         private Timer timer;
@@ -38,13 +38,14 @@ namespace Benchmarker
         }
 
 
-        public MainForm(SpringPaths paths, SpringScanner scanner = null, PlasmaDownloader.PlasmaDownloader downloader = null) {
+        public MainForm(SpringPaths paths, IResourcePresenceChecker scanner = null, PlasmaDownloader.PlasmaDownloader downloader = null) {
             InitializeComponent();
             springPaths = paths;
             if (scanner != null) springScanner = scanner;
             else {
-                springScanner = new SpringScanner(springPaths);
-                springScanner.Start();
+                var pl = new PlasmaResourceChecker(springPaths);
+                springScanner = pl;
+                pl.Start();
             }
             if (downloader != null)  springDownloader = downloader;
             else springDownloader = new PlasmaDownloader.PlasmaDownloader(springScanner, springPaths);
