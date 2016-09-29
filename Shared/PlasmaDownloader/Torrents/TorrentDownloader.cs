@@ -109,7 +109,7 @@ namespace PlasmaDownloader.Torrents
         string GetDestPath(DownloadType type, string fileName)
         {
             return
-                Utils.GetAlternativeFileName(Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory ,"maps",fileName));
+                Utils.GetAlternativeFileName(Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory , type== DownloadType.MAP?"maps":"games",fileName));
         }
 
       

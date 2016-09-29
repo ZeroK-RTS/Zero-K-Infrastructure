@@ -19,14 +19,13 @@ namespace ZeroKWeb
     public static class ResourceLinkProvider
     {
         const double CheckPeriodForMissingLinks = 1; // check invalid every minute
-        const double CheckPeriodForValidLinks = 60*12; // check links every 12 hours
+        const double CheckPeriodForValidLinks = 60 * 12; // check links every 12 hours
         static readonly Dictionary<int, RequestData> Requests = new Dictionary<int, RequestData>();
 
         public static string[] Mirrors = GlobalConst.DefaultDownloadMirrors;
 
         static ResourceLinkProvider()
         {
-            if (GlobalConst.DefaultDownloadMirrors != null) Mirrors = GlobalConst.DefaultDownloadMirrors;
         }
 
 
@@ -111,15 +110,13 @@ namespace ZeroKWeb
                 // new request - actually perform it
                 try
                 {
-                    if (resource.ResourceContentFiles.Count > 1) // multiple content fiels - perform updates in paralell
-                    {
-                        var toCheck = from x in resource.ResourceContentFiles
-                                      group x by new { x.FileName, x.Length }
-                                      into g where !g.Key.FileName.EndsWith(".sdp") select g.First();
+                    var toCheck = from x in resource.ResourceContentFiles
+                                  group x by new { x.FileName, x.Length }
+                                  into g
+                                  where !g.Key.FileName.EndsWith(".sdp")
+                                  select g.First();
 
-                        Task.WaitAll(toCheck.Select(x => Task.Factory.StartNew(() => UpdateLinks(x))).ToArray());
-                    }
-                    else foreach (var content in resource.ResourceContentFiles) UpdateLinks(content);
+                    Task.WaitAll(toCheck.Select(x => Task.Factory.StartNew(() => UpdateLinks(x))).ToArray());
 
                     db.SaveChanges();
 
@@ -179,7 +176,7 @@ namespace ZeroKWeb
             }
         }
 
-        static void UpdateLinks(ResourceContentFile content)
+        public static void UpdateLinks(ResourceContentFile content)
         {
             var valids = new List<string>();
             if (content.LinkCount > 0 || content.Links != null) valids = new List<string>(content.Links.Split('\n')); // get previous links
@@ -204,7 +201,7 @@ namespace ZeroKWeb
             // combine with hardcoded mirrors
             foreach (var url in Mirrors)
             {
-                var replaced = url.Replace("%t", content.Resource.TypeID == ResourceType.Mod ? "mods" : "maps").Replace("%f", content.FileName);
+                var replaced = url.Replace("%t", content.Resource.TypeID == ResourceType.Map ? "maps" : "games").Replace("%f", content.FileName);
                 if (!valids.Contains(replaced)) valids.Add(replaced);
             }
 

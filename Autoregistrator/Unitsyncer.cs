@@ -89,7 +89,7 @@ namespace AutoRegistrator
                             hash.ToString(),
                             (int)length,
                             info.ResourceType,
-                            resource.ArchivePath,
+                            resource.ArchiveName,
                             info.Name,
                             serializedData,
                             info.Dependencies,

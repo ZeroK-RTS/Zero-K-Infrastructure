@@ -79,6 +79,7 @@ namespace ZkData
                     break;
             }
 
+            DefaultDownloadMirrors = new[] { BaseSiteUrl +"/autoregistrator/%t/%f" };
             ResourceBaseUrl = string.Format("{0}/Resources", BaseSiteUrl);
             BaseImageUrl = string.Format("{0}/img/", BaseSiteUrl);
             SelfUpdaterBaseUrl = string.Format("{0}/lobby", BaseSiteUrl);
@@ -182,7 +183,7 @@ namespace ZkData
         public const bool RequireWormholeToTravel = true;
         public const bool CanChangeClanFaction = true;
         public const double MaxPwEloDifference = 120;
-        
+
 
         public const PlanetWarsModes PlanetWarsMode = PlanetWarsModes.AllOffline;
 
@@ -224,7 +225,7 @@ namespace ZkData
 
         public static string ResourceBaseUrl;
         public static string SelfUpdaterBaseUrl;
-        public static readonly string[] DefaultDownloadMirrors = {};
+        public static string[] DefaultDownloadMirrors = {};
         public static string LobbyServerHost;
         public static int LobbyServerPort;
 
