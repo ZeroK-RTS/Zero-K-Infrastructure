@@ -20,13 +20,15 @@ namespace AutoRegistrator
         public string Engine { get; private set; }
         public SpringPaths Paths { get; private set; }
 
-        public UnitSyncer(SpringPaths paths, string engine)
+        public UnitSyncer(SpringPaths npaths, string nengine)
         {
-            if (string.IsNullOrEmpty(engine) || !paths.HasEngineVersion(engine))
+            Paths = npaths;
+            Engine = nengine;
+            if (string.IsNullOrEmpty(Engine) || !Paths.HasEngineVersion(Engine))
             {
-                Trace.TraceWarning("UnitSyncer: Engine {0} not found, trying backup", engine);
-                engine = paths.GetEngineList().FirstOrDefault();
-                if (engine == null) throw new Exception("UnitSyncer: No engine found for unitsync");
+                Trace.TraceWarning("UnitSyncer: Engine {0} not found, trying backup", Engine);
+                Engine = Paths.GetEngineList().FirstOrDefault();
+                if (Engine == null) throw new Exception("UnitSyncer: No engine found for unitsync");
             }
         }
 
@@ -40,7 +42,7 @@ namespace AutoRegistrator
                 using (var db = new ZkDataContext())
                 {
                     var registered = db.Resources.Select(x => x.InternalName).ToDictionary(x => x, x => true);
-                    foreach (var archive in archiveCache.Archives) if (!registered.ContainsKey(archive.Name)) Register(unitsync, archive);
+                    foreach (var archive in archiveCache.Archives) if (!registered.ContainsKey(archive.Name) && !UnitSync.DependencyExceptions.Contains(archive.Name)) Register(unitsync, archive);
                 }
             }
         }

@@ -43,8 +43,7 @@ namespace ZkData.UnitSyncLib
             lock (unitsyncInitLocker)
             {
                 paths = springPaths;
-                //Getting the directory of this application instead of the non-constant currentDirectory. Reference: http://stackoverflow.com/questions/52797/how-do-i-get-the-path-of-the-assembly-the-code-is-in
-                originalDirectory = springPaths.WritableDirectory;
+                originalDirectory = Directory.GetCurrentDirectory();
 
                 var unitSyncPath = paths.GetEngineFolderByVersion(engine);
                 Trace.TraceInformation("UnitSync: Directory: {0}", unitSyncPath);

@@ -78,26 +78,22 @@ namespace PlasmaDownloader
                 if (existing != null) return existing;
             }
 
-            if (scanner != null)
-            {
-                if (scanner.HasResource(name)) return null;
-                var tagged = PackageDownloader.GetByTag(name);
-                if (tagged != null && scanner.HasResource(tagged.InternalName)) return null; // has it (referenced by tag)
-            }
+            if (scanner?.HasResource(name) == true) return null;
             if (SpringPaths.HasEngineVersion(name)) return null;
 
 
             // check rapid to determine type
             if (type == DownloadType.NOTKNOWN)
             {
-                packageDownloader.DoMasterRefresh();
-                if (packageDownloader.GetByInternalName(name) != null || packageDownloader.GetByTag(name) != null)
+                if (packageDownloader.GetByInternalName(name) != null || packageDownloader.GetByTag(name) != null) type = DownloadType.RAPID;
+                else
                 {
-                    type = DownloadType.RAPID;
-                } else type = DownloadType.MAP;
+                    packageDownloader.LoadMasterAndVersions().Wait();
+                    if (packageDownloader.GetByInternalName(name) != null || packageDownloader.GetByTag(name) != null) type = DownloadType.RAPID;
+                    else type = DownloadType.MAP;
+                } 
             }
             
-
 
             lock (downloads)
             {
