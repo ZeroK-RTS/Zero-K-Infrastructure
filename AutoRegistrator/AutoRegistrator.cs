@@ -14,7 +14,7 @@ namespace ZeroKWeb
     {
 
         public SpringPaths Paths;
-        public SpringScanner Scanner;
+        public UnitSyncer UnitSyncer;
         public PlasmaDownloader.PlasmaDownloader Downloader;
 
         public event EventHandler<string> NewZkStableRegistered = delegate (object sender, string s) { };
@@ -59,20 +59,13 @@ namespace ZeroKWeb
         {
 
             Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false);
-            Scanner = new SpringScanner(Paths, true) { WatchingEnabled = false };
 
-            Scanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("Autoregistrator new resource found: {0}", e.Item.InternalName);
-            Scanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Autoregistrator Resource removed: {0}", e.Item.InternalName);
-
-            SpringScanner.MapRegistered += (s, e) => Trace.TraceInformation("Autoregistrator Map registered: {0}", e.MapName);
-            SpringScanner.ModRegistered += (s, e) => Trace.TraceInformation("Autoregistrator Mod registered: {0}", e.Data.Name);
-
-
-            Downloader = new PlasmaDownloader.PlasmaDownloader(Scanner, Paths);
+            Downloader = new PlasmaDownloader.PlasmaDownloader(null, Paths);
             Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Autoregistrator Download started: {0}", e.Data.Name);
             Downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
-            Scanner.InitialScan();
 
+            UnitSyncer = new UnitSyncer(Paths, MiscVar.DefaultEngine);
+            
             Downloader.PackageDownloader.SetMasterRefreshTimer(120);
             Downloader.PackagesChanged += Downloader_PackagesChanged;
             Downloader.PackageDownloader.LoadMasterAndVersions()?.Wait();
@@ -81,12 +74,9 @@ namespace ZeroKWeb
 
             foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag).Where(x => x.Key.StartsWith("spring-features")))
             {
-                Downloader.GetResource(DownloadType.UNKNOWN, ver.Value.InternalName)?.WaitHandle.WaitOne();
+                Downloader.GetResource(DownloadType.MOD, ver.Value.InternalName)?.WaitHandle.WaitOne();
             }
-
-            Scanner.Start(false);
-
-            while (Scanner.GetWorkCost() > 0) Thread.Sleep(1000);
+            
         }
 
         private void SynchronizeMapsFromSpringFiles()
@@ -95,7 +85,7 @@ namespace ZeroKWeb
             {
                 var fs = new WebFolderSyncer();
                 fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory, "maps"));
-                Scanner.Rescan();
+                UnitSyncer.Scan();
             }
         }
 
@@ -110,43 +100,17 @@ namespace ZeroKWeb
                 {
                     if (ver == "zk:stable" || ver == "zk:test")
                     {
+                        Trace.TraceInformation("Autoregistrator downloading {0}", ver);
                         Downloader.GetResource(DownloadType.MOD, ver)?.WaitHandle.WaitOne();
                     }
                 }
 
-                var waiting = false;
-                do
-                {
-                    var downs = Downloader.Downloads.ToList().Where(x => x.IsComplete == null && !x.IsAborted).ToList();
-                    if (downs.Any())
-                    {
-                        waiting = true;
-                        var d = downs.First();
-                        Trace.TraceInformation("Autoregistrator Waiting for: {0} - {1} {2}", d.Name, d.TotalProgress, d.TimeRemaining);
-                    }
-                    else waiting = false;
-                    if (waiting) Thread.Sleep(10000);
-                } while (waiting);
-
                 Trace.TraceInformation("Autoregistrator rescanning");
-                Scanner.Rescan();
+                UnitSyncer.Scan();
 
-                do
-                {
-                    if (Scanner.GetWorkCost() > 0)
-                    {
-                        waiting = true;
-                        Trace.TraceInformation("Autoregistrator Waiting for scanner: {0}", Scanner.GetWorkCost());
-                    }
-                    else waiting = false;
-                    if (waiting) Thread.Sleep(10000);
-                } while (waiting);
-
-
-                Trace.TraceInformation("Autoregistrator waiting done");
+                Trace.TraceInformation("Autoregistrator scanning done");
 
                 UpdateRapidTagsInDb();
-
                 Trace.TraceInformation("Autoregistrator rapid tags updated");
 
 
@@ -173,7 +137,7 @@ namespace ZeroKWeb
 
                                         mis.Revision++;
 
-                                        mu.UpdateMission(db, mis, Scanner);
+                                        mu.UpdateMission(db, mis, UnitSyncer.Paths, UnitSyncer.Engine);
                                         db.SaveChanges();
                                     }
 

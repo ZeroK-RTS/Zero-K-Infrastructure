@@ -42,13 +42,18 @@ namespace ZkData
             }
         }
 
-        public void UpdateMission(ZkDataContext db, Mission mission, SpringScanner scanner)
+        public void UpdateMission(ZkDataContext db, Mission mission, SpringPaths paths, string engine)
         {
             var file = mission.Mutator.ToArray();
-            var targetPath = Path.Combine(scanner.SpringPaths.WritableDirectory, "games", mission.SanitizedFileName);
+            var targetPath = Path.Combine(paths.WritableDirectory, "games", mission.SanitizedFileName);
             File.WriteAllBytes(targetPath, file);
-            
-            var modInfo = scanner.unitSync.GetResourceFromFileName(targetPath) as Mod;
+
+            Mod modInfo;
+            using (var unitsync = new UnitSync(paths, engine))
+            {
+                modInfo = unitsync.GetResourceFromFileName(targetPath) as Mod;
+            }
+
             File.Delete(targetPath);
             UpdateMission(db, mission, modInfo);
         }

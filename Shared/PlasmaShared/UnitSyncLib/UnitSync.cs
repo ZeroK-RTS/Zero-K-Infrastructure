@@ -22,6 +22,7 @@ namespace ZkData.UnitSyncLib
         private const int MaxMipLevel = 10;
         private const int MaxUnits = 2000;
 
+
         public static string[] DependencyExceptions =
         {
             "Spring Bitmaps", "Spring Cursors", "Map Helper v1", "Spring content v1",
@@ -37,7 +38,7 @@ namespace ZkData.UnitSyncLib
 
         public string Version { get; set; }
 
-        public UnitSync(SpringPaths springPaths, string engine = GlobalConst.DefaultEngineOverride)
+        public UnitSync(SpringPaths springPaths, string engine)
         {
             lock (unitsyncInitLocker)
             {
@@ -125,6 +126,12 @@ namespace ZkData.UnitSyncLib
                 return archiveCache.Archives.FirstOrDefault(x => x.Name == name);
             }
             return ret;
+        }
+
+
+        public ArchiveCache GetArchiveCache()
+        {
+            return new ArchiveCache(UnitsyncWritableFolder);
         }
 
         public Bitmap GetHeightMap(string mapName)

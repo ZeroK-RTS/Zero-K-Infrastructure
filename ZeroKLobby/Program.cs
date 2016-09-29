@@ -98,8 +98,7 @@ namespace ZeroKLobby
             {
                 //Stopwatch stopWatch = new Stopwatch(); stopWatch.Start();
                 Trace.Listeners.Add(new ConsoleTraceListener());
-
-
+                
 
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {

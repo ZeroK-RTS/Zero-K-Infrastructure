@@ -43,7 +43,6 @@ namespace AutoRegistrator
 
             CopyLobbyProgram();
             CopyExtraImages();
-            ScanArchives(paths);
         }
 
         private void CopyLobbyProgram() {
@@ -85,20 +84,6 @@ namespace AutoRegistrator
                 var fileName = $"{fac.Shortcut}.png";
                 var src = Path.Combine(spath, fileName);
                 if (File.Exists(src)) File.Copy(src, Path.Combine(tpath, fileName), true);
-            }
-        }
-
-        private static void ScanArchives(SpringPaths paths) {
-            using (var scanner = new SpringScanner(paths, true))
-            {
-                scanner.InitialScan();
-                scanner.Start();
-
-                while (scanner.GetWorkCost() > 0)
-                {
-                    Trace.TraceInformation("Waiting for scanner to complete: {0}", scanner.GetWorkCost());
-                    Thread.Sleep(5000);
-                }
             }
         }
 

@@ -564,4 +564,18 @@ namespace ZkData
             }
         }
     }
+
+    public class ProgressEventArgs : EventArgs
+    {
+        public int WorkDone { get; private set; }
+        public string WorkName { get; private set; }
+        public int WorkTotal { get; private set; }
+
+        public ProgressEventArgs(int workDone, int workTotal, string workName)
+        {
+            WorkTotal = workTotal;
+            WorkDone = workDone;
+            WorkName = workName;
+        }
+    }
 }

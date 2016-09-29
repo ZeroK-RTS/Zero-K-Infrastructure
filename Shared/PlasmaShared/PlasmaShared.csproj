@@ -118,7 +118,6 @@
     <Compile Include="SerializableDictionary.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SpringPaths.cs" />
-    <Compile Include="SpringScanner.cs" />
     <Compile Include="CsvTable.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="TcpTransport.cs" />
