@@ -74,7 +74,7 @@ namespace ChobbyLauncher
                     Status = "Updating rapid packages";
                     await downloader.PackageDownloader.LoadMasterAndVersions();
                     Status = "Checking for chobby update";
-                    Download = downloader.GetResource(DownloadType.MOD, chobbyTag);
+                    Download = downloader.GetResource(DownloadType.RAPID, chobbyTag);
                     var asTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
                     if (asTask != null) await asTask;
                     if (Download?.IsComplete == false)
@@ -84,7 +84,7 @@ namespace ChobbyLauncher
                     }
 
                     Status = "Checking for game update";
-                    Download = downloader.GetResource(DownloadType.MOD, "zk:stable");
+                    Download = downloader.GetResource(DownloadType.RAPID, "zk:stable");
                     asTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
                     if (asTask != null) await asTask;
                     if (Download?.IsComplete == false)

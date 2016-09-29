@@ -127,7 +127,7 @@ namespace Benchmarker
             foreach (var dep in
                 GetDependencies().Where(x => !UnitSync.DependencyExceptions.Contains(x))) {
                 if (GetBenchmarks(downloader.SpringPaths).Any(y => y.GetSpringName() == dep || y.Name == dep)) continue;
-                var dl = downloader.GetResource(DownloadType.MOD, dep);
+                var dl = downloader.GetResource(DownloadType.RAPID, dep);
                 if (dl != null && waitForDownload) {
                     dl.WaitHandle.WaitOne();
                     if (dl.IsComplete == false) return "Failed to download dependency mod " + dep;

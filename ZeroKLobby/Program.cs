@@ -301,7 +301,7 @@ namespace ZeroKLobby
                 TasClient.WelcomeReceived += (s, e) =>
                 {
                     Downloader.GetResource(DownloadType.ENGINE, e.Engine);
-                    Downloader.GetResource(DownloadType.MOD, e.Game);
+                    Downloader.GetResource(DownloadType.RAPID, e.Game);
                 };
 
                 Program.AreYouReadyDialog = new AreYouReadyDialog(TasClient);

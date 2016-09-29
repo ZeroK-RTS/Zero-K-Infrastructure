@@ -69,12 +69,12 @@ namespace ZeroKWeb
             Downloader.PackageDownloader.SetMasterRefreshTimer(120);
             Downloader.PackagesChanged += Downloader_PackagesChanged;
             Downloader.PackageDownloader.LoadMasterAndVersions()?.Wait();
-            Downloader.GetResource(DownloadType.MOD, "zk:stable")?.WaitHandle.WaitOne();
-            Downloader.GetResource(DownloadType.MOD, "zk:test")?.WaitHandle.WaitOne();
+            Downloader.GetResource(DownloadType.RAPID, "zk:stable")?.WaitHandle.WaitOne();
+            Downloader.GetResource(DownloadType.RAPID, "zk:test")?.WaitHandle.WaitOne();
 
             foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag).Where(x => x.Key.StartsWith("spring-features")))
             {
-                Downloader.GetResource(DownloadType.MOD, ver.Value.InternalName)?.WaitHandle.WaitOne();
+                Downloader.GetResource(DownloadType.RAPID, ver.Value.InternalName)?.WaitHandle.WaitOne();
             }
             
         }
@@ -101,7 +101,7 @@ namespace ZeroKWeb
                     if (ver == "zk:stable" || ver == "zk:test")
                     {
                         Trace.TraceInformation("Autoregistrator downloading {0}", ver);
-                        Downloader.GetResource(DownloadType.MOD, ver)?.WaitHandle.WaitOne();
+                        Downloader.GetResource(DownloadType.RAPID, ver)?.WaitHandle.WaitOne();
                     }
                 }
 
