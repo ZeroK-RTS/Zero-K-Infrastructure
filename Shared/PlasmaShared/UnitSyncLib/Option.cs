@@ -45,7 +45,6 @@ namespace ZkData.UnitSyncLib
 
         public float StrMaxLen { get { return strMaxLen; } set { strMaxLen = value; } }
 
-        public string Style { get; set; }
         public OptionType Type { get; set; }
 
         public string ConstructLine(string val)

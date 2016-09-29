@@ -510,7 +510,6 @@ namespace ZkData.UnitSyncLib
                 Type = (OptionType)NativeMethods.GetOptionType(index),
                 Scope = NativeMethods.GetOptionScope(index),
                 Section = NativeMethods.GetOptionSection(index),
-                Style = NativeMethods.GetOptionStyle(index)
             };
             switch (option.Type)
             {
