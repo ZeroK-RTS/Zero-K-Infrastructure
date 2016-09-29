@@ -198,7 +198,7 @@ namespace PlasmaDownloader.Packages
                 {
                     try
                     {
-                        var r = entry.Refresh();
+                        var r = entry.Refresh(this.plasmaDownloader.SpringPaths.WritableDirectory);
                         waiting.Add(r);
                     }
                     catch (Exception ex)
@@ -322,7 +322,7 @@ namespace PlasmaDownloader.Packages
                 BaseUrl = baseUrl;
             }
 
-            public Task<RefreshResponse> Refresh()
+            public Task<RefreshResponse> Refresh(string writableRoot)
             {
                 return Task.Factory.StartNew(() =>
                 {
@@ -338,6 +338,10 @@ namespace PlasmaDownloader.Packages
                             res.ChangedVersions = changes;
                             res.HasChanged = true;
                             LastModified = file.DateModified;
+
+                            var targetFolder = Path.Combine(writableRoot, "rapid", new Uri(BaseUrl).Host);
+                            if (!Directory.Exists(targetFolder)) Directory.CreateDirectory(targetFolder);
+                            File.WriteAllBytes(Path.Combine(targetFolder, "versions.gz"), file.Content);
                         }
                     }
                     catch (Exception ex)
