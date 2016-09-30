@@ -76,7 +76,7 @@ namespace ZkData
         public async Task SendLine(string command)
         {
             var buffer = Encoding.GetBytes(command);
-            if (IsConnected) {
+            if (IsConnected && tcp.Connected) {
                 try
                 {
                     //await stream.WriteAsync(buffer, 0, buffer.Length, cancellationTokenSource.Token);

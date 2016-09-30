@@ -33,8 +33,11 @@ namespace ZkLobbyServer
         const int MaxConnectionAttempts = 60;
         const int MaxConnectionAttemptsMinutes = 60;
 
+        static string[] ipWhitelist = new string[] {"127.0.0.1", "86.61.217.155" };
+
         private bool VerifyIp(string ip)
         {
+            if (ipWhitelist.Contains(ip)) return true;
             if (DateTime.UtcNow.Subtract(lastConLogReset).TotalMinutes > MaxConnectionAttemptsMinutes)
             {
                 connectionAttempts = new ConcurrentDictionary<string, int>();
