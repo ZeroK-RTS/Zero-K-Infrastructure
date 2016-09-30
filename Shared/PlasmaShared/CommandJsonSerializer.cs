@@ -1,23 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+using NetJSON;
+
 
 namespace PlasmaShared
 {
  
-
-
     public class CommandJsonSerializer
     {
         readonly Dictionary<string, Type> knownTypes = new Dictionary<string, Type>();
-        readonly JsonSerializerSettings settings = new JsonSerializerSettings();
+        NetJSONSettings ns = new NetJSONSettings() {DateFormat = NetJSONDateFormat.ISO};
+
 
         public CommandJsonSerializer(IEnumerable<Type> types)
         {
             RegisterTypes(types.ToArray());
-            settings.Formatting = Formatting.None;
-            settings.NullValueHandling = NullValueHandling.Ignore;
         }
 
 
@@ -28,7 +26,7 @@ namespace PlasmaShared
                 if (parts.Length != 2) throw new Exception(string.Format("Invalid json data {0} : {1}", this, line));
                 Type type;
                 if (!knownTypes.TryGetValue(parts[0], out type)) throw new Exception(string.Format("Invalid json type {0} : {1}", this, parts[0]));
-                return JsonConvert.DeserializeObject(parts[1], type) ?? type.GetConstructor(new Type[] {})?.Invoke(null);
+                return NetJSON.NetJSON.Deserialize(type, parts[1]) ?? type.GetConstructor(new Type[] {})?.Invoke(null);
             }
             return null;
         }
@@ -40,7 +38,8 @@ namespace PlasmaShared
 
         public string SerializeToLine<T>(T value)
         {
-            return string.Format("{0} {1}\n", typeof(T).Name, JsonConvert.SerializeObject(value, settings));
+            var send = $"{typeof(T).Name} {NetJSON.NetJSON.Serialize(value, ns)}\n";
+            return send;
         }
     }
 

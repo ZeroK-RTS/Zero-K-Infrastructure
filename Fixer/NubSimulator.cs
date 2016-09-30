@@ -14,7 +14,6 @@ namespace Fixer
 {
     class NubSimulator
     {
-        static List<Timer> timers = new List<Timer>();
         public void RunNub(int num)
         {
             var tas = new TasClient("Nubotron");
@@ -63,35 +62,18 @@ namespace Fixer
             
 
             tas.Connect(GlobalConst.LobbyServerHost, GlobalConst.LobbyServerPort);
-            var timer = new Timer((tc) =>
+            Task.Factory.StartNew(async () =>
             {
-                string[] article = { "the", "a", "one", "some", "any", };
-                string[] noun = { "boy", "girl", "dog", "town", "car", };
-                string[] verb = { "drove", "jumped", "ran", "walked", "skipped", };
-                string[] preposition = { "to", "from", "over", "under", "on", };
-
-                Random rndarticle = new Random();
-                Random rndnoun = new Random();
-                Random rndverb = new Random();
-                Random rndpreposition = new Random();
-
-                int randomarticle = rndarticle.Next(article.Length);
-                int randomnoun = rndnoun.Next(noun.Length);
-                int randomverb = rndverb.Next(verb.Length);
-                int randompreposition = rndpreposition.Next(preposition.Length);
-                int randomarticle2 = rndarticle.Next(article.Length);
-                int randomnoun2 = rndnoun.Next(noun.Length);
-                
-
-                var txt = String.Format("{0} {1} {2} {3} {4} {5}", article[randomarticle], noun[randomnoun], verb[randomverb], preposition[randompreposition], article[randomarticle2], noun[randomnoun2]);
-
-                
-                tas.Say(SayPlace.Channel, "zk", txt, false);
-            }, this, 10000, 10000);
-            timers.Add(timer);
+                while (true)
+                {
+                    await Task.Delay(rand.Next(20000));
+                    tas.Say(SayPlace.Channel, "zk", sent.GetNext(), false);
+                }
+            }, TaskCreationOptions.LongRunning);
         }
 
-
+        SentenceGenerator sent = new SentenceGenerator();
+        Random rand = new Random();
 
         public async Task SpawnMany()
         {
@@ -99,12 +81,35 @@ namespace Fixer
             ThreadPool.SetMaxThreads(1000, 1000);
             for (int i = 0; i < 400; i++) {
                 int i1 = i;
-                Thread.Sleep(250);
+                //Thread.Sleep(250);
                 RunNub(i1);
             }
 
          }
 
 
+    }
+
+    public class SentenceGenerator
+    {
+        Random rand = new Random();
+        string[] article = { "the", "a", "one", "some", "any", };
+        string[] noun = { "boy", "girl", "dog", "town", "car", };
+        string[] verb = { "drove", "jumped", "ran", "walked", "skipped", };
+        string[] preposition = { "to", "from", "over", "under", "on", };
+
+
+        public string GetNext()
+        {
+            int randomarticle = rand.Next(article.Length);
+            int randomnoun = rand.Next(noun.Length);
+            int randomverb = rand.Next(verb.Length);
+            int randompreposition = rand.Next(preposition.Length);
+            int randomarticle2 = rand.Next(article.Length);
+            int randomnoun2 = rand.Next(noun.Length);
+
+            var txt = String.Format("{0} {1} {2} {3} {4} {5}", article[randomarticle], noun[randomnoun], verb[randomverb], preposition[randompreposition], article[randomarticle2], noun[randomnoun2]);
+            return txt;
+        }
     }
 }
