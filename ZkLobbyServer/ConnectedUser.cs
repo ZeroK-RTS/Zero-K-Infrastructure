@@ -277,14 +277,14 @@ namespace ZkLobbyServer
                         if (channel.Users.ContainsKey(Name))
                         {
                             await server.Broadcast(channel.Users.Keys.Where(x => server.CanChatTo(say.User, x)), say);
-                            await server.OfflineMessageHandler.StoreChatHistory(say);
+                            server.OfflineMessageHandler.StoreChatHistory(say);
                         }
                     break;
 
                 case SayPlace.User:
                     ConnectedUser connectedUser;
                     if (server.ConnectedUsers.TryGetValue(say.Target, out connectedUser) && server.CanChatTo(say.User, say.Target)) await connectedUser.SendCommand(say);
-                    else await server.OfflineMessageHandler.StoreChatHistory(say);
+                    else server.OfflineMessageHandler.StoreChatHistory(say);
                     await SendCommand(say);
 
                     break;
@@ -295,7 +295,7 @@ namespace ZkLobbyServer
                         say.Target = MyBattle?.FounderName ?? "";
                         await server.Broadcast(MyBattle?.Users?.Keys.Where(x => server.CanChatTo(say.User, x)), say);
                         await MyBattle.ProcessBattleSay(say);
-                        await server.OfflineMessageHandler.StoreChatHistory(say);
+                        server.OfflineMessageHandler.StoreChatHistory(say);
                     }
                     break;
 

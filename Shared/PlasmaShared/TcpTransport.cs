@@ -81,7 +81,7 @@ namespace ZkData
                 {
                     //await stream.WriteAsync(buffer, 0, buffer.Length, cancellationTokenSource.Token);
                     //stream.Write(buffer, 0, buffer.Length);
-                    stream.WriteAsync(buffer, 0, buffer.Length, cancellationTokenSource.Token);
+                    if (tcp.Connected) stream.WriteAsync(buffer, 0, buffer.Length, cancellationTokenSource.Token);
                 } catch (Exception ex) {
                     if (cancellationTokenSource != null && !cancellationTokenSource.Token.IsCancellationRequested) {
                         Trace.TraceWarning("{0} error sending command: {1}", this, ex.Message);

@@ -180,12 +180,12 @@ namespace ZkLobbyServer
                 case SayPlace.Channel:
                     Channel channel;
                     if (Rooms.TryGetValue(say.Target, out channel)) await Broadcast(channel.Users.Keys.Where(x => CanChatTo(say.User, x)), say);
-                    await OfflineMessageHandler.StoreChatHistory(say);
+                    OfflineMessageHandler.StoreChatHistory(say);
                     break;
                 case SayPlace.User:
                     ConnectedUser connectedUser;
                     if (ConnectedUsers.TryGetValue(say.Target, out connectedUser) && CanChatTo(say.User, say.Target)) await connectedUser.SendCommand(say);
-                    else await OfflineMessageHandler.StoreChatHistory(say);
+                    else OfflineMessageHandler.StoreChatHistory(say);
                     break;
                 case SayPlace.MessageBox:
                     await Broadcast(ConnectedUsers.Values, say);
