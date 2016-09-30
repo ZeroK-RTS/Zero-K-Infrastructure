@@ -12,7 +12,7 @@ namespace ZkLobbyServer
     public class TcpTransportServerListener: ITransportServerListener
     {
         TcpListener listener;
-
+        private bool stopped;
 
         public bool Bind(int retryCount)
         {
@@ -37,7 +37,7 @@ namespace ZkLobbyServer
 
         public void RunLoop(Action<ITransport> onTransportAcccepted)
         {
-            while (true) {
+            while (!stopped) {
                 var tcp = listener.AcceptTcpClient();
                 Task.Run(() => {
                     var transport = new TcpTransport(tcp);
@@ -50,6 +50,7 @@ namespace ZkLobbyServer
         {
             try
             {
+                stopped = true;
                 listener.Server.Shutdown(SocketShutdown.Both);
                 listener.Server.Disconnect(true);
                 listener.Server.Close(0);
