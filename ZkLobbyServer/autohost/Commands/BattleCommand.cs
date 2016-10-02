@@ -57,6 +57,25 @@ namespace ZkLobbyServer
             if (Arm(battle, e, arguments) != null) await ExecuteArmed(battle, e);
         }
 
+        public bool IsSpectator(ServerBattle battle, string userName, UserBattleStatus user)
+        {
+            if (user == null)
+            {
+                if (userName != null) battle.Users.TryGetValue(userName, out user);
+            }
+            bool isSpectator = true;
+            var s = battle.spring;
+            if (s.IsRunning)
+            {
+                if (s.LobbyStartContext.Players.Any(x => x.Name == userName && !x.IsSpectator)) isSpectator = false;
+            }
+            else
+            {
+                if (user?.IsSpectator == false) isSpectator = false;
+            }
+            return isSpectator;
+        }
+
         /// <summary>
         /// Determines command permissions
         /// </summary>
@@ -72,16 +91,14 @@ namespace ZkLobbyServer
             var hasAdminRights = userName == battle.FounderName || user?.LobbyUser?.IsAdmin == true;
 
             var s = battle.spring;
-            bool isSpectator = true;
+            bool isSpectator = IsSpectator(battle, userName, user);
             int count = 0;
             if (s.IsRunning)
             {
-                if (s.LobbyStartContext.Players.Any(x => x.Name == userName && !x.IsSpectator)) isSpectator = false;
                 count = s.LobbyStartContext.Players.Count(x=>!x.IsSpectator);
             }
             else
             {
-                if (user?.IsSpectator == false) isSpectator = false;
                 count = battle.Users.Count(x => !x.Value.IsSpectator);
             }
 
@@ -89,7 +106,7 @@ namespace ZkLobbyServer
             if (defPerm == RunPermission.None) return defPerm;
             if (defPerm == RunPermission.Vote && count<=1) defPerm = RunPermission.Run;
 
-                if (Access == AccessType.Anywhere) return defPerm;
+            if (Access == AccessType.Anywhere) return defPerm;
             if (Access == AccessType.Ingame && s.IsRunning) return defPerm;
             if (Access == AccessType.NotIngame && !s.IsRunning) return defPerm;
             if (Access == AccessType.IngameVote && s.IsRunning) return RunPermission.Vote;
