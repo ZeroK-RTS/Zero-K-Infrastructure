@@ -27,7 +27,7 @@ namespace ZkLobbyServer
             Creator = e;
             question = command.Arm(battle, e, args);
             if (question == null) return false;
-            winCount = battle.Users.Values.Count(x => command.GetRunPermissions(battle, x.Name) >= BattleCommand.RunPermission.Vote) / 2 + 1;
+            winCount = battle.Users.Values.Count(x => command.GetRunPermissions(battle, x.Name) >= BattleCommand.RunPermission.Vote && !x.IsSpectator) / 2 + 1;
             if (winCount <= 0) winCount = 1;
 
             if (winCount <= 0) winCount = (battle.NonSpectatorCount / 2 + 1);
@@ -51,6 +51,9 @@ namespace ZkLobbyServer
         {
             if (command.GetRunPermissions(battle, e.User) >= BattleCommand.RunPermission.Vote && !ended)
             {
+                var battleUser = battle.Users.Values.FirstOrDefault(x => x.Name == e.User);
+                if (battleUser.IsSpectator) return false;
+
                 userVotes[e.User] = vote;
                 var yes = userVotes.Count(x => x.Value == true);
                 var no = userVotes.Count(x => x.Value == false);
