@@ -98,14 +98,14 @@ namespace Fixer
             page.Save(text, "Cleanup by DotNetWikiBot", false);
         }
 
-        public static void AddNavbox(string pageName, string template)
+        public static void AddTemplate(string pageName, string template)
         {
             Page page = new Page(newWiki, pageName);
             page.Load();
-            AddNavbox(page, template);
+            AddTemplate(page, template);
         }
 
-        public static void AddNavbox(Page page, string template)
+        public static void AddTemplate(Page page, string template)
         {
             string text = page.text;
             if (page.GetTemplates(false, false).Contains(template))
@@ -129,6 +129,30 @@ namespace Fixer
             password = password.Trim();
 
             newWiki = new Site(WIKI_URL, username, password);
+
+            int count = 0;  // increment this when we actually create a page
+            var files = new System.Collections.Generic.List<string>(Directory.GetFiles(@"G:\zkwiki\output\markup"));
+            files = files.Shuffle();
+            foreach (string path in files)
+            {
+                string unitname = Path.GetFileNameWithoutExtension(path);
+                unitname = unitname.Replace("&#47;", "/");
+                var page = new Page(newWiki, unitname);
+                page.Load();
+                if (page.Exists())
+                {
+                    // do nothing
+                }
+                else
+                {
+                    var text = File.ReadAllText(path);
+                    Console.WriteLine("-- Making page {0} --", unitname);
+                    page.Save(text, "Created page from unitguide builder export", false);
+                    count++;
+                    //if (count >= 20) break;
+                }
+            }
+
             string[,] toPort = 
             {
                 //{"MissionEditorCompatibility", "Mission Editor game compatibility"},
@@ -140,7 +164,7 @@ namespace Fixer
             };
             for (int i=0; i<toPort.GetLength(0); i++)
             {
-                ConvertPage(toPort[i, 0], toPort[i, 1], true);
+                ConvertPage(toPort[i, 0], toPort[i, 1], false);
             }
 
             string[] toReformat =
