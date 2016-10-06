@@ -15,7 +15,19 @@ namespace ZkLobbyServer
     {
         public ConcurrentDictionary<ClientConnection, bool> Connections = new ConcurrentDictionary<ClientConnection, bool>();
 
-        public ServerBattle MyBattle;
+        private ServerBattle myBattle;
+        public ServerBattle MyBattle { get {return myBattle;}
+            set
+            {
+                myBattle = value;
+                var bid = value?.BattleID;
+                if (User.BattleID != bid)
+                {
+                    User.BattleID = bid;
+                    Interlocked.Increment(ref User.SyncVersion);
+                }
+            }
+        }
         private ZkLobbyServer server;
         public User User = new User();
         public HashSet<string> FriendBy { get; set; }
@@ -645,6 +657,7 @@ namespace ZkLobbyServer
                     UserBattleStatus oldVal;
                     var seers = server.ConnectedUsers.Values.Where(x => x != null && server.CanUserSee(x, this)).ToList();
                     if (battle.Users.TryRemove(Name, out oldVal)) await server.Broadcast(seers, new LeftBattle() { BattleID = battle.BattleID, User = Name });
+                    await server.SyncUserToOthers(this);
                     var bots = battle.Bots.Values.Where(x => x.owner == Name).ToList();
                     foreach (var b in bots)
                     {

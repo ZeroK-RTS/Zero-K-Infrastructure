@@ -244,13 +244,17 @@ namespace LobbyClient
         public DateTime? InGameSince { get; set; }
         public bool IsAdmin { get; set; }
         public bool IsBot { get; set; }
-        public bool IsInBattleRoom { get; set; }
+        public int? BattleID { get; set; }
+        
+        //public bool IsInBattleRoom { get; set; }
         public int Level { get; set; }
         public string LobbyVersion { get; set; }
         public string Name { get; set; }
         public ulong? SteamID { get; set; }
         public bool IsAway => AwaySince != null;
         public bool IsInGame => InGameSince != null;
+        public bool IsInBattleRoom => BattleID != null;
+
 
         [JsonIgnore] 
         public int SyncVersion; //sync version for updating user statuses
@@ -288,6 +292,7 @@ namespace LobbyClient
             LobbyVersion = u.LobbyVersion;
             DisplayName = u.DisplayName;
             CompetitiveRank = u.CompetitiveRank;
+            BattleID = u.BattleID;
         }
     }
 

@@ -253,7 +253,7 @@ namespace ZeroKLobby.MicroLobby
                         contextMenu.MenuItems.Add(pinItem);
                     }
 
-                    var joinItem = new MenuItem("Join Same Battle") { Enabled = Program.TasClient.ExistingUsers[user.Name].IsInBattleRoom };
+                    var joinItem = new MenuItem("Join Same Battle") { Enabled = Program.TasClient.ExistingUsers[user.Name].IsInBattleRoom};
                     joinItem.Click += (s, e) => ActionHandler.JoinPlayer(user.Name);
                     contextMenu.MenuItems.Add(joinItem);
 

@@ -687,7 +687,6 @@ namespace LobbyClient
             if ((user != null) && (battle != null))
             {
                 battle.Users[user.Name] = new UserBattleStatus(user.Name, user);
-                user.IsInBattleRoom = true;
                 BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID));
                 if (user.Name == UserName)
                 {
@@ -715,7 +714,6 @@ namespace LobbyClient
 
             if ((bat != null) && (user != null))
             {
-                user.IsInBattleRoom = false;
                 UserBattleStatus removed;
                 bat.Users.TryRemove(left.User, out removed);
 
@@ -735,11 +733,6 @@ namespace LobbyClient
         {
             Battle battle;
             if (!ExistingBattles.TryGetValue(br.BattleID, out battle)) return;
-            foreach (var u in battle.Users.Keys)
-            {
-                User user;
-                if (ExistingUsers.TryGetValue(u, out user)) user.IsInBattleRoom = false;
-            }
 
             ExistingBattles.Remove(br.BattleID);
             if (battle == MyBattle)
