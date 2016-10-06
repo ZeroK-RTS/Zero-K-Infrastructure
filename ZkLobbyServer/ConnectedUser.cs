@@ -23,6 +23,8 @@ namespace ZkLobbyServer
         public HashSet<string> IgnoredBy { get; set; }
         public HashSet<string> Ignores { get; set; }
 
+        public ConcurrentDictionary<string, int> HasSeenUserVersion { get; set; } = new ConcurrentDictionary<string, int>();
+
         public bool IsLoggedIn => (User != null) && (User.AccountID != 0);
 
         public string Name => User.Name;
@@ -205,11 +207,7 @@ namespace ZkLobbyServer
             var visibleUsers = channel.Name != "zk" ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(Name, x)).ToList();
             var canSeeMe = channel.Name != "zk" ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(x, Name)).ToList();
 
-            // send other visible users in channel to self 
-            foreach (var u in visibleUsers) {
-                var conus = server.ConnectedUsers.Get(u);
-                if (conus?.User != null) await SendCommand(conus.User);
-            }
+            await server.TwoWaySyncUsers(Name, channel.Users.Keys); // mutually sync user statuses
 
             // send response with the list
             await SendCommand(new JoinChannelResponse()
@@ -231,11 +229,7 @@ namespace ZkLobbyServer
             await server.OfflineMessageHandler.SendMissedMessages(this, SayPlace.Channel, joinChannel.ChannelName, User.AccountID);
 
             // send self to other users who can see 
-            if (added)
-            {
-                await server.Broadcast(canSeeMe, User);
-                await server.Broadcast(canSeeMe, new ChannelUserAdded { ChannelName = channel.Name, UserName = Name });
-            }
+            if (added) await server.Broadcast(canSeeMe, new ChannelUserAdded { ChannelName = channel.Name, UserName = Name });
         }
 
 
@@ -443,7 +437,11 @@ namespace ZkLobbyServer
                 else User.AwaySince = null;
                 changed = true;
             }
-            if (changed) await server.Broadcast(server.ConnectedUsers.Values, User);
+            if (changed)
+            {
+                Interlocked.Increment(ref User.SyncVersion);
+                await server.SyncUserToOthers(this);
+            }
         }
 
 

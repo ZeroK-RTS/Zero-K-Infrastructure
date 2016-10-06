@@ -252,6 +252,9 @@ namespace LobbyClient
         public bool IsAway => AwaySince != null;
         public bool IsInGame => InGameSince != null;
 
+        [JsonIgnore] 
+        public int SyncVersion; //sync version for updating user statuses
+
         [JsonIgnore]
         public string IpAddress;
 

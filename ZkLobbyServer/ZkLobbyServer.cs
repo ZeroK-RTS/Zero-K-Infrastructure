@@ -25,6 +25,7 @@ namespace ZkLobbyServer
         public EventHandler<Say> Said = delegate { };
         public CommandJsonSerializer Serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<MessageAttribute>());
         public SteamWebApi SteamWebApi;
+
         private ServerTextCommands textCommands;
         public string Engine { get; private set; }
         public string Game { get; private set; }
@@ -114,6 +115,29 @@ namespace ZkLobbyServer
         }
 
 
+        /// <summary>
+        /// Mutually syncs user
+        /// </summary>
+        /// <param name="newUser">one group</param>
+        /// <param name="others">second group</param>
+        public async Task TwoWaySyncUsers(string newUser, IEnumerable<string> others)
+        {
+            var uNewUser = ConnectedUsers.Get(newUser);
+            if (uNewUser == null) return;
+            var uOthers = others.Select(x => ConnectedUsers.Get(x)).Where(x => x != null).ToList();
+
+            var visibleToNew = uOthers.Where(x => CanUserSee(uNewUser, x) && !HasSeen(uNewUser, x));
+            var othersWhoSee = uOthers.Where(x => CanUserSee(x, uNewUser) && !HasSeen(x, uNewUser));
+
+            foreach (var other in visibleToNew) await uNewUser.SendCommand(other.User);
+            await Broadcast(othersWhoSee, uNewUser.User);
+        }
+
+        public async Task SyncUserToOthers(ConnectedUser changer)
+        {
+            await Broadcast(ConnectedUsers.Values.Where(x => CanUserSee(x, changer) && !HasSeen(x, changer)), changer.User);
+        }
+
 
         public bool CanUserSee(string watcher, string watched)
         {
@@ -123,15 +147,22 @@ namespace ZkLobbyServer
             ConnectedUser uWatched;
             if (!ConnectedUsers.TryGetValue(watcher, out uWatcher) || !ConnectedUsers.TryGetValue(watched, out uWatched)) return false;
 
+            return CanUserSee(uWatcher, uWatched);
+        }
+
+        private bool CanUserSee(ConnectedUser uWatcher, ConnectedUser uWatched)
+        {
+            if (uWatched == uWatcher || uWatched == null || uWatcher == null) return false;
+
             // admins always visible
             if (uWatched.User?.IsAdmin == true) return true;
-            
+
             // friends see each other
             if (uWatcher.Friends.Contains(uWatched.Name)) return true;
 
             // clanmates see each other
             if (uWatcher.User?.Clan != null && uWatcher.User?.Clan == uWatched.User?.Clan) return true;
-            
+
             // people in same battle see each other
             if (uWatcher.MyBattle != null && uWatcher.MyBattle == uWatched.MyBattle) return true;
 
@@ -150,8 +181,28 @@ namespace ZkLobbyServer
                     }
                 }
             }
-
             return false;
+        }
+
+        public bool HasSeen(string watcher, string watched)
+        {
+            ConnectedUser uWatcher;
+            ConnectedUser uWatched;
+            if (!ConnectedUsers.TryGetValue(watcher, out uWatcher) || !ConnectedUsers.TryGetValue(watched, out uWatched)) return false;
+            return HasSeen(uWatcher, uWatched);
+        }
+
+        private static bool HasSeen(ConnectedUser uWatcher, ConnectedUser uWatched)
+        {
+            if (uWatched == uWatcher || uWatched == null || uWatcher == null) return false;
+            int lastSync;
+            var newSync = uWatched.User.SyncVersion;
+            if (!uWatcher.HasSeenUserVersion.TryGetValue(uWatched.Name, out lastSync) || lastSync != newSync)
+            {
+                uWatcher.HasSeenUserVersion[uWatched.Name] = newSync;
+                return false;
+            }
+            return true;
         }
 
 
@@ -304,7 +355,7 @@ namespace ZkLobbyServer
             if (ConnectedUsers.TryGetValue(acc.Name, out conus))
             {
                 LoginChecker.UpdateUserFromAccount(conus.User, acc);
-                await Broadcast(ConnectedUsers.Values, conus.User);
+                await SyncUserToOthers(conus);
             }
         }
 

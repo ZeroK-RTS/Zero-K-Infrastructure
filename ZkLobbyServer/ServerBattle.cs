@@ -183,6 +183,8 @@ namespace ZkLobbyServer
             ValidateBattleStatus(ubs);
             user.MyBattle = this;
 
+            await server.TwoWaySyncUsers(user.Name, Users.Keys); // mutually sync user statuses
+
             await server.Broadcast(server.ConnectedUsers.Keys, new JoinedBattle() { BattleID = BattleID, User = user.Name });
             await RecalcSpectators();
             await server.Broadcast(Users.Keys.Where(x => x != user.Name), ubs.ToUpdateBattleStatus()); // send my UBS to others in battle

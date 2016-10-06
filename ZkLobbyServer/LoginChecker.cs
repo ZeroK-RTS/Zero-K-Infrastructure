@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Threading;
 using LobbyClient;
 using MaxMind.Db;
 using MaxMind.GeoIP2;
@@ -103,6 +104,7 @@ namespace ZkLobbyServer
             user.Faction = acc.Faction != null ? acc.Faction.Shortcut : null;
             user.Clan = acc.Clan != null ? acc.Clan.Shortcut : null;
             user.AccountID = acc.AccountID;
+            Interlocked.Increment(ref user.SyncVersion);
 
             user.BanMute = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanMute) != null;
             user.BanSpecChat = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanSpecChat) != null;

@@ -99,11 +99,12 @@ namespace ZkLobbyServer
                 connectedUser.User = user;
                 connectedUser.Connections.TryAdd(this, true);
 
-                await server.Broadcast(server.ConnectedUsers.Keys.Where(x=>server.CanUserSee(x, Name)), connectedUser.User); // send self to all
+
+                // mutually syncs users based on visibility rules
+                await server.TwoWaySyncUsers(Name, server.ConnectedUsers.Keys);
 
                 await SendCommand(ret.LoginResponse); // login accepted
 
-                foreach (var c in server.ConnectedUsers.Values.Where(x => x != connectedUser && server.CanUserSee(Name, x.Name))) await SendCommand(c.User); // send others to self
 
                 foreach (var b in server.Battles.Values)
                 {
