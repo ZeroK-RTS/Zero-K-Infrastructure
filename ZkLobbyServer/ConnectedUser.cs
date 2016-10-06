@@ -596,7 +596,7 @@ namespace ZkLobbyServer
 
                 await server.MatchMaker.RemoveUser(Name, true);
 
-                await server.Broadcast(server.ConnectedUsers.Values, new UserDisconnected() { Name = Name, Reason = reason });
+                await server.Broadcast(server.ConnectedUsers.Values.Where(x=>x!=null && server.CanUserSee(x, this)), new UserDisconnected() { Name = Name, Reason = reason });
 
                 ConnectedUser connectedUser;
                 server.ConnectedUsers.TryRemove(Name, out connectedUser);
@@ -643,7 +643,8 @@ namespace ZkLobbyServer
                 {
                     MyBattle = null;
                     UserBattleStatus oldVal;
-                    if (battle.Users.TryRemove(Name, out oldVal)) await server.Broadcast(server.ConnectedUsers.Values, new LeftBattle() { BattleID = battle.BattleID, User = Name });
+                    var seers = server.ConnectedUsers.Values.Where(x => x != null && server.CanUserSee(x, this)).ToList();
+                    if (battle.Users.TryRemove(Name, out oldVal)) await server.Broadcast(seers, new LeftBattle() { BattleID = battle.BattleID, User = Name });
                     var bots = battle.Bots.Values.Where(x => x.owner == Name).ToList();
                     foreach (var b in bots)
                     {

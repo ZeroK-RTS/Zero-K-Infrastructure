@@ -150,9 +150,10 @@ namespace ZkLobbyServer
             return CanUserSee(uWatcher, uWatched);
         }
 
-        private bool CanUserSee(ConnectedUser uWatcher, ConnectedUser uWatched)
+        public bool CanUserSee(ConnectedUser uWatcher, ConnectedUser uWatched)
         {
-            if (uWatched == uWatcher || uWatched == null || uWatcher == null) return false;
+            if (uWatched == null || uWatcher == null) return false;
+            if (uWatched.Name == uWatcher.Name) return true;
 
             // admins always visible
             if (uWatched.User?.IsAdmin == true) return true;
@@ -192,7 +193,7 @@ namespace ZkLobbyServer
             return HasSeen(uWatcher, uWatched);
         }
 
-        private static bool HasSeen(ConnectedUser uWatcher, ConnectedUser uWatched)
+        public static bool HasSeen(ConnectedUser uWatcher, ConnectedUser uWatched)
         {
             if (uWatched == uWatcher || uWatched == null || uWatcher == null) return false;
             int lastSync;
@@ -365,7 +366,7 @@ namespace ZkLobbyServer
             {
                 ConnectedUser connectedUser;
                 if (ConnectedUsers.TryGetValue(u, out connectedUser)) connectedUser.MyBattle = null;
-                await Broadcast(ConnectedUsers.Values, new LeftBattle() { BattleID = battle.BattleID, User = u });
+                await Broadcast(ConnectedUsers.Values.Where(x=>x!=null && CanUserSee(x, connectedUser)), new LeftBattle() { BattleID = battle.BattleID, User = u });
             }
             ServerBattle bat;
             if (Battles.TryRemove(battle.BattleID, out bat)) bat.Dispose();

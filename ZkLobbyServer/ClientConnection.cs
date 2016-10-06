@@ -116,7 +116,7 @@ namespace ZkLobbyServer
                                 Header = b.GetHeader()
                             });
 
-                        foreach (var u in b.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });
+                        foreach (var u in b.Users.Keys.Where(x=> x!=null && server.CanUserSee(Name, x))) await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u });
                     }
                 }
 

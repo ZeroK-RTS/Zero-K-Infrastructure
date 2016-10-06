@@ -691,6 +691,12 @@ namespace LobbyClient
                 BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID));
                 if (user.Name == UserName)
                 {
+                    // delete existing to reset the list
+                    foreach (var u in battle.Users.Where(x=>x.Key != UserName).ToList())
+                    {
+                        UserBattleStatus ubs;
+                        battle.Users.TryRemove(u.Key, out ubs);
+                    }
                     MyBattle = battle;
                     if (battle.FounderName == UserName) BattleOpened(this, battle);
                     BattleJoined(this, MyBattle);
