@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NetJSON;
+using Newtonsoft.Json;
 
 
 namespace PlasmaShared
@@ -10,11 +11,11 @@ namespace PlasmaShared
     public class CommandJsonSerializer
     {
         readonly Dictionary<string, Type> knownTypes = new Dictionary<string, Type>();
-        NetJSONSettings ns = new NetJSONSettings() {DateFormat = NetJSONDateFormat.ISO};
-
+        NetJSONSettings ns = new NetJSONSettings() {DateFormat = NetJSONDateFormat.ISO , UseStringOptimization = true};
 
         public CommandJsonSerializer(IEnumerable<Type> types)
         {
+            NetJSON.NetJSON.IncludeFields = false;
             RegisterTypes(types.ToArray());
         }
 
@@ -26,7 +27,7 @@ namespace PlasmaShared
                 if (parts.Length != 2) throw new Exception(string.Format("Invalid json data {0} : {1}", this, line));
                 Type type;
                 if (!knownTypes.TryGetValue(parts[0], out type)) throw new Exception(string.Format("Invalid json type {0} : {1}", this, parts[0]));
-                return NetJSON.NetJSON.Deserialize(type, parts[1]) ?? type.GetConstructor(new Type[] {})?.Invoke(null);
+                return NetJSON.NetJSON.Deserialize(type, parts[1]) ?? type.GetConstructor(new Type[] { })?.Invoke(null);
             }
             return null;
         }
