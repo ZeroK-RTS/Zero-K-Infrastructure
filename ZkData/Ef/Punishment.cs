@@ -1,12 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace ZkData
 {
-    public class Punishment
+    public class Punishment :IEntityAfterChange
     {
         public int PunishmentID { get; set; }
         public int AccountID { get; set; }
@@ -43,14 +45,15 @@ namespace ZkData
         /// <param name="filter">additional filtering to punishments</param>
         /// <param name="db">db context to use</param>
         /// <returns></returns>
-        public static Punishment GetActivePunishment(int? accountID, string ip, long? userID, Expression<Func<Punishment, bool>> filter = null, ZkDataContext db = null)
+        public static Punishment GetActivePunishment(int? accountID, string ip, long? userID, Expression<Func<Punishment, bool>> filter = null)
         {
             if (ip == "") ip = null;
             if (accountID == 0) accountID = null;
             if (userID == 0) userID = null;
 
-            if (db == null) db = new ZkDataContext();
-            var ret = db.Punishments.Where(x => x.BanExpires > DateTime.UtcNow);    // don't use IsExpired because it has no supported translation to SQL
+            if (punishments == null) CachePunishments();
+            
+            var ret = punishments.Where(x => x.BanExpires > DateTime.UtcNow).AsQueryable();    // don't use IsExpired because it has no supported translation to SQL
             if (filter != null) ret = ret.Where(filter);
 
             ret =
@@ -59,6 +62,19 @@ namespace ZkData
             return ret.OrderByDescending(x => x.BanExpires).FirstOrDefault();
         }
 
+
+        static object punishmentsLock = new object();
+
+        private static void CachePunishments()
+        {
+            lock (punishmentsLock)
+            {
+                using (var db = new ZkDataContext()) punishments = db.Punishments.Where(x => x.BanExpires > DateTime.UtcNow).ToList();
+            }
+        }
+
+        private static List<Punishment> punishments = new List<Punishment>();
+
         [NotMapped]
         public bool IsExpired
         {
@@ -66,6 +82,10 @@ namespace ZkData
             {
                 return BanExpires < DateTime.UtcNow;
             }
+        }
+        public void AfterChange(ZkDataContext.EntityEntry entry)
+        {
+            if (entry.State == EntityState.Added || entry.State == EntityState.Deleted || entry.State == EntityState.Modified) CachePunishments();
         }
     }
 }

@@ -87,11 +87,10 @@ namespace ZkLobbyServer
 
         public async Task Process(Login login)
         {
-            Account account = null;
-            User user = null;
-            var response = await Task.Run(() => state.LoginChecker.Login(login, this.RemoteEndpointIP, out user));
-            if (response.ResultCode == LoginResponse.Code.Ok)
+            var ret = await state.LoginChecker.Login(login, this.RemoteEndpointIP);
+            if (ret.LoginResponse.ResultCode == LoginResponse.Code.Ok)
             {
+                var user = ret.User;
                 connectedUser = state.ConnectedUsers.GetOrAdd(user.Name, (n) => new ConnectedUser(state, user));
                 connectedUser.User = user;
                 connectedUser.Connections.TryAdd(this, true);
@@ -100,7 +99,7 @@ namespace ZkLobbyServer
                 
                 await state.Broadcast(state.ConnectedUsers.Values, connectedUser.User); // send self to all
 
-                await SendCommand(response); // login accepted
+                await SendCommand(ret.LoginResponse); // login accepted
 
                 foreach (var c in state.ConnectedUsers.Values.Where(x => x != connectedUser)) await SendCommand(c.User); // send others to self
 
@@ -139,8 +138,8 @@ namespace ZkLobbyServer
             }
             else
             {
-                await SendCommand(response);
-                if (response.ResultCode == LoginResponse.Code.Banned) transport.RequestClose();
+                await SendCommand(ret.LoginResponse);
+                if (ret.LoginResponse.ResultCode == LoginResponse.Code.Banned) transport.RequestClose();
             }
         }
 

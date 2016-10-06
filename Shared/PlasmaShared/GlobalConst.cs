@@ -42,7 +42,7 @@ namespace ZkData
                 case ModeType.Local:
                     BaseSiteUrl = "http://localhost:9739";
                     ZkDataContextConnectionString =
-                        @"Data Source=.;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=1000;";
+                        @"Data Source=.;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000;";
 
                     LobbyServerHost = "localhost";
                     LobbyServerPort = 8200;
@@ -54,7 +54,7 @@ namespace ZkData
                 case ModeType.Test:
                     BaseSiteUrl = "http://test.zero-k.info";
                     ZkDataContextConnectionString =
-                        "Data Source=test.zero-k.info;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=1000;";
+                        "Data Source=test.zero-k.info;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000;";
 
                     LobbyServerHost = "test.zero-k.info";
                     LobbyServerPort = 8202;
@@ -67,7 +67,7 @@ namespace ZkData
                 case ModeType.Live:
                     BaseSiteUrl = "http://zero-k.info";
                     ZkDataContextConnectionString =
-                        "Data Source=zero-k.info;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=1000;";
+                        "Data Source=zero-k.info;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000;";
                     
                     LobbyServerHost = "zero-k.info";
                     LobbyServerPort = 8200;
@@ -192,7 +192,7 @@ namespace ZkData
         public const string BomberIcon = "/img/fleets/neutral.png";
         public const string WarpIcon = "/img/warpcore.png";
 
-        public const bool VpnCheckEnabled = true; 
+        public const bool VpnCheckEnabled = false; 
 
         public const double EurosToKudos = 10.0;
         public const string TeamEmail = "Zero-K team <team@zero-k.info>";
