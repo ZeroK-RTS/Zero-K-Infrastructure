@@ -48,7 +48,7 @@ namespace ZkLobbyServer
             timer = new Timer(GlobalConst.LobbyProtocolPingInterval * 1000);
             timer.Elapsed += TimerOnElapsed;
 
-            transport.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed);
+            transport.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed).ConfigureAwait(false);
         }
 
         public async Task OnCommandReceived(string line)
@@ -91,12 +91,15 @@ namespace ZkLobbyServer
             if (ret.LoginResponse.ResultCode == LoginResponse.Code.Ok)
             {
                 var user = ret.User;
+                //Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
+
+
+                await this.SendCommand(user); // send self to self first
+
                 connectedUser = server.ConnectedUsers.GetOrAdd(user.Name, (n) => new ConnectedUser(server, user));
                 connectedUser.User = user;
                 connectedUser.Connections.TryAdd(this, true);
-                
-                //Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
-                
+
                 await server.Broadcast(server.ConnectedUsers.Values, connectedUser.User); // send self to all
 
                 await SendCommand(ret.LoginResponse); // login accepted
