@@ -66,7 +66,7 @@ namespace Fixer
             {
                 while (true)
                 {
-                    await Task.Delay(rand.Next(20000));
+                    await Task.Delay(rand.Next(400000));
                     tas.Say(SayPlace.Channel, "zk", sent.GetNext(), false);
                 }
             }, TaskCreationOptions.LongRunning);

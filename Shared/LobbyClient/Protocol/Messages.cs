@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using Newtonsoft.Json;
 using PlasmaShared;
 using ZkData;
@@ -249,6 +250,9 @@ namespace LobbyClient
         public ulong? SteamID { get; set; }
         public bool IsAway => AwaySince != null;
         public bool IsInGame => InGameSince != null;
+
+        [JsonIgnore]
+        public string IpAddress;
 
         public User Clone()
         {

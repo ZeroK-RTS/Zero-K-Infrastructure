@@ -65,19 +65,12 @@ namespace ZkLobbyServer
 
                 user.ClientType = login.ClientType;
                 user.LobbyVersion = login.LobbyVersion;
+                user.IpAddress = ip;
                 UpdateUserFromAccount(user, acc);
-
                 LogIP(db, acc, ip);
-
                 LogUserID(db, acc, userID);
 
                 db.SaveChanges();
-
-                var banMute = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanMute);
-                if (banMute != null) user.BanMute = true;
-
-                var banSpecChat = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanSpecChat);
-                if (banSpecChat != null) user.BanSpecChat = true;
 
                 var banPenalty = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanLobby);
 
@@ -111,12 +104,8 @@ namespace ZkLobbyServer
             user.Clan = acc.Clan != null ? acc.Clan.Shortcut : null;
             user.AccountID = acc.AccountID;
 
-            var banMute = Punishment.GetActivePunishment(acc.AccountID, "", 0, x => x.BanMute);
-            if (banMute != null) user.BanMute = true;
-            // note: we do not do "else = false" because this just checks accountID (there can still be active bans per IP or userID)
-
-            var banSpecChat = Punishment.GetActivePunishment(acc.AccountID, "", 0, x => x.BanSpecChat);
-            if (banSpecChat != null) user.BanSpecChat = true;
+            user.BanMute = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanMute) != null;
+            user.BanSpecChat = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanSpecChat) != null;
         }
 
 
