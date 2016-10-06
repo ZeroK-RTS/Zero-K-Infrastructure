@@ -30,7 +30,7 @@ namespace ZkLobbyServer
         DateTime lastPingFromClient;
         readonly int number;
 
-        readonly ZkLobbyServer state;
+        readonly ZkLobbyServer server;
         readonly Timer timer;
 
         ITransport transport;
@@ -40,10 +40,10 @@ namespace ZkLobbyServer
         }
 
 
-        public ClientConnection(ITransport transport, ZkLobbyServer state)
+        public ClientConnection(ITransport transport, ZkLobbyServer server)
         {
-            this.state = state;
-            number = Interlocked.Increment(ref state.ClientCounter);
+            this.server = server;
+            number = Interlocked.Increment(ref server.ClientCounter);
             this.transport = transport;
             timer = new Timer(GlobalConst.LobbyProtocolPingInterval * 1000);
             timer.Elapsed += TimerOnElapsed;
@@ -55,7 +55,7 @@ namespace ZkLobbyServer
         {
             try
             {
-                dynamic obj = state.Serializer.DeserializeLine(line);
+                dynamic obj = server.Serializer.DeserializeLine(line);
                 if (obj is Ping || obj is Login || obj is Register) await Process(obj);
                 else await connectedUser.Process(obj);
             }
@@ -70,7 +70,7 @@ namespace ZkLobbyServer
         public async Task OnConnected()
         {
             //Trace.TraceInformation("{0} connected", this);
-            await SendCommand(new Welcome() { Engine = state.Engine, Game = state.Game, Version = state.Version });
+            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Version = server.Version });
             lastPingFromClient = DateTime.UtcNow;
             timer.Start();
         }
@@ -87,23 +87,23 @@ namespace ZkLobbyServer
 
         public async Task Process(Login login)
         {
-            var ret = await state.LoginChecker.Login(login, this.RemoteEndpointIP);
+            var ret = await Task.Run(()=>server.LoginChecker.Login(login, RemoteEndpointIP));
             if (ret.LoginResponse.ResultCode == LoginResponse.Code.Ok)
             {
                 var user = ret.User;
-                connectedUser = state.ConnectedUsers.GetOrAdd(user.Name, (n) => new ConnectedUser(state, user));
+                connectedUser = server.ConnectedUsers.GetOrAdd(user.Name, (n) => new ConnectedUser(server, user));
                 connectedUser.User = user;
                 connectedUser.Connections.TryAdd(this, true);
                 
                 //Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
                 
-                await state.Broadcast(state.ConnectedUsers.Values, connectedUser.User); // send self to all
+                await server.Broadcast(server.ConnectedUsers.Values, connectedUser.User); // send self to all
 
                 await SendCommand(ret.LoginResponse); // login accepted
 
-                foreach (var c in state.ConnectedUsers.Values.Where(x => x != connectedUser)) await SendCommand(c.User); // send others to self
+                foreach (var c in server.ConnectedUsers.Values.Where(x => x != connectedUser)) await SendCommand(c.User); // send others to self
 
-                foreach (var b in state.Battles.Values)
+                foreach (var b in server.Battles.Values)
                 {
                     if (b != null)
                     {
@@ -118,10 +118,10 @@ namespace ZkLobbyServer
                 }
 
 
-                await state.OfflineMessageHandler.SendMissedMessages(this, SayPlace.User, Name, user.AccountID);
+                await server.OfflineMessageHandler.SendMissedMessages(this, SayPlace.User, Name, user.AccountID);
 
-                var defChans = await state.ChannelManager.GetDefaultChannels(user.AccountID); 
-                defChans.AddRange(state.Rooms.Where(x=>x.Value.Users.ContainsKey(user.Name)).Select(x=>x.Key)); // add currently connected channels to list too
+                var defChans = await server.ChannelManager.GetDefaultChannels(user.AccountID); 
+                defChans.AddRange(server.Rooms.Where(x=>x.Value.Users.ContainsKey(user.Name)).Select(x=>x.Key)); // add currently connected channels to list too
                 
                 foreach (var chan in defChans.ToList().Distinct()) {
                     await connectedUser.Process(new JoinChannel() {
@@ -134,7 +134,7 @@ namespace ZkLobbyServer
                 await SendCommand(new FriendList() { Friends = connectedUser.Friends.ToList() });
                 await SendCommand(new IgnoreList() { Ignores = connectedUser.Ignores.ToList() });
 
-                await state.MatchMaker.OnLoginAccepted(connectedUser);
+                await server.MatchMaker.OnLoginAccepted(connectedUser);
             }
             else
             {
@@ -149,7 +149,7 @@ namespace ZkLobbyServer
         {
             var response = new RegisterResponse();
             if (!Account.IsValidLobbyName(register.Name) || string.IsNullOrEmpty(register.PasswordHash)) response.ResultCode = RegisterResponse.Code.InvalidCharacters;
-            else if (state.ConnectedUsers.ContainsKey(register.Name)) response.ResultCode = RegisterResponse.Code.AlreadyConnected;
+            else if (server.ConnectedUsers.ContainsKey(register.Name)) response.ResultCode = RegisterResponse.Code.AlreadyConnected;
             else
             {
                 await Task.Run(() =>
@@ -195,7 +195,7 @@ namespace ZkLobbyServer
         {
             try
             {
-                var line = state.Serializer.SerializeToLine(data);
+                var line = server.Serializer.SerializeToLine(data);
                 await SendLine(line);
             }
             catch (Exception ex)

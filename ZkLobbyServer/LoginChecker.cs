@@ -8,7 +8,6 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 using LobbyClient;
 using MaxMind.Db;
 using MaxMind.GeoIP2;
@@ -35,35 +34,30 @@ namespace ZkLobbyServer
             geoIP = new DatabaseReader(Path.Combine(geoipPath, "GeoLite2-Country.mmdb"), FileAccessMode.Memory);
         }
 
-        public async Task<LoginReturn> Login(Login login, string ip)
+        public LoginCheckerResponse Login(Login login, string ip)
         {
             var userID = login.UserID;
             var lobbyVersion = login.LobbyVersion;
 
             using (var db = new ZkDataContext())
             {
-                if (!VerifyIp(ip)) return new LoginReturn(LoginResponse.Code.Banned, "Too many conneciton attempts");
+                if (!VerifyIp(ip)) return new LoginCheckerResponse(LoginResponse.Code.Banned, "Too many conneciton attempts");
 
-                var acc =
-                    db.Accounts.Include(x => x.Clan)
-                        .Include(x => x.Faction)
-                        .Include(x => x.AccountUserIDs)
-                        .Include(x => x.AccountIPs)
-                        .FirstOrDefault(x => x.Name == login.Name);
+                var acc = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name);
                 if (acc == null)
                 {
                     LogIpFailure(ip);
-                    return new LoginReturn(LoginResponse.Code.InvalidName, "Invalid user name");
+                    return new LoginCheckerResponse(LoginResponse.Code.InvalidName, "Invalid user name");
                 }
                 if (!acc.VerifyPassword(login.PasswordHash))
                 {
                     LogIpFailure(ip);
-                    return new LoginReturn(LoginResponse.Code.InvalidPassword, "Invalid password");
+                    return new LoginCheckerResponse(LoginResponse.Code.InvalidPassword, "Invalid password");
                 }
 
-                var ret = new LoginReturn(LoginResponse.Code.Ok, null);
+                var ret = new LoginCheckerResponse(LoginResponse.Code.Ok, null);
                 var user = ret.User;
-                
+
                 acc.Country = ResolveCountry(ip);
                 if ((acc.Country == null) || string.IsNullOrEmpty(acc.Country)) acc.Country = "unknown";
                 acc.LobbyVersion = lobbyVersion;
@@ -77,7 +71,7 @@ namespace ZkLobbyServer
 
                 LogUserID(db, acc, userID);
 
-                await db.SaveChangesAsync();
+                db.SaveChanges();
 
                 var banMute = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanMute);
                 if (banMute != null) user.BanMute = true;
@@ -94,7 +88,6 @@ namespace ZkLobbyServer
                             acc,
                             ip,
                             userID);
-
 
                 if (!acc.HasVpnException && GlobalConst.VpnCheckEnabled) if (HasVpn(ip, acc, db)) return BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, userID);
 
@@ -127,13 +120,13 @@ namespace ZkLobbyServer
         }
 
 
-        private LoginReturn BlockLogin(string reason, Account acc, string ip, long user_id)
+        private LoginCheckerResponse BlockLogin(string reason, Account acc, string ip, long user_id)
         {
             LogIpFailure(ip);
             var str = $"Login denied for {acc.Name} IP:{ip} ID:{user_id} reason: {reason}";
             Talk(str);
             Trace.TraceInformation(str);
-            return new LoginReturn(LoginResponse.Code.Banned, reason);
+            return new LoginCheckerResponse(LoginResponse.Code.Banned, reason);
         }
 
         private static bool CheckMask(IPAddress address, IPAddress mask, IPAddress target)
@@ -316,12 +309,12 @@ namespace ZkLobbyServer
         }
 
 
-        public class LoginReturn
+        public class LoginCheckerResponse
         {
             public LoginResponse LoginResponse = new LoginResponse();
             public User User = new User();
 
-            public LoginReturn(LoginResponse.Code code, string reason)
+            public LoginCheckerResponse(LoginResponse.Code code, string reason)
             {
                 LoginResponse.ResultCode = code;
                 LoginResponse.Reason = reason;
