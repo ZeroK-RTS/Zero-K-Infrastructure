@@ -154,6 +154,7 @@ namespace LobbyClient
     {
         public string Password { get; set; }
         public List<string> Users { get; set; } = new List<string>();
+        public int UserCount { get; set; }
         public string ChannelName { get; set; }
         public Topic Topic { get; set; }
 
@@ -341,6 +342,7 @@ namespace LobbyClient
         public AutohostMode? Mode { get; set; }
         public string Password { get; set; }
         public DateTime? RunningSince { get; set; }
+        public int? PlayerCount { get; set; }
         public int? SpectatorCount { get; set; }
         public string Title { get; set; }
         public bool? IsMatchMaker { get; set; }

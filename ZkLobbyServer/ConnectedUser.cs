@@ -25,7 +25,7 @@ namespace ZkLobbyServer
 
         public bool IsLoggedIn => (User != null) && (User.AccountID != 0);
 
-        public string Name { get { return User.Name; } }
+        public string Name => User.Name;
 
 
         public ConnectedUser(ZkLobbyServer server, User user)
@@ -121,7 +121,7 @@ namespace ZkLobbyServer
 
             Channel channel;
             User user;
-            if (server.Rooms.TryGetValue(chanKick.ChannelName, out channel) && channel.Users.TryGetValue(chanKick.UserName, out user))
+            if (server.Channels.TryGetValue(chanKick.ChannelName, out channel) && channel.Users.TryGetValue(chanKick.UserName, out user))
             {
                 if (!User.IsAdmin)
                 {
@@ -166,7 +166,7 @@ namespace ZkLobbyServer
             if (server.ConnectedUsers.TryGetValue(forceJoin.UserName, out connectedUser))
             {
                 Channel channel;
-                server.Rooms.TryGetValue(forceJoin.ChannelName, out channel);
+                server.Channels.TryGetValue(forceJoin.ChannelName, out channel);
 
                 await
                     connectedUser.Process(new JoinChannel()
@@ -194,7 +194,7 @@ namespace ZkLobbyServer
                 return;
             }
 
-            var channel = server.Rooms.GetOrAdd(joinChannel.ChannelName, (n) => new Channel() { Name = joinChannel.ChannelName, });
+            var channel = server.Channels.GetOrAdd(joinChannel.ChannelName, (n) => new Channel() { Name = joinChannel.ChannelName, });
             if (!string.IsNullOrEmpty(channel.Password) && (channel.Password != joinChannel.Password))
             {
                 await SendCommand(new JoinChannelResponse() { Success = false, Reason = "invalid password", ChannelName = joinChannel.ChannelName });
@@ -202,10 +202,17 @@ namespace ZkLobbyServer
             }
 
             var added = channel.Users.TryAdd(Name, User);
-            var users = channel.Users.Keys.ToArray();
+            var visibleUsers = channel.Name != "zk" ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(Name, x)).ToList();
+            var canSeeMe = channel.Name != "zk" ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(x, Name)).ToList();
 
-            await
-                SendCommand(new JoinChannelResponse()
+            // send other visible users in channel to self 
+            foreach (var u in visibleUsers) {
+                var conus = server.ConnectedUsers.Get(u);
+                if (conus?.User != null) await SendCommand(conus.User);
+            }
+
+            // send response with the list
+            await SendCommand(new JoinChannelResponse()
                 {
                     Success = true,
                     ChannelName = joinChannel.ChannelName,
@@ -215,13 +222,20 @@ namespace ZkLobbyServer
                             ChannelName = channel.Name,
                             Password = channel.Password,
                             Topic = channel.Topic,
-                            Users = new List<string>(users)
+                            UserCount = channel.Users.Count,
+                            Users = visibleUsers // for zk use cansee test to not send all users
                         }
                 });
 
+            // send missed messages
             await server.OfflineMessageHandler.SendMissedMessages(this, SayPlace.Channel, joinChannel.ChannelName, User.AccountID);
 
-            if (added) await server.Broadcast(users, new ChannelUserAdded { ChannelName = channel.Name, UserName = Name });
+            // send self to other users who can see 
+            if (added)
+            {
+                await server.Broadcast(canSeeMe, User);
+                await server.Broadcast(canSeeMe, new ChannelUserAdded { ChannelName = channel.Name, UserName = Name });
+            }
         }
 
 
@@ -230,13 +244,12 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             Channel channel;
-            if (server.Rooms.TryGetValue(leaveChannel.ChannelName, out channel))
+            if (server.Channels.TryGetValue(leaveChannel.ChannelName, out channel))
             {
                 User user;
+                var users = channel.Name != "zk" ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(x, Name)).ToList();
                 if (channel.Users.TryRemove(Name, out user))
                 {
-                    var users = channel.Users.Keys.ToArray();
-                    await SendCommand(new ChannelUserRemoved() { ChannelName = channel.Name, UserName = Name });
                     await server.Broadcast(users, new ChannelUserRemoved() { ChannelName = channel.Name, UserName = Name });
                 }
             }
@@ -273,7 +286,7 @@ namespace ZkLobbyServer
             {
                 case SayPlace.Channel:
                     Channel channel;
-                    if (server.Rooms.TryGetValue(say.Target, out channel))
+                    if (server.Channels.TryGetValue(say.Target, out channel))
                         if (channel.Users.ContainsKey(Name))
                         {
                             await server.Broadcast(channel.Users.Keys.Where(x => server.CanChatTo(say.User, x)), say);
@@ -574,7 +587,7 @@ namespace ZkLobbyServer
             if (Connections.TryRemove(con, out dummy) && (Connections.Count == 0))
             {
                 // notify all channels where i am to all users that i left 
-                foreach (var chan in server.Rooms.Values.Where(x => x.Users.ContainsKey(Name)).ToList()) await Process(new LeaveChannel() { ChannelName = chan.Name });
+                foreach (var chan in server.Channels.Values.Where(x => x.Users.ContainsKey(Name)).ToList()) await Process(new LeaveChannel() { ChannelName = chan.Name });
 
                 foreach (var b in server.Battles.Values.Where(x => x.Users.ContainsKey(Name)))
                 {

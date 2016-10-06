@@ -92,19 +92,18 @@ namespace ZkLobbyServer
             {
                 var user = ret.User;
                 //Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
-
-
+                
                 await this.SendCommand(user); // send self to self first
 
                 connectedUser = server.ConnectedUsers.GetOrAdd(user.Name, (n) => new ConnectedUser(server, user));
                 connectedUser.User = user;
                 connectedUser.Connections.TryAdd(this, true);
 
-                await server.Broadcast(server.ConnectedUsers.Values, connectedUser.User); // send self to all
+                await server.Broadcast(server.ConnectedUsers.Keys.Where(x=>server.CanUserSee(x, Name)), connectedUser.User); // send self to all
 
                 await SendCommand(ret.LoginResponse); // login accepted
 
-                foreach (var c in server.ConnectedUsers.Values.Where(x => x != connectedUser)) await SendCommand(c.User); // send others to self
+                foreach (var c in server.ConnectedUsers.Values.Where(x => x != connectedUser && server.CanUserSee(Name, x.Name))) await SendCommand(c.User); // send others to self
 
                 foreach (var b in server.Battles.Values)
                 {
@@ -124,7 +123,7 @@ namespace ZkLobbyServer
                 await server.OfflineMessageHandler.SendMissedMessages(this, SayPlace.User, Name, user.AccountID);
 
                 var defChans = await server.ChannelManager.GetDefaultChannels(user.AccountID); 
-                defChans.AddRange(server.Rooms.Where(x=>x.Value.Users.ContainsKey(user.Name)).Select(x=>x.Key)); // add currently connected channels to list too
+                defChans.AddRange(server.Channels.Where(x=>x.Value.Users.ContainsKey(user.Name)).Select(x=>x.Key)); // add currently connected channels to list too
                 
                 foreach (var chan in defChans.ToList().Distinct()) {
                     await connectedUser.Process(new JoinChannel() {

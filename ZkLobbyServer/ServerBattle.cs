@@ -49,6 +49,7 @@ namespace ZkLobbyServer
         public ZkLobbyServer server;
         public DedicatedServer spring;
 
+
         public CommandPoll ActivePoll { get; private set; }
 
         static ServerBattle()
@@ -217,12 +218,14 @@ namespace ZkLobbyServer
         public async Task RecalcSpectators()
         {
             var specCount = Users.Values.Count(x => x.IsSpectator);
-            if (specCount != SpectatorCount)
+            var playerCount = Users.Values.Count(x => !x.IsSpectator);
+            if (specCount != SpectatorCount || playerCount != NonSpectatorCount)
             {
                 SpectatorCount = specCount;
+                NonSpectatorCount = playerCount;
                 await
                     server.Broadcast(server.ConnectedUsers.Values,
-                        new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID } });
+                        new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID , PlayerCount = NonSpectatorCount} });
             }
         }
 
@@ -470,8 +473,10 @@ namespace ZkLobbyServer
             h.IsRunning = IsInGame;
             h.RunningSince = RunningSince;
             h.SpectatorCount = SpectatorCount;
+            h.PlayerCount = NonSpectatorCount;
             h.IsMatchMaker = IsMatchMakerBattle;
-
+            
+            
             base.UpdateWith(h);
 
             ValidateAndFillDetails();

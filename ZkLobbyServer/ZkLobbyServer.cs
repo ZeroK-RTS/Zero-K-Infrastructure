@@ -21,7 +21,7 @@ namespace ZkLobbyServer
 
         public LoginChecker LoginChecker;
         public OfflineMessageHandler OfflineMessageHandler = new OfflineMessageHandler();
-        public ConcurrentDictionary<string, Channel> Rooms = new ConcurrentDictionary<string, Channel>();
+        public ConcurrentDictionary<string, Channel> Channels = new ConcurrentDictionary<string, Channel>();
         public EventHandler<Say> Said = delegate { };
         public CommandJsonSerializer Serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<MessageAttribute>());
         public SteamWebApi SteamWebApi;
@@ -113,6 +113,48 @@ namespace ZkLobbyServer
             return true;
         }
 
+
+
+        public bool CanUserSee(string watcher, string watched)
+        {
+            if (watcher == watched) return true; // can see self
+
+            ConnectedUser uWatcher;
+            ConnectedUser uWatched;
+            if (!ConnectedUsers.TryGetValue(watcher, out uWatcher) || !ConnectedUsers.TryGetValue(watched, out uWatched)) return false;
+
+            // admins always visible
+            if (uWatched.User?.IsAdmin == true) return true;
+            
+            // friends see each other
+            if (uWatcher.Friends.Contains(uWatched.Name)) return true;
+
+            // clanmates see each other
+            if (uWatcher.User?.Clan != null && uWatcher.User?.Clan == uWatched.User?.Clan) return true;
+            
+            // people in same battle see each other
+            if (uWatcher.MyBattle != null && uWatcher.MyBattle == uWatched.MyBattle) return true;
+
+            // people in same non "zk" channel see each other
+            foreach (var chan in Channels.Values.Where(x => x != null))
+            {
+                if (chan.Users.ContainsKey(uWatcher.Name)) // my channel
+                {
+                    if (chan.Name != "zk")
+                    {
+                        if (chan.Users.ContainsKey(uWatched.Name)) return true;
+                    }
+                    else
+                    {
+                        return chan.Users.Keys.Take(50).Contains(uWatched.Name); // return first 50 from zk 
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
         public async Task ForceJoinBattle(string playerName, string battleHost)
         {
             var bat = Battles.Values.FirstOrDefault(x => x.FounderName == battleHost);
@@ -179,7 +221,7 @@ namespace ZkLobbyServer
             {
                 case SayPlace.Channel:
                     Channel channel;
-                    if (Rooms.TryGetValue(say.Target, out channel)) await Broadcast(channel.Users.Keys.Where(x => CanChatTo(say.User, x)), say);
+                    if (Channels.TryGetValue(say.Target, out channel)) await Broadcast(channel.Users.Keys.Where(x => CanChatTo(say.User, x)), say);
                     OfflineMessageHandler.StoreChatHistory(say);
                     break;
                 case SayPlace.User:
@@ -290,7 +332,7 @@ namespace ZkLobbyServer
         {
             // todo persist in db
             Channel chan;
-            if (Rooms.TryGetValue(channel, out chan))
+            if (Channels.TryGetValue(channel, out chan))
             {
                 chan.Topic.Text = topic;
                 chan.Topic.SetDate = DateTime.UtcNow;
