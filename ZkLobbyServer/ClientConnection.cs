@@ -116,7 +116,7 @@ namespace ZkLobbyServer
                 }
 
 
-                await server.OfflineMessageHandler.SendMissedMessages(this, SayPlace.User, Name, user.AccountID);
+                server.OfflineMessageHandler.SendMissedMessagesAsync(this, SayPlace.User, Name, user.AccountID);
 
                 var defChans = await server.ChannelManager.GetDefaultChannels(user.AccountID); 
                 defChans.AddRange(server.Channels.Where(x=>x.Value.Users.ContainsKey(user.Name)).Select(x=>x.Key)); // add currently connected channels to list too

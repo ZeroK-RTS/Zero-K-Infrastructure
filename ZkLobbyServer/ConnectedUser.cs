@@ -238,7 +238,7 @@ namespace ZkLobbyServer
                 });
 
             // send missed messages
-            await server.OfflineMessageHandler.SendMissedMessages(this, SayPlace.Channel, joinChannel.ChannelName, User.AccountID);
+            server.OfflineMessageHandler.SendMissedMessagesAsync(this, SayPlace.Channel, joinChannel.ChannelName, User.AccountID);
 
             // send self to other users who can see 
             if (added) await server.Broadcast(canSeeMe, new ChannelUserAdded { ChannelName = channel.Name, UserName = Name });
@@ -296,14 +296,14 @@ namespace ZkLobbyServer
                         if (channel.Users.ContainsKey(Name))
                         {
                             await server.Broadcast(channel.Users.Keys.Where(x => server.CanChatTo(say.User, x)), say);
-                            server.OfflineMessageHandler.StoreChatHistory(say);
+                            server.OfflineMessageHandler.StoreChatHistoryAsync(say);
                         }
                     break;
 
                 case SayPlace.User:
                     ConnectedUser connectedUser;
                     if (server.ConnectedUsers.TryGetValue(say.Target, out connectedUser) && server.CanChatTo(say.User, say.Target)) await connectedUser.SendCommand(say);
-                    else server.OfflineMessageHandler.StoreChatHistory(say);
+                    else server.OfflineMessageHandler.StoreChatHistoryAsync(say);
                     await SendCommand(say);
 
                     break;
@@ -314,7 +314,7 @@ namespace ZkLobbyServer
                         say.Target = MyBattle?.FounderName ?? "";
                         await server.Broadcast(MyBattle?.Users?.Keys.Where(x => server.CanChatTo(say.User, x)), say);
                         await MyBattle.ProcessBattleSay(say);
-                        server.OfflineMessageHandler.StoreChatHistory(say);
+                        server.OfflineMessageHandler.StoreChatHistoryAsync(say);
                     }
                     break;
 

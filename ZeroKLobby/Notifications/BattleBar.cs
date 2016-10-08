@@ -274,7 +274,7 @@ namespace ZeroKLobby.Notifications
                 else picoChat.Visible = false;
             };
 
-            timer.Interval = 1000;
+            timer.Interval = 2000;
             timer.Start();
 
             Program.BattleIconManager.BattleChanged += BattleIconManager_BattleChanged;
