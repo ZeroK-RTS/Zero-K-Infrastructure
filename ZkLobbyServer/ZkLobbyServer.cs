@@ -178,7 +178,8 @@ namespace ZkLobbyServer
                     }
                     else
                     {
-                        return chan.Users.Keys.Take(50).Contains(uWatched.Name); // return first 50 from zk 
+                        return false;
+                        //return chan.Users.Keys.Take(50).Contains(uWatched.Name); // return first 50 from zk 
                     }
                 }
             }
