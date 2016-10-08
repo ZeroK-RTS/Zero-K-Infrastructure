@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 using LobbyClient;
 using MaxMind.Db;
 using MaxMind.GeoIP2;
@@ -20,8 +21,9 @@ namespace ZkLobbyServer
     {
         private const int MaxConnectionAttempts = 60;
         private const int MaxConnectionAttemptsMinutes = 60;
+        private static readonly int MaxConcurrentLogins = Environment.ProcessorCount * 2;
 
-        private static string[] ipWhitelist = new string[] { "127.0.0.1", "86.61.217.155" };
+        private static string[] ipWhitelist = { "127.0.0.1", "86.61.217.155" };
         private readonly IGeoIP2Provider geoIP;
 
         private readonly ZkLobbyServer state;
@@ -29,63 +31,74 @@ namespace ZkLobbyServer
 
         private DateTime lastConLogReset = DateTime.UtcNow;
 
+
+        private SemaphoreSlim semaphore = new SemaphoreSlim(MaxConcurrentLogins);
+
         public LoginChecker(ZkLobbyServer state, string geoipPath)
         {
             this.state = state;
             geoIP = new DatabaseReader(Path.Combine(geoipPath, "GeoLite2-Country.mmdb"), FileAccessMode.Memory);
         }
 
-        public LoginCheckerResponse Login(Login login, string ip)
+        public async Task<LoginCheckerResponse> Login(Login login, string ip)
         {
-            var userID = login.UserID;
-            var lobbyVersion = login.LobbyVersion;
-
-            using (var db = new ZkDataContext())
+            await semaphore.WaitAsync();
+            try
             {
-                if (!VerifyIp(ip)) return new LoginCheckerResponse(LoginResponse.Code.Banned, "Too many conneciton attempts");
+                var userID = login.UserID;
+                var lobbyVersion = login.LobbyVersion;
 
-                var acc = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name);
-                if (acc == null)
+                using (var db = new ZkDataContext())
                 {
-                    LogIpFailure(ip);
-                    return new LoginCheckerResponse(LoginResponse.Code.InvalidName, "Invalid user name");
+                    if (!VerifyIp(ip)) return new LoginCheckerResponse(LoginResponse.Code.Banned, "Too many conneciton attempts");
+
+                    var acc = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name);
+                    if (acc == null)
+                    {
+                        LogIpFailure(ip);
+                        return new LoginCheckerResponse(LoginResponse.Code.InvalidName, "Invalid user name");
+                    }
+                    if (!acc.VerifyPassword(login.PasswordHash))
+                    {
+                        LogIpFailure(ip);
+                        return new LoginCheckerResponse(LoginResponse.Code.InvalidPassword, "Invalid password");
+                    }
+
+                    var ret = new LoginCheckerResponse(LoginResponse.Code.Ok, null);
+                    var user = ret.User;
+
+                    acc.Country = ResolveCountry(ip);
+                    if ((acc.Country == null) || string.IsNullOrEmpty(acc.Country)) acc.Country = "unknown";
+                    acc.LobbyVersion = lobbyVersion;
+                    acc.LastLogin = DateTime.UtcNow;
+
+                    user.ClientType = login.ClientType;
+                    user.LobbyVersion = login.LobbyVersion;
+                    user.IpAddress = ip;
+                    UpdateUserFromAccount(user, acc);
+                    LogIP(db, acc, ip);
+                    LogUserID(db, acc, userID);
+
+                    db.SaveChanges();
+
+                    var banPenalty = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanLobby);
+
+                    if (banPenalty != null)
+                        return
+                            BlockLogin(
+                                $"Banned until {banPenalty.BanExpires} (match to {banPenalty.AccountByAccountID.Name}), reason: {banPenalty.Reason}",
+                                acc,
+                                ip,
+                                userID);
+
+                    if (!acc.HasVpnException && GlobalConst.VpnCheckEnabled) if (HasVpn(ip, acc, db)) return BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, userID);
+
+                    return ret;
                 }
-                if (!acc.VerifyPassword(login.PasswordHash))
-                {
-                    LogIpFailure(ip);
-                    return new LoginCheckerResponse(LoginResponse.Code.InvalidPassword, "Invalid password");
-                }
-
-                var ret = new LoginCheckerResponse(LoginResponse.Code.Ok, null);
-                var user = ret.User;
-
-                acc.Country = ResolveCountry(ip);
-                if ((acc.Country == null) || string.IsNullOrEmpty(acc.Country)) acc.Country = "unknown";
-                acc.LobbyVersion = lobbyVersion;
-                acc.LastLogin = DateTime.UtcNow;
-
-                user.ClientType = login.ClientType;
-                user.LobbyVersion = login.LobbyVersion;
-                user.IpAddress = ip;
-                UpdateUserFromAccount(user, acc);
-                LogIP(db, acc, ip);
-                LogUserID(db, acc, userID);
-
-                db.SaveChanges();
-
-                var banPenalty = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanLobby);
-
-                if (banPenalty != null)
-                    return
-                        BlockLogin(
-                            $"Banned until {banPenalty.BanExpires} (match to {banPenalty.AccountByAccountID.Name}), reason: {banPenalty.Reason}",
-                            acc,
-                            ip,
-                            userID);
-
-                if (!acc.HasVpnException && GlobalConst.VpnCheckEnabled) if (HasVpn(ip, acc, db)) return BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, userID);
-
-                return ret;
+            }
+            finally
+            {
+                semaphore.Release();
             }
         }
 
