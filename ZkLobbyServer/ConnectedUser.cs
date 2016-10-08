@@ -571,24 +571,40 @@ namespace ZkLobbyServer
                     return;
                 }
 
+                var friendAdded = false;
+
                 var entry = srcAccount.RelalationsByOwner.FirstOrDefault(x => x.TargetAccountID == trgtAccount.AccountID);
                 if ((rel.Relation == Relation.None) && (entry != null)) db.AccountRelations.Remove(entry);
                 if (rel.Relation != Relation.None)
                     if (entry == null)
                     {
+                        if (rel.Relation == Relation.Friend) friendAdded = true;
                         entry = new AccountRelation() { Owner = srcAccount, Target = trgtAccount, Relation = rel.Relation };
                         srcAccount.RelalationsByOwner.Add(entry);
                     }
                     else entry.Relation = rel.Relation;
                 db.SaveChanges();
 
-                ConnectedUser connectedUser;
-                if (server.ConnectedUsers.TryGetValue(trgtAccount.Name, out connectedUser)) connectedUser.LoadFriendsIgnores();
-                if (server.ConnectedUsers.TryGetValue(srcAccount.Name, out connectedUser))
+                ConnectedUser targetConnectedUser;
+                if (server.ConnectedUsers.TryGetValue(trgtAccount.Name, out targetConnectedUser))
                 {
-                    connectedUser.LoadFriendsIgnores();
-                    await connectedUser.SendCommand(new FriendList() { Friends = Friends.ToList() });
-                    await connectedUser.SendCommand(new IgnoreList() { Ignores = Ignores.ToList() });
+                    targetConnectedUser.LoadFriendsIgnores(); // update partner's mutual lists
+
+                    if (friendAdded) // friend added, sync new friend to me (user, battle and channels)
+                    {
+                        await server.TwoWaySyncUsers(Name, new List<string>() { targetConnectedUser.Name }); 
+                        if (targetConnectedUser.MyBattle != null)
+                            await
+                                SendCommand(new JoinedBattle() { BattleID = targetConnectedUser.MyBattle.BattleID, User = targetConnectedUser.Name });
+
+                        foreach (var chan in
+                            server.Channels.Values.Where(
+                                x => (x != null) && x.Users.ContainsKey(Name) && x.Users.ContainsKey(targetConnectedUser.Name))) await SendCommand(new ChannelUserAdded() { ChannelName = chan.Name, UserName = targetConnectedUser.Name });
+                    }
+
+                    LoadFriendsIgnores();
+                    await SendCommand(new FriendList() { Friends = Friends.ToList() });
+                    await SendCommand(new IgnoreList() { Ignores = Ignores.ToList() });
                 }
             }
         }
