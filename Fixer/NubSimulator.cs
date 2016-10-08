@@ -62,14 +62,14 @@ namespace Fixer
             
 
             tas.Connect(GlobalConst.LobbyServerHost, GlobalConst.LobbyServerPort);
-            Task.Factory.StartNew(async () =>
+            /*Task.Factory.StartNew(async () =>
             {
                 while (true)
                 {
                     await Task.Delay(rand.Next(400000));
                     tas.Say(SayPlace.Channel, "zk", sent.GetNext(), false);
                 }
-            }, TaskCreationOptions.LongRunning);
+            }, TaskCreationOptions.LongRunning);*/
         }
 
         SentenceGenerator sent = new SentenceGenerator();
@@ -81,7 +81,7 @@ namespace Fixer
             ThreadPool.SetMaxThreads(1000, 1000);
             for (int i = 0; i < 400; i++) {
                 int i1 = i;
-                //Thread.Sleep(250);
+                //Thread.Sleep(100);
                 RunNub(i1);
             }
 

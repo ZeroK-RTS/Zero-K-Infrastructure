@@ -38,6 +38,7 @@ namespace ZkLobbyServer
 
         public PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
         public SpringPaths SpringPaths { get; private set; }
+        private BattleListUpdater battleListUpdater;
 
 
 
@@ -62,6 +63,7 @@ namespace ZkLobbyServer
             textCommands = new ServerTextCommands(this);
             ChannelManager = new ChannelManager(this);
             MatchMaker = new MatchMaker(this);
+            battleListUpdater = new BattleListUpdater(this);
         }
 
         /// <summary>

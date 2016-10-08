@@ -193,7 +193,7 @@ namespace ZkLobbyServer
             
             await RecalcSpectators();
             
-            await user.SendCommand(new JoinedBattle() { BattleID = BattleID, User = user.Name });
+            //await user.SendCommand(new JoinedBattle() { BattleID = BattleID, User = user.Name });
             await user.SendCommand(ubs.ToUpdateBattleStatus()); 
 
             foreach (var u in Users.Values.Where(x=>x!=null && x.Name != user.Name).Select(x => x.ToUpdateBattleStatus()).ToList())
@@ -241,8 +241,7 @@ namespace ZkLobbyServer
                 SpectatorCount = specCount;
                 NonSpectatorCount = playerCount;
                 await
-                    server.Broadcast(server.ConnectedUsers.Values,
-                        new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID , PlayerCount = NonSpectatorCount} });
+                    server.Broadcast(Users.Keys, new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID , PlayerCount = NonSpectatorCount} });
             }
         }
 

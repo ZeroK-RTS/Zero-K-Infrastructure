@@ -109,6 +109,7 @@
     <Compile Include="autohost\MapPicker.cs" />
     <Compile Include="autohost\CommandPoll.cs" />
     <Compile Include="autohost\Commands\BattleCommand.cs" />
+    <Compile Include="BattleListUpdater.cs" />
     <Compile Include="ChannelManager.cs" />
     <Compile Include="ChatRelay.cs" />
     <Compile Include="ClientConnection.cs" />

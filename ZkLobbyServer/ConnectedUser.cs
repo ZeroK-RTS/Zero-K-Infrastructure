@@ -11,12 +11,14 @@ using ZkData;
 
 namespace ZkLobbyServer
 {
-    public class ConnectedUser: ICommandSender
+    public class ConnectedUser : ICommandSender
     {
         public ConcurrentDictionary<ClientConnection, bool> Connections = new ConcurrentDictionary<ClientConnection, bool>();
 
         private ServerBattle myBattle;
-        public ServerBattle MyBattle { get {return myBattle;}
+        public ServerBattle MyBattle
+        {
+            get { return myBattle; }
             set
             {
                 myBattle = value;
@@ -223,10 +225,10 @@ namespace ZkLobbyServer
 
             // send response with the list
             await SendCommand(new JoinChannelResponse()
-                {
-                    Success = true,
-                    ChannelName = joinChannel.ChannelName,
-                    Channel =
+            {
+                Success = true,
+                ChannelName = joinChannel.ChannelName,
+                Channel =
                         new ChannelHeader()
                         {
                             ChannelName = channel.Name,
@@ -235,7 +237,7 @@ namespace ZkLobbyServer
                             UserCount = channel.Users.Count,
                             Users = visibleUsers // for zk use cansee test to not send all users
                         }
-                });
+            });
 
             // send missed messages
             server.OfflineMessageHandler.SendMissedMessagesAsync(this, SayPlace.Channel, joinChannel.ChannelName, User.AccountID);
@@ -608,7 +610,7 @@ namespace ZkLobbyServer
 
                 await server.MatchMaker.RemoveUser(Name, true);
 
-                await server.Broadcast(server.ConnectedUsers.Values.Where(x=>x!=null && server.CanUserSee(x, this)), new UserDisconnected() { Name = Name, Reason = reason });
+                await server.Broadcast(server.ConnectedUsers.Values.Where(x => x != null && server.CanUserSee(x, this)), new UserDisconnected() { Name = Name, Reason = reason });
 
                 ConnectedUser connectedUser;
                 server.ConnectedUsers.TryRemove(Name, out connectedUser);
@@ -647,6 +649,7 @@ namespace ZkLobbyServer
         private async Task LeaveBattle(Battle battle)
         {
             if (battle.Users.ContainsKey(Name))
+            {
                 if (battle.Users.Count == 1) // last user remove entire battle
                 {
                     await server.RemoveBattle(battle);
@@ -656,17 +659,19 @@ namespace ZkLobbyServer
                     MyBattle = null;
                     UserBattleStatus oldVal;
                     var seers = server.ConnectedUsers.Values.Where(x => x != null && server.CanUserSee(x, this)).ToList();
-                    if (battle.Users.TryRemove(Name, out oldVal)) await server.Broadcast(seers, new LeftBattle() { BattleID = battle.BattleID, User = Name });
-                    await server.SyncUserToOthers(this);
-                    var bots = battle.Bots.Values.Where(x => x.owner == Name).ToList();
-                    foreach (var b in bots)
+                    if (battle.Users.TryRemove(Name, out oldVal))
                     {
-                        BotBattleStatus obs;
-                        if (battle.Bots.TryRemove(b.Name, out obs)) await server.Broadcast(battle.Users.Keys, new RemoveBot() { Name = b.Name });
+                        await server.Broadcast(seers, new LeftBattle() { BattleID = battle.BattleID, User = Name });
+                        await server.SyncUserToOthers(this);
+                        var bots = battle.Bots.Values.Where(x => x.owner == Name).ToList();
+                        foreach (var b in bots)
+                        {
+                            BotBattleStatus obs;
+                            if (battle.Bots.TryRemove(b.Name, out obs)) await server.Broadcast(battle.Users.Keys, new RemoveBot() { Name = b.Name });
+                        }
                     }
                 }
+            }
         }
-
-
     }
 }
