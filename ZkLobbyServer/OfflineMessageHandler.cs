@@ -22,6 +22,8 @@ namespace ZkLobbyServer
             int accountID,
             int maxCount = OfflineMessageResendCount)
         {
+            if (place == SayPlace.Channel && target == "zk") return Task.FromResult(0); // do not push history for #zk
+
             return Task.Run(async () =>
             {
                 await sendHistorySemaphore.WaitAsync();
