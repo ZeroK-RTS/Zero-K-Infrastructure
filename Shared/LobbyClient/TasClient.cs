@@ -45,7 +45,6 @@ namespace LobbyClient
         private List<string> ignores = new List<string>();
 
 
-        private DateTime lastPing;
 
         private int lastUdpSourcePort;
         private int lastUserStatus;
@@ -625,8 +624,7 @@ namespace LobbyClient
 
         private void PingTimerInternal()
         {
-            if (IsConnected) SendCommand(new Ping());
-            else if (!WasDisconnectRequested) Connect(serverHost, serverPort);
+            if (!IsConnected && !WasDisconnectRequested) Connect(serverHost, serverPort);
         }
 
 
@@ -758,10 +756,6 @@ namespace LobbyClient
             }
         }
 
-        private async Task Process(Ping ping)
-        {
-            lastPing = DateTime.UtcNow;
-        }
 
         private async Task Process(User userUpdate)
         {

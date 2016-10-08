@@ -26,12 +26,11 @@ namespace ZkLobbyServer
             }
         }
         ConnectedUser connectedUser;
+        private bool loginAttempted;
 
-        DateTime lastPingFromClient;
         readonly int number;
 
         readonly ZkLobbyServer server;
-        readonly Timer timer;
 
         ITransport transport;
         public string RemoteEndpointIP
@@ -45,8 +44,6 @@ namespace ZkLobbyServer
             this.server = server;
             number = Interlocked.Increment(ref server.ClientCounter);
             this.transport = transport;
-            timer = new Timer(GlobalConst.LobbyProtocolPingInterval * 1000);
-            timer.Elapsed += TimerOnElapsed;
 
             transport.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed).ConfigureAwait(false);
         }
@@ -56,7 +53,7 @@ namespace ZkLobbyServer
             try
             {
                 dynamic obj = server.Serializer.DeserializeLine(line);
-                if (obj is Ping || obj is Login || obj is Register) await Process(obj);
+                if (obj is Login || obj is Register) await Process(obj);
                 else await connectedUser.Process(obj);
             }
             catch (Exception ex)
@@ -71,14 +68,11 @@ namespace ZkLobbyServer
         {
             //Trace.TraceInformation("{0} connected", this);
             await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Version = server.Version });
-            lastPingFromClient = DateTime.UtcNow;
-            timer.Start();
         }
 
 
         public async Task OnConnectionClosed(bool wasRequested)
         {
-            timer.Stop();
             var reason = wasRequested ? "quit" : "connection failed";
             if (!string.IsNullOrEmpty(Name)) await connectedUser.RemoveConnection(this, reason);
             //Trace.TraceInformation("{0} {1}", this, reason);
@@ -87,6 +81,7 @@ namespace ZkLobbyServer
 
         public async Task Process(Login login)
         {
+            loginAttempted = true;
             var ret = await Task.Run(()=>server.LoginChecker.Login(login, RemoteEndpointIP));
             if (ret.LoginResponse.ResultCode == LoginResponse.Code.Ok)
             {
@@ -184,11 +179,6 @@ namespace ZkLobbyServer
             await SendCommand(response);
         }
 
-        public async Task Process(Ping ping)
-        {
-            lastPingFromClient = DateTime.UtcNow;
-        }
-
         public void RequestClose()
         {
             transport.RequestClose();
@@ -226,10 +216,5 @@ namespace ZkLobbyServer
             return string.Format("[{0} {1}:{2} {3}]", number, transport.RemoteEndpointAddress, transport.RemoteEndpointPort, Name);
         }
 
-        void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
-        {
-            SendCommand(new Ping() { });
-            if (DateTime.UtcNow.Subtract(lastPingFromClient).TotalSeconds >= GlobalConst.LobbyProtocolPingTimeout || connectedUser?.IsLoggedIn != true) transport.RequestClose();
-        }
     }
 }
