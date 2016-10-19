@@ -391,8 +391,6 @@ namespace ZeroKLobby.MicroLobby
             var contextMenu = new ContextMenu();
             try
             {
-                if (battle.Users.Count <= 1) return contextMenu; // don't display if just 1 player (probably a bot)
-
                 var headerItem = new MenuItem("Message Player");
                 headerItem.Enabled = false;
                 headerItem.DefaultItem = true; //This is to make it appear bold

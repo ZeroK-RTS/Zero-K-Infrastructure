@@ -593,9 +593,6 @@ namespace ZkLobbyServer
                     if (friendAdded) // friend added, sync new friend to me (user, battle and channels)
                     {
                         await server.TwoWaySyncUsers(Name, new List<string>() { targetConnectedUser.Name }); 
-                        if (targetConnectedUser.MyBattle != null)
-                            await
-                                SendCommand(new JoinedBattle() { BattleID = targetConnectedUser.MyBattle.BattleID, User = targetConnectedUser.Name });
 
                         foreach (var chan in
                             server.Channels.Values.Where(
@@ -674,10 +671,9 @@ namespace ZkLobbyServer
                 {
                     MyBattle = null;
                     UserBattleStatus oldVal;
-                    var seers = server.ConnectedUsers.Values.Where(x => x != null && server.CanUserSee(x, this)).ToList();
                     if (battle.Users.TryRemove(Name, out oldVal))
                     {
-                        await server.Broadcast(seers, new LeftBattle() { BattleID = battle.BattleID, User = Name });
+                        await SendCommand(new LeaveBattleSucccess() {BattleID = battle.BattleID});
                         await server.SyncUserToOthers(this);
                         var bots = battle.Bots.Values.Where(x => x.owner == Name).ToList();
                         foreach (var b in bots)

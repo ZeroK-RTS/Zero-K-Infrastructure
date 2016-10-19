@@ -102,7 +102,7 @@ namespace ZeroKLobby.MicroLobby
                 }
                 else
                 {
-                    bool playerFound = x.Users.Values.Any(u => u.Name.ToUpper().Contains(word));
+                    bool playerFound = Program.TasClient.BattleUsers(x.BattleID).Any(u => u.Name.ToUpper().Contains(word));
                     bool titleFound = x.Title.ToUpper().Contains(word);
                     bool modFound = x.ModName.ToUpper().Contains(word);
                     bool mapFound = x.MapName.ToUpper().Contains(word);

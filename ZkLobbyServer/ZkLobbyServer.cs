@@ -163,6 +163,9 @@ namespace ZkLobbyServer
             // friends see each other
             if (uWatcher.Friends.Contains(uWatched.Name)) return true;
 
+            // already seen, cannot be unseen
+            if (uWatcher.HasSeenUserVersion.ContainsKey(uWatched.Name)) return true;
+
             // clanmates see each other
             if (uWatcher.User?.Clan != null && uWatcher.User?.Clan == uWatched.User?.Clan) return true;
 
@@ -368,8 +371,11 @@ namespace ZkLobbyServer
             foreach (var u in battle.Users.Keys)
             {
                 ConnectedUser connectedUser;
-                if (ConnectedUsers.TryGetValue(u, out connectedUser)) connectedUser.MyBattle = null;
-                await Broadcast(ConnectedUsers.Values.Where(x=>x!=null && CanUserSee(x, connectedUser)), new LeftBattle() { BattleID = battle.BattleID, User = u });
+                if (ConnectedUsers.TryGetValue(u, out connectedUser))
+                {
+                    connectedUser.MyBattle = null;
+                    await SyncUserToOthers(connectedUser);
+                }
             }
             ServerBattle bat;
             if (Battles.TryRemove(battle.BattleID, out bat)) bat.Dispose();

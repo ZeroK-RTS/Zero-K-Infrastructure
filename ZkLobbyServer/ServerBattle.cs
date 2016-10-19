@@ -183,30 +183,26 @@ namespace ZkLobbyServer
             ValidateBattleStatus(ubs);
             user.MyBattle = this;
 
-
-
+            
             await server.TwoWaySyncUsers(user.Name, Users.Keys); // mutually sync user statuses
-
-            await server.Broadcast(server.ConnectedUsers.Values.Where(x=> x!=null&& server.CanUserSee(x, user)), new JoinedBattle() { BattleID = BattleID, User = user.Name });
 
             await server.SyncUserToOthers(user);
             
             await RecalcSpectators();
+
+
+            await
+                user.SendCommand(new JoinBattleSuccess()
+                {
+                    BattleID = BattleID,
+                    Players = Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList(),
+                    Bots = Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList(),
+                    Options = ModOptions
+                });
             
-            //await user.SendCommand(new JoinedBattle() { BattleID = BattleID, User = user.Name });
-            await user.SendCommand(ubs.ToUpdateBattleStatus()); 
-
-            foreach (var u in Users.Values.Where(x=>x!=null && x.Name != user.Name).Select(x => x.ToUpdateBattleStatus()).ToList())
-            {
-                await user.SendCommand(new JoinedBattle() { BattleID = BattleID, User = u.Name });
-                await user.SendCommand(u); // send other's status to self
-            }
-
+            
             await server.Broadcast(Users.Keys.Where(x => x != user.Name), ubs.ToUpdateBattleStatus()); // send my UBS to others in battle
-
-            foreach (var u in Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await user.SendCommand(u);
-            await user.SendCommand(new SetModOptions() { Options = ModOptions });
-
+            
             if (spring.IsRunning)
             {
                 spring.AddUser(ubs.Name, ubs.ScriptPassword);

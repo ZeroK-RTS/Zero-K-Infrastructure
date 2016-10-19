@@ -376,19 +376,19 @@ namespace LobbyClient
 
 
     [Message(Origin.Server)]
-    public class LeftBattle
+    public class LeaveBattleSucccess
     {
         public int BattleID { get; set; }
-        public string User { get; set; }
     }
 
     [Message(Origin.Server)]
-    public class JoinedBattle
+    public class JoinBattleSuccess
     {
         public int BattleID { get; set; }
-        public string User { get; set; }
+        public List<UpdateUserBattleStatus> Players { get; set; }
+        public List<UpdateBotStatus> Bots { get; set; }
+        public Dictionary<string, string> Options { get; set; } = new Dictionary<string, string>();
     }
-
 
     [Message(Origin.Client)]
     public class JoinBattle

@@ -95,11 +95,12 @@ namespace ZkLobbyServer
                 connectedUser.Connections.TryAdd(this, true);
 
 
+
+
                 // mutually syncs users based on visibility rules
                 await server.TwoWaySyncUsers(Name, server.ConnectedUsers.Keys);
 
                 await SendCommand(ret.LoginResponse); // login accepted
-
 
                 foreach (var b in server.Battles.Values)
                 {
@@ -110,10 +111,9 @@ namespace ZkLobbyServer
                             {
                                 Header = b.GetHeader()
                             });
-
-                        foreach (var u in b.Users.Keys.Where(x=> x!=null && server.CanUserSee(Name, x))) await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u });
                     }
                 }
+
 
 
                 server.OfflineMessageHandler.SendMissedMessagesAsync(this, SayPlace.User, Name, user.AccountID);

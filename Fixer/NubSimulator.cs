@@ -79,7 +79,7 @@ namespace Fixer
         {
             SynchronizationContext.SetSynchronizationContext(null);
             ThreadPool.SetMaxThreads(1000, 1000);
-            for (int i = 0; i < 400; i++) {
+            for (int i = 0; i < 100; i++) {
                 int i1 = i;
                 //Thread.Sleep(100);
                 RunNub(i1);

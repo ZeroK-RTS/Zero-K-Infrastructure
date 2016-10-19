@@ -120,7 +120,7 @@ namespace ZeroKLobby.Notifications
 
 
 
-            client.BattleJoined += (s, e) =>
+            client.BattleJoinSuccess += (s, e) =>
                 {
                     if (!isVisible) ManualBattleStarted();
                     if (IsHostGameRunning()) btnStart.Text = "Rejoin";
