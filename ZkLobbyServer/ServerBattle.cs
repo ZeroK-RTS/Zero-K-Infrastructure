@@ -185,11 +185,10 @@ namespace ZkLobbyServer
 
             
             await server.TwoWaySyncUsers(user.Name, Users.Keys); // mutually sync user statuses
-
-            await server.SyncUserToOthers(user);
+            
+            await server.SyncUserToAll(user);
             
             await RecalcSpectators();
-
 
             await
                 user.SendCommand(new JoinBattleSuccess()

@@ -43,7 +43,7 @@ namespace ZeroKLobby.MicroLobby
             Program.TasClient.BattleMapChanged += TasClient_BattleMapChanged;
 
 
-            if (Program.TasClient.MyBattle != null) foreach (var user in Program.TasClient.MyBattleUsers) AddUser(user.Name);
+            if (Program.TasClient.MyBattle != null) foreach (var user in Program.TasClient.MyBattle.Users) AddUser(user.Key);
             ChatLine += (s, e) => { if (Program.TasClient.IsLoggedIn) Program.TasClient.Say(SayPlace.Battle, null, e.Data, false); };
             playerBox.IsBattle = true;
 

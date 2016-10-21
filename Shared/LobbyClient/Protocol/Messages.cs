@@ -376,12 +376,6 @@ namespace LobbyClient
 
 
     [Message(Origin.Server)]
-    public class LeaveBattleSucccess
-    {
-        public int BattleID { get; set; }
-    }
-
-    [Message(Origin.Server)]
     public class JoinBattleSuccess
     {
         public int BattleID { get; set; }

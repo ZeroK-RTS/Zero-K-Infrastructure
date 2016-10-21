@@ -94,27 +94,13 @@ namespace ZkLobbyServer
                 connectedUser.User = user;
                 connectedUser.Connections.TryAdd(this, true);
 
+                await SendCommand(ret.LoginResponse); // login accepted
 
-
+                foreach (var b in server.Battles.Values.Where(x => x != null)) await SendCommand(new BattleAdded() { Header = b.GetHeader() });
 
                 // mutually syncs users based on visibility rules
                 await server.TwoWaySyncUsers(Name, server.ConnectedUsers.Keys);
-
-                await SendCommand(ret.LoginResponse); // login accepted
-
-                foreach (var b in server.Battles.Values)
-                {
-                    if (b != null)
-                    {
-                        await
-                            SendCommand(new BattleAdded()
-                            {
-                                Header = b.GetHeader()
-                            });
-                    }
-                }
-
-
+               
 
                 server.OfflineMessageHandler.SendMissedMessagesAsync(this, SayPlace.User, Name, user.AccountID);
 

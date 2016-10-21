@@ -135,7 +135,7 @@ namespace ZkLobbyServer
             await Broadcast(othersWhoSee, uNewUser.User);
         }
 
-        public async Task SyncUserToOthers(ConnectedUser changer)
+        public async Task SyncUserToAll(ConnectedUser changer)
         {
             await Broadcast(ConnectedUsers.Values.Where(x => CanUserSee(x, changer) && !HasSeen(x, changer)), changer.User);
         }
@@ -201,7 +201,7 @@ namespace ZkLobbyServer
 
         public static bool HasSeen(ConnectedUser uWatcher, ConnectedUser uWatched)
         {
-            if (uWatched == uWatcher || uWatched == null || uWatcher == null) return false;
+            if (uWatched == null || uWatcher == null) return false;
             int lastSync;
             var newSync = uWatched.User.SyncVersion;
             if (!uWatcher.HasSeenUserVersion.TryGetValue(uWatched.Name, out lastSync) || lastSync != newSync)
@@ -362,7 +362,7 @@ namespace ZkLobbyServer
             if (ConnectedUsers.TryGetValue(acc.Name, out conus))
             {
                 LoginChecker.UpdateUserFromAccount(conus.User, acc);
-                await SyncUserToOthers(conus);
+                await SyncUserToAll(conus);
             }
         }
 
@@ -374,7 +374,7 @@ namespace ZkLobbyServer
                 if (ConnectedUsers.TryGetValue(u, out connectedUser))
                 {
                     connectedUser.MyBattle = null;
-                    await SyncUserToOthers(connectedUser);
+                    await SyncUserToAll(connectedUser);
                 }
             }
             ServerBattle bat;

@@ -73,10 +73,6 @@ namespace LobbyClient
 
         public Battle MyBattle { get; protected set; }
 
-        public List<User> MyBattleUsers => MyBattle != null ? BattleUsers(MyBattleID) : new List<User>();
-
-        public List<User> BattleUsers(int batleID) => ExistingUsers.Values.Where(x => x.BattleID == batleID).ToList();
-        
 
 
         public int MyBattleID
@@ -713,12 +709,6 @@ namespace LobbyClient
         }
 
 
-        private async Task Process(LeaveBattleSucccess left)
-        {
-            var bat = MyBattle;
-            MyBattle = null;
-            BattleClosed(this, bat);
-        }
 
         private async Task Process(BattleRemoved br)
         {
@@ -770,11 +760,20 @@ namespace LobbyClient
                 {
                     if (user.BattleID.HasValue)
                     {
+                        ExistingBattles.Get(user.BattleID??0)?.Users.TryAdd(user.Name, new UserBattleStatus(user.Name, user));
                         BattleUserJoined(this, new BattleUserEventArgs(user.Name, user.BattleID.Value));
                     }
                     else
                     {
+                        UserBattleStatus oldu;
+                        var obat = ExistingBattles.Get(old.BattleID ?? 0);
+                        obat?.Users.TryRemove(user.Name, out oldu);
                         BattleUserLeft(this, new BattleUserEventArgs(user.Name, old.BattleID ?? 0));
+                        if (user.Name == UserName)
+                        {
+                            MyBattle = null;
+                            BattleClosed(this, obat);
+                        }
                     }
                 }
 

@@ -357,7 +357,7 @@ namespace ZeroKLobby
                 };
                 if (!Debugger.IsAttached && !Conf.DisableAutoUpdate && !IsSteamFolder) SelfUpdater.StartChecking();
 
-                SteamHandler.Connect();
+                if (GlobalConst.Mode != ModeType.Local) SteamHandler.Connect();
                 Application.Run(MainWindow);
 
                 ShutDown();

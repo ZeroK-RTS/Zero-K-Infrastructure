@@ -176,7 +176,7 @@ namespace ZeroKLobby.MicroLobby
             int admins = 0;
             int mes = 0; // whether i'm in the battle (can be 0 or 1)
 
-            foreach (User user in Program.TasClient.BattleUsers(Battle.BattleID))
+            foreach (User user in Battle.Users.Values.Select(x=>x.LobbyUser))
             {
                 if (user.Name == Program.TasClient.UserName) mes++;
                 if (Program.TasClient.Friends.Contains(user.Name)) friends++;

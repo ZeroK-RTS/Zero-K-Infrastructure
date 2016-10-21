@@ -454,7 +454,7 @@ namespace ZkLobbyServer
             if (changed)
             {
                 Interlocked.Increment(ref User.SyncVersion);
-                await server.SyncUserToOthers(this);
+                await server.SyncUserToAll(this);
             }
         }
 
@@ -673,8 +673,7 @@ namespace ZkLobbyServer
                     UserBattleStatus oldVal;
                     if (battle.Users.TryRemove(Name, out oldVal))
                     {
-                        await SendCommand(new LeaveBattleSucccess() {BattleID = battle.BattleID});
-                        await server.SyncUserToOthers(this);
+                        await server.SyncUserToAll(this);
                         var bots = battle.Bots.Values.Where(x => x.owner == Name).ToList();
                         foreach (var b in bots)
                         {
