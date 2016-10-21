@@ -235,7 +235,6 @@ namespace LobbyClient
         public bool BanMute { get; set; }
         public bool BanSpecChat { get; set; }
         public string Clan { get; set; }
-        public Login.ClientTypes ClientType { get; set; }
         public string Country { get; set; }
         public string DisplayName { get; set; }
         public int EffectiveMmElo { get; set; }
@@ -288,7 +287,6 @@ namespace LobbyClient
             BanMute = u.BanMute;
             BanSpecChat = u.BanSpecChat;
             Level = u.Level;
-            ClientType = u.ClientType;
             LobbyVersion = u.LobbyVersion;
             DisplayName = u.DisplayName;
             CompetitiveRank = u.CompetitiveRank;
