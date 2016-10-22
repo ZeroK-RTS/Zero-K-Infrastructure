@@ -5,7 +5,11 @@ namespace CMissionLib.UnitSyncLib
 {
     partial class UnitSync
     {
-		#region Nested type: NativeMethods
+        #region Nested type: NativeMethods
+
+        /// <summary>
+        /// Unitsync methods: see https://github.com/spring/spring/blob/develop/tools/unitsync/unitsync_api.h
+        /// </summary>
 
         public static class NativeMethods
         {
@@ -73,9 +77,13 @@ namespace CMissionLib.UnitSyncLib
             [DllImport(UnitSyncName)]
             public static extern int GetMapCount();
 
+            [Obsolete("No longer supported in Spring 103.0+")]
             [DllImport(UnitSyncName)]
             [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GetMapInfoEx([MarshalAs(UnmanagedType.LPStr)] string name, [In] [Out] ref MapInfo outInfo, int version);
+
+            [DllImport(UnitSyncName)]
+            public static extern int GetMapInfoCount(int index);
 
             public static string GetMapName(int index)
             {
@@ -229,11 +237,13 @@ namespace CMissionLib.UnitSyncLib
             [DllImport(UnitSyncName)]
             public static extern int GetPrimaryModCount();
 
+            [Obsolete("No longer supported in Spring 103.0+")]
             public static string GetPrimaryModDescription(int index)
             {
                 return Marshal.PtrToStringAnsi(RawGetPrimaryModDescription(index));
             }
 
+            [Obsolete("No longer supported in Spring 103.0+")]
             public static string GetPrimaryModGame(int index)
             {
                 return Marshal.PtrToStringAnsi(RawGetPrimaryModGame(index));
@@ -252,9 +262,9 @@ namespace CMissionLib.UnitSyncLib
 
             public static string GetPrimaryModName(int index)
             {
-                return Marshal.PtrToStringAnsi(RawGetPrimaryModName(index));  // deprecated
+                //return Marshal.PtrToStringAnsi(RawGetPrimaryModName(index));  // deprecated
 
-                /*  this is the not-deprecated way to do it, but if it ain't broke don't fix it
+                // this is the not-deprecated way to do it
                 int infoKeyCount = GetPrimaryModInfoCount(index);
                 for (int infoKeyIndex=0; infoKeyIndex<infoKeyCount; ++infoKeyIndex)
                 {
@@ -266,19 +276,21 @@ namespace CMissionLib.UnitSyncLib
                     }
                 }
                 return null;
-                */
             }
 
+            [Obsolete("No longer supported in Spring 103.0+")]
             public static string GetPrimaryModShortGame(int index)
             {
                 return Marshal.PtrToStringAnsi(RawGetPrimaryModShortGame(index));
             }
 
+            [Obsolete("No longer supported in Spring 103.0+")]
             public static string GetPrimaryModShortName(int index)
             {
                 return Marshal.PtrToStringAnsi(RawGetPrimaryModShortName(index));
             }
 
+            [Obsolete("No longer supported in Spring 103.0+")]
             public static string GetPrimaryModVersion(int index)
             {
                 return Marshal.PtrToStringAnsi(RawGetPrimaryModVersion(index));
@@ -670,14 +682,11 @@ namespace CMissionLib.UnitSyncLib
                 return Marshal.PtrToStringAnsi(RawGetInfoValueString(infoIndex));
             }
 
-			// FIXME: deprecated
-			[DllImport(UnitSyncName, EntryPoint = "GetInfoValue")]
-			static extern IntPtr RawGetInfoValue(int infoIndex);
+            [DllImport(UnitSyncName)]
+            public static extern int GetInfoValueInteger(int infoIndex);
 
-			public static string GetInfoValue(int infoIndex)
-			{
-				return Marshal.PtrToStringAnsi(RawGetInfoValue(infoIndex));
-			}
+            [DllImport(UnitSyncName)]
+            public static extern float GetInfoValueFloat(int infoIndex);
             
             [DllImport(UnitSyncName, EntryPoint = "GetInfoDescription")]
             static extern IntPtr RawGetInfoDescription(int infoIndex);
