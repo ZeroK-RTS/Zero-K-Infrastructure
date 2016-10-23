@@ -6,6 +6,9 @@ namespace ZkData.UnitSyncLib
 {
     partial class UnitSync
     {
+        /// <summary>
+        /// Unitsync methods: see https://github.com/spring/spring/blob/develop/tools/unitsync/unitsync_api.h
+        /// </summary>
         public static class NativeMethods
         {
             const string UnitSyncName = "unitsync";
@@ -71,9 +74,13 @@ namespace ZkData.UnitSyncLib
             [DllImport(UnitSyncName)]
             public static extern int GetMapCount();
 
+            [Obsolete("No longer supported in Spring 103.0+")]
             [DllImport(UnitSyncName)]
             [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GetMapInfoEx([MarshalAs(UnmanagedType.LPStr)] string name, [In] [Out] ref MapInfo outInfo, int version);
+
+            [DllImport(UnitSyncName)]
+            public static extern int GetMapInfoCount(int index);
 
             public static string GetMapName(int index)
             {
@@ -207,11 +214,13 @@ namespace ZkData.UnitSyncLib
             [DllImport(UnitSyncName)]
             public static extern int GetPrimaryModCount();
 
+            [Obsolete("No longer supported in Spring 103.0+")]
             public static string GetPrimaryModDescription(int index)
             {
                 return Marshal.PtrToStringAnsi(RawGetPrimaryModDescription(index));
             }
 
+            [Obsolete("No longer supported in Spring 103.0+")]
             public static string GetPrimaryModGame(int index)
             {
                 return Marshal.PtrToStringAnsi(RawGetPrimaryModGame(index));
@@ -230,9 +239,9 @@ namespace ZkData.UnitSyncLib
 
             public static string GetPrimaryModName(int index)
             {
-                return Marshal.PtrToStringAnsi(RawGetPrimaryModName(index));  // deprecated
+                //return Marshal.PtrToStringAnsi(RawGetPrimaryModName(index));  // deprecated
 
-                /*  this is the not-deprecated way to do it, but if it ain't broke don't fix it
+                // this is the not-deprecated way to do it, but if it ain't broke don't fix it
                 int infoKeyCount = GetPrimaryModInfoCount(index);
                 for (int infoKeyIndex=0; infoKeyIndex<infoKeyCount; ++infoKeyIndex)
                 {
@@ -244,19 +253,21 @@ namespace ZkData.UnitSyncLib
                     }
                 }
                 return null;
-                */
             }
 
+            [Obsolete("No longer supported in Spring 103.0+")]
             public static string GetPrimaryModShortGame(int index)
             {
                 return Marshal.PtrToStringAnsi(RawGetPrimaryModShortGame(index));
             }
 
+            [Obsolete("No longer supported in Spring 103.0+")]
             public static string GetPrimaryModShortName(int index)
             {
                 return Marshal.PtrToStringAnsi(RawGetPrimaryModShortName(index));
             }
 
+            [Obsolete("No longer supported in Spring 103.0+")]
             public static string GetPrimaryModVersion(int index)
             {
                 return Marshal.PtrToStringAnsi(RawGetPrimaryModVersion(index));
@@ -655,6 +666,12 @@ namespace ZkData.UnitSyncLib
             {
                 return Marshal.PtrToStringAnsi(RawGetInfoKey(infoIndex));
             }
+
+            [DllImport(UnitSyncName)]
+            public static extern int GetInfoValueInteger(int infoIndex);
+
+            [DllImport(UnitSyncName)]
+            public static extern float GetInfoValueFloat(int infoIndex);
 
             [DllImport(UnitSyncName, EntryPoint = "GetInfoValueString")]
             static extern IntPtr RawGetInfoValueString(int infoIndex);
