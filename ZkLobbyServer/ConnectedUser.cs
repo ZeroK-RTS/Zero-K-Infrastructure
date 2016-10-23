@@ -221,7 +221,7 @@ namespace ZkLobbyServer
             var visibleUsers = channel.Name != "zk" ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(Name, x)).ToList();
             var canSeeMe = channel.Name != "zk" ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(x, Name)).ToList();
 
-            await server.TwoWaySyncUsers(Name, channel.Users.Keys); // mutually sync user statuses
+            await server.TwoWaySyncUsers(Name, canSeeMe); // mutually sync user statuses
 
             // send response with the list
             await SendCommand(new JoinChannelResponse()
