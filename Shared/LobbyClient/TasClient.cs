@@ -758,35 +758,35 @@ namespace LobbyClient
                 UserAdded(this, user);
                 await Process(new ChannelUserAdded() { UserName = user.Name, ChannelName = "zk" }); // silly hacky thing to make all Users appear in #zk remove later
             }
-            if (old != null)
+            var battleID = user.BattleID;
+            var oldBattleID = old?.BattleID;
+            if (battleID != oldBattleID)
             {
-                if (user.BattleID != old.BattleID)
+                if (battleID.HasValue)
                 {
-                    if (user.BattleID.HasValue)
-                    {
-                        ExistingBattles.Get(user.BattleID??0)?.Users.TryAdd(user.Name, new UserBattleStatus(user.Name, user));
-                        BattleUserJoined(this, new BattleUserEventArgs(user.Name, user.BattleID.Value));
-                    }
-                    else
-                    {
-                        UserBattleStatus oldu;
-                        var obat = ExistingBattles.Get(old.BattleID ?? 0);
-                        obat?.Users.TryRemove(user.Name, out oldu);
-                        BattleUserLeft(this, new BattleUserEventArgs(user.Name, old.BattleID ?? 0));
-                        if (user.Name == UserName)
-                        {
-                            MyBattle = null;
-                            BattleClosed(this, obat);
-                        }
-                    }
+                    ExistingBattles.Get(battleID.Value)?.Users.TryAdd(user.Name, new UserBattleStatus(user.Name, user));
+                    BattleUserJoined(this, new BattleUserEventArgs(user.Name, battleID.Value));
                 }
-
-                var bat = MyBattle;
-                if ((bat != null) && (bat.FounderName == user.Name))
+                else
                 {
-                    if (!user.IsInGame && old.IsInGame) MyBattleHostExited(this, bat);
+                    UserBattleStatus oldu;
+                    var obat = ExistingBattles.Get(oldBattleID ?? 0);
+                    obat?.Users.TryRemove(user.Name, out oldu);
+                    BattleUserLeft(this, new BattleUserEventArgs(user.Name, oldBattleID ?? 0));
+                    if (user.Name == UserName)
+                    {
+                        MyBattle = null;
+                        BattleClosed(this, obat);
+                    }
                 }
             }
+
+            var bat = MyBattle;
+            if ((bat != null) && (bat.FounderName == user.Name))
+            {
+                if (!user.IsInGame && old?.IsInGame == true) MyBattleHostExited(this, bat);
+            }
+
             if (user.Name == UserName) MyUserStatusChanged(this, new OldNewPair<User>(old, user));
             UserStatusChanged(this, new OldNewPair<User>(old, user));
         }
