@@ -360,7 +360,7 @@ namespace LobbyClient
                     case Talker.SpringEventType.SERVER_GAMEOVER:
                         foreach (var p in Context.ActualPlayers)
                         {
-                            if (!p.IsIngame && !p.IsSpectator) MarkPlayerDead(p.Name, true);
+                            if (!Context.GameEndedOk && !p.IsIngame && !p.IsSpectator) MarkPlayerDead(p.Name, true);
                             p.IsIngame = false;
                         }
 
