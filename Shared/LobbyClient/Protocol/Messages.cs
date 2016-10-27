@@ -45,6 +45,11 @@ namespace LobbyClient
         ///     Lobby server version
         /// </summary>
         public string Version { get; set; }
+
+        /// <summary>
+        /// Number of current users
+        /// </summary>
+        public int UserCount { get; set; }
     }
 
 
@@ -633,6 +638,8 @@ namespace LobbyClient
         public List<string> InstantStartQueues { get; set; } = new List<string>();
 
         public Dictionary<string, int> IngameCounts { get; set; } = new Dictionary<string, int>();
+
+        public int UserCount { get; set; }
     }
 
     

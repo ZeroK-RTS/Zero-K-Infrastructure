@@ -388,7 +388,8 @@ namespace ZkLobbyServer
                     JoinedQueues = entry?.QueueTypes.Select(x => x.Name).ToList(),
                     CurrentEloWidth = entry?.EloWidth,
                     JoinedTime = entry?.JoinedTime,
-                    BannedSeconds = BannedSeconds(name)
+                    BannedSeconds = BannedSeconds(name),
+                    UserCount = server.ConnectedUsers.Count
                 };
 
 
