@@ -329,7 +329,7 @@ namespace ZkLobbyServer
                                 Text = line,
                                 Place = privateUser != null ? SayPlace.BattlePrivate : SayPlace.Battle,
                                 Target = privateUser,
-                                IsEmote = true
+                                IsEmote = true,
                             },
                             BattleID);
                 }

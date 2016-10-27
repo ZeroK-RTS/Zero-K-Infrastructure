@@ -284,60 +284,36 @@ namespace ZkLobbyServer
 
             say.User = Name;
             say.Time = DateTime.UtcNow;
-
+            
             if (say.Ring)
                 if (!User.IsAdmin)
                     if (((say.Place != SayPlace.Battle) && (say.Place != SayPlace.BattlePrivate)) || (MyBattle == null) ||
                         (MyBattle.FounderName != Name)) say.Ring = false;
 
+
+
+            // verify basic permissions to talk
             switch (say.Place)
             {
                 case SayPlace.Channel:
-                    Channel channel;
-                    if (server.Channels.TryGetValue(say.Target, out channel))
-                        if (channel.Users.ContainsKey(Name))
-                        {
-                            await server.Broadcast(channel.Users.Keys.Where(x => server.CanChatTo(say.User, x)), say);
-                            server.OfflineMessageHandler.StoreChatHistoryAsync(say);
-                        }
-                    break;
-
-                case SayPlace.User:
-                    ConnectedUser connectedUser;
-                    if (server.ConnectedUsers.TryGetValue(say.Target, out connectedUser) && server.CanChatTo(say.User, say.Target)) await connectedUser.SendCommand(say);
-                    else server.OfflineMessageHandler.StoreChatHistoryAsync(say);
-                    await SendCommand(say);
-
+                    if (server.Channels.Get(say.Target)?.Users?.ContainsKey(Name) != true) return;
                     break;
 
                 case SayPlace.Battle:
-                    if (MyBattle != null)
-                    {
-                        say.Target = MyBattle?.FounderName ?? "";
-                        await server.Broadcast(MyBattle?.Users?.Keys.Where(x => server.CanChatTo(say.User, x)), say);
-                        await MyBattle.ProcessBattleSay(say);
-                        server.OfflineMessageHandler.StoreChatHistoryAsync(say);
-                    }
+                    if (MyBattle?.Users?.Keys.Contains(Name) != true) return;
                     break;
 
                 case SayPlace.BattlePrivate:
-                    if ((MyBattle != null) && (MyBattle.FounderName == Name))
-                    {
-                        ConnectedUser cli;
-                        if (MyBattle.Users.ContainsKey(say.Target))
-                            if (server.ConnectedUsers.TryGetValue(say.Target, out cli) && server.CanChatTo(say.User, say.Target))
-                            {
-                                await cli.SendCommand(say);
-                                await MyBattle.ProcessBattleSay(say);
-                            }
-                    }
+                    return;
                     break;
-                case SayPlace.MessageBox:
-                    if (User.IsAdmin) await server.Broadcast(server.ConnectedUsers.Values, say);
-                    break;
-            }
 
-            await server.OnSaid(say);
+                case SayPlace.MessageBox:
+                    if (!User.IsAdmin) return;
+                    break;
+                
+            }
+            
+            await server.GhostSay(say, MyBattle?.BattleID);
         }
 
         public async Task Process(OpenBattle openBattle)

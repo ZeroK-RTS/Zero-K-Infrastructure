@@ -54,7 +54,7 @@ namespace ZkLobbyServer
             Downloader = new PlasmaDownloader.PlasmaDownloader(null, SpringPaths);
             Downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine);
             Downloader.PackageDownloader.DoMasterRefresh();
-            
+
             Game = Downloader.PackageDownloader.GetByTag("zk:stable").InternalName;
 
             LoginChecker = new LoginChecker(this, geoIPpath);
@@ -291,11 +291,19 @@ namespace ZkLobbyServer
                     break;
                 case SayPlace.Battle:
                     ServerBattle battle;
-                    if (Battles.TryGetValue(battleID.Value, out battle)) await Broadcast(battle.Users.Keys.Where(x => CanChatTo(say.User, x)), say);
+                    if (Battles.TryGetValue(battleID ?? 0, out battle))
+                    {
+                        await Broadcast(battle.Users.Keys.Where(x => CanChatTo(say.User, x)), say);
+                        await battle.ProcessBattleSay(say);
+                        OfflineMessageHandler.StoreChatHistoryAsync(say);
+                    }
                     break;
                 case SayPlace.BattlePrivate:
-                    ConnectedUser originUser;
-                    if (ConnectedUsers.TryGetValue(say.Target, out originUser) && CanChatTo(say.User, say.Target)) await originUser.SendCommand(say);
+                    ConnectedUser targetUser;
+                    if (ConnectedUsers.TryGetValue(say.Target, out targetUser) && CanChatTo(say.User, say.Target))
+                    {
+                        await targetUser.SendCommand(say);
+                    }
                     break;
             }
 
@@ -342,12 +350,12 @@ namespace ZkLobbyServer
             }
             db.SaveChanges();
 
-            
+
             // close all existing client connections
             foreach (var usr in ConnectedUsers.Values) if (usr != null) foreach (var con in usr.Connections.Keys) con?.RequestClose();
 
 
-            foreach (var bat in Battles.Values) if (bat !=null && bat.spring.IsRunning) bat.spring.ExitGame();
+            foreach (var bat in Battles.Values) if (bat != null && bat.spring.IsRunning) bat.spring.ExitGame();
         }
 
         public virtual async Task OnSaid(Say say)
