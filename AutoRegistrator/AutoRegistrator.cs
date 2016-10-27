@@ -35,6 +35,7 @@ namespace ZeroKWeb
         {
             Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false);
 
+            
             Downloader = new PlasmaDownloader.PlasmaDownloader(null, Paths);
             Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Autoregistrator Download started: {0}", e.Data.Name);
             Downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine)?.WaitHandle.WaitOne();

@@ -90,7 +90,7 @@ namespace PlasmaDownloader
                                     ExtractZipArchive(target, targetDir);
                                     FixPermissions(targetDir);
                                     Trace.TraceInformation("Install of {0} complete", Name);
-                                    springPaths.NotifyNewEngine(targetDir);
+                                    springPaths.NotifyNewEngine(Name);
                                     Finish(true);
                                 }
                                 catch (Exception ex)
