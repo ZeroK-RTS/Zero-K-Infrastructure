@@ -232,13 +232,6 @@ namespace ZkData
 
 
 
-        public static bool IsZkMod(string name)
-        {
-            if (string.IsNullOrEmpty(name)) return false;
-            return name.Contains("Zero-K");
-        }
-
-
         static ChannelFactory<IContentService> contentServiceFactory;
 
         public static IContentService GetContentService()

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Neo.IronLua;
@@ -10,7 +11,7 @@ namespace PlasmaShared.UnitSyncLib
     {
         public static FileInfo GetCacheFile(string writableFolder) {
             var di = new DirectoryInfo(Path.Combine(writableFolder, "cache"));
-            return di.GetFiles("ArchiveCache*.lua").OrderByDescending(x => x.LastWriteTime).FirstOrDefault();
+            return di.GetFiles("ArchiveCache*.lua", SearchOption.AllDirectories).OrderByDescending(x => x.LastWriteTime).FirstOrDefault();
         }
             
 
@@ -57,7 +58,7 @@ namespace PlasmaShared.UnitSyncLib
                         }
                     }
                 }
-            }
+            } else Trace.TraceError("Cannot locate engine archive cache in {0}", unitsyncWritableFolder);
         }
 
         public List<ResourceInfo> Archives { get; }
