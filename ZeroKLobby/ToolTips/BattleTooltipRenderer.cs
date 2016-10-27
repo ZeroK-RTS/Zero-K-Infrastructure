@@ -62,7 +62,7 @@ namespace ZeroKLobby
             newLine();
             drawString("Players: " + battle.NonSpectatorCount);
             drawString("Spectators: " + battle.SpectatorCount);
-            drawString("Friends: " + battle.Users.Values.Count(u => Program.TasClient.Friends.Contains(u.Name)));
+            drawString("Friends: " + battle.Users.Count(u => Program.TasClient.Friends.Contains(u.Key)));
             newLine();
 
 
@@ -85,9 +85,9 @@ namespace ZeroKLobby
             newLine();
 
 
-            foreach (var player in battle.Users.Values)
+            foreach (var player in battle.Users.Values.Select(u=>u.LobbyUser))
             {
-                var user = player.LobbyUser;
+                var user = player;
                 var icon = TextImage.GetUserImage(user.Name);
                 drawImage(icon, 16, 16);
                 Image flag;

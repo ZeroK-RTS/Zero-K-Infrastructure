@@ -176,11 +176,11 @@ namespace ZeroKLobby.MicroLobby
             int admins = 0;
             int mes = 0; // whether i'm in the battle (can be 0 or 1)
 
-            foreach (UserBattleStatus user in Battle.Users.Values)
+            foreach (User user in Battle.Users.Values.Select(x=>x.LobbyUser))
             {
                 if (user.Name == Program.TasClient.UserName) mes++;
                 if (Program.TasClient.Friends.Contains(user.Name)) friends++;
-                else if (user.LobbyUser.IsAdmin) admins++;
+                else if (user.IsAdmin) admins++;
             }
 
             // make sure there aren't more little dudes than non-specs in a battle

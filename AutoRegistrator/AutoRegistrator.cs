@@ -35,6 +35,7 @@ namespace ZeroKWeb
         {
             Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false);
 
+            
             Downloader = new PlasmaDownloader.PlasmaDownloader(null, Paths);
             Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Autoregistrator Download started: {0}", e.Data.Name);
             Downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine)?.WaitHandle.WaitOne();
@@ -139,18 +140,21 @@ namespace ZeroKWeb
                     var newName = Downloader.PackageDownloader.GetByTag("zk:stable").InternalName;
                     if (MiscVar.LastRegisteredZkVersion != newName)
                     {
-                        Trace.TraceInformation("Autoregistrator Generating steam stable package");
                         MiscVar.LastRegisteredZkVersion = newName;
-                        try
+                        if (GlobalConst.Mode == ModeType.Live)
                         {
-                            var pgen = new SteamDepotGenerator(sitePath,
-                                Path.GetFullPath(Path.Combine(sitePath, "..", "steamworks", "tools", "ContentBuilder", "content")));
-                            pgen.Generate();
-                            pgen.RunBuild();
-                        }
-                        catch (Exception ex)
-                        {
-                            Trace.TraceError("Autoregistrator Error building steam package: {0}", ex);
+                            Trace.TraceInformation("Autoregistrator Generating steam stable package");
+                            try
+                            {
+                                var pgen = new SteamDepotGenerator(sitePath,
+                                    Path.GetFullPath(Path.Combine(sitePath, "..", "steamworks", "tools", "ContentBuilder", "content")));
+                                pgen.Generate();
+                                pgen.RunBuild();
+                            }
+                            catch (Exception ex)
+                            {
+                                Trace.TraceError("Autoregistrator Error building steam package: {0}", ex);
+                            }
                         }
                         NewZkStableRegistered(this, newName);
                     }

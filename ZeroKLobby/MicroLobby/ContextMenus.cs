@@ -253,7 +253,7 @@ namespace ZeroKLobby.MicroLobby
                         contextMenu.MenuItems.Add(pinItem);
                     }
 
-                    var joinItem = new MenuItem("Join Same Battle") { Enabled = Program.TasClient.ExistingUsers[user.Name].IsInBattleRoom };
+                    var joinItem = new MenuItem("Join Same Battle") { Enabled = Program.TasClient.ExistingUsers[user.Name].IsInBattleRoom};
                     joinItem.Click += (s, e) => ActionHandler.JoinPlayer(user.Name);
                     contextMenu.MenuItems.Add(joinItem);
 
@@ -391,8 +391,6 @@ namespace ZeroKLobby.MicroLobby
             var contextMenu = new ContextMenu();
             try
             {
-                if (battle.Users.Count <= 1) return contextMenu; // don't display if just 1 player (probably a bot)
-
                 var headerItem = new MenuItem("Message Player");
                 headerItem.Enabled = false;
                 headerItem.DefaultItem = true; //This is to make it appear bold

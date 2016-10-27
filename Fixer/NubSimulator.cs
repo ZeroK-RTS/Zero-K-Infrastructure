@@ -28,11 +28,14 @@ namespace Fixer
                 tas.Login(name, "dummy");
             };
 
-            tas.ConnectionLost += (sender, args) => { Console.WriteLine("disconnected"); };
+            tas.ConnectionLost += (sender, args) => { tas.Connect(GlobalConst.LobbyServerHost, GlobalConst.LobbyServerPort); Console.WriteLine("disconnected"); };
 
 
             tas.LoginAccepted += (sender, args) => { Console.WriteLine(name + " accepted"); };
             tas.LoginDenied += (sender, args) => { tas.Register(name, "dummy"); };
+
+            tas.RegistrationAccepted += (sender, args) => { tas.Login(name, "dummy"); };
+            tas.RegistrationDenied += (sender, response) => { Console.WriteLine(name + "registration denied"); };
 
             
 
@@ -41,10 +44,7 @@ namespace Fixer
                     tas.JoinChannel("bots");
                     if (num%16 == 0) tas.OpenBattle(new BattleHeader()
                     {
-                        Engine = "91.0",
-                        Game  = "Zero-K v1.3.1.15",
-                        Title = "test" + ord,
-                        Map = "SmallDivide",
+                        Title = batname,
                         MaxPlayers = 16,
                     });
                     else {
@@ -59,28 +59,27 @@ namespace Fixer
                     tas.JoinBattle(args.BattleID);
                 }
             };
+            
 
             tas.Connect(GlobalConst.LobbyServerHost, GlobalConst.LobbyServerPort);
-        }
-
-        public void RunNub2(int num)
-        {
-            var con = new ServerConnection();
-            con.CommandRecieved += (sender, args) => {
-                if (args.Command == "TASServer") {
-                    con.SendCommand("LOGIN");
+            /*Task.Factory.StartNew(async () =>
+            {
+                while (true)
+                {
+                    await Task.Delay(rand.Next(400000));
+                    tas.Say(SayPlace.Channel, "zk", sent.GetNext(), false);
                 }
-            };
-
-            con.Connect(GlobalConst.LobbyServerHost, GlobalConst.LobbyServerPort);
-            
+            }, TaskCreationOptions.LongRunning);*/
         }
 
+        SentenceGenerator sent = new SentenceGenerator();
+        Random rand = new Random();
 
         public async Task SpawnMany()
         {
+            SynchronizationContext.SetSynchronizationContext(null);
             ThreadPool.SetMaxThreads(1000, 1000);
-            for (int i = 0; i < 200; i++) {
+            for (int i = 0; i < 100; i++) {
                 int i1 = i;
                 //Thread.Sleep(100);
                 RunNub(i1);
@@ -89,5 +88,28 @@ namespace Fixer
          }
 
 
+    }
+
+    public class SentenceGenerator
+    {
+        Random rand = new Random();
+        string[] article = { "the", "a", "one", "some", "any", };
+        string[] noun = { "boy", "girl", "dog", "town", "car", };
+        string[] verb = { "drove", "jumped", "ran", "walked", "skipped", };
+        string[] preposition = { "to", "from", "over", "under", "on", };
+
+
+        public string GetNext()
+        {
+            int randomarticle = rand.Next(article.Length);
+            int randomnoun = rand.Next(noun.Length);
+            int randomverb = rand.Next(verb.Length);
+            int randompreposition = rand.Next(preposition.Length);
+            int randomarticle2 = rand.Next(article.Length);
+            int randomnoun2 = rand.Next(noun.Length);
+
+            var txt = String.Format("{0} {1} {2} {3} {4} {5}", article[randomarticle], noun[randomnoun], verb[randomverb], preposition[randompreposition], article[randomarticle2], noun[randomnoun2]);
+            return txt;
+        }
     }
 }

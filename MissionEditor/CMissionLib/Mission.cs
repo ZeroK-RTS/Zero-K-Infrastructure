@@ -316,11 +316,13 @@ namespace CMissionLib
 		public void CreateArchive(string mutatorPath, bool hideFromModList = false)
 		{
 			var script = GetScript();
+			var luascript = GetLuaStartscript();
 			var modInfo = GetModInfo(hideFromModList);
 			var luaMissionData = SerializeToLua();
 			if (Debugger.IsAttached)
 			{
 				File.WriteAllText("startscript.txt", script);
+				File.WriteAllText("startscript.lua", "return " + luascript);
 				File.WriteAllText("modinfo.txt", modInfo);
 				//File.WriteAllText("mission.lua", luaMissionData);
 			}
@@ -482,6 +484,94 @@ namespace CMissionLib
 				slots.Add(new LuaTable(map));
 			}
 			return LuaTable.CreateArray(slots);
+		}
+
+		// TODO
+		public LuaTable GetLuaStartscript()
+		{
+			Dictionary<object, object> map = new Dictionary<object, object>
+			{
+				{"MapName", MapName},
+				{"StartposType", 2},
+				{"GameType", Name},
+				{"IsHost", 1},
+				{"OnlyLocal", 1},
+				{"MyPlayerName", StartingPlayer.Name.Replace(' ', '_')},
+				
+			};
+			foreach (var player in Players)
+			{
+				if (player.IsHuman)
+				{
+					var index = Players.Where(x => x.IsHuman).ToList().IndexOf(player);
+					var teamIndex = Players.IndexOf(player);
+					LuaTable playerDict = new LuaTable(new Dictionary<object, object>
+					{
+						{"Name", player.Name.Replace(' ', '_')},
+						{"Team", teamIndex},
+					});
+					map.Add("player" + index, playerDict);
+				}
+				else
+				{
+					var index = Players.Where(x => !x.IsHuman).ToList().IndexOf(player);
+					var teamIndex = Players.IndexOf(player);
+					LuaTable playerDict = new LuaTable(new Dictionary<object, object>
+					{
+						{"Name", player.Name.Replace(' ', '_')},
+						{"ShortName", player.AIDll},
+						{"Team", teamIndex},
+						{"Host",  Players.IndexOf(StartingPlayer)}
+					});
+					map.Add("ai" + index, playerDict);
+				}
+			}
+			
+			foreach (var player in Players)
+			{
+				var index = Players.IndexOf(player);
+				var alliances = Players.Select(p => p.Alliance).Distinct().ToList();
+				LuaTable teamDict = new LuaTable(new Dictionary<object, object>
+				{
+					{"TeamLeader", Players.IndexOf(StartingPlayer)},
+					{"AllyTeam", alliances.IndexOf(player.Alliance)},
+					{"RGBColor", String.Format("{0} {1} {2}", player.Color.ScR, player.Color.ScG, player.Color.ScB)},
+				});
+				map.Add("team" + index, teamDict);
+			}
+
+			var allianceCount = Players.Select(p => p.Alliance).Distinct().Count();
+			for (var i = 0; i < allianceCount; i++)
+			{
+				LuaTable allyTeamDict = new LuaTable(new Dictionary <object, object>
+				{
+					{"NumAllies", 0},
+				});
+				map.Add("allyTeam" + i, allyTeamDict);
+			}
+
+			var modopts = new Dictionary<object, object>();
+			if (customModOptions != null)
+			{
+				List<string> modoptsArray = new List<string>(customModOptions.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries));
+				foreach (string modopt in modoptsArray)
+				{
+					var modoptSplit = modopt.Split(new string[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
+					if (modoptSplit.Length < 2) continue;
+					var key = modoptSplit[0];
+					// make sure only the first = is used as a separator
+					var valueArray = new string[modoptSplit.Length - 1];
+					for (int i=1; i<modoptSplit.Length; i++)
+					{
+						valueArray[i - 1] = modoptSplit[i];
+					}
+					var value = String.Join("", valueArray);
+					modopts.Add(key, value);
+				}
+			}
+			map.Add("modoptions", new LuaTable(modopts));
+
+			return new LuaTable(map);
 		}
 
 		public string GetScript()

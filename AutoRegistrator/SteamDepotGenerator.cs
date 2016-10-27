@@ -151,11 +151,13 @@ namespace AutoRegistrator
         }
 
         public void RunBuild() {
+            Trace.TraceInformation("Starting SteamDepot build");
             var pi = new ProcessStartInfo(Path.Combine(targetFolder,"..","builder","steamcmd.exe"), string.Format(@"+login zkbuild {0} +run_app_build_http ..\scripts\app_zk_stable.vdf +quit", new Secrets().GetSteamBuildPassword()));
             pi.UseShellExecute = false;
             pi.WindowStyle = ProcessWindowStyle.Hidden;
             var runp = Process.Start(pi);
             runp.WaitForExit();
+            Trace.TraceInformation("SteamDepot build completed!");
         }
     }
 }

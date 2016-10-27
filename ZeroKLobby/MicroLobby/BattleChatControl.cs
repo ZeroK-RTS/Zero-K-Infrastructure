@@ -31,7 +31,7 @@ namespace ZeroKLobby.MicroLobby
             if (this.IsInDesignMode()) return;
 
             Program.TasClient.Said += TasClient_Said;
-            Program.TasClient.BattleJoined += TasClient_BattleJoined;
+            Program.TasClient.BattleJoinSuccess += TasClientBattleJoinSuccess;
             Program.TasClient.BattleUserLeft += TasClient_BattleUserLeft;
             Program.TasClient.BattleUserJoined += TasClient_BattleUserJoined;
             Program.TasClient.BattleUserStatusChanged += TasClient_BattleUserStatusChanged;
@@ -43,7 +43,7 @@ namespace ZeroKLobby.MicroLobby
             Program.TasClient.BattleMapChanged += TasClient_BattleMapChanged;
 
 
-            if (Program.TasClient.MyBattle != null) foreach (var user in Program.TasClient.MyBattle.Users.Values) AddUser(user.Name);
+            if (Program.TasClient.MyBattle != null) foreach (var user in Program.TasClient.MyBattle.Users) AddUser(user.Key);
             ChatLine += (s, e) => { if (Program.TasClient.IsLoggedIn) Program.TasClient.Say(SayPlace.Battle, null, e.Data, false); };
             playerBox.IsBattle = true;
 
@@ -232,7 +232,7 @@ namespace ZeroKLobby.MicroLobby
         }
 
 
-        void TasClient_BattleJoined(object sender, Battle battle)
+        void TasClientBattleJoinSuccess(object sender, Battle battle)
         {
             Reset();
             SetMapImages(battle.MapName);
@@ -256,12 +256,8 @@ namespace ZeroKLobby.MicroLobby
             if (tas.MyBattle != null && battleID == tas.MyBattle.BattleID)
             {
                 var userName = e1.UserName;
-                UserBattleStatus userBattleStatus;
-                if (tas.MyBattle.Users.TryGetValue(userName, out userBattleStatus))
-                {
-                    AddUser(userBattleStatus.Name);
-                    AddLine(new JoinLine(userName));
-                }
+                AddUser(userName);
+                AddLine(new JoinLine(userName));
             }
         }
 

@@ -26,12 +26,11 @@ namespace ZkLobbyServer
             }
         }
         ConnectedUser connectedUser;
+        private bool loginAttempted;
 
-        DateTime lastPingFromClient;
         readonly int number;
 
-        readonly ZkLobbyServer state;
-        readonly Timer timer;
+        readonly ZkLobbyServer server;
 
         ITransport transport;
         public string RemoteEndpointIP
@@ -40,23 +39,21 @@ namespace ZkLobbyServer
         }
 
 
-        public ClientConnection(ITransport transport, ZkLobbyServer state)
+        public ClientConnection(ITransport transport, ZkLobbyServer server)
         {
-            this.state = state;
-            number = Interlocked.Increment(ref state.ClientCounter);
+            this.server = server;
+            number = Interlocked.Increment(ref server.ClientCounter);
             this.transport = transport;
-            timer = new Timer(GlobalConst.LobbyProtocolPingInterval * 1000);
-            timer.Elapsed += TimerOnElapsed;
 
-            transport.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed);
+            transport.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed).ConfigureAwait(false);
         }
 
         public async Task OnCommandReceived(string line)
         {
             try
             {
-                dynamic obj = state.Serializer.DeserializeLine(line);
-                if (obj is Ping || obj is Login || obj is Register) await Process(obj);
+                dynamic obj = server.Serializer.DeserializeLine(line);
+                if (obj is Login || obj is Register) await Process(obj);
                 else await connectedUser.Process(obj);
             }
             catch (Exception ex)
@@ -70,15 +67,12 @@ namespace ZkLobbyServer
         public async Task OnConnected()
         {
             //Trace.TraceInformation("{0} connected", this);
-            await SendCommand(new Welcome() { Engine = state.Engine, Game = state.Game, Version = state.Version });
-            lastPingFromClient = DateTime.UtcNow;
-            timer.Start();
+            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Version = server.Version });
         }
 
 
         public async Task OnConnectionClosed(bool wasRequested)
         {
-            timer.Stop();
             var reason = wasRequested ? "quit" : "connection failed";
             if (!string.IsNullOrEmpty(Name)) await connectedUser.RemoveConnection(this, reason);
             //Trace.TraceInformation("{0} {1}", this, reason);
@@ -87,42 +81,31 @@ namespace ZkLobbyServer
 
         public async Task Process(Login login)
         {
-            Account account = null;
-            User user = null;
-            var response = await Task.Run(() => state.LoginChecker.Login(login, this.RemoteEndpointIP, out user));
-            if (response.ResultCode == LoginResponse.Code.Ok)
+            loginAttempted = true;
+            var ret = await Task.Run(()=>server.LoginChecker.Login(login, RemoteEndpointIP));
+            if (ret.LoginResponse.ResultCode == LoginResponse.Code.Ok)
             {
-                connectedUser = state.ConnectedUsers.GetOrAdd(user.Name, (n) => new ConnectedUser(state, user));
-                connectedUser.User = user;
-                connectedUser.Connections.TryAdd(this, true);
-                
+                var user = ret.User;
                 //Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
                 
-                await state.Broadcast(state.ConnectedUsers.Values, connectedUser.User); // send self to all
+                await this.SendCommand(user); // send self to self first
 
-                await SendCommand(response); // login accepted
+                connectedUser = server.ConnectedUsers.GetOrAdd(user.Name, (n) => new ConnectedUser(server, user));
+                connectedUser.User = user;
+                connectedUser.Connections.TryAdd(this, true);
 
-                foreach (var c in state.ConnectedUsers.Values.Where(x => x != connectedUser)) await SendCommand(c.User); // send others to self
+                await SendCommand(ret.LoginResponse); // login accepted
 
-                foreach (var b in state.Battles.Values)
-                {
-                    if (b != null)
-                    {
-                        await
-                            SendCommand(new BattleAdded()
-                            {
-                                Header = b.GetHeader()
-                            });
+                foreach (var b in server.Battles.Values.Where(x => x != null)) await SendCommand(new BattleAdded() { Header = b.GetHeader() });
 
-                        foreach (var u in b.Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await SendCommand(new JoinedBattle() { BattleID = b.BattleID, User = u.Name });
-                    }
-                }
+                // mutually syncs users based on visibility rules
+                await server.TwoWaySyncUsers(Name, server.ConnectedUsers.Keys);
+               
 
+                server.OfflineMessageHandler.SendMissedMessagesAsync(this, SayPlace.User, Name, user.AccountID);
 
-                await state.OfflineMessageHandler.SendMissedMessages(this, SayPlace.User, Name, user.AccountID);
-
-                var defChans = await state.ChannelManager.GetDefaultChannels(user.AccountID); 
-                defChans.AddRange(state.Rooms.Where(x=>x.Value.Users.ContainsKey(user.Name)).Select(x=>x.Key)); // add currently connected channels to list too
+                var defChans = await server.ChannelManager.GetDefaultChannels(user.AccountID); 
+                defChans.AddRange(server.Channels.Where(x=>x.Value.Users.ContainsKey(user.Name)).Select(x=>x.Key)); // add currently connected channels to list too
                 
                 foreach (var chan in defChans.ToList().Distinct()) {
                     await connectedUser.Process(new JoinChannel() {
@@ -135,12 +118,12 @@ namespace ZkLobbyServer
                 await SendCommand(new FriendList() { Friends = connectedUser.Friends.ToList() });
                 await SendCommand(new IgnoreList() { Ignores = connectedUser.Ignores.ToList() });
 
-                await state.MatchMaker.OnLoginAccepted(connectedUser);
+                await server.MatchMaker.OnLoginAccepted(connectedUser);
             }
             else
             {
-                await SendCommand(response);
-                if (response.ResultCode == LoginResponse.Code.Banned) transport.RequestClose();
+                await SendCommand(ret.LoginResponse);
+                if (ret.LoginResponse.ResultCode == LoginResponse.Code.Banned) transport.RequestClose();
             }
         }
 
@@ -150,7 +133,7 @@ namespace ZkLobbyServer
         {
             var response = new RegisterResponse();
             if (!Account.IsValidLobbyName(register.Name) || string.IsNullOrEmpty(register.PasswordHash)) response.ResultCode = RegisterResponse.Code.InvalidCharacters;
-            else if (state.ConnectedUsers.ContainsKey(register.Name)) response.ResultCode = RegisterResponse.Code.AlreadyConnected;
+            else if (server.ConnectedUsers.ContainsKey(register.Name)) response.ResultCode = RegisterResponse.Code.AlreadyConnected;
             else
             {
                 await Task.Run(() =>
@@ -182,11 +165,6 @@ namespace ZkLobbyServer
             await SendCommand(response);
         }
 
-        public async Task Process(Ping ping)
-        {
-            lastPingFromClient = DateTime.UtcNow;
-        }
-
         public void RequestClose()
         {
             transport.RequestClose();
@@ -196,7 +174,7 @@ namespace ZkLobbyServer
         {
             try
             {
-                var line = state.Serializer.SerializeToLine(data);
+                var line = server.Serializer.SerializeToLine(data);
                 await SendLine(line);
             }
             catch (Exception ex)
@@ -224,10 +202,5 @@ namespace ZkLobbyServer
             return string.Format("[{0} {1}:{2} {3}]", number, transport.RemoteEndpointAddress, transport.RemoteEndpointPort, Name);
         }
 
-        void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
-        {
-            if (DateTime.UtcNow.Subtract(lastPingFromClient).TotalSeconds >= GlobalConst.LobbyProtocolPingTimeout || connectedUser?.IsLoggedIn != true) transport.RequestClose();
-            else SendCommand(new Ping() { });
-        }
     }
 }

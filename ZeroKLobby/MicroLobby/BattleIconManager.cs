@@ -40,9 +40,9 @@ namespace ZeroKLobby.MicroLobby
 
         private void TasClientOnFriendListUpdated(object sender, IReadOnlyCollection<string> friends)
         {
-            foreach (var battle in Program.TasClient.ExistingBattles.Values.Where(b => b.Users.Any(y => friends.Contains(y.Key))))
+            foreach (var battleID in Program.TasClient.ExistingUsers.Values.Where(b => friends.Contains(b.Name) && b.BattleID.HasValue).Select(x=>x.BattleID))
             {
-                var battleIcon = GetBattleIcon(battle.BattleID);
+                var battleIcon = GetBattleIcon(battleID??0);
                 battleIcon.SetPlayers();
                 BattleChanged(this, new EventArgs<BattleIcon>(battleIcon));
             }

@@ -21,10 +21,11 @@ namespace ZkLobbyServer
 
         public LoginChecker LoginChecker;
         public OfflineMessageHandler OfflineMessageHandler = new OfflineMessageHandler();
-        public ConcurrentDictionary<string, Channel> Rooms = new ConcurrentDictionary<string, Channel>();
+        public ConcurrentDictionary<string, Channel> Channels = new ConcurrentDictionary<string, Channel>();
         public EventHandler<Say> Said = delegate { };
         public CommandJsonSerializer Serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<MessageAttribute>());
         public SteamWebApi SteamWebApi;
+
         private ServerTextCommands textCommands;
         public string Engine { get; private set; }
         public string Game { get; private set; }
@@ -37,6 +38,7 @@ namespace ZkLobbyServer
 
         public PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
         public SpringPaths SpringPaths { get; private set; }
+        private BattleListUpdater battleListUpdater;
 
 
 
@@ -61,6 +63,7 @@ namespace ZkLobbyServer
             textCommands = new ServerTextCommands(this);
             ChannelManager = new ChannelManager(this);
             MatchMaker = new MatchMaker(this);
+            battleListUpdater = new BattleListUpdater(this);
         }
 
         /// <summary>
@@ -112,6 +115,103 @@ namespace ZkLobbyServer
             if (ConnectedUsers.TryGetValue(target, out usr)) if (usr.Ignores.Contains(origin)) return false;
             return true;
         }
+
+
+        /// <summary>
+        /// Mutually syncs user
+        /// </summary>
+        /// <param name="newUser">one group</param>
+        /// <param name="others">second group</param>
+        public async Task TwoWaySyncUsers(string newUser, IEnumerable<string> others)
+        {
+            var uNewUser = ConnectedUsers.Get(newUser);
+            if (uNewUser == null) return;
+            var uOthers = others.Select(x => ConnectedUsers.Get(x)).Where(x => x != null).ToList();
+
+            var visibleToNew = uOthers.Where(x => CanUserSee(uNewUser, x) && !HasSeen(uNewUser, x));
+            var othersWhoSee = uOthers.Where(x => CanUserSee(x, uNewUser) && !HasSeen(x, uNewUser));
+
+            foreach (var other in visibleToNew) await uNewUser.SendCommand(other.User);
+            await Broadcast(othersWhoSee, uNewUser.User);
+        }
+
+        public async Task SyncUserToAll(ConnectedUser changer)
+        {
+            await Broadcast(ConnectedUsers.Values.Where(x => CanUserSee(x, changer) && !HasSeen(x, changer)), changer.User);
+        }
+
+
+        public bool CanUserSee(string watcher, string watched)
+        {
+            if (watcher == watched) return true; // can see self
+
+            ConnectedUser uWatcher;
+            ConnectedUser uWatched;
+            if (!ConnectedUsers.TryGetValue(watcher, out uWatcher) || !ConnectedUsers.TryGetValue(watched, out uWatched)) return false;
+
+            return CanUserSee(uWatcher, uWatched);
+        }
+
+        public bool CanUserSee(ConnectedUser uWatcher, ConnectedUser uWatched)
+        {
+            if (uWatched == null || uWatcher == null) return false;
+            if (uWatched.Name == uWatcher.Name) return true;
+
+            // admins always visible
+            if (uWatched.User?.IsAdmin == true) return true;
+
+            // friends see each other
+            if (uWatcher.Friends.Contains(uWatched.Name)) return true;
+
+            // already seen, cannot be unseen
+            if (uWatcher.HasSeenUserVersion.ContainsKey(uWatched.Name)) return true;
+
+            // clanmates see each other
+            if (uWatcher.User?.Clan != null && uWatcher.User?.Clan == uWatched.User?.Clan) return true;
+
+            // people in same battle see each other
+            if (uWatcher.MyBattle != null && uWatcher.MyBattle == uWatched.MyBattle) return true;
+
+            // people in same non "zk" channel see each other
+            foreach (var chan in Channels.Values.Where(x => x != null))
+            {
+                if (chan.Users.ContainsKey(uWatcher.Name)) // my channel
+                {
+                    if (chan.Name != "zk")
+                    {
+                        if (chan.Users.ContainsKey(uWatched.Name)) return true;
+                    }
+                    else
+                    {
+                        return false;
+                        //return chan.Users.Keys.Take(50).Contains(uWatched.Name); // return first 50 from zk 
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool HasSeen(string watcher, string watched)
+        {
+            ConnectedUser uWatcher;
+            ConnectedUser uWatched;
+            if (!ConnectedUsers.TryGetValue(watcher, out uWatcher) || !ConnectedUsers.TryGetValue(watched, out uWatched)) return false;
+            return HasSeen(uWatcher, uWatched);
+        }
+
+        public static bool HasSeen(ConnectedUser uWatcher, ConnectedUser uWatched)
+        {
+            if (uWatched == null || uWatcher == null) return false;
+            int lastSync;
+            var newSync = uWatched.User.SyncVersion;
+            if (!uWatcher.HasSeenUserVersion.TryGetValue(uWatched.Name, out lastSync) || lastSync != newSync)
+            {
+                uWatcher.HasSeenUserVersion[uWatched.Name] = newSync;
+                return false;
+            }
+            return true;
+        }
+
 
         public async Task ForceJoinBattle(string playerName, string battleHost)
         {
@@ -179,13 +279,13 @@ namespace ZkLobbyServer
             {
                 case SayPlace.Channel:
                     Channel channel;
-                    if (Rooms.TryGetValue(say.Target, out channel)) await Broadcast(channel.Users.Keys.Where(x => CanChatTo(say.User, x)), say);
-                    await OfflineMessageHandler.StoreChatHistory(say);
+                    if (Channels.TryGetValue(say.Target, out channel)) await Broadcast(channel.Users.Keys.Where(x => CanChatTo(say.User, x)), say);
+                    OfflineMessageHandler.StoreChatHistoryAsync(say);
                     break;
                 case SayPlace.User:
                     ConnectedUser connectedUser;
                     if (ConnectedUsers.TryGetValue(say.Target, out connectedUser) && CanChatTo(say.User, say.Target)) await connectedUser.SendCommand(say);
-                    else await OfflineMessageHandler.StoreChatHistory(say);
+                    else OfflineMessageHandler.StoreChatHistoryAsync(say);
                     break;
                 case SayPlace.MessageBox:
                     await Broadcast(ConnectedUsers.Values, say);
@@ -262,7 +362,7 @@ namespace ZkLobbyServer
             if (ConnectedUsers.TryGetValue(acc.Name, out conus))
             {
                 LoginChecker.UpdateUserFromAccount(conus.User, acc);
-                await Broadcast(ConnectedUsers.Values, conus.User);
+                await SyncUserToAll(conus);
             }
         }
 
@@ -271,8 +371,11 @@ namespace ZkLobbyServer
             foreach (var u in battle.Users.Keys)
             {
                 ConnectedUser connectedUser;
-                if (ConnectedUsers.TryGetValue(u, out connectedUser)) connectedUser.MyBattle = null;
-                await Broadcast(ConnectedUsers.Values, new LeftBattle() { BattleID = battle.BattleID, User = u });
+                if (ConnectedUsers.TryGetValue(u, out connectedUser))
+                {
+                    connectedUser.MyBattle = null;
+                    await SyncUserToAll(connectedUser);
+                }
             }
             ServerBattle bat;
             if (Battles.TryRemove(battle.BattleID, out bat)) bat.Dispose();
@@ -290,7 +393,7 @@ namespace ZkLobbyServer
         {
             // todo persist in db
             Channel chan;
-            if (Rooms.TryGetValue(channel, out chan))
+            if (Channels.TryGetValue(channel, out chan))
             {
                 chan.Topic.Text = topic;
                 chan.Topic.SetDate = DateTime.UtcNow;

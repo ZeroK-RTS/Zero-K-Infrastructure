@@ -133,7 +133,9 @@ namespace MissionEditor2
 							{
 								mission.CreateArchive(fileName, hideFromModList);
 								var scriptPath = String.Format("{0}\\{1}.txt", Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
+								var scriptPathLua = String.Format("{0}\\{1}.lua", Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
 								File.WriteAllText(scriptPath, mission.GetScript());
+								File.WriteAllText(scriptPathLua, "return " + mission.GetLuaStartscript());
 								this.Invoke(loadingDialog.Close);
 							});
 					};
@@ -548,11 +550,13 @@ namespace MissionEditor2
 			try
 			{
 				var missionFile = "testmission.sdz";
-                var writeablePath = unitSync.WritableDataDirectory;
+				var writeablePath = unitSync.WritableDataDirectory;
 				var missionPath = writeablePath + "\\games\\" + missionFile;
 				scriptFile = writeablePath + "\\script.txt";
+				string scriptFileLua = writeablePath + "\\script.lua";
 				Mission.Name = Mission.Name + " Test";
 				File.WriteAllText(scriptFile, Mission.GetScript());
+				File.WriteAllText(scriptFileLua, "return " + Mission.GetLuaStartscript());
 				Mission.CreateArchive(missionPath, true);
 			}
 			catch(Exception e)

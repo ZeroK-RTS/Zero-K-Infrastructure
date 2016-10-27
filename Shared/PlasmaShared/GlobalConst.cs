@@ -32,8 +32,8 @@ namespace ZkData
             #elif TEST
                 Mode = ModeType.Test;
             #else
-            Mode = ModeType.Local;
-#endif
+                Mode = ModeType.Local;
+            #endif
         }
 
         static void SetMode(ModeType newMode)
@@ -42,7 +42,7 @@ namespace ZkData
                 case ModeType.Local:
                     BaseSiteUrl = "http://localhost:9739";
                     ZkDataContextConnectionString =
-                        @"Data Source=.;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true";
+                        @"Data Source=.;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000;";
 
                     LobbyServerHost = "localhost";
                     LobbyServerPort = 8200;
@@ -54,7 +54,7 @@ namespace ZkData
                 case ModeType.Test:
                     BaseSiteUrl = "http://test.zero-k.info";
                     ZkDataContextConnectionString =
-                        "Data Source=test.zero-k.info;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
+                        "Data Source=test.zero-k.info;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000;";
 
                     LobbyServerHost = "test.zero-k.info";
                     LobbyServerPort = 8202;
@@ -67,7 +67,7 @@ namespace ZkData
                 case ModeType.Live:
                     BaseSiteUrl = "http://zero-k.info";
                     ZkDataContextConnectionString =
-                        "Data Source=zero-k.info;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true";
+                        "Data Source=zero-k.info;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000;";
                     
                     LobbyServerHost = "zero-k.info";
                     LobbyServerPort = 8200;
@@ -185,14 +185,14 @@ namespace ZkData
         public const double MaxPwEloDifference = 120;
 
 
-        public const PlanetWarsModes PlanetWarsMode = PlanetWarsModes.AllOffline;
+        public const PlanetWarsModes PlanetWarsMode = PlanetWarsModes.Running;
 
         public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";
         public const string BomberIcon = "/img/fleets/neutral.png";
         public const string WarpIcon = "/img/warpcore.png";
 
-        public const bool VpnCheckEnabled = true; 
+        public const bool VpnCheckEnabled = false; 
 
         public const double EurosToKudos = 10.0;
         public const string TeamEmail = "Zero-K team <team@zero-k.info>";
@@ -212,9 +212,6 @@ namespace ZkData
         public const int PlanetWarsMaxTeamsize = 4;
         public const int MinPlanetWarsLevel = 10;
         public const int MinPlanetWarsElo = 1000;
-        
-        public const int LobbyProtocolPingInterval = 30;
-        public const int LobbyProtocolPingTimeout = 60;
 
         public const int WikiEditLevel = 20;
 

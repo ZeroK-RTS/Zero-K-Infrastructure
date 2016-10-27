@@ -81,7 +81,7 @@ namespace ZeroKLobby
             User user;
             if (client.ExistingUsers.TryGetValue(name, out user) && user.IsInBattleRoom)
             {
-                var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.Users.ContainsKey(name));
+                var bat = client.ExistingBattles.Get(user.BattleID ?? 0);
                 if (bat != null)
                 {
                     string password = null;

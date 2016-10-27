@@ -21,8 +21,9 @@ namespace ZkData.UnitSyncLib
         private const int DescriptionBufferSize = 256;
         private const int MaxMipLevel = 10;
         private const int MaxUnits = 2000;
-
-
+        
+        private Dictionary<string, int> mapIndices;
+        
         public static string[] DependencyExceptions =
         {
             "Spring Bitmaps", "Spring Cursors", "Map Helper v1", "Spring content v1",
@@ -362,13 +363,80 @@ namespace ZkData.UnitSyncLib
             return Path.GetFileName(archivePath);
         }
 
+        public Dictionary<string, int> GetMapIndices()
+        {
+            if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
+            if (mapIndices != null) return mapIndices;
+            var mapCount = NativeMethods.GetMapCount();
+            if (mapCount < 0) throw new UnitSyncException(NativeMethods.GetNextError());
+            mapIndices = new Dictionary<string, int>();
+            for (int i = 0; i < mapCount; i++)
+            {
+                mapIndices[NativeMethods.GetMapName(i)] = i;
+            }
+            return mapIndices;
+        }
+
+        void ProcessMapInfoItem(int index, string key, ref MapInfo info)
+        {
+            switch (key)
+            {
+                case "description":
+                    info.description = NativeMethods.GetInfoValueString(index);
+                    break;
+                case "author":
+                    info.author = NativeMethods.GetInfoValueString(index);
+                    break;
+                case "tidalStrength":
+                    info.tidalStrength = NativeMethods.GetInfoValueInteger(index);
+                    break;
+                case "gravity":
+                    info.gravity = NativeMethods.GetInfoValueInteger(index);
+                    break;
+                case "maxMetal":
+                    info.maxMetal = NativeMethods.GetInfoValueFloat(index);
+                    break;
+                case "extractorRadius":
+                    info.extractorRadius = NativeMethods.GetInfoValueInteger(index);
+                    break;
+                case "minWind":
+                    info.minWind = NativeMethods.GetInfoValueInteger(index);
+                    break;
+                case "maxWind":
+                    info.maxWind = NativeMethods.GetInfoValueInteger(index);
+                    break;
+                case "width":
+                    info.width = NativeMethods.GetInfoValueInteger(index);
+                    break;
+                case "height":
+                    info.height = NativeMethods.GetInfoValueInteger(index);
+                    break;
+            }
+        }
 
         private MapInfo GetMapInfo(ResourceInfo ae, int mapInfoVersion)
         {
             if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
             if (!new[] { 0, 1 }.Contains(mapInfoVersion)) throw new ArgumentOutOfRangeException("mapInfoVersion", "must be 0 or 1.");
             var mapInfo = new MapInfo { author = new string(' ', AuthorBufferSize), description = new string(' ', DescriptionBufferSize) };
-            if (!NativeMethods.GetMapInfoEx(ae.Name, ref mapInfo, mapInfoVersion)) throw new UnitSyncException("Error getting map information.");
+            try
+            {
+                var indices = GetMapIndices();
+                int mapIndex = indices[ae.Name];
+                int infoItemCount = NativeMethods.GetMapInfoCount(mapIndex);
+                for (int i = 0; i < infoItemCount; i++)
+                {
+                    string key = NativeMethods.GetInfoKey(i);
+                    //string desc = NativeMethods.GetInfoDescription(i);
+                    //string type = NativeMethods.GetInfoType(i);
+                    //Trace.TraceInformation(String.Format("Unitsync map info: ({0}) key: {1}; type: {2}, desc: {3}", i, key, type, desc));
+                    ProcessMapInfoItem(i, key, ref mapInfo);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new UnitSyncException(String.Format("Error loading map info for ({0}): {1}", ae.Name, ex));
+            }
             TestMapInfo(mapInfo);
             return mapInfo;
         }

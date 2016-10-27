@@ -33,7 +33,7 @@ namespace LobbyClient
         public string ModName { get; set; }
         public Dictionary<string, string> ModOptions { get; set; }
 
-        public int NonSpectatorCount { get { return Users.Count - SpectatorCount; } }
+        public virtual int NonSpectatorCount { get; set; }
 
         public string Password;
 
@@ -70,6 +70,7 @@ namespace LobbyClient
             if (h.Title != null) Title = h.Title;
             if (h.Game != null) ModName = h.Game;
             if (h.SpectatorCount != null) SpectatorCount = h.SpectatorCount.Value;
+            if (h.PlayerCount != null) NonSpectatorCount = h.PlayerCount.Value;
             if (h.Mode != null) Mode = h.Mode.Value;
             if (h.RunningSince != null) RunningSince = h.RunningSince;
             if (h.IsRunning != null) IsInGame = h.IsRunning.Value;
@@ -88,6 +89,7 @@ namespace LobbyClient
                 Map = b.MapName,
                 Title = b.Title,
                 SpectatorCount = b.SpectatorCount,
+                PlayerCount = b.NonSpectatorCount,
                 MaxPlayers = b.MaxPlayers,
                 Password = b.Password != null ? "?" : null,
                 Mode = b.Mode,

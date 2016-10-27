@@ -1,6 +1,7 @@
 #region using
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -45,7 +46,6 @@ namespace LobbyClient
         private List<string> ignores = new List<string>();
 
 
-        private DateTime lastPing;
 
         private int lastUdpSourcePort;
         private int lastUserStatus;
@@ -72,6 +72,8 @@ namespace LobbyClient
         public List<string> MatchMakerJoinedQueues { get; private set; } = new List<string>();
 
         public Battle MyBattle { get; protected set; }
+
+
 
         public int MyBattleID
         {
@@ -200,7 +202,7 @@ namespace LobbyClient
 
         public event EventHandler<Battle> BattleFound = delegate { };
         public event EventHandler<OldNewPair<Battle>> BattleInfoChanged = delegate { };
-        public event EventHandler<Battle> BattleJoined = delegate { };
+        public event EventHandler<Battle> BattleJoinSuccess = delegate { };
         public event EventHandler<OldNewPair<Battle>> BattleMapChanged = delegate { };
         public event EventHandler<UserBattleStatus> BattleMyUserStatusChanged = delegate { };
         public event EventHandler<Battle> BattleOpened = delegate { };
@@ -397,7 +399,6 @@ namespace LobbyClient
         public event EventHandler<Battle> MyBattleHostExited = delegate { };
         public event EventHandler<OldNewPair<Battle>> MyBattleMapChanged = delegate { };
         public event EventHandler<Battle> MyBattleRemoved = delegate { }; // raised just after the battle is removed from the battle list
-        public event EventHandler<Battle> MyBattleStarted = delegate { };
         public event EventHandler<OldNewPair<User>> MyUserStatusChanged = delegate { };
 
         public async Task OnCommandReceived(string line)
@@ -625,8 +626,7 @@ namespace LobbyClient
 
         private void PingTimerInternal()
         {
-            if (IsConnected) SendCommand(new Ping());
-            else if (!WasDisconnectRequested) Connect(serverHost, serverPort);
+            if (!IsConnected && !WasDisconnectRequested) Connect(serverHost, serverPort);
         }
 
 
@@ -678,62 +678,42 @@ namespace LobbyClient
             MatchMakerStatusUpdated(this, status);
         }
 
-        private async Task Process(JoinedBattle bat)
+
+        private async Task Process(JoinBattleSuccess bat)
         {
-            User user;
-            ExistingUsers.TryGetValue(bat.User, out user);
             Battle battle;
             ExistingBattles.TryGetValue(bat.BattleID, out battle);
-            if ((user != null) && (battle != null))
+            if (battle != null)
             {
-                battle.Users[user.Name] = new UserBattleStatus(user.Name, user);
-                user.IsInBattleRoom = true;
-                BattleUserJoined(this, new BattleUserEventArgs(user.Name, bat.BattleID));
-                if (user.Name == UserName)
+                battle.Users.Clear();
+                foreach (var battleStatusUpdate in bat.Players)
                 {
-                    MyBattle = battle;
-                    if (battle.FounderName == UserName) BattleOpened(this, battle);
-                    BattleJoined(this, MyBattle);
+                    var ubs = new UserBattleStatus(battleStatusUpdate.Name, ExistingUsers.Get(battleStatusUpdate.Name));
+                    ubs.UpdateWith(battleStatusUpdate);
+                    battle.Users[battleStatusUpdate.Name] = ubs;
                 }
+
+                battle.Bots.Clear();
+                foreach (var botStatusUpdate in bat.Bots)
+                {
+                    var ubs = new BotBattleStatus(botStatusUpdate.Name, botStatusUpdate.Owner, botStatusUpdate.AiLib);
+                    ubs.UpdateWith(botStatusUpdate);
+                    battle.Bots[botStatusUpdate.Name] = ubs;
+                    BattleBotAdded(this, ubs);
+                }
+
+                MyBattle = battle;
+                if (battle.FounderName == UserName) BattleOpened(this, battle);
+                BattleJoinSuccess(this, MyBattle);
             }
         }
 
 
-        private async Task Process(LeftBattle left)
-        {
-            User user;
-            Battle bat;
-
-            ExistingUsers.TryGetValue(left.User, out user);
-            ExistingBattles.TryGetValue(left.BattleID, out bat);
-
-            if ((bat != null) && (user != null))
-            {
-                user.IsInBattleRoom = false;
-                UserBattleStatus removed;
-                bat.Users.TryRemove(left.User, out removed);
-
-                if ((MyBattle != null) && (left.BattleID == MyBattleID))
-                    if (UserName == left.User)
-                    {
-                        bat.Bots.Clear();
-                        bat.ModOptions.Clear();
-                        MyBattle = null;
-                        BattleClosed(this, bat);
-                    }
-                BattleUserLeft(this, new BattleUserEventArgs(user.Name, left.BattleID));
-            }
-        }
 
         private async Task Process(BattleRemoved br)
         {
             Battle battle;
             if (!ExistingBattles.TryGetValue(br.BattleID, out battle)) return;
-            foreach (var u in battle.Users.Keys)
-            {
-                User user;
-                if (ExistingUsers.TryGetValue(u, out user)) user.IsInBattleRoom = false;
-            }
 
             ExistingBattles.Remove(br.BattleID);
             if (battle == MyBattle)
@@ -759,10 +739,6 @@ namespace LobbyClient
             }
         }
 
-        private async Task Process(Ping ping)
-        {
-            lastPing = DateTime.UtcNow;
-        }
 
         private async Task Process(User userUpdate)
         {
@@ -780,10 +756,30 @@ namespace LobbyClient
             if (old == null) UserAdded(this, user);
             if (old != null)
             {
+                if (user.BattleID != old.BattleID)
+                {
+                    if (user.BattleID.HasValue)
+                    {
+                        ExistingBattles.Get(user.BattleID??0)?.Users.TryAdd(user.Name, new UserBattleStatus(user.Name, user));
+                        BattleUserJoined(this, new BattleUserEventArgs(user.Name, user.BattleID.Value));
+                    }
+                    else
+                    {
+                        UserBattleStatus oldu;
+                        var obat = ExistingBattles.Get(old.BattleID ?? 0);
+                        obat?.Users.TryRemove(user.Name, out oldu);
+                        BattleUserLeft(this, new BattleUserEventArgs(user.Name, old.BattleID ?? 0));
+                        if (user.Name == UserName)
+                        {
+                            MyBattle = null;
+                            BattleClosed(this, obat);
+                        }
+                    }
+                }
+
                 var bat = MyBattle;
                 if ((bat != null) && (bat.FounderName == user.Name))
                 {
-                    if (user.IsInGame && !old.IsInGame) MyBattleStarted(this, bat);
                     if (!user.IsInGame && old.IsInGame) MyBattleHostExited(this, bat);
                 }
             }

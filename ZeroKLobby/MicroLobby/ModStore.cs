@@ -24,7 +24,7 @@ namespace ZeroKLobby.MicroLobby
 		public ModStore()
 		{
 			Program.TasClient.ModOptionsChanged += (s, e) => SetModOptions(e.ModOptions);
-			Program.TasClient.BattleJoined += (s, e) =>
+			Program.TasClient.BattleJoinSuccess += (s, e) =>
 				{
 					if (mod != null && mod.Name != Program.TasClient.MyBattle.ModName)
 					{

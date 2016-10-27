@@ -49,6 +49,7 @@ namespace ZkLobbyServer
         public ZkLobbyServer server;
         public DedicatedServer spring;
 
+
         public CommandPoll ActivePoll { get; private set; }
 
         static ServerBattle()
@@ -182,13 +183,25 @@ namespace ZkLobbyServer
             ValidateBattleStatus(ubs);
             user.MyBattle = this;
 
-            await server.Broadcast(server.ConnectedUsers.Keys, new JoinedBattle() { BattleID = BattleID, User = user.Name });
+            
+            await server.TwoWaySyncUsers(user.Name, Users.Keys); // mutually sync user statuses
+            
+            await server.SyncUserToAll(user);
+            
             await RecalcSpectators();
-            await server.Broadcast(Users.Keys.Where(x => x != user.Name), ubs.ToUpdateBattleStatus()); // send my UBS to others in battle
-            foreach (var u in Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList()) await user.SendCommand(u); // send other's status to self
-            foreach (var u in Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList()) await user.SendCommand(u);
-            await user.SendCommand(new SetModOptions() { Options = ModOptions });
 
+            await
+                user.SendCommand(new JoinBattleSuccess()
+                {
+                    BattleID = BattleID,
+                    Players = Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList(),
+                    Bots = Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList(),
+                    Options = ModOptions
+                });
+            
+            
+            await server.Broadcast(Users.Keys.Where(x => x != user.Name), ubs.ToUpdateBattleStatus()); // send my UBS to others in battle
+            
             if (spring.IsRunning)
             {
                 spring.AddUser(ubs.Name, ubs.ScriptPassword);
@@ -217,12 +230,13 @@ namespace ZkLobbyServer
         public async Task RecalcSpectators()
         {
             var specCount = Users.Values.Count(x => x.IsSpectator);
-            if (specCount != SpectatorCount)
+            var playerCount = Users.Values.Count(x => !x.IsSpectator);
+            if (specCount != SpectatorCount || playerCount != NonSpectatorCount)
             {
                 SpectatorCount = specCount;
+                NonSpectatorCount = playerCount;
                 await
-                    server.Broadcast(server.ConnectedUsers.Values,
-                        new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID } });
+                    server.Broadcast(Users.Keys, new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID , PlayerCount = NonSpectatorCount} });
             }
         }
 
@@ -470,8 +484,10 @@ namespace ZkLobbyServer
             h.IsRunning = IsInGame;
             h.RunningSince = RunningSince;
             h.SpectatorCount = SpectatorCount;
+            h.PlayerCount = NonSpectatorCount;
             h.IsMatchMaker = IsMatchMakerBattle;
-
+            
+            
             base.UpdateWith(h);
 
             ValidateAndFillDetails();

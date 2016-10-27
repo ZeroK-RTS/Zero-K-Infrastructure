@@ -146,9 +146,8 @@ namespace ZeroKLobby
             if (user.IsInBattleRoom)
             {
                 if (y < 70) y = 70; 
-                var battle = Program.TasClient.ExistingBattles.Values.FirstOrDefault(b => b.Users.ContainsKey(user.Name));
-                if (battle != null) {
-                    var battleIcon = Program.BattleIconManager.GetBattleIcon(battle.BattleID);
+                if (user.IsInBattleRoom) {
+                    var battleIcon = Program.BattleIconManager.GetBattleIcon(user.BattleID??0);
                     if (battleIcon != null) g.DrawImageUnscaled(battleIcon.Image, x, y);
                 }
             }

@@ -276,7 +276,7 @@ namespace ZeroKLobby
                 SpringScanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Resource removed: {0}", e.Item.InternalName);
                 Downloader = new PlasmaDownloader.PlasmaDownloader(SpringScanner, SpringPaths); //rapid
                 Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
-                Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride);
+                //Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride);
 
                 var isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
                 TasClient = new TasClient(string.Format("ZK {0}{1}", SelfUpdater.CurrentVersion, isLinux ? " linux" : ""));
@@ -357,7 +357,7 @@ namespace ZeroKLobby
                 };
                 if (!Debugger.IsAttached && !Conf.DisableAutoUpdate && !IsSteamFolder) SelfUpdater.StartChecking();
 
-                SteamHandler.Connect();
+                if (GlobalConst.Mode != ModeType.Local) SteamHandler.Connect();
                 Application.Run(MainWindow);
 
                 ShutDown();

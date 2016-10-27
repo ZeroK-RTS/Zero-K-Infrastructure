@@ -120,7 +120,7 @@ namespace ZeroKLobby.Notifications
 
 
 
-            client.BattleJoined += (s, e) =>
+            client.BattleJoinSuccess += (s, e) =>
                 {
                     if (!isVisible) ManualBattleStarted();
                     if (IsHostGameRunning()) btnStart.Text = "Rejoin";
@@ -274,7 +274,7 @@ namespace ZeroKLobby.Notifications
                 else picoChat.Visible = false;
             };
 
-            timer.Interval = 1000;
+            timer.Interval = 2000;
             timer.Start();
 
             Program.BattleIconManager.BattleChanged += BattleIconManager_BattleChanged;

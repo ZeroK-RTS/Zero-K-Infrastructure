@@ -358,7 +358,11 @@ namespace LobbyClient
                         break;
 
                     case Talker.SpringEventType.SERVER_GAMEOVER:
-                        foreach (var p in Context.ActualPlayers) p.IsIngame = false;
+                        foreach (var p in Context.ActualPlayers)
+                        {
+                            if (!p.IsIngame && !p.IsSpectator) MarkPlayerDead(p.Name, true);
+                            p.IsIngame = false;
+                        }
 
                         // set victory team for all allied with currently alive
                         foreach (var p in Context.ActualPlayers.Where(x => !x.IsSpectator && (x.LoseTime == null))) foreach (var q in Context.ActualPlayers.Where(x => !x.IsSpectator && (x.AllyNumber == p.AllyNumber))) q.IsVictoryTeam = true;

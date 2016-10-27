@@ -69,7 +69,7 @@ namespace ZkLobbyServer
                     {
                         springTas.Say(TasClient.SayPlace.User,
                             args.UserName,
-                            string.Join(", ", zkServer.Rooms[args.Channel].Users.Select(x => x.Key)),
+                            string.Join(", ", zkServer.Channels[args.Channel].Users.Select(x => x.Key)),
                             true);
                     }
 
