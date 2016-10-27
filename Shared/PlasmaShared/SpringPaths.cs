@@ -67,9 +67,9 @@ namespace ZkData
 
         public event EventHandler<string> SpringVersionChanged;
 
-        public void NotifyNewEngine(string engine)
+        public void NotifyNewEngine(string targetDir)
         {
-            SpringVersionChanged?.Invoke(this, engine);
+            SpringVersionChanged?.Invoke(this, Path.GetDirectoryName(targetDir));
         }
 
         private static string JoinDataDirectories(IEnumerable<string> input)
