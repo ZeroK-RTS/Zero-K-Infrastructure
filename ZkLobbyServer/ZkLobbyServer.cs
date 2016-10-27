@@ -111,6 +111,7 @@ namespace ZkLobbyServer
         public bool CanChatTo(string origin, string target)
         {
             ConnectedUser usr;
+            if (origin == GlobalConst.NightwatchName) return true;
             if (ConnectedUsers.TryGetValue(origin, out usr)) if (usr.IgnoredBy.Contains(target)) return false;
             if (ConnectedUsers.TryGetValue(target, out usr)) if (usr.Ignores.Contains(origin)) return false;
             return true;
@@ -194,13 +195,13 @@ namespace ZkLobbyServer
         {
             ConnectedUser uWatcher;
             ConnectedUser uWatched;
-            if (!ConnectedUsers.TryGetValue(watcher, out uWatcher) || !ConnectedUsers.TryGetValue(watched, out uWatched)) return false;
+            if (!ConnectedUsers.TryGetValue(watcher, out uWatcher) || !ConnectedUsers.TryGetValue(watched, out uWatched)) return true;
             return HasSeen(uWatcher, uWatched);
         }
 
         public static bool HasSeen(ConnectedUser uWatcher, ConnectedUser uWatched)
         {
-            if (uWatched == null || uWatcher == null) return false;
+            if (uWatched == null || uWatcher == null) return true;
             int lastSync;
             var newSync = uWatched.User.SyncVersion;
             if (!uWatcher.HasSeenUserVersion.TryGetValue(uWatched.Name, out lastSync) || lastSync != newSync)
@@ -267,6 +268,14 @@ namespace ZkLobbyServer
                 });
         }
 
+        private async Task SyncAndSay(IEnumerable<string> targetNames, Say say)
+        {
+            var targets = targetNames.Where(x => CanChatTo(say.User, x)).ToList();
+            var user = ConnectedUsers.Get(say.User);
+            if (user != null) await Broadcast(targets.Where(x => !HasSeen(x, say.User)), user.User); // sync user 
+            await Broadcast(targets, say);
+        }
+
         /// <summary>
         ///     Directly say something possibly as another user (skips all checks)
         /// </summary>
@@ -278,32 +287,31 @@ namespace ZkLobbyServer
             {
                 case SayPlace.Channel:
                     Channel channel;
-                    if (Channels.TryGetValue(say.Target, out channel)) await Broadcast(channel.Users.Keys.Where(x => CanChatTo(say.User, x)), say);
+                    if (Channels.TryGetValue(say.Target, out channel)) await SyncAndSay(channel.Users.Keys, say);
                     OfflineMessageHandler.StoreChatHistoryAsync(say);
                     break;
                 case SayPlace.User:
                     ConnectedUser connectedUser;
-                    if (ConnectedUsers.TryGetValue(say.Target, out connectedUser) && CanChatTo(say.User, say.Target)) await connectedUser.SendCommand(say);
+                    if (ConnectedUsers.TryGetValue(say.Target, out connectedUser)) await SyncAndSay(new List<string>() {say.Target}, say);
                     else OfflineMessageHandler.StoreChatHistoryAsync(say);
-                    break;
-                case SayPlace.MessageBox:
-                    await Broadcast(ConnectedUsers.Values, say);
                     break;
                 case SayPlace.Battle:
                     ServerBattle battle;
                     if (Battles.TryGetValue(battleID ?? 0, out battle))
                     {
-                        await Broadcast(battle.Users.Keys.Where(x => CanChatTo(say.User, x)), say);
+                        await SyncAndSay(battle.Users.Keys, say);
                         await battle.ProcessBattleSay(say);
                         OfflineMessageHandler.StoreChatHistoryAsync(say);
                     }
                     break;
+
+                // admin AH sent only:
+                case SayPlace.MessageBox:
+                    await Broadcast(ConnectedUsers.Values, say);
+                    break;
                 case SayPlace.BattlePrivate:
                     ConnectedUser targetUser;
-                    if (ConnectedUsers.TryGetValue(say.Target, out targetUser) && CanChatTo(say.User, say.Target))
-                    {
-                        await targetUser.SendCommand(say);
-                    }
+                    if (ConnectedUsers.TryGetValue(say.Target, out targetUser)) await targetUser.SendCommand(say);
                     break;
             }
 
