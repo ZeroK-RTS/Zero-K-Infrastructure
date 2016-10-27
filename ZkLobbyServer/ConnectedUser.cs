@@ -250,10 +250,11 @@ namespace ZkLobbyServer
         public async Task Process(LeaveChannel leaveChannel)
         {
             if (!IsLoggedIn) return;
-
+            
             Channel channel;
             if (server.Channels.TryGetValue(leaveChannel.ChannelName, out channel))
             {
+                if (channel.IsDeluge) return;
                 User user;
                 var users = !channel.IsDeluge ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(x, Name)).ToList();
                 if (channel.Users.TryRemove(Name, out user))
