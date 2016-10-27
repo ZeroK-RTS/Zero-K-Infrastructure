@@ -67,7 +67,7 @@ namespace ZkLobbyServer
         public async Task OnConnected()
         {
             //Trace.TraceInformation("{0} connected", this);
-            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Version = server.Version });
+            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Version = server.Version, UserCount = server.ConnectedUsers.Count});
         }
 
 

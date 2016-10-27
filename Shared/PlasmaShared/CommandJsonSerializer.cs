@@ -9,7 +9,7 @@ namespace PlasmaShared
     {
         private readonly Dictionary<string, Type> knownTypes = new Dictionary<string, Type>();
         //   NetJSONSettings ns = new NetJSONSettings() {DateFormat = NetJSONDateFormat.ISO, UseEnumString = false};
-        private JsonSerializerSettings settings = new JsonSerializerSettings() { Formatting = Formatting.None, NullValueHandling = NullValueHandling.Ignore};
+        private JsonSerializerSettings settings = new JsonSerializerSettings() { Formatting = Formatting.None, NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate};
 
         public CommandJsonSerializer(IEnumerable<Type> types)
         {

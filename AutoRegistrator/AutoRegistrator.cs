@@ -106,36 +106,7 @@ namespace ZeroKWeb
 
                 lock (Locker)
                 {
-                    foreach (var id in
-                        new ZkDataContext(false).Missions.Where(x => !x.IsScriptMission && (x.ModRapidTag != "") && !x.IsDeleted)
-                            .Select(x => x.MissionID)
-                            .ToList())
-                        using (var db = new ZkDataContext(false))
-                        {
-                            var mis = db.Missions.Single(x => x.MissionID == id);
-                            try
-                            {
-                                if (!string.IsNullOrEmpty(mis.ModRapidTag))
-                                {
-                                    var latestMod = Downloader.PackageDownloader.GetByTag(mis.ModRapidTag);
-                                    if ((latestMod != null) && ((mis.Mod != latestMod.InternalName) || !mis.Resources.Any()))
-                                    {
-                                        mis.Mod = latestMod.InternalName;
-                                        Trace.TraceInformation("Autoregistrator Updating mission {0} {1} to {2}", mis.MissionID, mis.Name, mis.Mod);
-                                        var mu = new MissionUpdater();
-
-                                        mis.Revision++;
-
-                                        mu.UpdateMission(db, mis, UnitSyncer.Paths, UnitSyncer.Engine);
-                                        db.SaveChanges();
-                                    }
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Trace.TraceError("Autoregistrator Failed to update mission {0}: {1}", mis.MissionID, ex);
-                            }
-                        }
+                    // UpdateMissions();
 
                     var newName = Downloader.PackageDownloader.GetByTag("zk:stable").InternalName;
                     if (MiscVar.LastRegisteredZkVersion != newName)
@@ -166,6 +137,38 @@ namespace ZeroKWeb
             {
                 Trace.TraceError("Autoregistrator Error updating packages: {0}", ex);
             }
+        }
+
+        private void UpdateMissions()
+        {
+            foreach (var id in
+                new ZkDataContext(false).Missions.Where(x => !x.IsScriptMission && (x.ModRapidTag != "") && !x.IsDeleted).Select(x => x.MissionID).ToList())
+                using (var db = new ZkDataContext(false))
+                {
+                    var mis = db.Missions.Single(x => x.MissionID == id);
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(mis.ModRapidTag))
+                        {
+                            var latestMod = Downloader.PackageDownloader.GetByTag(mis.ModRapidTag);
+                            if ((latestMod != null) && ((mis.Mod != latestMod.InternalName) || !mis.Resources.Any()))
+                            {
+                                mis.Mod = latestMod.InternalName;
+                                Trace.TraceInformation("Autoregistrator Updating mission {0} {1} to {2}", mis.MissionID, mis.Name, mis.Mod);
+                                var mu = new MissionUpdater();
+
+                                mis.Revision++;
+
+                                mu.UpdateMission(db, mis, UnitSyncer.Paths, UnitSyncer.Engine);
+                                db.SaveChanges();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError("Autoregistrator Failed to update mission {0}: {1}", mis.MissionID, ex);
+                    }
+                }
         }
 
         private void SynchronizeMapsFromSpringFiles()

@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LobbyClient;
 using ZkData;
 
 namespace ZkLobbyServer
@@ -23,6 +24,7 @@ namespace ZkLobbyServer
                 clanChannels =
                     new ConcurrentDictionary<string, Clan>(db.Clans.Where(x => !x.IsDeleted).ToList().ToDictionary(x => x.GetClanChannel(), x => x));
             }
+            server.Channels["zk"] = new Channel() { Name = "zk", IsDeluge = true };
         }
 
         public async Task<bool> CanJoin(int accountID, string channel)

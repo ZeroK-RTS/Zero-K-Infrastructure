@@ -45,6 +45,11 @@ namespace LobbyClient
         ///     Lobby server version
         /// </summary>
         public string Version { get; set; }
+
+        /// <summary>
+        /// Number of current users
+        /// </summary>
+        public int UserCount { get; set; }
     }
 
 
@@ -154,9 +159,9 @@ namespace LobbyClient
     {
         public string Password { get; set; }
         public List<string> Users { get; set; } = new List<string>();
-        public int UserCount { get; set; }
         public string ChannelName { get; set; }
         public Topic Topic { get; set; }
+        public bool IsDeluge { get; set; }
 
         public ChannelHeader()
         {
@@ -633,6 +638,8 @@ namespace LobbyClient
         public List<string> InstantStartQueues { get; set; } = new List<string>();
 
         public Dictionary<string, int> IngameCounts { get; set; } = new Dictionary<string, int>();
+
+        public int UserCount { get; set; }
     }
 
     

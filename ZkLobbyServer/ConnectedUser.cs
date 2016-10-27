@@ -218,8 +218,8 @@ namespace ZkLobbyServer
             }
 
             var added = channel.Users.TryAdd(Name, User);
-            var visibleUsers = channel.Name != "zk" ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(Name, x)).ToList();
-            var canSeeMe = channel.Name != "zk" ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(x, Name)).ToList();
+            var visibleUsers = !channel.IsDeluge ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(Name, x)).ToList();
+            var canSeeMe = !channel.IsDeluge ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(x, Name)).ToList();
 
             await server.TwoWaySyncUsers(Name, canSeeMe); // mutually sync user statuses
 
@@ -234,13 +234,13 @@ namespace ZkLobbyServer
                             ChannelName = channel.Name,
                             Password = channel.Password,
                             Topic = channel.Topic,
-                            UserCount = channel.Users.Count,
-                            Users = visibleUsers // for zk use cansee test to not send all users
+                            Users = visibleUsers, // for zk use cansee test to not send all users
+                            IsDeluge = channel.IsDeluge
                         }
             });
 
             // send missed messages
-            server.OfflineMessageHandler.SendMissedMessagesAsync(this, SayPlace.Channel, joinChannel.ChannelName, User.AccountID);
+            server.OfflineMessageHandler.SendMissedMessagesAsync(this, SayPlace.Channel, joinChannel.ChannelName, User.AccountID, channel.IsDeluge ? OfflineMessageHandler.DelugeMessageResendCount : OfflineMessageHandler.MessageResendCount);
 
             // send self to other users who can see 
             if (added) await server.Broadcast(canSeeMe, new ChannelUserAdded { ChannelName = channel.Name, UserName = Name });
@@ -250,12 +250,13 @@ namespace ZkLobbyServer
         public async Task Process(LeaveChannel leaveChannel)
         {
             if (!IsLoggedIn) return;
-
+            
             Channel channel;
             if (server.Channels.TryGetValue(leaveChannel.ChannelName, out channel))
             {
+                if (channel.IsDeluge) return;
                 User user;
-                var users = channel.Name != "zk" ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(x, Name)).ToList();
+                var users = !channel.IsDeluge ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(x, Name)).ToList();
                 if (channel.Users.TryRemove(Name, out user))
                 {
                     await server.Broadcast(users, new ChannelUserRemoved() { ChannelName = channel.Name, UserName = Name });
@@ -284,60 +285,36 @@ namespace ZkLobbyServer
 
             say.User = Name;
             say.Time = DateTime.UtcNow;
-
+            
             if (say.Ring)
                 if (!User.IsAdmin)
                     if (((say.Place != SayPlace.Battle) && (say.Place != SayPlace.BattlePrivate)) || (MyBattle == null) ||
                         (MyBattle.FounderName != Name)) say.Ring = false;
 
+
+
+            // verify basic permissions to talk
             switch (say.Place)
             {
                 case SayPlace.Channel:
-                    Channel channel;
-                    if (server.Channels.TryGetValue(say.Target, out channel))
-                        if (channel.Users.ContainsKey(Name))
-                        {
-                            await server.Broadcast(channel.Users.Keys.Where(x => server.CanChatTo(say.User, x)), say);
-                            server.OfflineMessageHandler.StoreChatHistoryAsync(say);
-                        }
-                    break;
-
-                case SayPlace.User:
-                    ConnectedUser connectedUser;
-                    if (server.ConnectedUsers.TryGetValue(say.Target, out connectedUser) && server.CanChatTo(say.User, say.Target)) await connectedUser.SendCommand(say);
-                    else server.OfflineMessageHandler.StoreChatHistoryAsync(say);
-                    await SendCommand(say);
-
+                    if (server.Channels.Get(say.Target)?.Users?.ContainsKey(Name) != true) return;
                     break;
 
                 case SayPlace.Battle:
-                    if (MyBattle != null)
-                    {
-                        say.Target = MyBattle?.FounderName ?? "";
-                        await server.Broadcast(MyBattle?.Users?.Keys.Where(x => server.CanChatTo(say.User, x)), say);
-                        await MyBattle.ProcessBattleSay(say);
-                        server.OfflineMessageHandler.StoreChatHistoryAsync(say);
-                    }
+                    if (MyBattle?.Users?.Keys.Contains(Name) != true) return;
                     break;
 
                 case SayPlace.BattlePrivate:
-                    if ((MyBattle != null) && (MyBattle.FounderName == Name))
-                    {
-                        ConnectedUser cli;
-                        if (MyBattle.Users.ContainsKey(say.Target))
-                            if (server.ConnectedUsers.TryGetValue(say.Target, out cli) && server.CanChatTo(say.User, say.Target))
-                            {
-                                await cli.SendCommand(say);
-                                await MyBattle.ProcessBattleSay(say);
-                            }
-                    }
+                    return;
                     break;
-                case SayPlace.MessageBox:
-                    if (User.IsAdmin) await server.Broadcast(server.ConnectedUsers.Values, say);
-                    break;
-            }
 
-            await server.OnSaid(say);
+                case SayPlace.MessageBox:
+                    if (!User.IsAdmin) return;
+                    break;
+                
+            }
+            
+            await server.GhostSay(say, MyBattle?.BattleID);
         }
 
         public async Task Process(OpenBattle openBattle)

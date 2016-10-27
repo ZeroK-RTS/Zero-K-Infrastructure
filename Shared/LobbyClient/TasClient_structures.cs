@@ -25,6 +25,7 @@ namespace LobbyClient
         public ConcurrentDictionary<string, User> Users = new ConcurrentDictionary<string, User>();
         public string Name { get; set; }
         public Topic Topic { get; set; } = new Topic();
+        public bool IsDeluge { get; set; }
         public string Password;
     }
 
