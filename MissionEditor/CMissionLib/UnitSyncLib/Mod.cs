@@ -18,7 +18,7 @@ namespace CMissionLib.UnitSyncLib
 		public string[] Dependencies { get; set; }
 		public string[] DependencyArchives { get; set; }
 
-		public string Desctiption { get; set; }
+		public string Description { get; set; }
 		public string Game { get; set; }
 		public string Mutator { get; set; }
 		public Option[] Options { get; set; }
