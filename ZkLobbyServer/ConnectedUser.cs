@@ -628,6 +628,12 @@ namespace ZkLobbyServer
                 ConnectedUser connectedUser;
                 server.ConnectedUsers.TryRemove(Name, out connectedUser);
 
+                foreach (var conus in server.ConnectedUsers.Values.Where(x=>x!=null))
+                {
+                    int seenVersion;
+                    conus.HasSeenUserVersion.TryRemove(Name, out seenVersion);
+                }
+
                 using (var db = new ZkDataContext())
                 {
                     var acc = await db.Accounts.FindAsync(User.AccountID);
