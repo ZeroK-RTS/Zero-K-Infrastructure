@@ -539,7 +539,7 @@ namespace ZkData.UnitSyncLib
 
         private IEnumerable<UnitInfo> GetUnitList()
         {
-            for (var i = 0; (i <= MaxUnits) && (NativeMethods.ProcessUnitsNoChecksum() > 0); i++)
+            for (var i = 0; (i <= MaxUnits) && (NativeMethods.ProcessUnits() > 0); i++)
             {
                 var error = NativeMethods.GetNextError();
                 if (error != null)
