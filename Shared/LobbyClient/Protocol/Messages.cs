@@ -159,9 +159,9 @@ namespace LobbyClient
     {
         public string Password { get; set; }
         public List<string> Users { get; set; } = new List<string>();
-        public int UserCount { get; set; }
         public string ChannelName { get; set; }
         public Topic Topic { get; set; }
+        public bool IsDeluge { get; set; }
 
         public ChannelHeader()
         {

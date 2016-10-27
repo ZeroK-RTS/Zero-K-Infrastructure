@@ -218,8 +218,8 @@ namespace ZkLobbyServer
             }
 
             var added = channel.Users.TryAdd(Name, User);
-            var visibleUsers = channel.Name != "zk" ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(Name, x)).ToList();
-            var canSeeMe = channel.Name != "zk" ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(x, Name)).ToList();
+            var visibleUsers = !channel.IsDeluge ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(Name, x)).ToList();
+            var canSeeMe = !channel.IsDeluge ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(x, Name)).ToList();
 
             await server.TwoWaySyncUsers(Name, canSeeMe); // mutually sync user statuses
 
@@ -234,13 +234,13 @@ namespace ZkLobbyServer
                             ChannelName = channel.Name,
                             Password = channel.Password,
                             Topic = channel.Topic,
-                            UserCount = channel.Users.Count,
-                            Users = visibleUsers // for zk use cansee test to not send all users
+                            Users = visibleUsers, // for zk use cansee test to not send all users
+                            IsDeluge = channel.IsDeluge
                         }
             });
 
             // send missed messages
-            server.OfflineMessageHandler.SendMissedMessagesAsync(this, SayPlace.Channel, joinChannel.ChannelName, User.AccountID);
+            server.OfflineMessageHandler.SendMissedMessagesAsync(this, SayPlace.Channel, joinChannel.ChannelName, User.AccountID, channel.IsDeluge ? OfflineMessageHandler.DelugeMessageResendCount : OfflineMessageHandler.MessageResendCount);
 
             // send self to other users who can see 
             if (added) await server.Broadcast(canSeeMe, new ChannelUserAdded { ChannelName = channel.Name, UserName = Name });
@@ -255,7 +255,7 @@ namespace ZkLobbyServer
             if (server.Channels.TryGetValue(leaveChannel.ChannelName, out channel))
             {
                 User user;
-                var users = channel.Name != "zk" ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(x, Name)).ToList();
+                var users = !channel.IsDeluge ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(x, Name)).ToList();
                 if (channel.Users.TryRemove(Name, out user))
                 {
                     await server.Broadcast(users, new ChannelUserRemoved() { ChannelName = channel.Name, UserName = Name });

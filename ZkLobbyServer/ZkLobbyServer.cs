@@ -178,13 +178,13 @@ namespace ZkLobbyServer
             {
                 if (chan.Users.ContainsKey(uWatcher.Name)) // my channel
                 {
-                    if (chan.Name != "zk")
+                    if (chan.IsDeluge)
                     {
-                        if (chan.Users.ContainsKey(uWatched.Name)) return true;
+                        if (chan.Users.Keys.Take(GlobalConst.DelugeChannelDisplayUsers).Contains(uWatched.Name)) return true;
                     }
                     else
                     {
-                        //return chan.Users.Keys.Take(50).Contains(uWatched.Name); // return first 50 from zk 
+                        if (chan.Users.ContainsKey(uWatched.Name)) return true;
                     }
                 }
             }

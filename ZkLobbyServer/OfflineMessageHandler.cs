@@ -11,7 +11,9 @@ namespace ZkLobbyServer
 {
     public class OfflineMessageHandler
     {
-        private const int OfflineMessageResendCount = 1000;
+        public const int MessageResendCount = 1000;
+        public const int DelugeMessageResendCount = 50;
+        
         private SemaphoreSlim sendHistorySemaphore = new SemaphoreSlim(Environment.ProcessorCount * 2);
         private SemaphoreSlim storeHistorySemaphore = new SemaphoreSlim(Environment.ProcessorCount * 2);
 
@@ -20,7 +22,7 @@ namespace ZkLobbyServer
             SayPlace place,
             string target,
             int accountID,
-            int maxCount = OfflineMessageResendCount)
+            int maxCount = MessageResendCount)
         {
             if (place == SayPlace.Channel && target == "zk") return Task.FromResult(0); // do not push history for #zk
 
