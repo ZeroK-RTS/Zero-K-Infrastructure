@@ -32,8 +32,8 @@ namespace ZkData
             #elif TEST
                 Mode = ModeType.Test;
             #else
-                Mode = ModeType.Local;
-            #endif
+            Mode = ModeType.Local;
+#endif
         }
 
         static void SetMode(ModeType newMode)
@@ -185,7 +185,7 @@ namespace ZkData
         public const double MaxPwEloDifference = 120;
 
 
-        public const PlanetWarsModes PlanetWarsMode = PlanetWarsModes.Running;
+        public const PlanetWarsModes PlanetWarsMode = PlanetWarsModes.AllOffline;
 
         public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";
@@ -230,13 +230,6 @@ namespace ZkData
 
         public static string[] ReplaysPossiblePaths = { @"c:\projekty\springie_spring\demos-server"};
 
-
-
-        public static bool IsZkMod(string name)
-        {
-            if (string.IsNullOrEmpty(name)) return false;
-            return name.Contains("Zero-K");
-        }
 
 
         static ChannelFactory<IContentService> contentServiceFactory;

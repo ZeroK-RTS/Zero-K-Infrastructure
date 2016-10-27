@@ -753,7 +753,11 @@ namespace LobbyClient
             else user = userUpdate;
             ExistingUsers[user.Name] = user;
 
-            if (old == null) UserAdded(this, user);
+            if (old == null)
+            {
+                UserAdded(this, user);
+                await Process(new ChannelUserAdded() { UserName = user.Name, ChannelName = "zk" }); // silly hacky thing to make all Users appear in #zk remove later
+            }
             if (old != null)
             {
                 if (user.BattleID != old.BattleID)

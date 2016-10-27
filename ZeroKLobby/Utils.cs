@@ -305,18 +305,6 @@ namespace ZeroKLobby
         }
 
 
-        public static bool VerifySpringInstalled(bool showMessageBox = true) {
-            if (!Program.SpringPaths.HasEngineVersion(GlobalConst.DefaultEngineOverride)) {
-                if (showMessageBox)
-                    MessageBox.Show(new Form { TopMost = true }, "Cannot start yet, please wait until engine downloads",
-                                    "Engine not prepared yet",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Information);
-                return false;
-            }
-            else return true;
-        }
-
         public static void RenderControlBgImage(this Control destination, Control source, PaintEventArgs e)
         {
             var loc = source.PointToClient((destination.Parent ?? Program.MainWindow).PointToScreen(destination.Location));

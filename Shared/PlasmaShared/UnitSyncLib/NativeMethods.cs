@@ -503,9 +503,6 @@ namespace ZkData.UnitSyncLib
             [DllImport(UnitSyncName)]
             public static extern int ProcessUnits();
 
-            [DllImport(UnitSyncName)]
-            public static extern int ProcessUnitsNoChecksum();
-
             [DllImport(UnitSyncName, EntryPoint = "lpGetStrKeyStrVal")]
             static extern IntPtr RawlpGetStrKeyStrVal([In] [MarshalAs(UnmanagedType.LPStr)] string key,
                                                              [In] [MarshalAs(UnmanagedType.LPStr)] string defVal);

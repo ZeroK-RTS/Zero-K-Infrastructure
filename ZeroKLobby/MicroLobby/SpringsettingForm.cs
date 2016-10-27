@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LobbyClient;
@@ -76,7 +77,7 @@ namespace ZeroKLobby.MicroLobby
                 Program.ToolTip.SetText(cancelButton, "Exit, do not commit change");
                 Program.ToolTip.SetText(applyButton, "Write all entries to Springsettings.cfg");
                 
-                if(!Utils.VerifySpringInstalled())
+                if(!Program.SpringPaths.GetEngineList().Any())
                 {
                 	Program.Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride);
                 	this.Close();
