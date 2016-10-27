@@ -218,7 +218,7 @@ namespace ZkData
         public const int TcpLingerStateSeconds = 5;
         public const bool TcpLingerStateEnabled = true;
 
-        public const int DelugeChannelDisplayUsers = 10;
+        public const int DelugeChannelDisplayUsers = 100;
 
         public static int UdpHostingPortStart;
 
