@@ -73,7 +73,7 @@ namespace ZkData
             }
         }
 
-        private static List<Punishment> punishments = new List<Punishment>();
+        private static List<Punishment> punishments = null;
 
         [NotMapped]
         public bool IsExpired
