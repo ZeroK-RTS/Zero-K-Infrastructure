@@ -358,25 +358,28 @@ namespace LobbyClient
                         break;
 
                     case Talker.SpringEventType.SERVER_GAMEOVER:
-                        foreach (var p in Context.ActualPlayers)
+                        if (!Context.GameEndedOk) // server gameover runs multiple times
                         {
-                            if (!p.IsIngame && !p.IsSpectator) MarkPlayerDead(p.Name, true);
-                            p.IsIngame = false;
+                            foreach (var p in Context.ActualPlayers)
+                            {
+                                if (!p.IsIngame && !p.IsSpectator) MarkPlayerDead(p.Name, true);
+                                p.IsIngame = false;
+                            }
+
+                            // set victory team for all allied with currently alive
+                            foreach (var p in Context.ActualPlayers.Where(x => !x.IsSpectator && (x.LoseTime == null))) foreach (var q in Context.ActualPlayers.Where(x => !x.IsSpectator && (x.AllyNumber == p.AllyNumber))) q.IsVictoryTeam = true;
+
+                            if (Context.IngameStartTime != null)
+                            {
+                                Context.GameEndedOk = true;
+                                Context.Duration = (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds;
+
+                                GameOver?.Invoke(this, new SpringLogEventArgs(e.PlayerName));
+                            }
+                            else Trace.TraceWarning("recieved GAMEOVER before STARTPLAYING!");
+
+                            Task.Delay(10000).ContinueWith(x => ExitGame());
                         }
-
-                        // set victory team for all allied with currently alive
-                        foreach (var p in Context.ActualPlayers.Where(x => !x.IsSpectator && (x.LoseTime == null))) foreach (var q in Context.ActualPlayers.Where(x => !x.IsSpectator && (x.AllyNumber == p.AllyNumber))) q.IsVictoryTeam = true;
-
-                        if (Context.IngameStartTime != null)
-                        {
-                            Context.GameEndedOk = true;
-                            Context.Duration = (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds;
-
-                            GameOver?.Invoke(this, new SpringLogEventArgs(e.PlayerName));
-                        }
-                        else Trace.TraceWarning("recieved GAMEOVER before STARTPLAYING!");
-
-                        Task.Delay(10000).ContinueWith(x => ExitGame());
                         break;
 
                     case Talker.SpringEventType.PLAYER_READY:

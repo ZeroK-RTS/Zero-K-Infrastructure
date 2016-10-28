@@ -294,6 +294,7 @@ namespace ZkLobbyServer
                     ConnectedUser connectedUser;
                     if (ConnectedUsers.TryGetValue(say.Target, out connectedUser)) await SyncAndSay(new List<string>() {say.Target}, say);
                     else OfflineMessageHandler.StoreChatHistoryAsync(say);
+                    if (say.User != GlobalConst.NightwatchName && ConnectedUsers.TryGetValue(say.User, out connectedUser)) await connectedUser.SendCommand(say);
                     break;
                 case SayPlace.Battle:
                     ServerBattle battle;
