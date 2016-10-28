@@ -700,7 +700,7 @@ namespace ZkLobbyServer
 
             ConnectedUser user;
             if (server.ConnectedUsers.TryGetValue(e.Username, out user) && !user.User.BanMute) // relay
-                if (!e.Line.StartsWith("Allies:") && !e.Line.StartsWith("Spectators:")) server.GhostSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle }, BattleID);
+                if (!e.Line.StartsWith("Allies:") && !e.Line.StartsWith("Spectators:")) server.GhostSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle, AllowRelay = false}, BattleID);
         }
 
         private async void DedicatedServerExited(object sender, SpringBattleContext springBattleContext)
