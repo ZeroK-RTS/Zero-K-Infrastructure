@@ -96,6 +96,14 @@ namespace ZkLobbyServer
 
                 await SendCommand(ret.LoginResponse); // login accepted
 
+                // reset old known versions (needed for two connection on same login)
+                foreach (var conus in server.ConnectedUsers.Values.Where(x => x != null))
+                {
+                    int seenVersion;
+                    conus.HasSeenUserVersion.TryRemove(Name, out seenVersion);
+                }
+
+
                 foreach (var b in server.Battles.Values.Where(x => x != null)) await SendCommand(new BattleAdded() { Header = b.GetHeader() });
 
                 // mutually syncs users based on visibility rules
