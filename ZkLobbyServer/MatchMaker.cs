@@ -40,7 +40,7 @@ namespace ZkLobbyServer
                 possibleQueues.Add(new MatchMakerSetup.Queue()
                 {
                     Name = "Teams",
-                    Description = "Play 2v2, 3v3 or 4v4 with team members and opponents of similar skill.",
+                    Description = "Play 2v2, 3v3 or 4v4 team game with players of similar skill.",
                     MaxPartySize = 4,
                     MinSize = 4,
                     MaxSize = 8,
@@ -56,7 +56,7 @@ namespace ZkLobbyServer
                 possibleQueues.Add(new MatchMakerSetup.Queue()
                 {
                     Name = "1v1",
-                    Description = "Duel an opponent of similar skill.",
+                    Description = "Duel an opponent of similar skill in a 1v1 match.",
                     MaxPartySize = 1,
                     MinSize = 2,
                     MaxSize = 2,
