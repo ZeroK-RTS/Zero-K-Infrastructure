@@ -183,9 +183,9 @@ end
 -- controls fade-out/fade-in/letterboxing progression; hides and locks mouse
 local timer = 0
 function widget:Update(dt)
-    if isInCutscene and WG.IsGUIHidden() then
-      spSetMouseCursor('none')
-    end
+    --if isInCutscene and WG.IsGUIHidden() then
+    --  spSetMouseCursor('none')
+    --end
     timer = timer + dt
     if timer > UPDATE_PERIOD then
       if isInCutscene then
