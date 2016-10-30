@@ -180,7 +180,13 @@ namespace ZkLobbyServer
                 {
                     if (chan.IsDeluge)
                     {
-                        if (chan.Users.Keys.Take(GlobalConst.DelugeChannelDisplayUsers).Contains(uWatched.Name)) return true;
+                        var channelUsersBySkill = chan.Users.Keys.Select(x => ConnectedUsers.Get(x))
+                                .Where(x => x != null)
+                                .OrderByDescending(x => x.User?.EffectiveMmElo)
+                                .Select(x => x.Name)
+                                .Take(GlobalConst.DelugeChannelDisplayUsers);
+
+                        if (channelUsersBySkill.Contains(uWatched.Name)) return true;
                     }
                     else
                     {
