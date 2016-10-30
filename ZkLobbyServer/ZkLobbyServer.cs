@@ -427,13 +427,13 @@ namespace ZkLobbyServer
         public async Task SetEngine(string engine)
         {
             Engine = engine;
-            await Broadcast(new Welcome() { Engine = engine, Game = Game, Version = Version });
+            await Broadcast(new DefaultEngineChanged() { Engine = engine });
         }
 
         public async Task SetGame(string game)
         {
             Game = game;
-            await Broadcast(new Welcome() { Engine = Engine, Game = game, Version = Version });
+            await Broadcast(new DefaultGameChanged() { Game = game });
             await MatchMaker.OnServerGameChanged(game);
         }
 
