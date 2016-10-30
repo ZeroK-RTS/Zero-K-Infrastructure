@@ -58,7 +58,7 @@ namespace MissionEditor2
                 
                 TextBox id1 = new TextBox { Width = TEXTBOX_WIDTH };
                 Grid.SetColumn(id1, 0);
-                TextBox text1 = new TextBox { IsReadOnly = READ_ONLY, Background = NO_EDIT_COLOR };
+                TextBox text1 = new TextBox { IsReadOnly = READ_ONLY, Background = NO_EDIT_COLOR, TextWrapping = TextWrapping.Wrap };
                 Grid.SetColumn(text1, 1);
                 TextBox id2 = null;
                 TextBox text2 = null;
@@ -69,7 +69,7 @@ namespace MissionEditor2
                     AddBinding(id1, obj, "TitleStringID");
                     AddBinding(text1, obj, "Title");
                     id2 = new TextBox { Width = TEXTBOX_WIDTH };
-                    text2 = new TextBox {IsReadOnly = READ_ONLY, Background = NO_EDIT_COLOR };
+                    text2 = new TextBox {IsReadOnly = READ_ONLY, Background = NO_EDIT_COLOR, TextWrapping = TextWrapping.Wrap };
                     AddBinding(id2, obj, "StringID");
                     AddBinding(text2, obj, "Description");
                 }
@@ -79,7 +79,7 @@ namespace MissionEditor2
                     AddBinding(id1, obj, "TitleStringID");
                     AddBinding(text1, obj, "Title");
                     id2 = new TextBox { Width = TEXTBOX_WIDTH };
-                    text2 = new TextBox { IsReadOnly = READ_ONLY, Background = NO_EDIT_COLOR };
+                    text2 = new TextBox { IsReadOnly = READ_ONLY, Background = NO_EDIT_COLOR, TextWrapping = TextWrapping.Wrap };
                     AddBinding(id2, obj, "StringID");
                     AddBinding(text2, obj, "Description");
                 }
