@@ -768,7 +768,7 @@ namespace CMissionLib
 			//sb.AppendFormat("  shortgame     =	[[{0}]],\n", mod.ShortGame);
 			//sb.AppendFormat("  shortbasename =	[[{0}]],\n", mod.ShortBaseName);
 			sb.AppendLine("  depend = {");
-			sb.AppendLine("    " + (!string.IsNullOrEmpty(rapidTag) ? String.Format("[[rapid://{0}]]\n", rapidTag) : mod.Name));
+			sb.AppendLine("    " + (!string.IsNullOrEmpty(rapidTag) ? String.Format("[[rapid://{0}]]\n", rapidTag) : String.Format("[[{0}]]", mod.Name) ));
 			sb.AppendLine("  },");
 			sb.AppendLine("}");
 			sb.AppendLine("return modinfo");
