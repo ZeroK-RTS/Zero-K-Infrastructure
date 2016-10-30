@@ -171,6 +171,11 @@ namespace LobbyClient
         public string Reason { get; set; }
 
         public Code ResultCode { get; set; }
+
+        /// <summary>
+        /// Use this to login to website
+        /// </summary>
+        public string SessionToken { get; set; }
     }
 
 

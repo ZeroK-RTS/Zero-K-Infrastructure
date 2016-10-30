@@ -83,6 +83,8 @@ namespace ZkLobbyServer
                 connectedUser.User = user;
                 connectedUser.Connections.TryAdd(this, true);
 
+                server.SessionTokens[ret.LoginResponse.SessionToken] = user.AccountID;
+
                 await SendCommand(ret.LoginResponse); // login accepted
 
                 // reset old known versions (needed for two connection on same login)

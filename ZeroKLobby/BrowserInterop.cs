@@ -11,6 +11,7 @@ namespace ZeroKLobby
     {
         string login;
         string password;
+        private string sessionToken;
 
         public BrowserInterop(TasClient tas, Config conf) {
             login = conf.LobbyPlayerName;
@@ -23,8 +24,10 @@ namespace ZeroKLobby
 
             tas.LoginAccepted += delegate
                 {
+
                     login = tas.UserName;
                     password = tas.UserPassword;
+                    sessionToken = tas.SessionToken;
                     var wc = new WebClient();
                     var uri =
                         new Uri(string.Format("{2}/Home/Logon?login={0}&password={1}",
@@ -44,15 +47,13 @@ namespace ZeroKLobby
             try {
                 if (string.IsNullOrEmpty(url)) return "";
                 if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password)) return url;
-                if (url.ToLower().Contains(GlobalConst.BaseSiteUrl) && url.EndsWith("/") && !url.ToLower().Contains(string.Format("{0}=", GlobalConst.ASmallCakeCookieName))) {
+                if (url.ToLower().Contains(GlobalConst.BaseSiteUrl) && !url.ToLower().Contains(string.Format("{0}=", GlobalConst.SessionTokenVariable))) {
                     if (url.Contains("?")) url = url + "&";
                     else url = url + "?";
                     url = url +
-                          string.Format("{0}={1}&{2}={3}&{4}=1&zkl=1",
-                                        GlobalConst.ASmallCakeCookieName,
-                                        Uri.EscapeDataString(AuthTools.GetSiteAuthToken(ZkData.Utils.HashLobbyPassword(password))),
-                                        GlobalConst.ASmallCakeLoginCookieName,
-                                        Uri.EscapeDataString(login),
+                          string.Format("{0}={1}&{2}=1&zkl=1",
+                                        GlobalConst.SessionTokenVariable,
+                                        Program.TasClient.SessionToken,
                                         GlobalConst.LobbyAccessCookieName);
                 }
                 return url;

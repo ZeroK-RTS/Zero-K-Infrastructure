@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO.Ports;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -601,6 +602,8 @@ namespace ZkLobbyServer
 
                 await server.Broadcast(server.ConnectedUsers.Values.Where(x => x != null && server.CanUserSee(x, this)), new UserDisconnected() { Name = Name, Reason = reason });
 
+                server.RemoveSessionsForAccountID(User.AccountID);
+              
                 ConnectedUser connectedUser;
                 server.ConnectedUsers.TryRemove(Name, out connectedUser);
 
