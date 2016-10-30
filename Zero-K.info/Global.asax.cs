@@ -119,7 +119,7 @@ namespace ZeroKWeb
         {
             if (DateTime.UtcNow.Subtract(lastPollCheck).TotalMinutes > 15)
             {
-                PollController.AutoClosePolls();
+                PollController.AutoClosePolls(); // this is silly here, should be a seaprate timer/thread
                 lastPollCheck = DateTime.UtcNow;
             }
 
@@ -131,6 +131,8 @@ namespace ZeroKWeb
                 if (Global.Server?.SessionTokens.TryGetValue(Request[GlobalConst.SessionTokenVariable], out id) == true)
                 {
                     acc = new ZkDataContext().Accounts.Find(id);
+                    int oldVal;
+                    Global.Server.SessionTokens.TryGetValue(Request[GlobalConst.SessionTokenVariable], out oldVal);
                 }
             }
 
