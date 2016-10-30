@@ -69,7 +69,7 @@ namespace ZkData
         {
             lock (punishmentsLock)
             {
-                using (var db = new ZkDataContext()) punishments = db.Punishments.Where(x => x.BanExpires > DateTime.UtcNow).ToList();
+                using (var db = new ZkDataContext()) punishments = db.Punishments.Where(x => x.BanExpires > DateTime.UtcNow).Include(x=>x.AccountByAccountID).Include(x=>x.AccountByCreatedAccountID).ToList();
             }
         }
 
