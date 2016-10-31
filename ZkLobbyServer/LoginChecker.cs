@@ -80,6 +80,8 @@ namespace ZkLobbyServer
 
                     db.SaveChanges();
 
+                    ret.LoginResponse.SessionToken = Guid.NewGuid().ToString(); // create session token
+
                     var banPenalty = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanLobby);
 
                     if (banPenalty != null)

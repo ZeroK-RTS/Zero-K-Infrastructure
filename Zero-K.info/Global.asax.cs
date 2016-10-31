@@ -119,16 +119,21 @@ namespace ZeroKWeb
         {
             if (DateTime.UtcNow.Subtract(lastPollCheck).TotalMinutes > 15)
             {
-                PollController.AutoClosePolls();
+                PollController.AutoClosePolls(); // this is silly here, should be a seaprate timer/thread
                 lastPollCheck = DateTime.UtcNow;
             }
 
             Account acc = null;
             if (FormsAuthentication.IsEnabled && User.Identity.IsAuthenticated) acc = Account.AccountByName(new ZkDataContext(), User.Identity.Name);
-            else if (Request[GlobalConst.ASmallCakeCookieName] != null)
+            else if (Request[GlobalConst.SessionTokenVariable] != null)
             {
-                var testAcc = Account.AccountByName(new ZkDataContext(), Request[GlobalConst.ASmallCakeLoginCookieName]);
-                if (testAcc != null) if (ValidateSiteAuthToken(testAcc, Request[GlobalConst.ASmallCakeCookieName])) acc = testAcc;
+                int id = 0;
+                if (Global.Server?.SessionTokens.TryGetValue(Request[GlobalConst.SessionTokenVariable], out id) == true)
+                {
+                    acc = new ZkDataContext().Accounts.Find(id);
+                    int oldVal;
+                    Global.Server.SessionTokens.TryGetValue(Request[GlobalConst.SessionTokenVariable], out oldVal);
+                }
             }
 
             if (acc == null) if (Request[GlobalConst.LoginCookieName] != null) acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);
@@ -157,12 +162,6 @@ namespace ZeroKWeb
             if (Request.QueryString["weblobby"] != null) Session["weblobby"] = Request.QueryString["weblobby"];
 
             if (Request.QueryString["zkl"] != null) Session["zkl"] = Request.QueryString["zkl"];
-        }
-
-
-        private static bool ValidateSiteAuthToken(Account acc, string token)
-        {
-            return acc.VerifyPassword(token);
         }
     }
 }

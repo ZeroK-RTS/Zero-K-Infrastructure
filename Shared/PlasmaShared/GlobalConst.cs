@@ -143,8 +143,7 @@ namespace ZkData
         public const double EloWeightMalusFactor = -80;
 
         public const string LoginCookieName = "zk_login";
-        public const string ASmallCakeCookieName = "asmallcake";
-        public const string ASmallCakeLoginCookieName = "alogin";
+        public const string SessionTokenVariable = "asmallcake";
 
         public const string MissionScriptFileName = "_missionScript.txt";
         public const string MissionSlotsFileName = "_missionSlots.xml";

@@ -73,6 +73,8 @@ namespace LobbyClient
 
         public Battle MyBattle { get; protected set; }
 
+        public string SessionToken { get; private set; }
+
 
 
         public int MyBattleID
@@ -730,6 +732,7 @@ namespace LobbyClient
             if (loginResponse.ResultCode == LoginResponse.Code.Ok)
             {
                 IsLoggedIn = true;
+                SessionToken = loginResponse.SessionToken;
                 LoginAccepted(this, new TasEventArgs());
             }
             else

@@ -129,6 +129,10 @@
     <Compile Include="AreaDragInfo.xaml.cs" />
     <Compile Include="CircleDragInfo.xaml.cs" />
     <Compile Include="ConditionsFolder.cs" />
+    <Compile Include="LocalizationControl.xaml.cs">
+      <DependentUpon>LocalizationControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LocalizationWindow.cs" />
     <Compile Include="UnitEnteredLOSConditionControl.xaml.cs">
       <DependentUpon>UnitEnteredLOSConditionControl.xaml</DependentUpon>
     </Compile>
@@ -218,6 +222,14 @@
     </Compile>
     <Compile Include="ZoomControl.cs" />
     <Compile Include="ZoomConverter.cs" />
+    <Page Include="LocalizationControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="LocalizationWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UnitEnteredLOSConditionControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

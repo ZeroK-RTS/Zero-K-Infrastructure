@@ -17,26 +17,16 @@ namespace ZkLobbyServer
 {
     public class ClientConnection:ICommandSender
     {
-        string Name
-        {
-            get
-            {
-                if (connectedUser != null) return connectedUser.Name;
-                else return null;
-            }
-        }
+        string Name => connectedUser?.Name;
         ConnectedUser connectedUser;
-        private bool loginAttempted;
 
         readonly int number;
 
         readonly ZkLobbyServer server;
 
         ITransport transport;
-        public string RemoteEndpointIP
-        {
-            get { return transport.RemoteEndpointAddress; }
-        }
+
+        public string RemoteEndpointIP => transport.RemoteEndpointAddress;
 
 
         public ClientConnection(ITransport transport, ZkLobbyServer server)
@@ -81,7 +71,6 @@ namespace ZkLobbyServer
 
         public async Task Process(Login login)
         {
-            loginAttempted = true;
             var ret = await Task.Run(()=>server.LoginChecker.Login(login, RemoteEndpointIP));
             if (ret.LoginResponse.ResultCode == LoginResponse.Code.Ok)
             {
@@ -93,6 +82,8 @@ namespace ZkLobbyServer
                 connectedUser = server.ConnectedUsers.GetOrAdd(user.Name, (n) => new ConnectedUser(server, user));
                 connectedUser.User = user;
                 connectedUser.Connections.TryAdd(this, true);
+
+                server.SessionTokens[ret.LoginResponse.SessionToken] = user.AccountID;
 
                 await SendCommand(ret.LoginResponse); // login accepted
 

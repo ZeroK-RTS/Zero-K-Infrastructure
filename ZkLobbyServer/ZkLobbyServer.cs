@@ -38,6 +38,9 @@ namespace ZkLobbyServer
 
         public PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
         public SpringPaths SpringPaths { get; private set; }
+
+        public ConcurrentDictionary<string,int> SessionTokens = new ConcurrentDictionary<string, int>();
+
         private BattleListUpdater battleListUpdater;
 
 
@@ -180,7 +183,13 @@ namespace ZkLobbyServer
                 {
                     if (chan.IsDeluge)
                     {
-                        if (chan.Users.Keys.Take(GlobalConst.DelugeChannelDisplayUsers).Contains(uWatched.Name)) return true;
+                        var channelUsersBySkill = chan.Users.Keys.Select(x => ConnectedUsers.Get(x))
+                                .Where(x => x != null)
+                                .OrderByDescending(x => x.User?.EffectiveMmElo)
+                                .Select(x => x.Name)
+                                .Take(GlobalConst.DelugeChannelDisplayUsers);
+
+                        if (channelUsersBySkill.Contains(uWatched.Name)) return true;
                     }
                     else
                     {
@@ -421,14 +430,23 @@ namespace ZkLobbyServer
         public async Task SetEngine(string engine)
         {
             Engine = engine;
-            await Broadcast(new Welcome() { Engine = engine, Game = Game, Version = Version });
+            await Broadcast(new DefaultEngineChanged() { Engine = engine });
         }
 
         public async Task SetGame(string game)
         {
             Game = game;
-            await Broadcast(new Welcome() { Engine = Engine, Game = game, Version = Version });
+            await Broadcast(new DefaultGameChanged() { Game = game });
             await MatchMaker.OnServerGameChanged(game);
+        }
+
+        public void RemoveSessionsForAccountID(int accountID)
+        {
+            foreach (var todel in SessionTokens.Where(x => x.Value == accountID).Select(x => x.Key).ToList())
+            {
+                int entry;
+                SessionTokens.TryRemove(todel, out entry);
+            }
         }
 
     }

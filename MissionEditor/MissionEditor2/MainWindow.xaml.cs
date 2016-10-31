@@ -537,6 +537,11 @@ namespace MissionEditor2
 			new MissionSettingsDialog { Owner = this }.ShowDialog();
 		}
 
+		void ShowLocalizationControl()
+		{
+			new LocalizationWindow { Owner = this }.ShowDialog();
+		}
+
 		/// <summary>
 		/// create testmission.sdz, the script.txt, run spring, capture output
 		/// </summary>
@@ -806,7 +811,8 @@ namespace MissionEditor2
             mission.AddAction("Create Mutator", () => BuildMission());
             mission.AddAction("Create Invisible Mutator", () => BuildMission(true));
             mission.AddAction("Test Mission", TestMission);
-            mission.AddAction("Export Localization File", ExportLocalizationFile);
+            mission.AddAction("Set Localization IDs", ShowLocalizationControl);
+            //mission.AddAction("Export Localization File", ExportLocalizationFile);
             mission.AddAction("Publish", ShowMissionManagement);
             mission.AddAction("Settings", ShowMissionSettings);
 
@@ -1249,14 +1255,13 @@ namespace MissionEditor2
             dict.Add(key, value);
         }
 
-        void ExportLocalizationFile()
+        public void ExportLocalizationFile()
         {
             var saveFileDialog = new SaveFileDialog { DefaultExt = ".json", Filter = "JSON (*.json)|*.json|All files (*.*)|*.*",
                 RestoreDirectory = true, FileName = "missions.en.json" };
             var result = saveFileDialog.ShowDialog();
             if (result == true)
             {
-                //TODO: actually save the file
                 Dictionary<string, string> texts = new Dictionary<string, string>();
                 Dictionary<string, string> textsSorted = new Dictionary<string, string>();
                 foreach (Action action in Mission.AllLogic.Where(x=> x is Action))
