@@ -330,6 +330,7 @@ namespace ZkLobbyServer
                                 Place = privateUser != null ? SayPlace.BattlePrivate : SayPlace.Battle,
                                 Target = privateUser,
                                 IsEmote = true,
+                                AllowRelay = false,
                             },
                             BattleID);
                 }
