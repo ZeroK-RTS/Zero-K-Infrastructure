@@ -455,6 +455,7 @@ namespace ZeroKWeb
 
         void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
+            return;
             try
             {
                 if (Challenge == null)

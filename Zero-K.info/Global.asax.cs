@@ -128,11 +128,9 @@ namespace ZeroKWeb
             else if (Request[GlobalConst.SessionTokenVariable] != null)
             {
                 int id = 0;
-                if (Global.Server?.SessionTokens.TryGetValue(Request[GlobalConst.SessionTokenVariable], out id) == true)
+                if (Global.Server?.SessionTokens.TryRemove(Request[GlobalConst.SessionTokenVariable], out id) == true)
                 {
                     acc = new ZkDataContext().Accounts.Find(id);
-                    int oldVal;
-                    Global.Server.SessionTokens.TryGetValue(Request[GlobalConst.SessionTokenVariable], out oldVal);
                 }
             }
 
