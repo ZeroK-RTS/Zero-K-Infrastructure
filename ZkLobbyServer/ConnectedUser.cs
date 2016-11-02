@@ -251,7 +251,7 @@ namespace ZkLobbyServer
         public async Task Process(LeaveChannel leaveChannel)
         {
             if (!IsLoggedIn) return;
-            
+
             Channel channel;
             if (server.Channels.TryGetValue(leaveChannel.ChannelName, out channel))
             {
@@ -285,7 +285,7 @@ namespace ZkLobbyServer
 
             say.User = Name;
             say.Time = DateTime.UtcNow;
-            
+
             if (say.Ring)
                 if (!User.IsAdmin)
                     if (((say.Place != SayPlace.Battle) && (say.Place != SayPlace.BattlePrivate)) || (MyBattle == null) ||
@@ -311,9 +311,9 @@ namespace ZkLobbyServer
                 case SayPlace.MessageBox:
                     if (!User.IsAdmin) return;
                     break;
-                
+
             }
-            
+
             await server.GhostSay(say, MyBattle?.BattleID);
         }
 
@@ -569,7 +569,7 @@ namespace ZkLobbyServer
 
                     if (friendAdded) // friend added, sync new friend to me (user, battle and channels)
                     {
-                        await server.TwoWaySyncUsers(Name, new List<string>() { targetConnectedUser.Name }); 
+                        await server.TwoWaySyncUsers(Name, new List<string>() { targetConnectedUser.Name });
 
                         foreach (var chan in
                             server.Channels.Values.Where(
@@ -603,21 +603,19 @@ namespace ZkLobbyServer
                 await server.Broadcast(server.ConnectedUsers.Values.Where(x => x != null && server.CanUserSee(x, this)), new UserDisconnected() { Name = Name, Reason = reason });
 
                 server.RemoveSessionsForAccountID(User.AccountID);
-              
+
                 ConnectedUser connectedUser;
-                server.ConnectedUsers.TryRemove(Name, out connectedUser);
 
-                foreach (var conus in server.ConnectedUsers.Values.Where(x=>x!=null))
+                if (server.ConnectedUsers.TryRemove(Name, out connectedUser))
                 {
-                    int seenVersion;
-                    conus.HasSeenUserVersion.TryRemove(Name, out seenVersion);
-                }
+                    connectedUser.ResetHasSeen();
 
-                using (var db = new ZkDataContext())
-                {
-                    var acc = await db.Accounts.FindAsync(User.AccountID);
-                    acc.LastLogout = DateTime.UtcNow;
-                    await db.SaveChangesAsync();
+                    using (var db = new ZkDataContext())
+                    {
+                        var acc = await db.Accounts.FindAsync(User.AccountID);
+                        acc.LastLogout = DateTime.UtcNow;
+                        await db.SaveChangesAsync();
+                    }
                 }
             }
         }
@@ -641,6 +639,17 @@ namespace ZkLobbyServer
         public override string ToString()
         {
             return string.Format("[{0}]", Name);
+        }
+
+
+        public void ResetHasSeen()
+        {
+            HasSeenUserVersion.Clear();
+            foreach (var conus in server.ConnectedUsers.Values.Where(x => x != null))
+            {
+                int seenVersion;
+                conus.HasSeenUserVersion.TryRemove(Name, out seenVersion);
+            }
         }
 
 
