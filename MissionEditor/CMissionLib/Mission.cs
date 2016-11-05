@@ -313,24 +313,35 @@ namespace CMissionLib
 			Items = new CompositeObservableCollection<Trigger, Region>(Triggers, Regions);
 		}
 
-		public void CreateArchive(string mutatorPath, bool hideFromModList = false)
-		{
-			var script = GetScript();
-			var luascript = GetLuaStartscript();
-			var modInfo = GetModInfo(hideFromModList);
-			var luaMissionData = SerializeToLua();
-			if (Debugger.IsAttached)
-			{
-				File.WriteAllText("startscript.txt", script);
-				File.WriteAllText("startscript.lua", "return " + luascript);
-				File.WriteAllText("modinfo.txt", modInfo);
-				//File.WriteAllText("mission.lua", luaMissionData);
-			}
-			var textEncoding = Encoding.UTF8; // ASCIIEncoding()
-			
-			string directory = Path.GetDirectoryName(mutatorPath);
-			if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
-			if (File.Exists(mutatorPath)) File.Delete(mutatorPath);
+        public void CreateArchive(string mutatorPath, bool hideFromModList = false, bool sdd = false)
+        {
+            var script = GetScript();
+            var luascript = GetLuaStartscript();
+            var modInfo = GetModInfo(hideFromModList);
+            var luaMissionData = SerializeToLua();
+            if (Debugger.IsAttached)
+            {
+                File.WriteAllText("startscript.txt", script);
+                File.WriteAllText("startscript.lua", "return " + luascript);
+                File.WriteAllText("modinfo.txt", modInfo);
+                //File.WriteAllText("mission.lua", luaMissionData);
+            }
+            var textEncoding = Encoding.UTF8; // ASCIIEncoding()
+
+            string directory = Path.GetDirectoryName(mutatorPath);
+            if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+            if (File.Exists(mutatorPath)) File.Delete(mutatorPath);
+
+            string sddPath = Path.ChangeExtension(mutatorPath, "sdd");
+            if (sdd && Directory.Exists(sddPath))
+            {
+                try
+                {
+                    Directory.Delete(sddPath, true);
+                } catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException || ex is DirectoryNotFoundException) {
+                    // meh
+                }
+            }
 			
 			using (var zip = ZipFile.Open(mutatorPath, ZipArchiveMode.Update, Encoding.UTF8))
 			{
@@ -343,6 +354,7 @@ namespace CMissionLib
 				zip.SafeAddEntry("modinfo.lua", modInfo);
 				zip.SafeAddEntry("mission.lua", luaMissionData);
 				zip.SafeAddEntry("script.txt", script);
+				zip.SafeAddEntry("script.lua", "return " + luascript);
 				zip.SafeAddEntry(GlobalConst.MissionScriptFileName, script);
 				zip.SafeAddEntry("slots.lua", GetLuaSlots().ToString());
 				zip.SafeAddEntry("dependencies.txt", String.Join(";", Mod.Dependencies)); // FIXME
@@ -428,7 +440,13 @@ namespace CMissionLib
                         }
                     }
 				}
+
+                if (sdd)
+                {
+                    zip.ExtractToDirectory(sddPath);
+                }
 			}
+            if (sdd) File.Delete(mutatorPath);
 		}
 
 		public Trigger FindLogicOwner(TriggerLogic l)
