@@ -134,7 +134,9 @@ namespace ChobbyLauncher
         private async Task<bool> DownloadUrl(string desc, string url, string filePathTarget)
         {
             Status = desc;
-            Download = new WebFileDownload(url, filePathTarget, paths.Cache);
+            var wfd = new WebFileDownload(url, filePathTarget, paths.Cache);
+            wfd.Start();
+            Download = wfd;
             var dlTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(30));
             if (dlTask != null) await dlTask;
             if (Download?.IsComplete == false)
@@ -174,27 +176,12 @@ namespace ChobbyLauncher
                 missions.Where(m => !existing.Any(x => x.MissionID == m.MissionID && x.Revision == m.Revision && x.DownloadHandle == m.DownloadHandle))
                     .ToList();
 
-
             // download mission files
             foreach (var m in toDownload.Where(x => !x.IsScriptMission))
             {
                 if (!await DownloadFile("Downloading mission " + m.DisplayName, DownloadType.MISSION, m.DownloadHandle)) return false;
-                if (!string.IsNullOrEmpty(m.OtherDependencies))
-                {
-                    foreach (var dep in m.OtherDependencies.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        if (!await DownloadFile("Downloading dependency " + dep, DownloadType.NOTKNOWN, dep)) return false;
-                    }
-                }
                 if (!await DownloadUrl("Downloading image", m.ImageUrl, Path.Combine(missionsFolder, $"{m.MissionID}.png"))) return false;
             }
-
-            // download maps
-            foreach (var map in toDownload.Select(x => x.Map).Distinct()) if (!await DownloadFile("Downloading map " + map, DownloadType.MAP, map)) return false;
-
-            // download games
-            foreach (var game in toDownload.Select(x=>x.Mod).Distinct().Where(x=>x != "zk:stable")) if (!await DownloadFile("Downloading game " + game, DownloadType.NOTKNOWN, game)) return false;
-
 
             File.WriteAllText(missionFile, JsonConvert.SerializeObject(missions));
 
