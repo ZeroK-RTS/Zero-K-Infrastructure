@@ -81,6 +81,7 @@
     <Compile Include="GlobalConst.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="IContentService\AccountInfo.cs" />
+    <Compile Include="IContentService\ClientMissionInfo.cs" />
     <Compile Include="IContentService\IContentService.cs" />
     <Compile Include="IContentService\ResourceData.cs" />
     <Compile Include="IContentService\ResourceType.cs" />

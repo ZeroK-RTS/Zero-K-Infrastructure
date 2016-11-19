@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.SqlServer;
 using System.Diagnostics;
 using System.IO;
@@ -34,6 +35,7 @@ namespace ZeroKWeb
         }
 
 
+
         public List<ResourceData> FindResourceData(string[] words, ResourceType? type = null)
         {
             var db = new ZkDataContext();
@@ -59,15 +61,6 @@ namespace ZeroKWeb
 
 
         
-        public List<string> GetEloTop10()
-        {
-            DateTime ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
-            using (var db = new ZkDataContext())
-
-                return
-                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > ladderTimeout && y.SpringBattle.PlayerCount == 2 && y.SpringBattle.HasBots == false && y.EloChange != null && !y.IsSpectator)).OrderByDescending(
-                    x => x.EffectiveMmElo).WithTranslations().Select(x => x.Name).Take(10).ToList();
-        }
 
 
 
@@ -238,10 +231,38 @@ namespace ZeroKWeb
             }
         }
 
+        public List<ClientMissionInfo> GetDefaultMissions()
+        {
+            using (var db = new ZkDataContext())
+            {
+                
+                    new ClientMissionInfo()
+                    {
+                        DisplayName = x.Name,
+                        Author = x.Account.Name,
+                        Revision = x.Revision,
+                        Description = x.Description,
+                        Script = x.Script,
+                        Mod = x.ModRapidTag ?? x.Mod,
+                        Map = x.Map,
+                        IsScriptMission = x.IsScriptMission,
+                        Rating = x.Rating,
+                        Difficulty = x.Difficulty,
+                        MissionID = x.MissionID,
+                        DownloadHandle = x.Resources.Select(x1=>x1.InternalName).FirstOrDefault(),
+                        OtherDependencies = x.ManualDependencies
+                    }
+                ).ToList(); // this does in single sql query
 
+                // add image url
+                foreach (var m in ret)
+                {
+                    m.ImageUrl = $"{GlobalConst.BaseSiteUrl}/img/missions/{m.MissionID}.png";
+                }
 
-
-      
+                return ret;
+            }
+        }
 
 
         public static void ProgressCampaign(int accountID, int missionID, string missionVars = "")
@@ -416,4 +437,6 @@ namespace ZeroKWeb
             }
         }
     }
+
+
 }

@@ -75,5 +75,8 @@ namespace PlasmaShared
 
         [OperationContract]
         void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds, string missionVars = "");
+
+        [OperationContract]
+        List<ClientMissionInfo> GetDefaultMissions();
     }
 }
