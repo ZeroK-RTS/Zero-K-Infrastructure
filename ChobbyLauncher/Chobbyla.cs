@@ -91,7 +91,11 @@ namespace ChobbyLauncher
 
                 if (!await DownloadFile("Downloading engine", DownloadType.ENGINE, engine)) return false;
 
-                if (!await UpdateMissions()) return false;
+                if (!await UpdateMissions())
+                {
+                    Trace.TraceWarning("Mission update has failed");
+                    Status = "Error updating missions";
+                }
 
 
                 if (!isDev)
