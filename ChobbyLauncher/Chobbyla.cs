@@ -28,7 +28,7 @@ namespace ChobbyLauncher
         private string engine;
         private bool isDev;
 
-        private SpringPaths paths;
+        public SpringPaths paths;
         private string internalName;
         private int loopbackPort;
         private PlasmaDownloader.PlasmaDownloader downloader;

@@ -136,7 +136,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                System.Diagnostics.Process.Start(args.Folder);
+                System.Diagnostics.Process.Start(chobbyla.paths.WritableDirectory);
             }
             catch (Exception ex)
             {
