@@ -235,6 +235,7 @@ namespace ZeroKWeb
         {
             using (var db = new ZkDataContext())
             {
+                var ret = db.Missions.Where(x => x.FeaturedOrder != null && !x.IsDeleted).Select(x =>
                 
                     new ClientMissionInfo()
                     {
