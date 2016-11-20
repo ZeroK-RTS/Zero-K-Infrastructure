@@ -277,13 +277,20 @@ namespace ZeroKWeb.SpringieInterface
                             res.DeleteBots = true;
                         }
                         break;
-
+                    
                     case AutohostMode.GameChickens:
                         {
                             res.Players = context.Players.ToList();
                             res.Bots = context.Bots.ToList();
                             foreach (var p in res.Players) p.AllyID = 0;
                             foreach (var b in res.Bots) b.AllyID = 1;
+
+                            // add chickens via modoptions hackish thingie
+                            string chickBot = null;
+                            if (context.ModOptions?.TryGetValue("chickenailevel", out chickBot) == true && !string.IsNullOrEmpty(chickBot) && chickBot != "none")
+                            {
+                                res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "default_Chicken", BotAI = chickBot });
+                            }
 
                             if (!res.Bots.Any() && res.Players.Count > 0)
                             {
