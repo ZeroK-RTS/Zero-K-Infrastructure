@@ -66,7 +66,14 @@ namespace ChobbyLauncher
                     {
                         Status = "Checking for self-upgrade";
                         var selfUpdater = new SelfUpdater();
-                        selfUpdater.ProgramUpdated += delegate { Application.Restart(); };
+                        selfUpdater.ProgramUpdated += delegate
+                        {
+                            if (Environment.OSVersion.Platform == PlatformID.Unix)
+                            {
+                                Process.Start(Application.ExecutablePath);
+                                Environment.Exit(0);
+                            } else Application.Restart();
+                        };
                         var task = new Task<bool>(() => selfUpdater.CheckForUpdate());
                         task.Start();
                         await task;
