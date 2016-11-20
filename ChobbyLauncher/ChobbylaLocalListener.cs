@@ -180,6 +180,7 @@ namespace ChobbyLauncher
             try
             {
                 DownloadType type;
+                if (string.IsNullOrEmpty(args.FileType) || !Enum.TryParse(args.FileType, out type)) type = DownloadType.NOTKNOWN;
                 var down = chobbyla.downloader.GetResource(type, args.Name);
                 ReportDownloadResult(args, down); // executes as async
             }
