@@ -107,6 +107,9 @@ namespace ChobbyLauncher
 
                 if (!isDev)
                 {
+                    Status = "Reseting configs";
+                    ConfigVersions.ResetConfigs(paths, ver);
+
                     Status = "Extracting default configs";
                     ExtractDefaultConfigs(paths, ver);
                 }

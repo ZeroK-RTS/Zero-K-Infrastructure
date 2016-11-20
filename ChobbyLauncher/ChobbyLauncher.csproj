@@ -68,6 +68,7 @@
     <Compile Include="BitmapButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ConfigVersions.cs" />
     <Compile Include="TextToSpeechLinux.cs" />
     <Compile Include="TextToSpeechWindows.cs" />
     <Compile Include="Chobbyla.cs" />
