@@ -31,7 +31,7 @@ namespace ChobbyLauncher
         public SpringPaths paths;
         private string internalName;
         private int loopbackPort;
-        private PlasmaDownloader.PlasmaDownloader downloader;
+        public PlasmaDownloader.PlasmaDownloader downloader;
         public Download Download { get; private set; }
         public string Status { get; private set; }
         public Process process { get; private set; }
