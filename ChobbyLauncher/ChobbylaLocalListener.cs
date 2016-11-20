@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using PlasmaDownloader;
 using PlasmaShared;
 using ZkData;
 
@@ -172,6 +173,35 @@ namespace ChobbyLauncher
                 Trace.TraceError("{0} error processing line {1} : {2}", this, line, ex);
             }
         }
+
+
+        public async Task Process(DownloadFile args)
+        {
+            try
+            {
+                DownloadType type;
+                var down = chobbyla.downloader.GetResource(type, args.Name);
+                ReportDownloadResult(args, down); // executes as async
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error downloading file {0} : {1}", args?.Name, ex);
+            }
+        }
+
+        private async Task ReportDownloadResult(DownloadFile args, Download down)
+        {
+            try
+            {
+                if (down != null) await down.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
+                await SendCommand(new DownloadFileDone() { Name = args.Name, FileType = args.FileType, IsSuccess = down?.IsComplete == true });
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error processing download result for file {0} : {1}", args.Name, ex);
+            }
+        }
+
 
         private async Task OnConnected()
         {
