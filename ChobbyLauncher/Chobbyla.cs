@@ -191,11 +191,12 @@ namespace ChobbyLauncher
                     .ToList();
 
             // download mission files
-            foreach (var m in toDownload.Where(x => !x.IsScriptMission))
+            foreach (var m in toDownload)
             {
-                if (!await DownloadFile("Downloading mission " + m.DisplayName, DownloadType.MISSION, m.DownloadHandle)) return false;
+                if (!m.IsScriptMission) if (!await DownloadFile("Downloading mission " + m.DisplayName, DownloadType.MISSION, m.DownloadHandle)) return false;
                 if (!await DownloadUrl("Downloading image", m.ImageUrl, Path.Combine(missionsFolder, $"{m.MissionID}.png"))) return false;
             }
+            
 
             File.WriteAllText(missionFile, JsonConvert.SerializeObject(missions));
 
