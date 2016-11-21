@@ -339,7 +339,7 @@ namespace ZkLobbyServer
         public async Task SetModOptions(Dictionary<string, string> options)
         {
             ModOptions = options;
-            await server.Broadcast(Users.Keys, options);
+            await server.Broadcast(Users.Keys, new SetModOptions() {Options = options});
         }
 
 
