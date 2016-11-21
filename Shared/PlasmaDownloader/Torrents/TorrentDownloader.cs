@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MonoTorrent.Common;
@@ -26,6 +27,24 @@ namespace PlasmaDownloader.Torrents
             incomingFolder = Utils.MakePath(this.plasmaDownloader.SpringPaths.Cache, "Incoming");
             Utils.CheckPath(incomingFolder);
 
+        }
+
+        private static Torrent CreateTorrentFromFile(string path)
+        {
+            try
+            {
+                var creator = new TorrentCreator();
+                creator.Path = path;
+                var ms = new MemoryStream();
+                creator.Create(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                return Torrent.Load(ms);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Error creating torrent from file {0}", path);
+                return null;
+            }
         }
 
 
@@ -61,6 +80,26 @@ namespace PlasmaDownloader.Torrents
                     down.TypeOfResource = e.resourceType == ResourceType.Map ? DownloadType.MAP : DownloadType.RAPID;
 
 
+                    foreach (var dependency in e.dependencies)
+                    {
+                        var dep = plasmaDownloader.GetResource(DownloadType.NOTKNOWN, dependency);
+                        if (dep != null) down.AddNeededDownload(dep);
+                    }
+
+
+                    var defPath = Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory, down.TypeOfResource == DownloadType.MAP ? "maps" : "games", down.FileName);
+                    
+                    if (File.Exists(defPath))
+                    {
+                        var exTor = CreateTorrentFromFile(defPath);
+                        if (exTor != null && exTor.InfoHash.Equals(tor.InfoHash))
+                        {
+                            down.Finish(true);
+                            return; // done
+                        }
+                    }
+
+
                     // just 1 link, use normal webdownload
                     if (e.links.Count() == 1 || e.links.Count(x => !x.Contains("springfiles.com")) == 1) // mirrors or mirros without jobjol = 1
                     {
@@ -76,11 +115,8 @@ namespace PlasmaDownloader.Torrents
                         down.Finish(true); // mark current torrent dl as complete - will wait for dependency
                         wd.Start(); // start dependent download
                     }
-                    foreach (var dependency in e.dependencies)
-                    {
-                        var dep = plasmaDownloader.GetResource(DownloadType.NOTKNOWN, dependency);
-                        if (dep != null) down.AddNeededDownload(dep);
-                    }
+
+
                 }
                 catch (Exception ex)
                 {

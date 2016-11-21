@@ -149,7 +149,7 @@ namespace ZkLobbyServer
             if ((say.Place == SayPlace.Battle) && !say.IsEmote && (user?.User.BanMute != true) && (user?.User.BanSpecChat != true) && say.AllowRelay) spring.SayGame($"<{say.User}>{say.Text}"); // relay to spring
 
             // check if it's command
-            if (!say.IsEmote && (say.Text?.Length > 1) && say.Text.StartsWith("!"))
+            if (!say.IsEmote && (say.Text?.Length > 1) && say.Text.StartsWith("!") && !say.AllowRelay)
             {
                 var parts = say.Text.Substring(1).Split(new[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
                 await RunCommandWithPermissionCheck(say, parts[0], parts.Skip(1).FirstOrDefault());

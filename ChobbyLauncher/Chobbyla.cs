@@ -9,8 +9,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Neo.IronLua;
+using Newtonsoft.Json;
 using PlasmaDownloader;
 using PlasmaDownloader.Packages;
+using PlasmaShared;
 using ZkData;
 
 namespace ChobbyLauncher
@@ -26,9 +28,10 @@ namespace ChobbyLauncher
         private string engine;
         private bool isDev;
 
-        private SpringPaths paths;
+        public SpringPaths paths;
         private string internalName;
         private int loopbackPort;
+        public PlasmaDownloader.PlasmaDownloader downloader;
         public Download Download { get; private set; }
         public string Status { get; private set; }
         public Process process { get; private set; }
@@ -40,6 +43,7 @@ namespace ChobbyLauncher
             chobbyTag = chobbyTagOverride ?? (GlobalConst.Mode == ModeType.Live ? "zkmenu:stable" : "zkmenu:test");
             isDev = chobbyTag == "dev" || chobbyTag == "chobby:dev" || chobbyTag =="zkmenu:dev";
             engine = engineOverride;
+            downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
         }
 
         
@@ -53,8 +57,6 @@ namespace ChobbyLauncher
         {
             try
             {
-                var downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
-
                 PackageDownloader.Version ver = null;
                 internalName = null;
 
@@ -64,34 +66,22 @@ namespace ChobbyLauncher
                     {
                         Status = "Checking for self-upgrade";
                         var selfUpdater = new SelfUpdater();
-                        selfUpdater.ProgramUpdated += delegate { Application.Restart(); };
+                        selfUpdater.ProgramUpdated += delegate
+                        {
+                            if (Environment.OSVersion.Platform == PlatformID.Unix)
+                            {
+                                Process.Start(Application.ExecutablePath);
+                                Environment.Exit(0);
+                            } else Application.Restart();
+                        };
                         var task = new Task<bool>(() => selfUpdater.CheckForUpdate());
                         task.Start();
                         await task;
                     }
-
-
-                    Status = "Checking for chobby update";
-                    Download = downloader.GetResource(DownloadType.RAPID, chobbyTag);
-                    var asTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
-                    if (asTask != null) await asTask;
-                    if (Download?.IsComplete == false)
-                    {
-                        Status = $"Download of {Download.Name} has failed";
-                        return false;
-                    }
-
-                    Status = "Checking for game update";
-                    Download = downloader.GetResource(DownloadType.RAPID, "zk:stable");
-                    asTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
-                    if (asTask != null) await asTask;
-                    if (Download?.IsComplete == false)
-                    {
-                        Status = $"Download of {Download.Name} has failed";
-                        return false;
-                    }
-
-
+                    
+                    if (!await DownloadFile("Checking for chobby update", DownloadType.RAPID, chobbyTag)) return false;
+                    if (!await DownloadFile("Checking for game update", DownloadType.RAPID, "zk:stable")) return false;
+                    
                     ver = downloader.PackageDownloader.GetByTag(chobbyTag);
                     if (ver == null)
                     {
@@ -106,19 +96,20 @@ namespace ChobbyLauncher
 
                 engine = engine ?? QueryDefaultEngine() ?? ExtractEngineFromLua(ver) ?? GlobalConst.DefaultEngineOverride;
 
+                if (!await DownloadFile("Downloading engine", DownloadType.ENGINE, engine)) return false;
 
-                Status = "Downloading engine";
-                Download = downloader.GetResource(DownloadType.ENGINE, engine);
-                var engDlTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
-                if (engDlTask != null) await engDlTask;
-                if (Download?.IsComplete == false)
+                if (!await UpdateMissions())
                 {
-                    Status = $"Download of engine {Download.Name} has failed";
-                    return false;
+                    Trace.TraceWarning("Mission update has failed");
+                    Status = "Error updating missions";
                 }
+
 
                 if (!isDev)
                 {
+                    Status = "Reseting configs";
+                    ConfigVersions.ResetConfigs(paths, ver);
+
                     Status = "Extracting default configs";
                     ExtractDefaultConfigs(paths, ver);
                 }
@@ -136,6 +127,79 @@ namespace ChobbyLauncher
                 Status = "Unexpected error preparing chobby launch: " + ex.Message;
                 return false;
             }
+        }
+
+
+
+        private async Task<bool> DownloadFile(string desc, DownloadType type, string name)
+        {
+            Status = desc;
+            Download = downloader.GetResource(type,  name);
+            var dlTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(30));
+            if (dlTask != null) await dlTask;
+            if (Download?.IsComplete == false)
+            {
+                Status = $"Download of {Download.Name} has failed";
+                return false;
+            }
+            return true;
+        }
+
+        private async Task<bool> DownloadUrl(string desc, string url, string filePathTarget)
+        {
+            Status = desc;
+            var wfd = new WebFileDownload(url, filePathTarget, paths.Cache);
+            wfd.Start();
+            Download = wfd;
+            var dlTask = Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(30));
+            if (dlTask != null) await dlTask;
+            if (Download?.IsComplete == false)
+            {
+                Status = $"Download of {Download.Name} has failed";
+                return false;
+            }
+            return true;
+        }
+
+
+
+        private async Task<bool> UpdateMissions()
+        {
+            Status = "Downloading missions";
+            var missions = GlobalConst.GetContentService().GetDefaultMissions();
+
+            var missionsFolder = Path.Combine(paths.WritableDirectory, "missions");
+            if (!Directory.Exists(missionsFolder)) Directory.CreateDirectory(missionsFolder);
+            var missionFile = Path.Combine(missionsFolder, "missions.json");
+
+            List<ClientMissionInfo> existing = null;
+            if (File.Exists(missionFile))
+            {
+                try
+                {
+                    existing = JsonConvert.DeserializeObject<List<ClientMissionInfo>>(File.ReadAllText(missionFile));
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Error reading mission file {0} : {1}", missionFile, ex);
+                }
+            }
+            existing = existing ?? new List<ClientMissionInfo>();
+
+            var toDownload =
+                missions.Where(m => !existing.Any(x => x.MissionID == m.MissionID && x.Revision == m.Revision && x.DownloadHandle == m.DownloadHandle))
+                    .ToList();
+
+            // download mission files
+            foreach (var m in toDownload.Where(x => !x.IsScriptMission))
+            {
+                if (!await DownloadFile("Downloading mission " + m.DisplayName, DownloadType.MISSION, m.DownloadHandle)) return false;
+                if (!await DownloadUrl("Downloading image", m.ImageUrl, Path.Combine(missionsFolder, $"{m.MissionID}.png"))) return false;
+            }
+
+            File.WriteAllText(missionFile, JsonConvert.SerializeObject(missions));
+
+            return true;
         }
 
         private string QueryDefaultEngine()

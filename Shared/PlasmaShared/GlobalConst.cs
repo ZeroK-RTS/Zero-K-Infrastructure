@@ -84,8 +84,7 @@ namespace ZkData
             BaseImageUrl = string.Format("{0}/img/", BaseSiteUrl);
             SelfUpdaterBaseUrl = string.Format("{0}/lobby", BaseSiteUrl);
 
-            contentServiceFactory = new ChannelFactory<IContentService>(CreateBasicHttpBinding(), string.Format("{0}/ContentService.svc", BaseSiteUrl));
-            
+            contentServiceFactory = new ChannelFactory<IContentService>(CreateBasicHttpBinding(), $"{BaseSiteUrl}/ContentService.svc");
             mode = newMode;
         }
 

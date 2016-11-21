@@ -85,7 +85,7 @@ namespace ZkData
             else
             {
                 if (IsMatchMaker) CalculateEloGeneric(x => x.EloMm, x => x.EloMmWeight, (x, v) => x.EloMm = v, (x, v) => x.EloMmWeight = v);
-                else if (Duration > GlobalConst.MinDurationForElo) CalculateEloGeneric(x => x.Elo, x => x.EloWeight, (x, v) => x.Elo = v, (x, v) => x.EloWeight = v);
+                if (Duration > GlobalConst.MinDurationForElo) CalculateEloGeneric(x => x.Elo, x => x.EloWeight, (x, v) => x.Elo = v, (x, v) => x.EloWeight = v);
             }
 
             if (Duration > GlobalConst.MinDurationForXP) ApplyXpChanges();

@@ -117,10 +117,11 @@ namespace MissionEditor2
 			Mission.RaisePropertyChanged(String.Empty);
 		}
 
-		void BuildMission(bool hideFromModList = false)
+		void BuildMission(bool hideFromModList = false, bool sdd = false)
 		{
 			var filter = "Spring Mod Archive (*.sdz)|*.sdz|All files (*.*)|*.*";
-			var saveFileDialog = new SaveFileDialog { DefaultExt = "sdz", Filter = filter, RestoreDirectory = true };
+			if (sdd) filter = "Temporary Zip Archive (*.zip)|*.zip|All files (*.*)|*.*";
+			var saveFileDialog = new SaveFileDialog { DefaultExt = sdd ? "zip" : "sdz", Filter = filter, RestoreDirectory = true };
 			if (saveFileDialog.ShowDialog() == true)
 			{
 				var loadingDialog = new LoadingDialog { Owner =this };
@@ -129,13 +130,16 @@ namespace MissionEditor2
 					{
 						var mission = Mission;
 						var fileName = saveFileDialog.FileName;
+						//if (sdd) fileName = Path.ChangeExtension(fileName, "zip"); // this is the temporary zip, leave the .sdd path for the actual .sdd
 						Utils.InvokeInNewThread(delegate
 							{
-								mission.CreateArchive(fileName, hideFromModList);
-								var scriptPath = String.Format("{0}\\{1}.txt", Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
-								var scriptPathLua = String.Format("{0}\\{1}.lua", Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
-								File.WriteAllText(scriptPath, mission.GetScript());
-								File.WriteAllText(scriptPathLua, "return " + mission.GetLuaStartscript());
+								mission.CreateArchive(fileName, hideFromModList, sdd);
+								if (!sdd) {
+									var scriptPath = String.Format("{0}\\{1}.txt", Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
+									var scriptPathLua = String.Format("{0}\\{1}.lua", Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
+									File.WriteAllText(scriptPath, mission.GetScript());
+									File.WriteAllText(scriptPathLua, "return " + mission.GetLuaStartscript());
+								}
 								this.Invoke(loadingDialog.Close);
 							});
 					};
@@ -808,8 +812,12 @@ namespace MissionEditor2
             }
 
             var mission = MainMenu.AddContainer("Mission");
-            mission.AddAction("Create Mutator", () => BuildMission());
-            mission.AddAction("Create Invisible Mutator", () => BuildMission(true));
+            var createMutator = mission.AddContainer("Create Mutator");
+            createMutator.AddAction(".sdz", () => BuildMission(false, false));
+            createMutator.AddAction(".sdd", () => BuildMission(false, true));
+            var createInvisibleMutator = mission.AddContainer("Create Invisible Mutator");
+            createInvisibleMutator.AddAction(".sdz", () => BuildMission(true, false));
+            createInvisibleMutator.AddAction(".sdd", () => BuildMission(true, true));
             mission.AddAction("Test Mission", TestMission);
             mission.AddAction("Set Localization IDs", ShowLocalizationControl);
             //mission.AddAction("Export Localization File", ExportLocalizationFile);

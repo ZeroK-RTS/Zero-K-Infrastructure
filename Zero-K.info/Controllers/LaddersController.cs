@@ -25,14 +25,24 @@ namespace ZeroKWeb.Controllers
         /// Gets a chart of game activity since February 2011
         /// </summary>
 	    [OutputCache(Duration = 3600 * 2, VaryByParam = "*", Location = OutputCacheLocation.Server)]
-        public ActionResult Games(int years = 1)
+        public ActionResult Games()
         {
+            return GenerateStats(1);
+        }
 
+        [OutputCache(Duration = 3600 * 2, VaryByParam = "*", Location = OutputCacheLocation.Server)]
+        public ActionResult GamesAll()
+        {
+            return GenerateStats(10);
+        }
+
+
+        private ActionResult GenerateStats(int years)
+        {
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var data = MemCache.GetCached(
-                "gameStats",
+            var data = MemCache.GetCached("gameStats",
                 () =>
                 {
                     var start = DateTime.Now.AddYears(-years); //new DateTime(2011, 2, 3);
@@ -44,16 +54,16 @@ namespace ZeroKWeb.Controllers
                         orderby x.Key
                         let players = x.SelectMany(y => y.SpringBattlePlayers.Where(z => !z.IsSpectator)).Select(z => z.AccountID).Distinct().Count()
                         select
-                            new GameStats
-                            {
-                                Day = x.Key.Value,
-                                Players = x.SelectMany(y => y.SpringBattlePlayers.Where(z=>!z.IsSpectator)).Select(z => z.AccountID).Distinct().Count(),
-                                MinutesPerPlayer = x.Sum(y => y.Duration*y.PlayerCount)/60/players,
-                                FirstGamePlayers =
-                                    x.SelectMany(y => y.SpringBattlePlayers)
-                                        .GroupBy(y => y.Account)
-                                        .Count(y => y.Any(z => z == y.Key.SpringBattlePlayers.FirstOrDefault()))
-                            }).ToList();
+                        new GameStats
+                        {
+                            Day = x.Key.Value,
+                            Players = x.SelectMany(y => y.SpringBattlePlayers.Where(z => !z.IsSpectator)).Select(z => z.AccountID).Distinct().Count(),
+                            MinutesPerPlayer = x.Sum(y => y.Duration*y.PlayerCount)/60/players,
+                            FirstGamePlayers =
+                                x.SelectMany(y => y.SpringBattlePlayers)
+                                    .GroupBy(y => y.Account)
+                                    .Count(y => y.Any(z => z == y.Key.SpringBattlePlayers.FirstOrDefault()))
+                        }).ToList();
                 },
                 60*60*20);
 
@@ -63,8 +73,16 @@ namespace ZeroKWeb.Controllers
             chart.AddLegend("Daily values", "dps");
 
             chart.AddSeries("unique players", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Players).ToList(), legend: "dps");
-            chart.AddSeries("minutes/player", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.MinutesPerPlayer).ToList(), legend: "dps");
-            chart.AddSeries("new players", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.FirstGamePlayers).ToList(), legend: "dps");
+            chart.AddSeries("minutes/player",
+                "Line",
+                xValue: data.Select(x => x.Day).ToList(),
+                yValues: data.Select(x => x.MinutesPerPlayer).ToList(),
+                legend: "dps");
+            chart.AddSeries("new players",
+                "Line",
+                xValue: data.Select(x => x.Day).ToList(),
+                yValues: data.Select(x => x.FirstGamePlayers).ToList(),
+                legend: "dps");
 
             return File(chart.GetBytes("png"), "image/png");
         }
