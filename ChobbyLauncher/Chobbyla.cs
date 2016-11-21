@@ -193,6 +193,7 @@ namespace ChobbyLauncher
             // download mission files
             foreach (var m in toDownload)
             {
+                if (m.IsScriptMission && m.Script != null) m.Script = m.Script.Replace("%MAP%", m.Map);
                 if (!m.IsScriptMission) if (!await DownloadFile("Downloading mission " + m.DisplayName, DownloadType.MISSION, m.DownloadHandle)) return false;
                 if (!await DownloadUrl("Downloading image", m.ImageUrl, Path.Combine(missionsFolder, $"{m.MissionID}.png"))) return false;
             }
