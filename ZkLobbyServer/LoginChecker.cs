@@ -294,7 +294,7 @@ namespace ZkLobbyServer
             if (state.ConnectedUsers.TryGetValue(GlobalConst.NightwatchName, out cli)) cli.Process(new Say { IsEmote = true, Place = SayPlace.Channel, Target = "zkadmin", Text = text });
         }
 
-        private bool VerifyIp(string ip)
+        public bool VerifyIp(string ip)
         {
             if (ipWhitelist.Contains(ip)) return true;
             if (DateTime.UtcNow.Subtract(lastConLogReset).TotalMinutes > MaxConnectionAttemptsMinutes)

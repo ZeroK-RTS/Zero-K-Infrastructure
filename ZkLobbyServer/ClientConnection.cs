@@ -141,14 +141,31 @@ namespace ZkLobbyServer
                             if (string.IsNullOrEmpty(register.PasswordHash)) response.ResultCode = RegisterResponse.Code.InvalidPassword;
                             else
                             {
-                                acc = new Account() { Name = register.Name };
-                                acc.SetPasswordHashed(register.PasswordHash);
-                                acc.SetName(register.Name);
-                                acc.SetAvatar();
-                                db.Accounts.Add(acc);
-                                db.SaveChanges();
+                                if (!server.LoginChecker.VerifyIp(RemoteEndpointIP))
+                                {
+                                    response.ResultCode = RegisterResponse.Code.Banned;
+                                    response.Reason = "Too many connection attempts";
+                                }
+                                else
+                                {
+                                    var banPenalty = Punishment.GetActivePunishment(null, RemoteEndpointIP, null, x => x.BanLobby);
+                                    if (banPenalty != null)
+                                    {
+                                        response.ResultCode = RegisterResponse.Code.Banned;
+                                        response.Reason = banPenalty.Reason;
+                                    }
+                                    else
+                                    {
+                                        acc = new Account() { Name = register.Name };
+                                        acc.SetPasswordHashed(register.PasswordHash);
+                                        acc.SetName(register.Name);
+                                        acc.SetAvatar();
+                                        db.Accounts.Add(acc);
+                                        db.SaveChanges();
 
-                                response.ResultCode = RegisterResponse.Code.Ok;
+                                        response.ResultCode = RegisterResponse.Code.Ok;
+                                    }
+                                }
                             }
                         }
                     }
