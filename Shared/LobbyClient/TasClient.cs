@@ -487,7 +487,7 @@ namespace LobbyClient
 
         public Task Register(string username, string password)
         {
-            return SendCommand(new Register() { Name = username, PasswordHash = Utils.HashLobbyPassword(password) });
+            return SendCommand(new Register() { Name = username, PasswordHash = Utils.HashLobbyPassword(password), UserID = GetMyUserID()});
         }
 
         public event EventHandler<TasEventArgs> RegistrationAccepted = delegate { };

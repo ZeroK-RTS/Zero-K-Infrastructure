@@ -148,7 +148,7 @@ namespace ZkLobbyServer
                                 }
                                 else
                                 {
-                                    var banPenalty = Punishment.GetActivePunishment(null, RemoteEndpointIP, null, x => x.BanLobby);
+                                    var banPenalty = Punishment.GetActivePunishment(null, RemoteEndpointIP, register.UserID, x => x.BanLobby);
                                     if (banPenalty != null)
                                     {
                                         response.ResultCode = RegisterResponse.Code.Banned;

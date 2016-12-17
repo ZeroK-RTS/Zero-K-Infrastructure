@@ -115,6 +115,9 @@ namespace LobbyClient
         ///     base64(md5(password))
         /// </summary>
         public string PasswordHash { get; set; }
+
+        
+        public long UserID { get; set; }
     }
 
     [Message(Origin.Server)]
