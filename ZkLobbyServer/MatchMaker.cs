@@ -44,6 +44,7 @@ namespace ZkLobbyServer
                     MaxPartySize = 4,
                     MinSize = 4,
                     MaxSize = 8,
+                    EloCutOffExponent = 0.97,
                     Game = server.Game,
                     Mode = AutohostMode.Teams,
                     Maps =
@@ -60,6 +61,7 @@ namespace ZkLobbyServer
                     MaxPartySize = 1,
                     MinSize = 2,
                     MaxSize = 2,
+                    EloCutOffExponent = 0.98,
                     Game = server.Game,
                     Maps =
                         db.Resources.Where(
@@ -428,7 +430,7 @@ namespace ZkLobbyServer
             public List<ProposedBattle> GenerateWantedBattles()
             {
                 var ret = new List<ProposedBattle>();
-                foreach (var qt in QueueTypes) for (var i = qt.MaxSize; i >= qt.MinSize; i--) if (i % 2 == 0) ret.Add(new ProposedBattle(i, this, qt));
+                foreach (var qt in QueueTypes) for (var i = qt.MaxSize; i >= qt.MinSize; i--) if (i % 2 == 0) ret.Add(new ProposedBattle(i, this, qt, qt.EloCutOffExponent));
                 return ret;
             }
 
@@ -447,12 +449,14 @@ namespace ZkLobbyServer
             public int MaxElo { get; private set; } = int.MinValue;
             public int MinElo { get; private set; } = int.MaxValue;
             public MatchMakerSetup.Queue QueueType { get; private set; }
+            private double eloCutOffExponent;
 
-            public ProposedBattle(int size, PlayerEntry initialPlayer, MatchMakerSetup.Queue queue)
+            public ProposedBattle(int size, PlayerEntry initialPlayer, MatchMakerSetup.Queue queue, double eloCutOffExponent)
             {
                 Size = size;
                 owner = initialPlayer;
                 QueueType = queue;
+                this.eloCutOffExponent = eloCutOffExponent;
                 AddPlayer(initialPlayer);
             }
 
@@ -476,7 +480,11 @@ namespace ZkLobbyServer
                 return true;
             }
 
-            private int GetElo(PlayerEntry entry) => entry.LobbyUser.EffectiveMmElo;
+            private int GetElo(PlayerEntry entry)
+            {
+                if (entry.LobbyUser.EffectiveMmElo >= 1500) return (int)Math.Round(1500.0 + Math.Pow(entry.LobbyUser.EffectiveMmElo-1500.0, eloCutOffExponent));
+                else return (int)Math.Round(1500.0 - Math.Pow(1500.0 - entry.LobbyUser.EffectiveMmElo, eloCutOffExponent));
+            } 
         }
     }
 }
