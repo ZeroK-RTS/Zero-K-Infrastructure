@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -102,8 +103,11 @@ namespace ZeroKWeb
 
         private string GetUserIP()
         {
-            var ip = Context.Request.ServerVariables["REMOTE_ADDR"];
-            return ip;
+            string hostname = Context.Request.ServerVariables["REMOTE_HOST"];
+            IPAddress[] ipv4s = Array.FindAll(Dns.GetHostEntry(string.Empty).AddressList,
+                a => a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+            if (ipv4s.Length > 0) return ipv4s[0].ToString();
+            return Context.Request.ServerVariables["REMOTE_ADDR"];
         }
 
         private void MvcApplication_Error(object sender, EventArgs e)
