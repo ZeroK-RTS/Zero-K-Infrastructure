@@ -72,7 +72,7 @@ namespace ZkLobbyServer
             else if (channel == "zkerror") return acc.IsZeroKAdmin;
             else if (channel == GlobalConst.Top20Channel) return IsTop20(acc.AccountID);
             else if (clanChannels.ContainsKey(channel)) return acc.ClanID == clanChannels[channel].ClanID;
-            else if (factionChannels.ContainsKey(channel) && acc.Level >= GlobalConst.FactionChannelMinLevel) return acc.FactionID == factionChannels[channel].FactionID;
+            else if (factionChannels.ContainsKey(channel)) return acc.Level >= GlobalConst.FactionChannelMinLevel && acc.FactionID == factionChannels[channel].FactionID;
             return true;
         }
     }

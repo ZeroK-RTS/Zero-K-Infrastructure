@@ -122,6 +122,7 @@ namespace ZkData
         public const int SteamAppID = 334920;
         public const int ZkLobbyUserCpu = 6667;
         public const int ZkLobbyUserCpuLinux = 6668;
+        public const int MaxUsernameLength = 25;
         public const int CommanderProfileCount = 6;
         public const int NumCommanderLevels = 5;
         public const int MaxCommanderNameLength = 20;
@@ -183,7 +184,7 @@ namespace ZkData
         public const double MaxPwEloDifference = 120;
 
 
-        public const PlanetWarsModes PlanetWarsMode = PlanetWarsModes.Running;
+        public const PlanetWarsModes PlanetWarsMode = PlanetWarsModes.AllOffline;
 
         public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";

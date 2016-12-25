@@ -120,16 +120,24 @@ namespace MissionEditor2
 		void BuildMission(bool hideFromModList = false, bool sdd = false)
 		{
 			var filter = "Spring Mod Archive (*.sdz)|*.sdz|All files (*.*)|*.*";
-			if (sdd) filter = "Temporary Zip Archive (*.zip)|*.zip|All files (*.*)|*.*";
-			var saveFileDialog = new SaveFileDialog { DefaultExt = sdd ? "zip" : "sdz", Filter = filter, RestoreDirectory = true };
-			if (saveFileDialog.ShowDialog() == true)
+			if (sdd) filter = "Temporary Archive (auto-extracts to .sdd) (*.zip)|*.zip|All files (*.*)|*.*";
+			var saveFileDialog = new System.Windows.Forms.SaveFileDialog { DefaultExt = sdd ? "zip" : "sdz", Filter = filter, RestoreDirectory = true };
+			if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 			{
-				var loadingDialog = new LoadingDialog { Owner =this };
+				var fileName = saveFileDialog.FileName;
+				if (sdd && Directory.Exists(Path.ChangeExtension(fileName, "sdd")))
+				{
+					System.Windows.Forms.DialogResult confirmOverwrite = System.Windows.Forms.MessageBox.Show("The .sdd already exists in the selected directory.\nIt will be deleted and replaced.\nContinue?",
+						"sdd already exists",
+						System.Windows.Forms.MessageBoxButtons.YesNo);
+					if (confirmOverwrite != System.Windows.Forms.DialogResult.Yes) return;
+				}
+				var loadingDialog = new LoadingDialog { Owner = this };
 				loadingDialog.Text = "Building Mission";
 				loadingDialog.Loaded += delegate
 					{
 						var mission = Mission;
-						var fileName = saveFileDialog.FileName;
+						
 						//if (sdd) fileName = Path.ChangeExtension(fileName, "zip"); // this is the temporary zip, leave the .sdd path for the actual .sdd
 						Utils.InvokeInNewThread(delegate
 							{

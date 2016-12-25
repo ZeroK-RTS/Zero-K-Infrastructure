@@ -1741,13 +1741,14 @@ local startTime = Spring.GetTimer()
 function gadget:DrawWorld()
   for ghostID, ghost in pairs(ghosts) do
     gl.PushMatrix()
+    gl.LoadIdentity()
     local t = Spring.DiffTimers(Spring.GetTimer(), startTime)
     local alpha = (math.sin(t*6)+1)/6+1/3 -- pulse
     gl.Color(0.7, 0.7, 1, alpha)
     gl.Translate(ghost.x, Spring.GetGroundHeight(ghost.x, ghost.y), ghost.y)
     gl.Rotate(ghost.heading, 0, 1, 0)
     gl.DepthTest(true)
-    gl.UnitShape(ghost.unitDefID, ghost.teamID)
+    gl.UnitShape(ghost.unitDefID, ghost.teamID, false, false, false)
     gl.PopMatrix()
   end
 end

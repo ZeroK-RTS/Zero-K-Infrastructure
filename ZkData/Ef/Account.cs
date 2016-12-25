@@ -591,7 +591,7 @@ namespace ZkData
 
         public static bool IsValidLobbyName(string name)
         {
-            return !string.IsNullOrEmpty(name) && name.All(ValidLobbyNameCharacter);
+            return !string.IsNullOrEmpty(name) && name.Length <= GlobalConst.MaxUsernameLength && name.All(ValidLobbyNameCharacter);
         }
 
         public static bool ValidLobbyNameCharacter(char c) {

@@ -115,6 +115,9 @@ namespace LobbyClient
         ///     base64(md5(password))
         /// </summary>
         public string PasswordHash { get; set; }
+
+        
+        public long UserID { get; set; }
     }
 
     [Message(Origin.Server)]
@@ -631,12 +634,15 @@ namespace LobbyClient
             public List<string> Maps { get; set; } = new List<string>();
             public string Game { get; set; }
             public int MaxPartySize { get; set; }
-
+            
             [JsonIgnore]
             public int MaxSize { get; set; }
 
             [JsonIgnore]
             public int MinSize { get; set; }
+
+            [JsonIgnore]
+            public double EloCutOffExponent { get; set; }
 
             [JsonIgnore]
             public AutohostMode Mode { get; set; }
