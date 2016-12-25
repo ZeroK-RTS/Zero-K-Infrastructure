@@ -72,17 +72,27 @@ namespace MissionEditor2
 				var missionFileName = "publish_mission_temp.sdz";
 				try
 				{
-                    var paths = new SpringPaths(Settings.Default.SpringPath);
-                    using (var unitSync = new ZkData.UnitSyncLib.UnitSync(paths, paths.GetEngineList().FirstOrDefault()))
+					string writableDir = Settings.Default.SpringPath;
+					// this is an engine folder, use our actual writable folder
+					bool isEngineFolder = File.Exists(Path.Combine(writableDir, Environment.OSVersion.Platform == PlatformID.Unix ? "spring" : "spring.exe"));
+					if (isEngineFolder)
+					{
+						writableDir = SpringPaths.GetMySpringDocPath();
+					}
+
+					var paths = new SpringPaths(writableDir, true);
+					string engine = paths.GetEngineList().LastOrDefault();
+					if (isEngineFolder) engine = paths.GetEngineList().FirstOrDefault(x => x == new DirectoryInfo(Settings.Default.SpringPath).Name);
+
+					using (var unitSync = new ZkData.UnitSyncLib.UnitSync(paths, engine))
 					{
 						var modPath = Path.Combine(paths.WritableDirectory, "games");
 						tempPath = Path.Combine(modPath, missionFileName);
 					}
 					if (File.Exists(tempPath)) File.Delete(tempPath);
 					mission.CreateArchive(tempPath);
-
 					Mod mod;
-					using (var unitSync = new ZkData.UnitSyncLib.UnitSync(paths, paths.GetEngineList().FirstOrDefault()))
+					using (var unitSync = new ZkData.UnitSyncLib.UnitSync(paths, engine))
 					{
 						mod = (Mod)unitSync.GetResourceFromFileName(mission.Mod.ArchiveName);
 						if (mod == null) throw new Exception("Mod metadata not extracted: mod not found");
