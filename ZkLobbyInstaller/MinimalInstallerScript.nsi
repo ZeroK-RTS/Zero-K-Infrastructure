@@ -155,29 +155,16 @@ FunctionEnd
 !include WinVer.nsh
 
 Function DownloadAndInstallNet
-		${If} ${IsWinXP}
-			Push 4
-			Push 0
-			Push 0
-		${Else}
-			Push 4
-			Push 5
-			Push 1
-		${EndIf}
+		Push 4
+		Push 5
+		Push 1
 		Call FoundDotNETVersion
 		Pop $0
 		${If} $0 == 0
-			${If} ${IsWinXP}
-				#MessageBox MB_OK|MB_ICONEXCLAMATION|MB_DEFBUTTON1 "NET Framework 4.0 isn't found in your system.$\n$\nSetup will install NET Framework 4.0"
-				DetailPrint "Downloading: http://download.microsoft.com/download/1/B/E/1BE39E79-7E39-46A3-96FF-047F95396215/dotNetFx40_Full_setup.exe"
-				NSISdl::download /TIMEOUT=30000 http://download.microsoft.com/download/1/B/E/1BE39E79-7E39-46A3-96FF-047F95396215/dotNetFx40_Full_setup.exe "$INSTDIR\dotNetFx40_Full_setup.exe"
+			#MessageBox MB_OK|MB_ICONEXCLAMATION|MB_DEFBUTTON1 "NET Framework 4.5.1 isn't found in your system.$\n$\nSetup will install NET Framework 4.5.1"
+			DetailPrint "Downloading: http://download.microsoft.com/download/B/4/1/B4119C11-0423-477B-80EE-7A474314B347/NDP452-KB2901954-Web.exe"
+			NSISdl::download /TIMEOUT=30000 http://download.microsoft.com/download/B/4/1/B4119C11-0423-477B-80EE-7A474314B347/NDP452-KB2901954-Web.exe "$INSTDIR\dotNetFx452-KB2901954-Web.exe"
 
-			${Else}
-				#MessageBox MB_OK|MB_ICONEXCLAMATION|MB_DEFBUTTON1 "NET Framework 4.5.2 isn't found in your system.$\n$\nSetup will install NET Framework 4.5.2"
-				DetailPrint "Downloading: http://download.microsoft.com/download/B/4/1/B4119C11-0423-477B-80EE-7A474314B347/NDP452-KB2901954-Web.exe"
-				NSISdl::download /TIMEOUT=30000 http://download.microsoft.com/download/B/4/1/B4119C11-0423-477B-80EE-7A474314B347/NDP452-KB2901954-Web.exe "$INSTDIR\dotNetFx452-KB2901954-Web.exe"
-
-			${EndIf}
 			Pop $0 #from download stack
 			StrCmp "$0" "success" +4
 				DetailPrint "Download Failed: $0"
@@ -185,20 +172,12 @@ Function DownloadAndInstallNet
 				Abort
 
 			#run installer
-			${If} ${IsWinXP}
-				#Banner download ref: http://nsis.sourceforge.net/How_to_Automatically_download_and_install_a_particular_version_of_.NET_if_it_is_not_already_installed
-				Banner::show /NOUNLOAD "Waiting for NET4.0 Websetup ..."
-				DetailPrint "Running $INSTDIR\dotNetFx40_Full_setup.exe"
-				nsExec::ExecToStack "$INSTDIR\dotNetFx40_Full_setup.exe" /norestart
-				Banner::destroy
+			Banner::show /NOUNLOAD "Waiting for NET4.5.2 Websetup ..."
+			DetailPrint "Running $INSTDIR\dotNetFx452-KB2901954-Web.exe"
+			nsExec::ExecToStack "$INSTDIR\dotNetFx452-KB2901954-Web.exe" /norestart
+			Banner::destroy
 
-			${Else}
-				Banner::show /NOUNLOAD "Waiting for NET4.5.2 Websetup ..."
-				DetailPrint "Running $INSTDIR\dotNetFx452-KB2901954-Web.exe"
-				nsExec::ExecToStack "$INSTDIR\dotNetFx452-KB2901954-Web.exe" /norestart
-				Banner::destroy
 
-			${EndIf}
 			#NET Framework installer exit code: https://msdn.microsoft.com/en-us/library/ee390831%28v=vs.110%29.aspx
 			Pop $0 #from 
 			StrCmp "$0" "0" 0 +3
@@ -240,24 +219,14 @@ Section "Zero-K Lobby" ZKL
 	AddSize 5500
 
 	#Ask to overwrite existing ZKL
-	${If} ${IsWinXP}
-		IfFileExists "$INSTDIR\Zero-K_NET4.0.exe" 0 continue
-			MessageBox MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON1 "Zero-K_NET4.0.exe already exist.$\nOverwrite?" IDNO zklExist
-	${Else}
-		IfFileExists "$INSTDIR\Zero-K.exe" 0 continue
-			MessageBox MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON1 "Zero-K.exe already exist.$\nOverwrite?" IDNO zklExist
-	${EndIf}
+	IfFileExists "$INSTDIR\Chobby.exe" 0 continue
+		MessageBox MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON1 "Chobby.exe already exist.$\nOverwrite?" IDNO zklExist
 	continue:
 
 	#check win version: http://nsis.sourceforge.net/Get_Windows_version
 	#download file: http://nsis.sourceforge.net/NSISdl_plug-in  --Register used:    $0 as downloader's exit code
-	${If} ${IsWinXP}
-		DetailPrint "Downloading: http://zero-k.info/lobby/Zero-K_NET4.0.exe"
-		NSISdl::download /TIMEOUT=30000 http://zero-k.info/lobby/Zero-K_NET4.0.exe "$INSTDIR\Zero-K_NET4.0.exe"
-	${Else}
-		DetailPrint "Downloading: http://zero-k.info/lobby/Zero-K.exe"
-		NSISdl::download /TIMEOUT=30000 http://zero-k.info/lobby/Zero-K.exe "$INSTDIR\Zero-K.exe"
-	${EndIf}
+	DetailPrint "Downloading: http://zero-k.info/lobby/Chobby.exe"
+	NSISdl::download /TIMEOUT=30000 http://zero-k.info/lobby/Chobby.exe "$INSTDIR\Chobby.exe"
 	Pop $0 #from download stack
 	StrCmp "$0" "success" zklExist
 		DetailPrint "Download Failed: $0"
@@ -265,14 +234,6 @@ Section "Zero-K Lobby" ZKL
 		Abort
 	zklExist:
 	Call DownloadAndInstallNet
-
-	#Ask to overwrite existing config
-	IfFileExists "$INSTDIR\ZeroKLobbyConfig.xml" 0 +2
-		MessageBox MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON1 "ZeroKLobbyConfig.xml already exist.$\nOverwrite?" IDNO end
-
-	#Write basic config file
-	SetOverwrite on
-	File ZeroKLobbyConfig.xml
 
 	#check diskspace, --Register used:    $0 as disk space,     $1 as drive letter
 	DetailPrint "Writing game-data path to ZeroKLobbyConfig.xml"
@@ -283,18 +244,6 @@ Section "Zero-K Lobby" ZKL
 		MessageBox MB_OK|MB_ICONINFORMATION "Disk space might be too low for game-data.$\n$\nIt is recommended to set a separate game-data folder. Zero-K Lobby will prompt you for this."
 	${EndIf}
 
-	#save game-data folder into config file. --Register used:    $0 as disk space (from previous),     $1 as file content
-	FileOpen $1 $INSTDIR\ZeroKLobbyConfig.xml a
-	IfErrors end #unknown error
-		FileSeek $1 -9 END #right before the word </Config>
-		${If} $0 <= 0
-			FileWrite $1 "  <DataFolder>invalid</DataFolder>$\r$\n"
-		${Else}
-			FileWrite $1 "  <DataFolder>$INSTDIR</DataFolder>$\r$\n"
-		${EndIf}
-		FileWrite $1 "</Config>"
-		FileClose $1
-	end:
 SectionEnd
 ;--------------------------------
 ;Descriptions
@@ -310,11 +259,7 @@ SectionEnd
 ;--------------------------------
 ;Post installation
 Function runZeroKLobby
-	${If} ${IsWinXP}
-		!insertmacro UAC_AsUser_ExecShell "open" "$INSTDIR\Zero-K_NET4.0.exe" "" "" ""
-	${Else}
-		!insertmacro UAC_AsUser_ExecShell "open" "$INSTDIR\Zero-K.exe" "" "" ""
-	${EndIf}
+	!insertmacro UAC_AsUser_ExecShell "open" "$INSTDIR\Chobby.exe" "" "" ""
 FunctionEnd
 
 Function .onInstSuccess
