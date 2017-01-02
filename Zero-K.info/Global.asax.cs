@@ -104,7 +104,7 @@ namespace ZeroKWeb
         private string GetUserIP()
         {
             string hostname = Context.Request.ServerVariables["REMOTE_HOST"];
-            IPAddress[] ipv4s = Array.FindAll(Dns.GetHostEntry(string.Empty).AddressList,
+            IPAddress[] ipv4s = Array.FindAll(Dns.GetHostEntry(hostname).AddressList,
                 a => a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
             if (ipv4s.Length > 0) return ipv4s[0].ToString();
             return Context.Request.ServerVariables["REMOTE_ADDR"];
