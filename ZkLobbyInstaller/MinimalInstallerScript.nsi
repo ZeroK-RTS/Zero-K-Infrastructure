@@ -1,6 +1,6 @@
 #Author: xponen, for Zero-K, (from a modified Basic Example Script written by Joost Verburg)
 #Date: 18 May 2015
-#Function: Display code-of-conduct, download ZKL, and download & Install NET Framework if needed.
+#Function: Display license, download ZKL, and download & Install NET Framework if needed.
 #Required Plugin: 
 #    Stock plugin (preinstalled with NSIS)
 #    UAC plugin (http://nsis.sourceforge.net/UAC_plug-in , REQUIRE NSIS version 2.46)
@@ -70,16 +70,16 @@ RequestExecutionLevel user #not needed (always set to user), because UAC will be
 
 ;--------------------------------
 ;Pages
-!define MUI_PAGE_HEADER_SUBTEXT "Please review the Zero-K community's code of conduct before continuing Zero-K Lobby Setup."
+!define MUI_PAGE_HEADER_SUBTEXT "Please review the license agreement before continuing Zero-K Lobby Setup."
 !define MUI_PAGE_HEADER_TEXT "Zero-K Community's Code of Conduct,"
 !define MUI_LICENSEPAGE_CHECKBOX true
-!define MUI_LICENSEPAGE_CHECKBOX_TEXT "I accept these code of conduct."
+!define MUI_LICENSEPAGE_CHECKBOX_TEXT "I accept the license agreement."
 !define MUI_LICENSEPAGE_BUTTON "Next"
-!define MUI_LICENSEPAGE_TEXT_TOP "Press Page Down to see the rest of the code of conduct."
-!define MUI_LICENSEPAGE_TEXT_BOTTOM  "Please review the code of conduct before continuing Zero-K Lobby setup. If you accept the code of conduct, click the checkbox below. Click Next to continue."
-!insertmacro MUI_PAGE_LICENSE "codeconduct.txt"
+!define MUI_LICENSEPAGE_TEXT_TOP "Press Page Down to see the rest of the agreement."
+!define MUI_LICENSEPAGE_TEXT_BOTTOM  "Please review the license agreement before continuing Zero-K Lobby setup. If you accept the agreement, click the checkbox below. Click Next to continue."
+!insertmacro MUI_PAGE_LICENSE "legal.txt"
 
-!define MUI_PAGE_HEADER_TEXT "Component"
+!define MUI_PAGE_HEADER_TEXT "Components"
 !define MUI_PAGE_HEADER_SUBTEXT "Choose which features of Zero-K you want to download."
 !define MUI_COMPONENTSPAGE_TEXT_TOP  "Map and Game is to be downloaded by Zero-K Lobby later. Click Next to continue.$\n(pre-installable media is being planned.)"
 !insertmacro MUI_PAGE_COMPONENTS
