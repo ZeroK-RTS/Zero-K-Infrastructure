@@ -1534,8 +1534,12 @@ function gadget:RecvLuaMsg(msg, player)
       for _, condition in ipairs(trigger.logic) do
         if condition.logicType == "UnitSelectedCondition" then
           if not next(condition.args.players) or ArrayContains(condition.args.players, teamID) then
-            ExecuteTrigger(trigger)
-            break
+            for groupName in pairs(condition.args.groups) do
+              if FindUnitsInGroup(groupName)[unitID] then
+                ExecuteTrigger(trigger)
+                break
+              end
+            end
           end
         end
       end
@@ -1546,8 +1550,12 @@ function gadget:RecvLuaMsg(msg, player)
       for _, condition in ipairs(trigger.logic) do
         if condition.logicType == "UnitIsVisibleCondition" then
           if not next(condition.args.players) or ArrayContains(condition.args.players, teamID) then
-            ExecuteTrigger(trigger)
-            break
+            for groupName in pairs(condition.args.groups) do
+              if FindUnitsInGroup(groupName)[unitID] then
+                ExecuteTrigger(trigger)
+                break
+              end
+            end
           end
         end
       end
@@ -1623,7 +1631,6 @@ function gadget:UnitEnteredLos(unitID, unitTeam, allyTeam, unitDefID)
       if condition.logicType == "UnitEnteredLOSCondition" then
         if not next(condition.args.alliances) or ArrayContains(condition.args.alliances, allyTeam) then
           for groupName in pairs(condition.args.groups) do
-            local unitDefID = Spring.GetUnitDefID(unitID)
             if FindUnitsInGroup(groupName)[unitID] then
               ExecuteTrigger(triggers[i])
               break
