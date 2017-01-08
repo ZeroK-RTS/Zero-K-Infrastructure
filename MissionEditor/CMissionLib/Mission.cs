@@ -33,10 +33,12 @@ namespace CMissionLib
         string customModOptions = String.Empty;
 		string description = String.Empty;
         string descriptionStory = String.Empty;
+
 		ObservableCollection<string> disabledGadgets = new ObservableCollection<string>();
 		ObservableCollection<string> disabledUnits = new ObservableCollection<string>();
 		ObservableCollection<string> disabledWidgets = new ObservableCollection<string>();
 		Dictionary<string, string> folders = new Dictionary<string, string>();
+
 		string imagePath;
 		CompositeObservableCollection<Trigger, Region> items;
 		Map map;
@@ -164,6 +166,14 @@ namespace CMissionLib
 				RaisePropertyChanged("Folders");
 			}
 		}
+
+		[DataMember]
+		public bool ExcludeRunnerGadget { get; set; }
+		[DataMember]
+		public bool ExcludeGUIWidget { get; set; }
+		[DataMember]
+		public bool ExcludeMessageBoxWidget { get; set; }
+
 		[DataMember]
 		public string ImagePath
 		{
@@ -349,7 +359,13 @@ namespace CMissionLib
 
 				var assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 				var basePath = Path.Combine(assemblyLocation, "MissionBase");
-				zip.SafeAddDirectory(basePath);
+
+				List<string> exclude = new List<string>();
+				if (ExcludeRunnerGadget) exclude.Add("mission_runner.lua");
+				if (ExcludeGUIWidget) exclude.Add("mission_gui.lua");
+				if (ExcludeMessageBoxWidget) exclude.Add("mission_messagebox.lua");
+
+				zip.SafeAddDirectory(basePath, exclude);
 
 				zip.SafeAddEntry("modinfo.lua", modInfo);
 				zip.SafeAddEntry("mission.lua", luaMissionData);

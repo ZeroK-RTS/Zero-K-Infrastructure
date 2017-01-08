@@ -33,13 +33,17 @@ namespace CMissionLib
 			}
 		}
 
-		public static void SafeAddDirectory(this ZipArchive zip, string directoryPath)
+		public static void SafeAddDirectory(this ZipArchive zip, string directoryPath, List<string> exclude = null)
 		{
 			directoryPath = Path.GetFullPath(directoryPath) + "\\";
 			foreach (var filePath in Directory.GetFiles(directoryPath, "*", SearchOption.AllDirectories))
 			{
 				var pathInArchive = filePath.Replace(directoryPath, String.Empty);
 				if (!File.Exists(filePath)) throw new Exception("File does not exist: " + pathInArchive);
+
+				if (exclude != null && exclude.Contains(Path.GetFileName(filePath)))
+					continue;
+
 				zip.SafeAddFile(filePath, Path.GetDirectoryName(pathInArchive));
 			}
 		}
