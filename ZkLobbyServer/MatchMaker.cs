@@ -414,7 +414,13 @@ namespace ZkLobbyServer
         {
             public bool InvitedToPlay;
             public bool LastReadyResponse;
-            public int EloWidth => (int)Math.Min(400, 100 + DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / 30.0 * 150.0);
+
+            public int EloWidth => (int)(100.0 + WaitRatio * 300.0);
+            public int MinConsideredElo => LobbyUser.EffectiveMmElo;
+            public int MaxConsideredElo => (int)(LobbyUser.EffectiveMmElo + (LobbyUser.RawMmElo - LobbyUser.EffectiveMmElo)*WaitRatio);
+
+            public double WaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds/60.0));
+
             public DateTime JoinedTime { get; private set; } = DateTime.UtcNow;
             public User LobbyUser { get; private set; }
             public string Name => LobbyUser.Name;
@@ -466,8 +472,8 @@ namespace ZkLobbyServer
             public void AddPlayer(PlayerEntry player)
             {
                 Players.Add(player);
-                MinElo = Math.Min(MinElo, GetPlayerRawElo(player));
-                MaxElo = Math.Max(MaxElo, GetPlayerWeightedElo(player));
+                MinElo = Math.Min(MinElo, GetPlayerMaxElo(player));
+                MaxElo = Math.Max(MaxElo, GetPlayerMinElo(player));
             }
 
             public bool CanBeAdded(PlayerEntry other)
@@ -475,7 +481,7 @@ namespace ZkLobbyServer
                 if (!other.GenerateWantedBattles().Any(y => y.Size == Size && y.QueueType == QueueType)) return false;
                 var width = owner.EloWidth * widthMultiplier;
 
-                if ((GetPlayerWeightedElo(other) - MinElo > width) || (MaxElo - GetPlayerRawElo(other) > width)) return false;
+                if ((GetPlayerMinElo(other) - MinElo > width) || (MaxElo - GetPlayerMaxElo(other) > width)) return false;
 
                 return true;
             }
@@ -486,14 +492,14 @@ namespace ZkLobbyServer
                 else return 1500.0 - Math.Pow(1500.0 - input, eloCutOffExponent);
             }
 
-            private int GetPlayerWeightedElo(PlayerEntry entry)
+            private int GetPlayerMinElo(PlayerEntry entry)
             {
-                return (int)Math.Round(CutOffFunc(entry.LobbyUser.EffectiveMmElo));
+                return (int)Math.Round(CutOffFunc(entry.MinConsideredElo));
             }
 
-            private int GetPlayerRawElo(PlayerEntry entry)
+            private int GetPlayerMaxElo(PlayerEntry entry)
             {
-                return (int)Math.Round(CutOffFunc(entry.LobbyUser.RawMmElo));
+                return (int)Math.Round(CutOffFunc(entry.MaxConsideredElo));
             }
 
         }
