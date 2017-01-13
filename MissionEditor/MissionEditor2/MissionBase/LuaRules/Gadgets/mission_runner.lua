@@ -13,6 +13,12 @@ function gadget:GetInfo()
   }
 end
 
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+if not VFS.FileExists("mission.lua") then
+  return
+end
 
 local callInList = { -- events forwarded to unsynced
   "UnitFinished",
@@ -20,7 +26,8 @@ local callInList = { -- events forwarded to unsynced
 
 VFS.Include("savetable.lua")
 local magic = "--mt\r\n"
-local SAVE_FILE = "mission.lua"
+local SAVE_FILE = "Gadgets/mission.lua"
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --
@@ -50,6 +57,7 @@ local factoryExpectedUnits = {} -- key: factoryID, value: {unitDefID, groups: gr
 local repeatFactoryGroups = {} -- key: factoryID, value: group set
 local ghosts = {} -- key: incrementing index, value: unit details  -- TODO
 local objectives = {}	-- [index] = {id, title, description, color, unitsOrPositions = {}}	-- important: widget must be able to access on demand
+local persistentMessages = {} --[index] = {}  -- ditto
 local unitsWithObjectives = {}
 local wantUpdateDisabledUnits = false
 
@@ -57,6 +65,8 @@ _G.displayedCountdowns = displayedCountdowns
 _G.lastFinishedUnits = lastFinishedUnits
 _G.factoryExpectedUnits = factoryExpectedUnits
 _G.repeatFactoryGroups = repeatFactoryGroups
+_G.objectives = objectives
+_G.persistentMessages = persistentMessages
 
 GG.mission = {
   scores = scores,
@@ -67,6 +77,7 @@ GG.mission = {
   allTriggers = allTriggers,
   ghosts = ghosts,
   objectives = objectives,
+  persistentMessages = persistentMessages,
   cheatingWasEnabled = cheatingWasEnabled,
   allowTransfer = allowTransfer,
 }
@@ -956,6 +967,10 @@ local actionsTable = {
             end
           end
         end,
+  GuiMessagePersistentAction = function(action)
+          persistentMessages[#persistentMessages+1] = {message = action.args.message, height = action.args.height, width = action.args.width, fontSize = action.args.fontSize, image = action.args.image}
+          UnsyncedEventFunc(action)
+        end,
   AddObjectiveAction = function(action)
           objectives[#objectives+1] = {id = action.args.id, title = action.args.title, description = action.args.description, status = "Incomplete", unitsOrPositions = {}}
           UnsyncedEventFunc(action)
@@ -1040,7 +1055,7 @@ local unsyncedActions = {
   RestoreCameraStateAction = true,
   ShakeCameraAction = true,
   GuiMessageAction = true,
-  GuiMessagePersistentAction = true,
+  --GuiMessagePersistentAction = true,
   HideGuiMessagePersistentAction = true,
   ConvoMessageAction = true,
   ClearConvoMessageQueueAction = true,
@@ -1174,6 +1189,16 @@ end
 
 GG.mission.SetAllyTeamLongName = SetAllyTeamLongName
 GG.mission.SetAllyTeamShortName = SetAllyTeamShortName
+
+local function SendObjectivesToUnsynced()
+  _G.objectives = objectives
+  SendToUnsynced("SendMissionObjectives")
+end
+
+local function SendPersistentMessagesToUnsynced()
+  _G.persistentMessages = persistentMessages
+  SendToUnsynced("SendMissionPersistentMessages")
+end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -1561,7 +1586,9 @@ function gadget:RecvLuaMsg(msg, player)
       end
     end
   elseif StartsWith(msg, "sendMissionObjectives") then
-    SendToUnsynced("SendMissionObjectives")
+    SendObjectivesToUnsynced()
+  elseif StartsWith(msg, "sendMissionPersistentMessages") then
+    SendPersistentMessagesToUnsynced()
   elseif StartsWith(msg, "skipCutscene") then
     if currCutsceneID and currCutsceneIsSkippable then
       for _, trigger in ipairs(triggers) do
@@ -1660,6 +1687,7 @@ function gadget:Load(zip)
     triggers = data.triggers
     allTriggers = data.allTriggers
     objectives = data.objectives
+    persistentMessages = data.persistentMessages
     cheatingWasEnabled = data.cheatingWasEnabled
     allowTransfer = data.allowTransfer
     
@@ -1676,13 +1704,15 @@ function gadget:Load(zip)
       triggers = triggers,
       allTriggers = allTriggers,
       objectives = objectives,
+      persistentMessages = persistentMessages,
       cheatingWasEnabled = cheatingWasEnabled,
       allowTransfer = allowTransfer,
     }
     gameStarted = true 
   end
   
-  SendToUnsynced("SendMissionObjectives")
+  --SendObjectivesToUnsynced()
+  --SendPersistentMessagesToUnsynced()
   -- TODO transmit ghosts as well
 end
 
@@ -1801,8 +1831,22 @@ end
 
 function SendMissionObjectives()
   if Script.LuaUI("MissionObjectivesFromSynced") then
-    local objectives = MakeRealTable(SYNCED.mission.objectives)
+    local objectives = MakeRealTable(SYNCED.objectives)
     Script.LuaUI.MissionObjectivesFromSynced(objectives)
+  end
+end
+
+function SendMissionPersistentMessages()
+  if Script.LuaUI("MissionPersistentMessagesFromSynced") then
+    Spring.Echo("damn it to hell!")
+    local persistentMessages = MakeRealTable(SYNCED.persistentMessages)
+    for i,v in spairs(SYNCED.persistentMessages) do
+      Spring.Echo("choo choo motherfucker", i)
+    end
+    for i,v in pairs(persistentMessages) do
+      Spring.Echo("awooo", i) 
+    end
+    Script.LuaUI.MissionPersistentMessagesFromSynced(persistentMessages)
   end
 end
 
@@ -1815,6 +1859,7 @@ function gadget:Initialize()
   gadgetHandler:AddSyncAction('GhostRemovedEvent', GhostRemovedEvent)
   gadgetHandler:AddSyncAction('ScoreEvent', ScoreEvent)
   gadgetHandler:AddSyncAction('SendMissionObjectives', SendMissionObjectives)
+  gadgetHandler:AddSyncAction('SendMissionPersistentMessages', SendMissionPersistentMessages)
   for _,callIn in pairs(callInList) do
     local fun = gadget[callIn]
     gadgetHandler:AddSyncAction(callIn, fun)
@@ -1827,6 +1872,7 @@ function gadget:Shutdown()
   gadgetHandler:RemoveSyncAction('GhostRemovedEvent')
   gadgetHandler:RemoveSyncAction('ScoreEvent')
   gadgetHandler:RemoveSyncAction('SendMissionObjectives')
+  gadgetHandler:RemoveSyncAction('SendMissionPersistentMessages')
 end
 
 function gadget:Save(zip)
