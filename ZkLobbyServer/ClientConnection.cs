@@ -134,7 +134,8 @@ namespace ZkLobbyServer
                 {
                     using (var db = new ZkDataContext())
                     {
-                        var acc = db.Accounts.FirstOrDefault(x => x.Name == register.Name);
+                        // http://stackoverflow.com/questions/5312585/linq-case-insensitive-without-toupper-or-tolower
+                        var acc = db.Accounts.FirstOrDefault(x => x.Name.Equals(register.Name, StringComparison.InvariantCultureIgnoreCase));
                         if (acc != null) response.ResultCode = RegisterResponse.Code.InvalidName;
                         else
                         {
