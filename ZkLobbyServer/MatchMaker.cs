@@ -445,11 +445,13 @@ namespace ZkLobbyServer
         {
             private PlayerEntry owner;
             public List<PlayerEntry> Players = new List<PlayerEntry>();
-            public int Size;
+            public int Size { get; private set; }
             public int MaxElo { get; private set; } = int.MinValue;
             public int MinElo { get; private set; } = int.MaxValue;
             public MatchMakerSetup.Queue QueueType { get; private set; }
             private double eloCutOffExponent;
+
+            private double widthMultiplier;
 
             public ProposedBattle(int size, PlayerEntry initialPlayer, MatchMakerSetup.Queue queue, double eloCutOffExponent)
             {
@@ -457,34 +459,43 @@ namespace ZkLobbyServer
                 owner = initialPlayer;
                 QueueType = queue;
                 this.eloCutOffExponent = eloCutOffExponent;
+                widthMultiplier = Math.Max(1.0, 1.0 + (Size - 4) * 0.1);
                 AddPlayer(initialPlayer);
             }
 
             public void AddPlayer(PlayerEntry player)
             {
                 Players.Add(player);
-                var elo = GetElo(player);
-                MinElo = Math.Min(MinElo, elo);
-                MaxElo = Math.Max(MaxElo, elo);
+                MinElo = Math.Min(MinElo, GetPlayerRawElo(player));
+                MaxElo = Math.Max(MaxElo, GetPlayerWeightedElo(player));
             }
 
             public bool CanBeAdded(PlayerEntry other)
             {
                 if (!other.GenerateWantedBattles().Any(y => y.Size == Size && y.QueueType == QueueType)) return false;
-                var widthMultiplier = Math.Max(1.0, 1.0 + (Size - 4) * 0.1);
                 var width = owner.EloWidth * widthMultiplier;
 
-                var elo = GetElo(other);
-                if ((elo - MinElo > width) || (MaxElo - elo > width)) return false;
+                if ((GetPlayerWeightedElo(other) - MinElo > width) || (MaxElo - GetPlayerRawElo(other) > width)) return false;
 
                 return true;
             }
 
-            private int GetElo(PlayerEntry entry)
+            private double CutOffFunc(double input)
             {
-                if (entry.LobbyUser.EffectiveMmElo >= 1500) return (int)Math.Round(1500.0 + Math.Pow(entry.LobbyUser.EffectiveMmElo-1500.0, eloCutOffExponent));
-                else return (int)Math.Round(1500.0 - Math.Pow(1500.0 - entry.LobbyUser.EffectiveMmElo, eloCutOffExponent));
-            } 
+                if (input >= 1500) return Math.Round(1500.0 + Math.Pow(input - 1500.0, eloCutOffExponent));
+                else return 1500.0 - Math.Pow(1500.0 - input, eloCutOffExponent);
+            }
+
+            private int GetPlayerWeightedElo(PlayerEntry entry)
+            {
+                return (int)Math.Round(CutOffFunc(entry.LobbyUser.EffectiveMmElo));
+            }
+
+            private int GetPlayerRawElo(PlayerEntry entry)
+            {
+                return (int)Math.Round(CutOffFunc(entry.LobbyUser.RawMmElo));
+            }
+
         }
     }
 }
