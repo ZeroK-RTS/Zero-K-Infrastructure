@@ -271,6 +271,7 @@ namespace LobbyClient
         public string Country { get; set; }
         public string DisplayName { get; set; }
         public int EffectiveMmElo { get; set; }
+        public int RawMmElo { get; set; }
         public int? CompetitiveRank { get; set; }
         public string Faction { get; set; }
         public DateTime? InGameSince { get; set; }
@@ -313,6 +314,7 @@ namespace LobbyClient
             Avatar = u.Avatar;
             Country = u.Country;
             EffectiveMmElo = u.EffectiveMmElo;
+            RawMmElo = u.RawMmElo;
             Faction = u.Faction;
             InGameSince = u.InGameSince;
             IsAdmin = u.IsAdmin;

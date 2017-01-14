@@ -118,7 +118,10 @@ ul {list-style-type: circle;}
 }
 
 .fleft{float: left;}
-.fright{float: right;}
+.fright{
+	float: right;
+	-webkit-margin-after: 0px;
+}
 .clearfloat{clear:both;}
 
 .center

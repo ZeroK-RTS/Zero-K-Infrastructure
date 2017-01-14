@@ -1,5 +1,5 @@
 ﻿<Window x:Class="MissionEditor2.MissionSettingsDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Mission Settings" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" Height="540" Width="850" x:Name="dialog">
+        Title="Mission Settings" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" Height="540" Width="960" x:Name="dialog">
     <Grid Margin="3">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
@@ -126,6 +126,7 @@
                     <TextBlock Grid.ColumnSpan="2" Grid.Row="2">Files in this folder will be <LineBreak /> included in the mission.</TextBlock>
                 </Grid>
             </GroupBox>
+            <!-- 
             <GroupBox Header="Mission Story">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -139,6 +140,28 @@
                     <TextBlock Grid.Row="2" TextWrapping="WrapWithOverflow">Suppports BBCode.<LineBreak />It is suggested that you format in a<LineBreak />text editor and paste here.</TextBlock>
                 </Grid>
             </GroupBox>
+            -->
+            <GroupBox Header="Do not include">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.ColumnSpan="2" TextWrapping="WrapWithOverflow">Do not include editor's version of these widgets/gadgets in mission archive.<LineBreak />Make sure the game or Additional Content Folder has them.</TextBlock>
+                    <TextBlock Grid.Row="1">Mission runner gadget (mission_runner.lua)</TextBlock>
+                    <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding ExcludeRunnerGadget}"/>
+                    <TextBlock Grid.Row="2">Mission GUI widget (mission_gui.lua)</TextBlock>
+                    <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding ExcludeGUIWidget}"/>
+                    <TextBlock Grid.Row="3">Message box widget (mission_messagebox.lua)</TextBlock>
+                    <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding ExcludeMessageBoxWidget}"/>
+                </Grid>
+            </GroupBox> 
         </StackPanel>
         <Button Grid.Row="2" Grid.Column="3" IsCancel="True" IsDefault="True" Width="70" Content="O_K" HorizontalAlignment="Right" Margin="3" />
     </Grid>
