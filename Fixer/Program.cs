@@ -348,6 +348,8 @@ namespace Fixer
 
         static void Main(string[] args)
         {
+            RenameOldAccounts();
+            return;
             var ns = new NubSimulator();
             ns.SpawnMany();
             Console.ReadLine();
@@ -873,6 +875,17 @@ namespace Fixer
             }
             double average = eloSum / count;
             System.Console.WriteLine(String.Format("Average: {0}, Total players: {1}", average, count));
+        }
+
+        public static void RenameOldAccounts()
+        {
+            using (var db = new ZkDataContext())
+            {
+                db.Database.ExecuteSqlCommand(
+                    "update accounts set name = name + '#old#' + cast(accountid as nvarchar)  where lastlogin<'20150101' and (select count(*) from springbattleplayers where accountid=accounts.accountid and isspectator=0) < 10 and LastNewsRead < '20150101' and name not like '%#old#%'");
+            }
+            
+
         }
 
         static void FixDemoEngineVersion()
