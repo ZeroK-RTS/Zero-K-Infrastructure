@@ -241,6 +241,14 @@ namespace LobbyClient
 
             if (LobbyStartContext != null) foreach (var p in Context.ActualPlayers) p.IsIngame = false;
 
+            if (File.Exists(scriptPath))
+            {
+                try
+                {
+                    File.Delete(scriptPath);
+                } catch { }
+            }
+
             DedicatedServerExited?.Invoke(this, Context);
             AnyDedicatedExited?.Invoke(this, Context);
         }
