@@ -24,7 +24,7 @@ namespace ZkLobbyServer
             var commandName = parts[0] ?? "";
             var commandArgs = parts.Length > 1 ? parts[1] : null;
             commandToRun = battle.GetCommandByName(commandName);
-            if (commandToRun.GetRunPermissions(battle, e.User) >= RunPermission.Vote)
+            if (commandToRun.GetRunPermissions(battle, e.User) >= RunPermission.Vote && commandToRun.Access != AccessType.NoCheck)
             {
                 return commandToRun.Arm(battle, e, commandArgs);
             }
