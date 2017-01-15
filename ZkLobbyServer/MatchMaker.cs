@@ -39,11 +39,45 @@ namespace ZkLobbyServer
             {
                 possibleQueues.Add(new MatchMakerSetup.Queue()
                 {
-                    Name = "Teams",
-                    Description = "Play 2v2, 3v3 or 4v4 team game with players of similar skill.",
+                    Name = "4v4",
+                    Description = "Play 4v4 with players of similar skill.",
                     MaxPartySize = 4,
-                    MinSize = 4,
+                    MinSize = 8,
                     MaxSize = 8,
+                    EloCutOffExponent = 0.96,
+                    Game = server.Game,
+                    Mode = AutohostMode.Teams,
+                    Maps =
+                        db.Resources.Where(
+                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams == true) && (x.TypeID == ResourceType.Map))
+                            .Select(x => x.InternalName)
+                            .ToList()
+                });
+
+                possibleQueues.Add(new MatchMakerSetup.Queue()
+                {
+                    Name = "3v3",
+                    Description = "Play 3v3 with players of similar skill.",
+                    MaxPartySize = 3,
+                    MinSize = 6,
+                    MaxSize = 6,
+                    EloCutOffExponent = 0.965,
+                    Game = server.Game,
+                    Mode = AutohostMode.Teams,
+                    Maps =
+                        db.Resources.Where(
+                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams == true) && (x.TypeID == ResourceType.Map))
+                            .Select(x => x.InternalName)
+                            .ToList()
+                });
+
+                possibleQueues.Add(new MatchMakerSetup.Queue()
+                {
+                    Name = "2v2",
+                    Description = "Play 2v2 with players of similar skill.",
+                    MaxPartySize = 2,
+                    MinSize = 4,
+                    MaxSize = 4,
                     EloCutOffExponent = 0.97,
                     Game = server.Game,
                     Mode = AutohostMode.Teams,
