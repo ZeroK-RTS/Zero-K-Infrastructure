@@ -105,11 +105,23 @@ namespace ZkLobbyServer
             }
         }
 
+        private List<string> AddFriendsBy(IEnumerable<string> people)
+        {
+            var result = new List<string>();
+            foreach (var p in people)
+            {
+                if (!result.Contains(p)) result.Add(p);
+                ConnectedUser usr;
+                if (server.ConnectedUsers.TryGetValue(p, out usr)) foreach (var f in usr.FriendBy) if (server.ConnectedUsers.ContainsKey(f) && !result.Contains(f)) result.Add(f);
+            }
+            return result;
+        }
+
         private async Task AddToParty(Party party, params string[] names)
         {
             foreach (var n in names) if (!party.UserNames.Contains(n)) party.UserNames.Add(n);
             var ps = new OnPartyStatus() { PartyID = party.PartyID, UserNames = party.UserNames };
-            await server.Broadcast(party.UserNames, ps);
+            await server.Broadcast(AddFriendsBy(party.UserNames), ps);
         }
 
         private async Task RemoveFromParty(Party party, params string[] names)
@@ -121,9 +133,10 @@ namespace ZkLobbyServer
                 broadcastNames.Add(n);
             }
             var ps = new OnPartyStatus() { PartyID = party.PartyID, UserNames = party.UserNames };
-            broadcastNames = broadcastNames.Distinct().ToList();
+
             if (party.UserNames.Count == 0) parties.Remove(party);
-            await server.Broadcast(broadcastNames, ps);
+
+            await server.Broadcast(AddFriendsBy(broadcastNames), ps);
         }
 
         private void RemoveOldInvites()
