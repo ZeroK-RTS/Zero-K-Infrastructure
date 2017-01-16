@@ -43,6 +43,7 @@ namespace ZkLobbyServer
 
         private BattleListUpdater battleListUpdater;
 
+        public PartyManager PartyManager { get; private set; }
 
 
         public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator, ITopPlayerProvider topPlayerProvider)
@@ -67,6 +68,7 @@ namespace ZkLobbyServer
             ChannelManager = new ChannelManager(this);
             MatchMaker = new MatchMaker(this);
             battleListUpdater = new BattleListUpdater(this);
+            PartyManager = new PartyManager(this);
         }
 
         /// <summary>

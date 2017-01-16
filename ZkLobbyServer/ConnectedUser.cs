@@ -44,6 +44,8 @@ namespace ZkLobbyServer
 
         public string Name => User.Name;
 
+        private PartyManager partyManager => server.PartyManager;
+
 
         public ConnectedUser(ZkLobbyServer server, User user)
         {
@@ -510,6 +512,7 @@ namespace ZkLobbyServer
                 await bat.SetModOptions(options.Options);
             }
         }
+       
 
         public async Task Process(LinkSteam linkSteam)
         {
@@ -602,6 +605,7 @@ namespace ZkLobbyServer
 
 
                 await server.MatchMaker.RemoveUser(Name, true);
+                await server.PartyManager.OnUserDisconnected(Name);
 
                 await server.Broadcast(server.ConnectedUsers.Values.Where(x => x != null && server.CanUserSee(x, this)), new UserDisconnected() { Name = Name, Reason = reason });
 
@@ -639,6 +643,20 @@ namespace ZkLobbyServer
             await server.MatchMaker.AreYouReadyResponse(this, response);
         }
 
+        public async Task Process(InviteToParty invite)
+        {
+            await partyManager.ProcessInviteToParty(this, invite);
+        }
+
+        public async Task Process(PartyInviteResponse response)
+        {
+            await partyManager.ProcessPartyInviteResponse(this, response);
+        }
+
+        public async Task Process(LeaveParty message)
+        {
+            await partyManager.ProcessLeaveParty(this, message);
+        }
 
 
         public override string ToString()
