@@ -327,6 +327,7 @@ namespace ZkLobbyServer
                 return;
             }
 
+            openBattle.Header.Title = openBattle.Header.Title.Truncate(200);
             var battle = new ServerBattle(server, Name);
             battle.UpdateWith(openBattle.Header);
             server.Battles[battle.BattleID] = battle;
@@ -353,6 +354,8 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             var h = battleUpdate.Header;
+            h.Title = h.Title.Truncate(200);
+
             if ((h.BattleID == null) && (MyBattle != null)) h.BattleID = MyBattle.BattleID;
             ServerBattle bat;
             if (!server.Battles.TryGetValue(h.BattleID.Value, out bat))
@@ -635,6 +638,8 @@ namespace ZkLobbyServer
         {
             await server.MatchMaker.AreYouReadyResponse(this, response);
         }
+
+
 
         public override string ToString()
         {
