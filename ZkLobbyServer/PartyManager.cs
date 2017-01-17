@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LobbyClient;
+using ZkData;
 
 namespace ZkLobbyServer
 {
@@ -127,6 +128,8 @@ namespace ZkLobbyServer
             foreach (var n in names)
                 if (!party.UserNames.Contains(n))
                 {
+                    var lobus = server.ConnectedUsers.Get(n)?.User;
+                    if (lobus != null) lobus.PartyID = party.PartyID;
                     party.UserNames.Add(n);
                     isChange = true;
                 }
@@ -145,6 +148,8 @@ namespace ZkLobbyServer
             var broadcastNames = party.UserNames.ToList();
             foreach (var n in names)
             {
+                var lobus = server.ConnectedUsers.Get(n)?.User;
+                if (lobus != null) lobus.PartyID = null;
                 party.UserNames.Remove(n);
                 broadcastNames.Add(n);
             }
