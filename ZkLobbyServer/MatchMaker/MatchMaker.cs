@@ -12,7 +12,7 @@ using ZkData;
 
 namespace ZkLobbyServer
 {
-    public class MatchMaker
+    public partial class MatchMaker
     {
         private const int TimerSeconds = 30;
 
@@ -441,101 +441,6 @@ namespace ZkLobbyServer
 
                 await conus.SendCommand(ret);
             }
-        }
-
-
-        public class PlayerEntry
-        {
-            public bool InvitedToPlay;
-            public bool LastReadyResponse;
-
-            public int EloWidth => (int)(100.0 + WaitRatio * 300.0);
-            public int MinConsideredElo => LobbyUser.EffectiveMmElo;
-            public int MaxConsideredElo => (int)(LobbyUser.EffectiveMmElo + (LobbyUser.RawMmElo - LobbyUser.EffectiveMmElo)*WaitRatio);
-
-            public double WaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds/60.0));
-
-            public DateTime JoinedTime { get; private set; } = DateTime.UtcNow;
-            public User LobbyUser { get; private set; }
-            public string Name => LobbyUser.Name;
-            public List<MatchMakerSetup.Queue> QueueTypes { get; private set; }
-
-
-            public PlayerEntry(User user, List<MatchMakerSetup.Queue> queueTypes)
-            {
-                QueueTypes = queueTypes;
-                LobbyUser = user;
-            }
-
-            public List<ProposedBattle> GenerateWantedBattles()
-            {
-                var ret = new List<ProposedBattle>();
-                foreach (var qt in QueueTypes) for (var i = qt.MaxSize; i >= qt.MinSize; i--) if (i % 2 == 0) ret.Add(new ProposedBattle(i, this, qt, qt.EloCutOffExponent));
-                return ret;
-            }
-
-            public void UpdateTypes(List<MatchMakerSetup.Queue> queueTypes)
-            {
-                QueueTypes = queueTypes;
-            }
-        }
-
-
-        public class ProposedBattle
-        {
-            private PlayerEntry owner;
-            public List<PlayerEntry> Players = new List<PlayerEntry>();
-            public int Size { get; private set; }
-            public int MaxElo { get; private set; } = int.MinValue;
-            public int MinElo { get; private set; } = int.MaxValue;
-            public MatchMakerSetup.Queue QueueType { get; private set; }
-            private double eloCutOffExponent;
-
-            private double widthMultiplier;
-
-            public ProposedBattle(int size, PlayerEntry initialPlayer, MatchMakerSetup.Queue queue, double eloCutOffExponent)
-            {
-                Size = size;
-                owner = initialPlayer;
-                QueueType = queue;
-                this.eloCutOffExponent = eloCutOffExponent;
-                widthMultiplier = Math.Max(1.0, 1.0 + (Size - 4) * 0.1);
-                AddPlayer(initialPlayer);
-            }
-
-            public void AddPlayer(PlayerEntry player)
-            {
-                Players.Add(player);
-                MinElo = Math.Min(MinElo, GetPlayerMaxElo(player));
-                MaxElo = Math.Max(MaxElo, GetPlayerMinElo(player));
-            }
-
-            public bool CanBeAdded(PlayerEntry other)
-            {
-                if (!other.GenerateWantedBattles().Any(y => y.Size == Size && y.QueueType == QueueType)) return false;
-                var width = owner.EloWidth * widthMultiplier;
-
-                if ((GetPlayerMinElo(other) - MinElo > width) || (MaxElo - GetPlayerMaxElo(other) > width)) return false;
-
-                return true;
-            }
-
-            private double CutOffFunc(double input)
-            {
-                if (input >= 1500) return Math.Round(1500.0 + Math.Pow(input - 1500.0, eloCutOffExponent));
-                else return 1500.0 - Math.Pow(1500.0 - input, eloCutOffExponent);
-            }
-
-            private int GetPlayerMinElo(PlayerEntry entry)
-            {
-                return (int)Math.Round(CutOffFunc(entry.MinConsideredElo));
-            }
-
-            private int GetPlayerMaxElo(PlayerEntry entry)
-            {
-                return (int)Math.Round(CutOffFunc(entry.MaxConsideredElo));
-            }
-
         }
     }
 }
