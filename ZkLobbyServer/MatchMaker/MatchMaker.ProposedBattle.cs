@@ -59,7 +59,7 @@ namespace ZkLobbyServer
             public bool CanBeAdded(PlayerEntry other, List<PlayerEntry> allPlayers)
             {
                 if (Players.Contains(other)) return false;
-                if (other.Party == owner.Party) return true; // always accept same party
+                if (owner.Party !=null && other.Party == owner.Party) return true; // always accept same party
 
                 if (!other.GenerateWantedBattles(allPlayers).Any(y => (y.Size == Size) && (y.QueueType == QueueType))) return false;
                 var width = owner.EloWidth * widthMultiplier;
