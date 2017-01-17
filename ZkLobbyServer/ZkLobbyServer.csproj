@@ -119,8 +119,10 @@
     <Compile Include="LoginChecker.cs" />
     <Compile Include="ConnectedUser.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="MatchMaker.cs" />
-    <Compile Include="MatchMakerBattle.cs" />
+    <Compile Include="MatchMaker\MatchMaker.cs" />
+    <Compile Include="MatchMaker\MatchMaker.PlayerEntry.cs" />
+    <Compile Include="MatchMaker\MatchMaker.ProposedBattle.cs" />
+    <Compile Include="MatchMaker\MatchMakerBattle.cs" />
     <Compile Include="OfflineMessageHandler.cs" />
     <Compile Include="PartyManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

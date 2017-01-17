@@ -14,6 +14,7 @@ namespace ZeroKWeb.SpringieInterface
         public enum BalanceMode
         {
             Normal,
+            Party, 
             ClanWise,
             FactionWise
         }
@@ -37,7 +38,7 @@ namespace ZeroKWeb.SpringieInterface
             if (clanWise == null && (context.Mode == AutohostMode.Teams)) clanWise = true;
 
 
-            var res = PerformBalance(context, isGameStart, allyCount, clanWise, playerCount);
+            var res = PerformBalance(context, isGameStart, allyCount, clanWise);
 
             if (context.Mode != AutohostMode.None && context.Mode != AutohostMode.GameChickens)
             {
@@ -91,6 +92,8 @@ namespace ZeroKWeb.SpringieInterface
         {
             var ret = new BalanceTeamsResult();
 
+            if (b.IsMatchMakerGame) mode = BalanceMode.Party; // override, for matchmaker mode is always party
+            
             try
             {
                 ret.CanStart = true;
@@ -128,9 +131,16 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 balanceItems = new List<BalanceItem>();
+                if (mode == BalanceMode.Party)
+                {
+                    var clanGroups = accs.GroupBy(x => b.Players.First(p => p.Name == x.Name).PartyID ?? x.AccountID).ToList();
+                    if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
+                    else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
+                }
+
                 if (mode == BalanceMode.ClanWise)
                 {
-                    var clanGroups = accs.GroupBy(x => x.ClanID ?? x.AccountID).ToList();
+                    var clanGroups = accs.GroupBy(x => b.Players.First(p => p.Name == x.Name).PartyID ?? x.ClanID ?? x.AccountID).ToList();
                     if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
                     else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
                 }
@@ -249,14 +259,12 @@ namespace ZeroKWeb.SpringieInterface
         /// <param name="allyCount"></param>
         /// <param name="clanWise"></param>
         /// <param name="config"></param>
-        /// <param name="playerCount"></param>
         /// <remarks>Also removes bots from team games, and tells people to add bots to a chicken game if absent</remarks>
         static BalanceTeamsResult PerformBalance(
             LobbyHostingContext context,
             bool isGameStart,
             int? allyCount,
-            bool? clanWise,
-            int playerCount)
+            bool? clanWise)
         {
             var res = new BalanceTeamsResult();
             var mode = context.Mode;
@@ -349,7 +357,7 @@ namespace ZeroKWeb.SpringieInterface
                     res.CanStart = false;
                     return res;
                 }
-
+                /*
                 foreach (var matchUser in info.Attackers) AddPwPlayer(context, matchUser, res, 0);
 
                 foreach (var matchUser in info.Defenders) AddPwPlayer(context, matchUser, res, 1);
@@ -369,11 +377,12 @@ namespace ZeroKWeb.SpringieInterface
                     res.Message += "This planet is infested by aliens, fight for your survival";
                     return res;
                 }
-
+                */
                 return res;
             }
         }
 
+        /*
         static void AddPwPlayer(LobbyHostingContext context, string matchUser, BalanceTeamsResult res, int allyID)
         {
             var player = context.Players.FirstOrDefault(x => x.Name == matchUser);
@@ -391,7 +400,7 @@ namespace ZeroKWeb.SpringieInterface
             }
             res.Players.Add(
                 new PlayerTeam { AllyID = allyID, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID });
-        }
+        }*/
 
         /// <summary>
         ///     Gets the best balance (lowest standard deviation between teams)

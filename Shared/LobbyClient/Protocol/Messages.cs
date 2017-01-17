@@ -288,6 +288,9 @@ namespace LobbyClient
         public bool IsInGame => InGameSince != null;
         public bool IsInBattleRoom => BattleID != null;
 
+        [JsonIgnore]
+        public int? PartyID;
+
 
         [JsonIgnore] 
         public int SyncVersion; //sync version for updating user statuses
