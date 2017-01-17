@@ -92,7 +92,11 @@ namespace ZkLobbyServer
                     Party party = null;
 
                     if ((inviterParty == null) && (inviteeParty != null)) party = inviteeParty;
-                    if ((inviterParty == null) && (inviteeParty == null)) party = new Party(inv.PartyID);
+                    if ((inviterParty == null) && (inviteeParty == null))
+                    {
+                        party = new Party(inv.PartyID);
+                        parties.Add(party);
+                    }
                     if ((inviterParty != null) && (inviteeParty == null)) party = inviterParty;
                     if ((inviterParty != null) && (inviteeParty != null))
                     {
@@ -119,13 +123,25 @@ namespace ZkLobbyServer
 
         private async Task AddToParty(Party party, params string[] names)
         {
-            foreach (var n in names) if (!party.UserNames.Contains(n)) party.UserNames.Add(n);
+            var isChange = false;
+            foreach (var n in names)
+                if (!party.UserNames.Contains(n))
+                {
+                    party.UserNames.Add(n);
+                    isChange = true;
+                }
+
             var ps = new OnPartyStatus() { PartyID = party.PartyID, UserNames = party.UserNames };
+
+            if (isChange) await server.MatchMaker.RemoveUser(names.First(), true); // remove all people from this party from mm 
+
             await server.Broadcast(AddFriendsBy(party.UserNames), ps);
         }
 
         private async Task RemoveFromParty(Party party, params string[] names)
         {
+            await server.MatchMaker.RemoveUser(names.First(), true); // removing user before changing party removes all party users
+
             var broadcastNames = party.UserNames.ToList();
             foreach (var n in names)
             {

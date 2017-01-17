@@ -210,6 +210,12 @@ namespace ZkLobbyServer
         }
 
 
+        /// <summary>
+        /// Removes user (and his party) from MM queues
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="broadcastChanges">should change be broadcasted/statuses updated</param>
+        /// <returns></returns>
         public async Task RemoveUser(string name, bool broadcastChanges)
         {
             var party = server.PartyManager.GetParty(name);
