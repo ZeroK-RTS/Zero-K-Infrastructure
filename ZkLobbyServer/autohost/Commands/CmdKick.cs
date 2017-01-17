@@ -25,6 +25,10 @@ namespace ZkLobbyServer
 
             target = battle.GetAllUserNames().FirstOrDefault(x => x.Contains(arguments));
             if (target == null) target = arguments;
+            if (target == battle.FounderName) {
+                battle.Respond(e, "Cannot kick the host");
+                return null;
+            }
             return $"do you want to kick {target}?";
         }
 

@@ -118,7 +118,10 @@ namespace LobbyClient
                 Name = this.Name,
                 LobbyID = this.LobbyUser.AccountID,
                 IsSpectator = this.IsSpectator,
-                ScriptPassword = this.ScriptPassword
+                ScriptPassword = this.ScriptPassword,
+                Clan = this.LobbyUser.Clan,
+                Faction = this.LobbyUser.Faction,
+                PartyID = this.LobbyUser.PartyID
 	        };
 	    }
 	} ;

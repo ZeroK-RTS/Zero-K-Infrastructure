@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +11,7 @@ using ZkData;
 
 namespace ZkLobbyServer
 {
-    public class MatchMaker
+    public partial class MatchMaker
     {
         private const int TimerSeconds = 30;
 
@@ -39,11 +38,45 @@ namespace ZkLobbyServer
             {
                 possibleQueues.Add(new MatchMakerSetup.Queue()
                 {
-                    Name = "Teams",
-                    Description = "Play 2v2, 3v3 or 4v4 team game with players of similar skill.",
+                    Name = "4v4",
+                    Description = "Play 4v4 with players of similar skill.",
                     MaxPartySize = 4,
-                    MinSize = 4,
+                    MinSize = 8,
                     MaxSize = 8,
+                    EloCutOffExponent = 0.96,
+                    Game = server.Game,
+                    Mode = AutohostMode.Teams,
+                    Maps =
+                        db.Resources.Where(
+                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams == true) && (x.TypeID == ResourceType.Map))
+                            .Select(x => x.InternalName)
+                            .ToList()
+                });
+
+                possibleQueues.Add(new MatchMakerSetup.Queue()
+                {
+                    Name = "3v3",
+                    Description = "Play 3v3 with players of similar skill.",
+                    MaxPartySize = 3,
+                    MinSize = 6,
+                    MaxSize = 6,
+                    EloCutOffExponent = 0.965,
+                    Game = server.Game,
+                    Mode = AutohostMode.Teams,
+                    Maps =
+                        db.Resources.Where(
+                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams == true) && (x.TypeID == ResourceType.Map))
+                            .Select(x => x.InternalName)
+                            .ToList()
+                });
+
+                possibleQueues.Add(new MatchMakerSetup.Queue()
+                {
+                    Name = "2v2",
+                    Description = "Play 2v2 with players of similar skill.",
+                    MaxPartySize = 2,
+                    MinSize = 4,
+                    MaxSize = 4,
                     EloCutOffExponent = 0.97,
                     Game = server.Game,
                     Mode = AutohostMode.Teams,
@@ -98,8 +131,7 @@ namespace ZkLobbyServer
 
                     if (invitedPeople.Count <= 1)
                     {
-                        foreach (var p in invitedPeople)
-                            p.LastReadyResponse = true;
+                        foreach (var p in invitedPeople) p.LastReadyResponse = true;
                         // if we are doing tick because too few people, make sure we count remaining people as readied to not ban them 
                         OnTick();
                     }
@@ -134,18 +166,17 @@ namespace ZkLobbyServer
             return queuesCounts?.Sum(x => (int?)x.Value) ?? 0;
         }
 
-        public async Task OnServerGameChanged(string game)
-        {
-            foreach (var pq in possibleQueues) pq.Game = game;
-            await server.Broadcast(new MatchMakerSetup() { PossibleQueues = possibleQueues });
-        }
-
-
 
         public async Task OnLoginAccepted(ConnectedUser conus)
         {
             await conus.SendCommand(new MatchMakerSetup() { PossibleQueues = possibleQueues });
             await UpdatePlayerStatus(conus.Name);
+        }
+
+        public async Task OnServerGameChanged(string game)
+        {
+            foreach (var pq in possibleQueues) pq.Game = game;
+            await server.Broadcast(new MatchMakerSetup() { PossibleQueues = possibleQueues });
         }
 
         public async Task QueueRequest(ConnectedUser user, MatchMakerQueueRequest cmd)
@@ -169,38 +200,39 @@ namespace ZkLobbyServer
             var wantedQueueNames = cmd.Queues?.ToList() ?? new List<string>();
             var wantedQueues = possibleQueues.Where(x => wantedQueueNames.Contains(x.Name)).ToList();
 
+            var party = server.PartyManager.GetParty(user.Name);
+            if (party != null) wantedQueues = wantedQueues.Where(x => x.MaxSize/2 >= party.UserNames.Count).ToList(); // if is in party keep only queues where party fits
+
             if (wantedQueues.Count == 0) // delete
             {
                 await RemoveUser(user.Name, true);
                 return;
             }
 
-            players.AddOrUpdate(user.Name,
-                (str) => new PlayerEntry(user.User, wantedQueues),
-                (str, usr) =>
-                {
-                    usr.UpdateTypes(wantedQueues);
-                    return usr;
-                });
-
-
-            // if nobody is invited, we can do tick now to speed up things
-            if (invitationBattles?.Any() != true) OnTick();
-            else await UpdateAllPlayerStatuses(); // else we just send statuses
+            await AddOrUpdateUser(user, wantedQueues);
         }
 
+
+        /// <summary>
+        /// Removes user (and his party) from MM queues
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="broadcastChanges">should change be broadcasted/statuses updated</param>
+        /// <returns></returns>
         public async Task RemoveUser(string name, bool broadcastChanges)
         {
-            PlayerEntry entry;
-            if (players.TryRemove(name, out entry))
+            var party = server.PartyManager.GetParty(name);
+            var anyRemoved = false;
+
+            if (party != null)
             {
-                if (entry.InvitedToPlay) bannedPlayers[entry.Name] = DateTime.UtcNow; // was invited but he is gone now (whatever reason), ban!
-
-                ConnectedUser conUser;
-                if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null)) if (entry?.InvitedToPlay == true) await conUser.SendCommand(new AreYouReadyResult() { AreYouBanned = true, IsBattleStarting = false, });
-
-                if (broadcastChanges) await UpdateAllPlayerStatuses();
+                foreach (var n in party.UserNames) if (await RemoveSingleUser(n)) anyRemoved = true;
             }
+            else
+            {
+                anyRemoved = await RemoveSingleUser(name);
+            }
+            if (broadcastChanges && anyRemoved) await UpdateAllPlayerStatuses();
         }
 
         public async Task UpdateAllPlayerStatuses()
@@ -209,6 +241,39 @@ namespace ZkLobbyServer
             queuesCounts = CountQueuedPeople(players.Values);
 
             await Task.WhenAll(server.ConnectedUsers.Keys.Where(x => x != null).Select(UpdatePlayerStatus));
+        }
+
+        private async Task AddOrUpdateUser(ConnectedUser user, List<MatchMakerSetup.Queue> wantedQueues)
+        {
+            var party = server.PartyManager.GetParty(user.Name);
+            if (party != null)
+                foreach (var p in party.UserNames)
+                {
+                    var conUs = server.ConnectedUsers.Get(p);
+                    if (conUs != null)
+                        players.AddOrUpdate(p,
+                            (str) => new PlayerEntry(conUs.User, wantedQueues, party),
+                            (str, usr) =>
+                            {
+                                usr.UpdateTypes(wantedQueues);
+                                usr.Party = party;
+                                return usr;
+                            });
+                }
+            else
+                players.AddOrUpdate(user.Name,
+                    (str) => new PlayerEntry(user.User, wantedQueues, null),
+                    (str, usr) =>
+                    {
+                        usr.UpdateTypes(wantedQueues);
+                        usr.Party = null;
+                        return usr;
+                    });
+
+
+            // if nobody is invited, we can do tick now to speed up things
+            if (invitationBattles?.Any() != true) OnTick();
+            else await UpdateAllPlayerStatuses(); // else we just send statuses
         }
 
 
@@ -289,6 +354,21 @@ namespace ZkLobbyServer
             return proposedBattles;
         }
 
+
+        private async Task<bool> RemoveSingleUser(string name)
+        {
+            PlayerEntry entry;
+            if (players.TryRemove(name, out entry))
+            {
+                if (entry.InvitedToPlay) bannedPlayers[entry.Name] = DateTime.UtcNow; // was invited but he is gone now (whatever reason), ban!
+
+                ConnectedUser conUser;
+                if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null)) if (entry?.InvitedToPlay == true) await conUser.SendCommand(new AreYouReadyResult() { AreYouBanned = true, IsBattleStarting = false, });
+                return true;
+            }
+            return false;
+        }
+
         private void ResetAndSendMmInvitations()
         {
             // generate next battles and send inviatation
@@ -362,16 +442,14 @@ namespace ZkLobbyServer
                     .ThenBy(x => x.JoinedTime)
                     .ToList();
 
-            var testedBattles = player.GenerateWantedBattles();
+            var testedBattles = player.GenerateWantedBattles(playersByElo);
 
             foreach (var other in playersByElo)
                 foreach (var bat in testedBattles)
-                    if (bat.CanBeAdded(other))
-                    {
-                        bat.AddPlayer(other);
-                        if (bat.Players.Count == bat.Size) return bat;
-                    }
-
+                {
+                    if (bat.CanBeAdded(other, playersByElo)) bat.AddPlayer(other, playersByElo);
+                    if (bat.Players.Count == bat.Size) return bat;
+                }
             return null;
         }
 
@@ -395,113 +473,20 @@ namespace ZkLobbyServer
                 };
 
 
-                // check for instant battle start
-                if (invitationBattles?.Any() != true && players.Count > 0) // nobody invited atm and some in queue
+                // check for instant battle start - only non partied people
+                if ((invitationBattles?.Any() != true) && (players.Count > 0) && (server.PartyManager.GetParty(name) == null))
+                // nobody invited atm and some in queue
                 {
-                    var testPlayers = players.Values.Where(x => x != null && x.Name != name).ToList(); // get all currently queued players except for self
-                    var testSelf = new PlayerEntry(conus.User, possibleQueues.ToList()); // readd self but with all queues
+                    var testPlayers = players.Values.Where(x => (x != null) && (x.Name != name)).ToList();
+                    // get all currently queued players except for self
+                    var testSelf = new PlayerEntry(conus.User, possibleQueues.ToList(), null); // readd self but with all queues
                     testPlayers.Add(testSelf);
-                    var testBattles = ProposeBattles(testPlayers); 
+                    var testBattles = ProposeBattles(testPlayers);
                     ret.InstantStartQueues = testBattles.Where(x => x.Players.Contains(testSelf)).Select(x => x.QueueType.Name).Distinct().ToList();
                 }
 
                 await conus.SendCommand(ret);
             }
-        }
-
-
-        public class PlayerEntry
-        {
-            public bool InvitedToPlay;
-            public bool LastReadyResponse;
-
-            public int EloWidth => (int)(100.0 + WaitRatio * 300.0);
-            public int MinConsideredElo => LobbyUser.EffectiveMmElo;
-            public int MaxConsideredElo => (int)(LobbyUser.EffectiveMmElo + (LobbyUser.RawMmElo - LobbyUser.EffectiveMmElo)*WaitRatio);
-
-            public double WaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds/60.0));
-
-            public DateTime JoinedTime { get; private set; } = DateTime.UtcNow;
-            public User LobbyUser { get; private set; }
-            public string Name => LobbyUser.Name;
-            public List<MatchMakerSetup.Queue> QueueTypes { get; private set; }
-
-
-            public PlayerEntry(User user, List<MatchMakerSetup.Queue> queueTypes)
-            {
-                QueueTypes = queueTypes;
-                LobbyUser = user;
-            }
-
-            public List<ProposedBattle> GenerateWantedBattles()
-            {
-                var ret = new List<ProposedBattle>();
-                foreach (var qt in QueueTypes) for (var i = qt.MaxSize; i >= qt.MinSize; i--) if (i % 2 == 0) ret.Add(new ProposedBattle(i, this, qt, qt.EloCutOffExponent));
-                return ret;
-            }
-
-            public void UpdateTypes(List<MatchMakerSetup.Queue> queueTypes)
-            {
-                QueueTypes = queueTypes;
-            }
-        }
-
-
-        public class ProposedBattle
-        {
-            private PlayerEntry owner;
-            public List<PlayerEntry> Players = new List<PlayerEntry>();
-            public int Size { get; private set; }
-            public int MaxElo { get; private set; } = int.MinValue;
-            public int MinElo { get; private set; } = int.MaxValue;
-            public MatchMakerSetup.Queue QueueType { get; private set; }
-            private double eloCutOffExponent;
-
-            private double widthMultiplier;
-
-            public ProposedBattle(int size, PlayerEntry initialPlayer, MatchMakerSetup.Queue queue, double eloCutOffExponent)
-            {
-                Size = size;
-                owner = initialPlayer;
-                QueueType = queue;
-                this.eloCutOffExponent = eloCutOffExponent;
-                widthMultiplier = Math.Max(1.0, 1.0 + (Size - 4) * 0.1);
-                AddPlayer(initialPlayer);
-            }
-
-            public void AddPlayer(PlayerEntry player)
-            {
-                Players.Add(player);
-                MinElo = Math.Min(MinElo, GetPlayerMaxElo(player));
-                MaxElo = Math.Max(MaxElo, GetPlayerMinElo(player));
-            }
-
-            public bool CanBeAdded(PlayerEntry other)
-            {
-                if (!other.GenerateWantedBattles().Any(y => y.Size == Size && y.QueueType == QueueType)) return false;
-                var width = owner.EloWidth * widthMultiplier;
-
-                if ((GetPlayerMinElo(other) - MinElo > width) || (MaxElo - GetPlayerMaxElo(other) > width)) return false;
-
-                return true;
-            }
-
-            private double CutOffFunc(double input)
-            {
-                if (input >= 1500) return Math.Round(1500.0 + Math.Pow(input - 1500.0, eloCutOffExponent));
-                else return 1500.0 - Math.Pow(1500.0 - input, eloCutOffExponent);
-            }
-
-            private int GetPlayerMinElo(PlayerEntry entry)
-            {
-                return (int)Math.Round(CutOffFunc(entry.MinConsideredElo));
-            }
-
-            private int GetPlayerMaxElo(PlayerEntry entry)
-            {
-                return (int)Math.Round(CutOffFunc(entry.MaxConsideredElo));
-            }
-
         }
     }
 }

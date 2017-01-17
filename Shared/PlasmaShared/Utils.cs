@@ -759,5 +759,13 @@ namespace ZkData
             return tcs.Task;
         }
 
+
+        public static string Truncate(this string input, int length)
+        {
+            if (input == null) return input;
+            if (input.Length < length) return input;
+            return input.Substring(0, length);
+        }
+
     }
 }

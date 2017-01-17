@@ -1838,14 +1838,7 @@ end
 
 function SendMissionPersistentMessages()
   if Script.LuaUI("MissionPersistentMessagesFromSynced") then
-    Spring.Echo("damn it to hell!")
     local persistentMessages = MakeRealTable(SYNCED.persistentMessages)
-    for i,v in spairs(SYNCED.persistentMessages) do
-      Spring.Echo("choo choo motherfucker", i)
-    end
-    for i,v in pairs(persistentMessages) do
-      Spring.Echo("awooo", i) 
-    end
     Script.LuaUI.MissionPersistentMessagesFromSynced(persistentMessages)
   end
 end

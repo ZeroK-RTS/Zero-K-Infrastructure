@@ -72,7 +72,9 @@
     <Compile Include="Legacy\TasClient.cs" />
     <Compile Include="Legacy\TasClient_structures.cs" />
     <Compile Include="Legacy\User.cs" />
+    <Compile Include="Protocol\MatchMakerMessages.cs" />
     <Compile Include="Protocol\Messages.cs" />
+    <Compile Include="Protocol\PartyMessages.cs" />
     <Compile Include="SayingEventArgs.cs" />
     <Compile Include="Legacy\ServerConnection.cs" />
     <Compile Include="ScriptGenerator.cs" />

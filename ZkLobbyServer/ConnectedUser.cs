@@ -44,6 +44,8 @@ namespace ZkLobbyServer
 
         public string Name => User.Name;
 
+        private PartyManager partyManager => server.PartyManager;
+
 
         public ConnectedUser(ZkLobbyServer server, User user)
         {
@@ -327,6 +329,7 @@ namespace ZkLobbyServer
                 return;
             }
 
+            openBattle.Header.Title = openBattle.Header.Title.Truncate(200);
             var battle = new ServerBattle(server, Name);
             battle.UpdateWith(openBattle.Header);
             server.Battles[battle.BattleID] = battle;
@@ -353,6 +356,8 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
 
             var h = battleUpdate.Header;
+            h.Title = h.Title.Truncate(200);
+
             if ((h.BattleID == null) && (MyBattle != null)) h.BattleID = MyBattle.BattleID;
             ServerBattle bat;
             if (!server.Battles.TryGetValue(h.BattleID.Value, out bat))
@@ -507,6 +512,7 @@ namespace ZkLobbyServer
                 await bat.SetModOptions(options.Options);
             }
         }
+       
 
         public async Task Process(LinkSteam linkSteam)
         {
@@ -599,6 +605,7 @@ namespace ZkLobbyServer
 
 
                 await server.MatchMaker.RemoveUser(Name, true);
+                await server.PartyManager.OnUserDisconnected(Name);
 
                 await server.Broadcast(server.ConnectedUsers.Values.Where(x => x != null && server.CanUserSee(x, this)), new UserDisconnected() { Name = Name, Reason = reason });
 
@@ -635,6 +642,22 @@ namespace ZkLobbyServer
         {
             await server.MatchMaker.AreYouReadyResponse(this, response);
         }
+
+        public async Task Process(InviteToParty invite)
+        {
+            await partyManager.ProcessInviteToParty(this, invite);
+        }
+
+        public async Task Process(PartyInviteResponse response)
+        {
+            await partyManager.ProcessPartyInviteResponse(this, response);
+        }
+
+        public async Task Process(LeaveParty message)
+        {
+            await partyManager.ProcessLeaveParty(this, message);
+        }
+
 
         public override string ToString()
         {
