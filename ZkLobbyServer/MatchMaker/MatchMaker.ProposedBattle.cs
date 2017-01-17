@@ -66,7 +66,7 @@ namespace ZkLobbyServer
 
                 if (other.Party != null)
                 {
-                    if (!VerifyPartySizeFits(other)) return false;
+                    if (!VerifyPartySizeFits(other.Party)) return false;
 
                     foreach (var p in allPlayers.Where(x => x.Party == other.Party)) if ((GetPlayerMinElo(p) - MinElo > width) || (MaxElo - GetPlayerMaxElo(p) > width)) return false;
                 }
@@ -91,8 +91,10 @@ namespace ZkLobbyServer
                 return (int)Math.Round(CutOffFunc(entry.MinConsideredElo));
             }
 
-            private bool VerifyPartySizeFits(PlayerEntry other)
+            private bool VerifyPartySizeFits(PartyManager.Party party)
             {
+                if (party.UserNames.Count + Players.Count > Size) return false;
+
                 var existingPartySizes =
                     Players.Where(x => x.Party != null).GroupBy(x => x.Party).Select(x => x.Key.UserNames.Count).OrderByDescending(x => x).ToList();
                 var maxTeamSize = Size / 2;
@@ -102,7 +104,7 @@ namespace ZkLobbyServer
                     if (t1 + psize <= maxTeamSize) t1 += psize;
                     else if (t2 + psize <= maxTeamSize) t2 += psize;
 
-                if ((other.Party.UserNames.Count + t1 > maxTeamSize) && (other.Party.UserNames.Count + t2 > maxTeamSize)) return false; // cannot fit new party to still balance
+                if ((party.UserNames.Count + t1 > maxTeamSize) && (party.UserNames.Count + t2 > maxTeamSize)) return false; // cannot fit new party to still balance
                 return true;
             }
         }
