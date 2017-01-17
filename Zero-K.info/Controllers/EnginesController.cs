@@ -15,7 +15,7 @@ namespace ZeroKWeb.Controllers
     [Auth(Role = AuthRole.ZkAdmin)]
     public class EnginesController : Controller
     {
-        public static string[] EnginePlatforms = new[] { "win32", "linux64", "linux32" };
+        public static string[] EnginePlatforms = new[] { "win32", "linux64", "linux32", "win64" };
 
 
         public class EnginesModel
