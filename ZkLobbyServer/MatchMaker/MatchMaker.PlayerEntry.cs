@@ -21,10 +21,12 @@ namespace ZkLobbyServer
             public User LobbyUser { get; private set; }
             public string Name => LobbyUser.Name;
             public List<MatchMakerSetup.Queue> QueueTypes { get; private set; }
+            public PartyManager.Party Party { get; set; }
 
 
-            public PlayerEntry(User user, List<MatchMakerSetup.Queue> queueTypes)
+            public PlayerEntry(User user, List<MatchMakerSetup.Queue> queueTypes, PartyManager.Party party)
             {
+                Party = party;
                 QueueTypes = queueTypes;
                 LobbyUser = user;
             }
