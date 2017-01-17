@@ -31,10 +31,14 @@ namespace ZkLobbyServer
                 LobbyUser = user;
             }
 
-            public List<ProposedBattle> GenerateWantedBattles()
+            public List<ProposedBattle> GenerateWantedBattles(List<PlayerEntry> allPlayers)
             {
                 var ret = new List<ProposedBattle>();
-                foreach (var qt in QueueTypes) for (var i = qt.MaxSize; i >= qt.MinSize; i--) if (i % 2 == 0) ret.Add(new ProposedBattle(i, this, qt, qt.EloCutOffExponent));
+                foreach (var qt in QueueTypes) for (var i = qt.MaxSize; i >= qt.MinSize; i--)
+                    if (i%2 == 0)
+                    {
+                        if (Party == null || Party.UserNames.Count <= i/2) ret.Add(new ProposedBattle(i, this, qt, qt.EloCutOffExponent, allPlayers));
+                    }
                 return ret;
             }
 

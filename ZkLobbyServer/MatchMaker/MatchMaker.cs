@@ -200,6 +200,9 @@ namespace ZkLobbyServer
             var wantedQueueNames = cmd.Queues?.ToList() ?? new List<string>();
             var wantedQueues = possibleQueues.Where(x => wantedQueueNames.Contains(x.Name)).ToList();
 
+            var party = server.PartyManager.GetParty(user.Name);
+            if (party != null) wantedQueues = wantedQueues.Where(x => x.MaxSize/2 >= party.UserNames.Count).ToList(); // if is in party keep only queues where party fits
+
             if (wantedQueues.Count == 0) // delete
             {
                 await RemoveUser(user.Name, true);
@@ -439,16 +442,14 @@ namespace ZkLobbyServer
                     .ThenBy(x => x.JoinedTime)
                     .ToList();
 
-            var testedBattles = player.GenerateWantedBattles();
+            var testedBattles = player.GenerateWantedBattles(playersByElo);
 
             foreach (var other in playersByElo)
                 foreach (var bat in testedBattles)
-                    if (bat.CanBeAdded(other))
-                    {
-                        bat.AddPlayer(other);
-                        if (bat.Players.Count == bat.Size) return bat;
-                    }
-
+                {
+                    if (bat.CanBeAdded(other, playersByElo)) bat.AddPlayer(other, playersByElo);
+                    if (bat.Players.Count == bat.Size) return bat;
+                }
             return null;
         }
 
