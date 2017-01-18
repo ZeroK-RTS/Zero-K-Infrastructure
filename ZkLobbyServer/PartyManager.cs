@@ -143,8 +143,10 @@ namespace ZkLobbyServer
 
         private async Task RemoveFromParty(Party party, params string[] names)
         {
-            await server.MatchMaker.RemoveUser(names.First(), true); // removing user before changing party removes all party users
+            if (party.UserNames.Count == 2 && names.Any(x => party.UserNames.Contains(x))) names = party.UserNames.ToArray(); // party has just two people and we remove one of them -> remove all
 
+            await server.MatchMaker.RemoveUser(names.First(), true); // removing user before changing party removes all party users
+            
             var broadcastNames = party.UserNames.ToList();
             foreach (var n in names)
             {

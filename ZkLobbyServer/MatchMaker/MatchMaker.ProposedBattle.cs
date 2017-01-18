@@ -41,9 +41,9 @@ namespace ZkLobbyServer
                         if (!Players.Contains(p))
                         {
                             Players.Add(p);
-                            MinElo = Math.Min(MinElo, GetPlayerMaxElo(p));
-                            MaxElo = Math.Max(MaxElo, GetPlayerMinElo(p));
                         }
+                    MinElo = Math.Min(MinElo, GetPartyMaxElo(player.Party, allPlayers));
+                    MaxElo = Math.Max(MaxElo, GetPartyMinElo(player.Party, allPlayers));
                 }
                 else
                 {
@@ -56,6 +56,7 @@ namespace ZkLobbyServer
                 }
             }
 
+            
             public bool CanBeAdded(PlayerEntry other, List<PlayerEntry> allPlayers)
             {
                 if (Players.Contains(other)) return false;
@@ -67,8 +68,8 @@ namespace ZkLobbyServer
                 if (other.Party != null)
                 {
                     if (!VerifyPartySizeFits(other.Party)) return false;
-
-                    foreach (var p in allPlayers.Where(x => x.Party == other.Party)) if ((GetPlayerMinElo(p) - MinElo > width) || (MaxElo - GetPlayerMaxElo(p) > width)) return false;
+                    
+                    if ((GetPartyMinElo(other.Party, allPlayers) - MinElo > width) || (MaxElo - GetPartyMaxElo(other.Party, allPlayers) > width)) return false;
                 }
                 else if ((GetPlayerMinElo(other) - MinElo > width) || (MaxElo - GetPlayerMaxElo(other) > width)) return false;
 
@@ -85,6 +86,17 @@ namespace ZkLobbyServer
             {
                 return (int)Math.Round(CutOffFunc(entry.MaxConsideredElo));
             }
+
+            private int GetPartyMaxElo(PartyManager.Party party, List<PlayerEntry> players)
+            {
+                return (int)Math.Round(players.Where(x => x.Party == party).Select(GetPlayerMaxElo).Average());
+            }
+
+            private int GetPartyMinElo(PartyManager.Party party, List<PlayerEntry> players)
+            {
+                return (int)Math.Round(players.Where(x => x.Party == party).Select(GetPlayerMinElo).Average());
+            }
+
 
             private int GetPlayerMinElo(PlayerEntry entry)
             {
