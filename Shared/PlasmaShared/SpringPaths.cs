@@ -42,6 +42,7 @@ namespace ZkData
         public string WritableDirectory { get; private set; }
 
         public bool UseSafeMode { get; set; }
+        public bool Allow64BitWindows { get; set; }
 
         public string GetDedicatedServerPath(string engine)
         {

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using LobbyClient;
+using ZkData;
 
 namespace ZkLobbyServer
 {
@@ -35,6 +37,9 @@ namespace ZkLobbyServer
 
             public void AddPlayer(PlayerEntry player, List<PlayerEntry> allPlayers)
             {
+                //Trace.TraceError("MM: proposed battle {0} adding {1}", string.Join(", ", Players.Select(x=>x.Name)), player.Name);
+                //var minEloOrg = MinElo;
+                //var maxEloOrg = MaxElo;
                 if (player.Party != null)
                 {
                     foreach (var p in allPlayers.Where(x => x.Party == player.Party))
@@ -44,6 +49,9 @@ namespace ZkLobbyServer
                         }
                     MinElo = Math.Min(MinElo, GetPartyMaxElo(player.Party, allPlayers));
                     MaxElo = Math.Max(MaxElo, GetPartyMinElo(player.Party, allPlayers));
+
+                    //Trace.TraceError("MM: added party {6} MinElo: {0}->{1} ({4}),  MaxElo: {2}->{3} ({5})", minEloOrg, MinElo, maxEloOrg, MaxElo, GetPartyMaxElo(player.Party, allPlayers), GetPartyMinElo(player.Party, allPlayers), player.Name);
+
                 }
                 else
                 {
@@ -52,26 +60,51 @@ namespace ZkLobbyServer
                         Players.Add(player);
                         MinElo = Math.Min(MinElo, GetPlayerMaxElo(player));
                         MaxElo = Math.Max(MaxElo, GetPlayerMinElo(player));
+
+                        //Trace.TraceError("MM: added player {6} MinElo: {0}->{1} ({4}),  MaxElo: {2}->{3} ({5})", minEloOrg, MinElo, maxEloOrg, MaxElo, GetPlayerMaxElo(player), GetPlayerMinElo(player), player.Name);
                     }
                 }
+
             }
 
             
             public bool CanBeAdded(PlayerEntry other, List<PlayerEntry> allPlayers)
             {
-                if (Players.Contains(other)) return false;
+                //Trace.TraceError("MM: proposed battle {0} checking {1}", string.Join(", ", Players.Select(x => x.Name)), other.Name);
+
+                if (Players.Contains(other))
+                {
+                    //Trace.TraceError("MM: cannot add {0}, already added", other.Name);
+                    return false;
+                }
                 if (owner.Party !=null && other.Party == owner.Party) return true; // always accept same party
 
-                if (!other.GenerateWantedBattles(allPlayers).Any(y => (y.Size == Size) && (y.QueueType == QueueType))) return false;
+                if (!other.GenerateWantedBattles(allPlayers).Any(y => (y.Size == Size) && (y.QueueType == QueueType)))
+                {
+                    //Trace.TraceError("MM: cannot add {0}, does not want same game type", other.Name);
+                    return false;
+                }
                 var width = owner.EloWidth * widthMultiplier;
 
                 if (other.Party != null)
                 {
-                    if (!VerifyPartySizeFits(other.Party)) return false;
-                    
-                    if ((GetPartyMinElo(other.Party, allPlayers) - MinElo > width) || (MaxElo - GetPartyMaxElo(other.Party, allPlayers) > width)) return false;
+                    if (!VerifyPartySizeFits(other.Party))
+                    {
+                        //Trace.TraceError("MM: cannot add party {0}, party size does not fit", other.Name);
+                        return false;
+                    }
+
+                    if ((GetPartyMinElo(other.Party, allPlayers) - MinElo > width) || (MaxElo - GetPartyMaxElo(other.Party, allPlayers) > width))
+                    {
+                        //Trace.TraceError("MM: cannot add party {0}, {1} - {2} > {3} || {4} - {5} > {3}", other.Name, GetPartyMinElo(other.Party, allPlayers), MinElo, width, MaxElo, GetPartyMaxElo(other.Party, allPlayers));
+                        return false;
+                    }
                 }
-                else if ((GetPlayerMinElo(other) - MinElo > width) || (MaxElo - GetPlayerMaxElo(other) > width)) return false;
+                else if ((GetPlayerMinElo(other) - MinElo > width) || (MaxElo - GetPlayerMaxElo(other) > width))
+                {
+                    //Trace.TraceError("MM: cannot add {0}, {1} - {2} > {3} || {4} - {5} > {3}", other.Name, GetPlayerMinElo(other), MinElo, width, MaxElo, GetPlayerMaxElo(other));
+                    return false;
+                }
 
                 return true;
             }

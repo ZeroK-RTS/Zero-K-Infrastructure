@@ -436,18 +436,22 @@ namespace ZkLobbyServer
 
         private static ProposedBattle TryToMakeBattle(PlayerEntry player, IList<PlayerEntry> otherPlayers)
         {
+            var allPlayers = new List<PlayerEntry>();
+            allPlayers.AddRange(otherPlayers);
+            allPlayers.Add(player);
+
             var playersByElo =
                 otherPlayers.Where(x => x != player)
                     .OrderBy(x => Math.Abs(x.LobbyUser.EffectiveMmElo - player.LobbyUser.EffectiveMmElo))
                     .ThenBy(x => x.JoinedTime)
                     .ToList();
 
-            var testedBattles = player.GenerateWantedBattles(playersByElo);
+            var testedBattles = player.GenerateWantedBattles(allPlayers);
 
             foreach (var other in playersByElo)
                 foreach (var bat in testedBattles)
                 {
-                    if (bat.CanBeAdded(other, playersByElo)) bat.AddPlayer(other, playersByElo);
+                    if (bat.CanBeAdded(other, allPlayers)) bat.AddPlayer(other, allPlayers);
                     if (bat.Players.Count == bat.Size) return bat;
                 }
             return null;
