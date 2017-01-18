@@ -39,7 +39,7 @@ namespace ChobbyLauncher
 
         public Chobbyla(string rootPath, string chobbyTagOverride, string engineOverride)
         {
-            paths = new SpringPaths(rootPath, false);
+            paths = new SpringPaths(rootPath, false) { Allow64BitWindows = true };
             chobbyTag = chobbyTagOverride ?? (GlobalConst.Mode == ModeType.Live ? "zkmenu:stable" : "zkmenu:test");
             isDev = chobbyTag == "dev" || chobbyTag == "chobby:dev" || chobbyTag =="zkmenu:dev";
             engine = engineOverride;
