@@ -37,7 +37,7 @@ namespace ZkLobbyServer
 
             public void AddPlayer(PlayerEntry player, List<PlayerEntry> allPlayers)
             {
-                Trace.TraceError("MM: proposed battle {0}", string.Join(", ", Players.Select(x=>x.Name)));
+                Trace.TraceError("MM: proposed battle {0} adding {1}", string.Join(", ", Players.Select(x=>x.Name)), player.Name);
                 var minEloOrg = MinElo;
                 var maxEloOrg = MaxElo;
                 if (player.Party != null)
@@ -70,6 +70,8 @@ namespace ZkLobbyServer
             
             public bool CanBeAdded(PlayerEntry other, List<PlayerEntry> allPlayers)
             {
+                Trace.TraceError("MM: proposed battle {0} checking {1}", string.Join(", ", Players.Select(x => x.Name)), other.Name);
+
                 if (Players.Contains(other))
                 {
                     Trace.TraceError("MM: cannot add {0}, already added", other.Name);
