@@ -37,6 +37,8 @@ namespace PlasmaDownloader
             Utils.StartAsync(() =>
                 {
                     var platform = "win32";
+                    
+                    if (Environment.Is64BitOperatingSystem) platform = "win64";
 
                     if (Environment.OSVersion.Platform == PlatformID.Unix)
                     {
