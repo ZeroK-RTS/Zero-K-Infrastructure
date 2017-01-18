@@ -58,7 +58,7 @@ namespace PlasmaDownloader
                     if (platform == "win64")
                     {
                         possibleUrls.Add(string.Format("{0}/engine/{2}/{1}.zip", GlobalConst.BaseSiteUrl, Name, "win32"));
-                        possibleUrls.Add(string.Format("{0}/engine/{2}/{1}.zip", "http://zero-k.info", Name, "win32"));server
+                        possibleUrls.Add(string.Format("{0}/engine/{2}/{1}.zip", "http://zero-k.info", Name, "win32"));
                     }
 
                     var downloadUrl = possibleUrls.Where(VerifyFile).FirstOrDefault();
