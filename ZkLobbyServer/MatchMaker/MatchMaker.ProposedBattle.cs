@@ -37,6 +37,7 @@ namespace ZkLobbyServer
 
             public void AddPlayer(PlayerEntry player, List<PlayerEntry> allPlayers)
             {
+                Trace.TraceError("MM: proposed battle {0}", string.Join(", ", Players.Select(x=>x.Name)));
                 var minEloOrg = MinElo;
                 var maxEloOrg = MaxElo;
                 if (player.Party != null)
