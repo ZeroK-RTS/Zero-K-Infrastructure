@@ -38,7 +38,7 @@ namespace PlasmaDownloader
                 {
                     var platform = "win32";
                     
-                    //if (Environment.Is64BitOperatingSystem) platform = "win64";
+                    if (Environment.Is64BitOperatingSystem && springPaths.Allow64BitWindows) platform = "win64";
 
                     if (Environment.OSVersion.Platform == PlatformID.Unix)
                     {
