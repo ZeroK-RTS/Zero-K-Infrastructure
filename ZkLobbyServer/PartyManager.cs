@@ -181,7 +181,7 @@ namespace ZkLobbyServer
         {
             public string Invitee;
             public string Inviter;
-            public DateTime Issued;
+            public DateTime Issued = DateTime.UtcNow;
             public int PartyID;
         }
     }
