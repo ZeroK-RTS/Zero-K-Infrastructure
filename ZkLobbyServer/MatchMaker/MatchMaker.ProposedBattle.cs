@@ -44,13 +44,12 @@ namespace ZkLobbyServer
                     foreach (var p in allPlayers.Where(x => x.Party == player.Party))
                         if (!Players.Contains(p))
                         {
-                            Trace.TraceError("MM: adding {0} to proposed battle", p);
                             Players.Add(p);
                         }
                     MinElo = Math.Min(MinElo, GetPartyMaxElo(player.Party, allPlayers));
                     MaxElo = Math.Max(MaxElo, GetPartyMinElo(player.Party, allPlayers));
 
-                    Trace.TraceError("MM: added party MinElo: {0}->{1} ({4}),  MaxElo: {2}->{3} ({5})", minEloOrg, MinElo, maxEloOrg, MaxElo, GetPartyMaxElo(player.Party, allPlayers), GetPartyMinElo(player.Party, allPlayers));
+                    Trace.TraceError("MM: added party {6} MinElo: {0}->{1} ({4}),  MaxElo: {2}->{3} ({5})", minEloOrg, MinElo, maxEloOrg, MaxElo, GetPartyMaxElo(player.Party, allPlayers), GetPartyMinElo(player.Party, allPlayers), player.Name);
 
                 }
                 else
@@ -58,11 +57,10 @@ namespace ZkLobbyServer
                     if (!Players.Contains(player))
                     {
                         Players.Add(player);
-                        Trace.TraceError("MM: adding {0} to proposed battle", player);
                         MinElo = Math.Min(MinElo, GetPlayerMaxElo(player));
                         MaxElo = Math.Max(MaxElo, GetPlayerMinElo(player));
 
-                        Trace.TraceError("MM: added player MinElo: {0}->{1} ({4}),  MaxElo: {2}->{3} ({5})", minEloOrg, MinElo, maxEloOrg, MaxElo, GetPlayerMaxElo(player), GetPlayerMinElo(player));
+                        Trace.TraceError("MM: added player {6} MinElo: {0}->{1} ({4}),  MaxElo: {2}->{3} ({5})", minEloOrg, MinElo, maxEloOrg, MaxElo, GetPlayerMaxElo(player), GetPlayerMinElo(player), player.Name);
                     }
                 }
 
@@ -71,7 +69,11 @@ namespace ZkLobbyServer
             
             public bool CanBeAdded(PlayerEntry other, List<PlayerEntry> allPlayers)
             {
-                if (Players.Contains(other)) return false;
+                if (Players.Contains(other))
+                {
+                    Trace.TraceError("MM: cannot add {0}, already added", other.Name);
+                    return false;
+                }
                 if (owner.Party !=null && other.Party == owner.Party) return true; // always accept same party
 
                 if (!other.GenerateWantedBattles(allPlayers).Any(y => (y.Size == Size) && (y.QueueType == QueueType)))
