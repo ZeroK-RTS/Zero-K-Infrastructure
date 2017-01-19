@@ -94,6 +94,7 @@ namespace ZeroKWeb.SpringieInterface
 
                         userParams["avatar"] = user.Avatar;
                         userParams["admin"] = user.IsZeroKAdmin ? "1" : "0";
+                        if (p.PartyID.HasValue) userParams["PartyID"] = p.PartyID.ToString();
 
                         var userSpecChatBlocked = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanSpecChat);
                         userParams["can_spec_chat"] = userSpecChatBlocked ? "0" : "1";
