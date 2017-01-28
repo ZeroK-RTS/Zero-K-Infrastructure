@@ -968,7 +968,8 @@ local actionsTable = {
           end
         end,
   GuiMessagePersistentAction = function(action)
-          persistentMessages[#persistentMessages+1] = {message = action.args.message, height = action.args.height, width = action.args.width, fontSize = action.args.fontSize, image = action.args.image}
+          persistentMessages[#persistentMessages+1] = {message = action.args.message, height = action.args.height, width = action.args.width,
+            fontSize = action.args.fontSize, image = action.args.image, imageFromArchive = action.args.imageFromArchive}
           UnsyncedEventFunc(action)
         end,
   AddObjectiveAction = function(action)
