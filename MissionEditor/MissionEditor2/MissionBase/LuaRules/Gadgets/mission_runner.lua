@@ -579,7 +579,7 @@ local actionsTable = {
         end,
   ModifyUnitHealthAction = function(action)
           for unitID in pairs(FindUnitsInGroup(action.args.group)) do
-            Spring.AddUnitDamage(unitID, action.args.damage)
+            Spring.AddUnitDamage(unitID, action.args.damage, 0, -1, -6) -- weaponID -6 since -1 to -5 are used by engine for various things and ZK does UnitPreDamaged on them
           end
         end,
   MakeUnitsAlwaysVisibleAction = function(action)
