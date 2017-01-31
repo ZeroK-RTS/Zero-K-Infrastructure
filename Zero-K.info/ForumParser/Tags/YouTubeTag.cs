@@ -20,13 +20,13 @@ namespace ZeroKWeb.ForumParser
                 var match = Regex.Match(content, "v=([^&]+)");
                 if (match.Success)
                 {
-                    context.AppendFormat("<iframe width=\"420\" height=\"315\" src=\"http://www.youtube.com/embed/{0}\" frameborder=\"0\" hd=\"1\" allowfullscreen=\"1\"></iframe>", match.Groups[1].Value);
+                    context.AppendFormat("<iframe width=\"420\" height=\"315\" src=\"https://www.youtube.com/embed/{0}\" frameborder=\"0\" hd=\"1\" allowfullscreen=\"1\"></iframe>", match.Groups[1].Value);
                     return closing.Next;
                 }
                 match = Regex.Match(content, @"\.be/([^&]+)");
                 if (match.Success)
                 {
-                    context.AppendFormat("<iframe width=\"420\" height=\"315\" src=\"http://www.youtube.com/embed/{0}\" frameborder=\"0\" hd=\"1\" allowfullscreen=\"1\"></iframe>", match.Groups[1].Value);
+                    context.AppendFormat("<iframe width=\"420\" height=\"315\" src=\"https://www.youtube.com/embed/{0}\" frameborder=\"0\" hd=\"1\" allowfullscreen=\"1\"></iframe>", match.Groups[1].Value);
                     return closing.Next;
                 }
             }
