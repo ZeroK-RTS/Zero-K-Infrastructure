@@ -30,6 +30,27 @@ namespace ChobbyLauncher
         }
 
 
+        public void CreateLobbyAsync(Action<ulong?> onCreated)
+        {
+            if (IsOnline)
+            {
+                var onLobbyCreated = new CallResult<LobbyCreated_t>();
+                var callID = SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, 16);
+                onLobbyCreated.Set(callID, (t, failure) =>
+                {
+                    if (!failure && t.m_eResult == EResult.k_EResultOK)
+                    {
+                        onCreated?.Invoke(t.m_ulSteamIDLobby);
+                    }
+                    else
+                    {
+                        onCreated?.Invoke((ulong?)null);
+                    }
+                });
+            }
+        }
+        
+        
         [HandleProcessCorruptedStateExceptions]
         void TimerOnElapsed(object sender)
         {
@@ -77,6 +98,8 @@ namespace ChobbyLauncher
             var truncArray = new byte[ticketSize];
             Array.Copy(buf, truncArray, truncArray.Length);
             return truncArray;
+
+
         }
 
         public ulong GetSteamID()

@@ -80,6 +80,7 @@ namespace ChobbyLauncher
     {
         public string AuthToken { get; set; }
         public List<ulong> Friends { get; set; }
+        public ulong? LobbyID { get; set; }
     }
 
 

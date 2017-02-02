@@ -135,6 +135,7 @@
     <Compile Include="SpringieInterface\PlanetWarsTurnHandler.cs" />
     <Compile Include="SpringieInterface\PlayerJoinHandler.cs" />
     <Compile Include="SpringieInterface\StartSetup.cs" />
+    <Compile Include="SteamWebApi.cs" />
     <Compile Include="utils\Utils.cs" />
     <Compile Include="ZkLobbyServer.cs" />
     <Compile Include="TcpTransportServerListener.cs" />
