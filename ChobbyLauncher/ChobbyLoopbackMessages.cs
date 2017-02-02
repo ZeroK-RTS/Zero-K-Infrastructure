@@ -84,4 +84,11 @@ namespace ChobbyLauncher
     }
 
 
+    [ChobbyMessage]
+    public class SteamJoinFriend
+    {
+        public ulong FriendSteamID { get; set; }
+    }
+
+
 }

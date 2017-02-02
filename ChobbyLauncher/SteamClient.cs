@@ -18,7 +18,6 @@ namespace ChobbyLauncher
         public bool IsOnline { get; private set; }
         Timer timer;
         private Callback<GameLobbyJoinRequested_t> lobbyJoinRequestCallback;
-        private Callback<GameServerChangeRequested_t> gameServerChangeRequestCallback;
 
 
         public event Action SteamOnline = () => { };
@@ -71,12 +70,6 @@ namespace ChobbyLauncher
                             {
                                 JoinFriendRequest(t.m_steamIDFriend.m_SteamID);
                             });
-
-                            gameServerChangeRequestCallback = new Callback<GameServerChangeRequested_t>((t =>
-                            {
-                                Console.WriteLine(t.m_rgchServer);
-                            }));
-
                             SteamOnline();
                         }
                     }
