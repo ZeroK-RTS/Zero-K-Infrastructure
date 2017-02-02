@@ -207,6 +207,8 @@ namespace ChobbyLauncher
         private async Task OnConnected()
         {
             Trace.TraceInformation("Chobby connected to wrapper");
+            await SendCommand(new SteamOnline() { AuthToken = chobbyla.AuthToken, Friends = chobbyla.Friends });
+
         }
 
         private async Task OnConnectionClosed(bool arg)

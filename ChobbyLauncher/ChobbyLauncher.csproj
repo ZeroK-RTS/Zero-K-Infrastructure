@@ -51,6 +51,9 @@
       <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Steamworks.NET">
+      <HintPath>..\Libs\Steamworks.NET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Speech" />
@@ -69,6 +72,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ConfigVersions.cs" />
+    <Compile Include="SteamClient.cs" />
     <Compile Include="TextToSpeechLinux.cs" />
     <Compile Include="TextToSpeechWindows.cs" />
     <Compile Include="Chobbyla.cs" />
@@ -125,6 +129,18 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Shraka.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="libCSteamworks-x86_64.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="libCSteamworks.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="libsteam_api-x86_64.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="libsteam_api.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -147,6 +163,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="CSteamworks.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="steam_api.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="steam_appid.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="ZK_logo_128.ico" />
   </ItemGroup>
   <ItemGroup>

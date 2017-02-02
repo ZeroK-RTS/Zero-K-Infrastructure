@@ -74,6 +74,9 @@ namespace ZkLobbyServer
 
                     user.LobbyVersion = login.LobbyVersion;
                     user.IpAddress = ip;
+
+                    if (!string.IsNullOrEmpty(login.SteamAuthToken)) await state.SteamWebApi.UpdateAccountInformation(acc, login.SteamAuthToken);
+
                     UpdateUserFromAccount(user, acc);
                     LogIP(db, acc, ip);
                     LogUserID(db, acc, userID);

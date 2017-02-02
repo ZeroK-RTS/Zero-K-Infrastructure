@@ -32,6 +32,8 @@ namespace ChobbyLauncher
         private string internalName;
         private int loopbackPort;
         public PlasmaDownloader.PlasmaDownloader downloader;
+        public string AuthToken { get; private set; }
+        public List<ulong> Friends { get; private set; }
         public Download Download { get; private set; }
         public string Status { get; private set; }
         public Process process { get; private set; }
@@ -114,8 +116,20 @@ namespace ChobbyLauncher
                     ExtractDefaultConfigs(paths, ver);
                 }
                 
-                Status = "Starting";
 
+
+
+                var steam = new SteamClientHelper();
+                steam.SteamOnline += () =>
+                {
+                    AuthToken = steam.GetClientAuthTokenHex();
+                    Friends = steam.GetFriends();
+                };
+                steam.ConnectToSteam();
+
+           
+
+                Status = "Starting";
                 var chobyl = new ChobbylaLocalListener(this);
                 loopbackPort = chobyl.StartListening();
                 

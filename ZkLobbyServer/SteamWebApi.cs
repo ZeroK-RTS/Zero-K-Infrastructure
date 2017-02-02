@@ -1,9 +1,13 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
+using ZkData;
 
-namespace ZkData
+namespace ZkLobbyServer
 {
     public class SteamWebApi
     {
@@ -77,6 +81,28 @@ namespace ZkData
             var response = JsonConvert.DeserializeObject<AuthenticateUserTicketResponse>(ret);
 
             return response.response.@params.steamid;
+        }
+
+
+        public async Task<PlayerInfo> UpdateAccountInformation(Account acc, string token)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                await Task.Delay(500);
+                try
+                {
+                    var steamID = WebValidateAuthToken(token);
+                    var info = WebGetPlayerInfo(steamID);
+                    acc.SteamID = steamID;
+                    acc.SteamName = info?.personaname;
+                    return info;
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error linking steam account: {0}", ex);
+                }
+            }
+            return null;
         }
     }
 }
