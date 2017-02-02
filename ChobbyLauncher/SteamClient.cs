@@ -12,17 +12,20 @@ using ZkData;
 namespace ChobbyLauncher
 {
     // see handling corrupted state exceptions https://msdn.microsoft.com/en-us/magazine/dd419661.aspx?f=255&MSPPError=-2147217396
-    public class SteamClientHelper : IDisposable
+    public class SteamClientHelper: IDisposable
     {
         int tickCounter;
         public bool IsOnline { get; private set; }
         Timer timer;
+        private Callback<GameLobbyJoinRequested_t> lobbyJoinRequestCallback;
+        private Callback<GameServerChangeRequested_t> gameServerChangeRequestCallback;
 
 
         public event Action SteamOnline = () => { };
         public event Action SteamOffline = () => { };
 
-
+        public event Action<ulong> JoinFriendRequest = (steamID) => {};
+        
         public void ConnectToSteam()
         {
             TimerOnElapsed(this);
@@ -63,6 +66,17 @@ namespace ChobbyLauncher
                         if (SteamAPI.Init() && SteamAPI.IsSteamRunning())
                         {
                             IsOnline = true;
+
+                            lobbyJoinRequestCallback = new Callback<GameLobbyJoinRequested_t>(t =>
+                            {
+                                JoinFriendRequest(t.m_steamIDFriend.m_SteamID);
+                            });
+
+                            gameServerChangeRequestCallback = new Callback<GameServerChangeRequested_t>((t =>
+                            {
+                                Console.WriteLine(t.m_rgchServer);
+                            }));
+
                             SteamOnline();
                         }
                     }
