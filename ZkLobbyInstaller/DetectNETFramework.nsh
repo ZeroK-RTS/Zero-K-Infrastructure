@@ -63,7 +63,7 @@ Function FoundDotNETVersion
 				Goto doneFail
 			${EndIf}
 			#.NET Framework 4.5.1 installed on Windows 8, Windows 7 SP1, or Windows Vista SP2
-			${If} $2 == 378758
+			${If} $2 > 378758
 				${If} $4 == 5
 					${If} $5 <= 1
 						Goto doneSucceed
