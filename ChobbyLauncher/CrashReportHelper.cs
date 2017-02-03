@@ -20,27 +20,19 @@ namespace ChobbyLauncher
             {
                 var client = new GitHubClient(new ProductHeaderValue("chobbyla"));
                 client.Credentials = new Credentials(GlobalConst.CrashReportGithubToken);
-
-                if (MessageBox.Show("We would like to send crash data to Zero-K repository, it can contain chat. Do you agree?",
-                        "Automated crash report",
-                        MessageBoxButtons.OKCancel) == DialogResult.OK)
-                {
-                    using (var fs = File.Open(Path.Combine(paths.WritableDirectory, "infolog.txt"),
+                using (
+                    var fs = File.Open(Path.Combine(paths.WritableDirectory, "infolog.txt"),
                         FileMode.Open,
                         FileAccess.Read,
                         FileShare.ReadWrite | FileShare.Delete))
-                    using (var streamReader = new StreamReader(fs))
-                    {
-                        var createdIssue =
-                            client.Issue.Create("ZeroK-RTS",
-                                "CrashReports",
-                                new NewIssue("Spring crash") { Body = $"```{streamReader.ReadToEnd()}```", }).Result;
+                using (var streamReader = new StreamReader(fs))
+                {
+                    var createdIssue =
+                        client.Issue.Create("ZeroK-RTS", "CrashReports", new NewIssue("Spring crash") { Body = $"```{streamReader.ReadToEnd()}```", })
+                            .Result;
 
-
-                        return createdIssue;
-                    }
+                    return createdIssue;
                 }
-
             }
             catch (Exception ex)
             {

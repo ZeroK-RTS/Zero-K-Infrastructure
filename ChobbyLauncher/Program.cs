@@ -62,7 +62,8 @@ namespace ChobbyLauncher
                 var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
                 if (cf.ShowDialog() == DialogResult.OK)
                 {
-                    if (!chobbyla.Run().Result)
+                    if (!chobbyla.Run().Result && MessageBox.Show("We would like to send crash data to Zero-K repository, it can contain chat. Do you agree?",
+                        "Automated crash report", MessageBoxButtons.OKCancel) == DialogResult.OK)
                     {
                         CrashReportHelper.ReportCrash(chobbyla.paths);
                     }
