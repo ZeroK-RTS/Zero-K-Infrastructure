@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Octokit;
 using ZkData;
+using FileMode = System.IO.FileMode;
 
 namespace ChobbyLauncher
 {
@@ -24,14 +25,20 @@ namespace ChobbyLauncher
                         "Automated crash report",
                         MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
-                    var createdIssue = client.Issue.Create("ZeroK-RTS",
-                            "CrashReports",
-                            new NewIssue("Spring crash")
-                            {
-                                Body = $"```{File.ReadAllText(Path.Combine(paths.WritableDirectory, "infolog.txt"))}```",
-                            }).Result;
+                    using (var fs = File.Open(Path.Combine(paths.WritableDirectory, "infolog.txt"),
+                        FileMode.Open,
+                        FileAccess.Read,
+                        FileShare.ReadWrite | FileShare.Delete))
+                    using (var streamReader = new StreamReader(fs))
+                    {
+                        var createdIssue =
+                            client.Issue.Create("ZeroK-RTS",
+                                "CrashReports",
+                                new NewIssue("Spring crash") { Body = $"```{streamReader.ReadToEnd()}```", }).Result;
 
-                    return createdIssue;
+
+                        return createdIssue;
+                    }
                 }
 
             }

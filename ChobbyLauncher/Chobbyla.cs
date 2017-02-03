@@ -127,8 +127,6 @@ namespace ChobbyLauncher
                         if (lobbyID != null) LobbyID = lobbyID;
                         ev.Set();
                     });
-
-                    
                 };
                 Steam.ConnectToSteam();
 
