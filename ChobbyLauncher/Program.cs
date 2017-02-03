@@ -65,7 +65,14 @@ namespace ChobbyLauncher
                     if (!chobbyla.Run().Result && MessageBox.Show("We would like to send crash data to Zero-K repository, it can contain chat. Do you agree?",
                         "Automated crash report", MessageBoxButtons.OKCancel) == DialogResult.OK)
                     {
-                        CrashReportHelper.ReportCrash(chobbyla.paths);
+                        var ret = CrashReportHelper.ReportCrash(chobbyla.paths);
+                        if (ret != null)
+                        {
+                            try
+                            {
+                                Process.Start(ret.Url.ToString());
+                            } catch { }
+                        }
                     }
                     Environment.Exit(0);
                 }
