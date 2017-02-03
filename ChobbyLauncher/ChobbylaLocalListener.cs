@@ -196,6 +196,33 @@ namespace ChobbyLauncher
             }
         }
 
+        public async Task Process(SteamOpenOverlaySection args)
+        {
+            try
+            {
+                chobbyla.Steam.OpenOverlaySection(args.Option ?? SteamClientHelper.OverlayOption.Friends);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error opening overlay page {0} : {1}", args?.Option, ex);
+            }
+        }
+
+        public async Task Process(SteamOpenOverlayWebsite args)
+        {
+            try
+            {
+                if (chobbyla.Steam.IsOnline) chobbyla.Steam.OpenOverlayWebsite(args.Url);
+                else System.Diagnostics.Process.Start(args.Url);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error opening overlay url {0} : {1}", args.Url, ex);
+            }
+        }
+
+
+
         private async Task ReportDownloadResult(DownloadFile args, Download down)
         {
             try
@@ -219,7 +246,6 @@ namespace ChobbyLauncher
         private async Task OnConnectionClosed(bool arg)
         {
             Trace.TraceInformation("Chobby closed connection");
-            //Application.Exit();
         }
     }
 }

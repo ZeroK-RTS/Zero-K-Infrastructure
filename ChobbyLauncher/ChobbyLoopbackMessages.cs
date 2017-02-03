@@ -91,4 +91,18 @@ namespace ChobbyLauncher
     }
 
 
+    [ChobbyMessage]
+    public class SteamOpenOverlaySection
+    {
+        public SteamClientHelper.OverlayOption? Option { get; set; } = SteamClientHelper.OverlayOption.Friends;
+    }
+
+
+    [ChobbyMessage]
+    public class SteamOpenOverlayWebsite
+    {
+        public string Url { get; set; }
+    }
+
+
 }
