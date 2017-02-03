@@ -104,5 +104,11 @@ namespace ChobbyLauncher
         public string Url { get; set; }
     }
 
+    [ChobbyMessage]
+    public class SteamInviteFriendToGame
+    {
+        public ulong SteamID { get; set; }
+    }
+
 
 }

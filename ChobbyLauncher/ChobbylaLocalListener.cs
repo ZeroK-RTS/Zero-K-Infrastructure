@@ -221,6 +221,17 @@ namespace ChobbyLauncher
             }
         }
 
+        public async Task Process(SteamInviteFriendToGame args)
+        {
+            try
+            {
+                if (chobbyla.LobbyID != null) chobbyla.Steam.InviteFriendToGame(chobbyla.LobbyID.Value, args.SteamID);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error inviting friend to game {0} : {1}", args?.SteamID, ex);
+            }
+        }
 
 
         private async Task ReportDownloadResult(DownloadFile args, Download down)

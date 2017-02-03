@@ -153,5 +153,14 @@ namespace ChobbyLauncher
 
             tickCounter++;
         }
+
+
+        public void InviteFriendToGame(ulong lobbyID, ulong friendID)
+        {
+            if (IsOnline)
+            {
+                SteamMatchmaking.InviteUserToLobby(new CSteamID(lobbyID), new CSteamID(friendID));
+            }
+        }
     }
 }
