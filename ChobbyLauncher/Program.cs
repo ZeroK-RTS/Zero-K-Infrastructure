@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Octokit;
 using ZkData;
+using Application = System.Windows.Forms.Application;
 
 namespace ChobbyLauncher
 {
@@ -47,7 +49,10 @@ namespace ChobbyLauncher
                 var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
                 if (cf.ShowDialog() == DialogResult.OK)
                 {
-                    chobbyla.Run().Wait();
+                    if (!chobbyla.Run().Result)
+                    {
+                        CrashReportHelper.ReportCrash(chobbyla.paths);
+                    }
                     Environment.Exit(0);
                 }
             }

@@ -8,10 +8,12 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Neo.IronLua;
 using Newtonsoft.Json;
+using Octokit;
 using PlasmaDownloader;
 using PlasmaDownloader.Packages;
 using PlasmaShared;
 using ZkData;
+using Application = System.Windows.Forms.Application;
 
 namespace ChobbyLauncher
 {
@@ -142,7 +144,7 @@ namespace ChobbyLauncher
         }
 
 
-        public Task Run()
+        public Task<bool> Run()
         {
             return LaunchChobby(paths, internalName, engine, loopbackPort);
         }
@@ -206,7 +208,7 @@ namespace ChobbyLauncher
         }
 
 
-        private async Task LaunchChobby(SpringPaths paths, string internalName, string engineVersion, int loopbackPort)
+        private async Task<bool> LaunchChobby(SpringPaths paths, string internalName, string engineVersion, int loopbackPort)
         {
             process = new Process { StartInfo = { CreateNoWindow = true, UseShellExecute = false } };
 
@@ -220,11 +222,15 @@ namespace ChobbyLauncher
             process.StartInfo.Arguments = $"--menu \"{internalName}\"";
 
             var tcs = new TaskCompletionSource<bool>();
-            process.Exited += (sender, args) => tcs.TrySetResult(true);
+            process.Exited += (sender, args) =>
+            {
+                var isCrash = process.ExitCode != 0;
+                tcs.TrySetResult(!isCrash);
+            };
             process.EnableRaisingEvents = true;
             process.Start();
 
-            await tcs.Task;
+            return await tcs.Task;
         }
 
         private string QueryDefaultEngine()
@@ -241,6 +247,9 @@ namespace ChobbyLauncher
             }
             return null;
         }
+
+
+
 
 
         private async Task<bool> UpdateMissions()

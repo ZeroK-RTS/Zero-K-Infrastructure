@@ -51,6 +51,10 @@
       <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Octokit, Version=0.24.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Octokit.0.24.0\lib\net45\Octokit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Steamworks.NET">
       <HintPath>..\Libs\Steamworks.NET.dll</HintPath>
     </Reference>
@@ -72,6 +76,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ConfigVersions.cs" />
+    <Compile Include="CrashReportHelper.cs" />
     <Compile Include="SteamClient.cs" />
     <Compile Include="TextToSpeechLinux.cs" />
     <Compile Include="TextToSpeechWindows.cs" />
