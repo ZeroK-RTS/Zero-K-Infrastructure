@@ -200,7 +200,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                chobbyla.Steam.OpenOverlaySection(args.Option ?? SteamClientHelper.OverlayOption.Friends);
+                chobbyla.Steam.OpenOverlaySection(args.Option ?? SteamClientHelper.OverlayOption.LobbyInvite);
             }
             catch (Exception ex)
             {
@@ -251,7 +251,11 @@ namespace ChobbyLauncher
         private async Task OnConnected()
         {
             Trace.TraceInformation("Chobby connected to wrapper");
-            await SendCommand(new SteamOnline() { AuthToken = chobbyla.AuthToken, Friends = chobbyla.Friends, LobbyID = chobbyla.LobbyID });
+            await SendCommand(new SteamOnline()
+            {
+                AuthToken = chobbyla.AuthToken, Friends = chobbyla.Friends,
+                FriendSteamID = chobbyla.InitialConnectLobbyID != 0 ? chobbyla.Steam.GetLobbyOwner(chobbyla.InitialConnectLobbyID): null
+            });
         }
 
         private async Task OnConnectionClosed(bool arg)

@@ -80,7 +80,7 @@ namespace ChobbyLauncher
     {
         public string AuthToken { get; set; }
         public List<ulong> Friends { get; set; }
-        public ulong? LobbyID { get; set; }
+        public ulong? JoinFriend { get; set; }
     }
 
 
@@ -94,7 +94,7 @@ namespace ChobbyLauncher
     [ChobbyMessage]
     public class SteamOpenOverlaySection
     {
-        public SteamClientHelper.OverlayOption? Option { get; set; } = SteamClientHelper.OverlayOption.Friends;
+        public SteamClientHelper.OverlayOption? Option { get; set; } = SteamClientHelper.OverlayOption.LobbyInvite;
     }
 
 

@@ -14,6 +14,7 @@ namespace ChobbyLauncher
     {
         public enum OverlayOption
         {
+            LobbyInvite,
             Friends,
             Community,
             Players,
@@ -60,6 +61,7 @@ namespace ChobbyLauncher
                         if (!failure && (t.m_eResult == EResult.k_EResultOK)) onCreated?.Invoke(t.m_ulSteamIDLobby);
                         else onCreated?.Invoke((ulong?)null);
                     });
+
             }
         }
 
@@ -161,6 +163,13 @@ namespace ChobbyLauncher
             {
                 SteamMatchmaking.InviteUserToLobby(new CSteamID(lobbyID), new CSteamID(friendID));
             }
+        }
+
+
+        public ulong? GetLobbyOwner(ulong lobbyID)
+        {
+            if (IsOnline) return SteamMatchmaking.GetLobbyOwner(new CSteamID(lobbyID)).m_SteamID;
+            return null;
         }
     }
 }

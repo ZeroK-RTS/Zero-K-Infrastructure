@@ -23,8 +23,22 @@ namespace ChobbyLauncher
 
             string chobbyTag = null;
             string engineOverride = null;
+            ulong connectLobbyID = 0;
+
             if (args.Length > 0)
             {
+                for (int i = 0; i < args.Length-1; i++)
+                {
+                    var a = args[i];
+                    if (a == "+connect_lobby")
+                    {
+                        ulong.TryParse(args[i+1], out connectLobbyID);
+                        args = args.Where((x, j) => j != i && j != i + 1).ToArray();
+                        break;
+                    }
+                }
+
+
                 if (args[0] == "--help" || args[0] == "-h" || args[0] == "/?")
                 {
                     MessageBox.Show("chobby.exe [rapid_tag] [engine_override] \n\nUse zkmenu:stable or chobby:test\nTo run local dev version use chobby.exe dev");
@@ -44,8 +58,7 @@ namespace ChobbyLauncher
 
             try
             {
-
-                var chobbyla = new Chobbyla(startupPath, chobbyTag, engineOverride);
+                var chobbyla = new Chobbyla(startupPath, chobbyTag, engineOverride, connectLobbyID);
                 var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
                 if (cf.ShowDialog() == DialogResult.OK)
                 {

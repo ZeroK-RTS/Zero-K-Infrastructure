@@ -41,9 +41,12 @@ namespace ChobbyLauncher
         public Process process { get; private set; }
         public string Status { get; private set; }
 
+        public ulong InitialConnectLobbyID { get; private set; }
 
-        public Chobbyla(string rootPath, string chobbyTagOverride, string engineOverride)
+
+        public Chobbyla(string rootPath, string chobbyTagOverride, string engineOverride, ulong connectLobbyID)
         {
+            InitialConnectLobbyID = connectLobbyID;
             paths = new SpringPaths(rootPath, false) { Allow64BitWindows = true };
             chobbyTag = chobbyTagOverride ?? (GlobalConst.Mode == ModeType.Live ? "zkmenu:stable" : "zkmenu:test");
             isDev = (chobbyTag == "dev") || (chobbyTag == "chobby:dev") || (chobbyTag == "zkmenu:dev");
@@ -124,6 +127,8 @@ namespace ChobbyLauncher
                         if (lobbyID != null) LobbyID = lobbyID;
                         ev.Set();
                     });
+
+                    
                 };
                 Steam.ConnectToSteam();
 
