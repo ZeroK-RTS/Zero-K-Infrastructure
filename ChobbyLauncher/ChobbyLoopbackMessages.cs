@@ -75,4 +75,20 @@ namespace ChobbyLauncher
     }
 
 
+    [ChobbyMessage]
+    public class SteamOnline
+    {
+        public string AuthToken { get; set; }
+        public List<ulong> Friends { get; set; }
+        public ulong? LobbyID { get; set; }
+    }
+
+
+    [ChobbyMessage]
+    public class SteamJoinFriend
+    {
+        public ulong FriendSteamID { get; set; }
+    }
+
+
 }

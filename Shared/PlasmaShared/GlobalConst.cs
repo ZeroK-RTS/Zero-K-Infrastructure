@@ -228,6 +228,7 @@ namespace ZkData
         public static int LobbyServerPort;
 
         public static bool AutoMigrateDatabase { get; private set; }
+        public static string CrashReportGithubToken = "fffb24b" + "91a758"+"a6a4e7a"+ "7a7eafb1a9"+"af27e9e18e";
 
         public static string[] ReplaysPossiblePaths = { @"c:\projekty\springie_spring\demos-server"};
 

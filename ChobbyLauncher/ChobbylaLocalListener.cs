@@ -29,6 +29,12 @@ namespace ChobbyLauncher
             this.chobbyla = chobbyla;
             serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<ChobbyMessageAttribute>());
             tts = TextToSpeechBase.Create();
+            chobbyla.Steam.JoinFriendRequest += SteamOnJoinFriendRequest;
+        }
+
+        private void SteamOnJoinFriendRequest(ulong friendSteamID)
+        {
+            SendCommand(new SteamJoinFriend() { FriendSteamID = friendSteamID });
         }
 
 
@@ -207,6 +213,7 @@ namespace ChobbyLauncher
         private async Task OnConnected()
         {
             Trace.TraceInformation("Chobby connected to wrapper");
+            await SendCommand(new SteamOnline() { AuthToken = chobbyla.AuthToken, Friends = chobbyla.Friends, LobbyID = chobbyla.LobbyID });
         }
 
         private async Task OnConnectionClosed(bool arg)

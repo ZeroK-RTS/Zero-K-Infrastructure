@@ -130,7 +130,7 @@ namespace ZkLobbyServer
             else if (server.ConnectedUsers.ContainsKey(register.Name)) response.ResultCode = RegisterResponse.Code.AlreadyConnected;
             else
             {
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
                     using (var db = new ZkDataContext())
                     {
@@ -157,7 +157,15 @@ namespace ZkLobbyServer
                                     }
                                     else
                                     {
-                                        acc = new Account() { Name = register.Name };
+                                        acc = new Account()
+                                        {
+                                            Name = register.Name 
+                                        };
+
+
+                                        if (!string.IsNullOrEmpty(register.SteamAuthToken)) await server.SteamWebApi.UpdateAccountInformation(acc, register.SteamAuthToken);
+
+
                                         acc.SetPasswordHashed(register.PasswordHash);
                                         acc.SetName(register.Name);
                                         acc.SetAvatar();
@@ -176,6 +184,7 @@ namespace ZkLobbyServer
             //Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
             await SendCommand(response);
         }
+
 
         public void RequestClose()
         {
