@@ -111,4 +111,11 @@ namespace ChobbyLauncher
     }
 
 
+    [ChobbyMessage]
+    public class SteamOverlayChanged
+    {
+        public bool IsActive { get; set; }
+    }
+
+
 }

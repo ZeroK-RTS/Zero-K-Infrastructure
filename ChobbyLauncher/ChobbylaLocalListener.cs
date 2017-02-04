@@ -30,6 +30,12 @@ namespace ChobbyLauncher
             serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<ChobbyMessageAttribute>());
             tts = TextToSpeechBase.Create();
             chobbyla.Steam.JoinFriendRequest += SteamOnJoinFriendRequest;
+            chobbyla.Steam.OverlayActivated += SteamOnOverlayActivated;
+        }
+
+        private void SteamOnOverlayActivated(bool b)
+        {
+            SendCommand(new SteamOverlayChanged() { IsActive = b });
         }
 
         private void SteamOnJoinFriendRequest(ulong friendSteamID)
