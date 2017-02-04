@@ -823,7 +823,7 @@ namespace LobbyClient
 
         private async Task Process(FriendList friendList)
         {
-            friends = friendList.Friends;
+            friends = friendList.Friends.Select(x=>x.Name).ToList();
             FriendListUpdated(this, friends);
         }
 

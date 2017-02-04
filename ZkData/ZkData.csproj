@@ -232,6 +232,10 @@
     <Compile Include="Migrations\201609162245138_AddRanks.Designer.cs">
       <DependentUpon>201609162245138_AddRanks.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702041325111_AddSteamIDIndex.cs" />
+    <Compile Include="Migrations\201702041325111_AddSteamIDIndex.Designer.cs">
+      <DependentUpon>201702041325111_AddSteamIDIndex.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="Enums\TreatyState.cs" />
@@ -483,6 +487,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609162245138_AddRanks.resx">
       <DependentUpon>201609162245138_AddRanks.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702041325111_AddSteamIDIndex.resx">
+      <DependentUpon>201702041325111_AddSteamIDIndex.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

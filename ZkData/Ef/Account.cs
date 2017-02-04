@@ -132,6 +132,8 @@ namespace ZkData
         public int ForumTotalUpvotes { get; set; }
         public int ForumTotalDownvotes { get; set; }
         public int? VotesAvailable { get; set; }
+
+        [Index(IsUnique = false)]
         public decimal? SteamID { get; set; }
         [StringLength(200)]
         public string SteamName { get; set; }

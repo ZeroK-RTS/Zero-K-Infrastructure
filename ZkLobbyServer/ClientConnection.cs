@@ -109,7 +109,7 @@ namespace ZkLobbyServer
                 }
 
 
-                await SendCommand(new FriendList() { Friends = connectedUser.Friends.ToList() });
+                await SendCommand(new FriendList() { Friends = connectedUser.FriendEntries.ToList() });
                 await SendCommand(new IgnoreList() { Ignores = connectedUser.Ignores.ToList() });
 
                 await server.MatchMaker.OnLoginAccepted(connectedUser);

@@ -167,7 +167,7 @@ namespace ZkLobbyServer
             if (uWatched.User?.IsAdmin == true) return true;
 
             // friends see each other
-            if (uWatcher.Friends.Contains(uWatched.Name)) return true;
+            if (uWatcher.FriendNames.Contains(uWatched.Name)) return true;
 
             // already seen, cannot be unseen
             if (uWatcher.HasSeenUserVersion.ContainsKey(uWatched.Name)) return true;
