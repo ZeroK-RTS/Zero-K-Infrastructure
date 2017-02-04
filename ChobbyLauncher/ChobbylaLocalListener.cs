@@ -34,7 +34,7 @@ namespace ChobbyLauncher
 
         private void SteamOnJoinFriendRequest(ulong friendSteamID)
         {
-            SendCommand(new SteamJoinFriend() { FriendSteamID = friendSteamID });
+            SendCommand(new SteamJoinFriend() { FriendSteamID = friendSteamID.ToString() });
         }
 
 
@@ -225,7 +225,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                if (chobbyla.LobbyID != null) chobbyla.Steam.InviteFriendToGame(chobbyla.LobbyID.Value, args.SteamID);
+                if (chobbyla.LobbyID != null) chobbyla.Steam.InviteFriendToGame(chobbyla.LobbyID.Value, ulong.Parse(args.SteamID));
             }
             catch (Exception ex)
             {
@@ -253,8 +253,8 @@ namespace ChobbyLauncher
             Trace.TraceInformation("Chobby connected to wrapper");
             await SendCommand(new SteamOnline()
             {
-                AuthToken = chobbyla.AuthToken, Friends = chobbyla.Friends,
-                FriendSteamID = chobbyla.InitialConnectLobbyID != 0 ? chobbyla.Steam.GetLobbyOwner(chobbyla.InitialConnectLobbyID): null
+                AuthToken = chobbyla.AuthToken, Friends = chobbyla.Friends.Select(x=>x.ToString()).ToList(),
+                FriendSteamID = chobbyla.InitialConnectLobbyID != 0 ? chobbyla.Steam.GetLobbyOwner(chobbyla.InitialConnectLobbyID)?.ToString(): null
             });
         }
 
