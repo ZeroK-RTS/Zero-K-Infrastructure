@@ -263,4 +263,5 @@ Function runZeroKLobby
 FunctionEnd
 
 Function .onInstSuccess
+	CreateShortcut "$desktop\Zero-K.lnk" "$INSTDIR\Chobby.exe"
 FunctionEnd
