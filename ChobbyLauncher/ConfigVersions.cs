@@ -73,30 +73,34 @@ namespace ChobbyLauncher
             {
                 var oldVers = LoadFromDisk(paths) ?? new ConfigVersions();
                 var newVers = LoadFromChobby(ver, paths);
-            
-                foreach (var versionEntry in newVers.Versions.Where(x => string.IsNullOrEmpty(x.Platform) || x.Platform == paths.Platform.ToString()))
+
+                if (newVers != null)
                 {
-                    try
+                    foreach (
+                        var versionEntry in newVers.Versions.Where(x => string.IsNullOrEmpty(x.Platform) || x.Platform == paths.Platform.ToString()))
                     {
-                        var target = Path.Combine(paths.WritableDirectory, versionEntry.TargetPath);
-
-                        if (
-                            !oldVers.Versions.Any(
-                                x =>
-                                    x.TargetPath == versionEntry.TargetPath && x.VersionNumber >= versionEntry.VersionNumber &&
-                                    x.Platform == versionEntry.Platform) || !File.Exists(target))
+                        try
                         {
-                            var dirName = Path.GetDirectoryName(target);
-                            if (!Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
+                            var target = Path.Combine(paths.WritableDirectory, versionEntry.TargetPath);
 
-                            var content = ver.ReadFile(paths, versionEntry.SourcePath);
-                            if (content != null) File.WriteAllBytes(target, content.ToArray());
-                            else File.Delete(target);
+                            if (
+                                !oldVers.Versions.Any(
+                                    x =>
+                                        x.TargetPath == versionEntry.TargetPath && x.VersionNumber >= versionEntry.VersionNumber &&
+                                        x.Platform == versionEntry.Platform) || !File.Exists(target))
+                            {
+                                var dirName = Path.GetDirectoryName(target);
+                                if (!Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
+
+                                var content = ver.ReadFile(paths, versionEntry.SourcePath);
+                                if (content != null) File.WriteAllBytes(target, content.ToArray());
+                                else File.Delete(target);
+                            }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceError("Error processing file deployment {0} : {1}", versionEntry.SourcePath, ex);
+                        catch (Exception ex)
+                        {
+                            Trace.TraceError("Error processing file deployment {0} : {1}", versionEntry.SourcePath, ex);
+                        }
                     }
                 }
                 (newVers ?? oldVers).SaveToDisk(paths);
