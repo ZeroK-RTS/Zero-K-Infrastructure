@@ -464,7 +464,8 @@ function ReceivePersistentMessages(newMessages)
   
   ClearPersistentMessageHistory()
   for index, msg in pairs(newMessages) do
-    ShowPersistentMessageBox(msg.message, msg.width, msg.height, msg.fontSize, msg.image)
+    local image = (msg.imageFromArchive and "" or "LuaUI/Images/") .. msg.image
+    ShowPersistentMessageBox(msg.message, msg.width, msg.height, msg.fontSize, image)
   end
 end
 

@@ -75,4 +75,40 @@ namespace ChobbyLauncher
     }
 
 
+    [ChobbyMessage]
+    public class SteamOnline
+    {
+        public string AuthToken { get; set; }
+        public List<ulong> Friends { get; set; }
+        public ulong? FriendSteamID { get; set; }
+    }
+
+
+    [ChobbyMessage]
+    public class SteamJoinFriend
+    {
+        public ulong FriendSteamID { get; set; }
+    }
+
+
+    [ChobbyMessage]
+    public class SteamOpenOverlaySection
+    {
+        public SteamClientHelper.OverlayOption? Option { get; set; } = SteamClientHelper.OverlayOption.LobbyInvite;
+    }
+
+
+    [ChobbyMessage]
+    public class SteamOpenOverlayWebsite
+    {
+        public string Url { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class SteamInviteFriendToGame
+    {
+        public ulong SteamID { get; set; }
+    }
+
+
 }

@@ -120,7 +120,6 @@
     <Compile Include="Settings.cs" />
     <Compile Include="SpringPaths.cs" />
     <Compile Include="CsvTable.cs" />
-    <Compile Include="SteamWebApi.cs" />
     <Compile Include="TcpTransport.cs" />
     <Compile Include="UnitSyncLib\ArchiveCache.cs" />
     <Compile Include="UnitSyncLib\ArchiveEntry.cs" />

@@ -51,6 +51,13 @@
       <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Octokit, Version=0.24.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Octokit.0.24.0\lib\net45\Octokit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Steamworks.NET">
+      <HintPath>..\Libs\Steamworks.NET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Speech" />
@@ -69,6 +76,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ConfigVersions.cs" />
+    <Compile Include="CrashReportHelper.cs" />
+    <Compile Include="SteamClient.cs" />
     <Compile Include="TextToSpeechLinux.cs" />
     <Compile Include="TextToSpeechWindows.cs" />
     <Compile Include="Chobbyla.cs" />
@@ -125,6 +134,18 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Shraka.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="libCSteamworks-x86_64.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="libCSteamworks.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="libsteam_api-x86_64.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="libsteam_api.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -147,6 +168,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="CSteamworks.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="steam_api.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="steam_appid.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="ZK_logo_128.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -169,8 +199,13 @@
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>if /i $(ConfigurationName) NEQ Release exit 0
+ren CSteamworks.dll CSteamworks.dll.b
+ren steam_api.dll steam_api.dll.b
 "$(ProjectDir)\..\packages\ilmerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetDir)$(TargetName).exe" "$(TargetDir)*.dll" /target:exe "/targetplatform:v4.5,%25ProgramFiles%25\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.1" /wildcards /t:winexe
 copy /Y "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).pdb"
-copy /Y "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"</PostBuildEvent>
+copy /Y "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"
+ren CSteamworks.dll.b CSteamworks.dll
+ren steam_api.dll.b steam_api.dll
+</PostBuildEvent>
   </PropertyGroup>
 </Project>

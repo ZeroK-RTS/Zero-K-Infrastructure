@@ -1,5 +1,7 @@
 ﻿using DotNetWikiBot;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -117,6 +119,63 @@ namespace Fixer
             page.Save(text, "Infobox added by DotNetWikiBot", true);
         }
 
+        public static bool UpdateTemplate(Page page, KeyValuePair<string, object> kvp)
+        {
+            bool changed = false;
+            string key = kvp.Key;
+            if (kvp.Value is string)
+            {
+                string newValue = (string)kvp.Value;
+                string currentValue = page.GetFirstTemplateParameter("Infobox zkunit", key);
+                if (!string.IsNullOrEmpty(currentValue) && currentValue != newValue)
+                {
+                    changed = true;
+                    Console.WriteLine("Value {0} has changed: {1}, {2}", key, currentValue, newValue);
+                }
+            }
+            else if (kvp.Value is Dictionary<string, object>)
+            {
+                //changed = Updateemplate
+                foreach (KeyValuePair<string, object> kvp2 in (Dictionary <string, object>)kvp.Value)
+                {
+                    changed = changed || UpdateTemplate(page, kvp2);
+                }
+            }
+
+            return changed;
+        }
+
+        /// <summary>Replaces all instances of a specified template from page text with the provided text. Does nothing if old and new templates are identical.</summary>
+        /// <param name="templateTitle">Title of template to remove.</param>
+        /// <param name="replacement">The text to insert in place of the template.</param>
+        /// <returns>True if old and new page texts are different and page text was modified, false otherwise.</returns>
+        public static bool ReplaceTemplate(this Page page, string templateTitle, string replacement, string tailTag = null)
+        {
+            tailTag = tailTag ?? @"==\s?Description\s?==";
+            if (string.IsNullOrEmpty(templateTitle))
+                throw new ArgumentNullException("templateTitle");
+            templateTitle = Regex.Escape(templateTitle);
+            templateTitle = "(" + Char.ToUpper(templateTitle[0]) + "|" +
+                Char.ToLower(templateTitle[0]) + ")" +
+                (templateTitle.Length > 1 ? templateTitle.Substring(1) : "");
+            string currentText = page.text;
+            string newText = Regex.Replace(page.text, @"(?s)\{\{\s*" + templateTitle +
+                @"(.*?)}}\r?\n?" + tailTag, replacement + "==Description==");
+            if (currentText.Equals(newText))
+            {
+                Console.WriteLine("Did nothing");
+                return false;
+            }
+            else
+            {
+                Console.WriteLine("Did something!");
+                //Console.WriteLine(currentText);
+                //Console.WriteLine(newText);
+                page.text = newText;
+                return true;
+            }
+        }
+
         public static void DoStuff()
         {
             string username = "";
@@ -131,9 +190,11 @@ namespace Fixer
             newWiki = new Site(WIKI_URL, username, password);
 
             int count = 0;  // increment this when we actually create a page
-            var files = new System.Collections.Generic.List<string>(Directory.GetFiles(@"G:\zkwiki\output\markup"));
-            files = files.Shuffle();
-            foreach (string path in files)
+            string dir = Environment.OSVersion.Platform == PlatformID.Unix ? @"home/media/My Book/zkwiki/raw/markup" : @"G:\zkwiki\raw\markup";
+            var newFiles = new List<string>(Directory.GetFiles(dir));
+            //newFiles = files.Shuffle();
+            /*
+            foreach (string path in newFiles)
             {
                 string unitname = Path.GetFileNameWithoutExtension(path);
                 unitname = unitname.Replace("&#47;", "/");
@@ -152,6 +213,64 @@ namespace Fixer
                     //if (count >= 20) break;
                 }
             }
+            */
+
+            /*
+            count = 0;
+            dir = Environment.OSVersion.Platform == PlatformID.Unix ? @"home/media/My Book/zkwiki/raw_infobox/markup" : @"G:\zkwiki\raw_infobox\markup";
+            var filesUpdate = new List<string>(Directory.GetFiles(dir));
+            foreach (string path in filesUpdate)
+            {
+                string unitname = Path.GetFileNameWithoutExtension(path);
+                unitname = unitname.Replace("&#47;", "/");
+                var page = new Page(newWiki, unitname);
+                page.Load();
+                if (page.Exists())
+                {
+                    //Dictionary<string, object> unitData = new Dictionary<string, object>();
+                    //JsonConvert.PopulateObject(File.ReadAllText(path), unitData);
+                    //foreach (KeyValuePair<string, object> kvp in unitData)
+                    //{
+                    //    UpdateTemplate(page, kvp);
+                    //}
+                    
+                    bool result = page.ReplaceTemplate("Infobox zkunit", File.ReadAllText(path));
+                    if (result)
+                    {
+                        page.Save(page.text, "Page auto-updated with DotNetWikiBot", true);
+                        count++;
+                    }
+                    if (count >= 5)
+                    {
+                        count = 0;
+                        Console.WriteLine("-- INTERMISSION --");
+                        Console.WriteLine("-- Review changes on wiki, then press Enter to continue --");
+                        Console.ReadLine();
+                    }
+                }
+            }
+            */
+
+            /*
+            count = 0;
+            dir = Environment.OSVersion.Platform == PlatformID.Unix ? @"home/media/My Book/zkwiki/raw_infobox/markup" : @"G:\zkwiki\raw_infobox\markup";
+            var filesUpdate = new List<string>(Directory.GetFiles(dir));
+            foreach (string path in filesUpdate)
+            {
+                string unitname = Path.GetFileNameWithoutExtension(path);
+                unitname = unitname.Replace("&#47;", "/");
+                var page = new Page(newWiki, unitname);
+                page.Load();
+                if (page.Exists() && !page.IsRedirect())
+                {
+                    string oldText = page.text;
+                    string text = page.text.Replace(@"http://packages.springrts.com/zkmanual/unitpics/", @"http://manual.zero-k.info/unitpics/");
+                    if (!oldText.Equals(text))
+                        page.Save(text, "Modified image path with DotNetWikiBot", true);
+                }
+                count++;
+            }
+            */
 
             string[,] toPort = 
             {

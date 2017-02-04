@@ -29,6 +29,12 @@ namespace ChobbyLauncher
             this.chobbyla = chobbyla;
             serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<ChobbyMessageAttribute>());
             tts = TextToSpeechBase.Create();
+            chobbyla.Steam.JoinFriendRequest += SteamOnJoinFriendRequest;
+        }
+
+        private void SteamOnJoinFriendRequest(ulong friendSteamID)
+        {
+            SendCommand(new SteamJoinFriend() { FriendSteamID = friendSteamID });
         }
 
 
@@ -190,6 +196,44 @@ namespace ChobbyLauncher
             }
         }
 
+        public async Task Process(SteamOpenOverlaySection args)
+        {
+            try
+            {
+                chobbyla.Steam.OpenOverlaySection(args.Option ?? SteamClientHelper.OverlayOption.LobbyInvite);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error opening overlay page {0} : {1}", args?.Option, ex);
+            }
+        }
+
+        public async Task Process(SteamOpenOverlayWebsite args)
+        {
+            try
+            {
+                if (chobbyla.Steam.IsOnline) chobbyla.Steam.OpenOverlayWebsite(args.Url);
+                else System.Diagnostics.Process.Start(args.Url);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error opening overlay url {0} : {1}", args.Url, ex);
+            }
+        }
+
+        public async Task Process(SteamInviteFriendToGame args)
+        {
+            try
+            {
+                if (chobbyla.LobbyID != null) chobbyla.Steam.InviteFriendToGame(chobbyla.LobbyID.Value, args.SteamID);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error inviting friend to game {0} : {1}", args?.SteamID, ex);
+            }
+        }
+
+
         private async Task ReportDownloadResult(DownloadFile args, Download down)
         {
             try
@@ -207,12 +251,16 @@ namespace ChobbyLauncher
         private async Task OnConnected()
         {
             Trace.TraceInformation("Chobby connected to wrapper");
+            await SendCommand(new SteamOnline()
+            {
+                AuthToken = chobbyla.AuthToken, Friends = chobbyla.Friends,
+                FriendSteamID = chobbyla.InitialConnectLobbyID != 0 ? chobbyla.Steam.GetLobbyOwner(chobbyla.InitialConnectLobbyID): null
+            });
         }
 
         private async Task OnConnectionClosed(bool arg)
         {
             Trace.TraceInformation("Chobby closed connection");
-            //Application.Exit();
         }
     }
 }

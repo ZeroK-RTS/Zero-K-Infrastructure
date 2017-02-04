@@ -99,6 +99,8 @@ namespace LobbyClient
         public string PasswordHash { get; set; }
 
         public long UserID { get; set; }
+
+        public string SteamAuthToken { get; set; }
     }
 
     /// <summary>
@@ -116,6 +118,7 @@ namespace LobbyClient
         /// </summary>
         public string PasswordHash { get; set; }
 
+        public string SteamAuthToken { get; set; }
         
         public long UserID { get; set; }
     }

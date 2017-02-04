@@ -579,7 +579,7 @@ local actionsTable = {
         end,
   ModifyUnitHealthAction = function(action)
           for unitID in pairs(FindUnitsInGroup(action.args.group)) do
-            Spring.AddUnitDamage(unitID, action.args.damage)
+            Spring.AddUnitDamage(unitID, action.args.damage, 0, -1, -6) -- weaponID -6 since -1 to -5 are used by engine for various things and ZK does UnitPreDamaged on them
           end
         end,
   MakeUnitsAlwaysVisibleAction = function(action)
@@ -968,7 +968,8 @@ local actionsTable = {
           end
         end,
   GuiMessagePersistentAction = function(action)
-          persistentMessages[#persistentMessages+1] = {message = action.args.message, height = action.args.height, width = action.args.width, fontSize = action.args.fontSize, image = action.args.image}
+          persistentMessages[#persistentMessages+1] = {message = action.args.message, height = action.args.height, width = action.args.width,
+            fontSize = action.args.fontSize, image = action.args.image, imageFromArchive = action.args.imageFromArchive}
           UnsyncedEventFunc(action)
         end,
   AddObjectiveAction = function(action)
