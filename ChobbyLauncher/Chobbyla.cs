@@ -190,6 +190,9 @@ namespace ChobbyLauncher
                     var target = Path.Combine(paths.WritableDirectory, Path.GetFileName(f));
                     if (!File.Exists(target))
                     {
+                        var dirName = Path.GetDirectoryName(target);
+                        if (!Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
+
                         var content = ver.ReadFile(paths, f);
                         if (content != null) File.WriteAllBytes(target, content.ToArray());
                     }
