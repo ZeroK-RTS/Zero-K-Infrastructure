@@ -74,6 +74,7 @@ namespace ChobbyLauncher
                 var oldVers = LoadFromDisk(paths) ?? new ConfigVersions();
                 var newVers = LoadFromChobby(ver, paths);
             
+                foreach (var versionEntry in newVers.Versions.Where(x => string.IsNullOrEmpty(x.Platform) || x.Platform == paths.Platform.ToString()))
                 {
                     try
                     {
