@@ -48,7 +48,7 @@ namespace ZkLobbyServer
                     Mode = AutohostMode.Teams,
                     Maps =
                         db.Resources.Where(
-                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams == true) && (x.TypeID == ResourceType.Map))
+                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams != false) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true)
                             .Select(x => x.InternalName)
                             .ToList()
                 });
@@ -65,7 +65,7 @@ namespace ZkLobbyServer
                     Mode = AutohostMode.Teams,
                     Maps =
                         db.Resources.Where(
-                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams == true) && (x.TypeID == ResourceType.Map))
+                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams != false) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true)
                             .Select(x => x.InternalName)
                             .ToList()
                 });
@@ -82,7 +82,7 @@ namespace ZkLobbyServer
                     Mode = AutohostMode.Teams,
                     Maps =
                         db.Resources.Where(
-                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams == true) && (x.TypeID == ResourceType.Map))
+                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams != false) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true)
                             .Select(x => x.InternalName)
                             .ToList()
                 });
@@ -98,7 +98,7 @@ namespace ZkLobbyServer
                     Game = server.Game,
                     Maps =
                         db.Resources.Where(
-                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIs1v1 == true) && (x.TypeID == ResourceType.Map))
+                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIs1v1 == true) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true)
                             .Select(x => x.InternalName)
                             .ToList(),
                     Mode = AutohostMode.Game1v1,
