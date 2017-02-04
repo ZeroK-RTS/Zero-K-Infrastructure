@@ -54,7 +54,7 @@ namespace ZkLobbyServer
             Version = entry.GetName().Version.ToString();
             Engine = MiscVar.DefaultEngine;
 
-            SpringPaths = new SpringPaths(GlobalConst.SpringieDataDir, false);
+            SpringPaths = new SpringPaths(GlobalConst.SpringieDataDir, false, false);
             Downloader = new PlasmaDownloader.PlasmaDownloader(null, SpringPaths);
             Downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine);
             Downloader.PackageDownloader.DoMasterRefresh();

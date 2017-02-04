@@ -12,8 +12,27 @@ namespace ZkData
     {
         private List<string> dataDirectories = new List<string>();
 
-        public SpringPaths(string writableFolder, bool useMultipleDataFolders = true)
+        public enum PlatformType
         {
+            win32,
+            win64,
+            linux32,
+            linux64
+        }
+
+        public SpringPaths(string writableFolder, bool useMultipleDataFolders, bool allow64BitWindows)
+        {
+            Platform = PlatformType.win32;
+
+            if (Environment.Is64BitOperatingSystem && Allow64BitWindows) Platform = PlatformType.win64;
+
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                Platform = Environment.Is64BitOperatingSystem ? PlatformType.linux64 : PlatformType.linux32;
+                //var response = Utils.ExecuteConsoleCommand("uname", "-m") ?? "";
+                //Platform = response.Contains("64") ? PlatformType.linux64 : PlatformType.linux32;
+            }
+            
             WritableDirectory = writableFolder;
 
             dataDirectories = useMultipleDataFolders ? new List<string> { GetMySpringDocPath() } : new List<string>() { };
@@ -42,7 +61,8 @@ namespace ZkData
         public string WritableDirectory { get; private set; }
 
         public bool UseSafeMode { get; set; }
-        public bool Allow64BitWindows { get; set; }
+        public bool Allow64BitWindows { get; private set; }
+        public PlatformType Platform { get; private set; }
 
         public string GetDedicatedServerPath(string engine)
         {
