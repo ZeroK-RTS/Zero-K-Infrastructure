@@ -34,6 +34,7 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.btnCancel = new ChobbyLauncher.BitmapButton();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lb1
@@ -41,7 +42,7 @@
             this.lb1.AutoSize = true;
             this.lb1.BackColor = System.Drawing.Color.Transparent;
             this.lb1.ForeColor = System.Drawing.Color.White;
-            this.lb1.Location = new System.Drawing.Point(12, 24);
+            this.lb1.Location = new System.Drawing.Point(29, 63);
             this.lb1.Name = "lb1";
             this.lb1.Size = new System.Drawing.Size(52, 13);
             this.lb1.TabIndex = 0;
@@ -49,7 +50,7 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(15, 50);
+            this.progressBar1.Location = new System.Drawing.Point(32, 89);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(306, 23);
             this.progressBar1.TabIndex = 1;
@@ -73,7 +74,7 @@
             this.btnCancel.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancel.ForeColor = System.Drawing.Color.White;
-            this.btnCancel.Location = new System.Drawing.Point(117, 89);
+            this.btnCancel.Location = new System.Drawing.Point(133, 129);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(106, 37);
             this.btnCancel.TabIndex = 2;
@@ -81,11 +82,24 @@
             this.btnCancel.UseVisualStyleBackColor = false;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.label1.ForeColor = System.Drawing.Color.White;
+            this.label1.Location = new System.Drawing.Point(27, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(310, 26);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Zero-K is updating, please wait";
+            // 
             // ChobbylaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(344, 138);
+            this.ClientSize = new System.Drawing.Size(371, 178);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.lb1);
@@ -105,5 +119,6 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Timer timer1;
         private BitmapButton btnCancel;
+        private System.Windows.Forms.Label label1;
     }
 }
