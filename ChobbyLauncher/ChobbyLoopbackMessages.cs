@@ -81,6 +81,7 @@ namespace ChobbyLauncher
         public string AuthToken { get; set; }
         public List<string> Friends { get; set; }
         public string FriendSteamID { get; set; }
+        public string MySteamName { get; set; }
     }
 
 
