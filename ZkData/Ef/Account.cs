@@ -132,6 +132,8 @@ namespace ZkData
         public int ForumTotalUpvotes { get; set; }
         public int ForumTotalDownvotes { get; set; }
         public int? VotesAvailable { get; set; }
+
+        [Index(IsUnique = false)]
         public decimal? SteamID { get; set; }
         [StringLength(200)]
         public string SteamName { get; set; }
@@ -242,13 +244,15 @@ namespace ZkData
 
         public bool VerifyPassword(string passwordHash)
         {
-            return BCrypt.Net.BCrypt.Verify(passwordHash, PasswordBcrypt);
+            if (!string.IsNullOrEmpty(PasswordBcrypt)) return BCrypt.Net.BCrypt.Verify(passwordHash, PasswordBcrypt);
+            return false;
         }
 
 
         public void SetPasswordHashed(string passwordHash)
         {
-            PasswordBcrypt = BCrypt.Net.BCrypt.HashPassword(passwordHash, 4);
+            if (string.IsNullOrEmpty(passwordHash)) PasswordBcrypt = null;
+            else PasswordBcrypt = BCrypt.Net.BCrypt.HashPassword(passwordHash, 4);
         }
 
         public void SetPasswordPlain(string passwordPlain)
@@ -591,23 +595,7 @@ namespace ZkData
 
         public static bool IsValidLobbyName(string name)
         {
-            return !string.IsNullOrEmpty(name) && name.Length <= GlobalConst.MaxUsernameLength && name.All(ValidLobbyNameCharacter);
-        }
-
-        public static bool ValidLobbyNameCharacter(char c) {
-            if (c >= 'a' && c <= 'z') return true;
-            if (c >= 'A' && c <= 'Z') return true;
-            if (c >= '0' && c <= '9') return true;
-            if (c == '_') return true;
-            if (c == '[' || c == ']') return true;
-            return false;
-        }
-
-        public static string StripInvalidLobbyNameChars(string name) {
-            if (string.IsNullOrEmpty(name)) return name;
-            var sb = new StringBuilder();
-            foreach (var c in name.Where(ValidLobbyNameCharacter)) sb.Append(c);
-            return sb.ToString();
+            return !string.IsNullOrEmpty(name) && name.Length <= GlobalConst.MaxUsernameLength && name.All(Utils.ValidLobbyNameCharacter);
         }
     }
 }

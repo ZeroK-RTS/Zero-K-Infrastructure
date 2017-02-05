@@ -54,7 +54,7 @@ namespace ZkLobbyServer
             Version = entry.GetName().Version.ToString();
             Engine = MiscVar.DefaultEngine;
 
-            SpringPaths = new SpringPaths(GlobalConst.SpringieDataDir, false);
+            SpringPaths = new SpringPaths(GlobalConst.SpringieDataDir, false, false);
             Downloader = new PlasmaDownloader.PlasmaDownloader(null, SpringPaths);
             Downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine);
             Downloader.PackageDownloader.DoMasterRefresh();
@@ -167,7 +167,7 @@ namespace ZkLobbyServer
             if (uWatched.User?.IsAdmin == true) return true;
 
             // friends see each other
-            if (uWatcher.Friends.Contains(uWatched.Name)) return true;
+            if (uWatcher.FriendNames.Contains(uWatched.Name)) return true;
 
             // already seen, cannot be unseen
             if (uWatcher.HasSeenUserVersion.ContainsKey(uWatched.Name)) return true;

@@ -24,7 +24,7 @@ namespace AutoRegistrator
 
         public void Generate() {
             Utils.CheckPath(targetFolder);
-            var paths = new SpringPaths(targetFolder, false);
+            var paths = new SpringPaths(targetFolder, false, false);
             try
             {
                 //Directory.Delete(Path.Combine(paths.WritableDirectory, "pool"), true);

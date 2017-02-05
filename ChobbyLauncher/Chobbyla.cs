@@ -19,11 +19,6 @@ namespace ChobbyLauncher
 {
     public class Chobbyla
     {
-        private static List<string> defaultConfigs = new List<string>()
-        {
-            "LuaMenu/configs/gameConfig/zk/defaultSettings/lups.cfg",
-            "LuaMenu/configs/gameConfig/zk/defaultSettings/springsettings.cfg"
-        };
         public PlasmaDownloader.PlasmaDownloader downloader;
         private string engine;
         private string chobbyTag;
@@ -47,7 +42,7 @@ namespace ChobbyLauncher
         public Chobbyla(string rootPath, string chobbyTagOverride, string engineOverride, ulong connectLobbyID)
         {
             InitialConnectLobbyID = connectLobbyID;
-            paths = new SpringPaths(rootPath, false) { Allow64BitWindows = true };
+            paths = new SpringPaths(rootPath, false, true);
             chobbyTag = chobbyTagOverride ?? (GlobalConst.Mode == ModeType.Live ? "zkmenu:stable" : "zkmenu:test");
             isDev = (chobbyTag == "dev") || (chobbyTag == "chobby:dev") || (chobbyTag == "zkmenu:dev");
             engine = engineOverride;
@@ -107,11 +102,8 @@ namespace ChobbyLauncher
 
                 if (!isDev)
                 {
-                    Status = "Reseting configs";
-                    ConfigVersions.ResetConfigs(paths, ver);
-
-                    Status = "Extracting default configs";
-                    ExtractDefaultConfigs(paths, ver);
+                    Status = "Reseting configs and deploying AIs";
+                    ConfigVersions.DeployAndResetConfigs(paths, ver);
                 }
 
                 EventWaitHandle ev = new EventWaitHandle(false, EventResetMode.ManualReset);
@@ -127,6 +119,7 @@ namespace ChobbyLauncher
                         if (lobbyID != null) LobbyID = lobbyID;
                         ev.Set();
                     });
+                    MySteamNameSanitized = Utils.StripInvalidLobbyNameChars(Steam.GetMyName());
                 };
                 Steam.ConnectToSteam();
 
@@ -145,6 +138,8 @@ namespace ChobbyLauncher
                 return false;
             }
         }
+
+        public string MySteamNameSanitized { get; set; }
 
 
         public Task<bool> Run()
@@ -180,20 +175,6 @@ namespace ChobbyLauncher
                 return false;
             }
             return true;
-        }
-
-        private static void ExtractDefaultConfigs(SpringPaths paths, PackageDownloader.Version ver)
-        {
-            if (ver != null)
-                foreach (var f in defaultConfigs)
-                {
-                    var target = Path.Combine(paths.WritableDirectory, Path.GetFileName(f));
-                    if (!File.Exists(target))
-                    {
-                        var content = ver.ReadFile(paths, f);
-                        if (content != null) File.WriteAllBytes(target, content.ToArray());
-                    }
-                }
         }
 
         private dynamic ExtractEngineFromLua(PackageDownloader.Version ver)

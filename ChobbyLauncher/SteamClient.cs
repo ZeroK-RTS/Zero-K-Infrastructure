@@ -24,9 +24,15 @@ namespace ChobbyLauncher
         }
 
         private Callback<GameLobbyJoinRequested_t> lobbyJoinRequestCallback;
+        private Callback<GameOverlayActivated_t> overlayActivatedCallback;
+
         private int tickCounter;
         private Timer timer;
         public bool IsOnline { get; private set; }
+
+        public event Action<bool> OverlayActivated = (b) => { };
+        public event Action SteamOffline = () => { };
+        public event Action SteamOnline = () => { };
 
 
         public void Dispose()
@@ -61,11 +67,10 @@ namespace ChobbyLauncher
                         if (!failure && (t.m_eResult == EResult.k_EResultOK)) onCreated?.Invoke(t.m_ulSteamIDLobby);
                         else onCreated?.Invoke((ulong?)null);
                     });
-
             }
         }
 
-        public byte[] GetClientAuthToken()
+        private byte[] GetClientAuthToken()
         {
             var buf = new byte[256];
             uint ticketSize;
@@ -78,36 +83,53 @@ namespace ChobbyLauncher
 
         public string GetClientAuthTokenHex()
         {
-            return GetClientAuthToken().ToHex();
+            if (IsOnline) return GetClientAuthToken().ToHex();
+            else return null;
         }
 
 
         public List<ulong> GetFriends()
         {
-            var ret = new List<ulong>();
-            var cnt = SteamFriends.GetFriendCount(EFriendFlags.k_EFriendFlagImmediate);
-            for (var i = 0; i < cnt; i++) ret.Add(SteamFriends.GetFriendByIndex(i, EFriendFlags.k_EFriendFlagImmediate).m_SteamID);
-            return ret;
+            if (IsOnline)
+            {
+                var ret = new List<ulong>();
+                var cnt = SteamFriends.GetFriendCount(EFriendFlags.k_EFriendFlagImmediate);
+                for (var i = 0; i < cnt; i++) ret.Add(SteamFriends.GetFriendByIndex(i, EFriendFlags.k_EFriendFlagImmediate).m_SteamID);
+                return ret;
+            }
+            return null;
+        }
+
+
+        public ulong? GetLobbyOwner(ulong lobbyID)
+        {
+            if (IsOnline) return SteamMatchmaking.GetLobbyOwner(new CSteamID(lobbyID)).m_SteamID;
+            return null;
         }
 
         public string GetMyName()
         {
-            return SteamFriends.GetPersonaName();
+            if (IsOnline) return SteamFriends.GetPersonaName();
+            return null;
         }
 
         public ulong GetSteamID()
         {
-            return SteamUser.GetSteamID().m_SteamID;
+            if (IsOnline) return SteamUser.GetSteamID().m_SteamID;
+            return 0;
+        }
+
+
+        public void InviteFriendToGame(ulong lobbyID, ulong friendID)
+        {
+            if (IsOnline) SteamMatchmaking.InviteUserToLobby(new CSteamID(lobbyID), new CSteamID(friendID));
         }
 
         public event Action<ulong> JoinFriendRequest = (steamID) => { };
 
         public void OpenOverlaySection(OverlayOption option)
         {
-            if (IsOnline)
-            {
-                SteamFriends.ActivateGameOverlay(option.ToString());
-            }
+            if (IsOnline) SteamFriends.ActivateGameOverlay(option.ToString());
         }
 
         public void OpenOverlayWebsite(string url)
@@ -115,10 +137,6 @@ namespace ChobbyLauncher
             if (IsOnline) SteamFriends.ActivateGameOverlayToWebPage(url);
         }
 
-        public event Action SteamOffline = () => { };
-
-
-        public event Action SteamOnline = () => { };
 
 
         [HandleProcessCorruptedStateExceptions]
@@ -133,6 +151,8 @@ namespace ChobbyLauncher
                             IsOnline = true;
 
                             lobbyJoinRequestCallback = new Callback<GameLobbyJoinRequested_t>(t => { JoinFriendRequest(t.m_steamIDFriend.m_SteamID); });
+                            overlayActivatedCallback = new Callback<GameOverlayActivated_t>(t => { OverlayActivated(t.m_bActive != 0); });
+
                             SteamOnline();
                         }
                 if (IsOnline)
@@ -154,22 +174,6 @@ namespace ChobbyLauncher
             }
 
             tickCounter++;
-        }
-
-
-        public void InviteFriendToGame(ulong lobbyID, ulong friendID)
-        {
-            if (IsOnline)
-            {
-                SteamMatchmaking.InviteUserToLobby(new CSteamID(lobbyID), new CSteamID(friendID));
-            }
-        }
-
-
-        public ulong? GetLobbyOwner(ulong lobbyID)
-        {
-            if (IsOnline) return SteamMatchmaking.GetLobbyOwner(new CSteamID(lobbyID)).m_SteamID;
-            return null;
         }
     }
 }

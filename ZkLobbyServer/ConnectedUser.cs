@@ -34,7 +34,9 @@ namespace ZkLobbyServer
         private ZkLobbyServer server;
         public User User = new User();
         public HashSet<string> FriendBy { get; set; }
-        public HashSet<string> Friends { get; set; }
+        public HashSet<string> FriendNames { get; set; }
+
+        public List<FriendEntry> FriendEntries { get; set; } = new List<FriendEntry>();
         public HashSet<string> IgnoredBy { get; set; }
         public HashSet<string> Ignores { get; set; }
 
@@ -81,13 +83,15 @@ namespace ZkLobbyServer
             {
                 var rels =
                     db.AccountRelations.Where(x => (x.TargetAccountID == User.AccountID) || (x.OwnerAccountID == User.AccountID))
-                        .Select(x => new { OwnerAccountID = x.OwnerAccountID, Owner = x.Owner.Name, Target = x.Target.Name, Relation = x.Relation })
+                        .Select(x => new { OwnerAccountID = x.OwnerAccountID, Owner = x.Owner.Name, Target = x.Target.Name, Relation = x.Relation, SteamID= x.Target.SteamID })
                         .ToList();
 
-                Friends =
+                FriendNames =
                     new HashSet<string>(rels.Where(x => (x.Relation == Relation.Friend) && (x.OwnerAccountID == User.AccountID)).Select(x => x.Target));
                 FriendBy =
                     new HashSet<string>(rels.Where(x => (x.Relation == Relation.Friend) && (x.OwnerAccountID != User.AccountID)).Select(x => x.Owner));
+
+                FriendEntries = new List<FriendEntry>(rels.Where(x => (x.Relation == Relation.Friend) && (x.OwnerAccountID != User.AccountID)).Select(x => new FriendEntry() {Name = x.Target, SteamID = x.SteamID?.ToString()}));
 
                 Ignores =
                     new HashSet<string>(rels.Where(x => (x.Relation == Relation.Ignore) && (x.OwnerAccountID == User.AccountID)).Select(x => x.Target));
@@ -521,7 +525,12 @@ namespace ZkLobbyServer
             using (var db = new ZkDataContext())
             {
                 var acc = await db.Accounts.FindAsync(User.AccountID);
-                await server.SteamWebApi.UpdateAccountInformation(acc, linkSteam.Token);
+                var info = await server.SteamWebApi.VerifyAndGetAccountInformation(linkSteam.Token);
+                if (info != null)
+                {
+                    acc.SteamID = info.steamid;
+                    acc.SteamName = info.personaname;
+                }
                 await db.SaveChangesAsync();
                 await server.PublishAccountUpdate(acc);
             }
@@ -531,12 +540,15 @@ namespace ZkLobbyServer
         {
             if (!IsLoggedIn) return;
 
-            if (string.IsNullOrEmpty(rel.TargetName)) return;
+            if (string.IsNullOrEmpty(rel.TargetName) && string.IsNullOrEmpty(rel.SteamID)) return;
 
             using (var db = new ZkDataContext())
             {
+                ulong steamId = 0;
+
                 var srcAccount = db.Accounts.Find(User.AccountID);
-                var trgtAccount = Account.AccountByName(db, rel.TargetName);
+                ulong.TryParse(rel.SteamID, out steamId);
+                var trgtAccount = Account.AccountByName(db, rel.TargetName) ?? db.Accounts.FirstOrDefault(x=>x.SteamID == steamId);
                 if (trgtAccount == null)
                 {
                     await Respond("No such account found");
@@ -572,7 +584,7 @@ namespace ZkLobbyServer
                     }
 
                     LoadFriendsIgnores();
-                    await SendCommand(new FriendList() { Friends = Friends.ToList() });
+                    await SendCommand(new FriendList() { Friends = FriendEntries.ToList() });
                     await SendCommand(new IgnoreList() { Ignores = Ignores.ToList() });
                 }
             }

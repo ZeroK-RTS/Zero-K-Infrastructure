@@ -33,7 +33,7 @@ namespace ZeroKWeb
         /// </summary>
         public void Main()
         {
-            Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false);
+            Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false, false);
 
             
             Downloader = new PlasmaDownloader.PlasmaDownloader(null, Paths);

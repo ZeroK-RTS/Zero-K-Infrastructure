@@ -79,15 +79,16 @@ namespace ChobbyLauncher
     public class SteamOnline
     {
         public string AuthToken { get; set; }
-        public List<ulong> Friends { get; set; }
-        public ulong? FriendSteamID { get; set; }
+        public List<string> Friends { get; set; }
+        public string FriendSteamID { get; set; }
+        public string SuggestedName { get; set; }
     }
 
 
     [ChobbyMessage]
     public class SteamJoinFriend
     {
-        public ulong FriendSteamID { get; set; }
+        public string FriendSteamID { get; set; }
     }
 
 
@@ -107,7 +108,14 @@ namespace ChobbyLauncher
     [ChobbyMessage]
     public class SteamInviteFriendToGame
     {
-        public ulong SteamID { get; set; }
+        public string SteamID { get; set; }
+    }
+
+
+    [ChobbyMessage]
+    public class SteamOverlayChanged
+    {
+        public bool IsActive { get; set; }
     }
 
 

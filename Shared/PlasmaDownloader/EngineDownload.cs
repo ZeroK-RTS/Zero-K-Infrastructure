@@ -36,26 +36,16 @@ namespace PlasmaDownloader
         {
             Utils.StartAsync(() =>
                 {
-                    var platform = "win32";
-                    
-                    if (Environment.Is64BitOperatingSystem && springPaths.Allow64BitWindows) platform = "win64";
-
-                    if (Environment.OSVersion.Platform == PlatformID.Unix)
-                    {
-                        var response = Utils.ExecuteConsoleCommand("uname", "-m") ?? "";
-                        platform = response.Contains("64") ? "linux64" : "linux32";
-                    }
-
 
                     var possibleUrls = new List<string>
                     {
-                        string.Format("{0}/engine/{2}/{1}.zip", GlobalConst.BaseSiteUrl, Name, platform),
-                        string.Format("{0}/engine/{2}/{1}.zip", "http://zero-k.info", Name, platform), // for non-live deployments also try live server
+                        string.Format("{0}/engine/{2}/{1}.zip", GlobalConst.BaseSiteUrl, Name, springPaths.Platform),
+                        string.Format("{0}/engine/{2}/{1}.zip", "http://zero-k.info", Name, springPaths.Platform), // for non-live deployments also try live server
                     };
                     
                     
                     // for 64bit win also add 32bit engines in case 64bit are missing
-                    if (platform == "win64")
+                    if (springPaths.Platform == SpringPaths.PlatformType.win64)
                     {
                         possibleUrls.Add(string.Format("{0}/engine/{2}/{1}.zip", GlobalConst.BaseSiteUrl, Name, "win32"));
                         possibleUrls.Add(string.Format("{0}/engine/{2}/{1}.zip", "http://zero-k.info", Name, "win32"));

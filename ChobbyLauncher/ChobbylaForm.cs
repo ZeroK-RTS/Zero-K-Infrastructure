@@ -74,6 +74,7 @@ namespace ChobbyLauncher
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            if (MessageBox.Show(this, "WARNING, cancelling now might corrupt your game copy.\nDo you really need to do it?", "Confirm download cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             chobbyla.Download?.Abort();
             DialogResult = DialogResult.Cancel;
             Close();

@@ -193,7 +193,7 @@ namespace ZeroKLobby
 
                 
 
-                SpringPaths = new SpringPaths(contentDir);
+                SpringPaths = new SpringPaths(contentDir, true, true);
 
                 if (
                 MessageBox.Show(new Form() { TopMost = true },

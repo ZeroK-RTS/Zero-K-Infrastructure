@@ -58,10 +58,24 @@ namespace ZkLobbyServer
                         LogIpFailure(ip);
                         return new LoginCheckerResponse(LoginResponse.Code.InvalidName, "Invalid user name");
                     }
-                    if (!acc.VerifyPassword(login.PasswordHash))
+
+                    if (!string.IsNullOrEmpty(login.PasswordHash))
+                    {
+
+                        if (!acc.VerifyPassword(login.PasswordHash))
+                        {
+                            LogIpFailure(ip);
+                            return new LoginCheckerResponse(LoginResponse.Code.InvalidPassword, "Invalid password");
+                        }
+                    }
+
+                    SteamWebApi.PlayerInfo info = null;
+                    if (!string.IsNullOrEmpty(login.SteamAuthToken)) info = await state.SteamWebApi.VerifyAndGetAccountInformation(login.SteamAuthToken);
+
+                    if (string.IsNullOrEmpty(login.PasswordHash) && info == null)
                     {
                         LogIpFailure(ip);
-                        return new LoginCheckerResponse(LoginResponse.Code.InvalidPassword, "Invalid password");
+                        return new LoginCheckerResponse(LoginResponse.Code.InvalidPassword, "Invalid steam token");
                     }
 
                     var ret = new LoginCheckerResponse(LoginResponse.Code.Ok, null);
@@ -71,11 +85,12 @@ namespace ZkLobbyServer
                     if ((acc.Country == null) || string.IsNullOrEmpty(acc.Country)) acc.Country = "unknown";
                     acc.LobbyVersion = lobbyVersion;
                     acc.LastLogin = DateTime.UtcNow;
+                    acc.SteamID = info?.steamid;
+                    acc.SteamName = info?.personaname;
+
 
                     user.LobbyVersion = login.LobbyVersion;
                     user.IpAddress = ip;
-
-                    if (!string.IsNullOrEmpty(login.SteamAuthToken)) await state.SteamWebApi.UpdateAccountInformation(acc, login.SteamAuthToken);
 
                     UpdateUserFromAccount(user, acc);
                     LogIP(db, acc, ip);

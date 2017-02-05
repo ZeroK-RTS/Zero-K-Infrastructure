@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Net;
 using Newtonsoft.Json;
 using PlasmaShared;
 using ZkData;
@@ -41,15 +40,15 @@ namespace LobbyClient
         ///     Default suggested game version
         /// </summary>
         public string Game { get; set; }
+
+        /// <summary>
+        ///     Number of current users
+        /// </summary>
+        public int UserCount { get; set; }
         /// <summary>
         ///     Lobby server version
         /// </summary>
         public string Version { get; set; }
-
-        /// <summary>
-        /// Number of current users
-        /// </summary>
-        public int UserCount { get; set; }
     }
 
     [Message(Origin.Server)]
@@ -70,7 +69,6 @@ namespace LobbyClient
         /// </summary>
         public string Game { get; set; }
     }
-
 
 
     /// <summary>
@@ -98,9 +96,9 @@ namespace LobbyClient
         /// </summary>
         public string PasswordHash { get; set; }
 
-        public long UserID { get; set; }
-
         public string SteamAuthToken { get; set; }
+
+        public long UserID { get; set; }
     }
 
     /// <summary>
@@ -119,7 +117,7 @@ namespace LobbyClient
         public string PasswordHash { get; set; }
 
         public string SteamAuthToken { get; set; }
-        
+
         public long UserID { get; set; }
     }
 
@@ -179,7 +177,7 @@ namespace LobbyClient
         public Code ResultCode { get; set; }
 
         /// <summary>
-        /// Use this to login to website
+        ///     Use this to login to website
         /// </summary>
         public string SessionToken { get; set; }
     }
@@ -188,11 +186,11 @@ namespace LobbyClient
     [Message(Origin.Server)]
     public class ChannelHeader
     {
-        public string Password { get; set; }
-        public List<string> Users { get; set; } = new List<string>();
         public string ChannelName { get; set; }
-        public Topic Topic { get; set; }
         public bool IsDeluge { get; set; }
+        public string Password { get; set; }
+        public Topic Topic { get; set; }
+        public List<string> Users { get; set; } = new List<string>();
 
         public ChannelHeader()
         {
@@ -264,42 +262,41 @@ namespace LobbyClient
     [Message(Origin.Server | Origin.Client)]
     public class User
     {
+        [JsonIgnore]
+        public string IpAddress;
+
+        [JsonIgnore]
+        public int? PartyID;
+
+
+        [JsonIgnore]
+        public int SyncVersion; //sync version for updating user statuses
         public int AccountID { get; set; }
         public string Avatar { get; set; }
         public DateTime? AwaySince { get; set; }
 
         public bool BanMute { get; set; }
         public bool BanSpecChat { get; set; }
+        public int? BattleID { get; set; }
         public string Clan { get; set; }
+        public int? CompetitiveRank { get; set; }
         public string Country { get; set; }
         public string DisplayName { get; set; }
         public int EffectiveMmElo { get; set; }
-        public int RawMmElo { get; set; }
-        public int? CompetitiveRank { get; set; }
         public string Faction { get; set; }
         public DateTime? InGameSince { get; set; }
         public bool IsAdmin { get; set; }
+        public bool IsAway => AwaySince != null;
         public bool IsBot { get; set; }
-        public int? BattleID { get; set; }
-        
+        public bool IsInBattleRoom => BattleID != null;
+        public bool IsInGame => InGameSince != null;
+
         //public bool IsInBattleRoom { get; set; }
         public int Level { get; set; }
         public string LobbyVersion { get; set; }
         public string Name { get; set; }
+        public int RawMmElo { get; set; }
         public ulong? SteamID { get; set; }
-        public bool IsAway => AwaySince != null;
-        public bool IsInGame => InGameSince != null;
-        public bool IsInBattleRoom => BattleID != null;
-
-        [JsonIgnore]
-        public int? PartyID;
-
-
-        [JsonIgnore] 
-        public int SyncVersion; //sync version for updating user statuses
-
-        [JsonIgnore]
-        public string IpAddress;
 
         public User Clone()
         {
@@ -383,16 +380,16 @@ namespace LobbyClient
         public string Engine { get; set; }
         public string Founder { get; set; }
         public string Game { get; set; }
+        public bool? IsMatchMaker { get; set; }
         public bool? IsRunning { get; set; }
         public string Map { get; set; }
         public int? MaxPlayers { get; set; }
         public AutohostMode? Mode { get; set; }
         public string Password { get; set; }
-        public DateTime? RunningSince { get; set; }
         public int? PlayerCount { get; set; }
+        public DateTime? RunningSince { get; set; }
         public int? SpectatorCount { get; set; }
         public string Title { get; set; }
-        public bool? IsMatchMaker { get; set; }
     }
 
     [Message(Origin.Server)]
@@ -418,9 +415,9 @@ namespace LobbyClient
     public class JoinBattleSuccess
     {
         public int BattleID { get; set; }
-        public List<UpdateUserBattleStatus> Players { get; set; }
         public List<UpdateBotStatus> Bots { get; set; }
         public Dictionary<string, string> Options { get; set; } = new Dictionary<string, string>();
+        public List<UpdateUserBattleStatus> Players { get; set; }
     }
 
     [Message(Origin.Client)]
@@ -567,6 +564,8 @@ namespace LobbyClient
     public class SetAccountRelation
     {
         public Relation Relation { get; set; }
+
+        public string SteamID { get; set; }
         public string TargetName { get; set; }
     }
 
@@ -575,10 +574,10 @@ namespace LobbyClient
     public class ConnectSpring
     {
         public string Engine { get; set; }
-        public string Ip { get; set; }
-        public int Port { get; set; }
-        public string Map { get; set; }
         public string Game { get; set; }
+        public string Ip { get; set; }
+        public string Map { get; set; }
+        public int Port { get; set; }
         public string ScriptPassword { get; set; }
     }
 
@@ -593,7 +592,13 @@ namespace LobbyClient
     [Message(Origin.Server)]
     public class FriendList
     {
-        public List<string> Friends { get; set; } = new List<string>();
+        public List<FriendEntry> Friends { get; set; } = new List<FriendEntry>();
+    }
+
+    public class FriendEntry
+    {
+        public string Name { get; set; }
+        public string SteamID { get; set; }
     }
 
     [Message(Origin.Server)]
@@ -605,28 +610,28 @@ namespace LobbyClient
     [Message(Origin.Server)]
     public class BattleDebriefing
     {
-        public string Url { get; set; }
-        public string Message { get; set; }
-        public string ChatChannel { get; set; }
-        public int ServerBattleID { get; set; }
         public Dictionary<string, DebriefingUser> DebriefingUsers { get; set; } = new Dictionary<string, DebriefingUser>();
-
-        public class DebriefingUser
-        {
-            public float? EloChange { get; set; }
-            public int? XpChange { get; set; }
-            public bool IsInVictoryTeam { get; set; }
-            public int? LoseTime { get; set; }
-            public int AllyNumber { get; set; }
-            public bool IsLevelUp { get; set; }
-            public object Awards { get; set; }
-        }
+        public string ChatChannel { get; set; }
+        public string Message { get; set; }
+        public int ServerBattleID { get; set; }
+        public string Url { get; set; }
 
         public class DebriefingAward
         {
+            public string Description { get; set; }
             public string Key { get; set; }
             public double? Value { get; set; }
-            public string Description { get; set; }
+        }
+
+        public class DebriefingUser
+        {
+            public int AllyNumber { get; set; }
+            public object Awards { get; set; }
+            public float? EloChange { get; set; }
+            public bool IsInVictoryTeam { get; set; }
+            public bool IsLevelUp { get; set; }
+            public int? LoseTime { get; set; }
+            public int? XpChange { get; set; }
         }
     }
 }

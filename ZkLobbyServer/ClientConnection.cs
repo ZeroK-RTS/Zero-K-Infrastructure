@@ -109,7 +109,7 @@ namespace ZkLobbyServer
                 }
 
 
-                await SendCommand(new FriendList() { Friends = connectedUser.Friends.ToList() });
+                await SendCommand(new FriendList() { Friends = connectedUser.FriendEntries.ToList() });
                 await SendCommand(new IgnoreList() { Ignores = connectedUser.Ignores.ToList() });
 
                 await server.MatchMaker.OnLoginAccepted(connectedUser);
@@ -132,57 +132,69 @@ namespace ZkLobbyServer
             {
                 await Task.Run(async () =>
                 {
-                    using (var db = new ZkDataContext())
-                    {
-                        // http://stackoverflow.com/questions/5312585/linq-case-insensitive-without-toupper-or-tolower
-                        var acc = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == register.Name.ToUpper());
-                        if (acc != null) response.ResultCode = RegisterResponse.Code.InvalidName;
-                        else
-                        {
-                            if (string.IsNullOrEmpty(register.PasswordHash)) response.ResultCode = RegisterResponse.Code.InvalidPassword;
-                            else
-                            {
-                                if (!server.LoginChecker.VerifyIp(RemoteEndpointIP))
-                                {
-                                    response.ResultCode = RegisterResponse.Code.Banned;
-                                    response.Reason = "Too many connection attempts";
-                                }
-                                else
-                                {
-                                    var banPenalty = Punishment.GetActivePunishment(null, RemoteEndpointIP, register.UserID, x => x.BanLobby);
-                                    if (banPenalty != null)
-                                    {
-                                        response.ResultCode = RegisterResponse.Code.Banned;
-                                        response.Reason = banPenalty.Reason;
-                                    }
-                                    else
-                                    {
-                                        acc = new Account()
-                                        {
-                                            Name = register.Name 
-                                        };
-
-
-                                        if (!string.IsNullOrEmpty(register.SteamAuthToken)) await server.SteamWebApi.UpdateAccountInformation(acc, register.SteamAuthToken);
-
-
-                                        acc.SetPasswordHashed(register.PasswordHash);
-                                        acc.SetName(register.Name);
-                                        acc.SetAvatar();
-                                        db.Accounts.Add(acc);
-                                        db.SaveChanges();
-
-                                        response.ResultCode = RegisterResponse.Code.Ok;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    response = await DoRegister(register);
                 });
             }
 
             //Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
             await SendCommand(response);
+        }
+
+        private async Task<RegisterResponse> DoRegister(Register register)
+        {
+            var response = new RegisterResponse();
+            using (var db = new ZkDataContext())
+            {
+                // http://stackoverflow.com/questions/5312585/linq-case-insensitive-without-toupper-or-tolower
+                var acc = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == register.Name.ToUpper());
+                if (acc != null) response.ResultCode = RegisterResponse.Code.InvalidName;
+                else
+                {
+                    if (string.IsNullOrEmpty(register.PasswordHash) && string.IsNullOrEmpty(register.SteamAuthToken)) response.ResultCode = RegisterResponse.Code.InvalidPassword;
+                    else
+                    {
+                        if (!server.LoginChecker.VerifyIp(RemoteEndpointIP))
+                        {
+                            response.ResultCode = RegisterResponse.Code.Banned;
+                            response.Reason = "Too many connection attempts";
+                        }
+                        else
+                        {
+                            var banPenalty = Punishment.GetActivePunishment(null, RemoteEndpointIP, register.UserID, x => x.BanLobby);
+                            if (banPenalty != null)
+                            {
+                                response.ResultCode = RegisterResponse.Code.Banned;
+                                response.Reason = banPenalty.Reason;
+                            }
+                            else
+                            {
+                                acc = new Account() { Name = register.Name };
+                                SteamWebApi.PlayerInfo info = null;
+                                if (!string.IsNullOrEmpty(register.SteamAuthToken))
+                                {
+                                    info = await server.SteamWebApi.VerifyAndGetAccountInformation(register.SteamAuthToken);
+                                    if (info == null && string.IsNullOrEmpty(register.PasswordHash)) // no steam check and no pw, forget it
+                                    {
+                                        response.ResultCode = RegisterResponse.Code.InvalidPassword;
+                                        return response;
+                                    }
+                                }
+
+                                acc.SetPasswordHashed(register.PasswordHash);
+                                acc.SetName(register.Name);
+                                acc.SetAvatar();
+                                acc.SteamID = info?.steamid;
+                                acc.SteamName = info?.personaname;
+                                db.Accounts.Add(acc);
+                                db.SaveChanges();
+
+                                response.ResultCode = RegisterResponse.Code.Ok;
+                            }
+                        }
+                    }
+                }
+            }
+            return response;
         }
 
 

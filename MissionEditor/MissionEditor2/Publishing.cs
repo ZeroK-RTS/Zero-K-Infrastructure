@@ -80,7 +80,7 @@ namespace MissionEditor2
 						writableDir = SpringPaths.GetMySpringDocPath();
 					}
 
-					var paths = new SpringPaths(writableDir, true);
+					var paths = new SpringPaths(writableDir, true, false);
 					string engine = paths.GetEngineList().LastOrDefault();
 					if (isEngineFolder) engine = paths.GetEngineList().FirstOrDefault(x => x == new DirectoryInfo(Settings.Default.SpringPath).Name);
 
