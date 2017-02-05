@@ -244,7 +244,7 @@ namespace ZeroKWeb.Controllers
                 forumPostID == null && string.IsNullOrWhiteSpace(title)) return Content("Cannot post new thread with blank title");
             if (string.IsNullOrWhiteSpace(text)) return Content("Please type some text :)");
 
-            var penalty = Punishment.GetActivePunishment(Global.AccountID, Request.ServerVariables["REMOTE_ADDR"], 0, x => x.BanForum);
+            var penalty = Punishment.GetActivePunishment(Global.AccountID, MvcApplication.GetUserIP(Request), 0, x => x.BanForum);
             if (penalty != null)
             {
                 return
