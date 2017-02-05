@@ -70,7 +70,7 @@ namespace ChobbyLauncher
             }
         }
 
-        public byte[] GetClientAuthToken()
+        private byte[] GetClientAuthToken()
         {
             var buf = new byte[256];
             uint ticketSize;
@@ -83,16 +83,21 @@ namespace ChobbyLauncher
 
         public string GetClientAuthTokenHex()
         {
-            return GetClientAuthToken().ToHex();
+            if (IsOnline) return GetClientAuthToken().ToHex();
+            else return null;
         }
 
 
         public List<ulong> GetFriends()
         {
-            var ret = new List<ulong>();
-            var cnt = SteamFriends.GetFriendCount(EFriendFlags.k_EFriendFlagImmediate);
-            for (var i = 0; i < cnt; i++) ret.Add(SteamFriends.GetFriendByIndex(i, EFriendFlags.k_EFriendFlagImmediate).m_SteamID);
-            return ret;
+            if (IsOnline)
+            {
+                var ret = new List<ulong>();
+                var cnt = SteamFriends.GetFriendCount(EFriendFlags.k_EFriendFlagImmediate);
+                for (var i = 0; i < cnt; i++) ret.Add(SteamFriends.GetFriendByIndex(i, EFriendFlags.k_EFriendFlagImmediate).m_SteamID);
+                return ret;
+            }
+            return null;
         }
 
 
@@ -104,12 +109,14 @@ namespace ChobbyLauncher
 
         public string GetMyName()
         {
-            return SteamFriends.GetPersonaName();
+            if (IsOnline) return SteamFriends.GetPersonaName();
+            return null;
         }
 
         public ulong GetSteamID()
         {
-            return SteamUser.GetSteamID().m_SteamID;
+            if (IsOnline) return SteamUser.GetSteamID().m_SteamID;
+            return 0;
         }
 
 
