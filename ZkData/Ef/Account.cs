@@ -244,13 +244,15 @@ namespace ZkData
 
         public bool VerifyPassword(string passwordHash)
         {
-            return BCrypt.Net.BCrypt.Verify(passwordHash, PasswordBcrypt);
+            if (!string.IsNullOrEmpty(PasswordBcrypt)) return BCrypt.Net.BCrypt.Verify(passwordHash, PasswordBcrypt);
+            return false;
         }
 
 
         public void SetPasswordHashed(string passwordHash)
         {
-            PasswordBcrypt = BCrypt.Net.BCrypt.HashPassword(passwordHash, 4);
+            if (string.IsNullOrEmpty(passwordHash)) PasswordBcrypt = null;
+            else PasswordBcrypt = BCrypt.Net.BCrypt.HashPassword(passwordHash, 4);
         }
 
         public void SetPasswordPlain(string passwordPlain)
