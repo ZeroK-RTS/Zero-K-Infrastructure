@@ -59,7 +59,7 @@ namespace ZkLobbyServer
 
         public class PlayerInfo
         {
-            public long steamid { get; set; }
+            public ulong steamid { get; set; }
             public string personaname { get; set; }
             public long lastlogoff { get; set; }
             public string profileurl { get; set; }
@@ -84,17 +84,15 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task<PlayerInfo> UpdateAccountInformation(Account acc, string token)
+        public async Task<PlayerInfo> VerifyAndGetAccountInformation(string token)
         {
             if (!string.IsNullOrEmpty(token))
             {
-                await Task.Delay(500);
                 try
                 {
                     var steamID = WebValidateAuthToken(token);
                     var info = WebGetPlayerInfo(steamID);
-                    acc.SteamID = steamID;
-                    acc.SteamName = info?.personaname;
+                    info.steamid = steamID;
                     return info;
                 }
                 catch (Exception ex)

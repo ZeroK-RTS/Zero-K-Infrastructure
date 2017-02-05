@@ -525,7 +525,12 @@ namespace ZkLobbyServer
             using (var db = new ZkDataContext())
             {
                 var acc = await db.Accounts.FindAsync(User.AccountID);
-                await server.SteamWebApi.UpdateAccountInformation(acc, linkSteam.Token);
+                var info = await server.SteamWebApi.VerifyAndGetAccountInformation(linkSteam.Token);
+                if (info != null)
+                {
+                    acc.SteamID = info.steamid;
+                    acc.SteamName = info.personaname;
+                }
                 await db.SaveChangesAsync();
                 await server.PublishAccountUpdate(acc);
             }
