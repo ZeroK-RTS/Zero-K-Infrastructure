@@ -119,7 +119,7 @@ namespace ChobbyLauncher
                         if (lobbyID != null) LobbyID = lobbyID;
                         ev.Set();
                     });
-                    MySteamName = Steam.GetMyName();
+                    MySteamNameSanitized = Utils.StripInvalidLobbyNameChars(Steam.GetMyName());
                 };
                 Steam.ConnectToSteam();
 
@@ -139,7 +139,7 @@ namespace ChobbyLauncher
             }
         }
 
-        public string MySteamName { get; set; }
+        public string MySteamNameSanitized { get; set; }
 
 
         public Task<bool> Run()

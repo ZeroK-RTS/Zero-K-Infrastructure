@@ -58,7 +58,7 @@ namespace ZeroKWeb
         }
 
         public static string SanitizeWord(string word) {
-            return Account.StripInvalidLobbyNameChars(word).ToLower();
+            return Utils.StripInvalidLobbyNameChars(word).ToLower();
         }
 
         public void IndexPost(ForumPost post) {

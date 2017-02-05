@@ -593,23 +593,7 @@ namespace ZkData
 
         public static bool IsValidLobbyName(string name)
         {
-            return !string.IsNullOrEmpty(name) && name.Length <= GlobalConst.MaxUsernameLength && name.All(ValidLobbyNameCharacter);
-        }
-
-        public static bool ValidLobbyNameCharacter(char c) {
-            if (c >= 'a' && c <= 'z') return true;
-            if (c >= 'A' && c <= 'Z') return true;
-            if (c >= '0' && c <= '9') return true;
-            if (c == '_') return true;
-            if (c == '[' || c == ']') return true;
-            return false;
-        }
-
-        public static string StripInvalidLobbyNameChars(string name) {
-            if (string.IsNullOrEmpty(name)) return name;
-            var sb = new StringBuilder();
-            foreach (var c in name.Where(ValidLobbyNameCharacter)) sb.Append(c);
-            return sb.ToString();
+            return !string.IsNullOrEmpty(name) && name.Length <= GlobalConst.MaxUsernameLength && name.All(Utils.ValidLobbyNameCharacter);
         }
     }
 }

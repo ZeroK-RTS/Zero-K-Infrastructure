@@ -261,7 +261,7 @@ namespace ChobbyLauncher
             {
                 AuthToken = chobbyla.AuthToken, Friends = chobbyla.Friends.Select(x=>x.ToString()).ToList(),
                 FriendSteamID = chobbyla.InitialConnectLobbyID != 0 ? chobbyla.Steam.GetLobbyOwner(chobbyla.InitialConnectLobbyID)?.ToString(): null,
-                MySteamName = chobbyla.MySteamName
+                MySteamName = chobbyla.MySteamNameSanitized
             });
         }
 

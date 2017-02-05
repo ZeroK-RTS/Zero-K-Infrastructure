@@ -309,7 +309,7 @@ namespace ZkData
 
         public static string EscapePath(this string path)
         {
-            if (string.IsNullOrEmpty(path)) return path;
+            if (String.IsNullOrEmpty(path)) return path;
             var escaped = new StringBuilder();
             foreach (var c in path)
             {
@@ -767,5 +767,20 @@ namespace ZkData
             return input.Substring(0, length);
         }
 
+        public static bool ValidLobbyNameCharacter(char c) {
+            if (c >= 'a' && c <= 'z') return true;
+            if (c >= 'A' && c <= 'Z') return true;
+            if (c >= '0' && c <= '9') return true;
+            if (c == '_') return true;
+            if (c == '[' || c == ']') return true;
+            return false;
+        }
+
+        public static string StripInvalidLobbyNameChars(string name) {
+            if (String.IsNullOrEmpty(name)) return name;
+            var sb = new StringBuilder();
+            foreach (var c in name.Where(Utils.ValidLobbyNameCharacter)) sb.Append(c);
+            return sb.ToString();
+        }
     }
 }
