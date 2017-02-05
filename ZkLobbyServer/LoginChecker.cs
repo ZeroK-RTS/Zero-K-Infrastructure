@@ -72,7 +72,7 @@ namespace ZkLobbyServer
                     SteamWebApi.PlayerInfo info = null;
                     if (!string.IsNullOrEmpty(login.SteamAuthToken)) info = await state.SteamWebApi.VerifyAndGetAccountInformation(login.SteamAuthToken);
 
-                    if (string.IsNullOrEmpty(login.PasswordHash) && info == null)
+                    if (string.IsNullOrEmpty(login.PasswordHash) && info?.steamid != acc.SteamID)
                     {
                         LogIpFailure(ip);
                         return new LoginCheckerResponse(LoginResponse.Code.InvalidPassword, "Invalid steam token");
