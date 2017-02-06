@@ -251,11 +251,7 @@ namespace ZeroKWeb.Controllers
 		    }
 			else
 			{
-                // todo replace with safer permanent cookie
-				Response.SetCookie(new HttpCookie(GlobalConst.LoginCookieName, login) { Expires = DateTime.Now.AddMonths(12) });
-				Response.SetCookie(new HttpCookie(GlobalConst.PasswordHashCookieName, hashed) { Expires = DateTime.Now.AddMonths(12) });
-
-                FormsAuthentication.SetAuthCookie(acc.Name, false);
+                FormsAuthentication.SetAuthCookie(acc.Name, true);
 
                 if (string.IsNullOrEmpty(referer)) referer = Url.Action("Index");
 				return Redirect(referer);
@@ -266,8 +262,6 @@ namespace ZeroKWeb.Controllers
 		{
 			if (Global.IsAccountAuthorized)
 			{
-				Response.SetCookie(new HttpCookie(GlobalConst.LoginCookieName, "") { Expires = DateTime.Now.AddMinutes(2) });
-				Response.SetCookie(new HttpCookie(GlobalConst.PasswordHashCookieName, "") { Expires = DateTime.Now.AddMinutes(2) });
                 FormsAuthentication.SignOut();
 			}
             if (string.IsNullOrEmpty(referer)) referer = Url.Action("Index");
@@ -295,7 +289,7 @@ namespace ZeroKWeb.Controllers
                             var acc = db.Accounts.FirstOrDefault(x => x.SteamID == steamID);
                             if (acc != null)
                             {
-                                FormsAuthentication.SetAuthCookie(acc.Name, false);
+                                FormsAuthentication.SetAuthCookie(acc.Name, true);
                                 referer = response.GetCallbackArgument("referer");
                                 if (string.IsNullOrEmpty(referer)) referer = Url.Action("Index");
                                 return Redirect(referer);

@@ -136,8 +136,6 @@ namespace ZeroKWeb
                 }
             }
 
-            if (acc == null) if (Request[GlobalConst.LoginCookieName] != null) acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);
-
             if (acc != null)
             {
                 var ip = GetUserIP();

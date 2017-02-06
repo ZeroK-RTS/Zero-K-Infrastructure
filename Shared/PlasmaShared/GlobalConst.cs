@@ -142,7 +142,6 @@ namespace ZkData
         public const double EloWeightLearnFactor = 30;
         public const double EloWeightMalusFactor = -80;
 
-        public const string LoginCookieName = "zk_login";
         public const string SessionTokenVariable = "asmallcake";
 
         public const string MissionScriptFileName = "_missionScript.txt";
@@ -152,7 +151,7 @@ namespace ZkData
         public const string ModeratorChannel = "zkadmin";
         public const string Top20Channel = "zktop20";
 
-        public const string PasswordHashCookieName = "zk_passwordHash";
+        
         public const string LobbyAccessCookieName = "zk_lobby";
 
         public const double PlanetMetalPerTurn = 1;
