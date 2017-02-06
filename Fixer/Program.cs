@@ -348,7 +348,15 @@ namespace Fixer
 
         static void Main(string[] args)
         {
-            RenameOldAccounts();
+            GlobalConst.Mode = ModeType.Live;
+            using (var db = new ZkDataContext())
+            {
+                var total = db.Resources.Where(x => x.MapSupportLevel >= MapSupportLevel.MatchMaker)
+                    .Select(x => x.ResourceContentFiles.OrderByDescending(y => y.LinkCount).Select(y => y.Length).FirstOrDefault())
+                    .Sum(x=>(decimal)x);
+                Console.WriteLine(total);
+            }
+            //RenameOldAccounts();
             return;
             var ns = new NubSimulator();
             ns.SpawnMany();

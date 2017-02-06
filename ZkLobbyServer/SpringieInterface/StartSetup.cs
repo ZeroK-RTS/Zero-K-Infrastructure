@@ -82,7 +82,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams["LobbyID"] = user.AccountID.ToString();
                         userParams["CountryCode"] = user.Country;
 
-                        var userBanMuted = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanMute);
+                        var userBanMuted = Punishment.GetActivePunishment(user.AccountID, null, null, x => x.BanMute) != null;
                         if (userBanMuted) userParams["muted"] = "1";
                         userParams["faction"] = user.Faction != null ? user.Faction.Shortcut : "";
                         userParams["clan"] = user.Clan != null ? user.Clan.Shortcut : "";
@@ -96,7 +96,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams["admin"] = user.IsZeroKAdmin ? "1" : "0";
                         if (p.PartyID.HasValue) userParams["PartyID"] = p.PartyID.ToString();
 
-                        var userSpecChatBlocked = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanSpecChat);
+                        var userSpecChatBlocked = Punishment.GetActivePunishment(user.AccountID, null, null, x => x.BanSpecChat) != null; ;
                         userParams["can_spec_chat"] = userSpecChatBlocked ? "0" : "1";
 
                         userParams["ignored"] = string.Join(",", user.RelalationsByOwner.Where(x => x.Relation == Relation.Ignore).Select(x=>x.Target.Name));
@@ -119,7 +119,7 @@ namespace ZeroKWeb.SpringieInterface
                             if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams["extracomm"] = "1";
 
                             var commProfileIDs = new LuaTable();
-                            var userCommandersBanned = user.PunishmentsByAccountID.Any(x => !x.IsExpired && x.BanCommanders);
+                            var userCommandersBanned = Punishment.GetActivePunishment(user.AccountID, null, null, x => x.BanCommanders) != null; 
                             if (!userCommandersBanned)
                             {
                                 // set up commander data

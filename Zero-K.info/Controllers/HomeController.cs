@@ -235,7 +235,7 @@ namespace ZeroKWeb.Controllers
 			return View();
 		}
 
-        [AcceptVerbs(HttpVerbs.Post)]
+        [AcceptVerbs(HttpVerbs.Post | HttpVerbs.Get)]
         public ActionResult Logon(string login, string password, string referer, string steamlogon)
 		{
 		    if (!Global.Server.LoginChecker.VerifyIp(Request.UserHostAddress)) return Content("Too many login failures, access blocked");
