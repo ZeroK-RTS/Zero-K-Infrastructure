@@ -91,7 +91,7 @@ namespace ZkLobbyServer
                 FriendBy =
                     new HashSet<string>(rels.Where(x => (x.Relation == Relation.Friend) && (x.OwnerAccountID != User.AccountID)).Select(x => x.Owner));
 
-                FriendEntries = new List<FriendEntry>(rels.Where(x => (x.Relation == Relation.Friend) && (x.OwnerAccountID != User.AccountID)).Select(x => new FriendEntry() {Name = x.Target, SteamID = x.SteamID?.ToString()}));
+                FriendEntries = new List<FriendEntry>(rels.Where(x => (x.Relation == Relation.Friend) && (x.OwnerAccountID == User.AccountID)).Select(x => new FriendEntry() {Name = x.Target, SteamID = x.SteamID?.ToString()}));
 
                 Ignores =
                     new HashSet<string>(rels.Where(x => (x.Relation == Relation.Ignore) && (x.OwnerAccountID == User.AccountID)).Select(x => x.Target));
