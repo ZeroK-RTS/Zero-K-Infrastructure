@@ -9,6 +9,10 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using DotNetOpenAuth.Messaging;
+using DotNetOpenAuth.OpenId;
+using DotNetOpenAuth.OpenId.Extensions.SimpleRegistration;
+using DotNetOpenAuth.OpenId.RelyingParty;
 using ZeroKWeb;
 using ZkData;
 
@@ -270,9 +274,57 @@ namespace ZeroKWeb.Controllers
 			return Redirect(referer);
 		}
 
-  
 
-		string GetCommanderTooltip(int commanderID)
+        [AcceptVerbs(HttpVerbs.Post | HttpVerbs.Get)]
+        public ActionResult SteamLogon(string referer)
+        {
+            var openid = new OpenIdRelyingParty();
+            IAuthenticationResponse response = openid.GetResponse();
+
+            if (response != null)
+            {
+                switch (response.Status)
+                {
+                    case AuthenticationStatus.Authenticated:
+                        var db = new ZkDataContext();
+                        var steamIDStr = response.FriendlyIdentifierForDisplay.Split('/').LastOrDefault();
+                        ulong steamID;
+
+                        if (ulong.TryParse(steamIDStr, out steamID))
+                        {
+                            var acc = db.Accounts.FirstOrDefault(x => x.SteamID == steamID);
+                            if (acc != null)
+                            {
+                                FormsAuthentication.SetAuthCookie(acc.Name, false);
+                                referer = response.GetCallbackArgument("referer");
+                                if (string.IsNullOrEmpty(referer)) referer = Url.Action("Index");
+                                return Redirect(referer);
+                            }
+                            else
+                            {
+                                return Content("Please download the game and create an account in-game first");
+                            }
+                        }
+                        break;
+                    case AuthenticationStatus.Canceled:
+                        return Content("Login was cancelled at the provider");
+                        break;
+                    case AuthenticationStatus.Failed:
+                        return Content("Login failed");
+                        break;
+                }
+                return View("HomeIndex");
+            }
+            else
+            {
+                IAuthenticationRequest request = openid.CreateRequest(Identifier.Parse("https://steamcommunity.com/openid/"));
+                if (!string.IsNullOrEmpty(referer)) request.SetCallbackArgument("referer", referer);
+                return request.RedirectingResponse.AsActionResultMvc5();
+            }
+        }
+
+
+        string GetCommanderTooltip(int commanderID)
 		{
 			var db = new ZkDataContext();
 			var sb = new StringBuilder();

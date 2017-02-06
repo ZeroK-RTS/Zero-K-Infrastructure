@@ -13,6 +13,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -697,11 +698,24 @@ namespace ZkData
             return da.Length > 0 ? da[0].Description : e.ToString();
         }
 
+        public static IEnumerable<Type> GetLoadableTypes(this Assembly assembly)
+        {
+            if (assembly == null) throw new ArgumentNullException(nameof(assembly));
+            try
+            {
+                return assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                return e.Types.Where(t => t != null);
+            }
+        }
+
 
         public static IEnumerable<Type> GetAllTypesWithAttribute<T>()
         {
             return from a in AppDomain.CurrentDomain.GetAssemblies().AsParallel()
-                from t in a.GetTypes()
+                from t in a.GetLoadableTypes()
                 let attributes = t.GetCustomAttributes(typeof(T), true)
                 where attributes != null && attributes.Length > 0
                 select t;
