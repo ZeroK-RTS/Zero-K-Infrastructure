@@ -150,7 +150,7 @@ namespace ZeroKWeb
                 else
                 {
                     HttpContext.Current.User = acc;
-                    FormsAuthentication.SetAuthCookie(acc.Name, false);
+                    FormsAuthentication.SetAuthCookie(acc.Name, true);
                 }
             }
         }

@@ -6,10 +6,12 @@
     if (!(Global.IsAccountAuthorized))
     {
         <form method="post" action="@Url.Action("Logon", "Home")" style="padding: 0; margin: 0;">
-            <a href="@Url.Action("SteamLogon", "Home", new {referer= Request["ReturnUrl"] ?? Request.Url?.ToString()})" nicetitle="Login using Steam (you need to download and run game first)"><img src="~/Img/sits_small.png" /></a>
-            &nbsp;<i>OR</i>&nbsp;&nbsp;Zero-K Name: 
+            Zero-K Name: 
             <input type="text" name="login" />
-            &nbsp;&nbsp; Password:
+            &nbsp;&nbsp; 
+            <input type="image" value="Login" src="~/Img/sits_small.png" style="border: none; vertical-align: middle;" title="Login using Steam (you need to download and run game first)" alt="Login" name="steamlogon" />
+            &nbsp;<i>OR</i>&nbsp;&nbsp;
+            Password:
             <input type="password" name="password" />
             &nbsp;&nbsp;
             <input type="image" value="Login" src="~/Img/login.png" style="border: none; width: 25px;
