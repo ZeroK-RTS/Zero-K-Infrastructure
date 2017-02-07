@@ -308,12 +308,25 @@ namespace ChobbyLauncher
         private async Task OnConnected()
         {
             Trace.TraceInformation("Chobby connected to wrapper");
-            await SendCommand(new SteamOnline()
+            try
             {
-                AuthToken = chobbyla.AuthToken, Friends = chobbyla.Friends.Select(x=>x.ToString()).ToList(),
-                FriendSteamID = chobbyla.InitialConnectLobbyID != 0 ? chobbyla.Steam.GetLobbyOwner(chobbyla.InitialConnectLobbyID)?.ToString(): null,
-                SuggestedName = chobbyla.MySteamNameSanitized
-            });
+                if (chobbyla.Steam.IsOnline)
+                {
+                    await
+                        SendCommand(new SteamOnline()
+                        {
+                            AuthToken = chobbyla.AuthToken,
+                            Friends = chobbyla.Friends.Select(x => x.ToString()).ToList(),
+                            FriendSteamID =
+                                chobbyla.InitialConnectLobbyID != 0 ? chobbyla.Steam.GetLobbyOwner(chobbyla.InitialConnectLobbyID)?.ToString() : null,
+                            SuggestedName = chobbyla.MySteamNameSanitized
+                        });
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error processing OnConnected: {0}" ,ex);
+            }
         }
 
         private async Task OnConnectionClosed(bool arg)
