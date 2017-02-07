@@ -6,7 +6,7 @@
 <head>
     @RenderSection("head", false)
 
-    <meta name="description" content="Zero-K is a FREE multiplatform, open-source RTS game which aims to be dynamic and action-packed."/>
+    <meta name="description" content="Zero-K is a FREE multiplatform, open-source RTS game which aims to be dynamic and action-packed." />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
         @if (!string.IsNullOrEmpty(Page.Title))
@@ -16,7 +16,7 @@
         Zero-K
     </title>
 
-    <link rel="icon" href='@Href("~/img/favicon.png")'/>
+    <link rel="icon" href='@Href("~/img/favicon.png")' />
     @System.Web.Optimization.Styles.Render("~/bundles/maincss")
     @System.Web.Optimization.Scripts.Render("~/bundles/main")
 
@@ -48,16 +48,18 @@
             </style>
         }
     }
-    
-    
- <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-20510497-1', 'auto');
-  ga('send', 'pageview');
-  </script>
+
+
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+        ga('create', 'UA-20510497-1', 'auto');
+        ga('send', 'pageview');
+    </script>
 </head>
 <body class="">
     <div id='busy' class="border">Loading...<img src='/img/Loader.gif' class="vcenter" /></div>
@@ -84,7 +86,7 @@
             </div>
 
 
-            <div id="renderbody" @if (ViewBag.NoBorder == null) { <text> class="border" </text>   } @if (ViewBag.OpaqueBody == true) { <text> style="opacity: 1" </text>   }>
+            <div id="renderbody" @if (ViewBag.NoBorder == null) { <text> class="border" </text>    } @if (ViewBag.OpaqueBody == true) { <text> style="opacity: 1" </text>    }>
                 @RenderBody()
             </div>
 
@@ -99,7 +101,7 @@
     else
     {
         <div id="simplestyle">
-            @if (!Global.IsWebLobbyAccess && Request.Params["no_menu"]!="1")
+            @if (!Global.IsWebLobbyAccess && Request.Params["no_menu"] != "1")
             {
                 <div class="border" id="menu" style="padding: 0">
                     @Html.Partial("TopMenu")
@@ -111,5 +113,11 @@
             @RenderBody()
         </div>
     }
+
+    <script language="javascript">
+        $(function () {
+            GlobalPageInit();
+        });
+    </script>
 </body>
 </html>
