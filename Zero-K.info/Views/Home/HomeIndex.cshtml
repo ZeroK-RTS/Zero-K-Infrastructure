@@ -7,6 +7,55 @@
     var stat = @Model.LobbyStats;
 }
 
+@section head {
+    @if (!Global.IsAccountAuthorized)
+    {
+        <!-- Google Analytics Content Experiment code -->
+        <script>
+            function utmx_section() {}
+
+            function utmx() {}
+
+            (function() {
+                var
+                    k = '40620291-0', d = document, l = d.location, c = d.cookie;
+                if (l.search.indexOf('utm_expid=' + k) > 0) return;
+
+                function f(n) {
+                    if (c) {
+                        var i = c.indexOf(n + '=');
+                        if (i > -1) {
+                            var j = c.indexOf(';', i);
+                            return escape(c.substring(i + n.length + 1, j < 0 ? c.length : j))
+                        }
+                    }
+                }
+
+                var x = f('__utmx'), xx = f('__utmxx'), h = l.hash;
+                d.write(
+                    '<sc' +
+                    'ript src="' +
+                    'http' +
+                    (l.protocol == 'https:' ? 's://ssl' : '://www') +
+                    '.google-analytics.com/ga_exp.js?' +
+                    'utmxkey=' +
+                    k +
+                    '&utmx=' +
+                    (x ? x : '') +
+                    '&utmxx=' +
+                    (xx ? xx : '') +
+                    '&utmxtime=' +
+                    new Date().valueOf() +
+                    (h ? '&utmxhash=' + escape(h.substr(1)) : '') +
+                    '" type="text/javascript" charset="utf-8"><\/sc' +
+                    'ript>')
+            })();
+        </script>
+        <script>utmx('url', 'A/B');</script>
+        <!-- End of Google Analytics Content Experiment code -->
+    }
+}
+
 @if (!Global.IsLobbyAccess)
 {
     <div class="border">
@@ -24,8 +73,32 @@
         {
             <div align="center">
                 <br /><h3>Welcome to Zero-K</h3><br />
-                <div align="left">Zero-K is a free, multiplatform, open-source RTS game where massive robot armies fight an endless conflict. It has a powerful interface allowing players precision control over high level economic, strategic and tactical decisions. Units interact intuitively using real projectile and movement physics. It boasts over 100 diverse units including Vehicles, Tanks, Hovercraft, Planes, Gunships, Ships, Spiders walkers and dozens of different robots offering unique strategies and constantly moving combat.</div><br />
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/jUcqY4GfRpI" frameborder="0" hd="1" allowfullscreen></iframe><br /><br />
+                @{
+                    var ab = Request["ab"];
+                    switch (ab)
+                    {
+                        case "b":
+                            <div align="left">Zero-K is a free, multiplatform, open-source RTS game where massive robot armies fight an endless conflict. It has a powerful interface allowing players precision control over high level economic, strategic and tactical decisions. Units interact intuitively using real projectile and movement physics. It boasts over 100 diverse units including Vehicles, Tanks, Hovercraft, Planes, Gunships, Ships, Spiders walkers and dozens of different robots offering unique strategies and constantly moving combat.</div><br />
+                            <iframe width="560" height="315" src="https://www.youtube.com/embed/ijstp_QEyGU" frameborder="0" hd="1" allowfullscreen></iframe><br /><br />
+
+                            break;
+
+                        case "c":
+                            <div align="left">Zero-K is a free, multiplatform, open-source RTS game where massive robot armies fight an endless conflict. It has a powerful interface allowing players precision control over high level economic, strategic and tactical decisions. Units interact intuitively using real projectile and movement physics. It boasts over 100 diverse units including Vehicles, Tanks, Hovercraft, Planes, Gunships, Ships, Spiders walkers and dozens of different robots offering unique strategies and constantly moving combat.</div><br />
+                            <iframe width="560" height="315" src="https://www.youtube.com/embed/vkZaLLyhEgI" frameborder="0" hd="1" allowfullscreen></iframe><br /><br />
+                            break;
+                        case "a":
+                        default:
+
+                            <div align="left">Zero-K is a free, multiplatform, open-source RTS game where massive robot armies fight an endless conflict. It has a powerful interface allowing players precision control over high level economic, strategic and tactical decisions. Units interact intuitively using real projectile and movement physics. It boasts over 100 diverse units including Vehicles, Tanks, Hovercraft, Planes, Gunships, Ships, Spiders walkers and dozens of different robots offering unique strategies and constantly moving combat.</div><br />
+                            <iframe width="560" height="315" src="https://www.youtube.com/embed/jUcqY4GfRpI" frameborder="0" hd="1" allowfullscreen></iframe><br /><br />
+                            break;
+
+                    }
+
+                }
+
+
                 <div class="downloadbutton" style="width:300px;">
                     <a href="/Wiki/Download" style="vertical-align:middle">
                         <span class="buttonSpan"></span>
@@ -40,11 +113,11 @@
         }
     </div>
     @foreach (var n in Model.Headlines)
-    {
+                    {
         <div class="js_dialog" title="News headlines">
             <h1>@n.Title</h1>
             @if (n.ImageRelativeUrl != null)
-            {
+                    {
                 <img src="@n.ImageRelativeUrl" style="float:left; width:800px; margin: 6px;" />
             }
 
@@ -66,7 +139,7 @@
             <small>
                 Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)
                 @if (Global.IsZeroKAdmin)
-                {
+                    {
                     <span class="admin">
                         @Html.ActionLink("Edit", "Detail", "News", new { id = n.NewsID }, null)
                     </span>
@@ -77,7 +150,7 @@
         }
         <a href="@Url.Action("Index", "News")"><img src="/img/rss.png" width="25" alt="rss" /> RSS feed</a> | <a href='/Forum?categoryID=13'>news archive</a>
         @if (Global.IsZeroKAdmin)
-        {
+                    {
             <div class="admin">
                 @Html.Partial("/Views/News/NewsDetail.cshtml", new News() { Created = DateTime.UtcNow, HeadlineUntil = DateTime.UtcNow.AddDays(7) })
             </div>
@@ -87,7 +160,7 @@
 </div>
 <div id="sidebar" class="fright width-30">
     @if (!Global.IsAccountAuthorized && !Global.IsLobbyAccess)
-    {
+                    {
         <a onclick="window.location='/Wiki/Download';"><span class="downloadbutton"><span class="buttonSpan"></span><!--<img src="/img/downloadBlue.png" alt="Download" width="45" height="45" style="vertical-align:middle;" />--> Download</span></a>
     }
 

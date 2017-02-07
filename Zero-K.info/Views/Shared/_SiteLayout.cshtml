@@ -4,8 +4,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="description" content="Zero-K is a FREE multiplatform, open-source RTS game which aims to be dynamic and action-packed." />
-    <meta name="keywords" content="zk, 0k, Zero K, zero-k, game, rts, Real Time Strategy, awesome, robot, mech, online, space, 4x, free, open source, foss, spring, planetwars, planet wars" />
+    <meta name="description" content="Zero-K is a FREE multiplatform, open-source RTS game which aims to be dynamic and action-packed."/>
+    <meta name="keywords" content="zk, 0k, Zero K, zero-k, game, rts, Real Time Strategy, awesome, robot, mech, online, space, 4x, free, open source, foss, spring, planetwars, planet wars"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
         @if (!string.IsNullOrEmpty(Page.Title))
@@ -15,7 +15,7 @@
         Zero-K
     </title>
 
-    <link rel="icon" href='@Href("~/img/favicon.png")' />
+    <link rel="icon" href='@Href("~/img/favicon.png")'/>
     @System.Web.Optimization.Styles.Render("~/bundles/maincss")
     @System.Web.Optimization.Scripts.Render("~/bundles/main")
 
@@ -41,10 +41,10 @@
             var random = new Random(date);
             string file = Path.GetFileName(files[random.Next(files.Length)]);
             <style type="text/css">
-                    html {
-                        background: #000 url("/img/screenshots/@file") no-repeat scroll 50% 0;
-                        background-attachment: fixed;
-                    }
+                html {
+                    background: #000 url("/img/screenshots/@file") no-repeat scroll 50% 0;
+                    background-attachment: fixed;
+                }
             </style>
         }
     }
