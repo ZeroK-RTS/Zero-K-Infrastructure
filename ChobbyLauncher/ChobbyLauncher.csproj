@@ -178,13 +178,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>if /i $(ConfigurationName) NEQ Release exit 0
-ren CSteamworks.dll CSteamworks.dll.b
-ren steam_api.dll steam_api.dll.b
 "$(ProjectDir)\..\packages\ilmerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetDir)$(TargetName).exe" "$(TargetDir)*.dll" /target:exe "/targetplatform:v4.5,%25ProgramFiles%25\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.1" /wildcards /t:winexe
 copy /Y "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).pdb"
 copy /Y "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"
-ren CSteamworks.dll.b CSteamworks.dll
-ren steam_api.dll.b steam_api.dll
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
