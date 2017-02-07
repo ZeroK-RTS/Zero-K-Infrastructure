@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -30,7 +31,10 @@ namespace ZeroKWeb
                     if (dbs != null) dbs.Add(context);
                 }
             };
-            BeginRequest += (sender, args) => { HttpContext.Current.Items[DbListKey] = new List<ZkDataContext>(); };
+            BeginRequest += (sender, args) =>
+            {
+                HttpContext.Current.Items[DbListKey] = new List<ZkDataContext>();
+            };
             EndRequest += (sender, args) =>
             {
                 var dbs = HttpContext.Current.Items[DbListKey] as List<ZkDataContext>;
@@ -119,13 +123,15 @@ namespace ZeroKWeb
 
         private void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e)
         {
-            if (DateTime.UtcNow.Subtract(lastPollCheck).TotalMinutes > 15)
+            if (DateTime.UtcNow.Subtract(lastPollCheck).TotalMinutes > 60)
             {
                 PollController.AutoClosePolls(); // this is silly here, should be a seaprate timer/thread
                 lastPollCheck = DateTime.UtcNow;
             }
 
             Account acc = null;
+
+            
             if (FormsAuthentication.IsEnabled && User.Identity.IsAuthenticated) acc = Account.AccountByName(new ZkDataContext(), User.Identity.Name);
             else if (Request[GlobalConst.SessionTokenVariable] != null)
             {
@@ -153,6 +159,10 @@ namespace ZeroKWeb
                     FormsAuthentication.SetAuthCookie(acc.Name, true);
                 }
             }
+
+            // remove cake from URL 
+            var removeCake = Regex.Replace(Request.Url.ToString(), $"([?|&])({GlobalConst.SessionTokenVariable}=[^&?]+[?|&]*)", m => m.Groups[1].Value);
+            if (removeCake != Request.Url.ToString()) Response.Redirect(removeCake, true);
         }
 
         private void OnPostAcquireRequestState(object sender, EventArgs eventArgs)
