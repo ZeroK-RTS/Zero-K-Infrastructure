@@ -12,11 +12,11 @@
     {
         <!-- Google Analytics Content Experiment code -->
         <script>
-            function utmx_section() {}
+            function utmx_section() { }
 
-            function utmx() {}
+            function utmx() { }
 
-            (function() {
+            (function () {
                 var
                     k = '40620291-0', d = document, l = d.location, c = d.cookie;
                 if (l.search.indexOf('utm_expid=' + k) > 0) return;
@@ -33,9 +33,7 @@
 
                 var x = f('__utmx'), xx = f('__utmxx'), h = l.hash;
                 d.write(
-                    '<sc' +
-                    'ript src="' +
-                    'http' +
+                    '<script src="http' +
                     (l.protocol == 'https:' ? 's://ssl' : '://www') +
                     '.google-analytics.com/ga_exp.js?' +
                     'utmxkey=' +
@@ -110,14 +108,14 @@
                 </div>
             </div><br />
             @Html.IncludeWiki("Features")
-        }
+                    }
     </div>
     @foreach (var n in Model.Headlines)
-                    {
+    {
         <div class="js_dialog" title="News headlines">
             <h1>@n.Title</h1>
             @if (n.ImageRelativeUrl != null)
-                    {
+            {
                 <img src="@n.ImageRelativeUrl" style="float:left; width:800px; margin: 6px;" />
             }
 
@@ -139,7 +137,7 @@
             <small>
                 Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)
                 @if (Global.IsZeroKAdmin)
-                    {
+                {
                     <span class="admin">
                         @Html.ActionLink("Edit", "Detail", "News", new { id = n.NewsID }, null)
                     </span>
@@ -150,7 +148,7 @@
         }
         <a href="@Url.Action("Index", "News")"><img src="/img/rss.png" width="25" alt="rss" /> RSS feed</a> | <a href='/Forum?categoryID=13'>news archive</a>
         @if (Global.IsZeroKAdmin)
-                    {
+        {
             <div class="admin">
                 @Html.Partial("/Views/News/NewsDetail.cshtml", new News() { Created = DateTime.UtcNow, HeadlineUntil = DateTime.UtcNow.AddDays(7) })
             </div>
@@ -160,7 +158,7 @@
 </div>
 <div id="sidebar" class="fright width-30">
     @if (!Global.IsAccountAuthorized && !Global.IsLobbyAccess)
-                    {
+    {
         <a onclick="window.location='/Wiki/Download';"><span class="downloadbutton"><span class="buttonSpan"></span><!--<img src="/img/downloadBlue.png" alt="Download" width="45" height="45" style="vertical-align:middle;" />--> Download</span></a>
     }
 
@@ -203,12 +201,12 @@
 
     <div class="border">
         <h2>Social Media</h2>
-        <a href="https://www.facebook.com/ZeroK.RTS"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/F_icon.svg" class="icon32"/></a>
+        <a href="https://www.facebook.com/ZeroK.RTS"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/F_icon.svg" class="icon32" /></a>
         <a href="https://github.com/ZeroK-RTS"><img src="https://i.imgur.com/BItG041.png" class="icon32"></a>
         <a href="http://steamcommunity.com/groups/0-K"><img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg" class="icon32" /></a>
-        <a href="@Url.Action("Index", "News")"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png" class="icon32"/></a>
-        <a href="https://plus.google.com/+Zero-kInfo/"><img src="https://plus.google.com/favicon.ico" class="icon32"/></a>
-        <a href="http://twitter.com/ZeroKTeam"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Twitter_Logo_Mini.svg/220px-Twitter_Logo_Mini.svg.png" class="icon32"/></a>
+        <a href="@Url.Action("Index", "News")"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png" class="icon32" /></a>
+        <a href="https://plus.google.com/+Zero-kInfo/"><img src="https://plus.google.com/favicon.ico" class="icon32" /></a>
+        <a href="http://twitter.com/ZeroKTeam"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Twitter_Logo_Mini.svg/220px-Twitter_Logo_Mini.svg.png" class="icon32" /></a>
     </div>
     <div class="border">
         <h2>Links</h2>
