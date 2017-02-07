@@ -272,7 +272,7 @@ namespace ZkLobbyServer
             entry.LastLogin = DateTime.UtcNow;
         }
 
-        private void LogIpFailure(string ip)
+        public void LogIpFailure(string ip)
         {
             connectionAttempts.AddOrUpdate(ip, (ipStr) => 1, (ipStr, count) => count + 1);
         }

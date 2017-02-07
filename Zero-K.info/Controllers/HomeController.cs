@@ -9,6 +9,10 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using DotNetOpenAuth.Messaging;
+using DotNetOpenAuth.OpenId;
+using DotNetOpenAuth.OpenId.Extensions.SimpleRegistration;
+using DotNetOpenAuth.OpenId.RelyingParty;
 using ZeroKWeb;
 using ZkData;
 
@@ -231,48 +235,99 @@ namespace ZeroKWeb.Controllers
 			return View();
 		}
 
-		public ActionResult Logon(string login, string password, string referer)
+        [AcceptVerbs(HttpVerbs.Post | HttpVerbs.Get)]
+        public ActionResult Logon(string login, string password, string referer, string steamlogon)
 		{
-			var db = new ZkDataContext();
+		    if (!Global.Server.LoginChecker.VerifyIp(Request.UserHostAddress)) return Content("Too many login failures, access blocked");
 
-			var acc = db.Accounts.FirstOrDefault(x => x.Name == login);    // FIXME: might want to just not allow duplicate names to happen in the first place
-			if (acc == null) return Content("Invalid login name");
+		    var openid = new OpenIdRelyingParty();
+            IAuthenticationResponse response = openid.GetResponse();
+
+		    if (response != null) // return from steam openid 
+		        return ProcessSteamOpenIDResponse(response);
+
+		    if (steamlogon != null) // steam login request
+		        return RedirectToSteamOpenID(login, referer, openid);
+
+
+		    // standard login
+            var db = new ZkDataContext();
+            var acc = db.Accounts.FirstOrDefault(x => x.Name == login);
+            if (acc == null) return Content("Invalid login name");
 			var hashed = Utils.HashLobbyPassword(password);
+            
 			acc = AuthServiceClient.VerifyAccountHashed(login, hashed);
-		    if (acc == null)
+		    if (acc != null)
 		    {
-                Trace.TraceWarning("Invalid login attempt for {0}", login);
-                System.Threading.Thread.Sleep(new Random().Next(2000));
-                return Content("Invalid password");
+		        FormsAuthentication.SetAuthCookie(acc.Name, true);
+		        if (string.IsNullOrEmpty(referer)) referer = Url.Action("Index");
+		        return Redirect(referer);
 		    }
-			else
-			{
-                // todo replace with safer permanent cookie
-				Response.SetCookie(new HttpCookie(GlobalConst.LoginCookieName, login) { Expires = DateTime.Now.AddMonths(12) });
-				Response.SetCookie(new HttpCookie(GlobalConst.PasswordHashCookieName, hashed) { Expires = DateTime.Now.AddMonths(12) });
-
-                FormsAuthentication.SetAuthCookie(acc.Name, false);
-
-                if (string.IsNullOrEmpty(referer)) referer = Url.Action("Index");
-				return Redirect(referer);
-			}
+		    else
+		    {
+		        Trace.TraceWarning("Invalid login attempt for {0}", login);
+		        Global.Server.LoginChecker.LogIpFailure(Request.UserHostAddress);
+		        return Content("Invalid password");
+		    }
 		}
 
-		public ActionResult Logout(string referer)
+	    private static ActionResult RedirectToSteamOpenID(string login, string referer, OpenIdRelyingParty openid)
+	    {
+	        IAuthenticationRequest request = openid.CreateRequest(Identifier.Parse("https://steamcommunity.com/openid/"));
+	        if (!string.IsNullOrEmpty(referer)) request.SetCallbackArgument("referer", referer);
+	        if (!string.IsNullOrEmpty(login)) request.SetCallbackArgument("login", login);
+	        return request.RedirectingResponse.AsActionResultMvc5();
+	    }
+
+	    private ActionResult ProcessSteamOpenIDResponse(IAuthenticationResponse response)
+	    {
+	        switch (response.Status)
+	        {
+	            case AuthenticationStatus.Authenticated:
+	                var steamIDStr = response.FriendlyIdentifierForDisplay.Split('/').LastOrDefault();
+	                ulong steamID;
+	                if (ulong.TryParse(steamIDStr, out steamID))
+	                {
+                        var referer = response.GetCallbackArgument("referer");
+	                    var login = response.GetCallbackArgument("login");
+	                    using (var db = new ZkDataContext())
+	                    {
+	                        var acc =
+	                            db.Accounts.Where(x => x.SteamID == steamID)
+	                                .OrderByDescending(x => x.Name == login)
+	                                .ThenByDescending(x => x.AccountID)
+	                                .FirstOrDefault();
+	                        if (acc != null)
+	                        {
+	                            FormsAuthentication.SetAuthCookie(acc.Name, true);
+	                            if (string.IsNullOrEmpty(referer)) referer = Url.Action("Index");
+	                            return Redirect(referer);
+	                        }
+	                        else return Content("Please download the game and create an account in-game first");
+	                    }
+	                }
+	                break;
+	            case AuthenticationStatus.Canceled:
+	                return Content("Login was cancelled at the provider");
+	            case AuthenticationStatus.Failed:
+	                return Content("Login failed");
+	        }
+	        return View("HomeIndex");
+	    }
+
+	    public ActionResult Logout(string referer)
 		{
 			if (Global.IsAccountAuthorized)
 			{
-				Response.SetCookie(new HttpCookie(GlobalConst.LoginCookieName, "") { Expires = DateTime.Now.AddMinutes(2) });
-				Response.SetCookie(new HttpCookie(GlobalConst.PasswordHashCookieName, "") { Expires = DateTime.Now.AddMinutes(2) });
                 FormsAuthentication.SignOut();
 			}
             if (string.IsNullOrEmpty(referer)) referer = Url.Action("Index");
 			return Redirect(referer);
 		}
 
-  
 
-		string GetCommanderTooltip(int commanderID)
+   
+        string GetCommanderTooltip(int commanderID)
 		{
 			var db = new ZkDataContext();
 			var sb = new StringBuilder();

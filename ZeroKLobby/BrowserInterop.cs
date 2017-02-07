@@ -17,8 +17,7 @@ namespace ZeroKLobby
             login = conf.LobbyPlayerName;
             password = conf.LobbyPlayerPassword;
             var baseUrl = GlobalConst.BaseSiteUrl;
-            WindowsApi.InternetSetCookiePub(baseUrl, GlobalConst.LoginCookieName, login);
-            WindowsApi.InternetSetCookiePub(baseUrl, GlobalConst.PasswordHashCookieName, ZkData.Utils.HashLobbyPassword(password));
+
             WindowsApi.InternetSetCookiePub(baseUrl, GlobalConst.LobbyAccessCookieName, "1");
 
 
@@ -35,8 +34,7 @@ namespace ZeroKLobby
                                               Uri.EscapeDataString(password), 
                                               GlobalConst.BaseSiteUrl));
 
-                    WindowsApi.InternetSetCookiePub(baseUrl, GlobalConst.LoginCookieName, login);
-                    WindowsApi.InternetSetCookiePub(baseUrl, GlobalConst.PasswordHashCookieName, ZkData.Utils.HashLobbyPassword(password));
+                    WindowsApi.InternetSetCookiePub(baseUrl, GlobalConst.SessionTokenVariable, sessionToken);
 
                     if (conf.IsFirstRun) wc.DownloadString(uri);
                     else wc.DownloadStringAsync(uri);

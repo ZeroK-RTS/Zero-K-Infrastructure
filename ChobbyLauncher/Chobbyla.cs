@@ -111,6 +111,7 @@ namespace ChobbyLauncher
                 Steam = new SteamClientHelper();
                 Steam.SteamOnline += () =>
                 {
+                    Trace.TraceInformation("Steam online");
                     AuthToken = Steam.GetClientAuthTokenHex();
                     Friends = Steam.GetFriends();
 
@@ -121,6 +122,7 @@ namespace ChobbyLauncher
                     });
                     MySteamNameSanitized = Utils.StripInvalidLobbyNameChars(Steam.GetMyName());
                 };
+                Trace.TraceInformation("Connecting to steam API");
                 Steam.ConnectToSteam();
 
                 if (Steam.IsOnline) ev.WaitOne(2000);
@@ -238,41 +240,49 @@ namespace ChobbyLauncher
 
         private async Task<bool> UpdateMissions()
         {
-            Status = "Downloading missions";
-            var missions = GlobalConst.GetContentService().GetDefaultMissions();
-
-            var missionsFolder = Path.Combine(paths.WritableDirectory, "missions");
-            if (!Directory.Exists(missionsFolder)) Directory.CreateDirectory(missionsFolder);
-            var missionFile = Path.Combine(missionsFolder, "missions.json");
-
-            List<ClientMissionInfo> existing = null;
-            if (File.Exists(missionFile))
-                try
-                {
-                    existing = JsonConvert.DeserializeObject<List<ClientMissionInfo>>(File.ReadAllText(missionFile));
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceWarning("Error reading mission file {0} : {1}", missionFile, ex);
-                }
-            existing = existing ?? new List<ClientMissionInfo>();
-
-            var toDownload =
-                missions.Where(
-                        m => !existing.Any(x => (x.MissionID == m.MissionID) && (x.Revision == m.Revision) && (x.DownloadHandle == m.DownloadHandle)))
-                    .ToList();
-
-            // download mission files
-            foreach (var m in toDownload)
+            try
             {
-                if (m.IsScriptMission && (m.Script != null)) m.Script = m.Script.Replace("%MAP%", m.Map);
-                if (!m.IsScriptMission) if (!await DownloadFile("Downloading mission " + m.DisplayName, DownloadType.MISSION, m.DownloadHandle)) return false;
-                if (!await DownloadUrl("Downloading image", m.ImageUrl, Path.Combine(missionsFolder, $"{m.MissionID}.png"))) return false;
+                Status = "Downloading missions";
+                var missions = GlobalConst.GetContentService().GetDefaultMissions();
+
+                var missionsFolder = Path.Combine(paths.WritableDirectory, "missions");
+                if (!Directory.Exists(missionsFolder)) Directory.CreateDirectory(missionsFolder);
+                var missionFile = Path.Combine(missionsFolder, "missions.json");
+
+                List<ClientMissionInfo> existing = null;
+                if (File.Exists(missionFile))
+                    try
+                    {
+                        existing = JsonConvert.DeserializeObject<List<ClientMissionInfo>>(File.ReadAllText(missionFile));
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceWarning("Error reading mission file {0} : {1}", missionFile, ex);
+                    }
+                existing = existing ?? new List<ClientMissionInfo>();
+
+                var toDownload =
+                    missions.Where(
+                            m => !existing.Any(x => (x.MissionID == m.MissionID) && (x.Revision == m.Revision) && (x.DownloadHandle == m.DownloadHandle)))
+                        .ToList();
+
+                // download mission files
+                foreach (var m in toDownload)
+                {
+                    if (m.IsScriptMission && (m.Script != null)) m.Script = m.Script.Replace("%MAP%", m.Map);
+                    if (!m.IsScriptMission) if (!await DownloadFile("Downloading mission " + m.DisplayName, DownloadType.MISSION, m.DownloadHandle)) return false;
+                    if (!await DownloadUrl("Downloading image", m.ImageUrl, Path.Combine(missionsFolder, $"{m.MissionID}.png"))) return false;
+                }
+
+                File.WriteAllText(missionFile, JsonConvert.SerializeObject(missions));
+
+                return true;
             }
-
-            File.WriteAllText(missionFile, JsonConvert.SerializeObject(missions));
-
-            return true;
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error updating missions: {0}", ex);
+                return false;
+            }
         }
     }
 }

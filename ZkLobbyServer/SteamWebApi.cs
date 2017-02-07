@@ -51,7 +51,7 @@ namespace ZkLobbyServer
             var wc = new WebClient();
             var ret =
                 wc.DownloadString(
-                    string.Format("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={0}&steamids={1}", webApiKey, steamID));
+                    string.Format("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={0}&steamids={1}", webApiKey, steamID));
 
             var response = JsonConvert.DeserializeObject<PlayerSummariesResposne>(ret);
             return response.response.players.FirstOrDefault();
@@ -74,7 +74,7 @@ namespace ZkLobbyServer
             var wc = new WebClient();
             var ret =
                 wc.DownloadString(string.Format(
-                    "http://api.steampowered.com/ISteamUserAuth/AuthenticateUserTicket/V0001?key={0}&appid={1}&ticket={2}",
+                    "https://api.steampowered.com/ISteamUserAuth/AuthenticateUserTicket/V0001?key={0}&appid={1}&ticket={2}",
                     webApiKey,
                     steamAppID,
                     hexToken));

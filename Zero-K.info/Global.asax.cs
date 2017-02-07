@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -30,7 +31,10 @@ namespace ZeroKWeb
                     if (dbs != null) dbs.Add(context);
                 }
             };
-            BeginRequest += (sender, args) => { HttpContext.Current.Items[DbListKey] = new List<ZkDataContext>(); };
+            BeginRequest += (sender, args) =>
+            {
+                HttpContext.Current.Items[DbListKey] = new List<ZkDataContext>();
+            };
             EndRequest += (sender, args) =>
             {
                 var dbs = HttpContext.Current.Items[DbListKey] as List<ZkDataContext>;
@@ -80,6 +84,8 @@ namespace ZeroKWeb
             routes.MapRoute("Default", "{controller}/{action}/{id}", new { controller = "Home", action = "Index", id = UrlParameter.Optional });
 
             routes.MapRoute("Root", "", new { controller = "Home", action = "Index", id = "" });
+
+            //OAuthWebSecurity
         }
 
 
@@ -100,12 +106,6 @@ namespace ZeroKWeb
             Global.StartApplication(this);
         }
 
-        private string GetUserIP()
-        {
-            var ip = Context.Request.ServerVariables["REMOTE_ADDR"];
-            return ip;
-        }
-
         private void MvcApplication_Error(object sender, EventArgs e)
         {
             var ex = Context.Server.GetLastError();
@@ -117,13 +117,15 @@ namespace ZeroKWeb
 
         private void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e)
         {
-            if (DateTime.UtcNow.Subtract(lastPollCheck).TotalMinutes > 15)
+            if (DateTime.UtcNow.Subtract(lastPollCheck).TotalMinutes > 60)
             {
                 PollController.AutoClosePolls(); // this is silly here, should be a seaprate timer/thread
                 lastPollCheck = DateTime.UtcNow;
             }
 
             Account acc = null;
+
+            
             if (FormsAuthentication.IsEnabled && User.Identity.IsAuthenticated) acc = Account.AccountByName(new ZkDataContext(), User.Identity.Name);
             else if (Request[GlobalConst.SessionTokenVariable] != null)
             {
@@ -134,11 +136,9 @@ namespace ZeroKWeb
                 }
             }
 
-            if (acc == null) if (Request[GlobalConst.LoginCookieName] != null) acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);
-
             if (acc != null)
             {
-                var ip = GetUserIP();
+                var ip = Request.UserHostAddress;
                 var penalty = Punishment.GetActivePunishment(acc.AccountID, ip, null, x => x.BanSite);
                 if (penalty != null)
                 {
@@ -150,9 +150,13 @@ namespace ZeroKWeb
                 else
                 {
                     HttpContext.Current.User = acc;
-                    FormsAuthentication.SetAuthCookie(acc.Name, false);
+                    FormsAuthentication.SetAuthCookie(acc.Name, true);
                 }
             }
+
+            // remove cake from URL 
+            var removeCake = Regex.Replace(Request.Url.ToString(), $"([?|&])({GlobalConst.SessionTokenVariable}=[^&?]+[?|&]*)", m => m.Groups[1].Value);
+            if (removeCake != Request.Url.ToString()) Response.Redirect(removeCake, true);
         }
 
         private void OnPostAcquireRequestState(object sender, EventArgs eventArgs)

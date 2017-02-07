@@ -348,7 +348,7 @@ namespace Fixer
 
         static void Main(string[] args)
         {
-            RenameOldAccounts();
+            //RenameOldAccounts();
             return;
             var ns = new NubSimulator();
             ns.SpawnMany();

@@ -79,7 +79,7 @@ namespace ZeroKWeb.ForumParser
                     var m = Regex.Match(Text,"v=([^&]+)");
                     if (m.Success)
                     {
-                        context.AppendFormat("<iframe width=\"420\" height=\"315\" src=\"http://www.youtube.com/embed/{0}\" frameborder=\"0\" hd=\"1\" allowfullscreen=\"1\"></iframe>", m.Groups[1].Value);
+                        context.AppendFormat("<iframe width=\"420\" height=\"315\" src=\"https://www.youtube.com/embed/{0}\" frameborder=\"0\" hd=\"1\" allowfullscreen=\"1\"></iframe>", m.Groups[1].Value);
                     }
                 }
                 else if (Text.StartsWith("http://youtu.be/") || Text.StartsWith("https://youtu.be/"))
@@ -87,7 +87,7 @@ namespace ZeroKWeb.ForumParser
                     var m = Regex.Match(Text, @"\.be/([^&?]+)");
                     if (m.Success)
                     {
-                        context.AppendFormat("<iframe width=\"420\" height=\"315\" src=\"http://www.youtube.com/embed/{0}\" frameborder=\"0\" hd=\"1\" allowfullscreen=\"1\"></iframe>", m.Groups[1].Value);
+                        context.AppendFormat("<iframe width=\"420\" height=\"315\" src=\"https://www.youtube.com/embed/{0}\" frameborder=\"0\" hd=\"1\" allowfullscreen=\"1\"></iframe>", m.Groups[1].Value);
                     }
                 }
                 else context.AppendFormat("<a href=\"{0}\">{0}</a>", Text);
