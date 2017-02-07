@@ -106,12 +106,6 @@ namespace ZeroKWeb
             Global.StartApplication(this);
         }
 
-        private string GetUserIP()
-        {
-            var ip = Context.Request.ServerVariables["REMOTE_ADDR"];
-            return ip;
-        }
-
         private void MvcApplication_Error(object sender, EventArgs e)
         {
             var ex = Context.Server.GetLastError();
@@ -144,7 +138,7 @@ namespace ZeroKWeb
 
             if (acc != null)
             {
-                var ip = GetUserIP();
+                var ip = Request.UserHostAddress;
                 var penalty = Punishment.GetActivePunishment(acc.AccountID, ip, null, x => x.BanSite);
                 if (penalty != null)
                 {
