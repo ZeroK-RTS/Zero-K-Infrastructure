@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using GameAnalyticsSDK.Net;
 using Neo.IronLua;
 using Newtonsoft.Json;
 using Octokit;
@@ -47,6 +48,8 @@ namespace ChobbyLauncher
             isDev = (chobbyTag == "dev") || (chobbyTag == "chobby:dev") || (chobbyTag == "zkmenu:dev");
             engine = engineOverride;
             downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
+
+           
         }
 
         public async Task<bool> Prepare()
