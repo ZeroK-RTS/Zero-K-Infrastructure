@@ -31,7 +31,7 @@ namespace ChobbyLauncher
         public SteamClientHelper Steam { get; private set; }
         public string AuthToken { get; private set; }
         public Download Download { get; private set; }
-        public List<ulong> Friends { get; private set; }
+        public List<ulong> Friends { get; private set; } = new List<ulong>();
 
         public ulong? LobbyID { get; set; }
         public Process process { get; private set; }
