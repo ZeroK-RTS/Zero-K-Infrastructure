@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using GameAnalyticsSDK.Net;
 using PlasmaDownloader;
 using PlasmaShared;
 using ZkData;
@@ -239,6 +240,56 @@ namespace ChobbyLauncher
             }
         }
 
+
+        public async Task Process(GaAddErrorEvent args)
+        {
+            try
+            {
+                GameAnalytics.AddErrorEvent(args.Severity, args.Message);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error adding GA error event {0} : {1}", args?.Message, ex);
+            }
+        }
+
+
+        public async Task Process(GaAddDesignEvent args)
+        {
+            try
+            {
+                if (args.Value != null) GameAnalytics.AddDesignEvent(args.EventID, args.Value.Value);
+                else GameAnalytics.AddDesignEvent(args.EventID);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error adding GA design event {0} : {1}", args?.EventID, ex);
+            }
+        }
+
+
+        public async Task Process(GaAddProgressionEvent args)
+        {
+            try
+            {
+                if (args.Score != null)
+                {
+                    if (!string.IsNullOrEmpty(args.Progression3)) GameAnalytics.AddProgressionEvent(args.Status, args.Progression1, args.Progression2, args.Progression3, args.Score.Value);
+                    else if (!string.IsNullOrEmpty(args.Progression2)) GameAnalytics.AddProgressionEvent(args.Status, args.Progression1, args.Progression2, args.Score.Value);
+                    else GameAnalytics.AddProgressionEvent(args.Status, args.Progression1, args.Score.Value);
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(args.Progression3)) GameAnalytics.AddProgressionEvent(args.Status, args.Progression1, args.Progression2, args.Progression3);
+                    else if (!string.IsNullOrEmpty(args.Progression2)) GameAnalytics.AddProgressionEvent(args.Status, args.Progression1, args.Progression2);
+                    else GameAnalytics.AddProgressionEvent(args.Status, args.Progression1);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error adding GA progression event {0}", ex);
+            }
+        }
 
         private async Task ReportDownloadResult(DownloadFile args, Download down)
         {

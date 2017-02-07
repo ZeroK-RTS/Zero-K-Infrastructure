@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GameAnalyticsSDK.Net;
 
 namespace ChobbyLauncher
 {
@@ -116,6 +117,37 @@ namespace ChobbyLauncher
     public class SteamOverlayChanged
     {
         public bool IsActive { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class GaAddErrorEvent
+    {
+        public string Message { get; set; }
+
+        public EGAErrorSeverity Severity { get; set; }
+    }
+
+
+    [ChobbyMessage]
+    public class GaAddDesignEvent
+    {
+        public string EventID { get; set; }
+
+        public double? Value { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class GaAddProgressionEvent
+    {
+        public EGAProgressionStatus Status { get; set; }
+
+        public string Progression1 { get; set; }
+
+        public string Progression2 { get; set; }
+
+        public string Progression3 { get; set; }
+
+        public double? Score { get; set; }
     }
 
 

@@ -227,7 +227,15 @@ namespace ZkData
         public static int LobbyServerPort;
 
         public static bool AutoMigrateDatabase { get; private set; }
-        public static string CrashReportGithubToken = "fffb24b" + "91a758"+"a6a4e7a"+ "7a7eafb1a9"+"af27e9e18e";
+
+        private const string tokenPart = "af27e9e18e";
+
+        public static string CrashReportGithubToken = "fffb24b" + "91a758"+"a6a4e7a"+ "7a7eafb1a9" + tokenPart;
+
+        public static string GameAnalyticsGameKey = "5197842fb91cbc18a7291436337232af";
+        private const string tokenPart2 = "68b318aa1f701165";
+        public static string GameAnalyticsToken = "9a815450a" + "0058bc6" + "4812a4d9" + tokenPart2;
+
 
         public static string[] ReplaysPossiblePaths = { @"c:\projekty\springie_spring\demos-server"};
 

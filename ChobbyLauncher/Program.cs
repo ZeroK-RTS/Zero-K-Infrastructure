@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using GameAnalyticsSDK.Net;
 using Octokit;
 using ZkData;
 using Application = System.Windows.Forms.Application;
@@ -20,6 +21,15 @@ namespace ChobbyLauncher
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
 
+            try
+            {
+                GameAnalytics.Initialize(GlobalConst.GameAnalyticsGameKey, GlobalConst.GameAnalyticsToken);
+                GameAnalytics.StartSession();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error starting GameAnalytics: {0}", ex);
+            }
 
             string chobbyTag = null;
             string engineOverride = null;
@@ -27,12 +37,12 @@ namespace ChobbyLauncher
 
             if (args.Length > 0)
             {
-                for (int i = 0; i < args.Length-1; i++)
+                for (int i = 0; i < args.Length - 1; i++)
                 {
                     var a = args[i];
                     if (a == "+connect_lobby")
                     {
-                        ulong.TryParse(args[i+1], out connectLobbyID);
+                        ulong.TryParse(args[i + 1], out connectLobbyID);
                         args = args.Where((x, j) => j != i && j != i + 1).ToArray();
                         break;
                     }
@@ -51,6 +61,14 @@ namespace ChobbyLauncher
             if (!SpringPaths.IsDirectoryWritable(startupPath))
             {
                 MessageBox.Show("Please move this program to a writable folder", "Cannot write to startup folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                try
+                {
+                    GameAnalytics.AddErrorEvent(EGAErrorSeverity.Error, "Wrapper cannot start, folder not writable");
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error adding GA error event: {0}", ex);
+                }
                 return;
             }
 
@@ -62,17 +80,44 @@ namespace ChobbyLauncher
                 var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
                 if (cf.ShowDialog() == DialogResult.OK)
                 {
-                    if (!chobbyla.Run().Result && MessageBox.Show("We would like to send crash data to Zero-K repository, it can contain chat. Do you agree?",
-                        "Automated crash report", MessageBoxButtons.OKCancel) == DialogResult.OK)
+
+                    if (!chobbyla.Run().Result) // crash has occured
                     {
-                        var ret = CrashReportHelper.ReportCrash(chobbyla.paths);
-                        if (ret != null)
+
+                        if (
+                            MessageBox.Show("We would like to send crash data to Zero-K repository, it can contain chat. Do you agree?",
+                                "Automated crash report",
+                                MessageBoxButtons.OKCancel) == DialogResult.OK)
                         {
-                            try
+                            var ret = CrashReportHelper.ReportCrash(chobbyla.paths);
+                            if (ret != null)
                             {
-                                Process.Start(ret.Url.ToString());
-                            } catch { }
+                                try
+                                {
+                                    Process.Start(ret.Url.ToString());
+                                }
+                                catch { }
+                            }
                         }
+
+                        try
+                        {
+                            GameAnalytics.AddErrorEvent(EGAErrorSeverity.Critical, "Spring crash");
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.TraceError("Error adding GA error event: {0}", ex);
+                        }
+                    }
+
+
+                    try
+                    {
+                        GameAnalytics.EndSession();
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceWarning("Error ending GA session: {0}", ex);
                     }
                     Environment.Exit(0);
                 }
@@ -81,8 +126,24 @@ namespace ChobbyLauncher
             {
                 Trace.TraceError("Error starting chobby: {0}", ex);
                 MessageBox.Show(ex.ToString(), "Error starting Chobby", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                try
+                {
+                    GameAnalytics.AddErrorEvent(EGAErrorSeverity.Critical, "Wrapper crash: " + ex.Message);
+                }
+                catch (Exception ex2)
+                {
+                    Trace.TraceError("Error adding GA error event: {0}", ex);
+                }
             }
 
+            try
+            {
+                GameAnalytics.EndSession();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Error ending GA session: {0}", ex);
+            }
         }
     }
 }
