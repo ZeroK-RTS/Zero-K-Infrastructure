@@ -48,11 +48,11 @@ namespace ZkLobbyServer
                 new Say()
                 {
                     AllowRelay = false,
-                    User = GlobalConst.NightwatchName,
+                    User = messageEventArgs.User.ToString(),
                     IsEmote = false,
                     Place = SayPlace.Channel,
                     Target = "zk",
-                    Text = $"<{messageEventArgs.User}> {messageEventArgs.Message.Text}"
+                    Text = messageEventArgs.Message.Text"
                 });
         }
 
