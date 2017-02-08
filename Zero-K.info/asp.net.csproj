@@ -320,6 +320,7 @@
     <Content Include="Img\delete_icon.png" />
     <Content Include="Img\delete_trashcan.png" />
     <Content Include="Img\developer.png" />
+    <Content Include="Img\discord.png" />
     <Content Include="Img\dl_button2.png" />
     <Content Include="Img\download.png" />
     <Content Include="Img\download1.png" />

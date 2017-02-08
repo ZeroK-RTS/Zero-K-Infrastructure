@@ -85,8 +85,11 @@ namespace ZkLobbyServer
                     if ((acc.Country == null) || string.IsNullOrEmpty(acc.Country)) acc.Country = "unknown";
                     acc.LobbyVersion = lobbyVersion;
                     acc.LastLogin = DateTime.UtcNow;
-                    acc.SteamID = info?.steamid;
-                    acc.SteamName = info?.personaname;
+                    if (info != null)
+                    {
+                        acc.SteamID = info.steamid;
+                        acc.SteamName = info.personaname;
+                    }
 
 
                     user.LobbyVersion = login.LobbyVersion;

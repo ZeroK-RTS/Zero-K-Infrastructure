@@ -14,5 +14,7 @@ namespace ZkData
         public string GetGithubHookKey() => MiscVar.GetValue("GithubHookKey");
         public string GetSteamBuildPassword() => MiscVar.GetValue("SteamBuildPassword");
         public string GetGlacierSecretKey() => MiscVar.GetValue("GlacierSecretKey");
+
+        public string GetNightwatchDiscordToken() => MiscVar.GetValue("NightwatchDiscordToken");
     }
 }

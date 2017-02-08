@@ -178,6 +178,18 @@
             @Html.Print(t.ForumThread)<br />
         }
     </div>
+    
+    <div class="border">
+        <center>
+            <a href="http://twitter.com/ZeroKTeam"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Twitter_Logo_Mini.svg/220px-Twitter_Logo_Mini.svg.png" class="icon32" /></a>
+            <a href="https://github.com/ZeroK-RTS"><img src="https://i.imgur.com/BItG041.png" class="icon32"></a>
+            <a href="https://www.facebook.com/ZeroK.RTS"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/F_icon.svg" class="icon32" /></a>
+            <a href="http://steamcommunity.com/groups/0-K"><img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg" class="icon32" /></a>
+            <a href="@Url.Action("Index", "News")"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png" class="icon32" /></a><br />
+            <a href="https://discord.gg/aab63Vt"><img src="~/Img/discord.png" alt="join discord" style="height: 40px;margin-top: 5px" /></a>
+        </center>
+    </div>
+
 
     <div id="topten" class="border">
         <h2><a href='@Url.Action("Index","Ladders")'>Top Players</a></h2>
@@ -197,20 +209,6 @@
                 </tr>
             }
         </table>
-    </div>
-
-    <div class="border">
-        <h2>Social Media</h2>
-        <a href="https://www.facebook.com/ZeroK.RTS"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/F_icon.svg" class="icon32" /></a>
-        <a href="https://github.com/ZeroK-RTS"><img src="https://i.imgur.com/BItG041.png" class="icon32"></a>
-        <a href="http://steamcommunity.com/groups/0-K"><img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg" class="icon32" /></a>
-        <a href="@Url.Action("Index", "News")"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png" class="icon32" /></a>
-        <a href="https://plus.google.com/+Zero-kInfo/"><img src="https://plus.google.com/favicon.ico" class="icon32" /></a>
-        <a href="http://twitter.com/ZeroKTeam"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Twitter_Logo_Mini.svg/220px-Twitter_Logo_Mini.svg.png" class="icon32" /></a>
-    </div>
-    <div class="border">
-        <h2>Links</h2>
-        @Html.IncludeWiki("Links")
     </div>
 
 </div>
