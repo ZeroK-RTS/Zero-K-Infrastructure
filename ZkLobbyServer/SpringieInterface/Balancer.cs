@@ -297,6 +297,7 @@ namespace ZeroKWeb.SpringieInterface
                             string chickBot = null;
                             if (context.ModOptions?.TryGetValue("chickenailevel", out chickBot) == true && !string.IsNullOrEmpty(chickBot) && chickBot != "none")
                             {
+                                res.Bots.RemoveAll(x => x.BotAI.StartsWith("Chicken:"));
                                 res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "default_Chicken", BotAI = chickBot });
                             }
 
