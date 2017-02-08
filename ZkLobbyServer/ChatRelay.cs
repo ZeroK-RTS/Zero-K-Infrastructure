@@ -52,7 +52,7 @@ namespace ZkLobbyServer
                     IsEmote = false,
                     Place = SayPlace.Channel,
                     Target = "zk",
-                    Text = messageEventArgs.Message.Text"
+                    Text = messageEventArgs.Message.Text
                 });
         }
 
