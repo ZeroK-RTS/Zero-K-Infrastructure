@@ -22,7 +22,8 @@ namespace ZkLobbyServer
         readonly ZkLobbyServer zkServer;
         private readonly DiscordClient discord;
 
-        const ulong DiscordZkChannelID = 278805140708786177;
+        const ulong DiscordZkServerID = 278805140708786177;
+        
 
         public ChatRelay(ZkLobbyServer zkServer, string password, List<string> channels)
         {
@@ -38,20 +39,23 @@ namespace ZkLobbyServer
 
             discord.Connect(new Secrets().GetNightwatchDiscordToken(), TokenType.Bot);
             
+            
+
             SetupSpringTasConnection(password);
         }
 
-        private void DiscordOnMessageReceived(object sender, MessageEventArgs messageEventArgs)
+        private void DiscordOnMessageReceived(object sender, MessageEventArgs msg)
         {
-            if (messageEventArgs.Channel.Id == DiscordZkChannelID && !messageEventArgs.User.IsBot) zkServer.GhostSay(
+            if (channels.Contains(msg.Channel.Name) && !msg.User.IsBot) zkServer.GhostSay(
                 new Say()
                 {
                     AllowRelay = false,
-                    User = messageEventArgs.User.ToString(),
+                    User = msg.User.ToString(),
                     IsEmote = false,
                     Place = SayPlace.Channel,
-                    Target = "zk",
-                    Text = messageEventArgs.Message.Text
+                    Target = msg.Channel.Name,
+                    Text = msg.Message.Text,
+                    Source = SaySource.Discord
                 });
         }
 
@@ -62,12 +66,13 @@ namespace ZkLobbyServer
                 if (say.AllowRelay && say.Place == SayPlace.Channel && channels.Contains(say.Target))
                 {
                     if (say.Text.StartsWith("!names")) zkServer.GhostPm(say.User, string.Join(", ", springTas.JoinedChannels[say.Target].ChannelUsers));
-                    else springTas.Say(TasClient.SayPlace.Channel, say.Target, string.Format("<{0}> {1}", say.User, say.Text), say.IsEmote);
+                    else
+                    {
+                        springTas.Say(TasClient.SayPlace.Channel, say.Target, string.Format("<{0}> {1}", say.User, say.Text), say.IsEmote);
+                        discord.GetServer(DiscordZkServerID).AllChannels.FirstOrDefault(x=>x.Name==say.Target)?.SendMessage($"<{say.User}> {say.Text}");
+                    }
                 }
-                if (say.AllowRelay && say.Place == SayPlace.Channel && say.Target == "zk" && say.User != GlobalConst.NightwatchName)
-                {
-                    discord.GetChannel(DiscordZkChannelID).SendMessage($"<{say.User}> {say.Text}");
-                }
+             
             }
             catch (Exception ex)
             {
@@ -108,7 +113,8 @@ namespace ZkLobbyServer
                         Time = DateTime.UtcNow,
                         Target = args.Channel,
                         User = args.UserName,
-                        AllowRelay = false
+                        AllowRelay = false,
+                        Source = SaySource.Spring
                     });
                 }
             }
