@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using Discord;
 using LobbyClient;
 using ZkData;
 using TasClient = LobbyClient.Legacy.TasClient;
@@ -19,6 +20,9 @@ namespace ZkLobbyServer
         readonly List<string> channels;
         readonly TasClient springTas;
         readonly ZkLobbyServer zkServer;
+        private readonly DiscordClient discord;
+
+        const ulong DiscordZkChannelID = 278805140708786177;
 
         public ChatRelay(ZkLobbyServer zkServer, string password, List<string> channels)
         {
@@ -29,7 +33,27 @@ namespace ZkLobbyServer
             springTas.Said += OnSpringTasSaid;
             zkServer.Said += OnZkServerSaid;
 
+            discord = new DiscordClient();
+            discord.MessageReceived += DiscordOnMessageReceived;
+
+            discord.Connect(new Secrets().GetNightwatchDiscordToken(), TokenType.Bot);
+            
+
             SetupSpringTasConnection(password);
+        }
+
+        private void DiscordOnMessageReceived(object sender, MessageEventArgs messageEventArgs)
+        {
+            if (messageEventArgs.Channel.Id == DiscordZkChannelID && !messageEventArgs.User.IsBot) zkServer.GhostSay(
+                new Say()
+                {
+                    AllowRelay = false,
+                    User = GlobalConst.NightwatchName,
+                    IsEmote = false,
+                    Place = SayPlace.Channel,
+                    Target = "zk",
+                    Text = $"<{messageEventArgs.User}> {messageEventArgs.Message.Text}"
+                });
         }
 
         void OnZkServerSaid(object sender, Say say)
@@ -40,6 +64,10 @@ namespace ZkLobbyServer
                 {
                     if (say.Text.StartsWith("!names")) zkServer.GhostPm(say.User, string.Join(", ", springTas.JoinedChannels[say.Target].ChannelUsers));
                     else springTas.Say(TasClient.SayPlace.Channel, say.Target, string.Format("<{0}> {1}", say.User, say.Text), say.IsEmote);
+                }
+                if (say.AllowRelay && say.Place == SayPlace.Channel && say.Target == "zk" && say.User != GlobalConst.NightwatchName)
+                {
+                    discord.GetChannel(DiscordZkChannelID).SendMessage($"<{say.User}> {say.Text}");
                 }
             }
             catch (Exception ex)
