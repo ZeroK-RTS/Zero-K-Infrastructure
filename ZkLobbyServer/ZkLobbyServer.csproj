@@ -134,6 +134,8 @@
     <Compile Include="ChannelManager.cs" />
     <Compile Include="ChatRelay.cs" />
     <Compile Include="ClientConnection.cs" />
+    <Compile Include="DiscordRelaySource.cs" />
+    <Compile Include="IChatRelaySource.cs" />
     <Compile Include="ICommandSender.cs" />
     <Compile Include="ITopPlayerProvider.cs" />
     <Compile Include="ITransportServerListener.cs" />
@@ -156,10 +158,12 @@
     <Compile Include="SpringieInterface\PlanetWarsTurnHandler.cs" />
     <Compile Include="SpringieInterface\PlayerJoinHandler.cs" />
     <Compile Include="SpringieInterface\StartSetup.cs" />
+    <Compile Include="SpringRelaySource.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="utils\Utils.cs" />
     <Compile Include="ZkLobbyServer.cs" />
     <Compile Include="TcpTransportServerListener.cs" />
+    <Compile Include="ZklsRelaySource.cs" />
     <Compile Include="ZkServerTraceListener.cs" />
   </ItemGroup>
   <ItemGroup>

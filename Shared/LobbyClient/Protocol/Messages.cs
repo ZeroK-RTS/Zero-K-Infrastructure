@@ -373,7 +373,8 @@ namespace LobbyClient
     public enum SaySource
     {
         Discord,
-        Spring
+        Spring,
+        Zk,
     }
 
     [Message(Origin.Client)]
