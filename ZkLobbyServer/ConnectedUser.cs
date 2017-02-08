@@ -551,7 +551,7 @@ namespace ZkLobbyServer
                 var trgtAccount = Account.AccountByName(db, rel.TargetName) ?? db.Accounts.FirstOrDefault(x=>x.SteamID == steamId);
                 if (trgtAccount == null)
                 {
-                    await Respond("No such account found");
+                    if (!string.IsNullOrEmpty(rel.TargetName)) await Respond("No such account found"); // only warn if name is set and not just steam id
                     return;
                 }
 
