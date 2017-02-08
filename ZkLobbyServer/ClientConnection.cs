@@ -183,8 +183,11 @@ namespace ZkLobbyServer
                                 acc.SetPasswordHashed(register.PasswordHash);
                                 acc.SetName(register.Name);
                                 acc.SetAvatar();
-                                acc.SteamID = info?.steamid;
-                                acc.SteamName = info?.personaname;
+                                if (info != null)
+                                {
+                                    acc.SteamID = info.steamid;
+                                    acc.SteamName = info.personaname;
+                                }
                                 db.Accounts.Add(acc);
                                 db.SaveChanges();
 
