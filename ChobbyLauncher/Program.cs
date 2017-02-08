@@ -96,7 +96,7 @@ namespace ChobbyLauncher
                             {
                                 try
                                 {
-                                    Process.Start(ret.Url.ToString());
+                                    Process.Start(ret.HtmlUrl.ToString());
                                 }
                                 catch { }
                             }
