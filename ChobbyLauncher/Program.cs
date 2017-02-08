@@ -23,6 +23,8 @@ namespace ChobbyLauncher
 
             try
             {
+                //GameAnalytics.SetEnabledInfoLog(true);
+                //GameAnalytics.SetEnabledVerboseLog(true);
                 GameAnalytics.Initialize(GlobalConst.GameAnalyticsGameKey, GlobalConst.GameAnalyticsToken);
                 GameAnalytics.StartSession();
             }
