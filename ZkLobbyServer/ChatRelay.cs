@@ -38,7 +38,6 @@ namespace ZkLobbyServer
 
             discord.Connect(new Secrets().GetNightwatchDiscordToken(), TokenType.Bot);
             
-
             SetupSpringTasConnection(password);
         }
 

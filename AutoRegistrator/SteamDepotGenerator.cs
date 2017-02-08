@@ -36,18 +36,18 @@ namespace AutoRegistrator
             var downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
             downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
             downloader.GetResource(DownloadType.RAPID, "zk:stable")?.WaitHandle.WaitOne();
-            downloader.GetResource(DownloadType.RAPID, "zk:test")?.WaitHandle.WaitOne();
+            downloader.GetResource(DownloadType.RAPID, "zkmenu:stable")?.WaitHandle.WaitOne();
 
-            CopyResources(siteBase, paths, GetResourceList(downloader.PackageDownloader.GetByTag("zk:stable").InternalName, downloader.PackageDownloader.GetByTag("zk:test").InternalName), downloader);
+            CopyResources(siteBase, paths, GetResourceList(downloader.PackageDownloader.GetByTag("zk:stable").InternalName, downloader.PackageDownloader.GetByTag("zkmenu:stable").InternalName), downloader);
 
             CopyLobbyProgram();
             CopyExtraImages();
         }
 
         private void CopyLobbyProgram() {
-            var zklSource = Path.Combine(siteBase, "lobby", "Zero-K.exe");
-            if (File.Exists(zklSource)) File.Copy(zklSource, Path.Combine(targetFolder, "Zero-K.exe"), true);
-            else new WebClient().DownloadFile(GlobalConst.SelfUpdaterBaseUrl + "/" + "Zero-K.exe", Path.Combine(targetFolder, "Zero-K.exe"));
+            var zklSource = Path.Combine(siteBase, "lobby", "Chobby.exe");
+            if (File.Exists(zklSource)) File.Copy(zklSource, Path.Combine(targetFolder, "Chobby.exe"), true);
+            else new WebClient().DownloadFile(GlobalConst.SelfUpdaterBaseUrl + "/" + "Chobbe.exe", Path.Combine(targetFolder, "Chobby.exe"));
         }
 
         private void CopyExtraImages() {
@@ -90,9 +90,6 @@ namespace AutoRegistrator
         private static void CopyResources(string siteBase, SpringPaths paths, List<Resource> resources, PlasmaDownloader.PlasmaDownloader downloader) {
             var destMaps = Path.Combine(paths.WritableDirectory, "maps");
             var sourceMaps = Path.Combine(siteBase, "autoregistrator", "maps");
-            var sourceMetadata = Path.Combine(siteBase, "Resources");
-            var targetMetadata = Path.Combine(paths.Cache, "Resources");
-            if (!Directory.Exists(targetMetadata)) Directory.CreateDirectory(targetMetadata);
 
             foreach (var res in resources)
             {
@@ -116,17 +113,6 @@ namespace AutoRegistrator
                     if (!File.Exists(Path.Combine(destMaps, fileName))) File.Copy(Path.Combine(sourceMaps, fileName), Path.Combine(destMaps, fileName));
                 } else if (res.MissionID != null) File.WriteAllBytes(Path.Combine(paths.WritableDirectory, "games", res.Mission.SanitizedFileName), res.Mission.Mutator);
                 else downloader.GetResource(DownloadType.RAPID, res.InternalName)?.WaitHandle.WaitOne();
-
-                foreach (var metaName in new[] { res.MinimapName, res.HeightmapName, res.MetalmapName, res.MetadataName, res.ThumbnailName })
-                {
-                    Trace.TraceInformation("Copying resource: {0}", metaName);
-                    var src = Path.Combine(sourceMetadata, metaName);
-                    var dst = Path.Combine(targetMetadata, metaName);
-                    if (!File.Exists(dst) && File.Exists(src))
-                    {
-                        File.Copy(src, dst);
-                    }
-                }
             }
         }
 
@@ -135,7 +121,7 @@ namespace AutoRegistrator
             
 
             var db = new ZkDataContext();
-            var resources = db.Resources.Where(x => extraNames.Contains(x.InternalName) || (x.TypeID == ResourceType.Map && x.MapSupportLevel>=MapSupportLevel.Featured) || (x.MissionID != null && !x.Mission.IsDeleted && x.Mission.FeaturedOrder !=null )).ToList();
+            var resources = db.Resources.Where(x => extraNames.Contains(x.InternalName) || (x.TypeID == ResourceType.Map && x.MapSupportLevel>=MapSupportLevel.MatchMaker) || (x.MissionID != null && !x.Mission.IsDeleted && x.Mission.FeaturedOrder !=null )).ToList();
             foreach (var res in resources.ToList())
             {
                 foreach (var requestedDependency in res.ResourceDependencies.Select(x => x.NeedsInternalName))
