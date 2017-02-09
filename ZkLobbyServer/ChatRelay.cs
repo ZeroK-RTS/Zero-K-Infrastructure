@@ -29,6 +29,7 @@ namespace ZkLobbyServer
                 {
                     var users = new List<string>();
                     foreach (var s in sources.Where(x => x != source)) users.AddRange(s.GetUsers(msg.Channel));
+                    users = users.Distinct().OrderBy(x=>x).ToList();
 
                     source.SendPm(msg.User, string.Join("\n", users));
                 }
