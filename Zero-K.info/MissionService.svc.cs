@@ -129,6 +129,7 @@ namespace ZeroKWeb
 				prev.Revision++;
 				prev.Mutator = mission.Mutator;
                 prev.ForumThread.Title = mission.Name;
+                prev.Script = mission.Script;
 				mission = prev;
 			}
 			else
