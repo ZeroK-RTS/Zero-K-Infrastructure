@@ -42,7 +42,12 @@ namespace ZkLobbyServer
         {
             try
             {
-                if (m.Source != SaySource.Discord) GetChannel(m.Channel)?.SendMessage($"<{m.User}> {m.Message}");
+                if (m.Source != SaySource.Discord)
+                {
+                    if (m.User != GlobalConst.NightwatchName) GetChannel(m.Channel)?.SendMessage($"<{m.User}> {m.Message}");
+                    // don't relay extra "nightwatch" if it is self relay
+                    else GetChannel(m.Channel)?.SendMessage(m.Message);
+                }
             }
             catch (Exception ex)
             {

@@ -62,7 +62,11 @@ namespace ZkLobbyServer
         {
             try
             {
-                if (msg.Source != SaySource.Spring) springTas.Say(TasClient.SayPlace.Channel, msg.Channel, string.Format("<{0}> {1}", msg.User, msg.Message), msg.IsEmote);
+                if (msg.Source != SaySource.Spring)
+                {
+                    if (msg.User != GlobalConst.NightwatchName) springTas.Say(TasClient.SayPlace.Channel, msg.Channel, string.Format("<{0}> {1}", msg.User, msg.Message), msg.IsEmote);
+                    else springTas.Say(TasClient.SayPlace.Channel, msg.Channel, msg.Message, msg.IsEmote);
+                }
             }
             catch (Exception ex)
             {
