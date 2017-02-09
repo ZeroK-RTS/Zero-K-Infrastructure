@@ -21,16 +21,12 @@ namespace ZeroKWeb.Controllers
             public int FirstGamePlayers { get; set; }
         }
 
-        /// <summary>
-        /// Gets a chart of game activity since February 2011
-        /// </summary>
-	    [OutputCache(Duration = 3600 * 2, VaryByParam = "*", Location = OutputCacheLocation.Server)]
+  
         public ActionResult Games()
         {
             return GenerateStats(1);
         }
 
-        [OutputCache(Duration = 3600 * 2, VaryByParam = "*", Location = OutputCacheLocation.Server)]
         public ActionResult GamesAll()
         {
             return GenerateStats(10);
@@ -42,7 +38,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var data = MemCache.GetCached("gameStats",
+            var data = MemCache.GetCached("gameStats" + years,
                 () =>
                 {
                     var start = DateTime.Now.AddYears(-years); //new DateTime(2011, 2, 3);
