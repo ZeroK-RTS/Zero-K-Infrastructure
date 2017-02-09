@@ -85,13 +85,13 @@ namespace ZeroKWeb.Controllers
         }
 
 
-        public ActionResult Cohort(int? year)
+        public ActionResult Cohorts(int? year)
         {
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
             year = year ?? 1;
 
-            var data = MemCache.GetCached("cohort" + year,
+            var data = MemCache.GetCached("cohorts" + year,
                 () =>
                 {
                     var start = DateTime.Now.AddYears(-year.Value); //new DateTime(2011, 2, 3);
@@ -123,17 +123,54 @@ namespace ZeroKWeb.Controllers
 
             //chart.AddSeries("New players", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Players).ToList(), legend: "dps");
 
-            var t = "StackedColumn";
+            var t = "SplineArea";
 
-            chart.AddSeries("30 days", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => 100.0 * x.Day30 / x.Players).ToList(), legend: "dps");
-            chart.AddSeries("7 days", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => 100.0 * x.Day7 / x.Players).ToList(), legend: "dps");
+            chart.AddSeries("1 day", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => 100.0 * x.Day1 / x.Players).ToList(), legend: "dps");
             chart.AddSeries("3 days", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => 100.0 * x.Day3 / x.Players).ToList(), legend: "dps");
-            chart.AddSeries("1 day", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => 100.0*x.Day1 / x.Players).ToList(), legend: "dps");
-            
-            
-            
+            chart.AddSeries("7 days", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => 100.0 * x.Day7 / x.Players).ToList(), legend: "dps");
+            chart.AddSeries("30 days", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => 100.0 * x.Day30 / x.Players).ToList(), legend: "dps");
             return File(chart.GetBytes("png"), "image/png");
         }
+
+        public ActionResult Retention(int? year)
+        {
+            var db = new ZkDataContext();
+            db.Database.CommandTimeout = 600;
+            year = year ?? 1;
+
+            var data = MemCache.GetCached("retention" + year,
+                () =>
+                {
+                    var start = DateTime.Now.AddYears(-year.Value); //new DateTime(2011, 2, 3);
+                    var end = DateTime.Now.Date;
+
+                    return (from acc in db.Accounts
+                            where acc.FirstLogin < end && acc.FirstLogin > start
+                            group acc by DbFunctions.TruncateTime(acc.FirstLogin)
+                        into x
+                            orderby x.Key
+                            let players = x.Count()
+                            select
+                            new
+                            {
+                                Day = x.Key.Value,
+                                Players = x.Count(),
+                                Retention = x.Select(y => DbFunctions.DiffDays(x.Key, y.LastLogin)).Select(y => y > 30 ? 30 : y).Average(),
+                            }).ToList();
+                },
+                60 * 60 * 20);
+
+            var chart = new Chart(1500, 700, ChartTheme.Blue);
+
+            chart.AddTitle("Retention (max 30)");
+            chart.AddLegend("Daily values", "dps");
+
+            var t = "SplineArea";
+
+            chart.AddSeries("Days (up to 30)", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Retention).ToList(), legend: "dps");
+            return File(chart.GetBytes("png"), "image/png");
+        }
+
 
         //
         // GET: /Ladders/
