@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Helpers;
@@ -83,6 +84,50 @@ namespace ZeroKWeb.Controllers
             return File(chart.GetBytes("png"), "image/png");
         }
 
+
+        public ActionResult Cohort()
+        {
+            var db = new ZkDataContext();
+            db.Database.CommandTimeout = 600;
+
+            var data = MemCache.GetCached("cohort",
+                () =>
+                {
+                    var start = DateTime.Now.AddYears(-10); //new DateTime(2011, 2, 3);
+                    var end = DateTime.Now.Date;
+
+                    return (from acc in db.Accounts
+                            where acc.FirstLogin < end && acc.FirstLogin > start
+                            group acc by DbFunctions.TruncateTime(acc.FirstLogin)
+                        into x
+                            orderby x.Key
+                            let players = x.Count()
+                            select
+                            new 
+                            {
+                                Day = x.Key.Value,
+                                Players = x.Count(),
+                                Day1 = x.Count(y=>y.LastLogin>= DbFunctions.AddDays(x.Key, 1)),
+                                Day3 = x.Count(y => y.LastLogin >= DbFunctions.AddDays(x.Key, 3)),
+                                Day7 = x.Count(y => y.LastLogin >= DbFunctions.AddDays(x.Key, 7)),
+                                Day30 = x.Count(y => y.LastLogin >= DbFunctions.AddDays(x.Key, 30)),
+                            }).ToList();
+                },
+                60 * 60 * 20);
+
+            var chart = new Chart(1500, 700, ChartTheme.Blue);
+
+            chart.AddTitle("Cohorts");
+            chart.AddLegend("Daily values", "dps");
+
+            //chart.AddSeries("New players", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Players).ToList(), legend: "dps");
+
+            chart.AddSeries("1 day", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Day1 / x.Players).ToList(), legend: "dps");
+            chart.AddSeries("3 days", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Day3/ x.Players).ToList(), legend: "dps");
+            chart.AddSeries("7 days", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Day7 / x.Players).ToList(), legend: "dps");
+            chart.AddSeries("30 days", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Day30 / x.Players).ToList(), legend: "dps");
+            return File(chart.GetBytes("png"), "image/png");
+        }
 
         //
         // GET: /Ladders/
