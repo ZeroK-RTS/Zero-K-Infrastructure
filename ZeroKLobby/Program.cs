@@ -197,8 +197,8 @@ namespace ZeroKLobby
 
                 if (
                 MessageBox.Show(new Form() { TopMost = true },
-                    "Would you like to try the new lobby program for Zero-K: Chobby?",
-                    "New launcher option available",
+                    "WARNING: Zero-K lobby is now obsolete. Starting Chobby instead, ok? ",
+                    "WARNING: launcher obsolete",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question) == DialogResult.Yes)
                 {
