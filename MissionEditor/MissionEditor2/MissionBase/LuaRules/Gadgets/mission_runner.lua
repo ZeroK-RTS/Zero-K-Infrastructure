@@ -1498,6 +1498,10 @@ function gadget:UnitCreated(unitID, unitDefID, unitTeam)
   UpdateDisabledUnits(unitID, unitTeam)
 end
 
+function gadget:UnitTaken(unitID, unitDefID, oldTeam, newTeam)
+  UpdateDisabledUnits(unitID, newTeam)
+end
+
 -- ZK custom functions
 function gadget:AllowCommand_GetWantedCommand()	
 	return true

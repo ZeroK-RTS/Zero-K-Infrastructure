@@ -307,6 +307,8 @@ namespace ZkLobbyServer
             return ncounts;
         }
 
+        public Dictionary<string, int> GetQueueCounts() => queuesCounts;
+
         private void OnTick()
         {
             lock (tickLock)

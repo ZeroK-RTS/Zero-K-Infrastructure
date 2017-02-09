@@ -199,7 +199,7 @@ namespace ChobbyLauncher
 
         private async Task<bool> LaunchChobby(SpringPaths paths, string internalName, string engineVersion, int loopbackPort)
         {
-            process = new Process { StartInfo = { CreateNoWindow = true, UseShellExecute = false } };
+            process = new Process { StartInfo = { CreateNoWindow = false, UseShellExecute = false } };
 
             paths.SetDefaultEnvVars(process.StartInfo, engineVersion);
             var widgetFolder = Path.Combine(paths.WritableDirectory); //, "LuaMenu", "Widgets");
