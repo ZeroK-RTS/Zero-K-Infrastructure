@@ -21,15 +21,15 @@ namespace ZeroKWeb
 			if (prev != null)
 			{
 				var acc = AuthServiceClient.VerifyAccountPlain(author, password);
-                if (acc == null)
-                {
-                    Trace.TraceWarning("Invalid login attempt for {0}", author);
-                    System.Threading.Thread.Sleep(new Random().Next(2000));
-                    throw new ApplicationException("Cannot verify user account");
-                }
-                if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("You cannot delete a mission from an other user");
+				if (acc == null)
+				{
+					Trace.TraceWarning("Invalid login attempt for {0}", author);
+					System.Threading.Thread.Sleep(new Random().Next(2000));
+					throw new ApplicationException("Cannot verify user account");
+				}
+				if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("You cannot delete a mission from an other user");
 				prev.IsDeleted = true;
-			    db.SaveChanges();
+				db.SaveChanges();
 			}
 			else throw new ApplicationException("No such mission found");
 		}
@@ -41,16 +41,16 @@ namespace ZeroKWeb
 			if (prev != null)
 			{
 				var acc = AuthServiceClient.VerifyAccountPlain(author, password);
-                if (acc == null)
-                {
-                    Trace.TraceWarning("Invalid login attempt for {0}", author);
-                    System.Threading.Thread.Sleep(new Random().Next(2000));
-                    throw new ApplicationException("Cannot verify user account");
-                }
+				if (acc == null)
+				{
+					Trace.TraceWarning("Invalid login attempt for {0}", author);
+					System.Threading.Thread.Sleep(new Random().Next(2000));
+					throw new ApplicationException("Cannot verify user account");
+				}
 
-                if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("You cannot undelete a mission from an other user");
+				if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("You cannot undelete a mission from an other user");
 				prev.IsDeleted = false;
-			    db.SaveChanges();
+				db.SaveChanges();
 			}
 			else throw new ApplicationException("No such mission found");
 		}
@@ -58,7 +58,7 @@ namespace ZeroKWeb
 		public Mission GetMission(string missionName)
 		{
 			var db = new ZkDataContext();
-            db.Configuration.ProxyCreationEnabled = false;
+			db.Configuration.ProxyCreationEnabled = false;
 			var prev = db.Missions.Where(x => x.Name == missionName).Include(x=>x.Mutator).SingleOrDefault();
 			return prev;
 		}
@@ -66,43 +66,43 @@ namespace ZeroKWeb
 		public Mission GetMissionByID(int missionID)
 		{
 			var db = new ZkDataContext();
-            db.Configuration.ProxyCreationEnabled = false;
+			db.Configuration.ProxyCreationEnabled = false;
 			var prev = db.Missions.Where(x => x.MissionID == missionID).Include(x=>x.Mutator).SingleOrDefault();
 			return prev;
 		}
 
-	    public IEnumerable<Mission> ListMissionInfos()
-	    {
-	        var db = new ZkDataContext();
-	        db.Configuration.ProxyCreationEnabled = false;
-	        var list = db.Missions.ToList();
-	        foreach (var m in list) {
-	            m.Mutator = new byte[] { };
-	            m.Script = null;
-	            m.Image = new byte[] { };
-	        }
-	        return list;
-	    }
-
-
-	    public void SendMission(Mission mission, List<MissionSlot> slots, string author, string password, Mod modInfo)
+		public IEnumerable<Mission> ListMissionInfos()
 		{
-            if (mission == null) throw new ApplicationException("Mission is null");
+			var db = new ZkDataContext();
+			db.Configuration.ProxyCreationEnabled = false;
+			var list = db.Missions.ToList();
+			foreach (var m in list) {
+				m.Mutator = new byte[] { };
+				m.Script = null;
+				m.Image = new byte[] { };
+			}
+			return list;
+		}
+
+
+		public void SendMission(Mission mission, List<MissionSlot> slots, string author, string password, Mod modInfo)
+		{
+			if (mission == null) throw new ApplicationException("Mission is null");
 
 			Account acc = null;
 			var db = new ZkDataContext();
 			if (Debugger.IsAttached) acc = db.Accounts.SingleOrDefault(x => x.Name == "Testor303");
 			else acc = AuthServiceClient.VerifyAccountPlain(author, password);
 
-		    if (acc == null)
-		    {
-                Trace.TraceWarning("Invalid login attempt for {0}", author);
-                System.Threading.Thread.Sleep(new Random().Next(2000));
-                throw new ApplicationException("Cannot verify user account");
-		    }
+			if (acc == null)
+			{
+				Trace.TraceWarning("Invalid login attempt for {0}", author);
+				System.Threading.Thread.Sleep(new Random().Next(2000));
+				throw new ApplicationException("Cannot verify user account");
+			}
 
 
-            Mission prev = db.Missions.SingleOrDefault(x => x.MissionID == mission.MissionID || (x.Name == mission.Name && x.AccountID == acc.AccountID)); // previous mission by id or name + account
+			Mission prev = db.Missions.SingleOrDefault(x => x.MissionID == mission.MissionID || (x.Name == mission.Name && x.AccountID == acc.AccountID)); // previous mission by id or name + account
 			if (prev == null && db.Missions.Any(x =>x.Name == mission.Name)) throw new ApplicationException("Mission name must be unique");
 			var map = db.Resources.SingleOrDefault(x => x.InternalName == mission.Map && x.TypeID == ZkData.ResourceType.Map);
 			if (map == null) throw new ApplicationException("Map name is unknown");
@@ -110,13 +110,13 @@ namespace ZeroKWeb
 			if (mod == null) throw new ApplicationException("Mod name is unknown");
 			//if (db.Resources.Any(x => x.InternalName == mission.Name && x.MissionID != null)) throw new ApplicationException("Name already taken by other mod/map");
 
-            modInfo.MissionMap = mission.Map;
+			modInfo.MissionMap = mission.Map;
 
 			if (prev != null)
 			{
 				if (prev.AccountID != acc.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("Invalid author or password");
 				prev.Description = mission.Description;
-                prev.DescriptionStory = mission.DescriptionStory;
+				prev.DescriptionStory = mission.DescriptionStory;
 				prev.Mod = mission.Mod;
 				prev.Map = mission.Map;
 				prev.Name = mission.Name;
@@ -128,15 +128,15 @@ namespace ZeroKWeb
 				prev.SpringVersion = mission.SpringVersion;
 				prev.Revision++;
 				prev.Mutator = mission.Mutator;
-                prev.ForumThread.Title = mission.Name;
-                prev.Script = mission.Script;
+				prev.ForumThread.Title = mission.Name;
+				prev.Script = mission.Script;
 				mission = prev;
 			}
 			else
 			{
 				mission.CreatedTime = DateTime.UtcNow;
-                mission.ForumThread = new ForumThread() { Title = mission.Name, ForumCategory = db.ForumCategories.FirstOrDefault(x=>x.ForumMode==ForumMode.Missions), CreatedAccountID = acc.AccountID, LastPostAccountID= acc.AccountID };
-                mission.ForumThread.UpdateLastRead(acc.AccountID, true);
+				mission.ForumThread = new ForumThread() { Title = mission.Name, ForumCategory = db.ForumCategories.FirstOrDefault(x=>x.ForumMode==ForumMode.Missions), CreatedAccountID = acc.AccountID, LastPostAccountID= acc.AccountID };
+				mission.ForumThread.UpdateLastRead(acc.AccountID, true);
 				db.Missions.InsertOnSubmit(mission);
 			}
 			mission.AccountID = acc.AccountID;
@@ -147,13 +147,13 @@ namespace ZeroKWeb
 			mission.IsDeleted = true;
 			mission.IsCoop = slots.Where(x => x.IsHuman).GroupBy(x => x.AllyID).Count() == 1;
 
-	        db.SaveChanges();
+			db.SaveChanges();
 
-	        var updater = new MissionUpdater();
-            updater.UpdateMission(db, mission, modInfo);
+			var updater = new MissionUpdater();
+			updater.UpdateMission(db, mission, modInfo);
 
 			mission.IsDeleted = false;
-	        db.SaveChanges();
+			db.SaveChanges();
 		}
 	}
 }
