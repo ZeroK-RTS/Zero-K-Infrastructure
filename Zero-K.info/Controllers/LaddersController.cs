@@ -85,15 +85,16 @@ namespace ZeroKWeb.Controllers
         }
 
 
-        public ActionResult Cohort()
+        public ActionResult Cohort(int? year)
         {
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
+            year = year ?? 1;
 
-            var data = MemCache.GetCached("cohort",
+            var data = MemCache.GetCached("cohort" + year,
                 () =>
                 {
-                    var start = DateTime.Now.AddYears(-10); //new DateTime(2011, 2, 3);
+                    var start = DateTime.Now.AddYears(-year.Value); //new DateTime(2011, 2, 3);
                     var end = DateTime.Now.Date;
 
                     return (from acc in db.Accounts
@@ -122,10 +123,15 @@ namespace ZeroKWeb.Controllers
 
             //chart.AddSeries("New players", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Players).ToList(), legend: "dps");
 
-            chart.AddSeries("1 day", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Day1 / x.Players).ToList(), legend: "dps");
-            chart.AddSeries("3 days", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Day3/ x.Players).ToList(), legend: "dps");
-            chart.AddSeries("7 days", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Day7 / x.Players).ToList(), legend: "dps");
-            chart.AddSeries("30 days", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Day30 / x.Players).ToList(), legend: "dps");
+            var t = "StackedColumn";
+
+            chart.AddSeries("30 days", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => 100.0 * x.Day30 / x.Players).ToList(), legend: "dps");
+            chart.AddSeries("7 days", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => 100.0 * x.Day7 / x.Players).ToList(), legend: "dps");
+            chart.AddSeries("3 days", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => 100.0 * x.Day3 / x.Players).ToList(), legend: "dps");
+            chart.AddSeries("1 day", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => 100.0*x.Day1 / x.Players).ToList(), legend: "dps");
+            
+            
+            
             return File(chart.GetBytes("png"), "image/png");
         }
 
