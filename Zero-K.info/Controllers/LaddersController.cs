@@ -85,17 +85,17 @@ namespace ZeroKWeb.Controllers
         }
 
 
-        public ActionResult Cohorts(int? year)
+        public ActionResult Cohorts(int? years)
         {
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
-            year = year ?? 1;
+            years = years ?? 1;
 
-            var data = MemCache.GetCached("cohorts" + year,
+            var data = MemCache.GetCached("cohorts" + years,
                 () =>
                 {
-                    var start = DateTime.Now.AddYears(-year.Value); //new DateTime(2011, 2, 3);
-                    var end = DateTime.Now.Date;
+                    var start = DateTime.Now.AddYears(-years.Value); //new DateTime(2011, 2, 3);
+                    var end = DateTime.Now.Date.AddDays(-30);
 
                     return (from acc in db.Accounts
                             where acc.FirstLogin < end && acc.FirstLogin > start
@@ -132,17 +132,18 @@ namespace ZeroKWeb.Controllers
             return File(chart.GetBytes("png"), "image/png");
         }
 
-        public ActionResult Retention(int? year)
+        public ActionResult Retention(int? years)
         {
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
-            year = year ?? 1;
+            years = years ?? 1;
 
-            var data = MemCache.GetCached("retention" + year,
+            var start = DateTime.Now.AddYears(-years.Value); //new DateTime(2011, 2, 3);
+
+            var data = MemCache.GetCached("retention" + years,
                 () =>
                 {
-                    var start = DateTime.Now.AddYears(-year.Value); //new DateTime(2011, 2, 3);
-                    var end = DateTime.Now.Date;
+                    var end = DateTime.Now.Date.AddDays(-30);
 
                     return (from acc in db.Accounts
                             where acc.FirstLogin < end && acc.FirstLogin > start
@@ -167,7 +168,7 @@ namespace ZeroKWeb.Controllers
 
             var t = "SplineArea";
 
-            chart.AddSeries("Days (up to 30)", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Retention).ToList(), legend: "dps");
+            chart.AddSeries("Days (up to 30)", t, xValue: data.GroupBy(x=> (int)x.Day.Subtract(start).TotalDays/7).Select(x=>x.First().Day).ToList(), yValues: data.GroupBy(x => (int)x.Day.Subtract(start).TotalDays / 7).Select(x => x.Average(y=>y.Retention)).ToList(), legend: "dps");
             return File(chart.GetBytes("png"), "image/png");
         }
 
