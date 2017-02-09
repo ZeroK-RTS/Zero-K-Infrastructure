@@ -1,2 +1,2 @@
 #!/bin/bash
-mono ${0}/Chobby.exe
+mono ${0}/Chobby.exe $@
