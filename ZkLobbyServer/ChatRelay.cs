@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace ZkLobbyServer
 {
@@ -10,10 +11,12 @@ namespace ZkLobbyServer
     {
         private readonly List<string> channels;
         private readonly List<IChatRelaySource> sources = new List<IChatRelaySource>();
+        private ZkLobbyServer server;
 
         public ChatRelay(ZkLobbyServer zkServer, List<string> channels)
         {
             this.channels = channels;
+            this.server = zkServer;
 
             sources.Add(new SpringRelaySource(channels));
             sources.Add(new DiscordRelaySource());
@@ -32,6 +35,17 @@ namespace ZkLobbyServer
                     users = users.Distinct().OrderBy(x=>x).ToList();
 
                     source.SendPm(msg.User, string.Join("\n", users));
+                }
+                else if (msg.Message.StartsWith("!games"))
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendFormat("MatchMaker queue {0}\n", string.Join(", ", server.MatchMaker.GetQueueCounts().Select(x => $"{x.Key}: {x.Value}")));
+                    sb.Append(string.Join("\n",
+                        server.Battles.Values.Where(x => x != null)
+                            .OrderByDescending(x => x.NonSpectatorCount)
+                            .Select(x => $"{x.Mode} {x.NonSpectatorCount}+{x.SpectatorCount}/{x.MaxPlayers} {x.MapName} {x.Title}")));
+
+                    source.SendPm(msg.User, sb.ToString());
                 }
                 else
                 {
