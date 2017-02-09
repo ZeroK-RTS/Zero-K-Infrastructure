@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace ZkLobbyServer
 {
@@ -12,6 +15,9 @@ namespace ZkLobbyServer
         private readonly List<string> channels;
         private readonly List<IChatRelaySource> sources = new List<IChatRelaySource>();
         private ZkLobbyServer server;
+        private DiscordRelaySource discordSource;
+        private Timer timer;
+        private string lastTopic;
 
         public ChatRelay(ZkLobbyServer zkServer, List<string> channels)
         {
@@ -19,10 +25,28 @@ namespace ZkLobbyServer
             this.server = zkServer;
 
             sources.Add(new SpringRelaySource(channels));
-            sources.Add(new DiscordRelaySource());
             sources.Add(new ZklsRelaySource(zkServer));
+            discordSource = new DiscordRelaySource();
+            sources.Add(discordSource);
 
             foreach (var s in sources) s.OnChatRelayMessage += OnAnySourceMessage;
+
+            timer = new Timer(TimerCallback, this, 1000, 2000);
+        }
+
+        private void TimerCallback(object state)
+        {
+            try
+            {
+                var topic =
+                    $"Zero-K game server: {server.ConnectedUsers.Count} online, {server.MatchMaker.GetTotalWaiting()} in queue, {server.Battles.Values.Where(x => x != null).Sum(x => (int?)x.NonSpectatorCount + x.SpectatorCount) ?? 0} in custom games";
+
+                if (topic != lastTopic) discordSource?.SetTopic("zk", topic);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error processing relay timer: {0}",ex);
+            }
         }
 
         private void OnAnySourceMessage(IChatRelaySource source, ChatRelayMessage msg)

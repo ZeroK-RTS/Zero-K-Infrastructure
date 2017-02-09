@@ -38,6 +38,19 @@ namespace ZkLobbyServer
 
         public event Action<IChatRelaySource, ChatRelayMessage> OnChatRelayMessage;
 
+        public void SetTopic(string channel, string topic)
+        {
+            try
+            {
+                GetChannel(channel)?.Edit(topic: topic);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Error setting discord topic: {0}",ex);
+            }
+        }
+
+
         public void SendMessage(ChatRelayMessage m)
         {
             try
