@@ -1,2 +1,2 @@
 #!/bin/bash
-mono $(dirname ${0})/Chobby.exe $@
+mono $( dirname ${0})/Chobby.exe $@
