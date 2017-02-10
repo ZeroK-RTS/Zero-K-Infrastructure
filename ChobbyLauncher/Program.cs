@@ -130,7 +130,7 @@ namespace ChobbyLauncher
                 MessageBox.Show(ex.ToString(), "Error starting Chobby", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 try
                 {
-                    GameAnalytics.AddErrorEvent(EGAErrorSeverity.Critical, "Wrapper crash: " + ex.Message);
+                    GameAnalytics.AddErrorEvent(EGAErrorSeverity.Critical, "Wrapper crash: " + ex);
                 }
                 catch (Exception ex2)
                 {
