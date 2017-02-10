@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using ZkData;
 
 namespace ZkLobbyServer
 {
@@ -67,7 +68,7 @@ namespace ZkLobbyServer
                     sb.Append(string.Join("\n",
                         server.Battles.Values.Where(x => x != null)
                             .OrderByDescending(x => x.NonSpectatorCount)
-                            .Select(x => $"{x.Mode} {x.NonSpectatorCount}+{x.SpectatorCount}/{x.MaxPlayers} {x.MapName} {x.Title}")));
+                            .Select(x => $"{x.Mode.Description()} {x.NonSpectatorCount}+{x.SpectatorCount}/{x.MaxPlayers} {x.MapName} {x.Title}")));
 
                     source.SendPm(msg.User, sb.ToString());
                 }

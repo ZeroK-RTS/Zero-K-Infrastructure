@@ -25,11 +25,13 @@ namespace ZkLobbyServer
         private List<MatchMakerSetup.Queue> possibleQueues = new List<MatchMakerSetup.Queue>();
 
         private Dictionary<string, int> queuesCounts = new Dictionary<string, int>();
+
         private ZkLobbyServer server;
 
 
         private object tickLock = new object();
         private Timer timer;
+        private int totalQueued;
 
         public MatchMaker(ZkLobbyServer server)
         {
@@ -161,10 +163,7 @@ namespace ZkLobbyServer
                 }
         }
 
-        public int GetTotalWaiting()
-        {
-            return queuesCounts?.Sum(x => (int?)x.Value) ?? 0;
-        }
+        public int GetTotalWaiting() => totalQueued;
 
 
         public async Task OnLoginAccepted(ConnectedUser conus)
@@ -302,8 +301,14 @@ namespace ZkLobbyServer
 
         private Dictionary<string, int> CountQueuedPeople(IEnumerable<PlayerEntry> sumPlayers)
         {
+            int total = 0;
             var ncounts = possibleQueues.ToDictionary(x => x.Name, x => 0);
-            foreach (var plr in sumPlayers.Where(x => x != null)) foreach (var jq in plr.QueueTypes) ncounts[jq.Name]++;
+            foreach (var plr in sumPlayers.Where(x => x != null))
+            {
+                total++;
+                foreach (var jq in plr.QueueTypes) ncounts[jq.Name]++;
+            }
+            totalQueued = total; // ugly to both return and set class property, refactor for nicer
             return ncounts;
         }
 

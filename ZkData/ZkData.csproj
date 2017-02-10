@@ -236,6 +236,10 @@
     <Compile Include="Migrations\201702041325111_AddSteamIDIndex.Designer.cs">
       <DependentUpon>201702041325111_AddSteamIDIndex.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702091321502_StoreSourceInChatHistory.cs" />
+    <Compile Include="Migrations\201702091321502_StoreSourceInChatHistory.Designer.cs">
+      <DependentUpon>201702091321502_StoreSourceInChatHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="Enums\TreatyState.cs" />
@@ -490,6 +494,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702041325111_AddSteamIDIndex.resx">
       <DependentUpon>201702041325111_AddSteamIDIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702091321502_StoreSourceInChatHistory.resx">
+      <DependentUpon>201702091321502_StoreSourceInChatHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
