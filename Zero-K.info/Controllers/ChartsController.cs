@@ -10,6 +10,7 @@ namespace ZeroKWeb.Controllers
 {
     public interface IGraphDataProvider
     {
+        string Name { get; }
         string Label { get; }
         IList<GraphPoint> GetDailyValues(DateTime fromTime, DateTime toTime);
     }
@@ -42,12 +43,19 @@ namespace ZeroKWeb.Controllers
                     }).ToList();
         }
 
+        public string Name => "retention";
         public string Label => "Avg. retention (cap 30)";
     }
 
 
     public class ChartsController : Controller
     {
+        private List<IGraphDataProvider> GetPossibleProviders()
+        {
+            return new List<IGraphDataProvider>() {new Retention()};
+        }
+
+
         public ActionResult GenerateGraph(ChartsModel model)
         {
             model = model ?? new ChartsModel();
@@ -56,10 +64,11 @@ namespace ZeroKWeb.Controllers
             var from = model.From.Date;
             var grouping = model.Grouping;
 
-            var providers = new List<IGraphDataProvider>() { new Retention() };
+            var providers = GetPossibleProviders().Where(x => model.Graphs.Contains(x.Name));
+            
 
             var chart = new Chart(1500, 700, ChartTheme.Blue);
-            chart.AddTitle(string.Join(", ", providers.Select(x => x.Label)));
+            chart.AddTitle(string.Join(", ", providers.Select(x => x.Name)));
             chart.AddLegend("Daily values", "l");
             var graphType = "Line";
 
@@ -86,7 +95,9 @@ namespace ZeroKWeb.Controllers
         // GET: Charts
         public ActionResult Index(ChartsModel model)
         {
-            return View("ChartsIndex", model ?? new ChartsModel());
+            model = model ?? new ChartsModel();
+            model.PossibleGraphs = GetPossibleProviders().Select(x => x.Name).ToList();
+            return View("ChartsIndex", model);
         }
 
         public class ChartsModel
@@ -94,6 +105,8 @@ namespace ZeroKWeb.Controllers
             public DateTime From { get; set; } = DateTime.UtcNow.AddYears(-1).Date;
 
             public List<string> Graphs { get; set; } = new List<string>();
+
+            public List<string> PossibleGraphs { get; set; } = new List<string>();
 
             public int Grouping { get; set; } = 1;
             public DateTime To { get; set; } = DateTime.UtcNow.Date;

@@ -8,14 +8,29 @@
 
 <h2>Zero-K player statistics</h2>
 
-<form method="post" action="@Url.Action("Index")">
+<form method="post" action="@Url.Action("Index")" id="formID">
     <table>
-        <tr><td>From</td><td>@Html.TextBoxFor(x => x.From, new {@class="js_datepicker"})</td></tr>
+        <tr><td>Graphs</td><td>
+            @foreach (var g in Model.PossibleGraphs)
+            {
+                <label>
+                    <input type="checkbox" name="Graphs" value="@g" checked="@(Model.Graphs.Contains(g))" />
+                    @g
+                </label>
+            }
+        </td></tr>
+        <tr><td>From</td><td>@Html.TextBoxFor(x => x.From, new { @class = "js_datepicker" })</td></tr>
         <tr><td>To</td><td>@Html.TextBoxFor(x => x.To, new { @class = "js_datepicker" })</td></tr>
         <tr><td>Group days</td><td>@Html.EditorFor(x => x.Grouping)</td></tr>
-        <tr><td colspan="2"><input type="submit" /></td></tr>
+        <tr><td colspan="2"><input type="submit"/></td></tr>
     </table>
 </form>
 
-<img src="@Url.Action("GenerateGraph", Model)" />
+<img id="graphID" />
+
+<script language="javascript">
+    $(function() {
+        $("#graphID").attr("src", '@Url.Action("GenerateGraph")' + '?' + $("#formID").serialize());
+    });
+</script>
 
