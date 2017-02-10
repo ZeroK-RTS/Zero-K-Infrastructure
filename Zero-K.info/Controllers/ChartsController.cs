@@ -94,6 +94,7 @@ namespace ZeroKWeb.Controllers
     public class RetentionLimit : IGraphDataProvider
     {
         private int limitDays;
+
         public RetentionLimit(int limitDays)
         {
             this.limitDays = limitDays;
@@ -123,7 +124,7 @@ namespace ZeroKWeb.Controllers
                     new GraphPoint()
                     {
                         Day = grp.Key.Value,
-                        Value = 100.0 * grp.Count(x => x.LastLogin >= DbFunctions.AddDays(x.FirstLogin, limitDays))/ grp.Count()
+                        Value = 100.0 * grp.Count(x => x.LastLogin >= DbFunctions.AddDays(x.FirstLogin, limitDays)) / grp.Count()
                     }).ToList();
         }
 
@@ -168,13 +169,7 @@ namespace ZeroKWeb.Controllers
                 into grp
                     orderby grp.Key
                     let players = grp.SelectMany(y => y.SpringBattlePlayers.Where(z => !z.IsSpectator)).Select(z => z.AccountID).Distinct().Count()
-                    select
-                    
-                    new GraphPoint()
-                    {
-                        Day = grp.Key.Value,
-                        Value = grp.Sum(y => y.Duration * y.PlayerCount) / 60 / players,
-                    }).ToList();
+                    select new GraphPoint() { Day = grp.Key.Value, Value = grp.Sum(y => y.Duration * y.PlayerCount) / 60 / players, }).ToList();
         }
 
         public string Name => "player_minutes";
@@ -191,12 +186,7 @@ namespace ZeroKWeb.Controllers
 
             var selected =
                 db.SpringBattlePlayers.GroupBy(x => x.Account)
-                    .Select(
-                        acc =>
-                            new
-                            {
-                                FirstLogin = acc.OrderBy(x => x.SpringBattleID).Select(x => x.SpringBattle.StartTime).FirstOrDefault(),
-                            })
+                    .Select(acc => new { FirstLogin = acc.OrderBy(x => x.SpringBattleID).Select(x => x.SpringBattle.StartTime).FirstOrDefault(), })
                     .Where(x => (x.FirstLogin >= fromTime) && (x.FirstLogin <= toTime));
 
             return (from acc in selected
@@ -211,14 +201,9 @@ namespace ZeroKWeb.Controllers
     }
 
 
+    [Auth(Role = AuthRole.ZkAdmin)]
     public class ChartsController : Controller
     {
-        public class GraphSeries
-        {
-            public string Title;
-            public IList<GraphPoint> Data;
-        }
-
         public ActionResult GenerateGraph(ChartsModel model)
         {
             model = model ?? new ChartsModel();
@@ -229,8 +214,7 @@ namespace ZeroKWeb.Controllers
 
             var providers = GetPossibleProviders().Where(x => model.Graphs.Contains(x.Name));
 
-
-            List<GraphSeries> series = new List<GraphSeries>();
+            var series = new List<GraphSeries>();
 
             foreach (var prov in providers)
             {
@@ -242,25 +226,16 @@ namespace ZeroKWeb.Controllers
                             .Select(x => new GraphPoint() { Day = x.First().Day, Value = x.Average(y => y.Value) })
                             .ToList();
 
-                series.Add(new GraphSeries()
-                {
-                    Title = prov.Title,
-                    Data = data
-                });
+                series.Add(new GraphSeries() { Title = prov.Title, Data = data });
             }
             if (model.Normalize)
-            {
                 foreach (var s in series)
                 {
                     var min = s.Data.Min(x => x.Value);
                     var max = s.Data.Max(x => x.Value);
 
-                    foreach (var d in s.Data)
-                    {
-                        d.Value = 100.0* (d.Value - min)/(max - min);
-                    }
+                    foreach (var d in s.Data) d.Value = 100.0 * (d.Value - min) / (max - min);
                 }
-            }
 
             // TODO: convert this to System.Web.UI.DataVisualization.Charting  (which this thing is internally using)
 
@@ -270,15 +245,12 @@ namespace ZeroKWeb.Controllers
             var graphType = "Line";
 
             foreach (var s in series)
-            {
-                
                 chart.AddSeries(s.Title,
                     graphType,
                     xValue: s.Data.Select(x => x.Day.Date.ToString("d")).ToList(),
                     yValues: s.Data.Select(y => y.Value).ToList(),
                     legend: "l");
-            }
-            
+
             return File(chart.GetBytes("png"), "image/png");
         }
 
@@ -292,7 +264,24 @@ namespace ZeroKWeb.Controllers
 
         private List<IGraphDataProvider> GetPossibleProviders()
         {
-            return new List<IGraphDataProvider>() { new Retention(), new DailyUnique(), new DailyNew(), new RetentionLimit(1), new RetentionLimit(3), new RetentionLimit(7), new RetentionLimit(30), new DailyAvgMinutes(), new Leaving() };
+            return new List<IGraphDataProvider>()
+            {
+                new Retention(),
+                new DailyUnique(),
+                new DailyNew(),
+                new RetentionLimit(1),
+                new RetentionLimit(3),
+                new RetentionLimit(7),
+                new RetentionLimit(30),
+                new DailyAvgMinutes(),
+                new Leaving()
+            };
+        }
+
+        public class GraphSeries
+        {
+            public IList<GraphPoint> Data;
+            public string Title;
         }
 
         public class ChartsModel
@@ -304,9 +293,9 @@ namespace ZeroKWeb.Controllers
             public List<string> Graphs { get; set; } = new List<string>();
 
             public int Grouping { get; set; } = 1;
-            public DateTime To { get; set; } = DateTime.UtcNow.Date;
 
             public bool Normalize { get; set; }
+            public DateTime To { get; set; } = DateTime.UtcNow.Date;
 
             public class PossibleGraph
             {
