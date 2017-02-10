@@ -30,27 +30,23 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var selected =
-                db.SpringBattlePlayers.GroupBy(x => x.Account)
-                    .Select(
-                        acc =>
-                            new
-                            {
-                                FirstLogin = acc.OrderBy(x => x.SpringBattleID).Select(x => x.SpringBattle.StartTime).FirstOrDefault(),
-                                LastLogin = acc.OrderByDescending(x => x.SpringBattleID).Select(x => x.SpringBattle.StartTime).FirstOrDefault()
-                            })
-                    .Where(x => (x.FirstLogin >= fromTime) && (x.FirstLogin <= toTime));
+            var selected = (from sbp in db.SpringBattlePlayers
+                join sb in db.SpringBattles on sbp.SpringBattleID equals sb.SpringBattleID select new { sb,sbp}).GroupBy(x => x.sbp.AccountID).Select(x => new
+            {
+                FirstLogin = x.Min(y=>y.sb.StartTime),
+                LastLogin = x.Max(y=>y.sb.StartTime)
+            }).Where(x => (x.FirstLogin >= fromTime) && (x.FirstLogin <= toTime)).ToList();
 
             return (from acc in selected
-                    group acc by DbFunctions.TruncateTime(acc.FirstLogin)
+                    group acc by acc.FirstLogin.Date
                 into grp
                     orderby grp.Key
                     select
                     new GraphPoint()
                     {
-                        Day = grp.Key.Value,
-                        Value = grp.Select(y => DbFunctions.DiffDays(grp.Key, y.LastLogin)).Select(y => y > 30 ? 30 : y).Average() ?? 0
-                    }).ToList();
+                        Day = grp.Key,
+                        Value = grp.Select(y => y.LastLogin.Subtract(y.FirstLogin).TotalDays).Select(y => y > 30 ? 30 : y).Average()
+                    }).OrderBy(x => x.Day).ToList();
         }
 
         public string Name => "retention";
@@ -64,27 +60,24 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var selected =
-                db.SpringBattlePlayers.GroupBy(x => x.Account)
-                    .Select(
-                        acc =>
-                            new
+            var selected = (from sbp in db.SpringBattlePlayers
+                            join sb in db.SpringBattles on sbp.SpringBattleID equals sb.SpringBattleID
+                            select new { sb, sbp }).GroupBy(x => x.sbp.AccountID).Select(x => new
                             {
-                                FirstLogin = acc.OrderBy(x => x.SpringBattleID).Select(x => x.SpringBattle.StartTime).FirstOrDefault(),
-                                LastLogin = acc.OrderByDescending(x => x.SpringBattleID).Select(x => x.SpringBattle.StartTime).FirstOrDefault()
-                            })
-                    .Where(x => (x.LastLogin >= fromTime) && (x.LastLogin <= toTime));
+                                FirstLogin = x.Min(y => y.sb.StartTime),
+                                LastLogin = x.Max(y => y.sb.StartTime)
+                            }).Where(x => (x.LastLogin >= fromTime) && (x.LastLogin <= toTime)).ToList();
 
             return (from acc in selected
-                    group acc by DbFunctions.TruncateTime(acc.LastLogin)
+                    group acc by acc.LastLogin.Date
                 into grp
                     orderby grp.Key
                     select
                     new GraphPoint()
                     {
-                        Day = grp.Key.Value,
-                        Value = grp.Select(y => DbFunctions.DiffDays(y.FirstLogin, y.LastLogin)).Select(y => y > 30 ? 30 : y).Average() ?? 0
-                    }).ToList();
+                        Day = grp.Key,
+                        Value = grp.Select(y => y.LastLogin.Subtract(y.FirstLogin).TotalDays).Select(y => y > 30 ? 30 : y).Average()
+                    }).OrderBy(x => x.Day).ToList();
         }
 
         public string Name => "leavers";
@@ -105,27 +98,24 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var selected =
-                db.SpringBattlePlayers.GroupBy(x => x.Account)
-                    .Select(
-                        acc =>
-                            new
+            var selected = (from sbp in db.SpringBattlePlayers
+                            join sb in db.SpringBattles on sbp.SpringBattleID equals sb.SpringBattleID
+                            select new { sb, sbp }).GroupBy(x => x.sbp.AccountID).Select(x => new
                             {
-                                FirstLogin = acc.OrderBy(x => x.SpringBattleID).Select(x => x.SpringBattle.StartTime).FirstOrDefault(),
-                                LastLogin = acc.OrderByDescending(x => x.SpringBattleID).Select(x => x.SpringBattle.StartTime).FirstOrDefault()
-                            })
-                    .Where(x => (x.FirstLogin >= fromTime) && (x.FirstLogin <= toTime));
+                                FirstLogin = x.Min(y => y.sb.StartTime),
+                                LastLogin = x.Max(y => y.sb.StartTime)
+                            }).Where(x => (x.FirstLogin >= fromTime) && (x.FirstLogin <= toTime)).ToList();
 
             return (from acc in selected
-                    group acc by DbFunctions.TruncateTime(acc.FirstLogin)
+                    group acc by acc.FirstLogin.Date
                 into grp
                     orderby grp.Key
                     select
                     new GraphPoint()
                     {
-                        Day = grp.Key.Value,
-                        Value = 100.0 * grp.Count(x => x.LastLogin >= DbFunctions.AddDays(x.FirstLogin, limitDays)) / grp.Count()
-                    }).ToList();
+                        Day = grp.Key,
+                        Value = 100.0 * grp.Count(x => x.LastLogin.Subtract(x.FirstLogin).TotalDays >= limitDays) / grp.Count()
+                    }).OrderBy(x => x.Day).ToList();
         }
 
         public string Name => "retention_" + limitDays;
@@ -140,16 +130,18 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            return (from sb in db.SpringBattles.Where(x => (x.StartTime >= fromTime) && (x.StartTime <= toTime))
-                    group sb by DbFunctions.TruncateTime(sb.StartTime)
+            var selected = db.SpringBattlePlayers.Select(x => new { x.AccountID, x.SpringBattle.StartTime }).Where(x=>x.StartTime >= fromTime && x.StartTime <= toTime).ToList();
+            
+            return (from sb in selected
+                    group sb by sb.StartTime.Date
                 into grp
                     orderby grp.Key
                     select
                     new GraphPoint()
                     {
-                        Day = grp.Key.Value,
-                        Value = grp.SelectMany(y => y.SpringBattlePlayers.Where(z => !z.IsSpectator)).Select(z => z.AccountID).Distinct().Count(),
-                    }).ToList();
+                        Day = grp.Key,
+                        Value = grp.Select(z => z.AccountID).Distinct().Count(),
+                    }).OrderBy(x=>x.Day).ToList();
         }
 
         public string Name => "daily_unique";
@@ -164,12 +156,15 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            return (from sb in db.SpringBattles.Where(x => (x.StartTime >= fromTime) && (x.StartTime <= toTime))
-                    group sb by DbFunctions.TruncateTime(sb.StartTime)
+            var selected = db.SpringBattlePlayers.Select(x => new { x.AccountID, x.SpringBattle.StartTime, x.SpringBattle.Duration }).Where(x => x.StartTime >= fromTime && x.StartTime <= toTime).ToList();
+
+
+            return (from sb in selected
+                    group sb by sb.StartTime.Date
                 into grp
                     orderby grp.Key
-                    let players = grp.SelectMany(y => y.SpringBattlePlayers.Where(z => !z.IsSpectator)).Select(z => z.AccountID).Distinct().Count()
-                    select new GraphPoint() { Day = grp.Key.Value, Value = grp.Sum(y => y.Duration * y.PlayerCount) / 60 / players, }).ToList();
+                    let players = grp.Select(y => y.AccountID).Distinct().Count()
+                    select new GraphPoint() { Day = grp.Key, Value = grp.Sum(y => y.Duration) / 60 / players, }).OrderBy(x => x.Day).ToList();
         }
 
         public string Name => "player_minutes";
@@ -184,16 +179,18 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var selected =
-                db.SpringBattlePlayers.GroupBy(x => x.Account)
-                    .Select(acc => new { FirstLogin = acc.OrderBy(x => x.SpringBattleID).Select(x => x.SpringBattle.StartTime).FirstOrDefault(), })
-                    .Where(x => (x.FirstLogin >= fromTime) && (x.FirstLogin <= toTime));
+            var selected = (from sbp in db.SpringBattlePlayers
+                            join sb in db.SpringBattles on sbp.SpringBattleID equals sb.SpringBattleID
+                            select new { sb, sbp }).GroupBy(x => x.sbp.AccountID).Select(x => new
+                            {
+                                FirstLogin = x.Min(y => y.sb.StartTime),
+                            }).Where(x => (x.FirstLogin >= fromTime) && (x.FirstLogin <= toTime)).ToList();
 
             return (from acc in selected
-                    group acc by DbFunctions.TruncateTime(acc.FirstLogin)
+                    group acc by acc.FirstLogin.Date
                 into grp
                     orderby grp.Key
-                    select new GraphPoint() { Day = grp.Key.Value, Value = grp.Count(), }).ToList();
+                    select new GraphPoint() { Day = grp.Key, Value = grp.Count(), }).OrderBy(x => x.Day).ToList();
         }
 
         public string Name => "daily_first";

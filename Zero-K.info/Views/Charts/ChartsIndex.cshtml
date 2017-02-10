@@ -16,7 +16,7 @@
                 <label>
                     <input type="checkbox" name="Graphs" value="@g.Name" checked="@(Model.Graphs.Contains(g.Name))" />
                     @g.Title
-                </label>
+                </label><br/>
             }
         </td></tr>
         <tr><td>From</td><td>@Html.TextBoxFor(x => x.From, new { @class = "js_datepicker" })</td></tr>
