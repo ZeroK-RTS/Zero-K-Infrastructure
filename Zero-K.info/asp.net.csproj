@@ -181,6 +181,7 @@
     </Compile>
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AutocompleteController.cs" />
+    <Compile Include="Controllers\ChartsController.cs" />
     <Compile Include="Controllers\ClansController.cs" />
     <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\EnginesController.cs" />
@@ -1512,6 +1513,7 @@
     <Content Include="Views\Lobby\LobbyChatHistory.cshtml" />
     <Content Include="Views\Admin\TraceLogs.cshtml" />
     <Content Include="Views\Engines\EnginesIndex.cshtml" />
+    <Content Include="Views\Charts\ChartsIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

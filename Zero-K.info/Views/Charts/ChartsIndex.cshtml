@@ -1,0 +1,21 @@
+﻿@using ZeroKWeb
+@model ZeroKWeb.Controllers.ChartsController.ChartsModel
+
+@{
+    ViewBag.Title = "Charts";
+    ViewBag.Minimal = 1;
+}
+
+<h2>Zero-K player statistics</h2>
+
+<form method="post" action="@Url.Action("Index")">
+    <table>
+        <tr><td>From</td><td>@Html.TextBoxFor(x => x.From, new {@class="js_datepicker"})</td></tr>
+        <tr><td>To</td><td>@Html.TextBoxFor(x => x.To, new { @class = "js_datepicker" })</td></tr>
+        <tr><td>Group days</td><td>@Html.EditorFor(x => x.Grouping)</td></tr>
+        <tr><td colspan="2"><input type="submit" /></td></tr>
+    </table>
+</form>
+
+<img src="@Url.Action("GenerateGraph", Model)" />
+

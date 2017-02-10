@@ -348,6 +348,17 @@ namespace Fixer
 
         static void Main(string[] args)
         {
+            var s = new DateTime(2014, 1, 1);
+            var e = new DateTime(2015, 1, 1);
+            GlobalConst.Mode = ModeType.Live;
+            
+            var db = new ZkDataContext();
+            //db.SpringBattlePlayers.Where(x => x.SpringBattle.StartTime >= s && x.SpringBattle.StartTime <= e).Select(x => x.AccountID).Distinct().Count();
+
+            var t2 = db.Accounts.Where(x => x.FirstLogin >= s && x.FirstLogin <= e).Count();
+            //Console.WriteLine(test);
+
+
             //RenameOldAccounts();
             return;
             var ns = new NubSimulator();

@@ -34,6 +34,9 @@ namespace ZeroKWeb.Controllers
         }
 
 
+
+
+
         private ActionResult GenerateStats(int years)
         {
             var db = new ZkDataContext();
@@ -64,7 +67,7 @@ namespace ZeroKWeb.Controllers
                 },
                 60*60*20);
 
-            var chart = new Chart(1500, 700, ChartTheme.Blue);
+            var chart = new System.Web.Helpers.Chart(1500, 700, ChartTheme.Blue);
 
             chart.AddTitle("Daily activity");
             chart.AddLegend("Daily values", "dps");
@@ -116,7 +119,7 @@ namespace ZeroKWeb.Controllers
                 },
                 60 * 60 * 20);
 
-            var chart = new Chart(1500, 700, ChartTheme.Blue);
+            var chart = new System.Web.Helpers.Chart(1500, 700, ChartTheme.Blue);
 
             chart.AddTitle("Cohorts");
             chart.AddLegend("Daily values", "dps");
@@ -132,7 +135,9 @@ namespace ZeroKWeb.Controllers
             return File(chart.GetBytes("png"), "image/png");
         }
 
-        public ActionResult Retention(int? years)
+
+
+        public ActionResult Leavers(int? years)
         {
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
@@ -140,14 +145,14 @@ namespace ZeroKWeb.Controllers
 
             var start = DateTime.Now.AddYears(-years.Value); //new DateTime(2011, 2, 3);
 
-            var data = MemCache.GetCached("retention" + years,
+            var data = MemCache.GetCached("leavers" + years,
                 () =>
                 {
                     var end = DateTime.Now.Date.AddDays(-30);
 
                     return (from acc in db.Accounts
-                            where acc.FirstLogin < end && acc.FirstLogin > start
-                            group acc by DbFunctions.TruncateTime(acc.FirstLogin)
+                            where !acc.Name.StartsWith("TestNub") &&  acc.LastLogin < end && acc.LastLogin > start
+                            group acc by DbFunctions.TruncateTime(acc.LastLogin)
                         into x
                             orderby x.Key
                             let players = x.Count()
@@ -155,23 +160,25 @@ namespace ZeroKWeb.Controllers
                             new
                             {
                                 Day = x.Key.Value,
-                                Players = x.Count(),
-                                Retention = x.Select(y => DbFunctions.DiffDays(x.Key, y.LastLogin)).Select(y => y > 30 ? 30 : y).Average(),
+                                Count = x.Count(),
+                                Retention = x.Average(y => DbFunctions.DiffDays(y.FirstLogin, x.Key)),
                             }).ToList();
                 },
                 60 * 60 * 20);
 
-            var chart = new Chart(1500, 700, ChartTheme.Blue);
+            var chart = new System.Web.Helpers.Chart(1500, 700, ChartTheme.Blue);
 
-            chart.AddTitle("Retention (max 30)");
+            chart.AddTitle("Last played");
             chart.AddLegend("Daily values", "dps");
 
-            var t = "SplineArea";
+            var t = "Line";
 
-            chart.AddSeries("Days (up to 30)", t, xValue: data.GroupBy(x=> (int)x.Day.Subtract(start).TotalDays/7).Select(x=>x.First().Day).ToList(), yValues: data.GroupBy(x => (int)x.Day.Subtract(start).TotalDays / 7).Select(x => x.Average(y=>y.Retention)).ToList(), legend: "dps");
+            //chart.AddSeries("Left count", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Count).ToList(), legend: "dps");
+            chart.AddSeries("Left played for days", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Retention).ToList(), legend: "dps");
+
+            
             return File(chart.GetBytes("png"), "image/png");
         }
-
 
         //
         // GET: /Ladders/
