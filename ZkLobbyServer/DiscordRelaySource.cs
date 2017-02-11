@@ -11,23 +11,23 @@ namespace ZkLobbyServer
 {
     public class DiscordRelaySource : IChatRelaySource
     {
-        private const ulong DiscordZkServerID = 278805140708786177;
         private DiscordClient discord;
-
+        private ulong serverID;
+        private SaySource source;
 
         private static string GetName(Discord.User user)
         {
             return (user.Nickname ?? user.Name) + "#" + user.Discriminator;
         }
 
-        public DiscordRelaySource()
+        public DiscordRelaySource(DiscordClient client, ulong serverID, SaySource source)
         {
-            discord = new DiscordClient();
-            discord = new DiscordClient();
-
+            discord = client;
+            this.source = source;
             discord.MessageReceived += DiscordOnMessageReceived;
 
-            discord.Connect(new Secrets().GetNightwatchDiscordToken(), TokenType.Bot);
+            this.serverID = serverID;
+
         }
 
 
@@ -55,7 +55,7 @@ namespace ZkLobbyServer
         {
             try
             {
-                if (m.Source != SaySource.Discord)
+                if (m.Source != source)
                 {
                     if (m.User != GlobalConst.NightwatchName) GetChannel(m.Channel)?.SendMessage($"<{m.User}> {m.Message}");
                     // don't relay extra "nightwatch" if it is self relay
@@ -72,7 +72,7 @@ namespace ZkLobbyServer
         {
             try
             {
-                discord.GetServer(DiscordZkServerID).Users.FirstOrDefault(x => GetName(x) == user)?.SendMessage(message);
+                discord.GetServer(serverID).Users.FirstOrDefault(x => GetName(x) == user)?.SendMessage(message);
             }
             catch (Exception ex)
             {
@@ -85,7 +85,7 @@ namespace ZkLobbyServer
         {
             try
             {
-                if (!msg.User.IsBot) OnChatRelayMessage?.Invoke(this, new ChatRelayMessage(msg.Channel.Name, GetName(msg.User), msg.Message.Text, SaySource.Discord, false));
+                if (msg.Server.Id == serverID) if (!msg.User.IsBot) OnChatRelayMessage?.Invoke(this, new ChatRelayMessage(msg.Channel.Name, GetName(msg.User), msg.Message.Text, source, false));
             }
             catch (Exception ex)
             {
@@ -95,7 +95,7 @@ namespace ZkLobbyServer
 
         private Channel GetChannel(string name)
         {
-            return discord.GetServer(DiscordZkServerID).AllChannels.FirstOrDefault(x => x.Name == name);
+            return discord.GetServer(serverID).AllChannels.FirstOrDefault(x => x.Name == name);
         }
     }
 }

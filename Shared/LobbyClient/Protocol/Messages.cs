@@ -375,6 +375,7 @@ namespace LobbyClient
         Discord,
         Spring,
         Zk,
+        DiscordSpring
     }
 
     [Message(Origin.Client)]
