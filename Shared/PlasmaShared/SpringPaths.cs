@@ -110,6 +110,8 @@ namespace ZkData
 
         public string GetEngineFolderByVersion(string version)
         {
+            Debug.Assert(!string.IsNullOrEmpty(WritableDirectory), "WritableDirectory is set to null");
+            Debug.Assert(!string.IsNullOrEmpty(version), "Engine version is set to null");
             return Utils.MakePath(WritableDirectory, "engine", version);
         }
 
