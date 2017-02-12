@@ -30,7 +30,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var selected = (from sbp in db.SpringBattlePlayers
+            var selected = (from sbp in db.SpringBattlePlayers.Where(x=>!x.IsSpectator)
                 join sb in db.SpringBattles on sbp.SpringBattleID equals sb.SpringBattleID select new { sb,sbp}).GroupBy(x => x.sbp.AccountID).Select(x => new
             {
                 FirstLogin = x.Min(y=>y.sb.StartTime),
@@ -60,7 +60,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var selected = (from sbp in db.SpringBattlePlayers
+            var selected = (from sbp in db.SpringBattlePlayers.Where(x=>!x.IsSpectator)
                             join sb in db.SpringBattles on sbp.SpringBattleID equals sb.SpringBattleID
                             select new { sb, sbp }).GroupBy(x => x.sbp.AccountID).Select(x => new
                             {
@@ -98,7 +98,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var selected = (from sbp in db.SpringBattlePlayers
+            var selected = (from sbp in db.SpringBattlePlayers.Where(x=>!x.IsSpectator)
                             join sb in db.SpringBattles on sbp.SpringBattleID equals sb.SpringBattleID
                             select new { sb, sbp }).GroupBy(x => x.sbp.AccountID).Select(x => new
                             {
@@ -130,7 +130,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var selected = db.SpringBattlePlayers.Select(x => new { x.AccountID, x.SpringBattle.StartTime }).Where(x=>x.StartTime >= fromTime && x.StartTime <= toTime).ToList();
+            var selected = db.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => new { x.AccountID, x.SpringBattle.StartTime }).Where(x=>x.StartTime >= fromTime && x.StartTime <= toTime).ToList();
             
             return (from sb in selected
                     group sb by sb.StartTime.Date
@@ -156,7 +156,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var selected = db.SpringBattlePlayers.Select(x => new { x.AccountID, x.SpringBattle.StartTime, x.SpringBattle.Duration }).Where(x => x.StartTime >= fromTime && x.StartTime <= toTime).ToList();
+            var selected = db.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => new { x.AccountID, x.SpringBattle.StartTime, x.SpringBattle.Duration }).Where(x => x.StartTime >= fromTime && x.StartTime <= toTime).ToList();
 
 
             return (from sb in selected
@@ -179,7 +179,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var selected = (from sbp in db.SpringBattlePlayers
+            var selected = (from sbp in db.SpringBattlePlayers.Where(x => !x.IsSpectator)
                             join sb in db.SpringBattles on sbp.SpringBattleID equals sb.SpringBattleID
                             select new { sb, sbp }).GroupBy(x => x.sbp.AccountID).Select(x => new
                             {
