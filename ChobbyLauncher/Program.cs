@@ -23,10 +23,7 @@ namespace ChobbyLauncher
 
             try
             {
-                //GameAnalytics.SetEnabledInfoLog(true);
-                //GameAnalytics.SetEnabledVerboseLog(true);
                 GameAnalytics.Initialize(GlobalConst.GameAnalyticsGameKey, GlobalConst.GameAnalyticsToken);
-                GameAnalytics.StartSession();
             }
             catch (Exception ex)
             {
@@ -115,7 +112,7 @@ namespace ChobbyLauncher
 
                     try
                     {
-                        GameAnalytics.EndSession();
+                        GameAnalytics.OnStop();
                     }
                     catch (Exception ex)
                     {
@@ -130,7 +127,7 @@ namespace ChobbyLauncher
                 MessageBox.Show(ex.ToString(), "Error starting Chobby", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 try
                 {
-                    GameAnalytics.AddErrorEvent(EGAErrorSeverity.Critical, "Wrapper crash: " + ex.Message);
+                    GameAnalytics.AddErrorEvent(EGAErrorSeverity.Critical, "Wrapper crash: " + ex);
                 }
                 catch (Exception ex2)
                 {
@@ -140,7 +137,7 @@ namespace ChobbyLauncher
 
             try
             {
-                GameAnalytics.EndSession();
+                GameAnalytics.OnStop();
             }
             catch (Exception ex)
             {

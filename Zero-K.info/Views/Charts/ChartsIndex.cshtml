@@ -1,0 +1,37 @@
+﻿@using ZeroKWeb
+@model ZeroKWeb.Controllers.ChartsController.ChartsModel
+
+@{
+    ViewBag.Title = "Charts";
+    ViewBag.Minimal = 1;
+}
+
+<h2>Zero-K player statistics</h2>
+
+<form method="get" action="@Url.Action("Index")" id="formID">
+    <table>
+        <tr><td>Graphs</td><td>
+            @foreach (var g in Model.PossibleGraphs)
+            {
+                <label>
+                    <input type="checkbox" name="Graphs" value="@g.Name" checked="@(Model.Graphs.Contains(g.Name))" />
+                    @g.Title
+                </label><br/>
+            }
+        </td></tr>
+        <tr><td>From</td><td>@Html.TextBoxFor(x => x.From, new { @class = "js_datepicker" })</td></tr>
+        <tr><td>To</td><td>@Html.TextBoxFor(x => x.To, new { @class = "js_datepicker" })</td></tr>
+        <tr><td>Group days</td><td>@Html.EditorFor(x => x.Grouping)</td></tr>
+        <tr><td>Normalize</td><td>@Html.CheckBoxFor(x=>x.Normalize)</td></tr>
+        <tr><td colspan="2"><input type="submit"/></td></tr>
+    </table>
+</form>
+
+<img id="graphID" />
+
+<script language="javascript">
+    $(function() {
+        $("#graphID").attr("src", '@Url.Action("GenerateGraph")' + '?' + $("#formID").serialize());
+    });
+</script>
+

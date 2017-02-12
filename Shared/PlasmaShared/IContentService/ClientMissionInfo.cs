@@ -19,5 +19,7 @@ namespace PlasmaShared
         public float? Rating { get; set; }
         public int Revision { get; set; }
         public string Script { get; set; }
+
+        public float? FeaturedOrder { get; set; }
     }
 }

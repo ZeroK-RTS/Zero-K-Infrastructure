@@ -33,7 +33,7 @@ namespace ZeroKWeb.Controllers
             return GenerateStats(10);
         }
 
-
+        
         private ActionResult GenerateStats(int years)
         {
             var db = new ZkDataContext();
@@ -64,7 +64,7 @@ namespace ZeroKWeb.Controllers
                 },
                 60*60*20);
 
-            var chart = new Chart(1500, 700, ChartTheme.Blue);
+            var chart = new System.Web.Helpers.Chart(1500, 700, ChartTheme.Blue);
 
             chart.AddTitle("Daily activity");
             chart.AddLegend("Daily values", "dps");
@@ -84,93 +84,6 @@ namespace ZeroKWeb.Controllers
             return File(chart.GetBytes("png"), "image/png");
         }
 
-
-        public ActionResult Cohorts(int? years)
-        {
-            var db = new ZkDataContext();
-            db.Database.CommandTimeout = 600;
-            years = years ?? 1;
-
-            var data = MemCache.GetCached("cohorts" + years,
-                () =>
-                {
-                    var start = DateTime.Now.AddYears(-years.Value); //new DateTime(2011, 2, 3);
-                    var end = DateTime.Now.Date.AddDays(-30);
-
-                    return (from acc in db.Accounts
-                            where acc.FirstLogin < end && acc.FirstLogin > start
-                            group acc by DbFunctions.TruncateTime(acc.FirstLogin)
-                        into x
-                            orderby x.Key
-                            let players = x.Count()
-                            select
-                            new 
-                            {
-                                Day = x.Key.Value,
-                                Players = x.Count(),
-                                Day1 = x.Count(y=>y.LastLogin>= DbFunctions.AddDays(x.Key, 1)),
-                                Day3 = x.Count(y => y.LastLogin >= DbFunctions.AddDays(x.Key, 3)),
-                                Day7 = x.Count(y => y.LastLogin >= DbFunctions.AddDays(x.Key, 7)),
-                                Day30 = x.Count(y => y.LastLogin >= DbFunctions.AddDays(x.Key, 30)),
-                            }).ToList();
-                },
-                60 * 60 * 20);
-
-            var chart = new Chart(1500, 700, ChartTheme.Blue);
-
-            chart.AddTitle("Cohorts");
-            chart.AddLegend("Daily values", "dps");
-
-            //chart.AddSeries("New players", "Line", xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => x.Players).ToList(), legend: "dps");
-
-            var t = "SplineArea";
-
-            chart.AddSeries("1 day", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => 100.0 * x.Day1 / x.Players).ToList(), legend: "dps");
-            chart.AddSeries("3 days", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => 100.0 * x.Day3 / x.Players).ToList(), legend: "dps");
-            chart.AddSeries("7 days", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => 100.0 * x.Day7 / x.Players).ToList(), legend: "dps");
-            chart.AddSeries("30 days", t, xValue: data.Select(x => x.Day).ToList(), yValues: data.Select(x => 100.0 * x.Day30 / x.Players).ToList(), legend: "dps");
-            return File(chart.GetBytes("png"), "image/png");
-        }
-
-        public ActionResult Retention(int? years)
-        {
-            var db = new ZkDataContext();
-            db.Database.CommandTimeout = 600;
-            years = years ?? 1;
-
-            var start = DateTime.Now.AddYears(-years.Value); //new DateTime(2011, 2, 3);
-
-            var data = MemCache.GetCached("retention" + years,
-                () =>
-                {
-                    var end = DateTime.Now.Date.AddDays(-30);
-
-                    return (from acc in db.Accounts
-                            where acc.FirstLogin < end && acc.FirstLogin > start
-                            group acc by DbFunctions.TruncateTime(acc.FirstLogin)
-                        into x
-                            orderby x.Key
-                            let players = x.Count()
-                            select
-                            new
-                            {
-                                Day = x.Key.Value,
-                                Players = x.Count(),
-                                Retention = x.Select(y => DbFunctions.DiffDays(x.Key, y.LastLogin)).Select(y => y > 30 ? 30 : y).Average(),
-                            }).ToList();
-                },
-                60 * 60 * 20);
-
-            var chart = new Chart(1500, 700, ChartTheme.Blue);
-
-            chart.AddTitle("Retention (max 30)");
-            chart.AddLegend("Daily values", "dps");
-
-            var t = "SplineArea";
-
-            chart.AddSeries("Days (up to 30)", t, xValue: data.GroupBy(x=> (int)x.Day.Subtract(start).TotalDays/7).Select(x=>x.First().Day).ToList(), yValues: data.GroupBy(x => (int)x.Day.Subtract(start).TotalDays / 7).Select(x => x.Average(y=>y.Retention)).ToList(), legend: "dps");
-            return File(chart.GetBytes("png"), "image/png");
-        }
 
 
         //

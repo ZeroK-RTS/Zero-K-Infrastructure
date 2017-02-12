@@ -71,7 +71,7 @@ RequestExecutionLevel user #not needed (always set to user), because UAC will be
 ;--------------------------------
 ;Pages
 !define MUI_PAGE_HEADER_SUBTEXT "Please review the license agreement before continuing Zero-K Lobby Setup."
-!define MUI_PAGE_HEADER_TEXT "Zero-K Community's Code of Conduct,"
+!define MUI_PAGE_HEADER_TEXT "Zero-K license agreement"
 !define MUI_LICENSEPAGE_CHECKBOX true
 !define MUI_LICENSEPAGE_CHECKBOX_TEXT "I accept the license agreement."
 !define MUI_LICENSEPAGE_BUTTON "Next"
@@ -81,22 +81,22 @@ RequestExecutionLevel user #not needed (always set to user), because UAC will be
 
 !define MUI_PAGE_HEADER_TEXT "Components"
 !define MUI_PAGE_HEADER_SUBTEXT "Choose which features of Zero-K you want to download."
-!define MUI_COMPONENTSPAGE_TEXT_TOP  "Map and Game is to be downloaded by Zero-K Lobby later. Click Next to continue.$\n(pre-installable media is being planned.)"
+!define MUI_COMPONENTSPAGE_TEXT_TOP  "Further game and map files will be downloaded by Zero-K Lobby later when the program is run. Click Next to continue.$\n(In the future these will be bundled with the installer.)"
 !insertmacro MUI_PAGE_COMPONENTS
 
 !define MUI_PAGE_HEADER_SUBTEXT "Choose the folder in which you want to place Zero-K Lobby"
-!define MUI_DIRECTORYPAGE_TEXT_TOP "Target folder should have at least 600MB disk space available for Zero-K Lobby to save minimum amount of Game, Spring engine, and Map files.  Click Install to continue."
+!define MUI_DIRECTORYPAGE_TEXT_TOP "Target folder should have at least 600 MB disk space available (ideally up to 6 GB) for Zero-K Lobby to save game and map files. Click Install to continue."
 !define MUI_PAGE_HEADER_TEXT "Directory"
 !insertmacro MUI_PAGE_DIRECTORY
 
-!define MUI_PAGE_HEADER_SUBTEXT "Please wait while Zero-K Lobby being downloaded"
+!define MUI_PAGE_HEADER_SUBTEXT "Please wait while Zero-K Lobby is being downloaded"
 !define MUI_PAGE_HEADER_TEXT  "Installation"
 !define MUI_INSTFILESPAGE_FINISHHEADER_SUBTEXT  "Setup was completed successfully, click Next to continue."
 !define MUI_INSTFILESPAGE_ABORTHEADER_SUBTEXT  "Setup was not completed successfully, click Cancel to exit."
 !insertmacro MUI_PAGE_INSTFILES
 
 !define MUI_FINISHPAGE_TITLE "Complete Zero-K Lobby Setup"
-!define MUI_FINISHPAGE_TEXT "Setup need to launch Zero-K Lobby to finish the setup.$\n$\nPlease launch Zero-K Lobby and wait for it to pop-up, to finish the rest of setup."
+!define MUI_FINISHPAGE_TEXT "Setup needs to launch Zero-K Lobby to finish the setup.$\n$\nPlease launch Zero-K Lobby and wait for it to pop-up, to finish the rest of setup."
 !define MUI_FINISHPAGE_BUTTON "Finish"
 !define MUI_FINISHPAGE_RUN
 !define MUI_FINISHPAGE_RUN_TEXT "Launch Zero-K Lobby now"
@@ -241,7 +241,7 @@ Section "Zero-K Lobby" ZKL
 	${DriveSpace} $1 "/D=F /S=M" $0 #Freespace in Megabyte
 	IntOp $0 $0 - $EST_ZKL_MAP_GAME_SPRING_SIZE_MB
 	${If} $0 <= 0
-		MessageBox MB_OK|MB_ICONINFORMATION "Disk space might be too low for game-data.$\n$\nIt is recommended to set a separate game-data folder. Zero-K Lobby will prompt you for this."
+		MessageBox MB_OK|MB_ICONINFORMATION "Disk space might be too low for game files.$\n$\nIt is recommended to set a separate game data folder. Zero-K Lobby will prompt you for this."
 	${EndIf}
 
 SectionEnd
@@ -249,7 +249,7 @@ SectionEnd
 ;Descriptions
 
 	;Language strings
-	LangString DESC_Zkl ${LANG_ENGLISH} "Zero-K Lobby is where you socialize with other players and launch multiplayer games."
+	LangString DESC_Zkl ${LANG_ENGLISH} "The base lobby client for launching matches and chatting with other players."
 
 	;Assign language strings to sections
 	!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN

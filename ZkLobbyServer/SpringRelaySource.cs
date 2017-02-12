@@ -12,36 +12,35 @@ namespace ZkLobbyServer
 {
     public class SpringRelaySource: IChatRelaySource
     {
-
-        readonly TasClient springTas;
+        public TasClient SpringTas { get; private set; }
 
         private List<string> channels;
         public SpringRelaySource(List<string> channels)
         {
             this.channels = channels;
-            this.springTas = new TasClient(null, "ChatRelay", 0);
-            springTas.LoginAccepted += OnSpringTasLoginAccepted;
-            springTas.Said += OnSpringTasSaid;
+            this.SpringTas = new TasClient(null, "ChatRelay", 0);
+            SpringTas.LoginAccepted += OnSpringTasLoginAccepted;
+            SpringTas.Said += OnSpringTasSaid;
 
             SetupSpringTasConnection(new Secrets().GetNightwatchPassword());
         }
 
         void SetupSpringTasConnection(string password)
         {
-            springTas.Connected += (sender, args) => springTas.Login(GlobalConst.NightwatchName, password);
-            springTas.Connect(GlobalConst.OldSpringLobbyHost, GlobalConst.OldSpringLobbyPort);
+            SpringTas.Connected += (sender, args) => SpringTas.Login(GlobalConst.NightwatchName, password);
+            SpringTas.Connect(GlobalConst.OldSpringLobbyHost, GlobalConst.OldSpringLobbyPort);
         }
 
         void OnSpringTasLoginAccepted(object sender, TasEventArgs e)
         {
-            foreach (var chan in channels) if (!springTas.JoinedChannels.ContainsKey(chan)) springTas.JoinChannel(chan);
+            foreach (var chan in channels) if (!SpringTas.JoinedChannels.ContainsKey(chan)) SpringTas.JoinChannel(chan);
         }
 
         void OnSpringTasSaid(object sender, TasSayEventArgs args)
         {
             try
             {
-                if (args.Place == TasSayEventArgs.Places.Channel && args.UserName != springTas.UserName)
+                if (args.Place == TasSayEventArgs.Places.Channel && args.UserName != SpringTas.UserName)
                 {
                     OnChatRelayMessage?.Invoke(this, new ChatRelayMessage(args.Channel, args.UserName, args.Text, SaySource.Spring, args.IsEmote));
                 }
@@ -54,7 +53,7 @@ namespace ZkLobbyServer
 
         public List<string> GetUsers(string channel)
         {
-            return springTas.JoinedChannels.Get(channel)?.ChannelUsers?.ToList() ?? new List<string>();
+            return SpringTas.JoinedChannels.Get(channel)?.ChannelUsers?.ToList() ?? new List<string>();
         }
 
         public event Action<IChatRelaySource, ChatRelayMessage> OnChatRelayMessage;
@@ -64,8 +63,8 @@ namespace ZkLobbyServer
             {
                 if (msg.Source != SaySource.Spring)
                 {
-                    if (msg.User != GlobalConst.NightwatchName) springTas.Say(TasClient.SayPlace.Channel, msg.Channel, string.Format("<{0}> {1}", msg.User, msg.Message), msg.IsEmote);
-                    else springTas.Say(TasClient.SayPlace.Channel, msg.Channel, msg.Message, msg.IsEmote);
+                    if (msg.User != GlobalConst.NightwatchName) SpringTas.Say(TasClient.SayPlace.Channel, msg.Channel, string.Format("<{0}> {1}", msg.User, msg.Message), msg.IsEmote);
+                    else SpringTas.Say(TasClient.SayPlace.Channel, msg.Channel, msg.Message, msg.IsEmote);
                 }
             }
             catch (Exception ex)
@@ -78,7 +77,7 @@ namespace ZkLobbyServer
         {
             try
             {
-                springTas.Say(TasClient.SayPlace.User, user, message, true);
+                SpringTas.Say(TasClient.SayPlace.User, user, message, true);
             }
             catch (Exception ex)
             {

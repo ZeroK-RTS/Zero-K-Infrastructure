@@ -14,14 +14,14 @@ namespace ChobbyLauncher
     public class TextToSpeechWindows:TextToSpeechBase
     {
         readonly SpeechSynthesizer speechSynthesizer;
-        readonly ReadOnlyCollection<InstalledVoice> voices;
+        readonly IList<InstalledVoice> voices;
 
         public TextToSpeechWindows()
         {
             try
             {
                 speechSynthesizer = new SpeechSynthesizer();
-                voices = speechSynthesizer.GetInstalledVoices();
+                voices = speechSynthesizer.GetInstalledVoices()?.Where(x=>x?.VoiceInfo.Culture.Name.StartsWith("en-") == true).ToList();
             }
             catch (Exception ex)
             {
