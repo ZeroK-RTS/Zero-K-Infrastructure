@@ -57,7 +57,10 @@ namespace ZkLobbyServer
                 var zkTopic =
                     $"Zero-K game server: {server.ConnectedUsers.Count} online, {server.MatchMaker.GetTotalWaiting()} in queue, {server.Battles.Values.Where(x => x != null).Sum(x => (int?)x.NonSpectatorCount + x.SpectatorCount) ?? 0} in custom games";
 
-                if (zkTopic != lastZkTopic) discordZkRelay?.SetTopic("zk", zkTopic);
+                if (zkTopic != lastZkTopic)
+                {
+                    foreach (var ch in channels) discordZkRelay?.SetTopic(ch, zkTopic);
+                }
                 lastZkTopic = zkTopic;
 
 
