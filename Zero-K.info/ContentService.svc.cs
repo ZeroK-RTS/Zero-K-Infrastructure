@@ -244,6 +244,7 @@ namespace ZeroKWeb
                         Revision = x.Revision,
                         Description = x.Description,
                         Script = x.Script,
+                        FeaturedOrder = x.FeaturedOrder,
                         Mod = x.ModRapidTag ?? x.Mod,
                         Map = x.Map,
                         IsScriptMission = x.IsScriptMission,
