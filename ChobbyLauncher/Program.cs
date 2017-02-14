@@ -79,6 +79,7 @@ namespace ChobbyLauncher
                 var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
                 if (cf.ShowDialog() == DialogResult.OK)
                 {
+                    chobbyla.Steam.Shutdown();
 
                     if (!chobbyla.Run().Result) // crash has occured
                     {
@@ -108,17 +109,7 @@ namespace ChobbyLauncher
                             Trace.TraceError("Error adding GA error event: {0}", ex);
                         }
                     }
-
-
-                    try
-                    {
-                        GameAnalytics.OnStop();
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceWarning("Error ending GA session: {0}", ex);
-                    }
-                    Environment.Exit(0);
+             
                 }
             }
             catch (Exception ex)
@@ -131,7 +122,7 @@ namespace ChobbyLauncher
                 }
                 catch (Exception ex2)
                 {
-                    Trace.TraceError("Error adding GA error event: {0}", ex);
+                    Trace.TraceError("Error adding GA error event: {0}", ex2);
                 }
             }
 

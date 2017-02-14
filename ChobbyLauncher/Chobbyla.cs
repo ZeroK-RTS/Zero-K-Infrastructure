@@ -13,6 +13,7 @@ using Octokit;
 using PlasmaDownloader;
 using PlasmaDownloader.Packages;
 using PlasmaShared;
+using Steamworks;
 using ZkData;
 using Application = System.Windows.Forms.Application;
 
@@ -129,7 +130,6 @@ namespace ChobbyLauncher
                 Steam.ConnectToSteam();
 
                 if (Steam.IsOnline) ev.WaitOne(2000);
-
                 Status = "Starting";
                 var chobyl = new ChobbylaLocalListener(this);
                 loopbackPort = chobyl.StartListening();

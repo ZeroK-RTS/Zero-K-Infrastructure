@@ -175,5 +175,20 @@ namespace ChobbyLauncher
 
             tickCounter++;
         }
+
+        public void Shutdown()
+        {
+            if (IsOnline)
+            {
+                try
+                {
+                    SteamAPI.Shutdown();
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Error shutting down: {0}",ex);
+                }
+            }
+        }
     }
 }
