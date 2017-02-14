@@ -13,6 +13,7 @@ using Octokit;
 using PlasmaDownloader;
 using PlasmaDownloader.Packages;
 using PlasmaShared;
+using Steamworks;
 using ZkData;
 using Application = System.Windows.Forms.Application;
 
@@ -129,7 +130,6 @@ namespace ChobbyLauncher
                 Steam.ConnectToSteam();
 
                 if (Steam.IsOnline) ev.WaitOne(2000);
-
                 Status = "Starting";
                 var chobyl = new ChobbylaLocalListener(this);
                 loopbackPort = chobyl.StartListening();
@@ -139,6 +139,7 @@ namespace ChobbyLauncher
             catch (Exception ex)
             {
                 Trace.TraceError("Unexpected error: {0}", ex);
+                GameAnalytics.AddErrorEvent(EGAErrorSeverity.Error, $"Unexpected error {Status}: {ex}");
                 Status = "Unexpected error preparing chobby launch: " + ex.Message;
                 return false;
             }

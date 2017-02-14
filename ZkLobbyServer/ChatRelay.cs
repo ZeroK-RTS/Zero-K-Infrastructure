@@ -22,7 +22,6 @@ namespace ZkLobbyServer
         private DiscordRelaySource discordSpringRelay;
         private Timer timer;
         private string lastZkTopic;
-        private string lastSpringTopic;
         private SpringRelaySource springRelay;
 
         private const ulong DiscordZkServerID = 278805140708786177;
@@ -55,20 +54,13 @@ namespace ZkLobbyServer
             try
             {
                 var zkTopic =
-                    $"Zero-K game server: {server.ConnectedUsers.Count} online, {server.MatchMaker.GetTotalWaiting()} in queue, {server.Battles.Values.Where(x => x != null).Sum(x => (int?)x.NonSpectatorCount + x.SpectatorCount) ?? 0} in custom games";
+                    $"[game: {server.ConnectedUsers.Count} online, {server.MatchMaker.GetTotalWaiting()} in queue, {server.Battles.Values.Where(x => x != null).Sum(x => (int?)x.NonSpectatorCount + x.SpectatorCount) ?? 0} in custom]";
 
                 if (zkTopic != lastZkTopic)
                 {
                     foreach (var ch in channels) discordZkRelay?.SetTopic(ch, zkTopic);
                 }
                 lastZkTopic = zkTopic;
-
-
-                var springTopic =
-                    $"Spring game server: {springRelay.SpringTas.ExistingUsers.Count} online, {springRelay.SpringTas.ExistingUsers.Values.Count(x => x.IsInBattleRoom)} in games";
-
-                if (springTopic != lastSpringTopic) discordSpringRelay?.SetTopic("main", springTopic);
-                lastSpringTopic = springTopic;
             }
             catch (Exception ex)
             {

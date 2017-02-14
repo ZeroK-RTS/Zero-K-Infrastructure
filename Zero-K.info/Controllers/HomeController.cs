@@ -236,7 +236,7 @@ namespace ZeroKWeb.Controllers
 		}
 
         [AcceptVerbs(HttpVerbs.Post | HttpVerbs.Get)]
-        public ActionResult Logon(string login, string password, string referer, string steamlogon)
+        public ActionResult Logon(string login, string password, string referer, string zklogon)
 		{
 		    if (!Global.Server.LoginChecker.VerifyIp(Request.UserHostAddress)) return Content("Too many login failures, access blocked");
 
@@ -246,7 +246,7 @@ namespace ZeroKWeb.Controllers
 		    if (response != null) // return from steam openid 
 		        return ProcessSteamOpenIDResponse(response);
 
-		    if (steamlogon != null) // steam login request
+		    if (string.IsNullOrEmpty(zklogon)) // steam login request
 		        return RedirectToSteamOpenID(login, referer, openid);
 
 
