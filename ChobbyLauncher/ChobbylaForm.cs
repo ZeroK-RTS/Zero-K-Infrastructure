@@ -34,8 +34,7 @@ namespace ChobbyLauncher
                 {
                     MessageBox.Show(this, chobbyla.Status, "Failed to start", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     DialogResult = DialogResult.Cancel;
-                }
-                DialogResult = DialogResult.OK;
+                } else DialogResult = DialogResult.OK;
             }
             catch (Exception ex)
             {

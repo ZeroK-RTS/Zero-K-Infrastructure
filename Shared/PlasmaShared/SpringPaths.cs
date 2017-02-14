@@ -110,9 +110,14 @@ namespace ZkData
 
         public string GetEngineFolderByVersion(string version)
         {
-            if (WritableDirectory == null) throw new NullReferenceException("WritableDirectory is null");
-            if (version == null) throw new NullReferenceException("Engine version is set to null");
-            return Utils.MakePath(WritableDirectory, "engine", version);
+            try
+            {
+                return Utils.MakePath(WritableDirectory, "engine", version);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"Cannot configure spring folder, WritableDirectory:{WritableDirectory}, EngineVersion:{version}, Exception:{ex}");
+            }
         }
 
         public List<string> GetEngineList()

@@ -139,6 +139,7 @@ namespace ChobbyLauncher
             catch (Exception ex)
             {
                 Trace.TraceError("Unexpected error: {0}", ex);
+                GameAnalytics.AddErrorEvent(EGAErrorSeverity.Error, $"Unexpected error {Status}: {ex}");
                 Status = "Unexpected error preparing chobby launch: " + ex.Message;
                 return false;
             }
