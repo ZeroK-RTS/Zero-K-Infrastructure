@@ -68,6 +68,7 @@ namespace ChobbyLauncher
                 {
                     Trace.TraceError("Error adding GA error event: {0}", ex);
                 }
+                Environment.Exit(0);
                 return;
             }
 
@@ -134,6 +135,7 @@ namespace ChobbyLauncher
             {
                 Trace.TraceWarning("Error ending GA session: {0}", ex);
             }
+            Environment.Exit(0);
         }
     }
 }
