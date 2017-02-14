@@ -267,6 +267,103 @@ namespace ChobbyLauncher
             }
         }
 
+        public async Task Process(GaAddBusinessEvent args)
+        {
+            try
+            {
+                GameAnalytics.AddBusinessEvent(args.Currency, args.Amount, args.ItemType, args.ItemId, args.CartType);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error adding GA business event: {0}",  ex);
+            }
+        }
+
+        public async Task Process(GaAddResourceEvent args)
+        {
+            try
+            {
+                GameAnalytics.AddResourceEvent(args.FlowType, args.Currency, args.Amount, args.ItemType, args.ItemId);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error adding GA resource event: {0}", ex);
+            }
+        }
+
+
+        public async Task Process(GaConfigureResourceCurrencies args)
+        {
+            try
+            {
+                GameAnalytics.ConfigureAvailableResourceCurrencies(args.List);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error configuring GA resource currencies: {0}", ex);
+            }
+        }
+
+        public async Task Process(GaConfigureResourceItemTypes args)
+        {
+            try
+            {
+                GameAnalytics.ConfigureAvailableResourceItemTypes(args.List);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error configuring GA resource currencies: {0}", ex);
+            }
+        }
+
+
+        public async Task Process(GaConfigureCustomDimensions args)
+        {
+            try
+            {
+                switch (args.Level)
+                {
+                    case 3:
+                        GameAnalytics.ConfigureAvailableCustomDimensions03(args.List);
+                        break;
+                    case 2:
+                        GameAnalytics.ConfigureAvailableCustomDimensions02(args.List);
+                        break;
+                    case 1:
+                    default:
+                        GameAnalytics.ConfigureAvailableCustomDimensions03(args.List);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error configuring GA custom dimensions: {0}", ex);
+            }
+        }
+
+        public async Task Process(GaSetCustomDimension args)
+        {
+            try
+            {
+                switch (args.Level)
+                {
+                    case 3:
+                        GameAnalytics.SetCustomDimension03(args.Value);
+                        break;
+                    case 2:
+                        GameAnalytics.SetCustomDimension02(args.Value);
+                        break;
+                    case 1:
+                    default:
+                        GameAnalytics.SetCustomDimension01(args.Value);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error setting GA custom dimensions: {0}", ex);
+            }
+        }
 
         public async Task Process(GaAddProgressionEvent args)
         {
@@ -334,4 +431,5 @@ namespace ChobbyLauncher
             Trace.TraceInformation("Chobby closed connection");
         }
     }
+
 }

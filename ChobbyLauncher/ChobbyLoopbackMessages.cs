@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GameAnalyticsSDK.Net;
 
 namespace ChobbyLauncher
 {
-    public class ChobbyMessageAttribute : Attribute {}
-    
+    public class ChobbyMessageAttribute : Attribute { }
+
     [ChobbyMessage]
     public class OpenUrl
     {
@@ -22,15 +20,13 @@ namespace ChobbyLauncher
     }
 
     /// <summary>
-    /// Restarts wrapper 
+    ///     Restarts wrapper
     /// </summary>
     [ChobbyMessage]
-    public class Restart
-    {
-    }
+    public class Restart { }
 
     /// <summary>
-    /// Flashes spring window
+    ///     Flashes spring window
     /// </summary>
     [ChobbyMessage]
     public class Alert
@@ -39,24 +35,24 @@ namespace ChobbyLauncher
     }
 
     /// <summary>
-    /// Sets text to speech volume
+    ///     Sets text to speech volume
     /// </summary>
     [ChobbyMessage]
     public class TtsVolume
     {
         /// <summary>
-        /// Min 0, Max 1
+        ///     Min 0, Max 1
         /// </summary>
         public double Volume { get; set; }
     }
 
     /// <summary>
-    /// Say a text. Name is used as a hint (hashed) for picking a voice
+    ///     Say a text. Name is used as a hint (hashed) for picking a voice
     /// </summary>
     [ChobbyMessage]
     public class TtsSay
     {
-        public string Name {get; set; }
+        public string Name { get; set; }
         public string Text { get; set; }
     }
 
@@ -71,8 +67,8 @@ namespace ChobbyLauncher
     public class DownloadFileDone
     {
         public string FileType { get; set; }
-        public string Name { get; set; }
         public bool IsSuccess { get; set; }
+        public string Name { get; set; }
     }
 
 
@@ -139,8 +135,6 @@ namespace ChobbyLauncher
     [ChobbyMessage]
     public class GaAddProgressionEvent
     {
-        public EGAProgressionStatus Status { get; set; }
-
         public string Progression1 { get; set; }
 
         public string Progression2 { get; set; }
@@ -148,6 +142,59 @@ namespace ChobbyLauncher
         public string Progression3 { get; set; }
 
         public double? Score { get; set; }
+        public EGAProgressionStatus Status { get; set; }
+    }
+
+
+    [ChobbyMessage]
+    public class GaAddBusinessEvent
+    {
+        public int Amount { get; set; }
+        public string CartType { get; set; }
+        public string Currency { get; set; }
+        public string ItemId { get; set; }
+        public string ItemType { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class GaAddResourceEvent
+    {
+        public float Amount { get; set; }
+        public string Currency { get; set; }
+        public EGAResourceFlowType FlowType { get; set; }
+        public string ItemId { get; set; }
+        public string ItemType { get; set; }
+    }
+
+
+    [ChobbyMessage]
+    public class GaConfigureResourceCurrencies
+    {
+        public string[] List { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class GaConfigureResourceItemTypes
+    {
+        public string[] List { get; set; }
+    }
+
+
+    [ChobbyMessage]
+    public class GaConfigureCustomDimensions
+    {
+        public int Level { get; set; }
+
+        public string[] List { get; set; }
+    }
+
+
+    [ChobbyMessage]
+    public class GaSetCustomDimension
+    {
+        public int Level { get; set; }
+
+        public string Value { get; set; }
     }
 
 
