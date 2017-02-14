@@ -53,7 +53,7 @@ namespace ChobbyLauncher
             if (cd != null)
             {
                 lb1.Text = $"Downloading {cd.Name}  {cd.CurrentSpeed/1024}kB/s  ETA: {cd.TimeRemaining}";
-                progressBar1.Value = (int)Math.Round(cd.TotalProgress);
+                progressBar1.Value = Math.Max(0, Math.Min(100, (int)Math.Round(cd.TotalProgress)));
                 
             }
             if (progressBar1.Value == 0)
