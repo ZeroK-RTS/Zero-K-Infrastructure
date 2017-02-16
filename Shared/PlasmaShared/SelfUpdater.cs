@@ -6,7 +6,9 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading;
+using Mono.Unix.Native;
 using Newtonsoft.Json;
+
 
 namespace ZkData
 {
@@ -82,6 +84,21 @@ namespace ZkData
                 bakName = Utils.GetAlternativeFileName(filepath + ".bak");
                 File.Move(filepath, bakName); // copy current to bak
                 File.Move(newname, filepath); // rename new
+
+                if (Environment.OSVersion.Platform == PlatformID.Unix)
+                {
+                    try
+                    {
+                        Syscall.chmod(filepath,
+                            FilePermissions.S_IRWXU | FilePermissions.S_IRGRP | FilePermissions.S_IXGRP | FilePermissions.S_IROTH |
+                            FilePermissions.S_IXOTH);
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceWarning("Failed to set execute permissions for {0}, please set it manually. {1}", filepath, ex);
+                    }
+                }
+
                 return true;
             }
             catch (Exception ex)
