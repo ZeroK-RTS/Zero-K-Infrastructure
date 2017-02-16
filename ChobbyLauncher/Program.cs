@@ -80,11 +80,8 @@ namespace ChobbyLauncher
                 var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
                 if (cf.ShowDialog() == DialogResult.OK)
                 {
-                    chobbyla.Steam.Shutdown();
-
                     if (!chobbyla.Run().Result) // crash has occured
                     {
-
                         if (
                             MessageBox.Show("We would like to send crash data to Zero-K repository, it can contain chat. Do you agree?",
                                 "Automated crash report",
@@ -110,7 +107,8 @@ namespace ChobbyLauncher
                             Trace.TraceError("Error adding GA error event: {0}", ex);
                         }
                     }
-             
+
+                    chobbyla.Steam.Shutdown();
                 }
             }
             catch (Exception ex)
@@ -135,6 +133,7 @@ namespace ChobbyLauncher
             {
                 Trace.TraceWarning("Error ending GA session: {0}", ex);
             }
+
             Environment.Exit(0);
         }
     }
