@@ -202,7 +202,7 @@ namespace ZkData
 
         public const int ForumPostsPerPage = 20;
         public const int MinLevelForForumVote = 10;
-        public const int MinNetKarmaToVote = -30;
+        public const int MinNetKarmaToVote = -9999;
         public const int PostVoteHideThreshold = -6;
         public const bool OnlyAdminsSeePostVoters = false;
         public const int PlanetWarsMinutesToAttack = 30;
