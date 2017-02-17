@@ -240,6 +240,7 @@
     <Compile Include="Migrations\201702091321502_StoreSourceInChatHistory.Designer.cs">
       <DependentUpon>201702091321502_StoreSourceInChatHistory.cs</DependentUpon>
     </Compile>
+    <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
     <Compile Include="Enums\TreatyState.cs" />

@@ -112,7 +112,7 @@ namespace ZeroKWeb
                     if (MiscVar.LastRegisteredZkVersion != newName)
                     {
                         MiscVar.LastRegisteredZkVersion = newName;
-                        if (GlobalConst.Mode == ModeType.Live)
+                        if (GlobalConst.Mode != ModeType.Local)
                         {
                             Trace.TraceInformation("Autoregistrator Generating steam stable package");
                             try

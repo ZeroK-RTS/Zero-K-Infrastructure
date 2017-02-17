@@ -144,9 +144,17 @@ namespace AutoRegistrator
             var runp = Process.Start(pi);
             runp.WaitForExit();
             Trace.TraceInformation("SteamDepot build completed!");
-
-            // TODO set buld live:
-            // curl - k--data "key=mykey&appid=myappid&buildid=mybuildid&betakey=mybranchname" https://api.steampowered.com/ISteamApps/SetAppBuildLive/v1/
+            try
+            {
+                var steamWebApi = new SteamWebApi();
+                var build = steamWebApi.GetAppBuilds().First();
+                steamWebApi.SetAppBuildLive(build.BuildID, GlobalConst.Mode == ModeType.Live ? "public" : "test");
+                Trace.TraceInformation("SteamDepot build {0} set live", build.BuildID);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("SteamDepot error publishing steam branch: {0}", ex);
+            }
         }
     }
 }
