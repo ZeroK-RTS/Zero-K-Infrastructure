@@ -131,10 +131,14 @@ namespace ChobbyLauncher
                     {
                         ulong.TryParse(args[i + 1], out connectLobbyID);
                         args = args.Where((x, j) => j != i && j != i + 1).ToArray();
+
+                        if (args.Length < 1) return;
                         break;
                     }
                 }
 
+
+                
                 if (args[0] == "--help" || args[0] == "-h" || args[0] == "/?")
                 {
                     Console.WriteLine(
