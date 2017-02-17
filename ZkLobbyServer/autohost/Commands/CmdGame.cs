@@ -19,7 +19,7 @@ namespace ZkLobbyServer
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            if (string.IsNullOrEmpty(arguments)) arguments = battle.server.Game ?? "zk:stable";
+            if (string.IsNullOrEmpty(arguments)) arguments = battle.server.Game ?? GlobalConst.DefaultZkTag;
             game = MapPicker.FindResources(ResourceType.Mod, arguments).FirstOrDefault();
 
             if (game == null)

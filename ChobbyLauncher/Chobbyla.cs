@@ -46,7 +46,7 @@ namespace ChobbyLauncher
         public Chobbyla(string rootPath, string chobbyTagOverride, string engineOverride)
         {
             paths = new SpringPaths(rootPath, false, true);
-            chobbyTag = chobbyTagOverride ?? (GlobalConst.Mode == ModeType.Live ? "zkmenu:stable" : "zkmenu:test");
+            chobbyTag = chobbyTagOverride ?? GlobalConst.DefaultChobbyTag;
             isDev = (chobbyTag == "dev") || (chobbyTag == "chobby:dev") || (chobbyTag == "zkmenu:dev");
             engine = engineOverride;
             downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
@@ -77,7 +77,7 @@ namespace ChobbyLauncher
                     }
 
                     if (!await downloader.DownloadFile("Checking for chobby update", DownloadType.RAPID, chobbyTag, Progress)) return false;
-                    if (!await downloader.DownloadFile("Checking for game update", DownloadType.RAPID, "zk:stable", Progress)) return false;
+                    if (!await downloader.DownloadFile("Checking for game update", DownloadType.RAPID, GlobalConst.DefaultZkTag, Progress)) return false;
 
                     ver = downloader.PackageDownloader.GetByTag(chobbyTag);
                     if (ver == null)

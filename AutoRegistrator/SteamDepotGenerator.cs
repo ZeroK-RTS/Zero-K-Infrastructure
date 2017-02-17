@@ -46,11 +46,11 @@ namespace AutoRegistrator
 
             var downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
             downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
-            downloader.GetResource(DownloadType.RAPID, "zk:stable")?.WaitHandle.WaitOne();
-            downloader.GetResource(DownloadType.RAPID, "zkmenu:stable")?.WaitHandle.WaitOne();
+            downloader.GetResource(DownloadType.RAPID, GlobalConst.DefaultZkTag)?.WaitHandle.WaitOne();
+            downloader.GetResource(DownloadType.RAPID, GlobalConst.DefaultChobbyTag)?.WaitHandle.WaitOne();
 
             
-            CopyResources(siteBase, paths, GetResourceList(downloader.PackageDownloader.GetByTag("zk:stable").InternalName, downloader.PackageDownloader.GetByTag("zkmenu:stable").InternalName), downloader);
+            CopyResources(siteBase, paths, GetResourceList(downloader.PackageDownloader.GetByTag(GlobalConst.DefaultZkTag).InternalName, downloader.PackageDownloader.GetByTag(GlobalConst.DefaultChobbyTag).InternalName), downloader);
 
             CopyLobbyProgram();
             CopyExtraImages();

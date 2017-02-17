@@ -523,12 +523,12 @@ namespace ZkLobbyServer
             }
             if (MaxPlayers > 32) MaxPlayers = 32;
 
-            HostedMod = MapPicker.FindResources(ResourceType.Mod, ModName ?? server.Game ?? "zk:stable").FirstOrDefault();
+            HostedMod = MapPicker.FindResources(ResourceType.Mod, ModName ?? server.Game ?? GlobalConst.DefaultZkTag).FirstOrDefault();
             HostedMap = MapName != null
                 ? MapPicker.FindResources(ResourceType.Map, MapName).FirstOrDefault()
                 : MapPicker.GetRecommendedMap(GetContext());
 
-            ModName = HostedMod?.InternalName ?? ModName ?? server.Game ?? "zk:stable";
+            ModName = HostedMod?.InternalName ?? ModName ?? server.Game ?? GlobalConst.DefaultZkTag;
             MapName = HostedMap?.InternalName ?? MapName ?? "Small_Divide-Remake-v04";
 
             if (HostedMod != null)

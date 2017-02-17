@@ -107,8 +107,8 @@ namespace ZeroKWeb
 
                 lock (Locker)
                 {
-                    var newName = Downloader.PackageDownloader.GetByTag(GlobalConst.Mode == ModeType.Test ? "zk:test" : "zk:stable").InternalName;
-                    var newChobbyName = Downloader.PackageDownloader.GetByTag(GlobalConst.Mode == ModeType.Test ? "zkmenu:test" : "zkmenu:stable").InternalName;
+                    var newName = Downloader.PackageDownloader.GetByTag(GlobalConst.DefaultZkTag).InternalName;
+                    var newChobbyName = Downloader.PackageDownloader.GetByTag(GlobalConst.DefaultChobbyTag).InternalName;
                     if (MiscVar.LastRegisteredZkVersion != newName || MiscVar.LastRegisteredChobbyVersion != newChobbyName)
                     {
                         NewZkReleaseRegistered(newName, newChobbyName);
