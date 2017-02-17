@@ -232,7 +232,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                if (chobbyla.LobbyID != null) chobbyla.Steam.InviteFriendToGame(chobbyla.LobbyID.Value, ulong.Parse(args.SteamID));
+                if (chobbyla.Steam.LobbyID != null) chobbyla.Steam.InviteFriendToGame(chobbyla.Steam.LobbyID.Value, ulong.Parse(args.SteamID));
             }
             catch (Exception ex)
             {
@@ -412,8 +412,8 @@ namespace ChobbyLauncher
                     await
                         SendCommand(new SteamOnline()
                         {
-                            AuthToken = chobbyla.AuthToken,
-                            Friends = chobbyla.Friends.Select(x => x.ToString()).ToList(),
+                            AuthToken = chobbyla.Steam.AuthToken,
+                            Friends = chobbyla.Steam.Friends.Select(x => x.ToString()).ToList(),
                             FriendSteamID =
                                 chobbyla.InitialConnectLobbyID != 0 ? chobbyla.Steam.GetLobbyOwner(chobbyla.InitialConnectLobbyID)?.ToString() : null,
                             SuggestedName = chobbyla.MySteamNameSanitized

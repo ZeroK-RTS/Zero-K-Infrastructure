@@ -197,7 +197,7 @@ namespace ZeroKLobby.MicroLobby
             if (user.SteamID != null) {
                 bool isEnabled;
                 bool isTalking;
-                Program.SteamHandler.Voice.GetUserVoiceInfo(user.SteamID.Value, out isEnabled, out isTalking);
+                Program.SteamHandler.Voice.GetUserVoiceInfo(ulong.Parse(user.SteamID), out isEnabled, out isTalking);
                 if (isEnabled) {
                     drawImage(isTalking ? ZklResources.voice_talking : ZklResources.voice_off);
                 }

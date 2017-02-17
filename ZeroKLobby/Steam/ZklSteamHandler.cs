@@ -55,18 +55,18 @@ namespace ZeroKLobby
             tas.MyUserStatusChanged += (sender, args) => { if (SteamHelper.IsOnline && SteamID != 0) OnLoggedToBothSteamAndTas(); };
             tas.UserStatusChanged += (sender, args) =>
             {
-                if (args?.New?.SteamID != null && args?.Old?.SteamID != args?.New?.SteamID && args?.New?.SteamID !=0) {
-                    Voice.AddListenerSteamID(args.New.SteamID.Value); // todo only for battle in future
-                    if (friends.Contains(args.New.SteamID.Value)) AddFriend(args.New.Name);
+                if (args?.New?.SteamID != null && args?.Old?.SteamID != args?.New?.SteamID && !string.IsNullOrEmpty(args?.New?.SteamID)) {
+                    Voice.AddListenerSteamID(ulong.Parse(args.New.SteamID)); // todo only for battle in future
+                    if (friends.Contains(ulong.Parse(args.New.SteamID))) AddFriend(args.New.Name);
                 }
             };
 
             tas.UserRemoved += (sender, args) =>
             {
                 User us;
-                if (tas.ExistingUsers.TryGetValue(args.Name, out us) && us.SteamID.HasValue)
+                if (tas.ExistingUsers.TryGetValue(args.Name, out us) && !string.IsNullOrEmpty(us.SteamID))
                 {
-                    Voice.RemoveListenerSteamID(us.SteamID.Value);
+                    Voice.RemoveListenerSteamID(ulong.Parse(us.SteamID));
                 }
             };
         }
@@ -111,7 +111,7 @@ namespace ZeroKLobby
                 string token = SteamHelper.GetClientAuthTokenHex();
                 if (!string.IsNullOrEmpty(token)) tas.LinkSteam(token);
             }
-            foreach (User u in tas.ExistingUsers.Values.ToList().Where(x => x.SteamID != null && friends.Contains(x.SteamID.Value))) AddFriend(u.Name);
+            foreach (User u in tas.ExistingUsers.Values.ToList().Where(x => x.SteamID != null && friends.Contains(ulong.Parse(x.SteamID)))) AddFriend(u.Name);
             if (Program.Conf.EnableVoiceChat && Environment.OSVersion.Platform != PlatformID.Unix)
             {
                 Voice.Init(SteamID);

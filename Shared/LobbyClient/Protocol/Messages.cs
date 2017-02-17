@@ -296,7 +296,7 @@ namespace LobbyClient
         public string LobbyVersion { get; set; }
         public string Name { get; set; }
         public int RawMmElo { get; set; }
-        public ulong? SteamID { get; set; }
+        public string SteamID { get; set; }
 
         public User Clone()
         {

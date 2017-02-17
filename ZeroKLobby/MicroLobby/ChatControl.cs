@@ -420,7 +420,7 @@ namespace ZeroKLobby.MicroLobby
         {
             Program.MainWindow.InvokeFunc(() =>
             {
-                var user = Program.TasClient.ExistingUsers.Values.FirstOrDefault(x => x.SteamID == steamID);
+                var user = Program.TasClient.ExistingUsers.Values.FirstOrDefault(x => x.SteamID == steamID.ToString());
                 if (user != null) RefreshUser(user.Name);
             });
         }

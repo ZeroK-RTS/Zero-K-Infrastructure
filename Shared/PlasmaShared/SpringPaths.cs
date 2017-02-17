@@ -160,7 +160,7 @@ namespace ZkData
         {
             var path = GetEngineFolderByVersion(version);
             var exec = Path.Combine(path, Environment.OSVersion.Platform == PlatformID.Unix ? "spring" : "spring.exe");
-            if (File.Exists(exec)) return true;
+            if (File.Exists(exec) && File.Exists(Path.Combine(path,"done.txt"))) return true;
             return false;
         }
 

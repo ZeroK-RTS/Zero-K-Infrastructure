@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using ZkData;
@@ -20,6 +21,24 @@ namespace ZeroKWeb.Controllers
     {
         public DateTime Day;
         public double Value;
+
+        public static IEnumerable<GraphPoint> FillHoles(IEnumerable<GraphPoint> source, DateTime from, DateTime to)
+        {
+            using (var enumerator = source.GetEnumerator())
+            {
+                enumerator.MoveNext();
+                var dt = from;
+                while (dt <= to)
+                {
+                    while (enumerator.Current != null && enumerator.Current.Day < dt) enumerator.MoveNext();
+                    if (enumerator.Current?.Day == dt) yield return enumerator.Current;
+                    else yield return new GraphPoint() { Day = dt, Value = 0 };
+
+                    dt = dt.AddDays(1);
+                }
+            }
+        }
+
     }
 
 
@@ -215,7 +234,8 @@ namespace ZeroKWeb.Controllers
 
             foreach (var prov in providers)
             {
-                var data = MemCache.GetCached($"chart_{prov.Title}_{from}_{to}", () => prov.GetDailyValues(from, to), 3600 * 24);
+                var data = MemCache.GetCached($"chart_{prov.Title}_{from}_{to}", () => GraphPoint.FillHoles(prov.GetDailyValues(from, to), from, to).ToList(), 3600 * 24);
+
 
                 if (grouping > 1)
                     data =
@@ -225,6 +245,8 @@ namespace ZeroKWeb.Controllers
 
                 series.Add(new GraphSeries() { Title = prov.Title, Data = data });
             }
+
+
             if (model.Normalize)
                 foreach (var s in series)
                 {
