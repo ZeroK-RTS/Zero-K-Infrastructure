@@ -30,33 +30,13 @@ namespace ChobbyLauncher
                 Trace.TraceError("Error starting GameAnalytics: {0}", ex);
             }
 
-            string chobbyTag = null;
-            string engineOverride = null;
-            ulong connectLobbyID = 0;
+            string chobbyTag, engineOverride;
+            ulong connectLobbyID;
 
-            if (args.Length > 0)
-            {
-                for (int i = 0; i < args.Length - 1; i++)
-                {
-                    var a = args[i];
-                    if (a == "+connect_lobby")
-                    {
-                        ulong.TryParse(args[i + 1], out connectLobbyID);
-                        args = args.Where((x, j) => j != i && j != i + 1).ToArray();
-                        break;
-                    }
-                }
-
-
-                if (args[0] == "--help" || args[0] == "-h" || args[0] == "/?")
-                {
-                    MessageBox.Show("chobby.exe [rapid_tag] [engine_override] \n\nUse zkmenu:stable or chobby:test\nTo run local dev version use chobby.exe dev");
-                }
-                chobbyTag = args[0];
-                if (args.Length > 1) engineOverride = args[1];
-            }
+            ParseCommandLine(args, out connectLobbyID, out chobbyTag, out engineOverride);
 
             var startupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
+
             if (!SpringPaths.IsDirectoryWritable(startupPath))
             {
                 MessageBox.Show("Please move this program to a writable folder", "Cannot write to startup folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -108,7 +88,7 @@ namespace ChobbyLauncher
                         }
                     }
 
-                    chobbyla.Steam.Shutdown();
+                    chobbyla.Steam.Dispose();
                 }
             }
             catch (Exception ex)
@@ -135,6 +115,36 @@ namespace ChobbyLauncher
             }
 
             Environment.Exit(0);
+        }
+
+        private static void ParseCommandLine(string[] args, out ulong connectLobbyID, out string chobbyTag, out string engineOverride)
+        {
+            connectLobbyID = 0;
+            chobbyTag = null;
+            engineOverride = null;
+            if (args.Length > 0)
+            {
+                for (int i = 0; i < args.Length - 1; i++)
+                {
+                    var a = args[i];
+                    if (a == "+connect_lobby")
+                    {
+                        ulong.TryParse(args[i + 1], out connectLobbyID);
+                        args = args.Where((x, j) => j != i && j != i + 1).ToArray();
+                        break;
+                    }
+                }
+
+                if (args[0] == "--help" || args[0] == "-h" || args[0] == "/?")
+                {
+                    Console.WriteLine(
+                        "chobby.exe[rapid_tag][engine_override] \n\nUse zkmenu: stable or chobby: test\nTo run local dev version use chobby.exe dev");
+                    MessageBox.Show(
+                        "chobby.exe [rapid_tag] [engine_override] \n\nUse zkmenu:stable or chobby:test\nTo run local dev version use chobby.exe dev");
+                }
+                chobbyTag = args[0];
+                if (args.Length > 1) engineOverride = args[1];
+            }
         }
     }
 }

@@ -28,11 +28,15 @@ namespace ChobbyLauncher
 
         private int tickCounter;
         private Timer timer;
+
+        public string AuthToken { get; private set; }
+
+        public List<ulong> Friends { get; private set; }
         public bool IsOnline { get; private set; }
 
-        public event Action<bool> OverlayActivated = (b) => { };
-        public event Action SteamOffline = () => { };
-        public event Action SteamOnline = () => { };
+        public ulong? LobbyID { get; set; }
+
+        public string MySteamNameSanitized { get; set; }
 
 
         public void Dispose()
@@ -55,7 +59,38 @@ namespace ChobbyLauncher
         }
 
 
-        public void CreateLobbyAsync(Action<ulong?> onCreated)
+        public ulong? GetLobbyOwner(ulong lobbyID)
+        {
+            if (IsOnline) return SteamMatchmaking.GetLobbyOwner(new CSteamID(lobbyID)).m_SteamID;
+            return null;
+        }
+
+
+        public void InviteFriendToGame(ulong lobbyID, ulong friendID)
+        {
+            if (IsOnline) SteamMatchmaking.InviteUserToLobby(new CSteamID(lobbyID), new CSteamID(friendID));
+        }
+
+        public event Action<ulong> JoinFriendRequest = (steamID) => { };
+
+        public void OpenOverlaySection(OverlayOption option)
+        {
+            if (IsOnline) SteamFriends.ActivateGameOverlay(option.ToString());
+        }
+
+        public void OpenOverlayWebsite(string url)
+        {
+            if (IsOnline) SteamFriends.ActivateGameOverlayToWebPage(url);
+        }
+
+        public event Action<bool> OverlayActivated = (b) => { };
+
+
+        public event Action SteamOffline = () => { };
+        public event Action SteamOnline = () => { };
+
+
+        private void CreateLobbyAsync(Action<ulong?> onCreated)
         {
             if (IsOnline)
             {
@@ -81,14 +116,14 @@ namespace ChobbyLauncher
         }
 
 
-        public string GetClientAuthTokenHex()
+        private string GetClientAuthTokenHex()
         {
             if (IsOnline) return GetClientAuthToken().ToHex();
             else return null;
         }
 
 
-        public List<ulong> GetFriends()
+        private List<ulong> GetFriends()
         {
             if (IsOnline)
             {
@@ -100,43 +135,37 @@ namespace ChobbyLauncher
             return null;
         }
 
-
-        public ulong? GetLobbyOwner(ulong lobbyID)
-        {
-            if (IsOnline) return SteamMatchmaking.GetLobbyOwner(new CSteamID(lobbyID)).m_SteamID;
-            return null;
-        }
-
-        public string GetMyName()
+        private string GetMyName()
         {
             if (IsOnline) return SteamFriends.GetPersonaName();
             return null;
         }
 
-        public ulong GetSteamID()
+        private ulong GetSteamID()
         {
             if (IsOnline) return SteamUser.GetSteamID().m_SteamID;
             return 0;
         }
 
-
-        public void InviteFriendToGame(ulong lobbyID, ulong friendID)
+        private void OnSteamOnline()
         {
-            if (IsOnline) SteamMatchmaking.InviteUserToLobby(new CSteamID(lobbyID), new CSteamID(friendID));
+            Trace.TraceInformation("Steam online");
+
+            lobbyJoinRequestCallback = new Callback<GameLobbyJoinRequested_t>(t => { JoinFriendRequest(t.m_steamIDFriend.m_SteamID); });
+            overlayActivatedCallback = new Callback<GameOverlayActivated_t>(t => { OverlayActivated(t.m_bActive != 0); });
+
+            var ev = new EventWaitHandle(false, EventResetMode.ManualReset);
+            AuthToken = GetClientAuthTokenHex();
+            CreateLobbyAsync((lobbyID) =>
+            {
+                if (lobbyID != null) LobbyID = lobbyID;
+                ev.Set();
+            });
+            Friends = GetFriends();
+            MySteamNameSanitized = Utils.StripInvalidLobbyNameChars(GetMyName());
+            ev.WaitOne(2000);
+            SteamOnline?.Invoke();
         }
-
-        public event Action<ulong> JoinFriendRequest = (steamID) => { };
-
-        public void OpenOverlaySection(OverlayOption option)
-        {
-            if (IsOnline) SteamFriends.ActivateGameOverlay(option.ToString());
-        }
-
-        public void OpenOverlayWebsite(string url)
-        {
-            if (IsOnline) SteamFriends.ActivateGameOverlayToWebPage(url);
-        }
-
 
 
         [HandleProcessCorruptedStateExceptions]
@@ -150,10 +179,7 @@ namespace ChobbyLauncher
                         {
                             IsOnline = true;
 
-                            lobbyJoinRequestCallback = new Callback<GameLobbyJoinRequested_t>(t => { JoinFriendRequest(t.m_steamIDFriend.m_SteamID); });
-                            overlayActivatedCallback = new Callback<GameOverlayActivated_t>(t => { OverlayActivated(t.m_bActive != 0); });
-
-                            SteamOnline();
+                            OnSteamOnline();
                         }
                 if (IsOnline)
                     if (SteamAPI.IsSteamRunning()) SteamAPI.RunCallbacks();
@@ -174,21 +200,6 @@ namespace ChobbyLauncher
             }
 
             tickCounter++;
-        }
-
-        public void Shutdown()
-        {
-            if (IsOnline)
-            {
-                try
-                {
-                    SteamAPI.Shutdown();
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceWarning("Error shutting down: {0}",ex);
-                }
-            }
         }
     }
 }

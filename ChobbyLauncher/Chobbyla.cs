@@ -29,12 +29,8 @@ namespace ChobbyLauncher
         private int loopbackPort;
 
         public SpringPaths paths;
-        public SteamClientHelper Steam { get; private set; }
-        public string AuthToken { get; private set; }
+        public SteamClientHelper Steam = new SteamClientHelper();
         public Download Download { get; private set; }
-        public List<ulong> Friends { get; private set; } = new List<ulong>();
-
-        public ulong? LobbyID { get; set; }
         public Process process { get; private set; }
         public string Status { get; private set; }
 
@@ -110,26 +106,10 @@ namespace ChobbyLauncher
                     ConfigVersions.DeployAndResetConfigs(paths, ver);
                 }
 
-                EventWaitHandle ev = new EventWaitHandle(false, EventResetMode.ManualReset);
 
-                Steam = new SteamClientHelper();
-                Steam.SteamOnline += () =>
-                {
-                    Trace.TraceInformation("Steam online");
-                    AuthToken = Steam.GetClientAuthTokenHex();
-                    Friends = Steam.GetFriends();
-
-                    Steam.CreateLobbyAsync((lobbyID) =>
-                    {
-                        if (lobbyID != null) LobbyID = lobbyID;
-                        ev.Set();
-                    });
-                    MySteamNameSanitized = Utils.StripInvalidLobbyNameChars(Steam.GetMyName());
-                };
                 Trace.TraceInformation("Connecting to steam API");
                 Steam.ConnectToSteam();
 
-                if (Steam.IsOnline) ev.WaitOne(2000);
                 Status = "Starting";
                 var chobyl = new ChobbylaLocalListener(this);
                 loopbackPort = chobyl.StartListening();
