@@ -26,8 +26,6 @@ namespace ChobbyLauncher
         public SteamClientHelper Steam = new SteamClientHelper();
 
         public ulong InitialConnectLobbyID { get; private set; }
-
-        public string MySteamNameSanitized { get; set; }
         public Process process { get; private set; }
 
         public IChobbylaProgress Progress { get; private set; } = new ProgressMeter();
