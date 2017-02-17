@@ -19,6 +19,10 @@ namespace PlasmaDownloader
 
     public static class ChobbylaHelper
     {
+        public static Task<bool> DownloadFile(this PlasmaDownloader downloader, DownloadType type,
+            string name,
+            IChobbylaProgress progress) => DownloadFile(downloader, name, type, name, progress);
+
         public static async Task<bool> DownloadFile(this PlasmaDownloader downloader,
             string desc,
             DownloadType type,

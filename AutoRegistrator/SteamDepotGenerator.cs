@@ -38,6 +38,11 @@ namespace AutoRegistrator
             } else Trace.TraceWarning("SteamDepot generating steam package SKIPPED in debug mode");
         }
 
+        public class DummyProgress: IChobbylaProgress
+        {
+            public Download Download { get; set; }
+            public string Status { get; set; }
+        }
         private void Generate() {
             Utils.CheckPath(targetFolder);
             var paths = new SpringPaths(targetFolder, false, false);
@@ -47,20 +52,29 @@ namespace AutoRegistrator
                 Directory.Delete(Path.Combine(paths.WritableDirectory, "packages"), true);
                 Directory.CreateDirectory(Path.Combine(paths.WritableDirectory, "packages"));
             } catch { }
-            
 
+            var prog = new DummyProgress();
             var downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
-            downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
-            downloader.GetResource(DownloadType.RAPID, GlobalConst.DefaultZkTag)?.WaitHandle.WaitOne();
-            downloader.GetResource(DownloadType.RAPID, GlobalConst.DefaultChobbyTag)?.WaitHandle.WaitOne();
+
+            if (!downloader.DownloadFile(DownloadType.ENGINE, MiscVar.DefaultEngine,prog).Result) throw new ApplicationException("SteamDepot engine download failed: " + prog.Status);
+
+            if (!downloader.DownloadFile(DownloadType.RAPID, GlobalConst.DefaultZkTag, prog).Result) throw new ApplicationException("SteamDepot zk download failed: " + prog.Status);
+
+            if (!downloader.DownloadFile(DownloadType.RAPID, GlobalConst.DefaultChobbyTag, prog).Result) throw new ApplicationException("SteamDepot chobby download failed: " + prog.Status);
 
             File.WriteAllText(Path.Combine(paths.WritableDirectory,"steam_engine.txt"), MiscVar.DefaultEngine);
 
-            
-            CopyResources(siteBase, paths, GetResourceList(downloader.PackageDownloader.GetByTag(GlobalConst.DefaultZkTag).InternalName, downloader.PackageDownloader.GetByTag(GlobalConst.DefaultChobbyTag).InternalName), downloader);
+           
+            CopyResources(siteBase, paths, GetResourceList(), downloader);
+
+            if (!downloader.UpdateMissions(prog).Result) throw new ApplicationException("SteamDepot Error updating missions! " + prog.Status);
+            var ver = downloader.PackageDownloader.GetByTag(GlobalConst.DefaultChobbyTag);
+            ConfigVersions.DeployAndResetConfigs(paths, ver);
+
 
             CopyLobbyProgram();
             CopyExtraImages();
+
         }
 
         private void CopyLobbyProgram() {
@@ -123,8 +137,8 @@ namespace AutoRegistrator
 
                     if (fileName == null)
                     {
-
-                        Trace.TraceError("Cannot find map file: {0}", res.InternalName);
+                        var prog = new DummyProgress();
+                        if (!downloader.DownloadFile(DownloadType.MAP, res.InternalName, prog).Result) Trace.TraceError("Cannot find map file: {0}", res.InternalName);
                         continue;
                     }
 
@@ -140,7 +154,7 @@ namespace AutoRegistrator
             
 
             var db = new ZkDataContext();
-            var resources = db.Resources.Where(x => extraNames.Contains(x.InternalName) || (x.TypeID == ResourceType.Map && x.MapSupportLevel>=MapSupportLevel.MatchMaker) || (x.MissionID != null && !x.Mission.IsDeleted && x.Mission.FeaturedOrder !=null )).ToList();
+            var resources = db.Resources.Where(x => extraNames.Contains(x.InternalName) || (x.TypeID == ResourceType.Map && x.MapSupportLevel>=MapSupportLevel.MatchMaker)).ToList();
             foreach (var res in resources.ToList())
             {
                 foreach (var requestedDependency in res.ResourceDependencies.Select(x => x.NeedsInternalName))
