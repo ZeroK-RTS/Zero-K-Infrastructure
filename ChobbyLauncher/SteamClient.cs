@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Threading;
@@ -61,7 +62,11 @@ namespace ChobbyLauncher
 
         public ulong? GetLobbyOwner(ulong lobbyID)
         {
-            if (IsOnline) return SteamMatchmaking.GetLobbyOwner(new CSteamID(lobbyID)).m_SteamID;
+            if (IsOnline)
+            {
+                var owner = SteamMatchmaking.GetLobbyOwner(new CSteamID(lobbyID)).m_SteamID;
+                return owner;
+            }
             return null;
         }
 
@@ -158,7 +163,13 @@ namespace ChobbyLauncher
             AuthToken = GetClientAuthTokenHex();
             CreateLobbyAsync((lobbyID) =>
             {
-                if (lobbyID != null) LobbyID = lobbyID;
+                if (lobbyID != null)
+                {
+                    LobbyID = lobbyID;
+
+                    SteamMatchmaking.JoinLobby(new CSteamID(lobbyID.Value));
+                    SteamMatchmaking.SetLobbyOwner(new CSteamID(lobbyID.Value), new CSteamID(GetSteamID()));
+                }
                 ev.Set();
             });
             Friends = GetFriends();
