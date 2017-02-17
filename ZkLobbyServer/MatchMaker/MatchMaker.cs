@@ -42,7 +42,6 @@ namespace ZkLobbyServer
                 {
                     Name = "4v4",
                     Description = "Play 4v4 with players of similar skill.",
-                    MaxPartySize = 4,
                     MinSize = 8,
                     MaxSize = 8,
                     EloCutOffExponent = 0.96,
@@ -59,7 +58,6 @@ namespace ZkLobbyServer
                 {
                     Name = "3v3",
                     Description = "Play 3v3 with players of similar skill.",
-                    MaxPartySize = 3,
                     MinSize = 6,
                     MaxSize = 6,
                     EloCutOffExponent = 0.965,
@@ -76,7 +74,6 @@ namespace ZkLobbyServer
                 {
                     Name = "2v2",
                     Description = "Play 2v2 with players of similar skill.",
-                    MaxPartySize = 2,
                     MinSize = 4,
                     MaxSize = 4,
                     EloCutOffExponent = 0.97,
@@ -93,7 +90,6 @@ namespace ZkLobbyServer
                 {
                     Name = "1v1",
                     Description = "Duel an opponent of similar skill in a 1v1 match.",
-                    MaxPartySize = 1,
                     MinSize = 2,
                     MaxSize = 2,
                     EloCutOffExponent = 0.98,
