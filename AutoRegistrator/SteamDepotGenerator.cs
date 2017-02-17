@@ -152,7 +152,7 @@ namespace AutoRegistrator
 
         private void RunBuild() {
             Trace.TraceInformation("Starting SteamDepot build");
-            var pi = new ProcessStartInfo(Path.Combine(targetFolder,"..","builder","steamcmd.exe"), string.Format(@"+login zkbuild {0} +run_app_build_http ..\scripts\app_zk_stable.vdf +quit", new Secrets().GetSteamBuildPassword()));
+            var pi = new ProcessStartInfo(Path.Combine(targetFolder,"..","builder","steamcmd.exe"), string.Format(@"+login zkbuild {0} +run_app_build_http ..\scripts\{1}.vdf +quit", new Secrets().GetSteamBuildPassword(), GlobalConst.Mode == ModeType.Live ? "app_zk_stable" : "app_zk_test"));
             pi.UseShellExecute = false;
             pi.WindowStyle = ProcessWindowStyle.Hidden;
             var runp = Process.Start(pi);
@@ -165,7 +165,7 @@ namespace AutoRegistrator
             try
             {
                 var steamWebApi = new SteamWebApi();
-                var build = steamWebApi.GetAppBuilds().First();
+                var build = steamWebApi.GetAppBuilds().First(x=>x.Description.ToLower().Contains(GlobalConst.Mode == ModeType.Live?"stable":"test"));
                 steamWebApi.SetAppBuildLive(build.BuildID, GlobalConst.Mode == ModeType.Live ? "public" : "test");
                 Trace.TraceInformation("SteamDepot build {0} set live", build.BuildID);
             }
