@@ -89,6 +89,7 @@ namespace PlasmaDownloader
                                 {
                                     ExtractZipArchive(target, targetDir);
                                     FixPermissions(targetDir);
+                                    MarkAsDone(targetDir);
                                     Trace.TraceInformation("Install of {0} complete", Name);
                                     springPaths.NotifyNewEngine(Name);
                                     Finish(true);
@@ -119,6 +120,11 @@ namespace PlasmaDownloader
                         Finish(false);
                     }
                 });
+        }
+
+        private void MarkAsDone(string targetDir)
+        {
+            File.WriteAllText(Path.Combine(targetDir,"done.txt"),"Engine download completed");
         }
 
         private static void FixPermissions(string targetDir)
