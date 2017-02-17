@@ -54,6 +54,8 @@ namespace AutoRegistrator
 
             CopyLobbyProgram();
             CopyExtraImages();
+
+            // TODO write current engine to file for offline installer
         }
 
         private void CopyLobbyProgram() {

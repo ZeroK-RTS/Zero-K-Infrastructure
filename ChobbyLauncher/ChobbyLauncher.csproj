@@ -87,7 +87,6 @@
     <Compile Include="BitmapButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ConfigVersions.cs" />
     <Compile Include="CrashReportHelper.cs" />
     <Compile Include="SteamClient.cs" />
     <Compile Include="TextToSpeechLinux.cs" />

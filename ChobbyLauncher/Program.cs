@@ -56,6 +56,7 @@ namespace ChobbyLauncher
 
             try
             {
+
                 var chobbyla = new Chobbyla(startupPath, chobbyTag, engineOverride, connectLobbyID);
                 var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
                 if (cf.ShowDialog() == DialogResult.OK)
