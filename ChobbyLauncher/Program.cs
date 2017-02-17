@@ -5,9 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using GameAnalyticsSDK.Net;
-using Octokit;
 using ZkData;
-using Application = System.Windows.Forms.Application;
 
 namespace ChobbyLauncher
 {
@@ -39,7 +37,10 @@ namespace ChobbyLauncher
 
             if (!SpringPaths.IsDirectoryWritable(startupPath))
             {
-                MessageBox.Show("Please move this program to a writable folder", "Cannot write to startup folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Please move this program to a writable folder",
+                    "Cannot write to startup folder",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
                 try
                 {
                     GameAnalytics.AddErrorEvent(EGAErrorSeverity.Error, "Wrapper cannot start, folder not writable");
@@ -56,39 +57,9 @@ namespace ChobbyLauncher
 
             try
             {
-
                 var chobbyla = new Chobbyla(startupPath, chobbyTag, engineOverride);
-                var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
-                if (cf.ShowDialog() == DialogResult.OK)
-                {
-                    if (!chobbyla.Run(connectLobbyID).Result) // crash has occured
-                    {
-                        if (
-                            MessageBox.Show("We would like to send crash data to Zero-K repository, it can contain chat. Do you agree?",
-                                "Automated crash report",
-                                MessageBoxButtons.OKCancel) == DialogResult.OK)
-                        {
-                            var ret = CrashReportHelper.ReportCrash(chobbyla.paths);
-                            if (ret != null)
-                            {
-                                try
-                                {
-                                    Process.Start(ret.HtmlUrl.ToString());
-                                }
-                                catch { }
-                            }
-                        }
 
-                        try
-                        {
-                            GameAnalytics.AddErrorEvent(EGAErrorSeverity.Critical, "Spring crash");
-                        }
-                        catch (Exception ex)
-                        {
-                            Trace.TraceError("Error adding GA error event: {0}", ex);
-                        }
-                    }
-                }
+                RunWrapper(chobbyla, connectLobbyID);
             }
             catch (Exception ex)
             {
@@ -123,22 +94,20 @@ namespace ChobbyLauncher
             engineOverride = null;
             if (args.Length > 0)
             {
-                for (int i = 0; i < args.Length - 1; i++)
+                for (var i = 0; i < args.Length - 1; i++)
                 {
                     var a = args[i];
                     if (a == "+connect_lobby")
                     {
                         ulong.TryParse(args[i + 1], out connectLobbyID);
-                        args = args.Where((x, j) => j != i && j != i + 1).ToArray();
+                        args = args.Where((x, j) => (j != i) && (j != i + 1)).ToArray();
 
                         if (args.Length < 1) return;
                         break;
                     }
                 }
 
-
-                
-                if (args[0] == "--help" || args[0] == "-h" || args[0] == "/?")
+                if ((args[0] == "--help") || (args[0] == "-h") || (args[0] == "/?"))
                 {
                     Console.WriteLine(
                         "chobby.exe[rapid_tag][engine_override] \n\nUse zkmenu: stable or chobby: test\nTo run local dev version use chobby.exe dev");
@@ -147,6 +116,42 @@ namespace ChobbyLauncher
                 }
                 chobbyTag = args[0];
                 if (args.Length > 1) engineOverride = args[1];
+            }
+        }
+
+        private static void RunWrapper(Chobbyla chobbyla, ulong connectLobbyID)
+        {
+            if (!chobbyla.IsSteam) // not steam, show gui
+            {
+                var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
+                if (cf.ShowDialog() != DialogResult.OK) return;
+            }
+            else if (!chobbyla.Prepare().Result) return; // otherwise just do simple prepare, no gui
+
+            if (!chobbyla.Run(connectLobbyID).Result) // crash has occured
+            {
+                if (
+                    MessageBox.Show("We would like to send crash data to Zero-K repository, it can contain chat. Do you agree?",
+                        "Automated crash report",
+                        MessageBoxButtons.OKCancel) == DialogResult.OK)
+                {
+                    var ret = CrashReportHelper.ReportCrash(chobbyla.paths);
+                    if (ret != null)
+                        try
+                        {
+                            Process.Start(ret.HtmlUrl.ToString());
+                        }
+                        catch { }
+                }
+
+                try
+                {
+                    GameAnalytics.AddErrorEvent(EGAErrorSeverity.Critical, "Spring crash");
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error adding GA error event: {0}", ex);
+                }
             }
         }
     }

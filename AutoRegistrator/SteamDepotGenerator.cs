@@ -54,13 +54,13 @@ namespace AutoRegistrator
             downloader.GetResource(DownloadType.RAPID, GlobalConst.DefaultZkTag)?.WaitHandle.WaitOne();
             downloader.GetResource(DownloadType.RAPID, GlobalConst.DefaultChobbyTag)?.WaitHandle.WaitOne();
 
+            File.WriteAllText(Path.Combine(paths.WritableDirectory,"steam_engine.txt"), MiscVar.DefaultEngine);
+
             
             CopyResources(siteBase, paths, GetResourceList(downloader.PackageDownloader.GetByTag(GlobalConst.DefaultZkTag).InternalName, downloader.PackageDownloader.GetByTag(GlobalConst.DefaultChobbyTag).InternalName), downloader);
 
             CopyLobbyProgram();
             CopyExtraImages();
-
-            // TODO write current engine to file for offline installer
         }
 
         private void CopyLobbyProgram() {

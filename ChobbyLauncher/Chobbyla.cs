@@ -22,6 +22,7 @@ namespace ChobbyLauncher
         private bool isDev;
 
         public SpringPaths paths;
+        public bool IsSteam { get; private set; }
 
         public Process process { get; private set; }
 
@@ -29,10 +30,7 @@ namespace ChobbyLauncher
 
         public string Status
         {
-            get
-            {
-                return Progress.Status;
-            }
+            get { return Progress.Status; }
             set
             {
                 if (Progress.Status != value)
@@ -48,6 +46,7 @@ namespace ChobbyLauncher
             paths = new SpringPaths(rootPath, false, true);
             chobbyTag = chobbyTagOverride ?? GlobalConst.DefaultChobbyTag;
             isDev = (chobbyTag == "dev") || (chobbyTag == "chobby:dev") || (chobbyTag == "zkmenu:dev");
+            IsSteam = File.Exists(Path.Combine(paths.WritableDirectory, "steamfolder.txt"));
             engine = engineOverride;
             downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
         }
@@ -62,7 +61,7 @@ namespace ChobbyLauncher
 
                 if (!isDev)
                 {
-                    if (!Debugger.IsAttached)
+                    if (!Debugger.IsAttached && !IsSteam)
                     {
                         Status = "Checking for self-upgrade";
                         var selfUpdater = new SelfUpdater();
@@ -76,8 +75,11 @@ namespace ChobbyLauncher
                         await task;
                     }
 
-                    if (!await downloader.DownloadFile("Checking for chobby update", DownloadType.RAPID, chobbyTag, Progress)) return false;
-                    if (!await downloader.DownloadFile("Checking for game update", DownloadType.RAPID, GlobalConst.DefaultZkTag, Progress)) return false;
+                    if (!IsSteam)
+                    {
+                        if (!await downloader.DownloadFile("Checking for chobby update", DownloadType.RAPID, chobbyTag, Progress)) return false;
+                        if (!await downloader.DownloadFile("Checking for game update", DownloadType.RAPID, GlobalConst.DefaultZkTag, Progress)) return false;
+                    }
 
                     ver = downloader.PackageDownloader.GetByTag(chobbyTag);
                     if (ver == null)
@@ -90,22 +92,24 @@ namespace ChobbyLauncher
                 }
                 else internalName = "Chobby $VERSION";
 
-                engine = engine ?? QueryDefaultEngine() ?? ExtractEngineFromLua(ver) ?? GlobalConst.DefaultEngineOverride;
+                engine = engine ?? GetSteamEngine() ?? QueryDefaultEngine() ?? ExtractEngineFromLua(ver) ?? GlobalConst.DefaultEngineOverride;
 
-                if (!await downloader.DownloadFile("Downloading engine", DownloadType.ENGINE, engine, Progress)) return false;
-
-                if (!await downloader.UpdateMissions(Progress))
+                if (!IsSteam)
                 {
-                    Trace.TraceWarning("Mission update has failed");
-                    Status = "Error updating missions";
-                }
+                    if (!await downloader.DownloadFile("Downloading engine", DownloadType.ENGINE, engine, Progress)) return false;
 
-                if (!isDev)
-                {
-                    Status = "Reseting configs and deploying AIs";
-                    ConfigVersions.DeployAndResetConfigs(paths, ver);
-                }
+                    if (!await downloader.UpdateMissions(Progress))
+                    {
+                        Trace.TraceWarning("Mission update has failed");
+                        Status = "Error updating missions";
+                    }
 
+                    if (!isDev)
+                    {
+                        Status = "Reseting configs and deploying AIs";
+                        ConfigVersions.DeployAndResetConfigs(paths, ver);
+                    }
+                }
 
                 return true;
             }
@@ -145,6 +149,16 @@ namespace ChobbyLauncher
                 dynamic result = luaEnv.DoChunk(new StreamReader(mi), "dummy.lua");
                 var engineVersion = result.engine;
                 return engineVersion;
+            }
+            return null;
+        }
+
+        private string GetSteamEngine()
+        {
+            if (IsSteam)
+            {
+                var fp = Path.Combine(paths.WritableDirectory, "steam_engine.txt");
+                if (File.Exists(fp)) return File.ReadAllText(fp);
             }
             return null;
         }
