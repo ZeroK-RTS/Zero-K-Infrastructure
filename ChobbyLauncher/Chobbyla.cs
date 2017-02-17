@@ -20,12 +20,9 @@ namespace ChobbyLauncher
         private string chobbyTag;
         private string internalName;
         private bool isDev;
-        private int loopbackPort;
 
         public SpringPaths paths;
-        public SteamClientHelper Steam = new SteamClientHelper();
 
-        public ulong InitialConnectLobbyID { get; private set; }
         public Process process { get; private set; }
 
         public IChobbylaProgress Progress { get; private set; } = new ProgressMeter();
@@ -46,9 +43,8 @@ namespace ChobbyLauncher
             }
         }
 
-        public Chobbyla(string rootPath, string chobbyTagOverride, string engineOverride, ulong connectLobbyID)
+        public Chobbyla(string rootPath, string chobbyTagOverride, string engineOverride)
         {
-            InitialConnectLobbyID = connectLobbyID;
             paths = new SpringPaths(rootPath, false, true);
             chobbyTag = chobbyTagOverride ?? (GlobalConst.Mode == ModeType.Live ? "zkmenu:stable" : "zkmenu:test");
             isDev = (chobbyTag == "dev") || (chobbyTag == "chobby:dev") || (chobbyTag == "zkmenu:dev");
@@ -110,12 +106,6 @@ namespace ChobbyLauncher
                     ConfigVersions.DeployAndResetConfigs(paths, ver);
                 }
 
-                Status = "Connecting to steam API";
-                Steam.ConnectToSteam();
-
-                Status = "Starting";
-                var chobyl = new ChobbylaLocalListener(this);
-                loopbackPort = chobyl.StartListening();
 
                 return true;
             }
@@ -129,9 +119,19 @@ namespace ChobbyLauncher
         }
 
 
-        public Task<bool> Run()
+        public Task<bool> Run(ulong initialConnectLobbyID)
         {
-            return LaunchChobby(paths, internalName, engine, loopbackPort);
+            Status = "Connecting to steam API";
+            using (var steam = new SteamClientHelper())
+            {
+                steam.ConnectToSteam();
+
+                Status = "Starting";
+                var chobyl = new ChobbylaLocalListener(this, steam, initialConnectLobbyID);
+                var loopbackPort = chobyl.StartListening();
+
+                return LaunchChobby(paths, internalName, engine, loopbackPort);
+            }
         }
 
 

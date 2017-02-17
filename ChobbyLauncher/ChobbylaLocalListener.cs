@@ -23,15 +23,19 @@ namespace ChobbyLauncher
         private TcpTransport transport;
         private Chobbyla chobbyla;
         private TextToSpeechBase tts;
+        private SteamClientHelper steam;
+        private ulong initialConnectLobbyID;
 
 
-        public ChobbylaLocalListener(Chobbyla chobbyla)
+        public ChobbylaLocalListener(Chobbyla chobbyla, SteamClientHelper steam, ulong initialConnectLobbyID)
         {
             this.chobbyla = chobbyla;
+            this.steam = steam;
+            this.initialConnectLobbyID = initialConnectLobbyID;
             serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<ChobbyMessageAttribute>());
             tts = TextToSpeechBase.Create();
-            chobbyla.Steam.JoinFriendRequest += SteamOnJoinFriendRequest;
-            chobbyla.Steam.OverlayActivated += SteamOnOverlayActivated;
+            steam.JoinFriendRequest += SteamOnJoinFriendRequest;
+            steam.OverlayActivated += SteamOnOverlayActivated;
         }
 
         private void SteamOnOverlayActivated(bool b)
@@ -207,7 +211,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                chobbyla.Steam.OpenOverlaySection(args.Option ?? SteamClientHelper.OverlayOption.LobbyInvite);
+                steam.OpenOverlaySection(args.Option ?? SteamClientHelper.OverlayOption.LobbyInvite);
             }
             catch (Exception ex)
             {
@@ -219,7 +223,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                if (chobbyla.Steam.IsOnline) chobbyla.Steam.OpenOverlayWebsite(args.Url);
+                if (steam.IsOnline) steam.OpenOverlayWebsite(args.Url);
                 else System.Diagnostics.Process.Start(args.Url);
             }
             catch (Exception ex)
@@ -232,7 +236,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                if (chobbyla.Steam.LobbyID != null) chobbyla.Steam.InviteFriendToGame(chobbyla.Steam.LobbyID.Value, ulong.Parse(args.SteamID));
+                if (steam.LobbyID != null) steam.InviteFriendToGame(steam.LobbyID.Value, ulong.Parse(args.SteamID));
             }
             catch (Exception ex)
             {
@@ -310,16 +314,15 @@ namespace ChobbyLauncher
             Trace.TraceInformation("Chobby connected to wrapper");
             try
             {
-                if (chobbyla.Steam.IsOnline)
+                if (steam.IsOnline)
                 {
                     await
                         SendCommand(new SteamOnline()
                         {
-                            AuthToken = chobbyla.Steam.AuthToken,
-                            Friends = chobbyla.Steam.Friends.Select(x => x.ToString()).ToList(),
-                            FriendSteamID =
-                                chobbyla.InitialConnectLobbyID != 0 ? chobbyla.Steam.GetLobbyOwner(chobbyla.InitialConnectLobbyID)?.ToString() : null,
-                            SuggestedName = chobbyla.Steam.MySteamNameSanitized
+                            AuthToken = steam.AuthToken,
+                            Friends = steam.Friends.Select(x => x.ToString()).ToList(),
+                            FriendSteamID = initialConnectLobbyID != 0 ? steam.GetLobbyOwner(initialConnectLobbyID)?.ToString() : null,
+                            SuggestedName = steam.MySteamNameSanitized
                         });
                 }
             }
