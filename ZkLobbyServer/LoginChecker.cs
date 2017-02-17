@@ -133,7 +133,7 @@ namespace ZkLobbyServer
             user.EffectiveMmElo = (int)acc.EffectiveMmElo;
             user.RawMmElo = (int)acc.EloMm;
             user.CompetitiveRank = acc.CompetitiveRank;
-            user.SteamID = (ulong?)acc.SteamID;
+            user.SteamID = acc.SteamID?.ToString();
             user.IsAdmin = acc.IsZeroKAdmin;
             user.IsBot = acc.IsBot;
             user.Country = acc.Country;
