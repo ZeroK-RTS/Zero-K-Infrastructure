@@ -22,7 +22,18 @@ namespace AutoRegistrator
             this.siteBase = siteBase;
         }
 
-        public void Generate() {
+        public void RunAll()
+        {
+            if (GlobalConst.Mode != ModeType.Local)
+            {
+                Trace.TraceInformation("SteamDepot gnerating steam package");
+                Generate();
+                RunBuild();
+                PublishBuild();
+            } else Trace.TraceWarning("SteamDepot generating steam package SKIPPED in debug mode");
+        }
+
+        private void Generate() {
             Utils.CheckPath(targetFolder);
             var paths = new SpringPaths(targetFolder, false, false);
             try
@@ -38,6 +49,7 @@ namespace AutoRegistrator
             downloader.GetResource(DownloadType.RAPID, "zk:stable")?.WaitHandle.WaitOne();
             downloader.GetResource(DownloadType.RAPID, "zkmenu:stable")?.WaitHandle.WaitOne();
 
+            
             CopyResources(siteBase, paths, GetResourceList(downloader.PackageDownloader.GetByTag("zk:stable").InternalName, downloader.PackageDownloader.GetByTag("zkmenu:stable").InternalName), downloader);
 
             CopyLobbyProgram();
@@ -136,7 +148,7 @@ namespace AutoRegistrator
             return resources;
         }
 
-        public void RunBuild() {
+        private void RunBuild() {
             Trace.TraceInformation("Starting SteamDepot build");
             var pi = new ProcessStartInfo(Path.Combine(targetFolder,"..","builder","steamcmd.exe"), string.Format(@"+login zkbuild {0} +run_app_build_http ..\scripts\app_zk_stable.vdf +quit", new Secrets().GetSteamBuildPassword()));
             pi.UseShellExecute = false;
@@ -144,6 +156,10 @@ namespace AutoRegistrator
             var runp = Process.Start(pi);
             runp.WaitForExit();
             Trace.TraceInformation("SteamDepot build completed!");
+        }
+
+        private void PublishBuild()
+        {
             try
             {
                 var steamWebApi = new SteamWebApi();

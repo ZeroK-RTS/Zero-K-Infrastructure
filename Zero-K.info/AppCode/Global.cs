@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Web.Mvc.Ajax;
 using System.Web.Routing;
+using AutoRegistrator;
 using JetBrains.Annotations;
 using LobbyClient;
 using ZkData;
@@ -160,7 +161,8 @@ namespace ZeroKWeb
             LadderCalculator = new LadderCalculator();
             LadderCalculator.RecomputeNow();
 
-            ZkServerRunner = new ServerRunner(mvcApplication.Server.MapPath("~"), new PlanetwarsEventCreator(), LadderCalculator);
+            var sitePath = mvcApplication.Server.MapPath("~");
+            ZkServerRunner = new ServerRunner(sitePath, new PlanetwarsEventCreator(), LadderCalculator);
             Server = ZkServerRunner.ZkLobbyServer;
 
             Trace.TraceInformation("Starting lobby server");
@@ -169,10 +171,17 @@ namespace ZeroKWeb
 
             ForumPostIndexer = new ForumPostIndexer();
 
+            SteamDepotGenerator = new SteamDepotGenerator(sitePath, Path.Combine(sitePath, "..", "steamworks", "tools", "ContentBuilder", "content"));
+
             Trace.TraceInformation("Starting autoregistrator");
             AutoRegistrator = new AutoRegistrator(MapPath("~"));
-            AutoRegistrator.NewZkStableRegistered += delegate(object sender, string game)
-                { Server.SetGame(game); };
+            AutoRegistrator.NewZkReleaseRegistered += (game, chobby) =>
+            {
+                SteamDepotGenerator.RunAll();
+                Server.SetGame(game);
+            };
+
+
             AutoRegistrator.RunMainAndMapSyncAsync();
 
  
@@ -181,6 +190,8 @@ namespace ZeroKWeb
 
             if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Server);
         }
+
+        public static SteamDepotGenerator SteamDepotGenerator { get; private set; }
 
         public static LadderCalculator LadderCalculator { get; private set; }
 

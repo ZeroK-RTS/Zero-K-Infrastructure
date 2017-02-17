@@ -126,6 +126,7 @@ namespace ZeroKWeb.Controllers
             if (new ContentService().GetEngineList(null).Contains(engine))
             {
                 MiscVar.DefaultEngine = engine;
+                Global.SteamDepotGenerator.RunAll();
                 Global.Server.SetEngine(engine);
             }
             return RedirectToAction("Index");

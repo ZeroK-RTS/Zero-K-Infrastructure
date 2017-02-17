@@ -22,8 +22,7 @@ namespace Autoregistrator
             //ar.Main();
 
             var spg = new SteamDepotGenerator(sitePath, Path.Combine(sitePath,"..","steamworks","tools","ContentBuilder","content"));
-            spg.Generate();
-            spg.RunBuild();
+            spg.RunAll();
         }
     }
 }
