@@ -27,7 +27,7 @@ namespace ChobbyLauncher
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             SetStyle(ControlStyles.Selectable, false);
 
-            ButtonStyle = FrameBorderRenderer.StyleType.DarkHive;
+            ButtonStyle = FrameBorderRenderer.StyleType.Shraka;
         }
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]

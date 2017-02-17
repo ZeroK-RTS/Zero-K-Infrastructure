@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using PlasmaDownloader;
+using ZkData;
 
 namespace ChobbyLauncher
 {
@@ -16,6 +17,9 @@ namespace ChobbyLauncher
         {
             this.chobbyla = chobbyla;
             InitializeComponent();
+            btnCancel.Image = Shraka.exit.GetResized(16,16);
+            btnCancel.ImageAlign = ContentAlignment.MiddleCenter;
+            
             DoubleBuffered = true;
         }
 

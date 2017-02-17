@@ -32,7 +32,21 @@ namespace ChobbyLauncher
 
         public IChobbylaProgress Progress { get; private set; } = new ProgressMeter();
 
-        public string Status { get { return Progress.Status; } set { Progress.Status = value; } }
+        public string Status
+        {
+            get
+            {
+                return Progress.Status;
+            }
+            set
+            {
+                if (Progress.Status != value)
+                {
+                    Progress.Status = value;
+                    Trace.TraceInformation(value);
+                }
+            }
+        }
 
         public Chobbyla(string rootPath, string chobbyTagOverride, string engineOverride, ulong connectLobbyID)
         {
