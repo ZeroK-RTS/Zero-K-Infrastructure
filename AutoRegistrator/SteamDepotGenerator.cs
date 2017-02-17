@@ -22,14 +22,19 @@ namespace AutoRegistrator
             this.siteBase = siteBase;
         }
 
+        private object locker =new object();
+
         public void RunAll()
         {
             if (GlobalConst.Mode != ModeType.Local)
             {
-                Trace.TraceInformation("SteamDepot gnerating steam package");
-                Generate();
-                RunBuild();
-                PublishBuild();
+                lock (locker)
+                {
+                    Trace.TraceInformation("SteamDepot gnerating steam package");
+                    Generate();
+                    RunBuild();
+                    PublishBuild();
+                }
             } else Trace.TraceWarning("SteamDepot generating steam package SKIPPED in debug mode");
         }
 
