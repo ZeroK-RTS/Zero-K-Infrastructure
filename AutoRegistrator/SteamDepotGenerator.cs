@@ -144,6 +144,9 @@ namespace AutoRegistrator
             var runp = Process.Start(pi);
             runp.WaitForExit();
             Trace.TraceInformation("SteamDepot build completed!");
+
+            // TODO set buld live:
+            // curl - k--data "key=mykey&appid=myappid&buildid=mybuildid&betakey=mybranchname" https://api.steampowered.com/ISteamApps/SetAppBuildLive/v1/
         }
     }
 }
