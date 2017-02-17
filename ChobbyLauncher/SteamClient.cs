@@ -64,8 +64,12 @@ namespace ChobbyLauncher
         {
             if (IsOnline)
             {
-                var owner = SteamMatchmaking.GetLobbyOwner(new CSteamID(lobbyID)).m_SteamID;
-                return owner;
+                foreach (var f in GetFriends())
+                {
+                    FriendGameInfo_t gi;
+                    SteamFriends.GetFriendGamePlayed(new CSteamID(f), out gi);
+                    if (gi.m_steamIDLobby.m_SteamID == lobbyID) return f;
+                }
             }
             return null;
         }
@@ -163,13 +167,7 @@ namespace ChobbyLauncher
             AuthToken = GetClientAuthTokenHex();
             CreateLobbyAsync((lobbyID) =>
             {
-                if (lobbyID != null)
-                {
-                    LobbyID = lobbyID;
-
-                    SteamMatchmaking.JoinLobby(new CSteamID(lobbyID.Value));
-                    SteamMatchmaking.SetLobbyOwner(new CSteamID(lobbyID.Value), new CSteamID(GetSteamID()));
-                }
+                if (lobbyID != null) LobbyID = lobbyID;
                 ev.Set();
             });
             Friends = GetFriends();
