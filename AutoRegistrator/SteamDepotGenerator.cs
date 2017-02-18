@@ -63,8 +63,9 @@ namespace AutoRegistrator
             if (!downloader.DownloadFile(DownloadType.RAPID, GlobalConst.DefaultChobbyTag, prog).Result) throw new ApplicationException("SteamDepot chobby download failed: " + prog.Status);
 
             File.WriteAllText(Path.Combine(paths.WritableDirectory,"steam_engine.txt"), MiscVar.DefaultEngine);
+            File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_chobby.txt"), downloader.PackageDownloader.GetByTag(GlobalConst.DefaultChobbyTag).InternalName);
 
-           
+
             CopyResources(siteBase, paths, GetResourceList(), downloader);
 
             if (!downloader.UpdateMissions(prog).Result) throw new ApplicationException("SteamDepot Error updating missions! " + prog.Status);

@@ -79,16 +79,18 @@ namespace ChobbyLauncher
                     {
                         if (!await downloader.DownloadFile("Checking for chobby update", DownloadType.RAPID, chobbyTag, Progress)) return false;
                         if (!await downloader.DownloadFile("Checking for game update", DownloadType.RAPID, GlobalConst.DefaultZkTag, Progress)) return false;
-                    }
 
-                    ver = downloader.PackageDownloader.GetByTag(chobbyTag);
-                    if (ver == null)
-                    {
-                        Status = "Rapid package appears to be corrupted, please clear the folder";
-                        return false;
-                    }
 
-                    internalName = ver.InternalName;
+                        ver = downloader.PackageDownloader.GetByTag(chobbyTag);
+                        if (ver == null)
+                        {
+                            Status = "Rapid package appears to be corrupted, please clear the folder";
+                            return false;
+                        }
+
+                        internalName = ver.InternalName;
+                    }
+                    else internalName = GetSteamChobby();
                 }
                 else internalName = "Chobby $VERSION";
 
@@ -163,6 +165,17 @@ namespace ChobbyLauncher
             }
             return null;
         }
+
+        private string GetSteamChobby()
+        {
+            if (IsSteam)
+            {
+                var fp = Path.Combine(paths.WritableDirectory, "steam_chobby.txt");
+                if (File.Exists(fp)) return File.ReadAllText(fp);
+            }
+            return null;
+        }
+
 
 
         private async Task<bool> LaunchChobby(SpringPaths paths, string internalName, string engineVersion, int loopbackPort)
