@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using PlasmaShared;
@@ -41,23 +42,15 @@ namespace PlasmaDownloader
             return true;
         }
 
-        public static async Task<bool> DownloadUrl(this PlasmaDownloader downloader,
+        public static bool DownloadUrl(this PlasmaDownloader downloader,
             string desc,
             string url,
             string filePathTarget,
             IChobbylaProgress progress)
         {
             progress.Status = desc;
-            var wfd = new WebFileDownload(url, filePathTarget, downloader.SpringPaths.Cache);
-            wfd.Start();
-            progress.Download = wfd;
-            var dlTask = progress.Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(30));
-            if (dlTask != null) await dlTask.ConfigureAwait(false);
-            if (progress.Download?.IsComplete == false)
-            {
-                progress.Status = $"Download of {progress.Download.Name} has failed";
-                return false;
-            }
+            var wfd = new WebClient();
+            wfd.DownloadFile(url, filePathTarget);
             return true;
         }
 
@@ -95,7 +88,7 @@ namespace PlasmaDownloader
                 {
                     if (m.IsScriptMission && (m.Script != null)) m.Script = m.Script.Replace("%MAP%", m.Map);
                     if (!m.IsScriptMission) if (!await downloader.DownloadFile("Downloading mission " + m.DisplayName, DownloadType.MISSION, m.DownloadHandle, progress).ConfigureAwait(false)) return false;
-                    if (!await downloader.DownloadUrl("Downloading image", m.ImageUrl, Path.Combine(missionsFolder, $"{m.MissionID}.png"), progress).ConfigureAwait(false)) return false;
+                    if (!downloader.DownloadUrl("Downloading image", m.ImageUrl, Path.Combine(missionsFolder, $"{m.MissionID}.png"), progress)) return false;
                 }
 
                 File.WriteAllText(missionFile, JsonConvert.SerializeObject(missions));
