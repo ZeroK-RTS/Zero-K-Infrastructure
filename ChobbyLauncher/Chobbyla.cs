@@ -98,18 +98,19 @@ namespace ChobbyLauncher
                 {
                     if (!await downloader.DownloadFile("Downloading engine", DownloadType.ENGINE, engine, Progress)) return false;
 
-                    if (!isDev)
-                    {
-                        Status = "Reseting configs and deploying AIs";
-                        ConfigVersions.DeployAndResetConfigs(paths, ver);
-                    }
-
                     if (!await downloader.UpdateMissions(Progress))
                     {
                         Trace.TraceWarning("Mission update has failed");
                         Status = "Error updating missions";
                     }
                 }
+
+                if (!isDev)
+                {
+                    Status = "Reseting configs and deploying AIs";
+                    ConfigVersions.DeployAndResetConfigs(paths, ver);
+                }
+
 
                 return true;
             }

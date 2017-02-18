@@ -68,8 +68,6 @@ namespace AutoRegistrator
             CopyResources(siteBase, paths, GetResourceList(), downloader);
 
             if (!downloader.UpdateMissions(prog).Result) throw new ApplicationException("SteamDepot Error updating missions! " + prog.Status);
-            var ver = downloader.PackageDownloader.GetByTag(GlobalConst.DefaultChobbyTag);
-            ConfigVersions.DeployAndResetConfigs(paths, ver);
 
 
             CopyLobbyProgram();
