@@ -32,7 +32,7 @@ namespace PlasmaDownloader
             progress.Status = desc;
             progress.Download = downloader.GetResource(type, name);
             var dlTask = progress.Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(30));
-            if (dlTask != null) await dlTask;
+            if (dlTask != null) await dlTask.ConfigureAwait(false);
             if (progress.Download?.IsComplete == false)
             {
                 progress.Status = $"Download of {progress.Download.Name} has failed";
@@ -52,7 +52,7 @@ namespace PlasmaDownloader
             wfd.Start();
             progress.Download = wfd;
             var dlTask = progress.Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(30));
-            if (dlTask != null) await dlTask;
+            if (dlTask != null) await dlTask.ConfigureAwait(false);
             if (progress.Download?.IsComplete == false)
             {
                 progress.Status = $"Download of {progress.Download.Name} has failed";
@@ -94,8 +94,8 @@ namespace PlasmaDownloader
                 foreach (var m in toDownload)
                 {
                     if (m.IsScriptMission && (m.Script != null)) m.Script = m.Script.Replace("%MAP%", m.Map);
-                    if (!m.IsScriptMission) if (!await downloader.DownloadFile("Downloading mission " + m.DisplayName, DownloadType.MISSION, m.DownloadHandle, progress)) return false;
-                    if (!await downloader.DownloadUrl("Downloading image", m.ImageUrl, Path.Combine(missionsFolder, $"{m.MissionID}.png"), progress)) return false;
+                    if (!m.IsScriptMission) if (!await downloader.DownloadFile("Downloading mission " + m.DisplayName, DownloadType.MISSION, m.DownloadHandle, progress).ConfigureAwait(false)) return false;
+                    if (!await downloader.DownloadUrl("Downloading image", m.ImageUrl, Path.Combine(missionsFolder, $"{m.MissionID}.png"), progress).ConfigureAwait(false)) return false;
                 }
 
                 File.WriteAllText(missionFile, JsonConvert.SerializeObject(missions));
