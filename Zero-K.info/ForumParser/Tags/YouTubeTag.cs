@@ -17,13 +17,14 @@ namespace ZeroKWeb.ForumParser
             var content = self.Next.GetOriginalContentUntilNode(closing);
             if (!string.IsNullOrEmpty(content))
             {
-                var match = Regex.Match(content, "v=([^&]+)");
+                string content2 = content.Replace("autoplay=1", "");
+                var match = Regex.Match(content2, "v=([^&]+)");
                 if (match.Success)
                 {
                     context.AppendFormat("<iframe width=\"420\" height=\"315\" src=\"https://www.youtube.com/embed/{0}\" frameborder=\"0\" hd=\"1\" allowfullscreen=\"1\"></iframe>", match.Groups[1].Value);
                     return closing.Next;
                 }
-                match = Regex.Match(content, @"\.be/([^&]+)");
+                match = Regex.Match(content2, @"\.be/([^&]+)");
                 if (match.Success)
                 {
                     context.AppendFormat("<iframe width=\"420\" height=\"315\" src=\"https://www.youtube.com/embed/{0}\" frameborder=\"0\" hd=\"1\" allowfullscreen=\"1\"></iframe>", match.Groups[1].Value);
