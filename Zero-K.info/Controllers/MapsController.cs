@@ -233,6 +233,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", new { id = res.ResourceID });
         }
 
+        [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult Tag(int id,
                                 int? sea,

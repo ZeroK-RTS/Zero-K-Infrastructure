@@ -34,6 +34,7 @@ namespace ZeroKWeb.Controllers
             return View("BlockedVPNs");
         }
 
+        [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult AddBlockedCompany(string companyName, string comment)
         {
@@ -51,6 +52,7 @@ namespace ZeroKWeb.Controllers
             return  RedirectToAction("BlockedVPNs");
         }
 
+        [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult AddBlockedHost(string hostname, string comment)
         {
@@ -68,6 +70,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("BlockedVPNs");
         }
 
+        [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult RemoveBlockedCompany(int companyID)
         {
@@ -81,6 +84,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("BlockedVPNs");
         }
 
+        [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult RemoveBlockedHost(int hostID)
         {
