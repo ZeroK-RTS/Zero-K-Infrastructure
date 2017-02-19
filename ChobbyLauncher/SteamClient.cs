@@ -40,12 +40,14 @@ namespace ChobbyLauncher
 
         public string MySteamNameSanitized { get; set; }
 
+        private bool isDisposed;
 
         public void Dispose()
         {
             try
             {
-                if (timer != null) timer.Dispose();
+                isDisposed = true;
+                timer?.Dispose();
                 if (IsOnline) SteamAPI.Shutdown();
             }
             catch (Exception ex)
@@ -186,6 +188,7 @@ namespace ChobbyLauncher
         {
             try
             {
+                if (isDisposed) return;
                 timer?.Stop();
                 if (tickCounter%300 == 0)
                     if (!IsOnline)
@@ -215,7 +218,7 @@ namespace ChobbyLauncher
             finally
             {
                 tickCounter++;
-                timer?.Start();
+                if (!isDisposed) timer?.Start();
             }
 
             

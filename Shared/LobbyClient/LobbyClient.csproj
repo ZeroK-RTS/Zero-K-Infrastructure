@@ -65,7 +65,6 @@
     <Compile Include="Battle.cs" />
     <Compile Include="BotBattleStatus.cs" />
     <Compile Include="CountryNames.cs" />
-    <Compile Include="Crc.cs" />
     <Compile Include="DedicatedServer.cs" />
     <Compile Include="Legacy\Channel.cs" />
     <Compile Include="Legacy\SayingEventArgs.cs" />

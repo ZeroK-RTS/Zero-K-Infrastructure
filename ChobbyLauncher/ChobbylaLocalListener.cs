@@ -315,6 +315,13 @@ namespace ChobbyLauncher
             Trace.TraceInformation("Chobby connected to wrapper");
             try
             {
+                await SendCommand(new WrapperOnline()
+                {
+                    DefaultServerHost = GlobalConst.LobbyServerHost,
+                    DefaultServerPort = GlobalConst.LobbyServerPort,
+                    UserID = Utils.GetMyUserID().ToString()
+                });
+
                 await SendSteamOnline();
             }
             catch (Exception ex)

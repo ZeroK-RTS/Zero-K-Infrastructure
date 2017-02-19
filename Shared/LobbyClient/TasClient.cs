@@ -312,21 +312,6 @@ namespace LobbyClient
         }
 
 
-        public static long GetMyUserID()
-        {
-            var nics =
-                NetworkInterface.GetAllNetworkInterfaces()
-                    .Where(
-                        x =>
-                            !string.IsNullOrWhiteSpace(x.GetPhysicalAddress().ToString()) &&
-                            (x.NetworkInterfaceType != NetworkInterfaceType.Loopback) && (x.NetworkInterfaceType != NetworkInterfaceType.Tunnel));
-
-            var wantedNic = nics.FirstOrDefault();
-
-            if (wantedNic != null) return Crc.Crc32(wantedNic.GetPhysicalAddress().GetAddressBytes());
-            return 0;
-        }
-
         public User GetUserCaseInsensitive(string userName)
         {
             return ExistingUsers.Values.FirstOrDefault(u => string.Equals(u.Name, userName, StringComparison.InvariantCultureIgnoreCase));
@@ -381,7 +366,7 @@ namespace LobbyClient
                     Name = userName,
                     PasswordHash = Utils.HashLobbyPassword(password),
                     ClientType = clientType,
-                    UserID = GetMyUserID(),
+                    UserID = Utils.GetMyUserID(),
                     LobbyVersion = appName
                 });
         }
@@ -487,7 +472,7 @@ namespace LobbyClient
 
         public Task Register(string username, string password)
         {
-            return SendCommand(new Register() { Name = username, PasswordHash = Utils.HashLobbyPassword(password), UserID = GetMyUserID()});
+            return SendCommand(new Register() { Name = username, PasswordHash = Utils.HashLobbyPassword(password), UserID = Utils.GetMyUserID()});
         }
 
         public event EventHandler<TasEventArgs> RegistrationAccepted = delegate { };

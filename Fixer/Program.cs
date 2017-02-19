@@ -98,8 +98,8 @@ namespace Fixer
             {
                 string mac = GenerateMACAddress() + "lobby.springrts.com";
                 byte[] mac2 = Encoding.ASCII.GetBytes(mac);
-                uint hash1 = LobbyClient.Crc.Crc32(mac2);
-                uint hash2 = LobbyClient.Crc.Crc32Old(mac2);
+                uint hash1 = Crc.Crc32(mac2);
+                uint hash2 = Crc.Crc32Old(mac2);
                 if (hash1 != hash2)
                 {
                     Console.WriteLine("MISMATCH: {0} vs. {1} (MAC {2})", hash1, hash2, mac);

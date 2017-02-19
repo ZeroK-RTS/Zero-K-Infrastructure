@@ -87,6 +87,15 @@ namespace ChobbyLauncher
 
 
     [ChobbyMessage]
+    public class WrapperOnline
+    {
+        public string UserID { get; set;}
+        public string DefaultServerHost { get; set; }
+        public int DefaultServerPort { get; set; }
+    }
+
+
+    [ChobbyMessage]
     public class SteamJoinFriend
     {
         public string FriendSteamID { get; set; }

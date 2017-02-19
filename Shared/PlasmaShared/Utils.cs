@@ -796,5 +796,27 @@ namespace ZkData
             foreach (var c in name.Where(Utils.ValidLobbyNameCharacter)) sb.Append(c);
             return sb.ToString();
         }
+
+        public static long GetMyUserID()
+        {
+            try
+            {
+                var nics =
+                    NetworkInterface.GetAllNetworkInterfaces()
+                        .Where(
+                            x =>
+                                !String.IsNullOrWhiteSpace(x.GetPhysicalAddress().ToString()) &&
+                                (x.NetworkInterfaceType != NetworkInterfaceType.Loopback) && (x.NetworkInterfaceType != NetworkInterfaceType.Tunnel));
+
+                var wantedNic = nics.FirstOrDefault();
+
+                if (wantedNic != null) return Crc.Crc32(wantedNic.GetPhysicalAddress().GetAddressBytes());
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Failed to get the userID: {0}",ex);
+            }
+            return 0;
+        }
     }
 }
