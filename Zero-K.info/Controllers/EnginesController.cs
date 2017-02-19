@@ -68,6 +68,9 @@ namespace ZeroKWeb.Controllers
             return View("EnginesIndex", model);
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         private string UploadEngine(string uploadName, List<string> uploadPlatforms)
         {
             for (var i = 0; i < EnginePlatforms.Length; i++)

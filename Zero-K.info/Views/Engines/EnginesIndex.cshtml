@@ -13,7 +13,7 @@
 {
     if (item.IsDefault)
     {
-        <b style="color: red">*DEFAULT*</b>
+        <b style="color: red">*DEFAULT*</b>  @Html.ActionLink("rebuild steam", "MakeDefault", new { engine = item.Name });
     }
     else
     {
@@ -29,6 +29,7 @@
     </div>
 
     <form action="@Url.Action("Index", "Engines")">
+        @Html.AntiForgeryToken()
         <div>
             <h3>Upload a new engine</h3>
             <table>

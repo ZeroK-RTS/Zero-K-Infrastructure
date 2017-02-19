@@ -48,6 +48,7 @@ namespace ZeroKWeb.Controllers
 
         [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
+        [ValidateAntiForgeryToken]
         public ActionResult ChangePermissions(int accountID, bool zkAdmin, bool vpnException)
         {
             var db = new ZkDataContext();
