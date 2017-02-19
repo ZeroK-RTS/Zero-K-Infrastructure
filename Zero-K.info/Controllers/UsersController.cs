@@ -425,6 +425,12 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(Global.AccountID);
+            if (AuthServiceClient.VerifyAccountPlain(acc.Name, oldPassword) == null)
+            {
+                Trace.TraceWarning("Failed password check for {0} on attempted password change", Global.Account.Name);
+                Global.Server.LoginChecker.LogIpFailure(Request.UserHostAddress);
+                return Content("Invalid password");
+            } 
             if (newPassword != newPassword2) return Content("New passwords do not match");
             if (string.IsNullOrWhiteSpace(newPassword)) return Content("New password cannot be blank");
             acc.SetPasswordPlain(newPassword);
