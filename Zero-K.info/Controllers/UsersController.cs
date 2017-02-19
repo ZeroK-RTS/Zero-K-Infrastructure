@@ -442,6 +442,7 @@ namespace ZeroKWeb.Controllers
             } 
             if (newPassword != newPassword2) return Content("New passwords do not match");
             if (string.IsNullOrWhiteSpace(newPassword)) return Content("New password cannot be blank");
+            if (string.IsNullOrEmpty(oldPassword)) return Content("Your account is password-less, use steam");
             acc.SetPasswordPlain(newPassword);
             db.SaveChanges();
             //return Content("Old: " + oldPassword + "; new: " + newPassword);
