@@ -7,6 +7,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using Steamworks;
 using ZkData;
+using Timer = System.Timers.Timer;
 
 namespace ChobbyLauncher
 {
@@ -56,7 +57,10 @@ namespace ChobbyLauncher
         public void ConnectToSteam()
         {
             TimerOnElapsed(this);
-            timer = new Timer(TimerOnElapsed, null, 100, 100);
+            timer = new Timer(100);
+            timer.AutoReset = false;
+            timer.Elapsed += (sender, args) => TimerOnElapsed(this);
+            timer.Start();
         }
 
 
@@ -182,7 +186,8 @@ namespace ChobbyLauncher
         {
             try
             {
-                if (tickCounter % 300 == 0)
+                timer?.Stop();
+                if (tickCounter%300 == 0)
                     if (!IsOnline)
                         if (SteamAPI.Init() && SteamAPI.IsSteamRunning())
                         {
@@ -207,8 +212,13 @@ namespace ChobbyLauncher
             {
                 Trace.TraceError(ex.ToString());
             }
+            finally
+            {
+                tickCounter++;
+                timer?.Start();
+            }
 
-            tickCounter++;
+            
         }
     }
 }

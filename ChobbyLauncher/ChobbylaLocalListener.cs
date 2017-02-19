@@ -36,6 +36,7 @@ namespace ChobbyLauncher
             tts = TextToSpeechBase.Create();
             steam.JoinFriendRequest += SteamOnJoinFriendRequest;
             steam.OverlayActivated += SteamOnOverlayActivated;
+            steam.SteamOnline += () => { SendSteamOnline(); };
         }
 
         private void SteamOnOverlayActivated(bool b)
@@ -314,21 +315,26 @@ namespace ChobbyLauncher
             Trace.TraceInformation("Chobby connected to wrapper");
             try
             {
-                if (steam.IsOnline)
-                {
-                    await
-                        SendCommand(new SteamOnline()
-                        {
-                            AuthToken = steam.AuthToken,
-                            Friends = steam.Friends.Select(x => x.ToString()).ToList(),
-                            FriendSteamID = initialConnectLobbyID != 0 ? steam.GetLobbyOwner(initialConnectLobbyID)?.ToString() : null,
-                            SuggestedName = steam.MySteamNameSanitized
-                        });
-                }
+                await SendSteamOnline();
             }
             catch (Exception ex)
             {
                 Trace.TraceError("Error processing OnConnected: {0}" ,ex);
+            }
+        }
+
+        private async Task SendSteamOnline()
+        {
+            if (steam.IsOnline)
+            {
+                await
+                    SendCommand(new SteamOnline()
+                    {
+                        AuthToken = steam.AuthToken,
+                        Friends = steam.Friends.Select(x => x.ToString()).ToList(),
+                        FriendSteamID = initialConnectLobbyID != 0 ? steam.GetLobbyOwner(initialConnectLobbyID)?.ToString() : null,
+                        SuggestedName = steam.MySteamNameSanitized
+                    });
             }
         }
 

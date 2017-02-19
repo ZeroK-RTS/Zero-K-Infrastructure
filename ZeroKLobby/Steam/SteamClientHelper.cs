@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.ExceptionServices;
-using System.Threading;
+using System.Timers;
 using ZkData;
 using Steamworks;
 
@@ -23,30 +23,42 @@ namespace ZeroKLobby.Steam
         public void ConnectToSteam()
         {
             TimerOnElapsed(this);
-            timer = new Timer(TimerOnElapsed, null, 100, 100);
+            timer = new Timer(100);
+            timer.AutoReset = false;
+            timer.Elapsed += (sender, args) => TimerOnElapsed(this);
+            timer.Start();
         }
 
 
         [HandleProcessCorruptedStateExceptions]
         void TimerOnElapsed(object sender)
         {
-            try {
-                if (tickCounter%300 == 0) {
-                    if (!IsOnline) {
-                        if (SteamAPI.Init() && SteamAPI.IsSteamRunning()) {
+            try
+            {
+                timer?.Stop();
+                if (tickCounter%300 == 0)
+                {
+                    if (!IsOnline)
+                    {
+                        if (SteamAPI.Init() && SteamAPI.IsSteamRunning())
+                        {
                             IsOnline = true;
                             SteamOnline();
                         }
                     }
                 }
-                if (IsOnline) {
+                if (IsOnline)
+                {
                     if (SteamAPI.IsSteamRunning()) SteamAPI.RunCallbacks();
-                    else {
+                    else
+                    {
                         IsOnline = false;
                         SteamOffline();
                     }
                 }
-            } catch (DllNotFoundException ex) {
+            }
+            catch (DllNotFoundException ex)
+            {
                 Trace.TraceWarning("Error initializing steam, disabling susbystem: {0} library not found", ex.Message);
                 if (timer != null) timer.Dispose();
             }
@@ -54,8 +66,13 @@ namespace ZeroKLobby.Steam
             {
                 Trace.TraceError(ex.ToString());
             }
+            finally
+            {
+                tickCounter++;
+                timer?.Start();
+            }
 
-            tickCounter++;
+
         }
 
         public byte[] GetClientAuthToken()
