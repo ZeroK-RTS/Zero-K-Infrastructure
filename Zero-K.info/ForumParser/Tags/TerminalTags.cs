@@ -72,7 +72,7 @@ namespace ZeroKWeb.ForumParser
             if (Text.IsValidLink())
             {
                 // implicit linkification and imagifination
-                if (Text.EndsWith(".png") || Text.EndsWith(".gif") || Text.EndsWith(".jpg") || Text.EndsWith(".jpeg")) context.AppendFormat("<a href=\"{0}\" target=\"_blank\" ><img src=\"{0}\" max-width=\"100%\" height=\"auto\"/></a>", Text);
+                if ((Text.EndsWith(".png") || Text.EndsWith(".gif") || Text.EndsWith(".jpg") || Text.EndsWith(".jpeg")) && Text.IsValidLinkOrRelativeUrl(true)) context.AppendFormat("<a href=\"{0}\" target=\"_blank\" ><img src=\"{0}\" max-width=\"100%\" height=\"auto\"/></a>", Text);
                 // YouTube auto-embed
                 else if (Text.StartsWith("http://www.youtube.com/watch") || Text.StartsWith("https://www.youtube.com/watch"))
                 {
