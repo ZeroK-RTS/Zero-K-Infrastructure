@@ -171,8 +171,9 @@ namespace ZeroKWeb.Controllers
         public ActionResult KickPlayerFromClan(int clanID, int accountID)
         {
             var db = new ZkDataContext();
-            var clan = db.Clans.Single(c => clanID == c.ClanID);
-            var kickee_acc = db.Accounts.Single(x => x.AccountID == accountID);
+            var clan = db.Clans.SingleOrDefault(c => clanID == c.ClanID);
+            if (clan == null) return Content("No such clan");
+            var kickee_acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (kickee_acc == null) return Content("No such person");
             if (kickee_acc.Clan != clan) return Content("Target not in your clan");
             if (!(Global.Account.HasClanRight(x => x.RightKickPeople) && clan.ClanID == Global.Account.ClanID)) return Content("Unauthorized");
