@@ -161,6 +161,11 @@ namespace ChobbyLauncher
 
         private bool CheckForJava()
         {
+            int p = (int)Environment.OSVersion.Platform;
+            bool isLinux = (p == 4) || (p == 6) || (p == 128);
+
+            if (isLinux) return false;
+
             string[] envVars = { "JAVA_HOME", "JDK_HOME", "JRE_HOME" };
 
             foreach (string envVar in envVars) { 
@@ -171,28 +176,19 @@ namespace ChobbyLauncher
                 }
             }
 
-            int p = (int)Environment.OSVersion.Platform;
-            bool isLinux = (p == 4) || (p == 6) || (p == 128);
-
-            if (isLinux)
+            string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
+            using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey))
             {
-                //sorry tux
-            }
-            else
-            {
-                string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
-                using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey))
+                string currentVersion = rk.GetValue("CurrentVersion").ToString();
+                using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion))
                 {
-                    string currentVersion = rk.GetValue("CurrentVersion").ToString();
-                    using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion))
+                    if (CheckJavaPath(key.GetValue("JavaHome").ToString()))
                     {
-                        if (CheckJavaPath(key.GetValue("JavaHome").ToString()))
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }
+            
             return false;
         }
 
