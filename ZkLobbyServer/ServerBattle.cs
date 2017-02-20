@@ -698,7 +698,6 @@ namespace ZkLobbyServer
         private void spring_PlayerSaid(object sender, SpringLogEventArgs e)
         {
             ConnectedUser user;
-            if (server.ConnectedUsers.TryGetValue(e.Username, out user) && !user.User.BanMute) // relay
                 if (!e.Line.StartsWith("Allies:") && !e.Line.StartsWith("Spectators:")) server.GhostSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle, AllowRelay = false}, BattleID);
         }
 
