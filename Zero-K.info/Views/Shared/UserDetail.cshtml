@@ -304,12 +304,13 @@
         }
     }
 
-    @if (Global.AccountID == Model.AccountID)
+    @if (Global.AccountID == Model.AccountID && !string.IsNullOrEmpty(Model.PasswordBcrypt))
     {
         <h3 class="js_expand">Account maintenance</h3>
         <div id="accountMaint" class="collapse width-90">
             <h4>Change password</h4>
             <form method="post" action="@Url.Action("ChangePassword", "Users")">
+                Old password: @Html.Password("oldPassword")<br />
                 New password: @Html.Password("newPassword")<br />
                 Reenter new password: @Html.Password("newPassword2")<br />
                 <input type="submit" />

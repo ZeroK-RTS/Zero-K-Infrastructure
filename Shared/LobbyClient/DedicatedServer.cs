@@ -312,7 +312,7 @@ namespace LobbyClient
 
             // use shell execute, this prevents handle inheritance and allows 8200 port to be reused if server crashes
             // alternative: http://stackoverflow.com/questions/3342941/kill-child-process-when-parent-process-is-killed
-            process.StartInfo.UseShellExecute = true;
+            process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = false;
             process.StartInfo.RedirectStandardError = false;
             process.EnableRaisingEvents = true;

@@ -14,6 +14,7 @@ namespace ZeroKWeb.Controllers
     {
         //
         // GET: /Users/
+        [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult ChangeHideCountry(int accountID, bool hideCountry)
         {
@@ -27,6 +28,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
+        [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult ChangeAccountDeleted(int accountID, bool isDeleted)
         {
@@ -42,9 +44,11 @@ namespace ZeroKWeb.Controllers
             db.SaveChanges();
 
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
-        }     
+        }
 
+        [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
+        [ValidateAntiForgeryToken]
         public ActionResult ChangePermissions(int accountID, bool zkAdmin, bool vpnException)
         {
             var db = new ZkDataContext();
@@ -71,6 +75,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
+        [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult ChangeElo(int accountID, int eloweight, int eloweight1v1)
         {
@@ -193,6 +198,7 @@ namespace ZeroKWeb.Controllers
         /// </summary>
         /// <param name="accountID"><see cref="Account"/> ID of the person being punished</param>
         /// <param name="reason">Displayed reason for the penalty</param>
+        [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult Punish(int accountID,
                                    string reason,
@@ -295,6 +301,7 @@ namespace ZeroKWeb.Controllers
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
 
+        [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult RemovePunishment(int punishmentID) {
             var db = new ZkDataContext();
@@ -324,6 +331,7 @@ namespace ZeroKWeb.Controllers
             return View("MassBan");
         }
 
+        [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult MassBanSubmit(string name, int startIndex, int endIndex, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
         {
@@ -369,6 +377,7 @@ namespace ZeroKWeb.Controllers
             return Index(new UsersIndexModel() {Name = name});
         }
 
+        [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult MassBanByUserIDSubmit(int userID, double? maxAge, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
         {
@@ -409,7 +418,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
-
+        [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult SetPassword(int accountID, string newPassword)
         {
@@ -420,13 +429,21 @@ namespace ZeroKWeb.Controllers
             return Content(string.Format("{0} password set to {1}", acc.Name, newPassword));
         }
 
+        [HttpPost]
         [Auth]
-        public ActionResult ChangePassword(string newPassword, string newPassword2)
+        public ActionResult ChangePassword(string oldPassword, string newPassword, string newPassword2)
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(Global.AccountID);
+            if (AuthServiceClient.VerifyAccountPlain(acc.Name, oldPassword) == null)
+            {
+                Trace.TraceWarning("Failed password check for {0} on attempted password change", Global.Account.Name);
+                Global.Server.LoginChecker.LogIpFailure(Request.UserHostAddress);
+                return Content("Invalid password");
+            } 
             if (newPassword != newPassword2) return Content("New passwords do not match");
             if (string.IsNullOrWhiteSpace(newPassword)) return Content("New password cannot be blank");
+            if (string.IsNullOrEmpty(oldPassword)) return Content("Your account is password-less, use steam");
             acc.SetPasswordPlain(newPassword);
             db.SaveChanges();
             //return Content("Old: " + oldPassword + "; new: " + newPassword);

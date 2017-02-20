@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using ZkData;
@@ -14,6 +15,17 @@ namespace ZkLobbyServer
         TcpListener listener;
         private bool stopped;
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool SetHandleInformation(IntPtr hObject, HANDLE_FLAGS dwMask, HANDLE_FLAGS dwFlags);
+    
+        [Flags]
+        enum HANDLE_FLAGS : uint
+        {
+            None = 0,
+            INHERIT = 1,
+            PROTECT_FROM_CLOSE = 2
+        }
+        
         public bool Bind(int retryCount)
         {
             listener = null;
@@ -23,6 +35,7 @@ namespace ZkLobbyServer
                     listener = new TcpListener(new IPEndPoint(IPAddress.Any, GlobalConst.LobbyServerPort));
                     listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(GlobalConst.TcpLingerStateEnabled, GlobalConst.TcpLingerStateSeconds));
                     listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 0);
+                    if (!SetHandleInformation(listener.Server.Handle, HANDLE_FLAGS.INHERIT | HANDLE_FLAGS.PROTECT_FROM_CLOSE, 0)) throw new ApplicationException("Unable to set socket flags: " + Marshal.GetLastWin32Error());
 
                     listener.Start();
                     Trace.TraceInformation("Listening at port {0}", GlobalConst.LobbyServerPort);

@@ -7,6 +7,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using Steamworks;
 using ZkData;
+using Timer = System.Timers.Timer;
 
 namespace ChobbyLauncher
 {
@@ -39,12 +40,14 @@ namespace ChobbyLauncher
 
         public string MySteamNameSanitized { get; set; }
 
+        private bool isDisposed;
 
         public void Dispose()
         {
             try
             {
-                if (timer != null) timer.Dispose();
+                isDisposed = true;
+                timer?.Dispose();
                 if (IsOnline) SteamAPI.Shutdown();
             }
             catch (Exception ex)
@@ -56,7 +59,10 @@ namespace ChobbyLauncher
         public void ConnectToSteam()
         {
             TimerOnElapsed(this);
-            timer = new Timer(TimerOnElapsed, null, 100, 100);
+            timer = new Timer(100);
+            timer.AutoReset = false;
+            timer.Elapsed += (sender, args) => TimerOnElapsed(this);
+            timer.Start();
         }
 
 
@@ -64,8 +70,12 @@ namespace ChobbyLauncher
         {
             if (IsOnline)
             {
-                var owner = SteamMatchmaking.GetLobbyOwner(new CSteamID(lobbyID)).m_SteamID;
-                return owner;
+                foreach (var f in GetFriends())
+                {
+                    FriendGameInfo_t gi;
+                    SteamFriends.GetFriendGamePlayed(new CSteamID(f), out gi);
+                    if (gi.m_steamIDLobby.m_SteamID == lobbyID) return f;
+                }
             }
             return null;
         }
@@ -163,13 +173,7 @@ namespace ChobbyLauncher
             AuthToken = GetClientAuthTokenHex();
             CreateLobbyAsync((lobbyID) =>
             {
-                if (lobbyID != null)
-                {
-                    LobbyID = lobbyID;
-
-                    SteamMatchmaking.JoinLobby(new CSteamID(lobbyID.Value));
-                    SteamMatchmaking.SetLobbyOwner(new CSteamID(lobbyID.Value), new CSteamID(GetSteamID()));
-                }
+                if (lobbyID != null) LobbyID = lobbyID;
                 ev.Set();
             });
             Friends = GetFriends();
@@ -184,7 +188,9 @@ namespace ChobbyLauncher
         {
             try
             {
-                if (tickCounter % 300 == 0)
+                if (isDisposed) return;
+                timer?.Stop();
+                if (tickCounter%300 == 0)
                     if (!IsOnline)
                         if (SteamAPI.Init() && SteamAPI.IsSteamRunning())
                         {
@@ -209,8 +215,13 @@ namespace ChobbyLauncher
             {
                 Trace.TraceError(ex.ToString());
             }
+            finally
+            {
+                tickCounter++;
+                if (!isDisposed) timer?.Start();
+            }
 
-            tickCounter++;
+            
         }
     }
 }

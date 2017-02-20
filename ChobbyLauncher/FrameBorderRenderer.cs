@@ -11,8 +11,6 @@ namespace ChobbyLauncher
     {
         public enum StyleType
         {
-            DarkHive,
-            DarkHiveHover,
             Shraka,
             IconOnly
         }
@@ -20,37 +18,6 @@ namespace ChobbyLauncher
         public static FrameBorderRenderer Instance = new FrameBorderRenderer();
         public static Dictionary<StyleType, FrameStyle> Styles = new Dictionary<StyleType, FrameStyle>
         {
-            {
-                StyleType.DarkHiveHover,
-                new FrameStyle
-                {
-                    N = DarkHiveHover.N,
-                    NE = DarkHiveHover.NE,
-                    NW = DarkHiveHover.NW,
-                    S = DarkHiveHover.S,
-                    SE = DarkHiveHover.SE,
-                    SW = DarkHiveHover.SW,
-                    E = DarkHiveHover.E,
-                    W = DarkHiveHover.W,
-                    FillBrush = new SolidBrush(Color.FromArgb(89, 23, 252, 255))
-                }
-            },
-            {
-                StyleType.DarkHive,
-                new FrameStyle
-                {
-                    N = DarkHive.N,
-                    NE = DarkHive.NE,
-                    NW = DarkHive.NW,
-                    S = DarkHive.S,
-                    SE = DarkHive.SE,
-                    SW = DarkHive.SW,
-                    E = DarkHive.E,
-                    W = DarkHive.W,
-                    FillBrush = new SolidBrush(Color.FromArgb(179, 0, 0, 0)),
-                    HoverStyle = StyleType.DarkHiveHover
-                }
-            },
             {
                 StyleType.Shraka,
                 new FrameStyle

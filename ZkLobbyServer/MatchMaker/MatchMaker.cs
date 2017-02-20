@@ -38,11 +38,10 @@ namespace ZkLobbyServer
             this.server = server;
             using (var db = new ZkDataContext())
             {
-                possibleQueues.Add(new MatchMakerSetup.Queue()
+/*                possibleQueues.Add(new MatchMakerSetup.Queue()
                 {
                     Name = "4v4",
                     Description = "Play 4v4 with players of similar skill.",
-                    MaxPartySize = 4,
                     MinSize = 8,
                     MaxSize = 8,
                     EloCutOffExponent = 0.96,
@@ -59,7 +58,6 @@ namespace ZkLobbyServer
                 {
                     Name = "3v3",
                     Description = "Play 3v3 with players of similar skill.",
-                    MaxPartySize = 3,
                     MinSize = 6,
                     MaxSize = 6,
                     EloCutOffExponent = 0.965,
@@ -76,7 +74,6 @@ namespace ZkLobbyServer
                 {
                     Name = "2v2",
                     Description = "Play 2v2 with players of similar skill.",
-                    MaxPartySize = 2,
                     MinSize = 4,
                     MaxSize = 4,
                     EloCutOffExponent = 0.97,
@@ -87,23 +84,22 @@ namespace ZkLobbyServer
                                 x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams != false) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true)
                             .Select(x => x.InternalName)
                             .ToList()
-                });
+                });*/
 
                 possibleQueues.Add(new MatchMakerSetup.Queue()
                 {
-                    Name = "1v1",
-                    Description = "Duel an opponent of similar skill in a 1v1 match.",
-                    MaxPartySize = 1,
+                    Name = "1v1-4v4",
+                    Description = "1v1 to 4v4 with opponents of similar skill",
                     MinSize = 2,
-                    MaxSize = 2,
-                    EloCutOffExponent = 0.98,
+                    MaxSize = 8,
+                    EloCutOffExponent = 0.96,
                     Game = server.Game,
                     Maps =
                         db.Resources.Where(
-                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIs1v1 == true) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true)
+                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true)
                             .Select(x => x.InternalName)
                             .ToList(),
-                    Mode = AutohostMode.Game1v1,
+                    Mode = AutohostMode.Teams,
                 });
             }
             timer = new Timer(TimerSeconds * 1000);

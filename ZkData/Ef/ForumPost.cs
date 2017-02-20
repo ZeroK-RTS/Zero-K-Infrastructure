@@ -29,5 +29,7 @@ namespace ZkData
                 this.ForumThread.ForumCategory.ForumMode == ForumMode.Wiki && acc.CanEditWiki()) && ForumThread.ForumPosts.First().ForumPostID== ForumPostID) return true;
             else return false;
         }
+
+
     }
 }

@@ -66,7 +66,10 @@
     <br/>
     @if (Global.IsZeroKAdmin) {
         <div class="admin">
-            @Html.ActionLink("remove ban", "RemovePunishment","Users", new {punishmentID = p.PunishmentID}, new {@class="js_confirm"})
+            <form action="@Url.Action("RemovePunishment", "Users")" method="post">
+                <input type="hidden" name="punishmentID" value="@p.PunishmentID" />
+                <input type="submit" value="Remove punishment" class="js_confirm" />
+            </form>
         </div>
     }
 </div>

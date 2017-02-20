@@ -59,11 +59,11 @@ namespace ZkLobbyServer
             Downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine);
             Downloader.PackageDownloader.DoMasterRefresh();
 
-            Game = Downloader.PackageDownloader.GetByTag("zk:stable").InternalName;
+            Game = Downloader.PackageDownloader.GetByTag(GlobalConst.DefaultZkTag).InternalName;
 
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
-            chatRelay = new ChatRelay(this, new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai", "zk" });
+            chatRelay = new ChatRelay(this, new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai", "zk", "zkmap" });
             textCommands = new ServerTextCommands(this);
             ChannelManager = new ChannelManager(this);
             MatchMaker = new MatchMaker(this);

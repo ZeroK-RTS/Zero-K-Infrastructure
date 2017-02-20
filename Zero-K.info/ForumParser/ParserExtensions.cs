@@ -80,11 +80,18 @@ namespace ZeroKWeb.ForumParser
             return linkMatcher.IsMatch(content);
         }
 
-        public static bool IsValidLinkOrRelativeUrl(this string content)
+        public static bool IsValidLinkOrRelativeUrl(this string content, bool imageOnly)
         {
             if (string.IsNullOrEmpty(content)) return false;
             Uri parsed;
-            return linkMatcher.IsMatch(content) || Uri.TryCreate(content, UriKind.Relative, out parsed);
+            if (!linkMatcher.IsMatch(content) || Uri.TryCreate(content, UriKind.Relative, out parsed)) return false;
+            if (imageOnly)
+            {
+                Uri.TryCreate(content, UriKind.RelativeOrAbsolute, out parsed);
+                // for proper check do HEAD request and check response, but this needs some cache 
+                if (!(parsed.AbsolutePath.EndsWith(".jpg") || parsed.AbsolutePath.EndsWith(".gif") || parsed.AbsolutePath.EndsWith(".png") || parsed.AbsolutePath.EndsWith(".jpeg"))) return false;
+            }
+            return true;
         }
 
         public static char ToLower(this char high) {

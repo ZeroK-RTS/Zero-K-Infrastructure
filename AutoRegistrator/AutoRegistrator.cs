@@ -53,7 +53,8 @@ namespace ZeroKWeb
             OnRapidChanged();
         }
 
-        public event EventHandler<string> NewZkStableRegistered = delegate (object sender, string s) { };
+        public event Action<string, string> NewZkReleaseRegistered = (zk, chobby)=> { };
+
 
         public Thread RunMainAndMapSyncAsync()
         {
@@ -106,28 +107,13 @@ namespace ZeroKWeb
 
                 lock (Locker)
                 {
-                    // UpdateMissions();
-
-                    var newName = Downloader.PackageDownloader.GetByTag("zk:stable").InternalName;
-                    if (MiscVar.LastRegisteredZkVersion != newName)
+                    var newName = Downloader.PackageDownloader.GetByTag(GlobalConst.DefaultZkTag).InternalName;
+                    var newChobbyName = Downloader.PackageDownloader.GetByTag(GlobalConst.DefaultChobbyTag).InternalName;
+                    if (MiscVar.LastRegisteredZkVersion != newName || MiscVar.LastRegisteredChobbyVersion != newChobbyName)
                     {
+                        NewZkReleaseRegistered(newName, newChobbyName);
                         MiscVar.LastRegisteredZkVersion = newName;
-                        if (GlobalConst.Mode == ModeType.Live)
-                        {
-                            Trace.TraceInformation("Autoregistrator Generating steam stable package");
-                            try
-                            {
-                                var pgen = new SteamDepotGenerator(sitePath,
-                                    Path.GetFullPath(Path.Combine(sitePath, "..", "steamworks", "tools", "ContentBuilder", "content")));
-                                pgen.Generate();
-                                pgen.RunBuild();
-                            }
-                            catch (Exception ex)
-                            {
-                                Trace.TraceError("Autoregistrator Error building steam package: {0}", ex);
-                            }
-                        }
-                        NewZkStableRegistered(this, newName);
+                        MiscVar.LastRegisteredChobbyVersion = newChobbyName;
                     }
                 }
 
@@ -137,38 +123,6 @@ namespace ZeroKWeb
             {
                 Trace.TraceError("Autoregistrator Error updating packages: {0}", ex);
             }
-        }
-
-        private void UpdateMissions()
-        {
-            foreach (var id in
-                new ZkDataContext(false).Missions.Where(x => !x.IsScriptMission && (x.ModRapidTag != "") && !x.IsDeleted).Select(x => x.MissionID).ToList())
-                using (var db = new ZkDataContext(false))
-                {
-                    var mis = db.Missions.Single(x => x.MissionID == id);
-                    try
-                    {
-                        if (!string.IsNullOrEmpty(mis.ModRapidTag))
-                        {
-                            var latestMod = Downloader.PackageDownloader.GetByTag(mis.ModRapidTag);
-                            if ((latestMod != null) && ((mis.Mod != latestMod.InternalName) || !mis.Resources.Any()))
-                            {
-                                mis.Mod = latestMod.InternalName;
-                                Trace.TraceInformation("Autoregistrator Updating mission {0} {1} to {2}", mis.MissionID, mis.Name, mis.Mod);
-                                var mu = new MissionUpdater();
-
-                                mis.Revision++;
-
-                                mu.UpdateMission(db, mis, UnitSyncer.Paths, UnitSyncer.Engine);
-                                db.SaveChanges();
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceError("Autoregistrator Failed to update mission {0}: {1}", mis.MissionID, ex);
-                    }
-                }
         }
 
         private void SynchronizeMapsFromSpringFiles()

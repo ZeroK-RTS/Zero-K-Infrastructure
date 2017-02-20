@@ -68,6 +68,9 @@ namespace ZeroKWeb.Controllers
             return View("EnginesIndex", model);
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         private string UploadEngine(string uploadName, List<string> uploadPlatforms)
         {
             for (var i = 0; i < EnginePlatforms.Length; i++)
@@ -126,6 +129,7 @@ namespace ZeroKWeb.Controllers
             if (new ContentService().GetEngineList(null).Contains(engine))
             {
                 MiscVar.DefaultEngine = engine;
+                Global.SteamDepotGenerator.RunAll();
                 Global.Server.SetEngine(engine);
             }
             return RedirectToAction("Index");

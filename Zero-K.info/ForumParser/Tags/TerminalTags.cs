@@ -72,11 +72,11 @@ namespace ZeroKWeb.ForumParser
             if (Text.IsValidLink())
             {
                 // implicit linkification and imagifination
-                if (Text.EndsWith(".png") || Text.EndsWith(".gif") || Text.EndsWith(".jpg") || Text.EndsWith(".jpeg")) context.AppendFormat("<a href=\"{0}\" target=\"_blank\" ><img src=\"{0}\" max-width=\"100%\" height=\"auto\"/></a>", Text);
+                if ((Text.EndsWith(".png") || Text.EndsWith(".gif") || Text.EndsWith(".jpg") || Text.EndsWith(".jpeg")) && Text.IsValidLinkOrRelativeUrl(true)) context.AppendFormat("<a href=\"{0}\" target=\"_blank\" ><img src=\"{0}\" max-width=\"100%\" height=\"auto\"/></a>", Text);
                 // YouTube auto-embed
                 else if (Text.StartsWith("http://www.youtube.com/watch") || Text.StartsWith("https://www.youtube.com/watch"))
                 {
-                    var m = Regex.Match(Text,"v=([^&]+)");
+                    var m = Regex.Match(Text.Replace("autoplay=1", ""),"v=([^&]+)");
                     if (m.Success)
                     {
                         context.AppendFormat("<iframe width=\"420\" height=\"315\" src=\"https://www.youtube.com/embed/{0}\" frameborder=\"0\" hd=\"1\" allowfullscreen=\"1\"></iframe>", m.Groups[1].Value);
@@ -84,7 +84,7 @@ namespace ZeroKWeb.ForumParser
                 }
                 else if (Text.StartsWith("http://youtu.be/") || Text.StartsWith("https://youtu.be/"))
                 {
-                    var m = Regex.Match(Text, @"\.be/([^&?]+)");
+                    var m = Regex.Match(Text.Replace("autoplay=1", ""), @"\.be/([^&?]+)");
                     if (m.Success)
                     {
                         context.AppendFormat("<iframe width=\"420\" height=\"315\" src=\"https://www.youtube.com/embed/{0}\" frameborder=\"0\" hd=\"1\" allowfullscreen=\"1\"></iframe>", m.Groups[1].Value);

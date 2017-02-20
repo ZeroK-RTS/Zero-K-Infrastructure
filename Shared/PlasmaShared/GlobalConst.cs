@@ -114,6 +114,9 @@ namespace ZkData
         public static string BaseImageUrl;
         public static string BaseSiteUrl;
 
+        public static string DefaultZkTag => Mode == ModeType.Live ? "zk:stable" : "zk:test";
+        public static string DefaultChobbyTag => Mode == ModeType.Live ? "zkmenu:stable" : "zkmenu:test";
+
 
         public const string InfologPathFormat = @"C:\projekty\springie_spring\infolog_{0}.txt";
         public static string SiteDiskPath = @"c:\projekty\zero-k.info\www";

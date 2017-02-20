@@ -95,7 +95,7 @@ namespace ZkLobbyServer
 
         private Channel GetChannel(string name)
         {
-            return discord.GetServer(serverID).AllChannels.FirstOrDefault(x => x.Name == name);
+            return discord?.GetServer(serverID)?.AllChannels.FirstOrDefault(x => x.Name == name);
         }
     }
 }

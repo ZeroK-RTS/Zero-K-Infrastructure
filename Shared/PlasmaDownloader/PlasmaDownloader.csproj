@@ -59,6 +59,8 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="ChobbylaHelper.cs" />
+    <Compile Include="ConfigVersions.cs" />
     <Compile Include="Download.cs" />
     <Compile Include="EngineDownload.cs" />
     <Compile Include="Packages\BitArray.cs" />

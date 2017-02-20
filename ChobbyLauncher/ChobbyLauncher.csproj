@@ -87,7 +87,6 @@
     <Compile Include="BitmapButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ConfigVersions.cs" />
     <Compile Include="CrashReportHelper.cs" />
     <Compile Include="SteamClient.cs" />
     <Compile Include="TextToSpeechLinux.cs" />
@@ -101,16 +100,6 @@
     </Compile>
     <Compile Include="ChobbylaLocalListener.cs" />
     <Compile Include="ChobbyLoopbackMessages.cs" />
-    <Compile Include="DarkHive.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DarkHive.resx</DependentUpon>
-    </Compile>
-    <Compile Include="DarkHiveHover.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DarkHiveHover.resx</DependentUpon>
-    </Compile>
     <Compile Include="FrameBorderRenderer.cs" />
     <Compile Include="TextToSpeechBase.cs" />
     <Compile Include="Program.cs" />
@@ -123,14 +112,6 @@
     <Compile Include="WindowsApi.cs" />
     <EmbeddedResource Include="ChobbylaForm.resx">
       <DependentUpon>ChobbylaForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DarkHive.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>DarkHive.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DarkHiveHover.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>DarkHiveHover.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -168,13 +149,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\exit.png" />
+    <Content Include="Resources\Shraka\E.png" />
+    <Content Include="Resources\Shraka\N.png" />
+    <Content Include="Resources\Shraka\NE.png" />
+    <Content Include="Resources\Shraka\NW.png" />
+    <Content Include="Resources\Shraka\S.png" />
+    <Content Include="Resources\Shraka\SE.png" />
+    <Content Include="Resources\Shraka\SW.png" />
+    <Content Include="Resources\Shraka\W.png" />
     <Content Include="ZK_logo_128.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\DarkHiveHover\" />
-    <Folder Include="Resources\DarkHive\" />
-    <Folder Include="Resources\Shraka\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>

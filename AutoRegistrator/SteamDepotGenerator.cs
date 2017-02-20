@@ -22,7 +22,28 @@ namespace AutoRegistrator
             this.siteBase = siteBase;
         }
 
-        public void Generate() {
+        private object locker =new object();
+
+        public void RunAll()
+        {
+            if (GlobalConst.Mode != ModeType.Local)
+            {
+                lock (locker)
+                {
+                    Trace.TraceInformation("SteamDepot gnerating steam package");
+                    Generate();
+                    RunBuild();
+                    PublishBuild();
+                }
+            } else Trace.TraceWarning("SteamDepot generating steam package SKIPPED in debug mode");
+        }
+
+        public class DummyProgress: IChobbylaProgress
+        {
+            public Download Download { get; set; }
+            public string Status { get; set; }
+        }
+        private void Generate() {
             Utils.CheckPath(targetFolder);
             var paths = new SpringPaths(targetFolder, false, false);
             try
@@ -31,17 +52,28 @@ namespace AutoRegistrator
                 Directory.Delete(Path.Combine(paths.WritableDirectory, "packages"), true);
                 Directory.CreateDirectory(Path.Combine(paths.WritableDirectory, "packages"));
             } catch { }
-            
 
+            var prog = new DummyProgress();
             var downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
-            downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine)?.WaitHandle.WaitOne(); //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
-            downloader.GetResource(DownloadType.RAPID, "zk:stable")?.WaitHandle.WaitOne();
-            downloader.GetResource(DownloadType.RAPID, "zkmenu:stable")?.WaitHandle.WaitOne();
 
-            CopyResources(siteBase, paths, GetResourceList(downloader.PackageDownloader.GetByTag("zk:stable").InternalName, downloader.PackageDownloader.GetByTag("zkmenu:stable").InternalName), downloader);
+            if (!downloader.DownloadFile(DownloadType.ENGINE, MiscVar.DefaultEngine,prog).Result) throw new ApplicationException("SteamDepot engine download failed: " + prog.Status);
+
+            if (!downloader.DownloadFile(DownloadType.RAPID, GlobalConst.DefaultZkTag, prog).Result) throw new ApplicationException("SteamDepot zk download failed: " + prog.Status);
+
+            if (!downloader.DownloadFile(DownloadType.RAPID, GlobalConst.DefaultChobbyTag, prog).Result) throw new ApplicationException("SteamDepot chobby download failed: " + prog.Status);
+
+            File.WriteAllText(Path.Combine(paths.WritableDirectory,"steam_engine.txt"), MiscVar.DefaultEngine);
+            File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_chobby.txt"), downloader.PackageDownloader.GetByTag(GlobalConst.DefaultChobbyTag).InternalName);
+
+
+            CopyResources(siteBase, paths, GetResourceList(), downloader);
+
+            if (!downloader.UpdateMissions(prog).Result) throw new ApplicationException("SteamDepot Error updating missions! " + prog.Status);
+
 
             CopyLobbyProgram();
             CopyExtraImages();
+
         }
 
         private void CopyLobbyProgram() {
@@ -104,8 +136,8 @@ namespace AutoRegistrator
 
                     if (fileName == null)
                     {
-
-                        Trace.TraceError("Cannot find map file: {0}", res.InternalName);
+                        var prog = new DummyProgress();
+                        if (!downloader.DownloadFile(DownloadType.MAP, res.InternalName, prog).Result) Trace.TraceError("Cannot find map file: {0}", res.InternalName);
                         continue;
                     }
 
@@ -121,7 +153,7 @@ namespace AutoRegistrator
             
 
             var db = new ZkDataContext();
-            var resources = db.Resources.Where(x => extraNames.Contains(x.InternalName) || (x.TypeID == ResourceType.Map && x.MapSupportLevel>=MapSupportLevel.MatchMaker) || (x.MissionID != null && !x.Mission.IsDeleted && x.Mission.FeaturedOrder !=null )).ToList();
+            var resources = db.Resources.Where(x => extraNames.Contains(x.InternalName) || (x.TypeID == ResourceType.Map && x.MapSupportLevel>=MapSupportLevel.MatchMaker)).ToList();
             foreach (var res in resources.ToList())
             {
                 foreach (var requestedDependency in res.ResourceDependencies.Select(x => x.NeedsInternalName))
@@ -136,14 +168,29 @@ namespace AutoRegistrator
             return resources;
         }
 
-        public void RunBuild() {
+        private void RunBuild() {
             Trace.TraceInformation("Starting SteamDepot build");
-            var pi = new ProcessStartInfo(Path.Combine(targetFolder,"..","builder","steamcmd.exe"), string.Format(@"+login zkbuild {0} +run_app_build_http ..\scripts\app_zk_stable.vdf +quit", new Secrets().GetSteamBuildPassword()));
+            var pi = new ProcessStartInfo(Path.Combine(targetFolder,"..","builder","steamcmd.exe"), string.Format(@"+login zkbuild {0} +run_app_build_http ..\scripts\{1}.vdf +quit", new Secrets().GetSteamBuildPassword(), GlobalConst.Mode == ModeType.Live ? "app_zk_stable" : "app_zk_test"));
             pi.UseShellExecute = false;
             pi.WindowStyle = ProcessWindowStyle.Hidden;
             var runp = Process.Start(pi);
             runp.WaitForExit();
             Trace.TraceInformation("SteamDepot build completed!");
+        }
+
+        private void PublishBuild()
+        {
+            try
+            {
+                var steamWebApi = new SteamWebApi();
+                var build = steamWebApi.GetAppBuilds().First(x=>x.Description.ToLower().Contains(GlobalConst.Mode == ModeType.Live?"stable":"test"));
+                steamWebApi.SetAppBuildLive(build.BuildID, GlobalConst.Mode == ModeType.Live ? "public" : "test");
+                Trace.TraceInformation("SteamDepot build {0} set live", build.BuildID);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("SteamDepot error publishing steam branch: {0}", ex);
+            }
         }
     }
 }

@@ -8,8 +8,11 @@ using Newtonsoft.Json;
 using PlasmaDownloader.Packages;
 using ZkData;
 
-namespace ChobbyLauncher
+namespace PlasmaDownloader
 {
+    /// <summary>
+    /// System to deploy/update configs and other files from chobby rapid
+    /// </summary>
     public class ConfigVersions
     {
         public class ConfigVersionEntry
@@ -31,14 +34,14 @@ namespace ChobbyLauncher
         private const string FilePathInChobby = "LuaMenu/configs/gameConfig/zk/defaultSettings/configversions.json";
         private const string FilePathOnDisk = "configversions.json";
 
-        public static ConfigVersions LoadFromChobby(PackageDownloader.Version ver, SpringPaths paths)
+        private static ConfigVersions LoadFromChobby(PackageDownloader.Version ver, SpringPaths paths)
         {
             var ms = ver?.ReadFile(paths, FilePathInChobby);
             if (ms != null) return TryDeserialize(Encoding.UTF8.GetString(ms.ToArray()));
             return null;
         }
 
-        public static ConfigVersions LoadFromDisk(SpringPaths paths)
+        private static ConfigVersions LoadFromDisk(SpringPaths paths)
         {
             var filePath = Path.Combine(paths.WritableDirectory, FilePathOnDisk);
             if (File.Exists(filePath))

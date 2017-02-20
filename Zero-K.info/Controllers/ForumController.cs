@@ -67,6 +67,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Thread", new { id = threadID, page });
         }
 
+        [HttpPost]
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult DeleteAllPostsByUser(int accountID, string accountName) {
             var db = new ZkDataContext();
@@ -226,6 +227,7 @@ namespace ZeroKWeb.Controllers
         /// <param name="threadID">The <see cref="ForumThread" /> ID, if not a new thread</param>
         /// <param name="categoryID">The ID of the subforum the <see cref="ForumPost" /> is/will be in</param>
         /// <param name="forumPostID">The <see cref="ForumPost" /> ID, if editing an existing post</param>
+        [HttpPost]
         [Auth]
         [ValidateInput(false)]
         public ActionResult SubmitPost(
