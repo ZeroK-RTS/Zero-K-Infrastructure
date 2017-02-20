@@ -174,7 +174,7 @@ namespace ZeroKWeb.Controllers
             var clan = db.Clans.Single(c => clanID == c.ClanID);
             var kickee_acc = db.Accounts.Single(x => x.AccountID == accountID);
             if (kickee_acc == null) return Content("No such person");
-            if (kickee_acc.Clan != clan.ClanID) return Content("Target not in your clan");
+            if (kickee_acc.Clan != clan) return Content("Target not in your clan");
             if (!(Global.Account.HasClanRight(x => x.RightKickPeople) && clan.ClanID == Global.Account.ClanID)) return Content("Unauthorized");
             PerformLeaveClan(accountID);
             db.SaveChanges();
