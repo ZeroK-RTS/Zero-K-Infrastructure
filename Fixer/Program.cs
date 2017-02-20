@@ -348,14 +348,15 @@ namespace Fixer
 
         static void Main(string[] args)
         {
-            var s = new DateTime(2014, 1, 1);
-            var e = new DateTime(2015, 1, 1);
             GlobalConst.Mode = ModeType.Live;
             
             var db = new ZkDataContext();
-            //db.SpringBattlePlayers.Where(x => x.SpringBattle.StartTime >= s && x.SpringBattle.StartTime <= e).Select(x => x.AccountID).Distinct().Count();
 
-            var t2 = db.Accounts.Where(x => x.FirstLogin >= s && x.FirstLogin <= e).Count();
+            //var mmBats = db.SpringBattles.Where(x => x.IsMatchMaker);
+            //var suc = mmBats.Count(x => x.Duration > 300 && x.PlayerCount > 2);
+            //var fail = mmBats.Count(x => x.Duration < 300);
+            var weeke= db.SpringBattles.Count(x => x.StartTime >= new DateTime(2017, 2, 19) && x.StartTime <= new DateTime(2017, 2, 20) && x.Duration > 300 && x.PlayerCount > 2);
+
             //Console.WriteLine(test);
 
 

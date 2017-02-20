@@ -306,7 +306,10 @@ namespace ZeroKWeb.SpringieInterface
                                 //res.Message = "Add some bot (computer player) as your enemy. Use button on bottom left. Chicken or CAI is recommended.";
                                 var map = db.Resources.FirstOrDefault(x => x.InternalName == context.Map);
                                 if (map?.MapIsChickens == true) res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "default_Chicken", BotAI = "Chicken: Normal", });
-                                else res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "cai", BotAI = "CAI", });
+                                else
+                                {
+                                    for (int i =1; i<= res.Players.Count; i++) res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "cai" + i, BotAI = "CAI", });
+                                }
                                 res.Message = "Adding computer AI player for you";
                             }
                         }
