@@ -73,38 +73,6 @@ namespace ZkLobbyServer
                 });
 
 
-                /*                possibleQueues.Add(new MatchMakerSetup.Queue()
-                                {
-                                    Name = "3v3",
-                                    Description = "Play 3v3 with players of similar skill.",
-                                    MinSize = 6,
-                                    MaxSize = 6,
-                                    EloCutOffExponent = 0.965,
-                                    Game = server.Game,
-                                    Mode = AutohostMode.Teams,
-                                    Maps =
-                                        db.Resources.Where(
-                                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams != false) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true)
-                                            .Select(x => x.InternalName)
-                                            .ToList()
-                                });
-
-                                possibleQueues.Add(new MatchMakerSetup.Queue()
-                                {
-                                    Name = "2v2",
-                                    Description = "Play 2v2 with players of similar skill.",
-                                    MinSize = 4,
-                                    MaxSize = 4,
-                                    EloCutOffExponent = 0.97,
-                                    Game = server.Game,
-                                    Mode = AutohostMode.Teams,
-                                    Maps =
-                                        db.Resources.Where(
-                                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams != false) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true)
-                                            .Select(x => x.InternalName)
-                                            .ToList()
-                                });*/
-
                 possibleQueues.Add(new MatchMakerSetup.Queue()
                 {
                     Name = "1v1",
