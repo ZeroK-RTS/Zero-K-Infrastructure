@@ -93,6 +93,7 @@ namespace ZkLobbyServer
                     MinSize = 2,
                     MaxSize = 8,
                     EloCutOffExponent = 0.96,
+                    MaxPartySize = 4,
                     Game = server.Game,
                     Maps =
                         db.Resources.Where(
