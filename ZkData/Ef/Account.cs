@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -128,6 +128,7 @@ namespace ZkData
         public double PwWarpUsed { get; set; }
         public double PwAttackPoints { get; set; }
         public bool HasVpnException { get; set; }
+        public bool HasDevStatus { get; set; }
         public int Kudos { get; set; }
         public int ForumTotalUpvotes { get; set; }
         public int ForumTotalDownvotes { get; set; }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
@@ -91,6 +91,13 @@ namespace ZeroKWeb.SpringieInterface
                         var elo = user.EffectiveMmElo;
                         userParams["elo"] = Math.Round(elo).ToString(); 
                         userParams["skill_order"] = ((context.IsMatchMakerGame ? user.CompetitiveRank : user.CasualRank) ?? int.MaxValue).ToString(); // send order of skills (For lists). Note this should be improved by sendng normalized list instead of ranks
+
+
+                        var contribs = user.ContributionsByAccountID.ToList();
+                        var total = 0;
+                        foreach (var contrib in contribs) total += contrib.KudosValue;
+                        userParams["donations"] = total.ToString();
+                        userParams["has_dev_status"] = user.HasDevStatus ? "1" : "0";
 
                         userParams["avatar"] = user.Avatar;
                         userParams["admin"] = user.IsZeroKAdmin ? "1" : "0";
