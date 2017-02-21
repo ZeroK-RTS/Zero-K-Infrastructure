@@ -44,7 +44,7 @@ namespace ZkLobbyServer
                     for (var i = qt.MaxSize; i >= qt.MaxSize - (qt.MaxSize - qt.MinSize) * qtMaxWait; i--)
                         if (qt.Mode == AutohostMode.GameChickens || i % 2 == 0)
                         {
-                            if (Party == null || qt.Mode == AutohostMode.GameChickens || Party.UserNames.Count <= i / 2) ret.Add(new ProposedBattle(i, this, qt, qt.EloCutOffExponent, allPlayers));
+                            if (Party == null || (qt.Mode == AutohostMode.GameChickens && Party.UserNames.Count<=i) || Party.UserNames.Count <= i / 2) ret.Add(new ProposedBattle(i, this, qt, qt.EloCutOffExponent, allPlayers));
                         }
                 }
                 return ret;
