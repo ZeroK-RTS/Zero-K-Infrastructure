@@ -20,19 +20,17 @@ namespace ZkData
             linux64
         }
 
-        public SpringPaths(string writableFolder, bool useMultipleDataFolders, bool allow64BitWindows)
+        public SpringPaths(string writableFolder, bool useMultipleDataFolders, bool allow64BitWindows, PlatformType? forcePlatform = null)
         {
-            Platform = PlatformType.win32;
-
-            if (Environment.Is64BitOperatingSystem && Allow64BitWindows) Platform = PlatformType.win64;
-
-            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            if (forcePlatform != null) Platform = forcePlatform.Value;
+            else
             {
-                Platform = Environment.Is64BitOperatingSystem ? PlatformType.linux64 : PlatformType.linux32;
-                //var response = Utils.ExecuteConsoleCommand("uname", "-m") ?? "";
-                //Platform = response.Contains("64") ? PlatformType.linux64 : PlatformType.linux32;
+                
+                Platform = PlatformType.win32;
+                if (Environment.Is64BitOperatingSystem && allow64BitWindows) Platform = PlatformType.win64;
+                if (Environment.OSVersion.Platform == PlatformID.Unix) Platform = Environment.Is64BitOperatingSystem ? PlatformType.linux64 : PlatformType.linux32;
             }
-            
+
             WritableDirectory = writableFolder;
 
             dataDirectories = useMultipleDataFolders ? new List<string> { GetMySpringDocPath() } : new List<string>() { };
@@ -61,7 +59,6 @@ namespace ZkData
         public string WritableDirectory { get; private set; }
 
         public bool UseSafeMode { get; set; }
-        public bool Allow64BitWindows { get; private set; }
         public PlatformType Platform { get; private set; }
 
         public string GetDedicatedServerPath(string engine)
@@ -112,7 +109,7 @@ namespace ZkData
         {
             try
             {
-                return Utils.MakePath(WritableDirectory, "engine", version);
+                return Utils.MakePath(WritableDirectory, "engine", Platform.ToString(), version);
             }
             catch (Exception ex)
             {
@@ -123,7 +120,7 @@ namespace ZkData
         public List<string> GetEngineList()
         {
             return
-                new DirectoryInfo(Utils.MakePath(WritableDirectory, "engine")).GetDirectories().Select(x => x.Name).Where(HasEngineVersion).ToList();
+                new DirectoryInfo(Utils.MakePath(WritableDirectory, "engine", Platform.ToString())).GetDirectories().Select(x => x.Name).Where(HasEngineVersion).ToList();
         }
 
 

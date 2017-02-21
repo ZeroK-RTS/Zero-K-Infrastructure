@@ -54,10 +54,17 @@ namespace AutoRegistrator
             } catch { }
 
             var prog = new DummyProgress();
+
+            foreach (var plat in Enum.GetValues(typeof(SpringPaths.PlatformType)).Cast<SpringPaths.PlatformType>())
+            {
+                var sp = new SpringPaths(targetFolder, false, false, plat);
+                var dn = new PlasmaDownloader.PlasmaDownloader(null, sp);
+                
+                if (!dn.DownloadFile(DownloadType.ENGINE, MiscVar.DefaultEngine, prog).Result) throw new ApplicationException("SteamDepot engine download failed: " + prog.Status);
+            }
+
             var downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
-
-            if (!downloader.DownloadFile(DownloadType.ENGINE, MiscVar.DefaultEngine,prog).Result) throw new ApplicationException("SteamDepot engine download failed: " + prog.Status);
-
+            
             if (!downloader.DownloadFile(DownloadType.RAPID, GlobalConst.DefaultZkTag, prog).Result) throw new ApplicationException("SteamDepot zk download failed: " + prog.Status);
 
             if (!downloader.DownloadFile(DownloadType.RAPID, GlobalConst.DefaultChobbyTag, prog).Result) throw new ApplicationException("SteamDepot chobby download failed: " + prog.Status);
