@@ -85,7 +85,7 @@ namespace ZkLobbyServer
         {
             try
             {
-                if (msg.Server.Id == serverID) if (!msg.User.IsBot) OnChatRelayMessage?.Invoke(this, new ChatRelayMessage(msg.Channel.Name, GetName(msg.User), msg.Message.Text, source, false));
+                if (msg.Server.Id == serverID) if (!msg.User.IsBot && msg.User.Name != GlobalConst.NightwatchName) OnChatRelayMessage?.Invoke(this, new ChatRelayMessage(msg.Channel.Name, GetName(msg.User), msg.Message.Text, source, false));
             }
             catch (Exception ex)
             {
