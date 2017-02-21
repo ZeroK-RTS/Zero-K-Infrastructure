@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ZkLobbyServer
@@ -84,7 +85,9 @@ namespace ZkLobbyServer
                     //Trace.TraceError("MM: cannot add {0}, does not want same game type", other.Name);
                     return false;
                 }
+
                 var width = owner.EloWidth * widthMultiplier;
+                
 
                 if (other.Party != null)
                 {
@@ -140,16 +143,25 @@ namespace ZkLobbyServer
             {
                 if (party.UserNames.Count + Players.Count > Size) return false;
 
-                var existingPartySizes =
-                    Players.Where(x => x.Party != null).GroupBy(x => x.Party).Select(x => x.Key.UserNames.Count).OrderByDescending(x => x).ToList();
-                var maxTeamSize = Size / 2;
-                var t1 = 0;
-                var t2 = 0;
-                foreach (var psize in existingPartySizes)
-                    if (t1 + psize <= maxTeamSize) t1 += psize;
-                    else if (t2 + psize <= maxTeamSize) t2 += psize;
+                if (QueueType.Mode != AutohostMode.GameChickens)
+                {
 
-                if ((party.UserNames.Count + t1 > maxTeamSize) && (party.UserNames.Count + t2 > maxTeamSize)) return false; // cannot fit new party to still balance
+                    var existingPartySizes =
+                        Players.Where(x => x.Party != null)
+                            .GroupBy(x => x.Party)
+                            .Select(x => x.Key.UserNames.Count)
+                            .OrderByDescending(x => x)
+                            .ToList();
+                    var maxTeamSize = Size/2;
+                    var t1 = 0;
+                    var t2 = 0;
+                    foreach (var psize in existingPartySizes)
+                        if (t1 + psize <= maxTeamSize) t1 += psize;
+                        else if (t2 + psize <= maxTeamSize) t2 += psize;
+
+                    if ((party.UserNames.Count + t1 > maxTeamSize) && (party.UserNames.Count + t2 > maxTeamSize)) return false; // cannot fit new party to still balance
+                }
+
                 return true;
             }
         }
