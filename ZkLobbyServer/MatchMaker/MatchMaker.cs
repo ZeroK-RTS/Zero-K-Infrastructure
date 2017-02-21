@@ -275,6 +275,7 @@ namespace ZkLobbyServer
             if (bannedPlayers.TryGetValue(name, out banEntry) && (DateTime.UtcNow.Subtract(banEntry.BannedTime).TotalSeconds < banEntry.BanSeconds)) return (int)(banEntry.BanSeconds - DateTime.UtcNow.Subtract(banEntry.BannedTime).TotalSeconds);
 
             // remove old
+            if (banEntry != null && DateTime.UtcNow.Subtract(banEntry.BannedTime).TotalSeconds > BanReset) bannedPlayers.TryRemove(name, out banEntry);
 
             return null;
         }
