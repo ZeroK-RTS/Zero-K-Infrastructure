@@ -45,13 +45,16 @@ namespace AutoRegistrator
         }
         private void Generate() {
             Utils.CheckPath(targetFolder);
-            var paths = new SpringPaths(targetFolder, false, false);
             try
             {
-                //Directory.Delete(Path.Combine(paths.WritableDirectory, "pool"), true);
-                Directory.Delete(Path.Combine(paths.WritableDirectory, "packages"), true);
-                Directory.CreateDirectory(Path.Combine(paths.WritableDirectory, "packages"));
+                Directory.Delete(Path.Combine(targetFolder, "pool"), true);
+                Directory.Delete(Path.Combine(targetFolder, "packages"), true);
+                Directory.Delete(Path.Combine(targetFolder, "engine"), true);
+                Directory.Delete(Path.Combine(targetFolder, "games"), true);
+                Directory.Delete(Path.Combine(targetFolder, "rapid"), true);
             } catch { }
+
+            var paths = new SpringPaths(targetFolder, false, false);
 
             var prog = new DummyProgress();
 
@@ -80,6 +83,13 @@ namespace AutoRegistrator
 
             CopyLobbyProgram();
             CopyExtraImages();
+
+            Utils.CheckPath(targetFolder);
+            try
+            {
+                Directory.Delete(Path.Combine(targetFolder, "cache"), true);
+            }
+            catch { }
 
         }
 
