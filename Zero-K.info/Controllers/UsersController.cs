@@ -435,6 +435,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(Global.AccountID);
+            if (string.IsNullOrEmpty(acc.PasswordBcrypt)) return Content("Your account is password-less, use steam");
             if (AuthServiceClient.VerifyAccountPlain(acc.Name, oldPassword) == null)
             {
                 Trace.TraceWarning("Failed password check for {0} on attempted password change", Global.Account.Name);
@@ -443,7 +444,6 @@ namespace ZeroKWeb.Controllers
             } 
             if (newPassword != newPassword2) return Content("New passwords do not match");
             if (string.IsNullOrWhiteSpace(newPassword)) return Content("New password cannot be blank");
-            if (string.IsNullOrEmpty(oldPassword)) return Content("Your account is password-less, use steam");
             acc.SetPasswordPlain(newPassword);
             db.SaveChanges();
             //return Content("Old: " + oldPassword + "; new: " + newPassword);
