@@ -52,6 +52,7 @@ namespace AutoRegistrator
                 Directory.Delete(Path.Combine(targetFolder, "engine"), true);
                 Directory.Delete(Path.Combine(targetFolder, "games"), true);
                 Directory.Delete(Path.Combine(targetFolder, "rapid"), true);
+                File.Delete(Path.Combine(targetFolder,"missions","missions.json"));
             } catch { }
 
             var paths = new SpringPaths(targetFolder, false, false);
