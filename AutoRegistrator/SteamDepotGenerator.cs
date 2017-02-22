@@ -86,12 +86,6 @@ namespace AutoRegistrator
             CopyExtraImages();
 
             Utils.CheckPath(targetFolder);
-            try
-            {
-                Directory.Delete(Path.Combine(targetFolder, "cache"), true);
-            }
-            catch { }
-
         }
 
         private void CopyLobbyProgram() {
