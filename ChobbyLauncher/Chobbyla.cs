@@ -82,15 +82,20 @@ namespace ChobbyLauncher
 
 
                         ver = downloader.PackageDownloader.GetByTag(chobbyTag);
-                        if (ver == null)
-                        {
-                            Status = "Rapid package appears to be corrupted, please clear the folder";
-                            return false;
-                        }
-
                         internalName = ver.InternalName;
                     }
-                    else internalName = GetSteamChobby();
+                    else
+                    {
+                        internalName = GetSteamChobby();
+                        ver = downloader.PackageDownloader.GetByInternalName(internalName);
+                    }
+
+                    if (ver == null)
+                    {
+                        Status = "Rapid package appears to be corrupted, please clear the folder";
+                        return false;
+                    }
+
                 }
                 else internalName = "Chobby $VERSION";
 
