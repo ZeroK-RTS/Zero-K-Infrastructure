@@ -30,7 +30,7 @@
                                 {
                                     @:&nbsp
                         string question = String.Format("Expelling {0} will make them sad. Are you sure you want to proceed?", a.Name);
-                                    @Html.ActionLink("kick", "KickPlayerFromClan", new { clanID = c.ClanID, accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) })
+                                    @Html.ActionLink("kick", "KickPlayerFromClan", new { accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) })
                                 }
                             </td>
                         </tr>

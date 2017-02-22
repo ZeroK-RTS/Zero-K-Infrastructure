@@ -168,15 +168,20 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult KickPlayerFromClan(int clanID, int accountID)
+        public ActionResult KickPlayerFromClan(int accountID)
         {
             var db = new ZkDataContext();
-            var clan = db.Clans.Single(c => clanID == c.ClanID);
-            if (!(Global.Account.HasClanRight(x => x.RightKickPeople) && clan.ClanID == Global.Account.ClanID)) return Content("Unauthorized");
+
+            var kickee_acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+            if (kickee_acc == null) return Content("No such person");
+
+            if (kickee_acc.ClanID != Global.Account.ClanID) return Content("Target not in your clan");
+            if (!Global.Account.HasClanRight(x => x.RightKickPeople)) return Content("You have no kicking rights"); // unclanned people get handled here
+
             PerformLeaveClan(accountID);
             db.SaveChanges();
             PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator());
-            return RedirectToAction("Detail", new { id = clanID });
+            return RedirectToAction("Detail", new { id = Global.Account.ClanID });
         }
 
         /// <summary>

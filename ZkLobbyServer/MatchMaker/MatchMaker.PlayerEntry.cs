@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LobbyClient;
+using PlasmaShared;
 
 namespace ZkLobbyServer
 {
-    public partial class MatchMaker {
+    public partial class MatchMaker
+    {
         public class PlayerEntry
         {
             public bool InvitedToPlay;
@@ -13,9 +15,9 @@ namespace ZkLobbyServer
 
             public int EloWidth => (int)(100.0 + WaitRatio * 300.0);
             public int MinConsideredElo => LobbyUser.EffectiveMmElo;
-            public int MaxConsideredElo => (int)(LobbyUser.EffectiveMmElo + (LobbyUser.RawMmElo - LobbyUser.EffectiveMmElo)*WaitRatio);
+            public int MaxConsideredElo => (int)(LobbyUser.EffectiveMmElo + (LobbyUser.RawMmElo - LobbyUser.EffectiveMmElo) * WaitRatio);
 
-            public double WaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds/60.0));
+            public double WaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / 60.0));
 
             public DateTime JoinedTime { get; private set; } = DateTime.UtcNow;
             public User LobbyUser { get; private set; }
@@ -34,11 +36,17 @@ namespace ZkLobbyServer
             public List<ProposedBattle> GenerateWantedBattles(List<PlayerEntry> allPlayers)
             {
                 var ret = new List<ProposedBattle>();
-                foreach (var qt in QueueTypes) for (var i = qt.MaxSize; i >= qt.MinSize; i--)
-                    if (i%2 == 0)
-                    {
-                        if (Party == null || Party.UserNames.Count <= i/2) ret.Add(new ProposedBattle(i, this, qt, qt.EloCutOffExponent, allPlayers));
-                    }
+                foreach (var qt in QueueTypes)
+                {
+                    // variable game size, allow smaller games the longer the wait of longest waiting player
+                    var qtMaxWait = qt.MaxSize > qt.MinSize ? allPlayers.Where(x => x.QueueTypes.Contains(qt)).Max(x => x.WaitRatio) : 0; 
+
+                    for (var i = qt.MaxSize; i >= qt.MaxSize - (qt.MaxSize - qt.MinSize) * qtMaxWait; i--)
+                        if (qt.Mode == AutohostMode.GameChickens || i % 2 == 0)
+                        {
+                            if (Party == null || (qt.Mode == AutohostMode.GameChickens && Party.UserNames.Count<=i) || Party.UserNames.Count <= i / 2) ret.Add(new ProposedBattle(i, this, qt, qt.EloCutOffExponent, allPlayers));
+                        }
+                }
                 return ret;
             }
 

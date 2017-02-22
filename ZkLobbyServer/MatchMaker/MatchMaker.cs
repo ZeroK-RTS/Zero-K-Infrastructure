@@ -15,9 +15,18 @@ namespace ZkLobbyServer
     {
         private const int TimerSeconds = 30;
 
-        private const int BanSeconds = 30;
+        private const int BanSecondsIncrease = 30;
+        private const int BanSecondsMax = 300;
+        private const int BanReset = 600;
 
-        private ConcurrentDictionary<string, DateTime> bannedPlayers = new ConcurrentDictionary<string, DateTime>();
+        public class BanInfo
+        {
+            public DateTime BannedTime;
+            public int BanCounter;
+            public int BanSeconds;
+        }
+
+        private ConcurrentDictionary<string, BanInfo> bannedPlayers = new ConcurrentDictionary<string, BanInfo>();
         private Dictionary<string, int> ingameCounts = new Dictionary<string, int>();
 
         private List<ProposedBattle> invitationBattles = new List<ProposedBattle>();
@@ -72,38 +81,6 @@ namespace ZkLobbyServer
             .ToList()
                 });
 
-
-                /*                possibleQueues.Add(new MatchMakerSetup.Queue()
-                                {
-                                    Name = "3v3",
-                                    Description = "Play 3v3 with players of similar skill.",
-                                    MinSize = 6,
-                                    MaxSize = 6,
-                                    EloCutOffExponent = 0.965,
-                                    Game = server.Game,
-                                    Mode = AutohostMode.Teams,
-                                    Maps =
-                                        db.Resources.Where(
-                                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams != false) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true)
-                                            .Select(x => x.InternalName)
-                                            .ToList()
-                                });
-
-                                possibleQueues.Add(new MatchMakerSetup.Queue()
-                                {
-                                    Name = "2v2",
-                                    Description = "Play 2v2 with players of similar skill.",
-                                    MinSize = 4,
-                                    MaxSize = 4,
-                                    EloCutOffExponent = 0.97,
-                                    Game = server.Game,
-                                    Mode = AutohostMode.Teams,
-                                    Maps =
-                                        db.Resources.Where(
-                                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams != false) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true)
-                                            .Select(x => x.InternalName)
-                                            .ToList()
-                                });*/
 
                 possibleQueues.Add(new MatchMakerSetup.Queue()
                 {
@@ -294,9 +271,12 @@ namespace ZkLobbyServer
 
         private int? BannedSeconds(string name)
         {
-            DateTime banEntry;
-            if (bannedPlayers.TryGetValue(name, out banEntry) && (DateTime.UtcNow.Subtract(banEntry).TotalSeconds < BanSeconds)) return (int)(BanSeconds - DateTime.UtcNow.Subtract(banEntry).TotalSeconds);
-            else bannedPlayers.TryRemove(name, out banEntry);
+            BanInfo banEntry;
+            if (bannedPlayers.TryGetValue(name, out banEntry) && (DateTime.UtcNow.Subtract(banEntry.BannedTime).TotalSeconds < banEntry.BanSeconds)) return (int)(banEntry.BanSeconds - DateTime.UtcNow.Subtract(banEntry.BannedTime).TotalSeconds);
+
+            // remove old
+            if (banEntry != null && DateTime.UtcNow.Subtract(banEntry.BannedTime).TotalSeconds > BanReset) bannedPlayers.TryRemove(name, out banEntry);
+
             return null;
         }
 
@@ -383,7 +363,15 @@ namespace ZkLobbyServer
             PlayerEntry entry;
             if (players.TryRemove(name, out entry))
             {
-                if (entry.InvitedToPlay) bannedPlayers[entry.Name] = DateTime.UtcNow; // was invited but he is gone now (whatever reason), ban!
+                if (entry.InvitedToPlay)
+                {
+                    // was invited but he is gone now (whatever reason), ban!
+                    var banEntry = bannedPlayers.GetOrAdd(name, (n) => new BanInfo());
+                    banEntry.BannedTime = DateTime.UtcNow;
+                    banEntry.BanCounter++;
+                    banEntry.BanSeconds = Math.Min(BanSecondsMax, BanSecondsIncrease*banEntry.BanCounter);
+                }
+          
 
                 ConnectedUser conUser;
                 if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null)) if (entry?.InvitedToPlay == true) await conUser.SendCommand(new AreYouReadyResult() { AreYouBanned = true, IsBattleStarting = false, });

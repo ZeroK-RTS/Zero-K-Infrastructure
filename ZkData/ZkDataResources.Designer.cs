@@ -59,20 +59,5 @@ namespace ZkData {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 	Abbreviations	List of used abbreviations in Zero-K.   Manual Site	Aug 16	skasski@gmx.at	 
-        ///	GameplayDosAndDonts	Things to do (or not do) in a game   Site Manual	Aug 8	skasski@gmx.at	 
-        ///	Download	Download and installation instructions   Site Download Install compiling	Jun 30	testozor	 
-        ///	SpecificUnitGuides	Includes all Ground units &amp; Striders.   Site Manual	May 16	authorityblade	 
-        ///	Overdrive	Manual entry for the overdrive system.   Manual	May 16	skasski@gmx.at	 
-        ///	WindgenfarmGuide		May 8	skasski@gmx.at	 
-        /// [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string wikiIndex {
-            get {
-                return ResourceManager.GetString("wikiIndex", resourceCulture);
-            }
-        }
     }
 }

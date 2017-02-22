@@ -17,8 +17,8 @@ namespace ZeroKWeb.ForumParser
 
                 if (context.NextChar != '=')
                 {
-                    if (context.PreviousTag == null || context.PreviousTag.Value is SpaceTag || context.PreviousTag.Value is NewLineTag ||
-                        context.NextChar == null || context.NextChar == ' ' || context.NextChar == '\r' || context.NextChar == '\n') return true;
+                    if ((context.PreviousTag == null || context.PreviousTag.Value is SpaceTag || context.PreviousTag.Value is NewLineTag) && 
+                     (context.NextChar == null || context.NextChar == ' ' || context.NextChar == '\r' || context.NextChar == '\n')) return true;
                     return false;
                 }
 

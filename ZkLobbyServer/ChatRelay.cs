@@ -58,7 +58,7 @@ namespace ZkLobbyServer
 
                 if (zkTopic != lastZkTopic)
                 {
-                    foreach (var ch in channels) discordZkRelay?.SetTopic(ch, zkTopic);
+                    foreach (var ch in channels) discordZkRelay?.SetTopic(ch, $"{server.Channels.Get(ch)?.Topic?.Text} {zkTopic}");
                 }
                 lastZkTopic = zkTopic;
             }

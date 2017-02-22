@@ -14,58 +14,6 @@ namespace ZkData.Migrations
             AutomaticMigrationsEnabled = false;
         }
 
-        public static void ImportWiki() {
-            var wikiNodes = ZkDataResources.wikiIndex.Lines().Select(x => x.Trim().Split(' ', '\t')[0]).ToList();
-            foreach (var node in wikiNodes)
-            {
-                using (var wc = new WebClient())
-                {
-                    using (var db = new ZkDataContext())
-                    {
-                        var str = wc.DownloadString($"https://zero-k.googlecode.com/svn/wiki/{node}.wiki");
-
-                        var thread = db.ForumThreads.FirstOrDefault(x => x.WikiKey == node);
-                        if (thread == null)
-                        {
-                            thread = new ForumThread();
-                            thread.ForumCategory = db.ForumCategories.First(x => x.ForumMode == ForumMode.Wiki);
-                            db.ForumThreads.Add(thread);
-                        }
-
-                        var improtOwner = db.Accounts.First(); // note .. meh...
-
-                        var title = node;
-                        str = Regex.Replace(
-                            str,
-                            "\\#summary ([^\n\r]+)",
-                            me =>
-                            {
-                                title = me.Groups[1].Value;
-                                return "";
-                            });
-
-                        str = Regex.Replace(str, "\\#labels ([^\n\r]+)", "");
-
-                        thread.Title = title.Substring(0, Math.Min(300, title.Length));
-
-                        thread.WikiKey = node;
-                        thread.AccountByCreatedAccountID = improtOwner;
-
-                        var post = thread.ForumPosts.OrderBy(x => x.ForumPostID).FirstOrDefault();
-                        if (post == null)
-                        {
-                            post = new ForumPost();
-                            thread.ForumPosts.Add(post);
-                        }
-                        post.Text = str;
-                        post.Account = improtOwner;
-
-                        db.SaveChanges();
-                    }
-                }
-            }
-        }
-
         protected override void Seed(ZkDataContext db) {
             //  This method will be called after migrating to the latest version.
             if (GlobalConst.Mode == ModeType.Local)
@@ -157,8 +105,6 @@ namespace ZkData.Migrations
 
             db.SaveChanges();
 
-
-            if (db.ForumThreads.Count(x => !Equals(x.WikiKey, null)) == 0) ImportWiki();
         }
     }
 }
