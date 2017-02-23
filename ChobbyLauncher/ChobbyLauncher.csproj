@@ -89,6 +89,13 @@
     </Compile>
     <Compile Include="CrashReportHelper.cs" />
     <Compile Include="SteamClient.cs" />
+    <Compile Include="STUN\Client\STUN_Client.cs" />
+    <Compile Include="STUN\Client\STUN_NetType.cs" />
+    <Compile Include="STUN\Client\STUN_Result.cs" />
+    <Compile Include="STUN\Message\STUN_Message.cs" />
+    <Compile Include="STUN\Message\STUN_MessageType.cs" />
+    <Compile Include="STUN\Message\STUN_t_ChangeRequest.cs" />
+    <Compile Include="STUN\Message\STUN_t_ErrorCode.cs" />
     <Compile Include="TextToSpeechLinux.cs" />
     <Compile Include="TextToSpeechWindows.cs" />
     <Compile Include="Chobbyla.cs" />
