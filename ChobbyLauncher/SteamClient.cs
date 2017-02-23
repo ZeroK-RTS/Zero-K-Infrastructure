@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
+using System.Text;
 using System.Threading;
+using PlasmaShared;
 using Steamworks;
 using ZkData;
 using Timer = System.Timers.Timer;
@@ -27,6 +29,9 @@ namespace ChobbyLauncher
 
         private Callback<GameLobbyJoinRequested_t> lobbyJoinRequestCallback;
         private Callback<GameOverlayActivated_t> overlayActivatedCallback;
+        private Callback<P2PSessionRequest_t> newConnectionCallback;
+
+        CommandJsonSerializer steamCommandSerializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<SteamP2PMessageAttribute>());
 
         private int tickCounter;
         private Timer timer;
@@ -39,9 +44,11 @@ namespace ChobbyLauncher
         public ulong? LobbyID { get; set; }
 
         public string MySteamNameSanitized { get; set; }
+        public ChobbylaLocalListener Listener { get; set; }
 
         private bool isDisposed;
 
+        
         public void Dispose()
         {
             try
@@ -168,6 +175,8 @@ namespace ChobbyLauncher
 
             lobbyJoinRequestCallback = new Callback<GameLobbyJoinRequested_t>(t => { JoinFriendRequest(t.m_steamIDFriend.m_SteamID); });
             overlayActivatedCallback = new Callback<GameOverlayActivated_t>(t => { OverlayActivated(t.m_bActive != 0); });
+            newConnectionCallback = Callback<P2PSessionRequest_t>.Create(t => SteamNetworking.AcceptP2PSessionWithUser(t.m_steamIDRemote));
+            MySteamNameSanitized = Utils.StripInvalidLobbyNameChars(GetMyName());
 
             var ev = new EventWaitHandle(false, EventResetMode.ManualReset);
             AuthToken = GetClientAuthTokenHex();
@@ -177,9 +186,39 @@ namespace ChobbyLauncher
                 ev.Set();
             });
             Friends = GetFriends();
-            MySteamNameSanitized = Utils.StripInvalidLobbyNameChars(GetMyName());
             ev.WaitOne(2000);
             SteamOnline?.Invoke();
+        }
+
+
+
+        /// <summary>
+        /// Sends steam message to target client
+        /// </summary>
+        /// <param name="targetClientID"></param>
+        /// <param name="message"></param>
+        private void SendSteamMessage(ulong targetClientID, object message)
+        {
+            if (IsOnline)
+            {
+                var cmd = steamCommandSerializer.SerializeToLine(message);
+                var data = Encoding.UTF8.GetBytes(cmd);
+                SteamNetworking.SendP2PPacket(new CSteamID(targetClientID), data, (uint)data.Length, EP2PSend.k_EP2PSendReliable);
+            }
+        }
+
+        public void SendSteamNotifyJoin(ulong toClientID)
+        {
+            SendSteamMessage(toClientID, new SteamP2PNotifyJoin() { JoinerName = MySteamNameSanitized });
+        }
+
+
+        private void ProcessMessage(ulong remoteUser, SteamP2PNotifyJoin cmd)
+        {
+            if (Listener != null)
+            {
+                Listener.SendCommand(new SteamFriendJoinedMe() {FriendSteamID = remoteUser.ToString(), FriendSteamName = cmd.JoinerName});
+            }
         }
 
 
@@ -199,7 +238,30 @@ namespace ChobbyLauncher
                             OnSteamOnline();
                         }
                 if (IsOnline)
-                    if (SteamAPI.IsSteamRunning()) SteamAPI.RunCallbacks();
+                    if (SteamAPI.IsSteamRunning())
+                    {
+                        SteamAPI.RunCallbacks();
+
+                        uint networkSize;
+                        while (SteamNetworking.IsP2PPacketAvailable(out networkSize))
+                        {
+                            try
+                            {
+                                var buf = new byte[networkSize];
+                                CSteamID remoteUser;
+                                if (SteamNetworking.ReadP2PPacket(buf, networkSize, out networkSize, out remoteUser))
+                                {
+                                    var str = Encoding.UTF8.GetString(buf);
+                                    dynamic cmd = steamCommandSerializer.DeserializeLine(str);
+                                    ProcessMessage(remoteUser.m_SteamID, cmd);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Trace.TraceError("Error processing steam P2P message: {0}",ex);
+                            }
+                        }
+                    }
                     else
                     {
                         IsOnline = false;

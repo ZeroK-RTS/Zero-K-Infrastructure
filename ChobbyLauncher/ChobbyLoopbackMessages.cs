@@ -101,6 +101,14 @@ namespace ChobbyLauncher
         public string FriendSteamID { get; set; }
     }
 
+    [ChobbyMessage]
+    public class SteamFriendJoinedMe
+    {
+        public string FriendSteamID { get; set; }
+        public string FriendSteamName { get; set; }
+    }
+
+
 
     [ChobbyMessage]
     public class SteamOpenOverlaySection
