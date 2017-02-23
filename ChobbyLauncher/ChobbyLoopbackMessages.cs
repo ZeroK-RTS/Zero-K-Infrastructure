@@ -125,7 +125,6 @@ namespace ChobbyLauncher
         public string Game { get; set; }
 
         public string Engine { get; set; }
-        public string ScriptPassword { get; set; }
     }
 
     [ChobbyMessage]
