@@ -75,6 +75,7 @@ namespace ZkData
 
                 var firstUnreadPost = ForumPosts.FirstOrDefault(x => x.Created > (lastRead.LastRead ?? DateTime.MinValue));
                 if (firstUnreadPost != null) unreadPostID = firstUnreadPost.ForumPostID;
+                else unreadPostID = ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumPostID).FirstOrDefault();
 
                 lastRead.LastRead = time;
                 if (isPost) lastRead.LastPosted = time;
