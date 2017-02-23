@@ -299,6 +299,14 @@
     <Content Include="Img\artifact_3.png" />
     <Content Include="Img\artifact_4.png" />
     <Content Include="Img\artifact_empty.png" />
+    <Content Include="Img\badges\dev_adv.png" />
+    <Content Include="Img\badges\dev_content.png" />
+    <Content Include="Img\badges\dev_game.png" />
+    <Content Include="Img\badges\donator_0.png" />
+    <Content Include="Img\badges\donator_1.png" />
+    <Content Include="Img\badges\donator_2.png" />
+    <Content Include="Img\badges\player_elo.png" />
+    <Content Include="Img\badges\player_level.png" />
     <Content Include="Img\bar_blue.png" />
     <Content Include="Img\bar_blue_poll.png" />
     <Content Include="Img\bar_red.png" />

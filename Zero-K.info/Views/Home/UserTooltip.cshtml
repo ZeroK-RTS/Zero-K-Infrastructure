@@ -7,10 +7,9 @@
 <span style="float:left;">@Html.AccountAvatar(u)</span><b>@Html.PrintAccount(u)</b><br/>
 <b>First Login:</b> @u.FirstLogin.ToAgoString(), <b>Last Login:</b> @u.LastLogin.ToAgoString()<br />
 <b>Rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")
-@if (Model.ContributionsByAccountID.Count() > 0)
-{
-    @Html.PrintContributorStar(u, true); <br />
-}
+<br />
+@Html.PrintBadges(u)
+<br/>
 <b>Level:</b> @u.Level<br/>
 <br/>
 @foreach (var entry in Model.AccountRolesByAccountID) {

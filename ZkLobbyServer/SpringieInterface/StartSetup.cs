@@ -93,6 +93,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams["skill_order"] = ((context.IsMatchMakerGame ? user.CompetitiveRank : user.CasualRank) ?? int.MaxValue).ToString(); // send order of skills (For lists). Note this should be improved by sendng normalized list instead of ranks
 
                         userParams["avatar"] = user.Avatar;
+                        userParams["badges"] = string.Join(",", user.GetBadges());
                         userParams["admin"] = user.AdminLevel >= AdminLevel.Moderator ? "1" : "0";
                         if (p.PartyID.HasValue) userParams["PartyID"] = p.PartyID.ToString();
 

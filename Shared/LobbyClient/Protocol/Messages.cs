@@ -297,6 +297,7 @@ namespace LobbyClient
         public string Name { get; set; }
         public int RawMmElo { get; set; }
         public string SteamID { get; set; }
+        public List<string> Badges { get; set; }
 
         public User Clone()
         {
@@ -329,6 +330,7 @@ namespace LobbyClient
             DisplayName = u.DisplayName;
             CompetitiveRank = u.CompetitiveRank;
             BattleID = u.BattleID;
+            Badges = u.Badges;
         }
     }
 

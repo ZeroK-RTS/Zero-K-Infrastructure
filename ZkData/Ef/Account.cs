@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -602,6 +603,42 @@ namespace ZkData
         public static bool IsValidLobbyName(string name)
         {
             return !string.IsNullOrEmpty(name) && name.Length <= GlobalConst.MaxUsernameLength && name.All(Utils.ValidLobbyNameCharacter);
+        }
+
+
+        public enum BadgeType
+        {
+            [Description("Exceedingly high level")]
+            player_level = 0,
+            [Description("Top 3 player")]
+            player_elo = 1,
+            [Description("Bronze donator")]
+            donator_0 = 2,
+            [Description("Silver donator")]
+            donator_1 = 3,
+            [Description("Gold donator")]
+            donator_2 = 4,
+            [Description("Content contributor")]
+            dev_content =  5,
+            [Description("Game developer")]
+            dev_game = 6,
+            [Description("Lead developer")]
+            dev_adv = 7
+        }
+
+        public List<BadgeType> GetBadges()
+        {
+            var ret = new List<BadgeType>();
+            if (Level > 200) ret.Add(BadgeType.player_level); 
+            if (CompetitiveRank <= 3 || CasualRank <= 3) ret.Add(BadgeType.player_elo); // top 3 best
+            var total = Kudos> 0 ? ContributionsByAccountID.Sum(x => (int?)x.KudosValue) : 0;
+            if (total > GlobalConst.KudosForGold) ret.Add(BadgeType.donator_2);
+            else if (total > GlobalConst.KudosForSilver) ret.Add(BadgeType.donator_1);
+            else if (total > GlobalConst.KudosForBronze) ret.Add(BadgeType.donator_0);
+            if (DevLevel >= DevLevel.CoreDeveloper) ret.Add(BadgeType.dev_adv);
+            if (DevLevel >= DevLevel.Developer) ret.Add(BadgeType.dev_game);
+            if (DevLevel >= DevLevel.Contributor) ret.Add(BadgeType.dev_content);
+            return ret.OrderByDescending(x => (int)x).ToList();
         }
     }
 }

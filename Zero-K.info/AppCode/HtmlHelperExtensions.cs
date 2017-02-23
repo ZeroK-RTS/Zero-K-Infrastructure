@@ -287,22 +287,12 @@ namespace System.Web.Mvc
             }
         }
 
-        /// <summary>
-        /// Returns an image of the user's contributor star (bronze/silver/gold), if any. Links to the Contributions page.
-        /// </summary>
-        public static MvcHtmlString PrintContributorStar(this HtmlHelper helper, Account account, bool large = false) {
-            var star = "";
-            var contribs = account.ContributionsByAccountID.ToList();
-            var total = 0;
-            foreach (var contrib in contribs) total += contrib.KudosValue;
-            if (total >= GlobalConst.KudosForDiamond) star = "star_diamond";
-            else if (total >= GlobalConst.KudosForGold) star = "star_yellow";
-            else if (total >= GlobalConst.KudosForSilver) star = "star_white";
-            else if (total >= GlobalConst.KudosForBronze) star = "star_brown";
-            else return new MvcHtmlString("");
 
-            if (large == false) star = star + "_small";
-            return new MvcHtmlString(string.Format("<a href='/Contributions' target='_blank' ><img src='/img/stars/{0}.png' alt='Donator star'/></a>", star));
+        public static MvcHtmlString PrintBadges(this HtmlHelper helper, Account account, int? maxHeight = null)
+        {
+            if (account == null) return new MvcHtmlString("");
+            var badges = account.GetBadges();
+            return new MvcHtmlString(string.Join("\n", badges.Select(x=>$"<img src='/img/badges/{x}.png' nicetitle='{x.Description()}' {(maxHeight != null ? $"style='height:{maxHeight}px;'":"")}/>")));
         }
 
         /// <summary>

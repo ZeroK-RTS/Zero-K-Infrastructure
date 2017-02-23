@@ -102,12 +102,9 @@
                             <a nicetitle='Link to this post' href="@linkURL">
                                 <img src="/img/link.png" height="22"/>
                             </a>
-                            @if (p.Account.Kudos > 0)
-                            {
-                                <br/>
-                                @Html.PrintContributorStar(p.Account)
-                                <br/>
-                            }
+                            <br/>
+                            @Html.PrintBadges(p.Account)
+                            <br/>
                         </td>
                     </tr>
 
