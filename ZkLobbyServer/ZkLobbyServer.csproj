@@ -103,6 +103,7 @@
     <Compile Include="autohost\Commands\CmdEngine.cs" />
     <Compile Include="autohost\Commands\CmdExit.cs" />
     <Compile Include="autohost\Commands\CmdForce.cs" />
+    <Compile Include="autohost\Commands\CmdForceGame.cs" />
     <Compile Include="autohost\Commands\CmdHelp.cs" />
     <Compile Include="autohost\Commands\CmdHostsay.cs" />
     <Compile Include="autohost\Commands\CmdKick.cs" />
