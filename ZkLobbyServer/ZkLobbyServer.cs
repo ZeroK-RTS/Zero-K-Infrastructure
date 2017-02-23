@@ -375,7 +375,7 @@ namespace ZkLobbyServer
             foreach (var usr in ConnectedUsers.Values) if (usr != null) foreach (var con in usr.Connections.Keys) con?.RequestClose();
 
 
-            foreach (var bat in Battles.Values) if (bat != null && bat.spring.IsRunning) bat.spring.ExitGame();
+            //foreach (var bat in Battles.Values) if (bat != null && bat.spring.IsRunning) bat.spring.ExitGame();
         }
 
         public virtual async Task OnSaid(Say say)
