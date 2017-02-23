@@ -29,11 +29,8 @@ namespace ChobbyLauncher
     }
 
     [SteamP2PMessage]
-    public class SteamP2PDirectConnectRequest
+    public class SteamP2PDirectConnectRequest:SteamConnectSpring
     {
-        public string IP { get; set; }
-        public int Port { get; set; }
-        public string ScriptPassword { get; set; }
     }
 
 }

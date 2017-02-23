@@ -111,6 +111,55 @@ namespace ChobbyLauncher
 
 
     [ChobbyMessage]
+    public class SteamHostGameRequest
+    {
+        public class SteamHostPlayerEntry
+        {
+            public string SteamID { get; set; }
+            public string Name { get; set; }
+            public string ScriptPassword { get; set; }
+        }
+        
+        public List<SteamHostPlayerEntry> Players { get; set; } = new List<SteamHostPlayerEntry>();
+        public string Map { get; set; }
+        public string Game { get; set; }
+
+        public string Engine { get; set; }
+        public string ScriptPassword { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class SteamHostGameFailed
+    {
+        public string CausedBySteamID { get; set; }
+        public string Reason { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class SteamHostGameSuccess
+    {
+        public int HostPort { get; set; }
+    
+    }
+
+    [ChobbyMessage]
+    public class SteamConnectSpring
+    {
+        public string HostIP { get; set; }
+        public int HostPort { get; set; }
+        public int ClientPort { get; set; }
+
+        public string Name { get; set; }
+        public string ScriptPassword { get; set; }
+        public string Map { get; set; }
+        public string Game { get; set; }
+
+        public string Engine { get; set; }
+    }
+
+
+
+    [ChobbyMessage]
     public class SteamOpenOverlaySection
     {
         public SteamClientHelper.OverlayOption? Option { get; set; } = SteamClientHelper.OverlayOption.LobbyInvite;

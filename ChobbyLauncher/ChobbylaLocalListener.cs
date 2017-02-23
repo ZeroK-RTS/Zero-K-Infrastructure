@@ -299,6 +299,7 @@ namespace ChobbyLauncher
             }
         }
 
+
         private async Task ReportDownloadResult(DownloadFile args, Download down)
         {
             try
@@ -309,6 +310,18 @@ namespace ChobbyLauncher
             catch (Exception ex)
             {
                 Trace.TraceError("Error processing download result for file {0} : {1}", args.Name, ex);
+            }
+        }
+
+        public async Task Process(SteamHostGameRequest args)
+        {
+            try
+            {
+                steam.PrepareToHostP2PGame(args);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error processing steamhostgamerequest: {0}",ex);
             }
         }
 
@@ -335,6 +348,7 @@ namespace ChobbyLauncher
             }
         }
 
+        
         private async Task SendSteamOnline()
         {
             if (steam.IsOnline)
