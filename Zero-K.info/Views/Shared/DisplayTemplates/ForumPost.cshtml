@@ -71,7 +71,8 @@
                 <table>
                     <tr>
                         <td>
-                            @Html.AccountAvatar(p.Account)
+                            @Html.AccountAvatar(p.Account)<br/>
+                            @Html.PrintBadges(p.Account, 64)
                         </td>
                         <td valign='top'>
                             @Html.PrintAccount(p.Account)<br/>
@@ -102,9 +103,6 @@
                             <a nicetitle='Link to this post' href="@linkURL">
                                 <img src="/img/link.png" height="22"/>
                             </a>
-                            <br/>
-                            @Html.PrintBadges(p.Account, 64)
-                            <br/>
                         </td>
                     </tr>
 

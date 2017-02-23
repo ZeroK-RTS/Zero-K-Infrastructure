@@ -288,11 +288,11 @@ namespace System.Web.Mvc
         }
 
 
-        public static MvcHtmlString PrintBadges(this HtmlHelper helper, Account account, int? maxHeight = null)
+        public static MvcHtmlString PrintBadges(this HtmlHelper helper, Account account, int? maxWidth = null)
         {
             if (account == null) return new MvcHtmlString("");
             var badges = account.GetBadges();
-            return new MvcHtmlString(string.Join("\n", badges.Select(x=>$"<img src='/img/badges/{x}.png' nicetitle='{x.Description()}' {(maxHeight != null ? $"style='height:{maxHeight}px;'":"")}/>")));
+            return new MvcHtmlString(string.Join("\n", badges.Select(x=>$"<img src='/img/badges/{x}.png' nicetitle='{x.Description()}' {(maxWidth != null ? $"style='width:{maxWidth}px;'":"")}/>")));
         }
 
         /// <summary>

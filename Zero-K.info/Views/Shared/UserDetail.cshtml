@@ -116,9 +116,8 @@
 
             <p class="fleft">
 
-                <span style="float: left;">@Html.AccountAvatar(Model)</span>
+                <span style="float: left;">@Html.AccountAvatar(Model)<br/>@Html.PrintBadges(Model, 64)</span>
                 <h2>@Html.PrintAccount(Model, true, true)</h2>
-                @Html.PrintBadges(Model)
                 <br/>
                 @foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.BanExpires > DateTime.UtcNow))
                 {
