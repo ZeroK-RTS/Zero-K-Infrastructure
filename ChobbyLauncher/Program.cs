@@ -20,6 +20,9 @@ namespace ChobbyLauncher
         [STAThread]
         private static void Main(string[] args)
         {
+            //var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            //socket.Bind(new IPEndPoint(IPAddress.Any, 0));
+            //var result = STUN_Client.Query("stun.l.google.com", 19302, socket);
 
             Trace.Listeners.Add(new ConsoleTraceListener());
 
