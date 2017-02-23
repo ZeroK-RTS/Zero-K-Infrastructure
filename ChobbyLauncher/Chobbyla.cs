@@ -99,7 +99,19 @@ namespace ChobbyLauncher
                 }
                 else internalName = "Chobby $VERSION";
 
+
                 engine = engine ?? GetSteamEngine() ?? QueryDefaultEngine() ?? ExtractEngineFromLua(ver) ?? GlobalConst.DefaultEngineOverride;
+
+                try
+                {
+                    GameAnalytics.ConfigureGameEngineVersion(internalName);
+                    GameAnalytics.ConfigureSdkGameEngineVersion(engine);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Game analytics failed to configure version: {0}", ex);
+                }
+
 
                 if (!IsSteam)
                 {
