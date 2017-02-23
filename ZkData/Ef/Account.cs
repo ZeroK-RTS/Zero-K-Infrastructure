@@ -632,12 +632,15 @@ namespace ZkData
             if (Level > 200) ret.Add(BadgeType.player_level); 
             if (CompetitiveRank <= 3 || CasualRank <= 3) ret.Add(BadgeType.player_elo); // top 3 best
             var total = Kudos> 0 ? ContributionsByAccountID.Sum(x => (int?)x.KudosValue) : 0;
-            if (total > GlobalConst.KudosForGold) ret.Add(BadgeType.donator_2);
-            else if (total > GlobalConst.KudosForSilver) ret.Add(BadgeType.donator_1);
-            else if (total > GlobalConst.KudosForBronze) ret.Add(BadgeType.donator_0);
+
+            if (total >= GlobalConst.KudosForGold) ret.Add(BadgeType.donator_2);
+            else if (total >= GlobalConst.KudosForSilver) ret.Add(BadgeType.donator_1);
+            else if (total >= GlobalConst.KudosForBronze) ret.Add(BadgeType.donator_0);
+
             if (DevLevel >= DevLevel.CoreDeveloper) ret.Add(BadgeType.dev_adv);
-            if (DevLevel >= DevLevel.Developer) ret.Add(BadgeType.dev_game);
-            if (DevLevel >= DevLevel.Contributor) ret.Add(BadgeType.dev_content);
+            else if (DevLevel >= DevLevel.Developer) ret.Add(BadgeType.dev_game);
+            else if (DevLevel >= DevLevel.Contributor) ret.Add(BadgeType.dev_content);
+
             return ret.OrderByDescending(x => (int)x).ToList();
         }
     }
