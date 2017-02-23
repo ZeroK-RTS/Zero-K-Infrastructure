@@ -338,6 +338,7 @@ namespace ChobbyLauncher
             if (IsOnline)
             {
                 var cmd = steamCommandSerializer.SerializeToLine(message);
+                Trace.TraceInformation("SteamP2P >> {0} : {1}", targetClientID, cmd);
                 var data = Encoding.UTF8.GetBytes(cmd);
                 SteamNetworking.SendP2PPacket(new CSteamID(targetClientID), data, (uint)data.Length, EP2PSend.k_EP2PSendReliable);
             }
@@ -395,6 +396,7 @@ namespace ChobbyLauncher
                                 if (SteamNetworking.ReadP2PPacket(buf, networkSize, out networkSize, out remoteUser))
                                 {
                                     var str = Encoding.UTF8.GetString(buf);
+                                    Trace.TraceInformation("SteamP2P << {0} : {1}", remoteUser.m_SteamID, str);
                                     dynamic cmd = steamCommandSerializer.DeserializeLine(str);
                                     ProcessMessage(remoteUser.m_SteamID, cmd);
                                 }
