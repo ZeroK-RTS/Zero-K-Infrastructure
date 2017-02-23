@@ -292,7 +292,7 @@ namespace System.Web.Mvc
         {
             if (account == null) return new MvcHtmlString("");
             var badges = account.GetBadges();
-            return new MvcHtmlString(string.Join("\n", badges.Select(x=>$"<img src='/img/badges/{x}.png' nicetitle='{x.Description()}' {(maxWidth != null ? $"style='width:{maxWidth}px;'":"")}/>")));
+            return new MvcHtmlString(string.Join("\n", badges.Select(x=>$"<img src='/img/badges/{x}.png' nicetitle='{x.Description()}' {(maxWidth != null ? $"style='width:{maxWidth}px;'":"")}/><br/>")));
         }
 
         /// <summary>
