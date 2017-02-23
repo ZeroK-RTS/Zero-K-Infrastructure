@@ -25,7 +25,7 @@
         }
     }
 
-    @if (Global.IsZeroKAdmin && p.ExpireBy == null)
+    @if (Global.IsModerator && p.ExpireBy == null)
     {   
 
             <br/>
@@ -34,7 +34,7 @@
     </div>
 }
 
-@if (Global.IsZeroKAdmin)
+@if (Global.IsModerator)
 {
     <div class="admin">
         <h3>Add a new poll</h3>

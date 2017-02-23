@@ -134,7 +134,7 @@ namespace ZkLobbyServer
             user.RawMmElo = (int)acc.EloMm;
             user.CompetitiveRank = acc.CompetitiveRank;
             user.SteamID = acc.SteamID?.ToString();
-            user.IsAdmin = acc.IsZeroKAdmin;
+            user.IsAdmin = acc.AdminLevel >= AdminLevel.Moderator;
             user.IsBot = acc.IsBot;
             user.Country = acc.Country;
             user.Faction = acc.Faction != null ? acc.Faction.Shortcut : null;

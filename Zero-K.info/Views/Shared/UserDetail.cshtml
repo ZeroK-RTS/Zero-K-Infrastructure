@@ -5,7 +5,7 @@
     if (!Model.IsDeleted) { Page.Title = Model.Name + " user page"; }
     else
     {
-        if (Global.IsZeroKAdmin) { Page.Title = Model.Name + " (hidden) user page"; }
+        if (Global.IsModerator) { Page.Title = Model.Name + " (hidden) user page"; }
         else { Page.Title = "Redacted user account"; }
     }
 }
@@ -57,7 +57,7 @@
         <h3>Account redacted</h3>
         <br />
     }
-    @if (!Model.IsDeleted || Global.IsZeroKAdmin)
+    @if (!Model.IsDeleted || Global.IsModerator)
     {
         <div id="usr_info" class="">
 
@@ -132,7 +132,7 @@
                 {
                     <a href="@Html.PrintSpringLink("chat/user/" + Model.Name)"> Chat with @Model.Name in the lobby </a><br />
                 }
-                @if (Model.IsZeroKAdmin)
+                @if (Model.AdminLevel >= AdminLevel.Moderator)
                 {
                     <div>
                         <b> @Model.Name </b> is a <b>Zero-K Administrator</b>
@@ -176,7 +176,7 @@
     }
 
 
-    @if (Global.IsZeroKAdmin)
+    @if (Global.IsModerator)
     {
         <div class="admin">
             @Html.ActionLink("Admin user", "AdminUserDetail", "Users", new { id = Model.AccountID }, null)
@@ -188,7 +188,7 @@
         @Html.IncludeWiki("NewbieIntro")
     }
 
-    @if (!Model.IsDeleted || Global.IsZeroKAdmin)
+    @if (!Model.IsDeleted || Global.IsModerator)
     {
         <div id="usr_trophies" class="">
             <h3>Trophies:</h3>
@@ -318,7 +318,7 @@
         </div>
     }
 
-    @if (Global.IsZeroKAdmin && Global.AccountID == Model.AccountID)
+    @if (Global.IsModerator && Global.AccountID == Model.AccountID)
     {
         <div class="admin">
             <h3>Admin extras</h3>

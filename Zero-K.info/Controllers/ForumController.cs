@@ -45,7 +45,7 @@ namespace ZeroKWeb.Controllers
             db.SaveChanges();
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult DeletePost(int? postID) {
             var db = new ZkDataContext();
             var post = db.ForumPosts.Single(x => x.ForumPostID == postID);
@@ -68,7 +68,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult DeleteAllPostsByUser(int accountID, string accountName) {
             var db = new ZkDataContext();
             var acc = db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
@@ -471,7 +471,7 @@ namespace ZeroKWeb.Controllers
             return View(res);
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult AdminThread(int threadID, int newcat, bool isPinned, bool isLocked) {
             var db = new ZkDataContext();
             var thread = db.ForumThreads.Single(x => x.ForumThreadID == threadID);

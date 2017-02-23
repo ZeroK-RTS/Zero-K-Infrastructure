@@ -8,12 +8,12 @@ using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
-    [Auth(Role = AuthRole.ZkAdmin)]
+    [Auth(Role = AdminLevel.Moderator)]
     public class AdminController : Controller
     {
         
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.SuperAdmin)]
         public ActionResult ResetDb()
         {
             if (GlobalConst.Mode == ModeType.Test)
@@ -32,7 +32,7 @@ namespace ZeroKWeb.Controllers
             else return Content("Not allowed!");
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.SuperAdmin)]
         public ActionResult TraceLogs(TraceLogIndex model)
         {
             model = model ?? new TraceLogIndex();

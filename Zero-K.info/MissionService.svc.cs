@@ -27,7 +27,7 @@ namespace ZeroKWeb
 					System.Threading.Thread.Sleep(new Random().Next(2000));
 					throw new ApplicationException("Cannot verify user account");
 				}
-				if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("You cannot delete a mission from an other user");
+				if (acc.AccountID != prev.AccountID && acc.AdminLevel < AdminLevel.Moderator) throw new ApplicationException("You cannot delete a mission from an other user");
 				prev.IsDeleted = true;
 				db.SaveChanges();
 			}
@@ -48,7 +48,7 @@ namespace ZeroKWeb
 					throw new ApplicationException("Cannot verify user account");
 				}
 
-				if (acc.AccountID != prev.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("You cannot undelete a mission from an other user");
+				if (acc.AccountID != prev.AccountID && acc.AdminLevel < AdminLevel.Moderator) throw new ApplicationException("You cannot undelete a mission from an other user");
 				prev.IsDeleted = false;
 				db.SaveChanges();
 			}
@@ -114,7 +114,7 @@ namespace ZeroKWeb
 
 			if (prev != null)
 			{
-				if (prev.AccountID != acc.AccountID && !acc.IsZeroKAdmin) throw new ApplicationException("Invalid author or password");
+				if (prev.AccountID != acc.AccountID && acc.AdminLevel < AdminLevel.Moderator) throw new ApplicationException("Invalid author or password");
 				prev.Description = mission.Description;
 				prev.DescriptionStory = mission.DescriptionStory;
 				prev.Mod = mission.Mod;

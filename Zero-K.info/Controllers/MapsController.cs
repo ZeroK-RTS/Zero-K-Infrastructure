@@ -234,7 +234,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Tag(int id,
                                 int? sea,
                                 int? hills,

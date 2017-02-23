@@ -156,7 +156,7 @@
       </tr>
     </table>
  </div>
-  @if (Global.IsZeroKAdmin) {
+  @if (Global.IsModerator) {
     <form action='@Url.Action("ChangeFeaturedOrder", "Missions", new { id = m.MissionID })' method="post">
     Featured order: @Html.TextBox("featuredOrder", Model.Mission.FeaturedOrder)
     @if (m.IsScriptMission) {

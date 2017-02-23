@@ -30,21 +30,21 @@ namespace ZkData.Migrations
                 if (!db.MiscVars.Any(y => y.VarName == "GlacierSecretKey"))
                     db.MiscVars.AddOrUpdate(x => x.VarName, new MiscVar { VarName = "GlacierSecretKey", VarValue = "secret" });
 
-                
+             
                 db.Accounts.AddOrUpdate(
                     x => x.Name,
                     new Account
                     {
                         Name = "test",
                         NewPasswordPlain = "test",
-                        IsZeroKAdmin = true,
+                        AdminLevel = AdminLevel.SuperAdmin,
                         Kudos = 200,
                         Elo = 1700,
                         Level = 50,
                         EloWeight = 2,
                         Country = "cz"
                     },
-                    new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, IsZeroKAdmin = true });
+                    new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, AdminLevel = AdminLevel.SuperAdmin});
 
             }
 

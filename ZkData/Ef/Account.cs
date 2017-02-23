@@ -74,6 +74,13 @@ namespace ZkData
             Events = new HashSet<Event>();
 
         }
+        
+        public DevLevel DevLevel { get; set; }
+        [StringLength(200)]
+        public string SpecialNote { get; set; }
+
+        public AdminLevel AdminLevel { get; set; }
+
 
         public int AccountID { get; set; }
         [Required]
@@ -107,7 +114,6 @@ namespace ZkData
         [StringLength(5)]
         public string Country { get; set; }
         public int MissionRunCount { get; set; }
-        public bool IsZeroKAdmin { get; set; }
         public int Xp { get; set; }
         public int Level { get; set; }
         public int? ClanID { get; set; }
@@ -584,8 +590,8 @@ namespace ZkData
 
         public bool IsInRole(string role)
         {
-            if (role == "ZkAdmin") return IsZeroKAdmin;
-            else return String.IsNullOrEmpty(role);
+            var al = (AdminLevel)Enum.Parse(typeof(AdminLevel), role);
+            return AdminLevel >= al;
         }
 
         [NotMapped]

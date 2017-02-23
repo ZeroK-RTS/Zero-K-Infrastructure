@@ -7,7 +7,7 @@
     @{Html.RenderPartial("ForumPath", Model.Path);}
 </div>
 
-@if (Global.IsZeroKAdmin)
+@if (Global.IsModerator)
 {
     var db = new ZkData.ZkDataContext();
     <div class="admin">

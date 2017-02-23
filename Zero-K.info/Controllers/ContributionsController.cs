@@ -45,7 +45,7 @@ namespace ZeroKWeb.Controllers
         /// <summary>
         /// Manually input a contribution
         /// </summary>
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult AddContribution(int accountID,int kudos, string item, string currency, double gross, double grossEur, double netEur, string email, string comment, bool isSpring, DateTime date) {
             using (var db = new ZkDataContext()) {
                 var acc = db.Accounts.Find(accountID);
@@ -75,7 +75,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult ResendEmail(int contributionID) {
             var db = new ZkDataContext();
             var contrib = db.Contributions.First(x => x.ContributionID == contributionID);

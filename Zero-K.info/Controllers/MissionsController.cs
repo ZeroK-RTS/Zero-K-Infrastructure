@@ -12,7 +12,7 @@ namespace ZeroKWeb.Controllers
         // GET: /Missions/
         
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult ChangeFeaturedOrder(int id, float? featuredOrder, string script)
         {
             var db = new ZkDataContext();
@@ -28,7 +28,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Delete(int id)
         {
             var db = new ZkDataContext();
@@ -149,7 +149,7 @@ namespace ZeroKWeb.Controllers
             return File(Encoding.UTF8.GetBytes(m.Script), "application/octet-stream", "script.txt");
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Undelete(int id)
         {
             var db = new ZkDataContext();

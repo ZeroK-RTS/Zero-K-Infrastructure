@@ -431,8 +431,7 @@ namespace ZeroKWeb.Controllers
                 Planet planet = db.Planets.Single(p => p.PlanetID == planetID);
                 /*if ((Global.Account.AccountID != planet.OwnerAccountID) &&
                     !(Global.Account.FactionID == planet.OwnerFactionID && Global.Account.HasFactionRight(x => x.RightEditTexts) || Global.Account.IsZeroKAdmin))*/
-                if (!Global.Account.IsZeroKAdmin)
-                    return Content("Unauthorized");
+                if (!Global.IsModerator) return Content("Unauthorized");
                 db.SaveChanges();
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} renamed planet {1} to {2}", Global.Account, planet, newName));
                 planet.Name = newName;

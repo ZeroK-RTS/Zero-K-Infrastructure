@@ -106,7 +106,7 @@
     }
 
     <br class="clearfloat" />
-    @if (ZeroKWeb.Global.IsAccountAuthorized && (ZeroKWeb.Global.Account.IsZeroKAdmin))
+    @if (ZeroKWeb.Global.IsModerator)
     {
 	
         <div style='border: 1px dashed teal; padding: 10px;'>
@@ -146,7 +146,7 @@
                         <tr>
                             <td>Author:</td><td>@Html.TextBox("author", m.AuthorName)</td>
                         </tr>
-                        @if (ZeroKWeb.Global.IsZeroKAdmin)
+                        @if (ZeroKWeb.Global.IsModerator)
                         {
                             <tr>
                                 <td>Support level:</td><td>

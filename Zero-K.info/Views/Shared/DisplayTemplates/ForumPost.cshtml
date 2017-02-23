@@ -22,7 +22,7 @@
                     </a>
                 }
                 <a href="@Url.Action("Index", "PostHistory", new { id = p.ForumPostID })">view edit history</a>
-                @if (Global.IsZeroKAdmin)
+                @if (Global.IsModerator)
                 {
                     <a class="textbutton js_confirm" href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })'>
                         Delete <img src="/img/delete_trashcan.png" class="icon16" />
@@ -93,7 +93,7 @@
                                     <img src="/img/edit_pencil.png" height="22"/>
                                 </a>
                             }
-                            @if (Global.IsZeroKAdmin)
+                            @if (Global.IsModerator)
                             {
                                 <a nicetitle='Delete the post' href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='js_confirm'>
                                     <img src="/img/delete_trashcan.png" height="22"/>

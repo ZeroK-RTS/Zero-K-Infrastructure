@@ -68,9 +68,10 @@ namespace ZkLobbyServer
 
         bool CanJoin(Account acc, string channel)
         {
-            if (channel == GlobalConst.ModeratorChannel) return acc.IsZeroKAdmin;
-            else if (channel == "zkerror") return acc.IsZeroKAdmin;
+            if (channel == GlobalConst.ModeratorChannel) return acc.AdminLevel >= AdminLevel.Moderator;
+            else if (channel == "zkerror") return acc.AdminLevel >= AdminLevel.SuperAdmin;
             else if (channel == GlobalConst.Top20Channel) return IsTop20(acc.AccountID);
+            else if (channel == "zkcore") return acc.DevLevel >= DevLevel.RetiredCoreDeveloper;
             else if (clanChannels.ContainsKey(channel)) return acc.ClanID == clanChannels[channel].ClanID;
             else if (factionChannels.ContainsKey(channel)) return acc.Level >= GlobalConst.FactionChannelMinLevel && acc.FactionID == factionChannels[channel].FactionID;
             return true;

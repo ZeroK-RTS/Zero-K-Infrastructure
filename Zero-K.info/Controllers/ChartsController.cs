@@ -217,7 +217,7 @@ namespace ZeroKWeb.Controllers
     }
 
 
-    [Auth(Role = AuthRole.ZkAdmin)]
+    [Auth(Role = AdminLevel.Moderator)]
     public class ChartsController : Controller
     {
         public ActionResult GenerateGraph(ChartsModel model)
