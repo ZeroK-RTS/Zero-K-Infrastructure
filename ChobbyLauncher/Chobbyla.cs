@@ -87,7 +87,7 @@ namespace ChobbyLauncher
                     else
                     {
                         internalName = GetSteamChobby();
-                        ver = downloader.PackageDownloader.GetByInternalName(internalName);
+                        ver = downloader.PackageDownloader.GetByInternalName(internalName) ?? downloader.PackageDownloader.GetByTag(chobbyTag);
                     }
 
                     if (ver == null)

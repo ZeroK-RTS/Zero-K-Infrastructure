@@ -53,12 +53,14 @@ namespace AutoRegistrator
                 Directory.Delete(Path.Combine(targetFolder, "games"), true);
                 Directory.Delete(Path.Combine(targetFolder, "rapid"), true);
                 File.Delete(Path.Combine(targetFolder,"missions","missions.json"));
+                File.Delete(Path.Combine(targetFolder, "cache", "repositories.json"));
             } catch { }
 
             var paths = new SpringPaths(targetFolder, false, false);
-
+            var downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
             var prog = new DummyProgress();
 
+           
             foreach (var plat in Enum.GetValues(typeof(SpringPaths.PlatformType)).Cast<SpringPaths.PlatformType>())
             {
                 var sp = new SpringPaths(targetFolder, false, false, plat);
@@ -67,14 +69,16 @@ namespace AutoRegistrator
                 if (!dn.DownloadFile(DownloadType.ENGINE, MiscVar.DefaultEngine, prog).Result) throw new ApplicationException("SteamDepot engine download failed: " + prog.Status);
             }
 
-            var downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
-            
+            downloader.PackageDownloader.DoMasterRefresh();
+
+            var chobbyName = downloader.PackageDownloader.GetByTag(GlobalConst.DefaultChobbyTag).InternalName;
+
+            if (!downloader.DownloadFile(DownloadType.RAPID, chobbyName, prog).Result) throw new ApplicationException("SteamDepot chobby download failed: " + prog.Status);
             if (!downloader.DownloadFile(DownloadType.RAPID, GlobalConst.DefaultZkTag, prog).Result) throw new ApplicationException("SteamDepot zk download failed: " + prog.Status);
 
-            if (!downloader.DownloadFile(DownloadType.RAPID, GlobalConst.DefaultChobbyTag, prog).Result) throw new ApplicationException("SteamDepot chobby download failed: " + prog.Status);
 
+            File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_chobby.txt"), chobbyName);
             File.WriteAllText(Path.Combine(paths.WritableDirectory,"steam_engine.txt"), MiscVar.DefaultEngine);
-            File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_chobby.txt"), downloader.PackageDownloader.GetByTag(GlobalConst.DefaultChobbyTag).InternalName);
 
 
             CopyResources(siteBase, paths, GetResourceList(), downloader);
@@ -86,6 +90,8 @@ namespace AutoRegistrator
             CopyExtraImages();
 
             Utils.CheckPath(targetFolder);
+
+            downloader.PackageDownloader.DoMasterRefresh();
         }
 
         private void CopyLobbyProgram() {
