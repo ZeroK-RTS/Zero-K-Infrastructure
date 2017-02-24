@@ -545,12 +545,6 @@ namespace LobbyClient
         public string Command { get; set; }
     }
 
-    [Message(Origin.Client)]
-    public class LinkSteam
-    {
-        public string Token { get; set; }
-    }
-
 
     [Message(Origin.Client | Origin.Server)]
     public class PwMatchCommand

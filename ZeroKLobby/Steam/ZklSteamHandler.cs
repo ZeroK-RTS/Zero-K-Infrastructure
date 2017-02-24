@@ -109,7 +109,7 @@ namespace ZeroKLobby
             if (tas.MyUser.SteamID == null)
             {
                 string token = SteamHelper.GetClientAuthTokenHex();
-                if (!string.IsNullOrEmpty(token)) tas.LinkSteam(token);
+                // removed if (!string.IsNullOrEmpty(token)) tas.LinkSteam(token);
             }
             foreach (User u in tas.ExistingUsers.Values.ToList().Where(x => x.SteamID != null && friends.Contains(ulong.Parse(x.SteamID)))) AddFriend(u.Name);
             if (Program.Conf.EnableVoiceChat && Environment.OSVersion.Platform != PlatformID.Unix)

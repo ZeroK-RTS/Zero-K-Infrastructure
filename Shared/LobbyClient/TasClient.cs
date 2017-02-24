@@ -350,12 +350,6 @@ namespace LobbyClient
             if (JoinedChannels.ContainsKey(channelName)) await SendCommand(new LeaveChannel() { ChannelName = channelName });
         }
 
-        public Task LinkSteam(string token)
-        {
-            return SendCommand(new LinkSteam() { Token = token });
-        }
-
-
         public Task Login(string userName, string password)
         {
             UserName = userName;

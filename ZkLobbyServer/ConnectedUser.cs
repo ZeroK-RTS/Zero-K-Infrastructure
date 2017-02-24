@@ -518,24 +518,6 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task Process(LinkSteam linkSteam)
-        {
-            await Task.Delay(2000); // steam is slow to get the ticket from client .. wont verify if its checked too soon
-
-            using (var db = new ZkDataContext())
-            {
-                var acc = await db.Accounts.FindAsync(User.AccountID);
-                var info = await server.SteamWebApi.VerifyAndGetAccountInformation(linkSteam.Token);
-                if (info != null)
-                {
-                    acc.SteamID = info.steamid;
-                    acc.SteamName = info.personaname;
-                }
-                await db.SaveChangesAsync();
-                await server.PublishAccountUpdate(acc);
-            }
-        }
-
         public async Task Process(SetAccountRelation rel)
         {
             if (!IsLoggedIn) return;
