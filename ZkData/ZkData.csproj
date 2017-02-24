@@ -246,6 +246,10 @@
     <Compile Include="Migrations\201702230955223_AdminAndDevFlags.Designer.cs">
       <DependentUpon>201702230955223_AdminAndDevFlags.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702240913040_MakeSteamIDUnique.cs" />
+    <Compile Include="Migrations\201702240913040_MakeSteamIDUnique.Designer.cs">
+      <DependentUpon>201702240913040_MakeSteamIDUnique.cs</DependentUpon>
+    </Compile>
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
@@ -507,6 +511,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702230955223_AdminAndDevFlags.resx">
       <DependentUpon>201702230955223_AdminAndDevFlags.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702240913040_MakeSteamIDUnique.resx">
+      <DependentUpon>201702240913040_MakeSteamIDUnique.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

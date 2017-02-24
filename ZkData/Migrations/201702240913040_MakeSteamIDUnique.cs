@@ -9,7 +9,12 @@ namespace ZkData.Migrations
         {
             DropIndex("dbo.Accounts", new[] { "SteamID" });
             Sql("update dbo.Accounts set SteamID=null where SteamID is not null and adminlevel>0");
-            CreateIndex("dbo.Accounts", "SteamID", unique: true);
+
+            var indexName = "SteamID";
+            var tableName = "dbo.Accounts";
+            var columnName = "SteamID";
+
+            Sql(string.Format(@"CREATE UNIQUE NONCLUSTERED INDEX {0} ON {1}({2}) WHERE {2} IS NOT NULL;", indexName, tableName, columnName));
         }
         
         public override void Down()

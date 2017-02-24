@@ -71,7 +71,7 @@ namespace ZkLobbyServer
 
         public async Task Process(Login login)
         {
-            var ret = await Task.Run(() => server.LoginChecker.Login(login, RemoteEndpointIP));
+            var ret = await Task.Run(() => server.LoginChecker.DoLogin(login, RemoteEndpointIP));
             if (ret.LoginResponse.ResultCode == LoginResponse.Code.Ok)
             {
                 var user = ret.User;
@@ -128,56 +128,11 @@ namespace ZkLobbyServer
         public async Task Process(Register register)
         {
             var response = new RegisterResponse();
-            await Task.Run(async () => response = await DoRegister(register));
+            await Task.Run(async () => response = await server.LoginChecker.DoRegister(register, RemoteEndpointIP));
             await SendCommand(response);
         }
 
-        private async Task<RegisterResponse> DoRegister(Register register)
-        {
-            if (!Account.IsValidLobbyName(register.Name)) return new RegisterResponse(RegisterResponse.Code.InvalidCharacters, "Name contains invalid characters");
-
-            if (server.ConnectedUsers.ContainsKey(register.Name)) return new RegisterResponse(RegisterResponse.Code.AlreadyConnected, "You are already connected");
-
-            if (string.IsNullOrEmpty(register.PasswordHash) && string.IsNullOrEmpty(register.SteamAuthToken)) return new RegisterResponse(RegisterResponse.Code.InvalidPassword, "Missing both password and steam token");
-
-            if (!server.LoginChecker.VerifyIp(RemoteEndpointIP)) return new RegisterResponse(RegisterResponse.Code.Banned, "Too many connection attempts");
-
-            var banPenalty = Punishment.GetActivePunishment(null, RemoteEndpointIP, register.UserID, x => x.BanLobby);
-            if (banPenalty != null) return new RegisterResponse(RegisterResponse.Code.Banned, banPenalty.Reason);
-
-            SteamWebApi.PlayerInfo info = null;
-            if (!string.IsNullOrEmpty(register.SteamAuthToken))
-            {
-                info = await server.SteamWebApi.VerifyAndGetAccountInformation(register.SteamAuthToken);
-                if (info == null) return new RegisterResponse(RegisterResponse.Code.InvalidSteamToken, "Steam token is invalid or could not be validated");
-            }
-
-
-            using (var db = new ZkDataContext())
-            {
-                var existingByName = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == register.Name.ToUpper());
-                if (existingByName != null) return new RegisterResponse(RegisterResponse.Code.InvalidName, "Name already taken");
-
-                var acc = new Account() { Name = register.Name };
-                acc.SetPasswordHashed(register.PasswordHash);
-                acc.SetName(register.Name);
-                acc.SetAvatar();
-                if (info != null)
-                {
-                    var existingBySteam = db.Accounts.FirstOrDefault(x => x.SteamID == info.steamid);
-                    if (existingBySteam != null)
-                        return new RegisterResponse(RegisterResponse.Code.SteamAlreadyRegistered,
-                            "Your steam account is already registered as " + existingBySteam.Name);
-
-                    acc.SteamID = info.steamid;
-                    acc.SteamName = info.personaname;
-                }
-                db.Accounts.Add(acc);
-                db.SaveChanges();
-            }
-            return new RegisterResponse(RegisterResponse.Code.Ok, "Registered");
-        }
-
+       
 
         public void RequestClose()
         {
