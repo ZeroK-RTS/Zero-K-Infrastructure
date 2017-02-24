@@ -134,12 +134,14 @@ namespace ZkLobbyServer
             user.RawMmElo = (int)acc.EloMm;
             user.CompetitiveRank = acc.CompetitiveRank;
             user.SteamID = acc.SteamID?.ToString();
-            user.IsAdmin = acc.IsZeroKAdmin;
+            user.IsAdmin = acc.AdminLevel >= AdminLevel.Moderator;
             user.IsBot = acc.IsBot;
             user.Country = acc.Country;
             user.Faction = acc.Faction != null ? acc.Faction.Shortcut : null;
             user.Clan = acc.Clan != null ? acc.Clan.Shortcut : null;
             user.AccountID = acc.AccountID;
+            user.Badges = acc.GetBadges().Select(x=>x.ToString()).ToList();
+            if (user.Badges.Count == 0) user.Badges = null; // slight optimization for data transfer
             Interlocked.Increment(ref user.SyncVersion);
 
             user.BanMute = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanMute) != null;

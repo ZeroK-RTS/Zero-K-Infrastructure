@@ -201,7 +201,6 @@ namespace ZkData
         public const int KudosForBronze = 100;
         public const int KudosForSilver = 500;
         public const int KudosForGold = 1000;
-        public const int KudosForDiamond = 5000;
 
         public const int ForumPostsPerPage = 20;
         public const int MinLevelForForumVote = 10;

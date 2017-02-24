@@ -12,7 +12,7 @@ using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
-    [Auth(Role = AuthRole.ZkAdmin)]
+    [Auth(Role = AdminLevel.Moderator)]
     public class EnginesController : Controller
     {
         public static string[] EnginePlatforms = new[] { "win32", "linux64", "linux32", "win64" };
@@ -69,6 +69,7 @@ namespace ZeroKWeb.Controllers
         }
 
 
+        [Auth(Role = AdminLevel.SuperAdmin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         private string UploadEngine(string uploadName, List<string> uploadPlatforms)

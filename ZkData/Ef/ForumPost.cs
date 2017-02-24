@@ -25,7 +25,7 @@ namespace ZkData
         public bool CanEdit(Account acc) {
             if (acc == null) return false;
             if (this.ForumThread.IsLocked) return false;
-            if (this.AuthorAccountID == acc.AccountID || acc.IsZeroKAdmin || (
+            if (this.AuthorAccountID == acc.AccountID || acc.AdminLevel >= AdminLevel.Moderator || (
                 this.ForumThread.ForumCategory.ForumMode == ForumMode.Wiki && acc.CanEditWiki()) && ForumThread.ForumPosts.First().ForumPostID== ForumPostID) return true;
             else return false;
         }

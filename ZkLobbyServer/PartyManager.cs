@@ -47,6 +47,9 @@ namespace ZkLobbyServer
                 var targetParty = GetParty(target.Name);
                 if ((myParty != null) && (myParty == targetParty)) return;
 
+                // if i dont have battle but target has, join him 
+                if (myParty == null && usr.MyBattle == null && target.MyBattle != null && !target.MyBattle.IsPassworded) await server.ForceJoinBattle(usr.Name, target.MyBattle);
+
                 RemoveOldInvites();
                 var partyInvite = partyInvites.FirstOrDefault(x => (x.Inviter == usr.Name) && (x.Invitee == target.Name));
 
@@ -87,6 +90,21 @@ namespace ZkLobbyServer
                 var inv = partyInvites.FirstOrDefault(x => x.PartyID == response.PartyID);
                 if ((inv != null) && (inv.Invitee == usr.Name))
                 {
+                    
+                    var inviteeUser = usr;
+                    var inviterUser = server.ConnectedUsers.Get(inv.Inviter);
+
+                    if (inviterUser != null)
+                    {
+                        var targetBattle = inviterUser.MyBattle ?? inviteeUser.MyBattle; // join inviter user's battle, if its empty join invitee user's battle
+                        if (targetBattle != null)
+                        {
+                            if (inviteeUser.MyBattle != targetBattle) await server.ForceJoinBattle(inviteeUser.Name, targetBattle);
+                            if (inviterUser.MyBattle != targetBattle) await server.ForceJoinBattle(inviterUser.Name, targetBattle);
+                        }
+                    }
+
+
                     var inviterParty = parties.FirstOrDefault(x => x.PartyID == response.PartyID);
                     var inviteeParty = parties.FirstOrDefault(x => x.UserNames.Contains(usr.Name));
 
@@ -104,6 +122,7 @@ namespace ZkLobbyServer
                         await RemoveFromParty(inviterParty, inv.Invitee);
                         party = inviterParty;
                     }
+
 
                     await AddToParty(party, inv.Invitee, inv.Inviter);
                 }

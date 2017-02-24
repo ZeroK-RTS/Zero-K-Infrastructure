@@ -15,7 +15,7 @@ namespace ZeroKWeb.Controllers
         //
         // GET: /Users/
         [HttpPost]
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult ChangeHideCountry(int accountID, bool hideCountry)
         {
             var db = new ZkDataContext();
@@ -29,7 +29,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult ChangeAccountDeleted(int accountID, bool isDeleted)
         {
             var db = new ZkDataContext();
@@ -47,7 +47,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.SuperAdmin)]
         [ValidateAntiForgeryToken]
         public ActionResult ChangePermissions(int accountID, bool zkAdmin, bool vpnException)
         {
@@ -55,12 +55,14 @@ namespace ZeroKWeb.Controllers
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
             Account adminAcc = Global.Account;
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
-           if (acc.IsZeroKAdmin != zkAdmin)
+
+            var curAdmin = acc.AdminLevel > AdminLevel.None;
+            if (curAdmin != zkAdmin)
             {
                 //reset chat priviledges to 2 if removing adminhood; remove NW subsciption to admin channel
                 // FIXME needs to also terminate forbidden clan/faction subscriptions
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Admin status: {0} -> {1}", acc.IsZeroKAdmin, zkAdmin));
-                acc.IsZeroKAdmin = zkAdmin;
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Moderator status: {0} -> {1}", curAdmin, zkAdmin));
+                acc.AdminLevel = zkAdmin ? AdminLevel.Moderator : AdminLevel.None;
                 
             }
             if (acc.HasVpnException != vpnException)
@@ -76,7 +78,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult ChangeElo(int accountID, int eloweight, int eloweight1v1)
         {
             var db = new ZkDataContext();
@@ -98,7 +100,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult AdminUserDetail(int id)
         {
             var db = new ZkDataContext();
@@ -106,7 +108,7 @@ namespace ZeroKWeb.Controllers
             return View("AdminUserDetail", user);
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult ReportLog ()
         {
             return View("ReportLog");
@@ -151,7 +153,7 @@ namespace ZeroKWeb.Controllers
                 var termLower = model.Name.ToLower();
                 ret = ret.Where(x => x.Name.ToLower().Contains(termLower) || x.SteamName.Contains(model.Name));
             }
-            if (Global.IsZeroKAdmin)
+            if (Global.IsModerator)
             {
                 if (!string.IsNullOrEmpty(model.IP)) ret = ret.Where(x => x.AccountIPs.Any(y => y.IP == model.IP));
                 if (model.UserID.HasValue) ret = ret.Where(x => x.AccountUserIDs.Any(y => y.UserID == model.UserID));
@@ -168,7 +170,7 @@ namespace ZeroKWeb.Controllers
             if (model.LastLoginFrom.HasValue) ret = ret.Where(x => x.LastLogin >= model.LastLoginFrom);
             if (model.LastLoginTo.HasValue) ret = ret.Where(x => x.LastLogin <= model.LastLoginTo);
 
-            if (model.IsAdmin) ret = ret.Where(x => x.IsZeroKAdmin);
+            if (model.IsAdmin) ret = ret.Where(x => x.AdminLevel >= AdminLevel.Moderator);
 
             model.Data = ret.OrderByDescending(x=>x.AccountID);
 
@@ -199,7 +201,7 @@ namespace ZeroKWeb.Controllers
         /// <param name="accountID"><see cref="Account"/> ID of the person being punished</param>
         /// <param name="reason">Displayed reason for the penalty</param>
         [HttpPost]
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Punish(int accountID,
                                    string reason,
                                    bool deleteXP,
@@ -302,7 +304,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult RemovePunishment(int punishmentID) {
             var db = new ZkDataContext();
             var todel = db.Punishments.First(x => x.PunishmentID == punishmentID);
@@ -325,14 +327,14 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = todel.AccountID });
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult MassBan()
         {
             return View("MassBan");
         }
 
         [HttpPost]
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult MassBanSubmit(string name, int startIndex, int endIndex, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
         {
             ZkDataContext db = new ZkDataContext();
@@ -378,7 +380,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult MassBanByUserIDSubmit(int userID, double? maxAge, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
         {
             ZkDataContext db = new ZkDataContext();
@@ -419,11 +421,12 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult SetPassword(int accountID, string newPassword)
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(accountID);
+            if (acc.AdminLevel > AdminLevel.None || acc.PasswordBcrypt == null) return Content("Cannot set password on this user");
             acc.SetPasswordPlain(newPassword);
             db.SaveChanges();
             return Content(string.Format("{0} password set to {1}", acc.Name, newPassword));

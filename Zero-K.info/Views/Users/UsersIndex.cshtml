@@ -7,7 +7,7 @@
     var grid = new UniGrid<Account>(Model.Data, "Zero-K players");
 
     grid.AddCol("ID", x => x.AccountID).SetSort(x => x.AccountID);
-    grid.AddCol("<span nicetitle='Is admin?'>A</span>", x => x.IsZeroKAdmin ? "<img src='/img/police.png'/>" : "").SetSort(x => x.IsZeroKAdmin);
+    grid.AddCol("<span nicetitle='Is admin?'>A</span>", x => x.AdminLevel >= AdminLevel.Moderator ? "<img src='/img/police.png'/>" : "").SetSort(x => x.AdminLevel);
     grid.AddCol("Name", x => Html.PrintAccount(x)).SetSort(x => x.Name);
     //grid.AddCol("Steam", x => x.SteamName).SetSort(x => x.SteamName);
     grid.AddCol("First", x => Html.PrintDate(x.FirstLogin)).SetSort(x => x.FirstLogin);
@@ -24,7 +24,7 @@
 }
 <div id="userIndex">
     <h1>@Page.Title</h1>
-    @if (Global.IsZeroKAdmin)
+    @if (Global.IsModerator)
     {
         <div class="admin">
             @Html.ActionLink("Mass ban", "MassBan")
@@ -55,7 +55,7 @@
                 <td>@Html.TextBoxFor(x => x.Country)</td>
             </tr>
 
-            @if (Global.IsZeroKAdmin)
+            @if (Global.IsModerator)
             {
                 <tr>
                     <td class="admin">IP:</td>

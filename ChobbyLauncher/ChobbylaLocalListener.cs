@@ -31,12 +31,14 @@ namespace ChobbyLauncher
         {
             this.chobbyla = chobbyla;
             this.steam = steam;
+            steam.Listener = this;
             this.initialConnectLobbyID = initialConnectLobbyID;
             serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<ChobbyMessageAttribute>());
             tts = TextToSpeechBase.Create();
             steam.JoinFriendRequest += SteamOnJoinFriendRequest;
             steam.OverlayActivated += SteamOnOverlayActivated;
             steam.SteamOnline += () => { SendSteamOnline(); };
+
         }
 
         private void SteamOnOverlayActivated(bool b)
@@ -47,6 +49,7 @@ namespace ChobbyLauncher
         private void SteamOnJoinFriendRequest(ulong friendSteamID)
         {
             SendCommand(new SteamJoinFriend() { FriendSteamID = friendSteamID.ToString() });
+            steam.SendSteamNotifyJoin(friendSteamID);
         }
 
 
@@ -393,6 +396,7 @@ namespace ChobbyLauncher
             }
         }
 
+
         private async Task ReportDownloadResult(DownloadFile args, Download down)
         {
             try
@@ -403,6 +407,18 @@ namespace ChobbyLauncher
             catch (Exception ex)
             {
                 Trace.TraceError("Error processing download result for file {0} : {1}", args.Name, ex);
+            }
+        }
+
+        public async Task Process(SteamHostGameRequest args)
+        {
+            try
+            {
+                steam.PrepareToHostP2PGame(args);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error processing steamhostgamerequest: {0}",ex);
             }
         }
 
@@ -420,6 +436,8 @@ namespace ChobbyLauncher
                 });
 
                 await SendSteamOnline();
+
+                
             }
             catch (Exception ex)
             {
@@ -427,18 +445,23 @@ namespace ChobbyLauncher
             }
         }
 
+        
         private async Task SendSteamOnline()
         {
             if (steam.IsOnline)
             {
+                var friendId = initialConnectLobbyID != 0 ? steam.GetLobbyOwner(initialConnectLobbyID) : null;
+                    
                 await
                     SendCommand(new SteamOnline()
                     {
                         AuthToken = steam.AuthToken,
                         Friends = steam.Friends.Select(x => x.ToString()).ToList(),
-                        FriendSteamID = initialConnectLobbyID != 0 ? steam.GetLobbyOwner(initialConnectLobbyID)?.ToString() : null,
+                        FriendSteamID = friendId?.ToString(),
                         SuggestedName = steam.MySteamNameSanitized
                     });
+
+                if (friendId != null) steam.SendSteamNotifyJoin(friendId.Value);
             }
         }
 

@@ -148,7 +148,7 @@ namespace ZeroKWeb.Controllers
         /// <summary>
         ///     Returns a page with the <see cref="SpringBattle" /> infolog
         /// </summary>
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Logs(int id) {
             using (var db = new ZkDataContext())
             {

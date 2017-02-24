@@ -82,10 +82,17 @@ namespace ZeroKWeb
         {
             get { return HttpContext.Current.Session["weblobby"] != null; }
         }
-        public static bool IsZeroKAdmin
+
+        public static bool IsModerator
         {
-            get { return IsAccountAuthorized && Account.IsZeroKAdmin; }
+            get { return IsAccountAuthorized && Account?.AdminLevel>= AdminLevel.Moderator; }
         }
+        public static bool IsSuperAdmin
+        {
+            get { return IsAccountAuthorized && Account?.AdminLevel >= AdminLevel.SuperAdmin; }
+        }
+
+
         public static PayPalInterface PayPalInterface { get; private set; }
         public static PlanetWarsMatchMaker PlanetWarsMatchMaker { get; private set; }
         public static ZkLobbyServer.ZkLobbyServer Server { get; private set; }

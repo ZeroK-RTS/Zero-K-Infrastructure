@@ -1,15 +1,13 @@
 ﻿@using ZeroKWeb
+@using ZkData
 @model ZkData.Account
 @{
     var u = Model;
 }
-<span style="float:left;">@Html.AccountAvatar(u)</span><b>@Html.PrintAccount(u)</b><br/>
+<span style="float:left;">@Html.AccountAvatar(u)<br/>@Html.PrintBadges(u, 64)</span><b>@Html.PrintAccount(u)</b><br/>
 <b>First Login:</b> @u.FirstLogin.ToAgoString(), <b>Last Login:</b> @u.LastLogin.ToAgoString()<br />
 <b>Rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")
-@if (Model.ContributionsByAccountID.Count() > 0)
-{
-    @Html.PrintContributorStar(u, true); <br />
-}
+<br />
 <b>Level:</b> @u.Level<br/>
 <br/>
 @foreach (var entry in Model.AccountRolesByAccountID) {
@@ -17,7 +15,7 @@
         @Html.PrintRoleType(entry.RoleType) of @(entry.RoleType.IsClanOnly ? Html.PrintClan(entry.Clan) : Html.PrintFaction(entry.Faction,false))
     </span><br/>
 }<br/>
-@if (Model.IsZeroKAdmin)
+@if (Model.AdminLevel >= AdminLevel.Moderator)
  {
 			<span>
 				<b> @Model.Name </b> is a <b>Zero-K Administrator</b><br/>

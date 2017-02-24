@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Runtime.ExceptionServices;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using LumiSoft.Net.STUN.Client;
+using PlasmaShared;
 using Steamworks;
 using ZkData;
 using Timer = System.Timers.Timer;
@@ -25,22 +31,31 @@ namespace ChobbyLauncher
             Achievements
         }
 
+
+        private ConcurrentDictionary<ulong, SteamP2PClientPort> clientPorts = new ConcurrentDictionary<ulong, SteamP2PClientPort>();
+
+        private bool isDisposed;
+
         private Callback<GameLobbyJoinRequested_t> lobbyJoinRequestCallback;
+        private Callback<P2PSessionRequest_t> newConnectionCallback;
         private Callback<GameOverlayActivated_t> overlayActivatedCallback;
+
+        private CommandJsonSerializer steamCommandSerializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<SteamP2PMessageAttribute>());
 
         private int tickCounter;
         private Timer timer;
+        private UdpClient udpClient;
 
         public string AuthToken { get; private set; }
 
         public List<ulong> Friends { get; private set; }
         public bool IsOnline { get; private set; }
+        public ChobbylaLocalListener Listener { get; set; }
 
         public ulong? LobbyID { get; set; }
 
         public string MySteamNameSanitized { get; set; }
 
-        private bool isDisposed;
 
         public void Dispose()
         {
@@ -69,14 +84,12 @@ namespace ChobbyLauncher
         public ulong? GetLobbyOwner(ulong lobbyID)
         {
             if (IsOnline)
-            {
                 foreach (var f in GetFriends())
                 {
                     FriendGameInfo_t gi;
                     SteamFriends.GetFriendGamePlayed(new CSteamID(f), out gi);
                     if (gi.m_steamIDLobby.m_SteamID == lobbyID) return f;
                 }
-            }
             return null;
         }
 
@@ -99,6 +112,98 @@ namespace ChobbyLauncher
         }
 
         public event Action<bool> OverlayActivated = (b) => { };
+
+        /// <summary>
+        ///     chobby request p2p game to be created
+        /// </summary>
+        public void PrepareToHostP2PGame(SteamHostGameRequest request)
+        {
+            var socket = new UdpClient(0);
+            udpClient = socket;
+
+            // send requests to clients to resolve their external IPs
+            clientPorts.Clear();
+            foreach (var player in request.Players)
+            {
+                ulong playerSteamID;
+                ulong.TryParse(player.SteamID, out playerSteamID);
+
+                clientPorts[playerSteamID] = null;
+                SendSteamMessage(playerSteamID, new SteamP2PRequestClientPort());
+            }
+
+            // resolve my own address
+            var hostResolve = StunUDP(udpClient);
+            if ((hostResolve == null) || (hostResolve.NetType == STUN_NetType.UdpBlocked))
+            {
+                Listener.SendCommand(new SteamHostGameFailed() { CausedBySteamID = GetSteamID().ToString(), Reason = "Host cannot open UDP port" });
+                return;
+            }
+
+            var startWait = DateTime.UtcNow;
+            Task.Factory.StartNew(() =>
+            {
+                // wait 30s for all clients to respond
+                while (clientPorts.Any(x => x.Value == null))
+                {
+                    if (DateTime.UtcNow.Subtract(startWait).TotalSeconds > 30)
+                        Listener.SendCommand(new SteamHostGameFailed()
+                        {
+                            CausedBySteamID = clientPorts.Where(x => x.Value == null).Select(x => x.Key).FirstOrDefault().ToString(),
+                            Reason = "Client didn't send his UDP port"
+                        });
+
+                    Task.Delay(100);
+                }
+
+                // any client without valid ip/port ?
+                var failedClient = clientPorts.Where(x => (x.Value.IP == null) || (x.Value.Port == 0)).Select(x => x.Key).FirstOrDefault();
+                if (failedClient != 0)
+                    Listener.SendCommand(new SteamHostGameFailed()
+                    {
+                        CausedBySteamID = failedClient.ToString(),
+                        Reason = "Client could not resolve his NAT/firewall"
+                    });
+
+                var hostExtPort = hostResolve.PublicEndPoint.Port;
+                var hostExtIP = hostResolve.PublicEndPoint.Address.ToString();
+                var hostLocalPort = ((IPEndPoint)udpClient.Client.LocalEndPoint).Port;
+
+                var buffer = new byte[] { 1, 2, 3, 4, 5, 6 };
+                foreach (var cli in clientPorts)
+                {
+                    var player = request.Players.First(x => x.SteamID == cli.Key.ToString());
+
+                    // send some packets to each client's external IP/port to punch NAT
+                    udpClient.Send(buffer, buffer.Length, cli.Value.IP, cli.Value.Port);
+                    udpClient.Send(buffer, buffer.Length, cli.Value.IP, cli.Value.Port);
+                    udpClient.Send(buffer, buffer.Length, cli.Value.IP, cli.Value.Port);
+
+                    // tell clients to connect to server's external port/IP
+                    SendSteamMessage(cli.Key,
+                        new SteamP2PDirectConnectRequest()
+                        {
+                            HostPort = hostExtPort,
+                            HostIP = hostExtIP,
+                            Name = player.Name,
+                            Engine = request.Engine,
+                            Game = request.Game,
+                            Map = request.Map,
+                            ScriptPassword = player.ScriptPassword
+                        });
+                }
+                
+
+                udpClient.Close(); // release socket
+
+                Listener.SendCommand(new SteamHostGameSuccess() { HostPort = hostLocalPort });
+            });
+        }
+
+        public void SendSteamNotifyJoin(ulong toClientID)
+        {
+            SendSteamMessage(toClientID, new SteamP2PNotifyJoin() { JoinerName = MySteamNameSanitized });
+        }
 
 
         public event Action SteamOffline = () => { };
@@ -168,6 +273,8 @@ namespace ChobbyLauncher
 
             lobbyJoinRequestCallback = new Callback<GameLobbyJoinRequested_t>(t => { JoinFriendRequest(t.m_steamIDFriend.m_SteamID); });
             overlayActivatedCallback = new Callback<GameOverlayActivated_t>(t => { OverlayActivated(t.m_bActive != 0); });
+            newConnectionCallback = Callback<P2PSessionRequest_t>.Create(t => SteamNetworking.AcceptP2PSessionWithUser(t.m_steamIDRemote));
+            MySteamNameSanitized = Utils.StripInvalidLobbyNameChars(GetMyName());
 
             var ev = new EventWaitHandle(false, EventResetMode.ManualReset);
             AuthToken = GetClientAuthTokenHex();
@@ -177,9 +284,86 @@ namespace ChobbyLauncher
                 ev.Set();
             });
             Friends = GetFriends();
-            MySteamNameSanitized = Utils.StripInvalidLobbyNameChars(GetMyName());
             ev.WaitOne(2000);
             SteamOnline?.Invoke();
+        }
+
+
+        private void ProcessMessage(ulong remoteUser, SteamP2PNotifyJoin cmd)
+        {
+            if (Listener != null) Listener.SendCommand(new SteamFriendJoinedMe() { FriendSteamID = remoteUser.ToString(), FriendSteamName = cmd.JoinerName });
+        }
+
+        /// <summary>
+        ///     host request port from client
+        /// </summary>
+        private void ProcessMessage(ulong remoteUser, SteamP2PRequestClientPort cmd)
+        {
+            var socket = new UdpClient(0);
+            udpClient = socket;
+            var result = StunUDP(udpClient);
+            if ((result == null) || (result.NetType == STUN_NetType.UdpBlocked)) SendSteamMessage(remoteUser, new SteamP2PClientPort());
+            else
+                SendSteamMessage(remoteUser,
+                    new SteamP2PClientPort() { Port = result.PublicEndPoint.Port, IP = result.PublicEndPoint.Address.ToString() });
+        }
+
+
+        /// <summary>
+        ///     client sends port to host
+        /// </summary>
+        private void ProcessMessage(ulong remoteUser, SteamP2PClientPort cmd)
+        {
+            clientPorts[remoteUser] = cmd;
+        }
+
+        /// <summary>
+        /// UDP is punched, client can start 
+        /// </summary>
+        private void ProcessMessage(ulong remoteUser, SteamP2PDirectConnectRequest cmd)
+        {
+            cmd.ClientPort = ((IPEndPoint)udpClient.Client.LocalEndPoint).Port;
+            udpClient.Close();
+            Listener.SendCommand((SteamConnectSpring)cmd);
+        }
+
+
+        /// <summary>
+        ///     Sends steam message to target client
+        /// </summary>
+        /// <param name="targetClientID"></param>
+        /// <param name="message"></param>
+        private void SendSteamMessage(ulong targetClientID, object message)
+        {
+            if (IsOnline)
+            {
+                var cmd = steamCommandSerializer.SerializeToLine(message);
+                Trace.TraceInformation("SteamP2P >> {0} : {1}", targetClientID, cmd);
+                var data = Encoding.UTF8.GetBytes(cmd);
+                SteamNetworking.SendP2PPacket(new CSteamID(targetClientID), data, (uint)data.Length, EP2PSend.k_EP2PSendReliable);
+            }
+        }
+
+        private static STUN_Result StunUDP(UdpClient socket)
+        {
+            socket.AllowNatTraversal(true);
+            var servers = new[] { "stun.l.google.com:19302", "stun.services.mozilla.com", "stunserver.org" };
+            foreach (var server in servers)
+            {
+                var host = server.Split(':').FirstOrDefault();
+                try
+                {
+                    int port;
+                    if (!int.TryParse(server.Split(':').LastOrDefault(), out port) || (port == 0)) port = 3478;
+
+                    return STUN_Client.Query(host, port, socket.Client);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("STUN request to {0} failed : {1}", host, ex);
+                }
+            }
+            return null;
         }
 
 
@@ -190,7 +374,7 @@ namespace ChobbyLauncher
             {
                 if (isDisposed) return;
                 timer?.Stop();
-                if (tickCounter%300 == 0)
+                if (tickCounter % 300 == 0)
                     if (!IsOnline)
                         if (SteamAPI.Init() && SteamAPI.IsSteamRunning())
                         {
@@ -199,7 +383,29 @@ namespace ChobbyLauncher
                             OnSteamOnline();
                         }
                 if (IsOnline)
-                    if (SteamAPI.IsSteamRunning()) SteamAPI.RunCallbacks();
+                    if (SteamAPI.IsSteamRunning())
+                    {
+                        SteamAPI.RunCallbacks();
+
+                        uint networkSize;
+                        while (SteamNetworking.IsP2PPacketAvailable(out networkSize))
+                            try
+                            {
+                                var buf = new byte[networkSize];
+                                CSteamID remoteUser;
+                                if (SteamNetworking.ReadP2PPacket(buf, networkSize, out networkSize, out remoteUser))
+                                {
+                                    var str = Encoding.UTF8.GetString(buf);
+                                    Trace.TraceInformation("SteamP2P << {0} : {1}", remoteUser.m_SteamID, str);
+                                    dynamic cmd = steamCommandSerializer.DeserializeLine(str);
+                                    ProcessMessage(remoteUser.m_SteamID, cmd);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Trace.TraceError("Error processing steam P2P message: {0}", ex);
+                            }
+                    }
                     else
                     {
                         IsOnline = false;
@@ -220,8 +426,6 @@ namespace ChobbyLauncher
                 tickCounter++;
                 if (!isDisposed) timer?.Start();
             }
-
-            
         }
     }
 }

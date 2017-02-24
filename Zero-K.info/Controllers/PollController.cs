@@ -21,7 +21,7 @@ namespace ZeroKWeb.Controllers
             return null;
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult NewPoll(string question, string answers, bool? isAnonymous)
         {
             var p = new Poll() { CreatedAccountID = Global.AccountID, IsHeadline = true, QuestionText = question, IsAnonymous = isAnonymous == true, };
@@ -189,7 +189,7 @@ namespace ZeroKWeb.Controllers
             return PartialView("PollView", poll);
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult SwapHeadline(int pollid)
         {
             var db = new ZkDataContext();

@@ -9,7 +9,7 @@
 <div>
     <h3>PENALTY: @p.Reason</h3>
     Issued on: @p.Time (@p.Time.ToAgoString())<br />
-    @if (Global.IsZeroKAdmin)
+    @if (Global.IsModerator)
     {
         <span>Issued by: @Html.PrintAccount(p.AccountByCreatedAccountID)</span><br />
     }
@@ -53,7 +53,7 @@
     {
         <span>Segregated to troll host</span><br />
     }
-    @if (Global.IsZeroKAdmin)
+    @if (Global.IsModerator)
     {
         <span>IP block: @p.BanIP</span><br />
         <span>UserID block: @p.UserID</span><br />
@@ -64,7 +64,7 @@
         <span> (@(daysRemain)d @(hoursRemain)h remaining)</span>
     }
     <br/>
-    @if (Global.IsZeroKAdmin) {
+    @if (Global.IsModerator) {
         <div class="admin">
             <form action="@Url.Action("RemovePunishment", "Users")" method="post">
                 <input type="hidden" name="punishmentID" value="@p.PunishmentID" />

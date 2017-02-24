@@ -5,7 +5,7 @@
     if (!Model.IsDeleted) { Page.Title = Model.Name + " user page"; }
     else
     {
-        if (Global.IsZeroKAdmin) { Page.Title = Model.Name + " (hidden) user page"; }
+        if (Global.IsModerator) { Page.Title = Model.Name + " (hidden) user page"; }
         else { Page.Title = "Redacted user account"; }
     }
 }
@@ -57,7 +57,7 @@
         <h3>Account redacted</h3>
         <br />
     }
-    @if (!Model.IsDeleted || Global.IsZeroKAdmin)
+    @if (!Model.IsDeleted || Global.IsModerator)
     {
         <div id="usr_info" class="">
 
@@ -101,7 +101,7 @@
                     </div>
                 </div>
             }
-            <p class="fright" align="right">
+            <span style="float: right; text-align: right;">
                 @if (Model.AccountID == Global.AccountID)
                 {
                     <a href="@Url.Action("ReportToAdmin", "Users", new { id = Model.AccountID })" nicetitle="Report problems or abuse to administrators">Contact administrators<img src="/img/abuse.png" height="32" /></a>
@@ -112,52 +112,45 @@
                 }
                 <br />
                 <a href="/Wiki/CodeOfConduct" nicetitle="Code of Conduct"><b><img src="/img/conduct.png" height="32" /></b></a>
-            </p>
+            </span>
 
-            <p class="fleft">
-
-                <span style="float: left;">@Html.AccountAvatar(Model)</span>
-                <h2>@Html.PrintAccount(Model, true, true)</h2>
-                @if (Model.ContributionsByAccountID.Count() > 0)
+            <span style="float: left;">@Html.AccountAvatar(Model)<br />@Html.PrintBadges(Model, 64)</span>
+            <h2>@Html.PrintAccount(Model, true, true)</h2>
+            <br />
+            @foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.BanExpires > DateTime.UtcNow))
                 {
-                    @Html.PrintContributorStar(Model, true) <br />
-                }
-                @foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.BanExpires > DateTime.UtcNow))
+                @Html.DisplayFor(x => p)
+            }
+
+
+            @if (Model.AccountID != Global.AccountID)
                 {
-                    @Html.DisplayFor(x => p)
-                }
-
-
-                @if (Model.AccountID != Global.AccountID)
+                <a href="@Html.PrintSpringLink("chat/user/" + Model.Name)"> Chat with @Model.Name in the lobby </a><br />
+            }
+            @if (Model.AdminLevel >= AdminLevel.Moderator)
                 {
-                    <a href="@Html.PrintSpringLink("chat/user/" + Model.Name)"> Chat with @Model.Name in the lobby </a><br />
-                }
-                @if (Model.IsZeroKAdmin)
-                {
-                    <div>
-                        <b> @Model.Name </b> is a <b>Zero-K Administrator</b>
-                    </div>
-                }
-
-                <b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
-                <br />
-                
-                <b>Rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")
-                <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
-                <br />
-
-                @{ double ratio = (Model.Xp - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)); }
-                <div title='Your XP: @Model.Xp (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
-                    <b class="fleft"> Level @Model.Level </b>
-                    <img src="/img/progressl_base.png" height="17" class="fleft" />
-                    <img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300*ratio))" />
-                    <img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300*(1 - ratio)))" />
-                    <img src="/img/progressr_base.png" height="17" class="fleft" />
-                    <b class="fleft"> Level @(Model.Level + 1) </b>
+                <div>
+                    <b> @Model.Name </b> is a <b>Zero-K Administrator</b>
                 </div>
-                <br class="clearfloat" />
+            }
 
-            </p>
+            <b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
+            <br />
+
+            <b>Rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")
+            <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
+            <br />
+
+            @{ double ratio = (Model.Xp - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)); }
+            <div title='Your XP: @Model.Xp (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
+                <b class="fleft"> Level @Model.Level </b>
+                <img src="/img/progressl_base.png" height="17" class="fleft" />
+                <img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300*ratio))" />
+                <img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300*(1 - ratio)))" />
+                <img src="/img/progressr_base.png" height="17" class="fleft" />
+                <b class="fleft"> Level @(Model.Level + 1) </b>
+            </div>
+            <br class="clearfloat" />
             @if (Model.Faction != null)
             {
                 @:Faction: @Html.PrintFaction(Model.Faction, false)
@@ -173,10 +166,10 @@
             }
 
         </div>
-    }
+                }
 
 
-    @if (Global.IsZeroKAdmin)
+    @if (Global.IsModerator)
     {
         <div class="admin">
             @Html.ActionLink("Admin user", "AdminUserDetail", "Users", new { id = Model.AccountID }, null)
@@ -188,7 +181,7 @@
         @Html.IncludeWiki("NewbieIntro")
     }
 
-    @if (!Model.IsDeleted || Global.IsZeroKAdmin)
+    @if (!Model.IsDeleted || Global.IsModerator)
     {
         <div id="usr_trophies" class="">
             <h3>Trophies:</h3>
@@ -318,17 +311,17 @@
         </div>
     }
 
-    @if (Global.IsZeroKAdmin && Global.AccountID == Model.AccountID)
+    @if (Global.IsModerator && Global.AccountID == Model.AccountID)
     {
         <div class="admin">
             <h3>Admin extras</h3>
             @if (GlobalConst.Mode == ModeType.Test)
             {
-                <a href="@Url.Action("ResetDB", "Admin")" class="js_confirm">Reset database (copy from live)</a><br/>
+                <a href="@Url.Action("ResetDB", "Admin")" class="js_confirm">Reset database (copy from live)</a><br />
             }
             <a href="@Url.Action("Index", "Engines")">Engines</a><br />
-            <a href="@Url.Action("ChatHistory", "Lobby")">Lobby chat history</a><br/>
-            <a href="@Url.Action("TraceLogs", "Admin")">Infrastructure trace logs</a><br/>
+            <a href="@Url.Action("ChatHistory", "Lobby")">Lobby chat history</a><br />
+            <a href="@Url.Action("TraceLogs", "Admin")">Infrastructure trace logs</a><br />
             <a href="@Url.Content("~/ResourceList.aspx")">Resource list</a><br />
             <a href="@Url.Action("BlockedVPNs", "Lobby")">Blocked VPNs</a><br />
             <a href="@Url.Action("ReportLog", "Users")">Abuse report log</a><br />

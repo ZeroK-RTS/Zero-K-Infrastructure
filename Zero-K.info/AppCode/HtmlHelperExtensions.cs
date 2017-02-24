@@ -169,7 +169,7 @@ namespace System.Web.Mvc
                 else if (account.Faction != null) clanStr = string.Format("<img src='{0}' width='16'/>", account.Faction.GetImageUrl());
                 
                 var dudeStr = "";
-                if (account.IsZeroKAdmin) dudeStr = "<img src='/img/police.png'  class='icon16' alt='Admin' />";
+                if (account.AdminLevel >= AdminLevel.Moderator) dudeStr = "<img src='/img/police.png'  class='icon16' alt='Admin' />";
                 
                 var clampedLevel = System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((-0.12 / Math.Cosh((account.Level - 61.9) / 7.08) + 1) 
                     * 2.93 * Math.Log(Math.Exp(-2.31) * account.Level + 1) - 0.89 / Math.Cosh((account.Level - 28.55) / 3.4))));
@@ -287,22 +287,12 @@ namespace System.Web.Mvc
             }
         }
 
-        /// <summary>
-        /// Returns an image of the user's contributor star (bronze/silver/gold), if any. Links to the Contributions page.
-        /// </summary>
-        public static MvcHtmlString PrintContributorStar(this HtmlHelper helper, Account account, bool large = false) {
-            var star = "";
-            var contribs = account.ContributionsByAccountID.ToList();
-            var total = 0;
-            foreach (var contrib in contribs) total += contrib.KudosValue;
-            if (total >= GlobalConst.KudosForDiamond) star = "star_diamond";
-            else if (total >= GlobalConst.KudosForGold) star = "star_yellow";
-            else if (total >= GlobalConst.KudosForSilver) star = "star_white";
-            else if (total >= GlobalConst.KudosForBronze) star = "star_brown";
-            else return new MvcHtmlString("");
 
-            if (large == false) star = star + "_small";
-            return new MvcHtmlString(string.Format("<a href='/Contributions' target='_blank' ><img src='/img/stars/{0}.png' alt='Donator star'/></a>", star));
+        public static MvcHtmlString PrintBadges(this HtmlHelper helper, Account account, int? maxWidth = null)
+        {
+            if (account == null) return new MvcHtmlString("");
+            var badges = account.GetBadges();
+            return new MvcHtmlString(string.Join("\n", badges.Select(x=>$"<img src='/img/badges/{x}.png' nicetitle='{x.Description()}' {(maxWidth != null ? $"style='width:{maxWidth}px;'":"")}/><br/>")));
         }
 
         /// <summary>
@@ -633,7 +623,7 @@ namespace System.Web.Mvc
             AccountForumVote previousVote = post.AccountForumVotes.SingleOrDefault(x => x.AccountID == Global.AccountID);
             bool upvoted = (previousVote != null && previousVote.Vote > 0);
             bool downvoted = (previousVote != null && previousVote.Vote < 0);
-            bool votersVisible = (!GlobalConst.OnlyAdminsSeePostVoters || (Global.Account != null && Global.Account.IsZeroKAdmin));
+            bool votersVisible = (!GlobalConst.OnlyAdminsSeePostVoters || (Global.Account?.AdminLevel >= AdminLevel.Moderator));
             /*
             return new MvcHtmlString(string.Format("<input type='' name='upvote' value='{3}{0}{4}' title='Upvote'> / <input type='submit' name='downvote' value='{5}{1}{6}'> {2}",
                     string.Format("<font {0}>+{1}</font>", post.Upvotes > 0 ? "color='LawnGreen'" : "", post.Upvotes),

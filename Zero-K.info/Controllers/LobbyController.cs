@@ -28,14 +28,14 @@ namespace ZeroKWeb.Controllers
             return Content("");
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult BlockedVPNs()
         {
             return View("BlockedVPNs");
         }
 
         [HttpPost]
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult AddBlockedCompany(string companyName, string comment)
         {
             ZkDataContext db = new ZkDataContext();
@@ -53,7 +53,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult AddBlockedHost(string hostname, string comment)
         {
             ZkDataContext db = new ZkDataContext();
@@ -71,7 +71,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult RemoveBlockedCompany(int companyID)
         {
             ZkDataContext db = new ZkDataContext();
@@ -85,7 +85,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult RemoveBlockedHost(int hostID)
         {
             ZkDataContext db = new ZkDataContext();
@@ -109,9 +109,13 @@ namespace ZeroKWeb.Controllers
             public IQueryable<LobbyChatHistory> Data;
         }
 
-        [Auth(Role = AuthRole.ZkAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult ChatHistory(ChatHistoryModel model) {
             model = model ?? new ChatHistoryModel();
+
+            // do not show zkcore history for non-cores
+            if (model.Channel == "zkcore" && Global.Account.DevLevel < DevLevel.RetiredCoreDeveloper) return View("LobbyChatHistory", model);
+
 
             var db = new ZkDataContext();
             var ret = db.LobbyChatHistories.Where(x=>x.SayPlace == model.Place).AsQueryable();

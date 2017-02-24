@@ -75,6 +75,8 @@
   <ItemGroup>
     <Compile Include="DbCloner.cs" />
     <Compile Include="Ef\AccountRelation.cs" />
+    <Compile Include="Enums\AdminLevel.cs" />
+    <Compile Include="Enums\DevLevel.cs" />
     <Compile Include="Ef\ForumPostWord.cs" />
     <Compile Include="Ef\Word.cs" />
     <Compile Include="Ef\LobbyChatHistory.cs" />
@@ -239,6 +241,10 @@
     <Compile Include="Migrations\201702091321502_StoreSourceInChatHistory.cs" />
     <Compile Include="Migrations\201702091321502_StoreSourceInChatHistory.Designer.cs">
       <DependentUpon>201702091321502_StoreSourceInChatHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702230955223_AdminAndDevFlags.cs" />
+    <Compile Include="Migrations\201702230955223_AdminAndDevFlags.Designer.cs">
+      <DependentUpon>201702230955223_AdminAndDevFlags.cs</DependentUpon>
     </Compile>
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -498,6 +504,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702091321502_StoreSourceInChatHistory.resx">
       <DependentUpon>201702091321502_StoreSourceInChatHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702230955223_AdminAndDevFlags.resx">
+      <DependentUpon>201702230955223_AdminAndDevFlags.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

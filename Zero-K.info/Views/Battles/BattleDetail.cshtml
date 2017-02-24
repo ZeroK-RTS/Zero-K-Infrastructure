@@ -116,7 +116,7 @@
                     @if (ViewBag.ShowWinners)
                     {
                         @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")
-                        if ((Global.IsZeroKAdmin || Model.IsMatchMaker) && u.EloChange.HasValue)
+                        if ((Global.IsModerator || Model.IsMatchMaker) && u.EloChange.HasValue)
                         {
                             @:Elo: @u.EloChange.Value.ToString("F1")
                         }
@@ -145,7 +145,7 @@
 }
 <br />
 
-@if (Global.IsZeroKAdmin)
+@if (Global.IsModerator)
 {
     <div class="admin" >
         Logs: @Html.ActionLink("Logs", "Logs", "Battles", new { id = Model.SpringBattleID }, null)
