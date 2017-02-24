@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using EntityFramework.Extensions;
 using Microsoft.Linq.Translations;
 using ZkData;
 using ZkLobbyServer;
@@ -116,6 +117,61 @@ namespace ZeroKWeb
                     var awardItems = CalculateAwards(db);
 
                     var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
+
+                    // set unused accounts weight to 1
+                    db.Accounts.Where(x => !x.SpringBattlePlayers.Any(
+                                    y => (y.SpringBattle.StartTime > ladderTimeout) && !y.SpringBattle.IsMatchMaker && !y.IsSpectator))
+                        .Update(acc => new Account() { EloWeight = 1 });
+
+                    db.Accounts.Where(x => !x.SpringBattlePlayers.Any(y => (y.SpringBattle.StartTime > ladderTimeout) && y.SpringBattle.IsMatchMaker && !y.IsSpectator)).Update(acc => new Account() { EloMmWeight = 1 });
+
+                    db.SaveChanges();
+
+
+                    foreach (
+                        var entry in
+                        db.Accounts.Where(x => x.EloWeight > 1)
+                            .Select(
+                                acc =>
+                                    new
+                                    {
+                                        Account = acc,
+                                        LastGame =
+                                        acc.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.SpringBattle.IsMatchMaker)
+                                            .OrderByDescending(x => x.SpringBattleID)
+                                            .Select(x =>x.SpringBattle.StartTime).FirstOrDefault()
+                                    }))
+                    {
+                        var days = DateTime.UtcNow.Subtract(entry.LastGame).TotalDays;
+                        var ratio = days/GlobalConst.LadderActivityDays;
+                        entry.Account.EloWeight = Math.Min(entry.Account.EloWeight,
+                            Math.Max(1, GlobalConst.EloWeightMax - (GlobalConst.EloWeightMax - 1)*ratio));
+                    }
+
+                    db.SaveChanges();
+
+
+                    foreach (
+                        var entry in
+                        db.Accounts.Where(x => x.EloMmWeight > 1)
+                            .Select(
+                                acc =>
+                                    new
+                                    {
+                                        Account = acc,
+                                        LastGame =
+                                        acc.SpringBattlePlayers.Where(x => !x.IsSpectator && x.SpringBattle.IsMatchMaker)
+                                            .OrderByDescending(x => x.SpringBattleID)
+                                            .Select(x => x.SpringBattle.StartTime).FirstOrDefault()
+                                    }))
+                    {
+                        var days = DateTime.UtcNow.Subtract(entry.LastGame).TotalDays;
+                        var ratio = days / GlobalConst.LadderActivityDays;
+                        entry.Account.EloMmWeight = Math.Min(entry.Account.EloMmWeight,
+                            Math.Max(1, GlobalConst.EloWeightMax - (GlobalConst.EloWeightMax - 1) * ratio));
+                    }
+                    db.SaveChanges();
+
 
                     // recalc competitive ranking
                     var cnt = 0;
