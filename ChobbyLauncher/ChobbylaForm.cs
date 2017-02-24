@@ -36,9 +36,12 @@ namespace ChobbyLauncher
                     "WARNING, cancelling now might corrupt your game copy.\nDo you really need to do it?",
                     "Confirm download cancel",
                     MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning) == DialogResult.Yes) progress.Download?.Abort();
-            DialogResult = DialogResult.Cancel;
-            Close();
+                    MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                progress.Download?.Abort();
+                DialogResult = DialogResult.Cancel;
+                Close();
+            }
         }
 
 
