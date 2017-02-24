@@ -139,9 +139,6 @@
   <data name="_0_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\ranks\0_6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="_0_7" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\ranks\0_7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="_1_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\ranks\1_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -162,9 +159,6 @@
   </data>
   <data name="_1_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\ranks\1_6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_1_7" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\ranks\1_7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="_2_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\ranks\2_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -187,9 +181,6 @@
   <data name="_2_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\ranks\2_6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="_2_7" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\ranks\2_7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="_3_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\ranks\3_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -210,9 +201,6 @@
   </data>
   <data name="_3_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\ranks\3_6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_3_7" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\ranks\3_7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="_4_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\ranks\4_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -235,9 +223,6 @@
   <data name="_4_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\ranks\4_6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="_4_7" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\ranks\4_7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="_5_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\ranks\5_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -258,9 +243,6 @@
   </data>
   <data name="_5_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\ranks\5_6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_5_7" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\ranks\5_7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="_6_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\ranks\6_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -283,9 +265,6 @@
   <data name="_6_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\ranks\6_6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="_6_7" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\ranks\6_7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="_7_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\ranks\7_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -306,8 +285,5 @@
   </data>
   <data name="_7_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\ranks\7_6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_7_7" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\ranks\7_7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

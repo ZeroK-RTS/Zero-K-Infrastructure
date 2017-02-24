@@ -133,16 +133,6 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _0_7 {
-            get {
-                object obj = ResourceManager.GetObject("_0_7", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap _1_0 {
             get {
                 object obj = ResourceManager.GetObject("_1_0", resourceCulture);
@@ -206,16 +196,6 @@ namespace ZeroKLobby {
         internal static System.Drawing.Bitmap _1_6 {
             get {
                 object obj = ResourceManager.GetObject("_1_6", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap _1_7 {
-            get {
-                object obj = ResourceManager.GetObject("_1_7", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -293,16 +273,6 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _2_7 {
-            get {
-                object obj = ResourceManager.GetObject("_2_7", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap _3_0 {
             get {
                 object obj = ResourceManager.GetObject("_3_0", resourceCulture);
@@ -366,16 +336,6 @@ namespace ZeroKLobby {
         internal static System.Drawing.Bitmap _3_6 {
             get {
                 object obj = ResourceManager.GetObject("_3_6", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap _3_7 {
-            get {
-                object obj = ResourceManager.GetObject("_3_7", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -453,16 +413,6 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _4_7 {
-            get {
-                object obj = ResourceManager.GetObject("_4_7", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap _5_0 {
             get {
                 object obj = ResourceManager.GetObject("_5_0", resourceCulture);
@@ -526,16 +476,6 @@ namespace ZeroKLobby {
         internal static System.Drawing.Bitmap _5_6 {
             get {
                 object obj = ResourceManager.GetObject("_5_6", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap _5_7 {
-            get {
-                object obj = ResourceManager.GetObject("_5_7", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -613,16 +553,6 @@ namespace ZeroKLobby {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _6_7 {
-            get {
-                object obj = ResourceManager.GetObject("_6_7", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap _7_0 {
             get {
                 object obj = ResourceManager.GetObject("_7_0", resourceCulture);
@@ -686,16 +616,6 @@ namespace ZeroKLobby {
         internal static System.Drawing.Bitmap _7_6 {
             get {
                 object obj = ResourceManager.GetObject("_7_6", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap _7_7 {
-            get {
-                object obj = ResourceManager.GetObject("_7_7", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
