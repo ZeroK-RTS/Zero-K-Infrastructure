@@ -52,32 +52,39 @@ namespace ZkLobbyServer
                 {
                     if (!VerifyIp(ip)) return new LoginCheckerResponse(LoginResponse.Code.Banned, "Too many conneciton attempts");
 
-                    var acc = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name);
-                    if (acc == null)
+                    SteamWebApi.PlayerInfo info = null;
+                    if (!string.IsNullOrEmpty(login.SteamAuthToken))
                     {
-                        LogIpFailure(ip);
-                        return new LoginCheckerResponse(LoginResponse.Code.InvalidName, "Invalid user name");
+                        info = await state.SteamWebApi.VerifyAndGetAccountInformation(login.SteamAuthToken);
+
+                        if (info == null)
+                        {
+                            LogIpFailure(ip);
+                            return new LoginCheckerResponse(LoginResponse.Code.InvalidSteamToken, "Steam token is invalid or could not be checked");
+                        }
                     }
 
-                    if (!string.IsNullOrEmpty(login.PasswordHash))
-                    {
+                    Account accBySteamID = null;
+                    Account accByLogin = null;
+                    if (info != null) accBySteamID = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.SteamID == info.steamid);
+                    if (!string.IsNullOrEmpty(login.Name)) accByLogin = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.SteamID == info.steamid);
 
-                        if (!acc.VerifyPassword(login.PasswordHash))
+                    if (accBySteamID == null)
+                    {
+                        if (accByLogin == null)
+                        {
+                            LogIpFailure(ip);
+                            return new LoginCheckerResponse(LoginResponse.Code.InvalidName,
+                                "Steam is not linked to any account yet, please provide a valid login name");
+                        }
+                        if (string.IsNullOrEmpty(login.PasswordHash) || !accByLogin.VerifyPassword(login.PasswordHash))
                         {
                             LogIpFailure(ip);
                             return new LoginCheckerResponse(LoginResponse.Code.InvalidPassword, "Invalid password");
                         }
                     }
-
-                    SteamWebApi.PlayerInfo info = null;
-                    if (!string.IsNullOrEmpty(login.SteamAuthToken)) info = await state.SteamWebApi.VerifyAndGetAccountInformation(login.SteamAuthToken);
-
-                    if (string.IsNullOrEmpty(login.PasswordHash) && (info == null || info.steamid != acc.SteamID || acc.SteamID == null))
-                    {
-                        LogIpFailure(ip);
-                        return new LoginCheckerResponse(LoginResponse.Code.InvalidPassword, "Invalid steam token");
-                    }
-
+                    var acc = accBySteamID ?? accByLogin;
+                    
                     var ret = new LoginCheckerResponse(LoginResponse.Code.Ok, null);
                     var user = ret.User;
 
@@ -90,8 +97,7 @@ namespace ZkLobbyServer
                         acc.SteamID = info.steamid;
                         acc.SteamName = info.personaname;
                     }
-
-
+                    
                     user.LobbyVersion = login.LobbyVersion;
                     user.IpAddress = ip;
 

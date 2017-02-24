@@ -15,7 +15,7 @@ using Timer = System.Timers.Timer;
 
 namespace ZkLobbyServer
 {
-    public class ClientConnection:ICommandSender
+    public class ClientConnection : ICommandSender
     {
         string Name => connectedUser?.Name;
         ConnectedUser connectedUser;
@@ -57,7 +57,7 @@ namespace ZkLobbyServer
         public async Task OnConnected()
         {
             //Trace.TraceInformation("{0} connected", this);
-            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Version = server.Version, UserCount = server.ConnectedUsers.Count});
+            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Version = server.Version, UserCount = server.ConnectedUsers.Count });
         }
 
 
@@ -71,12 +71,12 @@ namespace ZkLobbyServer
 
         public async Task Process(Login login)
         {
-            var ret = await Task.Run(()=>server.LoginChecker.Login(login, RemoteEndpointIP));
+            var ret = await Task.Run(() => server.LoginChecker.Login(login, RemoteEndpointIP));
             if (ret.LoginResponse.ResultCode == LoginResponse.Code.Ok)
             {
                 var user = ret.User;
                 //Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
-                
+
                 await this.SendCommand(user); // send self to self first
 
                 connectedUser = server.ConnectedUsers.GetOrAdd(user.Name, (n) => new ConnectedUser(server, user));
@@ -94,15 +94,17 @@ namespace ZkLobbyServer
 
                 // mutually syncs users based on visibility rules
                 await server.TwoWaySyncUsers(Name, server.ConnectedUsers.Keys);
-               
+
 
                 server.OfflineMessageHandler.SendMissedMessagesAsync(this, SayPlace.User, Name, user.AccountID);
 
-                var defChans = await server.ChannelManager.GetDefaultChannels(user.AccountID); 
-                defChans.AddRange(server.Channels.Where(x=>x.Value.Users.ContainsKey(user.Name)).Select(x=>x.Key)); // add currently connected channels to list too
-                
-                foreach (var chan in defChans.ToList().Distinct()) {
-                    await connectedUser.Process(new JoinChannel() {
+                var defChans = await server.ChannelManager.GetDefaultChannels(user.AccountID);
+                defChans.AddRange(server.Channels.Where(x => x.Value.Users.ContainsKey(user.Name)).Select(x => x.Key)); // add currently connected channels to list too
+
+                foreach (var chan in defChans.ToList().Distinct())
+                {
+                    await connectedUser.Process(new JoinChannel()
+                    {
                         ChannelName = chan,
                         Password = null
                     });
@@ -126,78 +128,54 @@ namespace ZkLobbyServer
         public async Task Process(Register register)
         {
             var response = new RegisterResponse();
-            if (!Account.IsValidLobbyName(register.Name)) response.ResultCode = RegisterResponse.Code.InvalidCharacters;
-            else if (server.ConnectedUsers.ContainsKey(register.Name)) response.ResultCode = RegisterResponse.Code.AlreadyConnected;
-            else
-            {
-                await Task.Run(async () =>
-                {
-                    response = await DoRegister(register);
-                });
-            }
-
-            //Trace.TraceInformation("{0} login: {1}", this, response.ResultCode.Description());
+            await Task.Run(async () => response = await DoRegister(register));
             await SendCommand(response);
         }
 
         private async Task<RegisterResponse> DoRegister(Register register)
         {
-            var response = new RegisterResponse();
+            if (!Account.IsValidLobbyName(register.Name)) return new RegisterResponse(RegisterResponse.Code.InvalidCharacters, "Name contains invalid characters");
+
+            if (server.ConnectedUsers.ContainsKey(register.Name)) return new RegisterResponse(RegisterResponse.Code.AlreadyConnected, "You are already connected");
+
+            if (string.IsNullOrEmpty(register.PasswordHash) && string.IsNullOrEmpty(register.SteamAuthToken)) return new RegisterResponse(RegisterResponse.Code.InvalidPassword, "Missing both password and steam token");
+
+            if (!server.LoginChecker.VerifyIp(RemoteEndpointIP)) return new RegisterResponse(RegisterResponse.Code.Banned, "Too many connection attempts");
+
+            var banPenalty = Punishment.GetActivePunishment(null, RemoteEndpointIP, register.UserID, x => x.BanLobby);
+            if (banPenalty != null) return new RegisterResponse(RegisterResponse.Code.Banned, banPenalty.Reason);
+
+            SteamWebApi.PlayerInfo info = null;
+            if (!string.IsNullOrEmpty(register.SteamAuthToken))
+            {
+                info = await server.SteamWebApi.VerifyAndGetAccountInformation(register.SteamAuthToken);
+                if (info == null) return new RegisterResponse(RegisterResponse.Code.InvalidSteamToken, "Steam token is invalid or could not be validated");
+            }
+
+
             using (var db = new ZkDataContext())
             {
-                // http://stackoverflow.com/questions/5312585/linq-case-insensitive-without-toupper-or-tolower
-                var acc = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == register.Name.ToUpper());
-                if (acc != null) response.ResultCode = RegisterResponse.Code.InvalidName;
-                else
+                var existingByName = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == register.Name.ToUpper());
+                if (existingByName != null) return new RegisterResponse(RegisterResponse.Code.InvalidName, "Name already taken");
+
+                var acc = new Account() { Name = register.Name };
+                acc.SetPasswordHashed(register.PasswordHash);
+                acc.SetName(register.Name);
+                acc.SetAvatar();
+                if (info != null)
                 {
-                    if (string.IsNullOrEmpty(register.PasswordHash) && string.IsNullOrEmpty(register.SteamAuthToken)) response.ResultCode = RegisterResponse.Code.InvalidPassword;
-                    else
-                    {
-                        if (!server.LoginChecker.VerifyIp(RemoteEndpointIP))
-                        {
-                            response.ResultCode = RegisterResponse.Code.Banned;
-                            response.Reason = "Too many connection attempts";
-                        }
-                        else
-                        {
-                            var banPenalty = Punishment.GetActivePunishment(null, RemoteEndpointIP, register.UserID, x => x.BanLobby);
-                            if (banPenalty != null)
-                            {
-                                response.ResultCode = RegisterResponse.Code.Banned;
-                                response.Reason = banPenalty.Reason;
-                            }
-                            else
-                            {
-                                acc = new Account() { Name = register.Name };
-                                SteamWebApi.PlayerInfo info = null;
-                                if (!string.IsNullOrEmpty(register.SteamAuthToken))
-                                {
-                                    info = await server.SteamWebApi.VerifyAndGetAccountInformation(register.SteamAuthToken);
-                                    if (info == null && string.IsNullOrEmpty(register.PasswordHash)) // no steam check and no pw, forget it
-                                    {
-                                        response.ResultCode = RegisterResponse.Code.InvalidPassword;
-                                        return response;
-                                    }
-                                }
+                    var existingBySteam = db.Accounts.FirstOrDefault(x => x.SteamID == info.steamid);
+                    if (existingBySteam != null)
+                        return new RegisterResponse(RegisterResponse.Code.SteamAlreadyRegistered,
+                            "Your steam account is already registered as " + existingBySteam.Name);
 
-                                acc.SetPasswordHashed(register.PasswordHash);
-                                acc.SetName(register.Name);
-                                acc.SetAvatar();
-                                if (info != null)
-                                {
-                                    acc.SteamID = info.steamid;
-                                    acc.SteamName = info.personaname;
-                                }
-                                db.Accounts.Add(acc);
-                                db.SaveChanges();
-
-                                response.ResultCode = RegisterResponse.Code.Ok;
-                            }
-                        }
-                    }
+                    acc.SteamID = info.steamid;
+                    acc.SteamName = info.personaname;
                 }
+                db.Accounts.Add(acc);
+                db.SaveChanges();
             }
-            return response;
+            return new RegisterResponse(RegisterResponse.Code.Ok, "Registered");
         }
 
 

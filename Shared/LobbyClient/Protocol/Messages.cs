@@ -142,6 +142,12 @@ namespace LobbyClient
 
             [Description("invalid name characters")]
             InvalidCharacters = 5,
+
+            [Description("invalid steam token")]
+            InvalidSteamToken = 6,
+
+            [Description("steam already registered")]
+            SteamAlreadyRegistered = 7,
         }
 
         /// <summary>
@@ -150,6 +156,14 @@ namespace LobbyClient
         public string Reason { get; set; }
 
         public Code ResultCode { get; set; }
+
+        public RegisterResponse(Code resultCode, string reason)
+        {
+            Reason = reason;
+            ResultCode = resultCode;
+        }
+
+        public RegisterResponse() {}
     }
 
     [Message(Origin.Server)]
@@ -166,7 +180,10 @@ namespace LobbyClient
             InvalidPassword = 3,
 
             [Description("banned")]
-            Banned = 4
+            Banned = 4,
+
+            [Description("invalid steam token")]
+            InvalidSteamToken = 5,
         }
 
         /// <summary>

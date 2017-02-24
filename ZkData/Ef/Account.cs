@@ -140,7 +140,7 @@ namespace ZkData
         public int ForumTotalDownvotes { get; set; }
         public int? VotesAvailable { get; set; }
 
-        [Index(IsUnique = false)]
+        [Index(IsUnique = true)]
         public decimal? SteamID { get; set; }
         [StringLength(200)]
         public string SteamName { get; set; }
