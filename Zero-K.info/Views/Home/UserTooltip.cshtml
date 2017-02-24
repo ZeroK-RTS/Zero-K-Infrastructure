@@ -5,24 +5,17 @@
     var u = Model;
 }
 <span style="float:left;">@Html.AccountAvatar(u)<br/>@Html.PrintBadges(u, 64)</span><b>@Html.PrintAccount(u)</b><br/>
-<b>First Login:</b> @u.FirstLogin.ToAgoString(), <b>Last Login:</b> @u.LastLogin.ToAgoString()<br />
-<b>Rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")
-<br />
-<b>Level:</b> @u.Level<br/>
-<br/>
-@foreach (var entry in Model.AccountRolesByAccountID) {
-    <span>
-        @Html.PrintRoleType(entry.RoleType) of @(entry.RoleType.IsClanOnly ? Html.PrintClan(entry.Clan) : Html.PrintFaction(entry.Faction,false))
-    </span><br/>
-}<br/>
-@if (Model.AdminLevel >= AdminLevel.Moderator)
- {
-			<span>
-				<b> @Model.Name </b> is a <b>Zero-K Administrator</b><br/>
-			</span>
- }
-
-
+<p>
+    <b>First Login:</b> @u.FirstLogin.ToAgoString(), <b>Last Login:</b> @u.LastLogin.ToAgoString()<br />
+    <b>Level:</b> @u.Level<br />
+    <br />
+    @foreach (var entry in Model.AccountRolesByAccountID)
+    {
+        <span>
+            @Html.PrintRoleType(entry.RoleType) of @(entry.RoleType.IsClanOnly ? Html.PrintClan(entry.Clan) : Html.PrintFaction(entry.Faction, false))
+        </span><br />
+    }
+</p>
 
 <div id="usr_trophies" class="">
     <h3>Trophies:</h3>

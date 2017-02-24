@@ -130,12 +130,6 @@ namespace ZeroKLobby
                     }
                     newLine();
                 }
-                if (user.CompetitiveRank.HasValue && user.CompetitiveRank<=10)
-                {
-                    drawImage(ZklResources.cup, 16, 16);
-                    drawString(string.Format("Top 10 Rank: {0}.", user.CompetitiveRank));
-                    newLine();
-                }
                 if (!string.IsNullOrEmpty(user.Avatar))
                 {
                     var image = Program.ServerImages.GetAvatarImage(user);
@@ -174,7 +168,6 @@ namespace ZeroKLobby
                 h += 16; // skill text
             }
             if (user.SteamID!=null) h += 16; //steam icon
-            if (user.CompetitiveRank.HasValue && user.CompetitiveRank<=10) h += 16; // top 10
             if (user.IsInBattleRoom) h += 76; // battle icon
 
             return new Size((int)302, (int)h);

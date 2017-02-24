@@ -213,6 +213,8 @@ namespace ZkData
 
         public double EffectiveMmElo => effectiveEloMmExpression.Evaluate(this);
 
+        public double BestEffectiveElo => Math.Max(EffectiveMmElo, EffectiveElo);
+
 
         [NotMapped]
         public int AvailableXP

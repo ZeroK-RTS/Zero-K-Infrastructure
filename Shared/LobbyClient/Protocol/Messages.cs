@@ -296,7 +296,6 @@ namespace LobbyClient
         public bool BanSpecChat { get; set; }
         public int? BattleID { get; set; }
         public string Clan { get; set; }
-        public int? CompetitiveRank { get; set; }
         public string Country { get; set; }
         public string DisplayName { get; set; }
         public int EffectiveMmElo { get; set; }
@@ -312,9 +311,12 @@ namespace LobbyClient
         public int Level { get; set; }
         public string LobbyVersion { get; set; }
         public string Name { get; set; }
+
+        [JsonIgnore]
         public int RawMmElo { get; set; }
         public string SteamID { get; set; }
         public List<string> Badges { get; set; }
+        public int EffectiveElo { get; set; }
 
         public User Clone()
         {
@@ -335,6 +337,7 @@ namespace LobbyClient
             Avatar = u.Avatar;
             Country = u.Country;
             EffectiveMmElo = u.EffectiveMmElo;
+            EffectiveElo = u.EffectiveElo;
             RawMmElo = u.RawMmElo;
             Faction = u.Faction;
             InGameSince = u.InGameSince;
@@ -345,7 +348,6 @@ namespace LobbyClient
             Level = u.Level;
             LobbyVersion = u.LobbyVersion;
             DisplayName = u.DisplayName;
-            CompetitiveRank = u.CompetitiveRank;
             BattleID = u.BattleID;
             Badges = u.Badges;
         }

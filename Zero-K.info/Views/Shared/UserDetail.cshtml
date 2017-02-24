@@ -127,17 +127,12 @@
                 {
                 <a href="@Html.PrintSpringLink("chat/user/" + Model.Name)"> Chat with @Model.Name in the lobby </a><br />
             }
-            @if (Model.AdminLevel >= AdminLevel.Moderator)
-                {
-                <div>
-                    <b> @Model.Name </b> is a <b>Zero-K Administrator</b>
-                </div>
-            }
 
             <b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
             <br />
+            
 
-            <b>Rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")
+            <b>Level:</b> @Model.Level<br />
             <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
             <br />
 

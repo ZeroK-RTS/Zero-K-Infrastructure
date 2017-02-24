@@ -109,10 +109,6 @@ namespace ZeroKLobby
                 }*/
                 drawString(player.Name);
 
-                if (user.CompetitiveRank.HasValue && user.CompetitiveRank <= 10)
-                {
-                    drawImage(ZklResources.cup, 16, 16);
-                }
 
                 if (!user.IsBot)
                 {

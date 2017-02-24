@@ -188,8 +188,8 @@ namespace ZkLobbyServer
             user.Avatar = acc.Avatar;
             user.Level = acc.Level;
             user.EffectiveMmElo = (int)acc.EffectiveMmElo;
+            user.EffectiveElo = (int)acc.EffectiveElo;
             user.RawMmElo = (int)acc.EloMm;
-            user.CompetitiveRank = acc.CompetitiveRank;
             user.SteamID = acc.SteamID?.ToString();
             user.IsAdmin = acc.AdminLevel >= AdminLevel.Moderator;
             user.IsBot = acc.IsBot;

@@ -179,14 +179,6 @@ namespace ZeroKLobby.MicroLobby
 
             var userDisplayName = user.Name;
             drawText(userDisplayName, textColor);
-            if (user.CompetitiveRank.HasValue && user.CompetitiveRank <= 10)
-            {
-                var oldProgression = x;
-                drawImage(ZklResources.cup);
-                x = oldProgression;
-                //TextRenderer.DrawText(g, top10.ToString(), boldFont, new Point(bounds.Left + x - 2, bounds.Top - 2), Config.TextColor, Color.Transparent, TextFormatFlags.PreserveGraphicsTranslateTransform);
-                x += 16;
-            }
 
             if (user.IsInGame) drawImage(Buttons.fight);
             else if (!isBattle && user.IsInBattleRoom) drawImage(Buttons.game);
