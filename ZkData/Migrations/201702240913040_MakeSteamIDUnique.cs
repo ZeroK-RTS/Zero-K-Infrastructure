@@ -8,7 +8,7 @@ namespace ZkData.Migrations
         public override void Up()
         {
             DropIndex("dbo.Accounts", new[] { "SteamID" });
-            Sql("update dbo.Accounts set SteamID=null where SteamID is not null and adminlevel>0");
+            Sql("update dbo.Accounts set SteamID=null where SteamID is not null and adminlevel=0");
 
             var indexName = "SteamID";
             var tableName = "dbo.Accounts";
