@@ -618,7 +618,7 @@ namespace ZkData
             donator_1 = 3,
             [Description("Gold donator")]
             donator_2 = 4,
-            [Description("Content contributor")]
+            [Description("External developer")]
             dev_content =  5,
             [Description("Game developer")]
             dev_game = 6,
