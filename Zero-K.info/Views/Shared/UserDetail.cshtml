@@ -131,6 +131,8 @@
             <b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
             <br />
             
+            <b>Competetive rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")<br />
+            <b>Casual rank:</b> @(Model.CasualRank == null ? "?" : $"{Model.CasualRank}. ({Math.Round(Model.EffectiveElo)})")<br />
 
             <b>Level:</b> @Model.Level<br />
             <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
