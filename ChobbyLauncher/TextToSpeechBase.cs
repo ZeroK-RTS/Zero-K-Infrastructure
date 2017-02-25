@@ -24,7 +24,7 @@ namespace ChobbyLauncher
         }
 
         public abstract void Say(string name, string text);
-        public abstract void SetVolume(double volume); // 0-1
+        public abstract void SetVolume(double volume); // 0-100
 
         protected static string Sanitize(string input)
         {

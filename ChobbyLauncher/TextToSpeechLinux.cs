@@ -13,7 +13,7 @@ namespace ChobbyLauncher
 
         public override void Say(string name, string text)
         {
-            var volint = ((int)volume.Clamp(0, 1) * 200.0 - 100.0).Clamp(-100, 100);
+            var volint = ((int)volume.Clamp(0, 100) * 2 - 100.0).Clamp(-100, 100);
             Process.Start("spd-say", $"-i {volint} \"{Sanitize(text)}\"");
         }
 
