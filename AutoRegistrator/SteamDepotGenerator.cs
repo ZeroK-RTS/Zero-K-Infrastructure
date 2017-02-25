@@ -120,7 +120,7 @@ namespace AutoRegistrator
             {
                 var fileName = $"{clan.Shortcut}.png";
                 var src = Path.Combine(spath, fileName);
-                if (File.Exists(src)) File.Copy(src, Path.Combine(tpath, fileName), true);
+                File.Copy(src, Path.Combine(tpath, fileName), true);
             }
 
             Trace.TraceInformation("Copying faction icons");
@@ -132,7 +132,7 @@ namespace AutoRegistrator
             {
                 var fileName = $"{fac.Shortcut}.png";
                 var src = Path.Combine(spath, fileName);
-                if (File.Exists(src)) File.Copy(src, Path.Combine(tpath, fileName), true);
+                File.Copy(src, Path.Combine(tpath, fileName), true);
             }
         }
 
