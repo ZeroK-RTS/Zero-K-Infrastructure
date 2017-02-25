@@ -193,7 +193,10 @@ namespace LobbyClient
             BannedTooManyConnectionAttempts = 6,
 
             [Description("your steam account is not linked yet, send ZK login or register")]
-            SteamNotLinkedAndLoginMissing = 7
+            SteamNotLinkedAndLoginMissing = 7,
+
+            [Description("your steam account is already linked to a different account")]
+            SteamLinkedToDifferentAccount = 8
         }
 
         public string BanReason { get; set; }

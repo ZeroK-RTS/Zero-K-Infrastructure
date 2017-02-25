@@ -93,6 +93,11 @@ namespace ZkLobbyServer
                     acc.LastLogin = DateTime.UtcNow;
                     if (info != null)
                     {
+                        if (db.Accounts.Any(x => x.SteamID == info.steamid && x.Name != acc.Name))
+                        {
+                            LogIpFailure(ip);
+                            return new LoginCheckerResponse(LoginResponse.Code.SteamLinkedToDifferentAccount);
+                        }
                         acc.SteamID = info.steamid;
                         acc.SteamName = info.personaname;
                     }
