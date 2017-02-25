@@ -275,7 +275,6 @@ namespace ZeroKWeb.Controllers
 	    {
 	        IAuthenticationRequest request = openid.CreateRequest(Identifier.Parse("https://steamcommunity.com/openid/"));
 	        if (!string.IsNullOrEmpty(referer)) request.SetCallbackArgument("referer", referer);
-	        if (!string.IsNullOrEmpty(login)) request.SetCallbackArgument("login", login);
 	        return request.RedirectingResponse.AsActionResultMvc5();
 	    }
 
@@ -289,14 +288,9 @@ namespace ZeroKWeb.Controllers
 	                if (ulong.TryParse(steamIDStr, out steamID))
 	                {
                         var referer = response.GetCallbackArgument("referer");
-	                    var login = response.GetCallbackArgument("login");
 	                    using (var db = new ZkDataContext())
 	                    {
-	                        var acc =
-	                            db.Accounts.Where(x => x.SteamID == steamID)
-	                                .OrderByDescending(x => x.Name == login)
-	                                .ThenByDescending(x => x.AccountID)
-	                                .FirstOrDefault();
+	                        var acc = db.Accounts.FirstOrDefault(x => x.SteamID == steamID);
 	                        if (acc != null)
 	                        {
 	                            FormsAuthentication.SetAuthCookie(acc.Name, true);

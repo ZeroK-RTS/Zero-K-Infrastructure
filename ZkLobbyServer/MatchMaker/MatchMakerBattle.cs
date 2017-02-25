@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
+using PlasmaShared;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 
@@ -25,6 +26,9 @@ namespace ZkLobbyServer
             Prototype = bat;
 
             foreach (var pe in bat.Players) Users[pe.Name] = new UserBattleStatus(pe.Name, pe.LobbyUser, Guid.NewGuid().ToString());
+            
+            if (ModOptions == null) ModOptions = new Dictionary<string, string>();
+            if (bat.QueueType.Mode != AutohostMode.GameChickens) ModOptions["mutespec"] = "mute"; // mute spectators
 
             ValidateAndFillDetails();
         }

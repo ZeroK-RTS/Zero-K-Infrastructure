@@ -132,7 +132,7 @@ namespace LobbyClient
             AlreadyConnected = 1,
 
             [Description("name already exists")]
-            InvalidName = 2,
+            NameAlreadyTaken = 2,
 
             [Description("invalid password")]
             InvalidPassword = 3,
@@ -141,15 +141,38 @@ namespace LobbyClient
             Banned = 4,
 
             [Description("invalid name characters")]
-            InvalidCharacters = 5,
+            NameHasInvalidCharacters = 5,
+
+            [Description("invalid steam token")]
+            InvalidSteamToken = 6,
+
+            [Description("steam already registered")]
+            SteamAlreadyRegistered = 7,
+
+            [Description("missing both password and token")]
+            MissingBothPasswordAndToken = 8,
+
+            [Description("banned too many connection attempts")]
+            BannedTooManyAttempts = 9,
+
+            [Description("already registered, use login using steam")]
+            AlreadyRegisteredWithThisSteamToken = 10,
+
+            [Description("already registered, use login using password")]
+            AlreadyRegisteredWithThisPassword = 11
         }
 
-        /// <summary>
-        ///     Additional text (ban reason)
-        /// </summary>
-        public string Reason { get; set; }
 
         public Code ResultCode { get; set; }
+
+        public string BanReason { get; set; }
+
+        public RegisterResponse(Code resultCode)
+        {
+            ResultCode = resultCode;
+        }
+
+        public RegisterResponse() {}
     }
 
     [Message(Origin.Server)]
@@ -166,13 +189,25 @@ namespace LobbyClient
             InvalidPassword = 3,
 
             [Description("banned")]
-            Banned = 4
+            Banned = 4,
+
+
+            [Description("invalid steam token")]
+            InvalidSteamToken = 5,
+
+            [Description("banned, too many connection attempts")]
+            BannedTooManyConnectionAttempts = 6,
+
+            [Description("your steam account is not linked yet, send ZK login or register")]
+            SteamNotLinkedAndLoginMissing = 7,
+
+            [Description("your steam account is already linked to a different account")]
+            SteamLinkedToDifferentAccount = 8
         }
 
-        /// <summary>
-        ///     Additional text (ban reason)
-        /// </summary>
-        public string Reason { get; set; }
+        public string Name { get; set; }
+
+        public string BanReason { get; set; }
 
         public Code ResultCode { get; set; }
 
@@ -279,7 +314,6 @@ namespace LobbyClient
         public bool BanSpecChat { get; set; }
         public int? BattleID { get; set; }
         public string Clan { get; set; }
-        public int? CompetitiveRank { get; set; }
         public string Country { get; set; }
         public string DisplayName { get; set; }
         public int EffectiveMmElo { get; set; }
@@ -295,9 +329,12 @@ namespace LobbyClient
         public int Level { get; set; }
         public string LobbyVersion { get; set; }
         public string Name { get; set; }
+
+        [JsonIgnore]
         public int RawMmElo { get; set; }
         public string SteamID { get; set; }
         public List<string> Badges { get; set; }
+        public int EffectiveElo { get; set; }
 
         public User Clone()
         {
@@ -318,6 +355,7 @@ namespace LobbyClient
             Avatar = u.Avatar;
             Country = u.Country;
             EffectiveMmElo = u.EffectiveMmElo;
+            EffectiveElo = u.EffectiveElo;
             RawMmElo = u.RawMmElo;
             Faction = u.Faction;
             InGameSince = u.InGameSince;
@@ -328,7 +366,6 @@ namespace LobbyClient
             Level = u.Level;
             LobbyVersion = u.LobbyVersion;
             DisplayName = u.DisplayName;
-            CompetitiveRank = u.CompetitiveRank;
             BattleID = u.BattleID;
             Badges = u.Badges;
         }
@@ -526,12 +563,6 @@ namespace LobbyClient
     public class SiteToLobbyCommand
     {
         public string Command { get; set; }
-    }
-
-    [Message(Origin.Client)]
-    public class LinkSteam
-    {
-        public string Token { get; set; }
     }
 
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
@@ -140,8 +141,9 @@ namespace ZkData
         public int ForumTotalDownvotes { get; set; }
         public int? VotesAvailable { get; set; }
 
-        [Index(IsUnique = false)]
+        [Index(IsUnique = true)]
         public decimal? SteamID { get; set; }
+
         [StringLength(200)]
         public string SteamName { get; set; }
         public int Cpu { get; set; }
@@ -210,6 +212,8 @@ namespace ZkData
         private static readonly CompiledExpression<Account, double> effectiveEloMmExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveMmElo).Is(e => e.EloMm + (GlobalConst.EloWeightMax - e.EloMmWeight) * GlobalConst.EloWeightMalusFactor);
 
         public double EffectiveMmElo => effectiveEloMmExpression.Evaluate(this);
+
+        public double BestEffectiveElo => Math.Max(EffectiveMmElo, EffectiveElo);
 
 
         [NotMapped]

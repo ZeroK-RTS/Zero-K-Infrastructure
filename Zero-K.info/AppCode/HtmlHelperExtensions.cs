@@ -174,7 +174,7 @@ namespace System.Web.Mvc
                 var clampedLevel = System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((-0.12 / Math.Cosh((account.Level - 61.9) / 7.08) + 1) 
                     * 2.93 * Math.Log(Math.Exp(-2.31) * account.Level + 1) - 0.89 / Math.Cosh((account.Level - 28.55) / 3.4))));
                 //0, 5, 10, 20, 35, 50, 75, 100 -> 0, 1, 2, 3, 4, 5, 6, 7
-                var clampedSkill = System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((account.EffectiveMmElo - 1000.0) / 200)));
+                var clampedSkill = System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((Math.Max(account.EffectiveMmElo, account.EffectiveElo) - 1000.0)) / 200));
 
                 string color = Faction.FactionColor(account.Faction, Global.FactionID);
                 if (String.IsNullOrEmpty(color)) color = "#B0D0C0";

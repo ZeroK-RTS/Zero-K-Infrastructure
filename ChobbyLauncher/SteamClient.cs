@@ -202,6 +202,7 @@ namespace ChobbyLauncher
 
         public void SendSteamNotifyJoin(ulong toClientID)
         {
+            SendSteamMessage(toClientID, new Dummy());
             SendSteamMessage(toClientID, new SteamP2PNotifyJoin() { JoinerName = MySteamNameSanitized });
         }
 
@@ -288,6 +289,9 @@ namespace ChobbyLauncher
             SteamOnline?.Invoke();
         }
 
+        private void ProcessMessage(ulong remoteUser, Dummy cmd)
+        {
+        }
 
         private void ProcessMessage(ulong remoteUser, SteamP2PNotifyJoin cmd)
         {
@@ -333,7 +337,7 @@ namespace ChobbyLauncher
         /// </summary>
         /// <param name="targetClientID"></param>
         /// <param name="message"></param>
-        private void SendSteamMessage(ulong targetClientID, object message)
+        private void SendSteamMessage<T>(ulong targetClientID, T message)
         {
             if (IsOnline)
             {

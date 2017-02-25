@@ -26,7 +26,7 @@ namespace ZkLobbyServer
         private static string[] ipWhitelist = { "127.0.0.1", "86.61.217.155" };
         private readonly IGeoIP2Provider geoIP;
 
-        private readonly ZkLobbyServer state;
+        private readonly ZkLobbyServer server;
         private ConcurrentDictionary<string, int> connectionAttempts = new ConcurrentDictionary<string, int>();
 
         private DateTime lastConLogReset = DateTime.UtcNow;
@@ -34,13 +34,13 @@ namespace ZkLobbyServer
 
         private SemaphoreSlim semaphore = new SemaphoreSlim(MaxConcurrentLogins);
 
-        public LoginChecker(ZkLobbyServer state, string geoipPath)
+        public LoginChecker(ZkLobbyServer server, string geoipPath)
         {
-            this.state = state;
+            this.server = server;
             geoIP = new DatabaseReader(Path.Combine(geoipPath, "GeoLite2-Country.mmdb"), FileAccessMode.Memory);
         }
 
-        public async Task<LoginCheckerResponse> Login(Login login, string ip)
+        public async Task<LoginCheckerResponse> DoLogin(Login login, string ip)
         {
             await semaphore.WaitAsync();
             try
@@ -50,35 +50,42 @@ namespace ZkLobbyServer
 
                 using (var db = new ZkDataContext())
                 {
-                    if (!VerifyIp(ip)) return new LoginCheckerResponse(LoginResponse.Code.Banned, "Too many conneciton attempts");
+                    if (!VerifyIp(ip)) return new LoginCheckerResponse(LoginResponse.Code.BannedTooManyConnectionAttempts);
 
-                    var acc = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name);
-                    if (acc == null)
+                    SteamWebApi.PlayerInfo info = null;
+                    if (!string.IsNullOrEmpty(login.SteamAuthToken))
                     {
-                        LogIpFailure(ip);
-                        return new LoginCheckerResponse(LoginResponse.Code.InvalidName, "Invalid user name");
-                    }
+                        info = await server.SteamWebApi.VerifyAndGetAccountInformation(login.SteamAuthToken);
 
-                    if (!string.IsNullOrEmpty(login.PasswordHash))
-                    {
-
-                        if (!acc.VerifyPassword(login.PasswordHash))
+                        if (info == null)
                         {
                             LogIpFailure(ip);
-                            return new LoginCheckerResponse(LoginResponse.Code.InvalidPassword, "Invalid password");
+                            return new LoginCheckerResponse(LoginResponse.Code.InvalidSteamToken);
                         }
                     }
 
-                    SteamWebApi.PlayerInfo info = null;
-                    if (!string.IsNullOrEmpty(login.SteamAuthToken)) info = await state.SteamWebApi.VerifyAndGetAccountInformation(login.SteamAuthToken);
+                    Account accBySteamID = null;
+                    Account accByLogin = null;
+                    if (info != null) accBySteamID = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.SteamID == info.steamid);
+                    if (!string.IsNullOrEmpty(login.Name)) accByLogin = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name);
 
-                    if (string.IsNullOrEmpty(login.PasswordHash) && (info == null || info.steamid != acc.SteamID || acc.SteamID == null))
+                    if (accBySteamID == null)
                     {
-                        LogIpFailure(ip);
-                        return new LoginCheckerResponse(LoginResponse.Code.InvalidPassword, "Invalid steam token");
+                        if (accByLogin == null)
+                        {
+                            LogIpFailure(ip);
+                            return new LoginCheckerResponse(LoginResponse.Code.SteamNotLinkedAndLoginMissing);
+                        }
+                        if (string.IsNullOrEmpty(login.PasswordHash) || !accByLogin.VerifyPassword(login.PasswordHash))
+                        {
+                            LogIpFailure(ip);
+                            return new LoginCheckerResponse(LoginResponse.Code.InvalidPassword);
+                        }
                     }
+                    var acc = accBySteamID ?? accByLogin;
 
-                    var ret = new LoginCheckerResponse(LoginResponse.Code.Ok, null);
+                    var ret = new LoginCheckerResponse(LoginResponse.Code.Ok);
+                    ret.LoginResponse.Name = acc.Name;
                     var user = ret.User;
 
                     acc.Country = ResolveCountry(ip);
@@ -87,10 +94,14 @@ namespace ZkLobbyServer
                     acc.LastLogin = DateTime.UtcNow;
                     if (info != null)
                     {
+                        if (db.Accounts.Any(x => x.SteamID == info.steamid && x.Name != acc.Name))
+                        {
+                            LogIpFailure(ip);
+                            return new LoginCheckerResponse(LoginResponse.Code.SteamLinkedToDifferentAccount);
+                        }
                         acc.SteamID = info.steamid;
                         acc.SteamName = info.personaname;
                     }
-
 
                     user.LobbyVersion = login.LobbyVersion;
                     user.IpAddress = ip;
@@ -124,6 +135,66 @@ namespace ZkLobbyServer
             }
         }
 
+        public async Task<RegisterResponse> DoRegister(Register register, string ip)
+        {
+            if (!Account.IsValidLobbyName(register.Name)) return new RegisterResponse(RegisterResponse.Code.NameHasInvalidCharacters);
+
+            if (server.ConnectedUsers.ContainsKey(register.Name)) return new RegisterResponse(RegisterResponse.Code.AlreadyConnected);
+
+            if (string.IsNullOrEmpty(register.PasswordHash) && string.IsNullOrEmpty(register.SteamAuthToken)) return new RegisterResponse(RegisterResponse.Code.MissingBothPasswordAndToken);
+
+            if (!VerifyIp(ip)) return new RegisterResponse(RegisterResponse.Code.BannedTooManyAttempts);
+
+            var banPenalty = Punishment.GetActivePunishment(null, ip, register.UserID, x => x.BanLobby);
+            if (banPenalty != null) return new RegisterResponse(RegisterResponse.Code.Banned) {BanReason =  banPenalty.Reason};
+
+            SteamWebApi.PlayerInfo info = null;
+            if (!string.IsNullOrEmpty(register.SteamAuthToken))
+            {
+                info = await server.SteamWebApi.VerifyAndGetAccountInformation(register.SteamAuthToken);
+                if (info == null) return new RegisterResponse(RegisterResponse.Code.InvalidSteamToken);
+            }
+
+            using (var db = new ZkDataContext())
+            {
+                var existingByName = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == register.Name.ToUpper());
+                if (existingByName != null)
+                {
+                    if (info != null && existingByName.SteamID == info.steamid) return new RegisterResponse(RegisterResponse.Code.AlreadyRegisteredWithThisSteamToken);
+
+                    if (info == null && !string.IsNullOrEmpty(register.PasswordHash) && existingByName.VerifyPassword(register.PasswordHash)) return new RegisterResponse(RegisterResponse.Code.AlreadyRegisteredWithThisPassword);
+
+                    return new RegisterResponse(RegisterResponse.Code.NameAlreadyTaken);
+                }
+
+                var acc = new Account() { Name = register.Name };
+                acc.SetPasswordHashed(register.PasswordHash);
+                acc.SetName(register.Name);
+                acc.SetAvatar();
+                if (info != null)
+                {
+                    var existingBySteam = db.Accounts.FirstOrDefault(x => x.SteamID == info.steamid);
+                    if (existingBySteam != null)
+                        return new RegisterResponse(RegisterResponse.Code.SteamAlreadyRegistered);
+
+                    acc.SteamID = info.steamid;
+                    acc.SteamName = info.personaname;
+                } else if (string.IsNullOrEmpty(register.PasswordHash))
+                {
+                    return new RegisterResponse(RegisterResponse.Code.InvalidPassword);
+                }
+                db.Accounts.Add(acc);
+                db.SaveChanges();
+            }
+            return new RegisterResponse(RegisterResponse.Code.Ok);
+        }
+
+        public void LogIpFailure(string ip)
+        {
+            connectionAttempts.AddOrUpdate(ip, (ipStr) => 1, (ipStr, count) => count + 1);
+        }
+
+
         public static void UpdateUserFromAccount(User user, Account acc)
         {
             user.Name = acc.Name;
@@ -131,8 +202,8 @@ namespace ZkLobbyServer
             user.Avatar = acc.Avatar;
             user.Level = acc.Level;
             user.EffectiveMmElo = (int)acc.EffectiveMmElo;
+            user.EffectiveElo = (int)acc.EffectiveElo;
             user.RawMmElo = (int)acc.EloMm;
-            user.CompetitiveRank = acc.CompetitiveRank;
             user.SteamID = acc.SteamID?.ToString();
             user.IsAdmin = acc.AdminLevel >= AdminLevel.Moderator;
             user.IsBot = acc.IsBot;
@@ -140,12 +211,31 @@ namespace ZkLobbyServer
             user.Faction = acc.Faction != null ? acc.Faction.Shortcut : null;
             user.Clan = acc.Clan != null ? acc.Clan.Shortcut : null;
             user.AccountID = acc.AccountID;
-            user.Badges = acc.GetBadges().Select(x=>x.ToString()).ToList();
+            user.Badges = acc.GetBadges().Select(x => x.ToString()).ToList();
             if (user.Badges.Count == 0) user.Badges = null; // slight optimization for data transfer
             Interlocked.Increment(ref user.SyncVersion);
 
             user.BanMute = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanMute) != null;
             user.BanSpecChat = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanSpecChat) != null;
+        }
+
+        public bool VerifyIp(string ip)
+        {
+            if (ipWhitelist.Contains(ip)) return true;
+            if (DateTime.UtcNow.Subtract(lastConLogReset).TotalMinutes > MaxConnectionAttemptsMinutes)
+            {
+                connectionAttempts = new ConcurrentDictionary<string, int>();
+                lastConLogReset = DateTime.UtcNow;
+                return true;
+            }
+
+            int entry;
+            if (connectionAttempts.TryGetValue(ip, out entry) && (entry > MaxConnectionAttempts))
+            {
+                Trace.TraceInformation("Blocking IP {0} due to too many connection attempts", ip);
+                return false;
+            }
+            return true;
         }
 
 
@@ -155,30 +245,10 @@ namespace ZkLobbyServer
             var str = $"Login denied for {acc.Name} IP:{ip} ID:{user_id} reason: {reason}";
             Talk(str);
             Trace.TraceInformation(str);
-            return new LoginCheckerResponse(LoginResponse.Code.Banned, reason);
-        }
-
-        private static bool CheckMask(IPAddress address, IPAddress mask, IPAddress target)
-        {
-            if (mask == null) return false;
-
-            var ba = address.GetAddressBytes();
-            var bm = mask.GetAddressBytes();
-            var bb = target.GetAddressBytes();
-
-            if ((ba.Length != bm.Length) || (bm.Length != bb.Length)) return false;
-
-            for (var i = 0; i < ba.Length; i++)
-            {
-                int m = bm[i];
-
-                var a = ba[i] & m;
-                var b = bb[i] & m;
-
-                if (a != b) return false;
-            }
-
-            return true;
+            
+            var ret = new LoginCheckerResponse(LoginResponse.Code.Banned);
+            ret.LoginResponse.BanReason = reason;
+            return ret;
         }
 
         private bool HasVpn(string ip, Account acc, ZkDataContext db)
@@ -249,6 +319,29 @@ namespace ZkLobbyServer
             return false;
         }
 
+        private static bool CheckMask(IPAddress address, IPAddress mask, IPAddress target)
+        {
+            if (mask == null) return false;
+
+            var ba = address.GetAddressBytes();
+            var bm = mask.GetAddressBytes();
+            var bb = target.GetAddressBytes();
+
+            if ((ba.Length != bm.Length) || (bm.Length != bb.Length)) return false;
+
+            for (var i = 0; i < ba.Length; i++)
+            {
+                int m = bm[i];
+
+                var a = ba[i] & m;
+                var b = bb[i] & m;
+
+                if (a != b) return false;
+            }
+
+            return true;
+        }
+
         private static bool IsLanIP(string ip)
         {
             var address = IPAddress.Parse(ip);
@@ -275,11 +368,6 @@ namespace ZkLobbyServer
             }
             entry.LoginCount++;
             entry.LastLogin = DateTime.UtcNow;
-        }
-
-        public void LogIpFailure(string ip)
-        {
-            connectionAttempts.AddOrUpdate(ip, (ipStr) => 1, (ipStr, count) => count + 1);
         }
 
         private static void LogUserID(ZkDataContext db, Account acc, long user_id)
@@ -315,26 +403,7 @@ namespace ZkLobbyServer
         private void Talk(string text)
         {
             ConnectedUser cli;
-            if (state.ConnectedUsers.TryGetValue(GlobalConst.NightwatchName, out cli)) cli.Process(new Say { IsEmote = true, Place = SayPlace.Channel, Target = "zkadmin", Text = text });
-        }
-
-        public bool VerifyIp(string ip)
-        {
-            if (ipWhitelist.Contains(ip)) return true;
-            if (DateTime.UtcNow.Subtract(lastConLogReset).TotalMinutes > MaxConnectionAttemptsMinutes)
-            {
-                connectionAttempts = new ConcurrentDictionary<string, int>();
-                lastConLogReset = DateTime.UtcNow;
-                return true;
-            }
-
-            int entry;
-            if (connectionAttempts.TryGetValue(ip, out entry) && (entry > MaxConnectionAttempts))
-            {
-                Trace.TraceInformation("Blocking IP {0} due to too many connection attempts", ip);
-                return false;
-            }
-            return true;
+            if (server.ConnectedUsers.TryGetValue(GlobalConst.NightwatchName, out cli)) cli.Process(new Say { IsEmote = true, Place = SayPlace.Channel, Target = "zkadmin", Text = text });
         }
 
 
@@ -343,10 +412,9 @@ namespace ZkLobbyServer
             public LoginResponse LoginResponse = new LoginResponse();
             public User User = new User();
 
-            public LoginCheckerResponse(LoginResponse.Code code, string reason)
+            public LoginCheckerResponse(LoginResponse.Code code)
             {
                 LoginResponse.ResultCode = code;
-                LoginResponse.Reason = reason;
             }
         }
     }

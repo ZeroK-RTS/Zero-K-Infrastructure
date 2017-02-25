@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Windows.Forms;
 using GameAnalyticsSDK.Net;
 using LumiSoft.Net.STUN.Client;
@@ -20,6 +21,7 @@ namespace ChobbyLauncher
         [STAThread]
         private static void Main(string[] args)
         {
+
             Trace.Listeners.Add(new ConsoleTraceListener());
 
             try

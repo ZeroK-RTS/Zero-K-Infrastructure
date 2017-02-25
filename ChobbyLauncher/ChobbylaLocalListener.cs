@@ -428,24 +428,31 @@ namespace ChobbyLauncher
             Trace.TraceInformation("Chobby connected to wrapper");
             try
             {
-                await SendCommand(new WrapperOnline()
-                {
-                    DefaultServerHost = GlobalConst.LobbyServerHost,
-                    DefaultServerPort = GlobalConst.LobbyServerPort,
-                    UserID = Utils.GetMyUserID().ToString()
-                });
-
                 await SendSteamOnline();
-
-                
+               
             }
             catch (Exception ex)
             {
                 Trace.TraceError("Error processing OnConnected: {0}" ,ex);
             }
+
+            try
+            {
+                await
+                    SendCommand(new WrapperOnline()
+                    {
+                        DefaultServerHost = GlobalConst.LobbyServerHost,
+                        DefaultServerPort = GlobalConst.LobbyServerPort,
+                        UserID = Utils.GetMyUserID().ToString()
+                    });
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error sending WrapperOnline", ex);
+            }
         }
 
-        
+
         private async Task SendSteamOnline()
         {
             if (steam.IsOnline)

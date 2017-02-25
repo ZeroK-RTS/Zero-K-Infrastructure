@@ -31,8 +31,6 @@ namespace ChobbyLauncher
 
         public override void SetVolume(double volume)
         {
-            volume = volume.Clamp(0, 1);
-            volume = volume*100.0;
             volume = volume.Clamp(0, 100);
             speechSynthesizer.Volume = (int)volume;
         }

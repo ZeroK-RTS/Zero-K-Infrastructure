@@ -16,20 +16,19 @@
             });
         </script>
         <form method="post" action="@Url.Action("Logon", "Home")" style="padding: 0; margin: 0;">
+            <input type="hidden" name="steamlogon" />
+            <a href="#" id="steamloginsubmit" nicetitle="Login using Steam (must create account in-game first)">
+                <img src="~/Img/sits_small.png" style="vertical-align: middle;" />
+            </a>
+            &nbsp;&nbsp;<i>OR</i>&nbsp;
             Zero-K Name: 
             <input type="text" name="login" />
             &nbsp;&nbsp; 
-            <a href="#" id="steamloginsubmit"  nicetitle="Login using Steam (must create account in-game first)">
-                <img src="~/Img/sits_small.png" style="vertical-align: middle;"/>
-            </a>
-            &nbsp;<i>OR</i>&nbsp;&nbsp;
             Password:
             <input type="password" name="password" />
-            <input type="hidden" name="steamlogon"/>
             &nbsp;&nbsp;
-            <a href="#" onclick="$(this).closest('form').submit();return false;" nicetitle="Login with your Zero-K lobby account (must create account in-game first)">
-                <img src="~/Img/login.png" style="vertical-align: middle; height: 24px;" />
-            </a>
+            <input type="image" value="Login" src="/img/login.png" style="border: none; height: 24px;
+        height: 25px; vertical-align: middle;" title="Login with your Zero-K lobby account (must create account in-game first)" alt="Login" />
             <input type="hidden" name="referer" value="@(Request["ReturnUrl"] ?? Request.Url?.ToString())" />
         </form>
     }

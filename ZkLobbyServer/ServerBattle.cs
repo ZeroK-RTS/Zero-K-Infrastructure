@@ -698,8 +698,24 @@ namespace ZkLobbyServer
         private void spring_PlayerSaid(object sender, SpringLogEventArgs e)
         {
             ConnectedUser user;
-            if (server.ConnectedUsers.TryGetValue(e.Username, out user) && !user.User.BanMute && (!(user.User.BanSpecChat || spring.LobbyStartContext.Mode == AutohostMode.GameFFA) || spring.Context.ActualPlayers.Any(x=>x.Name == e.Username && !x.IsSpectator))) // relay
-                if (!e.Line.StartsWith("Allies:") && !e.Line.StartsWith("Spectators:")) server.GhostSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle, AllowRelay = false}, BattleID);
+
+            var isPlayer = spring.Context.ActualPlayers.Any(x => x.Name == e.Username && !x.IsSpectator);
+            
+            // block spectator chat in FFA and non chicken MM
+            if (!isPlayer)
+            {
+                if (spring.LobbyStartContext.Mode == AutohostMode.GameFFA ||
+                    (spring.LobbyStartContext.IsMatchMakerGame && spring.LobbyStartContext.Mode != AutohostMode.GameChickens)) return;
+            }
+
+            // check bans
+            if (!server.ConnectedUsers.TryGetValue(e.Username, out user) || user.User.BanMute || (user.User.BanSpecChat && !isPlayer))
+            {
+                return;
+            }
+                
+            // relay
+            if (!e.Line.StartsWith("Allies:") && !e.Line.StartsWith("Spectators:")) server.GhostSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle, AllowRelay = false}, BattleID);
         }
 
         private async void DedicatedServerExited(object sender, SpringBattleContext springBattleContext)

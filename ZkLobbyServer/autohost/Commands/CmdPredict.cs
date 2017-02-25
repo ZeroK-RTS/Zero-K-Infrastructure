@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
@@ -35,11 +36,11 @@ namespace ZkLobbyServer
                 if (battle.IsInGame)
                     grouping = b.spring.LobbyStartContext?.Players.Where(u => !u.IsSpectator)
                         .GroupBy(u => u.AllyID)
-                        .ToDictionary(x => x.Key, x => x.Average(y => Account.AccountByName(db, y.Name).EffectiveMmElo));
+                        .ToDictionary(x => x.Key, x => x.Average(y => Account.AccountByName(db, y.Name).BestEffectiveElo));
                 else
                     grouping = b.Users.Values.Where(u => !u.IsSpectator)
                         .GroupBy(u => u.AllyNumber)
-                        .ToDictionary(x => x.Key, x => x.Average(y => y.LobbyUser.EffectiveMmElo));
+                        .ToDictionary(x => x.Key, x => x.Average(y => Math.Max(y.LobbyUser.EffectiveMmElo, y.LobbyUser.EffectiveElo)));
             }
 
             KeyValuePair<int, double>? oldg = null;
