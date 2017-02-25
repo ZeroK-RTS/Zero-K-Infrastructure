@@ -132,7 +132,7 @@ namespace LobbyClient
             AlreadyConnected = 1,
 
             [Description("name already exists")]
-            InvalidName = 2,
+            NameAlreadyTaken = 2,
 
             [Description("invalid password")]
             InvalidPassword = 3,
@@ -141,25 +141,28 @@ namespace LobbyClient
             Banned = 4,
 
             [Description("invalid name characters")]
-            InvalidCharacters = 5,
+            NameHasInvalidCharacters = 5,
 
             [Description("invalid steam token")]
             InvalidSteamToken = 6,
 
             [Description("steam already registered")]
             SteamAlreadyRegistered = 7,
+
+            [Description("missing both password and token")]
+            MissingBothPasswordAndToken = 8,
+
+            [Description("banned too many connection attempts")]
+            BannedTooManyAttempts = 9
         }
 
-        /// <summary>
-        ///     Additional text (ban reason)
-        /// </summary>
-        public string Reason { get; set; }
 
         public Code ResultCode { get; set; }
 
-        public RegisterResponse(Code resultCode, string reason)
+        public string BanReason { get; set; }
+
+        public RegisterResponse(Code resultCode)
         {
-            Reason = reason;
             ResultCode = resultCode;
         }
 
@@ -182,14 +185,18 @@ namespace LobbyClient
             [Description("banned")]
             Banned = 4,
 
+
             [Description("invalid steam token")]
             InvalidSteamToken = 5,
+
+            [Description("banned, too many connection attempts")]
+            BannedTooManyConnectionAttempts = 6,
+
+            [Description("your steam account is not linked yet, send ZK login or register")]
+            SteamNotLinkedAndLoginMissing = 7
         }
 
-        /// <summary>
-        ///     Additional text (ban reason)
-        /// </summary>
-        public string Reason { get; set; }
+        public string BanReason { get; set; }
 
         public Code ResultCode { get; set; }
 

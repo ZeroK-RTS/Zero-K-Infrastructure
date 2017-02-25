@@ -50,7 +50,7 @@ namespace ZkLobbyServer
 
                 using (var db = new ZkDataContext())
                 {
-                    if (!VerifyIp(ip)) return new LoginCheckerResponse(LoginResponse.Code.Banned, "Too many conneciton attempts");
+                    if (!VerifyIp(ip)) return new LoginCheckerResponse(LoginResponse.Code.BannedTooManyConnectionAttempts);
 
                     SteamWebApi.PlayerInfo info = null;
                     if (!string.IsNullOrEmpty(login.SteamAuthToken))
@@ -60,7 +60,7 @@ namespace ZkLobbyServer
                         if (info == null)
                         {
                             LogIpFailure(ip);
-                            return new LoginCheckerResponse(LoginResponse.Code.InvalidSteamToken, "Steam token is invalid or could not be checked");
+                            return new LoginCheckerResponse(LoginResponse.Code.InvalidSteamToken);
                         }
                     }
 
@@ -74,18 +74,17 @@ namespace ZkLobbyServer
                         if (accByLogin == null)
                         {
                             LogIpFailure(ip);
-                            return new LoginCheckerResponse(LoginResponse.Code.InvalidName,
-                                "Steam is not linked to any account yet, please provide a valid login name");
+                            return new LoginCheckerResponse(LoginResponse.Code.SteamNotLinkedAndLoginMissing);
                         }
                         if (string.IsNullOrEmpty(login.PasswordHash) || !accByLogin.VerifyPassword(login.PasswordHash))
                         {
                             LogIpFailure(ip);
-                            return new LoginCheckerResponse(LoginResponse.Code.InvalidPassword, "Invalid password");
+                            return new LoginCheckerResponse(LoginResponse.Code.InvalidPassword);
                         }
                     }
                     var acc = accBySteamID ?? accByLogin;
 
-                    var ret = new LoginCheckerResponse(LoginResponse.Code.Ok, null);
+                    var ret = new LoginCheckerResponse(LoginResponse.Code.Ok);
                     var user = ret.User;
 
                     acc.Country = ResolveCountry(ip);
@@ -132,28 +131,28 @@ namespace ZkLobbyServer
 
         public async Task<RegisterResponse> DoRegister(Register register, string ip)
         {
-            if (!Account.IsValidLobbyName(register.Name)) return new RegisterResponse(RegisterResponse.Code.InvalidCharacters, "Name contains invalid characters");
+            if (!Account.IsValidLobbyName(register.Name)) return new RegisterResponse(RegisterResponse.Code.NameHasInvalidCharacters);
 
-            if (server.ConnectedUsers.ContainsKey(register.Name)) return new RegisterResponse(RegisterResponse.Code.AlreadyConnected, "You are already connected");
+            if (server.ConnectedUsers.ContainsKey(register.Name)) return new RegisterResponse(RegisterResponse.Code.AlreadyConnected);
 
-            if (string.IsNullOrEmpty(register.PasswordHash) && string.IsNullOrEmpty(register.SteamAuthToken)) return new RegisterResponse(RegisterResponse.Code.InvalidPassword, "Missing both password and steam token");
+            if (string.IsNullOrEmpty(register.PasswordHash) && string.IsNullOrEmpty(register.SteamAuthToken)) return new RegisterResponse(RegisterResponse.Code.MissingBothPasswordAndToken);
 
-            if (!VerifyIp(ip)) return new RegisterResponse(RegisterResponse.Code.Banned, "Too many connection attempts");
+            if (!VerifyIp(ip)) return new RegisterResponse(RegisterResponse.Code.BannedTooManyAttempts);
 
             var banPenalty = Punishment.GetActivePunishment(null, ip, register.UserID, x => x.BanLobby);
-            if (banPenalty != null) return new RegisterResponse(RegisterResponse.Code.Banned, banPenalty.Reason);
+            if (banPenalty != null) return new RegisterResponse(RegisterResponse.Code.Banned) {BanReason =  banPenalty.Reason};
 
             SteamWebApi.PlayerInfo info = null;
             if (!string.IsNullOrEmpty(register.SteamAuthToken))
             {
                 info = await server.SteamWebApi.VerifyAndGetAccountInformation(register.SteamAuthToken);
-                if (info == null) return new RegisterResponse(RegisterResponse.Code.InvalidSteamToken, "Steam token is invalid or could not be validated");
+                if (info == null) return new RegisterResponse(RegisterResponse.Code.InvalidSteamToken);
             }
 
             using (var db = new ZkDataContext())
             {
                 var existingByName = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == register.Name.ToUpper());
-                if (existingByName != null) return new RegisterResponse(RegisterResponse.Code.InvalidName, "Name already taken");
+                if (existingByName != null) return new RegisterResponse(RegisterResponse.Code.NameAlreadyTaken);
 
                 var acc = new Account() { Name = register.Name };
                 acc.SetPasswordHashed(register.PasswordHash);
@@ -163,16 +162,18 @@ namespace ZkLobbyServer
                 {
                     var existingBySteam = db.Accounts.FirstOrDefault(x => x.SteamID == info.steamid);
                     if (existingBySteam != null)
-                        return new RegisterResponse(RegisterResponse.Code.SteamAlreadyRegistered,
-                            "Your steam account is already registered as " + existingBySteam.Name);
+                        return new RegisterResponse(RegisterResponse.Code.SteamAlreadyRegistered);
 
                     acc.SteamID = info.steamid;
                     acc.SteamName = info.personaname;
+                } else if (string.IsNullOrEmpty(register.PasswordHash))
+                {
+                    return new RegisterResponse(RegisterResponse.Code.InvalidPassword);
                 }
                 db.Accounts.Add(acc);
                 db.SaveChanges();
             }
-            return new RegisterResponse(RegisterResponse.Code.Ok, "Registered");
+            return new RegisterResponse(RegisterResponse.Code.Ok);
         }
 
         public void LogIpFailure(string ip)
@@ -231,7 +232,10 @@ namespace ZkLobbyServer
             var str = $"Login denied for {acc.Name} IP:{ip} ID:{user_id} reason: {reason}";
             Talk(str);
             Trace.TraceInformation(str);
-            return new LoginCheckerResponse(LoginResponse.Code.Banned, reason);
+            
+            var ret = new LoginCheckerResponse(LoginResponse.Code.Banned);
+            ret.LoginResponse.BanReason = reason;
+            return ret;
         }
 
         private bool HasVpn(string ip, Account acc, ZkDataContext db)
@@ -395,10 +399,9 @@ namespace ZkLobbyServer
             public LoginResponse LoginResponse = new LoginResponse();
             public User User = new User();
 
-            public LoginCheckerResponse(LoginResponse.Code code, string reason)
+            public LoginCheckerResponse(LoginResponse.Code code)
             {
                 LoginResponse.ResultCode = code;
-                LoginResponse.Reason = reason;
             }
         }
     }
