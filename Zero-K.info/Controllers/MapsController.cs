@@ -234,6 +234,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Tag(int id,
                                 int? sea,

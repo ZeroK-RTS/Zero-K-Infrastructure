@@ -46,6 +46,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth(Role = AdminLevel.Moderator)]
+        //[ValidateAntiForgeryToken]
         public ActionResult DeletePost(int? postID) {
             var db = new ZkDataContext();
             var post = db.ForumPosts.Single(x => x.ForumPostID == postID);
@@ -68,6 +69,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult DeleteAllPostsByUser(int accountID, string accountName) {
             var db = new ZkDataContext();
@@ -471,6 +473,7 @@ namespace ZeroKWeb.Controllers
             return View(res);
         }
 
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult AdminThread(int threadID, int newcat, bool isPinned, bool isLocked) {
             var db = new ZkDataContext();

@@ -39,6 +39,7 @@
     <div class="admin">
         <h3>Add a new poll</h3>
         <form action="@Url.Action("NewPoll")" method="POST">
+            @Html.AntiForgeryToken()
             Is anonymous: <input type="checkbox" name="isAnonymous" value="true" /><br/>
             Question: <br/>
             <input type="text" name="question" style="width: 600px"/><br/>

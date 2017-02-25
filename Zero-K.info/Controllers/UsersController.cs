@@ -15,6 +15,7 @@ namespace ZeroKWeb.Controllers
         //
         // GET: /Users/
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult ChangeHideCountry(int accountID, bool hideCountry)
         {
@@ -29,6 +30,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult ChangeAccountDeleted(int accountID, bool isDeleted)
         {
@@ -78,6 +80,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult ChangeElo(int accountID, int eloweight, int eloweight1v1)
         {
@@ -201,6 +204,7 @@ namespace ZeroKWeb.Controllers
         /// <param name="accountID"><see cref="Account"/> ID of the person being punished</param>
         /// <param name="reason">Displayed reason for the penalty</param>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Punish(int accountID,
                                    string reason,
@@ -304,6 +308,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult RemovePunishment(int punishmentID) {
             var db = new ZkDataContext();
@@ -334,6 +339,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult MassBanSubmit(string name, int startIndex, int endIndex, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
         {
@@ -380,6 +386,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult MassBanByUserIDSubmit(int userID, double? maxAge, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
         {
@@ -421,6 +428,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult SetPassword(int accountID, string newPassword)
         {
