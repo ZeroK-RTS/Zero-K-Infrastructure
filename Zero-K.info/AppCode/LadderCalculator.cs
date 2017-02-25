@@ -143,9 +143,9 @@ namespace ZeroKWeb
                                     }))
                     {
                         var days = DateTime.UtcNow.Subtract(entry.LastGame).TotalDays;
-                        var ratio = days/GlobalConst.LadderActivityDays;
+                        var decayRatio = ((days-7)/(GlobalConst.LadderActivityDays-7)).Clamp(0,1);
                         entry.Account.EloWeight = Math.Min(entry.Account.EloWeight,
-                            Math.Max(1, GlobalConst.EloWeightMax - (GlobalConst.EloWeightMax - 1)*ratio));
+                            Math.Max(1, GlobalConst.EloWeightMax - (GlobalConst.EloWeightMax - 1)*decayRatio));
                     }
 
                     db.SaveChanges();
@@ -166,9 +166,9 @@ namespace ZeroKWeb
                                     }))
                     {
                         var days = DateTime.UtcNow.Subtract(entry.LastGame).TotalDays;
-                        var ratio = days / GlobalConst.LadderActivityDays;
+                        var decayRatio = ((days - 7) / (GlobalConst.LadderActivityDays - 7)).Clamp(0, 1);
                         entry.Account.EloMmWeight = Math.Min(entry.Account.EloMmWeight,
-                            Math.Max(1, GlobalConst.EloWeightMax - (GlobalConst.EloWeightMax - 1) * ratio));
+                            Math.Max(1, GlobalConst.EloWeightMax - (GlobalConst.EloWeightMax - 1) * decayRatio));
                     }
                     db.SaveChanges();
 
