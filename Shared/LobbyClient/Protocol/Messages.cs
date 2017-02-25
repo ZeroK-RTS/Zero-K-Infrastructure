@@ -199,6 +199,8 @@ namespace LobbyClient
             SteamLinkedToDifferentAccount = 8
         }
 
+        public string Name { get; set; }
+
         public string BanReason { get; set; }
 
         public Code ResultCode { get; set; }

@@ -85,6 +85,7 @@ namespace ZkLobbyServer
                     var acc = accBySteamID ?? accByLogin;
 
                     var ret = new LoginCheckerResponse(LoginResponse.Code.Ok);
+                    ret.LoginResponse.Name = acc.Name;
                     var user = ret.User;
 
                     acc.Country = ResolveCountry(ip);
