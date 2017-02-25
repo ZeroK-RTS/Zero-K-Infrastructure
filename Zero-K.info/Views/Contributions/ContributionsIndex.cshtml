@@ -41,7 +41,7 @@
                 <td>&euro;@jar.TargetGrossEuros.ToString("F0")</td>
                 <td>
                     <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-
+                        @Html.AntiForgeryToken()
                         <input type="hidden" name="business" value="S7LYLK6P63H48">
 
                         <!-- Specify a Donate button. -->
@@ -106,6 +106,7 @@
         <div class="admin">
             <h3>Add a manual contribution</h3>
             <form action="@Url.Action("AddContribution")" method="POST">
+                @Html.AntiForgeryToken()
                 <table>
                     <tr>
                         <td>Account ID</td>

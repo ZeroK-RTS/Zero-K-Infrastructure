@@ -67,6 +67,7 @@
     @if (Global.IsModerator) {
         <div class="admin">
             <form action="@Url.Action("RemovePunishment", "Users")" method="post">
+                @Html.AntiForgeryToken()
                 <input type="hidden" name="punishmentID" value="@p.PunishmentID" />
                 <input type="submit" value="Remove punishment" class="js_confirm" />
             </form>

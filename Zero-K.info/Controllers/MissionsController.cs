@@ -12,6 +12,7 @@ namespace ZeroKWeb.Controllers
         // GET: /Missions/
         
 
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult ChangeFeaturedOrder(int id, float? featuredOrder, string script)
         {
@@ -28,6 +29,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
+        //[ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Delete(int id)
         {
@@ -149,6 +151,7 @@ namespace ZeroKWeb.Controllers
             return File(Encoding.UTF8.GetBytes(m.Script), "application/octet-stream", "script.txt");
         }
 
+        //[ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Undelete(int id)
         {

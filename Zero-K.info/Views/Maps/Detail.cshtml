@@ -117,6 +117,7 @@
                     @: - Last tagged by @m.Account.Name
                 }
                 <form action="@Url.Action("Tag", new { id = m.ResourceID })" method="post">
+                    @Html.AntiForgeryToken()
                     <table>
                         <tr>
                             <td>Terrain:</td><td>@Html.Select("sea", typeof(Resource.WaterLevel), m.MapWaterLevel, "?")</td>

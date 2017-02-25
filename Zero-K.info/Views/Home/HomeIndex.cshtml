@@ -8,7 +8,7 @@
 }
 
 @section head {
-    @if (!Global.IsAccountAuthorized)
+    @if (!Global.IsAccountAuthorized && GlobalConst.Mode == ModeType.Live)
     {
         <!-- Google Analytics Content Experiment code -->
         <script>

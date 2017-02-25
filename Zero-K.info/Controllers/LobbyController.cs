@@ -35,6 +35,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult AddBlockedCompany(string companyName, string comment)
         {
@@ -53,6 +54,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult AddBlockedHost(string hostname, string comment)
         {
@@ -70,7 +72,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("BlockedVPNs");
         }
 
-        [HttpPost]
+        //[ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult RemoveBlockedCompany(int companyID)
         {
@@ -84,7 +86,7 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("BlockedVPNs");
         }
 
-        [HttpPost]
+        //[ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult RemoveBlockedHost(int hostID)
         {
