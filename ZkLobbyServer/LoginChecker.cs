@@ -67,7 +67,7 @@ namespace ZkLobbyServer
                     Account accBySteamID = null;
                     Account accByLogin = null;
                     if (info != null) accBySteamID = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.SteamID == info.steamid);
-                    if (!string.IsNullOrEmpty(login.Name)) accByLogin = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.SteamID == info.steamid);
+                    if (!string.IsNullOrEmpty(login.Name)) accByLogin = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name);
 
                     if (accBySteamID == null)
                     {
