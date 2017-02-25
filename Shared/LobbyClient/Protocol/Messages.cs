@@ -153,7 +153,13 @@ namespace LobbyClient
             MissingBothPasswordAndToken = 8,
 
             [Description("banned too many connection attempts")]
-            BannedTooManyAttempts = 9
+            BannedTooManyAttempts = 9,
+
+            [Description("already registered, use login using steam")]
+            AlreadyRegisteredWithThisSteamToken = 10,
+
+            [Description("already registered, use login using password")]
+            AlreadyRegisteredWithThisPassword = 11
         }
 
 

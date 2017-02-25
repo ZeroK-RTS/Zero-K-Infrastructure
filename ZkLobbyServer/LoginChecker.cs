@@ -158,7 +158,14 @@ namespace ZkLobbyServer
             using (var db = new ZkDataContext())
             {
                 var existingByName = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == register.Name.ToUpper());
-                if (existingByName != null) return new RegisterResponse(RegisterResponse.Code.NameAlreadyTaken);
+                if (existingByName != null)
+                {
+                    if (info != null && existingByName.SteamID == info.steamid) return new RegisterResponse(RegisterResponse.Code.AlreadyRegisteredWithThisSteamToken);
+
+                    if (info == null && !string.IsNullOrEmpty(register.PasswordHash) && existingByName.VerifyPassword(register.PasswordHash)) return new RegisterResponse(RegisterResponse.Code.AlreadyRegisteredWithThisPassword);
+
+                    return new RegisterResponse(RegisterResponse.Code.NameAlreadyTaken);
+                }
 
                 var acc = new Account() { Name = register.Name };
                 acc.SetPasswordHashed(register.PasswordHash);
