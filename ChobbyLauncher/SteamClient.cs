@@ -289,6 +289,9 @@ namespace ChobbyLauncher
             SteamOnline?.Invoke();
         }
 
+        private void ProcessMessage(ulong remoteUser, Dummy cmd)
+        {
+        }
 
         private void ProcessMessage(ulong remoteUser, SteamP2PNotifyJoin cmd)
         {
