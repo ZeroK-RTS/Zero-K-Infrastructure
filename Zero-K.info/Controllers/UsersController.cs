@@ -426,8 +426,9 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(accountID);
-            if (acc.AdminLevel > AdminLevel.None || acc.PasswordBcrypt == null) return Content("Cannot set password on this user");
+            if (acc.AdminLevel > AdminLevel.None) return Content("Cannot set password on this user");
             acc.SetPasswordPlain(newPassword);
+            if (!string.IsNullOrEmpty(newPassword)) acc.SteamID = null;
             db.SaveChanges();
             return Content(string.Format("{0} password set to {1}", acc.Name, newPassword));
         }
