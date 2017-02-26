@@ -143,7 +143,7 @@ namespace ChobbyLauncher
         }
 
 
-        public Task<bool> Run(ulong initialConnectLobbyID)
+        public Task<bool> Run(ulong initialConnectLobbyID, TextWriter writer)
         {
             Status = "Connecting to steam API";
             var steam = new SteamClientHelper();
@@ -153,7 +153,7 @@ namespace ChobbyLauncher
             var chobyl = new ChobbylaLocalListener(this, steam, initialConnectLobbyID);
             var loopbackPort = chobyl.StartListening();
 
-            return LaunchChobby(paths, internalName, engine, loopbackPort).ContinueWith(x =>
+            return LaunchChobby(paths, internalName, engine, loopbackPort, writer).ContinueWith(x =>
             {
                 steam?.Dispose();
                 return x.Result;
@@ -198,7 +198,7 @@ namespace ChobbyLauncher
 
 
 
-        private async Task<bool> LaunchChobby(SpringPaths paths, string internalName, string engineVersion, int loopbackPort)
+        private async Task<bool> LaunchChobby(SpringPaths paths, string internalName, string engineVersion, int loopbackPort, TextWriter writer)
         {
             process = new Process { StartInfo = { CreateNoWindow = false, UseShellExecute = false } };
 
@@ -211,6 +211,12 @@ namespace ChobbyLauncher
             process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetSpringExecutablePath(engineVersion));
             process.StartInfo.Arguments = $"--menu \"{internalName}\"";
 
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+
+            process.OutputDataReceived += (sender, args) => { writer.WriteLine(args.Data); };
+            process.ErrorDataReceived += (sender, args) => { writer.WriteLine(args.Data); };
+
             var tcs = new TaskCompletionSource<bool>();
             process.Exited += (sender, args) =>
             {
@@ -219,7 +225,9 @@ namespace ChobbyLauncher
             };
             process.EnableRaisingEvents = true;
             process.Start();
-
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            
             return await tcs.Task;
         }
 

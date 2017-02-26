@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using GameAnalyticsSDK.Net;
@@ -21,8 +22,11 @@ namespace ChobbyLauncher
         [STAThread]
         private static void Main(string[] args)
         {
+            if (!Debugger.IsAttached) Trace.Listeners.Add(new ConsoleTraceListener());
 
-            Trace.Listeners.Add(new ConsoleTraceListener());
+            var logStringBuilder = new StringBuilder();
+            var threadSafeWriter = TextWriter.Synchronized(new StringWriter(logStringBuilder));
+            Trace.Listeners.Add(new TextWriterTraceListener(threadSafeWriter));
 
             try
             {
@@ -64,7 +68,7 @@ namespace ChobbyLauncher
             {
                 var chobbyla = new Chobbyla(startupPath, chobbyTag, engineOverride);
 
-                RunWrapper(chobbyla, connectLobbyID);
+                RunWrapper(chobbyla, connectLobbyID, threadSafeWriter, logStringBuilder);
             }
             catch (Exception ex)
             {
@@ -124,7 +128,7 @@ namespace ChobbyLauncher
             }
         }
 
-        private static void RunWrapper(Chobbyla chobbyla, ulong connectLobbyID)
+        private static void RunWrapper(Chobbyla chobbyla, ulong connectLobbyID, TextWriter logWriter, StringBuilder logSb)
         {
             if (!chobbyla.IsSteam) // not steam, show gui
             {
@@ -133,14 +137,20 @@ namespace ChobbyLauncher
             }
             else if (!chobbyla.Prepare().Result) return; // otherwise just do simple prepare, no gui
 
-            if (!chobbyla.Run(connectLobbyID).Result) // crash has occured
+            var springRunOk = chobbyla.Run(connectLobbyID, logWriter).Result;
+            Trace.TraceInformation("Spring exited");
+            logWriter.Flush();
+
+
+            if (!springRunOk) // crash has occured
             {
+                Trace.TraceWarning("Spring crash detected");
                 if (
                     MessageBox.Show("We would like to send crash data to Zero-K repository, it can contain chat. Do you agree?",
                         "Automated crash report",
                         MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
-                    var ret = CrashReportHelper.ReportCrash(chobbyla.paths);
+                    var ret = CrashReportHelper.ReportCrash(logSb.ToString());
                     if (ret != null)
                         try
                         {
@@ -158,6 +168,8 @@ namespace ChobbyLauncher
                     Trace.TraceError("Error adding GA error event: {0}", ex);
                 }
             }
+
+
         }
     }
 }

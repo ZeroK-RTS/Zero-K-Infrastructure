@@ -14,25 +14,17 @@ namespace ChobbyLauncher
 {
     public static class CrashReportHelper
     {
-        public static Issue ReportCrash(SpringPaths paths)
+        public static Issue ReportCrash(string infolog)
         {
             try
             {
                 var client = new GitHubClient(new ProductHeaderValue("chobbyla"));
                 client.Credentials = new Credentials(GlobalConst.CrashReportGithubToken);
-                using (
-                    var fs = File.Open(Path.Combine(paths.WritableDirectory, "infolog.txt"),
-                        FileMode.Open,
-                        FileAccess.Read,
-                        FileShare.ReadWrite | FileShare.Delete))
-                using (var streamReader = new StreamReader(fs))
-                {
-                    var createdIssue =
-                        client.Issue.Create("ZeroK-RTS", "CrashReports", new NewIssue("Spring crash") { Body = $"```{streamReader.ReadToEnd()}```", })
-                            .Result;
+                var createdIssue =
+                    client.Issue.Create("ZeroK-RTS", "CrashReports", new NewIssue("Spring crash") { Body = $"```{infolog}```", })
+                        .Result;
 
-                    return createdIssue;
-                }
+                return createdIssue;
             }
             catch (Exception ex)
             {
