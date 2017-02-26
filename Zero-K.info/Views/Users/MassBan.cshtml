@@ -11,6 +11,7 @@
     <br />
  
     <form action="@Url.Action("MassBanSubmit", "Users", new { })" method="post">
+        @Html.AntiForgeryToken()
         Name: @Html.TextBox("name", null)<br />
         Start num: @Html.TextBox("startIndex")<br />
         End num: @Html.TextBox("endIndex")<br />
@@ -29,6 +30,7 @@
     <br />
  
     <form action="@Url.Action("MassBanByUserIDSubmit", "Users", new { })" method="post">
+        @Html.AntiForgeryToken()
         UserID: @Html.TextBox("userID")<br />
         Max account age (hours): @Html.TextBox("maxAge")<br />
         Reason: @Html.TextBox("reason")<br />

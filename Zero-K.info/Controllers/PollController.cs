@@ -21,6 +21,7 @@ namespace ZeroKWeb.Controllers
             return null;
         }
 
+        [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult NewPoll(string question, string answers, bool? isAnonymous)
         {
@@ -189,6 +190,7 @@ namespace ZeroKWeb.Controllers
             return PartialView("PollView", poll);
         }
 
+        //[ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult SwapHeadline(int pollid)
         {

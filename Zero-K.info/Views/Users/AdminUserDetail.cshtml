@@ -103,13 +103,24 @@
 
     <br />
     <h2>Modify user settings</h2>
-    Hide country flag: <form method="post" action="@Url.Action("ChangeHideCountry", "Users", new { accountID = Model.AccountID })">@Html.CheckBox("hideCountry")<input type="submit"/></form>
+    Hide country flag: 
+    <form method="post" action="@Url.Action("ChangeHideCountry", "Users", new { accountID = Model.AccountID })">
+        @Html.AntiForgeryToken()
+        @Html.CheckBox("hideCountry", Model.Country == "??")
+        <input type="submit"/>
+    </form>
     <br />
-    Password reset: <form method="post" action="@Url.Action("SetPassword", "Users", new { accountID = Model.AccountID })">@Html.TextBox("newPassword")<input type="submit" /></form>
+    Password reset: 
+    <form method="post" action="@Url.Action("SetPassword", "Users", new { accountID = Model.AccountID })">
+        @Html.AntiForgeryToken()
+        @Html.TextBox("newPassword")
+        <input type="submit" />
+    </form>
     <br/>
 
     <h2>Modify user rating</h2>
     <form method="post" action="@Url.Action("ChangeElo", "Users", new { accountID = Model.AccountID })">
+        @Html.AntiForgeryToken()
         Team newbie malus: @Html.TextBox("eloweight", Model.EloWeight)
         1v1 newbie malus: @Html.TextBox("eloweight1v1", Model.EloMmWeight)
         Malus 6 is max (normal experienced player)
@@ -127,6 +138,7 @@
     <br />
     <h2>Issue a penalty</h2>
     <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
+        @Html.AntiForgeryToken()
         Reason: @Html.TextBox("reason","Smurf")<br />
         <br />
 
@@ -148,13 +160,20 @@
 
         <input type="submit" value="BAN" class="js_confirm" />
     </form>
+    <br />
 
-    <br />
     <h2>Special functions</h2>
-    Hide ("delete") account: <form method="post" action="@Url.Action("ChangeAccountDeleted", "Users", new { accountID = Model.AccountID })">@Html.CheckBox("isDeleted")<input type="submit"/></form>
+    Hide ("delete") account: 
+    <form method="post" action="@Url.Action("ChangeAccountDeleted", "Users", new { accountID = Model.AccountID })">
+        @Html.AntiForgeryToken()
+        @Html.CheckBox("isDeleted")
+        <input type="submit"/>
+    </form>
     <br />
+
     <h3>Delete all posts</h3>
     <form action="@Url.Action("DeleteAllPostsByUser", "Forum", new { accountID = Model.AccountID })" method="post">
+        @Html.AntiForgeryToken()
         This will <b>permanently</b> remove <b>all</b> of the user's posts.<br />
         This action <b>cannot</b> be undone!<br />
         <br />

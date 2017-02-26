@@ -79,6 +79,7 @@
 
     <h2>New blocked company</h2>
     <form action="@Url.Action("AddBlockedCompany",  new {})" method="post">
+        @Html.AntiForgeryToken()
         Name: @Html.TextBox("companyName")<br />
         Remarks: @Html.TextBox("comment")<br />
         <input type="submit" value="Add to list"/>
@@ -87,6 +88,7 @@
 
     <h2>New blocked host</h2>
     <form action="@Url.Action("AddBlockedHost", new {})" method="post">
+        @Html.AntiForgeryToken()
         Name: @Html.TextBox("hostname")<br />
         Remarks: @Html.TextBox("comment")<br />
         <input type="submit" value="Add to list"/>
