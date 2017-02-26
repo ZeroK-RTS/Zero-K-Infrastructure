@@ -141,6 +141,14 @@ namespace ChobbyLauncher
             Trace.TraceInformation("Spring exited");
             logWriter.Flush();
 
+            var logStr = logSb.ToString();
+            var openGlFail = logStr.Contains("No OpenGL drivers installed.") ||
+                            logStr.Contains("Please go to your GPU vendor's website and download their drivers.") ||
+                            logStr.Contains("Update your graphic-card driver!");
+
+            if (openGlFail) MessageBox.Show("You have outdated graphics card drivers!\r\nPlease try finding ones for your graphics card and updating them.", "Outdate graphics card driver detected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+
             if (!springRunOk) // crash has occured
             {
                 Trace.TraceWarning("Spring crash detected");
