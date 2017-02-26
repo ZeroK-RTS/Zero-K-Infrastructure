@@ -9,6 +9,11 @@
 <h1>@Model.ForumThread.Title</h1>
 @Html.BBCodeCached(Model)
 
+@if (Model.ForumThread.WikiKey == "Download")
+{
+    <iframe width="1" height="1" frameborder="0" src="~/lobby/Zero-K.setup.exe"></iframe>
+}
+
 @if (Model.CanEdit(Global.Account))
 {
     <br/>
