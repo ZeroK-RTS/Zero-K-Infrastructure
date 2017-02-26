@@ -17,12 +17,13 @@ namespace AutoRegistrator
     {
         string targetFolder;
         private string siteBase;
-        public SteamDepotGenerator(string siteBase, string targetFolder) {
+        public SteamDepotGenerator(string siteBase, string targetFolder)
+        {
             this.targetFolder = targetFolder;
             this.siteBase = siteBase;
         }
 
-        private object locker =new object();
+        private object locker = new object();
 
         public void RunAll()
         {
@@ -35,15 +36,17 @@ namespace AutoRegistrator
                     RunBuild();
                     PublishBuild();
                 }
-            } else Trace.TraceWarning("SteamDepot generating steam package SKIPPED in debug mode");
+            }
+            else Trace.TraceWarning("SteamDepot generating steam package SKIPPED in debug mode");
         }
 
-        public class DummyProgress: IChobbylaProgress
+        public class DummyProgress : IChobbylaProgress
         {
             public Download Download { get; set; }
             public string Status { get; set; }
         }
-        private void Generate() {
+        private void Generate()
+        {
             Utils.CheckPath(targetFolder);
             try
             {
@@ -52,20 +55,21 @@ namespace AutoRegistrator
                 Directory.Delete(Path.Combine(targetFolder, "engine"), true);
                 Directory.Delete(Path.Combine(targetFolder, "games"), true);
                 Directory.Delete(Path.Combine(targetFolder, "rapid"), true);
-                File.Delete(Path.Combine(targetFolder,"missions","missions.json"));
+                File.Delete(Path.Combine(targetFolder, "missions", "missions.json"));
                 File.Delete(Path.Combine(targetFolder, "cache", "repositories.json"));
-            } catch { }
+            }
+            catch { }
 
             var paths = new SpringPaths(targetFolder, false, false);
             var downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
             var prog = new DummyProgress();
 
-           
+
             foreach (var plat in Enum.GetValues(typeof(SpringPaths.PlatformType)).Cast<SpringPaths.PlatformType>())
             {
                 var sp = new SpringPaths(targetFolder, false, false, plat);
                 var dn = new PlasmaDownloader.PlasmaDownloader(null, sp);
-                
+
                 if (!dn.DownloadFile(DownloadType.ENGINE, MiscVar.DefaultEngine, prog).Result) throw new ApplicationException("SteamDepot engine download failed: " + prog.Status);
             }
 
@@ -78,7 +82,7 @@ namespace AutoRegistrator
 
 
             File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_chobby.txt"), chobbyName);
-            File.WriteAllText(Path.Combine(paths.WritableDirectory,"steam_engine.txt"), MiscVar.DefaultEngine);
+            File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_engine.txt"), MiscVar.DefaultEngine);
 
 
             CopyResources(siteBase, paths, GetResourceList(), downloader);
@@ -94,13 +98,15 @@ namespace AutoRegistrator
             downloader.PackageDownloader.DoMasterRefresh();
         }
 
-        private void CopyLobbyProgram() {
+        private void CopyLobbyProgram()
+        {
             var zklSource = Path.Combine(siteBase, "lobby", "Chobby.exe");
             if (File.Exists(zklSource)) File.Copy(zklSource, Path.Combine(targetFolder, "Chobby.exe"), true);
             else new WebClient().DownloadFile(GlobalConst.SelfUpdaterBaseUrl + "/" + "Chobbe.exe", Path.Combine(targetFolder, "Chobby.exe"));
         }
 
-        private void CopyExtraImages() {
+        private void CopyExtraImages()
+        {
             var db = new ZkDataContext();
             var configs = Path.Combine(targetFolder, "LuaUI", "Configs");
             Utils.CheckPath(configs);
@@ -137,7 +143,8 @@ namespace AutoRegistrator
         }
 
 
-        private static void CopyResources(string siteBase, SpringPaths paths, List<Resource> resources, PlasmaDownloader.PlasmaDownloader downloader) {
+        private static void CopyResources(string siteBase, SpringPaths paths, List<Resource> resources, PlasmaDownloader.PlasmaDownloader downloader)
+        {
             var destMaps = Path.Combine(paths.WritableDirectory, "maps");
             var sourceMaps = Path.Combine(siteBase, "autoregistrator", "maps");
 
@@ -146,11 +153,11 @@ namespace AutoRegistrator
                 Trace.TraceInformation("Copying {0}", res.InternalName);
                 if (res.TypeID == ResourceType.Map)
                 {
-                    var fileName = res.ResourceContentFiles.ToList().Where(x=>File.Exists(Path.Combine(sourceMaps, x.FileName))).OrderByDescending(x => x.LinkCount).FirstOrDefault()?.FileName; // get registered file names
+                    var fileName = res.ResourceContentFiles.ToList().Where(x => File.Exists(Path.Combine(sourceMaps, x.FileName))).OrderByDescending(x => x.LinkCount).FirstOrDefault()?.FileName; // get registered file names
 
-                    fileName = fileName?? res.ResourceContentFiles
-                        .Where(x=>x.Links!=null).SelectMany(x => x.Links.Split('\n'))
-                        .Where(x => x != null).Select(x=> x.Substring(x.LastIndexOf('/')+1, x.Length - x.LastIndexOf('/') - 1)).FirstOrDefault(x => !string.IsNullOrEmpty(x) && File.Exists(Path.Combine(sourceMaps,x))); // get filenames from url
+                    fileName = fileName ?? res.ResourceContentFiles
+                        .Where(x => x.Links != null).SelectMany(x => x.Links.Split('\n'))
+                        .Where(x => x != null).Select(x => x.Substring(x.LastIndexOf('/') + 1, x.Length - x.LastIndexOf('/') - 1)).FirstOrDefault(x => !string.IsNullOrEmpty(x) && File.Exists(Path.Combine(sourceMaps, x))); // get filenames from url
 
                     if (fileName == null)
                     {
@@ -161,17 +168,19 @@ namespace AutoRegistrator
 
 
                     if (!File.Exists(Path.Combine(destMaps, fileName))) File.Copy(Path.Combine(sourceMaps, fileName), Path.Combine(destMaps, fileName));
-                } else if (res.MissionID != null) File.WriteAllBytes(Path.Combine(paths.WritableDirectory, "games", res.Mission.SanitizedFileName), res.Mission.Mutator);
+                }
+                else if (res.MissionID != null) File.WriteAllBytes(Path.Combine(paths.WritableDirectory, "games", res.Mission.SanitizedFileName), res.Mission.Mutator);
                 else downloader.GetResource(DownloadType.RAPID, res.InternalName)?.WaitHandle.WaitOne();
             }
         }
 
 
-        private static List<Resource> GetResourceList(params string[] extraNames) {
-            
+        private static List<Resource> GetResourceList(params string[] extraNames)
+        {
+
 
             var db = new ZkDataContext();
-            var resources = db.Resources.Where(x => extraNames.Contains(x.InternalName) || (x.TypeID == ResourceType.Map && x.MapSupportLevel>=MapSupportLevel.MatchMaker)).ToList();
+            var resources = db.Resources.Where(x => extraNames.Contains(x.InternalName) || (x.TypeID == ResourceType.Map && x.MapSupportLevel >= MapSupportLevel.MatchMaker)).ToList();
             foreach (var res in resources.ToList())
             {
                 foreach (var requestedDependency in res.ResourceDependencies.Select(x => x.NeedsInternalName))
@@ -186,9 +195,10 @@ namespace AutoRegistrator
             return resources;
         }
 
-        private void RunBuild() {
+        private void RunBuild()
+        {
             Trace.TraceInformation("Starting SteamDepot build");
-            var pi = new ProcessStartInfo(Path.Combine(targetFolder,"..","builder","steamcmd.exe"), string.Format(@"+login zkbuild {0} +run_app_build_http ..\scripts\{1}.vdf +quit", new Secrets().GetSteamBuildPassword(), GlobalConst.Mode == ModeType.Live ? "app_zk_stable" : "app_zk_test"));
+            var pi = new ProcessStartInfo(Path.Combine(targetFolder, "..", "builder", "steamcmd.exe"), string.Format(@"+login zkbuild {0} +run_app_build_http ..\scripts\{1}.vdf +quit", new Secrets().GetSteamBuildPassword(), GlobalConst.Mode == ModeType.Live ? "app_zk_stable" : "app_zk_test"));
             pi.UseShellExecute = false;
             pi.WindowStyle = ProcessWindowStyle.Hidden;
             var runp = Process.Start(pi);
@@ -201,7 +211,7 @@ namespace AutoRegistrator
             try
             {
                 var steamWebApi = new SteamWebApi();
-                var build = steamWebApi.GetAppBuilds().First(x=>x.Description.ToLower().Contains(GlobalConst.Mode == ModeType.Live?"stable":"test"));
+                var build = steamWebApi.GetAppBuilds().First(x => x.Description.ToLower().Contains(GlobalConst.Mode == ModeType.Live ? "stable" : "test"));
                 steamWebApi.SetAppBuildLive(build.BuildID, GlobalConst.Mode == ModeType.Live ? "public" : "test");
                 Trace.TraceInformation("SteamDepot build {0} set live", build.BuildID);
             }
