@@ -141,7 +141,6 @@ namespace ChobbyLauncher
             Trace.TraceInformation("Spring exited");
             logWriter.Flush();
 
-
             if (!springRunOk) // crash has occured
             {
                 Trace.TraceWarning("Spring crash detected");
