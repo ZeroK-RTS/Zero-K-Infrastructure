@@ -145,6 +145,10 @@ namespace AutoRegistrator
 
             spath = Path.Combine(siteBase, "Resources");
             tpath = Path.Combine(targetFolder, "LuaMenu", "configs", "gameConfig", "zk");
+
+            Utils.CheckPath(Path.Combine(tpath, "minimapThumbnail"));
+            Utils.CheckPath(Path.Combine(tpath, "minimapOverride"));
+
             foreach (var map in db.Resources.Where(x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= MapSupportLevel.Supported))
             {
                 var sourceFile = Path.Combine(spath, map.MinimapName);
