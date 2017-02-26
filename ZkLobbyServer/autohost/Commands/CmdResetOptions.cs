@@ -12,7 +12,7 @@ namespace ZkLobbyServer
 
         public override BattleCommand Create() => new CmdResetOptions();
 
-        public override string Arm(ServerBattle battle, Say e, string arguments = null) => string.Empty;
+        public override string Arm(ServerBattle battle, Say e, string arguments = null) => "Reset game options to default?";
 
 
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
