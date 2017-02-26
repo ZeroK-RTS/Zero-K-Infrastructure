@@ -15,7 +15,7 @@ namespace ChobbyLauncher
     public static class CrashReportHelper
     {
         private const int MaxInfologSize = 1000000;
-        public static Issue ReportCrash(string infolog)
+        public static Issue ReportCrash(string infolog, bool isDesync, string engine)
         {
             try
             {
@@ -26,7 +26,7 @@ namespace ChobbyLauncher
                 infolog = Truncate(infolog, MaxInfologSize);
 
                 var createdIssue =
-                    client.Issue.Create("ZeroK-RTS", "CrashReports", new NewIssue("Spring crash") { Body = $"```{infolog}```", })
+                    client.Issue.Create("ZeroK-RTS", "CrashReports", new NewIssue($"Spring {(isDesync ? "desync" : "crash")} [{engine}]") { Body = $"```{infolog}```", })
                         .Result;
 
                 return createdIssue;

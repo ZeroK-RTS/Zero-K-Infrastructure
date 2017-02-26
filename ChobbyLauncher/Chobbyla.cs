@@ -16,7 +16,7 @@ namespace ChobbyLauncher
     public class Chobbyla
     {
         public PlasmaDownloader.PlasmaDownloader downloader;
-        private string engine;
+        public string engine;
         private string chobbyTag;
         private string internalName;
         private bool isDev;
