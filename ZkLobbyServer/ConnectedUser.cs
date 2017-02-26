@@ -83,7 +83,7 @@ namespace ZkLobbyServer
             {
                 var rels =
                     db.AccountRelations.Where(x => (x.TargetAccountID == User.AccountID) || (x.OwnerAccountID == User.AccountID))
-                        .Select(x => new { OwnerAccountID = x.OwnerAccountID, Owner = x.Owner.Name, Target = x.Target.Name, Relation = x.Relation, SteamID= x.Target.SteamID })
+                        .Select(x => new { OwnerAccountID = x.OwnerAccountID, Owner = x.Owner.Name, Target = x.Target.Name, Relation = x.Relation, SteamID = x.Target.SteamID })
                         .ToList();
 
                 FriendNames =
@@ -91,7 +91,7 @@ namespace ZkLobbyServer
                 FriendBy =
                     new HashSet<string>(rels.Where(x => (x.Relation == Relation.Friend) && (x.OwnerAccountID != User.AccountID)).Select(x => x.Owner));
 
-                FriendEntries = new List<FriendEntry>(rels.Where(x => (x.Relation == Relation.Friend) && (x.OwnerAccountID == User.AccountID)).Select(x => new FriendEntry() {Name = x.Target, SteamID = x.SteamID?.ToString()}));
+                FriendEntries = new List<FriendEntry>(rels.Where(x => (x.Relation == Relation.Friend) && (x.OwnerAccountID == User.AccountID)).Select(x => new FriendEntry() { Name = x.Target, SteamID = x.SteamID?.ToString() }));
 
                 Ignores =
                     new HashSet<string>(rels.Where(x => (x.Relation == Relation.Ignore) && (x.OwnerAccountID == User.AccountID)).Select(x => x.Target));
@@ -530,7 +530,7 @@ namespace ZkLobbyServer
 
                 var srcAccount = db.Accounts.Find(User.AccountID);
                 ulong.TryParse(rel.SteamID, out steamId);
-                var trgtAccount = Account.AccountByName(db, rel.TargetName) ?? db.Accounts.FirstOrDefault(x=>x.SteamID == steamId);
+                var trgtAccount = Account.AccountByName(db, rel.TargetName) ?? db.Accounts.FirstOrDefault(x => x.SteamID == steamId);
                 if (trgtAccount == null)
                 {
                     if (!string.IsNullOrEmpty(rel.TargetName)) await Respond("No such account found"); // only warn if name is set and not just steam id
@@ -682,6 +682,30 @@ namespace ZkLobbyServer
                         }
                     }
                 }
+            }
+        }
+
+
+        private DateTime lastThrottleReset = DateTime.UtcNow;
+        private int bytesSent;
+
+        public async Task Throttle(int lineLength)
+        {
+            bytesSent += lineLength;
+            if (bytesSent < GlobalConst.LobbyThrottleBytesPerSecond) return;
+
+            var now = DateTime.UtcNow;
+            var seconds = now.Subtract(lastThrottleReset).TotalSeconds;
+            if (bytesSent < GlobalConst.LobbyThrottleBytesPerSecond * seconds)
+            {
+                bytesSent = 0;
+                lastThrottleReset = now;
+            }
+            else
+            {
+                bytesSent = (int)Math.Round(bytesSent*1.5); // grow a bit as a punishment
+                var needForSleep = (double)bytesSent/GlobalConst.LobbyThrottleBytesPerSecond - seconds;
+                await Task.Delay((int)Math.Round(needForSleep*1000.0));
             }
         }
     }

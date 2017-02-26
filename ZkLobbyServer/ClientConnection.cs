@@ -44,7 +44,11 @@ namespace ZkLobbyServer
             {
                 dynamic obj = server.Serializer.DeserializeLine(line);
                 if (obj is Login || obj is Register) await Process(obj);
-                else await connectedUser.Process(obj);
+                else
+                {
+                    await connectedUser.Throttle(line.Length);
+                    await connectedUser.Process(obj);
+                }
             }
             catch (Exception ex)
             {
