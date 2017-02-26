@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -139,6 +140,32 @@ namespace AutoRegistrator
                 var fileName = $"{fac.Shortcut}.png";
                 var src = Path.Combine(spath, fileName);
                 if (File.Exists(src)) File.Copy(src, Path.Combine(tpath, fileName), true);
+            }
+
+
+            spath = Path.Combine(siteBase, "Resources");
+            tpath = Path.Combine(targetFolder, "LuaMenu", "configs", "gameConfig", "zk");
+            foreach (var map in db.Resources.Where(x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= MapSupportLevel.Supported))
+            {
+                var sourceFile = Path.Combine(spath, map.MinimapName);
+                if (File.Exists(sourceFile))
+                {
+                    var name = map.InternalName.EscapePath();
+                    var thumbnailTarget = Path.Combine(tpath, "minimapThumbnail", $"{name}.png");
+                    if (!File.Exists(thumbnailTarget))
+                    {
+                        using (var img = Image.FromFile(sourceFile))
+                        {
+                            using (var resized = Utils.GetResized(img, 64,64))
+                            {
+                                resized.Save(thumbnailTarget);
+                            }
+                        }
+                    }
+
+                    var minimapTarget = Path.Combine(tpath, "minimapOverride", $"{name}.jpg");
+                    if (!File.Exists(minimapTarget)) File.Copy(sourceFile, minimapTarget);
+                }
             }
         }
 
