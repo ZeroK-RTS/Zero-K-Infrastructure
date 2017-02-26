@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Mvc.Ajax;
 using System.Web.Routing;
 using AutoRegistrator;
@@ -180,6 +181,14 @@ namespace ZeroKWeb
 
             SteamDepotGenerator = new SteamDepotGenerator(sitePath, Path.Combine(sitePath, "..", "steamworks", "tools", "ContentBuilder", "content"));
 
+            
+            SetupPaypalInterface();
+
+            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Server);
+
+
+            Task.Factory.StartNew(() => SteamDepotGenerator.RunAll());
+
             Trace.TraceInformation("Starting autoregistrator");
             AutoRegistrator = new AutoRegistrator(MapPath("~"));
             AutoRegistrator.NewZkReleaseRegistered += (game, chobby) =>
@@ -188,14 +197,7 @@ namespace ZeroKWeb
                 Server.SetGame(game);
             };
 
-
             AutoRegistrator.RunMainAndMapSyncAsync();
-
- 
-
-            SetupPaypalInterface();
-
-            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Server);
         }
 
         public static SteamDepotGenerator SteamDepotGenerator { get; private set; }

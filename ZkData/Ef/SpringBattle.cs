@@ -59,6 +59,8 @@ namespace ZkData
         public virtual Resource ResourceByModResourceID { get; set; }
         public int SpringBattleID { get; set; }
         public virtual ICollection<SpringBattlePlayer> SpringBattlePlayers { get; set; }
+        public virtual ICollection<SpringBattleBot> SpringBattleBots { get; set; } = new List<SpringBattleBot>();
+
         public DateTime StartTime { get; set; }
         [StringLength(200)]
         public string Title { get; set; }

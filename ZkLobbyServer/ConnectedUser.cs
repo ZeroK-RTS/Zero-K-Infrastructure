@@ -564,11 +564,11 @@ namespace ZkLobbyServer
                             server.Channels.Values.Where(
                                 x => (x != null) && x.Users.ContainsKey(Name) && x.Users.ContainsKey(targetConnectedUser.Name))) await SendCommand(new ChannelUserAdded() { ChannelName = chan.Name, UserName = targetConnectedUser.Name });
                     }
-
-                    LoadFriendsIgnores();
-                    await SendCommand(new FriendList() { Friends = FriendEntries.ToList() });
-                    await SendCommand(new IgnoreList() { Ignores = Ignores.ToList() });
                 }
+
+                LoadFriendsIgnores();
+                await SendCommand(new FriendList() { Friends = FriendEntries.ToList() });
+                await SendCommand(new IgnoreList() { Ignores = Ignores.ToList() });
             }
         }
 

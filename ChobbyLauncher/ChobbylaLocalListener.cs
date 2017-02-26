@@ -173,6 +173,7 @@ namespace ChobbyLauncher
             try
             {
                 var line = serializer.SerializeToLine(data);
+                Trace.TraceInformation("Chobbyla >> {0}", line);
                 await transport.SendLine(line);
             }
             catch (Exception ex)
@@ -187,6 +188,7 @@ namespace ChobbyLauncher
             try
             {
                 dynamic obj = serializer.DeserializeLine(line);
+                Trace.TraceInformation("Chobbyla << {0}", line);
                 await Process(obj);
             }
             catch (Exception ex)

@@ -25,7 +25,7 @@ namespace ZkLobbyServer
             MaxPlayers = bat.Size;
             Prototype = bat;
 
-            foreach (var pe in bat.Players) Users[pe.Name] = new UserBattleStatus(pe.Name, pe.LobbyUser, Guid.NewGuid().ToString());
+            foreach (var pe in bat.Players) Users[pe.Name] = new UserBattleStatus(pe.Name, pe.LobbyUser, GenerateClientScriptPassword(pe.Name));
             
             if (ModOptions == null) ModOptions = new Dictionary<string, string>();
             if (bat.QueueType.Mode != AutohostMode.GameChickens) ModOptions["mutespec"] = "mute"; // mute spectators

@@ -24,15 +24,4 @@
     // be included.
     "recursive" "1"
   }
-
-	// but exclude all symbol files  
-	// This can be a full path, or a path relative to ContentRoot
-	"FileExclusion" "*.pdb"
-  
-	"FileProperties"
-    {
-        "LocalPath" "cache\\repositories.json"
-        "Attributes" "userconfig" // this file will be modified during runtime
-    }  
-	
 }

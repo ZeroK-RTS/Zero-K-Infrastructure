@@ -17,7 +17,7 @@ namespace ZkLobbyServer
         {
             if (int.TryParse(arguments, out cnt) && cnt > 1)
             {
-                return $"Change title to {cnt}?";
+                return $"Change max players to {cnt}?";
             }
             else return null;
         }
