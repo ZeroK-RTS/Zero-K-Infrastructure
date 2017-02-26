@@ -153,7 +153,7 @@ namespace ChobbyLauncher
             logWriter.Flush();
             var logStr = logSb.ToString();
 
-            var syncError = logStr.Contains("Sync error for ");
+            var syncError = logStr.Contains(" Sync error for ");
             if (syncError) Trace.TraceWarning("Sync error detected");
 
                         var openGlFail = logStr.Contains("No OpenGL drivers installed.") ||
