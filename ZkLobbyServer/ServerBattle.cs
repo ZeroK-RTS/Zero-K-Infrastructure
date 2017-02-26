@@ -48,7 +48,7 @@ namespace ZkLobbyServer
 
         public ZkLobbyServer server;
         public DedicatedServer spring;
-
+        public string battleInstanceGuid;
 
         public CommandPoll ActivePoll { get; private set; }
 
@@ -71,6 +71,7 @@ namespace ZkLobbyServer
         {
             BattleID = Interlocked.Increment(ref BattleCounter);
             FounderName = founder;
+            battleInstanceGuid = Guid.NewGuid().ToString();
 
             this.server = server;
             pollTimer = new Timer(PollTimeout * 1000);
@@ -81,6 +82,10 @@ namespace ZkLobbyServer
             PickHostingPort();
         }
 
+        public string GenerateClientScriptPassword(string name)
+        {
+            return Hash.HashString(battleInstanceGuid + name).ToString();
+        }
 
         public void Dispose()
         {
@@ -176,7 +181,7 @@ namespace ZkLobbyServer
             UserBattleStatus ubs;
             if (!Users.TryGetValue(user.Name, out ubs))
             {
-                ubs = new UserBattleStatus(user.Name, user.User, Guid.NewGuid().ToString());
+                ubs = new UserBattleStatus(user.Name, user.User, GenerateClientScriptPassword(user.Name));
                 Users[user.Name] = ubs;
             }
 
@@ -263,7 +268,7 @@ namespace ZkLobbyServer
                     await conus.Respond("Invalid password");
                     return;
                 }
-            var pwd = Guid.NewGuid().ToString();
+            var pwd = GenerateClientScriptPassword(conus.Name);
             spring.AddUser(conus.Name, pwd);
 
             await conus.SendCommand(GetConnectSpringStructure(pwd));
