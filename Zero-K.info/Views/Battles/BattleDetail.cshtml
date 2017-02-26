@@ -97,19 +97,24 @@
 </div>
 <br class="clearfloat" />
 <div>
-    @foreach (var grp in Model.SpringBattlePlayers.Where(x => !x.IsSpectator).GroupBy(x => x.AllyNumber))
+    @{
+        var allPlayers = Model.SpringBattlePlayers.ToList();
+        var allBots = Model.SpringBattleBots.ToList();
+        var allAllyIDs = allPlayers.Select(x => x.AllyNumber).Union(allBots.Select(x=>x.AllyNumber)).OrderBy(x=>x).ToList();
+    }
+    @foreach (var allyID in allAllyIDs)
     {
-        var win = grp.First().IsInVictoryTeam;
+        var win = allPlayers.Any(x=>x.IsInVictoryTeam && x.AllyNumber == allyID) || allBots.Any(x=>x.IsInVictoryTeam && x.AllyNumber == allyID);
         var css = ViewBag.ShowWinners ? (win ? "battle_winner" : "battle_loser") : "battle_spec";
         var label = ViewBag.ShowWinners ? (win ? "Won!" : "Lost") : "";
         <div class='fleft @css'>
-            <span style="font-size: 130%">Team @(grp.Key + 1) @label</span><br/>
+            <span style="font-size: 130%">Team @(allyID + 1) @label</span><br/>
             @if (ViewBag.ShowWinners)
             {
                 <small>XP gained: @(win ? @Model.WinnerTeamXpChange : @Model.LoserTeamXpChange)</small>
             }
             <br/>
-            @foreach (var u in grp)
+            @foreach (var u in allPlayers.Where(x=>x.AllyNumber == allyID))
             {
                 <span>
                     @Html.PrintAccount(u.Account)
@@ -128,6 +133,15 @@
                 </span>
                 <br/>
             }
+            
+            @foreach (var b in allBots.Where(x => x.AllyNumber == allyID))
+            {
+                <span>
+                    <img src="~/Img/battles/robot.png"/>@b.BotName &lt;@b.BotAI&gt;
+                </span>
+                <br />
+            }
+
         </div>
     }
     <div class="fleft battle_spec">

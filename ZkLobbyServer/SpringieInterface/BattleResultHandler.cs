@@ -158,6 +158,7 @@ namespace ZeroKWeb.SpringieInterface
             };
             db.SpringBattles.InsertOnSubmit(sb);
 
+            // store players
             foreach (BattlePlayerResult p in result.ActualPlayers)
             {
                 var account = Account.AccountByName(db, p.Name);
@@ -173,6 +174,20 @@ namespace ZeroKWeb.SpringieInterface
                         LoseTime = p.LoseTime
                     });
                 }
+            }
+
+            // store bots
+            var victoryAllyID = result.ActualPlayers.Where(x => x.IsVictoryTeam).Select(x => (int?)x.AllyNumber).FirstOrDefault() ?? -1;
+            if (victoryAllyID == -1) victoryAllyID = (result.ActualPlayers.Min(x => (int?)x.AllyNumber)??-1) + 1; // no player won, its likely to be next lowes team (stupid hack needed)
+            foreach (var bot in result.LobbyStartContext.Bots)
+            {
+                sb.SpringBattleBots.Add(new SpringBattleBot()
+                {
+                    AllyNumber = bot.AllyID,
+                    BotAI = bot.BotAI,
+                    BotName = bot.BotName,
+                    IsInVictoryTeam = bot.AllyID == victoryAllyID
+                });
             }
 
             db.SaveChanges();

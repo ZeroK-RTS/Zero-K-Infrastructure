@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="DbCloner.cs" />
     <Compile Include="Ef\AccountRelation.cs" />
+    <Compile Include="Ef\SpringBattleBot.cs" />
     <Compile Include="Enums\AdminLevel.cs" />
     <Compile Include="Enums\DevLevel.cs" />
     <Compile Include="Ef\ForumPostWord.cs" />
@@ -249,6 +250,10 @@
     <Compile Include="Migrations\201702240913040_MakeSteamIDUnique.cs" />
     <Compile Include="Migrations\201702240913040_MakeSteamIDUnique.Designer.cs">
       <DependentUpon>201702240913040_MakeSteamIDUnique.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702261344064_AddBattleBots.cs" />
+    <Compile Include="Migrations\201702261344064_AddBattleBots.Designer.cs">
+      <DependentUpon>201702261344064_AddBattleBots.cs</DependentUpon>
     </Compile>
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -514,6 +519,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702240913040_MakeSteamIDUnique.resx">
       <DependentUpon>201702240913040_MakeSteamIDUnique.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702261344064_AddBattleBots.resx">
+      <DependentUpon>201702261344064_AddBattleBots.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

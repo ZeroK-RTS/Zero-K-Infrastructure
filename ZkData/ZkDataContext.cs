@@ -88,6 +88,8 @@ namespace ZkData
         public virtual DbSet<ForumPostWord> IndexForumPosts { get; set; }
         public virtual DbSet<AccountRelation> AccountRelations { get; set; }
 
+        public virtual DbSet<SpringBattleBot> SpringBattleBots { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Account>()
