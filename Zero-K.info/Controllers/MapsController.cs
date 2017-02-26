@@ -348,6 +348,7 @@ namespace ZeroKWeb.Controllers
             if (cachedEntry != null) data.MapInfo = cachedEntry;
             else {
                 var path = Server.MapPath("~/Resources/") + res.MetadataName;
+
                 if (System.IO.File.Exists(path)) {
                     try {
                         data.MapInfo =
@@ -356,6 +357,7 @@ namespace ZeroKWeb.Controllers
                     } catch (Exception ex) {
                         Trace.TraceWarning("Failed to get map metedata {0}:{1}", res.MetadataName, ex);
                         data.MapInfo = new Map();
+                        HttpContext.Application["mapinfo_" + res.ResourceID] = data.MapInfo;
                     }
                 }
             }
