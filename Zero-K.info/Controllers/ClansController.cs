@@ -25,7 +25,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult Index(ClansModel model) {
             model = model ?? new ClansModel();
             var db = new ZkDataContext();
-            var ret = db.Clans.Where(x => !x.IsDeleted && (x.Faction != null && !x.Faction.IsDeleted));
+            var ret = db.Clans.Where(x => !x.IsDeleted && (x.Faction == null || !x.Faction.IsDeleted));
             if (!string.IsNullOrEmpty(model.Search)) ret = ret.Where(x => x.ClanName.Contains(model.Search) || x.Shortcut.Contains(model.Search));
             model.Data = ret.OrderBy(x => x.ClanName);
             return View("ClansIndex", model);
