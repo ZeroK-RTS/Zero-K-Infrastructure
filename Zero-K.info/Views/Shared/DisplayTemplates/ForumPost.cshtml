@@ -3,7 +3,7 @@
 @model ZkData.ForumPost
 @{
     var p = Model;
-    var linkURL = Url.Action("Post", "Forum", new { id = p.ForumPostID }) + "#" + p.ForumPostID;
+    var linkURL = Url.Action("Post", "Forum", new { id = p.ForumPostID }, Request?.Url?.Scheme ?? "http") + "#" + p.ForumPostID;
     var isWikiMain = Model.ForumThread.ForumCategory.ForumMode == ForumMode.Wiki && Model.ForumThread.ForumPosts.OrderBy(x => x.ForumPostID).First().ForumPostID == Model.ForumPostID;
 }
 
@@ -100,7 +100,7 @@
                                     <img src="/img/delete_trashcan.png" height="22"/>
                                 </a>
                             }
-                            <a nicetitle='Link to this post' href="@linkURL">
+                            <a nicetitle='Link to this post' href="@linkURL" class="js_clipboard">
                                 <img src="/img/link.png" height="22"/>
                             </a>
                         </td>
