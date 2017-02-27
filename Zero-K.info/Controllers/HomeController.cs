@@ -144,7 +144,6 @@ namespace ZeroKWeb.Controllers
             public int BattlesRunning;
             public int UsersFighting;
             public int UsersWaiting;
-            public int UsersLastMonth;
             public int UsersOnline;
         }
 
@@ -172,8 +171,6 @@ namespace ZeroKWeb.Controllers
                 ret.UsersWaiting += Global.Server.MatchMaker.GetTotalWaiting();
             }
 
-            var lastMonth = DateTime.Now.AddDays(-31);
-            ret.UsersLastMonth = new ZkDataContext().SpringBattlePlayers.Where(x => x.SpringBattle.StartTime > lastMonth).Select(x => x.AccountID).Distinct().Count();
             return ret;
         }
 

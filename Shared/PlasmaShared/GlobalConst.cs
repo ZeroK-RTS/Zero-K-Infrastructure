@@ -142,7 +142,7 @@ namespace ZkData
         public const int XpForMissionOrBotsVictory = 50;
 
         public const double EloWeightMax = 6;
-        public const double EloWeightLearnFactor = 30;
+        public const double EloWeightLearnFactor = 10;
         public const double EloWeightMalusFactor = -80;
 
         public const string SessionTokenVariable = "asmallcake";
@@ -219,6 +219,10 @@ namespace ZkData
         public const bool TcpLingerStateEnabled = true;
 
         public const int DelugeChannelDisplayUsers = 100;
+
+        public const int LobbyThrottleBytesPerSecond = 2000;
+        public const int LobbyMaxMessageSize = 2000;
+
 
         public static int UdpHostingPortStart;
 
