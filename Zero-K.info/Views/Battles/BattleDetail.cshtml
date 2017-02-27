@@ -98,7 +98,7 @@
 <br class="clearfloat" />
 <div>
     @{
-        var allPlayers = Model.SpringBattlePlayers.ToList();
+        var allPlayers = Model.SpringBattlePlayers.Where(x=>!x.IsSpectator).ToList();
         var allBots = Model.SpringBattleBots.ToList();
         var allAllyIDs = allPlayers.Select(x => x.AllyNumber).Union(allBots.Select(x=>x.AllyNumber)).OrderBy(x=>x).ToList();
     }
