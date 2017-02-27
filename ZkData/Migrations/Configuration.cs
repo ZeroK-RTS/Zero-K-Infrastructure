@@ -102,6 +102,8 @@ namespace ZkData.Migrations
                 x => x.Title,
                 new ForumCategory { Title = "Asylum", ForumMode = ForumMode.Archive, IsLocked = false, SortOrder = 21, ParentForumCategoryID = offtopic });
 
+            db.RoleTypes.AddOrUpdate(x=>x.Name, new RoleType() {Name = "Clan Leader", Description = "Clan founder or elected leader", IsClanOnly = true, IsOnePersonOnly = true, IsVoteable = true, PollDurationDays = 2, RightDropshipQuota = 1, RightBomberQuota = 1, RightMetalQuota = 1, RightWarpQuota = 1, RightEditTexts = true, RightSetEnergyPriority = true, RightKickPeople = true, DisplayOrder = 0});
+
 
             db.SaveChanges();
 

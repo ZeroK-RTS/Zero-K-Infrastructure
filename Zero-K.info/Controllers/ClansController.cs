@@ -25,7 +25,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult Index(ClansModel model) {
             model = model ?? new ClansModel();
             var db = new ZkDataContext();
-            var ret = db.Clans.Where(x => !x.IsDeleted && (x.Faction != null && !x.Faction.IsDeleted));
+            var ret = db.Clans.Where(x => !x.IsDeleted && (x.Faction == null || !x.Faction.IsDeleted));
             if (!string.IsNullOrEmpty(model.Search)) ret = ret.Where(x => x.ClanName.Contains(model.Search) || x.Shortcut.Contains(model.Search));
             model.Data = ret.OrderBy(x => x.ClanName);
             return View("ClansIndex", model);
@@ -320,6 +320,8 @@ namespace ZeroKWeb.Controllers
                 else 
                     db.Clans.InsertOnSubmit(clan);
 
+                db.SaveChanges();
+
                 var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
                 acc.ClanID = clan.ClanID;
 
@@ -349,12 +351,6 @@ namespace ZeroKWeb.Controllers
             Global.Server.SetTopic(clan.GetClanChannel(), clan.SecretTopic, Global.Account.Name);
             //}
             return RedirectToAction("Detail", new { id = clan.ClanID });
-        }
-
-        public ActionResult JsonGetClanList()
-        {
-            var db = new ZkDataContext();
-            return Json(db.Clans.Where(x => !x.IsDeleted).Select(x => new { Name = x.ClanName, ID = x.ClanID, Shortcut = x.Shortcut, Description = x.Description, HasPassword = x.Password != null }).ToList(), JsonRequestBehavior.AllowGet);
         }
 
         /*

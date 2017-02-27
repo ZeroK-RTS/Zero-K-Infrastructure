@@ -703,7 +703,6 @@ namespace ZkLobbyServer
             }
             else
             {
-                bytesSent = (int)Math.Round(bytesSent*1.5); // grow a bit as a punishment
                 var needForSleep = (double)bytesSent/GlobalConst.LobbyThrottleBytesPerSecond - seconds;
                 await Task.Delay((int)Math.Round(needForSleep*1000.0));
             }
