@@ -320,6 +320,8 @@ namespace ZeroKWeb.Controllers
                 else 
                     db.Clans.InsertOnSubmit(clan);
 
+                db.SaveChanges();
+
                 var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
                 acc.ClanID = clan.ClanID;
 
