@@ -221,7 +221,8 @@ namespace ZkData
         public const int DelugeChannelDisplayUsers = 100;
 
         public const int LobbyThrottleBytesPerSecond = 2000;
-        
+        public const int LobbyMaxMessageSize = 2000;
+
 
         public static int UdpHostingPortStart;
 

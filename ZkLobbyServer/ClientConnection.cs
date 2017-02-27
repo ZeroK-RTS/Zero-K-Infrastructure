@@ -42,6 +42,12 @@ namespace ZkLobbyServer
         {
             try
             {
+                if (line.Length > GlobalConst.LobbyMaxMessageSize)
+                {
+                    Trace.TraceWarning("{0} too long message: {1}",this,line);
+                    return;
+                }
+
                 dynamic obj = server.Serializer.DeserializeLine(line);
                 if (obj is Login || obj is Register) await Process(obj);
                 else
