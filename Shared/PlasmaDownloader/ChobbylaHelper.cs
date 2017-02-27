@@ -30,13 +30,18 @@ namespace PlasmaDownloader
             string name,
             IChobbylaProgress progress)
         {
-            progress.Status = desc;
-            progress.Download = downloader.GetResource(type, name);
-            var dlTask = progress.Download?.WaitHandle.AsTask(TimeSpan.FromMinutes(30));
-            if (dlTask != null) await dlTask.ConfigureAwait(false);
-            if (progress.Download?.IsComplete == false)
+            var down = downloader.GetResource(type, name);
+            
+            if (progress != null)
             {
-                progress.Status = $"Download of {progress.Download.Name} has failed";
+                progress.Status = desc;
+                progress.Download = down;
+            }
+            var dlTask = down?.WaitHandle.AsTask(TimeSpan.FromMinutes(30));
+            if (dlTask != null) await dlTask.ConfigureAwait(false);
+            if (down?.IsComplete == false)
+            {
+                if (progress != null) progress.Status = $"Download of {progress.Download.Name} has failed";
                 return false;
             }
             return true;

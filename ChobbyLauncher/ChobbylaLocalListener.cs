@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Media;
 using System.Net;
@@ -325,6 +326,57 @@ namespace ChobbyLauncher
             {
                 Trace.TraceError("Error processing steamhostgamerequest: {0}",ex);
             }
+        }
+
+        private void Process(StartNewSpring args)
+        {
+            Task.Factory.StartNew(async () =>
+            {
+                try
+                {
+                    if (args.Downloads?.Any() == true)
+                    {
+                        foreach (var x in args.Downloads)
+                        {
+                            DownloadType type;
+                            if (string.IsNullOrEmpty(x.FileType) || !Enum.TryParse(x.FileType, out type)) type = DownloadType.NOTKNOWN;
+                            var result = await chobbyla.downloader.DownloadFile(type, x.Name, null);
+                            if (!result) Trace.TraceWarning("Download of {0} {1} has failed", x.FileType, x.Name);
+                        }
+                    }
+                    if (!await chobbyla.downloader.DownloadFile(DownloadType.ENGINE, args.Engine, null)) Trace.TraceWarning("Download of engine {0} has failed", args.Engine);
+
+
+                    var process = new Process { StartInfo = { CreateNoWindow = false, UseShellExecute = false } };
+                    var paths = chobbyla.paths;
+                    paths.SetDefaultEnvVars(process.StartInfo, args.Engine);
+
+                    process.StartInfo.FileName = paths.GetSpringExecutablePath(args.Engine);
+                    process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetSpringExecutablePath(args.Engine));
+
+
+                    var startFilePath = Path.Combine(paths.WritableDirectory, "demos", args.StartDemoName);
+                    if (!string.IsNullOrEmpty(args.StartScriptContent))
+                    {
+                        startFilePath = Path.Combine(paths.WritableDirectory, "_script.txt");
+                        File.WriteAllText(startFilePath, args.StartScriptContent);
+                    }
+
+                    var configFilePath = Path.Combine(paths.WritableDirectory, "springsettings.cfg");
+                    if (!string.IsNullOrEmpty(args.SpringSettings))
+                    {
+                        configFilePath = Path.Combine(paths.WritableDirectory, "_springsettings.cfg");
+                        File.WriteAllText(configFilePath, args.SpringSettings);
+                    }
+
+                    process.StartInfo.Arguments = $"\"{startFilePath}\" --config \"{configFilePath}\"";
+                    process.Start();
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error processing StartNewSpring: {0}", ex);
+                }
+            });
         }
 
 

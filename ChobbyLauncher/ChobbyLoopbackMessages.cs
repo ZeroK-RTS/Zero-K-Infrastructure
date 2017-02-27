@@ -216,4 +216,19 @@ namespace ChobbyLauncher
     }
 
 
+    [ChobbyMessage]
+    public class StartNewSpring
+    {
+        public string StartScriptContent { get; set; }
+
+        public string StartDemoName { get; set; }
+
+        public string SpringSettings { get; set;  }
+        public string Engine { get; set; }
+
+        public List<DownloadFile> Downloads { get; set; }
+    }
+
+
+
 }
