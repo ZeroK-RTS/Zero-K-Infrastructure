@@ -696,7 +696,7 @@ namespace ZkLobbyServer
 
             var now = DateTime.UtcNow;
             var seconds = now.Subtract(lastThrottleReset).TotalSeconds;
-            if (bytesSent < GlobalConst.LobbyThrottleBytesPerSecond * seconds)
+            if (bytesSent <= GlobalConst.LobbyThrottleBytesPerSecond * seconds)
             {
                 bytesSent = 0;
                 lastThrottleReset = now;
