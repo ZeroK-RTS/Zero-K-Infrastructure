@@ -142,7 +142,7 @@ namespace ZkData
         public const int XpForMissionOrBotsVictory = 50;
 
         public const double EloWeightMax = 6;
-        public const double EloWeightLearnFactor = 30;
+        public const double EloWeightLearnFactor = 10;
         public const double EloWeightMalusFactor = -80;
 
         public const string SessionTokenVariable = "asmallcake";
