@@ -32,7 +32,7 @@ namespace ChobbyLauncher
             return
                 new string(
                     input.ToCharArray()
-                        .Where(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || (c == '-') || (c == '?') || (c == '!'))
+                        .Where(c => (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c ==' ' || (c == '-') || (c == '?') || (c == '!'))
                         .ToArray());
         }
     }
