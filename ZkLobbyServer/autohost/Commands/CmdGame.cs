@@ -28,6 +28,13 @@ namespace ZkLobbyServer
                 return null;
             }
 
+            if (!battle.IsPassworded)
+            {
+                battle.Respond(e, $"You can only do this on private, passworded hosts.");
+                return null;
+            }
+
+
             return $"Change game to {game.RapidTag} {game.InternalName}?";
         }
 

@@ -18,6 +18,13 @@ namespace ZkLobbyServer
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
             this.gameName = arguments;
+
+            if (!battle.IsPassworded)
+            {
+                battle.Respond(e, $"You can only do this on private, passworded hosts.");
+                return null;
+            }
+
             if (string.IsNullOrEmpty(arguments)) {
                 battle.Respond(e, "Please specify game name.");
                 return null;
