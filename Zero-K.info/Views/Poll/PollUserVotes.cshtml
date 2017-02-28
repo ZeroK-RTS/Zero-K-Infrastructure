@@ -6,32 +6,37 @@
 
 @foreach (var p in Account.ValidPolls(Global.Account).OrderByDescending(x => x.PollID))
 {
-    <div style="@(p.IsHeadline ? " border: 1px solid green" : ""); margin:2px; padding:1px">
-    @Html.Partial("PollView", p)
-
-    @if (!p.IsAnonymous)
+    if (p.IsVisible || Global.IsModerator)
     {
-        var vote = Model != null? p.PollVotes.FirstOrDefault(x => x.AccountID == Model.AccountID) :null;
-        if (vote != null)
-        {
-            if (!p.IsAnonymous)
-            {
-                <span>Voted: @vote.PollOption.OptionText</span>
-            }
-            else
-            {
-                <span>Voted</span>
-            }
-        }
-    }
+        <div style="@(p.IsHeadline ? " border: 1px solid green" : (p.IsVisible ? "":" border: 1px dashed gray;")); margin: 2px; padding: 1px">
+            @Html.Partial("PollView", p)
 
-    @if (Global.IsModerator && p.ExpireBy == null)
-    {   
+            @if (!p.IsAnonymous)
+            {
+                var vote = Model != null ? p.PollVotes.FirstOrDefault(x => x.AccountID == Model.AccountID) : null;
+                if (vote != null)
+                {
+                    if (!p.IsAnonymous)
+                    {
+                        <span>Voted: @vote.PollOption.OptionText</span>
+                    }
+                    else
+                    {
+                        <span>Voted</span>
+                    }
+                }
+            }
 
-            <br/>
-            @Html.ActionLink(p.IsHeadline ? "STOP displaying" : "start displaying", "SwapHeadline", new { pollID = p.PollID })<br />
-    }
-    </div>
+            @if (Global.IsModerator && p.ExpireBy == null)
+            {
+
+                <br/>
+                @Html.ActionLink(p.IsVisible ? "visible, hide completely?" : "hidden, show in this list?", "SwapVisible", new { pollID = p.PollID })<br />
+                @Html.ActionLink(p.IsHeadline ? "HEADLINE, stop displaying on home?" : "add to home headline?", "SwapHeadline", new { pollID = p.PollID })<br/>
+
+            }
+        </div>
+    } 
 }
 
 @if (Global.IsModerator)

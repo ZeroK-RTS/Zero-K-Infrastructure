@@ -27,6 +27,8 @@ namespace ZkData
         public DateTime? ExpireBy { get; set; }
         public bool IsHeadline { get; set; }
 
+        public bool IsVisible { get; set; } = true;
+
         public virtual Account AccountByRoleTargetAccountID { get; set; }
         public virtual Account CreatedAccount { get; set; }
         public virtual Faction Faction { get; set; }
