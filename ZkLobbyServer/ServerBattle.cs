@@ -262,7 +262,8 @@ namespace ZkLobbyServer
         public async Task RequestConnectSpring(ConnectedUser conus, string joinPassword)
         {
             UserBattleStatus ubs;
-            if (!Users.TryGetValue(conus.Name, out ubs))
+
+            if (!Users.TryGetValue(conus.Name, out ubs) && !(IsInGame && spring.LobbyStartContext.Players.Any(x => x.Name == conus.Name)))
                 if (IsPassworded && (Password != joinPassword))
                 {
                     await conus.Respond("Invalid password");

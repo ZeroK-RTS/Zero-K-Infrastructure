@@ -121,6 +121,16 @@ namespace ZkLobbyServer
                 }
 
 
+                foreach (var bat in server.Battles.Values.Where(x => x != null && x.IsInGame))
+                {
+                    var s = bat.spring;
+                    if (s.LobbyStartContext.Players.Any(x => !x.IsSpectator && x.Name == Name) && !s.Context.ActualPlayers.Any(x=>x.Name == Name && x.LoseTime != null))
+                    {
+                        await SendCommand(new RejoinOption() { BattleID = bat.BattleID });
+                    }
+                }
+
+
                 await SendCommand(new FriendList() { Friends = connectedUser.FriendEntries.ToList() });
                 await SendCommand(new IgnoreList() { Ignores = connectedUser.Ignores.ToList() });
 

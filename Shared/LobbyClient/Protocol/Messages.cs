@@ -624,6 +624,13 @@ namespace LobbyClient
         public string ScriptPassword { get; set; }
     }
 
+    [Message(Origin.Server)]
+    public class RejoinOption
+    {
+        public int BattleID { get; set; }
+    }
+
+
 
     [Message(Origin.Client)]
     public class RequestConnectSpring
