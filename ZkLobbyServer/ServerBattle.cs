@@ -209,7 +209,7 @@ namespace ZkLobbyServer
             
             if (spring.IsRunning)
             {
-                spring.AddUser(ubs.Name, ubs.ScriptPassword);
+                spring.AddUser(ubs.Name, ubs.ScriptPassword, ubs.LobbyUser);
                 var started = DateTime.UtcNow.Subtract(spring.IngameStartTime ?? RunningSince ?? DateTime.UtcNow);
                 started = new TimeSpan((int)started.TotalHours, started.Minutes, started.Seconds);
                 await SayBattle($"THIS GAME IS CURRENTLY IN PROGRESS, PLEASE WAIT UNTIL IT ENDS! Running for {started}", ubs.Name);
@@ -270,7 +270,7 @@ namespace ZkLobbyServer
                     return;
                 }
             var pwd = GenerateClientScriptPassword(conus.Name);
-            spring.AddUser(conus.Name, pwd);
+            spring.AddUser(conus.Name, pwd, conus.User);
 
             await conus.SendCommand(GetConnectSpringStructure(pwd));
         }
