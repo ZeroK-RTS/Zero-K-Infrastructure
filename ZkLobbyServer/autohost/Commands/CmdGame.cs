@@ -23,18 +23,17 @@ namespace ZkLobbyServer
             if (string.IsNullOrEmpty(arguments)) arguments = battle.server.Game ?? GlobalConst.DefaultZkTag;
             game = MapPicker.FindResources(ResourceType.Mod, arguments).FirstOrDefault();
 
+            if (battle.Mode != AutohostMode.None || !battle.IsPassworded)
+            {
+                battle.Respond(e, $"You can only do this on custom passworded hosts.");
+                return null;
+            }
+
             if (game == null)
             {
                 battle.Respond(e, "Cannot find such game.");
                 return null;
             }
-
-            if (battle.Mode != AutohostMode.None)
-            {
-                battle.Respond(e, $"You can only do this on private hosts.");
-                return null;
-            }
-
 
             return $"Change game to {game.RapidTag} {game.InternalName}?";
         }

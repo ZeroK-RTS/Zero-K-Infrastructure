@@ -20,9 +20,9 @@ namespace ZkLobbyServer
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
             engine = string.IsNullOrEmpty(arguments) ? battle.server.Engine : arguments;
-            if (battle.Mode != AutohostMode.None)
+            if (battle.Mode != AutohostMode.None || !battle.IsPassworded)
             {
-                battle.Respond(e, $"You can only do this on private hosts.");
+                battle.Respond(e, $"You can only do this on custom passworded hosts.");
                 return null;
             }
             if (battle.Mode != AutohostMode.None && engine != battle.server.Engine)
