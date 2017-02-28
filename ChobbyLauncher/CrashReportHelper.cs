@@ -14,7 +14,7 @@ namespace ChobbyLauncher
 {
     public static class CrashReportHelper
     {
-        private const int MaxInfologSize = 65000;
+        private const int MaxInfologSize = 250000;
         public static Issue ReportCrash(string infolog, bool isDesync, string engine)
         {
             try
