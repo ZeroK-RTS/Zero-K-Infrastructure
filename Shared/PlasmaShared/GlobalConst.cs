@@ -151,9 +151,11 @@ namespace ZkData
         public const string MissionSlotsFileName = "_missionSlots.xml";
 
         public const string NightwatchName = "Nightwatch";
+
         public const string ModeratorChannel = "zkadmin";
         public const string Top20Channel = "zktop20";
-
+        public const string ErrorChannel = "zkerror";
+        public const string CoreChannel = "zkcore";
         
         public const string LobbyAccessCookieName = "zk_lobby";
 
