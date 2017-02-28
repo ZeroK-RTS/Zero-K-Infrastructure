@@ -546,3 +546,7 @@ div#busy
 .grid .row_selected {
 	background-color: #0000cd;
 }
+
+.video-container {
+    max-width: 100%;
+}
