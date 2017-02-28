@@ -19,9 +19,9 @@ namespace ZkLobbyServer
         {
             this.gameName = arguments;
 
-            if (!battle.IsPassworded)
+            if (battle.Mode != AutohostMode.None)
             {
-                battle.Respond(e, $"You can only do this on private, passworded hosts.");
+                battle.Respond(e, $"You can only do this on private hosts.");
                 return null;
             }
 
