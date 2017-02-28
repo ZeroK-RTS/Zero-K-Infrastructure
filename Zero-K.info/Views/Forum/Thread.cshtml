@@ -23,7 +23,7 @@
     </div>
 }
 
-<h1>@Model.CurrentThread.Title</h1>
+<h1 style="word-break: break-all;">@Model.CurrentThread.Title</h1>
 @if (!string.IsNullOrEmpty(Model.CurrentThread.WikiKey))
 {
     <h2><a href="@Url.Action("Index", "Wiki", new { node = Model.CurrentThread.WikiKey })">@("[" + Model.CurrentThread.WikiKey + "]")</a></h2>
