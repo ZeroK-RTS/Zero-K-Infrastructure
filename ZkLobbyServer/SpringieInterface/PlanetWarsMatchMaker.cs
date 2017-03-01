@@ -36,6 +36,7 @@ namespace ZeroKWeb
     {
         readonly List<Faction> factions;
         readonly string pwHostName;
+        private ZkLobbyServer.ZkLobbyServer server;
 
         readonly TasClient tas;
 
@@ -321,7 +322,7 @@ namespace ZeroKWeb
                 List<string> playerIds = option.Attackers.Select(x => x).Union(option.Defenders.Select(x => x)).ToList();
 
                 
-                // todo hack PlanetWarsTurnHandler.EndTurn(option.Map, null, db, 0, db.Accounts.Where(x => playerIds.Contains(x.Name) && x.Faction != null).ToList(), text, null, db.Accounts.Where(x => option.Attackers.Contains(x.Name) && x.Faction != null).ToList());
+                PlanetWarsTurnHandler.EndTurn(option.Map, null, db, 0, db.Accounts.Where(x => playerIds.Contains(x.Name) && x.Faction != null).ToList(), text, null, db.Accounts.Where(x => option.Attackers.Contains(x.Name) && x.Faction != null).ToList(), server.PlanetWarsEventCreator);
             }
             catch (Exception ex)
             {

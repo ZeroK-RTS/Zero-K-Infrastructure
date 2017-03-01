@@ -484,7 +484,6 @@ namespace ZkData
         {
             PwMetalProduced += count;
             Faction.Metal += count;
-
             if (PwMetalUsed > PwMetalProduced) PwMetalUsed = PwMetalProduced;
         }
 

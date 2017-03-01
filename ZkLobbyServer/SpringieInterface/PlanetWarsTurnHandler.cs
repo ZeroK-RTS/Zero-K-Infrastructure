@@ -156,9 +156,7 @@ public static class PlanetWarsTurnHandler
 
         // distribute metal
         var attackersTotalMetal = Math.Floor(GlobalConst.PlanetWarsAttackerMetal);
-        var defendersTotalMetal = Math.Floor(GlobalConst.PlanetWarsDefenderMetal);
         var attackerMetal = Math.Floor(attackersTotalMetal / attackers.Count);
-        var defenderMetal = Math.Floor(defendersTotalMetal / defenders.Count);
         foreach (Account w in attackers)
         {
             w.ProduceMetal(attackerMetal);
@@ -170,16 +168,24 @@ public static class PlanetWarsTurnHandler
             text.AppendLine(ev.PlainText);
         }
 
-        foreach (Account w in defenders)
-        {
-            w.ProduceMetal(defenderMetal);
-            var ev = eventCreator.CreateEvent("{0} gained {1} metal from battle {2}",
-                                        w,
-                                        defenderMetal,
-                                        sb);
 
-            db.Events.InsertOnSubmit(ev);
-            text.AppendLine(ev.PlainText);
+        var defendersTotalMetal = Math.Floor(GlobalConst.PlanetWarsDefenderMetal);
+        if (defenders.Count > 0)
+        {
+            var defenderMetal = Math.Floor(defendersTotalMetal/defenders.Count);
+            foreach (Account w in defenders)
+            {
+
+                w.ProduceMetal(defenderMetal);
+                var ev = eventCreator.CreateEvent("{0} gained {1} metal from battle {2}", w, defenderMetal, sb);
+
+                db.Events.InsertOnSubmit(ev);
+                text.AppendLine(ev.PlainText);
+            }
+        }
+        else
+        {
+            if (planet.OwnerFactionID !=null) planet.Faction.ProduceMetal(defendersTotalMetal);
         }
 
 
