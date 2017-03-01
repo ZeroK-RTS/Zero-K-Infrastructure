@@ -81,6 +81,7 @@ namespace LobbyClient
             public bool IsAdmin { get; set; }
             public string Clan { get; set; }
             public string Faction { get; set; }
+            public string Country { get; set; }
 
             public MidGameJoinUser(User user)
             {
@@ -91,6 +92,7 @@ namespace LobbyClient
                 IsAdmin = user.IsAdmin;
                 Clan = user.Clan;
                 Faction = user.Faction;
+                Country = user.Country;
             }
         }
 
