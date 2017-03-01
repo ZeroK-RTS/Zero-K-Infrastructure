@@ -4,7 +4,7 @@
 @model ZkData.Account
 <h2>Voting details for @Html.PrintAccount(Model)</h2>
 
-@foreach (var p in Account.ValidPolls(Global.Account).OrderByDescending(x => x.PollID))
+@foreach (var p in Account.ValidPolls(Global.Account).OrderByDescending(x => x.IsVisible).ThenByDescending(x=>x.PollID))
 {
     if (p.IsVisible || Global.IsModerator)
     {
