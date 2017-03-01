@@ -211,6 +211,7 @@ namespace ZkData
         public const bool OnlyAdminsSeePostVoters = false;
         public const int PlanetWarsMinutesToAttack = 30;
         public const int PlanetWarsMinutesToAccept = 10;
+        public const int PlanetWarsDropshipsStayForMinutes = 2*60;
         public const int PlanetWarsMaxTeamsize = 4;
         public const int PlanetWarsBaseDropshipDefense = 9;
         public const int MinPlanetWarsLevel = 10;

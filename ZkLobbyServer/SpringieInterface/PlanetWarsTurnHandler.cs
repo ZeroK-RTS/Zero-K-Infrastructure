@@ -185,12 +185,24 @@ public static class PlanetWarsTurnHandler
         }
         else
         {
+            // planet had no defenders, give metal to owner's faction
             if (planet.OwnerFactionID !=null) planet.Faction.ProduceMetal(defendersTotalMetal);
         }
 
 
-        // remove dropships
+        // remove attacker's dropships
         foreach (var pf in planet.PlanetFactions.Where(x => x.Faction == attacker)) pf.Dropships = 0;
+
+
+        // remove dropships staying for too long (return to faction pool)
+        foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != attacker && x.Dropships > 0 && x.DropshipsLastAdded != null))
+        {
+            if (DateTime.UtcNow.Subtract(pf.DropshipsLastAdded.Value).TotalMinutes > GlobalConst.PlanetWarsDropshipsStayForMinutes)
+            {
+                pf.Faction.ProduceDropships(pf.Dropships);
+                pf.Dropships = 0;
+            }
+        }
 
 
         // add attack points
