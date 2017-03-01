@@ -87,12 +87,14 @@ namespace ZeroKWeb.SpringieInterface
                         userParams["faction"] = user.Faction != null ? user.Faction.Shortcut : "";
                         userParams["clan"] = user.Clan != null ? user.Clan.Shortcut : "";
                         userParams["clanfull"] = user.Clan != null ? user.Clan.ClanName : "";
-                        userParams["level"] = user.Level.ToString();
 
-                        userParams["mm_elo"] = Math.Round(user.EffectiveMmElo).ToString();
-                        userParams["casual_elo"] = Math.Round(user.EffectiveElo).ToString();
+                        //userParams["level"] = user.Level.ToString();
+                        //userParams["mm_elo"] = Math.Round(user.EffectiveMmElo).ToString();
+                        //userParams["casual_elo"] = Math.Round(user.EffectiveElo).ToString();
+
                         userParams["elo"] = Math.Round(user.BestEffectiveElo).ToString();
 
+                        userParams["icon"] = user.GetIconName();
                         userParams["avatar"] = user.Avatar;
                         userParams["badges"] = string.Join(",", user.GetBadges());
                         userParams["admin"] = user.AdminLevel >= AdminLevel.Moderator ? "1" : "0";

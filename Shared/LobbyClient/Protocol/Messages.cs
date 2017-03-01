@@ -294,47 +294,58 @@ namespace LobbyClient
     }
 
 
+    
     [Message(Origin.Server | Origin.Client)]
     public class User
     {
-        [JsonIgnore]
-        public string IpAddress;
-
-        [JsonIgnore]
-        public int? PartyID;
-
-
-        [JsonIgnore]
-        public int SyncVersion; //sync version for updating user statuses
         public int AccountID { get; set; }
         public string Avatar { get; set; }
         public DateTime? AwaySince { get; set; }
-
         public bool BanMute { get; set; }
         public bool BanSpecChat { get; set; }
         public int? BattleID { get; set; }
         public string Clan { get; set; }
         public string Country { get; set; }
         public string DisplayName { get; set; }
-        public int EffectiveMmElo { get; set; }
         public string Faction { get; set; }
         public DateTime? InGameSince { get; set; }
         public bool IsAdmin { get; set; }
-        public bool IsAway => AwaySince != null;
         public bool IsBot { get; set; }
+
+        public string LobbyVersion { get; set; }
+        public string Name { get; set; }
+        public string SteamID { get; set; }
+        public List<string> Badges { get; set; }
+
+        public string Icon { get; set; }
+
+        public bool IsAway => AwaySince != null;
         public bool IsInBattleRoom => BattleID != null;
         public bool IsInGame => InGameSince != null;
 
-        //public bool IsInBattleRoom { get; set; }
-        public int Level { get; set; }
-        public string LobbyVersion { get; set; }
-        public string Name { get; set; }
+
+
+
+        [JsonIgnore]
+        public string IpAddress;
+
+        [JsonIgnore]
+        public int? PartyID;
+
+        [JsonIgnore]
+        public int SyncVersion; //sync version for updating user statuses
+
+        [JsonIgnore]
+        public int EffectiveMmElo { get; set; }
 
         [JsonIgnore]
         public int RawMmElo { get; set; }
-        public string SteamID { get; set; }
-        public List<string> Badges { get; set; }
+
+        [JsonIgnore]
         public int EffectiveElo { get; set; }
+
+        [JsonIgnore]
+        public int Level { get; set; }
 
         public User Clone()
         {
@@ -368,6 +379,7 @@ namespace LobbyClient
             DisplayName = u.DisplayName;
             BattleID = u.BattleID;
             Badges = u.Badges;
+            Icon = u.Icon;
         }
     }
 

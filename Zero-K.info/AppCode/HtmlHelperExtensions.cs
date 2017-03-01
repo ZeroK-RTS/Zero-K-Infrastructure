@@ -171,21 +171,15 @@ namespace System.Web.Mvc
                 var dudeStr = "";
                 if (account.AdminLevel >= AdminLevel.Moderator) dudeStr = "<img src='/img/police.png'  class='icon16' alt='Admin' />";
                 
-                var clampedLevel = System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((-0.12 / Math.Cosh((account.Level - 61.9) / 7.08) + 1) 
-                    * 2.93 * Math.Log(Math.Exp(-2.31) * account.Level + 1) - 0.89 / Math.Cosh((account.Level - 28.55) / 3.4))));
-                //0, 5, 10, 20, 35, 50, 75, 100 -> 0, 1, 2, 3, 4, 5, 6, 7
-                var clampedSkill = System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((Math.Max(account.EffectiveMmElo, account.EffectiveElo) - 1000.0)) / 200));
-
                 string color = Faction.FactionColor(account.Faction, Global.FactionID);
                 if (String.IsNullOrEmpty(color)) color = "#B0D0C0";
 
                 return
                     new MvcHtmlString(
                         string.Format(
-                            "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}_{2}.png'  class='icon16' alt='rank' />{6}{7}<a href='/Users/Detail/{3}' style='color:{4}' nicetitle='$user${3}'>{5}</a>",
+                            "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}.png'  class='icon16' alt='rank' />{5}{6}<a href='/Users/Detail/{2}' style='color:{3}' nicetitle='$user${2}'>{4}</a>",
                             account.Country != "??" ? account.Country : "unknown",
-                            clampedLevel,
-                            clampedSkill,
+                            account.GetIconName(),
                             account.AccountID,
                             colorize ? color : "",
                             account.Name,
