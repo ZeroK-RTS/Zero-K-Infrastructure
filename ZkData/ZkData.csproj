@@ -255,6 +255,10 @@
     <Compile Include="Migrations\201702261344064_AddBattleBots.Designer.cs">
       <DependentUpon>201702261344064_AddBattleBots.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702281735393_AddPollIsvisible.cs" />
+    <Compile Include="Migrations\201702281735393_AddPollIsvisible.Designer.cs">
+      <DependentUpon>201702281735393_AddPollIsvisible.cs</DependentUpon>
+    </Compile>
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
@@ -522,6 +526,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702261344064_AddBattleBots.resx">
       <DependentUpon>201702261344064_AddBattleBots.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702281735393_AddPollIsvisible.resx">
+      <DependentUpon>201702281735393_AddPollIsvisible.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

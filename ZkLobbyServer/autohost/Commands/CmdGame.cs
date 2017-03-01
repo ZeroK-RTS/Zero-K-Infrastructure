@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
+using PlasmaShared;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 
@@ -21,6 +22,12 @@ namespace ZkLobbyServer
         {
             if (string.IsNullOrEmpty(arguments)) arguments = battle.server.Game ?? GlobalConst.DefaultZkTag;
             game = MapPicker.FindResources(ResourceType.Mod, arguments).FirstOrDefault();
+
+            if (battle.Mode != AutohostMode.None || !battle.IsPassworded)
+            {
+                battle.Respond(e, $"You can only do this on custom passworded hosts.");
+                return null;
+            }
 
             if (game == null)
             {

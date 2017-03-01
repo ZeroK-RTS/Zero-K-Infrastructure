@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using Newtonsoft.Json;
 using PlasmaShared;
 using ZkData;
 using Timer = System.Timers.Timer;
@@ -74,9 +75,14 @@ namespace LobbyClient
         /// <summary>
         ///     Adds user dynamically to running game - for security reasons add his script
         /// </summary>
-        public void AddUser(string name, string scriptPassword)
+        public void AddUser(string name, string scriptPassword, User user)
         {
-            if (IsRunning) talker.SendText($"/adduser {name} {scriptPassword}");
+            if (IsRunning)
+            {
+                talker.SendText($"/adduser {name} {scriptPassword}");
+                if (user != null) talker.SendText($"SPRINGIE:User {JsonConvert.SerializeObject(user)}");
+            }
+            
         }
 
         public event EventHandler BattleStarted = (sender, args) => { };

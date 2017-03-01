@@ -28,7 +28,10 @@ namespace ZkLobbyServer
             foreach (var pe in bat.Players) Users[pe.Name] = new UserBattleStatus(pe.Name, pe.LobbyUser, GenerateClientScriptPassword(pe.Name));
             
             if (ModOptions == null) ModOptions = new Dictionary<string, string>();
-            if (bat.QueueType.Mode != AutohostMode.GameChickens) ModOptions["mutespec"] = "mute"; // mute spectators
+
+            // hacky way to send some extra start setup data
+            if (bat.QueueType.Mode != AutohostMode.GameChickens) ModOptions["mutespec"] = "mute";
+            ModOptions["MatchMakerType"] = bat.QueueType.Name;
 
             ValidateAndFillDetails();
         }

@@ -1,6 +1,7 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
+using PlasmaShared;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 
@@ -18,6 +19,13 @@ namespace ZkLobbyServer
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
             this.gameName = arguments;
+
+            if (battle.Mode != AutohostMode.None || !battle.IsPassworded)
+            {
+                battle.Respond(e, $"You can only do this on custom passworded hosts.");
+                return null;
+            }
+
             if (string.IsNullOrEmpty(arguments)) {
                 battle.Respond(e, "Please specify game name.");
                 return null;

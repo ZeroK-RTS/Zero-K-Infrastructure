@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ChobbyLauncher;
 using GameAnalyticsSDK.Net;
 
 namespace ChobbyLauncher
@@ -212,6 +213,20 @@ namespace ChobbyLauncher
 
 
     [ChobbyMessage]
+    public class StartNewSpring
+    {
+        public string StartScriptContent { get; set; }
+
+        public string StartDemoName { get; set; }
+
+        public string SpringSettings { get; set;  }
+        public string Engine { get; set; }
+
+        public List<DownloadFile> Downloads { get; set; }
+    }
+
+
+    [ChobbyMessage]
     public class GaAddBusinessEvent
     {
         public int Amount { get; set; }
@@ -261,6 +276,4 @@ namespace ChobbyLauncher
 
         public string Value { get; set; }
     }
-
-
 }

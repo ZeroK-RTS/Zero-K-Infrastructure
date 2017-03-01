@@ -208,5 +208,15 @@ namespace ZeroKWeb.Controllers
             var acc = id > 0 ? db.Accounts.Find(id) : null;
             return View("PollUserVotes", acc);
         }
+
+        [Auth(Role = AdminLevel.Moderator)]
+        public ActionResult SwapVisible(int pollid)
+        {
+            var db = new ZkDataContext();
+            var p = db.Polls.Single(x => x.PollID == pollid);
+            p.IsVisible = !p.IsVisible;
+            db.SaveChanges();
+            return RedirectToAction("UserVotes", new { id = Global.AccountID });
+        }
     }
 }
