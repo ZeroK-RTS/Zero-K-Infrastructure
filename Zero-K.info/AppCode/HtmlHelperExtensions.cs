@@ -126,7 +126,7 @@ namespace System.Web.Mvc
             string link;
             if (page > 0) link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID, page = page});
             else link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID });
-            link = string.Format("<a href='{0}' title='$thread${1}'>", link, thread.ForumThreadID);
+            link = string.Format("<a href='{0}' title='$thread${1}' style='word-break:break-all;'>", link, thread.ForumThreadID);
 
             string format;
 
