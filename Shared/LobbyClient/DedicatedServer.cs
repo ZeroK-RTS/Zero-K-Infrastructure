@@ -94,6 +94,11 @@ namespace LobbyClient
                 Faction = user.Faction;
                 Country = user.Country;
             }
+            
+            public override string ToString()
+            {
+                return string.Join(",", new string[]{Name, Avatar, Icon, Badges, IsAdmin.ToString(), Clan, Faction, Country});
+            }
         }
 
         /// <summary>
@@ -104,7 +109,7 @@ namespace LobbyClient
             if (IsRunning)
             {
                 talker.SendText($"/adduser {name} {scriptPassword}");
-                if (user != null) talker.SendText($"SPRINGIE:User {JsonConvert.SerializeObject(new MidGameJoinUser(user))}");
+                if (user != null) talker.SendText($"SPRINGIE:User {new MidGameJoinUser(user)}");
             }
             
         }
