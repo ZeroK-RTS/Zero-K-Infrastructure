@@ -344,7 +344,6 @@ namespace LobbyClient
         [JsonIgnore]
         public int EffectiveElo { get; set; }
 
-        [JsonIgnore]
         public int Level { get; set; }
 
         public User Clone()

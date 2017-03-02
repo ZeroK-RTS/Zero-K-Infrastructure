@@ -88,7 +88,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams["clan"] = user.Clan != null ? user.Clan.Shortcut : "";
                         userParams["clanfull"] = user.Clan != null ? user.Clan.ClanName : "";
 
-                        //userParams["level"] = user.Level.ToString();
+                        userParams["level"] = user.Level.ToString();
                         //userParams["mm_elo"] = Math.Round(user.EffectiveMmElo).ToString();
                         //userParams["casual_elo"] = Math.Round(user.EffectiveElo).ToString();
 
