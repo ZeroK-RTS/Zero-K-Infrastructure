@@ -53,8 +53,7 @@ namespace ZeroKWeb
                 }
                 else
                 {
-                    Response.StatusCode = 403;
-                    Response.SubStatusCode = 502;
+                    Response.StatusCode = 429;
                     Response.End();
                 }
             };
