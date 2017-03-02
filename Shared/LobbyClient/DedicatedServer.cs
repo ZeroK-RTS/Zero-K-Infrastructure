@@ -97,7 +97,7 @@ namespace LobbyClient
             
             public override string ToString()
             {
-                return string.Join(",", new string[]{Name, Avatar, Icon, Badges, IsAdmin.ToString(), Clan, Faction, Country});
+                return string.Join("|", new string[]{Name, Avatar, Icon, Badges, IsAdmin.ToString(), Clan, Faction, Country});
             }
         }
 
