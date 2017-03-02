@@ -19,7 +19,8 @@ namespace ZeroKWeb
     public class MvcApplication : HttpApplication
     {
         private const string DbListKey = "ZkDataContextList";
-        private DateTime lastPollCheck = DateTime.UtcNow;
+        private static DateTime lastPollCheck = DateTime.UtcNow;
+        private static DosProtector protector = new DosProtector();
 
         public MvcApplication()
         {
@@ -35,7 +36,40 @@ namespace ZeroKWeb
             {
                 HttpContext.Current.Items[DbListKey] = new List<ZkDataContext>();
             };
+    
             EndRequest += (sender, args) =>
+            {
+                protector.RequestEnd(Request);
+                ClearRequestDbContexts();
+            };
+
+            PostAuthenticateRequest += MvcApplication_PostAuthenticateRequest;
+            PostAcquireRequestState += OnPostAcquireRequestState;
+            PostMapRequestHandler += (sender, args) =>
+            {
+                if (protector.CanQuery(Request))
+                {
+                    protector.RequestStart(Request);
+                }
+                else
+                {
+                    Response.StatusCode = 403;
+                    Response.End();
+                }
+            };
+
+
+            Error += (sender, args) =>
+            {
+                protector.RequestEnd(Request);
+                ClearRequestDbContexts();
+                MvcApplication_Error(sender, args);
+            };
+        }
+
+        private static void ClearRequestDbContexts()
+        {
+            try
             {
                 var dbs = HttpContext.Current.Items[DbListKey] as List<ZkDataContext>;
                 if (dbs != null)
@@ -45,14 +79,14 @@ namespace ZeroKWeb
                         {
                             db.Dispose();
                         }
-                        catch { }
+                        catch {}
                         ;
                     }
-            };
-
-            PostAuthenticateRequest += MvcApplication_PostAuthenticateRequest;
-            PostAcquireRequestState += OnPostAcquireRequestState;
-            Error += MvcApplication_Error;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Error clearing DB context: {0}",ex);
+            }
         }
 
         public override string GetVaryByCustomString(HttpContext context, string custom)
@@ -153,7 +187,7 @@ namespace ZeroKWeb
                     FormsAuthentication.SetAuthCookie(acc.Name, true);
                 }
             }
-
+            
             // remove cake from URL 
             var removeCake = Regex.Replace(Request.Url.ToString(), $"([?|&])({GlobalConst.SessionTokenVariable}=[^&?]+[?|&]*)", m => m.Groups[1].Value);
             if (removeCake != Request.Url.ToString()) Response.Redirect(removeCake, true);
