@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using LobbyClient;
 using PlasmaDownloader;
 using PlasmaShared;
+using ZeroKWeb;
 using ZkData;
 
 namespace ZkLobbyServer
@@ -45,6 +46,8 @@ namespace ZkLobbyServer
 
         public PartyManager PartyManager { get; private set; }
 
+        public PlanetWarsMatchMaker PlanetWarsMatchMaker { get; private set; }
+
 
         public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator, ITopPlayerProvider topPlayerProvider)
         {
@@ -69,6 +72,7 @@ namespace ZkLobbyServer
             MatchMaker = new MatchMaker(this);
             battleListUpdater = new BattleListUpdater(this);
             PartyManager = new PartyManager(this);
+            PlanetWarsMatchMaker = new PlanetWarsMatchMaker(this);
         }
 
         /// <summary>
