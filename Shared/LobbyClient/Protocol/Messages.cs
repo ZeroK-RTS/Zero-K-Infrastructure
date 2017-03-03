@@ -583,7 +583,7 @@ namespace LobbyClient
     }
 
 
-    [Message(Origin.Client)]
+    [Message(Origin.Server)]
     public class PwMatchCommand
     {
         public enum ModeType
