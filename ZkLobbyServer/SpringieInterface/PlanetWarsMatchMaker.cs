@@ -15,29 +15,12 @@ using Timer = System.Timers.Timer;
 
 namespace ZeroKWeb
 {
-    public class MatchMakerState
-    {
-        /// <summary>
-        ///     Possible attack options
-        /// </summary>
-        public List<PlanetWarsMatchMaker.AttackOption> AttackOptions { get; set; }
-        public DateTime AttackerSideChangeTime { get; set; }
-        public int AttackerSideCounter { get; set; }
-        public PlanetWarsMatchMaker.AttackOption Challenge { get; set; }
-
-        public DateTime? ChallengeTime { get; set; }
-
-        public Dictionary<int, PlanetWarsMatchMaker.AttackOption> RunningBattles { get; set; }
-        public MatchMakerState() { }
-    }
-
     /// <summary>
     ///     Handles arranging and starting of PW games
     /// </summary>
-    public class PlanetWarsMatchMaker : MatchMakerState
+    public class PlanetWarsMatchMaker : PlanetWarsMatchMakerState
     {
         readonly List<Faction> factions;
-        readonly string pwHostName;
         private ZkLobbyServer.ZkLobbyServer server;
 
 
@@ -70,17 +53,16 @@ namespace ZeroKWeb
             RunningBattles = new Dictionary<int, AttackOption>();
 
             var db = new ZkDataContext();
-            // todo reimplement pwHostName = db.AutohostConfigs.First(x => x.AutohostMode == AutohostMode.Planetwars).Login.TrimNumbers();
 
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
 
-            MatchMakerState dbState = null;
+            PlanetWarsMatchMakerState dbState = null;
             if (gal.MatchMakerState != null)
             {
                 try
                 {
-                    dbState = JsonConvert.DeserializeObject<MatchMakerState>(gal.MatchMakerState);
+                    dbState = JsonConvert.DeserializeObject<PlanetWarsMatchMakerState>(gal.MatchMakerState);
                 }
                 catch (Exception ex)
                 {
@@ -181,13 +163,6 @@ namespace ZeroKWeb
                 };
             }
             return command;
-        }
-
-        public AttackOption GetBattleInfo(int battleID)
-        {
-            AttackOption option;
-            RunningBattles.TryGetValue(battleID, out option);
-            return option;
         }
 
         public void UpdateLobby()
@@ -355,7 +330,7 @@ namespace ZeroKWeb
             var db = new ZkDataContext();
             Galaxy gal = db.Galaxies.First(x => x.IsDefault);
 
-            gal.MatchMakerState = JsonConvert.SerializeObject((MatchMakerState)this);
+            gal.MatchMakerState = JsonConvert.SerializeObject((PlanetWarsMatchMakerState)this);
 
             gal.AttackerSideCounter = AttackerSideCounter;
             gal.AttackerSideChangeTime = AttackerSideChangeTime;
@@ -425,7 +400,6 @@ namespace ZeroKWeb
 
         void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            return;
             try
             {
                 if (Challenge == null)
@@ -516,7 +490,6 @@ namespace ZeroKWeb
 
         public void RemoveFromRunningBattles(int battleID)
         {
-            // TODO check this logic
             RunningBattles.Remove(battleID);
         }
     }

@@ -158,6 +158,7 @@
     <Compile Include="ServerTextCommands.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />
     <Compile Include="SpringieInterface\BattleResultHandler.cs" />
+    <Compile Include="SpringieInterface\PlanetWarsMatchMakerState.cs" />
     <Compile Include="SpringieInterface\PlanetWarsMatchMaker.cs" />
     <Compile Include="SpringieInterface\PlanetWarsTurnHandler.cs" />
     <Compile Include="SpringieInterface\PlayerJoinHandler.cs" />
