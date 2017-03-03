@@ -106,6 +106,12 @@ namespace ZkLobbyServer
             await server.MatchMaker.QueueRequest(this, queueRequest);
         }
 
+        public async Task Process(PwJoinPlanet args)
+        {
+            await server.PlanetWarsMatchMaker.OnJoinPlanet(this, args);
+        }
+
+
         public async Task Process(KickFromBattle batKick)
         {
             if (!IsLoggedIn) return;
@@ -589,6 +595,7 @@ namespace ZkLobbyServer
 
                 await server.MatchMaker.RemoveUser(Name, true);
                 await server.PartyManager.OnUserDisconnected(Name);
+                await server.PlanetWarsMatchMaker.OnUserDisconnected(Name);
 
                 await server.Broadcast(server.ConnectedUsers.Values.Where(x => x != null && server.CanUserSee(x, this)), new UserDisconnected() { Name = Name, Reason = reason });
 

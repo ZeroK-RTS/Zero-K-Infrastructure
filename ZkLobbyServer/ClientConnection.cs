@@ -135,6 +135,7 @@ namespace ZkLobbyServer
                 await SendCommand(new IgnoreList() { Ignores = connectedUser.Ignores.ToList() });
 
                 await server.MatchMaker.OnLoginAccepted(connectedUser);
+                await server.PlanetWarsMatchMaker.OnLoginAccepted(connectedUser);
             }
             else
             {

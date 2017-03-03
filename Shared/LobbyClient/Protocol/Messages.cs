@@ -351,6 +351,12 @@ namespace LobbyClient
             return (User)MemberwiseClone();
         }
 
+        public bool CanUserPlanetWars()
+        {
+            return !string.IsNullOrEmpty(Faction) && Level >= GlobalConst.MinPlanetWarsLevel && EffectiveMmElo > GlobalConst.MinPlanetWarsElo;
+        }
+
+
         public override string ToString()
         {
             return Name;
@@ -577,7 +583,7 @@ namespace LobbyClient
     }
 
 
-    [Message(Origin.Client | Origin.Server)]
+    [Message(Origin.Client)]
     public class PwMatchCommand
     {
         public enum ModeType
@@ -611,6 +617,12 @@ namespace LobbyClient
             public int PlanetID { get; set; }
             public string PlanetName { get; set; }
         }
+    }
+
+    [Message(Origin.Client)]
+    public class PwJoinPlanet
+    {
+        public int PlanetID { get; set; }
     }
 
 
