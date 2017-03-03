@@ -38,9 +38,13 @@ namespace ZeroKWeb
             AttackOptions = new List<AttackOption>();
             RunningBattles = new Dictionary<int, AttackOption>();
 
+
+            if (GlobalConst.PlanetWarsMode != PlanetWarsModes.Running) return;
+
             var db = new ZkDataContext();
 
             var gal = db.Galaxies.First(x => x.IsDefault);
+            
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
 
             PlanetWarsMatchMakerState dbState = null;
@@ -154,31 +158,39 @@ namespace ZeroKWeb
 
         public async Task OnJoinPlanet(ConnectedUser conus, PwJoinPlanet args)
         {
-            if (conus.User.CanUserPlanetWars()) await JoinPlanet(conus.Name, args.PlanetID);
+            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running)
+            {
+                if (conus.User.CanUserPlanetWars()) await JoinPlanet(conus.Name, args.PlanetID);
+            }
         }
 
         public async Task OnLoginAccepted(ConnectedUser connectedUser)
         {
-            var u = connectedUser.User;
-            if (!string.IsNullOrEmpty(u.Faction) && (u.Level >= GlobalConst.MinPlanetWarsLevel) &&
-                (Math.Max(u.EffectiveMmElo, u.EffectiveElo) > GlobalConst.MinPlanetWarsElo)) await UpdateLobby(u.Name);
+            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running)
+            {
+                var u = connectedUser.User;
+                if (u.CanUserPlanetWars()) await UpdateLobby(u.Name);
+            }
         }
 
         public async Task OnUserDisconnected(string name)
         {
-            if (Challenge == null)
+            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running)
             {
-                if (AttackOptions.Count > 0)
+                if (Challenge == null)
                 {
-                    var sumRemoved = 0;
-                    foreach (var aop in AttackOptions) sumRemoved += aop.Attackers.RemoveAll(x => x == name);
-                    if (sumRemoved > 0) await UpdateLobby();
+                    if (AttackOptions.Count > 0)
+                    {
+                        var sumRemoved = 0;
+                        foreach (var aop in AttackOptions) sumRemoved += aop.Attackers.RemoveAll(x => x == name);
+                        if (sumRemoved > 0) await UpdateLobby();
+                    }
                 }
-            }
-            else
-            {
-                var userName = name;
-                if (Challenge.Defenders.RemoveAll(x => x == userName) > 0) await UpdateLobby();
+                else
+                {
+                    var userName = name;
+                    if (Challenge.Defenders.RemoveAll(x => x == userName) > 0) await UpdateLobby();
+                }
             }
         }
 
@@ -191,12 +203,7 @@ namespace ZeroKWeb
         public async Task UpdateLobby()
         {
             await
-                server.Broadcast(
-                    server.ConnectedUsers.Values.Where(
-                        x =>
-                            (x.User.Faction != null) && (x.User.Level >= GlobalConst.MinPlanetWarsLevel) &&
-                            (Math.Max(x.User.EffectiveMmElo, x.User.EffectiveElo) >= GlobalConst.MinPlanetWarsLevel)),
-                    GenerateLobbyCommand());
+                server.Broadcast(server.ConnectedUsers.Values.Where(x => x.User.CanUserPlanetWars()), GenerateLobbyCommand());
             SaveStateToDb();
         }
 
