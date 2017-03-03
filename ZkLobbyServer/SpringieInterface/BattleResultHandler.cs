@@ -134,7 +134,7 @@ namespace ZeroKWeb.SpringieInterface
                 sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.AllyNumber == 0).Select(x => x.Account).ToList(),
                 server.PlanetWarsEventCreator);
 
-            // TODO HACK Global.PlanetWarsMatchMaker.RemoveFromRunningBattles(context.AutohostName);
+            server.PlanetWarsMatchMaker.RemoveFromRunningBattles(result.LobbyStartContext.BattleID);
         }
 
         private static SpringBattle SaveSpringBattle(SpringBattleContext result, ZkDataContext db)
