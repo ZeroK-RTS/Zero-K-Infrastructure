@@ -74,8 +74,10 @@ namespace ZkLobbyServer
                         if (accByLogin == null)
                         {
                             LogIpFailure(ip);
-                            return new LoginCheckerResponse(LoginResponse.Code.SteamNotLinkedAndLoginMissing);
+                            if (!string.IsNullOrEmpty(login.Name)) return new LoginCheckerResponse(LoginResponse.Code.InvalidName);
+                            else return new LoginCheckerResponse(LoginResponse.Code.SteamNotLinkedAndLoginMissing);
                         }
+
                         if (string.IsNullOrEmpty(login.PasswordHash) || !accByLogin.VerifyPassword(login.PasswordHash))
                         {
                             LogIpFailure(ip);
