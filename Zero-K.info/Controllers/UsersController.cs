@@ -146,6 +146,8 @@ namespace ZeroKWeb.Controllers
             public IQueryable<Account> Data;
         }
 
+
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Index(UsersIndexModel model) {
             model = model ?? new UsersIndexModel();
             var db = new ZkDataContext();
