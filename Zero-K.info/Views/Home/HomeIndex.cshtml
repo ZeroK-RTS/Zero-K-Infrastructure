@@ -7,52 +7,6 @@
     var stat = @Model.LobbyStats;
 }
 
-@section head {
-    @if (!Global.IsAccountAuthorized && GlobalConst.Mode == ModeType.Live)
-    {
-        <!-- Google Analytics Content Experiment code -->
-        <script>
-            function utmx_section() { }
-
-            function utmx() { }
-
-            (function () {
-                var
-                    k = '40620291-0', d = document, l = d.location, c = d.cookie;
-                if (l.search.indexOf('utm_expid=' + k) > 0) return;
-
-                function f(n) {
-                    if (c) {
-                        var i = c.indexOf(n + '=');
-                        if (i > -1) {
-                            var j = c.indexOf(';', i);
-                            return escape(c.substring(i + n.length + 1, j < 0 ? c.length : j))
-                        }
-                    }
-                }
-
-                var x = f('__utmx'), xx = f('__utmxx'), h = l.hash;
-                d.write(
-                    '<script src="http' +
-                    (l.protocol == 'https:' ? 's://ssl' : '://www') +
-                    '.google-analytics.com/ga_exp.js?' +
-                    'utmxkey=' +
-                    k +
-                    '&utmx=' +
-                    (x ? x : '') +
-                    '&utmxx=' +
-                    (xx ? xx : '') +
-                    '&utmxtime=' +
-                    new Date().valueOf() +
-                    (h ? '&utmxhash=' + escape(h.substr(1)) : '') +
-                    '" type="text/javascript" charset="utf-8"><\/sc' +
-                    'ript>')
-            })();
-        </script>
-        <script>utmx('url', 'A/B');</script>
-        <!-- End of Google Analytics Content Experiment code -->
-    }
-}
 
 @if (!Global.IsLobbyAccess)
 {
@@ -71,30 +25,8 @@
         {
             <div align="center">
                 <br /><h3>Welcome to Zero-K</h3><br />
-                @{
-                    var ab = Request["ab"];
-                    switch (ab)
-                    {
-                        case "b":
-                            <div align="left">Zero-K is a free, multiplatform, open-source RTS game in which massive robot armies fight in an endless conflict. A powerful interface allows players to easily implement their economic, strategic, and tactical decisions. Units interact intuitively, using real-world projectile and movement physics. It boasts over 100 diverse units including Vehicles, Tanks, Hovercraft, Planes, Gunships, Ships, Spider walkers, and dozens of other different robots offering unique strategic options and a dynamic combat style.</div><br />
-                            <iframe width="560" height="315" src="https://www.youtube.com/embed/Ho1K9XP9UMk?rel=0" frameborder="0" hd="1" allowfullscreen></iframe><br /><br />
-
-                            break;
-
-                        case "c":
-                            <div align="left">Zero-K is a free, multiplatform, open-source RTS game in which massive robot armies fight in an endless conflict. A powerful interface allows players to easily implement their economic, strategic, and tactical decisions. Units interact intuitively, using real-world projectile and movement physics. It boasts over 100 diverse units including Vehicles, Tanks, Hovercraft, Planes, Gunships, Ships, Spider walkers, and dozens of other different robots offering unique strategic options and a dynamic combat style.</div><br />
-                            <iframe width="560" height="315" src="https://www.youtube.com/embed/vkZaLLyhEgI?rel=0" frameborder="0" hd="1" allowfullscreen></iframe><br /><br />
-                            break;
-                        case "a":
-                        default:
-
-                            <div align="left">Zero-K is a free, multiplatform, open-source RTS game in which massive robot armies fight in an endless conflict. A powerful interface allows players to easily implement their economic, strategic, and tactical decisions. Units interact intuitively, using real-world projectile and movement physics. It boasts over 100 diverse units including Vehicles, Tanks, Hovercraft, Planes, Gunships, Ships, Spider walkers, and dozens of other different robots offering unique strategic options and a dynamic combat style.</div><br />
-                            <iframe width="560" height="315" src="https://www.youtube.com/embed/jUcqY4GfRpI?rel=0" frameborder="0" hd="1" allowfullscreen></iframe><br /><br />
-                            break;
-
-                    }
-
-                }
+                <div align="left">Zero-K is a free, multiplatform, open-source RTS game in which massive robot armies fight in an endless conflict. A powerful interface allows players to easily implement their economic, strategic, and tactical decisions. Units interact intuitively, using real-world projectile and movement physics. It boasts over 100 diverse units including Vehicles, Tanks, Hovercraft, Planes, Gunships, Ships, Spider walkers, and dozens of other different robots offering unique strategic options and a dynamic combat style.</div><br />
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/Ho1K9XP9UMk?rel=0" frameborder="0" hd="1" allowfullscreen></iframe><br /><br />
 
 
                 <div class="downloadbutton" style="width:300px;">
@@ -108,7 +40,7 @@
                 </div>
             </div><br />
             @Html.IncludeWiki("Features")
-                    }
+        }
     </div>
     @foreach (var n in Model.Headlines)
     {
@@ -178,7 +110,7 @@
             @Html.Print(t.ForumThread)<br />
         }
     </div>
-    
+
     <div class="border">
         <center>
             <a href="http://twitter.com/ZeroKTeam"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Twitter_Logo_Mini.svg/220px-Twitter_Logo_Mini.svg.png" class="icon32" /></a>
