@@ -378,7 +378,7 @@ namespace ChobbyLauncher
             {
                 if (isDisposed) return;
                 timer?.Stop();
-                if (tickCounter % 300 == 0)
+                if (tickCounter % 50 == 0)
                     if (!IsOnline)
                         if (SteamAPI.Init() && SteamAPI.IsSteamRunning())
                         {
