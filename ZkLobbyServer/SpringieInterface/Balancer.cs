@@ -353,59 +353,23 @@ namespace ZeroKWeb.SpringieInterface
                 res.Message = "";
                 var planet = db.Galaxies.Single(x => x.IsDefault).Planets.First(x => x.Resource.InternalName == context.Map);
 
-                // todo hackvar info = PlanetWarsMatchMaker.GetBattleInfo(context.AutohostName);
-                PlanetWarsMatchMaker.AttackOption info = null;
-                if (info == null)
-                {
-                    res.Message = "Start battle using matchmaker";
-                    res.CanStart = false;
-                    return res;
-                }
-                /*
-                foreach (var matchUser in info.Attackers) AddPwPlayer(context, matchUser, res, 0);
-
-                foreach (var matchUser in info.Defenders) AddPwPlayer(context, matchUser, res, 1);
-
-                foreach (var p in context.Players.Where(x => !res.Players.Any(y => y.Name == x.Name)))
-                {
-                    p.IsSpectator = true;
-                    res.Players.Add(p);
-                }
+                res.Players = context.Players;
 
                 // bots game
                 var cnt = 0;
                 if (planet.PlanetStructures.Any(x => !string.IsNullOrEmpty(x.StructureType.EffectBots)))
                 {
-                    foreach (var b in planet.PlanetStructures.Select(x => x.StructureType).Where(x => !string.IsNullOrEmpty(x.EffectBots))) res.Bots.Add(new BotTeam { AllyID = 2, BotAI = b.EffectBots, BotName = "Aliens" + cnt++ });
+                    foreach (var b in planet.PlanetStructures.Select(x => x.StructureType).Where(x => !string.IsNullOrEmpty(x.EffectBots))) res.Bots.Add(new BotTeam { AllyID = 1, BotAI = b.EffectBots, BotName = "Aliens" + cnt++ });
 
                     res.Message += "This planet is infested by aliens, fight for your survival";
                     return res;
                 }
-                */
+                
                 return res;
             }
         }
 
-        /*
-        static void AddPwPlayer(LobbyHostingContext context, string matchUser, BalanceTeamsResult res, int allyID)
-        {
-            var player = context.Players.FirstOrDefault(x => x.Name == matchUser);
-            if (player == null)
-            {
-                player = new PlayerTeam { Name = matchUser };
-                ConnectedUser us;
-                // todo hack if (Global.Server.ConnectedUsers.TryGetValue(matchUser, out us)) player.LobbyID = us.User.AccountID;
-                //  else
-                {
-                    var db = new ZkDataContext();
-                    var acc = Account.AccountByName(db, matchUser);
-                    if (acc != null) player.LobbyID = acc.AccountID;
-                }
-            }
-            res.Players.Add(
-                new PlayerTeam { AllyID = allyID, IsSpectator = false, Name = player.Name, LobbyID = player.LobbyID });
-        }*/
-
+      
         /// <summary>
         ///     Gets the best balance (lowest standard deviation between teams)
         /// </summary>

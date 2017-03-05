@@ -72,6 +72,35 @@ namespace LobbyClient
             talker = null;
         }
 
+        public class MidGameJoinUser
+        {
+            public string Name { get; set; }
+            public string Avatar { get; set; }
+            public string Icon { get; set; }
+            public string Badges { get; set; }
+            public bool IsAdmin { get; set; }
+            public string Clan { get; set; }
+            public string Faction { get; set; }
+            public string Country { get; set; }
+
+            public MidGameJoinUser(User user)
+            {
+                Name = user.Name;
+                Avatar = user.Avatar;
+                Icon = user.Icon;
+                if (user.Badges != null) Badges = string.Join(",", user.Badges);
+                IsAdmin = user.IsAdmin;
+                Clan = user.Clan;
+                Faction = user.Faction;
+                Country = user.Country;
+            }
+            
+            public override string ToString()
+            {
+                return string.Join("|", new string[]{Name, Avatar, Icon, Badges, IsAdmin.ToString(), Clan, Faction, Country});
+            }
+        }
+
         /// <summary>
         ///     Adds user dynamically to running game - for security reasons add his script
         /// </summary>
@@ -80,7 +109,7 @@ namespace LobbyClient
             if (IsRunning)
             {
                 talker.SendText($"/adduser {name} {scriptPassword}");
-                if (user != null) talker.SendText($"SPRINGIE:User {JsonConvert.SerializeObject(user)}");
+                if (user != null) talker.SendText($"SPRINGIE:User {new MidGameJoinUser(user)}");
             }
             
         }

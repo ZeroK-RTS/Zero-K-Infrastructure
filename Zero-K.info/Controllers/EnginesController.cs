@@ -105,7 +105,6 @@ namespace ZeroKWeb.Controllers
                         // success
                         System.IO.File.Delete(Path.Combine(temp, "temp.7z"));
 
-                        // todo compress and move step above
                         if (System.IO.File.Exists(finalPath)) System.IO.File.Delete(finalPath);
                         var archive = ArchiveFactory.Create(ArchiveType.Zip);
                         archive.AddAllFromDirectory(temp);

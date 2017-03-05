@@ -7,7 +7,7 @@
 Note: wildcards are not supported yet, sorry!
     <form action="@Url.Action("SubmitSearch", "Forum", new {})" method="post">
         Keywords: @Html.TextBox("keywords")<br />
-        Author: @Html.TextBox("userName") <a href="@Url.Action("Index", "Users")">(user list)</a><br />
+        Author: @Html.TextBox("userName")<br />
         Only search first post in topic: @Html.CheckBox("firstPostOnly")<br />
         Display results as individual posts: @Html.CheckBox("resultsAsPosts")<br />
         <input type="submit" value="Search"/>

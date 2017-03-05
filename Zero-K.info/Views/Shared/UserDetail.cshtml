@@ -312,6 +312,9 @@
     {
         <div class="admin">
             <h3>Admin extras</h3>
+            
+            <a href="@Url.Action("Index", "Users")">User list</a>
+            <a href="@Url.Action("Index", "Charts")">Charts</a>
             @if (GlobalConst.Mode == ModeType.Test)
             {
                 <a href="@Url.Action("ResetDB", "Admin")" class="js_confirm">Reset database (copy from live)</a><br />

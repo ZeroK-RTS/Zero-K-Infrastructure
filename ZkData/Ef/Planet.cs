@@ -118,7 +118,7 @@ namespace ZkData
         {
             if (CanDropshipsAttack(attacker) ||
                 PlanetFactions.Where(x => x.FactionID == attacker.FactionID).Sum(y => y.Dropships) >
-                PlanetStructures.Where(x => x.IsActive).Sum(y => y.StructureType.EffectDropshipDefense)) return true;
+                PlanetStructures.Where(x => x.IsActive).Sum(y => y.StructureType.EffectDropshipDefense) + GlobalConst.PlanetWarsBaseDropshipDefense) return true;
             else return false;
         }
 

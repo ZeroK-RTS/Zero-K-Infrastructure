@@ -5,19 +5,8 @@
 
     if (!(Global.IsAccountAuthorized))
     {
-        <script language="javascript">
-            $(function() {
-                $("#steamloginsubmit")
-                    .click(function() {
-                        $('input[name="steamlogon"]').val("true");
-                        $(this).closest('form').submit();
-                        return false;
-                    });
-            });
-        </script>
         <form method="post" action="@Url.Action("Logon", "Home")" style="padding: 0; margin: 0;">
-            <input type="hidden" name="steamlogon" />
-            <a href="#" id="steamloginsubmit" nicetitle="Login using Steam (must create account in-game first)">
+            <a href="#" id="steamloginsubmit" onclick="$(this).closest('form').submit();" nicetitle="Login using Steam (must create account in-game first)">
                 <img src="~/Img/sits_small.png" style="vertical-align: middle;" />
             </a>
             &nbsp;&nbsp;<i>OR</i>&nbsp;
@@ -27,7 +16,7 @@
             Password:
             <input type="password" name="password" />
             &nbsp;&nbsp;
-            <input type="image" value="Login" src="/img/login.png" style="border: none; height: 24px;
+            <input type="image" name="zklogin" value="Login" src="/img/login.png" style="border: none; height: 24px;
         height: 25px; vertical-align: middle;" title="Login with your Zero-K lobby account (must create account in-game first)" alt="Login" />
             <input type="hidden" name="referer" value="@(Request["ReturnUrl"] ?? Request.Url?.ToString())" />
         </form>

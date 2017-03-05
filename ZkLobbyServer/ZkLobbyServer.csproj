@@ -144,10 +144,12 @@
     <Compile Include="LoginChecker.cs" />
     <Compile Include="ConnectedUser.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="MatchMaker\AutoClosedServerBatle.cs" />
     <Compile Include="MatchMaker\MatchMaker.cs" />
     <Compile Include="MatchMaker\MatchMaker.PlayerEntry.cs" />
     <Compile Include="MatchMaker\MatchMaker.ProposedBattle.cs" />
     <Compile Include="MatchMaker\MatchMakerBattle.cs" />
+    <Compile Include="MatchMaker\PlanetWarsServerBattle.cs" />
     <Compile Include="OfflineMessageHandler.cs" />
     <Compile Include="PartyManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -156,6 +158,7 @@
     <Compile Include="ServerTextCommands.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />
     <Compile Include="SpringieInterface\BattleResultHandler.cs" />
+    <Compile Include="SpringieInterface\PlanetWarsMatchMakerState.cs" />
     <Compile Include="SpringieInterface\PlanetWarsMatchMaker.cs" />
     <Compile Include="SpringieInterface\PlanetWarsTurnHandler.cs" />
     <Compile Include="SpringieInterface\PlayerJoinHandler.cs" />
