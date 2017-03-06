@@ -25,7 +25,7 @@ namespace ZkLobbyServer
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
             await battle.SwitchPassword(pwd);
-            await battle.SayBattle("battle room password changed");
+            await battle.SayBattle(string.IsNullOrEmpty(pwd) ? "battle password removed" : "battle room password changed");
         }
     }
 }
