@@ -181,6 +181,10 @@
     <Compile Include="AppCode\UniGrid\IUniGridCol.cs" />
     <Compile Include="AppCode\UniGrid\UniGrid.cs" />
     <Compile Include="AppCode\UniGrid\UniGridCol.cs" />
+    <Compile Include="AppCode\WHR\Game.cs" />
+    <Compile Include="AppCode\WHR\Player.cs" />
+    <Compile Include="AppCode\WHR\PlayerDay.cs" />
+    <Compile Include="AppCode\WHR\WholeHistoryRating.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="ContentService.svc.cs">
       <DependentUpon>ContentService.svc</DependentUpon>
