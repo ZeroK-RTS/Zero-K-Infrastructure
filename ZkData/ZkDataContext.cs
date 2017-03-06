@@ -6,6 +6,7 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using ZkData.Migrations;
 
@@ -808,8 +809,9 @@ namespace ZkData
             }
             catch (DbEntityValidationException e)
             {
-                ProcessEntityValidationErrors(e);
-                throw;
+                var message = ProcessEntityValidationErrors(e);
+                Trace.TraceError("DbEntityValidationError {0} : {1}", message,e);
+                throw new ApplicationException($"{message}", e);
             }
         }
 
@@ -838,22 +840,24 @@ namespace ZkData
             return ChangeTracker.Entries().Where(x => x.State == EntityState.Modified || x.State == EntityState.Added || x.State == EntityState.Deleted).Select(x => new EntityEntry(x.Entity, x.State)).ToList();
         }
 
-        private static void ProcessEntityValidationErrors(DbEntityValidationException e)
+        private static string ProcessEntityValidationErrors(DbEntityValidationException e)
         {
+            var sb = new StringBuilder();
             foreach (var eve in e.EntityValidationErrors)
             {
-                Trace.TraceError("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                sb.AppendFormat("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:\n",
                     eve.Entry.Entity.GetType().Name,
                     eve.Entry.State);
 
                 foreach (var ve in eve.ValidationErrors)
                 {
-                    Trace.TraceError("- Property: \"{0}\", Value: \"{1}\", Error: \"{2}\"",
+                    sb.AppendFormat("- Property: \"{0}\", Value: \"{1}\", Error: \"{2}\"\n",
                         ve.PropertyName,
                         eve.Entry.CurrentValues.GetValue<object>(ve.PropertyName),
                         ve.ErrorMessage);
                 }
             }
+            return sb.ToString();
         }
 
         public override async Task<int> SaveChangesAsync()
