@@ -43,7 +43,9 @@ namespace ZeroKWeb
 
             var db = new ZkDataContext();
 
-            var gal = db.Galaxies.First(x => x.IsDefault);
+            var gal = db.Galaxies.FirstOrDefault(x => x.IsDefault);
+            if (gal == null) return;
+            
             
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
 
