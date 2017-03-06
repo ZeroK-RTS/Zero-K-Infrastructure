@@ -55,6 +55,7 @@ namespace ZeroKWeb
                 {
                     Response.StatusCode = 403;
                     Response.SubStatusCode = 502;
+                    Response.StatusDescription = "Too many requests from your IP address, please try again later";
                     Response.End();
                 }
             };
