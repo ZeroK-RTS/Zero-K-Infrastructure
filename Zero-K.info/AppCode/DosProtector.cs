@@ -21,8 +21,8 @@ namespace ZeroKWeb
             var ip = request.UserHostAddress;
             var now = DateTime.UtcNow;
             var limit = now.AddSeconds(-5);
-            var paralell = requests.Values.Count(x => x != null && x.IP == ip && x.RequestEnd > now);
-            if (paralell > 10) return false;
+            var parallel = requests.Values.Count(x => x != null && x.IP == ip && x.RequestEnd > now);
+            if (parallel > 10) return false;
 
             var totalTime =
                 requests.Values.Where(x => (x != null) && (x.IP == ip) && (x.RequestEnd >= limit))
