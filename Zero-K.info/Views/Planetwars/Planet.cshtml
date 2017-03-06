@@ -36,7 +36,7 @@
     </tr>
 </table>
 
-@if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars() && (Global.PlanetWarsMatchMaker != null && Global.PlanetWarsMatchMaker.AttackingFaction.FactionID == Global.FactionID) && Model.CanMatchMakerPlay(Global.Account.Faction))
+@if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars() && (Global.Server.PlanetWarsMatchMaker != null && Global.Server.PlanetWarsMatchMaker.AttackingFaction.FactionID == Global.FactionID) && Model.CanMatchMakerPlay(Global.Account.Faction))
 {
     <a href="@Url.Action("MatchMakerAttack", "Planetwars", new { planetID = Model.PlanetID })">ATTACK PLANET</a>
 }

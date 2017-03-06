@@ -34,6 +34,7 @@ namespace ZeroKWeb
 
         public PlanetWarsMatchMaker(ZkLobbyServer.ZkLobbyServer server)
         {
+
             this.server = server;
             AttackOptions = new List<AttackOption>();
             RunningBattles = new Dictionary<int, AttackOption>();
@@ -43,7 +44,9 @@ namespace ZeroKWeb
 
             var db = new ZkDataContext();
 
-            var gal = db.Galaxies.First(x => x.IsDefault);
+            var gal = db.Galaxies.FirstOrDefault(x => x.IsDefault);
+            if (gal == null) return;
+            
             
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
 
@@ -78,7 +81,7 @@ namespace ZeroKWeb
             timer.Start();
         }
 
-        public async Task AcceptChallenge()
+        private async Task AcceptChallenge()
         {
             if (missedDefenseFactionID == Challenge.OwnerFactionID)
             {
@@ -92,7 +95,7 @@ namespace ZeroKWeb
 
             // also join in lobby
             await server.Broadcast(server.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
-            foreach (var usr in Challenge.Attackers.Union(Challenge.Defenders).Select(x => server.ConnectedUsers.Get(x)?.User)) await server.ForceJoinBattle(usr.Name, battle);
+            foreach (var usr in Challenge.Attackers.Union(Challenge.Defenders)) await server.ForceJoinBattle(usr, battle);
 
             await battle.StartGame();
 
@@ -111,48 +114,70 @@ namespace ZeroKWeb
         /// <param name="planet"></param>
         public void AddAttackOption(Planet planet)
         {
-            if (!AttackOptions.Any(x => x.PlanetID == planet.PlanetID) && (Challenge == null) && (planet.OwnerFactionID != AttackingFaction.FactionID))
+            try
             {
-                InternalAddOption(planet);
-                UpdateLobby();
+                if (!AttackOptions.Any(x => x.PlanetID == planet.PlanetID) && (Challenge == null) &&
+                    (planet.OwnerFactionID != AttackingFaction.FactionID))
+                {
+                    InternalAddOption(planet);
+                    UpdateLobby();
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("PlanetWars error adding option {0}: {1}", planet, ex);
             }
         }
 
         public PwMatchCommand GenerateLobbyCommand()
         {
-            PwMatchCommand command;
-            if (Challenge == null)
-                command = new PwMatchCommand(PwMatchCommand.ModeType.Attack)
-                {
-                    Options = AttackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList(),
-                    DeadlineSeconds = (int)GetAttackDeadline().Subtract(DateTime.UtcNow).TotalSeconds,
-                    AttackerFaction = AttackingFaction.Shortcut
-                };
-            else
-                command = new PwMatchCommand(PwMatchCommand.ModeType.Defend)
-                {
-                    Options = new List<PwMatchCommand.VoteOption> { Challenge.ToVoteOption(PwMatchCommand.ModeType.Defend) },
-                    DeadlineSeconds = (int)GetAcceptDeadline().Subtract(DateTime.UtcNow).TotalSeconds,
-                    AttackerFaction = AttackingFaction.Shortcut,
-                    DefenderFactions = GetDefendingFactions(Challenge).Select(x => x.Shortcut).ToList()
-                };
+            PwMatchCommand command = null;
+            try
+            {
+                if (Challenge == null)
+                    command = new PwMatchCommand(PwMatchCommand.ModeType.Attack)
+                    {
+                        Options = AttackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList(),
+                        DeadlineSeconds = (int)GetAttackDeadline().Subtract(DateTime.UtcNow).TotalSeconds,
+                        AttackerFaction = AttackingFaction.Shortcut
+                    };
+                else
+                    command = new PwMatchCommand(PwMatchCommand.ModeType.Defend)
+                    {
+                        Options = new List<PwMatchCommand.VoteOption> { Challenge.ToVoteOption(PwMatchCommand.ModeType.Defend) },
+                        DeadlineSeconds = (int)GetAcceptDeadline().Subtract(DateTime.UtcNow).TotalSeconds,
+                        AttackerFaction = AttackingFaction.Shortcut,
+                        DefenderFactions = GetDefendingFactions(Challenge).Select(x => x.Shortcut).ToList()
+                    };
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("PlanetWars {0}: {1}", nameof(GenerateLobbyCommand), ex);
+            }
             return command;
         }
 
         public async Task JoinPlanet(string name, int planetId)
         {
-            var user = server.ConnectedUsers.Get(name)?.User;
-            if (user != null)
+            try
             {
-                var faction = factions.FirstOrDefault(x => x.Shortcut == user.Faction);
-                if (faction == null)
+                var user = server.ConnectedUsers.Get(name)?.User;
+                if (user != null)
                 {
-                    var db = new ZkDataContext(); // this is a fallback, should not be needed
-                    var acc = Account.AccountByName(db, name);
-                    faction = factions.FirstOrDefault(x => x.FactionID == acc.FactionID);
+                    var faction = factions.FirstOrDefault(x => x.Shortcut == user.Faction);
+                    if (faction == null)
+                    {
+                        var db = new ZkDataContext(); // this is a fallback, should not be needed
+                        var acc = Account.AccountByName(db, name);
+                        faction = factions.FirstOrDefault(x => x.FactionID == acc.FactionID);
+                    }
+                    if (faction == AttackingFaction) await JoinPlanetAttack(planetId, name);
+                    else if ((Challenge != null) && GetDefendingFactions(Challenge).Contains(faction)) await JoinPlanetDefense(planetId, name);
                 }
-                if (faction == AttackingFaction) await JoinPlanetAttack(planetId, name);
-                else if ((Challenge != null) && GetDefendingFactions(Challenge).Contains(faction)) await JoinPlanetDefense(planetId, name);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("PlanetWars {0} {1} {2} : {3}", nameof(JoinPlanet), name, planetId, ex);
             }
         }
 
@@ -175,22 +200,29 @@ namespace ZeroKWeb
 
         public async Task OnUserDisconnected(string name)
         {
-            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running)
+            try
             {
-                if (Challenge == null)
+                if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running)
                 {
-                    if (AttackOptions.Count > 0)
+                    if (Challenge == null)
                     {
-                        var sumRemoved = 0;
-                        foreach (var aop in AttackOptions) sumRemoved += aop.Attackers.RemoveAll(x => x == name);
-                        if (sumRemoved > 0) await UpdateLobby();
+                        if (AttackOptions.Count > 0)
+                        {
+                            var sumRemoved = 0;
+                            foreach (var aop in AttackOptions) sumRemoved += aop.Attackers.RemoveAll(x => x == name);
+                            if (sumRemoved > 0) await UpdateLobby();
+                        }
+                    }
+                    else
+                    {
+                        var userName = name;
+                        if (Challenge.Defenders.RemoveAll(x => x == userName) > 0) await UpdateLobby();
                     }
                 }
-                else
-                {
-                    var userName = name;
-                    if (Challenge.Defenders.RemoveAll(x => x == userName) > 0) await UpdateLobby();
-                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("PlanetWars OnUserDisconnected: {0}",ex);
             }
         }
 
@@ -200,14 +232,14 @@ namespace ZeroKWeb
             RunningBattles.Remove(battleID);
         }
 
-        public async Task UpdateLobby()
+        private async Task UpdateLobby()
         {
             await
                 server.Broadcast(server.ConnectedUsers.Values.Where(x => x.User.CanUserPlanetWars()), GenerateLobbyCommand());
             SaveStateToDb();
         }
 
-        public Task UpdateLobby(string player)
+        private Task UpdateLobby(string player)
         {
             return server.ConnectedUsers.Get(player)?.SendCommand(GenerateLobbyCommand());
         }
@@ -425,7 +457,7 @@ namespace ZeroKWeb
             }
             catch (Exception ex)
             {
-                Trace.TraceError(ex.ToString());
+                Trace.TraceError("PlanetWars timer error: {0}", ex);
             }
         }
 

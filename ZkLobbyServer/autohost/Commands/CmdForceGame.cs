@@ -20,7 +20,7 @@ namespace ZkLobbyServer
         {
             this.gameName = arguments;
 
-            if (battle.Mode != AutohostMode.None || !battle.IsPassworded)
+            if ((battle.Mode != AutohostMode.None || !battle.IsPassworded) && arguments != "zk:stable")
             {
                 battle.Respond(e, $"You can only do this on custom passworded hosts.");
                 return null;

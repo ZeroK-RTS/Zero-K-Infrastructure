@@ -49,7 +49,7 @@ namespace ZkData
             if (!IsShortcutValid(Shortcut))
                 yield return
                     new ValidationResult("Invalid shortcut - can only contain numbers and letters and must be at least one character long",
-                        new[] { "Shortcut" });
+                        new[] { nameof(Shortcut) });
         }
 
         public bool CanJoin(Account account)

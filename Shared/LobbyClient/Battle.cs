@@ -91,7 +91,7 @@ namespace LobbyClient
                 SpectatorCount = b.SpectatorCount,
                 PlayerCount = b.NonSpectatorCount,
                 MaxPlayers = b.MaxPlayers,
-                Password = b.Password != null ? "?" : null,
+                Password = !string.IsNullOrEmpty(b.Password) ? "?" : "",
                 Mode = b.Mode,
                 IsRunning = b.IsInGame,
                 RunningSince = b.IsInGame ? b.RunningSince : null,

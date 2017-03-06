@@ -16,8 +16,7 @@
             Password:
             <input type="password" name="password" />
             &nbsp;&nbsp;
-            <input type="image" name="zklogin" value="Login" src="/img/login.png" style="border: none; height: 24px;
-        height: 25px; vertical-align: middle;" title="Login with your Zero-K lobby account (must create account in-game first)" alt="Login" />
+        <button name="zklogin" type="submit" value="Login" title="Login with your Zero-K lobby account (must create account in-game first)" alt="Login" >Login</button>
             <input type="hidden" name="referer" value="@(Request["ReturnUrl"] ?? Request.Url?.ToString())" />
         </form>
     }

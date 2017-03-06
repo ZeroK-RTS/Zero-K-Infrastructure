@@ -95,7 +95,7 @@ namespace ZeroKWeb
 
 
         public static PayPalInterface PayPalInterface { get; private set; }
-        public static PlanetWarsMatchMaker PlanetWarsMatchMaker { get; private set; }
+        //public static PlanetWarsMatchMaker PlanetWarsMatchMaker { get; private set; }
         public static ZkLobbyServer.ZkLobbyServer Server { get; private set; }
 
         public static ServerRunner ZkServerRunner { get; private set; }
@@ -183,8 +183,6 @@ namespace ZeroKWeb
 
             
             SetupPaypalInterface();
-
-            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running) PlanetWarsMatchMaker = new PlanetWarsMatchMaker(Server);
 
 
             Task.Factory.StartNew(() => SteamDepotGenerator.RunAll());
