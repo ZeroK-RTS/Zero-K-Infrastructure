@@ -60,6 +60,7 @@ namespace Ratings
         private SpringBattle latestBattle, lastUpdate;
 
         private readonly object updateLock = new object();
+        private readonly object updateLockInternal = new object();
 
         public void UpdateRatings()
         {
@@ -108,8 +109,11 @@ namespace Ratings
                 {
                     try
                     {
-                        updateAction.Invoke();
-                        Trace.TraceInformation("WHR Ratings updated");
+                        lock (updateLockInternal)
+                        {
+                            updateAction.Invoke();
+                            Trace.TraceInformation("WHR Ratings updated");
+                        }
                     }
                     catch (Exception ex)
                     {
