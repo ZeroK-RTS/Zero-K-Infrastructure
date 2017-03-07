@@ -16,6 +16,8 @@ namespace Ratings
 
         public static bool Initialized { get; private set; }
 
+        private static object processingLock = new object();
+
         static RatingSystems()
         {
             Initialized = false;
@@ -23,8 +25,11 @@ namespace Ratings
 
             ZkDataContext data = new ZkDataContext();
             Task.Factory.StartNew(() => {
-                foreach (SpringBattle b in data.SpringBattles.AsNoTracking().OrderBy(x => x.SpringBattleID)) ProcessResult(b);
-                Initialized = true;
+                lock (processingLock)
+                {
+                    foreach (SpringBattle b in data.SpringBattles.AsNoTracking().OrderBy(x => x.SpringBattleID)) ProcessResult(b);
+                    Initialized = true;
+                }
             });
         }
 
@@ -35,9 +40,12 @@ namespace Ratings
 
         public static void ProcessResult(SpringBattle battle)
         {
-            if (processedBattles.Contains(battle)) return;
-            processedBattles.Add(battle);
-            ratingCategories.Where(c => IsCategory(battle, c)).ToList().ForEach(c => whr[c].ProcessBattle(battle));
+            lock (processingLock)
+            {
+                if (processedBattles.Contains(battle)) return;
+                processedBattles.Add(battle);
+                ratingCategories.Where(c => IsCategory(battle, c)).ToList().ForEach(c => whr[c].ProcessBattle(battle));
+            }
         }
 
         private static bool IsCategory(SpringBattle battle, RatingCategory category)
