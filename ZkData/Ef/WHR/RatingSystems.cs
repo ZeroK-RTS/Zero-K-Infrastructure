@@ -25,11 +25,8 @@ namespace Ratings
 
             ZkDataContext data = new ZkDataContext();
             Task.Factory.StartNew(() => {
-                lock (processingLock)
-                {
-                    foreach (SpringBattle b in data.SpringBattles.AsNoTracking().OrderBy(x => x.SpringBattleID)) ProcessResult(b);
-                    Initialized = true;
-                }
+                foreach (SpringBattle b in data.SpringBattles.AsNoTracking().OrderBy(x => x.SpringBattleID)) ProcessResult(b);
+                Initialized = true;
             });
         }
 
