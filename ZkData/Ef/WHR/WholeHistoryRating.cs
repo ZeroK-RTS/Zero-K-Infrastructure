@@ -47,8 +47,14 @@ namespace Ratings
             return teams.Select(t => SetupGame(t, teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2).ToList(), "B", ConvertDate(DateTime.Now)).getBlackWinProbability() * 2 / teams.Count).ToList();
         }
 
+        private int battlesRegistered = 0;
+
         public void ProcessBattle(SpringBattle battle)
         {
+            if (++battlesRegistered % 1000 == 0)
+            {
+                Trace.TraceInformation(battlesRegistered + " battles registered for WHR");
+            }
             latestBattle = battle;
             List<Account> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam).Select(p => p.Account).ToList();
             List<Account> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam).Select(p => p.Account).ToList();
@@ -66,12 +72,12 @@ namespace Ratings
         {
             if (latestBattle == null)
             {
-                Trace.TraceInformation("WHR: No battles to evaluate");
+                //Trace.TraceInformation("WHR: No battles to evaluate");
                 return;
             }
             if (latestBattle.Equals(lastUpdate))
             {
-                Trace.TraceInformation("WHR: Nothing to update");
+                //Trace.TraceInformation("WHR: Nothing to update");
                 return;
             }
             lock (updateLock)
@@ -102,7 +108,7 @@ namespace Ratings
                 }
                 else
                 {
-                    Trace.TraceInformation("No WHR ratings to update");
+                    //Trace.TraceInformation("No WHR ratings to update");
                     return;
                 }
                 Task.Factory.StartNew(() =>
@@ -111,8 +117,9 @@ namespace Ratings
                     {
                         lock (updateLockInternal)
                         {
+                            DateTime start = DateTime.Now;
                             updateAction.Invoke();
-                            Trace.TraceInformation("WHR Ratings updated");
+                            Trace.TraceInformation("WHR Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds");
                         }
                     }
                     catch (Exception ex)
