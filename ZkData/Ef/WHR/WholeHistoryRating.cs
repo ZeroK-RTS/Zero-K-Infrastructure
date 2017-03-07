@@ -75,36 +75,41 @@ namespace Ratings
             }
             try
             {
-                Task.Factory.StartNew(() =>
+                lock (updateLock)
                 {
-                    lock (updateLock)
+                    if (lastUpdate == null)
                     {
-                        if (lastUpdate == null)
-                        {
-                            Trace.TraceInformation("Initializing all WHR ratings, this will take some time..");
+                        Trace.TraceInformation("Initializing all WHR ratings, this will take some time..");
+                        Task.Factory.StartNew(() => {
                             runIterations(50);
-                        }
-                        else if (latestBattle.StartTime.Subtract(lastUpdate.StartTime).TotalDays > 0.5d)
-                        {
-                            Trace.TraceInformation("Updating all WHR ratings");
+                            Trace.TraceInformation("WHR Ratings updated");
+                        });
+                    }
+                    else if (latestBattle.StartTime.Subtract(lastUpdate.StartTime).TotalDays > 0.5d)
+                    {
+                        Trace.TraceInformation("Updating all WHR ratings");
+                        Task.Factory.StartNew(() => {
                             runIterations(1);
-                        }
-                        else if (!latestBattle.Equals(lastUpdate))
-                        {
-                            Trace.TraceInformation("Updating WHR ratings for last Battle");
+                            Trace.TraceInformation("WHR Ratings updated");
+                        });
+                    }
+                    else if (!latestBattle.Equals(lastUpdate))
+                    {
+                        Trace.TraceInformation("Updating WHR ratings for last Battle");
+                        Task.Factory.StartNew(() => {
                             List<Player> players = latestBattle.SpringBattlePlayers.Select(p => GetPlayerByAccount(p.Account)).ToList();
                             players.ForEach(p => p.runOneNewtonIteration());
                             players.ForEach(p => p.updateUncertainty());
-                        }
-                        else
-                        {
-                            Trace.TraceInformation("No WHR ratings to update");
-                        }
-                        Trace.TraceInformation("WHR Ratings updated");
-
-                        lastUpdate = latestBattle;
+                            Trace.TraceInformation("WHR Ratings updated");
+                        });
                     }
-                });
+                    else
+                    {
+                        Trace.TraceInformation("No WHR ratings to update");
+                    }
+
+                    lastUpdate = latestBattle;
+                }
             }catch(Exception ex)
             {
                 Trace.TraceError("Thread error while updating WHR " + ex);
