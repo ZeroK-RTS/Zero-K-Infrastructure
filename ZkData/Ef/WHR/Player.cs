@@ -102,16 +102,16 @@ namespace Ratings
             }
 
             if (false) {/*
-                Debug.WriteLine("namein " + id);
+                Trace.TraceInformation("namein " + id);
                 for (PlayerDay day in days) {
-                    Debug.WriteLine("day[#" + day.day + "] r = " + day.r);
-                    Debug.WriteLine("day[#" + day.day + "] win terms = #" + Arrays.deepTostring(day.getWonGameTerms().toArray()) + "");
-                    Debug.WriteLine("day[#" + day.day + "] win games = #" + Arrays.tostring(day.wonGames.toArray()) + "");
-                    Debug.WriteLine("day[#" + day.day + "] lose terms = #" + Arrays.deepTostring(day.getLostGameTerms().toArray()) + "");
-                    Debug.WriteLine("day[#" + day.day + "] lost games = #" + Arrays.tostring(day.lostGames.toArray()) + "");
-                    Debug.WriteLine("day[#" + day.day + "] Log(p) = #" + (day.getLogLikelyhood()) + "");
-                    Debug.WriteLine("day[#" + day.day + "] dlp = #" + (day.getLogLikelyhoodFirstDerivative()) + "");
-                    Debug.WriteLine("day[#" + day.day + "] dlp2 = #" + (day.getLogLikelyhoodSecondDerivative()) + "");
+                    Trace.TraceInformation("day[#" + day.day + "] r = " + day.r);
+                    Trace.TraceInformation("day[#" + day.day + "] win terms = #" + Arrays.deepTostring(day.getWonGameTerms().toArray()) + "");
+                    Trace.TraceInformation("day[#" + day.day + "] win games = #" + Arrays.tostring(day.wonGames.toArray()) + "");
+                    Trace.TraceInformation("day[#" + day.day + "] lose terms = #" + Arrays.deepTostring(day.getLostGameTerms().toArray()) + "");
+                    Trace.TraceInformation("day[#" + day.day + "] lost games = #" + Arrays.tostring(day.lostGames.toArray()) + "");
+                    Trace.TraceInformation("day[#" + day.day + "] Log(p) = #" + (day.getLogLikelyhood()) + "");
+                    Trace.TraceInformation("day[#" + day.day + "] dlp = #" + (day.getLogLikelyhoodFirstDerivative()) + "");
+                    Trace.TraceInformation("day[#" + day.day + "] dlp2 = #" + (day.getLogLikelyhoodSecondDerivative()) + "");
                 }*/
             }
             // sigma squared (used in the prior)
@@ -150,7 +150,7 @@ namespace Ratings
             for (int i = 0; i < n; i++) {
                 if (Math.Abs(x[i]) > _maxChg) {
                     _maxChg = Math.Abs(x[i]);
-                    Debug.WriteLine("New max change of " + _maxChg + " for player " + id);
+                    Trace.TraceWarning("WHR diverging: New max change of " + _maxChg + " for player " + id);
                 }
             }
 

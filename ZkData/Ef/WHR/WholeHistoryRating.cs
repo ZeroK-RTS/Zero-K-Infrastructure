@@ -30,7 +30,7 @@ namespace Ratings
         {
             UpdateRatings();
             List<double[]> ratings = getPlayerRatings(account.AccountID);
-            return ratings.Count > 0 ? ratings.Last()[1] : 0;
+            return (ratings.Count > 0 ? ratings.Last()[1] : 0) + 1500; //1500 for zk peoplers to feel at home
         }
 
         public double GetPlayerRatingUncertainty(Account account)
@@ -62,16 +62,20 @@ namespace Ratings
             if (latestBattle == null) return;
             if (lastUpdate == null)
             {
+                Trace.TraceInformation("Initializing all WHR ratings, this will take some time..");
                 runIterations(50);
             }else if(latestBattle.StartTime.Subtract(lastUpdate.StartTime).TotalDays > 0.5d)
             {
+                Trace.TraceInformation("Updating all WHR ratings");
                 runIterations(1);
             }else if (!latestBattle.Equals(lastUpdate))
             {
+                Trace.TraceInformation("Updating WHR ratings for last Battle");
                 List<Player> players = latestBattle.SpringBattlePlayers.Select(p => GetPlayerByAccount(p.Account)).ToList();
                 players.ForEach(p => p.runOneNewtonIteration());
                 players.ForEach(p => p.updateUncertainty());
             }
+            Trace.TraceInformation("WHR Ratings updated");
 
             lastUpdate = latestBattle;
         }
@@ -104,17 +108,17 @@ namespace Ratings
 
             // Avoid self-played games (no info)
             if (black.Equals(white)) {
-                Debug.WriteLine("White == Black");
+                Trace.TraceError("White == Black");
                 return null;
             }
             if (white.Count < 1)
             {
-                Debug.WriteLine("White empty");
+                Trace.TraceError("White empty");
                 return null;
             }
             if (black.Count < 1)
             {
-                Debug.WriteLine("Black empty");
+                Trace.TraceError("Black empty");
                 return null;
             }
 
@@ -163,12 +167,12 @@ namespace Ratings
                     highest = Math.Max(highest, elo);
                 }
             }
-            Debug.WriteLine("Lowest eloin " + lowest);
-            Debug.WriteLine("Highest eloin " + highest);
-            Debug.WriteLine("sum eloin " + sum);
-            Debug.WriteLine("Average eloin " + (sum / total));
-            Debug.WriteLine("Amount > 0in " + bigger);
-            Debug.WriteLine("Amount < 0in " + (total - bigger));
+            Trace.TraceInformation("Lowest eloin " + lowest);
+            Trace.TraceInformation("Highest eloin " + highest);
+            Trace.TraceInformation("sum eloin " + sum);
+            Trace.TraceInformation("Average eloin " + (sum / total));
+            Trace.TraceInformation("Amount > 0in " + bigger);
+            Trace.TraceInformation("Amount < 0in " + (total - bigger));
         }
 
         private void runSingleIteration() {

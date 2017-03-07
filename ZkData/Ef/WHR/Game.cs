@@ -28,11 +28,11 @@ namespace Ratings
             double w; totWeight = 0;
             foreach (PlayerDay pd in whiteDays.Values) {
                 w = 1; //Math.Max(0.1, Math.Min(10, 1 / pd.uncertainty));
-                       //Debug.WriteLine(w);
+                       //Trace.TraceInformation(w);
                 totWeight += w;
                 ret += pd.getElo() * w;
             }
-            //Debug.WriteLine(totWeight + "\n");
+            //Trace.TraceInformation(totWeight + "\n");
             return ret / totWeight;
         }
 
@@ -98,12 +98,12 @@ namespace Ratings
             } else if (blackPlayers.Contains(player)) {
                 opponentElo = whiteElo + (-blackElo + blackDays[player].getElo())/* / Math.Sqrt(blackDays.Count)*/;
             } else {
-                Debug.WriteLine("No opponent for player " + player.id + ", since they're not in this game.");
+                Trace.TraceError("No opponent for player " + player.id + ", since they're not in this game.");
                 return 0;
             }
             double rval = Math.Pow(10, (opponentElo / 400.0));
             if (rval == 0 || double.IsInfinity(rval) || double.IsNaN(rval)) {
-                Debug.WriteLine("Gamma out of bounds");
+                Trace.TraceError("WHR Failure: Gamma out of bounds");
                 return 0;
             }
             return rval;
@@ -115,7 +115,7 @@ namespace Ratings
             } else if (blackPlayers.Contains(player)) {
                 return blackPlayers;
             } else {
-                Debug.WriteLine("No opponent for player " + player.id + ", since they're not in this gamein.");
+                Trace.TraceInformation("No opponent for player " + player.id + ", since they're not in this gamein.");
                 return null;
             }
         }

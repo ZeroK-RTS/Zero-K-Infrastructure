@@ -124,7 +124,7 @@ namespace Ratings
                     || (game.winner.ToUpper().Equals("W") && game.blackPlayers.Contains(player))) {
                 lostGames.Add(game);
             } else {
-                Debug.WriteLine("Player not part of game");
+                Trace.TraceError("Player not part of game");
             }
 
         }
