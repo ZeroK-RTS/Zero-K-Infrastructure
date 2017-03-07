@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace WHR
+namespace Ratings
 {
     public class Game {
 
@@ -128,7 +128,13 @@ namespace WHR
             return getWhiteGamma() / (getWhiteGamma() + getBlackGamma());
         }
 
-        public double getBlackWinProbability() {
+        public double getBlackWinProbability()
+        {
+            if (whiteDays.Count == 0 || blackDays.Count == 0)
+            {
+                whitePlayers.ForEach(p => p.fakeGame(this));
+                blackPlayers.ForEach(p => p.fakeGame(this));
+            }
             return getBlackGamma() / (getBlackGamma() + getWhiteGamma());
         }
     }

@@ -17,7 +17,7 @@ using JetBrains.Annotations;
 using LobbyClient;
 using ZkData;
 using ZkLobbyServer;
-using WHR;
+using Ratings;
 
 namespace ZeroKWeb
 {
@@ -167,8 +167,6 @@ namespace ZeroKWeb
 
             GlobalConst.SiteDiskPath = MapPath("~");
             
-            WholeHistoryRating = new WholeHistoryRating();
-
             LadderCalculator = new LadderCalculator();
             LadderCalculator.RecomputeNow();
 
@@ -206,8 +204,6 @@ namespace ZeroKWeb
         public static SteamDepotGenerator SteamDepotGenerator { get; private set; }
 
         public static LadderCalculator LadderCalculator { get; private set; }
-
-        public static WholeHistoryRating WholeHistoryRating { get; private set; }
 
         public static ForumPostIndexer ForumPostIndexer { get; private set; }
 

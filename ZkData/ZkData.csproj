@@ -76,6 +76,12 @@
     <Compile Include="DbCloner.cs" />
     <Compile Include="Ef\AccountRelation.cs" />
     <Compile Include="Ef\SpringBattleBot.cs" />
+    <Compile Include="Ef\WHR\Game.cs" />
+    <Compile Include="Ef\WHR\IRatingSystem.cs" />
+    <Compile Include="Ef\WHR\Player.cs" />
+    <Compile Include="Ef\WHR\PlayerDay.cs" />
+    <Compile Include="Ef\WHR\RatingSystems.cs" />
+    <Compile Include="Ef\WHR\WholeHistoryRating.cs" />
     <Compile Include="Enums\AdminLevel.cs" />
     <Compile Include="Enums\DevLevel.cs" />
     <Compile Include="Ef\ForumPostWord.cs" />

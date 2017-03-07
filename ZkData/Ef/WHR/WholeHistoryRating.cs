@@ -6,10 +6,10 @@ using System.Diagnostics;
 using System.Linq;
 using ZkData;
 
-namespace WHR
+namespace Ratings
 {
 
-    public class WholeHistoryRating {
+    public class WholeHistoryRating : IRatingSystem{
 
         const double DecayPerDaySquared = 300;
 
@@ -29,41 +29,68 @@ namespace WHR
             {
                 if (!(b.IsMission || b.HasBots || (b.PlayerCount < 2) || (b.ResourceByMapResourceID.MapIsSpecial == true)))
                 {
-                    RunBattle(b);
+                    ProcessBattle(b);
                 }
             }
         }
+        
 
-        public void RunBattle(SpringBattle battle)
+        public double GetPlayerRating(Account account)
         {
-            List<int> winners = new List<int>();
-            List<int> losers = new List<int>();
-            foreach (SpringBattlePlayer p in battle.SpringBattlePlayers)
-            {
-                if (p.IsInVictoryTeam)
-                {
-                    winners.Add(p.AccountID);
-                }else
-                {
-                    losers.Add(p.AccountID);
-                }
-            }
-            createGame(losers, winners, "W", (int)battle.StartTime.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays);
+            List<double[]> ratings = getPlayerRatings(account.AccountID);
+            return ratings.Count > 0 ? ratings.Last()[1] : 0;
         }
 
-        public Player getPlayerById(int id) {
+        public double GetPlayerRatingUncertainty(Account account)
+        {
+            List<double[]> ratings = getPlayerRatings(account.AccountID);
+            return ratings.Count > 0 ? ratings.Last()[2] : Double.PositiveInfinity;
+        }
+
+        public List<double> PredictOutcome(List<List<Account>> teams)
+        {
+            return teams.Select(t => SetupGame(t, teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2).ToList(), "B", ConvertDate(DateTime.Now)).getBlackWinProbability() * 2 / teams.Count).ToList();
+        }
+
+        public void ProcessBattle(SpringBattle battle)
+        {
+            List<Account> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam).Select(p => p.Account).ToList();
+            List<Account> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam).Select(p => p.Account).ToList();
+            createGame(losers, winners, "W", ConvertDate(battle.StartTime));
+        }
+
+        //implementation specific
+
+        public void UpdateAllRatings()
+        {
+            runIterations(1);
+        }
+
+        //private
+
+        private int ConvertDate(DateTime date)
+        {
+            return (int)date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays;
+        }
+
+        private Player GetPlayerByAccount(Account acc)
+        {
+            return getPlayerById(acc.AccountID);
+        }
+
+        private Player getPlayerById(int id) {
             if (!players.ContainsKey(id)) {
                 players.Add(id, new Player(id, w2));
             }
             return players[id];
         }
 
-        public List<int[]> getPlayerRatings(int id) {
+        private List<double[]> getPlayerRatings(int id) {
             Player player = getPlayerById(id);
-            return player.days.Select(d=> new int[] { d.day, (int)Math.Round(d.getElo()), (int)Math.Round((d.uncertainty * 100)) }).ToList();
+            return player.days.Select(d=> new double[] { d.day, (d.getElo()), ((d.uncertainty * 100)) }).ToList();
         }
 
-        public Game setup_game(List<int> black, List<int> white, string winner, int time_step) {
+        private Game SetupGame(List<Account> black, List<Account> white, string winner, int time_step) {
 
             // Avoid self-played games (no info)
             if (black.Equals(white)) {
@@ -82,14 +109,14 @@ namespace WHR
             }
 
 
-            List<Player> white_player = white.Select(p=>getPlayerById(p)).ToList();
-            List<Player> black_player = black.Select(p=>getPlayerById(p)).ToList();
+            List<Player> white_player = white.Select(p=>GetPlayerByAccount(p)).ToList();
+            List<Player> black_player = black.Select(p=>GetPlayerByAccount(p)).ToList();
             Game game = new Game(black_player, white_player, winner, time_step);
             return game;
         }
 
-        public Game createGame(List<int> black, List<int> white, string winner, int time_step) {
-            Game game = setup_game(black, white, winner, time_step);
+        private Game createGame(List<Account> black, List<Account> white, string winner, int time_step) {
+            Game game = SetupGame(black, white, winner, time_step);
             return game != null ? AddGame(game) : null;
         }
 
@@ -101,7 +128,7 @@ namespace WHR
             return game;
         }
 
-        public void runIterations(int count) {
+        private void runIterations(int count) {
             for (int i = 0; i < count; i++) {
                 runSingleIteration();
             }
@@ -110,7 +137,7 @@ namespace WHR
             }
         }
 
-        public void printStats() {
+        private void printStats() {
             double sum = 0;
             int bigger = 0;
             int total = 0;
