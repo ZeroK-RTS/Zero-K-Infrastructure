@@ -38,11 +38,11 @@ namespace Ratings
             switch (category)
             {
                 case RatingCategory.Casual:
-                    return !(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID.MapIsSpecial == true));
+                    return false && !(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID.MapIsSpecial == true));
                 case RatingCategory.MatchMaking:
                     return battle.IsMatchMaker;
                 case RatingCategory.Planetwars:
-                    return false; //how?
+                    return battle.Mode == PlasmaShared.AutohostMode.Planetwars; //how?
             }
             return false;
         }
