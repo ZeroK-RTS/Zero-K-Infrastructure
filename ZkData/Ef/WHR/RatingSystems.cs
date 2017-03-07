@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ZkData;
 
 namespace Ratings
@@ -11,7 +9,9 @@ namespace Ratings
     {
         public static Dictionary<RatingCategory, WholeHistoryRating> whr = new Dictionary<RatingCategory, WholeHistoryRating>();
 
-        public static List<RatingCategory> ratingCategories = Enum.GetValues(typeof(RatingCategory)).Cast<RatingCategory>().ToList();
+        public static readonly List<RatingCategory> ratingCategories = Enum.GetValues(typeof(RatingCategory)).Cast<RatingCategory>().ToList();
+
+        private static HashSet<SpringBattle> processedBattles = new HashSet<SpringBattle>();
 
         static RatingSystems()
         {
@@ -28,6 +28,8 @@ namespace Ratings
 
         public static void ProcessResult(SpringBattle battle)
         {
+            if (processedBattles.Contains(battle)) return;
+            processedBattles.Add(battle);
             ratingCategories.Where(c => IsCategory(battle, c)).ToList().ForEach(c => whr[c].ProcessBattle(battle));
         }
 
