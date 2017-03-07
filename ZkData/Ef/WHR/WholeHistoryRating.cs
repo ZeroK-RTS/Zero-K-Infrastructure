@@ -20,18 +20,9 @@ namespace Ratings
         double w2; //elo range expand per day squared
 
         public WholeHistoryRating() {
-            this.w2 = DecayPerDaySquared;
+            w2 = DecayPerDaySquared;
             games = new List<Game>();
             players = new Dictionary<int, Player>();
-
-            ZkDataContext data = new ZkDataContext();
-            foreach (SpringBattle b in data.SpringBattles)
-            {
-                if (!(b.IsMission || b.HasBots || (b.PlayerCount < 2) || (b.ResourceByMapResourceID.MapIsSpecial == true)))
-                {
-                    ProcessBattle(b);
-                }
-            }
         }
         
 
