@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ZkData;
 
 namespace Ratings
@@ -13,12 +14,23 @@ namespace Ratings
 
         private static HashSet<SpringBattle> processedBattles = new HashSet<SpringBattle>();
 
+        public static bool Initialized { get; private set; }
+
+        private static object processingLock = new object();
+
         static RatingSystems()
         {
+            Initialized = false;
             ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating());
 
             ZkDataContext data = new ZkDataContext();
-            foreach (SpringBattle b in data.SpringBattles.AsNoTracking().OrderBy(x => x.SpringBattleID)) ProcessResult(b);
+            Task.Factory.StartNew(() => {
+                lock (processingLock)
+                {
+                    foreach (SpringBattle b in data.SpringBattles.AsNoTracking().OrderBy(x => x.SpringBattleID)) ProcessResult(b);
+                    Initialized = true;
+                }
+            });
         }
 
         public static IRatingSystem GetRatingSystem(RatingCategory category)
@@ -28,9 +40,12 @@ namespace Ratings
 
         public static void ProcessResult(SpringBattle battle)
         {
-            if (processedBattles.Contains(battle)) return;
-            processedBattles.Add(battle);
-            ratingCategories.Where(c => IsCategory(battle, c)).ForEach(c => whr[c].ProcessBattle(battle));
+            lock (processingLock)
+            {
+                if (processedBattles.Contains(battle)) return;
+                processedBattles.Add(battle);
+                ratingCategories.Where(c => IsCategory(battle, c)).ForEach(c => whr[c].ProcessBattle(battle));
+            }
         }
 
         private static bool IsCategory(SpringBattle battle, RatingCategory category)
@@ -38,11 +53,11 @@ namespace Ratings
             switch (category)
             {
                 case RatingCategory.Casual:
-                    return !(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID.MapIsSpecial == true));
+                    return !(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID?.MapIsSpecial == true));
                 case RatingCategory.MatchMaking:
                     return battle.IsMatchMaker;
                 case RatingCategory.Planetwars:
-                    return false; //how?
+                    return battle.Mode == PlasmaShared.AutohostMode.Planetwars; //how?
             }
             return false;
         }

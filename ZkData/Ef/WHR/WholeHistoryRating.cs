@@ -14,7 +14,7 @@ namespace Ratings
     public class WholeHistoryRating : IRatingSystem{
 
         const double DecayPerDaySquared = 300;
-
+        const double RatingOffset = 1500;
 
 
         IDictionary<int, Player> players;
@@ -30,13 +30,15 @@ namespace Ratings
 
         public double GetPlayerRating(Account account)
         {
+            if (!RatingSystems.Initialized) return RatingOffset;
             UpdateRatings();
             List<double[]> ratings = getPlayerRatings(account.AccountID);
-            return (ratings.Count > 0 ? ratings.Last()[1] : 0) + 1500; //1500 for zk peoplers to feel at home
+            return (ratings.Count > 0 ? ratings.Last()[1] : 0) + RatingOffset; //1500 for zk peoplers to feel at home
         }
 
         public double GetPlayerRatingUncertainty(Account account)
         {
+            if (!RatingSystems.Initialized) return Double.PositiveInfinity;
             UpdateRatings();
             List<double[]> ratings = getPlayerRatings(account.AccountID);
             return ratings.Count > 0 ? ratings.Last()[2] : Double.PositiveInfinity;
