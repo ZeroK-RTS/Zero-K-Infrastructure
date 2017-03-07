@@ -38,7 +38,7 @@ namespace Ratings
             switch (category)
             {
                 case RatingCategory.Casual:
-                    return false && !(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID.MapIsSpecial == true));
+                    return false && !(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID == null || battle.ResourceByMapResourceID.MapIsSpecial == true));
                 case RatingCategory.MatchMaking:
                     return battle.IsMatchMaker;
                 case RatingCategory.Planetwars:
