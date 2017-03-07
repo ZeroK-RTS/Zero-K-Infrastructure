@@ -18,7 +18,7 @@ namespace Ratings
             ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating());
 
             ZkDataContext data = new ZkDataContext();
-            data.SpringBattles.ToList().ForEach(b => ProcessResult(b));
+            foreach (SpringBattle b in data.SpringBattles) ProcessResult(b);
         }
 
         public static IRatingSystem GetRatingSystem(RatingCategory category)
