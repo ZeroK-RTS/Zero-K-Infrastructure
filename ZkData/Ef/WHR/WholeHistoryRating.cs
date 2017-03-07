@@ -59,7 +59,11 @@ namespace Ratings
 
         public void UpdateRatings()
         {
-            if (latestBattle == null) return;
+            if (latestBattle == null)
+            {
+                Trace.TraceInformation("WHR: No battles to evaluate");
+                return;
+            }
             if (lastUpdate == null)
             {
                 Trace.TraceInformation("Initializing all WHR ratings, this will take some time..");
@@ -74,6 +78,9 @@ namespace Ratings
                 List<Player> players = latestBattle.SpringBattlePlayers.Select(p => GetPlayerByAccount(p.Account)).ToList();
                 players.ForEach(p => p.runOneNewtonIteration());
                 players.ForEach(p => p.updateUncertainty());
+            }else
+            {
+                Trace.TraceInformation("No WHR ratings to update");
             }
             Trace.TraceInformation("WHR Ratings updated");
 
