@@ -28,12 +28,14 @@ namespace Ratings
 
         public double GetPlayerRating(Account account)
         {
+            UpdateRatings();
             List<double[]> ratings = getPlayerRatings(account.AccountID);
             return ratings.Count > 0 ? ratings.Last()[1] : 0;
         }
 
         public double GetPlayerRatingUncertainty(Account account)
         {
+            UpdateRatings();
             List<double[]> ratings = getPlayerRatings(account.AccountID);
             return ratings.Count > 0 ? ratings.Last()[2] : Double.PositiveInfinity;
         }
@@ -45,6 +47,7 @@ namespace Ratings
 
         public void ProcessBattle(SpringBattle battle)
         {
+            latestBattle = battle;
             List<Account> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam).Select(p => p.Account).ToList();
             List<Account> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam).Select(p => p.Account).ToList();
             createGame(losers, winners, "W", ConvertDate(battle.StartTime));
@@ -52,9 +55,25 @@ namespace Ratings
 
         //implementation specific
 
-        public void UpdateAllRatings()
+        private SpringBattle latestBattle, lastUpdate;
+
+        public void UpdateRatings()
         {
-            runIterations(1);
+            if (latestBattle == null) return;
+            if (lastUpdate == null)
+            {
+                runIterations(50);
+            }else if(latestBattle.StartTime.Subtract(lastUpdate.StartTime).TotalDays > 0.5d)
+            {
+                runIterations(1);
+            }else if (!latestBattle.Equals(lastUpdate))
+            {
+                List<Player> players = latestBattle.SpringBattlePlayers.Select(p => GetPlayerByAccount(p.Account)).ToList();
+                players.ForEach(p => p.runOneNewtonIteration());
+                players.ForEach(p => p.updateUncertainty());
+            }
+
+            lastUpdate = latestBattle;
         }
 
         //private
