@@ -8,6 +8,12 @@ namespace ChobbyLauncher
 {
     public class ChobbyMessageAttribute : Attribute { }
 
+    public enum ImageType
+    {
+        Avatars = 0, 
+        Clans = 1
+    }
+
     [ChobbyMessage]
     public class OpenUrl
     {
@@ -63,6 +69,25 @@ namespace ChobbyLauncher
         public string FileType { get; set; }
         public string Name { get; set; }
     }
+
+
+    [ChobbyMessage]
+    public class DownloadImage
+    {
+        public string RequestToken { get; set; } // client can set token to track multiple responses/requests
+        public string ImageType { get; set; }
+        public string Name { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class DownloadImageDone
+    {
+        public string RequestToken { get; set; } // client can set token to track multiple responses/requests
+        public string ImageType { get; set; }
+        public string Name { get; set; }
+    }
+
+
 
     [ChobbyMessage]
     public class DownloadFileDone

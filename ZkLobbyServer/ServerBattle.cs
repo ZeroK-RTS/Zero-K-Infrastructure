@@ -512,7 +512,7 @@ namespace ZkLobbyServer
                     MaxPlayers = 2;
                     break;
                 case AutohostMode.Planetwars:
-                    MaxPlayers = 4;
+                    MaxPlayers = 16;
                     break;
                 case AutohostMode.GameChickens:
                     if (MaxPlayers < 2) MaxPlayers = 10;

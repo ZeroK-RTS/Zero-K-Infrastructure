@@ -41,7 +41,7 @@ namespace Ratings
             {
                 if (processedBattles.Contains(battle)) return;
                 processedBattles.Add(battle);
-                ratingCategories.Where(c => IsCategory(battle, c)).ToList().ForEach(c => whr[c].ProcessBattle(battle));
+                ratingCategories.Where(c => IsCategory(battle, c)).ForEach(c => whr[c].ProcessBattle(battle));
             }
         }
 
