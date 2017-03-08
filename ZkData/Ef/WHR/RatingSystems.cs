@@ -45,7 +45,6 @@ namespace Ratings
                         ProcessResult(b);
                     }
                     Initialized = true;
-                    data.Dispose();
                 }
             });
         }
