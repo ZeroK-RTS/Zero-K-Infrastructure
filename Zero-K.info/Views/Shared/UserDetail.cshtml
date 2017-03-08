@@ -133,8 +133,11 @@
             
             <b>Competitive rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")<br />
             <b>Casual rank:</b> @(Model.CasualRank == null ? "?" : $"{Model.CasualRank}. ({Math.Round(Model.EffectiveElo)})")<br />
-            <b>Casual Rating:</b> @($"({Math.Round(Model.GetRating(Ratings.RatingCategory.Casual))})")<br />
-            <b>Competitive Rating:</b> @($"({Math.Round(Model.GetRating(Ratings.RatingCategory.MatchMaking))})")<br />
+            @if (!Ratings.RatingSystems.DisableRatingSystems)
+            {
+                <b>Casual Rating:</b> @($"({Math.Round(Model.GetRating(Ratings.RatingCategory.Casual))})")<br />
+                <b>Competitive Rating:</b> @($"({Math.Round(Model.GetRating(Ratings.RatingCategory.MatchMaking))})")<br />
+            }
 
             <b>Level:</b> @Model.Level<br />
             <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
