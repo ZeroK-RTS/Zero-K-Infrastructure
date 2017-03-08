@@ -138,6 +138,7 @@ namespace ZeroKWeb
                     command = new PwMatchCommand(PwMatchCommand.ModeType.Attack)
                     {
                         Options = AttackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList(),
+                        Deadline = GetAttackDeadline(),
                         DeadlineSeconds = (int)GetAttackDeadline().Subtract(DateTime.UtcNow).TotalSeconds,
                         AttackerFaction = AttackingFaction.Shortcut
                     };
@@ -145,6 +146,7 @@ namespace ZeroKWeb
                     command = new PwMatchCommand(PwMatchCommand.ModeType.Defend)
                     {
                         Options = new List<PwMatchCommand.VoteOption> { Challenge.ToVoteOption(PwMatchCommand.ModeType.Defend) },
+                        Deadline = GetAcceptDeadline(),
                         DeadlineSeconds = (int)GetAcceptDeadline().Subtract(DateTime.UtcNow).TotalSeconds,
                         AttackerFaction = AttackingFaction.Shortcut,
                         DefenderFactions = GetDefendingFactions(Challenge).Select(x => x.Shortcut).ToList()
@@ -280,7 +282,8 @@ namespace ZeroKWeb
             var attackOption = AttackOptions.Find(x => x.PlanetID == targetPlanetId);
             if (attackOption != null)
             {
-                var user = server.ConnectedUsers.Get(userName)?.User;
+                var conus = server.ConnectedUsers.Get(userName);
+                var user = conus?.User;
                 if (user != null)
                     using (var db = new ZkDataContext())
                     {
@@ -288,18 +291,21 @@ namespace ZeroKWeb
                         if ((account != null) && (account.FactionID == AttackingFaction.FactionID) && account.CanPlayerPlanetWars())
                         {
                             // remove existing user from other options
-                            foreach (var aop in AttackOptions) aop.Attackers.RemoveAll(x => x == userName);
+                            foreach (var aop in AttackOptions.Where(x=>x.PlanetID != targetPlanetId)) aop.Attackers.RemoveAll(x => x == userName);
 
                             // add user to this option
-                            if (attackOption.Attackers.Count < attackOption.TeamSize)
+                            if (attackOption.Attackers.Count < attackOption.TeamSize && !attackOption.Attackers.Contains(userName))
                             {
                                 attackOption.Attackers.Add(user.Name);
                                 await server.GhostChanSay(user.Faction, $"{userName} joins attack on {attackOption.Name}");
+
+                                await conus.SendCommand(new PwJoinPlanetSuccess() { PlanetID = targetPlanetId });
 
                                 if (attackOption.Attackers.Count == attackOption.TeamSize) StartChallenge(attackOption);
                                 else await UpdateLobby();
                             }
                         }
+
                     }
             }
         }
@@ -308,7 +314,8 @@ namespace ZeroKWeb
         {
             if ((Challenge != null) && (Challenge.PlanetID == targetPlanetID) && (Challenge.Defenders.Count < Challenge.TeamSize))
             {
-                var user = server.ConnectedUsers.Get(userName)?.User;
+                var conus = server.ConnectedUsers.Get(userName);
+                var user = conus?.User;
                 if (user != null)
                 {
                     var db = new ZkDataContext();
@@ -318,8 +325,11 @@ namespace ZeroKWeb
                         if (!Challenge.Defenders.Any(y => y == user.Name))
                         {
                             Challenge.Defenders.Add(user.Name);
+
                             await server.GhostChanSay(user.Faction, $"{userName} joins defense of {Challenge.Name}");
 
+                            await conus.SendCommand(new PwJoinPlanetSuccess() { PlanetID = targetPlanetID });
+                            
                             if (Challenge.Defenders.Count == Challenge.TeamSize) await AcceptChallenge();
                             else await UpdateLobby();
                         }

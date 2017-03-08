@@ -595,6 +595,8 @@ namespace LobbyClient
 
         public string AttackerFaction { get; set; }
 
+        public DateTime Deadline { get; set; }
+
         public int DeadlineSeconds { get; set; }
         public List<string> DefenderFactions { get; set; }
 
@@ -623,6 +625,12 @@ namespace LobbyClient
 
     [Message(Origin.Client)]
     public class PwJoinPlanet
+    {
+        public int PlanetID { get; set; }
+    }
+
+    [Message(Origin.Server)]
+    public class PwJoinPlanetSuccess
     {
         public int PlanetID { get; set; }
     }
