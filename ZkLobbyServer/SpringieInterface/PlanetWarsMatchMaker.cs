@@ -273,7 +273,9 @@ namespace ZeroKWeb
                 OwnerFactionID = planet.OwnerFactionID,
                 Name = planet.Name,
                 TeamSize = planet.TeamSize,
-                PlanetImage = planet.Resource?.MapPlanetWarsIcon
+                PlanetImage = planet.Resource?.MapPlanetWarsIcon,
+                IconSize = planet.Resource?.PlanetWarsIconSize ?? 0,
+                StructureImages = planet.PlanetStructures.Select(x=>x.IsActive ? x.StructureType.MapIcon : x.StructureType.DisabledMapIcon).ToList()
             });
         }
 
@@ -482,6 +484,9 @@ namespace ZeroKWeb
             public int? OwnerFactionID { get; set; }
             public int PlanetID { get; set; }
             public int TeamSize { get; set; }
+            public List<string> StructureImages { get; set; } = new List<string>();
+            public int IconSize { get; set; }
+
 
             public string PlanetImage { get; set; }
 
@@ -498,6 +503,8 @@ namespace ZeroKWeb
                     PlanetID = PlanetID,
                     PlanetName = Name,
                     Map = Map,
+                    IconSize = IconSize,
+                    StructureImages = StructureImages,
                     PlanetImage = PlanetImage,
                     Count = mode == PwMatchCommand.ModeType.Attack ? Attackers.Count : Defenders.Count,
                     Needed = TeamSize
@@ -505,6 +512,7 @@ namespace ZeroKWeb
 
                 return opt;
             }
+
         }
     }
 }
