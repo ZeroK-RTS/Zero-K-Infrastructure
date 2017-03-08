@@ -34,7 +34,7 @@ namespace ZkLobbyServer
         {
             using (var db = new ZkDataContext())
             {
-                cachedFactions = db.Factions.Where(x => !x.IsDeleted).Select(x => x.ToFactionInfo()).ToList();
+                cachedFactions = db.Factions.Where(x => !x.IsDeleted).ToList().Select(x => x.ToFactionInfo()).ToList();
             }
         }
 

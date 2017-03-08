@@ -50,7 +50,7 @@ namespace LobbyClient
         /// </summary>
         public string Version { get; set; }
 
-        public List<FactionInfo> Factions {get;set;}
+        public List<FactionInfo> Factions { get; set;}
 
 
         public class FactionInfo
