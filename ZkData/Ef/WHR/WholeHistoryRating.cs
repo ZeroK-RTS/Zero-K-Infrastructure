@@ -61,11 +61,12 @@ namespace Ratings
             ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam).Select(p => p.AccountID).ToList();
             if (winners.Count > 0 && losers.Count > 0)
             {
+                createGame(losers, winners, false, ConvertDate(battle.StartTime));
                 if (RatingSystems.Initialized)
                 {
                     Trace.TraceInformation(battlesRegistered + " battles registered for WHR");
+                    UpdateRatings();
                 }
-                createGame(losers, winners, false, ConvertDate(battle.StartTime));
             }
         }
 
