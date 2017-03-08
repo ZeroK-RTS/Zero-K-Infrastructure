@@ -146,7 +146,7 @@ namespace Ratings
 
         private int ConvertDate(DateTime date)
         {
-            return (int)(date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays / 10);
+            return (int)(date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays / 1);
         }
 
         private Player GetPlayerByAccount(Account acc)
