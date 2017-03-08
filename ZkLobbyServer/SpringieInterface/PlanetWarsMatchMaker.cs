@@ -271,6 +271,7 @@ namespace ZeroKWeb
                 OwnerFactionID = planet.OwnerFactionID,
                 Name = planet.Name,
                 TeamSize = planet.TeamSize,
+                PlanetImage = planet.Resource?.MapPlanetWarsIcon
             });
         }
 
@@ -472,6 +473,8 @@ namespace ZeroKWeb
             public int PlanetID { get; set; }
             public int TeamSize { get; set; }
 
+            public string PlanetImage { get; set; }
+
             public AttackOption()
             {
                 Attackers = new List<string>();
@@ -485,6 +488,7 @@ namespace ZeroKWeb
                     PlanetID = PlanetID,
                     PlanetName = Name,
                     Map = Map,
+                    PlanetImage = PlanetImage,
                     Count = mode == PwMatchCommand.ModeType.Attack ? Attackers.Count : Defenders.Count,
                     Needed = TeamSize
                 };

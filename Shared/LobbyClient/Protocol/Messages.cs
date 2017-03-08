@@ -615,6 +615,8 @@ namespace LobbyClient
             public string Map { get; set; }
             public int Needed { get; set; }
             public int PlanetID { get; set; }
+
+            public string PlanetImage { get; set; }
             public string PlanetName { get; set; }
         }
     }
