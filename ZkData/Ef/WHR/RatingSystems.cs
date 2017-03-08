@@ -68,7 +68,7 @@ namespace Ratings
                 }
                 catch (Exception ex)
                 {
-                    Trace.TraceError("Error processing battle (B" + battleID + ")" + ex);
+                    Trace.TraceError("WHR: Error processing battle (B" + battleID + ")" + ex);
                 }
             }
         }
@@ -91,7 +91,7 @@ namespace Ratings
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error while checking battle category (B" + battleID + ")" + ex);
+                Trace.TraceError("WHR: Error while checking battle category (B" + battleID + ")" + ex);
             }
             return false;
         }
