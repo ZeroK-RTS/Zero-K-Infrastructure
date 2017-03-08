@@ -8,6 +8,7 @@ using LobbyClient;
 using Newtonsoft.Json;
 using PlasmaShared;
 using ZkData;
+using Ratings;
 
 namespace ZeroKWeb.SpringieInterface
 {
@@ -47,6 +48,8 @@ namespace ZeroKWeb.SpringieInterface
                 Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
                 ProcessElos(result, server, db, sb);
+
+                RatingSystems.ProcessResult(sb);
                 
                 ret.Url = string.Format("{1}/Battles/Detail/{0}", sb.SpringBattleID, GlobalConst.BaseSiteUrl);
                 ret.ServerBattleID = sb.SpringBattleID;
@@ -98,6 +101,7 @@ namespace ZeroKWeb.SpringieInterface
             bool noElo = result.OutputExtras.Any(x => x?.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture) == true);
 
             sb.CalculateAllElo(noElo);
+
             foreach (var u in sb.SpringBattlePlayers.Where(x => !x.IsSpectator)) u.Account.CheckLevelUp();
 
             db.SaveChanges();

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using PlasmaShared;
+using Ratings;
 
 namespace ZkData
 {
@@ -132,7 +133,6 @@ namespace ZkData
 
             var losers = SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
             var winners = SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
-
             if ((losers.Count == 0) || (winners.Count == 0))
             {
                 IsEloProcessed = true;

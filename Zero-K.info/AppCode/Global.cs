@@ -17,6 +17,7 @@ using JetBrains.Annotations;
 using LobbyClient;
 using ZkData;
 using ZkLobbyServer;
+using Ratings;
 
 namespace ZeroKWeb
 {
@@ -165,7 +166,7 @@ namespace ZeroKWeb
             Trace.TraceInformation("Starting Zero-K.info web and application");
 
             GlobalConst.SiteDiskPath = MapPath("~");
-
+            
             LadderCalculator = new LadderCalculator();
             LadderCalculator.RecomputeNow();
 

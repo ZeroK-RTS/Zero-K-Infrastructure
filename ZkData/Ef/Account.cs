@@ -12,6 +12,7 @@ using LobbyClient;
 using Microsoft.Linq.Translations;
 using PlasmaShared;
 using ZkData;
+using Ratings;
 
 namespace ZkData
 {
@@ -238,8 +239,7 @@ namespace ZkData
 
         [NotMapped]
         public int KudosSpent { get { return KudosPurchases.Sum(x => x.KudosValue); } }
-
-
+        
         public static Account AccountByName(ZkDataContext db, string name)
         {
             return db.Accounts.FirstOrDefault(x => x.Name == name);
@@ -252,6 +252,10 @@ namespace ZkData
             return null;
         }
 
+        public double GetRating(RatingCategory category)
+        {
+            return RatingSystems.GetRatingSystem(category).GetPlayerRating(this);
+        }
 
         public bool VerifyPassword(string passwordHash)
         {

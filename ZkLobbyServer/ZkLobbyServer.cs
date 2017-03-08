@@ -20,6 +20,7 @@ namespace ZkLobbyServer
         public int ClientCounter;
         public ConcurrentDictionary<string, ConnectedUser> ConnectedUsers = new ConcurrentDictionary<string, ConnectedUser>();
 
+
         public LoginChecker LoginChecker;
         public OfflineMessageHandler OfflineMessageHandler = new OfflineMessageHandler();
         public ConcurrentDictionary<string, Channel> Channels = new ConcurrentDictionary<string, Channel>();

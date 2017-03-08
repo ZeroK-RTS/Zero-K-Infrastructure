@@ -45,7 +45,6 @@ namespace ZkData.Migrations
                         Country = "cz"
                     },
                     new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, AdminLevel = AdminLevel.SuperAdmin});
-
             }
 
             db.Resources.AddOrUpdate(x=>x.InternalName, new Resource()

@@ -49,6 +49,16 @@ namespace LobbyClient
         ///     Lobby server version
         /// </summary>
         public string Version { get; set; }
+
+        public List<FactionInfo> Factions {get;set;}
+
+
+        public class FactionInfo
+        {
+            public string Name { get; set; }
+            public string Shortcut { get; set; }
+            public string Color { get; set; }
+        }
     }
 
     [Message(Origin.Server)]
@@ -595,6 +605,8 @@ namespace LobbyClient
 
         public string AttackerFaction { get; set; }
 
+        public DateTime Deadline { get; set; }
+
         public int DeadlineSeconds { get; set; }
         public List<string> DefenderFactions { get; set; }
 
@@ -615,12 +627,21 @@ namespace LobbyClient
             public string Map { get; set; }
             public int Needed { get; set; }
             public int PlanetID { get; set; }
+            public string PlanetImage { get; set; }
+            public List<string> StructureImages { get; set; }
+            public int IconSize { get; set; }
             public string PlanetName { get; set; }
         }
     }
 
     [Message(Origin.Client)]
     public class PwJoinPlanet
+    {
+        public int PlanetID { get; set; }
+    }
+
+    [Message(Origin.Server)]
+    public class PwJoinPlanetSuccess
     {
         public int PlanetID { get; set; }
     }
