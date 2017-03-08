@@ -18,7 +18,7 @@ namespace Ratings
 
 
         IDictionary<int, Player> players;
-        List<Game> games;
+        ICollection<Game> games;
         double w2; //elo range expand per day squared
 
         public WholeHistoryRating() {
@@ -32,7 +32,7 @@ namespace Ratings
         {
             if (!RatingSystems.Initialized) return RatingOffset;
             UpdateRatings();
-            List<double[]> ratings = getPlayerRatings(account.AccountID);
+            ICollection<double[]> ratings = getPlayerRatings(account.AccountID);
             return (ratings.Count > 0 ? ratings.Last()[1] : 0) + RatingOffset; //1500 for zk peoplers to feel at home
         }
 
@@ -40,13 +40,18 @@ namespace Ratings
         {
             if (!RatingSystems.Initialized) return Double.PositiveInfinity;
             UpdateRatings();
-            List<double[]> ratings = getPlayerRatings(account.AccountID);
+            ICollection<double[]> ratings = getPlayerRatings(account.AccountID);
             return ratings.Count > 0 ? ratings.Last()[2] : Double.PositiveInfinity;
         }
 
-        public List<double> PredictOutcome(List<List<Account>> teams)
+        public List<double> PredictOutcome(List<ICollection<Account>> teams)
         {
-            return teams.Select(t => SetupGame(t, teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2).ToList(), "B", ConvertDate(DateTime.Now)).getBlackWinProbability() * 2 / teams.Count).ToList();
+            return teams.Select(t => 
+                    SetupGame(t.Select(x => x.AccountID).ToList(), 
+                            teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => x.AccountID)).ToList(), 
+                            "B", 
+                            ConvertDate(DateTime.Now)).getBlackWinProbability() * 2 / teams.Count
+                    ).ToList();
         }
 
         private int battlesRegistered = 0;
@@ -58,9 +63,12 @@ namespace Ratings
                 Trace.TraceInformation(battlesRegistered + " battles registered for WHR");
             }
             latestBattle = battle;
-            List<Account> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam).Select(p => p.Account).ToList();
-            List<Account> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam).Select(p => p.Account).ToList();
-            createGame(losers, winners, "W", ConvertDate(battle.StartTime));
+            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam).Select(p => p.AccountID).ToList();
+            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam).Select(p => p.AccountID).ToList();
+            if (winners.Count > 0 && losers.Count > 0)
+            {
+                createGame(losers, winners, "W", ConvertDate(battle.StartTime));
+            }
         }
 
         //implementation specific
@@ -103,7 +111,7 @@ namespace Ratings
                 {
                     updateAction = (() => {
                         Trace.TraceInformation("Updating WHR ratings for last Battle");
-                        List<Player> players = latestBattle.SpringBattlePlayers.Select(p => GetPlayerByAccount(p.Account)).ToList();
+                        IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Select(p => getPlayerById(p.AccountID));
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
                     });
@@ -158,7 +166,7 @@ namespace Ratings
             return player.days.Select(d=> new double[] { d.day, (d.getElo()), ((d.uncertainty * 100)) }).ToList();
         }
 
-        private Game SetupGame(List<Account> black, List<Account> white, string winner, int time_step) {
+        private Game SetupGame(ICollection<int> black, ICollection<int> white, string winner, int time_step) {
 
             // Avoid self-played games (no info)
             if (black.Equals(white)) {
@@ -177,13 +185,13 @@ namespace Ratings
             }
 
 
-            List<Player> white_player = white.Select(p=>GetPlayerByAccount(p)).ToList();
-            List<Player> black_player = black.Select(p=>GetPlayerByAccount(p)).ToList();
+            List<Player> white_player = white.Select(p=> getPlayerById(p)).ToList();
+            List<Player> black_player = black.Select(p=> getPlayerById(p)).ToList();
             Game game = new Game(black_player, white_player, winner, time_step);
             return game;
         }
 
-        private Game createGame(List<Account> black, List<Account> white, string winner, int time_step) {
+        private Game createGame(ICollection<int> black, ICollection<int> white, string winner, int time_step) {
             Game game = SetupGame(black, white, winner, time_step);
             return game != null ? AddGame(game) : null;
         }

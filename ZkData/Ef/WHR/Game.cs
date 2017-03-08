@@ -2,19 +2,20 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using ZkData;
 
 namespace Ratings
 {
     public class Game {
 
         public int day;
-        public List<Player> whitePlayers;
-        public List<Player> blackPlayers;
+        public ICollection<Player> whitePlayers;
+        public ICollection<Player> blackPlayers;
         public string winner;
         public IDictionary<Player, PlayerDay> whiteDays = new Dictionary<Player, PlayerDay>();
         public IDictionary<Player, PlayerDay> blackDays = new Dictionary<Player, PlayerDay>();
 
-        public Game(List<Player> black, List<Player> white, string winner, int time_step) { //extras?
+        public Game(ICollection<Player> black, ICollection<Player> white, string winner, int time_step) { //extras?
 
             day = time_step;
             whitePlayers = white;
@@ -109,7 +110,7 @@ namespace Ratings
             return rval;
         }
 
-        public List<Player> getPlayerTeammates(Player player) {
+        public ICollection<Player> getPlayerTeammates(Player player) {
             if ((whitePlayers.Contains(player))) {
                 return whitePlayers;
             } else if (blackPlayers.Contains(player)) {

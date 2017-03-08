@@ -12,6 +12,6 @@ namespace Ratings
 
         double GetPlayerRatingUncertainty(Account account);
 
-        List<double> PredictOutcome(List<List<Account>> teams);
+        List<double> PredictOutcome(List<ICollection<Account>> teams);
     }
 }

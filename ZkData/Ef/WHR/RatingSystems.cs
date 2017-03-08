@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using ZkData;
+using System.Data.Entity;
 
 namespace Ratings
 {
@@ -11,7 +12,7 @@ namespace Ratings
     {
         public static Dictionary<RatingCategory, WholeHistoryRating> whr = new Dictionary<RatingCategory, WholeHistoryRating>();
 
-        public static readonly List<RatingCategory> ratingCategories = Enum.GetValues(typeof(RatingCategory)).Cast<RatingCategory>().ToList();
+        public static readonly IEnumerable<RatingCategory> ratingCategories = Enum.GetValues(typeof(RatingCategory)).Cast<RatingCategory>();
 
         private static HashSet<SpringBattle> processedBattles = new HashSet<SpringBattle>();
 
@@ -24,11 +25,19 @@ namespace Ratings
             Initialized = false;
             ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating());
 
-            ZkDataContext data = new ZkDataContext();
             Task.Factory.StartNew(() => {
                 lock (processingLock)
                 {
-                    foreach (SpringBattle b in data.SpringBattles.AsNoTracking().OrderBy(x => x.SpringBattleID)) ProcessResult(b);
+                    ZkDataContext data = new ZkDataContext();
+                    foreach (SpringBattle b in data.SpringBattles
+                            .Include(x => x.ResourceByMapResourceID)
+                            .Include(x => x.SpringBattlePlayers)
+                            .Include(x => x.SpringBattleBots)
+                            .AsNoTracking()
+                            .OrderBy(x => x.SpringBattleID))
+                    {
+                        ProcessResult(b);
+                    }
                     Initialized = true;
                 }
             });
@@ -53,7 +62,7 @@ namespace Ratings
                 }
                 catch (Exception ex)
                 {
-                    Trace.TraceError("Error processing battle (B" + battleID + ")" + ex);
+                    Trace.TraceError("WHR: Error processing battle (B" + battleID + ")" + ex);
                 }
             }
         }
@@ -76,7 +85,7 @@ namespace Ratings
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error while checking battle category (B" + battleID + ")" + ex);
+                Trace.TraceError("WHR: Error while checking battle category (B" + battleID + ")" + ex);
             }
             return false;
         }
