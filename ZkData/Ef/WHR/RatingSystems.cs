@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using ZkData;
+using System.Data.Entity;
 
 namespace Ratings
 {
@@ -24,12 +25,27 @@ namespace Ratings
             Initialized = false;
             ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating());
 
-            ZkDataContext data = new ZkDataContext();
             Task.Factory.StartNew(() => {
                 lock (processingLock)
                 {
-                    foreach (SpringBattle b in data.SpringBattles.AsNoTracking().OrderBy(x => x.SpringBattleID)) ProcessResult(b);
+                    ZkDataContext data = new ZkDataContext();
+                    foreach (SpringBattle b in data.SpringBattles.Include(x => x.SpringBattleID)
+                            .Include(x => x.StartTime)
+                            .Include(x => x.ResourceByMapResourceID)
+                            .Include(x => x.PlayerCount)
+                            .Include(x => x.IsMatchMaker)
+                            .Include(x => x.Mode)
+                            .Include(x => x.IsMission)
+                            .Include(x => x.HasBots)
+                            .Include(x => x.SpringBattlePlayers)
+                            .Include(x => x.SpringBattleBots)
+                            .AsNoTracking()
+                            .OrderBy(x => x.SpringBattleID))
+                    {
+                        ProcessResult(b);
+                    }
                     Initialized = true;
+                    data.Dispose();
                 }
             });
         }
