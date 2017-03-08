@@ -413,6 +413,12 @@ namespace ZeroKWeb
                     var planet = planets.FirstOrDefault(x => (x.TeamSize == 2) && x.CanMatchMakerPlay(attacker));
                     if (planet != null) InternalAddOption(planet);
                 }
+
+                // make sure some option always exists
+                if (!AttackOptions.Any())
+                {
+                    foreach (var planet in planets.Take(3)) InternalAddOption(planet);
+                }
             }
 
             UpdateLobby();
