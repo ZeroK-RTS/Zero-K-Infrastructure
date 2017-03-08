@@ -18,12 +18,10 @@ namespace Ratings
 
 
         IDictionary<int, Player> players;
-        ICollection<Game> games;
         float w2; //elo range expand per day squared
 
         public WholeHistoryRating() {
             w2 = DecayPerDaySquared;
-            games = new List<Game>();
             players = new Dictionary<int, Player>();
         }
         
@@ -49,7 +47,7 @@ namespace Ratings
             return teams.Select(t => 
                     SetupGame(t.Select(x => x.AccountID).ToList(), 
                             teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => x.AccountID)).ToList(), 
-                            "B", 
+                            true, 
                             ConvertDate(DateTime.Now)).getBlackWinProbability() * 2 / teams.Count
                     ).ToList();
         }
@@ -67,7 +65,7 @@ namespace Ratings
             ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam).Select(p => p.AccountID).ToList();
             if (winners.Count > 0 && losers.Count > 0)
             {
-                createGame(losers, winners, "W", ConvertDate(battle.StartTime));
+                createGame(losers, winners, false, ConvertDate(battle.StartTime));
             }
         }
 
@@ -166,7 +164,7 @@ namespace Ratings
             return player.days.Select(d=> new float[] { d.day, (d.getElo()), ((d.uncertainty * 100)) }).ToList();
         }
 
-        private Game SetupGame(ICollection<int> black, ICollection<int> white, string winner, int time_step) {
+        private Game SetupGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step) {
 
             // Avoid self-played games (no info)
             if (black.Equals(white)) {
@@ -187,20 +185,19 @@ namespace Ratings
 
             List<Player> white_player = white.Select(p=> getPlayerById(p)).ToList();
             List<Player> black_player = black.Select(p=> getPlayerById(p)).ToList();
-            Game game = new Game(black_player, white_player, winner, time_step);
+            Game game = new Game(black_player, white_player, blackWins, time_step);
             return game;
         }
 
-        private Game createGame(ICollection<int> black, ICollection<int> white, string winner, int time_step) {
-            Game game = SetupGame(black, white, winner, time_step);
+        private Game createGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step) {
+            Game game = SetupGame(black, white, blackWins, time_step);
             return game != null ? AddGame(game) : null;
         }
 
         private Game AddGame(Game game) {
             game.whitePlayers.ForEach(p=>p.AddGame(game));
             game.blackPlayers.ForEach(p=>p.AddGame(game));
-
-            games.Add(game);
+            
             return game;
         }
 

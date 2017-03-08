@@ -8,14 +8,13 @@ namespace Ratings
     public class Player {
 
         public int id;
-        public float anchor_gamma;
         public List<PlayerDay> days = new List<PlayerDay>();
-        public float w2;
+        public static float w2;
         const float MAX_RATING_CHANGE = 5;
 
         public Player(int id, float w2) {
             this.id = id;
-            this.w2 = (float)(Math.Pow(Math.Sqrt(w2) * Math.Log(10) / 400, 2));  // Convert from elo^2 to r^2
+            Player.w2 = (float)(Math.Pow(Math.Sqrt(w2) * Math.Log(10) / 400, 2));  // Convert from elo^2 to r^2
 
         }
 

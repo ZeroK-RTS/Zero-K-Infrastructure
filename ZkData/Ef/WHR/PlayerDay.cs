@@ -9,7 +9,6 @@ namespace Ratings
     public class PlayerDay {
 
         public ICollection<Game> wonGames, lostGames;
-        public string name;
         public int day;
         public Player player;
         public float r;
@@ -117,11 +116,11 @@ namespace Ratings
         }
 
         public void AddGame(Game game) {
-            if ((game.winner.ToUpper().Equals("W") && game.whitePlayers.Contains(player))
-                    || (game.winner.ToUpper().Equals("B") && game.blackPlayers.Contains(player))) {
+            if ((!game.blackWins && game.whitePlayers.Contains(player))
+                    || (game.blackWins && game.blackPlayers.Contains(player))) {
                 wonGames.Add(game);
-            } else if ((game.winner.ToUpper().Equals("B") && game.whitePlayers.Contains(player))
-                    || (game.winner.ToUpper().Equals("W") && game.blackPlayers.Contains(player))) {
+            } else if ((game.blackWins && game.whitePlayers.Contains(player))
+                    || (!game.blackWins && game.blackPlayers.Contains(player))) {
                 lostGames.Add(game);
             } else {
                 Trace.TraceError("Player not part of game");
