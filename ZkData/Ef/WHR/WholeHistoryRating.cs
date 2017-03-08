@@ -38,8 +38,11 @@ namespace Ratings
         {
             if (!RatingSystems.Initialized) return float.PositiveInfinity;
             UpdateRatings();
-            ICollection<float[]> ratings = getPlayerRatings(account.AccountID);
-            return ratings.Count > 0 ? ratings.Last()[2] : float.PositiveInfinity;
+            Player player = getPlayerById(account.AccountID);
+            if (player.days.Count > 0) {
+                return player.days.Last().uncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - player.days.Last().day) * w2) ; 
+            }
+            return float.PositiveInfinity;
         }
 
         public List<float> PredictOutcome(List<ICollection<Account>> teams)

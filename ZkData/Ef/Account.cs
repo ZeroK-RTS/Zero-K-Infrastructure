@@ -257,6 +257,11 @@ namespace ZkData
             return RatingSystems.GetRatingSystem(category).GetPlayerRating(this);
         }
 
+        public double GetRatingUncertainty(RatingCategory category)
+        {
+            return RatingSystems.GetRatingSystem(category).GetPlayerRatingUncertainty(this);
+        }
+
         public bool VerifyPassword(string passwordHash)
         {
             if (!string.IsNullOrEmpty(PasswordBcrypt)) return BCrypt.Net.BCrypt.Verify(passwordHash, PasswordBcrypt);
