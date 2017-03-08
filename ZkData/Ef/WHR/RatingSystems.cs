@@ -14,7 +14,7 @@ namespace Ratings
 
         public static readonly IEnumerable<RatingCategory> ratingCategories = Enum.GetValues(typeof(RatingCategory)).Cast<RatingCategory>();
 
-        private static HashSet<SpringBattle> processedBattles = new HashSet<SpringBattle>();
+        private static HashSet<int> processedBattles = new HashSet<int>();
 
         public static bool Initialized { get; private set; }
 
@@ -56,8 +56,8 @@ namespace Ratings
                 try
                 {
                     battleID = battle.SpringBattleID;
-                    if (processedBattles.Contains(battle)) return;
-                    processedBattles.Add(battle);
+                    if (processedBattles.Contains(battleID)) return;
+                    processedBattles.Add(battleID);
                     ratingCategories.Where(c => IsCategory(battle, c)).ForEach(c => whr[c].ProcessBattle(battle));
                 }
                 catch (Exception ex)
