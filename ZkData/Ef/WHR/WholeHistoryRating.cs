@@ -65,7 +65,10 @@ namespace Ratings
             latestBattle = battle;
             List<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam).Select(p => p.AccountID).ToList();
             List<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam).Select(p => p.AccountID).ToList();
-            createGame(losers, winners, "W", ConvertDate(battle.StartTime));
+            if (winners.Count > 0 && losers.Count > 0)
+            {
+                createGame(losers, winners, "W", ConvertDate(battle.StartTime));
+            }
         }
 
         //implementation specific
