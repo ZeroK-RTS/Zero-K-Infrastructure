@@ -8,7 +8,7 @@ namespace Ratings
 
     public class PlayerDay {
 
-        public List<Game> wonGames, lostGames;
+        public ICollection<Game> wonGames, lostGames;
         public string name;
         public int day;
         public Player player;
@@ -40,14 +40,14 @@ namespace Ratings
             return (r * 400.0) / (Math.Log(10));
         }
 
-        List<double[]> won_game_terms, lost_game_terms;
+        ICollection<double[]> won_game_terms, lost_game_terms;
 
         public void clearGameTermsCache() {
             won_game_terms = null;
             lost_game_terms = null;
         }
 
-        public List<double[]> getWonGameTerms() {
+        public ICollection<double[]> getWonGameTerms() {
             if (won_game_terms == null) {
                 won_game_terms = new List<double[]>();
                 foreach (Game g in wonGames) {
@@ -61,7 +61,7 @@ namespace Ratings
             return won_game_terms;
         }
 
-        public List<double[]> getLostGameTerms() {
+        public ICollection<double[]> getLostGameTerms() {
             if (lost_game_terms == null) {
                 lost_game_terms = new List<double[]>();
                 foreach (Game g in lostGames) {

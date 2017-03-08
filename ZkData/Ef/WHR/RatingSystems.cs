@@ -12,7 +12,7 @@ namespace Ratings
     {
         public static Dictionary<RatingCategory, WholeHistoryRating> whr = new Dictionary<RatingCategory, WholeHistoryRating>();
 
-        public static readonly List<RatingCategory> ratingCategories = Enum.GetValues(typeof(RatingCategory)).Cast<RatingCategory>().ToList();
+        public static readonly IEnumerable<RatingCategory> ratingCategories = Enum.GetValues(typeof(RatingCategory)).Cast<RatingCategory>();
 
         private static HashSet<SpringBattle> processedBattles = new HashSet<SpringBattle>();
 
