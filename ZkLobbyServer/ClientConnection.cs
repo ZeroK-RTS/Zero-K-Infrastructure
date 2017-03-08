@@ -28,6 +28,16 @@ namespace ZkLobbyServer
 
         public string RemoteEndpointIP => transport.RemoteEndpointAddress;
 
+        static List<Welcome.FactionInfo> cachedFactions = new List<Welcome.FactionInfo>();
+
+        static ClientConnection()
+        {
+            using (var db = new ZkDataContext())
+            {
+                cachedFactions = db.Factions.Where(x => !x.IsDeleted).Select(x => x.ToFactionInfo()).ToList();
+            }
+        }
+
 
         public ClientConnection(ITransport transport, ZkLobbyServer server)
         {
@@ -67,7 +77,7 @@ namespace ZkLobbyServer
         public async Task OnConnected()
         {
             //Trace.TraceInformation("{0} connected", this);
-            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Version = server.Version, UserCount = server.ConnectedUsers.Count });
+            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Version = server.Version, UserCount = server.ConnectedUsers.Count, Factions = cachedFactions});
         }
 
 

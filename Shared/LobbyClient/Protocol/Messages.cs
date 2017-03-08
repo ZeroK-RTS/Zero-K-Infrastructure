@@ -49,6 +49,16 @@ namespace LobbyClient
         ///     Lobby server version
         /// </summary>
         public string Version { get; set; }
+
+        public List<FactionInfo> Factions {get;set;}
+
+
+        public class FactionInfo
+        {
+            public string Name { get; set; }
+            public string Shortcut { get; set; }
+            public string Color { get; set; }
+        }
     }
 
     [Message(Origin.Server)]

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using LobbyClient;
 
 namespace ZkData
 {
@@ -245,6 +246,12 @@ namespace ZkData
                     }
                 }
             }
+        }
+
+        public Welcome.FactionInfo ToFactionInfo()
+        {
+            var fi = new Welcome.FactionInfo() { Name = Name, Shortcut = Shortcut, Color = Color };
+            return fi;
         }
     }
 }
