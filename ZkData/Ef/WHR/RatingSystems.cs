@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using ZkData;
@@ -42,22 +43,40 @@ namespace Ratings
         {
             lock (processingLock)
             {
-                if (processedBattles.Contains(battle)) return;
-                processedBattles.Add(battle);
-                ratingCategories.Where(c => IsCategory(battle, c)).ForEach(c => whr[c].ProcessBattle(battle));
+                int battleID = -1;
+                try
+                {
+                    battleID = battle.SpringBattleID;
+                    if (processedBattles.Contains(battle)) return;
+                    processedBattles.Add(battle);
+                    ratingCategories.Where(c => IsCategory(battle, c)).ForEach(c => whr[c].ProcessBattle(battle));
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error processing battle category (B" + battleID + ")" + ex);
+                }
             }
         }
 
         private static bool IsCategory(SpringBattle battle, RatingCategory category)
         {
-            switch (category)
+            int battleID = -1;
+            try
             {
-                case RatingCategory.Casual:
-                    return !(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID?.MapIsSpecial == true));
-                case RatingCategory.MatchMaking:
-                    return battle.IsMatchMaker;
-                case RatingCategory.Planetwars:
-                    return battle.Mode == PlasmaShared.AutohostMode.Planetwars; //how?
+                battleID = battle.SpringBattleID;
+                switch (category)
+                {
+                    case RatingCategory.Casual:
+                        return !(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID?.MapIsSpecial == true));
+                    case RatingCategory.MatchMaking:
+                        return battle.IsMatchMaker;
+                    case RatingCategory.Planetwars:
+                        return battle.Mode == PlasmaShared.AutohostMode.Planetwars; //how?
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error while checking battle category (B" + battleID + ")" + ex);
             }
             return false;
         }
