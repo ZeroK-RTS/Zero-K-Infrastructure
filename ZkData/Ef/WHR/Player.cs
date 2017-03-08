@@ -8,41 +8,41 @@ namespace Ratings
     public class Player {
 
         public int id;
-        public double anchor_gamma;
+        public float anchor_gamma;
         public List<PlayerDay> days = new List<PlayerDay>();
-        public double w2;
-        const double MAX_RATING_CHANGE = 5;
+        public float w2;
+        const float MAX_RATING_CHANGE = 5;
 
-        public Player(int id, double w2) {
+        public Player(int id, float w2) {
             this.id = id;
-            this.w2 = Math.Pow(Math.Sqrt(w2) * Math.Log(10) / 400, 2);  // Convert from elo^2 to r^2
+            this.w2 = (float)(Math.Pow(Math.Sqrt(w2) * Math.Log(10) / 400, 2));  // Convert from elo^2 to r^2
 
         }
 
-        double[,] __m = new double[10,10];
+        float[,] __m = new float[10,10];
 
-        public double[,] generateHessian(List<PlayerDay> days, List<double> sigma2) {
+        public float[,] generateHessian(List<PlayerDay> days, List<float> sigma2) {
 
             int n = days.Count;
             if (__m.GetLength(0) < n + 1) {
-                __m = new double[n + 10, n + 10];
+                __m = new float[n + 10, n + 10];
             }
-            double[,] m = __m;
+            float[,] m = __m;
             for (int row = 0; row < n; row++) {
                 for (int col = 0; col < n; col++) {
                     if (row == col) {
-                        double prior = 0;
+                        float prior = 0;
                         if (row < (n - 1)) {
-                            prior += -1.0 / sigma2[row];
+                            prior += -1.0f / sigma2[row];
                         }
                         if (row > 0) {
-                            prior += -1.0 / sigma2[row - 1];
+                            prior += -1.0f / sigma2[row - 1];
                         }
-                        m[row,col] = days[row].getLogLikelyhoodSecondDerivative() + prior - 0.001;
+                        m[row,col] = days[row].getLogLikelyhoodSecondDerivative() + prior - 0.001f;
                     } else if (row == col - 1) {
-                        m[row,col] = 1.0 / sigma2[row];
+                        m[row,col] = 1.0f / sigma2[row];
                     } else if (row == col + 1) {
-                        m[row,col] = 1.0 / sigma2[col];
+                        m[row,col] = 1.0f / sigma2[col];
                     } else {
                         m[row,col] = 0;
                     }
@@ -51,11 +51,11 @@ namespace Ratings
             return m;
         }
 
-        public List<double> generateGradient(List<double> r, List<PlayerDay> days, List<double> sigma2) {
-            List<double> g = new List<double>();
+        public List<float> generateGradient(List<float> r, List<PlayerDay> days, List<float> sigma2) {
+            List<float> g = new List<float>();
             int n = days.Count;
             for (int i = 0; i < days.Count; i++) {
-                double prior = 0;
+                float prior = 0;
                 if (i < (n - 1)) {
                     prior += -(r[i] - r[i + 1]) / sigma2[i];
                 }
@@ -79,24 +79,24 @@ namespace Ratings
             }
         }
 
-        public List<double> generateSigma2() {
-            List<double> sigma2 = new List<double>();
+        public List<float> generateSigma2() {
+            List<float> sigma2 = new List<float>();
             for (int i = 0; i < days.Count - 1; i++) {
                 sigma2.Add(Math.Abs(days[i + 1].day - days[i].day) * w2);
             }
             return sigma2;
         }
 
-        private List<double> makeList(int size) {
-            List<double> temp = new List<double>();
+        private List<float> makeList(int size) {
+            List<float> temp = new List<float>();
             for (int i = 0; i < size; i++) {
-                temp.Add(0d);
+                temp.Add(0f);
             }
             return temp;
         }
 
         public void updateByNDimNewton() {
-            List<double> r = new List<double>();
+            List<float> r = new List<float>();
             foreach (PlayerDay day in days) {
                 r.Add(day.r);
             }
@@ -115,16 +115,16 @@ namespace Ratings
                 }*/
             }
             // sigma squared (used in the prior)
-            List<double> sigma2 = generateSigma2();
+            List<float> sigma2 = generateSigma2();
 
-            double[,] h = generateHessian(days, sigma2);
-            List<double> g = generateGradient(r, days, sigma2);
+            float[,] h = generateHessian(days, sigma2);
+            List<float> g = generateGradient(r, days, sigma2);
 
             int n = r.Count;
 
-            List<double> a = makeList(n);
-            List<double> d = makeList(n);
-            List<double> b = makeList(n);
+            List<float> a = makeList(n);
+            List<float> d = makeList(n);
+            List<float> b = makeList(n);
             d[0] = h[0,0];
             b[0] = h[0,1];
 
@@ -134,13 +134,13 @@ namespace Ratings
                 b[i] = ( h[i,i + 1]);
             }
 
-            List<double> y = makeList(n);
+            List<float> y = makeList(n);
             y[0] = g[0];
             for (int i = 1; i < n; i++) {
                 y[i] = ( g[i] - a[i] * y[i - 1]);
             }
 
-            List<double> x = makeList(n);
+            List<float> x = makeList(n);
             x[n - 1] = y[n - 1] / d[n - 1];
             for (int i = n - 2; i >= 0; i--) {
                 x[i] = ( (y[i] - b[i] * x[i + 1]) / d[i]);
@@ -159,25 +159,25 @@ namespace Ratings
             }
 
         }
-        static double _maxChg = 3;
+        static float _maxChg = 3;
 
-        double[,] __cov = new double[10,10];
+        float[,] __cov = new float[10,10];
 
-        public double[,] generateCovariance() {
-            List<double> r = new List<double>();
+        public float[,] generateCovariance() {
+            List<float> r = new List<float>();
             foreach (PlayerDay day in days) {
                 r.Add(day.r);
             }
 
-            List<double> sigma2 = generateSigma2();
-            double[,] h = generateHessian(days, sigma2);
-            List<double> g = generateGradient(r, days, sigma2);
+            List<float> sigma2 = generateSigma2();
+            float[,] h = generateHessian(days, sigma2);
+            List<float> g = generateGradient(r, days, sigma2);
 
             int n = r.Count;
 
-            List<double> a = makeList(n);
-            List<double> d = makeList(n);
-            List<double> b = makeList(n);
+            List<float> a = makeList(n);
+            List<float> d = makeList(n);
+            List<float> b = makeList(n);
             d[0] = h[0, 0];
             b[0] = h[0, 1];
 
@@ -187,27 +187,27 @@ namespace Ratings
                 b[i] = ( h[i,i + 1]);
             }
 
-            List<double> dp = makeList(n);
+            List<float> dp = makeList(n);
             dp[n - 1] = (h[n - 1,n - 1]);
-            List<double> bp = makeList(n);
+            List<float> bp = makeList(n);
             bp[n - 1] = (n >= 2 ? h[n - 1,n - 2] : 0);
-            List<double> ap = makeList(n);
+            List<float> ap = makeList(n);
             for (int i = n - 2; i >= 0; i--) {
                 ap[i] = ( h[i,i + 1] / dp[i + 1]);
                 dp[i] = ( h[i,i] - ap[i] * bp[i + 1]);
                 bp[i] = ( i > 0 ? h[i,i - 1] : 0);
             }
 
-            List<double> v = makeList(n);
+            List<float> v = makeList(n);
             for (int i = 0; i < n - 1; i++) {
                 v[i] = ( dp[i + 1] / (b[i] * bp[i + 1] - d[i] * dp[i + 1]));
             }
             v[n - 1] = (-1 / d[n - 1]);
 
             if (__cov.GetLength(0) < n + 1) {
-                __cov = new double[n + 10,n + 10];
+                __cov = new float[n + 10,n + 10];
             }
-            double[,] cov = __cov;
+            float[,] cov = __cov;
 
             for (int row = 0; row < n; row++) {
                 for (int col = 0; col < n; col++) {
@@ -225,7 +225,7 @@ namespace Ratings
 
         public void updateUncertainty() {
             if (days.Count > 0) {
-                double[,] c = generateCovariance();
+                float[,] c = generateCovariance();
                 for (int i = 0; i < days.Count; i++) {
                     days[i].uncertainty = c[i,i];
                 }
@@ -241,7 +241,7 @@ namespace Ratings
                     newPDay.uncertainty = 10;
                 } else {
                     newPDay.setGamma(days[days.Count - 1].getGamma());
-                    newPDay.uncertainty = days[days.Count - 1].uncertainty + Math.Sqrt(game.day - days[days.Count - 1].day) * w2;
+                    newPDay.uncertainty = days[days.Count - 1].uncertainty + (float)Math.Sqrt(game.day - days[days.Count - 1].day) * w2;
                 }
                 days.Add(newPDay);
             }
@@ -269,7 +269,7 @@ namespace Ratings
                 else
                 {
                     newPDay.setGamma(days[days.Count - 1].getGamma());
-                    newPDay.uncertainty = days[days.Count - 1].uncertainty + Math.Sqrt(game.day - days[days.Count - 1].day) * w2;
+                    newPDay.uncertainty = days[days.Count - 1].uncertainty + (float)Math.Sqrt(game.day - days[days.Count - 1].day) * w2;
                 }
                 d = (newPDay);
             } else {

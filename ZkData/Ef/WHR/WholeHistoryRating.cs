@@ -13,13 +13,13 @@ namespace Ratings
 
     public class WholeHistoryRating : IRatingSystem{
 
-        const double DecayPerDaySquared = 300;
-        const double RatingOffset = 1500;
+        const float DecayPerDaySquared = 300;
+        const float RatingOffset = 1500;
 
 
         IDictionary<int, Player> players;
         ICollection<Game> games;
-        double w2; //elo range expand per day squared
+        float w2; //elo range expand per day squared
 
         public WholeHistoryRating() {
             w2 = DecayPerDaySquared;
@@ -28,23 +28,23 @@ namespace Ratings
         }
         
 
-        public double GetPlayerRating(Account account)
+        public float GetPlayerRating(Account account)
         {
             if (!RatingSystems.Initialized) return RatingOffset;
             UpdateRatings();
-            ICollection<double[]> ratings = getPlayerRatings(account.AccountID);
+            ICollection<float[]> ratings = getPlayerRatings(account.AccountID);
             return (ratings.Count > 0 ? ratings.Last()[1] : 0) + RatingOffset; //1500 for zk peoplers to feel at home
         }
 
-        public double GetPlayerRatingUncertainty(Account account)
+        public float GetPlayerRatingUncertainty(Account account)
         {
-            if (!RatingSystems.Initialized) return Double.PositiveInfinity;
+            if (!RatingSystems.Initialized) return float.PositiveInfinity;
             UpdateRatings();
-            ICollection<double[]> ratings = getPlayerRatings(account.AccountID);
-            return ratings.Count > 0 ? ratings.Last()[2] : Double.PositiveInfinity;
+            ICollection<float[]> ratings = getPlayerRatings(account.AccountID);
+            return ratings.Count > 0 ? ratings.Last()[2] : float.PositiveInfinity;
         }
 
-        public List<double> PredictOutcome(List<ICollection<Account>> teams)
+        public List<float> PredictOutcome(List<ICollection<Account>> teams)
         {
             return teams.Select(t => 
                     SetupGame(t.Select(x => x.AccountID).ToList(), 
@@ -161,9 +161,9 @@ namespace Ratings
             return players[id];
         }
 
-        private List<double[]> getPlayerRatings(int id) {
+        private List<float[]> getPlayerRatings(int id) {
             Player player = getPlayerById(id);
-            return player.days.Select(d=> new double[] { d.day, (d.getElo()), ((d.uncertainty * 100)) }).ToList();
+            return player.days.Select(d=> new float[] { d.day, (d.getElo()), ((d.uncertainty * 100)) }).ToList();
         }
 
         private Game SetupGame(ICollection<int> black, ICollection<int> white, string winner, int time_step) {
@@ -214,15 +214,15 @@ namespace Ratings
         }
 
         private void printStats() {
-            double sum = 0;
+            float sum = 0;
             int bigger = 0;
             int total = 0;
-            double lowest = 0;
-            double highest = 0;
+            float lowest = 0;
+            float highest = 0;
             foreach (Player p in players.Values) {
                 if (p.days.Count > 0) {
                     total++;
-                    double elo = p.days[p.days.Count - 1].getElo();
+                    float elo = p.days[p.days.Count - 1].getElo();
                     sum += elo;
                     if (elo > 0) bigger++;
                     lowest = Math.Min(lowest, elo);

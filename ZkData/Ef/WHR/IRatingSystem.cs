@@ -8,10 +8,10 @@ namespace Ratings
 
         void ProcessBattle(SpringBattle battle);
 
-        double GetPlayerRating(Account account);
+        float GetPlayerRating(Account account);
 
-        double GetPlayerRatingUncertainty(Account account);
+        float GetPlayerRatingUncertainty(Account account);
 
-        List<double> PredictOutcome(List<ICollection<Account>> teams);
+        List<float> PredictOutcome(List<ICollection<Account>> teams);
     }
 }

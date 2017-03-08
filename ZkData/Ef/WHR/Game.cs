@@ -23,10 +23,10 @@ namespace Ratings
             this.winner = winner;
         }
 
-        private double totWeight;
-        private double getWhiteElo() {
-            double ret = 0;
-            double w; totWeight = 0;
+        private float totWeight;
+        private float getWhiteElo() {
+            float ret = 0;
+            float w; totWeight = 0;
             foreach (PlayerDay pd in whiteDays.Values) {
                 w = 1; //Math.Max(0.1, Math.Min(10, 1 / pd.uncertainty));
                        //Trace.TraceInformation(w);
@@ -37,9 +37,9 @@ namespace Ratings
             return ret / totWeight;
         }
 
-        private double getBlackElo() {
-            double ret = 0;
-            double w; totWeight = 0;
+        private float getBlackElo() {
+            float ret = 0;
+            float w; totWeight = 0;
             foreach (PlayerDay pd in blackDays.Values) {
                 w = 1;//Math.Max(0.1, Math.Min(10, 1 / pd.uncertainty));
                 totWeight += w;
@@ -48,52 +48,52 @@ namespace Ratings
             return ret / totWeight;
         }
 
-        public double getPlayerWeight(Player p) {
+        public float getPlayerWeight(Player p) {
             if (whiteDays.ContainsKey(p)) {
                 getWhiteElo();
-                return Math.Max(0.1, Math.Min(10, 1 / whiteDays[p].uncertainty)) / totWeight;
+                return Math.Max(0.1f, Math.Min(10, 1 / whiteDays[p].uncertainty)) / totWeight;
             }
             getBlackElo();
-            return Math.Max(0.1, Math.Min(10, 1 / blackDays[p].uncertainty)) / totWeight;
+            return Math.Max(0.1f, Math.Min(10, 1 / blackDays[p].uncertainty)) / totWeight;
         }
 
 
-        private double getWhiteGamma() {
-            return Math.Exp(getWhiteElo() * Math.Log(10) / 400.0);
+        private float getWhiteGamma() {
+            return (float)(Math.Exp(getWhiteElo() * Math.Log(10) / 400.0f));
         }
-        private double getBlackGamma() {
-            return Math.Exp(getBlackElo() * Math.Log(10) / 400.0);
+        private float getBlackGamma() {
+            return (float)(Math.Exp(getBlackElo() * Math.Log(10) / 400.0f));
         }
         //*/
         /*
-        private double getWhiteGamma(){
-            double ret = 0;
+        private float getWhiteGamma(){
+            float ret = 0;
             for (PlayerDay pd in whiteDays.Values){
                 ret += pd.getGamma();
             }
             return ret / whiteDays.Count;
         }
 
-        private double getBlackGamma(){
-            double ret = 0;
+        private float getBlackGamma(){
+            float ret = 0;
             for (PlayerDay pd in blackDays.Values){
                 ret += pd.getGamma();
             }
             return ret / blackDays.Count;
         }
 
-        private double getWhiteElo(){
+        private float getWhiteElo(){
             return Math.Log(getWhiteGamma()) * 400 / Math.Log(10);
         }
-        private double getBlackElo(){
+        private float getBlackElo(){
             return Math.Log(getBlackGamma()) * 400 / Math.Log(10);
         }
     //*/
-        public double getOpponentsAdjustedGamma(Player player) {
+        public float getOpponentsAdjustedGamma(Player player) {
 
-            double opponentElo;
-            double blackElo = getBlackElo();
-            double whiteElo = getWhiteElo();
+            float opponentElo;
+            float blackElo = getBlackElo();
+            float whiteElo = getWhiteElo();
             if ((whitePlayers.Contains(player))) {
                 opponentElo = blackElo + (-whiteElo + whiteDays[player].getElo())/* / Math.Sqrt(whiteDays.Count)*/;
             } else if (blackPlayers.Contains(player)) {
@@ -102,8 +102,8 @@ namespace Ratings
                 Trace.TraceError("No opponent for player " + player.id + ", since they're not in this game.");
                 return 0;
             }
-            double rval = Math.Pow(10, (opponentElo / 400.0));
-            if (rval == 0 || double.IsInfinity(rval) || double.IsNaN(rval)) {
+            float rval = (float)(Math.Pow(10, (opponentElo / 400.0)));
+            if (rval == 0 || float.IsInfinity(rval) || float.IsNaN(rval)) {
                 Trace.TraceError("WHR Failure: Gamma out of bounds");
                 return 0;
             }
@@ -121,7 +121,7 @@ namespace Ratings
             }
         }
 
-        public double getWhiteWinProbability() {
+        public float getWhiteWinProbability() {
             if (whiteDays.Count == 0 || blackDays.Count == 0 ) {
                 whitePlayers.ForEach(p=>p.fakeGame(this));
                 blackPlayers.ForEach(p=>p.fakeGame(this));
@@ -129,7 +129,7 @@ namespace Ratings
             return getWhiteGamma() / (getWhiteGamma() + getBlackGamma());
         }
 
-        public double getBlackWinProbability()
+        public float getBlackWinProbability()
         {
             if (whiteDays.Count == 0 || blackDays.Count == 0)
             {
