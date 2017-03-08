@@ -14,6 +14,8 @@ namespace Ratings
 
         public static readonly IEnumerable<RatingCategory> ratingCategories = Enum.GetValues(typeof(RatingCategory)).Cast<RatingCategory>();
 
+        public static readonly bool DISABLE_RATING_SYSTEMS = GlobalConst.Mode == ModeType.Live;
+
         private static HashSet<int> processedBattles = new HashSet<int>();
 
         public static bool Initialized { get; private set; }
@@ -22,6 +24,7 @@ namespace Ratings
 
         static RatingSystems()
         {
+            if (DISABLE_RATING_SYSTEMS) return;
             Initialized = false;
             ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating());
 
@@ -45,11 +48,13 @@ namespace Ratings
 
         public static IRatingSystem GetRatingSystem(RatingCategory category)
         {
+            if (DISABLE_RATING_SYSTEMS) return null;
             return whr[category];
         }
 
         public static void ProcessResult(SpringBattle battle)
         {
+            if (DISABLE_RATING_SYSTEMS) return;
             lock (processingLock)
             {
                 int battleID = -1;
