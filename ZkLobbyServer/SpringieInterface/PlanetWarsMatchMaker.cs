@@ -293,7 +293,7 @@ namespace ZeroKWeb
                         if ((account != null) && (account.FactionID == AttackingFaction.FactionID) && account.CanPlayerPlanetWars())
                         {
                             // remove existing user from other options
-                            //foreach (var aop in AttackOptions.Where(x=>x.PlanetID != targetPlanetId)) aop.Attackers.RemoveAll(x => x == userName);
+                            foreach (var aop in AttackOptions.Where(x=>x.PlanetID != targetPlanetId)) aop.Attackers.RemoveAll(x => x == userName);
 
                             // add user to this option
                             if (attackOption.Attackers.Count < attackOption.TeamSize && !attackOption.Attackers.Contains(userName))
