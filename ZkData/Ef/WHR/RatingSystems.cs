@@ -53,7 +53,7 @@ namespace Ratings
                 }
                 catch (Exception ex)
                 {
-                    Trace.TraceError("Error processing battle category (B" + battleID + ")" + ex);
+                    Trace.TraceError("Error processing battle (B" + battleID + ")" + ex);
                 }
             }
         }
