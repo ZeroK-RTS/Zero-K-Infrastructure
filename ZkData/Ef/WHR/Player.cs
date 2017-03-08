@@ -19,13 +19,13 @@ namespace Ratings
 
         }
 
-        double[,] __m = new double[100,100];
+        double[,] __m = new double[10,10];
 
         public double[,] generateHessian(List<PlayerDay> days, List<double> sigma2) {
 
             int n = days.Count;
             if (__m.GetLength(0) < n + 1) {
-                __m = new double[n + 100, n + 100];
+                __m = new double[n + 10, n + 10];
             }
             double[,] m = __m;
             for (int row = 0; row < n; row++) {
@@ -161,7 +161,7 @@ namespace Ratings
         }
         static double _maxChg = 3;
 
-        double[,] __cov = new double[100,100];
+        double[,] __cov = new double[10,10];
 
         public double[,] generateCovariance() {
             List<double> r = new List<double>();
@@ -205,7 +205,7 @@ namespace Ratings
             v[n - 1] = (-1 / d[n - 1]);
 
             if (__cov.GetLength(0) < n + 1) {
-                __cov = new double[n + 100,n + 100];
+                __cov = new double[n + 10,n + 10];
             }
             double[,] cov = __cov;
 
