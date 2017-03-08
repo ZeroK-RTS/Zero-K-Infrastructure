@@ -205,12 +205,18 @@ namespace ZkData
 
 
 
-        private static readonly CompiledExpression<Account, double> effectiveEloExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveElo).Is(e => e.Elo + (GlobalConst.EloWeightMax - e.EloWeight) * GlobalConst.EloWeightMalusFactor);
+        private static readonly CompiledExpression<Account, double> effectiveEloExpression = 
+                RatingSystems.DisableRatingSystems
+                ? DefaultTranslationOf<Account>.Property(e => e.EffectiveElo).Is(e => e.Elo + (GlobalConst.EloWeightMax - e.EloWeight) * GlobalConst.EloWeightMalusFactor)
+                : DefaultTranslationOf<Account>.Property(e => e.EffectiveElo).Is(e => e.GetRating(RatingCategory.Casual));
 
         public double EffectiveElo => effectiveEloExpression.Evaluate(this);
 
 
-        private static readonly CompiledExpression<Account, double> effectiveEloMmExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveMmElo).Is(e => e.EloMm + (GlobalConst.EloWeightMax - e.EloMmWeight) * GlobalConst.EloWeightMalusFactor);
+        private static readonly CompiledExpression<Account, double> effectiveEloMmExpression =
+                RatingSystems.DisableRatingSystems
+                ? DefaultTranslationOf<Account>.Property(e => e.EffectiveMmElo).Is(e => e.EloMm + (GlobalConst.EloWeightMax - e.EloMmWeight) * GlobalConst.EloWeightMalusFactor)
+                : DefaultTranslationOf<Account>.Property(e => e.EffectiveMmElo).Is(e => e.GetRating(RatingCategory.MatchMaking));
 
         public double EffectiveMmElo => effectiveEloMmExpression.Evaluate(this);
 
