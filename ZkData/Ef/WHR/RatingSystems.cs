@@ -29,14 +29,8 @@ namespace Ratings
                 lock (processingLock)
                 {
                     ZkDataContext data = new ZkDataContext();
-                    foreach (SpringBattle b in data.SpringBattles.Include(x => x.SpringBattleID)
-                            .Include(x => x.StartTime)
+                    foreach (SpringBattle b in data.SpringBattles
                             .Include(x => x.ResourceByMapResourceID)
-                            .Include(x => x.PlayerCount)
-                            .Include(x => x.IsMatchMaker)
-                            .Include(x => x.Mode)
-                            .Include(x => x.IsMission)
-                            .Include(x => x.HasBots)
                             .Include(x => x.SpringBattlePlayers)
                             .Include(x => x.SpringBattleBots)
                             .AsNoTracking()
