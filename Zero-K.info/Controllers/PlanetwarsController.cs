@@ -143,7 +143,7 @@ namespace ZeroKWeb.Controllers
                 db.SaveChanges();
 
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} has built a {1} on {2} planet {3}.",
-                                                            Global.Account,
+                                                            acc,
                                                             newBuilding.StructureType,
                                                             planet.Faction,
                                                             planet));
@@ -180,7 +180,7 @@ namespace ZeroKWeb.Controllers
                 var refund = toDestroy.StructureType.Cost * GlobalConst.SelfDestructRefund;
                 if (toDestroy.Account != null) toDestroy.Account.ProduceMetal(refund);
                 else faction?.ProduceMetal(refund);
-                db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} has demolished a {1} on {2}.", Global.Account, toDestroy.StructureType, planet));
+                db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} has demolished a {1} on {2}.", acc, toDestroy.StructureType, planet));
                 db.SaveChanges();
                 PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator(), db);
             }
@@ -428,12 +428,13 @@ namespace ZeroKWeb.Controllers
             {
                 if (String.IsNullOrWhiteSpace(newName)) return Content("Error: the planet must have a name.");
                 var db = new ZkDataContext();
+                var acc = db.Accounts.Find(Global.AccountID);
                 Planet planet = db.Planets.Single(p => p.PlanetID == planetID);
                 /*if ((Global.Account.AccountID != planet.OwnerAccountID) &&
                     !(Global.Account.FactionID == planet.OwnerFactionID && Global.Account.HasFactionRight(x => x.RightEditTexts) || Global.Account.IsZeroKAdmin))*/
                 if (!Global.IsModerator) return Content("Unauthorized");
                 db.SaveChanges();
-                db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} renamed planet {1} to {2}", Global.Account, planet, newName));
+                db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} renamed planet {1} to {2}", acc, planet, newName));
                 planet.Name = newName;
                 db.SaveChanges();
                 scope.Complete();
@@ -542,7 +543,7 @@ namespace ZeroKWeb.Controllers
                 }
                 structure.Account = acc;
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} has confiscated {1} structure {2} on {3}.",
-                                                            Global.Account,
+                                                            acc,
                                                             orgAc,
                                                             structure.StructureType,
                                                             planet));
