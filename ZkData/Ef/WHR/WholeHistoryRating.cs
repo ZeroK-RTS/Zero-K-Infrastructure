@@ -108,7 +108,7 @@ namespace Ratings
                 {
                     updateAction = (() => {
                         Trace.TraceInformation("Updating WHR ratings for last Battle");
-                        List<Player> players = latestBattle.SpringBattlePlayers.Select(p => GetPlayerByAccount(p.Account)).ToList();
+                        List<Player> players = latestBattle.SpringBattlePlayers.Select(p => getPlayerById(p.AccountID)).ToList();
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
                     });
