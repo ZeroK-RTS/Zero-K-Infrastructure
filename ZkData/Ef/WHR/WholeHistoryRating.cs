@@ -1,6 +1,7 @@
 // Implementation of WHR based on original by Pete Schwamb httpsin//github.com/goshrine/whole_history_rating
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -11,20 +12,25 @@ using ZkData;
 namespace Ratings
 {
 
-    public class WholeHistoryRating : IRatingSystem{
+    public class WholeHistoryRating : IRatingSystem
+    {
 
         const float DecayPerDaySquared = 300;
         const float RatingOffset = 1500;
+        const float MaxLadderUncertainty = 200; //200 for testing, smaller values recommended on live
 
 
-        IDictionary<int, Player> players;
+        IDictionary<int, Player> players = new Dictionary<int, Player>();
+        SortedDictionary<float, int> sortedPlayers = new SortedDictionary<float, int>();
+        IDictionary<int, float> playerKeys = new Dictionary<int, float>();
+        Random rand = new Random();
         float w2; //elo range expand per day squared
 
-        public WholeHistoryRating() {
+        public WholeHistoryRating()
+        {
             w2 = DecayPerDaySquared;
-            players = new Dictionary<int, Player>();
         }
-        
+
 
         public float GetPlayerRating(Account account)
         {
@@ -47,10 +53,10 @@ namespace Ratings
 
         public List<float> PredictOutcome(List<ICollection<Account>> teams)
         {
-            return teams.Select(t => 
-                    SetupGame(t.Select(x => x.AccountID).ToList(), 
-                            teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => x.AccountID)).ToList(), 
-                            true, 
+            return teams.Select(t =>
+                    SetupGame(t.Select(x => x.AccountID).ToList(),
+                            teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => x.AccountID)).ToList(),
+                            true,
                             ConvertDate(DateTime.Now)).getBlackWinProbability() * 2 / teams.Count
                     ).ToList();
         }
@@ -73,7 +79,32 @@ namespace Ratings
             }
         }
 
+        public List<Account> GetTopPlayers(int count)
+        {
+            int counter = 0;
+            ZkDataContext db = new ZkDataContext();
+            List<Account> retval = new List<Account>();
+            foreach (var pair in sortedPlayers)
+            {
+                Account acc = db.Accounts.Where(a => a.AccountID == pair.Value).FirstOrDefault();
+                if (GetPlayerRatingUncertainty(acc) <= MaxLadderUncertainty)
+                {
+                    if (counter++ >= count) break;
+                    retval.Add(acc);
+                }
+            }
+            return retval;
+        }
+
         //implementation specific
+
+        private void UpdateRanking(Player p)
+        {
+            float rating = -p.days.Last().getElo() + 0.1f * (float)rand.NextDouble();
+            if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
+            playerKeys[p.id] = rating;
+            sortedPlayers[rating] = p.id;
+        }
 
         private SpringBattle latestBattle, lastUpdate;
 
@@ -100,22 +131,27 @@ namespace Ratings
                     updateAction = (() => {
                         Trace.TraceInformation("Initializing WHR ratings for " + battlesRegistered + " battles, this will take some time..");
                         runIterations(50);
+                        players.Values.ForEach(p => UpdateRanking(p));
                     });
                 }
                 else if (latestBattle.StartTime.Subtract(lastUpdate.StartTime).TotalDays > 0.5d)
                 {
-                    updateAction = (() => {
+                    updateAction = (() =>
+                    {
                         Trace.TraceInformation("Updating all WHR ratings");
                         runIterations(1);
+                        players.Values.ForEach(p => UpdateRanking(p));
                     });
                 }
                 else if (!latestBattle.Equals(lastUpdate))
                 {
-                    updateAction = (() => {
+                    updateAction = (() =>
+                    {
                         Trace.TraceInformation("Updating WHR ratings for last Battle");
                         IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Select(p => getPlayerById(p.AccountID));
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
+                        players.ForEach(p => UpdateRanking(p));
                     });
                 }
                 else
@@ -141,7 +177,7 @@ namespace Ratings
                 });
                 lastUpdate = latestBattle;
             }
-            
+
         }
 
         //private
@@ -156,22 +192,27 @@ namespace Ratings
             return getPlayerById(acc.AccountID);
         }
 
-        private Player getPlayerById(int id) {
-            if (!players.ContainsKey(id)) {
+        private Player getPlayerById(int id)
+        {
+            if (!players.ContainsKey(id))
+            {
                 players.Add(id, new Player(id, w2));
             }
             return players[id];
         }
 
-        private List<float[]> getPlayerRatings(int id) {
+        private List<float[]> getPlayerRatings(int id)
+        {
             Player player = getPlayerById(id);
-            return player.days.Select(d=> new float[] { d.day, (d.getElo()), ((d.uncertainty * 100)) }).ToList();
+            return player.days.Select(d => new float[] { d.day, (d.getElo()), ((d.uncertainty * 100)) }).ToList();
         }
 
-        private Game SetupGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step) {
+        private Game SetupGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step)
+        {
 
             // Avoid self-played games (no info)
-            if (black.Equals(white)) {
+            if (black.Equals(white))
+            {
                 Trace.TraceError("White == Black");
                 return null;
             }
@@ -187,41 +228,49 @@ namespace Ratings
             }
 
 
-            List<Player> white_player = white.Select(p=> getPlayerById(p)).ToList();
-            List<Player> black_player = black.Select(p=> getPlayerById(p)).ToList();
+            List<Player> white_player = white.Select(p => getPlayerById(p)).ToList();
+            List<Player> black_player = black.Select(p => getPlayerById(p)).ToList();
             Game game = new Game(black_player, white_player, blackWins, time_step);
             return game;
         }
 
-        private Game createGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step) {
+        private Game createGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step)
+        {
             Game game = SetupGame(black, white, blackWins, time_step);
             return game != null ? AddGame(game) : null;
         }
 
-        private Game AddGame(Game game) {
-            game.whitePlayers.ForEach(p=>p.AddGame(game));
-            game.blackPlayers.ForEach(p=>p.AddGame(game));
-            
+        private Game AddGame(Game game)
+        {
+            game.whitePlayers.ForEach(p => p.AddGame(game));
+            game.blackPlayers.ForEach(p => p.AddGame(game));
+
             return game;
         }
 
-        private void runIterations(int count) {
-            for (int i = 0; i < count; i++) {
+        private void runIterations(int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
                 runSingleIteration();
             }
-            foreach (Player p in players.Values) {
+            foreach (Player p in players.Values)
+            {
                 p.updateUncertainty();
             }
         }
 
-        private void printStats() {
+        private void printStats()
+        {
             float sum = 0;
             int bigger = 0;
             int total = 0;
             float lowest = 0;
             float highest = 0;
-            foreach (Player p in players.Values) {
-                if (p.days.Count > 0) {
+            foreach (Player p in players.Values)
+            {
+                if (p.days.Count > 0)
+                {
                     total++;
                     float elo = p.days[p.days.Count - 1].getElo();
                     sum += elo;
@@ -238,8 +287,10 @@ namespace Ratings
             Trace.TraceInformation("Amount < 0in " + (total - bigger));
         }
 
-        private void runSingleIteration() {
-            foreach (Player p in players.Values) {
+        private void runSingleIteration()
+        {
+            foreach (Player p in players.Values)
+            {
                 p.runOneNewtonIteration();
             }
         }
