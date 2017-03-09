@@ -123,6 +123,7 @@ namespace ZeroKWeb.Controllers
 
             var rt = db.RoleTypes.Single(x => x.RoleTypeID == roleTypeID);
 
+            if (Global.Account.Level < GlobalConst.MinLevelForForumVote) return Content($"You need to be level {GlobalConst.MinLevelForForumVote} to vote");
             if (!rt.IsClanOnly && GlobalConst.PlanetWarsMode == PlanetWarsModes.AllOffline) return Content("Round over, no nominations can be made");
             if (rt.RestrictFactionID != null && rt.RestrictFactionID != Global.FactionID) throw new ApplicationException("Invalid faction");
             if (!rt.IsClanOnly && Global.FactionID == 0) throw new ApplicationException("No faction");
@@ -167,25 +168,28 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult PollVote(int pollID)
         {
-            var key = Request.Form.AllKeys.Where(x => !string.IsNullOrEmpty(x)).First(x => x.StartsWith("option"));
-            var optionID = Convert.ToInt32(key.Substring(6));
-
             var db = new ZkDataContext();
             var poll = Account.ValidPolls(Global.Account, db).Single(x => x.PollID == pollID);
 
-            if (!poll.PollOptions.Any(x => x.OptionID == optionID)) return Content("Invalid option");
-
-            var entry = poll.PollVotes.SingleOrDefault(x => x.AccountID == Global.AccountID);
-            if (entry == null)
+            if (Global.Account.Level >= GlobalConst.MinLevelForForumVote)
             {
-                entry = new PollVote() { PollID = poll.PollID, AccountID = Global.AccountID };
-                poll.PollVotes.Add(entry);
-            }
-            entry.OptionID = optionID;
+                var key = Request.Form.AllKeys.Where(x => !string.IsNullOrEmpty(x)).First(x => x.StartsWith("option"));
+                var optionID = Convert.ToInt32(key.Substring(6));
 
-            db.SaveChanges();
-            foreach (var opt in poll.PollOptions) opt.Votes = opt.PollVotes.Count(x => x.PollID == poll.PollID);
-            db.SaveChanges();
+                if (!poll.PollOptions.Any(x => x.OptionID == optionID)) return Content("Invalid option");
+
+                var entry = poll.PollVotes.SingleOrDefault(x => x.AccountID == Global.AccountID);
+                if (entry == null)
+                {
+                    entry = new PollVote() { PollID = poll.PollID, AccountID = Global.AccountID };
+                    poll.PollVotes.Add(entry);
+                }
+                entry.OptionID = optionID;
+
+                db.SaveChanges();
+                foreach (var opt in poll.PollOptions) opt.Votes = opt.PollVotes.Count(x => x.PollID == poll.PollID);
+                db.SaveChanges();
+            }
 
             return PartialView("PollView", poll);
         }
