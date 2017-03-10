@@ -348,23 +348,22 @@ namespace Fixer
 
         static void Main(string[] args)
         {
+            return;
             GlobalConst.Mode = ModeType.Live;
-            
-            var db = new ZkDataContext();
 
             //var mmBats = db.SpringBattles.Where(x => x.IsMatchMaker);
             //var suc = mmBats.Count(x => x.Duration > 300 && x.PlayerCount > 2);
             //var fail = mmBats.Count(x => x.Duration < 300);
-            var weeke= db.SpringBattles.Count(x => x.StartTime >= new DateTime(2017, 2, 19) && x.StartTime <= new DateTime(2017, 2, 20) && x.Duration > 300 && x.PlayerCount > 2);
 
             //Console.WriteLine(test);
 
 
             //RenameOldAccounts();
-            return;
-            var ns = new NubSimulator();
-            ns.SpawnMany();
-            Console.ReadLine();
+
+            //var ns = new NubSimulator();
+            //ns.SpawnMany();
+            //Console.ReadLine();
+
             /*using (var archive = ArchiveFactory.Open(target))
             {
                 long done = 0;
@@ -380,34 +379,13 @@ namespace Fixer
 
 
             //WikiPortingMW.DoStuff();
-            return;
-
+            
             //FixStuff();
             //MigrateDatabase();
             //return;
 
             //DeleteOldUsers();
             //return;
-
-            /*
-            //ImportWiki();
-            var db = new ZkDataContext();
-            var wikis = db.ForumCategories.First(x => x.IsWiki).ForumThreads.Select(x => new { key=x.WikiKey, text= x.ForumPosts.First().Text}).ToList();
-
-            var parser = new ForumWikiParser();
-            for (int i = 0; i < 100; i++)
-            {
-                var sw = Stopwatch.StartNew();
-                foreach (var w in wikis)
-                {
-                    //Console.WriteLine(w.key);
-                    parser.ProcessToHtml(w.text, null);
-                }
-                sw.Stop();
-                Console.WriteLine("total: {0}ms, item: {1:D}ms", sw.ElapsedMilliseconds, sw.ElapsedMilliseconds/wikis.Count);
-            }*/
-
-
 
             //GetGameStats(new DateTime(2014,12,1));
             //Thread.Sleep(10000);
@@ -449,17 +427,17 @@ namespace Fixer
 
             //PickHomworldOwners();
 
-            //PlanetwarsFixer.PurgeGalaxy(24, false, true);
-            //PlanetwarsFixer.RandomizeMaps(24);
-            //SetPlanetTeamSizes();
+            PlanetwarsFixer.PurgeGalaxy(24, false, true);
+            PlanetwarsFixer.RandomizeMaps(24);
+            PlanetwarsFixer.SetPlanetTeamSizes(24);
 
             //RandomizePlanetOwners(24);
             //GenerateStructures(24);
-            //PlanetwarsFixer.GenerateArtefacts(24, new int[] { 3940, 3949, 3954, 3929, 3956 });
+            PlanetwarsFixer.GenerateArtefacts(24, new int[] { 3940, 3949, 3954, 3929, 3956 });
 
             //SwapPlanetOwners(3948, 3955);
             //SwapPlanetOwners(3973, 3932);
-            //PlanetwarsFixer.AddWormholes();
+            PlanetwarsFixer.AddWormholes();
             //PlanetwarsFixer.RemoveTechStructures(true, true);
             //StartGalaxy(24);
 
@@ -527,23 +505,6 @@ namespace Fixer
             cloner.CloneAllTables();
         }
 
-        static void SetPlanetTeamSizes()
-        {
-            var db = new ZkDataContext();
-            var gal = db.Galaxies.First(x => x.IsDefault);
-            var planets = gal.Planets.ToList().OrderBy(x => x.Resource.MapDiagonal).ToList();
-            var cnt = planets.Count;
-            int num = 0;
-            foreach (var p in planets)
-            {
-                //if (num < cnt*0.15) p.TeamSize = 1;else 
-                if (num < cnt * 0.80) p.TeamSize = 2;
-                //else if (num < cnt*0.85) p.TeamSize = 3;
-                else p.TeamSize = 3;
-                num++;
-            }
-            db.SaveChanges();
-        }
 
         public static void RecalculateKudos()
         {
