@@ -303,7 +303,7 @@ namespace ZeroKWeb
 
                                 await conus.SendCommand(new PwJoinPlanetSuccess() { PlanetID = targetPlanetId });
 
-                                if (attackOption.Attackers.Count == attackOption.TeamSize) StartChallenge(attackOption);
+                                if (attackOption.Attackers.Count == attackOption.TeamSize) await StartChallenge(attackOption);
                                 else await UpdateLobby();
                             }
                         }
@@ -439,12 +439,13 @@ namespace ZeroKWeb
         }
 
 
-        private void StartChallenge(AttackOption attackOption)
+        private async Task StartChallenge(AttackOption attackOption)
         {
             Challenge = attackOption;
             ChallengeTime = DateTime.UtcNow;
             AttackOptions.Clear();
-            UpdateLobby();
+            await UpdateLobby();
+            await server.Broadcast(attackOption.Attackers, new PwAttackingPlanet() { PlanetID = attackOption.PlanetID });
         }
 
 
