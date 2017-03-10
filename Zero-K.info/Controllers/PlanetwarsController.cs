@@ -780,7 +780,7 @@ namespace ZeroKWeb.Controllers
             if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars() && planet.CanMatchMakerPlay(Global.Account.Faction))
             {
                 Global.Server.PlanetWarsMatchMaker.AddAttackOption(planet);
-                Global.Server.PlanetWarsMatchMaker.JoinPlanet(Global.Account.Name, planet.PlanetID);
+                Global.Server.RequestJoinPlanet(Global.Account.Name, planet.PlanetID);
             }
             return RedirectToAction("Planet", new { id = planetID });
         }
@@ -801,7 +801,7 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult MatchMakerJoin(int planetID)
         {
-            Global.Server.PlanetWarsMatchMaker.JoinPlanet(Global.Account.Name,  planetID);
+            Global.Server.RequestJoinPlanet(Global.Account.Name,  planetID);
             return MatchMaker();
         }
     }

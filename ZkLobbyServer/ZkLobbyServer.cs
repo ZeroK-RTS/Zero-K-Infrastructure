@@ -270,6 +270,12 @@ namespace ZkLobbyServer
                 });
         }
 
+        public async Task RequestJoinPlanet(string name, int planetID)
+        {
+            var conus = ConnectedUsers.Get(name);
+            if (conus != null) await conus.SendCommand(new PwRequestJoinPlanet() { PlanetID = planetID });
+        }
+
         public Task GhostPm(string name, string text)
         {
             return

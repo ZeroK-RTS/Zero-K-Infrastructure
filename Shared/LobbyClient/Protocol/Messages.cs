@@ -641,6 +641,13 @@ namespace LobbyClient
     }
 
     [Message(Origin.Server)]
+    public class PwRequestJoinPlanet
+    {
+        public int PlanetID { get; set; }
+    }
+
+
+    [Message(Origin.Server)]
     public class PwJoinPlanetSuccess
     {
         public int PlanetID { get; set; }

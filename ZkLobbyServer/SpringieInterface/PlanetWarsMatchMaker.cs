@@ -159,7 +159,7 @@ namespace ZeroKWeb
             return command;
         }
 
-        public async Task JoinPlanet(string name, int planetId)
+        private async Task JoinPlanet(string name, int planetId)
         {
             try
             {
