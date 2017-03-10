@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Transactions;
 using System.Web.Mvc;
+using System.Data.Entity;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -21,7 +22,7 @@ namespace ZeroKWeb.Controllers
             Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             if (acc.Faction == null) return Content("Join some faction first");
             Planet planet = db.Planets.Single(x => x.PlanetID == planetID);
-            bool accessible = (useWarp == true) ? planet.CanBombersWarp(acc.Faction) : planet.CanBombersAttack(acc.Faction);
+            bool accessible =(useWarp == true) ? planet.CanBombersWarp(acc.Faction) : planet.CanBombersAttack(acc.Faction);
             if (!accessible) return Content("You cannot attack here");
             if (Global.Server.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot bomb planet");
 
@@ -31,6 +32,7 @@ namespace ZeroKWeb.Controllers
             if (useWarp == true) avail = Math.Min(acc.GetWarpAvailable(), avail);
 
             var capa = acc.GetBomberCapacity();
+
             if (avail > capa) return Content("Too many bombers, increase bomber fleet size capacity");
 
             if (avail > 0)
@@ -53,12 +55,12 @@ namespace ZeroKWeb.Controllers
                 int ipKillCount = (int)Math.Floor(ipKillChance + r.NextDouble());
 
                 List<PlanetStructure> structs = planet.PlanetStructures.Where(x => x.StructureType.IsBomberDestructible).ToList();
-                var bombed = new List<PlanetStructure>();
+                var bombed = new List<StructureType>();
                 while (structs.Count > 0 && strucKillCount > 0)
                 {
                     strucKillCount--;
                     PlanetStructure s = structs[r.Next(structs.Count)];
-                    bombed.Add(s);
+                    bombed.Add(s.StructureType);
                     structs.Remove(s);
                     db.PlanetStructures.DeleteOnSubmit(s);
                 }
@@ -84,7 +86,7 @@ namespace ZeroKWeb.Controllers
                                useWarp == true ? "They attacked by warp. " : "",
                                ipKillAmmount
                            };
-                args.AddRange(bombed.Select(x => x.StructureType));
+                args.AddRange(bombed);
 
                 string str;
                 if (selfbomb) str = "{0} of {1} bombed own planet {3} using {4} bombers against {5} defenses. {6}Ground armies lost {7} influence";
@@ -93,7 +95,7 @@ namespace ZeroKWeb.Controllers
                 {
                     str += " and ";
                     int counter = 8;
-                    foreach (PlanetStructure b in bombed)
+                    foreach (var b in bombed)
                     {
                         str += "{" + counter + "}" + ", ";
                         counter++;
@@ -778,7 +780,7 @@ namespace ZeroKWeb.Controllers
             if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars() && planet.CanMatchMakerPlay(Global.Account.Faction))
             {
                 Global.Server.PlanetWarsMatchMaker.AddAttackOption(planet);
-                Global.Server.PlanetWarsMatchMaker.JoinPlanet(Global.Account.Name, planet.PlanetID);
+                Global.Server.RequestJoinPlanet(Global.Account.Name, planet.PlanetID);
             }
             return RedirectToAction("Planet", new { id = planetID });
         }
@@ -799,7 +801,7 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult MatchMakerJoin(int planetID)
         {
-            Global.Server.PlanetWarsMatchMaker.JoinPlanet(Global.Account.Name,  planetID);
+            Global.Server.RequestJoinPlanet(Global.Account.Name,  planetID);
             return MatchMaker();
         }
     }

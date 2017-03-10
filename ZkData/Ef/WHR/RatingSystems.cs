@@ -41,6 +41,7 @@ namespace Ratings
                     {
                         ProcessResult(b);
                     }
+                    whr.Values.ForEach(w => w.UpdateRatings());
                     Initialized = true;
                 }
             });

@@ -38,8 +38,11 @@ namespace Ratings
         {
             if (!RatingSystems.Initialized) return float.PositiveInfinity;
             UpdateRatings();
-            ICollection<float[]> ratings = getPlayerRatings(account.AccountID);
-            return ratings.Count > 0 ? ratings.Last()[2] : float.PositiveInfinity;
+            Player player = getPlayerById(account.AccountID);
+            if (player.days.Count > 0) {
+                return player.days.Last().uncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - player.days.Last().day) * w2) ; 
+            }
+            return float.PositiveInfinity;
         }
 
         public List<float> PredictOutcome(List<ICollection<Account>> teams)
@@ -56,16 +59,17 @@ namespace Ratings
 
         public void ProcessBattle(SpringBattle battle)
         {
-            if (++battlesRegistered % 1000 == 0)
-            {
-                Trace.TraceInformation(battlesRegistered + " battles registered for WHR");
-            }
             latestBattle = battle;
             ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam).Select(p => p.AccountID).ToList();
             ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam).Select(p => p.AccountID).ToList();
             if (winners.Count > 0 && losers.Count > 0)
             {
                 createGame(losers, winners, false, ConvertDate(battle.StartTime));
+                if (RatingSystems.Initialized)
+                {
+                    Trace.TraceInformation(battlesRegistered + " battles registered for WHR");
+                    UpdateRatings();
+                }
             }
         }
 
@@ -94,7 +98,7 @@ namespace Ratings
                 if (lastUpdate == null)
                 {
                     updateAction = (() => {
-                        Trace.TraceInformation("Initializing all WHR ratings, this will take some time..");
+                        Trace.TraceInformation("Initializing WHR ratings for " + battlesRegistered + " battles, this will take some time..");
                         runIterations(50);
                     });
                 }
