@@ -143,22 +143,20 @@ namespace ChobbyLauncher
         }
 
 
-        public Task<bool> Run(ulong initialConnectLobbyID, TextWriter writer)
+        public bool Run(ulong initialConnectLobbyID, TextWriter writer)
         {
             Status = "Connecting to steam API";
-            var steam = new SteamClientHelper();
-            steam.ConnectToSteam();
-
-            Status = "Starting";
-            var chobyl = new ChobbylaLocalListener(this, steam, initialConnectLobbyID);
-            var loopbackPort = chobyl.StartListening();
-
-            return LaunchChobby(paths, internalName, engine, loopbackPort, writer).ContinueWith(x =>
+            using (var steam = new SteamClientHelper())
             {
-                steam?.Dispose();
-                return x.Result;
-            });
+                steam.ConnectToSteam();
 
+                Status = "Starting";
+                var chobyl = new ChobbylaLocalListener(this, steam, initialConnectLobbyID);
+                var loopbackPort = chobyl.StartListening();
+
+                var ret = LaunchChobby(paths, internalName, engine, loopbackPort, writer).Result;
+                return ret;
+            }
         }
 
 
