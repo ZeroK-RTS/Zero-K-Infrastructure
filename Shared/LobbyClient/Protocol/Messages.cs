@@ -653,6 +653,13 @@ namespace LobbyClient
         public int PlanetID { get; set; }
     }
 
+    [Message(Origin.Server)]
+    public class PwAttackingPlanet
+    {
+        public int PlanetID { get; set; }
+    }
+
+
 
     [Message(Origin.Client)]
     public class SetAccountRelation
