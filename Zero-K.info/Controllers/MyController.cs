@@ -151,7 +151,7 @@ namespace ZeroKWeb.Controllers
                         if (unlockId > 0)
                         {
                             CommanderDecorationSlot decSlot = db.CommanderDecorationSlots.Single(x => x.CommanderDecorationSlotID == slotId);
-                            Unlock unlock = db.Unlocks.Single(x => x.UnlockID == unlockId);
+                            Unlock unlock = db.Unlocks.Single(x => x.UnlockID == unlockId && x.UnlockType == UnlockTypes.Decoration);
 
                             if (!unlocks.Any(x => x.Unlock.UnlockID == unlock.UnlockID)) return Content("WTF get lost!");
                             if (!string.IsNullOrEmpty(unlock.LimitForChassis))

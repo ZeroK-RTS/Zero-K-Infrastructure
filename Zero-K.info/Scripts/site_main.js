@@ -50,9 +50,11 @@ function DynDialog(url, title) {
             title: title,
             width: 800,
             maxHeight: 600,
-            open: function() {
-                $('.js_dialog').scrollTop(0);
-            },
+            open: function () {
+                setTimeout(function() {
+                    $('.js_dialog').scrollTop(0);
+                }, 500);
+           },
             buttons: { "Close": function() { $(this).dialog("close"); } }
         });
     });
@@ -191,7 +193,9 @@ function GlobalPageInit(root) {
             width: 800,
             maxHeight: 600,
             open: function() {
-                $('.js_dialog').scrollTop(0);
+                setTimeout(function () {
+                    $('.js_dialog').scrollTop(0);
+                }, 500);
             },
             buttons: { "Close": function() {$(this).dialog("close"); } }
         }
@@ -318,7 +322,9 @@ function GlobalPageInit(root) {
                                 });
                             //if (!$(trigger).is(":visible")) window.setTimeout(refresh, 2000);
                         };
-                        $('.js_dialog').scrollTop(0);
+                        setTimeout(function () {
+                            $('.js_dialog').scrollTop(0);
+                        }, 500);
                         //window.setTimeout(refresh, 2000);
                     },
                     close: function() {
