@@ -66,7 +66,15 @@ namespace ZeroKWeb.SpringieInterface
                     if (attacker == defender) defender = null;
 
                     ret.ModOptions["attackingFaction"] = attacker.Shortcut;
-                    if (defender != null) ret.ModOptions["defendingFaction"] = defender.Shortcut;
+                    ret.ModOptions["attackingFactionName"] = attacker.Name;
+                    ret.ModOptions["attackingFactionColor"] = attacker.Color;
+                    if (defender != null)
+                    {
+                        ret.ModOptions["defendingFaction"] = defender.Shortcut;
+                        ret.ModOptions["defendingFactionName"] = defender.Name;
+                        ret.ModOptions["defendingFactionColor"] = defender.Color;
+
+                    }
                     ret.ModOptions["planet"] = planet.Name;
                 }
 
