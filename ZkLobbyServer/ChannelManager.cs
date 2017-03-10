@@ -68,7 +68,8 @@ namespace ZkLobbyServer
 
         bool CanJoin(Account acc, string channel)
         {
-            if (channel == GlobalConst.ModeratorChannel) return acc.AdminLevel >= AdminLevel.Moderator;
+            if (channel.StartsWith(PartyManager.PartyChannelPrefix)) return server.PartyManager.CanJoinChannel(acc.Name, channel);
+            else if (channel == GlobalConst.ModeratorChannel) return acc.AdminLevel >= AdminLevel.Moderator;
             else if (channel == GlobalConst.ErrorChannel) return acc.AdminLevel >= AdminLevel.SuperAdmin;
             else if (channel == GlobalConst.Top20Channel) return IsTop20(acc.AccountID);
             else if (channel == GlobalConst.CoreChannel) return acc.DevLevel >= DevLevel.RetiredCoreDeveloper;
