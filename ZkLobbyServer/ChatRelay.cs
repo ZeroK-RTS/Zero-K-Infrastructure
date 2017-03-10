@@ -17,12 +17,18 @@ namespace ZkLobbyServer
     {
         private readonly List<string> channels;
         private readonly List<IChatRelaySource> sources = new List<IChatRelaySource>();
+
+        
+        private readonly List<string> restrictedChannels = new List<string>() { GlobalConst.ModeratorChannel, GlobalConst.CoreChannel }; // restricted channels can only be relayed between restricted sources
+        private readonly List<IChatRelaySource> restrictedSources = new List<IChatRelaySource>();
+
         private ZkLobbyServer server;
         private DiscordRelaySource discordZkRelay;
         private DiscordRelaySource discordSpringRelay;
         private Timer timer;
         private string lastZkTopic;
         private SpringRelaySource springRelay;
+        private ZklsRelaySource zklsRelay;
 
         private const ulong DiscordZkServerID = 278805140708786177;
         private const ulong DiscordSpringServerID = 223585969956323328;
@@ -36,11 +42,17 @@ namespace ZkLobbyServer
 
             springRelay = new SpringRelaySource(channels);
             sources.Add(springRelay);
-            sources.Add(new ZklsRelaySource(zkServer));
+            zklsRelay = new ZklsRelaySource(zkServer);
+            sources.Add(zklsRelay);
             discordZkRelay = new DiscordRelaySource(discord, DiscordZkServerID, SaySource.Discord);
             sources.Add(discordZkRelay);
             discordSpringRelay = new DiscordRelaySource(discord, DiscordSpringServerID, SaySource.DiscordSpring);
             sources.Add(discordSpringRelay);
+
+
+            restrictedSources.Add(zklsRelay);
+            restrictedSources.Add(discordZkRelay);
+
 
             discord.Connect(new Secrets().GetNightwatchDiscordToken(), TokenType.Bot);
 
@@ -89,6 +101,9 @@ namespace ZkLobbyServer
                             .Select(x => $"{x.Mode.Description()} {x.NonSpectatorCount}+{x.SpectatorCount}/{x.MaxPlayers} {x.MapName} {x.Title}")));
 
                     source.SendPm(msg.User, sb.ToString());
+                } else if (restrictedChannels.Contains(msg.Channel))
+                {
+                    foreach (var s in restrictedSources.Where(x => x != source)) s.SendMessage(msg);
                 }
                 else
                 {

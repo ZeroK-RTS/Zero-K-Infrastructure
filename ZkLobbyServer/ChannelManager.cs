@@ -52,7 +52,7 @@ namespace ZkLobbyServer
         public List<string> GetDefaultChannels(Account acc) {
             if (acc.IsBot) return new List<string>() { "bots" };
 
-            var ret = new List<string>() { "zk", GlobalConst.ModeratorChannel, GlobalConst.Top20Channel };
+            var ret = new List<string>() { "zk", GlobalConst.ModeratorChannel, GlobalConst.Top20Channel, GlobalConst.CoreChannel };
             if (acc.Clan != null) ret.Add(acc.Clan.GetClanChannel());
             if (acc.Faction != null && GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline) ret.Add(acc.Faction.Shortcut);
 
