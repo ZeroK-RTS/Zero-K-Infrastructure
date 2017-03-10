@@ -120,7 +120,6 @@ namespace ZkData
         public int Xp { get; set; }
         public int Level { get; set; }
         public int? ClanID { get; set; }
-        public DateTime? LastNewsRead { get; set; }
         public int? FactionID { get; set; }
         public bool IsDeleted { get; set; }
         [StringLength(50)]
