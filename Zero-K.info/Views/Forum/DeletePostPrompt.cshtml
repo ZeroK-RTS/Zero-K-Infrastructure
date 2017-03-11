@@ -1,0 +1,62 @@
+﻿@using ZkData
+@model ForumPost
+@{
+    Page.Title = "Delete post from " + Model.ForumThread.Title;
+    bool isFirstPost = Model.ForumThread.ForumPosts.OrderBy(x => x.Created).First() == Model;
+    var p = Model;
+}
+
+<h2>Delete post</h2>
+<br />
+<div>
+    <table width='100%'>
+        <tr class="forumRow">
+            <td class="forumPostHead" valign="top">
+                <table>
+                    <tr>
+                        <td>
+                            @Html.AccountAvatar(p.Account)<br />
+                            @Html.PrintBadges(p.Account, 64)
+                        </td>
+                        <td valign='top'>
+                            @Html.PrintAccount(p.Account)<br />
+                            <small>
+                                <span nicetitle="@p.Created">@p.Created.ToAgoString()</span>
+                                @if (p.ForumPostEdits.Any())
+                                {
+                                    var lastEdit = p.ForumPostEdits.OrderByDescending(x => x.EditTime).First();
+                                    <br />
+                                    <a nicetitle="@lastEdit.EditTime" href="@Url.Action("Index", "PostHistory", new { id = p.ForumPostID })">
+                                        (edited @lastEdit.EditTime.ToAgoString())
+                                    </a>
+                                }
+                            </small>
+                            <br />
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+            <td valign="top" class="forumPostText" id="@p.ForumPostID">
+                <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
+                @Html.BBCodeCached(p)
+                <br />
+                <div id="@("ForumPostVoteForm" + p.ForumPostID)" style="float: right; clear: both;">
+                    @Html.PrintPostRating(p)
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<br />
+<div>
+    <form method="post" action="@Url.Action("DeletePost", "Forum", new { postID = Model.ForumPostID })">
+        @Html.AntiForgeryToken()
+        @if (isFirstPost)
+        {
+            <span>Delete thread</span> @Html.CheckBox("deleteThread")
+            <br/>
+        }
+        <input type="submit" value="DELETE" class="js_confirm" />
+    </form>
+</div>
