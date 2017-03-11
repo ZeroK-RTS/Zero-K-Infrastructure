@@ -28,7 +28,7 @@ namespace ZeroKWeb
                 requests.Values.Where(x => (x != null) && (x.IP == ip) && (x.RequestEnd >= limit))
                     .Select(x => x.RequestEnd < now ? x.RequestEnd.Subtract(x.RequestStart > limit ? x.RequestStart : limit).TotalSeconds : now.Subtract(x.RequestStart > limit ? x.RequestStart : limit).TotalSeconds)
                     .Sum();
-            if (totalTime > 7.1) return false;
+            if (totalTime > 11) return false;
             return true;
         }
 
