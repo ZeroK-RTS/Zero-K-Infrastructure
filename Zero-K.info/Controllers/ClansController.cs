@@ -120,6 +120,7 @@ namespace ZeroKWeb.Controllers
             }
 
             db.SaveChanges();
+            Global.Server.PublishAccountUpdate(acc);
             return clan;
         }
 
@@ -161,6 +162,7 @@ namespace ZeroKWeb.Controllers
                     }
 
                     db.SaveChanges();
+                    Global.Server.PublishAccountUpdate(acc);
                     return RedirectToAction("Detail", new { id = clan.ClanID });
                 }
             }
@@ -181,6 +183,7 @@ namespace ZeroKWeb.Controllers
             PerformLeaveClan(accountID);
             db.SaveChanges();
             PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator());
+            Global.Server.PublishAccountUpdate(kickee_acc);
             return RedirectToAction("Detail", new { id = Global.Account.ClanID });
         }
 
@@ -194,7 +197,7 @@ namespace ZeroKWeb.Controllers
             //{
             ZkDataContext db = new ZkDataContext();
             bool created = clan.ClanID == 0; // existing clan vs creation
-
+            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             //return Content(noFaction ? "true":"false");
             if (noFaction) clan.FactionID = null;
 
@@ -322,7 +325,6 @@ namespace ZeroKWeb.Controllers
 
                 db.SaveChanges();
 
-                var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
                 acc.ClanID = clan.ClanID;
 
                 // we created a new clan, set self as founder and rights
@@ -346,6 +348,7 @@ namespace ZeroKWeb.Controllers
                 db.SaveChanges();
             }
 
+            Global.Server.PublishAccountUpdate(acc);
             //scope.Complete();
             Global.Server.ChannelManager.AddClanChannel(clan);;
             Global.Server.SetTopic(clan.GetClanChannel(), clan.SecretTopic, Global.Account.Name);
