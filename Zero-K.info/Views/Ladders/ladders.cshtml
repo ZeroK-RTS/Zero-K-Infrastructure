@@ -35,7 +35,7 @@
                     @:</span><br /><span style="font-size: small">
                     }
                 <text>
-                    @(acct.CasualRank) ) @Html.PrintAccount(acct) - @(Math.Round(RatingSystems.DisableRatingSystems ? acct.EffectiveElo : acct.GetRating(RatingCategory.Casual))))<br />
+                    @(acct.CasualRank) ) @Html.PrintAccount(acct) - @(Math.Round(RatingSystems.DisableRatingSystems ? acct.EffectiveElo : acct.GetRating(RatingCategory.Casual)))<br />
                 </text>
             }
         </td>
