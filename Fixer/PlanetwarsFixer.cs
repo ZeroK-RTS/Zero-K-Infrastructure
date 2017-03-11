@@ -435,5 +435,24 @@ namespace Fixer
             }
             db.SaveChanges();
         }
+
+        public static void SetPlanetTeamSizes(int galaxyID)
+        {
+            var db = new ZkDataContext();
+            var gal = db.Galaxies.First(x => x.GalaxyID == galaxyID);
+            var planets = gal.Planets.ToList().OrderBy(x => x.Resource.MapDiagonal).ToList();
+            var cnt = planets.Count;
+            int num = 0;
+            foreach (var p in planets)
+            {
+                //if (num < cnt*0.15) p.TeamSize = 1;else 
+                if (num < cnt * 0.80) p.TeamSize = 2;
+                //else if (num < cnt*0.85) p.TeamSize = 3;
+                else p.TeamSize = 3;
+                num++;
+            }
+            db.SaveChanges();
+        }
+
     }
 }

@@ -7,7 +7,7 @@
 <span style="float:left;">@Html.AccountAvatar(u)<br/>@Html.PrintBadges(u, 64)</span><b>@Html.PrintAccount(u)</b><br/>
 <p>
     <b>First Login:</b> @u.FirstLogin.ToAgoString(), <b>Last Login:</b> @u.LastLogin.ToAgoString()<br />
-    <b>Competetive rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")<br />
+    <b>Competitive rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")<br />
     <b>Casual rank:</b> @(Model.CasualRank == null ? "?" : $"{Model.CasualRank}. ({Math.Round(Model.EffectiveElo)})")<br />
     <b>Level:</b> @u.Level<br />
     <br />

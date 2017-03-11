@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +13,7 @@ namespace ZkLobbyServer
     public class PartyManager
     {
         private const int inviteTimeoutSeconds = 60;
+        public const string PartyChannelPrefix = "party_";
 
         private List<Party> parties = new List<Party>();
 
@@ -147,16 +150,20 @@ namespace ZkLobbyServer
             foreach (var n in names)
                 if (!party.UserNames.Contains(n))
                 {
-                    var lobus = server.ConnectedUsers.Get(n)?.User;
+                    var conus = server.ConnectedUsers.Get(n);
+                    var lobus = conus?.User;
                     if (lobus != null) lobus.PartyID = party.PartyID;
                     party.UserNames.Add(n);
                     isChange = true;
+
+                    if (conus != null) await conus.Process(new JoinChannel() { ChannelName = party.ChannelName });
                 }
 
             var ps = new OnPartyStatus() { PartyID = party.PartyID, UserNames = party.UserNames };
 
             if (isChange) await server.MatchMaker.RemoveUser(names.First(), true); // remove all people from this party from mm 
 
+            
             await server.Broadcast(AddFriendsBy(party.UserNames), ps);
         }
 
@@ -169,10 +176,13 @@ namespace ZkLobbyServer
             var broadcastNames = party.UserNames.ToList();
             foreach (var n in names)
             {
-                var lobus = server.ConnectedUsers.Get(n)?.User;
+                var conus = server.ConnectedUsers.Get(n);
+                var lobus = conus?.User;
                 if (lobus != null) lobus.PartyID = null;
                 party.UserNames.Remove(n);
                 broadcastNames.Add(n);
+                if (conus != null) await conus.Process(new LeaveChannel() { ChannelName = party.ChannelName });
+
             }
             var ps = new OnPartyStatus() { PartyID = party.PartyID, UserNames = party.UserNames };
 
@@ -192,6 +202,9 @@ namespace ZkLobbyServer
             public int PartyID { get; private set; }
             public List<string> UserNames { get; private set; } = new List<string>();
 
+
+            public string ChannelName => PartyManager.PartyChannelPrefix + PartyID;
+
             public Party(int partyID)
             {
                 PartyID = partyID;
@@ -204,6 +217,21 @@ namespace ZkLobbyServer
             public string Inviter;
             public DateTime Issued = DateTime.UtcNow;
             public int PartyID;
+        }
+
+        public bool CanJoinChannel(string name, string channel)
+        {
+            try
+            {
+                var party =  parties.FirstOrDefault(x=>x.ChannelName == channel);
+                if (party != null) return party.UserNames.Contains(name);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error checking party channel entrance {0} {1} : {2}" , name, channel, ex);
+            }
+            return true;
         }
     }
 }

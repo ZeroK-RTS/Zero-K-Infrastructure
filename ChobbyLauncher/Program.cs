@@ -146,7 +146,7 @@ namespace ChobbyLauncher
             }
             else if (!chobbyla.Prepare().Result) return; // otherwise just do simple prepare, no gui
 
-            var springRunOk = chobbyla.Run(connectLobbyID, logWriter).Result;
+            var springRunOk = chobbyla.Run(connectLobbyID, logWriter);
             Trace.TraceInformation("Spring exited");
             if (!springRunOk) Trace.TraceWarning("Spring crash detected");
             

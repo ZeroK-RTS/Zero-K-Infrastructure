@@ -49,6 +49,12 @@ function DynDialog(url, title) {
             modal: false,
             title: title,
             width: 800,
+            maxHeight: 600,
+            open: function () {
+                setTimeout(function() {
+                    $('.js_dialog').scrollTop(0);
+                }, 500);
+           },
             buttons: { "Close": function() { $(this).dialog("close"); } }
         });
     });
@@ -185,7 +191,13 @@ function GlobalPageInit(root) {
             hide: "fade",
             modal: false,
             width: 800,
-            buttons: { "Close": function() { $(this).dialog("close"); } }
+            maxHeight: 600,
+            open: function() {
+                setTimeout(function () {
+                    $('.js_dialog').scrollTop(0);
+                }, 500);
+            },
+            buttons: { "Close": function() {$(this).dialog("close"); } }
         }
     );
 
@@ -297,6 +309,7 @@ function GlobalPageInit(root) {
                     modal: false,
                     title: "Preview (close before opening a new one)",
                     width: 800,
+                    naxHeight : 600,
                     open: function() {
                         $(trigger).hide();
                         var refresh = function () {
@@ -309,7 +322,9 @@ function GlobalPageInit(root) {
                                 });
                             //if (!$(trigger).is(":visible")) window.setTimeout(refresh, 2000);
                         };
-
+                        setTimeout(function () {
+                            $('.js_dialog').scrollTop(0);
+                        }, 500);
                         //window.setTimeout(refresh, 2000);
                     },
                     close: function() {

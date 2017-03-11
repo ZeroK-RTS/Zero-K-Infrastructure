@@ -120,7 +120,6 @@ namespace ZkData
         public int Xp { get; set; }
         public int Level { get; set; }
         public int? ClanID { get; set; }
-        public DateTime? LastNewsRead { get; set; }
         public int? FactionID { get; set; }
         public bool IsDeleted { get; set; }
         [StringLength(50)]
@@ -341,7 +340,7 @@ namespace ZkData
 
         public bool CanVoteRecall(Account targetAccount, RoleType roleType)
         {
-            if (roleType.IsVoteable && targetAccount.FactionID == FactionID && (!roleType.IsClanOnly || targetAccount.ClanID == ClanID)) return true;
+            if (Level>= GlobalConst.MinLevelForForumVote && roleType.IsVoteable && targetAccount.FactionID == FactionID && (!roleType.IsClanOnly || targetAccount.ClanID == ClanID)) return true;
             else return false;
         }
 
@@ -557,6 +556,9 @@ namespace ZkData
             if (db == null) db = new ZkDataContext();
             var clanID = acc?.ClanID;
             var facID = acc?.FactionID;
+
+            // block too low level
+            if (acc?.Level < GlobalConst.MinLevelForForumVote) return new List<Poll>();
 
             return
                 db.Polls.Where(
