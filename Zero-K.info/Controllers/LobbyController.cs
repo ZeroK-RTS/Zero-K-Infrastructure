@@ -28,6 +28,17 @@ namespace ZeroKWeb.Controllers
             return Content("");
         }
 
+        [NoCache]
+        [Auth]
+        public async Task<ActionResult> WatchBattle(int id)
+        {
+            Global.Server.ConnectedUsers.Get(Global.Account.Name).Process(new RequestConnectSpring() { BattleID = id });
+            return Content("");
+        }
+
+
+
+
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult BlockedVPNs()
         {

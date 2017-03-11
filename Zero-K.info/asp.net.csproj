@@ -1528,6 +1528,7 @@
     <Content Include="Views\Admin\TraceLogs.cshtml" />
     <Content Include="Views\Engines\EnginesIndex.cshtml" />
     <Content Include="Views\Charts\ChartsIndex.cshtml" />
+    <Content Include="Views\Forum\DeletePostPrompt.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
