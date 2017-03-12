@@ -346,8 +346,63 @@ namespace Fixer
         }
 
 
+        public static void MakeActiveClanLeaders()
+        {
+            var db = new ZkDataContext();
+            var year = DateTime.UtcNow.AddYears(-1);
+            var day4 = DateTime.UtcNow.AddDays(-4);
+            List<Clan> toDelClans = new List<Clan>();
+            var leaderRole = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople && x.IsClanOnly);
+            foreach (var clan in db.Clans.Where(x=>!x.IsDeleted).ToList())
+            {
+                List<Tuple<Account,DateTime>> players = new List<Tuple<Account, DateTime>>();
+                var acc = clan.Accounts.ToList();
+                foreach (var a in acc)
+                {
+                    var lastTime =
+                        db.SpringBattlePlayers.Where(x => x.AccountID == a.AccountID && !x.IsSpectator)
+                            .OrderByDescending(x => x.SpringBattle.StartTime).Select(x=>x.SpringBattle.StartTime).FirstOrDefault();
+                    players.Add(Tuple.Create(a, lastTime));
+                }
+
+                if (!Clan.IsShortcutValid(clan.Shortcut))
+                {
+                    toDelClans.Add(clan);
+                } else if (!players.Any(x => x.Item2 >= year))
+                {
+                    clan.IsDeleted = true;
+                    toDelClans.Add(clan);
+                }
+                else
+                {
+                    var leader = players.Where(x => x.Item1.AccountRolesByAccountID.Any(y=>y.RoleTypeID == leaderRole.RoleTypeID)).FirstOrDefault();
+                    if (leader == null || leader.Item2 < day4)
+                    {
+                        var newLeader = players.FirstOrDefault();
+                        if (newLeader != null && (leader == null || newLeader.Item1.AccountID != leader.Item1.AccountID))
+                        {
+                            db.AccountRoles.InsertOnSubmit(new AccountRole()
+                            {
+                                AccountID = newLeader.Item1.AccountID,
+                                ClanID = clan.ClanID,
+                                RoleTypeID = leaderRole.RoleTypeID,
+                                Inauguration = DateTime.UtcNow
+                            });
+                        }
+                    }
+                }
+                db.SaveChanges();
+            }
+
+            db.Clans.RemoveRange(toDelClans);
+            db.SaveChanges();
+        }
+
+
         static void Main(string[] args)
         {
+            //GlobalConst.Mode = ModeType.Live;
+            MakeActiveClanLeaders();
             //return;
             //GlobalConst.Mode = ModeType.Live;
 
