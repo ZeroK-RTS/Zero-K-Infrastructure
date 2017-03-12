@@ -84,12 +84,14 @@ namespace Fixer
                 db.Database.ExecuteSqlCommand("delete from planetownerhistories");
                 db.Database.ExecuteSqlCommand("delete from planetstructures");
                 db.Database.ExecuteSqlCommand("delete from planetfactions");
+                db.Database.ExecuteSqlCommand("update planets set ownerfactionid=null, owneraccountid=null where galaxyid=24");
                 db.Database.ExecuteSqlCommand("delete from accountplanets");
                 if (resetroles) db.Database.ExecuteSqlCommand("delete from accountroles where clanID is null");
                 db.Database.ExecuteSqlCommand("delete from factiontreaties");
                 db.Database.ExecuteSqlCommand("delete from treatyeffects");
+                db.Database.ExecuteSqlCommand("update clans set factionid=null");
 
-                db.Database.ExecuteSqlCommand("delete from forumthreads where forumcategoryid={0}", db.ForumCategories.Single(x => x.ForumMode ==ForumMode.Planets).ForumCategoryID);
+                //db.Database.ExecuteSqlCommand("delete from forumthreads where forumcategoryid={0}", db.ForumCategories.Single(x => x.ForumMode ==ForumMode.Planets).ForumCategoryID);
 
                 if (resetclans)
                 {
@@ -230,7 +232,8 @@ namespace Fixer
                 var facs = db.Factions.Where(x => !x.IsDeleted).ToList();
                 for (int i = 0; i < facs.Count; i++)
                 {
-                    var planet = db.Planets.First(x => x.PlanetID == startingPlanets[i]);
+                    var pid = startingPlanets[i];
+                    var planet = db.Planets.First(x => x.PlanetID == pid);
                     var faction = facs[i];
                     planet.PlanetFactions.Add(new PlanetFaction()
                     {

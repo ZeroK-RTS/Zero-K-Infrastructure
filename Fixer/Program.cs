@@ -348,8 +348,14 @@ namespace Fixer
 
         static void Main(string[] args)
         {
+            //return;
+            //GlobalConst.Mode = ModeType.Live;
+
+            //PlanetwarsFixer.PurgeGalaxy(24, false, true);
+            //PlanetwarsFixer.StartGalaxy(24, 3919, 3925);
+            //PlanetwarsFixer.StartGalaxy(24, 3973, 3923);
+
             return;
-            GlobalConst.Mode = ModeType.Live;
 
             //var mmBats = db.SpringBattles.Where(x => x.IsMatchMaker);
             //var suc = mmBats.Count(x => x.Duration > 300 && x.PlayerCount > 2);
@@ -379,7 +385,7 @@ namespace Fixer
 
 
             //WikiPortingMW.DoStuff();
-            
+
             //FixStuff();
             //MigrateDatabase();
             //return;
@@ -406,7 +412,7 @@ namespace Fixer
             //var db = new ZkDataContext(false);
             //db.Database.CreateIfNotExists();
 
-            //PlanetwarsFixer.StartGalaxy(24,3919,3925);
+
             //AddClanLeader();
             //return;
             //TestPwMatch();
@@ -428,8 +434,8 @@ namespace Fixer
             //PickHomworldOwners();
 
             PlanetwarsFixer.PurgeGalaxy(24, false, true);
-            PlanetwarsFixer.RandomizeMaps(24);
-            PlanetwarsFixer.SetPlanetTeamSizes(24);
+            //PlanetwarsFixer.RandomizeMaps(24);
+            //PlanetwarsFixer.SetPlanetTeamSizes(24);
 
             //RandomizePlanetOwners(24);
             //GenerateStructures(24);
@@ -439,7 +445,8 @@ namespace Fixer
             //SwapPlanetOwners(3973, 3932);
             PlanetwarsFixer.AddWormholes();
             //PlanetwarsFixer.RemoveTechStructures(true, true);
-            //StartGalaxy(24);
+
+            PlanetwarsFixer.StartGalaxy(24, 3919, 3925);
 
             //TestPrediction();
             //FixMissionScripts();
