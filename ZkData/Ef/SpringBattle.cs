@@ -89,7 +89,7 @@ namespace ZkData
             {
                 if (Duration > GlobalConst.MinDurationForElo) CalculateEloGeneric(x => x.Elo, x => x.EloWeight, (x, v) => x.Elo = v, (x, v) => x.EloWeight = v);
                 if (IsMatchMaker) {
-                    if (Mode == AutohostMode.Planetwars) CalculateEloGeneric(x => x.EloPw, x => GlobalConst.EloWeightMax, (x, v) => x.EloPw = v, (x, v) => { });
+                    if (Mode == AutohostMode.Planetwars) CalculateEloGeneric(x => x.EloPw, x => x.EloWeight, (x, v) => x.EloPw = v, (x, v) => x.EloWeight = v);
                     else CalculateEloGeneric(x => x.EloMm, x => x.EloMmWeight, (x, v) => x.EloMm = v, (x, v) => x.EloMmWeight = v);
                 }
             }
