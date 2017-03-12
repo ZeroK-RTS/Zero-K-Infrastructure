@@ -26,6 +26,9 @@ namespace ZkLobbyServer
             foreach (var pe in option.Attackers.Union(option.Defenders)) Users[pe] = new UserBattleStatus(pe, server.ConnectedUsers.Get(pe)?.User, GenerateClientScriptPassword(pe));
 
             if (ModOptions == null) ModOptions = new Dictionary<string, string>();
+
+            ModOptions["mutespec"] = "mute";
+
             ValidateAndFillDetails();
         }
 
