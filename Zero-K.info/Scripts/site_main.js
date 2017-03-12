@@ -202,7 +202,8 @@ function GlobalPageInit(root) {
     );
 
     s.find(".js_ping")
-        .click(function() {
+        .click(function (event) {
+            event.preventDefault();
                 $.ajax({
                     url: $(this).attr("src"),
                     data: {
