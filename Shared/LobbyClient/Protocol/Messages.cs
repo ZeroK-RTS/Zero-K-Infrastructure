@@ -659,6 +659,12 @@ namespace LobbyClient
         public int PlanetID { get; set; }
     }
 
+    [Message(Origin.Client)]
+    public class JoinFactionRequest
+    {
+        public string Faction { get; set; }
+    }
+
 
 
     [Message(Origin.Client)]

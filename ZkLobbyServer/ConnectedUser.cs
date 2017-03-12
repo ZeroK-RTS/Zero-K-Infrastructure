@@ -276,6 +276,21 @@ namespace ZkLobbyServer
             }
         }
 
+        public async Task Process(JoinFactionRequest joinFaction)
+        {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Find(User.AccountID);
+            var fac = db.Factions.First(x => !x.IsDeleted && x.Shortcut == joinFaction.Faction);
+            if (acc.ClanID == null && acc.FactionID == null)
+            {
+                acc.FactionID = fac.FactionID;
+            }
+            db.SaveChanges();
+            db.Events.InsertOnSubmit(server.PlanetWarsEventCreator.CreateEvent("{0} joins {1}", acc, fac));
+            db.SaveChanges();
+            await server.PublishAccountUpdate(acc);
+        }
+
 
         public async Task Process(RequestConnectSpring connectSpring)
         {
