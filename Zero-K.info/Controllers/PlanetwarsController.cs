@@ -762,14 +762,36 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult Ladder()
         {
-            ZkDataContext db = new ZkDataContext();
-            DateTime minDate = DateTime.UtcNow.AddMonths(-1);
-            List<PwLadder> items = db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.IsMatchMaker && y.SpringBattle.Mode == AutohostMode.Planetwars && y.SpringBattle.StartTime > minDate)).Where(x => x.Faction!=null && !x.Faction.IsDeleted).GroupBy(x => x.Faction).Select(x => new PwLadder
-            {
-                Faction = x.Key,
-                Top10 = x.OrderByDescending(y => y.PwAttackPoints).ThenByDescending(y => y.Planets.Count).ThenByDescending(y => y.EloPw).Take(10).ToList()
-            }).ToList();
-            return View("Ladder", items);
+            var ret = MemCache.GetCached("pwLadder",
+                () =>
+                {
+                    ZkDataContext db = new ZkDataContext();
+                    var gal = db.Galaxies.First(x => x.IsDefault);
+                    DateTime minDate = gal.Started ?? DateTime.UtcNow;
+                    List<PwLadder> items =
+                        db.SpringBattles.Where(x => x.StartTime >= minDate && x.IsMatchMaker && x.Mode == AutohostMode.Planetwars)
+                            .SelectMany(x => x.SpringBattlePlayers)
+                            .Select(x => x.Account)
+                            .Where(x => x.Faction != null)
+                            .Distinct()
+                            .GroupBy(x => x.Faction)
+                            .Select(
+                                x =>
+                                    new PwLadder
+                                    {
+                                        Faction = x.Key,
+                                        Top10 =
+                                            x.OrderByDescending(y => y.PwAttackPoints)
+                                                .ThenByDescending(y => y.Planets.Count)
+                                                .ThenByDescending(y => y.EloPw)
+                                                .Take(10)
+                                                .ToList()
+                                    })
+                            .ToList();
+                    return items;
+                },
+                60*2);
+            return View("Ladder", ret);
         }
 
         [Auth]

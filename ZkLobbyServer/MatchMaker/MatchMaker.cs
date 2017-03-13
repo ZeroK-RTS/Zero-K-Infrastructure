@@ -435,7 +435,7 @@ namespace ZkLobbyServer
             await server.Broadcast(server.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
             foreach (var usr in bat.Players) await server.ForceJoinBattle(usr.Name, battle);
 
-            await battle.StartGame();
+            if (!await battle.StartGame()) await server.RemoveBattle(battle);
         }
 
 

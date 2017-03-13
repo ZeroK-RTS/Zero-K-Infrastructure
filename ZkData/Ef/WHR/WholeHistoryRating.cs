@@ -2,9 +2,13 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Threading.Tasks;
 using ZkData;
@@ -19,7 +23,7 @@ namespace Ratings
         const float RatingOffset = 1500;
         const float MaxLadderUncertainty = 200; //200 for testing, smaller values recommended on live
 
-
+        IDictionary<int, float> playerRatings = new ConcurrentDictionary<int, float>();
         IDictionary<int, Player> players = new Dictionary<int, Player>();
         SortedDictionary<float, int> sortedPlayers = new SortedDictionary<float, int>();
         IDictionary<int, float> playerKeys = new Dictionary<int, float>();
@@ -98,13 +102,6 @@ namespace Ratings
 
         //implementation specific
 
-        private void UpdateRanking(Player p)
-        {
-            float rating = -p.days.Last().getElo() + 0.1f * (float)rand.NextDouble();
-            if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
-            playerKeys[p.id] = rating;
-            sortedPlayers[rating] = p.id;
-        }
 
         private SpringBattle latestBattle, lastUpdate;
 
@@ -180,7 +177,36 @@ namespace Ratings
 
         }
 
+        public void Deserialize(byte[] bytes)
+        {
+            IFormatter formatter = new BinaryFormatter();
+            using (MemoryStream stream = new MemoryStream(bytes))
+            {
+                playerRatings = (ConcurrentDictionary<int, float>)formatter.Deserialize(stream);
+            }
+        }
+
+        public byte[] Serialize()
+        {
+            byte[] bytes;
+            IFormatter formatter = new BinaryFormatter();
+            using (MemoryStream stream = new MemoryStream())
+            {
+                formatter.Serialize(stream, playerRatings);
+                bytes = stream.ToArray();
+            }
+            return bytes;
+        }
+
         //private
+
+        private void UpdateRanking(Player p)
+        {
+            float rating = -p.days.Last().getElo() + 0.1f * (float)rand.NextDouble();
+            if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
+            playerKeys[p.id] = rating;
+            sortedPlayers[rating] = p.id;
+        }
 
         private int ConvertDate(DateTime date)
         {
