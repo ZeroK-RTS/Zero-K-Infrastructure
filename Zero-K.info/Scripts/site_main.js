@@ -206,9 +206,6 @@ function GlobalPageInit(root) {
             event.preventDefault();
                 $.ajax({
                     url: $(this).attr("src"),
-                    data: {
-                        link: link
-                    },
                     success: function (data) {
                         if (data != null && data.length > 0) alert(data);
                     },
