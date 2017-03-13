@@ -50,6 +50,7 @@ namespace Ratings
 
         public static void BackupToDB()
         {
+            if (DisableRatingSystems) return;
             Trace.TraceInformation("Backing up ratings...");
             ratingCategories.ForEach(category => MiscVar.SetValue("WHR_" + category.ToString(), whr[category].SerializeJSON()));
         }

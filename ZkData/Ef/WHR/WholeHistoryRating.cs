@@ -223,6 +223,26 @@ namespace Ratings
             Trace.TraceInformation("Deserialized WHR cache for " + playerRatings.Count + " players");
         }
 
+        public string DebugPlayer(Account player)
+        {
+            if (!RatingSystems.Initialized) return "";
+            if (!players.ContainsKey(player.AccountID)) return "Unknown player";
+            string debugString = "";
+            foreach (PlayerDay d in players[player.AccountID].days)
+            {
+                debugString +=
+                    d.day + ';' +
+                    d.getElo() + ';' +
+                    d.uncertainty * 100 + ';' +
+                    d.wonGames.Select(g =>
+                        g.whitePlayers.Select(p => p.id.ToString()).Aggregate((x, y) => x + ',' + y) + '/' +
+                        g.blackPlayers.Select(p => p.id.ToString()).Aggregate((x, y) => x + ',' + y) + '/' +
+                        (g.blackWins ? "First" : "Second")
+                    ).Aggregate((x, y) => x + '|' + y) + "\r\n";
+            }
+            return debugString;
+        }
+
         //private
 
         private void UpdateRanking(Player p)
