@@ -43,7 +43,6 @@ namespace Ratings
                     }
                     whr.Values.ForEach(w => w.UpdateRatings());
                     Initialized = true;
-                    BackupToDB();
                 }
             });
         }
@@ -53,6 +52,13 @@ namespace Ratings
             if (DisableRatingSystems) return;
             Trace.TraceInformation("Backing up ratings...");
             ratingCategories.ForEach(category => MiscVar.SetValue("WHR_" + category.ToString(), whr[category].SerializeJSON()));
+        }
+
+        public static void BackupToDB(IRatingSystem ratingSystem)
+        {
+            if (DisableRatingSystems) return;
+            Trace.TraceInformation("Backing up rating system...");
+            ratingCategories.Where(category => whr[category].Equals(ratingSystem)).ForEach(category => MiscVar.SetValue("WHR_" + category.ToString(), whr[category].SerializeJSON()));
         }
 
         public static IRatingSystem GetRatingSystem(RatingCategory category)

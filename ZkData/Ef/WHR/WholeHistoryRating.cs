@@ -339,6 +339,7 @@ namespace Ratings
             {
                 p.updateUncertainty();
             }
+            RatingSystems.BackupToDB(this);
         }
 
         private void printStats()
