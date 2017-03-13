@@ -26,6 +26,7 @@ namespace Ratings
         {
         }
 
+        [JsonConstructor]
         public PlayerRating(float Elo, Func<float> UncertaintyCalculator)
         {
             this.Elo = Elo;
