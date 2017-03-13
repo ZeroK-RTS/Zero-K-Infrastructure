@@ -60,8 +60,9 @@ namespace Ratings
                     SetupGame(t.Select(x => x.AccountID).ToList(),
                             teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => x.AccountID)).ToList(),
                             true,
-                            ConvertDate(DateTime.Now)).getBlackWinProbability() * 2 / teams.Count
-                    ).ToList();
+                            ConvertDate(DateTime.Now),
+                            -1
+                    ).getBlackWinProbability() * 2 / teams.Count).ToList();
         }
 
         private int battlesRegistered = 0;
@@ -74,7 +75,7 @@ namespace Ratings
             if (winners.Count > 0 && losers.Count > 0)
             {
                 battlesRegistered++;
-                createGame(losers, winners, false, ConvertDate(battle.StartTime));
+                createGame(losers, winners, false, ConvertDate(battle.StartTime), battle.SpringBattleID);
                 if (RatingSystems.Initialized)
                 {
                     Trace.TraceInformation(battlesRegistered + " battles registered for WHR");
@@ -235,10 +236,10 @@ namespace Ratings
                     d.getElo() + ';' +
                     d.uncertainty * 100 + ';' +
                     d.wonGames.Select(g =>
-                        g.whitePlayers.Select(p => p.id.ToString()).Aggregate((x, y) => x + ',' + y) + '/' +
-                        g.blackPlayers.Select(p => p.id.ToString()).Aggregate((x, y) => x + ',' + y) + '/' +
+                        g.whitePlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + ',' + y) + '/' +
+                        g.blackPlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + ',' + y) + '/' +
                         (g.blackWins ? "First" : "Second")
-                    ).Aggregate((x, y) => x + '|' + y) + "\r\n";
+                    ).Aggregate("", (x, y) => x + '|' + y) + "\r\n";
             }
             return debugString;
         }
@@ -281,7 +282,7 @@ namespace Ratings
             return player.days.Select(d => new float[] { d.day, (d.getElo()), ((d.uncertainty * 100)) }).ToList();
         }
 
-        private Game SetupGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step)
+        private Game SetupGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step, int id)
         {
 
             // Avoid self-played games (no info)
@@ -304,13 +305,13 @@ namespace Ratings
 
             List<Player> white_player = white.Select(p => getPlayerById(p)).ToList();
             List<Player> black_player = black.Select(p => getPlayerById(p)).ToList();
-            Game game = new Game(black_player, white_player, blackWins, time_step);
+            Game game = new Game(black_player, white_player, blackWins, time_step, id);
             return game;
         }
 
-        private Game createGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step)
+        private Game createGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step, int id)
         {
-            Game game = SetupGame(black, white, blackWins, time_step);
+            Game game = SetupGame(black, white, blackWins, time_step, id);
             return game != null ? AddGame(game) : null;
         }
 
