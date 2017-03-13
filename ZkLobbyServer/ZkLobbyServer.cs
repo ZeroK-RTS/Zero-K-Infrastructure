@@ -20,6 +20,7 @@ namespace ZkLobbyServer
         public int ClientCounter;
         public ConcurrentDictionary<string, ConnectedUser> ConnectedUsers = new ConcurrentDictionary<string, ConnectedUser>();
 
+
         public LoginChecker LoginChecker;
         public OfflineMessageHandler OfflineMessageHandler = new OfflineMessageHandler();
         public ConcurrentDictionary<string, Channel> Channels = new ConcurrentDictionary<string, Channel>();
@@ -66,7 +67,7 @@ namespace ZkLobbyServer
 
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
-            chatRelay = new ChatRelay(this, new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai", "zk", "zkmap" });
+            chatRelay = new ChatRelay(this, new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai", "zk", "zkmap", "springboard", GlobalConst.ModeratorChannel, GlobalConst.CoreChannel });
             textCommands = new ServerTextCommands(this);
             ChannelManager = new ChannelManager(this);
             MatchMaker = new MatchMaker(this);
@@ -267,6 +268,12 @@ namespace ZkLobbyServer
                     Text = text,
                     Ring = isRing
                 });
+        }
+
+        public async Task RequestJoinPlanet(string name, int planetID)
+        {
+            var conus = ConnectedUsers.Get(name);
+            if (conus != null) await conus.SendCommand(new PwRequestJoinPlanet() { PlanetID = planetID });
         }
 
         public Task GhostPm(string name, string text)

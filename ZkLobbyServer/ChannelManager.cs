@@ -52,7 +52,7 @@ namespace ZkLobbyServer
         public List<string> GetDefaultChannels(Account acc) {
             if (acc.IsBot) return new List<string>() { "bots" };
 
-            var ret = new List<string>() { "zk", GlobalConst.ModeratorChannel, GlobalConst.Top20Channel };
+            var ret = new List<string>() { "zk", GlobalConst.ModeratorChannel, GlobalConst.Top20Channel, GlobalConst.CoreChannel };
             if (acc.Clan != null) ret.Add(acc.Clan.GetClanChannel());
             if (acc.Faction != null && GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline) ret.Add(acc.Faction.Shortcut);
 
@@ -68,7 +68,8 @@ namespace ZkLobbyServer
 
         bool CanJoin(Account acc, string channel)
         {
-            if (channel == GlobalConst.ModeratorChannel) return acc.AdminLevel >= AdminLevel.Moderator;
+            if (channel.StartsWith(PartyManager.PartyChannelPrefix)) return server.PartyManager.CanJoinChannel(acc.Name, channel);
+            else if (channel == GlobalConst.ModeratorChannel) return acc.AdminLevel >= AdminLevel.Moderator;
             else if (channel == GlobalConst.ErrorChannel) return acc.AdminLevel >= AdminLevel.SuperAdmin;
             else if (channel == GlobalConst.Top20Channel) return IsTop20(acc.AccountID);
             else if (channel == GlobalConst.CoreChannel) return acc.DevLevel >= DevLevel.RetiredCoreDeveloper;

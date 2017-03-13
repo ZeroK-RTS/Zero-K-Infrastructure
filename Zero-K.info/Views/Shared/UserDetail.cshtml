@@ -131,7 +131,7 @@
             <b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
             <br />
             
-            <b>Competetive rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")<br />
+            <b>Competitive rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")<br />
             <b>Casual rank:</b> @(Model.CasualRank == null ? "?" : $"{Model.CasualRank}. ({Math.Round(Model.EffectiveElo)})")<br />
             @if (!Ratings.RatingSystems.DisableRatingSystems)
             {
@@ -238,7 +238,7 @@
                     watched, @Model.MissionRunCount missions
                 </span>
                 <br />
-                @foreach (SpringBattlePlayer b in Model.SpringBattlePlayers.OrderByDescending(x => x.SpringBattleID).Take(10))
+                @foreach (SpringBattlePlayer b in Model.SpringBattlePlayers.Where(x=>!x.IsSpectator).OrderByDescending(x => x.SpringBattleID).Take(10))
                 {
                     <small>@Html.PrintBattle(b)</small>
                     <br />

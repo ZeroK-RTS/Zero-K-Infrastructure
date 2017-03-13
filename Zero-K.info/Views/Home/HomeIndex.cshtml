@@ -42,7 +42,7 @@
             @Html.IncludeWiki("Features")
         }
     </div>
-    @foreach (var n in Model.Headlines)
+    @foreach (var n in Model.Headlines.Take(1))
     {
         <div class="js_dialog" title="News headlines">
             <h1>@n.Title</h1>

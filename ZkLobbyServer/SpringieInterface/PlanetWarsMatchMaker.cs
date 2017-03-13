@@ -138,6 +138,7 @@ namespace ZeroKWeb
                     command = new PwMatchCommand(PwMatchCommand.ModeType.Attack)
                     {
                         Options = AttackOptions.Select(x => x.ToVoteOption(PwMatchCommand.ModeType.Attack)).ToList(),
+                        Deadline = GetAttackDeadline(),
                         DeadlineSeconds = (int)GetAttackDeadline().Subtract(DateTime.UtcNow).TotalSeconds,
                         AttackerFaction = AttackingFaction.Shortcut
                     };
@@ -145,6 +146,7 @@ namespace ZeroKWeb
                     command = new PwMatchCommand(PwMatchCommand.ModeType.Defend)
                     {
                         Options = new List<PwMatchCommand.VoteOption> { Challenge.ToVoteOption(PwMatchCommand.ModeType.Defend) },
+                        Deadline = GetAcceptDeadline(),
                         DeadlineSeconds = (int)GetAcceptDeadline().Subtract(DateTime.UtcNow).TotalSeconds,
                         AttackerFaction = AttackingFaction.Shortcut,
                         DefenderFactions = GetDefendingFactions(Challenge).Select(x => x.Shortcut).ToList()
@@ -157,7 +159,7 @@ namespace ZeroKWeb
             return command;
         }
 
-        public async Task JoinPlanet(string name, int planetId)
+        private async Task JoinPlanet(string name, int planetId)
         {
             try
             {
@@ -271,6 +273,9 @@ namespace ZeroKWeb
                 OwnerFactionID = planet.OwnerFactionID,
                 Name = planet.Name,
                 TeamSize = planet.TeamSize,
+                PlanetImage = planet.Resource?.MapPlanetWarsIcon,
+                IconSize = planet.Resource?.PlanetWarsIconSize ?? 0,
+                StructureImages = planet.PlanetStructures.Select(x=>x.IsActive ? x.StructureType.MapIcon : x.StructureType.DisabledMapIcon).ToList()
             });
         }
 
@@ -279,7 +284,8 @@ namespace ZeroKWeb
             var attackOption = AttackOptions.Find(x => x.PlanetID == targetPlanetId);
             if (attackOption != null)
             {
-                var user = server.ConnectedUsers.Get(userName)?.User;
+                var conus = server.ConnectedUsers.Get(userName);
+                var user = conus?.User;
                 if (user != null)
                     using (var db = new ZkDataContext())
                     {
@@ -287,18 +293,21 @@ namespace ZeroKWeb
                         if ((account != null) && (account.FactionID == AttackingFaction.FactionID) && account.CanPlayerPlanetWars())
                         {
                             // remove existing user from other options
-                            foreach (var aop in AttackOptions) aop.Attackers.RemoveAll(x => x == userName);
+                            foreach (var aop in AttackOptions.Where(x=>x.PlanetID != targetPlanetId)) aop.Attackers.RemoveAll(x => x == userName);
 
                             // add user to this option
-                            if (attackOption.Attackers.Count < attackOption.TeamSize)
+                            if (attackOption.Attackers.Count < attackOption.TeamSize && !attackOption.Attackers.Contains(userName))
                             {
                                 attackOption.Attackers.Add(user.Name);
                                 await server.GhostChanSay(user.Faction, $"{userName} joins attack on {attackOption.Name}");
 
-                                if (attackOption.Attackers.Count == attackOption.TeamSize) StartChallenge(attackOption);
+                                await conus.SendCommand(new PwJoinPlanetSuccess() { PlanetID = targetPlanetId });
+
+                                if (attackOption.Attackers.Count == attackOption.TeamSize) await StartChallenge(attackOption);
                                 else await UpdateLobby();
                             }
                         }
+
                     }
             }
         }
@@ -307,7 +316,8 @@ namespace ZeroKWeb
         {
             if ((Challenge != null) && (Challenge.PlanetID == targetPlanetID) && (Challenge.Defenders.Count < Challenge.TeamSize))
             {
-                var user = server.ConnectedUsers.Get(userName)?.User;
+                var conus = server.ConnectedUsers.Get(userName);
+                var user = conus?.User;
                 if (user != null)
                 {
                     var db = new ZkDataContext();
@@ -317,8 +327,11 @@ namespace ZeroKWeb
                         if (!Challenge.Defenders.Any(y => y == user.Name))
                         {
                             Challenge.Defenders.Add(user.Name);
+
                             await server.GhostChanSay(user.Faction, $"{userName} joins defense of {Challenge.Name}");
 
+                            await conus.SendCommand(new PwJoinPlanetSuccess() { PlanetID = targetPlanetID });
+                            
                             if (Challenge.Defenders.Count == Challenge.TeamSize) await AcceptChallenge();
                             else await UpdateLobby();
                         }
@@ -400,6 +413,12 @@ namespace ZeroKWeb
                     var planet = planets.FirstOrDefault(x => (x.TeamSize == 2) && x.CanMatchMakerPlay(attacker));
                     if (planet != null) InternalAddOption(planet);
                 }
+
+                // make sure some option always exists
+                if (!AttackOptions.Any())
+                {
+                    foreach (var planet in planets.Take(3)) InternalAddOption(planet);
+                }
             }
 
             UpdateLobby();
@@ -420,12 +439,13 @@ namespace ZeroKWeb
         }
 
 
-        private void StartChallenge(AttackOption attackOption)
+        private async Task StartChallenge(AttackOption attackOption)
         {
             Challenge = attackOption;
             ChallengeTime = DateTime.UtcNow;
             AttackOptions.Clear();
-            UpdateLobby();
+            await UpdateLobby();
+            await server.Broadcast(attackOption.Attackers, new PwAttackingPlanet() { PlanetID = attackOption.PlanetID });
         }
 
 
@@ -471,6 +491,11 @@ namespace ZeroKWeb
             public int? OwnerFactionID { get; set; }
             public int PlanetID { get; set; }
             public int TeamSize { get; set; }
+            public List<string> StructureImages { get; set; } = new List<string>();
+            public int IconSize { get; set; }
+
+
+            public string PlanetImage { get; set; }
 
             public AttackOption()
             {
@@ -485,12 +510,16 @@ namespace ZeroKWeb
                     PlanetID = PlanetID,
                     PlanetName = Name,
                     Map = Map,
+                    IconSize = IconSize,
+                    StructureImages = StructureImages,
+                    PlanetImage = PlanetImage,
                     Count = mode == PwMatchCommand.ModeType.Attack ? Attackers.Count : Defenders.Count,
                     Needed = TeamSize
                 };
 
                 return opt;
             }
+
         }
     }
 }

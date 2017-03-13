@@ -20,23 +20,28 @@
 }
 
 <div id="matchMaker">
-    @Ajax.ActionLink("refresh", "MatchMaker", new AjaxOptions { UpdateTargetId = "matchMaker", InsertionMode = InsertionMode.Replace })
-    &nbsp;
-    <span id="pwTimer">
-        Deadline: @Utils.PrintTimeRemaining(pw.DeadlineSeconds)
-    </span>
-    <span>@text</span>
-    @foreach (PwMatchCommand.VoteOption opt in pw.Options)
+    @using (Ajax.BeginForm("MatchMaker","PlanetWars", null, Global.GetAjaxOptions("matchMaker", false), new {@id="mmForm"}))
     {
-        <span style="border: 1px solid cyan;">
-            @if (canClick)
-            {
-                @Ajax.ActionLink("Join", "MatchMakerJoin", new { planetID = opt.PlanetID }, new AjaxOptions { UpdateTargetId = "matchMaker", InsertionMode = InsertionMode.Replace })
-            }
-            @Html.PrintPlanet(db.Planets.First(x => x.PlanetID == opt.PlanetID))
-            <span>[@opt.Count/@opt.Needed]</span>
+        <span id="pwTimer">
+            Deadline: @Utils.PrintTimeRemaining(pw.DeadlineSeconds)
         </span>
-        <text>&nbsp; &nbsp;&nbsp;</text>
+        <span>@text</span>
+        foreach (PwMatchCommand.VoteOption opt in pw.Options)
+        {
+            <span style="border: 1px solid cyan;">
+                @if (canClick)
+                {
+                    @Ajax.ActionLink("Join", "MatchMakerJoin", new { planetID = opt.PlanetID }, new AjaxOptions { UpdateTargetId = "matchMaker", InsertionMode = InsertionMode.Replace })
+                }
+                @Html.PrintPlanet(db.Planets.First(x => x.PlanetID == opt.PlanetID))
+                <span>[@opt.Count/@opt.Needed]</span>
+            </span>
+            <text>&nbsp; &nbsp;&nbsp;</text>
+        }
     }
-    
+    <script type="text/javascript">
+        $(function() {
+            setTimeout(function() { $("#mmForm").submit(); }, 5000);
+        });
+    </script>
 </div>

@@ -109,8 +109,11 @@ namespace ZeroKWeb.Controllers
 
 						if (unlockId > 0)
 						{
-							CommanderSlot slot = db.CommanderSlots.Single(x => x.CommanderSlotID == slotId);
-							Unlock unlock = db.Unlocks.Single(x => x.UnlockID == unlockId);
+							CommanderSlot slot = db.CommanderSlots.SingleOrDefault(x => x.CommanderSlotID == slotId);
+							if (slot == null) return Content("WTF get lost!");
+
+							Unlock unlock = db.Unlocks.SingleOrDefault(x => x.UnlockID == unlockId);
+							if (unlock == null) return Content("WTF get lost!");
 
 							if (!unlocks.Any(x => x.Unlock.UnlockID == unlock.UnlockID)) return Content("WTF get lost!");
 							if (slot.MorphLevel < unlock.MorphLevel || !IsUnlockValidForSlot(unlock, slot)) return Content(string.Format("WTF cannot use {0} in slot {1}", unlock.Name, slot.CommanderSlotID));
@@ -150,8 +153,11 @@ namespace ZeroKWeb.Controllers
 
                         if (unlockId > 0)
                         {
-                            CommanderDecorationSlot decSlot = db.CommanderDecorationSlots.Single(x => x.CommanderDecorationSlotID == slotId);
-                            Unlock unlock = db.Unlocks.Single(x => x.UnlockID == unlockId);
+                            CommanderDecorationSlot decSlot = db.CommanderDecorationSlots.SingleOrDefault(x => x.CommanderDecorationSlotID == slotId);
+                            if (decSlot == null) return Content("WTF get lost!");
+
+                            Unlock unlock = db.Unlocks.SingleOrDefault(x => x.UnlockID == unlockId && x.UnlockType == UnlockTypes.Decoration);
+                            if (unlock == null) return Content("WTF get lost!");
 
                             if (!unlocks.Any(x => x.Unlock.UnlockID == unlock.UnlockID)) return Content("WTF get lost!");
                             if (!string.IsNullOrEmpty(unlock.LimitForChassis))

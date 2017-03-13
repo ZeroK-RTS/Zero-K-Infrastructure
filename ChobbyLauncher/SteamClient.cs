@@ -62,6 +62,7 @@ namespace ChobbyLauncher
             try
             {
                 isDisposed = true;
+                timer?.Stop();
                 timer?.Dispose();
                 if (IsOnline) SteamAPI.Shutdown();
             }
