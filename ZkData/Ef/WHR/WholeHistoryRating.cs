@@ -1,5 +1,6 @@
 // Implementation of WHR based on original by Pete Schwamb httpsin//github.com/goshrine/whole_history_rating
 
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -42,6 +43,11 @@ namespace Ratings
             Deserialize(serializedData);
         }
 
+        public WholeHistoryRating(string serializedData) : this()
+        {
+            DeserializeJSON(serializedData);
+        }
+
 
         public PlayerRating GetPlayerRating(Account account)
         {
@@ -67,6 +73,7 @@ namespace Ratings
             ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam).Select(p => p.AccountID).ToList();
             if (winners.Count > 0 && losers.Count > 0)
             {
+                battlesRegistered++;
                 createGame(losers, winners, false, ConvertDate(battle.StartTime));
                 if (RatingSystems.Initialized)
                 {
@@ -189,6 +196,31 @@ namespace Ratings
                 bytes = stream.ToArray();
             }
             return bytes;
+        }
+        public string SerializeJSON()
+        {
+            try
+            {
+                return JsonConvert.SerializeObject(playerRatings, Formatting.None);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Failed to serialize WHR " + ex);
+            }
+            return "";
+        }
+
+        public void DeserializeJSON(string json)
+        {
+            try
+            {
+                playerRatings = JsonConvert.DeserializeObject<ConcurrentDictionary<int, PlayerRating>>(json);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Failed to deserialize WHR " + ex);
+            }
+            Trace.TraceInformation("Deserialized WHR cache for " + playerRatings.Count + " players");
         }
 
         //private
