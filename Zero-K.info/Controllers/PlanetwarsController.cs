@@ -6,6 +6,7 @@ using System.Linq;
 using System.Transactions;
 using System.Web.Mvc;
 using System.Data.Entity;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -761,15 +762,29 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult Ladder()
         {
-            ZkDataContext db = new ZkDataContext();
-            var factions = db.Factions.Where(x => !x.IsDeleted).ToList();
-            DateTime minDate = DateTime.UtcNow.AddMonths(-1);
-            List<PwLadder> items = db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > minDate)).Where(x => (x.Faction == null || !x.Faction.IsDeleted)).GroupBy(x => x.Faction).Select(x => new PwLadder
-            {
-                Faction = x.Key,
-                Top10 = x.OrderByDescending(y => y.EloWeight).ThenByDescending(y => y.PwAttackPoints).ThenByDescending(y => y.Planets.Count).ThenByDescending(y => y.EloPw).Take(10).ToList()
-            }).ToList();
-            return View("Ladder", items);
+            var ret = MemCache.GetCached("pwLadder",
+                () =>
+                {
+                    ZkDataContext db = new ZkDataContext();
+                    var gal = db.Galaxies.First(x => x.IsDefault);
+                    DateTime minDate = gal.Started ?? DateTime.UtcNow;
+                    List<PwLadder> items = db.Accounts.Where(x=>x.FactionID !=null && x.LastLogin > minDate && x.SpringBattlePlayers.Any(y=>y.SpringBattle.StartTime > minDate && !y.IsSpectator && y.SpringBattle.Mode == AutohostMode.Planetwars)).ToList().GroupBy(x => x.Faction)
+                            .Select(
+                                x =>
+                                    new PwLadder
+                                    {
+                                        Faction = x.Key,
+                                        Top10 =
+                                            x.OrderByDescending(y => y.PwAttackPoints)
+                                                .ThenByDescending(y => y.EloPw)
+                                                .Take(10)
+                                                .ToList()
+                                    })
+                            .ToList();
+                    return items;
+                },
+                60*2);
+            return View("Ladder", ret);
         }
 
         [Auth]

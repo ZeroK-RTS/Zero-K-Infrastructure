@@ -24,10 +24,10 @@
     <a href="@Url.Action("Detail", "Factions", new { id = f.FactionID })" nicetitle="$faction$@f.FactionID">
         <span style="font-size: 120%; color:@f.Color;">@f.Name</span></a>
     @if (Global.Account != null) {
-        if (Global.Account.FactionID == null) {
+        if (Global.Account.FactionID == null && Global.Clan == null) {
             @Html.ActionLink("Join!", "JoinFaction", "Factions", new { id = f.FactionID }, null)
         }
-        else if (Global.Account.FactionID == f.FactionID) {
+        else if (Global.Account.FactionID == f.FactionID && Global.Clan == null) {
             @Html.ActionLink("Leave", "LeaveFaction", "Factions", null, new { @class = "delete" })
         }
     }

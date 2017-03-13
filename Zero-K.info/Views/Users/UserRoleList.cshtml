@@ -16,9 +16,9 @@
         <br/>
     }
 }
-@if (Model.FactionID != null && Model.FactionID == Global.FactionID && !Model.Faction.IsDeleted)
+@if ((Model.FactionID != null && Model.FactionID == Global.FactionID && !Model.Faction.IsDeleted) || (Model.ClanID !=null && Model.ClanID == Global.ClanID))
 {
-    foreach (var grp in new ZkDataContext().RoleTypes.Where(x => (x.RestrictFactionID == null || x.RestrictFactionID == Global.FactionID) && !x.AccountRoles.Any(y=>y.AccountID == Model.AccountID)).GroupBy(x => x.IsClanOnly)) {
+    foreach (var grp in new ZkDataContext().RoleTypes.Where(x => ((!x.IsClanOnly && Global.FactionID != 0 && (x.RestrictFactionID == null || x.RestrictFactionID == Global.FactionID)) || (x.IsClanOnly && Global.ClanID != 0)) && !x.AccountRoles.Any(y=>y.AccountID == Model.AccountID)).GroupBy(x => x.IsClanOnly)) {
         
         if (!grp.Key && GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
         {
@@ -36,7 +36,7 @@
 
                      if (role.IsVoteable && Global.AccountID == Model.AccountID && Global.Account.Level >= GlobalConst.MinLevelForForumVote)
                      {
-                         <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = role.RoleTypeID })" onclick=" var text = prompt('What is your slogan?', 'vote me!'); $(this).attr('href', $(this).attr('href') + '&text=' + text); ">(nominate)</a>
+                         <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = role.RoleTypeID })" onclick="var text = prompt('What is your slogan?', 'vote me!'); if (text != null) $(this).attr('href', $(this).attr('href') + '&text=' + text); ">(nominate)</a>
                      }
                      if (Global.Account.CanAppoint(Model, role))
                      {

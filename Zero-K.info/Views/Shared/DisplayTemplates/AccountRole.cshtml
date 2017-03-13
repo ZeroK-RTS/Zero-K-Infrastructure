@@ -8,7 +8,7 @@
 {
     if (Global.Account != null && Global.Account.CanVoteRecall(entry.Account, entry.RoleType))
     {
-        <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = entry.RoleTypeID, removalAccountID = entry.AccountID, isRemoval = true })" onclick=" var text = prompt('What is the reason?', 'He failed us!'); $(this).attr('href', $(this).attr('href') + '&text=' + text); ">(vote out)</a>
+        <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = entry.RoleTypeID, removalAccountID = entry.AccountID, isRemoval = true })" onclick="var text = prompt('What is the reason?', 'He failed us!');if (text !=null) $(this).attr('href', $(this).attr('href') + '&text=' + text); ">(vote out)</a>
     }
     <span>&nbsp;</span>
     if (Global.Account != null && Global.Account.CanRecall(entry.Account, entry.RoleType))

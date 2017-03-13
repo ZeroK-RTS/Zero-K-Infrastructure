@@ -346,10 +346,71 @@ namespace Fixer
         }
 
 
+        public static void MakeActiveClanLeaders()
+        {
+            var db = new ZkDataContext();
+            var year = DateTime.UtcNow.AddYears(-1);
+            var day4 = DateTime.UtcNow.AddDays(-4);
+            List<Clan> toDelClans = new List<Clan>();
+            var leaderRole = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople && x.IsClanOnly);
+            foreach (var clan in db.Clans.Where(x=>!x.IsDeleted).ToList())
+            {
+                List<Tuple<Account,DateTime>> players = new List<Tuple<Account, DateTime>>();
+                var acc = clan.Accounts.ToList();
+                foreach (var a in acc)
+                {
+                    var lastTime =
+                        db.SpringBattlePlayers.Where(x => x.AccountID == a.AccountID && !x.IsSpectator)
+                            .OrderByDescending(x => x.SpringBattle.StartTime).Select(x=>x.SpringBattle.StartTime).FirstOrDefault();
+                    players.Add(Tuple.Create(a, lastTime));
+                }
+
+                if (!Clan.IsShortcutValid(clan.Shortcut))
+                {
+                    toDelClans.Add(clan);
+                } else if (!players.Any(x => x.Item2 >= year))
+                {
+                    clan.IsDeleted = true;
+                    toDelClans.Add(clan);
+                }
+                else
+                {
+                    var leader = players.Where(x => x.Item1.AccountRolesByAccountID.Any(y=>y.RoleTypeID == leaderRole.RoleTypeID)).FirstOrDefault();
+                    if (leader == null || leader.Item2 < day4)
+                    {
+                        var newLeader = players.FirstOrDefault();
+                        if (newLeader != null && (leader == null || newLeader.Item1.AccountID != leader.Item1.AccountID))
+                        {
+                            db.AccountRoles.InsertOnSubmit(new AccountRole()
+                            {
+                                AccountID = newLeader.Item1.AccountID,
+                                ClanID = clan.ClanID,
+                                RoleTypeID = leaderRole.RoleTypeID,
+                                Inauguration = DateTime.UtcNow
+                            });
+                        }
+                    }
+                }
+                db.SaveChanges();
+            }
+
+            db.Clans.RemoveRange(toDelClans);
+            db.SaveChanges();
+        }
+
+
         static void Main(string[] args)
         {
+            //GlobalConst.Mode = ModeType.Live;
+            MakeActiveClanLeaders();
+            //return;
+            //GlobalConst.Mode = ModeType.Live;
+
+            //PlanetwarsFixer.PurgeGalaxy(24, false, true);
+            //PlanetwarsFixer.StartGalaxy(24, 3919, 3925);
+            //PlanetwarsFixer.StartGalaxy(24, 3973, 3923);
+
             return;
-            GlobalConst.Mode = ModeType.Live;
 
             //var mmBats = db.SpringBattles.Where(x => x.IsMatchMaker);
             //var suc = mmBats.Count(x => x.Duration > 300 && x.PlayerCount > 2);
@@ -379,7 +440,7 @@ namespace Fixer
 
 
             //WikiPortingMW.DoStuff();
-            
+
             //FixStuff();
             //MigrateDatabase();
             //return;
@@ -406,7 +467,7 @@ namespace Fixer
             //var db = new ZkDataContext(false);
             //db.Database.CreateIfNotExists();
 
-            //PlanetwarsFixer.StartGalaxy(24,3919,3925);
+
             //AddClanLeader();
             //return;
             //TestPwMatch();
@@ -428,8 +489,8 @@ namespace Fixer
             //PickHomworldOwners();
 
             PlanetwarsFixer.PurgeGalaxy(24, false, true);
-            PlanetwarsFixer.RandomizeMaps(24);
-            PlanetwarsFixer.SetPlanetTeamSizes(24);
+            //PlanetwarsFixer.RandomizeMaps(24);
+            //PlanetwarsFixer.SetPlanetTeamSizes(24);
 
             //RandomizePlanetOwners(24);
             //GenerateStructures(24);
@@ -439,7 +500,8 @@ namespace Fixer
             //SwapPlanetOwners(3973, 3932);
             PlanetwarsFixer.AddWormholes();
             //PlanetwarsFixer.RemoveTechStructures(true, true);
-            //StartGalaxy(24);
+
+            PlanetwarsFixer.StartGalaxy(24, 3919, 3925);
 
             //TestPrediction();
             //FixMissionScripts();

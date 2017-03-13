@@ -49,37 +49,3 @@
     }
 }
 
-<!-- FIXME find a proper way to put mercs at the bottom -->
-@{
-    var ladder2 = Model[0];
-    {
-        <div>
-            <img src='/img/factions/Mercenary.png' style='float: left'/>
-            <span style="font-size: 120%">Mercenaries</span>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Name</th>
-                    <th>Attack points</th>
-                    <th>Elo</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    int rank = 0;
-                    foreach (var acct in ladder2.Top10)
-                    {
-                        <tr>
-                            <td>@(++rank)</td>
-                            <td>@Html.PrintAccount(acct)</td>
-                            <td>@acct.PwAttackPoints</td>
-                            <td>@(Math.Round(RatingSystems.DisableRatingSystems ? acct.EffectivePwElo : acct.GetRating(RatingCategory.Planetwars).Elo))</td>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
-    }
-}

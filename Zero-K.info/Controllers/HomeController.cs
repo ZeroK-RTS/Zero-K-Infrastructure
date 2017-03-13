@@ -272,7 +272,7 @@ namespace ZeroKWeb.Controllers
 
 	    private static ActionResult RedirectToSteamOpenID(string login, string referer, OpenIdRelyingParty openid)
 	    {
-	        IAuthenticationRequest request = openid.CreateRequest(Identifier.Parse("https://steamcommunity.com/openid/"));
+            IAuthenticationRequest request = openid.CreateRequest(Identifier.Parse("https://steamcommunity.com/openid/"));
 	        if (!string.IsNullOrEmpty(referer)) request.SetCallbackArgument("referer", referer);
 	        return request.RedirectingResponse.AsActionResultMvc5();
 	    }
