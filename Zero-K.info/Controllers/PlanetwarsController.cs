@@ -768,13 +768,7 @@ namespace ZeroKWeb.Controllers
                     ZkDataContext db = new ZkDataContext();
                     var gal = db.Galaxies.First(x => x.IsDefault);
                     DateTime minDate = gal.Started ?? DateTime.UtcNow;
-                    List<PwLadder> items =
-                        db.SpringBattles.Where(x => x.StartTime >= minDate && x.IsMatchMaker && x.Mode == AutohostMode.Planetwars)
-                            .SelectMany(x => x.SpringBattlePlayers)
-                            .Select(x => x.Account)
-                            .Where(x => x.Faction != null)
-                            .Distinct()
-                            .GroupBy(x => x.Faction)
+                    List<PwLadder> items = db.Accounts.Where(x=>x.FactionID !=null && x.LastLogin > minDate && x.SpringBattlePlayers.Any(y=>y.SpringBattle.StartTime > minDate && !y.IsSpectator && y.SpringBattle.Mode == AutohostMode.Planetwars)).ToList().GroupBy(x => x.Faction)
                             .Select(
                                 x =>
                                     new PwLadder
@@ -782,7 +776,6 @@ namespace ZeroKWeb.Controllers
                                         Faction = x.Key,
                                         Top10 =
                                             x.OrderByDescending(y => y.PwAttackPoints)
-                                                .ThenByDescending(y => y.Planets.Count)
                                                 .ThenByDescending(y => y.EloPw)
                                                 .Take(10)
                                                 .ToList()
