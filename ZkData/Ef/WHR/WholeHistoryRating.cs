@@ -1,5 +1,6 @@
 // Implementation of WHR based on original by Pete Schwamb httpsin//github.com/goshrine/whole_history_rating
 
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -23,12 +24,13 @@ namespace Ratings
         const float RatingOffset = 1500;
         const float MaxLadderUncertainty = 200; //200 for testing, smaller values recommended on live
 
-        IDictionary<int, float> playerRatings = new ConcurrentDictionary<int, float>();
+        IDictionary<int, PlayerRating> playerRatings = new ConcurrentDictionary<int, PlayerRating>();
         IDictionary<int, Player> players = new Dictionary<int, Player>();
         SortedDictionary<float, int> sortedPlayers = new SortedDictionary<float, int>();
         IDictionary<int, float> playerKeys = new Dictionary<int, float>();
         Random rand = new Random();
-        float w2; //elo range expand per day squared
+        readonly float w2; //elo range expand per day squared
+        readonly PlayerRating DefaultRating = new PlayerRating(RatingOffset, float.PositiveInfinity);
 
         public WholeHistoryRating()
         {
@@ -36,23 +38,20 @@ namespace Ratings
         }
 
 
-        public float GetPlayerRating(Account account)
+        public WholeHistoryRating(byte[] serializedData) : this()
         {
-            if (!RatingSystems.Initialized) return RatingOffset;
-            UpdateRatings();
-            ICollection<float[]> ratings = getPlayerRatings(account.AccountID);
-            return (ratings.Count > 0 ? ratings.Last()[1] : 0) + RatingOffset; //1500 for zk peoplers to feel at home
+            Deserialize(serializedData);
         }
 
-        public float GetPlayerRatingUncertainty(Account account)
+        public WholeHistoryRating(string serializedData) : this()
         {
-            if (!RatingSystems.Initialized) return float.PositiveInfinity;
-            UpdateRatings();
-            Player player = getPlayerById(account.AccountID);
-            if (player.days.Count > 0) {
-                return player.days.Last().uncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - player.days.Last().day) * w2) ; 
-            }
-            return float.PositiveInfinity;
+            DeserializeJSON(serializedData);
+        }
+
+
+        public PlayerRating GetPlayerRating(Account account)
+        {
+            return playerRatings.ContainsKey(account.AccountID) ? playerRatings[account.AccountID] : DefaultRating;
         }
 
         public List<float> PredictOutcome(List<ICollection<Account>> teams)
@@ -74,6 +73,7 @@ namespace Ratings
             ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam).Select(p => p.AccountID).ToList();
             if (winners.Count > 0 && losers.Count > 0)
             {
+                battlesRegistered++;
                 createGame(losers, winners, false, ConvertDate(battle.StartTime));
                 if (RatingSystems.Initialized)
                 {
@@ -91,7 +91,7 @@ namespace Ratings
             foreach (var pair in sortedPlayers)
             {
                 Account acc = db.Accounts.Where(a => a.AccountID == pair.Value).FirstOrDefault();
-                if (GetPlayerRatingUncertainty(acc) <= MaxLadderUncertainty)
+                if (playerRatings[acc.AccountID].Uncertainty <= MaxLadderUncertainty)
                 {
                     if (counter++ >= count) break;
                     retval.Add(acc);
@@ -182,7 +182,7 @@ namespace Ratings
             IFormatter formatter = new BinaryFormatter();
             using (MemoryStream stream = new MemoryStream(bytes))
             {
-                playerRatings = (ConcurrentDictionary<int, float>)formatter.Deserialize(stream);
+                playerRatings = (ConcurrentDictionary<int, PlayerRating>)formatter.Deserialize(stream);
             }
         }
 
@@ -197,12 +197,60 @@ namespace Ratings
             }
             return bytes;
         }
+        public string SerializeJSON()
+        {
+            try
+            {
+                return JsonConvert.SerializeObject(playerRatings, Formatting.None);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Failed to serialize WHR " + ex);
+            }
+            return "";
+        }
+
+        public void DeserializeJSON(string json)
+        {
+            try
+            {
+                playerRatings = JsonConvert.DeserializeObject<ConcurrentDictionary<int, PlayerRating>>(json);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Failed to deserialize WHR " + ex);
+            }
+            Trace.TraceInformation("Deserialized WHR cache for " + playerRatings.Count + " players");
+        }
+
+        public string DebugPlayer(Account player)
+        {
+            if (!RatingSystems.Initialized) return "";
+            if (!players.ContainsKey(player.AccountID)) return "Unknown player";
+            string debugString = "";
+            foreach (PlayerDay d in players[player.AccountID].days)
+            {
+                debugString +=
+                    d.day + ';' +
+                    d.getElo() + ';' +
+                    d.uncertainty * 100 + ';' +
+                    d.wonGames.Select(g =>
+                        g.whitePlayers.Select(p => p.id.ToString()).Aggregate((x, y) => x + ',' + y) + '/' +
+                        g.blackPlayers.Select(p => p.id.ToString()).Aggregate((x, y) => x + ',' + y) + '/' +
+                        (g.blackWins ? "First" : "Second")
+                    ).Aggregate((x, y) => x + '|' + y) + "\r\n";
+            }
+            return debugString;
+        }
 
         //private
 
         private void UpdateRanking(Player p)
         {
-            float rating = -p.days.Last().getElo() + 0.1f * (float)rand.NextDouble();
+            float elo = p.days.Last().getElo() + RatingOffset;
+            Func<float> uncertainty = () => p.days.Last().uncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - p.days.Last().day) * w2);
+            playerRatings[p.id] = new PlayerRating(elo, uncertainty);
+            float rating = -elo + 0.1f * (float)rand.NextDouble();
             if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
             playerKeys[p.id] = rating;
             sortedPlayers[rating] = p.id;

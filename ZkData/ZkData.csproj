@@ -80,6 +80,7 @@
     <Compile Include="Ef\WHR\IRatingSystem.cs" />
     <Compile Include="Ef\WHR\Player.cs" />
     <Compile Include="Ef\WHR\PlayerDay.cs" />
+    <Compile Include="Ef\WHR\PlayerRating.cs" />
     <Compile Include="Ef\WHR\RatingSystems.cs" />
     <Compile Include="Ef\WHR\WholeHistoryRating.cs" />
     <Compile Include="Enums\AdminLevel.cs" />

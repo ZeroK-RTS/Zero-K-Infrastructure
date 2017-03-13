@@ -9,6 +9,7 @@ using PlasmaDownloader;
 using PlasmaShared;
 using ZeroKWeb;
 using ZkData;
+using Ratings;
 
 namespace ZkLobbyServer
 {
@@ -369,6 +370,8 @@ namespace ZkLobbyServer
                     Text = "Zero-K server restarted for upgrade, be back soon",
                     Place = SayPlace.MessageBox,
                 });
+
+            RatingSystems.BackupToDB();
 
             var db = new ZkDataContext();
             foreach (var u in ConnectedUsers.Values)
