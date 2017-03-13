@@ -13,6 +13,8 @@ namespace Ratings
 
         List<Account> GetTopPlayers(int count);
 
+        List<Account> GetTopPlayers(int count, Func<Account, bool> selector);
+
         List<float> PredictOutcome(List<ICollection<Account>> teams);
     }
 }

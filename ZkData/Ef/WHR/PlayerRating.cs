@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ZkData;
 using System.Data.Entity;
+using Newtonsoft.Json;
 
 namespace Ratings
 {
@@ -17,7 +18,8 @@ namespace Ratings
                 return UncertaintyFunc.Invoke();
             }
         }
-        
+
+        [JsonProperty]
         private readonly Func<float> UncertaintyFunc;
 
         public PlayerRating(float Elo, float Uncertainty) : this(Elo, () => Uncertainty)

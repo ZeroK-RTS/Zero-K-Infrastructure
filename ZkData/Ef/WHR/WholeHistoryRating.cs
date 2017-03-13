@@ -70,8 +70,8 @@ namespace Ratings
         public void ProcessBattle(SpringBattle battle)
         {
             latestBattle = battle;
-            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam).Select(p => p.AccountID).ToList();
-            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam).Select(p => p.AccountID).ToList();
+            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
+            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
             if (winners.Count > 0 && losers.Count > 0)
             {
                 battlesRegistered++;
@@ -86,13 +86,18 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count)
         {
+            return GetTopPlayers(count, x => true);
+        }
+
+        public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
+        {
             int counter = 0;
             ZkDataContext db = new ZkDataContext();
             List<Account> retval = new List<Account>();
             foreach (var pair in sortedPlayers)
             {
                 Account acc = db.Accounts.Where(a => a.AccountID == pair.Value).FirstOrDefault();
-                if (playerRatings[acc.AccountID].Uncertainty <= MaxLadderUncertainty)
+                if (playerRatings[acc.AccountID].Uncertainty <= MaxLadderUncertainty && selector.Invoke(acc))
                 {
                     if (counter++ >= count) break;
                     retval.Add(acc);
@@ -232,14 +237,15 @@ namespace Ratings
             foreach (PlayerDay d in players[player.AccountID].days)
             {
                 debugString +=
-                    d.day + ';' +
-                    d.getElo() + ';' +
-                    d.uncertainty * 100 + ';' +
+                    d.day + ";" +
+                    d.getElo() + ";" +
+                    d.uncertainty * 100 + ";" +
                     d.wonGames.Select(g =>
-                        g.whitePlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + ',' + y) + '/' +
-                        g.blackPlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + ',' + y) + '/' +
-                        (g.blackWins ? "First" : "Second")
-                    ).Aggregate("", (x, y) => x + '|' + y) + "\r\n";
+                        g.whitePlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y) + "/" +
+                        g.blackPlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y) + "/" +
+                        (g.blackWins ? "Second" : "First") + "/" +
+                        g.id
+                    ).Aggregate("", (x, y) => x + "|" + y) + "\r\n";
             }
             return debugString;
         }
