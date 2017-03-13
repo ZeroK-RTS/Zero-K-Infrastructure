@@ -90,7 +90,9 @@ namespace ZeroKWeb
             }
 
             // only really start if attackers are present, otherwise missed battle opportunity basically
-            if (Challenge.Attackers.Union(Challenge.Defenders).Any(x => server.ConnectedUsers.ContainsKey(x)))
+            Challenge.Attackers = Challenge.Attackers.Where(x => server.ConnectedUsers.ContainsKey(x)).ToList();
+            Challenge.Defenders = Challenge.Defenders.Where(x => server.ConnectedUsers.ContainsKey(x)).ToList();
+            if (Challenge.Attackers.Any() || Challenge.Defenders.Any())
             {
                 var battle = new PlanetWarsServerBattle(server, Challenge);
                 RunningBattles[battle.BattleID] = Challenge;
