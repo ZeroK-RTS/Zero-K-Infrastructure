@@ -252,14 +252,9 @@ namespace ZkData
             return null;
         }
 
-        public double GetRating(RatingCategory category)
+        public PlayerRating GetRating(RatingCategory category)
         {
             return RatingSystems.GetRatingSystem(category).GetPlayerRating(this);
-        }
-
-        public double GetRatingUncertainty(RatingCategory category)
-        {
-            return RatingSystems.GetRatingSystem(category).GetPlayerRatingUncertainty(this);
         }
 
         public bool VerifyPassword(string passwordHash)

@@ -9,9 +9,7 @@ namespace Ratings
 
         void ProcessBattle(SpringBattle battle);
 
-        float GetPlayerRating(Account account);
-
-        float GetPlayerRatingUncertainty(Account account);
+        PlayerRating GetPlayerRating(Account account);
 
         List<Account> GetTopPlayers(int count);
 
