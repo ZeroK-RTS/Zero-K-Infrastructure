@@ -138,7 +138,6 @@
                 <b>Casual Rating:</b> @($"{Math.Round(Model.GetRating(Ratings.RatingCategory.Casual).Elo)} +- {Math.Round(Model.GetRating(Ratings.RatingCategory.Casual).Uncertainty)}" )<br />
                 <b>Competitive Rating:</b> @($"{Math.Round(Model.GetRating(Ratings.RatingCategory.MatchMaking).Elo)} +- {Math.Round(Model.GetRating(Ratings.RatingCategory.MatchMaking).Uncertainty)}" )<br />
                 <b>Planetwars Rating:</b> @($"{Math.Round(Model.GetRating(Ratings.RatingCategory.Planetwars).Elo)} +- {Math.Round(Model.GetRating(Ratings.RatingCategory.Planetwars).Uncertainty)}" )<br />
-                <b>Casual Debug:</b> @($"{((Ratings.WholeHistoryRating)Ratings.RatingSystems.GetRatingSystem(Ratings.RatingCategory.Casual)).DebugPlayer(Model)}" )<br />
             }
 
             <b>Level:</b> @Model.Level<br />
