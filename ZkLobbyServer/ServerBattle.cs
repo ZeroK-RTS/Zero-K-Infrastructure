@@ -356,25 +356,25 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task StartGame()
+        public async Task<bool> StartGame()
         {
             var context = GetContext();
             if (Mode != AutohostMode.None)
             {
                 var balance = Balancer.BalanceTeams(context, true, null, null);
                 if (!IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
-                if (!balance.CanStart) return;
+                if (!balance.CanStart) return false;
                 context.ApplyBalance(balance);
             }
 
             var startSetup = StartSetup.GetDedicatedServerStartSetup(context);
 
-            if (!await EnsureEngineIsPresent()) return;
+            if (!await EnsureEngineIsPresent()) return false;
 
             if (IsInGame || spring.IsRunning)
             {
                 await SayBattle("Game already running");
-                return;
+                return false;
             }
             spring.HostGame(startSetup, hostingIp, hostingPort);
             IsInGame = true;
@@ -390,6 +390,7 @@ namespace ZkLobbyServer
             // remove all from MM
             await Task.WhenAll(startSetup.Players.Where(x => !x.IsSpectator).Select(x=>server.MatchMaker.RemoveUser(x.Name, false)));
             await server.MatchMaker.UpdateAllPlayerStatuses();
+            return true;
         }
 
 
