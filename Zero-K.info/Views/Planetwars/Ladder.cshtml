@@ -1,9 +1,9 @@
 ﻿@using ZeroKWeb.Controllers
 @using ZkData
+@using Ratings
 @model List<PwLadder>
 @{
     Page.Title = "PlanetWars Ladder";
-    int playerIndex = 1;
     var db = new ZkDataContext();
 }
 
@@ -20,7 +20,6 @@
             <a href="@Url.Action("Detail", "Factions", new { id = f.FactionID })" nicetitle="$faction$@f.FactionID">
             <span style="font-size: 120%; color:@f.Color;">@f.Name</span></a>
         </div>
-        playerIndex = 1;
         <table>
             <thead>
                 <tr>
@@ -32,19 +31,19 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach (Account acc in ladder.Top10)
-            {
-                {
-                    <tr>
-                        <td>@playerIndex</td>
-                        <td>@Html.PrintAccount(acc)</td>
-                        <td>@acc.PwAttackPoints</td>
-                        <td>@acc.Planets.Count</td>
-                        <td>@Math.Round(acc.EffectivePwElo)</td>                  
-                    </tr>
-                    playerIndex = playerIndex + 1;
+                @{
+                    int rank = 0;
+                    foreach (var acct in ladder.Top10)
+                    {
+                        <tr>
+                            <td>@(++rank)</td>
+                            <td>@Html.PrintAccount(acct)</td>
+                            <td>@acct.PwAttackPoints</td>
+                            <td>@acct.Planets.Count</td> 
+                            <td>@(Math.Round(RatingSystems.DisableRatingSystems ? acct.EffectivePwElo : acct.GetRating(RatingCategory.Planetwars).Elo))</td>
+                        </tr>
+                    }
                 }
-            }
             </tbody>
         </table>
     }
@@ -58,7 +57,6 @@
             <img src='/img/factions/Mercenary.png' style='float: left'/>
             <span style="font-size: 120%">Mercenaries</span>
         </div>
-        playerIndex = 1;
         <table>
             <thead>
                 <tr>
@@ -69,18 +67,19 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach (Account acc in ladder2.Top10)
-            {
-                {
-                    <tr>
-                        <td>@playerIndex</td>
-                        <td>@Html.PrintAccount(acc)</td>
-                        <td>@acc.PwAttackPoints</td>
-                        <td>@Math.Round(acc.EffectivePwElo)</td>                  
-                    </tr>
-                    playerIndex = playerIndex + 1;
+                @{
+                    int rank = 0;
+                    foreach (var acct in ladder2.Top10)
+                    {
+                        <tr>
+                            <td>@(++rank)</td>
+                            <td>@Html.PrintAccount(acct)</td>
+                            <td>@acct.PwAttackPoints</td>
+                            <td>@acct.Planets.Count</td>
+                            <td>@(Math.Round(RatingSystems.DisableRatingSystems ? acct.EffectivePwElo : acct.GetRating(RatingCategory.Planetwars).Elo))</td>
+                        </tr>
+                    }
                 }
-            }
             </tbody>
         </table>
     }

@@ -86,13 +86,18 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count)
         {
+            return GetTopPlayers(count, x => true);
+        }
+
+        public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
+        {
             int counter = 0;
             ZkDataContext db = new ZkDataContext();
             List<Account> retval = new List<Account>();
             foreach (var pair in sortedPlayers)
             {
                 Account acc = db.Accounts.Where(a => a.AccountID == pair.Value).FirstOrDefault();
-                if (playerRatings[acc.AccountID].Uncertainty <= MaxLadderUncertainty)
+                if (playerRatings[acc.AccountID].Uncertainty <= MaxLadderUncertainty && selector.Invoke(acc))
                 {
                     if (counter++ >= count) break;
                     retval.Add(acc);
