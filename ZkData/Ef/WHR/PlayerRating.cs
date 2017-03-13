@@ -8,6 +8,7 @@ using System.Data.Entity;
 
 namespace Ratings
 {
+    [Serializable]
     public class PlayerRating
     {
         public float Elo { get; private set; }
