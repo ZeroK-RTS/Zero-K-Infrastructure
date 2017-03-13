@@ -9,18 +9,20 @@ namespace Ratings
     public class Game {
 
         public int day;
+        public int id;
         public ICollection<Player> whitePlayers;
         public ICollection<Player> blackPlayers;
         public bool blackWins;
         public IDictionary<Player, PlayerDay> whiteDays = new Dictionary<Player, PlayerDay>();
         public IDictionary<Player, PlayerDay> blackDays = new Dictionary<Player, PlayerDay>();
 
-        public Game(ICollection<Player> black, ICollection<Player> white, bool blackWins, int time_step) { //extras?
+        public Game(ICollection<Player> black, ICollection<Player> white, bool blackWins, int time_step, int id) { //extras?
 
             day = time_step;
             whitePlayers = white;
             blackPlayers = black;
             this.blackWins = blackWins;
+            this.id = id;
         }
 
         private float totWeight;
