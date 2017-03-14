@@ -669,7 +669,8 @@ namespace ZkData
         {
             var ret = new List<BadgeType>();
             if (Level > 200) ret.Add(BadgeType.player_level); 
-            if (CompetitiveRank <= 3 || CasualRank <= 3) ret.Add(BadgeType.player_elo); // top 3 best
+            if (RatingSystems.DisableRatingSystems && (CompetitiveRank <= 3 || CasualRank <= 3)) ret.Add(BadgeType.player_elo); // top 3 best
+            if (!RatingSystems.DisableRatingSystems && (GetRating(RatingCategory.MatchMaking).Rank <= 3 || GetRating(RatingCategory.Casual).Rank <= 3)) ret.Add(BadgeType.player_elo); 
             var total = Kudos> 0 ? ContributionsByAccountID.Where(x=>x.OriginalAmount > 0).Sum(x => (int?)x.KudosValue) : 0;
 
             if (total >= GlobalConst.KudosForGold) ret.Add(BadgeType.donator_2);

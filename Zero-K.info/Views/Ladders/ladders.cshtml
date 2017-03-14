@@ -16,15 +16,15 @@
         <td>
             <span>
                 @{
-                    int rank = 0;
-                    foreach (Account acct in RatingSystems.DisableRatingSystems ? Model.Top50Accounts : RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetTopPlayers(50))
+                    var collection = RatingSystems.DisableRatingSystems ? Model.Top50Accounts : RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetTopPlayers(50);
+                    for (int rank = 0; rank < collection.Count; rank++)
                     {
-                        if (rank++ == 20)
+                        if (rank == 20)
                         {
                             @:</span><br /><span style="font-size: small">
                         }
                         <text>
-                            @(rank) ) @Html.PrintAccount(acct) - @(Math.Round(RatingSystems.DisableRatingSystems ? acct.EffectiveMmElo : acct.GetRating(RatingCategory.MatchMaking).Elo)) <br />
+                            @(rank + 1) ) @Html.PrintAccount(collection[rank]) - @(Math.Round(RatingSystems.DisableRatingSystems ? collection[rank].EffectiveMmElo : collection[rank].GetRating(RatingCategory.MatchMaking).Elo)) <br />
                         </text>
                     }
                 }
@@ -33,15 +33,15 @@
         <td>
             <span>
                 @{
-                    rank = 0;
-                    foreach (Account acct in RatingSystems.DisableRatingSystems ? Model.Top50Casual : RatingSystems.GetRatingSystem(RatingCategory.Casual).GetTopPlayers(50))
+                    collection = RatingSystems.DisableRatingSystems ? Model.Top50Casual : RatingSystems.GetRatingSystem(RatingCategory.Casual).GetTopPlayers(50);
+                    for (int rank = 0; rank < collection.Count; rank ++)
                     {
-                        if (rank++ == 20)
+                        if (rank == 20)
                         {
                             @:</span><br /><span style="font-size: small">
                         }
                         <text>
-                            @(rank)) @Html.PrintAccount(acct) - @(Math.Round(RatingSystems.DisableRatingSystems ? acct.EffectiveElo : acct.GetRating(RatingCategory.Casual).Elo))<br />
+                            @(rank + 1)) @Html.PrintAccount(collection[rank]) - @(Math.Round(RatingSystems.DisableRatingSystems ? collection[rank].EffectiveElo : collection[rank].GetRating(RatingCategory.Casual).Elo))<br />
                         </text>
                     }
                 }
