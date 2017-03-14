@@ -14,7 +14,7 @@ namespace Ratings
 
         public static readonly IEnumerable<RatingCategory> ratingCategories = Enum.GetValues(typeof(RatingCategory)).Cast<RatingCategory>();
 
-        public static readonly bool DisableRatingSystems = GlobalConst.Mode == ModeType.Live;
+        public static readonly bool DisableRatingSystems = GlobalConst.Mode == ModeType.Live || GlobalConst.Mode == ModeType.Local;
 
         private static HashSet<int> processedBattles = new HashSet<int>();
 
