@@ -22,7 +22,6 @@ namespace Ratings
 
         const float DecayPerDaySquared = 300;
         const float RatingOffset = 1500;
-        const float MaxLadderUncertainty = 200; //200 for testing, smaller values recommended on live
 
         IDictionary<int, PlayerRating> playerRatings = new ConcurrentDictionary<int, PlayerRating>();
         IDictionary<int, Player> players = new Dictionary<int, Player>();
@@ -30,7 +29,7 @@ namespace Ratings
         IDictionary<int, float> playerKeys = new Dictionary<int, float>();
         Random rand = new Random();
         readonly float w2; //elo range expand per day squared
-        readonly PlayerRating DefaultRating = new PlayerRating(RatingOffset, float.PositiveInfinity);
+        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity);
 
         public WholeHistoryRating()
         {
@@ -97,7 +96,7 @@ namespace Ratings
             foreach (var pair in sortedPlayers)
             {
                 Account acc = db.Accounts.Where(a => a.AccountID == pair.Value).FirstOrDefault();
-                if (playerRatings[acc.AccountID].Uncertainty <= MaxLadderUncertainty && selector.Invoke(acc))
+                if (playerRatings[acc.AccountID].Uncertainty <= GlobalConst.MaxLadderUncertainty && selector.Invoke(acc))
                 {
                     if (counter++ >= count) break;
                     retval.Add(acc);
@@ -135,6 +134,7 @@ namespace Ratings
                         Trace.TraceInformation("Initializing WHR ratings for " + battlesRegistered + " battles, this will take some time..");
                         runIterations(50);
                         players.Values.ForEach(p => UpdateRanking(p));
+                        players.Values.ForEach(p => UpdateRanking(p));
                     });
                 }
                 else if (latestBattle.StartTime.Subtract(lastUpdate.StartTime).TotalDays > 0.5d)
@@ -143,6 +143,7 @@ namespace Ratings
                     {
                         Trace.TraceInformation("Updating all WHR ratings");
                         runIterations(1);
+                        players.Values.ForEach(p => UpdateRanking(p));
                         players.Values.ForEach(p => UpdateRanking(p));
                     });
                 }
@@ -154,6 +155,7 @@ namespace Ratings
                         IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Select(p => getPlayerById(p.AccountID));
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
+                        players.ForEach(p => UpdateRanking(p));
                         players.ForEach(p => UpdateRanking(p));
                     });
                 }
@@ -256,7 +258,9 @@ namespace Ratings
         {
             float elo = p.days.Last().getElo() + RatingOffset;
             Func<float> uncertainty = () => p.days.Last().uncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - p.days.Last().day) * w2);
-            playerRatings[p.id] = new PlayerRating(elo, uncertainty);
+            var activePlayers = playerRatings.Where(x => x.Value.Uncertainty < GlobalConst.MaxLadderUncertainty);
+            int rank = activePlayers.Count(x => x.Value.Elo > elo - 0.0001f);
+            playerRatings[p.id] = new PlayerRating(rank, (float)rank / activePlayers.Count(), elo, uncertainty);
             float rating = -elo + 0.1f * (float)rand.NextDouble();
             if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
             playerKeys[p.id] = rating;

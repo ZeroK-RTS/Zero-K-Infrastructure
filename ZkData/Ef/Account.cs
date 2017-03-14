@@ -256,6 +256,19 @@ namespace ZkData
             return RatingSystems.GetRatingSystem(category).GetPlayerRating(this);
         }
 
+        public PlayerRating GetBestRating()
+        {
+            var casual = RatingSystems.GetRatingSystem(RatingCategory.Casual).GetPlayerRating(this);
+            var mm = RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetPlayerRating(this);
+            var pw = RatingSystems.GetRatingSystem(RatingCategory.Planetwars).GetPlayerRating(this);
+
+            if (casual.Elo >= mm.Elo && casual.Uncertainty < GlobalConst.MaxLadderUncertainty) return casual;
+            if (mm.Elo >= casual.Elo && mm.Uncertainty < GlobalConst.MaxLadderUncertainty) return mm;
+            //ignore pw 
+
+            return new PlayerRating(int.MaxValue, 1, 0, float.PositiveInfinity);
+        }
+
         public bool VerifyPassword(string passwordHash)
         {
             if (!string.IsNullOrEmpty(PasswordBcrypt)) return BCrypt.Net.BCrypt.Verify(passwordHash, PasswordBcrypt);
@@ -646,7 +659,8 @@ namespace ZkData
 
             int clampedSkill = 0;
 
-            if (EloWeight > 1) clampedSkill = System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((Math.Max(EffectiveMmElo, EffectiveElo) - 1000.0)) / 200));
+            if (RatingSystems.DisableRatingSystems && EloWeight > 1) clampedSkill = Math.Max(0, Math.Min(7, (int)Math.Floor((Math.Max(EffectiveMmElo, EffectiveElo) - 1000.0)) / 200));
+            if (!RatingSystems.DisableRatingSystems) clampedSkill = Math.Max(clampedSkill, Math.Max(0, Math.Min(7, (int)Math.Floor((GetBestRating().Elo - 1000.0)) / 200)));
 
             return $"{clampedLevel}_{clampedSkill}";
         }
