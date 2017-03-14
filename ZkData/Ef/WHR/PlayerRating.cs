@@ -24,7 +24,7 @@ namespace Ratings
         public float Elo {
             get
             {
-                return RealElo - Math.Min(200, Uncertainty) * 2;
+                return RealElo - Math.Min(200, Math.Max(0, Uncertainty - 20)) * 2; //dont reduce value for active players
             }
         }
 
