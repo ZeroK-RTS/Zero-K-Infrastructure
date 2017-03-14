@@ -30,7 +30,7 @@ namespace Ratings
         [JsonProperty]
         private readonly Func<float> UncertaintyFunc;
         [JsonProperty]
-        private readonly float RealElo;
+        public readonly float RealElo;
 
         public PlayerRating(int Rank, float Percentile, float Elo, float Uncertainty) : this(Rank, Percentile, Elo, () => Uncertainty)
         {

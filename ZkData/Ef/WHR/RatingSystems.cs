@@ -32,7 +32,7 @@ namespace Ratings
                 lock (processingLock)
                 {
                     ZkDataContext data = new ZkDataContext();
-                    DateTime minStartTime = DateTime.Now.AddYears(-1);
+                    DateTime minStartTime = DateTime.Now.AddYears(-2);
                     foreach (SpringBattle b in data.SpringBattles
                             .Where(x => x.StartTime > minStartTime)
                             .Include(x => x.ResourceByMapResourceID)
