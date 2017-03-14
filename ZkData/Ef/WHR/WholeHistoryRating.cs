@@ -20,7 +20,7 @@ namespace Ratings
     public class WholeHistoryRating : IRatingSystem
     {
 
-        const float DecayPerDaySquared = 300;
+        const float DecayPerDaySquared = 30;
         const float RatingOffset = 1500;
 
         IDictionary<int, PlayerRating> playerRatings = new ConcurrentDictionary<int, PlayerRating>();
@@ -30,6 +30,8 @@ namespace Ratings
         Random rand = new Random();
         readonly float w2; //elo range expand per day squared
         public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity);
+
+        private bool runningInitialization = true;
 
         public WholeHistoryRating()
         {
@@ -90,7 +92,8 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
         {
-            lock (updateLockInternal) //todo dont block during rating init
+            if (runningInitialization) return new List<Account>(); // dont block during updates to prevent dosprotector from kicking in
+            lock (updateLockInternal) 
             {
                 int counter = 0;
                 ZkDataContext db = new ZkDataContext();
@@ -168,12 +171,14 @@ namespace Ratings
                 {
                     try
                     {
+                        runningInitialization = true;
                         lock (updateLockInternal)
                         {
                             DateTime start = DateTime.Now;
                             updateAction.Invoke();
                             Trace.TraceInformation("WHR Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds");
                         }
+                        runningInitialization = false;
                     }
                     catch (Exception ex)
                     {
@@ -267,7 +272,9 @@ namespace Ratings
             foreach (var p in players)
             {
                 float elo = p.days.Last().getElo() + RatingOffset;
-                Func<float> uncertainty = () => p.days.Last().uncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - p.days.Last().day) * w2);
+                float lastUncertainty = p.days.Last().uncertainty;
+                float lastDay = p.days.Last().day;
+                Func<float> uncertainty = () => lastUncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - lastDay) * w2);
                 playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, uncertainty);
                 float rating = -elo + 0.1f * (float)rand.NextDouble();
                 if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
