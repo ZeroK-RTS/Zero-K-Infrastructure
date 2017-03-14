@@ -214,11 +214,11 @@ public static class PlanetWarsTurnHandler
                 AccountPlanet apentry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == acc.AccountID);
                 if (apentry == null)
                 {
-                    apentry = new AccountPlanet { AccountID = acc.AccountID, PlanetID = planet.PlanetID };
+                    apentry = new AccountPlanet { AccountID = acc.AccountID, PlanetID = planet.PlanetID, AttackPoints = ap };
                     db.AccountPlanets.InsertOnSubmit(apentry);
+                } else {
+                    apentry.AttackPoints += ap;
                 }
-
-                apentry.AttackPoints += ap;
             }
             acc.PwAttackPoints += ap;
         }
