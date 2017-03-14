@@ -90,19 +90,22 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
         {
-            int counter = 0;
-            ZkDataContext db = new ZkDataContext();
-            List<Account> retval = new List<Account>();
-            foreach (var pair in sortedPlayers)
+            lock (updateLockInternal) //todo dont block during rating init
             {
-                Account acc = db.Accounts.Where(a => a.AccountID == pair.Value).FirstOrDefault();
-                if (playerRatings[acc.AccountID].Uncertainty <= GlobalConst.MaxLadderUncertainty && selector.Invoke(acc))
+                int counter = 0;
+                ZkDataContext db = new ZkDataContext();
+                List<Account> retval = new List<Account>();
+                foreach (var pair in sortedPlayers)
                 {
-                    if (counter++ >= count) break;
-                    retval.Add(acc);
+                    Account acc = db.Accounts.Where(a => a.AccountID == pair.Value).FirstOrDefault();
+                    if (playerRatings[acc.AccountID].Uncertainty <= GlobalConst.MaxLadderUncertainty && selector.Invoke(acc))
+                    {
+                        if (counter++ >= count) break;
+                        retval.Add(acc);
+                    }
                 }
+                return retval;
             }
-            return retval;
         }
 
         //implementation specific
@@ -133,8 +136,7 @@ namespace Ratings
                     updateAction = (() => {
                         Trace.TraceInformation("Initializing WHR ratings for " + battlesRegistered + " battles, this will take some time..");
                         runIterations(50);
-                        players.Values.ForEach(p => UpdateRanking(p));
-                        players.Values.ForEach(p => UpdateRanking(p));
+                        UpdateRankings(players.Values);
                     });
                 }
                 else if (latestBattle.StartTime.Subtract(lastUpdate.StartTime).TotalDays > 0.5d)
@@ -143,8 +145,7 @@ namespace Ratings
                     {
                         Trace.TraceInformation("Updating all WHR ratings");
                         runIterations(1);
-                        players.Values.ForEach(p => UpdateRanking(p));
-                        players.Values.ForEach(p => UpdateRanking(p));
+                        UpdateRankings(players.Values);
                     });
                 }
                 else if (!latestBattle.Equals(lastUpdate))
@@ -155,8 +156,7 @@ namespace Ratings
                         IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Select(p => getPlayerById(p.AccountID));
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
-                        players.ForEach(p => UpdateRanking(p));
-                        players.ForEach(p => UpdateRanking(p));
+                        UpdateRankings(players);
                     });
                 }
                 else
@@ -259,18 +259,31 @@ namespace Ratings
         }
 
         //private
+        
 
-        private void UpdateRanking(Player p)
+        //Runs in O(log(N)) for a single player -> O(N log(N)) for all players
+        private void UpdateRankings(IEnumerable<Player> players)
         {
-            float elo = p.days.Last().getElo() + RatingOffset;
-            Func<float> uncertainty = () => p.days.Last().uncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - p.days.Last().day) * w2);
+            foreach (var p in players)
+            {
+                float elo = p.days.Last().getElo() + RatingOffset;
+                Func<float> uncertainty = () => p.days.Last().uncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - p.days.Last().day) * w2);
+                playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, uncertainty);
+                float rating = -elo + 0.1f * (float)rand.NextDouble();
+                if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
+                playerKeys[p.id] = rating;
+                sortedPlayers[rating] = p.id;
+            }
             var activePlayers = playerRatings.Where(x => x.Value.Uncertainty < GlobalConst.MaxLadderUncertainty);
-            int rank = activePlayers.Count(x => x.Value.Elo > elo - 0.0001f);
-            playerRatings[p.id] = new PlayerRating(rank, (float)rank / activePlayers.Count(), elo, uncertainty);
-            float rating = -elo + 0.1f * (float)rand.NextDouble();
-            if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
-            playerKeys[p.id] = rating;
-            sortedPlayers[rating] = p.id;
+            int rank = 0;
+            foreach (var pair in sortedPlayers)
+            {
+                if (playerRatings[pair.Value].Uncertainty <= GlobalConst.MaxLadderUncertainty)
+                {
+                    rank++;
+                    playerRatings[pair.Value] = new PlayerRating(rank, (float)rank / activePlayers.Count(), playerRatings[pair.Value].Elo, playerRatings[pair.Value].Uncertainty);
+                }
+            }
         }
 
         private int ConvertDate(DateTime date)
