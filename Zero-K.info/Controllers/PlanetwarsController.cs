@@ -180,7 +180,7 @@ namespace ZeroKWeb.Controllers
                 var canDestroy = toDestroy.OwnerAccountID == acc.AccountID || planet.OwnerAccountID == acc.AccountID;
                 if (!canDestroy) return Content("Structure is not under your control.");
                 db.PlanetStructures.DeleteOnSubmit(toDestroy);
-                var refund = toDestroy.StructureType.Cost * GlobalConst.SelfDestructRefund;
+                var refund = structureType.Cost * GlobalConst.SelfDestructRefund;
                 if (toDestroy.Account != null) toDestroy.Account.ProduceMetal(refund);
                 else faction?.ProduceMetal(refund);
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} has demolished a {1} on {2}.", acc, toDestroy.StructureType, planet));
