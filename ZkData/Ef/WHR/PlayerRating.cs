@@ -12,17 +12,25 @@ namespace Ratings
     [Serializable]
     public class PlayerRating
     {
-        public readonly float Elo;
         public readonly float Percentile;
         public readonly int Rank;
-        public float Uncertainty { get
+        public float Uncertainty {
+            get
             {
                 return UncertaintyFunc != null ? UncertaintyFunc.Invoke() : float.PositiveInfinity;
+            }
+        }
+        public float Elo {
+            get
+            {
+                return RealElo - Math.Min(200, Uncertainty) * 3;
             }
         }
 
         [JsonProperty]
         private readonly Func<float> UncertaintyFunc;
+        [JsonProperty]
+        private readonly float RealElo;
 
         public PlayerRating(int Rank, float Percentile, float Elo, float Uncertainty) : this(Rank, Percentile, Elo, () => Uncertainty)
         {
@@ -33,7 +41,7 @@ namespace Ratings
         {
             this.Percentile = Percentile;
             this.Rank = Rank;
-            this.Elo = Elo;
+            this.RealElo = Elo;
             this.UncertaintyFunc = UncertaintyCalculator;
         }
     }
