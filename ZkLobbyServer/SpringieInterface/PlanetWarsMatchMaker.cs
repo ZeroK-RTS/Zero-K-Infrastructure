@@ -75,7 +75,7 @@ namespace ZeroKWeb
                 AttackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
             }
 
-            timer = new Timer(10000);
+            timer = new Timer(1045);
             timer.AutoReset = true;
             timer.Elapsed += TimerOnElapsed;
             timer.Start();
