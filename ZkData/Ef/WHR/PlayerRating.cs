@@ -17,7 +17,7 @@ namespace Ratings
         public readonly int Rank;
         public float Uncertainty { get
             {
-                return UncertaintyFunc.Invoke();
+                return UncertaintyFunc?.Invoke();
             }
         }
 
