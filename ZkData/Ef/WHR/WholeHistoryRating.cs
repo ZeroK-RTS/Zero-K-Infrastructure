@@ -267,7 +267,9 @@ namespace Ratings
             foreach (var p in players)
             {
                 float elo = p.days.Last().getElo() + RatingOffset;
-                Func<float> uncertainty = () => p.days.Last().uncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - p.days.Last().day) * w2);
+                float lastUncertainty = p.days.Last().uncertainty;
+                float lastDay = p.days.Last().day;
+                Func<float> uncertainty = () => lastUncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - lastDay) * w2);
                 playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, uncertainty);
                 float rating = -elo + 0.1f * (float)rand.NextDouble();
                 if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
