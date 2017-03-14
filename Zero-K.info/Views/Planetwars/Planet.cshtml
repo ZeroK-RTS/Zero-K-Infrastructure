@@ -50,15 +50,11 @@
 	<input type='submit' value="Rename Planet" />
 	</form>
 }
-@if (autohost != null) { 
+@if (autohost != null && autohost.IsInGame) { 
 	<b>
 		@if (autohost.IsInGame) {
-			<a href="@Html.PrintSpringLink("@join_player:"+autohost.FounderName)">
-				Battle in progress, JOIN TO WATCH</a>
-	} else {
-			<a href="@Html.PrintSpringLink("@join_player:"+autohost.FounderName)">
-				Battle has @autohost.Users.Count players waiting, JOIN IT</a>
-	}
+            <a href="@Url.Action("WatchBattle", "Lobby", new {id=autohost.BattleID})" class="js_ping">Battle in progress, JOIN TO WATCH</a>
+        }
 	</b>
 }
 @{

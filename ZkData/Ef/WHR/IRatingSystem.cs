@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ZkData;
 
 namespace Ratings
@@ -8,9 +9,11 @@ namespace Ratings
 
         void ProcessBattle(SpringBattle battle);
 
-        float GetPlayerRating(Account account);
+        PlayerRating GetPlayerRating(Account account);
 
-        float GetPlayerRatingUncertainty(Account account);
+        List<Account> GetTopPlayers(int count);
+
+        List<Account> GetTopPlayers(int count, Func<Account, bool> selector);
 
         List<float> PredictOutcome(List<ICollection<Account>> teams);
     }

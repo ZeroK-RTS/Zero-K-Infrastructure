@@ -59,7 +59,7 @@ namespace PlasmaDownloader
                         var wc = new WebClient() { Proxy = null };
                         var assemblyName = Assembly.GetEntryAssembly()?.GetName();
                         if (assemblyName != null) wc.Headers.Add("user-agent", string.Format("{0} {1}", assemblyName.Name, assemblyName.Version));
-                        var target = Path.GetTempFileName() + extension;
+                        var downloadTempName = Path.GetTempFileName() + extension;
                         wc.DownloadProgressChanged += (s, e) =>
                         {
                             Length = (int)(e.TotalBytesToReceive);
@@ -87,7 +87,7 @@ namespace PlasmaDownloader
 
                                 try
                                 {
-                                    ExtractZipArchive(target, targetDir);
+                                    ExtractZipArchive(downloadTempName, targetDir);
                                     FixPermissions(targetDir);
                                     MarkAsDone(targetDir);
                                     Trace.TraceInformation("Install of {0} complete", Name);
@@ -109,9 +109,10 @@ namespace PlasmaDownloader
                                     timer.Dispose();
                                 }
                             }
+                            try { File.Delete(downloadTempName);} catch { }
                         };
                         Trace.TraceInformation("Downloading {0}", downloadUrl);
-                        wc.DownloadFileAsync(new Uri(downloadUrl), target, this);
+                        wc.DownloadFileAsync(new Uri(downloadUrl), downloadTempName, this);
                         return;
                     }
                     else

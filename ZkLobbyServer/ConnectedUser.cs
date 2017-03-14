@@ -276,6 +276,28 @@ namespace ZkLobbyServer
             }
         }
 
+        public async Task Process(JoinFactionRequest joinFaction)
+        {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Find(User.AccountID);
+            var fac = db.Factions.First(x => !x.IsDeleted && x.Shortcut == joinFaction.Faction);
+            if (acc.FactionID == null)
+            {
+                if (acc.Clan != null && acc.Clan.FactionID == null) // if your clan is faction-less join the faciton too
+                {
+                    acc.Clan.FactionID = fac.FactionID;
+                    foreach (Account member in acc.Clan.Accounts) member.FactionID = fac.FactionID;
+                    db.SaveChanges();
+                    db.Events.InsertOnSubmit(server.PlanetWarsEventCreator.CreateEvent("Clan {0} moved to faction {1}", acc.Clan, fac));
+                }
+                acc.FactionID = fac.FactionID;
+            }
+            db.SaveChanges();
+            db.Events.InsertOnSubmit(server.PlanetWarsEventCreator.CreateEvent("{0} joins {1}", acc, fac));
+            db.SaveChanges();
+            await server.PublishAccountUpdate(acc);
+        }
+
 
         public async Task Process(RequestConnectSpring connectSpring)
         {
@@ -710,8 +732,8 @@ namespace ZkLobbyServer
             }
             else
             {
-                var needForSleep = (double)bytesSent/GlobalConst.LobbyThrottleBytesPerSecond - seconds;
-                await Task.Delay((int)Math.Round(needForSleep*1000.0));
+                var needForSleep = (double)bytesSent / GlobalConst.LobbyThrottleBytesPerSecond - seconds;
+                await Task.Delay((int)Math.Round(needForSleep * 1000.0));
             }
         }
     }

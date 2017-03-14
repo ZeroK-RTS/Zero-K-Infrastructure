@@ -1,5 +1,6 @@
 @using ZeroKWeb
 @using ZkData
+@using Ratings
 @model ZeroKWeb.Controllers.HomeController.IndexResult
 @{
     ViewBag.NoBorder = true;
@@ -42,7 +43,7 @@
             @Html.IncludeWiki("Features")
         }
     </div>
-    @foreach (var n in Model.Headlines)
+    @foreach (var n in Model.Headlines.Take(1))
     {
         <div class="js_dialog" title="News headlines">
             <h1>@n.Title</h1>
@@ -131,14 +132,17 @@
                 <th width="200" align="left">Name</th>
                 <th>ELO</th>
             </tr>
-            @{var cnt = 1;}
-            @foreach (var a in Model.Top10Players)
-            {
-                <tr>
-                    <td>@(cnt++)</td>
-                    <td><small>@Html.PrintAccount(a)</small></td>
-                    <td>@Math.Round(a.EffectiveMmElo)</td>
-                </tr>
+            @{
+                int rank = 0;
+                foreach (var acct in RatingSystems.DisableRatingSystems ? Model.Top10Players : RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetTopPlayers(10))
+                {
+
+                    <tr>
+                        <td>@(++rank)</td>
+                        <td><small>@Html.PrintAccount(acct)</small></td>
+                        <td>@(Math.Round(RatingSystems.DisableRatingSystems ? acct.EffectiveMmElo : acct.GetRating(RatingCategory.MatchMaking).Elo))</td>
+                    </tr>
+                }
             }
         </table>
     </div>

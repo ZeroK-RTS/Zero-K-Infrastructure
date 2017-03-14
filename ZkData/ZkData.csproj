@@ -80,6 +80,7 @@
     <Compile Include="Ef\WHR\IRatingSystem.cs" />
     <Compile Include="Ef\WHR\Player.cs" />
     <Compile Include="Ef\WHR\PlayerDay.cs" />
+    <Compile Include="Ef\WHR\PlayerRating.cs" />
     <Compile Include="Ef\WHR\RatingSystems.cs" />
     <Compile Include="Ef\WHR\WholeHistoryRating.cs" />
     <Compile Include="Enums\AdminLevel.cs" />
@@ -268,6 +269,10 @@
     <Compile Include="Migrations\201703030808034_FixSpringBattleBotKey.cs" />
     <Compile Include="Migrations\201703030808034_FixSpringBattleBotKey.Designer.cs">
       <DependentUpon>201703030808034_FixSpringBattleBotKey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703101203373_RemoveNewLastRead.cs" />
+    <Compile Include="Migrations\201703101203373_RemoveNewLastRead.Designer.cs">
+      <DependentUpon>201703101203373_RemoveNewLastRead.cs</DependentUpon>
     </Compile>
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -542,6 +547,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703030808034_FixSpringBattleBotKey.resx">
       <DependentUpon>201703030808034_FixSpringBattleBotKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703101203373_RemoveNewLastRead.resx">
+      <DependentUpon>201703101203373_RemoveNewLastRead.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

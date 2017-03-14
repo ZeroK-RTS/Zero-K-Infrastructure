@@ -1,6 +1,7 @@
 ﻿@using ZeroKWeb
 @using ZeroKWeb.Controllers
 @using ZkData
+@using Ratings
 @model LadderCalculator.LadderModel
 @{
     Page.Title = "Award ladders";
@@ -14,29 +15,37 @@
     <tr>
         <td>
             <span>
-                @foreach (Account acct in Model.Top50Accounts)
-                {
-                    if (acct.CompetitiveRank == 21)
+                @{
+                    int rank = 0;
+                    foreach (Account acct in RatingSystems.DisableRatingSystems ? Model.Top50Accounts : RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetTopPlayers(50))
                     {
-                        @:</span><br /><span style="font-size: small">
+                        if (rank++ == 20)
+                        {
+                            @:</span><br /><span style="font-size: small">
+                        }
+                        <text>
+                            @(rank) ) @Html.PrintAccount(acct) - @(Math.Round(RatingSystems.DisableRatingSystems ? acct.EffectiveMmElo : acct.GetRating(RatingCategory.MatchMaking).Elo)) <br />
+                        </text>
                     }
-                    <text>
-                        @(acct.CompetitiveRank) ) @Html.PrintAccount(acct) - @(Math.Round(acct.EffectiveMmElo)) <br />
-                    </text>
                 }
             </span>
         </td>
         <td>
-            @foreach (Account acct in Model.Top50Casual)
-            {
-                if (acct.CasualRank == 21)
-                {
-                    @:</span><br /><span style="font-size: small">
+            <span>
+                @{
+                    rank = 0;
+                    foreach (Account acct in RatingSystems.DisableRatingSystems ? Model.Top50Casual : RatingSystems.GetRatingSystem(RatingCategory.Casual).GetTopPlayers(50))
+                    {
+                        if (rank++ == 20)
+                        {
+                            @:</span><br /><span style="font-size: small">
+                        }
+                        <text>
+                            @(rank)) @Html.PrintAccount(acct) - @(Math.Round(RatingSystems.DisableRatingSystems ? acct.EffectiveElo : acct.GetRating(RatingCategory.Casual).Elo))<br />
+                        </text>
                     }
-                <text>
-                    @(acct.CasualRank) ) @Html.PrintAccount(acct) - @(Math.Round(acct.EffectiveElo))<br />
-                </text>
-            }
+                }
+            </span>
         </td>
     </tr>
 </table>
@@ -75,4 +84,4 @@
             </div>
         </div>
     </div>
- }
+}

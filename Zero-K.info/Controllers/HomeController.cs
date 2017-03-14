@@ -197,11 +197,13 @@ namespace ZeroKWeb.Controllers
 			if (Global.Account != null) {
 				result.Headlines =
 					db.News.Where(
-						x => x.Created < DateTime.UtcNow && x.HeadlineUntil != null && x.HeadlineUntil > DateTime.UtcNow && (Global.Account.LastNewsRead == null || ( x.Created > Global.Account.LastNewsRead))).
-						OrderByDescending(x => x.Created);
+						x => x.Created < DateTime.UtcNow && x.HeadlineUntil != null && x.HeadlineUntil > DateTime.UtcNow && !x.ForumThread.ForumThreadLastReads.Any(y=>y.AccountID== Global.AccountID && y.LastRead != null)).
+						OrderByDescending(x => x.Created).ToList();
 
-				if (result.Headlines.Any()) {
-					db.Accounts.Single(x => x.AccountID == Global.AccountID).LastNewsRead = DateTime.UtcNow;
+				if (result.Headlines.Any())
+				{
+				    foreach (var h in result.Headlines) h.ForumThread.UpdateLastRead(Global.AccountID, false);
+
 				    db.SaveChanges();
 				}
 			} else {
@@ -270,7 +272,7 @@ namespace ZeroKWeb.Controllers
 
 	    private static ActionResult RedirectToSteamOpenID(string login, string referer, OpenIdRelyingParty openid)
 	    {
-	        IAuthenticationRequest request = openid.CreateRequest(Identifier.Parse("https://steamcommunity.com/openid/"));
+            IAuthenticationRequest request = openid.CreateRequest(Identifier.Parse("https://steamcommunity.com/openid/"));
 	        if (!string.IsNullOrEmpty(referer)) request.SetCallbackArgument("referer", referer);
 	        return request.RedirectingResponse.AsActionResultMvc5();
 	    }

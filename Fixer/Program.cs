@@ -346,25 +346,85 @@ namespace Fixer
         }
 
 
+        public static void MakeActiveClanLeaders()
+        {
+            var db = new ZkDataContext();
+            var year = DateTime.UtcNow.AddYears(-1);
+            var day4 = DateTime.UtcNow.AddDays(-4);
+            List<Clan> toDelClans = new List<Clan>();
+            var leaderRole = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople && x.IsClanOnly);
+            foreach (var clan in db.Clans.Where(x=>!x.IsDeleted).ToList())
+            {
+                List<Tuple<Account,DateTime>> players = new List<Tuple<Account, DateTime>>();
+                var acc = clan.Accounts.ToList();
+                foreach (var a in acc)
+                {
+                    var lastTime =
+                        db.SpringBattlePlayers.Where(x => x.AccountID == a.AccountID && !x.IsSpectator)
+                            .OrderByDescending(x => x.SpringBattle.StartTime).Select(x=>x.SpringBattle.StartTime).FirstOrDefault();
+                    players.Add(Tuple.Create(a, lastTime));
+                }
+
+                if (!Clan.IsShortcutValid(clan.Shortcut))
+                {
+                    toDelClans.Add(clan);
+                } else if (!players.Any(x => x.Item2 >= year))
+                {
+                    clan.IsDeleted = true;
+                    toDelClans.Add(clan);
+                }
+                else
+                {
+                    var leader = players.Where(x => x.Item1.AccountRolesByAccountID.Any(y=>y.RoleTypeID == leaderRole.RoleTypeID)).FirstOrDefault();
+                    if (leader == null || leader.Item2 < day4)
+                    {
+                        var newLeader = players.FirstOrDefault();
+                        if (newLeader != null && (leader == null || newLeader.Item1.AccountID != leader.Item1.AccountID))
+                        {
+                            db.AccountRoles.InsertOnSubmit(new AccountRole()
+                            {
+                                AccountID = newLeader.Item1.AccountID,
+                                ClanID = clan.ClanID,
+                                RoleTypeID = leaderRole.RoleTypeID,
+                                Inauguration = DateTime.UtcNow
+                            });
+                        }
+                    }
+                }
+                db.SaveChanges();
+            }
+
+            db.Clans.RemoveRange(toDelClans);
+            db.SaveChanges();
+        }
+
+
         static void Main(string[] args)
         {
-            GlobalConst.Mode = ModeType.Live;
-            
-            var db = new ZkDataContext();
+            //GlobalConst.Mode = ModeType.Live;
+            MakeActiveClanLeaders();
+            //return;
+            //GlobalConst.Mode = ModeType.Live;
+
+            //PlanetwarsFixer.PurgeGalaxy(24, false, true);
+            //PlanetwarsFixer.StartGalaxy(24, 3919, 3925);
+            //PlanetwarsFixer.StartGalaxy(24, 3973, 3923);
+
+            return;
 
             //var mmBats = db.SpringBattles.Where(x => x.IsMatchMaker);
             //var suc = mmBats.Count(x => x.Duration > 300 && x.PlayerCount > 2);
             //var fail = mmBats.Count(x => x.Duration < 300);
-            var weeke= db.SpringBattles.Count(x => x.StartTime >= new DateTime(2017, 2, 19) && x.StartTime <= new DateTime(2017, 2, 20) && x.Duration > 300 && x.PlayerCount > 2);
 
             //Console.WriteLine(test);
 
 
             //RenameOldAccounts();
-            return;
-            var ns = new NubSimulator();
-            ns.SpawnMany();
-            Console.ReadLine();
+
+            //var ns = new NubSimulator();
+            //ns.SpawnMany();
+            //Console.ReadLine();
+
             /*using (var archive = ArchiveFactory.Open(target))
             {
                 long done = 0;
@@ -380,7 +440,6 @@ namespace Fixer
 
 
             //WikiPortingMW.DoStuff();
-            return;
 
             //FixStuff();
             //MigrateDatabase();
@@ -388,26 +447,6 @@ namespace Fixer
 
             //DeleteOldUsers();
             //return;
-
-            /*
-            //ImportWiki();
-            var db = new ZkDataContext();
-            var wikis = db.ForumCategories.First(x => x.IsWiki).ForumThreads.Select(x => new { key=x.WikiKey, text= x.ForumPosts.First().Text}).ToList();
-
-            var parser = new ForumWikiParser();
-            for (int i = 0; i < 100; i++)
-            {
-                var sw = Stopwatch.StartNew();
-                foreach (var w in wikis)
-                {
-                    //Console.WriteLine(w.key);
-                    parser.ProcessToHtml(w.text, null);
-                }
-                sw.Stop();
-                Console.WriteLine("total: {0}ms, item: {1:D}ms", sw.ElapsedMilliseconds, sw.ElapsedMilliseconds/wikis.Count);
-            }*/
-
-
 
             //GetGameStats(new DateTime(2014,12,1));
             //Thread.Sleep(10000);
@@ -428,7 +467,7 @@ namespace Fixer
             //var db = new ZkDataContext(false);
             //db.Database.CreateIfNotExists();
 
-            //PlanetwarsFixer.StartGalaxy(24,3919,3925);
+
             //AddClanLeader();
             //return;
             //TestPwMatch();
@@ -449,19 +488,20 @@ namespace Fixer
 
             //PickHomworldOwners();
 
-            //PlanetwarsFixer.PurgeGalaxy(24, false, true);
+            PlanetwarsFixer.PurgeGalaxy(24, false, true);
             //PlanetwarsFixer.RandomizeMaps(24);
-            //SetPlanetTeamSizes();
+            //PlanetwarsFixer.SetPlanetTeamSizes(24);
 
             //RandomizePlanetOwners(24);
             //GenerateStructures(24);
-            //PlanetwarsFixer.GenerateArtefacts(24, new int[] { 3940, 3949, 3954, 3929, 3956 });
+            PlanetwarsFixer.GenerateArtefacts(24, new int[] { 3940, 3949, 3954, 3929, 3956 });
 
             //SwapPlanetOwners(3948, 3955);
             //SwapPlanetOwners(3973, 3932);
-            //PlanetwarsFixer.AddWormholes();
+            PlanetwarsFixer.AddWormholes();
             //PlanetwarsFixer.RemoveTechStructures(true, true);
-            //StartGalaxy(24);
+
+            PlanetwarsFixer.StartGalaxy(24, 3919, 3925);
 
             //TestPrediction();
             //FixMissionScripts();
@@ -527,23 +567,6 @@ namespace Fixer
             cloner.CloneAllTables();
         }
 
-        static void SetPlanetTeamSizes()
-        {
-            var db = new ZkDataContext();
-            var gal = db.Galaxies.First(x => x.IsDefault);
-            var planets = gal.Planets.ToList().OrderBy(x => x.Resource.MapDiagonal).ToList();
-            var cnt = planets.Count;
-            int num = 0;
-            foreach (var p in planets)
-            {
-                //if (num < cnt*0.15) p.TeamSize = 1;else 
-                if (num < cnt * 0.80) p.TeamSize = 2;
-                //else if (num < cnt*0.85) p.TeamSize = 3;
-                else p.TeamSize = 3;
-                num++;
-            }
-            db.SaveChanges();
-        }
 
         public static void RecalculateKudos()
         {

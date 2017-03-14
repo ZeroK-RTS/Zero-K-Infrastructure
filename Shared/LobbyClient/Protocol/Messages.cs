@@ -641,10 +641,30 @@ namespace LobbyClient
     }
 
     [Message(Origin.Server)]
+    public class PwRequestJoinPlanet
+    {
+        public int PlanetID { get; set; }
+    }
+
+
+    [Message(Origin.Server)]
     public class PwJoinPlanetSuccess
     {
         public int PlanetID { get; set; }
     }
+
+    [Message(Origin.Server)]
+    public class PwAttackingPlanet
+    {
+        public int PlanetID { get; set; }
+    }
+
+    [Message(Origin.Client)]
+    public class JoinFactionRequest
+    {
+        public string Faction { get; set; }
+    }
+
 
 
     [Message(Origin.Client)]

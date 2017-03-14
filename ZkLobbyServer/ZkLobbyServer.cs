@@ -9,6 +9,7 @@ using PlasmaDownloader;
 using PlasmaShared;
 using ZeroKWeb;
 using ZkData;
+using Ratings;
 
 namespace ZkLobbyServer
 {
@@ -67,7 +68,7 @@ namespace ZkLobbyServer
 
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
-            chatRelay = new ChatRelay(this, new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai", "zk", "zkmap" });
+            chatRelay = new ChatRelay(this, new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai", "zk", "zkmap", "springboard", GlobalConst.ModeratorChannel, GlobalConst.CoreChannel });
             textCommands = new ServerTextCommands(this);
             ChannelManager = new ChannelManager(this);
             MatchMaker = new MatchMaker(this);
@@ -270,6 +271,12 @@ namespace ZkLobbyServer
                 });
         }
 
+        public async Task RequestJoinPlanet(string name, int planetID)
+        {
+            var conus = ConnectedUsers.Get(name);
+            if (conus != null) await conus.SendCommand(new PwRequestJoinPlanet() { PlanetID = planetID });
+        }
+
         public Task GhostPm(string name, string text)
         {
             return
@@ -363,6 +370,8 @@ namespace ZkLobbyServer
                     Text = "Zero-K server restarted for upgrade, be back soon",
                     Place = SayPlace.MessageBox,
                 });
+
+            RatingSystems.BackupToDB();
 
             var db = new ZkDataContext();
             foreach (var u in ConnectedUsers.Values)

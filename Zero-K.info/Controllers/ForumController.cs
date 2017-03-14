@@ -45,24 +45,36 @@ namespace ZeroKWeb.Controllers
             db.SaveChanges();
         }
 
-        [Auth(Role = AdminLevel.Moderator)]
-        //[ValidateAntiForgeryToken]
-        public ActionResult DeletePost(int? postID) {
+        public ActionResult DeletePostPrompt(int? postID)
+        {
             var db = new ZkDataContext();
             var post = db.ForumPosts.Single(x => x.ForumPostID == postID);
+            if (post == null) return Content("Post does not exist");
+            return View("DeletePostPrompt", post);
+        }
+
+        [HttpPost]
+        [Auth(Role = AdminLevel.Moderator)]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeletePost(int? postID, bool deleteThread = false) {
+            var db = new ZkDataContext();
+            if (postID == null) return Content("No post specified for deletion");
+            var post = db.ForumPosts.Single(x => x.ForumPostID == postID);
+            if (post == null) return Content(String.Format("Post ID {0} does not exist", postID));
             var thread = post.ForumThread;
             var threadID = thread.ForumThreadID;
             //int index = post.ForumThread.ForumPosts.IndexOf(post);
             var page = GetPostPage(post);
 
             db.ForumPosts.DeleteOnSubmit(post);
-            if (thread.ForumPosts.Count() <= 1 && IsNormalThread(thread))
+            if ((thread.ForumPosts.Count() <= 0 || deleteThread) && IsNormalThread(thread))
             {
                 db.ForumThreadLastReads.DeleteAllOnSubmit(db.ForumThreadLastReads.Where(x => x.ForumThreadID == thread.ForumThreadID).ToList());
                 db.ForumThreads.DeleteOnSubmit(thread);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            thread.PostCount -= 1;
             db.SaveChanges();
             ResetThreadLastPostTime(threadID);
             return RedirectToAction("Thread", new { id = threadID, page });

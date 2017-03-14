@@ -66,6 +66,7 @@ namespace ZkData
             if (accountID > 0)
             {
                 if (time == null) time = DateTime.UtcNow;
+
                 var lastRead = ForumThreadLastReads.SingleOrDefault(x => x.AccountID == accountID);
                 if (lastRead == null)
                 {

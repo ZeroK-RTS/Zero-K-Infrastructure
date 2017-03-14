@@ -84,12 +84,14 @@ namespace Fixer
                 db.Database.ExecuteSqlCommand("delete from planetownerhistories");
                 db.Database.ExecuteSqlCommand("delete from planetstructures");
                 db.Database.ExecuteSqlCommand("delete from planetfactions");
+                db.Database.ExecuteSqlCommand("update planets set ownerfactionid=null, owneraccountid=null where galaxyid=24");
                 db.Database.ExecuteSqlCommand("delete from accountplanets");
                 if (resetroles) db.Database.ExecuteSqlCommand("delete from accountroles where clanID is null");
                 db.Database.ExecuteSqlCommand("delete from factiontreaties");
                 db.Database.ExecuteSqlCommand("delete from treatyeffects");
+                db.Database.ExecuteSqlCommand("update clans set factionid=null");
 
-                db.Database.ExecuteSqlCommand("delete from forumthreads where forumcategoryid={0}", db.ForumCategories.Single(x => x.ForumMode ==ForumMode.Planets).ForumCategoryID);
+                //db.Database.ExecuteSqlCommand("delete from forumthreads where forumcategoryid={0}", db.ForumCategories.Single(x => x.ForumMode ==ForumMode.Planets).ForumCategoryID);
 
                 if (resetclans)
                 {
@@ -230,7 +232,8 @@ namespace Fixer
                 var facs = db.Factions.Where(x => !x.IsDeleted).ToList();
                 for (int i = 0; i < facs.Count; i++)
                 {
-                    var planet = db.Planets.First(x => x.PlanetID == startingPlanets[i]);
+                    var pid = startingPlanets[i];
+                    var planet = db.Planets.First(x => x.PlanetID == pid);
                     var faction = facs[i];
                     planet.PlanetFactions.Add(new PlanetFaction()
                     {
@@ -435,5 +438,24 @@ namespace Fixer
             }
             db.SaveChanges();
         }
+
+        public static void SetPlanetTeamSizes(int galaxyID)
+        {
+            var db = new ZkDataContext();
+            var gal = db.Galaxies.First(x => x.GalaxyID == galaxyID);
+            var planets = gal.Planets.ToList().OrderBy(x => x.Resource.MapDiagonal).ToList();
+            var cnt = planets.Count;
+            int num = 0;
+            foreach (var p in planets)
+            {
+                //if (num < cnt*0.15) p.TeamSize = 1;else 
+                if (num < cnt * 0.80) p.TeamSize = 2;
+                //else if (num < cnt*0.85) p.TeamSize = 3;
+                else p.TeamSize = 3;
+                num++;
+            }
+            db.SaveChanges();
+        }
+
     }
 }

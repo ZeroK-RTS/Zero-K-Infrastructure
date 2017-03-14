@@ -137,6 +137,7 @@ namespace ZkData
         public const int MinDurationForPlanetwars = 0;
 
         public const int LadderActivityDays = 70;
+        public const float MaxLadderUncertainty = 200; //200 for testing, smaller values recommended on live
 
         public const int XpForMissionOrBots = 25;
         public const int XpForMissionOrBotsVictory = 50;
@@ -181,7 +182,7 @@ namespace ZkData
         public const int AttackPointsForDefeat = 1;
         public static readonly int? MaxClanSkilledSize = null;
         public const int ClanLeaveLimit = 100;
-        public const int FactionChannelMinLevel = 10;
+        public const int FactionChannelMinLevel = 2;
         public const bool RotatePWMaps = false;
         public const bool RequireWormholeToTravel = true;
         public const bool CanChangeClanFaction = true;
@@ -205,7 +206,7 @@ namespace ZkData
         public const int KudosForGold = 1000;
 
         public const int ForumPostsPerPage = 20;
-        public const int MinLevelForForumVote = 10;
+        public const int MinLevelForForumVote = 2;
         public const int MinNetKarmaToVote = -30;
         public const int PostVoteHideThreshold = -6;
         public const bool OnlyAdminsSeePostVoters = false;
@@ -214,8 +215,8 @@ namespace ZkData
         public const int PlanetWarsDropshipsStayForMinutes = 2*60;
         public const int PlanetWarsMaxTeamsize = 4;
         public const int PlanetWarsBaseDropshipDefense = 9;
-        public const int MinPlanetWarsLevel = 10;
-        public const int MinPlanetWarsElo = 1000;
+        public const int MinPlanetWarsLevel = 2;
+        public const int MinPlanetWarsElo = -1000;
 
         public const int WikiEditLevel = 20;
 

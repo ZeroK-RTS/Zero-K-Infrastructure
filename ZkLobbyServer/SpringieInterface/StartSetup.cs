@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using PlasmaShared;
 using ZkData;
+using Ratings;
 
 namespace ZeroKWeb.SpringieInterface
 {
@@ -66,7 +67,15 @@ namespace ZeroKWeb.SpringieInterface
                     if (attacker == defender) defender = null;
 
                     ret.ModOptions["attackingFaction"] = attacker.Shortcut;
-                    if (defender != null) ret.ModOptions["defendingFaction"] = defender.Shortcut;
+                    ret.ModOptions["attackingFactionName"] = attacker.Name;
+                    ret.ModOptions["attackingFactionColor"] = attacker.Color;
+                    if (defender != null)
+                    {
+                        ret.ModOptions["defendingFaction"] = defender.Shortcut;
+                        ret.ModOptions["defendingFactionName"] = defender.Name;
+                        ret.ModOptions["defendingFactionColor"] = defender.Color;
+
+                    }
                     ret.ModOptions["planet"] = planet.Name;
                 }
 
@@ -92,7 +101,7 @@ namespace ZeroKWeb.SpringieInterface
                         //userParams["mm_elo"] = Math.Round(user.EffectiveMmElo).ToString();
                         //userParams["casual_elo"] = Math.Round(user.EffectiveElo).ToString();
 
-                        userParams["elo"] = Math.Round(user.BestEffectiveElo).ToString();
+                        userParams["elo"] = Math.Round(RatingSystems.DisableRatingSystems ? user.BestEffectiveElo : user.GetBestRating().Elo).ToString();
 
                         userParams["icon"] = user.GetIconName();
                         userParams["avatar"] = user.Avatar;

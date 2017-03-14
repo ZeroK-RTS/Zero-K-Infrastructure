@@ -22,13 +22,13 @@ namespace ZeroKWeb
             var now = DateTime.UtcNow;
             var limit = now.AddSeconds(-5);
             var parallel = requests.Values.Count(x => x != null && x.IP == ip && x.RequestEnd > now);
-            if (parallel > 10) return false;
+            if (parallel > 15) return false;
 
             var totalTime =
                 requests.Values.Where(x => (x != null) && (x.IP == ip) && (x.RequestEnd >= limit))
                     .Select(x => x.RequestEnd < now ? x.RequestEnd.Subtract(x.RequestStart > limit ? x.RequestStart : limit).TotalSeconds : now.Subtract(x.RequestStart > limit ? x.RequestStart : limit).TotalSeconds)
                     .Sum();
-            if (totalTime > 5.1) return false;
+            if (totalTime > 11) return false;
             return true;
         }
 

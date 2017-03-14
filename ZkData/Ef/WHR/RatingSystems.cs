@@ -26,13 +26,15 @@ namespace Ratings
         {
             if (DisableRatingSystems) return;
             Initialized = false;
-            ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating());
+            ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating(MiscVar.GetValue("WHR_" + category.ToString())));
 
             Task.Factory.StartNew(() => {
                 lock (processingLock)
                 {
                     ZkDataContext data = new ZkDataContext();
+                    DateTime minStartTime = DateTime.Now.AddYears(-1);
                     foreach (SpringBattle b in data.SpringBattles
+                            .Where(x => x.StartTime > minStartTime)
                             .Include(x => x.ResourceByMapResourceID)
                             .Include(x => x.SpringBattlePlayers)
                             .Include(x => x.SpringBattleBots)
@@ -41,9 +43,24 @@ namespace Ratings
                     {
                         ProcessResult(b);
                     }
+                    whr.Values.ForEach(w => w.UpdateRatings());
                     Initialized = true;
                 }
             });
+        }
+
+        public static void BackupToDB()
+        {
+            if (DisableRatingSystems) return;
+            Trace.TraceInformation("Backing up ratings...");
+            ratingCategories.ForEach(category => MiscVar.SetValue("WHR_" + category.ToString(), whr[category].SerializeJSON()));
+        }
+
+        public static void BackupToDB(IRatingSystem ratingSystem)
+        {
+            if (DisableRatingSystems) return;
+            Trace.TraceInformation("Backing up rating system...");
+            ratingCategories.Where(category => whr[category].Equals(ratingSystem)).ForEach(category => MiscVar.SetValue("WHR_" + category.ToString(), whr[category].SerializeJSON()));
         }
 
         public static IRatingSystem GetRatingSystem(RatingCategory category)
@@ -81,7 +98,8 @@ namespace Ratings
                 switch (category)
                 {
                     case RatingCategory.Casual:
-                        return !(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID?.MapIsSpecial == true));
+                        return !(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID?.MapIsSpecial == true)
+                            || battle.ResourceByMapResourceID?.MapSupportLevel < MapSupportLevel.Supported || battle.Duration < GlobalConst.MinDurationForElo);
                     case RatingCategory.MatchMaking:
                         return battle.IsMatchMaker;
                     case RatingCategory.Planetwars:

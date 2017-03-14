@@ -120,7 +120,6 @@ namespace ZkData
         public int Xp { get; set; }
         public int Level { get; set; }
         public int? ClanID { get; set; }
-        public DateTime? LastNewsRead { get; set; }
         public int? FactionID { get; set; }
         public bool IsDeleted { get; set; }
         [StringLength(50)]
@@ -258,9 +257,22 @@ namespace ZkData
             return null;
         }
 
-        public double GetRating(RatingCategory category)
+        public PlayerRating GetRating(RatingCategory category)
         {
             return RatingSystems.GetRatingSystem(category).GetPlayerRating(this);
+        }
+
+        public PlayerRating GetBestRating()
+        {
+            var casual = RatingSystems.GetRatingSystem(RatingCategory.Casual).GetPlayerRating(this);
+            var mm = RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetPlayerRating(this);
+            var pw = RatingSystems.GetRatingSystem(RatingCategory.Planetwars).GetPlayerRating(this);
+
+            if ((casual.Elo >= mm.Elo || mm.Uncertainty > GlobalConst.MaxLadderUncertainty) && casual.Uncertainty < GlobalConst.MaxLadderUncertainty) return casual;
+            if ((mm.Elo >= casual.Elo || casual.Uncertainty > GlobalConst.MaxLadderUncertainty) && mm.Uncertainty < GlobalConst.MaxLadderUncertainty) return mm;
+            //ignore pw 
+
+            return new PlayerRating(int.MaxValue, 1, 0, float.PositiveInfinity);
         }
 
         public bool VerifyPassword(string passwordHash)
@@ -342,7 +354,7 @@ namespace ZkData
 
         public bool CanVoteRecall(Account targetAccount, RoleType roleType)
         {
-            if (roleType.IsVoteable && targetAccount.FactionID == FactionID && (!roleType.IsClanOnly || targetAccount.ClanID == ClanID)) return true;
+            if (Level>= GlobalConst.MinLevelForForumVote && roleType.IsVoteable && targetAccount.FactionID == FactionID && (!roleType.IsClanOnly || targetAccount.ClanID == ClanID)) return true;
             else return false;
         }
 
@@ -559,6 +571,9 @@ namespace ZkData
             var clanID = acc?.ClanID;
             var facID = acc?.FactionID;
 
+            // block too low level
+            if (acc?.Level < GlobalConst.MinLevelForForumVote) return new List<Poll>();
+
             return
                 db.Polls.Where(
                     x =>
@@ -650,7 +665,8 @@ namespace ZkData
 
             int clampedSkill = 0;
 
-            if (EloWeight > 1) clampedSkill = System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((Math.Max(EffectiveMmElo, EffectiveElo) - 1000.0)) / 200));
+            if (RatingSystems.DisableRatingSystems && EloWeight > 1) clampedSkill = Math.Max(0, Math.Min(7, (int)Math.Floor((Math.Max(EffectiveMmElo, EffectiveElo) - 1000.0)) / 200));
+            if (!RatingSystems.DisableRatingSystems) clampedSkill = Math.Max(clampedSkill, Math.Max(0, Math.Min(7, (int)Math.Floor((GetBestRating().Elo - 1000.0)) / 200)));
 
             return $"{clampedLevel}_{clampedSkill}";
         }
@@ -659,7 +675,8 @@ namespace ZkData
         {
             var ret = new List<BadgeType>();
             if (Level > 200) ret.Add(BadgeType.player_level); 
-            if (CompetitiveRank <= 3 || CasualRank <= 3) ret.Add(BadgeType.player_elo); // top 3 best
+            if (RatingSystems.DisableRatingSystems && (CompetitiveRank <= 3 || CasualRank <= 3)) ret.Add(BadgeType.player_elo); // top 3 best
+            if (!RatingSystems.DisableRatingSystems && (GetRating(RatingCategory.MatchMaking).Rank <= 3 || GetRating(RatingCategory.Casual).Rank <= 3)) ret.Add(BadgeType.player_elo); 
             var total = Kudos> 0 ? ContributionsByAccountID.Where(x=>x.OriginalAmount > 0).Sum(x => (int?)x.KudosValue) : 0;
 
             if (total >= GlobalConst.KudosForGold) ret.Add(BadgeType.donator_2);

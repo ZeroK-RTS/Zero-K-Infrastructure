@@ -116,12 +116,12 @@ namespace LobbyClient
             return new PlayerTeam() {
                 AllyID = this.AllyNumber,
                 Name = this.Name,
-                LobbyID = this.LobbyUser.AccountID,
+                LobbyID = this.LobbyUser?.AccountID ?? 0,
                 IsSpectator = this.IsSpectator,
                 ScriptPassword = this.ScriptPassword,
-                Clan = this.LobbyUser.Clan,
-                Faction = this.LobbyUser.Faction,
-                PartyID = this.LobbyUser.PartyID
+                Clan = this.LobbyUser?.Clan,
+                Faction = this.LobbyUser?.Faction,
+                PartyID = this.LobbyUser?.PartyID
 	        };
 	    }
 	} ;

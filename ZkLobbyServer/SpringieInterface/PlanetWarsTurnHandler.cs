@@ -323,7 +323,7 @@ public static class PlanetWarsTurnHandler
         db.SaveChanges();
 
         db = new ZkDataContext(); // is this needed - attempt to fix setplanetownersbeing buggy
-        SetPlanetOwners(eventCreator, db, sb);
+        SetPlanetOwners(eventCreator, db, sb != null ? db.SpringBattles.Find(sb.SpringBattleID) : null);
         gal = db.Galaxies.Single(x => x.IsDefault);
 
         planet = gal.Planets.Single(x => x.Resource.InternalName == mapName);

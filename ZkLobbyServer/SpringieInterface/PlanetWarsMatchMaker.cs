@@ -75,7 +75,7 @@ namespace ZeroKWeb
                 AttackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
             }
 
-            timer = new Timer(10000);
+            timer = new Timer(1045);
             timer.AutoReset = true;
             timer.Elapsed += TimerOnElapsed;
             timer.Start();
@@ -89,20 +89,29 @@ namespace ZeroKWeb
                 missedDefenseFactionID = 0;
             }
 
-            var battle = new PlanetWarsServerBattle(server, Challenge);
-            RunningBattles[battle.BattleID] = Challenge;
-            server.Battles[battle.BattleID] = battle;
+            // only really start if attackers are present, otherwise missed battle opportunity basically
+            Challenge.Attackers = Challenge.Attackers.Where(x => server.ConnectedUsers.ContainsKey(x)).ToList();
+            Challenge.Defenders = Challenge.Defenders.Where(x => server.ConnectedUsers.ContainsKey(x)).ToList();
+            if (Challenge.Attackers.Any() || Challenge.Defenders.Any())
+            {
+                var battle = new PlanetWarsServerBattle(server, Challenge);
+                RunningBattles[battle.BattleID] = Challenge;
+                server.Battles[battle.BattleID] = battle;
 
-            // also join in lobby
-            await server.Broadcast(server.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
-            foreach (var usr in Challenge.Attackers.Union(Challenge.Defenders)) await server.ForceJoinBattle(usr, battle);
+                // also join in lobby
+                await server.Broadcast(server.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
+                foreach (var usr in Challenge.Attackers.Union(Challenge.Defenders)) await server.ForceJoinBattle(usr, battle);
 
-            await battle.StartGame();
+                if (await battle.StartGame())
+                {
 
-            var text =
-                $"Battle for planet {Challenge.Name} starts on zk://@join_player:{Challenge.Attackers.FirstOrDefault()}  Roster: {string.Join(",", Challenge.Attackers)} vs {string.Join(",", Challenge.Defenders)}";
+                    var text =
+                        $"Battle for planet {Challenge.Name} starts on zk://@join_player:{Challenge.Attackers.FirstOrDefault()}  Roster: {string.Join(",", Challenge.Attackers)} vs {string.Join(",", Challenge.Defenders)}";
 
-            foreach (var fac in factions) await server.GhostChanSay(fac.Shortcut, text);
+                    foreach (var fac in factions) await server.GhostChanSay(fac.Shortcut, text);
+                }
+                else await server.RemoveBattle(battle);
+            }
 
             AttackerSideCounter++;
             ResetAttackOptions();
@@ -159,7 +168,7 @@ namespace ZeroKWeb
             return command;
         }
 
-        public async Task JoinPlanet(string name, int planetId)
+        private async Task JoinPlanet(string name, int planetId)
         {
             try
             {
@@ -303,7 +312,7 @@ namespace ZeroKWeb
 
                                 await conus.SendCommand(new PwJoinPlanetSuccess() { PlanetID = targetPlanetId });
 
-                                if (attackOption.Attackers.Count == attackOption.TeamSize) StartChallenge(attackOption);
+                                if (attackOption.Attackers.Count == attackOption.TeamSize) await StartChallenge(attackOption);
                                 else await UpdateLobby();
                             }
                         }
@@ -388,7 +397,7 @@ namespace ZeroKWeb
             using (var db = new ZkDataContext())
             {
                 var gal = db.Galaxies.First(x => x.IsDefault);
-                var cnt = 2;
+                var cnt = 6;
                 var attacker = db.Factions.Single(x => x.FactionID == AttackingFaction.FactionID);
                 var planets =
                     gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID)
@@ -417,7 +426,7 @@ namespace ZeroKWeb
                 // make sure some option always exists
                 if (!AttackOptions.Any())
                 {
-                    foreach (var planet in planets.Take(3)) InternalAddOption(planet);
+                    foreach (var planet in planets.Take(6)) InternalAddOption(planet);
                 }
             }
 
@@ -439,12 +448,13 @@ namespace ZeroKWeb
         }
 
 
-        private void StartChallenge(AttackOption attackOption)
+        private async Task StartChallenge(AttackOption attackOption)
         {
             Challenge = attackOption;
             ChallengeTime = DateTime.UtcNow;
             AttackOptions.Clear();
-            UpdateLobby();
+            await UpdateLobby();
+            await server.Broadcast(attackOption.Attackers, new PwAttackingPlanet() { PlanetID = attackOption.PlanetID });
         }
 
 
