@@ -222,7 +222,8 @@ namespace Ratings
         {
             try
             {
-                playerRatings = JsonConvert.DeserializeObject<ConcurrentDictionary<int, PlayerRating>>(json);
+                var t = JsonConvert.DeserializeObject<ConcurrentDictionary<int, PlayerRating>>(json);
+                if (t != null) playerRatings = t;
             }
             catch (Exception ex)
             {
