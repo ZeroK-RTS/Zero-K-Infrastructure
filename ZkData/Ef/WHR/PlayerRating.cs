@@ -23,14 +23,14 @@ namespace Ratings
         public float Elo {
             get
             {
-                return RealElo - Math.Min(200, Uncertainty) * 3;
+                return RealElo - Math.Min(200, Uncertainty) * 2;
             }
         }
 
         [JsonProperty]
         private readonly Func<float> UncertaintyFunc;
         [JsonProperty]
-        private readonly float RealElo;
+        public readonly float RealElo;
 
         public PlayerRating(int Rank, float Percentile, float Elo, float Uncertainty) : this(Rank, Percentile, Elo, () => Uncertainty)
         {

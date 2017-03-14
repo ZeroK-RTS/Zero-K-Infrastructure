@@ -276,7 +276,7 @@ namespace Ratings
                 float lastDay = p.days.Last().day;
                 Func<float> uncertainty = () => lastUncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - lastDay) * w2);
                 playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, uncertainty);
-                float rating = -elo + 0.1f * (float)rand.NextDouble();
+                float rating = -playerRatings[p.id].Elo + 0.1f * (float)rand.NextDouble();
                 if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
                 playerKeys[p.id] = rating;
                 sortedPlayers[rating] = p.id;
@@ -288,7 +288,11 @@ namespace Ratings
                 if (playerRatings[pair.Value].Uncertainty <= GlobalConst.MaxLadderUncertainty)
                 {
                     rank++;
-                    playerRatings[pair.Value] = new PlayerRating(rank, (float)rank / activePlayers.Count(), playerRatings[pair.Value].Elo, playerRatings[pair.Value].Uncertainty);
+                    playerRatings[pair.Value] = new PlayerRating(rank, (float)rank / activePlayers.Count(), playerRatings[pair.Value].RealElo, playerRatings[pair.Value].Uncertainty);
+                }
+                else if (playerRatings[pair.Value].Rank < int.MaxValue)
+                {
+                    playerRatings[pair.Value] = new PlayerRating(int.MaxValue, 1, playerRatings[pair.Value].RealElo, playerRatings[pair.Value].Uncertainty);
                 }
             }
         }
