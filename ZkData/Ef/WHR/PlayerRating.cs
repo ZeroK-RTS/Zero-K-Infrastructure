@@ -23,7 +23,7 @@ namespace Ratings
         public float Elo {
             get
             {
-                return RealElo - Math.Min(200, Uncertainty) * 3;
+                return RealElo - Math.Min(200, Uncertainty) * 2;
             }
         }
 
