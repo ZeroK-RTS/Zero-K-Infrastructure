@@ -58,7 +58,7 @@ namespace Ratings
         {
             if (DisableRatingSystems) return;
             Trace.TraceInformation("Backing up rating system...");
-            ratingCategories.Where(x => whr[category].Equals(ratingSystem_).ForEach(category => MiscVar.SetValue("WHR_" + category.ToString(), whr[category].SerializeJSON()));
+            ratingCategories.Where(category => whr[category].Equals(ratingSystem)).ForEach(category => MiscVar.SetValue("WHR_" + category.ToString(), whr[category].SerializeJSON()));
         }
 
         public static IRatingSystem GetRatingSystem(RatingCategory category)
