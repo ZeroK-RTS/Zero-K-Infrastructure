@@ -92,8 +92,8 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
         {
-            if (runningInitialization) return new List<Account>(); // dont block during init
-            lock (updateLockInternal) //worst case block for around 1 second during full iteration
+            if (runningInitialization) return new List<Account>(); // dont block during updates to prevent dosprotector from kicking in
+            lock (updateLockInternal) 
             {
                 int counter = 0;
                 ZkDataContext db = new ZkDataContext();
@@ -140,7 +140,6 @@ namespace Ratings
                         Trace.TraceInformation("Initializing WHR ratings for " + battlesRegistered + " battles, this will take some time..");
                         runIterations(50);
                         UpdateRankings(players.Values);
-                        runningInitialization = false;
                     });
                 }
                 else if (latestBattle.StartTime.Subtract(lastUpdate.StartTime).TotalDays > 0.5d)
@@ -172,12 +171,14 @@ namespace Ratings
                 {
                     try
                     {
+                        runningInitialization = true;
                         lock (updateLockInternal)
                         {
                             DateTime start = DateTime.Now;
                             updateAction.Invoke();
                             Trace.TraceInformation("WHR Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds");
                         }
+                        runningInitialization = false;
                     }
                     catch (Exception ex)
                     {
