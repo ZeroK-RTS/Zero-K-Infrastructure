@@ -14,7 +14,7 @@ namespace Ratings
 
         public static readonly IEnumerable<RatingCategory> ratingCategories = Enum.GetValues(typeof(RatingCategory)).Cast<RatingCategory>();
 
-        public static readonly bool DisableRatingSystems = GlobalConst.Mode == ModeType.Live || GlobalConst.Mode == ModeType.Local;
+        public static readonly bool DisableRatingSystems = GlobalConst.Mode == ModeType.Live;
 
         private static HashSet<int> processedBattles = new HashSet<int>();
 
@@ -22,7 +22,7 @@ namespace Ratings
 
         private static object processingLock = new object();
 
-        static RatingSystems()
+        public static void Init()
         {
             if (DisableRatingSystems) return;
             Initialized = false;

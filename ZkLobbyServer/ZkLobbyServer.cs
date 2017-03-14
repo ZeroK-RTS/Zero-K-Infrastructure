@@ -53,6 +53,8 @@ namespace ZkLobbyServer
 
         public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator, ITopPlayerProvider topPlayerProvider)
         {
+            RatingSystems.Init();
+
             TopPlayerProvider = topPlayerProvider;
             PlanetWarsEventCreator = creator;
             var entry = Assembly.GetExecutingAssembly();
