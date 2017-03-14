@@ -137,6 +137,7 @@ namespace ZkData
         public const int MinDurationForPlanetwars = 0;
 
         public const int LadderActivityDays = 70;
+        public const float MaxLadderUncertainty = 200; //200 for testing, smaller values recommended on live
 
         public const int XpForMissionOrBots = 25;
         public const int XpForMissionOrBotsVictory = 50;

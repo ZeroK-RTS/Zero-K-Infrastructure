@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
 using ZkData;
+using Ratings;
 
 namespace ZkLobbyServer
 {
@@ -36,7 +37,7 @@ namespace ZkLobbyServer
                 if (battle.IsInGame)
                     grouping = b.spring.LobbyStartContext?.Players.Where(u => !u.IsSpectator)
                         .GroupBy(u => u.AllyID)
-                        .ToDictionary(x => x.Key, x => x.Average(y => Account.AccountByName(db, y.Name).BestEffectiveElo));
+                        .ToDictionary(x => x.Key, x => x.Average(y => RatingSystems.DisableRatingSystems ? Account.AccountByName(db, y.Name).BestEffectiveElo : Account.AccountByName(db, y.Name).GetBestRating().Elo));
                 else
                     grouping = b.Users.Values.Where(u => !u.IsSpectator)
                         .GroupBy(u => u.AllyNumber)

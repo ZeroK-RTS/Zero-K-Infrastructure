@@ -14,6 +14,7 @@ using LobbyClient;
 using MaxMind.Db;
 using MaxMind.GeoIP2;
 using ZkData;
+using Ratings;
 
 namespace ZkLobbyServer
 {
@@ -203,9 +204,9 @@ namespace ZkLobbyServer
             user.DisplayName = acc.SteamName;
             user.Avatar = acc.Avatar;
             user.Level = acc.Level;
-            user.EffectiveMmElo = (int)acc.EffectiveMmElo;
-            user.EffectiveElo = (int)acc.EffectiveElo;
-            user.RawMmElo = (int)acc.EloMm;
+            user.EffectiveMmElo = (int)Math.Round(RatingSystems.DisableRatingSystems ? acc.EffectiveMmElo : acc.GetRating(RatingCategory.MatchMaking).Elo);
+            user.EffectiveElo = (int)Math.Round(RatingSystems.DisableRatingSystems ? acc.EffectiveElo : acc.GetRating(RatingCategory.Casual).Elo);
+            user.RawMmElo = (int)Math.Round(RatingSystems.DisableRatingSystems ? acc.EloMm : acc.GetRating(RatingCategory.MatchMaking).Elo);
             user.SteamID = acc.SteamID?.ToString();
             user.IsAdmin = acc.AdminLevel >= AdminLevel.Moderator;
             user.IsBot = acc.IsBot;

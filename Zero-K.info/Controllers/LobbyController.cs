@@ -32,7 +32,7 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public async Task<ActionResult> WatchBattle(int id)
         {
-            Global.Server.ConnectedUsers.Get(Global.Account.Name).Process(new RequestConnectSpring() { BattleID = id });
+            Global.Server.ConnectedUsers.Get(Global.Account.Name)?.Process(new RequestConnectSpring() { BattleID = id });
             return Content("");
         }
 

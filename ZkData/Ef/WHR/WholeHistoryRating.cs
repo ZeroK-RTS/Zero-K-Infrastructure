@@ -1,5 +1,6 @@
 // Implementation of WHR based on original by Pete Schwamb httpsin//github.com/goshrine/whole_history_rating
 
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -21,14 +22,14 @@ namespace Ratings
 
         const float DecayPerDaySquared = 300;
         const float RatingOffset = 1500;
-        const float MaxLadderUncertainty = 200; //200 for testing, smaller values recommended on live
 
-        IDictionary<int, float> playerRatings = new ConcurrentDictionary<int, float>();
+        IDictionary<int, PlayerRating> playerRatings = new ConcurrentDictionary<int, PlayerRating>();
         IDictionary<int, Player> players = new Dictionary<int, Player>();
         SortedDictionary<float, int> sortedPlayers = new SortedDictionary<float, int>();
         IDictionary<int, float> playerKeys = new Dictionary<int, float>();
         Random rand = new Random();
-        float w2; //elo range expand per day squared
+        readonly float w2; //elo range expand per day squared
+        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity);
 
         public WholeHistoryRating()
         {
@@ -36,23 +37,20 @@ namespace Ratings
         }
 
 
-        public float GetPlayerRating(Account account)
+        public WholeHistoryRating(byte[] serializedData) : this()
         {
-            if (!RatingSystems.Initialized) return RatingOffset;
-            UpdateRatings();
-            ICollection<float[]> ratings = getPlayerRatings(account.AccountID);
-            return (ratings.Count > 0 ? ratings.Last()[1] : 0) + RatingOffset; //1500 for zk peoplers to feel at home
+            Deserialize(serializedData);
         }
 
-        public float GetPlayerRatingUncertainty(Account account)
+        public WholeHistoryRating(string serializedData) : this()
         {
-            if (!RatingSystems.Initialized) return float.PositiveInfinity;
-            UpdateRatings();
-            Player player = getPlayerById(account.AccountID);
-            if (player.days.Count > 0) {
-                return player.days.Last().uncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - player.days.Last().day) * w2) ; 
-            }
-            return float.PositiveInfinity;
+            DeserializeJSON(serializedData);
+        }
+
+
+        public PlayerRating GetPlayerRating(Account account)
+        {
+            return playerRatings.ContainsKey(account.AccountID) ? playerRatings[account.AccountID] : DefaultRating;
         }
 
         public List<float> PredictOutcome(List<ICollection<Account>> teams)
@@ -61,8 +59,9 @@ namespace Ratings
                     SetupGame(t.Select(x => x.AccountID).ToList(),
                             teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => x.AccountID)).ToList(),
                             true,
-                            ConvertDate(DateTime.Now)).getBlackWinProbability() * 2 / teams.Count
-                    ).ToList();
+                            ConvertDate(DateTime.Now),
+                            -1
+                    ).getBlackWinProbability() * 2 / teams.Count).ToList();
         }
 
         private int battlesRegistered = 0;
@@ -70,11 +69,12 @@ namespace Ratings
         public void ProcessBattle(SpringBattle battle)
         {
             latestBattle = battle;
-            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam).Select(p => p.AccountID).ToList();
-            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam).Select(p => p.AccountID).ToList();
+            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
+            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
             if (winners.Count > 0 && losers.Count > 0)
             {
-                createGame(losers, winners, false, ConvertDate(battle.StartTime));
+                battlesRegistered++;
+                createGame(losers, winners, false, ConvertDate(battle.StartTime), battle.SpringBattleID);
                 if (RatingSystems.Initialized)
                 {
                     Trace.TraceInformation(battlesRegistered + " battles registered for WHR");
@@ -85,19 +85,27 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count)
         {
-            int counter = 0;
-            ZkDataContext db = new ZkDataContext();
-            List<Account> retval = new List<Account>();
-            foreach (var pair in sortedPlayers)
+            return GetTopPlayers(count, x => true);
+        }
+
+        public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
+        {
+            lock (updateLockInternal) //todo dont block during rating init
             {
-                Account acc = db.Accounts.Where(a => a.AccountID == pair.Value).FirstOrDefault();
-                if (GetPlayerRatingUncertainty(acc) <= MaxLadderUncertainty)
+                int counter = 0;
+                ZkDataContext db = new ZkDataContext();
+                List<Account> retval = new List<Account>();
+                foreach (var pair in sortedPlayers)
                 {
-                    if (counter++ >= count) break;
-                    retval.Add(acc);
+                    Account acc = db.Accounts.Where(a => a.AccountID == pair.Value).FirstOrDefault();
+                    if (playerRatings[acc.AccountID].Uncertainty <= GlobalConst.MaxLadderUncertainty && selector.Invoke(acc))
+                    {
+                        if (counter++ >= count) break;
+                        retval.Add(acc);
+                    }
                 }
+                return retval;
             }
-            return retval;
         }
 
         //implementation specific
@@ -128,7 +136,7 @@ namespace Ratings
                     updateAction = (() => {
                         Trace.TraceInformation("Initializing WHR ratings for " + battlesRegistered + " battles, this will take some time..");
                         runIterations(50);
-                        players.Values.ForEach(p => UpdateRanking(p));
+                        UpdateRankings(players.Values);
                     });
                 }
                 else if (latestBattle.StartTime.Subtract(lastUpdate.StartTime).TotalDays > 0.5d)
@@ -137,7 +145,7 @@ namespace Ratings
                     {
                         Trace.TraceInformation("Updating all WHR ratings");
                         runIterations(1);
-                        players.Values.ForEach(p => UpdateRanking(p));
+                        UpdateRankings(players.Values);
                     });
                 }
                 else if (!latestBattle.Equals(lastUpdate))
@@ -148,7 +156,7 @@ namespace Ratings
                         IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Select(p => getPlayerById(p.AccountID));
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
-                        players.ForEach(p => UpdateRanking(p));
+                        UpdateRankings(players);
                     });
                 }
                 else
@@ -182,7 +190,7 @@ namespace Ratings
             IFormatter formatter = new BinaryFormatter();
             using (MemoryStream stream = new MemoryStream(bytes))
             {
-                playerRatings = (ConcurrentDictionary<int, float>)formatter.Deserialize(stream);
+                playerRatings = (ConcurrentDictionary<int, PlayerRating>)formatter.Deserialize(stream);
             }
         }
 
@@ -197,15 +205,85 @@ namespace Ratings
             }
             return bytes;
         }
+        public string SerializeJSON()
+        {
+            try
+            {
+                return JsonConvert.SerializeObject(playerRatings, Formatting.None);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Failed to serialize WHR " + ex);
+            }
+            return "";
+        }
+
+        public void DeserializeJSON(string json)
+        {
+            try
+            {
+                var settings = new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    MissingMemberHandling = MissingMemberHandling.Ignore
+                };
+                var t = JsonConvert.DeserializeObject<ConcurrentDictionary<int, PlayerRating>>(json, settings);
+                if (t != null) playerRatings = t;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Failed to deserialize WHR " + ex);
+            }
+            Trace.TraceInformation("Deserialized WHR cache for " + playerRatings.Count + " players");
+        }
+
+        public string DebugPlayer(Account player)
+        {
+            if (!RatingSystems.Initialized) return "";
+            if (!players.ContainsKey(player.AccountID)) return "Unknown player";
+            string debugString = "";
+            foreach (PlayerDay d in players[player.AccountID].days)
+            {
+                debugString +=
+                    d.day + ";" +
+                    d.getElo() + ";" +
+                    d.uncertainty * 100 + ";" +
+                    d.wonGames.Select(g =>
+                        g.whitePlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y) + "/" +
+                        g.blackPlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y) + "/" +
+                        (g.blackWins ? "Second" : "First") + "/" +
+                        g.id
+                    ).Aggregate("", (x, y) => x + "|" + y) + "\r\n";
+            }
+            return debugString;
+        }
 
         //private
+        
 
-        private void UpdateRanking(Player p)
+        //Runs in O(log(N)) for a single player -> O(N log(N)) for all players
+        private void UpdateRankings(IEnumerable<Player> players)
         {
-            float rating = -p.days.Last().getElo() + 0.1f * (float)rand.NextDouble();
-            if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
-            playerKeys[p.id] = rating;
-            sortedPlayers[rating] = p.id;
+            foreach (var p in players)
+            {
+                float elo = p.days.Last().getElo() + RatingOffset;
+                Func<float> uncertainty = () => p.days.Last().uncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - p.days.Last().day) * w2);
+                playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, uncertainty);
+                float rating = -elo + 0.1f * (float)rand.NextDouble();
+                if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
+                playerKeys[p.id] = rating;
+                sortedPlayers[rating] = p.id;
+            }
+            var activePlayers = playerRatings.Where(x => x.Value.Uncertainty < GlobalConst.MaxLadderUncertainty);
+            int rank = 0;
+            foreach (var pair in sortedPlayers)
+            {
+                if (playerRatings[pair.Value].Uncertainty <= GlobalConst.MaxLadderUncertainty)
+                {
+                    rank++;
+                    playerRatings[pair.Value] = new PlayerRating(rank, (float)rank / activePlayers.Count(), playerRatings[pair.Value].Elo, playerRatings[pair.Value].Uncertainty);
+                }
+            }
         }
 
         private int ConvertDate(DateTime date)
@@ -233,7 +311,7 @@ namespace Ratings
             return player.days.Select(d => new float[] { d.day, (d.getElo()), ((d.uncertainty * 100)) }).ToList();
         }
 
-        private Game SetupGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step)
+        private Game SetupGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step, int id)
         {
 
             // Avoid self-played games (no info)
@@ -256,13 +334,13 @@ namespace Ratings
 
             List<Player> white_player = white.Select(p => getPlayerById(p)).ToList();
             List<Player> black_player = black.Select(p => getPlayerById(p)).ToList();
-            Game game = new Game(black_player, white_player, blackWins, time_step);
+            Game game = new Game(black_player, white_player, blackWins, time_step, id);
             return game;
         }
 
-        private Game createGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step)
+        private Game createGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step, int id)
         {
-            Game game = SetupGame(black, white, blackWins, time_step);
+            Game game = SetupGame(black, white, blackWins, time_step, id);
             return game != null ? AddGame(game) : null;
         }
 
@@ -284,6 +362,7 @@ namespace Ratings
             {
                 p.updateUncertainty();
             }
+            RatingSystems.BackupToDB(this);
         }
 
         private void printStats()

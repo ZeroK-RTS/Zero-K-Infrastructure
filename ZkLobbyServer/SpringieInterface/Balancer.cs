@@ -6,6 +6,7 @@ using System.Threading;
 using PlasmaShared;
 using ZkData;
 using ZkLobbyServer;
+using Ratings;
 
 namespace ZeroKWeb.SpringieInterface
 {
@@ -451,8 +452,17 @@ namespace ZeroKWeb.SpringieInterface
             public BalanceItem(bool isMatchMaker, params Account[] accounts)
             {
                 LobbyId = accounts.Select(x => x.AccountID).ToList();
-                EloSum = isMatchMaker ? accounts.Sum(x => x.EffectiveMmElo) : accounts.Sum(x => x.EffectiveElo);
                 Count = accounts.Length;
+
+                if (RatingSystems.DisableRatingSystems)
+                {
+                    EloSum = isMatchMaker ? accounts.Sum(x => x.EffectiveMmElo) : accounts.Sum(x => x.EffectiveElo);
+                }
+                else
+                {
+                    RatingCategory category = isMatchMaker ? RatingCategory.MatchMaking : RatingCategory.Casual;
+                    EloSum = accounts.Sum(x => x.GetRating(category).Elo);
+                }
             }
         }
 

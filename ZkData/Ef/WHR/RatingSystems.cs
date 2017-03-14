@@ -26,7 +26,7 @@ namespace Ratings
         {
             if (DisableRatingSystems) return;
             Initialized = false;
-            ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating());
+            ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating(MiscVar.GetValue("WHR_" + category.ToString())));
 
             Task.Factory.StartNew(() => {
                 lock (processingLock)
@@ -45,6 +45,20 @@ namespace Ratings
                     Initialized = true;
                 }
             });
+        }
+
+        public static void BackupToDB()
+        {
+            if (DisableRatingSystems) return;
+            Trace.TraceInformation("Backing up ratings...");
+            ratingCategories.ForEach(category => MiscVar.SetValue("WHR_" + category.ToString(), whr[category].SerializeJSON()));
+        }
+
+        public static void BackupToDB(IRatingSystem ratingSystem)
+        {
+            if (DisableRatingSystems) return;
+            Trace.TraceInformation("Backing up rating system...");
+            ratingCategories.Where(category => whr[category].Equals(ratingSystem)).ForEach(category => MiscVar.SetValue("WHR_" + category.ToString(), whr[category].SerializeJSON()));
         }
 
         public static IRatingSystem GetRatingSystem(RatingCategory category)

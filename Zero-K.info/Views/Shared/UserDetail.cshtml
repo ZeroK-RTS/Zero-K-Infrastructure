@@ -131,13 +131,20 @@
             <b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
             <br />
             
-            <b>Competitive rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")<br />
-            <b>Casual rank:</b> @(Model.CasualRank == null ? "?" : $"{Model.CasualRank}. ({Math.Round(Model.EffectiveElo)})")<br />
-            @if (!Ratings.RatingSystems.DisableRatingSystems)
+            @if (Ratings.RatingSystems.DisableRatingSystems)
             {
-                <b>Casual Rating:</b> @($"{Math.Round(Model.GetRating(Ratings.RatingCategory.Casual))} +- {Math.Round(Model.GetRatingUncertainty(Ratings.RatingCategory.Casual))}" )<br />
-                <b>Competitive Rating:</b> @($"{Math.Round(Model.GetRating(Ratings.RatingCategory.MatchMaking))} +- {Math.Round(Model.GetRatingUncertainty(Ratings.RatingCategory.MatchMaking))}" )<br />
-                <b>Planetwars Rating:</b> @($"{Math.Round(Model.GetRating(Ratings.RatingCategory.Planetwars))} +- {Math.Round(Model.GetRatingUncertainty(Ratings.RatingCategory.Planetwars))}" )<br />
+                <b>Competitive rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")<br />
+                <b>Casual rank:</b> @(Model.CasualRank == null ? "?" : $"{Model.CasualRank}. ({Math.Round(Model.EffectiveElo)})")<br />
+            }
+            else
+            {
+                var casual = Model.GetRating(Ratings.RatingCategory.Casual);
+                var mm = Model.GetRating(Ratings.RatingCategory.MatchMaking);
+                var pw = Model.GetRating(Ratings.RatingCategory.Planetwars);
+
+                <b>Competitive rank:</b> @(mm.Rank == int.MaxValue ? "?" : $"{mm.Rank}. ({Math.Round(mm.Elo)} ± {Math.Round(mm.Uncertainty)}, Top {Math.Ceiling(mm.Percentile * 1000) / 10f}%)")<br />
+                <b>Casual rank:</b> @(casual.Rank == int.MaxValue ? "?" : $"{casual.Rank}. ({Math.Round(casual.Elo)} ± {Math.Round(casual.Uncertainty)}, Top {Math.Ceiling(casual.Percentile * 1000) / 10f}%)")<br />
+                <b>Planetwars rank:</b> @(pw.Rank == int.MaxValue ? "?" : $"{pw.Rank}. ({Math.Round(pw.Elo)} ± {Math.Round(pw.Uncertainty)}, Top {Math.Ceiling(pw.Percentile * 1000) / 10f}%)")<br />
             }
 
             <b>Level:</b> @Model.Level<br />
