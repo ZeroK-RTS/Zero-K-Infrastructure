@@ -20,7 +20,7 @@ namespace Ratings
     public class WholeHistoryRating : IRatingSystem
     {
 
-        const float DecayPerDaySquared = 300;
+        const float DecayPerDaySquared = 30;
         const float RatingOffset = 1500;
 
         IDictionary<int, PlayerRating> playerRatings = new ConcurrentDictionary<int, PlayerRating>();
