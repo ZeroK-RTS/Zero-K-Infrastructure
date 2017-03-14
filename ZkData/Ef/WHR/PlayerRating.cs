@@ -14,6 +14,7 @@ namespace Ratings
     {
         public readonly float Percentile;
         public readonly int Rank;
+        public readonly float RealElo;
         public float Uncertainty {
             get
             {
@@ -30,7 +31,7 @@ namespace Ratings
         [JsonProperty]
         private readonly Func<float> UncertaintyFunc;
         [JsonProperty]
-        public readonly float RealElo;
+        private readonly DateTime lastGame;
 
         public PlayerRating(int Rank, float Percentile, float Elo, float Uncertainty) : this(Rank, Percentile, Elo, () => Uncertainty)
         {
