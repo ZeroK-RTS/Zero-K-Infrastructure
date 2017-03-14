@@ -397,7 +397,7 @@ namespace ZeroKWeb
             using (var db = new ZkDataContext())
             {
                 var gal = db.Galaxies.First(x => x.IsDefault);
-                var cnt = 2;
+                var cnt = 6;
                 var attacker = db.Factions.Single(x => x.FactionID == AttackingFaction.FactionID);
                 var planets =
                     gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID)
@@ -426,7 +426,7 @@ namespace ZeroKWeb
                 // make sure some option always exists
                 if (!AttackOptions.Any())
                 {
-                    foreach (var planet in planets.Take(3)) InternalAddOption(planet);
+                    foreach (var planet in planets.Take(6)) InternalAddOption(planet);
                 }
             }
 
