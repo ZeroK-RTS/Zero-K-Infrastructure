@@ -31,6 +31,8 @@ namespace Ratings
         readonly float w2; //elo range expand per day squared
         public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity);
 
+        private bool runningInitialization = true;
+
         public WholeHistoryRating()
         {
             w2 = DecayPerDaySquared;
@@ -90,7 +92,8 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
         {
-            lock (updateLockInternal) //todo dont block during rating init
+            if (runningInitialization) return new List<Account>(); // dont block during init
+            lock (updateLockInternal) //worst case block for around 1 second during full iteration
             {
                 int counter = 0;
                 ZkDataContext db = new ZkDataContext();
@@ -137,6 +140,7 @@ namespace Ratings
                         Trace.TraceInformation("Initializing WHR ratings for " + battlesRegistered + " battles, this will take some time..");
                         runIterations(50);
                         UpdateRankings(players.Values);
+                        runningInitialization = false;
                     });
                 }
                 else if (latestBattle.StartTime.Subtract(lastUpdate.StartTime).TotalDays > 0.5d)
