@@ -192,7 +192,7 @@
 			<img src='/img/planetstatus/@(autohost.IsInGame ? "attacking" : "preparing")0.png' width='@(por.Width)' style='position:absolute; left: 0;'/>
 		}
 		
-		<span style="position: absolute; left: @(-por.Width); top: @(por.Height/2);"  >
+		<span style="position: absolute; left: @(-por.Width); top: @(por.Height/2);"  nicetitle="$planet$@p.PlanetID">
 		@{
 			var rendered = new List<string>();
 		}
