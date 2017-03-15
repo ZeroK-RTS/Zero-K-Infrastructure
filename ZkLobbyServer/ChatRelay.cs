@@ -29,6 +29,7 @@ namespace ZkLobbyServer
         private string lastZkTopic;
         private SpringRelaySource springRelay;
         private ZklsRelaySource zklsRelay;
+        private DiscordClient discord;
 
         private const ulong DiscordZkServerID = 278805140708786177;
         private const ulong DiscordSpringServerID = 223585969956323328;
@@ -38,7 +39,7 @@ namespace ZkLobbyServer
             this.channels = channels;
             this.server = zkServer;
 
-            var discord = new DiscordClient();
+            discord = new DiscordClient();
 
             springRelay = new SpringRelaySource(channels);
             sources.Add(springRelay);
@@ -53,7 +54,6 @@ namespace ZkLobbyServer
             restrictedSources.Add(zklsRelay);
             restrictedSources.Add(discordZkRelay);
 
-
             discord.Connect(new Secrets().GetNightwatchDiscordToken(), TokenType.Bot);
 
             foreach (var s in sources) s.OnChatRelayMessage += OnAnySourceMessage;
@@ -61,10 +61,13 @@ namespace ZkLobbyServer
             timer = new Timer(TimerCallback, this, 1000, 2000);
         }
 
-        private void TimerCallback(object state)
+        public int DiscordZkUserCount { get; private set; }
+
+       private void TimerCallback(object state)
         {
             try
             {
+                DiscordZkUserCount = discord?.GetServer(DiscordZkServerID)?.UserCount ?? 0;
                 var zkTopic =
                     $"[game: {server.ConnectedUsers.Count} online, {server.MatchMaker.GetTotalWaiting()} in queue, {server.Battles.Values.Where(x => x != null).Sum(x => (int?)x.NonSpectatorCount + x.SpectatorCount) ?? 0} in custom]";
 

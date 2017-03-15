@@ -76,6 +76,7 @@ namespace PlasmaDownloader
             {
                 var oldVers = LoadFromDisk(paths) ?? new ConfigVersions();
                 var newVers = LoadFromChobby(ver, paths);
+                bool hasError = false;
 
                 if (newVers != null)
                 {
@@ -102,11 +103,12 @@ namespace PlasmaDownloader
                         }
                         catch (Exception ex)
                         {
+                            hasError = true;
                             Trace.TraceError("Error processing file deployment {0} : {1}", versionEntry.SourcePath, ex);
                         }
                     }
                 }
-                (newVers ?? oldVers).SaveToDisk(paths);
+                if (!hasError) (newVers ?? oldVers).SaveToDisk(paths);
             }
         }
 

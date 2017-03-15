@@ -17,7 +17,7 @@ namespace ZkLobbyServer
     {
         public ConcurrentDictionary<int, ServerBattle> Battles = new ConcurrentDictionary<int, ServerBattle>();
         public ChannelManager ChannelManager;
-        private ChatRelay chatRelay;
+        public ChatRelay chatRelay;
         public int ClientCounter;
         public ConcurrentDictionary<string, ConnectedUser> ConnectedUsers = new ConcurrentDictionary<string, ConnectedUser>();
 
@@ -53,6 +53,8 @@ namespace ZkLobbyServer
 
         public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator, ITopPlayerProvider topPlayerProvider)
         {
+            RatingSystems.Init();
+
             TopPlayerProvider = topPlayerProvider;
             PlanetWarsEventCreator = creator;
             var entry = Assembly.GetExecutingAssembly();
@@ -404,6 +406,14 @@ namespace ZkLobbyServer
             {
                 LoginChecker.UpdateUserFromAccount(conus.User, acc);
                 await SyncUserToAll(conus);
+
+                // join/leave to default channels
+                var defaultChannels = ChannelManager.GetDefaultChannels(acc);
+                foreach (var chan in Channels)
+                {
+                    if (chan.Value.Users.ContainsKey(acc.Name) && !ChannelManager.CanJoin(acc, chan.Key)) await conus.Process(new LeaveChannel() { ChannelName = chan.Key });
+                    else if (!chan.Value.Users.ContainsKey(acc.Name) && defaultChannels.Contains(acc.Name)) await conus.Process(new JoinChannel() { ChannelName = chan.Key, Password = chan.Value.Password });
+                }
             }
         }
 
@@ -442,6 +452,8 @@ namespace ZkLobbyServer
                 await Broadcast(chan.Users.Keys, new ChangeTopic() { ChannelName = chan.Name, Topic = chan.Topic });
             }
         }
+
+        public int GetDiscordUserCount() => chatRelay.DiscordZkUserCount;
 
         public async Task SetEngine(string engine)
         {

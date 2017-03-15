@@ -137,7 +137,8 @@ namespace ZkData
         public const int MinDurationForPlanetwars = 0;
 
         public const int LadderActivityDays = 70;
-        public const float MaxLadderUncertainty = 200; //200 for testing, smaller values recommended on live
+        public const float MaxLadderUncertainty = 46; // < 70 days
+        public const float EloDecayPerDaySquared = 30;
 
         public const int XpForMissionOrBots = 25;
         public const int XpForMissionOrBotsVictory = 50;
@@ -210,7 +211,7 @@ namespace ZkData
         public const int MinNetKarmaToVote = -30;
         public const int PostVoteHideThreshold = -6;
         public const bool OnlyAdminsSeePostVoters = false;
-        public const int PlanetWarsMinutesToAttack = 30;
+        public const int PlanetWarsMinutesToAttack = 45;
         public const int PlanetWarsMinutesToAccept = 10;
         public const int PlanetWarsDropshipsStayForMinutes = 2*60;
         public const int PlanetWarsMaxTeamsize = 4;

@@ -262,8 +262,8 @@ namespace ZkData
             var mm = RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetPlayerRating(this);
             var pw = RatingSystems.GetRatingSystem(RatingCategory.Planetwars).GetPlayerRating(this);
 
-            if (casual.Elo >= mm.Elo && casual.Uncertainty < GlobalConst.MaxLadderUncertainty) return casual;
-            if (mm.Elo >= casual.Elo && mm.Uncertainty < GlobalConst.MaxLadderUncertainty) return mm;
+            if ((casual.Elo >= mm.Elo || mm.Uncertainty > GlobalConst.MaxLadderUncertainty) && casual.Uncertainty < GlobalConst.MaxLadderUncertainty) return casual;
+            if ((mm.Elo >= casual.Elo || casual.Uncertainty > GlobalConst.MaxLadderUncertainty) && mm.Uncertainty < GlobalConst.MaxLadderUncertainty) return mm;
             //ignore pw 
 
             return new PlayerRating(int.MaxValue, 1, 0, float.PositiveInfinity);

@@ -75,7 +75,7 @@ namespace ZeroKWeb
                 AttackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
             }
 
-            timer = new Timer(10000);
+            timer = new Timer(1045);
             timer.AutoReset = true;
             timer.Elapsed += TimerOnElapsed;
             timer.Start();
@@ -397,6 +397,7 @@ namespace ZeroKWeb
             using (var db = new ZkDataContext())
             {
                 var gal = db.Galaxies.First(x => x.IsDefault);
+                var cnt = 6;
                 var attacker = db.Factions.Single(x => x.FactionID == AttackingFaction.FactionID);
                 var planets =
                     gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID)
@@ -411,7 +412,9 @@ namespace ZeroKWeb
                     {
                         // pick only those where you can actually attack atm
                         InternalAddOption(planet);
+                        cnt--;
                     }
+                    if (cnt == 0) break;
                 }
 
                 if (!AttackOptions.Any(y => y.TeamSize == 2))
@@ -423,7 +426,7 @@ namespace ZeroKWeb
                 // make sure some option always exists
                 if (!AttackOptions.Any())
                 {
-                    foreach (var planet in planets.Take(3)) InternalAddOption(planet);
+                    foreach (var planet in planets.Take(6)) InternalAddOption(planet);
                 }
             }
 

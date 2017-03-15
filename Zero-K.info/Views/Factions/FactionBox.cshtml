@@ -1,21 +1,32 @@
 ﻿@using ZeroKWeb
 @using ZkData
+@using Ratings
 @model ZkData.Faction
 @{
     Faction f = Model;
     int count;
     int skill;
-    if (GlobalConst.PlanetWarsMode == PlanetWarsModes.PreGame)
+    var maxAge = DateTime.UtcNow.AddDays(-7);
+    if (RatingSystems.DisableRatingSystems)
     {
-        var accounts = f.Accounts.Where(x => x.LastLogin > DateTime.UtcNow.AddDays(-7)).ToList();
-        count = accounts.Count();
-        skill = accounts.Count > 0 ? (int)Math.Round(accounts.Average(x => x.EffectiveMmElo)) : 1500;
+        if (GlobalConst.PlanetWarsMode == PlanetWarsModes.PreGame)
+        {
+            var accounts = f.Accounts.Where(x => x.LastLogin > maxAge).ToList();
+            count = accounts.Count();
+            skill = accounts.Count > 0 ? (int)Math.Round(accounts.Average(x => x.EffectiveMmElo)) : 1500;
+        }
+        else
+        {
+            var accounts = f.Accounts.Where(x => x.PwAttackPoints > 0).ToList();
+            count = accounts.Count();
+            skill = accounts.Count > 0 ? (int)Math.Round(accounts.Average(x => x.EffectivePwElo)) : 1500;
+        }
     }
     else
     {
-        var accounts = f.Accounts.Where(x => x.PwAttackPoints > 0).ToList();
-        count = accounts.Count();
-        skill = accounts.Count > 0 ? (int)Math.Round(accounts.Average(x => x.EffectivePwElo)) : 1500;
+        var retval = RatingSystems.GetPlanetwarsFactionStats(f.FactionID);
+        count = retval.Item1;
+        skill = retval.Item2;
     }
 }
 <div style="color: @f.Color">

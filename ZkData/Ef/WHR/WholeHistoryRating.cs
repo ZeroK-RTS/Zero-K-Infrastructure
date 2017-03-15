@@ -20,7 +20,6 @@ namespace Ratings
     public class WholeHistoryRating : IRatingSystem
     {
 
-        const float DecayPerDaySquared = 300;
         const float RatingOffset = 1500;
 
         IDictionary<int, PlayerRating> playerRatings = new ConcurrentDictionary<int, PlayerRating>();
@@ -31,9 +30,11 @@ namespace Ratings
         readonly float w2; //elo range expand per day squared
         public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity);
 
+        private bool runningInitialization = true;
+
         public WholeHistoryRating()
         {
-            w2 = DecayPerDaySquared;
+            w2 = GlobalConst.EloDecayPerDaySquared;
         }
 
 
@@ -59,7 +60,7 @@ namespace Ratings
                     SetupGame(t.Select(x => x.AccountID).ToList(),
                             teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => x.AccountID)).ToList(),
                             true,
-                            ConvertDate(DateTime.Now),
+                            RatingSystems.ConvertDateToDays(DateTime.Now),
                             -1
                     ).getBlackWinProbability() * 2 / teams.Count).ToList();
         }
@@ -74,7 +75,7 @@ namespace Ratings
             if (winners.Count > 0 && losers.Count > 0)
             {
                 battlesRegistered++;
-                createGame(losers, winners, false, ConvertDate(battle.StartTime), battle.SpringBattleID);
+                createGame(losers, winners, false, RatingSystems.ConvertDateToDays(battle.StartTime), battle.SpringBattleID);
                 if (RatingSystems.Initialized)
                 {
                     Trace.TraceInformation(battlesRegistered + " battles registered for WHR");
@@ -90,7 +91,8 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
         {
-            lock (updateLockInternal) //todo dont block during rating init
+            if (runningInitialization) return new List<Account>(); // dont block during updates to prevent dosprotector from kicking in
+            lock (updateLockInternal) 
             {
                 int counter = 0;
                 ZkDataContext db = new ZkDataContext();
@@ -168,12 +170,14 @@ namespace Ratings
                 {
                     try
                     {
+                        runningInitialization = true;
                         lock (updateLockInternal)
                         {
                             DateTime start = DateTime.Now;
                             updateAction.Invoke();
                             Trace.TraceInformation("WHR Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds");
                         }
+                        runningInitialization = false;
                     }
                     catch (Exception ex)
                     {
@@ -267,9 +271,10 @@ namespace Ratings
             foreach (var p in players)
             {
                 float elo = p.days.Last().getElo() + RatingOffset;
-                Func<float> uncertainty = () => p.days.Last().uncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - p.days.Last().day) * w2);
-                playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, uncertainty);
-                float rating = -elo + 0.1f * (float)rand.NextDouble();
+                float lastUncertainty = p.days.Last().uncertainty * 100;
+                int lastDay = p.days.Last().day;
+                playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastUncertainty, lastDay);
+                float rating = -playerRatings[p.id].Elo + 0.1f * (float)rand.NextDouble();
                 if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
                 playerKeys[p.id] = rating;
                 sortedPlayers[rating] = p.id;
@@ -281,14 +286,13 @@ namespace Ratings
                 if (playerRatings[pair.Value].Uncertainty <= GlobalConst.MaxLadderUncertainty)
                 {
                     rank++;
-                    playerRatings[pair.Value] = new PlayerRating(rank, (float)rank / activePlayers.Count(), playerRatings[pair.Value].Elo, playerRatings[pair.Value].Uncertainty);
+                    playerRatings[pair.Value] = new PlayerRating(rank, (float)rank / activePlayers.Count(), playerRatings[pair.Value].RealElo, playerRatings[pair.Value].Uncertainty);
+                }
+                else if (playerRatings[pair.Value].Rank < int.MaxValue)
+                {
+                    playerRatings[pair.Value] = new PlayerRating(int.MaxValue, 1, playerRatings[pair.Value].RealElo, playerRatings[pair.Value].Uncertainty);
                 }
             }
-        }
-
-        private int ConvertDate(DateTime date)
-        {
-            return (int)(date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays / 1);
         }
 
         private Player GetPlayerByAccount(Account acc)
