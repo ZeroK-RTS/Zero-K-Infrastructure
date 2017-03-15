@@ -182,8 +182,8 @@ namespace ZeroKWeb.Controllers
                 var refund = toDestroy.StructureType.Cost * GlobalConst.SelfDestructRefund;
                 if (toDestroy.Account != null) toDestroy.Account.ProduceMetal(refund);
                 else faction?.ProduceMetal(refund);
-                db.PlanetStructures.DeleteOnSubmit(toDestroy);
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} has demolished a {1} on {2}.", acc, toDestroy.StructureType, planet));
+                db.PlanetStructures.DeleteOnSubmit(toDestroy);
                 db.SaveChanges();
                 PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator(), db);
             }
