@@ -20,7 +20,6 @@ namespace Ratings
     public class WholeHistoryRating : IRatingSystem
     {
 
-        const float DecayPerDaySquared = 30;
         const float RatingOffset = 1500;
 
         IDictionary<int, PlayerRating> playerRatings = new ConcurrentDictionary<int, PlayerRating>();
@@ -35,7 +34,7 @@ namespace Ratings
 
         public WholeHistoryRating()
         {
-            w2 = DecayPerDaySquared;
+            w2 = GlobalConst.EloDecayPerDaySquared;
         }
 
 
@@ -61,7 +60,7 @@ namespace Ratings
                     SetupGame(t.Select(x => x.AccountID).ToList(),
                             teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => x.AccountID)).ToList(),
                             true,
-                            ConvertDate(DateTime.Now),
+                            RatingSystems.ConvertDateToDays(DateTime.Now),
                             -1
                     ).getBlackWinProbability() * 2 / teams.Count).ToList();
         }
@@ -76,7 +75,7 @@ namespace Ratings
             if (winners.Count > 0 && losers.Count > 0)
             {
                 battlesRegistered++;
-                createGame(losers, winners, false, ConvertDate(battle.StartTime), battle.SpringBattleID);
+                createGame(losers, winners, false, RatingSystems.ConvertDateToDays(battle.StartTime), battle.SpringBattleID);
                 if (RatingSystems.Initialized)
                 {
                     Trace.TraceInformation(battlesRegistered + " battles registered for WHR");
@@ -272,10 +271,9 @@ namespace Ratings
             foreach (var p in players)
             {
                 float elo = p.days.Last().getElo() + RatingOffset;
-                float lastUncertainty = p.days.Last().uncertainty;
-                float lastDay = p.days.Last().day;
-                Func<float> uncertainty = () => lastUncertainty * 100 + (float)Math.Sqrt((ConvertDate(DateTime.Now) - lastDay) * w2);
-                playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, uncertainty);
+                float lastUncertainty = p.days.Last().uncertainty * 100;
+                int lastDay = p.days.Last().day;
+                playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastUncertainty, lastDay);
                 float rating = -playerRatings[p.id].Elo + 0.1f * (float)rand.NextDouble();
                 if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
                 playerKeys[p.id] = rating;
@@ -295,11 +293,6 @@ namespace Ratings
                     playerRatings[pair.Value] = new PlayerRating(int.MaxValue, 1, playerRatings[pair.Value].RealElo, playerRatings[pair.Value].Uncertainty);
                 }
             }
-        }
-
-        private int ConvertDate(DateTime date)
-        {
-            return (int)(date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays / 1);
         }
 
         private Player GetPlayerByAccount(Account acc)

@@ -69,6 +69,8 @@ namespace Ratings
             return whr[category];
         }
 
+        private static int latestBattle;
+
         public static void ProcessResult(SpringBattle battle)
         {
             if (DisableRatingSystems) return;
@@ -81,12 +83,53 @@ namespace Ratings
                     if (processedBattles.Contains(battleID)) return;
                     processedBattles.Add(battleID);
                     ratingCategories.Where(c => IsCategory(battle, c)).ForEach(c => whr[c].ProcessBattle(battle));
+                    latestBattle = battleID;
                 }
                 catch (Exception ex)
                 {
                     Trace.TraceError("WHR: Error processing battle (B" + battleID + ")" + ex);
                 }
             }
+        }
+
+        private static Dictionary<int, Tuple<int, int, int>> factionCache = new Dictionary<int, Tuple<int, int, int>>();
+
+        public static Tuple<int, int> GetPlanetwarsFactionStats(int factionID)
+        {
+            try
+            {
+                int count, skill;
+                if (!factionCache.ContainsKey(factionID) || factionCache[factionID].Item1 != latestBattle)
+                {
+                    var maxAge = DateTime.UtcNow.AddDays(-7);
+                    IEnumerable<Account> accounts;
+                    var rating = RatingCategory.Planetwars;
+                    if (GlobalConst.PlanetWarsMode == PlanetWarsModes.PreGame)
+                    {
+                        rating = RatingCategory.MatchMaking;
+                        accounts = GetRatingSystem(rating).GetTopPlayers(int.MaxValue, x => x.LastLogin > maxAge && x.FactionID == factionID);
+                    }
+                    else
+                    {
+                        accounts = GetRatingSystem(rating).GetTopPlayers(int.MaxValue, x => x.PwAttackPoints > 0 && x.FactionID == factionID);
+                    }
+                    count = accounts.Count();
+                    skill = count > 0 ? (int)Math.Round(accounts.Average(x => x.GetRating(rating).Elo)) : 1500;
+                    factionCache[factionID] = new Tuple<int, int, int>(latestBattle, count, skill);
+                }
+                count = factionCache[factionID].Item2;
+                skill = factionCache[factionID].Item3;
+                return new Tuple<int, int>(count, skill);
+            }catch(Exception ex)
+            {
+                Trace.TraceError("WHR failed to calculate faction stats " + ex);
+                return new Tuple<int, int>(-1, -1);
+            }
+        }
+
+        public static int ConvertDateToDays(DateTime date)
+        {
+            return (int)(date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays / 1);
         }
 
         private static bool IsCategory(SpringBattle battle, RatingCategory category)

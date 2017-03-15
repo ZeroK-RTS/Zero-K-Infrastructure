@@ -14,35 +14,37 @@ namespace Ratings
     {
         public readonly float Percentile;
         public readonly int Rank;
+        public readonly float RealElo;
         public float Uncertainty {
             get
             {
-                return UncertaintyFunc != null ? UncertaintyFunc.Invoke() : float.PositiveInfinity;
+                return LastUncertainty + (float)Math.Sqrt((RatingSystems.ConvertDateToDays(DateTime.Now) - LastGameDate) * GlobalConst.EloDecayPerDaySquared);
             }
         }
         public float Elo {
             get
             {
-                return RealElo - Math.Min(200, Uncertainty) * 2;
+                return RealElo - Math.Min(200, Math.Max(0, Uncertainty - 20)) * 2; //dont reduce value for active players
             }
         }
 
         [JsonProperty]
-        private readonly Func<float> UncertaintyFunc;
+        private readonly float LastUncertainty;
         [JsonProperty]
-        public readonly float RealElo;
+        private readonly int LastGameDate;
 
-        public PlayerRating(int Rank, float Percentile, float Elo, float Uncertainty) : this(Rank, Percentile, Elo, () => Uncertainty)
+        public PlayerRating(int Rank, float Percentile, float Elo, float Uncertainty) : this(Rank, Percentile, Elo, Uncertainty, RatingSystems.ConvertDateToDays(DateTime.Now))
         {
         }
 
         [JsonConstructor]
-        public PlayerRating(int Rank, float Percentile , float Elo, Func<float> UncertaintyCalculator)
+        public PlayerRating(int Rank, float Percentile, float Elo, float LastUncertainty, int LastGameDate)
         {
             this.Percentile = Percentile;
             this.Rank = Rank;
             this.RealElo = Elo;
-            this.UncertaintyFunc = UncertaintyCalculator;
+            this.LastUncertainty = LastUncertainty;
+            this.LastGameDate = LastGameDate;
         }
     }
 }

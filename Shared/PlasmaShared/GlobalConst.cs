@@ -138,6 +138,7 @@ namespace ZkData
 
         public const int LadderActivityDays = 70;
         public const float MaxLadderUncertainty = 46; // < 70 days
+        public const float EloDecayPerDaySquared = 30;
 
         public const int XpForMissionOrBots = 25;
         public const int XpForMissionOrBotsVictory = 50;
