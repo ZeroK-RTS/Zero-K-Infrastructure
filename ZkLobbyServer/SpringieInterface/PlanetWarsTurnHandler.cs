@@ -342,14 +342,15 @@ public static class PlanetWarsTurnHandler
             // store history
             foreach (Planet p in gal.Planets)
             {
-                db.PlanetOwnerHistories.InsertOnSubmit(new PlanetOwnerHistory
+                var hist = db.PlanetOwnerHistories.FirstOrDefault(x => x.PlanetID == p.PlanetID && x.Turn == gal.Turn);
+                if (hist == null)
                 {
-                    PlanetID = p.PlanetID,
-                    OwnerAccountID = p.OwnerAccountID,
-                    OwnerClanID = p.OwnerAccountID != null ? p.Account.ClanID : null,
-                    OwnerFactionID = p.OwnerFactionID,
-                    Turn = gal.Turn
-                });
+                    hist = new PlanetOwnerHistory() { PlanetID = p.PlanetID, Turn = gal.Turn};
+                    db.PlanetOwnerHistories.Add(hist);
+                }
+                hist.OwnerAccountID = p.OwnerAccountID;
+                hist.OwnerClanID = p.OwnerAccountID != null ? p.Account.ClanID : null;
+                hist.OwnerFactionID = p.OwnerFactionID;
             }
 
             db.SaveChanges();
