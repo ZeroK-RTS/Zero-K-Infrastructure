@@ -406,6 +406,14 @@ namespace ZkLobbyServer
             {
                 LoginChecker.UpdateUserFromAccount(conus.User, acc);
                 await SyncUserToAll(conus);
+
+                // join/leave to default channels
+                var defaultChannels = ChannelManager.GetDefaultChannels(acc);
+                foreach (var chan in Channels)
+                {
+                    if (chan.Value.Users.ContainsKey(acc.Name) && !ChannelManager.CanJoin(acc, chan.Key)) await conus.Process(new LeaveChannel() { ChannelName = chan.Key });
+                    else if (!chan.Value.Users.ContainsKey(acc.Name) && defaultChannels.Contains(acc.Name)) await conus.Process(new JoinChannel() { ChannelName = chan.Key, Password = chan.Value.Password });
+                }
             }
         }
 

@@ -66,7 +66,7 @@ namespace ZkLobbyServer
         }
 
 
-        bool CanJoin(Account acc, string channel)
+        public bool CanJoin(Account acc, string channel)
         {
             if (channel.StartsWith(PartyManager.PartyChannelPrefix)) return server.PartyManager.CanJoinChannel(acc.Name, channel);
             else if (channel == GlobalConst.ModeratorChannel) return acc.AdminLevel >= AdminLevel.Moderator;
