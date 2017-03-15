@@ -56,6 +56,7 @@ namespace LobbyClient
         public Dictionary<string, int> IngameCounts { get; set; } = new Dictionary<string, int>();
 
         public int UserCount { get; set; }
+        public int UserCountDiscord { get; set; }
     }
 
 

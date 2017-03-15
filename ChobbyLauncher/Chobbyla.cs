@@ -77,8 +77,8 @@ namespace ChobbyLauncher
 
                     if (!IsSteam)
                     {
-                        if (!await downloader.DownloadFile("Checking for chobby update", DownloadType.RAPID, chobbyTag, Progress)) return false;
-                        if (!await downloader.DownloadFile("Checking for game update", DownloadType.RAPID, GlobalConst.DefaultZkTag, Progress)) return false;
+                        if (!await downloader.DownloadFile("Checking for chobby update", DownloadType.RAPID, chobbyTag, Progress, 2)) return false;
+                        if (!await downloader.DownloadFile("Checking for game update", DownloadType.RAPID, GlobalConst.DefaultZkTag, Progress, 2)) return false;
 
 
                         ver = downloader.PackageDownloader.GetByTag(chobbyTag);
@@ -115,7 +115,7 @@ namespace ChobbyLauncher
 
                 if (!IsSteam)
                 {
-                    if (!await downloader.DownloadFile("Downloading engine", DownloadType.ENGINE, engine, Progress)) return false;
+                    if (!await downloader.DownloadFile("Downloading engine", DownloadType.ENGINE, engine, Progress, 2)) return false;
 
                     if (!await downloader.UpdateMissions(Progress))
                     {

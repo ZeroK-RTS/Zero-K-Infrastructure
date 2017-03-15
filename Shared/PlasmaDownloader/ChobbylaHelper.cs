@@ -28,17 +28,23 @@ namespace PlasmaDownloader
             string desc,
             DownloadType type,
             string name,
-            IChobbylaProgress progress)
+            IChobbylaProgress progress, int retries = 0)
         {
-            var down = downloader.GetResource(type, name);
-            
-            if (progress != null)
+            Download down;
+            do
             {
-                progress.Status = desc;
-                progress.Download = down;
-            }
-            var dlTask = down?.WaitHandle.AsTask(TimeSpan.FromMinutes(30));
-            if (dlTask != null) await dlTask.ConfigureAwait(false);
+                down = downloader.GetResource(type, name);
+
+                if (progress != null)
+                {
+                    progress.Status = desc;
+                    progress.Download = down;
+                }
+
+                var dlTask = down?.WaitHandle.AsTask(TimeSpan.FromMinutes(30));
+                if (dlTask != null) await dlTask.ConfigureAwait(false);
+            } while (down?.IsAborted != true && down?.IsComplete != true && retries-- > 0);
+
             if (down?.IsComplete == false)
             {
                 if (progress != null) progress.Status = $"Download of {progress.Download.Name} has failed";
