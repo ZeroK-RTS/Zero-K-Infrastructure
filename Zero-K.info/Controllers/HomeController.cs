@@ -143,8 +143,8 @@ namespace ZeroKWeb.Controllers
         {
             public int BattlesRunning;
             public int UsersFighting;
-            public int UsersWaiting;
             public int UsersOnline;
+            public int UsersDiscord;
         }
 
 
@@ -160,15 +160,11 @@ namespace ZeroKWeb.Controllers
                     if (b.IsInGame)
                     {
                         ret.BattlesRunning++;
-                        ret.UsersFighting += b.NonSpectatorCount;
-                    }
-                    else
-                    {
-                        ret.UsersWaiting += b.NonSpectatorCount;
+                        ret.UsersFighting += b.NonSpectatorCount + b.SpectatorCount;
                     }
                 }
 
-                ret.UsersWaiting += Global.Server.MatchMaker.GetTotalWaiting();
+                ret.UsersDiscord = Global.Server.GetDiscordUserCount();
             }
 
             return ret;
