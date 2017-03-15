@@ -462,6 +462,7 @@ namespace ZeroKWeb
         {
             try
             {
+                timer.Stop();
                 if (Challenge == null)
                 {
                     // attack timer
@@ -487,6 +488,10 @@ namespace ZeroKWeb
             catch (Exception ex)
             {
                 Trace.TraceError("PlanetWars timer error: {0}", ex);
+            }
+            finally
+            {
+                timer.Start();
             }
         }
 
