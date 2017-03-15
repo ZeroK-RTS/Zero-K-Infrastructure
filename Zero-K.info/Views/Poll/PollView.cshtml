@@ -27,6 +27,7 @@
                 @Html.PrintRoleType(Model.RoleType) ?<br />
                 @p.QuestionText
             </h4>
+            <span>ends @Model.ExpireBy.ToAgoString()</span>
         }
         else
         {

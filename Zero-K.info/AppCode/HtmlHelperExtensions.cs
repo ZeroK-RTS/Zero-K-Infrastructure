@@ -748,7 +748,8 @@ namespace System.Web.Mvc
         }
 
         public static string ToAgoString(this TimeSpan timeSpan) {
-            return string.Format("{0} ago", timeSpan.ToNiceString());
+            if (timeSpan.TotalSeconds > 0) return string.Format("{0} ago", timeSpan.Duration().ToNiceString());
+            else return string.Format("in {0}", timeSpan.Duration().ToNiceString());
         }
 
         /// <summary>
