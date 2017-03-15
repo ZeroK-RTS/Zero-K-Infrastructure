@@ -32,7 +32,7 @@ namespace ZeroKWeb.Controllers
             else return Content("Not allowed!");
         }
 
-        [Auth(Role = AdminLevel.SuperAdmin)]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult TraceLogs(TraceLogIndex model)
         {
             model = model ?? new TraceLogIndex();
