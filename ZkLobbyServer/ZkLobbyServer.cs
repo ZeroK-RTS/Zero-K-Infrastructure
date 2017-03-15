@@ -17,7 +17,7 @@ namespace ZkLobbyServer
     {
         public ConcurrentDictionary<int, ServerBattle> Battles = new ConcurrentDictionary<int, ServerBattle>();
         public ChannelManager ChannelManager;
-        private ChatRelay chatRelay;
+        public ChatRelay chatRelay;
         public int ClientCounter;
         public ConcurrentDictionary<string, ConnectedUser> ConnectedUsers = new ConcurrentDictionary<string, ConnectedUser>();
 
@@ -452,6 +452,8 @@ namespace ZkLobbyServer
                 await Broadcast(chan.Users.Keys, new ChangeTopic() { ChannelName = chan.Name, Topic = chan.Topic });
             }
         }
+
+        public int GetDiscordUserCount() => chatRelay.DiscordZkUserCount;
 
         public async Task SetEngine(string engine)
         {

@@ -484,7 +484,8 @@ namespace ZkLobbyServer
                     CurrentEloWidth = entry?.EloWidth,
                     JoinedTime = entry?.JoinedTime,
                     BannedSeconds = BannedSeconds(name),
-                    UserCount = server.ConnectedUsers.Count
+                    UserCount = server.ConnectedUsers.Count,
+                    UserCountDiscord = server.GetDiscordUserCount()
                 };
 
 
