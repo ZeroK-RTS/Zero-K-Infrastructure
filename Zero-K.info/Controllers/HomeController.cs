@@ -270,9 +270,21 @@ namespace ZeroKWeb.Controllers
 		    }
 		}
 
-	    private static ActionResult RedirectToSteamOpenID(string login, string referer, OpenIdRelyingParty openid)
+	    private ActionResult RedirectToSteamOpenID(string login, string referer, OpenIdRelyingParty openid)
 	    {
-            IAuthenticationRequest request = openid.CreateRequest(Identifier.Parse("https://steamcommunity.com/openid/"));
+            IAuthenticationRequest request=null;
+	        int tries = 3;
+            while (request == null && tries > 0)
+                try
+                {
+                    tries--;
+                    request = openid.CreateRequest(Identifier.Parse("https://steamcommunity.com/openid/"));
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Steam openid CreateRequest has failed: {0}", ex);
+                }
+	        if (request == null) return Content("Steam OpenID service is offline, cannot authorize, please try again later.");
 	        if (!string.IsNullOrEmpty(referer)) request.SetCallbackArgument("referer", referer);
 	        return request.RedirectingResponse.AsActionResultMvc5();
 	    }
