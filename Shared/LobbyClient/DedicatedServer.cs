@@ -74,25 +74,25 @@ namespace LobbyClient
 
         public class MidGameJoinUser
         {
-            public string Name { get; set; }
-            public string Avatar { get; set; }
-            public string Icon { get; set; }
-            public string Badges { get; set; }
-            public bool IsAdmin { get; set; }
-            public string Clan { get; set; }
-            public string Faction { get; set; }
-            public string Country { get; set; }
+            public string a { get; set; }
+            public string b { get; set; }
+            public string c { get; set; }
+            public string d { get; set; }
+            public bool e { get; set; }
+            public string f { get; set; }
+            public string g { get; set; }
+            public string h { get; set; }
 
             public MidGameJoinUser(User user)
             {
-                Name = user.Name;
-                Avatar = user.Avatar;
-                Icon = user.Icon;
-                if (user.Badges != null) Badges = string.Join(",", user.Badges);
-                IsAdmin = user.IsAdmin;
-                Clan = user.Clan;
-                Faction = user.Faction;
-                Country = user.Country;
+                a = user.Name;
+                b = user.Avatar;
+                c = user.Icon;
+                if (user.Badges != null) d = string.Join(",", user.Badges.Take(2));
+                e = user.IsAdmin;
+                f = user.Clan;
+                g = user.Faction;
+                h = user.Country;
             }
             
             public override string ToString()
@@ -111,7 +111,7 @@ namespace LobbyClient
                 talker.SendText($"/adduser {name} {scriptPassword}");
                 if (user != null) talker.SendText($"SPRINGIE:User {new MidGameJoinUser(user)}");
             }
-            
+
         }
 
         public event EventHandler BattleStarted = (sender, args) => { };
@@ -281,7 +281,8 @@ namespace LobbyClient
                 try
                 {
                     File.Delete(scriptPath);
-                } catch { }
+                }
+                catch { }
             }
 
             DedicatedServerExited?.Invoke(this, Context);
