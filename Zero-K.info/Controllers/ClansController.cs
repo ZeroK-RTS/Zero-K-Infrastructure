@@ -177,7 +177,7 @@ namespace ZeroKWeb.Controllers
             var kickee_acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (kickee_acc == null) return Content("No such person");
 
-            if (Global.Account.AdminLevel < AdminLevel.Moderator) {
+            if (!Global.IsModerator) {
                 if (kickee_acc.ClanID != Global.Account.ClanID) return Content("Target not in your clan");
                 if (!Global.Account.HasClanRight(x => x.RightKickPeople)) return Content("You have no kicking rights"); // unclanned people get handled here
             }
