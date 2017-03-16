@@ -27,20 +27,6 @@ namespace ZeroKWeb.Controllers
         }
 
         /// <summary>
-        ///     Returns true if the thread is a clanthread and the user is the leader of this clan
-        /// </summary>
-        bool IsClanLeaderForThread(ForumThread thread) {
-            ZkDataContext db = new ZkDataContext();
-
-            Clan clan = db.Clans.FirstOrDefault(x => x.ForumThreadID == thread.ForumThreadID);
-            if (clan == null || Global.ClanID != clan.ClanID) return false;
-
-            if (!Global.Account.HasClanRight(x => x.RightKickPeople)) return false; // RightKickPeople is clan leader; could use a better name
-
-            return true;
-        }
-
-        /// <summary>
         ///     Set the last post time of the thread to current time (includes edits)
         /// </summary>
         void ResetThreadLastPostTime(int threadID) {
@@ -80,7 +66,7 @@ namespace ZeroKWeb.Controllers
             //int index = post.ForumThread.ForumPosts.IndexOf(post);
             var page = GetPostPage(post);
 
-            if (!Global.IsModerator && !IsClanLeaderForThread(thread)) return Content("No permission to delete this post");
+            if (!Global.IsModerator && !((thread.Clan == Account.Clan) && Global.Account.HasClanRight(x => x.RightKickPeople))) return Content("No permission to delete this post");
 
             db.ForumPosts.DeleteOnSubmit(post);
             if ((thread.ForumPosts.Count() <= 0 || deleteThread) && IsNormalThread(thread))
