@@ -5,7 +5,7 @@
     var p = Model;
     var linkURL = Url.Action("Post", "Forum", new { id = p.ForumPostID }, Request?.Url?.Scheme ?? "http") + "#" + p.ForumPostID;
     var isWikiMain = Model.ForumThread.ForumCategory.ForumMode == ForumMode.Wiki && Model.ForumThread.ForumPosts.OrderBy(x => x.ForumPostID).First().ForumPostID == Model.ForumPostID;
-    var isClanLeaderOfThread = (Model.ForumThread.Clan == Account.Clan) && Global.Account.HasClanRight(x => x.RightKickPeople);
+    var isClanLeaderOfThread = (Model.ForumThread.Clan == Global.Account.Clan) && Global.Account.HasClanRight(x => x.RightKickPeople);
 }
 
 @if (isWikiMain)
