@@ -5,6 +5,7 @@
     var p = Model;
     var linkURL = Url.Action("Post", "Forum", new { id = p.ForumPostID }, Request?.Url?.Scheme ?? "http") + "#" + p.ForumPostID;
     var isWikiMain = Model.ForumThread.ForumCategory.ForumMode == ForumMode.Wiki && Model.ForumThread.ForumPosts.OrderBy(x => x.ForumPostID).First().ForumPostID == Model.ForumPostID;
+    var isClanLeaderOfThread = (Model.ForumThread.Clan == Account.Clan) && Global.Account.HasClanRight(x => x.RightKickPeople);
 }
 
 @if (isWikiMain)
@@ -94,7 +95,7 @@
                                     <img src="/img/edit_pencil.png" height="22"/>
                                 </a>
                             }
-                            @if (Global.IsModerator)
+                            @if (Global.IsModerator || isClanLeaderOfThread)
                             {
                                 <a nicetitle='Delete the post' href='@Url.Action("DeletePostPrompt", "Forum", new { postID = p.ForumPostID })'>
                                     <img src="/img/delete_trashcan.png" height="22"/>
