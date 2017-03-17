@@ -169,7 +169,8 @@ namespace ZeroKWeb.Controllers
                 return RedirectToAction("Detail", new { id = treaty.ProposingFactionID});
             }
 
-            return View("FactionTreatyDefinition", treaty);
+
+            return View("FactionTreatyDefinition", db.FactionTreaties.Find(treaty.FactionTreatyID));
         }
 
      
