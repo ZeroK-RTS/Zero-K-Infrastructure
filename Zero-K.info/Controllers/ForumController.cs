@@ -66,7 +66,7 @@ namespace ZeroKWeb.Controllers
             //int index = post.ForumThread.ForumPosts.IndexOf(post);
             var page = GetPostPage(post);
 
-            if (!Global.IsModerator && !((thread.Clan == Global.Account.Clan) && Global.Account.HasClanRight(x => x.RightKickPeople))) return Content("No permission to delete this post");
+            if (!Global.IsModerator && !((thread.Clan == Global.Account.Clan) && Global.Account.HasClanRight(x => x.RightEditTexts))) return Content("No permission to delete this post");
 
             db.ForumPosts.DeleteOnSubmit(post);
             if ((thread.ForumPosts.Count() <= 0 || deleteThread) && IsNormalThread(thread))
