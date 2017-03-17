@@ -26,7 +26,7 @@
                                 @Html.PrintAccount(a)
                             </td>
                             <td>
-                                @if (isMember && Global.Account.HasClanRight(x => x.RightKickPeople))
+                                @if (Global.IsModerator || (isMember && Global.Account.HasClanRight(x => x.RightKickPeople)))
                                 {
                                     @:&nbsp
                         string question = String.Format("Expelling {0} will make them sad. Are you sure you want to proceed?", a.Name);
