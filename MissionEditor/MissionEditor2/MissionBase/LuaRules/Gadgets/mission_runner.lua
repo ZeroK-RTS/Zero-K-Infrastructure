@@ -344,9 +344,14 @@ local function FindUnitsInGroups(searchGroups)
   return results
 end
 
+local function IsUnitInGroup(unitID, group)
+  return unitGroups[unitID] and unitGroups[unitID][group]
+end
+
 GG.mission.FindUnitsInGroup = FindUnitsInGroup
 GG.mission.FindUnitInGroup = FindUnitInGroup
 GG.mission.FindUnitsInGroups = FindUnitsInGroups
+GG.mission.IsUnitInGroup = IsUnitInGroup
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
