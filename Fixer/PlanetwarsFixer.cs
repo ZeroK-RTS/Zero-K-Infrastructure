@@ -213,11 +213,23 @@ namespace Fixer
             }
         }
 
-        public static void GenerateArtefacts(int galaxyID, int[] planetIDs)
+        public static void GenerateArtefacts(int? galaxyID, int[] planetIDs, bool cleanupExisting = false)
         {
             ZkDataContext db = new ZkDataContext();
+            if (galaxyID == null) galaxyID = db.Galaxies.FirstOrDefault(x => x.IsDefault).GalaxyID;
+            if (cleanupExisting)
+            {
+                foreach (Planet p in db.Planets.Where(x => x.GalaxyID == galaxyID))
+                {
+                    var structure = p.PlanetStructures.FirstOrDefault(x => x.StructureTypeID == 9);
+                    if (structure != null)
+                        db.PlanetStructures.DeleteOnSubmit(structure);
+                }
+                db.SaveChanges();
+            }
+
             var planetList = planetIDs.ToList();
-            var planets = db.Planets.Where(x => planetList.Contains(x.PlanetID));
+            var planets = db.Planets.Where(x => planetList.Contains(x.PlanetID) && x.GalaxyID == galaxyID);
             foreach (Planet p in planets)
             {
                 p.AddStruct(9);
