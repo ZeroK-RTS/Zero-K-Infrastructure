@@ -383,7 +383,7 @@ function GlobalPageInit(root) {
     SetupGrid(s);
 
 
-    //$(".qtip").remove(); // remove all floating tooltips - breaks autorefresh with init
+    $(".qtip").remove(); // remove all floating tooltips - breaks autorefresh with init
 }
 
 
