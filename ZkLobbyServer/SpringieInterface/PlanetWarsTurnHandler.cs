@@ -276,15 +276,41 @@ public static class PlanetWarsTurnHandler
         else
         {
             // attacker won disable all but evacuated
-            foreach (var s in planet.PlanetStructures.Where(x => x.StructureType.IsIngameDestructible && !evacuatedStructureTypeIDs.Contains(x.StructureTypeID)))
+            foreach (var s in planet.PlanetStructures.Where(x => x.StructureType.IsIngameDestructible))
             {
-                s.IsActive = false;
-                s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate * (GlobalConst.StructureIngameDisableTimeMult - 1));
+                if (evacuatedStructureTypeIDs.Contains(s.StructureTypeID))
+                {
+                    var evSaved = eventCreator.CreateEvent("{0} structure {1} on planet {2} has been saved by evacuation. {3}",
+                        planet.Faction,
+                        s.StructureType,
+                        planet,
+                        sb);
+                    db.Events.InsertOnSubmit(evSaved);
+                    text.AppendLine(evSaved.PlainText);
+                }
+                else
+                {
+                    s.IsActive = false;
+                    s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate*(GlobalConst.StructureIngameDisableTimeMult - 1));
+                }
             }
             // destroy structures by battle (usually defenses)
-            foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.BattleDeletesThis && !evacuatedStructureTypeIDs.Contains(x.StructureTypeID)).ToList()) planet.PlanetStructures.Remove(s);
+            foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.BattleDeletesThis).ToList())
+            {
+                if (evacuatedStructureTypeIDs.Contains(s.StructureTypeID))
+                {
+                    var evSaved = eventCreator.CreateEvent("{0} structure {1} on planet {2} has been saved by evacuation. {3}",
+                        planet.Faction,
+                        s.StructureType,
+                        planet,
+                        sb);
+                    db.Events.InsertOnSubmit(evSaved);
+                    text.AppendLine(evSaved.PlainText);
+                }
+                else planet.PlanetStructures.Remove(s);
+            }
 
-            var ev = eventCreator.CreateEvent("All structures have been disabled on {0} planet {1}. {2}", planet.Faction, planet, sb);
+            var ev = eventCreator.CreateEvent("All non-evacuated structures have been disabled on {0} planet {1}. {2}", planet.Faction, planet, sb);
             db.Events.InsertOnSubmit(ev);
             text.AppendLine(ev.PlainText);
         }
