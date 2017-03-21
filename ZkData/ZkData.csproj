@@ -274,6 +274,10 @@
     <Compile Include="Migrations\201703101203373_RemoveNewLastRead.Designer.cs">
       <DependentUpon>201703101203373_RemoveNewLastRead.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703212247128_AddMorePropertiesForStructureTypes.cs" />
+    <Compile Include="Migrations\201703212247128_AddMorePropertiesForStructureTypes.Designer.cs">
+      <DependentUpon>201703212247128_AddMorePropertiesForStructureTypes.cs</DependentUpon>
+    </Compile>
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
@@ -550,6 +554,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703101203373_RemoveNewLastRead.resx">
       <DependentUpon>201703101203373_RemoveNewLastRead.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703212247128_AddMorePropertiesForStructureTypes.resx">
+      <DependentUpon>201703212247128_AddMorePropertiesForStructureTypes.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
