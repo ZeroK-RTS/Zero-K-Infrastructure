@@ -177,8 +177,8 @@ namespace ZkData
         public const double BomberKillIpChance = 1.2;
         public const double BomberKillIpAmount = 1;
         public const double StructureIngameDisableTimeMult = 2;
-        public const int DefaultDropshipCapacity = 10;
-        public const int DefaultBomberCapacity = 10;
+        public const int DefaultDropshipCapacity = 50;
+        public const int DefaultBomberCapacity = 50;
         public const int AttackPointsForVictory = 2;
         public const int AttackPointsForDefeat = 1;
         public static readonly int? MaxClanSkilledSize = null;
