@@ -1,8 +1,11 @@
 ﻿@model IEnumerable<ZkData.Account>
-         
+@using Ratings     
+    
 <span>
 <small>
-Level sum: @Model.Sum(x => (int?)x.Level), level avg: @Math.Round(Model.Average(x => (int?)x.Level)??0), elo avg: @Math.Round(Model.Average(x => (double?)x.EffectiveMmElo)??0)) <br />
+Level sum: @Model.Sum(x => (int?)x.Level), 
+level avg: @Math.Round(Model.Average(x => (int?)x.Level) ?? 0), 
+elo avg: @Math.Round(Model.Average(x => (double?)(RatingSystems.DisableRatingSystems ? x.EffectiveMmElo : x.GetRating(RatingCategory.MatchMaking).Elo)) ?? 0)) <br />
 
 @foreach (var a in Model.OrderByDescending(x=>x.Level).Take(30)) {
   @Html.PrintAccount(a)<br />
