@@ -178,7 +178,6 @@ public static class PlanetWarsTurnHandler
 
                 w.ProduceMetal(defenderMetal);
                 var ev = eventCreator.CreateEvent("{0} gained {1} metal from battle {2}", w, defenderMetal, sb);
-
                 db.Events.InsertOnSubmit(ev);
                 text.AppendLine(ev.PlainText);
             }
@@ -186,7 +185,12 @@ public static class PlanetWarsTurnHandler
         else
         {
             // planet had no defenders, give metal to owner's faction
-            if (planet.OwnerFactionID !=null) planet.Faction.ProduceMetal(defendersTotalMetal);
+            if (planet.OwnerFactionID != null)
+            {
+                planet.Faction.ProduceMetal(defendersTotalMetal);
+                var ev = eventCreator.CreateEvent("{0} gained {1} metal from battle {2}", planet.Faction, defendersTotalMetal, sb);
+                db.Events.InsertOnSubmit(ev);
+            }
         }
 
 
