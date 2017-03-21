@@ -51,6 +51,8 @@ public static class PlanetWarsTurnHandler
             return;
         }
 
+        var evacuatedStructureTypeIDs = GetEvacuatedStructureTypes(extraData, db);
+
         int dropshipsSent = (planet.PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0);
         bool isLinked = planet.CanDropshipsAttack(attacker);
         string influenceReport = "";
@@ -273,14 +275,14 @@ public static class PlanetWarsTurnHandler
         }
         else
         {
-            // attacker won disable all
-            foreach (var s in planet.PlanetStructures.Where(x => x.StructureType.IsIngameDestructible))
+            // attacker won disable all but evacuated
+            foreach (var s in planet.PlanetStructures.Where(x => x.StructureType.IsIngameDestructible && !evacuatedStructureTypeIDs.Contains(x.StructureTypeID)))
             {
                 s.IsActive = false;
                 s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate * (GlobalConst.StructureIngameDisableTimeMult - 1));
             }
             // destroy structures by battle (usually defenses)
-            foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.BattleDeletesThis).ToList()) planet.PlanetStructures.Remove(s);
+            foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.BattleDeletesThis && !evacuatedStructureTypeIDs.Contains(x.StructureTypeID)).ToList()) planet.PlanetStructures.Remove(s);
 
             var ev = eventCreator.CreateEvent("All structures have been disabled on {0} planet {1}. {2}", planet.Faction, planet, sb);
             db.Events.InsertOnSubmit(ev);
@@ -391,6 +393,20 @@ public static class PlanetWarsTurnHandler
             }
             db.SaveChanges();
         }
+    }
+
+    private static List<int> GetEvacuatedStructureTypes(List<string> extraData, ZkDataContext db)
+    {
+        List<int> evacuatedStructureTypeIDs = new List<int>();
+        foreach (var evac in extraData.Where(x => x.StartsWith("pwEvacuate ")))
+        {
+            foreach (var ingameName in evac.Split(' ').Skip(1))
+            {
+                var stype = db.StructureTypes.FirstOrDefault(x => x.IsIngameEvacuable && x.IngameUnitName == ingameName);
+                if (stype != null) evacuatedStructureTypeIDs.Add(stype.StructureTypeID);
+            }
+        }
+        return evacuatedStructureTypeIDs;
     }
 
     /// <summary>
