@@ -40,8 +40,6 @@ namespace ZeroKWeb
             RunningBattles = new Dictionary<int, AttackOption>();
 
 
-            if (GlobalConst.PlanetWarsMode != PlanetWarsModes.Running) return;
-
             var db = new ZkDataContext();
 
             var gal = db.Galaxies.FirstOrDefault(x => x.IsDefault);
@@ -125,6 +123,8 @@ namespace ZeroKWeb
         {
             try
             {
+                if (GlobalConst.PlanetWarsMode != PlanetWarsModes.Running) return;
+
                 if (!AttackOptions.Any(x => x.PlanetID == planet.PlanetID) && (Challenge == null) &&
                     (planet.OwnerFactionID != AttackingFaction.FactionID))
                 {
@@ -463,6 +463,9 @@ namespace ZeroKWeb
             try
             {
                 timer.Stop();
+
+                if (GlobalConst.PlanetWarsMode != PlanetWarsModes.Running) return;
+
                 if (Challenge == null)
                 {
                     // attack timer
