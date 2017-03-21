@@ -298,6 +298,9 @@ public static class PlanetWarsTurnHandler
         // process production
         gal.ProcessProduction();
 
+        // delete one time activated structures
+        gal.DeleteOneTimeActivited(eventCreator, db);
+        db.SaveChanges();
 
         // process treaties
         foreach (var tr in db.FactionTreaties.Where(x => x.TreatyState == TreatyState.Accepted || x.TreatyState == TreatyState.Suspended))

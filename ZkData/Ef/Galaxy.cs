@@ -180,5 +180,20 @@ namespace ZkData
             }
 
         }
+
+        public void DeleteOneTimeActivited(IPlanetwarsEventCreator eventCreator, ZkDataContext db)
+        {
+            var todel = new List<PlanetStructure>();
+            foreach (var structure in Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive && x.StructureType.IsSingleUse == true))
+            {
+                todel.Add(structure);
+                db.Events.Add(eventCreator.CreateEvent("{0}'s {1} on planet {2} has activated and is now removed",
+                    structure.Account,
+                    structure.StructureType,
+                    structure.Planet));
+            }
+
+            db.PlanetStructures.DeleteAllOnSubmit(todel);
+        }
     }
 }
