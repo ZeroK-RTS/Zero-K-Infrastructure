@@ -699,7 +699,7 @@ namespace ZeroKWeb.Controllers
             return null;
         }
 
-        public ActionResult ChangePlanetMap(int planetID, int structureTypeID, int targetID, int? newMapID)
+        private ActionResult ChangePlanetMap(int planetID, int structureTypeID, int targetID, int? newMapID)
         {
             var db = new ZkDataContext();
             PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
