@@ -44,6 +44,7 @@ namespace ZkData
         public double EnergyProducedLastTurn { get; set; }
         public double EnergyDemandLastTurn { get; set; }
         public double Warps { get; set; }
+        public double VictoryPoints { get; set; }
 
         public virtual ICollection<Account> Accounts { get; set; }
         public virtual ICollection<AccountRole> AccountRoles { get; set; }

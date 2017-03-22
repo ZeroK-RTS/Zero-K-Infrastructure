@@ -287,6 +287,10 @@
     <Compile Include="Migrations\201703221141560_AddLobbyChannelTopics.Designer.cs">
       <DependentUpon>201703221141560_AddLobbyChannelTopics.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703221157379_AddFactionVictoryPoints.cs" />
+    <Compile Include="Migrations\201703221157379_AddFactionVictoryPoints.Designer.cs">
+      <DependentUpon>201703221157379_AddFactionVictoryPoints.cs</DependentUpon>
+    </Compile>
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
@@ -572,6 +576,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703221141560_AddLobbyChannelTopics.resx">
       <DependentUpon>201703221141560_AddLobbyChannelTopics.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703221157379_AddFactionVictoryPoints.resx">
+      <DependentUpon>201703221157379_AddFactionVictoryPoints.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
