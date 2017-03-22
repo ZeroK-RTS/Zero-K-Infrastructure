@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -442,7 +443,6 @@ namespace ZkLobbyServer
 
         public async Task SetTopic(string channel, string topic, string author)
         {
-            // todo persist in db
             Channel chan;
             if (Channels.TryGetValue(channel, out chan))
             {
@@ -450,6 +450,28 @@ namespace ZkLobbyServer
                 chan.Topic.SetDate = DateTime.UtcNow;
                 chan.Topic.SetBy = author;
                 await Broadcast(chan.Users.Keys, new ChangeTopic() { ChannelName = chan.Name, Topic = chan.Topic });
+
+                try
+                {
+                    using (var db = new ZkDataContext())
+                    {
+                        var entry = db.LobbyChannelTopics.FirstOrDefault(x => x.ChannelName == channel);
+                        if (entry == null)
+                        {
+                            entry = new LobbyChannelTopic() { ChannelName = channel };
+                            db.LobbyChannelTopics.Add(entry);
+                        }
+                        entry.Topic = topic;
+                        entry.Author = author;
+                        entry.SetDate = DateTime.UtcNow;
+                        db.SaveChanges();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Failed to set channel topic {0} : {1}",  channel, ex);
+                }
+
             }
         }
 

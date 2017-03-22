@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="DbCloner.cs" />
     <Compile Include="Ef\AccountRelation.cs" />
+    <Compile Include="Ef\LobbyChannelTopic.cs" />
     <Compile Include="Ef\SpringBattleBot.cs" />
     <Compile Include="Ef\WHR\Game.cs" />
     <Compile Include="Ef\WHR\IRatingSystem.cs" />
@@ -277,6 +278,10 @@
     <Compile Include="Migrations\201703212247128_AddMorePropertiesForStructureTypes.cs" />
     <Compile Include="Migrations\201703212247128_AddMorePropertiesForStructureTypes.Designer.cs">
       <DependentUpon>201703212247128_AddMorePropertiesForStructureTypes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703221133361_AddExtraGalaxyColumns.cs" />
+    <Compile Include="Migrations\201703221133361_AddExtraGalaxyColumns.Designer.cs">
+      <DependentUpon>201703221133361_AddExtraGalaxyColumns.cs</DependentUpon>
     </Compile>
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -557,6 +562,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703212247128_AddMorePropertiesForStructureTypes.resx">
       <DependentUpon>201703212247128_AddMorePropertiesForStructureTypes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703221133361_AddExtraGalaxyColumns.resx">
+      <DependentUpon>201703221133361_AddExtraGalaxyColumns.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

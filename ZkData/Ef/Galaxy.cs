@@ -18,7 +18,7 @@ namespace ZkData
         public int GalaxyID { get; set; }
         public DateTime? Started { get; set; }
         public int Turn { get; set; }
-        public DateTime? TurnStarted { get; set; }
+
         [StringLength(100)]
         public string ImageName { get; set; }
         public bool IsDirty { get; set; }
@@ -27,8 +27,12 @@ namespace ZkData
         public bool IsDefault { get; set; }
         public int AttackerSideCounter { get; set; }
         public DateTime? AttackerSideChangeTime { get; set; }
-        [Column(TypeName = "text")]
+        
         public string MatchMakerState { get; set; }
+
+        public DateTime? Ended { get; set; }
+
+        public string EndMessage { get; set; }
         
         public virtual ICollection<Link> Links { get; set; }
         public virtual ICollection<Planet> Planets { get; set; }

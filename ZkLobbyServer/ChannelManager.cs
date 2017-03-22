@@ -19,17 +19,37 @@ namespace ZkLobbyServer
         public ChannelManager(ZkLobbyServer server)
         {
             this.server = server;
-            using (var db = new ZkDataContext()) {
+
+
+            using (var db = new ZkDataContext())
+            {
                 factionChannels = new ConcurrentDictionary<string, Faction>(db.Factions.Where(x => !x.IsDeleted).ToDictionary(x => x.Shortcut, x => x));
                 clanChannels =
                     new ConcurrentDictionary<string, Clan>(db.Clans.Where(x => !x.IsDeleted).ToList().ToDictionary(x => x.GetClanChannel(), x => x));
+
+                // restore topics from db
+                foreach (var channelTopic in db.LobbyChannelTopics)
+                {
+                    server.Channels[channelTopic.ChannelName] = new Channel()
+                    {
+                        Name = channelTopic.ChannelName,
+                        Topic = new Topic() { Text = channelTopic.Topic, SetBy = channelTopic.Author, SetDate = channelTopic.SetDate }
+                    };
+                }
             }
-            server.Channels["zk"] = new Channel() { Name = "zk", IsDeluge = true };
+
+            // set "zk" as deluge
+            server.Channels.AddOrUpdate("zk", s => new Channel() { Name = "zk", IsDeluge = true }, (s, ch) =>
+            {
+                ch.IsDeluge = true;
+                return ch;
+            });
         }
 
         public async Task<bool> CanJoin(int accountID, string channel)
         {
-            using (var db = new ZkDataContext()) {
+            using (var db = new ZkDataContext())
+            {
                 var acc = await db.Accounts.FindAsync(accountID);
                 return CanJoin(acc, channel);
             }
@@ -48,8 +68,9 @@ namespace ZkLobbyServer
         {
             clanChannels[clan.GetClanChannel()] = clan;
         }
-        
-        public List<string> GetDefaultChannels(Account acc) {
+
+        public List<string> GetDefaultChannels(Account acc)
+        {
             if (acc.IsBot) return new List<string>() { "bots" };
 
             var ret = new List<string>() { "zk", GlobalConst.ModeratorChannel, GlobalConst.Top20Channel, GlobalConst.CoreChannel };
