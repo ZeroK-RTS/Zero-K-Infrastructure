@@ -104,7 +104,10 @@
             this.Controls.Add(this.lb1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "ChobbylaForm";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "ChobbylaForm";
             this.Load += new System.EventHandler(this.ChobbylaForm_Load);
             this.ResumeLayout(false);
