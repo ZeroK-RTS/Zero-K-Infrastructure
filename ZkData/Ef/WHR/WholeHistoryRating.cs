@@ -38,11 +38,6 @@ namespace Ratings
         }
 
 
-        public WholeHistoryRating(byte[] serializedData) : this()
-        {
-            Deserialize(serializedData);
-        }
-
         public WholeHistoryRating(string serializedData) : this()
         {
             DeserializeJSON(serializedData);
@@ -189,26 +184,6 @@ namespace Ratings
 
         }
 
-        public void Deserialize(byte[] bytes)
-        {
-            IFormatter formatter = new BinaryFormatter();
-            using (MemoryStream stream = new MemoryStream(bytes))
-            {
-                playerRatings = (ConcurrentDictionary<int, PlayerRating>)formatter.Deserialize(stream);
-            }
-        }
-
-        public byte[] Serialize()
-        {
-            byte[] bytes;
-            IFormatter formatter = new BinaryFormatter();
-            using (MemoryStream stream = new MemoryStream())
-            {
-                formatter.Serialize(stream, playerRatings);
-                bytes = stream.ToArray();
-            }
-            return bytes;
-        }
         public string SerializeJSON()
         {
             try
