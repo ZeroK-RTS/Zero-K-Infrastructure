@@ -64,6 +64,7 @@ namespace ZkData
             double dropshipsFac1toFac2 = 0;
             double bombersFac1toFac2 = 0;
             double warpsFac1toFac2 = 0;
+            double victoryPointsFac1toFac2 = 0;
 
 
             foreach (var te in TreatyEffects.Where(x => x.TreatyEffectType.IsOneTimeOnly == oneTimeOnly))
@@ -99,6 +100,12 @@ namespace ZkData
                     else warpsFac1toFac2 -= te.Value ?? 0;
                 }
 
+                if (tr.EffectGiveVictoryPoints == true)
+                {
+                    if (fac1 == te.FactionByGivingFactionID) victoryPointsFac1toFac2 += te.Value ?? 0;
+                    else victoryPointsFac1toFac2 -= te.Value ?? 0;
+                }
+
             }
 
             if (fac1.Metal < metalFac1toFac2 || fac2.Metal < -metalFac1toFac2) return false;
@@ -106,8 +113,7 @@ namespace ZkData
             if (fac1.Dropships < dropshipsFac1toFac2 || fac2.Dropships < -dropshipsFac1toFac2) return false;
             if (fac1.Bombers < bombersFac1toFac2 || fac2.Bombers < -bombersFac1toFac2) return false;
             if (fac1.Warps < warpsFac1toFac2 || fac2.Warps < -warpsFac1toFac2) return false;
-
-
+            if (fac1.VictoryPoints < victoryPointsFac1toFac2 || fac2.VictoryPoints < -victoryPointsFac1toFac2) return false;
 
 
             fac1.ProduceMetal(-metalFac1toFac2);
@@ -120,6 +126,9 @@ namespace ZkData
             fac2.ProduceBombers(bombersFac1toFac2);
             fac1.ProduceWarps(-warpsFac1toFac2);
             fac2.ProduceWarps(warpsFac1toFac2);
+            fac1.VictoryPoints -= victoryPointsFac1toFac2;
+            fac2.VictoryPoints += victoryPointsFac1toFac2;
+
 
             foreach (var te in TreatyEffects.Where(x => x.TreatyEffectType.IsOneTimeOnly == oneTimeOnly && x.TreatyEffectType.EffectGiveInfluence == true))
             {
