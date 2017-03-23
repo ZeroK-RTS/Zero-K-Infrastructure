@@ -44,8 +44,8 @@ namespace ZeroKWeb
 
             var gal = db.Galaxies.FirstOrDefault(x => x.IsDefault);
             if (gal == null) return;
-            
-            
+
+
             factions = db.Factions.Where(x => !x.IsDeleted).ToList();
 
             PlanetWarsMatchMakerState dbState = null;
@@ -143,6 +143,8 @@ namespace ZeroKWeb
             PwMatchCommand command = null;
             try
             {
+                if (GlobalConst.PlanetWarsMode != PlanetWarsModes.Running) return new PwMatchCommand(PwMatchCommand.ModeType.Clear);
+
                 if (Challenge == null)
                     command = new PwMatchCommand(PwMatchCommand.ModeType.Attack)
                     {
@@ -233,7 +235,7 @@ namespace ZeroKWeb
             }
             catch (Exception ex)
             {
-                Trace.TraceError("PlanetWars OnUserDisconnected: {0}",ex);
+                Trace.TraceError("PlanetWars OnUserDisconnected: {0}", ex);
             }
         }
 
@@ -284,7 +286,7 @@ namespace ZeroKWeb
                 TeamSize = planet.TeamSize,
                 PlanetImage = planet.Resource?.MapPlanetWarsIcon,
                 IconSize = planet.Resource?.PlanetWarsIconSize ?? 0,
-                StructureImages = planet.PlanetStructures.Select(x=>x.IsActive ? x.StructureType.MapIcon : x.StructureType.DisabledMapIcon).ToList()
+                StructureImages = planet.PlanetStructures.Select(x => x.IsActive ? x.StructureType.MapIcon : x.StructureType.DisabledMapIcon).ToList()
             });
         }
 
@@ -302,7 +304,7 @@ namespace ZeroKWeb
                         if ((account != null) && (account.FactionID == AttackingFaction.FactionID) && account.CanPlayerPlanetWars())
                         {
                             // remove existing user from other options
-                            foreach (var aop in AttackOptions.Where(x=>x.PlanetID != targetPlanetId)) aop.Attackers.RemoveAll(x => x == userName);
+                            foreach (var aop in AttackOptions.Where(x => x.PlanetID != targetPlanetId)) aop.Attackers.RemoveAll(x => x == userName);
 
                             // add user to this option
                             if (attackOption.Attackers.Count < attackOption.TeamSize && !attackOption.Attackers.Contains(userName))
@@ -340,7 +342,7 @@ namespace ZeroKWeb
                             await server.GhostChanSay(user.Faction, $"{userName} joins defense of {Challenge.Name}");
 
                             await conus.SendCommand(new PwJoinPlanetSuccess() { PlanetID = targetPlanetID });
-                            
+
                             if (Challenge.Defenders.Count == Challenge.TeamSize) await AcceptChallenge();
                             else await UpdateLobby();
                         }
@@ -457,12 +459,19 @@ namespace ZeroKWeb
             await server.Broadcast(attackOption.Attackers, new PwAttackingPlanet() { PlanetID = attackOption.PlanetID });
         }
 
+        private PlanetWarsModes? lastPlanetWarsMode;
 
         private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             try
             {
                 timer.Stop();
+
+                if (GlobalConst.PlanetWarsMode != lastPlanetWarsMode)
+                {
+                    UpdateLobby();
+                    lastPlanetWarsMode = GlobalConst.PlanetWarsMode;
+                }
 
                 if (GlobalConst.PlanetWarsMode != PlanetWarsModes.Running) return;
 
