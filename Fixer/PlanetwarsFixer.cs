@@ -75,6 +75,7 @@ namespace Fixer
                     f.Bombers = 0;
                     f.Dropships = 0;
                     f.Warps = 0;
+                    f.VictoryPoints = 0;
                 }
                 db.SaveChanges();
 
