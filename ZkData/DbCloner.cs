@@ -141,6 +141,24 @@ namespace ZkData
                 Log("Enabling checks: " + t);
                 EnableChecks(t);
             }
+
+
+            PatchSecrets();
+
+        }
+
+        public void PatchSecrets()
+        {
+            using (var con = new SqlConnection(targetConnectionString))
+            {
+                con.Open();
+                using (var com = new SqlCommand("update MiscVars set VarValue='censored' where VarName in ('GithubHookKey','GlacierSecretKey', 'NightwatchDiscordToken','NightwatchPassword')", con) { CommandTimeout = 3600 })
+                {
+                    com.ExecuteNonQuery();
+                }
+            }
+
+
         }
 
         public void DeleteFromTable(string tableName)

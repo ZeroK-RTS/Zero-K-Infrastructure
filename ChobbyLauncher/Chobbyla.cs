@@ -219,6 +219,10 @@ namespace ChobbyLauncher
             process.Exited += (sender, args) =>
             {
                 var isCrash = process.ExitCode != 0;
+                if (isCrash)
+                {
+                    Trace.TraceWarning("Spring exit code is: {0}, assuming crash", process.ExitCode);
+                }
                 tcs.TrySetResult(!isCrash);
             };
             process.EnableRaisingEvents = true;

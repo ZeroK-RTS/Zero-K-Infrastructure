@@ -38,6 +38,8 @@ namespace ZkData
         public bool? EffectPreventIngamePwStructureDestruction { get; set; }
         public bool? EffectGiveInfluence { get; set; }
 
+        public bool? EffectGiveVictoryPoints { get; set; }
+
         public virtual ICollection<TreatyEffect> TreatyEffects { get; set; }
     }
 }

@@ -360,6 +360,8 @@
     <Content Include="Img\factions\Empire1.png" />
     <Content Include="Img\factions\Empire3.png" />
     <Content Include="Img\factions\Empire_ship.png" />
+    <Content Include="Img\factions\Federation.png" />
+    <Content Include="Img\factions\Federation_ship.png" />
     <Content Include="Img\factions\Hegemony.png" />
     <Content Include="Img\factions\Hegemony_ship.png" />
     <Content Include="Img\factions\Liberty.png" />

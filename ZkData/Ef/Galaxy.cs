@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
+using ZkData.Migrations;
 
 namespace ZkData
 {
@@ -36,6 +38,11 @@ namespace ZkData
         
         public virtual ICollection<Link> Links { get; set; }
         public virtual ICollection<Planet> Planets { get; set; }
+
+        public virtual Faction WinnerFaction { get; set; }
+
+        [ForeignKey(nameof(WinnerFaction))]
+        public int? WinnerFactionID { get; set; }
 
 
         /// <summary>
@@ -185,7 +192,7 @@ namespace ZkData
 
         }
 
-        public void DeleteOneTimeActivited(IPlanetwarsEventCreator eventCreator, ZkDataContext db)
+        public void DeleteOneTimeActivated(IPlanetwarsEventCreator eventCreator, ZkDataContext db)
         {
             var todel = new List<PlanetStructure>();
             foreach (var structure in Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive && x.StructureType.IsSingleUse == true))
@@ -199,5 +206,6 @@ namespace ZkData
 
             db.PlanetStructures.DeleteAllOnSubmit(todel);
         }
+
     }
 }

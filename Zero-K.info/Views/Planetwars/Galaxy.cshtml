@@ -73,86 +73,39 @@
 <br />
 
 
+@switch (GlobalConst.PlanetWarsMode)
+{
+    case PlanetWarsModes.AllOffline:
+        if (Model.WinnerFaction != null)
+        {
+            <h2>PlanetWars eneded, @Model.WinnerFaction.Name won!</h2>
+            @Html.PrintFaction(Model.WinnerFaction, true)<br/>
+
+            @Html.BBCode(Model.EndMessage)
+
+            <h2>Top players</h2>
+            @Html.Action("Ladder","Planetwars")
+        }
+        else
+        {
+            <h3>PlanetWars currently offline</h3>
+        }
+
+        break;
+
+    case PlanetWarsModes.PreGame:
+        <h3>PlanetWars will start soon, pick your side!</h3>
+        break;
+}
+
 @Html.Partial("FactionList")
 <br style="clear:both"/>
 
-@if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars())
+@if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running && Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars())
 {
     @Html.Action("MatchMaker")
 }
 
-@{
-	var db = new ZkDataContext();
-}
-
-@if (Model.Started != null) {
-
-<div id="victory_conquest" class="fleft border" style="min-height: 60px;">
-<b>Conquest victory (70% planets):</b>
-@{
-	var conquest = Model.Planets.Where(x => x.Faction != null).GroupBy(x => x.Faction).Select(x => new { Fac = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count).FirstOrDefault();
-	
-	if (conquest != null)
-	{
-        double proportion = 0.7;
-        var ratio_planets = conquest.Count / Math.Round(Model.Planets.Count() * proportion);
-		<span><b>@Html.PrintFaction(conquest.Fac)</b></span>
-	    <br />
-		<img src="/img/progressl_base.png" height="17" class="fleft" />
-		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio_planets))" />
-		<img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300 * (1 - ratio_planets)))" />
-		<img src="/img/progressr_base.png" height="17" class="fleft" />
-		<span class="fleft">@conquest.Count / @Math.Round(Model.Planets.Count() * proportion) planets </span>
-		<br class="clearfloat" />
-	}
-}
-</div>
-
-
-<div id="victory_tech" class="fleft border" style="min-height: 60px;">
-<b>Artefact victory:</b>
-@{
-	var arts = Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true)).Count();
-	var artsTaken = Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true) && y.Faction != null).GroupBy(x => x.Faction).Select(x => new { Faction = x.Key, Arts = x.Count() }).OrderByDescending(x=>x.Arts).FirstOrDefault();
-
-	if (artsTaken != null)
-	{
-        var owned = artsTaken.Arts;
-       
-        
-		<span><b>@Html.PrintFaction(artsTaken.Faction)</b> </span>
-    
-		//maybe change colors depending on how many artifacts captured?
-            @*
-          <br />
-        var techs = Model.Planets.Where(x => x.OwnerAccountID != null && x.Faction == artsTaken.Faction).SelectMany(y => y.PlanetStructures).Select(y => y.StructureType).Distinct().Count(y => y.EffectUnlockID != null);
-
-        var ratio_struct = techs / (double)db.StructureTypes.Where(x => x.EffectUnlockID != null).Count();
-
-        <img src="/img/progressl_base.png" height="17" class="fleft" />
-        <img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio_struct))" />
-        <img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300 * (1 - ratio_struct)))" />
-        <img src="/img/progressr_base.png" height="17" class="fleft" />
-        <span class="fleft"> @techs / @db.StructureTypes.Where(x => x.EffectUnlockID != null).Count() techs</span>*@
-		<br class="clearfloat" />
-	<div>
-		@for (int i = 0; i < @owned; i++)
-		{
-			<img src="/img/artifact_@(i + 1).png" class="fleft" height="30" />
-		}
-
-		@for (int i = @owned; i < @arts; i++)
-		{
-			<img src="/img/artifact_empty.png" class="fleft" height="30" />
-		}
-		<span> @owned out of @arts Artifacts</span>
-		<br class="clearfloat"/>
-	</div>
-	}
-}
-</div>
-
-}
 
 <br class="clearfloat" />
 
@@ -163,7 +116,6 @@
 
 @foreach (var p in Model.Planets)
 {
-	var pr = p.PlanetRectangle(Model);
 	var por = p.PlanetOverlayRectangle(Model);
 	Clan clan = null;
     Faction faction = p.Faction;

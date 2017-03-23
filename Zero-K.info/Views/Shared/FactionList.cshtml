@@ -6,8 +6,19 @@
 
 @foreach (var f in db.Factions.Where(x => !x.IsDeleted))
 {
-    <div style="float:left;">
-    @Html.Partial("~/Views/Factions/FactionBox.cshtml", f)
-   </div>
+    var ratio = f.VictoryPoints/GlobalConst.PlanetWarsVictoryPointsToWin;
+
+    <div class="fleft border">
+        @Html.Partial("~/Views/Factions/FactionBox.cshtml", f)
+        <br />
+        <i>Victory points:</i><br/>
+        <img src="/img/progressl_base.png" height="17" class="fleft" />
+        <img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(170 * ratio))" />
+        <img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(170 * (1 - ratio)))" />
+        <img src="/img/progressr_base.png" height="17" class="fleft" />
+        <span class="fleft">@f.VictoryPoints / @GlobalConst.PlanetWarsVictoryPointsToWin</span>
+        <br class="clearfloat" />
+
+    </div>
 }
 <div style="clear:both;float:none"></div>

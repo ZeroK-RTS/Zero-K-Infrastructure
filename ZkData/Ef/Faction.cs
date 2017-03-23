@@ -79,6 +79,7 @@ namespace ZkData
 
         public bool HasTreatyRight(Faction giverFaction, Func<TreatyEffectType, bool> test, Planet planet = null)
         {
+            if (giverFaction == null) return false;
             var effects = TreatyEffectsByReceivingFactionID.Where(x => x.FactionTreaty.TreatyState == TreatyState.Accepted && x.GivingFactionID == giverFaction.FactionID && (x.Planet == null || x.Planet == planet));
             return effects.Any(x => test(x.TreatyEffectType));
         }

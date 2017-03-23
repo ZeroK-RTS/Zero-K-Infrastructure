@@ -307,11 +307,6 @@ namespace ZeroKWeb.Controllers
         /// </summary>
         public ActionResult Index(int? galaxyID = null)
         {
-            if (GlobalConst.PlanetWarsMode != PlanetWarsModes.Running)
-            {
-                if (galaxyID == null) return View("GalaxyOffline");
-            }
-
             var db = new ZkDataContext();
             
             Galaxy gal;

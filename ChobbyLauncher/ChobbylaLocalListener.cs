@@ -446,7 +446,7 @@ namespace ChobbyLauncher
             }
         }
 
-        private void Process(StartNewSpring args)
+        private async Task Process(StartNewSpring args)
         {
             Task.Factory.StartNew(async () =>
             {
@@ -472,8 +472,18 @@ namespace ChobbyLauncher
                     process.StartInfo.FileName = paths.GetSpringExecutablePath(args.Engine);
                     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.GetSpringExecutablePath(args.Engine));
 
-
-                    var startFilePath = Path.Combine(paths.WritableDirectory, "demos", args.StartDemoName);
+                    string startFilePath = null;
+                    if (!string.IsNullOrEmpty(args.StartDemoName))
+                    {
+                        if (!args.StartDemoName.EndsWith(".sdfz") && !args.StartDemoName.EndsWith(".sdf")) args.StartDemoName = args.StartDemoName + ".sdfz";
+                        startFilePath = Path.Combine(paths.WritableDirectory, "demos", args.StartDemoName);
+                        if (!File.Exists(startFilePath))
+                        {
+                            Trace.TraceWarning("Demo file {0} not found, aborting", startFilePath);
+                            return;
+                        }
+                    }
+                    
                     if (!string.IsNullOrEmpty(args.StartScriptContent))
                     {
                         startFilePath = Path.Combine(paths.WritableDirectory, "_script.txt");
