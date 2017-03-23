@@ -327,7 +327,7 @@ public static class PlanetWarsTurnHandler
         gal.ProcessProduction();
 
         // delete one time activated structures
-        gal.DeleteOneTimeActivited(eventCreator, db);
+        gal.DeleteOneTimeActivated(eventCreator, db);
         db.SaveChanges();
 
         // process treaties

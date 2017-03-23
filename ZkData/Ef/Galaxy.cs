@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
 
 namespace ZkData
 {
@@ -185,7 +186,7 @@ namespace ZkData
 
         }
 
-        public void DeleteOneTimeActivited(IPlanetwarsEventCreator eventCreator, ZkDataContext db)
+        public void DeleteOneTimeActivated(IPlanetwarsEventCreator eventCreator, ZkDataContext db)
         {
             var todel = new List<PlanetStructure>();
             foreach (var structure in Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive && x.StructureType.IsSingleUse == true))
@@ -199,5 +200,6 @@ namespace ZkData
 
             db.PlanetStructures.DeleteAllOnSubmit(todel);
         }
+
     }
 }
