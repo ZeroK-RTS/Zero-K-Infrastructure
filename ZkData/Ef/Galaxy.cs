@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.Remoting.Channels;
+using ZkData.Migrations;
 
 namespace ZkData
 {
@@ -37,6 +38,11 @@ namespace ZkData
         
         public virtual ICollection<Link> Links { get; set; }
         public virtual ICollection<Planet> Planets { get; set; }
+
+        public virtual Faction WinnerFaction { get; set; }
+
+        [ForeignKey(nameof(WinnerFaction))]
+        public int? WinnerFactionID { get; set; }
 
 
         /// <summary>

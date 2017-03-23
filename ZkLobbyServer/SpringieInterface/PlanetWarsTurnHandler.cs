@@ -658,7 +658,7 @@ public static class PlanetWarsTurnHandler
 
                     if (planet.PlanetStructures.Any(x => x.StructureType.OwnerChangeWinsGame))
                     {
-                        WinGame(db, gal, eventCreator.CreateEvent("CONGRATULATIONS!! {0} has won the PlanetWars by capturing {1} planet {2}!", newFaction, planet.Faction, planet));
+                        WinGame(db, gal, newFaction, eventCreator.CreateEvent("CONGRATULATIONS!! {0} has won the PlanetWars by capturing {1} planet {2}!", newFaction, planet.Faction, planet));
                     }
                 }
 
@@ -671,11 +671,12 @@ public static class PlanetWarsTurnHandler
     }
 
 
-    public static void WinGame(ZkDataContext db,Galaxy gal, Event ev)
+    public static void WinGame(ZkDataContext db,Galaxy gal, Faction winnerFaction, Event ev)
     {
         GlobalConst.PlanetWarsMode = PlanetWarsModes.AllOffline;
         gal.Ended = DateTime.UtcNow;
         gal.EndMessage = ev.PlainText;
+        gal.WinnerFaction = winnerFaction;
         db.Events.Add(ev);
     }
 
