@@ -177,8 +177,8 @@ namespace ZkData
         public const double BomberKillIpChance = 1.2;
         public const double BomberKillIpAmount = 1;
         public const double StructureIngameDisableTimeMult = 2;
-        public const int DefaultDropshipCapacity = 10;
-        public const int DefaultBomberCapacity = 10;
+        public const int DefaultDropshipCapacity = 50;
+        public const int DefaultBomberCapacity = 50;
         public const int AttackPointsForVictory = 2;
         public const int AttackPointsForDefeat = 1;
         public static readonly int? MaxClanSkilledSize = null;
@@ -190,7 +190,7 @@ namespace ZkData
         public const double MaxPwEloDifference = 120;
 
 
-        public const PlanetWarsModes PlanetWarsMode = PlanetWarsModes.AllOffline;
+        public static PlanetWarsModes PlanetWarsMode = PlanetWarsModes.PreGame;
 
         public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";
@@ -216,7 +216,7 @@ namespace ZkData
         public const int PlanetWarsDropshipsStayForMinutes = 2*60;
         public const int PlanetWarsMaxTeamsize = 4;
         public const int PlanetWarsBaseDropshipDefense = 9;
-        public const int MinPlanetWarsLevel = 2;
+        public const int MinPlanetWarsLevel = 5;
         public const int MinPlanetWarsElo = -1000;
 
         public const int WikiEditLevel = 20;

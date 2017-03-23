@@ -656,7 +656,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult FirePlanetBuster(int planetID, int structureTypeID, int targetID)
+        private ActionResult FirePlanetBuster(int planetID, int structureTypeID, int targetID)
         {
             var db = new ZkDataContext();
             PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
@@ -668,8 +668,7 @@ namespace ZeroKWeb.Controllers
             if (!target.CanFirePlanetBuster(acc.Faction)) return Content("You cannot attack here");
 
             //Get rid of all strutures
-            var structures = target.PlanetStructures.Where(x => x.StructureType.EffectIsVictoryPlanet == false);
-            db.PlanetStructures.DeleteAllOnSubmit(structures);
+            var structures = target.PlanetStructures.Where(x => x.StructureType.EffectIsVictoryPlanet == false).ToList();
 
 
             //kill all IP
@@ -692,6 +691,7 @@ namespace ZeroKWeb.Controllers
             db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("A {4} fired from {0} {1} has destroyed {2} {3}!", source.Faction, source, target.Faction, target, structure.StructureType));
             db.SaveChanges();
 
+            db.PlanetStructures.DeleteAllOnSubmit(structures);
             var residue = db.StructureTypes.First(x => x.Name == "Residue"); // todo not nice use constant instead
             target.PlanetStructures.Add(new PlanetStructure() { StructureType = residue, IsActive = true, ActivatedOnTurn = null});
             db.SaveChanges();
@@ -699,7 +699,7 @@ namespace ZeroKWeb.Controllers
             return null;
         }
 
-        public ActionResult ChangePlanetMap(int planetID, int structureTypeID, int targetID, int? newMapID)
+        private ActionResult ChangePlanetMap(int planetID, int structureTypeID, int targetID, int? newMapID)
         {
             var db = new ZkDataContext();
             PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);

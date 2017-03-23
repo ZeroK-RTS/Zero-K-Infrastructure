@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="DbCloner.cs" />
     <Compile Include="Ef\AccountRelation.cs" />
+    <Compile Include="Ef\LobbyChannelTopic.cs" />
     <Compile Include="Ef\SpringBattleBot.cs" />
     <Compile Include="Ef\WHR\Game.cs" />
     <Compile Include="Ef\WHR\IRatingSystem.cs" />
@@ -273,6 +274,22 @@
     <Compile Include="Migrations\201703101203373_RemoveNewLastRead.cs" />
     <Compile Include="Migrations\201703101203373_RemoveNewLastRead.Designer.cs">
       <DependentUpon>201703101203373_RemoveNewLastRead.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703212247128_AddMorePropertiesForStructureTypes.cs" />
+    <Compile Include="Migrations\201703212247128_AddMorePropertiesForStructureTypes.Designer.cs">
+      <DependentUpon>201703212247128_AddMorePropertiesForStructureTypes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703221133361_AddExtraGalaxyColumns.cs" />
+    <Compile Include="Migrations\201703221133361_AddExtraGalaxyColumns.Designer.cs">
+      <DependentUpon>201703221133361_AddExtraGalaxyColumns.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703221141560_AddLobbyChannelTopics.cs" />
+    <Compile Include="Migrations\201703221141560_AddLobbyChannelTopics.Designer.cs">
+      <DependentUpon>201703221141560_AddLobbyChannelTopics.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703221157379_AddFactionVictoryPoints.cs" />
+    <Compile Include="Migrations\201703221157379_AddFactionVictoryPoints.Designer.cs">
+      <DependentUpon>201703221157379_AddFactionVictoryPoints.cs</DependentUpon>
     </Compile>
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -550,6 +567,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703101203373_RemoveNewLastRead.resx">
       <DependentUpon>201703101203373_RemoveNewLastRead.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703212247128_AddMorePropertiesForStructureTypes.resx">
+      <DependentUpon>201703212247128_AddMorePropertiesForStructureTypes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703221133361_AddExtraGalaxyColumns.resx">
+      <DependentUpon>201703221133361_AddExtraGalaxyColumns.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703221141560_AddLobbyChannelTopics.resx">
+      <DependentUpon>201703221141560_AddLobbyChannelTopics.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703221157379_AddFactionVictoryPoints.resx">
+      <DependentUpon>201703221157379_AddFactionVictoryPoints.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

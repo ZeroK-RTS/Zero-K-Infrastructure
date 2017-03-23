@@ -51,6 +51,8 @@ public static class PlanetWarsTurnHandler
             return;
         }
 
+        var evacuatedStructureTypeIDs = GetEvacuatedStructureTypes(extraData, db);
+
         int dropshipsSent = (planet.PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0);
         bool isLinked = planet.CanDropshipsAttack(attacker);
         string influenceReport = "";
@@ -178,7 +180,6 @@ public static class PlanetWarsTurnHandler
 
                 w.ProduceMetal(defenderMetal);
                 var ev = eventCreator.CreateEvent("{0} gained {1} metal from battle {2}", w, defenderMetal, sb);
-
                 db.Events.InsertOnSubmit(ev);
                 text.AppendLine(ev.PlainText);
             }
@@ -186,7 +187,12 @@ public static class PlanetWarsTurnHandler
         else
         {
             // planet had no defenders, give metal to owner's faction
-            if (planet.OwnerFactionID !=null) planet.Faction.ProduceMetal(defendersTotalMetal);
+            if (planet.OwnerFactionID != null)
+            {
+                planet.Faction.ProduceMetal(defendersTotalMetal);
+                var ev = eventCreator.CreateEvent("{0} gained {1} metal from battle {2}", planet.Faction, defendersTotalMetal, sb);
+                db.Events.InsertOnSubmit(ev);
+            }
         }
 
 
@@ -269,16 +275,42 @@ public static class PlanetWarsTurnHandler
         }
         else
         {
-            // attacker won disable all
+            // attacker won disable all but evacuated
             foreach (var s in planet.PlanetStructures.Where(x => x.StructureType.IsIngameDestructible))
             {
-                s.IsActive = false;
-                s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate * (GlobalConst.StructureIngameDisableTimeMult - 1));
+                if (evacuatedStructureTypeIDs.Contains(s.StructureTypeID))
+                {
+                    var evSaved = eventCreator.CreateEvent("{0} structure {1} on planet {2} has been saved by evacuation. {3}",
+                        planet.Faction,
+                        s.StructureType,
+                        planet,
+                        sb);
+                    db.Events.InsertOnSubmit(evSaved);
+                    text.AppendLine(evSaved.PlainText);
+                }
+                else
+                {
+                    s.IsActive = false;
+                    s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate*(GlobalConst.StructureIngameDisableTimeMult - 1));
+                }
             }
             // destroy structures by battle (usually defenses)
-            foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.BattleDeletesThis).ToList()) planet.PlanetStructures.Remove(s);
+            foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.BattleDeletesThis).ToList())
+            {
+                if (evacuatedStructureTypeIDs.Contains(s.StructureTypeID))
+                {
+                    var evSaved = eventCreator.CreateEvent("{0} structure {1} on planet {2} has been saved by evacuation. {3}",
+                        planet.Faction,
+                        s.StructureType,
+                        planet,
+                        sb);
+                    db.Events.InsertOnSubmit(evSaved);
+                    text.AppendLine(evSaved.PlainText);
+                }
+                else planet.PlanetStructures.Remove(s);
+            }
 
-            var ev = eventCreator.CreateEvent("All structures have been disabled on {0} planet {1}. {2}", planet.Faction, planet, sb);
+            var ev = eventCreator.CreateEvent("All non-evacuated structures have been disabled on {0} planet {1}. {2}", planet.Faction, planet, sb);
             db.Events.InsertOnSubmit(ev);
             text.AppendLine(ev.PlainText);
         }
@@ -294,6 +326,9 @@ public static class PlanetWarsTurnHandler
         // process production
         gal.ProcessProduction();
 
+        // delete one time activated structures
+        gal.DeleteOneTimeActivited(eventCreator, db);
+        db.SaveChanges();
 
         // process treaties
         foreach (var tr in db.FactionTreaties.Where(x => x.TreatyState == TreatyState.Accepted || x.TreatyState == TreatyState.Suspended))
@@ -384,6 +419,20 @@ public static class PlanetWarsTurnHandler
             }
             db.SaveChanges();
         }
+    }
+
+    private static List<int> GetEvacuatedStructureTypes(List<string> extraData, ZkDataContext db)
+    {
+        List<int> evacuatedStructureTypeIDs = new List<int>();
+        foreach (var evac in extraData.Where(x => x.StartsWith("pwEvacuate ")))
+        {
+            foreach (var ingameName in evac.Split(' ').Skip(1))
+            {
+                var stype = db.StructureTypes.FirstOrDefault(x => x.IsIngameEvacuable && x.IngameUnitName == ingameName);
+                if (stype != null) evacuatedStructureTypeIDs.Add(stype.StructureTypeID);
+            }
+        }
+        return evacuatedStructureTypeIDs;
     }
 
     /// <summary>

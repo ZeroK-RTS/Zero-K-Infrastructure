@@ -45,17 +45,33 @@ namespace ZkData
         public bool? EffectCreateLink { get; set; }
         public bool? EffectChangePlanetMap { get; set; }
         public bool? EffectPlanetBuster { get; set; }
+
+        public double? EffectReduceBattleInfluenceGain { get; set; }
+        public double? EffectVictoryPointProduction { get; set; }
+
+        public double? EffectDisconnectedMetalMalus { get; set; }
+
+        public double? EffectDistanceMetalBonusMultiplier { get; set; }
+        public double? EffectDistanceMetalBonusMax { get; set; }
+        public double? EffectDistanceMetalBonusMin { get; set; }
+
+        
         public double Cost { get; set; }
         public bool IsBuildable { get; set; }
         public bool IsIngameDestructible { get; set; }
+
+        public bool IsIngameEvacuable { get; set; }
         public bool IsBomberDestructible { get; set; }
         public bool OwnerChangeDeletesThis { get; set; }
         public bool OwnerChangeDisablesThis { get; set; }
+
+        public bool OwnerChangeWinsGame { get; set; }
         public bool BattleDeletesThis { get; set; }
         public bool IsSingleUse { get; set; }
         public bool RequiresPlanetTarget { get; set; }
-        public double? EffectReduceBattleInfluenceGain { get; set; }
 
+
+        
         public virtual ICollection<PlanetStructure> PlanetStructures { get; set; }
         public virtual Unlock Unlock { get; set; }
 

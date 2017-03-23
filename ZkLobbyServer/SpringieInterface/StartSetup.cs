@@ -102,7 +102,7 @@ namespace ZeroKWeb.SpringieInterface
                         //userParams["casual_elo"] = Math.Round(user.EffectiveElo).ToString();
 
                         userParams["elo"] = Math.Round(RatingSystems.DisableRatingSystems ? user.BestEffectiveElo : user.GetBestRating().Elo).ToString();
-
+                        
                         userParams["icon"] = user.GetIconName();
                         userParams["avatar"] = user.Avatar;
                         userParams["badges"] = string.Join(",", user.GetBadges());
@@ -120,6 +120,12 @@ namespace ZeroKWeb.SpringieInterface
                             // set valid PW structure attackers
                             if (mode == AutohostMode.Planetwars)
                             {
+                                userParams["pwRank"] = (user.AccountRolesByAccountID.Where(
+                                            x =>
+                                                !x.RoleType.IsClanOnly &&
+                                                (x.RoleType.RestrictFactionID == null || x.RoleType.RestrictFactionID == user.FactionID)).OrderBy(x=>x.RoleType.DisplayOrder).Select(x => (int?)x.RoleType.DisplayOrder).FirstOrDefault() ?? 999).ToString();
+
+
                                 var allied = user.Faction != null && defender != null && user.Faction != defender &&
                                              defender.HasTreatyRight(user.Faction, x => x.EffectPreventIngamePwStructureDestruction == true, planet);
 
@@ -245,6 +251,9 @@ namespace ZeroKWeb.SpringieInterface
                             new LuaTable
                             {
                                 { "unitname", s.StructureType.IngameUnitName },
+                                { "owner", s.Account?.Name },
+                                { "canBeEvacuated", s.StructureType.IsIngameEvacuable },
+                                { "canBeDestroyed", s.StructureType.IsIngameDestructible },
                                 //{ "isDestroyed", s.IsDestroyed ? true : false },
                                 {
                                     "name", $"{owner} {s.StructureType.Name} ({(s.Account != null ? s.Account.Name : "unowned")})" },

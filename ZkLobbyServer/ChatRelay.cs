@@ -67,7 +67,7 @@ namespace ZkLobbyServer
         {
             try
             {
-                DiscordZkUserCount = discord?.GetServer(DiscordZkServerID)?.Users.Count(x=>x.Status != UserStatus.Offline) ?? 0;
+                DiscordZkUserCount = discord?.GetServer(DiscordZkServerID)?.DefaultChannel?.Users.Count(x=>x.Status != UserStatus.Offline) ?? 0;
                 var zkTopic =
                     $"[game: {server.ConnectedUsers.Count} online, {server.MatchMaker.GetTotalWaiting()} in queue, {server.Battles.Values.Where(x => x != null).Sum(x => (int?)x.NonSpectatorCount + x.SpectatorCount) ?? 0} in custom]";
 

@@ -88,8 +88,9 @@ namespace ZkData
         public virtual DbSet<Word> IndexWords { get; set; }
         public virtual DbSet<ForumPostWord> IndexForumPosts { get; set; }
         public virtual DbSet<AccountRelation> AccountRelations { get; set; }
-
         public virtual DbSet<SpringBattleBot> SpringBattleBots { get; set; }
+
+        public virtual DbSet<LobbyChannelTopic> LobbyChannelTopics { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
