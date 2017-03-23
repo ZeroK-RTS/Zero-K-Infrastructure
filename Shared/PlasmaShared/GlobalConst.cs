@@ -190,7 +190,7 @@ namespace ZkData
         public const double MaxPwEloDifference = 120;
 
 
-        public static PlanetWarsModes PlanetWarsMode = PlanetWarsModes.AllOffline;
+        public static PlanetWarsModes PlanetWarsMode = PlanetWarsModes.PreGame;
 
         public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";
