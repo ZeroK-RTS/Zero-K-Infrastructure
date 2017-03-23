@@ -601,6 +601,12 @@ public static class PlanetWarsTurnHandler
                             planet.PlanetID,
                             GlobalConst.BaseSiteUrl));
                     }
+
+
+                    if (planet.PlanetStructures.Any(x => x.StructureType.OwnerChangeWinsGame))
+                    {
+                        WinGame(db, gal, eventCreator.CreateEvent("CONGRATULATIONS!! {0} has won the PlanetWars by capturing {1} planet {2}!", newFaction, planet.Faction, planet));
+                    }
                 }
 
                 planet.Faction = newFaction;
@@ -609,6 +615,15 @@ public static class PlanetWarsTurnHandler
             ReturnPeacefulDropshipsHome(db, planet);
         }
         db.SaveChanges();
+    }
+
+
+    public static void WinGame(ZkDataContext db,Galaxy gal, Event ev)
+    {
+        GlobalConst.PlanetWarsMode = PlanetWarsModes.AllOffline;
+        gal.Ended = DateTime.UtcNow;
+        gal.EndMessage = ev.PlainText;
+        db.Events.Add(ev);
     }
 
 
