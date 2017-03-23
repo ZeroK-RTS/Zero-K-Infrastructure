@@ -366,6 +366,17 @@ public static class PlanetWarsTurnHandler
         SetPlanetOwners(eventCreator, db, sb != null ? db.SpringBattles.Find(sb.SpringBattleID) : null);
         gal = db.Galaxies.Single(x => x.IsDefault);
 
+        var winByVictoryPoints = db.Factions.FirstOrDefault(x => !x.IsDeleted && x.VictoryPoints >= GlobalConst.PlanetWarsVictoryPointsToWin);
+        if (winByVictoryPoints != null)
+        {
+            WinGame(db,
+                gal,
+                winByVictoryPoints,
+                eventCreator.CreateEvent("CONGRATULATIONS!! {0} has won the PlanetWars by getting enough victory points!", winByVictoryPoints));
+            db.SaveChanges();
+        }
+
+
         planet = gal.Planets.Single(x => x.Resource.InternalName == mapName);
         if (planet.OwnerAccountID != oldOwner && planet.OwnerAccountID != null)
         {
