@@ -26,6 +26,7 @@ public static class PlanetWarsTurnHandler
         if (extraData == null) extraData = new List<string>();
         Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
         Planet planet = gal.Planets.Single(x => x.Resource.InternalName == mapName);
+        var hqStructure = db.StructureTypes.FirstOrDefault(x => x.EffectDisconnectedMetalMalus != null || x.EffectDistanceMetalBonusMax != null);
 
         text.AppendFormat("Battle on {1}/PlanetWars/Planet/{0} has ended\n", planet.PlanetID, GlobalConst.BaseSiteUrl);
 
@@ -156,9 +157,12 @@ public static class PlanetWarsTurnHandler
         }
 
 
+
+
         // distribute metal
-        var attackersTotalMetal = Math.Floor(GlobalConst.PlanetWarsAttackerMetal);
+        var attackersTotalMetal = CalculateFactionMetalGain(planet, hqStructure, attacker, GlobalConst.PlanetWarsAttackerMetal, eventCreator, db, text, sb);
         var attackerMetal = Math.Floor(attackersTotalMetal / attackers.Count);
+
         foreach (Account w in attackers)
         {
             w.ProduceMetal(attackerMetal);
@@ -171,7 +175,8 @@ public static class PlanetWarsTurnHandler
         }
 
 
-        var defendersTotalMetal = Math.Floor(GlobalConst.PlanetWarsDefenderMetal);
+        var defendersTotalMetal = planet.OwnerFactionID == null ? Math.Floor(GlobalConst.PlanetWarsDefenderMetal) : CalculateFactionMetalGain(planet, hqStructure, planet.Faction, GlobalConst.PlanetWarsDefenderMetal, eventCreator, db, text, sb);
+
         if (defenders.Count > 0)
         {
             var defenderMetal = Math.Floor(defendersTotalMetal/defenders.Count);
@@ -420,6 +425,54 @@ public static class PlanetWarsTurnHandler
             db.SaveChanges();
         }
     }
+
+
+    private static double CalculateFactionMetalGain(Planet planet, StructureType hq, Faction forFaction, double baseMetal, IPlanetwarsEventCreator eventCreator, ZkDataContext db, StringBuilder texts, SpringBattle sb)
+    {
+        if (hq == null) return baseMetal;
+        Planet matchPlanet;
+
+        var hqDistance = planet.GetLinkDistanceTo(p => p.PlanetStructures.Any(y => y.StructureTypeID == hq.StructureTypeID), forFaction, out matchPlanet);
+        if (hqDistance == null)
+        {
+            if (hq.EffectDisconnectedMetalMalus != null)
+            {
+                baseMetal = baseMetal - hq.EffectDisconnectedMetalMalus.Value;
+
+                var ev = eventCreator.CreateEvent("{0} metal gain reduced by {1} because it is disconnected from {2}. {3}",
+                    forFaction,
+                    hq.EffectDisconnectedMetalMalus,
+                    hq.Name, 
+                    sb);
+                db.Events.Add(ev);
+                texts.AppendLine(ev.PlainText);
+
+            }
+        }
+        else
+        {
+            if (hq.EffectDistanceMetalBonusMultiplier != null)
+            {
+                var bonus = Math.Max(hq.EffectDistanceMetalBonusMin ?? 0, (hq.EffectDistanceMetalBonusMax ?? 0) - hq.EffectDistanceMetalBonusMultiplier.Value*hqDistance.Value);
+
+                if (bonus > 0)
+                {
+                    baseMetal = baseMetal + bonus;
+                    var ev = eventCreator.CreateEvent("{0} metal gain improved by {1} because it is close to {2}. {3}",
+                        forFaction,
+                        bonus,
+                        hq.Name,
+                        sb);
+                    db.Events.Add(ev);
+                    texts.AppendLine(ev.PlainText);
+                }
+            }
+        }
+        return baseMetal;
+    }
+
+
+
 
     private static List<int> GetEvacuatedStructureTypes(List<string> extraData, ZkDataContext db)
     {
