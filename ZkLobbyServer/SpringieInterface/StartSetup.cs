@@ -74,7 +74,12 @@ namespace ZeroKWeb.SpringieInterface
                         ret.ModOptions["defendingFaction"] = defender.Shortcut;
                         ret.ModOptions["defendingFactionName"] = defender.Name;
                         ret.ModOptions["defendingFactionColor"] = defender.Color;
-
+                    }
+                    else
+                    {
+                        ret.ModOptions["defendingFaction"] = "Mercenary";
+                        ret.ModOptions["defendingFactionName"] = "Local militia";
+                        ret.ModOptions["defendingFactionColor"] = "#CCCCCC";
                     }
                     ret.ModOptions["planet"] = planet.Name;
                 }
