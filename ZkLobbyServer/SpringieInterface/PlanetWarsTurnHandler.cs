@@ -72,7 +72,7 @@ public static class PlanetWarsTurnHandler
         double shipBonus = effectiveShips*GlobalConst.InfluencePerShip;
 
         double defenseBonus = -planetIpDefs;
-        double techBonus = attacker.GetFactionUnlocks().Count() * GlobalConst.InfluencePerTech;
+        double techBonus = 0; //attacker.GetFactionUnlocks().Count() * GlobalConst.InfluencePerTech;
         double ipMultiplier = 1;
         string ipReason;
         if (!isAttackerWinner)
