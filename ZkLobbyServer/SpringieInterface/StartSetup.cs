@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using PlasmaShared;
 using ZkData;
 using Ratings;
@@ -138,6 +139,8 @@ namespace ZeroKWeb.SpringieInterface
                                 {
                                     userParams["canAttackPwStructures"] = "1";
                                 }
+
+                                userParams["pwInstructions"] = GetPwInstructions(planet, user, db, attacker);
                             }
 
                             if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams["extracomm"] = "1";
@@ -275,6 +278,17 @@ namespace ZeroKWeb.SpringieInterface
                 Trace.TraceError(ex.ToString());
                 throw;
             }
+        }
+
+        private static string GetPwInstructions(Planet planet, Account user, ZkDataContext db, Faction attacker)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (user.Faction == attacker)
+            {
+                sb.AppendFormat("You are attacking {0} planet {1}\n", planet.Faction != null ? planet.Faction.Name : "neutral", planet.Name);
+
+            }
+            throw new NotImplementedException();
         }
     }
 }

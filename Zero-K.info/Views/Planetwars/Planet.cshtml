@@ -131,7 +131,7 @@
 			<span>You have no free dropships - fight more battles</span>
 		} else {
 			var isAccessible = Model.CanDropshipsAttack(Global.Account.Faction);
-            var isWarp = Model.CanDropshipsWarp(Global.Account.Faction) && Global.Account.GetWarpAvailable() >= 1; 
+            var isWarp = Model.CanDropshipsWarp(Global.Account.Faction) && Global.Account.GetWarpAvailable() >= GlobalConst.DropshipsForFullWarpIPGain && Global.Account.GetDropshipsAvailable() >= GlobalConst.DropshipsForFullWarpIPGain; 
 			if (isAccessible) {
                 var avail = Global.Account.GetDropshipsAvailable();
                 <form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID })' method="post">

@@ -54,25 +54,21 @@ public static class PlanetWarsTurnHandler
 
         var evacuatedStructureTypeIDs = GetEvacuatedStructureTypes(extraData, db);
 
-        int dropshipsSent = (planet.PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0);
         bool isLinked = planet.CanDropshipsAttack(attacker);
         string influenceReport = "";
 
         // distribute influence
         // save influence gains
         // give influence to main attackers
-        double planetDropshipDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
         double planetIpDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectReduceBattleInfluenceGain) ?? 0);
 
         double baseInfluence = GlobalConst.BaseInfluencePerBattle;
         double influence = baseInfluence;
 
-
-        double effectiveShips = Math.Max(0, (dropshipsSent - planetDropshipDefs));
-        double shipBonus = effectiveShips*GlobalConst.InfluencePerShip;
+        double shipBonus = planet.GetEffectiveShipIpBonus(attacker);
 
         double defenseBonus = -planetIpDefs;
-        double techBonus = 0; //attacker.GetFactionUnlocks().Count() * GlobalConst.InfluencePerTech;
+        double techBonus = attacker.GetFactionUnlocks().Count() * GlobalConst.InfluencePerTech;
         double ipMultiplier = 1;
         string ipReason;
         if (!isAttackerWinner)
