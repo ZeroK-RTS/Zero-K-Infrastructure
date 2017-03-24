@@ -119,7 +119,7 @@ namespace ZkData
         {
             if (CanDropshipsAttack(attacker) ||
                 PlanetFactions.Where(x => x.FactionID == attacker.FactionID).Sum(y => y.Dropships) >
-                PlanetStructures.Where(x => x.IsActive).Sum(y => y.StructureType.EffectDropshipDefense) + GlobalConst.PlanetWarsBaseDropshipDefense) return true;
+                PlanetStructures.Where(x => x.IsActive).Sum(y => y.StructureType.EffectDropshipDefense)) return true;
             else return false;
         }
 
@@ -216,6 +216,13 @@ namespace ZkData
 
             matchPlanet = null;
             return null;
+        }
+
+        public double GetEffectiveShipIpBonus(Faction attacker)
+        {
+            double planetDropshipDefs = (PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
+            int dropshipsSent = (PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0);
+            return Math.Max(0, (dropshipsSent - planetDropshipDefs)) * GlobalConst.InfluencePerShip;
         }
 
 
