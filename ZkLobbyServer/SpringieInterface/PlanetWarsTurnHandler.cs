@@ -79,7 +79,7 @@ public static class PlanetWarsTurnHandler
         {
             if (wasDefenderCcDestroyed)
             {
-                ipMultiplier = 0.2;
+                ipMultiplier = GlobalConst.PlanetWarsDefenderWinKillCcMultiplier;
                 ipReason = "from losing but killing defender's CC";
             }
             else
@@ -93,7 +93,7 @@ public static class PlanetWarsTurnHandler
             if (wasAttackerCcDestroyed)
             {
                 ipReason = "from losing own CC";
-                ipMultiplier = 0.5;
+                ipMultiplier = GlobalConst.PlanetWarsAttackerWinLoseCcMultiplier;
             }
             else
             {

@@ -217,6 +217,8 @@ namespace ZkData
         public const int PlanetWarsDropshipsStayForMinutes = 2*60;
         public const int PlanetWarsMaxTeamsize = 4;
         public const int PlanetWarsBaseDropshipDefense = 9;
+        public const double PlanetWarsDefenderWinKillCcMultiplier = 0.2;
+        public const double PlanetWarsAttackerWinLoseCcMultiplier = 0.5;
         public const int MinPlanetWarsLevel = 5;
         public const int MinPlanetWarsElo = -1000;
 
