@@ -59,7 +59,7 @@ public static class PlanetWarsTurnHandler
         // distribute influence
         // save influence gains
         // give influence to main attackers
-        double planetIpDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectReduceBattleInfluenceGain) ?? 0);
+        double planetIpDefs = planet.GetEffectiveIpDefense();
 
         double baseInfluence = GlobalConst.BaseInfluencePerBattle;
         double influence = baseInfluence;

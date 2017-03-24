@@ -225,6 +225,11 @@ namespace ZkData
             return Math.Max(0, (dropshipsSent - planetDropshipDefs)) * GlobalConst.InfluencePerShip;
         }
 
+        public double GetEffectiveIpDefense()
+        {
+            return (PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectReduceBattleInfluenceGain) ?? 0);
+        }
+
 
         public bool CheckWarpAttack(Faction attacker, Func<TreatyEffectType, bool> preventingTreaty)
         {
