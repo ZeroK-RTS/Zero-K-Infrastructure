@@ -401,6 +401,8 @@ namespace Fixer
 
         static void Main(string[] args)
         {
+            if (Console.ReadLine()?.StartsWith("i read the code") != true) return;
+
             //GlobalConst.Mode = ModeType.Live;
             MakeActiveClanLeaders();
             //return;
