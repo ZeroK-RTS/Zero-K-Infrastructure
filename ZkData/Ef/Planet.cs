@@ -46,7 +46,7 @@ namespace ZkData
         public virtual Resource Resource { get; set; }
         public virtual ICollection<PlanetFaction> PlanetFactions { get; set; }
         public virtual ICollection<PlanetOwnerHistory> PlanetOwnerHistories { get; set; }
-        public virtual ICollection<PlanetStructure> PlanetStructures { get; set; }
+        public virtual ICollection<PlanetStructure> PlanetStructures { get; set; } = new List<PlanetStructure>();
         public virtual ICollection<PlanetStructure> PlanetStructuresByTargetPlanetID { get; set; }
         public virtual ICollection<TreatyEffect> TreatyEffects { get; set; }
         public virtual ICollection<Event> Events { get; set; }
