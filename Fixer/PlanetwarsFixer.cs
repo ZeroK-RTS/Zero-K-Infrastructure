@@ -422,7 +422,8 @@ namespace Fixer
         {
             var db = new ZkDataContext();
             var wormhole = db.StructureTypes.Where(x => x.EffectInfluenceSpread > 0).OrderBy(x => x.EffectInfluenceSpread).First();
-            foreach (var p in db.Planets.Where(x => !x.PlanetStructures.Any(y => y.StructureType.EffectInfluenceSpread > 0)))
+            var galaxy = db.Galaxies.First(x => x.IsDefault);
+            foreach (var p in db.Planets.Where(x => x.GalaxyID == galaxy.GalaxyID && !x.PlanetStructures.Any(y => y.StructureType.EffectInfluenceSpread > 0)))
             {
                 p.PlanetStructures.Add(new PlanetStructure() { StructureTypeID = wormhole.StructureTypeID });
             }
