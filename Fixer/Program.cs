@@ -403,127 +403,15 @@ namespace Fixer
         {
             if (Console.ReadLine()?.StartsWith("i read the code") != true) return;
 
-            //GlobalConst.Mode = ModeType.Live;
-            MakeActiveClanLeaders();
-            //return;
-            //GlobalConst.Mode = ModeType.Live;
-
-            //PlanetwarsFixer.PurgeGalaxy(24, false, true);
-            //PlanetwarsFixer.StartGalaxy(24, 3919, 3925);
-            //PlanetwarsFixer.StartGalaxy(24, 3973, 3923);
-
+            GlobalConst.Mode = ModeType.Live;
+            PlanetwarsFixer.AddWormholes(27);
+            PlanetwarsFixer.StartGalaxy(27, 3);
+            PlanetwarsFixer.OwnPlanets(27);
+            PlanetwarsFixer.SetPlanetTeamSizes(27);
+           
             return;
-
-            //var mmBats = db.SpringBattles.Where(x => x.IsMatchMaker);
-            //var suc = mmBats.Count(x => x.Duration > 300 && x.PlayerCount > 2);
-            //var fail = mmBats.Count(x => x.Duration < 300);
-
-            //Console.WriteLine(test);
-
-
-            //RenameOldAccounts();
-
-            //var ns = new NubSimulator();
-            //ns.SpawnMany();
-            //Console.ReadLine();
-
-            /*using (var archive = ArchiveFactory.Open(target))
-            {
-                long done = 0;
-                var totalSize = archive.Entries.Count() + 1;
-                archive.EntryExtractionEnd += (sender, args) =>
-                {
-                    done++;
-                    IndividualProgress = 90 + (10 * done / totalSize);
-                };
-
-                archive.WriteToDirectory(targetDir, ExtractOptions.ExtractFullPath | ExtractOptions.Overwrite);
-            }*/
-
-
-            //WikiPortingMW.DoStuff();
-
-            //FixStuff();
-            //MigrateDatabase();
-            //return;
-
-            //DeleteOldUsers();
-            //return;
-
-            //GetGameStats(new DateTime(2014,12,1));
-            //Thread.Sleep(10000);
-
-            //MigrateDatabase();
-            //FixDuplicatedAccounts();
-            //BcryptPasswords();
-            //var db = new ZkDataContext(true);
-            //var test = db.Accounts.OrderByDescending(x => x.EffectiveElo).WithTranslations().Take(5).ToList();
-
-
-            //MigrateDatabase();
-            //var test = GlobalConst.GetContentService().DownloadFile("Zero-K v1.1.0");
-            //var db = new ZkDataContext();
-            //var post = db.ForumPosts.First(x => x.ForumPostID == 113893);
-
-
-            //var db = new ZkDataContext(false);
-            //db.Database.CreateIfNotExists();
-
-
-            //AddClanLeader();
-            //return;
-            //TestPwMatch();
-
-            //var guid = Guid.NewGuid().ToString();
-
-            //var pp = new PayPalInterface();
-            //pp.ImportPaypalHistory(Directory.GetCurrentDirectory());
-
-            //Test1v1Elo();
-            //GenerateTechs();
-
-            //FixDemoEngineVersion();
-
-            //ImportSpringiePlayers();
-            //RecalculateBattleElo();
-            //FixMaps();
-
-            //PickHomworldOwners();
-
-            PlanetwarsFixer.PurgeGalaxy(24, false, true);
-            //PlanetwarsFixer.RandomizeMaps(24);
-            //PlanetwarsFixer.SetPlanetTeamSizes(24);
-
-            //RandomizePlanetOwners(24);
-            //GenerateStructures(24);
-            PlanetwarsFixer.GenerateArtefacts(24, new int[] { 3940, 3949, 3954, 3929, 3956 });
-
-            //SwapPlanetOwners(3948, 3955);
-            //SwapPlanetOwners(3973, 3932);
-            PlanetwarsFixer.AddWormholes();
-            //PlanetwarsFixer.RemoveTechStructures(true, true);
-
-            PlanetwarsFixer.StartGalaxy(24, 3919, 3925);
-
-            //TestPrediction();
-            //FixMissionScripts();
-
-            //AnalyzeModuleUsagePatterns();
-            //AnalyzeCommUsagePatterns();
-
-            //UpdateMissionProgression(12);
-            //PrintNightwatchSubscriptions("zkadmin");
-
-            //RecountForumVotes();
-            //GetForumKarmaLadder();
-            //GetForumKarmaVotes();
-            //GetForumVotesByVoter(161294, 5340);
-            //DeleteUserVotes(189201, null);  //neon    
-            //GetClanStackWinRate(465, 2000); //Mean
-            //GetForumVotesByUserVoterAgnostic(161294);
-            //GetAverageElo();
-
-            //DuplicateFinder.GetDuplicates();
+           
+           
         }
 
         static IEnumerable<MiniBat> GetMiniBats() {

@@ -264,8 +264,8 @@ namespace GalaxyDesigner
 
                         p.Name = memPlanet.Name;
                         p.GalaxyID = galaxyNumber;
-                        p.OwnerAccountID = null;
-						p.X = (float)(Canvas.GetLeft(d)/imageSource.Width);
+					    p.OwnerAccountID = memPlanet.OwnerAccountID;
+                        p.X = (float)(Canvas.GetLeft(d)/imageSource.Width);
 						p.Y = (float)(Canvas.GetTop(d)/imageSource.Height);
 					    if (memPlanet.MapResourceID == null)
 					    {
