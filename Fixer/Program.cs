@@ -404,10 +404,10 @@ namespace Fixer
             if (Console.ReadLine()?.StartsWith("i read the code") != true) return;
 
             GlobalConst.Mode = ModeType.Live;
-            PlanetwarsFixer.AddWormholes(27);
-            PlanetwarsFixer.StartGalaxy(27, 3);
-            PlanetwarsFixer.OwnPlanets(27);
-            PlanetwarsFixer.SetPlanetTeamSizes(27);
+            PlanetwarsFixer.AddWormholes(28);
+            PlanetwarsFixer.StartGalaxy(28, 3);
+            PlanetwarsFixer.OwnPlanets(28);
+            PlanetwarsFixer.SetPlanetTeamSizes(28);
            
             return;
            
