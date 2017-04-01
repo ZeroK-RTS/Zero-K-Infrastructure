@@ -37,6 +37,8 @@ namespace ZeroKWeb.Controllers
 
             switch (eventType) {
                 case "issues":
+                    if (payload.action == "labeled")
+                        break;
                     values = new [] {payload.repository.name ,payload.sender.login,  payload.action, payload.issue.title, payload.issue.html_url};
                     text = string.Format("[{0}] {1} has {2} issue {3} {4}",values);
                     break;
