@@ -508,6 +508,13 @@ namespace Fixer
             }
 
             db.SaveChanges();
+
+            foreach (var p in gal.Planets)
+            {
+                p.PlanetFactions.Clear();
+                if (p.OwnerFactionID != null) p.PlanetFactions.Add(new PlanetFaction() {FactionID = p.OwnerFactionID.Value, Influence = 100});
+            }
+            db.SaveChanges();
         }
     }
 }
