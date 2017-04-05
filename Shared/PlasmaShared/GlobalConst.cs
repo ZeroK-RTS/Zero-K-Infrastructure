@@ -163,7 +163,7 @@ namespace ZkData
 
         public const double PlanetMetalPerTurn = 1;
         public const double PlanetWarsEnergyToMetalRatio = 1 / 20.0;
-        public const int PlanetWarsVictoryPointsToWin = 200;
+        public const int PlanetWarsVictoryPointsToWin = 100;
         public const int BaseInfluencePerBattle = 35;
         public const double PlanetWarsAttackerMetal = 100;
         public const double PlanetWarsDefenderMetal = 100;
@@ -216,7 +216,8 @@ namespace ZkData
         public const int PlanetWarsMinutesToAccept = 10;
         public const int PlanetWarsDropshipsStayForMinutes = 2*60;
         public const int PlanetWarsMaxTeamsize = 4;
-        public const int PlanetWarsBaseDropshipDefense = 9;
+        public const double PlanetWarsDefenderWinKillCcMultiplier = 0.2;
+        public const double PlanetWarsAttackerWinLoseCcMultiplier = 0.5;
         public const int MinPlanetWarsLevel = 5;
         public const int MinPlanetWarsElo = -1000;
 

@@ -75,10 +75,11 @@ namespace Fixer
                     f.Bombers = 0;
                     f.Dropships = 0;
                     f.Warps = 0;
+                    f.VictoryPoints = 0;
                 }
                 db.SaveChanges();
 
-                db.Database.ExecuteSqlCommand("update accounts set pwbombersproduced=0, pwbombersused=0, pwdropshipsproduced=0, pwdropshipsused=0, pwmetalproduced=0, pwmetalused=0, pwattackpoints=0, pwwarpproduced=0, pwwarpused=0, elopw=1500");
+                db.Database.ExecuteSqlCommand("update accounts set pwbombersproduced=0, pwbombersused=0, pwdropshipsproduced=0, pwdropshipsused=0, pwmetalproduced=0, pwmetalused=0, pwattackpoints=0, pwwarpproduced=0, pwwarpused=0, elopw=1500, factionid=null");
                 if (resetclans) db.Database.ExecuteSqlCommand("update accounts set clanid=null");
                 db.Database.ExecuteSqlCommand("delete from events");
                 db.Database.ExecuteSqlCommand("delete from planetownerhistories");
@@ -242,6 +243,14 @@ namespace Fixer
             using (var db = new ZkDataContext())
             {
                 var facs = db.Factions.Where(x => !x.IsDeleted).ToList();
+                if (startingPlanets == null || startingPlanets.Length < facs.Count)
+                    startingPlanets =
+                        db.Planets.Where(x => x.GalaxyID == galaxyID && x.PlanetStructures.Any(y => y.StructureType.OwnerChangeWinsGame == true))
+                            .OrderBy(x => x.Y)
+                            .ThenBy(x => x.Y)
+                            .Select(x => x.PlanetID)
+                            .ToArray();
+
                 for (int i = 0; i < facs.Count; i++)
                 {
                     var pid = startingPlanets[i];
@@ -288,7 +297,7 @@ namespace Fixer
                     }
                     else
                     {
-                        foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.EffectIsVictoryPlanet != true))
+                        foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.OwnerChangeWinsGame != true))
                         {
                             s.IsActive = false;
                             s.ActivatedOnTurn = null;
@@ -417,11 +426,11 @@ namespace Fixer
             db.SaveChanges();
         }
 
-        public static void AddWormholes()
+        public static void AddWormholes(int galaxyID)
         {
             var db = new ZkDataContext();
             var wormhole = db.StructureTypes.Where(x => x.EffectInfluenceSpread > 0).OrderBy(x => x.EffectInfluenceSpread).First();
-            foreach (var p in db.Planets.Where(x => !x.PlanetStructures.Any(y => y.StructureType.EffectInfluenceSpread > 0)))
+            foreach (var p in db.Planets.Where(x => x.GalaxyID == galaxyID && !x.PlanetStructures.Any(y => y.StructureType.EffectInfluenceSpread > 0)))
             {
                 p.PlanetStructures.Add(new PlanetStructure() { StructureTypeID = wormhole.StructureTypeID });
             }
@@ -469,5 +478,43 @@ namespace Fixer
             db.SaveChanges();
         }
 
+        public static void OwnPlanets(int galaxyID)
+        {
+            var db = new ZkDataContext();
+            var gal = db.Galaxies.FirstOrDefault(x => x.GalaxyID == galaxyID);
+            var hqs = gal.Planets.Where(x => x.PlanetStructures.Any(y => y.StructureType.OwnerChangeWinsGame)).ToList();
+            foreach (var p in gal.Planets)
+            {
+                var distances = hqs.ToDictionary(x => x, x => x.GetLinkDistanceTo(p));
+                var min = distances.OrderBy(x => x.Value).First();
+                if (distances.Any(x => x.Key != min.Key && x.Value == min.Value))
+                {
+                    p.OwnerFactionID = null;
+                }
+                else
+                {
+                    p.OwnerFactionID = min.Key.OwnerFactionID;
+                }
+            }
+
+            db.SaveChanges();
+
+            var neutrals = gal.Planets.Where(x => x.OwnerFactionID == null).Select(x => x.PlanetID).ToList();
+
+            foreach (var p in gal.Planets)
+            {
+                Planet m;
+                if (p.GetLinkDistanceTo(x => neutrals.Contains(x.PlanetID), null, out m) == 1) p.OwnerFactionID = null;
+            }
+
+            db.SaveChanges();
+
+            foreach (var p in gal.Planets)
+            {
+                p.PlanetFactions.Clear();
+                if (p.OwnerFactionID != null) p.PlanetFactions.Add(new PlanetFaction() {FactionID = p.OwnerFactionID.Value, Influence = 100});
+            }
+            db.SaveChanges();
+        }
     }
 }

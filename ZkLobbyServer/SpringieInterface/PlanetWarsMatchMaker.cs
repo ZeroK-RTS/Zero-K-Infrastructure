@@ -271,7 +271,23 @@ namespace ZeroKWeb
 
         private List<Faction> GetDefendingFactions(AttackOption target)
         {
-            if (target.OwnerFactionID != null) return new List<Faction> { factions.Find(x => x.FactionID == target.OwnerFactionID) };
+            if (target.OwnerFactionID != null)
+            {
+                var ret = new List<Faction>();
+                ret.Add(factions.Find(x => x.FactionID == target.OwnerFactionID));
+
+                // add allies as defenders
+                using (var db = new ZkDataContext())
+                {
+                    var planet = db.Planets.Find(target.PlanetID);
+                    foreach (var of in db.Factions.Where(x=>!x.IsDeleted && x.FactionID != target.OwnerFactionID && x.FactionID != AttackingFaction.FactionID))
+                    {
+                        if (of.GaveTreatyRight(planet, x=>x.EffectBalanceSameSide == true)) ret.Add(of);
+                    }
+                }
+                return ret;
+            }
+
             return factions.Where(x => x != AttackingFaction).ToList();
         }
 

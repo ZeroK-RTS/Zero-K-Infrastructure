@@ -54,22 +54,17 @@ public static class PlanetWarsTurnHandler
 
         var evacuatedStructureTypeIDs = GetEvacuatedStructureTypes(extraData, db);
 
-        int dropshipsSent = (planet.PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0);
-        bool isLinked = planet.CanDropshipsAttack(attacker);
         string influenceReport = "";
 
         // distribute influence
         // save influence gains
         // give influence to main attackers
-        double planetDropshipDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
-        double planetIpDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectReduceBattleInfluenceGain) ?? 0);
+        double planetIpDefs = planet.GetEffectiveIpDefense();
 
         double baseInfluence = GlobalConst.BaseInfluencePerBattle;
         double influence = baseInfluence;
 
-
-        double effectiveShips = Math.Max(0, (dropshipsSent - planetDropshipDefs));
-        double shipBonus = effectiveShips*GlobalConst.InfluencePerShip;
+        double shipBonus = planet.GetEffectiveShipIpBonus(attacker);
 
         double defenseBonus = -planetIpDefs;
         double techBonus = attacker.GetFactionUnlocks().Count() * GlobalConst.InfluencePerTech;
@@ -79,7 +74,7 @@ public static class PlanetWarsTurnHandler
         {
             if (wasDefenderCcDestroyed)
             {
-                ipMultiplier = 0.2;
+                ipMultiplier = GlobalConst.PlanetWarsDefenderWinKillCcMultiplier;
                 ipReason = "from losing but killing defender's CC";
             }
             else
@@ -93,20 +88,13 @@ public static class PlanetWarsTurnHandler
             if (wasAttackerCcDestroyed)
             {
                 ipReason = "from losing own CC";
-                ipMultiplier = 0.5;
+                ipMultiplier = GlobalConst.PlanetWarsAttackerWinLoseCcMultiplier;
             }
             else
             {
                 ipReason = "from winning flawlessly";
             }
         }
-        if (!isLinked && effectiveShips < GlobalConst.DropshipsForFullWarpIPGain)
-        {
-            var newMult = effectiveShips/GlobalConst.DropshipsForFullWarpIPGain;
-            ipMultiplier *= newMult ;
-            ipReason = ipReason + string.Format(" and reduced to {0}% because only {1} of {2} ships needed for warp attack got past defenses", (int)(newMult*100.0), (int)effectiveShips, GlobalConst.DropshipsForFullWarpIPGain);
-        }
-
 
         influence = (influence + shipBonus + techBonus) * ipMultiplier + defenseBonus;
         if (influence < 0) influence = 0;

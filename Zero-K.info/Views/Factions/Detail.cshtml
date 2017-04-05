@@ -14,44 +14,52 @@
 @Html.IncludeWiki("Faction" + f.Shortcut)
 
 
-<br/>
+<br />
 <h3>Resources</h3>
 <table>
     <tr>
-        <td>Metal:</td><td>@Html.PrintMetal(f.Metal)</td>
-    </tr>    
+        <td>Metal:</td>
+        <td>@Html.PrintMetal(f.Metal)</td>
+    </tr>
     <tr>
-        <td>Dropships:</td><td>@Html.PrintDropships(f.Dropships, f)</td>
-    </tr>    
+        <td>Dropships:</td>
+        <td>@Html.PrintDropships(f.Dropships, f)</td>
+    </tr>
     <tr>
-        <td>Bombers:</td><td>@Html.PrintBombers(f.Bombers)</td>
-    </tr>    
+        <td>Bombers:</td>
+        <td>@Html.PrintBombers(f.Bombers)</td>
+    </tr>
     <tr><td>Warp cores:</td><td>@Html.PrintWarps(f.Warps)</td></tr>
     <tr><td>Energy produced:</td><td style="color:lightgreen">+@Html.PrintEnergy(f.EnergyProducedLastTurn)</td></tr>
     <tr><td>Energy demand:</td><td style="color:red">-@Html.PrintEnergy(f.EnergyDemandLastTurn)</td></tr>
     <tr><td>Metal from energy excess:</td><td style="color: lightgreen">+@Html.PrintMetal(f.GetEnergyToMetalConversion())</td></tr>
     <tr><td>Metal from planets:</td><td style="color: lightgreen">+@Html.PrintMetal(f.GetMetalFromPlanets())</td></tr>
-    <tr><td>Infrastructure: </td><td>@Html.PrintMetal(f.Planets.SelectMany(x=>x.PlanetStructures).Where(x=>x.StructureType.IsBuildable).Sum(x=>x.StructureType.Cost))</td></tr>
+    <tr><td>Infrastructure: </td><td>@Html.PrintMetal(f.Planets.SelectMany(x => x.PlanetStructures).Where(x => x.StructureType.IsBuildable).Sum(x => x.StructureType.Cost))</td></tr>
 </table>
 
-@if (Global.Account != null && Global.FactionID == f.FactionID) {
+@if (Global.Account != null && Global.FactionID == f.FactionID)
+{
     <b>Secret topic:</b><br />
-    if (Global.Account.HasFactionRight(x=>x.RightEditTexts)) {
+    if (Global.Account.HasFactionRight(x => x.RightEditTexts))
+    {
         <form action="@Url.Action("SetTopic", new{factionID = f.FactionID})" method="POST">
-            @Html.TextArea("secretTopic", f.SecretTopic, 8,80,null)
-            <input type="submit"/>
+            @Html.TextArea("secretTopic", f.SecretTopic, 8, 80, null)
+            <input type="submit" />
         </form>
-    } else {
+    }
+    else
+    {
         @Html.BBCode(f.SecretTopic)
     }
 
 }
 
 <h3>Faction roles</h3>
-@foreach (RoleType rt in new ZkDataContext().RoleTypes.Where(x => !x.IsClanOnly && (x.RestrictFactionID == null || x.RestrictFactionID == f.FactionID)).OrderBy(x => x.DisplayOrder)) {
+@foreach (RoleType rt in new ZkDataContext().RoleTypes.Where(x => !x.IsClanOnly && (x.RestrictFactionID == null || x.RestrictFactionID == f.FactionID)).OrderBy(x => x.DisplayOrder))
+{
     @Html.PrintRoleType(rt)
     @Html.PrintFactionRoleHolders(rt, f)
-    <br/>
+    <br />
 }
 
 <h2>Diplomacy</h2>
@@ -59,7 +67,7 @@
 {
     @Html.ActionLink("(propose new treaty)", "NewTreaty")
 }
-<br/>
+<br />
 @foreach (FactionTreaty tr in db.FactionTreaties.Where(x => x.TreatyState != TreatyState.Invalid).Where(x => (x.ProposingFactionID == f.FactionID || x.AcceptingFactionID == f.FactionID)).OrderBy(x => x.TreatyState))
 {
     if (tr.TreatyState == TreatyState.Proposed)
@@ -70,13 +78,13 @@
     {
         <b>@Html.PrintFactionTreaty(tr) between @Html.PrintFaction(tr.FactionByProposingFactionID, false) and @Html.PrintFaction(tr.FactionByAcceptingFactionID, false)</b>
     }
-    <br/>
+    <br />
 }
 
 
 <div class="js_tabs">
     <ul>
-        <li><a href="#events"><span>Events</span></a></li>            
+        <li><a href="#events"><span>Events</span></a></li>
         <li><a href="#starships"><span>Starships</span></a></li>
         <li><a href="#technologies"><span>Technologies</span></a></li>
     </ul>
@@ -91,24 +99,24 @@
                 <tr>
                     <td>@Html.PrintPlanet(p.Planet)</td>
                     <td>
-                        <img src='@p.Faction.GetShipImageUrl()' />@p.Dropships</td>
+                        <img src='@p.Faction.GetShipImageUrl()' />@p.Dropships
+                    </td>
                 </tr>
             }
         </table>
     </div>
-    
-        <div id="technologies">
+
+    <div id="technologies">
         @foreach (var unlockEntry in Model.GetFactionUnlocks())
         {
             var unlock = unlockEntry.Unlock;
             var giver = unlockEntry.Faction;
-  
-          <span style="color: @unlock.LabelColor; font-size:x-small; display:inline-block; width:90px;height:90px" title="$unlock$@unlock.UnlockID"  >
-            <span style='font-size:x-small'>@Html.PrintFaction(giver, false)</span>
-            <img src="@unlock.ImageUrl"/><br />
-            @unlock.Name
-          </span>
-				}
+
+            <span style="color: @unlock.LabelColor; font-size:x-small; display:inline-block; width:90px;height:90px" title="$unlock$@unlock.UnlockID">
+                <span style='font-size:x-small'>@Html.PrintFaction(giver, false)</span>
+                <img src="@unlock.ImageUrl" /><br />
+                @unlock.Name
+            </span>}
     </div>
 
 </div>

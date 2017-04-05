@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Transactions;
@@ -179,9 +180,9 @@ namespace GalaxyDesigner
 			try
 			{
 				var db = new ZkDataContext();
-				var planetDict = db.Planets.Where(x=>x.GalaxyID == galaxyNumber).ToDictionary(p => p.PlanetID, p => new PlanetDrawing(p, ImageSource.Width, ImageSource.Height));
+				var planetDict = db.Planets.Where(x=>x.GalaxyID == galaxyNumber).Include(x=>x.PlanetStructures).Include(x=>x.LinksByPlanetID1).Include(x=>x.LinksByPlanetID2).Include(x=>x.Resource).ToList().ToDictionary(p => p.PlanetID, p => new PlanetDrawing(p, ImageSource.Width, ImageSource.Height));
 				PlanetDrawings = planetDict.Values.ToList();
-				LinkDrawings = db.Links.Where(x=>x.GalaxyID == galaxyNumber).Select(l => new LinkDrawing(planetDict[l.PlanetID1], planetDict[l.PlanetID2])).ToList();
+				LinkDrawings = db.Links.Where(x=>x.GalaxyID == galaxyNumber).ToList().Select(l => new LinkDrawing(planetDict[l.PlanetID1], planetDict[l.PlanetID2])).ToList();
 				if (canvas != null)
 				{
 					foreach (var p in PlanetDrawings)
@@ -256,21 +257,26 @@ namespace GalaxyDesigner
 
 					foreach (var d in PlanetDrawings)
 					{
-						var p = d.Planet;
-						p.GalaxyID = galaxyNumber;
-						p.OwnerAccountID = null;
-						p.X = (float)(Canvas.GetLeft(d)/imageSource.Width);
-						p.Y = (float)(Canvas.GetTop(d)/imageSource.Height);
-						if (p.MapResourceID == null)
-						{
-							p.MapResourceID = maps[cnt].ResourceID;
-							cnt++;
-							cnt = cnt%maps.Count;
-						}
+                        var memPlanet = d.Planet;
 
-						var clone = p.DbClone();
-						clone.PlanetStructures.AddRange(p.PlanetStructures.Select(x => new PlanetStructure() { StructureTypeID = x.StructureTypeID }));
-						gal.Planets.Add(clone);
+					    var p = new Planet();
+					    db.Planets.Add(p);
+
+                        p.Name = memPlanet.Name;
+                        p.GalaxyID = galaxyNumber;
+					    p.OwnerAccountID = memPlanet.OwnerAccountID;
+                        p.X = (float)(Canvas.GetLeft(d)/imageSource.Width);
+						p.Y = (float)(Canvas.GetTop(d)/imageSource.Height);
+					    if (memPlanet.MapResourceID == null)
+					    {
+					        p.MapResourceID = maps[cnt].ResourceID;
+					        cnt++;
+					        cnt = cnt%maps.Count;
+					    }
+					    else p.MapResourceID = memPlanet.MapResourceID;
+
+                        p.PlanetStructures.Clear();
+						p.PlanetStructures.AddRange(memPlanet.PlanetStructures.Select(x => new PlanetStructure() { StructureTypeID = x.StructureTypeID }));
 					}
 				    db.SaveChanges();
 

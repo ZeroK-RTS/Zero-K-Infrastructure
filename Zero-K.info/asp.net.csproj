@@ -189,7 +189,6 @@
     <Compile Include="Controllers\AutocompleteController.cs" />
     <Compile Include="Controllers\ChartsController.cs" />
     <Compile Include="Controllers\ClansController.cs" />
-    <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\EnginesController.cs" />
     <Compile Include="Controllers\FactionsController.cs" />
     <Compile Include="Controllers\ContributionsController.cs" />
@@ -1501,18 +1500,12 @@
     <Content Include="Views\Shared\DisplayTemplates\FactionTreaty.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\StructureType.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Enum.cshtml" />
-    <Content Include="Views\Campaign\CampaignMap.cshtml" />
-    <Content Include="Views\Campaign\Index.cshtml" />
-    <Content Include="Views\Campaign\Minimap.cshtml" />
-    <Content Include="Views\Campaign\Planet.cshtml" />
     <Content Include="Views\Home\PlanetTooltipCampaign.cshtml" />
     <Content Include="Views\Shared\PlanetIconCampaign.cshtml" />
-    <Content Include="Views\Campaign\CampaignEvents.cshtml" />
     <Content Include="Views\Contributions\ContributionsIndex.cshtml" />
     <Content Include="Views\Contributions\ThankYou.cshtml" />
     <Content Include="Views\Forum\ForumVotesForPost.cshtml" />
     <Content Include="Views\Planetwars\Ladder.cshtml" />
-    <Content Include="Views\Campaign\Journals.cshtml" />
     <Content Include="Views\Users\MassBan.cshtml" />
     <Content Include="Views\Lobby\BlockedVPNs.cshtml" />
     <Content Include="Views\Forum\SearchResults.cshtml" />

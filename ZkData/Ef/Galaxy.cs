@@ -70,11 +70,23 @@ namespace ZkData
 
                 var bombers = structs.Where(x => x.StructureType.EffectBomberProduction > 0).Sum(x => x.StructureType.EffectBomberProduction) ?? 0;
                 grp.Key.ProduceBombers(bombers);
-
-
+                
                 var warps = structs.Where(x => x.StructureType.EffectWarpProduction > 0).Sum(x => x.StructureType.EffectWarpProduction) ?? 0;
                 grp.Key.ProduceWarps(warps);
+
             }
+
+
+            // produce victory points
+            foreach (var fac in Planets.Where(x => x.Faction != null).GroupBy(x => x.Faction))
+            {
+                fac.Key.VictoryPoints +=
+                    fac.SelectMany(x => x.PlanetStructures)
+                        .Where(x => x.IsActive && x.StructureType.EffectVictoryPointProduction != null)
+                        .Sum(x => x.StructureType.EffectVictoryPointProduction) ?? 0;
+            }
+
+
 
             // planets generate metal
             foreach (var p in Planets.Where(x => x.Faction != null && x.Account != null))

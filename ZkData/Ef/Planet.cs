@@ -9,7 +9,7 @@ namespace ZkData
 {
     public class Planet
     {
-        
+
         public Planet()
         {
             AccountPlanets = new HashSet<AccountPlanet>();
@@ -46,7 +46,7 @@ namespace ZkData
         public virtual Resource Resource { get; set; }
         public virtual ICollection<PlanetFaction> PlanetFactions { get; set; }
         public virtual ICollection<PlanetOwnerHistory> PlanetOwnerHistories { get; set; }
-        public virtual ICollection<PlanetStructure> PlanetStructures { get; set; }
+        public virtual ICollection<PlanetStructure> PlanetStructures { get; set; } = new List<PlanetStructure>();
         public virtual ICollection<PlanetStructure> PlanetStructuresByTargetPlanetID { get; set; }
         public virtual ICollection<TreatyEffect> TreatyEffects { get; set; }
         public virtual ICollection<Event> Events { get; set; }
@@ -119,7 +119,7 @@ namespace ZkData
         {
             if (CanDropshipsAttack(attacker) ||
                 PlanetFactions.Where(x => x.FactionID == attacker.FactionID).Sum(y => y.Dropships) >
-                PlanetStructures.Where(x => x.IsActive).Sum(y => y.StructureType.EffectDropshipDefense) + GlobalConst.PlanetWarsBaseDropshipDefense) return true;
+                PlanetStructures.Where(x => x.IsActive).Sum(y => y.StructureType.EffectDropshipDefense)) return true;
             else return false;
         }
 
@@ -165,19 +165,14 @@ namespace ZkData
             return false;
         }
 
-        public int? GetLinkDistanceTo(Func<Planet, bool> planetCondition,Faction traverseFaction, out Planet matchPlanet)
-        {
-            // check if this planet is the condition
 
-            if (planetCondition(this) && OwnerFactionID == traverseFaction.FactionID)
-            {
-                matchPlanet = this;
-                return 0;
-            }
+        public int? GetLinkDistanceTo(Planet targetPlanet)
+        {
+            if (this == targetPlanet) return 0;
 
             int? distance = 0;
             List<Planet> checkedPlanets = new List<Planet>();
-            List<Planet> front = new List<Planet>() {this};
+            List<Planet> front = new List<Planet>() { this };
 
             do
             {
@@ -195,8 +190,51 @@ namespace ZkData
                         if (!checkedPlanets.Contains(otherPlanet))
                         {
                             // planet has wormhole active and is traversable
-                            if (p.OwnerFactionID == traverseFaction.FactionID &&
-                                otherPlanet.PlanetStructures.Any(x => x.IsActive && x.StructureType.EffectAllowShipTraversal == true))
+
+                            if (otherPlanet == targetPlanet) return distance + 1;
+                            newFront.Add(otherPlanet);
+                        }
+                    }
+                }
+                front = newFront;
+                distance++;
+            } while (front.Count > 0);
+
+            return null;
+        }
+
+        public int? GetLinkDistanceTo(Func<Planet, bool> planetCondition, Faction traverseFaction, out Planet matchPlanet)
+        {
+            // check if this planet is the condition
+
+            if (planetCondition(this) && (traverseFaction==null|| OwnerFactionID == traverseFaction.FactionID))
+            {
+                matchPlanet = this;
+                return 0;
+            }
+
+            int? distance = 0;
+            List<Planet> checkedPlanets = new List<Planet>();
+            List<Planet> front = new List<Planet>() { this };
+
+            do
+            {
+                checkedPlanets.AddRange(front);
+                List<Planet> newFront = new List<Planet>();
+
+                foreach (var p in front)
+                {
+                    // iterate links to this planet
+                    foreach (var link in p.LinksByPlanetID1.Union(p.LinksByPlanetID2))
+                    {
+                        var otherPlanet = p.PlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
+
+
+                        if (!checkedPlanets.Contains(otherPlanet))
+                        {
+                            // planet has wormhole active and is traversable
+                            if (traverseFaction == null || (p.OwnerFactionID == traverseFaction.FactionID &&
+                                otherPlanet.PlanetStructures.Any(x => x.IsActive && x.StructureType.EffectAllowShipTraversal == true)))
                             {
 
                                 if (planetCondition(otherPlanet))
@@ -216,6 +254,18 @@ namespace ZkData
 
             matchPlanet = null;
             return null;
+        }
+
+        public double GetEffectiveShipIpBonus(Faction attacker)
+        {
+            double planetDropshipDefs = (PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
+            int dropshipsSent = (PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0);
+            return Math.Max(0, (dropshipsSent - planetDropshipDefs)) * GlobalConst.InfluencePerShip;
+        }
+
+        public double GetEffectiveIpDefense()
+        {
+            return (PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectReduceBattleInfluenceGain) ?? 0);
         }
 
 

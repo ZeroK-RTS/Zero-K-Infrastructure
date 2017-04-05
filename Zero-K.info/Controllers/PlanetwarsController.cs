@@ -361,7 +361,7 @@ namespace ZeroKWeb.Controllers
             bool accessible = useWarp == true ? planet.CanDropshipsWarp(acc.Faction) : planet.CanDropshipsAttack(acc.Faction);
             if (!accessible) return Content(string.Format("That planet cannot be attacked"));
             if (Global.Server.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot send ships");
-
+            
             int cnt = Math.Max(count, 0);
 
             int capa = acc.GetDropshipCapacity();
@@ -372,7 +372,11 @@ namespace ZeroKWeb.Controllers
             if (cnt > 0)
             {
                 acc.SpendDropships(cnt);
-                if (useWarp == true) acc.SpendWarps(cnt);
+                if (useWarp == true)
+                {
+                    acc.SpendWarps(cnt);
+                    if (cnt < GlobalConst.DropshipsForFullWarpIPGain) return Content($"You must send at least {GlobalConst.DropshipsForFullWarpIPGain} dropships when warping");
+                }
 
                 if (planet.Account != null) {
                     Global.Server.GhostPm(planet.Account.Name, string.Format(
