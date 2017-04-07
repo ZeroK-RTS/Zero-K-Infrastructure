@@ -23,7 +23,8 @@ namespace ZkLobbyServer
             MaxPlayers = option.TeamSize*2;
             prototype = option;
 
-            foreach (var pe in option.Attackers.Union(option.Defenders)) Users[pe] = new UserBattleStatus(pe, server.ConnectedUsers.Get(pe)?.User, GenerateClientScriptPassword(pe));
+            foreach (var pe in option.Attackers) Users[pe] = new UserBattleStatus(pe, server.ConnectedUsers.Get(pe)?.User, GenerateClientScriptPassword(pe)) {AllyNumber = 0};
+            foreach (var pe in option.Defenders) Users[pe] = new UserBattleStatus(pe, server.ConnectedUsers.Get(pe)?.User, GenerateClientScriptPassword(pe)) { AllyNumber = 1 };
 
             if (ModOptions == null) ModOptions = new Dictionary<string, string>();
 

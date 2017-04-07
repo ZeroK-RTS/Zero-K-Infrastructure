@@ -227,6 +227,7 @@ namespace ZkLobbyServer
             }
             catch (Exception ex)
             {
+                Trace.TraceError(ex.ToString());
                 await SayBattle("ServerManage error: " + ex);
             }
         }
@@ -513,7 +514,7 @@ namespace ZkLobbyServer
                     MaxPlayers = 2;
                     break;
                 case AutohostMode.Planetwars:
-                    MaxPlayers = 16;
+                    if (MaxPlayers < 2) MaxPlayers = 16;
                     break;
                 case AutohostMode.GameChickens:
                     if (MaxPlayers < 2) MaxPlayers = 10;

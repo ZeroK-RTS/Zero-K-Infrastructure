@@ -191,7 +191,7 @@ namespace ZkData
         public const double MaxPwEloDifference = 120;
 
 
-        public static PlanetWarsModes PlanetWarsMode = PlanetWarsModes.Running;
+        public static PlanetWarsModes PlanetWarsMode = PlanetWarsModes.PreGame;
 
         public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";
@@ -212,7 +212,7 @@ namespace ZkData
         public const int MinNetKarmaToVote = -30;
         public const int PostVoteHideThreshold = -6;
         public const bool OnlyAdminsSeePostVoters = false;
-        public const int PlanetWarsMinutesToAttack = 45;
+        public const int PlanetWarsMinutesToAttack = 30;
         public const int PlanetWarsMinutesToAccept = 10;
         public const int PlanetWarsDropshipsStayForMinutes = 2*60;
         public const int PlanetWarsMaxTeamsize = 4;
