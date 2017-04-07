@@ -233,7 +233,7 @@ namespace ZkData
                         if (!checkedPlanets.Contains(otherPlanet))
                         {
                             // planet has wormhole active and is traversable
-                            if (traverseFaction == null || (p.OwnerFactionID == traverseFaction.FactionID &&
+                            if (traverseFaction == null || (otherPlanet.OwnerFactionID == traverseFaction.FactionID &&
                                 otherPlanet.PlanetStructures.Any(x => x.IsActive && x.StructureType.EffectAllowShipTraversal == true)))
                             {
 
