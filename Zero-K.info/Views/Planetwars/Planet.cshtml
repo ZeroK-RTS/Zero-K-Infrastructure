@@ -42,14 +42,6 @@
 }
 
 
-@if (Global.Account != null && (false && (Model.OwnerAccountID == Global.AccountID || (Global.Account.FactionID == Model.OwnerFactionID && Global.Account.HasFactionRight(x => x.RightEditTexts))) || Global.IsModerator ))
-{
-	<form method="post" action="@Url.Action("SubmitRenamePlanet")">
-	<input type="hidden" name="planetID" value="@Model.PlanetID"/>
-	<input type="text" name="newName" value="@Model.Name"/>
-	<input type='submit' value="Rename Planet" />
-	</form>
-}
 @if (autohost != null && autohost.IsInGame) { 
 	<b>
 		@if (autohost.IsInGame) {
@@ -112,6 +104,32 @@
 	</script>
 }
 @Html.Partial("PlanetSummary", Model)
+
+@if (Global.Account != null && Global.IsModerator)
+{
+    <div class="admin">
+        <form method="post" action="@Url.Action("SubmitRenamePlanet")">
+            <input type="hidden" name="planetID" value="@Model.PlanetID"/>
+            <table>
+                <tr>
+                    <td>Name</td>
+                    <td><input type="text" name="newName" value="@Model.Name" /></td>
+                </tr>
+                <tr>
+                    <td>Team size</td>
+                    <td><input type="text" name="teamSize" value="@Model.TeamSize" /></td>
+                </tr>
+                <tr>
+                    <td>Map</td>
+                    <td><input type="text" name="map" value="@Model.Resource.InternalName"  data-autocomplete="@Url.Action("Maps", "Autocomplete")"/></td>
+                </tr>
+            </table>
+            <input type='submit' value="Modify planet"/>
+        </form>
+    </div>
+}
+
+
 <div class="js_tabs">
 	<ul>
 		<li><a href="#influence"><span>Influence</span></a></li>

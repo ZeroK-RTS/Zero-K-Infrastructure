@@ -423,8 +423,8 @@ namespace ZeroKWeb.Controllers
 
 
 
-        [Auth]
-        public ActionResult SubmitRenamePlanet(int planetID, string newName)
+        [Auth(Role = AdminLevel.Moderator)]
+        public ActionResult SubmitRenamePlanet(int planetID, string newName, int teamSize, string map)
         {
             using (var scope = new TransactionScope())
             {
@@ -432,12 +432,12 @@ namespace ZeroKWeb.Controllers
                 var db = new ZkDataContext();
                 var acc = db.Accounts.Find(Global.AccountID);
                 Planet planet = db.Planets.Single(p => p.PlanetID == planetID);
-                /*if ((Global.Account.AccountID != planet.OwnerAccountID) &&
-                    !(Global.Account.FactionID == planet.OwnerFactionID && Global.Account.HasFactionRight(x => x.RightEditTexts) || Global.Account.IsZeroKAdmin))*/
-                if (!Global.IsModerator) return Content("Unauthorized");
+                if (planet.Name != newName) db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} renamed planet {1} to {2}", acc, planet, newName));
                 db.SaveChanges();
-                db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} renamed planet {1} to {2}", acc, planet, newName));
                 planet.Name = newName;
+                planet.TeamSize = teamSize;
+                planet.Resource = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.InternalName == map).First();
+                planet.Galaxy.IsDirty = true;
                 db.SaveChanges();
                 scope.Complete();
                 return RedirectToAction("Planet", new { id = planet.PlanetID });
