@@ -121,7 +121,7 @@ namespace LobbyClient
                 ScriptPassword = this.ScriptPassword,
                 Clan = this.LobbyUser?.Clan,
                 Faction = this.LobbyUser?.Faction,
-                PartyID = this.LobbyUser?.PartyID
+                PartyID = this.LobbyUser?.PartyID,
 	        };
 	    }
 	} ;
