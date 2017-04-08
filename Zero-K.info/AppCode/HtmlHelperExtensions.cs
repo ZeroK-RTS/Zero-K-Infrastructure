@@ -449,26 +449,6 @@ namespace System.Web.Mvc
                                                 planet.Faction != null ? "color:" + planet.Faction.Color : ""));
         }
 
-        /// <summary>
-        /// Returns the <see cref="CampaignPlanet"/> icon and name
-        /// </summary>
-        /// <param name="helper"></param>
-        /// <param name="planet"></param>
-        /// <returns></returns>
-        public static MvcHtmlString PrintCampaignPlanet(this HtmlHelper helper, CampaignPlanet planet) {
-            if (planet == null) return new MvcHtmlString("?");
-            var db = new ZkDataContext();
-            var url = Global.UrlHelper();
-            string mapName = planet.DisplayedMap ?? planet.Mission.Map;
-            Resource map = db.Resources.FirstOrDefault(m => m.InternalName == mapName);
-            return
-                new MvcHtmlString(string.Format("<a href='{0}' title='$campaignPlanet${4}'><img src='/img/planets/{1}' width='{2}'>{3}</a>",
-                                                url.Action("Planet", "Campaign", new { id = planet.PlanetID }),
-                                                map.MapPlanetWarsIcon,
-                                                map.PlanetWarsIconSize/3,
-                                                planet.Name,
-                                                planet.PlanetID));
-        }
 
         /// <summary>
         /// Returns the clan/faction role name and tooltip

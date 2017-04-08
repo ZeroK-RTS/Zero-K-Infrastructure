@@ -140,7 +140,7 @@ namespace ZeroKWeb.SpringieInterface
                                     userParams["canAttackPwStructures"] = "1";
                                 }
 
-                                userParams["pwInstructions"] = GetPwInstructions(planet, user, db, attacker);
+                                userParams["pwInstructions"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(GetPwInstructions(planet, user, db, attacker)));
                             }
 
                             if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams["extracomm"] = "1";
