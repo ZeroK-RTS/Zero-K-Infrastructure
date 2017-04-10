@@ -271,24 +271,43 @@ namespace ZeroKWeb
 
         private List<Faction> GetDefendingFactions(AttackOption target)
         {
+            var ret = new List<Faction>();
+
             if (target.OwnerFactionID != null)
             {
-                var ret = new List<Faction>();
+                // planet is owned, add owner as defender
                 ret.Add(factions.Find(x => x.FactionID == target.OwnerFactionID));
 
                 // add allies as defenders
                 using (var db = new ZkDataContext())
                 {
                     var planet = db.Planets.Find(target.PlanetID);
-                    foreach (var of in db.Factions.Where(x=>!x.IsDeleted && x.FactionID != target.OwnerFactionID && x.FactionID != AttackingFaction.FactionID))
+                    foreach (
+                        var of in
+                        db.Factions.Where(x => !x.IsDeleted && x.FactionID != target.OwnerFactionID && x.FactionID != AttackingFaction.FactionID))
                     {
-                        if (of.GaveTreatyRight(planet, x=>x.EffectBalanceSameSide == true)) ret.Add(of);
+                        if (of.GaveTreatyRight(planet, x => x.EffectBalanceSameSide == true)) ret.Add(of);
                     }
                 }
                 return ret;
             }
+            else
+            {
+                // add non-allies as militia defenders
 
-            return factions.Where(x => x != AttackingFaction).ToList();
+                using (var db = new ZkDataContext())
+                {
+                    var planet = db.Planets.Find(target.PlanetID);
+                    var attacker = db.Factions.First(x => x.FactionID == AttackingFaction.FactionID);
+                    foreach (
+                        var of in
+                        db.Factions.Where(x => !x.IsDeleted && x.FactionID != attacker.FactionID))
+                    {
+                        if (!attacker.HasTreatyRight(of, x=>x.EffectBalanceSameSide == true, planet)) ret.Add(of);
+                    }
+                }
+            }
+            return ret;
         }
 
         private void InternalAddOption(Planet planet)
