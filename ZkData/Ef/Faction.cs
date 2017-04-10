@@ -186,7 +186,7 @@ namespace ZkData
                 // todo implement complex energy behavior with multilayered distribution
                 foreach (var s in structs.OrderByDescending(x => (int)x.EnergyPriority).ThenBy(x => x.StructureType.UpkeepEnergy ?? 0))
                 {
-                    if (energy >= s.StructureType.UpkeepEnergy)
+                    if (energy >= s.StructureType.UpkeepEnergy && s.EnergyPriority > EnergyPriority.PowerOff)
                     {
                         s.PoweredTick(turn);
                         energy -= s.StructureType.UpkeepEnergy ?? 0;

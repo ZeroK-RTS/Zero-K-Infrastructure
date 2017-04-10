@@ -207,7 +207,7 @@ namespace ZkData
         public void DeleteOneTimeActivated(IPlanetwarsEventCreator eventCreator, ZkDataContext db)
         {
             var todel = new List<PlanetStructure>();
-            foreach (var structure in Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive && x.StructureType.IsSingleUse == true))
+            foreach (var structure in Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive && x.StructureType.IsSingleUse == true && !x.StructureType.RequiresPlanetTarget))
             {
                 todel.Add(structure);
                 db.Events.Add(eventCreator.CreateEvent("{0}'s {1} on planet {2} has activated and is now removed",
