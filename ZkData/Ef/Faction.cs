@@ -80,14 +80,14 @@ namespace ZkData
         public bool HasTreatyRight(Faction giverFaction, Func<TreatyEffectType, bool> test, Planet planet = null)
         {
             if (giverFaction == null) return false;
-            var effects = TreatyEffectsByReceivingFactionID.Where(x => x.FactionTreaty.TreatyState == TreatyState.Accepted && x.GivingFactionID == giverFaction.FactionID && (x.Planet == null || x.Planet == planet));
+            var effects = TreatyEffectsByReceivingFactionID.Where(x => x.FactionTreaty.TreatyState == TreatyState.Accepted && x.GivingFactionID == giverFaction.FactionID && (x.Planet == null || x.Planet == planet)).ToList();
             return effects.Any(x => test(x.TreatyEffectType));
         }
 
         public bool GaveTreatyRight(Planet planet, Func<TreatyEffectType, bool> test)
         {
             if (planet == null) return false; // not targeted, must be either planet or faction or both
-            var effects = TreatyEffectsByGivingFactionID.Where(x => x.FactionTreaty.TreatyState == TreatyState.Accepted && ((x.PlanetID == planet.PlanetID && (planet.OwnerFactionID == null || planet.OwnerFactionID == x.ReceivingFactionID)) || (x.PlanetID == null && x.ReceivingFactionID == planet.OwnerFactionID)));
+            var effects = TreatyEffectsByGivingFactionID.Where(x => x.FactionTreaty.TreatyState == TreatyState.Accepted && ((x.PlanetID == planet.PlanetID && (planet.OwnerFactionID == null || planet.OwnerFactionID == x.ReceivingFactionID)) || (x.PlanetID == null && x.ReceivingFactionID == planet.OwnerFactionID))).ToList();
             return effects.Any(x => test(x.TreatyEffectType));
         }
 
