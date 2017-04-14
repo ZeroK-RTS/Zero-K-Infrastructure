@@ -172,6 +172,13 @@ namespace LobbyClient
                             sea.GameID = data.Skip(5).Take(16).ToArray().ToHex();
                             sea.ReplayFileName = Encoding.UTF8.GetString(data, 21, data.Length - 21);
                             break;
+                            
+                        case SpringEventType.SERVER_GAMEOVER:
+                            int msgSize = data[1];
+                            sea.PlayerNumber = data[2];
+                            if (msgSize != data.Length) Trace.TraceWarning("Warning spring message size mismatch, expected {0} got {1} on GAMEOVER", msgSize, data.Length);
+                            sea.winningAllyTeams = data.Skip(3).Take(msgSize - 3).ToArray();
+                            break;
 
                         case SpringEventType.SERVER_MESSAGE:
 
@@ -202,6 +209,7 @@ namespace LobbyClient
             public string Text;
             public string GameID;
             public string ReplayFileName;
+            public byte[] winningAllyTeams;
         }
     }
 }
