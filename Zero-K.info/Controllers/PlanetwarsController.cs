@@ -34,7 +34,7 @@ namespace ZeroKWeb.Controllers
 
             var capa = acc.GetBomberCapacity();
 
-            if (avail > capa) return Content("Too many bombers, increase bomber fleet size capacity");
+            if (avail > capa) return Content("Too many bombers - the fleet limit is " + capa);
 
             if (avail > 0)
             {
@@ -366,7 +366,7 @@ namespace ZeroKWeb.Controllers
 
             int capa = acc.GetDropshipCapacity();
 
-            if (cnt + there > capa) return Content("Too many ships, increase fleet size");
+            if (cnt + there > capa) return Content("Too many dropships on planet - the fleet limit is " + capa);
             cnt = Math.Min(cnt, (int)acc.GetDropshipsAvailable());
             if (useWarp == true) cnt = Math.Min(cnt, (int)acc.GetWarpAvailable());
             if (cnt > 0)
