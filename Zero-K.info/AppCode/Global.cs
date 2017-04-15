@@ -148,7 +148,7 @@ namespace ZeroKWeb
             SetupPaypalInterface();
 
 
-            Task.Factory.StartNew(() => SteamDepotGenerator.RunAll());
+            // HACK Task.Factory.StartNew(() => SteamDepotGenerator.RunAll());
 
             Trace.TraceInformation("Starting autoregistrator");
             AutoRegistrator = new AutoRegistrator(MapPath("~"));
@@ -158,7 +158,7 @@ namespace ZeroKWeb
                 Server.SetGame(game);
             };
 
-            AutoRegistrator.RunMainAndMapSyncAsync();
+            // HACK AutoRegistrator.RunMainAndMapSyncAsync();
         }
 
         public static SteamDepotGenerator SteamDepotGenerator { get; private set; }

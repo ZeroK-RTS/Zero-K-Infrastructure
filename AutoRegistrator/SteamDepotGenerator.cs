@@ -34,8 +34,8 @@ namespace AutoRegistrator
                 {
                     Trace.TraceInformation("SteamDepot gnerating steam package");
                     Generate();
-                    //HACK RunBuild();
-                    //HACK PublishBuild();
+                    RunBuild();
+                    PublishBuild();
                 }
             }
             else Trace.TraceWarning("SteamDepot generating steam package SKIPPED in debug mode");
