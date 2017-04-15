@@ -175,7 +175,7 @@ namespace ZkData
 
             if (energy >= demand)
             {
-                foreach (var s in structs)
+                foreach (var s in structs.Where(x=>x.EnergyPriority > EnergyPriority.PowerOff))
                 {
                     s.PoweredTick(turn);
                 }

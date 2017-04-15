@@ -55,7 +55,6 @@ local secondsPerDay        = 120                 --seconds per day
 
 local maxBeamDivergent = 2 					--how big the light beam can expand if unit get further away from ground
 
-local reverseCompatibility = Game.version:find('91.') or (Game.version:find('94') and not Game.version:find('94.1.1')) -- for UnitDef Tag
 --------------------------------------------------------------------------------
 --other vars
 --------------------------------------------------------------------------------
@@ -287,14 +286,6 @@ local function DrawSearchlights()
 			leadDistance = cache[defID].leadDist
 			leadDist_to_height_ratio = cache[defID].lhRatio
 			radius = unitRadius
-		  elseif (reverseCompatibility and (unitDef.type == "Bomber" or unitDef.type == "Fighter") or 
-		  (unitDef.isBomberAirUnit or unitDef.isFighterAirUnit)) then --https://github.com/spring/spring/blob/develop/doc/changelog.txt
-			local vx, _, vz = GetUnitVelocity(unitID)
-			heading = math.atan2(vz, vx)
-			leadDistance = searchlightAirLeadTime * math.sqrt(vx * vx + vz * vz) * 30
-			relativeHeight = relativeHeight+unitDef.wantedHeight--nominal search light height is unit height + flying height distance
-			leadDist_to_height_ratio = leadDistance/relativeHeight
-			radius = unitRadius * 2
 		  elseif (unitDef.canFly) then
 			cache[defID]= cache[defID] or {}
 			if not cache[defID].leadDist then

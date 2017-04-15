@@ -667,7 +667,7 @@ namespace ZeroKWeb.Controllers
             if (!target.CanFirePlanetBuster(acc.Faction)) return Content("You cannot attack here");
 
             //Get rid of all strutures
-            var structures = target.PlanetStructures.Where(x => x.StructureType.EffectIsVictoryPlanet == false).ToList();
+            var structures = target.PlanetStructures.Where(x => x.StructureType.EffectIsVictoryPlanet != true && x.StructureType.OwnerChangeWinsGame != true).ToList();
 
 
             //kill all IP
@@ -676,16 +676,7 @@ namespace ZeroKWeb.Controllers
                 pf.Influence = 0;
             }
             var links = db.Links.Where(x => (x.PlanetID1 == target.PlanetID || x.PlanetID2 == target.PlanetID));
-            foreach (Link link in links)
-            {
-                Planet planet1 = db.Planets.FirstOrDefault(x => x.PlanetID == link.PlanetID1);
-                Planet planet2 = db.Planets.FirstOrDefault(x => x.PlanetID == link.PlanetID2);
-                if (!(planet1.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true)) &&
-                    !(planet2.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true)))
-                {
-                    db.Links.DeleteOnSubmit(link);
-                }
-            }
+            foreach (Link link in links) db.Links.DeleteOnSubmit(link);
 
             db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("A {4} fired from {0} {1} has destroyed {2} {3}!", source.Faction, source, target.Faction, target, structure.StructureType));
             db.SaveChanges();
