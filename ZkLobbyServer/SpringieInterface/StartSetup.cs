@@ -255,7 +255,7 @@ namespace ZeroKWeb.SpringieInterface
                     foreach (
                         var s in planet.PlanetStructures.Where(x => x.StructureType != null && !string.IsNullOrEmpty(x.StructureType.IngameUnitName)))
                     {
-                        pwStructures.Add("s" + s.StructureTypeID,
+                        pwStructures.Add(s.StructureType.IngameUnitName,
                             new LuaTable
                             {
                                 { "unitname", s.StructureType.IngameUnitName },
