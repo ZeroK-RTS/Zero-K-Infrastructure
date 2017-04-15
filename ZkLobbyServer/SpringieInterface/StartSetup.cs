@@ -255,6 +255,8 @@ namespace ZeroKWeb.SpringieInterface
                     foreach (
                         var s in planet.PlanetStructures.Where(x => x.StructureType != null && !string.IsNullOrEmpty(x.StructureType.IngameUnitName)))
                     {
+                        string ownerName = (s.Account != null ? s.Account.Name : "unowned");
+                        string name = String.Format("{0} {1} ({2})", owner, s.StructureType.Name, ownerName);
                         pwStructures.Add("s" + s.StructureTypeID,
                             new LuaTable
                             {
@@ -263,8 +265,7 @@ namespace ZeroKWeb.SpringieInterface
                                 { "canBeEvacuated", s.StructureType.IsIngameEvacuable },
                                 { "canBeDestroyed", s.StructureType.IsIngameDestructible },
                                 //{ "isDestroyed", s.IsDestroyed ? true : false },
-                                {
-                                    "name", $"{owner} {s.StructureType.Name} ({(s.Account != null ? s.Account.Name : "unowned")})" },
+                                { "name", name },
                                 { "description", s.StructureType.Description }
                             });
                     }
