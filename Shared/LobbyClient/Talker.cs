@@ -134,6 +134,7 @@ namespace LobbyClient
                 var endpoint = new IPEndPoint(IPAddress.Loopback, 0);
                 var data = udp.Receive(ref endpoint);
                 springTalkPort = endpoint.Port;
+                int msgSize;
                 if (data.Length > 0) {
                     var sea = new SpringEventArgs();
 
@@ -167,10 +168,17 @@ namespace LobbyClient
                             break;
 
                         case SpringEventType.SERVER_STARTPLAYING:
-                            int msgSize = data[1] + (data[2]<<8) + (data[3]<<16) + (data[4]<<24);
+                            msgSize = data[1] + (data[2]<<8) + (data[3]<<16) + (data[4]<<24);
                             if (msgSize != data.Length) Trace.TraceWarning("Warning spring message size mismatch, expected {0} got {1} on STARTPLAYING", msgSize, data.Length);
                             sea.GameID = data.Skip(5).Take(16).ToArray().ToHex();
                             sea.ReplayFileName = Encoding.UTF8.GetString(data, 21, data.Length - 21);
+                            break;
+                            
+                        case SpringEventType.SERVER_GAMEOVER:
+                            msgSize = data[1];
+                            sea.PlayerNumber = data[2];
+                            if (msgSize != data.Length) Trace.TraceWarning("Warning spring message size mismatch, expected {0} got {1} on GAMEOVER", msgSize, data.Length);
+                            sea.winningAllyTeams = data.Skip(3).Take(msgSize - 3).ToArray();
                             break;
 
                         case SpringEventType.SERVER_MESSAGE:
@@ -202,6 +210,7 @@ namespace LobbyClient
             public string Text;
             public string GameID;
             public string ReplayFileName;
+            public byte[] winningAllyTeams;
         }
     }
 }

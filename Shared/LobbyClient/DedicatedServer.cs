@@ -410,7 +410,11 @@ namespace LobbyClient
                             }
 
                             // set victory team for all allied with currently alive
-                            foreach (var p in Context.ActualPlayers.Where(x => !x.IsSpectator && (x.LoseTime == null))) foreach (var q in Context.ActualPlayers.Where(x => !x.IsSpectator && (x.AllyNumber == p.AllyNumber))) q.IsVictoryTeam = true;
+                            if (e.winningAllyTeams.Length > 0) {
+                                foreach (var ally in e.winningAllyTeams) foreach (var p in Context.ActualPlayers.Where(x => !x.IsSpectator && (x.AllyNumber == ally))) p.IsVictoryTeam = true;
+                            } else { // Fallback, shouldn't happen
+                                foreach (var p in Context.ActualPlayers.Where(x => !x.IsSpectator && (x.LoseTime == null))) foreach (var q in Context.ActualPlayers.Where(x => !x.IsSpectator && (x.AllyNumber == p.AllyNumber))) q.IsVictoryTeam = true;
+                            }
 
                             if (Context.IngameStartTime != null)
                             {
