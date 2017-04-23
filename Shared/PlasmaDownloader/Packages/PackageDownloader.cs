@@ -185,7 +185,7 @@ namespace PlasmaDownloader.Packages
 
                 Task.WaitAll(waiting.ToArray()); //wait until all "repositories" element finish downloading.
 
-                if (waiting.Any(y => y?.Result.HasChanged == true)) hasChanged = true;
+                hasChanged = waiting.Any(y => y?.Result.HasChanged == true);
 
                 if (hasChanged)
                 {
@@ -308,12 +308,17 @@ namespace PlasmaDownloader.Packages
                             List<Version> changes;
                             ParseVersionList(file.Content, out changes);
                             res.ChangedVersions = changes;
-                            res.HasChanged = true;
                             LastModified = file.DateModified;
 
                             var targetFolder = Path.Combine(writableRoot, "rapid", new Uri(BaseUrl).Host);
                             if (!Directory.Exists(targetFolder)) Directory.CreateDirectory(targetFolder);
-                            File.WriteAllBytes(Path.Combine(targetFolder, "versions.gz"), file.Content);
+
+                            var targetPath = Path.Combine(targetFolder, "versions.gz");
+                            if (!File.Exists(targetPath) || !File.ReadAllBytes(targetPath).SequenceEqual(file.Content))
+                            {
+                                File.WriteAllBytes(targetPath, file.Content);
+                                res.HasChanged = true;
+                            }
                         }
                     }
                     catch (Exception ex)

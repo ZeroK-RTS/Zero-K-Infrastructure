@@ -158,7 +158,7 @@ namespace ZeroKWeb
                 Server.SetGame(game);
             };
 
-            // HACK AutoRegistrator.RunMainAndMapSyncAsync();
+            AutoRegistrator.RunMainAndMapSyncAsync();
         }
 
         public static SteamDepotGenerator SteamDepotGenerator { get; private set; }
