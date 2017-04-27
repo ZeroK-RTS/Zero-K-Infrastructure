@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -36,8 +36,8 @@ namespace ZeroKLobby
 
                     WindowsApi.InternetSetCookiePub(baseUrl, GlobalConst.SessionTokenVariable, sessionToken);
 
-                    if (conf.IsFirstRun) wc.DownloadString(uri);
-                    else wc.DownloadStringAsync(uri);
+                    //if (conf.IsFirstRun) wc.DownloadString(uri); //Note: probably no need to wait for website responses. Its probably for showing "LastLogin" information in user's page.
+                    wc.DownloadStringAsync(uri);
                 };
         }
 
