@@ -309,7 +309,7 @@ namespace ZeroKWeb.SpringieInterface
                                 if (map?.MapIsChickens == true) res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "default_Chicken", BotAI = "Chicken: Normal", });
                                 else
                                 {
-                                    for (int i =1; i<= res.Players.Count; i++) res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "cai" + i, BotAI = "CAI", });
+                                    for (int i =1; i<= res.Players.Where(x => !x.IsSpectator).Count(); i++) res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "cai" + i, BotAI = "CAI", });
                                 }
                                 res.Message = "Adding computer AI player for you";
                             }

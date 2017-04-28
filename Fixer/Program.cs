@@ -32,6 +32,7 @@ using ZeroKWeb;
 using ZeroKWeb.ForumParser;
 using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
+using PlasmaDownloader = PlasmaDownloader.PlasmaDownloader;
 
 namespace Fixer
 {
@@ -403,20 +404,8 @@ namespace Fixer
         {
             if (Console.ReadLine()?.StartsWith("i read the code") != true) return;
 
+           
             GlobalConst.Mode = ModeType.Live;
-
-            using (var db = new ZkDataContext())
-            {
-                var hedge = db.Accounts.FirstOrDefault(x => x.Name == "Failer").AccountID;
-                foreach (
-                    var grp in
-                    db.ForumPosts.GroupBy(y=>y.Account).OrderByDescending(x => x.SelectMany(z=>z.AccountForumVotes).Count(y => y.Vote < 0)).Take(10))
-                {
-                    var votes = grp.SelectMany(y => y.AccountForumVotes);
-                    Trace.TraceInformation("{0} : {1} down, {2} up", grp.Key.Name, votes.Count(x=>x.Vote < 0), votes.Count(x=>x.Vote > 0));
-                }
-
-            }
 
             //PlanetwarsFixer.AddWormholes(28);
             //PlanetwarsFixer.StartGalaxy(28, 3);
