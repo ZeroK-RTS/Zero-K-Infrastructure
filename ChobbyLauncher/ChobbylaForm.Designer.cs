@@ -6,6 +6,7 @@
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
+        public event FormClosingEventHandler FormClosing
 
         /// <summary>
         /// Clean up any resources being used.
@@ -110,6 +111,7 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "ChobbylaForm";
             this.Load += new System.EventHandler(this.ChobbylaForm_Load);
+            
             this.ResumeLayout(false);
             this.PerformLayout();
 

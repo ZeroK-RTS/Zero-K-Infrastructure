@@ -65,6 +65,11 @@ namespace ChobbyLauncher
         }
 
 
+        private async void Form1_FormClosing(Object sender, FormClosingEventArgs e)
+        {
+            Application.Exit(1); // Lets close the process now.
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (lb1.Text != progress.Status) lb1.Text = progress.Status;
