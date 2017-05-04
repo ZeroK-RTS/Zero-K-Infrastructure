@@ -28,6 +28,8 @@ namespace AutoRegistrator
 
         public void RunAll()
         {
+            if (GlobalConst.Mode == ModeType.Live)
+            {
                 lock (locker)
                 {
                     Trace.TraceInformation("SteamDepot gnerating steam package");
@@ -35,6 +37,8 @@ namespace AutoRegistrator
                     RunBuild();
                     PublishBuild();
                 }
+            }
+            else Trace.TraceWarning("SteamDepot generating steam package SKIPPED in debug mode");
         }
 
         public class DummyProgress : IChobbylaProgress
