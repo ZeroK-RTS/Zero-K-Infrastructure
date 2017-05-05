@@ -1,4 +1,6 @@
-﻿namespace ChobbyLauncher
+﻿using System.Windows.Forms;
+
+namespace ChobbyLauncher
 {
     partial class ChobbylaForm
     {
@@ -6,6 +8,7 @@
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
+        public event FormClosingEventHandler closingEvent;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -110,6 +113,7 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "ChobbylaForm";
             this.Load += new System.EventHandler(this.ChobbylaForm_Load);
+            this.closingEvent += this.ChobbylaForm_Closing;
             this.ResumeLayout(false);
             this.PerformLayout();
 
