@@ -55,6 +55,11 @@ input, textarea
 	padding: 3px;
 }
 
+video
+{
+	max-width: 100%;
+}
+
 .noborder, input.radio
 {
 	border: none;
