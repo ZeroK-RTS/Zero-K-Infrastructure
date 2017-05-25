@@ -177,7 +177,7 @@ namespace ZeroKWeb
             {
                 var ip = Request.UserHostAddress;
 				var lastLogin = acc.AccountUserIDs.OrderByDescending (x => x.LastLogin).FirstOrDefault();
-				var userID = lastLogin != null ? lastLogin.UserID : null;
+				var userID = lastLogin?.UserID;
 				var penalty = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanSite);
                 if (penalty != null)
                 {
