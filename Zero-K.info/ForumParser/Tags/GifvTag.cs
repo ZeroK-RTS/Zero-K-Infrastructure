@@ -22,7 +22,7 @@ namespace ZeroKWeb.ForumParser
                 {
                     var urlPart = match.Groups[1].Value + match.Groups[2].Value;
                     context.AppendFormat(
-                        "<div class=\"video-container\"><video preload=\"auto\" height=\"auto\" width=\"100%\" autoplay=\"autoplay\" muted=\"muted\" loop=\"loop\" ><source type=\"video/webm\" src=\"{0}webm\"><source type=\"video/mp4\" src=\"{0}mp4\">Your browser does not support the video tag. Find out if your Browser is supported at www.w3schools.com/tags/tag_video.asp</video></div>",
+                        "<div class=\"video-container\"><video preload=\"auto\" height=\"auto\" width=\"auto\" autoplay=\"autoplay\" muted=\"muted\" loop=\"loop\" ><source type=\"video/webm\" src=\"{0}webm\"><source type=\"video/mp4\" src=\"{0}mp4\">Your browser does not support the video tag. Find out if your Browser is supported at www.w3schools.com/tags/tag_video.asp</video></div>",
                         urlPart); // this looks just wrong
                 }
             }
