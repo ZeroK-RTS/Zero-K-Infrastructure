@@ -215,6 +215,13 @@ div#busy
 	vertical-align:middle;
 }
 
+/* profile page
+----------------------------------------------*/
+div#features div#usr_recentbattles, div#features div#usr_forumposts
+{
+    max-width:302px;
+}
+
 /* galaxy map
 ----------------------------------------------*/
 .sectorgrid
