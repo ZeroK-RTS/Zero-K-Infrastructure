@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -172,6 +172,55 @@ namespace ChobbyLauncher
                 return engineVersion;
             }
             return null;
+        }
+
+        private bool CheckForJava()
+        {
+            int p = (int)Environment.OSVersion.Platform;
+            bool isLinux = (p == 4) || (p == 6) || (p == 128);
+
+            if (isLinux) return false;
+
+            string[] envVars = { "JAVA_HOME", "JDK_HOME", "JRE_HOME" };
+
+            foreach (string envVar in envVars) { 
+                string environmentPath = Environment.GetEnvironmentVariable(envVar);
+                if (!string.IsNullOrEmpty(environmentPath) && CheckJavaPath(environmentPath))
+                {
+                    return true;
+                }
+            }
+
+            string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
+            using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey))
+            {
+                string currentVersion = rk.GetValue("CurrentVersion").ToString();
+                using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion))
+                {
+                    if (CheckJavaPath(key.GetValue("JavaHome").ToString()))
+                    {
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
+        }
+
+        private bool CheckJavaPath(string jrePath)
+        {
+            jrePath = System.IO.Path.Combine(jrePath, "bin\\Java.exe");
+            if (!(System.IO.File.Exists(jrePath))) return false;
+            const int PE_PTR_OFFSET = 60;
+            const int MACHINE_OFFSET = 4;
+            byte[] data = new byte[4096];
+            using (Stream stm = new FileStream(jrePath, FileMode.Open, FileAccess.Read))
+            {
+                stm.Read(data, 0, 4096);
+            }
+            int PE_HDR_ADDR = BitConverter.ToInt32(data, PE_PTR_OFFSET);
+            int machineUint = BitConverter.ToUInt16(data, PE_HDR_ADDR + MACHINE_OFFSET);
+            return machineUint != 0x8664; // 0x8664 == amd64, 0x014c == i586
         }
 
         private string GetSteamEngine()
