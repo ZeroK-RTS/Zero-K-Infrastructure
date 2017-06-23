@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
@@ -7,6 +7,7 @@ using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using ZkData;
+using PlasmaShared;
 
 namespace ZeroKWeb.Controllers
 {
@@ -89,7 +90,7 @@ namespace ZeroKWeb.Controllers
                 // do it down here so it gets the correct news ID
                 if (!String.IsNullOrWhiteSpace(news.ImageRelativeUrl) && news.ForumThread != null)
                 {
-                    postText = "[img]" + news.ImageRelativeUrl + "[/img]" + Environment.NewLine + postText;
+                    postText = "[img]" + GlobalConst.BaseSiteUrl + news.ImageRelativeUrl + "[/img]" + Environment.NewLine + postText;
                     news.ForumThread.ForumPosts.ElementAt(0).Text = postText;
                     db.SaveChanges();
                 }
