@@ -186,6 +186,8 @@ namespace ZkLobbyServer
                 {
                     return new RegisterResponse(RegisterResponse.Code.InvalidPassword);
                 }
+                LogIP(db, acc, ip);
+                LogUserID(db, acc, register.UserID);
                 db.Accounts.Add(acc);
                 db.SaveChanges();
             }
