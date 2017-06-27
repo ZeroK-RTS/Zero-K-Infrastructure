@@ -54,7 +54,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
-        [Auth(Role = AdminLevel.Moderator)]
+        [Auth]
         [ValidateAntiForgeryToken]
         public ActionResult DeletePost(int? postID, bool deleteThread = false) {
             var db = new ZkDataContext();
@@ -65,6 +65,8 @@ namespace ZeroKWeb.Controllers
             var threadID = thread.ForumThreadID;
             //int index = post.ForumThread.ForumPosts.IndexOf(post);
             var page = GetPostPage(post);
+
+            if (!Global.IsModerator && !((thread.Clan == Global.Account.Clan) && Global.Account.HasClanRight(x => x.RightEditTexts))) return Content("No permission to delete this post");
 
             db.ForumPosts.DeleteOnSubmit(post);
             if ((thread.ForumPosts.Count() <= 0 || deleteThread) && IsNormalThread(thread))
