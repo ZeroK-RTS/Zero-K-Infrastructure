@@ -493,12 +493,16 @@ namespace ZkLobbyServer
                 if ((invitationBattles?.Any() != true) && (players.Count > 0) && (server.PartyManager.GetParty(name) == null))
                 // nobody invited atm and some in queue
                 {
-                    // get all currently queued players except for self
-                    var testPlayers = players.Values.Where(x => (x != null) && (x.Name != name)).ToList();
-                    var testSelf = new PlayerEntry(conus.User, possibleQueues.ToList(), null); // readd self but with all queues
-                    testPlayers.Add(testSelf);
-                    var testBattles = ProposeBattles(testPlayers);
-                    ret.InstantStartQueues = testBattles.Where(x => x.Players.Contains(testSelf)).Select(x => x.QueueType.Name).Distinct().ToList();
+                    ret.InstantStartQueues = new List<string>();
+                    // iterate each queue to check all possible instant starts
+                    foreach (var queue in possibleQueues) {
+                        // get all currently queued players except for self
+                        var testPlayers = players.Values.Where(x => (x != null) && (x.Name != name)).ToList();
+                        var testSelf = new PlayerEntry(conus.User, new List<MatchMakerSetup.Queue> { queue }, null); 
+                        testPlayers.Add(testSelf);
+                        var testBattles = ProposeBattles(testPlayers);
+                        ret.InstantStartQueues.AddRange(testBattles.Where(x => x.Players.Contains(testSelf)).Select(x => x.QueueType.Name).Distinct().ToList());
+                    }
                 }
 
                 await conus.SendCommand(ret);
