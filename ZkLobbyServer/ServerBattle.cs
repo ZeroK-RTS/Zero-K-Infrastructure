@@ -356,6 +356,12 @@ namespace ZkLobbyServer
             if (server.ConnectedUsers.TryGetValue(name, out usr)) await usr.Process(new UpdateUserBattleStatus() { Name = usr.Name, IsSpectator = true });
         }
 
+        public async Task Unspectate(string name)
+        {
+            ConnectedUser usr;
+            if (server.ConnectedUsers.TryGetValue(name, out usr)) await usr.Process(new UpdateUserBattleStatus() { Name = usr.Name, IsSpectator = false });
+        }
+
 
         public async Task<bool> StartGame()
         {
