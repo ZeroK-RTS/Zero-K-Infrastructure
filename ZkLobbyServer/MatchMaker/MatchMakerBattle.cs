@@ -9,7 +9,7 @@ namespace ZkLobbyServer
     {
         public MatchMaker.ProposedBattle Prototype { get; private set; }
 
-        public MatchMakerBattle(ZkLobbyServer server, MatchMaker.ProposedBattle bat) : base(server, null)
+        public MatchMakerBattle(ZkLobbyServer server, MatchMaker.ProposedBattle bat, string mapname) : base(server, null)
         {
             IsMatchMakerBattle = true;
             EngineVersion = server.Engine;
@@ -19,6 +19,7 @@ namespace ZkLobbyServer
             Mode = bat.QueueType.Mode;
             MaxPlayers = bat.Size;
             Prototype = bat;
+            MapName = mapname;
 
             foreach (var pe in bat.Players) Users[pe.Name] = new UserBattleStatus(pe.Name, pe.LobbyUser, GenerateClientScriptPassword(pe.Name));
             

@@ -32,6 +32,9 @@ namespace LobbyClient
             [JsonIgnore]
             public AutohostMode Mode { get; set; }
 
+            [JsonIgnore]
+            public List<string> SafeMaps { get; set; }
+
             public override bool Equals(object obj)
             {
                 return Name.Equals((obj as Queue)?.Name);

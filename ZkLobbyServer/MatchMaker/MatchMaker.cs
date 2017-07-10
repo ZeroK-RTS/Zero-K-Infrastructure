@@ -14,7 +14,7 @@ namespace ZkLobbyServer
     public partial class MatchMaker
     {
         private const int TimerSeconds = 30;
-        private const int MapModChangePauseSeconds = 30; 
+        private const int MapModChangePauseSeconds = 30;
 
         private const int BanSecondsIncrease = 30;
         private const int BanSecondsMax = 300;
@@ -116,12 +116,14 @@ namespace ZkLobbyServer
             using (var db = new ZkDataContext())
             {
                 var oldQueues = possibleQueues;
-                possibleQueues = queueConfigs.Select(x => {
+                possibleQueues = queueConfigs.Select(x =>
+                {
                     MatchMakerSetup.Queue queue = new MatchMakerSetup.Queue();
                     if (oldQueues.Exists(y => y.Name == x.Name))
                     {
                         queue = oldQueues.Find(y => y.Name == x.Name);
                     }
+                    var oldmaps = queue.Maps;
                     queue.Name = x.Name;
                     queue.Description = x.Description;
                     queue.MinSize = x.MinSize;
@@ -135,6 +137,7 @@ namespace ZkLobbyServer
                             .Where(x.MapSelector)
                             .Select(y => y.InternalName)
                             .ToList();
+                    queue.SafeMaps = queue.Maps.Where(y => oldmaps.Contains(y)).ToList();
                     return queue;
                 }).ToList();
             }
@@ -355,16 +358,13 @@ namespace ZkLobbyServer
                 try
                 {
                     timer.Stop();
-                    if (DateTime.Now.Subtract(lastQueueUpdate).TotalSeconds > MapModChangePauseSeconds)
-                    {
-                        var realBattles = ResolveToRealBattles();
+                    var realBattles = ResolveToRealBattles();
 
-                        UpdateAllPlayerStatuses();
+                    UpdateAllPlayerStatuses();
 
-                        foreach (var bat in realBattles) StartBattle(bat);
+                    foreach (var bat in realBattles) StartBattle(bat);
 
-                        ResetAndSendMmInvitations();
-                    }
+                    ResetAndSendMmInvitations();
                 }
                 catch (Exception ex)
                 {
@@ -467,9 +467,23 @@ namespace ZkLobbyServer
             return realBattles;
         }
 
+        private string PickMap(MatchMakerSetup.Queue queue)
+        {
+            Random r = new Random();
+            List<string> candidates;
+            if (DateTime.Now.Subtract(lastQueueUpdate).TotalSeconds > MapModChangePauseSeconds)
+            {
+                candidates = queue.Maps;
+            }else
+            {
+                candidates = queue.SafeMaps;
+            }
+            return candidates.Count == 0 ? "" : candidates[r.Next(candidates.Count)];
+        }
+
         private async Task StartBattle(ProposedBattle bat)
         {
-            var battle = new MatchMakerBattle(server, bat);
+            var battle = new MatchMakerBattle(server, bat, PickMap(bat.QueueType));
             server.Battles[battle.BattleID] = battle;
 
             // also join in lobby
