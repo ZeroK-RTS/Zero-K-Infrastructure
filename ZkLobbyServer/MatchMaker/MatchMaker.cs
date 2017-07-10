@@ -115,9 +115,9 @@ namespace ZkLobbyServer
                 var oldQueues = possibleQueues;
                 possibleQueues = queueConfigs.Select(x => {
                     MatchMakerSetup.Queue queue = new MatchMakerSetup.Queue();
-                    if (oldQueues.Exists(y => y.Equals(x)))
+                    if (oldQueues.Exists(y => y.Name == x.Name))
                     {
-                        queue = oldQueues.Find(y => y.Equals(x));
+                        queue = oldQueues.Find(y => y.Name == x.Name);
                     }
                     queue.Name = x.Name;
                     queue.Description = x.Description;
