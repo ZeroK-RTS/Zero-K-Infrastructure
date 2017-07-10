@@ -121,7 +121,7 @@ namespace ZkLobbyServer
                     MaxPartySize = x.MaxPartySize,
                     EloCutOffExponent = x.EloCutOffExponent,
                     Game = server.Game,
-                    Mode = AutohostMode.Teams,
+                    Mode = x.Mode,
                     Maps =
                         db.Resources
                             .Where(x.MapSelector)
