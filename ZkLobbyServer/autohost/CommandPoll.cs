@@ -30,9 +30,6 @@ namespace ZkLobbyServer
             winCount = battle.Users.Values.Count(x => command.GetRunPermissions(battle, x.Name) >= BattleCommand.RunPermission.Vote && !cmd.IsSpectator(battle, x.Name, x)) / 2 + 1;
             if (winCount <= 0) winCount = 1;
 
-            if (winCount <= 0) winCount = (battle.NonSpectatorCount / 2 + 1);
-            if (winCount <= 0) winCount = 1;
-
             if (!await Vote(e, true)) await battle.SayBattle($"Poll: {question} [!y=0/{winCount}, !n=0/{winCount}]");
             else return false;
 
