@@ -92,6 +92,7 @@ namespace ZkLobbyServer
 
             var s = battle.spring;
             bool isSpectator = IsSpectator(battle, userName, user);
+            bool isAway = user?.LobbyUser?.IsAway == true;
             int count = 0;
             if (s.IsRunning)
             {
@@ -102,7 +103,7 @@ namespace ZkLobbyServer
                 count = battle.Users.Count(x => !x.Value.IsSpectator);
             }
 
-            var defPerm = hasAdminRights ? RunPermission.Run : (isSpectator ? RunPermission.None : RunPermission.Vote);
+            var defPerm = hasAdminRights ? RunPermission.Run : (isSpectator || isAway ? RunPermission.None : RunPermission.Vote);
             if (defPerm == RunPermission.None) return defPerm;
             if (defPerm == RunPermission.Vote && count<=1) defPerm = RunPermission.Run;
 
