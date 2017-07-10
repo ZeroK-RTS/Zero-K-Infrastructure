@@ -14,6 +14,7 @@ namespace ZkLobbyServer
     public partial class MatchMaker
     {
         private const int TimerSeconds = 30;
+        private const int MapModChangePauseSeconds = 30; 
 
         private const int BanSecondsIncrease = 30;
         private const int BanSecondsMax = 300;
@@ -52,6 +53,7 @@ namespace ZkLobbyServer
         private object tickLock = new object();
         private Timer timer;
         private int totalQueued;
+        private DateTime lastQueueUpdate = DateTime.Now;
 
         public MatchMaker(ZkLobbyServer server)
         {
@@ -110,6 +112,7 @@ namespace ZkLobbyServer
 
         private void UpdateQueues()
         {
+            lastQueueUpdate = DateTime.Now;
             using (var db = new ZkDataContext())
             {
                 var oldQueues = possibleQueues;
@@ -352,13 +355,16 @@ namespace ZkLobbyServer
                 try
                 {
                     timer.Stop();
-                    var realBattles = ResolveToRealBattles();
+                    if (DateTime.Now.Subtract(lastQueueUpdate).TotalSeconds > MapModChangePauseSeconds)
+                    {
+                        var realBattles = ResolveToRealBattles();
 
-                    UpdateAllPlayerStatuses();
+                        UpdateAllPlayerStatuses();
 
-                    foreach (var bat in realBattles) StartBattle(bat);
+                        foreach (var bat in realBattles) StartBattle(bat);
 
-                    ResetAndSendMmInvitations();
+                        ResetAndSendMmInvitations();
+                    }
                 }
                 catch (Exception ex)
                 {
