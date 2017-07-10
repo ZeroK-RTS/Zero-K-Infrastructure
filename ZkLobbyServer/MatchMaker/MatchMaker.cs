@@ -301,9 +301,7 @@ namespace ZkLobbyServer
                     });
 
 
-            // if nobody is invited, we can do tick now to speed up things
-            if (invitationBattles?.Any() != true) OnTick();
-            else await UpdateAllPlayerStatuses(); // else we just send statuses
+            await UpdateAllPlayerStatuses();
         }
 
 
