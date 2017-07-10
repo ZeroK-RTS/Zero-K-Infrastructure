@@ -150,11 +150,6 @@ div#busy
 	vertical-align:middle;
 }
 
-.buttonSpan:hover
-{
-	background-image: url("/img/downloadBlue45_2.png");
-}
-
 .textbutton
 {
 	display: inline-block;
