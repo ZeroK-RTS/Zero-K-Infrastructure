@@ -265,6 +265,7 @@ namespace ZeroKWeb.Controllers
             r.MapFFAMaxTeams = ffaTeams;
             r.MapSpringieCommands = springieCommands;
             db.SaveChanges();
+            Global.Server.OnServerMapsChanged();
             return RedirectToAction("Detail", new { id = id });
         }
 

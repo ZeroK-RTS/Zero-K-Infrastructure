@@ -19,6 +19,16 @@ namespace ZkLobbyServer
         private const int BanSecondsMax = 300;
         private const int BanReset = 600;
 
+
+        private struct QueueConfig
+        {
+            public string Name, Description;
+            public Func<Resource, bool> MapSelector;
+            public int MaxPartySize, MaxSize, MinSize;
+            public double EloCutOffExponent;
+            public AutohostMode Mode;
+        }
+
         public class BanInfo
         {
             public DateTime BannedTime;
@@ -32,6 +42,7 @@ namespace ZkLobbyServer
         private List<ProposedBattle> invitationBattles = new List<ProposedBattle>();
         private ConcurrentDictionary<string, PlayerEntry> players = new ConcurrentDictionary<string, PlayerEntry>();
         private List<MatchMakerSetup.Queue> possibleQueues = new List<MatchMakerSetup.Queue>();
+        private List<QueueConfig> queueConfigs = new List<QueueConfig>();
 
         private Dictionary<string, int> queuesCounts = new Dictionary<string, int>();
 
@@ -45,60 +56,49 @@ namespace ZkLobbyServer
         public MatchMaker(ZkLobbyServer server)
         {
             this.server = server;
-            using (var db = new ZkDataContext())
+
+            Func<Resource, bool> IsTeamsMap = x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams != false) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true;
+            Func<Resource, bool> IsCoopMap = x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true;
+            Func<Resource, bool> Is1v1Map = x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.TypeID == ResourceType.Map) && x.MapIs1v1 == true && x.MapIsSpecial != true;
+
+            queueConfigs.Add(new QueueConfig()
             {
-                possibleQueues.Add(new MatchMakerSetup.Queue()
-                {
-                    Name = "Teams",
-                    Description = "Play 2v2 to 4v4 with players of similar skill.",
-                    MinSize = 4,
-                    MaxSize = 8,
-                    MaxPartySize = 4,
-                    EloCutOffExponent = 0.96,
-                    Game = server.Game,
-                    Mode = AutohostMode.Teams,
-                    Maps =
-                        db.Resources.Where(
-                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams != false) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true)
-                            .Select(x => x.InternalName)
-                            .ToList()
-                });
+                Name = "Teams",
+                Description = "Play 2v2 to 4v4 with players of similar skill.",
+                MinSize = 4,
+                MaxSize = 8,
+                MaxPartySize = 4,
+                EloCutOffExponent = 0.96,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
 
-                possibleQueues.Add(new MatchMakerSetup.Queue()
-                {
-                    Name = "Coop",
-                    Description = "Play together, against AI",
-                    MinSize = 2,
-                    MaxSize = 5,
-                    MaxPartySize = 5,
-                    EloCutOffExponent = 0,
-                    Game = server.Game,
-                    Mode = AutohostMode.GameChickens,
-                    Maps =
-        db.Resources.Where(
-                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true)
-            .Select(x => x.InternalName)
-            .ToList()
-                });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "Coop",
+                Description = "Play together, against AI or chickens",
+                MinSize = 2,
+                MaxSize = 5,
+                MaxPartySize = 5,
+                EloCutOffExponent = 0,
+                Mode = AutohostMode.GameChickens,
+                MapSelector = IsCoopMap,
+            });
 
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "1v1",
+                Description = "1v1 with opponent of similar skill",
+                MinSize = 2,
+                MaxSize = 2,
+                EloCutOffExponent = 0.975,
+                MaxPartySize = 1,
+                Mode = AutohostMode.Game1v1,
+                MapSelector = Is1v1Map,
+            });
 
-                possibleQueues.Add(new MatchMakerSetup.Queue()
-                {
-                    Name = "1v1",
-                    Description = "1v1 with opponent of similar skill",
-                    MinSize = 2,
-                    MaxSize = 2,
-                    EloCutOffExponent = 0.975,
-                    MaxPartySize = 1,
-                    Game = server.Game,
-                    Maps =
-                        db.Resources.Where(
-                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.TypeID == ResourceType.Map) && x.MapIs1v1 == true && x.MapIsSpecial != true)
-                            .Select(x => x.InternalName)
-                            .ToList(),
-                    Mode = AutohostMode.Game1v1,
-                });
-            }
+            UpdateQueues();
+
             timer = new Timer(TimerSeconds * 1000);
             timer.AutoReset = true;
             timer.Elapsed += TimerTick;
@@ -106,6 +106,29 @@ namespace ZkLobbyServer
 
             queuesCounts = CountQueuedPeople(players.Values);
             ingameCounts = CountIngamePeople();
+        }
+
+        private void UpdateQueues()
+        {
+            using (var db = new ZkDataContext())
+            {
+                possibleQueues = queueConfigs.Select(x => new MatchMakerSetup.Queue()
+                {
+                    Name = x.Name,
+                    Description = x.Description,
+                    MinSize = x.MinSize,
+                    MaxSize = x.MaxSize,
+                    MaxPartySize = x.MaxPartySize,
+                    EloCutOffExponent = x.EloCutOffExponent,
+                    Game = server.Game,
+                    Mode = x.Mode,
+                    Maps =
+                        db.Resources
+                            .Where(x.MapSelector)
+                            .Select(y => y.InternalName)
+                            .ToList()
+                }).ToList();
+            }
         }
 
 
@@ -167,7 +190,13 @@ namespace ZkLobbyServer
 
         public async Task OnServerGameChanged(string game)
         {
-            foreach (var pq in possibleQueues) pq.Game = game;
+            UpdateQueues();
+            await server.Broadcast(new MatchMakerSetup() { PossibleQueues = possibleQueues });
+        }
+
+        public async Task OnServerMapsChanged()
+        {
+            UpdateQueues();
             await server.Broadcast(new MatchMakerSetup() { PossibleQueues = possibleQueues });
         }
 
