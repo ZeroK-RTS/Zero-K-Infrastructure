@@ -112,21 +112,27 @@ namespace ZkLobbyServer
         {
             using (var db = new ZkDataContext())
             {
-                possibleQueues = queueConfigs.Select(x => new MatchMakerSetup.Queue()
-                {
-                    Name = x.Name,
-                    Description = x.Description,
-                    MinSize = x.MinSize,
-                    MaxSize = x.MaxSize,
-                    MaxPartySize = x.MaxPartySize,
-                    EloCutOffExponent = x.EloCutOffExponent,
-                    Game = server.Game,
-                    Mode = x.Mode,
-                    Maps =
+                var oldQueues = possibleQueues;
+                possibleQueues = queueConfigs.Select(x => {
+                    MatchMakerSetup.Queue queue = new MatchMakerSetup.Queue();
+                    if (oldQueues.Exists(y => y.Equals(x)))
+                    {
+                        queue = oldQueues.Find(y => y.Equals(x));
+                    }
+                    queue.Name = x.Name;
+                    queue.Description = x.Description;
+                    queue.MinSize = x.MinSize;
+                    queue.MaxSize = x.MaxSize;
+                    queue.MaxPartySize = x.MaxPartySize;
+                    queue.EloCutOffExponent = x.EloCutOffExponent;
+                    queue.Game = server.Game;
+                    queue.Mode = x.Mode;
+                    queue.Maps =
                         db.Resources
                             .Where(x.MapSelector)
                             .Select(y => y.InternalName)
-                            .ToList()
+                            .ToList();
+                    return queue;
                 }).ToList();
             }
         }
@@ -222,7 +228,7 @@ namespace ZkLobbyServer
             var wantedQueues = possibleQueues.Where(x => wantedQueueNames.Contains(x.Name)).ToList();
 
             var party = server.PartyManager.GetParty(user.Name);
-            if (party != null) wantedQueues = wantedQueues.Where(x => x.MaxSize/2 >= party.UserNames.Count).ToList(); // if is in party keep only queues where party fits
+            if (party != null) wantedQueues = wantedQueues.Where(x => x.MaxSize / 2 >= party.UserNames.Count).ToList(); // if is in party keep only queues where party fits
 
             if (wantedQueues.Count == 0) // delete
             {
@@ -398,9 +404,9 @@ namespace ZkLobbyServer
                     var banEntry = bannedPlayers.GetOrAdd(name, (n) => new BanInfo());
                     banEntry.BannedTime = DateTime.UtcNow;
                     banEntry.BanCounter++;
-                    banEntry.BanSeconds = Math.Min(BanSecondsMax, BanSecondsIncrease*banEntry.BanCounter);
+                    banEntry.BanSeconds = Math.Min(BanSecondsMax, BanSecondsIncrease * banEntry.BanCounter);
                 }
-          
+
 
                 ConnectedUser conUser;
                 if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null)) if (entry?.InvitedToPlay == true) await conUser.SendCommand(new AreYouReadyResult() { AreYouBanned = true, IsBattleStarting = false, });
@@ -524,10 +530,11 @@ namespace ZkLobbyServer
                 {
                     ret.InstantStartQueues = new List<string>();
                     // iterate each queue to check all possible instant starts
-                    foreach (var queue in possibleQueues) {
+                    foreach (var queue in possibleQueues)
+                    {
                         // get all currently queued players except for self
                         var testPlayers = players.Values.Where(x => (x != null) && (x.Name != name)).ToList();
-                        var testSelf = new PlayerEntry(conus.User, new List<MatchMakerSetup.Queue> { queue }, null); 
+                        var testSelf = new PlayerEntry(conus.User, new List<MatchMakerSetup.Queue> { queue }, null);
                         testPlayers.Add(testSelf);
                         var testBattles = ProposeBattles(testPlayers);
                         ret.InstantStartQueues.AddRange(testBattles.Where(x => x.Players.Contains(testSelf)).Select(x => x.QueueType.Name).Distinct().ToList());
