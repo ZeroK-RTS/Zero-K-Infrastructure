@@ -8,11 +8,6 @@
 }
 <div>
     <h3>PENALTY: @p.Reason</h3>
-    Issued on: @p.Time (@p.Time.ToAgoString())<br />
-    @if (Global.IsModerator)
-    {
-        <span>Issued by: @Html.PrintAccount(p.AccountByCreatedAccountID)</span><br />
-    }
     @if (p.DeleteInfluence)
     {
         <span>PlanetWars influence deleted</span><br />
@@ -55,9 +50,13 @@
     }
     @if (Global.IsModerator)
     {
-        <span>IP block: @p.BanIP</span><br />
-        <span>UserID block: @p.UserID</span><br />
+        <div class="admin">
+            <span>IP block: @p.BanIP</span><br />
+            <span>UserID block: @p.UserID</span><br />
+            <span>Issued by: @Html.PrintAccount(p.AccountByCreatedAccountID)</span><br />
+        </div>
     }
+    Issued on: @p.Time (@p.Time.ToAgoString())<br />
     Expires on: @p.BanExpires
     @if (!p.IsExpired && timeRemaining < TimeSpan.FromDays(7))
     {

@@ -14,10 +14,21 @@ namespace ZkLobbyServer
     public partial class MatchMaker
     {
         private const int TimerSeconds = 30;
+        private const int MapModChangePauseSeconds = 30;
 
         private const int BanSecondsIncrease = 30;
         private const int BanSecondsMax = 300;
         private const int BanReset = 600;
+
+
+        private struct QueueConfig
+        {
+            public string Name, Description;
+            public Func<Resource, bool> MapSelector;
+            public int MaxPartySize, MaxSize, MinSize;
+            public double EloCutOffExponent;
+            public AutohostMode Mode;
+        }
 
         public class BanInfo
         {
@@ -32,6 +43,7 @@ namespace ZkLobbyServer
         private List<ProposedBattle> invitationBattles = new List<ProposedBattle>();
         private ConcurrentDictionary<string, PlayerEntry> players = new ConcurrentDictionary<string, PlayerEntry>();
         private List<MatchMakerSetup.Queue> possibleQueues = new List<MatchMakerSetup.Queue>();
+        private List<QueueConfig> queueConfigs = new List<QueueConfig>();
 
         private Dictionary<string, int> queuesCounts = new Dictionary<string, int>();
 
@@ -41,64 +53,54 @@ namespace ZkLobbyServer
         private object tickLock = new object();
         private Timer timer;
         private int totalQueued;
+        private DateTime lastQueueUpdate = DateTime.Now;
 
         public MatchMaker(ZkLobbyServer server)
         {
             this.server = server;
-            using (var db = new ZkDataContext())
+
+            Func<Resource, bool> IsTeamsMap = x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams != false) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true;
+            Func<Resource, bool> IsCoopMap = x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true;
+            Func<Resource, bool> Is1v1Map = x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.TypeID == ResourceType.Map) && x.MapIs1v1 == true && x.MapIsSpecial != true;
+
+            queueConfigs.Add(new QueueConfig()
             {
-                possibleQueues.Add(new MatchMakerSetup.Queue()
-                {
-                    Name = "Teams",
-                    Description = "Play 2v2 to 4v4 with players of similar skill.",
-                    MinSize = 4,
-                    MaxSize = 8,
-                    MaxPartySize = 4,
-                    EloCutOffExponent = 0.96,
-                    Game = server.Game,
-                    Mode = AutohostMode.Teams,
-                    Maps =
-                        db.Resources.Where(
-                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.MapIsTeams != false) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true)
-                            .Select(x => x.InternalName)
-                            .ToList()
-                });
+                Name = "Teams",
+                Description = "Play 2v2 to 4v4 with players of similar skill.",
+                MinSize = 4,
+                MaxSize = 8,
+                MaxPartySize = 4,
+                EloCutOffExponent = 0.96,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
 
-                possibleQueues.Add(new MatchMakerSetup.Queue()
-                {
-                    Name = "Coop",
-                    Description = "Play together, against AI",
-                    MinSize = 2,
-                    MaxSize = 5,
-                    MaxPartySize = 5,
-                    EloCutOffExponent = 0,
-                    Game = server.Game,
-                    Mode = AutohostMode.GameChickens,
-                    Maps =
-        db.Resources.Where(
-                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.TypeID == ResourceType.Map) && x.MapIsSpecial != true)
-            .Select(x => x.InternalName)
-            .ToList()
-                });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "Coop",
+                Description = "Play together, against AI or chickens",
+                MinSize = 2,
+                MaxSize = 5,
+                MaxPartySize = 5,
+                EloCutOffExponent = 0,
+                Mode = AutohostMode.GameChickens,
+                MapSelector = IsCoopMap,
+            });
 
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "1v1",
+                Description = "1v1 with opponent of similar skill",
+                MinSize = 2,
+                MaxSize = 2,
+                EloCutOffExponent = 0.975,
+                MaxPartySize = 1,
+                Mode = AutohostMode.Game1v1,
+                MapSelector = Is1v1Map,
+            });
 
-                possibleQueues.Add(new MatchMakerSetup.Queue()
-                {
-                    Name = "1v1",
-                    Description = "1v1 with opponent of similar skill",
-                    MinSize = 2,
-                    MaxSize = 2,
-                    EloCutOffExponent = 0.975,
-                    MaxPartySize = 1,
-                    Game = server.Game,
-                    Maps =
-                        db.Resources.Where(
-                                x => (x.MapSupportLevel >= MapSupportLevel.MatchMaker) && (x.TypeID == ResourceType.Map) && x.MapIs1v1 == true && x.MapIsSpecial != true)
-                            .Select(x => x.InternalName)
-                            .ToList(),
-                    Mode = AutohostMode.Game1v1,
-                });
-            }
+            UpdateQueues();
+
             timer = new Timer(TimerSeconds * 1000);
             timer.AutoReset = true;
             timer.Elapsed += TimerTick;
@@ -106,6 +108,39 @@ namespace ZkLobbyServer
 
             queuesCounts = CountQueuedPeople(players.Values);
             ingameCounts = CountIngamePeople();
+        }
+
+        private void UpdateQueues()
+        {
+            lastQueueUpdate = DateTime.Now;
+            using (var db = new ZkDataContext())
+            {
+                var oldQueues = possibleQueues;
+                possibleQueues = queueConfigs.Select(x =>
+                {
+                    MatchMakerSetup.Queue queue = new MatchMakerSetup.Queue();
+                    if (oldQueues.Exists(y => y.Name == x.Name))
+                    {
+                        queue = oldQueues.Find(y => y.Name == x.Name);
+                    }
+                    var oldmaps = queue.Maps;
+                    queue.Name = x.Name;
+                    queue.Description = x.Description;
+                    queue.MinSize = x.MinSize;
+                    queue.MaxSize = x.MaxSize;
+                    queue.MaxPartySize = x.MaxPartySize;
+                    queue.EloCutOffExponent = x.EloCutOffExponent;
+                    queue.Game = server.Game;
+                    queue.Mode = x.Mode;
+                    queue.Maps =
+                        db.Resources
+                            .Where(x.MapSelector)
+                            .Select(y => y.InternalName)
+                            .ToList();
+                    queue.SafeMaps = queue.Maps.Where(y => oldmaps.Contains(y)).ToList();
+                    return queue;
+                }).ToList();
+            }
         }
 
 
@@ -167,7 +202,13 @@ namespace ZkLobbyServer
 
         public async Task OnServerGameChanged(string game)
         {
-            foreach (var pq in possibleQueues) pq.Game = game;
+            UpdateQueues();
+            await server.Broadcast(new MatchMakerSetup() { PossibleQueues = possibleQueues });
+        }
+
+        public async Task OnServerMapsChanged()
+        {
+            UpdateQueues();
             await server.Broadcast(new MatchMakerSetup() { PossibleQueues = possibleQueues });
         }
 
@@ -193,7 +234,7 @@ namespace ZkLobbyServer
             var wantedQueues = possibleQueues.Where(x => wantedQueueNames.Contains(x.Name)).ToList();
 
             var party = server.PartyManager.GetParty(user.Name);
-            if (party != null) wantedQueues = wantedQueues.Where(x => x.MaxSize/2 >= party.UserNames.Count).ToList(); // if is in party keep only queues where party fits
+            if (party != null) wantedQueues = wantedQueues.Where(x => x.MaxSize / 2 >= party.UserNames.Count).ToList(); // if is in party keep only queues where party fits
 
             if (wantedQueues.Count == 0) // delete
             {
@@ -369,9 +410,9 @@ namespace ZkLobbyServer
                     var banEntry = bannedPlayers.GetOrAdd(name, (n) => new BanInfo());
                     banEntry.BannedTime = DateTime.UtcNow;
                     banEntry.BanCounter++;
-                    banEntry.BanSeconds = Math.Min(BanSecondsMax, BanSecondsIncrease*banEntry.BanCounter);
+                    banEntry.BanSeconds = Math.Min(BanSecondsMax, BanSecondsIncrease * banEntry.BanCounter);
                 }
-          
+
 
                 ConnectedUser conUser;
                 if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null)) if (entry?.InvitedToPlay == true) await conUser.SendCommand(new AreYouReadyResult() { AreYouBanned = true, IsBattleStarting = false, });
@@ -426,9 +467,23 @@ namespace ZkLobbyServer
             return realBattles;
         }
 
+        private string PickMap(MatchMakerSetup.Queue queue)
+        {
+            Random r = new Random();
+            List<string> candidates;
+            if (DateTime.Now.Subtract(lastQueueUpdate).TotalSeconds > MapModChangePauseSeconds)
+            {
+                candidates = queue.Maps;
+            }else
+            {
+                candidates = queue.SafeMaps;
+            }
+            return candidates.Count == 0 ? "" : candidates[r.Next(candidates.Count)];
+        }
+
         private async Task StartBattle(ProposedBattle bat)
         {
-            var battle = new MatchMakerBattle(server, bat);
+            var battle = new MatchMakerBattle(server, bat, PickMap(bat.QueueType));
             server.Battles[battle.BattleID] = battle;
 
             // also join in lobby
@@ -493,12 +548,17 @@ namespace ZkLobbyServer
                 if ((invitationBattles?.Any() != true) && (players.Count > 0) && (server.PartyManager.GetParty(name) == null))
                 // nobody invited atm and some in queue
                 {
-                    // get all currently queued players except for self
-                    var testPlayers = players.Values.Where(x => (x != null) && (x.Name != name)).ToList();
-                    var testSelf = new PlayerEntry(conus.User, possibleQueues.ToList(), null); // readd self but with all queues
-                    testPlayers.Add(testSelf);
-                    var testBattles = ProposeBattles(testPlayers);
-                    ret.InstantStartQueues = testBattles.Where(x => x.Players.Contains(testSelf)).Select(x => x.QueueType.Name).Distinct().ToList();
+                    ret.InstantStartQueues = new List<string>();
+                    // iterate each queue to check all possible instant starts
+                    foreach (var queue in possibleQueues)
+                    {
+                        // get all currently queued players except for self
+                        var testPlayers = players.Values.Where(x => (x != null) && (x.Name != name)).ToList();
+                        var testSelf = new PlayerEntry(conus.User, new List<MatchMakerSetup.Queue> { queue }, null);
+                        testPlayers.Add(testSelf);
+                        var testBattles = ProposeBattles(testPlayers);
+                        ret.InstantStartQueues.AddRange(testBattles.Where(x => x.Players.Contains(testSelf)).Select(x => x.QueueType.Name).Distinct().ToList());
+                    }
                 }
 
                 await conus.SendCommand(ret);

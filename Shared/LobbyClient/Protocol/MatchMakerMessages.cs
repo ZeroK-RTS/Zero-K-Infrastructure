@@ -31,6 +31,19 @@ namespace LobbyClient
 
             [JsonIgnore]
             public AutohostMode Mode { get; set; }
+
+            [JsonIgnore]
+            public List<string> SafeMaps { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                return Name.Equals((obj as Queue)?.Name);
+            }
+
+            public override int GetHashCode()
+            {
+                return Name.GetHashCode();
+            }
         }
         public List<Queue> PossibleQueues { get; set; }
     }

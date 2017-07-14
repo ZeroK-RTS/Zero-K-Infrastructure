@@ -490,6 +490,11 @@ namespace ZkLobbyServer
             await MatchMaker.OnServerGameChanged(game);
         }
 
+        public async Task OnServerMapsChanged()
+        {
+            await MatchMaker.OnServerMapsChanged();
+        }
+
         public void RemoveSessionsForAccountID(int accountID)
         {
             foreach (var todel in SessionTokens.Where(x => x.Value == accountID).Select(x => x.Key).ToList())

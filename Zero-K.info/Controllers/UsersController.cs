@@ -258,6 +258,7 @@ namespace ZeroKWeb.Controllers
 
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Reason: {0} ", reason));
+                Global.Server.GhostPm(acc.Name, string.Format("Your account has received moderator action: {0}", reason));
             }
             catch (Exception ex)
             {

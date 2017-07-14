@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using PlasmaDownloader;
 using ZkData;
+using System.Threading;
 
 namespace ChobbyLauncher
 {
@@ -64,6 +65,12 @@ namespace ChobbyLauncher
             Close();
         }
 
+
+        private void ChobbylaForm_Closing(Object sender, FormClosingEventArgs e)
+        {
+            Thread.Sleep(500); // This allows Analystics to finish.
+            Application.Exit(); // Lets close the process now.
+        }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
