@@ -23,7 +23,7 @@ namespace ZeroKWeb.Controllers
         [NoCache]
         public async Task<ActionResult> SendCommand(string link) {
             if (Global.Account == null) return Content("You must be logged in to the site");
-            if (!Global.Server.IsLobbyConnected(Global.Account.Name)) return Content("To use this feature, run the Zero-K application and go online");
+            if (!Global.Server.IsLobbyConnected(Global.Account.Name)) return Content("To use this feature, you need to be running the game and be logged in there");
             await Global.Server.SendSiteToLobbyCommand(Global.Account.Name, new SiteToLobbyCommand() { Command = link });
             return Content("");
         }
