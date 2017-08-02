@@ -129,6 +129,8 @@ namespace ZeroKWeb.Controllers
             // do not show zkcore history for non-cores
             if (model.Channel == "zkcore" && Global.Account.DevLevel < DevLevel.RetiredCoreDeveloper) return View("LobbyChatHistory", model);
 
+            // do not show undelivered offline PMs to anyone
+            if (model.Place == SayPlace.User) return View("LobbyChatHistory", model);
 
             var db = new ZkDataContext();
             var ret = db.LobbyChatHistories.Where(x=>x.SayPlace == model.Place).AsQueryable();
