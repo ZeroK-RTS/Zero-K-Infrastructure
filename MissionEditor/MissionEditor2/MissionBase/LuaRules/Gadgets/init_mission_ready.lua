@@ -37,8 +37,8 @@ local yOffset = 150
 
 local missionReady = false
 
-function gadget:KeyPress()
-	if missionReady == false then
+function gadget:KeyPress(key)
+	if missionReady == false and key == 32 then	-- spacebar
 		missionReady = true
 		Spring.SendCommands("forcestart")
 		return true
@@ -46,6 +46,7 @@ function gadget:KeyPress()
 	return false
 end
 
+--[[
 function gadget:MousePress()
 	if missionReady == false then
 		missionReady = true
@@ -54,6 +55,7 @@ function gadget:MousePress()
 	end
 	return false
 end
+]]
 
 function gadget:GameSetup(label, ready, playerStates)
 	lastLabel = label
@@ -64,7 +66,9 @@ function gadget:DrawScreen()
 	local vsx, vsy = gl.GetViewSizes()
 	local text = lastLabel or ''
 	if not missionReady then
-		text = "Press any key to begin"
+		text = "Press Space to begin"
+	elseif text == "Choose start pos" then
+		return
 	end
 
 	glPushMatrix()
