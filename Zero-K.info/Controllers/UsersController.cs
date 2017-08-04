@@ -135,7 +135,7 @@ namespace ZeroKWeb.Controllers
             public string Name { get; set; }
             public string IP { get; set; }
             public string Country { get; set; }
-            public int? UserID { get; set; }
+            public long? UserID { get; set; }
             public DateTime? RegisteredFrom { get; set; }
             public DateTime? RegisteredTo { get; set; }
 
@@ -355,7 +355,7 @@ namespace ZeroKWeb.Controllers
                 if (acc != null)
                 {
                     firstAccID = firstAccID ?? acc.AccountID;
-                    uint? userID = banID ? (uint?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                    long? userID = banID ? (uint?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
                     string userIP = banIP ? acc.AccountIPs.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
                     System.Console.WriteLine(acc.Name, userID, userIP);
                     Punishment punishment = new Punishment
@@ -391,14 +391,14 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult MassBanByUserIDSubmit(int userID, double? maxAge, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
+        public ActionResult MassBanByUserIDSubmit(long userID, double? maxAge, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
         {
             ZkDataContext db = new ZkDataContext();
             if (banHours > MaxBanHours) banHours = MaxBanHours;
             DateTime firstLoginAfter = maxAge != null? DateTime.UtcNow.AddHours(-(double)maxAge) : DateTime.MinValue; 
             foreach (Account acc in db.Accounts.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID) && (maxAge == null || x.FirstLogin > firstLoginAfter) ))
             {
-                uint? punishmentUserID = banID ? (uint?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                long? punishmentUserID = banID ? (uint?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
                 string userIP = banIP ? acc.AccountIPs.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
                 System.Console.WriteLine(acc.Name, userID, userIP);
                 Punishment punishment = new Punishment
