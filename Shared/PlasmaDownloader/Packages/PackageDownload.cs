@@ -118,7 +118,7 @@ namespace PlasmaDownloader.Packages
 
 			                if (!responseStream.ReadExactly(buf, 0, sizeLength, ref doneAll))
 			                {
-			                    Trace.TraceError("{0} download failed - unexpected endo fo stream", Name);
+			                    Trace.TraceError("{0} download failed - unexpected end of stream", Name);
 			                    return false;
 			                }
 			                pool.PutToStorage(buf, hashesToDownload[cnt]);
@@ -127,7 +127,7 @@ namespace PlasmaDownloader.Packages
 
 			            if (cnt != hashesToDownload.Count)
 			            {
-			                Trace.TraceError("{0} download failed - unexpected endo fo stream", Name);
+			                Trace.TraceError("{0} download failed - unexpected end of stream", Name);
 			                return false;
 			            }
 			            Trace.TraceInformation("{0} download complete - {1}", Name, Utils.PrintByteLength(Length));
