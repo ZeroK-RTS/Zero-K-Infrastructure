@@ -16,6 +16,7 @@ namespace PlasmaDownloader
     public enum DownloadType
     {
         RAPID,
+        GAME_SDZ,
         MAP,
         MISSION,
         DEMO,
@@ -107,7 +108,7 @@ namespace PlasmaDownloader
                     var down = new WebFileDownload(name, filePath, null);
                     down.DownloadType = type;
                     downloads.Add(down);
-                    DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down)); //create dowload bar (handled by MainWindow.cs)
+                    DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down)); //create download bar (handled by MainWindow.cs)
                     down.Start();
                     return down;
                 }
@@ -139,14 +140,36 @@ namespace PlasmaDownloader
                     }
                 }
 
-
-
                 if (type == DownloadType.ENGINE)
                 {
                     var down = new EngineDownload(name, SpringPaths);
                     down.DownloadType = type;
                     downloads.Add(down);
                     DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
+                    down.Start();
+                    return down;
+                }
+
+                // FIXME: temporary hax to download ZK as .sdz
+                if (type == DownloadType.GAME_SDZ)
+                {
+                    var bla = packageDownloader.GetByTag(name);
+                    if (bla == null)
+                    {
+                        return null;
+                    }
+                    string filename = bla.InternalName + ".sdz";
+                    filename = filename.Replace("Zero-K ", "zk-");
+                    string url = "http://zk.repo.springrts.com/builds/" + filename;
+
+                    var target = new Uri(url);
+                    var filePath = Utils.MakePath(SpringPaths.WritableDirectory, "games", filename);
+                    if (File.Exists(filePath)) return null;
+
+                    var down = new WebFileDownload(url, filePath, null);
+                    down.DownloadType = type;
+                    downloads.Add(down);
+                    DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down)); //create download bar (handled by MainWindow.cs)
                     down.Start();
                     return down;
                 }

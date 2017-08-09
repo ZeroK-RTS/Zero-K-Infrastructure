@@ -177,8 +177,9 @@ namespace DotNetWikiBot
 		}
 
 		/// <summary>This constructor is used to generate most Site objects.</summary>
-		/// <param name="address">Wiki site's URI. It must point to the main page of the wiki, e.g.
-		/// "https://en.wikipedia.org" or "http://127.0.0.1:80/w/index.php?title=Main_page".</param>
+		/// <param name="address">Wiki site's URI. Normally it must point to the main page of the wiki, e.g.
+		/// "https://en.wikipedia.org" or "http://127.0.0.1:80/w/index.php?title=Main_page".
+		/// The ZK version is hacked to automatically append "/mediawiki".</param>
 		/// <param name="userName">User name to log in.</param>
 		/// <param name="userPass">Password.</param>
 		/// <returns>Returns Site object.</returns>
@@ -188,8 +189,9 @@ namespace DotNetWikiBot
 		/// <summary>This constructor is used for LDAP authentication. Additional information can
 		/// be found <see href="http://www.mediawiki.org/wiki/Extension:LDAP_Authentication">here
 		/// </see>.</summary>
-		/// <param name="address">Wiki site's URI. It must point to the main page of the wiki, e.g.
-		/// "https://en.wikipedia.org" or "http://127.0.0.1:80/w/index.php?title=Main_page".</param>
+		/// <param name="address">Wiki site's URI. Normally it must point to the main page of the wiki, e.g.
+		/// "https://en.wikipedia.org" or "http://127.0.0.1:80/w/index.php?title=Main_page".
+		/// The ZK version is hacked to automatically append "/mediawiki".</param>
 		/// <param name="userName">User name to log in.</param>
 		/// <param name="userPass">Password.</param>
 		/// <param name="userDomain">Domain name for LDAP authentication.</param>
@@ -4803,7 +4805,7 @@ namespace DotNetWikiBot
 
 			// Find suitable directory for cache where all required permissions are present
 			char dirSep = Path.DirectorySeparatorChar;
-			cacheDir = Path.GetFullPath("Cache");
+			cacheDir = Path.GetFullPath("cache");
 			try {
 				if (!Directory.Exists(cacheDir))
 					Directory.CreateDirectory(cacheDir);
@@ -4825,7 +4827,7 @@ namespace DotNetWikiBot
 				}
 				catch (Exception) {    // occurs if permissions are missing
 					throw new WikiBotException(string.Format(Msg("Read/write permissions are " +
-						"required for \"{0}\" directory."), Path.GetFullPath("Cache")));
+						"required for \"{0}\" directory."), Path.GetFullPath("cache")));
 				}
 				Console.WriteLine(string.Format(Msg(
 					"Now using \"{0}\" directory for cache."), cacheDir));

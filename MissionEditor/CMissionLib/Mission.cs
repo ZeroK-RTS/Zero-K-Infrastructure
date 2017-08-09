@@ -624,6 +624,7 @@ namespace CMissionLib
             line("OnlyLocal", "1");
 			//line("MyPlayerNum", Players.IndexOf(StartingPlayer));
 			line("MyPlayerName", StartingPlayer.Name.Replace(' ', '_'));
+            line("GameStartDelay", 0);
 
             sb.AppendLine("\t[MODOPTIONS]");
             sb.AppendLine("\t{");

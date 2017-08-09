@@ -12,7 +12,7 @@ namespace Fixer
     /// <summary>Ports Zero-K wiki pages to the new MediaWiki.</summary>
     public static class WikiPortingMW
     {
-        public const string WIKI_URL = "http://zero-k.info";
+        public const string WIKI_URL = @"https://zero-k.info";
         static Site newWiki;
 
         public static string BBCodeToMediaWiki(string text)
@@ -149,9 +149,9 @@ namespace Fixer
         /// <param name="templateTitle">Title of template to remove.</param>
         /// <param name="replacement">The text to insert in place of the template.</param>
         /// <returns>True if old and new page texts are different and page text was modified, false otherwise.</returns>
-        public static bool ReplaceTemplate(this Page page, string templateTitle, string replacement, string tailTag = null)
+        public static bool ReplaceTemplate(this Page page, string templateTitle, string replacement)
         {
-            tailTag = tailTag ?? @"==\s?Description\s?==";
+            
             if (string.IsNullOrEmpty(templateTitle))
                 throw new ArgumentNullException("templateTitle");
             templateTitle = Regex.Escape(templateTitle);
@@ -159,16 +159,25 @@ namespace Fixer
                 Char.ToLower(templateTitle[0]) + ")" +
                 (templateTitle.Length > 1 ? templateTitle.Substring(1) : "");
             string currentText = page.text;
+
+            // regex find infobox to replace it
+            string tailTag = @"==\s?Description\s?==";
             string newText = Regex.Replace(page.text, @"(?s)\{\{\s*" + templateTitle +
                 @"(.*?)}}\r?\n?" + tailTag, replacement + "==Description==");
+
+            // different content ordering (usually manually created page)
+            tailTag = @"\s*The '''";
+            newText = Regex.Replace(newText, @"(?s)\{\{\s*" + templateTitle +
+                @"(.*?)}}\r?\n?" + tailTag, replacement + "The '''");
+
             if (currentText.Equals(newText))
             {
-                Console.WriteLine("Did nothing");
+                //Console.WriteLine("Did nothing");
                 return false;
             }
             else
             {
-                Console.WriteLine("Did something!");
+                Console.WriteLine(">> Did something!");
                 //Console.WriteLine(currentText);
                 //Console.WriteLine(newText);
                 page.text = newText;
@@ -190,8 +199,11 @@ namespace Fixer
             newWiki = new Site(WIKI_URL, username, password);
 
             int count = 0;  // increment this when we actually create a page
-            string dir = Environment.OSVersion.Platform == PlatformID.Unix ? @"home/media/My Book/zkwiki/raw/markup" : @"G:\zkwiki\raw\markup";
-            var newFiles = new List<string>(Directory.GetFiles(dir));
+            string dir = "";
+            List<string> newFiles = null;    //new List<string>(Directory.GetFiles(dir));
+
+            //dir = Environment.OSVersion.Platform == PlatformID.Unix ? @"/media/histidine/My Book/zkwiki/raw/markup" : @"G:\zkwiki\raw\markup";
+            //newFiles = null;new List<string>(Directory.GetFiles(dir));
             //newFiles = files.Shuffle();
             /*
             foreach (string path in newFiles)
@@ -215,9 +227,8 @@ namespace Fixer
             }
             */
 
-            /*
             count = 0;
-            dir = Environment.OSVersion.Platform == PlatformID.Unix ? @"home/media/My Book/zkwiki/raw_infobox/markup" : @"G:\zkwiki\raw_infobox\markup";
+            dir = Environment.OSVersion.Platform == PlatformID.Unix ? @"/media/histidine/My Book/zkwiki/raw_infobox/markup" : @"G:\zkwiki\raw_infobox\markup";
             var filesUpdate = new List<string>(Directory.GetFiles(dir));
             foreach (string path in filesUpdate)
             {
@@ -225,8 +236,7 @@ namespace Fixer
                 unitname = unitname.Replace("&#47;", "/");
                 var page = new Page(newWiki, unitname);
                 page.Load();
-                if (page.Exists())
-                {
+                if (page.Exists ()) {
                     //Dictionary<string, object> unitData = new Dictionary<string, object>();
                     //JsonConvert.PopulateObject(File.ReadAllText(path), unitData);
                     //foreach (KeyValuePair<string, object> kvp in unitData)
@@ -234,26 +244,27 @@ namespace Fixer
                     //    UpdateTemplate(page, kvp);
                     //}
                     
-                    bool result = page.ReplaceTemplate("Infobox zkunit", File.ReadAllText(path));
-                    if (result)
-                    {
-                        page.Save(page.text, "Page auto-updated with DotNetWikiBot", true);
+                    bool result = page.ReplaceTemplate ("Infobox zkunit", File.ReadAllText (path));
+                    if (result) {
+                        page.Save (page.text, "Page auto-updated with DotNetWikiBot", true);
                         count++;
                     }
-                    if (count >= 5)
-                    {
+                    if (count >= 10) {
                         count = 0;
-                        Console.WriteLine("-- INTERMISSION --");
-                        Console.WriteLine("-- Review changes on wiki, then press Enter to continue --");
-                        Console.ReadLine();
+                        Console.WriteLine ("-- INTERMISSION --");
+                        Console.WriteLine ("-- Review changes on wiki, then press Enter to continue --");
+                        Console.ReadLine ();
                     }
+                } 
+                else 
+                {
+                    Console.WriteLine ("Page " +  page.title + " doesn't exist!");
                 }
             }
-            */
 
             /*
             count = 0;
-            dir = Environment.OSVersion.Platform == PlatformID.Unix ? @"home/media/My Book/zkwiki/raw_infobox/markup" : @"G:\zkwiki\raw_infobox\markup";
+            dir = Environment.OSVersion.Platform == PlatformID.Unix ? @"/media/histidine/zkwiki/raw_infobox/markup" : @"G:\zkwiki\raw_infobox\markup";
             var filesUpdate = new List<string>(Directory.GetFiles(dir));
             foreach (string path in filesUpdate)
             {

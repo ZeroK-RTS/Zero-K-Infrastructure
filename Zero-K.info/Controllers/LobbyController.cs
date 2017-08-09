@@ -23,7 +23,7 @@ namespace ZeroKWeb.Controllers
         [NoCache]
         public async Task<ActionResult> SendCommand(string link) {
             if (Global.Account == null) return Content("You must be logged in to the site");
-            if (!Global.Server.IsLobbyConnected(Global.Account.Name)) return Content("Your lobby program is not running");
+            if (!Global.Server.IsLobbyConnected(Global.Account.Name)) return Content("To use this feature, you need to be running the game and be logged in there");
             await Global.Server.SendSiteToLobbyCommand(Global.Account.Name, new SiteToLobbyCommand() { Command = link });
             return Content("");
         }
@@ -129,6 +129,8 @@ namespace ZeroKWeb.Controllers
             // do not show zkcore history for non-cores
             if (model.Channel == "zkcore" && Global.Account.DevLevel < DevLevel.RetiredCoreDeveloper) return View("LobbyChatHistory", model);
 
+            // do not show undelivered offline PMs to anyone
+            if (model.Place == SayPlace.User) return View("LobbyChatHistory", model);
 
             var db = new ZkDataContext();
             var ret = db.LobbyChatHistories.Where(x=>x.SayPlace == model.Place).AsQueryable();
