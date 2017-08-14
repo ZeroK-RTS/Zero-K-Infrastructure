@@ -52,7 +52,7 @@ namespace ZkData
                     AutoMigrateDatabase = true;
                     break;
                 case ModeType.Test:
-                    BaseSiteUrl = "http://test.zero-k.info";
+                    BaseSiteUrl = "https://test.zero-k.info";
                     ZkDataContextConnectionString =
                         "Data Source=test.zero-k.info;Initial Catalog=zero-k_test;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000;";
 
@@ -65,7 +65,7 @@ namespace ZkData
                     AutoMigrateDatabase = false;
                     break;
                 case ModeType.Live:
-                    BaseSiteUrl = "http://zero-k.info";
+                    BaseSiteUrl = "https://zero-k.info";
                     ZkDataContextConnectionString =
                         "Data Source=zero-k.info;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000;";
                     
