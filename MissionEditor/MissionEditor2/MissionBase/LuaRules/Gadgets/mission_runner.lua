@@ -275,12 +275,6 @@ end
 
 GG.mission.IsUnitInRegion = IsUnitInRegion
 
-local function SetUnitGroup(unitID, group)
-  unitGroups[unitID] = unitGroups[unitID] or {}
-  unitGroups[unitID][group] = true
-end
-
-
 local function FindUnitsInGroup(searchGroup)
   local results = {}
   if StartsWith(searchGroup, "Units in ") then
