@@ -304,7 +304,15 @@ namespace ZeroKWeb.Controllers
                                            });
             db.SaveChanges();
 
-            var str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name, Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), text);
+            var str;
+            if (Global.AccountID == accountID)
+                str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name, 
+                    Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), 
+                    acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), 
+                    text);
+            else
+                str = string.Format("{0} {1} contacts admins : {2}", Global.Account.Name, 
+                    Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), text);
 
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str, isRing:true);
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
