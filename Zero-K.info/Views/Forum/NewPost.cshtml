@@ -1,7 +1,12 @@
 ﻿@using ZkData
 @model ZeroKWeb.Controllers.ForumController.NewPostResult
-@{
+@if (Model.EditedPost == null)
+{
     Page.Title = "New post";
+}
+else
+{
+	Page.Title = "Edit post";
 }
 
 @{ Html.RenderPartial("ForumPath", Model.Path); }
@@ -41,6 +46,10 @@ else
     <textarea name="text" style="height: 50vh; width: 100%;">@(Model.EditedPost != null ? Model.EditedPost.Text : null)</textarea><br/>
     <input class="textbutton" type="submit" value="Submit Post"/>
     <span class="textbutton" data-preview="text">Preview</span>
+    @if (Model.EditedPost != null)
+    {
+        <input type="checkbox" name="isMinorEdit" value="true"/><span>Minor edit (does not bump thread)</span>
+    }
     <a href="~/Wiki/formatting" target="_blank" style="float: right">Forum and Wiki formatting guide</a>
 </form>
 
