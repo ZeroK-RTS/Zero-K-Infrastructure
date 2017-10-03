@@ -387,7 +387,7 @@ namespace ZeroKWeb.Controllers
 
 
                 if (thread == null) return Content("Thread not found");
-                if (thread.IsLocked) return Content("Thread is locked");
+                if (thread.IsLocked && Global.Account.AdminLevel < AdminLevel.Moderator) return Content("Thread is locked");
                 if (thread.RestrictedClanID != null && thread.RestrictedClanID != Global.Account.ClanID) return Content("Cannot post in this clan");
 
                 var lastPost = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
