@@ -296,7 +296,6 @@ namespace ZeroKWeb.Controllers
             
             db.AbuseReports.InsertOnSubmit(new AbuseReport()
                                            {
-                                               
                                                AccountID = acc.AccountID,
                                                ReporterAccountID = Global.AccountID,
                                                Time = DateTime.UtcNow,
@@ -304,7 +303,7 @@ namespace ZeroKWeb.Controllers
                                            });
             db.SaveChanges();
 
-            var str;
+            string str;
             if (Global.AccountID == accountID)
                 str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name, 
                     Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), 
