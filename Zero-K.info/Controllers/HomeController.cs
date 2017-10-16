@@ -179,8 +179,9 @@ namespace ZeroKWeb.Controllers
             var result = new IndexResult()
 			             {
 			             	Spotlight = SpotlightHandler.GetRandom(),
-			             	Top10Players = Global.LadderCalculator.GetLadder().Top50Accounts.Take(10).ToList()
-			             };
+			             	Top10Players = Global.LadderCalculator.GetLadder().Top50Accounts.Take(10).ToList(),
+                            WikiRecentChanges = MediaWikiRecentChanges.LoadRecentChanges()
+                        };
 
 			result.LobbyStats =  MemCache.GetCached("lobby_stats", GetCurrentLobbyStats, 60*2);
 
@@ -215,6 +216,8 @@ namespace ZeroKWeb.Controllers
 				                     select new NewThreadEntry { ForumThread = t, WasRead = read != null, WasWritten = read != null && read.LastPosted != null }).
 					Take(10);
 			}
+
+			
 
 			return View("HomeIndex",result);
 		}
@@ -415,6 +418,7 @@ namespace ZeroKWeb.Controllers
 			public IEnumerable<Account> Top10Players;
 			public IEnumerable<News> News;
 			public IEnumerable<News> Headlines;
+			public IEnumerable<MediaWikiRecentChanges.MediaWikiEdit> WikiRecentChanges;
 		}
 
 		public class NewThreadEntry

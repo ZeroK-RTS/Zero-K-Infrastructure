@@ -633,6 +633,13 @@ namespace System.Web.Mvc
                     ));
         }
 
+        public static MvcHtmlString PrintMediaWikiEdit(this HtmlHelper helper, MediaWikiRecentChanges.MediaWikiEdit edit)
+        {
+            return new MvcHtmlString(string.Format("<a href=\"//zero-k.info/mediawiki/index.php?title={0}\">{0}</a> by {1} <small>{2}</small>",
+                    edit.Title, edit.Username, edit.AgoString
+                    ));
+        }
+
         /// <summary>
         /// <para>Converts strings preceded with an @ to a printed <see cref="Account"/>, <see cref="SpringBattle"/>, etc. as appropriate</para>
         /// <para>e.g. @KingRaptor becomes the printed account for user KingRaptor</para>

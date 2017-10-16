@@ -170,6 +170,7 @@
     <Compile Include="AppCode\LadderCalculator.cs" />
     <Compile Include="AppCode\MemCache.cs" />
     <Compile Include="AppCode\PlanetwarsEventCreator.cs" />
+    <Compile Include="AppCode\MediaWikiRecentChanges.cs" />
     <Compile Include="AppCode\UniGrid\Col.cs" />
     <Compile Include="AppCode\UniGrid\HCol.cs" />
     <Compile Include="AppCode\ModStatsDb.designer.cs">
