@@ -273,8 +273,6 @@ local function GetRegionsUnitIsIn(unitID)
   end
 end
 
-GG.mission.IsUnitInRegion = IsUnitInRegion
-
 local function FindUnitsInGroup(searchGroup)
   local results = {}
   if StartsWith(searchGroup, "Units in ") then
@@ -342,6 +340,8 @@ local function IsUnitInGroup(unitID, group)
   return unitGroups[unitID] and unitGroups[unitID][group]
 end
 
+GG.mission.GetUnitsInRegion = GetUnitsInRegion
+GG.mission.IsUnitInRegion = IsUnitInRegion
 GG.mission.FindUnitsInGroup = FindUnitsInGroup
 GG.mission.FindUnitInGroup = FindUnitInGroup
 GG.mission.FindUnitsInGroups = FindUnitsInGroups
