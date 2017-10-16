@@ -255,7 +255,8 @@ namespace ZeroKWeb.Controllers
             string text,
             string title,
             string wikiKey,
-            int? forumPostID) {
+            int? forumPostID,
+            bool? isMinorEdit) {
             if (threadID == null && missionID == null && resourceID == null && springBattleID == null && clanID == null && planetID == null &&
                 forumPostID == null && string.IsNullOrWhiteSpace(title)) return Content("Cannot post new thread with blank title");
             if (string.IsNullOrWhiteSpace(text)) return Content("Please type some text :)");
@@ -387,7 +388,7 @@ namespace ZeroKWeb.Controllers
 
 
                 if (thread == null) return Content("Thread not found");
-                if (thread.IsLocked) return Content("Thread is locked");
+                if (thread.IsLocked && Global.Account.AdminLevel < AdminLevel.Moderator) return Content("Thread is locked");
                 if (thread.RestrictedClanID != null && thread.RestrictedClanID != Global.Account.ClanID) return Content("Cannot post in this clan");
 
                 var lastPost = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
@@ -417,9 +418,11 @@ namespace ZeroKWeb.Controllers
                         db.SaveChanges();
                         gotoPostId = p.ForumPostID;
                     }
-
-                    thread.LastPost = DateTime.UtcNow;
-                    thread.LastPostAccountID = Global.AccountID;
+                    
+                    if (isMinorEdit != true) {
+                        thread.LastPost = DateTime.UtcNow;
+                        thread.LastPostAccountID = Global.AccountID;
+                    }
                     thread.PostCount = thread.ForumPosts.Count();
                     thread.UpdateLastRead(Global.AccountID, true, thread.LastPost);
 

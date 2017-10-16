@@ -78,7 +78,8 @@ namespace ZeroKWeb.Views.Forum
                     isAfter == true?  edit.NewText: edit.OriginalText,
                     thread.Title,
                     thread.WikiKey,
-                    post.ForumPostID);
+                    post.ForumPostID,
+                    false);
             } else return Content("Denied");
         }
 

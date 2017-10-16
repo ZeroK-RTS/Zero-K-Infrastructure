@@ -50,7 +50,7 @@ namespace CMissionLib.Actions
 
 		public override string GetDefaultName()
 		{
-			return "Custom Action (Alternate)";
+			return "Custom Action";
 		}
 	}
 }

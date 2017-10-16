@@ -232,8 +232,8 @@ namespace MissionEditor2
             addAction("Save Camera State", () => new SaveCameraStateAction(), "Camera");
             addAction("Restore Camera State", () => new RestoreCameraStateAction(), "Camera");
 
-            addAction("Custom Action", () => new CustomAction(), "Misc");
-            addAction("Custom Action (alternate)", () => new CustomAction2(), "Misc");
+            //addAction("Custom Action", () => new CustomAction(), "Misc");
+            addAction("Custom Action", () => new CustomAction2(), "Misc");
             addAction("Pause", () => new PauseAction(), "Misc");
             addAction("Play Music", () => new MusicAction(), "Misc");
             addAction("Play Looping Music", () => new MusicLoopAction(), "Misc");
@@ -1268,6 +1268,7 @@ namespace MissionEditor2
             //if (String.IsNullOrEmpty(value)) return;
             if (dict.ContainsKey(key)) return;
             value = value.Replace("%", "%%");
+            value = value.Replace("\r\n", "\n");
             dict.Add(key, value);
         }
 

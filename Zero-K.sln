@@ -36,7 +36,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkData", "ZkData\ZkData.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkLobbyServer", "ZkLobbyServer\ZkLobbyServer.csproj", "{1A6022DF-9AF2-4BA3-A61C-87BE507A6F4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Autoregistrator", "Autoregistrator\Autoregistrator.csproj", "{01FAEBBC-02E0-42FE-972C-F17045BA3807}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoRegistrator", "AutoRegistrator\AutoRegistrator.csproj", "{01FAEBBC-02E0-42FE-972C-F17045BA3807}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetWikiBot", "DotNetWikiBot\DotNetWikiBot.csproj", "{016C2B52-AFD5-4A3A-A960-E9FB51C014BB}"
 EndProject

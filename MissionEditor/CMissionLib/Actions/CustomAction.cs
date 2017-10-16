@@ -13,7 +13,7 @@ namespace CMissionLib.Actions
 
 		public override string GetDefaultName()
 		{
-			return "Custom Action";
+			return "Custom Action (Legacy)";
 		}
 	}
 }
