@@ -140,6 +140,8 @@ namespace CMissionLib
 				RaisePropertyChanged("Description");
 			}
 		}
+        
+        [Obsolete("No longer displayed on site, no need to use this")]
         [DataMember]
         public string DescriptionStory
         {
@@ -323,6 +325,11 @@ namespace CMissionLib
 			Items = new CompositeObservableCollection<Trigger, Region>(Triggers, Regions);
 		}
 
+        /// <summary>
+        /// Creates the mission mutator archive in <c>.sdz</c> or <c>.sdd</c> format.
+        /// </summary>
+        /// <param name="mutatorPath">Path to save the mutator archive to.</param>
+        /// <param name="hideFromModList">If true, create an invisible mutator (<code>modtype = 0</code>).</param>
         public void CreateArchive(string mutatorPath, bool hideFromModList = false, bool sdd = false)
         {
             var script = GetScript();
@@ -465,11 +472,21 @@ namespace CMissionLib
             if (sdd) File.Delete(mutatorPath);
 		}
 
+        /// <summary>
+        /// Returns the trigger that contains the specified <see cref="CMissionLib.Action"/> or <see cref="CMissionLib.Condition"/>.
+        /// </summary>
+        /// <param name="l"></param>
+        /// <returns></returns>
 		public Trigger FindLogicOwner(TriggerLogic l)
 		{
 			return triggers.Single(t => t.Logic.Contains(l));
 		}
 
+        /// <summary>
+        /// Loads a <see cref="CMissionLib.Mission"/> from a serialized .xml file or .sdz.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
 		public static Mission FromFile(string path)
 		{
 			if (path.ToLower().EndsWith(".xml")) using (var stream = File.OpenRead(path)) return (Mission)new NetDataContractSerializer().ReadObject(stream);
@@ -484,11 +501,21 @@ namespace CMissionLib
 			}
 		}
 
+        /// <summary>
+        /// Converts the Spring map width to mission editor map width.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
 		public double FromIngameX(double x)
 		{
 			return x*Map.Texture.Width/Map.Size.Width;
 		}
 
+        /// <summary>
+        /// Converts the Spring map height to mission editor map height.
+        /// </summary>
+        /// <param name="y"></param>
+        /// <returns></returns>
 		public double FromIngameY(double y)
 		{
 			return y*Map.Texture.Height/Map.Size.Height;
@@ -520,6 +547,10 @@ namespace CMissionLib
 			return LuaTable.CreateArray(slots);
 		}
 
+		/// <summary>
+		/// Gets a Lua table representing the mission start script.
+		/// </summary>
+		/// <returns></returns>
 		// TODO
 		public LuaTable GetLuaStartscript()
 		{
@@ -608,6 +639,10 @@ namespace CMissionLib
 			return new LuaTable(map);
 		}
 
+		/// <summary>
+		/// Gets the contents of the mission start script.
+		/// </summary>
+		/// <returns></returns>
 		public string GetScript()
 		{
 			var sb = new StringBuilder();
@@ -728,6 +763,12 @@ namespace CMissionLib
 			Items = new CompositeObservableCollection<Trigger, Region>(Triggers, Regions);
 		}
 
+        /// <summary>
+        /// Writes an XML file representing the serialized mission to disk.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="auto">Is this an autosave?</param>
+        /// <returns></returns>
 		public bool SaveToXmlFile(string path, bool auto = false)
 		{
             bool success = false;
@@ -753,16 +794,30 @@ namespace CMissionLib
 			return "return " + luaTable;
 		}
 
+        /// <summary>
+        /// Converts the mission editor map width to Spring map width.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
 		public double ToIngameX(double x)
 		{
 			return x/Map.Texture.Width*Map.Size.Width;
 		}
 
+        /// <summary>
+        /// Converts the mission editor map height to Spring map height.
+        /// </summary>
+        /// <param name="y"></param>
+        /// <returns></returns>
 		public double ToIngameY(double y)
 		{
 			return y/Map.Texture.Height*Map.Size.Height;
 		}
 
+        /// <summary>
+        /// Checks whether the mission has a mission image and a description, and returns an error message if not.
+        /// </summary>
+        /// <returns>The error message to display.</returns>
 		public string VerifyCanPublish()
 		{
 			if (ImagePath == null || !File.Exists(ImagePath)) return "A mission image needs to be set in the Mission Settings dialog.";
@@ -792,6 +847,11 @@ namespace CMissionLib
 			return new LuaTable(luaMap);
 		}
 
+        /// <summary>
+        /// Writes the contents of the mission mutator's modinfo.lua
+        /// </summary>
+        /// <param name="hideFromModList">Makes the mutator invisible (<code>modtype = 0</code>).</param>
+        /// <returns></returns>
 		string GetModInfo(bool hideFromModList)
 		{
 			var sb = new StringBuilder();
@@ -810,6 +870,11 @@ namespace CMissionLib
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Writes an ally team entry for the startscript
+        /// </summary>
+        /// <param name="sb"></param>
+        /// <param name="index">Ally team index</param>
 		void WriteAllyTeam(StringBuilder sb, int index)
 		{
 			sb.AppendFormat("\t[ALLYTEAM{0}]\n", index);
@@ -822,6 +887,11 @@ namespace CMissionLib
 			sb.AppendLine("\t}");
 		}
 
+        /// <summary>
+        /// Writes a player entry for the startscript
+        /// </summary>
+        /// <param name="sb"></param>
+        /// <param name="player"></param>
 		void WritePlayer(StringBuilder sb, Player player)
 		{
 			if (player.IsHuman)
@@ -851,6 +921,11 @@ namespace CMissionLib
 			}
 		}
 
+        /// <summary>
+        /// Writes a team entry for the specified player in the startscript
+        /// </summary>
+        /// <param name="sb"></param>
+        /// <param name="player">The player controlling the team. Players cannot share a team at present.</param>
 		void WriteTeam(StringBuilder sb, Player player) // no commshares for now
 		{
 			var index = Players.IndexOf(player);
@@ -864,7 +939,10 @@ namespace CMissionLib
 			sb.AppendLine("\t}");
 		}
 
-        
+        /// <summary>
+        /// Makes a copy of the provided <see cref="Trigger"/> and adds it to the mission's list of triggers.
+        /// </summary>
+        /// <param name="source">The original trigger to copy.</param>
         public void CopyTrigger(Trigger source)
         {
             /*

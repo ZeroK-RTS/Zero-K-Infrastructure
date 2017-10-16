@@ -6,6 +6,9 @@ using System.Text;
 
 namespace CMissionLib
 {
+	/// <summary>
+	/// Defines a rectangular area on the map
+	/// </summary>
 	[DataContract]
 	public class RectangularArea : Area
 	{

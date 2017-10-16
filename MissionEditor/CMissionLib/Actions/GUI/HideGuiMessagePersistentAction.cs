@@ -3,6 +3,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Removes all existing persistent GUI messages
+	/// </summary>
 	[DataContract]
 	public class HideGuiMessagePersistentAction : Action
 	{

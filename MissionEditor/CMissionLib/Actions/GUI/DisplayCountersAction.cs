@@ -3,6 +3,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Writes the status of all countdowns to the console
+	/// </summary>
 	[DataContract]
 	public class DisplayCountersAction : Action
 	{

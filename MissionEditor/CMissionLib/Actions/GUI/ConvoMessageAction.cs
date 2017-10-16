@@ -6,6 +6,9 @@ using System.Windows.Media.Imaging;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Displays an ingame dialogue message (at or near top of screen) with optional portrait that goes away on its own after a while
+	/// </summary>
 	[DataContract]
 	public class ConvoMessageAction : Action, ILocalizable
 	{

@@ -6,6 +6,11 @@ using System.Text;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Enables the player to transfer units to another team
+	/// Some game-side Lua code might require this
+	/// Not required for <see cref="TransferUnitsAction"/>
+	/// </summary>
 	[DataContract]
 	public class AllowUnitTransfersAction : Action
 	{

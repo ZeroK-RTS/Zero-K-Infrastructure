@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Adds to, subtracts from, multiplies with or sets the specified counter to a given value
+	/// </summary>
 	[DataContract]
 	public class ModifyCounterAction : Action
 	{

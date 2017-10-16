@@ -6,6 +6,9 @@ using System.Text;
 
 namespace CMissionLib
 {
+	/// <summary>
+	/// Actions and conditions
+	/// </summary>
 	[DataContract]
 	public abstract class TriggerLogic : PropertyChanged
 	{

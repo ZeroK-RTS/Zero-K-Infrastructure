@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Adds the specified amount of resources or storage to the specified team
+	/// </summary>
 	[DataContract]
 	public class ModifyResourcesAction : Action
 	{

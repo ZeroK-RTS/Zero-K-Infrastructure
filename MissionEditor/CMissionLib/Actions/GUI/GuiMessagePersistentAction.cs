@@ -6,6 +6,10 @@ using System.Windows.Media.Imaging;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Makes a persistent UI message on the side of the screen
+	/// Multiple messages can be flipped through as pages
+	/// </summary>
 	[DataContract]
 	public class GuiMessagePersistentAction : Action, ILocalizable
 	{

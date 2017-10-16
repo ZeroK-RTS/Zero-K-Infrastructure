@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Makes a marker point on the map
+	/// </summary>
 	[DataContract]
 	public class MarkerPointAction : Action, ILocalizable
 	{

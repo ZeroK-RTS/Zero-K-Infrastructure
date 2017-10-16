@@ -6,6 +6,10 @@ using System.Linq;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Make certain units unbuildable by the specified teams
+	/// <seealso cref="UnlockUnitsAction"/>
+	/// </summary>
 	[DataContract]
 	public class LockUnitsAction : Action
 	{
@@ -18,6 +22,9 @@ namespace CMissionLib.Actions
 		[DataMember]
 		public ObservableCollection<string> Units { get; set; }
 
+		/// <summary>
+		/// Teams for whom the unit will be locked; empty set means all teams are affected
+		/// </summary>
         [DataMember]
         public ObservableCollection<Player> Players { get; set; }
 

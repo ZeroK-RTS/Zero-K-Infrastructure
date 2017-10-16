@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Set whether the selected unit group is marked as neutral in Spring
+	/// </summary>
 	[DataContract]
 	public class MakeUnitsNeutralAction : Action
 	{

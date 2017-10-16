@@ -231,7 +231,7 @@
     <Compile Include="UnitSyncLib\UnitSync.cs" />
     <Compile Include="UnitSyncLib\UnitSyncException.cs" />
     <Compile Include="UnitSyncLib\VfsMode.cs" />
-    <Compile Include="Actions\VictoryAction.cs" />
+    <Compile Include="Actions\Logic\VictoryAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\PlasmaShared\PlasmaShared.csproj">

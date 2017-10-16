@@ -4,6 +4,10 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Specifies a unit group whose members the camera will jump to when the objective is clicked in the ingame GUI
+	/// The unit(s) must be within LoS
+	/// </summary>
 	[DataContract]
 	public class AddUnitsToObjectiveAction : Action
 	{

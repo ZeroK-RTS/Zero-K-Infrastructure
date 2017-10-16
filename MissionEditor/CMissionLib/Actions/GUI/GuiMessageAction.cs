@@ -6,6 +6,9 @@ using System.Windows.Media.Imaging;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Makes a window with a text message
+	/// </summary>
 	[DataContract]
 	public class GuiMessageAction : Action, ILocalizable
 	{

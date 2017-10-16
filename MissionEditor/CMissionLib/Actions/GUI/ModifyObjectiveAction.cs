@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Modifies the GUI objective with the specified ID
+    /// </summary>
 	[DataContract]
 	public class ModifyObjectiveAction : Action, ILocalizable
 	{
@@ -16,7 +19,6 @@ namespace CMissionLib.Actions
         string status = Statuses[1];
         //bool useCustomColor;
         //int[] color;
-        bool hasCameraTarget;
         string groupTarget;
 
         public ModifyObjectiveAction()
