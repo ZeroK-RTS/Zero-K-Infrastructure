@@ -210,7 +210,7 @@ namespace ZeroKWeb.SpringieInterface
                                             slots.Sort(delegate (CommanderSlot x, CommanderSlot y)
                                             {
                                                 UnlockTypes type1 = x.UnlockType;
-                                                UnlockTypes type2 = x.UnlockType;
+                                                UnlockTypes type2 = y.UnlockType;
                                                 if (type1 == UnlockTypes.WeaponManualFire || type1 == UnlockTypes.WeaponBoth)
                                                     type1 = UnlockTypes.Weapon;
                                                 if (type2 == UnlockTypes.WeaponManualFire || type2 == UnlockTypes.WeaponBoth)
