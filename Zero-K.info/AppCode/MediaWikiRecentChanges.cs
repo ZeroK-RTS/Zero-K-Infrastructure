@@ -9,7 +9,14 @@ namespace ZeroKWeb
 {
 	public class MediaWikiRecentChanges
 	{
+		public static List<MediaWikiEdit> cache = null;
+		public static DateTime cacheTimestamp = DateTime.UtcNow;
+		public const int CACHE_TIME = 10;
+
 		public static List<MediaWikiEdit> LoadRecentChanges() {
+			if (cache != null && cacheTimestamp > DateTime.UtcNow.AddMinutes(-CACHE_TIME))
+				return cache;
+
 			var edits = new List<MediaWikiEdit>();
 			try
 			{
@@ -30,6 +37,9 @@ namespace ZeroKWeb
 				Trace.TraceError("Error generating MediaWiki recent changes: {0}", ex);
 				throw ex;
 			}
+
+			cache = edits;
+			cacheTimestamp = DateTime.UtcNow;
 			return edits;
 		}
 
