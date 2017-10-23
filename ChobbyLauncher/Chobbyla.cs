@@ -219,9 +219,10 @@ namespace ChobbyLauncher
             process.Exited += (sender, args) =>
             {
                 var isCrash = process.ExitCode != 0;
+                var isHangKilled = (process.ExitCode == -805306369); // hanged, drawn and quartered
                 if (isCrash)
                 {
-                    Trace.TraceWarning("Spring exit code is: {0}, assuming crash", process.ExitCode);
+                    Trace.TraceWarning("Spring exit code is: {0}, {1}", process.ExitCode, isHangKilled ? "user-killed during hang" : "assuming crash");
                 }
                 tcs.TrySetResult(!isCrash);
             };
