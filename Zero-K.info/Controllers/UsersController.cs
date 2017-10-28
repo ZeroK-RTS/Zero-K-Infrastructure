@@ -304,7 +304,7 @@ namespace ZeroKWeb.Controllers
             db.SaveChanges();
 
             string str;
-            if (Global.AccountID == accountID)
+            if (Global.AccountID != accountID)
                 str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name, 
                     Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), 
                     acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), 
