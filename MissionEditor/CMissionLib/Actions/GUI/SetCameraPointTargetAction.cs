@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Points the camera at the selected position on the map
+	/// </summary>
 	[DataContract]
 	public class SetCameraPointTargetAction : Action
 	{

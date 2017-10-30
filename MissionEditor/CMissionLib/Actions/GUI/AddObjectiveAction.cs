@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Adds an objective to GUI
+	/// </summary>
 	[DataContract]
 	public class AddObjectiveAction : Action, ILocalizable
 	{

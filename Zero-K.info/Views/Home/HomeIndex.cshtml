@@ -97,7 +97,7 @@
 
 
     <div id="unit" class="border relative text-left">
-        <img src="http://packages.springrts.com/zkmanual/unitpics/@(s.Unitname).png" width="64" height="51" class="fright" />
+        <img src="http://manual.zero-k.info/unitpics/@(s.Unitname).png" width="64" height="51" class="fright" />
         <h2><a href='http://zero-k.info/mediawiki/index.php?title=Manual'>Manual:</a></h2>
         <h3>@s.Name</h3>
         <p>@s.Title</p>
@@ -109,6 +109,14 @@
         @foreach (var t in Model.NewThreads)
         {
             @Html.Print(t.ForumThread)<br />
+        }
+    </div>
+
+    <div class="border">
+        <h3><a href='//zero-k.info/mediawiki/index.php?title=Special:RecentChanges'>Recently on the wiki</a></h3>
+        @foreach (var edit in Model.WikiRecentChanges)
+        {
+            @Html.PrintMediaWikiEdit(edit)<br />
         }
     </div>
 

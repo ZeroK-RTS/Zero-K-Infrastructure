@@ -4,6 +4,10 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Transfers units in the specified group to the specified team
+	/// Does not require <see cref="AllowUnitTransfersAction"/>
+	/// </summary>
 	[DataContract]
 	public class TransferUnitsAction : Action
 	{

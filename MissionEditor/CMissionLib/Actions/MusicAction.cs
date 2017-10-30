@@ -5,6 +5,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Plays the specified track once
+	/// </summary>
 	[DataContract]
 	public class MusicAction : Action
 	{

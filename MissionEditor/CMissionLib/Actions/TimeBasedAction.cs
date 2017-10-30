@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+    /// <summary>
+    /// Inherited by (most) classes that have a time parameter
+    /// </summary>
     [DataContract]
     public class TimeBasedAction : Action, ITimeSpan
     {

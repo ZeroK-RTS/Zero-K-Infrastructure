@@ -7,6 +7,9 @@ using System.Text;
 
 namespace CMissionLib
 {
+	/// <summary>
+	/// Defines a set of circular and/or rectangular areas on the map
+	/// </summary>
 	[DataContract]
 	public class Region : PropertyChanged
 	{

@@ -6,6 +6,9 @@ using CMissionLib.UnitSyncLib;
 
 namespace CMissionLib
 {
+	/// <summary>
+	/// Defines a unit placed on the map
+	/// </summary>
 	[DataContract]
 	public class UnitStartInfo: Positionable
 	{

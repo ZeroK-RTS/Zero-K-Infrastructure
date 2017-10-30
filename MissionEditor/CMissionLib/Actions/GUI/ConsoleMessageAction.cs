@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Prints a message to the ingame console
+	/// </summary>
 	[DataContract]
 	public class ConsoleMessageAction : Action
 	{

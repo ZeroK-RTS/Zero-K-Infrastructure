@@ -6,6 +6,9 @@ using System.Text;
 
 namespace CMissionLib
 {
+	/// <summary>
+	/// Defines an area on the map (a circle or rectangle)
+	/// </summary>
 	[DataContract]
 	public abstract class Area : PropertyChanged
 	{

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using ZkData;
 
@@ -13,6 +14,7 @@ namespace Fixer
     public static class WikiPortingMW
     {
         public const string WIKI_URL = @"https://zero-k.info";
+        public static string fileDir = Environment.OSVersion.Platform == PlatformID.Unix ? @"/media/histidine/My Book/zkwiki/" : @"G:\zkwiki\";
         static Site newWiki;
 
         public static string BBCodeToMediaWiki(string text)
@@ -90,6 +92,7 @@ namespace Fixer
             page.Save(text, update ? "" : "Ported from ZK wiki by DotNetWikiBot", update);
         }
 
+        /// <summary>Like ConvertPage, except works on an already existing MediaWiki page</summary>
         public static void ReformatPage(string pageName)
         {
             Page page = new Page(newWiki, pageName);
@@ -119,6 +122,7 @@ namespace Fixer
             page.Save(text, "Infobox added by DotNetWikiBot", true);
         }
 
+        // unused
         public static bool UpdateTemplate(Page page, KeyValuePair<string, object> kvp)
         {
             bool changed = false;
@@ -143,6 +147,37 @@ namespace Fixer
             }
 
             return changed;
+        }
+
+        public static void RenamePage(string pageName, string newName, string reason, bool testOnly = false)
+        {
+            Page page = new Page(newWiki, pageName);
+            page.Load();
+            if (!page.Exists())
+            {
+                Console.WriteLine("Page {0} does not exist", pageName);
+                return;
+            }
+            Page newPage = new Page(newWiki, newName);
+            newPage.Load();
+            if (newPage.Exists())
+            {
+                Console.WriteLine("Page {0} already exists", newName);
+                return;
+            }
+
+            if (!testOnly)
+            {
+                try
+                {
+                    page.RenameTo(newName, reason, true, false);
+                }
+                catch (WikiBotException wbex)
+                {
+                    Console.WriteLine(wbex);
+                }
+            }
+            Console.WriteLine("Renamed page {0} to {1}", pageName, newName);
         }
 
         /// <summary>Replaces all instances of a specified template from page text with the provided text. Does nothing if old and new templates are identical.</summary>
@@ -172,17 +207,104 @@ namespace Fixer
 
             if (currentText.Equals(newText))
             {
-                //Console.WriteLine("Did nothing");
                 return false;
             }
             else
             {
-                Console.WriteLine(">> Did something!");
-                //Console.WriteLine(currentText);
-                //Console.WriteLine(newText);
                 page.text = newText;
                 return true;
             }
+        }
+
+        public static bool UpdateUnitPage(Page page, string filePath, bool infoboxOnly)
+        {
+            string text = page.text;
+            string newText = text;
+
+            if (infoboxOnly)
+            {
+                bool result = page.ReplaceTemplate("Infobox zkunit", File.ReadAllText(filePath));
+                return result;
+            }
+            else
+            {
+                string tailText = @"==\s?Tactics and Strategy\s?==";
+                Match match = Regex.Match(text, tailText);
+                if (match.Success)
+                {
+                    int index = match.Index;
+                    newText = text.Remove(0, index).Insert(0, File.ReadAllText(filePath) + "\n\n");
+                }
+                else
+                {
+                    tailText = @"{{\s?Navbox";
+                    match = Regex.Match(text, tailText);
+                    if (match.Success)
+                    {
+                        int index = match.Index;
+                        newText = text.Remove(0, index).Insert(0, File.ReadAllText(filePath) + "\n\n");
+                    }
+                }
+
+                if (text.Equals(newText))
+                {
+                    //Console.WriteLine("Did nothing");
+                    return false;
+                }
+                else
+                {
+                    Console.WriteLine(">> Did something!");
+                    Console.WriteLine(newText);
+                    page.text = newText;
+                    return true;
+                }
+            }
+        }
+
+        public static void ApplyRenamesToPageText(string pageName, string[] renames)
+        {
+            Page page = new Page(newWiki, pageName);
+            page.Load();
+            string newText = page.text;
+            foreach (string renameLine in renames)
+            {
+                string[] kvp = renameLine.Split(',');
+                string oldName = kvp[0];
+                string newName = kvp[1];
+                newText = newText.Replace(oldName, newName);
+            }
+
+            if (page.text != newText)
+            {
+                page.text = newText;
+                page.Save("Update unit names", true);
+            }
+        }
+
+        public static void UpdateUnitNavbox(Page navbox, string[] renames)
+        {
+            navbox.Load();
+            string newText = navbox.text;
+            foreach (string renameLine in renames)
+            {
+                string[] kvp = renameLine.Split(',');
+                string oldName = kvp[0];
+                string newName = kvp[1];
+                newText = newText.Replace(oldName, newName);
+            }
+            if (navbox.text != newText)
+            {
+                navbox.text = newText;
+                navbox.Save("Update unit names", false);
+            }
+        }
+
+        public static void UpdateUnitNavboxes(string[] renames)
+        {
+            Page unitBox = new Page(newWiki, "Template:Navbox_units");
+            Page buildingBox = new Page(newWiki, "Template:Navbox_buildings");
+            UpdateUnitNavbox(unitBox, renames);
+            UpdateUnitNavbox(buildingBox, renames);
         }
 
         public static void DoStuff()
@@ -200,12 +322,14 @@ namespace Fixer
 
             int count = 0;  // increment this when we actually create a page
             string dir = "";
-            List<string> newFiles = null;    //new List<string>(Directory.GetFiles(dir));
 
-            //dir = Environment.OSVersion.Platform == PlatformID.Unix ? @"/media/histidine/My Book/zkwiki/raw/markup" : @"G:\zkwiki\raw\markup";
-            //newFiles = null;new List<string>(Directory.GetFiles(dir));
-            //newFiles = files.Shuffle();
+            // create new pages
             /*
+            List<string> newFiles = null;    //new List<string>(Directory.GetFiles(dir));
+            dir = Environment.OSVersion.Platform == PlatformID.Unix ? @"/media/histidine/My Book/zkwiki/raw/markup" : @"G:\zkwiki\raw\markup";
+            newFiles = null;new List<string>(Directory.GetFiles(dir));
+            newFiles = files.Shuffle();
+            
             foreach (string path in newFiles)
             {
                 string unitname = Path.GetFileNameWithoutExtension(path);
@@ -227,8 +351,33 @@ namespace Fixer
             }
             */
 
+            // unit renamer
+            //string renamedFilesListPath = Path.Combine(fileDir, "renames.csv");
+            //string[] renames = File.ReadAllLines(renamedFilesListPath);
+            /*
+            foreach (string renameLine in renames)
+            {
+                string[] kvp = renameLine.Split(',');
+                string oldName = kvp[0];
+                string newName = kvp[1];
+                RenamePage(oldName, newName, "Unit renamed", false);
+            }
+            */
+            //UpdateUnitNavboxes(renames);
+            //ApplyRenamesToPageText("Cloak", renames);
+            //ApplyRenamesToPageText("Newbie Guide", renames);
+            //ApplyRenamesToPageText("Newbie Guide 2", renames);
+            //ApplyRenamesToPageText("Shield", renames);
+
+            // unit page updater
+            /*
             count = 0;
-            dir = Environment.OSVersion.Platform == PlatformID.Unix ? @"/media/histidine/My Book/zkwiki/raw_infobox/markup" : @"G:\zkwiki\raw_infobox\markup";
+            bool infoBoxOnly = true;
+            if (infoBoxOnly)
+                dir = Path.Combine(fileDir, "raw_infobox/markup");
+            else
+                dir = Path.Combine(fileDir, "raw/markup");
+
             var filesUpdate = new List<string>(Directory.GetFiles(dir));
             foreach (string path in filesUpdate)
             {
@@ -243,13 +392,13 @@ namespace Fixer
                     //{
                     //    UpdateTemplate(page, kvp);
                     //}
-                    
-                    bool result = page.ReplaceTemplate ("Infobox zkunit", File.ReadAllText (path));
+
+                    bool result = UpdateUnitPage(page, path, false);
                     if (result) {
-                        page.Save (page.text, "Page auto-updated with DotNetWikiBot", true);
+                        page.Save ("Page auto-updated with DotNetWikiBot", true);
                         count++;
                     }
-                    if (count >= 10) {
+                    if (count >= 5) {
                         count = 0;
                         Console.WriteLine ("-- INTERMISSION --");
                         Console.WriteLine ("-- Review changes on wiki, then press Enter to continue --");
@@ -261,7 +410,9 @@ namespace Fixer
                     Console.WriteLine ("Page " +  page.title + " doesn't exist!");
                 }
             }
+            */
 
+            // unitpic replacer
             /*
             count = 0;
             dir = Environment.OSVersion.Platform == PlatformID.Unix ? @"/media/histidine/zkwiki/raw_infobox/markup" : @"G:\zkwiki\raw_infobox\markup";
@@ -283,20 +434,18 @@ namespace Fixer
             }
             */
 
+            // page porting
             string[,] toPort = 
             {
                 //{"MissionEditorCompatibility", "Mission Editor game compatibility"},
                 //{"MissionEditorStartPage", "Mission Editor"},
-                //{"MissionEditorWINE", "Mission Editor in WINE"},
-                //{"FactoryOrdersTutorial", "Mission Editor Factory Orders Tutorial"},
-                //{"MissionEditorTutorial", "Mission Editor Tutorial"},
-                //{"MissionEditorCutsceneTutorial", "Mission Editor Cutscenes Tutorial"}
             };
             for (int i=0; i<toPort.GetLength(0); i++)
             {
                 ConvertPage(toPort[i, 0], toPort[i, 1], false);
             }
 
+            //
             string[] toReformat =
             {
                 //"Mission Editor Cutscenes Tutorial"

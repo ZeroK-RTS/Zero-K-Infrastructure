@@ -4,6 +4,10 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Inflicts the specified amount of damage on all members of the specified unit group 
+	/// (can be negative)
+	/// </summary>
 	[DataContract]
 	public class ModifyUnitHealthAction : Action
 	{

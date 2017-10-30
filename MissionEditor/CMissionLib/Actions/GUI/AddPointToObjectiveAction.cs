@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Specifies a point that the camera will jump to when the objective is clicked in the ingame GUI
+	/// </summary>
 	[DataContract]
 	public class AddPointToObjectiveAction : Action
 	{

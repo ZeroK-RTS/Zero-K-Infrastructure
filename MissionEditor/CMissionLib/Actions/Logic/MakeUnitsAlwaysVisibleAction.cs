@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
+	/// <summary>
+	/// Set whether the selected unit group is always visible
+	/// </summary>
 	[DataContract]
 	public class MakeUnitsAlwaysVisibleAction : Action
 	{

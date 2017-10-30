@@ -20,6 +20,11 @@ namespace MissionEditor2
 {
 	static class Publishing
 	{
+		/// <summary>
+		/// Creates the dialog window for publishing the mission to server.
+		/// </summary>
+		/// <param name="mission"></param>
+		/// <param name="missionID">The ID of the mission on server to update; null when publishing a new mission.</param>
 		public static void Publish(Mission mission, int? missionID)
 		{
 			var dialog = new PublishDialog { DataContext = mission, Owner = MainWindow.Instance};
@@ -36,6 +41,13 @@ namespace MissionEditor2
 			dialog.ShowDialog();
 		}
 
+		/// <summary>
+		/// Uploads the mission to server.
+		/// </summary>
+		/// <param name="mission"></param>
+		/// <param name="password">User account password.</param>
+		/// <param name="missionId">The ID of the mission on server to update; null when publishing a new mission.</param>
+		/// <returns></returns>
 		public static bool SendMission(Mission mission, string password, int? missionId)
 		{
 			try
