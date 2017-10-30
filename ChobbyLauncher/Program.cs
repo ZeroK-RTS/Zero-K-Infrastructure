@@ -158,6 +158,7 @@ namespace ChobbyLauncher
 
                         var openGlFail = logStr.Contains("No OpenGL drivers installed.") ||
                             logStr.Contains("Please go to your GPU vendor's website and download their drivers.") ||
+                            logStr.Contains("minimum required OpenGL version not supported, aborting") ||
                             logStr.Contains("Update your graphic-card driver!");
             
 
@@ -166,9 +167,8 @@ namespace ChobbyLauncher
                 Trace.TraceWarning("Outdated OpenGL detected");
                 MessageBox.Show("You have outdated graphics card drivers!\r\nPlease try finding ones for your graphics card and updating them.", "Outdate graphics card driver detected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            
 
-            if (!springRunOk || syncError) // crash has occured
+            if ((!springRunOk && !openGlFail) || syncError) // crash has occured
             {
                 
                 if (
