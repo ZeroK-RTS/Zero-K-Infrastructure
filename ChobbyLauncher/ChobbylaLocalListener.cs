@@ -425,7 +425,18 @@ namespace ChobbyLauncher
         {
             try
             {
-                if (down != null) await down.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
+                if (down != null)
+                {
+                    await down.WaitHandle.AsTask(TimeSpan.FromMinutes(20), TimeSpan.FromSeconds(2), async () => {
+                        await SendCommand(new DownloadFileProgress()
+                        {
+                            Name = args.Name,
+                            FileType = args.FileType,
+                            Progress = down.TotalProgress,
+                            SecondsRemaining = down.SecondsRemaining
+                        });
+                    });
+                }
                 await SendCommand(new DownloadFileDone() { Name = args.Name, FileType = args.FileType, IsSuccess = down?.IsComplete == true });
             }
             catch (Exception ex)
