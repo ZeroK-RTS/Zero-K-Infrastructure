@@ -451,6 +451,23 @@ namespace ZeroKWeb.Controllers
             return Content(string.Format("{0} password set to {1}", acc.Name, newPassword));
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Auth(Role = AdminLevel.Moderator)]
+        public ActionResult SetUsername(int accountID, string newUsername)
+        {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Find(accountID);
+            if (!Account.IsValidLobbyName(newUsername)) return Content("Invalid username");
+            var existing = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == newUsername.ToUpper());
+            if (existing != null) return Content("Name conflict with user " + existing.AccountID);
+            var oldName = acc.Name;
+            acc.SetName(newUsername);
+            db.SaveChanges();
+            return Content(string.Format("{0} renamed to {1}", oldName, newUsername));
+        }
+
         [HttpPost]
         [Auth]
         public ActionResult ChangePassword(string oldPassword, string newPassword, string newPassword2)
