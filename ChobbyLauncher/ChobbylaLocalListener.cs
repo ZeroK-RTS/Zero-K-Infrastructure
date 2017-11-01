@@ -199,6 +199,23 @@ namespace ChobbyLauncher
         }
 
 
+        public async Task Process(AbortDownload args)
+        {
+            try
+            {
+                DownloadType type;
+                if (string.IsNullOrEmpty(args.FileType) || !Enum.TryParse(args.FileType, out type)) type = DownloadType.NOTKNOWN;
+                var down = chobbyla.downloader.GetResource(type, args.Name);
+                chobbyla.downloader.Downloads
+                    .Where(x => (x.TypeOfResource == type && (x.Alias == args.Name || x.Name == args.Name)))
+                    .ForEach(x => x.Abort());
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error cancelling download {0} : {1}", args?.Name, ex);
+            }
+        }
+
         public async Task Process(DownloadFile args)
         {
             try

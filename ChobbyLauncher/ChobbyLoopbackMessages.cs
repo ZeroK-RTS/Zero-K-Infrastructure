@@ -70,6 +70,13 @@ namespace ChobbyLauncher
         public string Name { get; set; }
     }
 
+    [ChobbyMessage]
+    public class AbortDownload
+    {
+        public string FileType { get; set; }
+        public string Name { get; set; }
+    }
+
 
     [ChobbyMessage]
     public class DownloadImage
