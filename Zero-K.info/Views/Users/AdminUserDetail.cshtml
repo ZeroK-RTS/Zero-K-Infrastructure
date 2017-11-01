@@ -118,6 +118,15 @@
     </form>
     <br/>
 
+    <br />
+    Rename user:
+    <form method="post" action="@Url.Action("SetUsername", "Users", new { accountID = Model.AccountID })">
+        @Html.AntiForgeryToken()
+        @Html.TextBox("newUsername", "Lobster")
+        <input type="submit" />
+    </form>
+    <br />
+
     <h2>Modify user rating</h2>
     <form method="post" action="@Url.Action("ChangeElo", "Users", new { accountID = Model.AccountID })">
         @Html.AntiForgeryToken()
