@@ -797,9 +797,13 @@ namespace ZkData
                 var localTcs = (TaskCompletionSource<object>)state;
                 Task.Run(callback);
                 if (timedOut)
+                {
                     if (DateTime.UtcNow > expiration) localTcs.TrySetCanceled();
+                }
                 else
+                {
                     localTcs.TrySetResult(null);
+                }
             }, tcs, updateInterval, executeOnlyOnce: false);
             tcs.Task.ContinueWith((_, state) => ((RegisteredWaitHandle)state).Unregister(null), registration, TaskScheduler.Default);
             return tcs.Task;
