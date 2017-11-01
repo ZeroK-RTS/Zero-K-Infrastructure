@@ -187,6 +187,10 @@ namespace ZkLobbyServer
             // people in same battle see each other
             if (uWatcher.MyBattle != null && uWatcher.MyBattle == uWatched.MyBattle) return true;
 
+            // people in same party see each other
+            if (uWatcher.User?.PartyID != null && uWatcher.User.PartyID == uWatched.User?.PartyID) return true;
+
+
             // people in same non "zk" channel see each other
             foreach (var chan in Channels.Values.Where(x => x != null))
             {
