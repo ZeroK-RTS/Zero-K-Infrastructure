@@ -20,7 +20,8 @@ namespace ZeroKWeb.Controllers
         public ActionResult ChangeHideCountry(int accountID, bool hideCountry)
         {
             var db = new ZkDataContext();
-            Account acc = db.Accounts.Single(x => x.AccountID == accountID);
+            Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+            if (acc == null) return Content("Invalid accountID");
 
             if (hideCountry) acc.Country = "??";
             // TODO reimplement ? Global.Nightwatch.Tas.SetHideCountry(acc.Name, hideCountry);
@@ -35,7 +36,8 @@ namespace ZeroKWeb.Controllers
         public ActionResult ChangeAccountDeleted(int accountID, bool isDeleted)
         {
             var db = new ZkDataContext();
-            Account acc = db.Accounts.Single(x => x.AccountID == accountID);
+            Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+            if (acc == null) return Content("Invalid accountID");
 
             if (acc.IsDeleted != isDeleted)
             {
@@ -54,7 +56,8 @@ namespace ZeroKWeb.Controllers
         public ActionResult ChangePermissions(int accountID, bool zkAdmin, bool vpnException)
         {
             var db = new ZkDataContext();
-            Account acc = db.Accounts.Single(x => x.AccountID == accountID);
+            Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+            if (acc == null) return Content("Invalid accountID");
             Account adminAcc = Global.Account;
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
 
@@ -85,7 +88,8 @@ namespace ZeroKWeb.Controllers
         public ActionResult ChangeElo(int accountID, int eloweight, int eloweight1v1)
         {
             var db = new ZkDataContext();
-            Account acc = db.Accounts.Single(x => x.AccountID == accountID);
+            Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+            if (acc == null) return Content("Invalid accountID");
             Account adminAcc = Global.Account;
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Fake elo malus changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
             if (acc.EloWeight != eloweight) {
@@ -108,6 +112,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var user = db.Accounts.Find(id);
+            if (acc == null) return Content("Invalid accountID");
             return View("AdminUserDetail", user);
         }
 
@@ -126,6 +131,7 @@ namespace ZeroKWeb.Controllers
             Account user = null;
             if (int.TryParse(id, out idint)) user = db.Accounts.Find(idint);
             if (user == null) user = Account.AccountByName(db, id);
+            if (user == null) return Content("Invalid account (neither an ID nor name)");
             return View("UserDetail", user);
         }
 
@@ -194,6 +200,7 @@ namespace ZeroKWeb.Controllers
             Account user = null;
             if (int.TryParse(id, out idint)) user = db.Accounts.Find(idint);
             if (user == null) user = Account.AccountByName(db, id);
+            if (user == null) return Content("Invalid account (neither an ID nor name)");
 
             return View("UserDetail", user);
         }
@@ -225,7 +232,8 @@ namespace ZeroKWeb.Controllers
                                    double banHours)
         {
             ZkDataContext db = new ZkDataContext();
-            Account acc = db.Accounts.Single(x => x.AccountID == accountID);
+            Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+            if (acc == null) return Content("Invalid accountID");
 
             if (banHours > MaxBanHours) banHours = MaxBanHours; // todo show some notification 
 
@@ -273,6 +281,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(id);
+            if (acc == null) return Content("Invalid accountID");
             return View("ReportToAdmin", acc);
         }
 
@@ -283,6 +292,7 @@ namespace ZeroKWeb.Controllers
             Account user = null;
             if (int.TryParse(id, out idint)) user = db.Accounts.Find(idint);
             if (user == null) user = Account.AccountByName(db, id);
+            if (user == null) return Content("Invalid account (neither an ID nor name)");
 
             return View("ReportToAdmin", user);
         }
@@ -293,6 +303,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(accountID);
+            if (acc == null) return Content("Invalid accountID");
             
             db.AbuseReports.InsertOnSubmit(new AbuseReport()
                                            {
@@ -322,7 +333,8 @@ namespace ZeroKWeb.Controllers
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult RemovePunishment(int punishmentID) {
             var db = new ZkDataContext();
-            var todel = db.Punishments.First(x => x.PunishmentID == punishmentID);
+            var todel = db.Punishments.FirstOrDefault(x => x.PunishmentID == punishmentID);
+            if (todel == null) return Content("Invalid punishmentID");
 
             Account acc = todel.AccountByAccountID;
             string punisherName = "<unknown>";
@@ -444,6 +456,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(accountID);
+            if (acc == null) return Content("Invalid accountID");
             if (acc.AdminLevel > AdminLevel.None) return Content("Cannot set password on this user");
             acc.SetPasswordPlain(newPassword);
             if (!string.IsNullOrEmpty(newPassword)) acc.SteamID = null;
@@ -478,6 +491,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(Global.AccountID);
+            if (acc == null) return Content("Invalid accountID");
             if (string.IsNullOrEmpty(acc.PasswordBcrypt)) return Content("Your account is password-less, use steam");
             if (AuthServiceClient.VerifyAccountPlain(acc.Name, oldPassword) == null)
             {
