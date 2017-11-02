@@ -462,6 +462,7 @@ namespace ZeroKWeb.Controllers
             if (!Account.IsValidLobbyName(newUsername)) return Content("Invalid username");
             var existing = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == newUsername.ToUpper());
             if (existing != null) return Content("Name conflict with user " + existing.AccountID);
+            Global.Server.KickFromServer(Global.Account.Name, acc.Name, "Your username has been changed from " + acc.Name + " to " + newUsername + ". Please login using your new username.");
             var oldName = acc.Name;
             acc.SetName(newUsername);
             db.SaveChanges();
