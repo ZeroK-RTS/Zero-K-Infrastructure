@@ -459,6 +459,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(accountID);
+            if (acc == null) return Content("Invalid accountID");
             if (!Account.IsValidLobbyName(newUsername)) return Content("Invalid username");
             var existing = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == newUsername.ToUpper());
             if (existing != null) return Content("Name conflict with user " + existing.AccountID);
