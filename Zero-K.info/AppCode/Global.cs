@@ -238,12 +238,12 @@ namespace ZeroKWeb
                 var message = string.Format("WOOHOO! {0:d} New contribution of {1:F2}€ by {2} - for the jar {3}", c.Time, c.Euros,
                     c.Name.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(), c.ContributionJar.Name);
 
-                Server.GhostSay(new Say() { IsEmote = true, Target = "zkdev", User = GlobalConst.NightwatchName, Text = message });
+                Server.GhostSay(new Say() { IsEmote = true, Target = "zk", User = GlobalConst.NightwatchName, Text = message });
 
                 if (c.AccountByAccountID != null) {
                     Server.GhostSay(new Say() {
                         IsEmote = true,
-                        Target = "zkdev",
+                        Target = "zk",
                         User = GlobalConst.NightwatchName,
                         Text = string.Format("It is {0} {2}/Users/Detail/{1}", c.AccountByAccountID.Name, c.AccountID, GlobalConst.BaseSiteUrl)
                     });
