@@ -53,10 +53,10 @@ namespace ZkData
 
 			var gotHash = Hash.HashBytes(data.Decompress());
 			if (gotHash != hash) throw new ApplicationException("File hash invalid, cannot add to pool");
-			//var tempFile = Path.Combine(tempPath, name);
+			var tempFile = Path.Combine(tempPath, name);
 			var targetFile = Path.Combine(folder, name);
-			File.WriteAllBytes(targetFile, data);
-			//File.Move(tempFile, targetFile);
+			File.WriteAllBytes(tempFile, data);
+			File.Move(tempFile, targetFile);
 		}
 
         public byte[] ReadFromStorage(Hash hash)
