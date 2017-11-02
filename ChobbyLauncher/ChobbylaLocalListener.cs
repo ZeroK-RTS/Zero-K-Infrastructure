@@ -205,7 +205,6 @@ namespace ChobbyLauncher
             {
                 DownloadType type;
                 if (string.IsNullOrEmpty(args.FileType) || !Enum.TryParse(args.FileType, out type)) type = DownloadType.NOTKNOWN;
-                var down = chobbyla.downloader.GetResource(type, args.Name);
                 chobbyla.downloader.Downloads
                     .Where(x => (x.TypeOfResource == type && (x.Alias == args.Name || x.Name == args.Name)))
                     .ForEach(x => x.Abort());
