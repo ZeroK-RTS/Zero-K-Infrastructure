@@ -295,39 +295,40 @@ namespace ZeroKWeb.SpringieInterface
             if (user.Faction == attacker)
             {
                 sb.AppendFormat("You are attacking {0} planet {1}\n", planet.Faction != null ? planet.Faction.Name : "neutral", planet.Name);
-                sb.AppendFormat("You have {0} of the {1} influence needed to conquer this planet.\n",
+                sb.AppendFormat("You have {0:N1} of the {1:N1} influence needed to conquer this planet.\n",
                     attackerIp,
                     GlobalConst.InfluenceToCapturePlanet);
 
-                sb.AppendFormat("If you win you will gain {0} influence ({1} base + {2} from dropships - {3} from defense)\n",
+                sb.AppendFormat("If you win you will gain {0:N1} influence ({1:N1} base + {2:N1} from dropships - {3:N1} from defense)\n",
                     ipBase + ipShips - ipDefs,
                     ipBase,
                     ipShips,
                     ipDefs);
 
-                sb.AppendFormat("If you are losing, try to kill enemy command center for {0} influence\n", attackerLoseKillCc);
-                sb.AppendFormat("If you are winning, protect your command center. If you lose it, you will only get {0} influence here\n", attackerWinLoseCc);
+                sb.AppendFormat("If you are losing, try to kill enemy command center for {0:N1} influence\n", attackerLoseKillCc);
+                sb.AppendFormat("If you are winning, protect your command center. If you lose it, you will only get {0:N1} influence here\n", attackerWinLoseCc);
                 sb.AppendFormat("You can also destroy enemy PlanetWars structures to disable them on the strategic map\n");
             }
             else
             {
                 sb.AppendFormat("You are defending {0} planet {1}\n", planet.Faction != null ? planet.Faction.Name : "neutral", planet.Name);
-                sb.AppendFormat("Attackers have {0} of the {1} influence needed to conquer this planet.\n",
+                sb.AppendFormat("Attackers have {0:N1} of the {1:N1} influence needed to conquer this planet.\n",
                     attackerIp,
                     GlobalConst.InfluenceToCapturePlanet);
 
                 sb.AppendFormat("If you win, attacker will get nothing, but they can disable your PlanetWars structures by destroying them here.\n");
                 sb.AppendFormat("You can prevent structure destruction by evacuation them.\n");
 
-                sb.AppendFormat("If you lose, {4} will gain {0} influence ({1} base + {2} from dropships - {3} from defense)\n",
+                sb.AppendFormat("If you lose, {4} will gain {0:N1} influence ({1:N1} base + {2:N1} from dropships - {3:N1} from defense)\n",
                     ipBase + ipShips - ipDefs,
                     ipBase,
                     ipShips,
                     ipDefs, attacker?.Shortcut);
 
 
-                sb.AppendFormat("If you are losing, try to kill enemy command center, they will only gain {0} influence\n", attackerWinLoseCc);
-                sb.AppendFormat("If you are winning, protect your command center. If you win but lose it, they will still get {0} influence here\n", attackerLoseKillCc);
+                sb.AppendFormat("If you are losing, try to kill enemy command center, they will only gain {0:N1} influence\n", attackerWinLoseCc);
+                sb.AppendFormat("If you are winning, protect your command center. If you win but lose it, they will still get {0:N1} influence here\n", attackerLoseKillCc);
+                sb.AppendFormat("You should also protect PlanetWars structures as if they die they get disabled on the strategic map\n");
             }
 
             return sb.ToString();
