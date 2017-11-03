@@ -112,7 +112,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var user = db.Accounts.Find(id);
-            if (acc == null) return Content("Invalid accountID");
+            if (user == null) return Content("Invalid accountID");
             return View("AdminUserDetail", user);
         }
 
