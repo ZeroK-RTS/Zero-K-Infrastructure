@@ -235,8 +235,8 @@ namespace ZeroKWeb
                 };
 
             PayPalInterface.NewContribution += (c) => {
-                var message = string.Format("WOOHOO! {0:d} New contribution of {1:F2}€ by {2} - for the jar {3}", c.Time, c.Euros,
-                    c.Name.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(), c.ContributionJar.Name);
+                var message = string.Format("WOOHOO! {0:d} New contribution of {1:F2}€ - for the jar {2}", c.Time, c.Euros,
+                    c.ContributionJar.Name);
 
                 Server.GhostSay(new Say() { IsEmote = true, Target = "zk", User = GlobalConst.NightwatchName, Text = message });
 
