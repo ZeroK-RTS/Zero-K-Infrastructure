@@ -127,7 +127,7 @@ namespace ZkData
                 var match = Regex.Match(itemCode, "ZK_ID_([0-9]*)_JAR_([0-9]*)");
                 if (match.Success) {
                     int i;
-                    if (int.TryParse(match.Groups[1].Value, out i)) accountID = i;
+                    if (int.TryParse(match.Groups[1].Value, out i) && i != 0) accountID = i;
                     else accountID = null;
                     if (int.TryParse(match.Groups[2].Value, out i)) jarID = i;
                     else jarID = null;
