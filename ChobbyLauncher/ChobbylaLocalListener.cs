@@ -443,7 +443,7 @@ namespace ChobbyLauncher
             {
                 if (down != null)
                 {
-                    await down.WaitHandle.AsTask(TimeSpan.FromMinutes(20), TimeSpan.FromSeconds(2), async () => {
+                    await down.WaitHandle.AsTask(TimeSpan.FromMinutes(20), TimeSpan.FromSeconds(1), async () => {
                         await SendCommand(new DownloadFileProgress()
                         {
                             Name = args.Name,
