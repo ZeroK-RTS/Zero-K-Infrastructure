@@ -28,7 +28,7 @@ namespace AutoRegistrator
 
         public void RunAll()
         {
-            if (GlobalConst.Mode == ModeType.Live)
+            if (GlobalConst.Mode != ModeType.Local)
             {
                 lock (locker)
                 {
