@@ -383,7 +383,7 @@ namespace PlasmaDownloader.Packages
 
             public MemoryStream ReadFile(SpringPaths paths, string namePath)
             {
-                var sdpPath = Path.Combine(paths.WritableDirectory, "packages", $"{Hash}.sdp");
+                var sdpPath = Path.Combine(paths.WritableDirectory, "packages", $"{Hash}.sdpzk");
                 if (File.Exists(sdpPath))
                 {
                     SdpArchive sdp;

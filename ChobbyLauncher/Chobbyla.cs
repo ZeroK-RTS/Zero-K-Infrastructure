@@ -79,7 +79,6 @@ namespace ChobbyLauncher
                     {
                         if (!await downloader.DownloadFile("Checking for chobby update", DownloadType.RAPID, chobbyTag, Progress, 2)) return false;
                         if (!await downloader.DownloadFile("Checking for game update", DownloadType.RAPID, GlobalConst.DefaultZkTag, Progress, 2)) return false;
-                        //if (!await downloader.DownloadFile("Checking for game update", DownloadType.GAME_SDZ, GlobalConst.DefaultZkTag, Progress, 2)) return false;
 
                         ver = downloader.PackageDownloader.GetByTag(chobbyTag);
                         internalName = ver.InternalName;

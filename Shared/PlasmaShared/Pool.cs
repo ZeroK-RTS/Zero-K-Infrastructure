@@ -56,6 +56,7 @@ namespace ZkData
 			var tempFile = Path.Combine(tempPath, name);
 			var targetFile = Path.Combine(folder, name);
 			File.WriteAllBytes(tempFile, data);
+            if (File.Exists(targetFile)) File.Delete(targetFile);
 			File.Move(tempFile, targetFile);
 		}
 
