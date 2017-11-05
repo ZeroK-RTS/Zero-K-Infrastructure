@@ -70,6 +70,13 @@ namespace ChobbyLauncher
         public string Name { get; set; }
     }
 
+    [ChobbyMessage]
+    public class AbortDownload
+    {
+        public string FileType { get; set; }
+        public string Name { get; set; }
+    }
+
 
     [ChobbyMessage]
     public class DownloadImage
@@ -95,6 +102,15 @@ namespace ChobbyLauncher
         public string FileType { get; set; }
         public bool IsSuccess { get; set; }
         public string Name { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class DownloadFileProgress
+    {
+        public string FileType { get; set; }
+        public string Name { get; set; }
+        public double Progress { get; set; }
+        public int SecondsRemaining { get; set; }
     }
 
 

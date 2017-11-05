@@ -782,6 +782,34 @@ namespace ZkData
         }
 
 
+        /// <summary>
+        /// Converts wait handle into awaitable task with an update callback
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
+        public static Task AsTask(this WaitHandle handle, TimeSpan timeout, TimeSpan updateInterval, Action callback)
+        {
+            var tcs = new TaskCompletionSource<object>();
+            var expiration = DateTime.UtcNow.Add(updateInterval);
+            var registration = ThreadPool.RegisterWaitForSingleObject(handle, (state, timedOut) =>
+            {
+                var localTcs = (TaskCompletionSource<object>)state;
+                Task.Run(callback);
+                if (timedOut)
+                {
+                    if (DateTime.UtcNow > expiration) localTcs.TrySetCanceled();
+                }
+                else
+                {
+                    localTcs.TrySetResult(null);
+                }
+            }, tcs, updateInterval, executeOnlyOnce: false);
+            tcs.Task.ContinueWith((_, state) => ((RegisteredWaitHandle)state).Unregister(null), registration, TaskScheduler.Default);
+            return tcs.Task;
+        }
+
+
         public static string Truncate(this string input, int length)
         {
             if (input == null) return input;

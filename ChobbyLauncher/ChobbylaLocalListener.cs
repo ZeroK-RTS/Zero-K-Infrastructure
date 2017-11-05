@@ -199,6 +199,22 @@ namespace ChobbyLauncher
         }
 
 
+        public async Task Process(AbortDownload args)
+        {
+            try
+            {
+                DownloadType type;
+                if (string.IsNullOrEmpty(args.FileType) || !Enum.TryParse(args.FileType, out type)) type = DownloadType.NOTKNOWN;
+                chobbyla.downloader.Downloads
+                    .Where(x => (x.TypeOfResource == type && (x.Alias == args.Name || x.Name == args.Name)))
+                    .ForEach(x => x.Abort());
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error cancelling download {0} : {1}", args?.Name, ex);
+            }
+        }
+
         public async Task Process(DownloadFile args)
         {
             try
@@ -425,7 +441,18 @@ namespace ChobbyLauncher
         {
             try
             {
-                if (down != null) await down.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
+                if (down != null)
+                {
+                    await down.WaitHandle.AsTask(TimeSpan.FromMinutes(20), TimeSpan.FromSeconds(2), async () => {
+                        await SendCommand(new DownloadFileProgress()
+                        {
+                            Name = args.Name,
+                            FileType = args.FileType,
+                            Progress = down.TotalProgress,
+                            SecondsRemaining = down.SecondsRemaining
+                        });
+                    });
+                }
                 await SendCommand(new DownloadFileDone() { Name = args.Name, FileType = args.FileType, IsSuccess = down?.IsComplete == true });
             }
             catch (Exception ex)
