@@ -82,10 +82,6 @@ namespace AutoRegistrator
             if (!downloader.DownloadFile(DownloadType.RAPID, GlobalConst.DefaultZkTag, prog).Result) throw new ApplicationException("SteamDepot zk download failed: " + prog.Status);
 
 
-            File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_chobby.txt"), chobbyName);
-            File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_engine.txt"), MiscVar.DefaultEngine);
-
-
             CopyResources(siteBase, paths, GetResourceList(), downloader);
 
             if (!downloader.UpdateMissions(prog).Result) throw new ApplicationException("SteamDepot Error updating missions! " + prog.Status);
@@ -94,9 +90,15 @@ namespace AutoRegistrator
             CopyLobbyProgram();
             CopyExtraImages();
 
-            Utils.CheckPath(targetFolder);
-
             downloader.PackageDownloader.DoMasterRefresh();
+            
+            try
+            {
+                Directory.Delete(Path.Combine(targetFolder, "pool"), true);
+            } catch { }
+
+            File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_chobby.txt"), chobbyName);
+            File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_engine.txt"), MiscVar.DefaultEngine);
         }
 
         private void CopyLobbyProgram()
