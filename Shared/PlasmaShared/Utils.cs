@@ -791,11 +791,12 @@ namespace ZkData
         public static Task AsTask(this WaitHandle handle, TimeSpan timeout, TimeSpan updateInterval, Action callback)
         {
             var tcs = new TaskCompletionSource<object>();
-            var expiration = DateTime.UtcNow.Add(updateInterval);
+            var expiration = DateTime.UtcNow.Add(timeout);
             var registration = ThreadPool.RegisterWaitForSingleObject(handle, (state, timedOut) =>
             {
-                var localTcs = (TaskCompletionSource<object>)state;
                 Task.Run(callback);
+
+                var localTcs = (TaskCompletionSource<object>)state;
                 if (timedOut)
                 {
                     if (DateTime.UtcNow > expiration) localTcs.TrySetCanceled();
