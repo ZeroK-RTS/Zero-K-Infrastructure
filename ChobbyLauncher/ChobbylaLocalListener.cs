@@ -449,7 +449,10 @@ namespace ChobbyLauncher
                             Name = args.Name,
                             FileType = args.FileType,
                             Progress = down.TotalProgress,
-                            SecondsRemaining = down.SecondsRemaining
+                            SecondsRemaining = down.SecondsRemaining,
+                            TotalLength = down.TotalLength,
+                            CurrentSpeed = down.CurrentSpeed
+                            
                         });
                     });
                 }
