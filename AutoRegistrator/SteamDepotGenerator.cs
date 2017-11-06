@@ -103,9 +103,9 @@ namespace AutoRegistrator
 
         private void CopyLobbyProgram()
         {
-            var zklSource = Path.Combine(siteBase, "lobby", "Chobby.exe");
-            if (File.Exists(zklSource)) File.Copy(zklSource, Path.Combine(targetFolder, "Chobby.exe"), true);
-            else new WebClient().DownloadFile(GlobalConst.SelfUpdaterBaseUrl + "/" + "Chobbe.exe", Path.Combine(targetFolder, "Chobby.exe"));
+            var zklSource = Path.Combine(siteBase, "lobby", "Zero-K.exe");
+            if (File.Exists(zklSource)) File.Copy(zklSource, Path.Combine(targetFolder, "Zero-K.exe"), true);
+            else new WebClient().DownloadFile(GlobalConst.SelfUpdaterBaseUrl + "/" + "Zero-K.exe", Path.Combine(targetFolder, "Zero-K.exe"));
         }
 
         private void CopyExtraImages()

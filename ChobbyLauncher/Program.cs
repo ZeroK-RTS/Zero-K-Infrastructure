@@ -128,9 +128,9 @@ namespace ChobbyLauncher
                 if ((args[0] == "--help") || (args[0] == "-h") || (args[0] == "/?"))
                 {
                     Console.WriteLine(
-                        "chobby.exe[rapid_tag][engine_override] \n\nUse zkmenu: stable or chobby: test\nTo run local dev version use chobby.exe dev");
+                        "Zero-K.exe [rapid_tag] [engine_override] \n\nUse zkmenu:stable or chobby:test\nTo run local dev version use Zero-K.exe dev");
                     MessageBox.Show(
-                        "chobby.exe [rapid_tag] [engine_override] \n\nUse zkmenu:stable or chobby:test\nTo run local dev version use chobby.exe dev");
+                        "Zero-K.exe [rapid_tag] [engine_override] \n\nUse zkmenu:stable or chobby:test\nTo run local dev version use Zero-K.exe dev");
                 }
                 chobbyTag = args[0];
                 if (args.Length > 1) engineOverride = args[1];

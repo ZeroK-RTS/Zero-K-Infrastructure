@@ -64,7 +64,7 @@ namespace ChobbyLauncher
                     if (!Debugger.IsAttached && !IsSteam)
                     {
                         Status = "Checking for self-upgrade";
-                        var selfUpdater = new SelfUpdater();
+                        var selfUpdater = new SelfUpdater("Zero-K");
                         selfUpdater.ProgramUpdated += delegate
                         {
                             Process.Start(Application.ExecutablePath, string.Join(" ", Environment.GetCommandLineArgs().Skip(1)));
