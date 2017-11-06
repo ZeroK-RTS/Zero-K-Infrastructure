@@ -22,7 +22,7 @@ namespace ChobbyLauncher
         private bool isDev;
 
         public SpringPaths paths;
-        public bool IsSteam { get; private set; }
+        public bool IsSteamFolder { get; private set; }
 
         public Process process { get; private set; }
 
@@ -46,7 +46,7 @@ namespace ChobbyLauncher
             paths = new SpringPaths(rootPath, false, true);
             chobbyTag = chobbyTagOverride ?? GlobalConst.DefaultChobbyTag;
             isDev = (chobbyTag == "dev") || (chobbyTag == "chobby:dev") || (chobbyTag == "zkmenu:dev");
-            IsSteam = File.Exists(Path.Combine(paths.WritableDirectory, "steamfolder.txt"));
+            IsSteamFolder = File.Exists(Path.Combine(paths.WritableDirectory, "steamfolder.txt"));
             engine = engineOverride;
             downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
         }
@@ -61,7 +61,7 @@ namespace ChobbyLauncher
 
                 if (!isDev)
                 {
-                    if (!Debugger.IsAttached && !IsSteam)
+                    if (!Debugger.IsAttached && !IsSteamFolder)
                     {
                         Status = "Checking for self-upgrade";
                         var selfUpdater = new SelfUpdater("Zero-K");
@@ -75,7 +75,7 @@ namespace ChobbyLauncher
                         await task;
                     }
 
-                    if (!IsSteam)
+                    if (!IsSteamFolder)
                     {
                         if (!await downloader.DownloadFile("Checking for chobby update", DownloadType.RAPID, chobbyTag, Progress, 2)) return false;
                         if (!await downloader.DownloadFile("Checking for game update", DownloadType.RAPID, GlobalConst.DefaultZkTag, Progress, 2)) return false;
@@ -112,7 +112,7 @@ namespace ChobbyLauncher
                 }
 
 
-                if (!IsSteam)
+                if (!IsSteamFolder)
                 {
                     if (!await downloader.DownloadFile("Downloading engine", DownloadType.ENGINE, engine, Progress, 2)) return false;
 
@@ -175,7 +175,7 @@ namespace ChobbyLauncher
 
         private string GetSteamEngine()
         {
-            if (IsSteam)
+            if (IsSteamFolder)
             {
                 var fp = Path.Combine(paths.WritableDirectory, "steam_engine.txt");
                 if (File.Exists(fp)) return File.ReadAllText(fp);
@@ -185,7 +185,7 @@ namespace ChobbyLauncher
 
         private string GetSteamChobby()
         {
-            if (IsSteam)
+            if (IsSteamFolder)
             {
                 var fp = Path.Combine(paths.WritableDirectory, "steam_chobby.txt");
                 if (File.Exists(fp)) return File.ReadAllText(fp);

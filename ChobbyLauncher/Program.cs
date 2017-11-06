@@ -139,7 +139,7 @@ namespace ChobbyLauncher
 
         private static void RunWrapper(Chobbyla chobbyla, ulong connectLobbyID, TextWriter logWriter, StringBuilder logSb)
         {
-            if (!chobbyla.IsSteam) // not steam, show gui
+            if (!chobbyla.IsSteamFolder) // not steam, show gui
             {
                 var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
                 if (cf.ShowDialog() != DialogResult.OK) return;

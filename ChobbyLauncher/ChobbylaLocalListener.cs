@@ -558,7 +558,9 @@ namespace ChobbyLauncher
                     {
                         DefaultServerHost = GlobalConst.LobbyServerHost,
                         DefaultServerPort = GlobalConst.LobbyServerPort,
-                        UserID = Utils.GetMyUserID().ToString()
+                        UserID = Utils.GetMyUserID().ToString(),
+                        IsSteamFolder = chobbyla.IsSteamFolder
+
                     });
             }
             catch (Exception ex)
@@ -580,7 +582,7 @@ namespace ChobbyLauncher
                         AuthToken = steam.AuthToken,
                         Friends = steam.Friends.Select(x => x.ToString()).ToList(),
                         FriendSteamID = friendId?.ToString(),
-                        SuggestedName = steam.MySteamNameSanitized
+                        SuggestedName = steam.MySteamNameSanitized,
                     });
 
                 if (friendId != null) steam.SendSteamNotifyJoin(friendId.Value);

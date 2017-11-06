@@ -132,6 +132,7 @@ namespace ChobbyLauncher
         public string UserID { get; set;}
         public string DefaultServerHost { get; set; }
         public int DefaultServerPort { get; set; }
+        public bool IsSteamFolder { get; set; }
     }
 
 
