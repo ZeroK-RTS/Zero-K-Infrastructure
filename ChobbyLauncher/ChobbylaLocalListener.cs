@@ -14,6 +14,7 @@ using GameAnalyticsSDK.Net;
 using PlasmaDownloader;
 using PlasmaShared;
 using ZkData;
+using Timer = System.Threading.Timer;
 
 namespace ChobbyLauncher
 {
@@ -26,6 +27,7 @@ namespace ChobbyLauncher
         private TextToSpeechBase tts;
         private SteamClientHelper steam;
         private ulong initialConnectLobbyID;
+        private Timer timer;
 
 
         public ChobbylaLocalListener(Chobbyla chobbyla, SteamClientHelper steam, ulong initialConnectLobbyID)
@@ -39,7 +41,23 @@ namespace ChobbyLauncher
             steam.JoinFriendRequest += SteamOnJoinFriendRequest;
             steam.OverlayActivated += SteamOnOverlayActivated;
             steam.SteamOnline += () => { SendSteamOnline(); };
+            timer = new Timer((o)=>OnTimerTick(), this, 500, 500);
+        }
 
+        private void OnTimerTick()
+        {
+            foreach (var d in chobbyla.downloader.Downloads.Where(x=>x.IsComplete == null))
+            {
+                SendCommand(new DownloadFileProgress()
+                {
+                    Name = d.Name,
+                    FileType = d.DownloadType.ToString(),
+                    Progress = d.TotalProgress,
+                    SecondsRemaining = d.SecondsRemaining,
+                    TotalLength = d.TotalLength,
+                    CurrentSpeed = d.CurrentSpeed
+                });
+            }
         }
 
         private void SteamOnOverlayActivated(bool b)
@@ -443,20 +461,9 @@ namespace ChobbyLauncher
             {
                 if (down != null)
                 {
-                    await down.WaitHandle.AsTask(TimeSpan.FromMinutes(30), TimeSpan.FromMilliseconds(500), async () => {
-                        await SendCommand(new DownloadFileProgress()
-                        {
-                            Name = args.Name,
-                            FileType = args.FileType,
-                            Progress = down.TotalProgress,
-                            SecondsRemaining = down.SecondsRemaining,
-                            TotalLength = down.TotalLength,
-                            CurrentSpeed = down.CurrentSpeed
-                            
-                        });
-                    });
+                    await down.WaitHandle.AsTask(TimeSpan.FromMinutes(30));
                 }
-                await SendCommand(new DownloadFileDone() { Name = args.Name, FileType = args.FileType, IsSuccess = down?.IsComplete == true });
+                await SendCommand(new DownloadFileDone() { Name = args.Name, FileType = args.FileType, IsSuccess = down?.IsComplete == true, IsAborted = down?.IsAborted == true});
             }
             catch (Exception ex)
             {
@@ -591,6 +598,7 @@ namespace ChobbyLauncher
 
         private async Task OnConnectionClosed(bool arg)
         {
+            timer.Dispose();
             Trace.TraceInformation("Chobby closed connection");
         }
     }

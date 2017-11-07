@@ -101,6 +101,7 @@ namespace ChobbyLauncher
     {
         public string FileType { get; set; }
         public bool IsSuccess { get; set; }
+        public bool IsAborted { get; set; }
         public string Name { get; set; }
     }
 

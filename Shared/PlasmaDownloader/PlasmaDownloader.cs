@@ -1,6 +1,7 @@
 #region using
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,9 +34,12 @@ namespace PlasmaDownloader
         private IResourcePresenceChecker scanner;
 
 
-        public IEnumerable<Download> Downloads
+        public IReadOnlyCollection<Download> Downloads
         {
-            get { return downloads.AsReadOnly(); }
+            get
+            {   
+                lock (downloads) return new List<Download>(downloads).AsReadOnly();
+            }
         }
 
         public PackageDownloader PackageDownloader
