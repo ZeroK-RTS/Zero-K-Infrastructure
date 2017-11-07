@@ -257,7 +257,7 @@ namespace ZeroKWeb
             return server.ConnectedUsers.Get(player)?.SendCommand(GenerateLobbyCommand());
         }
 
-        private DateTime GetAcceptDeadline()
+        private DateTime GetAcceptDeadline() 
         {
             return ChallengeTime.Value.AddMinutes(GlobalConst.PlanetWarsMinutesToAccept);
         }
@@ -265,7 +265,13 @@ namespace ZeroKWeb
         private DateTime GetAttackDeadline()
         {
             var extra = 0;
+            if (AttackOptions.Count == 0)
+            {
+                return AttackerSideChangeTime.AddMinutes(GlobalConst.PlanetWarsMinutesToAttackIfNoOption);
+            }
+
             if (missedDefenseFactionID == AttackingFaction.FactionID) extra = Math.Min(missedDefenseCount * GlobalConst.PlanetWarsMinutesToAttack, 60);
+
             return AttackerSideChangeTime.AddMinutes(GlobalConst.PlanetWarsMinutesToAttack + extra);
         }
 
@@ -439,12 +445,6 @@ namespace ZeroKWeb
                 {
                     var planet = planets.FirstOrDefault(x => (x.TeamSize == 2) && x.CanMatchMakerPlay(attacker));
                     if (planet != null) InternalAddOption(planet);
-                }
-
-                // make sure some option always exists
-                if (!AttackOptions.Any())
-                {
-                    foreach (var planet in planets.Take(6)) InternalAddOption(planet);
                 }
             }
 

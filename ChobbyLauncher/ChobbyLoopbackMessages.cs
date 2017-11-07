@@ -70,6 +70,13 @@ namespace ChobbyLauncher
         public string Name { get; set; }
     }
 
+    [ChobbyMessage]
+    public class AbortDownload
+    {
+        public string FileType { get; set; }
+        public string Name { get; set; }
+    }
+
 
     [ChobbyMessage]
     public class DownloadImage
@@ -94,7 +101,19 @@ namespace ChobbyLauncher
     {
         public string FileType { get; set; }
         public bool IsSuccess { get; set; }
+        public bool IsAborted { get; set; }
         public string Name { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class DownloadFileProgress
+    {
+        public string FileType { get; set; }
+        public string Name { get; set; }
+        public double Progress { get; set; }
+        public int SecondsRemaining { get; set; }
+        public int TotalLength { get; set; }
+        public int CurrentSpeed { get; set; }
     }
 
 
@@ -114,6 +133,7 @@ namespace ChobbyLauncher
         public string UserID { get; set;}
         public string DefaultServerHost { get; set; }
         public int DefaultServerPort { get; set; }
+        public bool IsSteamFolder { get; set; }
     }
 
 

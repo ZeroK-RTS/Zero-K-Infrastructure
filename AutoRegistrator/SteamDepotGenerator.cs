@@ -28,7 +28,7 @@ namespace AutoRegistrator
 
         public void RunAll()
         {
-            if (GlobalConst.Mode == ModeType.Live)
+            if (GlobalConst.Mode != ModeType.Local)
             {
                 lock (locker)
                 {
@@ -82,10 +82,6 @@ namespace AutoRegistrator
             if (!downloader.DownloadFile(DownloadType.RAPID, GlobalConst.DefaultZkTag, prog).Result) throw new ApplicationException("SteamDepot zk download failed: " + prog.Status);
 
 
-            File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_chobby.txt"), chobbyName);
-            File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_engine.txt"), MiscVar.DefaultEngine);
-
-
             CopyResources(siteBase, paths, GetResourceList(), downloader);
 
             if (!downloader.UpdateMissions(prog).Result) throw new ApplicationException("SteamDepot Error updating missions! " + prog.Status);
@@ -94,16 +90,22 @@ namespace AutoRegistrator
             CopyLobbyProgram();
             CopyExtraImages();
 
-            Utils.CheckPath(targetFolder);
-
             downloader.PackageDownloader.DoMasterRefresh();
+            
+            try
+            {
+                Directory.Delete(Path.Combine(targetFolder, "pool"), true);
+            } catch { }
+
+            File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_chobby.txt"), chobbyName);
+            File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_engine.txt"), MiscVar.DefaultEngine);
         }
 
         private void CopyLobbyProgram()
         {
-            var zklSource = Path.Combine(siteBase, "lobby", "Chobby.exe");
-            if (File.Exists(zklSource)) File.Copy(zklSource, Path.Combine(targetFolder, "Chobby.exe"), true);
-            else new WebClient().DownloadFile(GlobalConst.SelfUpdaterBaseUrl + "/" + "Chobbe.exe", Path.Combine(targetFolder, "Chobby.exe"));
+            var zklSource = Path.Combine(siteBase, "lobby", "Zero-K.exe");
+            if (File.Exists(zklSource)) File.Copy(zklSource, Path.Combine(targetFolder, "Zero-K.exe"), true);
+            else new WebClient().DownloadFile(GlobalConst.SelfUpdaterBaseUrl + "/" + "Zero-K.exe", Path.Combine(targetFolder, "Zero-K.exe"));
         }
 
         private void CopyExtraImages()

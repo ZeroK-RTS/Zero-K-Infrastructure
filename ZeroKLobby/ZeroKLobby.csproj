@@ -7,7 +7,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ZeroKLobby</RootNamespace>
-    <AssemblyName>Zero-K</AssemblyName>
+    <AssemblyName>Zero-Klobby</AssemblyName>
     <ApplicationIcon>Resources\ZK_logo_128.ico</ApplicationIcon>
     <ManifestCertificateThumbprint>FC2212B55F1B9944395B70DF91CE4D38FC17189D</ManifestCertificateThumbprint>
     <ManifestKeyFile>SpringDownloader_TemporaryKey.pfx</ManifestKeyFile>

@@ -55,6 +55,8 @@ namespace ZkData
         public double? EffectDistanceMetalBonusMax { get; set; }
         public double? EffectDistanceMetalBonusMin { get; set; }
 
+        public double? EffectPreventInfluenceDecayBelow { get; set; }
+
         
         public double Cost { get; set; }
         public bool IsBuildable { get; set; }

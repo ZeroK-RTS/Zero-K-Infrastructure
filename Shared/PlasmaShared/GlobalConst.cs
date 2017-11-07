@@ -162,7 +162,7 @@ namespace ZkData
         public const string LobbyAccessCookieName = "zk_lobby";
 
         public const double PlanetMetalPerTurn = 1;
-        public const double PlanetWarsEnergyToMetalRatio = 1 / 20.0;
+        public const double PlanetWarsEnergyToMetalRatio = 0.0;
         public const int PlanetWarsVictoryPointsToWin = 100;
         public const int BaseInfluencePerBattle = 35;
         public const double PlanetWarsAttackerMetal = 100;
@@ -191,7 +191,7 @@ namespace ZkData
         public const double MaxPwEloDifference = 120;
 
 
-        public static PlanetWarsModes PlanetWarsMode = PlanetWarsModes.AllOffline;
+        public static PlanetWarsModes PlanetWarsMode = Mode == ModeType.Test ? PlanetWarsModes.Running : PlanetWarsModes.AllOffline;
 
         public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";
@@ -212,6 +212,7 @@ namespace ZkData
         public const int MinNetKarmaToVote = -30;
         public const int PostVoteHideThreshold = -6;
         public const bool OnlyAdminsSeePostVoters = false;
+        public const int PlanetWarsMinutesToAttackIfNoOption = 5;
         public const int PlanetWarsMinutesToAttack = 20;
         public const int PlanetWarsMinutesToAccept = 5;
         public const int PlanetWarsDropshipsStayForMinutes = 2*60;

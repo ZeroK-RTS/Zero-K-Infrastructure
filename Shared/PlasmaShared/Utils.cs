@@ -782,6 +782,7 @@ namespace ZkData
         }
 
 
+
         public static string Truncate(this string input, int length)
         {
             if (input == null) return input;

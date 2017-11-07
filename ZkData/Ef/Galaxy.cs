@@ -52,10 +52,17 @@ namespace ZkData
         {
             foreach (var planet in Planets.Where(x => x.PlanetFactions.Count(y => y.Influence > 0) > 1))
             {
+                var influenceDecayMin = planet.PlanetStructures.Where(x => x.IsActive && x.StructureType.EffectPreventInfluenceDecayBelow != null).Select(x=>x.StructureType.EffectPreventInfluenceDecayBelow).OrderByDescending(x => x).FirstOrDefault();
+                
                 foreach (var pf in planet.PlanetFactions.Where(x => x.Influence > 0))
                 {
                     pf.Influence = Math.Max((double)0, pf.Influence - GlobalConst.InfluenceDecay);
+
+                    if (pf.FactionID == planet.OwnerFactionID && influenceDecayMin > 0) pf.Influence = Math.Max(pf.Influence, influenceDecayMin.Value);
                 }
+
+                
+                
             }
         }
 

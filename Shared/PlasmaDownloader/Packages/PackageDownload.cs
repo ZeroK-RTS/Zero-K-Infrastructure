@@ -5,8 +5,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Threading;
+using SharpCompress.Archive;
+using SharpCompress.Archive.Zip;
+using SharpCompress.Common;
 using ZkData;
 
 #endregion
@@ -163,7 +167,9 @@ namespace PlasmaDownloader.Packages
                 this.urlRoot = entry.Item1.BaseUrl;
                 this.packageHash = entry.Item2.Hash;
 
-                if (File.Exists(Path.Combine(paths.WritableDirectory, "packages", packageHash + ".sdp"))) // SDP exists, abort
+                var targetSdz = Path.Combine(paths.WritableDirectory, "games", packageHash + ".sdz");
+
+                if (File.Exists(targetSdz)) // SDZ exists, abort
 			    {
 			        Finish(true);
 			        return;
@@ -182,10 +188,19 @@ namespace PlasmaDownloader.Packages
 				{
 					var folder = Utils.MakePath(paths.WritableDirectory, "packages");
 					if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-					var target = Utils.MakePath(folder, packageHash + ".sdp");
+					var target = Utils.MakePath(folder, packageHash + ".sdpzk");
 					if (File.Exists(target)) File.Delete(target);
 					File.Move(tempFilelist, target);
-					Finish(true);
+
+
+				    var tempSdz = Path.Combine(paths.WritableDirectory, "temp", packageHash + ".sdz");
+				    GenerateSdz(fileList, tempSdz);
+
+                    File.Move(tempSdz, targetSdz);
+
+				    RemoveOtherSdzVersions(entry);
+
+				    Finish(true);
 				}
 				else Finish(false);
 			}
@@ -196,6 +211,37 @@ namespace PlasmaDownloader.Packages
 				Finish(false);
 			}
 		}
+
+	    private void RemoveOtherSdzVersions(Tuple<PackageDownloader.Repository, PackageDownloader.Version> entry)
+	    {
+	        var fileNames = Directory.GetFiles(Path.Combine(paths.WritableDirectory, "games"), "*.sdz").Select(Path.GetFileNameWithoutExtension).ToList();
+
+	        foreach (var other in entry.Item1.VersionsByTag)
+	        {
+	            if (other.Value.Hash != packageHash && !other.Key.EndsWith(":stable") && !other.Key.EndsWith(":test") &&
+	                fileNames.Contains(other.Value.Hash.ToString())) File.Delete(Path.Combine(paths.WritableDirectory, "games", other.Value.Hash + ".sdz"));
+	        }
+	    }
+
+	    /// <summary>
+        /// Generates sdz archive from pool and file list
+        /// </summary>
+	    private void GenerateSdz(SdpArchive fileList, string tempSdz)
+	    {
+	        var dir = Path.GetDirectoryName(tempSdz);
+	        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            if (File.Exists(tempSdz)) File.Delete(tempSdz);
+
+	        
+            using (var archive = ArchiveFactory.Create(ArchiveType.Zip))
+	        {
+                foreach (var fl in fileList.Files)
+	            {
+	                archive.AddEntry(fl.Name, pool.ReadFromStorageDecompressed(fl.Hash), true, fl.UncompressedSize);
+	            }
+                archive.SaveTo(tempSdz, CompressionType.None);
+	        }
+	    }
 
 	    private Hash packageHash;
 	    private Pool pool;

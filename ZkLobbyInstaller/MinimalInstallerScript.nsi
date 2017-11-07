@@ -28,11 +28,11 @@ Function .onInit
 		${IfThen} $1 = 1 ${|} Quit ${|} ;we are the outer process, the inner process has done its work, we are done
 		${IfThen} $3 <> 0 ${|} ${Break} ${|} ;we are admin, let the show go on
 		${If} $1 = 3 ;RunAs completed successfully, but with a non-admin user
-			MessageBox MB_YESNO|MB_ICONEXCLAMATION|MB_TOPMOST|MB_SETFOREGROUND "Zero-K Lobby downloader requires admin privileges, try again" /SD IDNO IDYES uac_tryagain IDNO 0
+			MessageBox MB_YESNO|MB_ICONEXCLAMATION|MB_TOPMOST|MB_SETFOREGROUND "Zero-K downloader requires admin privileges, try again" /SD IDNO IDYES uac_tryagain IDNO 0
 		${EndIf}
 		;fall-through and die
 	${Case} 1223
-		MessageBox MB_ICONSTOP|MB_TOPMOST|MB_SETFOREGROUND "Zero-K Lobby downloader requires admin privileges, aborting!"
+		MessageBox MB_ICONSTOP|MB_TOPMOST|MB_SETFOREGROUND "Zero-K downloader requires admin privileges, aborting!"
 		Quit
 	${Case} 1062
 		MessageBox MB_ICONSTOP|MB_TOPMOST|MB_SETFOREGROUND "Logon service not running, aborting!"
@@ -53,7 +53,7 @@ FunctionEnd
 ;--------------------------------
 ;General
 ;Name and file
-Name "Zero-K Lobby downloader"
+Name "Zero-K downloader"
 OutFile "Zero-K.setup.exe"
 
 ;Default installation folder
@@ -70,36 +70,36 @@ RequestExecutionLevel user #not needed (always set to user), because UAC will be
 
 ;--------------------------------
 ;Pages
-!define MUI_PAGE_HEADER_SUBTEXT "Please review the license agreement before continuing Zero-K Lobby Setup."
+!define MUI_PAGE_HEADER_SUBTEXT "Please review the license agreement before continuing Zero-K Setup."
 !define MUI_PAGE_HEADER_TEXT "Zero-K license agreement"
 !define MUI_LICENSEPAGE_CHECKBOX true
 !define MUI_LICENSEPAGE_CHECKBOX_TEXT "I accept the license agreement."
 !define MUI_LICENSEPAGE_BUTTON "Next"
 !define MUI_LICENSEPAGE_TEXT_TOP "Press Page Down to see the rest of the agreement."
-!define MUI_LICENSEPAGE_TEXT_BOTTOM  "Please review the license agreement before continuing Zero-K Lobby setup. If you accept the agreement, click the checkbox below. Click Next to continue."
+!define MUI_LICENSEPAGE_TEXT_BOTTOM  "Please review the license agreement before continuing Zero-K setup. If you accept the agreement, click the checkbox below. Click Next to continue."
 !insertmacro MUI_PAGE_LICENSE "legal.txt"
 
 !define MUI_PAGE_HEADER_TEXT "Components"
 !define MUI_PAGE_HEADER_SUBTEXT "Choose which features of Zero-K you want to download."
-!define MUI_COMPONENTSPAGE_TEXT_TOP  "Further game and map files will be downloaded by Zero-K Lobby later when the program is run. Click Next to continue.$\n(In the future these will be bundled with the installer.)"
+!define MUI_COMPONENTSPAGE_TEXT_TOP  "Further game and map files will be downloaded by Zero-K later when the program is run. Click Next to continue."
 !insertmacro MUI_PAGE_COMPONENTS
 
-!define MUI_PAGE_HEADER_SUBTEXT "Choose the folder in which you want to place Zero-K Lobby"
-!define MUI_DIRECTORYPAGE_TEXT_TOP "Target folder should have at least 600 MB disk space available (ideally up to 6 GB) for Zero-K Lobby to save game and map files. Click Install to continue."
+!define MUI_PAGE_HEADER_SUBTEXT "Choose the folder in which you want to place Zero-K"
+!define MUI_DIRECTORYPAGE_TEXT_TOP "Target folder should have at least 600 MB disk space available (ideally up to 6 GB) for Zero-K to save game and map files. Click Install to continue."
 !define MUI_PAGE_HEADER_TEXT "Directory"
 !insertmacro MUI_PAGE_DIRECTORY
 
-!define MUI_PAGE_HEADER_SUBTEXT "Please wait while Zero-K Lobby is being downloaded"
+!define MUI_PAGE_HEADER_SUBTEXT "Please wait while Zero-K is being downloaded"
 !define MUI_PAGE_HEADER_TEXT  "Installation"
 !define MUI_INSTFILESPAGE_FINISHHEADER_SUBTEXT  "Setup was completed successfully, click Next to continue."
 !define MUI_INSTFILESPAGE_ABORTHEADER_SUBTEXT  "Setup was not completed successfully, click Cancel to exit."
 !insertmacro MUI_PAGE_INSTFILES
 
-!define MUI_FINISHPAGE_TITLE "Complete Zero-K Lobby Setup"
-!define MUI_FINISHPAGE_TEXT "Setup needs to launch Zero-K Lobby to finish the setup.$\n$\nPlease launch Zero-K Lobby and wait for it to pop-up, to finish the rest of setup."
+!define MUI_FINISHPAGE_TITLE "Complete Zero-K Setup"
+!define MUI_FINISHPAGE_TEXT "Setup needs to launch Zero-K to finish the setup.$\n$\nPlease launch Zero-K and wait for it to pop-up, to finish the rest of setup."
 !define MUI_FINISHPAGE_BUTTON "Finish"
 !define MUI_FINISHPAGE_RUN
-!define MUI_FINISHPAGE_RUN_TEXT "Launch Zero-K Lobby now"
+!define MUI_FINISHPAGE_RUN_TEXT "Launch Zero-K now"
 !define MUI_FINISHPAGE_RUN_FUNCTION runZeroKLobby
 !insertmacro MUI_PAGE_FINISH
   
@@ -211,7 +211,7 @@ Function DownloadAndInstallNet
 		${EndIf}
 FunctionEnd
 
-Section "Zero-K Lobby" ZKL
+Section "Zero-K" ZKL
 
 	SetOutPath "$INSTDIR"
 	
@@ -219,14 +219,14 @@ Section "Zero-K Lobby" ZKL
 	AddSize 5500
 
 	#Ask to overwrite existing ZKL
-	IfFileExists "$INSTDIR\Chobby.exe" 0 continue
-		MessageBox MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON1 "Chobby.exe already exist.$\nOverwrite?" IDNO zklExist
+	IfFileExists "$INSTDIR\Zero-K.exe" 0 continue
+		MessageBox MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON1 "Zero-K.exe already exist.$\nOverwrite?" IDNO zklExist
 	continue:
 
 	#check win version: http://nsis.sourceforge.net/Get_Windows_version
 	#download file: http://nsis.sourceforge.net/NSISdl_plug-in  --Register used:    $0 as downloader's exit code
-	DetailPrint "Downloading: http://zero-k.info/lobby/Chobby.exe"
-	NSISdl::download /TIMEOUT=30000 http://zero-k.info/lobby/Chobby.exe "$INSTDIR\Chobby.exe"
+	DetailPrint "Downloading: http://zero-k.info/lobby/Zero-K.exe"
+	NSISdl::download /TIMEOUT=30000 http://zero-k.info/lobby/Zero-K.exe "$INSTDIR\Zero-K.exe"
 	Pop $0 #from download stack
 	StrCmp "$0" "success" zklExist
 		DetailPrint "Download Failed: $0"
@@ -241,7 +241,7 @@ Section "Zero-K Lobby" ZKL
 	${DriveSpace} $1 "/D=F /S=M" $0 #Freespace in Megabyte
 	IntOp $0 $0 - $EST_ZKL_MAP_GAME_SPRING_SIZE_MB
 	${If} $0 <= 0
-		MessageBox MB_OK|MB_ICONINFORMATION "Disk space might be too low for game files.$\n$\nIt is recommended to set a separate game data folder. Zero-K Lobby will prompt you for this."
+		MessageBox MB_OK|MB_ICONINFORMATION "Disk space might be too low for game files.$\n$\nIt is recommended to set a separate game data folder. Zero-K will prompt you for this."
 	${EndIf}
 
 SectionEnd
@@ -249,7 +249,7 @@ SectionEnd
 ;Descriptions
 
 	;Language strings
-	LangString DESC_Zkl ${LANG_ENGLISH} "The base lobby client for launching matches and chatting with other players."
+	LangString DESC_Zkl ${LANG_ENGLISH} "The base client for launching matches and chatting with other players."
 
 	;Assign language strings to sections
 	!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
@@ -259,9 +259,9 @@ SectionEnd
 ;--------------------------------
 ;Post installation
 Function runZeroKLobby
-	!insertmacro UAC_AsUser_ExecShell "open" "$INSTDIR\Chobby.exe" "" "" ""
+	!insertmacro UAC_AsUser_ExecShell "open" "$INSTDIR\Zero-K.exe" "" "" ""
 FunctionEnd
 
 Function .onInstSuccess
-	CreateShortcut "$desktop\Zero-K.lnk" "$INSTDIR\Chobby.exe"
+	CreateShortcut "$desktop\Zero-K.lnk" "$INSTDIR\Zero-K.exe"
 FunctionEnd

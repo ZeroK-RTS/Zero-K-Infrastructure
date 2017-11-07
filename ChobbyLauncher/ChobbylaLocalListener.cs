@@ -14,6 +14,7 @@ using GameAnalyticsSDK.Net;
 using PlasmaDownloader;
 using PlasmaShared;
 using ZkData;
+using Timer = System.Threading.Timer;
 
 namespace ChobbyLauncher
 {
@@ -26,6 +27,7 @@ namespace ChobbyLauncher
         private TextToSpeechBase tts;
         private SteamClientHelper steam;
         private ulong initialConnectLobbyID;
+        private Timer timer;
 
 
         public ChobbylaLocalListener(Chobbyla chobbyla, SteamClientHelper steam, ulong initialConnectLobbyID)
@@ -39,7 +41,23 @@ namespace ChobbyLauncher
             steam.JoinFriendRequest += SteamOnJoinFriendRequest;
             steam.OverlayActivated += SteamOnOverlayActivated;
             steam.SteamOnline += () => { SendSteamOnline(); };
+            timer = new Timer((o)=>OnTimerTick(), this, 500, 500);
+        }
 
+        private void OnTimerTick()
+        {
+            foreach (var d in chobbyla.downloader.Downloads.Where(x=>x.IsComplete == null))
+            {
+                SendCommand(new DownloadFileProgress()
+                {
+                    Name = d.Name,
+                    FileType = d.DownloadType.ToString(),
+                    Progress = d.TotalProgress,
+                    SecondsRemaining = d.SecondsRemaining,
+                    TotalLength = d.TotalLength,
+                    CurrentSpeed = d.CurrentSpeed
+                });
+            }
         }
 
         private void SteamOnOverlayActivated(bool b)
@@ -198,6 +216,22 @@ namespace ChobbyLauncher
             }
         }
 
+
+        public async Task Process(AbortDownload args)
+        {
+            try
+            {
+                DownloadType type;
+                if (string.IsNullOrEmpty(args.FileType) || !Enum.TryParse(args.FileType, out type)) type = DownloadType.NOTKNOWN;
+                chobbyla.downloader.Downloads
+                    .Where(x => (x.TypeOfResource == type && (x.Alias == args.Name || x.Name == args.Name)))
+                    .ForEach(x => x.Abort());
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error cancelling download {0} : {1}", args?.Name, ex);
+            }
+        }
 
         public async Task Process(DownloadFile args)
         {
@@ -425,8 +459,11 @@ namespace ChobbyLauncher
         {
             try
             {
-                if (down != null) await down.WaitHandle.AsTask(TimeSpan.FromMinutes(20));
-                await SendCommand(new DownloadFileDone() { Name = args.Name, FileType = args.FileType, IsSuccess = down?.IsComplete == true });
+                if (down != null)
+                {
+                    await down.WaitHandle.AsTask(TimeSpan.FromMinutes(30));
+                }
+                await SendCommand(new DownloadFileDone() { Name = args.Name, FileType = args.FileType, IsSuccess = down?.IsComplete == true, IsAborted = down?.IsAborted == true});
             }
             catch (Exception ex)
             {
@@ -528,7 +565,9 @@ namespace ChobbyLauncher
                     {
                         DefaultServerHost = GlobalConst.LobbyServerHost,
                         DefaultServerPort = GlobalConst.LobbyServerPort,
-                        UserID = Utils.GetMyUserID().ToString()
+                        UserID = Utils.GetMyUserID().ToString(),
+                        IsSteamFolder = chobbyla.IsSteamFolder
+
                     });
             }
             catch (Exception ex)
@@ -550,7 +589,7 @@ namespace ChobbyLauncher
                         AuthToken = steam.AuthToken,
                         Friends = steam.Friends.Select(x => x.ToString()).ToList(),
                         FriendSteamID = friendId?.ToString(),
-                        SuggestedName = steam.MySteamNameSanitized
+                        SuggestedName = steam.MySteamNameSanitized,
                     });
 
                 if (friendId != null) steam.SendSteamNotifyJoin(friendId.Value);
@@ -559,6 +598,7 @@ namespace ChobbyLauncher
 
         private async Task OnConnectionClosed(bool arg)
         {
+            timer.Dispose();
             Trace.TraceInformation("Chobby closed connection");
         }
     }
