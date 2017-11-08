@@ -9,6 +9,7 @@ using GameAnalyticsSDK.Net;
 using Neo.IronLua;
 using PlasmaDownloader;
 using PlasmaDownloader.Packages;
+using PlasmaShared;
 using ZkData;
 
 namespace ChobbyLauncher
@@ -142,7 +143,7 @@ namespace ChobbyLauncher
         }
 
 
-        public bool Run(ulong initialConnectLobbyID, TextWriter writer)
+        public int Run(ulong initialConnectLobbyID, TextWriter writer)
         {
             Status = "Connecting to steam API";
             using (var steam = new SteamClientHelper())
@@ -195,7 +196,7 @@ namespace ChobbyLauncher
 
 
 
-        private async Task<bool> LaunchChobby(SpringPaths paths, string internalName, string engineVersion, int loopbackPort, TextWriter writer)
+        private async Task<int> LaunchChobby(SpringPaths paths, string internalName, string engineVersion, int loopbackPort, TextWriter writer)
         {
             process = new Process { StartInfo = { CreateNoWindow = false, UseShellExecute = false } };
 
@@ -214,16 +215,16 @@ namespace ChobbyLauncher
             process.OutputDataReceived += (sender, args) => { writer.WriteLine(args.Data); };
             process.ErrorDataReceived += (sender, args) => { writer.WriteLine(args.Data); };
 
-            var tcs = new TaskCompletionSource<bool>();
+            var tcs = new TaskCompletionSource<int>();
             process.Exited += (sender, args) =>
             {
                 var isCrash = process.ExitCode != 0;
-                var isHangKilled = (process.ExitCode == -805306369); // hanged, drawn and quartered
+                var isHangKilled = (process.ExitCode == GlobalConst.SpringHangReturnValue); // hanged, drawn and quartered
                 if (isCrash)
                 {
                     Trace.TraceWarning("Spring exit code is: {0}, {1}", process.ExitCode, isHangKilled ? "user-killed during hang" : "assuming crash");
                 }
-                tcs.TrySetResult(!isCrash);
+                tcs.TrySetResult(process.ExitCode);
             };
             process.EnableRaisingEvents = true;
             process.Start();
