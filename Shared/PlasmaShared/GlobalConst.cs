@@ -137,7 +137,8 @@ namespace ZkData
         public const int MinDurationForPlanetwars = 0;
 
         public const int LadderActivityDays = 70;
-        public const float MaxLadderUncertainty = 46; // < 70 days
+        public const int LadderSize = 50; // Amount of players shown on ladders
+        public const float MinimumDynamicMaxLadderUncertainty = 46; // < 70 days, higher uncertainties allowed in the case of low player activity
         public const float EloDecayPerDaySquared = 30;
 
         public const int XpForMissionOrBots = 25;

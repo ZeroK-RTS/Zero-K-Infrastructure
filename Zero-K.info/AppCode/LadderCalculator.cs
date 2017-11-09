@@ -35,8 +35,8 @@ namespace ZeroKWeb
             return ladderModel;
         }
 
-        public List<Account> GetTop50() => ladderModel?.Top50Accounts;
-        public List<Account> GetTop50Casual() => ladderModel?.Top50Casual;
+        public List<Account> GetTop() => ladderModel?.TopAccounts;
+        public List<Account> GetTopCasual() => ladderModel?.TopCasual;
 
 
         private static List<AwardItem> CalculateAwards(ZkDataContext db)
@@ -202,7 +202,7 @@ namespace ZeroKWeb
                     }
                     db.SaveChanges();
 
-                    var top50Accounts =
+                    var topAccounts =
                         db.Accounts.Where(
                                 x =>
                                     x.SpringBattlePlayers.Any(
@@ -211,10 +211,10 @@ namespace ZeroKWeb
                             .Include(x => x.Faction)
                             .OrderByDescending(x => x.EffectiveMmElo)
                             .WithTranslations()
-                            .Take(50)
+                            .Take(GlobalConst.LadderSize)
                             .ToList();
 
-                    var top50Casual =
+                    var topCasual =
                         db.Accounts.Where(
                                 x =>
                                     x.SpringBattlePlayers.Any(
@@ -223,10 +223,10 @@ namespace ZeroKWeb
                             .Include(x => x.Faction)
                             .OrderByDescending(x => x.EffectiveElo)
                             .WithTranslations()
-                            .Take(50)
+                            .Take(GlobalConst.LadderSize)
                             .ToList();
 
-                    return new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts, Top50Casual = top50Casual };
+                    return new LadderModel { AwardItems = awardItems, TopAccounts = topAccounts, TopCasual = topCasual };
                 }
                 catch (Exception ex)
                 {
@@ -251,8 +251,8 @@ namespace ZeroKWeb
         public class LadderModel
         {
             public List<AwardItem> AwardItems = new List<AwardItem>();
-            public List<Account> Top50Accounts = new List<Account>();
-            public List<Account> Top50Casual = new List<Account>();
+            public List<Account> TopAccounts = new List<Account>();
+            public List<Account> TopCasual = new List<Account>();
         }
 
     }
