@@ -44,9 +44,9 @@ namespace Ratings
         }
 
 
-        public PlayerRating GetPlayerRating(Account account)
+        public PlayerRating GetPlayerRating(int accountID)
         {
-            return playerRatings.ContainsKey(account.AccountID) ? playerRatings[account.AccountID] : DefaultRating;
+            return playerRatings.ContainsKey(accountID) ? playerRatings[accountID] : DefaultRating;
         }
 
         public List<float> PredictOutcome(List<ICollection<Account>> teams)
