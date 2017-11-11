@@ -253,17 +253,17 @@ namespace ZkData
 
         public PlayerRating GetRating(RatingCategory category)
         {
-            return RatingSystems.GetRatingSystem(category).GetPlayerRating(this);
+            return RatingSystems.GetRatingSystem(category).GetPlayerRating(AccountID);
         }
 
         public PlayerRating GetBestRating()
         {
-            var casual = RatingSystems.GetRatingSystem(RatingCategory.Casual).GetPlayerRating(this);
-            var mm = RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetPlayerRating(this);
-            var pw = RatingSystems.GetRatingSystem(RatingCategory.Planetwars).GetPlayerRating(this);
+            var casual = RatingSystems.GetRatingSystem(RatingCategory.Casual).GetPlayerRating(AccountID);
+            var mm = RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetPlayerRating(AccountID);
+            var pw = RatingSystems.GetRatingSystem(RatingCategory.Planetwars).GetPlayerRating(AccountID);
 
-            if ((casual.Elo >= mm.Elo || mm.Uncertainty > GlobalConst.MaxLadderUncertainty) && casual.Uncertainty < GlobalConst.MaxLadderUncertainty) return casual;
-            if ((mm.Elo >= casual.Elo || casual.Uncertainty > GlobalConst.MaxLadderUncertainty) && mm.Uncertainty < GlobalConst.MaxLadderUncertainty) return mm;
+            if ((casual.Elo >= mm.Elo || mm.Rank == int.MaxValue) && casual.Rank < int.MaxValue) return casual;
+            if ((mm.Elo >= casual.Elo || casual.Rank == int.MaxValue) && mm.Rank < int.MaxValue) return mm;
             //ignore pw 
 
             return new PlayerRating(int.MaxValue, 1, 0, float.PositiveInfinity);
