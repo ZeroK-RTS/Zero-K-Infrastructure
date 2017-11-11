@@ -13,7 +13,7 @@ using DotNetOpenAuth.Messaging;
 using DotNetOpenAuth.OpenId;
 using DotNetOpenAuth.OpenId.Extensions.SimpleRegistration;
 using DotNetOpenAuth.OpenId.RelyingParty;
-using ZeroKWeb;
+using Ratings;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -179,7 +179,7 @@ namespace ZeroKWeb.Controllers
             var result = new IndexResult()
 			             {
 			             	Spotlight = SpotlightHandler.GetRandom(),
-			             	Top10Players = Global.LadderCalculator.GetLadder().Top50Accounts.Take(10).ToList(),
+			             	Top10Players = RatingSystems.DisableRatingSystems ? Global.LadderCalculator.GetLadder().TopAccounts.Take(10).ToList() : RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetTopPlayers(10),
                             WikiRecentChanges = MediaWikiRecentChanges.LoadRecentChanges()
                         };
 

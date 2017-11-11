@@ -44,9 +44,9 @@ namespace Ratings
         }
 
 
-        public PlayerRating GetPlayerRating(Account account)
+        public PlayerRating GetPlayerRating(int accountID)
         {
-            return playerRatings.ContainsKey(account.AccountID) ? playerRatings[account.AccountID] : DefaultRating;
+            return playerRatings.ContainsKey(accountID) ? playerRatings[accountID] : DefaultRating;
         }
 
         public List<float> PredictOutcome(List<ICollection<Account>> teams)
@@ -95,7 +95,7 @@ namespace Ratings
                 foreach (var pair in sortedPlayers)
                 {
                     Account acc = db.Accounts.Where(a => a.AccountID == pair.Value).FirstOrDefault();
-                    if (playerRatings[acc.AccountID].Uncertainty <= GlobalConst.MaxLadderUncertainty && selector.Invoke(acc))
+                    if (playerRatings[acc.AccountID].Rank < int.MaxValue && selector.Invoke(acc))
                     {
                         if (counter++ >= count) break;
                         retval.Add(acc);
@@ -240,7 +240,7 @@ namespace Ratings
         //private
         
 
-        //Runs in O(log(N)) for a single player -> O(N log(N)) for all players
+        //Runs in O(N log(N)) for all players
         private void UpdateRankings(IEnumerable<Player> players)
         {
             foreach (var p in players)
@@ -249,19 +249,28 @@ namespace Ratings
                 float lastUncertainty = p.days.Last().uncertainty * 100;
                 int lastDay = p.days.Last().day;
                 playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastUncertainty, lastDay);
-                float rating = -playerRatings[p.id].Elo + 0.1f * (float)rand.NextDouble();
+                float rating = -playerRatings[p.id].Elo + 0.001f * (float)rand.NextDouble();
                 if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
                 playerKeys[p.id] = rating;
                 sortedPlayers[rating] = p.id;
             }
-            var activePlayers = playerRatings.Where(x => x.Value.Uncertainty < GlobalConst.MaxLadderUncertainty);
+            float[] playerUncertainties = new float[playerRatings.Count];
+            int index = 0;
+            float DynamicMaxUncertainty = GlobalConst.MinimumDynamicMaxLadderUncertainty;
+            foreach (var pair in playerRatings)
+            {
+                playerUncertainties[index++] = pair.Value.Uncertainty;
+            }
+            Array.Sort(playerUncertainties);
+            DynamicMaxUncertainty = Math.Max(DynamicMaxUncertainty, playerUncertainties[Math.Min(playerUncertainties.Length, GlobalConst.LadderSize) - 1] + 0.01f);
+            int activePlayers = Math.Max(1, ~Array.BinarySearch(playerUncertainties, DynamicMaxUncertainty));
             int rank = 0;
             foreach (var pair in sortedPlayers)
             {
-                if (playerRatings[pair.Value].Uncertainty <= GlobalConst.MaxLadderUncertainty)
+                if (playerRatings[pair.Value].Uncertainty <= DynamicMaxUncertainty)
                 {
                     rank++;
-                    playerRatings[pair.Value] = new PlayerRating(rank, (float)rank / activePlayers.Count(), playerRatings[pair.Value].RealElo, playerRatings[pair.Value].Uncertainty);
+                    playerRatings[pair.Value] = new PlayerRating(rank, (float)rank / activePlayers, playerRatings[pair.Value].RealElo, playerRatings[pair.Value].Uncertainty);
                 }
                 else if (playerRatings[pair.Value].Rank < int.MaxValue)
                 {

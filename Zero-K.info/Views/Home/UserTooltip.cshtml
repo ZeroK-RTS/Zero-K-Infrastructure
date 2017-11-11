@@ -18,8 +18,8 @@
         var mm = Model.GetRating(Ratings.RatingCategory.MatchMaking);
         var pw = Model.GetRating(Ratings.RatingCategory.Planetwars);
 
-        <b>Competitive rank:</b> @(mm.Rank == int.MaxValue ? "?" : $"{mm.Rank}. ({Math.Round(mm.Elo)})")<br />
-        <b>Casual rank:</b> @(casual.Rank == int.MaxValue ? "?" : $"{casual.Rank}. ({Math.Round(casual.Elo)})")<br />
+        <b>Competitive rank:</b> @(mm.Rank == int.MaxValue ? "Unranked" : $"{mm.Rank}. ({Math.Round(mm.Elo)})")<br />
+        <b>Casual rank:</b> @(casual.Rank == int.MaxValue ? "Unranked" : $"{casual.Rank}. ({Math.Round(casual.Elo)})")<br />
     }
     <b>Level:</b> @u.Level<br />
     <br />
