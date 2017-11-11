@@ -27,20 +27,14 @@ namespace PlasmaDownloader
 
     public class PlasmaDownloader : IDisposable
     {
-        private readonly List<Download> downloads = new List<Download>();
+        private readonly ConcurrentDictionary<string, Download> downloads = new ConcurrentDictionary<string, Download>();
 
         private readonly PackageDownloader packageDownloader;
         private TorrentDownloader torrentDownloader;
         private IResourcePresenceChecker scanner;
 
 
-        public IReadOnlyCollection<Download> Downloads
-        {
-            get
-            {   
-                lock (downloads) return new List<Download>(downloads).AsReadOnly();
-            }
-        }
+        public IReadOnlyCollection<Download> Downloads => new List<Download>(downloads.Values.Where(x=>x!= null)).AsReadOnly();
 
         public PackageDownloader PackageDownloader
         {
@@ -70,37 +64,44 @@ namespace PlasmaDownloader
             packageDownloader.Dispose();
         }
 
+        private object locker = new Object();
 
         [CanBeNull]
         public Download GetResource(DownloadType type, string name)
         {
             if (name == "zk:dev" || name == "Zero-K $VERSION") return null;
-            lock (downloads)
+            lock (locker)
             {
-                downloads.RemoveAll(x => x.IsAborted || x.IsComplete != null); // remove already completed downloads from list}
-                var existing = downloads.FirstOrDefault(x => x.Name == name || x.Alias == name);
-                if (existing != null) return existing;
-            }
-
-            if (scanner?.HasResource(name) == true) return null;
-            if (SpringPaths.HasEngineVersion(name)) return null;
-
-
-            // check rapid to determine type
-            if (type == DownloadType.NOTKNOWN)
-            {
-                if (packageDownloader.GetByInternalName(name) != null || packageDownloader.GetByTag(name) != null) type = DownloadType.RAPID;
-                else
+                // remove already completed downloads from list
+                foreach (var d in downloads.Values.ToList())
                 {
-                    packageDownloader.LoadMasterAndVersions().Wait();
-                    if (packageDownloader.GetByInternalName(name) != null || packageDownloader.GetByTag(name) != null) type = DownloadType.RAPID;
-                    else type = DownloadType.MAP;
-                } 
-            }
-            
+                    if (d != null && (d.IsAborted || d.IsComplete != null))
+                    {
+                        downloads.TryRemove(d.Name, out _);
+                    }
+                }
 
-            lock (downloads)
-            {
+                
+                var existing = downloads.Values.FirstOrDefault(x => x!=null && (x.Name == name || x.Alias == name));
+                if (existing != null) return existing;
+
+                if (scanner?.HasResource(name) == true) return null;
+                if (SpringPaths.HasEngineVersion(name)) return null;
+
+
+                // check rapid to determine type
+                if (type == DownloadType.NOTKNOWN)
+                {
+                    if (packageDownloader.GetByInternalName(name) != null || packageDownloader.GetByTag(name) != null) type = DownloadType.RAPID;
+                    else
+                    {
+                        packageDownloader.LoadMasterAndVersions().Wait();
+                        if (packageDownloader.GetByInternalName(name) != null || packageDownloader.GetByTag(name) != null) type = DownloadType.RAPID;
+                        else type = DownloadType.MAP;
+                    }
+                }
+
+
 
                 if (type == DownloadType.DEMO)
                 {
@@ -110,7 +111,7 @@ namespace PlasmaDownloader
                     if (File.Exists(filePath)) return null;
                     var down = new WebFileDownload(name, filePath, null);
                     down.DownloadType = type;
-                    downloads.Add(down);
+                    downloads[down.Name] = down;
                     DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down)); //create download bar (handled by MainWindow.cs)
                     down.Start();
                     return down;
@@ -124,7 +125,7 @@ namespace PlasmaDownloader
                     if (down != null)
                     {
                         down.DownloadType = type;
-                        downloads.Add(down);
+                        downloads[down.Name] = down;
                         DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
                         return down;
                     }
@@ -137,7 +138,7 @@ namespace PlasmaDownloader
                     {
                         down.DownloadType = type;
                         down.Alias = name;
-                        downloads.Add(down);
+                        downloads[down.Name] = down;
                         DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
                         return down;
                     }
@@ -147,7 +148,7 @@ namespace PlasmaDownloader
                 {
                     var down = new EngineDownload(name, SpringPaths);
                     down.DownloadType = type;
-                    downloads.Add(down);
+                    downloads[down.Name] = down;
                     DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
                     down.Start();
                     return down;
