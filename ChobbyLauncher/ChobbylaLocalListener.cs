@@ -52,7 +52,7 @@ namespace ChobbyLauncher
                 {
                     Name = d.Name,
                     FileType = d.DownloadType.ToString(),
-                    Progress = d.TotalProgress,
+                    Progress = d.TotalProgress.ToString("F2"),
                     SecondsRemaining = d.SecondsRemaining,
                     TotalLength = d.TotalLength,
                     CurrentSpeed = d.CurrentSpeed
