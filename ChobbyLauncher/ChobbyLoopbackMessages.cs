@@ -110,7 +110,7 @@ namespace ChobbyLauncher
     {
         public string FileType { get; set; }
         public string Name { get; set; }
-        public double Progress { get; set; }
+        public string Progress { get; set; }
         public int SecondsRemaining { get; set; }
         public int TotalLength { get; set; }
         public int CurrentSpeed { get; set; }
