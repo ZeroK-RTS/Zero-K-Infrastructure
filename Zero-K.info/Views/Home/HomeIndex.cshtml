@@ -142,7 +142,7 @@
             </tr>
             @{
                 int rank = 0;
-                foreach (var acct in RatingSystems.DisableRatingSystems ? Model.Top10Players : RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetTopPlayers(10))
+                foreach (var acct in Model.Top10Players)
                 {
 
                     <tr>

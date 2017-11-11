@@ -17,7 +17,7 @@
             <span>
                 @{
                     int rank = 0;
-                    foreach (Account acct in RatingSystems.DisableRatingSystems ? Model.Top50Accounts : RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetTopPlayers(50))
+                    foreach (Account acct in RatingSystems.DisableRatingSystems ? Model.TopAccounts : RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetTopPlayers(GlobalConst.LadderSize))
                     {
                         if (rank++ == 20)
                         {
@@ -34,7 +34,7 @@
             <span>
                 @{
                     rank = 0;
-                    foreach (Account acct in RatingSystems.DisableRatingSystems ? Model.Top50Casual : RatingSystems.GetRatingSystem(RatingCategory.Casual).GetTopPlayers(50))
+                    foreach (Account acct in RatingSystems.DisableRatingSystems ? Model.TopCasual : RatingSystems.GetRatingSystem(RatingCategory.Casual).GetTopPlayers(GlobalConst.LadderSize))
                     {
                         if (rank++ == 20)
                         {
