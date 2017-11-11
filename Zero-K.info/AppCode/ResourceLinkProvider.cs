@@ -162,7 +162,7 @@ namespace ZeroKWeb
             try
             {
                 var wr = (HttpWebRequest)WebRequest.Create(url);
-                wr.Timeout = 3000;
+                wr.Timeout = 2000;
                 wr.Method = "HEAD";
                 var res = wr.GetResponse();
                 redirectUrl = res.ResponseUri.ToString();
