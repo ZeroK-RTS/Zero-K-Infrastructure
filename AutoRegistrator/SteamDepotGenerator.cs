@@ -91,11 +91,7 @@ namespace AutoRegistrator
             CopyExtraImages();
 
             downloader.PackageDownloader.DoMasterRefresh();
-            
-            try
-            {
-                Directory.Delete(Path.Combine(targetFolder, "pool"), true);
-            } catch { }
+           
 
             File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_chobby.txt"), chobbyName);
             File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_engine.txt"), MiscVar.DefaultEngine);
