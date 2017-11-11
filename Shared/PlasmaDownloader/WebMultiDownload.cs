@@ -303,6 +303,7 @@ namespace PlasmaDownloader
       }
       catch (Exception ex)
       {
+          invalid = true;
         Trace.Write("Error downloading file piece: " + ex.Message);
         return false;
       }
