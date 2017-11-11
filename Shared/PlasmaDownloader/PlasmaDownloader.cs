@@ -77,7 +77,8 @@ namespace PlasmaDownloader
                 {
                     if (d != null && (d.IsAborted || d.IsComplete != null))
                     {
-                        downloads.TryRemove(d.Name, out _);
+                        Download dummy;
+                        downloads.TryRemove(d.Name, out dummy);
                     }
                 }
 
