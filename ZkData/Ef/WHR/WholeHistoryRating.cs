@@ -170,7 +170,7 @@ namespace Ratings
                         {
                             DateTime start = DateTime.Now;
                             updateAction.Invoke();
-                            Trace.TraceInformation("WHR Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds");
+                            Trace.TraceInformation("WHR Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
                         }
                         runningInitialization = false;
                     }

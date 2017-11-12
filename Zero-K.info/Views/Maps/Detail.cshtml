@@ -34,9 +34,13 @@
         </a>
     </div>
     <h2>@m.InternalName 
-	@if (m.MapSupportLevel >= MapSupportLevel.Featured) {
-		<img src="/img/star_40.png" title="Featured" alt="Featured">
-	}
+	@if (m.MapSupportLevel >= MapSupportLevel.MatchMaker) { 
+        <img src="@Url.Content("/img/star_40_gold.png")" title="Matchmaking pool" alt="Matchmaking pool" />
+      } else if (m.MapSupportLevel >= MapSupportLevel.Featured) {
+        <img src="@Url.Content("/img/star_40_silver.png")" title="Featured" alt="Featured" />
+      } else if (m.MapSupportLevel >= MapSupportLevel.Supported) {
+        <img src="@Url.Content("/img/star_40_bronze.png")" title="Supported" alt="Supported" />
+      }
 	</h2>
     @if (planet!=null) {
         <h2>Planet @Html.PrintPlanet(planet)</h2>

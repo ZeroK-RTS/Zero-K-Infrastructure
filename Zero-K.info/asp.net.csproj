@@ -1235,7 +1235,9 @@
     <Content Include="Img\stars\star_white_small.png" />
     <Content Include="Img\stars\star_yellow.png" />
     <Content Include="Img\stars\star_yellow_small.png" />
-    <Content Include="Img\star_40.png" />
+    <Content Include="Img\star_40_bronze.png" />
+    <Content Include="Img\star_40_gold.png" />
+    <Content Include="Img\star_40_silver.png" />
     <Content Include="Img\steam_20p.png" />
     <Content Include="Img\sticky.png" />
     <Content Include="Img\stickylock.png" />
