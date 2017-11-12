@@ -7,8 +7,12 @@
     <a href="@Url.Action("Detail", new { id = m.ResourceID })">
 	<div class='mission fleft'>
       <b>@m.InternalName</b>
-      @if (m.MapSupportLevel>=MapSupportLevel.Featured) { 
-        <img src="@Url.Content("~/img/star_40.png")" alt="Featured" style='float:right' />
+      @if (m.MapSupportLevel >= MapSupportLevel.MatchMaker) { 
+        <img src="@Url.Content("~/img/star_40_gold.png")" title="Matchmaking pool" alt="Matchmaking pool" style='float:right' />
+      } else if (m.MapSupportLevel >= MapSupportLevel.Featured) {
+        <img src="@Url.Content("~/img/star_40_silver.png")" title="Featured" alt="Featured" style='float:right' />
+      } else if (m.MapSupportLevel >= MapSupportLevel.Supported) {
+        <img src="@Url.Content("~/img/star_40_bronze.png")" title="Supported" alt="Supported" style='float:right' />
       }
       <br />
       @m.AuthorName<br />
