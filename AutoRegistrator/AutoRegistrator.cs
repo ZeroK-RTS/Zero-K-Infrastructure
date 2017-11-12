@@ -38,10 +38,10 @@ namespace ZeroKWeb
             
             Downloader = new PlasmaDownloader.PlasmaDownloader(null, Paths);
             Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Autoregistrator Download started: {0}", e.Data.Name);
-            Downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine)?.WaitHandle.WaitOne();
+            Downloader.GetResource(DownloadType.ENGINE, GlobalConst.UnitSyncEngine)?.WaitHandle.WaitOne();
             //for ZKL equivalent, see PlasmaShared/GlobalConst.cs
 
-            UnitSyncer = new UnitSyncer(Paths, MiscVar.DefaultEngine);
+            UnitSyncer = new UnitSyncer(Paths, GlobalConst.UnitSyncEngine);
 
             Downloader.PackageDownloader.DoMasterRefresh();
             Downloader.GetResource(DownloadType.RAPID, "zk:stable")?.WaitHandle.WaitOne();
