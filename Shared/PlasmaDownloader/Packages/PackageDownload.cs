@@ -7,11 +7,14 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Security.Principal;
 using System.Threading;
+using Ionic.Zip;
 using SharpCompress.Archive;
 using SharpCompress.Archive.Zip;
 using SharpCompress.Common;
 using ZkData;
+using CompressionLevel = Ionic.Zlib.CompressionLevel;
 
 #endregion
 
@@ -42,7 +45,7 @@ namespace PlasmaDownloader.Packages
 				else
 				{
 					// getting files - can get accurate progress 
-					return (100.0*(doneAll + fileListWebGet.Length)/Length);
+					return (80.0*(doneAll + fileListWebGet.Length)/Length) + 20.0 * zipProgress;
 				}
 			}
 		}
@@ -214,7 +217,7 @@ namespace PlasmaDownloader.Packages
 
 	    private void RemoveOtherSdzVersions(Tuple<PackageDownloader.Repository, PackageDownloader.Version> entry)
 	    {
-	        var fileNames = Directory.GetFiles(Path.Combine(paths.WritableDirectory, "games"), "*.sdz").Select(Path.GetFileNameWithoutExtension).ToList();
+            var fileNames = Directory.GetFiles(Path.Combine(paths.WritableDirectory, "games"), "*.sdz").Select(Path.GetFileNameWithoutExtension).ToList();
 
 	        foreach (var other in entry.Item1.VersionsByTag)
 	        {
@@ -223,24 +226,44 @@ namespace PlasmaDownloader.Packages
 	        }
 	    }
 
+	    private const int paralellZipForFilesAboveSize = 300000;
+
+
+	    private double zipProgress;
+
 	    /// <summary>
         /// Generates sdz archive from pool and file list
         /// </summary>
 	    private void GenerateSdz(SdpArchive fileList, string tempSdz)
 	    {
-	        var dir = Path.GetDirectoryName(tempSdz);
+            var dir = Path.GetDirectoryName(tempSdz);
 	        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             if (File.Exists(tempSdz)) File.Delete(tempSdz);
 
-	        
-            using (var archive = ArchiveFactory.Create(ArchiveType.Zip))
-	        {
+	        long uncompressedTotalSize = fileList.Files.Sum(x => x.UncompressedSize);
+	        long uncompressedProgress = 0;
+
+
+            using (var fs = new FileStream(tempSdz, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (var zip = new ZipOutputStream(fs, false))
+            {
+                zip.CompressionLevel = CompressionLevel.BestSpeed;
+                zip.ParallelDeflateThreshold = 0;
                 foreach (var fl in fileList.Files)
-	            {
-	                archive.AddEntry(fl.Name, pool.ReadFromStorageDecompressed(fl.Hash), true, fl.UncompressedSize);
-	            }
-                archive.SaveTo(tempSdz, CompressionType.None);
-	        }
+                {
+                    zip.PutNextEntry(fl.Name);
+
+                    // 0 means paralell deflate is used, -1 means it is disabled
+                    if (fl.UncompressedSize > paralellZipForFilesAboveSize) zip.ParallelDeflateThreshold = 0; 
+                    else zip.ParallelDeflateThreshold = -1;
+                    
+                    using (var itemStream = pool.ReadFromStorageDecompressed(fl.Hash)) itemStream.CopyTo(zip);
+
+                    uncompressedProgress += fl.UncompressedSize;
+
+                    zipProgress = (double)uncompressedProgress / uncompressedTotalSize;
+                }
+            }
 	    }
 
 	    private Hash packageHash;
