@@ -383,14 +383,24 @@ namespace PlasmaDownloader.Packages
 
             public MemoryStream ReadFile(SpringPaths paths, string namePath)
             {
-                var sdpPath = Path.Combine(paths.WritableDirectory, "packages", $"{Hash}.sdpzk");
+                var sdpPath = Path.Combine(paths.WritableDirectory, "packages", $"{Hash}.sdp");
+                var sdpZkPath = Path.ChangeExtension(sdpPath, "sdpzk");
+
+                return ReadFileFromSdp(paths, namePath, sdpPath) ?? ReadFileFromSdp(paths, namePath, sdpZkPath);
+            }
+
+            private static MemoryStream ReadFileFromSdp(SpringPaths paths, string namePath, string sdpPath)
+            {
                 if (File.Exists(sdpPath))
                 {
                     SdpArchive sdp;
                     using (var fs = new FileStream(sdpPath, FileMode.Open)) sdp = new SdpArchive(new GZipStream(fs, CompressionMode.Decompress));
 
-                    var entry = sdp.Files.FirstOrDefault(x => x.Name.ToLower() == namePath.Replace('\\','/').ToLower());
-                    if (entry != null) return new Pool(paths).ReadFromStorageDecompressed(entry.Hash);
+                    var entry = sdp.Files.FirstOrDefault(x => x.Name.ToLower() == namePath.Replace('\\', '/').ToLower());
+                    if (entry != null)
+                    {
+                        return new Pool(paths).ReadFromStorageDecompressed(entry.Hash);
+                    }
                 }
                 return null;
             }

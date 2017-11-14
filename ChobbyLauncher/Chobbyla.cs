@@ -77,8 +77,12 @@ namespace ChobbyLauncher
 
                     if (!IsSteamFolder)
                     {
+                        downloader.RapidHandling = RapidHandling.SdzNameHash;
+
                         if (!await downloader.DownloadFile("Checking for chobby update", DownloadType.RAPID, chobbyTag, Progress, 2)) return false;
                         if (!await downloader.DownloadFile("Checking for game update", DownloadType.RAPID, GlobalConst.DefaultZkTag, Progress, 2)) return false;
+
+                        downloader.RapidHandling = RapidHandling.DefaultSdp;
 
                         ver = downloader.PackageDownloader.GetByTag(chobbyTag);
                         internalName = ver.InternalName;

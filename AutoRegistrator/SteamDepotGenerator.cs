@@ -78,8 +78,13 @@ namespace AutoRegistrator
 
             var chobbyName = downloader.PackageDownloader.GetByTag(GlobalConst.DefaultChobbyTag).InternalName;
 
+            downloader.RapidHandling = RapidHandling.SdzNameTagForceDownload;
+
             if (!downloader.DownloadFile(DownloadType.RAPID, chobbyName, prog).Result) throw new ApplicationException("SteamDepot chobby download failed: " + prog.Status);
             if (!downloader.DownloadFile(DownloadType.RAPID, GlobalConst.DefaultZkTag, prog).Result) throw new ApplicationException("SteamDepot zk download failed: " + prog.Status);
+
+            downloader.RapidHandling = RapidHandling.DefaultSdp;
+            
 
 
             CopyResources(siteBase, paths, GetResourceList(), downloader);

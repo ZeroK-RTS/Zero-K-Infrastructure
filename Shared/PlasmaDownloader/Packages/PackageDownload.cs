@@ -32,6 +32,8 @@ namespace PlasmaDownloader.Packages
 	    private SpringPaths paths;
 	    private string urlRoot;
 
+	    private RapidHandling rapidHandling;
+
 	    public override double IndividualProgress
 		{
 			get
@@ -45,7 +47,10 @@ namespace PlasmaDownloader.Packages
 				else
 				{
 					// getting files - can get accurate progress 
-					return (80.0*(doneAll + fileListWebGet.Length)/Length) + 20.0 * zipProgress;
+				    return rapidHandling != RapidHandling.DefaultSdp 
+				        ? (80.0 * (doneAll + fileListWebGet.Length) / Length) + 20.0 * zipProgress
+				        : (100.0 * (doneAll + fileListWebGet.Length) / Length);
+
 				}
 			}
 		}
@@ -54,6 +59,7 @@ namespace PlasmaDownloader.Packages
 	    public PackageDownload(string name, PlasmaDownloader downloader) {
 	        this.Name = name;
 	        this.downloader = downloader;
+	        this.rapidHandling = downloader.RapidHandling;
 	    }
         
 		public void Start()
@@ -170,13 +176,24 @@ namespace PlasmaDownloader.Packages
                 this.urlRoot = entry.Item1.BaseUrl;
                 this.packageHash = entry.Item2.Hash;
 
-                var targetSdz = Path.Combine(paths.WritableDirectory, "games", packageHash + ".sdz");
+			    string sdzName = string.Empty;
+			    if (rapidHandling == RapidHandling.SdzNameHash) sdzName = packageHash.ToString();
+                else if (rapidHandling == RapidHandling.SdzNameTagForceDownload) sdzName = entry.Item2.Name.Replace(":", "-");
 
-                if (File.Exists(targetSdz)) // SDZ exists, abort
+                var targetSdz = Path.Combine(paths.WritableDirectory, "games", sdzName + ".sdz");
+                var targetSdp = Path.Combine(paths.WritableDirectory, "packages", packageHash + ".sdp");
+                
+                if (rapidHandling == RapidHandling.SdzNameHash && File.Exists(targetSdz)) // SDZ exists, abort
 			    {
 			        Finish(true);
 			        return;
 			    }
+
+			    if (rapidHandling == RapidHandling.DefaultSdp && File.Exists(targetSdp)) // SDP exists, abort
+			    {
+			        Finish(true);
+			        return;
+                }
 
                 AddDependencies(entry);
 
@@ -189,20 +206,18 @@ namespace PlasmaDownloader.Packages
 				while (!IsAborted && !ok && i++ < 3) ok = LoadFiles(fileList);
 				if (ok)
 				{
-					var folder = Utils.MakePath(paths.WritableDirectory, "packages");
-					if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-					var target = Utils.MakePath(folder, packageHash + ".sdpzk");
-					if (File.Exists(target)) File.Delete(target);
-					File.Move(tempFilelist, target);
+					if (File.Exists(targetSdp)) File.Delete(targetSdp);
+					File.Move(tempFilelist, targetSdp);
 
+				    if (rapidHandling != RapidHandling.DefaultSdp)
+				    {
+				        var convertor = new Sdp2Sdz();
+                        convertor.ConvertSdp2Sdz(paths, packageHash, targetSdz, (p)=> { zipProgress = p; });
 
-				    var tempSdz = Path.Combine(paths.WritableDirectory, "temp", packageHash + ".sdz");
-				    GenerateSdz(fileList, tempSdz);
+                        if (rapidHandling == RapidHandling.SdzNameHash) RemoveOtherSdzVersions(entry);
+				    }
 
-                    File.Move(tempSdz, targetSdz);
-
-				    RemoveOtherSdzVersions(entry);
-
+                    
 				    Finish(true);
 				}
 				else Finish(false);
@@ -226,45 +241,12 @@ namespace PlasmaDownloader.Packages
 	        }
 	    }
 
-	    private const int paralellZipForFilesAboveSize = 300000;
+
 
 
 	    private double zipProgress;
 
-	    /// <summary>
-        /// Generates sdz archive from pool and file list
-        /// </summary>
-	    private void GenerateSdz(SdpArchive fileList, string tempSdz)
-	    {
-            var dir = Path.GetDirectoryName(tempSdz);
-	        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-            if (File.Exists(tempSdz)) File.Delete(tempSdz);
 
-	        long uncompressedTotalSize = fileList.Files.Sum(x => x.UncompressedSize);
-	        long uncompressedProgress = 0;
-
-
-            using (var fs = new FileStream(tempSdz, FileMode.Create, FileAccess.Write, FileShare.None))
-            using (var zip = new ZipOutputStream(fs, false))
-            {
-                zip.CompressionLevel = CompressionLevel.BestSpeed;
-                zip.ParallelDeflateThreshold = 0;
-                foreach (var fl in fileList.Files)
-                {
-                    zip.PutNextEntry(fl.Name);
-
-                    // 0 means paralell deflate is used, -1 means it is disabled
-                    if (fl.UncompressedSize > paralellZipForFilesAboveSize) zip.ParallelDeflateThreshold = 0; 
-                    else zip.ParallelDeflateThreshold = -1;
-                    
-                    using (var itemStream = pool.ReadFromStorageDecompressed(fl.Hash)) itemStream.CopyTo(zip);
-
-                    uncompressedProgress += fl.UncompressedSize;
-
-                    zipProgress = (double)uncompressedProgress / uncompressedTotalSize;
-                }
-            }
-	    }
 
 	    private Hash packageHash;
 	    private Pool pool;

@@ -64,6 +64,7 @@
     <Compile Include="Download.cs" />
     <Compile Include="EngineDownload.cs" />
     <Compile Include="Packages\BitArray.cs" />
+    <Compile Include="Packages\Sdp2Sdz.cs" />
     <Compile Include="Packages\StreamExtension.cs" />
     <Compile Include="PlasmaDownloader.cs" />
     <Compile Include="WebDownload.cs" />
