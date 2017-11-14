@@ -50,6 +50,12 @@ namespace ZkData
             else return val;
         }
 
+        public static void RenameWithOverwrite(this string sourceFile, string targetFile)
+        {
+            if (File.Exists(targetFile)) File.Delete(targetFile);
+            File.Move(sourceFile, targetFile);
+        }
+
 
         public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source,
     Func<TSource, TKey> selector)

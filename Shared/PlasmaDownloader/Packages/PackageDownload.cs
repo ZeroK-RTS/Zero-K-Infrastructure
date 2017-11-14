@@ -207,11 +207,10 @@ namespace PlasmaDownloader.Packages
 
 				    if (useSdz)
 				    {
-				        var tempSdz = Path.Combine(paths.WritableDirectory, "temp", packageHash + ".sdz");
-				        GenerateSdz(fileList, tempSdz);
-				        File.Move(tempSdz, targetSdz);
-				        RemoveOtherSdzVersions(entry);
-				        File.Move(targetSdp, Path.ChangeExtension(targetSdp, "sdpzk")); // remove sdp -> sdpzk
+				        var convertor = new Sdp2Sdz();
+                        convertor.ConvertSdp2Sdz(paths, packageHash, packageHash.ToString(), (p)=> { zipProgress = p; });
+
+                        RemoveOtherSdzVersions(entry);
 				    }
 
                     
@@ -238,45 +237,12 @@ namespace PlasmaDownloader.Packages
 	        }
 	    }
 
-	    private const int paralellZipForFilesAboveSize = 300000;
+
 
 
 	    private double zipProgress;
 
-	    /// <summary>
-        /// Generates sdz archive from pool and file list
-        /// </summary>
-	    private void GenerateSdz(SdpArchive fileList, string tempSdz)
-	    {
-            var dir = Path.GetDirectoryName(tempSdz);
-	        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-            if (File.Exists(tempSdz)) File.Delete(tempSdz);
 
-	        long uncompressedTotalSize = fileList.Files.Sum(x => x.UncompressedSize);
-	        long uncompressedProgress = 0;
-
-
-            using (var fs = new FileStream(tempSdz, FileMode.Create, FileAccess.Write, FileShare.None))
-            using (var zip = new ZipOutputStream(fs, false))
-            {
-                zip.CompressionLevel = CompressionLevel.BestSpeed;
-                zip.ParallelDeflateThreshold = 0;
-                foreach (var fl in fileList.Files)
-                {
-                    zip.PutNextEntry(fl.Name);
-
-                    // 0 means paralell deflate is used, -1 means it is disabled
-                    if (fl.UncompressedSize > paralellZipForFilesAboveSize) zip.ParallelDeflateThreshold = 0; 
-                    else zip.ParallelDeflateThreshold = -1;
-                    
-                    using (var itemStream = pool.ReadFromStorageDecompressed(fl.Hash)) itemStream.CopyTo(zip);
-
-                    uncompressedProgress += fl.UncompressedSize;
-
-                    zipProgress = (double)uncompressedProgress / uncompressedTotalSize;
-                }
-            }
-	    }
 
 	    private Hash packageHash;
 	    private Pool pool;
