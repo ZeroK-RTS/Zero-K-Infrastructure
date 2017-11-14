@@ -32,6 +32,8 @@ namespace PlasmaDownloader.Packages
 	    private SpringPaths paths;
 	    private string urlRoot;
 
+	    private bool useSdz;
+
 	    public override double IndividualProgress
 		{
 			get
@@ -45,7 +47,10 @@ namespace PlasmaDownloader.Packages
 				else
 				{
 					// getting files - can get accurate progress 
-					return (80.0*(doneAll + fileListWebGet.Length)/Length) + 20.0 * zipProgress;
+				    return useSdz
+				        ? (80.0 * (doneAll + fileListWebGet.Length) / Length) + 20.0 * zipProgress
+				        : (100.0 * (doneAll + fileListWebGet.Length) / Length);
+
 				}
 			}
 		}
@@ -54,6 +59,7 @@ namespace PlasmaDownloader.Packages
 	    public PackageDownload(string name, PlasmaDownloader downloader) {
 	        this.Name = name;
 	        this.downloader = downloader;
+	        this.useSdz = downloader.DownloadRapidToSdz;
 	    }
         
 		public void Start()
@@ -171,12 +177,19 @@ namespace PlasmaDownloader.Packages
                 this.packageHash = entry.Item2.Hash;
 
                 var targetSdz = Path.Combine(paths.WritableDirectory, "games", packageHash + ".sdz");
-
-                if (File.Exists(targetSdz)) // SDZ exists, abort
+			    var targetSdp = Path.Combine(paths.WritableDirectory, "packages", packageHash + ".sdp");
+                
+                if (useSdz && File.Exists(targetSdz)) // SDZ exists, abort
 			    {
 			        Finish(true);
 			        return;
 			    }
+
+			    if (!useSdz && File.Exists(targetSdp)) // SDP exists, abort
+			    {
+			        Finish(true);
+			        return;
+                }
 
                 AddDependencies(entry);
 
@@ -189,20 +202,19 @@ namespace PlasmaDownloader.Packages
 				while (!IsAborted && !ok && i++ < 3) ok = LoadFiles(fileList);
 				if (ok)
 				{
-					var folder = Utils.MakePath(paths.WritableDirectory, "packages");
-					if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-					var target = Utils.MakePath(folder, packageHash + ".sdpzk");
-					if (File.Exists(target)) File.Delete(target);
-					File.Move(tempFilelist, target);
+					if (File.Exists(targetSdp)) File.Delete(targetSdp);
+					File.Move(tempFilelist, targetSdp);
 
+				    if (useSdz)
+				    {
+				        var tempSdz = Path.Combine(paths.WritableDirectory, "temp", packageHash + ".sdz");
+				        GenerateSdz(fileList, tempSdz);
+				        File.Move(tempSdz, targetSdz);
+				        RemoveOtherSdzVersions(entry);
+				        File.Move(targetSdp, Path.ChangeExtension(targetSdp, "sdpzk")); // remove sdp -> sdpzk
+				    }
 
-				    var tempSdz = Path.Combine(paths.WritableDirectory, "temp", packageHash + ".sdz");
-				    GenerateSdz(fileList, tempSdz);
-
-                    File.Move(tempSdz, targetSdz);
-
-				    RemoveOtherSdzVersions(entry);
-
+                    
 				    Finish(true);
 				}
 				else Finish(false);

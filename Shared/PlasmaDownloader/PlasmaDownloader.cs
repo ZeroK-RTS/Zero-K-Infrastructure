@@ -34,6 +34,8 @@ namespace PlasmaDownloader
         private IResourcePresenceChecker scanner;
 
 
+        public bool DownloadRapidToSdz;
+
         public IReadOnlyCollection<Download> Downloads => new List<Download>(downloads.Values.Where(x=>x!= null)).AsReadOnly();
 
         public PackageDownloader PackageDownloader
