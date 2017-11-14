@@ -32,7 +32,7 @@ namespace PlasmaDownloader.Packages
 	    private SpringPaths paths;
 	    private string urlRoot;
 
-	    private bool useSdz;
+	    private RapidHandling rapidHandling;
 
 	    public override double IndividualProgress
 		{
@@ -47,7 +47,7 @@ namespace PlasmaDownloader.Packages
 				else
 				{
 					// getting files - can get accurate progress 
-				    return useSdz
+				    return rapidHandling != RapidHandling.DefaultSdp 
 				        ? (80.0 * (doneAll + fileListWebGet.Length) / Length) + 20.0 * zipProgress
 				        : (100.0 * (doneAll + fileListWebGet.Length) / Length);
 
@@ -59,7 +59,7 @@ namespace PlasmaDownloader.Packages
 	    public PackageDownload(string name, PlasmaDownloader downloader) {
 	        this.Name = name;
 	        this.downloader = downloader;
-	        this.useSdz = downloader.DownloadRapidToSdz;
+	        this.rapidHandling = downloader.RapidHandling;
 	    }
         
 		public void Start()
@@ -176,16 +176,20 @@ namespace PlasmaDownloader.Packages
                 this.urlRoot = entry.Item1.BaseUrl;
                 this.packageHash = entry.Item2.Hash;
 
-                var targetSdz = Path.Combine(paths.WritableDirectory, "games", packageHash + ".sdz");
-			    var targetSdp = Path.Combine(paths.WritableDirectory, "packages", packageHash + ".sdp");
+			    string sdzName = string.Empty;
+			    if (rapidHandling == RapidHandling.SdzNameHash) sdzName = packageHash.ToString();
+                else if (rapidHandling == RapidHandling.SdzNameTagForceDownload) sdzName = entry.Item2.Name.Replace(":", "-");
+
+                var targetSdz = Path.Combine(paths.WritableDirectory, "games", sdzName + ".sdz");
+                var targetSdp = Path.Combine(paths.WritableDirectory, "packages", packageHash + ".sdp");
                 
-                if (useSdz && File.Exists(targetSdz)) // SDZ exists, abort
+                if (rapidHandling == RapidHandling.SdzNameHash && File.Exists(targetSdz)) // SDZ exists, abort
 			    {
 			        Finish(true);
 			        return;
 			    }
 
-			    if (!useSdz && File.Exists(targetSdp)) // SDP exists, abort
+			    if (rapidHandling == RapidHandling.DefaultSdp && File.Exists(targetSdp)) // SDP exists, abort
 			    {
 			        Finish(true);
 			        return;
@@ -205,12 +209,12 @@ namespace PlasmaDownloader.Packages
 					if (File.Exists(targetSdp)) File.Delete(targetSdp);
 					File.Move(tempFilelist, targetSdp);
 
-				    if (useSdz)
+				    if (rapidHandling != RapidHandling.DefaultSdp)
 				    {
 				        var convertor = new Sdp2Sdz();
-                        convertor.ConvertSdp2Sdz(paths, packageHash, packageHash.ToString(), (p)=> { zipProgress = p; });
+                        convertor.ConvertSdp2Sdz(paths, packageHash, targetSdz, (p)=> { zipProgress = p; });
 
-                        RemoveOtherSdzVersions(entry);
+                        if (rapidHandling == RapidHandling.SdzNameHash) RemoveOtherSdzVersions(entry);
 				    }
 
                     

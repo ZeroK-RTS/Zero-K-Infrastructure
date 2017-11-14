@@ -24,6 +24,21 @@ namespace PlasmaDownloader
         NOTKNOWN
     }
 
+    public enum RapidHandling
+    {
+        /// <summary>
+        /// Default SDP download, keeps SDP
+        /// </summary>
+        DefaultSdp,
+        /// <summary>
+        /// SDZ named based on hash. Deletes other verisons of the same game
+        /// </summary>
+        SdzNameHash,
+        /// <summary>
+        /// SDZ with name based on tag. Existing version is not checked, forces re-download
+        /// </summary>
+        SdzNameTagForceDownload
+    }
 
     public class PlasmaDownloader : IDisposable
     {
@@ -34,7 +49,7 @@ namespace PlasmaDownloader
         private IResourcePresenceChecker scanner;
 
 
-        public bool DownloadRapidToSdz;
+        public RapidHandling RapidHandling = RapidHandling.DefaultSdp;
 
         public IReadOnlyCollection<Download> Downloads => new List<Download>(downloads.Values.Where(x=>x!= null)).AsReadOnly();
 
