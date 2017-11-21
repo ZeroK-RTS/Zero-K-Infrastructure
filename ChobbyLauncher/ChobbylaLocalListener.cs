@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Media;
@@ -52,7 +53,7 @@ namespace ChobbyLauncher
                 {
                     Name = d.Name,
                     FileType = d.DownloadType.ToString(),
-                    Progress = d.TotalProgress.ToString("F2"),
+                    Progress = d.TotalProgress.ToString("F2", CultureInfo.InvariantCulture),
                     SecondsRemaining = d.SecondsRemaining,
                     TotalLength = d.TotalLength,
                     CurrentSpeed = d.CurrentSpeed

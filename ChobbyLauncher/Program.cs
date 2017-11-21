@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -22,6 +23,9 @@ namespace ChobbyLauncher
         [STAThread]
         private static void Main(string[] args)
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+
             if (!Debugger.IsAttached) Trace.Listeners.Add(new ConsoleTraceListener());
 
             var logStringBuilder = new StringBuilder();

@@ -111,9 +111,8 @@ namespace ChobbyLauncher
             this.MinimizeBox = false;
             this.Name = "ChobbylaForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.Text = "ChobbylaForm";
+            this.Text = "Zero-K launcher";
             this.Load += new System.EventHandler(this.ChobbylaForm_Load);
-            this.closingEvent += this.ChobbylaForm_Closing;
             this.ResumeLayout(false);
             this.PerformLayout();
 
