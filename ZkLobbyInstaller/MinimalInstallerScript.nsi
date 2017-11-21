@@ -227,6 +227,7 @@ Section "Zero-K" ZKL
 	#download file: http://nsis.sourceforge.net/NSISdl_plug-in  --Register used:    $0 as downloader's exit code
 	DetailPrint "Downloading: http://zero-k.info/lobby/Zero-K.exe"
 	NSISdl::download /TIMEOUT=30000 http://zero-k.info/lobby/Zero-K.exe "$INSTDIR\Zero-K.exe"
+	NSISdl::download /TIMEOUT=30000 http://zero-k.info/lobby/sqlite3.dll "$INSTDIR\sqlite3.dll"
 	Pop $0 #from download stack
 	StrCmp "$0" "success" zklExist
 		DetailPrint "Download Failed: $0"
