@@ -67,7 +67,7 @@ namespace ZkLobbyServer
             Downloader.GetResource(DownloadType.ENGINE, MiscVar.DefaultEngine);
             Downloader.PackageDownloader.DoMasterRefresh();
 
-            Game = Downloader.PackageDownloader.GetByTag(GlobalConst.DefaultZkTag).InternalName;
+            Game = MiscVar.LastRegisteredZkVersion;
 
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());

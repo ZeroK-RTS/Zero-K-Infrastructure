@@ -35,7 +35,13 @@ namespace ZeroKWeb
         {
             Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false, false);
 
-            
+            // delete all packages to speed up startup
+            foreach (var f in Directory.GetFiles(Path.Combine(Paths.WritableDirectory, "packages")))
+            {
+                File.Delete(f);
+            }
+
+
             Downloader = new PlasmaDownloader.PlasmaDownloader(null, Paths);
             Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Autoregistrator Download started: {0}", e.Data.Name);
             Downloader.GetResource(DownloadType.ENGINE, GlobalConst.UnitSyncEngine)?.WaitHandle.WaitOne();
@@ -44,16 +50,18 @@ namespace ZeroKWeb
             UnitSyncer = new UnitSyncer(Paths, GlobalConst.UnitSyncEngine);
 
             Downloader.PackageDownloader.DoMasterRefresh();
-            Downloader.GetResource(DownloadType.RAPID, "zk:stable")?.WaitHandle.WaitOne();
-            Downloader.GetResource(DownloadType.RAPID, "zk:test")?.WaitHandle.WaitOne();
-
-            foreach (
-                var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag).Where(x => x.Key.StartsWith("spring-features"))) Downloader.GetResource(DownloadType.RAPID, ver.Value.InternalName)?.WaitHandle.WaitOne();
+            //LoadAllSpringFeatures();
 
             OnRapidChanged();
         }
 
-        public event Action<string, string> NewZkReleaseRegistered = (zk, chobby)=> { };
+        private void LoadAllSpringFeatures()
+        {
+            foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag).Where(x => x.Key.StartsWith("spring-features")))
+                Downloader.GetResource(DownloadType.RAPID, ver.Value.InternalName)?.WaitHandle.WaitOne();
+        }
+
+        public event Action<string, string> NewZkReleaseRegistered = (zk, chobby) => { };
 
 
         public Thread RunMainAndMapSyncAsync()
@@ -68,11 +76,13 @@ namespace ZeroKWeb
                     {
                         Thread.Sleep(61 * 1000);
                         if (Downloader.PackageDownloader.DoMasterRefresh()) OnRapidChanged();
+
+                        /*
                         if (DateTime.UtcNow.Subtract(lastSpringFilesUpdate).TotalMinutes > 61)
                         {
                             lastSpringFilesUpdate = DateTime.UtcNow;
                             SynchronizeMapsFromSpringFiles();
-                        }
+                        }*/
                     }
                 }
                 catch (Exception ex)
@@ -89,24 +99,25 @@ namespace ZeroKWeb
         {
             try
             {
-                Trace.TraceInformation("Autoregistrator packages changed");
-                foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag.Keys))
-                    if ((ver == "zk:stable") || (ver == "zk:test"))
-                    {
-                        Trace.TraceInformation("Autoregistrator downloading {0}", ver);
-                        Downloader.GetResource(DownloadType.RAPID, ver)?.WaitHandle.WaitOne();
-                    }
-
-                Trace.TraceInformation("Autoregistrator rescanning");
-                UnitSyncer.Scan();
-
-                Trace.TraceInformation("Autoregistrator scanning done");
-
-                UpdateRapidTagsInDb();
-                Trace.TraceInformation("Autoregistrator rapid tags updated");
-
                 lock (Locker)
                 {
+
+                    Trace.TraceInformation("Autoregistrator packages changed");
+                    foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag.Keys))
+                        if ((ver == "zk:stable") || (ver == "zk:test"))
+                        {
+                            Trace.TraceInformation("Autoregistrator downloading {0}", ver);
+                            Downloader.GetResource(DownloadType.RAPID, ver)?.WaitHandle.WaitOne();
+                        }
+
+                    Trace.TraceInformation("Autoregistrator rescanning");
+                    UnitSyncer.Scan();
+
+                    Trace.TraceInformation("Autoregistrator scanning done");
+
+                    UpdateRapidTagsInDb();
+                    Trace.TraceInformation("Autoregistrator rapid tags updated");
+
                     var newName = Downloader.PackageDownloader.GetByTag(GlobalConst.DefaultZkTag).InternalName;
                     var newChobbyName = Downloader.PackageDownloader.GetByTag(GlobalConst.DefaultChobbyTag).InternalName;
                     if (MiscVar.LastRegisteredZkVersion != newName || MiscVar.LastRegisteredChobbyVersion != newChobbyName)
