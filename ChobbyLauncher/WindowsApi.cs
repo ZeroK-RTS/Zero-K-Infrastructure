@@ -24,5 +24,16 @@ namespace ChobbyLauncher
             public UInt32 dwTimeout;
         }
 
+
+        public enum SwCommand 
+        {
+            SW_MAXIMIZE = 3,
+            SW_MINIMIZE = 6
+        }
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool ShowWindow(IntPtr hWnd, SwCommand nCmdShow);
+
     }
 }
