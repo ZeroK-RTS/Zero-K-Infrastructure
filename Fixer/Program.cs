@@ -151,6 +151,29 @@ namespace Fixer
             }
         }
 
+        public static void RemoveUnusedMaps()
+        {
+            var db = new ZkDataContext();
+            var mintime = DateTime.Now.AddMonths(-12);
+
+            var maps = db.Resources.Where(x => x.TypeID == ResourceType.Map)
+                .Select(x => new { Map = x, Count = x.SpringBattlesByMapResourceID.Count(y => y.StartTime >= mintime) })
+                .Where(x => x.Map.MapSupportLevel >= MapSupportLevel.Supported || x.Count > 1 && x.Map.ResourceContentFiles.Any(y=>y.LinkCount >0))
+                .Select(x => x.Map.ResourceContentFiles.OrderByDescending(y => y.LinkCount).Select(y=>y.FileName.ToLower()).FirstOrDefault()).ToList();
+
+            
+            var files = Directory.GetFiles(Path.Combine(GlobalConst.SiteDiskPath, "autoregistrator", "maps")).Select(Path.GetFileName).ToList();
+
+            foreach (var f in files.Where(x => !maps.Contains(x.ToLower())))
+            {
+                var todel = Path.Combine(GlobalConst.SiteDiskPath, "autoregistrator", "maps", f);
+                Console.WriteLine($"{f}");
+                File.Delete(todel);
+            }
+
+        }
+
+
         public enum OptionType
         {
             Undefined = 0,
@@ -406,6 +429,9 @@ namespace Fixer
 
            
             GlobalConst.Mode = ModeType.Live;
+            
+            RemoveUnusedMaps();
+
 
             //PlanetwarsFixer.AddWormholes(28);
             //PlanetwarsFixer.StartGalaxy(28, 3);
