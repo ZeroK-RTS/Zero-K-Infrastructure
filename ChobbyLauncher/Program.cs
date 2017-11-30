@@ -62,7 +62,7 @@ namespace ChobbyLauncher
                 {
                     Trace.TraceError("Error adding GA error event: {0}", ex);
                 }
-                //Environment.Exit(0);
+                Environment.Exit(0);
                 return;
             }
 
@@ -106,7 +106,7 @@ namespace ChobbyLauncher
             {
                 Trace.TraceWarning("Error writing full infolog: {0}",ex);
             }
-            //Environment.Exit(0);
+            Environment.Exit(0);
         }
 
         private static void ParseCommandLine(string[] args, out ulong connectLobbyID, out string chobbyTag, out string engineOverride)
