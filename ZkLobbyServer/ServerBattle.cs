@@ -528,8 +528,8 @@ namespace ZkLobbyServer
                 case AutohostMode.None:
                     if (MaxPlayers == 0) MaxPlayers = 16;
                     break;
-            }
-            if (MaxPlayers > 32) MaxPlayers = 32;
+            }            
+            if (MaxPlayers > 200) MaxPlayers = 200;
 
             HostedMod = MapPicker.FindResources(ResourceType.Mod, ModName ?? server.Game ?? GlobalConst.DefaultZkTag).FirstOrDefault();
             HostedMap = MapName != null
