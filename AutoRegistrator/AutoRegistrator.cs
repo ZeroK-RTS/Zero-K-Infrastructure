@@ -68,11 +68,13 @@ namespace ZeroKWeb
                     {
                         Thread.Sleep(61 * 1000);
                         if (Downloader.PackageDownloader.DoMasterRefresh()) OnRapidChanged();
+
+                        /*
                         if (DateTime.UtcNow.Subtract(lastSpringFilesUpdate).TotalMinutes > 61)
                         {
                             lastSpringFilesUpdate = DateTime.UtcNow;
                             SynchronizeMapsFromSpringFiles();
-                        }
+                        }*/
                     }
                 }
                 catch (Exception ex)
