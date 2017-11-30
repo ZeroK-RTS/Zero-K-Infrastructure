@@ -142,7 +142,7 @@ namespace Ratings
                 {
                     case RatingCategory.Casual:
                         return !(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID?.MapIsSpecial == true)
-                            || battle.ResourceByMapResourceID?.MapSupportLevel < MapSupportLevel.Supported || battle.Duration < GlobalConst.MinDurationForElo);
+                            || battle.Duration < GlobalConst.MinDurationForElo);
                     case RatingCategory.MatchMaking:
                         return battle.IsMatchMaker;
                     case RatingCategory.Planetwars:

@@ -79,8 +79,7 @@ namespace ZkData
         {
             if (IsEloProcessed) return;
 
-            if (IsMission || HasBots || (PlayerCount < 2) || noElo || (ResourceByMapResourceID.MapIsSpecial == true) ||
-                (ResourceByMapResourceID.MapSupportLevel < MapSupportLevel.Supported))
+            if (IsMission || HasBots || (PlayerCount < 2) || noElo || (ResourceByMapResourceID.MapIsSpecial == true))
             {
                 WinnerTeamXpChange = GlobalConst.XpForMissionOrBotsVictory;
                 LoserTeamXpChange = GlobalConst.XpForMissionOrBots;
