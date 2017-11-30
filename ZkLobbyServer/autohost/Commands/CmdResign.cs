@@ -59,6 +59,9 @@ namespace ZkLobbyServer
                 {
                     var entry = battle.spring.LobbyStartContext.Players.FirstOrDefault(x => x.Name == userName);
                     if (entry != null && !entry.IsSpectator && (alliance == null || entry.AllyID == alliance)) return ret;
+
+                    // if player is dead, he cannot vote
+                    //if (!battle.spring.Context.ActualPlayers.Any(x=>x.Name == userName && x.LoseTime == null)) return RunPermission.None;
                 }
             }
             return RunPermission.None;
