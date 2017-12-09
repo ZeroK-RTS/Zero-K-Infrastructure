@@ -264,7 +264,7 @@ namespace ZkData
             return contentServiceFactory.CreateChannel();
         }
 
-        public static string UnitSyncEngine = "103.0";
+        public static string UnitSyncEngine = "unitsync";
     }
 
     public enum PlanetWarsModes
