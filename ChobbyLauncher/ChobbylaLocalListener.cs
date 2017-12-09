@@ -29,6 +29,7 @@ namespace ChobbyLauncher
         private SteamClientHelper steam;
         private ulong initialConnectLobbyID;
         private Timer timer;
+        private DiscordController discordController;
 
 
         public ChobbylaLocalListener(Chobbyla chobbyla, SteamClientHelper steam, ulong initialConnectLobbyID)
@@ -42,6 +43,14 @@ namespace ChobbyLauncher
             steam.JoinFriendRequest += SteamOnJoinFriendRequest;
             steam.OverlayActivated += SteamOnOverlayActivated;
             steam.SteamOnline += () => { SendSteamOnline(); };
+            discordController = new DiscordController(GlobalConst.ZeroKDiscordID, GlobalConst.SteamAppID.ToString());
+            discordController.OnJoin += DiscordOnJoinCallback;
+            discordController.OnDisconnected += DiscordOnDisconnectedCallback;
+            discordController.OnError += DiscordOnErrorCallback;
+            discordController.OnReady += DiscordOnReadyCallback;
+            discordController.OnRequest += DiscordOnRequestCallback;
+            discordController.OnSpectate += DiscordOnSpectateCallback;
+
             timer = new Timer((o)=>OnTimerTick(), this, 500, 500);
         }
 
@@ -59,6 +68,9 @@ namespace ChobbyLauncher
                     CurrentSpeed = d.CurrentSpeed
                 });
             }
+
+            
+            discordController.Update();
         }
 
         private void SteamOnOverlayActivated(bool b)
@@ -71,6 +83,20 @@ namespace ChobbyLauncher
             SendCommand(new SteamJoinFriend() { FriendSteamID = friendSteamID.ToString() });
             steam.SendSteamNotifyJoin(friendSteamID);
         }
+
+
+        private void DiscordOnErrorCallback(int errorCode, string message) { }
+
+        private void DiscordOnJoinCallback(string secret) { }
+
+        private void DiscordOnSpectateCallback(string secret) { }
+
+        private void DiscordOnRequestCallback(ref DiscordRpc.JoinRequest request) { }
+
+        private void DiscordOnReadyCallback() { }
+
+        private void DiscordOnDisconnectedCallback(int errorCode, string message) { }
+
 
 
         /// <summary>
@@ -596,6 +622,8 @@ namespace ChobbyLauncher
             {
                 Trace.TraceError("Error sending WrapperOnline", ex);
             }
+
+            discordController.Init();
         }
 
 
@@ -621,6 +649,7 @@ namespace ChobbyLauncher
         private async Task OnConnectionClosed(bool arg)
         {
             timer.Dispose();
+            discordController.OnDisable();            
             Trace.TraceInformation("Chobby closed connection");
         }
     }

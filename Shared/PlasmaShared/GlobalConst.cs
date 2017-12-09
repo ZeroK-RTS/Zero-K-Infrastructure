@@ -255,6 +255,8 @@ namespace ZkData
 
         public static string[] ReplaysPossiblePaths = { @"c:\projekty\springie_spring\demos-server"};
 
+        public const string ZeroKDiscordID = "389176180877688832";
+
 
 
         static ChannelFactory<IContentService> contentServiceFactory;
