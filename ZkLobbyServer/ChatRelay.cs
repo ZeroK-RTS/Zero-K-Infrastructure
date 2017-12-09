@@ -60,17 +60,17 @@ namespace ZkLobbyServer
             restrictedSources.Add(zklsRelay);
             restrictedSources.Add(discordZkRelay);
 
-            //var token = new Secrets().GetNightwatchDiscordToken();
-            var token = "Mjc4ODA4MTA5NzQ3NjY2OTQ3.DQysBg.3pJoe7Vkg36vZgwAGaR6i9VjgNE";
+            var token = new Secrets().GetNightwatchDiscordToken(); 
             Task.Factory.StartNew(async () =>
             {
                 try
                 {
+                    await discord.StartAsync();
                     await discord.LoginAsync(TokenType.Bot, token);
                 }
                 catch (Exception ex)
                 {
-                    
+                    Trace.TraceError("Error initializing discord connection/relay: {0}",ex);
                 }
             }).Wait();
             
@@ -82,24 +82,29 @@ namespace ZkLobbyServer
 
         public int DiscordZkUserCount { get; private set; }
 
+        private object timerLock = new object();
        private void TimerCallback(object state)
         {
-            try
+            lock (timerLock)
             {
-                if (discord?.ConnectionState != ConnectionState.Connected || discord?.Status == UserStatus.Offline) return;
-                DiscordZkUserCount = discord?.GetGuild(DiscordZkServerID)?.Users?.Count ?? 0;
-                var zkTopic =
-                    $"[game: {server.ConnectedUsers.Count} online, {server.MatchMaker.GetTotalWaiting()} in queue, {server.Battles.Values.Where(x => x != null).Sum(x => (int?)x.NonSpectatorCount + x.SpectatorCount) ?? 0} in custom]";
-
-                if (zkTopic != lastZkTopic)
+                try
                 {
-                    foreach (var ch in channels) discordZkRelay?.SetTopic(ch, $"{server.Channels.Get(ch)?.Topic?.Text} {zkTopic}");
+                    if (discord?.LoginState != LoginState.LoggedIn) return;
+                    if (server?.ConnectedUsers?.Count == null) return;
+                    DiscordZkUserCount = discord?.GetGuild(DiscordZkServerID)?.Users?.Count ?? 0;
+                    var zkTopic =
+                        $"[game: {server.ConnectedUsers.Count} online, {server.MatchMaker.GetTotalWaiting()} in queue, {server.Battles.Values.Where(x => x != null).Sum(x => (int?)x.NonSpectatorCount + x.SpectatorCount) ?? 0} in custom]";
+
+                    if (zkTopic != lastZkTopic)
+                    {
+                        foreach (var ch in channels) discordZkRelay?.SetTopic(ch, $"{server.Channels.Get(ch)?.Topic?.Text} {zkTopic}");
+                    }
+                    lastZkTopic = zkTopic;
                 }
-                lastZkTopic = zkTopic;
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Error processing relay timer: {0}",ex);
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error processing relay timer: {0}", ex);
+                }
             }
         }
 
