@@ -2,32 +2,31 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Discord;
+using Discord.WebSocket;
 using LobbyClient;
 using ZkData;
-using Channel = Discord.Channel;
 
 namespace ZkLobbyServer
 {
     public class DiscordRelaySource : IChatRelaySource
     {
-        private DiscordClient discord;
+        private DiscordSocketClient discord;
         private ulong serverID;
         private SaySource source;
 
-        private static string GetName(Discord.User user)
+        private static string GetName(IUser user)
         {
-            return (user.Nickname ?? user.Name) + "#" + user.Discriminator;
+            return user.Username + "#" + user.Discriminator;
         }
 
-        public DiscordRelaySource(DiscordClient client, ulong serverID, SaySource source)
+        public DiscordRelaySource(DiscordSocketClient client, ulong serverID, SaySource source)
         {
             discord = client;
             this.source = source;
             discord.MessageReceived += DiscordOnMessageReceived;
-
             this.serverID = serverID;
-
         }
 
 
@@ -42,7 +41,7 @@ namespace ZkLobbyServer
         {
             try
             {
-                GetChannel(channel)?.Edit(topic: topic);
+                GetChannel(channel)?.ModifyAsync(prop => { prop.Topic = topic; });
             }
             catch (Exception ex)
             {
@@ -57,9 +56,9 @@ namespace ZkLobbyServer
             {
                 if (m.Source != source)
                 {
-                    if (m.User != GlobalConst.NightwatchName) GetChannel(m.Channel)?.SendMessage($"<{m.User}> {m.Message}");
+                    if (m.User != GlobalConst.NightwatchName) GetChannel(m.Channel)?.SendMessageAsync($"<{m.User}> {m.Message}");
                     // don't relay extra "nightwatch" if it is self relay
-                    else GetChannel(m.Channel)?.SendMessage(m.Message);
+                    else GetChannel(m.Channel)?.SendMessageAsync(m.Message);
                 }
             }
             catch (Exception ex)
@@ -72,7 +71,7 @@ namespace ZkLobbyServer
         {
             try
             {
-                discord.GetServer(serverID).Users.FirstOrDefault(x => GetName(x) == user)?.SendMessage(message);
+                discord.GetGuild(serverID).Users.FirstOrDefault(x => GetName(x) == user)?.SendMessageAsync(message);
             }
             catch (Exception ex)
             {
@@ -81,11 +80,11 @@ namespace ZkLobbyServer
         }
 
 
-        private void DiscordOnMessageReceived(object sender, MessageEventArgs msg)
+        private async Task DiscordOnMessageReceived(SocketMessage msg)
         {
             try
             {
-                if (msg.Server.Id == serverID) if (!msg.User.IsBot && msg.User.Name != GlobalConst.NightwatchName) OnChatRelayMessage?.Invoke(this, new ChatRelayMessage(msg.Channel.Name, GetName(msg.User), msg.Message.Text, source, false));
+                if (discord.GetGuild(serverID).GetChannel(msg.Channel.Id) != null) if (!msg.Author.IsBot && msg.Author.Username != GlobalConst.NightwatchName) OnChatRelayMessage?.Invoke(this, new ChatRelayMessage(msg.Channel.Name, GetName(msg.Author), msg.Content, source, false));
             }
             catch (Exception ex)
             {
@@ -93,9 +92,9 @@ namespace ZkLobbyServer
             }
         }
 
-        private Channel GetChannel(string name)
+        private SocketTextChannel GetChannel(string name)
         {
-            return discord?.GetServer(serverID)?.AllChannels.FirstOrDefault(x => x.Name == name);
+            return discord?.GetGuild(serverID)?.TextChannels.FirstOrDefault(x => x.Name == name);
         }
     }
 }

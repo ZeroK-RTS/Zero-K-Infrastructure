@@ -4,7 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Discord;
+using Discord.Rest;
+using Discord.Rpc;
+using Discord.WebSocket;
 using LobbyClient;
 using ZkData;
 
@@ -29,7 +33,7 @@ namespace ZkLobbyServer
         private string lastZkTopic;
         private SpringRelaySource springRelay;
         private ZklsRelaySource zklsRelay;
-        private DiscordClient discord;
+        private DiscordSocketClient discord;
 
         private const ulong DiscordZkServerID = 278805140708786177;
         private const ulong DiscordSpringServerID = 223585969956323328;
@@ -39,12 +43,14 @@ namespace ZkLobbyServer
             this.channels = channels;
             this.server = zkServer;
 
-            discord = new DiscordClient();
+            discord = new DiscordSocketClient();
+            
 
             springRelay = new SpringRelaySource(channels);
             sources.Add(springRelay);
             zklsRelay = new ZklsRelaySource(zkServer);
             sources.Add(zklsRelay);
+            
             discordZkRelay = new DiscordRelaySource(discord, DiscordZkServerID, SaySource.Discord);
             sources.Add(discordZkRelay);
             discordSpringRelay = new DiscordRelaySource(discord, DiscordSpringServerID, SaySource.DiscordSpring);
@@ -54,7 +60,20 @@ namespace ZkLobbyServer
             restrictedSources.Add(zklsRelay);
             restrictedSources.Add(discordZkRelay);
 
-            discord.Connect(new Secrets().GetNightwatchDiscordToken(), TokenType.Bot);
+            //var token = new Secrets().GetNightwatchDiscordToken();
+            var token = "Mjc4ODA4MTA5NzQ3NjY2OTQ3.DQysBg.3pJoe7Vkg36vZgwAGaR6i9VjgNE";
+            Task.Factory.StartNew(async () =>
+            {
+                try
+                {
+                    await discord.LoginAsync(TokenType.Bot, token);
+                }
+                catch (Exception ex)
+                {
+                    
+                }
+            }).Wait();
+            
 
             foreach (var s in sources) s.OnChatRelayMessage += OnAnySourceMessage;
 
@@ -67,7 +86,8 @@ namespace ZkLobbyServer
         {
             try
             {
-                DiscordZkUserCount = discord?.GetServer(DiscordZkServerID)?.UserCount ?? 0;
+                if (discord?.ConnectionState != ConnectionState.Connected || discord?.Status == UserStatus.Offline) return;
+                DiscordZkUserCount = discord?.GetGuild(DiscordZkServerID)?.Users?.Count ?? 0;
                 var zkTopic =
                     $"[game: {server.ConnectedUsers.Count} online, {server.MatchMaker.GetTotalWaiting()} in queue, {server.Battles.Values.Where(x => x != null).Sum(x => (int?)x.NonSpectatorCount + x.SpectatorCount) ?? 0} in custom]";
 
