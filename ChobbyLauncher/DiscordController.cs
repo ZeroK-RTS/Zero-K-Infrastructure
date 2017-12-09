@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Diagnostics;
+using ChobbyLauncher;
 
 public class DiscordController: IDisposable
 {
@@ -15,7 +16,7 @@ public class DiscordController: IDisposable
         this.steamAppID = steamAppId;
     }
 
-   public DiscordRpc.ReadyCallback OnReady { get => handlers.readyCallback; set => handlers.readyCallback = value; }
+    public DiscordRpc.ReadyCallback OnReady { get => handlers.readyCallback; set => handlers.readyCallback = value; }
     public DiscordRpc.DisconnectedCallback OnDisconnected { get => handlers.disconnectedCallback; set => handlers.disconnectedCallback = value; }
     public DiscordRpc.ErrorCallback OnError { get => handlers.errorCallback; set => handlers.errorCallback = value; }
     public DiscordRpc.JoinCallback OnJoin { get => handlers.joinCallback; set => handlers.joinCallback = value; }
@@ -35,7 +36,7 @@ public class DiscordController: IDisposable
         {
             DiscordRpc.Initialize(discordAppID, ref handlers, true, steamAppID);
             isInitialized = true;
-            var presence = new DiscordRpc.RichPresence();
+            var presence = new DiscordUpdatePresence();
             presence.details = "The best RTS";
             presence.state = "Loading";
             DiscordRpc.UpdatePresence(ref presence);
@@ -59,7 +60,7 @@ public class DiscordController: IDisposable
     }
 
 
-    public void UpdatePresence(DiscordRpc.RichPresence presence)
+    public void UpdatePresence(DiscordUpdatePresence presence)
     {
         try
         {

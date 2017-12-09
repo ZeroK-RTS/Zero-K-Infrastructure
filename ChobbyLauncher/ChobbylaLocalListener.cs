@@ -85,20 +85,38 @@ namespace ChobbyLauncher
         }
 
 
-        private void DiscordOnErrorCallback(int errorCode, string message) { }
+        private void DiscordOnErrorCallback(int errorCode, string message)
+        {
+            SendCommand(new DiscordOnError { ErrorCode = errorCode, Message = message });
+        }
 
-        private void DiscordOnJoinCallback(string secret) { }
+        private void DiscordOnJoinCallback(string secret)
+        {
+            SendCommand(new DiscordOnJoin() { Secret = secret });
+        }
 
-        private void DiscordOnSpectateCallback(string secret) { }
+        private void DiscordOnSpectateCallback(string secret)
+        {
+            SendCommand(new DiscordOnSpectate { Secret = secret });
+        }
 
-        private void DiscordOnRequestCallback(ref DiscordRpc.JoinRequest request) { }
+        private void DiscordOnRequestCallback(ref DiscordOnJoinRequest request)
+        {
+            SendCommand(request);
+        }
 
-        private void DiscordOnReadyCallback() { }
+        private void DiscordOnReadyCallback()
+        {
+            SendCommand(new DiscordOnReady());
+        }
 
-        private void DiscordOnDisconnectedCallback(int errorCode, string message) { }
+        private void DiscordOnDisconnectedCallback(int errorCode, string message)
+        {
+            SendCommand(new DiscordOnDisconnected { ErrorCode = errorCode, Message = message });
+        }
 
 
-
+        
         /// <summary>
         /// Starts listening on a new thread
         /// </summary>
@@ -592,6 +610,17 @@ namespace ChobbyLauncher
             });
         }
 
+
+        private async Task Process(DiscordUpdatePresence args)
+        {
+            discordController.UpdatePresence(args);
+        }
+
+        private async Task Process(DiscordRespond args)
+        {
+            discordController.Respond(args.UserId, (DiscordRpc.Reply)args.Reply);
+        }
+        
 
         private async Task OnConnected()
         {
