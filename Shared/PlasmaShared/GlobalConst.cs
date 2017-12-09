@@ -32,7 +32,7 @@ namespace ZkData
 #elif TEST
                 Mode = ModeType.Test;
 #else
-            Mode = ModeType.Test;
+            Mode = ModeType.Local;
 #endif
         }
 
@@ -264,7 +264,7 @@ namespace ZkData
             return contentServiceFactory.CreateChannel();
         }
 
-        public static string UnitSyncEngine = "103.0.1-1048-g97abd14";
+        public static string UnitSyncEngine = "103.0";
     }
 
     public enum PlanetWarsModes
