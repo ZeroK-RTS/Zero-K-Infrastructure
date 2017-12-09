@@ -101,6 +101,7 @@ namespace ChobbyLauncher
         {
             try
             {
+                MinimizeChobby();
                 System.Diagnostics.Process.Start(args.Url);
             }
             catch (Exception ex)
@@ -109,7 +110,22 @@ namespace ChobbyLauncher
             }
         }
 
-        
+        private void MinimizeChobby()
+        {
+            try
+            {
+                if (chobbyla.process.MainWindowHandle != IntPtr.Zero)
+                {
+                    WindowsApi.ShowWindow(chobbyla.process.MainWindowHandle, WindowsApi.SwCommand.SW_MINIMIZE);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Error minimizing chobby zero-k window: {0}", ex);
+            }
+        }
+
+
         public async Task Process(Alert args)
         {
             try
@@ -178,6 +194,7 @@ namespace ChobbyLauncher
         {
             try
             {
+                MinimizeChobby();
                 System.Diagnostics.Process.Start(chobbyla.paths.WritableDirectory);
             }
             catch (Exception ex)
@@ -287,7 +304,11 @@ namespace ChobbyLauncher
             try
             {
                 if (steam.IsOnline) steam.OpenOverlayWebsite(args.Url);
-                else System.Diagnostics.Process.Start(args.Url);
+                else
+                {
+                    MinimizeChobby();
+                    System.Diagnostics.Process.Start(args.Url);
+                }
             }
             catch (Exception ex)
             {

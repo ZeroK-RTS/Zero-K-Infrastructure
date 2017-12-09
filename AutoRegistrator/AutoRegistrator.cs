@@ -33,7 +33,7 @@ namespace ZeroKWeb
         /// </summary>
         public void Main()
         {
-            Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false, false);
+            Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false, Environment.Is64BitProcess);
 
             // delete all packages to speed up startup
             foreach (var f in Directory.GetFiles(Path.Combine(Paths.WritableDirectory, "packages")))

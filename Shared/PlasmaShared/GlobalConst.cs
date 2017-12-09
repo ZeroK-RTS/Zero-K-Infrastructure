@@ -27,11 +27,11 @@ namespace ZkData
 
         static GlobalConst()
         {
-            #if LIVE
+#if LIVE
                 Mode = ModeType.Live;
-            #elif TEST
+#elif TEST
                 Mode = ModeType.Test;
-            #else
+#else
             Mode = ModeType.Local;
 #endif
         }
@@ -264,7 +264,7 @@ namespace ZkData
             return contentServiceFactory.CreateChannel();
         }
 
-        public static string UnitSyncEngine = "103.0";
+        public static string UnitSyncEngine = "unitsync";
     }
 
     public enum PlanetWarsModes
