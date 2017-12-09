@@ -649,7 +649,7 @@ namespace ChobbyLauncher
         private async Task OnConnectionClosed(bool arg)
         {
             timer.Dispose();
-            discordController.OnDisable();            
+            discordController.Dispose();            
             Trace.TraceInformation("Chobby closed connection");
         }
     }
