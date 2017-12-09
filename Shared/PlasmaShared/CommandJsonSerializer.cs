@@ -13,7 +13,7 @@ namespace PlasmaShared
 
         public CommandJsonSerializer(IEnumerable<Type> types)
         {
-            NetJSON.NetJSON.IncludeFields = false;
+            //NetJSON.NetJSON.IncludeFields = false;
             RegisterTypes(types.ToArray());
         }
 
