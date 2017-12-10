@@ -126,6 +126,12 @@ namespace ChobbyLauncher
         public string SuggestedName { get; set; }
     }
 
+    [ChobbyMessage]
+    public class SteamOffline
+    {
+    }
+
+
 
     [ChobbyMessage]
     public class WrapperOnline

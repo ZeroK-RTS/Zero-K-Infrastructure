@@ -43,6 +43,7 @@ namespace ChobbyLauncher
             steam.JoinFriendRequest += SteamOnJoinFriendRequest;
             steam.OverlayActivated += SteamOnOverlayActivated;
             steam.SteamOnline += () => { SendSteamOnline(); };
+            steam.SteamOffline += () => { SendSteamOffline(); };
             discordController = new DiscordController(GlobalConst.ZeroKDiscordID, GlobalConst.SteamAppID.ToString());
             discordController.OnJoin += DiscordOnJoinCallback;
             discordController.OnDisconnected += DiscordOnDisconnectedCallback;
@@ -53,6 +54,7 @@ namespace ChobbyLauncher
 
             timer = new Timer((o)=>OnTimerTick(), this, 500, 500);
         }
+
 
         private void OnTimerTick()
         {
@@ -674,6 +676,12 @@ namespace ChobbyLauncher
                 if (friendId != null) steam.SendSteamNotifyJoin(friendId.Value);
             }
         }
+
+        private async Task SendSteamOffline()
+        {
+            await SendCommand(new SteamOffline());
+        }
+
 
         private async Task OnConnectionClosed(bool arg)
         {
