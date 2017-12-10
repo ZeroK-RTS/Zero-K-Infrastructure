@@ -29,6 +29,7 @@ namespace ChobbyLauncher
         private SteamClientHelper steam;
         private ulong initialConnectLobbyID;
         private Timer timer;
+        private DiscordController discordController;
 
 
         public ChobbylaLocalListener(Chobbyla chobbyla, SteamClientHelper steam, ulong initialConnectLobbyID)
@@ -42,8 +43,18 @@ namespace ChobbyLauncher
             steam.JoinFriendRequest += SteamOnJoinFriendRequest;
             steam.OverlayActivated += SteamOnOverlayActivated;
             steam.SteamOnline += () => { SendSteamOnline(); };
+            steam.SteamOffline += () => { SendSteamOffline(); };
+            discordController = new DiscordController(GlobalConst.ZeroKDiscordID, GlobalConst.SteamAppID.ToString());
+            discordController.OnJoin += DiscordOnJoinCallback;
+            discordController.OnDisconnected += DiscordOnDisconnectedCallback;
+            discordController.OnError += DiscordOnErrorCallback;
+            discordController.OnReady += DiscordOnReadyCallback;
+            discordController.OnRequest += DiscordOnRequestCallback;
+            discordController.OnSpectate += DiscordOnSpectateCallback;
+
             timer = new Timer((o)=>OnTimerTick(), this, 500, 500);
         }
+
 
         private void OnTimerTick()
         {
@@ -59,6 +70,9 @@ namespace ChobbyLauncher
                     CurrentSpeed = d.CurrentSpeed
                 });
             }
+
+            
+            discordController.Update();
         }
 
         private void SteamOnOverlayActivated(bool b)
@@ -73,6 +87,38 @@ namespace ChobbyLauncher
         }
 
 
+        private void DiscordOnErrorCallback(int errorCode, string message)
+        {
+            SendCommand(new DiscordOnError { ErrorCode = errorCode, Message = message });
+        }
+
+        private void DiscordOnJoinCallback(string secret)
+        {
+            SendCommand(new DiscordOnJoin() { Secret = secret });
+        }
+
+        private void DiscordOnSpectateCallback(string secret)
+        {
+            SendCommand(new DiscordOnSpectate { Secret = secret });
+        }
+
+        private void DiscordOnRequestCallback(ref DiscordOnJoinRequest request)
+        {
+            SendCommand(request);
+        }
+
+        private void DiscordOnReadyCallback()
+        {
+            SendCommand(new DiscordOnReady());
+        }
+
+        private void DiscordOnDisconnectedCallback(int errorCode, string message)
+        {
+            SendCommand(new DiscordOnDisconnected { ErrorCode = errorCode, Message = message });
+        }
+
+
+        
         /// <summary>
         /// Starts listening on a new thread
         /// </summary>
@@ -567,6 +613,17 @@ namespace ChobbyLauncher
         }
 
 
+        private async Task Process(DiscordUpdatePresence args)
+        {
+            discordController.UpdatePresence(args);
+        }
+
+        private async Task Process(DiscordRespond args)
+        {
+            discordController.Respond(args.UserId, (DiscordRpc.Reply)args.Reply);
+        }
+        
+
         private async Task OnConnected()
         {
             Trace.TraceInformation("Chobby connected to wrapper");
@@ -596,6 +653,8 @@ namespace ChobbyLauncher
             {
                 Trace.TraceError("Error sending WrapperOnline", ex);
             }
+
+            discordController.Init();
         }
 
 
@@ -618,9 +677,16 @@ namespace ChobbyLauncher
             }
         }
 
+        private async Task SendSteamOffline()
+        {
+            await SendCommand(new SteamOffline());
+        }
+
+
         private async Task OnConnectionClosed(bool arg)
         {
             timer.Dispose();
+            discordController.Dispose();            
             Trace.TraceInformation("Chobby closed connection");
         }
     }

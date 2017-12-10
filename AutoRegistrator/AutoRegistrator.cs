@@ -35,11 +35,10 @@ namespace ZeroKWeb
         {
             Paths = new SpringPaths(Path.Combine(sitePath, "autoregistrator"), false, Environment.Is64BitProcess);
 
-            // delete all packages to speed up startup
-            foreach (var f in Directory.GetFiles(Path.Combine(Paths.WritableDirectory, "packages")))
-            {
-                File.Delete(f);
-            }
+            // delete all maps and packages to speed up startup
+            DeleteAllPackages();
+            DeleteAllMaps();
+
 
 
             Downloader = new PlasmaDownloader.PlasmaDownloader(null, Paths);
@@ -53,6 +52,22 @@ namespace ZeroKWeb
             //LoadAllSpringFeatures();
 
             OnRapidChanged();
+        }
+
+        private void DeleteAllPackages()
+        {
+            foreach (var f in Directory.GetFiles(Path.Combine(Paths.WritableDirectory, "packages")))
+            {
+                File.Delete(f);
+            }
+        }
+
+        private void DeleteAllMaps()
+        {
+            foreach (var f in Directory.GetFiles(Path.Combine(Paths.WritableDirectory, "maps")))
+            {
+                File.Delete(f);
+            }
         }
 
         private void LoadAllSpringFeatures()
@@ -77,12 +92,12 @@ namespace ZeroKWeb
                         Thread.Sleep(61 * 1000);
                         if (Downloader.PackageDownloader.DoMasterRefresh()) OnRapidChanged();
 
-                        /*
+                        
                         if (DateTime.UtcNow.Subtract(lastSpringFilesUpdate).TotalMinutes > 61)
                         {
                             lastSpringFilesUpdate = DateTime.UtcNow;
                             SynchronizeMapsFromSpringFiles();
-                        }*/
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -140,9 +155,29 @@ namespace ZeroKWeb
         {
             if (GlobalConst.Mode == ModeType.Live)
             {
-                var fs = new WebFolderSyncer();
-                fs.SynchronizeFolders("http://api.springfiles.com/files/maps/", Path.Combine(Paths.WritableDirectory, "maps"));
-                UnitSyncer.Scan();
+                var db = new ZkDataContext();
+
+                var processedFiles = db.ResourceContentFiles.Where(x => x.Resource.TypeID == ResourceType.Map).Select(x => x.FileName.ToLower()).Distinct().ToLookup(x => x);
+                var triedFiles = db.SpringFilesUnitsyncAttempts.Select(x => x.FileName.ToLower()).Distinct().ToLookup(x => x);
+
+                var webSyncer = new WebFolderSyncer();
+
+                foreach (var file in webSyncer.GetFileList())
+                {
+                    if (processedFiles.Contains(file.ToLower()) || triedFiles.Contains(file.ToLower())) continue;
+
+                    webSyncer.DownloadFile(Path.Combine(Paths.WritableDirectory,"maps"), file);
+                    
+                    UnitSyncer.Scan();
+
+                    db.SpringFilesUnitsyncAttempts.Add(new SpringFilesUnitsyncAttempt() { FileName = file });
+                    db.SaveChanges();
+
+                    try
+                    {
+                        File.Delete(Path.Combine(Paths.WritableDirectory, "maps", file));
+                    } catch (Exception ex) { }
+                }
             }
         }
 
@@ -150,12 +185,18 @@ namespace ZeroKWeb
         {
             using (var db = new ZkDataContext())
             {
-                foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByInternalName.Values))
+                var internalNameToTag = Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByInternalName.Values)
+                    .ToLookup(x => x.InternalName, x => x);
+
+                foreach (var entry in db.Resources.Where(x => x.TypeID != ResourceType.Map).ToList())
                 {
-                    var entry = db.Resources.FirstOrDefault(x => (x.InternalName == ver.InternalName) && (x.RapidTag != ver.Name));
-                    if (entry != null) entry.RapidTag = ver.Name;
+                    var tag = internalNameToTag[entry.InternalName].Select(x => x.Name).FirstOrDefault();
+                    if (entry.RapidTag != tag && tag != null)
+                    {
+                        entry.RapidTag = tag;
+                        db.SaveChanges();
+                    }
                 }
-                db.SaveChanges();
             }
         }
     }

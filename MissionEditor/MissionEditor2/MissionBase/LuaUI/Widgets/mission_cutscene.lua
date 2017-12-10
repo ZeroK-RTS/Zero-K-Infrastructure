@@ -296,14 +296,14 @@ function widget:Initialize()
   
   WG.Cutscene.IsInCutscene = function() return isInCutscene end
   
-  --WG.AddNoHideWidget(self)
+  WG.AddNoHideWidget(self)
   
   drawListCamScreen = gl.CreateList(gl.BeginEnd, GL.LINES, DrawListCameraScreen, vsy*0.05)
 end
 
 function widget:Shutdown()
   if WG.UnhideGUI then
-    --WG.RemoveNoHideWidget(self)
+    WG.RemoveNoHideWidget(self)
     WG.UnhideGUI()
   end
   
@@ -396,10 +396,15 @@ function widget:DrawScreenEffects()
     glRect(0, vsy, vsx, 0)
     glColor(1,1,1,1)
   end
+end
+
+function widget:DrawScreen()
   if isInCutscene and isSkippable and (displaySkipMessage or (not WG.IsGUIHidden()) ) then
+    gl.PushMatrix()
     gl.Translate(vsx * 0.75, vsy * LETTERBOX_BOUNDARY/2, 0)
     gl.Text("SPACE: Skip", 0, 0, 20, "O")
-  end  
+    gl.PopMatrix()
+  end
 end
 
 function widget:ViewResize(viewSizeX, viewSizeY)

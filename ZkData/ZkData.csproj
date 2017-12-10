@@ -302,6 +302,11 @@
     <Compile Include="Migrations\201711021904166_AddEffectPreventInfluenceDecay.Designer.cs">
       <DependentUpon>201711021904166_AddEffectPreventInfluenceDecay.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201712101826097_SpringFilesUnitsyncAttempts.cs" />
+    <Compile Include="Migrations\201712101826097_SpringFilesUnitsyncAttempts.Designer.cs">
+      <DependentUpon>201712101826097_SpringFilesUnitsyncAttempts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
     <Compile Include="Enums\EnergyPriority.cs" />
@@ -599,6 +604,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201711021904166_AddEffectPreventInfluenceDecay.resx">
       <DependentUpon>201711021904166_AddEffectPreventInfluenceDecay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712101826097_SpringFilesUnitsyncAttempts.resx">
+      <DependentUpon>201712101826097_SpringFilesUnitsyncAttempts.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -126,6 +126,12 @@ namespace ChobbyLauncher
         public string SuggestedName { get; set; }
     }
 
+    [ChobbyMessage]
+    public class SteamOffline
+    {
+    }
+
+
 
     [ChobbyMessage]
     public class WrapperOnline
@@ -321,4 +327,75 @@ namespace ChobbyLauncher
 
         public string Value { get; set; }
     }
+
+
+    [ChobbyMessage]
+    [System.Serializable]
+    public struct DiscordUpdatePresence
+    {
+        public string state; /* max 128 bytes */
+        public string details; /* max 128 bytes */
+        public long startTimestamp;
+        public long endTimestamp;
+        public string largeImageKey; /* max 32 bytes */
+        public string largeImageText; /* max 128 bytes */
+        public string smallImageKey; /* max 32 bytes */
+        public string smallImageText; /* max 128 bytes */
+        public string partyId; /* max 128 bytes */
+        public int partySize;
+        public int partyMax;
+        public string matchSecret; /* max 128 bytes */
+        public string joinSecret; /* max 128 bytes */
+        public string spectateSecret; /* max 128 bytes */
+        public bool instance;
+    }
+
+    [ChobbyMessage]
+    public class DiscordRespond
+    {
+        public string UserId { get; set; }
+        public int Reply { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class DiscordOnReady
+    {
+    }
+
+    [ChobbyMessage]
+    public class DiscordOnSpectate
+    {
+        public string Secret { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class DiscordOnJoin
+    {
+        public string Secret { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class DiscordOnError
+    {
+        public string Message { get; set; }
+        public int ErrorCode { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class DiscordOnDisconnected
+    {
+        public string Message { get; set; }
+        public int ErrorCode { get; set; }
+    }
+
+    [ChobbyMessage]
+    [System.Serializable]
+    public struct DiscordOnJoinRequest
+    {
+        public string userId;
+        public string username;
+        public string discriminator;
+        public string avatar;
+    }
+
 }

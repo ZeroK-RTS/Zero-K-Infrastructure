@@ -79,7 +79,7 @@ namespace ZkData
                     break;
             }
 
-            DefaultDownloadMirrors = new[] { BaseSiteUrl +"/autoregistrator/%t/%f" };
+            DefaultDownloadMirrors = new[] { BaseSiteUrl +"/content/%t/%f" };
             ResourceBaseUrl = string.Format("{0}/Resources", BaseSiteUrl);
             BaseImageUrl = string.Format("{0}/img/", BaseSiteUrl);
             SelfUpdaterBaseUrl = string.Format("{0}/lobby", BaseSiteUrl);
@@ -254,6 +254,8 @@ namespace ZkData
 
 
         public static string[] ReplaysPossiblePaths = { @"c:\projekty\springie_spring\demos-server"};
+
+        public const string ZeroKDiscordID = "389176180877688832";
 
 
 

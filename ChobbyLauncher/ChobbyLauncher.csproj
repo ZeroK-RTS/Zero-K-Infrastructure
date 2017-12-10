@@ -87,6 +87,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="CrashReportHelper.cs" />
+    <Compile Include="DiscordController.cs" />
+    <Compile Include="DiscordRpc.cs" />
     <Compile Include="SteamClient.cs" />
     <Compile Include="SteamMessages.cs" />
     <Compile Include="STUN\Client\STUN_Client.cs" />
