@@ -472,6 +472,15 @@ local function AddEvent(frame, event, args, cutsceneID)
   table.insert(events[frame], {event = event, args = args, cutsceneID = cutsceneID})
 end
 
+local function RunEvents(frame)
+  if events[frame] then
+    for _, Event in ipairs(events[frame]) do
+      Event.event(unpack(Event.args)) -- run event
+    end
+  end
+  events[frame] = nil
+end
+GG.mission.RunEvents = RunEvents
 
 local function CustomConditionMet(name)
   for _, trigger in ipairs(triggers) do
@@ -1116,12 +1125,13 @@ ExecuteTrigger = function(trigger, frame)
 end
 GG.mission.ExecuteTrigger = ExecuteTrigger
 
-local function ExecuteTriggerByName(name)
+local function ExecuteTriggerByName(name, frame)
   local triggers = GG.mission.triggers
   for i=1,#triggers do
     local trigger = triggers[i]
     if trigger and trigger.name == name then
-      ExecuteTrigger(trigger)
+      ExecuteTrigger(trigger, frame)
+      --break
     end
   end
 end
@@ -1239,11 +1249,7 @@ function gadget:GamePreload()
       end
     end
   end
-  if events[-1] then
-    for _, Event in ipairs(events[-1]) do
-        Event.event(unpack(Event.args)) -- run event
-    end
-  end
+  RunEvents(-1)
 end
 
 function gadget:GameFrame(n)
@@ -1276,13 +1282,7 @@ function gadget:GameFrame(n)
     gameStarted = true
   end
   
- 
-  if events[n] then -- list of events to run at this frame
-    for _, Event in ipairs(events[n]) do
-      Event.event(unpack(Event.args)) -- run event
-    end
-    events[n] = nil
-  end
+  RunEvents(n)
   
   for countdown, expiry in pairs(countdowns) do
     if n == expiry then
