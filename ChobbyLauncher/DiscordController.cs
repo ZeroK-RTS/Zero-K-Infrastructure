@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using ChobbyLauncher;
 
-public class DiscordController: IDisposable
+public class DiscordController : IDisposable
 {
     public string discordAppID;
     public string steamAppID;
@@ -16,12 +16,12 @@ public class DiscordController: IDisposable
         this.steamAppID = steamAppId;
     }
 
-    public DiscordRpc.ReadyCallback OnReady { get => handlers.readyCallback; set => handlers.readyCallback = value; }
-    public DiscordRpc.DisconnectedCallback OnDisconnected { get => handlers.disconnectedCallback; set => handlers.disconnectedCallback = value; }
-    public DiscordRpc.ErrorCallback OnError { get => handlers.errorCallback; set => handlers.errorCallback = value; }
-    public DiscordRpc.JoinCallback OnJoin { get => handlers.joinCallback; set => handlers.joinCallback = value; }
-    public DiscordRpc.SpectateCallback OnSpectate { get => handlers.spectateCallback; set => handlers.spectateCallback = value; }
-    public DiscordRpc.RequestCallback OnRequest { get => handlers.requestCallback; set => handlers.requestCallback = value; }
+    public DiscordRpc.ReadyCallback OnReady {get { return handlers.readyCallback; } set { handlers.readyCallback = value; }}
+    public DiscordRpc.DisconnectedCallback OnDisconnected { get { return handlers.disconnectedCallback; } set { handlers.disconnectedCallback = value; } }
+    public DiscordRpc.ErrorCallback OnError { get { return handlers.errorCallback; } set { handlers.errorCallback = value; } }
+    public DiscordRpc.JoinCallback OnJoin { get { return handlers.joinCallback; } set { handlers.joinCallback = value; } }
+    public DiscordRpc.SpectateCallback OnSpectate { get { return handlers.spectateCallback; } set { handlers.spectateCallback = value; } }
+    public DiscordRpc.RequestCallback OnRequest { get { return handlers.requestCallback; } set { handlers.requestCallback = value; } }
 
 
     public DiscordController()
@@ -43,7 +43,7 @@ public class DiscordController: IDisposable
         }
         catch (Exception ex)
         {
-            Trace.TraceError("Error initializing discord-RPC: {0}",ex);
+            Trace.TraceError("Error initializing discord-RPC: {0}", ex);
         }
     }
 
@@ -68,7 +68,7 @@ public class DiscordController: IDisposable
         }
         catch (Exception ex)
         {
-            Trace.TraceError("Error setting discord-RPC presence: {0}",ex);
+            Trace.TraceError("Error setting discord-RPC presence: {0}", ex);
         }
     }
 
@@ -96,5 +96,4 @@ public class DiscordController: IDisposable
             Trace.TraceWarning("Exception shutting down discord-RPC: {0}", ex);
         }
     }
-
 }
