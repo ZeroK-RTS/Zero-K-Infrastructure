@@ -139,17 +139,26 @@ namespace MissionEditor2
 						var mission = Mission;
 						
 						//if (sdd) fileName = Path.ChangeExtension(fileName, "zip"); // this is the temporary zip, leave the .sdd path for the actual .sdd
-						Utils.InvokeInNewThread(delegate
-							{
-								mission.CreateArchive(fileName, hideFromModList, sdd);
-								if (!sdd) {
-									var scriptPath = String.Format("{0}\\{1}.txt", Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
-									var scriptPathLua = String.Format("{0}\\{1}.lua", Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
-									File.WriteAllText(scriptPath, mission.GetScript());
-									File.WriteAllText(scriptPathLua, "return " + mission.GetLuaStartscript());
-								}
-								this.Invoke(loadingDialog.Close);
-							});
+						try
+						{
+							Utils.InvokeInNewThread(delegate
+								{
+									mission.CreateArchive(fileName, hideFromModList, sdd);
+									if (!sdd)
+									{
+										var scriptPath = String.Format("{0}\\{1}.txt", Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
+										var scriptPathLua = String.Format("{0}\\{1}.lua", Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
+										File.WriteAllText(scriptPath, mission.GetScript());
+										File.WriteAllText(scriptPathLua, "return " + mission.GetLuaStartscript());
+									}
+									this.Invoke(loadingDialog.Close);
+								});
+						}
+						catch (Exception e)
+						{
+							if (Debugger.IsAttached) throw;
+							MessageBox.Show(e.Message);
+						}
 					};
 				loadingDialog.ShowDialog();
 			}
