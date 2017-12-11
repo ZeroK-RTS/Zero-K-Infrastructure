@@ -31,18 +31,23 @@ namespace Ratings
         public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity);
 
         private bool runningInitialization = true;
+        private readonly RatingCategory category;
 
-        public WholeHistoryRating()
+        public WholeHistoryRating(RatingCategory category)
         {
+            this.category = category;
             w2 = GlobalConst.EloDecayPerDaySquared;
+
+            lock (dbLock)
+            {
+                var db = new ZkDataContext();
+                foreach (var accountRating in db.AccountRatings.Where(x => x.ratingCategory == category).ToList())
+                {
+                    playerRatings.Add(accountRating.AccountID, new PlayerRating(accountRating.Rank, accountRating.Percentile, accountRating.RealElo, accountRating.LastUncertainty, accountRating.LastGameDate));
+                }
+            }
         }
-
-
-        public WholeHistoryRating(string serializedData) : this()
-        {
-            DeserializeJSON(serializedData);
-        }
-
+        
 
         public PlayerRating GetPlayerRating(int accountID)
         {
@@ -112,6 +117,7 @@ namespace Ratings
 
         private readonly object updateLock = new object();
         private readonly object updateLockInternal = new object();
+        private readonly object dbLock = new object();
 
         public void UpdateRatings()
         {
@@ -183,37 +189,28 @@ namespace Ratings
             }
 
         }
-
-        public string SerializeJSON()
+        
+        public void SaveToDB()
         {
-            try
+            lock (dbLock)
             {
-                return JsonConvert.SerializeObject(playerRatings, Formatting.None);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Failed to serialize WHR " + ex);
-            }
-            return "";
-        }
-
-        public void DeserializeJSON(string json)
-        {
-            try
-            {
-                var settings = new JsonSerializerSettings
+                var db = new ZkDataContext();
+                foreach (var playerRating in playerRatings)
                 {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    MissingMemberHandling = MissingMemberHandling.Ignore
-                };
-                var t = JsonConvert.DeserializeObject<ConcurrentDictionary<int, PlayerRating>>(json, settings);
-                if (t != null) playerRatings = t;
+                    var accountRating = db.AccountRatings.Where(r => r.AccountID == playerRating.Key && r.ratingCategory == category).FirstOrDefault();
+                    if (accountRating != null)
+                    {
+                        accountRating.UpdateFromRatingSystem(playerRating.Value);
+                    }
+                    else
+                    {
+                        accountRating = new AccountRating(playerRating.Key, category);
+                        accountRating.UpdateFromRatingSystem(playerRating.Value);
+                        db.AccountRatings.InsertOnSubmit(accountRating);
+                    }
+                }
+                db.SaveChanges();
             }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Failed to deserialize WHR " + ex);
-            }
-            Trace.TraceInformation("Deserialized WHR cache for " + playerRatings.Count + " players");
         }
 
         public string DebugPlayer(Account player)
@@ -367,7 +364,7 @@ namespace Ratings
             {
                 p.updateUncertainty();
             }
-            RatingSystems.BackupToDB(this);
+            SaveToDB();
         }
 
         private void printStats()

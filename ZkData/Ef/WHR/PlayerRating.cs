@@ -29,9 +29,9 @@ namespace Ratings
         }
 
         [JsonProperty]
-        private readonly float LastUncertainty;
+        public readonly float LastUncertainty;
         [JsonProperty]
-        private readonly int LastGameDate;
+        public readonly int LastGameDate;
 
         public PlayerRating(int Rank, float Percentile, float Elo, float Uncertainty) : this(Rank, Percentile, Elo, Uncertainty, RatingSystems.ConvertDateToDays(DateTime.Now))
         {

@@ -77,9 +77,11 @@
     <Compile Include="Ef\LobbyChannelTopic.cs" />
     <Compile Include="Ef\SpringBattleBot.cs" />
     <Compile Include="Ef\WHR\Game.cs" />
+    <Compile Include="Ef\WHR\IWHRUpdateListener.cs" />
     <Compile Include="Ef\WHR\IRatingSystem.cs" />
     <Compile Include="Ef\WHR\Player.cs" />
     <Compile Include="Ef\WHR\PlayerDay.cs" />
+    <Compile Include="Ef\AccountRating.cs" />
     <Compile Include="Ef\WHR\PlayerRating.cs" />
     <Compile Include="Ef\WHR\RatingSystems.cs" />
     <Compile Include="Ef\WHR\WholeHistoryRating.cs" />

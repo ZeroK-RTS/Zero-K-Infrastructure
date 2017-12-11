@@ -9,6 +9,7 @@ using EntityFramework.Extensions;
 using Microsoft.Linq.Translations;
 using ZkData;
 using ZkLobbyServer;
+using Ratings;
 
 namespace ZeroKWeb
 {
@@ -111,6 +112,11 @@ namespace ZeroKWeb
             {
                 try
                 {
+                    if (!RatingSystems.DisableRatingSystems)
+                    {
+                        RatingSystems.BackupToDB();
+                    }
+
                     var db = new ZkDataContext();
                     db.Database.CommandTimeout = 600;
 
