@@ -73,7 +73,7 @@ namespace Ratings
                 createGame(losers, winners, false, RatingSystems.ConvertDateToDays(battle.StartTime), battle.SpringBattleID);
                 if (RatingSystems.Initialized)
                 {
-                    Trace.TraceInformation(battlesRegistered + " battles registered for WHR");
+                    Trace.TraceInformation(battlesRegistered + " battles registered for WHR, latest Battle: " + battle.SpringBattleID );
                     UpdateRatings();
                 }
             }
@@ -150,7 +150,7 @@ namespace Ratings
                     updateAction = (() =>
                     {
                         Trace.TraceInformation("Updating WHR ratings for last Battle");
-                        IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Select(p => getPlayerById(p.AccountID));
+                        IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Where(p => !p.IsSpectator).Select(p => getPlayerById(p.AccountID));
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
                         UpdateRankings(players);
@@ -243,39 +243,51 @@ namespace Ratings
         //Runs in O(N log(N)) for all players
         private void UpdateRankings(IEnumerable<Player> players)
         {
-            foreach (var p in players)
+            try
             {
-                float elo = p.days.Last().getElo() + RatingOffset;
-                float lastUncertainty = p.days.Last().uncertainty * 100;
-                int lastDay = p.days.Last().day;
-                playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastUncertainty, lastDay);
-                float rating = -playerRatings[p.id].Elo + 0.001f * (float)rand.NextDouble();
-                if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
-                playerKeys[p.id] = rating;
-                sortedPlayers[rating] = p.id;
-            }
-            float[] playerUncertainties = new float[playerRatings.Count];
-            int index = 0;
-            float DynamicMaxUncertainty = GlobalConst.MinimumDynamicMaxLadderUncertainty;
-            foreach (var pair in playerRatings)
-            {
-                playerUncertainties[index++] = pair.Value.Uncertainty;
-            }
-            Array.Sort(playerUncertainties);
-            DynamicMaxUncertainty = Math.Max(DynamicMaxUncertainty, playerUncertainties[Math.Min(playerUncertainties.Length, GlobalConst.LadderSize) - 1] + 0.01f);
-            int activePlayers = Math.Max(1, ~Array.BinarySearch(playerUncertainties, DynamicMaxUncertainty));
-            int rank = 0;
-            foreach (var pair in sortedPlayers)
-            {
-                if (playerRatings[pair.Value].Uncertainty <= DynamicMaxUncertainty)
+                foreach (var p in players)
                 {
-                    rank++;
-                    playerRatings[pair.Value] = new PlayerRating(rank, (float)rank / activePlayers, playerRatings[pair.Value].RealElo, playerRatings[pair.Value].Uncertainty);
+                    float elo = p.days.Last().getElo() + RatingOffset;
+                    float lastUncertainty = p.days.Last().uncertainty * 100;
+                    int lastDay = p.days.Last().day;
+                    playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastUncertainty, lastDay);
+                    float rating = -playerRatings[p.id].Elo + 0.001f * (float)rand.NextDouble();
+                    if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
+                    playerKeys[p.id] = rating;
+                    sortedPlayers[rating] = p.id;
                 }
-                else if (playerRatings[pair.Value].Rank < int.MaxValue)
+                float[] playerUncertainties = new float[playerRatings.Count];
+                int index = 0;
+                float DynamicMaxUncertainty = GlobalConst.MinimumDynamicMaxLadderUncertainty;
+                foreach (var pair in playerRatings)
                 {
-                    playerRatings[pair.Value] = new PlayerRating(int.MaxValue, 1, playerRatings[pair.Value].RealElo, playerRatings[pair.Value].Uncertainty);
+                    playerUncertainties[index++] = pair.Value.Uncertainty;
                 }
+                Array.Sort(playerUncertainties);
+                DynamicMaxUncertainty = Math.Max(DynamicMaxUncertainty, playerUncertainties[Math.Min(playerUncertainties.Length, GlobalConst.LadderSize) - 1] + 0.01f);
+                int activePlayers = Math.Max(1, ~Array.BinarySearch(playerUncertainties, DynamicMaxUncertainty));
+                int rank = 0;
+                foreach (var pair in sortedPlayers)
+                {
+                    if (playerRatings[pair.Value].Uncertainty <= DynamicMaxUncertainty)
+                    {
+                        rank++;
+                        playerRatings[pair.Value] = new PlayerRating(rank, (float)rank / activePlayers, playerRatings[pair.Value].RealElo, playerRatings[pair.Value].Uncertainty);
+                    }
+                    else if (playerRatings[pair.Value].Rank < int.MaxValue)
+                    {
+                        playerRatings[pair.Value] = new PlayerRating(int.MaxValue, 1, playerRatings[pair.Value].RealElo, playerRatings[pair.Value].Uncertainty);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                string dbg = "Failed to update rankings " + ex + "\nPlayers: ";
+                foreach (var p in players)
+                {
+                    dbg += p.id + " (" + p.days.Count + " days), ";
+                }
+                Trace.TraceError(dbg);
             }
         }
 
