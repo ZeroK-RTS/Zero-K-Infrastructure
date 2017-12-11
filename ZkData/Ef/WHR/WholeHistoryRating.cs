@@ -247,6 +247,11 @@ namespace Ratings
             {
                 foreach (var p in players)
                 {
+                    if (p.days.Count == 0)
+                    {
+                        Trace.TraceWarning("No rating days for player " + p.id);
+                        continue;
+                    }
                     float elo = p.days.Last().getElo() + RatingOffset;
                     float lastUncertainty = p.days.Last().uncertainty * 100;
                     int lastDay = p.days.Last().day;
