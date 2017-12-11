@@ -246,7 +246,8 @@ namespace ZkData
 
         public static Account AccountVerify(ZkDataContext db, string login, string passwordHash)
         {
-            var acc = db.Accounts.FirstOrDefault(x => x.Name == login && !x.IsDeleted);
+            var loginUpper = login?.ToUpper();
+            var acc = db.Accounts.FirstOrDefault(x => x.Name == login && !x.IsDeleted) ?? db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == loginUpper && !x.IsDeleted);
             if (acc != null && acc.VerifyPassword(passwordHash)) return acc;
             return null;
         }
