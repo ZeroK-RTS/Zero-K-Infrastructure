@@ -77,7 +77,7 @@ namespace Ratings
                 updateByNDimNewton();
             }else
             {
-                Trace.TraceWarning("No rating days for player " + this.id);
+                //Trace.TraceWarning("No rating days for player " + this.id);
             }
         }
 
