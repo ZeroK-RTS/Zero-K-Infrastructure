@@ -75,6 +75,9 @@ namespace Ratings
                 days[0].updateBy1DNewton();
             } else if (days.Count > 1) {
                 updateByNDimNewton();
+            }else
+            {
+                //Trace.TraceWarning("No rating days for player " + this.id);
             }
         }
 
