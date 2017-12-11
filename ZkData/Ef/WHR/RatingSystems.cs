@@ -150,8 +150,9 @@ namespace Ratings
         }
     }
 
+    [Flags]
     public enum RatingCategory
     {
-        Casual, MatchMaking, Planetwars
+        Casual = 1, MatchMaking = 2, Planetwars = 4
     }
 }

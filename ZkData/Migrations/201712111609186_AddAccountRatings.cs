@@ -21,20 +21,20 @@ namespace ZkData.Migrations
                     })
                 .PrimaryKey(t => new { t.AccountID, t.RatingCategory })
                 .ForeignKey("dbo.Accounts", t => t.AccountID, cascadeDelete: true)
-                .Index(t => t.AccountID);
+                .Index(t => t.AccountID)
+                .Index(t => t.Rank)
+                .Index(t => t.RealElo);
             
-            AddColumn("dbo.SpringBattles", "IsRatedCompetitive", c => c.Boolean(nullable: false));
-            AddColumn("dbo.SpringBattles", "IsRatedCasual", c => c.Boolean(nullable: false));
-            AddColumn("dbo.SpringBattles", "IsRatedPlanetWars", c => c.Boolean(nullable: false));
+            AddColumn("dbo.SpringBattles", "ApplicableRatings", c => c.Int(nullable: false));
         }
         
         public override void Down()
         {
             DropForeignKey("dbo.AccountRatings", "AccountID", "dbo.Accounts");
+            DropIndex("dbo.AccountRatings", new[] { "RealElo" });
+            DropIndex("dbo.AccountRatings", new[] { "Rank" });
             DropIndex("dbo.AccountRatings", new[] { "AccountID" });
-            DropColumn("dbo.SpringBattles", "IsRatedPlanetWars");
-            DropColumn("dbo.SpringBattles", "IsRatedCasual");
-            DropColumn("dbo.SpringBattles", "IsRatedCompetitive");
+            DropColumn("dbo.SpringBattles", "ApplicableRatings");
             DropTable("dbo.AccountRatings");
         }
     }

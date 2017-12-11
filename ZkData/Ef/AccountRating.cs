@@ -27,7 +27,9 @@ namespace ZkData
         public RatingCategory RatingCategory { get; set; }
 
         public double Percentile { get; set; }
+        [Index]
         public int Rank { get; set; }
+        [Index]
         public double RealElo { get; set; }
 
 
@@ -58,6 +60,10 @@ namespace ZkData
             this.RealElo = 1500;
             this.LastUncertainty = double.PositiveInfinity;
             this.LastGameDate = 0;
+        }
+        public AccountRating()
+        {
+
         }
 
 
