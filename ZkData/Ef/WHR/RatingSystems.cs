@@ -18,6 +18,8 @@ namespace Ratings
 
         public static bool Initialized { get; private set; }
 
+        public const bool DisableRatingSystems = false;
+
         private static object processingLock = new object();
 
         public static void Init()

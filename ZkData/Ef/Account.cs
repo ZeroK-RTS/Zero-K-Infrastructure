@@ -21,6 +21,11 @@ namespace ZkData
 
         public Account()
         {
+            Elo = 1500;
+            EloMm = 1500;
+            EloPw = 1500;
+            EloWeight = 1;
+            EloMmWeight = 1;
             FirstLogin = DateTime.UtcNow;
             LastLogin = DateTime.UtcNow;
             LastLogout = DateTime.UtcNow;
@@ -94,6 +99,31 @@ namespace ZkData
 
         [StringLength(8000)]
         public string Aliases { get; set; }
+
+        public double Elo { get; set; }
+        public double EloWeight { get; set; }
+        public double EloMm { get; set; }
+        public double EloMmWeight { get; set; }
+        public double EloPw { get; set; }
+        public int? CasualRank { get; set; }
+        public int? CompetitiveRank { get; set; }
+        private static readonly CompiledExpression<Account, double> effectiveEloExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveElo).Is(e => e.Elo + (GlobalConst.EloWeightMax - e.EloWeight) * GlobalConst.EloWeightMalusFactor);
+        public double EffectiveElo => effectiveEloExpression.Evaluate(this);
+        private static readonly CompiledExpression<Account, double> effectiveEloMmExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveMmElo).Is(e => e.EloMm + (GlobalConst.EloWeightMax - e.EloMmWeight) * GlobalConst.EloWeightMalusFactor);
+        public double EffectiveMmElo => effectiveEloMmExpression.Evaluate(this);
+        public double BestEffectiveElo => Math.Max(EffectiveMmElo, EffectiveElo);
+        [NotMapped]
+        public double EffectivePwElo { get { return EloPw + (GlobalConst.EloWeightMax - EloWeight) * GlobalConst.EloWeightMalusFactor; } }
+        public static double AdjustEloWeight(double currentWeight, double sumWeight, int sumCount)
+        {
+            if (currentWeight < GlobalConst.EloWeightMax)
+            {
+                currentWeight = (currentWeight + ((sumWeight - currentWeight - (sumCount - 1)) / (sumCount - 1)) / GlobalConst.EloWeightLearnFactor);
+                if (currentWeight > GlobalConst.EloWeightMax) currentWeight = GlobalConst.EloWeightMax;
+            }
+            return currentWeight;
+        }
+
         public bool IsBot { get; set; }
         public bool CanPlayMultiplayer { get; set; } = true;
        

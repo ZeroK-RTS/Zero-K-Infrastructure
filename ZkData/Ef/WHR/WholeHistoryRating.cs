@@ -41,7 +41,7 @@ namespace Ratings
             lock (dbLock)
             {
                 var db = new ZkDataContext();
-                foreach (var accountRating in db.AccountRatings.Where(x => x.ratingCategory == category).ToList())
+                foreach (var accountRating in db.AccountRatings.Where(x => x.RatingCategory == category).ToList())
                 {
                     playerRatings.Add(accountRating.AccountID, new PlayerRating(accountRating.Rank, accountRating.Percentile, accountRating.RealElo, accountRating.LastUncertainty, accountRating.LastGameDate));
                 }
@@ -197,7 +197,7 @@ namespace Ratings
                 var db = new ZkDataContext();
                 foreach (var playerRating in playerRatings)
                 {
-                    var accountRating = db.AccountRatings.Where(r => r.AccountID == playerRating.Key && r.ratingCategory == category).FirstOrDefault();
+                    var accountRating = db.AccountRatings.Where(r => r.AccountID == playerRating.Key && r.RatingCategory == category).FirstOrDefault();
                     if (accountRating != null)
                     {
                         accountRating.UpdateFromRatingSystem(playerRating.Value);
@@ -253,7 +253,7 @@ namespace Ratings
                     float lastUncertainty = p.days.Last().uncertainty * 100;
                     int lastDay = p.days.Last().day;
                     playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastUncertainty, lastDay);
-                    float rating = -playerRatings[p.id].Elo + 0.001f * (float)rand.NextDouble();
+                    float rating = (float)(-playerRatings[p.id].Elo + 0.001f * rand.NextDouble());
                     if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
                     playerKeys[p.id] = rating;
                     sortedPlayers[rating] = p.id;
@@ -263,7 +263,7 @@ namespace Ratings
                 float DynamicMaxUncertainty = GlobalConst.MinimumDynamicMaxLadderUncertainty;
                 foreach (var pair in playerRatings)
                 {
-                    playerUncertainties[index++] = pair.Value.Uncertainty;
+                    playerUncertainties[index++] = (float)pair.Value.Uncertainty;
                 }
                 Array.Sort(playerUncertainties);
                 DynamicMaxUncertainty = Math.Max(DynamicMaxUncertainty, playerUncertainties[Math.Min(playerUncertainties.Length, GlobalConst.LadderSize) - 1] + 0.01f);

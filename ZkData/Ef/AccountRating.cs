@@ -24,21 +24,21 @@ namespace ZkData
         [Key]
         [Column(Order = 1)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public RatingCategory ratingCategory;
+        public RatingCategory RatingCategory { get; set; }
 
-        public float Percentile;
-        public int Rank;
-        public float RealElo;
+        public double Percentile { get; set; }
+        public int Rank { get; set; }
+        public double RealElo { get; set; }
 
 
-        private static readonly CompiledExpression<AccountRating, float> uncertaintyExpression = DefaultTranslationOf<AccountRating>.Property(e => e.Uncertainty).Is(e => e.LastUncertainty + (float)Math.Sqrt((RatingSystems.ConvertDateToDays(DateTime.Now) - e.LastGameDate) * GlobalConst.EloDecayPerDaySquared));
-        private static readonly CompiledExpression<AccountRating, float> eloExpression = DefaultTranslationOf<AccountRating>.Property(e => e.Elo).Is(e => e.RealElo - Math.Min(200, Math.Max(0, e.Uncertainty - 20)) * 2);
+        private static readonly CompiledExpression<AccountRating, double> uncertaintyExpression = DefaultTranslationOf<AccountRating>.Property(e => e.Uncertainty).Is(e => e.LastUncertainty + (double)Math.Sqrt((RatingSystems.ConvertDateToDays(DateTime.Now) - e.LastGameDate) * GlobalConst.EloDecayPerDaySquared));
+        private static readonly CompiledExpression<AccountRating, double> eloExpression = DefaultTranslationOf<AccountRating>.Property(e => e.Elo).Is(e => e.RealElo - Math.Min(200, Math.Max(0, e.Uncertainty - 20)) * 2);
 
-        public float Elo => eloExpression.Evaluate(this);
-        public float Uncertainty => uncertaintyExpression.Evaluate(this);
+        public double Elo => eloExpression.Evaluate(this);
+        public double Uncertainty => uncertaintyExpression.Evaluate(this);
 
-        public float LastUncertainty;
-        public int LastGameDate;
+        public double LastUncertainty { get; set; }
+        public int LastGameDate { get; set; }
 
         public void UpdateFromRatingSystem(PlayerRating rating)
         {
@@ -51,13 +51,17 @@ namespace ZkData
         
         public AccountRating(int AccountID, RatingCategory ratingCategory)
         {
-            this.ratingCategory = ratingCategory;
+            this.RatingCategory = ratingCategory;
             this.AccountID = AccountID; 
             this.Percentile = 1;
             this.Rank = int.MaxValue;
             this.RealElo = 1500;
-            this.LastUncertainty = float.PositiveInfinity;
+            this.LastUncertainty = double.PositiveInfinity;
             this.LastGameDate = 0;
         }
+
+
+        [ForeignKey(nameof(AccountID))]
+        public virtual Account Account { get; set; }
     }
 }

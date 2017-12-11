@@ -12,16 +12,16 @@ namespace Ratings
     [Serializable]
     public class PlayerRating
     {
-        public readonly float Percentile;
+        public readonly double Percentile;
         public readonly int Rank;
-        public readonly float RealElo;
-        public float Uncertainty {
+        public readonly double RealElo;
+        public double Uncertainty {
             get
             {
-                return LastUncertainty + (float)Math.Sqrt((RatingSystems.ConvertDateToDays(DateTime.Now) - LastGameDate) * GlobalConst.EloDecayPerDaySquared);
+                return LastUncertainty + (double)Math.Sqrt((RatingSystems.ConvertDateToDays(DateTime.Now) - LastGameDate) * GlobalConst.EloDecayPerDaySquared);
             }
         }
-        public float Elo {
+        public double Elo {
             get
             {
                 return RealElo - Math.Min(200, Math.Max(0, Uncertainty - 20)) * 2; //dont reduce value for active players
@@ -29,16 +29,16 @@ namespace Ratings
         }
 
         [JsonProperty]
-        public readonly float LastUncertainty;
+        public readonly double LastUncertainty;
         [JsonProperty]
         public readonly int LastGameDate;
 
-        public PlayerRating(int Rank, float Percentile, float Elo, float Uncertainty) : this(Rank, Percentile, Elo, Uncertainty, RatingSystems.ConvertDateToDays(DateTime.Now))
+        public PlayerRating(int Rank, double Percentile, double Elo, double Uncertainty) : this(Rank, Percentile, Elo, Uncertainty, RatingSystems.ConvertDateToDays(DateTime.Now))
         {
         }
 
         [JsonConstructor]
-        public PlayerRating(int Rank, float Percentile, float Elo, float LastUncertainty, int LastGameDate)
+        public PlayerRating(int Rank, double Percentile, double Elo, double LastUncertainty, int LastGameDate)
         {
             this.Percentile = Percentile;
             this.Rank = Rank;

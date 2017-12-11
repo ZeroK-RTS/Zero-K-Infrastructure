@@ -45,6 +45,10 @@ namespace ZkData
         public int? HostAccountID { get; set; }
         public bool IsEloProcessed { get; set; }
 
+        public bool IsRatedCompetitive { get; set; }
+        public bool IsRatedCasual { get; set; }
+        public bool IsRatedPlanetWars { get; set; }
+
         public bool IsMatchMaker { get; set; }
         public bool IsMission { get; set; }
         public int? LoserTeamXpChange { get; set; }
