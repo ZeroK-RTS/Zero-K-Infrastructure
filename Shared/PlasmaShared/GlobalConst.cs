@@ -138,8 +138,9 @@ namespace ZkData
 
         public const int LadderActivityDays = 70;
         public const int LadderSize = 50; // Amount of players shown on ladders
-        public const float MinimumDynamicMaxLadderUncertainty = 46; // < 70 days, higher uncertainties allowed in the case of low player activity
-        public const float EloDecayPerDaySquared = 30;
+        public const float MinimumDynamicMaxLadderUncertainty = 60; // uncertainties > this are marked unranked
+        public const float EloDecayPerDaySquared = 30; //whr thingie
+        public const float LadderUpdatePeriod = 1; //Ladder is fully updated every X hours
 
         public const int XpForMissionOrBots = 25;
         public const int XpForMissionOrBotsVictory = 50;

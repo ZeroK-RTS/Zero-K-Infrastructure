@@ -29,12 +29,14 @@ namespace Ratings
         Random rand = new Random();
         readonly float w2; //elo range expand per day squared
         public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity);
+        private Timer ladderRecalculationTimer;
 
         private bool runningInitialization = true;
 
         public WholeHistoryRating()
         {
             w2 = GlobalConst.EloDecayPerDaySquared;
+            ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242), (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
         }
 
 
@@ -109,6 +111,7 @@ namespace Ratings
 
 
         private SpringBattle latestBattle, lastUpdate;
+        private DateTime lastUpdateTime;
 
         private readonly object updateLock = new object();
         private readonly object updateLockInternal = new object();
@@ -118,11 +121,6 @@ namespace Ratings
             if (latestBattle == null)
             {
                 //Trace.TraceInformation("WHR: No battles to evaluate");
-                return;
-            }
-            if (latestBattle.Equals(lastUpdate))
-            {
-                //Trace.TraceInformation("WHR: Nothing to update");
                 return;
             }
             lock (updateLock)
@@ -136,7 +134,7 @@ namespace Ratings
                         UpdateRankings(players.Values);
                     });
                 }
-                else if (latestBattle.StartTime.Subtract(lastUpdate.StartTime).TotalDays > 0.5d)
+                else if (DateTime.UtcNow.Subtract(lastUpdateTime).TotalHours >= GlobalConst.LadderUpdatePeriod)
                 {
                     updateAction = (() =>
                     {
@@ -180,6 +178,7 @@ namespace Ratings
                     }
                 });
                 lastUpdate = latestBattle;
+                lastUpdateTime = DateTime.UtcNow;
             }
 
         }
