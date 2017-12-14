@@ -87,15 +87,20 @@ namespace PlasmaDownloader.Torrents
                     }
 
 
-                    var defPath = Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory, down.TypeOfResource == DownloadType.MAP ? "maps" : "games", down.FileName);
-                    
-                    if (File.Exists(defPath))
+                    if (!plasmaDownloader.ForceMapRedownload)
                     {
-                        var exTor = CreateTorrentFromFile(defPath);
-                        if (exTor != null && exTor.InfoHash.Equals(tor.InfoHash))
+                        var defPath = Utils.MakePath(plasmaDownloader.SpringPaths.WritableDirectory,
+                            down.TypeOfResource == DownloadType.MAP ? "maps" : "games",
+                            down.FileName);
+
+                        if (File.Exists(defPath))
                         {
-                            down.Finish(true);
-                            return; // done
+                            var exTor = CreateTorrentFromFile(defPath);
+                            if (exTor != null && exTor.InfoHash.Equals(tor.InfoHash))
+                            {
+                                down.Finish(true);
+                                return; // done
+                            }
                         }
                     }
 

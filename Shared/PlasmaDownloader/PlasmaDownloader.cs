@@ -51,6 +51,12 @@ namespace PlasmaDownloader
 
         public RapidHandling RapidHandling = RapidHandling.DefaultSdp;
 
+        /// <summary>
+        /// Forces map download even if the map is presnet, workaround for VFS issue in chobby
+        /// </summary>
+        public bool ForceMapRedownload = false;
+
+
         public IReadOnlyCollection<Download> Downloads => new List<Download>(downloads.Values.Where(x=>x!= null)).AsReadOnly();
 
         public PackageDownloader PackageDownloader
@@ -135,7 +141,7 @@ namespace PlasmaDownloader
                     return down;
                 }
 
-
+                
                 if (type == DownloadType.MAP || type == DownloadType.MISSION)
                 {
                     if (torrentDownloader == null) torrentDownloader = new TorrentDownloader(this); //lazy initialization

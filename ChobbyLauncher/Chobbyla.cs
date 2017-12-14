@@ -48,7 +48,7 @@ namespace ChobbyLauncher
             isDev = (chobbyTag == "dev") || (chobbyTag == "chobby:dev") || (chobbyTag == "zkmenu:dev");
             IsSteamFolder = File.Exists(Path.Combine(paths.WritableDirectory, "steamfolder.txt"));
             engine = engineOverride;
-            downloader = new PlasmaDownloader.PlasmaDownloader(null, paths);
+            downloader = new PlasmaDownloader.PlasmaDownloader(null, paths) { ForceMapRedownload = true };
         }
 
 
