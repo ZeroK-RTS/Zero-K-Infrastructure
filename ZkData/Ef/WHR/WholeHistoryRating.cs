@@ -28,7 +28,7 @@ namespace Ratings
         IDictionary<int, float> playerKeys = new Dictionary<int, float>();
         Random rand = new Random();
         readonly float w2; //elo range expand per day squared
-        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity);
+        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, 0);
         private Timer ladderRecalculationTimer;
 
         private bool runningInitialization = true;
