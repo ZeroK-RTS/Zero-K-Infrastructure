@@ -12,7 +12,7 @@ namespace Ratings
     [Serializable]
     public class PlayerRating
     {
-        public readonly float Percentile;
+        public float Percentile;
         public int Rank;
         public float RealElo;
         public float Uncertainty {
@@ -33,9 +33,14 @@ namespace Ratings
         [JsonProperty]
         private readonly int LastGameDate;
         [JsonProperty]
-        private readonly int CurrentDate;
+        private int CurrentDate;
 
-
+        public void ApplyLadderUpdate(int Rank, float Percentile, int CurrentDate)
+        {
+            this.Rank = Rank;
+            this.Percentile = Percentile;
+            this.CurrentDate = CurrentDate;
+        }
 
         [JsonConstructor]
         public PlayerRating(int Rank, float Percentile, float RealElo, float LastUncertainty, int LastGameDate, int CurrentDate)

@@ -28,7 +28,7 @@ namespace Ratings
         IDictionary<int, float> playerKeys = new Dictionary<int, float>();
         Random rand = new Random();
         readonly float w2; //elo range expand per day squared
-        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, 0);
+        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, 0, 0);
         private Timer ladderRecalculationTimer;
 
         private bool runningInitialization = true;
@@ -57,7 +57,7 @@ namespace Ratings
                     SetupGame(t.Select(x => x.AccountID).ToList(),
                             teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => x.AccountID)).ToList(),
                             true,
-                            RatingSystems.ConvertDateToDays(DateTime.Now),
+                            RatingSystems.ConvertDateToDays(DateTime.UtcNow),
                             -1
                     ).getBlackWinProbability() * 2 / teams.Count).ToList();
         }
@@ -244,12 +244,13 @@ namespace Ratings
         {
             try
             {
+                int currentDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow);
                 foreach (var p in players)
                 {
                     float elo = p.days.Last().getElo() + RatingOffset;
                     float lastUncertainty = p.days.Last().uncertainty * 100;
                     int lastDay = p.days.Last().day;
-                    playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastUncertainty, lastDay);
+                    playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastUncertainty, lastDay, currentDay);
                     float rating = -playerRatings[p.id].Elo + 0.001f * (float)rand.NextDouble();
                     if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
                     playerKeys[p.id] = rating;
@@ -271,11 +272,11 @@ namespace Ratings
                     if (playerRatings[pair.Value].Uncertainty <= DynamicMaxUncertainty)
                     {
                         rank++;
-                        playerRatings[pair.Value] = new PlayerRating(rank, (float)rank / activePlayers, playerRatings[pair.Value].RealElo, playerRatings[pair.Value].Uncertainty);
+                        playerRatings[pair.Value].ApplyLadderUpdate(rank, (float)rank / activePlayers, currentDay);
                     }
                     else if (playerRatings[pair.Value].Rank < int.MaxValue)
-                    {
-                        playerRatings[pair.Value] = new PlayerRating(int.MaxValue, 1, playerRatings[pair.Value].RealElo, playerRatings[pair.Value].Uncertainty);
+                    { 
+                        playerRatings[pair.Value].ApplyLadderUpdate(int.MaxValue, 1, currentDay);
                     }
                 }
             }
