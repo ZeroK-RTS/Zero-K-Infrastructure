@@ -99,23 +99,10 @@ namespace PlasmaDownloader.Torrents
                         }
                     }
 
-
-                    // just 1 link, use normal webdownload
-                    if (e.links.Count() == 1 || e.links.Count(x => !x.Contains("springfiles.com")) == 1) // mirrors or mirros without jobjol = 1
-                    {
-                        var wd = new WebFileDownload(e.links[0], GetDestPath(down.TypeOfResource, down.FileName), incomingFolder);
-                        down.AddNeededDownload(wd);
-                        down.Finish(true); // mark current torrent dl as complete - will wait for dependency
-                        wd.Start(); // start dependent download
-                    }
-                    else
-                    {
-                        var wd = new WebMultiDownload(e.links.Shuffle(), GetDestPath(down.TypeOfResource, down.FileName), incomingFolder, tor);
-                        down.AddNeededDownload(wd);
-                        down.Finish(true); // mark current torrent dl as complete - will wait for dependency
-                        wd.Start(); // start dependent download
-                    }
-
+                    var wd = new WebMultiDownload(e.links.Shuffle(), GetDestPath(down.TypeOfResource, down.FileName), incomingFolder, tor);
+                    down.AddNeededDownload(wd);
+                    down.Finish(true); // mark current torrent dl as complete - will wait for dependency
+                    wd.Start(); // start dependent download
 
                 }
                 catch (Exception ex)
