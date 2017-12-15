@@ -155,6 +155,9 @@
       <HintPath>..\packages\Validation.2.0.2.13022\lib\portable-windows8+net40+sl5+windowsphone8\Validation.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="VikingErik.Mvc.ResumingActionResults, Version=1.0.5181.42826, Culture=neutral, PublicKeyToken=9ae9bdee523dbbda, processorArchitecture=MSIL">
+      <HintPath>..\packages\MVC.ResumingActionResults.1.0.5181.42826\lib\net35\VikingErik.Mvc.ResumingActionResults.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
       <Private>True</Private>

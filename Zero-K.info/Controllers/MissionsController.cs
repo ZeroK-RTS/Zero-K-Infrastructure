@@ -2,6 +2,7 @@
 using System.Text;
 using System.Web.Mvc;
 using System.Web.UI;
+using VikingErik.Mvc.ResumingActionResults;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -68,7 +69,7 @@ namespace ZeroKWeb.Controllers
             if (int.TryParse(name, out id)) {
                 m = db.Missions.Single(x => x.MissionID == id);
             } else m = db.Missions.Single(x => x.Name == name);
-            return File(m.Mutator.ToArray(), "application/octet-stream", m.SanitizedFileName);
+            return new ResumingFileContentResult(m.Mutator, "application/octet-stream");
         }
 
         /// <summary>
