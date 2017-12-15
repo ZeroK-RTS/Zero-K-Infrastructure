@@ -152,7 +152,7 @@ namespace ZkLobbyServer
 
         public async Task SyncUserToAll(ConnectedUser changer)
         {
-            await Broadcast(ConnectedUsers.Values.Where(x => CanUserSee(x, changer) && !HasSeen(x, changer)), changer.User);
+            await Broadcast(ConnectedUsers.Values.Where(x=>x!=null).Where(x => CanUserSee(x, changer) && !HasSeen(x, changer)), changer.User);
         }
 
 
