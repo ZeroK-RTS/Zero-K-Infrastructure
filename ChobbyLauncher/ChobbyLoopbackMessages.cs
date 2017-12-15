@@ -8,11 +8,6 @@ namespace ChobbyLauncher
 {
     public class ChobbyMessageAttribute : Attribute { }
 
-    public enum ImageType
-    {
-        Avatars = 0, 
-        Clans = 1
-    }
 
     [ChobbyMessage]
     public class OpenUrl
@@ -82,16 +77,16 @@ namespace ChobbyLauncher
     public class DownloadImage
     {
         public string RequestToken { get; set; } // client can set token to track multiple responses/requests
-        public string ImageType { get; set; }
-        public string Name { get; set; }
+        public string ImageUrl { get; set; }
+        public string TargetPath { get; set; }
     }
 
     [ChobbyMessage]
     public class DownloadImageDone
     {
         public string RequestToken { get; set; } // client can set token to track multiple responses/requests
-        public string ImageType { get; set; }
-        public string Name { get; set; }
+        public string ImageUrl { get; set; }
+        public string TargetPath { get; set; }
     }
 
 
