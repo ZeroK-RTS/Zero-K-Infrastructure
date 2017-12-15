@@ -154,8 +154,10 @@ namespace ChobbyLauncher
             Status = "Loading community news";
             try
             {
+                var folder = Path.Combine(paths.WritableDirectory, "news");
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
                 var info = GlobalConst.GetContentService().GetPublicCommunityInfo();
-                File.WriteAllText(Path.Combine(paths.WritableDirectory, "community.json"), JsonConvert.SerializeObject(info));
+                File.WriteAllText(Path.Combine(folder, "community.json"), JsonConvert.SerializeObject(info));
             }
             catch (Exception ex)
             {
