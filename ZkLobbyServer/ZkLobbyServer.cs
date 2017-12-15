@@ -51,6 +51,8 @@ namespace ZkLobbyServer
 
         public PlanetWarsMatchMaker PlanetWarsMatchMaker { get; private set; }
 
+        public NewsListManager NewsListManager { get; private set; }
+
 
         public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator, ITopPlayerProvider topPlayerProvider)
         {
@@ -78,6 +80,7 @@ namespace ZkLobbyServer
             battleListUpdater = new BattleListUpdater(this);
             PartyManager = new PartyManager(this);
             PlanetWarsMatchMaker = new PlanetWarsMatchMaker(this);
+            NewsListManager = new NewsListManager(this);
         }
 
         /// <summary>

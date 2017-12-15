@@ -62,6 +62,23 @@ namespace LobbyClient
     }
 
     [Message(Origin.Server)]
+    public class NewsList
+    {
+        public class NewsItem
+        {
+            public string Header { get; set; }
+            public string Text { get; set; }
+            public DateTime Time { get; set; }
+            public string Url { get; set; }
+            public string Image { get; set; }
+        }
+
+        public List<NewsItem> NewsItems { get; set; } = new List<NewsItem>();
+    }
+
+
+
+    [Message(Origin.Server)]
     public class DefaultEngineChanged
     {
         /// <summary>

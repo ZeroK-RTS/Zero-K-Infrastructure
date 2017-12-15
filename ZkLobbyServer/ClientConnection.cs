@@ -146,6 +146,8 @@ namespace ZkLobbyServer
 
                 await server.MatchMaker.OnLoginAccepted(connectedUser);
                 await server.PlanetWarsMatchMaker.OnLoginAccepted(connectedUser);
+
+                await SendCommand(server.NewsListManager.GetCurrentNewsList()); 
             }
             else
             {
