@@ -262,9 +262,11 @@ namespace ZeroKWeb
             }
         }
 
-        public List<NewsItem> GetNewsList()
+        public PublicCommunityInfo GetPublicCommunityInfo()
         {
-            return Global.Server.NewsListManager.GetCurrentNewsList().NewsItems;
+            var info = new PublicCommunityInfo();
+            info.NewsItems = Global.Server.NewsListManager.GetCurrentNewsList().NewsItems;
+            return info;
         }
     }
 
