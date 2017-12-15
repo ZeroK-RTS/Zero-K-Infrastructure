@@ -70,7 +70,7 @@ namespace ZeroKWeb.Controllers
 						db.Commanders.DeleteOnSubmit(comm);
 					    db.SaveChanges();
 					    scope.Complete();
-						return GetCommanderProfileView(db, profileNumber);
+						return GetCommanderProfileView(profileNumber);
 					}
 				}
 				else
@@ -82,7 +82,7 @@ namespace ZeroKWeb.Controllers
 				if (comm.Unlock == null)
 				{
 					var chassisUnlock = unlocks.FirstOrDefault(x => x.Unlock.UnlockID == chassis);
-					if ((chassis == null || chassisUnlock == null)) return GetCommanderProfileView(db, profileNumber);
+					if ((chassis == null || chassisUnlock == null)) return GetCommanderProfileView(profileNumber);
 					else
 					{
 						comm.ChassisUnlockID = chassis.Value;
@@ -225,7 +225,7 @@ namespace ZeroKWeb.Controllers
 			    scope.Complete();
 			}
 
-			return GetCommanderProfileView(db, profileNumber);
+			return GetCommanderProfileView(profileNumber);
 		}
 
         /// <summary>
