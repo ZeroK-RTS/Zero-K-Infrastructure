@@ -15,6 +15,7 @@ namespace ZkLobbyServer {
         {
             ZkDataContext.AfterEntityChange += DbEntityChanged;
             server = zkLobbyServer;
+            CacheNewsList();
         }
 
         private void CacheNewsList()
@@ -23,7 +24,7 @@ namespace ZkLobbyServer {
             {
                 cachedNewsList = new NewsList()
                 {
-                    NewsItems = db.News.OrderByDescending(x => x.Created).Take(10).Select(x => new NewsItem
+                    NewsItems = db.News.OrderByDescending(x => x.Created).Take(10).ToList().Select(x => new NewsItem
                     {
                         Time = x.Created,
                         Header = x.Title,
@@ -35,12 +36,12 @@ namespace ZkLobbyServer {
             }
         }
 
-        private async void DbEntityChanged(object sender, ZkDataContext.EntityEntry e)
+        private void DbEntityChanged(object sender, ZkDataContext.EntityEntry e)
         {
             if (sender is News)
             {
                 CacheNewsList();
-                await server.Broadcast(cachedNewsList);
+                server.Broadcast(cachedNewsList);
             }
         }
 
