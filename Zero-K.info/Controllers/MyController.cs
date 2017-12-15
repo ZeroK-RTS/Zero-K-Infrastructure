@@ -318,8 +318,9 @@ namespace ZeroKWeb.Controllers
 			return View("UnlockList", new UnlockListResult() { Account = Global.Account, Unlocks = unlocks, FutureUnlocks = future, AlreadyUnlockedCounts = GetUserUnlockCountsListIncludingFree(db) });
 		}
 
-		PartialViewResult GetCommanderProfileView(ZkDataContext db, int profile)
+		PartialViewResult GetCommanderProfileView(int profile)
 		{
+            var db = new ZkDataContext();
 			var com = db.Commanders.SingleOrDefault(x => x.AccountID == Global.AccountID && x.ProfileNumber == profile);
 
             return PartialView("CommanderProfile",
