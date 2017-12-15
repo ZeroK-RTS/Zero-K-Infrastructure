@@ -104,6 +104,9 @@ namespace ZeroKWeb.Controllers
 				}
 				scope.Complete();
 			}
+
+		    Global.Server.NewsListManager.OnNewsChanged();
+
 		    return RedirectToAction("Index", "Home");
 		}
 	}

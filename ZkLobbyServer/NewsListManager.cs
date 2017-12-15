@@ -8,12 +8,10 @@ namespace ZkLobbyServer {
     public class NewsListManager
     {
         private ZkLobbyServer server;
-
         private NewsList cachedNewsList;
 
         public NewsListManager(ZkLobbyServer zkLobbyServer)
         {
-            ZkDataContext.AfterEntityChange += DbEntityChanged;
             server = zkLobbyServer;
             CacheNewsList();
         }
@@ -36,16 +34,12 @@ namespace ZkLobbyServer {
             }
         }
 
-        private void DbEntityChanged(object sender, ZkDataContext.EntityEntry e)
-        {
-            if (sender is News)
-            {
-                CacheNewsList();
-                server.Broadcast(cachedNewsList);
-            }
-        }
-
         public NewsList GetCurrentNewsList() => cachedNewsList;
 
+        public void OnNewsChanged()
+        {
+            CacheNewsList();
+            server.Broadcast(cachedNewsList);
+        }
     }
 }
