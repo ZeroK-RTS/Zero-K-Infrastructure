@@ -15,7 +15,7 @@ namespace ZkLobbyServer
 
             public int EloWidth => (int)(100.0 + WaitRatio * 300.0);
             public int MinConsideredElo => LobbyUser.EffectiveMmElo;
-            public int MaxConsideredElo => (int)(LobbyUser.EffectiveMmElo + (LobbyUser.RawMmElo - LobbyUser.EffectiveMmElo) * WaitRatio);
+            public int MaxConsideredElo => (int)(LobbyUser.EffectiveMmElo + (Math.Max(1500, LobbyUser.RawMmElo) - LobbyUser.EffectiveMmElo) * WaitRatio);
 
             public double WaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / 60.0));
 
