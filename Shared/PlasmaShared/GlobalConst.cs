@@ -41,8 +41,7 @@ namespace ZkData
             switch (newMode) {
                 case ModeType.Local:
                     BaseSiteUrl = "http://localhost:9739";
-                    ZkDataContextConnectionString =
-                        "Data Source=.;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000;";
+                    ZkDataContextConnectionString = @"Data Source=(localdb)\mssqllocaldb;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000";
 
                     LobbyServerHost = "localhost";
                     LobbyServerPort = 8200;
