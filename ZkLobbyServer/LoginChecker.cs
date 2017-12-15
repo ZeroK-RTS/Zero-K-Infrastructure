@@ -212,7 +212,7 @@ namespace ZkLobbyServer
             user.Level = acc.Level;
             user.EffectiveMmElo = (int)Math.Round(RatingSystems.DisableRatingSystems ? acc.EffectiveMmElo : acc.GetRating(RatingCategory.MatchMaking).Elo);
             user.EffectiveElo = (int)Math.Round(RatingSystems.DisableRatingSystems ? acc.EffectiveElo : acc.GetRating(RatingCategory.Casual).Elo);
-            user.RawMmElo = (int)Math.Round(RatingSystems.DisableRatingSystems ? acc.EloMm : acc.GetRating(RatingCategory.MatchMaking).Elo);
+            user.RawMmElo = (int)Math.Round(RatingSystems.DisableRatingSystems ? acc.EloMm : acc.GetRating(RatingCategory.MatchMaking).RealElo);
             user.SteamID = acc.SteamID?.ToString();
             user.IsAdmin = acc.AdminLevel >= AdminLevel.Moderator;
             user.IsBot = acc.IsBot;
