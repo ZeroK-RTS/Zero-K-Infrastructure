@@ -132,14 +132,22 @@ namespace LobbyClient
         {
             while (!close) {
                 var endpoint = new IPEndPoint(IPAddress.Loopback, 0);
-                var data = udp.Receive(ref endpoint);
+                byte[] data = null;
+                try
+                {
+                    data = udp.Receive(ref endpoint);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("UdpListener unexpected error port {0} : {1}", endpoint.Port, ex.Message);
+                }
                 springTalkPort = endpoint.Port;
-                int msgSize;
-                if (data.Length > 0) {
+                if (data?.Length > 0) {
                     var sea = new SpringEventArgs();
 
                     sea.EventType = (SpringEventType)data[0];
 
+                    int msgSize;
                     switch (sea.EventType) {
                         case SpringEventType.PLAYER_JOINED:
                             sea.PlayerNumber = data[1];
