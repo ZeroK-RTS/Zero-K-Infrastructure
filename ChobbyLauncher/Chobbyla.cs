@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GameAnalyticsSDK.Net;
 using Neo.IronLua;
+using Newtonsoft.Json;
 using PlasmaDownloader;
 using PlasmaDownloader.Packages;
+using PlasmaShared;
 using ZkData;
 
 namespace ChobbyLauncher
@@ -127,6 +129,8 @@ namespace ChobbyLauncher
                     }
                 }
 
+                UpdatePublicCommunityInfo();
+                
                 if (!isDev)
                 {
                     Status = "Reseting configs and deploying AIs";
@@ -142,6 +146,21 @@ namespace ChobbyLauncher
                 GameAnalytics.AddErrorEvent(EGAErrorSeverity.Error, $"Unexpected error {Status}: {ex}");
                 Status = "Unexpected error preparing chobby launch: " + ex.Message;
                 return false;
+            }
+        }
+
+        private void UpdatePublicCommunityInfo()
+        {
+            Status = "Loading community news";
+            try
+            {
+                var info = GlobalConst.GetContentService().GetPublicCommunityInfo();
+                File.WriteAllText(Path.Combine(paths.WritableDirectory, "community.json"), JsonConvert.SerializeObject(info));
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Loading public community info failed: {0}", ex);
+                Status = "Loading community news failed";
             }
         }
 
