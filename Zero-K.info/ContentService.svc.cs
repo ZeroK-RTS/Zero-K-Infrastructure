@@ -5,6 +5,7 @@ using System.Data.Entity.SqlServer;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using LobbyClient;
 using Microsoft.Linq.Translations;
 using PlasmaDownloader;
 using PlasmaShared;
@@ -259,6 +260,14 @@ namespace ZeroKWeb
 
                 return ret;
             }
+        }
+
+        public PublicCommunityInfo GetPublicCommunityInfo()
+        {
+            var info = new PublicCommunityInfo();
+            info.NewsItems = Global.Server.NewsListManager.GetCurrentNewsList().NewsItems;
+            info.LadderItems = Global.Server.LadderListManager.GetCurrentLadderList().LadderItems;
+            return info;
         }
     }
 

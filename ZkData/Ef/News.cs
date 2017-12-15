@@ -24,6 +24,11 @@ namespace ZkData
         public string ImageContentType { get; set; }
         public int? ImageLength { get; set; }
 
+        /// <summary>
+        /// Text to be displayed in lobby
+        /// </summary>
+        public string LobbyPlaintext { get; set; }
+
         public virtual Account Account { get; set; }
         public virtual ForumThread ForumThread { get; set; }
 

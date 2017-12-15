@@ -62,6 +62,20 @@ namespace LobbyClient
     }
 
     [Message(Origin.Server)]
+    public class NewsList
+    {
+        public List<NewsItem> NewsItems { get; set; } = new List<NewsItem>();
+    }
+
+    [Message(Origin.Server)]
+    public class LadderList
+    {
+        public List<LadderItem> LadderItems { get; set; } = new List<LadderItem>();
+    }
+
+
+
+    [Message(Origin.Server)]
     public class DefaultEngineChanged
     {
         /// <summary>

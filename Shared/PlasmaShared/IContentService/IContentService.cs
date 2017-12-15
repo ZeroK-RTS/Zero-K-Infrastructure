@@ -17,6 +17,31 @@ namespace PlasmaShared
         public string torrentFileName;
     }
 
+    public class NewsItem
+    {
+        public string Header { get; set; }
+        public string Text { get; set; }
+        public DateTime Time { get; set; }
+        public string Url { get; set; }
+        public string Image { get; set; }
+    }
+
+
+    public class LadderItem
+    {
+        public string Name { get; set; }
+        public string Clan { get; set; } 
+        public string Icon { get; set; }
+    }
+
+    public class PublicCommunityInfo
+    {
+        public List<NewsItem> NewsItems { get; set; } = new List<NewsItem>();
+        public List<LadderItem> LadderItems { get; set; } = new List<LadderItem>();
+
+    }
+
+
     [ServiceContract]
     public interface IContentService
     {
@@ -78,5 +103,8 @@ namespace PlasmaShared
 
         [OperationContract]
         List<ClientMissionInfo> GetDefaultMissions();
+
+        [OperationContract]
+        PublicCommunityInfo GetPublicCommunityInfo();
     }
 }
