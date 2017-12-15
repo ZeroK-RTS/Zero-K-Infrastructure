@@ -306,6 +306,10 @@
     <Compile Include="Migrations\201712101826097_SpringFilesUnitsyncAttempts.Designer.cs">
       <DependentUpon>201712101826097_SpringFilesUnitsyncAttempts.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201712152103095_NewsLobbyPlainText.cs" />
+    <Compile Include="Migrations\201712152103095_NewsLobbyPlainText.Designer.cs">
+      <DependentUpon>201712152103095_NewsLobbyPlainText.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -607,6 +611,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201712101826097_SpringFilesUnitsyncAttempts.resx">
       <DependentUpon>201712101826097_SpringFilesUnitsyncAttempts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712152103095_NewsLobbyPlainText.resx">
+      <DependentUpon>201712152103095_NewsLobbyPlainText.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
