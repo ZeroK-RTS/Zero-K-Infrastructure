@@ -26,11 +26,19 @@ namespace PlasmaShared
         public string Image { get; set; }
     }
 
+
+    public class LadderItem
+    {
+        public string Name { get; set; }
+        public string Clan { get; set; } 
+        public string Icon { get; set; }
+    }
+
     public class PublicCommunityInfo
     {
         public List<NewsItem> NewsItems { get; set; } = new List<NewsItem>();
+        public List<LadderItem> LadderItems { get; set; } = new List<LadderItem>();
 
-        
     }
 
 

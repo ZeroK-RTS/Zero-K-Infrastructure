@@ -28,6 +28,7 @@ namespace ZeroKWeb
         public void RecomputeNow()
         {
             ladderModel = ComputeLadder();
+            TopPlayersUpdated?.Invoke(this, this);
         }
 
         public LadderModel GetLadder()
@@ -37,6 +38,7 @@ namespace ZeroKWeb
 
         public List<Account> GetTop() => ladderModel?.TopAccounts;
         public List<Account> GetTopCasual() => ladderModel?.TopCasual;
+        public event EventHandler<ITopPlayerProvider> TopPlayersUpdated;
 
 
         private static List<AwardItem> CalculateAwards(ZkDataContext db)

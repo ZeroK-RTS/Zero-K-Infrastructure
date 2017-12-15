@@ -684,6 +684,11 @@ namespace ZkData
 
             return ret.OrderByDescending(x => (int)x).ToList();
         }
+
+        public LadderItem ToLadderItem()
+        {
+            return new LadderItem() { Name = Name, Clan = Clan?.Shortcut, Icon = GetIconName() };
+        }
     }
 }
 

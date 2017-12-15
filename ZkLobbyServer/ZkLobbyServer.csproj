@@ -153,6 +153,7 @@
     <Compile Include="ICommandSender.cs" />
     <Compile Include="ITopPlayerProvider.cs" />
     <Compile Include="ITransportServerListener.cs" />
+    <Compile Include="LadderListManager.cs" />
     <Compile Include="LoginChecker.cs" />
     <Compile Include="ConnectedUser.cs" />
     <Compile Include="Main.cs" />
