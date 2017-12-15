@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ZkLobbyServer {
@@ -22,7 +23,7 @@ namespace ZkLobbyServer {
             {
                 cachedNewsList = new NewsList()
                 {
-                    NewsItems = db.News.OrderByDescending(x => x.Created).Take(10).Select(x => new NewsList.NewsItem
+                    NewsItems = db.News.OrderByDescending(x => x.Created).Take(10).Select(x => new NewsItem
                     {
                         Time = x.Created,
                         Header = x.Title,

@@ -5,6 +5,7 @@ using System.Data.Entity.SqlServer;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using LobbyClient;
 using Microsoft.Linq.Translations;
 using PlasmaDownloader;
 using PlasmaShared;
@@ -259,6 +260,11 @@ namespace ZeroKWeb
 
                 return ret;
             }
+        }
+
+        public List<NewsItem> GetNewsList()
+        {
+            return Global.Server.NewsListManager.GetCurrentNewsList().NewsItems;
         }
     }
 
