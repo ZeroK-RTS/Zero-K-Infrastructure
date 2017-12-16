@@ -1,0 +1,56 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model System.Linq.IQueryable<ZkData.LobbyNews>
+
+@{
+    ViewBag.Title = "Lobby news";
+}
+<h2>@ViewBag.Title</h2>
+
+<span class="border">
+    @if (Global.IsModerator)
+    {
+        <div class="admin">
+            @Html.Partial("/Views/LobbyNews/LobbyNewsEdit.cshtml", new LobbyNews())
+        </div>
+    }
+
+
+    <table>
+        @foreach (var n in Model)
+        {
+            <tr>
+                <td colspan="2">
+                    <h1>@n.Title</h1>
+                </td>
+            </tr>
+            <tr>
+                <td>
+
+                    @if (n.ImageRelativeUrl != null)
+                    {
+                        <a href="@n.ImageRelativeUrl"><img src="@n.ImageRelativeUrl" style="max-width: 256px; max-height: 256px;" /></a>
+                    }
+                </td>
+                <td valign="top">@Html.BBCode(n.Text)</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <small>
+                        @if (n.EventTime != null)
+                        {
+                            <span>Event time: @n.EventTime.ToAgoString()</span><br />
+                        }
+                        <span>Posted by @Html.PrintAccount(n.Author) @n.Created.ToAgoString()</span>
+                        @if (Global.IsModerator)
+                        {
+                            <span class="admin">
+                                @Html.ActionLink("Edit", "Edit", "LobbyNews", new { id = n.LobbyNewsID }, null)
+                            </span>
+                        }
+                    </small>
+                </td>
+            </tr>
+        }
+    </table>
+</div>

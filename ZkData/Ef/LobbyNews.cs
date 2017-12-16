@@ -8,7 +8,7 @@ namespace ZkData {
         public int LobbyNewsID { get; set; }
 
         public DateTime? EventTime { get; set; }
-        public DateTime Created { get; set; }
+        public DateTime Created { get; set; } = DateTime.UtcNow;
 
         public string Title { get; set; }
         public string Text { get; set; }
