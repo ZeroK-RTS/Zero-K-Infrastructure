@@ -21,6 +21,7 @@ namespace Ratings
     {
 
         const float RatingOffset = 1500;
+        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, 0, 0);
 
         IDictionary<int, PlayerRating> playerRatings = new ConcurrentDictionary<int, PlayerRating>();
         IDictionary<int, Player> players = new Dictionary<int, Player>();
@@ -30,7 +31,6 @@ namespace Ratings
         IDictionary<ITopPlayersUpdateListener, int> topPlayersUpdateListeners = new Dictionary<ITopPlayersUpdateListener, int>(); 
         Random rand = new Random();
         readonly float w2; //elo range expand per day squared
-        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, 0, 0);
         private Timer ladderRecalculationTimer;
 
         private bool runningInitialization = true;
@@ -38,7 +38,7 @@ namespace Ratings
         public WholeHistoryRating()
         {
             w2 = GlobalConst.EloDecayPerDaySquared;
-            ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242), (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
+            ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
         }
 
 
@@ -85,7 +85,6 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count)
         {
-            if (runningInitialization) return new List<Account>(); // dont block during updates to prevent dosprotector from kicking in
             ZkDataContext db = new ZkDataContext();
             List<int> retIDs = topPlayers.Take(count).ToList();
             return db.Accounts.Where(a => retIDs.Contains(a.AccountID)).ToList(); 
@@ -299,6 +298,7 @@ namespace Ratings
                     }
                 }
                 topPlayers = newTopPlayers;
+                Trace.TraceInformation("WHR Ladders updated with " + topPlayers.Count + "/" + this.players.Count + "entries, max uncertainty selected: " + DynamicMaxUncertainty);
 
                 //check for topX updates
                 ZkDataContext db = null;
@@ -314,7 +314,7 @@ namespace Ratings
             }
             catch (Exception ex)
             {
-                string dbg = "Failed to update rankings " + ex + "\nPlayers: ";
+                string dbg = "WHR: Failed to update rankings " + ex + "\nPlayers: ";
                 foreach (var p in players)
                 {
                     dbg += p.id + " (" + p.days.Count + " days), ";
