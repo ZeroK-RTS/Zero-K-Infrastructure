@@ -23,12 +23,13 @@ namespace ZkLobbyServer {
         private void ZkDataContextOnAfterEntityChange(object sender, ZkDataContext.EntityEntry entityEntry)
         {
             ForumThread changedThread = null;
-            if (sender is ForumThread thread)
+            var entity = entityEntry.Entity;
+            if (entity is ForumThread)
             {
-                changedThread = thread;
-            } else if (sender is ForumPost post)
+                changedThread = (ForumThread)entity;
+            } else if (entity is ForumPost)
             {
-                changedThread = post.ForumThread;
+                changedThread = ((ForumPost)entity).ForumThread;
             }
 
             if (changedThread != null)

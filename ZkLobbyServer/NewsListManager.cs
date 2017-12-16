@@ -26,7 +26,7 @@ namespace ZkLobbyServer {
                     {
                         Time = x.Created,
                         Header = x.Title,
-                        Text = x.Text,
+                        Text = x.LobbyPlaintext,
                         Image = x.ThumbRelativeUrl,
                         Url = $"{GlobalConst.BaseSiteUrl}/Forum/Thread/{x.ForumThreadID}" // not very nice hardcode..
                     }).ToList()
