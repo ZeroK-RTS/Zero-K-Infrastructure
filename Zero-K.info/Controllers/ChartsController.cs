@@ -220,9 +220,13 @@ namespace ZeroKWeb.Controllers
     [Auth(Role = AdminLevel.Moderator)]
     public class ChartsController : Controller
     {
-        public ActionResult GenerateGraph(ChartsModel model)
+
+        // GET: Charts
+        public ActionResult Index(ChartsModel model)
         {
             model = model ?? new ChartsModel();
+            model.PossibleGraphs = GetPossibleProviders().Select(x => new ChartsModel.PossibleGraph() { Title = x.Title, Name = x.Name }).ToList();
+
 
             var to = model.To.Date;
             var from = model.From.Date;
@@ -255,29 +259,8 @@ namespace ZeroKWeb.Controllers
 
                     foreach (var d in s.Data) d.Value = 100.0 * (d.Value - min) / (max - min);
                 }
-
-            // TODO: convert this to System.Web.UI.DataVisualization.Charting  (which this thing is internally using)
-
-            var chart = new Chart(1500, 700, ChartTheme.Blue);
-            chart.AddTitle(string.Join(", ", providers.Select(x => x.Name)));
-            chart.AddLegend("Daily values", "l");
-            var graphType = "Line";
-
-            foreach (var s in series)
-                chart.AddSeries(s.Title,
-                    graphType,
-                    xValue: s.Data.Select(x => x.Day.Date.ToString("d")).ToList(),
-                    yValues: s.Data.Select(y => y.Value).ToList(),
-                    legend: "l");
-
-            return File(chart.GetBytes("png"), "image/png");
-        }
-
-        // GET: Charts
-        public ActionResult Index(ChartsModel model)
-        {
-            model = model ?? new ChartsModel();
-            model.PossibleGraphs = GetPossibleProviders().Select(x => new ChartsModel.PossibleGraph() { Title = x.Title, Name = x.Name }).ToList();
+            
+            model.GraphingData = series;
             return View("ChartsIndex", model);
         }
 
@@ -321,6 +304,10 @@ namespace ZeroKWeb.Controllers
                 public string Name;
                 public string Title;
             }
+
+            public IList<GraphSeries> GraphingData;
+
+            public String[] Colors = {"e6194b", "3cb44b", "ffe119", "0082c8", "f58231", "911eb4", "46f0f0", "f032e6", "d2f53c", "fabebe", "008080", "e6beff", "aa6e28","fffac8", "800000", "aaffc3", "808000", "ffd8b1", "000080", "808080", "FFFFFF", "000000"};
         }
     }
 }
