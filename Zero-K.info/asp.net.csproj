@@ -1394,6 +1394,8 @@
     <Content Include="OpenSans-Regular.eot" />
     <Content Include="OpenSans-Regular.ttf" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\Chart.min.js" />
+    <Content Include="Scripts\Chart.Zoom.min.js" />
     <Content Include="Scripts\grid.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
