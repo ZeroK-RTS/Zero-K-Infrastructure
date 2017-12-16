@@ -1,4 +1,5 @@
 ﻿@using ZeroKWeb
+@using System.Globalization
 @model ZeroKWeb.Controllers.ChartsController.ChartsModel
 
 @{
@@ -42,7 +43,7 @@
 
                 // The data for our dataset
                 data: {
-                    labels: [@Html.Raw(string.Join(",", Model.GraphingData[0].Data.Select(x => "\"" + x.Day.ToString() + "\"").ToList()))],
+                    labels: [@Html.Raw(string.Join(",", Model.GraphingData[0].Data.Select(x => "\"" + x.Day.ToString("yyyy-MM-dd") + "\"").ToList()))],
                     datasets: [
                     @{int index = 0;}
                     @foreach (var series in Model.GraphingData)
@@ -51,7 +52,7 @@
                         @:label: "@series.Title",
                         @:backgroundColor: '#@Model.Colors[(index) % Model.Colors.Length]',
                         @:borderColor: '#@Model.Colors[(index++) % Model.Colors.Length]',
-                        @:data: [@string.Join(",", series.Data.Select(x => x.Value.ToString()).ToList())],
+                        @:data: [@string.Join(",", series.Data.Select(x => x.Value.ToString(CultureInfo.InvariantCulture)).ToList())],
                         @:},
                     }
                     ]
