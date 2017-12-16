@@ -1406,6 +1406,7 @@
     <Content Include="Scripts\jquery.ui.stars.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site_main.js" />

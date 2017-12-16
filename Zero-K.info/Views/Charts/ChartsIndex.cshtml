@@ -6,6 +6,7 @@
     ViewBag.Title = "Charts";
     ViewBag.Minimal = 1;
 }
+<script src="/Scripts/moment.min.js"></script>
 <script src="/Scripts/Chart.min.js"></script>
 
 <h2>Zero-K player statistics</h2>
@@ -43,7 +44,7 @@
 
                 // The data for our dataset
                 data: {
-                    labels: [@Html.Raw(string.Join(",", Model.GraphingData[0].Data.Select(x => "\"" + x.Day.ToString("yyyy-MM-dd") + "\"").ToList()))],
+                    //labels: [@Html.Raw(string.Join(",", Model.GraphingData[0].Data.Select(x => "\"" + x.Day.ToString("yyyy-MM-dd") + "\"").ToList()))],
                     datasets: [
                     @{int index = 0;}
                     @foreach (var series in Model.GraphingData)
@@ -51,9 +52,9 @@
                         @:{
                         @:label: "@series.Title",
                         @:backgroundColor: '#@Model.Colors[(index) % Model.Colors.Length]',
-                        @:fill: false,
                         @:borderColor: '#@Model.Colors[(index++) % Model.Colors.Length]',
-                        @:data: [@string.Join(",", series.Data.Select(x => "10" + x.Value.ToString(CultureInfo.InvariantCulture)).ToList())],
+                        @:fill: false,
+                        @:data: [@Html.Raw(string.Join(",", series.Data.Select(x => "{x: moment(\"" + x.Day.ToString("yyyy-MM-dd") + "\"), y: "+ x.Value.ToString(CultureInfo.InvariantCulture) + "}").ToList()))],
                         @:},
                     }
                     ]
@@ -69,6 +70,7 @@
                             },
                         }],
                         xAxes: [{
+                            type: "time",
                             gridLines: {
                                 color: 'rgba(255, 255, 255, 0.2)',
                                 zeroLineColor: 'rgba(255, 255, 255, 0.2)',
