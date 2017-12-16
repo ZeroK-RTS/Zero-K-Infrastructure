@@ -296,6 +296,7 @@ namespace ZkLobbyServer
             db.Events.InsertOnSubmit(server.PlanetWarsEventCreator.CreateEvent("{0} joins {1}", acc, fac));
             db.SaveChanges();
             await server.PublishAccountUpdate(acc);
+            await server.PublishUserProfileUpdate(acc);
         }
 
 

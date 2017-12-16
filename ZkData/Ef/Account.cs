@@ -469,6 +469,11 @@ namespace ZkData
             return level * 80 + 20 * level * level;
         }
 
+        public double GetLevelUpRatio()
+        {
+            return (Xp - GetXpForLevel(Level)) / (double)(GetXpForLevel(Level + 1) - GetXpForLevel(Level));
+        }
+
         public bool HasClanRight(Func<RoleType, bool> test)
         {
             return AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).Select(x => x.RoleType).Any(test);
@@ -688,6 +693,30 @@ namespace ZkData
         public LadderItem ToLadderItem()
         {
             return new LadderItem() { Name = Name, Clan = Clan?.Shortcut, Icon = GetIconName() };
+        }
+
+
+        
+        public UserProfile ToUserProfile()
+        {
+            return new UserProfile()
+            {
+                Name = Name,
+                Awards =
+                    AccountBattleAwards.GroupBy(x => x.AwardKey).Select(x => new UserProfile.UserAward() { AwardKey = x.Key, Collected = x.Count() })
+                        .ToList(),
+                Badges = GetBadges().Select(x => x.ToString()).ToList(),
+                EffectiveElo = EffectiveElo,
+                EffectivePwElo = EffectivePwElo,
+                EffectiveMmElo = EffectiveMmElo,
+                Kudos = KudosGained,
+                Level = Level,
+                LevelUpRatio = GetLevelUpRatio(),
+                PwBombers = GetBombersAvailable(),
+                PwDropships = GetDropshipsAvailable(),
+                PwMetal = GetMetalAvailable(),
+                PwWarpcores = GetWarpAvailable(),
+            };
         }
     }
 }

@@ -431,6 +431,30 @@ namespace ZkLobbyServer
             }
         }
 
+
+        public async Task PublishUserProfileUpdate(Account acc)
+        {
+            ConnectedUser conus;
+            if (ConnectedUsers.TryGetValue(acc.Name, out conus))
+            {
+                await conus.SendCommand(acc.ToUserProfile());
+            }
+        }
+
+        public async Task PublishUserProfilePlanetwarsPlayers()
+        {
+            foreach (var conus in ConnectedUsers.Values.Where(x => x != null && x.IsLoggedIn && !string.IsNullOrEmpty(x.User.Faction)))
+            {
+                using (var db = new ZkDataContext())
+                {
+                    var acc = db.Accounts.Find(conus.User.AccountID);
+                    await PublishUserProfileUpdate(acc);
+                }
+            }
+        }
+
+
+
         public async Task RemoveBattle(Battle battle)
         {
             foreach (var u in battle.Users.Keys)

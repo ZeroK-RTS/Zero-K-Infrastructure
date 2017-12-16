@@ -151,7 +151,7 @@
             <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
             <br />
 
-            @{ double ratio = (Model.Xp - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)); }
+            @{ double ratio = Model.GetLevelUpRatio(); }
             <div title='Your XP: @Model.Xp (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
                 <b class="fleft"> Level @Model.Level </b>
                 <img src="/img/progressl_base.png" height="17" class="fleft" />
