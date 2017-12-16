@@ -24,15 +24,13 @@ namespace ZkLobbyServer {
 
         private void ZkDataContextOnAfterEntityChange(object sender, ZkDataContext.EntityEntry entityEntry)
         {
-            int? changedThreadID = null;
-            int? changedAccountID = null;
 
             if (entityEntry.State == EntityState.Deleted || entityEntry.State == EntityState.Unchanged) return;
 
             var entity = entityEntry.Entity;
             if (entity is ForumThread)
             {
-                changedThreadID = ((ForumThread)entity).ForumThreadID;
+                var changedThreadID = ((ForumThread)entity).ForumThreadID;
 
                 CachePublicForumList();
 
@@ -70,11 +68,20 @@ namespace ZkLobbyServer {
             }
             else if (entity is ForumThreadLastRead)
             {
-                changedAccountID = ((ForumThreadLastRead)entity).AccountID;
+                var changedAccountID = ((ForumThreadLastRead)entity).AccountID;
+                var readThreadID = ((ForumThreadLastRead)entity).ForumThreadID;
 
-                var list = CachePrivateForumList(changedAccountID.Value);
                 var conus = server.ConnectedUsers.Values.FirstOrDefault(x => x != null && x.User.AccountID == changedAccountID);
-                if (conus != null) conus.SendCommand(list);
+                if (conus != null)
+                {
+                    var list = GetCurrentForumList(changedAccountID);
+
+                    if (list.ForumItems.Any(x => x.ThreadID == readThreadID))
+                    {
+                        list = CachePrivateForumList(changedAccountID);
+                        conus.SendCommand(list);
+                    }
+                }
             }
         }
 
@@ -90,6 +97,7 @@ namespace ZkLobbyServer {
                     ForumItems = accessibleThreads.OrderByDescending(x => x.LastPost).Take(10).ToList().Select(x =>
                         new ForumItem()
                         {
+                            ThreadID = x.ForumThreadID,
                             Time = x.LastPost ?? x.Created,
                             Url = $"{GlobalConst.BaseSiteUrl}/Forum/Thread/{x.ForumThreadID}",
                             Header = x.Title,
@@ -120,6 +128,7 @@ namespace ZkLobbyServer {
                     ForumItems = threads.Select(x =>
                         new ForumItem()
                         {
+                            ThreadID = x.Thread.ForumThreadID,
                             Time = x.Thread.LastPost ?? x.Thread.Created,
                             Url = $"{GlobalConst.BaseSiteUrl}/Forum/Thread/{x.Thread.ForumThreadID}",
                             Header = x.Thread.Title,
