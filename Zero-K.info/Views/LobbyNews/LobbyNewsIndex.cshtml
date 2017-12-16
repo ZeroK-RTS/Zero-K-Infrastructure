@@ -20,7 +20,16 @@
     {
         <tr>
             <td colspan="2">
-                <h1>@n.Title</h1>
+                @if (n.Url != null)
+                {
+                    <a href="@n.Url">
+                        <h1>@n.Title</h1>
+                    </a>
+                }
+                else
+                {
+                    <h1>@n.Title</h1>
+                }
             </td>
         </tr>
         <tr>
@@ -38,6 +47,10 @@
                     @if (n.EventTime != null)
                     {
                         <span>Event time: @n.EventTime.ToAgoString()</span><br />
+                    }
+                    @if (n.Url != null)
+                    {
+                        <a href="@n.Url">@n.Url</a><br/>
                     }
                     <span>Posted by @Html.PrintAccount(n.Author) @n.Created.ToAgoString()</span>
                     @if (Global.IsModerator)

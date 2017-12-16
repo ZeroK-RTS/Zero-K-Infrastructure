@@ -55,6 +55,7 @@ namespace ZeroKWeb.Controllers
                 news.AuthorAccountID = Global.AccountID;
                 news.Title = nn.Title;
                 news.Text = nn.Text;
+                news.Url = nn.Url;
                 news.EventTime = nn.EventTime;
                 
 
