@@ -78,6 +78,7 @@
     <Compile Include="Ef\SpringBattleBot.cs" />
     <Compile Include="Ef\WHR\Game.cs" />
     <Compile Include="Ef\WHR\IRatingSystem.cs" />
+    <Compile Include="Ef\WHR\ITopPlayersUpdateListener.cs" />
     <Compile Include="Ef\WHR\Player.cs" />
     <Compile Include="Ef\WHR\PlayerDay.cs" />
     <Compile Include="Ef\WHR\PlayerRating.cs" />

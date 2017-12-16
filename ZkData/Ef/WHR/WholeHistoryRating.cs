@@ -25,7 +25,9 @@ namespace Ratings
         IDictionary<int, PlayerRating> playerRatings = new ConcurrentDictionary<int, PlayerRating>();
         IDictionary<int, Player> players = new Dictionary<int, Player>();
         SortedDictionary<float, int> sortedPlayers = new SortedDictionary<float, int>();
+        List<int> topPlayers = new List<int>();
         IDictionary<int, float> playerKeys = new Dictionary<int, float>();
+        IDictionary<ITopPlayersUpdateListener, int> topPlayersUpdateListeners = new Dictionary<ITopPlayersUpdateListener, int>(); 
         Random rand = new Random();
         readonly float w2; //elo range expand per day squared
         public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, 0, 0);
@@ -83,7 +85,10 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count)
         {
-            return GetTopPlayers(count, x => true);
+            if (runningInitialization) return new List<Account>(); // dont block during updates to prevent dosprotector from kicking in
+            ZkDataContext db = new ZkDataContext();
+            List<int> retIDs = topPlayers.Take(count).ToList();
+            return db.Accounts.Where(a => retIDs.Contains(a.AccountID)).ToList(); 
         }
 
         public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
@@ -105,6 +110,16 @@ namespace Ratings
                 }
                 return retval;
             }
+        }
+
+        public void AddTopPlayerUpdateListener(ITopPlayersUpdateListener listener, int topX)
+        {
+            topPlayersUpdateListeners.Add(listener, topX);
+        }
+
+        public void RemoveTopPlayerUpdateListener(ITopPlayersUpdateListener listener, int topX)
+        {
+            topPlayersUpdateListeners.Remove(listener);
         }
 
         //implementation specific
@@ -267,16 +282,33 @@ namespace Ratings
                 DynamicMaxUncertainty = Math.Max(DynamicMaxUncertainty, playerUncertainties[Math.Min(playerUncertainties.Length, GlobalConst.LadderSize) - 1] + 0.01f);
                 int activePlayers = Math.Max(1, ~Array.BinarySearch(playerUncertainties, DynamicMaxUncertainty));
                 int rank = 0;
+                List<int> newTopPlayers = new List<int>();
+                int matched = 0;
                 foreach (var pair in sortedPlayers)
                 {
                     if (playerRatings[pair.Value].Uncertainty <= DynamicMaxUncertainty)
                     {
+                        newTopPlayers.Add(pair.Value);
+                        if (rank == matched && topPlayers[rank] == pair.Value) matched++;
                         rank++;
                         playerRatings[pair.Value].ApplyLadderUpdate(rank, (float)rank / activePlayers, currentDay);
                     }
                     else if (playerRatings[pair.Value].Rank < int.MaxValue)
                     { 
                         playerRatings[pair.Value].ApplyLadderUpdate(int.MaxValue, 1, currentDay);
+                    }
+                }
+                topPlayers = newTopPlayers;
+
+                //check for topX updates
+                ZkDataContext db = null;
+                foreach (var listener in topPlayersUpdateListeners)
+                {
+                    if (matched < listener.Value)
+                    {
+                        if (db == null) db = new ZkDataContext();
+                        List<int> l = topPlayers.Take(listener.Value).ToList();
+                        listener.Key.TopPlayersUpdated(db.Accounts.Where(x => l.Contains(x.AccountID)).ToList());
                     }
                 }
             }
