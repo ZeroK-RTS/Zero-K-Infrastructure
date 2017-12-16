@@ -66,6 +66,26 @@ namespace PlasmaDownloader
         }
 
 
+        public static bool UpdatePublicCommunityInfo(this PlasmaDownloader downloader, IChobbylaProgress progress)
+        {
+            try
+            {
+                progress.Status = "Loading community news";
+                var folder = Path.Combine(downloader.SpringPaths.WritableDirectory, "news");
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+                var info = GlobalConst.GetContentService().GetPublicCommunityInfo();
+                File.WriteAllText(Path.Combine(folder, "community.json"), JsonConvert.SerializeObject(info));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Loading public community info failed: {0}", ex);
+                progress.Status = "Loading community news failed";
+                return false;
+            }
+        }
+
+
         public static async Task<bool> UpdateMissions(this PlasmaDownloader downloader, IChobbylaProgress progress)
         {
             try

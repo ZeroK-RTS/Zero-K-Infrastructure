@@ -129,7 +129,7 @@ namespace ChobbyLauncher
                     }
                 }
 
-                UpdatePublicCommunityInfo();
+                downloader.UpdatePublicCommunityInfo(Progress);
                 
                 if (!isDev)
                 {
@@ -146,23 +146,6 @@ namespace ChobbyLauncher
                 GameAnalytics.AddErrorEvent(EGAErrorSeverity.Error, $"Unexpected error {Status}: {ex}");
                 Status = "Unexpected error preparing chobby launch: " + ex.Message;
                 return false;
-            }
-        }
-
-        private void UpdatePublicCommunityInfo()
-        {
-            Status = "Loading community news";
-            try
-            {
-                var folder = Path.Combine(paths.WritableDirectory, "news");
-                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-                var info = GlobalConst.GetContentService().GetPublicCommunityInfo();
-                File.WriteAllText(Path.Combine(folder, "community.json"), JsonConvert.SerializeObject(info));
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Loading public community info failed: {0}", ex);
-                Status = "Loading community news failed";
             }
         }
 
