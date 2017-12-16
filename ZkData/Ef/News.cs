@@ -24,11 +24,6 @@ namespace ZkData
         public string ImageContentType { get; set; }
         public int? ImageLength { get; set; }
 
-        /// <summary>
-        /// Text to be displayed in lobby
-        /// </summary>
-        public string LobbyPlaintext { get; set; }
-
         public virtual Account Account { get; set; }
         public virtual ForumThread ForumThread { get; set; }
 
@@ -43,6 +38,5 @@ namespace ZkData
         {
             get { if (ImageExtension == null) return null; return string.Format("/img/news/{0}_thumb{1}", NewsID, ImageExtension); }
         }
-
     }
 }

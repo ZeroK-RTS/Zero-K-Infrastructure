@@ -54,7 +54,6 @@ namespace ZeroKWeb.Controllers
 		        news.AuthorAccountID = Global.AccountID;
                 news.Title=  nn.Title;
                 news.Text = nn.Text;
-			    news.LobbyPlaintext = nn.LobbyPlaintext;
 
 				Image im = null;
 				if (image != null && image.ContentLength > 0)
@@ -104,9 +103,6 @@ namespace ZeroKWeb.Controllers
 				}
 				scope.Complete();
 			}
-
-		    Global.Server.NewsListManager.OnNewsChanged();
-
 		    return RedirectToAction("Index", "Home");
 		}
 	}
