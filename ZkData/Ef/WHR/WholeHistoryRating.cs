@@ -289,7 +289,7 @@ namespace Ratings
                     if (playerRatings[pair.Value].Uncertainty <= DynamicMaxUncertainty)
                     {
                         newTopPlayers.Add(pair.Value);
-                        if (rank == matched && topPlayers[rank] == pair.Value) matched++;
+                        if (rank == matched && rank < topPlayers.Count && topPlayers[rank] == pair.Value) matched++;
                         rank++;
                         playerRatings[pair.Value].ApplyLadderUpdate(rank, (float)rank / activePlayers, currentDay);
                     }
