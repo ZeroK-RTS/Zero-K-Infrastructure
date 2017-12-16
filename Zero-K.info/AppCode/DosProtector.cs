@@ -17,6 +17,8 @@ namespace ZeroKWeb
         public bool CanQuery(HttpRequest request)
         {
             if (request.RequestContext.HttpContext.Handler == null) return true; // static files are allowed
+            if (request.Path.Contains("/Home/GetTooltip")) return true;
+
 
             var ip = request.UserHostAddress;
             var now = DateTime.UtcNow;
