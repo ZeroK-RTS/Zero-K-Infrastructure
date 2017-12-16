@@ -74,11 +74,19 @@ namespace Ratings
             if (winners.Count > 0 && losers.Count > 0)
             {
                 battlesRegistered++;
-                createGame(losers, winners, false, RatingSystems.ConvertDateToDays(battle.StartTime), battle.SpringBattleID);
-                if (RatingSystems.Initialized)
+                int date = RatingSystems.ConvertDateToDays(battle.StartTime);
+                if (date > RatingSystems.ConvertDateToDays(DateTime.UtcNow))
                 {
-                    Trace.TraceInformation(battlesRegistered + " battles registered for WHR, latest Battle: " + battle.SpringBattleID );
-                    UpdateRatings();
+                    Trace.TraceWarning("WHR: Tried to register battle " + battle.SpringBattleID + " which is from the future " + (date) + " > " + RatingSystems.ConvertDateToDays(DateTime.UtcNow));
+                }
+                else
+                {
+                    createGame(losers, winners, false, date, battle.SpringBattleID);
+                    if (RatingSystems.Initialized)
+                    {
+                        Trace.TraceInformation(battlesRegistered + " battles registered for WHR, latest Battle: " + battle.SpringBattleID);
+                        UpdateRatings();
+                    }
                 }
             }
         }
@@ -199,34 +207,11 @@ namespace Ratings
 
         public string SerializeJSON()
         {
-            try
-            {
-                return JsonConvert.SerializeObject(playerRatings, Formatting.None);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Failed to serialize WHR " + ex);
-            }
             return "";
         }
 
         public void DeserializeJSON(string json)
         {
-            try
-            {
-                var settings = new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    MissingMemberHandling = MissingMemberHandling.Ignore
-                };
-                var t = JsonConvert.DeserializeObject<ConcurrentDictionary<int, PlayerRating>>(json, settings);
-                if (t != null) playerRatings = t;
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("Failed to deserialize WHR " + ex);
-            }
-            Trace.TraceInformation("Deserialized WHR cache for " + playerRatings.Count + " players");
         }
 
         public string DebugPlayer(Account player)
@@ -298,7 +283,7 @@ namespace Ratings
                     }
                 }
                 topPlayers = newTopPlayers;
-                Trace.TraceInformation("WHR Ladders updated with " + topPlayers.Count + "/" + this.players.Count + "entries, max uncertainty selected: " + DynamicMaxUncertainty);
+                Trace.TraceInformation("WHR Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty);
 
                 //check for topX updates
                 ZkDataContext db = null;
