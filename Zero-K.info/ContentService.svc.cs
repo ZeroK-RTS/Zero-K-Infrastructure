@@ -267,6 +267,7 @@ namespace ZeroKWeb
             var info = new PublicCommunityInfo();
             info.NewsItems = Global.Server.NewsListManager.GetCurrentNewsList().NewsItems;
             info.LadderItems = Global.Server.LadderListManager.GetCurrentLadderList().LadderItems;
+            info.ForumItems = Global.Server.ForumListManager.GetCurrentForumList(null).ForumItems;
             return info;
         }
     }

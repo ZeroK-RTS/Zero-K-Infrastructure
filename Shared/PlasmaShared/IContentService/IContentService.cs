@@ -34,10 +34,20 @@ namespace PlasmaShared
         public string Icon { get; set; }
     }
 
+    public class ForumItem
+    {
+        public string Header { get; set; }
+        public string Url { get; set; }
+        public DateTime Time { get; set; }
+        public bool IsRead { get; set; }
+    }
+
+
     public class PublicCommunityInfo
     {
         public List<NewsItem> NewsItems { get; set; } = new List<NewsItem>();
         public List<LadderItem> LadderItems { get; set; } = new List<LadderItem>();
+        public List<ForumItem> ForumItems { get; set; } = new List<ForumItem>();
 
     }
 

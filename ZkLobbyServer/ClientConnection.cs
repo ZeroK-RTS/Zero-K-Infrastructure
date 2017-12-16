@@ -149,6 +149,7 @@ namespace ZkLobbyServer
 
                 await SendCommand(server.NewsListManager.GetCurrentNewsList());
                 await SendCommand(server.LadderListManager.GetCurrentLadderList());
+                await SendCommand(server.ForumListManager.GetCurrentForumList(user.AccountID));
             }
             else
             {

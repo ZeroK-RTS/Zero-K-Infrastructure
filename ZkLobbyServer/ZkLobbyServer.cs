@@ -52,8 +52,8 @@ namespace ZkLobbyServer
         public PlanetWarsMatchMaker PlanetWarsMatchMaker { get; private set; }
 
         public NewsListManager NewsListManager { get; private set; }
-
         public LadderListManager LadderListManager { get; private set; }
+        public ForumListManager ForumListManager { get; private set; }
 
 
         public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator, ITopPlayerProvider topPlayerProvider)
@@ -84,6 +84,7 @@ namespace ZkLobbyServer
             PlanetWarsMatchMaker = new PlanetWarsMatchMaker(this);
             NewsListManager = new NewsListManager(this);
             LadderListManager = new LadderListManager(this);
+            ForumListManager = new ForumListManager(this);
 
             topPlayerProvider.TopPlayersUpdated += (sender, provider) => { LadderListManager.OnLadderChange(); };
         }

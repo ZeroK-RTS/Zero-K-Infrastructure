@@ -74,6 +74,14 @@ namespace LobbyClient
     }
 
 
+    [Message(Origin.Server)]
+    public class ForumList
+    {
+        public List<ForumItem> ForumItems { get; set; } = new List<ForumItem>();
+    }
+
+
+
 
     [Message(Origin.Server)]
     public class DefaultEngineChanged
