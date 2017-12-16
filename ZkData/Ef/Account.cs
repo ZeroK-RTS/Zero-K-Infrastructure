@@ -267,7 +267,7 @@ namespace ZkData
             if ((mm.Elo >= casual.Elo || casual.Rank == int.MaxValue) && mm.Rank < int.MaxValue) return mm;
             //ignore pw 
 
-            return new PlayerRating(int.MaxValue, 1, 0, float.PositiveInfinity);
+            return WholeHistoryRating.DefaultRating;
         }
 
         public bool VerifyPassword(string passwordHash)
