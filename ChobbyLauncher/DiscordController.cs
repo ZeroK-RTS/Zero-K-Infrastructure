@@ -38,7 +38,9 @@ public class DiscordController : IDisposable
             isInitialized = true;
             var presence = new DiscordUpdatePresence();
             presence.details = "The best RTS";
-            presence.state = "Loading";
+            presence.state = "Waiting for GoogleFrog to send details";
+            presence.largeImageKey = "zk";
+            presence.smallImageKey = "star";
             DiscordRpc.UpdatePresence(ref presence);
         }
         catch (Exception ex)

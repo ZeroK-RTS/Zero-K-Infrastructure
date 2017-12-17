@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ZkData;
@@ -29,7 +30,7 @@ namespace ZeroKWeb.Controllers
                     if (System.IO.File.Exists(path)) return File(System.IO.File.OpenRead(path), "application/octet-stream");
                 }
             }
-            throw new HttpException(404,"Demo file not found");
+            return new HttpStatusCodeResult(HttpStatusCode.NotFound, "Demo file not found");
         }
 
     }

@@ -181,6 +181,7 @@ Zero-K.info/img/structures/*
 Zero-K.info/Resources/*
 Zero-K.info/autoregistrator/*
 Zero-K.info/img/news/*
+Zero-K.info/img/lobbynews/*
 
 *.pyc
 UberServer/server.db
@@ -208,3 +209,4 @@ Zero-K.info/img/missions/169.png
 /steamworks/tools/ContentBuilder
 
 .vs
+

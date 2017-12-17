@@ -49,7 +49,7 @@ namespace ZeroKWeb
 
 
         public List<int> SplitTermToWordIDs(string term) {
-            return term.Split(' ', '\t', '\n').Select(SanitizeWord).Where(x => !string.IsNullOrEmpty(x)).Select(GetWordID).Distinct().ToList();
+            return (term??"").Split(' ', '\t', '\n').Select(SanitizeWord).Where(x => !string.IsNullOrEmpty(x)).Select(GetWordID).Distinct().ToList();
         }
 
         void ZkDataContextOnAfterEntityChange(object sender, ZkDataContext.EntityEntry dbEntityEntry) {

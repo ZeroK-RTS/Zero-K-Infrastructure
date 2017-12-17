@@ -267,7 +267,7 @@ namespace ZkData
             if ((mm.Elo >= casual.Elo || casual.Rank == int.MaxValue) && mm.Rank < int.MaxValue) return mm;
             //ignore pw 
 
-            return new PlayerRating(int.MaxValue, 1, 0, float.PositiveInfinity);
+            return WholeHistoryRating.DefaultRating;
         }
 
         public bool VerifyPassword(string passwordHash)
@@ -467,6 +467,11 @@ namespace ZkData
         {
             if (level < 0) return 0;
             return level * 80 + 20 * level * level;
+        }
+
+        public double GetLevelUpRatio()
+        {
+            return (Xp - GetXpForLevel(Level)) / (double)(GetXpForLevel(Level + 1) - GetXpForLevel(Level));
         }
 
         public bool HasClanRight(Func<RoleType, bool> test)
@@ -683,6 +688,35 @@ namespace ZkData
             else if (DevLevel >= DevLevel.Contributor) ret.Add(BadgeType.dev_content);
 
             return ret.OrderByDescending(x => (int)x).ToList();
+        }
+
+        public LadderItem ToLadderItem()
+        {
+            return new LadderItem() { Name = Name, Clan = Clan?.Shortcut, Icon = GetIconName() };
+        }
+
+
+        
+        public UserProfile ToUserProfile()
+        {
+            return new UserProfile()
+            {
+                Name = Name,
+                Awards =
+                    AccountBattleAwards.GroupBy(x => x.AwardKey).Select(x => new UserProfile.UserAward() { AwardKey = x.Key, Collected = x.Count() })
+                        .ToList(),
+                Badges = GetBadges().Select(x => x.ToString()).ToList(),
+                EffectiveElo = EffectiveElo,
+                EffectivePwElo = EffectivePwElo,
+                EffectiveMmElo = EffectiveMmElo,
+                Kudos = KudosGained,
+                Level = Level,
+                LevelUpRatio = GetLevelUpRatio(),
+                PwBombers = GetBombersAvailable(),
+                PwDropships = GetDropshipsAvailable(),
+                PwMetal = GetMetalAvailable(),
+                PwWarpcores = GetWarpAvailable(),
+            };
         }
     }
 }

@@ -38,6 +38,5 @@ namespace ZkData
         {
             get { if (ImageExtension == null) return null; return string.Format("/img/news/{0}_thumb{1}", NewsID, ImageExtension); }
         }
-
     }
 }

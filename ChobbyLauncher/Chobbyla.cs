@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GameAnalyticsSDK.Net;
 using Neo.IronLua;
+using Newtonsoft.Json;
 using PlasmaDownloader;
 using PlasmaDownloader.Packages;
+using PlasmaShared;
 using ZkData;
 
 namespace ChobbyLauncher
@@ -127,6 +129,8 @@ namespace ChobbyLauncher
                     }
                 }
 
+                downloader.UpdatePublicCommunityInfo(Progress);
+                
                 if (!isDev)
                 {
                     Status = "Reseting configs and deploying AIs";

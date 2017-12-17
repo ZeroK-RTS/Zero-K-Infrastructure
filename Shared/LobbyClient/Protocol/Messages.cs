@@ -62,6 +62,28 @@ namespace LobbyClient
     }
 
     [Message(Origin.Server)]
+    public class NewsList
+    {
+        public List<NewsItem> NewsItems { get; set; } = new List<NewsItem>();
+    }
+
+    [Message(Origin.Server)]
+    public class LadderList
+    {
+        public List<LadderItem> LadderItems { get; set; } = new List<LadderItem>();
+    }
+
+
+    [Message(Origin.Server)]
+    public class ForumList
+    {
+        public List<ForumItem> ForumItems { get; set; } = new List<ForumItem>();
+    }
+
+
+
+
+    [Message(Origin.Server)]
     public class DefaultEngineChanged
     {
         /// <summary>
@@ -747,5 +769,33 @@ namespace LobbyClient
             public int? LoseTime { get; set; }
             public int? XpChange { get; set; }
         }
+    }
+
+    [Message(Origin.Server)]
+    public class UserProfile
+    {
+        public class UserAward
+        {
+            public string AwardKey { get; set; }
+            public int Collected { get; set; }
+        }
+
+        public string Name { get; set; }
+        public List<UserAward> Awards { get; set; } = new List<UserAward>();
+        public List<string> Badges { get; set; } = new List<string>();
+
+        public int Level { get; set; }
+        public double LevelUpRatio { get; set; }
+
+        public double EffectiveElo { get; set; }
+        public double EffectiveMmElo { get; set; }
+        public double EffectivePwElo { get; set; }
+
+        public int Kudos { get; set; }
+
+        public double PwMetal { get; set; }
+        public double PwDropships { get; set; }
+        public double PwBombers { get; set;}
+        public double PwWarpcores { get; set; }
     }
 }

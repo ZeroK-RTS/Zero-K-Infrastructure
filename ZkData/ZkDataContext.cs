@@ -93,6 +93,8 @@ namespace ZkData
 
         public virtual DbSet<LobbyChannelTopic> LobbyChannelTopics { get; set; }
 
+        public virtual DbSet<LobbyNews> LobbyNews { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Account>()

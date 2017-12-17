@@ -198,6 +198,7 @@
     <Compile Include="Controllers\ContributionsController.cs" />
     <Compile Include="Controllers\GithubController.cs" />
     <Compile Include="Controllers\LobbyController.cs" />
+    <Compile Include="Controllers\LobbyNewsController.cs" />
     <Compile Include="Controllers\ReplaysController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="ForumParser\ForumWikiParser.cs" />
@@ -1393,6 +1394,8 @@
     <Content Include="OpenSans-Regular.eot" />
     <Content Include="OpenSans-Regular.ttf" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\Chart.min.js" />
+    <Content Include="Scripts\Chart.Zoom.min.js" />
     <Content Include="Scripts\grid.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -1404,6 +1407,7 @@
     <Content Include="Scripts\jquery.ui.stars.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site_main.js" />
@@ -1530,6 +1534,8 @@
     <Content Include="Views\Engines\EnginesIndex.cshtml" />
     <Content Include="Views\Charts\ChartsIndex.cshtml" />
     <Content Include="Views\Forum\DeletePostPrompt.cshtml" />
+    <Content Include="Views\LobbyNews\LobbyNewsEdit.cshtml" />
+    <Content Include="Views\LobbyNews\LobbyNewsIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

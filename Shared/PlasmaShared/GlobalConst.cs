@@ -41,8 +41,7 @@ namespace ZkData
             switch (newMode) {
                 case ModeType.Local:
                     BaseSiteUrl = "http://localhost:9739";
-                    ZkDataContextConnectionString =
-                        "Data Source=.;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000;";
+                    ZkDataContextConnectionString = @"Data Source=(localdb)\mssqllocaldb;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000";
 
                     LobbyServerHost = "localhost";
                     LobbyServerPort = 8200;
@@ -138,8 +137,9 @@ namespace ZkData
 
         public const int LadderActivityDays = 70;
         public const int LadderSize = 50; // Amount of players shown on ladders
-        public const float MinimumDynamicMaxLadderUncertainty = 46; // < 70 days, higher uncertainties allowed in the case of low player activity
-        public const float EloDecayPerDaySquared = 30;
+        public const float MinimumDynamicMaxLadderUncertainty = 50; // uncertainties > this are marked unranked, max age ~ 2-3 months
+        public const float EloDecayPerDaySquared = 30; //whr thingie
+        public const float LadderUpdatePeriod = 1; //Ladder is fully updated every X hours
 
         public const int XpForMissionOrBots = 25;
         public const int XpForMissionOrBotsVictory = 50;

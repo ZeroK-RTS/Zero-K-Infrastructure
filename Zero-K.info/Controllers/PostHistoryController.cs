@@ -24,20 +24,23 @@ namespace ZeroKWeb.Views.Forum
             var db = new ZkDataContext();
             var post = db.ForumPosts.Find(id);
 
-            string txt1;
-            string txt2;
+            string txt1 = "";
+            string txt2 = "";
 
             if (grSel != null && grSel.Any())
             {
                 if (grSel.Count > 1)
                 {
-                    txt1 = db.ForumPostEdits.Find(grSel.Min()).NewText;
-                    txt2 = db.ForumPostEdits.Find(grSel.Max()).NewText;
+                    txt1 = db.ForumPostEdits.Find(grSel.Min())?.NewText;
+                    txt2 = db.ForumPostEdits.Find(grSel.Max())?.NewText;
                 } else
                 {
                     var edit = db.ForumPostEdits.Find(grSel.First());
-                    txt1 = edit.OriginalText;
-                    txt2 = edit.NewText;
+                    if (edit != null)
+                    {
+                        txt1 = edit.OriginalText;
+                        txt2 = edit.NewText;
+                    }
                 }
 
                 var sd = new SideBySideDiffBuilder(new Differ());

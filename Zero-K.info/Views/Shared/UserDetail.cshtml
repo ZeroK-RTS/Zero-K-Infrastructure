@@ -142,16 +142,16 @@
                 var mm = Model.GetRating(Ratings.RatingCategory.MatchMaking);
                 var pw = Model.GetRating(Ratings.RatingCategory.Planetwars);
 
-                <b>Competitive rank:</b> @(mm.Rank == int.MaxValue ? "Unranked" : $"{mm.Rank}. ({Math.Round(mm.Elo)} ± {Math.Round(mm.Uncertainty)}, Top {Math.Round(mm.Percentile * 1000) / 10f}%)")<br />
-                <b>Casual rank:</b> @(casual.Rank == int.MaxValue ? "Unranked" : $"{casual.Rank}. ({Math.Round(casual.Elo)} ± {Math.Round(casual.Uncertainty)}, Top {Math.Round(casual.Percentile * 1000) / 10f}%)")<br />
-                <b>Planetwars rank:</b> @(pw.Rank == int.MaxValue ? "Unranked" : $"{pw.Rank}. ({Math.Round(pw.Elo)} ± {Math.Round(pw.Uncertainty)}, Top {Math.Round(pw.Percentile * 1000) / 10f}%)")<br />
+                <b>Competitive rank:</b> @(mm.Rank == int.MaxValue ? $"Unranked, estimated {Math.Round(mm.Elo)} ± {Math.Round(mm.Uncertainty)}" : $"{mm.Rank}. ({Math.Round(mm.Elo)} ± {Math.Round(mm.Uncertainty)}, Top {Math.Round(mm.Percentile * 1000) / 10f}%)")<br />
+                <b>Casual rank:</b> @(casual.Rank == int.MaxValue ? $"Unranked, estimated {Math.Round(casual.Elo)} ± {Math.Round(casual.Uncertainty)}" : $"{casual.Rank}. ({Math.Round(casual.Elo)} ± {Math.Round(casual.Uncertainty)}, Top {Math.Round(casual.Percentile * 1000) / 10f}%)")<br />
+                <b>Planetwars rank:</b> @(pw.Rank == int.MaxValue ? $"Unranked, estimated {Math.Round(pw.Elo)} ± {Math.Round(pw.Uncertainty)}" : $"{pw.Rank}. ({Math.Round(pw.Elo)} ± {Math.Round(pw.Uncertainty)}, Top {Math.Round(pw.Percentile * 1000) / 10f}%)")<br />
             }
 
             <b>Level:</b> @Model.Level<br />
             <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
             <br />
 
-            @{ double ratio = (Model.Xp - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)); }
+            @{ double ratio = Model.GetLevelUpRatio(); }
             <div title='Your XP: @Model.Xp (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
                 <b class="fleft"> Level @Model.Level </b>
                 <img src="/img/progressl_base.png" height="17" class="fleft" />
@@ -326,6 +326,7 @@
         <div class="admin">
             <h3>Admin extras</h3>
             
+            <a href="@Url.Action("Index", "LobbyNews")">Lobby news</a><br/>
             <a href="@Url.Action("Index", "Users")">User list</a><br/>
             <a href="@Url.Action("Index", "Charts")">Charts</a><br/>
             @if (GlobalConst.Mode == ModeType.Test)

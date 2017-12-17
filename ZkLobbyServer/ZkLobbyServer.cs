@@ -51,6 +51,10 @@ namespace ZkLobbyServer
 
         public PlanetWarsMatchMaker PlanetWarsMatchMaker { get; private set; }
 
+        public NewsListManager NewsListManager { get; private set; }
+        public LadderListManager LadderListManager { get; private set; }
+        public ForumListManager ForumListManager { get; private set; }
+
 
         public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator, ITopPlayerProvider topPlayerProvider)
         {
@@ -78,6 +82,11 @@ namespace ZkLobbyServer
             battleListUpdater = new BattleListUpdater(this);
             PartyManager = new PartyManager(this);
             PlanetWarsMatchMaker = new PlanetWarsMatchMaker(this);
+            NewsListManager = new NewsListManager(this);
+            LadderListManager = new LadderListManager(this);
+            ForumListManager = new ForumListManager(this);
+
+            topPlayerProvider.TopPlayersUpdated += (sender, provider) => { LadderListManager.OnLadderChange(); };
         }
 
         /// <summary>
@@ -152,7 +161,7 @@ namespace ZkLobbyServer
 
         public async Task SyncUserToAll(ConnectedUser changer)
         {
-            await Broadcast(ConnectedUsers.Values.Where(x => CanUserSee(x, changer) && !HasSeen(x, changer)), changer.User);
+            await Broadcast(ConnectedUsers.Values.Where(x=>x!=null).Where(x => CanUserSee(x, changer) && !HasSeen(x, changer)), changer.User);
         }
 
 
@@ -421,6 +430,30 @@ namespace ZkLobbyServer
                 }
             }
         }
+
+
+        public async Task PublishUserProfileUpdate(Account acc)
+        {
+            ConnectedUser conus;
+            if (ConnectedUsers.TryGetValue(acc.Name, out conus))
+            {
+                await conus.SendCommand(acc.ToUserProfile());
+            }
+        }
+
+        public async Task PublishUserProfilePlanetwarsPlayers()
+        {
+            foreach (var conus in ConnectedUsers.Values.Where(x => x != null && x.IsLoggedIn && !string.IsNullOrEmpty(x.User.Faction)))
+            {
+                using (var db = new ZkDataContext())
+                {
+                    var acc = db.Accounts.Find(conus.User.AccountID);
+                    await PublishUserProfileUpdate(acc);
+                }
+            }
+        }
+
+
 
         public async Task RemoveBattle(Battle battle)
         {
