@@ -37,9 +37,7 @@ namespace ZeroKWeb.Controllers
         {
             public string Title { get; set; }
             public string Map { get; set; }
-            public string User1 { get; set; }
-            public string User2 { get; set; }
-            public string User3 { get; set; }
+            public int[] UserId { get; set; }
             public int? PlayersFrom { get; set; }
             public int? PlayersTo { get; set; }
             public AgeOption Age { get; set; }
@@ -79,12 +77,12 @@ namespace ZeroKWeb.Controllers
 
             if (!string.IsNullOrEmpty(model.Map)) q = q.Where(b => b.ResourceByMapResourceID.InternalName == model.Map);
 
-            
-            //if (user == null && Global.IsAccountAuthorized) user = Global.Account.Name;
-            if (!string.IsNullOrEmpty(model.User1)) q = q.Where(b => b.SpringBattlePlayers.Any(p => !p.IsSpectator && p.Account.Name == model.User1));
-            if (!string.IsNullOrEmpty(model.User2)) q = q.Where(b => b.SpringBattlePlayers.Any(p => !p.IsSpectator && p.Account.Name == model.User2));
-            if (!string.IsNullOrEmpty(model.User3)) q = q.Where(b => b.SpringBattlePlayers.Any(p => !p.IsSpectator && p.Account.Name == model.User3));
 
+            //if (user == null && Global.IsAccountAuthorized) user = Global.Account.Name;
+            if (model.UserId != null) {
+                int uniqueIds = model.UserId.Distinct().Count();
+                q = q.Where(b => b.SpringBattlePlayers.Where(p => model.UserId.Contains(p.AccountID)).Count() == uniqueIds);
+            }
 
             if (model.PlayersFrom.HasValue) q = q.Where(b => b.SpringBattlePlayers.Count(p => !p.IsSpectator) >= model.PlayersFrom);
             if (model.PlayersTo.HasValue) q = q.Where(b => b.SpringBattlePlayers.Count(p => !p.IsSpectator) <= model.PlayersTo);

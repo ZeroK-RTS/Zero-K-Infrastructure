@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ratings;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -216,12 +217,34 @@ namespace ZeroKWeb.Controllers
         public string Title => "daily first-time players";
     }
 
+    public class RatingHistory : IGraphDataProvider
+    {
+        public readonly int AccountID;
+        public readonly RatingCategory Category;
 
-    [Auth(Role = AdminLevel.Moderator)]
+        public RatingHistory(int accountID, RatingCategory category)
+        {
+            this.AccountID = accountID;
+            this.Category = category;
+        }
+
+        public IList<GraphPoint> GetDailyValues(DateTime fromTime, DateTime toTime)
+        {
+            Dictionary<DateTime, float> ratings = RatingSystems.GetRatingSystem(Category).GetPlayerRatingHistory(AccountID);
+            return ratings.Where(x => x.Key >= fromTime && x.Key <= toTime).Select(x => new GraphPoint() { Day = x.Key, Value = x.Value, }).ToList();
+        }
+
+        public string Name => "rating_history";
+        public string Title => "rating history";
+    }
+
+
+
     public class ChartsController : Controller
     {
 
         // GET: Charts
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Index(ChartsModel model)
         {
             model = model ?? new ChartsModel();
@@ -266,18 +289,53 @@ namespace ZeroKWeb.Controllers
 
         private List<IGraphDataProvider> GetPossibleProviders()
         {
-            return new List<IGraphDataProvider>()
+            List<IGraphDataProvider> providers = new List<IGraphDataProvider>()
             {
-                new Retention(),
-                new DailyUnique(),
-                new DailyNew(),
-                new RetentionLimit(1),
-                new RetentionLimit(3),
-                new RetentionLimit(7),
-                new RetentionLimit(30),
-                new DailyAvgMinutes(),
-                new Leaving()
+
             };
+
+            if (Global.Account?.AdminLevel >= AdminLevel.Moderator)
+            {
+                providers.AddRange(new List<IGraphDataProvider>()
+                {
+                    new Retention(),
+                    new DailyUnique(),
+                    new DailyNew(),
+                    new RetentionLimit(1),
+                    new RetentionLimit(3),
+                    new RetentionLimit(7),
+                    new RetentionLimit(30),
+                    new DailyAvgMinutes(),
+                    new Leaving()
+                });
+            }
+            return providers;
+        }
+
+
+        // GET: Charts/Ratings
+        public ActionResult Ratings(ChartsModel model)
+        {
+            model = model ?? new ChartsModel();
+
+            var to = model.To.Date;
+            var from = model.From.Date;
+
+            var providers = new List<IGraphDataProvider>();
+            if (model.UserId != null)
+            {
+                providers = model.UserId.Select(x => (IGraphDataProvider)new RatingHistory(x, model.RatingCategory)).ToList();
+            }
+
+            var series = new List<GraphSeries>();
+
+            foreach (var prov in providers)
+            {
+                series.Add(new GraphSeries() { Title = prov.Title, Data = prov.GetDailyValues(from, to) });
+            }
+
+            model.GraphingData = series;
+            return View("ChartsRatings", model);
         }
 
         public class GraphSeries
@@ -289,6 +347,9 @@ namespace ZeroKWeb.Controllers
         public class ChartsModel
         {
             public List<PossibleGraph> PossibleGraphs = new List<PossibleGraph>();
+            
+            public int[] UserId { get; set; }
+            public RatingCategory RatingCategory { get; set; }
 
             public DateTime From { get; set; } = DateTime.UtcNow.AddYears(-1).Date;
 

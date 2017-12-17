@@ -53,6 +53,12 @@ namespace Ratings
             return playerRatings.ContainsKey(accountID) ? playerRatings[accountID] : DefaultRating;
         }
 
+        public Dictionary<DateTime, float> GetPlayerRatingHistory(int accountID)
+        {
+            if (!players.ContainsKey(accountID)) return new Dictionary<DateTime, float>();
+            return players[accountID].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.getElo() + RatingOffset);
+        }
+
         public List<float> PredictOutcome(List<ICollection<Account>> teams)
         {
             return teams.Select(t =>
