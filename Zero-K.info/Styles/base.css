@@ -47,6 +47,11 @@ pre
 	margin-right: 4em;
 }
 
+.inputTable > tbody> tr
+{
+    vertical-align: top;
+}
+
 input, textarea, select, option
 {
 	color: #cbd3d4; 

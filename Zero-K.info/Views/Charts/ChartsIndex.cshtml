@@ -50,15 +50,14 @@
                         datasets: [
                         @{int index = 0;}
                         @foreach (var series in Model.GraphingData)
-                    {
-                        @:{
-                                                    @:label: "@series.Title",
-                                                    @:backgroundColor: '#@Model.Colors[(index) % Model.Colors.Length]',
-                                                    @:borderColor: '#@Model.Colors[(index++) % Model.Colors.Length]',
-                                                    @:fill: false,
-                                                    @:data: [@Html.Raw(string.Join(",", series.Data.Select(x => "{x: moment(\"" + x.Day.ToString("yyyy-MM-dd") + "\"), y: "+ x.Value.ToString(CultureInfo.InvariantCulture) + "}").ToList()))],
-                                                    @:
-                        },
+                        {
+                            @:{
+                            @:label: "@series.Title",
+                            @:backgroundColor: '#@Model.Colors[(index) % Model.Colors.Length]',
+                            @:borderColor: '#@Model.Colors[(index++) % Model.Colors.Length]',
+                            @:fill: false,
+                            @:data: [@Html.Raw(string.Join(",", series.Data.Select(x => "{x: moment(\"" + x.Day.ToString("yyyy-MM-dd") + "\"), y: "+ x.Value.ToString(CultureInfo.InvariantCulture) + "}").ToList()))],
+                            @:},
                         }
                         ]
                     },

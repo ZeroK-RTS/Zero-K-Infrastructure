@@ -221,11 +221,16 @@ namespace ZeroKWeb.Controllers
     {
         public readonly int AccountID;
         public readonly RatingCategory Category;
+        public readonly string AccountName;
 
         public RatingHistory(int accountID, RatingCategory category)
         {
             this.AccountID = accountID;
             this.Category = category;
+            using (var db = new ZkDataContext())
+            {
+                AccountName = db.Accounts.Where(x => x.AccountID == accountID).FirstOrDefault().Name;
+            }
         }
 
         public IList<GraphPoint> GetDailyValues(DateTime fromTime, DateTime toTime)
@@ -235,7 +240,7 @@ namespace ZeroKWeb.Controllers
         }
 
         public string Name => "rating_history";
-        public string Title => "rating history";
+        public string Title => AccountName ;
     }
 
 

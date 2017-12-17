@@ -1,4 +1,4 @@
-﻿@using ZeroKWeb
+﻿@using ZkData
 @using System.Globalization
 @model ZeroKWeb.Controllers.ChartsController.ChartsModel
 
@@ -8,17 +8,17 @@
 <script src="/Scripts/moment.min.js"></script>
 <script src="/Scripts/Chart.min.js"></script>
 
-<div class="fleft" style="padding: 5px;">
+<div class="fleft width-100" style="padding: 5px;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;">
     <h2>Zero-K Player Rating History</h2> <br/>
     <form action="@Url.Action("Ratings")">
-        <table>
+        <table class="inputTable">
             <tr>
                 <td>Rating:</td>
                 <td>@Html.EnumDropDownListFor(x => x.RatingCategory, new { @class = "width-100"})</td>
             </tr>
             <tr>
                 <td>Players: </td>
-                <td>@Html.TextBox("User", "", new { data_autocomplete = Url.Action("Users", "Autocomplete"), data_autocomplete_action = "add" })</td>
+                <td>@using (var db = new ZkDataContext()){ @Html.MultiSelectFor(x => x.UserId, Url.Action("Users", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)));}</td>
             </tr>
             <tr>
                 <td></td>
@@ -35,7 +35,7 @@
     @{
         if (Model.GraphingData != null && Model.GraphingData.Count > 0)
         {
-            <canvas id="graphID"></canvas>
+            <canvas id="graphID" class="width-100"></canvas>
             <script language="javascript">
 
                 var ctx = document.getElementById('graphID').getContext('2d');
@@ -53,13 +53,12 @@
                             @foreach (var series in Model.GraphingData)
                             {
                                 @:{
-                                    @:label: "@series.Title",
-                                    @:backgroundColor: '#@Model.Colors[(index) % Model.Colors.Length]',
-                                    @:borderColor: '#@Model.Colors[(index++) % Model.Colors.Length]',
-                                    @:fill: false,
-                                    @:data: [@Html.Raw(string.Join(",", series.Data.Select(x => "{x: moment(\"" + x.Day.ToString("yyyy-MM-dd") + "\"), y: "+ x.Value.ToString(CultureInfo.InvariantCulture) + "}").ToList()))],
-                                    @:
-                                }
+                                @:label: "@series.Title",
+                                @:backgroundColor: '#@Model.Colors[(index) % Model.Colors.Length]',
+                                @:borderColor: '#@Model.Colors[(index++) % Model.Colors.Length]',
+                                @:fill: false,
+                                @:data: [@Html.Raw(string.Join(",", series.Data.Select(x => "{x: moment(\"" + x.Day.ToString("yyyy-MM-dd") + "\"), y: "+ x.Value.ToString(CultureInfo.InvariantCulture) + "}").ToList()))],
+                                @:},
                             }
                         ]
                     },
