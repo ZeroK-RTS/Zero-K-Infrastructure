@@ -131,6 +131,10 @@ namespace Ratings
         {
             return (int)(date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays / 1);
         }
+        public static DateTime ConvertDaysToDate(int days)
+        {
+            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddDays(days);
+        }
 
         private static bool IsCategory(SpringBattle battle, RatingCategory category)
         {

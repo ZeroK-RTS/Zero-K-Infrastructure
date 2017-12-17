@@ -1536,6 +1536,9 @@
     <Content Include="Views\Forum\DeletePostPrompt.cshtml" />
     <Content Include="Views\LobbyNews\LobbyNewsEdit.cshtml" />
     <Content Include="Views\LobbyNews\LobbyNewsIndex.cshtml" />
+    <Content Include="Views\Charts\ChartsRatings.cshtml">
+      <BrowseToURL>~/Views/Charts/ChartsRatings.cshtml</BrowseToURL>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

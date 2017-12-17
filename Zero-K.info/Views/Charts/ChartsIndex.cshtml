@@ -3,85 +3,89 @@
 @model ZeroKWeb.Controllers.ChartsController.ChartsModel
 
 @{
-    ViewBag.Title = "Charts";
-    ViewBag.Minimal = 1;
+    Page.Title = "Player charts";
 }
 <script src="/Scripts/moment.min.js"></script>
 <script src="/Scripts/Chart.min.js"></script>
 
-<h2>Zero-K player statistics</h2>
-
-<form method="get" action="@Url.Action("Index")" id="formID">
-    <table>
-        <tr><td>Graphs</td><td>
-            @foreach (var g in Model.PossibleGraphs)
+<div class="fleft" style="padding: 5px;">
+    <h2>Zero-K player statistics</h2>
+    <form method="get" action="@Url.Action("Index")" id="formID">
+        <table>
+            <tr>
+                <td>Graphs</td>
+                <td>
+                    @foreach (var g in Model.PossibleGraphs)
             {
-                <label>
-                    <input type="checkbox" name="Graphs" value="@g.Name" checked="@(Model.Graphs.Contains(g.Name))" />
-                    @g.Title
-                </label><br/>
-            }
-        </td></tr>
-        <tr><td>From</td><td>@Html.TextBoxFor(x => x.From, new { @class = "js_datepicker" })</td></tr>
-        <tr><td>To</td><td>@Html.TextBoxFor(x => x.To, new { @class = "js_datepicker" })</td></tr>
-        <tr><td>Group days</td><td>@Html.EditorFor(x => x.Grouping)</td></tr>
-        <tr><td>Normalize</td><td>@Html.CheckBoxFor(x => x.Normalize)</td></tr>
-        <tr><td colspan="2"><input type="submit"/></td></tr>
-    </table>
-</form>
-@{
-    if (Model.GraphingData != null && Model.GraphingData.Count > 0)
-    {
-        <canvas id="graphID"></canvas>
-        <script language="javascript">
+                        <label>
+                            <input type="checkbox" name="Graphs" value="@g.Name" checked="@(Model.Graphs.Contains(g.Name))" />
+                            @g.Title
+                        </label><br />
+                    }
+                </td>
+            </tr>
+            <tr><td>From</td><td>@Html.TextBoxFor(x => x.From, new { @class = "js_datepicker" })</td></tr>
+            <tr><td>To</td><td>@Html.TextBoxFor(x => x.To, new { @class = "js_datepicker" })</td></tr>
+            <tr><td>Group days</td><td>@Html.EditorFor(x => x.Grouping)</td></tr>
+            <tr><td>Normalize</td><td>@Html.CheckBoxFor(x => x.Normalize)</td></tr>
+            <tr><td colspan="2"><input type="submit" /></td></tr>
+        </table>
+    </form>
+    @{
+        if (Model.GraphingData != null && Model.GraphingData.Count > 0)
+        {
+            <canvas id="graphID"></canvas>
+            <script language="javascript">
 
-            var ctx = document.getElementById('graphID').getContext('2d');
-            Chart.defaults.global.defaultFontColor = '#ddd';
-            Chart.defaults.global.defaultColor = 'rgba(255, 255, 255, 0.1)';
-            var chart = new Chart(ctx, {
-                // The type of chart we want to create
-                type: 'line',
+                var ctx = document.getElementById('graphID').getContext('2d');
+                Chart.defaults.global.defaultFontColor = '#ddd';
+                Chart.defaults.global.defaultColor = 'rgba(255, 255, 255, 0.1)';
+                var chart = new Chart(ctx, {
+                    // The type of chart we want to create
+                    type: 'line',
 
-                // The data for our dataset
-                data: {
-                    //labels: [@Html.Raw(string.Join(",", Model.GraphingData[0].Data.Select(x => "\"" + x.Day.ToString("yyyy-MM-dd") + "\"").ToList()))],
-                    datasets: [
-                    @{int index = 0;}
-                    @foreach (var series in Model.GraphingData)
+                    // The data for our dataset
+                    data: {
+                        //labels: [@Html.Raw(string.Join(",", Model.GraphingData[0].Data.Select(x => "\"" + x.Day.ToString("yyyy-MM-dd") + "\"").ToList()))],
+                        datasets: [
+                        @{int index = 0;}
+                        @foreach (var series in Model.GraphingData)
                     {
                         @:{
-                        @:label: "@series.Title",
-                        @:backgroundColor: '#@Model.Colors[(index) % Model.Colors.Length]',
-                        @:borderColor: '#@Model.Colors[(index++) % Model.Colors.Length]',
-                        @:fill: false,
-                        @:data: [@Html.Raw(string.Join(",", series.Data.Select(x => "{x: moment(\"" + x.Day.ToString("yyyy-MM-dd") + "\"), y: "+ x.Value.ToString(CultureInfo.InvariantCulture) + "}").ToList()))],
-                        @:},
-                    }
-                    ]
-                },
-
-                // Configuration options go here
-                options: {
-                    scales: {
-                        yAxes: [{
-                            gridLines: {
-                                color: 'rgba(255, 255, 255, 0.2)',
-                                zeroLineColor: 'rgba(255, 255, 255, 0.5)',
-                            },
-                        }],
-                        xAxes: [{
-                            type: "time",
-                            gridLines: {
-                                color: 'rgba(255, 255, 255, 0.2)',
-                                zeroLineColor: 'rgba(255, 255, 255, 0.2)',
-                            }
-                        }],
+                                                    @:label: "@series.Title",
+                                                    @:backgroundColor: '#@Model.Colors[(index) % Model.Colors.Length]',
+                                                    @:borderColor: '#@Model.Colors[(index++) % Model.Colors.Length]',
+                                                    @:fill: false,
+                                                    @:data: [@Html.Raw(string.Join(",", series.Data.Select(x => "{x: moment(\"" + x.Day.ToString("yyyy-MM-dd") + "\"), y: "+ x.Value.ToString(CultureInfo.InvariantCulture) + "}").ToList()))],
+                                                    @:
+                        },
+                        }
+                        ]
                     },
-                    responsive: true,
-                },
 
-            });
-        </script>
-        }
+                    // Configuration options go here
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                gridLines: {
+                                    color: 'rgba(255, 255, 255, 0.2)',
+                                    zeroLineColor: 'rgba(255, 255, 255, 0.5)',
+                                },
+                            }],
+                            xAxes: [{
+                                type: "time",
+                                gridLines: {
+                                    color: 'rgba(255, 255, 255, 0.2)',
+                                    zeroLineColor: 'rgba(255, 255, 255, 0.2)',
+                                }
+                            }],
+                        },
+                        responsive: true,
+                    },
+
+                });
+            </script>
     }
-
+    }
+</div>
+<br class="clearfloat" />

@@ -377,11 +377,19 @@ function GlobalPageInit(root) {
                     var form = $(el).closest("form");
                     $('<input>').attr({
                         type: 'hidden',
-                        name: 'id[]',
+                        name: 'UserId[]',
+                        id: 'userinput' + ui.item.id,
                         value: ui.item.id
                     }).appendTo(form);
                     //$('<span class="ui-autocomplete">' + ui.item.value + '</span>').appendTo(form);
-                    $("<span></span>").data("item.autocomplete", ui.item).append($("<a></a>").html(ui.item.label)).appendTo(form);
+                    removeButton = $(" <a ><img src='/img/delete_trashcan.png' class='icon16' /></a><br />");
+                    userDisplay = $("<span></span>").data("item.autocomplete", ui.item).append($("<a></a> ").html(ui.item.label)).append(removeButton).appendTo($(form).find("#players"));
+                    userDisplay.attr({ id: 'userdisp' + ui.item.id })
+                    $(removeButton).click(function () {
+                        $(form).find("#userinput" + ui.item.id).remove();
+                        $(form).find("#userdisp" + ui.item.id).remove();
+                    })
+                    
                 }
             }
         }).data('ui-autocomplete')._renderItem = function (ul, item) {

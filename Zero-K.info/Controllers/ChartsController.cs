@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ratings;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -216,12 +217,34 @@ namespace ZeroKWeb.Controllers
         public string Title => "daily first-time players";
     }
 
+    public class RatingHistory : IGraphDataProvider
+    {
+        public readonly int AccountID;
+        public readonly RatingCategory Category;
 
-    [Auth(Role = AdminLevel.Moderator)]
+        public RatingHistory(int accountID, RatingCategory category)
+        {
+            this.AccountID = accountID;
+            this.Category = category;
+        }
+
+        public IList<GraphPoint> GetDailyValues(DateTime fromTime, DateTime toTime)
+        {
+            Dictionary<DateTime, float> ratings = RatingSystems.GetRatingSystem(Category).GetPlayerRatingHistory(AccountID);
+            return ratings.Where(x => x.Key >= fromTime && x.Key <= toTime).Select(x => new GraphPoint() { Day = x.Key, Value = x.Value, }).ToList();
+        }
+
+        public string Name => "rating_history";
+        public string Title => "rating history";
+    }
+
+
+
     public class ChartsController : Controller
     {
 
         // GET: Charts
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Index(ChartsModel model)
         {
             model = model ?? new ChartsModel();
@@ -266,18 +289,27 @@ namespace ZeroKWeb.Controllers
 
         private List<IGraphDataProvider> GetPossibleProviders()
         {
-            return new List<IGraphDataProvider>()
+            List<IGraphDataProvider> providers = new List<IGraphDataProvider>()
             {
-                new Retention(),
-                new DailyUnique(),
-                new DailyNew(),
-                new RetentionLimit(1),
-                new RetentionLimit(3),
-                new RetentionLimit(7),
-                new RetentionLimit(30),
-                new DailyAvgMinutes(),
-                new Leaving()
+
             };
+
+            if (Global.Account?.AdminLevel >= AdminLevel.Moderator)
+            {
+                providers.AddRange(new List<IGraphDataProvider>()
+                {
+                    new Retention(),
+                    new DailyUnique(),
+                    new DailyNew(),
+                    new RetentionLimit(1),
+                    new RetentionLimit(3),
+                    new RetentionLimit(7),
+                    new RetentionLimit(30),
+                    new DailyAvgMinutes(),
+                    new Leaving()
+                });
+            }
+            return providers;
         }
 
         public class GraphSeries
