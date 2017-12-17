@@ -373,6 +373,15 @@ function GlobalPageInit(root) {
                     $(el).closest("form").submit();
                 } else if (action === "goto") {
                     document.location = ui.item.url;
+                } else if (action === "add") {
+                    var form = $(el).closest("form");
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'id[]',
+                        value: ui.item.id
+                    }).appendTo(form);
+                    //$('<span class="ui-autocomplete">' + ui.item.value + '</span>').appendTo(form);
+                    $("<span></span>").data("item.autocomplete", ui.item).append($("<a></a>").html(ui.item.label)).appendTo(form);
                 }
             }
         }).data('ui-autocomplete')._renderItem = function (ul, item) {
