@@ -316,6 +316,10 @@
     <Compile Include="Migrations\201712161337337_LobbyNews.Designer.cs">
       <DependentUpon>201712161337337_LobbyNews.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201712171235171_AddPinnedOrderForLobbyNews.cs" />
+    <Compile Include="Migrations\201712171235171_AddPinnedOrderForLobbyNews.Designer.cs">
+      <DependentUpon>201712171235171_AddPinnedOrderForLobbyNews.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -623,6 +627,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201712161337337_LobbyNews.resx">
       <DependentUpon>201712161337337_LobbyNews.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712171235171_AddPinnedOrderForLobbyNews.resx">
+      <DependentUpon>201712171235171_AddPinnedOrderForLobbyNews.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

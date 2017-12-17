@@ -19,6 +19,9 @@ namespace ZkData {
         public string ImageExtension { get; set; }
 
 
+        public int? PinnedOrder { get; set; }
+
+
         public int AuthorAccountID { get; set; }
         [ForeignKey(nameof(AuthorAccountID))]
         public virtual Account Author { get; set; }
