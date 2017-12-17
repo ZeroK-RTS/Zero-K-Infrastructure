@@ -29,7 +29,7 @@
             <input name="sa" value="Search" alt="Search" type="image" src="/img/search_img.png" style="border: none; vertical-align: middle;" /></td>
         </tr>
     </table>
-    @Html.Raw(string.Concat(Model.UserId.Select(x => Html.Hidden("UserId[]", x)).ToList()))
+    @if (Model.UserId != null) { Html.Raw(string.Concat(Model.UserId.Select(x => Html.Hidden("UserId[]", x)).ToList())); }
 </form>
 <table>
     <tr>

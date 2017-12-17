@@ -47,14 +47,16 @@ pre
 	margin-right: 4em;
 }
 
-input, textarea
+input, textarea, select, option
 {
 	color: #cbd3d4; 
 	background: none;
 	border: 1px solid teal;
 	padding: 3px;
 }
-
+option{
+    background: black;
+}
 video
 {
 	max-width: 100%;
@@ -175,4 +177,6 @@ ul {list-style-type: circle;}
 .width-70 {width: 70%;}
 .width-80 {width: 80%;}
 .width-90 {width: 90%;}
+.width-100 {width: 100%;}
+
 

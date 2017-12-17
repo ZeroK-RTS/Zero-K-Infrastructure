@@ -377,7 +377,7 @@ function GlobalPageInit(root) {
                     var form = $(el).closest("form");
                     $('<input>').attr({
                         type: 'hidden',
-                        name: 'UserId[]',
+                        name: 'UserId',
                         id: 'userinput' + ui.item.id,
                         value: ui.item.id
                     }).appendTo(form);
