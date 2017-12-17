@@ -70,8 +70,7 @@ namespace ZkLobbyServer
                     if (info != null) accBySteamID = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.SteamID == info.steamid);
                     if (!string.IsNullOrEmpty(login.Name))
                     {
-                        string nameUpper = login.Name.ToUpper();
-                        accByLogin = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name) ?? db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name.ToUpper() == nameUpper);
+                        accByLogin = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name) ?? db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name);
                     }
 
                     if (accBySteamID == null)
@@ -164,7 +163,8 @@ namespace ZkLobbyServer
 
             using (var db = new ZkDataContext())
             {
-                var existingByName = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == register.Name.ToUpper());
+                var registerName = register.Name.ToUpper();
+                var existingByName = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == registerName);
                 if (existingByName != null)
                 {
                     if (info != null && existingByName.SteamID == info.steamid) return new RegisterResponse(RegisterResponse.Code.AlreadyRegisteredWithThisSteamToken);
