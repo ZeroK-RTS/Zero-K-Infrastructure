@@ -85,8 +85,6 @@ namespace ZkLobbyServer
             NewsListManager = new NewsListManager(this);
             LadderListManager = new LadderListManager(this);
             ForumListManager = new ForumListManager(this);
-
-            topPlayerProvider.TopPlayersUpdated += (sender, provider) => { LadderListManager.OnLadderChange(); };
         }
 
         /// <summary>
