@@ -68,11 +68,11 @@ namespace Ratings
 
         public void ProcessBattle(SpringBattle battle)
         {
-            latestBattle = battle;
             ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
             ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
             if (winners.Count > 0 && losers.Count > 0)
             {
+                latestBattle = battle;
                 battlesRegistered++;
                 int date = RatingSystems.ConvertDateToDays(battle.StartTime);
                 if (date > RatingSystems.ConvertDateToDays(DateTime.UtcNow))
@@ -167,12 +167,13 @@ namespace Ratings
                         runIterations(1);
                         UpdateRankings(players.Values);
                     });
+                    lastUpdateTime = DateTime.UtcNow;
                 }
                 else if (!latestBattle.Equals(lastUpdate))
                 {
                     updateAction = (() =>
                     {
-                        Trace.TraceInformation("Updating WHR ratings for last Battle");
+                        Trace.TraceInformation("Updating WHR ratings for last Battle: " + latestBattle.SpringBattleID);
                         IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Where(p => !p.IsSpectator).Select(p => getPlayerById(p.AccountID));
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
@@ -203,7 +204,6 @@ namespace Ratings
                     }
                 });
                 lastUpdate = latestBattle;
-                lastUpdateTime = DateTime.UtcNow;
             }
 
         }
