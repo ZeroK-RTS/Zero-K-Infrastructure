@@ -93,9 +93,13 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count)
         {
+            return GetTopPlayers(count, x => true);
+            //TODO use db query once accountrating is implemented
+            /*
             ZkDataContext db = new ZkDataContext();
             List<int> retIDs = topPlayers.Take(count).ToList();
             return db.Accounts.Where(a => retIDs.Contains(a.AccountID)).ToList(); 
+            */
         }
 
         public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
