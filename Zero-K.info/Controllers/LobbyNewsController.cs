@@ -27,6 +27,18 @@ namespace ZeroKWeb.Controllers
             return View("LobbyNewsEdit", db.LobbyNews.Find(id));
         }
 
+        [Auth(Role = AdminLevel.Moderator)]
+        public ActionResult Delete(int id)
+        {
+            var db = new ZkDataContext();
+            var n = db.LobbyNews.Find(id);
+            db.LobbyNews.Remove(n);
+            db.SaveChanges();
+            Global.Server.NewsListManager.OnNewsChanged();
+            return RedirectToAction("Index");
+        }
+
+
         /// <summary>
         /// Make a new <see cref="News"/> item or edit an existing one
         /// </summary>
