@@ -28,41 +28,45 @@ namespace ZkLobbyServer {
             if (entityEntry.State == EntityState.Deleted || entityEntry.State == EntityState.Unchanged) return;
 
             var entity = entityEntry.Entity;
-            if (entity is ForumThread)
+            if (entity is ForumPost && entityEntry.State == EntityState.Added)
             {
-                var changedThreadID = ((ForumThread)entity).ForumThreadID;
+                var post = (ForumPost)entity;
+                var changedThreadID = post.ForumThreadID;
 
                 CachePublicForumList();
 
                 using (var db = new ZkDataContext())
                 {
                     var t = db.ForumThreads.Find(changedThreadID);
-                    var item = new ForumItem()
+                    if (t != null)
                     {
-                        Time = t.LastPost ?? t.Created,
-                        Url = $"{GlobalConst.BaseSiteUrl}/Forum/Thread/{t.ForumThreadID}",
-                        Header = t.Title,
-                        IsRead = false
-                    };
-
-                    foreach (var user in server.ConnectedUsers.Values.Where(x => x != null && x.IsLoggedIn))
-                    {
-                        var list = GetCurrentForumList(user.User.AccountID);
-                        var existing = list.ForumItems.FirstOrDefault(x => x.Url == item.Url);
-                        if (existing != null)
+                        var item = new ForumItem()
                         {
-                            existing.Header = item.Header;
-                            existing.IsRead = item.IsRead;
-                            existing.Time = item.Time;
-                        }
-                        else
+                            Time = t.LastPost ?? t.Created,
+                            Url = $"{GlobalConst.BaseSiteUrl}/Forum/Thread/{t.ForumThreadID}",
+                            Header = t.Title,
+                            IsRead = false
+                        };
+
+                        foreach (var user in server.ConnectedUsers.Values.Where(x => x != null && x.IsLoggedIn))
                         {
-                            list.ForumItems.Insert(0, item);
+                            var list = GetCurrentForumList(user.User.AccountID);
+                            var existing = list.ForumItems.FirstOrDefault(x => x.Url == item.Url);
+                            if (existing != null)
+                            {
+                                existing.Header = item.Header;
+                                existing.IsRead = post.AuthorAccountID == user.User.AccountID;
+                                existing.Time = item.Time;
+                            }
+                            else
+                            {
+                                list.ForumItems.Insert(0, item);
+                            }
+
+                            list.ForumItems = list.ForumItems.OrderByDescending(x => x.Time).ToList();
+
+                            user.SendCommand(list);
                         }
-
-                        list.ForumItems = list.ForumItems.OrderByDescending(x => x.Time).ToList();
-
-                        user.SendCommand(list);
                     }
                 }
             }
