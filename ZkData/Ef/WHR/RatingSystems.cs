@@ -66,6 +66,11 @@ namespace Ratings
         public static IRatingSystem GetRatingSystem(RatingCategory category)
         {
             if (DisableRatingSystems) return null;
+            if (!whr.ContainsKey(category))
+            {
+                Trace.TraceError("WHR: Unknown category " + category);
+                return whr[RatingCategory.MatchMaking];
+            }
             return whr[category];
         }
 

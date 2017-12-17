@@ -1537,7 +1537,7 @@
     <Content Include="Views\LobbyNews\LobbyNewsEdit.cshtml" />
     <Content Include="Views\LobbyNews\LobbyNewsIndex.cshtml" />
     <Content Include="Views\Charts\ChartsRatings.cshtml">
-      <BrowseToURL>~/Views/Charts/ChartsRatings.cshtml</BrowseToURL>
+      <BrowseToURL>~/Charts/ChartsRatings</BrowseToURL>
     </Content>
   </ItemGroup>
   <ItemGroup>

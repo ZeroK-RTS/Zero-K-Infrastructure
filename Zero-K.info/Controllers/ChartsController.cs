@@ -312,6 +312,32 @@ namespace ZeroKWeb.Controllers
             return providers;
         }
 
+
+        // GET: Charts/Ratings
+        public ActionResult Ratings(ChartsModel model)
+        {
+            model = model ?? new ChartsModel();
+
+            var to = model.To.Date;
+            var from = model.From.Date;
+
+            var providers = new List<IGraphDataProvider>();
+            if (model.UserId != null)
+            {
+                providers = model.UserId.Select(x => (IGraphDataProvider)new RatingHistory(x, model.RatingCategory)).ToList();
+            }
+
+            var series = new List<GraphSeries>();
+
+            foreach (var prov in providers)
+            {
+                series.Add(new GraphSeries() { Title = prov.Title, Data = prov.GetDailyValues(from, to) });
+            }
+
+            model.GraphingData = series;
+            return View("ChartsRatings", model);
+        }
+
         public class GraphSeries
         {
             public IList<GraphPoint> Data;
@@ -321,6 +347,9 @@ namespace ZeroKWeb.Controllers
         public class ChartsModel
         {
             public List<PossibleGraph> PossibleGraphs = new List<PossibleGraph>();
+            
+            public int[] UserId { get; set; }
+            public RatingCategory RatingCategory { get; set; }
 
             public DateTime From { get; set; } = DateTime.UtcNow.AddYears(-1).Date;
 
