@@ -137,6 +137,7 @@ namespace Ratings
             int battleID = -1;
             try
             {
+                if (battle.HasBots) return false;
                 battleID = battle.SpringBattleID;
                 switch (category)
                 {
