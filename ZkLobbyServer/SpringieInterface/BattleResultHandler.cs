@@ -72,7 +72,7 @@ namespace ZeroKWeb.SpringieInterface
                         LoseTime = p.LoseTime,
                         AllyNumber = p.AllyNumber,
                         IsInVictoryTeam = p.IsInVictoryTeam,
-                        EloChange = p.EloChange,
+                        EloChange = p.EloChange?.ToString("F2"),
                         XpChange = p.XpChange,
                         IsLevelUp = orgLevels[p.AccountID] < p.Account.Level,
                         Awards = sb.AccountBattleAwards.Where(x=>x.AccountID == p.AccountID).Select(x=> new BattleDebriefing.DebriefingAward()
