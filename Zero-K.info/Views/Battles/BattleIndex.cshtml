@@ -28,7 +28,8 @@
             Bots: @Html.EnumDropDownListFor(x => x.Bots)
             <input name="sa" value="Search" alt="Search" type="image" src="/img/search_img.png" style="border: none; vertical-align: middle;" /></td>
         </tr>
-</table>
+    </table>
+    @Html.Raw(string.Concat(Model.UserId.Select(x => Html.Hidden("UserId[]", x)).ToList()))
 </form>
 <table>
     <tr>
