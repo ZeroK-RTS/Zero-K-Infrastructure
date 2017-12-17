@@ -157,6 +157,20 @@ namespace ZeroKWeb.Controllers
                     //,string.Format("infolog_{0}.txt", bat.SpringBattleID)
             }
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Auth(Role = AdminLevel.Moderator)]
+        public ActionResult SetApplicableRatings(int BattleID, bool MatchMaking, bool Casual, bool PlanetWars)
+        {
+            using (var db = new ZkDataContext())
+            {
+                db.SpringBattles.Where(x => x.SpringBattleID == BattleID).FirstOrDefault().ApplicableRatings = (MatchMaking ? Ratings.RatingCategory.MatchMaking : 0) | (Casual ? Ratings.RatingCategory.Casual : 0) | (PlanetWars ? Ratings.RatingCategory.Planetwars : 0);
+                db.SaveChanges();
+            }
+            return Detail(BattleID);
+        }
     }
 
     public struct BattleQuickInfo

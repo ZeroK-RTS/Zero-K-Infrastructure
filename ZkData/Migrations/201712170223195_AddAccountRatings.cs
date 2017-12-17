@@ -6,7 +6,7 @@ namespace ZkData.Migrations
     public partial class AddAccountRatings : DbMigration
     {
         public override void Up()
-        {
+        {   
             CreateTable(
                 "dbo.AccountRatings",
                 c => new
