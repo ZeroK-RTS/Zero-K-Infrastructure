@@ -103,7 +103,7 @@ namespace ZeroKWeb.Controllers
 				}
 				scope.Complete();
 			}
-			return Content("Posted!");
+		    return RedirectToAction("Index", "Home");
 		}
 	}
 }

@@ -13,7 +13,7 @@ namespace ZkData.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201712111609186_AddAccountRatings"; }
+            get { return "201712170223195_AddAccountRatings"; }
         }
         
         string IMigrationMetadata.Source

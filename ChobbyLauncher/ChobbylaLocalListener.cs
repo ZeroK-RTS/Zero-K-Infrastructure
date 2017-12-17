@@ -316,19 +316,15 @@ namespace ChobbyLauncher
         {
             try
             {
-                ImageType type;
-                if (string.IsNullOrEmpty(args.ImageType) || !Enum.TryParse(args.ImageType, out type)) type = ImageType.Clans;
                 using (var wc = new WebClient())
                 {
-
-                    wc.DownloadFile($"{GlobalConst.BaseSiteUrl}/img/{type}/{args.Name}.png",
-                        Path.Combine(chobbyla.paths.WritableDirectory, "LuaUI", "Configs", type.ToString(), $"{args.Name}.png"));
-                    SendCommand(new DownloadImageDone() { Name = args.Name, ImageType = args.ImageType, RequestToken = args.RequestToken });
+                    wc.DownloadFile($"{args.ImageUrl}", Path.Combine(chobbyla.paths.WritableDirectory, args.TargetPath));
+                    SendCommand(new DownloadImageDone() { TargetPath = args.TargetPath, ImageUrl = args.ImageUrl, RequestToken = args.RequestToken });
                 }
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error downloading image {0} : {1}", args?.Name, ex);
+                Trace.TraceError("Error downloading image {0} : {1}", args?.ImageUrl, ex);
             }
         }
 

@@ -90,6 +90,7 @@ namespace AutoRegistrator
             CopyResources(siteBase, paths, GetResourceList(), downloader);
 
             if (!downloader.UpdateMissions(prog).Result) throw new ApplicationException("SteamDepot Error updating missions! " + prog.Status);
+            if (!downloader.UpdatePublicCommunityInfo(prog)) throw new ApplicationException("SteamDepot Error updating public community info! " + prog.Status);
 
 
             CopyLobbyProgram();

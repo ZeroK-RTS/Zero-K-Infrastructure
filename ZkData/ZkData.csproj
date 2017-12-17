@@ -75,10 +75,12 @@
     <Compile Include="DbCloner.cs" />
     <Compile Include="Ef\AccountRelation.cs" />
     <Compile Include="Ef\LobbyChannelTopic.cs" />
+    <Compile Include="Ef\LobbyNews.cs" />
     <Compile Include="Ef\SpringBattleBot.cs" />
     <Compile Include="Ef\WHR\Game.cs" />
     <Compile Include="Ef\WHR\IWHRUpdateListener.cs" />
     <Compile Include="Ef\WHR\IRatingSystem.cs" />
+    <Compile Include="Ef\WHR\ITopPlayersUpdateListener.cs" />
     <Compile Include="Ef\WHR\Player.cs" />
     <Compile Include="Ef\WHR\PlayerDay.cs" />
     <Compile Include="Ef\AccountRating.cs" />
@@ -308,9 +310,13 @@
     <Compile Include="Migrations\201712101826097_SpringFilesUnitsyncAttempts.Designer.cs">
       <DependentUpon>201712101826097_SpringFilesUnitsyncAttempts.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201712111609186_AddAccountRatings.cs" />
-    <Compile Include="Migrations\201712111609186_AddAccountRatings.Designer.cs">
-      <DependentUpon>201712111609186_AddAccountRatings.cs</DependentUpon>
+    <Compile Include="Migrations\201712152103095_NewsLobbyPlainText.cs" />
+    <Compile Include="Migrations\201712152103095_NewsLobbyPlainText.Designer.cs">
+      <DependentUpon>201712152103095_NewsLobbyPlainText.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712161337337_LobbyNews.cs" />
+    <Compile Include="Migrations\201712161337337_LobbyNews.Designer.cs">
+      <DependentUpon>201712161337337_LobbyNews.cs</DependentUpon>
     </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
@@ -614,8 +620,11 @@
     <EmbeddedResource Include="Migrations\201712101826097_SpringFilesUnitsyncAttempts.resx">
       <DependentUpon>201712101826097_SpringFilesUnitsyncAttempts.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201712111609186_AddAccountRatings.resx">
-      <DependentUpon>201712111609186_AddAccountRatings.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201712152103095_NewsLobbyPlainText.resx">
+      <DependentUpon>201712152103095_NewsLobbyPlainText.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712161337337_LobbyNews.resx">
+      <DependentUpon>201712161337337_LobbyNews.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

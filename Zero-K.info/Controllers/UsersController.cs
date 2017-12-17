@@ -103,7 +103,8 @@ namespace ZeroKWeb.Controllers
             db.SaveChanges();
 
             Global.Server.PublishAccountUpdate(acc);
-            
+            Global.Server.PublishUserProfileUpdate(acc);
+
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 

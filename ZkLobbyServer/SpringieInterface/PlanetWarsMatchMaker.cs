@@ -402,7 +402,7 @@ namespace ZeroKWeb
                     text,
                     null,
                     db.Accounts.Where(x => option.Attackers.Contains(x.Name) && (x.Faction != null)).ToList(),
-                    server.PlanetWarsEventCreator);
+                    server.PlanetWarsEventCreator, server);
             }
             catch (Exception ex)
             {

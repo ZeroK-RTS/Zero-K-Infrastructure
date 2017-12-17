@@ -32,6 +32,7 @@ namespace ZeroKWeb.Controllers
             db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} joins {1}", acc, faction));
             db.SaveChanges();
             Global.Server.PublishAccountUpdate(acc);
+            Global.Server.PublishUserProfileUpdate(acc);
             return RedirectToAction("Index", "Factions");
         }
 
@@ -68,6 +69,7 @@ namespace ZeroKWeb.Controllers
                 db2.SaveChanges();
 
                 Global.Server.PublishAccountUpdate(acc2);
+                Global.Server.PublishUserProfileUpdate(acc2);
                 PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator(), db2);
             }
             return faction;

@@ -146,6 +146,16 @@ namespace ZkLobbyServer
 
                 await server.MatchMaker.OnLoginAccepted(connectedUser);
                 await server.PlanetWarsMatchMaker.OnLoginAccepted(connectedUser);
+
+                await SendCommand(server.NewsListManager.GetCurrentNewsList());
+                await SendCommand(server.LadderListManager.GetCurrentLadderList());
+                await SendCommand(server.ForumListManager.GetCurrentForumList(user.AccountID));
+
+                using (var db = new ZkDataContext())
+                {
+                    var acc = db.Accounts.Find(user.AccountID);
+                    if (acc != null) await server.PublishUserProfileUpdate(acc);
+                }
             }
             else
             {

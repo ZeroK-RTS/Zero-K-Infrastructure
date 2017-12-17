@@ -109,7 +109,11 @@ namespace ZeroKWeb.SpringieInterface
 
             try
             {
-                foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account)) server.PublishAccountUpdate(a);
+                foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account))
+                {
+                    server.PublishAccountUpdate(a);
+                    server.PublishUserProfileUpdate(a);
+                }
             }
             catch (Exception ex)
             {
@@ -137,7 +141,7 @@ namespace ZeroKWeb.SpringieInterface
                 text,
                 sb,
                 sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.AllyNumber == 0).Select(x => x.Account).ToList(),
-                server.PlanetWarsEventCreator);
+                server.PlanetWarsEventCreator, server);
 
             server.PlanetWarsMatchMaker.RemoveFromRunningBattles(result.LobbyStartContext.BattleID);
         }

@@ -1,0 +1,14 @@
+﻿@model ZkData.LobbyNews
+
+
+<form action="@Url.Action("PostNews", "LobbyNews")" enctype="multipart/form-data" method="post" valign="top">
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.LobbyNewsID)
+    <table>
+        <tr><td>Title: </td><td>@Html.TextBoxFor(x => x.Title)</td></tr>
+        <tr><td valign="top">Text: </td><td>@Html.TextAreaFor(x => x.Text, new { rows = "10", cols = "70" })</td></tr>
+        <tr><td>Url: </td><td>@Html.EditorFor(x=>x.Url)</td></tr>
+        <tr><td>Event time: </td><td>@Html.TextBoxFor(x => x.EventTime)</td></tr>
+        <tr><td>Image (optional): </td><td><input type="file" name="image" /><input type="submit" value="Post" class="js_confirm" /></td></tr>
+    </table>
+</form>

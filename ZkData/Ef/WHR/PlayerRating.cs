@@ -12,16 +12,16 @@ namespace Ratings
     [Serializable]
     public class PlayerRating
     {
-        public readonly double Percentile;
-        public readonly int Rank;
-        public readonly double RealElo;
-        public double Uncertainty {
+        public float Percentile;
+        public int Rank;
+        public float RealElo;
+        public float Uncertainty {
             get
             {
-                return LastUncertainty + (double)Math.Sqrt((RatingSystems.ConvertDateToDays(DateTime.Now) - LastGameDate) * GlobalConst.EloDecayPerDaySquared);
+                return LastUncertainty + (float)Math.Sqrt((CurrentDate - LastGameDate) * GlobalConst.EloDecayPerDaySquared);
             }
         }
-        public double Elo {
+        public float Elo {
             get
             {
                 return RealElo - Math.Min(200, Math.Max(0, Uncertainty - 20)) * 2; //dont reduce value for active players
@@ -29,22 +29,28 @@ namespace Ratings
         }
 
         [JsonProperty]
-        public readonly double LastUncertainty;
+        public readonly float LastUncertainty;
         [JsonProperty]
         public readonly int LastGameDate;
+        [JsonProperty]
+        private int CurrentDate;
 
-        public PlayerRating(int Rank, double Percentile, double Elo, double Uncertainty) : this(Rank, Percentile, Elo, Uncertainty, RatingSystems.ConvertDateToDays(DateTime.Now))
+        public void ApplyLadderUpdate(int Rank, float Percentile, int CurrentDate)
         {
+            this.Rank = Rank;
+            this.Percentile = Percentile;
+            this.CurrentDate = CurrentDate;
         }
 
         [JsonConstructor]
-        public PlayerRating(int Rank, double Percentile, double Elo, double LastUncertainty, int LastGameDate)
+        public PlayerRating(int Rank, float Percentile, float RealElo, float LastUncertainty, int LastGameDate, int CurrentDate)
         {
             this.Percentile = Percentile;
             this.Rank = Rank;
-            this.RealElo = Elo;
+            this.RealElo = RealElo;
             this.LastUncertainty = LastUncertainty;
             this.LastGameDate = LastGameDate;
+            this.CurrentDate = CurrentDate;
         }
     }
 }

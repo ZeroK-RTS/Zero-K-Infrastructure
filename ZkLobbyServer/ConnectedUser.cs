@@ -296,6 +296,7 @@ namespace ZkLobbyServer
             db.Events.InsertOnSubmit(server.PlanetWarsEventCreator.CreateEvent("{0} joins {1}", acc, fac));
             db.SaveChanges();
             await server.PublishAccountUpdate(acc);
+            await server.PublishUserProfileUpdate(acc);
         }
 
 
@@ -618,6 +619,7 @@ namespace ZkLobbyServer
                 await server.MatchMaker.RemoveUser(Name, true);
                 await server.PartyManager.OnUserDisconnected(Name);
                 await server.PlanetWarsMatchMaker.OnUserDisconnected(Name);
+                server.ForumListManager.OnUserDisconnected(User.AccountID);
 
                 await server.Broadcast(server.ConnectedUsers.Values.Where(x => x != null && server.CanUserSee(x, this)), new UserDisconnected() { Name = Name, Reason = reason });
 

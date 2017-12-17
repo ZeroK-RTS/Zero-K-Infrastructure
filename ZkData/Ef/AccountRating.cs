@@ -31,36 +31,28 @@ namespace ZkData
         public int Rank { get; set; }
         [Index]
         public double RealElo { get; set; }
-
-
-        private static readonly CompiledExpression<AccountRating, double> uncertaintyExpression = DefaultTranslationOf<AccountRating>.Property(e => e.Uncertainty).Is(e => e.LastUncertainty + (double)Math.Sqrt((RatingSystems.ConvertDateToDays(DateTime.Now) - e.LastGameDate) * GlobalConst.EloDecayPerDaySquared));
-        private static readonly CompiledExpression<AccountRating, double> eloExpression = DefaultTranslationOf<AccountRating>.Property(e => e.Elo).Is(e => e.RealElo - Math.Min(200, Math.Max(0, e.Uncertainty - 20)) * 2);
-
-        public double Elo => eloExpression.Evaluate(this);
-        public double Uncertainty => uncertaintyExpression.Evaluate(this);
-
-        public double LastUncertainty { get; set; }
-        public int LastGameDate { get; set; }
+        [Index]
+        public double Elo { get; set; }
+        
+        public double Uncertainty { get; set; }
+        
 
         public void UpdateFromRatingSystem(PlayerRating rating)
         {
             this.Percentile = rating.Percentile;
             this.Rank = rating.Rank;
             this.RealElo = rating.RealElo;
-            this.LastUncertainty = rating.LastUncertainty;
-            this.LastGameDate = rating.LastGameDate;
+            this.Uncertainty = rating.Uncertainty;
+            this.Elo = rating.Elo;
         }
         
         public AccountRating(int AccountID, RatingCategory ratingCategory)
         {
             this.RatingCategory = ratingCategory;
-            this.AccountID = AccountID; 
-            this.Percentile = 1;
-            this.Rank = int.MaxValue;
-            this.RealElo = 1500;
-            this.LastUncertainty = double.PositiveInfinity;
-            this.LastGameDate = 0;
+            this.AccountID = AccountID;
+            UpdateFromRatingSystem(WholeHistoryRating.DefaultRating);
         }
+
         public AccountRating()
         {
 
