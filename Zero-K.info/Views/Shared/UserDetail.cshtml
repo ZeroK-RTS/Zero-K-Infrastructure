@@ -143,11 +143,13 @@
                 var pw = Model.GetRating(Ratings.RatingCategory.Planetwars);
 
                 <b>Competitive rank:</b> @(mm.Rank == int.MaxValue ? $"Unranked, estimated {Math.Round(mm.Elo)} ± {Math.Round(mm.Uncertainty)}" : $"{mm.Rank}. ({Math.Round(mm.Elo)} ± {Math.Round(mm.Uncertainty)}, Top {Math.Round(mm.Percentile * 1000) / 10f}%) ")
-                //@Html.ActionLink("Plot graph", "Ratings", "Charts", new { UserId = new int[] { Model.AccountID } }, null)
+                @Html.ActionLink("Plot graph", "Ratings", "Charts", new { RatingCategory = (int)Ratings.RatingCategory.MatchMaking, UserId =  Model.AccountID }, null)
                 <br />
-                <b>Casual rank:</b> @(casual.Rank == int.MaxValue ? $"Unranked, estimated {Math.Round(casual.Elo)} ± {Math.Round(casual.Uncertainty)}" : $"{casual.Rank}. ({Math.Round(casual.Elo)} ± {Math.Round(casual.Uncertainty)}, Top {Math.Round(casual.Percentile * 1000) / 10f}%)")
+                <b>Casual rank:</b> @(casual.Rank == int.MaxValue ? $"Unranked, estimated {Math.Round(casual.Elo)} ± {Math.Round(casual.Uncertainty)} " : $"{casual.Rank}. ({Math.Round(casual.Elo)} ± {Math.Round(casual.Uncertainty)}, Top {Math.Round(casual.Percentile * 1000) / 10f}%) ")
+                @Html.ActionLink("Plot graph", "Ratings", "Charts", new { RatingCategory = (int)Ratings.RatingCategory.Casual, UserId = Model.AccountID }, null)
                 <br />
-                <b>Planetwars rank:</b> @(pw.Rank == int.MaxValue ? $"Unranked, estimated {Math.Round(pw.Elo)} ± {Math.Round(pw.Uncertainty)}" : $"{pw.Rank}. ({Math.Round(pw.Elo)} ± {Math.Round(pw.Uncertainty)}, Top {Math.Round(pw.Percentile * 1000) / 10f}%)")
+                <b>Planetwars rank:</b> @(pw.Rank == int.MaxValue ? $"Unranked, estimated {Math.Round(pw.Elo)} ± {Math.Round(pw.Uncertainty)} " : $"{pw.Rank}. ({Math.Round(pw.Elo)} ± {Math.Round(pw.Uncertainty)}, Top {Math.Round(pw.Percentile * 1000) / 10f}%) ")
+                @Html.ActionLink("Plot graph", "Ratings", "Charts", new { RatingCategory = (int)Ratings.RatingCategory.Planetwars, UserId = Model.AccountID }, null)
                 <br />
             }
 
@@ -243,7 +245,7 @@
         if (Model.SpringBattlePlayers.Any())
         {
             <div id="usr_recentbattles" class="fleft border">
-                <h3>@Html.ActionLink("Last battles", "Index", "Battles", new { UserId = new int[] { Model.AccountID} }, null)</h3>
+                <h3>@Html.ActionLink("Last battles", "Index", "Battles", new { UserId = Model.AccountID }, null)</h3>
                 <span>
                     @Model.SpringBattlePlayers.Count(x => !x.IsSpectator) played, @Model.SpringBattlePlayers.Count(x => x.IsSpectator)
                     watched, @Model.MissionRunCount missions
