@@ -27,7 +27,7 @@ namespace ZkLobbyServer {
                         Time = x.EventTime,
                         Header = x.Title,
                         Text = x.Text,
-                        Image = x.ImageRelativeUrl,
+                        Image = $"{GlobalConst.BaseSiteUrl}{x.ImageRelativeUrl}",
                         Url = x.Url
                     }).ToList()
                 };
