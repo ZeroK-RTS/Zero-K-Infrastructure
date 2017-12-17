@@ -249,6 +249,11 @@ namespace Ratings
                 int currentDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow);
                 foreach (var p in players)
                 {
+                    if (p.days.Count == 0)
+                    {
+                        Trace.TraceError("WHR has invalid player " + p.id + " with no days(games)");
+                        continue;
+                    }
                     float elo = p.days.Last().getElo() + RatingOffset;
                     float lastUncertainty = p.days.Last().uncertainty * 100;
                     int lastDay = p.days.Last().day;
