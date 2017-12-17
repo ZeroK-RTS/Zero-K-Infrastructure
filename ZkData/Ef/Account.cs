@@ -692,7 +692,7 @@ namespace ZkData
 
         public LadderItem ToLadderItem()
         {
-            return new LadderItem() { Name = Name, Clan = Clan?.Shortcut, Icon = GetIconName() };
+            return new LadderItem() { Name = Name, Clan = Clan?.Shortcut, Icon = GetIconName(), AccountID = AccountID};
         }
 
 
