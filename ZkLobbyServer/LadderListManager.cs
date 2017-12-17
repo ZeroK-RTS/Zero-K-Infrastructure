@@ -1,33 +1,33 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using LobbyClient;
 using Ratings;
+using ZkData;
 
 namespace ZkLobbyServer {
-    public class LadderListManager
+    public class LadderListManager : Ratings.ITopPlayersUpdateListener
     {
+        const int LadderListLength = 10;
+
         private ZkLobbyServer server;
         private LadderList cachedLadderList;
 
         public LadderListManager(ZkLobbyServer zkLobbyServer)
         {
             server = zkLobbyServer;
-            CacheLadderList();
-        }
-
-        private void CacheLadderList()
-        {
-            cachedLadderList = new LadderList()
-            {
-                LadderItems = RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetTopPlayers(10).ToList().Select(x => x.ToLadderItem())
-                    .ToList()
-            };
+            TopPlayersUpdated(new List<Account>()); //make sure ladderlist is never null
+            Ratings.RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).AddTopPlayerUpdateListener(this, LadderListLength);
         }
 
         public LadderList GetCurrentLadderList() => cachedLadderList;
 
-        public void OnLadderChange()
+        public void TopPlayersUpdated(IEnumerable<Account> players)
         {
-            CacheLadderList();
+            cachedLadderList = new LadderList()
+            {
+                LadderItems = players.Select(x => x.ToLadderItem()).ToList()
+            };
             server.Broadcast(cachedLadderList);
         }
     }
