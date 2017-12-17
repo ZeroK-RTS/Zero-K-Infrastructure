@@ -26,7 +26,7 @@ local callInList = { -- events forwarded to unsynced
 
 VFS.Include("savetable.lua")
 local magic = "--mt\r\n"
-local SAVE_FILE = "Gadgets/mission.lua"
+local SAVE_FILE = "Gadgets/mission_runner.lua"
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -67,21 +67,6 @@ _G.factoryExpectedUnits = factoryExpectedUnits
 _G.repeatFactoryGroups = repeatFactoryGroups
 _G.objectives = objectives
 _G.persistentMessages = persistentMessages
-
-GG.mission = {
-  scores = scores,
-  counters = counters,
-  countdowns = countdowns,
-  unitGroups = unitGroups,
-  triggers = triggers,
-  allTriggers = allTriggers,
-  ghosts = ghosts,
-  objectives = objectives,
-  persistentMessages = persistentMessages,
-  cheatingWasEnabled = cheatingWasEnabled,
-  allowTransfer = allowTransfer,
-}
-_G.mission = GG.mission
 
 for _, counter in ipairs(mission.counters) do
   counters[counter] = 0
@@ -340,13 +325,6 @@ local function IsUnitInGroup(unitID, group)
   return unitGroups[unitID] and unitGroups[unitID][group]
 end
 
-GG.mission.GetUnitsInRegion = GetUnitsInRegion
-GG.mission.IsUnitInRegion = IsUnitInRegion
-GG.mission.FindUnitsInGroup = FindUnitsInGroup
-GG.mission.FindUnitInGroup = FindUnitInGroup
-GG.mission.FindUnitsInGroups = FindUnitsInGroups
-GG.mission.IsUnitInGroup = IsUnitInGroup
-
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 local disabledUnitDefIDs = {} -- [team] = {[unitDefID1] = true, [unitDefID2] = true, ...}
@@ -423,8 +401,6 @@ local function AddUnitGroup(unitID, group)
   end
 end
 
-GG.mission.AddUnitGroup = AddUnitGroup
-
 local function AddUnitGroups(unitID, groups)
   for group in pairs(groups) do
     AddUnitGroup(unitID, group)
@@ -439,58 +415,6 @@ local function RemoveUnitGroup(unitID, group)
   if unitIsVisibleConditionGroups[group] then
     Spring.SetUnitRulesParam(unitID, "notifyvisible", 0)
   end 
-end
-
-GG.mission.RemoveUnitGroup = RemoveUnitGroup
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
-local function UpdateDisabledUnits(unitID, teamID)
-  local unitDefID = Spring.GetUnitDefID(unitID)
-  local buildOpts = UnitDefs[unitDefID].buildOptions
-  for i=1,#buildOpts do
-    local buildID = buildOpts[i]
-    local cmdDescID = Spring.FindUnitCmdDesc(unitID, -buildID)
-    if cmdDescID then
-      Spring.EditUnitCmdDesc(unitID, cmdDescID, {disabled = disabledUnitDefIDs[teamID][buildID] or false})
-    end
-  end
-end
-
-
-local function UpdateAllDisabledUnits()
-  local units = Spring.GetAllUnits()
-  for i=1,#units do
-    local unitID = units[i]
-    local teamID = Spring.GetUnitTeam(unitID)
-    UpdateDisabledUnits(unitID, teamID)
-  end
-end
-
-local function AddEvent(frame, event, args, cutsceneID)
-  events[frame] = events[frame] or {}
-  table.insert(events[frame], {event = event, args = args, cutsceneID = cutsceneID})
-end
-
-local function RunEvents(frame)
-  if events[frame] then
-    for _, Event in ipairs(events[frame]) do
-      Event.event(unpack(Event.args)) -- run event
-    end
-  end
-  events[frame] = nil
-end
-GG.mission.RunEvents = RunEvents
-
-local function CustomConditionMet(name)
-  for _, trigger in ipairs(triggers) do
-    for _, condition in ipairs(trigger.logic) do
-      if condition.logicType == "CustomCondition" and trigger.name == name then
-        ExecuteTrigger(trigger)
-        break
-      end
-    end
-  end
 end
 
 --------------------------------------------------------------------------------
@@ -1083,6 +1007,60 @@ local unsyncedActions = {
   FadeOutAction = true,
   FadeInAction = true,
 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+local function UpdateDisabledUnits(unitID, teamID)
+  local unitDefID = Spring.GetUnitDefID(unitID)
+  local buildOpts = UnitDefs[unitDefID].buildOptions
+  for i=1,#buildOpts do
+    local buildID = buildOpts[i]
+    local cmdDescID = Spring.FindUnitCmdDesc(unitID, -buildID)
+    if cmdDescID then
+      Spring.EditUnitCmdDesc(unitID, cmdDescID, {disabled = disabledUnitDefIDs[teamID][buildID] or false})
+    end
+  end
+end
+
+
+local function UpdateAllDisabledUnits()
+  local units = Spring.GetAllUnits()
+  for i=1,#units do
+    local unitID = units[i]
+    local teamID = Spring.GetUnitTeam(unitID)
+    UpdateDisabledUnits(unitID, teamID)
+  end
+end
+
+local function AddEvent(frame, funcName, args, cutsceneID)
+  events[frame] = events[frame] or {}
+  table.insert(events[frame], {funcName = funcName, args = args, cutsceneID = cutsceneID})
+end
+
+local function RunEvents(frame)
+  if events[frame] then
+    for _, Event in ipairs(events[frame]) do
+      local func = actionsTable[Event.funcName]
+      if (not func) and unsyncedActions[Event.funcName] then
+        func = UnsyncedEventFunc
+      end
+      func(unpack(Event.args)) -- run event
+    end
+  end
+  events[frame] = nil
+end
+
+local function CustomConditionMet(name)
+  for _, trigger in ipairs(triggers) do
+    for _, condition in ipairs(trigger.logic) do
+      if condition.logicType == "CustomCondition" and trigger.name == name then
+        ExecuteTrigger(trigger)
+        break
+      end
+    end
+  end
+end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -1099,7 +1077,7 @@ ExecuteTrigger = function(trigger, frame)
     for i=1,#trigger.logic do
       local action = trigger.logic[i]
       local args = {action, createdUnits, action.logicType}
-      local Event = actionsTable[action.logicType]
+      local funcName = action.logicType
       
       if action.logicType == "WaitAction" then
         frame = frame + action.args.frames
@@ -1108,13 +1086,9 @@ ExecuteTrigger = function(trigger, frame)
       elseif action.logicType == "LeaveCutsceneAction" then
         cutsceneID = nil
       end
-      
-      if unsyncedActions[action.logicType] and (not Event) then
-        Event = UnsyncedEventFunc
-      end
 
-      if Event then
-        AddEvent(frame, Event, args, cutsceneID) -- schedule event
+      if actionsTable[funcName] or unsyncedActions[funcName] then
+        AddEvent(frame, funcName, args, cutsceneID) -- schedule event
       end
     end
   end
@@ -1123,7 +1097,6 @@ ExecuteTrigger = function(trigger, frame)
     RemoveTrigger(trigger) -- the trigger is no longer needed
   end
 end
-GG.mission.ExecuteTrigger = ExecuteTrigger
 
 local function ExecuteTriggerByName(name, frame)
   local triggers = GG.mission.triggers
@@ -1135,7 +1108,6 @@ local function ExecuteTriggerByName(name, frame)
     end
   end
 end
-GG.mission.ExecuteTriggerByName = ExecuteTriggerByName
 
 local function SetTriggerEnabledByName(name, enabled)
   local triggers = GG.mission.triggers
@@ -1146,7 +1118,6 @@ local function SetTriggerEnabledByName(name, enabled)
     end
   end
 end
-GG.mission.SetTriggerEnabledByName = SetTriggerEnabledByName
 
 local function CheckUnitsEnteredGroups(unitID, condition)
   if not next(condition.args.groups) then return true end -- no group selected: any unit is ok
@@ -1187,8 +1158,6 @@ local function SendMissionVariables(tbl)
   Spring.Echo(str64)
 end
 
-GG.mission.SendMissionVariables = SendMissionVariables
-
 local function SetAllyTeamLongName(allyTeamID, name)
   Spring.SetGameRulesParam("allyteam_long_name_" .. allyTeamID, name)
 end
@@ -1196,9 +1165,6 @@ end
 local function SetAllyTeamShortName(allyTeamID, name)
     Spring.SetGameRulesParam("allyteam_short_name_" .. allyTeamID, name)
 end
-
-GG.mission.SetAllyTeamLongName = SetAllyTeamLongName
-GG.mission.SetAllyTeamShortName = SetAllyTeamShortName
 
 local function SendObjectivesToUnsynced()
   _G.objectives = objectives
@@ -1614,8 +1580,43 @@ end
   -- return false
 -- end
 
+local function MakeGGTable()
+  GG.mission = {
+    scores = scores,
+    counters = counters,
+    countdowns = countdowns,
+    unitGroups = unitGroups,
+    triggers = triggers,
+    allTriggers = allTriggers,
+    objectives = objectives,
+    persistentMessages = persistentMessages,
+    cheatingWasEnabled = cheatingWasEnabled,
+    allowTransfer = allowTransfer,
+    
+    GetUnitsInRegion = GetUnitsInRegion,
+    IsUnitInRegion = IsUnitInRegion,
+    FindUnitsInGroup = FindUnitsInGroup,
+    FindUnitInGroup = FindUnitInGroup,
+    FindUnitsInGroups = FindUnitsInGroups,
+    IsUnitInGroup = IsUnitInGroup,
+    AddUnitGroup = AddUnitGroup,
+    RemoveUnitGroup = RemoveUnitGroup,
+    RunEvents = RunEvents,
+    ExecuteTrigger = ExecuteTrigger,
+    ExecuteTriggerByName = ExecuteTriggerByName,
+    SetTriggerEnabledByName = SetTriggerEnabledByName,
+    SendMissionVariables = SendMissionVariables,
+    SetAllyTeamLongName = SetAllyTeamLongName,
+    SetAllyTeamShortName = SetAllyTeamShortName,
+  }
+  
+  _G.mission = GG.mission
+  _G.mission.events = events
+end
 
 function gadget:Initialize()
+    MakeGGTable()
+  
     -- Set up the forwarding calls to the unsynced part of the gadget.
     -- This does not overwrite the calls in the synced part.
     local SendToUnsynced = SendToUnsynced
@@ -1673,6 +1674,28 @@ function gadget:UnitEnteredLos(unitID, unitTeam, allyTeam, unitDefID)
   end
 end
 
+local function LoadAllTriggers(current, loaded)
+  for triggerIndex, data in pairs(loaded) do
+    current[triggerIndex].enabled = data.enabled
+    current[triggerIndex].occurrences = data.occurrences
+  end
+end
+
+local function LoadTriggers(current, loaded)
+  local newTriggers = {}
+  for triggerIndex,data in pairs(loaded) do
+    for _,data2 in pairs(current) do
+      if data2.name == data.name then
+        data2.enabled = data.enabled
+        data2.occurences = data.occurences
+        newTriggers[triggerIndex] = data2
+        break
+      end
+    end
+  end
+  return newTriggers
+end
+
 function gadget:Load(zip)
   if not GG.SaveLoad then
     Spring.Log(gadget:GetInfo().name, LOG.WARNING, "Save/Load API not found")
@@ -1688,35 +1711,32 @@ function gadget:Load(zip)
     unitGroups = GG.SaveLoad.GetNewUnitIDKeys(data.unitGroups)
     repeatFactoryGroups = GG.SaveLoad.GetNewUnitIDKeys(data.repeatFactoryGroups)
     factoryExpectedUnits = GG.SaveLoad.GetNewUnitIDKeys(data.factoryExpectedUnits)
-    triggers = data.triggers
-    allTriggers = data.allTriggers
+    
     objectives = data.objectives
     persistentMessages = data.persistentMessages
     cheatingWasEnabled = data.cheatingWasEnabled
     allowTransfer = data.allowTransfer
     
-    lastFinishedUnits = {}
-    for teamID, unitID in pairs(data.lastFinishedUnits) do
-      lastFinishedUnits[teamID] = GG.SaveLoad.GetNewUnitID(unitID)
-    end
+    --triggers = data.triggers
+    --allTriggers = data.allTriggers
+    triggers = LoadTriggers(triggers, data.triggers)
+    LoadAllTriggers(allTriggers, data.allTriggers)
     
-    GG.mission = {
-      scores = scores,
-      counters = counters,
-      countdowns = countdowns,
-      unitGroups = unitGroups,
-      triggers = triggers,
-      allTriggers = allTriggers,
-      objectives = objectives,
-      persistentMessages = persistentMessages,
-      cheatingWasEnabled = cheatingWasEnabled,
-      allowTransfer = allowTransfer,
-    }
-    gameStarted = true 
+    lastFinishedUnits = GG.SaveLoad.GetNewUnitIDValues(data.lastFinishedUnits)
+    
+    -- reset events gameframes
+    local eventsTemp = {}
+    local savedFrame = GG.SaveLoad.GetSavedGameFrame()
+    for frame, eventsThatFrame in pairs(data.events) do
+      eventsTemp[frame - savedFrame] = eventsThatFrame
+    end
+    events = eventsTemp
+    
+    -- update object references
+    MakeGGTable()
   end
+  gameStarted = true
   
-  --SendObjectivesToUnsynced()
-  --SendPersistentMessagesToUnsynced()
   -- TODO transmit ghosts as well
 end
 
@@ -1847,6 +1867,17 @@ function SendMissionPersistentMessages()
   end
 end
 
+local function SaveTriggers(triggersToSave)
+  local output = {}
+  for triggerIndex, data in pairs(triggersToSave) do
+    output[triggerIndex] = {
+      name = data.name,
+      enabled = data.enabled,
+      occurrences = data.occurrences
+    }
+  end
+  return output
+end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -1883,6 +1914,12 @@ function gadget:Save(zip)
   toSave.factoryExpectedUnits = MakeRealTable(SYNCED.factoryExpectedUnits)
   toSave.repeatFactoryGroups = MakeRealTable(SYNCED.repeatFactoryGroups)
   toSave.lastFinishedUnits = MakeRealTable(SYNCED.repeatFactoryGroups)
+  
+  -- clean up triggers table
+  -- I think the only thing that needs saving is name (to identify non-allTriggers),
+  -- whether a trigger is enabled or not, and occurrence count
+  toSave.triggers = SaveTriggers(toSave.triggers)
+  toSave.allTriggers = SaveTriggers(toSave.allTriggers)
   
   GG.SaveLoad.WriteSaveData(zip, SAVE_FILE, toSave)
 end

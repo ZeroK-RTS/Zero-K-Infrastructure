@@ -44,9 +44,13 @@
         <tr>
             <td colspan="2">
                 <small>
+                    @if (n.PinnedOrder != null)
+                    {
+                        <span>Pinned: @n.PinnedOrder</span>
+                    }
                     @if (n.EventTime != null)
                     {
-                        <span>Event time: @n.EventTime.ToAgoString()</span><br />
+                        <span>Event time: @n.EventTime.ToAgoString()</span><br/>
                     }
                     @if (n.Url != null)
                     {

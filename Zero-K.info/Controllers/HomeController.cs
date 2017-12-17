@@ -13,6 +13,7 @@ using DotNetOpenAuth.Messaging;
 using DotNetOpenAuth.OpenId;
 using DotNetOpenAuth.OpenId.Extensions.SimpleRegistration;
 using DotNetOpenAuth.OpenId.RelyingParty;
+using LobbyClient;
 using Ratings;
 using ZkData;
 
@@ -245,11 +246,12 @@ namespace ZeroKWeb.Controllers
 
 		    // standard login
             var db = new ZkDataContext();
-            var acc = db.Accounts.FirstOrDefault(x => x.Name == login);
+		    var loginUpper = login.ToUpper();
+            var acc = db.Accounts.FirstOrDefault(x => x.Name == login) ?? db.Accounts.FirstOrDefault(x=>x.Name.ToUpper() == loginUpper);
             if (acc == null) return Content("Invalid login name");
-			var hashed = Utils.HashLobbyPassword(password);
+            var hashed = Utils.HashLobbyPassword(password);
             
-			acc = AuthServiceClient.VerifyAccountHashed(login, hashed);
+			acc = AuthServiceClient.VerifyAccountHashed(acc.Name, hashed);
 		    if (acc != null)
 		    {
 		        FormsAuthentication.SetAuthCookie(acc.Name, true);

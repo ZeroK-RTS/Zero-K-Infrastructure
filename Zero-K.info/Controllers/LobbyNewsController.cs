@@ -16,7 +16,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult Index()
         {
             var db = new ZkDataContext();
-            var items = db.LobbyNews.OrderByDescending(x => x.Created).Take(10);
+            var items = db.LobbyNews.OrderBy(x=>x.PinnedOrder ?? int.MaxValue).ThenByDescending(x => x.Created).Take(10);
             return View("LobbyNewsIndex", items);
         }
 
@@ -57,6 +57,7 @@ namespace ZeroKWeb.Controllers
                 news.Text = nn.Text;
                 news.Url = nn.Url;
                 news.EventTime = nn.EventTime;
+                news.PinnedOrder = nn.PinnedOrder;
                 
 
                 Image im = null;

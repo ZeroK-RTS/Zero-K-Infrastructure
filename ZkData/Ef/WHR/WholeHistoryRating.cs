@@ -104,7 +104,6 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
         {
-            if (runningInitialization) return new List<Account>(); // dont block during updates to prevent dosprotector from kicking in
             lock (updateLockInternal) 
             {
                 int counter = 0;
@@ -290,14 +289,11 @@ namespace Ratings
                 Trace.TraceInformation("WHR Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty);
 
                 //check for topX updates
-                ZkDataContext db = null;
                 foreach (var listener in topPlayersUpdateListeners)
                 {
                     if (matched < listener.Value)
                     {
-                        if (db == null) db = new ZkDataContext();
-                        List<int> l = topPlayers.Take(listener.Value).ToList();
-                        listener.Key.TopPlayersUpdated(db.Accounts.Where(x => l.Contains(x.AccountID)).ToList());
+                        listener.Key.TopPlayersUpdated(GetTopPlayers(listener.Value));
                     }
                 }
             }
