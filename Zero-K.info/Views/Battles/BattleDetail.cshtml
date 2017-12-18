@@ -1,4 +1,5 @@
 ﻿@using ZeroKWeb
+@using Ratings
 @using ZkData
 @model ZkData.SpringBattle
 @{
@@ -162,8 +163,15 @@
 @if (Global.IsModerator)
 {
     <div class="admin" >
-        Logs: @Html.ActionLink("Logs", "Logs", "Battles", new { id = Model.SpringBattleID }, null)
-    </div>
+        Logs: @Html.ActionLink("Logs", "Logs", "Battles", new { id = Model.SpringBattleID }, null) <br />
+
+        <form action="@Url.Action("SetApplicableRatings", new { BattleID = Model.SpringBattleID })" method="post">
+            @Html.AntiForgeryToken()
+            Counts for competitive skill rating: @Html.CheckBox("MatchMaking", Model.ApplicableRatings.HasFlag(RatingCategory.MatchMaking)) <br />
+            Counts for casual skill rating: @Html.CheckBox("Casual", Model.ApplicableRatings.HasFlag(RatingCategory.Casual)) <br />
+            Counts for planetwars skill rating: @Html.CheckBox("PlanetWars", Model.ApplicableRatings.HasFlag(RatingCategory.Planetwars)) <br />
+        </form>
+</div>
 }
 
 <br />

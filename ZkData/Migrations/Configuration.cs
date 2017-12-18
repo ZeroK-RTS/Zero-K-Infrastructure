@@ -3,6 +3,7 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using Ratings;
 
 namespace ZkData.Migrations
 {
@@ -14,7 +15,25 @@ namespace ZkData.Migrations
             AutomaticMigrationsEnabled = false;
         }
 
+        private static void InitializeBattleRatings(ZkDataContext db)
+        {
+            
+            foreach (SpringBattle battle in db.SpringBattles.ToList())
+            {
+                int val = 0;
+                if (!battle.HasBots)
+                {
+                    val += (!(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID?.MapIsSpecial == true) || battle.Duration < GlobalConst.MinDurationForElo)) ? (int)(RatingCategory.Casual) : 0;
+                    val += (battle.IsMatchMaker || battle.Title.Contains("[T]") || battle.Title.Contains("Tournament") || battle.Title.Contains("Tourney")) ? (int)RatingCategory.MatchMaking : 0;
+                    val += (battle.Mode == PlasmaShared.AutohostMode.Planetwars) ? (int)RatingCategory.Planetwars : 0;
+                }
+                battle.ApplicableRatings = (RatingCategory)val;
+            }
+        }
+
         protected override void Seed(ZkDataContext db) {
+            InitializeBattleRatings(db); //remove this after execution
+
             //  This method will be called after migrating to the latest version.
             if (GlobalConst.Mode == ModeType.Local)
             {

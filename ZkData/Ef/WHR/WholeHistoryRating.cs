@@ -34,19 +34,15 @@ namespace Ratings
         private Timer ladderRecalculationTimer;
 
         private bool runningInitialization = true;
+        private readonly RatingCategory category;
 
-        public WholeHistoryRating()
+        public WholeHistoryRating(RatingCategory category)
         {
+            this.category = category;
             w2 = GlobalConst.EloDecayPerDaySquared;
             ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
         }
-
-
-        public WholeHistoryRating(string serializedData) : this()
-        {
-            DeserializeJSON(serializedData);
-        }
-
+        
 
         public PlayerRating GetPlayerRating(int accountID)
         {
@@ -146,6 +142,7 @@ namespace Ratings
 
         private readonly object updateLock = new object();
         private readonly object updateLockInternal = new object();
+        private readonly object dbLock = new object();
 
         public void UpdateRatings()
         {
@@ -195,14 +192,14 @@ namespace Ratings
                 {
                     try
                     {
-                        runningInitialization = true;
                         lock (updateLockInternal)
                         {
+                            runningInitialization = true;
                             DateTime start = DateTime.Now;
                             updateAction.Invoke();
                             Trace.TraceInformation("WHR Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
+                            runningInitialization = false;
                         }
-                        runningInitialization = false;
                     }
                     catch (Exception ex)
                     {
@@ -214,13 +211,27 @@ namespace Ratings
 
         }
 
-        public string SerializeJSON()
+        public void SaveToDB(IEnumerable<Player> players)
         {
-            return "";
-        }
-
-        public void DeserializeJSON(string json)
-        {
+            lock (dbLock)
+            {
+                var db = new ZkDataContext();
+                foreach (var player in players)
+                {
+                    var accountRating = db.AccountRatings.Where(r => r.AccountID == player.id && r.RatingCategory == category).FirstOrDefault();
+                    if (accountRating != null)
+                    {
+                        accountRating.UpdateFromRatingSystem(playerRatings[player.id]);
+                    }
+                    else
+                    {
+                        accountRating = new AccountRating(player.id, category);
+                        accountRating.UpdateFromRatingSystem(playerRatings[player.id]);
+                        db.AccountRatings.InsertOnSubmit(accountRating);
+                    }
+                }
+                db.SaveChanges();
+            }
         }
 
         public string DebugPlayer(Account player)
@@ -274,7 +285,7 @@ namespace Ratings
                 float DynamicMaxUncertainty = GlobalConst.MinimumDynamicMaxLadderUncertainty;
                 foreach (var pair in playerRatings)
                 {
-                    playerUncertainties[index++] = pair.Value.Uncertainty;
+                    playerUncertainties[index++] = (float)pair.Value.Uncertainty;
                 }
                 Array.Sort(playerUncertainties);
                 DynamicMaxUncertainty = Math.Max(DynamicMaxUncertainty, playerUncertainties[Math.Min(playerUncertainties.Length, GlobalConst.LadderSize) - 1] + 0.01f);
@@ -298,6 +309,8 @@ namespace Ratings
                 }
                 topPlayers = newTopPlayers;
                 Trace.TraceInformation("WHR Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty);
+
+                SaveToDB(players);
 
                 //check for topX updates
                 foreach (var listener in topPlayersUpdateListeners)
@@ -328,15 +341,12 @@ namespace Ratings
         {
             if (!players.ContainsKey(id))
             {
-                players.Add(id, new Player(id, w2));
+                lock (updateLockInternal)
+                {
+                    players.Add(id, new Player(id, w2));
+                }
             }
             return players[id];
-        }
-
-        private List<float[]> getPlayerRatings(int id)
-        {
-            Player player = getPlayerById(id);
-            return player.days.Select(d => new float[] { d.day, (d.getElo()), ((d.uncertainty * 100)) }).ToList();
         }
 
         private Game SetupGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step, int id)
@@ -390,7 +400,6 @@ namespace Ratings
             {
                 p.updateUncertainty();
             }
-            RatingSystems.BackupToDB(this);
         }
 
         private void printStats()

@@ -33,6 +33,7 @@ using ZeroKWeb.ForumParser;
 using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
 using PlasmaDownloader = PlasmaDownloader.PlasmaDownloader;
+using Ratings;
 
 namespace Fixer
 {
@@ -1154,5 +1155,7 @@ namespace Fixer
             Console.ReadLine();
 
         }
+
+        
     }
 }
