@@ -52,8 +52,8 @@ namespace Ratings
         public static void BackupToDB()
         {
             if (DisableRatingSystems) return;
-            Trace.TraceInformation("Backing up ratings...");
-            ratingCategories.ForEach(category => whr[category].SaveToDB());
+            //Trace.TraceInformation("Backing up ratings...");
+            //ratingCategories.ForEach(category => whr[category].SaveToDB());
         }
 
         public static IRatingSystem GetRatingSystem(RatingCategory category)

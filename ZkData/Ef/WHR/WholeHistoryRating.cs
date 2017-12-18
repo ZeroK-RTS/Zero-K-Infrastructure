@@ -192,14 +192,14 @@ namespace Ratings
                 {
                     try
                     {
-                        runningInitialization = true;
                         lock (updateLockInternal)
                         {
+                            runningInitialization = true;
                             DateTime start = DateTime.Now;
                             updateAction.Invoke();
                             Trace.TraceInformation("WHR Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
+                            runningInitialization = false;
                         }
-                        runningInitialization = false;
                     }
                     catch (Exception ex)
                     {
@@ -211,22 +211,22 @@ namespace Ratings
 
         }
 
-        public void SaveToDB()
+        public void SaveToDB(IEnumerable<Player> players)
         {
             lock (dbLock)
             {
                 var db = new ZkDataContext();
-                foreach (var playerRating in playerRatings)
+                foreach (var player in players)
                 {
-                    var accountRating = db.AccountRatings.Where(r => r.AccountID == playerRating.Key && r.RatingCategory == category).FirstOrDefault();
+                    var accountRating = db.AccountRatings.Where(r => r.AccountID == player.id && r.RatingCategory == category).FirstOrDefault();
                     if (accountRating != null)
                     {
-                        accountRating.UpdateFromRatingSystem(playerRating.Value);
+                        accountRating.UpdateFromRatingSystem(playerRatings[player.id]);
                     }
                     else
                     {
-                        accountRating = new AccountRating(playerRating.Key, category);
-                        accountRating.UpdateFromRatingSystem(playerRating.Value);
+                        accountRating = new AccountRating(player.id, category);
+                        accountRating.UpdateFromRatingSystem(playerRatings[player.id]);
                         db.AccountRatings.InsertOnSubmit(accountRating);
                     }
                 }
@@ -310,6 +310,8 @@ namespace Ratings
                 topPlayers = newTopPlayers;
                 Trace.TraceInformation("WHR Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty);
 
+                SaveToDB(players);
+
                 //check for topX updates
                 foreach (var listener in topPlayersUpdateListeners)
                 {
@@ -339,15 +341,12 @@ namespace Ratings
         {
             if (!players.ContainsKey(id))
             {
-                players.Add(id, new Player(id, w2));
+                lock (updateLockInternal)
+                {
+                    players.Add(id, new Player(id, w2));
+                }
             }
             return players[id];
-        }
-
-        private List<float[]> getPlayerRatings(int id)
-        {
-            Player player = getPlayerById(id);
-            return player.days.Select(d => new float[] { d.day, (d.getElo()), ((d.uncertainty * 100)) }).ToList();
         }
 
         private Game SetupGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step, int id)
@@ -401,7 +400,6 @@ namespace Ratings
             {
                 p.updateUncertainty();
             }
-            SaveToDB();
         }
 
         private void printStats()
