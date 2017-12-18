@@ -319,8 +319,8 @@ namespace ChobbyLauncher
                 using (var wc = new WebClient())
                 {
                     wc.DownloadFile($"{args.ImageUrl}", Path.Combine(chobbyla.paths.WritableDirectory, args.TargetPath));
-                    SendCommand(new DownloadImageDone() { TargetPath = args.TargetPath, ImageUrl = args.ImageUrl, RequestToken = args.RequestToken });
                 }
+                SendCommand(new DownloadImageDone() { TargetPath = args.TargetPath, ImageUrl = args.ImageUrl, RequestToken = args.RequestToken });
             }
             catch (Exception ex)
             {

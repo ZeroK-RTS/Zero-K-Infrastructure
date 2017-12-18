@@ -22,12 +22,12 @@ namespace ZkLobbyServer {
             {
                 cachedNewsList = new NewsList()
                 {
-                    NewsItems = db.LobbyNews.OrderByDescending(x => x.Created).Take(10).ToList().Select(x => new NewsItem
+                    NewsItems = db.LobbyNews.OrderBy(x => x.PinnedOrder ?? int.MaxValue).ThenByDescending(x => x.Created).Take(10).ToList().Select(x => new NewsItem
                     {
                         Time = x.EventTime,
                         Header = x.Title,
                         Text = x.Text,
-                        Image = x.ImageRelativeUrl,
+                        Image = $"{GlobalConst.BaseSiteUrl}{x.ImageRelativeUrl}",
                         Url = x.Url
                     }).ToList()
                 };

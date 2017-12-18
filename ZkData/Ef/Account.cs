@@ -685,7 +685,7 @@ namespace ZkData
 
         public LadderItem ToLadderItem()
         {
-            return new LadderItem() { Name = Name, Clan = Clan?.Shortcut, Icon = GetIconName() };
+            return new LadderItem() { Name = Name, Clan = Clan?.Shortcut, Icon = GetIconName(), AccountID = AccountID};
         }
 
 
@@ -699,16 +699,16 @@ namespace ZkData
                     AccountBattleAwards.GroupBy(x => x.AwardKey).Select(x => new UserProfile.UserAward() { AwardKey = x.Key, Collected = x.Count() })
                         .ToList(),
                 Badges = GetBadges().Select(x => x.ToString()).ToList(),
-                EffectiveElo = EffectiveElo,
-                EffectivePwElo = EffectivePwElo,
-                EffectiveMmElo = EffectiveMmElo,
+                EffectiveElo = (int)EffectiveElo,
+                EffectivePwElo = (int)EffectivePwElo,
+                EffectiveMmElo = (int)EffectiveMmElo,
                 Kudos = KudosGained,
                 Level = Level,
-                LevelUpRatio = GetLevelUpRatio(),
-                PwBombers = GetBombersAvailable(),
-                PwDropships = GetDropshipsAvailable(),
-                PwMetal = GetMetalAvailable(),
-                PwWarpcores = GetWarpAvailable(),
+                LevelUpRatio = GetLevelUpRatio().ToString("F2"),
+                PwBombers = GetBombersAvailable().ToString("F2"),
+                PwDropships = GetDropshipsAvailable().ToString("F2"),
+                PwMetal = GetMetalAvailable().ToString("F2"),
+                PwWarpcores = GetWarpAvailable().ToString("F2"),
             };
         }
     }

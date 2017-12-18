@@ -16,7 +16,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult Index()
         {
             var db = new ZkDataContext();
-            var items = db.LobbyNews.OrderByDescending(x => x.Created).Take(10);
+            var items = db.LobbyNews.OrderBy(x=>x.PinnedOrder ?? int.MaxValue).ThenByDescending(x => x.Created).Take(10);
             return View("LobbyNewsIndex", items);
         }
 
@@ -26,6 +26,18 @@ namespace ZeroKWeb.Controllers
             var db=  new ZkDataContext();
             return View("LobbyNewsEdit", db.LobbyNews.Find(id));
         }
+
+        [Auth(Role = AdminLevel.Moderator)]
+        public ActionResult Delete(int id)
+        {
+            var db = new ZkDataContext();
+            var n = db.LobbyNews.Find(id);
+            db.LobbyNews.Remove(n);
+            db.SaveChanges();
+            Global.Server.NewsListManager.OnNewsChanged();
+            return RedirectToAction("Index");
+        }
+
 
         /// <summary>
         /// Make a new <see cref="News"/> item or edit an existing one
@@ -57,6 +69,7 @@ namespace ZeroKWeb.Controllers
                 news.Text = nn.Text;
                 news.Url = nn.Url;
                 news.EventTime = nn.EventTime;
+                news.PinnedOrder = nn.PinnedOrder;
                 
 
                 Image im = null;

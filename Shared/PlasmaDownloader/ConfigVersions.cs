@@ -97,7 +97,14 @@ namespace PlasmaDownloader
                                 if (!Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
 
                                 var content = ver.ReadFile(paths, versionEntry.SourcePath);
-                                if (content != null) File.WriteAllBytes(target, content.ToArray());
+                                if (content != null)
+                                {
+                                    var targetBytes = content.ToArray();
+
+                                    if (!File.Exists(target) || !Hash.ByteArrayEquals(File.ReadAllBytes(target), targetBytes)) { 
+                                        File.WriteAllBytes(target, targetBytes);
+                                    }
+                                }
                                 else File.Delete(target);
                             }
                         }

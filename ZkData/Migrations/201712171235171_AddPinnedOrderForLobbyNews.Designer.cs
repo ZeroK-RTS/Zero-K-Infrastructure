@@ -7,13 +7,13 @@ namespace ZkData.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class AddAccountRatings : IMigrationMetadata
+    public sealed partial class AddPinnedOrderForLobbyNews : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddAccountRatings));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(AddPinnedOrderForLobbyNews));
         
         string IMigrationMetadata.Id
         {
-            get { return "201712170223195_AddAccountRatings"; }
+            get { return "201712171235171_AddPinnedOrderForLobbyNews"; }
         }
         
         string IMigrationMetadata.Source

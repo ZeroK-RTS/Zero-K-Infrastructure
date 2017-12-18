@@ -32,7 +32,7 @@ namespace Ratings
                 lock (processingLock)
                 {
                     ZkDataContext data = new ZkDataContext();
-                    DateTime minStartTime = DateTime.Now.AddYears(-2);
+                    DateTime minStartTime = DateTime.Now.AddYears(-5);
                     foreach (SpringBattle b in data.SpringBattles
                             .Where(x => x.StartTime > minStartTime)
                             .Include(x => x.ResourceByMapResourceID)
@@ -59,6 +59,11 @@ namespace Ratings
         public static IRatingSystem GetRatingSystem(RatingCategory category)
         {
             if (DisableRatingSystems) return null;
+            if (!whr.ContainsKey(category))
+            {
+                Trace.TraceError("WHR: Unknown category " + category);
+                return whr[RatingCategory.MatchMaking];
+            }
             return whr[category];
         }
 
@@ -124,12 +129,17 @@ namespace Ratings
         {
             return (int)(date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays / 1);
         }
+        public static DateTime ConvertDaysToDate(int days)
+        {
+            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddDays(days);
+        }
 
         private static bool IsCategory(SpringBattle battle, RatingCategory category)
         {
             int battleID = -1;
             try
             {
+                if (battle.HasBots) return false;
                 battleID = battle.SpringBattleID;
                 switch (category)
                 {

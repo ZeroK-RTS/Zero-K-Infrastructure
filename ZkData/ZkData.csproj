@@ -318,9 +318,13 @@
     <Compile Include="Migrations\201712161337337_LobbyNews.Designer.cs">
       <DependentUpon>201712161337337_LobbyNews.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201712170223195_AddAccountRatings.cs" />
-    <Compile Include="Migrations\201712170223195_AddAccountRatings.Designer.cs">
-      <DependentUpon>201712170223195_AddAccountRatings.cs</DependentUpon>
+    <Compile Include="Migrations\201712171235171_AddPinnedOrderForLobbyNews.cs" />
+    <Compile Include="Migrations\201712171235171_AddPinnedOrderForLobbyNews.Designer.cs">
+      <DependentUpon>201712171235171_AddPinnedOrderForLobbyNews.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712181924230_AddAccountRatings.cs" />
+    <Compile Include="Migrations\201712181924230_AddAccountRatings.Designer.cs">
+      <DependentUpon>201712181924230_AddAccountRatings.cs</DependentUpon>
     </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
@@ -630,8 +634,11 @@
     <EmbeddedResource Include="Migrations\201712161337337_LobbyNews.resx">
       <DependentUpon>201712161337337_LobbyNews.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201712170223195_AddAccountRatings.resx">
-      <DependentUpon>201712170223195_AddAccountRatings.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201712171235171_AddPinnedOrderForLobbyNews.resx">
+      <DependentUpon>201712171235171_AddPinnedOrderForLobbyNews.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712181924230_AddAccountRatings.resx">
+      <DependentUpon>201712181924230_AddAccountRatings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
