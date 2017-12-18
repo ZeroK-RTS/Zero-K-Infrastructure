@@ -17,8 +17,9 @@ namespace ZkData.Migrations
 
         private static void InitializeBattleRatings(ZkDataContext db)
         {
-            
-            foreach (SpringBattle battle in db.SpringBattles.ToList())
+            DateTime minStartTime = DateTime.Now.AddMonths(-1);
+
+            foreach (SpringBattle battle in db.SpringBattles.Where(x => x.StartTime > minStartTime).ToList())
             {
                 try
                 {
