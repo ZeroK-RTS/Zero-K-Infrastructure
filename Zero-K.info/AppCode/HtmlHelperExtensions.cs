@@ -773,5 +773,29 @@ namespace System.Web.Mvc
             return new MvcHtmlString(sb.ToString());
         }
 
+
+        public static MvcHtmlString MultiSelectFor<TModel, TEnum>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, IList<TEnum>>> expression, string autocompleteAction, Func<TEnum, MvcHtmlString> objectRenderer)
+        {
+            var listing = (IList<TEnum>)ModelMetadata.FromLambdaExpression(expression, htmlHelper.ViewData).Model ?? new List<TEnum>();
+            var name = ExpressionHelper.GetExpressionText(expression);
+            var sb = new StringBuilder();
+            sb.AppendFormat("<input data-autocomplete='{0}' data-autocomplete-action='add' id='{1}' name='' type='text' value='' class='ui-autocomplete-input' autocomplete='off'><br /><div id='{2}players'></div>", autocompleteAction, name, name);
+            foreach (var val in listing)
+            {
+                var visName = "multivis" + name + val.ToString();
+                var hidName = "multihid" + name + val.ToString();
+                sb.AppendFormat("<span id='{0}'>{1} <a onclick='$(\"#{2}\").remove();$(\"#{3}\").remove();'><img src='/img/delete_trashcan.png' class='icon16' /></a><br /></span><input type='hidden' name='{4}' id='{5}' value='{6}'>",
+                                visName,
+                                objectRenderer.Invoke(val),
+                                visName,
+                                hidName,
+                                name,
+                                hidName,
+                                val);
+            }
+
+            return new MvcHtmlString(sb.ToString());
+        }
+
     }
 }

@@ -60,7 +60,7 @@
                     @if (Global.IsModerator)
                     {
                         <span class="admin">
-                            @Html.ActionLink("Edit", "Edit", "LobbyNews", new { id = n.LobbyNewsID }, null)
+                            @Html.ActionLink("Edit", "Edit", "LobbyNews", new { id = n.LobbyNewsID }, null) | @Html.ActionLink("Delete","Delete","LobbyNews", new {id=n.LobbyNewsID}, new {@class="js_confirm"})
                         </span>
                     }
                 </small>

@@ -1,40 +1,41 @@
-﻿@using ZeroKWeb
+﻿@using ZkData
 @using System.Globalization
 @model ZeroKWeb.Controllers.ChartsController.ChartsModel
 
 @{
-    Page.Title = "Player charts";
+    Page.Title = "Rating charts";
 }
 <script src="/Scripts/moment.min.js"></script>
 <script src="/Scripts/Chart.min.js"></script>
 
-<div class="fleft" style="padding: 5px;">
-    <h2>Zero-K player statistics</h2>
-    <form method="get" action="@Url.Action("Index")" id="formID">
-        <table>
+<div class="fleft width-100" style="padding: 5px;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;">
+    <h2>Zero-K Player Rating History</h2> <br/>
+    <form action="@Url.Action("Ratings")">
+        <table class="inputTable">
             <tr>
-                <td>Graphs</td>
+                <td>Rating:</td>
+                <td>@Html.EnumDropDownListFor(x => x.RatingCategory, new { @class = "width-100"})</td>
+            </tr>
+            <tr>
+                <td>Players: </td>
+                <td>@using (var db = new ZkDataContext()){ @Html.MultiSelectFor(x => x.UserId, Url.Action("Users", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)));}</td>
+            </tr>
+            <tr>
+                <td></td>
                 <td>
-                    @foreach (var g in Model.PossibleGraphs)
-            {
-                        <label>
-                            <input type="checkbox" name="Graphs" value="@g.Name" checked="@(Model.Graphs.Contains(g.Name))" />
-                            @g.Title
-                        </label><br />
-                    }
+                    <div id="players">
+                    </div>
                 </td>
             </tr>
             <tr><td>From</td><td>@Html.TextBoxFor(x => x.From, new { @class = "js_datepicker" })</td></tr>
             <tr><td>To</td><td>@Html.TextBoxFor(x => x.To, new { @class = "js_datepicker" })</td></tr>
-            <tr><td>Group days</td><td>@Html.EditorFor(x => x.Grouping)</td></tr>
-            <tr><td>Normalize</td><td>@Html.CheckBoxFor(x => x.Normalize)</td></tr>
-            <tr><td colspan="2"><input type="submit" /></td></tr>
+            <tr><td colspan="2"><input class="textbutton width-100" type="submit" value="Plot graph" /></td></tr>
         </table>
     </form>
     @{
         if (Model.GraphingData != null && Model.GraphingData.Count > 0)
         {
-            <canvas id="graphID"></canvas>
+            <canvas id="graphID" class="width-100"></canvas>
             <script language="javascript">
 
                 var ctx = document.getElementById('graphID').getContext('2d');
@@ -48,17 +49,17 @@
                     data: {
                         //labels: [@Html.Raw(string.Join(",", Model.GraphingData[0].Data.Select(x => "\"" + x.Day.ToString("yyyy-MM-dd") + "\"").ToList()))],
                         datasets: [
-                        @{int index = 0;}
-                        @foreach (var series in Model.GraphingData)
-                        {
-                            @:{
-                            @:label: "@series.Title",
-                            @:backgroundColor: '#@Model.Colors[(index) % Model.Colors.Length]',
-                            @:borderColor: '#@Model.Colors[(index++) % Model.Colors.Length]',
-                            @:fill: false,
-                            @:data: [@Html.Raw(string.Join(",", series.Data.Select(x => "{x: moment(\"" + x.Day.ToString("yyyy-MM-dd") + "\"), y: "+ x.Value.ToString(CultureInfo.InvariantCulture) + "}").ToList()))],
-                            @:},
-                        }
+                            @{int index = 0;}
+                            @foreach (var series in Model.GraphingData)
+                            {
+                                @:{
+                                @:label: "@series.Title",
+                                @:backgroundColor: '#@Model.Colors[(index) % Model.Colors.Length]',
+                                @:borderColor: '#@Model.Colors[(index++) % Model.Colors.Length]',
+                                @:fill: false,
+                                @:data: [@Html.Raw(string.Join(",", series.Data.Select(x => "{x: moment(\"" + x.Day.ToString("yyyy-MM-dd") + "\"), y: "+ x.Value.ToString(CultureInfo.InvariantCulture) + "}").ToList()))],
+                                @:},
+                            }
                         ]
                     },
 

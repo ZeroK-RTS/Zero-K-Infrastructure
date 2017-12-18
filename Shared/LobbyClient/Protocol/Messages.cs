@@ -763,7 +763,7 @@ namespace LobbyClient
         {
             public int AllyNumber { get; set; }
             public object Awards { get; set; }
-            public float? EloChange { get; set; }
+            public string EloChange { get; set; }
             public bool IsInVictoryTeam { get; set; }
             public bool IsLevelUp { get; set; }
             public int? LoseTime { get; set; }
@@ -785,17 +785,17 @@ namespace LobbyClient
         public List<string> Badges { get; set; } = new List<string>();
 
         public int Level { get; set; }
-        public double LevelUpRatio { get; set; }
+        public string LevelUpRatio { get; set; }
 
-        public double EffectiveElo { get; set; }
-        public double EffectiveMmElo { get; set; }
-        public double EffectivePwElo { get; set; }
+        public int EffectiveElo { get; set; }
+        public int EffectiveMmElo { get; set; }
+        public int EffectivePwElo { get; set; }
 
         public int Kudos { get; set; }
 
-        public double PwMetal { get; set; }
-        public double PwDropships { get; set; }
-        public double PwBombers { get; set;}
-        public double PwWarpcores { get; set; }
+        public string PwMetal { get; set; }
+        public string PwDropships { get; set; }
+        public string PwBombers { get; set;}
+        public string PwWarpcores { get; set; }
     }
 }

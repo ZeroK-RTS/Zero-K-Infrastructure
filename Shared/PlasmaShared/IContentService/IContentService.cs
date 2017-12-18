@@ -32,6 +32,7 @@ namespace PlasmaShared
         public string Name { get; set; }
         public string Clan { get; set; } 
         public string Icon { get; set; }
+        public int AccountID { get; set; }
     }
 
     public class ForumItem

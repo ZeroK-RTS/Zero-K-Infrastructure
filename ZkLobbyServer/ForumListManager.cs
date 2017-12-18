@@ -30,10 +30,9 @@ namespace ZkLobbyServer {
             var entity = entityEntry.Entity;
             if (entity is ForumPost && entityEntry.State == EntityState.Added)
             {
+                // forum post got added, distribute to connected users 
                 var post = (ForumPost)entity;
                 var changedThreadID = post.ForumThreadID;
-
-                CachePublicForumList();
 
                 using (var db = new ZkDataContext())
                 {
@@ -47,7 +46,7 @@ namespace ZkLobbyServer {
                             Header = t.Title,
                             IsRead = false
                         };
-
+                        
                         foreach (var user in server.ConnectedUsers.Values.Where(x => x != null && x.IsLoggedIn))
                         {
                             var list = GetCurrentForumList(user.User.AccountID);
@@ -60,7 +59,7 @@ namespace ZkLobbyServer {
                             }
                             else
                             {
-                                list.ForumItems.Insert(0, item);
+                                list.ForumItems.Add(item);
                             }
 
                             list.ForumItems = list.ForumItems.OrderByDescending(x => x.Time).ToList();
@@ -70,21 +69,43 @@ namespace ZkLobbyServer {
                     }
                 }
             }
-            else if (entity is ForumThreadLastRead)
+            else if (entity is ForumThreadLastRead) 
             {
+                // someone read some thread
                 var changedAccountID = ((ForumThreadLastRead)entity).AccountID;
                 var readThreadID = ((ForumThreadLastRead)entity).ForumThreadID;
 
+                
                 var conus = server.ConnectedUsers.Values.FirstOrDefault(x => x != null && x.User.AccountID == changedAccountID);
                 if (conus != null)
                 {
                     var list = GetCurrentForumList(changedAccountID);
 
-                    if (list.ForumItems.Any(x => x.ThreadID == readThreadID))
+                    if (list.ForumItems.Any(x => x.ThreadID == readThreadID)) // the thread is in top 10, update list
                     {
                         list = CachePrivateForumList(changedAccountID);
                         conus.SendCommand(list);
                     }
+                }
+            } else if (entity is ForumThread)
+            {
+                var thread = (ForumThread)entity;
+                if (entityEntry.State == EntityState.Added) // thread added force refresh
+                {
+                    CachePublicForumList();
+                }
+                else
+                {
+                    var existing = cachedPublicForumList.ForumItems.FirstOrDefault(x => x.ThreadID == thread.ForumThreadID);
+                    if (existing != null) // top 10 thread modified
+                    {
+                        if (existing.Time < thread.LastPost) CachePublicForumList(); // it gotten a new post, update
+                    }
+                    else
+                    {
+                        if (thread.LastPost >= cachedPublicForumList.ForumItems.Min(x=>(DateTime?)x.Time)) CachePublicForumList(); // its a modified post and its date belongs to top 10, update
+                    }
+
                 }
             }
         }
@@ -124,7 +145,7 @@ namespace ZkLobbyServer {
                 var threads = (from t in accessibleThreads
                     let read = t.ForumThreadLastReads.FirstOrDefault(x => x.AccountID == account.AccountID)
                     orderby t.LastPost descending
-                    select new { Thread = t, Read = read != null && read.LastRead >= t.LastPost }).Take(10).ToList();
+                    select new { Thread = t, Read = (read != null && read.LastRead >= t.LastPost) }).Take(10).ToList();
                     
                 
                 var list = new ForumList()

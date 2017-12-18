@@ -11,6 +11,8 @@ namespace Ratings
 
         PlayerRating GetPlayerRating(int accountID);
 
+        Dictionary<DateTime, float> GetPlayerRatingHistory(int accountID);
+
         List<Account> GetTopPlayers(int count);
 
         List<Account> GetTopPlayers(int count, Func<Account, bool> selector);
