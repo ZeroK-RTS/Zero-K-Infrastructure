@@ -20,19 +20,27 @@ namespace ZkData.Migrations
             
             foreach (SpringBattle battle in db.SpringBattles.ToList())
             {
-                int val = 0;
-                if (!battle.HasBots)
+                try
                 {
-                    val += (!(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID?.MapIsSpecial == true) || battle.Duration < GlobalConst.MinDurationForElo)) ? (int)(RatingCategory.Casual) : 0;
-                    val += (battle.IsMatchMaker || battle.Title.Contains("[T]") || battle.Title.Contains("Tournament") || battle.Title.Contains("Tourney")) ? (int)RatingCategory.MatchMaking : 0;
-                    val += (battle.Mode == PlasmaShared.AutohostMode.Planetwars) ? (int)RatingCategory.Planetwars : 0;
+                    int val = 0;
+                    if (!battle.HasBots)
+                    {
+                        val += (!(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID?.MapIsSpecial == true) || battle.Duration < GlobalConst.MinDurationForElo)) ? (int)(RatingCategory.Casual) : 0;
+                        val += (battle.IsMatchMaker || battle.Title?.Contains("[T]") == true || battle.Title?.Contains("Tournament") == true || battle.Title?.Contains("Tourney") == true) ? (int)RatingCategory.MatchMaking : 0;
+                        val += (battle.Mode == PlasmaShared.AutohostMode.Planetwars) ? (int)RatingCategory.Planetwars : 0;
+                    }
+                    battle.ApplicableRatings = (RatingCategory)val;
                 }
-                battle.ApplicableRatings = (RatingCategory)val;
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceError("Error applying ratings: " + ex);
+                }
             }
         }
 
         protected override void Seed(ZkDataContext db) {
             InitializeBattleRatings(db); //remove this after execution
+            db.SaveChanges();
 
             //  This method will be called after migrating to the latest version.
             if (GlobalConst.Mode == ModeType.Local)
