@@ -14,11 +14,11 @@ namespace Ratings
 
         public static readonly IEnumerable<RatingCategory> ratingCategories = Enum.GetValues(typeof(RatingCategory)).Cast<RatingCategory>();
 
-        public static readonly bool DisableRatingSystems = false;
-
         private static HashSet<int> processedBattles = new HashSet<int>();
 
         public static bool Initialized { get; private set; }
+
+        public const bool DisableRatingSystems = false;
 
         private static object processingLock = new object();
 
@@ -26,7 +26,7 @@ namespace Ratings
         {
             if (DisableRatingSystems) return;
             Initialized = false;
-            ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating(MiscVar.GetValue("WHR_" + category.ToString())));
+            ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating(category));
 
             Task.Factory.StartNew(() => {
                 lock (processingLock)
@@ -52,15 +52,8 @@ namespace Ratings
         public static void BackupToDB()
         {
             if (DisableRatingSystems) return;
-            Trace.TraceInformation("Backing up ratings...");
-            ratingCategories.ForEach(category => MiscVar.SetValue("WHR_" + category.ToString(), whr[category].SerializeJSON()));
-        }
-
-        public static void BackupToDB(IRatingSystem ratingSystem)
-        {
-            if (DisableRatingSystems) return;
-            Trace.TraceInformation("Backing up rating system...");
-            ratingCategories.Where(category => whr[category].Equals(ratingSystem)).ForEach(category => MiscVar.SetValue("WHR_" + category.ToString(), whr[category].SerializeJSON()));
+            //Trace.TraceInformation("Backing up ratings...");
+            //ratingCategories.ForEach(category => whr[category].SaveToDB());
         }
 
         public static IRatingSystem GetRatingSystem(RatingCategory category)
@@ -146,6 +139,7 @@ namespace Ratings
             int battleID = -1;
             try
             {
+                if (battle.HasBots) return false;
                 battleID = battle.SpringBattleID;
                 switch (category)
                 {
@@ -165,9 +159,14 @@ namespace Ratings
             return false;
         }
     }
-
+    
     public enum RatingCategory
     {
-        Casual, MatchMaking, Planetwars
+        Casual = 1, MatchMaking = 2, Planetwars = 4
+    }
+    [Flags]
+    public enum RatingCategoryFlags
+    {
+        Casual = 1, MatchMaking = 2, Planetwars = 4
     }
 }

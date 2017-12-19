@@ -1,4 +1,4 @@
-// Implementation of WHR based on original by Pete Schwamb httpsin//github.com/goshrine/whole_history_rating
+// Implementation of WHR " + category +" based on original by Pete Schwamb httpsin//github.com/goshrine/whole_history_rating
 
 using Newtonsoft.Json;
 using System;
@@ -34,19 +34,15 @@ namespace Ratings
         private Timer ladderRecalculationTimer;
 
         private bool runningInitialization = true;
+        private readonly RatingCategory category;
 
-        public WholeHistoryRating()
+        public WholeHistoryRating(RatingCategory category)
         {
+            this.category = category;
             w2 = GlobalConst.EloDecayPerDaySquared;
             ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
         }
-
-
-        public WholeHistoryRating(string serializedData) : this()
-        {
-            DeserializeJSON(serializedData);
-        }
-
+        
 
         public PlayerRating GetPlayerRating(int accountID)
         {
@@ -74,23 +70,23 @@ namespace Ratings
 
         public void ProcessBattle(SpringBattle battle)
         {
-            latestBattle = battle;
             ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
             ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
             if (winners.Count > 0 && losers.Count > 0)
             {
+                latestBattle = battle;
                 battlesRegistered++;
                 int date = RatingSystems.ConvertDateToDays(battle.StartTime);
                 if (date > RatingSystems.ConvertDateToDays(DateTime.UtcNow))
                 {
-                    Trace.TraceWarning("WHR: Tried to register battle " + battle.SpringBattleID + " which is from the future " + (date) + " > " + RatingSystems.ConvertDateToDays(DateTime.UtcNow));
+                    Trace.TraceWarning("WHR " + category +": Tried to register battle " + battle.SpringBattleID + " which is from the future " + (date) + " > " + RatingSystems.ConvertDateToDays(DateTime.UtcNow));
                 }
                 else
                 {
                     createGame(losers, winners, false, date, battle.SpringBattleID);
                     if (RatingSystems.Initialized)
                     {
-                        Trace.TraceInformation(battlesRegistered + " battles registered for WHR, latest Battle: " + battle.SpringBattleID);
+                        Trace.TraceInformation(battlesRegistered + " battles registered for WHR " + category +", latest Battle: " + battle.SpringBattleID);
                         UpdateRatings();
                     }
                 }
@@ -99,14 +95,17 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count)
         {
+            return GetTopPlayers(count, x => true);
+            //TODO use db query once accountrating is implemented
+            /*
             ZkDataContext db = new ZkDataContext();
             List<int> retIDs = topPlayers.Take(count).ToList();
             return db.Accounts.Where(a => retIDs.Contains(a.AccountID)).ToList(); 
+            */
         }
 
         public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
         {
-            if (runningInitialization) return new List<Account>(); // dont block during updates to prevent dosprotector from kicking in
             lock (updateLockInternal) 
             {
                 int counter = 0;
@@ -143,12 +142,13 @@ namespace Ratings
 
         private readonly object updateLock = new object();
         private readonly object updateLockInternal = new object();
+        private readonly object dbLock = new object();
 
         public void UpdateRatings()
         {
             if (latestBattle == null)
             {
-                //Trace.TraceInformation("WHR: No battles to evaluate");
+                //Trace.TraceInformation("WHR " + category +": No battles to evaluate");
                 return;
             }
             lock (updateLock)
@@ -157,25 +157,28 @@ namespace Ratings
                 if (lastUpdate == null)
                 {
                     updateAction = (() => {
-                        Trace.TraceInformation("Initializing WHR ratings for " + battlesRegistered + " battles, this will take some time..");
+                        Trace.TraceInformation("Initializing WHR " + category +" ratings for " + battlesRegistered + " battles, this will take some time..");
                         runIterations(50);
                         UpdateRankings(players.Values);
+                        SaveToDB();
                     });
                 }
                 else if (DateTime.UtcNow.Subtract(lastUpdateTime).TotalHours >= GlobalConst.LadderUpdatePeriod)
                 {
                     updateAction = (() =>
                     {
-                        Trace.TraceInformation("Updating all WHR ratings");
+                        Trace.TraceInformation("Updating all WHR " + category +" ratings");
                         runIterations(1);
                         UpdateRankings(players.Values);
+                        SaveToDB();
                     });
+                    lastUpdateTime = DateTime.UtcNow;
                 }
                 else if (!latestBattle.Equals(lastUpdate))
                 {
                     updateAction = (() =>
                     {
-                        Trace.TraceInformation("Updating WHR ratings for last Battle");
+                        Trace.TraceInformation("Updating WHR " + category +" ratings for last Battle: " + latestBattle.SpringBattleID);
                         IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Where(p => !p.IsSpectator).Select(p => getPlayerById(p.AccountID));
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
@@ -184,40 +187,69 @@ namespace Ratings
                 }
                 else
                 {
-                    //Trace.TraceInformation("No WHR ratings to update");
+                    //Trace.TraceInformation("No WHR " + category +" ratings to update");
                     return;
                 }
                 Task.Factory.StartNew(() =>
                 {
                     try
                     {
-                        runningInitialization = true;
                         lock (updateLockInternal)
                         {
+                            runningInitialization = true;
                             DateTime start = DateTime.Now;
                             updateAction.Invoke();
-                            Trace.TraceInformation("WHR Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
+                            Trace.TraceInformation("WHR " + category +" Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
+                            runningInitialization = false;
                         }
-                        runningInitialization = false;
                     }
                     catch (Exception ex)
                     {
-                        Trace.TraceError("Thread error while updating WHR " + ex);
+                        Trace.TraceError("Thread error while updating WHR " + category +" " + ex);
                     }
                 });
                 lastUpdate = latestBattle;
-                lastUpdateTime = DateTime.UtcNow;
             }
 
         }
 
-        public string SerializeJSON()
+        public void SaveToDB()
         {
-            return "";
-        }
+            lock (dbLock)
+            {
+                DateTime start = DateTime.Now;
+                var db = new ZkDataContext();
+                HashSet<int> processedPlayers = new HashSet<int>();
+                int deleted = 0;
+                int added = 0;
+                foreach (var accountRating in db.AccountRatings.Where(x => x.RatingCategory == category))
+                {
+                    if (!playerRatings.ContainsKey(accountRating.AccountID))
+                    {
+                        deleted++;
+                        db.AccountRatings.DeleteOnSubmit(accountRating);
+                        continue;
+                    }
+                    processedPlayers.Add(accountRating.AccountID);
+                    if (Math.Abs(playerRatings[accountRating.AccountID].Elo - accountRating.Elo) > 10)
+                    {
+                        accountRating.UpdateFromRatingSystem(playerRatings[accountRating.AccountID]);
+                    }
+                }
+                foreach (int player in playerRatings.Keys)
+                {
+                    if (!processedPlayers.Contains(player))
+                    {
+                        var accountRating = new AccountRating(player, category);
+                        accountRating.UpdateFromRatingSystem(playerRatings[player]);
+                        db.AccountRatings.InsertOnSubmit(accountRating);
+                        added++;
+                    }
+                }
 
-        public void DeserializeJSON(string json)
-        {
+                db.SaveChanges();
+                Trace.TraceInformation("WHR " + category +" Ratings saved to DB in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + added + " entries added, " + deleted + " entries removed, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
+            }
         }
 
         public string DebugPlayer(Account player)
@@ -252,6 +284,11 @@ namespace Ratings
                 int currentDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow);
                 foreach (var p in players)
                 {
+                    if (p.days.Count == 0)
+                    {
+                        Trace.TraceError("WHR " + category +" has invalid player " + p.id + " with no days(games)");
+                        continue;
+                    }
                     float elo = p.days.Last().getElo() + RatingOffset;
                     float lastUncertainty = p.days.Last().uncertainty * 100;
                     int lastDay = p.days.Last().day;
@@ -266,7 +303,7 @@ namespace Ratings
                 float DynamicMaxUncertainty = GlobalConst.MinimumDynamicMaxLadderUncertainty;
                 foreach (var pair in playerRatings)
                 {
-                    playerUncertainties[index++] = pair.Value.Uncertainty;
+                    playerUncertainties[index++] = (float)pair.Value.Uncertainty;
                 }
                 Array.Sort(playerUncertainties);
                 DynamicMaxUncertainty = Math.Max(DynamicMaxUncertainty, playerUncertainties[Math.Min(playerUncertainties.Length, GlobalConst.LadderSize) - 1] + 0.01f);
@@ -289,23 +326,21 @@ namespace Ratings
                     }
                 }
                 topPlayers = newTopPlayers;
-                Trace.TraceInformation("WHR Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty);
+                Trace.TraceInformation("WHR " + category +" Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty);
+
 
                 //check for topX updates
-                ZkDataContext db = null;
                 foreach (var listener in topPlayersUpdateListeners)
                 {
                     if (matched < listener.Value)
                     {
-                        if (db == null) db = new ZkDataContext();
-                        List<int> l = topPlayers.Take(listener.Value).ToList();
-                        listener.Key.TopPlayersUpdated(db.Accounts.Where(x => l.Contains(x.AccountID)).ToList());
+                        listener.Key.TopPlayersUpdated(GetTopPlayers(listener.Value));
                     }
                 }
             }
             catch (Exception ex)
             {
-                string dbg = "WHR: Failed to update rankings " + ex + "\nPlayers: ";
+                string dbg = "WHR " + category +": Failed to update rankings " + ex + "\nPlayers: ";
                 foreach (var p in players)
                 {
                     dbg += p.id + " (" + p.days.Count + " days), ";
@@ -323,15 +358,12 @@ namespace Ratings
         {
             if (!players.ContainsKey(id))
             {
-                players.Add(id, new Player(id, w2));
+                lock (updateLockInternal)
+                {
+                    players.Add(id, new Player(id, w2));
+                }
             }
             return players[id];
-        }
-
-        private List<float[]> getPlayerRatings(int id)
-        {
-            Player player = getPlayerById(id);
-            return player.days.Select(d => new float[] { d.day, (d.getElo()), ((d.uncertainty * 100)) }).ToList();
         }
 
         private Game SetupGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step, int id)
@@ -385,7 +417,6 @@ namespace Ratings
             {
                 p.updateUncertainty();
             }
-            RatingSystems.BackupToDB(this);
         }
 
         private void printStats()

@@ -42,6 +42,9 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EntityFramework.Extended">
+      <HintPath>..\packages\EntityFramework.Extended.6.1.0.168\lib\net45\EntityFramework.Extended.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
@@ -78,10 +81,12 @@
     <Compile Include="Ef\LobbyNews.cs" />
     <Compile Include="Ef\SpringBattleBot.cs" />
     <Compile Include="Ef\WHR\Game.cs" />
+    <Compile Include="Ef\WHR\IWHRUpdateListener.cs" />
     <Compile Include="Ef\WHR\IRatingSystem.cs" />
     <Compile Include="Ef\WHR\ITopPlayersUpdateListener.cs" />
     <Compile Include="Ef\WHR\Player.cs" />
     <Compile Include="Ef\WHR\PlayerDay.cs" />
+    <Compile Include="Ef\AccountRating.cs" />
     <Compile Include="Ef\WHR\PlayerRating.cs" />
     <Compile Include="Ef\WHR\RatingSystems.cs" />
     <Compile Include="Ef\WHR\WholeHistoryRating.cs" />
@@ -315,6 +320,14 @@
     <Compile Include="Migrations\201712161337337_LobbyNews.cs" />
     <Compile Include="Migrations\201712161337337_LobbyNews.Designer.cs">
       <DependentUpon>201712161337337_LobbyNews.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712171235171_AddPinnedOrderForLobbyNews.cs" />
+    <Compile Include="Migrations\201712171235171_AddPinnedOrderForLobbyNews.Designer.cs">
+      <DependentUpon>201712171235171_AddPinnedOrderForLobbyNews.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712181924230_AddAccountRatings.cs" />
+    <Compile Include="Migrations\201712181924230_AddAccountRatings.Designer.cs">
+      <DependentUpon>201712181924230_AddAccountRatings.cs</DependentUpon>
     </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
@@ -623,6 +636,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201712161337337_LobbyNews.resx">
       <DependentUpon>201712161337337_LobbyNews.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712171235171_AddPinnedOrderForLobbyNews.resx">
+      <DependentUpon>201712171235171_AddPinnedOrderForLobbyNews.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712181924230_AddAccountRatings.resx">
+      <DependentUpon>201712181924230_AddAccountRatings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

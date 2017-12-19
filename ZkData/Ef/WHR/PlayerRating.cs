@@ -29,9 +29,9 @@ namespace Ratings
         }
 
         [JsonProperty]
-        private readonly float LastUncertainty;
+        public readonly float LastUncertainty;
         [JsonProperty]
-        private readonly int LastGameDate;
+        public readonly int LastGameDate;
         [JsonProperty]
         private int CurrentDate;
 

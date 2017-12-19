@@ -22,6 +22,7 @@ namespace ZkData
         public virtual DbSet<AccountCampaignVar> AccountCampaignVars { get; set; }
         public virtual DbSet<AccountForumVote> AccountForumVotes { get; set; }
         public virtual DbSet<AccountIP> AccountIPs { get; set; }
+        public virtual DbSet<AccountRating> AccountRatings { get; set; }
         public virtual DbSet<AccountPlanet> AccountPlanets { get; set; }
         public virtual DbSet<AccountRole> AccountRoles { get; set; }
         public virtual DbSet<AccountUnlock> AccountUnlocks { get; set; }
