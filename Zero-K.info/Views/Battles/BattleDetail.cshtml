@@ -167,9 +167,10 @@
 
         <form action="@Url.Action("SetApplicableRatings", new { BattleID = Model.SpringBattleID })" method="post">
             @Html.AntiForgeryToken()
-            Counts for competitive skill rating: @Html.CheckBox("MatchMaking", Model.ApplicableRatings.HasFlag(RatingCategory.MatchMaking)) <br />
-            Counts for casual skill rating: @Html.CheckBox("Casual", Model.ApplicableRatings.HasFlag(RatingCategory.Casual)) <br />
-            Counts for planetwars skill rating: @Html.CheckBox("PlanetWars", Model.ApplicableRatings.HasFlag(RatingCategory.Planetwars)) <br />
+            Counts for competitive skill rating: @Html.CheckBox("MatchMaking", Model.ApplicableRatings.HasFlag(RatingCategoryFlags.MatchMaking)) <br />
+            Counts for casual skill rating: @Html.CheckBox("Casual", Model.ApplicableRatings.HasFlag(RatingCategoryFlags.Casual)) <br />
+            Counts for planetwars skill rating: @Html.CheckBox("PlanetWars", Model.ApplicableRatings.HasFlag(RatingCategoryFlags.Planetwars)) <br />
+            <input type="submit" />
         </form>
 </div>
 }
