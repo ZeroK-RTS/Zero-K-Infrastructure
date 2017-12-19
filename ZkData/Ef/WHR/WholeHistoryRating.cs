@@ -57,7 +57,7 @@ namespace Ratings
             return players[accountID].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.getElo() + RatingOffset);
         }
 
-        public List<float> PredictOutcome(List<ICollection<Account>> teams)
+        public List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams)
         {
             return teams.Select(t =>
                     SetupGame(t.Select(x => x.AccountID).ToList(),
@@ -65,7 +65,7 @@ namespace Ratings
                             true,
                             RatingSystems.ConvertDateToDays(DateTime.UtcNow),
                             -1
-                    ).getBlackWinProbability() * 2 / teams.Count).ToList();
+                    ).getBlackWinProbability() * 2 / teams.Count()).ToList();
         }
 
         private int battlesRegistered = 0;

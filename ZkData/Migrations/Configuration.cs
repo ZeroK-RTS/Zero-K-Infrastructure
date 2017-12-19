@@ -63,9 +63,7 @@ namespace ZkData.Migrations
                         NewPasswordPlain = "test",
                         AdminLevel = AdminLevel.SuperAdmin,
                         Kudos = 200,
-                        Elo = 1700,
                         Level = 50,
-                        EloWeight = 2,
                         Country = "cz"
                     },
                     new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, AdminLevel = AdminLevel.SuperAdmin});

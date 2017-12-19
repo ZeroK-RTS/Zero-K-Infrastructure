@@ -170,9 +170,10 @@ namespace Fixer
                 List<int> forceNeutral = new List<int>(new int[] { 3930, 3964 });
 
                 List<List<Account>> accountsByFaction = new List<List<Account>>();
+                var minDate = DateTime.UtcNow.AddDays(-15);
                 foreach (Faction f in factions)
                 {
-                    accountsByFaction.Add(f.Accounts.Where(x => x.LastLogin > DateTime.UtcNow.AddDays(-15)).OrderByDescending(x => x.EloPw).ToList());
+                    accountsByFaction.Add(f.Accounts.Where(x => x.LastLogin > minDate).OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == Ratings.RatingCategory.Planetwars).Select(y => y.RealElo).DefaultIfEmpty(1500).FirstOrDefault()).ToList());
                 }
                 List<Account> alreadyAssigned = new List<Account>();
 

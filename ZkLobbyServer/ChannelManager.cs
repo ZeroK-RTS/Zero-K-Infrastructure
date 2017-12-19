@@ -84,13 +84,8 @@ namespace ZkLobbyServer
         public bool IsTop20(int lobbyID)
         {
             if (topPlayersExceptions.Contains(lobbyID)) return true;
-            if (RatingSystems.DisableRatingSystems) {
-                if (server.TopPlayerProvider.GetTop().Take(20).Any(x => x.AccountID == lobbyID)) return true;
-                if (server.TopPlayerProvider.GetTopCasual().Take(20).Any(x => x.AccountID == lobbyID)) return true;
-            } else {
-                if (RatingSystems.GetRatingSystem(RatingCategory.Casual).GetPlayerRating(lobbyID).Rank <= 20) return true;
-                if (RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetPlayerRating(lobbyID).Rank <= 20) return true;
-            }
+            if (RatingSystems.GetRatingSystem(RatingCategory.Casual).GetPlayerRating(lobbyID).Rank <= 20) return true;
+            if (RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetPlayerRating(lobbyID).Rank <= 20) return true;
             return false;
         }
 

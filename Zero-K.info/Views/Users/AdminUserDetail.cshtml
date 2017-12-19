@@ -128,12 +128,10 @@
     <br />
 
     <h2>Modify user rating</h2>
-    <form method="post" action="@Url.Action("ChangeElo", "Users", new { accountID = Model.AccountID })">
+    <form method="post" action="@Url.Action("DeleteFromRatings", "Users", new { accountID = Model.AccountID })">
         @Html.AntiForgeryToken()
-        Team newbie malus: @Html.TextBox("eloweight", Model.EloWeight)
-        1v1 newbie malus: @Html.TextBox("eloweight1v1", Model.EloMmWeight)
-        Malus 6 is max (normal experienced player)
-        <input type="submit" />
+        Remove every game this user participated in from ratings. This will impact every person this user played with and cannot be undone without rolling back the database!
+        <input type="submit" value="DELETE" />
     </form>
 
     <h2>Modify user permissions</h2>

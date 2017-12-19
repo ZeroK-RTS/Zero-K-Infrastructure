@@ -750,33 +750,6 @@ namespace ZeroKWeb.Controllers
             return null;
         }
 
-        public ActionResult Ladder()
-        {
-            var ret = MemCache.GetCached("pwLadder",
-                () =>
-                {
-                    ZkDataContext db = new ZkDataContext();
-                    var gal = db.Galaxies.First(x => x.IsDefault);
-                    DateTime minDate = gal.Started ?? DateTime.UtcNow;
-                    List<PwLadder> items = db.Accounts.Where(x=>x.FactionID !=null && x.LastLogin > minDate && x.SpringBattlePlayers.Any(y=>y.SpringBattle.StartTime > minDate && !y.IsSpectator && y.SpringBattle.Mode == AutohostMode.Planetwars)).ToList().GroupBy(x => x.Faction)
-                            .Select(
-                                x =>
-                                    new PwLadder
-                                    {
-                                        Faction = x.Key,
-                                        Top10 =
-                                            x.OrderByDescending(y => y.PwAttackPoints)
-                                                .ThenByDescending(y => y.EloPw)
-                                                .Take(10)
-                                                .ToList()
-                                    })
-                            .ToList();
-                    return items;
-                },
-                60*2);
-            return View("Ladder", ret);
-        }
-
         [Auth]
         public ActionResult MatchMakerAttack(int planetID)
         {

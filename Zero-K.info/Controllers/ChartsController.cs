@@ -354,9 +354,9 @@ namespace ZeroKWeb.Controllers
             public List<PossibleGraph> PossibleGraphs = new List<PossibleGraph>();
             
             public int[] UserId { get; set; }
-            public RatingCategory RatingCategory { get; set; }
+            public RatingCategory RatingCategory { get; set; } = RatingCategory.Casual;
 
-            public DateTime From { get; set; } = DateTime.UtcNow.AddYears(-1).Date;
+            public DateTime From { get; set; } = DateTime.UtcNow.AddYears(-10).Date;
 
             public List<string> Graphs { get; set; } = new List<string>();
 

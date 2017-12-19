@@ -18,7 +18,7 @@ namespace ZeroKWeb.Controllers
         // GET: /Ladders/
         public ActionResult Index()
         {
-            return View("Ladders", Global.LadderCalculator.GetLadder());
+            return View("Ladders", Global.AwardCalculator.GetAwards());
         }
     }
 }
