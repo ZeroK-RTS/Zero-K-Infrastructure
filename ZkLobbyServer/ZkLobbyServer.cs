@@ -441,14 +441,14 @@ namespace ZkLobbyServer
 
         public async Task PublishUserProfilePlanetwarsPlayers()
         {
-            foreach (var conus in ConnectedUsers.Values.Where(x => x != null && x.IsLoggedIn && !string.IsNullOrEmpty(x.User.Faction)))
+            ConnectedUsers.Values.Where(x => x != null && x.IsLoggedIn && !string.IsNullOrEmpty(x.User.Faction)).AsParallel().ForAll(conus =>
             {
                 using (var db = new ZkDataContext())
                 {
                     var acc = db.Accounts.Find(conus.User.AccountID);
-                    await PublishUserProfileUpdate(acc);
+                    if (conus.IsLoggedIn) PublishUserProfileUpdate(acc);
                 }
-            }
+            });
         }
 
 

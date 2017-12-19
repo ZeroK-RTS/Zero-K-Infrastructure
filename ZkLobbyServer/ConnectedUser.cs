@@ -630,6 +630,7 @@ namespace ZkLobbyServer
                 if (server.ConnectedUsers.TryRemove(Name, out connectedUser))
                 {
                     connectedUser.ResetHasSeen();
+                    connectedUser.User.AccountID = 0;
 
                     using (var db = new ZkDataContext())
                     {
