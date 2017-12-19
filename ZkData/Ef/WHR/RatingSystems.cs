@@ -39,7 +39,7 @@ namespace Ratings
                             .Include(x => x.SpringBattlePlayers)
                             .Include(x => x.SpringBattleBots)
                             .AsNoTracking()
-                            .OrderBy(x => x.SpringBattleID))
+                            .OrderBy(x => x.StartTime))
                     {
                         ProcessResult(b);
                     }

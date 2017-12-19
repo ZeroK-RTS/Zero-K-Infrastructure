@@ -67,6 +67,7 @@ namespace Ratings
         }
 
         private int battlesRegistered = 0;
+        private SpringBattle firstBattle = null;
 
         public void ProcessBattle(SpringBattle battle)
         {
@@ -74,6 +75,7 @@ namespace Ratings
             ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
             if (winners.Count > 0 && losers.Count > 0)
             {
+                if (firstBattle == null) firstBattle = battle;
                 latestBattle = battle;
                 battlesRegistered++;
                 int date = RatingSystems.ConvertDateToDays(battle.StartTime);
@@ -157,7 +159,7 @@ namespace Ratings
                 if (lastUpdate == null)
                 {
                     updateAction = (() => {
-                        Trace.TraceInformation("Initializing WHR " + category +" ratings for " + battlesRegistered + " battles, this will take some time..");
+                        Trace.TraceInformation("Initializing WHR " + category +" ratings for " + battlesRegistered + " battles, this will take some time.. From B" + firstBattle?.SpringBattleID + " to B" + latestBattle?.SpringBattleID);
                         runIterations(50);
                         UpdateRankings(players.Values);
                         SaveToDB();

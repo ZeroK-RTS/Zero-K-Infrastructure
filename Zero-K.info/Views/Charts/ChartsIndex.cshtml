@@ -8,7 +8,7 @@
 <script src="/Scripts/moment.min.js"></script>
 <script src="/Scripts/Chart.min.js"></script>
 
-<div class="fleft" style="padding: 5px;">
+<div class="fleft" style="padding: 5px;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;">
     <h2>Zero-K player statistics</h2>
     <form method="get" action="@Url.Action("Index")" id="formID">
         <table>
@@ -34,7 +34,7 @@
     @{
         if (Model.GraphingData != null && Model.GraphingData.Count > 0)
         {
-            <canvas id="graphID"></canvas>
+            <canvas id="graphID" class="width-100"></canvas>
             <script language="javascript">
 
                 var ctx = document.getElementById('graphID').getContext('2d');
