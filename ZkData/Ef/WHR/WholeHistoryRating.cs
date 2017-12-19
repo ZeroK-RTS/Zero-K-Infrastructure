@@ -247,9 +247,10 @@ namespace Ratings
                         accountRating.UpdateFromRatingSystem(playerRatings[accountRating.AccountID]);
                     }
                 }
+                int today = RatingSystems.ConvertDateToDays(DateTime.UtcNow);
                 foreach (int player in playerRatings.Keys)
                 {
-                    if (!processedPlayers.Contains(player))
+                    if (!processedPlayers.Contains(player) && today - players[player].days.Last().day < GlobalConst.LadderActivityDays)
                     {
                         var accountRating = new AccountRating(player, category);
                         accountRating.UpdateFromRatingSystem(playerRatings[player]);
