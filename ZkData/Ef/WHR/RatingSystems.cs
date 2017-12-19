@@ -46,11 +46,11 @@ namespace Ratings
                                     .AsNoTracking()
                                     .OrderBy(x => x.StartTime))
                             {
-                                ProcessResult(b);
+                                ProcessBattle(b);
                             }
                         }
-                        whr.Values.ForEach(w => w.UpdateRatings());
                         Initialized = true;
+                        whr.Values.ForEach(w => w.UpdateRatings());
                     }
                     catch (Exception ex)
                     {
@@ -81,6 +81,12 @@ namespace Ratings
         private static int latestBattle;
 
         public static void ProcessResult(SpringBattle battle)
+        {
+            if (!Initialized) return;
+            ProcessBattle(battle);
+        }
+
+        private static void ProcessBattle(SpringBattle battle)
         {
             if (DisableRatingSystems) return;
             lock (processingLock)

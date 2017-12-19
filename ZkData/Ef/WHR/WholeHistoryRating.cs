@@ -40,7 +40,7 @@ namespace Ratings
         {
             this.category = category;
             w2 = GlobalConst.EloDecayPerDaySquared;
-            ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
+            ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, 15 * 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
         }
         
 
@@ -156,6 +156,7 @@ namespace Ratings
 
         public void UpdateRatings()
         {
+            if (!RatingSystems.Initialized) return;
             if (latestBattle == null)
             {
                 //Trace.TraceInformation("WHR " + category +": No battles to evaluate");
