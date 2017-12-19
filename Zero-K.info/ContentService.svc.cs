@@ -268,6 +268,16 @@ namespace ZeroKWeb
             info.NewsItems = Global.Server.NewsListManager.GetCurrentNewsList().NewsItems;
             info.LadderItems = Global.Server.LadderListManager.GetCurrentLadderList().LadderItems;
             info.ForumItems = Global.Server.ForumListManager.GetCurrentForumList(null).ForumItems;
+            info.MapItems = MemCache.GetCached<List<MapItem>>("featuredMapItems",
+                () =>
+                {
+                    using (var db = new ZkDataContext())
+                    {
+                        return db.Resources.Where(x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= MapSupportLevel.Featured).ToList()
+                            .Select(x => x.ToMapItem()).ToList();
+                    }
+                }, 3542);
+
             return info;
         }
     }

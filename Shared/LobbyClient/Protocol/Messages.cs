@@ -708,6 +708,8 @@ namespace LobbyClient
         public string Map { get; set; }
         public int Port { get; set; }
         public string ScriptPassword { get; set; }
+        public AutohostMode Mode { get; set; }
+        public string Title { get; set; }
     }
 
     [Message(Origin.Server)]

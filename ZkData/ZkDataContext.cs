@@ -793,10 +793,12 @@ namespace ZkData
         {
             public object Entity { get; private set; }
             public EntityState State { get; private set; }
-            public EntityEntry(object entity, EntityState state)
+            public ZkDataContext Context { get; private set; }
+            public EntityEntry(object entity, EntityState state, ZkDataContext context)
             {
                 Entity = entity;
                 State = state;
+                Context = context;
             }
         }
 
@@ -842,7 +844,7 @@ namespace ZkData
 
         private List<EntityEntry> GetChanges()
         {
-            return ChangeTracker.Entries().Where(x => x.State == EntityState.Modified || x.State == EntityState.Added || x.State == EntityState.Deleted).Select(x => new EntityEntry(x.Entity, x.State)).ToList();
+            return ChangeTracker.Entries().Where(x => x.State == EntityState.Modified || x.State == EntityState.Added || x.State == EntityState.Deleted).Select(x => new EntityEntry(x.Entity, x.State, this)).ToList();
         }
 
         private static string ProcessEntityValidationErrors(DbEntityValidationException e)
