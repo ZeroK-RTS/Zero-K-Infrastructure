@@ -32,6 +32,9 @@ namespace PlasmaShared
         public string Name { get; set; }
         public string Clan { get; set; } 
         public string Icon { get; set; }
+        public int Level { get; set; }
+        public string Country { get; set; }
+        public bool IsAdmin { get; set; }
         public int AccountID { get; set; }
     }
 

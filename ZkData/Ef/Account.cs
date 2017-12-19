@@ -685,7 +685,7 @@ namespace ZkData
 
         public LadderItem ToLadderItem()
         {
-            return new LadderItem() { Name = Name, Clan = Clan?.Shortcut, Icon = GetIconName(), AccountID = AccountID};
+            return new LadderItem() { Name = Name, Clan = Clan?.Shortcut, Icon = GetIconName(), AccountID = AccountID, Level =  Level, IsAdmin = AdminLevel>= AdminLevel.Moderator, Country = Country};
         }
 
 
