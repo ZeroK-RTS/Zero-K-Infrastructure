@@ -22,13 +22,15 @@ namespace Ratings
 
         const float RatingOffset = 1500;
         public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, 0, 0);
+        
+        IDictionary<ITopPlayersUpdateListener, int> topPlayersUpdateListeners = new Dictionary<ITopPlayersUpdateListener, int>();
+        public event EventHandler<RatingUpdate> RatingsUpdated;
 
         IDictionary<int, PlayerRating> playerRatings = new ConcurrentDictionary<int, PlayerRating>();
         IDictionary<int, Player> players = new Dictionary<int, Player>();
         SortedDictionary<float, int> sortedPlayers = new SortedDictionary<float, int>();
         List<int> topPlayers = new List<int>();
         IDictionary<int, float> playerKeys = new Dictionary<int, float>();
-        IDictionary<ITopPlayersUpdateListener, int> topPlayersUpdateListeners = new Dictionary<ITopPlayersUpdateListener, int>(); 
         Random rand = new Random();
         readonly float w2; //elo range expand per day squared
         private Timer ladderRecalculationTimer;
@@ -348,6 +350,7 @@ namespace Ratings
                         listener.Key.TopPlayersUpdated(GetTopPlayers(listener.Value));
                     }
                 }
+                RatingsUpdated(this, new RatingUpdate() { affectedPlayers = players.Select(x => x.id) });
             }
             catch (Exception ex)
             {
@@ -464,6 +467,11 @@ namespace Ratings
                 p.runOneNewtonIteration();
             }
         }
+    }
+
+    public class RatingUpdate : EventArgs
+    {
+        public IEnumerable<int> affectedPlayers { get; set; }
     }
 
 }

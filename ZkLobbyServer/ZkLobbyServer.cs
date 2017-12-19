@@ -85,6 +85,18 @@ namespace ZkLobbyServer
             NewsListManager = new NewsListManager(this);
             LadderListManager = new LadderListManager(this);
             ForumListManager = new ForumListManager(this);
+
+
+            RatingSystems.GetRatingSystems().ForEach(x => x.RatingsUpdated += (sender, data) => 
+            {
+                var db = new ZkDataContext();
+                var updatedUsers = ConnectedUsers.Select(c => c.Value.User.AccountID).Intersect(data.affectedPlayers).ToHashSet();
+                db.Accounts.Where(acc => updatedUsers.Contains(acc.AccountID)).ForEach(p =>
+                {
+                    PublishAccountUpdate(p);
+                    PublishUserProfileUpdate(p);
+                });
+            });
         }
 
         /// <summary>

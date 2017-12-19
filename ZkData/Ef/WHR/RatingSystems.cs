@@ -67,6 +67,12 @@ namespace Ratings
             //ratingCategories.ForEach(category => whr[category].SaveToDB());
         }
 
+
+        public static IEnumerable<IRatingSystem> GetRatingSystems()
+        {
+            return whr.Values;
+        }
+
         public static IRatingSystem GetRatingSystem(RatingCategory category)
         {
             if (DisableRatingSystems) return null;
