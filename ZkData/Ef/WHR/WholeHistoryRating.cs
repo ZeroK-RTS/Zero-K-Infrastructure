@@ -69,18 +69,26 @@ namespace Ratings
         private int battlesRegistered = 0;
         private SpringBattle firstBattle = null;
 
+        private bool _outoforder = false;
+
         public void ProcessBattle(SpringBattle battle)
         {
             ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
             ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
             if (winners.Count > 0 && losers.Count > 0)
             {
+                if (latestBattle != null && battle.StartTime < latestBattle.StartTime && !_outoforder)
+                {
+                    _outoforder = true;
+                    Trace.TraceWarning("WHR " + category + " receiving battles out of order! " + battle.SpringBattleID + " from " + battle.StartTime + " comes before " + latestBattle.SpringBattleID + " from " + latestBattle.StartTime);
+                }
+
                 if (firstBattle == null) firstBattle = battle;
                 latestBattle = battle;
                 battlesRegistered++;
                 int date = RatingSystems.ConvertDateToDays(battle.StartTime);
                 if (date > RatingSystems.ConvertDateToDays(DateTime.UtcNow))
-                {
+                {   
                     Trace.TraceWarning("WHR " + category +": Tried to register battle " + battle.SpringBattleID + " which is from the future " + (date) + " > " + RatingSystems.ConvertDateToDays(DateTime.UtcNow));
                 }
                 else

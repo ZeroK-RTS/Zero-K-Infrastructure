@@ -18,7 +18,9 @@ namespace ZkData.Migrations
 
         private static void InitializeBattleRatings(ZkDataContext db)
         {
-            db.SpringBattles.Where(battle => (!(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID != null && battle.ResourceByMapResourceID.MapIsSpecial == true) || battle.Duration < GlobalConst.MinDurationForElo))).Update(battle => new SpringBattle()
+            db.SpringBattles.Where(battle => (!(battle.IsMission ||  battle.SpringBattlePlayers.Count > 0 && battle.SpringBattlePlayers.Any(x => x.IsInVictoryTeam) && 
+                    (!battle.SpringBattlePlayers.Where(x => x.IsInVictoryTeam).FirstOrDefault().EloChange.HasValue || Math.Abs(battle.SpringBattlePlayers.Where(x => x.IsInVictoryTeam).FirstOrDefault().EloChange.Value) < 0.001)
+            || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID != null && battle.ResourceByMapResourceID.MapIsSpecial == true) || battle.Duration < GlobalConst.MinDurationForElo))).Update(battle => new SpringBattle()
             {
                 ApplicableRatings = RatingCategoryFlags.Casual
             });
