@@ -164,7 +164,7 @@ namespace ZeroKWeb.Controllers
         {
             using (var db = new ZkDataContext())
             {
-                db.SpringBattles.Where(x => x.SpringBattleID == BattleID).FirstOrDefault().ApplicableRatings = (MatchMaking ? Ratings.RatingCategory.MatchMaking : 0) | (Casual ? Ratings.RatingCategory.Casual : 0) | (PlanetWars ? Ratings.RatingCategory.Planetwars : 0);
+                db.SpringBattles.Where(x => x.SpringBattleID == BattleID).FirstOrDefault().ApplicableRatings = (MatchMaking ? Ratings.RatingCategoryFlags.MatchMaking : 0) | (Casual ? Ratings.RatingCategoryFlags.Casual : 0) | (PlanetWars ? Ratings.RatingCategoryFlags.Planetwars : 0);
                 db.SaveChanges();
             }
             return Detail(BattleID);

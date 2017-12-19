@@ -3,6 +3,7 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using EntityFramework.Extensions;
 using Ratings;
 
 namespace ZkData.Migrations
@@ -17,26 +18,18 @@ namespace ZkData.Migrations
 
         private static void InitializeBattleRatings(ZkDataContext db)
         {
-            DateTime minStartTime = DateTime.Now.AddMonths(-1);
-
-            foreach (SpringBattle battle in db.SpringBattles.Where(x => x.StartTime > minStartTime).ToList())
+            db.SpringBattles.Where(battle => (!(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID != null && battle.ResourceByMapResourceID.MapIsSpecial == true) || battle.Duration < GlobalConst.MinDurationForElo))).Update(battle => new SpringBattle()
             {
-                try
-                {
-                    int val = 0;
-                    if (!battle.HasBots)
-                    {
-                        val += (!(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID?.MapIsSpecial == true) || battle.Duration < GlobalConst.MinDurationForElo)) ? (int)(RatingCategory.Casual) : 0;
-                        val += (battle.IsMatchMaker || battle.Title?.Contains("[T]") == true || battle.Title?.Contains("Tournament") == true || battle.Title?.Contains("Tourney") == true) ? (int)RatingCategory.MatchMaking : 0;
-                        val += (battle.Mode == PlasmaShared.AutohostMode.Planetwars) ? (int)RatingCategory.Planetwars : 0;
-                    }
-                    battle.ApplicableRatings = (RatingCategory)val;
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Trace.TraceError("Error applying ratings: " + ex);
-                }
-            }
+                ApplicableRatings = RatingCategoryFlags.Casual
+            });
+            db.SpringBattles.Where(battle => (!battle.HasBots && (battle.IsMatchMaker || !string.IsNullOrEmpty(battle.Title) && (battle.Title.Contains("[T]") || battle.Title.Contains("Tourney"))))).Update(battle => new SpringBattle()
+            {
+                ApplicableRatings = RatingCategoryFlags.MatchMaking | RatingCategoryFlags.Casual
+            });
+            db.SpringBattles.Where(battle => (!battle.HasBots && battle.Mode == PlasmaShared.AutohostMode.Planetwars)).Update(battle => new SpringBattle()
+            {
+                ApplicableRatings = RatingCategoryFlags.Planetwars | RatingCategoryFlags.Casual
+            });
         }
 
         protected override void Seed(ZkDataContext db) {
