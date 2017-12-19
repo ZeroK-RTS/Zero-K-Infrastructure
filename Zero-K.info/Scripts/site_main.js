@@ -393,6 +393,7 @@ function GlobalPageInit(root) {
                 }
             }
         }).data('ui-autocomplete')._renderItem = function (ul, item) {
+            item.label = item.label.replace("href", "hack");
             return $("<li></li>").data("item.autocomplete", item).append($("<a></a>").html(item.label)).appendTo(ul);
         };
     });
