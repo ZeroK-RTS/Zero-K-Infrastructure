@@ -18,9 +18,9 @@ namespace ZkLobbyServer
         List<Thread> listenThreads = new List<Thread>();
         List<ITransportServerListener> listeners = new List<ITransportServerListener>();
 
-        public ServerRunner(string geoIPpath, IPlanetwarsEventCreator creator, ITopPlayerProvider topPlayerProvider)
+        public ServerRunner(string geoIPpath, IPlanetwarsEventCreator creator)
         {
-            ZkLobbyServer = new ZkLobbyServer(geoIPpath, creator, topPlayerProvider);
+            ZkLobbyServer = new ZkLobbyServer(geoIPpath, creator);
         }
 
 

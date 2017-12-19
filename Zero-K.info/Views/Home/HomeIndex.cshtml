@@ -148,7 +148,7 @@
                     <tr>
                         <td>@(++rank)</td>
                         <td><small>@Html.PrintAccount(acct)</small></td>
-                        <td>@(Math.Round(RatingSystems.DisableRatingSystems ? acct.EffectiveMmElo : acct.GetRating(RatingCategory.MatchMaking).Elo))</td>
+                        <td>@(Math.Round(acct.GetRating(RatingCategory.MatchMaking).Elo))</td>
                     </tr>
                 }
             }

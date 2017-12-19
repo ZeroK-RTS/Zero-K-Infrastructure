@@ -7,20 +7,14 @@
 <span style="float:left;">@Html.AccountAvatar(u)<br/>@Html.PrintBadges(u, 64)</span><b>@Html.PrintAccount(u)</b><br/>
 <p>
     <b>First Login:</b> @u.FirstLogin.ToAgoString(), <b>Last Login:</b> @u.LastLogin.ToAgoString()<br />
-    @if (Ratings.RatingSystems.DisableRatingSystems)
-    {
-        <b>Competitive rank:</b> @(Model.CompetitiveRank == null ? "?" : $"{Model.CompetitiveRank}. ({Math.Round(Model.EffectiveMmElo)})")<br />
-        <b>Casual rank:</b> @(Model.CasualRank == null ? "?" : $"{Model.CasualRank}. ({Math.Round(Model.EffectiveElo)})")<br />
-    }
-    else
-    {
+    @{
         var casual = Model.GetRating(Ratings.RatingCategory.Casual);
         var mm = Model.GetRating(Ratings.RatingCategory.MatchMaking);
         var pw = Model.GetRating(Ratings.RatingCategory.Planetwars);
-
-        <b>Competitive rank:</b> @(mm.Rank == int.MaxValue ? "Unranked" : $"{mm.Rank}. ({Math.Round(mm.Elo)})")<br />
-        <b>Casual rank:</b> @(casual.Rank == int.MaxValue ? "Unranked" : $"{casual.Rank}. ({Math.Round(casual.Elo)})")<br />
     }
+
+    <b>Competitive rank:</b> @(mm.Rank == int.MaxValue ? "Unranked" : $"{mm.Rank}. ({Math.Round(mm.Elo)})")<br />
+    <b>Casual rank:</b> @(casual.Rank == int.MaxValue ? "Unranked" : $"{casual.Rank}. ({Math.Round(casual.Elo)})")<br />
     <b>Level:</b> @u.Level<br />
     <br />
     @foreach (var entry in Model.AccountRolesByAccountID)

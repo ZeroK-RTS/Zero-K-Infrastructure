@@ -18,13 +18,10 @@ namespace Ratings
 
         public static bool Initialized { get; private set; }
 
-        public const bool DisableRatingSystems = false;
-
         private static object processingLock = new object();
 
         public static void Init()
         {
-            if (DisableRatingSystems) return;
             Initialized = false;
             ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating(category));
 
@@ -60,13 +57,6 @@ namespace Ratings
             });
         }
 
-        public static void BackupToDB()
-        {
-            if (DisableRatingSystems) return;
-            //Trace.TraceInformation("Backing up ratings...");
-            //ratingCategories.ForEach(category => whr[category].SaveToDB());
-        }
-
 
         public static IEnumerable<IRatingSystem> GetRatingSystems()
         {
@@ -75,7 +65,6 @@ namespace Ratings
 
         public static IRatingSystem GetRatingSystem(RatingCategory category)
         {
-            if (DisableRatingSystems) return null;
             if (!whr.ContainsKey(category))
             {
                 Trace.TraceError("WHR: Unknown category " + category);
@@ -94,7 +83,6 @@ namespace Ratings
 
         private static void ProcessBattle(SpringBattle battle)
         {
-            if (DisableRatingSystems) return;
             lock (processingLock)
             {
                 int battleID = -1;

@@ -129,11 +129,11 @@ namespace ZeroKWeb
 
             GlobalConst.SiteDiskPath = MapPath("~");
             
-            LadderCalculator = new LadderCalculator();
-            LadderCalculator.RecomputeNow();
+            AwardCalculator = new AwardCalculator();
+            AwardCalculator.RecomputeNow();
 
             var sitePath = mvcApplication.Server.MapPath("~");
-            ZkServerRunner = new ServerRunner(sitePath, new PlanetwarsEventCreator(), LadderCalculator);
+            ZkServerRunner = new ServerRunner(sitePath, new PlanetwarsEventCreator());
             Server = ZkServerRunner.ZkLobbyServer;
 
             Trace.TraceInformation("Starting lobby server");
@@ -163,7 +163,7 @@ namespace ZeroKWeb
 
         public static SteamDepotGenerator SteamDepotGenerator { get; private set; }
 
-        public static LadderCalculator LadderCalculator { get; private set; }
+        public static AwardCalculator AwardCalculator { get; private set; }
 
         public static ForumPostIndexer ForumPostIndexer { get; private set; }
 

@@ -16,11 +16,11 @@ namespace ZkLobbyServer
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            if (!battle.IsMatchMakerBattle)
+            /*if (!battle.IsMatchMakerBattle)
             {
                 battle.Respond(e, "Not a matchmaker battle, cannot predict");
                 return null;
-            }
+            }*/
             return string.Empty;
         }
 
@@ -30,32 +30,28 @@ namespace ZkLobbyServer
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
             var b = battle;
-            Dictionary<int, double> grouping;
+            List<IEnumerable<Account>> teams;
+
+            RatingCategory cat = RatingCategory.Casual;
+            if (b.IsMatchMakerBattle) cat = RatingCategory.MatchMaking;
+            if (b.Mode == PlasmaShared.AutohostMode.Planetwars) cat = RatingCategory.Planetwars;
 
             using (var db = new ZkDataContext())
             {
                 if (battle.IsInGame)
-                    grouping = b.spring.LobbyStartContext?.Players.Where(u => !u.IsSpectator)
+                    teams = b.spring.LobbyStartContext?.Players.Where(u => !u.IsSpectator)
                         .GroupBy(u => u.AllyID)
-                        .ToDictionary(x => x.Key, x => x.Average(y => RatingSystems.DisableRatingSystems ? Account.AccountByName(db, y.Name).BestEffectiveElo : Account.AccountByName(db, y.Name).GetBestRating().Elo));
+                        .Select(x => x.Select(p => Account.AccountByName(db, p.Name))).ToList();
                 else
-                    grouping = b.Users.Values.Where(u => !u.IsSpectator)
+                    teams = b.Users.Values.Where(u => !u.IsSpectator)
                         .GroupBy(u => u.AllyNumber)
-                        .ToDictionary(x => x.Key, x => x.Average(y => Math.Max(y.LobbyUser.EffectiveMmElo, y.LobbyUser.EffectiveElo)));
+                        .Select(x => x.Select(p => Account.AccountByName(db, p.Name))).ToList();
             }
 
-            KeyValuePair<int, double>? oldg = null;
-            foreach (var g in grouping)
+            var chances = RatingSystems.GetRatingSystem(cat).PredictOutcome(teams);
+            for (int i = 0; i < teams.Count; i++)
             {
-                if (oldg != null)
-                {
-                    var t1elo = oldg.Value.Value;
-                    var t2elo = g.Value;
-                    await
-                        battle.Respond(e,
-                            $"team {oldg.Value.Key + 1} has {Utils.GetWinChancePercent(t2elo - t1elo)}% chance to win over team {g.Key + 1}");
-                }
-                oldg = g;
+                await battle.Respond(e, $"Team {teams[i].First().Name} has a {Math.Round(1000 * chances[i]) / 10}% chance to win");
             }
         }
     }

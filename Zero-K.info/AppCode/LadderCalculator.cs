@@ -13,33 +13,29 @@ using Ratings;
 
 namespace ZeroKWeb
 {
-    public class LadderCalculator: ITopPlayerProvider
+    public class AwardCalculator
     {
         private const int LadderRefreshMinutes = 30;
 
-        private LadderModel ladderModel = new LadderModel();
+        private AwardModel awardModel = new AwardModel();
 
         private Timer timer;
 
-        public LadderCalculator()
+        public AwardCalculator()
         {
-            timer = new Timer((t) => { ladderModel = ComputeLadder(); }, this, LadderRefreshMinutes * 60 * 1000, LadderRefreshMinutes * 60 * 1000);
+            timer = new Timer((t) => { awardModel = ComputeLadder(); }, this, LadderRefreshMinutes * 60 * 1000, LadderRefreshMinutes * 60 * 1000);
         }
 
         public void RecomputeNow()
         {
-            ladderModel = ComputeLadder();
-            TopPlayersUpdated?.Invoke(this, this);
+            awardModel = ComputeLadder();
         }
 
-        public LadderModel GetLadder()
+        public AwardModel GetAwards()
         {
-            return ladderModel;
+            return awardModel;
         }
-
-        public List<Account> GetTop() => ladderModel?.TopAccounts;
-        public List<Account> GetTopCasual() => ladderModel?.TopCasual;
-        public event EventHandler<ITopPlayerProvider> TopPlayersUpdated;
+        
 
 
         private static List<AwardItem> CalculateAwards(ZkDataContext db)
@@ -108,138 +104,23 @@ namespace ZeroKWeb
         }
 
         object computeLadderLock = new object();
-        private LadderModel ComputeLadder()
+        private AwardModel ComputeLadder()
         {
             lock (computeLadderLock)
             {
                 try
                 {
-                    if (!RatingSystems.DisableRatingSystems)
-                    {
-                        RatingSystems.BackupToDB();
-                    }
 
                     var db = new ZkDataContext();
                     db.Database.CommandTimeout = 600;
 
                     var awardItems = CalculateAwards(db);
-
-                    var ladderTimeout = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
-
-                    // set unused accounts weight to 1
-                    db.Accounts.Where(x => !x.SpringBattlePlayers.Any(
-                                    y => (y.SpringBattle.StartTime > ladderTimeout) && !y.SpringBattle.IsMatchMaker && !y.IsSpectator))
-                        .Update(acc => new Account() { EloWeight = 1 });
-
-                    db.Accounts.Where(x => !x.SpringBattlePlayers.Any(y => (y.SpringBattle.StartTime > ladderTimeout) && y.SpringBattle.IsMatchMaker && !y.IsSpectator)).Update(acc => new Account() { EloMmWeight = 1 });
-
-                    db.SaveChanges();
-
-
-                    foreach (
-                        var entry in
-                        db.Accounts.Where(x => x.EloWeight > 1)
-                            .Select(
-                                acc =>
-                                    new
-                                    {
-                                        Account = acc,
-                                        LastGame =
-                                        acc.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.SpringBattle.IsMatchMaker)
-                                            .OrderByDescending(x => x.SpringBattleID)
-                                            .Select(x =>x.SpringBattle.StartTime).FirstOrDefault()
-                                    }))
-                    {
-                        var days = DateTime.UtcNow.Subtract(entry.LastGame).TotalDays;
-                        var decayRatio = ((days-7)/(GlobalConst.LadderActivityDays-7)).Clamp(0,1);
-                        entry.Account.EloWeight = Math.Min(entry.Account.EloWeight,
-                            Math.Max(1, GlobalConst.EloWeightMax - (GlobalConst.EloWeightMax - 1)*decayRatio));
-                    }
-
-                    db.SaveChanges();
-
-
-                    foreach (
-                        var entry in
-                        db.Accounts.Where(x => x.EloMmWeight > 1)
-                            .Select(
-                                acc =>
-                                    new
-                                    {
-                                        Account = acc,
-                                        LastGame =
-                                        acc.SpringBattlePlayers.Where(x => !x.IsSpectator && x.SpringBattle.IsMatchMaker)
-                                            .OrderByDescending(x => x.SpringBattleID)
-                                            .Select(x => x.SpringBattle.StartTime).FirstOrDefault()
-                                    }))
-                    {
-                        var days = DateTime.UtcNow.Subtract(entry.LastGame).TotalDays;
-                        var decayRatio = ((days - 7) / (GlobalConst.LadderActivityDays - 7)).Clamp(0, 1);
-                        entry.Account.EloMmWeight = Math.Min(entry.Account.EloMmWeight,
-                            Math.Max(1, GlobalConst.EloWeightMax - (GlobalConst.EloWeightMax - 1) * decayRatio));
-                    }
-                    db.SaveChanges();
-
-
-                    // recalc competitive ranking
-                    var cnt = 0;
-                    foreach (var a in
-                        db.Accounts.Where(
-                                x =>
-                                    x.SpringBattlePlayers.Any(
-                                        y => (y.SpringBattle.StartTime > ladderTimeout) && y.SpringBattle.IsMatchMaker && !y.IsSpectator))
-                            .OrderByDescending(x => x.EffectiveMmElo)
-                            .WithTranslations())
-                    {
-                        cnt++;
-                        a.CompetitiveRank = cnt;
-                    }
-                    db.SaveChanges();
-
-                    cnt = 0;
-                    foreach (var a in
-                        db.Accounts.Where(
-                                x =>
-                                    x.SpringBattlePlayers.Any(
-                                        y => (y.SpringBattle.StartTime > ladderTimeout) && !y.SpringBattle.IsMatchMaker && !y.IsSpectator))
-                            .OrderByDescending(x => x.EffectiveElo)
-                            .WithTranslations())
-                    {
-                        cnt++;
-                        a.CasualRank = cnt;
-                    }
-                    db.SaveChanges();
-
-                    var topAccounts =
-                        db.Accounts.Where(
-                                x =>
-                                    x.SpringBattlePlayers.Any(
-                                        y => (y.SpringBattle.StartTime > ladderTimeout) && y.SpringBattle.IsMatchMaker && !y.IsSpectator))
-                            .Include(x => x.Clan)
-                            .Include(x => x.Faction)
-                            .OrderByDescending(x => x.EffectiveMmElo)
-                            .WithTranslations()
-                            .Take(GlobalConst.LadderSize)
-                            .ToList();
-
-                    var topCasual =
-                        db.Accounts.Where(
-                                x =>
-                                    x.SpringBattlePlayers.Any(
-                                        y => (y.SpringBattle.StartTime > ladderTimeout) && !y.SpringBattle.IsMatchMaker && !y.IsSpectator))
-                            .Include(x => x.Clan)
-                            .Include(x => x.Faction)
-                            .OrderByDescending(x => x.EffectiveElo)
-                            .WithTranslations()
-                            .Take(GlobalConst.LadderSize)
-                            .ToList();
-
-                    return new LadderModel { AwardItems = awardItems, TopAccounts = topAccounts, TopCasual = topCasual };
+                    return new AwardModel { AwardItems = awardItems };
                 }
                 catch (Exception ex)
                 {
                     Trace.TraceError("Error computing ladder: {0}", ex);
-                    return new LadderModel();
+                    return new AwardModel();
                 }
             }
         }
@@ -256,11 +137,9 @@ namespace ZeroKWeb
             public Account TopScoreHolderM;
         }
 
-        public class LadderModel
+        public class AwardModel
         {
             public List<AwardItem> AwardItems = new List<AwardItem>();
-            public List<Account> TopAccounts = new List<Account>();
-            public List<Account> TopCasual = new List<Account>();
         }
 
     }
