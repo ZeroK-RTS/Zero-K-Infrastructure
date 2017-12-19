@@ -120,7 +120,9 @@ namespace ZkLobbyServer
                 Port = hostingPort,
                 Map = MapName,
                 Game = ModName,
-                ScriptPassword = scriptPassword
+                ScriptPassword = scriptPassword,
+                Mode = Mode,
+                Title = Title
             };
         }
 
