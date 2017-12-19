@@ -47,12 +47,35 @@ namespace PlasmaShared
         public bool IsRead { get; set; }
     }
 
+    public class MapItem
+    {
+        public int ResourceID { get; set; }
+        public string Name { get; set; }
+        public MapSupportLevel SupportLevel { get; set; }
+        public int? Width { get; set; }
+        public int? Height { get; set; }
+        public bool? IsAssymetrical { get; set; }
+        public int? Hills { get; set; }
+        public int? WaterLevel { get; set; }
+        public bool? Is1v1 { get; set; }
+        public bool? IsTeams { get; set; }
+        public bool? IsFFA { get; set; }
+        public bool? IsChickens { get; set; }
+        public int? FFAMaxTeams { get; set; }
+        public int? RatingCount { get; set; }
+        public int? RatingSum { get; set; }
+        public bool? IsSpecial { get; set; }
+    }
+
+
+
 
     public class PublicCommunityInfo
     {
         public List<NewsItem> NewsItems { get; set; } = new List<NewsItem>();
         public List<LadderItem> LadderItems { get; set; } = new List<LadderItem>();
         public List<ForumItem> ForumItems { get; set; } = new List<ForumItem>();
+        public List<MapItem> MapItems { get; set; } = new List<MapItem>();
 
     }
 

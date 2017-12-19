@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Drawing;
+using PlasmaShared;
 
 namespace ZkData
 {
@@ -51,7 +52,7 @@ namespace ZkData
         [StringLength(100)]
         [Index]
         public string RapidTag { get; set; }
-        
+
         public virtual Account Account { get; set; }
         public virtual ForumThread ForumThread { get; set; }
         public virtual ICollection<MapRating> MapRatings { get; set; } = new HashSet<MapRating>();
@@ -151,5 +152,29 @@ namespace ZkData
             get { return string.Concat((string)InternalName.EscapePath(), ".metalmap.jpg"); }
         }
 
+        public MapItem ToMapItem()
+        {
+            if (TypeID != ResourceType.Map) return null;
+
+            return new MapItem()
+            {
+                ResourceID = ResourceID,
+                Name = InternalName,
+                SupportLevel = MapSupportLevel,
+                Width = MapWidth,
+                Height = MapHeight,
+                IsAssymetrical = MapIsAssymetrical,
+                Hills = MapHills,
+                WaterLevel = MapWaterLevel,
+                Is1v1 = MapIs1v1,
+                IsTeams = MapIsTeams,
+                IsFFA = MapIsFfa,
+                IsChickens = MapIsChickens,
+                FFAMaxTeams = MapFFAMaxTeams,
+                RatingCount = MapRatingCount,
+                RatingSum = MapRatingSum,
+                IsSpecial = MapIsSpecial
+            };
+        }
     }
 }
