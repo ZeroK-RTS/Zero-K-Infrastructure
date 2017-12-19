@@ -31,20 +31,31 @@ namespace Ratings
             Task.Factory.StartNew(() => {
                 lock (processingLock)
                 {
-                    ZkDataContext data = new ZkDataContext();
-                    DateTime minStartTime = DateTime.Now.AddYears(-5);
-                    foreach (SpringBattle b in data.SpringBattles
-                            .Where(x => x.StartTime > minStartTime)
-                            .Include(x => x.ResourceByMapResourceID)
-                            .Include(x => x.SpringBattlePlayers)
-                            .Include(x => x.SpringBattleBots)
-                            .AsNoTracking()
-                            .OrderBy(x => x.StartTime))
+                    try
                     {
-                        ProcessResult(b);
+                        ZkDataContext data = new ZkDataContext();
+                        for (int year = 10; year > 0; year--)
+                        {
+                            DateTime minStartTime = DateTime.Now.AddYears(-year);
+                            DateTime maxStartTime = DateTime.Now.AddYears(-year + 1);
+                            foreach (SpringBattle b in data.SpringBattles
+                                    .Where(x => x.StartTime > minStartTime && x.StartTime < maxStartTime)
+                                    .Include(x => x.ResourceByMapResourceID)
+                                    .Include(x => x.SpringBattlePlayers)
+                                    .Include(x => x.SpringBattleBots)
+                                    .AsNoTracking()
+                                    .OrderBy(x => x.StartTime))
+                            {
+                                ProcessResult(b);
+                            }
+                        }
+                        whr.Values.ForEach(w => w.UpdateRatings());
+                        Initialized = true;
                     }
-                    whr.Values.ForEach(w => w.UpdateRatings());
-                    Initialized = true;
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError("WHR: Error reading battles from DB" + ex);
+                    }
                 }
             });
         }

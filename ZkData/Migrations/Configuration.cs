@@ -24,7 +24,8 @@ namespace ZkData.Migrations
             {
                 ApplicableRatings = RatingCategoryFlags.Casual
             });
-            db.SpringBattles.Where(battle => (!battle.HasBots && (battle.IsMatchMaker || !string.IsNullOrEmpty(battle.Title) && (battle.Title.Contains("[T]") || battle.Title.Contains("Tourney"))))).Update(battle => new SpringBattle()
+            db.SpringBattles.Where(battle => (!battle.HasBots && (battle.IsMatchMaker || !string.IsNullOrEmpty(battle.Title) && (battle.Title.Contains("[T]") || battle.Title.ToLower().Contains("tourney") || battle.Title.ToLower().Contains("tournament") || battle.Title.ToLower().Contains("1v1")
+            )))).Update(battle => new SpringBattle()
             {
                 ApplicableRatings = RatingCategoryFlags.MatchMaking | RatingCategoryFlags.Casual
             });
