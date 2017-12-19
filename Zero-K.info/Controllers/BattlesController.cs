@@ -81,7 +81,7 @@ namespace ZeroKWeb.Controllers
             //if (user == null && Global.IsAccountAuthorized) user = Global.Account.Name;
             if (model.UserId != null) {
                 int uniqueIds = model.UserId.Distinct().Count();
-                q = q.Where(b => b.SpringBattlePlayers.Where(p => model.UserId.Contains(p.AccountID)).Count() == uniqueIds);
+                q = q.Where(b => b.SpringBattlePlayers.Where(p => model.UserId.Contains(p.AccountID) && !p.IsSpectator).Count() == uniqueIds);
             }
 
             if (model.PlayersFrom.HasValue) q = q.Where(b => b.SpringBattlePlayers.Count(p => !p.IsSpectator) >= model.PlayersFrom);
