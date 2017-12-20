@@ -348,8 +348,14 @@ namespace Ratings
                 int maxAge = GlobalConst.LadderActivityDays;
                 foreach (var pair in playerRatings)
                 {
-                    if (currentDay - pair.Value.LastGameDate > maxAge) continue;
-                    playerUncertainties[index++] = (float)pair.Value.Uncertainty;
+                    if (currentDay - pair.Value.LastGameDate > maxAge)
+                    {
+                        playerUncertainties[index++] = 9999 + index; //don't use infinity because i'm doing shady floating point things
+                    }
+                    else
+                    {
+                        playerUncertainties[index++] = (float)pair.Value.Uncertainty;
+                    }
                 }
                 Array.Sort(playerUncertainties);
                 DynamicMaxUncertainty = Math.Max(DynamicMaxUncertainty, playerUncertainties[Math.Min(playerUncertainties.Length, GlobalConst.LadderSize) - 1] + 0.01f);
