@@ -46,12 +46,12 @@ namespace ZkLobbyServer
                     teams = b.Users.Values.Where(u => !u.IsSpectator)
                         .GroupBy(u => u.AllyNumber)
                         .Select(x => x.Select(p => Account.AccountByName(db, p.Name))).ToList();
-            }
 
-            var chances = RatingSystems.GetRatingSystem(cat).PredictOutcome(teams);
-            for (int i = 0; i < teams.Count; i++)
-            {
-                await battle.Respond(e, $"Team {teams[i].First().Name} has a {Math.Round(1000 * chances[i]) / 10}% chance to win");
+                var chances = RatingSystems.GetRatingSystem(cat).PredictOutcome(teams);
+                for (int i = 0; i < teams.Count; i++)
+                {
+                    await battle.Respond(e, $"Team {teams[i].First().Name} has a {Math.Round(1000 * chances[i]) / 10}% chance to win");
+                }
             }
         }
     }
