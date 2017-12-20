@@ -26,6 +26,7 @@ namespace Ratings
         IDictionary<ITopPlayersUpdateListener, int> topPlayersUpdateListeners = new Dictionary<ITopPlayersUpdateListener, int>();
         public event EventHandler<RatingUpdate> RatingsUpdated;
 
+        IDictionary<int, PlayerRating> playerOldRatings = new ConcurrentDictionary<int, PlayerRating>();
         IDictionary<int, PlayerRating> playerRatings = new ConcurrentDictionary<int, PlayerRating>();
         IDictionary<int, Player> players = new Dictionary<int, Player>();
         SortedDictionary<float, int> sortedPlayers = new SortedDictionary<float, int>();
@@ -100,6 +101,11 @@ namespace Ratings
                     {
                         Trace.TraceInformation(battlesRegistered + " battles registered for WHR " + category +", latest Battle: " + battle.SpringBattleID);
                         UpdateRatings();
+                        using (var db = new ZkDataContext()) {
+                            db.SpringBattlePlayers.Where(p => p.SpringBattleID == battle.SpringBattleID && !p.IsSpectator && playerOldRatings.ContainsKey(p.AccountID)).ForEach(p => p.EloChange = playerRatings[p.AccountID].RealElo - playerOldRatings[p.AccountID].RealElo);
+                            db.SaveChanges();
+                        }
+                        losers.Concat(winners).ForEach(x => playerOldRatings[x] = playerRatings[x]);
                     }
                 }
             }
@@ -169,6 +175,7 @@ namespace Ratings
                         Trace.TraceInformation("Initializing WHR " + category +" ratings for " + battlesRegistered + " battles, this will take some time.. From B" + firstBattle?.SpringBattleID + " to B" + latestBattle?.SpringBattleID);
                         runIterations(50);
                         UpdateRankings(players.Values);
+                        playerOldRatings = new Dictionary<int, PlayerRating>(playerRatings);
                         SaveToDB();
                     });
                 }
