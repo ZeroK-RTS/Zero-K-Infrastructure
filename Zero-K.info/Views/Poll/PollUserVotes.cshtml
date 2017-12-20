@@ -29,11 +29,11 @@
 
             @if (Global.IsModerator && p.ExpireBy == null)
             {
-
+                <div class="admin">
                 <br/>
                 @Html.ActionLink(p.IsVisible ? "visible, hide completely?" : "hidden, show in this list?", "SwapVisible", new { pollID = p.PollID })<br />
                 @Html.ActionLink(p.IsHeadline ? "HEADLINE, stop displaying on home?" : "add to home headline?", "SwapHeadline", new { pollID = p.PollID })<br/>
-
+                </div>
             }
         </div>
     } 

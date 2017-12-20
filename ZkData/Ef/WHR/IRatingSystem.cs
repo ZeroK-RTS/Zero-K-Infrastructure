@@ -17,10 +17,12 @@ namespace Ratings
 
         List<Account> GetTopPlayers(int count, Func<Account, bool> selector);
 
-        List<float> PredictOutcome(List<ICollection<Account>> teams);
+        List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams);
         
         void AddTopPlayerUpdateListener(ITopPlayersUpdateListener listener, int topX);
         
         void RemoveTopPlayerUpdateListener(ITopPlayersUpdateListener listener, int topX);
+        
+        event EventHandler<RatingUpdate> RatingsUpdated;
     }
 }

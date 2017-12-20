@@ -21,16 +21,10 @@ namespace ZkData
 
         public Account()
         {
-            Elo = 1500;
-            EloMm = 1500;
-            EloPw = 1500;
-            EloWeight = 1;
-            EloMmWeight = 1;
             FirstLogin = DateTime.UtcNow;
             LastLogin = DateTime.UtcNow;
             LastLogout = DateTime.UtcNow;
             Country = "??";
-
 
             AbuseReportsByAccountID = new HashSet<AbuseReport>();
             AbuseReportsByReporterAccountID = new HashSet<AbuseReport>();
@@ -100,7 +94,7 @@ namespace ZkData
         [StringLength(8000)]
         public string Aliases { get; set; }
 
-        public double Elo { get; set; }
+        /*public double Elo { get; set; }
         public double EloWeight { get; set; }
         public double EloMm { get; set; }
         public double EloMmWeight { get; set; }
@@ -122,7 +116,7 @@ namespace ZkData
                 if (currentWeight > GlobalConst.EloWeightMax) currentWeight = GlobalConst.EloWeightMax;
             }
             return currentWeight;
-        }
+        }*/
 
         public bool IsBot { get; set; }
         public bool CanPlayMultiplayer { get; set; } = true;
@@ -220,10 +214,7 @@ namespace ZkData
         [InverseProperty("Target")]
         public virtual ICollection<AccountRelation> RelalationsByTarget { get; set; } = new List<AccountRelation>();
         public virtual Clan Clan { get; set; }
-
-
         
-
         [NotMapped]
         public int AvailableXP
         {
@@ -233,11 +224,7 @@ namespace ZkData
                        AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost * (x.Count - KudosPurchases.Count(y => y.UnlockID == x.UnlockID)))) ?? 0;
             }
         }
-
-
-
         
-
         [NotMapped]
         public int KudosGained { get { return ContributionsByAccountID.Sum(x => x.KudosValue); } }
 
@@ -699,9 +686,9 @@ namespace ZkData
                     AccountBattleAwards.GroupBy(x => x.AwardKey).Select(x => new UserProfile.UserAward() { AwardKey = x.Key, Collected = x.Count() })
                         .ToList(),
                 Badges = GetBadges().Select(x => x.ToString()).ToList(),
-                EffectiveElo = (int)EffectiveElo,
-                EffectivePwElo = (int)EffectivePwElo,
-                EffectiveMmElo = (int)EffectiveMmElo,
+                EffectiveElo = (int)Math.Round(GetRating(RatingCategory.Casual).Elo),
+                EffectivePwElo = (int)Math.Round(GetRating(RatingCategory.Planetwars).Elo),
+                EffectiveMmElo = (int)Math.Round(GetRating(RatingCategory.MatchMaking).Elo),
                 Kudos = KudosGained,
                 Level = Level,
                 LevelUpRatio = GetLevelUpRatio().ToString("F2"),

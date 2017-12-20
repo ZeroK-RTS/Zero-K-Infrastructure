@@ -7,6 +7,7 @@ using System.Web.Routing;
 using LobbyClient;
 using ZkData;
 using System.Data.Entity.SqlServer;
+using EntityFramework.Extensions;
 
 namespace ZeroKWeb.Controllers
 {
@@ -85,25 +86,15 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult ChangeElo(int accountID, int eloweight, int eloweight1v1)
+        public ActionResult DeleteFromRatings(int accountID, int eloweight, int eloweight1v1)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
             Account adminAcc = Global.Account;
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Fake elo malus changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
-            if (acc.EloWeight != eloweight) {
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Team Elo Weight: {0} -> {1}", acc.EloWeight, eloweight));
-                acc.EloWeight = eloweight;
-            }
-            if (acc.EloMmWeight != eloweight1v1) {
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - 1v1 Elo Weight: {0} -> {1}", acc.EloMmWeight, eloweight1v1));
-                acc.EloMmWeight = eloweight1v1;
-            }
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Ratings deleted for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
+            db.SpringBattles.Where(x => x.SpringBattlePlayers != null && x.SpringBattlePlayers.Where(p => !p.IsSpectator).Any(p => p.AccountID == accountID)).Update(x => new SpringBattle() { ApplicableRatings = 0 });
             db.SaveChanges();
-
-            Global.Server.PublishAccountUpdate(acc);
-            Global.Server.PublishUserProfileUpdate(acc);
 
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }

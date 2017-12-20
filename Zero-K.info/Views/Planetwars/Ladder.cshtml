@@ -40,7 +40,7 @@
                             <td>@Html.PrintAccount(acct)</td>
                             <td>@acct.PwAttackPoints</td>
                             <td>@acct.Planets.Count</td> 
-                            <td>@(Math.Round(RatingSystems.DisableRatingSystems ? acct.EffectivePwElo : acct.GetRating(RatingCategory.Planetwars).Elo))</td>
+                            <td>@(Math.Round(acct.GetRating(RatingCategory.Planetwars).Elo))</td>
                         </tr>
                     }
                 }

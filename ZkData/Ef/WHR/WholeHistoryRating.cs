@@ -22,13 +22,16 @@ namespace Ratings
 
         const float RatingOffset = 1500;
         public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, 0, 0);
+        
+        IDictionary<ITopPlayersUpdateListener, int> topPlayersUpdateListeners = new Dictionary<ITopPlayersUpdateListener, int>();
+        public event EventHandler<RatingUpdate> RatingsUpdated;
 
+        IDictionary<int, PlayerRating> playerOldRatings = new ConcurrentDictionary<int, PlayerRating>();
         IDictionary<int, PlayerRating> playerRatings = new ConcurrentDictionary<int, PlayerRating>();
         IDictionary<int, Player> players = new Dictionary<int, Player>();
         SortedDictionary<float, int> sortedPlayers = new SortedDictionary<float, int>();
         List<int> topPlayers = new List<int>();
         IDictionary<int, float> playerKeys = new Dictionary<int, float>();
-        IDictionary<ITopPlayersUpdateListener, int> topPlayersUpdateListeners = new Dictionary<ITopPlayersUpdateListener, int>(); 
         Random rand = new Random();
         readonly float w2; //elo range expand per day squared
         private Timer ladderRecalculationTimer;
@@ -40,7 +43,7 @@ namespace Ratings
         {
             this.category = category;
             w2 = GlobalConst.EloDecayPerDaySquared;
-            ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
+            ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, 15 * 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
         }
         
 
@@ -55,7 +58,7 @@ namespace Ratings
             return players[accountID].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.getElo() + RatingOffset);
         }
 
-        public List<float> PredictOutcome(List<ICollection<Account>> teams)
+        public List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams)
         {
             return teams.Select(t =>
                     SetupGame(t.Select(x => x.AccountID).ToList(),
@@ -63,7 +66,7 @@ namespace Ratings
                             true,
                             RatingSystems.ConvertDateToDays(DateTime.UtcNow),
                             -1
-                    ).getBlackWinProbability() * 2 / teams.Count).ToList();
+                    ).getBlackWinProbability() * 2 / teams.Count()).ToList();
         }
 
         private int battlesRegistered = 0;
@@ -105,13 +108,9 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count)
         {
-            return GetTopPlayers(count, x => true);
-            //TODO use db query once accountrating is implemented
-            /*
             ZkDataContext db = new ZkDataContext();
             List<int> retIDs = topPlayers.Take(count).ToList();
-            return db.Accounts.Where(a => retIDs.Contains(a.AccountID)).ToList(); 
-            */
+            return db.Accounts.Where(a => retIDs.Contains(a.AccountID)).OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault()).ToList(); 
         }
 
         public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
@@ -156,6 +155,7 @@ namespace Ratings
 
         public void UpdateRatings()
         {
+            if (!RatingSystems.Initialized) return;
             if (latestBattle == null)
             {
                 //Trace.TraceInformation("WHR " + category +": No battles to evaluate");
@@ -170,6 +170,7 @@ namespace Ratings
                         Trace.TraceInformation("Initializing WHR " + category +" ratings for " + battlesRegistered + " battles, this will take some time.. From B" + firstBattle?.SpringBattleID + " to B" + latestBattle?.SpringBattleID);
                         runIterations(50);
                         UpdateRankings(players.Values);
+                        playerOldRatings = new Dictionary<int, PlayerRating>(playerRatings);
                         SaveToDB();
                     });
                 }
@@ -193,6 +194,7 @@ namespace Ratings
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
                         UpdateRankings(players);
+                        SaveToDB(players.Select(x => x.id));
                     });
                 }
                 else
@@ -200,6 +202,7 @@ namespace Ratings
                     //Trace.TraceInformation("No WHR " + category +" ratings to update");
                     return;
                 }
+                var lastUpdateEx = lastUpdate;
                 Task.Factory.StartNew(() =>
                 {
                     try
@@ -211,6 +214,13 @@ namespace Ratings
                             updateAction.Invoke();
                             Trace.TraceInformation("WHR " + category +" Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
                             runningInitialization = false;
+                            
+                            using (var db = new ZkDataContext())
+                            {
+                                db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ToList().Where(p => playerOldRatings.ContainsKey(p.AccountID) && !p.EloChange.HasValue).ForEach(p => p.EloChange = playerRatings[p.AccountID].RealElo - playerOldRatings[p.AccountID].RealElo);
+                                db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ForEach(x => playerOldRatings[x.AccountID] = playerRatings[x.AccountID]);
+                                db.SaveChanges();
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -221,6 +231,30 @@ namespace Ratings
                 lastUpdate = latestBattle;
             }
 
+        }
+
+        public void SaveToDB(IEnumerable<int> players)
+        {
+            lock (dbLock)
+            {
+
+                var db = new ZkDataContext();
+                foreach (int player in players)
+                {
+                    var accountRating = db.AccountRatings.Where(x => x.RatingCategory == category && x.AccountID == player).FirstOrDefault();
+                    if (accountRating == null)
+                    {
+                        accountRating = new AccountRating(player, category);
+                        accountRating.UpdateFromRatingSystem(playerRatings[player]);
+                        db.AccountRatings.InsertOnSubmit(accountRating);
+                    }
+                    else
+                    {
+                        accountRating.UpdateFromRatingSystem(playerRatings[player]);
+                    }
+                }
+                db.SaveChanges();
+            }
         }
 
         public void SaveToDB()
@@ -241,7 +275,7 @@ namespace Ratings
                         continue;
                     }
                     processedPlayers.Add(accountRating.AccountID);
-                    if (Math.Abs(playerRatings[accountRating.AccountID].Elo - accountRating.Elo) > 10)
+                    if (Math.Abs(playerRatings[accountRating.AccountID].Elo - accountRating.Elo) > 1)
                     {
                         accountRating.UpdateFromRatingSystem(playerRatings[accountRating.AccountID]);
                     }
@@ -311,9 +345,17 @@ namespace Ratings
                 float[] playerUncertainties = new float[playerRatings.Count];
                 int index = 0;
                 float DynamicMaxUncertainty = GlobalConst.MinimumDynamicMaxLadderUncertainty;
+                int maxAge = GlobalConst.LadderActivityDays;
                 foreach (var pair in playerRatings)
                 {
-                    playerUncertainties[index++] = (float)pair.Value.Uncertainty;
+                    if (currentDay - pair.Value.LastGameDate > maxAge)
+                    {
+                        playerUncertainties[index++] = 9999 + index; //don't use infinity because i'm doing shady floating point things
+                    }
+                    else
+                    {
+                        playerUncertainties[index++] = (float)pair.Value.Uncertainty;
+                    }
                 }
                 Array.Sort(playerUncertainties);
                 DynamicMaxUncertainty = Math.Max(DynamicMaxUncertainty, playerUncertainties[Math.Min(playerUncertainties.Length, GlobalConst.LadderSize) - 1] + 0.01f);
@@ -323,7 +365,7 @@ namespace Ratings
                 int matched = 0;
                 foreach (var pair in sortedPlayers)
                 {
-                    if (playerRatings[pair.Value].Uncertainty <= DynamicMaxUncertainty)
+                    if (playerRatings[pair.Value].Uncertainty <= DynamicMaxUncertainty && currentDay - playerRatings[pair.Value].LastGameDate <= maxAge)
                     {
                         newTopPlayers.Add(pair.Value);
                         if (rank == matched && rank < topPlayers.Count && topPlayers[rank] == pair.Value) matched++;
@@ -347,6 +389,7 @@ namespace Ratings
                         listener.Key.TopPlayersUpdated(GetTopPlayers(listener.Value));
                     }
                 }
+                RatingsUpdated(this, new RatingUpdate() { affectedPlayers = players.Select(x => x.id) });
             }
             catch (Exception ex)
             {
@@ -463,6 +506,11 @@ namespace Ratings
                 p.runOneNewtonIteration();
             }
         }
+    }
+
+    public class RatingUpdate : EventArgs
+    {
+        public IEnumerable<int> affectedPlayers { get; set; }
     }
 
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ratings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +7,11 @@ using ZkData;
 
 namespace Fixer
 {
+    /*
+     * TODO: Replace Elo by AccountRating
     public class BattleBalanceData
     {
+        
         public static int MAX_TEAMSIZE = 12;
         int battleID;
         double t1Avg;
@@ -19,6 +23,7 @@ namespace Fixer
         List<string> t1Names;
         List<string> t2Names;
         static string header = GetStringHeader();
+
 
         public BattleBalanceData(int battleID)
         {
@@ -152,12 +157,7 @@ namespace Fixer
                 int count = 0;
                 foreach (SpringBattlePlayer player in game.SpringBattlePlayers.Where(x => !x.IsSpectator))
                 {
-                    if (player.Account.EloWeight < 5)
-                    {
-                        anyInvalidPlayers = true;
-                        break;
-                    }
-                    else count++;
+                    count++;
                 }
                 if (!anyInvalidPlayers && count >= 6 && count <= 24) games2.Add(game);
                 numProcessed++;
@@ -167,5 +167,5 @@ namespace Fixer
             Console.WriteLine(games2.Count);
             BattleBalanceData.PrintBattleData(games2);
         }
-    }
+    }*/
 }

@@ -152,7 +152,6 @@
     <Compile Include="ForumListManager.cs" />
     <Compile Include="IChatRelaySource.cs" />
     <Compile Include="ICommandSender.cs" />
-    <Compile Include="ITopPlayerProvider.cs" />
     <Compile Include="ITransportServerListener.cs" />
     <Compile Include="LadderListManager.cs" />
     <Compile Include="LoginChecker.cs" />

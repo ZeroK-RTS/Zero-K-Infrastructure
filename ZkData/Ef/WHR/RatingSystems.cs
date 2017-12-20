@@ -18,47 +18,53 @@ namespace Ratings
 
         public static bool Initialized { get; private set; }
 
-        public const bool DisableRatingSystems = false;
-
         private static object processingLock = new object();
 
         public static void Init()
         {
-            if (DisableRatingSystems) return;
             Initialized = false;
             ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating(category));
 
             Task.Factory.StartNew(() => {
                 lock (processingLock)
                 {
-                    ZkDataContext data = new ZkDataContext();
-                    DateTime minStartTime = DateTime.Now.AddYears(-5);
-                    foreach (SpringBattle b in data.SpringBattles
-                            .Where(x => x.StartTime > minStartTime)
-                            .Include(x => x.ResourceByMapResourceID)
-                            .Include(x => x.SpringBattlePlayers)
-                            .Include(x => x.SpringBattleBots)
-                            .AsNoTracking()
-                            .OrderBy(x => x.StartTime))
+                    try
                     {
-                        ProcessResult(b);
+                        ZkDataContext data = new ZkDataContext();
+                        for (int year = 10; year > 0; year--)
+                        {
+                            DateTime minStartTime = DateTime.Now.AddYears(-year);
+                            DateTime maxStartTime = DateTime.Now.AddYears(-year + 1);
+                            foreach (SpringBattle b in data.SpringBattles
+                                    .Where(x => x.StartTime > minStartTime && x.StartTime < maxStartTime)
+                                    .Include(x => x.ResourceByMapResourceID)
+                                    .Include(x => x.SpringBattlePlayers)
+                                    .Include(x => x.SpringBattleBots)
+                                    .AsNoTracking()
+                                    .OrderBy(x => x.StartTime))
+                            {
+                                ProcessBattle(b);
+                            }
+                        }
+                        Initialized = true;
+                        whr.Values.ForEach(w => w.UpdateRatings());
                     }
-                    whr.Values.ForEach(w => w.UpdateRatings());
-                    Initialized = true;
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError("WHR: Error reading battles from DB" + ex);
+                    }
                 }
             });
         }
 
-        public static void BackupToDB()
+
+        public static IEnumerable<IRatingSystem> GetRatingSystems()
         {
-            if (DisableRatingSystems) return;
-            //Trace.TraceInformation("Backing up ratings...");
-            //ratingCategories.ForEach(category => whr[category].SaveToDB());
+            return whr.Values;
         }
 
         public static IRatingSystem GetRatingSystem(RatingCategory category)
         {
-            if (DisableRatingSystems) return null;
             if (!whr.ContainsKey(category))
             {
                 Trace.TraceError("WHR: Unknown category " + category);
@@ -71,7 +77,12 @@ namespace Ratings
 
         public static void ProcessResult(SpringBattle battle)
         {
-            if (DisableRatingSystems) return;
+            if (!Initialized) return;
+            ProcessBattle(battle);
+        }
+
+        private static void ProcessBattle(SpringBattle battle)
+        {
             lock (processingLock)
             {
                 int battleID = -1;
@@ -145,13 +156,10 @@ namespace Ratings
                 {
                     case RatingCategory.Casual:
                         return battle.ApplicableRatings.HasFlag(RatingCategoryFlags.Casual);
-                        return !(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID?.MapIsSpecial == true) || battle.Duration < GlobalConst.MinDurationForElo);
                     case RatingCategory.MatchMaking:
                         return battle.ApplicableRatings.HasFlag(RatingCategoryFlags.MatchMaking);
-                        return battle.IsMatchMaker;
                     case RatingCategory.Planetwars:
                         return battle.ApplicableRatings.HasFlag(RatingCategoryFlags.Planetwars);
-                        return battle.Mode == PlasmaShared.AutohostMode.Planetwars; //how?
                 }
             }
             catch (Exception ex)
