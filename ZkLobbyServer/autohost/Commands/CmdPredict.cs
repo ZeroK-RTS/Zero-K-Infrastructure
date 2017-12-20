@@ -39,13 +39,32 @@ namespace ZkLobbyServer
             using (var db = new ZkDataContext())
             {
                 if (battle.IsInGame)
+                {
                     teams = b.spring.LobbyStartContext?.Players.Where(u => !u.IsSpectator)
                         .GroupBy(u => u.AllyID)
                         .Select(x => x.Select(p => Account.AccountByName(db, p.Name))).ToList();
+                }
                 else
-                    teams = b.Users.Values.Where(u => !u.IsSpectator)
-                        .GroupBy(u => u.AllyNumber)
-                        .Select(x => x.Select(p => Account.AccountByName(db, p.Name))).ToList();
+                {
+                    switch (battle.Mode)
+                    {
+                        case PlasmaShared.AutohostMode.Game1v1:
+                            teams = b.Users.Values.Where(u => !u.IsSpectator)
+                                .GroupBy(u => u.Name)
+                                .Select(x => x.Select(p => Account.AccountByName(db, p.Name))).ToList();
+                            break;
+
+                        case PlasmaShared.AutohostMode.Teams:
+                            await battle.Respond(e, $"The battle will be balanced when it starts");
+                            return;
+
+                        default:
+                            teams = b.Users.Values.Where(u => !u.IsSpectator)
+                                .GroupBy(u => u.AllyNumber)
+                                .Select(x => x.Select(p => Account.AccountByName(db, p.Name))).ToList();
+                            break;
+                    }
+                }
 
                 if (teams.Count < 2)
                 {

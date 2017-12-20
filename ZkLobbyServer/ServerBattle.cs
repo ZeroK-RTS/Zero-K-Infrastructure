@@ -330,6 +330,7 @@ namespace ZkLobbyServer
                 foreach (var line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     if ((privateUser == null) && (spring?.IsRunning == true)) spring.SayGame(line);
+                    if ((privateUser != null) && (spring?.IsRunning == true)) spring.SayGame(Format("/w {0} {1}", privateUser, line));
                     await
                         server.GhostSay(
                             new Say()
