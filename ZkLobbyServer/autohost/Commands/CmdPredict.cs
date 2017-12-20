@@ -47,6 +47,12 @@ namespace ZkLobbyServer
                         .GroupBy(u => u.AllyNumber)
                         .Select(x => x.Select(p => Account.AccountByName(db, p.Name))).ToList();
 
+                if (teams.Count < 2)
+                {
+                    await battle.Respond(e, $"!predict needs at least two human teams to work");
+                    return;
+                }
+
                 var chances = RatingSystems.GetRatingSystem(cat).PredictOutcome(teams);
                 for (int i = 0; i < teams.Count; i++)
                 {
