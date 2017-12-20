@@ -347,8 +347,10 @@ namespace Ratings
                 float[] playerUncertainties = new float[playerRatings.Count];
                 int index = 0;
                 float DynamicMaxUncertainty = GlobalConst.MinimumDynamicMaxLadderUncertainty;
+                int maxAge = GlobalConst.LadderActivityDays;
                 foreach (var pair in playerRatings)
                 {
+                    if (currentDay - pair.Value.LastGameDate > maxAge) continue;
                     playerUncertainties[index++] = (float)pair.Value.Uncertainty;
                 }
                 Array.Sort(playerUncertainties);
@@ -359,7 +361,7 @@ namespace Ratings
                 int matched = 0;
                 foreach (var pair in sortedPlayers)
                 {
-                    if (playerRatings[pair.Value].Uncertainty <= DynamicMaxUncertainty)
+                    if (playerRatings[pair.Value].Uncertainty <= DynamicMaxUncertainty && currentDay - playerRatings[pair.Value].LastGameDate <= maxAge)
                     {
                         newTopPlayers.Add(pair.Value);
                         if (rank == matched && rank < topPlayers.Count && topPlayers[rank] == pair.Value) matched++;
