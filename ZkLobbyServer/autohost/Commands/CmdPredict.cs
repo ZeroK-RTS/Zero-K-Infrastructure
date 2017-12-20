@@ -55,7 +55,7 @@ namespace ZkLobbyServer
                             break;
 
                         case PlasmaShared.AutohostMode.Teams:
-                            await battle.Respond(e, $"The battle will be balanced when it starts");
+                            await battle.SayBattle($"The battle will be balanced when it starts");
                             return;
 
                         default:
@@ -68,14 +68,14 @@ namespace ZkLobbyServer
 
                 if (teams.Count < 2)
                 {
-                    await battle.Respond(e, $"!predict needs at least two human teams to work");
+                    await battle.SayBattle($"!predict needs at least two human teams to work");
                     return;
                 }
 
                 var chances = RatingSystems.GetRatingSystem(cat).PredictOutcome(teams);
                 for (int i = 0; i < teams.Count; i++)
                 {
-                    await battle.Respond(e, $"Team {teams[i].First().Name} has a {Math.Round(1000 * chances[i]) / 10}% chance to win");
+                    await battle.SayBattle( $"Team {teams[i].First().Name} has a {Math.Round(1000 * chances[i]) / 10}% chance to win");
                 }
             }
         }
