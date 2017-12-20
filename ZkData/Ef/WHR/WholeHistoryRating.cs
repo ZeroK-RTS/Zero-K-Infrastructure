@@ -202,6 +202,7 @@ namespace Ratings
                     //Trace.TraceInformation("No WHR " + category +" ratings to update");
                     return;
                 }
+                var lastUpdateEx = lastUpdate;
                 Task.Factory.StartNew(() =>
                 {
                     try
@@ -214,7 +215,7 @@ namespace Ratings
                             Trace.TraceInformation("WHR " + category +" Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
                             runningInitialization = false;
 
-                            if (!latestBattle.Equals(lastUpdate))
+                            if (!latestBattle.Equals(lastUpdateEx))
                             {
                                 using (var db = new ZkDataContext())
                                 {
