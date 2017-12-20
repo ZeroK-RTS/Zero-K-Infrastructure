@@ -107,13 +107,9 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count)
         {
-            return GetTopPlayers(count, x => true);
-            //TODO use db query once accountrating is implemented
-            /*
             ZkDataContext db = new ZkDataContext();
             List<int> retIDs = topPlayers.Take(count).ToList();
-            return db.Accounts.Where(a => retIDs.Contains(a.AccountID)).ToList(); 
-            */
+            return db.Accounts.Where(a => retIDs.Contains(a.AccountID)).OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault()).ToList(); 
         }
 
         public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
@@ -196,6 +192,7 @@ namespace Ratings
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
                         UpdateRankings(players);
+                        SaveToDB(players.Select(x => x.id));
                     });
                 }
                 else
@@ -226,6 +223,30 @@ namespace Ratings
 
         }
 
+        public void SaveToDB(IEnumerable<int> players)
+        {
+            lock (dbLock)
+            {
+
+                var db = new ZkDataContext();
+                foreach (int player in players)
+                {
+                    var accountRating = db.AccountRatings.Where(x => x.RatingCategory == category && x.AccountID == player).FirstOrDefault();
+                    if (accountRating == null)
+                    {
+                        accountRating = new AccountRating(player, category);
+                        accountRating.UpdateFromRatingSystem(playerRatings[player]);
+                        db.AccountRatings.InsertOnSubmit(accountRating);
+                    }
+                    else
+                    {
+                        accountRating.UpdateFromRatingSystem(playerRatings[player]);
+                    }
+                }
+                db.SaveChanges();
+            }
+        }
+
         public void SaveToDB()
         {
             lock (dbLock)
@@ -244,7 +265,7 @@ namespace Ratings
                         continue;
                     }
                     processedPlayers.Add(accountRating.AccountID);
-                    if (Math.Abs(playerRatings[accountRating.AccountID].Elo - accountRating.Elo) > 10)
+                    if (Math.Abs(playerRatings[accountRating.AccountID].Elo - accountRating.Elo) > 1)
                     {
                         accountRating.UpdateFromRatingSystem(playerRatings[accountRating.AccountID]);
                     }

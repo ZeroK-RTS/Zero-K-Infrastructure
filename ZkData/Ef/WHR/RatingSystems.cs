@@ -156,13 +156,10 @@ namespace Ratings
                 {
                     case RatingCategory.Casual:
                         return battle.ApplicableRatings.HasFlag(RatingCategoryFlags.Casual);
-                        return !(battle.IsMission || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID?.MapIsSpecial == true) || battle.Duration < GlobalConst.MinDurationForElo);
                     case RatingCategory.MatchMaking:
                         return battle.ApplicableRatings.HasFlag(RatingCategoryFlags.MatchMaking);
-                        return battle.IsMatchMaker;
                     case RatingCategory.Planetwars:
                         return battle.ApplicableRatings.HasFlag(RatingCategoryFlags.Planetwars);
-                        return battle.Mode == PlasmaShared.AutohostMode.Planetwars; //how?
                 }
             }
             catch (Exception ex)
