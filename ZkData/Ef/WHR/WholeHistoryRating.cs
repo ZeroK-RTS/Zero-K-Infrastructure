@@ -101,11 +101,6 @@ namespace Ratings
                     {
                         Trace.TraceInformation(battlesRegistered + " battles registered for WHR " + category +", latest Battle: " + battle.SpringBattleID);
                         UpdateRatings();
-                        using (var db = new ZkDataContext()) {
-                            db.SpringBattlePlayers.Where(p => p.SpringBattleID == battle.SpringBattleID && !p.IsSpectator && playerOldRatings.ContainsKey(p.AccountID)).ForEach(p => p.EloChange = playerRatings[p.AccountID].RealElo - playerOldRatings[p.AccountID].RealElo);
-                            db.SaveChanges();
-                        }
-                        losers.Concat(winners).ForEach(x => playerOldRatings[x] = playerRatings[x]);
                     }
                 }
             }
@@ -218,6 +213,16 @@ namespace Ratings
                             updateAction.Invoke();
                             Trace.TraceInformation("WHR " + category +" Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
                             runningInitialization = false;
+
+                            if (!latestBattle.Equals(lastUpdate))
+                            {
+                                using (var db = new ZkDataContext())
+                                {
+                                    db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator && playerOldRatings.ContainsKey(p.AccountID)).ForEach(p => p.EloChange = playerRatings[p.AccountID].RealElo - playerOldRatings[p.AccountID].RealElo);
+                                    db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ForEach(x => playerOldRatings[x.AccountID] = playerRatings[x.AccountID]);
+                                    db.SaveChanges();
+                                }
+                            }
                         }
                     }
                     catch (Exception ex)
