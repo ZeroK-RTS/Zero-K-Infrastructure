@@ -122,6 +122,10 @@
                     @if (ViewBag.ShowWinners)
                     {
                         @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")
+                        if ((Global.IsModerator || Model.IsMatchMaker) && u.EloChange.HasValue)
+                        {
+                            @:Elo: @u.EloChange.Value.ToString("F1")
+                        }
                         foreach (var award in Model.AccountBattleAwards.Where(x => x.AccountID == u.AccountID))
                         {
                             <img src="/img/Awards/trophy_@(award.AwardKey).png" height="30" title="@award.AwardDescription"/>
