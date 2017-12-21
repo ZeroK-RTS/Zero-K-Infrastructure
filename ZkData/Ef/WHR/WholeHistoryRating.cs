@@ -171,7 +171,6 @@ namespace Ratings
                         runIterations(50);
                         UpdateRankings(players.Values);
                         playerOldRatings = new Dictionary<int, PlayerRating>(playerRatings);
-                        SaveToDB();
                     });
                 }
                 else if (DateTime.UtcNow.Subtract(lastUpdateTime).TotalHours >= GlobalConst.LadderUpdatePeriod)
@@ -181,7 +180,6 @@ namespace Ratings
                         Trace.TraceInformation("Updating all WHR " + category +" ratings");
                         runIterations(1);
                         UpdateRankings(players.Values);
-                        SaveToDB();
                     });
                     lastUpdateTime = DateTime.UtcNow;
                 }
@@ -194,7 +192,6 @@ namespace Ratings
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
                         UpdateRankings(players);
-                        SaveToDB(players.Select(x => x.id));
                     });
                 }
                 else
@@ -380,6 +377,14 @@ namespace Ratings
                 topPlayers = newTopPlayers;
                 Trace.TraceInformation("WHR " + category +" Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty);
 
+                var playerIds = players.Select(x => x.id).ToList();
+                if (playerIds.Count() < 100)
+                {
+                    SaveToDB(playerIds);
+                }else
+                {
+                    SaveToDB();
+                }
 
                 //check for topX updates
                 foreach (var listener in topPlayersUpdateListeners)
