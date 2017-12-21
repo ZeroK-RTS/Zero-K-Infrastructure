@@ -179,6 +179,7 @@ namespace ZkLobbyServer
                 acc.SetPasswordHashed(register.PasswordHash);
                 acc.SetName(register.Name);
                 acc.SetAvatar();
+                acc.Email = register.Email;
                 if (info != null)
                 {
                     var existingBySteam = db.Accounts.FirstOrDefault(x => x.SteamID == info.steamid);

@@ -150,6 +150,8 @@ namespace LobbyClient
 
         public string SteamAuthToken { get; set; }
 
+        public string Email { get; set; }
+
         public long UserID { get; set; }
     }
 
