@@ -224,7 +224,7 @@ namespace Ratings
                     {
                         Trace.TraceError("Thread error while updating WHR " + category +" " + ex);
                     }
-                });
+                }, CancellationToken.None, TaskCreationOptions.None, PriorityScheduler.BelowNormal);
                 lastUpdate = latestBattle;
             }
 
