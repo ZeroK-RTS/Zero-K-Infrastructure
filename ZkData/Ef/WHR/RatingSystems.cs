@@ -67,7 +67,7 @@ namespace Ratings
         {
             if (!whr.ContainsKey(category))
             {
-                Trace.TraceError("WHR: Unknown category " + category);
+                Trace.TraceWarning("WHR: Unknown category " + category + " " + new StackTrace());
                 return whr[RatingCategory.MatchMaking];
             }
             return whr[category];
