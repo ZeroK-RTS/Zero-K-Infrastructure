@@ -14,10 +14,12 @@
     }
     grid.AddCol("Commanders", x => x.Accounts.Count()).SetSort(x => x.Accounts.Count());
     grid.AddCol("Level", x => (int?)x.Accounts.Average(y => (double?)y.Level)).SetSort(x => x.Accounts.Average(y => (double?)y.Level));
-    grid.AddCol("Elo", x => (int?)x.Accounts.Average(y => (double?)y.Elo)).SetSort(x => x.Accounts.Average(y => (double?)y.Elo));
+    grid.AddCol("Elo", x => (int?)x.Accounts.SelectMany(r => r.AccountRatings).Where(r => r.RatingCategory == Ratings.RatingCategory.Casual).Average(y => (double?)y.RealElo))
+            .SetSort(x => x.Accounts.SelectMany(r => r.AccountRatings).Where(r => r.RatingCategory == Ratings.RatingCategory.Casual).Average(y => (double?)y.RealElo));
     if (GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
     {
-        grid.AddCol("PlanetWars Elo", x => (int?)x.Accounts.Average(y => (double?)y.EloPw)).SetSort(x => x.Accounts.Average(y => (double?)y.EloPw));
+        grid.AddCol("PlanetWars Elo", x => (int?)x.Accounts.SelectMany(r => r.AccountRatings).Where(r => r.RatingCategory == Ratings.RatingCategory.Planetwars).Average(y => (double?)y.RealElo))
+            .SetSort(x => x.Accounts.SelectMany(r => r.AccountRatings).Where(r => r.RatingCategory == Ratings.RatingCategory.Planetwars).Average(y => (double?)y.RealElo));
     }
     if (Global.Clan == null)
     {

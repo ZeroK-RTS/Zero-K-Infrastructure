@@ -36,8 +36,8 @@ namespace ZkData.Migrations
         }
 
         protected override void Seed(ZkDataContext db) {
-            InitializeBattleRatings(db); //remove this after execution
-            db.SaveChanges();
+            /*InitializeBattleRatings(db); //remove this after execution
+            db.SaveChanges();*/
 
             //  This method will be called after migrating to the latest version.
             if (GlobalConst.Mode == ModeType.Local)
