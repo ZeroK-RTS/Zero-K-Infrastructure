@@ -24,10 +24,14 @@ namespace ZkData.Migrations
             {
                 ApplicableRatings = RatingCategoryFlags.Casual
             });
-            db.SpringBattles.Where(battle => (!battle.HasBots && (battle.IsMatchMaker || !string.IsNullOrEmpty(battle.Title) && (battle.Title.Contains("[T]") || battle.Title.ToLower().Contains("tourney") || battle.Title.ToLower().Contains("tournament") || battle.Title.ToLower().Contains("1v1")
-            )))).Update(battle => new SpringBattle()
+            //db.SpringBattles.Where(battle => (!battle.HasBots && (battle.IsMatchMaker || !string.IsNullOrEmpty(battle.Title) && (battle.Title.Contains("[T]") || battle.Title.ToLower().Contains("tourney") || battle.Title.ToLower().Contains("tournament") || battle.Title.ToLower().Contains("1v1")))).Update(battle => new SpringBattle()
+            db.SpringBattles.Where(battle => (!(battle.IsMission || battle.SpringBattlePlayers.Count > 0 && battle.SpringBattlePlayers.Any(x => x.IsInVictoryTeam) &&
+                    (!battle.SpringBattlePlayers.Where(x => x.IsInVictoryTeam).FirstOrDefault().EloChange.HasValue || Math.Abs(battle.SpringBattlePlayers.Where(x => x.IsInVictoryTeam).FirstOrDefault().EloChange.Value) < 0.001)
+            || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID != null && battle.ResourceByMapResourceID.MapIsSpecial == true) || battle.Duration < GlobalConst.MinDurationForElo))
+            || battle.HasBots && (!(battle.IsMission || (battle.ResourceByMapResourceID != null && battle.ResourceByMapResourceID.MapIsSpecial == true) || battle.Duration < GlobalConst.MinDurationForElo))).Update(battle => new SpringBattle()
+
             {
-                ApplicableRatings = RatingCategoryFlags.MatchMaking | RatingCategoryFlags.Casual
+                ApplicableRatings = RatingCategoryFlags.MatchMaking// | RatingCategoryFlags.Casual
             });
             db.SpringBattles.Where(battle => (!battle.HasBots && battle.Mode == PlasmaShared.AutohostMode.Planetwars)).Update(battle => new SpringBattle()
             {
@@ -36,8 +40,8 @@ namespace ZkData.Migrations
         }
 
         protected override void Seed(ZkDataContext db) {
-            /*InitializeBattleRatings(db); //remove this after execution
-            db.SaveChanges();*/
+            InitializeBattleRatings(db); //remove this after execution
+            db.SaveChanges();
 
             //  This method will be called after migrating to the latest version.
             if (GlobalConst.Mode == ModeType.Local)

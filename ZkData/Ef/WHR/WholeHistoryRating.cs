@@ -76,9 +76,12 @@ namespace Ratings
 
         public void ProcessBattle(SpringBattle battle)
         {
-            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
-            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
-            if (winners.Count > 0 && losers.Count > 0)
+            ICollection<int> winners = GetBattleWinners(battle);
+            ICollection<int> losers = GetBattleLosers(battle);
+            if (battle.SpringBattleBots.Count(b => b.BotAI.Contains("Chicken")) > 1) return;
+            int minTeamSize = battle.SpringBattlePlayers.GroupBy(x => x.AllyNumber).Select(x => x.Count()).Min();
+            int maxTeamSize = battle.SpringBattlePlayers.GroupBy(x => x.AllyNumber).Select(x => x.Count()).Max();
+            if (winners.Count > 0 && losers.Count > 0 && (battle.SpringBattleBots.Count == 0 || maxTeamSize == minTeamSize) && maxTeamSize - minTeamSize <= 1)
             {
                 if (latestBattle != null && battle.StartTime < latestBattle.StartTime && !_outoforder)
                 {
@@ -188,7 +191,7 @@ namespace Ratings
                     updateAction = (() =>
                     {
                         Trace.TraceInformation("Updating WHR " + category +" ratings for last Battle: " + latestBattle.SpringBattleID);
-                        IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Where(p => !p.IsSpectator).Select(p => getPlayerById(p.AccountID));
+                        IEnumerable<Player> players = GetBattlePlayers(latestBattle).Select(p => getPlayerById(p));
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
                         UpdateRankings(players);
@@ -511,6 +514,35 @@ namespace Ratings
                 p.runOneNewtonIteration();
             }
         }
+
+        private HashSet<string> knownBots = new HashSet<string>();
+
+        private int GetBotId(SpringBattleBot bot)
+        {
+            int id = -(int)(((uint)bot.BotAI.Replace("32", "").Replace("64", "").GetHashCode()) >> 1);
+            if (!knownBots.Contains(bot.BotAI))
+            {
+                Trace.TraceInformation("New bot " + bot.BotAI + " with id " + id);
+                knownBots.Add(bot.BotAI);
+            }
+            return id;
+        }
+
+        private ICollection<int> GetBattlePlayers(SpringBattle battle)
+        {
+            return battle.SpringBattlePlayers.Where(p => !p.IsSpectator).Select(p => p.AccountID).Union(battle.SpringBattleBots.Select(p => GetBotId(p))).ToList();
+        }
+
+        private ICollection<int> GetBattleLosers(SpringBattle battle)
+        {
+            return battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).Union(battle.SpringBattleBots.Where(p => !p.IsInVictoryTeam).Select(p => GetBotId(p))).ToList();
+        }
+
+        private ICollection<int> GetBattleWinners(SpringBattle battle)
+        {
+            return battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).Union(battle.SpringBattleBots.Where(p => p.IsInVictoryTeam).Select(p => GetBotId(p))).ToList();
+        }
+
     }
 
     public class RatingUpdate : EventArgs
