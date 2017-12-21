@@ -21,16 +21,10 @@ namespace ZkData
 
         public Account()
         {
-            Elo = 1500;
-            EloMm = 1500;
-            EloPw = 1500;
-            EloWeight = 1;
-            EloMmWeight = 1;
             FirstLogin = DateTime.UtcNow;
             LastLogin = DateTime.UtcNow;
             LastLogout = DateTime.UtcNow;
             Country = "??";
-
 
             AbuseReportsByAccountID = new HashSet<AbuseReport>();
             AbuseReportsByReporterAccountID = new HashSet<AbuseReport>();
@@ -40,6 +34,7 @@ namespace ZkData
             AccountCampaignVars = new HashSet<AccountCampaignVar>();
             AccountForumVotes = new HashSet<AccountForumVote>();
             AccountIPs = new HashSet<AccountIP>();
+            AccountRatings = new HashSet<AccountRating>();
             AccountRolesByAccountID = new HashSet<AccountRole>();
             AccountUnlocks = new HashSet<AccountUnlock>();
             AccountUserIDs = new HashSet<AccountUserID>();
@@ -98,13 +93,31 @@ namespace ZkData
 
         [StringLength(8000)]
         public string Aliases { get; set; }
-        public double Elo { get; set; }
+
+        /*public double Elo { get; set; }
         public double EloWeight { get; set; }
         public double EloMm { get; set; }
         public double EloMmWeight { get; set; }
         public double EloPw { get; set; }
         public int? CasualRank { get; set; }
         public int? CompetitiveRank { get; set; }
+        private static readonly CompiledExpression<Account, double> effectiveEloExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveElo).Is(e => e.Elo + (GlobalConst.EloWeightMax - e.EloWeight) * GlobalConst.EloWeightMalusFactor);
+        public double EffectiveElo => effectiveEloExpression.Evaluate(this);
+        private static readonly CompiledExpression<Account, double> effectiveEloMmExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveMmElo).Is(e => e.EloMm + (GlobalConst.EloWeightMax - e.EloMmWeight) * GlobalConst.EloWeightMalusFactor);
+        public double EffectiveMmElo => effectiveEloMmExpression.Evaluate(this);
+        public double BestEffectiveElo => Math.Max(EffectiveMmElo, EffectiveElo);
+        [NotMapped]
+        public double EffectivePwElo { get { return EloPw + (GlobalConst.EloWeightMax - EloWeight) * GlobalConst.EloWeightMalusFactor; } }
+        public static double AdjustEloWeight(double currentWeight, double sumWeight, int sumCount)
+        {
+            if (currentWeight < GlobalConst.EloWeightMax)
+            {
+                currentWeight = (currentWeight + ((sumWeight - currentWeight - (sumCount - 1)) / (sumCount - 1)) / GlobalConst.EloWeightLearnFactor);
+                if (currentWeight > GlobalConst.EloWeightMax) currentWeight = GlobalConst.EloWeightMax;
+            }
+            return currentWeight;
+        }*/
+
         public bool IsBot { get; set; }
         public bool CanPlayMultiplayer { get; set; } = true;
        
@@ -154,6 +167,7 @@ namespace ZkData
         public virtual ICollection<AbuseReport> AbuseReportsByAccountID { get; set; }
         public virtual ICollection<AbuseReport> AbuseReportsByReporterAccountID { get; set; }
         public virtual Faction Faction { get; set; }
+        public virtual ICollection<AccountRating> AccountRatings { get; set; }
         public virtual ICollection<AccountBattleAward> AccountBattleAwards { get; set; }
         public virtual ICollection<AccountCampaignJournalProgress> AccountCampaignJournalProgresses { get; set; }
         public virtual ICollection<AccountCampaignProgress> AccountCampaignProgress { get; set; }
@@ -200,22 +214,7 @@ namespace ZkData
         [InverseProperty("Target")]
         public virtual ICollection<AccountRelation> RelalationsByTarget { get; set; } = new List<AccountRelation>();
         public virtual Clan Clan { get; set; }
-
-
-
-
-        private static readonly CompiledExpression<Account, double> effectiveEloExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveElo).Is(e => e.Elo + (GlobalConst.EloWeightMax - e.EloWeight) * GlobalConst.EloWeightMalusFactor);
-
-        public double EffectiveElo => effectiveEloExpression.Evaluate(this);
-
-
-        private static readonly CompiledExpression<Account, double> effectiveEloMmExpression = DefaultTranslationOf<Account>.Property(e => e.EffectiveMmElo).Is(e => e.EloMm + (GlobalConst.EloWeightMax - e.EloMmWeight) * GlobalConst.EloWeightMalusFactor);
-
-        public double EffectiveMmElo => effectiveEloMmExpression.Evaluate(this);
-
-        public double BestEffectiveElo => Math.Max(EffectiveMmElo, EffectiveElo);
-
-
+        
         [NotMapped]
         public int AvailableXP
         {
@@ -225,14 +224,7 @@ namespace ZkData
                        AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost * (x.Count - KudosPurchases.Count(y => y.UnlockID == x.UnlockID)))) ?? 0;
             }
         }
-
-
-
-
-        [NotMapped]
-        public double EffectivePwElo { get { return EloPw + (GlobalConst.EloWeightMax - EloWeight) * GlobalConst.EloWeightMalusFactor; } }
-
-
+        
         [NotMapped]
         public int KudosGained { get { return ContributionsByAccountID.Sum(x => x.KudosValue); } }
 
@@ -288,17 +280,7 @@ namespace ZkData
             SetPasswordHashed(Utils.HashLobbyPassword(passwordPlain));
         }
 
-
-
-        public static double AdjustEloWeight(double currentWeight, double sumWeight, int sumCount)
-        {
-            if (currentWeight < GlobalConst.EloWeightMax)
-            {
-                currentWeight = (currentWeight + ((sumWeight - currentWeight - (sumCount - 1)) / (sumCount - 1)) / GlobalConst.EloWeightLearnFactor);
-                if (currentWeight > GlobalConst.EloWeightMax) currentWeight = GlobalConst.EloWeightMax;
-            }
-            return currentWeight;
-        }
+        
 
         public bool CanAppoint(Account targetAccount, RoleType roleType)
         {
@@ -327,7 +309,7 @@ namespace ZkData
 
         public bool CanPlayerPlanetWars()
         {
-            return FactionID != null && Level >= GlobalConst.MinPlanetWarsLevel && EffectiveMmElo > GlobalConst.MinPlanetWarsElo;
+            return FactionID != null && Level >= GlobalConst.MinPlanetWarsLevel && GetBestRating().Elo > GlobalConst.MinPlanetWarsElo;
         }
 
 
@@ -664,9 +646,8 @@ namespace ZkData
             //0, 5, 10, 20, 35, 50, 75, 100 -> 0, 1, 2, 3, 4, 5, 6, 7
 
             int clampedSkill = 0;
-
-            if (RatingSystems.DisableRatingSystems && EloWeight > 1) clampedSkill = Math.Max(0, Math.Min(7, (int)Math.Floor((Math.Max(EffectiveMmElo, EffectiveElo) - 1000.0)) / 200));
-            if (!RatingSystems.DisableRatingSystems) clampedSkill = Math.Max(clampedSkill, Math.Max(0, Math.Min(7, (int)Math.Floor((GetBestRating().Elo - 1000.0)) / 200)));
+            
+            clampedSkill = Math.Max(clampedSkill, Math.Max(0, Math.Min(7, (int)Math.Floor((GetBestRating().Elo - 1000.0)) / 200)));
 
             return $"{clampedLevel}_{clampedSkill}";
         }
@@ -675,8 +656,7 @@ namespace ZkData
         {
             var ret = new List<BadgeType>();
             if (Level > 200) ret.Add(BadgeType.player_level); 
-            if (RatingSystems.DisableRatingSystems && (CompetitiveRank <= 3 || CasualRank <= 3)) ret.Add(BadgeType.player_elo); // top 3 best
-            if (!RatingSystems.DisableRatingSystems && (GetRating(RatingCategory.MatchMaking).Rank <= 3 || GetRating(RatingCategory.Casual).Rank <= 3)) ret.Add(BadgeType.player_elo); 
+            if ((GetRating(RatingCategory.MatchMaking).Rank <= 3 || GetRating(RatingCategory.Casual).Rank <= 3)) ret.Add(BadgeType.player_elo); 
             var total = Kudos> 0 ? ContributionsByAccountID.Where(x=>x.OriginalAmount > 0).Sum(x => (int?)x.KudosValue) : 0;
 
             if (total >= GlobalConst.KudosForGold) ret.Add(BadgeType.donator_2);
@@ -692,7 +672,7 @@ namespace ZkData
 
         public LadderItem ToLadderItem()
         {
-            return new LadderItem() { Name = Name, Clan = Clan?.Shortcut, Icon = GetIconName(), AccountID = AccountID};
+            return new LadderItem() { Name = Name, Clan = Clan?.Shortcut, Icon = GetIconName(), AccountID = AccountID, Level =  Level, IsAdmin = AdminLevel>= AdminLevel.Moderator, Country = Country};
         }
 
 
@@ -706,9 +686,9 @@ namespace ZkData
                     AccountBattleAwards.GroupBy(x => x.AwardKey).Select(x => new UserProfile.UserAward() { AwardKey = x.Key, Collected = x.Count() })
                         .ToList(),
                 Badges = GetBadges().Select(x => x.ToString()).ToList(),
-                EffectiveElo = (int)EffectiveElo,
-                EffectivePwElo = (int)EffectivePwElo,
-                EffectiveMmElo = (int)EffectiveMmElo,
+                EffectiveElo = (int)Math.Round(GetRating(RatingCategory.Casual).Elo),
+                EffectivePwElo = (int)Math.Round(GetRating(RatingCategory.Planetwars).Elo),
+                EffectiveMmElo = (int)Math.Round(GetRating(RatingCategory.MatchMaking).Elo),
                 Kudos = KudosGained,
                 Level = Level,
                 LevelUpRatio = GetLevelUpRatio().ToString("F2"),

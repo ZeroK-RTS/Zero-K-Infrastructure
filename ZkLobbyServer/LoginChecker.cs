@@ -179,6 +179,7 @@ namespace ZkLobbyServer
                 acc.SetPasswordHashed(register.PasswordHash);
                 acc.SetName(register.Name);
                 acc.SetAvatar();
+                acc.Email = register.Email;
                 if (info != null)
                 {
                     var existingBySteam = db.Accounts.FirstOrDefault(x => x.SteamID == info.steamid);
@@ -211,9 +212,9 @@ namespace ZkLobbyServer
             user.DisplayName = acc.SteamName;
             user.Avatar = acc.Avatar;
             user.Level = acc.Level;
-            user.EffectiveMmElo = (int)Math.Round(RatingSystems.DisableRatingSystems ? acc.EffectiveMmElo : acc.GetRating(RatingCategory.MatchMaking).Elo);
-            user.EffectiveElo = (int)Math.Round(RatingSystems.DisableRatingSystems ? acc.EffectiveElo : acc.GetRating(RatingCategory.Casual).Elo);
-            user.RawMmElo = (int)Math.Round(RatingSystems.DisableRatingSystems ? acc.EloMm : acc.GetRating(RatingCategory.MatchMaking).RealElo);
+            user.EffectiveMmElo = (int)Math.Round(acc.GetRating(RatingCategory.MatchMaking).Elo);
+            user.EffectiveElo = (int)Math.Round(acc.GetRating(RatingCategory.Casual).Elo);
+            user.RawMmElo = (int)Math.Round(acc.GetRating(RatingCategory.MatchMaking).RealElo);
             user.SteamID = acc.SteamID?.ToString();
             user.IsAdmin = acc.AdminLevel >= AdminLevel.Moderator;
             user.IsBot = acc.IsBot;

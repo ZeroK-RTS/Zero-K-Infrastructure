@@ -41,7 +41,7 @@ namespace ZeroKWeb.SpringieInterface
                             {
                                 foreach (var a in
                                     other.Select(x => db.Accounts.First(y => y.AccountID == x.LobbyID))
-                                        .OrderByDescending(x => x.Elo*x.EloWeight)
+                                        .OrderByDescending(x => x.GetRating(RatingCategory.Casual).Elo)
                                         .Take(cnt)) accountIDsWithExtraComms.Add(a.AccountID);
                             }
                         }
@@ -107,7 +107,7 @@ namespace ZeroKWeb.SpringieInterface
                         //userParams["mm_elo"] = Math.Round(user.EffectiveMmElo).ToString();
                         //userParams["casual_elo"] = Math.Round(user.EffectiveElo).ToString();
 
-                        userParams["elo"] = Math.Round(RatingSystems.DisableRatingSystems ? user.BestEffectiveElo : user.GetBestRating().Elo).ToString();
+                        userParams["elo"] = Math.Round(user.GetBestRating().Elo).ToString();
                         
                         userParams["icon"] = user.GetIconName();
                         userParams["avatar"] = user.Avatar;

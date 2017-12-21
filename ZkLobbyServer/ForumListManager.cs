@@ -76,7 +76,7 @@ namespace ZkLobbyServer {
                 var readThreadID = ((ForumThreadLastRead)entity).ForumThreadID;
 
                 
-                var conus = server.ConnectedUsers.Values.FirstOrDefault(x => x != null && x.User.AccountID == changedAccountID);
+                var conus = server.ConnectedUsers.Values.FirstOrDefault(x => x != null && x.User.AccountID == changedAccountID && x.IsLoggedIn);
                 if (conus != null)
                 {
                     var list = GetCurrentForumList(changedAccountID);

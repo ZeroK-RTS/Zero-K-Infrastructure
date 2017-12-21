@@ -3,6 +3,8 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using EntityFramework.Extensions;
+using Ratings;
 
 namespace ZkData.Migrations
 {
@@ -14,7 +16,29 @@ namespace ZkData.Migrations
             AutomaticMigrationsEnabled = false;
         }
 
+        private static void InitializeBattleRatings(ZkDataContext db)
+        {
+            db.SpringBattles.Where(battle => (!(battle.IsMission ||  battle.SpringBattlePlayers.Count > 0 && battle.SpringBattlePlayers.Any(x => x.IsInVictoryTeam) && 
+                    (!battle.SpringBattlePlayers.Where(x => x.IsInVictoryTeam).FirstOrDefault().EloChange.HasValue || Math.Abs(battle.SpringBattlePlayers.Where(x => x.IsInVictoryTeam).FirstOrDefault().EloChange.Value) < 0.001)
+            || battle.HasBots || (battle.PlayerCount < 2) || (battle.ResourceByMapResourceID != null && battle.ResourceByMapResourceID.MapIsSpecial == true) || battle.Duration < GlobalConst.MinDurationForElo))).Update(battle => new SpringBattle()
+            {
+                ApplicableRatings = RatingCategoryFlags.Casual
+            });
+            db.SpringBattles.Where(battle => (!battle.HasBots && (battle.IsMatchMaker || !string.IsNullOrEmpty(battle.Title) && (battle.Title.Contains("[T]") || battle.Title.ToLower().Contains("tourney") || battle.Title.ToLower().Contains("tournament") || battle.Title.ToLower().Contains("1v1")
+            )))).Update(battle => new SpringBattle()
+            {
+                ApplicableRatings = RatingCategoryFlags.MatchMaking | RatingCategoryFlags.Casual
+            });
+            db.SpringBattles.Where(battle => (!battle.HasBots && battle.Mode == PlasmaShared.AutohostMode.Planetwars)).Update(battle => new SpringBattle()
+            {
+                ApplicableRatings = RatingCategoryFlags.Planetwars | RatingCategoryFlags.Casual
+            });
+        }
+
         protected override void Seed(ZkDataContext db) {
+            InitializeBattleRatings(db); //remove this after execution
+            db.SaveChanges();
+
             //  This method will be called after migrating to the latest version.
             if (GlobalConst.Mode == ModeType.Local)
             {
@@ -39,9 +63,7 @@ namespace ZkData.Migrations
                         NewPasswordPlain = "test",
                         AdminLevel = AdminLevel.SuperAdmin,
                         Kudos = 200,
-                        Elo = 1700,
                         Level = 50,
-                        EloWeight = 2,
                         Country = "cz"
                     },
                     new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, AdminLevel = AdminLevel.SuperAdmin});

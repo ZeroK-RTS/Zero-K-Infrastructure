@@ -224,7 +224,7 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     if (allyNum > 0) text += " : ";
                     text += string.Format("{0}", (allyNum + 1));
-                    if (allyNum > 0) text += string.Format("={0}%)", Utils.GetWinChancePercent(lastTeamElo - team.AvgElo));
+                    text += string.Format("={0}%)", (int)Math.Round((1.0 / (1.0 + Math.Pow(10, ((team.AvgElo - bestTeams.Where(x => !x.Equals(team)).Select(x => x.AvgElo).Average())) / 400.0))) * 100.0 * 2 / bestTeams.Count));
                     lastTeamElo = team.AvgElo;
 
                     foreach (var u in team.Items.SelectMany(x => x.LobbyId)) ret.Players.Single(x => x.LobbyID == u).AllyID = allyNum;
@@ -453,16 +453,9 @@ namespace ZeroKWeb.SpringieInterface
             {
                 LobbyId = accounts.Select(x => x.AccountID).ToList();
                 Count = accounts.Length;
-
-                if (RatingSystems.DisableRatingSystems)
-                {
-                    EloSum = isMatchMaker ? accounts.Sum(x => x.EffectiveMmElo) : accounts.Sum(x => x.EffectiveElo);
-                }
-                else
-                {
-                    RatingCategory category = isMatchMaker ? RatingCategory.MatchMaking : RatingCategory.Casual;
-                    EloSum = accounts.Sum(x => x.GetRating(category).Elo);
-                }
+                
+                RatingCategory category = isMatchMaker ? RatingCategory.MatchMaking : RatingCategory.Casual;
+                EloSum = accounts.Sum(x => x.GetRating(category).Elo);
             }
         }
 

@@ -150,6 +150,8 @@ namespace LobbyClient
 
         public string SteamAuthToken { get; set; }
 
+        public string Email { get; set; }
+
         public long UserID { get; set; }
     }
 
@@ -708,6 +710,8 @@ namespace LobbyClient
         public string Map { get; set; }
         public int Port { get; set; }
         public string ScriptPassword { get; set; }
+        public AutohostMode Mode { get; set; }
+        public string Title { get; set; }
     }
 
     [Message(Origin.Server)]

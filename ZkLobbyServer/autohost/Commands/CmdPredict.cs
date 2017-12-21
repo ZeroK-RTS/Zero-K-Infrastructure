@@ -16,11 +16,11 @@ namespace ZkLobbyServer
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            if (!battle.IsMatchMakerBattle)
+            /*if (!battle.IsMatchMakerBattle)
             {
                 battle.Respond(e, "Not a matchmaker battle, cannot predict");
                 return null;
-            }
+            }*/
             return string.Empty;
         }
 
@@ -30,32 +30,53 @@ namespace ZkLobbyServer
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
             var b = battle;
-            Dictionary<int, double> grouping;
+            List<IEnumerable<Account>> teams;
+
+            RatingCategory cat = RatingCategory.Casual;
+            if (b.IsMatchMakerBattle) cat = RatingCategory.MatchMaking;
+            if (b.Mode == PlasmaShared.AutohostMode.Planetwars) cat = RatingCategory.Planetwars;
 
             using (var db = new ZkDataContext())
             {
                 if (battle.IsInGame)
-                    grouping = b.spring.LobbyStartContext?.Players.Where(u => !u.IsSpectator)
-                        .GroupBy(u => u.AllyID)
-                        .ToDictionary(x => x.Key, x => x.Average(y => RatingSystems.DisableRatingSystems ? Account.AccountByName(db, y.Name).BestEffectiveElo : Account.AccountByName(db, y.Name).GetBestRating().Elo));
-                else
-                    grouping = b.Users.Values.Where(u => !u.IsSpectator)
-                        .GroupBy(u => u.AllyNumber)
-                        .ToDictionary(x => x.Key, x => x.Average(y => Math.Max(y.LobbyUser.EffectiveMmElo, y.LobbyUser.EffectiveElo)));
-            }
-
-            KeyValuePair<int, double>? oldg = null;
-            foreach (var g in grouping)
-            {
-                if (oldg != null)
                 {
-                    var t1elo = oldg.Value.Value;
-                    var t2elo = g.Value;
-                    await
-                        battle.Respond(e,
-                            $"team {oldg.Value.Key + 1} has {Utils.GetWinChancePercent(t2elo - t1elo)}% chance to win over team {g.Key + 1}");
+                    teams = b.spring.LobbyStartContext?.Players.Where(u => !u.IsSpectator)
+                        .GroupBy(u => u.AllyID)
+                        .Select(x => x.Select(p => Account.AccountByName(db, p.Name))).ToList();
                 }
-                oldg = g;
+                else
+                {
+                    switch (battle.Mode)
+                    {
+                        case PlasmaShared.AutohostMode.Game1v1:
+                            teams = b.Users.Values.Where(u => !u.IsSpectator)
+                                .GroupBy(u => u.Name)
+                                .Select(x => x.Select(p => Account.AccountByName(db, p.Name))).ToList();
+                            break;
+
+                        case PlasmaShared.AutohostMode.Teams:
+                            await battle.SayBattle($"The battle will be balanced when it starts");
+                            return;
+
+                        default:
+                            teams = b.Users.Values.Where(u => !u.IsSpectator)
+                                .GroupBy(u => u.AllyNumber)
+                                .Select(x => x.Select(p => Account.AccountByName(db, p.Name))).ToList();
+                            break;
+                    }
+                }
+
+                if (teams.Count < 2)
+                {
+                    await battle.SayBattle($"!predict needs at least two human teams to work");
+                    return;
+                }
+
+                var chances = RatingSystems.GetRatingSystem(cat).PredictOutcome(teams);
+                for (int i = 0; i < teams.Count; i++)
+                {
+                    await battle.SayBattle( $"Team {teams[i].First().Name} has a {Math.Round(1000 * chances[i]) / 10}% chance to win");
+                }
             }
         }
     }

@@ -103,6 +103,14 @@ namespace ZkLobbyServer
                 connectedUser.User = user;
                 connectedUser.Connections.TryAdd(this, true);
 
+                // close other connections
+                foreach (var otherConnection in connectedUser.Connections.Keys.Where(x => x != null && x != this).ToList())
+                {
+                    otherConnection.RequestClose();
+                    bool oth;
+                    connectedUser.Connections.TryRemove(otherConnection, out oth);
+                }
+
                 server.SessionTokens[ret.LoginResponse.SessionToken] = user.AccountID;
 
                 await SendCommand(ret.LoginResponse); // login accepted

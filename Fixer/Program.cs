@@ -33,6 +33,7 @@ using ZeroKWeb.ForumParser;
 using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
 using PlasmaDownloader = PlasmaDownloader.PlasmaDownloader;
+using Ratings;
 
 namespace Fixer
 {
@@ -428,9 +429,9 @@ namespace Fixer
             if (Console.ReadLine()?.StartsWith("i read the code") != true) return;
 
            
-            GlobalConst.Mode = ModeType.Live;
-            
-            RemoveUnusedMaps();
+            GlobalConst.Mode = ModeType.Local;
+
+            //RemoveUnusedMaps();
 
 
             //PlanetwarsFixer.AddWormholes(28);
@@ -579,7 +580,7 @@ namespace Fixer
             System.Console.WriteLine("Total cost: " + numModules * moduleCost);
             System.Console.WriteLine();
         }
-
+        /*
         public static void AnalyzeModuleUsagePatterns()
         {
             var db = new ZkDataContext();
@@ -613,7 +614,7 @@ namespace Fixer
                 int chassisCount = comms.Count;
                 System.Console.WriteLine("CHASSIS " + chassis.Name + " : " + chassisCount);
             }
-        }
+        }*/
 
         public static void ProgressCampaign(ZkDataContext db, Account acc, Mission mission, bool completeNext = false, string missionVars = "")
         {
@@ -786,7 +787,7 @@ namespace Fixer
             }
         }
 
-
+        /*
         public static void GetClanStackWinRate(int clanID, int minElo)
         {
             int won = 0, lost = 0;
@@ -832,7 +833,7 @@ namespace Fixer
             }
             double average = eloSum / count;
             System.Console.WriteLine(String.Format("Average: {0}, Total players: {1}", average, count));
-        }
+        }*/
 
         public static void RenameOldAccounts()
         {
@@ -867,6 +868,7 @@ namespace Fixer
 
         }
 
+        /*
         public static void Test1v1Elo()
         {
             var db = new ZkDataContext();
@@ -946,8 +948,9 @@ namespace Fixer
                 Console.WriteLine("{0};{1:f0};{2:f0};{3};{4}", entry.Key.Name, entry.Value.Elo, entry.Key.EffectiveElo, entry.Value.Cnt, entry.Key.SpringBattlePlayers.Count(x => !x.IsSpectator && x.SpringBattle.PlayerCount > 2));
             }
 
-        }
+        }*/
 
+        /*
         public static void TestPrediction()
         {
             var db = new ZkDataContext();
@@ -1023,7 +1026,7 @@ namespace Fixer
                 }
             }
             db.SaveChanges();
-        }
+        }*/
 
         static void FixMaps()
         {
@@ -1154,5 +1157,7 @@ namespace Fixer
             Console.ReadLine();
 
         }
+
+        
     }
 }

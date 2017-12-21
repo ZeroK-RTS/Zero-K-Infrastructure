@@ -35,9 +35,7 @@ namespace ZkLobbyServer
         public string Game { get; private set; }
         public IPlanetwarsEventCreator PlanetWarsEventCreator { get; private set; }
         public MatchMaker MatchMaker { get; private set; }
-
-        public ITopPlayerProvider TopPlayerProvider { get; private set; }
-
+        
         public string Version { get; private set; }
 
         public PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
@@ -56,11 +54,10 @@ namespace ZkLobbyServer
         public ForumListManager ForumListManager { get; private set; }
 
 
-        public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator, ITopPlayerProvider topPlayerProvider)
+        public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator)
         {
             RatingSystems.Init();
-
-            TopPlayerProvider = topPlayerProvider;
+            
             PlanetWarsEventCreator = creator;
             var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();
@@ -85,6 +82,18 @@ namespace ZkLobbyServer
             NewsListManager = new NewsListManager(this);
             LadderListManager = new LadderListManager(this);
             ForumListManager = new ForumListManager(this);
+
+
+            RatingSystems.GetRatingSystems().ForEach(x => x.RatingsUpdated += (sender, data) => 
+            {
+                var db = new ZkDataContext();
+                var updatedUsers = ConnectedUsers.Select(c => c.Value.User.AccountID).Intersect(data.affectedPlayers).ToHashSet();
+                db.Accounts.Where(acc => updatedUsers.Contains(acc.AccountID)).ForEach(p =>
+                {
+                    PublishAccountUpdate(p);
+                    PublishUserProfileUpdate(p);
+                });
+            });
         }
 
         /// <summary>
@@ -385,8 +394,6 @@ namespace ZkLobbyServer
                     Place = SayPlace.MessageBox,
                 });
 
-            RatingSystems.BackupToDB();
-
             var db = new ZkDataContext();
             foreach (var u in ConnectedUsers.Values)
             {
@@ -441,14 +448,14 @@ namespace ZkLobbyServer
 
         public async Task PublishUserProfilePlanetwarsPlayers()
         {
-            foreach (var conus in ConnectedUsers.Values.Where(x => x != null && x.IsLoggedIn && !string.IsNullOrEmpty(x.User.Faction)))
+            ConnectedUsers.Values.Where(x => x != null && x.IsLoggedIn && !string.IsNullOrEmpty(x.User.Faction)).AsParallel().ForAll(conus =>
             {
                 using (var db = new ZkDataContext())
                 {
                     var acc = db.Accounts.Find(conus.User.AccountID);
-                    await PublishUserProfileUpdate(acc);
+                    if (conus.IsLoggedIn) PublishUserProfileUpdate(acc);
                 }
-            }
+            });
         }
 
 

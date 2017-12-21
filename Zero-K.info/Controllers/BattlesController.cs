@@ -81,7 +81,7 @@ namespace ZeroKWeb.Controllers
             //if (user == null && Global.IsAccountAuthorized) user = Global.Account.Name;
             if (model.UserId != null) {
                 int uniqueIds = model.UserId.Distinct().Count();
-                q = q.Where(b => b.SpringBattlePlayers.Where(p => model.UserId.Contains(p.AccountID)).Count() == uniqueIds);
+                q = q.Where(b => b.SpringBattlePlayers.Where(p => model.UserId.Contains(p.AccountID) && !p.IsSpectator).Count() == uniqueIds);
             }
 
             if (model.PlayersFrom.HasValue) q = q.Where(b => b.SpringBattlePlayers.Count(p => !p.IsSpectator) >= model.PlayersFrom);
@@ -154,6 +154,20 @@ namespace ZeroKWeb.Controllers
                 return Content(System.IO.File.ReadAllText(string.Format(GlobalConst.InfologPathFormat, bat.EngineGameID)), "text/plain");
                     //,string.Format("infolog_{0}.txt", bat.SpringBattleID)
             }
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Auth(Role = AdminLevel.Moderator)]
+        public ActionResult SetApplicableRatings(int BattleID, bool MatchMaking, bool Casual, bool PlanetWars)
+        {
+            using (var db = new ZkDataContext())
+            {
+                db.SpringBattles.Where(x => x.SpringBattleID == BattleID).FirstOrDefault().ApplicableRatings = (MatchMaking ? Ratings.RatingCategoryFlags.MatchMaking : 0) | (Casual ? Ratings.RatingCategoryFlags.Casual : 0) | (PlanetWars ? Ratings.RatingCategoryFlags.Planetwars : 0);
+                db.SaveChanges();
+            }
+            return Detail(BattleID);
         }
     }
 

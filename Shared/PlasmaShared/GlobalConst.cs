@@ -135,10 +135,10 @@ namespace ZkData
         public const int MinDurationForElo = 60;
         public const int MinDurationForPlanetwars = 0;
 
-        public const int LadderActivityDays = 70;
+        public const int LadderActivityDays = 30;
         public const int LadderSize = 50; // Amount of players shown on ladders
-        public const float MinimumDynamicMaxLadderUncertainty = 50; // uncertainties > this are marked unranked, max age ~ 2-3 months
-        public const float EloDecayPerDaySquared = 30; //whr thingie
+        public const float MinimumDynamicMaxLadderUncertainty = 100; // uncertainties > this are marked unranked, max age ~ 2-3 months
+        public const float EloDecayPerDaySquared = 35; //whr thingie
         public const float LadderUpdatePeriod = 1; //Ladder is fully updated every X hours
 
         public const int XpForMissionOrBots = 25;

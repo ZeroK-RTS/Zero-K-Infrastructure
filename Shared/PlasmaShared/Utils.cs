@@ -43,6 +43,11 @@ namespace ZkData
             }
         }
 
+        public static HashSet<T> ToHashSet<T>(this IEnumerable<T> source, IEqualityComparer<T> comparer = null)
+        {
+            return new HashSet<T>(source, comparer);
+        }
+
         public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
         {
             if (val.CompareTo(min) < 0) return min;
@@ -598,12 +603,7 @@ namespace ZkData
             }
             catch { }
         }
-
-        public static int GetWinChancePercent(double eloDiff)
-        {
-            return (int)Math.Round((1.0 / (1.0 + Math.Pow(10, (eloDiff) / 400.0))) * 100.0);
-        }
-
+        
 
         public static string ToHex(this byte[] array)
         {

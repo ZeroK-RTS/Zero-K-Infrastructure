@@ -163,7 +163,7 @@ namespace ZeroKWeb.SpringieInterface
                 Title = result.LobbyStartContext.Title,
                 ReplayFileName = Path.GetFileName(result.ReplayName),
                 EngineVersion = result.LobbyStartContext.EngineVersion,
-                IsMatchMaker = result.LobbyStartContext.IsMatchMakerGame
+                IsMatchMaker = result.LobbyStartContext.IsMatchMakerGame,
             };
             db.SpringBattles.InsertOnSubmit(sb);
 
