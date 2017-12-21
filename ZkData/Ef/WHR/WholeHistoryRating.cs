@@ -106,11 +106,23 @@ namespace Ratings
             }
         }
 
+        private List<Account> laddersCache = new List<Account>();
+
         public List<Account> GetTopPlayers(int count)
         {
-            ZkDataContext db = new ZkDataContext();
-            List<int> retIDs = topPlayers.Take(count).ToList();
-            return db.Accounts.Where(a => retIDs.Contains(a.AccountID)).OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault()).ToList(); 
+            if (count > 200)
+            {
+                ZkDataContext db = new ZkDataContext();
+                laddersCache = db.Accounts.OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault()).Take(count).ToList();
+            }
+            if (laddersCache.Count < count)
+            {
+
+                ZkDataContext db = new ZkDataContext();
+                List<int> retIDs = topPlayers.Take(count).ToList();
+                laddersCache = db.Accounts.Where(a => retIDs.Contains(a.AccountID)).OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault()).ToList();
+            }
+            return laddersCache.Take(count).ToList();
         }
 
         public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
@@ -375,6 +387,7 @@ namespace Ratings
                     }
                 }
                 topPlayers = newTopPlayers;
+                laddersCache = new List<Account>();
                 Trace.TraceInformation("WHR " + category +" Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty);
 
                 var playerIds = players.Select(x => x.id).ToList();
@@ -387,6 +400,7 @@ namespace Ratings
                 }
 
                 //check for topX updates
+                GetTopPlayers(GlobalConst.LadderSize); 
                 foreach (var listener in topPlayersUpdateListeners)
                 {
                     if (matched < listener.Value)
