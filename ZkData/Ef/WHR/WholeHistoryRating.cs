@@ -202,7 +202,7 @@ namespace Ratings
                 {
                     updateAction = (() => {
                         Trace.TraceInformation("Initializing WHR " + category +" ratings for " + battlesRegistered + " battles, this will take some time.. From B" + firstBattle?.SpringBattleID + " to B" + latestBattle?.SpringBattleID);
-                        runIterations(50);
+                        runIterations(75);
                         UpdateRankings(players.Values);
                         playerOldRatings = new Dictionary<int, PlayerRating>(playerRatings);
                     });
