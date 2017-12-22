@@ -30,24 +30,26 @@ namespace Ratings
                 {
                     try
                     {
-                        ZkDataContext data = new ZkDataContext();
-                        for (int year = 10; year > 0; year--)
+                        using (ZkDataContext data = new ZkDataContext())
                         {
-                            DateTime minStartTime = DateTime.Now.AddYears(-year);
-                            DateTime maxStartTime = DateTime.Now.AddYears(-year + 1);
-                            foreach (SpringBattle b in data.SpringBattles
-                                    .Where(x => x.StartTime > minStartTime && x.StartTime < maxStartTime)
-                                    .Include(x => x.ResourceByMapResourceID)
-                                    .Include(x => x.SpringBattlePlayers)
-                                    .Include(x => x.SpringBattleBots)
-                                    .AsNoTracking()
-                                    .OrderBy(x => x.StartTime))
+                            for (int year = 10; year > 0; year--)
                             {
-                                ProcessBattle(b);
+                                DateTime minStartTime = DateTime.Now.AddYears(-year);
+                                DateTime maxStartTime = DateTime.Now.AddYears(-year + 1);
+                                foreach (SpringBattle b in data.SpringBattles
+                                        .Where(x => x.StartTime > minStartTime && x.StartTime < maxStartTime)
+                                        .Include(x => x.ResourceByMapResourceID)
+                                        .Include(x => x.SpringBattlePlayers)
+                                        .Include(x => x.SpringBattleBots)
+                                        .AsNoTracking()
+                                        .OrderBy(x => x.StartTime))
+                                {
+                                    ProcessBattle(b);
+                                }
                             }
+                            Initialized = true;
+                            whr.Values.ForEach(w => w.UpdateRatings());
                         }
-                        Initialized = true;
-                        whr.Values.ForEach(w => w.UpdateRatings());
                     }
                     catch (Exception ex)
                     {
@@ -67,7 +69,7 @@ namespace Ratings
         {
             if (!whr.ContainsKey(category))
             {
-                Trace.TraceError("WHR: Unknown category " + category);
+                Trace.TraceWarning("WHR: Unknown category " + category + " " + new StackTrace());
                 return whr[RatingCategory.MatchMaking];
             }
             return whr[category];

@@ -80,6 +80,7 @@
     <Compile Include="EventArgs.cs" />
     <Compile Include="EventExtensions.cs" />
     <Compile Include="GlobalConst.cs" />
+    <Compile Include="PriorityScheduler.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="IContentService\AccountInfo.cs" />
     <Compile Include="IContentService\ClientMissionInfo.cs" />
