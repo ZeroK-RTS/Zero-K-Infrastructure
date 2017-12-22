@@ -112,15 +112,19 @@ namespace Ratings
         {
             if (count > 200)
             {
-                ZkDataContext db = new ZkDataContext();
-                laddersCache = db.Accounts.OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault()).Take(count).ToList();
+                using (ZkDataContext db = new ZkDataContext())
+                {
+                    laddersCache = db.Accounts.OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault()).Take(count).ToList();
+                }
             }
             if (laddersCache.Count < count)
             {
 
-                ZkDataContext db = new ZkDataContext();
-                List<int> retIDs = topPlayers.Take(count).ToList();
-                laddersCache = db.Accounts.Where(a => retIDs.Contains(a.AccountID)).OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault()).ToList();
+                using (ZkDataContext db = new ZkDataContext())
+                {
+                    List<int> retIDs = topPlayers.Take(count).ToList();
+                    laddersCache = db.Accounts.Where(a => retIDs.Contains(a.AccountID)).OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault()).ToList();
+                }
             }
             return laddersCache.Take(count).ToList();
         }
@@ -130,15 +134,18 @@ namespace Ratings
             lock (updateLockInternal) 
             {
                 int counter = 0;
-                ZkDataContext db = new ZkDataContext();
                 List<Account> retval = new List<Account>();
-                foreach (var pair in sortedPlayers)
+
+                using (ZkDataContext db = new ZkDataContext())
                 {
-                    Account acc = db.Accounts.Where(a => a.AccountID == pair.Value).FirstOrDefault();
-                    if (playerRatings[acc.AccountID].Rank < int.MaxValue && selector.Invoke(acc))
+                    foreach (var pair in sortedPlayers)
                     {
-                        if (counter++ >= count) break;
-                        retval.Add(acc);
+                        Account acc = db.Accounts.Where(a => a.AccountID == pair.Value).FirstOrDefault();
+                        if (playerRatings[acc.AccountID].Rank < int.MaxValue && selector.Invoke(acc))
+                        {
+                            if (counter++ >= count) break;
+                            retval.Add(acc);
+                        }
                     }
                 }
                 return retval;
@@ -247,22 +254,24 @@ namespace Ratings
             lock (dbLock)
             {
 
-                var db = new ZkDataContext();
-                foreach (int player in players)
+                using (var db = new ZkDataContext())
                 {
-                    var accountRating = db.AccountRatings.Where(x => x.RatingCategory == category && x.AccountID == player).FirstOrDefault();
-                    if (accountRating == null)
+                    foreach (int player in players)
                     {
-                        accountRating = new AccountRating(player, category);
-                        accountRating.UpdateFromRatingSystem(playerRatings[player]);
-                        db.AccountRatings.InsertOnSubmit(accountRating);
+                        var accountRating = db.AccountRatings.Where(x => x.RatingCategory == category && x.AccountID == player).FirstOrDefault();
+                        if (accountRating == null)
+                        {
+                            accountRating = new AccountRating(player, category);
+                            accountRating.UpdateFromRatingSystem(playerRatings[player]);
+                            db.AccountRatings.InsertOnSubmit(accountRating);
+                        }
+                        else
+                        {
+                            accountRating.UpdateFromRatingSystem(playerRatings[player]);
+                        }
                     }
-                    else
-                    {
-                        accountRating.UpdateFromRatingSystem(playerRatings[player]);
-                    }
+                    db.SaveChanges();
                 }
-                db.SaveChanges();
             }
         }
 
@@ -271,37 +280,39 @@ namespace Ratings
             lock (dbLock)
             {
                 DateTime start = DateTime.Now;
-                var db = new ZkDataContext();
-                HashSet<int> processedPlayers = new HashSet<int>();
-                int deleted = 0;
-                int added = 0;
-                foreach (var accountRating in db.AccountRatings.Where(x => x.RatingCategory == category))
+                using (var db = new ZkDataContext())
                 {
-                    if (!playerRatings.ContainsKey(accountRating.AccountID))
+                    HashSet<int> processedPlayers = new HashSet<int>();
+                    int deleted = 0;
+                    int added = 0;
+                    foreach (var accountRating in db.AccountRatings.Where(x => x.RatingCategory == category))
                     {
-                        deleted++;
-                        db.AccountRatings.DeleteOnSubmit(accountRating);
-                        continue;
+                        if (!playerRatings.ContainsKey(accountRating.AccountID))
+                        {
+                            deleted++;
+                            db.AccountRatings.DeleteOnSubmit(accountRating);
+                            continue;
+                        }
+                        processedPlayers.Add(accountRating.AccountID);
+                        if (Math.Abs(playerRatings[accountRating.AccountID].Elo - accountRating.Elo) > 1)
+                        {
+                            accountRating.UpdateFromRatingSystem(playerRatings[accountRating.AccountID]);
+                        }
                     }
-                    processedPlayers.Add(accountRating.AccountID);
-                    if (Math.Abs(playerRatings[accountRating.AccountID].Elo - accountRating.Elo) > 1)
+                    foreach (int player in playerRatings.Keys)
                     {
-                        accountRating.UpdateFromRatingSystem(playerRatings[accountRating.AccountID]);
+                        if (!processedPlayers.Contains(player))
+                        {
+                            var accountRating = new AccountRating(player, category);
+                            accountRating.UpdateFromRatingSystem(playerRatings[player]);
+                            db.AccountRatings.InsertOnSubmit(accountRating);
+                            added++;
+                        }
                     }
-                }
-                foreach (int player in playerRatings.Keys)
-                {
-                    if (!processedPlayers.Contains(player))
-                    {
-                        var accountRating = new AccountRating(player, category);
-                        accountRating.UpdateFromRatingSystem(playerRatings[player]);
-                        db.AccountRatings.InsertOnSubmit(accountRating);
-                        added++;
-                    }
-                }
 
-                db.SaveChanges();
-                Trace.TraceInformation("WHR " + category +" Ratings saved to DB in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + added + " entries added, " + deleted + " entries removed, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
+                    db.SaveChanges();
+                    Trace.TraceInformation("WHR " + category + " Ratings saved to DB in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + added + " entries added, " + deleted + " entries removed, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
+                }
             }
         }
 
