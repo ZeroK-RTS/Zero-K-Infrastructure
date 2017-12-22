@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -114,7 +115,12 @@ namespace Ratings
             {
                 using (ZkDataContext db = new ZkDataContext())
                 {
-                    laddersCache = db.Accounts.OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault()).Take(count).ToList();
+                    laddersCache = db.Accounts
+                        .Include(a => a.Clan)
+                        .Include(a => a.Faction)
+                        .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault())
+                        .Take(count)
+                        .ToList();
                 }
             }
             if (laddersCache.Count < count)
@@ -123,7 +129,12 @@ namespace Ratings
                 using (ZkDataContext db = new ZkDataContext())
                 {
                     List<int> retIDs = topPlayers.Take(count).ToList();
-                    laddersCache = db.Accounts.Where(a => retIDs.Contains(a.AccountID)).OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault()).ToList();
+                    laddersCache = db.Accounts
+                        .Where(a => retIDs.Contains(a.AccountID))
+                        .Include(a => a.Clan)
+                        .Include(a => a.Faction)
+                        .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault())
+                        .ToList();
                 }
             }
             return laddersCache.Take(count).ToList();
@@ -140,7 +151,11 @@ namespace Ratings
                 {
                     foreach (var pair in sortedPlayers)
                     {
-                        Account acc = db.Accounts.Where(a => a.AccountID == pair.Value).FirstOrDefault();
+                        Account acc = db.Accounts
+                            .Where(a => a.AccountID == pair.Value)
+                            .Include(a => a.Clan)
+                            .Include(a => a.Faction)
+                            .FirstOrDefault();
                         if (playerRatings[acc.AccountID].Rank < int.MaxValue && selector.Invoke(acc))
                         {
                             if (counter++ >= count) break;
