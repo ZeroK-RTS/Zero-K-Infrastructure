@@ -264,29 +264,39 @@ namespace System.Web.Mvc
         /// </summary>
         /// <param name="colorize">If true, write the text in <see cref="Faction"/> color</param>
         /// <returns></returns>
-        public static MvcHtmlString PrintClan(this HtmlHelper helper, Clan clan, bool colorize = true) {
+        public static MvcHtmlString PrintClan(this HtmlHelper helper, Clan clan, bool colorize = true, bool big = false) {
             var url = Global.UrlHelper();
             if (clan == null) return new MvcHtmlString(string.Format("<a href='{0}'>No Clan</a>", url.Action("Index", "Clans")));
             {
                 string color = Clan.ClanColor(clan, Global.ClanID);
                 if (String.IsNullOrEmpty(color)) color = "#B0D0C0";
-                return
-                    new MvcHtmlString(
+                if (big)
+                {
+                    return
+                        new MvcHtmlString(string.Format("<a href='{1}' nicetitle='$clan${2}'><img width='64' src='{0}'/></a>",
+                                                        clan.GetImageUrl(),
+                                                        url.Action("Detail", "Clans", new { id = clan.ClanID }),
+                                                        clan.ClanID));
+                }
+                else
+                {
+                    return new MvcHtmlString(
                         string.Format("<a href='{0}' nicetitle='$clan${4}'><img src='{1}' width='16'><span style='color:{2}'>{3}</span></a>",
                                       url.Action("Detail", "Clans", new { id = clan.ClanID }),
                                       clan.GetImageUrl(),
                                       colorize ? color : "",
                                       HttpUtility.HtmlEncode(clan.Shortcut),
                                       clan.ClanID));
+                }
             }
         }
 
 
-        public static MvcHtmlString PrintBadges(this HtmlHelper helper, Account account, int? maxWidth = null)
+        public static MvcHtmlString PrintBadges(this HtmlHelper helper, Account account, int? maxWidth = null, bool newlines = true)
         {
             if (account == null) return new MvcHtmlString("");
             var badges = account.GetBadges();
-            return new MvcHtmlString(string.Join("\n", badges.Select(x=>$"<img src='/img/badges/{x}.png' nicetitle='{x.Description()}' {(maxWidth != null ? $"style='width:{maxWidth}px;'":"")}/><br/>")));
+            return new MvcHtmlString(string.Join("\n", badges.Select(x=>$"<img src='/img/badges/{x}.png' nicetitle='{x.Description()}' {(maxWidth != null ? $"style='width:{maxWidth}px;'":"")}/>{(newlines ? "<br/>" : "")}")));
         }
 
         /// <summary>

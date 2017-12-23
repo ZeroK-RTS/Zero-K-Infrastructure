@@ -1,18 +1,40 @@
 .js_tabs {}
 
+@font-face {
+    font-family: "Xolonium";
+	font-weight: normal;
+    src: url("./fonts/Xolonium-Regular.ttf");
+    src: 
+    url("./fonts/Xolonium-Regular.woff") format("woff"),
+    url("./fonts/Xolonium-Regular.otf") format("opentype");
+}
+@font-face {
+    font-family: "Xolonium";
+	font-weight: bold;
+    src: url("./fonts/Xolonium-Bold.ttf");
+    src: 
+    url("./fonts/Xolonium-Bold.woff") format("woff"),
+    url("./fonts/Xolonium-Bold.otf") format("opentype");
+}
+
 html
 {
 	/*background: #000 url("/img/bg_bluehex.gif") fixed;*/
 	background: #000;
 	color: #ede;
-	font-family: os, sans-serif;
-	font-size: 15px;
+    font-family: 'Xolonium', os, sans-serif;
+	font-size: 14.5px;
 	height: 100%;
 	width: 100%;
 	padding: 0;
 	margin: 0;
 	border: 0;
 	z-index:0;
+    letter-spacing: -0.2px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-feature-settings: "kern";
+    -moz-font-feature-settings: "kern";
+    font-feature-settings: "kern";
 }
 
 body

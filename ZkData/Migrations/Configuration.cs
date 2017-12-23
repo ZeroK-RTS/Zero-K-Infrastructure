@@ -36,8 +36,12 @@ namespace ZkData.Migrations
         }
 
         protected override void Seed(ZkDataContext db) {
-            /*InitializeBattleRatings(db); //remove this after execution
-            db.SaveChanges();*/
+            var ago = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
+            db.Accounts.Where(x => x.LastLogin > ago).ForEach(x =>
+            {
+                x.Rank = Math.Max(0, Math.Min(7, (int)(x.AccountRatings.Where(a => a.RatingCategory == RatingCategory.Casual).Select(a => a.RealElo).DefaultIfEmpty(1500).FirstOrDefault() - 1000) / 200));
+            });
+            db.SaveChanges();
 
             //  This method will be called after migrating to the latest version.
             if (GlobalConst.Mode == ModeType.Local)
@@ -59,12 +63,16 @@ namespace ZkData.Migrations
                     x => x.Name,
                     new Account
                     {
-                        Name = "test",
+                        Name = "TestPlayer",
                         NewPasswordPlain = "test",
                         AdminLevel = AdminLevel.SuperAdmin,
                         Kudos = 200,
-                        Level = 50,
-                        Country = "cz"
+                        Level = 255,
+                        Xp = 1325900,
+                        Rank = 3,
+                        Country = "cz",
+                        Avatar = "amphimpulse",
+                        DevLevel = DevLevel.CoreDeveloper,
                     },
                     new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, AdminLevel = AdminLevel.SuperAdmin});
             }
