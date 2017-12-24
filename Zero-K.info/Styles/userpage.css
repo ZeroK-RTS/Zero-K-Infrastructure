@@ -1,6 +1,8 @@
 .username{
     text-align: center;
     letter-spacing: 0.3px;
+    margin-left: 150px;
+    margin-right: 150px;
 }
 
 .progress_filler{
@@ -68,19 +70,35 @@
 .user_buttons{
     float: right; 
     text-align: center;
-    width: 64px;
     bottom: 0px;
-    margin-top: 11px;
+    margin-top: 0px;
 }
-#avatar{
-    margin-top: 15px;
-    float:left;
-    padding-left: 15px;
-}
+
 .user_buttons table{
-    width: 100%;
 }
 .user_buttons tr td{
+    padding: 4px;
+}
+
+#avatar{
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5px;
+    background-image: url("/img/ranks/level-elo/velvetbacking.jpg");
+    background-size: 100% 100%;
+    width: 94px;
+    height: 180px;
+}
+.avatarbg{
+    background-image: url("/img/avatarbg.png");
+    display: inline-block;
+}
+#avatar table {
+    width: 100%;
+    padding-top: 10px;
+}
+#avatar table tr td{
+    text-align: center;
     padding: 4px;
 }
 #usr_info{
@@ -94,19 +112,21 @@
 }
 #badges{
     height: 26px;
-    width: 300px;
+    width: 400px;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
 }
 #levelrank{
-    padding-top: 4px;
+    padding-top: 0px;
     margin-left: auto;
     margin-right: auto;
 }
 .ranks{
     height: 200px;
 }
-#velvet{
-    display:none;
+#badge,
+#avatarwrap{
+    width: 49%;
+    display: inline-block;
 }
