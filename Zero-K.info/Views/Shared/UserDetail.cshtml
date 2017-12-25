@@ -20,6 +20,7 @@
 
 @{
     var backgroundImages = new string[] { "infrared", "brown", "red", "orange", "yellow", "blue", "neutron", "black" };
+    var rankNames = new string[] { "Nebulous", "Brown Dwarf", "Red Dwarf", "Subgiant", "Giant", "Supergiant", "Neutron Star", "Singularity", "Space Lobster" };
 
     <link href="/Styles/userpage.css" rel="stylesheet">
 
@@ -134,7 +135,7 @@
                     int bars = 0;
                         <div id="badge">
                             <div id="levelrank" title="This is a graphical representation of your level. Play more games to gain more rank!">
-                                <div id="velvet"><img src="../../img/ranks/level-elo/velvetbacking.jpg" width="100%" height="100%" /></div>
+                                <!--<div id="velvet"><img src="../../img/ranks/level-elo/velvetbacking.jpg" width="100%" height="100%" /></div>-->
                                 <div id="badge-center">
                                     @if (Model.Level > 125)
                                     {
@@ -197,7 +198,7 @@
                 <div title='Your XP: @Model.Xp (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
 
                     <div class="progress_wrapper_left">
-                        <div class="progress_text"> Rank X </div>
+                        <div class="progress_text"> @rankNames[Model.Rank] </div>
                         <div class="progress_begin"></div>
                     </div>
                     <div class="progress_wrapper">
@@ -206,7 +207,7 @@
                     </div>
                     <div class="progress_wrapper_right">
                         <div class="progress_end"></div>
-                        <div class="progress_text"> Rank Y </div>
+                        <div class="progress_text"> @rankNames[Model.Rank + 1] </div>
                     </div>
                 </div>
                 <br class="clearfloat" />

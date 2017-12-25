@@ -55,16 +55,17 @@
 }
     
 .progress_wrapper{
-    margin:  0px 120px 0px 120px ;
+    margin:  0px 150px 0px 150px ;
     position:relative;
 }
 .progress_wrapper_left{
-    width: 120px;
+    width: 150px;
     float: left;
 }
 .progress_wrapper_right{
-    width: 120px;
+    width: 150px;
     float: right;
+    text-align: right;
 
 }
 .user_buttons{
@@ -84,7 +85,7 @@
     margin-left: auto;
     margin-right: auto;
     margin-top: 5px;
-    background-image: url("/img/ranks/level-elo/velvetbacking.jpg");
+    #background-image: url("/img/ranks/level-elo/velvetbacking.jpg");
     background-size: 100% 100%;
     width: 94px;
     height: 180px;

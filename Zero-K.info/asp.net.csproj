@@ -309,6 +309,7 @@
     <Content Include="Img\artifact_4.png" />
     <Content Include="Img\artifact_5.png" />
     <Content Include="Img\artifact_empty.png" />
+    <Content Include="Img\avatarbg.png" />
     <Content Include="Img\badges\dev_adv.png" />
     <Content Include="Img\badges\dev_content.png" />
     <Content Include="Img\badges\dev_game.png" />
