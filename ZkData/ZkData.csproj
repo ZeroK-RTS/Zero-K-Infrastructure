@@ -336,6 +336,10 @@
     <Compile Include="Migrations\201712192204530_EloIsHistory.Designer.cs">
       <DependentUpon>201712192204530_EloIsHistory.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201712232154526_AddedSunRanks.cs" />
+    <Compile Include="Migrations\201712232154526_AddedSunRanks.Designer.cs">
+      <DependentUpon>201712232154526_AddedSunRanks.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -655,6 +659,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201712192204530_EloIsHistory.resx">
       <DependentUpon>201712192204530_EloIsHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712232154526_AddedSunRanks.resx">
+      <DependentUpon>201712232154526_AddedSunRanks.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

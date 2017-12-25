@@ -132,6 +132,7 @@ namespace ZkData
         public int MissionRunCount { get; set; }
         public int Xp { get; set; }
         public int Level { get; set; }
+        public int Rank { get; set; }
         public int? ClanID { get; set; }
         public int? FactionID { get; set; }
         public bool IsDeleted { get; set; }
@@ -647,9 +648,17 @@ namespace ZkData
 
             int clampedSkill = 0;
             
-            clampedSkill = Math.Max(clampedSkill, Math.Max(0, Math.Min(7, (int)Math.Floor((GetBestRating().Elo - 1000.0)) / 200)));
+            clampedSkill = Rank;
 
             return $"{clampedLevel}_{clampedSkill}";
+        }
+
+        public float GetRankProgress()
+        {
+            var rating = GetBestRating();
+            var rankCeil = Rank * 200 + 1200 + rating.Uncertainty;
+            var rankFloor = Rank * 200 + 1000 - rating.Uncertainty;
+            return Math.Min(1, Math.Max(0, (rating.RealElo - rankFloor) / (rankCeil - rankFloor)));
         }
 
         public List<BadgeType> GetBadges()

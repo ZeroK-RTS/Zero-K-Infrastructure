@@ -309,6 +309,7 @@
     <Content Include="Img\artifact_4.png" />
     <Content Include="Img\artifact_5.png" />
     <Content Include="Img\artifact_empty.png" />
+    <Content Include="Img\avatarbg.png" />
     <Content Include="Img\badges\dev_adv.png" />
     <Content Include="Img\badges\dev_content.png" />
     <Content Include="Img\badges\dev_game.png" />
@@ -1113,6 +1114,14 @@
     <Content Include="Img\progressl_fill.png" />
     <Content Include="Img\progressr_base.png" />
     <Content Include="Img\progressr_fill.png" />
+    <Content Include="Img\rankbg\black.png" />
+    <Content Include="Img\rankbg\blue.png" />
+    <Content Include="Img\rankbg\brown.png" />
+    <Content Include="Img\rankbg\infrared.png" />
+    <Content Include="Img\rankbg\neutron.png" />
+    <Content Include="Img\rankbg\orange.png" />
+    <Content Include="Img\rankbg\red.png" />
+    <Content Include="Img\rankbg\yellow.png" />
     <Content Include="Img\ranks\0_0.png" />
     <Content Include="Img\ranks\0_1.png" />
     <Content Include="Img\ranks\0_2.png" />
@@ -1411,6 +1420,7 @@
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site_main.js" />
+    <Content Include="Styles\userpage.css" />
     <Content Include="Styles\base.css" />
     <Content Include="Styles\dark-hive\images\tech_button.png" />
     <Content Include="Styles\dark-hive\images\ui-bg_flat_30_cccccc_40x100.png" />
@@ -1539,6 +1549,12 @@
     <Content Include="Views\Charts\ChartsRatings.cshtml">
       <BrowseToURL>~/Charts/ChartsRatings</BrowseToURL>
     </Content>
+    <Content Include="Styles\fonts\Xolonium-Bold.otf" />
+    <Content Include="Styles\fonts\Xolonium-Bold.ttf" />
+    <Content Include="Styles\fonts\Xolonium-Bold.woff" />
+    <Content Include="Styles\fonts\Xolonium-Regular.otf" />
+    <Content Include="Styles\fonts\Xolonium-Regular.ttf" />
+    <Content Include="Styles\fonts\Xolonium-Regular.woff" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
