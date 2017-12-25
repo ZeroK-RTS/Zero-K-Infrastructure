@@ -666,6 +666,7 @@
     <Content Include="Img\galaxies\origin.txt" />
     <Content Include="Img\galaxies\render_19.jpg" />
     <Content Include="Img\galaxies\render_24.jpg" />
+    <Content Include="Img\help.png" />
     <Content Include="Img\hof\r1_clans.jpg" />
     <Content Include="Img\hof\r1_map.jpg" />
     <Content Include="Img\hof\r1_winner.jpg" />
