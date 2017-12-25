@@ -244,7 +244,7 @@
         </div>
 
 
-        @if (Global.IsModerator)
+        if (Global.IsModerator)
         {
             <div class="admin">
                 @Html.ActionLink("Admin user", "AdminUserDetail", "Users", new { id = Model.AccountID }, null)
