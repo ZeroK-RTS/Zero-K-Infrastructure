@@ -118,7 +118,7 @@
                             <tr>
                                 <td>
                                     <div class="avatarbg">
-                                        @Html.AccountAvatar(Model)
+                                        <!-- @Html.AccountAvatar(Model) -->
                                         @if (Model.Clan != null) { Html.PrintClan(Model.Clan, true, true); }
                                         else if (Model.Faction != null) { Html.PrintFaction(Model.Faction, true); }
                                     </div>
@@ -211,14 +211,7 @@
                     </div>
                 </div>
                 <br class="clearfloat" />
-                @if (Model.Faction != null)
-                {
-                    @:Faction: @Html.PrintFaction(Model.Faction, false)
-            }
-                @if (Model.Clan != null)
-                {
-                    @:Clan: @Html.PrintClan(Model.Clan)
-            }
+               
                 @if (Model.Faction != null || Model.Clan != null)
                 {
                     <br />
@@ -228,13 +221,6 @@
         <br class="clearfloat"/>
     }
 
-
-    @if (Global.IsModerator)
-    {
-        <div class="admin">
-            @Html.ActionLink("Admin user", "AdminUserDetail", "Users", new { id = Model.AccountID }, null)
-        </div>
-    }
 
     @if (Global.AccountID == Model.AccountID && Model.Level <= 5 && !Model.IsDeleted)
     {
@@ -257,6 +243,13 @@
             <br class="clearfloat" />
         </div>
 
+
+        @if (Global.IsModerator)
+        {
+            <div class="admin">
+                @Html.ActionLink("Admin user", "AdminUserDetail", "Users", new { id = Model.AccountID }, null)
+            </div>
+        }
 
         <div id="usr_commanders" class="">
             <h3>Commanders: </h3>

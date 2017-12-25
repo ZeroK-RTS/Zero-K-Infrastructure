@@ -336,6 +336,7 @@
     <Content Include="Img\border.png" />
     <Content Include="Img\btn_donateCC_LG.gif" />
     <Content Include="Img\bullet.png" />
+    <Content Include="Img\chat.png" />
     <Content Include="Img\clans\3.png" />
     <Content Include="Img\conduct.png" />
     <Content Include="Img\delete_icon.png" />
