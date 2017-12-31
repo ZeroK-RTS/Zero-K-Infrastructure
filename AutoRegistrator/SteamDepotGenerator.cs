@@ -28,7 +28,7 @@ namespace AutoRegistrator
 
         public void RunAll()
         {
-            if (GlobalConst.Mode != ModeType.Local)
+            if (GlobalConst.Mode == ModeType.Live)
             {
                 lock (locker)
                 {
@@ -239,6 +239,13 @@ namespace AutoRegistrator
             var runp = Process.Start(pi);
             runp.WaitForExit();
             Trace.TraceInformation("SteamDepot build completed!");
+
+            // cleanup output folder to save disk space
+            var outputFolder = Path.Combine(targetFolder, "..", "output");
+            foreach (var file in Directory.GetFiles(outputFolder))
+            {
+                if (!file.EndsWith(".log")) File.Delete(file);
+            }
         }
 
         private void PublishBuild()
