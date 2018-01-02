@@ -35,39 +35,19 @@ namespace ZkData.Migrations
             });
         }
 
+        /// <summary>
+        /// This method is called after migration to latest version
+        /// </summary>
         protected override void Seed(ZkDataContext db) {
-            /*InitializeBattleRatings(db); //remove this after execution
-            db.SaveChanges();*/
-
-            //  This method will be called after migrating to the latest version.
-            if (GlobalConst.Mode == ModeType.Local)
+            var ago = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
+            db.Accounts.Where(x => x.LastLogin > ago).ForEach(x =>
             {
-                // fill local DB with some basic test data
-                db.MiscVars.AddOrUpdate(
-                    x => x.VarName,
-                    new MiscVar { VarName = "NightwatchPassword", VarValue = "dummy" },
-                    new MiscVar { VarName = "GithubHookKey", VarValue = "secret" });
-                
-                if (!db.MiscVars.Any(y=>y.VarName=="SteamBuildPassword"))
-                    db.MiscVars.AddOrUpdate(x => x.VarName, new MiscVar { VarName = "SteamBuildPassword", VarValue = "secret" });
-
-                if (!db.MiscVars.Any(y => y.VarName == "GlacierSecretKey"))
-                    db.MiscVars.AddOrUpdate(x => x.VarName, new MiscVar { VarName = "GlacierSecretKey", VarValue = "secret" });
-
-             
-                db.Accounts.AddOrUpdate(
-                    x => x.Name,
-                    new Account
-                    {
-                        Name = "test",
-                        NewPasswordPlain = "test",
-                        AdminLevel = AdminLevel.SuperAdmin,
-                        Kudos = 200,
-                        Level = 50,
-                        Country = "cz"
-                    },
-                    new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, AdminLevel = AdminLevel.SuperAdmin});
-            }
+                x.Rank = Math.Max(0, Math.Min(7, (int)(x.AccountRatings.Where(a => a.RatingCategory == RatingCategory.Casual).Select(a => a.RealElo).DefaultIfEmpty(1500).FirstOrDefault() - 1000) / 200));
+            });
+            db.SaveChanges();
+            db.Database.ExecuteSqlCommand($"truncate table {nameof(LogEntries)}");
+           
+            if (GlobalConst.Mode == ModeType.Local) LocalSeed(db);
 
             db.Resources.AddOrUpdate(x=>x.InternalName, new Resource()
             {
@@ -128,6 +108,37 @@ namespace ZkData.Migrations
 
             db.SaveChanges();
 
+        }
+
+        private static void LocalSeed(ZkDataContext db)
+        {
+            // fill local DB with some basic test data
+            db.MiscVars.AddOrUpdate(x => x.VarName,
+                new MiscVar { VarName = "NightwatchPassword", VarValue = "dummy" },
+                new MiscVar { VarName = "GithubHookKey", VarValue = "secret" });
+
+            if (!db.MiscVars.Any(y => y.VarName == "SteamBuildPassword"))
+                db.MiscVars.AddOrUpdate(x => x.VarName, new MiscVar { VarName = "SteamBuildPassword", VarValue = "secret" });
+
+            if (!db.MiscVars.Any(y => y.VarName == "GlacierSecretKey"))
+                db.MiscVars.AddOrUpdate(x => x.VarName, new MiscVar { VarName = "GlacierSecretKey", VarValue = "secret" });
+
+            db.Accounts.AddOrUpdate(x => x.Name,
+            new Account
+            {
+                Name = "TestPlayer",
+                NewPasswordPlain = "test",
+                AdminLevel = AdminLevel.SuperAdmin,
+                Kudos = 200,
+                Level = 255,
+                Xp = 1325900,
+                Rank = 3,
+                Country = "cz",
+                Avatar = "amphimpulse",
+                DevLevel = DevLevel.CoreDeveloper,
+            },
+            new Account { Name = "test", NewPasswordPlain = "test", AdminLevel = AdminLevel.SuperAdmin, Kudos = 200, Level = 50, Country = "cz" },
+            new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, AdminLevel = AdminLevel.SuperAdmin });
         }
     }
 }

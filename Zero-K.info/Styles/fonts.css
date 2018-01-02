@@ -12,3 +12,21 @@
     src: url('/OpenSans-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
     url('/OpenSans-Regular.ttf') format('truetype'); /* Safari, Android, iOS */
 }
+
+
+@font-face {
+    font-family: "Xolonium";
+	font-weight: normal;
+    src: url("/Styles/fonts/Xolonium-Regular.ttf");
+    src: 
+    url("/Styles/fonts/Xolonium-Regular.woff") format("woff"),
+    url("/Styles/fonts/Xolonium-Regular.otf") format("opentype");
+}
+@font-face {
+    font-family: "Xolonium";
+	font-weight: bold;
+    src: url("/Styles/fonts/Xolonium-Regular.ttf");
+    src: 
+    url("/Styles/fonts/Xolonium-Bold.woff") format("woff"),
+    url("/Styles/fonts/Xolonium-Bold.otf") format("opentype");
+}

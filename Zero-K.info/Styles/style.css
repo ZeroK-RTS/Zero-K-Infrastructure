@@ -5,14 +5,19 @@ html
 	/*background: #000 url("/img/bg_bluehex.gif") fixed;*/
 	background: #000;
 	color: #ede;
-	font-family: os, sans-serif;
-	font-size: 15px;
+    font-family: 'Xolonium', os, sans-serif;
+	font-size: 14.5px;
 	height: 100%;
 	width: 100%;
 	padding: 0;
 	margin: 0;
 	border: 0;
 	z-index:0;
+    letter-spacing: -0.2px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-feature-settings: "kern";
+    -moz-font-feature-settings: "kern";
+    font-feature-settings: "kern";
 }
 
 body
