@@ -69,13 +69,13 @@ namespace ZeroKWeb.SpringieInterface
 
         public static double GetTeamsDifference(List<BalanceTeam> t)
         {
-            if (t.Count == 2) return Math.Abs(t[0].AvgElo - t[1].AvgElo);
+            if (t.Count == 2) return Math.Abs(t[0].GuaranteedElo - t[1].GuaranteedElo);
             var min = double.MaxValue;
             var max = double.MinValue;
             foreach (var team in t)
             {
-                if (team.AvgElo > max) max = team.AvgElo;
-                if (team.AvgElo < min) min = team.AvgElo;
+                if (team.GuaranteedElo > max) max = team.GuaranteedElo;
+                if (team.GuaranteedElo < min) min = team.GuaranteedElo;
             }
             return max - min;
         }
@@ -190,8 +190,8 @@ namespace ZeroKWeb.SpringieInterface
 
                 if (unmovablePlayers != null && unmovablePlayers.Length > 0)
                 {
-                    var minElo = bestTeams.Min(x => x.AvgElo);
-                    var maxElo = bestTeams.Max(x => x.AvgElo);
+                    var minElo = bestTeams.Min(x => x.EloAvg);
+                    var maxElo = bestTeams.Max(x => x.EloAvg);
                     if (maxElo - minElo > GlobalConst.MaxPwEloDifference)
                     {
                         var fallback = new Balancer().LegacyBalance(teamCount, BalanceMode.ClanWise, b, null);
@@ -224,8 +224,8 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     if (allyNum > 0) text += " : ";
                     text += string.Format("{0}", (allyNum + 1));
-                    text += string.Format("={0}%)", (int)Math.Round((1.0 / (1.0 + Math.Pow(10, ((team.AvgElo - bestTeams.Where(x => !x.Equals(team)).Select(x => x.AvgElo).Average())) / 400.0))) * 100.0 * 2 / bestTeams.Count));
-                    lastTeamElo = team.AvgElo;
+                    text += string.Format("={0}%)", (int)Math.Round((1.0 / (1.0 + Math.Pow(10, ((team.EloAvg - bestTeams.Where(x => !x.Equals(team)).Select(x => x.EloAvg).Average())) / 400.0))) * 100.0 * 2 / bestTeams.Count));
+                    lastTeamElo = team.EloAvg;
 
                     foreach (var u in team.Items.SelectMany(x => x.LobbyId)) ret.Players.Single(x => x.LobbyID == u).AllyID = allyNum;
                     allyNum++;
@@ -386,7 +386,7 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     foreach (var team in teams)
                     {
-                        if (team.Count + item.Count <= maxTeamSize)
+                        if (team.Count + item.EloElements.Count <= maxTeamSize)
                         {
                             team.AddItem(item);
                             RecursiveBalance(itemIndex + 1);
@@ -444,43 +444,50 @@ namespace ZeroKWeb.SpringieInterface
 
         public class BalanceItem
         {
-            public readonly int Count;
-            public readonly double EloSum;
+            public readonly List<double> EloElements;
             public readonly List<int> LobbyId;
             public bool CanBeMoved = true;
 
             public BalanceItem(bool isMatchMaker, params Account[] accounts)
             {
                 LobbyId = accounts.Select(x => x.AccountID).ToList();
-                Count = accounts.Length;
                 
                 RatingCategory category = isMatchMaker ? RatingCategory.MatchMaking : RatingCategory.Casual;
-                EloSum = accounts.Sum(x => x.GetRating(category).Elo);
+                EloElements = accounts.Select(x => (double)x.GetRating(category).Elo).ToList();
             }
         }
 
         public class BalanceTeam
         {
             public List<BalanceItem> Items = new List<BalanceItem>();
-            public double AvgElo { get; private set; }
+            public double EloAvg { get; private set; }
+            public double GuaranteedElo { get; private set; }
+            private double EloSum { get; set; }
             public int Count { get; private set; }
-            public double EloSum { get; private set; }
+            public double EloVar { get; private set; }
+            private double EloVarSum { get; set; }
 
+            
             public void AddItem(BalanceItem item)
             {
                 Items.Add(item);
-                EloSum += item.EloSum;
-                Count += item.Count;
-                if (Count > 0) AvgElo = EloSum / Count;
-                else AvgElo = 0;
+                item.EloElements.ForEach(x => {
+                    double oldAvg = EloAvg;
+                    EloSum += x;
+                    EloAvg = EloSum / ++Count;
+                    EloVarSum += (x - oldAvg) * (x - EloAvg);
+                });
+                if (Count > 1) EloVar = EloVarSum / (Count - 1);
+                GuaranteedElo = EloAvg - Math.Sqrt(EloVar);
             }
 
             public BalanceTeam Clone()
             {
                 var clone = new BalanceTeam();
                 clone.Items = new List<BalanceItem>(Items);
-                clone.AvgElo = AvgElo;
-                clone.EloSum = EloSum;
+                clone.EloAvg = EloAvg;
+                clone.EloVarSum = EloVarSum;
+                clone.EloVar = EloVar;
                 clone.Count = Count;
                 return clone;
             }
@@ -488,10 +495,21 @@ namespace ZeroKWeb.SpringieInterface
             public void RemoveItem(BalanceItem item)
             {
                 Items.Remove(item);
-                EloSum -= item.EloSum;
-                Count -= item.Count;
-                if (Count > 0) AvgElo = EloSum / Count;
-                else AvgElo = 0;
+                item.EloElements.ForEach(x => {
+                    if (Count > 1)
+                    {
+                        double oldAvg = EloAvg;
+                        EloSum -= x;
+                        EloAvg = EloSum / --Count;
+                        EloVarSum -= (x - oldAvg) * (x - EloAvg);
+                    }else
+                    {
+                        EloSum = EloVarSum = EloAvg = 0;
+                    }
+                });
+                if (Count > 1) EloVar = EloVarSum / (Count - 1);
+                else EloVar = 0;
+                GuaranteedElo = EloAvg - Math.Sqrt(EloVar);
             }
         }
     }
