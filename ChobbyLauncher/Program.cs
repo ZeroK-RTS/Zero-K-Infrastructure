@@ -71,7 +71,6 @@ namespace ChobbyLauncher
             try
             {
                 var chobbyla = new Chobbyla(startupPath, chobbyTag, engineOverride);
-
                 RunWrapper(chobbyla, connectLobbyID, threadSafeWriter, logStringBuilder);
             }
             catch (Exception ex)

@@ -681,9 +681,10 @@ namespace ChobbyLauncher
 
         private async Task OnConnectionClosed(bool arg)
         {
-            timer.Dispose();
-            discordController.Dispose();            
             Trace.TraceInformation("Chobby closed connection");
+            timer.Dispose();
+            steam.Dispose();
+            discordController.Dispose();
         }
     }
 
