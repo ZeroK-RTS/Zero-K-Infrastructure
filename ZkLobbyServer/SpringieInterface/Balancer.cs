@@ -69,15 +69,19 @@ namespace ZeroKWeb.SpringieInterface
 
         public static double GetTeamsDifference(List<BalanceTeam> t)
         {
-            if (t.Count == 2) return Math.Abs(t[0].GuaranteedElo - t[1].GuaranteedElo);
-            var min = double.MaxValue;
-            var max = double.MinValue;
+            if (t.Count == 2) return (t[0].EloAvg - t[1].EloAvg) * (t[0].EloAvg - t[1].EloAvg) + 0.01 * (t[0].EloStdev - t[1].EloStdev) * (t[0].EloStdev - t[1].EloStdev);
+            double minElo = double.MaxValue;
+            double maxElo = double.MinValue;
+            double minVar = double.MaxValue;
+            double maxVar = double.MinValue;
             foreach (var team in t)
             {
-                if (team.GuaranteedElo > max) max = team.GuaranteedElo;
-                if (team.GuaranteedElo < min) min = team.GuaranteedElo;
+                if (team.EloAvg > maxElo) maxElo = team.EloAvg;
+                if (team.EloAvg < minElo) minElo = team.EloAvg;
+                if (team.EloStdev > maxVar) maxVar = team.EloStdev;
+                if (team.EloStdev < minVar) minVar = team.EloStdev;
             }
-            return max - min;
+            return (maxElo - minElo) * (maxElo - minElo) + 0.01 * (maxVar - minVar) * (maxVar - minVar);
         }
 
 
@@ -461,7 +465,7 @@ namespace ZeroKWeb.SpringieInterface
         {
             public List<BalanceItem> Items = new List<BalanceItem>();
             public double EloAvg { get; private set; }
-            public double GuaranteedElo { get; private set; }
+            public double EloStdev { get; private set; }
             private double EloSum { get; set; }
             public int Count { get; private set; }
             public double EloVar { get; private set; }
@@ -478,7 +482,7 @@ namespace ZeroKWeb.SpringieInterface
                     EloVarSum += (x - oldAvg) * (x - EloAvg);
                 });
                 if (Count > 1) EloVar = EloVarSum / (Count - 1);
-                GuaranteedElo = EloAvg - Math.Sqrt(EloVar);
+                EloStdev = Math.Sqrt(EloVar);
             }
 
             public BalanceTeam Clone()
@@ -489,6 +493,7 @@ namespace ZeroKWeb.SpringieInterface
                 clone.EloVarSum = EloVarSum;
                 clone.EloVar = EloVar;
                 clone.Count = Count;
+                clone.EloStdev = EloStdev;
                 return clone;
             }
 
@@ -509,7 +514,7 @@ namespace ZeroKWeb.SpringieInterface
                 });
                 if (Count > 1) EloVar = EloVarSum / (Count - 1);
                 else EloVar = 0;
-                GuaranteedElo = EloAvg - Math.Sqrt(EloVar);
+                EloStdev = Math.Sqrt(EloVar);
             }
         }
     }
