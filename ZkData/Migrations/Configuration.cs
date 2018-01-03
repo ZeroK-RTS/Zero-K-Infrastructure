@@ -44,6 +44,10 @@ namespace ZkData.Migrations
             {
                 x.Rank = Math.Max(0, Math.Min(7, (int)(x.AccountRatings.Where(a => a.RatingCategory == RatingCategory.Casual).Select(a => a.RealElo).DefaultIfEmpty(1500).FirstOrDefault() - 1000) / 200));
             });
+            for (int rank = Ranks.Percentiles.Length - 1; rank >= 0; rank--) {
+                var requirement = Ranks.Percentiles[rank];
+                db.Accounts.Where(a => a.AccountRatings.Any(r => r.Percentile < requirement)).Update(x => new Account(){ Rank = rank });
+            }
             db.SaveChanges();
             db.Database.ExecuteSqlCommand($"truncate table {nameof(LogEntries)}");
            

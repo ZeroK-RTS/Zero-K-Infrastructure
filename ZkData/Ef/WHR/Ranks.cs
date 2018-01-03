@@ -20,8 +20,9 @@ namespace Ratings
         public static float GetRankProgress(Account acc)
         {
             var rating = acc.GetBestRating();
-            var rankCeil = Brackets[acc.Rank + 1] + rating.Uncertainty;
-            var rankFloor = Brackets[acc.Rank] - rating.Uncertainty;
+            var stdev = Math.Min(10000, rating.Uncertainty);
+            var rankCeil = Brackets[acc.Rank + 1] + stdev;
+            var rankFloor = Brackets[acc.Rank] - stdev;
             return Math.Min(1, Math.Max(0, (rating.RealElo - rankFloor) / (rankCeil - rankFloor)));
         }
 
