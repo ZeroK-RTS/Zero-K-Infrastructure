@@ -5,7 +5,7 @@ namespace Ratings
 {
     public class Ranks
     {
-        public static readonly float[] Percentiles = { 0.01f, 0.05f, 0.1f, 0.2f, 0.4f, 0.6f, 0.8f, float.MaxValue};
+        public static readonly float[] Percentiles = {float.MaxValue, 0.8f, 0.6f, 0.4f, 0.2f, 0.1f, 0.05f, 0.01f};
 
         public static float[] Brackets = { float.MinValue, 1200f, 1400f, 1600f, 1800f, 2000f, 2200f, 2400f, float.MaxValue};
         

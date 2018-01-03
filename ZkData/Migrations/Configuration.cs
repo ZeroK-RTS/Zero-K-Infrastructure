@@ -40,15 +40,13 @@ namespace ZkData.Migrations
         /// </summary>
         protected override void Seed(ZkDataContext db) {
             var ago = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
-            db.Accounts.Where(x => x.LastLogin > ago).ForEach(x =>
-            {
-                x.Rank = Math.Max(0, Math.Min(7, (int)(x.AccountRatings.Where(a => a.RatingCategory == RatingCategory.Casual).Select(a => a.RealElo).DefaultIfEmpty(1500).FirstOrDefault() - 1000) / 200));
-            });
-            for (int rank = Ranks.Percentiles.Length - 1; rank >= 0; rank--) {
+            db.Accounts.Update(x => new Account() { Rank = 0 });
+            for (int rank = 0; rank < Ranks.Percentiles.Length; rank++) {
                 var requirement = Ranks.Percentiles[rank];
-                db.Accounts.Where(a => a.AccountRatings.Any(r => r.Percentile < requirement)).Update(x => new Account(){ Rank = rank });
+                db.Accounts.Where(x => x.LastLogin > ago).Where(a => a.AccountRatings.Any(r => r.Percentile < requirement)).Update(x => new Account(){ Rank = rank });
             }
             db.SaveChanges();
+
             db.Database.ExecuteSqlCommand($"truncate table {nameof(LogEntries)}");
            
             if (GlobalConst.Mode == ModeType.Local) LocalSeed(db);
