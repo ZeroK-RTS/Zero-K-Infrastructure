@@ -252,19 +252,7 @@ namespace Ratings
                                 db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ToList().Where(p => playerOldRatings.ContainsKey(p.AccountID) && !p.EloChange.HasValue).ForEach(p =>
                                 {
                                     p.EloChange = playerRatings[p.AccountID].RealElo - playerOldRatings[p.AccountID].RealElo;
-                                    var rating = p.Account.GetBestRating();
-                                    var rankCeil = p.Account.Rank * 200 + 1200;
-                                    var rankFloor = p.Account.Rank * 200 + 1000;
-                                    if (rating.RealElo - rating.Uncertainty > rankCeil && p.Account.Rank < 7 && p.IsInVictoryTeam)
-                                    {
-                                        p.Account.Rank = Math.Max(0, Math.Min(7, (int)(rating.RealElo - rating.Uncertainty - 1000) / 200));
-                                        updatedRanks.Add(p.AccountID);
-                                    }
-                                    if (rating.RealElo + rating.Uncertainty < rankFloor && p.Account.Rank > 0 && !p.IsInVictoryTeam)
-                                    {
-                                        p.Account.Rank = Math.Max(0, Math.Min(7, (int)(rating.RealElo + rating.Uncertainty - 1000) / 200));
-                                        updatedRanks.Add(p.AccountID);
-                                    }
+                                    Ranks.UpdateRank(p.Account, p.IsInVictoryTeam, !p.IsInVictoryTeam, db);
                                 });
                                 db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ForEach(x => playerOldRatings[x.AccountID] = playerRatings[x.AccountID]);
                                 db.SaveChanges();

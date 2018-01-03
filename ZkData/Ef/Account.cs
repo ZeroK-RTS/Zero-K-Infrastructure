@@ -637,30 +637,25 @@ namespace ZkData
             dev_adv = 7
         }
 
+        public int GetIconLevel()
+        {
+            return System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((-0.12 / Math.Cosh((Level - 61.9) / 7.08) + 1)
+    * 2.93 * Math.Log(Math.Exp(-2.31) * Level + 1) - 0.89 / Math.Cosh((Level - 28.55) / 3.4))));
+        }
+
         /// <summary>
         /// Gets account name without extension
         /// </summary>
         public string GetIconName()
         {
-            var clampedLevel = System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((-0.12 / Math.Cosh((Level - 61.9) / 7.08) + 1)
-    * 2.93 * Math.Log(Math.Exp(-2.31) * Level + 1) - 0.89 / Math.Cosh((Level - 28.55) / 3.4))));
+            var clampedLevel = GetIconLevel();
             //0, 5, 10, 20, 35, 50, 75, 100 -> 0, 1, 2, 3, 4, 5, 6, 7
 
-            int clampedSkill = 0;
-            
-            clampedSkill = Rank;
+            int clampedSkill = Rank;
 
             return $"{clampedLevel}_{clampedSkill}";
         }
-
-        public float GetRankProgress()
-        {
-            var rating = GetBestRating();
-            var rankCeil = Rank * 200 + 1200 + rating.Uncertainty;
-            var rankFloor = Rank * 200 + 1000 - rating.Uncertainty;
-            return Math.Min(1, Math.Max(0, (rating.RealElo - rankFloor) / (rankCeil - rankFloor)));
-        }
-
+        
         public List<BadgeType> GetBadges()
         {
             var ret = new List<BadgeType>();
