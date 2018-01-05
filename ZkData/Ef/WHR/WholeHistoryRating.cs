@@ -26,6 +26,8 @@ namespace Ratings
         
         IDictionary<ITopPlayersUpdateListener, int> topPlayersUpdateListeners = new Dictionary<ITopPlayersUpdateListener, int>();
         public event EventHandler<RatingUpdate> RatingsUpdated;
+        
+        private float[] PercentileBrackets = { float.MinValue, 1200f, 1400f, 1600f, 1800f, 2000f, 2200f, 2400f, float.MaxValue };
 
         IDictionary<int, PlayerRating> playerOldRatings = new ConcurrentDictionary<int, PlayerRating>();
         IDictionary<int, PlayerRating> playerRatings = new ConcurrentDictionary<int, PlayerRating>();
@@ -270,6 +272,16 @@ namespace Ratings
 
         }
 
+
+        public RankBracket GetPercentileBracket(int rank)
+        {
+            return new RankBracket()
+            {
+                LowerEloLimit = PercentileBrackets[rank],
+                UpperEloLimit = PercentileBrackets[rank + 1],
+            };
+        }
+
         public void SaveToDB(IEnumerable<int> players)
         {
             lock (dbLock)
@@ -404,6 +416,10 @@ namespace Ratings
                 int rank = 0;
                 List<int> newTopPlayers = new List<int>();
                 int matched = 0;
+                List<float> newPercentileBrackets = new List<float>();
+                newPercentileBrackets.Add(3000);
+                float percentile;
+                float[] percentilesRev = Ranks.Percentiles.Reverse().ToArray();
                 foreach (var pair in sortedPlayers)
                 {
                     if (playerRatings[pair.Value].Uncertainty <= DynamicMaxUncertainty && currentDay - playerRatings[pair.Value].LastGameDate <= maxAge)
@@ -411,13 +427,17 @@ namespace Ratings
                         newTopPlayers.Add(pair.Value);
                         if (rank == matched && rank < topPlayers.Count && topPlayers[rank] == pair.Value) matched++;
                         rank++;
-                        playerRatings[pair.Value].ApplyLadderUpdate(rank, (float)rank / activePlayers, currentDay);
+                        percentile = (float)rank / activePlayers;
+                        if (newPercentileBrackets.Count <= Ranks.Percentiles.Length && percentile > percentilesRev[newPercentileBrackets.Count - 1]) newPercentileBrackets.Add(playerRatings[pair.Value].RealElo);
+                        playerRatings[pair.Value].ApplyLadderUpdate(rank, percentile, currentDay);
                     }
                     else if (playerRatings[pair.Value].Rank < int.MaxValue)
                     { 
                         playerRatings[pair.Value].ApplyLadderUpdate(int.MaxValue, 1, currentDay);
                     }
                 }
+                newPercentileBrackets.Add(0);
+                PercentileBrackets = newPercentileBrackets.Select(x=>x).Reverse().ToArray();
                 topPlayers = newTopPlayers;
                 laddersCache = new List<Account>();
                 Trace.TraceInformation("WHR " + category +" Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty);

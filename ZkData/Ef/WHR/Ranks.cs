@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using ZkData;
 
 namespace Ratings
@@ -7,7 +8,6 @@ namespace Ratings
     {
         public static readonly float[] Percentiles = {float.MaxValue, 0.8f, 0.6f, 0.4f, 0.2f, 0.1f, 0.05f, 0.01f};
 
-        public static float[] Brackets = { float.MinValue, 1200f, 1400f, 1600f, 1800f, 2000f, 2200f, 2400f, float.MaxValue};
         
         public static string[] RankBackgroundImages = new string[] { "infrared", "brown", "red", "orange", "yellow", "blue", "neutron", "black" };
         public static string[] RankNames = new string[] { "Nebulous", "Brown Dwarf", "Red Dwarf", "Subgiant", "Giant", "Supergiant", "Neutron Star", "Singularity", "Space Lobster" };
@@ -19,27 +19,38 @@ namespace Ratings
 
         public static float GetRankProgress(Account acc)
         {
-            var rating = acc.GetBestRating();
-            var stdev = Math.Min(10000, rating.Uncertainty);
-            var rankCeil = Brackets[acc.Rank + 1] + stdev;
-            var rankFloor = Brackets[acc.Rank] - stdev;
-            return Math.Min(1, Math.Max(0, (rating.RealElo - rankFloor) / (rankCeil - rankFloor)));
+            float bestProgress = 0;
+            foreach (var ratingSystem in RatingSystems.GetRatingSystems())
+            {
+                var rating = ratingSystem.GetPlayerRating(acc.AccountID);
+                if (rating.Rank == int.MaxValue) continue;
+                var stdev = Math.Min(10000, rating.Uncertainty);
+                var bracket = ratingSystem.GetPercentileBracket(acc.Rank);
+                var rankCeil = bracket.UpperEloLimit + stdev;
+                var rankFloor = bracket.LowerEloLimit - stdev;
+                bestProgress = Math.Max(bestProgress, Math.Min(1, (rating.RealElo - rankFloor) / (rankCeil - rankFloor)));
+                //Trace.TraceInformation(acc.Name + ": bracket(" + bracket.LowerEloLimit + ", " + bracket.UpperEloLimit + ") requirements (" + rankFloor + ", " + rankCeil + ") current: " + rating.RealElo + " -> progress: " + bestProgress);
+            }
+            return bestProgress;
         }
 
         public static void UpdateRank(Account acc, bool allowUprank, bool allowDownrank, ZkDataContext db)
         {
-            var rating = acc.GetBestRating();
-            var rankCeil = Brackets[acc.Rank + 1] + rating.Uncertainty;
-            var rankFloor = Brackets[acc.Rank] - rating.Uncertainty;
-            if (rating.RealElo > rankCeil && allowUprank)
+            var progress = GetRankProgress(acc);
+            if (progress > 0.99999 && allowUprank)
             {
                 acc.Rank++;
             } 
-            if (rating.RealElo < rankFloor && allowDownrank)
+            if (progress < 0.00001 && allowDownrank)
             {
                 acc.Rank--;
             }
         }
+    }
+
+    public class RankBracket
+    {
+        public float UpperEloLimit, LowerEloLimit;
     }
     
 }

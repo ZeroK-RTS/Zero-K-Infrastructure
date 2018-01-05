@@ -22,7 +22,9 @@ namespace Ratings
         void AddTopPlayerUpdateListener(ITopPlayersUpdateListener listener, int topX);
         
         void RemoveTopPlayerUpdateListener(ITopPlayersUpdateListener listener, int topX);
-        
+
+        RankBracket GetPercentileBracket(int rank);
+
         event EventHandler<RatingUpdate> RatingsUpdated;
     }
 }

@@ -92,7 +92,7 @@
             {
                 <img src='/img/flags/@(Model.Country).png' class='flag' height='11' width='16' alt='@Model.Country' />
             }
-            @Model.Name
+            @Model.Name <img src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png" class="icon16" alt="rank" />
         </h1>
 
         <div id="usr_info" style="background-image: url('@Ratings.Ranks.GetRankBackgroundImagePath(Model)')">
