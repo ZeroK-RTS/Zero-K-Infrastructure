@@ -39,13 +39,6 @@ namespace ZkData.Migrations
         /// This method is called after migration to latest version
         /// </summary>
         protected override void Seed(ZkDataContext db) {
-            var ago = DateTime.UtcNow.AddDays(-GlobalConst.LadderActivityDays);
-            db.Accounts.Update(x => new Account() { Rank = 0 });
-            for (int rank = 0; rank < Ranks.Percentiles.Length; rank++) {
-                var requirement = Ranks.Percentiles[rank];
-                db.Accounts.Where(x => x.LastLogin > ago).Where(a => a.AccountRatings.Any(r => r.Percentile < requirement)).Update(x => new Account(){ Rank = rank });
-            }
-            db.SaveChanges();
 
             db.Database.ExecuteSqlCommand($"truncate table {nameof(LogEntries)}");
            
