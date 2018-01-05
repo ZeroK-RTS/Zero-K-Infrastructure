@@ -28,14 +28,12 @@ namespace Ratings
 
         public static void UpdateRank(Account acc, bool allowUprank, bool allowDownrank, ZkDataContext db)
         {
-            var rating = acc.GetBestRating();
-            var rankCeil = Brackets[acc.Rank + 1] + rating.Uncertainty;
-            var rankFloor = Brackets[acc.Rank] - rating.Uncertainty;
-            if (rating.RealElo > rankCeil && allowUprank)
+            var progress = GetRankProgress(acc);
+            if (progress > 0.99999 && allowUprank)
             {
                 acc.Rank++;
             } 
-            if (rating.RealElo < rankFloor && allowDownrank)
+            if (progress < 0.00001 && allowDownrank)
             {
                 acc.Rank--;
             }
