@@ -96,7 +96,7 @@ namespace ZkLobbyServer
                     var user = ret.User;
 
                     acc.Country = ResolveCountry(ip);
-                    if ((acc.Country == null) || string.IsNullOrEmpty(acc.Country)) acc.Country = "unknown";
+                    if ((acc.Country == null) || string.IsNullOrEmpty(acc.Country)) acc.Country = "??";
                     acc.LobbyVersion = lobbyVersion;
                     acc.LastLogin = DateTime.UtcNow;
                     if (info != null)
@@ -403,7 +403,7 @@ namespace ZkLobbyServer
             else
                 try
                 {
-                    return geoIP.Country(ip).Country.IsoCode;
+                    return geoIP.Country(ip)?.Country?.IsoCode ?? "??";
                 }
                 catch (Exception ex)
                 {
