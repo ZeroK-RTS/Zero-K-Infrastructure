@@ -89,18 +89,23 @@ body{
     margin-left: auto;
     margin-right: auto;
     margin-top: 5px;
-    #background-image: url("/img/ranks/level-elo/velvetbacking.jpg");
+    /*background-image: url("/img/ranks/level-elo/velvetbacking.jpg");*/
     background-size: 100% 100%;
     width: 94px;
     height: 180px;
 }
-.avatarbg{
-    background-image: url("/img/avatarbg.png");
-    display: inline-block;
-}
 #avatar table {
     width: 100%;
-    padding-top: 10px;
+    padding-top: 0px;
+}
+.avatarbg{
+    background-image: url("/img/avatarbg2.png");
+    display: inline-block;
+    width: 72px;
+    height: 72px;
+}
+.avatarbg img{
+    margin: 3px;
 }
 #avatar table tr td{
     text-align: center;
