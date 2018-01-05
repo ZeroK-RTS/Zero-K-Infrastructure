@@ -132,7 +132,7 @@
                     int chev = 0;
                     int bars = 0;
                         <div id="badge">
-                            <div id="levelrank" title="This is a graphical representation of your level. Play more games to gain more rank!">
+                            <div id="levelrank" title="This is a graphical representation of your level. Play more games to increase your level!">
                                 <!--<div id="velvet"><img src="../../img/ranks/level-elo/velvetbacking.jpg" width="100%" height="100%" /></div>-->
                                 <div id="badge-center">
                                     @if (Model.Level > 125)
@@ -176,7 +176,7 @@
 
                 <br class="clearfloat" />
                 @{ double ratio = Model.GetLevelUpRatio(); }
-                <div title='Your XP: @Model.Xp (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
+                <div title='Your level: <img src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png"  class="icon16" alt="rank" /> Level @(Model.Level) <br /> Progress to next level: @((int)(ratio*100))% <br />XP remaining for level @(Model.Level + 1): @(Account.GetXpForLevel(Model.Level + 1) - Model.Xp)<br />Play more games to increase your level!'>
 
                     <div class="progress_wrapper_left">
                         <div class="progress_text"> Level @Model.Level </div>
@@ -193,7 +193,7 @@
                 </div>
                 <br class="clearfloat" />
                 @{ ratio = Ratings.Ranks.GetRankProgress(Model); }
-                <div title='Your rank: <img src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png"  class="icon16" alt="rank" /> @(Ratings.Ranks.RankNames[Model.Rank]) <br /> Your progress to next rank: @((int)Math.Round(ratio*100))%'>
+                <div title='Your rank: <img src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png"  class="icon16" alt="rank" /> @(Ratings.Ranks.RankNames[Model.Rank]) <br /> Your progress to next rank: @((int)Math.Round(ratio*100))%<br />Win more games to improve your rank!'>
                     <div class="progress_wrapper_left">
                         <div class="progress_text"> @Ratings.Ranks.RankNames[Model.Rank] </div>
                         <div class="progress_begin"></div>
