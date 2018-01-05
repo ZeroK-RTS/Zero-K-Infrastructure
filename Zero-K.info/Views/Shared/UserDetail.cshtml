@@ -249,12 +249,12 @@
         }
 
         <div id="usr_commanders" class="">
+            <br />
             <h3>Commanders: </h3>
 
             <!--div>
                 @*@Html.Partial("UnlockedTechnologies", Model.AccountUnlocks)*@
             </div-->
-            <br />
             @foreach (Commander comm in Model.Commanders)
             {
                 <span class="fleft border"><center><img src='@comm.Unlock.ImageUrl' alt="unlock" title='$commander$@comm.CommanderID' /><br />@HttpContext.Current.Server.HtmlEncode(comm.Name)</center></span>
