@@ -417,6 +417,7 @@ namespace Ratings
                 List<int> newTopPlayers = new List<int>();
                 int matched = 0;
                 List<float> newPercentileBrackets = new List<float>();
+                newPercentileBrackets.Add(3000);
                 float percentile;
                 float[] percentilesRev = Ranks.Percentiles.Reverse().ToArray();
                 foreach (var pair in sortedPlayers)
@@ -427,7 +428,6 @@ namespace Ratings
                         if (rank == matched && rank < topPlayers.Count && topPlayers[rank] == pair.Value) matched++;
                         rank++;
                         percentile = (float)rank / activePlayers;
-                        if (newPercentileBrackets.Count == 0) newPercentileBrackets.Add(playerRatings[pair.Value].RealElo);
                         if (newPercentileBrackets.Count <= Ranks.Percentiles.Length && percentile > percentilesRev[newPercentileBrackets.Count - 1]) newPercentileBrackets.Add(playerRatings[pair.Value].RealElo);
                         playerRatings[pair.Value].ApplyLadderUpdate(rank, percentile, currentDay);
                     }
