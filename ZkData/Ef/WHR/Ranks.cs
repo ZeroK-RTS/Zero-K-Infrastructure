@@ -22,6 +22,7 @@ namespace Ratings
             float bestProgress = 0;
             foreach (var ratingSystem in RatingSystems.GetRatingSystems())
             {
+                if (ratingSystem.GetActivePlayers() < 50) continue;
                 var rating = ratingSystem.GetPlayerRating(acc.AccountID);
                 if (rating.Rank == int.MaxValue) continue;
                 var stdev = Math.Min(10000, rating.Uncertainty);

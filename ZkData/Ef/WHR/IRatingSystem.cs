@@ -25,6 +25,10 @@ namespace Ratings
 
         RankBracket GetPercentileBracket(int rank);
 
+        RatingCategory GetRatingCategory();
+
+        int GetActivePlayers();
+
         event EventHandler<RatingUpdate> RatingsUpdated;
     }
 }

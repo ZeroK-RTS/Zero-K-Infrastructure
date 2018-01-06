@@ -38,6 +38,7 @@ namespace Ratings
         Random rand = new Random();
         readonly float w2; //elo range expand per day squared
         private Timer ladderRecalculationTimer;
+        private int activePlayers = 0;
 
         private bool runningInitialization = true;
         private readonly RatingCategory category;
@@ -272,6 +273,14 @@ namespace Ratings
 
         }
 
+        public RatingCategory GetRatingCategory()
+        {
+            return category;
+        }
+        public int GetActivePlayers()
+        {
+            return activePlayers;
+        }
 
         public RankBracket GetPercentileBracket(int rank)
         {
@@ -436,6 +445,7 @@ namespace Ratings
                         playerRatings[pair.Value].ApplyLadderUpdate(int.MaxValue, 1, currentDay);
                     }
                 }
+                activePlayers = rank;
                 newPercentileBrackets.Add(0);
                 PercentileBrackets = newPercentileBrackets.Select(x=>x).Reverse().ToArray();
                 topPlayers = newTopPlayers;
