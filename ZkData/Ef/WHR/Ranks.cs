@@ -35,17 +35,20 @@ namespace Ratings
             return bestProgress;
         }
 
-        public static void UpdateRank(Account acc, bool allowUprank, bool allowDownrank, ZkDataContext db)
+        public static bool UpdateRank(Account acc, bool allowUprank, bool allowDownrank, ZkDataContext db)
         {
             var progress = GetRankProgress(acc);
             if (progress > 0.99999 && allowUprank)
             {
                 acc.Rank++;
+                return true;
             } 
             if (progress < 0.00001 && allowDownrank)
             {
                 acc.Rank--;
+                return true;
             }
+            return false;
         }
     }
 
