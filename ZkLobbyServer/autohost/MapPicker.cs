@@ -115,13 +115,13 @@ namespace ZeroKWeb.SpringieInterface
             return FindResources(type, string.Join(" ", words));
         }
 
-        public static IQueryable<Resource> FindResources(ResourceType type, string term)
+        public static IQueryable<Resource> FindResources(ResourceType type, string term, MapSupportLevel minimumSupportLevel = MapSupportLevel.None)
         {
             var db = new ZkDataContext();
             
 
             var ret = db.Resources.AsQueryable();
-            ret = ret.Where(x => x.TypeID == type);
+            ret = ret.Where(x => x.TypeID == type && x.MapSupportLevel >= minimumSupportLevel);
             
             var test = ret.Where(x => x.RapidTag == term || x.InternalName == term);
             if (test.Any()) return test.OrderByDescending(x => x.MapSupportLevel).ThenByDescending(x=>x.ResourceID);
