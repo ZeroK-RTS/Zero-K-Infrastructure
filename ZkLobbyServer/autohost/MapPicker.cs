@@ -37,6 +37,9 @@ namespace ZeroKWeb.SpringieInterface
 
                 var level = context.IsMatchMakerGame ? MapSupportLevel.MatchMaker : MapSupportLevel.Featured;
 
+                if (mode == AutohostMode.None && context.Players.Select(p => p.AllyID).Union(context.Bots.Select(b => b.AllyID)).Distinct().Count() > 2) mode = AutohostMode.GameFFA;
+                if (mode == AutohostMode.None && context.Players.Select(p => p.AllyID).Distinct().Count() == 1 && context.Bots.Count > 0 && context.Bots.All(b => b.IsChicken)) mode = AutohostMode.GameChickens;
+                if (mode == AutohostMode.None && context.Players.Count == 2 && context.Bots.Count == 0 && context.Players.Select(p => p.AllyID).Distinct().Count() == 2) mode = AutohostMode.Game1v1;
                 switch (mode)
                 {
                     case AutohostMode.Teams:
