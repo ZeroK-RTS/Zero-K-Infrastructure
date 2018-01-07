@@ -1,4 +1,5 @@
 ﻿
+using Ratings;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,6 +32,14 @@ namespace ZeroKWeb.Controllers
             }
             else return Content("Not allowed!");
         }
+
+        [Auth(Role = AdminLevel.Moderator)]
+        public ActionResult ResetRatings()
+        {
+            RatingSystems.ReinitializeRatingSystems();
+            return Content("Recalculation in progress, check the trace log for details. This operation will take 5 to 10 minutes.");
+        }
+
 
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult TraceLogs(TraceLogIndex model)

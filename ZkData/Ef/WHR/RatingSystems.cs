@@ -5,27 +5,77 @@ using System.Linq;
 using System.Threading.Tasks;
 using ZkData;
 using System.Data.Entity;
+using System.Threading;
 
 namespace Ratings
 {
     public class RatingSystems
     {
-        public static Dictionary<RatingCategory, WholeHistoryRating> whr = new Dictionary<RatingCategory, WholeHistoryRating>();
-
         public static readonly IEnumerable<RatingCategory> ratingCategories = Enum.GetValues(typeof(RatingCategory)).Cast<RatingCategory>();
 
-        private static HashSet<int> processedBattles = new HashSet<int>();
+        private static RatingSystems handler;
 
-        public static bool Initialized { get; private set; }
-
-        private static object processingLock = new object();
+        public static bool Initialized { get; private set; } = false;
 
         public static void Init()
         {
-            Initialized = false;
+            handler = new RatingSystems(false);
+        }
+
+        public static void ReinitializeRatingSystems()
+        {
+            Trace.TraceInformation("Reinitializing rating systems...");
+            Task.Factory.StartNew(() => {
+                handler = new RatingSystems(true);
+                Trace.TraceInformation("Ratings have been recalculated!");
+            });
+        }
+
+        public static IEnumerable<IRatingSystem> GetRatingSystems()
+        {
+            return handler.whr.Values;
+        }
+
+        public static IRatingSystem GetRatingSystem(RatingCategory category)
+        {
+            if (handler == null) return null;
+            return handler.GetRatingSystemInternal(category);
+        }
+        
+
+        public static void ProcessResult(SpringBattle battle)
+        {
+            if (!Initialized) return;
+            handler.ProcessBattle(battle);
+        }
+        
+        public static Tuple<int, int> GetPlanetwarsFactionStats(int factionID)
+        {
+            return handler.GetPlanetwarsFactionStatsInternal(factionID);
+        }
+
+        public static int ConvertDateToDays(DateTime date)
+        {
+            return (int)(date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays / 1);
+        }
+        public static DateTime ConvertDaysToDate(int days)
+        {
+            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddDays(days);
+        }
+
+
+        private Dictionary<RatingCategory, WholeHistoryRating> whr = new Dictionary<RatingCategory, WholeHistoryRating>();
+
+        private HashSet<int> processedBattles = new HashSet<int>();
+
+        private object processingLock = new object();
+
+        private RatingSystems(bool waitForCompleteInitialization)
+        {
             ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating(category));
 
-            Task.Factory.StartNew(() => {
+            Action initBattles = () =>
+            {
                 lock (processingLock)
                 {
                     try
@@ -48,7 +98,16 @@ namespace Ratings
                                 }
                             }
                             Initialized = true;
-                            whr.Values.ForEach(w => w.UpdateRatings());
+                            if (waitForCompleteInitialization)
+                            {
+                                SemaphoreSlim completedUpdates = new SemaphoreSlim(0);
+                                whr.Values.ForEach(w => w.UpdateRatings(() => completedUpdates.Release()));
+                                whr.Values.ForEach(w => completedUpdates.Wait());
+                            }
+                            else
+                            {
+                                whr.Values.ForEach(w => w.UpdateRatings());
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -56,16 +115,13 @@ namespace Ratings
                         Trace.TraceError("WHR: Error reading battles from DB" + ex);
                     }
                 }
-            });
+            };
+            if (waitForCompleteInitialization) initBattles.Invoke();
+            else Task.Factory.StartNew(initBattles);
         }
+        
 
-
-        public static IEnumerable<IRatingSystem> GetRatingSystems()
-        {
-            return whr.Values;
-        }
-
-        public static IRatingSystem GetRatingSystem(RatingCategory category)
+        private IRatingSystem GetRatingSystemInternal(RatingCategory category)
         {
             if (!whr.ContainsKey(category))
             {
@@ -75,15 +131,9 @@ namespace Ratings
             return whr[category];
         }
 
-        private static int latestBattle;
+        private int latestBattle;
 
-        public static void ProcessResult(SpringBattle battle)
-        {
-            if (!Initialized) return;
-            ProcessBattle(battle);
-        }
-
-        private static void ProcessBattle(SpringBattle battle)
+        private void ProcessBattle(SpringBattle battle)
         {
             lock (processingLock)
             {
@@ -103,9 +153,9 @@ namespace Ratings
             }
         }
 
-        private static Dictionary<int, Tuple<int, int, int>> factionCache = new Dictionary<int, Tuple<int, int, int>>();
+        private Dictionary<int, Tuple<int, int, int>> factionCache = new Dictionary<int, Tuple<int, int, int>>();
 
-        public static Tuple<int, int> GetPlanetwarsFactionStats(int factionID)
+        private Tuple<int, int> GetPlanetwarsFactionStatsInternal(int factionID)
         {
             try
             {
@@ -131,23 +181,15 @@ namespace Ratings
                 count = factionCache[factionID].Item2;
                 skill = factionCache[factionID].Item3;
                 return new Tuple<int, int>(count, skill);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Trace.TraceError("WHR failed to calculate faction stats " + ex);
                 return new Tuple<int, int>(-1, -1);
             }
         }
 
-        public static int ConvertDateToDays(DateTime date)
-        {
-            return (int)(date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays / 1);
-        }
-        public static DateTime ConvertDaysToDate(int days)
-        {
-            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddDays(days);
-        }
-
-        private static bool IsCategory(SpringBattle battle, RatingCategory category)
+        private bool IsCategory(SpringBattle battle, RatingCategory category)
         {
             int battleID = -1;
             try
