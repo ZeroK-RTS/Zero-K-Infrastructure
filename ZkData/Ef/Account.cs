@@ -338,7 +338,7 @@ namespace ZkData
 
         public void CheckLevelUp()
         {
-            if (Xp > GetXpForLevel(Level + 1)) Level++;
+            while (Xp > GetXpForLevel(Level + 1)) Level++;
         }
 
         public int GetBomberCapacity()

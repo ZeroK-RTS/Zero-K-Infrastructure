@@ -12,18 +12,32 @@ namespace Ratings
         public static string[] RankBackgroundImages = new string[] { "infrared", "brown", "red", "orange", "yellow", "blue", "neutron", "black" };
         public static string[] RankNames = new string[] { "Nebulous", "Brown Dwarf", "Red Dwarf", "Subgiant", "Giant", "Supergiant", "Neutron Star", "Singularity", "Space Lobster" };
 
+        private static bool ValidateRank(int rank)
+        {
+            return rank >= 0 && rank < RankBackgroundImages.Length;
+        }
+
         public static string GetRankBackgroundImagePath(Account acc)
         {
-            return string.Format("/img/rankbg/{0}.png", RankBackgroundImages[acc.Rank]);
+            int rank = acc.Rank;
+            if (!ValidateRank(rank))
+            {
+                Trace.TraceWarning("Invalid rank for player " + acc.AccountID + ": " + rank);
+                rank = 0;
+            }
+            return string.Format("/img/rankbg/{0}.png", RankBackgroundImages[rank]);
         }
 
         public static float GetRankProgress(Account acc)
         {
             float bestProgress = 0;
+            bool isActive = false;
             foreach (var ratingSystem in RatingSystems.GetRatingSystems())
             {
+                if (ratingSystem.GetActivePlayers() < 50) continue;
                 var rating = ratingSystem.GetPlayerRating(acc.AccountID);
                 if (rating.Rank == int.MaxValue) continue;
+                isActive = true;
                 var stdev = Math.Min(10000, rating.Uncertainty);
                 var bracket = ratingSystem.GetPercentileBracket(acc.Rank);
                 var rankCeil = bracket.UpperEloLimit + stdev;
@@ -31,20 +45,40 @@ namespace Ratings
                 bestProgress = Math.Max(bestProgress, Math.Min(1, (rating.RealElo - rankFloor) / (rankCeil - rankFloor)));
                 //Trace.TraceInformation(acc.Name + ": bracket(" + bracket.LowerEloLimit + ", " + bracket.UpperEloLimit + ") requirements (" + rankFloor + ", " + rankCeil + ") current: " + rating.RealElo + " -> progress: " + bestProgress);
             }
+            if (!isActive) return 0.001f;
             return bestProgress;
         }
 
-        public static void UpdateRank(Account acc, bool allowUprank, bool allowDownrank, ZkDataContext db)
+        public static bool UpdateRank(Account acc, bool allowUprank, bool allowDownrank, ZkDataContext db)
         {
             var progress = GetRankProgress(acc);
-            if (progress > 0.99999 && allowUprank)
+            if (progress > 0.99999f && allowUprank)
             {
                 acc.Rank++;
+                if (!ValidateRank(acc.Rank))
+                {
+                    Trace.TraceWarning("Correcting invalid rankup for player " + acc.AccountID + ": " + acc.Rank);
+                    acc.Rank = RankBackgroundImages.Length - 1;
+                }
+                return true;
             } 
-            if (progress < 0.00001 && allowDownrank)
+            if (progress < 0.00001f && allowDownrank)
             {
                 acc.Rank--;
+                if (!ValidateRank(acc.Rank))
+                {
+                    Trace.TraceWarning("Correcting invalid rankdown for player " + acc.AccountID + ": " + acc.Rank);
+                    acc.Rank = 0;
+                }
+                return true;
             }
+            if (!ValidateRank(acc.Rank))
+            {
+                Trace.TraceWarning("Correcting invalid rank for player " + acc.AccountID + ": " + acc.Rank);
+                acc.Rank = 0;
+                return true;
+            }
+            return false;
         }
     }
 

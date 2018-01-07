@@ -39,6 +39,7 @@ namespace ZkData.Migrations
         /// This method is called after migration to latest version
         /// </summary>
         protected override void Seed(ZkDataContext db) {
+            db.Accounts.Where(a => a.Rank < 0).Update(x => new Account() { Rank = 0 });
 
             db.Database.ExecuteSqlCommand($"truncate table {nameof(LogEntries)}");
            

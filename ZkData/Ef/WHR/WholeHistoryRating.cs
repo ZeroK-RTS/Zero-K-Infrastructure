@@ -38,6 +38,7 @@ namespace Ratings
         Random rand = new Random();
         readonly float w2; //elo range expand per day squared
         private Timer ladderRecalculationTimer;
+        private int activePlayers = 0;
 
         private bool runningInitialization = true;
         private readonly RatingCategory category;
@@ -248,14 +249,15 @@ namespace Ratings
                             Trace.TraceInformation("WHR " + category +" Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
                             runningInitialization = false;
 
-                            var updatedRanks = new List<int>();
+                            IEnumerable<int> updatedRanks;
                             using (var db = new ZkDataContext())
                             {
-                                db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ToList().Where(p => playerOldRatings.ContainsKey(p.AccountID) && !p.EloChange.HasValue).ForEach(p =>
+                                var lastBattlePlayers = db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).Include(x => x.Account).ToList();
+                                lastBattlePlayers.Where(p => playerOldRatings.ContainsKey(p.AccountID) && !p.EloChange.HasValue).ForEach(p =>
                                 {
                                     p.EloChange = playerRatings[p.AccountID].RealElo - playerOldRatings[p.AccountID].RealElo;
-                                    Ranks.UpdateRank(p.Account, p.IsInVictoryTeam, !p.IsInVictoryTeam, db);
                                 });
+                                updatedRanks = lastBattlePlayers.Where(p => Ranks.UpdateRank(p.Account, p.IsInVictoryTeam, !p.IsInVictoryTeam, db)).Select(x => x.AccountID);
                                 db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ForEach(x => playerOldRatings[x.AccountID] = playerRatings[x.AccountID]);
                                 db.SaveChanges();
                             }
@@ -272,6 +274,14 @@ namespace Ratings
 
         }
 
+        public RatingCategory GetRatingCategory()
+        {
+            return category;
+        }
+        public int GetActivePlayers()
+        {
+            return activePlayers;
+        }
 
         public RankBracket GetPercentileBracket(int rank)
         {
@@ -436,6 +446,7 @@ namespace Ratings
                         playerRatings[pair.Value].ApplyLadderUpdate(int.MaxValue, 1, currentDay);
                     }
                 }
+                this.activePlayers = rank;
                 newPercentileBrackets.Add(0);
                 PercentileBrackets = newPercentileBrackets.Select(x=>x).Reverse().ToArray();
                 topPlayers = newTopPlayers;
