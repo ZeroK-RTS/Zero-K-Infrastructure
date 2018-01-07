@@ -190,7 +190,7 @@ namespace Ratings
         private readonly object updateLockInternal = new object();
         private readonly object dbLock = new object();
 
-        public void UpdateRatings()
+        public void UpdateRatings(Action UpdateCompleted = null)
         {
             if (!RatingSystems.Initialized) return;
             if (latestBattle == null)
@@ -262,6 +262,7 @@ namespace Ratings
                                 db.SaveChanges();
                             }
                             RatingsUpdated(this, new RatingUpdate() { affectedPlayers = updatedRanks });
+                            if (UpdateCompleted != null) UpdateCompleted.Invoke();
                         }
                     }
                     catch (Exception ex)
