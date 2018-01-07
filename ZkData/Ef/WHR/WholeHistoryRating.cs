@@ -446,7 +446,7 @@ namespace Ratings
                         playerRatings[pair.Value].ApplyLadderUpdate(int.MaxValue, 1, currentDay);
                     }
                 }
-                activePlayers = rank;
+                this.activePlayers = rank;
                 newPercentileBrackets.Add(0);
                 PercentileBrackets = newPercentileBrackets.Select(x=>x).Reverse().ToArray();
                 topPlayers = newTopPlayers;
