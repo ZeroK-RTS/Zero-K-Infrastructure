@@ -124,6 +124,10 @@
                                             <!-- @Html.AccountAvatar(Model) -->
                                             @if (Model.Clan != null) { @Html.PrintClan(Model.Clan, true, true); }
                                             else if (Model.Faction != null) { @Html.PrintFaction(Model.Faction, true); }
+                                            else
+                                            {
+                                                @: <img style="padding: 22px;" src="/img/search_img.png">
+                                            }
                                         </div>
                                     </a>
                                 </td>
