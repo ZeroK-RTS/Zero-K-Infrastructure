@@ -629,15 +629,16 @@ namespace ZkLobbyServer
 
                 if (server.ConnectedUsers.TryRemove(Name, out connectedUser))
                 {
+                    int accountID = User.AccountID;
                     connectedUser.ResetHasSeen();
+                    connectedUser.User.AccountID = 0;
 
                     using (var db = new ZkDataContext())
                     {
-                        var acc = await db.Accounts.FindAsync(User.AccountID);
+                        var acc = await db.Accounts.FindAsync(accountID);
                         acc.LastLogout = DateTime.UtcNow;
                         await db.SaveChangesAsync();
                     }
-                    connectedUser.User.AccountID = 0;
                 }
             }
         }
