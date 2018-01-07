@@ -252,7 +252,7 @@ namespace Ratings
                             IEnumerable<int> updatedRanks;
                             using (var db = new ZkDataContext())
                             {
-                                var lastBattlePlayers = db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ToList();
+                                var lastBattlePlayers = db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).Include(x => x.Account).ToList();
                                 lastBattlePlayers.Where(p => playerOldRatings.ContainsKey(p.AccountID) && !p.EloChange.HasValue).ForEach(p =>
                                 {
                                     p.EloChange = playerRatings[p.AccountID].RealElo - playerOldRatings[p.AccountID].RealElo;
