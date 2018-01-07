@@ -33,13 +33,22 @@ namespace ZeroKWeb.SpringieInterface
             using (var db = new ZkDataContext())
             {
                 List<Resource> list = null;
-                var players = context.Players.Count(x => !x.IsSpectator);
+                var humanPlayers = context.Players.Count(x => !x.IsSpectator);
+                var botPlayers = context.Bots.Count;
+                var allyteams = context.Players.Where(x => !x.IsSpectator).Select(p => p.AllyID).Union(context.Bots.Select(b => b.AllyID)).Distinct().Count();
 
                 var level = context.IsMatchMakerGame ? MapSupportLevel.MatchMaker : MapSupportLevel.Featured;
-
-                if (mode == AutohostMode.None && context.Players.Select(p => p.AllyID).Union(context.Bots.Select(b => b.AllyID)).Distinct().Count() > 2) mode = AutohostMode.GameFFA;
-                if (mode == AutohostMode.None && context.Players.Select(p => p.AllyID).Distinct().Count() == 1 && context.Bots.Count > 0 && context.Bots.All(b => b.IsChicken)) mode = AutohostMode.GameChickens;
-                if (mode == AutohostMode.None && context.Players.Count == 2 && context.Bots.Count == 0 && context.Players.Select(p => p.AllyID).Distinct().Count() == 2) mode = AutohostMode.Game1v1;
+                
+                if (mode == AutohostMode.GameFFA)
+                {
+                    allyteams = humanPlayers;
+                }
+                if (mode == AutohostMode.None)
+                {
+                    if (allyteams > 2) mode = AutohostMode.GameFFA;
+                    if (context.Players.Where(x => !x.IsSpectator).Select(p => p.AllyID).Distinct().Count() == 1 && botPlayers > 0 && context.Bots.Any(b => b.IsChicken)) mode = AutohostMode.GameChickens;
+                    if (humanPlayers == 2 && botPlayers == 0 && allyteams == 2) mode = AutohostMode.Game1v1;
+                }
                 switch (mode)
                 {
                     case AutohostMode.Teams:
@@ -47,14 +56,14 @@ namespace ZeroKWeb.SpringieInterface
                         var ret =
                             db.Resources.Where(
                                 x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIsTeams != false && x.MapIsSpecial != true);
-                        if (players > 11) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16);
-                        else if (players > 8)
+                        if (humanPlayers > 11) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16);
+                        else if (humanPlayers > 8)
                             ret =
                                 ret.Where(
                                     x =>
                                         x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16 &&
                                         x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 24*24);
-                        else if (players > 5) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 24*24 || x.MapIs1v1 == true);
+                        else if (humanPlayers > 5) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 24*24 || x.MapIs1v1 == true);
                         else ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 16*16 || x.MapIs1v1 == true);
                         list = ret.ToList();
 
@@ -70,14 +79,14 @@ namespace ZeroKWeb.SpringieInterface
                                 x =>
                                     x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIsSpecial != true &&
                                     (x.MapIsChickens == true || x.MapWaterLevel == 1));
-                        if (players > 5) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16);
-                        else if (players > 4)
+                        if (humanPlayers > 5) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16);
+                        else if (humanPlayers > 4)
                             ret =
                                 ret.Where(
                                     x =>
                                         x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16 &&
                                         x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 24*24);
-                        else if (players > 2) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 24*24 || x.MapIs1v1 == true);
+                        else if (humanPlayers > 2) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 24*24 || x.MapIs1v1 == true);
                         else ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 16*16 || x.MapIs1v1 == true);
                         list = ret.ToList();
 
@@ -85,14 +94,14 @@ namespace ZeroKWeb.SpringieInterface
                     case AutohostMode.GameFFA:
                         list =
                             db.Resources.Where(
-                                x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIsFfa == true && x.MapFFAMaxTeams == players)
+                                x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIsFfa == true && x.MapFFAMaxTeams == allyteams)
                                 .ToList();
                         if (!list.Any())
                             list =
                                 db.Resources.Where(
                                     x =>
                                         x.TypeID == ResourceType.Map && x.MapSupportLevel>=level && x.MapIsFfa == true &&
-                                        (players%x.MapFFAMaxTeams == 0)).ToList();
+                                        (humanPlayers%x.MapFFAMaxTeams == 0)).ToList();
                         if (!list.Any()) list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.MapSupportLevel>=level && x.MapIsFfa == true).ToList();
 
                         break;
