@@ -31,11 +31,13 @@ namespace Ratings
         public static float GetRankProgress(Account acc)
         {
             float bestProgress = 0;
+            bool isActive = false;
             foreach (var ratingSystem in RatingSystems.GetRatingSystems())
             {
                 if (ratingSystem.GetActivePlayers() < 50) continue;
                 var rating = ratingSystem.GetPlayerRating(acc.AccountID);
                 if (rating.Rank == int.MaxValue) continue;
+                isActive = true;
                 var stdev = Math.Min(10000, rating.Uncertainty);
                 var bracket = ratingSystem.GetPercentileBracket(acc.Rank);
                 var rankCeil = bracket.UpperEloLimit + stdev;
@@ -43,13 +45,14 @@ namespace Ratings
                 bestProgress = Math.Max(bestProgress, Math.Min(1, (rating.RealElo - rankFloor) / (rankCeil - rankFloor)));
                 //Trace.TraceInformation(acc.Name + ": bracket(" + bracket.LowerEloLimit + ", " + bracket.UpperEloLimit + ") requirements (" + rankFloor + ", " + rankCeil + ") current: " + rating.RealElo + " -> progress: " + bestProgress);
             }
+            if (!isActive) return 0.001f;
             return bestProgress;
         }
 
         public static bool UpdateRank(Account acc, bool allowUprank, bool allowDownrank, ZkDataContext db)
         {
             var progress = GetRankProgress(acc);
-            if (progress > 0.99999 && allowUprank)
+            if (progress > 0.99999f && allowUprank)
             {
                 acc.Rank++;
                 if (!ValidateRank(acc.Rank))
@@ -59,7 +62,7 @@ namespace Ratings
                 }
                 return true;
             } 
-            if (progress < 0.00001 && allowDownrank)
+            if (progress < 0.00001f && allowDownrank)
             {
                 acc.Rank--;
                 if (!ValidateRank(acc.Rank))
