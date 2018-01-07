@@ -12,6 +12,8 @@ namespace ZeroKWeb.SpringieInterface
 {
     public static class MapPicker
     {
+        private static Random chickenRand = new Random();
+        private static bool UseNormalMapForChickens { get { return chickenRand.Next(3) == 0; } }
         /// <summary>
         ///     Picks a map and writes a message if applicable
         /// </summary>
@@ -38,16 +40,22 @@ namespace ZeroKWeb.SpringieInterface
                 var allyteams = context.Players.Where(x => !x.IsSpectator).Select(p => p.AllyID).Union(context.Bots.Select(b => b.AllyID)).Distinct().Count();
 
                 var level = context.IsMatchMakerGame ? MapSupportLevel.MatchMaker : MapSupportLevel.Featured;
-                
-                if (mode == AutohostMode.GameFFA)
-                {
-                    allyteams = humanPlayers;
-                }
-                if (mode == AutohostMode.None)
-                {
-                    if (allyteams > 2) mode = AutohostMode.GameFFA;
-                    if (context.Players.Where(x => !x.IsSpectator).Select(p => p.AllyID).Distinct().Count() == 1 && botPlayers > 0 && context.Bots.Any(b => b.IsChicken)) mode = AutohostMode.GameChickens;
-                    if (humanPlayers == 2 && botPlayers == 0 && allyteams == 2) mode = AutohostMode.Game1v1;
+
+
+                switch (mode) {
+                    case AutohostMode.GameChickens:
+                        if (!context.Bots.Any(b => b.IsChicken)) mode = AutohostMode.Teams;
+                        break;
+
+                    case AutohostMode.GameFFA:
+                        allyteams = humanPlayers;
+                        break;
+
+                    case AutohostMode.None:
+                        if (allyteams > 2) mode = AutohostMode.GameFFA;
+                        if (context.Players.Where(x => !x.IsSpectator).Select(p => p.AllyID).Distinct().Count() == 1 && botPlayers > 0 && context.Bots.Any(b => b.IsChicken)) mode = AutohostMode.GameChickens;
+                        if (humanPlayers == 2 && botPlayers == 0 && allyteams == 2) mode = AutohostMode.Game1v1;
+                        break;
                 }
                 switch (mode)
                 {
@@ -74,20 +82,30 @@ namespace ZeroKWeb.SpringieInterface
                                 x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIs1v1 == true && x.MapIsSpecial != true).ToList();
                         break;
                     case AutohostMode.GameChickens:
-                        ret =
+                        if (UseNormalMapForChickens)
+                        {
+                            ret =
                             db.Resources.Where(
                                 x =>
                                     x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIsSpecial != true &&
-                                    (x.MapIsChickens == true || x.MapWaterLevel == 1));
-                        if (humanPlayers > 5) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16);
-                        else if (humanPlayers > 4)
+                                    (x.MapWaterLevel == 1));
+                            if (humanPlayers > 5) ret = ret.Where(x => x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth > 16 * 16);
+                            else if (humanPlayers > 4)
+                                ret =
+                                    ret.Where(
+                                        x =>
+                                            x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth > 16 * 16 &&
+                                            x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth <= 24 * 24);
+                            else if (humanPlayers > 2) ret = ret.Where(x => x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth <= 24 * 24 || x.MapIs1v1 == true);
+                            else ret = ret.Where(x => x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth <= 16 * 16 || x.MapIs1v1 == true);
+                        }else
+                        {
                             ret =
-                                ret.Where(
-                                    x =>
-                                        x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16 &&
-                                        x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 24*24);
-                        else if (humanPlayers > 2) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 24*24 || x.MapIs1v1 == true);
-                        else ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 16*16 || x.MapIs1v1 == true);
+                            db.Resources.Where(
+                                x =>
+                                    x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIsSpecial != true && x.MapIsChickens == true);
+                        }
+                        
                         list = ret.ToList();
 
                         break;
