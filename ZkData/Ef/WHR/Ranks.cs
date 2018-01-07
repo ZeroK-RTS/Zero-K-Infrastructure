@@ -43,7 +43,7 @@ namespace Ratings
                 var rankCeil = bracket.UpperEloLimit + stdev;
                 var rankFloor = bracket.LowerEloLimit - stdev;
                 bestProgress = Math.Max(bestProgress, Math.Min(1, (rating.RealElo - rankFloor) / (rankCeil - rankFloor)));
-                //Trace.TraceInformation(acc.Name + ": bracket(" + bracket.LowerEloLimit + ", " + bracket.UpperEloLimit + ") requirements (" + rankFloor + ", " + rankCeil + ") current: " + rating.RealElo + " -> progress: " + bestProgress);
+                Trace.TraceInformation(acc.Name + ": bracket(" + bracket.LowerEloLimit + ", " + bracket.UpperEloLimit + ") requirements (" + rankFloor + ", " + rankCeil + ") current: " + rating.RealElo + " -> progress: " + bestProgress);
             }
             if (!isActive) return 0.001f;
             return bestProgress;
