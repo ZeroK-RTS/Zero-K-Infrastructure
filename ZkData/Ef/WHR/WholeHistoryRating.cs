@@ -42,9 +42,11 @@ namespace Ratings
 
         private bool runningInitialization = true;
         private readonly RatingCategory category;
+        private readonly RatingSystems handler;
 
-        public WholeHistoryRating(RatingCategory category)
+        public WholeHistoryRating(RatingCategory category, RatingSystems handler)
         {
+            this.handler = handler;
             this.category = category;
             w2 = GlobalConst.EloDecayPerDaySquared;
             ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, 15 * 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
@@ -101,7 +103,7 @@ namespace Ratings
                 else
                 {
                     createGame(losers, winners, false, date, battle.SpringBattleID);
-                    if (RatingSystems.Initialized)
+                    if (handler.Initialized)
                     {
                         Trace.TraceInformation(battlesRegistered + " battles registered for WHR " + category +", latest Battle: " + battle.SpringBattleID);
                         UpdateRatings();
@@ -190,9 +192,9 @@ namespace Ratings
         private readonly object updateLockInternal = new object();
         private readonly object dbLock = new object();
 
-        public void UpdateRatings()
+        public void UpdateRatings(Action UpdateCompleted = null)
         {
-            if (!RatingSystems.Initialized) return;
+            if (!handler.Initialized) return;
             if (latestBattle == null)
             {
                 //Trace.TraceInformation("WHR " + category +": No battles to evaluate");
@@ -262,6 +264,7 @@ namespace Ratings
                                 db.SaveChanges();
                             }
                             RatingsUpdated(this, new RatingUpdate() { affectedPlayers = updatedRanks });
+                            if (UpdateCompleted != null) UpdateCompleted.Invoke();
                         }
                     }
                     catch (Exception ex)
@@ -361,7 +364,7 @@ namespace Ratings
 
         public string DebugPlayer(Account player)
         {
-            if (!RatingSystems.Initialized) return "";
+            if (!handler.Initialized) return "";
             if (!players.ContainsKey(player.AccountID)) return "Unknown player";
             string debugString = "";
             foreach (PlayerDay d in players[player.AccountID].days)
