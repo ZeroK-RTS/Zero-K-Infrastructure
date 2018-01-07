@@ -120,6 +120,7 @@ namespace ZkData
         public const string InfologPathFormat = @"C:\projekty\springie_spring\infolog_{0}.txt";
         public static string SiteDiskPath = @"c:\projekty\zero-k.info\www";
 
+	public const long SpringHangReturnValue = 0xCFFFFFFF;
 
         public const int SteamAppID = 334920;
         public const int ZkLobbyUserCpu = 6667;

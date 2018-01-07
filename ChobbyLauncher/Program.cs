@@ -11,6 +11,7 @@ using System.Threading;
 using System.Windows.Forms;
 using GameAnalyticsSDK.Net;
 using LumiSoft.Net.STUN.Client;
+using PlasmaShared;
 using ZkData;
 
 namespace ChobbyLauncher
@@ -149,37 +150,49 @@ namespace ChobbyLauncher
             }
             else if (!chobbyla.Prepare().Result) return; // otherwise just do simple prepare, no gui
 
-            var springRunOk = chobbyla.Run(connectLobbyID, logWriter);
+            var springRet = chobbyla.Run(connectLobbyID, logWriter);
+            string crashType = "";
+            if (springRet == GlobalConst.SpringHangReturnValue)
+                 crashType = "hang on load";
+            else if (springRet != 0)
+                 crashType = "crash";
+
             Trace.TraceInformation("Spring exited");
-            if (!springRunOk) Trace.TraceWarning("Spring crash detected");
+            if (!string.IsNullOrEmpty(crashType)) Trace.TraceWarning("Spring " + crashType + " detected");
             
             logWriter.Flush();
             var logStr = logSb.ToString();
 
             var syncError = CrashReportHelper.IsDesyncMessage(logStr);
-            if (syncError) Trace.TraceWarning("Sync error detected");
+            if (syncError)
+            {
+                Trace.TraceWarning("Sync error detected");
+                if (string.IsNullOrEmpty(crashType)) crashType = "desync";
+                else crashType += " + desync";
+            }
 
-                        var openGlFail = logStr.Contains("No OpenGL drivers installed.") ||
-                            logStr.Contains("Please go to your GPU vendor's website and download their drivers.") ||
-                            logStr.Contains("minimum required OpenGL version not supported, aborting") ||
-                            logStr.Contains("Update your graphic-card driver!");
-            
+            var openGlFail = logStr.Contains("No OpenGL drivers installed.") ||
+                             logStr.Contains("Please go to your GPU vendor's website and download their drivers.") ||
+                             logStr.Contains("minimum required OpenGL version not supported, aborting") ||
+                             logStr.Contains("Update your graphic-card driver!");
 
             if (openGlFail)
             {
                 Trace.TraceWarning("Outdated OpenGL detected");
-                MessageBox.Show("You have outdated graphics card drivers!\r\nPlease try finding ones for your graphics card and updating them.", "Outdate graphics card driver detected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("You have outdated graphics card drivers!\r\nPlease try finding ones for your graphics card and updating them.", "Outdated graphics card driver detected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                // crashType = "obsolete OpenGL"; // not a useful crash.
+                crashType = "";
             }
 
-            if ((!springRunOk && !openGlFail) || syncError) // crash has occured
+            if (!string.IsNullOrEmpty(crashType))
             {
                 
                 if (
-                    MessageBox.Show("We would like to send crash/desync data to Zero-K repository, it can contain chat. Do you agree?",
+                    MessageBox.Show("We would like to send crash/desync data to Zero-K repository, it can contain chatlogs. Do you agree?",
                         "Automated crash report",
                         MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
-                    var ret = CrashReportHelper.ReportCrash(logSb.ToString(), syncError, chobbyla.engine);
+                    var ret = CrashReportHelper.ReportCrash(logSb.ToString(), crashType, chobbyla.engine);
                     if (ret != null)
                         try
                         {

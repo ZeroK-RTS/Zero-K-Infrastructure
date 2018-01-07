@@ -16,7 +16,7 @@ namespace ChobbyLauncher
     {
         private const string TruncatedString = "------- TRUNCATED -------";
         private const int MaxInfologSize = 250000;
-        public static Issue ReportCrash(string infolog, bool isDesync, string engine)
+        public static Issue ReportCrash(string infolog, string crashType, string engine)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace ChobbyLauncher
                 infolog = Truncate(infolog, MaxInfologSize);
 
                 var createdIssue =
-                    client.Issue.Create("ZeroK-RTS", "CrashReports", new NewIssue($"Spring {(isDesync ? "desync" : "crash")} [{engine}]") { Body = $"```{infolog}```", })
+                    client.Issue.Create("ZeroK-RTS", "CrashReports", new NewIssue($"Spring {crashType} [{engine}]") { Body = $"```{infolog}```", })
                         .Result;
 
                 return createdIssue;
