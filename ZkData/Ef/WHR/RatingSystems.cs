@@ -121,7 +121,7 @@ namespace Ratings
                     battleID = battle.SpringBattleID;
                     if (reprocessingBattle)
                     {
-                        ratingCategories.ForEach(c => whr[c].ProcessBattle(battle, !removeBattle && !IsCategory(battle, c)));
+                        ratingCategories.ForEach(c => whr[c].ProcessBattle(battle, removeBattle || !IsCategory(battle, c)));
                     }
                     else
                     {

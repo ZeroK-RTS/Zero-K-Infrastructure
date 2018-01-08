@@ -100,7 +100,7 @@ namespace Ratings
                 return;
             }
 
-            if (winners.Count > 0 && losers.Count > 0)
+            if (winners.Count > 0 && losers.Count > 0 && winners.Intersect(losers).Count() == 0)
             {
 
                 if (ProcessedBattles.Contains(battle.SpringBattleID)) return;
@@ -149,7 +149,7 @@ namespace Ratings
                 {
                     List<int> retIDs = topPlayers.Take(count).ToList();
                     laddersCache = db.Accounts
-                        .Where(a => retIDs.Contains(a.WhrAlias > 0 ? a.WhrAlias : a.AccountID))
+                        .Where(a => retIDs.Contains(a.AccountID))
                         .Include(a => a.Clan)
                         .Include(a => a.Faction)
                         .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault())
@@ -171,7 +171,7 @@ namespace Ratings
                     foreach (var pair in sortedPlayers)
                     {
                         Account acc = db.Accounts
-                            .Where(a => (a.WhrAlias > 0 ? a.WhrAlias : a.AccountID) == pair.Value)
+                            .Where(a => (a.AccountID) == pair.Value)
                             .Include(a => a.Clan)
                             .Include(a => a.Faction)
                             .FirstOrDefault();
@@ -322,7 +322,7 @@ namespace Ratings
                 {
                     foreach (int player in players)
                     {
-                        var accountRating = db.AccountRatings.Where(x => x.RatingCategory == category && (x.Account.WhrAlias > 0 ? x.Account.WhrAlias : x.AccountID) == player).FirstOrDefault();
+                        var accountRating = db.AccountRatings.Where(x => x.RatingCategory == category && (x.AccountID) == player).FirstOrDefault();
                         if (accountRating == null)
                         {
                             accountRating = new AccountRating(player, category);

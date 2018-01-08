@@ -509,6 +509,7 @@ namespace ZeroKWeb.Controllers
 
                 acc.WhrAlias = aliasId;
                 db.SaveChanges();
+                RatingSystems.UpdateRatingIds();
 
                 battles.ForEach(x => RatingSystems.ProcessResult(x));
 
