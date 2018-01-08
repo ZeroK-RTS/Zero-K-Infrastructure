@@ -52,9 +52,10 @@ namespace Ratings
         public static bool UpdateRank(Account acc, bool allowUprank, bool allowDownrank, ZkDataContext db)
         {
             var progress = GetRankProgress(acc);
-            if (progress > 0.99999f && allowUprank)
+            if (progress > 0.9999f && allowUprank)
             {
                 acc.Rank++;
+                Trace.TraceInformation(acc.Name + " ranked up to " + acc.Rank);
                 if (!ValidateRank(acc.Rank))
                 {
                     Trace.TraceWarning("Correcting invalid rankup for player " + acc.AccountID + ": " + acc.Rank);
@@ -62,9 +63,10 @@ namespace Ratings
                 }
                 return true;
             } 
-            if (progress < 0.00001f && allowDownrank)
+            if (progress < 0.0001f && allowDownrank)
             {
                 acc.Rank--;
+                Trace.TraceInformation(acc.Name + " ranked down to " + acc.Rank);
                 if (!ValidateRank(acc.Rank))
                 {
                     Trace.TraceWarning("Correcting invalid rankdown for player " + acc.AccountID + ": " + acc.Rank);
