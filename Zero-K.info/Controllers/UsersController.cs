@@ -88,14 +88,14 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult DeleteFromRatings(int accountID, int eloweight, int eloweight1v1)
+        public ActionResult DeleteFromRatings(int accountID)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
             Account adminAcc = Global.Account;
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Ratings deleted for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
-            var battles = db.SpringBattles.Where(x => x.SpringBattlePlayers != null && x.SpringBattlePlayers.Where(p => !p.IsSpectator).Any(p => p.AccountID == accountID))
+            var battles = db.SpringBattles.Where(x => x.SpringBattlePlayers.Where(p => !p.IsSpectator).Any(p => p.AccountID == accountID))
                                     .Include(x => x.ResourceByMapResourceID)
                                     .Include(x => x.SpringBattlePlayers)
                                     .Include(x => x.SpringBattleBots);
@@ -499,7 +499,7 @@ namespace ZeroKWeb.Controllers
                 var acc = db.Accounts.Find(accountID);
                 if (acc == null) return Content("Invalid accountID");
 
-                var battles = db.SpringBattles.Where(x => x.SpringBattlePlayers != null && x.SpringBattlePlayers.Where(p => !p.IsSpectator).Any(p => p.AccountID == accountID))
+                var battles = db.SpringBattles.Where(x => x.SpringBattlePlayers.Where(p => !p.IsSpectator).Any(p => p.AccountID == accountID))
                                         .Include(x => x.ResourceByMapResourceID)
                                         .Include(x => x.SpringBattlePlayers)
                                         .Include(x => x.SpringBattleBots)
