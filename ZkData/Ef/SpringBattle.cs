@@ -112,7 +112,7 @@ namespace ZkData
                 if ((losers.Count > 0) && (winners.Count > 0))
                 {
 
-                    List<float> probabilities = RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(new List<ICollection<Account>> { winners, losers });
+                    List<float> probabilities = RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(new List<ICollection<Account>> { winners, losers }, StartTime);
                     var eWin = probabilities[0];
                     var eLose = probabilities[1];
 
@@ -124,6 +124,11 @@ namespace ZkData
             if (Duration > GlobalConst.MinDurationForXP) ApplyXpChanges();
 
             IsEloProcessed = true;
+        }
+
+        public List<float> GetAllyteamWinChances()
+        {
+            return RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(SpringBattlePlayers.Where(x => !x.IsSpectator).OrderBy(x => x.AllyNumber).GroupBy(x => x.AllyNumber).Select(x => x.Select(y => y.Account)), StartTime);
         }
 
 

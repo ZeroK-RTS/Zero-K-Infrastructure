@@ -140,5 +140,16 @@ namespace Ratings
             }
             return getBlackGamma() / (getBlackGamma() + getWhiteGamma());
         }
+
+        public override int GetHashCode()
+        {
+            return id;
+        }
+
+        public override bool Equals(Object other)
+        {
+            Game game = other as Game;
+            return game != null && game.id == id;
+        }
     }
 }

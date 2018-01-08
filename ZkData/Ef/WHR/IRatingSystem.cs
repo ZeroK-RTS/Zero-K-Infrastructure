@@ -7,7 +7,7 @@ namespace Ratings
     public interface IRatingSystem
     {
 
-        void ProcessBattle(SpringBattle battle);
+        void ProcessBattle(SpringBattle battle, bool delete = false);
 
         PlayerRating GetPlayerRating(int accountID);
 
@@ -17,7 +17,7 @@ namespace Ratings
 
         List<Account> GetTopPlayers(int count, Func<Account, bool> selector);
 
-        List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams);
+        List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams, DateTime time);
         
         void AddTopPlayerUpdateListener(ITopPlayersUpdateListener listener, int topX);
         

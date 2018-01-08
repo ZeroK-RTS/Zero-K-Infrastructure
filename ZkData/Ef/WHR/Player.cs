@@ -234,32 +234,68 @@ namespace Ratings
             }
         }
 
-        public void AddGame(Game game) {
-            if (days.Count == 0 || days[days.Count - 1].day != game.day) {
+        private int FindDayBefore(int date)
+        {
+            int min = 0;
+            int max = days.Count;
+            int mid;
+            while (max - min > 1)
+            {
+                mid = (max + min) >> 1;
+                if (days[mid].day <= date)
+                {
+                    min = mid;
+                }else
+                {
+                    max = mid;
+                }
+            }
+            return min;
+        }
+
+        public void RemoveGame(Game game)
+        {
+            int dayIndex = FindDayBefore(game.day);
+            if (days[dayIndex].day != game.day || !(days[dayIndex].wonGames.Contains(game) || days[dayIndex].lostGames.Contains(game)))
+            {
+                Trace.TraceError("Couldn't find game to remove for player " + id);
+                return;
+            }
+            days[dayIndex].wonGames.Remove(game);
+            days[dayIndex].lostGames.Remove(game);
+            if (!days[dayIndex].isFirstDay && days[dayIndex].wonGames.Count + days[dayIndex].lostGames.Count == 0) days.RemoveAt(dayIndex);
+        }
+
+        public void AddGame(Game game)
+        {
+            int insertAfterDay = days.Count == 0 ? -1 : ((days[days.Count - 1].day <= game.day) ? (days.Count - 1) : FindDayBefore(game.day));
+            if (days.Count == 0 || days[insertAfterDay].day != game.day) {
                 PlayerDay newPDay = new PlayerDay(this, game.day);
                 if (days.Count == 0) {
                     newPDay.isFirstDay = true;
                     newPDay.setGamma(1);
                     newPDay.uncertainty = 10;
                 } else {
-                    newPDay.setGamma(days[days.Count - 1].getGamma());
-                    newPDay.uncertainty = days[days.Count - 1].uncertainty + (float)Math.Sqrt(game.day - days[days.Count - 1].day) * w2;
+                    newPDay.setGamma(days[insertAfterDay].getGamma());
+                    newPDay.uncertainty = days[insertAfterDay].uncertainty + (float)Math.Sqrt(game.day - days[insertAfterDay].day) * w2;
                 }
-                days.Add(newPDay);
+                days.Insert(insertAfterDay + 1, newPDay);
+                insertAfterDay++;
             }
             if (game.whitePlayers.Contains(this)) {
-                game.whiteDays.Add(this, days[days.Count - 1]);
+                game.whiteDays.Add(this, days[insertAfterDay]);
             } else {
-                game.blackDays.Add(this, days[days.Count - 1]);
+                game.blackDays.Add(this, days[insertAfterDay]);
             }
 
-            days[days.Count - 1].AddGame(game);
+            days[insertAfterDay].AddGame(game);
         }
 
 
         public void fakeGame(Game game) {
             PlayerDay d;
-            if (days.Count == 0 || days[days.Count - 1].day != game.day)
+            int insertAfterDay = FindDayBefore(game.day);
+            if (days.Count == 0 || days[insertAfterDay].day != game.day)
             {
                 PlayerDay newPDay = new PlayerDay(this, game.day);
                 if (days.Count == 0)
@@ -270,12 +306,12 @@ namespace Ratings
                 }
                 else
                 {
-                    newPDay.setGamma(days[days.Count - 1].getGamma());
-                    newPDay.uncertainty = days[days.Count - 1].uncertainty + (float)Math.Sqrt(game.day - days[days.Count - 1].day) * w2;
+                    newPDay.setGamma(days[insertAfterDay].getGamma());
+                    newPDay.uncertainty = days[insertAfterDay].uncertainty + (float)Math.Sqrt(game.day - days[insertAfterDay].day) * w2;
                 }
                 d = (newPDay);
             } else {
-                d = days[days.Count - 1];
+                d = days[insertAfterDay];
             }
             if (game.whitePlayers.Contains(this)) {
                 game.whiteDays.Add(this, d);

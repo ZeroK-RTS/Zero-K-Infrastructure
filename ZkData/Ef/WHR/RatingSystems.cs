@@ -77,13 +77,20 @@ namespace Ratings
 
         private static int latestBattle;
 
+        public static void ReprocessResult(SpringBattle battle)
+        {
+            if (!Initialized) return;
+            ProcessBattle(battle, true);
+        }
+
         public static void ProcessResult(SpringBattle battle)
         {
             if (!Initialized) return;
             ProcessBattle(battle);
         }
 
-        private static void ProcessBattle(SpringBattle battle)
+
+        private static void ProcessBattle(SpringBattle battle, bool reprocessingBattle = false)
         {
             lock (processingLock)
             {
@@ -91,10 +98,17 @@ namespace Ratings
                 try
                 {
                     battleID = battle.SpringBattleID;
-                    if (processedBattles.Contains(battleID)) return;
-                    processedBattles.Add(battleID);
-                    ratingCategories.Where(c => IsCategory(battle, c)).ForEach(c => whr[c].ProcessBattle(battle));
-                    latestBattle = battleID;
+                    if (reprocessingBattle)
+                    {
+                        ratingCategories.ForEach(c => whr[c].ProcessBattle(battle, !IsCategory(battle, c)));
+                    }
+                    else
+                    {
+                        if (processedBattles.Contains(battleID)) return;
+                        processedBattles.Add(battleID);
+                        ratingCategories.Where(c => IsCategory(battle, c)).ForEach(c => whr[c].ProcessBattle(battle));
+                        latestBattle = battleID;
+                    }
                 }
                 catch (Exception ex)
                 {

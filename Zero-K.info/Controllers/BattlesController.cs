@@ -1,3 +1,4 @@
+using Ratings;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -162,11 +163,18 @@ namespace ZeroKWeb.Controllers
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult SetApplicableRatings(int BattleID, bool MatchMaking, bool Casual, bool PlanetWars)
         {
+            SpringBattle battle;
             using (var db = new ZkDataContext())
             {
-                db.SpringBattles.Where(x => x.SpringBattleID == BattleID).FirstOrDefault().ApplicableRatings = (MatchMaking ? Ratings.RatingCategoryFlags.MatchMaking : 0) | (Casual ? Ratings.RatingCategoryFlags.Casual : 0) | (PlanetWars ? Ratings.RatingCategoryFlags.Planetwars : 0);
+                battle = db.SpringBattles.Where(x => x.SpringBattleID == BattleID)
+                                        .Include(x => x.ResourceByMapResourceID)
+                                        .Include(x => x.SpringBattlePlayers)
+                                        .Include(x => x.SpringBattleBots)
+                                        .FirstOrDefault();
+                battle.ApplicableRatings = (MatchMaking ? Ratings.RatingCategoryFlags.MatchMaking : 0) | (Casual ? Ratings.RatingCategoryFlags.Casual : 0) | (PlanetWars ? Ratings.RatingCategoryFlags.Planetwars : 0);
                 db.SaveChanges();
             }
+            RatingSystems.ReprocessResult(battle);
             return Detail(BattleID);
         }
     }

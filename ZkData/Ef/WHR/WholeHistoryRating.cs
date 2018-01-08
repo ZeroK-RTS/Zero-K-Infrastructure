@@ -62,13 +62,13 @@ namespace Ratings
             return players[accountID].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.getElo() + RatingOffset);
         }
 
-        public List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams)
+        public List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams, DateTime time)
         {
             return teams.Select(t =>
                     SetupGame(t.Select(x => x.AccountID).ToList(),
                             teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => x.AccountID)).ToList(),
                             true,
-                            RatingSystems.ConvertDateToDays(DateTime.UtcNow),
+                            RatingSystems.ConvertDateToDays(time),
                             -1
                     ).getBlackWinProbability() * 2 / teams.Count()).ToList();
         }
@@ -76,24 +76,40 @@ namespace Ratings
         private int battlesRegistered = 0;
         private SpringBattle firstBattle = null;
 
-        private bool _outoforder = false;
+        private HashSet<int> ProcessedBattles = new HashSet<int>();
 
-        public void ProcessBattle(SpringBattle battle)
+        public void ProcessBattle(SpringBattle battle, bool removeBattle = false)
         {
             ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
             ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
+            int date = RatingSystems.ConvertDateToDays(battle.StartTime);
+
+            if (removeBattle)
+            {
+                if (ProcessedBattles.Contains(battle.SpringBattleID) && RatingSystems.Initialized)
+                {
+                    Trace.TraceInformation("WHR " + category + " removing battle " + battle.SpringBattleID + " from " + battle.StartTime);
+                    var game = SetupGame(losers, winners, false, date, battle.SpringBattleID);
+                    losers.Union(winners).Select(x => getPlayerById(x)).ForEach(x => x.RemoveGame(game));
+                    ProcessedBattles.Remove(battle.SpringBattleID);
+                    battlesRegistered--;
+                    latestBattle = battle;
+                    Trace.TraceInformation(battlesRegistered + " battles registered for WHR " + category + ", latest Battle: " + battle.SpringBattleID);
+                    UpdateRatings();
+                }
+                return;
+            }
+
             if (winners.Count > 0 && losers.Count > 0)
             {
-                if (latestBattle != null && battle.StartTime < latestBattle.StartTime && !_outoforder)
-                {
-                    _outoforder = true;
-                    Trace.TraceWarning("WHR " + category + " receiving battles out of order! " + battle.SpringBattleID + " from " + battle.StartTime + " comes before " + latestBattle.SpringBattleID + " from " + latestBattle.StartTime);
-                }
+
+                if (ProcessedBattles.Contains(battle.SpringBattleID)) return;
+
+                battlesRegistered++;
+                ProcessedBattles.Add(battle.SpringBattleID);
 
                 if (firstBattle == null) firstBattle = battle;
                 latestBattle = battle;
-                battlesRegistered++;
-                int date = RatingSystems.ConvertDateToDays(battle.StartTime);
                 if (date > RatingSystems.ConvertDateToDays(DateTime.UtcNow))
                 {   
                     Trace.TraceWarning("WHR " + category +": Tried to register battle " + battle.SpringBattleID + " which is from the future " + (date) + " > " + RatingSystems.ConvertDateToDays(DateTime.UtcNow));
