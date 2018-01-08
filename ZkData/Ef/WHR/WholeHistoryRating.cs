@@ -220,7 +220,7 @@ namespace Ratings
                 if (lastUpdate == null)
                 {
                     updateAction = (() => {
-                        Trace.TraceInformation("Initializing WHR " + category +" ratings for " + battlesRegistered + " battles, this will take some time.. From B" + firstBattle?.SpringBattleID + " to B" + latestBattle?.SpringBattleID);
+                        Trace.TraceInformation("Initializing WHR " + category + " ratings for " + battlesRegistered + " battles, this will take some time.. From B" + firstBattle?.SpringBattleID + " to B" + latestBattle?.SpringBattleID);
                         runIterations(75);
                         UpdateRankings(players.Values);
                         playerOldRatings = new Dictionary<int, PlayerRating>(playerRatings);
@@ -230,7 +230,7 @@ namespace Ratings
                 {
                     updateAction = (() =>
                     {
-                        Trace.TraceInformation("Updating all WHR " + category +" ratings");
+                        Trace.TraceInformation("Updating all WHR " + category + " ratings");
                         runIterations(1);
                         UpdateRankings(players.Values);
                     });
@@ -240,7 +240,7 @@ namespace Ratings
                 {
                     updateAction = (() =>
                     {
-                        Trace.TraceInformation("Updating WHR " + category +" ratings for last Battle: " + latestBattle.SpringBattleID);
+                        Trace.TraceInformation("Updating WHR " + category + " ratings for last Battle: " + latestBattle.SpringBattleID);
                         IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Where(p => !p.IsSpectator).Select(p => getPlayerById(p.AccountID));
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
@@ -255,29 +255,30 @@ namespace Ratings
                 var lastUpdateEx = lastUpdate;
                 Task.Factory.StartNew(() =>
                 {
-                    try
+                try
+                {
+                    lock (updateLockInternal)
                     {
-                        lock (updateLockInternal)
-                        {
-                            runningInitialization = true;
-                            DateTime start = DateTime.Now;
-                            updateAction.Invoke();
-                            Trace.TraceInformation("WHR " + category +" Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
-                            runningInitialization = false;
+                        runningInitialization = true;
+                        DateTime start = DateTime.Now;
+                        updateAction.Invoke();
+                        Trace.TraceInformation("WHR " + category + " Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
+                        runningInitialization = false;
 
-                            IEnumerable<int> updatedRanks;
-                            using (var db = new ZkDataContext())
+                        IEnumerable<Account> updatedRanks;
+                        using (var db = new ZkDataContext())
+                        {
+                            var lastBattlePlayers = db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).Include(x => x.Account).ToList();
+                            lastBattlePlayers.Where(p => playerOldRatings.ContainsKey(p.AccountID) && !p.EloChange.HasValue).ForEach(p =>
                             {
-                                var lastBattlePlayers = db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).Include(x => x.Account).ToList();
-                                lastBattlePlayers.Where(p => playerOldRatings.ContainsKey(p.AccountID) && !p.EloChange.HasValue).ForEach(p =>
-                                {
-                                    p.EloChange = playerRatings[p.AccountID].RealElo - playerOldRatings[p.AccountID].RealElo;
-                                });
-                                updatedRanks = lastBattlePlayers.Where(p => Ranks.UpdateRank(p.Account, p.IsInVictoryTeam, !p.IsInVictoryTeam, db)).Select(x => x.AccountID);
-                                db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ForEach(x => playerOldRatings[x.AccountID] = playerRatings[x.AccountID]);
-                                db.SaveChanges();
-                            }
-                            RatingsUpdated(this, new RatingUpdate() { affectedPlayers = updatedRanks });
+                                p.EloChange = playerRatings[p.AccountID].RealElo - playerOldRatings[p.AccountID].RealElo;
+                            });
+                            updatedRanks = lastBattlePlayers.Where(p => Ranks.UpdateRank(p.Account, p.IsInVictoryTeam, !p.IsInVictoryTeam, db)).Select(x => x.Account);
+                            updatedRanks.ForEach(p => db.Entry(p).State = EntityState.Modified); 
+                            db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ForEach(x => playerOldRatings[x.AccountID] = playerRatings[x.AccountID]);
+                            db.SaveChanges();
+                        }
+                        RatingsUpdated(this, new RatingUpdate() { affectedPlayers = updatedRanks.Select(x => x.AccountID) });
                         }
                     }
                     catch (Exception ex)
