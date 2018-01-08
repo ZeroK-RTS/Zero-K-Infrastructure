@@ -101,7 +101,7 @@ namespace ZeroKWeb.Controllers
                                     .Include(x => x.SpringBattleBots);
             battles.Update(x => new SpringBattle() { ApplicableRatings = 0 });
             db.SaveChanges();
-            battles.AsNoTracking().ForEach(x => RatingSystems.RemoveResult(x));
+            battles.ToList().ForEach(x => RatingSystems.RemoveResult(x));
 
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
@@ -503,7 +503,7 @@ namespace ZeroKWeb.Controllers
                                         .Include(x => x.ResourceByMapResourceID)
                                         .Include(x => x.SpringBattlePlayers)
                                         .Include(x => x.SpringBattleBots)
-                                        .AsNoTracking();
+                                        .ToList();
 
                 battles.ForEach(x => RatingSystems.RemoveResult(x));
 
