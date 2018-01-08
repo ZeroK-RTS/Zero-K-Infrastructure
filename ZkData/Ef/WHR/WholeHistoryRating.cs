@@ -23,10 +23,10 @@ namespace Ratings
 
         const float RatingOffset = 1500;
         public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, 0, 0);
-        
+
         IDictionary<ITopPlayersUpdateListener, int> topPlayersUpdateListeners = new Dictionary<ITopPlayersUpdateListener, int>();
         public event EventHandler<RatingUpdate> RatingsUpdated;
-        
+
         private float[] PercentileBrackets = { float.MinValue, 1200f, 1400f, 1600f, 1800f, 2000f, 2200f, 2400f, float.MaxValue };
 
         IDictionary<int, PlayerRating> playerOldRatings = new ConcurrentDictionary<int, PlayerRating>();
@@ -49,7 +49,7 @@ namespace Ratings
             w2 = GlobalConst.EloDecayPerDaySquared;
             ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, 15 * 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
         }
-        
+
 
         public PlayerRating GetPlayerRating(int accountID)
         {
@@ -111,15 +111,15 @@ namespace Ratings
                 if (firstBattle == null) firstBattle = battle;
                 latestBattle = battle;
                 if (date > RatingSystems.ConvertDateToDays(DateTime.UtcNow))
-                {   
-                    Trace.TraceWarning("WHR " + category +": Tried to register battle " + battle.SpringBattleID + " which is from the future " + (date) + " > " + RatingSystems.ConvertDateToDays(DateTime.UtcNow));
+                {
+                    Trace.TraceWarning("WHR " + category + ": Tried to register battle " + battle.SpringBattleID + " which is from the future " + (date) + " > " + RatingSystems.ConvertDateToDays(DateTime.UtcNow));
                 }
                 else
                 {
                     createGame(losers, winners, false, date, battle.SpringBattleID);
                     if (RatingSystems.Initialized)
                     {
-                        Trace.TraceInformation(battlesRegistered + " battles registered for WHR " + category +", latest Battle: " + battle.SpringBattleID);
+                        Trace.TraceInformation(battlesRegistered + " battles registered for WHR " + category + ", latest Battle: " + battle.SpringBattleID);
                         UpdateRatings();
                     }
                 }
@@ -161,7 +161,7 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count, Func<Account, bool> selector)
         {
-            lock (updateLockInternal) 
+            lock (updateLockInternal)
             {
                 int counter = 0;
                 List<Account> retval = new List<Account>();
@@ -219,8 +219,9 @@ namespace Ratings
                 Action updateAction = null;
                 if (lastUpdate == null)
                 {
-                    updateAction = (() => {
-                        Trace.TraceInformation("Initializing WHR " + category +" ratings for " + battlesRegistered + " battles, this will take some time.. From B" + firstBattle?.SpringBattleID + " to B" + latestBattle?.SpringBattleID);
+                    updateAction = (() =>
+                    {
+                        Trace.TraceInformation("Initializing WHR " + category + " ratings for " + battlesRegistered + " battles, this will take some time.. From B" + firstBattle?.SpringBattleID + " to B" + latestBattle?.SpringBattleID);
                         runIterations(75);
                         UpdateRankings(players.Values);
                         playerOldRatings = new Dictionary<int, PlayerRating>(playerRatings);
@@ -230,7 +231,7 @@ namespace Ratings
                 {
                     updateAction = (() =>
                     {
-                        Trace.TraceInformation("Updating all WHR " + category +" ratings");
+                        Trace.TraceInformation("Updating all WHR " + category + " ratings");
                         runIterations(1);
                         UpdateRankings(players.Values);
                     });
@@ -240,7 +241,7 @@ namespace Ratings
                 {
                     updateAction = (() =>
                     {
-                        Trace.TraceInformation("Updating WHR " + category +" ratings for last Battle: " + latestBattle.SpringBattleID);
+                        Trace.TraceInformation("Updating WHR " + category + " ratings for last Battle: " + latestBattle.SpringBattleID);
                         IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Where(p => !p.IsSpectator).Select(p => getPlayerById(p.AccountID));
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
@@ -262,10 +263,10 @@ namespace Ratings
                             runningInitialization = true;
                             DateTime start = DateTime.Now;
                             updateAction.Invoke();
-                            Trace.TraceInformation("WHR " + category +" Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
+                            Trace.TraceInformation("WHR " + category + " Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
                             runningInitialization = false;
 
-                            IEnumerable<int> updatedRanks;
+                            IEnumerable<Account> updatedRanks;
                             using (var db = new ZkDataContext())
                             {
                                 var lastBattlePlayers = db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).Include(x => x.Account).ToList();
@@ -273,16 +274,17 @@ namespace Ratings
                                 {
                                     p.EloChange = playerRatings[p.AccountID].RealElo - playerOldRatings[p.AccountID].RealElo;
                                 });
-                                updatedRanks = lastBattlePlayers.Where(p => Ranks.UpdateRank(p.Account, p.IsInVictoryTeam, !p.IsInVictoryTeam, db)).Select(x => x.AccountID);
+                                updatedRanks = lastBattlePlayers.Where(p => Ranks.UpdateRank(p.Account, p.IsInVictoryTeam, !p.IsInVictoryTeam, db)).Select(x => x.Account);
+                                updatedRanks.ForEach(p => db.Entry(p).State = EntityState.Modified);
                                 db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ForEach(x => playerOldRatings[x.AccountID] = playerRatings[x.AccountID]);
                                 db.SaveChanges();
                             }
-                            RatingsUpdated(this, new RatingUpdate() { affectedPlayers = updatedRanks });
+                            RatingsUpdated(this, new RatingUpdate() { affectedPlayers = updatedRanks.Select(x => x.AccountID) });
                         }
                     }
                     catch (Exception ex)
                     {
-                        Trace.TraceError("Thread error while updating WHR " + category +" " + ex);
+                        Trace.TraceError("Thread error while updating WHR " + category + " " + ex);
                     }
                 }, CancellationToken.None, TaskCreationOptions.None, PriorityScheduler.BelowNormal);
                 lastUpdate = latestBattle;
@@ -397,7 +399,7 @@ namespace Ratings
         }
 
         //private
-        
+
 
         //Runs in O(N log(N)) for all players
         private void UpdateRankings(IEnumerable<Player> players)
@@ -409,7 +411,7 @@ namespace Ratings
                 {
                     if (p.days.Count == 0)
                     {
-                        Trace.TraceError("WHR " + category +" has invalid player " + p.id + " with no days(games)");
+                        Trace.TraceError("WHR " + category + " has invalid player " + p.id + " with no days(games)");
                         continue;
                     }
                     float elo = p.days.Last().getElo() + RatingOffset;
@@ -458,28 +460,29 @@ namespace Ratings
                         playerRatings[pair.Value].ApplyLadderUpdate(rank, percentile, currentDay);
                     }
                     else if (playerRatings[pair.Value].Rank < int.MaxValue)
-                    { 
+                    {
                         playerRatings[pair.Value].ApplyLadderUpdate(int.MaxValue, 1, currentDay);
                     }
                 }
                 this.activePlayers = rank;
                 newPercentileBrackets.Add(0);
-                PercentileBrackets = newPercentileBrackets.Select(x=>x).Reverse().ToArray();
+                PercentileBrackets = newPercentileBrackets.Select(x => x).Reverse().ToArray();
                 topPlayers = newTopPlayers;
                 laddersCache = new List<Account>();
-                Trace.TraceInformation("WHR " + category +" Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty);
+                Trace.TraceInformation("WHR " + category + " Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty);
 
                 var playerIds = players.Select(x => x.id).ToList();
                 if (playerIds.Count() < 100)
                 {
                     SaveToDB(playerIds);
-                }else
+                }
+                else
                 {
                     SaveToDB();
                 }
 
                 //check for topX updates
-                GetTopPlayers(GlobalConst.LadderSize); 
+                GetTopPlayers(GlobalConst.LadderSize);
                 foreach (var listener in topPlayersUpdateListeners)
                 {
                     if (matched < listener.Value)
@@ -491,7 +494,7 @@ namespace Ratings
             }
             catch (Exception ex)
             {
-                string dbg = "WHR " + category +": Failed to update rankings " + ex + "\nPlayers: ";
+                string dbg = "WHR " + category + ": Failed to update rankings " + ex + "\nPlayers: ";
                 foreach (var p in players)
                 {
                     dbg += p.id + " (" + p.days.Count + " days), ";
