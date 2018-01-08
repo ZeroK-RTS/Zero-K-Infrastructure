@@ -53,20 +53,20 @@ namespace Ratings
 
         public PlayerRating GetPlayerRating(int accountID)
         {
-            return playerRatings.ContainsKey(accountID) ? playerRatings[accountID] : DefaultRating;
+            return playerRatings.ContainsKey(RatingSystems.GetRatingId(accountID)) ? playerRatings[RatingSystems.GetRatingId(accountID)] : DefaultRating;
         }
 
-        public Dictionary<DateTime, float> GetPlayerRatingHistory(int accountID)
+        public Dictionary<DateTime, float> GetPlayerRatingHistory(int AccountID)
         {
-            if (!players.ContainsKey(accountID)) return new Dictionary<DateTime, float>();
-            return players[accountID].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.getElo() + RatingOffset);
+            if (!players.ContainsKey(RatingSystems.GetRatingId(AccountID))) return new Dictionary<DateTime, float>();
+            return players[RatingSystems.GetRatingId(AccountID)].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.getElo() + RatingOffset);
         }
 
         public List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams, DateTime time)
         {
             return teams.Select(t =>
-                    SetupGame(t.Select(x => x.AccountID).ToList(),
-                            teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => x.AccountID)).ToList(),
+                    SetupGame(t.Select(x => RatingSystems.GetRatingId(x.AccountID)).ToList(),
+                            teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => RatingSystems.GetRatingId(x.AccountID))).ToList(),
                             true,
                             RatingSystems.ConvertDateToDays(time),
                             -1
@@ -80,8 +80,8 @@ namespace Ratings
 
         public void ProcessBattle(SpringBattle battle, bool removeBattle = false)
         {
-            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
-            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => p.AccountID).ToList();
+            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).ToList();
+            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).ToList();
             int date = RatingSystems.ConvertDateToDays(battle.StartTime);
 
             if (removeBattle)
@@ -149,7 +149,7 @@ namespace Ratings
                 {
                     List<int> retIDs = topPlayers.Take(count).ToList();
                     laddersCache = db.Accounts
-                        .Where(a => retIDs.Contains(a.AccountID))
+                        .Where(a => retIDs.Contains(RatingSystems.GetRatingId(a.AccountID)))
                         .Include(a => a.Clan)
                         .Include(a => a.Faction)
                         .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault())
@@ -171,11 +171,11 @@ namespace Ratings
                     foreach (var pair in sortedPlayers)
                     {
                         Account acc = db.Accounts
-                            .Where(a => a.AccountID == pair.Value)
+                            .Where(a => RatingSystems.GetRatingId(a.AccountID) == pair.Value)
                             .Include(a => a.Clan)
                             .Include(a => a.Faction)
                             .FirstOrDefault();
-                        if (playerRatings[acc.AccountID].Rank < int.MaxValue && selector.Invoke(acc))
+                        if (playerRatings[RatingSystems.GetRatingId(acc.AccountID)].Rank < int.MaxValue && selector.Invoke(acc))
                         {
                             if (counter++ >= count) break;
                             retval.Add(acc);
@@ -242,7 +242,7 @@ namespace Ratings
                     updateAction = (() =>
                     {
                         Trace.TraceInformation("Updating WHR " + category + " ratings for last Battle: " + latestBattle.SpringBattleID);
-                        IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Where(p => !p.IsSpectator).Select(p => getPlayerById(p.AccountID));
+                        IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Where(p => !p.IsSpectator).Select(p => getPlayerById(RatingSystems.GetRatingId(p.AccountID)));
                         players.ForEach(p => p.runOneNewtonIteration());
                         players.ForEach(p => p.updateUncertainty());
                         UpdateRankings(players);
@@ -272,17 +272,17 @@ namespace Ratings
                                 var lastBattlePlayers = db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).Include(x => x.Account).ToList();
                                 if (latestBattle.GetRatingCategory() == category)
                                 {
-                                    lastBattlePlayers.Where(p => playerOldRatings.ContainsKey(p.AccountID) && !p.EloChange.HasValue).ForEach(p =>
+                                    lastBattlePlayers.Where(p => playerOldRatings.ContainsKey(RatingSystems.GetRatingId(p.AccountID)) && !p.EloChange.HasValue).ForEach(p =>
                                     {
-                                        p.EloChange = playerRatings[p.AccountID].RealElo - playerOldRatings[p.AccountID].RealElo;
+                                        p.EloChange = playerRatings[RatingSystems.GetRatingId(p.AccountID)].RealElo - playerOldRatings[RatingSystems.GetRatingId(p.AccountID)].RealElo;
                                     });
                                     updatedRanks = lastBattlePlayers.Where(p => Ranks.UpdateRank(p.Account, p.IsInVictoryTeam, !p.IsInVictoryTeam, db)).Select(x => x.Account);
                                     updatedRanks.ForEach(p => db.Entry(p).State = EntityState.Modified);
                                 }
-                                db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ForEach(x => playerOldRatings[x.AccountID] = playerRatings[x.AccountID]);
+                                db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ForEach(x => playerOldRatings[RatingSystems.GetRatingId(x.AccountID)] = playerRatings[RatingSystems.GetRatingId(x.AccountID)]);
                                 db.SaveChanges();
                             }
-                            RatingsUpdated(this, new RatingUpdate() { affectedPlayers = updatedRanks.Select(x => x.AccountID) });
+                            RatingsUpdated(this, new RatingUpdate() { affectedPlayers = updatedRanks.Select(p => RatingSystems.GetRatingId(p.AccountID)) });
                         }
                     }
                     catch (Exception ex)
@@ -322,7 +322,7 @@ namespace Ratings
                 {
                     foreach (int player in players)
                     {
-                        var accountRating = db.AccountRatings.Where(x => x.RatingCategory == category && x.AccountID == player).FirstOrDefault();
+                        var accountRating = db.AccountRatings.Where(x => x.RatingCategory == category && RatingSystems.GetRatingId(x.AccountID) == player).FirstOrDefault();
                         if (accountRating == null)
                         {
                             accountRating = new AccountRating(player, category);
@@ -383,9 +383,9 @@ namespace Ratings
         public string DebugPlayer(Account player)
         {
             if (!RatingSystems.Initialized) return "";
-            if (!players.ContainsKey(player.AccountID)) return "Unknown player";
+            if (!players.ContainsKey(RatingSystems.GetRatingId(player.AccountID))) return "Unknown player";
             string debugString = "";
-            foreach (PlayerDay d in players[player.AccountID].days)
+            foreach (PlayerDay d in players[RatingSystems.GetRatingId(player.AccountID)].days)
             {
                 debugString +=
                     d.day + ";" +
@@ -505,11 +505,7 @@ namespace Ratings
                 Trace.TraceError(dbg);
             }
         }
-
-        private Player GetPlayerByAccount(Account acc)
-        {
-            return getPlayerById(acc.AccountID);
-        }
+        
 
         private Player getPlayerById(int id)
         {
