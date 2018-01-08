@@ -64,7 +64,6 @@ namespace Ratings
 
         public List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams, DateTime time)
         {
-            Trace.TraceInformation("Predicting for teams: " + string.Concat(teams.Select(x => string.Concat(x.Select(y => y.Name), ", ")), " vs "));
             return teams.Select(t =>
                     SetupGame(t.Select(x => x.AccountID).ToList(),
                             teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => x.AccountID)).ToList(),

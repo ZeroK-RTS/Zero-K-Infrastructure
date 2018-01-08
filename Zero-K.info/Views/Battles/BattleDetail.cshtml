@@ -115,13 +115,14 @@
 
             @if (Model.IsRatedMatch())
             {
-                <small>Chance of victory: @(((int)Math.Round(1000 * allWinChances[teamId++])) / 10) %</small>
+                <small>Chance of victory: @(((int)Math.Round(1000 * allWinChances[teamId++])) / 10.0)%</small>
+                <br />
             }
             @if (ViewBag.ShowWinners)
             {
                 <small>XP gained: @(win ? @Model.WinnerTeamXpChange : @Model.LoserTeamXpChange)</small>
             }
-            <br/>
+            <br />
             @foreach (var u in allPlayers.Where(x=>x.AllyNumber == allyID))
             {
                 <span>
