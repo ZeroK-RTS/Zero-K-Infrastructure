@@ -130,7 +130,7 @@
                     @if (ViewBag.ShowWinners)
                     {
                         @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")
-                        if ((Global.IsModerator || Model.IsMatchMaker) && u.EloChange.HasValue)
+                        if ((Global.IsModerator) && u.EloChange.HasValue)
                         {
                             @:Elo: @u.EloChange.Value.ToString("F1")
                         }
