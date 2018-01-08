@@ -107,14 +107,16 @@
     }
     @foreach (var allyID in allAllyIDs)
     {
-        var chance = allWinChances[teamId++];
         var win = allPlayers.Any(x=>x.IsInVictoryTeam && x.AllyNumber == allyID) || allBots.Any(x=>x.IsInVictoryTeam && x.AllyNumber == allyID);
         var css = ViewBag.ShowWinners ? (win ? "battle_winner" : "battle_loser") : "battle_spec";
         var label = ViewBag.ShowWinners ? (win ? "Won!" : "Lost") : "";
         <div class='fleft @css'>
             <span style="font-size: 130%">Team @(allyID + 1) @label</span><br/>
 
-            <small>Chance of victory: @chance %</small>
+            @if (Model.IsRatedMatch())
+            {
+                <small>Chance of victory: @(((int)Math.Round(1000 * allWinChances[teamId++])) / 10) %</small>
+            }
             @if (ViewBag.ShowWinners)
             {
                 <small>XP gained: @(win ? @Model.WinnerTeamXpChange : @Model.LoserTeamXpChange)</small>

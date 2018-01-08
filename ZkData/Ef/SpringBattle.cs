@@ -77,7 +77,13 @@ namespace ZkData
             SpringBattlePlayers = new HashSet<SpringBattlePlayer>();
             Events = new HashSet<Event>();
         }
-        
+
+        public bool IsRatedMatch()
+        {
+            return ApplicableRatings != 0;
+        }
+
+
         public RatingCategory GetRatingCategory()
         { 
             if (ApplicableRatings.HasFlag(RatingCategoryFlags.MatchMaking)) return RatingCategory.MatchMaking;
@@ -128,7 +134,8 @@ namespace ZkData
 
         public List<float> GetAllyteamWinChances()
         {
-            return RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(SpringBattlePlayers.Where(x => !x.IsSpectator).OrderBy(x => x.AllyNumber).GroupBy(x => x.AllyNumber).Select(x => x.Select(y => y.Account)), StartTime);
+            if (!IsRatedMatch()) return new List<float>();
+            return RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(SpringBattlePlayers.Where(x => !x.IsSpectator).OrderBy(x => x.AllyNumber).GroupBy(x => x.AllyNumber).Select(x => x.Select(y => y.Account).ToList()).ToList(), StartTime);
         }
 
 
