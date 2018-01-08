@@ -69,10 +69,9 @@ namespace ZeroKWeb.SpringieInterface
 
         public static double GetTeamsDifference(List<BalanceTeam> t)
         {
-            Trace.TraceInformation("trying teams: " + string.Join(" | ", t.Select(x => string.Join(" ; ", x.Items.Select(y => string.Join(" , ", y.EloElements.Select(z => z.ToString())))))));
-            Trace.TraceInformation("elo averages/stdevs: " + string.Join(" | ", t.Select(x => x.EloAvg + " +- " + x.EloStdev)));
+            //Trace.TraceInformation("trying teams: " + string.Join(" | ", t.Select(x => string.Join(" ; ", x.Items.Select(y => string.Join(" , ", y.EloElements.Select(z => z.ToString())))))));
+            //Trace.TraceInformation("elo averages/stdevs: " + string.Join(" | ", t.Select(x => x.EloAvg + " +- " + x.EloStdev)));
             if (t.Count == 2) {
-                Trace.TraceInformation("result: " + ((t[0].EloAvg - t[1].EloAvg) * (t[0].EloAvg - t[1].EloAvg) + 0.01 * (t[0].EloStdev - t[1].EloStdev) * (t[0].EloStdev - t[1].EloStdev)));
                 return (t[0].EloAvg - t[1].EloAvg) * (t[0].EloAvg - t[1].EloAvg) + 0.01 * (t[0].EloStdev - t[1].EloStdev) * (t[0].EloStdev - t[1].EloStdev);
             }
             double minElo = double.MaxValue;
