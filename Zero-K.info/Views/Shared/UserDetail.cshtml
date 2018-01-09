@@ -90,9 +90,9 @@
         <h1 class="username">
             @if (Model.Country != "??")
             {
-                <img nicetitle="Your last known login location. <br /> <br />Contact the administrators if you would like it not to be shown publicly." src='/img/flags/@(Model.Country).png' class='flag' height='11' width='16' alt='@Model.Country' />
+                <img nicetitle="Last known login location. <br /> <br />Contact the administrators if you would like yours not to be shown publicly." src='/img/flags/@(Model.Country).png' class='flag' height='11' width='16' alt='@Model.Country' />
             }
-            @Model.Name <img nicetitle="Your combined rank/level icon. <br /><br />Rank is represented by the icon's color. Ranks range from red to purple, grey represents inactive players or players below red. The profile background adjusts based on rank. <br /><br />Level is represented by the icon's shape. It ranges from a single chevron for level 0 to a star for level 100+." src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png" class="icon16" alt="rank" />
+            @Model.Name <img nicetitle="Combined rank/level icon. <br /><br />Rank is represented by the icon's color. Ranks range from red to purple, grey represents inactive players or players below red. The profile background adjusts based on rank. <br /><br />Level is represented by the icon's shape. It ranges from a single chevron for level 0 to a star for level 100+." src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png" class="icon16" alt="rank" />
         </h1>
 
         <div id="usr_info" style="background-image: url('@Ratings.Ranks.GetRankBackgroundImagePath(Model)')">
@@ -108,7 +108,7 @@
                         <table>
                             <tr>
                                 <td>
-                                    <div class="avatarbg" nicetitle="Your avatar was chosen randomly upon registering">
+                                    <div class="avatarbg" nicetitle="The avatar is chosen randomly upon registering">
                                         @Html.AccountAvatar(Model)
                                     </div>
                                 </td>
@@ -142,7 +142,7 @@
                     int chev = 0;
                     int bars = 0;
                         <div id="badge">
-                            <div id="levelrank" title="This is a graphical representation of your exact level. <br /> <br />Play more games to increase your level!">
+                            <div id="levelrank" title="This is a graphical representation of the player's exact level. <br /> <br />Play more games to increase your level!">
                                 <!--<div id="velvet"><img src="../../img/ranks/level-elo/velvetbacking.jpg" width="100%" height="100%" /></div>-->
                                 <div id="badge-center">
                                     @if (Model.Level > 125)
@@ -186,7 +186,7 @@
 
                 <br class="clearfloat" />
                 @{ double ratio = Model.GetLevelUpRatio(); }
-                <div title='Your level: <img src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png"  class="icon16" alt="rank" /> Level @(Model.Level) <br /> <br /> Your progress to the next level: @((int)(ratio*100))% <br /> <br />XP remaining for level @(Model.Level + 1): @(Account.GetXpForLevel(Model.Level + 1) - Model.Xp)<br /> <br />Play more games to increase your level!'>
+                <div title='Current level: <img src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png"  class="icon16" alt="rank" /> Level @(Model.Level) <br /> <br /> Progress to the next level: @((int)(ratio*100))% <br /> <br />XP remaining for level @(Model.Level + 1): @(Account.GetXpForLevel(Model.Level + 1) - Model.Xp)<br /> <br />Play more games to increase your level!'>
 
                     <div class="progress_wrapper_left">
                         <div class="progress_text techfont"> Level @Model.Level </div>
@@ -203,7 +203,7 @@
                 </div>
                 <br class="clearfloat" />
                 @{ ratio = Ratings.Ranks.GetRankProgress(Model); }
-                <div title='Your rank: <img src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png"  class="icon16" alt="rank" /> @(Ratings.Ranks.RankNames[Model.Rank]) <br /> <br /> Your progress to the next rank: @((int)Math.Round(ratio*100))%<br /> <br />Win more games to improve your rank!'>
+                <div title='Current rank: <img src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png"  class="icon16" alt="rank" /> @(Ratings.Ranks.RankNames[Model.Rank]) <br /> <br /> Progress to the next rank: @((int)Math.Round(ratio*100))%<br /> <br />Win more games to improve your rank!'>
                     <div class="progress_wrapper_left">
                         <div class="progress_text techfont"> @Ratings.Ranks.RankNames[Model.Rank] </div>
                         <div class="progress_begin"></div>
