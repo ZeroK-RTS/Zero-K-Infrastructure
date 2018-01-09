@@ -41,7 +41,7 @@
                         Play Zero-K!
                     </a>
                 </div>
-                <br /><h2>Welcome to Zero-K</h2><br />
+                <br />
                 <iframe width="560" height="315" src="https://www.youtube.com/embed/Ho1K9XP9UMk?rel=0" frameborder="0" hd="1" allowfullscreen></iframe><br />
                 <div align="left" class="padded">
                     <p><h3>Commander wanted!</h3> <br>Drive giant robots, build an army of a thousand Fleas, move mountains if needed, bury the enemy at all cost!</p>
@@ -162,6 +162,17 @@
     }
 
     <div class="border">
+        <center>
+            <a href="http://twitter.com/ZeroKTeam"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Twitter_Logo_Mini.svg/220px-Twitter_Logo_Mini.svg.png" class="icon32" /></a>
+            <a href="https://github.com/ZeroK-RTS"><img src="https://i.imgur.com/BItG041.png" class="icon32"></a>
+            <a href="https://www.facebook.com/ZeroK.RTS"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/F_icon.svg" class="icon32" /></a>
+            <a href="http://steamcommunity.com/groups/0-K"><img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg" class="icon32" /></a>
+            <a href="@Url.Action("Index", "News")"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png" class="icon32" /></a><br />
+            <a href="https://discord.gg/aab63Vt"><img src="~/Img/discord.png" alt="join discord" style="height: 40px;margin-top: 5px" /></a>
+        </center>
+    </div>
+
+    <div class="border">
         <h2><a href='@Url.Action("Index","Forum", new {OnlyUnread= true})'>Forums</a></h2>
         @foreach (var t in Model.NewThreads)
         {
@@ -175,17 +186,6 @@
         {
             @Html.PrintMediaWikiEdit(edit)<br />
         }
-    </div>
-
-    <div class="border">
-        <center>
-            <a href="http://twitter.com/ZeroKTeam"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Twitter_Logo_Mini.svg/220px-Twitter_Logo_Mini.svg.png" class="icon32" /></a>
-            <a href="https://github.com/ZeroK-RTS"><img src="https://i.imgur.com/BItG041.png" class="icon32"></a>
-            <a href="https://www.facebook.com/ZeroK.RTS"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/F_icon.svg" class="icon32" /></a>
-            <a href="http://steamcommunity.com/groups/0-K"><img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg" class="icon32" /></a>
-            <a href="@Url.Action("Index", "News")"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/43/Feed-icon.svg/128px-Feed-icon.svg.png" class="icon32" /></a><br />
-            <a href="https://discord.gg/aab63Vt"><img src="~/Img/discord.png" alt="join discord" style="height: 40px;margin-top: 5px" /></a>
-        </center>
     </div>
 
 
