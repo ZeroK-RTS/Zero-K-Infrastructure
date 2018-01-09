@@ -673,6 +673,10 @@
     <Content Include="Img\hof\r1_winner.jpg" />
     <Content Include="Img\hostmulti.png" />
     <Content Include="Img\hr_img1.png" />
+    <Content Include="Img\landing\dante_small.jpg" />
+    <Content Include="Img\landing\dotwars.jpg" />
+    <Content Include="Img\landing\scorpion_small.jpg" />
+    <Content Include="Img\landing\warlord_small.jpg" />
     <Content Include="Img\link.png" />
     <Content Include="Img\lock.png" />
     <Content Include="Img\login.png" />
