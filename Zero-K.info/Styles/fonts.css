@@ -13,20 +13,14 @@
     url('/OpenSans-Regular.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
+@font-face {
+    font-family: 'Xolonium';
+	font-weight: normal;
+    src: url('/Styles/fonts/Xolonium-Regular.eot?') format('eot'), url('/Styles/fonts/Xolonium-Regular.woff') format('woff'), url('/Styles/fonts/Xolonium-Regular.otf') format('opentype'), url('/Styles/fonts/Xolonium-Regular.ttf') format('truetype');
+}
 
 @font-face {
-    font-family: "Xolonium";
-	font-weight: normal;
-    src: url("/Styles/fonts/Xolonium-Regular.ttf");
-    src: 
-    url("/Styles/fonts/Xolonium-Regular.woff") format("woff"),
-    url("/Styles/fonts/Xolonium-Regular.otf") format("opentype");
-}
-@font-face {
-    font-family: "Xolonium";
+    font-family: 'Xolonium';
 	font-weight: bold;
-    src: url("/Styles/fonts/Xolonium-Regular.ttf");
-    src: 
-    url("/Styles/fonts/Xolonium-Bold.woff") format("woff"),
-    url("/Styles/fonts/Xolonium-Bold.otf") format("opentype");
+    src: url('/Styles/fonts/Xolonium-Bold.eot?') format('eot'), url('/Styles/fonts/Xolonium-Bold.woff') format('woff'), url('/Styles/fonts/Xolonium-Bold.otf') format('opentype'), url('/Styles/fonts/Xolonium-Bold.ttf') format('truetype');
 }
