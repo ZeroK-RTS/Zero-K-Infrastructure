@@ -676,7 +676,14 @@
     <Content Include="Img\landing\dante_small.jpg" />
     <Content Include="Img\landing\dotwars.jpg" />
     <Content Include="Img\landing\scorpion_small.jpg" />
+    <Content Include="Img\landing\text1.jpg" />
+    <Content Include="Img\landing\text2.jpg" />
+    <Content Include="Img\landing\text3.jpg" />
+    <Content Include="Img\landing\text4.jpg" />
+    <Content Include="Img\landing\text5.jpg" />
+    <Content Include="Img\landing\text6.jpg" />
     <Content Include="Img\landing\warlord_small.jpg" />
+    <Content Include="Img\landing\wublord.jpg" />
     <Content Include="Img\link.png" />
     <Content Include="Img\lock.png" />
     <Content Include="Img\login.png" />
