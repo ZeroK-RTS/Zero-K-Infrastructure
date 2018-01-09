@@ -189,7 +189,7 @@
                 <div title='Your level: <img src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png"  class="icon16" alt="rank" /> Level @(Model.Level) <br /> <br /> Your progress to the next level: @((int)(ratio*100))% <br /> <br />XP remaining for level @(Model.Level + 1): @(Account.GetXpForLevel(Model.Level + 1) - Model.Xp)<br /> <br />Play more games to increase your level!'>
 
                     <div class="progress_wrapper_left">
-                        <div class="progress_text"> Level @Model.Level </div>
+                        <div class="progress_text techfont"> Level @Model.Level </div>
                         <div class="progress_begin"></div>
                     </div>
                     <div class="progress_wrapper">
@@ -198,14 +198,14 @@
                     </div>
                     <div class="progress_wrapper_right">
                         <div class="progress_end"></div>
-                        <div class="progress_text"> Level @(Model.Level + 1) </div>
+                        <div class="progress_text techfont"> Level @(Model.Level + 1) </div>
                     </div>
                 </div>
                 <br class="clearfloat" />
                 @{ ratio = Ratings.Ranks.GetRankProgress(Model); }
                 <div title='Your rank: <img src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png"  class="icon16" alt="rank" /> @(Ratings.Ranks.RankNames[Model.Rank]) <br /> <br /> Your progress to the next rank: @((int)Math.Round(ratio*100))%<br /> <br />Win more games to improve your rank!'>
                     <div class="progress_wrapper_left">
-                        <div class="progress_text"> @Ratings.Ranks.RankNames[Model.Rank] </div>
+                        <div class="progress_text techfont"> @Ratings.Ranks.RankNames[Model.Rank] </div>
                         <div class="progress_begin"></div>
                     </div>
                     <div class="progress_wrapper">
@@ -214,7 +214,7 @@
                     </div>
                     <div class="progress_wrapper_right">
                         <div class="progress_end"></div>
-                        <div class="progress_text"> @Ratings.Ranks.RankNames[Model.Rank + 1] </div>
+                        <div class="progress_text techfont"> @Ratings.Ranks.RankNames[Model.Rank + 1] </div>
                     </div>
                 </div>
                 <br class="clearfloat" />
@@ -327,10 +327,12 @@
             <br />
 
             @{
+
+                /*
+                 * 
                 var casual = Model.GetRating(Ratings.RatingCategory.Casual);
                 var mm = Model.GetRating(Ratings.RatingCategory.MatchMaking);
                 var pw = Model.GetRating(Ratings.RatingCategory.Planetwars);
-
                 <b>Competitive rank:</b> @(mm.Rank == int.MaxValue ? $"Unranked, estimated {Math.Round(mm.Elo)} ± {Math.Round(mm.Uncertainty)} " : $"{mm.Rank}. ({Math.Round(mm.Elo)} ± {Math.Round(mm.Uncertainty)}, Top {Math.Round(mm.Percentile * 1000) / 10f}%) ")
                 @Html.ActionLink("Plot graph", "Ratings", "Charts", new { RatingCategory = (int)Ratings.RatingCategory.MatchMaking, UserId = Model.AccountID }, null)
                 <br />
@@ -340,8 +342,11 @@
                 <b>Planetwars rank:</b> @(pw.Rank == int.MaxValue ? $"Unranked, estimated {Math.Round(pw.Elo)} ± {Math.Round(pw.Uncertainty)} " : $"{pw.Rank}. ({Math.Round(pw.Elo)} ± {Math.Round(pw.Uncertainty)}, Top {Math.Round(pw.Percentile * 1000) / 10f}%) ")
                 @Html.ActionLink("Plot graph", "Ratings", "Charts", new { RatingCategory = (int)Ratings.RatingCategory.Planetwars, UserId = Model.AccountID }, null)
                 <br />
+                */
             }
             <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
+            <br />
+            @Html.ActionLink("Show rating statistics", "Ratings", "Charts", new { RatingCategory = (int)Ratings.RatingCategory.Casual, UserId = Model.AccountID }, null)
         </div>
         <br class="clearfloat" />
 
