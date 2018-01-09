@@ -39,8 +39,8 @@ namespace Ratings
         readonly float w2; //elo range expand per day squared
         private Timer ladderRecalculationTimer;
         private int activePlayers = 0;
-
-        private bool runningInitialization = true;
+        private bool lastBattleRanked = false;
+        
         private readonly RatingCategory category;
 
         public WholeHistoryRating(RatingCategory category)
@@ -119,6 +119,7 @@ namespace Ratings
                     createGame(losers, winners, false, date, battle.SpringBattleID);
                     if (RatingSystems.Initialized)
                     {
+                        lastBattleRanked = true;
                         Trace.TraceInformation(battlesRegistered + " battles registered for WHR " + category + ", latest Battle: " + battle.SpringBattleID);
                         UpdateRatings();
                     }
@@ -260,23 +261,22 @@ namespace Ratings
                     {
                         lock (updateLockInternal)
                         {
-                            runningInitialization = true;
                             DateTime start = DateTime.Now;
                             updateAction.Invoke();
                             Trace.TraceInformation("WHR " + category + " Ratings updated in " + DateTime.Now.Subtract(start).TotalSeconds + " seconds, " + (GC.GetTotalMemory(false) / (1 << 20)) + "MiB total memory allocated");
-                            runningInitialization = false;
 
                             IEnumerable<Account> updatedRanks = new List<Account>();
                             using (var db = new ZkDataContext())
                             {
                                 var lastBattlePlayers = db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).Include(x => x.Account).ToList();
-                                if (latestBattle.GetRatingCategory() == category)
+                                if (latestBattle.GetRatingCategory() == category && lastBattleRanked)
                                 {
+                                    lastBattleRanked = false;
                                     lastBattlePlayers.Where(p => playerOldRatings.ContainsKey(RatingSystems.GetRatingId(p.AccountID)) && !p.EloChange.HasValue).ForEach(p =>
                                     {
                                         p.EloChange = playerRatings[RatingSystems.GetRatingId(p.AccountID)].RealElo - playerOldRatings[RatingSystems.GetRatingId(p.AccountID)].RealElo;
                                     });
-                                    updatedRanks = lastBattlePlayers.Where(p => Ranks.UpdateRank(p.Account, p.IsInVictoryTeam, !p.IsInVictoryTeam, db)).Select(x => x.Account);
+                                    updatedRanks = lastBattlePlayers.Where(p => Ranks.UpdateRank(p.Account, p.IsInVictoryTeam, !p.IsInVictoryTeam, db)).Select(x => x.Account).ToList();
                                     updatedRanks.ForEach(p => db.Entry(p).State = EntityState.Modified);
                                 }
                                 db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ToList().ForEach(x => playerOldRatings[RatingSystems.GetRatingId(x.AccountID)] = playerRatings[RatingSystems.GetRatingId(x.AccountID)]);
