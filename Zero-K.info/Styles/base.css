@@ -185,4 +185,10 @@ ul {list-style-type: circle;}
 .width-90 {width: 90%;}
 .width-100 {width: 100%;}
 
-
+.padded{
+    padding: 5px;
+}
+.rounded{
+    border-radius: 10px;
+    overflow: auto;
+}

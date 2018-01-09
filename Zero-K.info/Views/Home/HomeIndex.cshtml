@@ -42,9 +42,9 @@
                     </a>
                 </div>
                 <br /><h3>Welcome to Zero-K</h3><br />
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/Ho1K9XP9UMk?rel=0" frameborder="0" hd="1" allowfullscreen></iframe><br /><br />
-                <div align="left">
-                    <p>Commander wanted! <br>Drive giant robots, build an army of a thousand Fleas, move mountains if needed, bury the enemy at all cost!</p>
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/Ho1K9XP9UMk?rel=0" frameborder="0" hd="1" allowfullscreen></iframe><br />
+                <div align="left" class="padded">
+                    <p><h3>Commander wanted!</h3> <br>Drive giant robots, build an army of a thousand Fleas, move mountains if needed, bury the enemy at all cost!</p>
                     <ul><li>Real time strategy.</li><li>Physically simulated units and projectiles.</li><li>Terrain manipulation.</li><li>100+ varied units with unique abilities.</li><li>Singleplayer campaign.</li><li>Challenging, non-cheating AI.</li><li>Multiplayer 1v1 - 16v16, FFA, coop.</li><li>Multiplayer online campaign.</li><li>Really free, no in-game currency, no unfair multiplayer.</li></ul>
                     <h3> </h3>
                     <p> </p>
@@ -88,7 +88,6 @@
                     <small>or just <a href="/Wiki/Media">view the media</a></small>
                 </div>
             </div><br />
-            @Html.IncludeWiki("Features")
         }
     </div>
     @foreach (var n in Model.Headlines.Take(1))
@@ -142,11 +141,12 @@
     {
         <!--<a onclick="window.location='/Wiki/Download';"><span class="downloadbutton"><span class="buttonSpan"></span>Play Zero-K</span></a>-->
         <div id="unit" class="border relative text-left">
-            <br/>
             <a href="/Wiki/Media">
+                <div class="rounded">
                 <img src="/img/landing/scorpion_small.jpg" /><br />
                 <img src="/img/landing/warlord_small.jpg" /><br />
                 <img src="/img/landing/dante_small.jpg" />
+                </div>
             </a>
         </div>
     }
