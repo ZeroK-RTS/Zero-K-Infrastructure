@@ -77,7 +77,13 @@ namespace ZkData
             SpringBattlePlayers = new HashSet<SpringBattlePlayer>();
             Events = new HashSet<Event>();
         }
-        
+
+        public bool IsRatedMatch()
+        {
+            return ApplicableRatings != 0;
+        }
+
+
         public RatingCategory GetRatingCategory()
         { 
             if (ApplicableRatings.HasFlag(RatingCategoryFlags.MatchMaking)) return RatingCategory.MatchMaking;
@@ -100,30 +106,40 @@ namespace ZkData
 
             if (!noElo) ResetApplicableRatings();
 
-            if (IsMission || HasBots || (PlayerCount < 2) || noElo || (ResourceByMapResourceID.MapIsSpecial == true))
+            if (Duration > GlobalConst.MinDurationForXP)
             {
-                WinnerTeamXpChange = GlobalConst.XpForMissionOrBotsVictory;
-                LoserTeamXpChange = GlobalConst.XpForMissionOrBots;
-            }
-            else
-            {
-                var losers = SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => x.Account).ToList();
-                var winners = SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam).Select(x => x.Account).ToList();
-                if ((losers.Count > 0) && (winners.Count > 0))
+
+                if (IsMission || HasBots || (PlayerCount < 2) || noElo || (ResourceByMapResourceID.MapIsSpecial == true))
                 {
-
-                    List<float> probabilities = RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(new List<ICollection<Account>> { winners, losers });
-                    var eWin = probabilities[0];
-                    var eLose = probabilities[1];
-
-                    WinnerTeamXpChange = (int)(20 + (300 + 600 * (1 - eWin)) / (3.0 + winners.Count)); // a bit ugly this sets to battle directly
-                    LoserTeamXpChange = (int)(20 + (200 + 400 * (1 - eLose)) / (2.0 + losers.Count));
+                    WinnerTeamXpChange = GlobalConst.XpForMissionOrBotsVictory;
+                    LoserTeamXpChange = GlobalConst.XpForMissionOrBots;
                 }
-            }
+                else
+                {
+                    var losers = SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => x.Account).ToList();
+                    var winners = SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam).Select(x => x.Account).ToList();
+                    if ((losers.Count > 0) && (winners.Count > 0))
+                    {
 
-            if (Duration > GlobalConst.MinDurationForXP) ApplyXpChanges();
+                        List<float> probabilities = RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(new List<ICollection<Account>> { winners, losers }, StartTime);
+                        var eWin = probabilities[0];
+                        var eLose = probabilities[1];
+
+                        WinnerTeamXpChange = (int)(20 + (300 + 600 * (1 - eWin)) / (3.0 + winners.Count)); // a bit ugly this sets to battle directly
+                        LoserTeamXpChange = (int)(20 + (200 + 400 * (1 - eLose)) / (2.0 + losers.Count));
+                    }
+                }
+
+                ApplyXpChanges();
+            }
 
             IsEloProcessed = true;
+        }
+
+        public List<float> GetAllyteamWinChances()
+        {
+            if (!IsRatedMatch()) return new List<float>();
+            return RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(SpringBattlePlayers.Where(x => !x.IsSpectator).OrderBy(x => x.AllyNumber).GroupBy(x => x.AllyNumber).Select(x => x.Select(y => y.Account).ToList()).ToList(), StartTime);
         }
 
 

@@ -8,6 +8,8 @@ using LobbyClient;
 using ZkData;
 using System.Data.Entity.SqlServer;
 using EntityFramework.Extensions;
+using System.Data.Entity;
+using Ratings;
 
 namespace ZeroKWeb.Controllers
 {
@@ -86,15 +88,20 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult DeleteFromRatings(int accountID, int eloweight, int eloweight1v1)
+        public ActionResult DeleteFromRatings(int accountID)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
             Account adminAcc = Global.Account;
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Ratings deleted for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
-            db.SpringBattles.Where(x => x.SpringBattlePlayers != null && x.SpringBattlePlayers.Where(p => !p.IsSpectator).Any(p => p.AccountID == accountID)).Update(x => new SpringBattle() { ApplicableRatings = 0 });
+            var battles = db.SpringBattles.Where(x => x.SpringBattlePlayers.Where(p => !p.IsSpectator).Any(p => p.AccountID == accountID))
+                                    .Include(x => x.ResourceByMapResourceID)
+                                    .Include(x => x.SpringBattlePlayers)
+                                    .Include(x => x.SpringBattleBots);
+            battles.Update(x => new SpringBattle() { ApplicableRatings = 0 });
             db.SaveChanges();
+            battles.ToList().ForEach(x => RatingSystems.RemoveResult(x));
 
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
@@ -475,6 +482,40 @@ namespace ZeroKWeb.Controllers
             acc.SetName(newUsername);
             db.SaveChanges();
             return Content(string.Format("{0} renamed to {1}", oldName, newUsername));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Auth(Role = AdminLevel.Moderator)]
+        public ActionResult SetWhrAlias(int accountID, string alias)
+        {
+            int aliasId;
+            if (!int.TryParse(alias, out aliasId)) return Content("Not a valid number");
+            using (var db = new ZkDataContext())
+            {
+                var aliasAcc = db.Accounts.Find(aliasId);
+                if (aliasAcc == null) return Content("No account found with this id");
+
+                var acc = db.Accounts.Find(accountID);
+                if (acc == null) return Content("Invalid accountID");
+
+                var battles = db.SpringBattles.Where(x => x.SpringBattlePlayers.Where(p => !p.IsSpectator).Any(p => p.AccountID == accountID))
+                                        .Include(x => x.ResourceByMapResourceID)
+                                        .Include(x => x.SpringBattlePlayers)
+                                        .Include(x => x.SpringBattleBots)
+                                        .ToList();
+
+                battles.ForEach(x => RatingSystems.RemoveResult(x));
+
+                acc.WhrAlias = aliasId;
+                db.SaveChanges();
+                RatingSystems.UpdateRatingIds();
+
+                battles.ForEach(x => RatingSystems.ReprocessResult(x));
+
+
+                return Content(string.Format("{0} now plays for {1}", acc, aliasAcc));
+            }
         }
 
         [HttpPost]

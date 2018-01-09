@@ -341,6 +341,10 @@
     <Compile Include="Migrations\201712232154526_AddedSunRanks.Designer.cs">
       <DependentUpon>201712232154526_AddedSunRanks.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201801082132302_add_WhrAlias.cs" />
+    <Compile Include="Migrations\201801082132302_add_WhrAlias.Designer.cs">
+      <DependentUpon>201801082132302_add_WhrAlias.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -663,6 +667,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201712232154526_AddedSunRanks.resx">
       <DependentUpon>201712232154526_AddedSunRanks.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801082132302_add_WhrAlias.resx">
+      <DependentUpon>201801082132302_add_WhrAlias.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

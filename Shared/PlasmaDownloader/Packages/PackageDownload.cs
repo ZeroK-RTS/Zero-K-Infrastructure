@@ -211,10 +211,16 @@ namespace PlasmaDownloader.Packages
 
 				    if (rapidHandling != RapidHandling.DefaultSdp)
 				    {
-				        var convertor = new Sdp2Sdz();
-                        convertor.ConvertSdp2Sdz(paths, packageHash, targetSdz, (p)=> { zipProgress = p; });
+                        try
+                        {
+                            var convertor = new Sdp2Sdz();
+                            convertor.ConvertSdp2Sdz(paths, packageHash, targetSdz, (p) => { zipProgress = p; });
 
-                        if (rapidHandling == RapidHandling.SdzNameHash) RemoveOtherSdzVersions(entry);
+                            if (rapidHandling == RapidHandling.SdzNameHash) RemoveOtherSdzVersions(entry);
+                        }catch(Exception ex)
+                        {
+                            Trace.TraceError("Error converting {0} to sdz {1}", Name, ex);
+                        }
 				    }
 
                     

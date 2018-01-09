@@ -20,6 +20,8 @@ namespace Ratings
 
         private static object processingLock = new object();
 
+        private static Dictionary<int, int> accountAliases = new Dictionary<int, int>();
+
         public static void Init()
         {
             Initialized = false;
@@ -30,6 +32,7 @@ namespace Ratings
                 {
                     try
                     {
+                        UpdateRatingIds();
                         using (ZkDataContext data = new ZkDataContext())
                         {
                             for (int year = 10; year > 0; year--)
@@ -59,6 +62,18 @@ namespace Ratings
             });
         }
 
+        public static void UpdateRatingIds()
+        {
+            using (ZkDataContext db = new ZkDataContext())
+            {
+                accountAliases = db.Accounts.Where(x => x.WhrAlias > 0).ToDictionary(x => x.AccountID, x => x.WhrAlias);
+            }
+        }
+
+        public static int GetRatingId(int accountID)
+        {
+            return accountAliases.ContainsKey(accountID) ? accountAliases[accountID] : accountID;
+        }
 
         public static IEnumerable<IRatingSystem> GetRatingSystems()
         {
@@ -77,13 +92,26 @@ namespace Ratings
 
         private static int latestBattle;
 
+        public static void RemoveResult(SpringBattle battle)
+        {
+            if (!Initialized) return;
+            ProcessBattle(battle, true, true);
+        }
+
+        public static void ReprocessResult(SpringBattle battle)
+        {
+            if (!Initialized) return;
+            ProcessBattle(battle, true);
+        }
+
         public static void ProcessResult(SpringBattle battle)
         {
             if (!Initialized) return;
             ProcessBattle(battle);
         }
 
-        private static void ProcessBattle(SpringBattle battle)
+
+        private static void ProcessBattle(SpringBattle battle, bool reprocessingBattle = false, bool removeBattle = false)
         {
             lock (processingLock)
             {
@@ -91,10 +119,17 @@ namespace Ratings
                 try
                 {
                     battleID = battle.SpringBattleID;
-                    if (processedBattles.Contains(battleID)) return;
-                    processedBattles.Add(battleID);
-                    ratingCategories.Where(c => IsCategory(battle, c)).ForEach(c => whr[c].ProcessBattle(battle));
-                    latestBattle = battleID;
+                    if (reprocessingBattle)
+                    {
+                        ratingCategories.ForEach(c => whr[c].ProcessBattle(battle, removeBattle || !IsCategory(battle, c)));
+                    }
+                    else
+                    {
+                        if (processedBattles.Contains(battleID)) return;
+                        processedBattles.Add(battleID);
+                        ratingCategories.Where(c => IsCategory(battle, c)).ForEach(c => whr[c].ProcessBattle(battle));
+                        latestBattle = battleID;
+                    }
                 }
                 catch (Exception ex)
                 {

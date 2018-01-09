@@ -102,6 +102,8 @@
         var allPlayers = Model.SpringBattlePlayers.Where(x=>!x.IsSpectator).ToList();
         var allBots = Model.SpringBattleBots.ToList();
         var allAllyIDs = allPlayers.Select(x => x.AllyNumber).Union(allBots.Select(x=>x.AllyNumber)).OrderBy(x=>x).ToList();
+        var allWinChances = Model.GetAllyteamWinChances();
+        int teamId = 0;
     }
     @foreach (var allyID in allAllyIDs)
     {
@@ -110,11 +112,17 @@
         var label = ViewBag.ShowWinners ? (win ? "Won!" : "Lost") : "";
         <div class='fleft @css'>
             <span style="font-size: 130%">Team @(allyID + 1) @label</span><br/>
+
+            @if (Model.IsRatedMatch())
+            {
+                <small>Chance of victory: @(((int)Math.Round(1000 * allWinChances[teamId++])) / 10.0)%</small>
+                <br />
+            }
             @if (ViewBag.ShowWinners)
             {
                 <small>XP gained: @(win ? @Model.WinnerTeamXpChange : @Model.LoserTeamXpChange)</small>
             }
-            <br/>
+            <br />
             @foreach (var u in allPlayers.Where(x=>x.AllyNumber == allyID))
             {
                 <span>
@@ -122,9 +130,9 @@
                     @if (ViewBag.ShowWinners)
                     {
                         @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")
-                        if ((Global.IsModerator || Model.IsMatchMaker) && u.EloChange.HasValue)
+                        if ((Global.IsModerator) && u.EloChange.HasValue)
                         {
-                            @:Elo: @u.EloChange.Value.ToString("F1")
+                            @:Rank: @u.EloChange.Value.ToString("F1")
                         }
                         foreach (var award in Model.AccountBattleAwards.Where(x => x.AccountID == u.AccountID))
                         {

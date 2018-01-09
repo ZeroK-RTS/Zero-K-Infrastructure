@@ -80,6 +80,7 @@ namespace ZeroKWeb.Controllers
             if (db == null) db = new ZkDataContext();
             var acc = db.Accounts.Single(x => x.AccountID == accountID);
             var clan = acc.Clan;
+            if (clan == null) return null; // Person not in a clan
             if (clan.Accounts.Count() > GlobalConst.ClanLeaveLimit) return null; // "This clan is too big to leave";
 
             RoleType leader = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople && x.IsClanOnly);
@@ -176,6 +177,9 @@ namespace ZeroKWeb.Controllers
 
             var kickee_acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (kickee_acc == null) return Content("No such person");
+            if (!kickee_acc.ClanID.HasValue) return Content(kickee_acc.Name + " not in a clan");
+
+            int clanID = kickee_acc.ClanID.Value;
 
             if (!Global.IsModerator) {
                 if (kickee_acc.ClanID != Global.Account.ClanID) return Content("Target not in your clan");
@@ -186,7 +190,7 @@ namespace ZeroKWeb.Controllers
             db.SaveChanges();
             PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator());
             Global.Server.PublishAccountUpdate(kickee_acc);
-            return RedirectToAction("Detail", new { id = Global.Account.ClanID });
+            return RedirectToAction("Detail", new { id = clanID });
         }
 
         /// <summary>
