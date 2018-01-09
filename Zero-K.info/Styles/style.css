@@ -37,6 +37,7 @@ pre {
 #fadetoblack
 {
 	background: url("/img/fade.png") repeat-y 50% 0;
+    background-size: 100%;
 	position: fixed;
 	top: 0px;
 	left: 0px;
