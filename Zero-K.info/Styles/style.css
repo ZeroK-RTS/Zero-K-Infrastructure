@@ -4,6 +4,7 @@ html
 {
 	/*background: #000 url("/img/bg_bluehex.gif") fixed;*/
 	background: #000;
+    background-size: cover;
 	color: #ede;
     font-family: os, sans-serif;
 	font-size: 14.5px;
