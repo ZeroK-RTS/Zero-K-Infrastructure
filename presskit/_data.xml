@@ -7,7 +7,7 @@
 	<website>zero-k.info</website>
 	<based-in>International</based-in>
 	
-	<press-contact>press-contact@company.com</press-contact>
+	<press-contact>team@zero-k.info</press-contact>
 	<phone>0</phone>
 	<address>
 		<line>The Internet</line>
@@ -15,12 +15,12 @@
 
 	<socials>
 		<social>
-			<name>http://twitter.com/ZeroKTeam</name>
-			<link>http://twitter.com/ZeroKTeam</link>
+			<name>twitter.com/ZeroKTeam</name>
+			<link>twitter.com/ZeroKTeam</link>
 		</social>
 		<social>
-			<name>https://www.facebook.com/ZeroK.RTS</name>
-			<link>https://www.facebook.com/ZeroK.RTS</link>
+			<name>facebook.com/ZeroK.RTS</name>
+			<link>facebook.com/ZeroK.RTS</link>
 		</social>
 		</socials>
 
@@ -104,29 +104,31 @@ In 2014 Zero-K applied for and was accepted into Steam Greenlight. At this point
 	
 	<credits>
 		<credit>
-			<person>John Doe</person>
-			<role>Artist, Freelancer</role>
+			<person>Licho</person>
+			<role>General Management, Infrastructure, Game design, Balance</role>
 		</credit>
 		<credit>
-			<person>Oliver Twist</person>
-			<website>www.olivertwist.com</website>
-			<role>Artist, Freelancer</role>
+			<person>Google Frog</person>
+			<role>Lua, balance, Visuals, Sound, AI, Terraform</role>
 		</credit>
 		<credit>
-			<person>Jane Doette</person>
-			<website>www.olivertwist.com</website>
-			<role>Music, Freelancer</role>
+			<person>KingRaptor</person>
+			<role>Interface, Story, Lua, Cob</role>
+		</credit>
+		<credit>
+			<person>Shadowfury333</person>
+			<role>Videos (tutorial, commentary)</role>
 		</credit>
 	</credits>
 	
 	<contacts>
 		<contact>
 			<name>Inquiries</name>
-			<mail>rami@vlambeer.com</mail>
+			<mail> team@zero-k.info</mail>
 		</contact>
 		<contact>
 			<name>Twitter</name>
-			<link>http://twitter.com/MyCompanyName</link>
+			<link>http://twitter.com/ZeroKTeam</link>
 		</contact>
 		<contact>
 			<name>Facebook</name>
@@ -134,7 +136,7 @@ In 2014 Zero-K applied for and was accepted into Steam Greenlight. At this point
 		</contact>
 		<contact>
 			<name>Web</name>
-			<link>MyCompanyWebsite.com</link>
+			<link>zero-k.info</link>
 		</contact>
 	</contacts>
 </game>
