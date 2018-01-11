@@ -2,104 +2,72 @@
 <!-- example file containing base tags -->
 
 <game>	
-	<title>Company Name</title>
-	<founding-date>September 1, 2010</founding-date>
-	<website>http://www.website.com/</website>
-	<based-in>Cityville, Metropolisland</based-in>
+	<title>Zero-K</title>
+	<founding-date>October 1, 2010</founding-date>
+	<website>zero-k.info</website>
+	<based-in>International</based-in>
 	
-	<press-contact>press-contact@company.com</press-contact>
-	<phone>+00 (1) 22 33 44 55 66</phone>
+	<press-contact>team@zero-k.info</press-contact>
+	<phone>0</phone>
 	<address>
-		<line>Address Line 1</line>
-		<line>Address Line 2</line>
-		<line>Address Line 3</line>
-	</address>
+		<line>The Internet</line>
+		</address>
 
 	<socials>
 		<social>
-			<name>twitter.com/MyCompanyName</name>
-			<link>twitter.com/MyCompanyName</link>
+			<name>twitter.com/ZeroKTeam</name>
+			<link>twitter.com/ZeroKTeam</link>
 		</social>
 		<social>
-			<name>facebook.com/MyCompanyName</name>
-			<link>facebook.com/MyCompanyName</link>
+			<name>facebook.com/ZeroK.RTS</name>
+			<link>facebook.com/ZeroK.RTS</link>
 		</social>
-		<social>
-			<name>Skype</name>
-			<link>callto:MySkypeName</link>
-		</social>
-	</socials>
+		</socials>
 
 	<description>	
-		We're games studio and we make games. We're also capable of editing XML files.
+	Zero-K is a traditional RTS with a focus on physics and unit intelligence. Each unit in Zero-K is defined more by its unique combination of movement and weapon physics than it is by raw attributes such as health. Use quick nimble bots to dodge the slow projectiles of weapons meant to counter ponderous tanks. Manipulate the terrain to increase the range of arcing plasma cannons and to protect them from direct-fire lasers. Units are intelligent enough to exploit their abilities - long ranged units try to stay at maximum range while nimble units will attempt to dodge projectiles. This is not to say that micromanagement is dead, far from it, as battles require quick thinking and decision making to eek out the best results. Units are quite narrow-minded in this regard, they know how to fight the enemy in front of them but do not know about the incoming flank or when to do a suicide run on a high-value target. The result is a game in which a wide range of players can fight multi-front wars with interesting unit compositions as they can trust their units to not be too stupid when they look away.
 	</description>
 		
 	<histories>
 		<history>
-			<header>Early history</header>
-			<text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel nisi dolor. Pellentesque vitae eros velit, quis venenatis orci. Phasellus elit urna, semper ut gravida et, porta non dui. Aliquam erat volutpat. Aenean porta volutpat imperdiet. Maecenas venenatis, tellus eget vehicula vulputate, augue erat elementum quam, tincidunt laoreet magna orci et mauris. Proin porttitor pharetra nisi, accumsan sollicitudin neque varius a. Aenean ut massa ipsum, id hendrerit lacus. Maecenas posuere egestas nunc at cursus. Etiam mollis libero vel eros pulvinar aliquam. Sed vitae turpis sed nibh venenatis dictum. Sed suscipit orci justo, at sagittis ante. Sed leo nisl, ultricies in fermentum id, aliquam id dolor. Ut laoreet, felis id posuere bibendum, arcu ipsum lacinia est, eu lobortis velit enim eget mi. In ullamcorper ullamcorper enim ut gravida. Vivamus rutrum lacus mollis risus malesuada iaculis.</text>
+			<header>Background</header>
+			<text>Zero-K runs on the Spring Engine, which is an open source community-developed RTS engine. The Spring engine was initially released in 2005 as a way to play mods of Total Annihilation in 3D. The feature set of Spring grew beyond that of Total Annihilation with many original games created by members the Spring community. The inclusion of lua scripting in 2007 added the flexibility to support practically any type of RTS or game of a related genre. The engine has undergone steady development since its initial release with ongoing fixes, features and modernization.
+
+The Total Annihilation-derived games within the Spring community enjoyed a long history of forking each others projects over slight disagreements in design. Complete Annihilation, created in 2007, was one such fork that attracted many players and contributors from within the Spring community. Its principal aims were graphical improvement/replacement and to use lua scripting to experiment with the core systems of the game. The period from 2007-2009 was highly experimental with many iterations on the areas such as the economy and technology structure. This period also saw early versions of many core feature such as PlanetWars (the online persistent campaign) and terraforming. The community was also in the process of replacing the art assets of the game to avoid potential licensing issues with Total Annihilation.</text>
 		</history>
 		<history>
-			<header>After that</header>
-			<text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sem dui, volutpat eu adipiscing sed, rutrum aliquam lacus. Proin sollicitudin consequat dolor id dignissim. Aliquam sem turpis, sagittis lobortis viverra eget, varius vitae nunc. Proin ac lacus porttitor dui sollicitudin elementum. Nulla ut hendrerit est. Fusce vitae arcu erat, vel molestie est. Proin et placerat justo. Proin placerat arcu massa, eu blandit leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam eu lorem sed massa lobortis hendrerit vitae vel odio. Maecenas eget pulvinar tortor. Nunc vitae nisl ac odio bibendum luctus ac a leo. Suspendisse auctor elit et velit sagittis vehicula. Maecenas faucibus blandit rutrum. Duis et sem nibh. Vestibulum placerat elit et dui rhoncus accumsan.</text>
+			<header>Zero-K</header>
+			<text>Zero-K was created in October 2010 by the core development team of Complete Annihilation using most of the units and mechanics from Complete Annihilation. The primary motivation was to create a version of Complete Annihilation which only used art assets created by the community so that they could more legitimately advertise as a distinct game. It was at this point that the concept of a single faction was introduced. Each of the two factions of Complete Annihilation had about 7 technology branches, this was merged into a single faction with 11 branches. It is somewhat difficult to track the development history of Zero-K since uses the community-driven open source approach and is not overseen or managed by any formal or official organization. Over the past 10 years the project has likely seen 20 core developers and approximately 80 contributors. This is not counting engine development, which has its own history. The lead developers are Licho and GoogleFrog, who have both been actively contributing since at least 2008.
+
+In 2014 Zero-K applied for and was accepted into Steam Greenlight. At this point the experimental phase was winding down and the focus was shifting towards polish and approachability. It was generally felt by the development team that a steam release would be disastrous with the level of infrastructure and content present at the time. In 2015 Zero-K moved to its own lobby server, away from the generic Spring server, to allow for scaling as well as the implementation of matchmaking, better PlanetWars integration and more intuitive managing of custom games. In 2016 the old IRC-style lobby client was replaced with a more standard game menu. In 2017 the new game menu was populated with singleplayer content including tutorials, streamlined skirmish mode, a singleplayer campaign and an AI from the AI sub community that followed the game. In November 2017 Zero-K was released on itch.io</text>
 		</history>
 	</histories>
 		
 	<trailers>
 		<trailer>
-			<name>This video is nice</name>
-			<youtube>7jQbITg0MSk</youtube>
+			<name>Zero-K Gameplay Teaser</name>
+			<youtube>Ho1K9XP9UMk</youtube>
 		</trailer>
 		<trailer>
-			<name>This one too</name>
-			<youtube>0CevOaYrYDA</youtube>
-			<vimeo>12536488</vimeo>
+			<name>Zero-K Trailer</name>
+			<youtube>vkZaLLyhEgI</youtube>
 		</trailer>
 	</trailers>
 	
 	<awards>
 		<award>
-			<description>Winner in this highly relevant contest.</description>
-			<info>Award Location, 20 October, 1989</info>
+			<description>One of PC Gamers best free games of 2017</description>
+			<info>http://www.pcgamer.com/the-best-free-games-of-2017/</info>
 		</award>
-		<award>
-			<description>Nomination for this prestigious award.</description>
-			<info>Award Ceremony, 4 December, 1991</info>
-		</award>
-		<award>
-			<description>Winner in this highly relevant contest.</description>
-			<info>Award Location, 20 October, 1989</info>
-		</award>
-		<award>
-			<description>Nomination for this prestigious award.</description>
-			<info>Award Ceremony, 4 December, 1991</info>
-		</award>
+		
 	</awards>
 	
 	<quotes>
 		<quote>
-			<description>This is a rather insignificant quote by a highly important person.</description>
-			<name>Person Name</name>
+			<description>A neat take on a traditional RTS with terrain deformation, projectile physics and cool units, and all for free. </description>
+			<name>PC Gamer</name>
 			<website>Website</website>
-			<link>http://www.website.com/</link>
-		</quote>
-		<quote>
-			<description>An extremely positive quote from a rather insignificant person. Also great.</description>
-			<name>Some Guy</name>
-			<website>This Page Is Visited By 12 Visitors A Month</website>
-			<link>http://geocities.blog.com/</link>
-		</quote>
-		<quote>
-			<description>I pretend to love this game even though I do not actually understand it.</description>
-			<name>Pretentious Bastard</name>
-			<website>Artsy Page</website>
-			<link>http://art.tumblr.com/</link>
-		</quote>
-		<quote>
-			<description>HOLY SHIT SO AMAZING</description>
-			<name>Caps Guy</name>
-			<website>Angry Review</website>
-			<link>http://thispage.net/angrytube</link>
+			<link>http://www.pcgamer.com</link>
 		</quote>
 	</quotes>
 	
@@ -118,29 +86,31 @@
 	
 	<credits>
 		<credit>
-			<person>John Doe</person>
-			<role>Artist, Freelancer</role>
+			<person>Licho</person>
+			<role>General Management, Infrastructure, Game design, Balance</role>
 		</credit>
 		<credit>
-			<person>Oliver Twist</person>
-			<website>www.olivertwist.com</website>
-			<role>Artist, Freelancer</role>
+			<person>Google Frog</person>
+			<role>Lua, balance, Visuals, Sound, AI, Terraform</role>
 		</credit>
 		<credit>
-			<person>Jane Doette</person>
-			<website>www.olivertwist.com</website>
-			<role>Music, Freelancer</role>
+			<person>KingRaptor</person>
+			<role>Interface, Story, Lua, Cob</role>
+		</credit>
+		<credit>
+			<person>Shadowfury333</person>
+			<role>Videos (tutorial, commentary)</role>
 		</credit>
 	</credits>
 	
 	<contacts>
 		<contact>
 			<name>Inquiries</name>
-			<mail>rami@vlambeer.com</mail>
+			<mail> team@zero-k.info</mail>
 		</contact>
 		<contact>
 			<name>Twitter</name>
-			<link>http://twitter.com/MyCompanyName</link>
+			<link>http://twitter.com/ZeroKTeam</link>
 		</contact>
 		<contact>
 			<name>Facebook</name>
@@ -148,7 +118,7 @@
 		</contact>
 		<contact>
 			<name>Web</name>
-			<link>MyCompanyWebsite.com</link>
+			<link>zero-k.info</link>
 		</contact>
 	</contacts>
 </game>
