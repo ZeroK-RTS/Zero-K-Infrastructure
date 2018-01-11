@@ -64,28 +64,10 @@ In 2014 Zero-K applied for and was accepted into Steam Greenlight. At this point
 	
 	<quotes>
 		<quote>
-			<description>This is a rather insignificant quote by a highly important person.</description>
-			<name>Person Name</name>
+			<description>A neat take on a traditional RTS with terrain deformation, projectile physics and cool units, and all for free. </description>
+			<name>PC Gamer</name>
 			<website>Website</website>
-			<link>http://www.website.com/</link>
-		</quote>
-		<quote>
-			<description>An extremely positive quote from a rather insignificant person. Also great.</description>
-			<name>Some Guy</name>
-			<website>This Page Is Visited By 12 Visitors A Month</website>
-			<link>http://geocities.blog.com/</link>
-		</quote>
-		<quote>
-			<description>I pretend to love this game even though I do not actually understand it.</description>
-			<name>Pretentious Bastard</name>
-			<website>Artsy Page</website>
-			<link>http://art.tumblr.com/</link>
-		</quote>
-		<quote>
-			<description>HOLY SHIT SO AMAZING</description>
-			<name>Caps Guy</name>
-			<website>Angry Review</website>
-			<link>http://thispage.net/angrytube</link>
+			<link>http://www.pcgamer.com</link>
 		</quote>
 	</quotes>
 	
