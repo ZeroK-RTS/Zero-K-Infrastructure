@@ -283,6 +283,11 @@ namespace ZkLobbyServer
             var pwd = GenerateClientScriptPassword(conus.Name);
             spring.AddUser(conus.Name, pwd, conus.User);
 
+            if (spring.Context.LobbyStartContext.Players.Any(x => x.Name == conus.Name) && conus.MyBattle != this)
+            {
+                await ProcessPlayerJoin(conus, joinPassword);
+            }
+
             await conus.SendCommand(GetConnectSpringStructure(pwd));
         }
 
