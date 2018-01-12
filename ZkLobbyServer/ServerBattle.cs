@@ -147,6 +147,14 @@ namespace ZkLobbyServer
             }
         }
 
+        public async Task CheckCloseBattle()
+        {
+            if (Users.IsEmpty && !spring.IsRunning)
+            {
+                await server.RemoveBattle(this);
+            }
+        }
+
         public async Task ProcessBattleSay(Say say)
         {
             if (say.User == GlobalConst.NightwatchName) return; // ignore self
@@ -590,6 +598,7 @@ namespace ZkLobbyServer
                     });
 
             toNotify.Clear();
+            CheckCloseBattle();
         }
 
         private async Task ApplyBalanceResults(BalanceTeamsResult balance)
