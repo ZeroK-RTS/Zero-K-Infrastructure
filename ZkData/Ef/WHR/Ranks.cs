@@ -1,9 +1,33 @@
 ﻿using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using ZkData;
 
 namespace Ratings
 {
+    public enum RankSelector
+    {
+        [Display(Name="Nebulous")]
+        Grey = 0,
+        [Display(Name="Brown Dwarf")]
+        Brown = 1,
+        [Display(Name="Red Dwarf")]
+        Red = 2,
+        [Display(Name="Subgiant")]
+        Orange = 3,
+        [Display(Name="Giant")]
+        Yellow = 4,
+        [Display(Name="Supergiant")]
+        White = 5,
+        [Display(Name="Neutron Star")]
+        Blue = 6,
+        [Display(Name="Singularity")]
+        Purple = 7,
+        [Display(Name="Any")]
+        Undefined = 8,
+    }
+
     public class Ranks
     {
         public static readonly float[] Percentiles = {float.MaxValue, 0.8f, 0.6f, 0.4f, 0.2f, 0.1f, 0.05f, 0.01f};
@@ -52,10 +76,9 @@ namespace Ratings
         public static bool UpdateRank(Account acc, bool allowUprank, bool allowDownrank, ZkDataContext db)
         {
             var progress = GetRankProgress(acc);
-            if (progress > 0.9999f && allowUprank)
+            if (progress > 0.99999f && allowUprank)
             {
                 acc.Rank++;
-                Trace.TraceInformation(acc.Name + " ranked up to " + acc.Rank);
                 if (!ValidateRank(acc.Rank))
                 {
                     Trace.TraceWarning("Correcting invalid rankup for player " + acc.AccountID + ": " + acc.Rank);
@@ -63,10 +86,9 @@ namespace Ratings
                 }
                 return true;
             } 
-            if (progress < 0.0001f && allowDownrank)
+            if (progress < 0.00001f && allowDownrank)
             {
                 acc.Rank--;
-                Trace.TraceInformation(acc.Name + " ranked down to " + acc.Rank);
                 if (!ValidateRank(acc.Rank))
                 {
                     Trace.TraceWarning("Correcting invalid rankdown for player " + acc.AccountID + ": " + acc.Rank);

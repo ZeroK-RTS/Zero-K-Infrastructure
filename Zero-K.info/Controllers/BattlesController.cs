@@ -44,6 +44,7 @@ namespace ZeroKWeb.Controllers
             public AgeOption Age { get; set; }
             public YesNoAny Mission { get; set; }
             public YesNoAny Bots { get; set; }
+            public RankSelector Rank { get; set; } = RankSelector.Undefined;
             public int? offset { get; set; }
             public List<BattleQuickInfo> Data;
         }
@@ -116,6 +117,12 @@ namespace ZeroKWeb.Controllers
             {
                 var bval = model.Bots == YesNoAny.Yes;
                 q = q.Where(b => b.HasBots == bval);
+            }
+
+            if (model.Rank != RankSelector.Undefined)
+            {
+                int rank = (int)model.Rank;
+                q = q.Where(b => b.SpringBattlePlayers.Select(x => x.Account.Rank).Any(x => x == rank));
             }
 
             q = q.OrderByDescending(b => b.StartTime);
