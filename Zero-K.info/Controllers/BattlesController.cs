@@ -122,7 +122,7 @@ namespace ZeroKWeb.Controllers
             if (model.Rank != RankSelector.Undefined)
             {
                 int rank = (int)model.Rank;
-                q = q.Where(b => b.SpringBattlePlayers.Any(x => x.Account.Rank == rank));
+                q = q.Where(b => b.Rank == rank);
             }
 
             q = q.OrderByDescending(b => b.StartTime);

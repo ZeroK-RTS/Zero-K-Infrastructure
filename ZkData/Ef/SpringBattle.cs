@@ -70,6 +70,7 @@ namespace ZkData
         [StringLength(200)]
         public string Title { get; set; }
         public int? WinnerTeamXpChange { get; set; }
+        public int? Rank { get; set; }
 
         public SpringBattle()
         {
@@ -106,10 +107,15 @@ namespace ZkData
 
             if (!noElo) ResetApplicableRatings();
 
+            if (IsRatedMatch())
+            {
+                Rank = SpringBattlePlayers.Select(x => x.Account.Rank).Max();
+            }
+
             if (Duration > GlobalConst.MinDurationForXP)
             {
 
-                if (IsMission || HasBots || (PlayerCount < 2) || noElo || (ResourceByMapResourceID.MapIsSpecial == true))
+                if (!IsRatedMatch())
                 {
                     WinnerTeamXpChange = GlobalConst.XpForMissionOrBotsVictory;
                     LoserTeamXpChange = GlobalConst.XpForMissionOrBots;
