@@ -25,6 +25,7 @@ namespace ChobbyLauncher
 
         public SpringPaths paths;
         public bool IsSteamFolder { get; private set; }
+        public bool OfflineMode { get; private set; } = false;
 
         public Process process { get; private set; }
 
@@ -63,7 +64,7 @@ namespace ChobbyLauncher
 
                 if (!isDev)
                 {
-                    if (!Debugger.IsAttached && !IsSteamFolder)
+                    if (!Debugger.IsAttached && !IsSteamFolder && !OfflineMode)
                     {
                         Status = "Checking for self-upgrade";
                         var selfUpdater = new SelfUpdater("Zero-K");
@@ -74,10 +75,17 @@ namespace ChobbyLauncher
                         };
                         var task = new Task<bool>(() => selfUpdater.CheckForUpdate());
                         task.Start();
-                        await task;
+                        if (!await task)
+                        {
+                            MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1;
+                            if (MessageBox.Show(ChobbylaForm.ActiveForm, "Unable to update the game, do you want to run in offline mode?", "Offline mode", MessageBoxButtons.YesNo, MessageBoxIcon.Question, defaultButton) == DialogResult.Yes)
+                            {
+                                OfflineMode = true;
+                            }
+                        }
                     }
 
-                    if (!IsSteamFolder)
+                    if (!IsSteamFolder && !OfflineMode)
                     {
                         downloader.RapidHandling = RapidHandling.SdzNameHash;
 
@@ -88,10 +96,11 @@ namespace ChobbyLauncher
 
                         ver = downloader.PackageDownloader.GetByTag(chobbyTag);
                         internalName = ver.InternalName;
+                        SetOfflineChobby(internalName);
                     }
                     else
                     {
-                        internalName = GetSteamChobby();
+                        internalName = GetSteamChobby() ?? GetOfflineChobby();
                         ver = downloader.PackageDownloader.GetByInternalName(internalName) ?? downloader.PackageDownloader.GetByTag(chobbyTag);
                     }
 
@@ -105,7 +114,12 @@ namespace ChobbyLauncher
                 else internalName = "Chobby $VERSION";
 
 
-                engine = engine ?? GetSteamEngine() ?? QueryDefaultEngine() ?? ExtractEngineFromLua(ver) ?? GlobalConst.DefaultEngineOverride;
+                engine = engine ?? GetSteamEngine() ?? GetOfflineEngine() ?? QueryDefaultEngine() ?? ExtractEngineFromLua(ver) ?? GlobalConst.DefaultEngineOverride;
+
+                if (!IsSteamFolder && !OfflineMode)
+                {
+                    SetOfflineEngine(engine);
+                }
 
                 try
                 {
@@ -118,7 +132,7 @@ namespace ChobbyLauncher
                 }
 
 
-                if (!IsSteamFolder)
+                if (!IsSteamFolder && !OfflineMode)
                 {
                     if (!await downloader.DownloadFile("Downloading engine", DownloadType.ENGINE, engine, Progress, 2)) return false;
 
@@ -129,7 +143,10 @@ namespace ChobbyLauncher
                     }
                 }
 
-                downloader.UpdatePublicCommunityInfo(Progress);
+                if (!OfflineMode)
+                {
+                    downloader.UpdatePublicCommunityInfo(Progress);
+                }
                 
                 if (!isDev)
                 {
@@ -199,6 +216,38 @@ namespace ChobbyLauncher
                 if (File.Exists(fp)) return File.ReadAllText(fp);
             }
             return null;
+        }
+
+        private string GetOfflineChobby()
+        {
+            if (OfflineMode)
+            {
+                var fp = Path.Combine(paths.WritableDirectory, "offline_chobby.txt");
+                if (File.Exists(fp)) return File.ReadAllText(fp);
+            }
+            return null;
+        }
+
+        private void SetOfflineChobby(string chobby)
+        {
+            var fp = Path.Combine(paths.WritableDirectory, "offline_chobby.txt");
+            File.WriteAllText(fp, chobby);
+        }
+
+        private string GetOfflineEngine()
+        {
+            if (OfflineMode)
+            {
+                var fp = Path.Combine(paths.WritableDirectory, "offline_engine.txt");
+                if (File.Exists(fp)) return File.ReadAllText(fp);
+            }
+            return null;
+        }
+
+        private void SetOfflineEngine(string engine)
+        {
+            var fp = Path.Combine(paths.WritableDirectory, "offline_engine.txt");
+            File.WriteAllText(fp, engine);
         }
 
 

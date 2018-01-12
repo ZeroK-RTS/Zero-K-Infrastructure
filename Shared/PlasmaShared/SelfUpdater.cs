@@ -63,6 +63,7 @@ namespace ZkData
         {
             if (targetFile == null) targetFile = TargetExecutablePath;
             LatestVersion = GetLatestVersion();
+            if (string.IsNullOrEmpty(LatestVersion)) return false;
             if (forced || (!string.IsNullOrEmpty(LatestVersion) && LatestVersion != CurrentVersion)) {
                 if (UpgradeFile(string.Format("{0}/{1}.exe", urlBase, urlUpdateName), targetFile)) {
                     CurrentVersion = LatestVersion;
