@@ -603,7 +603,7 @@ namespace ZkLobbyServer
                     });
 
             toNotify.Clear();
-            CheckCloseBattle();
+            await CheckCloseBattle();
         }
 
         private async Task ApplyBalanceResults(BalanceTeamsResult balance)

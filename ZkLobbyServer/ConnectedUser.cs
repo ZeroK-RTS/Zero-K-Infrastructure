@@ -708,7 +708,7 @@ namespace ZkLobbyServer
                         if (battle.Bots.TryRemove(b.Name, out obs)) await server.Broadcast(battle.Users.Keys, new RemoveBot() { Name = b.Name });
                     }
                 }
-                battle.CheckCloseBattle();
+                await battle.CheckCloseBattle();
             }
         }
 
