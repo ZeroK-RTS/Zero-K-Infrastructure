@@ -704,7 +704,7 @@ namespace ZkLobbyServer
             spring.DedicatedServerExited += DedicatedServerExited;
 
             spring.DedicatedServerStarted += DedicatedServerStarted;
-            spring.PlayerSaid += async (s, e) => await spring_PlayerSaid(s,e);
+            spring.PlayerSaid += spring_PlayerSaid;
             spring.BattleStarted += spring_BattleStarted;
         }
 
@@ -714,14 +714,14 @@ namespace ZkLobbyServer
         }
 
 
-        private async Task spring_PlayerSaid(object sender, SpringChatEventArgs e)
+        private void spring_PlayerSaid(object sender, SpringChatEventArgs e)
         {
             ConnectedUser user;
 
             Say say = new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle, AllowRelay = false };
 
             //dont broadcast commands
-            if (await CheckSayForCommand(say)) return;
+            if (CheckSayForCommand(say).Result) return;
 
             var isPlayer = spring.Context.ActualPlayers.Any(x => x.Name == e.Username && !x.IsSpectator);
             
