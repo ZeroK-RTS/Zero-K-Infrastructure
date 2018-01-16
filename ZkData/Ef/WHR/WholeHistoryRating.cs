@@ -454,7 +454,7 @@ namespace Ratings
                 PercentileBrackets = newPercentileBrackets.Select(x => x).Reverse().ToArray();
                 topPlayers = newTopPlayers;
                 laddersCache = new List<Account>();
-                Trace.TraceInformation("WHR " + category + " Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty);
+                Trace.TraceInformation("WHR " + category + " Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty + " brackets are now: " + string.Join(", ", PercentileBrackets));
 
                 var playerIds = players.Select(x => x.id).ToList();
                 if (playerIds.Count() < 100)
