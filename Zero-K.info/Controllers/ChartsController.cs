@@ -275,6 +275,7 @@ namespace ZeroKWeb.Controllers
                             .Select(x => new GraphPoint() { Day = x.First().Day, Value = x.Average(y => y.Value) })
                             .ToList();
 
+                if (data.Count > 0) data.RemoveAt(data.Count - 1);
                 series.Add(new GraphSeries() { Title = prov.Title, Data = data });
             }
 
