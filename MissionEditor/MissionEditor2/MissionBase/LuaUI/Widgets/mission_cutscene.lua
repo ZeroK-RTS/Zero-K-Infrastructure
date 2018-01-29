@@ -186,12 +186,13 @@ function widget:Update(dt)
     --if isInCutscene and WG.IsGUIHidden() then
     --  spSetMouseCursor('none')
     --end
+    if isInCutscene and WG.IsGUIHidden() and (Spring.GetGameFrame() > 0) then
+      spWarpMouse(vsx/2, vsy/2)
+	end
+	
     timer = timer + dt
     if timer > UPDATE_PERIOD then
       if isInCutscene then
-        if WG.IsGUIHidden() then
-          --spWarpMouse(vsx/2, vsy/2)
-        end
         if isExitingCutscene then
           ProgressCutsceneExit(timer)
         elseif isEnteringCutscene then
@@ -325,29 +326,26 @@ end
 -- block all keypresses that aren't pause or Esc while in cutscene
 function widget:KeyPress(key, modifier, isRepeat)
   local guiHidden = WG.IsGUIHidden()
-  if isInCutscene and (Spring.GetGameFrame() > 0) then
-    if key == KEYSYMS.PAUSE or key == KEYSYMS.ESCAPE then
-      HandlePause(guiHidden)
-      return false
-    elseif key == KEYSYMS.SPACE and isSkippable then
-      return true -- pass to KeyRelease
-    end
-    
-    -- allow screenshots
-    local keystr = Spring.GetKeySymbol(key)
-    local keybinds = Spring.GetKeyBindings(keystr) or {}
-    for i=1,#keybinds do
-      for key in pairs(keybinds[i]) do
-        local lowerkey = key:lower()
-        if lowerkey == "screenshot" then --or key:lower() == "hideinterface"
-          return false
-        elseif lowerkey == "crudemenu" or lowerkey == "pause" then
-          HandlePause(guiHidden)
-          return false
+  if isInCutscene then
+    if (Spring.GetGameFrame() > 0) then
+	  if (key == KEYSYMS.SPACE) and isSkippable then
+        return true -- pass to KeyRelease
+      end
+      
+      -- allow screenshots
+      local keystr = Spring.GetKeySymbol(key)
+      local keybinds = Spring.GetKeyBindings(keystr) or {}
+      for i=1,#keybinds do
+        for key in pairs(keybinds[i]) do
+          local lowerkey = key:lower()
+          if lowerkey == "screenshot" then
+            return false
+          end
         end
       end
+    elseif (key == KEYSYMS.SPACE) then
+      return false -- pass to KeyRelease
     end
-    
     return guiHidden -- eat the keypress if appropriate (so nobody can use it)
   end
   return false

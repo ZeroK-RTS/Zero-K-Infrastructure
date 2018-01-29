@@ -1277,7 +1277,7 @@ namespace MissionEditor2
             //if (String.IsNullOrEmpty(value)) return;
             if (dict.ContainsKey(key)) return;
             value = value.Replace("%", "%%");
-            value = value.Replace("\r\n", "\n");
+            //value = value.Replace("\r\n", "\n");
             dict.Add(key, value);
         }
 
