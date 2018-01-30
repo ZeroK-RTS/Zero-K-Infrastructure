@@ -218,7 +218,7 @@ namespace ZkLobbyServer
             user.SteamID = acc.SteamID?.ToString();
             user.IsAdmin = acc.AdminLevel >= AdminLevel.Moderator;
             user.IsBot = acc.IsBot;
-            user.Country = acc.Country;
+            user.Country = acc.HideCountry ? "??" : acc.Country;
             user.Faction = acc.Faction != null ? acc.Faction.Shortcut : null;
             user.Clan = acc.Clan != null ? acc.Clan.Shortcut : null;
             user.AccountID = acc.AccountID;

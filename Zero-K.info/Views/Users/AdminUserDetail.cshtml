@@ -106,7 +106,7 @@
     Hide country flag: 
     <form method="post" action="@Url.Action("ChangeHideCountry", "Users", new { accountID = Model.AccountID })">
         @Html.AntiForgeryToken()
-        @Html.CheckBox("hideCountry", Model.Country == "??")
+        @Html.CheckBox("hideCountry", Model.HideCountry)
         <input type="submit"/>
     </form>
     <br />

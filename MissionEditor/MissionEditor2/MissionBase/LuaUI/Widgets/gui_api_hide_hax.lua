@@ -21,6 +21,9 @@ local function HideGUI()
 	
 	hidden = true
 	Spring.SendCommands("mapmarks 0")
+	if WG.SetCursorVisibility then
+		WG.SetCursorVisibility(false)
+	end
 	
 	-- hook widgetHandler to allow us to override the DrawScreen callin
 	local wh = widgetHandler
@@ -32,6 +35,9 @@ local function UnhideGUI()
 	if not hidden then return end
 	hidden = false
 	Spring.SendCommands("mapmarks 1")
+	if WG.SetCursorVisibility then
+		WG.SetCursorVisibility(true)
+	end
 	
 	local wh = widgetHandler
 	wh.DrawScreenList = wh.oldDrawScreenList
