@@ -12,27 +12,26 @@ namespace ChobbyLauncher {
     public class SteamP2PPortProxy : IDisposable
     {
         private UdpClient udp;
-        private int localListeUdpPort;
-        private int localTargetUdpPort;
+        public int LocalListenUdpPort { get; }
+        public int LocalTargetUdpPort { get; }
 
         private IPEndPoint localTargetEndpoint;
-        private int steamChannel;
+        public int SteamChannel { get; }
         private CSteamID remoteSteamID;
         private Thread udpThread;
         private Thread steamThread;
 
-        private bool close;
+        private bool closed;
 
-        public SteamP2PPortProxy() { }
 
         public SteamP2PPortProxy(int steamChannel, CSteamID remoteSteamID, int localTargetUdpPort)
         {
-            this.steamChannel = steamChannel;
+            this.SteamChannel = steamChannel;
             this.remoteSteamID = remoteSteamID;
-            this.localTargetUdpPort = localTargetUdpPort;
+            LocalTargetUdpPort = localTargetUdpPort;
 
             udp = new UdpClient(0);
-            localListeUdpPort = ((IPEndPoint)udp.Client.LocalEndPoint).Port;
+            LocalListenUdpPort = ((IPEndPoint)udp.Client.LocalEndPoint).Port;
             localTargetEndpoint = new IPEndPoint(IPAddress.Loopback, localTargetUdpPort);
 
             udpThread = new Thread(UdpListenThread);
@@ -50,10 +49,10 @@ namespace ChobbyLauncher {
 
             try
             {
-                while (!close)
+                while (!closed)
                 {
                     var data = udp.Receive(ref localTargetEndpoint);
-                    SteamNetworking.SendP2PPacket(remoteSteamID, data, (uint)data.Length, EP2PSend.k_EP2PSendUnreliable, steamChannel);
+                    SteamNetworking.SendP2PPacket(remoteSteamID, data, (uint)data.Length, EP2PSend.k_EP2PSendUnreliable, SteamChannel);
                 }
             }
             catch (ThreadAbortException ex) { }
@@ -69,19 +68,19 @@ namespace ChobbyLauncher {
             try
             {
 
-                while (!close)
+                while (!closed)
                 {
                     uint size;
-                    while (SteamNetworking.IsP2PPacketAvailable(out size, steamChannel))
+                    while (SteamNetworking.IsP2PPacketAvailable(out size, SteamChannel))
                     {
                         var data = new byte[size];
                         CSteamID actualRemoteSteamID;
-                        if (SteamNetworking.ReadP2PPacket(data, size, out size, out actualRemoteSteamID, steamChannel))
+                        if (SteamNetworking.ReadP2PPacket(data, size, out size, out actualRemoteSteamID, SteamChannel))
                         {
                             if (actualRemoteSteamID == remoteSteamID) udp.Send(data, (int)size, localTargetEndpoint);
                             else
                                 Trace.TraceError("Steam P2P channel {0} unexpected steamID {1}, expected {2}",
-                                    steamChannel,
+                                    SteamChannel,
                                     actualRemoteSteamID,
                                     remoteSteamID);
                         }
@@ -99,7 +98,7 @@ namespace ChobbyLauncher {
 
         public void Dispose()
         {
-            close = true;
+            closed = true;
             udpThread.Abort();
             steamThread.Abort();
             ((IDisposable)udp)?.Dispose();
