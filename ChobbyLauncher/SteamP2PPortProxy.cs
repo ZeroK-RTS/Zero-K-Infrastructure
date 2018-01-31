@@ -75,9 +75,15 @@ namespace ChobbyLauncher {
                     while (SteamNetworking.IsP2PPacketAvailable(out size, steamChannel))
                     {
                         var data = new byte[size];
-                        if (SteamNetworking.ReadP2PPacket(data, size, out size, out remoteSteamID, steamChannel))
+                        CSteamID actualRemoteSteamID;
+                        if (SteamNetworking.ReadP2PPacket(data, size, out size, out actualRemoteSteamID, steamChannel))
                         {
-                            udp.Send(data, (int)size, localTargetEndpoint);
+                            if (actualRemoteSteamID == remoteSteamID) udp.Send(data, (int)size, localTargetEndpoint);
+                            else
+                                Trace.TraceError("Steam P2P channel {0} unexpected steamID {1}, expected {2}",
+                                    steamChannel,
+                                    actualRemoteSteamID,
+                                    remoteSteamID);
                         }
                     }
                     Thread.Sleep(10);
