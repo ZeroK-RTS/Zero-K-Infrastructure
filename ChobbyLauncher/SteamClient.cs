@@ -193,7 +193,7 @@ namespace ChobbyLauncher
                             ScriptPassword = player.ScriptPassword
                         });
                 }
-                
+
 
                 udpClient.Close(); // release socket
 

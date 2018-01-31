@@ -91,6 +91,7 @@
     <Compile Include="DiscordRpc.cs" />
     <Compile Include="SteamClient.cs" />
     <Compile Include="SteamMessages.cs" />
+    <Compile Include="SteamP2PPortProxy.cs" />
     <Compile Include="STUN\Client\STUN_Client.cs" />
     <Compile Include="STUN\Client\STUN_NetType.cs" />
     <Compile Include="STUN\Client\STUN_Result.cs" />
