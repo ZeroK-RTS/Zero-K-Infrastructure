@@ -318,7 +318,10 @@ namespace ChobbyLauncher
             {
                 using (var wc = new WebClient())
                 {
-                    wc.DownloadFile($"{args.ImageUrl}", Path.Combine(chobbyla.paths.WritableDirectory, args.TargetPath));
+                    var targetPath = Path.Combine(chobbyla.paths.WritableDirectory, args.TargetPath);
+                    var dir = Path.GetDirectoryName(targetPath);
+                    if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                    wc.DownloadFile($"{args.ImageUrl}", targetPath);
                 }
                 SendCommand(new DownloadImageDone() { TargetPath = args.TargetPath, ImageUrl = args.ImageUrl, RequestToken = args.RequestToken });
             }

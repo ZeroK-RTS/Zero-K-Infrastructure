@@ -351,7 +351,14 @@ namespace ChobbyLauncher
 
         private static STUN_Result StunUDP(UdpClient socket)
         {
-            socket.AllowNatTraversal(true);
+            try
+            {
+                socket.AllowNatTraversal(true);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Allow nat traversal failed: {0}", ex.Message);
+            }
             var servers = new[] { "stun.l.google.com:19302", "stun.services.mozilla.com", "stunserver.org" };
             foreach (var server in servers)
             {

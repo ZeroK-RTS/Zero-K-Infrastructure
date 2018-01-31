@@ -130,6 +130,7 @@ namespace ZkData
 
         [StringLength(5)]
         public string Country { get; set; }
+        public bool HideCountry { get; set; }
         public int MissionRunCount { get; set; }
         public int Xp { get; set; }
         public int Level { get; set; }

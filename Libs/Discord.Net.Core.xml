@@ -62,6 +62,11 @@
             Move the channel to the following position. This is 0-based!
             </summary>
         </member>
+        <member name="P:Discord.GuildChannelProperties.CategoryId">
+            <summary>
+            Sets the category for this channel
+            </summary>
+        </member>
         <member name="M:Discord.IAudioChannel.ConnectAsync(System.Action{Discord.Audio.IAudioClient})">
             <summary> Connects to this audio channel. </summary>
         </member>
@@ -85,6 +90,12 @@
         </member>
         <member name="P:Discord.IGuildChannel.Position">
             <summary> Gets the position of this channel in the guild's channel list, relative to others of the same type. </summary>
+        </member>
+        <member name="P:Discord.IGuildChannel.CategoryId">
+            <summary> Gets the parentid (category) of this channel in the guild's channel list. </summary>
+        </member>
+        <member name="M:Discord.IGuildChannel.GetCategoryAsync">
+            <summary> Gets the parent channel (category) of this channel. </summary>
         </member>
         <member name="P:Discord.IGuildChannel.Guild">
             <summary> Gets the guild this channel is a member of. </summary>
@@ -176,6 +187,15 @@
         <member name="M:Discord.ITextChannel.ModifyAsync(System.Action{Discord.TextChannelProperties},Discord.RequestOptions)">
             <summary> Modifies this text channel. </summary>
         </member>
+        <member name="M:Discord.ITextChannel.CreateWebhookAsync(System.String,System.IO.Stream,Discord.RequestOptions)">
+            <summary> Creates a webhook in this text channel. </summary>
+        </member>
+        <member name="M:Discord.ITextChannel.GetWebhookAsync(System.UInt64,Discord.RequestOptions)">
+            <summary> Gets the webhook in this text channel with the provided id, or null if not found. </summary>
+        </member>
+        <member name="M:Discord.ITextChannel.GetWebhooksAsync(Discord.RequestOptions)">
+            <summary> Gets the webhooks for this text channel. </summary>
+        </member>
         <member name="P:Discord.IVoiceChannel.Bitrate">
             <summary> Gets the bitrate, in bits per second, clients in this voice channel are requested to use. </summary>
         </member>
@@ -246,6 +266,11 @@
         <member name="P:Discord.Emote.Id">
             <summary>
             The ID of this emote
+            </summary>
+        </member>
+        <member name="P:Discord.Emote.Animated">
+            <summary>
+            Is this emote animated?
             </summary>
         </member>
         <member name="M:Discord.Emote.Parse(System.String)">
@@ -494,6 +519,9 @@
         <member name="M:Discord.IGuild.CreateVoiceChannelAsync(System.String,Discord.RequestOptions)">
             <summary> Creates a new voice channel. </summary>
         </member>
+        <member name="M:Discord.IGuild.CreateCategoryAsync(System.String,Discord.RequestOptions)">
+            <summary> Creates a new channel category. </summary>
+        </member>
         <member name="M:Discord.IGuild.GetInvitesAsync(Discord.RequestOptions)">
             <summary> Gets a collection of all invites to this guild. </summary>
         </member>
@@ -520,6 +548,12 @@
         </member>
         <member name="M:Discord.IGuild.PruneUsersAsync(System.Int32,System.Boolean,Discord.RequestOptions)">
             <summary> Removes all users from this guild if they have not logged on in a provided number of days or, if simulate is true, returns the number of users that would be removed. </summary>
+        </member>
+        <member name="M:Discord.IGuild.GetWebhookAsync(System.UInt64,Discord.RequestOptions)">
+            <summary> Gets the webhook in this guild with the provided id, or null if not found. </summary>
+        </member>
+        <member name="M:Discord.IGuild.GetWebhooksAsync(Discord.RequestOptions)">
+            <summary> Gets a collection of all webhooks for this guild. </summary>
         </member>
         <member name="M:Discord.IGuild.GetEmoteAsync(System.UInt64,Discord.RequestOptions)">
             <summary> Gets a specific emote from this guild. </summary>
@@ -810,6 +844,9 @@
         <member name="P:Discord.ChannelPermissions.ReadMessages">
             <summary> If True, a user may join channels. </summary>
         </member>
+        <member name="P:Discord.ChannelPermissions.ViewChannel">
+            <summary> If True, a user may view channels. </summary>
+        </member>
         <member name="P:Discord.ChannelPermissions.SendMessages">
             <summary> If True, a user may send messages. </summary>
         </member>
@@ -1009,6 +1046,9 @@
             <summary> If Allowed, a user may add reactions. </summary>
         </member>
         <member name="P:Discord.OverwritePermissions.ReadMessages">
+            <summary> If Allowed, a user may join channels. </summary>
+        </member>
+        <member name="P:Discord.OverwritePermissions.ViewChannel">
             <summary> If Allowed, a user may join channels. </summary>
         </member>
         <member name="P:Discord.OverwritePermissions.SendMessages">
@@ -1268,7 +1308,7 @@
             Should the user have a nickname set? 
             </summary>
             <remarks>
-            To clear the user's nickname, this value can be set to null.
+            To clear the user's nickname, this value can be set to <see langword="null" /> or <see cref="F:System.String.Empty" />.
             </remarks>
         </member>
         <member name="P:Discord.GuildUserProperties.Roles">
@@ -1347,8 +1387,8 @@
         <member name="M:Discord.IGuildUser.RemoveRolesAsync(System.Collections.Generic.IEnumerable{Discord.IRole},Discord.RequestOptions)">
             <summary> Removes roles from this user in this guild. </summary>
         </member>
-        <member name="P:Discord.IPresence.Game">
-            <summary> Gets the game this user is currently playing, if any. </summary>
+        <member name="P:Discord.IPresence.Activity">
+            <summary> Gets the activity this user is currently doing. </summary>
         </member>
         <member name="P:Discord.IPresence.Status">
             <summary> Gets the current status of this user. </summary>
@@ -1430,6 +1470,85 @@
             <summary>
             Your avatar
             </summary>
+        </member>
+        <member name="P:Discord.IWebhook.Token">
+            <summary> Gets the token of this webhook. </summary>
+        </member>
+        <member name="P:Discord.IWebhook.Name">
+            <summary> Gets the default name of this webhook. </summary>
+        </member>
+        <member name="P:Discord.IWebhook.AvatarId">
+            <summary> Gets the id of this webhook's default avatar. </summary>
+        </member>
+        <member name="M:Discord.IWebhook.GetAvatarUrl(Discord.ImageFormat,System.UInt16)">
+            <summary> Gets the url to this webhook's default avatar. </summary>
+        </member>
+        <member name="P:Discord.IWebhook.Channel">
+            <summary> Gets the channel for this webhook. </summary>
+        </member>
+        <member name="P:Discord.IWebhook.ChannelId">
+            <summary> Gets the id of the channel for this webhook. </summary>
+        </member>
+        <member name="P:Discord.IWebhook.Guild">
+            <summary> Gets the guild owning this webhook. </summary>
+        </member>
+        <member name="P:Discord.IWebhook.GuildId">
+            <summary> Gets the id of the guild owning this webhook. </summary>
+        </member>
+        <member name="P:Discord.IWebhook.Creator">
+            <summary> Gets the user that created this webhook. </summary>
+        </member>
+        <member name="M:Discord.IWebhook.ModifyAsync(System.Action{Discord.WebhookProperties},Discord.RequestOptions)">
+            <summary> Modifies this webhook. </summary>
+        </member>
+        <member name="T:Discord.WebhookProperties">
+            <summary>
+            Modify an <see cref="T:Discord.IWebhook"/> with the specified parameters.
+            </summary>
+            <example>
+            <code language="c#">
+            await webhook.ModifyAsync(x =>
+            {
+                x.Name = "Bob";
+                x.Avatar = new Image("avatar.jpg");
+            });
+            </code>
+            </example>
+            <seealso cref="T:Discord.IWebhook"/>
+        </member>
+        <member name="P:Discord.WebhookProperties.Name">
+            <summary>
+            The default name of the webhook.
+            </summary>
+        </member>
+        <member name="P:Discord.WebhookProperties.Image">
+            <summary>
+            The default avatar of the webhook.
+            </summary>
+        </member>
+        <member name="P:Discord.WebhookProperties.Channel">
+            <summary>
+            The channel for this webhook.
+            </summary>
+            <remarks>
+            This field is not used when authenticated with <see cref="F:Discord.TokenType.Webhook"/>.
+            </remarks>
+        </member>
+        <member name="P:Discord.WebhookProperties.ChannelId">
+            <summary>
+            The channel id for this webhook.
+            </summary>
+            <remarks>
+            This field is not used when authenticated with <see cref="F:Discord.TokenType.Webhook"/>.
+            </remarks>
+        </member>
+        <member name="M:Discord.AsyncEnumerableExtensions.FlattenAsync``1(System.Collections.Generic.IAsyncEnumerable{System.Collections.Generic.IEnumerable{``0}})">
+            <summary>
+            Flattens the specified pages into one <see cref="T:System.Collections.Generic.IEnumerable`1"/> asynchronously
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="source"></param>
+            <returns></returns>
         </member>
         <member name="M:Discord.UserExtensions.SendMessageAsync(Discord.IUser,System.String,System.Boolean,Discord.Embed,Discord.RequestOptions)">
             <summary>
