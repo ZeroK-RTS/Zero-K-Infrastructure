@@ -113,6 +113,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams["avatar"] = user.Avatar;
                         userParams["badges"] = string.Join(",", user.GetBadges());
                         userParams["admin"] = user.AdminLevel >= AdminLevel.Moderator ? "1" : "0";
+                        userParams["room_boss"] = p.Name == context.FounderName ? "1" : "0";
                         if (p.PartyID.HasValue) userParams["PartyID"] = p.PartyID.ToString();
 
                         var userSpecChatBlocked = Punishment.GetActivePunishment(user.AccountID, null, null, x => x.BanSpecChat) != null; ;
