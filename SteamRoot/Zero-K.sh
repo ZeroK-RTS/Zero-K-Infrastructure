@@ -1,5 +1,5 @@
 #!/bin/sh
-installdir=$( dirname "${0}" )/bin
+installdir=$( dirname "${0}" )
 cd "$installdir"
 if [ -f "$installdir/Zero-K.exe" ]
     then
