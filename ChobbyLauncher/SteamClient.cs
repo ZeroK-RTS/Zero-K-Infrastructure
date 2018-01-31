@@ -9,7 +9,6 @@ using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using LumiSoft.Net.STUN.Client;
 using PlasmaShared;
 using Steamworks;
 using ZkData;
@@ -138,7 +137,7 @@ namespace ChobbyLauncher
                 ulong.TryParse(player.SteamID, out playerSteamID);
 
                 p2pProxies[playerSteamID] = null;
-                SendSteamMessage(playerSteamID, new SteamP2PRequestClientPort() {Channel = steamChannelCounter++});
+                SendSteamMessage(playerSteamID, new SteamP2PRequestPrepareProxy() {Channel = steamChannelCounter++});
             }
 
             // wait for response
@@ -290,21 +289,21 @@ namespace ChobbyLauncher
         /// <summary>
         ///     host request port from client
         /// </summary>
-        private void ProcessMessage(ulong remoteUser, SteamP2PRequestClientPort cmd)
+        private void ProcessMessage(ulong remoteUser, SteamP2PRequestPrepareProxy cmd)
         {
             foreach (var cli in p2pProxies) cli.Value?.Dispose();
             p2pProxies.Clear();
             
             p2pProxies[remoteUser] = new SteamP2PPortProxy(cmd.Channel, new CSteamID(remoteUser), PickUdpPort());
 
-            SendSteamMessage(remoteUser, new SteamP2PClientPort() { Channel = cmd.Channel });
+            SendSteamMessage(remoteUser, new SteamP2PConfirmCreateProxy() { Channel = cmd.Channel });
         }
 
 
         /// <summary>
         ///     client sends port to host
         /// </summary>
-        private void ProcessMessage(ulong remoteUser, SteamP2PClientPort cmd)
+        private void ProcessMessage(ulong remoteUser, SteamP2PConfirmCreateProxy cmd)
         {
             p2pProxies[remoteUser] = new SteamP2PPortProxy(cmd.Channel, new CSteamID(remoteUser), gameHostUdpPort); 
         }
@@ -314,11 +313,18 @@ namespace ChobbyLauncher
         /// </summary>
         private void ProcessMessage(ulong remoteUser, SteamP2PDirectConnectRequest cmd)
         {
-            var proxy = p2pProxies[remoteUser];
-            cmd.ClientPort = proxy.LocalTargetUdpPort;
-            cmd.HostPort = proxy.LocalListenUdpPort;
-            cmd.HostIP = "127.0.0.1";
-            Listener.SendCommand((SteamConnectSpring)cmd);
+            var proxy = p2pProxies.Get(remoteUser);
+            if (proxy == null)
+            {
+                Trace.TraceWarning("P2P requested spring client start for steamID {0} which does not have proxy prepared yet", remoteUser);
+            }
+            else
+            {
+                cmd.ClientPort = proxy.LocalTargetUdpPort;
+                cmd.HostPort = proxy.LocalListenUdpPort;
+                cmd.HostIP = "127.0.0.1";
+                Listener.SendCommand((SteamConnectSpring)cmd);
+            }
         }
 
 
@@ -338,34 +344,6 @@ namespace ChobbyLauncher
             }
         }
 
-        private static STUN_Result StunUDP(UdpClient socket)
-        {
-            try
-            {
-                socket.AllowNatTraversal(true);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceWarning("Allow nat traversal failed: {0}", ex.Message);
-            }
-            var servers = new[] { "stun.l.google.com:19302", "stun.services.mozilla.com", "stunserver.org" };
-            foreach (var server in servers)
-            {
-                var host = server.Split(':').FirstOrDefault();
-                try
-                {
-                    int port;
-                    if (!int.TryParse(server.Split(':').LastOrDefault(), out port) || (port == 0)) port = 3478;
-
-                    return STUN_Client.Query(host, port, socket.Client);
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceWarning("STUN request to {0} failed : {1}", host, ex);
-                }
-            }
-            return null;
-        }
 
 
         [HandleProcessCorruptedStateExceptions]
