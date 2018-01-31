@@ -32,7 +32,7 @@ namespace ChobbyLauncher
         }
 
 
-        private ConcurrentDictionary<ulong, SteamP2PClientPort> clientPorts = new ConcurrentDictionary<ulong, SteamP2PClientPort>();
+        private ConcurrentDictionary<ulong, SteamP2PPortProxy> p2pProxies = new ConcurrentDictionary<ulong, SteamP2PPortProxy>();
 
         private bool isDisposed;
 
@@ -44,7 +44,6 @@ namespace ChobbyLauncher
 
         private int tickCounter;
         private Timer timer;
-        private UdpClient udpClient;
 
         public string AuthToken { get; private set; }
 
@@ -114,78 +113,60 @@ namespace ChobbyLauncher
 
         public event Action<bool> OverlayActivated = (b) => { };
 
+        private static int steamChannelCounter;
+
+
+        private int gameHostUdpPort;
+
+
         /// <summary>
         ///     chobby request p2p game to be created
         /// </summary>
         public void PrepareToHostP2PGame(SteamHostGameRequest request)
         {
-            var socket = new UdpClient(0);
-            udpClient = socket;
+            // clear old listeners
+            foreach (var oldCli in p2pProxies) oldCli.Value?.Dispose();
+            p2pProxies.Clear();
 
-            // send requests to clients to resolve their external IPs
-            clientPorts.Clear();
+
+            gameHostUdpPort = PickUdpPort();
+
+            // send channel numbers to players
             foreach (var player in request.Players)
             {
                 ulong playerSteamID;
                 ulong.TryParse(player.SteamID, out playerSteamID);
 
-                clientPorts[playerSteamID] = null;
-                SendSteamMessage(playerSteamID, new SteamP2PRequestClientPort());
+                p2pProxies[playerSteamID] = null;
+                SendSteamMessage(playerSteamID, new SteamP2PRequestClientPort() {Channel = steamChannelCounter++});
             }
 
-            // resolve my own address
-            var hostResolve = StunUDP(udpClient);
-            if ((hostResolve == null) || (hostResolve.NetType == STUN_NetType.UdpBlocked))
-            {
-                Listener.SendCommand(new SteamHostGameFailed() { CausedBySteamID = GetSteamID().ToString(), Reason = "Host cannot open UDP port" });
-                return;
-            }
-
+            // wait for response
             var startWait = DateTime.UtcNow;
             Task.Factory.StartNew(() =>
             {
                 // wait 30s for all clients to respond
-                while (clientPorts.Any(x => x.Value == null))
+                while (p2pProxies.Any(x => x.Value == null))
                 {
                     if (DateTime.UtcNow.Subtract(startWait).TotalSeconds > 30)
                         Listener.SendCommand(new SteamHostGameFailed()
                         {
-                            CausedBySteamID = clientPorts.Where(x => x.Value == null).Select(x => x.Key).FirstOrDefault().ToString(),
-                            Reason = "Client didn't send his UDP port"
+                            CausedBySteamID = p2pProxies.Where(x => x.Value == null).Select(x => x.Key).FirstOrDefault().ToString(),
+                            Reason = "Client didn't send his confirmation"
                         });
 
                     Task.Delay(100);
                 }
 
-                // any client without valid ip/port ?
-                var failedClient = clientPorts.Where(x => (x.Value.IP == null) || (x.Value.Port == 0)).Select(x => x.Key).FirstOrDefault();
-                if (failedClient != 0)
-                    Listener.SendCommand(new SteamHostGameFailed()
-                    {
-                        CausedBySteamID = failedClient.ToString(),
-                        Reason = "Client could not resolve his NAT/firewall"
-                    });
-
-                var hostExtPort = hostResolve.PublicEndPoint.Port;
-                var hostExtIP = hostResolve.PublicEndPoint.Address.ToString();
-                var hostLocalPort = ((IPEndPoint)udpClient.Client.LocalEndPoint).Port;
-
-                var buffer = new byte[] { 1, 2, 3, 4, 5, 6 };
-                foreach (var cli in clientPorts)
+                // send command to start spring to all clients
+                foreach (var cli in p2pProxies)
                 {
                     var player = request.Players.First(x => x.SteamID == cli.Key.ToString());
-
-                    // send some packets to each client's external IP/port to punch NAT
-                    udpClient.Send(buffer, buffer.Length, cli.Value.IP, cli.Value.Port);
-                    udpClient.Send(buffer, buffer.Length, cli.Value.IP, cli.Value.Port);
-                    udpClient.Send(buffer, buffer.Length, cli.Value.IP, cli.Value.Port);
 
                     // tell clients to connect to server's external port/IP
                     SendSteamMessage(cli.Key,
                         new SteamP2PDirectConnectRequest()
                         {
-                            HostPort = hostExtPort,
-                            HostIP = hostExtIP,
                             Name = player.Name,
                             Engine = request.Engine,
                             Game = request.Game,
@@ -193,11 +174,9 @@ namespace ChobbyLauncher
                             ScriptPassword = player.ScriptPassword
                         });
                 }
-
-
-                udpClient.Close(); // release socket
-
-                Listener.SendCommand(new SteamHostGameSuccess() { HostPort = hostLocalPort });
+                
+                // send command to start spring to self
+                Listener.SendCommand(new SteamHostGameSuccess() { HostPort = gameHostUdpPort });
             });
         }
 
@@ -299,18 +278,26 @@ namespace ChobbyLauncher
             if (Listener != null) Listener.SendCommand(new SteamFriendJoinedMe() { FriendSteamID = remoteUser.ToString(), FriendSteamName = cmd.JoinerName });
         }
 
+        private static int PickUdpPort()
+        {
+            using (var udp = new UdpClient(0))
+            {
+                return ((IPEndPoint)udp.Client.LocalEndPoint).Port;
+            }
+        }
+
+
         /// <summary>
         ///     host request port from client
         /// </summary>
         private void ProcessMessage(ulong remoteUser, SteamP2PRequestClientPort cmd)
         {
-            var socket = new UdpClient(0);
-            udpClient = socket;
-            var result = StunUDP(udpClient);
-            if ((result == null) || (result.NetType == STUN_NetType.UdpBlocked)) SendSteamMessage(remoteUser, new SteamP2PClientPort());
-            else
-                SendSteamMessage(remoteUser,
-                    new SteamP2PClientPort() { Port = result.PublicEndPoint.Port, IP = result.PublicEndPoint.Address.ToString() });
+            foreach (var cli in p2pProxies) cli.Value?.Dispose();
+            p2pProxies.Clear();
+            
+            p2pProxies[remoteUser] = new SteamP2PPortProxy(cmd.Channel, new CSteamID(remoteUser), PickUdpPort());
+
+            SendSteamMessage(remoteUser, new SteamP2PClientPort() { Channel = cmd.Channel });
         }
 
 
@@ -319,7 +306,7 @@ namespace ChobbyLauncher
         /// </summary>
         private void ProcessMessage(ulong remoteUser, SteamP2PClientPort cmd)
         {
-            clientPorts[remoteUser] = cmd;
+            p2pProxies[remoteUser] = new SteamP2PPortProxy(cmd.Channel, new CSteamID(remoteUser), gameHostUdpPort); 
         }
 
         /// <summary>
@@ -327,8 +314,10 @@ namespace ChobbyLauncher
         /// </summary>
         private void ProcessMessage(ulong remoteUser, SteamP2PDirectConnectRequest cmd)
         {
-            cmd.ClientPort = ((IPEndPoint)udpClient.Client.LocalEndPoint).Port;
-            udpClient.Close();
+            var proxy = p2pProxies[remoteUser];
+            cmd.ClientPort = proxy.LocalTargetUdpPort;
+            cmd.HostPort = proxy.LocalListenUdpPort;
+            cmd.HostIP = "127.0.0.1";
             Listener.SendCommand((SteamConnectSpring)cmd);
         }
 

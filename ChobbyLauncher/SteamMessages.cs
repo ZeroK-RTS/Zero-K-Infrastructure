@@ -27,13 +27,13 @@ namespace ChobbyLauncher
     [SteamP2PMessage]
     public class SteamP2PRequestClientPort
     {
+        public int Channel { get; set; }
     }
 
     [SteamP2PMessage]
     public class SteamP2PClientPort
     {
-        public string IP { get; set; }
-        public int Port { get; set; }
+        public int Channel { get; set; }
 
     }
 
