@@ -5,7 +5,7 @@ installdir=$( dirname "${0}" )
 cd ${installdir}
 installdir=$PWD
 
-rm "$installdir/Chobby.exe" "$HOME/.local/share/applications/Zero-K.desktop" "$HOME/.local/share/icons/Zero-K.png"
+rm "$installdir/Zero-K.exe" "$HOME/.local/share/applications/Zero-K.desktop" "$HOME/.local/share/icons/Zero-K.png"
 
 # Setup dependencies ...
 pkgmanager=$( which apt-mark )
