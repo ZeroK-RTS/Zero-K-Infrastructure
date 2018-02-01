@@ -60,6 +60,10 @@ namespace ChobbyLauncher
         {
             try
             {
+                foreach (var cli in p2pProxies.Values.Where(x=>x!= null))
+                {
+                    cli.Dispose();
+                }
                 isDisposed = true;
                 timer?.Stop();
                 timer?.Dispose();
@@ -257,6 +261,7 @@ namespace ChobbyLauncher
             newConnectionCallback = Callback<P2PSessionRequest_t>.Create(t => SteamNetworking.AcceptP2PSessionWithUser(t.m_steamIDRemote));
             MySteamNameSanitized = Utils.StripInvalidLobbyNameChars(GetMyName());
 
+            
             var ev = new EventWaitHandle(false, EventResetMode.ManualReset);
             AuthToken = GetClientAuthTokenHex();
             CreateLobbyAsync((lobbyID) =>

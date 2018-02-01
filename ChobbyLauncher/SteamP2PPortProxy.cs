@@ -58,7 +58,8 @@ namespace ChobbyLauncher {
             catch (ThreadAbortException ex) { }
             catch (Exception ex)
             {
-                Trace.TraceError("Error steam p2p udp listen thread: {0}", ex);
+                Trace.TraceWarning("Error steam p2p udp listen thread, proxy shutting down: {0}", ex.Message);
+                Dispose();
             }
 
         }
@@ -91,7 +92,8 @@ namespace ChobbyLauncher {
             catch (ThreadAbortException ex) { }
             catch (Exception ex)
             {
-                Trace.TraceError("Error steam p2p steam listen thread: {0}", ex);
+                Trace.TraceWarning("Error steam p2p steam listen thread, proxy shutting down: {0}", ex.Message);
+                Dispose();
             }
         }
 
@@ -99,8 +101,8 @@ namespace ChobbyLauncher {
         public void Dispose()
         {
             closed = true;
-            udpThread.Abort();
-            steamThread.Abort();
+            try {udpThread.Abort();} catch { }
+            try {steamThread.Abort();} catch { }
             ((IDisposable)udp)?.Dispose();
         }
     }
