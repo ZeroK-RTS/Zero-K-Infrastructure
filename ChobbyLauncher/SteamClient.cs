@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using PlasmaShared;
 using Steamworks;
 using ZkData;
+using System.Net.NetworkInformation;
 using Timer = System.Timers.Timer;
 
 namespace ChobbyLauncher
@@ -112,7 +113,7 @@ namespace ChobbyLauncher
 
         public event Action<bool> OverlayActivated = (b) => { };
 
-        private static int steamChannelCounter;
+        private static int steamChannelCounter = 1;
 
 
         private int gameHostUdpPort;
@@ -263,6 +264,7 @@ namespace ChobbyLauncher
                 if (lobbyID != null) LobbyID = lobbyID;
                 ev.Set();
             });
+            SteamNetworking.AllowP2PPacketRelay(true);
             Friends = GetFriends();
             ev.WaitOne(2000);
             SteamOnline?.Invoke();
@@ -279,10 +281,18 @@ namespace ChobbyLauncher
 
         private static int PickUdpPort()
         {
-            using (var udp = new UdpClient(0))
-            {
-                return ((IPEndPoint)udp.Client.LocalEndPoint).Port;
-            }
+            var port = GlobalConst.UdpHostingPortStart;
+
+                    var usedPorts =
+                        IPGlobalProperties.GetIPGlobalProperties()
+                            .GetActiveUdpListeners()
+                            .Where(x => x != null)
+                            .Select(x => x.Port)
+                            .Distinct()
+                            .ToDictionary(x => x, x => true);
+
+                    while (usedPorts.ContainsKey(port)) port++;
+            return port;
         }
 
 

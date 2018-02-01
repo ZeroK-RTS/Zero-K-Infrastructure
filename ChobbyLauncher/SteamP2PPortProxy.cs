@@ -40,8 +40,8 @@ namespace ChobbyLauncher {
             steamThread = new Thread(SteamListenThread);
             steamThread.Priority = ThreadPriority.AboveNormal;
 
-            udpThread.Start(this);
-            steamThread.Start(this);
+            udpThread.Start();
+            steamThread.Start();
         }
 
         private void UdpListenThread()
@@ -52,7 +52,7 @@ namespace ChobbyLauncher {
                 while (!closed)
                 {
                     var data = udp.Receive(ref localTargetEndpoint);
-                    SteamNetworking.SendP2PPacket(remoteSteamID, data, (uint)data.Length, EP2PSend.k_EP2PSendUnreliable, SteamChannel);
+                    SteamNetworking.SendP2PPacket(remoteSteamID, data, (uint)data.Length, EP2PSend.k_EP2PSendReliable, SteamChannel);
                 }
             }
             catch (ThreadAbortException ex) { }
