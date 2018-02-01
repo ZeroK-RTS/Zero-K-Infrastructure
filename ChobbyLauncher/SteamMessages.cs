@@ -16,8 +16,7 @@ namespace ChobbyLauncher
     public class Dummy
     {
     }
-
-
+    
     [SteamP2PMessage]
     public class SteamP2PNotifyJoin
     {

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using Steamworks;
+using ZkData;
 
 namespace ChobbyLauncher {
     /// <summary>
@@ -22,6 +25,23 @@ namespace ChobbyLauncher {
         private Thread steamThread;
 
         private bool closed;
+
+        public static int GetFreeUdpPort()
+        {
+            var port = GlobalConst.UdpHostingPortStart;
+
+            var usedPorts =
+                IPGlobalProperties.GetIPGlobalProperties()
+                    .GetActiveUdpListeners()
+                    .Where(x => x != null)
+                    .Select(x => x.Port)
+                    .Distinct()
+                    .ToDictionary(x => x, x => true);
+
+            while (usedPorts.ContainsKey(port)) port++;
+            return port;
+        }
+
 
 
         public SteamP2PPortProxy(int steamChannel, CSteamID remoteSteamID, int localTargetUdpPort)
@@ -100,6 +120,7 @@ namespace ChobbyLauncher {
 
         public void Dispose()
         {
+            Trace.TraceInformation("Disposing steam p2p proxy, listen port {0},  target steam id {1}, channel {2}", LocalListenUdpPort, remoteSteamID, SteamChannel);
             closed = true;
             try {udpThread.Abort();} catch { }
             try {steamThread.Abort();} catch { }
