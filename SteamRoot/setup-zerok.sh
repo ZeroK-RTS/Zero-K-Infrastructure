@@ -6,7 +6,12 @@ pkgmanager=$( which apt-get )
 pkx=$( which pkexec )
 if [ -n "${pkgmanager}" -a -n "${pkx}" ]
 then
-  ${pkx} ${pkgmanager} -y install mono-complete libsdl2-2.0-0 libopenal1 libcurl3 zenity libgdiplus sqlite3
+  zenity --question --title "Install Dependencies" --text "Zero-K needs SDL2 and other dependencies to run.\nCheck for dependencies now?"
+  answer=$?
+  if [ $answer = 0 ]
+  then
+    ${pkx} ${pkgmanager} -y install mono-complete libsdl2-2.0-0 libopenal1 libcurl3 zenity libgdiplus sqlite3
+  fi
 fi
 
 # Binary name
