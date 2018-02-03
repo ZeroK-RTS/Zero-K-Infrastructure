@@ -1,0 +1,90 @@
+﻿@using LobbyClient
+@using ZeroKWeb
+@using ZkData
+@model System.Collections.Generic.List<ZkLobbyServer.TourneyBattle>
+
+@{
+    ViewBag.Title = "Current tourney";
+    var db = new ZkDataContext();
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.ActionLink("Refresh", "Index")<br/>
+
+<table>
+
+    @foreach (var b in Model)
+    {
+        <tr>
+            <td>
+                <span>
+                    <b>@b.Title</b><br />
+                    @foreach (var team in b.Prototype.TeamPlayers)
+                    {
+                        foreach (var p in team)
+                        {
+                            @Html.PrintAccount(Account.AccountByName(db, p))
+                            if (b.Users.Values.Any(x => x.Name == p))
+                            {
+                                <span style="color:green">&nbsp;&nbsp;IN</span>
+                            }
+                            <br />
+                        }
+                        <br />
+                        <span>vs</span>
+                        <br />
+                    }
+                </span>
+            </td>
+            <td>
+                <span>@b.NonSpectatorCount / @b.MaxPlayers (+@b.SpectatorCount)</span><br />
+                @Html.ActionLink("Join", "JoinBattle", new { battleHost = b.FounderName })
+            </td>
+            <td>
+                @foreach (var deb in b.Debriefings)
+                {
+
+                    var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == deb.ServerBattleID);
+                    if (bat != null)
+                    {
+                        @Html.PrintBattle(bat)<br />
+                    }
+                }
+            </td>
+            @if (Global.IsModerator)
+            {
+
+                <td class="admin">
+                    @Html.ActionLink("Force join", "ForceJoinPlayers", new {battleID = b.BattleID}) <br/>
+                    @Html.ActionLink("Remove", "RemoveBattle", new { battleID = b.BattleID }, new { @class = "js_confirm" })
+                </td>
+            }
+        </tr>
+    }
+</table>
+
+@if (Global.IsModerator)
+{
+    <div class="admin">
+        <form method="post" action="@Url.Action("AddBattle")">
+            <table>
+                <tr>
+                    <td>Title</td>
+                    <td>@Html.TextBox("Title")</td>
+                </tr>
+                <tr><td>Team 1 players</td>
+                    <td>
+                        
+                    </td>
+                </tr>
+
+            </table>
+
+
+        </form>
+
+    </div>
+    
+
+}
