@@ -34,6 +34,7 @@ namespace ZkData
 #else
             Mode = ModeType.Local;
 #endif
+            Mode = ModeType.Live;
         }
 
         static void SetMode(ModeType newMode)
