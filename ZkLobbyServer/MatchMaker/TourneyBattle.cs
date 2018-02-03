@@ -11,7 +11,6 @@ namespace ZkLobbyServer {
         {
             public string Title;
             public List<List<string>> TeamPlayers = new List<List<string>>();
-            public List<string> MapList = new List<string>();
 
             public Dictionary<string, string> ModOptions = new Dictionary<string, string>();
         }
@@ -22,13 +21,12 @@ namespace ZkLobbyServer {
         public TourneyBattle(ZkLobbyServer server, TourneyPrototype prototype) : base(server, null)
         {
             this.Prototype = prototype;
-            IsMatchMakerBattle = true;
+            IsMatchMakerBattle = false;
             EngineVersion = server.Engine;
             ModName = server.Game;
             FounderName = $"Tourney #{BattleID}";
             Title =  prototype.Title;
             Mode = AutohostMode.None;
-            MapName = prototype.MapList.FirstOrDefault();
             MaxPlayers = prototype.TeamPlayers.Sum(x=>x.Count);
             ModOptions = prototype.ModOptions;
             ModOptions["mutespec"] = "mute";
