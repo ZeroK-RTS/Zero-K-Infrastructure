@@ -696,7 +696,7 @@ namespace ZkLobbyServer
         {
             if (battle.Users.ContainsKey(Name))
             {
-                if (battle.Users.Count == 1) // last user remove entire battle
+                if (battle.Users.Count == 1 && !(battle is TourneyBattle)) // last user remove entire battle
                 {
                     await server.RemoveBattle(battle);
                 }
