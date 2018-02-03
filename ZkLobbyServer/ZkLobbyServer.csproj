@@ -163,6 +163,7 @@
     <Compile Include="MatchMaker\MatchMaker.ProposedBattle.cs" />
     <Compile Include="MatchMaker\MatchMakerBattle.cs" />
     <Compile Include="MatchMaker\PlanetWarsServerBattle.cs" />
+    <Compile Include="MatchMaker\TourneyBattle.cs" />
     <Compile Include="NewsListManager.cs" />
     <Compile Include="OfflineMessageHandler.cs" />
     <Compile Include="PartyManager.cs" />
