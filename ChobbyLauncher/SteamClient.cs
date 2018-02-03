@@ -61,6 +61,7 @@ namespace ChobbyLauncher
             try
             {
                 isDisposed = true;
+                DisposeExistingProxies();
                 timer?.Stop();
                 timer?.Dispose();
                 if (IsOnline) SteamAPI.Shutdown();
@@ -125,11 +126,9 @@ namespace ChobbyLauncher
         public void PrepareToHostP2PGame(SteamHostGameRequest request)
         {
             // clear old listeners
-            foreach (var oldCli in p2pProxies) oldCli.Value?.Dispose();
-            p2pProxies.Clear();
+            DisposeExistingProxies();
 
-
-            gameHostUdpPort = PickUdpPort();
+            gameHostUdpPort = SteamP2PPortProxy.GetFreeUdpPort();
 
             // send channel numbers to players
             foreach (var player in request.Players)
@@ -257,6 +256,7 @@ namespace ChobbyLauncher
             newConnectionCallback = Callback<P2PSessionRequest_t>.Create(t => SteamNetworking.AcceptP2PSessionWithUser(t.m_steamIDRemote));
             MySteamNameSanitized = Utils.StripInvalidLobbyNameChars(GetMyName());
 
+            
             var ev = new EventWaitHandle(false, EventResetMode.ManualReset);
             AuthToken = GetClientAuthTokenHex();
             CreateLobbyAsync((lobbyID) =>
@@ -279,21 +279,6 @@ namespace ChobbyLauncher
             if (Listener != null) Listener.SendCommand(new SteamFriendJoinedMe() { FriendSteamID = remoteUser.ToString(), FriendSteamName = cmd.JoinerName });
         }
 
-        private static int PickUdpPort()
-        {
-            var port = GlobalConst.UdpHostingPortStart;
-
-                    var usedPorts =
-                        IPGlobalProperties.GetIPGlobalProperties()
-                            .GetActiveUdpListeners()
-                            .Where(x => x != null)
-                            .Select(x => x.Port)
-                            .Distinct()
-                            .ToDictionary(x => x, x => true);
-
-                    while (usedPorts.ContainsKey(port)) port++;
-            return port;
-        }
 
 
         /// <summary>
@@ -301,12 +286,17 @@ namespace ChobbyLauncher
         /// </summary>
         private void ProcessMessage(ulong remoteUser, SteamP2PRequestPrepareProxy cmd)
         {
-            foreach (var cli in p2pProxies) cli.Value?.Dispose();
-            p2pProxies.Clear();
-            
-            p2pProxies[remoteUser] = new SteamP2PPortProxy(cmd.Channel, new CSteamID(remoteUser), PickUdpPort());
+            DisposeExistingProxies();
+
+            p2pProxies[remoteUser] = new SteamP2PPortProxy(cmd.Channel, new CSteamID(remoteUser), SteamP2PPortProxy.GetFreeUdpPort());
 
             SendSteamMessage(remoteUser, new SteamP2PConfirmCreateProxy() { Channel = cmd.Channel });
+        }
+
+        private void DisposeExistingProxies()
+        {
+            foreach (var cli in p2pProxies) cli.Value?.Dispose();
+            p2pProxies.Clear();
         }
 
 

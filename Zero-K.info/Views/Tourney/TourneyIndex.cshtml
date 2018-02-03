@@ -1,0 +1,99 @@
+﻿@using LobbyClient
+@using ZeroKWeb
+@using ZkData
+@model ZeroKWeb.Controllers.TourneyController.TourneyModel
+
+@{
+    ViewBag.Title = "Current tourney";
+    var db = new ZkDataContext();
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.ActionLink("Refresh", "Index")<br/>
+
+<table>
+
+    @foreach (var b in Model.Battles)
+    {
+        <tr>
+            <td>
+                <span>
+                    <h3>@b.Title</h3><br />
+                    @foreach (var team in b.Prototype.TeamPlayers)
+                    {
+                        foreach (var p in team)
+                        {
+                            @Html.PrintAccount(Account.AccountByName(db, p))
+                            if (b.Users.Values.Any(x => x.Name == p))
+                            {
+                                <span style="color:green">&nbsp;&nbsp;IN</span>
+                            }
+                            <br />
+                        }
+                        <br />
+                    }
+                </span>
+            </td>
+            <td>
+                <span>@b.NonSpectatorCount / @b.MaxPlayers (+@b.SpectatorCount)</span><br />
+                @Html.ActionLink("Join", "JoinBattle", new { battleHost = b.FounderName })
+            </td>
+            <td>
+                @foreach (var deb in b.Debriefings)
+                {
+
+                    var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == deb.ServerBattleID);
+                    if (bat != null)
+                    {
+                        @Html.PrintBattle(bat)<br />
+                    }
+                }
+            </td>
+            @if (Global.IsModerator)
+            {
+
+                <td class="admin">
+                    @Html.ActionLink("Force join", "ForceJoinPlayers", new {battleID = b.BattleID}) <br/>
+                    @Html.ActionLink("Delete", "RemoveBattle", new { battleID = b.BattleID }, new { @class = "js_confirm" })
+                </td>
+            }
+        </tr>
+        <tr><td>&nbsp;<br/></td></tr>
+    }
+</table>
+
+@if (Global.IsModerator)
+{
+    <div class="admin">
+        <span>Add a room</span>
+        <form method="post" action="@Url.Action("AddBattle")">
+            <table>
+                <tr>
+                    <td>Title</td>
+                    <td>@Html.TextBoxFor(x => x.Title)</td>
+                </tr>
+                <tr>
+                    <td>Team 1 players</td>
+                    <td>
+                        @Html.MultiSelectFor(x => x.Team1Ids, Url.Action("Users", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)))
+                    </td>
+                </tr>
+                <tr>
+                    <td>Team 2 players</td>
+                    <td>
+                        @Html.MultiSelectFor(x => x.Team2Ids, Url.Action("Users", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)))
+                    </td>
+                </tr>
+                <tr><td colspan="2"><input type="submit"/></td></tr>
+            </table>
+
+
+        </form>
+
+    </div>
+}
+
+@{
+    db.Dispose();
+}

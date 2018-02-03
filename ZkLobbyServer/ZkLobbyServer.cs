@@ -269,6 +269,8 @@ namespace ZkLobbyServer
             }
         }
 
+
+
         public List<Battle> GetPlanetBattles(Planet planet)
         {
             return GetPlanetWarsBattles().Where(x => x.MapName == planet.Resource.InternalName).ToList();
@@ -435,6 +437,14 @@ namespace ZkLobbyServer
                 }
             }
         }
+
+
+        public async Task AddBattle(ServerBattle battle)
+        {
+            Battles[battle.BattleID] = battle;
+            await Broadcast(ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
+        }
+
 
 
         public async Task PublishUserProfileUpdate(Account acc)

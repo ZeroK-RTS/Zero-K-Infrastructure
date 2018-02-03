@@ -43,6 +43,7 @@ namespace ZkLobbyServer
         protected bool isZombie;
 
         private List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
+        public List<BattleDebriefing> Debriefings { get; private set; } = new List<BattleDebriefing>();
 
         private Timer pollTimer;
 
@@ -573,6 +574,8 @@ namespace ZkLobbyServer
             RunningSince = null;
 
             var debriefingMessage = BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server);
+            Debriefings.Add(debriefingMessage);
+
             await server.Broadcast(Users.Keys, debriefingMessage);
             await server.Broadcast(server.ConnectedUsers.Keys, new BattleUpdate() { Header = GetHeader() });
 

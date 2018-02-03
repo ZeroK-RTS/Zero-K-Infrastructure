@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using Steamworks;
+using ZkData;
 
 namespace ChobbyLauncher {
     /// <summary>
@@ -22,6 +25,23 @@ namespace ChobbyLauncher {
         private Thread steamThread;
 
         private bool closed;
+
+        public static int GetFreeUdpPort()
+        {
+            var port = GlobalConst.UdpHostingPortStart;
+
+            var usedPorts =
+                IPGlobalProperties.GetIPGlobalProperties()
+                    .GetActiveUdpListeners()
+                    .Where(x => x != null)
+                    .Select(x => x.Port)
+                    .Distinct()
+                    .ToDictionary(x => x, x => true);
+
+            while (usedPorts.ContainsKey(port)) port++;
+            return port;
+        }
+
 
 
         public SteamP2PPortProxy(int steamChannel, CSteamID remoteSteamID, int localTargetUdpPort)
@@ -58,7 +78,8 @@ namespace ChobbyLauncher {
             catch (ThreadAbortException ex) { }
             catch (Exception ex)
             {
-                Trace.TraceError("Error steam p2p udp listen thread: {0}", ex);
+                Trace.TraceWarning("Error steam p2p udp listen thread, proxy shutting down: {0}", ex.Message);
+                Dispose();
             }
 
         }
@@ -91,16 +112,18 @@ namespace ChobbyLauncher {
             catch (ThreadAbortException ex) { }
             catch (Exception ex)
             {
-                Trace.TraceError("Error steam p2p steam listen thread: {0}", ex);
+                Trace.TraceWarning("Error steam p2p steam listen thread, proxy shutting down: {0}", ex.Message);
+                Dispose();
             }
         }
 
 
         public void Dispose()
         {
+            Trace.TraceInformation("Disposing steam p2p proxy, listen port {0},  target steam id {1}, channel {2}", LocalListenUdpPort, remoteSteamID, SteamChannel);
             closed = true;
-            udpThread.Abort();
-            steamThread.Abort();
+            try {udpThread.Abort();} catch { }
+            try {steamThread.Abort();} catch { }
             ((IDisposable)udp)?.Dispose();
         }
     }

@@ -200,6 +200,7 @@
     <Compile Include="Controllers\LobbyController.cs" />
     <Compile Include="Controllers\LobbyNewsController.cs" />
     <Compile Include="Controllers\ReplaysController.cs" />
+    <Compile Include="Controllers\TourneyController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="ForumParser\ForumWikiParser.cs" />
     <Compile Include="ForumParser\LinkedListNodeBackEnumerator.cs" />
@@ -1569,6 +1570,7 @@
     <Content Include="Styles\fonts\Xolonium-Regular.otf" />
     <Content Include="Styles\fonts\Xolonium-Regular.ttf" />
     <Content Include="Styles\fonts\Xolonium-Regular.woff" />
+    <Content Include="Views\Tourney\TourneyIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

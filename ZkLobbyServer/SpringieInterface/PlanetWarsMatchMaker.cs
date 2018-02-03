@@ -93,11 +93,10 @@ namespace ZeroKWeb
             if (Challenge.Attackers.Any() || Challenge.Defenders.Any())
             {
                 var battle = new PlanetWarsServerBattle(server, Challenge);
+                await server.AddBattle(battle);
                 RunningBattles[battle.BattleID] = Challenge;
-                server.Battles[battle.BattleID] = battle;
 
                 // also join in lobby
-                await server.Broadcast(server.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
                 foreach (var usr in Challenge.Attackers.Union(Challenge.Defenders)) await server.ForceJoinBattle(usr, battle);
 
                 if (await battle.StartGame())

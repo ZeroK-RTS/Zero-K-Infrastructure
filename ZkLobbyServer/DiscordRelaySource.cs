@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -80,11 +81,38 @@ namespace ZkLobbyServer
         }
 
 
+        private static string TranslateMentions(SocketMessage msg)
+        {
+            var text = msg.Content;
+            if (string.IsNullOrEmpty(text)) return string.Empty;
+
+            return Regex.Replace(text, "<@([0-9]+)>",
+                m =>
+                {
+                    var mentionedId = m.Groups[1].Value;
+
+                    var user = msg.MentionedUsers.FirstOrDefault(x => x.Id.ToString() == mentionedId);
+                    if (user != null) return user.Username;
+
+                    var channel = msg.MentionedChannels.FirstOrDefault(x => x.Id.ToString() == mentionedId);
+                    if (channel != null) return channel.Name;
+
+                    var role = msg.MentionedRoles.FirstOrDefault(x => x.Id.ToString() == mentionedId);
+                    if (role != null) return role.Name;
+
+                    return mentionedId;
+                });
+
+        }
+
+
         private async Task DiscordOnMessageReceived(SocketMessage msg)
         {
             try
             {
-                if (discord.GetGuild(serverID).GetChannel(msg.Channel.Id) != null) if (!msg.Author.IsBot && msg.Author.Username != GlobalConst.NightwatchName) OnChatRelayMessage?.Invoke(this, new ChatRelayMessage(msg.Channel.Name, GetName(msg.Author), msg.Content, source, false));
+                if (discord.GetGuild(serverID).GetChannel(msg.Channel.Id) != null) if (!msg.Author.IsBot && msg.Author.Username != GlobalConst.NightwatchName) OnChatRelayMessage?.Invoke(this, new ChatRelayMessage(msg.Channel.Name, GetName(msg.Author), TranslateMentions(msg), source, false));
+
+                
             }
             catch (Exception ex)
             {
