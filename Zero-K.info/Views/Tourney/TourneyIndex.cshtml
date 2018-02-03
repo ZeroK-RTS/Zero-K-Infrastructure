@@ -59,12 +59,14 @@
                 </td>
             }
         </tr>
+        <tr><td>&nbsp;<br/></td></tr>
     }
 </table>
 
 @if (Global.IsModerator)
 {
     <div class="admin">
+        <span>Add a room</span>
         <form method="post" action="@Url.Action("AddBattle")">
             <table>
                 <tr>
