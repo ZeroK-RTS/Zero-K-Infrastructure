@@ -109,7 +109,7 @@ namespace ZkData
 
             if (IsRatedMatch())
             {
-                Rank = SpringBattlePlayers.Select(x => x.Account.Rank).Max();
+                Rank = SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account.Rank).Max();
             }
 
             if (Duration > GlobalConst.MinDurationForXP)
