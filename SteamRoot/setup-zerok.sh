@@ -21,12 +21,12 @@ then
     altterm="/etc/alternatives/x-terminal-emulator"
     if [ -f "$altterm" ]
     then
-      $altterm -e "bash -c \"echo 'We need to install some deps. (y/n)?' ; read answer ; if [ \$answer == \"y\" ]; then ${pkx} ${pkgmanager} -y install mono-complete libsdl2-2.0-0 libopenal1 libcurl3 zenity libgdiplus sqlite3; fi\""
+      $altterm -e "bash -c \"echo 'Zero-K needs SDL2 and other dependencies to run. Check for dependencies now (y/n)?' ; read answer ; if [ \$answer == \"y\" ]; then ${pkx} ${pkgmanager} -y install mono-complete libsdl2-2.0-0 libopenal1 libcurl3 zenity libgdiplus sqlite3; fi\""
     else
       # Can we use xterm?
       which xterm; if [ $? = 0 ]
       then
-        xterm -e "bash -c 'echo \"We need to install some deps. (y/n)?\" ; read answer ; if [ \$answer == \"y\" ]; then ${pkx} ${pkgmanager} -y install mono-complete libsdl2-2.0-0 libopenal1 libcurl3 zenity libgdiplus sqlite3; fi'"
+        xterm -e "bash -c 'echo \"Zero-K needs SDL2 and other dependencies to run. Check for dependencies now (y/n)?\" ; read answer ; if [ \$answer == \"y\" ]; then ${pkx} ${pkgmanager} -y install mono-complete libsdl2-2.0-0 libopenal1 libcurl3 zenity libgdiplus sqlite3; fi'"
       fi
     fi
   fi
