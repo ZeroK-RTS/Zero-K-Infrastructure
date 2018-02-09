@@ -30,6 +30,8 @@ namespace ZkLobbyServer {
             MaxPlayers = prototype.TeamPlayers.Sum(x=>x.Count);
             ModOptions = prototype.ModOptions;
             ModOptions["mutespec"] = "mute";
+            ModOptions["mutelobby"] = "mute";
+
 
             ValidateAndFillDetails();
         }

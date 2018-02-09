@@ -6,11 +6,29 @@ pkgmanager=$( which apt-get )
 pkx=$( which pkexec )
 if [ -n "${pkgmanager}" -a -n "${pkx}" ]
 then
-  zenity --question --title "Install Dependencies" --text "Zero-K needs SDL2 and other dependencies to run.\nCheck for dependencies now?"
-  answer=$?
-  if [ $answer = 0 ]
+  # We know how to install packages on this system.
+  # Can we show a prompt using zenity?
+  which zenity; if [ $? = 0 ]
   then
-    ${pkx} ${pkgmanager} -y install mono-complete libsdl2-2.0-0 libopenal1 libcurl3 zenity libgdiplus sqlite3
+    zenity --question --title "Install Dependencies" --text "Zero-K needs SDL2 and other dependencies to run.\nCheck for dependencies now?"
+    answer=$?
+    if [ $answer = 0 ]
+    then
+      ${pkx} ${pkgmanager} -y install mono-complete libsdl2-2.0-0 libopenal1 libcurl3 zenity libgdiplus sqlite3
+    fi
+  else
+    # No zenity. Can we use the default terminal?
+    altterm="/etc/alternatives/x-terminal-emulator"
+    if [ -f "$altterm" ]
+    then
+      $altterm -e "bash -c \"echo 'Zero-K needs SDL2 and other dependencies to run. Check for dependencies now (y/n)?' ; read answer ; if [ \$answer == \"y\" ]; then ${pkx} ${pkgmanager} -y install mono-complete libsdl2-2.0-0 libopenal1 libcurl3 zenity libgdiplus sqlite3; fi\""
+    else
+      # Can we use xterm?
+      which xterm; if [ $? = 0 ]
+      then
+        xterm -e "bash -c 'echo \"Zero-K needs SDL2 and other dependencies to run. Check for dependencies now (y/n)?\" ; read answer ; if [ \$answer == \"y\" ]; then ${pkx} ${pkgmanager} -y install mono-complete libsdl2-2.0-0 libopenal1 libcurl3 zenity libgdiplus sqlite3; fi'"
+      fi
+    fi
   fi
 fi
 
