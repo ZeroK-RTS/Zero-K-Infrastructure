@@ -77,7 +77,7 @@ namespace ZeroKWeb.Controllers
 
             if (!string.IsNullOrEmpty(model.Title)) q = q.Where(b => b.Title.Contains(model.Title));
 
-            if (!string.IsNullOrEmpty(model.Map)) q = q.Where(b => b.ResourceByMapResourceID.InternalName == model.Map);
+            if (!string.IsNullOrEmpty(model.Map)) q = q.Where(b => b.ResourceByMapResourceID.InternalName.Contains(model.Map));
 
 
             //if (user == null && Global.IsAccountAuthorized) user = Global.Account.Name;
