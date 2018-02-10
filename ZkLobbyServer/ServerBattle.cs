@@ -90,9 +90,9 @@ namespace ZkLobbyServer
 
         public void Dispose()
         {
-            Stop();
             spring.UnsubscribeEvents(this);
-            pollTimer.Dispose();
+            if (pollTimer != null) pollTimer.Enabled = false;
+            pollTimer?.Dispose();
             pollTimer = null;
             spring = null;
             ActivePoll = null;
@@ -414,11 +414,6 @@ namespace ZkLobbyServer
             }
         }
 
-
-        public void Stop()
-        {
-            StopVote();
-        }
 
         public async void StopVote(Say e = null)
         {
