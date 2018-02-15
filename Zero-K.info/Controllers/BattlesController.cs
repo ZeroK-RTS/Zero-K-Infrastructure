@@ -178,6 +178,7 @@ namespace ZeroKWeb.Controllers
                                         .Include(x => x.SpringBattlePlayers)
                                         .Include(x => x.SpringBattleBots)
                                         .FirstOrDefault();
+                if (battle.HasBots || battle.SpringBattlePlayers.Select(x => x.AllyNumber).Distinct().Count() < 2) return Content("Battle type currently not supported for ratings");
                 battle.ApplicableRatings = (MatchMaking ? Ratings.RatingCategoryFlags.MatchMaking : 0) | (Casual ? Ratings.RatingCategoryFlags.Casual : 0) | (PlanetWars ? Ratings.RatingCategoryFlags.Planetwars : 0);
                 db.SaveChanges();
             }
