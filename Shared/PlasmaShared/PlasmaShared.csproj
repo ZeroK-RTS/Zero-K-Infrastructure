@@ -93,6 +93,7 @@
     <Compile Include="MapSupportLevel.cs" />
     <Compile Include="PlasmaResourceChecker.cs" />
     <Compile Include="Relation.cs" />
+    <Compile Include="ReplayReader.cs" />
     <Compile Include="ResizedImageCache.cs" />
     <Compile Include="ResourceInfo.cs" />
     <Compile Include="ISpringieService\AutohostMode.cs" />
