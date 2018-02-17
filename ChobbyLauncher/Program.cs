@@ -25,6 +25,7 @@ namespace ChobbyLauncher
         [STAThread]
         private static void Main(string[] args)
         {
+            //new ReplayReader().ReadReplayInfo(@"c:\temp\x\demos\20171124_222455_Comet Catcher Redux v3_104.0.1-92-g4409317 maintenance.sdfz");
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 

@@ -19,6 +19,10 @@ namespace PlasmaShared
             public string Game { get; set; }
             public string Map { get; set; }
             public string StartScript { get; set; }
+            public DateTime Date { get; set; }
+            public int GameLengthRealtime { get; set; }
+            public int GameLengthIngameTime { get; set; }
+            public string GameID { get; set; }
         }
 
 
@@ -73,7 +77,11 @@ namespace PlasmaShared
                     Engine = header.versionString,
                     Game = gameName,
                     Map = mapName,
-                    StartScript = script
+                    StartScript = script,
+                    Date = header.unixTime.UnixToDateTime(),
+                    GameLengthRealtime = header.wallclockTime,
+                    GameLengthIngameTime = header.gameTime,
+                    GameID = header.gameID.ToHex(),
                 };
                 return ret;
 

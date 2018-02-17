@@ -874,5 +874,13 @@ namespace ZkData
         {
             return reader.ReadBytes(Marshal.SizeOf(typeof(T))).ToStruct<T>();
         }
+
+        public static DateTime  UnixToDateTime(this UInt64 secondsFrom1970)
+        {
+            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(secondsFrom1970).ToLocalTime();
+            return dtDateTime;
+
+        }
     }
 }
