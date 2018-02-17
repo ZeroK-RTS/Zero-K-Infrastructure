@@ -29,10 +29,10 @@ namespace PlasmaShared
 
             public class PlayerEntry
             {
-                public bool IsSpectator;
-                public bool IsBot;
-                public string Name;
-                public int? AllyTeam;
+                public bool IsSpectator { get; set; }
+                public bool IsBot { get; set; }
+                public string Name { get; set; }
+                public int? AllyTeam { get; set; }
             }
         }
 
