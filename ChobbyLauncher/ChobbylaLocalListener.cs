@@ -621,7 +621,28 @@ namespace ChobbyLauncher
         {
             discordController.Respond(args.UserId, (DiscordRpc.Reply)args.Reply);
         }
-        
+
+
+        private async Task Process(ReadReplayInfo args)
+        {
+            string path = null;
+            ReplayReader.ReplayInfo ret = null;
+            try
+            {
+                path = Path.Combine(chobbyla.paths.WritableDirectory, args.RelativePath);
+                ret = new ReplayReader().ReadReplayInfo(path);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Error reading replay info from path {0} : {1}", path, ex);
+            }
+            
+            SendCommand(new ReadReplayInfoDone()
+            {
+                RelativePath = args.RelativePath,
+                ReplayInfo = ret
+            });
+        }
 
         private async Task OnConnected()
         {

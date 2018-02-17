@@ -14,6 +14,7 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -832,6 +833,46 @@ namespace ZkData
                 Trace.TraceWarning("Failed to get the userID: {0}",ex);
             }
             return 0;
+        }
+
+
+        public static T Pin<T>(this Array array, Func<IntPtr, T> action)
+        {
+            var handle = GCHandle.Alloc(array, GCHandleType.Pinned);
+            try
+            {
+                return action(handle.AddrOfPinnedObject());
+            }
+            finally
+            {
+                handle.Free();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a struct from binary data
+        /// </summary>
+        public static T ToStruct<T>(this byte[] buffer)
+        {
+            return buffer.Pin(p => (T)Marshal.PtrToStructure(p, typeof(T)));
+        }
+
+        /// <summary>
+        /// Initializes a struct from a stream (reads only the reqired bytes)
+        /// </summary>
+        public static T ReadStruct<T>(this Stream stream)
+        {
+            var buffer = new byte[Marshal.SizeOf(typeof(T))];
+            stream.Read(buffer, 0, buffer.Length);
+            return buffer.ToStruct<T>();
+        }
+
+        /// <summary>
+        /// Initializes a struct from a binary reader (reads only the reqired bytes)
+        /// </summary>
+        public static T ReadStruct<T>(this BinaryReader reader)
+        {
+            return reader.ReadBytes(Marshal.SizeOf(typeof(T))).ToStruct<T>();
         }
     }
 }

@@ -77,7 +77,7 @@ namespace ZeroKWeb.Controllers
 
             if (!string.IsNullOrEmpty(model.Title)) q = q.Where(b => b.Title.Contains(model.Title));
 
-            if (!string.IsNullOrEmpty(model.Map)) q = q.Where(b => b.ResourceByMapResourceID.InternalName == model.Map);
+            if (!string.IsNullOrEmpty(model.Map)) q = q.Where(b => b.ResourceByMapResourceID.InternalName.Contains(model.Map));
 
 
             //if (user == null && Global.IsAccountAuthorized) user = Global.Account.Name;
@@ -178,6 +178,7 @@ namespace ZeroKWeb.Controllers
                                         .Include(x => x.SpringBattlePlayers)
                                         .Include(x => x.SpringBattleBots)
                                         .FirstOrDefault();
+                if (battle.HasBots || battle.SpringBattlePlayers.Select(x => x.AllyNumber).Distinct().Count() < 2) return Content("Battle type currently not supported for ratings");
                 battle.ApplicableRatings = (MatchMaking ? Ratings.RatingCategoryFlags.MatchMaking : 0) | (Casual ? Ratings.RatingCategoryFlags.Casual : 0) | (PlanetWars ? Ratings.RatingCategoryFlags.Planetwars : 0);
                 db.SaveChanges();
             }
