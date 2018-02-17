@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -23,6 +25,15 @@ namespace PlasmaShared
             public int GameLengthRealtime { get; set; }
             public int GameLengthIngameTime { get; set; }
             public string GameID { get; set; }
+            public List<PlayerEntry> Players { get; set; } = new List<PlayerEntry>();
+
+            public class PlayerEntry
+            {
+                public bool IsSpectator;
+                public bool IsBot;
+                public string Name;
+                public int? AllyTeam;
+            }
         }
 
 
@@ -68,10 +79,24 @@ namespace PlasmaShared
                 var header = br.ReadStruct<DemoFileHeader>();
 
                 var script = Encoding.UTF8.GetString(br.ReadBytes(header.scriptSize));
+                var chunks = ScriptChunk.ChunkifyScript(script);
 
                 var mapName = Regex.Match(script, "mapname=([^;]+)", RegexOptions.IgnoreCase).Groups[1].Value;
                 var gameName = Regex.Match(script, "gametype=([^;]+)", RegexOptions.IgnoreCase).Groups[1].Value;
 
+
+                List<ReplayInfo.PlayerEntry> players = new List<ReplayInfo.PlayerEntry>();
+                foreach (var playerChunk in chunks.Where(x => x.Type == "player" || x.Type=="ai"))
+                {
+                    players.Add(new ReplayInfo.PlayerEntry()
+                    {
+                        Name = playerChunk["name"],
+                        AllyTeam = chunks.Where(x=>x.Type =="team" && x.Id.ToString()== playerChunk["team"]).Select(x=> x["allyteam"]).FirstOrDefault().ToInt(),
+                        IsSpectator = playerChunk["spectator"]=="1",
+                        IsBot = playerChunk.Type=="ai"
+                    });
+                }
+                
                 var ret = new ReplayInfo()
                 {
                     Engine = header.versionString,
@@ -82,12 +107,67 @@ namespace PlasmaShared
                     GameLengthRealtime = header.wallclockTime,
                     GameLengthIngameTime = header.gameTime,
                     GameID = header.gameID.ToHex(),
+                    Players = players
                 };
                 return ret;
 
             }
+        }
+
+        
+
+
+        public class ScriptChunk
+        {
+            public string Type;
+            public int Id;
+            public Dictionary<string,string> Values = new Dictionary<string, string>();
+
+            public string this[string key] => Values?.Get(key);
+            
+
+            public ScriptChunk(List<string> scriptPart)
+            {
+                var match = Regex.Match(scriptPart[0], "\\[([^0-9]+)([0-9]*)\\]");
+                Type = match.Groups[1].Value.ToLower();
+                int.TryParse(match.Groups[2].Value ?? "", out Id);
+                
+                foreach (var line in scriptPart.Skip(1))
+                {
+                    var m = Regex.Match(line, "([^=]+)=([^;]+);");
+                    if (m.Success)
+                    {
+                        Values[m.Groups[1].Value.ToLower().Trim()] = m.Groups[2].Value;
+                    }
+                }
+            }
+
+            public static List<ScriptChunk> ChunkifyScript(string script)
+            {
+                List<List<string>> chunks = new List<List<string>>();
+
+                // chunkify
+                List<string> chunkLines = new List<string>();
+                foreach (var line in script.Split('\n').Select(x => x.Trim()).Where(x => !string.IsNullOrEmpty(x)))
+                {
+                    if (line.ToLower().StartsWith("["))
+                    {
+                        if (chunkLines.Any())
+                        {
+                            chunks.Add(chunkLines);
+                            chunkLines = new List<string>();
+                        }
+                    }
+                    chunkLines.Add(line);
+                }
+
+                return chunks.Select(x => new ScriptChunk(x)).ToList();
+            }
 
         }
+
+
+
 
 
     }

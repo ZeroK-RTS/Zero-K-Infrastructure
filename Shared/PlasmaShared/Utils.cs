@@ -880,7 +880,13 @@ namespace ZkData
             var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds(secondsFrom1970).ToLocalTime();
             return dtDateTime;
+        }
 
+        public static int? ToInt(this string value)
+        {
+            if (string.IsNullOrEmpty(value)) return null;
+            if (int.TryParse(value, out var intval)) return intval;
+            return null;
         }
     }
 }
