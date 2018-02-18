@@ -303,8 +303,11 @@ namespace ZeroKWeb.Controllers
                         x.MapWaterLevel == null);
             }
 
-            mapSupportLevel = mapSupportLevel ?? MapSupportLevel.Featured;
-            ret = ret.Where(x => x.MapSupportLevel >= mapSupportLevel);
+            if (mapSupportLevel != null)
+            {   // unsupported == only unsupported; anything else also selects maps with higher support level
+                if (mapSupportLevel == 0) ret = ret.Where(x => x.MapSupportLevel == mapSupportLevel);
+                ret = ret.Where(x => x.MapSupportLevel >= mapSupportLevel);
+            }
             if (isDownloadable == 1) ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
             else if (isDownloadable == 0) ret = ret.Where(x => x.ResourceContentFiles.All(y => y.LinkCount <= 0));
             if (special != -1) ret = ret.Where(x => x.MapIsSpecial == (special == 1));
