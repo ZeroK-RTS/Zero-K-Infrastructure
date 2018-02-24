@@ -65,6 +65,8 @@ namespace ZeroKWeb.Controllers
                 {
                     p.Faction = null;
                     p.Account = null;
+                    p.OwnerFactionID = null;
+                    p.OwnerAccountID = null;
                 }
                 foreach (var f in db.Factions)
                 {
