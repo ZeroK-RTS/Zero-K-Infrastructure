@@ -34,12 +34,6 @@ namespace ZeroKWeb.Controllers
                         db.Accounts.Find(Global.AccountID),
                         model.PlanetWarsMode));
 
-                    var gal = db.Galaxies.Find(model.LastSelectedGalaxyID);
-                    if (model.PlanetWarsMode == PlanetWarsModes.PreGame)
-                    {
-                        gal.Started = null;
-                        gal.Ended = null;
-                    }
                     db.SaveChanges();
                 }
 
@@ -67,6 +61,9 @@ namespace ZeroKWeb.Controllers
 
                 var gal = db.Galaxies.Find(galaxyID);
                 gal.IsDirty = true;
+                gal.Started = null;
+                gal.Ended = null;
+                gal.EndMessage = null;
 
                 foreach (var p in gal.Planets)
                 {
