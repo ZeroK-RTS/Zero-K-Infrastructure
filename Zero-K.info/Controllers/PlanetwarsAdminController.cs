@@ -33,6 +33,13 @@ namespace ZeroKWeb.Controllers
                     db.Events.Add(PlanetwarsEventCreator.CreateEvent("{0} changed PlanetWars status to {1}",
                         db.Accounts.Find(Global.AccountID),
                         model.PlanetWarsMode));
+
+                    var gal = db.Galaxies.Find(model.LastSelectedGalaxyID);
+                    if (model.PlanetWarsMode == PlanetWarsModes.PreGame)
+                    {
+                        gal.Started = null;
+                        gal.Ended = null;
+                    }
                     db.SaveChanges();
                 }
 
