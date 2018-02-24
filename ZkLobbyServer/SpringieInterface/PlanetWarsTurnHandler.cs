@@ -678,6 +678,7 @@ public static class PlanetWarsTurnHandler
         gal.Ended = DateTime.UtcNow;
         gal.EndMessage = ev.PlainText;
         gal.WinnerFaction = winnerFaction;
+        MiscVar.PlanetWarsMode = PlanetWarsModes.AllOffline;
         db.Events.Add(ev);
     }
 
