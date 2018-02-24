@@ -16,7 +16,11 @@ namespace ZkData
 
         public static PlanetWarsModes PlanetWarsMode
         {
-            get { return (PlanetWarsModes)Enum.Parse(typeof(PlanetWarsModes), GetValue("planetWarsMode")); }
+            get { 
+                PlanetWarsModes mode;
+                if (Enum.TryParse(GetValue("planetWarsMode"), out mode)) return mode;
+                else return PlanetWarsModes.AllOffline;
+            }
             set { SetValue("planetWarsMode", value.ToString());}
         }
 

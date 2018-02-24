@@ -433,6 +433,7 @@ namespace Fixer
 
             //RemoveUnusedMaps();
 
+            //PlanetwarsFixer.PurgeGalaxy();
 
             //PlanetwarsFixer.AddWormholes(28);
             //PlanetwarsFixer.StartGalaxy(28, 3);
