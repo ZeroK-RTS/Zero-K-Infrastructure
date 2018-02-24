@@ -885,7 +885,8 @@ namespace ZkData
         public static int? ToInt(this string value)
         {
             if (string.IsNullOrEmpty(value)) return null;
-            if (int.TryParse(value, out var intval)) return intval;
+            int intval;
+            if (int.TryParse(value, out intval)) return intval;
             return null;
         }
     }
