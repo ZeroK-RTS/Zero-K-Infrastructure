@@ -674,7 +674,7 @@ public static class PlanetWarsTurnHandler
 
     public static void WinGame(ZkDataContext db,Galaxy gal, Faction winnerFaction, Event ev)
     {
-        GlobalConst.PlanetWarsMode = PlanetWarsModes.AllOffline;
+        MiscVar.PlanetWarsMode = PlanetWarsModes.AllOffline;
         gal.Ended = DateTime.UtcNow;
         gal.EndMessage = ev.PlainText;
         gal.WinnerFaction = winnerFaction;

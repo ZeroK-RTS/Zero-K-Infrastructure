@@ -124,7 +124,7 @@ namespace ZeroKWeb.Controllers
             var rt = db.RoleTypes.Single(x => x.RoleTypeID == roleTypeID);
 
             if (Global.Account.Level < GlobalConst.MinLevelForForumVote) return Content($"You need to be level {GlobalConst.MinLevelForForumVote} to vote");
-            if (!rt.IsClanOnly && GlobalConst.PlanetWarsMode == PlanetWarsModes.AllOffline) return Content("Round over, no nominations can be made");
+            if (!rt.IsClanOnly && MiscVar.PlanetWarsMode == PlanetWarsModes.AllOffline) return Content("Round over, no nominations can be made");
             if (rt.RestrictFactionID != null && rt.RestrictFactionID != Global.FactionID) throw new ApplicationException("Invalid faction");
             if (!rt.IsClanOnly && Global.FactionID == 0) throw new ApplicationException("No faction");
             if (!rt.IsClanOnly && rt.Faction.IsDeleted) throw new ApplicationException("Disabled faction");
