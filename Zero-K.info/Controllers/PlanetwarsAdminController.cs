@@ -195,6 +195,7 @@ namespace ZeroKWeb.Controllers
                     ApplicableRatings = RatingCategoryFlags.Casual
                 });
             }
+            (RatingSystems.GetRatingSystem(RatingCategory.Planetwars) as WholeHistoryRating).ResetAll();
 
             return RedirectToAction("Index");
         }

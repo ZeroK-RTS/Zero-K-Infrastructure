@@ -40,7 +40,14 @@ namespace Ratings
         private Timer ladderRecalculationTimer;
         private int activePlayers = 0;
         private bool lastBattleRanked = false;
-        
+
+        private int battlesRegistered = 0;
+        private SpringBattle firstBattle = null;
+        private List<Account> laddersCache = new List<Account>();
+
+        private SpringBattle latestBattle, lastUpdate;
+        private HashSet<int> ProcessedBattles = new HashSet<int>();
+
         private readonly RatingCategory category;
 
         public WholeHistoryRating(RatingCategory category)
@@ -50,6 +57,28 @@ namespace Ratings
             ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, 15 * 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
         }
 
+        public void ResetAll()
+        {
+
+            playerOldRatings = new ConcurrentDictionary<int, PlayerRating>();
+            playerRatings = new ConcurrentDictionary<int, PlayerRating>();
+            players = new Dictionary<int, Player>();
+            sortedPlayers = new SortedDictionary<float, int>();
+            topPlayers = new List<int>();
+            playerKeys = new Dictionary<int, float>();
+            activePlayers = 0;
+            lastBattleRanked = false;
+
+
+            battlesRegistered = 0;
+            firstBattle = null;
+            laddersCache = new List<Account>();
+
+            latestBattle = null;
+            lastUpdate = null;
+            ProcessedBattles = new HashSet<int>();
+            
+        }
 
         public PlayerRating GetPlayerRating(int accountID)
         {
@@ -73,10 +102,6 @@ namespace Ratings
                     ).getBlackWinProbability() * 2 / teams.Count()).ToList();
         }
 
-        private int battlesRegistered = 0;
-        private SpringBattle firstBattle = null;
-
-        private HashSet<int> ProcessedBattles = new HashSet<int>();
 
         public void ProcessBattle(SpringBattle battle, bool removeBattle = false)
         {
@@ -127,7 +152,6 @@ namespace Ratings
             }
         }
 
-        private List<Account> laddersCache = new List<Account>();
 
         public List<Account> GetTopPlayers(int count)
         {
@@ -200,7 +224,6 @@ namespace Ratings
         //implementation specific
 
 
-        private SpringBattle latestBattle, lastUpdate;
         private DateTime lastUpdateTime;
 
         private readonly object updateLock = new object();
