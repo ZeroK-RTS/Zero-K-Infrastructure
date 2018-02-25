@@ -280,6 +280,23 @@ namespace ZeroKWeb
 
             return info;
         }
+
+        public SpringBattleInfo GetSpringBattleInfo(string gameid)
+        {
+            using (var db = new ZkDataContext())
+            {
+                var sb = db.SpringBattles.FirstOrDefault(x => x.EngineGameID == gameid);
+                if (sb == null) return null;
+
+                return new SpringBattleInfo()
+                {
+                    AutohostMode = sb.Mode,
+                    SpringBattleID = sb.SpringBattleID,
+                    IsMatchMaker = sb.IsMatchMaker,
+                    Title = sb.Title
+                };
+            }
+        }
     }
 
 

@@ -353,6 +353,10 @@
     <Compile Include="Migrations\201801130030187_HideCountry.Designer.cs">
       <DependentUpon>201801130030187_HideCountry.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201802241624117_AddGameIdIndex.cs" />
+    <Compile Include="Migrations\201802241624117_AddGameIdIndex.Designer.cs">
+      <DependentUpon>201802241624117_AddGameIdIndex.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -684,6 +688,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201801130030187_HideCountry.resx">
       <DependentUpon>201801130030187_HideCountry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802241624117_AddGameIdIndex.resx">
+      <DependentUpon>201802241624117_AddGameIdIndex.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

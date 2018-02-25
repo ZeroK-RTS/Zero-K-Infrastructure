@@ -5,7 +5,14 @@
   Page.Title = "Maps";
 }
 <form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
-    Support: @Html.DropDownList("mapSupportLevel", EnumHelper.GetSelectList(typeof(MapSupportLevel), MapSupportLevel.Featured))
+    Support:
+    <select name="mapSupportLevel">
+        <option>Any</option>
+        <option value='0'>Unsupported</option>
+        <option value='1'>Supported</option>
+        <option value='2' selected="selected">Featured</option>
+        <option value='3'>MatchMaker</option>
+    </select>
     Size:
     <select name="size">
         <option>Any</option>

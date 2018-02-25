@@ -199,6 +199,7 @@
     <Compile Include="Controllers\GithubController.cs" />
     <Compile Include="Controllers\LobbyController.cs" />
     <Compile Include="Controllers\LobbyNewsController.cs" />
+    <Compile Include="Controllers\PlanetwarsAdminController.cs" />
     <Compile Include="Controllers\ReplaysController.cs" />
     <Compile Include="Controllers\TourneyController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
@@ -1571,6 +1572,7 @@
     <Content Include="Styles\fonts\Xolonium-Regular.ttf" />
     <Content Include="Styles\fonts\Xolonium-Regular.woff" />
     <Content Include="Views\Tourney\TourneyIndex.cshtml" />
+    <Content Include="Views\PlanetwarsAdmin\PlanetwarsAdminIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

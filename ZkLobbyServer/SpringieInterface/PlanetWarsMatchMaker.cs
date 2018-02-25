@@ -122,7 +122,7 @@ namespace ZeroKWeb
         {
             try
             {
-                if (GlobalConst.PlanetWarsMode != PlanetWarsModes.Running) return;
+                if (MiscVar.PlanetWarsMode != PlanetWarsModes.Running) return;
 
                 if (!AttackOptions.Any(x => x.PlanetID == planet.PlanetID) && (Challenge == null) &&
                     (planet.OwnerFactionID != AttackingFaction.FactionID))
@@ -142,7 +142,7 @@ namespace ZeroKWeb
             PwMatchCommand command = null;
             try
             {
-                if (GlobalConst.PlanetWarsMode != PlanetWarsModes.Running) return new PwMatchCommand(PwMatchCommand.ModeType.Clear);
+                if (MiscVar.PlanetWarsMode != PlanetWarsModes.Running) return new PwMatchCommand(PwMatchCommand.ModeType.Clear);
 
                 if (Challenge == null)
                     command = new PwMatchCommand(PwMatchCommand.ModeType.Attack)
@@ -195,7 +195,7 @@ namespace ZeroKWeb
 
         public async Task OnJoinPlanet(ConnectedUser conus, PwJoinPlanet args)
         {
-            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running)
+            if (MiscVar.PlanetWarsMode == PlanetWarsModes.Running)
             {
                 if (conus.User.CanUserPlanetWars()) await JoinPlanet(conus.Name, args.PlanetID);
             }
@@ -203,7 +203,7 @@ namespace ZeroKWeb
 
         public async Task OnLoginAccepted(ConnectedUser connectedUser)
         {
-            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running)
+            if (MiscVar.PlanetWarsMode == PlanetWarsModes.Running)
             {
                 var u = connectedUser.User;
                 if (u.CanUserPlanetWars()) await UpdateLobby(u.Name);
@@ -214,7 +214,7 @@ namespace ZeroKWeb
         {
             try
             {
-                if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running)
+                if (MiscVar.PlanetWarsMode == PlanetWarsModes.Running)
                 {
                     if (Challenge == null)
                     {
@@ -482,13 +482,13 @@ namespace ZeroKWeb
             {
                 timer.Stop();
 
-                if (GlobalConst.PlanetWarsMode != lastPlanetWarsMode)
+                if (MiscVar.PlanetWarsMode != lastPlanetWarsMode)
                 {
                     UpdateLobby();
-                    lastPlanetWarsMode = GlobalConst.PlanetWarsMode;
+                    lastPlanetWarsMode = MiscVar.PlanetWarsMode;
                 }
 
-                if (GlobalConst.PlanetWarsMode != PlanetWarsModes.Running) return;
+                if (MiscVar.PlanetWarsMode != PlanetWarsModes.Running) return;
 
                 if (Challenge == null)
                 {

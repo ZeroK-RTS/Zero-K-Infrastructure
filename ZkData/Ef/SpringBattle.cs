@@ -28,6 +28,7 @@ namespace ZkData
         }
         public int Duration { get; set; }
         [StringLength(64)]
+        [Index]
         public string EngineGameID { get; set; }
         [StringLength(100)]
         public string EngineVersion { get; set; }

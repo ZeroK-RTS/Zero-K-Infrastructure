@@ -406,4 +406,17 @@ namespace ChobbyLauncher
         public string RelativePath { get; set; }
         public ReplayReader.ReplayInfo ReplayInfo { get; set; }
     }
+
+    [ChobbyMessage]
+    public class GetSpringBattleInfo
+    {
+        public string GameID { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class GetSpringBattleInfoDone
+    {
+        public string GameID { get; set; }
+        public SpringBattleInfo SpringBattleInfo { get; set; }
+    }
 }

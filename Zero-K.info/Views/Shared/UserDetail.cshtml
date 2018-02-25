@@ -355,7 +355,7 @@
         </div>
         <br class="clearfloat" />
 
-                if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running)
+                if (MiscVar.PlanetWarsMode == PlanetWarsModes.Running)
                 {
             <div id="usr_planetwars" class="border relative">
 
@@ -405,6 +405,7 @@
             <a href="@Url.Action("Index", "LobbyNews")">Lobby news</a><br />
             <a href="@Url.Action("Index", "Users")">User list</a><br />
             <a href="@Url.Action("Index", "Charts")">Charts</a><br />
+            <a href="@Url.Action("Index", "PlanetwarsAdmin")">PlanetWars admin</a><br />
             @if (GlobalConst.Mode == ModeType.Test)
     {
         <a href="@Url.Action("ResetDB", "Admin")" class="js_confirm">Reset database (copy from live)</a><br />

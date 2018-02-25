@@ -188,6 +188,7 @@ namespace ChobbyLauncher
             }
 
             var luaErr = logStr.Contains("LUA_ERRRUN");
+            
 
             if ((!springRunOk && !openGlFail) || syncError || luaErr) // crash has occured
             {
