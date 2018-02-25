@@ -464,7 +464,7 @@ namespace Ratings
                         if (rank == matched && rank < topPlayers.Count && topPlayers[rank] == pair.Value) matched++;
                         rank++;
                         percentile = (float)rank / activePlayers;
-                        if (newPercentileBrackets.Count <= Ranks.Percentiles.Length && percentile > percentilesRev[newPercentileBrackets.Count - 1]) newPercentileBrackets.Add(playerRatings[pair.Value].RealElo);
+                        if (newPercentileBrackets.Count <= Ranks.Percentiles.Length && percentile > percentilesRev[newPercentileBrackets.Count - 1]) newPercentileBrackets.Add(playerRatings[pair.Value].Elo);
                         playerRatings[pair.Value].ApplyLadderUpdate(rank, percentile, currentDay);
                     }
                     else if (playerRatings[pair.Value].Rank < int.MaxValue)
