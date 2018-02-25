@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using EntityFramework.Extensions;
 using ZkData;
+using Ratings;
 
 namespace ZeroKWeb.Controllers
 {
@@ -185,6 +186,18 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult ResetRatings()
+        {
+            using (var db = new ZkDataContext())
+            {
+                db.SpringBattles.Where(x => x.ApplicableRatings == RatingCategoryFlags.Planetwars || x.ApplicableRatings == (RatingCategoryFlags.Planetwars | RatingCategoryFlags.Casual)).Update(x => new SpringBattle()
+                {
+                    ApplicableRatings = RatingCategoryFlags.Casual
+                });
+            }
+
+            return RedirectToAction("Index");
+        }
 
         public ActionResult AddWormholes(int galaxyID)
         {
