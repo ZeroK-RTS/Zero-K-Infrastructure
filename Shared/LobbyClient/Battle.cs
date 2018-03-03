@@ -45,6 +45,7 @@ namespace LobbyClient
         public DateTime? RunningSince { get; set; }
 
         public bool IsMatchMakerBattle { get; protected set; }
+        public bool IsTourneyBattle { get; protected set; }
 
 
         public ConcurrentDictionary<string, UserBattleStatus> Users { get; set; }
@@ -95,7 +96,8 @@ namespace LobbyClient
                 Mode = b.Mode,
                 IsRunning = b.IsInGame,
                 RunningSince = b.IsInGame ? b.RunningSince : null,
-                IsMatchMaker = b.IsMatchMakerBattle
+                IsMatchMaker = b.IsMatchMakerBattle,
+                IsTourney = b.IsTourneyBattle
             };
         }
 
@@ -132,8 +134,9 @@ namespace LobbyClient
             ret.Players = Users.Values.Where(x=>x!=null).Select(x => x.ToPlayerTeam()).ToList();
             ret.Bots = Bots.Values.Where(x=>x!=null).Select(x => x.ToBotTeam()).ToList();
             ret.ModOptions = new Dictionary<string, string>(ModOptions);
-            ret.Mode = Mode;
+            ret.Mode = Mode;    
             ret.IsMatchMakerGame = IsMatchMakerBattle;
+            ret.IsTourneyGame = IsTourneyBattle;
             ret.BattleID = BattleID;
             return ret;
         }

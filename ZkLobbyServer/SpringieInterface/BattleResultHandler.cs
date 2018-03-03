@@ -164,6 +164,7 @@ namespace ZeroKWeb.SpringieInterface
                 ReplayFileName = Path.GetFileName(result.ReplayName),
                 EngineVersion = result.LobbyStartContext.EngineVersion,
                 IsMatchMaker = result.LobbyStartContext.IsMatchMakerGame,
+                IsTourney = result.LobbyStartContext.IsTourneyGame,
             };
             db.SpringBattles.InsertOnSubmit(sb);
 
