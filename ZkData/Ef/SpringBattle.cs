@@ -97,8 +97,9 @@ namespace ZkData
 
         public void ResetApplicableRatings()
         {
+            if (HasBots) return;
             ApplicableRatings = (IsMatchMaker ? RatingCategoryFlags.MatchMaking | RatingCategoryFlags.Casual : 0)
-                                | (!(IsMission || IsMatchMaker || HasBots || (PlayerCount < 2) || (ResourceByMapResourceID?.MapIsSpecial == true) || Duration < GlobalConst.MinDurationForElo) ? RatingCategoryFlags.Casual : 0)
+                                | (!(IsMission || IsMatchMaker || (PlayerCount < 2) || (ResourceByMapResourceID?.MapIsSpecial == true) || Duration < GlobalConst.MinDurationForElo) ? RatingCategoryFlags.Casual : 0)
                                 | (Mode == AutohostMode.Planetwars ? RatingCategoryFlags.Planetwars : 0);
         }
 
