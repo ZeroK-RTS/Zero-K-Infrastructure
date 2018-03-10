@@ -484,6 +484,8 @@ namespace ZeroKWeb
             {
                 timer.Stop();
 
+
+
                 if (MiscVar.PlanetWarsMode != lastPlanetWarsMode)
                 {
                     server.Broadcast(GeneratePwStatus());

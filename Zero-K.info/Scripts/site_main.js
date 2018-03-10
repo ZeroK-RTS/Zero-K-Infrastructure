@@ -217,6 +217,7 @@ function GlobalPageInit(root) {
         });
 
     s.find(".js_datepicker").datepicker($.datepicker.regional["en"]);
+    s.find(".js_datetimepicker").datetimepicker();
 
     // buttonification
     s.find(":submit").button();
