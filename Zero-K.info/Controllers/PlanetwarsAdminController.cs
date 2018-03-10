@@ -35,7 +35,7 @@ namespace ZeroKWeb.Controllers
                     MiscVar.PlanetWarsMode = model.PlanetWarsMode;
                     db.Events.Add(PlanetwarsEventCreator.CreateEvent("{0} changed PlanetWars status to {1}",
                         db.Accounts.Find(Global.AccountID),
-                        model.PlanetWarsMode));
+                        model.PlanetWarsMode.Description()));
 
                     db.SaveChanges();
                 }

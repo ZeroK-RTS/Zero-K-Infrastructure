@@ -484,6 +484,20 @@ namespace ZeroKWeb
             {
                 timer.Stop();
 
+                // auto change PW mode based on time
+                if (MiscVar.PlanetWarsNextModeTime != null && MiscVar.PlanetWarsNextModeTime < DateTime.UtcNow && MiscVar.PlanetWarsNextMode != null)
+                {
+                    MiscVar.PlanetWarsMode = MiscVar.PlanetWarsNextMode ?? PlanetWarsModes.AllOffline;
+
+                    MiscVar.PlanetWarsNextMode = null;
+                    MiscVar.PlanetWarsNextModeTime = null;
+
+                    using (var db = new ZkDataContext())
+                    {
+                        db.Events.Add(server.PlanetWarsEventCreator.CreateEvent("PlanetWars changed status to {0}", MiscVar.PlanetWarsMode.Description()));
+                        db.SaveChanges();
+                    }
+                }
 
 
                 if (MiscVar.PlanetWarsMode != lastPlanetWarsMode)
