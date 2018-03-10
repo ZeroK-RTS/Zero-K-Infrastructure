@@ -148,9 +148,9 @@ namespace ZeroKWeb.Controllers
                                       StructureTypeID = structureTypeID,
                                       PlanetID = planetID,
                                       OwnerAccountID = acc.AccountID,
-                                      IsActive = false,
-                                      ActivatedOnTurn = planet.Galaxy.Turn
                                   };
+                newBuilding.ReactivateAfterBuild();
+
                 db.PlanetStructures.InsertOnSubmit(newBuilding);
                 db.SaveChanges();
 
@@ -589,9 +589,10 @@ namespace ZeroKWeb.Controllers
             var target = db.Planets.Single(x => x.PlanetID == targetPlanetID);
             if (target != structure.PlanetByTargetPlanetID)
             {
-                structure.IsActive = false; // deactivate on target change
-                structure.ActivatedOnTurn = null;
+                structure.ReactivateAfterBuild();
             }
+          
+
             structure.PlanetByTargetPlanetID = target;
             db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} of {1} aimed {2} located at {3} to {4} planet {5}", acc, acc.Faction, structure.StructureType, planet, target.Faction, target));
 
@@ -690,7 +691,7 @@ namespace ZeroKWeb.Controllers
 
             db.PlanetStructures.DeleteAllOnSubmit(structures);
             var residue = db.StructureTypes.First(x => x.Name == "Residue"); // todo not nice use constant instead
-            target.PlanetStructures.Add(new PlanetStructure() { StructureType = residue, IsActive = true, ActivatedOnTurn = null});
+            target.PlanetStructures.Add(new PlanetStructure() { StructureType = residue, IsActive = true});
             db.SaveChanges();
 
             return null;

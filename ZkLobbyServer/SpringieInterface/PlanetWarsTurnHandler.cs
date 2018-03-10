@@ -256,8 +256,7 @@ public static class PlanetWarsTurnHandler
                 {
                     if (s.StructureType.IsIngameDestructible)
                     {
-                        s.IsActive = false;
-                        s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate * (GlobalConst.StructureIngameDisableTimeMult - 1));
+                        s.ReactivateAfterDestruction();
 
                         var ev = eventCreator.CreateEvent("{0} has been disabled on {1} planet {2}. {3}", s.StructureType.Name, planet.Faction, planet, sb);
                         db.Events.InsertOnSubmit(ev);
@@ -283,8 +282,7 @@ public static class PlanetWarsTurnHandler
                 }
                 else
                 {
-                    s.IsActive = false;
-                    s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate*(GlobalConst.StructureIngameDisableTimeMult - 1));
+                    s.ReactivateAfterDestruction();
                 }
             }
             // destroy structures by battle (usually defenses)
@@ -504,8 +502,7 @@ public static class PlanetWarsTurnHandler
             if (planet.OwnerAccountID != null) foreach (var ps in planet.PlanetStructures.Where(x => x.OwnerAccountID == null))
                 {
                     ps.OwnerAccountID = planet.OwnerAccountID;
-                    ps.IsActive = false;
-                    ps.ActivatedOnTurn = null;
+                    ps.ReactivateAfterBuild();
                 }
 
 
@@ -576,8 +573,7 @@ public static class PlanetWarsTurnHandler
                 // disable structures 
                 foreach (PlanetStructure structure in planet.PlanetStructures.Where(x => x.StructureType.OwnerChangeDisablesThis))
                 {
-                    structure.IsActive = false;
-                    structure.ActivatedOnTurn = null;
+                    structure.ReactivateAfterBuild();
                     structure.Account = newAccount;
                 }
 

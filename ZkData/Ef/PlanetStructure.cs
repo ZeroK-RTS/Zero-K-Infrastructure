@@ -19,7 +19,8 @@ namespace ZkData
         public int StructureTypeID { get; set; }
         public int? OwnerAccountID { get; set; }
 
-        public int? ActivatedOnTurn { get; set; }
+        public int? ActivationTurnCounter { get; set; }
+        public int? TurnsToActivateOverride { get; set; }
 
         public EnergyPriority EnergyPriority { get; set; }
         public bool IsActive { get; set; }
@@ -34,10 +35,12 @@ namespace ZkData
             if (IsActive) return;
             if (!IsActive)
             {
-                if (ActivatedOnTurn == null) ActivatedOnTurn = turn;
-                if (StructureType.TurnsToActivate == null) IsActive = true;
-                else if (ActivatedOnTurn != null && ActivatedOnTurn.Value + StructureType.TurnsToActivate.Value <= turn) IsActive = true;
+                if (ActivationTurnCounter == null) ActivationTurnCounter = 1;
+                else ActivationTurnCounter++;
 
+                var turnsNeeded = TurnsToActivateOverride ?? StructureType.TurnsToActivate;
+
+                if (turnsNeeded == null || turnsNeeded <= ActivationTurnCounter) IsActive = true;
             }
 
         }
@@ -48,10 +51,26 @@ namespace ZkData
             if ((StructureType.UpkeepEnergy ?? 0) > 0)
             {
                 IsActive = false;
-                if (ActivatedOnTurn <= turn) ActivatedOnTurn = turn + 1;
+                ActivationTurnCounter = null;
             }
 
         }
+
+
+        public void ReactivateAfterDestruction()
+        {
+            IsActive = false;
+            ActivationTurnCounter = null;
+            TurnsToActivateOverride = StructureType.TurnsToReactivate;
+        }
+
+        public void ReactivateAfterBuild()
+        {
+            IsActive = false;
+            ActivationTurnCounter = null;
+            TurnsToActivateOverride = StructureType.TurnsToActivate;
+        }
+
 
         public string GetImageUrl()
         {
