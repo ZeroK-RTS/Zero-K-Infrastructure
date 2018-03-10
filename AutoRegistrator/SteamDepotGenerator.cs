@@ -51,7 +51,6 @@ namespace AutoRegistrator
             Utils.CheckPath(targetFolder);
             try
             {
-                Directory.Delete(Path.Combine(targetFolder, "pool"), true);
                 Directory.Delete(Path.Combine(targetFolder, "packages"), true);
                 Directory.Delete(Path.Combine(targetFolder, "engine"), true);
                 Directory.Delete(Path.Combine(targetFolder, "games"), true);
@@ -102,6 +101,7 @@ namespace AutoRegistrator
 
             File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_chobby.txt"), chobbyName);
             File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_engine.txt"), MiscVar.DefaultEngine);
+            File.WriteAllText(Path.Combine(paths.WritableDirectory, "steam_deletesdp.txt"), "1");
         }
 
         private void CopyLobbyProgram()
