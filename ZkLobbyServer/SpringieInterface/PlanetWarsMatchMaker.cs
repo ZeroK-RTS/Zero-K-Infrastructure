@@ -203,6 +203,8 @@ namespace ZeroKWeb
 
         public async Task OnLoginAccepted(ConnectedUser connectedUser)
         {
+            await connectedUser.SendCommand(GeneratePwStatus());
+
             if (MiscVar.PlanetWarsMode == PlanetWarsModes.Running)
             {
                 var u = connectedUser.User;
@@ -484,6 +486,7 @@ namespace ZeroKWeb
 
                 if (MiscVar.PlanetWarsMode != lastPlanetWarsMode)
                 {
+                    server.Broadcast(GeneratePwStatus());
                     UpdateLobby();
                     lastPlanetWarsMode = MiscVar.PlanetWarsMode;
                 }
@@ -520,6 +523,17 @@ namespace ZeroKWeb
             {
                 timer.Start();
             }
+        }
+
+        private static PwStatus GeneratePwStatus()
+        {
+            return new PwStatus()
+            {
+                PlanetWarsMode = MiscVar.PlanetWarsMode,
+                MinLevel = GlobalConst.MinPlanetWarsLevel,
+                PlanetWarsNextMode = MiscVar.PlanetWarsNextMode,
+                PlanetWarsNextModeTime = MiscVar.PlanetWarsNextModeTime
+            };
         }
 
         public class AttackOption
