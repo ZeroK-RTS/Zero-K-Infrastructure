@@ -56,8 +56,9 @@ namespace AutoRegistrator
                 Directory.Delete(Path.Combine(targetFolder, "engine"), true);
                 Directory.Delete(Path.Combine(targetFolder, "games"), true);
                 Directory.Delete(Path.Combine(targetFolder, "rapid"), true);
+                Directory.Delete(Path.Combine(targetFolder, "cache"), true);
+                Directory.Delete(Path.Combine(targetFolder, "temp"), true);
                 File.Delete(Path.Combine(targetFolder, "missions", "missions.json"));
-                File.Delete(Path.Combine(targetFolder, "cache", "repositories.json"));
             }
             catch { }
 
