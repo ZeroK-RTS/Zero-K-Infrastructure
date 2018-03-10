@@ -18,7 +18,9 @@ namespace ZkData
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int StructureTypeID { get; set; }
         public int? OwnerAccountID { get; set; }
+
         public int? ActivatedOnTurn { get; set; }
+
         public EnergyPriority EnergyPriority { get; set; }
         public bool IsActive { get; set; }
         public int? TargetPlanetID { get; set; }
