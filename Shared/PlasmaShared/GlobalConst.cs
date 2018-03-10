@@ -212,7 +212,7 @@ namespace ZkData
         public const int MinNetKarmaToVote = -30;
         public const int PostVoteHideThreshold = -6;
         public const bool OnlyAdminsSeePostVoters = false;
-        public const int PlanetWarsMinutesToAttackIfNoOption = 5;
+        public const int PlanetWarsMinutesToAttackIfNoOption = 2;
         public const int PlanetWarsMinutesToAttack = 20;
         public const int PlanetWarsMinutesToAccept = 5;
         public const int PlanetWarsDropshipsStayForMinutes = 2*60;
