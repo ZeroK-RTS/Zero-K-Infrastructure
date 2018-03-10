@@ -26,7 +26,7 @@ namespace ZkLobbyServer {
             ModName = server.Game;
             FounderName = $"Tourney #{BattleID}";
             Title =  prototype.Title;
-            Mode = prototype.TeamPlayers.Max(x => x.Count) == 1 ? AutohostMode.Game1v1 : AutohostMode.Teams;
+            Mode = prototype.TeamPlayers.Max(x => x.Count) == 1 ? AutohostMode.Game1v1 : AutohostMode.None;
             MaxPlayers = prototype.TeamPlayers.Sum(x=>x.Count);
             ModOptions = prototype.ModOptions;
             ModOptions["mutespec"] = "mute";

@@ -676,8 +676,6 @@ namespace ZeroKWeb.Controllers
             {
                 pf.Influence = 0;
             }
-            var links = db.Links.Where(x => (x.PlanetID1 == target.PlanetID || x.PlanetID2 == target.PlanetID));
-            foreach (Link link in links) db.Links.DeleteOnSubmit(link);
 
             db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("A {4} fired from {0} {1} has destroyed {2} {3}!", source.Faction, source, target.Faction, target, structure.StructureType));
             db.SaveChanges();
