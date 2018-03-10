@@ -70,11 +70,19 @@ namespace ZeroKWeb.Controllers
                 double ipKillAmmount = ipKillCount * GlobalConst.BomberKillIpAmount;
                 if (ipKillAmmount > 0)
                 {
+                    var influenceDecayMin = planet.PlanetStructures.Where(x => x.IsActive && x.StructureType.EffectPreventInfluenceDecayBelow != null).Select(x => x.StructureType.EffectPreventInfluenceDecayBelow).OrderByDescending(x => x).FirstOrDefault() ?? 0;
+
+
                     foreach (PlanetFaction pf in planet.PlanetFactions.Where(x => x.FactionID != acc.FactionID))
                     {
                         pf.Influence -= ipKillAmmount;
                         if (pf.Influence < 0) pf.Influence = 0;
+
+                        // prevent bombing below influence decaymin for owner - set by active structures
+                        if (pf.FactionID == planet.OwnerFactionID && pf.Influence < influenceDecayMin) pf.Influence = influenceDecayMin;
                     }
+
+
                 }
 
                 var args = new List<object>

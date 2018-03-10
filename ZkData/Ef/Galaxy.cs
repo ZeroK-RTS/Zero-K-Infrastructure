@@ -60,8 +60,6 @@ namespace ZkData
 
                     if (pf.FactionID == planet.OwnerFactionID && influenceDecayMin > 0) pf.Influence = Math.Max(pf.Influence, influenceDecayMin.Value);
                 }
-
-                
                 
             }
         }
