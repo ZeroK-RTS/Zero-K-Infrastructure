@@ -817,6 +817,33 @@ namespace ZeroKWeb.Controllers
             Global.Server.RequestJoinPlanet(Global.Account.Name,  planetID);
             return MatchMaker();
         }
+
+
+        [Auth]
+        public ActionResult RushActivation(int planetID, int structureTypeID)
+        {
+            using (var db = new ZkDataContext())
+            {
+                var planet = db.Planets.Single(p => p.PlanetID == planetID);
+                var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+                var structure = planet.PlanetStructures.Single(x => x.StructureTypeID == structureTypeID);
+                if (planet.OwnerFactionID != acc.FactionID || planet.OwnerFactionID == null) return Content("Planet not yours");
+                if (structure.StructureType.MetalToRushActivation == null) return Content("Cannot rush this");
+                if (structure.IsActive) return Content("Already active");
+                if (structure.TurnsToActivateOverride == 1) return Content("Already rushed");
+                if (acc.GetMetalAvailable() < structure.StructureType.MetalToRushActivation) return Content("You don't have enough metal");
+
+                structure.TurnsToActivateOverride = 1;
+                acc.SpendMetal(structure.StructureType.MetalToRushActivation.Value);
+                db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} has rushed activation of {1} on {2}.",
+                                                            acc,
+                                                            structure.StructureType,
+                                                            planet));
+                db.SaveChanges();
+
+                return RedirectToAction("Planet", new { id = planetID });
+            }
+        }
     }
 
     #region Nested type: ClanEntry
