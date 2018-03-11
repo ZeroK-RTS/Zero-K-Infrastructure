@@ -50,6 +50,7 @@ namespace ZkData
         {
             if ((StructureType.UpkeepEnergy ?? 0) > 0)
             {
+                if (IsActive) TurnsToActivateOverride = null;
                 IsActive = false;
                 ActivationTurnCounter = null;
             }
