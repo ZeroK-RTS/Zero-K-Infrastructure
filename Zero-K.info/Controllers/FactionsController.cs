@@ -190,6 +190,18 @@ namespace ZeroKWeb.Controllers
             if (treaty.CanCancel(acc)) {
                 treaty.TreatyState = TreatyState.Invalid;
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("Treaty {0} between {1} and {2} cancelled by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
+
+                if (acc.FactionID == treaty.AcceptingFactionID)
+                {
+                    treaty.FactionByProposingFactionID.ProduceMetal(treaty.AcceptingFactionGuarantee ?? 0);
+                    treaty.FactionByProposingFactionID.ProduceMetal(treaty.ProposingFactionGuarantee ?? 0);
+                }
+                else
+                {
+                    treaty.FactionByAcceptingFactionID.ProduceMetal(treaty.AcceptingFactionGuarantee ?? 0);
+                    treaty.FactionByAcceptingFactionID.ProduceMetal(treaty.ProposingFactionGuarantee ?? 0);
+                }
+
                 db.SaveChanges();
 
                 return RedirectToAction("Detail", new { id = Global.FactionID });
