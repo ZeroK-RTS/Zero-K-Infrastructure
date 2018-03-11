@@ -361,6 +361,10 @@
     <Compile Include="Migrations\201803102042027_AddTurnsToReactivateAndMetalToRushActivation.Designer.cs">
       <DependentUpon>201803102042027_AddTurnsToReactivateAndMetalToRushActivation.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803110939269_AddTreatyDbValuesForGuaranteeAndUnableToTradeMode.cs" />
+    <Compile Include="Migrations\201803110939269_AddTreatyDbValuesForGuaranteeAndUnableToTradeMode.Designer.cs">
+      <DependentUpon>201803110939269_AddTreatyDbValuesForGuaranteeAndUnableToTradeMode.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -698,6 +702,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803102042027_AddTurnsToReactivateAndMetalToRushActivation.resx">
       <DependentUpon>201803102042027_AddTurnsToReactivateAndMetalToRushActivation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803110939269_AddTreatyDbValuesForGuaranteeAndUnableToTradeMode.resx">
+      <DependentUpon>201803110939269_AddTreatyDbValuesForGuaranteeAndUnableToTradeMode.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

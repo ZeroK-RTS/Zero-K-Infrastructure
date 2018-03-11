@@ -18,7 +18,15 @@ namespace ZkData
         public int AcceptingFactionID { get; set; }
         public int? AcceptedAccountID { get; set; }
         public int? TurnsRemaining { get; set; }
+
+        public int? ProposingFactionGuarantee { get; set; }
+        public int? AcceptingFactionGuarantee { get; set; }
+
         public TreatyState TreatyState { get; set; }
+
+        public TreatyUnableToTradeMode TreatyUnableToTradeMode { get; set; }
+
+
         public int? TurnsTotal { get; set; }
         [StringLength(1000)]
         public string TreatyNote { get; set; }
