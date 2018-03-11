@@ -357,6 +357,18 @@
     <Compile Include="Migrations\201802241624117_AddGameIdIndex.Designer.cs">
       <DependentUpon>201802241624117_AddGameIdIndex.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803102042027_AddTurnsToReactivateAndMetalToRushActivation.cs" />
+    <Compile Include="Migrations\201803102042027_AddTurnsToReactivateAndMetalToRushActivation.Designer.cs">
+      <DependentUpon>201803102042027_AddTurnsToReactivateAndMetalToRushActivation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803110939269_AddTreatyDbValuesForGuaranteeAndUnableToTradeMode.cs" />
+    <Compile Include="Migrations\201803110939269_AddTreatyDbValuesForGuaranteeAndUnableToTradeMode.Designer.cs">
+      <DependentUpon>201803110939269_AddTreatyDbValuesForGuaranteeAndUnableToTradeMode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803111146094_RushActivationTime.cs" />
+    <Compile Include="Migrations\201803111146094_RushActivationTime.Designer.cs">
+      <DependentUpon>201803111146094_RushActivationTime.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -691,6 +703,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201802241624117_AddGameIdIndex.resx">
       <DependentUpon>201802241624117_AddGameIdIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803102042027_AddTurnsToReactivateAndMetalToRushActivation.resx">
+      <DependentUpon>201803102042027_AddTurnsToReactivateAndMetalToRushActivation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803110939269_AddTreatyDbValuesForGuaranteeAndUnableToTradeMode.resx">
+      <DependentUpon>201803110939269_AddTreatyDbValuesForGuaranteeAndUnableToTradeMode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803111146094_RushActivationTime.resx">
+      <DependentUpon>201803111146094_RushActivationTime.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

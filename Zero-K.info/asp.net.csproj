@@ -1426,6 +1426,7 @@
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.ba-bbq.js" />
+    <Content Include="Scripts\jquery.datetimepicker.full.min.js" />
     <Content Include="Scripts\jquery.expand.js" />
     <Content Include="Scripts\jquery.history.js" />
     <Content Include="Scripts\jquery.qtip.min.js" />
@@ -1436,6 +1437,7 @@
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site_main.js" />
+    <Content Include="Styles\jquery.datetimepicker.min.css" />
     <Content Include="Styles\userpage.css" />
     <Content Include="Styles\base.css" />
     <Content Include="Styles\dark-hive\images\tech_button.png" />

@@ -247,7 +247,23 @@
                 {
                     <span>Energy priority: @structure.EnergyPriority.Description()</span>
                 }
-                <br />
+                <br/>
+                
+                @if (structure.StructureType.MetalToRushActivation > 0 && !structure.IsActive && !structure.IsRushed())
+                {
+                    if (structure.CanRush(Global.Account))
+                     {
+                         <a href="@Url.Action("RushActivation", "Planetwars", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })">
+                             <span>Rush activation @structure.StructureType.RushActivationTime turn(s) (@Html.PrintMetal(structure.StructureType.MetalToRushActivation))</span>
+                         </a>
+                     }
+                     else
+                     {
+                         <span>Rush activation costs @Html.PrintMetal(structure.StructureType.MetalToRushActivation)</span>
+                     }
+                    <br/>
+                }
+
 
                 @if (structure.StructureType.RequiresPlanetTarget)
                 {

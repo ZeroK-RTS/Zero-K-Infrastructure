@@ -667,6 +667,23 @@ namespace ChobbyLauncher
 
         }
 
+        private async Task Process(SendBugReport args)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    chobbyla.ReportBug(args.Title, args.Description);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Error sending bug report {0}", ex);
+                }
+            });
+
+        }
+
+
         private async Task OnConnected()
         {
             Trace.TraceInformation("Chobby connected to wrapper");

@@ -15,6 +15,8 @@ namespace ZeroKWeb.Controllers
         public class PlanetwarsAdminModel
         {
             public PlanetWarsModes PlanetWarsMode { get; set; }
+            public PlanetWarsModes? PlanetWarsNextMode { get; set; }
+            public DateTime? PlanetWarsNextModeDate { get; set; }
             public int LastSelectedGalaxyID { get; set; }
             public bool ResetRoles { get; set; } = true;
             public bool DeleteClans { get; set; }
@@ -22,7 +24,7 @@ namespace ZeroKWeb.Controllers
         }
 
         // GET: PlanetwarsAdmin
-        public ActionResult Index(PlanetwarsAdminModel model, string set, string purge)
+        public ActionResult Index(PlanetwarsAdminModel model, string set, string purge, string futureset)
         {
             var db = new ZkDataContext();
 
@@ -33,7 +35,7 @@ namespace ZeroKWeb.Controllers
                     MiscVar.PlanetWarsMode = model.PlanetWarsMode;
                     db.Events.Add(PlanetwarsEventCreator.CreateEvent("{0} changed PlanetWars status to {1}",
                         db.Accounts.Find(Global.AccountID),
-                        model.PlanetWarsMode));
+                        model.PlanetWarsMode.Description()));
 
                     db.SaveChanges();
                 }
@@ -42,14 +44,30 @@ namespace ZeroKWeb.Controllers
                 {
                     PurgeGalaxy(model.LastSelectedGalaxyID, model.ResetRoles, model.DeleteClans);
                 }
+
+                if (!string.IsNullOrEmpty(futureset))
+                {
+                    if (model.PlanetWarsNextMode == MiscVar.PlanetWarsMode || model.PlanetWarsNextModeDate == null ||
+                        model.PlanetWarsNextModeDate < DateTime.UtcNow || model.PlanetWarsNextMode == null)
+                    {
+                        model.PlanetWarsNextMode = null;
+                        model.PlanetWarsNextModeDate = null;
+                    }
+
+                    MiscVar.PlanetWarsNextMode = model.PlanetWarsNextMode;
+                    MiscVar.PlanetWarsNextModeTime = model.PlanetWarsNextModeDate;
+                }
             }
 
             model = model ?? new PlanetwarsAdminModel();
 
             model.PlanetWarsMode = MiscVar.PlanetWarsMode;
+            model.PlanetWarsNextMode = MiscVar.PlanetWarsNextMode;
+            model.PlanetWarsNextModeDate = MiscVar.PlanetWarsNextModeTime;
+
             model.Galaxies = db.Galaxies.OrderByDescending(x=>x.IsDefault).ThenByDescending(x => x.GalaxyID);
             model.LastSelectedGalaxyID = model.Galaxies.FirstOrDefault(x => x.IsDefault)?.GalaxyID ?? 0;
-            
+
 
             return View("PlanetwarsAdminIndex", model);
         }
@@ -318,8 +336,7 @@ namespace ZeroKWeb.Controllers
                     {
                         foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.OwnerChangeWinsGame != true))
                         {
-                            s.IsActive = false;
-                            s.ActivatedOnTurn = null;
+                            s.ReactivateAfterBuild();
                         }
                     }
                 }

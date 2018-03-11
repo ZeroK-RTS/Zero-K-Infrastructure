@@ -33,7 +33,7 @@
 <div id="grid">
     <h1>@Page.Title</h1>
 
-    @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("grid")))
+    @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("grid", false)))
     {
         @Html.HiddenFor(x=>x.LastSelectedGalaxyID)
         <table>
@@ -43,6 +43,15 @@
                     <h3>@MiscVar.PlanetWarsMode</h3>
                     @Html.EnumDropDownListFor(x => x.PlanetWarsMode)<input type="submit" value="Switch" name="set"/>
                 </td>
+            </tr>
+            <tr>
+                <td>Timed switch</td>
+                <td>
+                    @Html.EnumDropDownListFor(x => x.PlanetWarsNextMode)&nbsp;&nbsp;
+                    @Html.TextBoxFor(x => x.PlanetWarsNextModeDate, new { @class = "js_datetimepicker" })
+                    <input type="submit" value="Set in future" name="futureset" />
+                </td>
+
             </tr>
             <tr>
                 <td>Purge PlanetWars</td>

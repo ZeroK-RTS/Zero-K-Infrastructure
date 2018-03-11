@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.ServiceModel;
 using PlasmaShared;
 
@@ -211,7 +212,7 @@ namespace ZkData
         public const int MinNetKarmaToVote = -30;
         public const int PostVoteHideThreshold = -6;
         public const bool OnlyAdminsSeePostVoters = false;
-        public const int PlanetWarsMinutesToAttackIfNoOption = 5;
+        public const int PlanetWarsMinutesToAttackIfNoOption = 2;
         public const int PlanetWarsMinutesToAttack = 20;
         public const int PlanetWarsMinutesToAccept = 5;
         public const int PlanetWarsDropshipsStayForMinutes = 2*60;
@@ -269,8 +270,11 @@ namespace ZkData
 
     public enum PlanetWarsModes
     {
+        [Description("offline")]
         AllOffline = 0,
+        [Description("pre-game")]
         PreGame = 1,
+        [Description("running")]
         Running = 2
     }
 }

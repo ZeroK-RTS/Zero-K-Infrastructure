@@ -18,7 +18,15 @@ namespace ZkData
         public int AcceptingFactionID { get; set; }
         public int? AcceptedAccountID { get; set; }
         public int? TurnsRemaining { get; set; }
+
+        public int? ProposingFactionGuarantee { get; set; }
+        public int? AcceptingFactionGuarantee { get; set; }
+
         public TreatyState TreatyState { get; set; }
+
+        public TreatyUnableToTradeMode TreatyUnableToTradeMode { get; set; }
+
+
         public int? TurnsTotal { get; set; }
         [StringLength(1000)]
         public string TreatyNote { get; set; }
@@ -34,10 +42,7 @@ namespace ZkData
         {
             if (account == null) return false;
             if (!account.HasFactionRight(x => x.RightDiplomacy)) return false;
-            if (TurnsRemaining == null || TreatyState == TreatyState.Proposed)
-            {
-                if (ProposingFactionID == account.FactionID || AcceptingFactionID == account.FactionID) return true; // can canel
-            }
+            if (ProposingFactionID == account.FactionID || AcceptingFactionID == account.FactionID) return true; // can canel
             return false;
         }
 
@@ -54,7 +59,40 @@ namespace ZkData
             return false;
         }
 
-        public bool ProcessTrade(bool oneTimeOnly)
+
+        public bool StoreGuarantee()
+        {
+            var propMetal = ProposingFactionGuarantee ?? 0;
+            var acceptMetal = AcceptingFactionGuarantee ?? 0;
+            if (FactionByProposingFactionID.Metal >= propMetal && FactionByAcceptingFactionID.Metal >= acceptMetal)
+            {
+                FactionByProposingFactionID.SpendMetal(propMetal);
+                FactionByAcceptingFactionID.SpendMetal(acceptMetal);
+                return true;
+            }
+
+            return false;
+        }
+
+        public void CancelTreaty(Faction faction)
+        {
+            TreatyState = TreatyState.Invalid;
+
+            if (faction?.FactionID == AcceptingFactionID)
+            {
+                FactionByProposingFactionID.ProduceMetal(AcceptingFactionGuarantee ?? 0);
+                FactionByProposingFactionID.ProduceMetal(ProposingFactionGuarantee ?? 0);
+            }
+            else
+            {
+                FactionByAcceptingFactionID.ProduceMetal(AcceptingFactionGuarantee ?? 0);
+                FactionByAcceptingFactionID.ProduceMetal(ProposingFactionGuarantee ?? 0);
+            }
+        }
+
+
+
+        public Faction ProcessTrade(bool oneTimeOnly)
         {
             var fac1 = FactionByProposingFactionID;
             var fac2 = FactionByAcceptingFactionID;
@@ -108,12 +146,18 @@ namespace ZkData
 
             }
 
-            if (fac1.Metal < metalFac1toFac2 || fac2.Metal < -metalFac1toFac2) return false;
-            if (fac1.EnergyProducedLastTurn < energyFac1toFac2 || fac2.EnergyProducedLastTurn < -energyFac1toFac2) return false;
-            if (fac1.Dropships < dropshipsFac1toFac2 || fac2.Dropships < -dropshipsFac1toFac2) return false;
-            if (fac1.Bombers < bombersFac1toFac2 || fac2.Bombers < -bombersFac1toFac2) return false;
-            if (fac1.Warps < warpsFac1toFac2 || fac2.Warps < -warpsFac1toFac2) return false;
-            if (fac1.VictoryPoints < victoryPointsFac1toFac2 || fac2.VictoryPoints < -victoryPointsFac1toFac2) return false;
+            if (fac1.Metal < metalFac1toFac2) return fac1;
+            if (fac2.Metal < -metalFac1toFac2) return fac2;
+            if (fac1.EnergyProducedLastTurn < energyFac1toFac2) return fac1;
+            if (fac2.EnergyProducedLastTurn < -energyFac1toFac2) return fac2;
+            if (fac1.Dropships < dropshipsFac1toFac2) return fac1;
+            if (fac2.Dropships < -dropshipsFac1toFac2) return fac2;
+            if (fac1.Bombers < bombersFac1toFac2) return fac1;
+            if (fac2.Bombers < -bombersFac1toFac2) return fac2;
+            if (fac1.Warps < warpsFac1toFac2) return fac1;
+            if (fac2.Warps < -warpsFac1toFac2) return fac2;
+            if (fac1.VictoryPoints < victoryPointsFac1toFac2) return fac1;
+            if (fac2.VictoryPoints < -victoryPointsFac1toFac2) return fac2;
 
 
             fac1.ProduceMetal(-metalFac1toFac2);
@@ -146,7 +190,7 @@ namespace ZkData
                 }
             }
 
-            return true;
+            return null;
         }
 
     }

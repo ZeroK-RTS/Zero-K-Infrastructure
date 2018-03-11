@@ -28,6 +28,9 @@ namespace ChobbyLauncher
 
         public Process process { get; private set; }
 
+        public string BugReportTitle { get; private set; }
+        public string BugReportDescription { get; private set; }
+
         public IChobbylaProgress Progress { get; private set; } = new ProgressMeter();
 
         public string Status
@@ -128,6 +131,12 @@ namespace ChobbyLauncher
                         Status = "Error updating missions";
                     }
                 }
+                else
+                {
+                    ClearSdp();
+                }
+
+                
 
                 downloader.UpdatePublicCommunityInfo(Progress);
                 
@@ -147,6 +156,29 @@ namespace ChobbyLauncher
                 Status = "Unexpected error preparing chobby launch: " + ex.Message;
                 return false;
             }
+        }
+
+        private void ClearSdp()
+        {
+            try
+            {
+                var indicatorPath = Path.Combine(paths.WritableDirectory, "steam_deletesdp.txt");
+
+                if (File.Exists(indicatorPath))
+                {
+                    foreach (var path in Directory.GetFiles(Path.Combine(paths.WritableDirectory, "packages"), "*.sdp"))
+                    {
+                        if (path.EndsWith(".sdp")) File.Delete(path); // this is necessary otherwise it lists sdpzk too
+                    }
+
+                    File.Delete(indicatorPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Error removing SDP files: {0}",ex);
+            }
+
         }
 
 
@@ -260,6 +292,13 @@ namespace ChobbyLauncher
         {
             public Download Download { get; set; }
             public string Status { get; set; }
+        }
+
+        public void ReportBug(string title, string description)
+        {
+            BugReportTitle = title;
+            BugReportDescription = description;
+            process?.Kill();
         }
     }
 }

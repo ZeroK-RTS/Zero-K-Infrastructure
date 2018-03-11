@@ -190,7 +190,8 @@ namespace ChobbyLauncher
             var luaErr = logStr.Contains("LUA_ERRRUN");
             
 
-            if ((!springRunOk && !openGlFail) || syncError || luaErr) // crash has occured
+
+            if ((!springRunOk && !openGlFail) || syncError || luaErr || !string.IsNullOrEmpty(chobbyla.BugReportTitle)) // crash has occured
             {
                 
                 if (
@@ -198,7 +199,14 @@ namespace ChobbyLauncher
                         "Automated crash report",
                         MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
-                    var ret = CrashReportHelper.ReportCrash(logSb.ToString(), syncError ? CrashType.Desync : luaErr ? CrashType.LuaError : CrashType.Crash, chobbyla.engine);
+                    var crashType = syncError ? CrashType.Desync : luaErr ? CrashType.LuaError : CrashType.Crash;
+                    if (!string.IsNullOrEmpty(chobbyla.BugReportTitle))
+                    {
+                        logSb.Insert(0, $"{chobbyla.BugReportTitle}\n\n{chobbyla.BugReportDescription}\n\n");
+                        crashType = CrashType.UserReport;
+                    }
+
+                    var ret = CrashReportHelper.ReportCrash(logSb.ToString(), crashType, chobbyla.engine);
                     if (ret != null)
                         try
                         {
