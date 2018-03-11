@@ -249,12 +249,12 @@
                 }
                 <br/>
                 
-                @if (structure.StructureType.MetalToRushActivation > 0 && !structure.IsActive && structure.TurnsToActivateOverride != 1)
+                @if (structure.StructureType.MetalToRushActivation > 0 && !structure.IsActive && !structure.IsRushed())
                 {
-                    if (Global.Account != null && Global.Account.FactionID == Model.OwnerFactionID && Model.OwnerFactionID != null && Global.Account.GetMetalAvailable() >= structure.StructureType.MetalToRushActivation)
+                    if (structure.CanRush(Global.Account))
                      {
                          <a href="@Url.Action("RushActivation", "Planetwars", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })">
-                             <span>Rush activation (@Html.PrintMetal(structure.StructureType.MetalToRushActivation))</span>
+                             <span>Rush activation @structure.StructureType.RushActivationTime turn(s) (@Html.PrintMetal(structure.StructureType.MetalToRushActivation))</span>
                          </a>
                      }
                      else

@@ -112,5 +112,29 @@ namespace ZkData
             }
         }
 
+
+        public bool IsRushed()
+        {
+            return IsActive || TurnsToActivateOverride <= (StructureType.RushActivationTime ?? 0);
+        }
+
+        public bool CanRush(Account account)
+        {
+            if (!IsRushed() && Planet.OwnerFactionID == account.FactionID && Planet.OwnerFactionID != null &&
+                StructureType.MetalToRushActivation > 0 && account.GetMetalAvailable() >= StructureType.MetalToRushActivation) return true;
+
+            else return false;
+        }
+
+        public bool RushStructure(Account account)
+        {
+            if (!CanRush(account)) return false;
+            TurnsToActivateOverride = StructureType.RushActivationTime ?? 0;
+            ActivationTurnCounter = null;
+            if (TurnsToActivateOverride == 0) IsActive = true;
+            account.SpendMetal(StructureType.MetalToRushActivation ?? 0);
+            return true;
+        }
+
     }
 }

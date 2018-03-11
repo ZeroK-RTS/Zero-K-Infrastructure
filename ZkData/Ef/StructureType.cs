@@ -27,6 +27,7 @@ namespace ZkData
         public int? TurnsToActivate { get; set; }
         public int? TurnsToReactivate { get; set; }
         public int? MetalToRushActivation { get; set; }
+        public int? RushActivationTime { get; set; }
 
         public double? EffectDropshipProduction { get; set; }
         public int? EffectDropshipCapacity { get; set; }
