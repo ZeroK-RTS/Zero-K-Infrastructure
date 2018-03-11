@@ -59,6 +59,22 @@ namespace ZkData
             return false;
         }
 
+
+        public bool StoreGuarantee()
+        {
+            var propMetal = ProposingFactionGuarantee ?? 0;
+            var acceptMetal = AcceptingFactionGuarantee ?? 0;
+            if (FactionByProposingFactionID.Metal >= propMetal && FactionByAcceptingFactionID.Metal >= acceptMetal)
+            {
+                FactionByProposingFactionID.SpendMetal(propMetal);
+                FactionByAcceptingFactionID.SpendMetal(acceptMetal);
+                return true;
+            }
+
+            return false;
+        }
+
+
         public bool ProcessTrade(bool oneTimeOnly)
         {
             var fac1 = FactionByProposingFactionID;
