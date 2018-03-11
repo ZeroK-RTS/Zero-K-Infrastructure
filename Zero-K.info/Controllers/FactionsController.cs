@@ -188,19 +188,9 @@ namespace ZeroKWeb.Controllers
             var treaty = db.FactionTreaties.Single(x => x.FactionTreatyID == id);
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             if (treaty.CanCancel(acc)) {
-                treaty.TreatyState = TreatyState.Invalid;
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("Treaty {0} between {1} and {2} cancelled by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
 
-                if (acc.FactionID == treaty.AcceptingFactionID)
-                {
-                    treaty.FactionByProposingFactionID.ProduceMetal(treaty.AcceptingFactionGuarantee ?? 0);
-                    treaty.FactionByProposingFactionID.ProduceMetal(treaty.ProposingFactionGuarantee ?? 0);
-                }
-                else
-                {
-                    treaty.FactionByAcceptingFactionID.ProduceMetal(treaty.AcceptingFactionGuarantee ?? 0);
-                    treaty.FactionByAcceptingFactionID.ProduceMetal(treaty.ProposingFactionGuarantee ?? 0);
-                }
+                treaty.CancelTreaty(acc.Faction);
 
                 db.SaveChanges();
 
@@ -249,7 +239,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var treaty = db.FactionTreaties.Single(x => x.FactionTreatyID == id);
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-            if (treaty.CanAccept(acc) && treaty.ProcessTrade(true) && treaty.StoreGuarantee()) {
+            if (treaty.CanAccept(acc) && treaty.ProcessTrade(true) == null && treaty.StoreGuarantee()) {
                 treaty.AcceptedAccountID = acc.AccountID;
                 treaty.TreatyState = TreatyState.Accepted;
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("Treaty {0} between {1} and {2} accepted by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));

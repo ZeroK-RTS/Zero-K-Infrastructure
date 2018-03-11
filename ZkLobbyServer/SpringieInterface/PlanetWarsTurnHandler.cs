@@ -324,20 +324,34 @@ public static class PlanetWarsTurnHandler
         // process treaties
         foreach (var tr in db.FactionTreaties.Where(x => x.TreatyState == TreatyState.Accepted || x.TreatyState == TreatyState.Suspended))
         {
-            if (tr.ProcessTrade(false))
+            var failedTradeFaction = tr.ProcessTrade(false);
+            if (failedTradeFaction == null)
             {
                 tr.TreatyState = TreatyState.Accepted;
                 if (tr.TurnsTotal != null)
                 {
                     tr.TurnsRemaining--;
-                    if (tr.TurnsRemaining <= 0)
+
+                    if (tr.TurnsRemaining <= 0) // treaty expired
                     {
                         tr.TreatyState = TreatyState.Invalid;
+                        tr.FactionByAcceptingFactionID.ProduceMetal(tr.AcceptingFactionGuarantee??0);
+                        tr.FactionByProposingFactionID.ProduceMetal(tr.ProposingFactionGuarantee ?? 0);
+
                         db.FactionTreaties.DeleteOnSubmit(tr);
                     }
                 }
             }
-            else tr.TreatyState = TreatyState.Suspended;
+            else
+            {
+                // failed to perform trade
+                if (tr.TreatyUnableToTradeMode == TreatyUnableToTradeMode.Suspend) tr.TreatyState = TreatyState.Suspended;
+                else
+                { // forced cancel
+                    tr.CancelTreaty(failedTradeFaction);
+                    db.Events.InsertOnSubmit(server.PlanetWarsEventCreator.CreateEvent("Treaty {0} between {1} and {2} cancelled by {3} because it failed to trade", tr, tr.FactionByProposingFactionID, tr.FactionByAcceptingFactionID, failedTradeFaction));
+                }
+            }
         }
 
         // burn extra energy
