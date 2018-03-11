@@ -42,10 +42,7 @@ namespace ZkData
         {
             if (account == null) return false;
             if (!account.HasFactionRight(x => x.RightDiplomacy)) return false;
-            if (TurnsRemaining == null || TreatyState == TreatyState.Proposed)
-            {
-                if (ProposingFactionID == account.FactionID || AcceptingFactionID == account.FactionID) return true; // can canel
-            }
+            if (ProposingFactionID == account.FactionID || AcceptingFactionID == account.FactionID) return true; // can canel
             return false;
         }
 
