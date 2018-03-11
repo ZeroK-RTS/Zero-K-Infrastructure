@@ -28,6 +28,9 @@ namespace ChobbyLauncher
 
         public Process process { get; private set; }
 
+        public string BugReportTitle { get; private set; }
+        public string BugReportDescription { get; private set; }
+
         public IChobbylaProgress Progress { get; private set; } = new ProgressMeter();
 
         public string Status
@@ -289,6 +292,13 @@ namespace ChobbyLauncher
         {
             public Download Download { get; set; }
             public string Status { get; set; }
+        }
+
+        public void ReportBug(string title, string description)
+        {
+            BugReportTitle = title;
+            BugReportDescription = description;
+            process?.Kill();
         }
     }
 }

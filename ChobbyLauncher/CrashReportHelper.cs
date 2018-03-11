@@ -15,7 +15,8 @@ namespace ChobbyLauncher
     public enum CrashType {
         Desync,
         Crash,
-        LuaError
+        LuaError,
+        UserReport
     };
 
     public static class CrashReportHelper
@@ -33,7 +34,7 @@ namespace ChobbyLauncher
                 infolog = Truncate(infolog, MaxInfologSize);
 
                 var createdIssue =
-                    client.Issue.Create("ZeroK-RTS", "CrashReports", new NewIssue($"Spring {(type == CrashType.Desync ? "desync" : type == CrashType.Crash ? "crash" : "Lua error")} [{engine}]") { Body = $"```{infolog}```", })
+                    client.Issue.Create("ZeroK-RTS", "CrashReports", new NewIssue($"Spring {type} [{engine}]") { Body = $"```{infolog}```", })
                         .Result;
 
                 return createdIssue;
