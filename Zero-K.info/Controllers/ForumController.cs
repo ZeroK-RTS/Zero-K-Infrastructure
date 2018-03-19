@@ -511,6 +511,10 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var myAcc = Global.Account;
 
+            var penalty = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, x => x.BanForum);
+            if (penalty != null)
+                return Content(string.Format("You cannot vote while banned from forum!\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason));
+
             if (myAcc.Level < GlobalConst.MinLevelForForumVote) return Content(string.Format("You cannot vote until you are level {0} or higher", GlobalConst.MinLevelForForumVote));
             if ((Global.Account.ForumTotalUpvotes - Global.Account.ForumTotalDownvotes) < GlobalConst.MinNetKarmaToVote) return Content("Your net karma is too low to vote");
 
