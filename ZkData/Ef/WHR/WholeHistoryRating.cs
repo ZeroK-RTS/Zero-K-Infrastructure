@@ -227,7 +227,7 @@ namespace Ratings
         private DateTime lastUpdateTime;
 
         private readonly object updateLock = new object();
-        private readonly object updateLockInternal = new object();
+        private readonly static object updateLockInternal = new object();
         private readonly object dbLock = new object();
 
         public void UpdateRatings()
