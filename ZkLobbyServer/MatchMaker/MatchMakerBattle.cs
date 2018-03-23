@@ -28,6 +28,8 @@ namespace ZkLobbyServer
             // hacky way to send some extra start setup data
             if (bat.QueueType.Mode != AutohostMode.GameChickens) ModOptions["mutespec"] = "mute";
             ModOptions["MatchMakerType"] = bat.QueueType.Name;
+            ModOptions["MinSpeed"] = "1";
+            ModOptions["MaxSpeed"] = "1";
 
             ValidateAndFillDetails();
         }
