@@ -44,8 +44,8 @@ namespace LobbyClient
 
         public DateTime? RunningSince { get; set; }
 
+        public RatingCategory ApplicableRating = RatingCategory.Casual;
         public bool IsMatchMakerBattle { get; protected set; }
-        public bool IsCompetitiveBattle { get; protected set; }
 
 
         public ConcurrentDictionary<string, UserBattleStatus> Users { get; set; }
@@ -96,8 +96,7 @@ namespace LobbyClient
                 Mode = b.Mode,
                 IsRunning = b.IsInGame,
                 RunningSince = b.IsInGame ? b.RunningSince : null,
-                IsMatchMaker = b.IsMatchMakerBattle,
-                IsCompetitive = b.IsCompetitiveBattle
+                IsMatchMaker = b.IsMatchMakerBattle
             };
         }
 
@@ -136,7 +135,7 @@ namespace LobbyClient
             ret.ModOptions = new Dictionary<string, string>(ModOptions);
             ret.Mode = Mode;    
             ret.IsMatchMakerGame = IsMatchMakerBattle;
-            ret.IsCompetitiveGame = IsCompetitiveBattle;
+            ret.ApplicableRating = ApplicableRating;
             ret.BattleID = BattleID;
             return ret;
         }

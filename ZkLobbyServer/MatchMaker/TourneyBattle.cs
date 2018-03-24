@@ -22,7 +22,7 @@ namespace ZkLobbyServer {
         {
             this.Prototype = prototype;
             IsMatchMakerBattle = false;
-            IsCompetitiveBattle = true;
+            ApplicableRating = RatingCategory.MatchMaking;
             EngineVersion = server.Engine;
             ModName = server.Game;
             FounderName = $"Tourney #{BattleID}";

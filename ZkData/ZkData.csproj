@@ -357,10 +357,6 @@
     <Compile Include="Migrations\201802241624117_AddGameIdIndex.Designer.cs">
       <DependentUpon>201802241624117_AddGameIdIndex.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201803032334324_SpringBattleIsTourney.cs" />
-    <Compile Include="Migrations\201803032334324_SpringBattleIsTourney.Designer.cs">
-      <DependentUpon>201803032334324_SpringBattleIsTourney.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\201803102042027_AddTurnsToReactivateAndMetalToRushActivation.cs" />
     <Compile Include="Migrations\201803102042027_AddTurnsToReactivateAndMetalToRushActivation.Designer.cs">
       <DependentUpon>201803102042027_AddTurnsToReactivateAndMetalToRushActivation.cs</DependentUpon>
@@ -707,9 +703,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201802241624117_AddGameIdIndex.resx">
       <DependentUpon>201802241624117_AddGameIdIndex.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201803032334324_SpringBattleIsTourney.resx">
-      <DependentUpon>201803032334324_SpringBattleIsTourney.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803102042027_AddTurnsToReactivateAndMetalToRushActivation.resx">
       <DependentUpon>201803102042027_AddTurnsToReactivateAndMetalToRushActivation.cs</DependentUpon>

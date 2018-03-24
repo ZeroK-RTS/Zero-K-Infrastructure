@@ -50,7 +50,6 @@ namespace ZkData
         public RatingCategoryFlags ApplicableRatings { get; set; }
 
         public bool IsMatchMaker { get; set; }
-        public bool IsCompetitive { get; set; }
         public bool IsMission { get; set; }
         public int? LoserTeamXpChange { get; set; }
         public int MapResourceID { get; set; }
@@ -95,20 +94,11 @@ namespace ZkData
             Trace.TraceError("Tried to retrieve rating category for battle without rating category: B" + SpringBattleID);
             return RatingCategory.Casual;
         }
+        
 
-        public void ResetApplicableRatings()
-        {
-            if (HasBots) return;
-            ApplicableRatings = ((IsCompetitive) ? RatingCategoryFlags.MatchMaking | RatingCategoryFlags.Casual : 0)
-                                | (!(IsMission || (PlayerCount < 2) || (ResourceByMapResourceID?.MapIsSpecial == true) || Duration < GlobalConst.MinDurationForElo) ? RatingCategoryFlags.Casual : 0)
-                                | (Mode == AutohostMode.Planetwars ? RatingCategoryFlags.Planetwars : 0);
-        }
-
-        public void CalculateAllElo(bool noElo = false)
+        public void DispenseXP()
         {
             if (IsEloProcessed) return;
-
-            if (!noElo) ResetApplicableRatings();
 
             if (IsRatedMatch())
             {

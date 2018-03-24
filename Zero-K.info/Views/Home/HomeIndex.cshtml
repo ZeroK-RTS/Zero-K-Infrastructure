@@ -1,30 +1,28 @@
 @using ZeroKWeb
 @using ZkData
-@using Ratings
+@using PlasmaShared
 @model ZeroKWeb.Controllers.HomeController.IndexResult
 @{
     ViewBag.NoBorder = true;
     var s = Model.Spotlight;
     var stat = @Model.LobbyStats;
 }
-
 @if (!Global.IsAccountAuthorized)
 {
 
     <style type="text/css">
+
         html {
             background: #000 url("/img/landing/dotwars.jpg") no-repeat fixed 50% 50%;
         }
     </style>
 }
-
 @if (!Global.IsLobbyAccess)
 {
     <div class="border">
         @(stat.UsersOnline) players online: @stat.UsersFighting of them fighting in @stat.BattlesRunning battles, @stat.UsersDiscord on <a href="https://discord.gg/aab63Vt">discord</a>
     </div>
 }
-
 <div id="content" class="fleft width-70">
     <div id="features" class="border">
         @if (Global.IsAccountAuthorized)
@@ -34,7 +32,6 @@
         else
         {
             <div align="center">
-
                 <div class="downloadbutton" style="width:300px;">
                     <a href="/Wiki/Download" style="vertical-align:middle">
                         <span class="buttonSpan"></span>
@@ -83,7 +80,6 @@
                     <p><img class="width-100" src="/img/landing/text6.jpg"><br></p>
                     <ul><li>Learn to use all of our 100+ units and play on hundreds of maps.</li><li>Invent the next mad team-tactics to shock enemies and make allies laugh.</li><li>Combine cloaking, teleports, shields, jumpjets, EMP, napalm, gravity guns, black hole launchers, mind control and self-replication.</li><li>Tiny flea swarm that clings to walls? <br>Jumping "cans" with steam-spike? <br>Buoys that hide under water to ambush ships? <br>Mechs that spew fire and enjoy being tossed from air transports? <br>Carrier with cute helicopters? <br>Jumping Jugglenaut with dual wielding gravity guns? <br>Meet them in Zero-K!<span class="author-a-z80zz84zs2z75zw0ibh5w6aod"></span></li></ul>
                 </div><br />
-
                 <div class="downloadbutton" style="width:300px;">
                     <a href="/Wiki/Download" style="vertical-align:middle">
                         <span class="buttonSpan"></span>
@@ -104,12 +100,10 @@
             {
                 <img src="@n.ImageRelativeUrl" style="float:left; width:800px; margin: 6px;" />
             }
-
             <div>@Html.BBCodeCached(n)</div>
             <small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)</small>
         </div>
     }
-
 
     <div id="news" class="border">
         @foreach (var n in Model.News.Take(4))
@@ -128,7 +122,6 @@
                         @Html.ActionLink("Edit", "Detail", "News", new { id = n.NewsID }, null)
                     </span>
                 }
-
             </small>
             <br /><br />
         }
@@ -139,7 +132,6 @@
                 @Html.Partial("/Views/News/NewsDetail.cshtml", new News() { Created = DateTime.UtcNow, HeadlineUntil = DateTime.UtcNow.AddDays(7) })
             </div>
         }
-
     </div>
 </div>
 <div id="sidebar" class="fright width-30">
@@ -149,9 +141,9 @@
         <div id="unit" class="border relative text-left">
             <a href="/Wiki/Media">
                 <div class="rounded">
-                <img src="/img/landing/scorpion_small.jpg" /><br />
-                <img src="/img/landing/warlord_small.jpg" /><br />
-                <img src="/img/landing/dante_small.jpg" />
+                    <img src="/img/landing/scorpion_small.jpg" /><br />
+                    <img src="/img/landing/warlord_small.jpg" /><br />
+                    <img src="/img/landing/dante_small.jpg" />
                 </div>
             </a>
         </div>
@@ -166,7 +158,6 @@
             <p>@s.Description</p>
         </div>
     }
-
     <div class="border">
         <center>
             <a href="http://twitter.com/ZeroKTeam"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Twitter_Logo_Mini.svg/220px-Twitter_Logo_Mini.svg.png" class="icon32" /></a>
@@ -177,7 +168,6 @@
             <a href="https://discord.gg/aab63Vt"><img src="~/Img/discord.png" alt="join discord" style="height: 40px;margin-top: 5px" /></a>
         </center>
     </div>
-
     <div class="border">
         <h2><a href='@Url.Action("Index","Forum", new {OnlyUnread= true})'>Forums</a></h2>
         @foreach (var t in Model.NewThreads)
@@ -185,7 +175,6 @@
             @Html.Print(t.ForumThread)<br />
         }
     </div>
-
     <div class="border">
         <h3><a href='//zero-k.info/mediawiki/index.php?title=Special:RecentChanges'>Recently on the wiki</a></h3>
         @foreach (var edit in Model.WikiRecentChanges)
@@ -193,7 +182,6 @@
             @Html.PrintMediaWikiEdit(edit)<br />
         }
     </div>
-
 
     <div id="topten" class="border">
         <h2><a href='@Url.Action("Index","Ladders")'>Top Players</a></h2>
@@ -217,5 +205,4 @@
             }
         </table>
     </div>
-
 </div>

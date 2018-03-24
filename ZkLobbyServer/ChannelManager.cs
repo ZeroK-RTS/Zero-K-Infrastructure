@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using LobbyClient;
 using ZkData;
 using Ratings;
+using PlasmaShared;
 
 namespace ZkLobbyServer
 {
