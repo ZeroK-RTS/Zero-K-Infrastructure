@@ -230,7 +230,7 @@ public static class PlanetWarsTurnHandler
                 planet.Faction,
                 planet,
                 sb,
-                isAttackerWinner ? "won. " : "lost. ",
+                isAttackerWinner ? "won" : "lost",
                 influenceReport
                 );
             db.Events.InsertOnSubmit(mainEvent);
@@ -246,7 +246,7 @@ public static class PlanetWarsTurnHandler
         if (!isAttackerWinner)
         {
             var handled = new List<string>();
-            foreach (string line in extraData.Where(x => x.StartsWith("structurekilled")))
+            foreach (string line in extraData.Where(x => x.StartsWith("structurekilled", StringComparison.InvariantCulture)))
             {
                 string[] data = line.Substring(16).Split(',');
                 string unitName = data[0];
