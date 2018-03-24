@@ -537,10 +537,9 @@ namespace System.Web.Mvc
             var url = Global.UrlHelper();
             var state = "";
             if (!s.IsActive) {
-                if (s.ActivatedOnTurn == null) state = "<span style='color:red'>DISABLED</span>";
-                if (s.ActivatedOnTurn != null) {
-                    state = string.Format(" <span style='color:orange'>POWERING {0} turns left</span>",
-                                          s.StructureType.TurnsToActivate - s.Planet.Galaxy.Turn + s.ActivatedOnTurn);
+                if (s.ActivationTurnCounter == null) state = "<span style='color:red'>DISABLED</span>";
+                if (s.ActivationTurnCounter >= 0) {
+                    state = string.Format(" <span style='color:orange'>POWERING {0} turns left</span>", (s.TurnsToActivateOverride ?? s.StructureType.TurnsToActivate) - s.ActivationTurnCounter);
                 }
             }
             else state = "<span style='color:green'>ACTIVE</span>";

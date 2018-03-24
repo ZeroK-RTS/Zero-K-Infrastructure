@@ -83,7 +83,6 @@
 
             @Html.BBCode(Model.EndMessage)
 
-            <h2>Top players</h2>
             @Html.Action("Ladder","Planetwars")
         }
         else
@@ -96,6 +95,11 @@
     case PlanetWarsModes.PreGame:
         <h3>PlanetWars will start soon, pick your side!</h3>
         break;
+}
+
+@if (MiscVar.PlanetWarsNextModeTime != null)
+{
+    <h3>PlanetWars will switch to @(MiscVar.PlanetWarsNextMode?.Description()) in (@MiscVar.PlanetWarsNextModeTime.Value.Subtract(DateTime.UtcNow).ToNiceString())</h3>
 }
 
 @Html.Partial("FactionList")

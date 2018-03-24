@@ -301,8 +301,7 @@ namespace Fixer
                     {
                         foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.OwnerChangeWinsGame != true))
                         {
-                            s.IsActive = false;
-                            s.ActivatedOnTurn = null;
+                            s.ReactivateAfterBuild();
                         }
                     }
                 }

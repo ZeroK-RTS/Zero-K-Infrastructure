@@ -70,11 +70,19 @@ namespace ZeroKWeb.Controllers
                 double ipKillAmmount = ipKillCount * GlobalConst.BomberKillIpAmount;
                 if (ipKillAmmount > 0)
                 {
+                    var influenceDecayMin = planet.PlanetStructures.Where(x => x.IsActive && x.StructureType.EffectPreventInfluenceDecayBelow != null).Select(x => x.StructureType.EffectPreventInfluenceDecayBelow).OrderByDescending(x => x).FirstOrDefault() ?? 0;
+
+
                     foreach (PlanetFaction pf in planet.PlanetFactions.Where(x => x.FactionID != acc.FactionID))
                     {
                         pf.Influence -= ipKillAmmount;
                         if (pf.Influence < 0) pf.Influence = 0;
+
+                        // prevent bombing below influence decaymin for owner - set by active structures
+                        if (pf.FactionID == planet.OwnerFactionID && pf.Influence < influenceDecayMin) pf.Influence = influenceDecayMin;
                     }
+
+
                 }
 
                 var args = new List<object>
@@ -138,11 +146,12 @@ namespace ZeroKWeb.Controllers
                 var newBuilding = new PlanetStructure
                                   {
                                       StructureTypeID = structureTypeID,
+                                      StructureType = structureType,
                                       PlanetID = planetID,
                                       OwnerAccountID = acc.AccountID,
-                                      IsActive = false,
-                                      ActivatedOnTurn = planet.Galaxy.Turn
                                   };
+                newBuilding.ReactivateAfterBuild();
+
                 db.PlanetStructures.InsertOnSubmit(newBuilding);
                 db.SaveChanges();
 
@@ -581,9 +590,10 @@ namespace ZeroKWeb.Controllers
             var target = db.Planets.Single(x => x.PlanetID == targetPlanetID);
             if (target != structure.PlanetByTargetPlanetID)
             {
-                structure.IsActive = false; // deactivate on target change
-                structure.ActivatedOnTurn = null;
+                structure.ReactivateAfterBuild();
             }
+          
+
             structure.PlanetByTargetPlanetID = target;
             db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} of {1} aimed {2} located at {3} to {4} planet {5}", acc, acc.Faction, structure.StructureType, planet, target.Faction, target));
 
@@ -682,7 +692,7 @@ namespace ZeroKWeb.Controllers
 
             db.PlanetStructures.DeleteAllOnSubmit(structures);
             var residue = db.StructureTypes.First(x => x.Name == "Residue"); // todo not nice use constant instead
-            target.PlanetStructures.Add(new PlanetStructure() { StructureType = residue, IsActive = true, ActivatedOnTurn = null});
+            target.PlanetStructures.Add(new PlanetStructure() { StructureType = residue, IsActive = true});
             db.SaveChanges();
 
             return null;
@@ -807,6 +817,28 @@ namespace ZeroKWeb.Controllers
         {
             Global.Server.RequestJoinPlanet(Global.Account.Name,  planetID);
             return MatchMaker();
+        }
+
+
+        [Auth]
+        public ActionResult RushActivation(int planetID, int structureTypeID)
+        {
+            using (var db = new ZkDataContext())
+            {
+                var planet = db.Planets.Single(p => p.PlanetID == planetID);
+                var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+                var structure = planet.PlanetStructures.Single(x => x.StructureTypeID == structureTypeID);
+                if (structure.RushStructure(acc))
+                    db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} has rushed activation of {1} on {2}.",
+                        acc,
+                        structure.StructureType,
+                        planet));
+                else return Content("You cannot rush this");
+
+                db.SaveChanges();
+
+                return RedirectToAction("Planet", new { id = planetID });
+            }
         }
     }
 

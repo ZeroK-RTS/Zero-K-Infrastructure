@@ -152,7 +152,7 @@ namespace Ratings
                     var rating = RatingCategory.Planetwars;
                     if (MiscVar.PlanetWarsMode == PlanetWarsModes.PreGame)
                     {
-                        rating = RatingCategory.MatchMaking;
+                        rating = RatingCategory.Casual;
                         accounts = GetRatingSystem(rating).GetTopPlayers(int.MaxValue, x => x.LastLogin > maxAge && x.FactionID == factionID);
                     }
                     else

@@ -671,7 +671,7 @@ namespace LobbyClient
         public int PlanetID { get; set; }
     }
 
-
+    
     [Message(Origin.Server)]
     public class PwJoinPlanetSuccess
     {
@@ -689,6 +689,17 @@ namespace LobbyClient
     {
         public string Faction { get; set; }
     }
+
+
+    [Message(Origin.Server)]
+    public class PwStatus
+    {
+        public PlanetWarsModes PlanetWarsMode {get; set; }
+        public PlanetWarsModes? PlanetWarsNextMode { get; set; }
+        public DateTime? PlanetWarsNextModeTime { get; set; }
+        public int MinLevel { get; set; }
+    }
+
 
 
 

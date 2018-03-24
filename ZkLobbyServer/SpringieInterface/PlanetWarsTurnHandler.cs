@@ -230,7 +230,7 @@ public static class PlanetWarsTurnHandler
                 planet.Faction,
                 planet,
                 sb,
-                isAttackerWinner ? "won. " : "lost. ",
+                isAttackerWinner ? "won" : "lost",
                 influenceReport
                 );
             db.Events.InsertOnSubmit(mainEvent);
@@ -246,7 +246,7 @@ public static class PlanetWarsTurnHandler
         if (!isAttackerWinner)
         {
             var handled = new List<string>();
-            foreach (string line in extraData.Where(x => x.StartsWith("structurekilled")))
+            foreach (string line in extraData.Where(x => x.StartsWith("structurekilled", StringComparison.InvariantCulture)))
             {
                 string[] data = line.Substring(16).Split(',');
                 string unitName = data[0];
@@ -256,8 +256,7 @@ public static class PlanetWarsTurnHandler
                 {
                     if (s.StructureType.IsIngameDestructible)
                     {
-                        s.IsActive = false;
-                        s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate * (GlobalConst.StructureIngameDisableTimeMult - 1));
+                        s.ReactivateAfterDestruction();
 
                         var ev = eventCreator.CreateEvent("{0} has been disabled on {1} planet {2}. {3}", s.StructureType.Name, planet.Faction, planet, sb);
                         db.Events.InsertOnSubmit(ev);
@@ -283,8 +282,7 @@ public static class PlanetWarsTurnHandler
                 }
                 else
                 {
-                    s.IsActive = false;
-                    s.ActivatedOnTurn = gal.Turn + (int)(s.StructureType.TurnsToActivate*(GlobalConst.StructureIngameDisableTimeMult - 1));
+                    s.ReactivateAfterDestruction();
                 }
             }
             // destroy structures by battle (usually defenses)
@@ -326,20 +324,34 @@ public static class PlanetWarsTurnHandler
         // process treaties
         foreach (var tr in db.FactionTreaties.Where(x => x.TreatyState == TreatyState.Accepted || x.TreatyState == TreatyState.Suspended))
         {
-            if (tr.ProcessTrade(false))
+            var failedTradeFaction = tr.ProcessTrade(false);
+            if (failedTradeFaction == null)
             {
                 tr.TreatyState = TreatyState.Accepted;
                 if (tr.TurnsTotal != null)
                 {
                     tr.TurnsRemaining--;
-                    if (tr.TurnsRemaining <= 0)
+
+                    if (tr.TurnsRemaining <= 0) // treaty expired
                     {
                         tr.TreatyState = TreatyState.Invalid;
+                        tr.FactionByAcceptingFactionID.ProduceMetal(tr.AcceptingFactionGuarantee??0);
+                        tr.FactionByProposingFactionID.ProduceMetal(tr.ProposingFactionGuarantee ?? 0);
+
                         db.FactionTreaties.DeleteOnSubmit(tr);
                     }
                 }
             }
-            else tr.TreatyState = TreatyState.Suspended;
+            else
+            {
+                // failed to perform trade
+                if (tr.TreatyUnableToTradeMode == TreatyUnableToTradeMode.Suspend) tr.TreatyState = TreatyState.Suspended;
+                else
+                { // forced cancel
+                    tr.CancelTreaty(failedTradeFaction);
+                    db.Events.InsertOnSubmit(server.PlanetWarsEventCreator.CreateEvent("Treaty {0} between {1} and {2} cancelled by {3} because it failed to trade", tr, tr.FactionByProposingFactionID, tr.FactionByAcceptingFactionID, failedTradeFaction));
+                }
+            }
         }
 
         // burn extra energy
@@ -504,8 +516,7 @@ public static class PlanetWarsTurnHandler
             if (planet.OwnerAccountID != null) foreach (var ps in planet.PlanetStructures.Where(x => x.OwnerAccountID == null))
                 {
                     ps.OwnerAccountID = planet.OwnerAccountID;
-                    ps.IsActive = false;
-                    ps.ActivatedOnTurn = null;
+                    ps.ReactivateAfterBuild();
                 }
 
 
@@ -576,8 +587,7 @@ public static class PlanetWarsTurnHandler
                 // disable structures 
                 foreach (PlanetStructure structure in planet.PlanetStructures.Where(x => x.StructureType.OwnerChangeDisablesThis))
                 {
-                    structure.IsActive = false;
-                    structure.ActivatedOnTurn = null;
+                    structure.ReactivateAfterBuild();
                     structure.Account = newAccount;
                 }
 

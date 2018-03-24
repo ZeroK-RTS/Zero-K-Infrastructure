@@ -24,6 +24,30 @@ namespace ZkData
             set { SetValue("planetWarsMode", value.ToString());}
         }
 
+        public static PlanetWarsModes? PlanetWarsNextMode
+        {
+            get
+            {
+                PlanetWarsModes mode;
+                if (Enum.TryParse(GetValue("planetWarsNextMode"), out mode)) return mode;
+                return null;
+            }
+            set { SetValue("planetWarsNextMode", value?.ToString()); }
+        }
+
+
+        public static DateTime? PlanetWarsNextModeTime
+        {
+            get
+            {
+                DateTime time;
+                if (DateTime.TryParse(GetValue("planetWarsNextModeTime"), out time)) return time;
+                return null;
+            }
+            set { SetValue("planetWarsNextModeTime", value?.ToString()); }
+        }
+
+
 
         [Key]
         [StringLength(200)]

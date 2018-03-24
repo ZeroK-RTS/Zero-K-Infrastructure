@@ -60,8 +60,6 @@ namespace ZkData
 
                     if (pf.FactionID == planet.OwnerFactionID && influenceDecayMin > 0) pf.Influence = Math.Max(pf.Influence, influenceDecayMin.Value);
                 }
-
-                
                 
             }
         }
@@ -69,7 +67,7 @@ namespace ZkData
 
         public void ProcessProduction()
         {
-            foreach (var grp in Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive && x.Account != null).GroupBy(x => x.Account))
+            foreach (var grp in Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive && x.Account != null && x.Account.Faction != null).GroupBy(x => x.Account))
             {
                 var structs = grp.ToList();
                 var drops = structs.Where(x => x.StructureType.EffectDropshipProduction > 0).Sum(x => x.StructureType.EffectDropshipProduction) ?? 0;

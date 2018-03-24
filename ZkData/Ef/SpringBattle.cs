@@ -98,8 +98,9 @@ namespace ZkData
 
         public void ResetApplicableRatings()
         {
-            ApplicableRatings = (IsCompetitive ? RatingCategoryFlags.MatchMaking | RatingCategoryFlags.Casual : 0)
-                                | (!(IsMission || IsMatchMaker || HasBots || (PlayerCount < 2) || (ResourceByMapResourceID?.MapIsSpecial == true) || Duration < GlobalConst.MinDurationForElo) ? RatingCategoryFlags.Casual : 0)
+            if (HasBots) return;
+            ApplicableRatings = ((IsCompetitive) ? RatingCategoryFlags.MatchMaking | RatingCategoryFlags.Casual : 0)
+                                | (!(IsMission || (PlayerCount < 2) || (ResourceByMapResourceID?.MapIsSpecial == true) || Duration < GlobalConst.MinDurationForElo) ? RatingCategoryFlags.Casual : 0)
                                 | (Mode == AutohostMode.Planetwars ? RatingCategoryFlags.Planetwars : 0);
         }
 
@@ -146,8 +147,18 @@ namespace ZkData
 
         public List<float> GetAllyteamWinChances()
         {
-            if (!IsRatedMatch()) return new List<float>();
-            return RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(SpringBattlePlayers.Where(x => !x.IsSpectator).OrderBy(x => x.AllyNumber).GroupBy(x => x.AllyNumber).Select(x => x.Select(y => y.Account).ToList()).ToList(), StartTime);
+            try
+            {
+                if (IsRatedMatch())
+                {
+                    return RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(SpringBattlePlayers.Where(x => !x.IsSpectator).OrderBy(x => x.AllyNumber).GroupBy(x => x.AllyNumber).Select(x => x.Select(y => y.Account).ToList()).ToList(), StartTime);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Invalid rating settings for B" + SpringBattleID + ", unable to calculate win chances. \n" + ex);
+            }
+            return new List<float>();
         }
 
 

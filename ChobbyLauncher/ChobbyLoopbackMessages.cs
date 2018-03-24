@@ -419,4 +419,11 @@ namespace ChobbyLauncher
         public string GameID { get; set; }
         public SpringBattleInfo SpringBattleInfo { get; set; }
     }
+
+    [ChobbyMessage]
+    public class SendBugReport
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+    }
 }
