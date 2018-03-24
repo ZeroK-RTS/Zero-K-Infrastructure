@@ -81,9 +81,13 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index", "Factions");
         }
 
-
+        // first display of the form, target faction not yet set
         public ActionResult NewTreaty(int? acceptingFactionID) {
-            // first display of the form, target faction not yet set 
+            if (Global.Account == null) // logged out while on new treaty page (or somehow got the link while not logged in)
+                return Content("You must be logged in to propose treaties");
+            if (!Global.Account.HasFactionRight(x => x.RightDiplomacy)) 
+                return Content("Not a diplomat!");
+
             var db = new ZkDataContext();
             var treaty = new FactionTreaty();
             treaty.AccountByProposingAccountID = Global.Account;
@@ -124,6 +128,8 @@ namespace ZeroKWeb.Controllers
                                          int? acceptingFactionGuarantee,
                                          string note,
                                          string add,int? delete,string propose) {
+            if (Global.Account == null)
+                return Content("You must be logged in to manage treaties");
             if (!Global.Account.HasFactionRight(x => x.RightDiplomacy)) return Content("Not a diplomat!");
 
             FactionTreaty treaty;
