@@ -62,14 +62,14 @@ namespace ZkData
         {
             IsActive = false;
             ActivationTurnCounter = null;
-            TurnsToActivateOverride = StructureType.TurnsToReactivate ?? 0;
+            TurnsToActivateOverride = StructureType.TurnsToReactivate;
         }
 
         public void ReactivateAfterBuild()
         {
             IsActive = false;
             ActivationTurnCounter = null;
-            TurnsToActivateOverride = StructureType.TurnsToActivate ?? 0;
+            TurnsToActivateOverride = StructureType.TurnsToActivate;
         }
 
 
