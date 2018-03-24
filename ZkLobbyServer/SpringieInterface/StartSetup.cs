@@ -301,7 +301,7 @@ namespace ZeroKWeb.SpringieInterface
                     attackerIp != null ? attackerIp : 0,
                     GlobalConst.InfluenceToCapturePlanet);
 
-                sb.AppendFormat("If you win with your Command Center intact you will gain {0:N1} influence ({1:N1} base + {2:N1} from dropships - {3:N1} from defense). Protect your Command Center as, if you win without it, you will only gain {1:N1} influence.\n\n"
+                sb.AppendFormat("If you win with your Command Center intact you will gain {0:N1} influence ({1:N1} base + {2:N1} from dropships - {3:N1} from defense). Protect your Command Center as, if you win without it, you will only gain {1:N1} influence.\n\n",
                     ipBase + ipShips - ipDefs,
                     ipBase,
                     ipShips,
