@@ -146,6 +146,7 @@ namespace ZeroKWeb.Controllers
                 var newBuilding = new PlanetStructure
                                   {
                                       StructureTypeID = structureTypeID,
+                                      StructureType = structureType,
                                       PlanetID = planetID,
                                       OwnerAccountID = acc.AccountID,
                                   };
