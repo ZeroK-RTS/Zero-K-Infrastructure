@@ -59,7 +59,6 @@ namespace ZkData
             return false;
         }
 
-
         public bool StoreGuarantee()
         {
             var propMetal = ProposingFactionGuarantee ?? 0;
@@ -76,17 +75,21 @@ namespace ZkData
 
         public void CancelTreaty(Faction faction)
         {
+            bool wasAccepted = TreatyState == TreatyState.Accepted;
             TreatyState = TreatyState.Invalid;
 
-            if (faction?.FactionID == AcceptingFactionID)
+            if (wasAccepted)
             {
-                FactionByProposingFactionID.ProduceMetal(AcceptingFactionGuarantee ?? 0);
-                FactionByProposingFactionID.ProduceMetal(ProposingFactionGuarantee ?? 0);
-            }
-            else
-            {
-                FactionByAcceptingFactionID.ProduceMetal(AcceptingFactionGuarantee ?? 0);
-                FactionByAcceptingFactionID.ProduceMetal(ProposingFactionGuarantee ?? 0);
+                if (faction?.FactionID == AcceptingFactionID)
+                {
+                    FactionByProposingFactionID.ProduceMetal(AcceptingFactionGuarantee ?? 0);
+                    FactionByProposingFactionID.ProduceMetal(ProposingFactionGuarantee ?? 0);
+                }
+                else
+                {
+                    FactionByAcceptingFactionID.ProduceMetal(AcceptingFactionGuarantee ?? 0);
+                    FactionByAcceptingFactionID.ProduceMetal(ProposingFactionGuarantee ?? 0);
+                }
             }
         }
 

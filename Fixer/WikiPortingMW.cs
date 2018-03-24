@@ -378,7 +378,18 @@ namespace Fixer
             else
                 dir = Path.Combine(fileDir, "raw/markup");
 
-            var filesUpdate = new List<string>(Directory.GetFiles(dir));
+            List<string> filesUpdate = new List<string>();
+            
+            //filesUpdate = new List<string>(Directory.GetFiles(dir));
+            var filesUpdateTemp = new List<string>(new string[] {
+                "Kodachi", "Reaver", "Blitz", "Ogre", "Pyro", "Grizzly", "Siren", "Dante", "Faraday"
+            });
+            foreach (string path in filesUpdateTemp) {
+                string newPath = Path.Combine(dir, path + ".txt");
+                filesUpdate.Add(newPath);
+                Console.WriteLine(newPath);
+            }
+
             foreach (string path in filesUpdate)
             {
                 string unitname = Path.GetFileNameWithoutExtension(path);
@@ -393,7 +404,7 @@ namespace Fixer
                     //    UpdateTemplate(page, kvp);
                     //}
 
-                    bool result = UpdateUnitPage(page, path, false);
+                    bool result = UpdateUnitPage(page, path, infoBoxOnly);
                     if (result) {
                         page.Save ("Page auto-updated with DotNetWikiBot", true);
                         count++;
