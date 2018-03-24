@@ -31,7 +31,7 @@ namespace ZkLobbyServer {
             ModOptions = prototype.ModOptions;
             ModOptions["mutespec"] = "mute";
             ModOptions["mutelobby"] = "mute";
-
+            ModOptions["allyreclaim"] = "1";
 
             ValidateAndFillDetails();
         }

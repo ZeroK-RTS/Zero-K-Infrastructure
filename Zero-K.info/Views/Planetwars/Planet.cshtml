@@ -236,16 +236,19 @@
 
                 }
                 <br/>
-                @if (Global.Account != null && Global.Account.CanSetPriority(structure))
+                @if (structure.StructureType.UpkeepEnergy > 0 )
                 {
-                    var priority = structure.EnergyPriority;
-                    <form method="POST" action="@Url.Action("SetEnergyPriority", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })">
-                        Energy priority: @Html.EditorFor(x => priority, "Enum") <input type="submit" value="change"/>
-                    </form>
-                }
-                else
-                {
-                    <span>Energy priority: @structure.EnergyPriority.Description()</span>
+                    if (&& structure Global.Account != null && Global.Account.CanSetPriority(structure))
+                    {
+                        var priority = structure.EnergyPriority;
+                        <form method="POST" action="@Url.Action("SetEnergyPriority", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })">
+                            Energy priority: @Html.EditorFor(x => priority, "Enum") <input type="submit" value="change"/>
+                        </form>
+                    }
+                    else
+                    {
+                        <span>Energy priority: @structure.EnergyPriority.Description()</span>
+                    }
                 }
                 <br/>
                 
