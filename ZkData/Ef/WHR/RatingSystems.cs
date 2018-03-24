@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using ZkData;
 using System.Data.Entity;
+using PlasmaShared;
+using LobbyClient;
 
 namespace Ratings
 {
@@ -92,24 +94,39 @@ namespace Ratings
 
         private static int latestBattle;
 
+        //Erases old SpringBattle from Rating History
         public static void RemoveResult(SpringBattle battle)
         {
             if (!Initialized) return;
             ProcessBattle(battle, true, true);
         }
 
+        //Processes old SpringBattle with predetermined applicable ratings
         public static void ReprocessResult(SpringBattle battle)
         {
             if (!Initialized) return;
             ProcessBattle(battle, true);
         }
 
-        public static void ProcessResult(SpringBattle battle)
+        //Processes new SpringBattle and determines applicable ratings
+        public static void ProcessResult(SpringBattle battle, SpringBattleContext result)
         {
             if (!Initialized) return;
+            FillApplicableRatings(battle, result);
             ProcessBattle(battle);
         }
 
+        private static void FillApplicableRatings(SpringBattle battle, SpringBattleContext result)
+        {
+            battle.ApplicableRatings = 0;
+            if (battle.HasBots) return;
+            if (battle.IsMission) return;
+            if (battle.SpringBattlePlayers?.Select(x => x.AllyNumber).Distinct().Count() < 2) return;
+            if (battle.ResourceByMapResourceID?.MapIsSpecial == true) return;
+            if (battle.Duration < GlobalConst.MinDurationForElo) return;
+            battle.ApplicableRatings |= (RatingCategoryFlags)result.LobbyStartContext.ApplicableRating;
+            //battle.ApplicableRatings |= RatingCategoryFlags.Casual;
+        }
 
         private static void ProcessBattle(SpringBattle battle, bool reprocessingBattle = false, bool removeBattle = false)
         {
@@ -207,13 +224,4 @@ namespace Ratings
         }
     }
     
-    public enum RatingCategory
-    {
-        Casual = 1, MatchMaking = 2, Planetwars = 4
-    }
-    [Flags]
-    public enum RatingCategoryFlags
-    {
-        Casual = 1, MatchMaking = 2, Planetwars = 4
-    }
 }

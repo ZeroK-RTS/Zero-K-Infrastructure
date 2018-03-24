@@ -47,7 +47,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
-                ProcessElos(result, server, db, sb);
+                ProcessRatingAndXP(result, server, db, sb);
 
                 
                 ret.Url = string.Format("{1}/Battles/Detail/{0}", sb.SpringBattleID, GlobalConst.BaseSiteUrl);
@@ -95,13 +95,13 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        private static void ProcessElos(SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, ZkDataContext db, SpringBattle sb)
+        private static void ProcessRatingAndXP(SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, ZkDataContext db, SpringBattle sb)
         {
             bool noElo = result.OutputExtras.Any(x => x?.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture) == true);
 
-            sb.CalculateAllElo(noElo);
+            if (!noElo) RatingSystems.ProcessResult(sb, result);
 
-            if (!noElo) RatingSystems.ProcessResult(sb);
+            sb.DispenseXP();
 
             foreach (var u in sb.SpringBattlePlayers.Where(x => !x.IsSpectator)) u.Account.CheckLevelUp();
 
@@ -164,6 +164,7 @@ namespace ZeroKWeb.SpringieInterface
                 ReplayFileName = Path.GetFileName(result.ReplayName),
                 EngineVersion = result.LobbyStartContext.EngineVersion,
                 IsMatchMaker = result.LobbyStartContext.IsMatchMakerGame,
+                ApplicableRatings = 0,
             };
             db.SpringBattles.InsertOnSubmit(sb);
 

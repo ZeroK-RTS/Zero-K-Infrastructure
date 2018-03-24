@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using EntityFramework.Extensions;
 using ZkData;
 using Ratings;
+using PlasmaShared;
 
 namespace ZeroKWeb.Controllers
 {

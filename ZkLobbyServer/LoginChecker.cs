@@ -15,6 +15,7 @@ using MaxMind.Db;
 using MaxMind.GeoIP2;
 using ZkData;
 using Ratings;
+using PlasmaShared;
 
 namespace ZkLobbyServer
 {
