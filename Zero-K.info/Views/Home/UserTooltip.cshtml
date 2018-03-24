@@ -1,5 +1,6 @@
 ﻿@using ZeroKWeb
 @using ZkData
+@using PlasmaShared
 @model ZkData.Account
 @{
     var u = Model;
@@ -8,9 +9,9 @@
 <p>
     <b>First Login:</b> @u.FirstLogin.ToAgoString(), <b>Last Login:</b> @u.LastLogin.ToAgoString()<br />
     @{
-        var casual = Model.GetRating(Ratings.RatingCategory.Casual);
-        var mm = Model.GetRating(Ratings.RatingCategory.MatchMaking);
-        var pw = Model.GetRating(Ratings.RatingCategory.Planetwars);
+        var casual = Model.GetRating(RatingCategory.Casual);
+        var mm = Model.GetRating(RatingCategory.MatchMaking);
+        var pw = Model.GetRating(RatingCategory.Planetwars);
     }
 
     <b>Competitive rank:</b> @(mm.Rank == int.MaxValue ? "Unranked" : $"{mm.Rank}. ({Math.Round(mm.Elo)})")<br />
