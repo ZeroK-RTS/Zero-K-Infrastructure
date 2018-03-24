@@ -164,14 +164,19 @@ namespace ZkLobbyServer
             server.ConnectedUsers.TryGetValue(say.User, out user);
             if ((say.Place == SayPlace.Battle) && !say.IsEmote && (user?.User.BanMute != true) && (user?.User.BanSpecChat != true) && say.AllowRelay) spring.SayGame($"<{say.User}>{say.Text}"); // relay to spring
 
+            await CheckSayForCommand(say);
+        }
+
+        private async Task<bool> CheckSayForCommand(Say say)
+        {
             // check if it's command
             if (!say.IsEmote && (say.Text?.Length > 1) && say.Text.StartsWith("!"))
             {
                 var parts = say.Text.Substring(1).Split(new[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
-                await RunCommandWithPermissionCheck(say, parts[0], parts.Skip(1).FirstOrDefault());
+                return await RunCommandWithPermissionCheck(say, parts[0], parts.Skip(1).FirstOrDefault());
             }
+            return false;
         }
-
 
         public virtual async Task ProcessPlayerJoin(ConnectedUser user, string joinPassword)
         {
@@ -306,17 +311,21 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task RunCommandWithPermissionCheck(Say e, string com, string arg)
+        public async Task<bool> RunCommandWithPermissionCheck(Say e, string com, string arg)
         {
             var cmd = GetCommandByName(com);
-            if (cmd != null)
-                if (isZombie) await Respond(e, "Tthis room is now disabled, please join a new one");
-                else
-                {
-                    var perm = cmd.GetRunPermissions(this, e.User);
-                    if (perm == BattleCommand.RunPermission.Run) await cmd.Run(this, e, arg);
-                    else if (perm == BattleCommand.RunPermission.Vote) await StartVote(cmd, e, arg);
-                }
+            if (cmd == null) return false;
+            if (isZombie)
+            {
+                await Respond(e, "This room is now disabled, please join a new one");
+                return false;
+            }
+            var perm = cmd.GetRunPermissions(this, e.User);
+
+            if (perm == BattleCommand.RunPermission.Run) await cmd.Run(this, e, arg);
+            else if (perm == BattleCommand.RunPermission.Vote) await StartVote(cmd, e, arg);
+            else return false;
+            return true;
         }
 
 
@@ -717,9 +726,14 @@ namespace ZkLobbyServer
         }
 
 
-        private void spring_PlayerSaid(object sender, SpringLogEventArgs e)
+        private void spring_PlayerSaid(object sender, SpringChatEventArgs e)
         {
             ConnectedUser user;
+
+            Say say = new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle, AllowRelay = false };
+
+            //dont broadcast commands
+            if (CheckSayForCommand(say).Result) return;
 
             var isPlayer = spring.Context.ActualPlayers.Any(x => x.Name == e.Username && !x.IsSpectator);
             
@@ -737,7 +751,7 @@ namespace ZkLobbyServer
             }
                 
             // relay
-            if (!e.Line.StartsWith("Allies:") && !e.Line.StartsWith("Spectators:")) server.GhostSay(new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle, AllowRelay = false}, BattleID);
+            if (e.Location == SpringChatLocation.Public) server.GhostSay(say, BattleID);
         }
 
         private async void DedicatedServerExited(object sender, SpringBattleContext springBattleContext)
