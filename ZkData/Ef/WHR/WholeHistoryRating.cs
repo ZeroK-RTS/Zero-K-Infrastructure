@@ -40,7 +40,14 @@ namespace Ratings
         private Timer ladderRecalculationTimer;
         private int activePlayers = 0;
         private bool lastBattleRanked = false;
-        
+
+        private int battlesRegistered = 0;
+        private SpringBattle firstBattle = null;
+        private List<Account> laddersCache = new List<Account>();
+
+        private SpringBattle latestBattle, lastUpdate;
+        private HashSet<int> ProcessedBattles = new HashSet<int>();
+
         private readonly RatingCategory category;
 
         public WholeHistoryRating(RatingCategory category)
@@ -50,6 +57,28 @@ namespace Ratings
             ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, 15 * 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
         }
 
+        public void ResetAll()
+        {
+
+            playerOldRatings = new ConcurrentDictionary<int, PlayerRating>();
+            playerRatings = new ConcurrentDictionary<int, PlayerRating>();
+            players = new Dictionary<int, Player>();
+            sortedPlayers = new SortedDictionary<float, int>();
+            topPlayers = new List<int>();
+            playerKeys = new Dictionary<int, float>();
+            activePlayers = 0;
+            lastBattleRanked = false;
+
+
+            battlesRegistered = 0;
+            firstBattle = null;
+            laddersCache = new List<Account>();
+
+            latestBattle = null;
+            lastUpdate = null;
+            ProcessedBattles = new HashSet<int>();
+            
+        }
 
         public PlayerRating GetPlayerRating(int accountID)
         {
@@ -73,10 +102,6 @@ namespace Ratings
                     ).getBlackWinProbability() * 2 / teams.Count()).ToList();
         }
 
-        private int battlesRegistered = 0;
-        private SpringBattle firstBattle = null;
-
-        private HashSet<int> ProcessedBattles = new HashSet<int>();
 
         public void ProcessBattle(SpringBattle battle, bool removeBattle = false)
         {
@@ -127,7 +152,6 @@ namespace Ratings
             }
         }
 
-        private List<Account> laddersCache = new List<Account>();
 
         public List<Account> GetTopPlayers(int count)
         {
@@ -200,11 +224,10 @@ namespace Ratings
         //implementation specific
 
 
-        private SpringBattle latestBattle, lastUpdate;
         private DateTime lastUpdateTime;
 
         private readonly object updateLock = new object();
-        private readonly object updateLockInternal = new object();
+        private readonly static object updateLockInternal = new object();
         private readonly object dbLock = new object();
 
         public void UpdateRatings()
@@ -441,7 +464,7 @@ namespace Ratings
                         if (rank == matched && rank < topPlayers.Count && topPlayers[rank] == pair.Value) matched++;
                         rank++;
                         percentile = (float)rank / activePlayers;
-                        if (newPercentileBrackets.Count <= Ranks.Percentiles.Length && percentile > percentilesRev[newPercentileBrackets.Count - 1]) newPercentileBrackets.Add(playerRatings[pair.Value].RealElo);
+                        if (newPercentileBrackets.Count <= Ranks.Percentiles.Length && percentile > percentilesRev[newPercentileBrackets.Count - 1]) newPercentileBrackets.Add(playerRatings[pair.Value].Elo);
                         playerRatings[pair.Value].ApplyLadderUpdate(rank, percentile, currentDay);
                     }
                     else if (playerRatings[pair.Value].Rank < int.MaxValue)
@@ -454,7 +477,7 @@ namespace Ratings
                 PercentileBrackets = newPercentileBrackets.Select(x => x).Reverse().ToArray();
                 topPlayers = newTopPlayers;
                 laddersCache = new List<Account>();
-                Trace.TraceInformation("WHR " + category + " Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty);
+                Trace.TraceInformation("WHR " + category + " Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty + " brackets are now: " + string.Join(", ", PercentileBrackets));
 
                 var playerIds = players.Select(x => x.id).ToList();
                 if (playerIds.Count() < 100)

@@ -52,13 +52,13 @@ namespace ChobbyLauncher
             discordController.OnRequest += DiscordOnRequestCallback;
             discordController.OnSpectate += DiscordOnSpectateCallback;
 
-            timer = new Timer((o)=>OnTimerTick(), this, 500, 500);
+            timer = new Timer((o) => OnTimerTick(), this, 500, 500);
         }
 
 
         private void OnTimerTick()
         {
-            foreach (var d in chobbyla.downloader.Downloads.Where(x=>x.IsComplete == null))
+            foreach (var d in chobbyla.downloader.Downloads.Where(x => x.IsComplete == null))
             {
                 SendCommand(new DownloadFileProgress()
                 {
@@ -71,7 +71,7 @@ namespace ChobbyLauncher
                 });
             }
 
-            
+
             discordController.Update();
         }
 
@@ -118,7 +118,7 @@ namespace ChobbyLauncher
         }
 
 
-        
+
         /// <summary>
         /// Starts listening on a new thread
         /// </summary>
@@ -218,7 +218,7 @@ namespace ChobbyLauncher
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error setting TTS volume {0}: {1}",args?.Volume, ex);
+                Trace.TraceError("Error setting TTS volume {0}: {1}", args?.Volume, ex);
             }
         }
 
@@ -318,7 +318,10 @@ namespace ChobbyLauncher
             {
                 using (var wc = new WebClient())
                 {
-                    wc.DownloadFile($"{args.ImageUrl}", Path.Combine(chobbyla.paths.WritableDirectory, args.TargetPath));
+                    var targetPath = Path.Combine(chobbyla.paths.WritableDirectory, args.TargetPath);
+                    var dir = Path.GetDirectoryName(targetPath);
+                    if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                    wc.DownloadFile($"{args.ImageUrl}", targetPath);
                 }
                 SendCommand(new DownloadImageDone() { TargetPath = args.TargetPath, ImageUrl = args.ImageUrl, RequestToken = args.RequestToken });
             }
@@ -405,7 +408,7 @@ namespace ChobbyLauncher
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error adding GA business event: {0}",  ex);
+                Trace.TraceError("Error adding GA business event: {0}", ex);
             }
         }
 
@@ -527,7 +530,7 @@ namespace ChobbyLauncher
                 {
                     await down.WaitHandle.AsTask(TimeSpan.FromMinutes(30));
                 }
-                await SendCommand(new DownloadFileDone() { Name = args.Name, FileType = args.FileType, IsSuccess = down?.IsComplete == true, IsAborted = down?.IsAborted == true});
+                await SendCommand(new DownloadFileDone() { Name = args.Name, FileType = args.FileType, IsSuccess = down?.IsComplete == true, IsAborted = down?.IsAborted == true });
             }
             catch (Exception ex)
             {
@@ -543,7 +546,7 @@ namespace ChobbyLauncher
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error processing steamhostgamerequest: {0}",ex);
+                Trace.TraceError("Error processing steamhostgamerequest: {0}", ex);
             }
         }
 
@@ -584,7 +587,7 @@ namespace ChobbyLauncher
                             return;
                         }
                     }
-                    
+
                     if (!string.IsNullOrEmpty(args.StartScriptContent))
                     {
                         startFilePath = Path.Combine(paths.WritableDirectory, "_script.txt");
@@ -618,7 +621,68 @@ namespace ChobbyLauncher
         {
             discordController.Respond(args.UserId, (DiscordRpc.Reply)args.Reply);
         }
-        
+
+
+        private async Task Process(ReadReplayInfo args)
+        {
+            string path = null;
+            ReplayReader.ReplayInfo ret = null;
+            try
+            {
+                path = Path.Combine(chobbyla.paths.WritableDirectory, args.RelativePath);
+                ret = new ReplayReader().ReadReplayInfo(path);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("Error reading replay info from path {0} : {1}", path, ex);
+            }
+
+            SendCommand(new ReadReplayInfoDone()
+            {
+                RelativePath = args.RelativePath,
+                ReplayInfo = ret
+            });
+        }
+
+
+        private async Task Process(GetSpringBattleInfo args)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    var serv = GlobalConst.GetContentService();
+                    var sbi = serv.GetSpringBattleInfo(args.GameID);
+                    SendCommand(new GetSpringBattleInfoDone()
+                    {
+                        GameID = args.GameID,
+                        SpringBattleInfo = sbi
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Error getting spring battle info {0} : {1}", args.GameID, ex);
+                }
+            });
+
+        }
+
+        private async Task Process(SendBugReport args)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    chobbyla.ReportBug(args.Title, args.Description);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Error sending bug report {0}", ex);
+                }
+            });
+
+        }
+
 
         private async Task OnConnected()
         {
@@ -626,11 +690,11 @@ namespace ChobbyLauncher
             try
             {
                 await SendSteamOnline();
-               
+
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error processing OnConnected: {0}" ,ex);
+                Trace.TraceError("Error processing OnConnected: {0}", ex);
             }
 
             try
@@ -659,7 +723,7 @@ namespace ChobbyLauncher
             if (steam.IsOnline)
             {
                 var friendId = initialConnectLobbyID != 0 ? steam.GetLobbyOwner(initialConnectLobbyID) : null;
-                    
+
                 await
                     SendCommand(new SteamOnline()
                     {

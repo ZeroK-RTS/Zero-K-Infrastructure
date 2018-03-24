@@ -93,11 +93,10 @@ namespace ZeroKWeb
             if (Challenge.Attackers.Any() || Challenge.Defenders.Any())
             {
                 var battle = new PlanetWarsServerBattle(server, Challenge);
+                await server.AddBattle(battle);
                 RunningBattles[battle.BattleID] = Challenge;
-                server.Battles[battle.BattleID] = battle;
 
                 // also join in lobby
-                await server.Broadcast(server.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
                 foreach (var usr in Challenge.Attackers.Union(Challenge.Defenders)) await server.ForceJoinBattle(usr, battle);
 
                 if (await battle.StartGame())
@@ -123,7 +122,7 @@ namespace ZeroKWeb
         {
             try
             {
-                if (GlobalConst.PlanetWarsMode != PlanetWarsModes.Running) return;
+                if (MiscVar.PlanetWarsMode != PlanetWarsModes.Running) return;
 
                 if (!AttackOptions.Any(x => x.PlanetID == planet.PlanetID) && (Challenge == null) &&
                     (planet.OwnerFactionID != AttackingFaction.FactionID))
@@ -143,7 +142,7 @@ namespace ZeroKWeb
             PwMatchCommand command = null;
             try
             {
-                if (GlobalConst.PlanetWarsMode != PlanetWarsModes.Running) return new PwMatchCommand(PwMatchCommand.ModeType.Clear);
+                if (MiscVar.PlanetWarsMode != PlanetWarsModes.Running) return new PwMatchCommand(PwMatchCommand.ModeType.Clear);
 
                 if (Challenge == null)
                     command = new PwMatchCommand(PwMatchCommand.ModeType.Attack)
@@ -196,7 +195,7 @@ namespace ZeroKWeb
 
         public async Task OnJoinPlanet(ConnectedUser conus, PwJoinPlanet args)
         {
-            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running)
+            if (MiscVar.PlanetWarsMode == PlanetWarsModes.Running)
             {
                 if (conus.User.CanUserPlanetWars()) await JoinPlanet(conus.Name, args.PlanetID);
             }
@@ -204,7 +203,9 @@ namespace ZeroKWeb
 
         public async Task OnLoginAccepted(ConnectedUser connectedUser)
         {
-            if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running)
+            await connectedUser.SendCommand(GeneratePwStatus());
+
+            if (MiscVar.PlanetWarsMode == PlanetWarsModes.Running)
             {
                 var u = connectedUser.User;
                 if (u.CanUserPlanetWars()) await UpdateLobby(u.Name);
@@ -215,7 +216,7 @@ namespace ZeroKWeb
         {
             try
             {
-                if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running)
+                if (MiscVar.PlanetWarsMode == PlanetWarsModes.Running)
                 {
                     if (Challenge == null)
                     {
@@ -483,13 +484,30 @@ namespace ZeroKWeb
             {
                 timer.Stop();
 
-                if (GlobalConst.PlanetWarsMode != lastPlanetWarsMode)
+                // auto change PW mode based on time
+                if (MiscVar.PlanetWarsNextModeTime != null && MiscVar.PlanetWarsNextModeTime < DateTime.UtcNow && MiscVar.PlanetWarsNextMode != null)
                 {
-                    UpdateLobby();
-                    lastPlanetWarsMode = GlobalConst.PlanetWarsMode;
+                    MiscVar.PlanetWarsMode = MiscVar.PlanetWarsNextMode ?? PlanetWarsModes.AllOffline;
+
+                    MiscVar.PlanetWarsNextMode = null;
+                    MiscVar.PlanetWarsNextModeTime = null;
+
+                    using (var db = new ZkDataContext())
+                    {
+                        db.Events.Add(server.PlanetWarsEventCreator.CreateEvent("PlanetWars changed status to {0}", MiscVar.PlanetWarsMode.Description()));
+                        db.SaveChanges();
+                    }
                 }
 
-                if (GlobalConst.PlanetWarsMode != PlanetWarsModes.Running) return;
+
+                if (MiscVar.PlanetWarsMode != lastPlanetWarsMode)
+                {
+                    server.Broadcast(GeneratePwStatus());
+                    UpdateLobby();
+                    lastPlanetWarsMode = MiscVar.PlanetWarsMode;
+                }
+
+                if (MiscVar.PlanetWarsMode != PlanetWarsModes.Running) return;
 
                 if (Challenge == null)
                 {
@@ -521,6 +539,17 @@ namespace ZeroKWeb
             {
                 timer.Start();
             }
+        }
+
+        private static PwStatus GeneratePwStatus()
+        {
+            return new PwStatus()
+            {
+                PlanetWarsMode = MiscVar.PlanetWarsMode,
+                MinLevel = GlobalConst.MinPlanetWarsLevel,
+                PlanetWarsNextMode = MiscVar.PlanetWarsNextMode,
+                PlanetWarsNextModeTime = MiscVar.PlanetWarsNextModeTime
+            };
         }
 
         public class AttackOption

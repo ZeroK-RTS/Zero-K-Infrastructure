@@ -67,9 +67,7 @@ namespace PlasmaShared
         public bool? IsSpecial { get; set; }
     }
 
-
-
-
+    
     public class PublicCommunityInfo
     {
         public List<NewsItem> NewsItems { get; set; } = new List<NewsItem>();
@@ -77,6 +75,14 @@ namespace PlasmaShared
         public List<ForumItem> ForumItems { get; set; } = new List<ForumItem>();
         public List<MapItem> MapItems { get; set; } = new List<MapItem>();
 
+    }
+
+    public class SpringBattleInfo
+    {
+        public int SpringBattleID { get; set; }
+        public AutohostMode AutohostMode { get; set; }
+        public bool IsMatchMaker { get; set; }
+        public string Title { get; set; }
     }
 
 
@@ -144,5 +150,8 @@ namespace PlasmaShared
 
         [OperationContract]
         PublicCommunityInfo GetPublicCommunityInfo();
+
+        [OperationContract]
+        SpringBattleInfo GetSpringBattleInfo(string gameid);
     }
 }

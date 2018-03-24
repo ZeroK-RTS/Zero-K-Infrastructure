@@ -150,9 +150,9 @@ namespace Ratings
                     var maxAge = DateTime.UtcNow.AddDays(-7);
                     IEnumerable<Account> accounts;
                     var rating = RatingCategory.Planetwars;
-                    if (GlobalConst.PlanetWarsMode == PlanetWarsModes.PreGame)
+                    if (MiscVar.PlanetWarsMode == PlanetWarsModes.PreGame)
                     {
-                        rating = RatingCategory.MatchMaking;
+                        rating = RatingCategory.Casual;
                         accounts = GetRatingSystem(rating).GetTopPlayers(int.MaxValue, x => x.LastLogin > maxAge && x.FactionID == factionID);
                     }
                     else

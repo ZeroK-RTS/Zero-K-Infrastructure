@@ -178,7 +178,7 @@ namespace System.Web.Mvc
                     new MvcHtmlString(
                         string.Format(
                             "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}.png'  class='icon16' alt='rank' />{5}{6}<a href='/Users/Detail/{2}' style='color:{3}' nicetitle='$user${2}'>{4}</a>",
-                            account.Country != "??" ? account.Country : "unknown",
+                            (account.Country != "??" && !account.HideCountry) ? account.Country : "unknown",
                             account.GetIconName(),
                             account.AccountID,
                             colorize ? color : "",
@@ -537,10 +537,9 @@ namespace System.Web.Mvc
             var url = Global.UrlHelper();
             var state = "";
             if (!s.IsActive) {
-                if (s.ActivatedOnTurn == null) state = "<span style='color:red'>DISABLED</span>";
-                if (s.ActivatedOnTurn != null) {
-                    state = string.Format(" <span style='color:orange'>POWERING {0} turns left</span>",
-                                          s.StructureType.TurnsToActivate - s.Planet.Galaxy.Turn + s.ActivatedOnTurn);
+                if (s.ActivationTurnCounter == null) state = "<span style='color:red'>DISABLED</span>";
+                if (s.ActivationTurnCounter >= 0) {
+                    state = string.Format(" <span style='color:orange'>POWERING {0} turns left</span>", (s.TurnsToActivateOverride ?? s.StructureType.TurnsToActivate) - s.ActivationTurnCounter);
                 }
             }
             else state = "<span style='color:green'>ACTIVE</span>";

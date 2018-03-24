@@ -16,8 +16,7 @@ namespace ChobbyLauncher
     public class Dummy
     {
     }
-
-
+    
     [SteamP2PMessage]
     public class SteamP2PNotifyJoin
     {
@@ -25,15 +24,15 @@ namespace ChobbyLauncher
     }
 
     [SteamP2PMessage]
-    public class SteamP2PRequestClientPort
+    public class SteamP2PRequestPrepareProxy
     {
+        public int Channel { get; set; }
     }
 
     [SteamP2PMessage]
-    public class SteamP2PClientPort
+    public class SteamP2PConfirmCreateProxy
     {
-        public string IP { get; set; }
-        public int Port { get; set; }
+        public int Channel { get; set; }
 
     }
 

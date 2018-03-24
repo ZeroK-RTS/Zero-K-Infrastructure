@@ -11,6 +11,8 @@ using System.Threading;
 using System.Windows.Forms;
 using GameAnalyticsSDK.Net;
 using LumiSoft.Net.STUN.Client;
+using PlasmaShared;
+using Steamworks;
 using ZkData;
 
 namespace ChobbyLauncher
@@ -159,19 +161,37 @@ namespace ChobbyLauncher
             var syncError = CrashReportHelper.IsDesyncMessage(logStr);
             if (syncError) Trace.TraceWarning("Sync error detected");
 
-                        var openGlFail = logStr.Contains("No OpenGL drivers installed.") ||
-                            logStr.Contains("Please go to your GPU vendor's website and download their drivers.") ||
-                            logStr.Contains("minimum required OpenGL version not supported, aborting") ||
-                            logStr.Contains("Update your graphic-card driver!");
+            var openGlFail = logStr.Contains("No OpenGL drivers installed.") ||
+                logStr.Contains("This stack trace indicates a problem with your graphic card driver") ||
+                logStr.Contains("Please go to your GPU vendor's website and download their drivers.") ||
+                logStr.Contains("minimum required OpenGL version not supported, aborting") ||
+                logStr.Contains("Update your graphic-card driver!");
             
 
             if (openGlFail)
             {
                 Trace.TraceWarning("Outdated OpenGL detected");
-                MessageBox.Show("You have outdated graphics card drivers!\r\nPlease try finding ones for your graphics card and updating them.", "Outdate graphics card driver detected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                if (Environment.OSVersion.Platform == PlatformID.Unix)
+                {
+                    if (MessageBox.Show("You have outdated graphics card drivers!\r\nPlease try finding ones for your graphics card and updating them. \r\n\r\nWould you like to see our Linux graphics driver guide?", "Outdated graphics card driver detected", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                    {
+                        Process.Start("http://zero-k.info/mediawiki/index.php?title=Optimized_Graphics_Linux");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("You have outdated graphics card drivers!\r\nPlease try finding ones for your graphics card and updating them.", "Outdated graphics card driver detected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
+                    
             }
 
-            if ((!springRunOk && !openGlFail) || syncError) // crash has occured
+            var luaErr = logStr.Contains("LUA_ERRRUN");
+            
+
+
+            if ((!springRunOk && !openGlFail) || syncError || luaErr || !string.IsNullOrEmpty(chobbyla.BugReportTitle)) // crash has occured
             {
                 
                 if (
@@ -179,7 +199,14 @@ namespace ChobbyLauncher
                         "Automated crash report",
                         MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
-                    var ret = CrashReportHelper.ReportCrash(logSb.ToString(), syncError, chobbyla.engine);
+                    var crashType = syncError ? CrashType.Desync : luaErr ? CrashType.LuaError : CrashType.Crash;
+                    if (!string.IsNullOrEmpty(chobbyla.BugReportTitle))
+                    {
+                        logSb.Insert(0, $"{chobbyla.BugReportTitle}\n\n{chobbyla.BugReportDescription}\n\n");
+                        crashType = CrashType.UserReport;
+                    }
+
+                    var ret = CrashReportHelper.ReportCrash(logSb.ToString(), crashType, chobbyla.engine);
                     if (ret != null)
                         try
                         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ChobbyLauncher;
 using GameAnalyticsSDK.Net;
+using PlasmaShared;
 
 namespace ChobbyLauncher
 {
@@ -89,8 +90,7 @@ namespace ChobbyLauncher
         public string TargetPath { get; set; }
     }
 
-
-
+    
     [ChobbyMessage]
     public class DownloadFileDone
     {
@@ -393,4 +393,37 @@ namespace ChobbyLauncher
         public string avatar;
     }
 
+
+    [ChobbyMessage]
+    public class ReadReplayInfo
+    {
+        public string RelativePath { get; set; }
+    }
+
+
+    [ChobbyMessage]
+    public class ReadReplayInfoDone {
+        public string RelativePath { get; set; }
+        public ReplayReader.ReplayInfo ReplayInfo { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class GetSpringBattleInfo
+    {
+        public string GameID { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class GetSpringBattleInfoDone
+    {
+        public string GameID { get; set; }
+        public SpringBattleInfo SpringBattleInfo { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class SendBugReport
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+    }
 }

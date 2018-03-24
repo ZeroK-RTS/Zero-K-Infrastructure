@@ -14,6 +14,7 @@ public class BundleConfig
             "~/Scripts/jquery.ba-bbq.js",
             "~/Scripts/jquery.history.js",
             "~/Scripts/jquery.expand.js",
+            "~/Scripts/jquery.datetimepicker.full.min.js",
             "~/Scripts/nicetitle.js",
             "~/Scripts/raphael-min.js",
             "~/Scripts/grid.js",
@@ -22,6 +23,7 @@ public class BundleConfig
         bundles.Add(new StyleBundle("~/bundles/maincss").Include(
             "~/Styles/fonts.css",
             "~/Styles/base.css",
+            "~/Styles/jquery.datetimepicker.min.css",
             "~/Styles/menu.css",
             "~/Styles/stars.css",
             "~/Styles/levelrank.css",

@@ -199,7 +199,9 @@
     <Compile Include="Controllers\GithubController.cs" />
     <Compile Include="Controllers\LobbyController.cs" />
     <Compile Include="Controllers\LobbyNewsController.cs" />
+    <Compile Include="Controllers\PlanetwarsAdminController.cs" />
     <Compile Include="Controllers\ReplaysController.cs" />
+    <Compile Include="Controllers\TourneyController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="ForumParser\ForumWikiParser.cs" />
     <Compile Include="ForumParser\LinkedListNodeBackEnumerator.cs" />
@@ -1424,6 +1426,7 @@
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.ba-bbq.js" />
+    <Content Include="Scripts\jquery.datetimepicker.full.min.js" />
     <Content Include="Scripts\jquery.expand.js" />
     <Content Include="Scripts\jquery.history.js" />
     <Content Include="Scripts\jquery.qtip.min.js" />
@@ -1434,6 +1437,7 @@
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site_main.js" />
+    <Content Include="Styles\jquery.datetimepicker.min.css" />
     <Content Include="Styles\userpage.css" />
     <Content Include="Styles\base.css" />
     <Content Include="Styles\dark-hive\images\tech_button.png" />
@@ -1569,6 +1573,8 @@
     <Content Include="Styles\fonts\Xolonium-Regular.otf" />
     <Content Include="Styles\fonts\Xolonium-Regular.ttf" />
     <Content Include="Styles\fonts\Xolonium-Regular.woff" />
+    <Content Include="Views\Tourney\TourneyIndex.cshtml" />
+    <Content Include="Views\PlanetwarsAdmin\PlanetwarsAdminIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

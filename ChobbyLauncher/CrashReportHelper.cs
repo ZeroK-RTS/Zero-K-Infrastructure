@@ -12,11 +12,18 @@ using FileMode = System.IO.FileMode;
 
 namespace ChobbyLauncher
 {
+    public enum CrashType {
+        Desync,
+        Crash,
+        LuaError,
+        UserReport
+    };
+
     public static class CrashReportHelper
     {
         private const string TruncatedString = "------- TRUNCATED -------";
         private const int MaxInfologSize = 250000;
-        public static Issue ReportCrash(string infolog, bool isDesync, string engine)
+        public static Issue ReportCrash(string infolog, CrashType type, string engine)
         {
             try
             {
@@ -27,7 +34,7 @@ namespace ChobbyLauncher
                 infolog = Truncate(infolog, MaxInfologSize);
 
                 var createdIssue =
-                    client.Issue.Create("ZeroK-RTS", "CrashReports", new NewIssue($"Spring {(isDesync ? "desync" : "crash")} [{engine}]") { Body = $"```{infolog}```", })
+                    client.Issue.Create("ZeroK-RTS", "CrashReports", new NewIssue($"Spring {type} [{engine}]") { Body = $"```{infolog}```", })
                         .Result;
 
                 return createdIssue;

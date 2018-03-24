@@ -88,11 +88,16 @@
             </table>
         </div>
         <h1 class="username">
-            @if (Model.Country != "??")
+            @{ 
+                MvcHtmlString ranks = new MvcHtmlString(Ratings.Ranks.RankBackgroundImages.Select((x, i) => (string)("<img class='icon16' src='/img/ranks/" + Model.GetIconLevel() + "_" + i + ".png'>")).Aggregate((x, y) => x + y));
+                MvcHtmlString levels = new MvcHtmlString(Ratings.Ranks.RankBackgroundImages.Select((x, i) => (string)("<img class='icon16' src='/img/ranks/" + i + "_" + Model.Rank + ".png'>")).Aggregate((x, y) => x + y));
+            }
+
+            @if (Model.Country != "??" && !Model.HideCountry)
             {
                 <img nicetitle="Last known login location. <br /> <br />Contact the administrators if you would like yours not to be shown publicly." src='/img/flags/@(Model.Country).png' class='flag' height='11' width='16' alt='@Model.Country' />
             }
-            @Model.Name <img nicetitle="Combined rank/level icon. <br /><br />Rank is represented by the icon's color. Ranks range from red to purple, grey represents inactive players or players below red. The profile background adjusts based on rank. <br /><br />Level is represented by the icon's shape. It ranges from a single chevron for level 0 to a star for level 100+." src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png" class="icon16" alt="rank" />
+            @Model.Name <img nicetitle="Combined rank/level icon. <br /><br />@ranks<br>Rank is represented by the icon's color. The profile background adjusts based on rank. <br /><br />@levels<br>Level is represented by the icon's shape. It ranges from a single chevron for level 0 to a star for level 100+." src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png" class="icon16" alt="rank" />
         </h1>
 
         <div id="usr_info" style="background-image: url('@Ratings.Ranks.GetRankBackgroundImagePath(Model)')">
@@ -271,7 +276,7 @@
             }
             @if (Model.AccountID == Global.AccountID)
             {
-                <span class="fleft border"><center><a href='@Url.Action("Commanders", "My")'><img src='/img/avatars/module_autorepair.png' alt="unlock" nicetitle="Configure Commanders" /><br />Add/Edit</a></center></span>
+                <span class="fleft border"><center><a href='@Url.Action("Commanders", "My")'><img src='/img/avatars/module_autorepair.png' alt="unlock" nicetitle="Configure Commanders<br><br>You can create presets for your commander to use in-game. Give your commander a unique name " /><br />Add/Edit</a></center></span>
             }
             <br class="clearfloat" />
         </div>
@@ -350,7 +355,7 @@
         </div>
         <br class="clearfloat" />
 
-                if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running)
+                if (MiscVar.PlanetWarsMode == PlanetWarsModes.Running)
                 {
             <div id="usr_planetwars" class="border relative">
 
@@ -395,14 +400,16 @@
     {
         <div class="admin">
             <h3>Admin extras</h3>
-            
-            <a href="@Url.Action("Index", "LobbyNews")">Lobby news</a><br/>
-            <a href="@Url.Action("Index", "Users")">User list</a><br/>
-            <a href="@Url.Action("Index", "Charts")">Charts</a><br/>
+
+            <a href="@Url.Action("Index", "Tourney")">Tourney control</a><br />
+            <a href="@Url.Action("Index", "LobbyNews")">Lobby news</a><br />
+            <a href="@Url.Action("Index", "Users")">User list</a><br />
+            <a href="@Url.Action("Index", "Charts")">Charts</a><br />
+            <a href="@Url.Action("Index", "PlanetwarsAdmin")">PlanetWars admin</a><br />
             @if (GlobalConst.Mode == ModeType.Test)
-            {
-                <a href="@Url.Action("ResetDB", "Admin")" class="js_confirm">Reset database (copy from live)</a><br />
-            }
+    {
+        <a href="@Url.Action("ResetDB", "Admin")" class="js_confirm">Reset database (copy from live)</a><br />
+}
             <a href="@Url.Action("Index", "Engines")">Engines</a><br />
             <a href="@Url.Action("ChatHistory", "Lobby")">Lobby chat history</a><br />
             <a href="@Url.Action("TraceLogs", "Admin")">Infrastructure trace logs</a><br />

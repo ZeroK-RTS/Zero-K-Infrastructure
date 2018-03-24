@@ -1,0 +1,90 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZeroKWeb.Controllers.PlanetwarsAdminController.PlanetwarsAdminModel
+
+@{
+    Page.Title = "Planetwars Admin";
+    var grid = new UniGrid<Galaxy>(Model.Galaxies, "Galaxy maps");
+    grid.AddCol("ID", x => x.GalaxyID).SetSort(x => x.GalaxyID);
+    grid.AddCol("Image", @<text>
+                             <a href="@( Url.Action("Index", "Planetwars", new { galaxyId = item.GalaxyID }))">
+                                 <img src="@( GlobalConst.BaseSiteUrl)/img/galaxies/render_@( item.GalaxyID).jpg" style="height: 80px"/>
+                             </a></text>).SetSort(x => x.GalaxyID);
+    grid.AddCol("Started", x => x.Started).SetSort(x => x.Started);
+    grid.AddCol("Ended", x => x.Ended).SetSort(x => x.Ended);
+    grid.AddCol("Turn", x => x.Turn).SetSort(x => x.Turn);
+    grid.AddCol("Admin", AdminColumn);
+}
+
+@helper AdminColumn(Galaxy gal)
+{
+    if (gal.IsDefault)
+    {
+        <span style="color: red; font-weight: bold">SELECTED</span>
+    }
+    else
+    {
+        @Html.ActionLink("Select", "SetDefault", new { galaxyID = gal.GalaxyID })
+        <span>&nbsp;|&nbsp;</span>
+        @Html.ActionLink("Delete", "Delete", new { galaxyID = gal.GalaxyID }, new { @class = "js_confirm" })
+    }
+}
+
+<div id="grid">
+    <h1>@Page.Title</h1>
+
+    @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("grid", false)))
+    {
+        @Html.HiddenFor(x=>x.LastSelectedGalaxyID)
+        <table>
+            <tr>
+                <td>Master switch</td>
+                <td>
+                    <h3>@MiscVar.PlanetWarsMode</h3>
+                    @Html.EnumDropDownListFor(x => x.PlanetWarsMode)<input type="submit" value="Switch" name="set"/>
+                </td>
+            </tr>
+            <tr>
+                <td>Timed switch</td>
+                <td>
+                    @Html.EnumDropDownListFor(x => x.PlanetWarsNextMode)&nbsp;&nbsp;
+                    @Html.TextBoxFor(x => x.PlanetWarsNextModeDate, new { @class = "js_datetimepicker" })
+                    <input type="submit" value="Set in future" name="futureset" />
+                </td>
+
+            </tr>
+            <tr>
+                <td>Purge PlanetWars</td>
+                <td>
+                    <label>
+                        @Html.CheckBoxFor(x => x.ResetRoles)
+                        Reset roles
+                    </label>
+                    <label>
+                        @Html.CheckBoxFor(x => x.DeleteClans)
+                        Delete clans
+                    </label>
+
+                    <input type="submit" value="Purge" name="purge"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    Selected map utils
+                </td>
+                <td>
+                    @Html.ActionLink("Randomize maps", "RandomizeMaps", new { galaxyID = Model.LastSelectedGalaxyID })<br />
+                    @Html.ActionLink("Set team sizes", "SetPlanetTeamSizes", new { galaxyID = Model.LastSelectedGalaxyID })<br />
+                    @Html.ActionLink("Add wormholes", "AddWormholes", new { galaxyID = Model.LastSelectedGalaxyID })<br />
+                    @Html.ActionLink("Start galaxy", "StartGalaxy", new { galaxyID = Model.LastSelectedGalaxyID })<br />
+                    @Html.ActionLink("Set planet ownership", "OwnPlanets", new { galaxyID = Model.LastSelectedGalaxyID })<br />
+                    @Html.ActionLink("Reset all PW player ratings", "ResetRatings")<br />
+                </td>
+            </tr>
+
+        </table>
+
+        @GridHelpers.RenderTable(grid)
+    }
+</div>

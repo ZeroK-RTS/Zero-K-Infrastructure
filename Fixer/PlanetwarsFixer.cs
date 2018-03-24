@@ -81,6 +81,7 @@ namespace Fixer
 
                 db.Database.ExecuteSqlCommand("update accounts set pwbombersproduced=0, pwbombersused=0, pwdropshipsproduced=0, pwdropshipsused=0, pwmetalproduced=0, pwmetalused=0, pwattackpoints=0, pwwarpproduced=0, pwwarpused=0, elopw=1500, factionid=null");
                 if (resetclans) db.Database.ExecuteSqlCommand("update accounts set clanid=null");
+                
                 db.Database.ExecuteSqlCommand("delete from events");
                 db.Database.ExecuteSqlCommand("delete from planetownerhistories");
                 db.Database.ExecuteSqlCommand("delete from planetstructures");
@@ -300,8 +301,7 @@ namespace Fixer
                     {
                         foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.OwnerChangeWinsGame != true))
                         {
-                            s.IsActive = false;
-                            s.ActivatedOnTurn = null;
+                            s.ReactivateAfterBuild();
                         }
                     }
                 }

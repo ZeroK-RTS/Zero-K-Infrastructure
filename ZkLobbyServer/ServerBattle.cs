@@ -43,6 +43,7 @@ namespace ZkLobbyServer
         protected bool isZombie;
 
         private List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
+        public List<BattleDebriefing> Debriefings { get; private set; } = new List<BattleDebriefing>();
 
         private Timer pollTimer;
 
@@ -89,9 +90,9 @@ namespace ZkLobbyServer
 
         public void Dispose()
         {
-            Stop();
             spring.UnsubscribeEvents(this);
-            pollTimer.Dispose();
+            if (pollTimer != null) pollTimer.Enabled = false;
+            pollTimer?.Dispose();
             pollTimer = null;
             spring = null;
             ActivePoll = null;
@@ -147,7 +148,7 @@ namespace ZkLobbyServer
             }
         }
 
-        public async Task CheckCloseBattle()
+        public virtual async Task CheckCloseBattle()
         {
             if (Users.IsEmpty && !spring.IsRunning)
             {
@@ -427,11 +428,6 @@ namespace ZkLobbyServer
         }
 
 
-        public void Stop()
-        {
-            StopVote();
-        }
-
         public async void StopVote(Say e = null)
         {
             if (ActivePoll != null) await ActivePoll.End();
@@ -586,6 +582,8 @@ namespace ZkLobbyServer
             RunningSince = null;
 
             var debriefingMessage = BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server);
+            Debriefings.Add(debriefingMessage);
+
             await server.Broadcast(Users.Keys, debriefingMessage);
             await server.Broadcast(server.ConnectedUsers.Keys, new BattleUpdate() { Header = GetHeader() });
 

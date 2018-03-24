@@ -73,7 +73,7 @@
 <br />
 
 
-@switch (GlobalConst.PlanetWarsMode)
+@switch (MiscVar.PlanetWarsMode)
 {
     case PlanetWarsModes.AllOffline:
         if (Model.WinnerFaction != null)
@@ -83,7 +83,6 @@
 
             @Html.BBCode(Model.EndMessage)
 
-            <h2>Top players</h2>
             @Html.Action("Ladder","Planetwars")
         }
         else
@@ -98,10 +97,15 @@
         break;
 }
 
+@if (MiscVar.PlanetWarsNextModeTime != null)
+{
+    <h3>PlanetWars will switch to @(MiscVar.PlanetWarsNextMode?.Description()) in (@MiscVar.PlanetWarsNextModeTime.Value.Subtract(DateTime.UtcNow).ToNiceString())</h3>
+}
+
 @Html.Partial("FactionList")
 <br style="clear:both"/>
 
-@if (GlobalConst.PlanetWarsMode == PlanetWarsModes.Running && Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars())
+@if (MiscVar.PlanetWarsMode == PlanetWarsModes.Running && Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars())
 {
     @Html.Action("MatchMaker")
 }

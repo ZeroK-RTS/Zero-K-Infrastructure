@@ -484,10 +484,9 @@ namespace ZkLobbyServer
         private async Task StartBattle(ProposedBattle bat)
         {
             var battle = new MatchMakerBattle(server, bat, PickMap(bat.QueueType));
-            server.Battles[battle.BattleID] = battle;
+            await server.AddBattle(battle);
 
             // also join in lobby
-            await server.Broadcast(server.ConnectedUsers.Keys, new BattleAdded() { Header = battle.GetHeader() });
             foreach (var usr in bat.Players) await server.ForceJoinBattle(usr.Name, battle);
 
             if (!await battle.StartGame()) await server.RemoveBattle(battle);

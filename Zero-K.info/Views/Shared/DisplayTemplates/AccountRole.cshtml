@@ -4,7 +4,7 @@
 @{
     AccountRole entry = Model;
 }
-@if (GlobalConst.PlanetWarsMode != PlanetWarsModes.AllOffline)
+@if (MiscVar.PlanetWarsMode != PlanetWarsModes.AllOffline)
 {
     if (Global.Account != null && Global.Account.CanVoteRecall(entry.Account, entry.RoleType))
     {
