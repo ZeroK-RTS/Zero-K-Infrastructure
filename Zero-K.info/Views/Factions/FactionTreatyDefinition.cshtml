@@ -28,8 +28,8 @@
         </tr>
         <tr><td>Treaty duration (turns):</td><td><span nicetitle="Empty = until cancelled">@Html.Editor("turns", tr.TurnsRemaining)</span></td></tr>
         <tr><td>If trade cannot be done:</td><td>@Html.EnumDropDownListFor(x=>x.TreatyUnableToTradeMode)</td></tr>
-        <tr><td>@Html.PrintFaction(tr.FactionByProposingFactionID) gaurantee:</td><td>@Html.TextBoxFor(x => x.ProposingFactionGuarantee)</td></tr>
-        <tr><td>@Html.PrintFaction(tr.FactionByAcceptingFactionID) gaurantee:</td><td>@Html.TextBoxFor(x => x.AcceptingFactionGuarantee)</td></tr>
+        <tr><td>@Html.PrintFaction(tr.FactionByProposingFactionID) guarantee:</td><td>@Html.TextBoxFor(x => x.ProposingFactionGuarantee)</td></tr>
+        <tr><td>@Html.PrintFaction(tr.FactionByAcceptingFactionID) guarantee:</td><td>@Html.TextBoxFor(x => x.AcceptingFactionGuarantee)</td></tr>
 
         @if (tr.TreatyEffects != null)
         {
