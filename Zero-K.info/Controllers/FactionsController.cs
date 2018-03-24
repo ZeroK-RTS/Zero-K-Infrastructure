@@ -258,11 +258,20 @@ namespace ZeroKWeb.Controllers
 
             // note: we don't actually need to make sure trade can be executed before storing guarantee,
             // because if either fails we just don't save the changes to database
-            if (treaty.ProcessTrade(true) == null && treaty.StoreGuarantee()) {
+
+            var isOneTimeOnly = treaty.TreatyEffects.All(x => x.TreatyEffectType.IsOneTimeOnly);
+
+            if (treaty.ProcessTrade(true) == null && (isOneTimeOnly || treaty.StoreGuarantee())) {
                 treaty.AcceptedAccountID = acc.AccountID;
                 treaty.TreatyState = TreatyState.Accepted;
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("Treaty {0} between {1} and {2} accepted by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
                 db.SaveChanges();
+
+                if (isOneTimeOnly)
+                {
+                    treaty.TreatyState = TreatyState.Invalid;
+                    db.SaveChanges();
+                }
 
                 return RedirectToAction("Detail", new { id = Global.FactionID });
             }
