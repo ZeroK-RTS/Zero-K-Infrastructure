@@ -122,6 +122,7 @@ namespace ZeroKWeb.Controllers
                 db.PlanetOwnerHistories.Delete();
 
                 db.PlanetStructures.Where(x => x.Planet.GalaxyID == gal.GalaxyID && x.StructureType.OwnerChangeWinsGame == false && x.StructureType.EffectIsVictoryPlanet != true && x.StructureType.EffectVictoryPointProduction == null).Delete();
+                db.PlanetStructures.Where(x => x.Planet.GalaxyID == gal.GalaxyID).Update(x => new PlanetStructure { OwnerAccountID = null });
                 db.PlanetFactions.Where(x => x.Planet.GalaxyID == gal.GalaxyID).Delete();
                 db.AccountPlanets.Where(x => x.Planet.GalaxyID == gal.GalaxyID).Delete();
 
