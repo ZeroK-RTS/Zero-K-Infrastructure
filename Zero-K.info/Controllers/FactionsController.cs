@@ -239,7 +239,12 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var treaty = db.FactionTreaties.Single(x => x.FactionTreatyID == id);
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-            if (treaty.CanAccept(acc) && treaty.ProcessTrade(true) == null && treaty.StoreGuarantee()) {
+            if (!treaty.CanAccept(acc))
+                return Content("You do not have rights to accept treaties");
+
+            // note: we don't actually need to make sure trade can be executed before storing guarantee,
+            // because if either fails we just don't save the changes to database
+            if (treaty.ProcessTrade(true) == null && treaty.StoreGuarantee()) {
                 treaty.AcceptedAccountID = acc.AccountID;
                 treaty.TreatyState = TreatyState.Accepted;
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("Treaty {0} between {1} and {2} accepted by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
@@ -247,7 +252,7 @@ namespace ZeroKWeb.Controllers
 
                 return RedirectToAction("Detail", new { id = Global.FactionID });
             }
-            return Content("Cannot cancel");
+            return Content("One or both parties are unable to meet treaty conditions");
 
         }
 
