@@ -7,13 +7,13 @@ namespace ZkData.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class SpringBattleIsTourney : IMigrationMetadata
+    public sealed partial class SpringBattleIsCompetitive : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(SpringBattleIsTourney));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(SpringBattleIsCompetitive));
         
         string IMigrationMetadata.Id
         {
-            get { return "201803032334324_SpringBattleIsTourney"; }
+            get { return "201803032334324_SpringBattleIsCompetitive"; }
         }
         
         string IMigrationMetadata.Source

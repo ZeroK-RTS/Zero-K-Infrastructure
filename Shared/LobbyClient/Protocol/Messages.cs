@@ -481,7 +481,7 @@ namespace LobbyClient
         public string Founder { get; set; }
         public string Game { get; set; }
         public bool? IsMatchMaker { get; set; }
-        public bool? IsTourney { get; set; }
+        public bool? IsCompetitive { get; set; }
         public bool? IsRunning { get; set; }
         public string Map { get; set; }
         public int? MaxPlayers { get; set; }

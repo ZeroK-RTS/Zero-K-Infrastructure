@@ -50,7 +50,7 @@ namespace ZkData
         public RatingCategoryFlags ApplicableRatings { get; set; }
 
         public bool IsMatchMaker { get; set; }
-        public bool IsTourney { get; set; }
+        public bool IsCompetitive { get; set; }
         public bool IsMission { get; set; }
         public int? LoserTeamXpChange { get; set; }
         public int MapResourceID { get; set; }
@@ -98,7 +98,7 @@ namespace ZkData
 
         public void ResetApplicableRatings()
         {
-            ApplicableRatings = ((IsMatchMaker || IsTourney) ? RatingCategoryFlags.MatchMaking | RatingCategoryFlags.Casual : 0)
+            ApplicableRatings = (IsCompetitive ? RatingCategoryFlags.MatchMaking | RatingCategoryFlags.Casual : 0)
                                 | (!(IsMission || IsMatchMaker || HasBots || (PlayerCount < 2) || (ResourceByMapResourceID?.MapIsSpecial == true) || Duration < GlobalConst.MinDurationForElo) ? RatingCategoryFlags.Casual : 0)
                                 | (Mode == AutohostMode.Planetwars ? RatingCategoryFlags.Planetwars : 0);
         }
