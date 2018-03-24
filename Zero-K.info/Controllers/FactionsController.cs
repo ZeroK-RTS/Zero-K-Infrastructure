@@ -88,6 +88,11 @@ namespace ZeroKWeb.Controllers
             var treaty = new FactionTreaty();
             treaty.AccountByProposingAccountID = Global.Account;
             treaty.FactionByProposingFactionID = Global.Account.Faction;
+            treaty.ProposingFactionID = Global.FactionID;
+            
+            if (treaty.ProposingFactionID == acceptingFactionID)
+                return Content("Faction cannot enter into treaty with itself");
+            
             treaty.FactionByAcceptingFactionID = db.Factions.SingleOrDefault(x => x.FactionID == acceptingFactionID);
             return View("FactionTreatyDefinition", treaty);
         }
@@ -131,6 +136,9 @@ namespace ZeroKWeb.Controllers
                 if (treaty.TreatyState != TreatyState.Invalid) return Content("Treaty already in progress!");
             }
             else {
+                if (factionTreatyID == acceptingFactionID)
+                    return Content("Faction cannot enter into treaty with itself");
+
                 treaty = new FactionTreaty();
                 db.FactionTreaties.InsertOnSubmit(treaty);
                 treaty.FactionByAcceptingFactionID = db.Factions.Single(x => x.FactionID == acceptingFactionID);
