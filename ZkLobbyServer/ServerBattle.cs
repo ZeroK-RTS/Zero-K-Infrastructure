@@ -148,6 +148,14 @@ namespace ZkLobbyServer
             }
         }
 
+        public virtual async Task CheckCloseBattle()
+        {
+            if (Users.IsEmpty && !spring.IsRunning)
+            {
+                await server.RemoveBattle(this);
+            }
+        }
+
         public async Task ProcessBattleSay(Say say)
         {
             if (say.User == GlobalConst.NightwatchName) return; // ignore self
@@ -275,6 +283,11 @@ namespace ZkLobbyServer
                 }
             var pwd = GenerateClientScriptPassword(conus.Name);
             spring.AddUser(conus.Name, pwd, conus.User);
+
+            if (spring.Context.LobbyStartContext.Players.Any(x => x.Name == conus.Name) && conus.MyBattle != this)
+            {
+                await ProcessPlayerJoin(conus, joinPassword);
+            }
 
             await conus.SendCommand(GetConnectSpringStructure(pwd));
         }
@@ -588,6 +601,7 @@ namespace ZkLobbyServer
                     });
 
             toNotify.Clear();
+            await CheckCloseBattle();
         }
 
         private async Task ApplyBalanceResults(BalanceTeamsResult balance)
