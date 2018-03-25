@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using EntityFramework.Extensions;
+using PlasmaShared;
 using Ratings;
 
 namespace ZkData.Migrations

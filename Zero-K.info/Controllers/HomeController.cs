@@ -14,6 +14,7 @@ using DotNetOpenAuth.OpenId;
 using DotNetOpenAuth.OpenId.Extensions.SimpleRegistration;
 using DotNetOpenAuth.OpenId.RelyingParty;
 using LobbyClient;
+using PlasmaShared;
 using Ratings;
 using ZkData;
 

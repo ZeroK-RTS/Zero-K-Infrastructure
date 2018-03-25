@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using LobbyClient;
 using PlasmaShared;
 using ZkData;
@@ -22,6 +23,7 @@ namespace ZkLobbyServer {
         {
             this.Prototype = prototype;
             IsMatchMakerBattle = false;
+            ApplicableRating = RatingCategory.MatchMaking;
             EngineVersion = server.Engine;
             ModName = server.Game;
             FounderName = $"Tourney #{BattleID}";
@@ -34,6 +36,11 @@ namespace ZkLobbyServer {
             ModOptions["allyreclaim"] = "1";
 
             ValidateAndFillDetails();
+        }
+
+        public override async Task CheckCloseBattle()
+        {
+            //Don't close tourney battles automatically
         }
 
         public override void ValidateBattleStatus(UserBattleStatus ubs)

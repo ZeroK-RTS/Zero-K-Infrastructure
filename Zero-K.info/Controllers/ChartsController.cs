@@ -1,4 +1,5 @@
-﻿using Ratings;
+﻿using PlasmaShared;
+using Ratings;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;

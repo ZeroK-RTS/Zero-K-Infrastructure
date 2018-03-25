@@ -10,6 +10,7 @@ using Ratings;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.Linq.Translations;
+using PlasmaShared;
 
 namespace ZkData
 {

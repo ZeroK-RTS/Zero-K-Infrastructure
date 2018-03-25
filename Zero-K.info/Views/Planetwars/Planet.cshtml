@@ -238,7 +238,7 @@
                 <br/>
                 @if (structure.StructureType.UpkeepEnergy > 0 )
                 {
-                    if (&& structure Global.Account != null && Global.Account.CanSetPriority(structure))
+                    if (Global.Account != null && Global.Account.CanSetPriority(structure))
                     {
                         var priority = structure.EnergyPriority;
                         <form method="POST" action="@Url.Action("SetEnergyPriority", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })">

@@ -11,6 +11,7 @@ namespace ZkLobbyServer
 
         public MatchMakerBattle(ZkLobbyServer server, MatchMaker.ProposedBattle bat, string mapname) : base(server, null)
         {
+            ApplicableRating = RatingCategory.MatchMaking;
             IsMatchMakerBattle = true;
             EngineVersion = server.Engine;
             ModName = server.Game;

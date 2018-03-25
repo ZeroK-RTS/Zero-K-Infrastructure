@@ -96,7 +96,7 @@ public static class PlanetWarsTurnHandler
             }
         }
 
-        influence = (influence + shipBonus + techBonus) * ipMultiplier + defenseBonus;
+        influence = (influence + shipBonus + techBonus + defenseBonus) * ipMultiplier;
         if (influence < 0) influence = 0;
         influence = Math.Floor(influence * 100) / 100;
 

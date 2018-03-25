@@ -1,3 +1,4 @@
+using PlasmaShared;
 using Ratings;
 using System;
 using System.Collections.Generic;
@@ -179,7 +180,7 @@ namespace ZeroKWeb.Controllers
                                         .Include(x => x.SpringBattleBots)
                                         .FirstOrDefault();
                 if (battle.HasBots || battle.SpringBattlePlayers.Select(x => x.AllyNumber).Distinct().Count() < 2) return Content("Battle type currently not supported for ratings");
-                battle.ApplicableRatings = (MatchMaking ? Ratings.RatingCategoryFlags.MatchMaking : 0) | (Casual ? Ratings.RatingCategoryFlags.Casual : 0) | (PlanetWars ? Ratings.RatingCategoryFlags.Planetwars : 0);
+                battle.ApplicableRatings = (MatchMaking ? RatingCategoryFlags.MatchMaking : 0) | (Casual ? RatingCategoryFlags.Casual : 0) | (PlanetWars ? RatingCategoryFlags.Planetwars : 0);
                 db.SaveChanges();
             }
             RatingSystems.ReprocessResult(battle);

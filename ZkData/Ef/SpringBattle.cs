@@ -94,20 +94,11 @@ namespace ZkData
             Trace.TraceError("Tried to retrieve rating category for battle without rating category: B" + SpringBattleID);
             return RatingCategory.Casual;
         }
+        
 
-        public void ResetApplicableRatings()
-        {
-            if (HasBots) return;
-            ApplicableRatings = (IsMatchMaker ? RatingCategoryFlags.MatchMaking | RatingCategoryFlags.Casual : 0)
-                                | (!(IsMission || IsMatchMaker || (PlayerCount < 2) || (ResourceByMapResourceID?.MapIsSpecial == true) || Duration < GlobalConst.MinDurationForElo) ? RatingCategoryFlags.Casual : 0)
-                                | (Mode == AutohostMode.Planetwars ? RatingCategoryFlags.Planetwars : 0);
-        }
-
-        public void CalculateAllElo(bool noElo = false)
+        public void DispenseXP()
         {
             if (IsEloProcessed) return;
-
-            if (!noElo) ResetApplicableRatings();
 
             if (IsRatedMatch())
             {

@@ -193,7 +193,7 @@ namespace LobbyClient
         public event EventHandler<SpringLogEventArgs> PlayerJoined;
         public event EventHandler<SpringLogEventArgs> PlayerLeft;
         public event EventHandler<SpringLogEventArgs> PlayerLost; // player lost the game
-        public event EventHandler<SpringLogEventArgs> PlayerSaid;
+        public event EventHandler<SpringChatEventArgs> PlayerSaid;
 
         public void ResignPlayer(string name)
         {
@@ -390,10 +390,15 @@ namespace LobbyClient
                     case Talker.SpringEventType.PLAYER_CHAT:
                         if (e.Param == 255) HandleSpecialMessages(e);
                         else AddToLogs(e);
-
-                        // only public chat
-                        if ((PlayerSaid != null) && ((e.Param == Talker.TO_EVERYONE) || (e.Param == Talker.TO_EVERYONE_LEGACY)) &&
-                            !string.IsNullOrEmpty(e.PlayerName)) PlayerSaid(this, new SpringLogEventArgs(e.PlayerName, e.Text));
+                        
+                        if ((PlayerSaid != null) && !string.IsNullOrEmpty(e.PlayerName))
+                        {
+                            SpringChatLocation location = SpringChatLocation.Private;
+                            if (((e.Param == Talker.TO_EVERYONE) || (e.Param == Talker.TO_EVERYONE_LEGACY))) location = SpringChatLocation.Public;
+                            if (e.Param == Talker.TO_ALLIES) location = SpringChatLocation.Allies;
+                            if (e.Param == Talker.TO_SPECTATORS) location = SpringChatLocation.Spectators;
+                            PlayerSaid(this, new SpringChatEventArgs(e.PlayerName, e.Text, location));
+                        }
                         break;
 
                     case Talker.SpringEventType.PLAYER_DEFEATED:
@@ -479,4 +484,5 @@ namespace LobbyClient
             }
         }
     }
+
 }

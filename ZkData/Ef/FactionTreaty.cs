@@ -188,8 +188,9 @@ namespace ZkData
                         entry = new PlanetFaction() { PlanetID = te.Planet.PlanetID, FactionID = te.ReceivingFactionID };
                         te.Planet.PlanetFactions.Add(entry);
                     }
-                    entry.Influence += org.Influence;
-                    org.Influence = 0;
+                    double transfer = Math.Min(te.Value, org.Influence);
+                    entry.Influence += transfer;
+                    org.Influence -= transfer;
                 }
             }
 

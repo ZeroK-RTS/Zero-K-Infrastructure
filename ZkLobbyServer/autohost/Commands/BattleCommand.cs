@@ -86,13 +86,29 @@ namespace ZkLobbyServer
         {
             if (Access == AccessType.NoCheck) return RunPermission.Run;
             
-            UserBattleStatus user = null;
-            if (userName != null) battle.Users.TryGetValue(userName, out user);
-            var hasAdminRights = userName == battle.FounderName || user?.LobbyUser?.IsAdmin == true;
+            User user = null;
+            UserBattleStatus ubs = null;
+            if (userName != null)
+            {
+
+                battle.Users.TryGetValue(userName, out ubs);
+                if (ubs != null)
+                {
+                    user = ubs.LobbyUser;
+                }
+                else
+                {
+                    ConnectedUser con;
+                    battle.server.ConnectedUsers.TryGetValue(userName, out con);
+                    user = con?.User;
+                }
+            }
+
+            var hasAdminRights = userName == battle.FounderName || user?.IsAdmin == true;
 
             var s = battle.spring;
-            bool isSpectator = IsSpectator(battle, userName, user);
-            bool isAway = user?.LobbyUser?.IsAway == true;
+            bool isSpectator = IsSpectator(battle, userName, ubs);
+            bool isAway = user?.IsAway == true;
             int count = 0;
             if (s.IsRunning)
             {

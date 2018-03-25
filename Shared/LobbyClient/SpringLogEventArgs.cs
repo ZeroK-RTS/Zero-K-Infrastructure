@@ -18,4 +18,20 @@ namespace LobbyClient
             Username = username;
         }
     };
+
+    public class SpringChatEventArgs : SpringLogEventArgs
+    {
+        public SpringChatLocation Location { get; }
+
+        public SpringChatEventArgs(string username, string line, SpringChatLocation location) : base(username, line)
+        {
+            this.Location = location;
+        }
+    };
+
+    public enum SpringChatLocation
+    {
+        Public, Allies, Spectators,
+        Private
+    }
 }
