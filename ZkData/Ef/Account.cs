@@ -411,25 +411,10 @@ namespace ZkData
 
             if (Faction != null)
             {
-                var clanQratio = AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).Select(x => x.RoleType).Max(quotaSelector) ?? 0;
-                var factionQratio = AccountRolesByAccountID.Where(x => !x.RoleType.IsClanOnly).Select(x => x.RoleType).Max(quotaSelector) ?? 0;
-
+                var factionQratio = Math.Min(1, AccountRolesByAccountID.Where(x => !x.RoleType.IsClanOnly).Select(x => x.RoleType).Max(quotaSelector) ?? 0);
                 var facRes = factionResources(Faction);
 
-                if (factionQratio >= clanQratio) total += facRes * factionQratio;
-                else
-                {
-                    if (clanQratio > 0 && Clan != null)
-                    {
-                        var sumClanProd = Clan.Accounts.Sum(producedSelector);
-                        var sumFacProd = Faction.Accounts.Sum(producedSelector);
-                        if (sumFacProd > 0)
-                        {
-                            var clanRes = facRes * sumClanProd / sumFacProd;
-                            total += clanRes * clanQratio + (facRes - clanRes) * factionQratio;
-                        }
-                    }
-                }
+                if (factionQratio >= 0) total += facRes * factionQratio;
             }
 
             return Math.Floor(total);
