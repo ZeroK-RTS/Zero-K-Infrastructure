@@ -89,7 +89,7 @@ namespace ZeroKWeb.Controllers
             db.AccountRoles.DeleteAllOnSubmit(acc.AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).ToList());
 
             // delete active polls
-            db.Polls.DeleteAllOnSubmit(acc.PollsByRoleTargetAccountID);
+            db.Polls.DeleteAllOnSubmit(acc.PollsByRoleTargetAccountID.Where(x => x.RoleType.IsClanOnly));
 
             // remove planets
             acc.Planets.Clear();
