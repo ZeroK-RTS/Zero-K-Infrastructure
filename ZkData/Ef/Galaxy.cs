@@ -175,6 +175,28 @@ namespace ZkData
                         spreads[planet.Faction] = oldVal2 + autospread;
                     }
 
+
+                    /*
+                     * Replacement proposal for free = 0
+                     * var sumSpreads = spreads.Sum(x => x.Value);
+double squeeze = 1.0;
+if (sumSpreads > 100) 
+  squeeze = 100 / sumSpreads
+  foreach spread IP
+    IP *= squeeze
+  end for
+  sumSpreads = 100
+end if
+
+if (sumSpreads > freeRoom)
+  factor = (100 - sumSpreads)/(100 - freeRoom)
+  foreach current IP
+    IP *= factor
+  end for
+end if
+that is it
+                     */
+
                     if (spreads.Count > 0)
                     {
                         var sumSpreads = spreads.Sum(x => x.Value);
