@@ -337,8 +337,6 @@ public static class PlanetWarsTurnHandler
                         tr.TreatyState = TreatyState.Invalid;
                         tr.FactionByAcceptingFactionID.ProduceMetal(tr.AcceptingFactionGuarantee??0);
                         tr.FactionByProposingFactionID.ProduceMetal(tr.ProposingFactionGuarantee ?? 0);
-
-                        db.FactionTreaties.DeleteOnSubmit(tr);
                     }
                 }
             }
