@@ -163,7 +163,7 @@ namespace ZkData
         
         public const string LobbyAccessCookieName = "zk_lobby";
 
-        public const double PlanetMetalPerTurn = 1;
+        public const double PlanetMetalPerTurn = 0;
         public const double PlanetWarsEnergyToMetalRatio = 0.0;
         public const int PlanetWarsVictoryPointsToWin = 100;
         public const int BaseInfluencePerBattle = 35;
