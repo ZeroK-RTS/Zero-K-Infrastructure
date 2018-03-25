@@ -23,6 +23,7 @@
     {
         <tr><td>Metal from energy excess:</td><td style="color: lightgreen">+@Html.PrintMetal(f.GetEnergyToMetalConversion())</td></tr>
     }
+    <tr><td>Metal from planets:</td><td style="color: lightgreen">+@Html.PrintMetal(f.GetMetalFromPlanets())</td></tr>
     <tr><td>Infrastructure: </td><td>@Html.PrintMetal(f.Planets.SelectMany(x=>x.PlanetStructures).Where(x=>x.StructureType.IsBuildable).Sum(x=>x.StructureType.Cost))</td></tr>
 </table>
 
