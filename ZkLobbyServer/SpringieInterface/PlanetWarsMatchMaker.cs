@@ -426,7 +426,7 @@ namespace ZeroKWeb
                 var attacker = db.Factions.Single(x => x.FactionID == AttackingFaction.FactionID);
                 var planets =
                     gal.Planets.Where(x => x.OwnerFactionID != AttackingFaction.FactionID)
-                        .OrderBy(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Sum(y => y.Dropships))
+                        .OrderByDescending(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Sum(y => y.Dropships))
                         .ThenByDescending(x => x.PlanetFactions.Where(y => y.FactionID == AttackingFaction.FactionID).Sum(y => y.Influence))
                         .ToList();
                 // list of planets by attacker's influence
