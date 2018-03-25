@@ -287,8 +287,8 @@ namespace ZeroKWeb.SpringieInterface
             var ipBase = GlobalConst.BaseInfluencePerBattle;
             var ipShips = planet.GetEffectiveShipIpBonus(attacker);
             var ipDefs = planet.GetEffectiveIpDefense();
-            var attackerWinLoseCc = (ipShips + ipBase)*GlobalConst.PlanetWarsAttackerWinLoseCcMultiplier - ipDefs;
-            var attackerLoseKillCc = (ipShips + ipBase) * GlobalConst.PlanetWarsDefenderWinKillCcMultiplier - ipDefs;
+            var attackerWinLoseCc = (ipShips + ipBase - ipDefs)*GlobalConst.PlanetWarsAttackerWinLoseCcMultiplier;
+            var attackerLoseKillCc = (ipShips + ipBase - ipDefs) * GlobalConst.PlanetWarsDefenderWinKillCcMultiplier;
 
             var attackerIp = planet.PlanetFactions.FirstOrDefault(x => x.FactionID == attacker.FactionID)?.Influence;
 
