@@ -269,7 +269,7 @@ namespace ZeroKWeb.Controllers
             foreach (var p in gal.Planets)
             {
                 p.PlanetFactions.Clear();
-                if (p.OwnerFactionID != null) p.PlanetFactions.Add(new PlanetFaction() { FactionID = p.OwnerFactionID.Value, Influence = 100 });
+                if (p.OwnerFactionID != null) p.PlanetFactions.Add(new PlanetFaction() { FactionID = p.OwnerFactionID.Value, Influence = GlobalConst.PlanetWarsMaximumIP });
             }
 
             gal.IsDirty = true;
@@ -298,7 +298,7 @@ namespace ZeroKWeb.Controllers
                     planet.PlanetFactions.Add(new PlanetFaction()
                     {
                         Faction = faction,
-                        Influence = 100
+                        Influence = GlobalConst.PlanetWarsMaximumIP
                     });
                     planet.Faction = faction;
                 }

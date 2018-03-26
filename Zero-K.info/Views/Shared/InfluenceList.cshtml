@@ -11,7 +11,7 @@
                 @foreach (var fac in Model.Where(x=>x.Influence > 0).OrderByDescending(x=>x.Influence)) {
                     <text>['@fac.Faction.Name', @fac.Influence],</text>
                 }
-            ['Neutral', @(100 - (Model.Sum(x=>(double?)x.Influence)??0))]
+            ['Neutral', @(GlobalConst.PlanetWarsMaximumIP - (Model.Sum(x=>(double?)x.Influence)??0))]
         ]);
 
             var options = {

@@ -389,7 +389,7 @@ namespace System.Web.Mvc
         /// <param name="fac">The faction whose influence should be printed</param>
         /// <returns></returns>
         public static MvcHtmlString PrintInfluence(this HtmlHelper helper, Faction fac, double influence) {
-            var formattedString = string.Format("<span style='color:{0}'>{1:0.#}%</span>", Faction.FactionColor(fac, Global.FactionID), influence);
+            var formattedString = string.Format("<span style='color:{0}'>{1:0.#} ({2:0.#}%)</span>", Faction.FactionColor(fac, Global.FactionID), influence, 100 * influence / GlobalConst.PlanetWarsMaximumIP);
             return new MvcHtmlString(formattedString);
         }
 
