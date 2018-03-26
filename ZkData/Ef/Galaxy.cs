@@ -112,7 +112,7 @@ namespace ZkData
             foreach (var planet in Planets)
             {
                 var sumInfluence = planet.PlanetFactions.Sum(x => (double?)x.Influence) ?? 0;
-                var freeRoom = 100 - sumInfluence;
+                var freeRoom = GlobalConst.PlanetWarsMaximumIP - sumInfluence;
                 if (freeRoom > 0)
                 {
                     var spreads = new Dictionary<Faction, double>();
@@ -219,7 +219,7 @@ that is it
                             }
                             else entry.Influence += gain;
 
-                            if (entry.Influence > 100) entry.Influence = 100;
+                            if (entry.Influence > GlobalConst.PlanetWarsMaximumIP) entry.Influence = GlobalConst.PlanetWarsMaximumIP;
 
                         }
                     }
