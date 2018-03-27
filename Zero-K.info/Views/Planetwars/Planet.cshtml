@@ -316,7 +316,7 @@
             <h2>Self destruct</h2>
       foreach (var structureType in planet.PlanetStructures.Where(s => s.StructureType.IsBuildable && (planet.OwnerAccountID == Global.AccountID || s.OwnerAccountID == Global.AccountID)).Select(x => x.StructureType))
       {
-          if (planet.PlanetStructures.Any(x => x.StructureTypeID == structureType.StructureTypeID))
+          if (planet.PlanetStructures.Any(x => x.StructureTypeID == structureType.StructureTypeID && x.IsActive))
           {
                     <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("DestroyStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })" class="js_confirm">Destroy @structureType.Name (@Html.PrintMetal(structureType.Cost * GlobalConst.SelfDestructRefund))</a><br />
           }
