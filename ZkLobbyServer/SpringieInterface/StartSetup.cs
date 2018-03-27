@@ -263,7 +263,7 @@ namespace ZeroKWeb.SpringieInterface
                                 { "owner", s.Account?.Name },
                                 { "canBeEvacuated", s.StructureType.IsIngameEvacuable },
                                 { "canBeDestroyed", s.StructureType.IsIngameDestructible },
-                                //{ "isDestroyed", s.IsDestroyed ? true : false },
+                                { "isInactive", !s.IsActive},
                                 {
                                     "name", $"{owner} {s.StructureType.Name} ({(s.Account != null ? s.Account.Name : "unowned")})" },
                                 { "description", s.StructureType.Description }
