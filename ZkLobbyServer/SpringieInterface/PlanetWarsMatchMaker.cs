@@ -287,7 +287,7 @@ namespace ZeroKWeb
                 using (var db = new ZkDataContext())
                 {
                     var planet = db.Planets.Find(target.PlanetID);
-                    foreach (var of in db.Factions.Where(x=>!x.IsDeleted && x.FactionID != target.OwnerFactionID && x.FactionID != AttackingFaction.FactionID))
+                    foreach (var of in factions.Where(x => x.FactionID != target.OwnerFactionID && x.FactionID != AttackingFaction.FactionID))
                     {
                         if (of.GaveTreatyRight(planet, x=>x.EffectBalanceSameSide == true)) ret.Add(of);
                     }
