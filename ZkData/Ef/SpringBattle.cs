@@ -135,6 +135,13 @@ namespace ZkData
             IsEloProcessed = true;
         }
 
+        public List<int> GetAllyteamIds()
+        {
+            var allPlayers = SpringBattlePlayers.Where(x => !x.IsSpectator).ToList();
+            var allBots = SpringBattleBots.ToList();
+            return allPlayers.Select(x => x.AllyNumber).Union(allBots.Select(x => x.AllyNumber)).OrderBy(x => x).ToList();
+        }
+
         public List<float> GetAllyteamWinChances()
         {
             try
@@ -148,7 +155,7 @@ namespace ZkData
             {
                 Trace.TraceWarning("Invalid rating settings for B" + SpringBattleID + ", unable to calculate win chances. \n" + ex);
             }
-            return new List<float>();
+            return new List<float>(new float[GetAllyteamIds().Count]);
         }
 
 
