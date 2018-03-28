@@ -155,7 +155,7 @@ namespace ZkData
             {
                 Trace.TraceWarning("Invalid rating settings for B" + SpringBattleID + ", unable to calculate win chances. \n" + ex);
             }
-            return new List<float>(GetAllyteamIds().Count);
+            return new List<float>(new float[GetAllyteamIds().Count]);
         }
 
 
