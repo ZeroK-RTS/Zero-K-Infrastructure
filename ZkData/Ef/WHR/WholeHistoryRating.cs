@@ -212,6 +212,29 @@ namespace Ratings
             }
         }
 
+        //optimized selector method for high player counts
+        public List<Account> GetTopPlayersIn(int count, Dictionary<int, Account> accounts)
+        {
+            lock (updateLockInternal)
+            {
+                int counter = 0;
+                List<Account> retval = new List<Account>();
+                
+                Account acc;
+                foreach (var pair in sortedPlayers)
+                {
+                    if (!accounts.ContainsKey(pair.Value)) continue;
+                    acc = accounts[pair.Value];
+                    if (playerRatings[RatingSystems.GetRatingId(acc.AccountID)].Rank < int.MaxValue)
+                    {
+                        if (counter++ >= count) break;
+                        retval.Add(acc);
+                    }
+                }
+                return retval;
+            }
+        }
+
         public void AddTopPlayerUpdateListener(ITopPlayersUpdateListener listener, int topX)
         {
             topPlayersUpdateListeners.Add(listener, topX);
