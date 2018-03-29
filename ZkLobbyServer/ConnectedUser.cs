@@ -692,29 +692,23 @@ namespace ZkLobbyServer
         }
 
 
-        private async Task LeaveBattle(Battle battle)
+        private async Task LeaveBattle(ServerBattle battle)
         {
             if (battle.Users.ContainsKey(Name))
             {
-                if (battle.Users.Count == 1 && !(battle is TourneyBattle)) // last user remove entire battle
+                MyBattle = null;
+                UserBattleStatus oldVal;
+                if (battle.Users.TryRemove(Name, out oldVal))
                 {
-                    await server.RemoveBattle(battle);
-                }
-                else
-                {
-                    MyBattle = null;
-                    UserBattleStatus oldVal;
-                    if (battle.Users.TryRemove(Name, out oldVal))
+                    await server.SyncUserToAll(this);
+                    var bots = battle.Bots.Values.Where(x => x.owner == Name).ToList();
+                    foreach (var b in bots)
                     {
-                        await server.SyncUserToAll(this);
-                        var bots = battle.Bots.Values.Where(x => x.owner == Name).ToList();
-                        foreach (var b in bots)
-                        {
-                            BotBattleStatus obs;
-                            if (battle.Bots.TryRemove(b.Name, out obs)) await server.Broadcast(battle.Users.Keys, new RemoveBot() { Name = b.Name });
-                        }
+                        BotBattleStatus obs;
+                        if (battle.Bots.TryRemove(b.Name, out obs)) await server.Broadcast(battle.Users.Keys, new RemoveBot() { Name = b.Name });
                     }
                 }
+                await battle.CheckCloseBattle();
             }
         }
 

@@ -44,6 +44,7 @@ namespace LobbyClient
 
         public DateTime? RunningSince { get; set; }
 
+        public RatingCategory ApplicableRating = RatingCategory.Casual;
         public bool IsMatchMakerBattle { get; protected set; }
 
 
@@ -132,8 +133,9 @@ namespace LobbyClient
             ret.Players = Users.Values.Where(x=>x!=null).Select(x => x.ToPlayerTeam()).ToList();
             ret.Bots = Bots.Values.Where(x=>x!=null).Select(x => x.ToBotTeam()).ToList();
             ret.ModOptions = new Dictionary<string, string>(ModOptions);
-            ret.Mode = Mode;
+            ret.Mode = Mode;    
             ret.IsMatchMakerGame = IsMatchMakerBattle;
+            ret.ApplicableRating = ApplicableRating;
             ret.BattleID = BattleID;
             return ret;
         }

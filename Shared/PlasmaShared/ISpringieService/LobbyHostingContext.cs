@@ -14,6 +14,7 @@ namespace PlasmaShared
         public bool IsMission;
         public string EngineVersion;
         public bool IsMatchMakerGame;
+        public RatingCategory ApplicableRating;
         public AutohostMode Mode = AutohostMode.None;
         public Dictionary<string, string> ModOptions = new Dictionary<string, string>();
         public Dictionary<string,Dictionary<string,string>> UserParameters = new Dictionary<string, Dictionary<string, string>>();

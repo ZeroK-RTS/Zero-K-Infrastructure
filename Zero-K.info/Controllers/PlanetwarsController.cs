@@ -187,6 +187,7 @@ namespace ZeroKWeb.Controllers
 
                 List<PlanetStructure> list = planet.PlanetStructures.Where(x => x.StructureTypeID == structureTypeID).ToList();
                 PlanetStructure toDestroy = list[0];
+                if (!toDestroy.IsActive) return Content("Structure is currently disabled");
                 var canDestroy = toDestroy.OwnerAccountID == acc.AccountID || planet.OwnerAccountID == acc.AccountID;
                 if (!canDestroy) return Content("Structure is not under your control.");
                 var refund = toDestroy.StructureType.Cost * GlobalConst.SelfDestructRefund;

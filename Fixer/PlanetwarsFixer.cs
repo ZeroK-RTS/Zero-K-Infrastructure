@@ -18,6 +18,7 @@ using LobbyClient;
 using ZkData.UnitSyncLib;
 using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
+using PlasmaShared;
 
 namespace Fixer
 {
@@ -174,7 +175,7 @@ namespace Fixer
                 var minDate = DateTime.UtcNow.AddDays(-15);
                 foreach (Faction f in factions)
                 {
-                    accountsByFaction.Add(f.Accounts.Where(x => x.LastLogin > minDate).OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == Ratings.RatingCategory.Planetwars).Select(y => y.RealElo).DefaultIfEmpty(1500).FirstOrDefault()).ToList());
+                    accountsByFaction.Add(f.Accounts.Where(x => x.LastLogin > minDate).OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == RatingCategory.Planetwars).Select(y => y.RealElo).DefaultIfEmpty(1500).FirstOrDefault()).ToList());
                 }
                 List<Account> alreadyAssigned = new List<Account>();
 
@@ -261,7 +262,7 @@ namespace Fixer
                     planet.PlanetFactions.Add(new PlanetFaction()
                     {
                         Faction = faction,
-                        Influence = 100
+                        Influence = GlobalConst.PlanetWarsMaximumIP
                     });
                     planet.Faction = faction;
                 }
@@ -513,7 +514,7 @@ namespace Fixer
             foreach (var p in gal.Planets)
             {
                 p.PlanetFactions.Clear();
-                if (p.OwnerFactionID != null) p.PlanetFactions.Add(new PlanetFaction() {FactionID = p.OwnerFactionID.Value, Influence = 100});
+                if (p.OwnerFactionID != null) p.PlanetFactions.Add(new PlanetFaction() {FactionID = p.OwnerFactionID.Value, Influence = GlobalConst.PlanetWarsMaximumIP});
             }
             db.SaveChanges();
         }

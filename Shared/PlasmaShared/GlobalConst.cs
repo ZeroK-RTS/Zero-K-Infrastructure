@@ -165,6 +165,7 @@ namespace ZkData
 
         public const double PlanetMetalPerTurn = 1;
         public const double PlanetWarsEnergyToMetalRatio = 0.0;
+        public const double PlanetWarsMaximumIP = 100.0; //maximum IP on each planet
         public const int PlanetWarsVictoryPointsToWin = 100;
         public const int BaseInfluencePerBattle = 35;
         public const double PlanetWarsAttackerMetal = 100;
@@ -172,7 +173,7 @@ namespace ZkData
         public const int InfluencePerShip = 1;
         public const double InfluencePerTech = 1;
         public const double InfluenceDecay = 1;
-        public const double InfluenceToCapturePlanet = 50.1;
+        public const double InfluenceToCapturePlanet = PlanetWarsMaximumIP / 2 + 0.1;
         public const double InfluenceToLosePlanet = 10;
         public const double DropshipsForFullWarpIPGain = 10;
         public const double SelfDestructRefund = 0.5;

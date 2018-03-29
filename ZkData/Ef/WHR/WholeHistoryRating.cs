@@ -1,6 +1,7 @@
 // Implementation of WHR " + category +" based on original by Pete Schwamb httpsin//github.com/goshrine/whole_history_rating
 
 using Newtonsoft.Json;
+using PlasmaShared;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;

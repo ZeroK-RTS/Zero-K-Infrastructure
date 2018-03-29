@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlasmaShared;
+using System;
 using System.Collections.Generic;
 using ZkData;
 

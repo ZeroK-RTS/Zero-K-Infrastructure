@@ -96,7 +96,7 @@ public static class PlanetWarsTurnHandler
             }
         }
 
-        influence = (influence + shipBonus + techBonus) * ipMultiplier + defenseBonus;
+        influence = (influence + shipBonus + techBonus + defenseBonus) * ipMultiplier;
         if (influence < 0) influence = 0;
         influence = Math.Floor(influence * 100) / 100;
 
@@ -113,17 +113,17 @@ public static class PlanetWarsTurnHandler
 
         // clamping of influence
         // gained over 100, sole owner
-        if (entry.Influence >= 100)
+        if (entry.Influence >= GlobalConst.PlanetWarsMaximumIP)
         {
-            entry.Influence = 100;
+            entry.Influence = GlobalConst.PlanetWarsMaximumIP;
             foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != attacker)) pf.Influence = 0;
         }
         else
         {
             var sumOthers = planet.PlanetFactions.Where(x => x.Faction != attacker).Sum(x => (double?)x.Influence) ?? 0;
-            if (sumOthers + entry.Influence > 100)
+            if (sumOthers + entry.Influence > GlobalConst.PlanetWarsMaximumIP)
             {
-                var excess = sumOthers + entry.Influence - 100;
+                var excess = sumOthers + entry.Influence - GlobalConst.PlanetWarsMaximumIP;
                 foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != attacker)) pf.Influence -= pf.Influence / sumOthers * excess;
             }
         }
@@ -337,8 +337,6 @@ public static class PlanetWarsTurnHandler
                         tr.TreatyState = TreatyState.Invalid;
                         tr.FactionByAcceptingFactionID.ProduceMetal(tr.AcceptingFactionGuarantee??0);
                         tr.FactionByProposingFactionID.ProduceMetal(tr.ProposingFactionGuarantee ?? 0);
-
-                        db.FactionTreaties.DeleteOnSubmit(tr);
                     }
                 }
             }

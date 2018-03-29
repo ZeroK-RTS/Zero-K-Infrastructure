@@ -238,7 +238,7 @@
                 <br/>
                 @if (structure.StructureType.UpkeepEnergy > 0 )
                 {
-                    if (&& structure Global.Account != null && Global.Account.CanSetPriority(structure))
+                    if (Global.Account != null && Global.Account.CanSetPriority(structure))
                     {
                         var priority = structure.EnergyPriority;
                         <form method="POST" action="@Url.Action("SetEnergyPriority", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })">
@@ -316,7 +316,7 @@
             <h2>Self destruct</h2>
       foreach (var structureType in planet.PlanetStructures.Where(s => s.StructureType.IsBuildable && (planet.OwnerAccountID == Global.AccountID || s.OwnerAccountID == Global.AccountID)).Select(x => x.StructureType))
       {
-          if (planet.PlanetStructures.Any(x => x.StructureTypeID == structureType.StructureTypeID))
+          if (planet.PlanetStructures.Any(x => x.StructureTypeID == structureType.StructureTypeID && x.IsActive))
           {
                     <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("DestroyStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })" class="js_confirm">Destroy @structureType.Name (@Html.PrintMetal(structureType.Cost * GlobalConst.SelfDestructRefund))</a><br />
           }
