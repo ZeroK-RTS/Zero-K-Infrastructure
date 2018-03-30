@@ -34,7 +34,7 @@ namespace ZeroKWeb
 
         public PlanetWarsMatchMaker(ZkLobbyServer.ZkLobbyServer server)
         {
-
+            
             this.server = server;
             AttackOptions = new List<AttackOption>();
             RunningBattles = new Dictionary<int, AttackOption>();
@@ -176,15 +176,9 @@ namespace ZeroKWeb
                 var user = server.ConnectedUsers.Get(name)?.User;
                 if (user != null)
                 {
-                    var faction = factions.FirstOrDefault(x => x.Shortcut == user.Faction);
-                    if (faction == null)
-                    {
-                        var db = new ZkDataContext(); // this is a fallback, should not be needed
-                        var acc = Account.AccountByName(db, name);
-                        faction = factions.FirstOrDefault(x => x.FactionID == acc.FactionID);
-                    }
+                    var faction = factions.First(x => x.Shortcut == user.Faction);
                     if (faction == AttackingFaction) await JoinPlanetAttack(planetId, name);
-                    else if ((Challenge != null) && GetDefendingFactions(Challenge).Contains(faction)) await JoinPlanetDefense(planetId, name);
+                    else if ((Challenge != null) && GetDefendingFactions(Challenge).Any(y=>y.FactionID == faction.FactionID)) await JoinPlanetDefense(planetId, name);
                 }
             }
             catch (Exception ex)
@@ -276,7 +270,7 @@ namespace ZeroKWeb
             return AttackerSideChangeTime.AddMinutes(GlobalConst.PlanetWarsMinutesToAttack + extra);
         }
 
-        private List<Faction> GetDefendingFactions(AttackOption target)
+        public List<Faction> GetDefendingFactions(AttackOption target)
         {
             if (target.OwnerFactionID != null)
             {
@@ -289,7 +283,7 @@ namespace ZeroKWeb
                     var planet = db.Planets.Find(target.PlanetID);
                     foreach (var of in db.Factions.Where(x=>!x.IsDeleted && x.FactionID != target.OwnerFactionID && x.FactionID != AttackingFaction.FactionID))
                     {
-                        if (of.GaveTreatyRight(planet, x=>x.EffectBalanceSameSide == true)) ret.Add(of);
+                        if (of.GaveTreatyRight(planet, x=>x.EffectBalanceSameSide == true)) ret.Add(factions.First(x=>x.FactionID == of.FactionID));
                     }
                 }
                 return ret;
