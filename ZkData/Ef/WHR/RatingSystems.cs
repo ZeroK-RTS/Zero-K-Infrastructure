@@ -167,15 +167,26 @@ namespace Ratings
                     var maxAge = DateTime.UtcNow.AddDays(-7);
                     IEnumerable<Account> accounts;
                     var rating = RatingCategory.Planetwars;
-                    if (MiscVar.PlanetWarsMode == PlanetWarsModes.PreGame)
+                    Dictionary<int, Account> players;
+                    using (var db = new ZkDataContext())
                     {
-                        rating = RatingCategory.Casual;
-                        accounts = GetRatingSystem(rating).GetTopPlayers(int.MaxValue, x => x.LastLogin > maxAge && x.FactionID == factionID);
+                        if (MiscVar.PlanetWarsMode == PlanetWarsModes.PreGame)
+                        {
+                            players = db.Accounts.Where(x => x.LastLogin > maxAge && x.FactionID == factionID)
+                                .Include(a => a.Clan)
+                                .Include(a => a.Faction)
+                                .ToDictionary(x => x.AccountID);
+                            rating = RatingCategory.Casual;
+                        }
+                        else
+                        {
+                            players = db.Accounts.Where(x => x.PwAttackPoints > 0 && x.FactionID == factionID)
+                                .Include(a => a.Clan)
+                                .Include(a => a.Faction)
+                                .ToDictionary(x => x.AccountID);
+                        }
                     }
-                    else
-                    {
-                        accounts = GetRatingSystem(rating).GetTopPlayers(int.MaxValue, x => x.PwAttackPoints > 0 && x.FactionID == factionID);
-                    }
+                    accounts = GetRatingSystem(rating).GetTopPlayersIn(int.MaxValue, players);
                     count = accounts.Count();
                     skill = count > 0 ? (int)Math.Round(accounts.Average(x => x.GetRating(rating).Elo)) : 1500;
                     factionCache[factionID] = new Tuple<int, int, int>(latestBattle, count, skill);

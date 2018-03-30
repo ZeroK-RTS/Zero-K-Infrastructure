@@ -18,6 +18,8 @@ namespace Ratings
 
         List<Account> GetTopPlayers(int count, Func<Account, bool> selector);
 
+        List<Account> GetTopPlayersIn(int count, Dictionary<int, Account> accounts);
+
         List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams, DateTime time);
         
         void AddTopPlayerUpdateListener(ITopPlayersUpdateListener listener, int topX);
