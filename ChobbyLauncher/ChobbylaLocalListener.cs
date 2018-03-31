@@ -320,6 +320,12 @@ namespace ChobbyLauncher
                 {
                     var targetPath = Path.Combine(chobbyla.paths.WritableDirectory, args.TargetPath);
                     var dir = Path.GetDirectoryName(targetPath);
+                    if (File.Exists(dir))
+                    {
+                        var renamePath = dir + ".old";
+                        if (File.Exists(renamePath)) File.Delete(renamePath);
+                        File.Move(dir, renamePath);
+                    }
                     if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
                     wc.DownloadFile($"{args.ImageUrl}", targetPath);
                 }
