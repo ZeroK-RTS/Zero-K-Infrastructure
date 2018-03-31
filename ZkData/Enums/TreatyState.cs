@@ -8,6 +8,8 @@ namespace ZkData
         Proposed = 1,
         Accepted = 2,
         Suspended = 3,
+        Ended = 4,
+        Cancelled = 5
     }
 
     public enum TreatyUnableToTradeMode
