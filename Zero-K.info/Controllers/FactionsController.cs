@@ -271,6 +271,9 @@ namespace ZeroKWeb.Controllers
                 treaty.AcceptedAccountID = acc.AccountID;
                 treaty.TreatyState = TreatyState.Accepted;
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("Treaty {0} between {1} and {2} accepted by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
+
+                PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator(), db);
+
                 db.SaveChanges();
 
                 if (isOneTimeOnly)
