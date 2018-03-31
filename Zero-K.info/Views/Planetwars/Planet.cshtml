@@ -5,7 +5,8 @@
 	ViewBag.Title = "Planet";
 	Page.Title = "Planet " + Model.Name;
 	var autohost = Global.Server.GetPlanetBattles(Model).OrderByDescending(x=>x.Users.Count).FirstOrDefault();
-	var db = new ZkData.ZkDataContext();
+    ZkDataContext db = ViewBag.Db;
+
     var colorStyle = "";
     if (Model.Faction != null) {
         colorStyle = "color:" + Model.Faction.Color + ";";
@@ -36,7 +37,7 @@
     </tr>
 </table>
 
-@if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars() && (Global.Server.PlanetWarsMatchMaker != null && Global.Server.PlanetWarsMatchMaker.AttackingFaction.FactionID == Global.FactionID) && Model.CanMatchMakerPlay(Global.Account.Faction))
+@if (Global.IsAccountAuthorized && db.CurrentAccount().CanPlayerPlanetWars() && (Global.Server.PlanetWarsMatchMaker != null && Global.Server.PlanetWarsMatchMaker.AttackingFaction.FactionID == Global.FactionID) && Model.CanMatchMakerPlay(db.CurrentAccount().Faction))
 {
     <a href="@Url.Action("MatchMakerAttack", "Planetwars", new { planetID = Model.PlanetID })">ATTACK PLANET</a>
 }

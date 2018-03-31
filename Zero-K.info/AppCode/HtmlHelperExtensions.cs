@@ -806,5 +806,12 @@ namespace System.Web.Mvc
             return new MvcHtmlString(sb.ToString());
         }
 
+
+        public static Account CurrentAccount(this ZkDataContext db)
+        {
+            if (Global.AccountID > 0 && Global.IsAccountAuthorized) return db.Accounts.Find(Global.AccountID);
+            else return null;
+        }
+
     }
 }
