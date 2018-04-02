@@ -18,7 +18,14 @@
     @if (tr.TreatyState == TreatyState.Suspended)
     {
         <span nicetitle="Faction cannot fulfil obligations, treaty is suspended"><b>SUSPENDED</b></span>
+    } else if (tr.TreatyState == TreatyState.Ended)
+    {
+        <span>Treaty has ended</span>
+    } else if (tr.TreatyState == TreatyState.Cancelled)
+    {
+        <span>Treaty has been cancelled</span>
     }
+    
     <br />
     @if (tr.TurnsRemaining != null)
     {

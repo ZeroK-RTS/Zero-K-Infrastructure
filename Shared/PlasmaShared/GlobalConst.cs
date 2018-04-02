@@ -135,6 +135,7 @@ namespace ZkData
         public const int MinDurationForXP = 240;    // seconds
         public const int MinDurationForElo = 60;
         public const int MinDurationForPlanetwars = 0;
+        public const int MaxDurationForPlanetwars = 60*60*3; // 3 hours
 
         public const int LadderActivityDays = 30;
         public const int LadderSize = 50; // Amount of players shown on ladders

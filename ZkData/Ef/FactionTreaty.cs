@@ -77,7 +77,7 @@ namespace ZkData
         public void CancelTreaty(Faction faction)
         {
             bool wasAccepted = TreatyState == TreatyState.Accepted;
-            TreatyState = TreatyState.Invalid;
+            TreatyState = TreatyState.Cancelled;
 
             if (wasAccepted)
             {

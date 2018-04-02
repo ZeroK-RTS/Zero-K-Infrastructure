@@ -334,7 +334,7 @@ public static class PlanetWarsTurnHandler
 
                     if (tr.TurnsRemaining <= 0) // treaty expired
                     {
-                        tr.TreatyState = TreatyState.Invalid;
+                        tr.TreatyState = TreatyState.Ended;
                         tr.FactionByAcceptingFactionID.ProduceMetal(tr.AcceptingFactionGuarantee??0);
                         tr.FactionByProposingFactionID.ProduceMetal(tr.ProposingFactionGuarantee ?? 0);
                     }

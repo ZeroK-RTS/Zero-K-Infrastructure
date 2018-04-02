@@ -355,6 +355,7 @@ namespace ZeroKWeb.Controllers
             Planet planet = db.Planets.Single(x => x.PlanetID == id);
             if (planet.ForumThread != null)
             {
+                ViewBag.Db = db;
                 planet.ForumThread.UpdateLastRead(Global.AccountID, false);
                 db.SaveChanges();
             }
@@ -792,7 +793,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var planet = db.Planets.Single(x => x.PlanetID == planetID);
-            if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars() && planet.CanMatchMakerPlay(Global.Account.Faction))
+            if (Global.IsAccountAuthorized && Global.Account.CanPlayerPlanetWars() && planet.CanMatchMakerPlay(db.CurrentAccount().Faction))
             {
                 Global.Server.PlanetWarsMatchMaker.AddAttackOption(planet);
                 Global.Server.RequestJoinPlanet(Global.Account.Name, planet.PlanetID);
