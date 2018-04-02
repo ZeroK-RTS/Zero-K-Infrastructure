@@ -205,7 +205,6 @@ namespace ZeroKWeb.Controllers
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("Treaty {0} between {1} and {2} cancelled by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
 
                 treaty.CancelTreaty(acc.Faction);
-
                 db.SaveChanges();
 
                 return RedirectToAction("Detail", new { id = Global.FactionID });
