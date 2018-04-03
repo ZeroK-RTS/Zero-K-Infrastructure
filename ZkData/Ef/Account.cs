@@ -683,6 +683,8 @@ namespace ZkData
                 Kudos = KudosGained,
                 Level = Level,
                 LevelUpRatio = GetLevelUpRatio().ToString("F2"),
+                Rank = Rank,
+                RankUpRatio = Ranks.GetRankProgress(this).ToString("F2"),
                 PwBombers = GetBombersAvailable().ToString("F2"),
                 PwDropships = GetDropshipsAvailable().ToString("F2"),
                 PwMetal = GetMetalAvailable().ToString("F2"),

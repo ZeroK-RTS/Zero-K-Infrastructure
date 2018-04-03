@@ -802,6 +802,9 @@ namespace LobbyClient
         public int Level { get; set; }
         public string LevelUpRatio { get; set; }
 
+        public int Rank { get; set; }
+        public string RankUpRatio { get; set; }
+
         public int EffectiveElo { get; set; }
         public int EffectiveMmElo { get; set; }
         public int EffectivePwElo { get; set; }
