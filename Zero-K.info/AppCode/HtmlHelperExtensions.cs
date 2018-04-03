@@ -649,6 +649,17 @@ namespace System.Web.Mvc
                     ));
         }
 
+
+        public static MvcHtmlString PrintRankProgress(this HtmlHelper helper, Account account)
+        {
+            var ratio =  Ratings.Ranks.GetRankProgress(account);
+            int percentage = (int)Math.Round(ratio * 100);
+            var progressText = string.Format("Progress to the next rank: {0}%", percentage);
+            if (percentage >= 100) progressText = "Rank up on next victory!";
+            var str = new MvcHtmlString(string.Format("Current rank: <img src='/img/ranks/{0}_{1}.png'  class='icon16' alt='rank' /> {2} <br /> <br /> {3}<br /> <br />Win more games to improve your rank!", account.GetIconLevel(), account.Rank, Ratings.Ranks.RankNames[account.Rank], progressText));
+            return str;
+        }
+
         /// <summary>
         /// <para>Converts strings preceded with an @ to a printed <see cref="Account"/>, <see cref="SpringBattle"/>, etc. as appropriate</para>
         /// <para>e.g. @KingRaptor becomes the printed account for user KingRaptor</para>

@@ -103,11 +103,9 @@
 
         <div id="usr_info" style="background-image: url('@Ratings.Ranks.GetRankBackgroundImagePath(Model)')">
             <div class="ranks">
-
                 <div id="badges">
                     @Html.PrintBadges(Model, 64, false)
                 </div>
-                
 
                 <div id="avatarwrap">
                     <div id="avatar">
@@ -121,19 +119,21 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <a @if (Model.Clan == null && Model.Faction == null) { 
-                                            @:href ="/Clans"
-                                        }>
-                                        <div class="avatarbg" @if (Model.Clan == null && Model.Faction == null) { 
-                                            @:nicetitle="Click to find a clan!"
-                                        }>
+                                    <a @if (Model.Clan == null && Model.Faction == null) { @: href="/Clans"
+                                       }>
+                                        <div class="avatarbg" @if (Model.Clan == null && Model.Faction == null) { @: nicetitle="Click to find a clan!"
+                                             }>
                                             <!-- @Html.AccountAvatar(Model) -->
-                                            @if (Model.Clan != null) { @Html.PrintClan(Model.Clan, true, true); }
-                                            else if (Model.Faction != null) { @Html.PrintFaction(Model.Faction, true); }
-                                            else
-                                            {
-                                                @: <img style="padding: 22px;" src="/img/search_img.png">
-                                            }
+                                            @if (Model.Clan != null)
+                                    {@Html.PrintClan(Model.Clan, true, true);
+                        }
+                        else if (Model.Faction != null)
+                        { @Html.PrintFaction(Model.Faction, true);
+            }
+            else
+            {
+                @: <img style="padding: 22px;" src="/img/search_img.png">
+    }
                                         </div>
                                     </a>
                                 </td>
@@ -141,96 +141,93 @@
                         </table>
                     </div>
                 </div>
-
-                    @if (!Global.IsLobbyAccess)
+                @if (!Global.IsLobbyAccess)
+        {
+            int star = 0;
+            int chev = 0;
+            int bars = 0;
+            <div id="badge">
+                <div id="levelrank" title="This is a graphical representation of the player's exact level. <br /> <br />Play more games to increase your level!">
+                    <!--<div id="velvet"><img src="../../img/ranks/level-elo/velvetbacking.jpg" width="100%" height="100%" /></div>-->
+                    <div id="badge-center">
+                        @if (Model.Level > 125)
                 {
-                    int star = 0;
-                    int chev = 0;
-                    int bars = 0;
-                        <div id="badge">
-                            <div id="levelrank" title="This is a graphical representation of the player's exact level. <br /> <br />Play more games to increase your level!">
-                                <!--<div id="velvet"><img src="../../img/ranks/level-elo/velvetbacking.jpg" width="100%" height="100%" /></div>-->
-                                <div id="badge-center">
-                                    @if (Model.Level > 125)
-                                    {
-                                        star = 125;
-                                        <div id="badge-star">
-                                            <img src="../../img/ranks/level-elo/star.png" class="rank star" />
-                                        </div>
-                                    }
-                                    <div id="badge-chevrons">
-                                        @for (int i = 0; i < (Model.Level - star) / 25; i++)
-                                        {
-                                            <img src="../../img/ranks/level-elo/chevron_gold.png" class="rank chev chev-@(i + 1)" />
-                                            chev += 25;
-                                        }
-                                    </div>
-                                    <div id="badge-bars">
-                                        @for (int i = 0; i < (Model.Level - star - chev) / 5; i++)
-                                        {
-                                            <img src="../../img/ranks/level-elo/bar_gold.png" class="rank bar bar-@(i + 1)" />
-                                            bars += 1;
-                                        }
-                                        <div class="rank dotline bar-@(bars + 1)">
-                                            @for (int i = 0; i < (Model.Level - star - chev) % 5; i++)
-                                            {
-                                                <img src="../../img/ranks/level-elo/dot_gold.png" class="dot" />
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
+                    star = 125;
+                    <div id="badge-star">
+                        <img src="../../img/ranks/level-elo/star.png" class="rank star" />
+                    </div>
+        }
+                        <div id="badge-chevrons">
+                            @for (int i = 0; i < (Model.Level - star) / 25; i++)
+                    {
+                        <img src="../../img/ranks/level-elo/chevron_gold.png" class="rank chev chev-@(i + 1)" />
+                chev += 25;
+            }
+                        </div>
+                        <div id="badge-bars">
+                            @for (int i = 0; i < (Model.Level - star - chev) / 5; i++)
+                    {
+                        <img src="../../img/ranks/level-elo/bar_gold.png" class="rank bar bar-@(i + 1)" />
+                bars += 1;
+            }
+                            <div class="rank dotline bar-@(bars + 1)">
+                                @for (int i = 0; i < (Model.Level - star - chev) % 5; i++)
+                        {
+                            <img src="../../img/ranks/level-elo/dot_gold.png" class="dot" />
+                }
                             </div>
                         </div>
-                    }
-                </div>
-                <br />
-                @foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.BanExpires > DateTime.UtcNow))
-                {
-                    @Html.DisplayFor(x => p)
-                }
-
-
-                <br class="clearfloat" />
-                @{ double ratio = Model.GetLevelUpRatio(); }
-                <div title='Current level: <img src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png"  class="icon16" alt="rank" /> Level @(Model.Level) <br /> <br /> Progress to the next level: @((int)(ratio*100))% <br /> <br />XP remaining for level @(Model.Level + 1): @(Account.GetXpForLevel(Model.Level + 1) - Model.Xp)<br /> <br />Play more games to increase your level!'>
-
-                    <div class="progress_wrapper_left">
-                        <div class="progress_text techfont"> Level @Model.Level </div>
-                        <div class="progress_begin"></div>
-                    </div>
-                    <div class="progress_wrapper">
-                        <div class="progress_filler" style="width: @((int)(100*ratio))%;"></div>
-                        <div class="progress_empty" style="width: @((100 - (int)(100*ratio)))%;"></div>
-                    </div>
-                    <div class="progress_wrapper_right">
-                        <div class="progress_end"></div>
-                        <div class="progress_text techfont"> Level @(Model.Level + 1) </div>
                     </div>
                 </div>
-                <br class="clearfloat" />
-                @{ ratio = Ratings.Ranks.GetRankProgress(Model); }
-                <div title='Current rank: <img src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png"  class="icon16" alt="rank" /> @(Ratings.Ranks.RankNames[Model.Rank]) <br /> <br /> Progress to the next rank: @((int)Math.Round(ratio*100))%<br /> <br />Win more games to improve your rank!'>
-                    <div class="progress_wrapper_left">
-                        <div class="progress_text techfont"> @Ratings.Ranks.RankNames[Model.Rank] </div>
-                        <div class="progress_begin"></div>
-                    </div>
-                    <div class="progress_wrapper">
-                        <div class="progress_filler" style="width: @((int)(100*ratio))%;"></div>
-                        <div class="progress_empty" style="width: @((100 - (int)(100*ratio)))%;"></div>
-                    </div>
-                    <div class="progress_wrapper_right">
-                        <div class="progress_end"></div>
-                        <div class="progress_text techfont"> @Ratings.Ranks.RankNames[Model.Rank + 1] </div>
-                    </div>
-                </div>
-                <br class="clearfloat" />
-               
-                @if (Model.Faction != null || Model.Clan != null)
-                {
-                    <br />
-                    @Html.Partial("~/Views/Users/UserRoleList.cshtml", Model)
-                }
             </div>
+}
+            </div>
+            <br />
+            @foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.BanExpires > DateTime.UtcNow))
+    {
+        @Html.DisplayFor(x => p)
+}
+
+            <br class="clearfloat" />
+            @{ double ratio = Model.GetLevelUpRatio(); }
+            <div title='Current level: <img src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png"  class="icon16" alt="rank" /> Level @(Model.Level) <br /> <br /> Progress to the next level: @((int)(ratio*100))% <br /> <br />XP remaining for level @(Model.Level + 1): @(Account.GetXpForLevel(Model.Level + 1) - Model.Xp)<br /> <br />Play more games to increase your level!'>
+                <div class="progress_wrapper_left">
+                    <div class="progress_text techfont"> Level @Model.Level </div>
+                    <div class="progress_begin"></div>
+                </div>
+                <div class="progress_wrapper">
+                    <div class="progress_filler" style="width: @((int)(100*ratio))%;"></div>
+                    <div class="progress_empty" style="width: @((100 - (int)(100*ratio)))%;"></div>
+                </div>
+                <div class="progress_wrapper_right">
+                    <div class="progress_end"></div>
+                    <div class="progress_text techfont"> Level @(Model.Level + 1) </div>
+                </div>
+            </div>
+            <br class="clearfloat" />
+            @{ ratio = Ratings.Ranks.GetRankProgress(Model); }
+            <div title="@Html.PrintRankProgress(Model)">
+                <div class="progress_wrapper_left">
+                    <div class="progress_text techfont"> @Ratings.Ranks.RankNames[Model.Rank] </div>
+                    <div class="progress_begin"></div>
+                </div>
+                <div class="progress_wrapper">
+                    <div class="progress_filler" style="width: @((int)(100*ratio))%;"></div>
+                    <div class="progress_empty" style="width: @((100 - (int)(100*ratio)))%;"></div>
+                </div>
+                <div class="progress_wrapper_right">
+                    <div class="progress_end"></div>
+                    <div class="progress_text techfont"> @Ratings.Ranks.RankNames[Model.Rank + 1] </div>
+                </div>
+            </div>
+            <br class="clearfloat" />
+
+            @if (Model.Faction != null || Model.Clan != null)
+    {
+        <br />
+        @Html.Partial("~/Views/Users/UserRoleList.cshtml", Model)
+}
+        </div>
         <br class="clearfloat"/>
     }
 
