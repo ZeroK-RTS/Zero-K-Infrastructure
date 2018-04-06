@@ -724,6 +724,8 @@ namespace ChobbyLauncher
             {
                 var friendId = initialConnectLobbyID != 0 ? steam.GetLobbyOwner(initialConnectLobbyID) : null;
 
+                
+
                 await
                     SendCommand(new SteamOnline()
                     {
@@ -731,6 +733,7 @@ namespace ChobbyLauncher
                         Friends = steam.Friends.Select(x => x.ToString()).ToList(),
                         FriendSteamID = friendId?.ToString(),
                         SuggestedName = steam.MySteamNameSanitized,
+                        Dlc = steam.GetDlcList()
                     });
 
                 if (friendId != null) steam.SendSteamNotifyJoin(friendId.Value);
