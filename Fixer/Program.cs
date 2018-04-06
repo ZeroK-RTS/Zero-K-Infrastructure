@@ -34,6 +34,7 @@ using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
 using PlasmaDownloader = PlasmaDownloader.PlasmaDownloader;
 using Ratings;
+using ZkLobbyServer = ZkLobbyServer.ZkLobbyServer;
 
 namespace Fixer
 {
@@ -424,12 +425,35 @@ namespace Fixer
         }
 
 
+        private static void TestPwMatchMaker()
+        {
+            var server = new global::ZkLobbyServer.ZkLobbyServer("", new PlanetwarsEventCreator());
+            var mm = server.PlanetWarsMatchMaker;
+            mm.ChallengeTime = DateTime.Now;
+            mm.AttackerSideCounter = 1;
+            //mm.ResetAttackOptions();
+            mm.GenerateLobbyCommand();
+            mm.Challenge = mm.AttackOptions[3];
+            mm.Challenge.OwnerFactionID = 2;
+            mm.Challenge.PlanetID = 4375;
+            mm.GetDefendingFactions(mm.Challenge);
+            mm.GenerateLobbyCommand();
+
+            //mm.Challenge = 
+            Global.Server.PlanetWarsMatchMaker.GenerateLobbyCommand();
+        }
+
+
         static void Main(string[] args)
         {
             if (Console.ReadLine()?.StartsWith("i read the code") != true) return;
-
-           
+            
             GlobalConst.Mode = ModeType.Local;
+
+            return;
+
+
+
 
             //RemoveUnusedMaps();
 
