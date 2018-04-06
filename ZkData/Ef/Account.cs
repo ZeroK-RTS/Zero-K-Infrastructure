@@ -675,6 +675,7 @@ namespace ZkData
 
         public void VerifyAndAddDlc(List<ulong> dlcs)
         {
+            if (dlcs == null || dlcs.Count == 0) return;
             List<ulong> dlcList = new List<ulong>();
             if (!string.IsNullOrEmpty(PurchasedDlc)) dlcList = PurchasedDlc.Split(',').Select(ulong.Parse).ToList();
 
