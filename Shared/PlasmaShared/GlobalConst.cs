@@ -206,8 +206,9 @@ namespace ZkData
         public const string TeamEmail = "Zero-K team <team@zero-k.info>";
 
         public const int KudosForBronze = 100;
-        public const int KudosForSilver = 500;
-        public const int KudosForGold = 1000;
+        public const int KudosForSilver = 250;
+        public const int KudosForGold = 500;
+        public const int KudosForDiamond = 1000;
 
         public const int ForumPostsPerPage = 20;
         public const int MinLevelForForumVote = 2;
