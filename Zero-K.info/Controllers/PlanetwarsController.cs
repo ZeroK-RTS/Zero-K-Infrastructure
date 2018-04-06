@@ -352,10 +352,10 @@ namespace ZeroKWeb.Controllers
         public ActionResult Planet(int id)
         {
             var db = new ZkDataContext();
+            ViewBag.Db = db;
             Planet planet = db.Planets.Single(x => x.PlanetID == id);
             if (planet.ForumThread != null)
             {
-                ViewBag.Db = db;
                 planet.ForumThread.UpdateLastRead(Global.AccountID, false);
                 db.SaveChanges();
             }

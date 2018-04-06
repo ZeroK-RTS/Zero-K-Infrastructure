@@ -117,6 +117,8 @@ namespace ZkData
 
         public bool CanMatchMakerPlay(Faction attacker)
         {
+            if (attacker == null) return false;
+
             if (CanDropshipsAttack(attacker) ||
                 PlanetFactions.Where(x => x.FactionID == attacker.FactionID).Sum(y => y.Dropships) >
                 PlanetStructures.Where(x => x.IsActive).Sum(y => y.StructureType.EffectDropshipDefense)) return true;
