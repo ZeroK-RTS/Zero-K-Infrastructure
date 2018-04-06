@@ -19,7 +19,7 @@ namespace ZeroKWeb.Controllers
             public PlanetWarsModes? PlanetWarsNextMode { get; set; }
             public DateTime? PlanetWarsNextModeDate { get; set; }
             public int LastSelectedGalaxyID { get; set; }
-            public bool ResetRoles { get; set; } = true;
+            public bool ResetRoles { get; set; }
             public bool DeleteClans { get; set; }
             public bool UnassignFactions { get; set; }
             public IQueryable<Galaxy> Galaxies;
@@ -283,6 +283,8 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult StartGalaxy(int galaxyID)
         {
+            AddWormholes(galaxyID);
+
             using (var db = new ZkDataContext())
             {
                 var facs = db.Factions.Where(x => !x.IsDeleted).ToList();
@@ -307,6 +309,8 @@ namespace ZeroKWeb.Controllers
                 }
 
                 db.SaveChanges();
+
+                OwnPlanets(galaxyID);
 
                 /*foreach (Account acc in db.Accounts)
                 {
