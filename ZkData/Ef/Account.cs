@@ -681,26 +681,29 @@ namespace ZkData
             foreach (var newdlc in dlcs.Where(x=>!dlcList.Contains(x)))
             {
                 int kudos;
-                if (GlobalConst.DlcToKudos.TryGetValue(newdlc, out kudos))
+                if (SteamID.HasValue && GlobalConst.DlcToKudos.TryGetValue(newdlc, out kudos))
                 {
-                    var contrib = new Contribution()
+                    if (new SteamWebApi().CheckAppOwnership((ulong)SteamID.Value, newdlc))
                     {
-                        AccountID = AccountID,
-                        KudosValue = kudos,
-                        ItemName = "Zero-K",
-                        IsSpringContribution = false,
-                        Comment = "Steam DLC",
-                        OriginalCurrency = "USD",
-                        OriginalAmount = kudos/10,
-                        Euros = 0.8 * (kudos/10), // USD to EUR 
-                        EurosNet = 0.5 * (kudos / 10), // USD to EUR, VAT, steam share
-                        Time = DateTime.Now,
-                        Name = Name,
-                        ContributionJarID = GlobalConst.SteamContributionJarID
-                    };
-                    ContributionsByAccountID.Add(contrib);
-                    Kudos += kudos;
-                    dlcList.Add(newdlc);
+                        var contrib = new Contribution()
+                        {
+                            AccountID = AccountID,
+                            KudosValue = kudos,
+                            ItemName = "Zero-K",
+                            IsSpringContribution = false,
+                            Comment = "Steam DLC",
+                            OriginalCurrency = "USD",
+                            OriginalAmount = kudos / 10,
+                            Euros = 0.8 * (kudos / 10), // USD to EUR 
+                            EurosNet = 0.5 * (kudos / 10), // USD to EUR, VAT, steam share
+                            Time = DateTime.Now,
+                            Name = Name,
+                            ContributionJarID = GlobalConst.SteamContributionJarID
+                        };
+                        ContributionsByAccountID.Add(contrib);
+                        Kudos += kudos;
+                        dlcList.Add(newdlc);
+                    }
                 }
             }
 

@@ -44,6 +44,29 @@ namespace ZkData
         }
 
 
+        public bool CheckAppOwnership(ulong steamID, ulong appID)
+        {
+            try
+            {
+                var wc = new WebClient();
+                var ret = wc.DownloadString(string.Format(
+                    "https://partner.steam-api.com/ISteamUser/CheckAppOwnership/v2/?key={0}&steamid={1}&appid={2}",
+                    webApiKey,
+                    steamID,
+                    appID));
+
+                var response = JsonConvert.DeserializeObject<CheckAppOwnershipResponse>(ret);
+                return response.ownsapp;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error checking app ownership {0} {1}: {2}", steamID, appID, ex);
+            }
+
+            return false;
+        }
+
+
         public async Task<PlayerInfo> VerifyAndGetAccountInformation(string token)
         {
             if (!string.IsNullOrEmpty(token))
@@ -132,6 +155,15 @@ namespace ZkData
             public long primaryclanid { get; set; }
             public string profileurl { get; set; }
             public ulong steamid { get; set; }
+        }
+
+        public class CheckAppOwnershipResponse
+        {
+            public bool ownsapp;
+            public bool permanent;
+            public string timestamp;
+            public ulong ownersteamid;
+            public bool sitelicense;
         }
 
 
