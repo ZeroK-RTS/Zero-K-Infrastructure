@@ -174,7 +174,11 @@ namespace ZeroKWeb.Controllers
                     if (effectType.MaxValue.HasValue && effectValue > effectType.MaxValue.Value) effectValue = effectType.MaxValue;
                 }
                 if (effectType.HasValue) effect.Value = effectValue;
-                if (effectType.IsPlanetBased) effect.PlanetID = planetID.Value;
+                if (effectType.IsPlanetBased)
+                {
+                    effect.PlanetID = planetID.Value;
+                    effect.Planet = db.Planets.Find(planetID.Value);
+                }
                 db.TreatyEffects.InsertOnSubmit(effect);
             }
             if (delete != null) {
@@ -205,7 +209,6 @@ namespace ZeroKWeb.Controllers
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("Treaty {0} between {1} and {2} cancelled by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
 
                 treaty.CancelTreaty(acc.Faction);
-
                 db.SaveChanges();
 
                 return RedirectToAction("Detail", new { id = Global.FactionID });
@@ -237,7 +240,9 @@ namespace ZeroKWeb.Controllers
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} modified treaty proposal {1} between {2} and {3}", acc, treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID));
                 db.SaveChanges();
 
-                return View("FactionTreatyDefinition", treaty);
+
+
+                return View("FactionTreatyDefinition", db.FactionTreaties.Find(treaty.FactionTreatyID));
 
             }
             return Content("Not permitted");
@@ -265,6 +270,9 @@ namespace ZeroKWeb.Controllers
                 treaty.AcceptedAccountID = acc.AccountID;
                 treaty.TreatyState = TreatyState.Accepted;
                 db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("Treaty {0} between {1} and {2} accepted by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
+
+                PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator(), db);
+
                 db.SaveChanges();
 
                 if (isOneTimeOnly)

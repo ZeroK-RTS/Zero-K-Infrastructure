@@ -42,7 +42,7 @@ namespace ZkLobbyServer
             geoIP = new DatabaseReader(Path.Combine(geoipPath, "GeoLite2-Country.mmdb"), FileAccessMode.Memory);
         }
 
-        public async Task<LoginCheckerResponse> DoLogin(Login login, string ip)
+        public async Task<LoginCheckerResponse> DoLogin(Login login, string ip, List<ulong> dlc)
         {
             await semaphore.WaitAsync();
             try
@@ -113,6 +113,8 @@ namespace ZkLobbyServer
 
                     user.LobbyVersion = login.LobbyVersion;
                     user.IpAddress = ip;
+
+                    acc.VerifyAndAddDlc(dlc);
 
                     UpdateUserFromAccount(user, acc);
                     LogIP(db, acc, ip);

@@ -10,7 +10,9 @@
     <h1>Administer @Html.PrintAccount(@Model, true, true)</h1>
     AccountID: @Model.AccountID
     <br />
-    Lobby program: @Model.LobbyVersion<br/>
+    Lobby program: @Model.LobbyVersion<br />
+    Last Login: @Model.LastLogin<br />
+    Last Logout: @Model.LastLogout<br />
     IP:
     <table>
         <thead>
@@ -58,24 +60,26 @@
         </tbody>
     </table>
     <br />
-    
+
     @{
         var myIPs = Model.AccountIPs.Select(x => x.IP).ToList();
         var myIDs = Model.AccountUserIDs.Select(x => x.UserID).ToList();
         var brokenIDs = new List<Int64>() { 1236934115, 1199297835, -2130083051, 195445522, 1141552226 };
         var smurfs = new ZkDataContext().Accounts.Where(x => x.AccountID != Model.AccountID && (x.AccountIPs.Any(y => myIPs.Contains(y.IP) && y.IP != "127.0.0.1" && y.IP != "127.0.1.1" && y.IP != "94.23.170.70" && y.IP != "78.46.100.157")
             || x.AccountUserIDs.Where(id => !brokenIDs.Contains(id.UserID)).Any(y => myIDs.Contains(y.UserID))));
-        
+
         Int64? lastUserID = null;
-        if (Model.AccountUserIDs.Any()) {
+        if (Model.AccountUserIDs.Any())
+        {
             lastUserID = Model.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID;
         }
     }
     <h2>Smurfs</h2>
     @foreach (var ac in smurfs)
     {
-        <span>@Html.PrintAccount(ac)  -  @Html.ActionLink("admin", "AdminUserDetail", new{id=ac.AccountID})</span>
-        if(ac.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) {
+        <span>@Html.PrintAccount(ac)  -  @Html.ActionLink("admin", "AdminUserDetail", new { id = ac.AccountID })</span>
+        if (ac.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby))
+        {
             <font color="#FF0000"><b>(BANNED)</b></font>
         }
         <br />
@@ -83,14 +87,14 @@
     <br />
     <h2>Abuse reports</h2>
     <table>
-    <tbody style="vertical-align:top; background-color:#222">
-    @foreach (var a in Model.AbuseReportsByAccountID)
-    {        
-        <tr><td>@a.Time</td><td>@Html.PrintAccount(a.AccountByReporterAccountID)</td><td style="padding-bottom:25px;">@Html.BBCode(a.Text)</td></tr>        
-    }
-    </tbody>
+        <tbody style="vertical-align:top; background-color:#222">
+            @foreach (var a in Model.AbuseReportsByAccountID)
+            {
+                <tr><td>@a.Time</td><td>@Html.PrintAccount(a.AccountByReporterAccountID)</td><td style="padding-bottom:25px;">@Html.BBCode(a.Text)</td></tr>
+            }
+        </tbody>
     </table>
-    
+
     @if (Model.PunishmentsByAccountID.Any())
     {
         <br />
@@ -103,20 +107,20 @@
 
     <br />
     <h2>Modify user settings</h2>
-    Hide country flag: 
+    Hide country flag:
     <form method="post" action="@Url.Action("ChangeHideCountry", "Users", new { accountID = Model.AccountID })">
         @Html.AntiForgeryToken()
         @Html.CheckBox("hideCountry", Model.HideCountry)
-        <input type="submit"/>
+        <input type="submit" />
     </form>
     <br />
-    Password reset: 
+    Password reset:
     <form method="post" action="@Url.Action("SetPassword", "Users", new { accountID = Model.AccountID })">
         @Html.AntiForgeryToken()
         @Html.TextBox("newPassword")
         <input type="submit" />
     </form>
-    <br/>
+    <br />
 
     <br />
     Rename user:
@@ -146,14 +150,14 @@
         @Html.AntiForgeryToken()
         Zero-K admin: @Html.CheckBox("zkAdmin", Model.AdminLevel >= AdminLevel.Moderator)
         VPN exception: @Html.CheckBox("vpnException", Model.HasVpnException)
-        <input type="submit"/>
+        <input type="submit" />
     </form>
 
     <br />
     <h2>Issue a penalty</h2>
     <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
         @Html.AntiForgeryToken()
-        Reason: @Html.TextBox("reason","Smurf")<br />
+        Reason: @Html.TextBox("reason", "Smurf")<br />
         <br />
 
         Delete XP: @Html.CheckBox("deleteXP")<br />
@@ -164,24 +168,24 @@
         Block unlocks: @Html.CheckBox("banUnlocks")<br />
         Disallow spec chat: @Html.CheckBox("banSpecChat")<br />
         <br />
-        IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x=>x.LastLogin).Select(x=>x.IP).FirstOrDefault())<br />
+        IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x => x.LastLogin).Select(x => x.IP).FirstOrDefault())<br />
         UserID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
         Ban site: @Html.CheckBox("banSite")<br />
         Ban lobby: @Html.CheckBox("banLobby")<br />
         Ban forum: @Html.CheckBox("banForum")<br />
         Set rights to zero: @Html.CheckBox("setRightsToZero")<br />
-        Ban hours: @Html.TextBox("banHours",1)<br />
+        Ban hours: @Html.TextBox("banHours", 1)<br />
 
         <input type="submit" value="BAN" class="js_confirm" />
     </form>
     <br />
 
     <h2>Special functions</h2>
-    Hide ("delete") account: 
+    Hide ("delete") account:
     <form method="post" action="@Url.Action("ChangeAccountDeleted", "Users", new { accountID = Model.AccountID })">
         @Html.AntiForgeryToken()
         @Html.CheckBox("isDeleted")
-        <input type="submit"/>
+        <input type="submit" />
     </form>
     <br />
 

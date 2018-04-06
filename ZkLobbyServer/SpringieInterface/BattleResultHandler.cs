@@ -123,7 +123,7 @@ namespace ZeroKWeb.SpringieInterface
 
         private static void ProcessPlanetWars(SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, SpringBattle sb, ZkDataContext db, StringBuilder text)
         {
-            if (result.LobbyStartContext.Mode != AutohostMode.Planetwars || sb.PlayerCount < 2 || sb.Duration < GlobalConst.MinDurationForPlanetwars) return;
+            if (result.LobbyStartContext.Mode != AutohostMode.Planetwars || sb.PlayerCount < 2 || sb.Duration < GlobalConst.MinDurationForPlanetwars || sb.Duration > GlobalConst.MaxDurationForPlanetwars) return;
 
             List<int> winnerTeams = sb.SpringBattlePlayers.Where(x => x.IsInVictoryTeam && !x.IsSpectator).Select(x => x.AllyNumber).Distinct().ToList();
             int? winNum = null;

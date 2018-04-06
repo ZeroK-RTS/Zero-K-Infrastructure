@@ -167,29 +167,22 @@ namespace Ratings
                     var maxAge = DateTime.UtcNow.AddDays(-7);
                     IEnumerable<Account> accounts;
                     var rating = RatingCategory.Planetwars;
-                    Dictionary<int, Account> players;
                     using (var db = new ZkDataContext())
                     {
+                        IQueryable<Account> players;
                         if (MiscVar.PlanetWarsMode == PlanetWarsModes.PreGame)
                         {
-                            players = db.Accounts.Where(x => x.LastLogin > maxAge && x.FactionID == factionID)
-                                .Include(a => a.Clan)
-                                .Include(a => a.Faction)
-                                .ToDictionary(x => x.AccountID);
+                            players = db.Accounts.Where(x => x.LastLogin > maxAge && x.FactionID == factionID);
                             rating = RatingCategory.Casual;
                         }
                         else
                         {
-                            players = db.Accounts.Where(x => x.PwAttackPoints > 0 && x.FactionID == factionID)
-                                .Include(a => a.Clan)
-                                .Include(a => a.Faction)
-                                .ToDictionary(x => x.AccountID);
+                            players = db.Accounts.Where(x => x.PwAttackPoints > 0 && x.FactionID == factionID);
                         }
+                        count = players.Count();
+                        skill = count > 0 ? (int)Math.Round(players.SelectMany(x => x.AccountRatings).Where(x => x.RatingCategory == rating).Select(x => x.RealElo).Average()) : 1500;
+                        factionCache[factionID] = new Tuple<int, int, int>(latestBattle, count, skill);
                     }
-                    accounts = GetRatingSystem(rating).GetTopPlayersIn(int.MaxValue, players);
-                    count = accounts.Count();
-                    skill = count > 0 ? (int)Math.Round(accounts.Average(x => x.GetRating(rating).Elo)) : 1500;
-                    factionCache[factionID] = new Tuple<int, int, int>(latestBattle, count, skill);
                 }
                 count = factionCache[factionID].Item2;
                 skill = factionCache[factionID].Item3;

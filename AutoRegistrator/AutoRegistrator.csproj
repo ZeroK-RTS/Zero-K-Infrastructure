@@ -61,6 +61,11 @@
     <Compile Include="AutoRegistrator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegistratorRes.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RegistratorRes.resx</DependentUpon>
+    </Compile>
     <Compile Include="SteamDepotGenerator.cs" />
     <Compile Include="Unitsyncer.cs" />
     <Compile Include="WebFolderSync.cs" />
@@ -86,6 +91,15 @@
       <Project>{61D3BE0A-282D-462C-BA26-06670E5ACB3E}</Project>
       <Name>ZkData</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RegistratorRes.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>RegistratorRes.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\campaignMaps.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

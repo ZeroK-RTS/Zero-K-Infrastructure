@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ServiceModel;
 using PlasmaShared;
@@ -135,6 +136,7 @@ namespace ZkData
         public const int MinDurationForXP = 240;    // seconds
         public const int MinDurationForElo = 60;
         public const int MinDurationForPlanetwars = 0;
+        public const int MaxDurationForPlanetwars = 60*60*3; // 3 hours
 
         public const int LadderActivityDays = 30;
         public const int LadderSize = 50; // Amount of players shown on ladders
@@ -205,8 +207,9 @@ namespace ZkData
         public const string TeamEmail = "Zero-K team <team@zero-k.info>";
 
         public const int KudosForBronze = 100;
-        public const int KudosForSilver = 500;
-        public const int KudosForGold = 1000;
+        public const int KudosForSilver = 250;
+        public const int KudosForGold = 500;
+        public const int KudosForDiamond = 1000;
 
         public const int ForumPostsPerPage = 20;
         public const int MinLevelForForumVote = 2;
@@ -243,7 +246,7 @@ namespace ZkData
         public static int LobbyServerPort;
 
         public static bool AutoMigrateDatabase { get; private set; }
-
+        
         private const string tokenPart = "af27e9e18e";
 
         public static string CrashReportGithubToken = "fffb24b" + "91a758"+"a6a4e7a"+ "7a7eafb1a9" + tokenPart;
@@ -267,6 +270,9 @@ namespace ZkData
         }
 
         public static string UnitSyncEngine = "unitsync";
+
+        public static int SteamContributionJarID = 2;
+        public static Dictionary<ulong, int> DlcToKudos = new Dictionary<ulong, int>() { { 842950, 100 }, { 842951, 250 }, { 842952, 500 } };
     }
 
     public enum PlanetWarsModes

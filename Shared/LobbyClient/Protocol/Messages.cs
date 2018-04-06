@@ -131,6 +131,8 @@ namespace LobbyClient
         public string SteamAuthToken { get; set; }
 
         public long UserID { get; set; }
+
+        public List<ulong> Dlc { get; set; }
     }
 
     /// <summary>
@@ -801,6 +803,9 @@ namespace LobbyClient
 
         public int Level { get; set; }
         public string LevelUpRatio { get; set; }
+
+        public int Rank { get; set; }
+        public string RankUpRatio { get; set; }
 
         public int EffectiveElo { get; set; }
         public int EffectiveMmElo { get; set; }

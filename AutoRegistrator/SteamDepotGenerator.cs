@@ -84,10 +84,11 @@ namespace AutoRegistrator
             if (!downloader.DownloadFile(DownloadType.RAPID, GlobalConst.DefaultZkTag, prog).Result) throw new ApplicationException("SteamDepot zk download failed: " + prog.Status);
 
             downloader.RapidHandling = RapidHandling.DefaultSdp;
-            
 
 
-            CopyResources(siteBase, paths, GetResourceList(), downloader);
+            var campaignMaps = RegistratorRes.campaignMaps.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim())
+                .ToArray();
+            CopyResources(siteBase, paths, GetMapList(campaignMaps), downloader);
 
             if (!downloader.UpdateMissions(prog).Result) throw new ApplicationException("SteamDepot Error updating missions! " + prog.Status);
             if (!downloader.UpdatePublicCommunityInfo(prog)) throw new ApplicationException("SteamDepot Error updating public community info! " + prog.Status);
@@ -211,7 +212,7 @@ namespace AutoRegistrator
         }
 
 
-        private static List<Resource> GetResourceList(params string[] extraNames)
+        private static List<Resource> GetMapList(params string[] extraNames)
         {
 
 

@@ -209,7 +209,7 @@
                 </div>
                 <br class="clearfloat" />
                 @{ ratio = Ratings.Ranks.GetRankProgress(Model); }
-                <div title='Current rank: <img src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png"  class="icon16" alt="rank" /> @(Ratings.Ranks.RankNames[Model.Rank]) <br /> <br /> Progress to the next rank: @((int)Math.Round(ratio*100))%<br /> <br />Win more games to improve your rank!'>
+                <div title="@Html.PrintRankProgress(Model)">
                     <div class="progress_wrapper_left">
                         <div class="progress_text techfont"> @Ratings.Ranks.RankNames[Model.Rank] </div>
                         <div class="progress_begin"></div>

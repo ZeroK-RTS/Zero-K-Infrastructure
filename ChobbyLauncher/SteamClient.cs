@@ -94,6 +94,24 @@ namespace ChobbyLauncher
             return null;
         }
 
+        public List<ulong> GetDlcList()
+        {
+            var ret = new List<ulong>();
+            if (IsOnline)
+            {
+                for (int i = 0; i < SteamApps.GetDLCCount(); i++)
+                {
+                    AppId_t appId;
+                    string name;
+                    bool available;
+                    SteamApps.BGetDLCDataByIndex(i, out appId, out available, out name, 200);
+                    ret.Add(appId.m_AppId);
+                }
+            }
+
+            return ret;
+        }
+
 
         public void InviteFriendToGame(ulong lobbyID, ulong friendID)
         {
