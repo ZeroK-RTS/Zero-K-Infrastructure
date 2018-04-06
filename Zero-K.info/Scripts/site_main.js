@@ -205,7 +205,7 @@ function GlobalPageInit(root) {
         .click(function (event) {
             event.preventDefault();
                 $.ajax({
-                    url: $(this).attr("src"),
+                    url: $(this).attr("href"),
                     success: function (data) {
                         if (data != null && data.length > 0) alert(data);
                     },
