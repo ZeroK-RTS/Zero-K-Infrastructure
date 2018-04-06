@@ -620,7 +620,7 @@ namespace ZkData
             [Description("Gold donator")]
             donator_2 = 4,
             [Description("Diamond donator")]
-            donator_3 = 4,
+            donator_3 = 8,
             [Description("External developer")]
             dev_content =  5,
             [Description("Game developer")]
