@@ -225,7 +225,7 @@ namespace ChobbyLauncher
 
         private byte[] GetClientAuthToken()
         {
-            var buf = new byte[256];
+            var buf = new byte[4096];
             uint ticketSize;
             SteamUser.GetAuthSessionTicket(buf, buf.Length, out ticketSize);
             var truncArray = new byte[ticketSize];
