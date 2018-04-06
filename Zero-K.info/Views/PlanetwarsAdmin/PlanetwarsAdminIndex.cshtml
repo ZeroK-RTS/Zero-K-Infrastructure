@@ -57,6 +57,10 @@
                 <td>Purge PlanetWars</td>
                 <td>
                     <label>
+                        @Html.CheckBoxFor(x => x.UnassignFactions)
+                        Unassign factions
+                    </label>
+                    <label>
                         @Html.CheckBoxFor(x => x.ResetRoles)
                         Reset roles
                     </label>

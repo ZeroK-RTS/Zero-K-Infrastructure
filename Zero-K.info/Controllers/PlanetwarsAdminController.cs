@@ -21,6 +21,7 @@ namespace ZeroKWeb.Controllers
             public int LastSelectedGalaxyID { get; set; }
             public bool ResetRoles { get; set; } = true;
             public bool DeleteClans { get; set; }
+            public bool UnassignFactions { get; set; }
             public IQueryable<Galaxy> Galaxies;
         }
 
@@ -43,7 +44,7 @@ namespace ZeroKWeb.Controllers
 
                 if (!string.IsNullOrEmpty(purge))
                 {
-                    PurgeGalaxy(model.LastSelectedGalaxyID, model.ResetRoles, model.DeleteClans);
+                    PurgeGalaxy(model.LastSelectedGalaxyID, model.UnassignFactions, model.ResetRoles, model.DeleteClans);
                 }
 
                 if (!string.IsNullOrEmpty(futureset))
@@ -73,7 +74,7 @@ namespace ZeroKWeb.Controllers
             return View("PlanetwarsAdminIndex", model);
         }
 
-        private static void PurgeGalaxy(int galaxyID, bool resetRoles, bool deleteClans)
+        private static void PurgeGalaxy(int galaxyID, bool unassignFactions, bool resetRoles, bool deleteClans)
         {
             using (var db = new ZkDataContext())
             {
@@ -116,8 +117,10 @@ namespace ZeroKWeb.Controllers
                     PwAttackPoints = 0,
                     PwWarpProduced = 0,
                     PwWarpUsed = 0,
-                    FactionID = null,
+                    
                 });
+
+                if (unassignFactions) db.Accounts.Update(x => new Account() { FactionID = null, });
 
                 db.Events.Delete();
                 db.PlanetOwnerHistories.Delete();
@@ -130,7 +133,7 @@ namespace ZeroKWeb.Controllers
                 db.FactionTreaties.Delete();
                 db.TreatyEffects.Delete();
 
-                db.Clans.Update(x => new Clan { FactionID = null });
+                if (unassignFactions) db.Clans.Update(x => new Clan { FactionID = null });
 
                 if (resetRoles) db.AccountRoles.Where(x=>x.ClanID == null).Delete();
 
