@@ -131,6 +131,8 @@ namespace LobbyClient
         public string SteamAuthToken { get; set; }
 
         public long UserID { get; set; }
+
+        public List<ulong> Dlc { get; set; }
     }
 
     /// <summary>
