@@ -319,6 +319,7 @@
     <Content Include="Img\badges\donator_0.png" />
     <Content Include="Img\badges\donator_1.png" />
     <Content Include="Img\badges\donator_2.png" />
+    <Content Include="Img\badges\donator_3.png" />
     <Content Include="Img\badges\player_elo.png" />
     <Content Include="Img\badges\player_level.png" />
     <Content Include="Img\bar_blue.png" />
