@@ -229,7 +229,7 @@ namespace ZeroKWeb.Controllers
             var wormhole = db.StructureTypes.Where(x => x.EffectInfluenceSpread > 0).OrderBy(x => x.EffectInfluenceSpread).First();
             foreach (var p in db.Planets.Where(x => x.GalaxyID == galaxyID && !x.PlanetStructures.Any(y => y.StructureType.EffectInfluenceSpread > 0)))
             {
-                p.PlanetStructures.Add(new PlanetStructure() { StructureTypeID = wormhole.StructureTypeID });
+                p.PlanetStructures.Add(new PlanetStructure() { StructureTypeID = wormhole.StructureTypeID, IsActive = true});
             }
 
             db.Galaxies.Find(galaxyID).IsDirty = true;
