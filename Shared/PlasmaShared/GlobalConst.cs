@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ServiceModel;
 using PlasmaShared;
@@ -245,7 +246,7 @@ namespace ZkData
         public static int LobbyServerPort;
 
         public static bool AutoMigrateDatabase { get; private set; }
-
+        
         private const string tokenPart = "af27e9e18e";
 
         public static string CrashReportGithubToken = "fffb24b" + "91a758"+"a6a4e7a"+ "7a7eafb1a9" + tokenPart;
@@ -269,6 +270,9 @@ namespace ZkData
         }
 
         public static string UnitSyncEngine = "unitsync";
+
+        public static int SteamContributionJarID = 2;
+        public static Dictionary<ulong, int> DlcToKudos = new Dictionary<ulong, int>() { { 842950, 100 }, { 842951, 250 }, { 842952, 500 } };
     }
 
     public enum PlanetWarsModes

@@ -157,6 +157,9 @@ namespace ZkData
         public int ForumTotalDownvotes { get; set; }
         public int? VotesAvailable { get; set; }
 
+        public string PurchasedDlc { get; set; }
+
+
         [Index(IsUnique = true)]
         public decimal? SteamID { get; set; }
 
@@ -668,6 +671,40 @@ namespace ZkData
         public LadderItem ToLadderItem()
         {
             return new LadderItem() { Name = Name, Clan = Clan?.Shortcut, Icon = GetIconName(), AccountID = AccountID, Level =  Level, IsAdmin = AdminLevel>= AdminLevel.Moderator, Country = Country};
+        }
+
+        public void VerifyAndAddDlc(List<ulong> dlcs)
+        {
+            List<ulong> dlcList = new List<ulong>();
+            if (!string.IsNullOrEmpty(PurchasedDlc)) dlcList = PurchasedDlc.Split(',').Select(ulong.Parse).ToList();
+
+            foreach (var newdlc in dlcs.Where(x=>!dlcList.Contains(x)))
+            {
+                int kudos;
+                if (GlobalConst.DlcToKudos.TryGetValue(newdlc, out kudos))
+                {
+                    var contrib = new Contribution()
+                    {
+                        AccountID = AccountID,
+                        KudosValue = kudos,
+                        ItemName = "Zero-K",
+                        IsSpringContribution = false,
+                        Comment = "Steam DLC",
+                        OriginalCurrency = "USD",
+                        OriginalAmount = kudos/10,
+                        Euros = 0.8 * (kudos/10), // USD to EUR 
+                        EurosNet = 0.5 * (kudos / 10), // USD to EUR, VAT, steam share
+                        Time = DateTime.Now,
+                        Name = Name,
+                        ContributionJarID = GlobalConst.SteamContributionJarID
+                    };
+                    ContributionsByAccountID.Add(contrib);
+                    Kudos += kudos;
+                    dlcList.Add(newdlc);
+                }
+            }
+
+            PurchasedDlc = string.Join(",", dlcList);
         }
 
 

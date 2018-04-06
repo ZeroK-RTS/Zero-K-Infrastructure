@@ -91,7 +91,7 @@ namespace ZkLobbyServer
 
         public async Task Process(Login login)
         {
-            var ret = await Task.Run(() => server.LoginChecker.DoLogin(login, RemoteEndpointIP));
+            var ret = await Task.Run(() => server.LoginChecker.DoLogin(login, RemoteEndpointIP, login.Dlc));
             if (ret.LoginResponse.ResultCode == LoginResponse.Code.Ok)
             {
                 var user = ret.User;
