@@ -56,7 +56,7 @@ namespace ZkData
                     appID));
 
                 var response = JsonConvert.DeserializeObject<CheckAppOwnershipResponse>(ret);
-                return response?.appownership?.ownsapp == true && response?.appownership?.permanent == true;
+                return response?.appownership?.ownsapp == true;
             }
             catch (Exception ex)
             {
