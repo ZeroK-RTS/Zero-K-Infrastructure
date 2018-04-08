@@ -51,7 +51,9 @@ namespace LobbyClient
         public string Version { get; set; }
 
         public List<FactionInfo> Factions { get; set;}
-
+        
+        public int CurrentPlayers { get; set; }
+        public int MaxPlayers { get; set; }
 
         public class FactionInfo
         {
@@ -238,7 +240,10 @@ namespace LobbyClient
             SteamNotLinkedAndLoginMissing = 7,
 
             [Description("your steam account is already linked to a different account")]
-            SteamLinkedToDifferentAccount = 8
+            SteamLinkedToDifferentAccount = 8,
+
+            [Description("sorry, the server is full, please retry later")]
+            ServerFull = 9
         }
 
         public string Name { get; set; }
