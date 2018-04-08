@@ -405,7 +405,7 @@
             <h3>Admin extras</h3>
 
             <form action="@Url.Action("SetZklsMaxPlayers", "Admin")" method="post">
-                Max lobby server players: @Html.TextBox("maxPlayers", MiscVar.ZklsMaxPlayers)
+                Max lobby server players: @Html.TextBox("maxPlayers", MiscVar.ZklsMaxUsers)
                 <input type="submit" value="set" />
             </form>
             <a href="@Url.Action("Index", "Tourney")">Tourney control</a><br />

@@ -13,17 +13,17 @@ namespace ZkData
         public static string DefaultEngine { get { return GetValue("engine") ?? GlobalConst.DefaultEngineOverride; } set { SetValue("engine", value); } }
         public static string LastRegisteredZkVersion { get { return GetValue("zkVersion"); } set { SetValue("zkVersion", value); } }
         public static string LastRegisteredChobbyVersion { get { return GetValue("chobbyVersion"); } set { SetValue("chobbyVersion", value); } }
-        public static int ZklsMaxPlayers
+        public static int ZklsMaxUsers
         {
             get
             {
                 int maxp;
-                int.TryParse(GetValue("ZklsMaxPlayers") ?? "", out maxp);
+                int.TryParse(GetValue("ZklsMaxUsers") ?? "", out maxp);
                 return maxp;
             }
             set
             {
-                SetValue("ZklsMaxPlayers", value.ToString());
+                SetValue("ZklsMaxUsers", value.ToString());
             }
         }
 

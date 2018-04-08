@@ -51,9 +51,8 @@ namespace LobbyClient
         public string Version { get; set; }
 
         public List<FactionInfo> Factions { get; set;}
-        
-        public int CurrentPlayers { get; set; }
-        public int MaxPlayers { get; set; }
+
+        public bool UserCountLimited { get; set; }
 
         public class FactionInfo
         {
@@ -230,7 +229,7 @@ namespace LobbyClient
             Banned = 4,
 
 
-            [Description("invalid steam token")]
+            [Description("invalid steam token, are you in offline mode?")]
             InvalidSteamToken = 5,
 
             [Description("banned, too many connection attempts")]

@@ -63,7 +63,7 @@ namespace ZeroKWeb.Controllers
         [Auth(Role = AdminLevel.SuperAdmin)]
         public ActionResult SetZklsMaxPlayers(int maxPlayers)
         {
-            MiscVar.ZklsMaxPlayers = maxPlayers;
+            MiscVar.ZklsMaxUsers = maxPlayers;
             return RedirectToAction("Index", "Home");
         }
     }
