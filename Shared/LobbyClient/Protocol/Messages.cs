@@ -180,7 +180,7 @@ namespace LobbyClient
             [Description("invalid name characters")]
             NameHasInvalidCharacters = 5,
 
-            [Description("invalid steam token")]
+            [Description("invalid steam token, are you in offline mode?")]
             InvalidSteamToken = 6,
 
             [Description("steam already registered")]
