@@ -192,7 +192,7 @@ namespace LobbyClient
             [Description("banned too many connection attempts")]
             BannedTooManyAttempts = 9,
 
-            [Description("already registered, use login using steam")]
+            [Description("already linked steam, connecting")]
             AlreadyRegisteredWithThisSteamToken = 10,
 
             [Description("already registered, use login using password")]
