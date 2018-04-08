@@ -71,7 +71,7 @@
     @Html.ActionLink("(propose new treaty)", "NewTreaty")
 }
 <br />
-@foreach (FactionTreaty tr in db.FactionTreaties.Where(x => x.TreatyState != TreatyState.Invalid).Where(x => (x.ProposingFactionID == f.FactionID || x.AcceptingFactionID == f.FactionID)).OrderBy(x => x.TreatyState))
+@foreach (FactionTreaty tr in db.FactionTreaties.Where(x => x.TreatyState != TreatyState.Invalid && x.TreatyState != TreatyState.Cancelled && x.TreatyState != TreatyState.Ended).Where(x => (x.ProposingFactionID == f.FactionID || x.AcceptingFactionID == f.FactionID)).OrderBy(x => x.TreatyState))
 {
     if (tr.TreatyState == TreatyState.Proposed)
     {

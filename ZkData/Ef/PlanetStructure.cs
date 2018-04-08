@@ -120,6 +120,7 @@ namespace ZkData
 
         public bool CanRush(Account account)
         {
+            if (account == null) return false;
             if (!IsRushed() && Planet.OwnerFactionID == account.FactionID && Planet.OwnerFactionID != null &&
                 StructureType.MetalToRushActivation > 0 && account.GetMetalAvailable() >= StructureType.MetalToRushActivation) return true;
 

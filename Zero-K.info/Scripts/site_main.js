@@ -201,21 +201,6 @@ function GlobalPageInit(root) {
         }
     );
 
-    s.find(".js_ping")
-        .click(function (event) {
-            event.preventDefault();
-                $.ajax({
-                    url: $(this).attr("src"),
-                    success: function (data) {
-                        if (data != null && data.length > 0) alert(data);
-                    },
-                    error: function () {
-                        alert("Error sending the command to lobby, please try again later");
-                    }
-                });
-            return false;
-        });
-
     s.find(".js_datepicker").datepicker($.datepicker.regional["en"]);
     s.find(".js_datetimepicker").datetimepicker();
 

@@ -44,6 +44,7 @@ namespace ZkLobbyServer
 
         public async Task<LoginCheckerResponse> DoLogin(Login login, string ip, List<ulong> dlc)
         {
+            if (server.ConnectedUsers.Count >= MiscVar.ZklsMaxUsers) return new LoginCheckerResponse(LoginResponse.Code.ServerFull);
             await semaphore.WaitAsync();
             try
             {

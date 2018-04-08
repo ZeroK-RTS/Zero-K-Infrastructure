@@ -13,15 +13,30 @@ namespace ZkData
         public static string DefaultEngine { get { return GetValue("engine") ?? GlobalConst.DefaultEngineOverride; } set { SetValue("engine", value); } }
         public static string LastRegisteredZkVersion { get { return GetValue("zkVersion"); } set { SetValue("zkVersion", value); } }
         public static string LastRegisteredChobbyVersion { get { return GetValue("chobbyVersion"); } set { SetValue("chobbyVersion", value); } }
+        public static int ZklsMaxUsers
+        {
+            get
+            {
+                int maxp;
+                int.TryParse(GetValue("ZklsMaxUsers") ?? "", out maxp);
+                return maxp;
+            }
+            set
+            {
+                SetValue("ZklsMaxUsers", value.ToString());
+            }
+        }
+
 
         public static PlanetWarsModes PlanetWarsMode
         {
-            get { 
+            get
+            {
                 PlanetWarsModes mode;
                 if (Enum.TryParse(GetValue("planetWarsMode"), out mode)) return mode;
                 else return PlanetWarsModes.AllOffline;
             }
-            set { SetValue("planetWarsMode", value.ToString());}
+            set { SetValue("planetWarsMode", value.ToString()); }
         }
 
         public static PlanetWarsModes? PlanetWarsNextMode
@@ -53,7 +68,7 @@ namespace ZkData
         [StringLength(200)]
         public string VarName { get; set; }
         public string VarValue { get; set; }
-        
+
 
         public static string GetValue(string varName)
         {

@@ -46,7 +46,7 @@
 @if (autohost != null && autohost.IsInGame) { 
 	<b>
 		@if (autohost.IsInGame) {
-            <a href="@Url.Action("WatchBattle", "Lobby", new {id=autohost.BattleID})" class="js_ping">Battle in progress, JOIN TO WATCH</a>
+            <a href="@Url.Action("WatchPlanetBattle", "Lobby", new {id=Model.PlanetID})">Battle in progress, JOIN TO WATCH</a>
         }
 	</b>
 }
