@@ -347,7 +347,7 @@ namespace ZeroKWeb.Controllers
                 using (var db = new ZkDataContext()) {
                     model.UserStats = model.UserId.Select(id => new UserStats()
                     {
-                        Account = db.Accounts.FirstOrDefault(a => a.AccountID == id),
+                        Account = db.Accounts.Where(x => x.AccountID == id).Include(x => x.Faction).Include(x => x.Clan).FirstOrDefault(),
                         RankStats = RatingSystems.ratingCategories.Select(s => new RankStats()
                         {
                             System = s.ToString(),
