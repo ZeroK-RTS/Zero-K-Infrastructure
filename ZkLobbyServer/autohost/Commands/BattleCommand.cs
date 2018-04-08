@@ -82,8 +82,9 @@ namespace ZkLobbyServer
         /// <param name="battle"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        public virtual RunPermission GetRunPermissions(ServerBattle battle, string userName)
+        public virtual RunPermission GetRunPermissions(ServerBattle battle, string userName, out string reason)
         {
+            reason = "";
             if (Access == AccessType.NoCheck) return RunPermission.Run;
             
             User user = null;
@@ -120,13 +121,19 @@ namespace ZkLobbyServer
             }
 
             var defPerm = hasAdminRights ? RunPermission.Run : (isSpectator || isAway ? RunPermission.None : RunPermission.Vote);
+            reason = "This command can't be executed by spectators. Join the game to use this command.";
             if (defPerm == RunPermission.None) return defPerm;
             if (defPerm == RunPermission.Vote && count<=1) defPerm = RunPermission.Run;
 
+            reason = "";
             if (Access == AccessType.Anywhere) return defPerm;
             if (Access == AccessType.Ingame && s.IsRunning) return defPerm;
             if (Access == AccessType.NotIngame && !s.IsRunning) return defPerm;
             if (Access == AccessType.IngameVote && s.IsRunning) return RunPermission.Vote;
+
+            reason = "You are not allowed to execute this command. Ask the host or create your own room to use it.";
+            if (Access == AccessType.NotIngame && s.IsRunning) reason = "This command can only be used outside of the game. Use !exit to abort the game.";
+            if ((Access == AccessType.IngameVote || Access == AccessType.Ingame) && !s.IsRunning) reason = "This command can only be used while the game is running. Use !start to start the game.";
 
             return RunPermission.None;
         }
