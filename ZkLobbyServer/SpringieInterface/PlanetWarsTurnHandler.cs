@@ -316,6 +316,7 @@ public static class PlanetWarsTurnHandler
 
         // process production (incl. victory points)
         gal.ProcessProduction();
+        db.SaveChanges();
 
         var vpFacs = db.Factions.Where(x => x.VictoryPoints > 0);
         if (vpFacs.Count() > 1)
