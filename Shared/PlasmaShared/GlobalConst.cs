@@ -169,6 +169,7 @@ namespace ZkData
         public const double PlanetWarsEnergyToMetalRatio = 0.0;
         public const double PlanetWarsMaximumIP = 100.0; //maximum IP on each planet
         public const int PlanetWarsVictoryPointsToWin = 100;
+        public const int VictoryPointDecay = 1;
         public const int BaseInfluencePerBattle = 35;
         public const double PlanetWarsAttackerMetal = 100;
         public const double PlanetWarsDefenderMetal = 100;
