@@ -55,7 +55,8 @@ namespace ZeroKWeb.SpringieInterface
                 Planet planet = null;
                 if (mode == AutohostMode.Planetwars)
                 {
-                    planet = db.Galaxies.First(x => x.IsDefault).Planets.First(x => x.Resource.InternalName == context.Map);
+                    var galaxy = db.Galaxies.First(x => x.IsDefault);
+                    planet = galaxy.Planets.First(x => x.Resource.InternalName == context.Map);
                     attacker =
                         context.Players.Where(x => x.AllyID == 0 && !x.IsSpectator)
                             .Select(x => db.Accounts.First(y => y.AccountID == x.LobbyID))
@@ -83,6 +84,16 @@ namespace ZeroKWeb.SpringieInterface
                         ret.ModOptions["defendingFactionColor"] = "#CCCCCC";
                     }
                     ret.ModOptions["planet"] = planet.Name;
+                    ret.ModOptions["galaxyTurn"] = galaxy.Turn.ToString();
+
+                    ret.ModOptions["baseIP"] = GlobalConst.BaseInfluencePerBattle.ToString();
+                    ret.ModOptions["dropshipIP"] = planet.GetEffectiveShipIpBonus(attacker).ToString();
+                    ret.ModOptions["defenseIP"] = planet.GetEffectiveIpDefense().ToString();
+                    ret.ModOptions["attackerIP"] = planet.PlanetFactions.FirstOrDefault(x => x.FactionID == attacker.FactionID)?.Influence ?? 0;
+                    ret.ModOptions["maxIP"] = GlobalConst.PlanetWarsMaximumIP.ToString();
+                    ret.ModOptions["neededIP"] = GlobalConst.InfluenceToCapturePlanet.ToString();
+                    ret.ModOptions["attackerWinLoseCC"] = GlobalConst.PlanetWarsAttackerWinLoseCcMultiplier;
+                    ret.ModOptions["defenderWinKillCC"] = GlobalConst.PlanetWarsDefenderWinKillCcMultiplier;
                 }
 
                 // write player custom keys (level, elo, is muted, etc.)
