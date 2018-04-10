@@ -88,7 +88,9 @@
                 </tr>
             </table>
         </div>
-        <h1 class="username">
+        string color = Faction.FactionColor(Model.Faction, Global.FactionID);
+        
+        <h1 class="username" style="color:@color !important">
             @{
                 MvcHtmlString ranks = new MvcHtmlString(Ratings.Ranks.RankBackgroundImages.Select((x, i) => (string)("<img class='icon16' src='/img/ranks/" + Model.GetIconLevel() + "_" + i + ".png'>")).Aggregate((x, y) => x + y));
                 MvcHtmlString levels = new MvcHtmlString(Ratings.Ranks.RankBackgroundImages.Select((x, i) => (string)("<img class='icon16' src='/img/ranks/" + i + "_" + Model.Rank + ".png'>")).Aggregate((x, y) => x + y));

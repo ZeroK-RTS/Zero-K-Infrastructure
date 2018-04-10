@@ -213,11 +213,12 @@ that is it
                             }
                             var gain = kvp.Value * squeeze;
 
-                            if (kvp.Key != planet.Faction && entry.Influence < GlobalConst.InfluenceToCapturePlanet && entry.Influence + gain >= GlobalConst.InfluenceToCapturePlanet)
+                            /*if (kvp.Key != planet.Faction && entry.Influence < GlobalConst.InfluenceToCapturePlanet && entry.Influence + gain >= GlobalConst.InfluenceToCapturePlanet)
                             {
                                 entry.Influence = GlobalConst.InfluenceToCapturePlanet - 0.1;
                             }
-                            else entry.Influence += gain;
+                            else */
+                            entry.Influence += gain;
 
                             if (entry.Influence > GlobalConst.PlanetWarsMaximumIP) entry.Influence = GlobalConst.PlanetWarsMaximumIP;
 

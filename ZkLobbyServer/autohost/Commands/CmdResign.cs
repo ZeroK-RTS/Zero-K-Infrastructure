@@ -48,9 +48,9 @@ namespace ZkLobbyServer
             await battle.SayBattle($"Team {alliance + 1} resigned");
         }
 
-        public override RunPermission GetRunPermissions(ServerBattle battle, string userName)
+        public override RunPermission GetRunPermissions(ServerBattle battle, string userName, out string reason)
         {
-            var ret = base.GetRunPermissions(battle, userName);
+            var ret = base.GetRunPermissions(battle, userName, out reason);
 
             // only people from same team can vote
             if (ret >= RunPermission.Vote)

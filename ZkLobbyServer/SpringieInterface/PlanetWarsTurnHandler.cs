@@ -314,8 +314,13 @@ public static class PlanetWarsTurnHandler
         // process faction energies
         foreach (var fac in db.Factions.Where(x => !x.IsDeleted)) fac.ProcessEnergy(gal.Turn);
 
-        // process production
+        // process production (incl. victory points)
         gal.ProcessProduction();
+        db.SaveChanges();
+
+        var vpFacs = db.Factions.Where(x => x.VictoryPoints > 0);
+        if (vpFacs.Count() > 1)
+            foreach (var fac in vpFacs) fac.VictoryPoints -= Math.Min(fac.VictoryPoints, GlobalConst.VictoryPointDecay);
 
         // delete one time activated structures
         gal.DeleteOneTimeActivated(eventCreator, db);

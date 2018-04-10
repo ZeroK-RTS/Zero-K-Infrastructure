@@ -1270,6 +1270,7 @@
     <Content Include="Img\star_40_gold.png" />
     <Content Include="Img\star_40_silver.png" />
     <Content Include="Img\steam_20p.png" />
+    <Content Include="Img\steam_logo.png" />
     <Content Include="Img\sticky.png" />
     <Content Include="Img\stickylock.png" />
     <Content Include="Img\structures\artefact.png" />
@@ -1423,6 +1424,7 @@
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Chart.min.js" />
     <Content Include="Scripts\Chart.Zoom.min.js" />
+    <Content Include="Scripts\countDown.js" />
     <Content Include="Scripts\grid.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -1439,6 +1441,7 @@
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site_main.js" />
+    <Content Include="Styles\countDown.css" />
     <Content Include="Styles\jquery.datetimepicker.min.css" />
     <Content Include="Styles\userpage.css" />
     <Content Include="Styles\base.css" />

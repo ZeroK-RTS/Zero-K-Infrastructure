@@ -9,16 +9,18 @@
 <script src="/Scripts/Chart.min.js"></script>
 
 <div class="fleft width-100" style="padding: 5px;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;">
-    <h2>Zero-K Player Rating History</h2> <br/>
+    <h1>Zero-K Player Rating History</h1> <br />
     <form action="@Url.Action("Ratings")">
         <table class="inputTable">
             <tr>
                 <td>Rating:</td>
-                <td>@Html.EnumDropDownListFor(x => x.RatingCategory, new { @class = "width-100"})</td>
+                <td>@Html.EnumDropDownListFor(x => x.RatingCategory, new { @class = "width-100" })</td>
             </tr>
             <tr>
                 <td>Players: </td>
-                <td>@using (var db = new ZkDataContext()){ @Html.MultiSelectFor(x => x.UserId, Url.Action("Users", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)));}</td>
+                <td>@using (var db = new ZkDataContext())
+                {@Html.MultiSelectFor(x => x.UserId, Url.Action("Users", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)));
+            }</td>
             </tr>
             <tr>
                 <td></td>
@@ -85,7 +87,45 @@
 
                 });
             </script>
+        }
     }
+    <br />
+    <h2>Current player ratings</h2>
+    <br />
+    @foreach (var player in Model.UserStats)
+    {
+        <ul><li><b>@Html.PrintAccount(player.Account)</b></li></ul>
+        foreach (var rank in player.RankStats)
+        {
+            <b>@rank.System</b><br />
+
+            <table>
+                <tr>
+                    <td>Current rating: </td>
+                    <td>@rank.CurrentRating.RealElo ± @rank.CurrentRating.Uncertainty</td>
+                </tr>
+                <tr>
+                    <td>Ladder rating: </td>
+                    <td>@rank.CurrentRating.Elo</td>
+                </tr>
+                <tr>
+                    <td>Ladder position: </td>
+                    <td>@(rank.CurrentRating.Rank >= int.MaxValue ? "Unranked" : string.Format("{0}. Top {1}%", rank.CurrentRating.Rank, Math.Round(rank.CurrentRating.Percentile * 1000) / 10f))</td>
+                </tr>
+                <tr>
+                    <td>Next rank above: </td>
+                    <td>@(rank.Bracket.UpperEloLimit + rank.CurrentRating.Uncertainty)</td>
+                </tr>
+                <tr>
+                    <td>Rank loss below: </td>
+                    <td>@(rank.Bracket.LowerEloLimit - rank.CurrentRating.Uncertainty)</td>
+                </tr>
+            </table>
+            <br />
+        }
     }
+    <br />
+    @Html.IncludeWiki("Ratings")
+    
 </div>
 <br class="clearfloat" />

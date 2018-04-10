@@ -200,13 +200,9 @@ namespace ChobbyLauncher
                         MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
                     var crashType = syncError ? CrashType.Desync : luaErr ? CrashType.LuaError : CrashType.Crash;
-                    if (!string.IsNullOrEmpty(chobbyla.BugReportTitle))
-                    {
-                        logSb.Insert(0, $"{chobbyla.BugReportTitle}\n\n{chobbyla.BugReportDescription}\n\n");
-                        crashType = CrashType.UserReport;
-                    }
+                    if (!string.IsNullOrEmpty(chobbyla.BugReportTitle)) crashType = CrashType.UserReport;
 
-                    var ret = CrashReportHelper.ReportCrash(logSb.ToString(), crashType, chobbyla.engine);
+                    var ret = CrashReportHelper.ReportCrash(logSb.ToString(), crashType, chobbyla.engine, chobbyla.BugReportTitle, chobbyla.BugReportDescription);
                     if (ret != null)
                         try
                         {

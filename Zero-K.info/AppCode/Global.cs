@@ -167,6 +167,9 @@ namespace ZeroKWeb
 
         public static ForumPostIndexer ForumPostIndexer { get; private set; }
 
+
+
+
         public static void StopApplication()
         {
             ZkServerRunner.Stop();

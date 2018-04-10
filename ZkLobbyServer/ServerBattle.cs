@@ -320,11 +320,16 @@ namespace ZkLobbyServer
                 await Respond(e, "This room is now disabled, please join a new one");
                 return false;
             }
-            var perm = cmd.GetRunPermissions(this, e.User);
+            string reason;
+            var perm = cmd.GetRunPermissions(this, e.User, out reason);
 
             if (perm == BattleCommand.RunPermission.Run) await cmd.Run(this, e, arg);
             else if (perm == BattleCommand.RunPermission.Vote) await StartVote(cmd, e, arg);
-            else return false;
+            else
+            {
+                await Respond(e, reason);
+                return false;
+            }
             return true;
         }
 
