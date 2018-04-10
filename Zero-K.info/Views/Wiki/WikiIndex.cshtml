@@ -9,17 +9,6 @@
 <h1>@Model.ForumThread.Title</h1>
 @Html.BBCodeCached(Model)
 
-@if (Model.ForumThread.WikiKey == "Download")
-{
-    <script type="text/javascript">
-    $(function() {
-        var isLinux = navigator.platform.toUpperCase().indexOf('LINUX') !== -1;
-        var isMac = navigator.platform.toUpperCase().indexOf('MAC') !== -1;
-        if (!isLinux && !isMac) $('<iframe width="1" height="1" frameborder="0" src="@Url.Content("~/lobby/Zero-K.setup.exe")"></iframe>').appendTo('body');
-    });
-    </script>
-}
-
 @if (Model.CanEdit(Global.Account))
 {
     <br/>
