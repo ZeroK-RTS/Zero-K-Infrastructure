@@ -155,7 +155,6 @@ div#busy
 	display: inline-block;
 	vertical-align:middle;
 }
-
 .textbutton
 {
 	display: inline-block;
@@ -180,6 +179,18 @@ div#busy
 	text-decoration: none;
 }
 
+
+.steamSpan {
+    margin-top: -5px;
+    margin-left: -12px;
+    margin-right: -12px;
+    height: 33px;
+    width: 140px;
+    background-size: cover;
+    background-image: url("/img/steam_logo.png");
+    display: inline-block;
+    vertical-align: middle;
+}
 .downloadbutton
 {
 	position: relative;
@@ -197,18 +208,40 @@ div#busy
 	font-size: 200%;
 }
 
-.downloadbutton:hover
-{
-	color: #fff;
-	box-shadow: 0 0 2px 2px #fff;
+.downloadbutton:hover {
+    color: #fff;
+    box-shadow: 0 0 2px 2px #fff;
 }
 
-.downloadbutton:active
-{
-	color: #cbd3d4;
-	box-shadow: 0 0 2px 2px #cbd3d4;
+.downloadbutton:active {
+    color: #cbd3d4;
+    box-shadow: 0 0 2px 2px #cbd3d4;
 }
 
+.downloadbuttonsteam {
+    position: relative;
+    display: block;
+    background: #000 url("/img/download.png") no-repeat center;
+    color: #38bfec;
+    border-radius: 5px;
+    border: 1px solid #2a8eaf;
+    box-shadow: 0 0 2px 2px #38bfec;
+    padding: 15px 0;
+    margin: 10px;
+    cursor: pointer;
+    text-align: center;
+    font-family: os, sans-serif;
+    font-size: 160%;
+}
+.downloadbuttonsteam:hover {
+    color: #fff;
+    box-shadow: 0 0 2px 2px #fff;
+}
+
+.downloadbuttonsteam:active {
+    color: #cbd3d4;
+    box-shadow: 0 0 2px 2px #cbd3d4;
+}
 
 /* Share */
 #shares 

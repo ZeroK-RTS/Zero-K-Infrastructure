@@ -45,11 +45,20 @@
                 }
                 else
                 {
+                    <div class="downloadbuttonsteam" style="width:340px;">
+                        <a href="http://store.steampowered.com/app/334920/ZeroK/" style="vertical-align:middle;color:#eee">
+                            Get Zero-K on 
+                            <span class="steamSpan"></span>
+                            
+                        </a>
+                    </div>
                 }
                 <br />
                 <iframe width="560" height="315" src="https://www.youtube.com/embed/Ho1K9XP9UMk?rel=0" frameborder="0" hd="1" allowfullscreen></iframe><br />
                 <br />
                 @if (GlobalConst.IsAfterSteam == false){
+                    <div class="center bold">Zero-K will be released on Steam in</div>
+                    <br />
                     <div class="container"></div>
                     <script>
                         var cd = new Countdown({
@@ -113,12 +122,25 @@
                     <p><img class="width-100" src="/img/landing/text6.jpg"><br></p>
                     <ul><li>Learn to use all of our 100+ units and play on hundreds of maps.</li><li>Invent the next mad team-tactics to shock enemies and make allies laugh.</li><li>Combine cloaking, teleports, shields, jumpjets, EMP, napalm, gravity guns, black hole launchers, mind control and self-replication.</li><li>Tiny flea swarm that clings to walls? <br>Jumping "cans" with steam-spike? <br>Buoys that hide under water to ambush ships? <br>Mechs that spew fire and enjoy being tossed from air transports? <br>Carrier with cute helicopters? <br>Jumping Jugglenaut with dual wielding gravity guns? <br>Meet them in Zero-K!<span class="author-a-z80zz84zs2z75zw0ibh5w6aod"></span></li></ul>
                 </div><br />
-                <div class="downloadbutton" style="width:300px;">
-                    <a href="/Wiki/Download" style="vertical-align:middle">
-                        <span class="buttonSpan"></span>
-                        Download
-                    </a>
-                </div>
+                @if (GlobalConst.IsAfterSteam)
+                {
+                    <div class="downloadbutton" style="width:300px;">
+                        <a href="/Wiki/Download" style="vertical-align:middle">
+                            <span class="buttonSpan"></span>
+                            Download
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="downloadbuttonsteam" style="width:340px;">
+                        <a href="http://store.steampowered.com/app/334920/ZeroK/" style="vertical-align:middle;color:#eee">
+                            Get Zero-K on 
+                            <span class="steamSpan"></span>
+                            
+                        </a>
+                    </div>
+                }
                 <div>
                     <small>or just <a href="/Wiki/Media">view the media</a></small>
                 </div>
