@@ -10,8 +10,9 @@
 @if (!Global.IsAccountAuthorized)
 {
 
+    <link href="/Styles/countDown.css" rel="stylesheet">
+    <script src="/Scripts/countDown.js"></script>
     <style type="text/css">
-
         html {
             background: #000 url("/img/landing/tutorialBattle.jpg") no-repeat fixed 50% 50%;
             background-size: cover;
@@ -33,14 +34,45 @@
         else
         {
             <div align="center">
-                <div class="downloadbutton" style="width:300px;">
-                    <a href="/Wiki/Download" style="vertical-align:middle">
-                        <span class="buttonSpan"></span>
-                        Play Zero-K!
-                    </a>
-                </div>
+                @if (GlobalConst.IsAfterSteam)
+                {
+                    <div class="downloadbutton" style="width:300px;">
+                        <a href="/Wiki/Download" style="vertical-align:middle">
+                            <span class="buttonSpan"></span>
+                            Play Zero-K!
+                        </a>
+                    </div>
+                }
+                else
+                {
+                }
                 <br />
                 <iframe width="560" height="315" src="https://www.youtube.com/embed/Ho1K9XP9UMk?rel=0" frameborder="0" hd="1" allowfullscreen></iframe><br />
+                <br />
+                @if (GlobalConst.IsAfterSteam == false){
+                    <div class="container"></div>
+                    <script>
+                        var cd = new Countdown({
+                            cont: document.querySelector('.container'),
+                            endDate: @GlobalConst.SteamRelease.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds,
+                            outputTranslation: {
+                                year: 'Years',
+                                week: 'Weeks',
+                                day: 'Days',
+                                hour: 'Hours',
+                                minute: 'Minutes',
+                                second: 'Seconds',
+                            },
+                            endCallback: null,
+                            outputFormat: 'day|hour|minute|second',
+                        });
+                        cd.start();
+                    </script>
+                }
+                <div id="getting-started"></div>
+                <script type="text/javascript">
+                    $("#getting-started").countdown("2017/01/01", function (event) { $(this).text(event.strftime('%D days %H:%M:%S')); });
+                </script>
                 <div align="left" class="padded">
                     <p><h3>Commander wanted!</h3> <br>Drive giant robots, build an army of a thousand Fleas, move mountains if needed, bury the enemy at all cost!</p>
                     <ul><li>Real time strategy.</li><li>Physically simulated units and projectiles.</li><li>Terrain manipulation.</li><li>100+ varied units with unique abilities.</li><li>Singleplayer campaign.</li><li>Challenging, non-cheating AI.</li><li>Multiplayer 1v1 - 16v16, FFA, coop.</li><li>Multiplayer online campaign.</li><li>Really free, no in-game currency, no unfair multiplayer.</li></ul>
@@ -105,7 +137,6 @@
             <small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)</small>
         </div>
     }
-
     <div id="news" class="border">
         @foreach (var n in Model.News.Take(4))
         {
@@ -183,7 +214,6 @@
             @Html.PrintMediaWikiEdit(edit)<br />
         }
     </div>
-
     <div id="topten" class="border">
         <h2><a href='@Url.Action("Index","Ladders")'>Top Players</a></h2>
         <table cellpadding='0' cellspacing='0'>
