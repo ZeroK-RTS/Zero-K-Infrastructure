@@ -80,7 +80,8 @@ namespace ZkData
                     break;
             }
 
-            DefaultDownloadMirrors = new[] { BaseSiteUrl +"/content/%t/%f" };
+            if (IsLongAfterSteam) DefaultDownloadMirrors = new[] { BaseSiteUrl +"/content/%t/%f" };
+
             ResourceBaseUrl = string.Format("{0}/Resources", BaseSiteUrl);
             BaseImageUrl = string.Format("{0}/img/", BaseSiteUrl);
             SelfUpdaterBaseUrl = string.Format("{0}/lobby", BaseSiteUrl);
@@ -274,6 +275,10 @@ namespace ZkData
 
         public static int SteamContributionJarID = 2;
         public static Dictionary<ulong, int> DlcToKudos = new Dictionary<ulong, int>() { { 842950, 100 }, { 842951, 250 }, { 842952, 500 } };
+
+        public static DateTime SteamRelease = new DateTime(2018, 4, 27, 8, 0, 0, DateTimeKind.Utc);
+        public static bool IsLongAfterSteam => DateTime.UtcNow.Subtract(SteamRelease).TotalDays > 14;
+
     }
 
     public enum PlanetWarsModes

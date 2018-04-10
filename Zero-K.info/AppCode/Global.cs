@@ -167,9 +167,6 @@ namespace ZeroKWeb
 
         public static ForumPostIndexer ForumPostIndexer { get; private set; }
 
-        public static DateTime SteamRelease = new DateTime(2018,4,27,8,0,0,DateTimeKind.Utc);
-
-        public static bool IsLongAfterSteam => DateTime.UtcNow.Subtract(SteamRelease).TotalDays > 14;
 
 
 
