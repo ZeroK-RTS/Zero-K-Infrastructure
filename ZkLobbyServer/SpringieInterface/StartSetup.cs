@@ -84,16 +84,16 @@ namespace ZeroKWeb.SpringieInterface
                         ret.ModOptions["defendingFactionColor"] = "#CCCCCC";
                     }
                     ret.ModOptions["planet"] = planet.Name;
-                    ret.ModOptions["galaxyTurn"] = galaxy.Turn.ToString();
+                    ret.ModOptions["pw_galaxyTurn"] = galaxy.Turn.ToString();
 
-                    ret.ModOptions["baseIP"] = GlobalConst.BaseInfluencePerBattle.ToString();
-                    ret.ModOptions["dropshipIP"] = planet.GetEffectiveShipIpBonus(attacker).ToString();
-                    ret.ModOptions["defenseIP"] = planet.GetEffectiveIpDefense().ToString();
-                    ret.ModOptions["attackerIP"] = (planet.PlanetFactions.FirstOrDefault(x => x.FactionID == attacker.FactionID)?.Influence ?? 0).ToString();
-                    ret.ModOptions["maxIP"] = GlobalConst.PlanetWarsMaximumIP.ToString();
-                    ret.ModOptions["neededIP"] = GlobalConst.InfluenceToCapturePlanet.ToString();
-                    ret.ModOptions["attackerWinLoseCC"] = GlobalConst.PlanetWarsAttackerWinLoseCcMultiplier.ToString();
-                    ret.ModOptions["defenderWinKillCC"] = GlobalConst.PlanetWarsDefenderWinKillCcMultiplier.ToString();
+                    ret.ModOptions["pw_baseIP"] = GlobalConst.BaseInfluencePerBattle.ToString();
+                    ret.ModOptions["pw_dropshipIP"] = planet.GetEffectiveShipIpBonus(attacker).ToString();
+                    ret.ModOptions["pw_defenseIP"] = planet.GetEffectiveIpDefense().ToString();
+                    ret.ModOptions["pw_attackerIP"] = (planet.PlanetFactions.FirstOrDefault(x => x.FactionID == attacker.FactionID)?.Influence ?? 0).ToString();
+                    ret.ModOptions["pw_maxIP"] = GlobalConst.PlanetWarsMaximumIP.ToString();
+                    ret.ModOptions["pw_neededIP"] = GlobalConst.InfluenceToCapturePlanet.ToString();
+                    ret.ModOptions["pw_attackerWinLoseCC"] = GlobalConst.PlanetWarsAttackerWinLoseCcMultiplier.ToString();
+                    ret.ModOptions["pw_defenderWinKillCC"] = GlobalConst.PlanetWarsDefenderWinKillCcMultiplier.ToString();
                 }
 
                 // write player custom keys (level, elo, is muted, etc.)
