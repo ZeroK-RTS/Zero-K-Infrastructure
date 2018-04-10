@@ -24,11 +24,12 @@ namespace ZkLobbyServer
             var commandName = parts[0] ?? "";
             var commandArgs = parts.Length > 1 ? parts[1] : null;
             commandToRun = battle.GetCommandByName(commandName);
-            if (commandToRun.GetRunPermissions(battle, e.User) >= RunPermission.Vote && commandToRun.Access != AccessType.NoCheck)
+            string reason;
+            if (commandToRun.GetRunPermissions(battle, e.User, out reason) >= RunPermission.Vote && commandToRun.Access != AccessType.NoCheck)
             {
                 return commandToRun.Arm(battle, e, commandArgs);
             }
-            battle.Respond(e, "You cannot poll this");
+            battle.Respond(e, reason);
             return null;
         }
 
@@ -38,10 +39,10 @@ namespace ZkLobbyServer
             await commandToRun.ExecuteArmed(battle, e);
         }
 
-        public override RunPermission GetRunPermissions(ServerBattle battle, string userName)
+        public override RunPermission GetRunPermissions(ServerBattle battle, string userName, out string reason)
         {
-            if (commandToRun == null) return base.GetRunPermissions(battle, userName) >= RunPermission.Vote ? RunPermission.Vote : RunPermission.None;
-            return commandToRun.GetRunPermissions(battle, userName);
+            if (commandToRun == null) return base.GetRunPermissions(battle, userName, out reason) >= RunPermission.Vote ? RunPermission.Vote : RunPermission.None;
+            return commandToRun.GetRunPermissions(battle, userName, out reason);
         }
     }
 }
