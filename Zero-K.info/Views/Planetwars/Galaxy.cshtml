@@ -2,17 +2,16 @@
 @using ZkData
 @model ZkData.Galaxy
 @{
-    Page.Title = "Planet-Wars galaxy view";
-    ViewBag.Minimal = true;
-    ViewBag.Refresh = 30;
-    var g = Model;
+	Page.Title = "Planet-Wars galaxy view";
+	ViewBag.Minimal = true;
+	var g = Model;
 
-    int maxDropships = new ZkDataContext().PlanetFactions.Select(x => (int?)x.Dropships).Max() ?? 1; // fake max as 1 to prevent division by zero
-    if (maxDropships == 0)
-    {
-        maxDropships = 1;
-    }
-
+	int maxDropships = new ZkDataContext().PlanetFactions.Select(x => (int?)x.Dropships).Max() ?? 1; // fake max as 1 to prevent division by zero
+	if (maxDropships == 0)
+	{
+		maxDropships = 1;
+	}
+	
 }
 
 @* Planet link lines *@
