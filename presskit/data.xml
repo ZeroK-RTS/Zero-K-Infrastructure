@@ -14,7 +14,7 @@
 		</platform>
 		<platform>
 			<name>Steam</name>
-			<link>http://www.steampowered.com/</link>
+			<link>http://store.steampowered.com/app/334920/ZeroK/</link>
 		</platform>
 	</platforms>
 	
@@ -66,12 +66,12 @@
 		
 	<trailers>
 		<trailer>
-			<name>Zero-K Gameplay Teaser</name>
-			<youtube>Ho1K9XP9UMk</youtube>
+			<name>Zero-K Launch Trailer</name>
+			<youtube>pHQkctGTm_A</youtube>
 		</trailer>
 		<trailer>
-			<name>Zero-K Trailer</name>
-			<youtube>vkZaLLyhEgI</youtube>
+			<name>Zero-K Gameplay Teaser</name>
+			<youtube>Ho1K9XP9UMk</youtube>
 		</trailer>
 	</trailers>
 	
@@ -98,6 +98,11 @@
 																			 	non-commercial (no monetization allowed),
 																			 	monetize (full permission) -->	
 	<additionals>
+		<additional>
+			<title>Steam page</title>
+			<description>Zero-K will be released on Steam, check it out at </description>
+			<link>http://store.steampowered.com/app/334920/ZeroK/</link>
+		</additional>
 		<additional>
 			<title>itch.io page</title>
 			<description>Zero-K has been released on itch.io, check it out at </description>
