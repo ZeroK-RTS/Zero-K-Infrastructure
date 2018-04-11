@@ -33,7 +33,11 @@
 
             if (!GlobalConst.IsAfterSteam)
             {
-                <div class="center bold">We did it! Zero-K will be released on Steam in</div>
+                <br/>
+                <div style="text-align: center">
+                    <h2>We did it!</h2>
+                    <b> Zero-K coming to Steam in</b>
+                </div>
                 <br />
                 <a href="http://store.steampowered.com/app/334920/ZeroK/">
                     <div class="container"></div>
@@ -56,18 +60,15 @@
                     cd.start();
                 </script>
                 <br />
-                <p>We thank each and every one of you for your patience and support. Be it via donations, contributions or simply playing the game!</p>
-                <p>Please, help us build the hype now! Tell friends, spread the word and upon release: download zk on steam, leave a review and rating and be around to help our newcomers!</p>
-                <p>Check out <a href="http://store.steampowered.com/app/334920/ZeroK/">our steam page</a>.</p>
-                <div align="center" style="display:none;">
-                    <div class="downloadbuttonsteam" style="width:340px;">
-                        <a href="http://store.steampowered.com/app/334920/ZeroK/" style="vertical-align:middle;color:#eee">
-                            Get Zero-K on
-                            <span class="steamSpan"></span>
+                <p style="text-align: center">Thank to all of you for your patience and support.<br/>
+                    Special thanks go to all <a href="http://zero-k.info/mediawiki/index.php?title=Credits">developers and contributors</a> and to everyone who helped to <a href="@Url.Action("Index","Contributions")">fund the server</a>!
+                </p>
+                                                           
+                <p style="text-align: center">Please <b>help us</b> build some hype now! <br/>
+                    Tell your friends, spread the word and upon the release: <a href="http://store.steampowered.com/app/334920/ZeroK/">get Zero-K on Steam</a>, play it, write a review and be around to help fresh newbies!</p>
 
-                        </a>
-                    </div>
-                </div>
+                <p style="text-align: center">We, the lead developers, wish you tons of fun in Zero-K, see you ingame!</p>                                                                                                                        
+
                 <br />
             }
             Html.RenderPartial("UserDetail", Global.Account);
