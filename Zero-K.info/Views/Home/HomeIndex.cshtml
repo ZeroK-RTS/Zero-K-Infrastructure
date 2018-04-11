@@ -7,12 +7,13 @@
     var s = Model.Spotlight;
     var stat = @Model.LobbyStats;
 }
+<link href="/Styles/countDown.css" rel="stylesheet">
+<script src="/Scripts/countDown.js"></script>
 @if (!Global.IsAccountAuthorized)
 {
 
-    <link href="/Styles/countDown.css" rel="stylesheet">
-    <script src="/Scripts/countDown.js"></script>
     <style type="text/css">
+
         html {
             background: #000 url("/img/landing/tutorialBattle.jpg") no-repeat fixed 50% 50%;
             background-size: cover;
@@ -29,6 +30,47 @@
     <div id="features" class="border">
         @if (Global.IsAccountAuthorized)
         {
+
+            if (!GlobalConst.IsAfterSteam)
+            {
+                <br/>
+                <div style="text-align: center">
+                    <h2>We did it!</h2>
+                    <b> Zero-K coming to Steam in</b>
+                </div>
+                <br />
+                <a href="http://store.steampowered.com/app/334920/ZeroK/">
+                    <div class="container"></div>
+                </a>
+                <script>
+                    var cd = new Countdown({
+                        cont: document.querySelector('.container'),
+                        endDate: @GlobalConst.SteamRelease.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds,
+                        outputTranslation: {
+                            year: 'Years',
+                            week: 'Weeks',
+                            day: 'Days',
+                            hour: 'Hours',
+                            minute: 'Minutes',
+                            second: 'Seconds',
+                        },
+                        endCallback: null,
+                        outputFormat: 'day|hour|minute|second',
+                    });
+                    cd.start();
+                </script>
+                <br />
+                <p style="text-align: center">Thank to all of you for your patience and support.<br/>
+                    Special thanks go to all <a href="http://zero-k.info/mediawiki/index.php?title=Credits">developers and contributors</a> and to everyone who helped to <a href="@Url.Action("Index","Contributions")">fund the server</a>!
+                </p>
+                                                           
+                <p style="text-align: center">Please <b>help us</b> build some hype now! <br/>
+                    Tell your friends, spread the word and upon the release: <a href="http://store.steampowered.com/app/334920/ZeroK/">get Zero-K on Steam</a>, play it, write a review and be around to help fresh newbies!</p>
+
+                <p style="text-align: center">We, the lead developers, wish you tons of fun in Zero-K, see you ingame!</p>                                                                                                                        
+
+                <br />
+            }
             Html.RenderPartial("UserDetail", Global.Account);
         }
         else
@@ -47,19 +89,20 @@
                 {
                     <div class="downloadbuttonsteam" style="width:340px;">
                         <a href="http://store.steampowered.com/app/334920/ZeroK/" style="vertical-align:middle;color:#eee">
-                            Get Zero-K on 
+                            Get Zero-K on
                             <span class="steamSpan"></span>
-                            
+
                         </a>
                     </div>
                 }
                 <br />
                 <iframe width="560" height="315" src="https://www.youtube.com/embed/pHQkctGTm_A?rel=0" frameborder="0" hd="1" allowfullscreen></iframe><br />
                 <br />
-                @if (GlobalConst.IsAfterSteam == false){
+                @if (GlobalConst.IsAfterSteam == false)
+                {
                     <div class="center bold">Zero-K will be released on Steam in</div>
                     <br />
-                    <div class="container"></div>
+                    <a href="http://store.steampowered.com/app/334920/ZeroK/"><div class="container"></div></a>
                     <script>
                         var cd = new Countdown({
                             cont: document.querySelector('.container'),
@@ -135,9 +178,9 @@
                 {
                     <div class="downloadbuttonsteam" style="width:340px;">
                         <a href="http://store.steampowered.com/app/334920/ZeroK/" style="vertical-align:middle;color:#eee">
-                            Get Zero-K on 
+                            Get Zero-K on
                             <span class="steamSpan"></span>
-                            
+
                         </a>
                     </div>
                 }
