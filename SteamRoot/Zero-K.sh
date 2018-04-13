@@ -1,10 +1,6 @@
 #!/bin/sh
 installdir=$( dirname "${0}" )
 cd "$installdir"
-export LD_LIBRARY_PATH=
-export LD_PRELOAD=
-DISPLAY=:1
-zenity --info --title "Done!" --text "Zeroblub\!" &&  touch blub2
 if [ -f "$installdir/installed.txt" ]
     then
     mono Zero-K.exe "$@"
