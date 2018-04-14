@@ -444,9 +444,6 @@ namespace Fixer
 
         static void Main(string[] args)
         {
-            WikiPortingMW.DoStuff();
-            return;
-
             if (Console.ReadLine()?.StartsWith("i read the code") != true) return;
             
             GlobalConst.Mode = ModeType.Local;
