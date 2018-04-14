@@ -32,6 +32,7 @@ using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
 using PlasmaDownloader = PlasmaDownloader.PlasmaDownloader;
 using Ratings;
+using ZeroKWeb;
 using ZkLobbyServer = ZkLobbyServer.ZkLobbyServer;
 
 namespace Fixer
