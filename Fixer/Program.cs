@@ -28,8 +28,6 @@ using PlasmaDownloader;
 using PlasmaDownloader.Packages;
 using PlasmaShared;
 using ZkData.UnitSyncLib;
-using ZeroKWeb;
-using ZeroKWeb.ForumParser;
 using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
 using PlasmaDownloader = PlasmaDownloader.PlasmaDownloader;
@@ -446,6 +444,9 @@ namespace Fixer
 
         static void Main(string[] args)
         {
+            WikiPortingMW.DoStuff();
+            return;
+
             if (Console.ReadLine()?.StartsWith("i read the code") != true) return;
             
             GlobalConst.Mode = ModeType.Local;
@@ -468,8 +469,6 @@ namespace Fixer
             Console.ReadLine();
 
             return;
-           
-           
         }
 
         static IEnumerable<MiniBat> GetMiniBats() {
