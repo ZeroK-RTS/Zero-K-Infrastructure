@@ -28,8 +28,6 @@ using PlasmaDownloader;
 using PlasmaDownloader.Packages;
 using PlasmaShared;
 using ZkData.UnitSyncLib;
-using ZeroKWeb;
-using ZeroKWeb.ForumParser;
 using ZkData;
 using Encoder = System.Drawing.Imaging.Encoder;
 using PlasmaDownloader = PlasmaDownloader.PlasmaDownloader;
@@ -468,8 +466,6 @@ namespace Fixer
             Console.ReadLine();
 
             return;
-           
-           
         }
 
         static IEnumerable<MiniBat> GetMiniBats() {
