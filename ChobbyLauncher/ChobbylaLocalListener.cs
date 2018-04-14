@@ -11,7 +11,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using GameAnalyticsSDK.Net;
 using PlasmaDownloader;
 using PlasmaShared;
 using ZkData;
@@ -378,7 +377,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                GameAnalytics.AddErrorEvent(args.Severity, args.Message);
+                //GameAnalytics.AddErrorEvent(args.Severity, args.Message);
             }
             catch (Exception ex)
             {
@@ -391,8 +390,8 @@ namespace ChobbyLauncher
         {
             try
             {
-                if (args.Value != null) GameAnalytics.AddDesignEvent(args.EventID, args.Value.Value);
-                else GameAnalytics.AddDesignEvent(args.EventID);
+                //if (args.Value != null) GameAnalytics.AddDesignEvent(args.EventID, args.Value.Value);
+                //else GameAnalytics.AddDesignEvent(args.EventID);
             }
             catch (Exception ex)
             {
@@ -404,7 +403,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                GameAnalytics.AddBusinessEvent(args.Currency, args.Amount, args.ItemType, args.ItemId, args.CartType);
+                //GameAnalytics.AddBusinessEvent(args.Currency, args.Amount, args.ItemType, args.ItemId, args.CartType);
             }
             catch (Exception ex)
             {
@@ -416,7 +415,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                GameAnalytics.AddResourceEvent(args.FlowType, args.Currency, args.Amount, args.ItemType, args.ItemId);
+                //GameAnalytics.AddResourceEvent(args.FlowType, args.Currency, args.Amount, args.ItemType, args.ItemId);
             }
             catch (Exception ex)
             {
@@ -429,7 +428,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                GameAnalytics.ConfigureAvailableResourceCurrencies(args.List);
+                //GameAnalytics.ConfigureAvailableResourceCurrencies(args.List);
             }
             catch (Exception ex)
             {
@@ -441,7 +440,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                GameAnalytics.ConfigureAvailableResourceItemTypes(args.List);
+                //GameAnalytics.ConfigureAvailableResourceItemTypes(args.List);
             }
             catch (Exception ex)
             {
@@ -457,14 +456,14 @@ namespace ChobbyLauncher
                 switch (args.Level)
                 {
                     case 3:
-                        GameAnalytics.ConfigureAvailableCustomDimensions03(args.List);
+                        //GameAnalytics.ConfigureAvailableCustomDimensions03(args.List);
                         break;
                     case 2:
-                        GameAnalytics.ConfigureAvailableCustomDimensions02(args.List);
+                        //GameAnalytics.ConfigureAvailableCustomDimensions02(args.List);
                         break;
                     case 1:
                     default:
-                        GameAnalytics.ConfigureAvailableCustomDimensions03(args.List);
+                        //GameAnalytics.ConfigureAvailableCustomDimensions03(args.List);
                         break;
                 }
             }
@@ -481,14 +480,14 @@ namespace ChobbyLauncher
                 switch (args.Level)
                 {
                     case 3:
-                        GameAnalytics.SetCustomDimension03(args.Value);
+                        //GameAnalytics.SetCustomDimension03(args.Value);
                         break;
                     case 2:
-                        GameAnalytics.SetCustomDimension02(args.Value);
+                        //GameAnalytics.SetCustomDimension02(args.Value);
                         break;
                     case 1:
                     default:
-                        GameAnalytics.SetCustomDimension01(args.Value);
+                        //GameAnalytics.SetCustomDimension01(args.Value);
                         break;
                 }
             }
@@ -502,7 +501,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                if (args.Score != null)
+                /*if (args.Score != null)
                 {
                     if (!string.IsNullOrEmpty(args.Progression3)) GameAnalytics.AddProgressionEvent(args.Status, args.Progression1, args.Progression2, args.Progression3, args.Score.Value);
                     else if (!string.IsNullOrEmpty(args.Progression2)) GameAnalytics.AddProgressionEvent(args.Status, args.Progression1, args.Progression2, args.Score.Value);
@@ -513,7 +512,7 @@ namespace ChobbyLauncher
                     if (!string.IsNullOrEmpty(args.Progression3)) GameAnalytics.AddProgressionEvent(args.Status, args.Progression1, args.Progression2, args.Progression3);
                     else if (!string.IsNullOrEmpty(args.Progression2)) GameAnalytics.AddProgressionEvent(args.Status, args.Progression1, args.Progression2);
                     else GameAnalytics.AddProgressionEvent(args.Status, args.Progression1);
-                }
+                }*/
             }
             catch (Exception ex)
             {

@@ -9,7 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using GameAnalyticsSDK.Net;
+//using GameAnalyticsSDK.Net;
 using LumiSoft.Net.STUN.Client;
 using PlasmaShared;
 using Steamworks;
@@ -36,7 +36,7 @@ namespace ChobbyLauncher
 
             try
             {
-                GameAnalytics.Initialize(GlobalConst.GameAnalyticsGameKey, GlobalConst.GameAnalyticsToken);
+                //GameAnalytics.Initialize(GlobalConst.GameAnalyticsGameKey, GlobalConst.GameAnalyticsToken);
             }
             catch (Exception ex)
             {
@@ -58,7 +58,7 @@ namespace ChobbyLauncher
                     MessageBoxIcon.Information);
                 try
                 {
-                    GameAnalytics.AddErrorEvent(EGAErrorSeverity.Error, "Wrapper cannot start, folder not writable");
+                    //GameAnalytics.AddErrorEvent(EGAErrorSeverity.Error, "Wrapper cannot start, folder not writable");
                 }
                 catch (Exception ex)
                 {
@@ -81,7 +81,7 @@ namespace ChobbyLauncher
                 MessageBox.Show(ex.ToString(), "Error starting Chobby", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 try
                 {
-                    GameAnalytics.AddErrorEvent(EGAErrorSeverity.Critical, "Wrapper crash: " + ex);
+                    //GameAnalytics.AddErrorEvent(EGAErrorSeverity.Critical, "Wrapper crash: " + ex);
                 }
                 catch (Exception ex2)
                 {
@@ -91,7 +91,7 @@ namespace ChobbyLauncher
 
             try
             {
-                GameAnalytics.OnStop();
+                //GameAnalytics.OnStop();
             }
             catch (Exception ex)
             {
@@ -213,7 +213,7 @@ namespace ChobbyLauncher
 
                 try
                 {
-                    GameAnalytics.AddErrorEvent(EGAErrorSeverity.Critical, "Spring crash");
+                    //GameAnalytics.AddErrorEvent(EGAErrorSeverity.Critical, "Spring crash");
                 }
                 catch (Exception ex)
                 {

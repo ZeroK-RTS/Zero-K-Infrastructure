@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ChobbyLauncher;
-using GameAnalyticsSDK.Net;
 using PlasmaShared;
 
 namespace ChobbyLauncher
@@ -233,7 +232,7 @@ namespace ChobbyLauncher
     {
         public string Message { get; set; }
 
-        public EGAErrorSeverity Severity { get; set; }
+        //public EGAErrorSeverity Severity { get; set; }
     }
 
 
@@ -255,7 +254,7 @@ namespace ChobbyLauncher
         public string Progression3 { get; set; }
 
         public double? Score { get; set; }
-        public EGAProgressionStatus Status { get; set; }
+        //public EGAProgressionStatus Status { get; set; }
     }
 
 
@@ -288,7 +287,7 @@ namespace ChobbyLauncher
     {
         public float Amount { get; set; }
         public string Currency { get; set; }
-        public EGAResourceFlowType FlowType { get; set; }
+        //public EGAResourceFlowType FlowType { get; set; }
         public string ItemId { get; set; }
         public string ItemType { get; set; }
     }

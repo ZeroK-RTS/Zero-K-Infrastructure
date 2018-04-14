@@ -5,9 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using GameAnalyticsSDK.Net;
 using Neo.IronLua;
-using Newtonsoft.Json;
 using PlasmaDownloader;
 using PlasmaDownloader.Packages;
 using PlasmaShared;
@@ -112,8 +110,8 @@ namespace ChobbyLauncher
 
                 try
                 {
-                    GameAnalytics.ConfigureGameEngineVersion(internalName);
-                    GameAnalytics.ConfigureSdkGameEngineVersion(engine);
+                    //GameAnalytics.ConfigureGameEngineVersion(internalName);
+                    //GameAnalytics.ConfigureSdkGameEngineVersion(engine);
                 }
                 catch (Exception ex)
                 {
@@ -152,7 +150,7 @@ namespace ChobbyLauncher
             catch (Exception ex)
             {
                 Trace.TraceError("Unexpected error: {0}", ex);
-                GameAnalytics.AddErrorEvent(EGAErrorSeverity.Error, $"Unexpected error {Status}: {ex}");
+                //GameAnalytics.AddErrorEvent(EGAErrorSeverity.Error, $"Unexpected error {Status}: {ex}");
                 Status = "Unexpected error preparing chobby launch: " + ex.Message;
                 return false;
             }
