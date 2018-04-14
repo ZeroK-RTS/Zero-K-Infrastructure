@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using Neo.IronLua;
 using PlasmaDownloader;
 using PlasmaDownloader.Packages;
@@ -64,20 +63,6 @@ namespace ChobbyLauncher
 
                 if (!isDev)
                 {
-                    if (!Debugger.IsAttached && !IsSteamFolder)
-                    {
-                        Status = "Checking for self-upgrade";
-                        var selfUpdater = new SelfUpdater("Zero-K");
-                        selfUpdater.ProgramUpdated += delegate
-                        {
-                            Process.Start(Application.ExecutablePath, string.Join(" ", Environment.GetCommandLineArgs().Skip(1)));
-                            Environment.Exit(0);
-                        };
-                        var task = new Task<bool>(() => selfUpdater.CheckForUpdate());
-                        task.Start();
-                        await task;
-                    }
-
                     if (!IsSteamFolder)
                     {
                         downloader.RapidHandling = RapidHandling.SdzNameHash;

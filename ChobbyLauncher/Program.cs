@@ -8,7 +8,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 //using GameAnalyticsSDK.Net;
 using LumiSoft.Net.STUN.Client;
 using PlasmaShared;
@@ -48,27 +47,15 @@ namespace ChobbyLauncher
 
             ParseCommandLine(args, out connectLobbyID, out chobbyTag, out engineOverride);
 
-            var startupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
+            var startupPath = Path.GetDirectoryName(Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location));
 
             if (!SpringPaths.IsDirectoryWritable(startupPath))
             {
-                MessageBox.Show("Please move this program to a writable folder",
-                    "Cannot write to startup folder",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-                try
-                {
-                    //GameAnalytics.AddErrorEvent(EGAErrorSeverity.Error, "Wrapper cannot start, folder not writable");
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError("Error adding GA error event: {0}", ex);
-                }
+                Console.WriteLine("Please move this program to a writable folder");
                 Environment.Exit(0);
                 return;
             }
 
-            Application.EnableVisualStyles();
 
             try
             {
@@ -78,15 +65,7 @@ namespace ChobbyLauncher
             catch (Exception ex)
             {
                 Trace.TraceError("Error starting chobby: {0}", ex);
-                MessageBox.Show(ex.ToString(), "Error starting Chobby", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                try
-                {
-                    //GameAnalytics.AddErrorEvent(EGAErrorSeverity.Critical, "Wrapper crash: " + ex);
-                }
-                catch (Exception ex2)
-                {
-                    Trace.TraceError("Error adding GA error event: {0}", ex2);
-                }
+                Console.WriteLine("Error starting chobby : {0}",ex);
             }
 
             try
@@ -134,8 +113,6 @@ namespace ChobbyLauncher
                 {
                     Console.WriteLine(
                         "Zero-K.exe [rapid_tag] [engine_override] \n\nUse zkmenu:stable or chobby:test\nTo run local dev version use Zero-K.exe dev");
-                    MessageBox.Show(
-                        "Zero-K.exe [rapid_tag] [engine_override] \n\nUse zkmenu:stable or chobby:test\nTo run local dev version use Zero-K.exe dev");
                 }
                 chobbyTag = args[0];
                 if (args.Length > 1) engineOverride = args[1];
@@ -144,12 +121,7 @@ namespace ChobbyLauncher
 
         private static void RunWrapper(Chobbyla chobbyla, ulong connectLobbyID, TextWriter logWriter, StringBuilder logSb)
         {
-            if (!chobbyla.IsSteamFolder) // not steam, show gui
-            {
-                var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
-                if (cf.ShowDialog() != DialogResult.OK) return;
-            }
-            else if (!chobbyla.Prepare().Result) return; // otherwise just do simple prepare, no gui
+            if (!chobbyla.Prepare().Result) return; // otherwise just do simple prepare, no gui
 
             var springRunOk = chobbyla.Run(connectLobbyID, logWriter);
             Trace.TraceInformation("Spring exited");
@@ -174,14 +146,13 @@ namespace ChobbyLauncher
 
                 if (Environment.OSVersion.Platform == PlatformID.Unix)
                 {
-                    if (MessageBox.Show("You have outdated graphics card drivers!\r\nPlease try finding ones for your graphics card and updating them. \r\n\r\nWould you like to see our Linux graphics driver guide?", "Outdated graphics card driver detected", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-                    {
-                        Process.Start("http://zero-k.info/mediawiki/index.php?title=Optimized_Graphics_Linux");
-                    }
+                    Console.WriteLine(
+                        "You have outdated graphics card drivers!\r\nPlease try finding ones for your graphics card and updating them. \r\n\r\nWould you like to see our Linux graphics driver guide?");
+                    Process.Start("http://zero-k.info/mediawiki/index.php?title=Optimized_Graphics_Linux");
                 }
                 else
                 {
-                    MessageBox.Show("You have outdated graphics card drivers!\r\nPlease try finding ones for your graphics card and updating them.", "Outdated graphics card driver detected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Console.Write("You have outdated graphics card drivers!\r\nPlease try finding ones for your graphics card and updating them.");
                 }
 
                     
@@ -193,23 +164,21 @@ namespace ChobbyLauncher
 
             if ((!springRunOk && !openGlFail) || syncError || luaErr || !string.IsNullOrEmpty(chobbyla.BugReportTitle)) // crash has occured
             {
-                
-                if (
-                    MessageBox.Show("We would like to send crash/desync data to Zero-K repository, it can contain chat. Do you agree?",
-                        "Automated crash report",
-                        MessageBoxButtons.OKCancel) == DialogResult.OK)
-                {
-                    var crashType = syncError ? CrashType.Desync : luaErr ? CrashType.LuaError : CrashType.Crash;
-                    if (!string.IsNullOrEmpty(chobbyla.BugReportTitle)) crashType = CrashType.UserReport;
+                Console.WriteLine("We would like to send crash/desync data to Zero-K repository, it can contain chat. Do you agree?");
+                var crashType = syncError ? CrashType.Desync : luaErr ? CrashType.LuaError : CrashType.Crash;
+                if (!string.IsNullOrEmpty(chobbyla.BugReportTitle)) crashType = CrashType.UserReport;
 
-                    var ret = CrashReportHelper.ReportCrash(logSb.ToString(), crashType, chobbyla.engine, chobbyla.BugReportTitle, chobbyla.BugReportDescription);
-                    if (ret != null)
-                        try
-                        {
-                            Process.Start(ret.HtmlUrl.ToString());
-                        }
-                        catch { }
-                }
+                var ret = CrashReportHelper.ReportCrash(logSb.ToString(),
+                    crashType,
+                    chobbyla.engine,
+                    chobbyla.BugReportTitle,
+                    chobbyla.BugReportDescription);
+                if (ret != null)
+                    try
+                    {
+                        Process.Start(ret.HtmlUrl.ToString());
+                    }
+                    catch { }
 
                 try
                 {
@@ -220,8 +189,6 @@ namespace ChobbyLauncher
                     Trace.TraceError("Error adding GA error event: {0}", ex);
                 }
             }
-
-
         }
     }
 }

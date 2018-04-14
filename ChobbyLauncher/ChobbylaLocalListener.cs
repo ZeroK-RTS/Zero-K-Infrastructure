@@ -10,7 +10,6 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using PlasmaDownloader;
 using PlasmaShared;
 using ZkData;
@@ -200,7 +199,7 @@ namespace ChobbyLauncher
         {
             try
             {
-                System.Diagnostics.Process.Start(Application.ExecutablePath);
+                System.Diagnostics.Process.Start(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 Environment.Exit(0);
             }
             catch (Exception ex)
