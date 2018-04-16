@@ -120,22 +120,43 @@ namespace ZkData.Migrations
             if (!db.MiscVars.Any(y => y.VarName == "GlacierSecretKey"))
                 db.MiscVars.AddOrUpdate(x => x.VarName, new MiscVar { VarName = "GlacierSecretKey", VarValue = "secret" });
 
+            // add some test accounts
             db.Accounts.AddOrUpdate(x => x.Name,
             new Account
             {
-                Name = "TestPlayer",
-                NewPasswordPlain = "test",
-                AdminLevel = AdminLevel.SuperAdmin,
-                Kudos = 200,
-                Level = 255,
-                Xp = 1325900,
-                Rank = 3,
-                Country = "cz",
+                Name = "newbie",
+                NewPasswordPlain = "newbie",
+                Country = "us",
                 Avatar = "amphimpulse",
-                DevLevel = DevLevel.CoreDeveloper,
             },
-            new Account { Name = "test", NewPasswordPlain = "test", AdminLevel = AdminLevel.SuperAdmin, Kudos = 200, Level = 50, Country = "cz" },
-            new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, AdminLevel = AdminLevel.SuperAdmin });
+            new Account
+            {
+                Name = "test",
+                NewPasswordPlain = "test",
+                Country = "us",
+                Avatar = "chickenr",
+                AdminLevel = AdminLevel.Moderator,
+                DevLevel = DevLevel.Developer,
+            },
+            new Account
+            {
+                Name = "admin",
+                NewPasswordPlain = "admin",
+                Country = "cz",
+                Avatar = null,
+                AdminLevel = AdminLevel.SuperAdmin,
+                DevLevel = DevLevel.CoreDeveloper,
+                Kudos = 200,
+                Level = 50,
+                Xp = 10000,
+            },
+            new Account
+            {
+                Name = GlobalConst.NightwatchName,
+                NewPasswordPlain = "dummy",
+                IsBot = true,
+                AdminLevel = AdminLevel.SuperAdmin
+            });
         }
     }
 }

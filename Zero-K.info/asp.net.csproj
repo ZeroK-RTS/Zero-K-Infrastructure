@@ -1656,6 +1656,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Img\avatars\" />
     <Folder Include="Img\news\" />
     <Folder Include="Resources\" />
     <Folder Include="Views\Autocomplete\" />
