@@ -119,6 +119,11 @@ namespace ZeroKWeb.SpringieInterface
                         //userParams["casual_elo"] = Math.Round(user.EffectiveElo).ToString();
 
                         userParams["elo"] = Math.Round(user.GetBestRating().Elo).ToString();
+                        userParams["elo_order"] = context.Players.Where(x => !x.IsSpectator)
+                            .Select(x => db.Accounts.First(y => y.AccountID == x.LobbyID))
+                            .Where(x => x.GetBestRating().Elo > user.GetBestRating().Elo)
+                            .Count()
+                            .ToString();
                         
                         userParams["icon"] = user.GetIconName();
                         userParams["avatar"] = user.Avatar;
