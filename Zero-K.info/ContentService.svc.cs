@@ -268,6 +268,7 @@ namespace ZeroKWeb
             info.NewsItems = Global.Server.NewsListManager.GetCurrentNewsList().NewsItems;
             info.LadderItems = Global.Server.LadderListManager.GetCurrentLadderList().LadderItems;
             info.ForumItems = Global.Server.ForumListManager.GetCurrentForumList(null).ForumItems;
+            info.UserCountLimited = MiscVar.ZklsMaxUsers > 0;
             info.MapItems = MemCache.GetCached<List<MapItem>>("featuredMapItems",
                 () =>
                 {
