@@ -481,6 +481,10 @@ namespace ZeroKWeb.Controllers
             var oldName = acc.Name;
             acc.SetName(newUsername);
             db.SaveChanges();
+            
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} renamed by {1}", Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" {0} -> {1}", oldName, newUsername));
+
             return Content(string.Format("{0} renamed to {1}", oldName, newUsername));
         }
 
