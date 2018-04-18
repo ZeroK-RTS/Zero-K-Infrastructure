@@ -222,7 +222,7 @@ namespace ZeroKWeb.Controllers
                     Percentile = WholeHistoryRating.DefaultRating.Percentile,
                     Rank = WholeHistoryRating.DefaultRating.Rank,
                     RealElo = WholeHistoryRating.DefaultRating.RealElo,
-                    Uncertainty = WholeHistoryRating.DefaultRating.Uncertainty,
+                    Uncertainty = 1000,
                     Elo = WholeHistoryRating.DefaultRating.Elo,
                 });
             }
