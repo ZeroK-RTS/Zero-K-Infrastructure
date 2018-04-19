@@ -3,6 +3,7 @@
 <game>	
 	<title>Zero-K</title>
 	<founding-date>October 1, 2010</founding-date>
+	<release-date>27 April, 2018</release-date>
 	<website>zero-k.info</website>
 	<based-in>International</based-in>
 	
@@ -18,9 +19,8 @@
 		</platform>
 	</platforms>
 	
-	
 	<press-contact>team@zero-k.info</press-contact>
-	<phone>0</phone>
+	<phone>No</phone>
 	<address>
 		<line>The Internet</line>
 		</address>
@@ -36,8 +36,8 @@
 		</social>
 		</socials> 
 
-	<description>	
-	Zero-K is a traditional RTS focused on physics and creativity. Construct fortresses or tear down obstacles with free-form terrain manipulation. Launch jumpjet robots into the air with gravity guns and have them rain down on your opponents base. Combine over 100 units types from 12 distinct technology branches. Every unit in Zero-K is defined more by its unique combination of movement and weapon physics than it is by raw attributes, such as health and damage. Use quick nimble bots to dodge the slow projectiles of weapons better suited at hitting ponderous tanks. Conquer the galaxy in a singleplayer campaign spanning 71 missions or grab some friends to fend off waves of alien invaders. Join our online community for games ranging from 1v1 to 16v16 as well as free-for-all and regular tournaments. 
+	<description>
+	Zero-K is a traditional real time strategy game with a focus on player creativity through terrain manipulation, physics, and a large roster of unique units - all while being balanced to support competitive play. Construct fortresses or tear down obstacles with free-form terrain manipulation. Launch jumpjet robots into the air with gravity guns and have them rain down on your opponents base. Combine over 100 units types from 12 distinct technology branches. Every unit in Zero-K is defined more by its unique combination of movement and weapon physics than it is by raw attributes, such as health and damage. Use quick nimble bots to dodge the slow projectiles of weapons better suited at hitting ponderous tanks. Conquer the galaxy in a singleplayer campaign spanning 71 missions or grab some friends to fend off waves of alien invaders. Join our online community for games ranging from 1v1 to 16v16 as well as free-for-all and regular tournaments. 
 	</description>
 		
 	<histories>
@@ -100,7 +100,7 @@
 	<additionals>
 		<additional>
 			<title>Steam page</title>
-			<description>Zero-K will be released on Steam, check it out at </description>
+			<description>Zero-K releases on Steam on the 27th of April 2018 </description>
 			<link>http://store.steampowered.com/app/334920/ZeroK/</link>
 		</additional>
 		<additional>
