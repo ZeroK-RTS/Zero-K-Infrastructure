@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<game>	
+<game>
 	<title>Zero-K</title>
 	<founding-date>October 1, 2010</founding-date>
 	<release-date>27 April, 2018</release-date>
 	<website>zero-k.info</website>
 	<based-in>International</based-in>
-	
+	<press-can-request-copy>TRUE</press-can-request-copy>
 	
 	<platforms>
 		<platform>
@@ -23,7 +23,7 @@
 	<phone>No</phone>
 	<address>
 		<line>The Internet</line>
-		</address>
+	</address>
 
 	<socials>
 		<social>
@@ -34,12 +34,12 @@
 			<name>facebook.com/ZeroK.RTS</name>
 			<link>facebook.com/ZeroK.RTS</link>
 		</social>
-		</socials> 
+	</socials>
 
 	<description>
-	Zero-K is a traditional real time strategy game with a focus on player creativity through terrain manipulation, physics, and a large roster of unique units - all while being balanced to support competitive play. Construct fortresses or tear down obstacles with free-form terrain manipulation. Launch jumpjet robots into the air with gravity guns and have them rain down on your opponents base. Combine over 100 units types from 12 distinct technology branches. Every unit in Zero-K is defined more by its unique combination of movement and weapon physics than it is by raw attributes, such as health and damage. Use quick nimble bots to dodge the slow projectiles of weapons better suited at hitting ponderous tanks. Conquer the galaxy in a singleplayer campaign spanning 71 missions or grab some friends to fend off waves of alien invaders. Join our online community for games ranging from 1v1 to 16v16 as well as free-for-all and regular tournaments. 
+		Zero-K is a traditional real time strategy game with a focus on player creativity through terrain manipulation, physics, and a large roster of unique units - all while being balanced to support competitive play. Construct fortresses or tear down obstacles with free-form terrain manipulation. Launch jumpjet robots into the air with gravity guns and have them rain down on your opponents base. Combine over 100 units types from 12 distinct technology branches. Every unit in Zero-K is defined more by its unique combination of movement and weapon physics than it is by raw attributes, such as health and damage. Use quick nimble bots to dodge the slow projectiles of weapons better suited at hitting ponderous tanks. Conquer the galaxy in a singleplayer campaign spanning 71 missions or grab some friends to fend off waves of alien invaders. Join our online community for games ranging from 1v1 to 16v16 as well as free-for-all and regular tournaments. 
 	</description>
-		
+	
 	<histories>
 		<history>
 			<text>Zero-K is managed and developed entirely by passionate volunteers. These volunteers are primarily drawn from its multiplayer community, which has existed for almost as long as the game itself. The bulk of the work is done by a handful of core developers with the occasional contribution of code or assets by members of the wider community. In Zero-K the concept of community generated content is hard to pin down as members of the community can become core developers through activity and competence. This resulted in a game which was constantly tested and optimized for multiplayer, but we wanted more. More players, specifically.
@@ -47,8 +47,8 @@
 			With such a focus on multiplayer Zero-K had become too daunting for many new players. The lead developers, Licho and GoogleFrog, shifted the focus of the project towards polish, singleplayer content and the new player experience. Enforcing this focus was a bit like herding (volunteer) cats as a developers default behaviour is to add cool new features. Despite this, progress was made, interfaces polished, campaigns designed. Luckily Zero-K has an active AI development sub-community which enjoys internal competition to make the strongest non-cheating AI. Now, at the end of this process, Zero-K boasts plenty of singleplayer content while retaining its strong multiplayer roots, alongside new ease-of-use multiplayer features such as matchmaking. </text>
 		</history>
 	</histories>
-		
-		
+	
+	
 	<features>
 		<feature>Physically simulated units, projectiles and terrain.</feature>
 		<feature>Terrain manipulation - Explosions leave craters. Constructors dig trenches, erect walls and ramps.</feature>
@@ -63,7 +63,7 @@
 		<feature>Regular tournaments.</feature>
 		<feature>Really free, no in-game currency, no unfair multiplayer.</feature>
 	</features>
-		
+	
 	<trailers>
 		<trailer>
 			<name>Zero-K Launch Trailer</name>
@@ -80,7 +80,6 @@
 			<description>One of PC Gamers best free games of 2017</description>
 			<info>PC Gamer</info>
 		</award>
-		
 	</awards>
 	
 	<quotes>
