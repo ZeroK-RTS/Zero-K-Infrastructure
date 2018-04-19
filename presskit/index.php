@@ -76,6 +76,9 @@ foreach( $xml->children() as $child )
 		case("founding-date"):
 			define("COMPANY_DATE", $child);
 			break;
+		case("release-date"):
+			define("GAME_DATE", $child);
+			break;
 		case("website"):
 			define("COMPANY_WEBSITE", $child);
 			break;
