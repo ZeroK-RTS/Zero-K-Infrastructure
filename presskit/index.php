@@ -76,6 +76,9 @@ foreach( $xml->children() as $child )
 		case("founding-date"):
 			define("COMPANY_DATE", $child);
 			break;
+		case("release-date"):
+			define("GAME_DATE", $child);
+			break;
 		case("website"):
 			define("COMPANY_WEBSITE", $child);
 			break;
@@ -266,6 +269,10 @@ echo '					<div class="uk-grid">
 								'. tl('Based in %s', COMPANY_BASED) .'
 							</p>
 							<p>
+								<strong>'. tl('Release date:'). '</strong><br/>
+								'. GAME_DATE .'
+							</p>
+							<p>
 								<strong>'. tl('Founding date:') .'</strong><br/>
 								'. COMPANY_DATE .'
 							</p>
@@ -292,9 +299,7 @@ for( $i = 0; $i < count($socials); $i++ )
 	echo( '<a href="http://'.parseLink($link).'">'.$name.'</a><br/>' );
 }
 
-echo '							</p>
-							<p>
-							<strong>'. tl('Releases:') .'</strong><br />';
+echo '							</p>';
 
 if ($handle = opendir('.')) {
 	while (false !== ($entry = readdir($handle))) {
@@ -305,8 +310,7 @@ if ($handle = opendir('.')) {
 }
 closedir($handle);
 
-echo '							</p>
-							<p>';
+echo '							<p>';
 
 if( count($address) > 0 )
 {
