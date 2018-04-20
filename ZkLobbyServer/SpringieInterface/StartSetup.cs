@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using PlasmaShared;
@@ -86,14 +87,14 @@ namespace ZeroKWeb.SpringieInterface
                     ret.ModOptions["planet"] = planet.Name;
                     ret.ModOptions["pw_galaxyTurn"] = galaxy.Turn.ToString();
 
-                    ret.ModOptions["pw_baseIP"] = GlobalConst.BaseInfluencePerBattle.ToString();
-                    ret.ModOptions["pw_dropshipIP"] = planet.GetEffectiveShipIpBonus(attacker).ToString();
-                    ret.ModOptions["pw_defenseIP"] = planet.GetEffectiveIpDefense().ToString();
-                    ret.ModOptions["pw_attackerIP"] = (planet.PlanetFactions.FirstOrDefault(x => x.FactionID == attacker.FactionID)?.Influence ?? 0).ToString();
-                    ret.ModOptions["pw_maxIP"] = GlobalConst.PlanetWarsMaximumIP.ToString();
-                    ret.ModOptions["pw_neededIP"] = GlobalConst.InfluenceToCapturePlanet.ToString();
-                    ret.ModOptions["pw_attackerWinLoseCC"] = GlobalConst.PlanetWarsAttackerWinLoseCcMultiplier.ToString();
-                    ret.ModOptions["pw_defenderWinKillCC"] = GlobalConst.PlanetWarsDefenderWinKillCcMultiplier.ToString();
+                    ret.ModOptions["pw_baseIP"] = GlobalConst.BaseInfluencePerBattle.ToString(CultureInfo.InvariantCulture);
+                    ret.ModOptions["pw_dropshipIP"] = planet.GetEffectiveShipIpBonus(attacker).ToString(CultureInfo.InvariantCulture);
+                    ret.ModOptions["pw_defenseIP"] = planet.GetEffectiveIpDefense().ToString(CultureInfo.InvariantCulture);
+                    ret.ModOptions["pw_attackerIP"] = (planet.PlanetFactions.FirstOrDefault(x => x.FactionID == attacker.FactionID)?.Influence ?? 0).ToString(CultureInfo.InvariantCulture);
+                    ret.ModOptions["pw_maxIP"] = GlobalConst.PlanetWarsMaximumIP.ToString(CultureInfo.InvariantCulture);
+                    ret.ModOptions["pw_neededIP"] = GlobalConst.InfluenceToCapturePlanet.ToString(CultureInfo.InvariantCulture);
+                    ret.ModOptions["pw_attackerWinLoseCC"] = GlobalConst.PlanetWarsAttackerWinLoseCcMultiplier.ToString(CultureInfo.InvariantCulture);
+                    ret.ModOptions["pw_defenderWinKillCC"] = GlobalConst.PlanetWarsDefenderWinKillCcMultiplier.ToString(CultureInfo.InvariantCulture);
                 }
 
                 // write player custom keys (level, elo, is muted, etc.)
