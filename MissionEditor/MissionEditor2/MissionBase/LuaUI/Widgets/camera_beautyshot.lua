@@ -18,7 +18,7 @@ local tau = 2*math.pi
 -- fixes https://github.com/ZeroK-RTS/Zero-K/issues/2906
 local function randomCustom(min, max)
   if min == max then
-    return 0
+    return min
   end
   if min > max then
     min, max = max, min
