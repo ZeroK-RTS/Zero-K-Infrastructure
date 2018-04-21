@@ -219,9 +219,9 @@ namespace AutoRegistrator
             
             var top100 = db.SpringBattles.Where(x => x.StartTime >= limit).GroupBy(x => x.ResourceByMapResourceID).Where(x=>x.Key.MapSupportLevel >= MapSupportLevel.Supported).OrderByDescending(x => x.Sum(y => y.Duration * (y.SpringBattlePlayers.Count))).Select(x=>x.Key.ResourceID).Take(50).ToList();
 
-            //var pwMaps = db.Galaxies.Where(x => x.IsDefault).SelectMany(x => x.Planets).Where(x => x.MapResourceID != null).Select(x => x.MapResourceID.Value).ToList();
+            var pwMaps = db.Galaxies.Where(x => x.IsDefault).SelectMany(x => x.Planets).Where(x => x.MapResourceID != null).Select(x => x.MapResourceID.Value).ToList();
 
-            //top100.AddRange(pwMaps);
+            top100.AddRange(pwMaps);
             top100 = top100.Distinct().ToList();
 
             var resources = db.Resources.Where(x => top100.Contains(x.ResourceID) || extraNames.Contains(x.InternalName) || (x.TypeID == ResourceType.Map && x.MapSupportLevel >= MapSupportLevel.MatchMaker)).ToList();
