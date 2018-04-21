@@ -831,9 +831,10 @@ namespace ZeroKWeb.Controllers
                 var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
                 var structure = planet.PlanetStructures.Single(x => x.StructureTypeID == structureTypeID);
                 if (structure.RushStructure(acc))
-                    db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} has rushed activation of {1} on {2}.",
+                    db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} has rushed activation of {1} on {2} planet {3}.",
                         acc,
                         structure.StructureType,
+                        planet.Faction,
                         planet));
                 else return Content("You cannot rush this");
 
