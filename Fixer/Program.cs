@@ -18,6 +18,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Xml.Serialization;
+using AutoRegistrator;
+using EntityFramework.Extensions;
 //using LobbyClient;
 //using NightWatch;
 using LobbyClient;
@@ -33,6 +35,7 @@ using Encoder = System.Drawing.Imaging.Encoder;
 using PlasmaDownloader = PlasmaDownloader.PlasmaDownloader;
 using Ratings;
 using ZeroKWeb;
+using AutoRegistrator = ZeroKWeb.AutoRegistrator;
 using ZkLobbyServer = ZkLobbyServer.ZkLobbyServer;
 
 namespace Fixer
@@ -442,13 +445,52 @@ namespace Fixer
             Global.Server.PlanetWarsMatchMaker.GenerateLobbyCommand();
         }
 
+        public static void SteamMapUnfeaturer()
+        {
+            var extraNames = RegistratorRes.campaignMaps.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim())
+                .ToArray();
+
+            var db = new ZkDataContext();
+            DateTime limit = DateTime.Now.AddMonths(-6);
+
+
+            var top100 = db.SpringBattles.Where(x => x.StartTime >= limit).GroupBy(x => x.ResourceByMapResourceID).Where(x => x.Key.MapSupportLevel >= MapSupportLevel.Supported).OrderByDescending(x => x.Sum(y => y.Duration * (y.SpringBattlePlayers.Count))).Select(x => x.Key.ResourceID).Take(50).ToList();
+
+            //var pwMaps = db.Galaxies.Where(x => x.IsDefault).SelectMany(x => x.Planets).Where(x => x.MapResourceID != null).Select(x => x.MapResourceID.Value).ToList();
+
+            //top100.AddRange(pwMaps);
+
+            top100 = top100.Distinct().ToList();
+
+            var shipping = db.Resources.Where(x => top100.Contains(x.ResourceID) || extraNames.Contains(x.InternalName) || (x.TypeID == ResourceType.Map && x.MapSupportLevel >= MapSupportLevel.MatchMaker)).Select(x => x.InternalName).ToList();
+
+            File.WriteAllText(@"c:\temp\shipped.txt", string.Join("\n", shipping));
+
+
+            var featured = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= MapSupportLevel.Featured)
+                .Select(x => x.InternalName).ToList();
+
+
+            File.WriteAllText(@"c:\temp\featured.txt", string.Join("\n", featured));
+
+
+
+            var unfeature = featured.Where(x => !shipping.Contains(x)).ToList();
+
+
+            File.WriteAllText(@"c:\temp\unfeature.txt", string.Join("\n", unfeature));
+
+            //db.Resources.Where(x => unfeature.Contains(x.InternalName)).Update(x => new Resource { MapSupportLevel = MapSupportLevel.Supported });
+            //db.SaveChanges();
+
+        }
+
 
         static void Main(string[] args)
         {
             if (Console.ReadLine()?.StartsWith("i read the code") != true) return;
-            
-            GlobalConst.Mode = ModeType.Local;
 
+            
             return;
 
 
