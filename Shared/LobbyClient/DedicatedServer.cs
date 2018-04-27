@@ -260,32 +260,42 @@ namespace LobbyClient
 
         private void dedicatedProcess_Exited(object sender, EventArgs e)
         {
-            Context.IsCrash = (process.ExitCode != 0) && !Context.WasKilled;
-            process.UnsubscribeEvents(this);
             try
             {
-                if (!process.WaitForExit(2000)) process.Kill();
-            }
-            catch { }
-
-            process = null;
-            talker.UnsubscribeEvents(this);
-            talker?.Close();
-            talker = null;
-            Thread.Sleep(1000);
-
-            if (LobbyStartContext != null) foreach (var p in Context.ActualPlayers) p.IsIngame = false;
-
-            if (File.Exists(scriptPath))
-            {
+                Context.IsCrash = (process.ExitCode != 0) && !Context.WasKilled;
+                process.UnsubscribeEvents(this);
                 try
                 {
-                    File.Delete(scriptPath);
-                } catch { }
-            }
+                    if (!process.WaitForExit(2000)) process.Kill();
+                }
+                catch { }
 
-            DedicatedServerExited?.Invoke(this, Context);
-            AnyDedicatedExited?.Invoke(this, Context);
+                process = null;
+                talker.UnsubscribeEvents(this);
+                talker?.Close();
+                talker = null;
+                Thread.Sleep(1000);
+
+                if (LobbyStartContext != null)
+                    foreach (var p in Context.ActualPlayers)
+                        p.IsIngame = false;
+
+                if (File.Exists(scriptPath))
+                {
+                    try
+                    {
+                        File.Delete(scriptPath);
+                    }
+                    catch { }
+                }
+
+                DedicatedServerExited?.Invoke(this, Context);
+                AnyDedicatedExited?.Invoke(this, Context);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error processing dedicated server exit: {0}", ex);
+            }
         }
 
 
