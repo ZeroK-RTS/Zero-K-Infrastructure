@@ -17,7 +17,7 @@ namespace ZkLobbyServer
         private const int MapModChangePauseSeconds = 30;
 
         private const int BanSecondsIncrease = 5;
-        private const int BanSecondsMax = 10;
+        private const int BanSecondsMax = 30;
         private const int BanReset = 60;
 
 
