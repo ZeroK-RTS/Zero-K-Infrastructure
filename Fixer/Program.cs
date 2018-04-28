@@ -558,7 +558,7 @@ namespace Fixer
         public static void RecalculateKudos()
         {
             var db = new ZkDataContext();
-            foreach (var acc in db.Accounts.Where(x => x.KudosPurchases.Any() || x.ContributionsByAccountID.Any())) acc.Kudos = acc.KudosGained - acc.KudosSpent;
+            foreach (var acc in db.Accounts.Where(x => x.KudosPurchases.Any())) acc.HasKudos = true;
             db.SaveChanges();
         }
 

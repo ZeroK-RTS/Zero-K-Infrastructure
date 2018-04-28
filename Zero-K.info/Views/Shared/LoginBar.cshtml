@@ -35,9 +35,9 @@
             {
                 <span> | @Html.PrintFaction(Global.Account.Faction, false)</span>
             }
-            @if (Global.Account.Kudos > 0)
+            @if (Global.Account.HasKudos)
             {
-                <span nicetitle="Metagame currency that you can get by donating to Zero-K. You can use it to get access to unique commander decorations"> | Kudos: @Global.Account.Kudos </span>
+                <span nicetitle="Metagame currency that you can get by donating to Zero-K. You can use it to get access to unique commander decorations"> | Kudos: @(Global.Account.KudosGained - Global.Account.KudosSpent)</span>
             }
             @if (MiscVar.PlanetWarsMode != PlanetWarsModes.AllOffline)
             {
