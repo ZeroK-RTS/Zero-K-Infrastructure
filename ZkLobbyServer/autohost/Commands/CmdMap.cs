@@ -28,9 +28,9 @@ namespace ZkLobbyServer
                 battle.Respond(e, "Cannot find such map.");
                 return null;
             }
-            else if (!string.IsNullOrEmpty(arguments) && map.MapSupportLevel < MapSupportLevel.Featured)
+            else if (!string.IsNullOrEmpty(arguments) && map.MapSupportLevel < MapSupportLevel.Supported)
             {
-                alternativeMap = MapPicker.FindResources(ResourceType.Map, arguments, MapSupportLevel.Featured).FirstOrDefault();
+                alternativeMap = MapPicker.FindResources(ResourceType.Map, arguments, MapSupportLevel.Supported).FirstOrDefault();
             }
 
 
