@@ -20,7 +20,7 @@ namespace ZkLobbyServer
         {
             map = string.IsNullOrEmpty(arguments)
                 ? MapPicker.GetRecommendedMap(battle.GetContext())
-                : MapPicker.FindResources(ResourceType.Map, arguments).FirstOrDefault();
+                : MapPicker.FindResources(ResourceType.Map, arguments, battle.MinimalMapSupportLevel).FirstOrDefault();
 
 
             if (map == null)
@@ -28,9 +28,9 @@ namespace ZkLobbyServer
                 battle.Respond(e, "Cannot find such map.");
                 return null;
             }
-            else if (!string.IsNullOrEmpty(arguments) && map.MapSupportLevel < MapSupportLevel.Supported)
+            else if (!string.IsNullOrEmpty(arguments) && map.MapSupportLevel < MapSupportLevel.Featured)
             {
-                alternativeMap = MapPicker.FindResources(ResourceType.Map, arguments, MapSupportLevel.Supported).FirstOrDefault();
+                alternativeMap = MapPicker.FindResources(ResourceType.Map, arguments, MapSupportLevel.Featured).FirstOrDefault();
             }
 
 
@@ -40,7 +40,7 @@ namespace ZkLobbyServer
             }
             else
             {
-                return $"Change to unsupported map {map.InternalName} {GlobalConst.BaseSiteUrl}/Maps/Detail/{map.ResourceID} ?";
+                return $"Change to UNSUPPORTED map {map.InternalName} {GlobalConst.BaseSiteUrl}/Maps/Detail/{map.ResourceID} ?";
             }
         }
 
