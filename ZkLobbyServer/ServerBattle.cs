@@ -51,7 +51,7 @@ namespace ZkLobbyServer
         public DedicatedServer spring;
         public string battleInstanceGuid;
 
-        public MapSupportLevel MinimalMapSupportLevel => IsPassworded ? MapSupportLevel.None : MapSupportLevel.None;
+        public MapSupportLevel MinimalMapSupportLevel => IsPassworded ? MapSupportLevel.None : MapSupportLevel.Supported;
 
         public CommandPoll ActivePoll { get; private set; }
 
