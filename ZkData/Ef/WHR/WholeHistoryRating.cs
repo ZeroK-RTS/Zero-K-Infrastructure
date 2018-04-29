@@ -526,6 +526,7 @@ namespace Ratings
                         });
                         var updatedRanks = lastBattlePlayers.Where(p => Ranks.UpdateRank(p.Account, p.IsInVictoryTeam, !p.IsInVictoryTeam, db)).Select(x => x.Account).ToList();
                         updatedRanks.ForEach(p => db.Entry(p).State = EntityState.Modified);
+                        RatingsUpdated(this, new RatingUpdate() { affectedPlayers = lastBattlePlayers.Select(x => x.AccountID) });
                     }
                     db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ToList().ForEach(x => playerOldRatings[RatingSystems.GetRatingId(x.AccountID)] = playerRatings[RatingSystems.GetRatingId(x.AccountID)]);
                     db.SaveChanges();
@@ -541,7 +542,7 @@ namespace Ratings
                         listener.Key.TopPlayersUpdated(GetTopPlayers(listener.Value));
                     }
                 }
-                RatingsUpdated(this, new RatingUpdate() { affectedPlayers = players.Select(x => x.id) });
+                
             }
             catch (Exception ex)
             {
