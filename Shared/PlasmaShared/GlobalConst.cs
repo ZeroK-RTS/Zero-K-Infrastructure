@@ -233,7 +233,7 @@ namespace ZkData
         public const int TcpLingerStateSeconds = 5;
         public const bool TcpLingerStateEnabled = true;
 
-        public const int DelugeChannelDisplayUsers = 50;
+        public const int DelugeChannelDisplayUsers = 0;
 
         public const int LobbyThrottleBytesPerSecond = 2000;
         public const int LobbyMaxMessageSize = 2000;
