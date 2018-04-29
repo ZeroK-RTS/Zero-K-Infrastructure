@@ -87,16 +87,13 @@ namespace ZkLobbyServer
             
             RatingSystems.GetRatingSystems().ForEach(x => x.RatingsUpdated += (sender, data) => 
             {
-                if (!MiscVar.IsZklsLimited)
+                var db = new ZkDataContext();
+                var updatedUsers = ConnectedUsers.Select(c => c.Value.User.AccountID).Intersect(data.affectedPlayers).ToHashSet();
+                db.Accounts.Where(acc => updatedUsers.Contains(acc.AccountID)).ForEach(p =>
                 {
-                    var db = new ZkDataContext();
-                    var updatedUsers = ConnectedUsers.Select(c => c.Value.User.AccountID).Intersect(data.affectedPlayers).ToHashSet();
-                    db.Accounts.Where(acc => updatedUsers.Contains(acc.AccountID)).ForEach(p =>
-                    {
-                        PublishAccountUpdate(p);
-                        PublishUserProfileUpdate(p);
-                    });
-                }
+                    PublishAccountUpdate(p);
+                    PublishUserProfileUpdate(p);
+                });
             });
         }
 
