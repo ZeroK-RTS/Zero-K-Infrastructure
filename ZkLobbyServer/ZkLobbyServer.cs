@@ -84,17 +84,20 @@ namespace ZkLobbyServer
             ForumListManager = new ForumListManager(this);
 
 
-            /*
+            
             RatingSystems.GetRatingSystems().ForEach(x => x.RatingsUpdated += (sender, data) => 
             {
-                var db = new ZkDataContext();
-                var updatedUsers = ConnectedUsers.Select(c => c.Value.User.AccountID).Intersect(data.affectedPlayers).ToHashSet();
-                db.Accounts.Where(acc => updatedUsers.Contains(acc.AccountID)).ForEach(p =>
+                if (!MiscVar.IsZklsLimited)
                 {
-                    PublishAccountUpdate(p);
-                    PublishUserProfileUpdate(p);
-                });
-            });*/
+                    var db = new ZkDataContext();
+                    var updatedUsers = ConnectedUsers.Select(c => c.Value.User.AccountID).Intersect(data.affectedPlayers).ToHashSet();
+                    db.Accounts.Where(acc => updatedUsers.Contains(acc.AccountID)).ForEach(p =>
+                    {
+                        PublishAccountUpdate(p);
+                        PublishUserProfileUpdate(p);
+                    });
+                }
+            });
         }
 
         /// <summary>
