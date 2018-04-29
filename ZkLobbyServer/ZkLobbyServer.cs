@@ -72,7 +72,7 @@ namespace ZkLobbyServer
 
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
-            chatRelay = new ChatRelay(this, new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai", "zk", "zkmap", "springboard", GlobalConst.ModeratorChannel, GlobalConst.CoreChannel });
+            chatRelay = new ChatRelay(this, new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai", "zk", "zkmap", "springboard", GlobalConst.ModeratorChannel, GlobalConst.CoreChannel, "off-topic", "support","modding" });
             textCommands = new ServerTextCommands(this);
             ChannelManager = new ChannelManager(this);
             MatchMaker = new MatchMaker(this);
@@ -196,7 +196,7 @@ namespace ZkLobbyServer
             if (uWatcher.FriendNames.Contains(uWatched.Name)) return true;
 
             // already seen, cannot be unseen
-            if (uWatcher.HasSeenUserVersion.ContainsKey(uWatched.Name)) return true;
+            if (!MiscVar.IsZklsLimited && uWatcher.HasSeenUserVersion.ContainsKey(uWatched.Name)) return true;
 
             // clanmates see each other
             if (uWatcher.User?.Clan != null && uWatcher.User?.Clan == uWatched.User?.Clan) return true;
@@ -215,13 +215,13 @@ namespace ZkLobbyServer
                 {
                     if (chan.IsDeluge)
                     {
-                        var channelUsersBySkill = chan.Users.Keys.Select(x => ConnectedUsers.Get(x))
-                                .Where(x => x != null)
-                                .OrderByDescending(x => x.User?.EffectiveMmElo)
-                                .Select(x => x.Name)
-                                .Take(GlobalConst.DelugeChannelDisplayUsers);
+                        if (GlobalConst.DelugeChannelDisplayUsers > 0)
+                        {
+                            var channelUsersBySkill = chan.Users.Keys.Select(x => ConnectedUsers.Get(x)).Where(x => x != null)
+                                .OrderByDescending(x => x.User?.EffectiveMmElo).Select(x => x.Name).Take(GlobalConst.DelugeChannelDisplayUsers);
 
-                        if (channelUsersBySkill.Contains(uWatched.Name)) return true;
+                            if (channelUsersBySkill.Contains(uWatched.Name)) return true;
+                        }
                     }
                     else
                     {
