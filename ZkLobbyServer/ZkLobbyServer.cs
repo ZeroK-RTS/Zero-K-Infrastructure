@@ -218,13 +218,13 @@ namespace ZkLobbyServer
                 {
                     if (chan.IsDeluge)
                     {
-                        var channelUsersBySkill = chan.Users.Keys.Select(x => ConnectedUsers.Get(x))
-                                .Where(x => x != null)
-                                .OrderByDescending(x => x.User?.EffectiveMmElo)
-                                .Select(x => x.Name)
-                                .Take(GlobalConst.DelugeChannelDisplayUsers);
+                        if (GlobalConst.DelugeChannelDisplayUsers > 0)
+                        {
+                            var channelUsersBySkill = chan.Users.Keys.Select(x => ConnectedUsers.Get(x)).Where(x => x != null)
+                                .OrderByDescending(x => x.User?.EffectiveMmElo).Select(x => x.Name).Take(GlobalConst.DelugeChannelDisplayUsers);
 
-                        if (channelUsersBySkill.Contains(uWatched.Name)) return true;
+                            if (channelUsersBySkill.Contains(uWatched.Name)) return true;
+                        }
                     }
                     else
                     {
