@@ -84,6 +84,7 @@ namespace ZkLobbyServer
             ForumListManager = new ForumListManager(this);
 
 
+            /*
             RatingSystems.GetRatingSystems().ForEach(x => x.RatingsUpdated += (sender, data) => 
             {
                 var db = new ZkDataContext();
@@ -93,7 +94,7 @@ namespace ZkLobbyServer
                     PublishAccountUpdate(p);
                     PublishUserProfileUpdate(p);
                 });
-            });
+            });*/
         }
 
         /// <summary>
