@@ -387,20 +387,32 @@ namespace ZkLobbyServer
 
         public Dictionary<string, int> GetQueueCounts() => queuesCounts;
 
+        private async Task StartBattles(List<ProposedBattle> realBattles)
+        {
+            try
+            {
+                await UpdateAllPlayerStatuses(); // This can't be run before ResetAndSendMmInvitations because it reads invitationQueue
+
+                foreach (var bat in realBattles) await StartBattle(bat);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("MatchMaker error starting battles: {0}", ex);
+            }
+        }
+
         private void OnTick()
         {
+            List<ProposedBattle> realBattles = new List<ProposedBattle>();
             lock (tickLock)
             {
                 try
                 {
                     timer.Stop();
-                    var realBattles = ResolveToRealBattles();
+                    realBattles = ResolveToRealBattles();
                     
-                    foreach (var bat in realBattles) StartBattle(bat);
-
                     ResetAndSendMmInvitations();
                     
-                    UpdateAllPlayerStatuses(); // This can't be run before ResetAndSendMmInvitations because it reads invitationQueue
                 }
                 catch (Exception ex)
                 {
@@ -411,6 +423,9 @@ namespace ZkLobbyServer
                     timer.Start();
                 }
             }
+
+            //do non critical updates to clients:
+            StartBattles(realBattles);
         }
 
         private static List<ProposedBattle> ProposeBattles(IEnumerable<PlayerEntry> users)
@@ -482,7 +497,7 @@ namespace ZkLobbyServer
             var lastMatchedUsers = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
 
             // force leave those not ready
-            foreach (var pl in lastMatchedUsers.Where(x => !x.LastReadyResponse)) RemoveUser(pl.Name, false);
+            foreach (var pl in lastMatchedUsers.Where(x => !x.LastReadyResponse)) RemoveUser(pl.Name);
 
             var readyUsers = lastMatchedUsers.Where(x => x.LastReadyResponse).ToList();
             var realBattles = ProposeBattles(readyUsers);
