@@ -156,7 +156,6 @@ namespace ZkLobbyServer
                     if (entry.InvitedToPlay)
                     {
 
-                        invitedPeople = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
                         if (response.Ready) entry.LastReadyResponse = true;
                         else
                         {
@@ -164,7 +163,8 @@ namespace ZkLobbyServer
                             playersUpdated = RemoveUser(user.Name);
                         }
 
-
+                        invitedPeople = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
+                        
                         if (invitedPeople.Count <= 1)
                         {
                             foreach (var p in invitedPeople) p.LastReadyResponse = true;
