@@ -196,7 +196,7 @@ namespace ZkLobbyServer
             if (uWatcher.FriendNames.Contains(uWatched.Name)) return true;
 
             // already seen, cannot be unseen
-            if (!MiscVar.IsZklsLimited && uWatcher.HasSeenUserVersion.ContainsKey(uWatched.Name)) return true;
+            if (uWatcher.HasSeenUserVersion.ContainsKey(uWatched.Name)) return true;
 
             // clanmates see each other
             if (uWatcher.User?.Clan != null && uWatcher.User?.Clan == uWatched.User?.Clan) return true;

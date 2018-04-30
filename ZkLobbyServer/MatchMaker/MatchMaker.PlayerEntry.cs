@@ -13,11 +13,11 @@ namespace ZkLobbyServer
             public bool InvitedToPlay;
             public bool LastReadyResponse;
 
-            public int EloWidth => (int)(50.0 + WaitRatio * 350.0);
+            public int EloWidth => (int)(80.0 + WaitRatio * 240.0);
             public int MinConsideredElo => LobbyUser.EffectiveMmElo;
             public int MaxConsideredElo => (int)(LobbyUser.EffectiveMmElo + (Math.Max(1500, LobbyUser.RawMmElo) - LobbyUser.EffectiveMmElo) * WaitRatio);
 
-            public double WaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / 180.0));
+            public double WaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / 120.0));
 
             public DateTime JoinedTime { get; private set; } = DateTime.UtcNow;
             public User LobbyUser { get; private set; }
