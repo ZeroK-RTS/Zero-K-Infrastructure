@@ -70,7 +70,7 @@ namespace ZkLobbyServer
                 MinSize = 4,
                 MaxSize = 8,
                 MaxPartySize = 4,
-                EloCutOffExponent = 0.975,
+                EloCutOffExponent = 0.96,
                 Mode = AutohostMode.Teams,
                 MapSelector = IsTeamsMap,
             });
