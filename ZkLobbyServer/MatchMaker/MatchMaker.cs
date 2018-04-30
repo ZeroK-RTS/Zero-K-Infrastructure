@@ -123,18 +123,6 @@ namespace ZkLobbyServer
                 MapSelector = IsTeamsMap
             });
 
-            queueConfigs.Add(new QueueConfig()
-            {
-                Name = "5v5",
-                Description = "5v5 with players of similar skill.",
-                MinSize = 10,
-                MaxSize = 10,
-                MaxPartySize = 5,
-                EloCutOffExponent = 0.96,
-                Mode = AutohostMode.Teams,
-                MapSelector = IsTeamsMap
-            });
-
             UpdateQueues();
 
             timer = new Timer(TimerSeconds * 1000);
