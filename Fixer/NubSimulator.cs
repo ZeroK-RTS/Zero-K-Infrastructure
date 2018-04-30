@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using LobbyClient;
 using Newtonsoft.Json;
+using PlasmaShared;
 using ZkData;
 using ZkData.UnitSyncLib;
 
@@ -46,6 +47,10 @@ namespace Fixer
                     {
                         Title = batname,
                         MaxPlayers = 16,
+                        Mode = AutohostMode.None,
+                        Engine = "spring91.0",
+                        Game = "Zero-K",
+                        Map = "SmallDivide",
                     });
                     else {
                         var bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Title == batname);
@@ -62,14 +67,14 @@ namespace Fixer
             
 
             tas.Connect(GlobalConst.LobbyServerHost, GlobalConst.LobbyServerPort);
-            /*Task.Factory.StartNew(async () =>
+            Task.Factory.StartNew(async () =>
             {
                 while (true)
                 {
                     await Task.Delay(rand.Next(400000));
-                    tas.Say(SayPlace.Channel, "zk", sent.GetNext(), false);
+                    tas.Say(SayPlace.Channel, "bots", sent.GetNext(), false);
                 }
-            }, TaskCreationOptions.LongRunning);*/
+            }, TaskCreationOptions.LongRunning);
         }
 
         SentenceGenerator sent = new SentenceGenerator();
@@ -79,7 +84,7 @@ namespace Fixer
         {
             SynchronizationContext.SetSynchronizationContext(null);
             ThreadPool.SetMaxThreads(1000, 1000);
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 1000; i++) {
                 int i1 = i;
                 //Thread.Sleep(100);
                 RunNub(i1);

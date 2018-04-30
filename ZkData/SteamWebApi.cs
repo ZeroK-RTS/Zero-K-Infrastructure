@@ -23,12 +23,32 @@ namespace ZkData
             this.webApiKey = webApiKey;
         }
 
+
+        private static T Retry<T>(Func<T> func)
+        {
+            int tries = 2;
+
+            retry:
+            try
+            {
+                return func();
+            }
+            catch (Exception ex)
+            {
+                tries--;
+                if (tries > 0) goto retry;
+                throw;
+            }
+        }
+
         public List<AppBuild> GetAppBuilds()
         {
-            var wc = new WebClient();
-            var ret = wc.DownloadString($"https://api.steampowered.com/ISteamApps/GetAppBuilds/v001/?appid={steamAppID}&key={webApiKey}");
-            var response = JsonConvert.DeserializeObject<GetAppBuildsResponse>(ret);
-            return Enumerable.OrderByDescending<AppBuild, ulong>(response.response.builds.Values, x => x.BuildID).ToList();
+            using (var wc = new WebClient())
+            {
+                var ret = wc.DownloadString($"https://api.steampowered.com/ISteamApps/GetAppBuilds/v001/?appid={steamAppID}&key={webApiKey}");
+                var response = JsonConvert.DeserializeObject<GetAppBuildsResponse>(ret);
+                return Enumerable.OrderByDescending<AppBuild, ulong>(response.response.builds.Values, x => x.BuildID).ToList();
+            }
         }
 
         public void SetAppBuildLive(ulong buildid, string branch = "public")
@@ -48,15 +68,17 @@ namespace ZkData
         {
             try
             {
-                var wc = new WebClient();
-                var ret = wc.DownloadString(string.Format(
-                    "https://partner.steam-api.com/ISteamUser/CheckAppOwnership/v2/?key={0}&steamid={1}&appid={2}",
-                    webApiKey,
-                    steamID,
-                    appID));
+                using (var wc = new WebClient())
+                {
+                    var ret = wc.DownloadString(string.Format(
+                        "https://partner.steam-api.com/ISteamUser/CheckAppOwnership/v2/?key={0}&steamid={1}&appid={2}",
+                        webApiKey,
+                        steamID,
+                        appID));
 
-                var response = JsonConvert.DeserializeObject<CheckAppOwnershipResponse>(ret);
-                return response?.appownership?.ownsapp == true && response?.appownership?.permanent == true;
+                    var response = JsonConvert.DeserializeObject<CheckAppOwnershipResponse>(ret);
+                    return response?.appownership?.ownsapp == true && response?.appownership?.permanent == true;
+                }
             }
             catch (Exception ex)
             {
@@ -86,28 +108,34 @@ namespace ZkData
 
         public PlayerInfo WebGetPlayerInfo(ulong steamID)
         {
-            var wc = new WebClient();
-            var ret =
-                wc.DownloadString(string.Format("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={0}&steamids={1}",
+            using (var wc = new WebClient())
+            {
+                var ret = wc.DownloadString(string.Format("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={0}&steamids={1}",
                     webApiKey,
                     steamID));
 
-            var response = JsonConvert.DeserializeObject<PlayerSummariesResposne>(ret);
-            return Enumerable.FirstOrDefault<PlayerInfo>(response.response.players);
+                var response = JsonConvert.DeserializeObject<PlayerSummariesResposne>(ret);
+                return Enumerable.FirstOrDefault<PlayerInfo>(response.response.players);
+            }
         }
 
         public ulong WebValidateAuthToken(string hexToken)
         {
-            var wc = new WebClient();
-            var ret =
-                wc.DownloadString(
-                    string.Format("https://api.steampowered.com/ISteamUserAuth/AuthenticateUserTicket/V0001?key={0}&appid={1}&ticket={2}",
+            return Retry(() =>
+            {
+                using (var wc = new WebClient())
+                {
+                    var ret = wc.DownloadString(string.Format(
+                        "https://api.steampowered.com/ISteamUserAuth/AuthenticateUserTicket/V0001?key={0}&appid={1}&ticket={2}",
                         webApiKey,
                         steamAppID,
                         hexToken));
-            var response = JsonConvert.DeserializeObject<AuthenticateUserTicketResponse>(ret);
 
-            return response.response.@params.steamid;
+                    var response = JsonConvert.DeserializeObject<AuthenticateUserTicketResponse>(ret);
+
+                    return response.response.@params.steamid;
+                }
+            });
         }
 
         public class AppBuild

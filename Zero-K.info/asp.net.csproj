@@ -1274,6 +1274,7 @@
     <Content Include="Img\sticky.png" />
     <Content Include="Img\stickylock.png" />
     <Content Include="Img\structures\artefact.png" />
+    <Content Include="Img\structures\artefact_inactive.png" />
     <Content Include="Img\structures\artefact_r_105.png" />
     <Content Include="Img\structures\artefact_r_87.png" />
     <Content Include="Img\structures\artefact_r_92.png" />

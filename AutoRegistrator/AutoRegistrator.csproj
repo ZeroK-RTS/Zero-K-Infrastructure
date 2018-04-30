@@ -94,7 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="RegistratorRes.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>RegistratorRes.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>

@@ -133,6 +133,7 @@ namespace ZeroKWeb
 
         protected void Application_Start()
         {
+            System.Net.ServicePointManager.DefaultConnectionLimit = 200;
             ViewEngines.Engines.Clear();
             ViewEngines.Engines.Add(new RazorViewEngine() { FileExtensions = new[] { "cshtml" } }); // this should speed up rendering a bit
 

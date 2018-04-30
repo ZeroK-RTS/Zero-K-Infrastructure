@@ -51,6 +51,8 @@ namespace ZkLobbyServer
         public DedicatedServer spring;
         public string battleInstanceGuid;
 
+        public MapSupportLevel MinimalMapSupportLevel => IsPassworded ? MapSupportLevel.None : MapSupportLevel.Supported;
+
         public CommandPoll ActivePoll { get; private set; }
 
         static ServerBattle()
@@ -257,8 +259,7 @@ namespace ZkLobbyServer
             {
                 SpectatorCount = specCount;
                 NonSpectatorCount = playerCount;
-                await
-                    server.Broadcast(Users.Keys, new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID , PlayerCount = NonSpectatorCount} });
+                if (!MiscVar.IsZklsLimited) await server.Broadcast(Users.Keys, new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID , PlayerCount = NonSpectatorCount} });
             }
         }
 

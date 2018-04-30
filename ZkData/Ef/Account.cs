@@ -152,7 +152,7 @@ namespace ZkData
         public double PwWarpUsed { get; set; }
         public double PwAttackPoints { get; set; }
         public bool HasVpnException { get; set; }
-        public int Kudos { get; set; }
+        public bool HasKudos { get; set; }
         public int ForumTotalUpvotes { get; set; }
         public int ForumTotalDownvotes { get; set; }
         public int? VotesAvailable { get; set; }
@@ -232,10 +232,10 @@ namespace ZkData
         }
         
         [NotMapped]
-        public int KudosGained { get { return ContributionsByAccountID.Sum(x => x.KudosValue); } }
+        public int KudosGained { get { return ContributionsByAccountID.Sum(x =>  (int?)x.KudosValue) ?? 0; } }
 
         [NotMapped]
-        public int KudosSpent { get { return KudosPurchases.Sum(x => x.KudosValue); } }
+        public int KudosSpent { get { return KudosPurchases.Sum(x => (int?)x.KudosValue) ?? 0; } }
         
         public static Account AccountByName(ZkDataContext db, string name)
         {
@@ -653,7 +653,7 @@ namespace ZkData
             var ret = new List<BadgeType>();
             if (Level > 200) ret.Add(BadgeType.player_level); 
             if ((GetRating(RatingCategory.MatchMaking).Rank <= 3 || GetRating(RatingCategory.Casual).Rank <= 3)) ret.Add(BadgeType.player_elo); 
-            var total = Kudos> 0 ? ContributionsByAccountID.Where(x=>x.OriginalAmount > 0).Sum(x => (int?)x.KudosValue) : 0;
+            var total = HasKudos ? KudosGained : 0;
 
             if (total >= GlobalConst.KudosForDiamond) ret.Add(BadgeType.donator_3);
             else if (total >= GlobalConst.KudosForGold) ret.Add(BadgeType.donator_2);
@@ -702,7 +702,7 @@ namespace ZkData
                             ContributionJarID = GlobalConst.SteamContributionJarID
                         };
                         ContributionsByAccountID.Add(contrib);
-                        Kudos += kudos;
+                        HasKudos = true;
                         dlcList.Add(newdlc);
                     }
                 }
