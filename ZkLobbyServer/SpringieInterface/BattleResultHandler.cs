@@ -98,12 +98,14 @@ namespace ZeroKWeb.SpringieInterface
         private static void ProcessRatingAndXP(SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, ZkDataContext db, SpringBattle sb)
         {
             bool noElo = result.OutputExtras.Any(x => x?.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture) == true);
-            
+
+
+            if (!noElo) RatingSystems.ProcessResult(sb, result);
+
             sb.DispenseXP();
 
             foreach (var u in sb.SpringBattlePlayers.Where(x => !x.IsSpectator)) u.Account.CheckLevelUp();
 
-            if (!noElo) RatingSystems.ProcessResult(sb, result);
 
             db.SaveChanges();
 
