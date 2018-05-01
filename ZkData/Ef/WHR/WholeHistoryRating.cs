@@ -42,12 +42,16 @@ namespace Ratings
         private int activePlayers = 0;
         private bool lastBattleRanked = false;
 
+        IDictionary<int, AccountRating> cachedRatings = new ConcurrentDictionary<int, AccountRating>();
+
         private int battlesRegistered = 0;
         private SpringBattle firstBattle = null;
         private List<Account> laddersCache = new List<Account>();
 
         private SpringBattle latestBattle, lastUpdate;
         private HashSet<int> ProcessedBattles = new HashSet<int>();
+
+        private bool completelyInitialized = false;
 
         private readonly RatingCategory category;
 
@@ -56,6 +60,9 @@ namespace Ratings
             this.category = category;
             w2 = GlobalConst.EloDecayPerDaySquared;
             ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, 15 * 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
+            using (var db = new ZkDataContext()) {
+                cachedRatings = new ConcurrentDictionary<int, AccountRating>(db.AccountRatings.Where(x => x.RatingCategory == category).ToDictionary(x => x.AccountID));
+            }
         }
 
         public void ResetAll()
@@ -83,6 +90,10 @@ namespace Ratings
 
         public PlayerRating GetPlayerRating(int accountID)
         {
+            if (!completelyInitialized)
+            {
+                return cachedRatings.ContainsKey(RatingSystems.GetRatingId(accountID)) ? cachedRatings[RatingSystems.GetRatingId(accountID)].ToPlayerRating() : DefaultRating;
+            }
             return playerRatings.ContainsKey(RatingSystems.GetRatingId(accountID)) ? playerRatings[RatingSystems.GetRatingId(accountID)] : DefaultRating;
         }
 
@@ -273,6 +284,7 @@ namespace Ratings
                         runIterations(75);
                         UpdateRankings(players.Values);
                         playerOldRatings = new Dictionary<int, PlayerRating>(playerRatings);
+                        completelyInitialized = true;
                     });
                 }
                 else if (DateTime.UtcNow.Subtract(lastUpdateTime).TotalHours >= GlobalConst.LadderUpdatePeriod)
