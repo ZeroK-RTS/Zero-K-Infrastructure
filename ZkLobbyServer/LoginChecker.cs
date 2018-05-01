@@ -25,7 +25,7 @@ namespace ZkLobbyServer
         private const int MaxConnectionAttemptsMinutes = 60;
         private static readonly int MaxConcurrentLogins = Environment.ProcessorCount * 2;
 
-        private static string[] ipWhitelist = { "127.0.0.1", "86.61.217.155" };
+        private static string[] ipWhitelist = { "127.0.0.1", "86.61.217.155", "78.45.34.102" };
         private readonly IGeoIP2Provider geoIP;
 
         private readonly ZkLobbyServer server;

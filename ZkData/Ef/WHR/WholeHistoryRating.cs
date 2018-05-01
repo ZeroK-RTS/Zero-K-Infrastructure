@@ -337,8 +337,8 @@ namespace Ratings
         {
             return new RankBracket()
             {
-                LowerEloLimit = PercentileBrackets[rank],
-                UpperEloLimit = PercentileBrackets[rank + 1],
+                LowerEloLimit = PercentileBrackets[Math.Min(PercentileBrackets.Length - 2, rank)],
+                UpperEloLimit = PercentileBrackets[Math.Min(PercentileBrackets.Length - 1, rank + 1)],
             };
         }
 
