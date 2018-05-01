@@ -25,7 +25,7 @@ namespace ZkLobbyServer
             prototype = option;
 
             foreach (var pe in option.Attackers) Users[pe] = new UserBattleStatus(pe, server.ConnectedUsers.Get(pe)?.User, GenerateClientScriptPassword(pe)) {AllyNumber = 0};
-            foreach (var pe in option.Defenders) Users[pe] = new UserBattleStatus(pe, server.ConnectedUsers.Get(pe)?.User, GenerateClientScriptPassword(pe)) {AllyNumber = 1};
+            foreach (var pe in option.Defenders) Users[pe] = new UserBattleStatus(pe, server.ConnectedUsers.Get(pe)?.User, GenerateClientScriptPassword(pe)) { AllyNumber = 1 };
 
             if (ModOptions == null) ModOptions = new Dictionary<string, string>();
 

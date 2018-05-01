@@ -96,8 +96,6 @@ namespace ZkData
 
         public virtual DbSet<LobbyNews> LobbyNews { get; set; }
 
-        public virtual DbSet<MMEvent> MMEvent { get; set; }
-
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Account>()

@@ -34,7 +34,6 @@ namespace ZkLobbyServer
         public string Engine { get; private set; }
         public string Game { get; private set; }
         public IPlanetwarsEventCreator PlanetWarsEventCreator { get; private set; }
-        public IMatchMakingEventCreator MMEventCreator { get; private set; }
         public MatchMaker MatchMaker { get; private set; }
         
         public string Version { get; private set; }
@@ -85,7 +84,7 @@ namespace ZkLobbyServer
             ForumListManager = new ForumListManager(this);
 
 
-
+            
             RatingSystems.GetRatingSystems().ForEach(x => x.RatingsUpdated += (sender, data) => 
             {
                 var db = new ZkDataContext();
