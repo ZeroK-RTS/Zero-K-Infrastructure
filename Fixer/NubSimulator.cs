@@ -18,14 +18,16 @@ namespace Fixer
         public void RunNub(int num)
         {
             var tas = new TasClient("Nubotron");
+
+            var maps = AutoRegistrator.RegistratorRes.campaignMaps.Split('\n');
             var name = "TestNub" + num;
             var ord = num / 16;
-            var batname = "Test " + ord;
 
             //tas.Input += (sender, args) => { Console.WriteLine(" < {0}", args); };
             //tas.Output += (sender, args) => { Console.WriteLine(" > {0}", args); };
 
-            tas.Connected += (sender, args) => {
+            tas.Connected += (sender, args) =>
+            {
                 tas.Login(name, "dummy");
             };
 
@@ -38,42 +40,49 @@ namespace Fixer
             tas.RegistrationAccepted += (sender, args) => { tas.Login(name, "dummy"); };
             tas.RegistrationDenied += (sender, response) => { Console.WriteLine(name + "registration denied"); };
 
-            
 
-            tas.UserAdded += (sender, args) => {
-                if (args.Name == name) {
-                    tas.JoinChannel("bots");
-                    if (num%16 == 0) tas.OpenBattle(new BattleHeader()
-                    {
-                        Title = batname,
-                        MaxPlayers = 16,
-                        Mode = AutohostMode.None,
-                        Engine = "spring91.0",
-                        Game = "Zero-K",
-                        Map = "SmallDivide",
-                    });
-                    else {
-                        var bat = tas.ExistingBattles.Values.FirstOrDefault(x => x.Title == batname);
-                        if (bat != null) tas.JoinBattle(bat.BattleID);
-                    }
-                }
-            };
-            tas.BattleFound += (sender, args) => {
-                if (args.Title == batname) {
-                    //await Task.Delay(200);
-                    tas.JoinBattle(args.BattleID);
-                }
-            };
-            
 
             tas.Connect(GlobalConst.LobbyServerHost, GlobalConst.LobbyServerPort);
+
             Task.Factory.StartNew(async () =>
             {
                 while (true)
                 {
+                    await Task.Delay(rand.Next(10000));
                     if (tas.IsLoggedIn)
                     {
-                        await Task.Delay(rand.Next(50000));
+                        await tas.LeaveBattle();
+                        if (tas.ExistingBattles.Count < 20)
+                            await tas.OpenBattle(new BattleHeader()
+                            {
+                                Title = "" + name,
+                                MaxPlayers = 16,
+                                Mode = AutohostMode.None,
+                                Engine = tas.ServerWelcome.Engine,
+                                Game = tas.ServerWelcome.Game,
+                                Map = maps[rand.Next(maps.Length)],
+                            });
+                        else
+                        {
+                            var bats = tas.ExistingBattles.Values.ToList();
+                            if (bats.Count > 0)
+                            {
+                                var bat = bats[rand.Next(bats.Count)];
+                                if (bat != null) tas.JoinBattle(bat.BattleID);
+                            }
+                        }
+                    }
+                }
+            }, TaskCreationOptions.LongRunning);
+
+
+            Task.Factory.StartNew(async () =>
+            {
+                while (true)
+                {
+                    await Task.Delay(rand.Next(50000));
+                    if (tas.IsLoggedIn)
+                    {
                         tas.Say(SayPlace.Channel, "zk", sent.GetNext(), false);
                     }
                 }
@@ -84,11 +93,11 @@ namespace Fixer
                 bool cycler = false;
                 while (true)
                 {
+                    await Task.Delay(rand.Next(5000));
                     if (tas.IsLoggedIn)
                     {
-                        await Task.Delay(rand.Next(5000));
                         await tas.ChangeMyUserStatus(cycler, cycler);
-                        await tas.ChangeMyBattleStatus(cycler);
+                        //await tas.ChangeMyBattleStatus(cycler, SyncStatuses.Synced, 1);
                         cycler = !cycler;
                     }
                 }
@@ -103,13 +112,14 @@ namespace Fixer
         {
             SynchronizationContext.SetSynchronizationContext(null);
             ThreadPool.SetMaxThreads(1000, 1000);
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 100; i++)
+            {
                 int i1 = i;
                 Thread.Sleep(100);
-                RunNub(i1+200);
+                RunNub(i1 + 100);
             }
 
-         }
+        }
 
 
     }
