@@ -146,13 +146,8 @@ namespace ZeroKWeb.SpringieInterface
         {
             var db = new ZkDataContext();
             
-
             var ret = db.Resources.AsQueryable();
             ret = ret.Where(x => x.TypeID == type && x.MapSupportLevel >= minimumSupportLevel);
-            
-            var test = ret.Where(x => x.RapidTag == term || x.InternalName == term);
-            if (test.Any()) return test.OrderByDescending(x => x.MapSupportLevel).ThenByDescending(x=>x.ResourceID);
-
 
             int i;
             var words = term.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -165,7 +160,8 @@ namespace ZeroKWeb.SpringieInterface
                     ret = ret.Where(x => SqlFunctions.PatIndex("%" + w1 + "%", x.InternalName) > 0);
                 }
             }
-            return ret.OrderByDescending(x => x.MapSupportLevel);
+
+            return ret.OrderByDescending(x => x.MapSupportLevel).ThenByDescending(x=>x.InternalName == term || x.RapidTag == term).ThenByDescending(x=>x.ResourceID);
         }
     }
 }
