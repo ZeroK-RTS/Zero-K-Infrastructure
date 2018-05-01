@@ -246,6 +246,7 @@ namespace ZkData
         public static string[] DefaultDownloadMirrors = {};
         public static string LobbyServerHost;
         public static int LobbyServerPort;
+        public static bool LobbyServerUpdateSpectatorsInstantly = false;
 
         public static bool AutoMigrateDatabase { get; private set; }
         

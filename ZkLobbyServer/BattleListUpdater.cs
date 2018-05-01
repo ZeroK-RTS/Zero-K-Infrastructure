@@ -9,7 +9,7 @@ namespace ZkLobbyServer
 {
     public class BattleListUpdater
     {
-        private const int UpdateIntervalSeconds = 10;
+        private const int UpdateIntervalSeconds = 5;
         private ZkLobbyServer server;
 
         private HashSet<Tuple<int, int, int>> storedCounts = new HashSet<Tuple<int, int, int>>();

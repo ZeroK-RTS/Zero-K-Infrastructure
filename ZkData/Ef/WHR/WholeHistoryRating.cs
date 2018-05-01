@@ -42,12 +42,17 @@ namespace Ratings
         private int activePlayers = 0;
         private bool lastBattleRanked = false;
 
+
         private int battlesRegistered = 0;
         private SpringBattle firstBattle = null;
         private List<Account> laddersCache = new List<Account>();
 
         private SpringBattle latestBattle, lastUpdate;
         private HashSet<int> ProcessedBattles = new HashSet<int>();
+
+        private bool completelyInitialized = false;
+
+        private ConcurrentDictionary<int, PlayerRating> cachedDbRatings = new ConcurrentDictionary<int, PlayerRating>();
 
         private readonly RatingCategory category;
 
@@ -56,6 +61,7 @@ namespace Ratings
             this.category = category;
             w2 = GlobalConst.EloDecayPerDaySquared;
             ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, 15 * 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
+
         }
 
         public void ResetAll()
@@ -78,11 +84,22 @@ namespace Ratings
             latestBattle = null;
             lastUpdate = null;
             ProcessedBattles = new HashSet<int>();
-            
+
         }
 
         public PlayerRating GetPlayerRating(int accountID)
         {
+            if (!completelyInitialized)
+            {
+                return cachedDbRatings.GetOrAdd(accountID,
+                    id =>
+                    {
+                        using (var db = new ZkDataContext())
+                            return db.AccountRatings.FirstOrDefault(x => x.AccountID == id && x.RatingCategory == category)
+                                           ?.ToPlayerRating() ?? DefaultRating;
+                    });
+            }
+            
             return playerRatings.ContainsKey(RatingSystems.GetRatingId(accountID)) ? playerRatings[RatingSystems.GetRatingId(accountID)] : DefaultRating;
         }
 
@@ -219,7 +236,7 @@ namespace Ratings
             {
                 int counter = 0;
                 List<Account> retval = new List<Account>();
-                
+
                 Account acc;
                 foreach (var pair in sortedPlayers)
                 {
@@ -273,6 +290,8 @@ namespace Ratings
                         runIterations(75);
                         UpdateRankings(players.Values);
                         playerOldRatings = new Dictionary<int, PlayerRating>(playerRatings);
+                        completelyInitialized = true;
+                        cachedDbRatings.Clear();
                     });
                 }
                 else if (DateTime.UtcNow.Subtract(lastUpdateTime).TotalHours >= GlobalConst.LadderUpdatePeriod)
@@ -542,7 +561,7 @@ namespace Ratings
                         listener.Key.TopPlayersUpdated(GetTopPlayers(listener.Value));
                     }
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -554,7 +573,7 @@ namespace Ratings
                 Trace.TraceError(dbg);
             }
         }
-        
+
 
         private Player getPlayerById(int id)
         {

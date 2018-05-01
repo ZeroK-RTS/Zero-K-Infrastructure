@@ -16,9 +16,9 @@ namespace ZkLobbyServer
         private const int TimerSeconds = 30;
         private const int MapModChangePauseSeconds = 30;
 
-        private const int BanSecondsIncrease = 30;
-        private const int BanSecondsMax = 300;
-        private const int BanReset = 600;
+        private int BanSecondsIncrease => DynamicConfig.Instance.MmBanSecondsIncrease;
+        private int BanSecondsMax => DynamicConfig.Instance.MmBanSecondsMax;
+        private int BanReset => DynamicConfig.Instance.MmBanReset;
 
 
         private struct QueueConfig
@@ -144,18 +144,18 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task AreYouReadyResponse(ConnectedUser user, AreYouReadyResponse response)
+        public void AreYouReadyResponse(ConnectedUser user, AreYouReadyResponse response)
         {
-            bool playersUpdated = false;
-            bool statusUpdated = false;
-            List<PlayerEntry> invitedPeople = null;
             lock (tickLock)
-            { //dont accept AreYouReadyResponse while tick is generating battles
+            {
+                bool playersUpdated = false;
+                bool statusUpdated = false;
+                List<PlayerEntry> invitedPeople = null;
+                //dont accept AreYouReadyResponse while tick is generating battles
                 PlayerEntry entry;
                 if (players.TryGetValue(user.Name, out entry))
                     if (entry.InvitedToPlay)
                     {
-
                         if (response.Ready) entry.LastReadyResponse = true;
                         else
                         {
@@ -164,7 +164,7 @@ namespace ZkLobbyServer
                         }
 
                         invitedPeople = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
-                        
+
                         if (invitedPeople.Count <= 1)
                         {
                             foreach (var p in invitedPeople) p.LastReadyResponse = true;
@@ -177,32 +177,32 @@ namespace ZkLobbyServer
                             statusUpdated = true;
                         }
                     }
-            }
-            if (invitedPeople != null && statusUpdated)
-            {
-                var readyCounts = CountQueuedPeople(invitedPeople.Where(x => x.LastReadyResponse));
 
-                var proposedBattles = ProposeBattles(invitedPeople.Where(x => x.LastReadyResponse));
-
-                await Task.WhenAll(invitedPeople.Select(async (p) =>
+                if (invitedPeople != null && statusUpdated)
                 {
-                    var invitedBattle = invitationBattles?.FirstOrDefault(x => x.Players.Contains(p));
-                    await
-                        server.SendToUser(p.Name,
+                    var readyCounts = CountQueuedPeople(invitedPeople.Where(x => x.LastReadyResponse));
+
+                    var proposedBattles = ProposeBattles(invitedPeople.Where(x => x.LastReadyResponse));
+
+                    Task.WhenAll(invitedPeople.Select(async (p) =>
+                    {
+                        var invitedBattle = invitationBattles?.FirstOrDefault(x => x.Players.Contains(p));
+                        await server.SendToUser(p.Name,
                             new AreYouReadyUpdate()
                             {
                                 QueueReadyCounts = readyCounts,
                                 ReadyAccepted = p.LastReadyResponse == true,
                                 LikelyToPlay = proposedBattles.Any(y => y.Players.Contains(p)),
                                 YourBattleSize = invitedBattle?.Size,
-                                YourBattleReady =
-                                    invitedPeople.Count(x => x.LastReadyResponse && (invitedBattle?.Players.Contains(x) == true))
+                                YourBattleReady = invitedPeople.Count(x => x.LastReadyResponse && (invitedBattle?.Players.Contains(x) == true))
                             });
-                }));
-            }
-            if (playersUpdated)
-            {
-                await UpdateAllPlayerStatuses();
+                    }));
+                }
+
+                if (playersUpdated)
+                {
+                    UpdateAllPlayerStatuses();
+                }
             }
         }
 
@@ -227,37 +227,42 @@ namespace ZkLobbyServer
             await server.Broadcast(new MatchMakerSetup() { PossibleQueues = possibleQueues });
         }
 
-        public async Task QueueRequest(ConnectedUser user, MatchMakerQueueRequest cmd)
+        public void QueueRequest(ConnectedUser user, MatchMakerQueueRequest cmd)
         {
-            var banTime = BannedSeconds(user.Name);
-            if (banTime != null)
+            lock (tickLock)
             {
-                await UpdatePlayerStatus(user.Name);
-                await user.Respond($"Please rest and wait for {banTime}s because you refused previous match");
-                return;
+                var banTime = BannedSeconds(user.Name);
+                if (banTime != null)
+                {
+                    UpdatePlayerStatus(user.Name);
+                    user.Respond($"Please rest and wait for {banTime}s because you refused previous match");
+                    return;
+                }
+
+                // already invited ignore requests
+                PlayerEntry entry;
+                if (players.TryGetValue(user.Name, out entry) && entry.InvitedToPlay)
+                {
+                    UpdatePlayerStatus(user.Name);
+                    return;
+                }
+
+                var wantedQueueNames = cmd.Queues?.ToList() ?? new List<string>();
+                var wantedQueues = possibleQueues.Where(x => wantedQueueNames.Contains(x.Name)).ToList();
+
+                var party = server.PartyManager.GetParty(user.Name);
+                if (party != null)
+                    wantedQueues = wantedQueues.Where(x => x.MaxSize / 2 >= party.UserNames.Count)
+                        .ToList(); // if is in party keep only queues where party fits
+
+                if (wantedQueues.Count == 0) // delete
+                {
+                    RemoveUser(user.Name, true);
+                    return;
+                }
+
+                AddOrUpdateUser(user, wantedQueues);
             }
-
-            // already invited ignore requests
-            PlayerEntry entry;
-            if (players.TryGetValue(user.Name, out entry) && entry.InvitedToPlay)
-            {
-                await UpdatePlayerStatus(user.Name);
-                return;
-            }
-
-            var wantedQueueNames = cmd.Queues?.ToList() ?? new List<string>();
-            var wantedQueues = possibleQueues.Where(x => wantedQueueNames.Contains(x.Name)).ToList();
-
-            var party = server.PartyManager.GetParty(user.Name);
-            if (party != null) wantedQueues = wantedQueues.Where(x => x.MaxSize / 2 >= party.UserNames.Count).ToList(); // if is in party keep only queues where party fits
-
-            if (wantedQueues.Count == 0) // delete
-            {
-                await RemoveUser(user.Name, true);
-                return;
-            }
-
-            await AddOrUpdateUser(user, wantedQueues);
         }
 
         /// <summary>
@@ -265,20 +270,27 @@ namespace ZkLobbyServer
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public bool RemoveUser(string name)
+        private bool RemoveUser(string name)
         {
-            var party = server.PartyManager.GetParty(name);
-            var anyRemoved = false;
+            lock (tickLock)
+            {
+                var party = server.PartyManager.GetParty(name);
+                var anyRemoved = false;
 
-            if (party != null)
-            {
-                foreach (var n in party.UserNames) if (RemoveSingleUser(n)) anyRemoved = true;
+                if (party != null)
+                {
+                    foreach (var n in party.UserNames)
+                    {
+                        if (RemoveSingleUser(n, n == name)) anyRemoved = true;
+                    }
+                }
+                else
+                {
+                    anyRemoved = RemoveSingleUser(name, true);
+                }
+
+                return anyRemoved;
             }
-            else
-            {
-                anyRemoved = RemoveSingleUser(name);
-            }
-            return anyRemoved;
         }
 
         /// <summary>
@@ -450,12 +462,12 @@ namespace ZkLobbyServer
         }
 
 
-        private bool RemoveSingleUser(string name)
+        private bool RemoveSingleUser(string name, bool banInvited)
         {
             PlayerEntry entry;
             if (players.TryRemove(name, out entry))
             {
-                if (entry.InvitedToPlay)
+                if (entry.InvitedToPlay && banInvited)
                 {
                     // was invited but he is gone now (whatever reason), ban!
                     var banEntry = bannedPlayers.GetOrAdd(name, (n) => new BanInfo());

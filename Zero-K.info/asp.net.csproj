@@ -1581,6 +1581,7 @@
     <Content Include="Styles\fonts\Xolonium-Regular.woff" />
     <Content Include="Views\Tourney\TourneyIndex.cshtml" />
     <Content Include="Views\PlanetwarsAdmin\PlanetwarsAdminIndex.cshtml" />
+    <Content Include="Views\Admin\DynamicConfigDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

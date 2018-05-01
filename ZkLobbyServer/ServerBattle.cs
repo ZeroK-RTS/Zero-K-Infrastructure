@@ -259,7 +259,10 @@ namespace ZkLobbyServer
             {
                 SpectatorCount = specCount;
                 NonSpectatorCount = playerCount;
-                if (!MiscVar.IsZklsLimited) await server.Broadcast(Users.Keys, new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID , PlayerCount = NonSpectatorCount} });
+                if (GlobalConst.LobbyServerUpdateSpectatorsInstantly)
+                {
+                    await server.Broadcast(Users.Keys, new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID , PlayerCount = NonSpectatorCount} });
+                }
             }
         }
 
