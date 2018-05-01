@@ -103,7 +103,7 @@ namespace ZkLobbyServer
 
         public async Task Process(MatchMakerQueueRequest queueRequest)
         {
-            await server.MatchMaker.QueueRequest(this, queueRequest); 
+            await server.MatchMaker.QueueRequest(this, queueRequest);
         }
 
         public async Task Process(PwJoinPlanet args)

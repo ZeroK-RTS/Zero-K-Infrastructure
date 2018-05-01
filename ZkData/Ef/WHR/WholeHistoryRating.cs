@@ -41,7 +41,6 @@ namespace Ratings
         private Timer ladderRecalculationTimer;
         private int activePlayers = 0;
         private bool lastBattleRanked = false;
-        
 
         private int battlesRegistered = 0;
         private SpringBattle firstBattle = null;
@@ -50,8 +49,6 @@ namespace Ratings
         private SpringBattle latestBattle, lastUpdate;
         private HashSet<int> ProcessedBattles = new HashSet<int>();
 
-        private bool completelyInitialized = false;
-
         private readonly RatingCategory category;
 
         public WholeHistoryRating(RatingCategory category)
@@ -59,7 +56,6 @@ namespace Ratings
             this.category = category;
             w2 = GlobalConst.EloDecayPerDaySquared;
             ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, 15 * 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
-            
         }
 
         public void ResetAll()
@@ -87,13 +83,6 @@ namespace Ratings
 
         public PlayerRating GetPlayerRating(int accountID)
         {
-            if (!completelyInitialized)
-            {
-                using (var db = new ZkDataContext())
-                {
-                    return db.AccountRatings.Where(x => x.AccountID == accountID && x.RatingCategory == category).FirstOrDefault()?.ToPlayerRating() ?? DefaultRating;
-                }
-            }
             return playerRatings.ContainsKey(RatingSystems.GetRatingId(accountID)) ? playerRatings[RatingSystems.GetRatingId(accountID)] : DefaultRating;
         }
 
@@ -284,7 +273,6 @@ namespace Ratings
                         runIterations(75);
                         UpdateRankings(players.Values);
                         playerOldRatings = new Dictionary<int, PlayerRating>(playerRatings);
-                        completelyInitialized = true;
                     });
                 }
                 else if (DateTime.UtcNow.Subtract(lastUpdateTime).TotalHours >= GlobalConst.LadderUpdatePeriod)

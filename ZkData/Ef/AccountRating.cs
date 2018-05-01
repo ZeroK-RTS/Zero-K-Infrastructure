@@ -37,10 +37,6 @@ namespace ZkData
         
         public double Uncertainty { get; set; }
         
-        public PlayerRating ToPlayerRating()
-        {
-            return new PlayerRating(Rank, (float)Percentile, (float)RealElo, (float)Uncertainty, 0, 0);
-        }
 
         public void UpdateFromRatingSystem(PlayerRating rating)
         {
