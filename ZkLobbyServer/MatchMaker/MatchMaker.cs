@@ -16,9 +16,9 @@ namespace ZkLobbyServer
         private const int TimerSeconds = 30;
         private const int MapModChangePauseSeconds = 30;
 
-        private const int BanSecondsIncrease = 30;
-        private const int BanSecondsMax = 300;
-        private const int BanReset = 600;
+        private const int BanSecondsIncrease = 1;
+        private const int BanSecondsMax = 15;
+        private const int BanReset = 60;
 
 
         private struct QueueConfig
