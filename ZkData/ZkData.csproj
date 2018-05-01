@@ -79,7 +79,6 @@
     <Compile Include="Ef\AccountRelation.cs" />
     <Compile Include="Ef\LobbyChannelTopic.cs" />
     <Compile Include="Ef\LobbyNews.cs" />
-    <Compile Include="Ef\MMEvent.cs" />
     <Compile Include="Ef\SpringBattleBot.cs" />
     <Compile Include="Ef\WHR\Game.cs" />
     <Compile Include="Ef\WHR\IRatingSystem.cs" />
@@ -98,7 +97,6 @@
     <Compile Include="Ef\LobbyChatHistory.cs" />
     <Compile Include="Enums\DecorationIconPositions.cs" />
     <Compile Include="Enums\DecorationIconTypes.cs" />
-    <Compile Include="IMatchMakingEventCreator.cs" />
     <Compile Include="IPlanetwarsEventCreator.cs" />
     <Compile Include="IEntityAfterChange.cs" />
     <Compile Include="IEntityBeforeChange.cs" />
