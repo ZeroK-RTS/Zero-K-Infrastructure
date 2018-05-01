@@ -217,8 +217,10 @@ namespace ZkLobbyServer
                     {
                         if (GlobalConst.DelugeChannelDisplayUsers > 0)
                         {
+                            var myEffectiveElo = uWatcher?.User?.EffectiveElo ?? 1200;
+
                             var channelUsersBySkill = chan.Users.Keys.Select(x => ConnectedUsers.Get(x)).Where(x => x != null)
-                                .OrderByDescending(x => x.User?.EffectiveMmElo).Select(x => x.Name).Take(GlobalConst.DelugeChannelDisplayUsers);
+                                .OrderBy(x => Math.Abs((x.User?.EffectiveMmElo??1200) - myEffectiveElo)).Select(x => x.Name).Take(GlobalConst.DelugeChannelDisplayUsers);
 
                             if (channelUsersBySkill.Contains(uWatched.Name)) return true;
                         }
