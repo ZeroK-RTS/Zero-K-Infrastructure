@@ -71,10 +71,29 @@ namespace Fixer
             {
                 while (true)
                 {
-                    await Task.Delay(rand.Next(400000));
-                    tas.Say(SayPlace.Channel, "bots", sent.GetNext(), false);
+                    if (tas.IsLoggedIn)
+                    {
+                        await Task.Delay(rand.Next(50000));
+                        tas.Say(SayPlace.Channel, "zk", sent.GetNext(), false);
+                    }
                 }
             }, TaskCreationOptions.LongRunning);
+
+            Task.Factory.StartNew(async () =>
+            {
+                bool cycler = false;
+                while (true)
+                {
+                    if (tas.IsLoggedIn)
+                    {
+                        await Task.Delay(rand.Next(5000));
+                        await tas.ChangeMyUserStatus(cycler, cycler);
+                        await tas.ChangeMyBattleStatus(cycler);
+                        cycler = !cycler;
+                    }
+                }
+            }, TaskCreationOptions.LongRunning);
+
         }
 
         SentenceGenerator sent = new SentenceGenerator();
@@ -84,10 +103,10 @@ namespace Fixer
         {
             SynchronizationContext.SetSynchronizationContext(null);
             ThreadPool.SetMaxThreads(1000, 1000);
-            for (int i = 0; i < 1000; i++) {
+            for (int i = 0; i < 100; i++) {
                 int i1 = i;
-                //Thread.Sleep(100);
-                RunNub(i1);
+                Thread.Sleep(100);
+                RunNub(i1+200);
             }
 
          }
