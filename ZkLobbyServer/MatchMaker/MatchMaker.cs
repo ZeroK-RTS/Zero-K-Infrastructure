@@ -16,9 +16,9 @@ namespace ZkLobbyServer
         private const int TimerSeconds = 30;
         private const int MapModChangePauseSeconds = 30;
 
-        private const int BanSecondsIncrease = 1;
-        private const int BanSecondsMax = 15;
-        private const int BanReset = 60;
+        private int BanSecondsIncrease => DynamicConfig.Instance.MmBanSecondsIncrease;
+        private int BanSecondsMax => DynamicConfig.Instance.MmBanSecondsMax;
+        private int BanReset => DynamicConfig.Instance.MmBanReset;
 
 
         private struct QueueConfig

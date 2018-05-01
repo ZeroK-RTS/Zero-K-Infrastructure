@@ -66,5 +66,20 @@ namespace ZeroKWeb.Controllers
             MiscVar.ZklsMaxUsers = maxPlayers;
             return RedirectToAction("Index", "Home");
         }
+
+
+        [Auth(Role = AdminLevel.SuperAdmin)]
+        public ActionResult EditDynamicConfig()
+        {
+            return View("DynamicConfigDetail", DynamicConfig.Instance);
+        }
+
+        [HttpPost]
+        [Auth(Role =  AdminLevel.SuperAdmin)]
+        public ActionResult EditDynamicConfigSubmit(DynamicConfig config)
+        {
+            DynamicConfig.SaveConfig(config);
+            return RedirectToAction("EditDynamicConfig");
+        }
     }
 }
