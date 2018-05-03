@@ -72,7 +72,7 @@ namespace ZkLobbyServer
             {
                 try
                 {
-                    if (QueueType.Mode != AutohostMode.Game1v1 && QueueType.Mode != AutohostMode.Teams) return true; //this shouldn't be hardcoded
+                    if (QueueType.Mode != AutohostMode.Teams) return true; //this shouldn't be hardcoded
 
                     var context = new LobbyHostingContext()
                     {
