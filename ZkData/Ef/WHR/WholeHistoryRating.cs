@@ -109,11 +109,11 @@ namespace Ratings
             return players[RatingSystems.GetRatingId(AccountID)].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.getElo() + RatingOffset);
         }
 
-        public List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams, DateTime time)
+        public List<float> PredictOutcome(IEnumerable<IEnumerable<int>> teams, DateTime time)
         {
             return teams.Select(t =>
-                    SetupGame(t.Select(x => RatingSystems.GetRatingId(x.AccountID)).ToList(),
-                            teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => RatingSystems.GetRatingId(x.AccountID))).ToList(),
+                    SetupGame(t.Select(x => RatingSystems.GetRatingId(x)).ToList(),
+                            teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => RatingSystems.GetRatingId(x))).ToList(),
                             true,
                             RatingSystems.ConvertDateToDays(time),
                             -1
