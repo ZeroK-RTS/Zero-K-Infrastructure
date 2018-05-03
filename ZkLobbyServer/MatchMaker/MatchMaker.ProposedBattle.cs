@@ -78,11 +78,11 @@ namespace ZkLobbyServer
                     Mode = QueueType.Mode,
                     Players = Players.Select(x => new PlayerTeam()
                     {
-                        Clan = x.LobbyUser.Clan,
-                        PartyID = x.Party.PartyID,
+                        Clan = x.LobbyUser?.Clan,
+                        PartyID = x.Party?.PartyID,
                         IsSpectator = false,
                         Name = x.Name,
-                        LobbyID = x.LobbyUser.AccountID,
+                        LobbyID = x.LobbyUser?.AccountID ?? 0,
                         AllyID = 0
                     }).ToList()
                 };
