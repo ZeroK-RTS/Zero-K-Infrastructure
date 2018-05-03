@@ -115,12 +115,12 @@ namespace ZkData
                 }
                 else
                 {
-                    var losers = SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => x.Account).ToList();
-                    var winners = SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam).Select(x => x.Account).ToList();
+                    var losers = SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => x.AccountID).ToList();
+                    var winners = SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam).Select(x => x.AccountID).ToList();
                     if ((losers.Count > 0) && (winners.Count > 0))
                     {
 
-                        List<float> probabilities = RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(new List<ICollection<Account>> { winners, losers }, StartTime);
+                        List<float> probabilities = RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(new List<ICollection<int>> { winners, losers }, StartTime);
                         var eWin = probabilities[0];
                         var eLose = probabilities[1];
 
@@ -148,7 +148,7 @@ namespace ZkData
             {
                 if (IsRatedMatch())
                 {
-                    return RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(SpringBattlePlayers.Where(x => !x.IsSpectator).OrderBy(x => x.AllyNumber).GroupBy(x => x.AllyNumber).Select(x => x.Select(y => y.Account).ToList()).ToList(), StartTime);
+                    return RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(SpringBattlePlayers.Where(x => !x.IsSpectator).OrderBy(x => x.AllyNumber).GroupBy(x => x.AllyNumber).Select(x => x.Select(y => y.AccountID).ToList()).ToList(), StartTime);
                 }
             }
             catch (Exception ex)
