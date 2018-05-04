@@ -93,7 +93,7 @@ namespace ZkLobbyServer
                 Description = "1v1 with opponent of similar skill",
                 MinSize = 2,
                 MaxSize = 2,
-                EloCutOffExponent = 0.975,
+                EloCutOffExponent = 0.97,
                 MaxPartySize = 1,
                 Mode = AutohostMode.Game1v1,
                 MapSelector = Is1v1Map,
