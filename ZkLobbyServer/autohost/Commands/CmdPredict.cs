@@ -6,6 +6,7 @@ using LobbyClient;
 using ZkData;
 using Ratings;
 using PlasmaShared;
+using System.Diagnostics;
 
 namespace ZkLobbyServer
 {
@@ -73,7 +74,18 @@ namespace ZkLobbyServer
                     return;
                 }
 
-                var chances = RatingSystems.GetRatingSystem(cat).PredictOutcome(teams.Select(x => x.Select(y => y.AccountID).ToList()).ToList(), DateTime.UtcNow);
+                var accIds = teams.Select(x => x.Select(y => y.AccountID).ToList()).ToList();
+                string str = "";
+                foreach (var team in accIds)
+                {
+                    str += "|";
+                    foreach (var p in team)
+                    {
+                        str += p + ",";
+                    }
+                }
+                Trace.TraceWarning("teams: " + str);
+                var chances = RatingSystems.GetRatingSystem(cat).PredictOutcome(accIds, DateTime.UtcNow);
                 for (int i = 0; i < teams.Count; i++)
                 {
                     await battle.SayBattle( $"Team {teams[i].First().Name} has a {Math.Round(1000 * chances[i]) / 10}% chance to win");
