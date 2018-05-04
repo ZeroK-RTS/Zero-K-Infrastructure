@@ -20,6 +20,8 @@ namespace ZkLobbyServer
         private int BanSecondsMax => DynamicConfig.Instance.MmBanSecondsMax;
         private int BanReset => DynamicConfig.Instance.MmBanReset;
 
+        private double AcceptMinInterval => DynamicConfig.Instance.AcceptMinInterval;
+
 
         private struct QueueConfig
         {
@@ -156,7 +158,11 @@ namespace ZkLobbyServer
                 if (players.TryGetValue(user.Name, out entry))
                     if (entry.InvitedToPlay)
                     {
-                        if (response.Ready) entry.LastReadyResponse = true;
+                        if (response.Ready)
+                        {
+                            entry.LastReadyResponse = true;
+                            entry.LastAcceptTime = DateTime.UtcNow;
+                        }
                         else
                         {
                             entry.LastReadyResponse = false;
@@ -490,16 +496,10 @@ namespace ZkLobbyServer
             invitationBattles = ProposeBattles(players.Values.Where(x => x != null));
             var toInvite = invitationBattles.SelectMany(x => x.Players).ToList();
             foreach (var usr in players.Values.Where(x => x != null))
-                if (toInvite.Contains(usr))
-                {
-                    usr.InvitedToPlay = true;
-                    usr.LastReadyResponse = false;
-                }
-                else
-                {
-                    usr.InvitedToPlay = false;
-                    usr.LastReadyResponse = false;
-                }
+            {
+                usr.InvitedToPlay = toInvite.Contains(usr);
+                usr.LastReadyResponse = DateTime.UtcNow.Subtract(usr.LastAcceptTime).TotalSeconds < AcceptMinInterval;
+            }
 
             server.Broadcast(toInvite.Select(x => x.Name), new AreYouReady() { SecondsRemaining = TimerSeconds });
         }
