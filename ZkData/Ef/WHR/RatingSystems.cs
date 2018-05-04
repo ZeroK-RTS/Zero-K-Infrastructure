@@ -37,10 +37,11 @@ namespace Ratings
                         UpdateRatingIds();
                         using (ZkDataContext data = new ZkDataContext())
                         {
-                            for (int year = 10; year > 0; year--)
+                            data.Database.CommandTimeout = 240;
+                            for (int month = 10*12; month > 0; month--)
                             {
-                                DateTime minStartTime = DateTime.Now.AddYears(-year);
-                                DateTime maxStartTime = DateTime.Now.AddYears(-year + 1);
+                                DateTime minStartTime = DateTime.Now.AddMonths(-month);
+                                DateTime maxStartTime = DateTime.Now.AddMonths(-month + 1);
                                 foreach (SpringBattle b in data.SpringBattles
                                         .Where(x => x.StartTime > minStartTime && x.StartTime < maxStartTime)
                                         .Include(x => x.ResourceByMapResourceID)
