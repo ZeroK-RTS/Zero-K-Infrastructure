@@ -21,6 +21,7 @@ namespace ZkLobbyServer
             public double WaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / DynamicConfig.Instance.MmWidthGrowthTime));
 
             public DateTime JoinedTime { get; private set; } = DateTime.UtcNow;
+            public DateTime LastAcceptTime { get; set; } = DateTime.UtcNow;
             public User LobbyUser { get; private set; }
             public string Name => LobbyUser.Name;
             public List<MatchMakerSetup.Queue> QueueTypes { get; private set; }
@@ -53,6 +54,7 @@ namespace ZkLobbyServer
 
             public void UpdateTypes(List<MatchMakerSetup.Queue> queueTypes)
             {
+                if (!queueTypes.All(QueueTypes.Contains)) LastAcceptTime = DateTime.UtcNow; //User chose new queue, he is active
                 QueueTypes = queueTypes;
             }
         }
