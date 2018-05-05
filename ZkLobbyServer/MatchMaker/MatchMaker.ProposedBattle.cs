@@ -72,6 +72,9 @@ namespace ZkLobbyServer
             {
                 try
                 {
+                    // disable balancer for now, it's eating up too many resources
+                    if (true) return true;
+                        
                     if (QueueType.Mode != AutohostMode.Teams) return true; //this shouldn't be hardcoded
 
                     var context = new LobbyHostingContext()
