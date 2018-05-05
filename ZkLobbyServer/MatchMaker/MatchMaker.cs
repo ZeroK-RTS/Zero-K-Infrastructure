@@ -366,18 +366,8 @@ namespace ZkLobbyServer
 
 
             // if nobody is invited, we can do tick now to speed up things
-            bool doUpdates = false;
-            lock (tickLock) {//wait for running tick to finish first
-                if (invitationBattles?.Any() != true)
-                {
-                    OnTick();
-                }
-                else
-                {
-                    doUpdates = true;
-                }
-            }
-            if (doUpdates) await UpdateAllPlayerStatuses(); // else we just send statuses
+
+            OnTick();
 
         }
 
@@ -446,9 +436,7 @@ namespace ZkLobbyServer
                 try
                 {
                     timer.Stop();
-                    realBattles = ResolveToRealBattles();
-                    
-                    ResetAndSendMmInvitations();
+                    realBattles = ProposeBattles(players.Values.Where(x => x != null));
                     
                 }
                 catch (Exception ex)
@@ -463,6 +451,7 @@ namespace ZkLobbyServer
 
             //do non critical updates to clients:
             StartBattles(realBattles);
+
         }
 
         private static List<ProposedBattle> ProposeBattles(IEnumerable<PlayerEntry> users)
