@@ -72,6 +72,8 @@ namespace ZkLobbyServer
             {
                 try
                 {
+                    if (minimumWinChance <= 0.01) return true;
+                        
                     if (QueueType.Mode != AutohostMode.Teams) return true; //this shouldn't be hardcoded
 
                     var context = new LobbyHostingContext()
