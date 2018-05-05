@@ -65,18 +65,6 @@ namespace ZkLobbyServer
 
             queueConfigs.Add(new QueueConfig()
             {
-                Name = "Teams",
-                Description = "Play 2v2 to 4v4 with players of similar skill.",
-                MinSize = 4,
-                MaxSize = 8,
-                MaxPartySize = 4,
-                EloCutOffExponent = 0.96,
-                Mode = AutohostMode.Teams,
-                MapSelector = IsTeamsMap,
-            });
-
-            queueConfigs.Add(new QueueConfig()
-            {
                 Name = "Coop",
                 Description = "Play together, against AI or chickens",
                 MinSize = 2,
@@ -97,6 +85,42 @@ namespace ZkLobbyServer
                 MaxPartySize = 1,
                 Mode = AutohostMode.Game1v1,
                 MapSelector = Is1v1Map,
+            });
+
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "2v2",
+                Description = "Play 2v2 with players of similar skill.",
+                MinSize = 4,
+                MaxSize = 4,
+                MaxPartySize = 2,
+                EloCutOffExponent = 0.96,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
+
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "3v3",
+                Description = "3v3 with players of similar skill.",
+                MinSize = 6,
+                MaxSize = 6,
+                MaxPartySize = 3,
+                EloCutOffExponent = 0.96,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap
+            });
+
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "4v4",
+                Description = "4v4 with players of similar skill.",
+                MinSize = 8,
+                MaxSize = 8,
+                MaxPartySize = 4,
+                EloCutOffExponent = 0.96,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap
             });
 
             UpdateQueues();
@@ -361,7 +385,8 @@ namespace ZkLobbyServer
         private int? BannedSeconds(string name)
         {
             BanInfo banEntry;
-            if (bannedPlayers.TryGetValue(name, out banEntry) && (DateTime.UtcNow.Subtract(banEntry.BannedTime).TotalSeconds < banEntry.BanSeconds)) return (int)(banEntry.BanSeconds - DateTime.UtcNow.Subtract(banEntry.BannedTime).TotalSeconds);
+            if (bannedPlayers.TryGetValue(name, out banEntry) && (DateTime.UtcNow.Subtract(banEntry.BannedTime).TotalSeconds < banEntry.BanSeconds))
+                return (int)(banEntry.BanSeconds - DateTime.UtcNow.Subtract(banEntry.BannedTime).TotalSeconds);
 
             // remove old
             if (banEntry != null && DateTime.UtcNow.Subtract(banEntry.BannedTime).TotalSeconds > BanReset) bannedPlayers.TryRemove(name, out banEntry);
