@@ -580,7 +580,7 @@ namespace ZkLobbyServer
                 foreach (var bat in testedBattles)
                 {
                     if (bat.CanBeAdded(other, allPlayers)) bat.AddPlayer(other, allPlayers);
-                    if (bat.Players.Count == bat.Size && bat.VerifyBalance(DynamicConfig.Instance.MmMinimumWinChance)) return bat;
+                    if (bat.Players.Count == bat.Size) return bat;
                 }
             return null;
         }

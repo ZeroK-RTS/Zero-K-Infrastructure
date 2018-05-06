@@ -20,7 +20,7 @@ namespace Ratings
 
         List<Account> GetTopPlayersIn(int count, Dictionary<int, Account> accounts);
 
-        List<float> PredictOutcome(IEnumerable<IEnumerable<int>> teams, DateTime time);
+        List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams, DateTime time);
         
         void AddTopPlayerUpdateListener(ITopPlayersUpdateListener listener, int topX);
         

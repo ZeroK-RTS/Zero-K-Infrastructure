@@ -68,41 +68,6 @@ namespace ZkLobbyServer
 
             }
 
-            public bool VerifyBalance(double minimumWinChance)
-            {
-                try
-                {
-                    if (minimumWinChance <= 0.01) return true;
-                        
-                    if (QueueType.Mode != AutohostMode.Teams) return true; //this shouldn't be hardcoded
-
-                    var context = new LobbyHostingContext()
-                    {
-                        IsMatchMakerGame = true,
-                        Mode = QueueType.Mode,
-                        Players = Players.Select(x => new PlayerTeam()
-                        {
-                            Clan = x.LobbyUser?.Clan,
-                            PartyID = x.Party?.PartyID,
-                            IsSpectator = false,
-                            Name = x.Name,
-                            LobbyID = x.LobbyUser?.AccountID ?? 0,
-                            AllyID = 0
-                        }).ToList()
-                    };
-                    var result = ZeroKWeb.SpringieInterface.Balancer.BalanceTeams(context, false, 2, true);
-                    var teams = result.Players.Where(u => !u.IsSpectator)
-                                    .GroupBy(u => u.AllyID)
-                                    .Select(x => x.Select(p => p.LobbyID)).ToList(); ;
-                    return Ratings.RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).PredictOutcome(teams, DateTime.UtcNow).Min() > minimumWinChance;
-                }
-                catch(Exception ex)
-                {
-                    Trace.TraceError("MatchMaker error checking balance: \n{0}", ex);
-                    return true;
-                }
-            }
-
             
             public bool CanBeAdded(PlayerEntry other, List<PlayerEntry> allPlayers)
             {
