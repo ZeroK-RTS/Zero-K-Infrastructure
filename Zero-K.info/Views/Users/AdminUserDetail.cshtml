@@ -130,6 +130,18 @@
         <input type="submit" />
     </form>
     <br />
+
+    @if (Model.SteamID != null)
+    {
+        Unlink from Steam:
+        <form method="post" action="@Url.Action("UnlinkSteamID", "Users", new { accountID = Model.AccountID })">
+            @Html.AntiForgeryToken()
+            Delete this account's Steam name and ID, allowing the user to link their Steam account to another ZK account.'
+            <input type="submit" class="js_confirm" />
+        </form>
+    }
+
+    <br />
     Set WHR Alias:
     <form method="post" action="@Url.Action("SetWhrAlias", "Users", new { accountID = Model.AccountID })">
         @Html.AntiForgeryToken()

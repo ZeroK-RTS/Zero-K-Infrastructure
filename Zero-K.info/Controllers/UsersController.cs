@@ -106,6 +106,28 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Auth(Role = AdminLevel.Moderator)]
+        public ActionResult UnlinkSteamID(int accountID)
+        {
+            var db = new ZkDataContext();
+            Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+            if (acc == null) return Content("Invalid accountID");
+            Account adminAcc = Global.Account;
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{2} unlinked Steam account for {0} {1} (name {3})", 
+                                                                                   acc.Name, 
+                                                                                   Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), 
+                                                                                   adminAcc.Name,
+                                                                                   acc.SteamName
+                                                                                  ));
+            acc.SteamName = null;
+            acc.SteamID = null;
+            db.SaveChanges();
+
+            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
+        }
+
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult AdminUserDetail(int id)
         {
