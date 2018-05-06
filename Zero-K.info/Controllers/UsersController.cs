@@ -524,23 +524,11 @@ namespace ZeroKWeb.Controllers
 
                 var acc = db.Accounts.Find(accountID);
                 if (acc == null) return Content("Invalid accountID");
-
-                var battles = db.SpringBattles.Where(x => x.SpringBattlePlayers.Where(p => !p.IsSpectator).Any(p => p.AccountID == accountID))
-                                        .Include(x => x.ResourceByMapResourceID)
-                                        .Include(x => x.SpringBattlePlayers)
-                                        .Include(x => x.SpringBattleBots)
-                                        .ToList();
-
-                battles.ForEach(x => RatingSystems.RemoveResult(x));
-
+                
                 acc.WhrAlias = aliasId;
                 db.SaveChanges();
-                RatingSystems.UpdateRatingIds();
-
-                battles.ForEach(x => RatingSystems.ReprocessResult(x));
-
-
-                return Content(string.Format("{0} now plays for {1}", acc, aliasAcc));
+                
+                return Content(string.Format("{0} will play for {1}", acc, aliasAcc));
             }
         }
 
