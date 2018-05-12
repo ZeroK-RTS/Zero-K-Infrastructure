@@ -311,7 +311,7 @@ namespace ZeroKWeb.Controllers
                 case AuthenticationStatus.Failed:
                     return Content("Login failed");
             }
-            return View("HomeIndex");
+            return Index();
         }
 
         private static string GetMapTooltip(int id)

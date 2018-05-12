@@ -1452,6 +1452,7 @@
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site_main.js" />
+    <Content Include="Scripts\userSettings.js" />
     <Content Include="Styles\jquery.datetimepicker.min.css" />
     <Content Include="Styles\userpage.css" />
     <Content Include="Styles\base.css" />
@@ -1590,6 +1591,12 @@
     <Content Include="Styles\fonts\Xolonium-Regular.woff" />
     <Content Include="Views\Tourney\TourneyIndex.cshtml" />
     <Content Include="Views\PlanetwarsAdmin\PlanetwarsAdminIndex.cshtml" />
+    <Content Include="Views\Shared\Navigation.cshtml" />
+    <Content Include="Styles\less\style.less" />
+    <Content Include="Styles\less\modules\all_modules.less" />
+    <Content Include="Styles\less\colors.less" />
+    <Content Include="Views\Shared\_LobbyLayout.cshtml" />
+    <Content Include="Views\Home\Landing.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
@@ -1677,6 +1684,7 @@
     <Folder Include="Views\Autocomplete\" />
     <Folder Include="Views\Github\" />
     <Folder Include="Views\LobbyService\" />
+    <Folder Include="Views\Modules\" />
     <Folder Include="Weblobby\" />
   </ItemGroup>
   <ItemGroup>

@@ -15,7 +15,7 @@
     </title>
 
     <link rel="icon" href='@Href("~/img/favicon.png")' />
-    @* TODO: add less files *@
+    <link rel="stylesheet/less" type="text/css" href="~/Styles/less/style.less" />
     @System.Web.Optimization.Styles.Render("~/bundles/maincss")
     @System.Web.Optimization.Scripts.Render("~/bundles/main")
 
@@ -48,36 +48,33 @@
         }
     }
 
-    @* TODO: replace with modules? *@
+    @* TODO: galaxy, minimap, planetwars scripts -- move to bundle *@
     @RenderSection("head", false)
 </head>
 <body>
+
     <div id='busy' class="border">Loading...<img src='/img/Loader.gif' class="vcenter" /></div>
+
     @if (ViewBag.Error != null)
     {
         <h3 style="color:red">@ViewBag.Error</h3>
     }
 
-    @if (!Global.IsLobbyAccess)
-    {
-        <div id="mainContentWrapper" class="wrapper">
-            <div id="header" style="text-align:center">
-                <a href="/">
-                    <img src="/img/zk_logo.png" height="150" alt="Zero K" />
-                </a>
-            </div>
+    <div id="logo">
+        <a href="/">
+            <img class="center" src="/img/zk_logo.png" alt="Zero K" />
+        </a>
+    </div>
 
-            <div class="border" id="menu" style="padding: 0">
-                @Html.Partial("TopMenu")
-            </div>
+    <div class="border" id="menu" style="padding: 0">
+        @Html.Partial("TopMenu")
+    </div>
 
-            <div class="border relative">
-                @Html.Partial("LoginBar")
-            </div>
+    <div class="border relative">
+        @Html.Partial("LoginBar")
+    </div>
 
-            @RenderBody()
-        </div>
-    }
+    @RenderBody()
 
     <script language="javascript">
         $(function () {

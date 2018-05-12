@@ -1,0 +1,69 @@
+﻿@using ZeroKWeb
+<nav>
+    <div>
+        Home
+        <div class="submenu">
+            <a href="@Url.Action("Index", "Home")">Home</a>
+            <a href="@Url.Action("UnlockList", "My")">Unlocks</a>
+            <a href="@Url.Action("Commanders", "My")">Commanders</a>
+            <a href="@Url.Action("UserVotes", "Poll", new { id = Global.AccountID })">Polls</a>
+        </div>
+    </div>
+    <div>
+        Play
+        <div class="submenu">
+            <a href="/Wiki/Download">Download Zero-K<span>Download the game, it's free! :)</span></a>
+            <!--<a href="Url.Action("Index", "Missions")">Missions<span>Single player missions</span></a>-->
+            <!--Mission hidden until Chobby supports them-->
+            <a href="@Url.Action("Index", "Maps")">Maps<span>Thousands of maps to pick</span></a>
+            <a href="@Url.Action("Index", "Battles")">Replays<span>All your past victories, stored here!</span></a>
+        </div>
+    </div>
+    <div>
+        Media
+        <div class="submenu">
+            <a href="/Wiki/Media#Screenshots">Screenshots</a>
+            <a href="/Wiki/Media#Videos">Videos</a>
+            <a href="/Wiki/Fanart">Fanart<span>Show the world your favorite game ;-)</span></a>
+        </div>
+    </div>
+    <div>
+        Wiki
+        <div class="submenu">
+            <a href="/mediawiki/index.php?title=Manual">Index</a>
+            <a href="/mediawiki/index.php?title=Newbie_Guide">Newbie guide<span>Don't know where to begin? Click here.</span></a>
+            <a href="/mediawiki/index.php?title=Units">Units</a>
+            <a href="/mediawiki/index.php?title=Economy_Guide">Economy</a>
+            <a href="/mediawiki/index.php?title=Terraform">Terraforming<span>Let's go play in the dirt!</span></a>
+            <a href="/mediawiki/index.php?title=FAQ">FAQ<span>Frequently Asked Questions</span></a>
+        </div>
+    </div>
+    <div>
+        Planetwars
+        <div class="submenu">
+            <a href="@Url.Action("Index", "Planetwars")">PlanetWars<span>Multiplayer online campaign</span></a>
+            <a href="@Url.Action("Ladder", "Planetwars")">Ladder</a>
+            <a href="@Url.Action("Index", "Factions")">Factions<span>The mighty factions controlling huge sectors of galaxy</span></a>
+        </div>
+    </div>
+    <div>
+        Community
+        <div class="submenu">
+            <a href="@Url.Action("Index", "Forum")">Forum<span>Discuss, ask for help, have fun!</span></a>
+            <a href="@Url.Action("Index", "Clans")">Clans<span>Play with your friends or make friends while playing :)</span></a>
+            <a href="@Url.Action("Index", "Ladders")">Ladders</a>
+            <a href="@Url.Action("Ratings", "Charts")">Statistics</a>
+            <a href="/mediawiki/index.php?title=Zero-K:Code_of_Conduct">Code of Conduct<span>Be nice, have fun!</span></a>
+            <a href="/mediawiki/index.php?title=Zero-K:Developing">Develop<span>Make the game with us</span></a>
+            <a href="/mediawiki/index.php?title=Zero-K:Privacy_policy">Privacy Policy</a>
+            <a href="/mediawiki/index.php?title=Zero-K:Contact">Contact<span>Contact the Zero-K team</span></a>
+            <a href="/mediawiki/index.php?title=Credits">Credits<span>Makers of Zero-K</span></a>
+        </div>
+    </div>
+    <div>
+        <a href="@Url.Action("Index", "Contributions")">Donate<span>Help cover the server costs!</span></a>
+    </div>
+    <div>
+        @{ Html.RenderPartial("SiteSearch"); }
+    </div>
+</nav>

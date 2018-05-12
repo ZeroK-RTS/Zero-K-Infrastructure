@@ -2,6 +2,7 @@
 @using ZkData
 @using PlasmaShared
 @model ZkData.Account
+
 @{
     if (!Model.IsDeleted) { Page.Title = Model.Name + " user page"; }
     else

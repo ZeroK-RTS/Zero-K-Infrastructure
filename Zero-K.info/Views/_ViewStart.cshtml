@@ -2,9 +2,15 @@
     if (ViewContext.IsChildAction)
     {
         Layout = null;
-    } else if (ViewContext.HttpContext.Request.IsAjaxRequest()) {
+    }
+    else if (ViewContext.HttpContext.Request.IsAjaxRequest()) {
         Layout = "~/Views/Shared/_AjaxLayout.cshtml";
-    } else 
+    }
+    else if (ZeroKWeb.Global.IsLobbyAccess)
+    {
+        Layout = "~/Views/Shared/_LobbyLayout";
+    }
+    else
     {
         Layout = "~/Views/Shared/_SiteLayout.cshtml";
     }

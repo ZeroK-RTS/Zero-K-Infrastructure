@@ -15,12 +15,13 @@ public class BundleConfig
             "~/Scripts/jquery.history.js",
             "~/Scripts/jquery.expand.js",
             "~/Scripts/jquery.datetimepicker.full.min.js",
-            "~/Scripts/jquery.cookie-{version}.min.js",
-            "~/Scripts/less-{version}.min.js",
+            "~/Scripts/jquery.cookie.js",
+            "~/Scripts/less-1.5.1.min.js",
             "~/Scripts/nicetitle.js",
             "~/Scripts/raphael-min.js",
             "~/Scripts/grid.js",
             "~/Scripts/site_main.js",
+            "~/Scripts/userSettings.js",
             "~/Scripts/GoogleAnalytics.js"));
 
         bundles.Add(new StyleBundle("~/bundles/maincss").Include(
