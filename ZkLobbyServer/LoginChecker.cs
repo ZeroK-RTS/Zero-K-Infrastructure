@@ -25,7 +25,7 @@ namespace ZkLobbyServer
         private const int MaxConnectionAttemptsMinutes = 60;
         private static readonly int MaxConcurrentLogins = Environment.ProcessorCount * 2;
 
-        private static string[] ipWhitelist = { "127.0.0.1", "86.61.217.155" };
+        private static string[] ipWhitelist = { "127.0.0.1", "86.61.217.155", "78.45.34.102" };
         private readonly IGeoIP2Provider geoIP;
 
         private readonly ZkLobbyServer server;
@@ -42,8 +42,10 @@ namespace ZkLobbyServer
             geoIP = new DatabaseReader(Path.Combine(geoipPath, "GeoLite2-Country.mmdb"), FileAccessMode.Memory);
         }
 
-        public async Task<LoginCheckerResponse> DoLogin(Login login, string ip)
+        public async Task<LoginCheckerResponse> DoLogin(Login login, string ip, List<ulong> dlc)
         {
+            var limit = MiscVar.ZklsMaxUsers;
+            if (limit > 0 && server.ConnectedUsers.Count >= limit) return new LoginCheckerResponse(LoginResponse.Code.ServerFull);
             await semaphore.WaitAsync();
             try
             {
@@ -113,6 +115,8 @@ namespace ZkLobbyServer
 
                     user.LobbyVersion = login.LobbyVersion;
                     user.IpAddress = ip;
+
+                    acc.VerifyAndAddDlc(dlc);
 
                     UpdateUserFromAccount(user, acc);
                     LogIP(db, acc, ip);

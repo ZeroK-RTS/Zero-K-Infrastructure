@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LobbyClient;
 using PlasmaShared;
+using ZkData;
 
 namespace ZkLobbyServer
 {
@@ -13,11 +14,11 @@ namespace ZkLobbyServer
             public bool InvitedToPlay;
             public bool LastReadyResponse;
 
-            public int EloWidth => (int)(100.0 + WaitRatio * 300.0);
+            public int EloWidth => (int)(DynamicConfig.Instance.MmStartingWidth + WaitRatio * DynamicConfig.Instance.MmWidthGrowth);
             public int MinConsideredElo => LobbyUser.EffectiveMmElo;
             public int MaxConsideredElo => (int)(LobbyUser.EffectiveMmElo + (Math.Max(1500, LobbyUser.RawMmElo) - LobbyUser.EffectiveMmElo) * WaitRatio);
 
-            public double WaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / 60.0));
+            public double WaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / DynamicConfig.Instance.MmWidthGrowthTime));
 
             public DateTime JoinedTime { get; private set; } = DateTime.UtcNow;
             public User LobbyUser { get; private set; }
@@ -44,7 +45,7 @@ namespace ZkLobbyServer
                     for (var i = qt.MaxSize; i >= qt.MaxSize - (qt.MaxSize - qt.MinSize) * qtMaxWait; i--)
                         if (qt.Mode == AutohostMode.GameChickens || i % 2 == 0)
                         {
-                            if (Party == null || (qt.Mode == AutohostMode.GameChickens && Party.UserNames.Count<=i) || Party.UserNames.Count <= i / 2) ret.Add(new ProposedBattle(i, this, qt, qt.EloCutOffExponent, allPlayers));
+                            if (Party == null || (qt.Mode == AutohostMode.GameChickens && Party.UserNames.Count<=i) || Party.UserNames.Count == i / 2) ret.Add(new ProposedBattle(i, this, qt, qt.EloCutOffExponent, allPlayers));
                         }
                 }
                 return ret;

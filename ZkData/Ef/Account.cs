@@ -152,10 +152,13 @@ namespace ZkData
         public double PwWarpUsed { get; set; }
         public double PwAttackPoints { get; set; }
         public bool HasVpnException { get; set; }
-        public int Kudos { get; set; }
+        public bool HasKudos { get; set; }
         public int ForumTotalUpvotes { get; set; }
         public int ForumTotalDownvotes { get; set; }
         public int? VotesAvailable { get; set; }
+
+        public string PurchasedDlc { get; set; }
+
 
         [Index(IsUnique = true)]
         public decimal? SteamID { get; set; }
@@ -229,10 +232,10 @@ namespace ZkData
         }
         
         [NotMapped]
-        public int KudosGained { get { return ContributionsByAccountID.Sum(x => x.KudosValue); } }
+        public int KudosGained { get { return ContributionsByAccountID.Sum(x =>  (int?)x.KudosValue) ?? 0; } }
 
         [NotMapped]
-        public int KudosSpent { get { return KudosPurchases.Sum(x => x.KudosValue); } }
+        public int KudosSpent { get { return KudosPurchases.Sum(x => (int?)x.KudosValue) ?? 0; } }
         
         public static Account AccountByName(ZkDataContext db, string name)
         {
@@ -616,6 +619,8 @@ namespace ZkData
             donator_1 = 3,
             [Description("Gold donator")]
             donator_2 = 4,
+            [Description("Diamond donator")]
+            donator_3 = 8,
             [Description("External developer")]
             dev_content =  5,
             [Description("Game developer")]
@@ -648,11 +653,13 @@ namespace ZkData
             var ret = new List<BadgeType>();
             if (Level > 200) ret.Add(BadgeType.player_level); 
             if ((GetRating(RatingCategory.MatchMaking).Rank <= 3 || GetRating(RatingCategory.Casual).Rank <= 3)) ret.Add(BadgeType.player_elo); 
-            var total = Kudos> 0 ? ContributionsByAccountID.Where(x=>x.OriginalAmount > 0).Sum(x => (int?)x.KudosValue) : 0;
+            var total = HasKudos ? KudosGained : 0;
 
-            if (total >= GlobalConst.KudosForGold) ret.Add(BadgeType.donator_2);
+            if (total >= GlobalConst.KudosForDiamond) ret.Add(BadgeType.donator_3);
+            else if (total >= GlobalConst.KudosForGold) ret.Add(BadgeType.donator_2);
             else if (total >= GlobalConst.KudosForSilver) ret.Add(BadgeType.donator_1);
             else if (total >= GlobalConst.KudosForBronze) ret.Add(BadgeType.donator_0);
+            
 
             if (DevLevel >= DevLevel.CoreDeveloper) ret.Add(BadgeType.dev_adv);
             else if (DevLevel >= DevLevel.Developer) ret.Add(BadgeType.dev_game);
@@ -664,6 +671,44 @@ namespace ZkData
         public LadderItem ToLadderItem()
         {
             return new LadderItem() { Name = Name, Clan = Clan?.Shortcut, Icon = GetIconName(), AccountID = AccountID, Level =  Level, IsAdmin = AdminLevel>= AdminLevel.Moderator, Country = Country};
+        }
+
+        public void VerifyAndAddDlc(List<ulong> dlcs)
+        {
+            if (dlcs == null || dlcs.Count == 0) return;
+            List<ulong> dlcList = new List<ulong>();
+            if (!string.IsNullOrEmpty(PurchasedDlc)) dlcList = PurchasedDlc.Split(',').Select(ulong.Parse).ToList();
+
+            foreach (var newdlc in dlcs.Where(x=>!dlcList.Contains(x)))
+            {
+                int kudos;
+                if (SteamID.HasValue && GlobalConst.DlcToKudos.TryGetValue(newdlc, out kudos))
+                {
+                    if (new SteamWebApi().CheckAppOwnership((ulong)SteamID.Value, newdlc))
+                    {
+                        var contrib = new Contribution()
+                        {
+                            AccountID = AccountID,
+                            KudosValue = kudos,
+                            ItemName = "Zero-K",
+                            IsSpringContribution = false,
+                            Comment = "Steam DLC",
+                            OriginalCurrency = "USD",
+                            OriginalAmount = kudos / 10,
+                            Euros = 0.8 * (kudos / 10), // USD to EUR 
+                            EurosNet = 0.5 * (kudos / 10), // USD to EUR, VAT, steam share
+                            Time = DateTime.Now,
+                            Name = Name,
+                            ContributionJarID = GlobalConst.SteamContributionJarID
+                        };
+                        ContributionsByAccountID.Add(contrib);
+                        HasKudos = true;
+                        dlcList.Add(newdlc);
+                    }
+                }
+            }
+
+            PurchasedDlc = string.Join(",", dlcList);
         }
 
 

@@ -14,6 +14,22 @@ local defaults = {time = 0, maxCamOffset = 10, minHeading = 15, maxHeading = 165
 local MAX_TRIES = 50
 local tau = 2*math.pi
 
+-- workaround bug where negative args throw an empty interval error
+-- fixes https://github.com/ZeroK-RTS/Zero-K/issues/2906
+local function randomCustom(min, max)
+  if min == max then
+    return min
+  end
+  if min > max then
+    min, max = max, min
+  end
+  local distFromZero = 0
+  if min < 0 then
+    distFromZero = -min
+  end
+  return math.random(min + distFromZero, max + distFromZero) - distFromZero
+end
+
 local function BeautyShot(unitID, params)
   params = params or {}
   for i,v in pairs(defaults) do
@@ -29,14 +45,14 @@ local function BeautyShot(unitID, params)
   end
   if not (x and y and z) then
     if validUnit then
-	_,_,_,x,y,z = Spring.GetUnitPosition(unitID, true)
-      else
-	Spring.Log(widget:GetInfo().name, LOG.ERROR, "No valid unit and no position, cannot make beauty shot")
+      _,_,_,x,y,z = Spring.GetUnitPosition(unitID, true)
+    else
+      Spring.Log(widget:GetInfo().name, LOG.ERROR, "No valid unit and no position, cannot make beauty shot")
       return
     end
   end
   for i=1,MAX_TRIES do
-    local camFromTargetHeading = math.random(params.minHeading, params.maxHeading)
+    local camFromTargetHeading = randomCustom(params.minHeading, params.maxHeading)
     if math.random() > 0.5 then
       camFromTargetHeading = -camFromTargetHeading
     end
@@ -45,13 +61,13 @@ local function BeautyShot(unitID, params)
       local unitHeading = Spring.GetUnitHeading(unitID)*tau/65536
       camFromTargetHeading = camFromTargetHeading + unitHeading
     end
-    local angleMod = math.random(-params.maxCamOffset, params.maxCamOffset)
+    local angleMod = randomCustom(-params.maxCamOffset, params.maxCamOffset)
     angleMod = math.rad(angleMod)
-    local dist2d = params.distance or math.random(params.minDistance,params.maxDistance)
+    local dist2d = params.distance or randomCustom(params.minDistance,params.maxDistance)
     if validUnit then
       dist2d = dist2d + Spring.GetUnitRadius(unitID)
     end
-    local camPitch = math.random(params.minPitch, params.maxPitch)
+    local camPitch = randomCustom(params.minPitch, params.maxPitch)
     camPitch = math.rad(camPitch)
     local dy = dist2d*math.tan(camPitch)
     --local dist = (dist2d^2 + dy^2)^0.5

@@ -99,25 +99,30 @@ namespace ZeroKWeb.SpringieInterface
         {
             bool noElo = result.OutputExtras.Any(x => x?.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture) == true);
 
+
             if (!noElo) RatingSystems.ProcessResult(sb, result);
 
             sb.DispenseXP();
 
             foreach (var u in sb.SpringBattlePlayers.Where(x => !x.IsSpectator)) u.Account.CheckLevelUp();
 
+
             db.SaveChanges();
 
-            try
+            if (sb.ApplicableRatings == 0)
             {
-                foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account))
+                try
                 {
-                    server.PublishAccountUpdate(a);
-                    server.PublishUserProfileUpdate(a);
+                    foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account))
+                    {
+                        server.PublishAccountUpdate(a);
+                        server.PublishUserProfileUpdate(a);
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("error updating extension data: {0}", ex);
+                catch (Exception ex)
+                {
+                    Trace.TraceError("error updating extension data: {0}", ex);
+                }
             }
         }
 

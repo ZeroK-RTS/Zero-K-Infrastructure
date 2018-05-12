@@ -23,7 +23,7 @@ namespace ZkLobbyServer
             {
                 if (say.AllowRelay && say.Place == SayPlace.Channel)
                 {
-                    OnChatRelayMessage?.Invoke(this, new ChatRelayMessage(say.Target, say.User, say.Text, SaySource.Zk, true));
+                    OnChatRelayMessage?.Invoke(this, new ChatRelayMessage(say.Target, say.User, say.Text, SaySource.Zk, false));
                 }
             }
             catch (Exception ex)

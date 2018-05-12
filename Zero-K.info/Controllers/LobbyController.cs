@@ -30,10 +30,17 @@ namespace ZeroKWeb.Controllers
 
         [NoCache]
         [Auth]
-        public async Task<ActionResult> WatchBattle(int id)
+        public async Task<ActionResult> WatchPlanetBattle(int id)
         {
-            Global.Server.ConnectedUsers.Get(Global.Account.Name)?.Process(new RequestConnectSpring() { BattleID = id });
-            return Content("");
+            var db = new ZkDataContext();
+            var planet = db.Planets.Find(id);
+            if (planet != null)
+            {
+                var battle = Global.Server.GetPlanetBattles(planet).OrderByDescending(x => x.Users.Count).FirstOrDefault();
+                if (battle != null) Global.Server.ConnectedUsers.Get(Global.Account.Name)?.Process(new RequestConnectSpring() { BattleID = id });
+            }
+
+            return RedirectToAction("Planet", "Planetwars", new { id = id });
         }
 
 

@@ -78,9 +78,20 @@ namespace ZkData
                 
                 var warps = structs.Where(x => x.StructureType.EffectWarpProduction > 0).Sum(x => x.StructureType.EffectWarpProduction) ?? 0;
                 grp.Key.ProduceWarps(warps);
-
             }
+            // structures without owning individual (or individual is somehow not in a faction)
+            foreach (var grp in Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive && (x.Account == null || x.Account.Faction == null)).GroupBy(x => x.Planet.Faction))
+            {
+                var structs = grp.ToList();
+                var drops = structs.Where(x => x.StructureType.EffectDropshipProduction > 0).Sum(x => x.StructureType.EffectDropshipProduction) ?? 0;
+                grp.Key.ProduceDropships(drops);
 
+                var bombers = structs.Where(x => x.StructureType.EffectBomberProduction > 0).Sum(x => x.StructureType.EffectBomberProduction) ?? 0;
+                grp.Key.ProduceBombers(bombers);
+
+                var warps = structs.Where(x => x.StructureType.EffectWarpProduction > 0).Sum(x => x.StructureType.EffectWarpProduction) ?? 0;
+                grp.Key.ProduceWarps(warps);
+            }
 
             // produce victory points
             foreach (var fac in Planets.Where(x => x.Faction != null).GroupBy(x => x.Faction))
@@ -213,11 +224,12 @@ that is it
                             }
                             var gain = kvp.Value * squeeze;
 
-                            if (kvp.Key != planet.Faction && entry.Influence < GlobalConst.InfluenceToCapturePlanet && entry.Influence + gain >= GlobalConst.InfluenceToCapturePlanet)
+                            /*if (kvp.Key != planet.Faction && entry.Influence < GlobalConst.InfluenceToCapturePlanet && entry.Influence + gain >= GlobalConst.InfluenceToCapturePlanet)
                             {
                                 entry.Influence = GlobalConst.InfluenceToCapturePlanet - 0.1;
                             }
-                            else entry.Influence += gain;
+                            else */
+                            entry.Influence += gain;
 
                             if (entry.Influence > GlobalConst.PlanetWarsMaximumIP) entry.Influence = GlobalConst.PlanetWarsMaximumIP;
 

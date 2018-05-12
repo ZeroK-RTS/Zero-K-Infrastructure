@@ -57,6 +57,10 @@
                 <td>Purge PlanetWars</td>
                 <td>
                     <label>
+                        @Html.CheckBoxFor(x => x.UnassignFactions)
+                        Unassign factions
+                    </label>
+                    <label>
                         @Html.CheckBoxFor(x => x.ResetRoles)
                         Reset roles
                     </label>
@@ -76,9 +80,7 @@
                 <td>
                     @Html.ActionLink("Randomize maps", "RandomizeMaps", new { galaxyID = Model.LastSelectedGalaxyID })<br />
                     @Html.ActionLink("Set team sizes", "SetPlanetTeamSizes", new { galaxyID = Model.LastSelectedGalaxyID })<br />
-                    @Html.ActionLink("Add wormholes", "AddWormholes", new { galaxyID = Model.LastSelectedGalaxyID })<br />
                     @Html.ActionLink("Start galaxy", "StartGalaxy", new { galaxyID = Model.LastSelectedGalaxyID })<br />
-                    @Html.ActionLink("Set planet ownership", "OwnPlanets", new { galaxyID = Model.LastSelectedGalaxyID })<br />
                     @Html.ActionLink("Reset all PW player ratings", "ResetRatings")<br />
                 </td>
             </tr>

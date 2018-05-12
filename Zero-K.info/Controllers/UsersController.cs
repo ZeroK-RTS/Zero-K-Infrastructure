@@ -106,6 +106,28 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Auth(Role = AdminLevel.Moderator)]
+        public ActionResult UnlinkSteamID(int accountID)
+        {
+            var db = new ZkDataContext();
+            Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+            if (acc == null) return Content("Invalid accountID");
+            Account adminAcc = Global.Account;
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{2} unlinked Steam account for {0} {1} (name {3})", 
+                                                                                   acc.Name, 
+                                                                                   Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), 
+                                                                                   adminAcc.Name,
+                                                                                   acc.SteamName
+                                                                                  ));
+            acc.SteamName = null;
+            acc.SteamID = null;
+            db.SaveChanges();
+
+            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
+        }
+
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult AdminUserDetail(int id)
         {
@@ -481,6 +503,10 @@ namespace ZeroKWeb.Controllers
             var oldName = acc.Name;
             acc.SetName(newUsername);
             db.SaveChanges();
+            
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} renamed by {1}", Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" {0} -> {1}", oldName, newUsername));
+
             return Content(string.Format("{0} renamed to {1}", oldName, newUsername));
         }
 
@@ -498,23 +524,11 @@ namespace ZeroKWeb.Controllers
 
                 var acc = db.Accounts.Find(accountID);
                 if (acc == null) return Content("Invalid accountID");
-
-                var battles = db.SpringBattles.Where(x => x.SpringBattlePlayers.Where(p => !p.IsSpectator).Any(p => p.AccountID == accountID))
-                                        .Include(x => x.ResourceByMapResourceID)
-                                        .Include(x => x.SpringBattlePlayers)
-                                        .Include(x => x.SpringBattleBots)
-                                        .ToList();
-
-                battles.ForEach(x => RatingSystems.RemoveResult(x));
-
+                
                 acc.WhrAlias = aliasId;
                 db.SaveChanges();
-                RatingSystems.UpdateRatingIds();
-
-                battles.ForEach(x => RatingSystems.ReprocessResult(x));
-
-
-                return Content(string.Format("{0} now plays for {1}", acc, aliasAcc));
+                
+                return Content(string.Format("{0} will play for {1}", acc, aliasAcc));
             }
         }
 

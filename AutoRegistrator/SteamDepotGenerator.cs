@@ -84,10 +84,11 @@ namespace AutoRegistrator
             if (!downloader.DownloadFile(DownloadType.RAPID, GlobalConst.DefaultZkTag, prog).Result) throw new ApplicationException("SteamDepot zk download failed: " + prog.Status);
 
             downloader.RapidHandling = RapidHandling.DefaultSdp;
-            
 
 
-            CopyResources(siteBase, paths, GetResourceList(), downloader);
+            var campaignMaps = RegistratorRes.campaignMaps.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim())
+                .ToArray();
+            CopyResources(siteBase, paths, GetMapList(campaignMaps), downloader);
 
             if (!downloader.UpdateMissions(prog).Result) throw new ApplicationException("SteamDepot Error updating missions! " + prog.Status);
             if (!downloader.UpdatePublicCommunityInfo(prog)) throw new ApplicationException("SteamDepot Error updating public community info! " + prog.Status);
@@ -211,12 +212,19 @@ namespace AutoRegistrator
         }
 
 
-        private static List<Resource> GetResourceList(params string[] extraNames)
+        private static List<Resource> GetMapList(params string[] extraNames)
         {
-
-
             var db = new ZkDataContext();
-            var resources = db.Resources.Where(x => extraNames.Contains(x.InternalName) || (x.TypeID == ResourceType.Map && x.MapSupportLevel >= MapSupportLevel.MatchMaker)).ToList();
+            DateTime limit = DateTime.Now.AddMonths(-6);
+            
+            var top100 = db.SpringBattles.Where(x => x.StartTime >= limit).GroupBy(x => x.ResourceByMapResourceID).Where(x=>x.Key.MapSupportLevel >= MapSupportLevel.Supported).OrderByDescending(x => x.Sum(y => y.Duration * (y.SpringBattlePlayers.Count))).Select(x=>x.Key.ResourceID).Take(50).ToList();
+
+            //var pwMaps = db.Galaxies.Where(x => x.IsDefault).SelectMany(x => x.Planets).Where(x => x.MapResourceID != null).Select(x => x.MapResourceID.Value).ToList();
+
+            //top100.AddRange(pwMaps);
+            top100 = top100.Distinct().ToList();
+
+            var resources = db.Resources.Where(x => top100.Contains(x.ResourceID) || extraNames.Contains(x.InternalName) || (x.TypeID == ResourceType.Map && x.MapSupportLevel >= MapSupportLevel.MatchMaker)).ToList();
             foreach (var res in resources.ToList())
             {
                 foreach (var requestedDependency in res.ResourceDependencies.Select(x => x.NeedsInternalName))

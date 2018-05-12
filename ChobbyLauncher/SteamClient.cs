@@ -94,6 +94,24 @@ namespace ChobbyLauncher
             return null;
         }
 
+        public List<ulong> GetDlcList()
+        {
+            var ret = new List<ulong>();
+            if (IsOnline)
+            {
+                for (int i = 0; i < SteamApps.GetDLCCount(); i++)
+                {
+                    AppId_t appId;
+                    string name;
+                    bool available;
+                    SteamApps.BGetDLCDataByIndex(i, out appId, out available, out name, 200);
+                    ret.Add(appId.m_AppId);
+                }
+            }
+
+            return ret;
+        }
+
 
         public void InviteFriendToGame(ulong lobbyID, ulong friendID)
         {
@@ -207,7 +225,7 @@ namespace ChobbyLauncher
 
         private byte[] GetClientAuthToken()
         {
-            var buf = new byte[256];
+            var buf = new byte[4096];
             uint ticketSize;
             SteamUser.GetAuthSessionTicket(buf, buf.Length, out ticketSize);
             var truncArray = new byte[ticketSize];

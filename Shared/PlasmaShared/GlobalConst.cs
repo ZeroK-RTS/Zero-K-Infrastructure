@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ServiceModel;
 using PlasmaShared;
@@ -79,7 +80,8 @@ namespace ZkData
                     break;
             }
 
-            DefaultDownloadMirrors = new[] { BaseSiteUrl +"/content/%t/%f" };
+            if (IsLongAfterSteam) DefaultDownloadMirrors = new[] { BaseSiteUrl +"/content/%t/%f" };
+
             ResourceBaseUrl = string.Format("{0}/Resources", BaseSiteUrl);
             BaseImageUrl = string.Format("{0}/img/", BaseSiteUrl);
             SelfUpdaterBaseUrl = string.Format("{0}/lobby", BaseSiteUrl);
@@ -166,8 +168,9 @@ namespace ZkData
 
         public const double PlanetMetalPerTurn = 1;
         public const double PlanetWarsEnergyToMetalRatio = 0.0;
-        public const double PlanetWarsMaximumIP = 100.0; //maximum IP on each planet
+        public const double PlanetWarsMaximumIP = 123.0; //maximum IP on each planet
         public const int PlanetWarsVictoryPointsToWin = 100;
+        public const int VictoryPointDecay = 1;
         public const int BaseInfluencePerBattle = 35;
         public const double PlanetWarsAttackerMetal = 100;
         public const double PlanetWarsDefenderMetal = 100;
@@ -206,8 +209,9 @@ namespace ZkData
         public const string TeamEmail = "Zero-K team <team@zero-k.info>";
 
         public const int KudosForBronze = 100;
-        public const int KudosForSilver = 500;
-        public const int KudosForGold = 1000;
+        public const int KudosForSilver = 250;
+        public const int KudosForGold = 500;
+        public const int KudosForDiamond = 1000;
 
         public const int ForumPostsPerPage = 20;
         public const int MinLevelForForumVote = 2;
@@ -229,7 +233,7 @@ namespace ZkData
         public const int TcpLingerStateSeconds = 5;
         public const bool TcpLingerStateEnabled = true;
 
-        public const int DelugeChannelDisplayUsers = 100;
+        public const int DelugeChannelDisplayUsers = 40;
 
         public const int LobbyThrottleBytesPerSecond = 2000;
         public const int LobbyMaxMessageSize = 2000;
@@ -242,9 +246,10 @@ namespace ZkData
         public static string[] DefaultDownloadMirrors = {};
         public static string LobbyServerHost;
         public static int LobbyServerPort;
+        public static bool LobbyServerUpdateSpectatorsInstantly = false;
 
         public static bool AutoMigrateDatabase { get; private set; }
-
+        
         private const string tokenPart = "af27e9e18e";
 
         public static string CrashReportGithubToken = "fffb24b" + "91a758"+"a6a4e7a"+ "7a7eafb1a9" + tokenPart;
@@ -268,6 +273,14 @@ namespace ZkData
         }
 
         public static string UnitSyncEngine = "unitsync";
+
+        public static int SteamContributionJarID = 2;
+        public static Dictionary<ulong, int> DlcToKudos = new Dictionary<ulong, int>() { { 842950, 100 }, { 842951, 250 }, { 842952, 500 } };
+
+        public static DateTime SteamRelease = new DateTime(2018, 4, 27, 8, 0, 0, DateTimeKind.Utc);
+        public static bool IsLongAfterSteam => DateTime.UtcNow.Subtract(SteamRelease).TotalDays > 14;
+        public static bool IsAfterSteam => DateTime.UtcNow.Subtract(SteamRelease).TotalMilliseconds > 0;
+
     }
 
     public enum PlanetWarsModes

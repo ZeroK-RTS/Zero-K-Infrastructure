@@ -219,7 +219,7 @@ namespace ZkData
 
                     db.SaveChanges();
 
-                    if (acc != null) acc.Kudos = acc.KudosGained - acc.KudosSpent;
+                    if (acc != null) acc.HasKudos = true;
                     db.SaveChanges();
 
 

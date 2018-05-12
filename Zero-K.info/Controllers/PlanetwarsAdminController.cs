@@ -19,8 +19,9 @@ namespace ZeroKWeb.Controllers
             public PlanetWarsModes? PlanetWarsNextMode { get; set; }
             public DateTime? PlanetWarsNextModeDate { get; set; }
             public int LastSelectedGalaxyID { get; set; }
-            public bool ResetRoles { get; set; } = true;
+            public bool ResetRoles { get; set; }
             public bool DeleteClans { get; set; }
+            public bool UnassignFactions { get; set; }
             public IQueryable<Galaxy> Galaxies;
         }
 
@@ -43,7 +44,7 @@ namespace ZeroKWeb.Controllers
 
                 if (!string.IsNullOrEmpty(purge))
                 {
-                    PurgeGalaxy(model.LastSelectedGalaxyID, model.ResetRoles, model.DeleteClans);
+                    PurgeGalaxy(model.LastSelectedGalaxyID, model.UnassignFactions, model.ResetRoles, model.DeleteClans);
                 }
 
                 if (!string.IsNullOrEmpty(futureset))
@@ -73,7 +74,7 @@ namespace ZeroKWeb.Controllers
             return View("PlanetwarsAdminIndex", model);
         }
 
-        private static void PurgeGalaxy(int galaxyID, bool resetRoles, bool deleteClans)
+        private static void PurgeGalaxy(int galaxyID, bool unassignFactions, bool resetRoles, bool deleteClans)
         {
             using (var db = new ZkDataContext())
             {
@@ -116,8 +117,10 @@ namespace ZeroKWeb.Controllers
                     PwAttackPoints = 0,
                     PwWarpProduced = 0,
                     PwWarpUsed = 0,
-                    FactionID = null,
+                    
                 });
+
+                if (unassignFactions) db.Accounts.Update(x => new Account() { FactionID = null, });
 
                 db.Events.Delete();
                 db.PlanetOwnerHistories.Delete();
@@ -130,7 +133,7 @@ namespace ZeroKWeb.Controllers
                 db.FactionTreaties.Delete();
                 db.TreatyEffects.Delete();
 
-                db.Clans.Update(x => new Clan { FactionID = null });
+                if (unassignFactions) db.Clans.Update(x => new Clan { FactionID = null });
 
                 if (resetRoles) db.AccountRoles.Where(x=>x.ClanID == null).Delete();
 
@@ -214,6 +217,14 @@ namespace ZeroKWeb.Controllers
                 {
                     ApplicableRatings = RatingCategoryFlags.Casual
                 });
+                db.AccountRatings.Where(x => x.RatingCategory == RatingCategory.Planetwars).Update(x => new AccountRating()
+                {
+                    Percentile = WholeHistoryRating.DefaultRating.Percentile,
+                    Rank = WholeHistoryRating.DefaultRating.Rank,
+                    RealElo = WholeHistoryRating.DefaultRating.RealElo,
+                    Uncertainty = 1000,
+                    Elo = WholeHistoryRating.DefaultRating.Elo,
+                });
             }
             (RatingSystems.GetRatingSystem(RatingCategory.Planetwars) as WholeHistoryRating).ResetAll();
 
@@ -226,7 +237,7 @@ namespace ZeroKWeb.Controllers
             var wormhole = db.StructureTypes.Where(x => x.EffectInfluenceSpread > 0).OrderBy(x => x.EffectInfluenceSpread).First();
             foreach (var p in db.Planets.Where(x => x.GalaxyID == galaxyID && !x.PlanetStructures.Any(y => y.StructureType.EffectInfluenceSpread > 0)))
             {
-                p.PlanetStructures.Add(new PlanetStructure() { StructureTypeID = wormhole.StructureTypeID });
+                p.PlanetStructures.Add(new PlanetStructure() { StructureTypeID = wormhole.StructureTypeID, IsActive = true});
             }
 
             db.Galaxies.Find(galaxyID).IsDirty = true;
@@ -280,6 +291,8 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult StartGalaxy(int galaxyID)
         {
+            AddWormholes(galaxyID);
+
             using (var db = new ZkDataContext())
             {
                 var facs = db.Factions.Where(x => !x.IsDeleted).ToList();
@@ -304,6 +317,8 @@ namespace ZeroKWeb.Controllers
                 }
 
                 db.SaveChanges();
+
+                OwnPlanets(galaxyID);
 
                 /*foreach (Account acc in db.Accounts)
                 {

@@ -16,9 +16,9 @@ namespace ZkLobbyServer
         private const int TimerSeconds = 30;
         private const int MapModChangePauseSeconds = 30;
 
-        private const int BanSecondsIncrease = 30;
-        private const int BanSecondsMax = 300;
-        private const int BanReset = 600;
+        private int BanSecondsIncrease => DynamicConfig.Instance.MmBanSecondsIncrease;
+        private int BanSecondsMax => DynamicConfig.Instance.MmBanSecondsMax;
+        private int BanReset => DynamicConfig.Instance.MmBanReset;
 
 
         private struct QueueConfig
@@ -93,7 +93,7 @@ namespace ZkLobbyServer
                 Description = "1v1 with opponent of similar skill",
                 MinSize = 2,
                 MaxSize = 2,
-                EloCutOffExponent = 0.975,
+                EloCutOffExponent = 0.97,
                 MaxPartySize = 1,
                 Mode = AutohostMode.Game1v1,
                 MapSelector = Is1v1Map,
@@ -144,51 +144,66 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task AreYouReadyResponse(ConnectedUser user, AreYouReadyResponse response)
+        public void AreYouReadyResponse(ConnectedUser user, AreYouReadyResponse response)
         {
-            PlayerEntry entry;
-            if (players.TryGetValue(user.Name, out entry))
-                if (entry.InvitedToPlay)
-                {
-                    if (response.Ready) entry.LastReadyResponse = true;
-                    else
+            lock (tickLock)
+            {
+                bool playersUpdated = false;
+                bool statusUpdated = false;
+                List<PlayerEntry> invitedPeople = null;
+                //dont accept AreYouReadyResponse while tick is generating battles
+                PlayerEntry entry;
+                if (players.TryGetValue(user.Name, out entry))
+                    if (entry.InvitedToPlay)
                     {
-                        entry.LastReadyResponse = false;
-                        await RemoveUser(user.Name, true);
-                    }
-
-                    var invitedPeople = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
-
-                    if (invitedPeople.Count <= 1)
-                    {
-                        foreach (var p in invitedPeople) p.LastReadyResponse = true;
-                        // if we are doing tick because too few people, make sure we count remaining people as readied to not ban them 
-                        OnTick();
-                    }
-                    else if (invitedPeople.All(x => x.LastReadyResponse)) OnTick();
-                    else
-                    {
-                        var readyCounts = CountQueuedPeople(invitedPeople.Where(x => x.LastReadyResponse));
-
-                        var proposedBattles = ProposeBattles(invitedPeople.Where(x => x.LastReadyResponse));
-
-                        await Task.WhenAll(invitedPeople.Select(async (p) =>
+                        if (response.Ready) entry.LastReadyResponse = true;
+                        else
                         {
-                            var invitedBattle = invitationBattles?.FirstOrDefault(x => x.Players.Contains(p));
-                            await
-                                server.SendToUser(p.Name,
-                                    new AreYouReadyUpdate()
-                                    {
-                                        QueueReadyCounts = readyCounts,
-                                        ReadyAccepted = p.LastReadyResponse == true,
-                                        LikelyToPlay = proposedBattles.Any(y => y.Players.Contains(p)),
-                                        YourBattleSize = invitedBattle?.Size,
-                                        YourBattleReady =
-                                            invitedPeople.Count(x => x.LastReadyResponse && (invitedBattle?.Players.Contains(x) == true))
-                                    });
-                        }));
+                            entry.LastReadyResponse = false;
+                            playersUpdated = RemoveUser(user.Name);
+                        }
+
+                        invitedPeople = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
+
+                        if (invitedPeople.Count <= 1)
+                        {
+                            foreach (var p in invitedPeople) p.LastReadyResponse = true;
+                            // if we are doing tick because too few people, make sure we count remaining people as readied to not ban them 
+                            OnTick();
+                        }
+                        else if (invitedPeople.All(x => x.LastReadyResponse)) OnTick();
+                        else
+                        {
+                            statusUpdated = true;
+                        }
                     }
+
+                if (invitedPeople != null && statusUpdated)
+                {
+                    var readyCounts = CountQueuedPeople(invitedPeople.Where(x => x.LastReadyResponse));
+
+                    var proposedBattles = ProposeBattles(invitedPeople.Where(x => x.LastReadyResponse));
+
+                    Task.WhenAll(invitedPeople.Select(async (p) =>
+                    {
+                        var invitedBattle = invitationBattles?.FirstOrDefault(x => x.Players.Contains(p));
+                        await server.SendToUser(p.Name,
+                            new AreYouReadyUpdate()
+                            {
+                                QueueReadyCounts = readyCounts,
+                                ReadyAccepted = p.LastReadyResponse == true,
+                                LikelyToPlay = proposedBattles.Any(y => y.Players.Contains(p)),
+                                YourBattleSize = invitedBattle?.Size,
+                                YourBattleReady = invitedPeople.Count(x => x.LastReadyResponse && (invitedBattle?.Players.Contains(x) == true))
+                            });
+                    }));
                 }
+
+                if (playersUpdated)
+                {
+                    UpdateAllPlayerStatuses();
+                }
+            }
         }
 
         public int GetTotalWaiting() => totalQueued;
@@ -212,39 +227,71 @@ namespace ZkLobbyServer
             await server.Broadcast(new MatchMakerSetup() { PossibleQueues = possibleQueues });
         }
 
-        public async Task QueueRequest(ConnectedUser user, MatchMakerQueueRequest cmd)
+        public void QueueRequest(ConnectedUser user, MatchMakerQueueRequest cmd)
         {
-            var banTime = BannedSeconds(user.Name);
-            if (banTime != null)
+            lock (tickLock)
             {
-                await UpdatePlayerStatus(user.Name);
-                await user.Respond($"Please rest and wait for {banTime}s because you refused previous match");
-                return;
+                var banTime = BannedSeconds(user.Name);
+                if (banTime != null)
+                {
+                    UpdatePlayerStatus(user.Name);
+                    user.Respond($"Please rest and wait for {banTime}s because you refused previous match");
+                    return;
+                }
+
+                // already invited ignore requests
+                PlayerEntry entry;
+                if (players.TryGetValue(user.Name, out entry) && entry.InvitedToPlay)
+                {
+                    UpdatePlayerStatus(user.Name);
+                    return;
+                }
+
+                var wantedQueueNames = cmd.Queues?.ToList() ?? new List<string>();
+                var wantedQueues = possibleQueues.Where(x => wantedQueueNames.Contains(x.Name)).ToList();
+
+                var party = server.PartyManager.GetParty(user.Name);
+                if (party != null)
+                    wantedQueues = wantedQueues.Where(x => x.MaxSize / 2 >= party.UserNames.Count)
+                        .ToList(); // if is in party keep only queues where party fits
+
+                if (wantedQueues.Count == 0) // delete
+                {
+                    RemoveUser(user.Name, true);
+                    return;
+                }
+
+                AddOrUpdateUser(user, wantedQueues);
             }
-
-            // already invited ignore requests
-            PlayerEntry entry;
-            if (players.TryGetValue(user.Name, out entry) && entry.InvitedToPlay)
-            {
-                await UpdatePlayerStatus(user.Name);
-                return;
-            }
-
-            var wantedQueueNames = cmd.Queues?.ToList() ?? new List<string>();
-            var wantedQueues = possibleQueues.Where(x => wantedQueueNames.Contains(x.Name)).ToList();
-
-            var party = server.PartyManager.GetParty(user.Name);
-            if (party != null) wantedQueues = wantedQueues.Where(x => x.MaxSize / 2 >= party.UserNames.Count).ToList(); // if is in party keep only queues where party fits
-
-            if (wantedQueues.Count == 0) // delete
-            {
-                await RemoveUser(user.Name, true);
-                return;
-            }
-
-            await AddOrUpdateUser(user, wantedQueues);
         }
 
+        /// <summary>
+        /// Removes user (and his party) from MM queues, doesnt broadcast changes
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private bool RemoveUser(string name)
+        {
+            lock (tickLock)
+            {
+                var party = server.PartyManager.GetParty(name);
+                var anyRemoved = false;
+
+                if (party != null)
+                {
+                    foreach (var n in party.UserNames)
+                    {
+                        if (RemoveSingleUser(n, n == name)) anyRemoved = true;
+                    }
+                }
+                else
+                {
+                    anyRemoved = RemoveSingleUser(name, true);
+                }
+
+                return anyRemoved;
+            }
+        }
 
         /// <summary>
         /// Removes user (and his party) from MM queues
@@ -254,17 +301,7 @@ namespace ZkLobbyServer
         /// <returns></returns>
         public async Task RemoveUser(string name, bool broadcastChanges)
         {
-            var party = server.PartyManager.GetParty(name);
-            var anyRemoved = false;
-
-            if (party != null)
-            {
-                foreach (var n in party.UserNames) if (await RemoveSingleUser(n)) anyRemoved = true;
-            }
-            else
-            {
-                anyRemoved = await RemoveSingleUser(name);
-            }
+            bool anyRemoved = RemoveUser(name);
             if (broadcastChanges && anyRemoved) await UpdateAllPlayerStatuses();
         }
 
@@ -305,8 +342,19 @@ namespace ZkLobbyServer
 
 
             // if nobody is invited, we can do tick now to speed up things
-            if (invitationBattles?.Any() != true) OnTick();
-            else await UpdateAllPlayerStatuses(); // else we just send statuses
+            bool doUpdates = false;
+            lock (tickLock) {//wait for running tick to finish first
+                if (invitationBattles?.Any() != true)
+                {
+                    OnTick();
+                }
+                else
+                {
+                    doUpdates = true;
+                }
+            }
+            if (doUpdates) await UpdateAllPlayerStatuses(); // else we just send statuses
+
         }
 
 
@@ -351,20 +399,32 @@ namespace ZkLobbyServer
 
         public Dictionary<string, int> GetQueueCounts() => queuesCounts;
 
+        private async Task StartBattles(List<ProposedBattle> realBattles)
+        {
+            try
+            {
+                await UpdateAllPlayerStatuses(); // This can't be run before ResetAndSendMmInvitations because it reads invitationQueue
+
+                foreach (var bat in realBattles) await StartBattle(bat);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("MatchMaker error starting battles: {0}", ex);
+            }
+        }
+
         private void OnTick()
         {
+            List<ProposedBattle> realBattles = new List<ProposedBattle>();
             lock (tickLock)
             {
                 try
                 {
                     timer.Stop();
-                    var realBattles = ResolveToRealBattles();
-
-                    UpdateAllPlayerStatuses();
-
-                    foreach (var bat in realBattles) StartBattle(bat);
-
+                    realBattles = ResolveToRealBattles();
+                    
                     ResetAndSendMmInvitations();
+                    
                 }
                 catch (Exception ex)
                 {
@@ -375,6 +435,9 @@ namespace ZkLobbyServer
                     timer.Start();
                 }
             }
+
+            //do non critical updates to clients:
+            StartBattles(realBattles);
         }
 
         private static List<ProposedBattle> ProposeBattles(IEnumerable<PlayerEntry> users)
@@ -399,12 +462,12 @@ namespace ZkLobbyServer
         }
 
 
-        private async Task<bool> RemoveSingleUser(string name)
+        private bool RemoveSingleUser(string name, bool banInvited)
         {
             PlayerEntry entry;
             if (players.TryRemove(name, out entry))
             {
-                if (entry.InvitedToPlay)
+                if (entry.InvitedToPlay && banInvited)
                 {
                     // was invited but he is gone now (whatever reason), ban!
                     var banEntry = bannedPlayers.GetOrAdd(name, (n) => new BanInfo());
@@ -415,7 +478,7 @@ namespace ZkLobbyServer
 
 
                 ConnectedUser conUser;
-                if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null)) if (entry?.InvitedToPlay == true) await conUser.SendCommand(new AreYouReadyResult() { AreYouBanned = true, IsBattleStarting = false, });
+                if (server.ConnectedUsers.TryGetValue(name, out conUser) && (conUser != null)) if (entry?.InvitedToPlay == true)    conUser.SendCommand(new AreYouReadyResult() { AreYouBanned = true, IsBattleStarting = false, });
                 return true;
             }
             return false;
@@ -446,7 +509,7 @@ namespace ZkLobbyServer
             var lastMatchedUsers = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
 
             // force leave those not ready
-            foreach (var pl in lastMatchedUsers.Where(x => !x.LastReadyResponse)) RemoveUser(pl.Name, false);
+            foreach (var pl in lastMatchedUsers.Where(x => !x.LastReadyResponse)) RemoveUser(pl.Name);
 
             var readyUsers = lastMatchedUsers.Where(x => x.LastReadyResponse).ToList();
             var realBattles = ProposeBattles(readyUsers);

@@ -52,6 +52,7 @@ namespace LobbyClient
 
         public List<FactionInfo> Factions { get; set;}
 
+        public bool UserCountLimited { get; set; }
 
         public class FactionInfo
         {
@@ -131,6 +132,8 @@ namespace LobbyClient
         public string SteamAuthToken { get; set; }
 
         public long UserID { get; set; }
+
+        public List<ulong> Dlc { get; set; }
     }
 
     /// <summary>
@@ -177,7 +180,7 @@ namespace LobbyClient
             [Description("invalid name characters")]
             NameHasInvalidCharacters = 5,
 
-            [Description("invalid steam token")]
+            [Description("invalid steam token, are you in offline mode?")]
             InvalidSteamToken = 6,
 
             [Description("steam already registered")]
@@ -189,7 +192,7 @@ namespace LobbyClient
             [Description("banned too many connection attempts")]
             BannedTooManyAttempts = 9,
 
-            [Description("already registered, use login using steam")]
+            [Description("already linked steam, connecting")]
             AlreadyRegisteredWithThisSteamToken = 10,
 
             [Description("already registered, use login using password")]
@@ -226,7 +229,7 @@ namespace LobbyClient
             Banned = 4,
 
 
-            [Description("invalid steam token")]
+            [Description("invalid steam token, are you in offline mode?")]
             InvalidSteamToken = 5,
 
             [Description("banned, too many connection attempts")]
@@ -236,7 +239,10 @@ namespace LobbyClient
             SteamNotLinkedAndLoginMissing = 7,
 
             [Description("your steam account is already linked to a different account")]
-            SteamLinkedToDifferentAccount = 8
+            SteamLinkedToDifferentAccount = 8,
+
+            [Description("sorry, the server is full, please retry later")]
+            ServerFull = 9
         }
 
         public string Name { get; set; }

@@ -74,7 +74,7 @@ namespace PlasmaShared
         public List<LadderItem> LadderItems { get; set; } = new List<LadderItem>();
         public List<ForumItem> ForumItems { get; set; } = new List<ForumItem>();
         public List<MapItem> MapItems { get; set; } = new List<MapItem>();
-
+        public bool UserCountLimited { get; set; }
     }
 
     public class SpringBattleInfo

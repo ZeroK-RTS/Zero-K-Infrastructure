@@ -11,8 +11,8 @@ namespace ZkLobbyServer
 {
     public class OfflineMessageHandler
     {
-        public const int MessageResendCount = 1000;
-        public const int DelugeMessageResendCount = 50;
+        public const int MessageResendCount = 200;
+        public const int DelugeMessageResendCount = 20;
         
         private SemaphoreSlim sendHistorySemaphore = new SemaphoreSlim(Environment.ProcessorCount * 2);
         private SemaphoreSlim storeHistorySemaphore = new SemaphoreSlim(Environment.ProcessorCount * 2);

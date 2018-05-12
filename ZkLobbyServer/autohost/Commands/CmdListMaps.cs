@@ -19,7 +19,7 @@ namespace ZkLobbyServer
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            maps = MapPicker.FindResources(ResourceType.Map, arguments).Take(200).ToList();
+            maps = MapPicker.FindResources(ResourceType.Map, arguments, battle.MinimalMapSupportLevel).Take(200).ToList();
             return String.Empty;
         }
 

@@ -1,0 +1,12 @@
+﻿@model ZkData.DynamicConfig
+
+@{
+    ViewBag.Title = "Edit dynamic config";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<form action="@Url.Action("EditDynamicConfigSubmit")" method="post">
+    @Html.EditorForModel()
+    <input type="submit"/>
+</form>

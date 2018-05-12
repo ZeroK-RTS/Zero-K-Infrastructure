@@ -119,6 +119,7 @@ namespace ChobbyLauncher
         public List<string> Friends { get; set; }
         public string FriendSteamID { get; set; }
         public string SuggestedName { get; set; }
+        public List<ulong> Dlc { get; set; }
     }
 
     [ChobbyMessage]

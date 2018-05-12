@@ -342,6 +342,21 @@ namespace ZeroKWeb.Controllers
             }
 
             model.GraphingData = series;
+
+            if (model.UserId != null) {
+                using (var db = new ZkDataContext()) {
+                    model.UserStats = model.UserId.Select(id => new UserStats()
+                    {
+                        Account = db.Accounts.Where(x => x.AccountID == id).Include(x => x.Faction).Include(x => x.Clan).FirstOrDefault(),
+                        RankStats = RatingSystems.ratingCategories.Select(s => new RankStats()
+                        {
+                            System = s.ToString(),
+                            CurrentRating = RatingSystems.GetRatingSystem(s).GetPlayerRating(id),
+                            Bracket = RatingSystems.GetRatingSystem(s).GetPercentileBracket(db.Accounts.FirstOrDefault(a => a.AccountID == id).Rank),
+                        }).ToList(),
+                    }).ToList();
+                }
+            }
             return View("ChartsRatings", model);
         }
 
@@ -354,8 +369,9 @@ namespace ZeroKWeb.Controllers
         public class ChartsModel
         {
             public List<PossibleGraph> PossibleGraphs = new List<PossibleGraph>();
-            
+
             public int[] UserId { get; set; }
+            public List<UserStats> UserStats { get; set; } = new List<UserStats>();
             public RatingCategory RatingCategory { get; set; } = RatingCategory.Casual;
 
             public DateTime From { get; set; } = DateTime.UtcNow.AddYears(-10).Date;
@@ -376,6 +392,19 @@ namespace ZeroKWeb.Controllers
             public IList<GraphSeries> GraphingData;
 
             public String[] Colors = {"e6194b", "3cb44b", "ffe119", "0082c8", "f58231", "911eb4", "46f0f0", "f032e6", "d2f53c", "fabebe", "008080", "e6beff", "aa6e28","fffac8", "800000", "aaffc3", "808000", "ffd8b1", "000080", "808080", "FFFFFF", "000000"};
+        }
+
+        public class UserStats
+        {
+            public Account Account;
+            public List<RankStats> RankStats;
+        }
+
+        public class RankStats
+        {
+            public string System;
+            public PlayerRating CurrentRating;
+            public RankBracket Bracket;
         }
     }
 }

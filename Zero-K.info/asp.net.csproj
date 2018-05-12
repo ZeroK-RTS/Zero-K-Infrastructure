@@ -328,6 +328,7 @@
     <Content Include="Img\badges\donator_0.png" />
     <Content Include="Img\badges\donator_1.png" />
     <Content Include="Img\badges\donator_2.png" />
+    <Content Include="Img\badges\donator_3.png" />
     <Content Include="Img\badges\player_elo.png" />
     <Content Include="Img\badges\player_level.png" />
     <Content Include="Img\bar_blue.png" />
@@ -693,6 +694,7 @@
     <Content Include="Img\landing\text4.jpg" />
     <Content Include="Img\landing\text5.jpg" />
     <Content Include="Img\landing\text6.jpg" />
+    <Content Include="Img\landing\tutorialBattle.jpg" />
     <Content Include="Img\landing\warlord_small.jpg" />
     <Content Include="Img\landing\wublord.jpg" />
     <Content Include="Img\link.png" />
@@ -1277,9 +1279,11 @@
     <Content Include="Img\star_40_gold.png" />
     <Content Include="Img\star_40_silver.png" />
     <Content Include="Img\steam_20p.png" />
+    <Content Include="Img\steam_logo.png" />
     <Content Include="Img\sticky.png" />
     <Content Include="Img\stickylock.png" />
     <Content Include="Img\structures\artefact.png" />
+    <Content Include="Img\structures\artefact_inactive.png" />
     <Content Include="Img\structures\artefact_r_105.png" />
     <Content Include="Img\structures\artefact_r_87.png" />
     <Content Include="Img\structures\artefact_r_92.png" />
@@ -1430,7 +1434,11 @@
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Chart.min.js" />
     <Content Include="Scripts\Chart.Zoom.min.js" />
+<<<<<<< HEAD
+    <Content Include="Scripts\countDown.js" />
+=======
     <Content Include="Scripts\GoogleAnalytics.js" />
+>>>>>>> 1617057ba8217a3c4aeeab605b232f5e35c7b6bb
     <Content Include="Scripts\grid.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -1452,7 +1460,11 @@
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site_main.js" />
+<<<<<<< HEAD
     <Content Include="Scripts\userSettings.js" />
+=======
+    <Content Include="Styles\countDown.css" />
+>>>>>>> 8541441311a27781a1e81af8ab1dfc49f95d5477
     <Content Include="Styles\jquery.datetimepicker.min.css" />
     <Content Include="Styles\userpage.css" />
     <Content Include="Styles\base.css" />
@@ -1591,12 +1603,16 @@
     <Content Include="Styles\fonts\Xolonium-Regular.woff" />
     <Content Include="Views\Tourney\TourneyIndex.cshtml" />
     <Content Include="Views\PlanetwarsAdmin\PlanetwarsAdminIndex.cshtml" />
+<<<<<<< HEAD
     <Content Include="Views\Shared\Navigation.cshtml" />
     <Content Include="Styles\less\style.less" />
     <Content Include="Styles\less\modules\all_modules.less" />
     <Content Include="Styles\less\colors.less" />
     <Content Include="Views\Shared\_LobbyLayout.cshtml" />
     <Content Include="Views\Home\Landing.cshtml" />
+=======
+    <Content Include="Views\Admin\DynamicConfigDetail.cshtml" />
+>>>>>>> 8541441311a27781a1e81af8ab1dfc49f95d5477
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

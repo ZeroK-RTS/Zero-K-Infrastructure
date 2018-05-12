@@ -525,7 +525,8 @@ else
 {
 	for( $i = 0; $i < count($trailers); $i++ )
 	{
-		$name = $youtube = $vimeo = $mov = $mp4 = "";
+		// Steam support haxed in by Histidine
+		$name = $youtube = $vimeo = $mov = $mp4 = $steam = "";
 		$ytfirst = -1;
 
 		foreach( $trailers[$i]['trailer']->children() as $child )
@@ -546,6 +547,9 @@ else
 				$mov = $child;
 			} else if( $child->getName() == "mp4" ) {
 				$mp4 = $child;
+			}
+			} else if( $child->getName() == "steam" ) {
+				$steam = $child;
 			}
 		}
 				
@@ -580,7 +584,14 @@ else
 </div>';
 			}
 			echo '</p>';
-		}				
+		} else if( strlen($steam) > 0 )
+		{
+			echo '<p><strong>'.$name.'</strong>&nbsp;';
+			echo '<video width="800" controls>
+				<source src="http://store.steampowered.com/gfxproxy/betagfx/apps/'.$steam.'/movie_max.webm" type="video/webm">
+			</video>';
+			echo '</p>';
+		}
 	}
 }
 

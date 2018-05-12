@@ -27,7 +27,8 @@ namespace ZkLobbyServer
             Creator = e;
             question = command.Arm(battle, e, args);
             if (question == null) return false;
-            winCount = battle.Users.Values.Count(x => command.GetRunPermissions(battle, x.Name) >= BattleCommand.RunPermission.Vote && !cmd.IsSpectator(battle, x.Name, x)) / 2 + 1;
+            string ignored;
+            winCount = battle.Users.Values.Count(x => command.GetRunPermissions(battle, x.Name, out ignored) >= BattleCommand.RunPermission.Vote && !cmd.IsSpectator(battle, x.Name, x)) / 2 + 1;
             if (winCount <= 0) winCount = 1;
 
             if (!await Vote(e, true)) await battle.SayBattle($"Poll: {question} [!y=0/{winCount}, !n=0/{winCount}]");
@@ -46,7 +47,8 @@ namespace ZkLobbyServer
 
         public async Task<bool> Vote(Say e, bool vote)
         {
-            if (command.GetRunPermissions(battle, e.User) >= BattleCommand.RunPermission.Vote && !ended)
+            string reason;
+            if (command.GetRunPermissions(battle, e.User, out reason) >= BattleCommand.RunPermission.Vote && !ended)
             {
                 if (command.IsSpectator(battle, e.User, null)) return false;
 
@@ -75,7 +77,7 @@ namespace ZkLobbyServer
             }
             else
             {
-                await battle.Respond(e, "You are not allowed to vote");
+                await battle.Respond(e, reason);
                 return false;
             }
             return false;
