@@ -1,10 +1,9 @@
 ﻿@using ZeroKWeb
 @using ZkData
-@using PlasmaShared
 @model ZkData.Account
 
 <div id="commanders" class="module">
-
+    <h3 class="handle">Commanders</h3>
     <!--div>
         @*@Html.Partial("UnlockedTechnologies", Model.AccountUnlocks)*@
     </div-->
@@ -16,5 +15,4 @@
     {
         <span class="fleft border"><center><a href='@Url.Action("Commanders", "My")'><img src='/img/avatars/module_autorepair.png' alt="unlock" nicetitle="Configure Commanders<br><br>You can create presets for your commander to use in-game. Give your commander a unique name " /><br />Add/Edit</a></center></span>
     }
-    <br class="clearfloat" />
 </div>

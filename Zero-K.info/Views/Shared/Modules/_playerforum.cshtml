@@ -1,21 +1,17 @@
 ﻿@using ZeroKWeb
 @using ZkData
-@using PlasmaShared
 @model ZkData.Account
 
+@if (Model.ForumPosts.Any())
+{
 <div id="playerforum" class="module">
-    @if (Model.ForumPosts.Any())
+    <h3 class="handle">@Html.ActionLink("Posted threads", "Index", "Forum", new { User = Model.Name }, null)</h3>
+    <span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
+    <br />
+    @foreach (ForumThread t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Where(x => x != null).Distinct().Take(10))
     {
-    <div id="usr_forumposts" class="fleft border">
-        <h3>@Html.ActionLink("Posted threads", "Index", "Forum", new { User = Model.Name }, null)</h3>
-        <span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
+        <small>@Html.Print(t)</small>
         <br />
-        @foreach (ForumThread t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Where(x => x != null).Distinct().Take(10))
-        {
-            <small>@Html.Print(t)</small>
-            <br />
-        }
-    </div>
     }
-
 </div>
+}

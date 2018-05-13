@@ -1,10 +1,11 @@
 ﻿@using ZeroKWeb
 @using ZkData
 @using PlasmaShared
-@model ZeroKWeb.Controllers.HomeController.IndexResult
+@model IEnumerable<Account>
 
 <div id="rankings" class="module">
-    <h2><a href='@Url.Action("Index","Ladders")'>Top Players</a></h2>
+    <h3 class="handle">Top Players</h3>
+    <a href='@Url.Action("Index","Ladders")'>Go to Ladder</a>
     <table cellpadding='0' cellspacing='0'>
         <tr>
             <th width="30" align="left">#</th>
@@ -13,7 +14,7 @@
         </tr>
         @{
             int rank = 0;
-            foreach (var acct in Model.Top10Players)
+            foreach (var acct in Model.Take(10))
             {
 
                 <tr>

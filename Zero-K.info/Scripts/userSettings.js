@@ -20,6 +20,7 @@
     console.log("init module sorting");
     $(".module-column").sortable({
         connectWith: ".module-column",
+        handle: ".handle",
         placeholder: "module-placeholder",
         stop: saveModules
     });

@@ -1,6 +1,4 @@
 @using ZeroKWeb
-@using ZkData
-@using PlasmaShared
 @model ZeroKWeb.Controllers.HomeController.IndexResult
 
 <div id="content">
@@ -9,12 +7,12 @@
         Html.RenderPartial("UserDetail", Global.Account);
     }
     <div class="module-column">
-        @{ Html.RenderPartial("_headlines"); }
-        @{ Html.RenderPartial("_news"); }
-        @{ Html.RenderPartial("_unitspotlight"); }
+        @{ Html.RenderPartial("_headlines", Model.Headlines); }
+        @{ Html.RenderPartial("_news", Model.News); }
+        @{ Html.RenderPartial("_unitspotlight", Model.Spotlight); }
         @{ Html.RenderPartial("_social"); }
-        @{ Html.RenderPartial("_forum"); }
-        @{ Html.RenderPartial("_wiki"); }
-        @{ Html.RenderPartial("_rankings"); }
+        @{ Html.RenderPartial("_forum", Model.NewThreads); }
+        @{ Html.RenderPartial("_wiki", Model.WikiRecentChanges); }
+        @{ Html.RenderPartial("_rankings", Model.Top10Players); }
     </div>
 </div>

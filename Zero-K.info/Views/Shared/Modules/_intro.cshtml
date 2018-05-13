@@ -1,13 +1,10 @@
 ﻿@using ZeroKWeb
-@using ZkData
-@using PlasmaShared
 @model ZkData.Account
 
+@if (Global.AccountID == Model.AccountID && Model.Level <= 5 && !Model.IsDeleted)
+{
 <div id="intro" class="module">
-
-    @if (Global.AccountID == Model.AccountID && Model.Level <= 5 && !Model.IsDeleted)
-    {
-        @Html.IncludeWiki("NewbieIntro")
-    }
-
+    <h2 class="handle">Welcome to Zero-K!</h2>
+    @Html.IncludeWiki("NewbieIntro")
 </div>
+}

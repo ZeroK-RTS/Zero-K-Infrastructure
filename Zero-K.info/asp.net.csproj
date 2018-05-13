@@ -1618,7 +1618,7 @@
     <Content Include="Views\Shared\Modules\_serverstats.cshtml" />
     <Content Include="Views\Shared\Modules\_trophies.cshtml" />
     <Content Include="Views\Shared\Modules\_userdetail.cshtml" />
-    <Content Include="Views\Shared\Modules\__empty.cshtml" />
+    <Content Include="Views\Shared\Modules\_settings.cshtml" />
     <Content Include="Views\Shared\Modules\_headlines.cshtml" />
     <Content Include="Views\Shared\Modules\_news.cshtml" />
     <Content Include="Views\Shared\Modules\_unitspotlight.cshtml" />
@@ -1626,6 +1626,7 @@
     <Content Include="Views\Shared\Modules\_forum.cshtml" />
     <Content Include="Views\Shared\Modules\_wiki.cshtml" />
     <Content Include="Views\Shared\Modules\_rankings.cshtml" />
+    <Content Include="Styles\less\modules\admin.less" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

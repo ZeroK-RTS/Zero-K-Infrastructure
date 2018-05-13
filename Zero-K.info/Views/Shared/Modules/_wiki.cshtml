@@ -1,11 +1,10 @@
 ﻿@using ZeroKWeb
-@using ZkData
-@using PlasmaShared
-@model ZeroKWeb.Controllers.HomeController.IndexResult
+@model IEnumerable<MediaWikiRecentChanges.MediaWikiEdit>
 
 <div id="wiki" class="module">
-    <h3><a href='//zero-k.info/mediawiki/index.php?title=Special:RecentChanges'>Recently on the wiki</a></h3>
-    @foreach (var edit in Model.WikiRecentChanges)
+    <h3 class="handle">Recently on the Wiki</h3>
+    <a href='//zero-k.info/mediawiki/index.php?title=Special:RecentChanges'>Go to Wiki</a>
+    @foreach (var edit in Model)
     {
         @Html.PrintMediaWikiEdit(edit)<br />
     }

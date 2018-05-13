@@ -1,0 +1,18 @@
+﻿@using ZeroKWeb
+@model ZkData.Account
+
+@if (Global.AccountID == Model.AccountID && !string.IsNullOrEmpty(Model.PasswordBcrypt))
+{
+<div id="settings" class="module">
+    <h3 class="handle">Settings</h3>
+    <h3 class="js_expand">Password Reset</h3>
+    <div id="accountMaint" class="collapse width-90">
+        <form method="post" action="@Url.Action("ChangePassword", "Users")">
+            Old password: @Html.Password("oldPassword")<br />
+            New password: @Html.Password("newPassword")<br />
+            Reenter new password: @Html.Password("newPassword2")<br />
+            <input type="submit" value="Reset Password" />
+        </form>
+    </div>
+</div>
+}

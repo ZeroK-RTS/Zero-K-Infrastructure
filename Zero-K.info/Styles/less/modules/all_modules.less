@@ -1,13 +1,21 @@
-﻿@import "../colors.less";
+﻿@import "admin.less";
+
+
+@import "../colors.less";
 
 .module {
     background: rgba(0,0,0,.5);
     /*min-height: 7em;*/
     overflow: hidden;
-    h2 {
+    padding-top: .5em;
+    padding-bottom: .5em;
+
+    h2, h3 {
         margin-top: 0;
+    }
+
+    .handle {
         cursor: move;
-        z-index: 10;
     }
 }
 

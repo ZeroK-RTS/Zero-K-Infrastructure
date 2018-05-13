@@ -1,15 +1,40 @@
 ﻿@using ZeroKWeb
 @using ZkData
-@using PlasmaShared
 @model ZkData.Account
 
-<div id="admin" class="module">
+@if (Global.IsModerator)
+{
+<div id="admin" class="module admin">
+    <h3 class="handle">Admin extras</h3>
 
+    @Html.ActionLink("Admin user", "AdminUserDetail", "Users", new { id = Model.AccountID }, null)
 
-    if (Global.IsModerator)
+    @if (Global.AccountID == Model.AccountID)
     {
-    <div class="admin">
-        @Html.ActionLink("Admin user", "AdminUserDetail", "Users", new { id = Model.AccountID }, null)
-    </div>
+        <form action="@Url.Action("SetZklsMaxPlayers", "Admin")" method="post">
+            Max lobby server players: @Html.TextBox("maxPlayers", MiscVar.ZklsMaxUsers)
+            <input type="submit" value="set" />
+        </form>
+
+        <a href="@Url.Action("Index", "Tourney")">Tourney control</a>
+        <a href="@Url.Action("Index", "LobbyNews")">Lobby news</a>
+        <a href="@Url.Action("Index", "Users")">User list</a>
+        <a href="@Url.Action("Index", "Charts")">Charts</a>
+        <a href="@Url.Action("Index", "PlanetwarsAdmin")">PlanetWars admin</a>
+        <a href="@Url.Action("EditDynamicConfig", "Admin")">Dynamic config</a>
+        <a href="@Url.Action("Index", "Engines")">Engines</a>
+        <a href="@Url.Action("ChatHistory", "Lobby")">Lobby chat history</a>
+        <a href="@Url.Action("TraceLogs", "Admin")">Infrastructure trace logs</a>
+        <a href="@Url.Content("~/ResourceList.aspx")">Resource list</a>
+        <a href="@Url.Action("BlockedVPNs", "Lobby")">Blocked VPNs</a>
+        <a href="@Url.Action("ReportLog", "Users")">Abuse report log</a>
+
+        if (GlobalConst.Mode == ModeType.Test)
+        {
+            <a href="@Url.Action("ResetDB", "Admin")" class="js_confirm">Reset database (copy from live)</a>
+        }
+
+        @Html.Partial("/Views/News/NewsDetail.cshtml", new News() { Created = DateTime.UtcNow, HeadlineUntil = DateTime.UtcNow.AddDays(7) })
     }
 </div>
+}

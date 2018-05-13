@@ -1,19 +1,18 @@
-﻿@using ZeroKWeb
-@using ZkData
-@using PlasmaShared
-@model ZeroKWeb.Controllers.HomeController.IndexResult
+﻿@using ZkData
+@model IEnumerable<News>
 
 <div id="headlines" class="module">
-    @foreach (var n in Model.Headlines.Take(1))
+    <h3 class="handle">Headlines</h3>
+    @foreach (var news in Model.Take(1))
     {
         <div class="js_dialog" title="News headlines">
-            <h1>@n.Title</h1>
-            @if (n.ImageRelativeUrl != null)
+            <h1>@news.Title</h1>
+            @if (news.ImageRelativeUrl != null)
             {
-                <img src="@n.ImageRelativeUrl" style="float:left; width:800px; margin: 6px;" />
+                <img src="@news.ImageRelativeUrl" style="float:left; width:800px; margin: 6px;" />
             }
-            <div>@Html.BBCodeCached(n)</div>
-            <small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)</small>
+            <div>@Html.BBCodeCached(news)</div>
+            <small>Posted by @Html.PrintAccount(news.Account) @news.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = news.ForumThreadID }, null)</small>
         </div>
     }
 </div>
