@@ -1,0 +1,12 @@
+﻿@using ZeroKWeb
+@using ZkData
+@using PlasmaShared
+@model ZeroKWeb.Controllers.HomeController.IndexResult
+
+<div id="forum" class="module">
+    <h2><a href='@Url.Action("Index","Forum", new {OnlyUnread= true})'>Forums</a></h2>
+    @foreach (var t in Model.NewThreads)
+    {
+        @Html.Print(t.ForumThread)<br />
+    }
+</div>

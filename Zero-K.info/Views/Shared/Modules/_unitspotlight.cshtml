@@ -1,0 +1,12 @@
+﻿@using ZeroKWeb
+@using ZkData
+@using PlasmaShared
+@model ZeroKWeb.Controllers.HomeController.IndexResult
+
+<div id="unitspotlight" class="module">
+    <img src="http://manual.zero-k.info/unitpics/@(Model.Spotlight.Unitname).png" width="64" height="64" class="fright" />
+    <h2><a href='http://zero-k.info/mediawiki/index.php?title=Manual'>Manual:</a></h2>
+    <h3>@Model.Spotlight.Name</h3>
+    <p>@Model.Spotlight.Title</p>
+    <p>@Model.Spotlight.Description</p>
+</div>

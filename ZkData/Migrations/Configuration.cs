@@ -146,7 +146,6 @@ namespace ZkData.Migrations
                 Avatar = null,
                 AdminLevel = AdminLevel.SuperAdmin,
                 DevLevel = DevLevel.CoreDeveloper,
-                Kudos = 200,
                 Level = 50,
                 Xp = 10000,
             },

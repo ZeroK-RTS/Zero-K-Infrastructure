@@ -1,0 +1,33 @@
+﻿@using ZeroKWeb
+@using ZkData
+@using PlasmaShared
+@model ZeroKWeb.Controllers.HomeController.IndexResult
+
+<div id="empty" class="module">
+    @foreach (var n in Model.News.Take(4))
+    {
+        <h1>@n.Title</h1>
+        if (n.ThumbRelativeUrl != null)
+        {
+            <a href="@n.ImageRelativeUrl"><img src="@n.ThumbRelativeUrl" style="float:left; width:120px; margin: 6px;" /></a>
+        }
+        <div>@Html.BBCodeCached(n)</div>
+        <small>
+            Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)
+            @if (Global.IsModerator)
+            {
+                <span class="admin">
+                    @Html.ActionLink("Edit", "Detail", "News", new { id = n.NewsID }, null)
+                </span>
+            }
+        </small>
+        <br /><br />
+    }
+    <a href="@Url.Action("Index", "News")"><img src="/img/rss.png" width="25" alt="rss" /> RSS feed</a> | <a href='/Forum?categoryID=13'>news archive</a>
+    @if (Global.IsModerator)
+    {
+        <div class="admin">
+            @Html.Partial("/Views/News/NewsDetail.cshtml", new News() { Created = DateTime.UtcNow, HeadlineUntil = DateTime.UtcNow.AddDays(7) })
+        </div>
+    }
+</div>

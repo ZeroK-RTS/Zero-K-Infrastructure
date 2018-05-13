@@ -263,6 +263,7 @@
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\WikiController.cs" />
     <Compile Include="Models\CommentList.cs" />
+    <Compile Include="Models\PartialViewEngine.cs" />
     <Compile Include="ResourceList.aspx.cs">
       <DependentUpon>ResourceList.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1604,6 +1605,27 @@
     <Content Include="Views\Shared\_LobbyLayout.cshtml" />
     <Content Include="Views\Home\Landing.cshtml" />
     <Content Include="Views\Admin\DynamicConfigDetail.cshtml" />
+    <Content Include="Views\Shared\Modules\_admin.cshtml" />
+    <Content Include="Views\Shared\Modules\_badges.cshtml" />
+    <Content Include="Views\Shared\Modules\_battles.cshtml" />
+    <Content Include="Views\Shared\Modules\_commanders.cshtml" />
+    <Content Include="Views\Shared\Modules\_faction.cshtml" />
+    <Content Include="Views\Shared\Modules\_playerforum.cshtml" />
+    <Content Include="Views\Shared\Modules\_intro.cshtml" />
+    <Content Include="Views\Shared\Modules\_planetwars.cshtml" />
+    <Content Include="Views\Shared\Modules\_polls.cshtml" />
+    <Content Include="Views\Shared\Modules\_punishments.cshtml" />
+    <Content Include="Views\Shared\Modules\_serverstats.cshtml" />
+    <Content Include="Views\Shared\Modules\_trophies.cshtml" />
+    <Content Include="Views\Shared\Modules\_userdetail.cshtml" />
+    <Content Include="Views\Shared\Modules\__empty.cshtml" />
+    <Content Include="Views\Shared\Modules\_headlines.cshtml" />
+    <Content Include="Views\Shared\Modules\_news.cshtml" />
+    <Content Include="Views\Shared\Modules\_unitspotlight.cshtml" />
+    <Content Include="Views\Shared\Modules\_social.cshtml" />
+    <Content Include="Views\Shared\Modules\_forum.cshtml" />
+    <Content Include="Views\Shared\Modules\_wiki.cshtml" />
+    <Content Include="Views\Shared\Modules\_rankings.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
@@ -1691,7 +1713,6 @@
     <Folder Include="Views\Autocomplete\" />
     <Folder Include="Views\Github\" />
     <Folder Include="Views\LobbyService\" />
-    <Folder Include="Views\Modules\" />
     <Folder Include="Weblobby\" />
   </ItemGroup>
   <ItemGroup>
