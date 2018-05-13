@@ -1,0 +1,13 @@
+﻿@using ZeroKWeb
+@using ZkData
+@using PlasmaShared
+@model ZkData.Account
+
+<div id="intro" class="module">
+
+    @if (Global.AccountID == Model.AccountID && Model.Level <= 5 && !Model.IsDeleted)
+    {
+        @Html.IncludeWiki("NewbieIntro")
+    }
+
+</div>

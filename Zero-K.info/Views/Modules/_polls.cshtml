@@ -1,0 +1,25 @@
+﻿@using ZeroKWeb
+@using ZkData
+
+<div id="polls" class="module">
+    @if (Model.AccountID == Global.AccountID && Global.AccountID > 0)
+    {
+        foreach (Poll p in Account.ValidPolls(Global.Account).Where(x => x.IsHeadline && (x.RoleTargetAccountID == null || !x.PollVotes.Any(y => y.AccountID == Global.AccountID))))
+        {
+            Html.RenderAction("Index", "Poll", new { pollID = p.PollID });
+        }
+    }
+
+    @if (Model.PollVotes.Any())
+    {
+    <div class="fleft border">
+        <h3>@Html.ActionLink("Poll votes", "UserVotes", "Poll", new { id = Model.AccountID }, null)</h3>
+        <ul>
+            @foreach (PollVote pv in Model.PollVotes.Where(x => !x.Poll.IsAnonymous).OrderByDescending(x => x.PollID).Take(5))
+            {
+                <li><small>@pv.Poll.QuestionText : <b>@pv.PollOption.OptionText</b></small></li>
+            }
+        </ul>
+    </div>
+    }
+</div>

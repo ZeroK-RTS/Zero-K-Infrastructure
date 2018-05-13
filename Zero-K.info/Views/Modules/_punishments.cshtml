@@ -1,0 +1,11 @@
+﻿@using ZeroKWeb
+@using ZkData
+@using PlasmaShared
+@model ZkData.Account
+
+<div id="punishments" class="module">
+    @foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.BanExpires > DateTime.UtcNow))
+    {
+        @Html.DisplayFor(x => p)
+    }
+</div>

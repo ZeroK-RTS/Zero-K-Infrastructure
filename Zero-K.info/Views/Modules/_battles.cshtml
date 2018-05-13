@@ -1,0 +1,24 @@
+﻿@using ZeroKWeb
+@using ZkData
+@using PlasmaShared
+@model ZkData.Account
+
+<div id="battles" class="module">
+
+    @if (Model.SpringBattlePlayers.Any())
+    {
+    <div id="usr_recentbattles" class="fleft border">
+        <h3>@Html.ActionLink("Last battles", "Index", "Battles", new { UserId = Model.AccountID }, null)</h3>
+        <span>
+            @Model.SpringBattlePlayers.Count(x => !x.IsSpectator) played, @Model.SpringBattlePlayers.Count(x => x.IsSpectator)
+            watched, @Model.MissionRunCount missions
+        </span>
+        <br />
+        @foreach (SpringBattlePlayer b in Model.SpringBattlePlayers.Where(x => !x.IsSpectator).OrderByDescending(x => x.SpringBattleID).Take(10))
+        {
+            <small>@Html.PrintBattle(b)</small>
+            <br />
+        }
+    </div>
+    }
+</div>

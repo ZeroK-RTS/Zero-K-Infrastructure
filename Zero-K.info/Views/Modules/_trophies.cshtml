@@ -1,0 +1,17 @@
+﻿@using ZeroKWeb
+@using ZkData
+@using PlasmaShared
+@model ZkData.Account
+
+<div id="_trophies" class="module">
+
+    @foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count()))
+    {
+        <div class="fleft border" style="margin: 3px;">
+            <img src="/img/Awards/trophy_@(award.Key).png" height="30" alt="@award.Key" title="@award.First().AwardDescription.Split(',').First()" />
+            <br />
+            <center>@award.Count()</center>
+        </div>
+    }
+    <br class="clearfloat" />
+</div>

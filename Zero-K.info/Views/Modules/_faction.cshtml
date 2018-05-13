@@ -1,0 +1,16 @@
+﻿@using ZeroKWeb
+@using ZkData
+@using PlasmaShared
+@model ZkData.Account
+
+
+<div id="faction" class="module">
+
+    @if (Model.Faction != null || Model.Clan != null)
+    {
+        string color = Faction.FactionColor(Model.Faction, Global.FactionID);
+
+        <br />
+        @Html.Partial("~/Views/Users/UserRoleList.cshtml", Model)
+    }
+</div>

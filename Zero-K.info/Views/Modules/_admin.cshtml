@@ -1,0 +1,15 @@
+﻿@using ZeroKWeb
+@using ZkData
+@using PlasmaShared
+@model ZkData.Account
+
+<div id="admin" class="module">
+
+
+    if (Global.IsModerator)
+    {
+    <div class="admin">
+        @Html.ActionLink("Admin user", "AdminUserDetail", "Users", new { id = Model.AccountID }, null)
+    </div>
+    }
+</div>

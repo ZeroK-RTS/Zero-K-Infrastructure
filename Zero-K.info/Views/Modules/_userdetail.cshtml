@@ -1,0 +1,110 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZkData.Account
+
+<div id="userdetails" class="module">
+    <img src="@Ratings.Ranks.GetRankBackgroundImagePath(Model)" />
+    @if (Model.AccountID != Global.AccountID)
+    {
+        <a href="@Html.PrintSpringLink("chat/user/" + Model.Name)" nicetitle="Chat with @Model.Name in the lobby"><img src="/img/chat.png" height="32" /></a><br />
+    }
+    @if (Model.AccountID == Global.AccountID)
+    {
+        <a href="@Url.Action("ReportToAdmin", "Users", new { id = Model.AccountID })" nicetitle="Contact administrators"><img src="/img/help.png" height="32" /></a>
+    }
+    else
+    {
+        <a href="@Url.Action("ReportToAdmin", "Users", new { id = Model.AccountID })" nicetitle="Report abuse to administrators"><img src="/img/abuse.png" height="32" /></a>
+    }
+    <a href="/Wiki/CodeOfConduct" nicetitle="Code of Conduct"><b><img src="/img/conduct.png" height="32" /></b></a>
+
+    <h1 class="username" style="color:@color !important">
+        @{
+            MvcHtmlString ranks = new MvcHtmlString(Ratings.Ranks.RankBackgroundImages.Select((x, i) => (string)("<img class='icon16' src='/img/ranks/" + Model.GetIconLevel() + "_" + i + ".png'>")).Aggregate((x, y) => x + y));
+            MvcHtmlString levels = new MvcHtmlString(Ratings.Ranks.RankBackgroundImages.Select((x, i) => (string)("<img class='icon16' src='/img/ranks/" + i + "_" + Model.Rank + ".png'>")).Aggregate((x, y) => x + y));
+        }
+
+        @if (Model.Country != "??" && !Model.HideCountry)
+        {
+            <img nicetitle="Last known login location. <br /> <br />Contact the administrators if you would like yours not to be shown publicly." src='/img/flags/@(Model.Country).png' class='flag' height='11' width='16' alt='@Model.Country' />
+        }
+        @Model.Name <img nicetitle="Combined rank/level icon. <br /><br />@ranks<br>Rank is represented by the icon's color. The profile background adjusts based on rank. <br /><br />@levels<br>Level is represented by the icon's shape. It ranges from a single chevron for level 0 to a star for level 100+." src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png" class="icon16" alt="rank" />
+    </h1>
+
+    @if (!Global.IsLobbyAccess)
+    {
+        int star = 0;
+        int chev = 0;
+        int bars = 0;
+        <div id="badge">
+            <div id="levelrank" title="This is a graphical representation of the player's exact level. <br /> <br />Play more games to increase your level!">
+                <!--<div id="velvet"><img src="../../img/ranks/level-elo/velvetbacking.jpg" width="100%" height="100%" /></div>-->
+                <div id="badge-center">
+                    @if (Model.Level > 125)
+                    {
+                        star = 125;
+                        <div id="badge-star">
+                            <img src="../../img/ranks/level-elo/star.png" class="rank star" />
+                        </div>
+                    }
+                    <div id="badge-chevrons">
+                        @for (int i = 0; i < (Model.Level - star) / 25; i++)
+                        {
+                            <img src="../../img/ranks/level-elo/chevron_gold.png" class="rank chev chev-@(i + 1)" />
+                            chev += 25;
+                        }
+                    </div>
+                    <div id="badge-bars">
+                        @for (int i = 0; i < (Model.Level - star - chev) / 5; i++)
+                        {
+                            <img src="../../img/ranks/level-elo/bar_gold.png" class="rank bar bar-@(i + 1)" />
+                            bars += 1;
+                        }
+                        <div class="rank dotline bar-@(bars + 1)">
+                            @for (int i = 0; i < (Model.Level - star - chev) % 5; i++)
+                            {
+                                <img src="../../img/ranks/level-elo/dot_gold.png" class="dot" />
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <br class="clearfloat" />
+    @{ double ratio = Model.GetLevelUpRatio(); }
+    <div title='Current level: <img src="/img/ranks/@(Model.GetIconLevel())_@(Model.Rank).png"  class="icon16" alt="rank" /> Level @(Model.Level) <br /> <br /> Progress to the next level: @((int)(ratio*100))% <br /> <br />XP remaining for level @(Model.Level + 1): @(Account.GetXpForLevel(Model.Level + 1) - Model.Xp)<br /> <br />Play more games to increase your level!'>
+
+        <div class="progress_wrapper_left">
+            <div class="progress_text techfont"> Level @Model.Level </div>
+            <div class="progress_begin"></div>
+        </div>
+        <div class="progress_wrapper">
+            <div class="progress_filler" style="width: @((int)(100*ratio))%;"></div>
+            <div class="progress_empty" style="width: @((100 - (int)(100*ratio)))%;"></div>
+        </div>
+        <div class="progress_wrapper_right">
+            <div class="progress_end"></div>
+            <div class="progress_text techfont"> Level @(Model.Level + 1) </div>
+        </div>
+    </div>
+    <br class="clearfloat" />
+    @{ ratio = Ratings.Ranks.GetRankProgress(Model); }
+    <div title="@Html.PrintRankProgress(Model)">
+        <div class="progress_wrapper_left">
+            <div class="progress_text techfont"> @Ratings.Ranks.RankNames[Model.Rank] </div>
+            <div class="progress_begin"></div>
+        </div>
+        <div class="progress_wrapper">
+            <div class="progress_filler" style="width: @((int)(100*ratio))%;"></div>
+            <div class="progress_empty" style="width: @((100 - (int)(100*ratio)))%;"></div>
+        </div>
+        <div class="progress_wrapper_right">
+            <div class="progress_end"></div>
+            <div class="progress_text techfont"> @Ratings.Ranks.RankNames[Model.Rank + 1] </div>
+        </div>
+    </div>
+    <br class="clearfloat" />
+
+</div>
