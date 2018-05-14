@@ -103,7 +103,7 @@ namespace ZkLobbyServer
 
         public async Task Process(MatchMakerQueueRequest queueRequest)
         {
-            await Task.Factory.StartNew(()=>server.MatchMaker.QueueRequest(this, queueRequest));
+            await server.MatchMaker.QueueRequest(this, queueRequest);
         }
 
         public async Task Process(PwJoinPlanet args)
@@ -656,7 +656,7 @@ namespace ZkLobbyServer
 
         public async Task Process(AreYouReadyResponse response)
         {
-            await Task.Factory.StartNew(() => server.MatchMaker.AreYouReadyResponse(this, response));
+            await server.MatchMaker.AreYouReadyResponse(this, response);
         }
 
         public async Task Process(InviteToParty invite)
