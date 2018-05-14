@@ -60,7 +60,7 @@ namespace Ratings
             {
                 if (ratingSystem.GetActivePlayers() < 50) continue;
                 var rating = ratingSystem.GetPlayerRating(acc.AccountID);
-                
+                if (rating.Rank == int.MaxValue) continue;
                 isActive = true;
                 var stdev = Math.Min(10000, rating.Uncertainty);
                 var bracket = ratingSystem.GetPercentileBracket(acc.Rank);
