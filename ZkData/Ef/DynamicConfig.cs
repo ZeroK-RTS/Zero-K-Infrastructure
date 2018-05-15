@@ -18,7 +18,6 @@ namespace ZkData
         public double MmStartingWidth { get; set; } = 80.0;
         public double MmWidthGrowth { get; set; } = 240.0;
         public double MmWidthGrowthTime { get; set; } = 120.0;
-        public double MmMinimumWinChance { get; set; } = 0.2; //this means win chance of worst team has to be at least 20%
 
         public static DynamicConfig Instance;
 

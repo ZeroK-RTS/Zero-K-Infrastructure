@@ -147,6 +147,7 @@
     <Compile Include="BattleListUpdater.cs" />
     <Compile Include="ChannelManager.cs" />
     <Compile Include="ChatRelay.cs" />
+    <Compile Include="DelayLogger.cs" />
     <Compile Include="ClientConnection.cs" />
     <Compile Include="DiscordRelaySource.cs" />
     <Compile Include="ForumListManager.cs" />

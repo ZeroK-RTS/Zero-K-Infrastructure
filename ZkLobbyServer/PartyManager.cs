@@ -122,7 +122,7 @@ namespace ZkLobbyServer
                     if ((inviterParty != null) && (inviteeParty == null)) party = inviterParty;
                     if ((inviterParty != null) && (inviteeParty != null))
                     {
-                        await RemoveFromParty(inviterParty, inv.Invitee);
+                        await RemoveFromParty(inviteeParty, inv.Invitee);
                         party = inviterParty;
                     }
 
