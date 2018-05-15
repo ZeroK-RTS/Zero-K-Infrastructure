@@ -68,7 +68,6 @@ namespace ZkLobbyServer
 
             }
 
-            
             public bool CanBeAdded(PlayerEntry other, List<PlayerEntry> allPlayers)
             {
                 //Trace.TraceError("MM: proposed battle {0} checking {1}", string.Join(", ", Players.Select(x => x.Name)), other.Name);
