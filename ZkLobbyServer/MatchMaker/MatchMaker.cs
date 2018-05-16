@@ -516,7 +516,7 @@ namespace ZkLobbyServer
             foreach (var other in playersByElo)
                 foreach (var bat in testedBattles)
                 {
-                    if (bat.CanBeAdded(other, allPlayers)) bat.AddPlayer(other, allPlayers);
+                    if (bat.CanBeAdded(other, allPlayers, ignoreSizeLimit)) bat.AddPlayer(other, allPlayers);
                     if (bat.Players.Count == bat.Size) return bat;
                 }
             return null;

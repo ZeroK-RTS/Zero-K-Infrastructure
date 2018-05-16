@@ -70,7 +70,7 @@ namespace ZkLobbyServer
 
             }
 
-            public bool CanBeAdded(PlayerEntry other, List<PlayerEntry> allPlayers)
+            public bool CanBeAdded(PlayerEntry other, List<PlayerEntry> allPlayers, bool ignoreSizeLimit)
             {
                 //Trace.TraceError("MM: proposed battle {0} checking {1}", string.Join(", ", Players.Select(x => x.Name)), other.Name);
 
@@ -81,7 +81,7 @@ namespace ZkLobbyServer
                 }
                 if (owner.Party !=null && other.Party == owner.Party) return true; // always accept same party
 
-                if (!other.GenerateWantedBattles(allPlayers, false).Any(y => (y.Size == Size) && (y.QueueType == QueueType)))
+                if (!other.GenerateWantedBattles(allPlayers, ignoreSizeLimit).Any(y => (y.Size == Size) && (y.QueueType == QueueType)))
                 {
                     //Trace.TraceError("MM: cannot add {0}, does not want same game type", other.Name);
                     return false;
