@@ -67,7 +67,7 @@ namespace ZkLobbyServer
                     await connectedUser.Process(obj);
                 }
                 var delay = sw.ElapsedMilliseconds;
-                if (delay > GlobalConst.ProcessTimeMinDelayMilliseconds) DelayLogger.ReportDelay(sw.ElapsedMilliseconds, obj.getType());
+                if (delay > GlobalConst.ProcessTimeMinDelayMilliseconds) DelayLogger.ReportDelay(sw.ElapsedMilliseconds, line.Trim().Split(' ')[0]);
             }
             catch (Exception ex)
             {

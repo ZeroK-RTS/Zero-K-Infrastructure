@@ -12,14 +12,14 @@ namespace ZkLobbyServer
         static long minDelay = int.MaxValue;
         static long sumDelay = 0;
         static long reports = 0;
-        static ConcurrentDictionary<Type, int> counts = new ConcurrentDictionary<Type, int>();
+        static ConcurrentDictionary<string, int> counts = new ConcurrentDictionary<string, int>();
         static DateTime lastReport = DateTime.UtcNow;
 
 
         static object mathlock = new object();
 
 
-        public static void ReportDelay(long milliseconds, Type type)
+        public static void ReportDelay(long milliseconds, string type)
         {
             counts.AddOrUpdate(type, 1, (a, i) => i + 1);
             lock (mathlock)
@@ -33,14 +33,14 @@ namespace ZkLobbyServer
                     Trace.TraceInformation("Lobby command processing time for last " + reports + " delayed commands. Avg: " + (sumDelay / reports) + " ms, Min: " + (minDelay) + " ms, Max: " + (maxDelay) + " ms.");
                     foreach (var pair in counts)
                     {
-                        Trace.TraceInformation(pair.Key.ToString() + " lagged " + pair.Value + " times.");
+                        Trace.TraceInformation(pair.Key + " lagged " + pair.Value + " times.");
                     }
                     reports = 0;
                     maxDelay = 0;
                     minDelay = int.MaxValue;
                     sumDelay = 0;
                     lastReport = DateTime.UtcNow;
-                    counts = new ConcurrentDictionary<Type, int>();
+                    counts = new ConcurrentDictionary<string, int>();
                 }
             }
 
