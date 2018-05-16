@@ -34,18 +34,24 @@ namespace ZkLobbyServer
                 LobbyUser = user;
             }
 
-            public List<ProposedBattle> GenerateWantedBattles(List<PlayerEntry> allPlayers)
+            public List<ProposedBattle> GenerateWantedBattles(List<PlayerEntry> allPlayers, bool ignoreSizeLimit)
             {
                 var ret = new List<ProposedBattle>();
                 foreach (var qt in QueueTypes)
                 {
                     // variable game size, allow smaller games the longer the wait of longest waiting player
-                    var qtMaxWait = qt.MaxSize > qt.MinSize ? allPlayers.Where(x => x.QueueTypes.Contains(qt)).Max(x => x.WaitRatio) : 0; 
+                    var minSize = qt.MinSize;
+                    if (ignoreSizeLimit)
+                    {
+                        var qtMaxWait = qt.MaxSize > qt.MinSize ? allPlayers.Where(x => x.QueueTypes.Contains(qt)).Max(x => x.WaitRatio) : 0;
+                        minSize = qt.MaxSize - (qt.MaxSize - qt.MinSize) * qtMaxWait;
+                    }
 
-                    for (var i = qt.MaxSize; i >= qt.MaxSize - (qt.MaxSize - qt.MinSize) * qtMaxWait; i--)
+                    for (var i = qt.MaxSize; i >= minSize; i--)
                         if (qt.Mode == AutohostMode.GameChickens || i % 2 == 0)
                         {
-                            if (Party == null || (qt.Mode == AutohostMode.GameChickens && Party.UserNames.Count<=i) || Party.UserNames.Count == i / 2) ret.Add(new ProposedBattle(i, this, qt, qt.EloCutOffExponent, allPlayers));
+                            if (Party == null || (qt.Mode == AutohostMode.GameChickens && Party.UserNames.Count<=i) || Party.UserNames.Count == i / 2)
+                                ret.Add(new ProposedBattle(i, this, qt, qt.EloCutOffExponent, allPlayers));
                         }
                 }
                 return ret;

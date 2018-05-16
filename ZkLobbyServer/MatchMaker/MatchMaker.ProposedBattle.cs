@@ -79,7 +79,7 @@ namespace ZkLobbyServer
                 }
                 if (owner.Party !=null && other.Party == owner.Party) return true; // always accept same party
 
-                if (!other.GenerateWantedBattles(allPlayers).Any(y => (y.Size == Size) && (y.QueueType == QueueType)))
+                if (!other.GenerateWantedBattles(allPlayers, false).Any(y => (y.Size == Size) && (y.QueueType == QueueType)))
                 {
                     //Trace.TraceError("MM: cannot add {0}, does not want same game type", other.Name);
                     return false;
