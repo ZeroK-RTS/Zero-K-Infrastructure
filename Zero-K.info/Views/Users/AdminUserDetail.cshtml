@@ -133,7 +133,7 @@
 
     @if (Model.SteamID != null)
     {
-        Unlink from Steam:
+        <span>Unlink from Steam:</span>
         <form method="post" action="@Url.Action("UnlinkSteamID", "Users", new { accountID = Model.AccountID })">
             @Html.AntiForgeryToken()
             Delete this account's Steam name and ID, allowing the user to link their Steam account to another ZK account.'

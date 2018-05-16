@@ -170,7 +170,7 @@ namespace ZkLobbyServer
                     {
                         var readyCounts = CountQueuedPeople(invitedPeople.Where(x => x.LastReadyResponse));
 
-                        var proposedBattles = ProposeBattles(invitedPeople.Where(x => x.LastReadyResponse));
+                        var proposedBattles = ProposeBattles(invitedPeople.Where(x => x.LastReadyResponse), false);
 
                         await Task.WhenAll(invitedPeople.Select(async (p) =>
                         {
@@ -375,7 +375,7 @@ namespace ZkLobbyServer
             }
         }
 
-        private static List<ProposedBattle> ProposeBattles(IEnumerable<PlayerEntry> users)
+        private static List<ProposedBattle> ProposeBattles(IEnumerable<PlayerEntry> users, bool ignoreSizeLimit)
         {
             var proposedBattles = new List<ProposedBattle>();
 
@@ -385,7 +385,7 @@ namespace ZkLobbyServer
             foreach (var user in usersByWaitTime)
                 if (remainingPlayers.Contains(user)) // consider only those not yet assigned
                 {
-                    var battle = TryToMakeBattle(user, remainingPlayers);
+                    var battle = TryToMakeBattle(user, remainingPlayers, ignoreSizeLimit);
                     if (battle != null)
                     {
                         proposedBattles.Add(battle);
@@ -423,7 +423,7 @@ namespace ZkLobbyServer
         private void ResetAndSendMmInvitations()
         {
             // generate next battles and send inviatation
-            invitationBattles = ProposeBattles(players.Values.Where(x => x != null));
+            invitationBattles = ProposeBattles(players.Values.Where(x => x != null), false);
             var toInvite = invitationBattles.SelectMany(x => x.Players).ToList();
             foreach (var usr in players.Values.Where(x => x != null))
                 if (toInvite.Contains(usr))
@@ -448,7 +448,7 @@ namespace ZkLobbyServer
             foreach (var pl in lastMatchedUsers.Where(x => !x.LastReadyResponse)) RemoveUser(pl.Name, false);
 
             var readyUsers = lastMatchedUsers.Where(x => x.LastReadyResponse).ToList();
-            var realBattles = ProposeBattles(readyUsers);
+            var realBattles = ProposeBattles(readyUsers, true);
 
             var readyAndStarting = readyUsers.Where(x => realBattles.Any(y => y.Players.Contains(x))).ToList();
             var readyAndFailed = readyUsers.Where(x => !realBattles.Any(y => y.Players.Contains(x))).Select(x => x.Name);
@@ -499,7 +499,7 @@ namespace ZkLobbyServer
         }
 
 
-        private static ProposedBattle TryToMakeBattle(PlayerEntry player, IList<PlayerEntry> otherPlayers)
+        private static ProposedBattle TryToMakeBattle(PlayerEntry player, IList<PlayerEntry> otherPlayers, bool ignoreSizeLimit)
         {
             var allPlayers = new List<PlayerEntry>();
             allPlayers.AddRange(otherPlayers);
@@ -511,12 +511,12 @@ namespace ZkLobbyServer
                     .ThenBy(x => x.JoinedTime)
                     .ToList();
 
-            var testedBattles = player.GenerateWantedBattles(allPlayers);
+            var testedBattles = player.GenerateWantedBattles(allPlayers, ignoreSizeLimit);
 
             foreach (var other in playersByElo)
                 foreach (var bat in testedBattles)
                 {
-                    if (bat.CanBeAdded(other, allPlayers)) bat.AddPlayer(other, allPlayers);
+                    if (bat.CanBeAdded(other, allPlayers, ignoreSizeLimit)) bat.AddPlayer(other, allPlayers);
                     if (bat.Players.Count == bat.Size) return bat;
                 }
             return null;
@@ -555,7 +555,7 @@ namespace ZkLobbyServer
                         var testPlayers = players.Values.Where(x => (x != null) && (x.Name != name)).ToList();
                         var testSelf = new PlayerEntry(conus.User, new List<MatchMakerSetup.Queue> { queue }, null);
                         testPlayers.Add(testSelf);
-                        var testBattles = ProposeBattles(testPlayers);
+                        var testBattles = ProposeBattles(testPlayers, false);
                         ret.InstantStartQueues.AddRange(testBattles.Where(x => x.Players.Contains(testSelf)).Select(x => x.QueueType.Name).Distinct().ToList());
                     }
                 }
