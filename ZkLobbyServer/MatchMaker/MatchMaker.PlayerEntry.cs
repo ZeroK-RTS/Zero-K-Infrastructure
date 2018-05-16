@@ -40,14 +40,9 @@ namespace ZkLobbyServer
                 foreach (var qt in QueueTypes)
                 {
                     // variable game size, allow smaller games the longer the wait of longest waiting player
-                    var minSize = qt.MinSize;
-                    if (ignoreSizeLimit)
-                    {
-                        var qtMaxWait = qt.MaxSize > qt.MinSize ? allPlayers.Where(x => x.QueueTypes.Contains(qt)).Max(x => x.WaitRatio) : 0;
-                        minSize = qt.MaxSize - (qt.MaxSize - qt.MinSize) * qtMaxWait;
-                    }
+                    var qtMaxWait = qt.MaxSize > qt.MinSize ? allPlayers.Where(x => x.QueueTypes.Contains(qt)).Max(x => x.WaitRatio) : 0; 
 
-                    for (var i = qt.MaxSize; i >= minSize; i--)
+                    for (var i = qt.MaxSize; i >= ignoreSizeLimit ? qt.MinSize : qt.MaxSize - (qt.MaxSize - qt.MinSize) * qtMaxWait; i--)
                         if (qt.Mode == AutohostMode.GameChickens || i % 2 == 0)
                         {
                             if (Party == null || (qt.Mode == AutohostMode.GameChickens && Party.UserNames.Count<=i) || Party.UserNames.Count == i / 2)

@@ -17,6 +17,7 @@ namespace ZkLobbyServer
             public List<PlayerEntry> Players = new List<PlayerEntry>();
 
             private double widthMultiplier;
+            private bool hasParty;
             public int MaxElo { get; private set; } = int.MinValue;
             public int MinElo { get; private set; } = int.MaxValue;
             public MatchMakerSetup.Queue QueueType { get; private set; }
@@ -51,6 +52,7 @@ namespace ZkLobbyServer
                     MinElo = Math.Min(MinElo, GetPartyMaxElo(player.Party, allPlayers));
                     MaxElo = Math.Max(MaxElo, GetPartyMinElo(player.Party, allPlayers));
 
+                    hasParty = true;
                     //Trace.TraceError("MM: added party {6} MinElo: {0}->{1} ({4}),  MaxElo: {2}->{3} ({5})", minEloOrg, MinElo, maxEloOrg, MaxElo, GetPartyMaxElo(player.Party, allPlayers), GetPartyMinElo(player.Party, allPlayers), player.Name);
 
                 }
@@ -86,10 +88,14 @@ namespace ZkLobbyServer
                 }
 
                 var width = owner.EloWidth * widthMultiplier;
-                
+                if (hasParty)
+                    width = width * 0.7;
 
                 if (other.Party != null)
                 {
+                    if (!hasParty)
+                        width = width * 0.7;
+
                     if (!VerifyPartySizeFits(other.Party))
                     {
                         //Trace.TraceError("MM: cannot add party {0}, party size does not fit", other.Name);
