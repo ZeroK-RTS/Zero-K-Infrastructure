@@ -19,6 +19,7 @@ namespace ZkData
         public double MmWidthGrowth { get; set; } = 240.0;
         public double MmWidthGrowthTime { get; set; } = 120.0;
         public double MmWidthReductionForParties { get; set; } = 0.7;
+        public double MmSizeGrowthTime { get; set; } = 40.0;
 
         public static DynamicConfig Instance;
 
