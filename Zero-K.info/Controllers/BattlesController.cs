@@ -45,6 +45,7 @@ namespace ZeroKWeb.Controllers
             public AgeOption Age { get; set; }
             public YesNoAny Mission { get; set; }
             public YesNoAny Bots { get; set; }
+            public YesNoAny Victory { get; set; }
             public RankSelector Rank { get; set; } = RankSelector.Undefined;
             public int? offset { get; set; }
             public List<BattleQuickInfo> Data;
@@ -84,7 +85,18 @@ namespace ZeroKWeb.Controllers
             //if (user == null && Global.IsAccountAuthorized) user = Global.Account.Name;
             if (model.UserId != null) {
                 int uniqueIds = model.UserId.Distinct().Count();
-                q = q.Where(b => b.SpringBattlePlayers.Where(p => model.UserId.Contains(p.AccountID) && !p.IsSpectator).Count() == uniqueIds);
+                switch (model.Victory)
+                {
+                    case YesNoAny.Any:
+                        q = q.Where(b => b.SpringBattlePlayers.Where(p => model.UserId.Contains(p.AccountID) && !p.IsSpectator).Count() == uniqueIds);
+                        break;
+                    case YesNoAny.Yes:
+                        q = q.Where(b => b.SpringBattlePlayers.Where(p => model.UserId.Contains(p.AccountID) && !p.IsSpectator && p.IsInVictoryTeam).Count() == uniqueIds);
+                        break;
+                    case YesNoAny.No:
+                        q = q.Where(b => b.SpringBattlePlayers.Where(p => model.UserId.Contains(p.AccountID) && !p.IsSpectator && !p.IsInVictoryTeam).Count() == uniqueIds);
+                        break;
+                }
             }
 
             if (model.PlayersFrom.HasValue) q = q.Where(b => b.SpringBattlePlayers.Count(p => !p.IsSpectator) >= model.PlayersFrom);
