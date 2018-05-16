@@ -77,7 +77,7 @@ namespace ZkLobbyServer
                     //Trace.TraceError("MM: cannot add {0}, already added", other.Name);
                     return false;
                 }
-                if (Players.Any(x => x.Party == other.Party)) return true; // always accept same party
+                if (owner.Party !=null && other.Party == owner.Party) return true; // always accept same party
 
                 if (!other.GenerateWantedBattles(allPlayers).Any(y => (y.Size == Size) && (y.QueueType == QueueType)))
                 {

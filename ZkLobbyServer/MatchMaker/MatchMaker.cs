@@ -347,7 +347,7 @@ namespace ZkLobbyServer
         }
 
         public Dictionary<string, int> GetQueueCounts() => queuesCounts;
-
+        
 
         private void OnTick()
         {
@@ -373,13 +373,6 @@ namespace ZkLobbyServer
                     timer.Start();
                 }
             }
-        }
-
-        private int GetEffectiveMinSize(MatchMakerSetup.Queue qt)
-        {
-            int waitSize = qt.MaxSize - (int)((qt.MaxSize - qt.MinSize) * players.Values.Where(x => x != null).Where(x => x.QueueTypes.Contains(qt)).DefaultIfEmpty().Max(x => x.WaitRatio) + 0.001f); //decreases to MinSize once a player has reached maximum wait ratio
-            int partySize = players.Values.Where(x => x != null && x.QueueTypes.Contains(qt) && x.Party != null).GroupBy(x => x.Party).Select(x => x.Count()).Min(); //minimum party size in this queue. make sure parties can find game asap
-            return Math.Min(waitSize, partySize);
         }
 
         private static List<ProposedBattle> ProposeBattles(IEnumerable<PlayerEntry> users)
@@ -429,9 +422,6 @@ namespace ZkLobbyServer
 
         private void ResetAndSendMmInvitations()
         {
-            // variable game size, allow smaller games the longer the wait of longest waiting player
-            possibleQueues.ForEach(x => x.EffectiveMinSize = GetEffectiveMinSize(x));
-
             // generate next battles and send inviatation
             invitationBattles = ProposeBattles(players.Values.Where(x => x != null));
             var toInvite = invitationBattles.SelectMany(x => x.Players).ToList();
