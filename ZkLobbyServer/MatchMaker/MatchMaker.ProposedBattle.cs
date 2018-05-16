@@ -89,12 +89,12 @@ namespace ZkLobbyServer
 
                 var width = owner.EloWidth * widthMultiplier;
                 if (hasParty)
-                    width = width * 0.7;
+                    width = width * DynamicConfig.Instance.MmWidthReductionForParties;
 
                 if (other.Party != null)
                 {
                     if (!hasParty)
-                        width = width * 0.7;
+                        width = width * DynamicConfig.Instance.MmWidthReductionForParties;
 
                     if (!VerifyPartySizeFits(other.Party))
                     {
