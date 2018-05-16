@@ -19,6 +19,7 @@ namespace ZkLobbyServer
             public int MaxConsideredElo => (int)(LobbyUser.EffectiveMmElo + (Math.Max(1500, LobbyUser.RawMmElo) - LobbyUser.EffectiveMmElo) * WaitRatio);
 
             public double WaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / DynamicConfig.Instance.MmWidthGrowthTime));
+            public double SizeWaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / 40.0)); //DynamicConfig.Instance.MmSizeGrowthTime));
 
             public DateTime JoinedTime { get; private set; } = DateTime.UtcNow;
             public User LobbyUser { get; private set; }
@@ -40,7 +41,7 @@ namespace ZkLobbyServer
                 foreach (var qt in QueueTypes)
                 {
                     // variable game size, allow smaller games the longer the wait of longest waiting player
-                    var qtMaxWait = qt.MaxSize > qt.MinSize ? allPlayers.Where(x => x.QueueTypes.Contains(qt)).Max(x => x.WaitRatio) : 0; 
+                    var qtMaxWait = qt.MaxSize > qt.MinSize ? allPlayers.Where(x => x.QueueTypes.Contains(qt)).Max(x => x.SizeWaitRatio) : 0; 
 
                     for (var i = qt.MaxSize; i >= (ignoreSizeLimit ? qt.MinSize : qt.MaxSize - (qt.MaxSize - qt.MinSize) * qtMaxWait); i--)
                         if (qt.Mode == AutohostMode.GameChickens || i % 2 == 0)
