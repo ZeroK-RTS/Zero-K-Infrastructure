@@ -27,9 +27,6 @@ namespace LobbyClient
             public int MinSize { get; set; }
 
             [JsonIgnore]
-            public int EffectiveMinSize { get; set; }
-
-            [JsonIgnore]
             public double EloCutOffExponent { get; set; }
 
             [JsonIgnore]
