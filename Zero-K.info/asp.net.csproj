@@ -1512,7 +1512,9 @@
     <Content Include="Img\eclipselogosmall.xcf" />
     <Content Include="Img\eclipselogowide.xcf" />
     <Content Include="Img\zk_logo.png_org" />
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="GeoLite2-Country.mmdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

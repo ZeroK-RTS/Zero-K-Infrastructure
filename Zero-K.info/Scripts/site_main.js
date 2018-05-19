@@ -157,6 +157,13 @@ function GlobalPageInit(root) {
     var s = root;
     if (s == null) s = $(document);
 
+    // navigation transition
+    $(window).on('scroll', function () {
+        var top = Math.round($(window).scrollTop());
+        var transition = $("#navtransition").offset().top - $("#menu").height();
+        top > transition ? $("#menu").addClass("past-transition") : $("#menu").removeClass("past-transition");
+    });
+
     s.find(".js_tabs").tabs({
         selected: parseInt($.getUrlVars().tab),
         ajaxOptions: {
