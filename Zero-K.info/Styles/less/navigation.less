@@ -1,0 +1,69 @@
+﻿@import "colors.less";
+
+nav {
+    background: @navigation-bg;
+    color: @navigation;
+    text-align: center;
+    padding: 1em;
+
+    div {
+        display: inline-block;
+        position: relative;
+        padding: .5em;
+        border: 1px solid transparent;
+        margin-left: 1em;
+        white-space: nowrap;
+
+        .submenu {
+            display: none;
+            background: @navigation-bg;
+            position: absolute;
+            left: -1px;
+            top: 2.5em;
+            text-align: left;
+            padding: 0;
+            margin: 0;
+            z-index: 10;
+
+            a {
+                display: block;
+                color: @navigation;
+                padding: .5em;
+            }
+
+            a:hover {
+                /*background: @highlight;
+                color: black;*/
+                color: @highlight;
+            }
+        }
+
+        span {
+            display: none;
+        }
+    }
+
+    .menu:hover {
+        background: @navigation-bg;
+        color: @highlight;
+        cursor: pointer;
+    }
+
+    .menu:hover > .submenu {
+        display: block;
+    }
+
+    .donate {
+        cursor: auto;
+
+        a {
+            color: @navigation;
+            padding: .5em;
+        }
+
+        a:hover {
+            background: @navigation-bg;
+            color: @highlight;
+        }
+    }
+}

@@ -2,6 +2,7 @@
 @using ZeroKWeb.Controllers
 @using ZkData
 @model ZeroKWeb.Controllers.ForumController.PostListModel
+
 @{
     var grid = new UniGrid<ForumPost>(Model.Data) { PageSize = GlobalConst.ForumPostsPerPage };
     grid.AddCol("sort", x => Html.DisplayFor(m => x)).SetSort(x => x.ForumPostID).SetWidth("100%");
@@ -10,24 +11,35 @@
         grid.PageNumber = 1 + ForumController.GetPostPage(Model.Thread.ForumPosts.First(x => x.ForumPostID == Model.GoToPost));
     }
 }
+
 <div id="gposts">
-    @if (!Model.Thread.IsLocked && Model.Thread.ForumCategory.ForumMode != ForumMode.Maps && Model.Thread.ForumCategory.ForumMode != ForumMode.Missions && Model.Thread.ForumCategory.ForumMode != ForumMode.SpringBattles && Model.Thread.ForumCategory.ForumMode != ForumMode.Clans && Model.Thread.ForumCategory.ForumMode != ForumMode.Planets)
+    @*@if (!Model.Thread.IsLocked && Model.Thread.ForumCategory.ForumMode != ForumMode.Maps && Model.Thread.ForumCategory.ForumMode != ForumMode.Missions && Model.Thread.ForumCategory.ForumMode != ForumMode.SpringBattles && Model.Thread.ForumCategory.ForumMode != ForumMode.Clans && Model.Thread.ForumCategory.ForumMode != ForumMode.Planets)
     {
         <span class="textbutton" id="@grid.PagerPrefixID">
             @Html.ActionLink("Post comment", "NewPost", new { threadID = Model.ThreadID })
         </span>
-    }
+    }*@
 
 
     @using (Ajax.BeginForm("GetPostList", "Forum", new { threadID = Model.ThreadID }, Global.GetAjaxOptions("gposts")))
     {
-        <span>
+        <span class="border">
             Filter: @Html.TextBoxFor(x => x.Search)&nbsp;&nbsp;
             Player: @Html.TextBoxFor(x => x.User, new { data_autocomplete = Url.Action("Users", "Autocomplete", new { threadID = Model.ThreadID }), data_autocomplete_action = "submit" })&nbsp;
             <input type="submit" value="Search" />
         </span>
-        @GridHelpers.RenderTable(grid, "")
-        ;
+        @GridHelpers.RenderTable(grid, "");
+        foreach (ForumPost p in Model.Data)
+        {
+        <div class="forum-post">
+            <li>@Html.Raw(p.Account.NameDecorated)
+            <li>@Html.Raw(p.Account.AvatarImage)
+            <li>@p.Text
+            <li>@p.Created
+            <li>@p.Upvotes
+            <li>@p.Downvotes
+        </div>
+        }
     }
 
     @if (Model.GoToPost > 0)

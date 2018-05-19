@@ -2,6 +2,8 @@
 
 /*imports*/
 @import "colors.less";
+@import "navigation.less";
+@import "forum.less";
 @import "modules/all_modules.less";
 
 /* fixes some of the modern browser buggery */
@@ -32,4 +34,55 @@ html {
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+
+.hide {
+    display: none;
+}
+
+.avatar {
+    width: 64px;
+    height: 64px;
+}
+
+.username-container {
+    display: inline-block;
+    font-weight: bold;
+
+    div {
+        display: inline-block;
+    }
+
+    .username-extra {
+        display: none;
+        position: absolute;
+    }
+}
+
+.username-container:hover {
+    .username-extra {
+        display: inline-block;
+    }
+}
+
+.flag {
+    display: inline-block;
+    height: 12px;
+    width: 16px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.icon16 {
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+}
+
+a {
+    color: @highlight;
+    text-decoration: none;
+}
+a:hover {
+    color: white;
 }

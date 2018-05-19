@@ -1432,14 +1432,16 @@
     <Content Include="OpenSans-Semibold.eot" />
     <Content Include="OpenSans-Regular.eot" />
     <Content Include="OpenSans-Regular.ttf" />
-    <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Chart.min.js" />
     <Content Include="Scripts\Chart.Zoom.min.js" />
     <Content Include="Scripts\countDown.js" />
     <Content Include="Scripts\GoogleAnalytics.js" />
     <Content Include="Scripts\grid.js" />
-    <Content Include="Scripts\jquery-2.1.4.js" />
-    <Content Include="Scripts\jquery-2.1.4.min.js" />
+    <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.3.1.js" />
+    <Content Include="Scripts\jquery-3.3.1.min.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.ba-bbq.js" />
@@ -1516,7 +1518,8 @@
     </Content>
     <Content Include="Img\factions\ships.xcf" />
     <None Include="Properties\PublishProfiles\Profile1.pubxml" />
-    <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.3.1.min.map" />
     <None Include="SM.eot" />
     <None Include="SM.ttf" />
     <Content Include="Views\Planetwars\Index.cshtml" />
@@ -1627,6 +1630,9 @@
     <Content Include="Views\Shared\Modules\_wiki.cshtml" />
     <Content Include="Views\Shared\Modules\_rankings.cshtml" />
     <Content Include="Styles\less\modules\admin.less" />
+    <Content Include="Styles\less\forum.less" />
+    <Content Include="Styles\less\modules\userdetail.less" />
+    <Content Include="Styles\less\navigation.less" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
@@ -1752,7 +1758,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target> -->

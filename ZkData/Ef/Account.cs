@@ -444,7 +444,7 @@ namespace ZkData
 
         public double GetLevelUpRatio()
         {
-            return (Xp - GetXpForLevel(Level)) / (double)(GetXpForLevel(Level + 1) - GetXpForLevel(Level));
+            return Math.Max((Xp - GetXpForLevel(Level)) / (double)(GetXpForLevel(Level + 1) - GetXpForLevel(Level)), 0);
         }
 
         public bool HasClanRight(Func<RoleType, bool> test)

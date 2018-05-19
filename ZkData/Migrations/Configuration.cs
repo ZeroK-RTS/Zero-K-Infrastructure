@@ -131,6 +131,33 @@ namespace ZkData.Migrations
             },
             new Account
             {
+                Name = "player1",
+                NewPasswordPlain = "player1",
+                Country = "??",
+                Rank = 1,
+                Level = 5,
+                Xp = 100
+            },
+            new Account
+            {
+                Name = "player2",
+                NewPasswordPlain = "player2",
+                Country = "??",
+                Rank = 2,
+                Level = 10,
+                Xp = 1000
+            },
+            new Account
+            {
+                Name = "pro",
+                NewPasswordPlain = "pro",
+                Country = "SE",
+                Rank = 7,
+                Level = 135,
+                Xp = 100000
+            },
+            new Account
+            {
                 Name = "test",
                 NewPasswordPlain = "test",
                 Country = "us",
