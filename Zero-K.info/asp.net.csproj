@@ -303,6 +303,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ContentService.svc" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\images\ui-icons_444444_256x240.png" />
     <Content Include="Content\images\ui-icons_555555_256x240.png" />
     <Content Include="Content\images\ui-icons_777620_256x240.png" />
@@ -1279,7 +1281,7 @@
     <Content Include="Img\star_40_bronze.png" />
     <Content Include="Img\star_40_gold.png" />
     <Content Include="Img\star_40_silver.png" />
-    <Content Include="Img\steam_20p.png" />
+    <Content Include="Img\steam-icon.png" />
     <Content Include="Img\steam_logo.png" />
     <Content Include="Img\sticky.png" />
     <Content Include="Img\stickylock.png" />
@@ -1428,15 +1430,21 @@
     <Content Include="MissionService.svc" />
     <Content Include="ResourceDetail.aspx" />
     <Content Include="Scripts\browser-css.js" />
-    <Content Include="OpenSans-Semibold.ttf" />
-    <Content Include="OpenSans-Semibold.eot" />
-    <Content Include="OpenSans-Regular.eot" />
-    <Content Include="OpenSans-Regular.ttf" />
+    <Content Include="Styles\fonts\OpenSans-Semibold.ttf" />
+    <Content Include="Styles\fonts\OpenSans-Semibold.eot" />
+    <Content Include="Styles\fonts\OpenSans-Regular.eot" />
+    <Content Include="Styles\fonts\OpenSans-Regular.ttf" />
     <Content Include="Scripts\Chart.min.js" />
     <Content Include="Scripts\Chart.Zoom.min.js" />
     <Content Include="Scripts\countDown.js" />
     <Content Include="Scripts\GoogleAnalytics.js" />
     <Content Include="Scripts\grid.js" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -1522,8 +1530,8 @@
     <None Include="Properties\PublishProfiles\Profile1.pubxml" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
-    <None Include="SM.eot" />
-    <None Include="SM.ttf" />
+    <None Include="Styles\fonts\SM.eot" />
+    <None Include="Styles\fonts\SM.ttf" />
     <Content Include="Views\Planetwars\Index.cshtml" />
     <Content Include="Views\Planetwars\Galaxy.cshtml" />
     <Content Include="Web.config">
@@ -1635,6 +1643,7 @@
     <Content Include="Styles\less\forum.less" />
     <Content Include="Styles\less\modules\userdetail.less" />
     <Content Include="Styles\less\navigation.less" />
+    <Content Include="Styles\less\maps.less" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
@@ -1671,8 +1680,6 @@
     <Content Include="Views\Clans\Create.cshtml" />
     <Content Include="Views\Clans\JoinClan.cshtml" />
     <Content Include="Views\Planetwars\Planet.cshtml" />
-    <Content Include="Views\Shared\SiteSearch.cshtml" />
-    <Content Include="Views\Shared\TopMenu.cshtml" />
     <Content Include="Views\Shared\PlanetIcon.cshtml" />
     <Content Include="Views\Shared\InfluenceListShort.cshtml" />
     <Content Include="Views\Planetwars\Events.cshtml" />
@@ -1717,6 +1724,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Img\avatars\" />
+    <Folder Include="Img\awards\" />
     <Folder Include="Img\news\" />
     <Folder Include="Resources\" />
     <Folder Include="Views\Autocomplete\" />

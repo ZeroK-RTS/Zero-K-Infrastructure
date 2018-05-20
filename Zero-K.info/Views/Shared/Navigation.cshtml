@@ -1,17 +1,70 @@
 ﻿@using ZeroKWeb
 @using ZkData
 <nav id="menu">
-    <div class="menu">
-        Home
-        <div class="submenu">
-            <a href="@Url.Action("Index", "Home")">Home</a>
-            <a href="@Url.Action("UnlockList", "My")">Unlocks</a>
-            <a href="@Url.Action("Commanders", "My")">Commanders</a>
-            <a href="@Url.Action("UserVotes", "Poll", new { id = Global.AccountID })">Polls</a>
-        </div>
+    <div class="nav-logo">
+        <a href="/">
+            <img src="/img/zk_logo.png" alt="Zero K" />
+        </a>
+    </div>
+    <div class="login menu">
+        @if (!Global.IsAccountAuthorized)
+        {
+            <i class="fa fa-lock"></i><div class="nav-text">Login</div>
+            <div class="submenu">
+                <form id="login" method="post" action="@Url.Action("Logon", "Home")">
+                    <div class="login-option">
+                        <div class="steam-login" nicetitle="Login using Steam (after creating in-game account)" onclick="$('#login').submit()">
+                            <img src="~/img/steam-icon.png" /> Login with STEAM
+                        </div>
+                    </div>
+                    <div class="login-option">
+                        <label for="username">Username:</label><input id="username" type="text" name="username" />
+                        <label for="password">Password:</label><input id="password" type="password" name="password" />
+                        <button type="submit">Login</button>
+                    </div>
+                    <input type="hidden" name="referer" value="@(Request["ReturnUrl"] ?? Request.Url?.ToString())" />
+                </form>
+            </div>
+
+        }
+        else
+        {
+            @HtmlHelperExtensions.PrintAccount(Global.Account)
+
+            <div class="submenu">
+                @if (Global.Account.HasKudos)
+                {
+                    <span nicetitle="Metagame currency that you can get by donating to Zero-K. You can use it to get access to unique commander decorations"> | Kudos: @(Global.Account.KudosGained - Global.Account.KudosSpent)</span>
+                }
+
+                @if (MiscVar.PlanetWarsMode != PlanetWarsModes.AllOffline)
+                {
+                    <span> | @Html.PrintMetal(Global.Account) | @Html.PrintDropships(Global.Account) | @Html.PrintBombers(Global.Account) | @Html.PrintWarps(Global.Account)</span>
+                }
+
+                @if (Global.IsLobbyAccess)
+                {
+                    <a href="@Url.Action("Logout", "Home")@("@logout")" nicetitle="Logout">
+                        @*<img src="~/Img/logout.png" style="width:20px" />*@
+                        Logout
+                    </a>
+                }
+                else
+                {
+                    <a href="@Url.Action("Logout", "Home", new { referer = Request.Url })" nicetitle="Logout">
+                        @*<img src="~/Img/logout.png" style="width:20px" />*@
+                        Logout
+                    </a>
+                }
+                <a href="@Url.Action("Index", "Home")">Home</a>
+                <a href="@Url.Action("UnlockList", "My")">Unlocks</a>
+                <a href="@Url.Action("Commanders", "My")">Commanders</a>
+                <a href="@Url.Action("UserVotes", "Poll", new { id = Global.AccountID })">Polls</a>
+            </div>
+        }
     </div>
     <div class="menu">
-        Play
+        <i class="fa fa-play"></i><div class="nav-text">Play</div>
         <div class="submenu">
             <a href="/Wiki/Download">Download Zero-K<span>Download the game, it's free! :)</span></a>
             <!--<a href="Url.Action("Index", "Missions")">Missions<span>Single player missions</span></a>-->
@@ -21,7 +74,7 @@
         </div>
     </div>
     <div class="menu">
-        Media
+        <i class="fa fa-video-camera"></i><div class="nav-text">Media</div>
         <div class="submenu">
             <a href="/Wiki/Media#Screenshots">Screenshots</a>
             <a href="/Wiki/Media#Videos">Videos</a>
@@ -29,7 +82,7 @@
         </div>
     </div>
     <div class="menu">
-        Wiki
+        <i class="fa fa-info-circle"></i><div class="nav-text">Wiki</div>
         <div class="submenu">
             <a href="/mediawiki/index.php?title=Manual">Index</a>
             <a href="/mediawiki/index.php?title=Newbie_Guide">Newbie guide<span>Don't know where to begin? Click here.</span></a>
@@ -40,7 +93,7 @@
         </div>
     </div>
     <div class="menu">
-        Planetwars
+        <i class="fa fa-crosshairs"></i><div class="nav-text">PlanetWars</div>
         <div class="submenu">
             <a href="@Url.Action("Index", "Planetwars")">PlanetWars<span>Multiplayer online campaign</span></a>
             <a href="@Url.Action("Ladder", "Planetwars")">Ladder</a>
@@ -48,7 +101,7 @@
         </div>
     </div>
     <div class="menu">
-        Community
+        <i class="fa fa-comment"></i><div class="nav-text">Community</div>
         <div class="submenu">
             <a href="@Url.Action("Index", "Forum")">Forum<span>Discuss, ask for help, have fun!</span></a>
             <a href="@Url.Action("Index", "Clans")">Clans<span>Play with your friends or make friends while playing :)</span></a>
@@ -62,47 +115,17 @@
         </div>
     </div>
     <div class="donate">
-        <a href="@Url.Action("Index", "Contributions")">Donate<span>Help cover the server costs!</span></a>
+        <a href="@Url.Action("Index", "Contributions")">
+            <i class="fa fa-dollar"></i><div class="nav-text">Donate</div>
+            <span>Help cover the server costs!</span>
+        </a>
     </div>
     <div class="search">
-        @{ Html.RenderPartial("SiteSearch"); }
-    </div>
-    <div class="login">
-        @if (!Global.IsAccountAuthorized)
-        {
-            <form id="login" method="post" action="@Url.Action("Logon", "Home")">
-                <img src="/img/sits_small.png"
-                     onclick="$('#login').submit();"
-                     nicetitle="Login using Steam (must create account in-game first)" />
-                Username: <input type="text" name="login" />
-                Password: <input type="password" name="password" />
-                <input type="submit" value="Login" />
-                <input type="hidden" name="referer" value="@(Request["ReturnUrl"] ?? Request.Url?.ToString())" />
-            </form>
-        }
-        else
-        {
-            @HtmlHelperExtensions.PrintAccount(Global.Account)
-            
-            if (Global.Account.HasKudos)
-            {
-                <span nicetitle="Metagame currency that you can get by donating to Zero-K. You can use it to get access to unique commander decorations"> | Kudos: @(Global.Account.KudosGained - Global.Account.KudosSpent)</span>
-            }
-
-            if (MiscVar.PlanetWarsMode != PlanetWarsModes.AllOffline)
-            {
-                <span> | @Html.PrintMetal(Global.Account) | @Html.PrintDropships(Global.Account) | @Html.PrintBombers(Global.Account) | @Html.PrintWarps(Global.Account)</span>
-            }
-
-            if (Global.IsLobbyAccess)
-            {
-                <a href="@Url.Action("Logout", "Home")@("@logout")" nicetitle="Logout"><img src="~/Img/logout.png" style="width:20px" /></a>
-            }
-            else
-            {
-                <a href="@Url.Action("Logout", "Home", new { referer = Request.Url })" nicetitle="Logout"><img src="~/Img/logout.png" style="width:20px" /></a>
-            }
-
-        }
+        <form action="@Url.Action("SubmitSearch","Forum")" method="POST">
+            <input type="text" name="keywords" id="keywords" data-autocomplete="@Url.Action("Index", "Autocomplete")" data-autocomplete-action="goto" />
+            <button type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+        </form>
     </div>
 </nav>

@@ -1,26 +1,32 @@
 @font-face {
     font-family: sm;
-    src: url('/SM.eot'); /* IE9 Compat Modes */
-    src: url('/SM.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-    url('/SM.ttf') format('truetype'); /* Safari, Android, iOS */
+    src: url('/Styles/fonts/SM.eot'); /* IE9 Compat Modes */
+    src: url('/Styles/fonts/SM.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('/Styles/fonts/SM.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
 
 @font-face {
     font-family: os;
-    src: url('/OpenSans-Regular.eot'); /* IE9 Compat Modes */
-    src: url('/OpenSans-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-    url('/OpenSans-Regular.ttf') format('truetype'); /* Safari, Android, iOS */
+    src: url('/Styles/fonts/OpenSans-Regular.eot'); /* IE9 Compat Modes */
+    src: url('/Styles/fonts/OpenSans-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('/Styles/fonts/OpenSans-Regular.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
 @font-face {
     font-family: 'Xolonium';
 	font-weight: normal;
-    src: url('/Styles/fonts/Xolonium-Regular.eot?') format('eot'), url('/Styles/fonts/Xolonium-Regular.woff') format('woff'), url('/Styles/fonts/Xolonium-Regular.otf') format('opentype'), url('/Styles/fonts/Xolonium-Regular.ttf') format('truetype');
+    src: url('/Styles/fonts/Xolonium-Regular.eot?') format('eot'), 
+        url('/Styles/fonts/Xolonium-Regular.woff') format('woff'), 
+        url('/Styles/fonts/Xolonium-Regular.otf') format('opentype'), 
+        url('/Styles/fonts/Xolonium-Regular.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'Xolonium';
 	font-weight: bold;
-    src: url('/Styles/fonts/Xolonium-Bold.eot?') format('eot'), url('/Styles/fonts/Xolonium-Bold.woff') format('woff'), url('/Styles/fonts/Xolonium-Bold.otf') format('opentype'), url('/Styles/fonts/Xolonium-Bold.ttf') format('truetype');
+    src: url('/Styles/fonts/Xolonium-Bold.eot?') format('eot'), 
+        url('/Styles/fonts/Xolonium-Bold.woff') format('woff'), 
+        url('/Styles/fonts/Xolonium-Bold.otf') format('opentype'), 
+        url('/Styles/fonts/Xolonium-Bold.ttf') format('truetype');
 }

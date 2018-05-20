@@ -106,11 +106,12 @@ div#busy
 	background: #190c02; /*bgcolor of load.gif*/
 	position: fixed;
 	display: none;
-	top: 40%;
+	/*top: 40%;
 	left: 40%;
 	right: 40%;
 	padding: 20px;
-	text-align: center;
+	text-align: center;*/
+    bottom: 0;
 	font-weight: bold;
 	z-index: 100;
 }

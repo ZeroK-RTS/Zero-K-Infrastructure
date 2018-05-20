@@ -6,6 +6,27 @@ nav {
     text-align: center;
     padding: 1em;
 
+    .nav-logo {
+        padding: 0;
+        border: 0;
+        margin: 0;
+
+        img {
+            max-height: 3em;
+            margin-right: 1em;
+        }
+    }
+
+    .menu:hover {
+        background: @navigation-bg;
+        color: @highlight;
+        cursor: pointer;
+    }
+
+    .menu:hover > .submenu {
+        display: block;
+    }
+
     div {
         display: inline-block;
         position: relative;
@@ -21,7 +42,7 @@ nav {
             left: -1px;
             top: 2.5em;
             text-align: left;
-            padding: 0;
+            padding: .5em;
             margin: 0;
             z-index: 10;
 
@@ -35,6 +56,10 @@ nav {
                 /*background: @highlight;
                 color: black;*/
                 color: @highlight;
+
+                span {
+                    display: block;
+                }
             }
         }
 
@@ -43,18 +68,21 @@ nav {
         }
     }
 
-    .menu:hover {
-        background: @navigation-bg;
-        color: @highlight;
-        cursor: pointer;
-    }
-
-    .menu:hover > .submenu {
-        display: block;
+    .nav-text {
+        padding: 0;
+        border: 0;
+        margin: 0;
+        margin-left: 4px;
     }
 
     .donate {
+        display: inline-block;
         cursor: auto;
+
+        span {
+            display: none;
+            position: absolute;
+        }
 
         a {
             color: @navigation;
@@ -64,12 +92,132 @@ nav {
         a:hover {
             background: @navigation-bg;
             color: @highlight;
+
+            span {
+                display: block;
+            }
+        }
+    }
+
+    .login {
+        margin-left: 0;
+        cursor: auto;
+
+        div {
+            margin-left: 0;
+        }
+
+        img {
+            height: 2em;
+        }
+
+        .nav-text {
+            margin-left: 4px;
+        }
+
+        .submenu {
+            width: 180px;
+            left: 0;
+            padding: 1em;
+
+            .login-option {
+                display: block;
+                color: @navigation;
+
+                .steam-login:hover {
+                    background: @highlight;
+                }
+
+                input {
+                    display: block;
+                    width: 100%;
+                    margin-bottom: .5em;
+                }
+
+                button {
+                    display: block;
+                    background: none;
+                    color: @navigation;
+                    width: 100%;
+                }
+
+                button:hover {
+                    background: @highlight;
+                }
+            }
+        }
+    }
+
+    .search {
+        cursor: auto;
+
+        button {
+            background: none;
+            color: @navigation;
+        }
+
+        button:hover {
+            background: @highlight;
         }
     }
 }
 
-.past-transition {
+nav.nav-affixed {
     position: fixed;
     top: 0;
+    width: 100%;
+    padding: 0;
+    margin: 0;
     z-index: 1000;
+    animation: anim 420ms ease;
+
+    @keyframes anim {
+        0% {
+            padding: 1em;
+        }
+
+        100% {
+            padding: 0;
+        }
+    }
+}
+
+div.nav-affixed {
+    padding: 0;
+
+    .submenu {
+        top: 1.5em;
+    }
+
+    .username-container + .submenu {
+        top: 2em;
+    }
+
+    animation: anim 420ms ease;
+
+    @keyframes anim {
+        0% {
+            padding: .5em;
+        }
+
+        100% {
+            padding: 0;
+        }
+    }
+}
+
+@media only screen and (max-width: 1000px) {
+    .nav-text {
+        width: 0;
+        /*opacity: 0;*/
+        overflow: hidden;
+        animation: anim 3000ms ease;
+
+        @keyframes anim {
+            to {
+                width: 0;
+                overflow: hidden;
+            }
+        }
+    }
 }

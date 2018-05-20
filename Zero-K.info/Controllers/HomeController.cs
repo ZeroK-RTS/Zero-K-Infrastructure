@@ -121,30 +121,32 @@ namespace ZeroKWeb.Controllers
         /// <summary>
         /// Logs in to website via Steam or standard credentials
         /// </summary>
-        /// <param name="login">Standard ZK credentials username</param>
+        /// <param name="username">Standard ZK credentials username</param>
         /// <param name="password">Standard ZK credentials password</param>
         /// <param name="referer">Where to redirect to after login</param>
         /// <param name="zklogin">Steam Login</param>
         /// <returns></returns>
         [AcceptVerbs(HttpVerbs.Post | HttpVerbs.Get)]
-        public ActionResult Logon(string login, string password, string referer, string zklogin)
+        public ActionResult Logon(string username, string password, string referer)
 		{
-		    if (!Global.Server.LoginChecker.VerifyIp(Request.UserHostAddress)) return Content("Too many login failures, access blocked");
+            // block excessive login attempts
+		    if (!Global.Server.LoginChecker.VerifyIp(Request.UserHostAddress))
+                return Content("Too many login failures, access blocked");
 
-		    var openid = new OpenIdRelyingParty();
+            // return from steam openid
+            var openid = new OpenIdRelyingParty();
             IAuthenticationResponse response = openid.GetResponse();
-
-		    if (response != null) // return from steam openid 
+            if (response != null)
 		        return ProcessSteamOpenIDResponse(response);
-
-		    if (string.IsNullOrEmpty(zklogin)) // steam login request
-		        return RedirectToSteamOpenID(login, referer, openid);
-
+            
+            // initiate steam login request if no password provided
+            if (string.IsNullOrEmpty(password)) 
+		        return RedirectToSteamOpenID(username, referer, openid);
 
 		    // standard login
             var db = new ZkDataContext();
-		    var loginUpper = login.ToUpper();
-            var acc = db.Accounts.FirstOrDefault(x => x.Name == login) ?? db.Accounts.FirstOrDefault(x=>x.Name.ToUpper() == loginUpper);
+		    var loginUpper = username.ToUpper();
+            var acc = db.Accounts.FirstOrDefault(x => x.Name == username) ?? db.Accounts.FirstOrDefault(x=>x.Name.ToUpper() == loginUpper);
             if (acc == null) return Content("Invalid login name");
             var hashed = Utils.HashLobbyPassword(password);
             
@@ -157,7 +159,7 @@ namespace ZeroKWeb.Controllers
 		    }
 		    else
 		    {
-		        Trace.TraceWarning("Invalid login attempt for {0}", login);
+		        Trace.TraceWarning("Invalid login attempt for {0}", username);
 		        Global.Server.LoginChecker.LogIpFailure(Request.UserHostAddress);
 		        return Content("Invalid password");
 		    }

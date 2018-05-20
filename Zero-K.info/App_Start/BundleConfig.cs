@@ -22,7 +22,8 @@ public class BundleConfig
             "~/Scripts/grid.js",
             "~/Scripts/site_main.js",
             "~/Scripts/userSettings.js",
-            "~/Scripts/GoogleAnalytics.js"));
+            "~/Scripts/GoogleAnalytics.js"
+            ));
 
         bundles.Add(new StyleBundle("~/bundles/maincss").Include(
             "~/Styles/fonts.css",
@@ -35,7 +36,10 @@ public class BundleConfig
             "~/Styles/style.css",
             "~/Styles/jquery.qtip.min.css",
             "~/Styles/dark-hive/jquery-ui.css",
-            "~/Styles/nicetitle.css"));
+            "~/Styles/nicetitle.css",
+            "~/Content/font-awesome.min.css",
+            "~/Content/jquery-ui.css"
+            ));
 
         
     }

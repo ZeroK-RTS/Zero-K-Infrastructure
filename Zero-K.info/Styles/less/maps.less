@@ -1,0 +1,22 @@
+﻿@import "colors.less";
+
+#mapfilters {
+    background: @map-bg;
+    padding: 1em;
+
+    input {
+    }
+
+    select {
+        min-width: 120px;
+        border: 1px solid @highlight;
+        border-radius: .5em;
+        /*-moz-appearance: none;
+        appearance: none;*/
+        /*background: url('/img/sort_down_green.png') no-repeat right;*/
+        option:hover {
+            background-color: @highlight;
+            color: black;
+        }
+    }
+}
