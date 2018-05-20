@@ -19,12 +19,14 @@
         <tr>
         </tr>
         <tr>
-            <td colspan="4">  
-            Age: @Html.EnumDropDownListFor(x => x.Age)
-            Mission: @Html.EnumDropDownListFor(x => x.Mission)
-            Bots: @Html.EnumDropDownListFor(x => x.Bots)
-            Rank: @Html.EnumDropDownListFor(x => x.Rank)
-            <input name="sa" value="Search" alt="Search" type="image" src="/img/search_img.png" style="border: none; vertical-align: middle;" /></td>
+            <td colspan="4">
+                Age: @Html.EnumDropDownListFor(x => x.Age)
+                Mission: @Html.EnumDropDownListFor(x => x.Mission)
+                Bots: @Html.EnumDropDownListFor(x => x.Bots)
+                Rank: @Html.EnumDropDownListFor(x => x.Rank)
+                Victory: @Html.EnumDropDownListFor(x => x.Victory);
+                <input name="sa" value="Search" alt="Search" type="image" src="/img/search_img.png" style="border: none; vertical-align: middle;" />
+            </td>
         </tr>
     </table>
     @if (Model.UserId != null) { Html.Raw(string.Concat(Model.UserId.Select(x => Html.Hidden("UserId", x)).ToList())); }

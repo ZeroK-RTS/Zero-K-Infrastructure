@@ -17,6 +17,7 @@ namespace ZkLobbyServer
             public List<PlayerEntry> Players = new List<PlayerEntry>();
 
             private double widthMultiplier;
+            private bool hasParty;
             public int MaxElo { get; private set; } = int.MinValue;
             public int MinElo { get; private set; } = int.MaxValue;
             public MatchMakerSetup.Queue QueueType { get; private set; }
@@ -51,6 +52,7 @@ namespace ZkLobbyServer
                     MinElo = Math.Min(MinElo, GetPartyMaxElo(player.Party, allPlayers));
                     MaxElo = Math.Max(MaxElo, GetPartyMinElo(player.Party, allPlayers));
 
+                    hasParty = true;
                     //Trace.TraceError("MM: added party {6} MinElo: {0}->{1} ({4}),  MaxElo: {2}->{3} ({5})", minEloOrg, MinElo, maxEloOrg, MaxElo, GetPartyMaxElo(player.Party, allPlayers), GetPartyMinElo(player.Party, allPlayers), player.Name);
 
                 }
@@ -68,8 +70,7 @@ namespace ZkLobbyServer
 
             }
 
-            
-            public bool CanBeAdded(PlayerEntry other, List<PlayerEntry> allPlayers)
+            public bool CanBeAdded(PlayerEntry other, List<PlayerEntry> allPlayers, bool ignoreSizeLimit)
             {
                 //Trace.TraceError("MM: proposed battle {0} checking {1}", string.Join(", ", Players.Select(x => x.Name)), other.Name);
 
@@ -80,17 +81,21 @@ namespace ZkLobbyServer
                 }
                 if (owner.Party !=null && other.Party == owner.Party) return true; // always accept same party
 
-                if (!other.GenerateWantedBattles(allPlayers).Any(y => (y.Size == Size) && (y.QueueType == QueueType)))
+                if (!other.GenerateWantedBattles(allPlayers, ignoreSizeLimit).Any(y => (y.Size == Size) && (y.QueueType == QueueType)))
                 {
                     //Trace.TraceError("MM: cannot add {0}, does not want same game type", other.Name);
                     return false;
                 }
 
                 var width = owner.EloWidth * widthMultiplier;
-                
+                if (hasParty)
+                    width = width * DynamicConfig.Instance.MmWidthReductionForParties;
 
                 if (other.Party != null)
                 {
+                    if (!hasParty)
+                        width = width * DynamicConfig.Instance.MmWidthReductionForParties;
+
                     if (!VerifyPartySizeFits(other.Party))
                     {
                         //Trace.TraceError("MM: cannot add party {0}, party size does not fit", other.Name);
