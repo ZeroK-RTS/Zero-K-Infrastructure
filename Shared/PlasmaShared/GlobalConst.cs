@@ -230,8 +230,6 @@ namespace ZkData
 
         public const int WikiEditLevel = 20;
 
-        public const int ProcessTimeLoggingIntervalSeconds = 300;
-        public const int ProcessTimeMinDelayMilliseconds = 1000;
         public const int TcpLingerStateSeconds = 5;
         public const bool TcpLingerStateEnabled = true;
 
