@@ -141,7 +141,7 @@
                         @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")
                         if ((Global.IsModerator) && u.EloChange.HasValue)
                         {
-                            <span class="admin">
+                            <span class="admin" style="margin:0px">
                             Rank: @u.EloChange.Value.ToString("F1")
                             </span>
                         }
