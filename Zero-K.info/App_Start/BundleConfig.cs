@@ -37,8 +37,8 @@ public class BundleConfig
             "~/Styles/jquery.qtip.min.css",
             "~/Styles/dark-hive/jquery-ui.css",
             "~/Styles/nicetitle.css",
-            "~/Content/font-awesome.min.css",
-            "~/Content/jquery-ui.css"
+            "~/Content/font-awesome.min.css"
+            //"~/Content/jquery-ui.css"
             ));
 
         

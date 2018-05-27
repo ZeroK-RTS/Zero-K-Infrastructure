@@ -3,50 +3,76 @@
 @using ZkData
 @model ZeroKWeb.Controllers.ForumController.PostListModel
 
-@{
-    var grid = new UniGrid<ForumPost>(Model.Data) { PageSize = GlobalConst.ForumPostsPerPage };
-    grid.AddCol("sort", x => Html.DisplayFor(m => x)).SetSort(x => x.ForumPostID).SetWidth("100%");
-    if (Model.GoToPost != 0)
-    {
-        grid.PageNumber = 1 + ForumController.GetPostPage(Model.Thread.ForumPosts.First(x => x.ForumPostID == Model.GoToPost));
+<div id="gposts" class="postlist">
+    @{
+        //var grid = new UniGrid<ForumPost>(Model.Data) { PageSize = GlobalConst.ForumPostsPerPage };
+        //grid.AddCol("sort", x => Html.DisplayFor(m => x)).SetSort(x => x.ForumPostID).SetWidth("100%");
+        //if (Model.GoToPost != 0)
+        //{
+        //    grid.PageNumber = 1 + ForumController.GetPostPage(Model.Thread.ForumPosts.First(x => x.ForumPostID == Model.GoToPost));
+        //}
     }
-}
-
-<div id="gposts">
-    @*@if (!Model.Thread.IsLocked && Model.Thread.ForumCategory.ForumMode != ForumMode.Maps && Model.Thread.ForumCategory.ForumMode != ForumMode.Missions && Model.Thread.ForumCategory.ForumMode != ForumMode.SpringBattles && Model.Thread.ForumCategory.ForumMode != ForumMode.Clans && Model.Thread.ForumCategory.ForumMode != ForumMode.Planets)
-    {
-        <span class="textbutton" id="@grid.PagerPrefixID">
-            @Html.ActionLink("Post comment", "NewPost", new { threadID = Model.ThreadID })
-        </span>
-    }*@
-
 
     @using (Ajax.BeginForm("GetPostList", "Forum", new { threadID = Model.ThreadID }, Global.GetAjaxOptions("gposts")))
     {
-        <span class="border">
-            Filter: @Html.TextBoxFor(x => x.Search)&nbsp;&nbsp;
-            Player: @Html.TextBoxFor(x => x.User, new { data_autocomplete = Url.Action("Users", "Autocomplete", new { threadID = Model.ThreadID }), data_autocomplete_action = "submit" })&nbsp;
-            <input type="submit" value="Search" />
-        </span>
-        @GridHelpers.RenderTable(grid, "");
+        <div class="filter-posts">
+            <div class="inline">
+                <label for="Search">Search posts for:</label>
+                <input type="text" id="Search" name="Search" />
+            </div>
+            <div class="inline">
+                <label for="User">Posts from specific User:</label>
+                <input type="text" id="User" name="User" class="ui-autocomplete-input" 
+                       autocomplete="off" data-autocomplete-action="submit" data-autocomplete="@Url.Action("Users", "Autocomplete", new { threadID = Model.ThreadID })" />
+            </div>
+            <div class="inline">
+                <input type="submit" value="Search" />
+            </div>
+        </div>
+
+        @*@GridHelpers.RenderTable(grid, "");*@
+
         foreach (ForumPost p in Model.Data)
         {
-        <div class="forum-post">
-            <li>@Html.Raw(p.Account.NameDecorated)
-            <li>@Html.Raw(p.Account.AvatarImage)
-            <li>@p.Text
-            <li>@p.Created
-            <li>@p.Upvotes
-            <li>@p.Downvotes
-        </div>
+            <div id="post@(p.ForumPostID)" class="forum-post">
+                <div class="header">
+                    @HtmlHelperExtensions.PrintAccount(p.Account)
+                    <div class="time" title="@p.Created">@p.Created.ToAgoString()</div>
+                    <div class="edit">
+                        @if (p.CanEdit(Global.Account))
+                        {
+                            <a title="Edit this post" href="@Url.Action("NewPost", "Forum", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })"><i class="fa fa-edit"></i></a>
+                        }
+                        @if (p.ForumPostEdits.Any())
+                        {
+                            <a title="View post history" href="@Url.Action("Index", "PostHistory", new { id = p.ForumPostID })"><i class="fa fa-history"></i></a>
+                        }
+                        @if (Global.IsModerator)
+                        {
+                            <a title="Delete this post" href="@Url.Action("DeletePostPrompt", "Forum", new { postID = p.ForumPostID })"><i class="fa fa-remove"></i></a>
+                        }
+                        <a title="Link to this post" 
+                           href="@(Url.Action("Post", "Forum", new { id = p.ForumPostID }, 
+                                 Request?.Url?.Scheme ?? "http") + "#" + p.ForumPostID)"><i class="fa fa-link"></i></a>
+                    </div>
+                    <div class="votes">
+                        <div class="upvote">+@p.Upvotes</div>
+                        <div class="downvote">-@p.Downvotes</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    @* TODO: bbcode parsing *@
+                    @p.Text
+                </div>
+            </div>
         }
     }
 
     @if (Model.GoToPost > 0)
     {
         <script language="javascript" type="text/javascript">
-            $(document).ready(function() {
-                document.getElementById("post@(Model.GoToPost)").scrollIntoView();
+            $(function() {
+                $("#post@(Model.GoToPost)").scrollIntoView();
             });
         </script>
     }

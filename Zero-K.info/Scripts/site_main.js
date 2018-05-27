@@ -158,12 +158,13 @@ function GlobalPageInit(root) {
     if (s == null) s = $(document);
 
     // navigation transitions
+    var transition;
     $(window).on('scroll', function () {
         // get position of top of viewport
         var top = Math.round($(window).scrollTop());
 
         // get position of transition point
-        var transition = $("#navtransition").offset().top - $("#menu").height();
+        if (!transition) transition = $("#navtransition").offset().top - $("#menu").height();
 
         console.log(top, transition);
 
@@ -171,31 +172,12 @@ function GlobalPageInit(root) {
             // affix nav to top of screen
             $("#menu").addClass("nav-affixed");
             $("#menu > div").addClass("nav-affixed");
-            $("#menu").removeClass("nav-static");
-            $("#menu > div").removeClass("nav-static");
         } else {
             // reset nav back to static position
             $("#menu").removeClass("nav-affixed");
             $("#menu > div").removeClass("nav-affixed");
-            $("#menu").addClass("nav-static");
-            $("#menu > div").addClass("nav-static");
         }
     });
-
-    //$(window).on('resize', function () {
-    //    // get width of viewport
-    //    var width = $(window).width();
-
-    //    console.log(width);
-
-    //    if (width < 1000) {
-    //        // shrink menu items
-    //        $(".nav-text").addClass("nav-minimal");
-    //    } else {
-    //        // grow menu items
-    //        $(".nav-text").removeClass("nav-minimal");
-    //    }
-    //});
 
     s.find(".js_tabs").tabs({
         selected: parseInt($.getUrlVars().tab),

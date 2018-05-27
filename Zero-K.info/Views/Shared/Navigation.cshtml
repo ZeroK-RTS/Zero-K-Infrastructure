@@ -1,27 +1,29 @@
 ﻿@using ZeroKWeb
 @using ZkData
 <nav id="menu">
+    @* menu divs must have no whitespace between elements otherwise modern browsers will add spaces and screw up the formatting *@
     <div class="nav-logo">
         <a href="/">
-            <img src="/img/zk_logo.png" alt="Zero K" />
+            <img src="/img/zk_logo.png" alt="Zero K" />&nbsp;
         </a>
-    </div>
-    <div class="login menu">
+    </div><div class="login menu">
         @if (!Global.IsAccountAuthorized)
         {
             <i class="fa fa-lock"></i><div class="nav-text">Login</div>
             <div class="submenu">
                 <form id="login" method="post" action="@Url.Action("Logon", "Home")">
-                    <div class="login-option">
-                        <div class="steam-login" nicetitle="Login using Steam (after creating in-game account)" onclick="$('#login').submit()">
-                            <img src="~/img/steam-icon.png" /> Login with STEAM
-                        </div>
-                    </div>
-                    <div class="login-option">
-                        <label for="username">Username:</label><input id="username" type="text" name="username" />
-                        <label for="password">Password:</label><input id="password" type="password" name="password" />
-                        <button type="submit">Login</button>
-                    </div>
+                    @*<a onclick="$('#login').submit()" nicetitle="Login using Steam (after creating in-game account)"> </a>*@
+                    <label for="username">Username:</label>
+                    <input id="username" type="text" name="username" />
+                    <label for="password">Password:</label>
+                    <input id="password" type="password" name="password" />
+                    <button type="submit">
+                        Login
+                    </button>
+                    <hr />
+                    <button type="submit">
+                        <img src="~/img/steam-icon.png" /> Login with STEAM
+                    </button>
                     <input type="hidden" name="referer" value="@(Request["ReturnUrl"] ?? Request.Url?.ToString())" />
                 </form>
             </div>
@@ -62,8 +64,7 @@
                 <a href="@Url.Action("UserVotes", "Poll", new { id = Global.AccountID })">Polls</a>
             </div>
         }
-    </div>
-    <div class="menu">
+    </div><div class="menu">
         <i class="fa fa-play"></i><div class="nav-text">Play</div>
         <div class="submenu">
             <a href="/Wiki/Download">Download Zero-K<span>Download the game, it's free! :)</span></a>
@@ -72,16 +73,14 @@
             <a href="@Url.Action("Index", "Maps")">Maps<span>Thousands of maps to pick</span></a>
             <a href="@Url.Action("Index", "Battles")">Replays<span>All your past victories, stored here!</span></a>
         </div>
-    </div>
-    <div class="menu">
+    </div><div class="menu">
         <i class="fa fa-video-camera"></i><div class="nav-text">Media</div>
         <div class="submenu">
             <a href="/Wiki/Media#Screenshots">Screenshots</a>
             <a href="/Wiki/Media#Videos">Videos</a>
             <a href="/Wiki/Fanart">Fanart<span>Show the world your favorite game ;-)</span></a>
         </div>
-    </div>
-    <div class="menu">
+    </div><div class="menu">
         <i class="fa fa-info-circle"></i><div class="nav-text">Wiki</div>
         <div class="submenu">
             <a href="/mediawiki/index.php?title=Manual">Index</a>
@@ -91,16 +90,14 @@
             <a href="/mediawiki/index.php?title=Terraform">Terraforming<span>Let's go play in the dirt!</span></a>
             <a href="/mediawiki/index.php?title=FAQ">FAQ<span>Frequently Asked Questions</span></a>
         </div>
-    </div>
-    <div class="menu">
+    </div><div class="menu">
         <i class="fa fa-crosshairs"></i><div class="nav-text">PlanetWars</div>
         <div class="submenu">
             <a href="@Url.Action("Index", "Planetwars")">PlanetWars<span>Multiplayer online campaign</span></a>
             <a href="@Url.Action("Ladder", "Planetwars")">Ladder</a>
             <a href="@Url.Action("Index", "Factions")">Factions<span>The mighty factions controlling huge sectors of galaxy</span></a>
         </div>
-    </div>
-    <div class="menu">
+    </div><div class="menu">
         <i class="fa fa-comment"></i><div class="nav-text">Community</div>
         <div class="submenu">
             <a href="@Url.Action("Index", "Forum")">Forum<span>Discuss, ask for help, have fun!</span></a>
@@ -113,19 +110,20 @@
             <a href="/mediawiki/index.php?title=Zero-K:Contact">Contact<span>Contact the Zero-K team</span></a>
             <a href="/mediawiki/index.php?title=Credits">Credits<span>Makers of Zero-K</span></a>
         </div>
-    </div>
-    <div class="donate">
+    </div><div class="donate menu">
         <a href="@Url.Action("Index", "Contributions")">
             <i class="fa fa-dollar"></i><div class="nav-text">Donate</div>
             <span>Help cover the server costs!</span>
         </a>
-    </div>
-    <div class="search">
-        <form action="@Url.Action("SubmitSearch","Forum")" method="POST">
-            <input type="text" name="keywords" id="keywords" data-autocomplete="@Url.Action("Index", "Autocomplete")" data-autocomplete-action="goto" />
-            <button type="submit">
-                <i class="fa fa-search"></i>
-            </button>
-        </form>
+    </div><div class="search menu">
+        <i class="fa fa-search"></i><div class="nav-text">Search</div>
+        <div class="submenu">
+            <form action="@Url.Action("SubmitSearch","Forum")" method="POST">
+                <input type="text" name="keywords" id="keywords" data-autocomplete="@Url.Action("Index", "Autocomplete")" data-autocomplete-action="goto" />
+                <button type="submit">
+                    <i class="fa fa-search"></i>
+                </button>
+            </form>
+        </div>
     </div>
 </nav>

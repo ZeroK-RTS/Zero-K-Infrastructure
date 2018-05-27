@@ -15,70 +15,97 @@
 @helper StickyMark(ForumThread t) {
     if (t.IsLocked && t.IsPinned)
     {
-        <img src="~/img/stickylock.png" class="icon16"/>
+        <img src="~/img/stickylock.png" class="thread-status"/>
     } else if (t.IsLocked)
     {
-        <img src="~/img/lock.png" class="icon16"/>
+        <img src="~/img/lock.png" class="thread-status"/>
     } else if (t.IsPinned)
     {
-        <img src="~/img/sticky.png" class="icon16"/>
+        <img src="~/img/sticky.png" class="thread-status"/>
     }
 }
 
 <div id="page">
+    <div class="infoCell">
+        @Html.Partial("ForumPath", Model.Path)
+            
+        @foreach (var cat in Model.Categories)
+        {
+            <span>
+                <b>@Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID })</b>
+            </span>
+        }
+    </div>
+
     @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("page")))
     {
         @Html.HiddenFor(x => x.CategoryID)
-        <div class="infoCell">
-            @Html.Partial("ForumPath", Model.Path)
-            
-            @foreach (var cat in Model.Categories)
-            {
-                <span>
-                    <b>@Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID })</b>
-                </span>
-            }
-        </div>
-
-        if (Model.Threads.Any())
-        {
-            <div id="foo">
-                <span>
-                    &nbsp;Filter: @Html.TextBoxFor(x => x.Search, new { data_autocomplete = Url.Action("Threads", "Autocomplete", new { categoryID = Model.CategoryID }), data_autocomplete_action = "goto" })
-                    @if (Global.IsAccountAuthorized)
-                    {
-                        <label>
-                            @Html.EditorFor(x => x.OnlyUnread)<span>only unread</span>
-                        </label>
-                    }
-                    &nbsp; Player: @Html.TextBoxFor(x => x.User, new { data_autocomplete = Url.Action("Users", "Autocomplete"), data_autocomplete_action = "submit" })
-                    <button type="submit">Search</button>
-                </span>
-                <br/>
-
-                @if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)
-                {
-                    <span class="textbutton" id="@grid.PagerPrefixID">
-                        @Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
-                    </span>
-                }
-
-                @if (Global.Account != null)
-                {
-                    <span class="textbutton" style="float: right;" id="@grid.PagerSuffixID">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</span>
-                }
-            </div>
-
-            <div>
-                @* list of threads *@
-                @GridHelpers.RenderTable(grid)
-            </div>
-        }
-        else if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)
+        
+        if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)
         {
             <span class="textbutton" id="@grid.PagerPrefixID">
                 @Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
             </span>
+        }
+
+        if (Model.Threads.Any())
+        {
+            <div class="filter-threads">
+                <div class="inline">
+                    <label for="Search">Search threads for:</label>
+                    <input type="text" id="Search" name="Search" class="ui-autocomplete-input" data-autocomplete="@Url.Action("Threads", "Autocomplete")" data-autocomplete-action="goto" autocomplete="off" />
+                </div>
+                <div class="inline">
+                    <label for="User">Posts from specific User:</label>
+                    <input type="text" id="User" name="User" class="ui-autocomplete-input"
+                           autocomplete="off" data-autocomplete-action="submit" data-autocomplete="@Url.Action("Users", "Autocomplete")" />
+                </div>
+                @if (Global.IsAccountAuthorized)
+                {
+                    <div class="inline">
+                        <label for="unread">Only Unread</label>
+                        <input type="checkbox" id="unread" name="OnlyUnread" />
+                    </div>
+                }
+                <div class="inline">
+                    <input type="submit" value="Search" />
+                </div>
+                @if (Global.Account != null)
+                {
+                    @Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
+                }
+            </div>
+            
+
+            @*<div style="background: #4800ff">
+                @GridHelpers.RenderTable(grid)
+            </div>*@
+
+            <div class="threads">
+                @foreach (ForumThread t in Model.Threads)
+                {
+                    <div id="thread@(t.ForumThreadID)" class="thread">
+                        <div class="thread-status">
+                            @StickyMark(t)
+                        </div>
+                        <div class="inline">
+                            <h3 class="thread-title"><a href="@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })">@t.Title</a></h3>
+                            <div class="inline">
+                                by @Html.PrintAccount(t.AccountByCreatedAccountID) @t.Created.ToAgoString()
+                            </div>
+                            <div class="inline thread-postcount">
+                                @t.ForumPosts.Count Posts
+                            </div>
+                            <div class="inline thread-lastpost">
+                                Last post: @t.LastPost.Value.ToAgoString()
+                                Last read: @(t.ForumThreadLastReads?.FirstOrDefault(x => x.AccountID == Global.AccountID)?.LastRead.ToAgoString() ?? "unread")
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+
         }
         
     }

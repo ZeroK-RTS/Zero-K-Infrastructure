@@ -2,10 +2,10 @@
 @model SpotlightHandler.UnitSpotlight
 
 <div id="unitspotlight" class="module">
-    <h3 class="handle">Unit Spotlight</h3>
-    <img src="http://manual.zero-k.info/unitpics/@(Model.Unitname).png" width="64" height="64" class="fright" />
-    <a href='http://zero-k.info/mediawiki/index.php?title=Manual'>Manual:</a>
+    <h1 class="handle">Unit Spotlight</h1>
+    <img src="http://manual.zero-k.info/unitpics/@(Model.Unitname).png" />
     <h3>@Model.Name</h3>
     <p>@Model.Title</p>
     <p>@Model.Description</p>
+    <a id="manual" href="http://zero-k.info/mediawiki/index.php?title=Manual" target="_blank">Game Manual</a>
 </div>

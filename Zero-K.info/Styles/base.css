@@ -1,4 +1,4 @@
-b {font-weight: bold;}
+/*b {font-weight: bold;}
 i {}
 .indent {text-indent: 2em;}
 .bold{font-weight: bold;}
@@ -7,14 +7,14 @@ h1 {font-size: 160%; color: #fff; padding: 0; margin: 0; }
 h2 {font-size: 140%; color: #cee; padding: 0; margin: 0; }
 h3 {font-size: 120%; color: #eec; padding: 0; margin: 0; }
 
-/*a {color: #38bfec; text-decoration: none;}
+a {color: #38bfec; text-decoration: none;}
 a:visited {color: #4c90a6;}
 a:hover {color: #fff;}
-a:active {color: #cbd3d4;}*/
+a:active {color: #cbd3d4;}
 
-/* Help cursor for anything that brings up a tooltip when moused over.
+ Help cursor for anything that brings up a tooltip when moused over.
 base.css might be the wrong file, please move when needed or delete this comment.
-Whatever you do, please notify me so I know next time. -Skasi */
+Whatever you do, please notify me so I know next time. -Skasi 
 [nicetitle], [nicetitle-processed] {cursor: help;}
 
 input[type="button"], input[type="checkbox"], input[type="image"],
@@ -85,12 +85,12 @@ video
 	background: transparent;
 }
 
-.button:hover /* hover */
+.button:hover
 {
 	color: #fff;
 }
 
-.button:focus:hover /* onclick */
+.button:focus:hover 
 {
 	color: #f00;
 }
@@ -102,27 +102,20 @@ ul {list-style-type: circle;}
 	background: #000 url("/img/border-1.png") repeat-x scroll 50% 0;
 	margin: 10px;
 	padding: 5px;
-    /**/border: 1px solid #2a8eaf;/**/
-    /*border: 1px solid #000;/**/
+    border: 1px solid #2a8eaf;
 	border-radius: 3px;
 	
     box-shadow: 0 0 3px 3px #000;
 	-moz-box-shadow: 0 0 3px 3px #000;
     -webkit-box-shadow: 0 0 3px 3px #000;
     
-    /*
-    -moz-border-image: url("/img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
-    -webkit-border-image: url("/img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
-    -border-image: url("/img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=88)";
-    /**/
 }
-/*
+
 .brightline
 {
     border: 1px solid #2a8eaf;
 }
-*/
+
 .ie .border
 {
     padding: 13px;
@@ -194,4 +187,4 @@ ul {list-style-type: circle;}
 
 .techfont, h1, h2, h3, h4, h5, h6{
     font-family: 'Xolonium', os, sans-serif;
-}
+}*/

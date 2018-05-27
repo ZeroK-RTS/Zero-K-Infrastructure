@@ -1,13 +1,90 @@
 ﻿@import "colors.less";
 
+.thread-detail {
+    margin-top: 3em;
+    background: rgba(100,0,0,.5);
+}
+
 .forum-post {
+    position: relative;
     display: block;
-    background: rgba(0,0,0,.5);
-    padding: 1em;
-    margin: 1em;
-    margin-top: 0;
-    li {
+    background: @background;
+    padding: 0;
+    border: 0;
+    margin: 0;
+    margin-bottom: 1em;
+
+    .time, .edit, .votes, .upvote, .downvote {
+        display: inline-block;
+    }
+
+    .time {
+        font-size: small;
+    }
+
+    .edit {
+        position: absolute;
+        right: 4em;
+        a {
+            padding: .5em;
+        }
+    }
+
+    .votes {
+        position: absolute;
+        right: 1em;
+    }
+
+    .header {
+        background: rgba(0,0,0,.1);
+        padding: 1em;
+        border-bottom: 1px solid @highlight;
+    }
+
+    .post-content {
+        padding: 1em;
+        text-indent: 2em;
+    }
+}
+
+#page {
+    margin-top: 3em;
+    /*background: rgba(200,0,0,.5);*/
+}
+
+.threads {
+    .thread {
+        position: relative;
         display: block;
-        padding: .5em;
+        background: @background;
+        padding: 1em;
+        border: 0;
+        margin: 0;
+
+        img.thread-status {
+            width: 100%;
+        }
+
+        div.thread-status {
+            display: inline-block;
+            width: 32px;
+            vertical-align: top;
+        }
+
+        .thread-postcount {
+            position: absolute;
+            top: 2em;
+            right: 15em;
+        }
+
+        .thread-lastpost {
+            position: absolute;
+            top: 2em;
+            right: 1em;
+        }
+    }
+
+    .thread:nth-child(even) {
+        background: rgba(0,0,0,.6);
     }
 }

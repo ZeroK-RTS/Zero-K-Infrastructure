@@ -3,11 +3,10 @@
 @if (Model != null)
 {
     <h2>
-        @Html.ActionLink("Forum index", "Index")&nbsp; &gt;
+        @Html.ActionLink("Forum index", "Index") /
         @foreach (var cat in Model)
         {
-            @Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID })
-            @:&nbsp; &gt;
+            @Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID }) @:<span>/</span>
         }
     </h2>
 }

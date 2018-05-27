@@ -11,40 +11,6 @@ namespace ZeroKWeb.Controllers
     {
         public const int PageSize = GlobalConst.ForumPostsPerPage;
 
-        /// <summary>
-        ///     Returns false for <see cref="News" /> posts and comment threads on <see cref="Clan" />s, <see cref="Mission" />s,
-        ///     PlanetWars <see cref="Planet" />s and <see cref="SpringBattle" />s; true otherwise
-        /// </summary>
-        /// <param name="thread"></param>
-        /// <returns></returns>
-        bool IsNormalThread(ForumThread thread) {
-            if (thread.Clans != null && thread.Clans.Count > 0) return false;
-            if (thread.Missions != null && thread.Missions.Count > 0) return false;
-            if (thread.Planets != null && thread.Planets.Count > 0) return false;
-            if (thread.SpringBattles != null && thread.SpringBattles.Count > 0) return false;
-            if (thread.News != null && thread.News.Count > 0) return false;
-            return true;
-        }
-
-        /// <summary>
-        ///     Set the last post time of the thread to current time (includes edits)
-        /// </summary>
-        void ResetThreadLastPostTime(int threadID) {
-            var db = new ZkDataContext();
-            var thread = db.ForumThreads.FirstOrDefault(x => x.ForumThreadID == threadID);
-            var lastPost = thread.Created;
-            foreach (var p in thread.ForumPosts.Reverse())
-            {
-                if (p.ForumPostEdits.Count > 0)
-                {
-                    var lastEdit = p.ForumPostEdits.Last().EditTime;
-                    if (lastEdit > lastPost) lastPost = lastEdit;
-                } else if (p.Created > lastPost) lastPost = p.Created;
-            }
-            thread.LastPost = lastPost;
-            db.SaveChanges();
-        }
-
         public ActionResult DeletePostPrompt(int? postID)
         {
             var db = new ZkDataContext();
@@ -163,16 +129,6 @@ namespace ZeroKWeb.Controllers
             model.Thread = thread;
 
             return View("PostList", model);
-        }
-
-        public class PostListModel
-        {
-            public int ThreadID { get; set; }
-            public string Search { get; set; }
-            public int GoToPost { get; set; }
-            public string User { get; set; }
-            public ForumThread Thread;
-            public IQueryable<ForumPost> Data;
         }
 
 
@@ -594,12 +550,6 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID });
         }
 
-        public static int GetPostPage(ForumPost post) {
-            if (post == null) return 0;
-            var index = post.ForumThread.ForumPosts.Count(x => x.ForumPostID < post.ForumPostID);
-            return index/PageSize;
-        }
-
         public ActionResult Search() {
             return View("Search");
         }
@@ -664,6 +614,73 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index", new { categoryID });
         }
 
+        [ValidateInput(false)]
+        public ActionResult Preview(string text)
+        {
+            return View("Preview", (object)text);
+        }
+
+
+        /// <summary>
+        ///     Returns false for <see cref="News" /> posts and comment threads on <see cref="Clan" />s, <see cref="Mission" />s,
+        ///     PlanetWars <see cref="Planet" />s and <see cref="SpringBattle" />s; true otherwise
+        /// </summary>
+        /// <param name="thread"></param>
+        /// <returns></returns>
+        bool IsNormalThread(ForumThread thread)
+        {
+            if (thread.Clans != null && thread.Clans.Count > 0) return false;
+            if (thread.Missions != null && thread.Missions.Count > 0) return false;
+            if (thread.Planets != null && thread.Planets.Count > 0) return false;
+            if (thread.SpringBattles != null && thread.SpringBattles.Count > 0) return false;
+            if (thread.News != null && thread.News.Count > 0) return false;
+            return true;
+        }
+
+        /// <summary>
+        ///     Set the last post time of the thread to current time (includes edits)
+        /// </summary>
+        void ResetThreadLastPostTime(int threadID)
+        {
+            var db = new ZkDataContext();
+            var thread = db.ForumThreads.FirstOrDefault(x => x.ForumThreadID == threadID);
+            var lastPost = thread.Created;
+            foreach (var p in thread.ForumPosts.Reverse())
+            {
+                if (p.ForumPostEdits.Count > 0)
+                {
+                    var lastEdit = p.ForumPostEdits.Last().EditTime;
+                    if (lastEdit > lastPost) lastPost = lastEdit;
+                }
+                else if (p.Created > lastPost) lastPost = p.Created;
+            }
+            thread.LastPost = lastPost;
+            db.SaveChanges();
+        }
+
+        /// <summary>
+        /// Returns the page the given forum post is on
+        /// </summary>
+        /// <param name="post"></param>
+        /// <returns></returns>
+        public static int GetPostPage(ForumPost post)
+        {
+            if (post == null) return 0;
+            var index = post.ForumThread.ForumPosts.Count(x => x.ForumPostID < post.ForumPostID);
+            return index / PageSize;
+        }
+
+
+        public class PostListModel
+        {
+            public int ThreadID { get; set; }
+            public string Search { get; set; }
+            public int GoToPost { get; set; }
+            public string User { get; set; }
+            public ForumThread Thread;
+            public IQueryable<ForumPost> Data;
+        }
+
         public class IndexResult
         {
             public IEnumerable<ForumCategory> Categories;
@@ -700,10 +717,5 @@ namespace ZeroKWeb.Controllers
             public List<ForumPost> Posts;
         }
 
-
-        [ValidateInput(false)]
-        public ActionResult Preview(string text) {
-            return View("Preview",(object)text);
-        }
     }
 }

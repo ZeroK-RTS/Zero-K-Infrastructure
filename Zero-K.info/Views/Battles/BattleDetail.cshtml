@@ -65,7 +65,7 @@
         Duration:
     </td>
     <td>
-        @TimeSpan.FromSeconds(Model.Duration).ToNiceString()
+        @TimeSpan.FromSeconds(Model.Duration).ToReadableTime()
 </td>
 </tr>
 <tr>
@@ -138,7 +138,7 @@
                     @Html.PrintAccount(u.Account)
                     @if (ViewBag.ShowWinners)
                     {
-                        @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")
+                        @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToReadableTime() : "")
                         if ((Global.IsModerator) && u.EloChange.HasValue)
                         {
                             @:Rank: @u.EloChange.Value.ToString("F1")

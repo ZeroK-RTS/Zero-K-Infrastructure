@@ -62,43 +62,62 @@ namespace System.Web.Mvc
         public static MvcHtmlString Print(this HtmlHelper helper, ForumThread thread) {
             var url = Global.UrlHelper();
 
-            ForumThreadLastRead lastRead = null;
-            ForumLastRead lastReadForum = null;
-            DateTime? lastTime = null;
+            ForumThreadLastRead threadLastRead = null;
+            ForumLastRead forumLastRead = null;
+            DateTime? lastRead = null;
+            int page = 0;
+
+            // get lastRead stats
             if (Global.Account != null)
             {
-                lastRead = Global.Account.ForumThreadLastReads.FirstOrDefault(x => x.ForumThreadID == thread.ForumThreadID);
-                lastReadForum = Global.Account.ForumLastReads.FirstOrDefault(x => x.ForumCategoryID == thread.ForumCategoryID);
-                if (lastReadForum != null) lastTime = lastReadForum.LastRead;
-            }
-            if (lastRead != null && (lastTime == null || lastRead.LastRead > lastTime)) lastTime = lastRead.LastRead;
-            ForumPost post = null;
-            if (lastTime != null) post = thread.ForumPosts.FirstOrDefault(x => x.Created > lastTime);
-            int page = post != null ? ZeroKWeb.Controllers.ForumController.GetPostPage(post) : (thread.PostCount-1)/GlobalConst.ForumPostsPerPage;
+                threadLastRead = Global.Account.ForumThreadLastReads.FirstOrDefault(x => x.ForumThreadID == thread.ForumThreadID);
+                forumLastRead = Global.Account.ForumLastReads.FirstOrDefault(x => x.ForumCategoryID == thread.ForumCategoryID);
 
-            string link;
-            if (page > 0) link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID, page = page});
-            else link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID });
-            link = string.Format("<a href='{0}' title='$thread${1}' style='word-break:break-all;'>", link, thread.ForumThreadID);
+                // if the forum was read, update lastRead
+                if (forumLastRead != null)
+                    lastRead = forumLastRead.LastRead;
 
-            string format;
+                // if the thread was read more recently than the forum, update lastRead
+                if (threadLastRead != null && (lastRead == null || threadLastRead.LastRead > lastRead))
+                    lastRead = threadLastRead.LastRead;
 
-            if (lastTime == null) format = "<span>{0}<img src='/img/mail/mail-unread.png' height='15' /><i>{1}</i></a></span>";
-            else {
-                if (lastTime >= thread.LastPost) format = "<span>{0}<img src='/img/mail/mail-read.png' height='15' />{1}</a></span>";
-                else {
-                    if (lastRead != null && lastRead.LastPosted != null) format = "<span>{0}<img src='/img/mail/mail-new.png' height='15' /><b>{1}</b></a></span>";
-                    else format = "<span>{0}<img src='/img/mail/mail-unread.png' height='15' />{1}</a></span>";
-                }
             }
 
-            string title = HttpUtility.HtmlEncode(thread.Title);
-            if (!string.IsNullOrEmpty(thread.WikiKey))
+            // get forum post page
+            if (lastRead != null)
             {
-                title = string.Format("<span style='color:lightblue'>[{0}]</span> {1}", thread.WikiKey, title);
+                ForumPost post = thread.ForumPosts.FirstOrDefault(x => x.Created > lastRead);
+                page = ZeroKWeb.Controllers.ForumController.GetPostPage(post);
             }
 
-            return new MvcHtmlString(string.Format(format, link, title));
+
+
+            string forumLinkContent = $"<span class='wiki-key'>{thread.WikiKey}</span>{HttpUtility.HtmlEncode(thread.Title)}";
+            string forumURL = url.Action("Thread", "Forum", new { id = thread.ForumThreadID, page });
+            string forumIMG, forumReadStatus;
+            
+            if (lastRead != null && lastRead >= thread.LastPost)
+            {
+                // forum has been read more recently than the last post
+                forumIMG = "/img/mail/mail-read.png";
+                forumReadStatus = "mail-read";
+            }
+            else if (threadLastRead?.LastPosted != null)
+            {
+                // forum has been posted to before
+                forumIMG = "/img/mail/mail-new.png";
+                forumReadStatus = "mail-new";
+            }
+            else
+            {
+                forumIMG = "/img/mail/mail-unread.png";
+                forumReadStatus = "mail-unread";
+            }
+
+            string forumLink = $"<a href='{forumURL}' class='forum-link {forumReadStatus}' title='$thread${thread.ForumThreadID}'><img src='{forumIMG}' />{forumLinkContent}</a>";
+
+            return new MvcHtmlString(forumLink);
+            //return new MvcHtmlString(string.Format(format, link, title));
         }
 
         /// <summary>
@@ -125,30 +144,30 @@ namespace System.Web.Mvc
             // flag icon
             string flagIcon = "";
             if (!account.HideCountry)
-                flagIcon = $"<img src='/img/flags/{(account.Country == "??" ? "unknown" : account.Country)}.png' class='flag' />";
+                flagIcon = $"<img src='/img/flags/{(account.Country == "??" ? "unknown" : account.Country)}.png' class='flag' alt='{account.Country}' />";
 
             // rank icon
-            string rankIcon = $"<img src='/img/ranks/{account.GetIconName()}.png' class='icon16' />";
+            string rankIcon = $"<img src='/img/ranks/{account.GetIconName()}.png' class='rank icon16' alt='rank{account.Rank}' />";
 
             // clan or faction icon
             // nicetitle='$clan${account.ClanID}'
             string clanIcon = "";
             string clanUrl = Global.UrlHelper().Action("Detail", "Clans", new { id = account.ClanID });
             if (account.Clan != null)
-                clanIcon = $"<a href='{clanUrl}' ><img src='{account.Clan.GetImageUrl()}' class='icon16' /></a>";
+                clanIcon = $"<a href='{clanUrl}' ><img src='{account.Clan.GetImageUrl()}' class='clan icon16' alt='{account.Clan.ClanName}' /></a>";
             else if (account.Faction != null)
-                clanIcon = $"<img src='{account.Faction.GetImageUrl()}' class='icon16' />";
+                clanIcon = $"<img src='{account.Faction.GetImageUrl()}' class='faction icon16' alt='{account.Faction.Name}' />";
 
             // moderator icon
             string moderatorIcon = "";
-            if (account.AdminLevel >= AdminLevel.Moderator) moderatorIcon = "<img src='/img/police.png'  class='icon16' alt='Admin' />";
+            if (account.AdminLevel >= AdminLevel.Moderator) moderatorIcon = "<img src='/img/police.png'  class='moderator icon16' alt='Admin' />";
 
             // user name
             // nicetitle='$user${account.AccountID}'
-            string displayName = $"<a href='/Users/Detail/{account.AccountID}' class='username' >{(account.Name + (account.IsDeleted ? " (redacted)" : ""))}</a>";
+            string displayName = $"<a href='/Users/Detail/{account.AccountID}' class='username {(Global.AccountID == account.AccountID ? "personal" : "")}' >{(account.Name + (account.IsDeleted ? " (redacted)" : ""))}</a>";
 
             // fully fleshed out username view
-            return new MvcHtmlString($"<div class='username-container'>{flagIcon}{rankIcon}{clanIcon}{moderatorIcon}{displayName}</div>");
+            return new MvcHtmlString($"<div class='username-container {(Global.AccountID == account.AccountID ? "personal" : "")}'>{flagIcon}{rankIcon}{clanIcon}{moderatorIcon}{displayName}</div>");
 
         }
 
@@ -446,7 +465,7 @@ namespace System.Web.Mvc
         }
 
         /// <summary>
-        /// Converts a <see cref="TimeSpan"/> to "X seconds/minutes/hours/days/months ago"
+        /// Converts a <see cref="TimeSpan"/> to "X seconds/minutes/hours/days/months"
         /// </summary>
         public static string ToReadableTime(this TimeSpan timeSpan) {
             if (timeSpan.TotalMinutes < 2) return string.Format("{0} seconds", (int)timeSpan.TotalSeconds);

@@ -2,26 +2,29 @@
 @using ZkData
 @model IEnumerable<News>
 
-<div id="empty" class="module">
-    <h3 class="handle">News</h3>
+<div id="news" class="module">
+    <h2 class="handle">News</h2>
     @foreach (var news in Model.Take(4))
     {
-        <h1>@news.Title</h1>
-        if (news.ThumbRelativeUrl != null)
-        {
-            <a href="@news.ImageRelativeUrl"><img src="@news.ThumbRelativeUrl" style="float:left; width:120px; margin: 6px;" /></a>
-        }
-        <div>@Html.BBCodeCached(news)</div>
-        <small>
-            Posted by @Html.PrintAccount(news.Account) @news.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = news.ForumThreadID }, null)
+        <div class="news-item">
+            <h1>@news.Title</h1>
+            @if (news.ThumbRelativeUrl != null)
+            {
+                <a href="@news.ImageRelativeUrl" class="news-image"><img src="@news.ThumbRelativeUrl" /></a>
+            }
+            <div class="news-content">
+                @Html.BBCodeCached(news)
+            </div>
+            <div class="news-about">
+                by @Html.PrintAccount(news.Account) @news.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = news.ForumThreadID }, null)
+            </div>
             @if (Global.IsModerator)
             {
                 <span class="admin">
                     @Html.ActionLink("Edit", "Detail", "News", new { id = news.NewsID }, null)
                 </span>
             }
-        </small>
-        <br /><br />
+        </div>
     }
     <a href="@Url.Action("Index", "News")"><img src="/img/rss.png" width="25" alt="rss" /> RSS feed</a> | <a href='/Forum?categoryID=13'>news archive</a>
 </div>

@@ -20,6 +20,47 @@ html {
     color: white;
 }
 
+a {
+    color: @highlight;
+    text-decoration: none;
+}
+
+a:hover {
+    color: white;
+}
+
+hr {
+    width: 80%;
+    border: 1px solid @highlight;
+    margin: 2em;
+    clear: both;
+}
+
+*::selection {
+    background: #ff0000;
+}
+
+input, select {
+    display: block;
+    background: @background;
+    color: white;
+    padding: .5em;
+    border: 1px solid white;
+    border-radius: .5em;
+    margin-bottom: 1em;
+}
+
+input:focus {
+    border: 1px solid transparent;
+    border-bottom: 1px solid @highlight;
+    border-right: 1px solid @highlight;
+}
+
+input[type=checkbox] {
+    display: inline-block;
+}
+
+// site layout
 #logo {
     background: none;
     img {
@@ -33,6 +74,28 @@ html {
     padding: 1em;
 }
 
+#busy {
+    display: none;
+    position: fixed;
+    background: @background;
+    width: 100%;
+    bottom: 0;
+    padding: 1em;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    z-index: 1000;
+
+    img {
+        vertical-align: middle;
+    }
+}
+
+// common classes
+.admin {
+    border: 1px dotted red;
+}
+
 .center {
     display: block;
     margin-left: auto;
@@ -43,6 +106,17 @@ html {
     display: none;
 }
 
+.icon16 {
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+}
+
+.inline {
+    display: inline-block;
+}
+
+// user specific classes
 .avatar {
     width: 64px;
     height: 64px;
@@ -76,16 +150,10 @@ html {
     padding-bottom: 2px;
 }
 
-.icon16 {
-    display: inline-block;
-    height: 16px;
-    width: 16px;
+.rank {
+
 }
 
-a {
-    color: @highlight;
-    text-decoration: none;
-}
-a:hover {
-    color: white;
+.faction {
+
 }

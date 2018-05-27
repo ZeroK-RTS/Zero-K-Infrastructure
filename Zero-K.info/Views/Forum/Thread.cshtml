@@ -3,40 +3,56 @@
 @{
     Page.Title = Model.CurrentThread.Title + " - forum thread";
 }
-<div class="infoCell">
-    @{Html.RenderPartial("ForumPath", Model.Path);}
-</div>
 
-@if (Global.IsModerator)
-{
-    var db = new ZkData.ZkDataContext();
-
-    <div class="admin">
-        <form action="@Url.Action("AdminThread", new { threadID = Model.CurrentThread.ForumThreadID })" method="post">
-            @Html.AntiForgeryToken()
-            <label for="newcat">Move Thread to Category: </label>
-            <select name="newcat">
-                @foreach (var c in db.ForumCategories.OrderBy(x => x.SortOrder))
-                {
-                    <option value="@c.ForumCategoryID" @(c.ForumCategoryID == Model.CurrentThread.ForumCategoryID ? "selected='selected'" : "")>
-                        @Html.Raw(string.Join(" > ", c.GetPath().Select(x => Html.Encode(x.Title))))
-                    </option>
-                }
-            </select>
-            <div>Pinned: @Html.CheckBox("isPinned", Model.CurrentThread.IsPinned)</div>
-            <div>Locked: @Html.CheckBox("isLocked", Model.CurrentThread.IsLocked)</div>
-            <input type="submit" value="Save" />
-        </form>
+<div class="thread-detail">
+    <div class="infoCell">
+        @{Html.RenderPartial("ForumPath", Model.Path);}
+        @Model.CurrentThread.Title
     </div>
-}
 
-<h1 style="word-break: break-all;">@Model.CurrentThread.Title</h1>
+    @if (!string.IsNullOrEmpty(Model.CurrentThread.WikiKey))
+    {
+        <h2><a href="@Url.Action("Index", "Wiki", new { node = Model.CurrentThread.WikiKey })">@("[" + Model.CurrentThread.WikiKey + "]")</a></h2>
+    }
 
-@if (!string.IsNullOrEmpty(Model.CurrentThread.WikiKey))
-{
-    <h2><a href="@Url.Action("Index", "Wiki", new { node = Model.CurrentThread.WikiKey })">@("[" + Model.CurrentThread.WikiKey + "]")</a></h2>
-}
+    <div>@string.Format("{0} posts, {1} views", Model.CurrentThread.PostCount, Model.CurrentThread.ViewCount)</div>
 
-<div>@string.Format("{0} posts, {1} views", Model.CurrentThread.PostCount, Model.CurrentThread.ViewCount)</div>
+    @Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })
 
-@Html.Action("GetPostList", new { threadID = Model.CurrentThread.ForumThreadID, GoToPost = Model.GoToPost })
+    @if (Global.IsModerator)
+    {
+        var db = new ZkData.ZkDataContext();
+
+        <div class="admin">
+            <form action="@Url.Action("AdminThread", new { threadID = Model.CurrentThread.ForumThreadID })" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="inline">
+                    <label for="newcat">Move Thread to Category: </label>
+                    <select name="newcat">
+                        @foreach (var c in db.ForumCategories.OrderBy(x => x.SortOrder))
+                        {
+                            <option value="@c.ForumCategoryID" @(c.ForumCategoryID == Model.CurrentThread.ForumCategoryID ? "selected='selected'" : "")>
+                                @Html.Raw(string.Join(" > ", c.GetPath().Select(x => Html.Encode(x.Title))))
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="inline">
+                    <label for="isPinned">Pinned:</label>
+                    @Html.CheckBox("isPinned", Model.CurrentThread.IsPinned)
+                </div>
+                <div class="inline">
+                    <label for="isLocked">Locked:</label>
+                    @Html.CheckBox("isLocked", Model.CurrentThread.IsLocked)
+                </div>
+                <div class="inline">
+                    <input type="submit" value="Save" />
+                </div>
+            </form>
+        </div>
+    }
+
+    @Html.Action("GetPostList", new { threadID = Model.CurrentThread.ForumThreadID, GoToPost = Model.GoToPost })
+
+</div>
