@@ -239,15 +239,13 @@ namespace ZeroKWeb.Controllers
         public ActionResult Punish(int accountID,
                                    string reason,
                                    bool deleteXP,
-                                   bool deleteInfluence,
                                    bool banMute,
                                    bool banCommanders,
                                    bool banSite,
                                    bool banLobby,
                                    bool banUnlocks,
                                    bool banSpecChat,
-                                   bool banForum,
-                                   bool setRightsToZero,            
+                                   bool banForum,        
                                    string banIP,
                                    long? banUserID,
                                    double banHours)
@@ -272,7 +270,7 @@ namespace ZeroKWeb.Controllers
                                  BanIP = banIP,
                                  BanForum = banForum,
                                  DeleteXP = deleteXP,
-                                 DeleteInfluence = deleteInfluence,
+                                 DeleteInfluence = false,
                                  CreatedAccountID = Global.AccountID,
                                  UserID = banUserID
                              };
