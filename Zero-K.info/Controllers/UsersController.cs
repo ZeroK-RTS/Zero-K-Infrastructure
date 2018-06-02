@@ -245,7 +245,7 @@ namespace ZeroKWeb.Controllers
                                    bool banLobby,
                                    bool banUnlocks,
                                    bool banSpecChat,
-                                   bool banForum,        
+                                   bool banForum,
                                    string banIP,
                                    long? banUserID,
                                    double banHours)
