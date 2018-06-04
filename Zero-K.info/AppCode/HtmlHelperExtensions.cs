@@ -154,10 +154,25 @@ namespace System.Web.Mvc
             string clanIcon = "";
             string clanUrl = Global.UrlHelper().Action("Detail", "Clans", new { id = account.ClanID });
             if (account.Clan != null)
+            {
                 clanIcon = $"<a href='{clanUrl}' ><img src='{account.Clan.GetImageUrl()}' class='clan icon16' alt='{account.Clan.ClanName}' /></a>";
+            }
             else if (account.Faction != null)
+            {
                 clanIcon = $"<img src='{account.Faction.GetImageUrl()}' class='faction icon16' alt='{account.Faction.Name}' />";
+            }
 
+            // apply class for appropriate highlight color
+            string highlight = "";
+            if (account.Faction != null)
+            {
+                highlight = "faction-" + account.Faction.Name.ToLower();
+            }
+            if (Global.AccountID == account.AccountID)
+            {
+                highlight += " personal";
+            }
+            
             // moderator icon
             string moderatorIcon = "";
             if (account.AdminLevel >= AdminLevel.Moderator) moderatorIcon = "<img src='/img/police.png'  class='moderator icon16' alt='Admin' />";
@@ -167,7 +182,7 @@ namespace System.Web.Mvc
             string displayName = $"<a href='/Users/Detail/{account.AccountID}' class='username {(Global.AccountID == account.AccountID ? "personal" : "")}' >{(account.Name + (account.IsDeleted ? " (redacted)" : ""))}</a>";
 
             // fully fleshed out username view
-            return new MvcHtmlString($"<div class='username-container {(Global.AccountID == account.AccountID ? "personal" : "")}'>{flagIcon}{rankIcon}{clanIcon}{moderatorIcon}{displayName}</div>");
+            return new MvcHtmlString($"<div class='username-container {highlight}'>{flagIcon}{rankIcon}{clanIcon}{moderatorIcon}{displayName}</div>");
 
         }
 

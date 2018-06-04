@@ -4,126 +4,129 @@
 @{
   Page.Title = "Maps";
 }
-<form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
-    <div id="mapfilters">
+<div id="mapfilters">
+    <form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
+        <div class="filter-section">
+            <label for="mapSize">Size:</label>
+            <select id="mapSize" name="size">
+                <option>Any Size</option>
+                <option value='1'>Small</option>
+                <option value='2'>Medium</option>
+                <option value='3'>Big</option>
+            </select>
 
-        <label for="mapSupportLevel">Support:</label>
-        <select id="mapSupportLevel" name="mapSupportLevel">
-            <option>Any</option>
-            <option value='0'>Unsupported</option>
-            <option value='1'>Supported</option>
-            <option value='2' selected="selected">Featured</option>
-            <option value='3'>MatchMaker</option>
-        </select>
+            <label for="mapSeaAmount">Water Ratio:</label>
+            <select id="mapSeaAmount" name="sea">
+                <option>Any Water</option>
+                <option value="1">Land</option>
+                <option value="2">Land &amp; Sea</option>
+                <option value="3">Sea</option>
+            </select>
 
-        <label for="mapSize">Size:</label>
-        <select id="mapSize" name="size">
-            <option>Any</option>
-            <option value='1'>Small</option>
-            <option value='2'>Medium</option>
-            <option value='3'>Big</option>
-        </select>
+            <label for="mapTerrain">Terrain Type:</label>
+            <select id="mapTerrain" name="hills">
+                <option>Any Terrain</option>
+                <option value="1">Flat</option>
+                <option value="2">Hills</option>
+                <option value="3">Mountains</option>
+            </select>
 
-        <label for="mapSeaAmount">Water Ratio:</label>
-        <select id="mapSeaAmount" name="sea">
-            <option>Any</option>
-            <option value="1">Land</option>
-            <option value="2">Mixed</option>
-            <option value="3">Sea</option>
-        </select>
+            <label for="mapDimensions">Aspect Ratio:</label>
+            <select id="mapDimensions" name="elongated">
+                <option>Any Aspect Ratio</option>
+                <option value='false'>Square-like</option>
+                <option value='true'>Elongated</option>
+            </select>
 
-        <label for="mapTerrain">Terrain Type:</label>
-        <select id="mapTerrain" name="hills">
-            <option>Any</option>
-            <option value="1">Flat</option>
-            <option value="2">Hills</option>
-            <option value="3">Mountains</option>
-        </select>
+            <label for="mapSymmetry">Symmetry:</label>
+            <select id="mapSymmetry" name="assymetrical">
+                <option>Any Symmetry</option>
+                <option value="false">Symmetrical</option>
+                <option value="true">Asymmetrical</option>
+            </select>
+        </div>
+        <div class="filter-section">
+            <label for="mapSupportsTeams">
+                Team:
+                <span title='Maps suitable for team games'></span>
+            </label>
+            <select id="mapSupportsTeams" name="isTeams">
+                <option>Can be for Teams</option>
+                <option value="false">Non Teams</option>
+                <option value="true">Teams Only</option>
+            </select>
 
-        <label for="mapDimensions">Aspect Ratio:</label>
-        <select id="mapDimensions" name="elongated">
-            <option>Any</option>
-            <option value='false'>Square-like</option>
-            <option value='true'>Elongated</option>
-        </select>
+            <label for="mapSupports1v1">
+                1v1:
+                <span title='Maps suitable for 1v1 games'></span>
+            </label>
+            <select id="mapSupports1v1" name="is1v1">
+                <option>Can be for 1v1</option>
+                <option value="false">Non 1v1</option>
+                <option value="true">1v1 Only</option>
+            </select>
 
-        <label for="mapSymmetry">Map Symmetry:</label>
-        <select id="mapSymmetry" name="assymetrical">
-            <option>Any</option>
-            <option value="false">Symmetrical</option>
-            <option value="true">Asymmetrical</option>
-        </select>
+            <label for="mapSupportsFFA">
+                FFA:
+                <span title='Maps suitable for Free-For-All games - multiple teams'></span>
+            </label>
+            <select id="mapSupportsFFA" name="ffa">
+                <option>Can be for FFA</option>
+                <option value='false'>Non FFA</option>
+                <option value='true'>FFA Only</option>
+            </select>
 
-        <label for="mapIsSpecial">
-            Special:
-            <span title='Maps with special features, speedmetal, duck, greenfields etc' style='white-space: nowrap'></span>
-        </label>
-        <select id="mapIsSpecial" name="special">
-            <option value="-1">Any</option>
-            <option value="0" selected>Normal</option>
-            <option value="1">Special</option>
-        </select>
+            <label for="mapSupportsChickens">
+                Chickens:
+                <span title='Maps suitable for chicken games?'></span>
+            </label>
+            <select id="mapSupportsChickens" name="chicken">
+                <option>Can be for Chickens</option>
+                <option value="false">Non Chicken</option>
+                <option value="true">For Chickens Only</option>
+            </select>
 
-        <label for="mapSupportsTeams">
-            Team:
-            <span title='Maps suitable for team games' style='white-space: nowrap'></span>
-        </label>
-        <select id="mapSupportsTeams" name="isTeams">
-            <option>Any</option>
-            <option value="true">Teams</option>
-            <option value="false">No teams</option>
-        </select>
+            <label for="mapIsSpecial">
+                Special:
+                <span title='Maps with special features, speedmetal, duck, greenfields etc'></span>
+            </label>
+            <select id="mapIsSpecial" name="special">
+                <option value="-1">Can be Special</option>
+                <option value="0" selected>Only Standard Maps</option>
+                <option value="1">Special Only</option>
+            </select>
 
-        <label for="mapSupports1v1">
-            1v1:
-            <span title='Maps suitable for 1v1 games' style='white-space: nowrap'></span>
-        </label>
-        <select id="mapSupports1v1" name="is1v1">
-            <option>Any</option>
-            <option value="true">1v1</option>
-            <option value="false">No 1v1</option>
-        </select>
+        </div>
+        <div class="filter-section">
+            <label for="mapSupportLevel">Support:</label>
+            <select id="mapSupportLevel" name="mapSupportLevel">
+                <option value='0'>Unsupported</option>
+                <option value='1'>Supported</option>
+                <option value='2' selected="selected">Featured</option>
+                <option value='3'>MatchMaker</option>
+            </select>
 
-        <label for="mapSupportsFFA">
-            FFA:
-            <span title='Maps suitable for Free-For-All games - multiple teams' style='white-space: nowrap'></span>
-        </label>
-        <select id="mapSupportsFFA" name="ffa">
-            <option>Any</option>
-            <option value='false'>Normal</option>
-            <option value='true'>FFA</option>
-        </select>
+            <label for="mapIsDownloadable">Download:</label>
+            <select id="mapIsDownloadable" name="isDownloadable">
+                <option value='-1'>Any Download Status</option>
+                <option value='1' selected>Downloadable</option>
+                <option value='0'>Download Not Verified</option>
+            </select>
 
-        <label for="mapSupportsChickens">
-            Chickens:
-            <span title='Maps suitable for chicken games?' style='white-space: nowrap'></span>
-        </label>
-        <select id="mapSupportsChickens" name="chicken">
-            <option>Any</option>
-            <option value="true">Chickens</option>
-            <option value="false">No chickens</option>
-        </select>
-
-        <label for="mapIsDownloadable">Download:</label>
-        <select id="mapIsDownloadable" name="isDownloadable">
-            <option value='-1'>Any</option>
-            <option value='1' selected>Downloadable</option>
-            <option value='0'>Not verified</option>
-        </select>
-
-        <label for="needsTagging">
-            Needs tagging:
-            <span title='Show maps that need to be manually tagged (sea, terrain, FFA etc diagnosed)' style='white-space: nowrap'></span>
-        </label>
-        <input id="needsTagging" name="needsTagging" value="true" type="checkbox">
+            <label for="needsTagging">
+                Needs tagging:
+                <span title='Show maps that need to be manually tagged (sea, terrain, FFA etc diagnosed)'></span>
+            </label>
+            <input id="needsTagging" name="needsTagging" value="true" type="checkbox">
+        </div>
 
         <label for="search">Name or Author:</label>
         <input data-autocomplete="/Autocomplete/Maps" data-autocomplete-action="submit" id="search" name="search" value="" class="ui-autocomplete-input" autocomplete="off" type="text">
 
         <input type="submit" id="submit" value="Search" />
-    </div>
+    </form>
+</div>
 
-</form>
 <table width='100%'>
   <tr>
     <td valign="top">

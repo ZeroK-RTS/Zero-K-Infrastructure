@@ -4,7 +4,7 @@
 @if (Global.AccountID == Model.AccountID && !string.IsNullOrEmpty(Model.PasswordBcrypt))
 {
 <div id="settings" class="module">
-    <h3 class="handle">Settings</h3>
+    <h2 class="handle">Settings</h2>
     <h3 class="js_expand">Password Reset</h3>
     <div id="accountMaint" class="collapse width-90">
         <form method="post" action="@Url.Action("ChangePassword", "Users")">

@@ -2,7 +2,7 @@
 @using ZkData
 
 <div id="polls" class="module">
-    <h3 class="handle">Polls</h3>
+    <h2 class="handle">Polls</h2>
     @if (Model.AccountID == Global.AccountID && Global.AccountID > 0)
     {
         foreach (Poll p in Account.ValidPolls(Global.Account).Where(x => x.IsHeadline && (x.RoleTargetAccountID == null || !x.PollVotes.Any(y => y.AccountID == Global.AccountID))))

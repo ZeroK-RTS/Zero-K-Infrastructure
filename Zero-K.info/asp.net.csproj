@@ -1430,6 +1430,7 @@
     <Content Include="MissionService.svc" />
     <Content Include="ResourceDetail.aspx" />
     <Content Include="Scripts\browser-css.js" />
+    <Content Include="Scripts\loading.js" />
     <Content Include="Styles\fonts\OpenSans-Semibold.ttf" />
     <Content Include="Styles\fonts\OpenSans-Semibold.eot" />
     <Content Include="Styles\fonts\OpenSans-Regular.eot" />
@@ -1632,6 +1633,7 @@
     <Content Include="Styles\less\modules\unitspotlight.less" />
     <Content Include="Styles\less\modules\social.less" />
     <Content Include="Styles\less\modules\forum.less" />
+    <Content Include="Views\Shared\DisplayTemplates\ForumThread.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

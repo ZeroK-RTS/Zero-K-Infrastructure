@@ -166,7 +166,7 @@ function GlobalPageInit(root) {
         // get position of transition point
         if (!transition) transition = $("#navtransition").offset().top - $("#menu").height();
 
-        console.log(top, transition);
+        //console.log(top, transition);
 
         if (top > transition) {
             // affix nav to top of screen

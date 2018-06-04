@@ -3,7 +3,7 @@
 @model ZkData.Account
 
 <div id="userdetail" class="module">
-    <h1 class="handle">@HtmlHelperExtensions.PrintAccount(Model)</h1>
+    <h2 class="handle">@HtmlHelperExtensions.PrintAccount(Model)</h2>
 
     @*@{
             MvcHtmlString ranks = new MvcHtmlString(Ratings.Ranks.RankBackgroundImages.Select((x, i) => (string)("<img class='icon16' src='/img/ranks/" + Model.GetIconLevel() + "_" + i + ".png'>")).Aggregate((x, y) => x + y));

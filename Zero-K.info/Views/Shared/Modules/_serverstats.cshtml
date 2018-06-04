@@ -4,9 +4,10 @@
 @model ZkData.Account
 
 <div id="serverstats" class="module">
-    <h3 class="handle">Statistics: </h3>
-    <b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
-    <br />
+    <h2 class="handle">Statistics: </h2>
+    <div>
+        <b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
+    </div>
 
     @{
 
@@ -26,7 +27,9 @@
         <br />
         */
     }
-    <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
-    <br />
+    <div>
+        <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
+    </div>
+
     @Html.ActionLink("Show rating statistics", "Ratings", "Charts", new { RatingCategory = (int)RatingCategory.Casual, UserId = Model.AccountID }, null)
 </div>

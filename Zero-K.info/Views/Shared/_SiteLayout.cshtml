@@ -3,7 +3,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <meta name="description" content="Zero-K is a FREE multiplatform, open-source RTS game which aims to be dynamic and action-packed." />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @if (ViewBag.Refresh > 0)
@@ -75,7 +74,9 @@
     
     <div id="navtransition"></div>
     
-    @RenderBody()
+    <div id="render-body">
+        @RenderBody()
+    </div>
 
     <script language="javascript">
         $(function () {

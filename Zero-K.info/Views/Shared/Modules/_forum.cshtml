@@ -1,10 +1,10 @@
 ﻿@model IQueryable <ZeroKWeb.Controllers.HomeController.NewThreadEntry>
 
 <div id="forum" class="module">
-    <h3 class="handle">Forums</h3>
+    <h2 class="handle">Forums</h2>
     <a href='@Url.Action("Index","Forum", new {OnlyUnread= true})'>Go to Forums</a>
     @foreach (var threadEntry in Model)
     {
-        @Html.Print(threadEntry.ForumThread)<br />
+        <div>@Html.Print(threadEntry.ForumThread)</div>
     }
 </div>

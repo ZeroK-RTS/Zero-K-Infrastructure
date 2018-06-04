@@ -1,90 +1,160 @@
 ﻿@import "colors.less";
 
-.thread-detail {
-    margin-top: 3em;
-    background: rgba(100,0,0,.5);
-}
+.forum {
+    background: rgba(0, 100, 0, .5);
+    padding: 1em;
 
-.forum-post {
-    position: relative;
-    display: block;
-    background: @background;
-    padding: 0;
-    border: 0;
-    margin: 0;
-    margin-bottom: 1em;
-
-    .time, .edit, .votes, .upvote, .downvote {
-        display: inline-block;
+    a {
+        color: @highlight-nonfaction;
     }
 
-    .time {
-        font-size: small;
-    }
-
-    .edit {
-        position: absolute;
-        right: 4em;
-        a {
-            padding: .5em;
-        }
-    }
-
-    .votes {
-        position: absolute;
-        right: 1em;
-    }
-
-    .header {
-        background: rgba(0,0,0,.1);
-        padding: 1em;
-        border-bottom: 1px solid @highlight;
-    }
-
-    .post-content {
-        padding: 1em;
-        text-indent: 2em;
-    }
-}
-
-#page {
-    margin-top: 3em;
-    /*background: rgba(200,0,0,.5);*/
-}
-
-.threads {
-    .thread {
+    .forum-post {
         position: relative;
         display: block;
         background: @background;
-        padding: 1em;
+        width: 100%;
+        padding: 0;
         border: 0;
         margin: 0;
+        margin-bottom: 1em;
 
-        img.thread-status {
-            width: 100%;
-        }
-
-        div.thread-status {
+        .time, .edit, .votes, .upvote, .downvote {
             display: inline-block;
-            width: 32px;
-            vertical-align: top;
         }
 
-        .thread-postcount {
-            position: absolute;
-            top: 2em;
-            right: 15em;
+        .time {
+            font-size: small;
         }
 
-        .thread-lastpost {
+        .edit {
             position: absolute;
-            top: 2em;
+            right: 4em;
+
+            a {
+                padding: .5em;
+            }
+        }
+
+        .votes {
+            position: absolute;
             right: 1em;
+        }
+
+        .header {
+            background: rgba(0,0,0,.1);
+            padding: 1em;
+            border-bottom: 1px solid @highlight-nonfaction;
+        }
+
+        .post-content {
+            padding: 1em;
+            text-indent: 2em;
         }
     }
 
-    .thread:nth-child(even) {
-        background: rgba(0,0,0,.6);
+    .forum-post:nth-child(even) {
+        background: @background-alt;
+    }
+
+    .threads {
+        .thread {
+            position: relative;
+            display: block;
+            background: @background;
+            padding: 1em;
+            border: 0;
+            margin: 0;
+
+            img.thread-status {
+                width: 100%;
+            }
+
+            div.thread-status {
+                display: inline-block;
+                width: 32px;
+                vertical-align: top;
+            }
+
+            .thread-details {
+                position: absolute;
+                top: 1em;
+                right: 1em;
+                text-align: right;
+            }
+        }
+
+        .thread:nth-child(even) {
+            background: @background-alt;
+        }
+
+        .read {
+            color: @link-read;
+
+            a {
+                color: @link-read;
+                text-decoration: underline;
+            }
+        }
+    }
+
+
+    .faction-odds {
+        .header {
+            border-bottom: 1px solid @highlight-odds;
+
+            a {
+                color: @highlight-odds;
+            }
+        }
+    }
+
+    .faction-evens {
+        .header {
+            border-bottom: 1px solid @highlight-evens;
+
+            a {
+                color: @highlight-evens;
+            }
+        }
+    }
+
+    .faction-empire {
+        .header {
+            border-bottom: 1px solid @highlight-empire;
+
+            a {
+                color: @highlight-empire;
+            }
+        }
+    }
+
+    .faction-dynasty {
+        .header {
+            border-bottom: 1px solid @highlight-dynasty;
+
+            a {
+                color: @highlight-dynasty;
+            }
+        }
+    }
+
+    .faction-federation {
+        .header {
+            border-bottom: 1px solid @highlight-federation;
+
+            a {
+                color: @highlight-federation;
+            }
+        }
+    }
+
+    .personal {
+        .header {
+            border-bottom: 1px solid @highlight;
+
+            a {
+                color: @highlight;
+            }
+        }
     }
 }

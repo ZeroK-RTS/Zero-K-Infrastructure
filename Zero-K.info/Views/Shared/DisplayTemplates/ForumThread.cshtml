@@ -1,0 +1,45 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZkData.ForumThread
+
+@{
+    var t = Model;
+    string alreadyRead = t.ForumThreadLastReads?.FirstOrDefault(x => x.AccountID == Global.AccountID)?.LastRead?.ToAgoString() == null ? "" : "read";
+}
+
+@helper StickyMark(ForumThread t)
+    {
+        if (t.IsLocked && t.IsPinned)
+        {
+            <img src="~/img/stickylock.png" class="thread-status" />
+        }
+        else if (t.IsLocked)
+        {
+            <img src="~/img/lock.png" class="thread-status" />
+        }
+        else if (t.IsPinned)
+        {
+            <img src="~/img/sticky.png" class="thread-status" />
+        }
+}
+
+<div id="thread@(t.ForumThreadID)" class="thread @alreadyRead">
+    <div class="thread-status">
+        @StickyMark(t)
+    </div>
+    <div class="inline">
+        <h3 class="thread-title"><a href="@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })">@t.Title</a></h3>
+        <div class="">
+            by @Html.PrintAccount(t.AccountByCreatedAccountID) @t.Created.ToAgoString()
+        </div>
+        <div class="thread-details">
+            <div>
+                @t.ForumPosts.Count Posts
+            </div>
+            <div>
+                Last post: @t.LastPost.Value.ToAgoString()
+                @*Last read: @(t.ForumThreadLastReads?.FirstOrDefault(x => x.AccountID == Global.AccountID)?.LastRead.ToAgoString() ?? "unread")*@
+            </div>
+        </div>
+    </div>
+</div>

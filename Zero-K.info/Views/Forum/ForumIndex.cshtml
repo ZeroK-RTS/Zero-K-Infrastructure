@@ -2,33 +2,17 @@
 @using ZkData
 @model ZeroKWeb.Controllers.ForumController.IndexResult
 @{
-    Page.Title = "Forum " + string.Join(" > ", Model.Path.Select(x => x.Title));
+	Page.Title = "Forum " + string.Join(" > ", Model.Path.Select(x => x.Title));
 
-    var grid = new UniGrid<ForumThread>(Model.Threads);
-    grid.AddCol("", StickyMark).SetSort(x => x.IsPinned).SetWidth("25px");
-    grid.AddCol("Title", x => Html.Print(x)).SetSort(x => x.Title);
-    grid.AddCol("Author", x => Html.PrintAccount(x.AccountByCreatedAccountID)).SetSort(x => x.AccountByCreatedAccountID.Name).SetWidth("200px");
-    grid.AddCol("Posts", x => x.PostCount).SetSort(x => x.PostCount).SetWidth("70px");
-    grid.AddCol("Last", x => Html.PrintDate(x.LastPost)).SetWidth("150px").SetSort(x => x.LastPost);
+	var grid = new UniGrid<ForumThread>(Model.Threads);
+	grid.AddCol("sort", x => Html.DisplayFor(m => x)).SetSort(x => x.ForumThreadID).SetWidth("100%");
+	grid.PrepareRenderData();
 }
 
-@helper StickyMark(ForumThread t) {
-    if (t.IsLocked && t.IsPinned)
-    {
-        <img src="~/img/stickylock.png" class="thread-status"/>
-    } else if (t.IsLocked)
-    {
-        <img src="~/img/lock.png" class="thread-status"/>
-    } else if (t.IsPinned)
-    {
-        <img src="~/img/sticky.png" class="thread-status"/>
-    }
-}
-
-<div id="page">
+<div id="page" class="forum">
     <div class="infoCell">
         @Html.Partial("ForumPath", Model.Path)
-            
+
         @foreach (var cat in Model.Categories)
         {
             <span>
@@ -40,7 +24,7 @@
     @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("page")))
     {
         @Html.HiddenFor(x => x.CategoryID)
-        
+
         if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)
         {
             <span class="textbutton" id="@grid.PagerPrefixID">
@@ -50,7 +34,7 @@
 
         if (Model.Threads.Any())
         {
-            <div class="filter-threads">
+            <div class="filter-section filter-threads">
                 <div class="inline">
                     <label for="Search">Search threads for:</label>
                     <input type="text" id="Search" name="Search" class="ui-autocomplete-input" data-autocomplete="@Url.Action("Threads", "Autocomplete")" data-autocomplete-action="goto" autocomplete="off" />
@@ -75,38 +59,19 @@
                     @Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
                 }
             </div>
-            
-
-            @*<div style="background: #4800ff">
-                @GridHelpers.RenderTable(grid)
-            </div>*@
-
-            <div class="threads">
-                @foreach (ForumThread t in Model.Threads)
-                {
-                    <div id="thread@(t.ForumThreadID)" class="thread">
-                        <div class="thread-status">
-                            @StickyMark(t)
-                        </div>
-                        <div class="inline">
-                            <h3 class="thread-title"><a href="@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })">@t.Title</a></h3>
-                            <div class="inline">
-                                by @Html.PrintAccount(t.AccountByCreatedAccountID) @t.Created.ToAgoString()
-                            </div>
-                            <div class="inline thread-postcount">
-                                @t.ForumPosts.Count Posts
-                            </div>
-                            <div class="inline thread-lastpost">
-                                Last post: @t.LastPost.Value.ToAgoString()
-                                Last read: @(t.ForumThreadLastReads?.FirstOrDefault(x => x.AccountID == Global.AccountID)?.LastRead.ToAgoString() ?? "unread")
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-
 
         }
-        
+
+        <div id="@grid.ID" class="threads">
+            <div class="grid_title">@grid.Title</div>
+            @GridHelpers.GridJs(grid)
+            @GridHelpers.Pager(grid)
+            @GridHelpers.Hidden(grid)
+            @GridHelpers.TableData(grid)
+            @GridHelpers.Pager(grid)
+        </div>
     }
+
+
+
 </div>

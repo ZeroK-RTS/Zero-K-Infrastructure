@@ -44,71 +44,72 @@
                     <span> | @Html.PrintMetal(Global.Account) | @Html.PrintDropships(Global.Account) | @Html.PrintBombers(Global.Account) | @Html.PrintWarps(Global.Account)</span>
                 }
 
+                <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i> Home</a>
+                <a href="@Url.Action("UnlockList", "My")"><i class="fa fa-unlock"></i> Unlocks</a>
+                <a href="@Url.Action("Commanders", "My")"> Commanders</a>
+                <a href="@Url.Action("UserVotes", "Poll", new { id = Global.AccountID })"><i class="fa fa-comment-alt"></i> Polls</a>
+                
                 @if (Global.IsLobbyAccess)
                 {
                     <a href="@Url.Action("Logout", "Home")@("@logout")" nicetitle="Logout">
                         @*<img src="~/Img/logout.png" style="width:20px" />*@
-                        Logout
+                        <i class="fa fa-sign-out"></i> Logout
                     </a>
                 }
                 else
                 {
                     <a href="@Url.Action("Logout", "Home", new { referer = Request.Url })" nicetitle="Logout">
                         @*<img src="~/Img/logout.png" style="width:20px" />*@
-                        Logout
+                        <i class="fa fa-sign-out"></i> Logout
                     </a>
                 }
-                <a href="@Url.Action("Index", "Home")">Home</a>
-                <a href="@Url.Action("UnlockList", "My")">Unlocks</a>
-                <a href="@Url.Action("Commanders", "My")">Commanders</a>
-                <a href="@Url.Action("UserVotes", "Poll", new { id = Global.AccountID })">Polls</a>
             </div>
         }
     </div><div class="menu">
         <i class="fa fa-play"></i><div class="nav-text">Play</div>
         <div class="submenu">
-            <a href="/Wiki/Download">Download Zero-K<span>Download the game, it's free! :)</span></a>
+            <a href="/Wiki/Download"><i class="fa fa-download"></i> Download Zero-K<span>Download the game, it's free! :)</span></a>
             <!--<a href="Url.Action("Index", "Missions")">Missions<span>Single player missions</span></a>-->
             <!--Mission hidden until Chobby supports them-->
-            <a href="@Url.Action("Index", "Maps")">Maps<span>Thousands of maps to pick</span></a>
-            <a href="@Url.Action("Index", "Battles")">Replays<span>All your past victories, stored here!</span></a>
+            <a href="@Url.Action("Index", "Maps")"><i class="fa fa-map"></i> Maps<span>Thousands of maps to pick</span></a>
+            <a href="@Url.Action("Index", "Battles")"><i class="fa fa-reply-all"></i> Replays<span>All your past victories, stored here!</span></a>
         </div>
     </div><div class="menu">
         <i class="fa fa-video-camera"></i><div class="nav-text">Media</div>
         <div class="submenu">
-            <a href="/Wiki/Media#Screenshots">Screenshots</a>
-            <a href="/Wiki/Media#Videos">Videos</a>
-            <a href="/Wiki/Fanart">Fanart<span>Show the world your favorite game ;-)</span></a>
+            <a href="/Wiki/Media#Screenshots"><i class="fa fa-camera"></i> Screenshots</a>
+            <a href="/Wiki/Media#Videos"><i class="fa fa-video-camera"></i> Videos</a>
+            <a href="/Wiki/Fanart"><i class="fa fa-paint-brush"></i> Fanart<span>Show the world your favorite game ;-)</span></a>
         </div>
     </div><div class="menu">
         <i class="fa fa-info-circle"></i><div class="nav-text">Wiki</div>
         <div class="submenu">
-            <a href="/mediawiki/index.php?title=Manual">Index</a>
-            <a href="/mediawiki/index.php?title=Newbie_Guide">Newbie guide<span>Don't know where to begin? Click here.</span></a>
-            <a href="/mediawiki/index.php?title=Units">Units</a>
-            <a href="/mediawiki/index.php?title=Economy_Guide">Economy</a>
-            <a href="/mediawiki/index.php?title=Terraform">Terraforming<span>Let's go play in the dirt!</span></a>
-            <a href="/mediawiki/index.php?title=FAQ">FAQ<span>Frequently Asked Questions</span></a>
+            <a href="/mediawiki/index.php?title=Manual"><i class="fa fa-file"></i> Index</a>
+            <a href="/mediawiki/index.php?title=Newbie_Guide"><i class="fa fa-book"></i> Newbie guide<span>Don't know where to begin? Click here.</span></a>
+            <a href="/mediawiki/index.php?title=Units"><i class="fa fa-star"></i> Units</a>
+            <a href="/mediawiki/index.php?title=Economy_Guide"><i class="fa fa-money"></i> Economy</a>
+            <a href="/mediawiki/index.php?title=Terraform"><i class="fa fa-road"></i> Terraforming<span>Let's go play in the dirt!</span></a>
+            <a href="/mediawiki/index.php?title=FAQ"><i class="fa fa-question"></i> FAQ<span>Frequently Asked Questions</span></a>
         </div>
     </div><div class="menu">
         <i class="fa fa-crosshairs"></i><div class="nav-text">PlanetWars</div>
         <div class="submenu">
-            <a href="@Url.Action("Index", "Planetwars")">PlanetWars<span>Multiplayer online campaign</span></a>
-            <a href="@Url.Action("Ladder", "Planetwars")">Ladder</a>
-            <a href="@Url.Action("Index", "Factions")">Factions<span>The mighty factions controlling huge sectors of galaxy</span></a>
+            <a href="@Url.Action("Index", "Planetwars")"><i class="fa fa-moon-o"></i> PlanetWars<span>Multiplayer online campaign</span></a>
+            <a href="@Url.Action("Ladder", "Planetwars")"><i class="fa fa-line-chart"></i> Ladder</a>
+            <a href="@Url.Action("Index", "Factions")"><i class="fa fa-users"></i> Factions<span>The mighty factions controlling huge sectors of galaxy</span></a>
         </div>
     </div><div class="menu">
         <i class="fa fa-comment"></i><div class="nav-text">Community</div>
         <div class="submenu">
-            <a href="@Url.Action("Index", "Forum")">Forum<span>Discuss, ask for help, have fun!</span></a>
-            <a href="@Url.Action("Index", "Clans")">Clans<span>Play with your friends or make friends while playing :)</span></a>
-            <a href="@Url.Action("Index", "Ladders")">Ladders</a>
-            <a href="@Url.Action("Ratings", "Charts")">Statistics</a>
-            <a href="/mediawiki/index.php?title=Zero-K:Code_of_Conduct">Code of Conduct<span>Be nice, have fun!</span></a>
-            <a href="/mediawiki/index.php?title=Zero-K:Developing">Develop<span>Make the game with us</span></a>
-            <a href="/mediawiki/index.php?title=Zero-K:Privacy_policy">Privacy Policy</a>
-            <a href="/mediawiki/index.php?title=Zero-K:Contact">Contact<span>Contact the Zero-K team</span></a>
-            <a href="/mediawiki/index.php?title=Credits">Credits<span>Makers of Zero-K</span></a>
+            <a href="@Url.Action("Index", "Forum")"><i class="fa fa-quote-left"></i> Forum<span>Discuss, ask for help, have fun!</span></a>
+            <a href="@Url.Action("Index", "Clans")"><i class="fa fa-users"></i> Clans<span>Play with your friends or make friends while playing :)</span></a>
+            <a href="@Url.Action("Index", "Ladders")"><i class="fa fa-line-chart"></i> Ladders</a>
+            <a href="@Url.Action("Ratings", "Charts")"><i class="fa fa-pie-chart"></i> Statistics</a>
+            <a href="/mediawiki/index.php?title=Zero-K:Code_of_Conduct"><i class="fa fa-university"></i> Code of Conduct<span>Be nice, have fun!</span></a>
+            <a href="/mediawiki/index.php?title=Zero-K:Developing"><i class="fa fa-code-fork"></i> Develop<span>Make the game with us</span></a>
+            <a href="/mediawiki/index.php?title=Zero-K:Privacy_policy"><i class="fa fa-user-secret"></i> Privacy Policy</a>
+            <a href="/mediawiki/index.php?title=Zero-K:Contact"><i class="fa fa-envelope"></i> Contact<span>Contact the Zero-K team</span></a>
+            <a href="/mediawiki/index.php?title=Credits"><i class="fa fa-address-book"></i> Credits<span>Makers of Zero-K</span></a>
         </div>
     </div><div class="donate menu">
         <a href="@Url.Action("Index", "Contributions")">

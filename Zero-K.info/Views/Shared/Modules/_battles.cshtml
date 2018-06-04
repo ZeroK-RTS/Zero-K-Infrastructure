@@ -3,7 +3,7 @@
 @model ZkData.Account
 
 <div id="battles" class="module">
-    <h3 class="handle">Ongoing Battles</h3>
+    <h2 class="handle">Ongoing Battles</h2>
     @if (Model.SpringBattlePlayers.Any())
     {
         <h3>@Html.ActionLink("Last battles", "Index", "Battles", new { UserId = Model.AccountID }, null)</h3>

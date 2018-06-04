@@ -120,6 +120,23 @@ namespace ZkData.Migrations
             if (!db.MiscVars.Any(y => y.VarName == "GlacierSecretKey"))
                 db.MiscVars.AddOrUpdate(x => x.VarName, new MiscVar { VarName = "GlacierSecretKey", VarValue = "secret" });
 
+            Faction odd = new Faction
+            {
+                Name = "Odds",
+                Shortcut = "Federation",
+                Color = "green"
+            };
+
+            Faction even = new Faction
+            {
+                Name = "Evens",
+                Shortcut = "Ascended",
+                Color = "blue"
+            };
+
+            // add factions
+            db.Factions.AddOrUpdate(x => x.Name, odd, even);
+
             // add some test accounts
             db.Accounts.AddOrUpdate(x => x.Name,
             new Account
@@ -127,13 +144,14 @@ namespace ZkData.Migrations
                 Name = "newbie",
                 NewPasswordPlain = "newbie",
                 Country = "us",
-                Avatar = "amphimpulse",
+                Avatar = "amphimpulse"
             },
             new Account
             {
                 Name = "player1",
                 NewPasswordPlain = "player1",
                 Country = "??",
+                FactionID = odd.FactionID,
                 Rank = 1,
                 Level = 5,
                 Xp = 100
@@ -143,6 +161,7 @@ namespace ZkData.Migrations
                 Name = "player2",
                 NewPasswordPlain = "player2",
                 Country = "??",
+                FactionID = even.FactionID,
                 Rank = 2,
                 Level = 10,
                 Xp = 1000
@@ -162,6 +181,7 @@ namespace ZkData.Migrations
                 NewPasswordPlain = "test",
                 Country = "us",
                 Avatar = "chickenr",
+                FactionID = even.FactionID,
                 AdminLevel = AdminLevel.Moderator,
                 DevLevel = DevLevel.Developer,
             },
@@ -171,6 +191,7 @@ namespace ZkData.Migrations
                 NewPasswordPlain = "admin",
                 Country = "cz",
                 Avatar = null,
+                FactionID = odd.FactionID,
                 AdminLevel = AdminLevel.SuperAdmin,
                 DevLevel = DevLevel.CoreDeveloper,
                 Level = 50,

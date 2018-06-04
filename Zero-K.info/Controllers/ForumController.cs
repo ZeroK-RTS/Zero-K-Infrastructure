@@ -105,8 +105,7 @@ namespace ZeroKWeb.Controllers
 
             return View("ForumIndex", model);
         }
-
-
+        
         public ActionResult GetPostList(PostListModel model) {
             var db = new ZkDataContext();
             model = model ?? new PostListModel();
@@ -125,7 +124,7 @@ namespace ZeroKWeb.Controllers
                 if (filterAccountID.HasValue) posts = posts.Where(x => x.AuthorAccountID == filterAccountID);
             }
 
-            model.Data = posts.OrderBy(x=>x.ForumPostID);
+            model.Posts = posts.OrderBy(x=>x.ForumPostID);
             model.Thread = thread;
 
             return View("PostList", model);
@@ -669,8 +668,7 @@ namespace ZeroKWeb.Controllers
             var index = post.ForumThread.ForumPosts.Count(x => x.ForumPostID < post.ForumPostID);
             return index / PageSize;
         }
-
-
+        
         public class PostListModel
         {
             public int ThreadID { get; set; }
@@ -678,7 +676,7 @@ namespace ZeroKWeb.Controllers
             public int GoToPost { get; set; }
             public string User { get; set; }
             public ForumThread Thread;
-            public IQueryable<ForumPost> Data;
+            public IQueryable<ForumPost> Posts;
         }
 
         public class IndexResult

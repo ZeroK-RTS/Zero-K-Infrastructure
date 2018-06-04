@@ -40,7 +40,7 @@ hr {
     background: #ff0000;
 }
 
-input, select {
+input, textarea {
     display: block;
     background: @background;
     color: white;
@@ -50,10 +50,8 @@ input, select {
     margin-bottom: 1em;
 }
 
-input:focus {
-    border: 1px solid transparent;
-    border-bottom: 1px solid @highlight;
-    border-right: 1px solid @highlight;
+input:focus, textarea:focus {
+    border: 1px solid @highlight;
 }
 
 input[type=checkbox] {
@@ -68,6 +66,10 @@ input[type=checkbox] {
         max-width: 100%;
         max-height: 150px;
     }
+}
+
+#render-body {
+    margin-top: 5em;
 }
 
 #content {
@@ -116,6 +118,18 @@ input[type=checkbox] {
     display: inline-block;
 }
 
+.filter-section {
+    background: @background;
+    label {
+        display: inline-block;
+        width: 6em;
+    }
+    select {
+        display: inline-block;
+        width: 10em;
+    }
+}
+
 // user specific classes
 .avatar {
     width: 64px;
@@ -126,6 +140,10 @@ input[type=checkbox] {
     display: inline-block;
     font-weight: bold;
 
+    img {
+        vertical-align: middle;
+    }
+
     div {
         display: inline-block;
     }
@@ -134,6 +152,7 @@ input[type=checkbox] {
         display: none;
         position: absolute;
     }
+
 }
 
 .username-container:hover {
