@@ -36,12 +36,11 @@ Type: <span style='color:@u.LabelColor;'>@u.UnlockType.Description()</span><br/>
   <br />
 }
 
-@if (u.MetalCost.HasValue) {
-  @:Metal cost: @Html.PrintMetal(u.MetalCost)<br/>
-}
-
 @if (u.MetalCostMorph2.HasValue) {
+  @:Level 1 -> 2 upgrade cost: @Html.PrintMetal(u.MetalCost)<br/>
   @:Level 2 -> 3 upgrade cost: @Html.PrintMetal(u.MetalCostMorph2)<br/>
+} else if (u.MetalCost.HasValue) {
+  @:Metal cost: @Html.PrintMetal(u.MetalCost)<br/>
 }
 
 @if (u.MetalCostMorph3.HasValue) {
