@@ -272,6 +272,14 @@ namespace ChobbyLauncher
         public List<DownloadFile> Downloads { get; set; }
     }
 
+    [ChobbyMessage]
+    public class DownloadSpring
+    {
+        public string Engine { get; set; }
+
+        public List<DownloadFile> Downloads { get; set; }
+    }
+
 
     [ChobbyMessage]
     public class GaAddBusinessEvent

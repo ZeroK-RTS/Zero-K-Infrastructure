@@ -611,6 +611,30 @@ namespace ChobbyLauncher
             });
         }
 
+        private async Task Process(DownloadSpring args)
+        {
+            Task.Factory.StartNew(async () =>
+            {
+                try
+                {
+                    if (args.Downloads?.Any() == true)
+                    {
+                        foreach (var x in args.Downloads)
+                        {
+                            DownloadType type;
+                            if (string.IsNullOrEmpty(x.FileType) || !Enum.TryParse(x.FileType, out type)) type = DownloadType.NOTKNOWN;
+                            var result = await chobbyla.downloader.DownloadFile(type, x.Name, null);
+                            if (!result) Trace.TraceWarning("Download of {0} {1} has failed", x.FileType, x.Name);
+                        }
+                    }
+                    if (!await chobbyla.downloader.DownloadFile(DownloadType.ENGINE, args.Engine, null)) Trace.TraceWarning("Download of engine {0} has failed", args.Engine);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error processing DownloadSpring: {0}", ex);
+                }
+            });
+        }
 
         private async Task Process(DiscordUpdatePresence args)
         {
