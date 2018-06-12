@@ -26,6 +26,7 @@ namespace ZeroKWeb.Controllers
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
 
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} changed {1} hide country to {2}", Global.Account.Name, acc.Name, hideCountry));
             acc.HideCountry = hideCountry;
             // TODO reimplement ? Global.Nightwatch.Tas.SetHideCountry(acc.Name, hideCountry);
             db.SaveChanges();
