@@ -527,7 +527,9 @@ namespace ZeroKWeb.Controllers
                 
                 acc.WhrAlias = aliasId;
                 db.SaveChanges();
-                
+
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} linked {1} WHR to {2}", Global.Account.Name, acc.Name, aliasAcc.Name));
+
                 return Content(string.Format("{0} will play for {1}", acc, aliasAcc));
             }
         }
