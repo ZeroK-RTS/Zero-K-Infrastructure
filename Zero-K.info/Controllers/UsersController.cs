@@ -481,6 +481,7 @@ namespace ZeroKWeb.Controllers
             acc.SetPasswordPlain(newPassword);
             if (!string.IsNullOrEmpty(newPassword)) acc.SteamID = null;
             db.SaveChanges();
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} changed {1} password", Global.Account.Name, acc.Name));
             return Content(string.Format("{0} password set to {1}", acc.Name, newPassword));
         }
 
