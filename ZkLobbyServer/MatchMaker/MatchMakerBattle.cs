@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LobbyClient;
 using PlasmaShared;
+using ZkData;
 
 namespace ZkLobbyServer
 {
