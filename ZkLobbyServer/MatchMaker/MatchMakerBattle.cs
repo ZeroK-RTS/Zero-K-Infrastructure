@@ -16,8 +16,30 @@ namespace ZkLobbyServer
             EngineVersion = server.Engine;
             ModName = server.Game;
             FounderName = "MatchMaker #" + BattleID;
-            Title = "MatchMaker " + BattleID;
             Mode = bat.QueueType.Mode;
+
+            Title = "MM " + BattleID + ": " + bat.QueueType.Name;
+            if (Mode == AutohostMode.Game1v1) {
+                // possibly it could say the matchup in teams as well? Risks too long title though.
+                Title += " " + bat.Players[0].Name + " vs " + bat.Players[1].Name;
+            }
+            if (Mode == AutohostMode.Game1v1 || Mode == AutohostMode.Teams) {
+                using (var db = new ZkDataContext())
+                {
+                    try {
+                        float totalElo = 0.0f;
+                        foreach (var pe in bat.Players) {
+                            var acc = db.Accounts.First(x => x.Name == pe.Name);
+                            totalElo += acc.GetBestRating().Elo;
+                        }
+                        totalElo /= bat.Players.Count();
+                        Title += ", avg skill " + totalElo.ToString("N0");
+                    } catch (Exception ex) {
+                        Trace.TraceError(ex.ToString());
+                    }
+                }
+            }
+
             MaxPlayers = bat.Size;
             Prototype = bat;
             MapName = mapname;
