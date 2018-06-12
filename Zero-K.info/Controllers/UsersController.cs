@@ -281,12 +281,22 @@ namespace ZeroKWeb.Controllers
             // notify lobby of changes and post log message
             try
             {
-                if (banLobby == true) Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
-                if (banMute == true) Global.Server.PublishAccountUpdate(acc);
-
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Reason: {0} ", reason));
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Duration: {0}h", banHours));
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - reason: {0} ", reason));
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - duration: {0}h ", banHours));
+                
+                if (banLobby == true) {
+                    Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
+                    Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - lobby banned");
+                }
+                if (banMute == true) {
+                    Global.Server.PublishAccountUpdate(acc);
+                    Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - muted");
+                }
+                
+                if (banForum == true) Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - forum banned");
+                if (banSpecChat == true) Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - spec chat muted");
+                
                 Global.Server.GhostPm(acc.Name, string.Format("Your account has received moderator action: {0}", reason));
             }
             catch (Exception ex)
