@@ -99,7 +99,7 @@ namespace ZkData
                 if (p.Account != null)
                     p.Account.ProduceMetal(GlobalConst.PlanetMetalPerTurn);
                 else
-                    p.Faction.Metal += GlobalConst.PlanetMetalPerTurn;
+                    p.Faction.ProduceMetal(GlobalConst.PlanetMetalPerTurn);
             }
         }
 
