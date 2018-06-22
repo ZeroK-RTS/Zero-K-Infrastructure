@@ -52,7 +52,6 @@ namespace ZkLobbyServer
         {
             try
             {
-                var sw = Stopwatch.StartNew();
                 if (line.Length > GlobalConst.LobbyMaxMessageSize)
                 {
                     Trace.TraceWarning("{0} too long message: {1}",this,line);
@@ -66,8 +65,6 @@ namespace ZkLobbyServer
                     await connectedUser.Throttle(line.Length);
                     await connectedUser.Process(obj);
                 }
-                var delay = sw.ElapsedMilliseconds;
-                if (delay > GlobalConst.ProcessTimeMinDelayMilliseconds) DelayLogger.ReportDelay(sw.ElapsedMilliseconds, obj.getType());
             }
             catch (Exception ex)
             {

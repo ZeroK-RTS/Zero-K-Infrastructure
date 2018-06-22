@@ -28,6 +28,11 @@ namespace ZkLobbyServer
                 battle.Respond(e, "Cannot find such map.");
                 return null;
             }
+            else if (map.InternalName == battle.MapName)
+            {
+                battle.Respond(e, "Already on this map.");
+                return null;
+            }
             else if (!string.IsNullOrEmpty(arguments) && map.MapSupportLevel < MapSupportLevel.Supported)
             {
                 alternativeMap = MapPicker.FindResources(ResourceType.Map, arguments, MapSupportLevel.Supported).FirstOrDefault();

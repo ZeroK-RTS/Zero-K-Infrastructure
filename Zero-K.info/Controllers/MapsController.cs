@@ -251,6 +251,10 @@ namespace ZeroKWeb.Controllers
                                 MapSupportLevel mapSupportLevel) {
             var db = new ZkDataContext();
             var r = db.Resources.Single(x => x.ResourceID == id);
+
+            if (r.MapSupportLevel != mapSupportLevel)
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} has changed level of map {1} from {2} to {3}", Global.Account.Name, r.InternalName, r.MapSupportLevel, mapSupportLevel));
+
             r.TaggedByAccountID = Global.AccountID;
             r.MapIsSpecial = special;
             r.MapWaterLevel = sea;

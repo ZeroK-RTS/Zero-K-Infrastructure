@@ -1,4 +1,4 @@
-﻿@using ZeroKWeb
+@using ZeroKWeb
 @using ZkData
 @model ZkData.Account
 @{
@@ -9,16 +9,20 @@
 @if (Model.AccountID == Global.AccountID)
 {
     <h2>Contact the administrators</h2>
+    <div>
+        Please describe briefly what has happened. Moderators will look into the issue.<br/>
+        Give as much information about your problem as is possible to make sure
+        your request is processed more quickly.
+    </div>
 } else {
     <h2>Report abuse by player @Html.PrintAccount(Model)</h2>
+    <div>
+        Please describe briefly what has happened. Moderators will look into the issue.<br/>
+        <b><u>Include a link to the battle replay, a Pastebin with chat logs, or other relevant evidence.</u><br/>
+        <i>Note: Action is unlikely if a report should include evidence and doesn't.</i></b><br/>
+        <a href="/mediawiki/index.php?title=Zero-K:Code_of_Conduct">Code of Conduct</a>
+    </div>
 }
-
-<div>
-    Please describe briefly what has happened. Moderators will look into the issue.<br/>
-    Include a link to the battle replay, a Pastebin with chat logs, or other relevant evidence.<br/>
-    Note: Action is unlikely if a report should include evidence and doesn't.<br/>
-    <a href="/Wiki/CodeOfConduct">Code of Conduct</a>
-</div>
 
 <form method="POST" action="@Url.Action("ReportToAdminSubmit")">
     @Html.HiddenFor(x=>x.AccountID)

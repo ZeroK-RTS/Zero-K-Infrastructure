@@ -84,6 +84,10 @@ namespace ZeroKWeb.Controllers
                     news.ForumThreadID = thread.ForumThreadID;
                     db.News.InsertOnSubmit(news);
                 }
+                else
+                {
+                    nn.ForumThread.Title = nn.Title;
+                }
 			    db.SaveChanges();
 
 			    // add image to the start of the forum post we made

@@ -178,6 +178,8 @@ namespace ZeroKWeb.Controllers
                 {
                     effect.PlanetID = planetID.Value;
                     effect.Planet = db.Planets.Find(planetID.Value);
+                    if (effect.Planet.PlanetStructures.Any(x => x.StructureType.OwnerChangeWinsGame == true) && effectType.TreatyEffects.Any(x => x.TreatyEffectType.EffectGiveInfluence == true))
+                        return Content("Cannot trade influence on victory planets");
                 }
                 db.TreatyEffects.InsertOnSubmit(effect);
             }

@@ -132,7 +132,7 @@ namespace ZkData
         public const int NumCommanderLevels = 5;
         public const int MaxCommanderNameLength = 20;
 
-        public const string DefaultEngineOverride = "103.0"; // hack for ZKL using tasclient's engine - override here for missions etc
+        public const string DefaultEngineOverride = "104.0.1-287-gf7b0fcc"; // hack for ZKL using tasclient's engine - override here for missions etc
 
         public const int MinDurationForXP = 240;    // seconds
         public const int MinDurationForElo = 60;
@@ -168,7 +168,7 @@ namespace ZkData
 
         public const double PlanetMetalPerTurn = 1;
         public const double PlanetWarsEnergyToMetalRatio = 0.0;
-        public const double PlanetWarsMaximumIP = 123.0; //maximum IP on each planet
+        public const double PlanetWarsMaximumIP = 100.0; //maximum IP on each planet
         public const int PlanetWarsVictoryPointsToWin = 100;
         public const int VictoryPointDecay = 1;
         public const int BaseInfluencePerBattle = 35;
@@ -230,8 +230,6 @@ namespace ZkData
 
         public const int WikiEditLevel = 20;
 
-        public const int ProcessTimeLoggingIntervalSeconds = 300;
-        public const int ProcessTimeMinDelayMilliseconds = 1000;
         public const int TcpLingerStateSeconds = 5;
         public const bool TcpLingerStateEnabled = true;
 
