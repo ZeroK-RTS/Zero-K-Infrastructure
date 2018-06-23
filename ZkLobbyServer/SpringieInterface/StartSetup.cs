@@ -69,6 +69,10 @@ namespace ZeroKWeb.SpringieInterface
 
                     if (attacker == defender) defender = null;
 
+                    ret.ModOptions["MinSpeed"] = "1";
+                    ret.ModOptions["MaxSpeed"] = "1";
+                    ret.ModOptions["mutespec"] = "mute";
+
                     ret.ModOptions["attackingFaction"] = attacker.Shortcut;
                     ret.ModOptions["attackingFactionName"] = attacker.Name;
                     ret.ModOptions["attackingFactionColor"] = attacker.Color;
