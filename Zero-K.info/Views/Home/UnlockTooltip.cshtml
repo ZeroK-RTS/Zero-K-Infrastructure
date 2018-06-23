@@ -56,7 +56,7 @@ Type: <span style='color:@u.LabelColor;'>@u.UnlockType.Description()</span><br/>
 }
 
     @if (u.MorphLevel > 0) {
-  @:Commander morph: @u.MorphLevel<br/>
+  @:Required Commander level: @u.MorphLevel<br/>
 }
 
 @if (u.MaxModuleCount != null && (u.UnlockType == UnlockTypes.Module || u.UnlockType == UnlockTypes.Weapon)) {
