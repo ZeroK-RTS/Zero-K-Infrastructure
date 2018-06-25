@@ -31,9 +31,9 @@ namespace ZkLobbyServer {
             Mode = prototype.TeamPlayers.Max(x => x.Count) == 1 ? AutohostMode.Game1v1 : AutohostMode.None;
             MaxPlayers = prototype.TeamPlayers.Sum(x=>x.Count);
             ModOptions = prototype.ModOptions;
-            ModOptions["mutespec"] = "mute";
-            ModOptions["mutelobby"] = "mute";
-            ModOptions["allyreclaim"] = "1";
+
+            SetCompetitiveModoptions();
+            ModOptions["allyreclaim"] = "1"; // even more competitive than the above
 
             ValidateAndFillDetails();
         }
