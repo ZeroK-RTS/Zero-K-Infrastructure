@@ -26,11 +26,10 @@ namespace ZkLobbyServer
             
             if (ModOptions == null) ModOptions = new Dictionary<string, string>();
 
-            // hacky way to send some extra start setup data
-            if (bat.QueueType.Mode != AutohostMode.GameChickens) ModOptions["mutespec"] = "mute";
+            // proper way to send some extra start setup data
+            if (bat.QueueType.Mode != AutohostMode.GameChickens)
+                SetCompetitiveModoptions();
             ModOptions["MatchMakerType"] = bat.QueueType.Name;
-            ModOptions["MinSpeed"] = "1";
-            ModOptions["MaxSpeed"] = "1";
 
             ValidateAndFillDetails();
         }

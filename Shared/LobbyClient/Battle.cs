@@ -119,7 +119,13 @@ namespace LobbyClient
             return $"{ModName} {MapName} ({NonSpectatorCount}+{SpectatorCount}/{MaxPlayers})";
         }
 
-
+        public void SetCompetitiveModoptions()
+        {
+            ModOptions["MinSpeed"] = "1";
+            ModOptions["MaxSpeed"] = "1";
+            ModOptions["mutespec"] = "mute";
+            ModOptions["mutelobby"] = "mute";
+        }
 
         public LobbyHostingContext GetContext()
         {
