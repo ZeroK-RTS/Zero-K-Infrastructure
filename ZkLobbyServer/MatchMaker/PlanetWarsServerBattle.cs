@@ -29,7 +29,7 @@ namespace ZkLobbyServer
 
             if (ModOptions == null) ModOptions = new Dictionary<string, string>();
 
-            ModOptions["mutespec"] = "mute";
+            SetCompetitiveModoptions();
 
             ValidateAndFillDetails();
         }
