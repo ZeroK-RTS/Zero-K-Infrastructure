@@ -33,17 +33,17 @@ namespace ZeroKWeb.ForumParser
                     {
                         var db = new ZkDataContext();
 
-                        var acc = Account.AccountByName(db, val);
-                        if (acc != null)
-                        {
-                            context.Append(context.Html.PrintAccount(acc));
-                            context.Append(remainder);
-                            return ender;
-                        }
                         var fac = db.Factions.FirstOrDefault(x => x.Shortcut == val);
                         if (fac != null)
                         {
                             context.Append(context.Html.PrintFaction(fac, false));
+                            context.Append(remainder);
+                            return ender;
+                        }
+                        var acc = Account.AccountByName(db, val);
+                        if (acc != null)
+                        {
+                            context.Append(context.Html.PrintAccount(acc));
                             context.Append(remainder);
                             return ender;
                         }
