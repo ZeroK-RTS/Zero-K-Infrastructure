@@ -181,6 +181,7 @@ namespace ZeroKWeb.Controllers
                     if (effect.Planet.PlanetStructures.Any(x => x.StructureType.OwnerChangeWinsGame == true) && effectType.TreatyEffects.Any(x => x.TreatyEffectType.EffectGiveInfluence == true))
                         return Content("Cannot trade influence on victory planets");
                 }
+                if (effectType.IsPlanetBased && effect.Planet.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true) && effectType.TreatyEffects.Any(x => x.TreatyEffectType.EffectGiveInfluence == true)) return Content("Cannot trade victory planets");
                 db.TreatyEffects.InsertOnSubmit(effect);
             }
             if (delete != null) {
