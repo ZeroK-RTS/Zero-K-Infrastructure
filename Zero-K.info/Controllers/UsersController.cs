@@ -524,6 +524,45 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
+        public ActionResult DeleteAllForumVotes(int accountID)
+        {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
+            var votes = acc.AccountForumVotes;
+
+            foreach (var vote in votes)
+            {
+                var post = vote.ForumPost;
+                var author = post.Account;
+                var oldDelta = vote.Vote;
+
+                /*
+                Console.WriteLine("Purging vote on post " + post.ForumPostID + " by author " + author.Name + ": " + oldDelta);
+                Console.ReadLine();
+                */
+
+                // reverse vote effects
+                if (oldDelta > 0)
+                {
+                    author.ForumTotalUpvotes = author.ForumTotalUpvotes - oldDelta;
+                    post.Upvotes = post.Upvotes - oldDelta;
+                }
+                else if (oldDelta < 0)
+                {
+                    author.ForumTotalDownvotes = author.ForumTotalDownvotes + oldDelta;
+                    post.Downvotes = post.Downvotes + oldDelta;
+                }
+                db.AccountForumVotes.DeleteOnSubmit(vote);
+            }
+            db.SaveChanges();
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} forum votes deleted by {1}", Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
+
+            return Content(string.Format("Deleted all forum votes of {0}", acc.Name));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Auth(Role = AdminLevel.Moderator)]
         public ActionResult SetWhrAlias(int accountID, string alias)
         {
             int aliasId;

@@ -208,4 +208,14 @@
         Enter the target's user name to confirm: @Html.TextBox("accountName")
         <input type="submit" value="DELETE" class="js_confirm" />
     </form>
+
+    <h3>Delete all forum votes</h3>
+    <form action="@Url.Action("DeleteAllForumVotes", "Forum", new { accountID = Model.AccountID })" method="post">
+        @Html.AntiForgeryToken()
+        This will <b>permanently</b> remove <b>all</b> of the user's upvotes/downvotes on forum.<br />
+        This action <b>cannot</b> be undone!<br />
+        <br />
+        Enter the target's user name to confirm: @Html.TextBox("accountName")
+        <input type="submit" value="DELETE" class="js_confirm" />
+    </form>
 </div>
