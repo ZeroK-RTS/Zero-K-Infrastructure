@@ -172,11 +172,8 @@
         Reason: @Html.TextBox("reason", "Smurf")<br />
         <br />
 
-        Delete XP: @Html.CheckBox("deleteXP")<br />
-        <br />
         Mute: @Html.CheckBox("banMute")<br />
         Block commanders: @Html.CheckBox("banCommanders")<br />
-        Block unlocks: @Html.CheckBox("banUnlocks")<br />
         Disallow spec chat: @Html.CheckBox("banSpecChat")<br />
         <br />
         IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x => x.LastLogin).Select(x => x.IP).FirstOrDefault())<br />
