@@ -17,7 +17,7 @@ Commander name: @Html.TextBox("name", c != null ? c.Name : "Commander " + Model.
 	
     foreach (var slots in Model.Slots.GroupBy(x => x.MorphLevel).OrderBy(x => x.Key))
     {
-        <h3>Morph @(slots.Key + 1):</h3>
+        <h3>Level @(slots.Key + 1):</h3>
 		@:Metal: @Html.PrintMetal(c.GetTotalMorphLevelCost(slots.Key) - (slots.Key > 1 ? c.GetTotalMorphLevelCost(slots.Key - 1) : 0)) <br />
         foreach (var slot in slots.OrderByDescending(x => x.UnlockType.ToString())) // cheap hax to make sure weapons go first
         {
