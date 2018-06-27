@@ -105,9 +105,12 @@ namespace ZkData
 
 
             // planets generate metal
-            foreach (var p in Planets.Where(x => x.Faction != null && x.Account != null))
+            foreach (var p in Planets.Where(x => x.Faction != null))
             {
-                p.Account.ProduceMetal(GlobalConst.PlanetMetalPerTurn);
+                if (p.Account != null)
+                    p.Account.ProduceMetal(GlobalConst.PlanetMetalPerTurn);
+                else
+                    p.Faction.ProduceMetal(GlobalConst.PlanetMetalPerTurn);
             }
         }
 
