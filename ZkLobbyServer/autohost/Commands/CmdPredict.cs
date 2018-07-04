@@ -76,7 +76,7 @@ namespace ZkLobbyServer
                 var chances = RatingSystems.GetRatingSystem(cat).PredictOutcome(teams, DateTime.UtcNow);
                 for (int i = 0; i < teams.Count; i++)
                 {
-                    await battle.SayBattle( $"Team {teams[i].First().Name} has a {Math.Round(1000 * chances[i]) / 10}% chance to win");
+                    await battle.SayBattle( $"Team {teams[i].OrderByDescending(x => x.GetRating(cat).Elo).First().Name} has a {Math.Round(1000 * chances[i]) / 10}% chance to win");
                 }
             }
         }
