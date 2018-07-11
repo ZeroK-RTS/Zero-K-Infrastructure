@@ -433,7 +433,7 @@ namespace ZkLobbyServer
         {
             if (ActivePoll != null)
             {
-                await Respond(e, "Another poll already in progress, please wait");
+                await Respond(e, $"Please wait, another poll already in progress: {ActivePoll.question}");
                 return;
             }
             var poll = new CommandPoll(this);
