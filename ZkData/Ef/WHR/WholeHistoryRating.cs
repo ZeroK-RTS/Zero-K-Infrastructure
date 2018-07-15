@@ -111,13 +111,14 @@ namespace Ratings
 
         public List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams, DateTime time)
         {
-            return teams.Select(t =>
+            var predictions = teams.Select(t =>
                     SetupGame(t.Select(x => RatingSystems.GetRatingId(x.AccountID)).ToList(),
                             teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => RatingSystems.GetRatingId(x.AccountID))).ToList(),
                             true,
                             RatingSystems.ConvertDateToDays(time),
                             -1
-                    ).getBlackWinProbability() * 2 / teams.Count()).ToList();
+                    ).getBlackWinProbability()).ToList();
+            return predictions.Select(x => x / predictions.Sum()).ToList();
         }
 
 

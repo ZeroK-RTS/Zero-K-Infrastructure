@@ -172,11 +172,8 @@
         Reason: @Html.TextBox("reason", "Smurf")<br />
         <br />
 
-        Delete XP: @Html.CheckBox("deleteXP")<br />
-        <br />
         Mute: @Html.CheckBox("banMute")<br />
         Block commanders: @Html.CheckBox("banCommanders")<br />
-        Block unlocks: @Html.CheckBox("banUnlocks")<br />
         Disallow spec chat: @Html.CheckBox("banSpecChat")<br />
         <br />
         IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x => x.LastLogin).Select(x => x.IP).FirstOrDefault())<br />
@@ -203,6 +200,16 @@
     <form action="@Url.Action("DeleteAllPostsByUser", "Forum", new { accountID = Model.AccountID })" method="post">
         @Html.AntiForgeryToken()
         This will <b>permanently</b> remove <b>all</b> of the user's posts.<br />
+        This action <b>cannot</b> be undone!<br />
+        <br />
+        Enter the target's user name to confirm: @Html.TextBox("accountName")
+        <input type="submit" value="DELETE" class="js_confirm" />
+    </form>
+
+    <h3>Delete all forum votes</h3>
+    <form action="@Url.Action("DeleteAllForumVotes", "Forum", new { accountID = Model.AccountID })" method="post">
+        @Html.AntiForgeryToken()
+        This will <b>permanently</b> remove <b>all</b> of the user's upvotes/downvotes on forum.<br />
         This action <b>cannot</b> be undone!<br />
         <br />
         Enter the target's user name to confirm: @Html.TextBox("accountName")

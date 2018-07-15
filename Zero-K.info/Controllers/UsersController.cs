@@ -239,12 +239,10 @@ namespace ZeroKWeb.Controllers
         [Auth(Role = AdminLevel.Moderator)]
         public ActionResult Punish(int accountID,
                                    string reason,
-                                   bool deleteXP,
                                    bool banMute,
                                    bool banCommanders,
                                    bool banSite,
                                    bool banLobby,
-                                   bool banUnlocks,
                                    bool banSpecChat,
                                    bool banForum,
                                    string banIP,
@@ -266,11 +264,11 @@ namespace ZeroKWeb.Controllers
                                  BanSite = banSite,
                                  BanLobby = banLobby,
                                  BanExpires = DateTime.UtcNow.AddHours(banHours),
-                                 BanUnlocks = banUnlocks,
+                                 BanUnlocks = false,
                                  BanSpecChat = banSpecChat,
                                  BanIP = banIP,
                                  BanForum = banForum,
-                                 DeleteXP = deleteXP,
+                                 DeleteXP = false,
                                  DeleteInfluence = false,
                                  CreatedAccountID = Global.AccountID,
                                  UserID = banUserID
@@ -519,6 +517,45 @@ namespace ZeroKWeb.Controllers
             Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" {0} -> {1}", oldName, newUsername));
 
             return Content(string.Format("{0} renamed to {1}", oldName, newUsername));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Auth(Role = AdminLevel.Moderator)]
+        public ActionResult DeleteAllForumVotes(int accountID)
+        {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
+            var votes = acc.AccountForumVotes;
+
+            foreach (var vote in votes)
+            {
+                var post = vote.ForumPost;
+                var author = post.Account;
+                var oldDelta = vote.Vote;
+
+                /*
+                Console.WriteLine("Purging vote on post " + post.ForumPostID + " by author " + author.Name + ": " + oldDelta);
+                Console.ReadLine();
+                */
+
+                // reverse vote effects
+                if (oldDelta > 0)
+                {
+                    author.ForumTotalUpvotes = author.ForumTotalUpvotes - oldDelta;
+                    post.Upvotes = post.Upvotes - oldDelta;
+                }
+                else if (oldDelta < 0)
+                {
+                    author.ForumTotalDownvotes = author.ForumTotalDownvotes + oldDelta;
+                    post.Downvotes = post.Downvotes + oldDelta;
+                }
+                db.AccountForumVotes.DeleteOnSubmit(vote);
+            }
+            db.SaveChanges();
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} forum votes deleted by {1}", Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
+
+            return Content(string.Format("Deleted all forum votes of {0}", acc.Name));
         }
 
         [HttpPost]

@@ -36,28 +36,27 @@ Type: <span style='color:@u.LabelColor;'>@u.UnlockType.Description()</span><br/>
   <br />
 }
 
-@if (u.MetalCost.HasValue) {
+@if (u.MetalCostMorph2.HasValue) {
+  @:Level 1 -> 2 upgrade cost: @Html.PrintMetal(u.MetalCost)<br/>
+  @:Level 2 -> 3 upgrade cost: @Html.PrintMetal(u.MetalCostMorph2)<br/>
+} else if (u.MetalCost.HasValue) {
   @:Metal cost: @Html.PrintMetal(u.MetalCost)<br/>
 }
 
-@if (u.MetalCostMorph2.HasValue) {
-  @:Morph 2 cost: @Html.PrintMetal(u.MetalCostMorph2)<br/>
-}
-
 @if (u.MetalCostMorph3.HasValue) {
-  @:Morph 3 cost: @Html.PrintMetal(u.MetalCostMorph3)<br/>
+  @:Level 3 -> 4 upgrade cost: @Html.PrintMetal(u.MetalCostMorph3)<br/>
 }
 
 @if (u.MetalCostMorph4.HasValue) {
-  @:Morph 4 cost: @Html.PrintMetal(u.MetalCostMorph4)<br/>
+  @:Level 4 -> 5 upgrade cost: @Html.PrintMetal(u.MetalCostMorph4)<br/>
 }
 
 @if (u.MetalCostMorph5.HasValue) {
-  @:Morph 5 cost: @Html.PrintMetal(u.MetalCostMorph5)<br/>
+  @:Level 5 -> 6 upgrade cost: @Html.PrintMetal(u.MetalCostMorph5)<br/>
 }
 
     @if (u.MorphLevel > 0) {
-  @:Commander morph: @u.MorphLevel<br/>
+  @:Required Commander level: @(u.MorphLevel+1)<br/>
 }
 
 @if (u.MaxModuleCount != null && (u.UnlockType == UnlockTypes.Module || u.UnlockType == UnlockTypes.Weapon)) {
