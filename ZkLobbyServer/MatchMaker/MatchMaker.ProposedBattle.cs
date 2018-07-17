@@ -88,13 +88,13 @@ namespace ZkLobbyServer
                 }
 
                 var width = owner.EloWidth * widthMultiplier;
-                if (hasParty)
-                    width = width * DynamicConfig.Instance.MmWidthReductionForParties;
+             /*   if (hasParty)           
+                    width = width * DynamicConfig.Instance.MmWidthReductionForParties; */  //dont deduct elo range for party. we dont want to make less games for party, but to give party more high elo games
 
-                if (other.Party != null)
+                if ((other.Party != null)||(hasParty))  //if here/there is a party, we maintain the width and boost their elo
                 {
-                    if (!hasParty)
-                        width = width * DynamicConfig.Instance.MmWidthReductionForParties;
+                /*    if (!hasParty)
+                        width = width * DynamicConfig.Instance.MmWidthReductionForParties; */ //dont do that
 
                     if (!VerifyPartySizeFits(other.Party))
                     {
@@ -102,7 +102,7 @@ namespace ZkLobbyServer
                         return false;
                     }
 
-                    if ((GetPartyMinElo(other.Party, allPlayers) - MinElo > width) || (MaxElo - GetPartyMaxElo(other.Party, allPlayers) > width))
+                    if (((GetPartyMinElo(other.Party, allPlayers) - MinElo > width)*(1+DynamicConfig.Instance.MmWidthReductionForParties)) || ((MaxElo - GetPartyMaxElo(other.Party, allPlayers)*(1+DynamicConfig.Instance.MmWidthReductionForParties)) > width))    //0% dynamic config will not boost and elo for party. 100% elo config will make parties fight with 2x stronger enemy
                     {
                         //Trace.TraceError("MM: cannot add party {0}, {1} - {2} > {3} || {4} - {5} > {3}", other.Name, GetPartyMinElo(other.Party, allPlayers), MinElo, width, MaxElo, GetPartyMaxElo(other.Party, allPlayers));
                         return false;
