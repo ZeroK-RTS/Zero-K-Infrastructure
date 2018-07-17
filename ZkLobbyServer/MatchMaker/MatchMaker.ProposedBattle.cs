@@ -88,6 +88,106 @@ namespace ZkLobbyServer
                 }
 
                 var width = owner.EloWidth * widthMultiplier;
+          /*      if (hasParty)
+                    width = width * DynamicConfig.Instance.MmWidthReductionForParties;*/  //reduces games by limiting the elo interval
+
+                if (other.Party != null)
+                {
+                 /*   if (!hasParty)
+                        width = width * DynamicConfig.Instance.MmWidthReductionForParties; */ //this condition will only be triggered only when :121 triggered already
+
+                    if (!VerifyPartySizeFits(other.Party))
+                    {
+                        //Trace.TraceError("MM: cannot add party {0}, party size does not fit", other.Name);
+                        return false;
+                    }
+
+                    if ((GetPartyMinElo(other.Party, allPlayers) - MinElo > width) || (MaxElo - GetPartyMaxElo(other.Party, allPlayers) > width))
+                    {
+                        //Trace.TraceError("MM: cannot add party {0}, {1} - {2} > {3} || {4} - {5} > {3}", other.Name, GetPartyMinElo(other.Party, allPlayers), MinElo, width, MaxElo, GetPartyMaxElo(other.Party, allPlayers));
+                        return false;
+                    }
+                }
+                else if ((GetPlayerMinElo(other) - MinElo > width) || (MaxElo - GetPlayerMaxElo(other) > width))
+                {
+                    //Trace.TraceError("MM: cannot add {0}, {1} - {2} > {3} || {4} - {5} > {3}", other.Name, GetPlayerMinElo(other), MinElo, width, MaxElo, GetPlayerMaxElo(other));
+                    return false;
+                }
+
+                return true;
+            }
+
+            private double CutOffFunc(double input)
+            {
+                if (input >= 1500) return Math.Round(1500.0 + Math.Pow(input - 1500.0, eloCutOffExponent));
+                else return 1500.0 - Math.Pow(1500.0 - input, eloCutOffExponent);
+            }
+
+            private int GetPlayerMaxElo(PlayerEntry entry)
+            {
+                return (int)Math.Round(CutOffFunc(entry.MaxConsideredElo));
+            }
+
+            private int GetPartyMaxElo(PartyManager.Party party, List<PlayerEntry> players)
+            {
+                return (int)Math.Round(players.Where(x => x.Party == party).Select(GetPlayerMaxElo).Average()*(2-DynamicConfig.Instance.MmWidthReductionForParties));  //1 limitation for 1:1 enemy, 0 limitation for 2x stronger enemy
+            }
+
+            private int GetPartyMinElo(PartyManager.Party party, List<PlayerEntry> players)
+            {
+                return (int)Math.Round(players.Where(x => x.Party == party).Select(GetPlayerMinElo).Average()*(2-DynamicConfig.Instance.MmWidthReductionForParties)); //1 limitation for 1:1 enemy, 0 limitation for 2x stronger enemy
+            }
+
+
+            private int GetPlayerMinElo(PlayerEntry entry)
+            {
+                return (int)Math.Round(CutOffFunc(entry.MinConsideredElo));
+            }
+
+            private bool VerifyPartySizeFits(PartyManager.Party party)
+            {
+                if (party.UserNames.Count + Players.Count > Size) return false;
+
+                if (QueueType.Mode != AutohostMode.GameChickens)
+                {
+
+                    var existingPartySizes =
+                        Players.Where(x => x.Party != null)
+                            .GroupBy(x => x.Party)
+                            .Select(x => x.Key.UserNames.Count)
+                            .OrderByDescending(x => x)
+                            .ToList();
+                    var maxTeamSize = Size/2;
+                    var t1 = 0;
+                    var t2 = 0;
+                    foreach (var psize in existingPartySizes)
+                        if (t1 + psize <= maxTeamSize) t1 += psize;
+                        else if (t2 + psize <= maxTeamSize) t2 += psize;
+
+                    if ((party.UserNames.Count + t1 > maxTeamSize) && (party.UserNames.Count + t2 > maxTeamSize)) return false; // cannot fit new party to still balance
+                }
+
+                return true;
+            }
+        }
+    }
+}
+
+
+                if (Players.Contains(other))
+                {
+                    //Trace.TraceError("MM: cannot add {0}, already added", other.Name);
+                    return false;
+                }
+                if (owner.Party !=null && other.Party == owner.Party) return true; // always accept same party
+
+                if (!other.GenerateWantedBattles(allPlayers, ignoreSizeLimit).Any(y => (y.Size == Size) && (y.QueueType == QueueType)))
+                {
+                    //Trace.TraceError("MM: cannot add {0}, does not want same game type", other.Name);
+                    return false;
+                }
+
+                var width = owner.EloWidth * widthMultiplier;
                 if (hasParty)
                     width = width * DynamicConfig.Instance.MmWidthReductionForParties;
 
