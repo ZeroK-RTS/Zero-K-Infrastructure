@@ -167,7 +167,7 @@ namespace ZkLobbyServer
                 return true;
             }
 
-	private double StengthToELO(double StrengthReceived)
+	private double StrengthToELO(double StrengthReceived)
 	{
 		return ((Math.Log10(StrengthReceived))*400);
 	}
