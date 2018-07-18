@@ -88,13 +88,10 @@ namespace ZkLobbyServer
                 }
 
                 var width = owner.EloWidth * widthMultiplier;
-            /*    if (hasParty)
-                    width = width * DynamicConfig.Instance.MmWidthReductionForParties; */ //reduces game for paty, not best solution
+              
 
                 if (other.Party != null)
                 {
-                /*    if (!hasParty)
-                        width = width * DynamicConfig.Instance.MmWidthReductionForParties;*/ //condition and action is the same as the above, commenting for performance
 
                     if (!VerifyPartySizeFits(other.Party))
                     {
@@ -130,12 +127,12 @@ namespace ZkLobbyServer
 
             private int GetPartyMaxElo(PartyManager.Party party, List<PlayerEntry> players)
             {
-                return (int)Math.Round(players.Where(x => x.Party == party).Select(GetPlayerMaxElo).Average()*(2-DynamicConfig.Instance.MmWidthReductionForParties));
+                return (int)Math.Round(StrengthToELO((2-DynamicConfig.Instance.MmWidthReductionForParties)*ELOToStrength(players.Where(x => x.Party == party).Select(GetPlayerMaxElo).Average())));
             }
 
             private int GetPartyMinElo(PartyManager.Party party, List<PlayerEntry> players)
             {
-                return (int)Math.Round(players.Where(x => x.Party == party).Select(GetPlayerMinElo).Average()*(2-DynamicConfig.Instance.MmWidthReductionForParties));
+                return (int)Math.Round(StrengthToELO((2-DynamicConfig.Instance.MmWidthReductionForParties)*ELOToStrength(players.Where(x => x.Party == party).Select(GetPlayerMinElo).Average())));
             }
 
 
@@ -144,7 +141,7 @@ namespace ZkLobbyServer
                 return (int)Math.Round(CutOffFunc(entry.MinConsideredElo));
             }
 
-            private bool VerifyPartySizeFits(PartyManager.Party party)
+          private bool VerifyPartySizeFits(PartyManager.Party party)
             {
                 if (party.UserNames.Count + Players.Count > Size) return false;
 
@@ -169,6 +166,18 @@ namespace ZkLobbyServer
 
                 return true;
             }
+
+	private double StengthToELO(double StrengthReceived)
+	{
+		return ((Math.Log10(StrengthReceived))*400);
+	}
+	
+	private double ELOToStrength(double ELOReceived)
+	{
+		return (Math.Pow(10.0,ELOReceived/400));
+	}
+
+
         }
     }
 }
