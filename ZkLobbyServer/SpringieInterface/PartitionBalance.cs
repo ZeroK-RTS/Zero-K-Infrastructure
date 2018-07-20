@@ -177,7 +177,11 @@ namespace ZeroKWeb.SpringieInterface
                     LobbyID = x.Account
                 }).ToList()
             };
-            
+
+            Trace.TraceInformation("First list, second list " + firstList.Count + " , " + secondList.Count);
+            Trace.TraceInformation("Best result is " + best);
+            Trace.TraceInformation("Best diff is " + bestDiff);
+
             int j = 0;
             while (j < players.Count)
             {
@@ -192,7 +196,8 @@ namespace ZeroKWeb.SpringieInterface
                 j++;
                 best >>= 1;
             }
-            
+
+            ret.Players.ForEach(x => Trace.TraceInformation("Balance: " + x.LobbyID + ": " + x.AllyID));
 
             //Make that nice message
 
@@ -252,6 +257,7 @@ namespace ZeroKWeb.SpringieInterface
             var dualResult = Balance(mode, players);
             dualResult.Players.ForEach(r => ret.Players.Where(x => x.LobbyID == r.LobbyID).ForEach(x => x.AllyID = r.AllyID));
             ret.Message = dualResult.Message;
+            ret.Players.ForEach(x => Trace.TraceInformation("BalanceInterface: " + x.LobbyID + ": " + x.AllyID));
             return ret;
         }
     }
