@@ -173,7 +173,7 @@ namespace ZeroKWeb.SpringieInterface
             DualBalanceResult ret = new DualBalanceResult()
             {
                 EloDifference = 2 * bestDiff / players.Count,
-                Players = players.Select(x => new PlayerTeam()
+                Players = players.Where(p => p.Account > 0).Select(x => new PlayerTeam()
                 {
                     LobbyID = x.Account
                 }).ToList()

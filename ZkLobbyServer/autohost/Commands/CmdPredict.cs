@@ -60,7 +60,7 @@ namespace ZkLobbyServer
                             teams = PartitionBalance.Balance(Balancer.BalanceMode.ClanWise, b.Users.Values.Select(x => x.LobbyUser).Select(x => new PartitionBalance.PlayerItem(x.AccountID, x.EffectiveElo, x.Clan, x.PartyID)).ToList())
                                 .Players
                                 .GroupBy(u => u.AllyID)
-                                .Select(x => x.Select(p => Account.AccountByName(db, p.Name))).ToList();
+                                .Select(x => x.Select(p => db.Accounts.Where(a => a.AccountID == p.LobbyID).FirstOrDefault())).ToList();
                             break;
 
                         default:
