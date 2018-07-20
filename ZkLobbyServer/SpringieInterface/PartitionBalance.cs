@@ -154,7 +154,7 @@ namespace ZeroKWeb.SpringieInterface
                 if (b >= 0 && sum - 2 * (firstList[a].Sum + secondList[b].Sum) < bestDiff)
                 {
                     bestDiff = sum - 2 * (firstList[a].Sum + secondList[b].Sum);
-                    best = firstList[a].Elements | (secondList[b].Elements << (firstList.Count));
+                    best = firstList[a].Elements | (secondList[b].Elements << (maxTeamSize));
                 }
                 a++;
             }
