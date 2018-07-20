@@ -6,6 +6,7 @@ using LobbyClient;
 using ZkData;
 using Ratings;
 using PlasmaShared;
+using ZeroKWeb.SpringieInterface;
 
 namespace ZkLobbyServer
 {
@@ -56,8 +57,11 @@ namespace ZkLobbyServer
                             break;
 
                         case PlasmaShared.AutohostMode.Teams:
-                            await battle.SayBattle($"The battle will be balanced when it starts");
-                            return;
+                            teams = PartitionBalance.Balance(Balancer.BalanceMode.ClanWise, b.Users.Values.Select(x => x.LobbyUser).Select(x => new PartitionBalance.PlayerItem(x.AccountID, x.EffectiveElo, x.Clan, x.PartyID)).ToList())
+                                .Players
+                                .GroupBy(u => u.AllyID)
+                                .Select(x => x.Select(p => Account.AccountByName(db, p.Name))).ToList();
+                            break;
 
                         default:
                             teams = b.Users.Values.Where(u => !u.IsSpectator)
@@ -76,7 +80,7 @@ namespace ZkLobbyServer
                 var chances = RatingSystems.GetRatingSystem(cat).PredictOutcome(teams, DateTime.UtcNow);
                 for (int i = 0; i < teams.Count; i++)
                 {
-                    await battle.SayBattle( $"Team {teams[i].OrderByDescending(x => x.GetRating(cat).Elo).First().Name} has a {Math.Round(1000 * chances[i]) / 10}% chance to win");
+                    await battle.SayBattle( $"Team {teams[i].OrderByDescending(x => x.GetRating(cat).Elo).Select(x => x.Name).Aggregate((a, y) => a + ", " + y)} has a {Math.Round(1000 * chances[i]) / 10}% chance to win");
                 }
             }
         }
