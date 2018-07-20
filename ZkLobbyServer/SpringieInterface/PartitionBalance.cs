@@ -234,6 +234,7 @@ namespace ZeroKWeb.SpringieInterface
 
             ret.CanStart = true;
             ret.Players = b.Players.ToList();
+            ret.Bots = b.Bots.ToList();
 
             List<PlayerItem> players = new List<PlayerItem>();
             using (var db = new ZkDataContext())

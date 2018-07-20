@@ -284,13 +284,23 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     case AutohostMode.None:
                         {
-                            if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == true ? BalanceMode.ClanWise : BalanceMode.Normal, context);
+                            if (!isGameStart)
+                            {
+                                if (allyCount == null || allyCount == 2)
+                                {
+                                    res = DualBalance.BalanceInterface(2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                                }
+                                else
+                                {
+                                    res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == true ? BalanceMode.ClanWise : BalanceMode.Normal, context);
+                                }
+                            }
                         }
                         break;
                     case AutohostMode.Teams:
                     case AutohostMode.Game1v1:
                         {
-                            res = DualBalance.BalanceInterface(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                            res = DualBalance.BalanceInterface(2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
                             res.DeleteBots = true;
                         }
                         break;
