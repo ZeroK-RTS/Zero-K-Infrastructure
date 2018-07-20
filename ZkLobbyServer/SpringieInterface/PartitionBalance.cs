@@ -134,6 +134,7 @@ namespace ZeroKWeb.SpringieInterface
             sw.Start();
 
             double sum = groupSkill.Sum();
+            maxTeamSize = playerGroups.Count / 2;
             List<Subset> firstList = generateAllSubsets(groupSkill.Where((x, i) => i < maxTeamSize).ToList());
             List<Subset> secondList = generateAllSubsets(groupSkill.Where((x, i) => i >= maxTeamSize).ToList());
 
@@ -154,7 +155,7 @@ namespace ZeroKWeb.SpringieInterface
                 if (b >= 0 && sum - 2 * (firstList[a].Sum + secondList[b].Sum) < bestDiff)
                 {
                     bestDiff = sum - 2 * (firstList[a].Sum + secondList[b].Sum);
-                    best = firstList[a].Elements | (secondList[b].Elements << (firstList.Count));
+                    best = firstList[a].Elements | (secondList[b].Elements << (maxTeamSize));
                 }
                 a++;
             }
@@ -171,7 +172,7 @@ namespace ZeroKWeb.SpringieInterface
 
             DualBalanceResult ret = new DualBalanceResult()
             {
-                EloDifference = bestDiff / maxTeamSize,
+                EloDifference = 2 * bestDiff / players.Count,
                 Players = players.Select(x => new PlayerTeam()
                 {
                     LobbyID = x.Account
@@ -183,7 +184,7 @@ namespace ZeroKWeb.SpringieInterface
             Trace.TraceInformation("Best diff is " + bestDiff);
 
             int j = 0;
-            while (j < players.Count)
+            while (j < playerGroups.Count)
             {
                 if ((best & 0x1) == 0)
                 {
