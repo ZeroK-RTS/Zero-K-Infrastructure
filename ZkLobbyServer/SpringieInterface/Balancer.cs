@@ -20,7 +20,7 @@ namespace ZeroKWeb.SpringieInterface
             FactionWise
         }
 
-        const double MaxCbalanceDifference = 70;
+        public const double MaxCbalanceDifference = 70;
         const double MaxTeamSizeDifferenceRatio = 2;
         readonly List<BalanceTeam> teams = new List<BalanceTeam>();
 
@@ -97,7 +97,7 @@ namespace ZeroKWeb.SpringieInterface
         /// <param name="b"></param>
         /// <param name="unmovablePlayers"></param>
         /// <returns></returns>
-        BalanceTeamsResult LegacyBalance(int teamCount, BalanceMode mode, LobbyHostingContext b, params List<Account>[] unmovablePlayers)
+        public BalanceTeamsResult LegacyBalance(int teamCount, BalanceMode mode, LobbyHostingContext b, params List<Account>[] unmovablePlayers)
         {
             var ret = new BalanceTeamsResult();
 
@@ -290,7 +290,7 @@ namespace ZeroKWeb.SpringieInterface
                     case AutohostMode.Teams:
                     case AutohostMode.Game1v1:
                         {
-                            res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                            res = DualBalance.BalanceInterface(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
                             res.DeleteBots = true;
                         }
                         break;
