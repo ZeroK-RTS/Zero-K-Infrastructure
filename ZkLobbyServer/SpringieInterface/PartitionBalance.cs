@@ -9,7 +9,7 @@ using static ZeroKWeb.SpringieInterface.Balancer;
 namespace ZeroKWeb.SpringieInterface
 {
     //Optimized balancing for two teams
-    class DualBalance
+    class PartitionBalance
     {
         public class PlayerItem
         {
@@ -178,11 +178,7 @@ namespace ZeroKWeb.SpringieInterface
                     LobbyID = x.Account
                 }).ToList()
             };
-
-            Trace.TraceInformation("First list, second list " + firstList.Count + " , " + secondList.Count);
-            Trace.TraceInformation("Best result is " + best);
-            Trace.TraceInformation("Best diff is " + bestDiff);
-
+            
             int j = 0;
             while (j < playerGroups.Count)
             {
@@ -197,12 +193,11 @@ namespace ZeroKWeb.SpringieInterface
                 j++;
                 best >>= 1;
             }
-
-            ret.Players.ForEach(x => Trace.TraceInformation("Balance: " + x.LobbyID + ": " + x.AllyID));
+            
 
             //Make that nice message
 
-            var text = string.Format("( ( 1={0}%) : 2={1}%))", (int)Math.Round((1.0 / (1.0 + Math.Pow(10, ret.EloDifference / 400.0))) * 100.0), (int)Math.Round((1.0 / (1.0 + Math.Pow(10, -ret.EloDifference / 400.0))) * 100.0));
+            var text = string.Format("( ( 1={0}%) : 2={1}%))", (int)Math.Round((1.0 / (1.0 + Math.Pow(10, ret.EloDifference / 400.0))) * 100.0), (int)Math.Round((1.0 / (1.0 + Math.Pow(10, ret.EloDifference / 400.0))) * 100.0));
             
             ret.Message = string.Format(
                 "{0} players balanced {2} to {1} teams {3}. {4} combinations checked, spent {5}ms of CPU time",
@@ -252,13 +247,12 @@ namespace ZeroKWeb.SpringieInterface
                     ret.CanStart = false;
                     return ret;
                 }
-                players = b.Players.Where(y => !y.IsSpectator).Select(x => new PlayerItem(x.LobbyID, accs.First(a => a.AccountID == x.LobbyID).GetRating(b.ApplicableRating).RealElo, x.Clan, x.PartyID)).ToList();
+                players = b.Players.Where(y => !y.IsSpectator).Select(x => new PlayerItem(x.LobbyID, accs.First(a => a.AccountID == x.LobbyID).GetRating(b.ApplicableRating).Elo, x.Clan, x.PartyID)).ToList();
             }
 
             var dualResult = Balance(mode, players);
             dualResult.Players.ForEach(r => ret.Players.Where(x => x.LobbyID == r.LobbyID).ForEach(x => x.AllyID = r.AllyID));
             ret.Message = dualResult.Message;
-            ret.Players.ForEach(x => Trace.TraceInformation("BalanceInterface: " + x.LobbyID + ": " + x.AllyID));
             return ret;
         }
     }

@@ -288,7 +288,7 @@ namespace ZeroKWeb.SpringieInterface
                             {
                                 if (allyCount == null || allyCount == 2)
                                 {
-                                    res = DualBalance.BalanceInterface(2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                                    res = PartitionBalance.BalanceInterface(2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
                                 }
                                 else
                                 {
@@ -300,7 +300,7 @@ namespace ZeroKWeb.SpringieInterface
                     case AutohostMode.Teams:
                     case AutohostMode.Game1v1:
                         {
-                            res = DualBalance.BalanceInterface(2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                            res = PartitionBalance.BalanceInterface(2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
                             res.DeleteBots = true;
                         }
                         break;
