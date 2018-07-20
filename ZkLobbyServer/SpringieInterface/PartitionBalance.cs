@@ -249,7 +249,7 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             var dualResult = Balance(mode, players);
-            dualResult.Players.ForEach(r => ret.Players.First(x => x.LobbyID == r.LobbyID).AllyID = r.AllyID);
+            dualResult.Players.ForEach(r => ret.Players.Where(x => x.LobbyID == r.LobbyID).ForEach(x => x.AllyID = r.AllyID));
             ret.Message = dualResult.Message;
             return ret;
         }
