@@ -11,7 +11,7 @@ namespace ZkLobbyServer
         private ServerBattle battle;
         private bool ended;
         private Dictionary<string, bool> userVotes = new Dictionary<string, bool>();
-        private string question;
+        public string question { get; private set; }
         public Say Creator { get; private set; }
         private BattleCommand command;
 
