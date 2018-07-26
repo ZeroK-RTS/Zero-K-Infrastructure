@@ -276,8 +276,6 @@ namespace ChobbyLauncher
     public class DownloadSpring
     {
         public string Engine { get; set; }
-
-        public List<DownloadFile> Downloads { get; set; }
     }
 
 
