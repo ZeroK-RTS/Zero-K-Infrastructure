@@ -390,6 +390,10 @@
     <Compile Include="Migrations\201805160811134_MmSizeGrowthTime.Designer.cs">
       <DependentUpon>201805160811134_MmSizeGrowthTime.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201807261504544_MmTeamsMinimumWinChance.cs" />
+    <Compile Include="Migrations\201807261504544_MmTeamsMinimumWinChance.Designer.cs">
+      <DependentUpon>201807261504544_MmTeamsMinimumWinChance.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -748,6 +752,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201805160811134_MmSizeGrowthTime.resx">
       <DependentUpon>201805160811134_MmSizeGrowthTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807261504544_MmTeamsMinimumWinChance.resx">
+      <DependentUpon>201807261504544_MmTeamsMinimumWinChance.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
