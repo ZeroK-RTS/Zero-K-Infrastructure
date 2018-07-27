@@ -5,6 +5,7 @@ using System.Linq;
 using LobbyClient;
 using PlasmaShared;
 using ZkData;
+using static ZeroKWeb.SpringieInterface.PartitionBalance;
 
 namespace ZkLobbyServer
 {
@@ -68,6 +69,24 @@ namespace ZkLobbyServer
                     }
                 }
 
+            }
+
+            public bool VerifyBalance(double minimumWinChance)
+            {
+                try
+                {
+                    if (minimumWinChance <= 0.01) return true;
+
+                    if (QueueType.Mode != AutohostMode.Teams) return true;
+
+                    var players = Players.Select(x => x.LobbyUser).Select(x => new PlayerItem(x.AccountID, x.EffectiveMmElo, x.Clan, x.PartyID)).ToList();
+                    return Balance(ZeroKWeb.SpringieInterface.Balancer.BalanceMode.Party, players).LowestWinChance > minimumWinChance;
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("MatchMaker error checking balance: \n{0}", ex);
+                    return true;
+                }
             }
 
             public bool CanBeAdded(PlayerEntry other, List<PlayerEntry> allPlayers, bool ignoreSizeLimit)
