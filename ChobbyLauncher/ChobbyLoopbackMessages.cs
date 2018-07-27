@@ -60,6 +60,12 @@ namespace ChobbyLauncher
     }
 
     [ChobbyMessage]
+    public class UserActivity
+    {
+        public double IdleSeconds { get; set; }
+    }
+
+    [ChobbyMessage]
     public class DownloadFile
     {
         public string FileType { get; set; }

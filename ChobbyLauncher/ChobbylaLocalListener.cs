@@ -22,6 +22,8 @@ namespace ChobbyLauncher
 
     public class ChobbylaLocalListener
     {
+        public static DateTime LastUserAction;
+
         private CommandJsonSerializer serializer;
         private TcpTransport transport;
         private Chobbyla chobbyla;
@@ -30,10 +32,11 @@ namespace ChobbyLauncher
         private ulong initialConnectLobbyID;
         private Timer timer;
         private DiscordController discordController;
-
+        private Timer idleReport;
 
         public ChobbylaLocalListener(Chobbyla chobbyla, SteamClientHelper steam, ulong initialConnectLobbyID)
         {
+            LastUserAction = DateTime.Now;
             this.chobbyla = chobbyla;
             this.steam = steam;
             steam.Listener = this;
@@ -53,6 +56,7 @@ namespace ChobbyLauncher
             discordController.OnSpectate += DiscordOnSpectateCallback;
 
             timer = new Timer((o) => OnTimerTick(), this, 500, 500);
+            idleReport = new Timer((o) => SendCommand(new UserActivity() {IdleSeconds = WindowsApi.IdleTime.TotalSeconds }), this, 5000, 5000);
         }
 
 
@@ -71,17 +75,18 @@ namespace ChobbyLauncher
                 });
             }
 
-
             discordController.Update();
         }
 
         private void SteamOnOverlayActivated(bool b)
         {
+            LastUserAction = DateTime.Now;
             SendCommand(new SteamOverlayChanged() { IsActive = b });
         }
 
         private void SteamOnJoinFriendRequest(ulong friendSteamID)
         {
+            LastUserAction = DateTime.Now;
             SendCommand(new SteamJoinFriend() { FriendSteamID = friendSteamID.ToString() });
             steam.SendSteamNotifyJoin(friendSteamID);
         }
@@ -94,11 +99,13 @@ namespace ChobbyLauncher
 
         private void DiscordOnJoinCallback(string secret)
         {
+            LastUserAction = DateTime.Now;
             SendCommand(new DiscordOnJoin() { Secret = secret });
         }
 
         private void DiscordOnSpectateCallback(string secret)
         {
+            LastUserAction = DateTime.Now;
             SendCommand(new DiscordOnSpectate { Secret = secret });
         }
 
@@ -147,6 +154,7 @@ namespace ChobbyLauncher
         {
             try
             {
+                LastUserAction = DateTime.Now;
                 MinimizeChobby();
                 System.Diagnostics.Process.Start(args.Url);
             }
