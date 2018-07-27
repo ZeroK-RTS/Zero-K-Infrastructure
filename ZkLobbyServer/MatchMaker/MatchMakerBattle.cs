@@ -21,25 +21,21 @@ namespace ZkLobbyServer
             FounderName = "MatchMaker #" + BattleID;
             Mode = bat.QueueType.Mode;
 
-            Title = "MM " + BattleID + ": " + bat.QueueType.Name;
+            Title = "MM ";
             if (Mode == AutohostMode.Game1v1) {
-                // possibly it could say the matchup in teams as well? Risks too long title though.
+                // Show names in favor of battle id/type, it's more interesting
                 Title += " " + bat.Players[0].Name + " vs " + bat.Players[1].Name;
             }
+            else
+            {
+                Title += BattleID + ": " + bat.QueueType.Name;
+            }
             if (Mode == AutohostMode.Game1v1 || Mode == AutohostMode.Teams) {
-                using (var db = new ZkDataContext())
-                {
-                    try {
-                        float totalElo = 0.0f;
-                        foreach (var pe in bat.Players) {
-                            var acc = db.Accounts.First(x => x.Name == pe.Name);
-                            totalElo += acc.GetBestRating().Elo;
-                        }
-                        totalElo /= bat.Players.Count();
-                        Title += ", avg skill " + totalElo.ToString("N0");
-                    } catch (Exception ex) {
-                        Trace.TraceError(ex.ToString());
-                    }
+                try {
+                    //Title += ", avg skill " + bat.Players.Select(x => x.LobbyUser.EffectiveMmElo).Average().ToString("N0");
+                    Title += ", Rank " + Ratings.Ranks.RankNames[bat.Players.Select(x => x.LobbyUser.Rank).Max()];
+                } catch (Exception ex) {
+                    Trace.TraceError(ex.ToString());
                 }
             }
 
