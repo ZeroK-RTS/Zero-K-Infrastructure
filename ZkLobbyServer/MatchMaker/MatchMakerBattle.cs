@@ -30,13 +30,11 @@ namespace ZkLobbyServer
             {
                 Title += BattleID + ": " + bat.QueueType.Name;
             }
-            if (Mode == AutohostMode.Game1v1 || Mode == AutohostMode.Teams) {
-                try {
-                    //Title += ", avg skill " + bat.Players.Select(x => x.LobbyUser.EffectiveMmElo).Average().ToString("N0");
-                    Title += ", Rank " + Ratings.Ranks.RankNames[bat.Players.Select(x => x.LobbyUser.Rank).Max()];
-                } catch (Exception ex) {
-                    Trace.TraceError(ex.ToString());
-                }
+            try {
+                //Title += ", avg skill " + bat.Players.Select(x => x.LobbyUser.EffectiveMmElo).Average().ToString("N0");
+                Title += ", Rank " + Ratings.Ranks.RankNames[bat.Players.Select(x => x.LobbyUser.Rank).Max()];
+            } catch (Exception ex) {
+                Trace.TraceError(ex.ToString());
             }
 
             MaxPlayers = bat.Size;
