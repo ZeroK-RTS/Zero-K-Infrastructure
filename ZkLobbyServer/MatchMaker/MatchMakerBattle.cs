@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using LobbyClient;
 using PlasmaShared;
+using ZkData;
 
 namespace ZkLobbyServer
 {
@@ -16,8 +19,24 @@ namespace ZkLobbyServer
             EngineVersion = server.Engine;
             ModName = server.Game;
             FounderName = "MatchMaker #" + BattleID;
-            Title = "MatchMaker " + BattleID;
             Mode = bat.QueueType.Mode;
+
+            Title = "MM ";
+            if (Mode == AutohostMode.Game1v1) {
+                // Show names in favor of battle id/type, it's more interesting
+                Title += " " + bat.Players[0].Name + " vs " + bat.Players[1].Name;
+            }
+            else
+            {
+                Title += BattleID + ": " + bat.QueueType.Name;
+            }
+            try {
+                //Title += ", avg skill " + bat.Players.Select(x => x.LobbyUser.EffectiveMmElo).Average().ToString("N0");
+                Title += ", Rank " + Ratings.Ranks.RankNames[bat.Players.Select(x => x.LobbyUser.Rank).Max()];
+            } catch (Exception ex) {
+                Trace.TraceError(ex.ToString());
+            }
+
             MaxPlayers = bat.Size;
             Prototype = bat;
             MapName = mapname;
