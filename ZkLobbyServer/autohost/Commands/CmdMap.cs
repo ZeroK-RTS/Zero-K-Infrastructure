@@ -25,7 +25,15 @@ namespace ZkLobbyServer
 
             if (map == null)
             {
-                battle.Respond(e, "Cannot find such map.");
+                var unsupportedMap = MapPicker.FindResources(ResourceType.Map, arguments, MapSupportLevel.None).FirstOrDefault();
+                if (unsupportedMap != null)
+                {
+                    battle.Respond(e, $"The map {unsupportedMap.InternalName} {GlobalConst.BaseSiteUrl}/Maps/Detail/{unsupportedMap.ResourceID} is not supported. Unsupported maps can only be played on passworded hosts.");
+                }
+                else
+                {
+                    battle.Respond(e, "Cannot find such map.");
+                }
                 return null;
             }
             else if (map.InternalName == battle.MapName)
