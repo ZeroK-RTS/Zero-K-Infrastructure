@@ -32,7 +32,7 @@ namespace ZkLobbyServer
                 }
                 else
                 {
-                    battle.Respond(e, "Cannot find such map.");
+                    battle.Respond(e, "Cannot find such a map.");
                 }
                 return null;
             }
