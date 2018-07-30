@@ -22,7 +22,7 @@ namespace ZeroKWeb
 	        var s = new List<UnitSpotlight>();
 	        try
 	        {
-	            var unitData = new WebClient().DownloadString("http://manual.zero-k.info/featured.txt");
+	            var unitData = new WebClient().DownloadString("https://manual.zero-k.info/featured.txt");
 	            s.AddRange(from line in unitData.Lines()
 	                select line.Split('\t')
 	                into parts

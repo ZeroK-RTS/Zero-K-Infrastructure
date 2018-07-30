@@ -385,6 +385,7 @@ namespace LobbyClient
         public int EffectiveElo { get; set; }
 
         public int Level { get; set; }
+        public int Rank { get; set; }
 
         public User Clone()
         {
@@ -420,6 +421,7 @@ namespace LobbyClient
             BanMute = u.BanMute;
             BanSpecChat = u.BanSpecChat;
             Level = u.Level;
+            Rank = u.Rank;
             LobbyVersion = u.LobbyVersion;
             DisplayName = u.DisplayName;
             BattleID = u.BattleID;

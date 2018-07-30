@@ -207,7 +207,8 @@ namespace ZeroKWeb.SpringieInterface
             //Make that nice message
 
             var text = string.Format("( ( 1={0}%) : 2={1}%))", (int)Math.Round((1.0 / (1.0 + Math.Pow(10, -ret.EloDifference / 400.0))) * 100.0), (int)Math.Round((1.0 / (1.0 + Math.Pow(10, ret.EloDifference / 400.0))) * 100.0));
-            
+            ret.LowestWinChance = 1.0 / (1.0 + Math.Pow(10, ret.EloDifference / 400.0));
+
             ret.Message = string.Format(
                 "{0} players balanced {2} to {1} teams {3}. {4} combinations checked, spent {5}ms of CPU time",
                 unmodifiedPlayers.Count,
@@ -280,5 +281,6 @@ namespace ZeroKWeb.SpringieInterface
         public List<PlayerTeam> Players = new List<PlayerTeam>();
         public double EloDifference;
         public string Message;
+        public double LowestWinChance;
     }
 }

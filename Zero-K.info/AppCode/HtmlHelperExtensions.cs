@@ -83,7 +83,7 @@ namespace System.Web.Mvc
         }
 
         public static MvcHtmlString IncludeFile(this HtmlHelper helper, string name) {
-            if (name.StartsWith("http://")) {
+            if (name.StartsWith("http://") || name.StartsWith("https://")) {
                 var ret = new WebClient().DownloadString(name);
                 return new MvcHtmlString(ret);
             }

@@ -20,6 +20,7 @@ namespace ZkData
         public double MmWidthGrowthTime { get; set; } = 120.0;
         public double MmWidthReductionForParties { get; set; } = 0.7;
         public double MmSizeGrowthTime { get; set; } = 40.0;
+        public double MmTeamsMinimumWinChance { get; set; } = 0.0; //every team needs to have a chance of at least x = [0, 0.5) to win for a game to be made. 0 to disable
 
         public static DynamicConfig Instance;
 
