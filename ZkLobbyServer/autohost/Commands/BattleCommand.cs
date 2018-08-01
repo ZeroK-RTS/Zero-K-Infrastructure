@@ -105,7 +105,8 @@ namespace ZkLobbyServer
                 }
             }
 
-            var hasAdminRights = userName == battle.FounderName || user?.IsAdmin == true;
+            var hasAdminRights = user?.IsAdmin == true;
+            var hasElevatedRights = hasAdminRights || userName == battle.FounderName;
 
             var s = battle.spring;
             bool isSpectator = IsSpectator(battle, userName, ubs);
@@ -122,7 +123,7 @@ namespace ZkLobbyServer
 
             if (Access == AccessType.Admin && hasAdminRights) return RunPermission.Run;
 
-            var defPerm = hasAdminRights ? RunPermission.Run : (isSpectator || isAway ? RunPermission.None : RunPermission.Vote);
+            var defPerm = hasElevatedRights ? RunPermission.Run : (isSpectator || isAway ? RunPermission.None : RunPermission.Vote);
 
             if (defPerm == RunPermission.None)
             {
