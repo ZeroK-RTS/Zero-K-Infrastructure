@@ -9,7 +9,7 @@ namespace ZkLobbyServer
         private int cnt;
         public override string Help => "count - changes room size, e.g. !maxplayers 10";
         public override string Shortcut => "maxplayers";
-        public override AccessType Access => AccessType.NotIngame;
+        public override AccessType Access => AccessType.NotIngameNotAutohost;
 
         public override BattleCommand Create() => new CmdMaxPlayers();
 

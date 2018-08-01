@@ -423,8 +423,7 @@ namespace ZkLobbyServer
                 if (bat.Users.TryGetValue(status.Name, out ubs))
                 {
                     // enfoce player count limit
-                    if ((status.IsSpectator == false) && (bat.Users[status.Name].IsSpectator == true) &&
-                        (bat.Users.Values.Count(x => !x.IsSpectator) >= bat.MaxPlayers)) status.IsSpectator = true;
+                    if (status.IsSpectator == false && !bat.CanUserPlay(this)) status.IsSpectator = true;
 
                     ubs.UpdateWith(status);
                     bat.ValidateBattleStatus(ubs);

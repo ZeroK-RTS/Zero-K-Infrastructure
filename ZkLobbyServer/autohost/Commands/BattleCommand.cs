@@ -120,6 +120,8 @@ namespace ZkLobbyServer
                 count = battle.Users.Count(x => !x.Value.IsSpectator);
             }
 
+            if (Access == AccessType.Admin && hasAdminRights) return RunPermission.Run;
+
             var defPerm = hasAdminRights ? RunPermission.Run : (isSpectator || isAway ? RunPermission.None : RunPermission.Vote);
 
             if (defPerm == RunPermission.None)
@@ -144,7 +146,12 @@ namespace ZkLobbyServer
                     return RunPermission.None;
                 }
             }
-            if (Access == AccessType.NotIngame)
+            if (Access == AccessType.NotIngameNotAutohost && battle.IsAutohost && !hasAdminRights)
+            {
+                reason = "This command cannot be used on autohosts, either ask a moderator to change the settings or create your own host.";
+                return RunPermission.None;
+            }
+            if (Access == AccessType.NotIngame || Access == AccessType.NotIngameNotAutohost)
             {
                 if (!s.IsRunning)
                 {
@@ -189,6 +196,18 @@ namespace ZkLobbyServer
             /// </summary>
             [Description("When game running, by players, needs vote")]
             IngameVote = 4,
+
+            /// <summary>
+            /// Can be executed ingame/offgame by admins only
+            /// </summary>
+            [Description("At any time, by admins only, no vote needed")]
+            Admin = 5,
+
+            /// <summary>
+            /// Can be executed not-ingame by non-spectators (vote) or admins or founder (direct). Unavailable to non-admins on autohosts
+            /// </summary>
+            [Description("When game not running, by players, might need a vote")]
+            NotIngameNotAutohost = 6,
         }
 
 

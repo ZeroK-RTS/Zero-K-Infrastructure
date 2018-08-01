@@ -50,6 +50,10 @@ namespace LobbyClient
 
         public ConcurrentDictionary<string, UserBattleStatus> Users { get; set; }
 
+        public int MaxElo { get; protected set; } = int.MaxValue;
+        public int MinElo { get; protected set; } = int.MinValue;
+        public int MaxLevel { get; protected set; } = int.MaxValue;
+        public int MinLevel { get; protected set; } = int.MinValue;
 
         public Battle()
         {
