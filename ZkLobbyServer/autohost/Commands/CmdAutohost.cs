@@ -19,9 +19,9 @@ namespace ZkLobbyServer
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            if (battle.IsMatchMakerBattle)
+            if (battle.IsMatchMakerBattle || battle.ApplicableRating != RatingCategory.Casual)
             {
-                battle.Respond(e, "MatchMaker battles can't be repurposed as autohosts");
+                battle.Respond(e, "Only casual battles be repurposed as autohosts");
                 return null;
             }
             return string.Empty;
