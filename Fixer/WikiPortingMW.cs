@@ -320,6 +320,34 @@ namespace Fixer
 
             newWiki = new Site(WIKI_URL, username, password);
 
+            // find pages with offsite images
+            /*
+            var allPages = File.ReadAllLines(Path.Combine(fileDir, "allpages.txt"));
+            foreach (string pageName in allPages){
+                Page page = new Page(newWiki, pageName);
+                page.LoadTextOnly();
+                MatchCollection matches = Regex.Matches(page.text, @"https?://.*?\.(jpe?g|png|gif)");
+                if (matches.Count <= 0) continue;
+                Console.WriteLine("Trying page " + page.title);
+
+                bool any = false;
+                foreach (Match match in matches)
+                {
+                    foreach (Capture capture in match.Captures)
+                    {
+                        if (capture.Value.Contains(".github")) continue;
+                        if (capture.Value.Contains("zero-k.info")) continue;
+                        if (capture.Value.Contains("licho.eu")) continue;
+                        Console.WriteLine("\t{0}", capture.Value);
+                        any = true;
+                    }
+                }
+                if (any) System.Diagnostics.Process.Start(@"http://zero-k.info/mediawiki/index.php?title=" + page.title);
+            }
+
+            return;
+            */
+
             int count = 0;  // increment this when we actually create a page
             string dir = "";
 
