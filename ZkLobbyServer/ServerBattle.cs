@@ -642,7 +642,7 @@ namespace ZkLobbyServer
                 }
                 if (ubs.LobbyUser.Level > MaxLevel) {
                     ubs.IsSpectator = true;
-                    SayBattle("Your level (" + ubs.LobbyUser.Level + ") is too high. The minimum level to play in this battle is " + MaxLevel + ".", ubs.Name);
+                    SayBattle("Your level (" + ubs.LobbyUser.Level + ") is too high. The maximum level to play in this battle is " + MaxLevel + ".", ubs.Name);
                 };
                 if (ubs.LobbyUser.Level < MinLevel) {
                     ubs.IsSpectator = true;
