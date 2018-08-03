@@ -31,6 +31,11 @@ namespace ZkLobbyServer
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
             battle.SwitchAutohost(!battle.IsAutohost, e?.User);
+            if (battle.IsAutohost){
+                await battle.SayBattle("This battle is now an autohost. It will stay open until this command is executed again. Maps are rotated after each game. Title, player limit, password and modoptions are locked. Use !maxelo, !minelo, !maxlevel, !minlevel, !minmapsupportlevel to customize this autohost.");
+            }else{
+                await battle.SayBattle("This battle is no longer an autohost, it will close as soon as it is empty.");
+            }
         }
     }
 }
