@@ -536,7 +536,7 @@ namespace ZkLobbyServer
             var bat = MyBattle;
             if (bat != null)
             {
-                if ((bat.FounderName != Name) && !User.IsAdmin)
+                if ((bat.FounderName != Name || bat.IsAutohost) && !User.IsAdmin)
                 {
                     await Respond("You don't have permissions to change mod options here");
                     return;
