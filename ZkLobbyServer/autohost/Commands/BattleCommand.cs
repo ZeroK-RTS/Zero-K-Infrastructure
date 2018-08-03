@@ -121,7 +121,15 @@ namespace ZkLobbyServer
                 count = battle.Users.Count(x => !x.Value.IsSpectator);
             }
 
-            if (Access == AccessType.Admin && hasAdminRights) return RunPermission.Run;
+            if (Access == AccessType.Admin && hasAdminRights)
+            {
+                return RunPermission.Run;
+            }
+            else if (Access == AccessType.Admin)
+            {
+                reason = "This command can only be used by moderators.";
+                return RunPermission.None;
+            }
 
             var defPerm = hasElevatedRights ? RunPermission.Run : (isSpectator || isAway ? RunPermission.None : RunPermission.Vote);
 
