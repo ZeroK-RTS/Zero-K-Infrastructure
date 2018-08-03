@@ -19,7 +19,7 @@ namespace ZkLobbyServer
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
             map = string.IsNullOrEmpty(arguments)
-                ? MapPicker.GetRecommendedMap(battle.GetContext())
+                ? MapPicker.GetRecommendedMap(battle.GetContext(), (battle.MinimalMapSupportLevel > MapSupportLevel.Featured) ? battle.MinimalMapSupportLevel : MapSupportLevel.Featured)
                 : MapPicker.FindResources(ResourceType.Map, arguments, battle.MinimalMapSupportLevel).FirstOrDefault();
 
 
