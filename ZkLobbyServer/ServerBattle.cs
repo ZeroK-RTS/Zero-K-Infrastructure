@@ -447,17 +447,6 @@ namespace ZkLobbyServer
             return true;
         }
 
-        public bool CanUserPlay(ConnectedUser connectedUser)
-        {
-            if (Users.Values.Count(x => !x.IsSpectator) >= MaxPlayers) return false;
-            if (connectedUser.User.EffectiveElo > MaxElo && connectedUser.User.EffectiveMmElo > MaxElo) return false;
-            if (connectedUser.User.EffectiveElo < MinElo && connectedUser.User.EffectiveMmElo < MinElo) return false;
-            if (connectedUser.User.Level > MaxLevel) return false;
-            if (connectedUser.User.Level < MinLevel) return false;
-
-            return true;
-        }
-
         public async Task StartVote(BattleCommand command, Say e, string args)
         {
             if (ActivePoll != null)
@@ -639,10 +628,26 @@ namespace ZkLobbyServer
 
             if (!ubs.IsSpectator)
             {
-                var cnt = Users.Values.Count(x => !x.IsSpectator);
-                var isPresent = Users.ContainsKey(ubs.Name);
-                if (isPresent && (cnt > MaxPlayers)) ubs.IsSpectator = true;
-                if (!isPresent && (cnt >= MaxPlayers)) ubs.IsSpectator = true;
+                if (Users.Values.Count(x => !x.IsSpectator) >= MaxPlayers && !Users.Any(x => !x.IsSpectator && x.Name == ubs.LobbyUser.Name)) {
+                    ubs.IsSpectator = true;
+                    SayBattle("This battle is full.", ubs.LobbyUser);
+                }
+                if (ubs.LobbyUser.EffectiveElo > MaxElo && ubs.LobbyUser.EffectiveMmElo > MaxElo) {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your rating (" + Math.Min(ubs.LobbyUser.EffectiveElo, ubs.LobbyUser.EffectiveMmElo) + ") is too high. The maximum rating to play in this battle is " + MaxElo + ".", ubs.LobbyUser);
+                }
+                if (ubs.LobbyUser.EffectiveElo < MinElo && ubs.LobbyUser.EffectiveMmElo < MinElo) {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your rating (" + Math.Max(ubs.LobbyUser.EffectiveElo, ubs.LobbyUser.EffectiveMmElo) + ") is too low. The minimum rating to play in this battle is " + MinElo + ".", ubs.LobbyUser);
+                }
+                if (ubs.LobbyUser.Level > MaxLevel) {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your level (" + ubs.LobbyUser.Level + ") is too high. The minimum level to play in this battle is " + MaxLevel + ".", ubs.LobbyUser);
+                };
+                if (ubs.LobbyUser.Level < MinLevel) {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your level (" + ubs.LobbyUser.Level + ") is too low. The minimum level to play in this battle is " + MinLevel + ".", ubs.LobbyUser);
+                };
             }
         }
 
