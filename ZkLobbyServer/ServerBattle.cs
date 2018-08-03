@@ -51,9 +51,14 @@ namespace ZkLobbyServer
         public DedicatedServer spring;
         public string battleInstanceGuid;
 
-        public MapSupportLevel MinimalMapSupportLevel => IsPassworded ? MapSupportLevel.None : MapSupportLevel.Supported;
+        public MapSupportLevel MinimalMapSupportLevel => IsAutohost ? MinimalMapSupportLevelAutohost : (IsPassworded ? MapSupportLevel.None : MapSupportLevel.Supported);
 
         public CommandPoll ActivePoll { get; private set; }
+
+        public bool IsAutohost { get; private set; }
+
+        public MapSupportLevel MinimalMapSupportLevelAutohost { get; protected set; } = MapSupportLevel.Featured;
+        
 
         static ServerBattle()
         {
@@ -152,9 +157,23 @@ namespace ZkLobbyServer
 
         public virtual async Task CheckCloseBattle()
         {
-            if (Users.IsEmpty && !spring.IsRunning)
+            if (Users.IsEmpty && !spring.IsRunning && !IsAutohost)
             {
                 await server.RemoveBattle(this);
+            }
+        }
+
+        public void SwitchAutohost(bool autohost, string founder)
+        {
+            if (autohost)
+            {
+                IsAutohost = true;
+                FounderName = "Autohost #" + BattleID;
+            }
+            else
+            {
+                IsAutohost = false;
+                FounderName = founder;
             }
         }
 
@@ -428,6 +447,16 @@ namespace ZkLobbyServer
             return true;
         }
 
+        public bool CanUserPlay(ConnectedUser connectedUser)
+        {
+            if (Users.Values.Count(x => !x.IsSpectator) >= MaxPlayers) return false;
+            if (connectedUser.User.EffectiveElo > MaxElo) return false;
+            if (connectedUser.User.EffectiveElo < MinElo) return false;
+            if (connectedUser.User.Level > MaxLevel) return false;
+            if (connectedUser.User.Level < MinLevel) return false;
+
+            return true;
+        }
 
         public async Task StartVote(BattleCommand command, Say e, string args)
         {
@@ -496,6 +525,31 @@ namespace ZkLobbyServer
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
+        }
+
+        public async Task SwitchMaxElo(int elo)
+        {
+            MaxElo = elo;
+        }
+
+        public async Task SwitchMinElo(int elo)
+        {
+            MinElo = elo;
+        }
+
+        public async Task SwitchMaxLevel(int lvl)
+        {
+            MaxLevel = lvl;
+        }
+
+        public async Task SwitchMinLevel(int lvl)
+        {
+            MinLevel = lvl;
+        }
+
+        public async Task SwitchMinMapSupportLevel(MapSupportLevel lvl)
+        {
+            MinimalMapSupportLevelAutohost = lvl;
         }
 
         public async Task SwitchPassword(string pwd)
@@ -619,6 +673,7 @@ namespace ZkLobbyServer
                     });
 
             toNotify.Clear();
+            if (IsAutohost) RunCommandDirectly<CmdMap>(null);
             await CheckCloseBattle();
         }
 
