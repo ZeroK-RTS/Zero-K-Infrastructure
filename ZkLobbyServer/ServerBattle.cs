@@ -450,8 +450,8 @@ namespace ZkLobbyServer
         public bool CanUserPlay(ConnectedUser connectedUser)
         {
             if (Users.Values.Count(x => !x.IsSpectator) >= MaxPlayers) return false;
-            if (connectedUser.User.EffectiveElo > MaxElo) return false;
-            if (connectedUser.User.EffectiveElo < MinElo) return false;
+            if (connectedUser.User.EffectiveElo > MaxElo && connectedUser.User.EffectiveMmElo > MaxElo) return false;
+            if (connectedUser.User.EffectiveElo < MinElo && connectedUser.User.EffectiveMmElo < MinElo) return false;
             if (connectedUser.User.Level > MaxLevel) return false;
             if (connectedUser.User.Level < MinLevel) return false;
 
