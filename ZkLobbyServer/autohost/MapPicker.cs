@@ -1,4 +1,4 @@
-// Contact: Jan Lichovník  licho@licho.eu, tel: +420 604 935 349,  www.itl.cz
+// Contact: Jan LichovnÃ­k  licho@licho.eu, tel: +420 604 935 349,  www.itl.cz
 // Last change by: licho  07.08.2016
 
 using System;
@@ -29,7 +29,7 @@ namespace ZeroKWeb.SpringieInterface
         ///         a multiple of player count
         ///     </para>
         /// </remarks>
-        public static Resource GetRecommendedMap(LobbyHostingContext context)
+        public static Resource GetRecommendedMap(LobbyHostingContext context, MapSupportLevel minimumSupportLevel = MapSupportLevel.Featured)
         {
             var mode = context.Mode;
             using (var db = new ZkDataContext())
@@ -39,7 +39,7 @@ namespace ZeroKWeb.SpringieInterface
                 var botPlayers = context.Bots.Count;
                 var allyteams = context.Players.Where(x => !x.IsSpectator).Select(p => p.AllyID).Union(context.Bots.Select(b => b.AllyID)).Distinct().Count();
 
-                var level = context.IsMatchMakerGame ? MapSupportLevel.MatchMaker : MapSupportLevel.Featured;
+                var level = context.IsMatchMakerGame ? MapSupportLevel.MatchMaker : minimumSupportLevel;
 
 
                 switch (mode) {

@@ -7,7 +7,7 @@ namespace ZeroKWeb.Controllers
         //
         // GET: /Static/
         public ActionResult Index(string name = "LobbyStart") {
-            if (name == "UnitGuide") return View("Index", (object)"https://manual.zero-k.info");
+            if (name == "UnitGuide") return View("Index", (object)"http://manual.zero-k.info");
             return Content("");
         }
     }

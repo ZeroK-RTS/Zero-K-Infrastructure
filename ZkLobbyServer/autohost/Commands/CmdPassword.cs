@@ -10,7 +10,7 @@ namespace ZkLobbyServer
         private string pwd;
         public override string Help => "<newpassword> - sets room password";
         public override string Shortcut => "password";
-        public override AccessType Access => AccessType.NotIngame;
+        public override AccessType Access => AccessType.NotIngameNotAutohost;
 
         public override BattleCommand Create() => new CmdPassword();
 

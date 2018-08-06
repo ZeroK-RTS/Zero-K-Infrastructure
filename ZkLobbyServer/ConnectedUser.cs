@@ -422,10 +422,6 @@ namespace ZkLobbyServer
                 UserBattleStatus ubs;
                 if (bat.Users.TryGetValue(status.Name, out ubs))
                 {
-                    // enfoce player count limit
-                    if ((status.IsSpectator == false) && (bat.Users[status.Name].IsSpectator == true) &&
-                        (bat.Users.Values.Count(x => !x.IsSpectator) >= bat.MaxPlayers)) status.IsSpectator = true;
-
                     ubs.UpdateWith(status);
                     bat.ValidateBattleStatus(ubs);
 
@@ -537,7 +533,7 @@ namespace ZkLobbyServer
             var bat = MyBattle;
             if (bat != null)
             {
-                if ((bat.FounderName != Name) && !User.IsAdmin)
+                if ((bat.FounderName != Name || bat.IsAutohost) && !User.IsAdmin)
                 {
                     await Respond("You don't have permissions to change mod options here");
                     return;

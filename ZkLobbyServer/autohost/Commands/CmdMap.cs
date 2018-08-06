@@ -19,13 +19,28 @@ namespace ZkLobbyServer
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
             map = string.IsNullOrEmpty(arguments)
-                ? MapPicker.GetRecommendedMap(battle.GetContext())
+                ? MapPicker.GetRecommendedMap(battle.GetContext(), (battle.MinimalMapSupportLevel > MapSupportLevel.Featured) ? battle.MinimalMapSupportLevel : MapSupportLevel.Featured)
                 : MapPicker.FindResources(ResourceType.Map, arguments, battle.MinimalMapSupportLevel).FirstOrDefault();
 
 
             if (map == null)
             {
-                battle.Respond(e, "Cannot find such map.");
+                var unsupportedMap = MapPicker.FindResources(ResourceType.Map, arguments, MapSupportLevel.None).FirstOrDefault();
+                if (unsupportedMap != null)
+                {
+                    if (battle.IsAutohost)
+                    {
+                        battle.Respond(e, $"The map {unsupportedMap.InternalName} {GlobalConst.BaseSiteUrl}/Maps/Detail/{unsupportedMap.ResourceID} is not available on this autohost. Play it in a player hosted battle.");
+                    }
+                    else
+                    {
+                        battle.Respond(e, $"The map {unsupportedMap.InternalName} {GlobalConst.BaseSiteUrl}/Maps/Detail/{unsupportedMap.ResourceID} is not supported. Unsupported maps can only be played on passworded hosts.");
+                    }
+                }
+                else
+                {
+                    battle.Respond(e, "Cannot find such a map.");
+                }
                 return null;
             }
             else if (map.InternalName == battle.MapName)

@@ -13,7 +13,7 @@ namespace ZkLobbyServer
         AutohostMode mode = AutohostMode.None;
         public override string Help => $"[type] - changes room type, e.g. !type custom ({string.Join(", ", GetValidTypes().Select(x => x.Description()))})";
         public override string Shortcut => "type";
-        public override AccessType Access => AccessType.NotIngame;
+        public override AccessType Access => AccessType.NotIngameNotAutohost;
 
         private static List<AutohostMode> GetValidTypes() => Enum.GetValues(typeof(AutohostMode)).Cast<AutohostMode>().Where(x => x != AutohostMode.Planetwars).ToList();
 

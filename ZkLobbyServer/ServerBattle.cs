@@ -51,9 +51,14 @@ namespace ZkLobbyServer
         public DedicatedServer spring;
         public string battleInstanceGuid;
 
-        public MapSupportLevel MinimalMapSupportLevel => IsPassworded ? MapSupportLevel.None : MapSupportLevel.Supported;
+        public MapSupportLevel MinimalMapSupportLevel => IsAutohost ? MinimalMapSupportLevelAutohost : (IsPassworded ? MapSupportLevel.None : MapSupportLevel.Supported);
 
         public CommandPoll ActivePoll { get; private set; }
+
+        public bool IsAutohost { get; private set; }
+
+        public MapSupportLevel MinimalMapSupportLevelAutohost { get; protected set; } = MapSupportLevel.Featured;
+        
 
         static ServerBattle()
         {
@@ -152,9 +157,23 @@ namespace ZkLobbyServer
 
         public virtual async Task CheckCloseBattle()
         {
-            if (Users.IsEmpty && !spring.IsRunning)
+            if (Users.IsEmpty && !spring.IsRunning && !IsAutohost)
             {
                 await server.RemoveBattle(this);
+            }
+        }
+
+        public void SwitchAutohost(bool autohost, string founder)
+        {
+            if (autohost)
+            {
+                IsAutohost = true;
+                FounderName = "Autohost #" + BattleID;
+            }
+            else
+            {
+                IsAutohost = false;
+                FounderName = founder;
             }
         }
 
@@ -428,7 +447,6 @@ namespace ZkLobbyServer
             return true;
         }
 
-
         public async Task StartVote(BattleCommand command, Say e, string args)
         {
             if (ActivePoll != null)
@@ -496,6 +514,31 @@ namespace ZkLobbyServer
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
+        }
+
+        public async Task SwitchMaxElo(int elo)
+        {
+            MaxElo = elo;
+        }
+
+        public async Task SwitchMinElo(int elo)
+        {
+            MinElo = elo;
+        }
+
+        public async Task SwitchMaxLevel(int lvl)
+        {
+            MaxLevel = lvl;
+        }
+
+        public async Task SwitchMinLevel(int lvl)
+        {
+            MinLevel = lvl;
+        }
+
+        public async Task SwitchMinMapSupportLevel(MapSupportLevel lvl)
+        {
+            MinimalMapSupportLevelAutohost = lvl;
         }
 
         public async Task SwitchPassword(string pwd)
@@ -585,10 +628,26 @@ namespace ZkLobbyServer
 
             if (!ubs.IsSpectator)
             {
-                var cnt = Users.Values.Count(x => !x.IsSpectator);
-                var isPresent = Users.ContainsKey(ubs.Name);
-                if (isPresent && (cnt > MaxPlayers)) ubs.IsSpectator = true;
-                if (!isPresent && (cnt >= MaxPlayers)) ubs.IsSpectator = true;
+                if (Users.Values.Count(x => !x.IsSpectator) >= MaxPlayers && !Users.Values.Any(x => !x.IsSpectator && x.Name == ubs.LobbyUser.Name)) {
+                    ubs.IsSpectator = true;
+                    SayBattle("This battle is full.", ubs.Name);
+                }
+                if (ubs.LobbyUser.EffectiveElo > MaxElo && ubs.LobbyUser.EffectiveMmElo > MaxElo) {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your rating (" + Math.Min(ubs.LobbyUser.EffectiveElo, ubs.LobbyUser.EffectiveMmElo) + ") is too high. The maximum rating to play in this battle is " + MaxElo + ".", ubs.Name);
+                }
+                if (ubs.LobbyUser.EffectiveElo < MinElo && ubs.LobbyUser.EffectiveMmElo < MinElo) {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your rating (" + Math.Max(ubs.LobbyUser.EffectiveElo, ubs.LobbyUser.EffectiveMmElo) + ") is too low. The minimum rating to play in this battle is " + MinElo + ".", ubs.Name);
+                }
+                if (ubs.LobbyUser.Level > MaxLevel) {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your level (" + ubs.LobbyUser.Level + ") is too high. The maximum level to play in this battle is " + MaxLevel + ".", ubs.Name);
+                };
+                if (ubs.LobbyUser.Level < MinLevel) {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your level (" + ubs.LobbyUser.Level + ") is too low. The minimum level to play in this battle is " + MinLevel + ".", ubs.Name);
+                };
             }
         }
 
@@ -619,6 +678,7 @@ namespace ZkLobbyServer
                     });
 
             toNotify.Clear();
+            if (IsAutohost) RunCommandDirectly<CmdMap>(null);
             await CheckCloseBattle();
         }
 

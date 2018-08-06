@@ -10,7 +10,7 @@ namespace ZkLobbyServer
         private string title;
         public override string Help => "[title] - changes room title, e.g. !title All Welcome";
         public override string Shortcut => "title";
-        public override AccessType Access => AccessType.NotIngame;
+        public override AccessType Access => AccessType.NotIngameNotAutohost;
 
         public override BattleCommand Create() => new CmdTitle();
 
