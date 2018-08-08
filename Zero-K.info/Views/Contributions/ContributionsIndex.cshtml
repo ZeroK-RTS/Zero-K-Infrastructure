@@ -77,7 +77,7 @@
 
     @{
         var grid = new UniGrid<Contribution>(Model);
-        grid.AddCol("Date", x => Html.PrintDate(x.Time)).SetSort(x => x.Time).SetWidth("150px");
+        grid.AddCol("Date", x => Html.PrintDate(x.Time.ToUniversalTime())).SetSort(x => x.Time).SetWidth("150px");
         grid.AddCol("Name", NameCol).SetSort(x => x.AccountByAccountID != null ? x.AccountByAccountID.Name : null).SetWidth("250px");
         grid.AddCol("Euro", x => x.Euros.Value.ToString("F2")).SetSort(x => x.Euros).SetWidth("100px");
         if (Global.IsModerator)
