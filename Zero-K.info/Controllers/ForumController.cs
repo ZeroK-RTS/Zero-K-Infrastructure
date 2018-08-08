@@ -67,12 +67,17 @@ namespace ZeroKWeb.Controllers
             var page = GetPostPage(post);
 
             db.ForumPosts.DeleteOnSubmit(post);
-            if ((thread.ForumPosts.Count() <= 0 || deleteThread) && IsNormalThread(thread))
+            if (thread.ForumPosts.Count() <= 0 || deleteThread)
             {
-                db.ForumThreadLastReads.DeleteAllOnSubmit(db.ForumThreadLastReads.Where(x => x.ForumThreadID == thread.ForumThreadID).ToList());
-                db.ForumThreads.DeleteOnSubmit(thread);
+                thread.SpringBattles.ForEach(x => x.ForumThread = null);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                if (IsNormalThread(thread))
+                {
+                    db.ForumThreadLastReads.DeleteAllOnSubmit(db.ForumThreadLastReads.Where(x => x.ForumThreadID == thread.ForumThreadID).ToList());
+                    db.ForumThreads.DeleteOnSubmit(thread);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
             thread.PostCount -= 1;
             db.SaveChanges();
