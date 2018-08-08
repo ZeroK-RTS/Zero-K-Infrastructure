@@ -628,7 +628,7 @@ namespace ZkLobbyServer
 
             if (!ubs.IsSpectator)
             {
-                if (Users.Values.Count(x => !x.IsSpectator) >= MaxPlayers && !Users.Values.Any(x => !x.IsSpectator && x.Name == ubs.LobbyUser.Name)) {
+                if (Users.Values.Count(x => !x.IsSpectator) > MaxPlayers) {
                     ubs.IsSpectator = true;
                     SayBattle("This battle is full.", ubs.Name);
                 }
