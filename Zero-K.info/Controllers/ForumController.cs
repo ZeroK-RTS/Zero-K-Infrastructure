@@ -69,7 +69,9 @@ namespace ZeroKWeb.Controllers
             db.ForumPosts.DeleteOnSubmit(post);
             if (thread.ForumPosts.Count() <= 0 || deleteThread)
             {
-                thread.SpringBattles.ForEach(x => x.ForumThread = null);
+                if (thread.SpringBattles != null) thread.SpringBattles.ForEach(x => x.ForumThread = null);
+                if (thread.Planets != null) thread.Planets.ForEach(x => x.ForumThread = null);
+                if (thread.Missions != null) thread.Missions.ForEach(x => x.ForumThread = null);
                 db.SaveChanges();
                 if (IsNormalThread(thread))
                 {
