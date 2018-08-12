@@ -14,7 +14,7 @@ namespace ZkLobbyServer
         private Resource game;
         public override string Help => "[<filters>..] - changes game version, e.g. !game zk:test. Use zk:dev to host local dev version";
         public override string Shortcut => "game";
-        public override AccessType Access => AccessType.NotIngame;
+        public override AccessType Access => AccessType.NotIngameNotAutohost;
 
         public override BattleCommand Create() => new CmdGame();
 
@@ -23,7 +23,7 @@ namespace ZkLobbyServer
             if (string.IsNullOrEmpty(arguments)) arguments = battle.server.Game ?? GlobalConst.DefaultZkTag;
             game = MapPicker.FindResources(ResourceType.Mod, arguments).FirstOrDefault();
 
-            if ((battle.Mode != AutohostMode.None || !battle.IsPassworded) && arguments != "zk:stable")
+            if ((battle.Mode != AutohostMode.None || !battle.IsPassworded) && arguments != "zk:stable" && !battle.IsAutohost)
             {
                 battle.Respond(e, $"You can only do this on custom passworded hosts.");
                 return null;
