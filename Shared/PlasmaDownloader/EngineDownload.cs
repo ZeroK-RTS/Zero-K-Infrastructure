@@ -160,6 +160,13 @@ namespace PlasmaDownloader
 
                 archive.WriteToDirectory(targetDir, ExtractOptions.ExtractFullPath | ExtractOptions.Overwrite);
             }
+            if (Directory.GetDirectories(targetDir).Length == 1) //unpacks engines that are one folder deeper than usual
+            {
+                var tempDir = Path.Combine(Directory.GetParent(targetDir).FullName, "temp");
+                Directory.Move(targetDir, tempDir);
+                Directory.Move(Directory.GetDirectories(tempDir)[0], targetDir);
+                Directory.Delete(tempDir);
+            }
         }
 
 
