@@ -35,6 +35,12 @@ namespace ZkLobbyServer
                 LobbyUser = user;
             }
 
+            //override elo width growth to find matches instantly
+            public void SetMaximumEloWidth()
+            {
+                JoinedTime = DateTime.UtcNow.AddHours(-1);
+            }
+
             public List<ProposedBattle> GenerateWantedBattles(List<PlayerEntry> allPlayers, bool ignoreSizeLimit)
             {
                 var ret = new List<ProposedBattle>();

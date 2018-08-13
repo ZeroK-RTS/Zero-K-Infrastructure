@@ -51,6 +51,8 @@ namespace ZkLobbyServer
         public DedicatedServer spring;
         public string battleInstanceGuid;
 
+        public int InviteMMPlayers { get; protected set; } = int.MaxValue; //will invite players to MM after each battle if more than X players
+
         public MapSupportLevel MinimalMapSupportLevel => IsAutohost ? MinimalMapSupportLevelAutohost : (IsPassworded ? MapSupportLevel.None : MapSupportLevel.Supported);
 
         public CommandPoll ActivePoll { get; private set; }
@@ -515,6 +517,10 @@ namespace ZkLobbyServer
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
         }
+        public async Task SwitchInviteMmPlayers(int players)
+        {
+            InviteMMPlayers = players;
+        }
 
         public async Task SwitchMaxElo(int elo)
         {
@@ -601,7 +607,7 @@ namespace ZkLobbyServer
                     if (MaxPlayers == 0) MaxPlayers = 16;
                     break;
             }
-            if (MaxPlayers > 32) MaxPlayers = 32;
+            if (MaxPlayers > DynamicConfig.Instance.MaximumBattlePlayers && !IsAutohost) MaxPlayers = DynamicConfig.Instance.MaximumBattlePlayers;
 
             HostedMod = MapPicker.FindResources(ResourceType.Mod, ModName ?? server.Game ?? GlobalConst.DefaultZkTag).FirstOrDefault();
             HostedMap = MapName != null
@@ -678,6 +684,13 @@ namespace ZkLobbyServer
                     });
 
             toNotify.Clear();
+            if (springBattleContext.LobbyStartContext.Players.Where(x => !x.IsSpectator).Count() >= InviteMMPlayers) {
+
+                //put all users into MM queue to suggest battles
+                var teamsQueues = server.MatchMaker.PossibleQueues.Where(x => x.Mode == AutohostMode.Teams).ToList();
+                var availableUsers = Users.Values.Where(x => !x.LobbyUser.IsAway).Select(x => server.ConnectedUsers[x.Name]).ToList();
+                await server.MatchMaker.MassJoin(availableUsers, teamsQueues);
+            }
             if (IsAutohost) RunCommandDirectly<CmdMap>(null);
             await CheckCloseBattle();
         }
