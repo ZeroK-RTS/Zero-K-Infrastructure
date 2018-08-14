@@ -251,13 +251,17 @@ namespace ZkLobbyServer
             users = users.Where(x => !(lastTimePlayerDeniedMatch.TryGetValue(x.Name, out lastDenied) && DateTime.UtcNow.Subtract(lastDenied).TotalMinutes < DynamicConfig.Instance.MmMinimumMinutesBetweenSuggestions)).ToList();
 
             for (int i = 0; i < users.Count; i++) {
-                //join all users and run tick/update on last user
-                await AddOrUpdateUser(users[i], wantedQueues, i < users.Count - 1); 
+                //join all users without running tick
+                await AddOrUpdateUser(users[i], wantedQueues, true); 
 
                 //set width for every user to maximum to speed up MM
                 PlayerEntry entry;
                 if (players.TryGetValue(users[i].Name, out entry)) entry.SetQuickPlay();
             }
+
+            // if nobody is invited, we can do tick now to speed up things
+            if (invitationBattles?.Any() != true) OnTick();
+            else await UpdateAllPlayerStatuses(); // else we just send statuses
         }
 
         /// <summary>
