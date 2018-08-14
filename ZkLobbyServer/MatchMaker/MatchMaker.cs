@@ -235,7 +235,8 @@ namespace ZkLobbyServer
                 return;
             }
 
-            lastTimePlayerDeniedMatch.TryRemove(user.Name, out _); //this player might be interested in suggestive MM games after all
+            DateTime player;
+            lastTimePlayerDeniedMatch.TryRemove(user.Name, out player); //this player might be interested in suggestive MM games after all
 
             var wantedQueueNames = cmd.Queues?.ToList() ?? new List<string>();
             var wantedQueues = PossibleQueues.Where(x => wantedQueueNames.Contains(x.Name)).ToList();
@@ -255,7 +256,7 @@ namespace ZkLobbyServer
 
                 //set width for every user to maximum to speed up MM
                 PlayerEntry entry;
-                if (players.TryGetValue(users[i].Name, out entry)) entry.SetMaximumEloWidth();
+                if (players.TryGetValue(users[i].Name, out entry)) entry.SetQuickPlay();
             }
         }
 
@@ -461,7 +462,7 @@ namespace ZkLobbyServer
             invitationBattles = ProposeBattles(players.Values.Where(x => x != null), false);
             var toInvite = invitationBattles.SelectMany(x => x.Players).ToList();
             foreach (var usr in players.Values.Where(x => x != null))
-                if (toInvite.Contains(usr))
+                if (toInvite.Contains(usr) || usr.QuickPlay) //invite all quickplay players, there will be lots of declines so don't care about making battles yet
                 {
                     usr.InvitedToPlay = true;
                     usr.LastReadyResponse = false;
@@ -486,9 +487,9 @@ namespace ZkLobbyServer
             var realBattles = ProposeBattles(readyUsers, true);
 
             var readyAndStarting = readyUsers.Where(x => realBattles.Any(y => y.Players.Contains(x))).ToList();
-            var readyAndFailed = readyUsers.Where(x => !realBattles.Any(y => y.Players.Contains(x))).Select(x => x.Name);
+            var readyAndFailed = readyUsers.Where(x => !realBattles.Any(y => y.Players.Contains(x))).ToList();
 
-            server.Broadcast(readyAndFailed, new AreYouReadyResult() { IsBattleStarting = false });
+            server.Broadcast(readyAndFailed.Select(x => x.Name), new AreYouReadyResult() { IsBattleStarting = false });
 
             server.Broadcast(readyAndStarting.Select(x => x.Name), new AreYouReadyResult() { IsBattleStarting = true });
 
@@ -496,6 +497,12 @@ namespace ZkLobbyServer
             {
                 PlayerEntry entry;
                 players.TryRemove(usr.Name, out entry);
+            }
+
+            foreach (var usr in readyAndFailed.Where(x => x.QuickPlay)) //quickplay didn't find a game in one tick, resign
+            {
+                usr.InvitedToPlay = false; //don't ban
+                RemoveUser(usr.Name, false); //properly remove in case some party members don't use quickplay
             }
 
             return realBattles;
