@@ -33,6 +33,7 @@
         <div>
             <h3>Upload a new engine</h3>
             <table>
+                <tr><td colspan="2"><em>Note: Use minimal-portable builds</em></td></tr>
                 <tr><td>Name</td><td>@Html.TextBoxFor(x => x.UploadName)</td></tr>
                 @for (int i = 0; i < EnginesController.EnginePlatforms.Length; i++)
                 {
@@ -47,7 +48,7 @@
             </table>
         </div>
     </form>
-
+    <hr/>
 
     @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("grid")))
     {
