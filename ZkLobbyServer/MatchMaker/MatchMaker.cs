@@ -464,7 +464,7 @@ namespace ZkLobbyServer
         {
             // generate next battles and send inviatation
             invitationBattles = ProposeBattles(players.Values.Where(x => x != null), false);
-            var toInvite = invitationBattles.SelectMany(x => x.Players).ToList();
+            var toInvite = invitationBattles.SelectMany(x => x.Players).ToHashSet();
             foreach (var usr in players.Values.Where(x => x != null))
                 if (toInvite.Contains(usr) || usr.QuickPlay) //invite all quickplay players, there will be lots of declines so don't care about making battles yet
                 {
@@ -477,7 +477,21 @@ namespace ZkLobbyServer
                     usr.LastReadyResponse = false;
                 }
 
-            server.Broadcast(toInvite.Select(x => x.Name), new AreYouReady() { SecondsRemaining = TimerSeconds });
+            //send out invites to players in battles
+            invitationBattles.ForEach(x => server.Broadcast(x.Players.Select(p => p.Name),
+                new AreYouReady() {
+                    SecondsRemaining = TimerSeconds,
+                    QueueName = x.QueueType.Name,
+                    MinimumWinChance = x.QueueType.Mode == AutohostMode.Teams ? DynamicConfig.Instance.MmTeamsMinimumWinChance : -1
+                }));
+            //send out fake invites to QuickPlayers
+            server.Broadcast(players.Values.Where(x => x != null && x.QuickPlay && !toInvite.Contains(x)).Select(x => x.Name),
+                new AreYouReady()
+                {
+                    SecondsRemaining = TimerSeconds,
+                    QueueName = PossibleQueues.Where(x => x.Mode == AutohostMode.Teams).FirstOrDefault()?.Name,
+                    MinimumWinChance = DynamicConfig.Instance.MmTeamsMinimumWinChance
+                });
         }
 
         private List<ProposedBattle> ResolveToRealBattles()
