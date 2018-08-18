@@ -79,7 +79,7 @@ namespace LobbyClient
     {
         public string QueueName { get; set; }
         public double MinimumWinChance { get; set; } = -1;
-        public bool QuickPlay { get; set; } = false
+        public bool QuickPlay { get; set; } = false;
         public int SecondsRemaining { get; set; } = 10;
     }
 
