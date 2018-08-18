@@ -73,6 +73,7 @@ namespace ZkData
 
         }
         
+        public bool IsTourneyController { get; set; }
         public DevLevel DevLevel { get; set; }
         [StringLength(200)]
         public string SpecialNote { get; set; }

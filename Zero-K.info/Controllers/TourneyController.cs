@@ -21,6 +21,7 @@ namespace ZeroKWeb.Controllers
         // GET: Tourney
         public ActionResult Index()
         {
+            if (!Global.IsTourneyController) return DenyAccess();
             var tourneyBattles = Global.Server.Battles.Values.Where(x => x != null).OfType<TourneyBattle>().ToList();
 
             return View("TourneyIndex", new TourneyModel() {Battles = tourneyBattles});
@@ -28,12 +29,14 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult JoinBattle(string battleHost)
         {
+            if (!Global.IsTourneyController) return DenyAccess();
             Global.Server.ForceJoinBattle(Global.Account?.Name, battleHost);
             return RedirectToAction("Index");
         }
 
         public ActionResult RemoveBattle(int battleid)
         {
+            if (!Global.IsTourneyController) return DenyAccess();
             var bat = Global.Server.Battles.Get(battleid);
             if (bat != null) Global.Server.RemoveBattle(bat);
             return RedirectToAction("Index");
@@ -41,6 +44,7 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult ForceJoinPlayers(int battleid)
         {
+            if (!Global.IsTourneyController) return DenyAccess();
             var bat = Global.Server.Battles.Get(battleid) as TourneyBattle;
             if (bat != null)
             {
@@ -51,10 +55,10 @@ namespace ZeroKWeb.Controllers
             }
             return RedirectToAction("Index");
         }
-
-        [Auth(Role = AdminLevel.Moderator)]
+        
         public ActionResult AddBattle(TourneyModel model)
         {
+            if (!Global.IsTourneyController) return DenyAccess();
             var db = new ZkDataContext();
             {
                 var tb = new TourneyBattle(Global.Server, new TourneyBattle.TourneyPrototype()
@@ -69,6 +73,11 @@ namespace ZeroKWeb.Controllers
                 Global.Server.AddBattle(tb);
             }
             return RedirectToAction("Index");
+        }
+
+        private ActionResult DenyAccess()
+        {
+            return Content("You don't have access to TourneyControl");
         }
     }
 }
