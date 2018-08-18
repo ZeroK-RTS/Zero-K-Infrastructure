@@ -50,14 +50,11 @@
                     }
                 }
             </td>
-            @if (Global.IsModerator)
-            {
 
-                <td class="admin">
-                    @Html.ActionLink("Force join", "ForceJoinPlayers", new {battleID = b.BattleID}) <br/>
-                    @Html.ActionLink("Delete", "RemoveBattle", new { battleID = b.BattleID }, new { @class = "js_confirm" })
-                </td>
-            }
+            <td >
+                @Html.ActionLink("Force join", "ForceJoinPlayers", new {battleID = b.BattleID}) <br/>
+                @Html.ActionLink("Delete", "RemoveBattle", new { battleID = b.BattleID }, new { @class = "js_confirm" })
+            </td>
         </tr>
         <tr><td>&nbsp;<br/></td></tr>
     }
