@@ -483,19 +483,21 @@ namespace ZkLobbyServer
                 }
 
             //send out invites to players in battles
-            invitationBattles.ForEach(x => server.Broadcast(x.Players.Select(p => p.Name),
+            invitationBattles.ForEach(x => server.Broadcast(x.Players.Where(p => !p.QuickPlay).Select(p => p.Name),
                 new AreYouReady() {
                     SecondsRemaining = TimerSeconds,
                     QueueName = x.QueueType.Name,
-                    MinimumWinChance = x.QueueType.Mode == AutohostMode.Teams ? DynamicConfig.Instance.MmTeamsMinimumWinChance : -1
+                    MinimumWinChance = x.QueueType.Mode == AutohostMode.Teams ? DynamicConfig.Instance.MmTeamsMinimumWinChance : -1,
+                    QuickPlay = false
                 }));
-            //send out fake invites to QuickPlayers
-            server.Broadcast(players.Values.Where(x => x != null && x.QuickPlay && !toInvite.Contains(x)).Select(x => x.Name),
+            //send out invites to all QuickPlayers
+            server.Broadcast(players.Values.Where(x => x != null && x.QuickPlay).Select(x => x.Name),
                 new AreYouReady()
                 {
                     SecondsRemaining = TimerSeconds,
                     QueueName = PossibleQueues.Where(x => x.Mode == AutohostMode.Teams).FirstOrDefault()?.Name,
-                    MinimumWinChance = DynamicConfig.Instance.MmTeamsMinimumWinChance
+                    MinimumWinChance = DynamicConfig.Instance.MmTeamsMinimumWinChance,
+                    QuickPlay = true
                 });
         }
 
