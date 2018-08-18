@@ -244,11 +244,16 @@ namespace ZkLobbyServer
             await AddOrUpdateUser(user, wantedQueues);
         }
 
+        public List<ConnectedUser> GetEligibleQuickJoinPlayers(List<ConnectedUser> users)
+        {
+            DateTime lastDenied;
+            return users.Where(x => !(lastTimePlayerDeniedMatch.TryGetValue(x.Name, out lastDenied) && DateTime.UtcNow.Subtract(lastDenied).TotalMinutes < DynamicConfig.Instance.MmMinimumMinutesBetweenSuggestions)).ToList(); 
+        }
+
         public async Task MassJoin(List<ConnectedUser> users, List<MatchMakerSetup.Queue> wantedQueues)
         {
             //don't join people that are probably not interested
-            DateTime lastDenied;
-            users = users.Where(x => !(lastTimePlayerDeniedMatch.TryGetValue(x.Name, out lastDenied) && DateTime.UtcNow.Subtract(lastDenied).TotalMinutes < DynamicConfig.Instance.MmMinimumMinutesBetweenSuggestions)).ToList();
+            users = GetEligibleQuickJoinPlayers(users);
 
             for (int i = 0; i < users.Count; i++) {
                 //join all users without running tick

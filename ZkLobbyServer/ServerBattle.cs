@@ -41,6 +41,7 @@ namespace ZkLobbyServer
         private int hostingPort;
 
         protected bool isZombie;
+        protected bool isPostBattleDiscussion => DateTime.UtcNow.Subtract(EndedSince).TotalSeconds < 30;
 
         private List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
         public List<BattleDebriefing> Debriefings { get; private set; } = new List<BattleDebriefing>();
@@ -343,6 +344,11 @@ namespace ZkLobbyServer
             if (isZombie)
             {
                 await Respond(e, "This room is now disabled, please join a new one");
+                return false;
+            }
+            if (isPostBattleDiscussion)
+            {
+                await Respond(e, "Please wait for a few seconds before starting a poll. Feel free to discuss the last battle.");
                 return false;
             }
             string reason;
@@ -663,6 +669,7 @@ namespace ZkLobbyServer
             StopVote();
             IsInGame = false;
             RunningSince = null;
+            EndedSince = DateTime.UtcNow;
 
             var debriefingMessage = BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server);
             Debriefings.Add(debriefingMessage);
@@ -684,7 +691,9 @@ namespace ZkLobbyServer
                     });
 
             toNotify.Clear();
-            if (springBattleContext.LobbyStartContext.Players.Where(x => !x.IsSpectator).Count() >= InviteMMPlayers) {
+
+            var playingEligibleUsers = server.MatchMaker.GetEligibleQuickJoinPlayers(Users.Values.Where(x => !x.LobbyUser.IsAway && !x.IsSpectator).Select(x => server.ConnectedUsers[x.Name]).ToList());
+            if (playingEligibleUsers.Count() >= InviteMMPlayers) { //Make sure there are enough eligible users for a battle to be likely to happen
 
                 //put all users into MM queue to suggest battles
                 var teamsQueues = server.MatchMaker.PossibleQueues.Where(x => x.Mode == AutohostMode.Teams).ToList();
