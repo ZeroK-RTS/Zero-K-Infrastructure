@@ -161,6 +161,7 @@
     <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID })">
         @Html.AntiForgeryToken()
         Zero-K admin: @Html.CheckBox("zkAdmin", Model.AdminLevel >= AdminLevel.Moderator)
+        Tourney Control: @Html.CheckBox("tourneyController", Model.IsTourneyController)
         VPN exception: @Html.CheckBox("vpnException", Model.HasVpnException)
         <input type="submit" />
     </form>

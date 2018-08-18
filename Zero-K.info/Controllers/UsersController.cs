@@ -57,7 +57,7 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [Auth(Role = AdminLevel.SuperAdmin)]
         [ValidateAntiForgeryToken]
-        public ActionResult ChangePermissions(int accountID, bool zkAdmin, bool vpnException)
+        public ActionResult ChangePermissions(int accountID, bool zkAdmin, bool tourneyController, bool vpnException)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
@@ -78,6 +78,11 @@ namespace ZeroKWeb.Controllers
             {
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - VPN exception: {0} -> {1}", acc.HasVpnException, vpnException));
                 acc.HasVpnException = vpnException;
+            }
+            if (acc.IsTourneyController != tourneyController)
+            {
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Tourney Control: {0} -> {1}", acc.IsTourneyController, tourneyController));
+                acc.IsTourneyController = tourneyController;
             }
             db.SaveChanges();
 
