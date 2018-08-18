@@ -23,6 +23,7 @@ namespace ZkLobbyServer
     public class ServerBattle : Battle
     {
         public const int PollTimeout = 60;
+        public const int DiscussionTime = 20;
         public static int BattleCounter;
 
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
@@ -41,7 +42,7 @@ namespace ZkLobbyServer
         private int hostingPort;
 
         protected bool isZombie;
-        protected bool isPostBattleDiscussion => DateTime.UtcNow.Subtract(EndedSince).TotalSeconds < 30;
+        protected bool isPostBattleDiscussion => DateTime.UtcNow.Subtract(EndedSince).TotalSeconds < DiscussionTime;
 
         private List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
         public List<BattleDebriefing> Debriefings { get; private set; } = new List<BattleDebriefing>();

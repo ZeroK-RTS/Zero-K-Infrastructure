@@ -13,7 +13,7 @@ namespace ZkLobbyServer
 {
     public partial class MatchMaker
     {
-        private const int TimerSeconds = 30;
+        private const int TimerSeconds = 15;
         private const int MapModChangePauseSeconds = 30;
 
         private int BanSecondsIncrease => DynamicConfig.Instance.MmBanSecondsIncrease;
