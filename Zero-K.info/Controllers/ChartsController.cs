@@ -170,6 +170,28 @@ namespace ZeroKWeb.Controllers
     }
 
 
+    public class DailyAvgMatchmakerMinutes : IGraphDataProvider
+    {
+        public IList<GraphPoint> GetDailyValues(DateTime fromTime, DateTime toTime)
+        {
+            var db = new ZkDataContext();
+            db.Database.CommandTimeout = 600;
+
+            var selected = db.SpringBattlePlayers.Where(x => !x.IsSpectator && x.SpringBattle.IsMatchMaker).Select(x => new { x.AccountID, x.SpringBattle.StartTime, x.SpringBattle.Duration }).Where(x => x.StartTime >= fromTime && x.StartTime <= toTime).ToList();
+
+
+            return (from sb in selected
+                    group sb by sb.StartTime.Date
+                into grp
+                    orderby grp.Key
+                    let players = grp.Select(y => y.AccountID).Distinct().Count()
+                    select new GraphPoint() { Day = grp.Key, Value = grp.Sum(y => y.Duration) / 60 / players, }).OrderBy(x => x.Day).ToList();
+        }
+
+        public string Name => "matchmaker_minutes";
+        public string Title => "avg. matchmaker minutes per player";
+    }
+
     public class DailyAvgMinutes : IGraphDataProvider
     {
         public IList<GraphPoint> GetDailyValues(DateTime fromTime, DateTime toTime)
@@ -190,6 +212,27 @@ namespace ZeroKWeb.Controllers
 
         public string Name => "player_minutes";
         public string Title => "avg. player minutes per player";
+    }
+
+    public class AverageGameSize : IGraphDataProvider
+    {
+        public IList<GraphPoint> GetDailyValues(DateTime fromTime, DateTime toTime)
+        {
+            var db = new ZkDataContext();
+            db.Database.CommandTimeout = 600;
+            
+            var selected = db.SpringBattles.Select(x => new { x.PlayerCount, x.StartTime, x.Duration }).Where(x => x.StartTime >= fromTime && x.StartTime <= toTime).ToList();
+
+            return (from sb in selected
+                    group sb by sb.StartTime.Date
+                into grp
+                    orderby grp.Key
+                    let playtime = grp.Sum(y => y.PlayerCount * y.Duration)
+                    select new GraphPoint() { Day = grp.Key, Value = (double)grp.Sum(y => y.PlayerCount * y.PlayerCount * y.Duration) / playtime }).OrderBy(x => x.Day).ToList();
+        }
+
+        public string Name => "average_game_size";
+        public string Title => "avg. game size by playtime";
     }
 
 
@@ -313,6 +356,8 @@ namespace ZeroKWeb.Controllers
                     new RetentionLimit(7),
                     new RetentionLimit(30),
                     new DailyAvgMinutes(),
+                    new DailyAvgMatchmakerMinutes(),
+                    new AverageGameSize(),
                     new Leaving()
                 });
             }
