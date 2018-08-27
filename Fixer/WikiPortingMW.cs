@@ -307,21 +307,89 @@ namespace Fixer
             UpdateUnitNavbox(buildingBox, renames);
         }
 
-        public static void DoStuff()
+        public static void UpdatePages()
         {
-            string username = "";
-            string password = "";
+            int count = 0;
+            string dir = "";
+            bool infoBoxOnly = true;
+            if (infoBoxOnly)
+                dir = Path.Combine(fileDir, "raw_infobox/markup");
+            else
+                dir = Path.Combine(fileDir, "raw/markup");
 
-            Console.WriteLine("Enter wiki username: ");
-            username = Console.ReadLine();
-            Console.WriteLine("Enter wiki password: ");
-            password = Console.ReadLine();
-            password = password.Trim();
+            List<string> filesUpdate = new List<string>();
 
-            newWiki = new Site(WIKI_URL, username, password);
+            //filesUpdate = new List<string>(Directory.GetFiles(dir));
+            var filesUpdateTemp = new List<string>(new string[] {
+                "Kodachi", "Reaver", "Blitz", "Ogre", "Pyro", "Grizzly", "Siren", "Dante", "Faraday"
+            });
+            foreach (string path in filesUpdateTemp)
+            {
+                string newPath = Path.Combine(dir, path + ".txt");
+                filesUpdate.Add(newPath);
+                Console.WriteLine(newPath);
+            }
 
-            // find pages with offsite images
-            /*
+            foreach (string path in filesUpdate)
+            {
+                string unitname = Path.GetFileNameWithoutExtension(path);
+                unitname = unitname.Replace("&#47;", "/");
+                var page = new Page(newWiki, unitname);
+                page.Load();
+                if (page.Exists())
+                {
+                    //Dictionary<string, object> unitData = new Dictionary<string, object>();
+                    //JsonConvert.PopulateObject(File.ReadAllText(path), unitData);
+                    //foreach (KeyValuePair<string, object> kvp in unitData)
+                    //{
+                    //    UpdateTemplate(page, kvp);
+                    //}
+
+                    bool result = UpdateUnitPage(page, path, infoBoxOnly);
+                    if (result)
+                    {
+                        page.Save("Page auto-updated with DotNetWikiBot", true);
+                        count++;
+                    }
+                    if (count >= 5)
+                    {
+                        count = 0;
+                        Console.WriteLine("-- INTERMISSION --");
+                        Console.WriteLine("-- Review changes on wiki, then press Enter to continue --");
+                        Console.ReadLine();
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Page " + page.title + " doesn't exist!");
+                }
+            }
+        }
+
+        public static void ReplaceUnitpics()
+        {
+            int count = 0;
+            string dir = Environment.OSVersion.Platform == PlatformID.Unix ? @"/media/histidine/zkwiki/raw_infobox/markup" : @"G:\zkwiki\raw_infobox\markup";
+            var filesUpdate = new List<string>(Directory.GetFiles(dir));
+            foreach (string path in filesUpdate)
+            {
+                string unitname = Path.GetFileNameWithoutExtension(path);
+                unitname = unitname.Replace("&#47;", "/");
+                var page = new Page(newWiki, unitname);
+                page.Load();
+                if (page.Exists() && !page.IsRedirect())
+                {
+                    string oldText = page.text;
+                    string text = page.text.Replace(@"http://packages.springrts.com/zkmanual/unitpics/", @"http://manual.zero-k.info/unitpics/");
+                    if (!oldText.Equals(text))
+                        page.Save(text, "Modified image path with DotNetWikiBot", true);
+                }
+                count++;
+            }
+        }
+
+        public static void FindOffsiteImages()
+        {
             var allPages = File.ReadAllLines(Path.Combine(fileDir, "allpages.txt"));
             foreach (string pageName in allPages){
                 Page page = new Page(newWiki, pageName);
@@ -344,9 +412,44 @@ namespace Fixer
                 }
                 if (any) System.Diagnostics.Process.Start(@"http://zero-k.info/mediawiki/index.php?title=" + page.title);
             }
+        }
 
+        public static void RenameUnits()
+        {
+            string renamedFilesListPath = Path.Combine(fileDir, "renames.csv");
+            string[] renames = File.ReadAllLines(renamedFilesListPath);
+            
+            foreach (string renameLine in renames)
+            {
+                string[] kvp = renameLine.Split(',');
+                string oldName = kvp[0];
+                string newName = kvp[1];
+                RenamePage(oldName, newName, "Unit renamed", false);
+            }
+            
+            UpdateUnitNavboxes(renames);
+            ApplyRenamesToPageText("Cloak", renames);
+            ApplyRenamesToPageText("Newbie Guide", renames);
+            ApplyRenamesToPageText("Newbie Guide 2", renames);
+            ApplyRenamesToPageText("Shield", renames);
+        }
+
+        public static void DoStuff()
+        {
+            string username = "";
+            string password = "";
+
+            Console.WriteLine("Enter wiki username: ");
+            username = Console.ReadLine();
+            Console.WriteLine("Enter wiki password: ");
+            password = Console.ReadLine();
+            password = password.Trim();
+
+            newWiki = new Site(WIKI_URL, username, password);
+
+            // find pages with offsite images
+            //FindOffsiteImages();
             return;
-            */
 
             int count = 0;  // increment this when we actually create a page
             string dir = "";
@@ -380,100 +483,16 @@ namespace Fixer
             */
 
             // unit renamer
-            //string renamedFilesListPath = Path.Combine(fileDir, "renames.csv");
-            //string[] renames = File.ReadAllLines(renamedFilesListPath);
-            /*
-            foreach (string renameLine in renames)
-            {
-                string[] kvp = renameLine.Split(',');
-                string oldName = kvp[0];
-                string newName = kvp[1];
-                RenamePage(oldName, newName, "Unit renamed", false);
-            }
-            */
-            //UpdateUnitNavboxes(renames);
-            //ApplyRenamesToPageText("Cloak", renames);
-            //ApplyRenamesToPageText("Newbie Guide", renames);
-            //ApplyRenamesToPageText("Newbie Guide 2", renames);
-            //ApplyRenamesToPageText("Shield", renames);
+            //RenameUnits();
 
             // unit page updater
-            /*
-            count = 0;
-            bool infoBoxOnly = true;
-            if (infoBoxOnly)
-                dir = Path.Combine(fileDir, "raw_infobox/markup");
-            else
-                dir = Path.Combine(fileDir, "raw/markup");
-
-            List<string> filesUpdate = new List<string>();
-            
-            //filesUpdate = new List<string>(Directory.GetFiles(dir));
-            var filesUpdateTemp = new List<string>(new string[] {
-                "Kodachi", "Reaver", "Blitz", "Ogre", "Pyro", "Grizzly", "Siren", "Dante", "Faraday"
-            });
-            foreach (string path in filesUpdateTemp) {
-                string newPath = Path.Combine(dir, path + ".txt");
-                filesUpdate.Add(newPath);
-                Console.WriteLine(newPath);
-            }
-
-            foreach (string path in filesUpdate)
-            {
-                string unitname = Path.GetFileNameWithoutExtension(path);
-                unitname = unitname.Replace("&#47;", "/");
-                var page = new Page(newWiki, unitname);
-                page.Load();
-                if (page.Exists ()) {
-                    //Dictionary<string, object> unitData = new Dictionary<string, object>();
-                    //JsonConvert.PopulateObject(File.ReadAllText(path), unitData);
-                    //foreach (KeyValuePair<string, object> kvp in unitData)
-                    //{
-                    //    UpdateTemplate(page, kvp);
-                    //}
-
-                    bool result = UpdateUnitPage(page, path, infoBoxOnly);
-                    if (result) {
-                        page.Save ("Page auto-updated with DotNetWikiBot", true);
-                        count++;
-                    }
-                    if (count >= 5) {
-                        count = 0;
-                        Console.WriteLine ("-- INTERMISSION --");
-                        Console.WriteLine ("-- Review changes on wiki, then press Enter to continue --");
-                        Console.ReadLine ();
-                    }
-                } 
-                else 
-                {
-                    Console.WriteLine ("Page " +  page.title + " doesn't exist!");
-                }
-            }
-            */
+            //UpdatePages();
 
             // unitpic replacer
-            /*
-            count = 0;
-            dir = Environment.OSVersion.Platform == PlatformID.Unix ? @"/media/histidine/zkwiki/raw_infobox/markup" : @"G:\zkwiki\raw_infobox\markup";
-            var filesUpdate = new List<string>(Directory.GetFiles(dir));
-            foreach (string path in filesUpdate)
-            {
-                string unitname = Path.GetFileNameWithoutExtension(path);
-                unitname = unitname.Replace("&#47;", "/");
-                var page = new Page(newWiki, unitname);
-                page.Load();
-                if (page.Exists() && !page.IsRedirect())
-                {
-                    string oldText = page.text;
-                    string text = page.text.Replace(@"http://packages.springrts.com/zkmanual/unitpics/", @"http://manual.zero-k.info/unitpics/");
-                    if (!oldText.Equals(text))
-                        page.Save(text, "Modified image path with DotNetWikiBot", true);
-                }
-                count++;
-            }
-            */
+            //ReplaceUnitpics();
 
             // page porting
+            /*
             string[,] toPort = 
             {
                 //{"MissionEditorCompatibility", "Mission Editor game compatibility"},
@@ -493,6 +512,7 @@ namespace Fixer
             {
                 ReformatPage(toReformat[i]);
             }
+            */
         }
     }
 }
