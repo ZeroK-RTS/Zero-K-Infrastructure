@@ -142,7 +142,7 @@
     }
 
     <br />
-    Set WHR Alias:
+    Set WHR Alias (has to be ID, not nickname):
     <form method="post" action="@Url.Action("SetWhrAlias", "Users", new { accountID = Model.AccountID })">
         @Html.AntiForgeryToken()
         @Html.TextBox("alias", Model.WhrAlias)
