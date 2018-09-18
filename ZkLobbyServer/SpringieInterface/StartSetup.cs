@@ -165,7 +165,7 @@ namespace ZeroKWeb.SpringieInterface
                                 userParams["pwInstructions"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(GetPwInstructions(planet, user, db, attacker)));
                             }
 
-                            if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams["extracomm"] = accountIDsWithExtraComms[user.accountID].ToString();
+                            if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams["extracomm"] = accountIDsWithExtraComms[user.AccountID].ToString();
 
                             var commProfileIDs = new LuaTable();
                             var userCommandersBanned = Punishment.GetActivePunishment(user.AccountID, null, null, x => x.BanCommanders) != null; 
