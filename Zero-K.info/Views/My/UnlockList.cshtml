@@ -3,8 +3,8 @@
 <center><h2>Owned technologies</h2></center>
 @{Html.RenderPartial("UnlockedTechnologies", Model.AlreadyUnlockedCounts);}
 
-<div class="border" style="position: fixed; bottom: 10%; left: 40%; z-index: 100; border: #fff;" title="Want more points? <br /> First you have to reach the next level before you'll receive new points. <br /> Gain XP just by playing the game, win or lose!">
-	<h3>You have <span style="color: red; font-size: 130%;"> @Model.Account.AvailableXP </span> points available</h3>
+<div class="border" style="position: fixed; bottom: 10%; left: 40%; z-index: 100; border: #fff;" title="Want more Kudos? Donate to Zero-K!">
+	<h3>You have <span style="color: red; font-size: 130%;"> @(Model.Account.KudosGained - Model.Account.KudosSpent) </span> Kudos available</h3>
 </div>
 
 @*<a href="@Url.Action("Reset")">Reset list (debug)</a>*@
