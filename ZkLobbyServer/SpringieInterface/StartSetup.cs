@@ -40,10 +40,14 @@ namespace ZeroKWeb.SpringieInterface
                             var cnt = biggest.Count() - other.Count();
                             if (cnt > 0)
                             {
-                                foreach (var a in
-                                    other.Select(x => db.Accounts.First(y => y.AccountID == x.LobbyID))
-                                        .OrderByDescending(x => x.GetRating(RatingCategory.Casual).Elo)
-                                        .Take(cnt)) accountIDsWithExtraComms.Add(a.AccountID);
+                                int per_player = cnt / other.Count();
+                                cnt = cnt % other.Count();
+                                foreach (var a in other
+                                    .Select(x => db.Accounts.First(y => y.AccountID == x.LobbyID))
+                                    .OrderByDescending(x => x.GetRating(RatingCategory.Casual).Elo)) {
+                                        accountIDsWithExtraComms.Add(a.AccountID, per_player + (cnt > 0 ? 1 : 0));
+                                        cnt--;
+                                }
                             }
                         }
                     }
@@ -161,7 +165,7 @@ namespace ZeroKWeb.SpringieInterface
                                 userParams["pwInstructions"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(GetPwInstructions(planet, user, db, attacker)));
                             }
 
-                            if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams["extracomm"] = "1";
+                            if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams["extracomm"] = accountIDsWithExtraComms[user.accountID].ToString();
 
                             var commProfileIDs = new LuaTable();
                             var userCommandersBanned = Punishment.GetActivePunishment(user.AccountID, null, null, x => x.BanCommanders) != null; 
