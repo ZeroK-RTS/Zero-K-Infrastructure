@@ -263,7 +263,7 @@ namespace ChobbyLauncher
                 {
                     Trace.TraceWarning("Spring exit code is: {0}, {1}", process.ExitCode, isHangKilled ? "user-killed during hang" : "assuming crash");
                 }
-                tcs.TrySetResult(!isCrash);
+                tcs.TrySetResult(!isCrash || isHangKilled);
             };
             process.EnableRaisingEvents = true;
             process.Start();
