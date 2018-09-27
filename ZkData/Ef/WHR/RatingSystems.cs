@@ -126,7 +126,7 @@ namespace Ratings
             if (battle.ResourceByMapResourceID?.MapIsSpecial == true) return;
             
             //only count balanced custom matches for elo
-            if (battle.Mode == AutohostMode.None && battle.SpringBattlePlayers?.GroupBy(x => x.AllyNumber).SelectMany(x => x.Count()).Distinct().Count() > 1) return;
+            if (battle.Mode == AutohostMode.None && battle.SpringBattlePlayers?.GroupBy(x => x.AllyNumber).Select(x => x.Count()).Distinct().Count() > 1) return;
             if (battle.Duration < GlobalConst.MinDurationForElo) return;
             battle.ApplicableRatings |= (RatingCategoryFlags)result.LobbyStartContext.ApplicableRating;
             //battle.ApplicableRatings |= RatingCategoryFlags.Casual;
