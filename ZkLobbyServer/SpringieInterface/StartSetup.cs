@@ -47,7 +47,7 @@ namespace ZeroKWeb.SpringieInterface
                                 // iterate over all players in this team
                                 //  first player: cnt == 2, >0 so we give him a second extra comm
                                 //  second player: cnt == 1, >0 so same deal
-                                //  from now on cnt <= 0 so the remaining 3 players only get the one extra comm
+                                //  from now on cnt <= 0 so the last player only gets the one extra comm
                                 int per_player = cnt / other.Count();
                                 cnt = cnt % other.Count();
                                 foreach (var a in other
