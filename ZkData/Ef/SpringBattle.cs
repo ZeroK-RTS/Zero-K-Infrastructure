@@ -26,7 +26,7 @@ namespace ZkData
                 return type;
             }
         }
-        public int Duration { get; set; }
+        public int Duration { get; set; } //Time from start to end of battle in seconds
         [StringLength(64)]
         [Index]
         public string EngineGameID { get; set; }

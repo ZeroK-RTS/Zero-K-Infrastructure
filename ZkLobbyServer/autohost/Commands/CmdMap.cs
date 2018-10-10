@@ -20,7 +20,7 @@ namespace ZkLobbyServer
         {
             map = string.IsNullOrEmpty(arguments)
                 ? MapPicker.GetRecommendedMap(battle.GetContext(), (battle.MinimalMapSupportLevel > MapSupportLevel.Featured) ? battle.MinimalMapSupportLevel : MapSupportLevel.Featured)
-                : MapPicker.FindResources(ResourceType.Map, arguments, battle.MinimalMapSupportLevel).FirstOrDefault();
+                : MapPicker.FindResources(ResourceType.Map, arguments, battle.MinimalMapSupportLevel, true).FirstOrDefault();
 
 
             if (map == null)
@@ -50,7 +50,7 @@ namespace ZkLobbyServer
             }
             else if (!string.IsNullOrEmpty(arguments) && map.MapSupportLevel < MapSupportLevel.Supported)
             {
-                alternativeMap = MapPicker.FindResources(ResourceType.Map, arguments, MapSupportLevel.Supported).FirstOrDefault();
+                alternativeMap = MapPicker.FindResources(ResourceType.Map, arguments, MapSupportLevel.Supported, true).FirstOrDefault();
             }
 
 

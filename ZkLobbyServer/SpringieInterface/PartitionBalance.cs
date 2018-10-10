@@ -224,6 +224,11 @@ namespace ZeroKWeb.SpringieInterface
         //Interface function to comply with LegacyBalance
         public static BalanceTeamsResult BalanceInterface(int teamCount, BalanceMode mode, LobbyHostingContext b, params List<Account>[] unmovablePlayers)
         {
+            if (b.Players.Where(y => !y.IsSpectator).Count() > 38) // dont try doing million+ iterations (arbitrarily chosen cap)
+            {
+                Trace.TraceWarning("PartitionBalance called with too many players: " + b.Players.Where(y => !y.IsSpectator).Count());
+                return new Balancer().LegacyBalance(teamCount, mode, b, unmovablePlayers);
+            }
             if (teamCount != 2)
             {
                 Trace.TraceWarning("PartitionBalance called with invalid number of teams: " + teamCount);

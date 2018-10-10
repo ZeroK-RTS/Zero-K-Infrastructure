@@ -73,6 +73,7 @@ namespace ZkData
 
         }
         
+        public bool IsTourneyController { get; set; }
         public DevLevel DevLevel { get; set; }
         [StringLength(200)]
         public string SpecialNote { get; set; }
@@ -233,6 +234,9 @@ namespace ZkData
         
         [NotMapped]
         public int KudosGained { get { return ContributionsByAccountID.Sum(x =>  (int?)x.KudosValue) ?? 0; } }
+
+        [NotMapped]
+        public int KudosDonated { get { return ContributionsByAccountID.Where(x => x.ManuallyAddedAccountID == null).Sum(x =>  (int?)x.KudosValue) ?? 0; } }
 
         [NotMapped]
         public int KudosSpent { get { return KudosPurchases.Sum(x => (int?)x.KudosValue) ?? 0; } }
@@ -653,7 +657,7 @@ namespace ZkData
             var ret = new List<BadgeType>();
             if (Level > 200) ret.Add(BadgeType.player_level); 
             if ((GetRating(RatingCategory.MatchMaking).Rank <= 3 || GetRating(RatingCategory.Casual).Rank <= 3)) ret.Add(BadgeType.player_elo); 
-            var total = HasKudos ? KudosGained : 0;
+            var total = HasKudos ? KudosDonated : 0;
 
             if (total >= GlobalConst.KudosForDiamond) ret.Add(BadgeType.donator_3);
             else if (total >= GlobalConst.KudosForGold) ret.Add(BadgeType.donator_2);

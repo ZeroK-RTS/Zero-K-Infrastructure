@@ -394,6 +394,10 @@
     <Compile Include="Migrations\201807261504544_MmTeamsMinimumWinChance.Designer.cs">
       <DependentUpon>201807261504544_MmTeamsMinimumWinChance.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201808181027066_AddTourneyControl.cs" />
+    <Compile Include="Migrations\201808181027066_AddTourneyControl.Designer.cs">
+      <DependentUpon>201808181027066_AddTourneyControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -755,6 +759,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201807261504544_MmTeamsMinimumWinChance.resx">
       <DependentUpon>201807261504544_MmTeamsMinimumWinChance.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201808181027066_AddTourneyControl.resx">
+      <DependentUpon>201808181027066_AddTourneyControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

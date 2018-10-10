@@ -19,6 +19,22 @@ namespace ZeroKWeb.ForumParser
             return 0;
         }
 
+        // copied from UnderscoreTag
+		public override bool? AcceptsLetter(ParseContext context, char letter)
+        {
+            if (letter == '*')
+            {
+                if (context.PreviousTag?.Value is SpaceTag || context.PreviousTag?.Value is NewLineTag || context.NextChar == ' ' ||
+                    context.NextChar == '\r' || context.NextChar == '\n')
+                {
+                    var lastLit = (context.PreviousTag?.Value as LiteralTag);
+                    if (lastLit?.Text.IsValidLink() == true) return false;
+                }
+                else return false;
+            }
+            return base.AcceptsLetter(context, letter);
+        }
+
         public override LinkedListNode<Tag> Translate(TranslateContext context, LinkedListNode<Tag> self) {
             // unordered lists
             if (ListPrefixLevel(self) > 0) return ProcessListContent(context, 0, self);

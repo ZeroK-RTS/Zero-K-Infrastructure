@@ -534,6 +534,8 @@ namespace Ratings
                 }
 
                 //check for rank updates
+
+                List<int> playersWithRatingChange = new List<int>();
                 using (var db = new ZkDataContext())
                 {
                     var lastBattlePlayers = db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).Include(x => x.Account).ToList();
@@ -546,10 +548,16 @@ namespace Ratings
                         });
                         var updatedRanks = lastBattlePlayers.Where(p => Ranks.UpdateRank(p.Account, p.IsInVictoryTeam, !p.IsInVictoryTeam, db)).Select(x => x.Account).ToList();
                         updatedRanks.ForEach(p => db.Entry(p).State = EntityState.Modified);
-                        RatingsUpdated(this, new RatingUpdate() { affectedPlayers = lastBattlePlayers.Select(x => x.AccountID) });
+                        playersWithRatingChange = lastBattlePlayers.Select(x => x.AccountID).ToList();
                     }
                     db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).ToList().ForEach(x => playerOldRatings[RatingSystems.GetRatingId(x.AccountID)] = playerRatings[RatingSystems.GetRatingId(x.AccountID)]);
                     db.SaveChanges();
+                }
+
+                if (latestBattle.GetRatingCategory() == category && lastBattleRanked)
+                {
+                    //Publish new results only after saving new stats to db.
+                    RatingsUpdated(this, new RatingUpdate() { affectedPlayers = playersWithRatingChange});
                 }
 
 

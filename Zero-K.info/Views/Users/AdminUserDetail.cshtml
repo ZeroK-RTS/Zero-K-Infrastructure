@@ -142,7 +142,7 @@
     }
 
     <br />
-    Set WHR Alias:
+    Set WHR Alias (has to be ID, not nickname):
     <form method="post" action="@Url.Action("SetWhrAlias", "Users", new { accountID = Model.AccountID })">
         @Html.AntiForgeryToken()
         @Html.TextBox("alias", Model.WhrAlias)
@@ -161,6 +161,7 @@
     <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID })">
         @Html.AntiForgeryToken()
         Zero-K admin: @Html.CheckBox("zkAdmin", Model.AdminLevel >= AdminLevel.Moderator)
+        Tourney Control: @Html.CheckBox("tourneyController", Model.IsTourneyController)
         VPN exception: @Html.CheckBox("vpnException", Model.HasVpnException)
         <input type="submit" />
     </form>
@@ -169,7 +170,7 @@
     <h2>Issue a penalty</h2>
     <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
         @Html.AntiForgeryToken()
-        Reason: @Html.TextBox("reason", "Smurf")<br />
+        Reason: @Html.TextBox("reason", "Smurf", new { style="width:50px" })<br />
         <br />
 
         Mute: @Html.CheckBox("banMute")<br />
