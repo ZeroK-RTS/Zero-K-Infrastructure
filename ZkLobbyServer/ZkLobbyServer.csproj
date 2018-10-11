@@ -126,12 +126,14 @@
     <Compile Include="autohost\Commands\CmdGame.cs" />
     <Compile Include="autohost\Commands\CmdListOptions.cs" />
     <Compile Include="autohost\Commands\CmdMap.cs" />
+    <Compile Include="autohost\Commands\CmdMaxRank.cs" />
     <Compile Include="autohost\Commands\CmdMinElo.cs" />
     <Compile Include="autohost\Commands\CmdMinMapSupportLevel.cs" />
     <Compile Include="autohost\Commands\CmdMinLevel.cs" />
     <Compile Include="autohost\Commands\CmdMaxLevel.cs" />
     <Compile Include="autohost\Commands\CmdMaxElo.cs" />
     <Compile Include="autohost\Commands\CmdMaxPlayers.cs" />
+    <Compile Include="autohost\Commands\CmdMinRank.cs" />
     <Compile Include="autohost\Commands\CmdN.cs" />
     <Compile Include="autohost\Commands\CmdNotify.cs" />
     <Compile Include="autohost\Commands\CmdPassword.cs" />
