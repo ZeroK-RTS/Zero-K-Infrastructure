@@ -158,9 +158,15 @@ namespace ZkLobbyServer
 
         public virtual async Task CheckCloseBattle()
         {
-            if (Users.IsEmpty && !spring.IsRunning && !IsAutohost)
+            if (Users.IsEmpty && !spring.IsRunning)
             {
-                await server.RemoveBattle(this);
+                if (IsAutohost) {
+                    RunCommandDirectly<CmdMap>(null);
+                }
+                else
+                {
+                    await server.RemoveBattle(this);
+                }
             }
         }
 
