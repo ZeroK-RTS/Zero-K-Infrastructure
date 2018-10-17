@@ -62,8 +62,9 @@ namespace ZkLobbyServer
                 if (m.Source != source)
                 {
                     //Translate mentions of nicknames to discord mentions
-                    var userIdsByNickname = discord.GetGuild(serverID).Users.ToDictionary(x => x.Nickname, x => x.Id);
-                    userIdsByNickname.ForEach((pair) => m.Message = m.Message.Replace(pair.Key, string.Format("<@{0}>", pair.Value)));
+                    var userIdsByNickname = discord.GetGuild(serverID).Users.ToDictionary(x => x.Nickname, x => x.Id.ToString(), StringComparer.OrdinalIgnoreCase);
+                    m.Message = Regex.Replace(m.Message, "(\\w+)", match => userIdsByNickname.ContainsKey(match.Groups[1].Value) ? 
+                            string.Format("<@{0}>", userIdsByNickname[match.Groups[1].Value]) : match.Groups[1].Value);
 
                     //Block any mentions of an entire role via ID
                     var roleIds = discord.GetGuild(serverID).Roles.Select(x => x.Id.ToString()).ToList();
