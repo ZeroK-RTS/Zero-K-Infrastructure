@@ -10,12 +10,13 @@ namespace ZkLobbyServer
     {
         private int winCount;
         private ServerBattle battle;
-        private bool ended;
         private Dictionary<string, bool> userVotes = new Dictionary<string, bool>();
+        public bool Ended { get; private set; } = false;
         public string question { get; private set; }
         public Say Creator { get; private set; }
         private BattleCommand command;
         private bool AbsoluteMajorityVote;
+        public PollOutcome Outcome { get; private set; }
 
         public event EventHandler<PollOutcome> PollEnded;
 
@@ -55,27 +56,32 @@ namespace ZkLobbyServer
 
             if (yes >= winCount || timeout && !AbsoluteMajorityVote && yes > no)
             {
-                ended = true;
+                Ended = true;
                 await battle.SayBattle($"Poll: {question} [END:SUCCESS]");
                 if (command.Access == BattleCommand.AccessType.NotIngame && battle.spring.IsRunning) return true;
                 if (command.Access == BattleCommand.AccessType.Ingame && !battle.spring.IsRunning) return true;
                 await command.ExecuteArmed(battle, Creator);
-                PollEnded(this, new PollOutcome() { Success = true });
+                Outcome = new PollOutcome() { Success = true };
                 return true;
             }
             else if (no >= winCount || timeout)
             {
-                ended = true;
+                Ended = true;
                 await battle.SayBattle($"Poll: {question} [END:FAILED]");
-                PollEnded(this, new PollOutcome() { Success = false });
+                Outcome = new PollOutcome() { Success = false };
                 return true;
             }
             return false;
         }
 
+        public void PublishResult()
+        {
+            PollEnded(this, Outcome);
+        }
+
         public async Task End()
         {
-            if (!ended) await CheckEnd(true);
+            if (!Ended) await CheckEnd(true);
         }
 
 
@@ -83,7 +89,7 @@ namespace ZkLobbyServer
         {
             if (e == null) return false;
             string reason;
-            if (command.GetRunPermissions(battle, e.User, out reason) >= BattleCommand.RunPermission.Vote && !ended)
+            if (command.GetRunPermissions(battle, e.User, out reason) >= BattleCommand.RunPermission.Vote && !Ended)
             {
                 if (command.IsSpectator(battle, e.User, null)) return false;
 

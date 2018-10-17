@@ -24,8 +24,8 @@ namespace ZkLobbyServer
     public class ServerBattle : Battle
     {
         public const int PollTimeout = 60;
-        public const int DiscussionTime = 40;
-        public const int MapVoteTime = 20;
+        public const int DiscussionTime = 35;
+        public const int MapVoteTime = 25;
         public static int BattleCounter;
 
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
@@ -312,8 +312,10 @@ namespace ZkLobbyServer
             {
                 if (await ActivePoll.Vote(e, vote))
                 {
+                    var oldPoll = ActivePoll;
                     pollTimer.Enabled = false;
                     ActivePoll = null;
+                    oldPoll.PublishResult();
                 }
             }
             else await Respond(e, "There is no poll going on, start some first");
@@ -491,9 +493,11 @@ namespace ZkLobbyServer
 
         public async void StopVote(Say e = null)
         {
+            var oldPoll = ActivePoll;
             if (ActivePoll != null) await ActivePoll.End();
             if (pollTimer != null) pollTimer.Enabled = false;
             ActivePoll = null;
+            oldPoll.PublishResult();
         }
 
         public async Task SwitchEngine(string engine)
