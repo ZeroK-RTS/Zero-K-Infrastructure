@@ -72,7 +72,7 @@ namespace ZkLobbyServer
 
                     //Block any mentions of an entire role via Name
                     var roleNames = discord.GetGuild(serverID).Roles.Select(x => x.Name).ToList();
-                    roleNames.ForEach(role => m.Message = m.Message.Replace(string.Format("@{0}", role), ""));
+                    roleNames.ForEach(role => m.Message = m.Message.Replace(string.Format("@{0}", role), string.Format(" {0}", role)));
 
                     if (m.User != GlobalConst.NightwatchName) GetChannel(m.Channel)?.SendMessageAsync($"<{m.User}> {m.Message}");
                     // don't relay extra "nightwatch" if it is self relay
