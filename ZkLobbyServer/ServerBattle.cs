@@ -24,7 +24,7 @@ namespace ZkLobbyServer
     public class ServerBattle : Battle
     {
         public const int PollTimeout = 60;
-        public const int DiscussionTime = 20;
+        public const int DiscussionTime = 40;
         public const int MapVoteTime = 20;
         public static int BattleCounter;
 
@@ -744,7 +744,7 @@ namespace ZkLobbyServer
             if (IsAutohost)
             {
                 RunCommandDirectly<CmdMap>(null);
-                discussionTimer.Interval = DiscussionTime * 1000;
+                discussionTimer.Interval = (DiscussionTime + 1) * 1000;
                 discussionTimer.Start();
             }
             await CheckCloseBattle();
