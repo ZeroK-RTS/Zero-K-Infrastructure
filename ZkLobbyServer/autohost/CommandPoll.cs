@@ -63,7 +63,7 @@ namespace ZkLobbyServer
                 PollEnded(this, new PollOutcome() { Success = true });
                 return true;
             }
-            else if (no >= winCount)
+            else if (no >= winCount || timeout)
             {
                 ended = true;
                 await battle.SayBattle($"Poll: {question} [END:FAILED]");
