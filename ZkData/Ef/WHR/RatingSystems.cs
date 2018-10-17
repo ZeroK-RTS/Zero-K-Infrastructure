@@ -122,8 +122,11 @@ namespace Ratings
             battle.ApplicableRatings = 0;
             if (battle.HasBots) return;
             if (battle.IsMission) return;
-            if (battle.SpringBattlePlayers?.Select(x => x.AllyNumber).Distinct().Count() < 2) return;
+            if (battle.SpringBattlePlayers?.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Distinct().Count() < 2) return;
             if (battle.ResourceByMapResourceID?.MapIsSpecial == true) return;
+            
+            //only count balanced custom matches for elo
+            if (battle.Mode == AutohostMode.None && battle.SpringBattlePlayers?.Where(x => !x.IsSpectator).GroupBy(x => x.AllyNumber).Select(x => x.Count()).Distinct().Count() > 1) return;
             if (battle.Duration < GlobalConst.MinDurationForElo) return;
             battle.ApplicableRatings |= (RatingCategoryFlags)result.LobbyStartContext.ApplicableRating;
             //battle.ApplicableRatings |= RatingCategoryFlags.Casual;

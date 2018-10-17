@@ -320,7 +320,7 @@ namespace ZeroKLobby
                 uint cbs;
                 uint ubs;
                 uint sendLength;
-                if (SteamAPI.IsSteamRunning() && SteamUser.GetVoice(true, buf, (uint)buf.Length, out cbs, false, null, 0, out ubs, sampleRate) == EVoiceResult.k_EVoiceResultOK)
+                if (SteamAPI.IsSteamRunning() && SteamUser.GetVoice(true, buf, (uint)buf.Length, out cbs) == EVoiceResult.k_EVoiceResultOK)
                 {
                     lastPacket[mySteamID.m_SteamID] = DateTime.Now;
 

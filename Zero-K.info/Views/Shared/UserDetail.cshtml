@@ -400,7 +400,14 @@
             </form>
         </div>
     }
-
+    
+    @if (Global.IsTourneyController && Global.AccountID == Model.AccountID)
+    {
+        <div class="admin">
+            <h3>Tourney extras</h3>
+            <a href="@Url.Action("Index", "Tourney")">Tourney control</a><br />
+        </div>
+    }
     @if (Global.IsModerator && Global.AccountID == Model.AccountID)
     {
         <div class="admin">

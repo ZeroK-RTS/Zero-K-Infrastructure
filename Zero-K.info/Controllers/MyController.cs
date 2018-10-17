@@ -280,6 +280,7 @@ namespace ZeroKWeb.Controllers
                 {
                     Unlock unlock = db.Unlocks.FirstOrDefault(x => x.UnlockID == id);
                     if (!useKudos && unlock.IsKudosOnly == true) return Content("That unlock cannot be bought using XP");
+                    if ( useKudos && unlock.KudosCost == null)   return Content("That unlock cannot be bought using Kudos");
 
                     if (useKudos) {
                         var acc = db.Accounts.Find(Global.AccountID);

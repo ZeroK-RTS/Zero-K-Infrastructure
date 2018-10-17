@@ -12,6 +12,7 @@ using System.Timers;
 using LobbyClient;
 using PlasmaDownloader;
 using PlasmaShared;
+using Ratings;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 using ZkData.UnitSyncLib;
@@ -170,9 +171,15 @@ namespace ZkLobbyServer
 
         public virtual async Task CheckCloseBattle()
         {
-            if (Users.IsEmpty && !spring.IsRunning && !IsAutohost)
+            if (Users.IsEmpty && !spring.IsRunning)
             {
-                await server.RemoveBattle(this);
+                if (IsAutohost) {
+                    RunCommandDirectly<CmdMap>(null);
+                }
+                else
+                {
+                    await server.RemoveBattle(this);
+                }
             }
         }
 
@@ -558,6 +565,16 @@ namespace ZkLobbyServer
             MinLevel = lvl;
         }
 
+        public async Task SwitchMaxRank(int rank)
+        {
+            MaxRank = rank;
+        }
+
+        public async Task SwitchMinRank(int rank)
+        {
+            MinRank = rank;
+        }
+
         public async Task SwitchMinMapSupportLevel(MapSupportLevel lvl)
         {
             MinimalMapSupportLevelAutohost = lvl;
@@ -662,14 +679,26 @@ namespace ZkLobbyServer
                     ubs.IsSpectator = true;
                     SayBattle("Your rating (" + Math.Max(ubs.LobbyUser.EffectiveElo, ubs.LobbyUser.EffectiveMmElo) + ") is too low. The minimum rating to play in this battle is " + MinElo + ".", ubs.Name);
                 }
-                if (ubs.LobbyUser.Level > MaxLevel) {
+                if (ubs.LobbyUser.Level > MaxLevel)
+                {
                     ubs.IsSpectator = true;
                     SayBattle("Your level (" + ubs.LobbyUser.Level + ") is too high. The maximum level to play in this battle is " + MaxLevel + ".", ubs.Name);
-                };
-                if (ubs.LobbyUser.Level < MinLevel) {
+                }
+                if (ubs.LobbyUser.Level < MinLevel)
+                {
                     ubs.IsSpectator = true;
                     SayBattle("Your level (" + ubs.LobbyUser.Level + ") is too low. The minimum level to play in this battle is " + MinLevel + ".", ubs.Name);
-                };
+                }
+                if (ubs.LobbyUser.Rank > MaxRank)
+                {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your Rank (" + Ranks.RankNames[ubs.LobbyUser.Rank] + ") is too high. The maximum Rank to play in this battle is " + Ranks.RankNames[MaxRank] + ".", ubs.Name);
+                }
+                if (ubs.LobbyUser.Rank < MinRank)
+                {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your Rank (" + Ranks.RankNames[ubs.LobbyUser.Rank] + ") is too low. The minimum Rank to play in this battle is " + Ranks.RankNames[MinRank] + ".", ubs.Name);
+                }
             }
         }
 

@@ -55,6 +55,8 @@ namespace LobbyClient
         public int MinElo { get; protected set; } = int.MinValue;
         public int MaxLevel { get; protected set; } = int.MaxValue;
         public int MinLevel { get; protected set; } = int.MinValue;
+        public int MaxRank { get; protected set; } = int.MaxValue;
+        public int MinRank { get; protected set; } = int.MinValue;
 
         public Battle()
         {
