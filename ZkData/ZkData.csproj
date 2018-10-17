@@ -398,6 +398,10 @@
     <Compile Include="Migrations\201808181027066_AddTourneyControl.Designer.cs">
       <DependentUpon>201808181027066_AddTourneyControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201810172106541_UpdateDynamicConfig.cs" />
+    <Compile Include="Migrations\201810172106541_UpdateDynamicConfig.Designer.cs">
+      <DependentUpon>201810172106541_UpdateDynamicConfig.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -762,6 +766,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201808181027066_AddTourneyControl.resx">
       <DependentUpon>201808181027066_AddTourneyControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810172106541_UpdateDynamicConfig.resx">
+      <DependentUpon>201810172106541_UpdateDynamicConfig.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
