@@ -24,6 +24,8 @@ namespace ZkLobbyServer
     public class ServerBattle : Battle
     {
         public const int PollTimeout = 60;
+        public const int DiscussionTime = 20;
+        public const int MapVoteTime = 20;
         public static int BattleCounter;
 
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
@@ -42,15 +44,19 @@ namespace ZkLobbyServer
         private int hostingPort;
 
         protected bool isZombie;
+        protected bool isPostBattleDiscussion => IsAutohost && DateTime.UtcNow.Subtract(EndedSince).TotalSeconds < DiscussionTime;
 
         private List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
         public List<BattleDebriefing> Debriefings { get; private set; } = new List<BattleDebriefing>();
 
         private Timer pollTimer;
+        private Timer discussionTimer;
 
         public ZkLobbyServer server;
         public DedicatedServer spring;
         public string battleInstanceGuid;
+
+        public int InviteMMPlayers { get; protected set; } = int.MaxValue; //will invite players to MM after each battle if more than X players
 
         public MapSupportLevel MinimalMapSupportLevel => IsAutohost ? MinimalMapSupportLevelAutohost : (IsPassworded ? MapSupportLevel.None : MapSupportLevel.Supported);
 
@@ -87,6 +93,10 @@ namespace ZkLobbyServer
             pollTimer.Enabled = false;
             pollTimer.AutoReset = false;
             pollTimer.Elapsed += pollTimer_Elapsed;
+            discussionTimer = new Timer(DiscussionTime * 1000);
+            discussionTimer.Enabled = false;
+            discussionTimer.AutoReset = false;
+            discussionTimer.Elapsed += discussionTimer_Elapsed;
             SetupSpring();
             PickHostingPort();
         }
@@ -102,6 +112,9 @@ namespace ZkLobbyServer
             if (pollTimer != null) pollTimer.Enabled = false;
             pollTimer?.Dispose();
             pollTimer = null;
+            if (discussionTimer != null) discussionTimer.Enabled = false;
+            discussionTimer?.Dispose();
+            discussionTimer = null;
             spring = null;
             ActivePoll = null;
         }
@@ -350,6 +363,11 @@ namespace ZkLobbyServer
                 await Respond(e, "This room is now disabled, please join a new one");
                 return false;
             }
+            if (isPostBattleDiscussion)
+            {
+                await Respond(e, "Please wait for a few seconds before starting a poll. Feel free to discuss the last battle.");
+                return false;
+            }
             string reason;
             var perm = cmd.GetRunPermissions(this, e.User, out reason);
 
@@ -454,18 +472,18 @@ namespace ZkLobbyServer
             return true;
         }
 
-        public async Task StartVote(BattleCommand command, Say e, string args)
+        public async Task StartVote(BattleCommand command, Say e, string args, int timeout = PollTimeout, CommandPoll poll = null)
         {
             if (ActivePoll != null)
             {
                 await Respond(e, $"Please wait, another poll already in progress: {ActivePoll.question}");
                 return;
             }
-            var poll = new CommandPoll(this);
+            if (poll == null) poll = new CommandPoll(this);
             if (await poll.Setup(command, e, args))
             {
                 ActivePoll = poll;
-                pollTimer.Interval = PollTimeout * 1000;
+                pollTimer.Interval = timeout * 1000;
                 pollTimer.Enabled = true;
             }
         }
@@ -521,6 +539,10 @@ namespace ZkLobbyServer
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
+        }
+        public async Task SwitchInviteMmPlayers(int players)
+        {
+            InviteMMPlayers = players;
         }
 
         public async Task SwitchMaxElo(int elo)
@@ -618,7 +640,7 @@ namespace ZkLobbyServer
                     if (MaxPlayers == 0) MaxPlayers = 16;
                     break;
             }
-            if (MaxPlayers > 32) MaxPlayers = 32;
+            if (MaxPlayers > DynamicConfig.Instance.MaximumBattlePlayers && !IsAutohost) MaxPlayers = DynamicConfig.Instance.MaximumBattlePlayers;
 
             HostedMod = MapPicker.FindResources(ResourceType.Mod, ModName ?? server.Game ?? GlobalConst.DefaultZkTag).FirstOrDefault();
             HostedMap = MapName != null
@@ -686,6 +708,7 @@ namespace ZkLobbyServer
             StopVote();
             IsInGame = false;
             RunningSince = null;
+            EndedSince = DateTime.UtcNow;
 
             var debriefingMessage = BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server);
             Debriefings.Add(debriefingMessage);
@@ -707,8 +730,39 @@ namespace ZkLobbyServer
                     });
 
             toNotify.Clear();
-            if (IsAutohost) RunCommandDirectly<CmdMap>(null);
+
+            var playingEligibleUsers = server.MatchMaker.GetEligibleQuickJoinPlayers(Users.Values.Where(x => !x.LobbyUser.IsAway && !x.IsSpectator).Select(x => server.ConnectedUsers[x.Name]).ToList());
+            if (playingEligibleUsers.Count() >= InviteMMPlayers) { //Make sure there are enough eligible users for a battle to be likely to happen
+
+                //put all users into MM queue to suggest battles
+                var teamsQueues = server.MatchMaker.PossibleQueues.Where(x => x.Mode == AutohostMode.Teams).ToList();
+                var availableUsers = Users.Values.Where(x => !x.LobbyUser.IsAway).Select(x => server.ConnectedUsers[x.Name]).ToList();
+                await server.MatchMaker.MassJoin(availableUsers, teamsQueues);
+            }
+
+
+            if (IsAutohost)
+            {
+                RunCommandDirectly<CmdMap>(null);
+                discussionTimer.Interval = DiscussionTime * 1000;
+                discussionTimer.Start();
+            }
             await CheckCloseBattle();
+        }
+
+
+
+        private void discussionTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            discussionTimer.Stop();
+            var poll = new CommandPoll(this, false);
+            poll.PollEnded += MapVoteEnded;
+            StartVote(new CmdMap(), null, "", MapVoteTime, poll);
+        }
+
+        private void MapVoteEnded(object sender, PollOutcome e)
+        {
+            StartVote(new CmdStart(), null, "", MapVoteTime);
         }
 
         private async Task ApplyBalanceResults(BalanceTeamsResult balance)

@@ -26,6 +26,7 @@ namespace ZkLobbyServer
             public string Name => LobbyUser.Name;
             public List<MatchMakerSetup.Queue> QueueTypes { get; private set; }
             public PartyManager.Party Party { get; set; }
+            public bool QuickPlay { get; private set; } = false;
 
 
             public PlayerEntry(User user, List<MatchMakerSetup.Queue> queueTypes, PartyManager.Party party)
@@ -33,6 +34,14 @@ namespace ZkLobbyServer
                 Party = party;
                 QueueTypes = queueTypes;
                 LobbyUser = user;
+            }
+
+            //override elo width growth to find matches instantly
+            //then remove user from queue if no match was found
+            public void SetQuickPlay()
+            {
+                JoinedTime = DateTime.UtcNow.AddHours(-1);
+                QuickPlay = true;
             }
 
             public List<ProposedBattle> GenerateWantedBattles(List<PlayerEntry> allPlayers, bool ignoreSizeLimit)
