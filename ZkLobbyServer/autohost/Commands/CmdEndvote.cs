@@ -20,7 +20,7 @@ namespace ZkLobbyServer
 
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
-            battle.StopVote(e);
+            battle.StopVote();
             await battle.SayBattle("poll cancelled");
         }
 

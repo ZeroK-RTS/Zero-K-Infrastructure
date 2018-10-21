@@ -260,7 +260,8 @@ namespace ZkLobbyServer
                     Bots = Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList(),
                     Options = ModOptions
                 });
-            
+
+            if (ActivePoll != null) await user.SendCommand(ActivePoll.GetBattlePoll());
             
             await server.Broadcast(Users.Keys.Where(x => x != user.Name), ubs.ToUpdateBattleStatus()); // send my UBS to others in battle
             
@@ -312,10 +313,7 @@ namespace ZkLobbyServer
             {
                 if (await ActivePoll.Vote(e, vote))
                 {
-                    var oldPoll = ActivePoll;
-                    pollTimer.Enabled = false;
-                    ActivePoll = null;
-                    oldPoll.PublishResult();
+                    StopVote();
                 }
             }
             else await Respond(e, "There is no poll going on, start some first");
@@ -500,7 +498,7 @@ namespace ZkLobbyServer
             });
 
             await StartVote(selector, options, e, topic);
-            await ActivePoll.Vote(e, 1);
+            await RegisterVote(e, 1);
         }
 
         public async Task StartVote(Func<string, string> eligibilitySelector, List<PollOption> options, Say creator, string topic, int timeout = PollTimeout, CommandPoll poll = null)
@@ -518,13 +516,19 @@ namespace ZkLobbyServer
         }
 
 
-        public async void StopVote(Say e = null)
+        public async void StopVote()
         {
             var oldPoll = ActivePoll;
             if (ActivePoll != null) await ActivePoll.End();
             if (pollTimer != null) pollTimer.Enabled = false;
             ActivePoll = null;
             oldPoll.PublishResult();
+            await server.Broadcast(Users.Keys, new BattlePoll()
+            {
+                Options = null,
+                Topic = null,
+                VotesToWin = -1
+            });
         }
 
         public async Task SwitchEngine(string engine)
