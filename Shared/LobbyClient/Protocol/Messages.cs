@@ -836,8 +836,8 @@ namespace LobbyClient
             public int Votes { get; set; }
         }
 
-        public string Topic { get; set; }
-        public List<PollOption> Options { get; set; } //Empty if there is no poll
-        public int VotesToWin { get; set; } //If any single option receives this many votes, it will win instantly
+        public string Topic { get; set; } //Null if there is no poll
+        public List<PollOption> Options { get; set; } //Null if there is no poll
+        public int VotesToWin { get; set; } //If any single option receives this many votes, it will win instantly. -1 if there is no poll
     }
 }
