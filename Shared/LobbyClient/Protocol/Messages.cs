@@ -824,4 +824,20 @@ namespace LobbyClient
         public string PwBombers { get; set;}
         public string PwWarpcores { get; set; }
     }
+
+
+    [Message(Origin.Server)]
+    public class BattlePoll
+    {
+        public class PollOption
+        {
+            public string Name { get; set; }
+            public int Id { get; set; }
+            public int Votes { get; set; }
+        }
+
+        public string Topic { get; set; }
+        public List<PollOption> Options { get; set; } //Empty if there is no poll
+        public int VotesToWin { get; set; } //If any single option receives this many votes, it will win instantly
+    }
 }

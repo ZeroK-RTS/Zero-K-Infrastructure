@@ -306,7 +306,7 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task RegisterVote(Say e, bool vote)
+        public async Task RegisterVote(Say e, int vote)
         {
             if (ActivePoll != null)
             {
@@ -474,20 +474,47 @@ namespace ZkLobbyServer
             return true;
         }
 
-        public async Task StartVote(BattleCommand command, Say e, string args, int timeout = PollTimeout, CommandPoll poll = null)
+        public async Task StartVote(BattleCommand cmd, Say e, string args, int timeout = PollTimeout, CommandPoll poll = null)
+        {
+            cmd = cmd.Create();
+
+            string topic = cmd.Arm(this, e, args);
+            if (topic == null) return;
+            Func<string, string> selector = cmd.GetIneligibilityReasonFunc(this);
+            if (e != null && selector(e.User) != null) return;
+            var options = new List<PollOption>();
+            options.Add(new PollOption()
+            {
+                Name = "Yes",
+                Action = async () =>
+                {
+                    if (cmd.Access == BattleCommand.AccessType.NotIngame && spring.IsRunning) return;
+                    if (cmd.Access == BattleCommand.AccessType.Ingame && !spring.IsRunning) return;
+                    await cmd.ExecuteArmed(this, e);
+                }
+            });
+            options.Add(new PollOption()
+            {
+                Name = "No",
+                Action = async () => { }
+            });
+
+            await StartVote(selector, options, e, topic);
+            await ActivePoll.Vote(e, 1);
+        }
+
+        public async Task StartVote(Func<string, string> eligibilitySelector, List<PollOption> options, Say creator, string topic, int timeout = PollTimeout, CommandPoll poll = null)
         {
             if (ActivePoll != null)
             {
-                await Respond(e, $"Please wait, another poll already in progress: {ActivePoll.question}");
+                await Respond(creator, $"Please wait, another poll already in progress: {ActivePoll.Topic}");
                 return;
             }
             if (poll == null) poll = new CommandPoll(this);
-            if (await poll.Setup(command, e, args))
-            {
-                ActivePoll = poll;
-                pollTimer.Interval = timeout * 1000;
-                pollTimer.Enabled = true;
-            }
+            await poll.Setup(eligibilitySelector, options, creator, topic);
+            ActivePoll = poll;
+            pollTimer.Interval = timeout * 1000;
+            pollTimer.Enabled = true;
         }
 
 
@@ -761,7 +788,24 @@ namespace ZkLobbyServer
             discussionTimer.Stop();
             var poll = new CommandPoll(this, false);
             poll.PollEnded += MapVoteEnded;
-            StartVote(new CmdMap(), null, "", MapVoteTime, poll);
+            var options = new List<PollOption>();
+            for (int i = 0; i < 4; i++)
+            {
+                var map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel > MapSupportLevel.Featured) ? MinimalMapSupportLevel : MapSupportLevel.Featured);
+                options.Add(new PollOption()
+                {
+                    Name = map.InternalName,
+                    Action = async () =>
+                    {
+                        var cmd = new CmdMap().Create();
+                        cmd.Arm(this, null, map.ResourceID.ToString());
+                        if (cmd.Access == BattleCommand.AccessType.NotIngame && spring.IsRunning) return;
+                        if (cmd.Access == BattleCommand.AccessType.Ingame && !spring.IsRunning) return;
+                        await cmd.ExecuteArmed(this, null);
+                    }
+                });
+            }
+            StartVote(new CmdMap().GetIneligibilityReasonFunc(this), options, null, "Choose the next map", MapVoteTime, poll);
         }
 
         private void MapVoteEnded(object sender, PollOutcome e)

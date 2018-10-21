@@ -24,7 +24,7 @@ namespace ZkLobbyServer
 
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
-            await battle.RegisterVote(e, opt != 2);
+            await battle.RegisterVote(e, opt);
         }
     }
 }
