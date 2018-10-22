@@ -804,7 +804,7 @@ namespace ZkLobbyServer
                 }
                 else
                 {
-                    map = MapPicker.GetRecommendedMap(GetContext(), MapSupportLevel.Supported); 
+                    map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Featured) ? MapSupportLevel.Supported : MinimalMapSupportLevel); 
                 }
                 options.Add(new PollOption()
                 {
