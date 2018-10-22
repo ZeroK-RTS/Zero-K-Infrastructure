@@ -880,7 +880,7 @@ namespace ZkLobbyServer
         private void spring_BattleStarted(object sender, SpringBattleContext e)
         {
             StopVote();
-            if (IsMatchMakerBattle && e.PlayersUnreadyOnStart.Count > 0)
+            if (IsMatchMakerBattle && e.PlayersUnreadyOnStart.Count > 0 && e.IsTimeoutForceStarted)
             {
                 string message = string.Format("Players {0} did not choose a start position. Game will be aborted.", e.PlayersUnreadyOnStart.Aggregate("", (x, y) => x + ", " + y));
                 spring.SayGame(message);

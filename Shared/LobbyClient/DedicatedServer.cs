@@ -491,7 +491,11 @@ namespace LobbyClient
 
                 if (Context.IsHosting && IsRunning && (Context.IngameStartTime == null))
                 {
-                    if (timeSinceStart > timeToWait) ForceStart();
+                    if (timeSinceStart > timeToWait)
+                    {
+                        Context.IsTimeoutForceStarted = true;
+                        ForceStart();
+                    }
                     else if (timeSinceStart > timeToWarn) SayGame($"Game will be force started in {Math.Max(20, timeToWait - Math.Round(timeSinceStart))} seconds");
                 }
             }

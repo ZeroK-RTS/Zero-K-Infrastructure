@@ -21,6 +21,7 @@ namespace LobbyClient
 
         public string IpAddress;
 
+        public bool IsTimeoutForceStarted;
         public bool IsForceStarted;
 
         public bool IsCheating;
