@@ -486,8 +486,8 @@ namespace LobbyClient
             try
             {
                 var timeSinceStart = DateTime.UtcNow.Subtract(Context.StartTime).TotalSeconds;
-                const int timeToWait = 180; // force start after 180s
-                const int timeToWarn = 120; // warn people after 120s 
+                const int timeToWait = 160; // force start after 180s
+                const int timeToWarn = 100; // warn people after 120s 
 
                 if (Context.IsHosting && IsRunning && (Context.IngameStartTime == null))
                 {
