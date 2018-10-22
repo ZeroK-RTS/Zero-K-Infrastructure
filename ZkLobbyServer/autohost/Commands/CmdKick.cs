@@ -33,6 +33,7 @@ namespace ZkLobbyServer
             if (e != null && battle.spring.IsRunning && battle.spring.LobbyStartContext?.Players.Any(x => x.Name == e.User && !x.IsSpectator) == false)
             {
                 battle.Respond(e, "Only players can invoke this during a game");
+                return null;
             }
             return $"do you want to kick {target}?";
         }
