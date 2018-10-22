@@ -26,6 +26,7 @@ namespace ZkLobbyServer
         public const int PollTimeout = 60;
         public const int DiscussionTime = 35;
         public const int MapVoteTime = 25;
+        public const int MinimumAutostartPlayers = 8;
         public static int BattleCounter;
 
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
@@ -766,7 +767,7 @@ namespace ZkLobbyServer
 
         private void MapVoteEnded(object sender, PollOutcome e)
         {
-            StartVote(new CmdStart(), null, "", MapVoteTime);
+            if (Users.Values.Count(x => !x.IsSpectator) >= MinimumAutostartPlayers) StartVote(new CmdStart(), null, "", MapVoteTime);
         }
 
         private async Task ApplyBalanceResults(BalanceTeamsResult balance)
