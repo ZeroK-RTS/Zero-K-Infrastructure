@@ -26,6 +26,7 @@ namespace ZkLobbyServer
         public const int PollTimeout = 60;
         public const int DiscussionTime = 35;
         public const int MapVoteTime = 25;
+        public const int NumberOfMapChoices = 4;
         public static int BattleCounter;
 
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
@@ -793,9 +794,17 @@ namespace ZkLobbyServer
             var poll = new CommandPoll(this, false);
             poll.PollEnded += MapVoteEnded;
             var options = new List<PollOption>();
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < NumberOfMapChoices; i++)
             {
-                var map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel > MapSupportLevel.Featured) ? MinimalMapSupportLevel : MapSupportLevel.Featured);
+                Resource map;
+                if (i < NumberOfMapChoices / 2 && MinimalMapSupportLevel < MapSupportLevel.Featured)
+                {
+                    map = MapPicker.GetRecommendedMap(GetContext(), MapSupportLevel.Featured); //choose at least 50% featured maps
+                }
+                else
+                {
+                    map = MapPicker.GetRecommendedMap(GetContext(), MapSupportLevel.Supported); 
+                }
                 options.Add(new PollOption()
                 {
                     Name = map.InternalName,
