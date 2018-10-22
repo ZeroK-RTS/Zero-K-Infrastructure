@@ -175,7 +175,7 @@ namespace ZkLobbyServer
             if (Users.IsEmpty && !spring.IsRunning)
             {
                 if (IsAutohost) {
-                    RunCommandDirectly<CmdMap>(null);
+                    await RunCommandDirectly<CmdMap>(null);
                 }
                 else
                 {
@@ -350,10 +350,10 @@ namespace ZkLobbyServer
         }
 
 
-        public void RunCommandDirectly<T>(Say e, string args = null) where T : BattleCommand, new()
+        public async Task RunCommandDirectly<T>(Say e, string args = null) where T : BattleCommand, new()
         {
             var t = new T();
-            t.Run(this, e, args);
+            await t.Run(this, e, args);
         }
 
 
@@ -748,7 +748,7 @@ namespace ZkLobbyServer
 
             if (IsAutohost)
             {
-                RunCommandDirectly<CmdMap>(null);
+                await RunCommandDirectly<CmdMap>(null);
                 discussionTimer.Interval = (DiscussionTime + 1) * 1000;
                 discussionTimer.Start();
             }
