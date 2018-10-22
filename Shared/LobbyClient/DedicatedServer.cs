@@ -114,7 +114,7 @@ namespace LobbyClient
             
         }
 
-        public event EventHandler BattleStarted = (sender, args) => { };
+        public event EventHandler<SpringBattleContext> BattleStarted = (sender, args) => { };
 
         //public event EventHandler<> 
         /// <summary>
@@ -152,7 +152,11 @@ namespace LobbyClient
 
         public void ForceStart()
         {
-            if (IsRunning) talker.SendText("/forcestart");
+            if (IsRunning)
+            {
+                talker.SendText("/forcestart");
+                Context.IsForceStarted = true;
+            }
         }
 
         public event EventHandler<SpringLogEventArgs> GameOver; // game has ended
@@ -457,11 +461,12 @@ namespace LobbyClient
                         Context.ReplayName = e.ReplayFileName;
                         Context.EngineBattleID = e.GameID;
                         Context.IngameStartTime = DateTime.UtcNow;
+                        Context.PlayersUnreadyOnStart = Context.ActualPlayers.Where(x => !x.IsSpectator && !(x.IsIngameReady && x.IsIngame)).Select(x => x.Name).ToList();
                         foreach (var p in Context.ActualPlayers.Where(x => !x.IsSpectator)) p.IsIngameReady = true;
 
                         process.PriorityClass = ProcessPriorityClass.High;
 
-                        BattleStarted(this, EventArgs.Empty);
+                        BattleStarted(this, Context);
                         break;
 
                     case Talker.SpringEventType.SERVER_QUIT:
@@ -485,8 +490,10 @@ namespace LobbyClient
                 const int timeToWarn = 120; // warn people after 120s 
 
                 if (Context.IsHosting && IsRunning && (Context.IngameStartTime == null))
+                {
                     if (timeSinceStart > timeToWait) ForceStart();
                     else if (timeSinceStart > timeToWarn) SayGame($"Game will be force started in {Math.Max(20, timeToWait - Math.Round(timeSinceStart))} seconds");
+                }
             }
             catch (Exception ex)
             {

@@ -877,9 +877,17 @@ namespace ZkLobbyServer
             spring.BattleStarted += spring_BattleStarted;
         }
 
-        private void spring_BattleStarted(object sender, EventArgs e)
+        private void spring_BattleStarted(object sender, SpringBattleContext e)
         {
             StopVote();
+            if (IsMatchMakerBattle && e.PlayersUnreadyOnStart.Count > 0)
+            {
+                string message = string.Format("Players {0} did not choose a start position. Game will be aborted.", e.PlayersUnreadyOnStart.Aggregate("", (x, y) => x + ", " + y));
+                spring.SayGame(message);
+                Trace.TraceInformation(string.Format("Matchmaker Game {0} aborted because {1}", BattleID, message));
+                RunCommandDirectly<CmdExit>(null);
+                e.PlayersUnreadyOnStart.ForEach(x => server.MatchMaker.BanPlayer(x));
+            }
         }
 
 
