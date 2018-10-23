@@ -43,6 +43,7 @@ namespace ZkLobbyServer
         public Mod HostedModInfo;
 
         private int hostingPort;
+        private int? dbAutohostIndex;
 
         protected bool isZombie;
         protected bool isPostBattleDiscussion => IsAutohost && DateTime.UtcNow.Subtract(EndedSince).TotalSeconds < DiscussionTime;
@@ -100,6 +101,42 @@ namespace ZkLobbyServer
             discussionTimer.Elapsed += discussionTimer_Elapsed;
             SetupSpring();
             PickHostingPort();
+        }
+
+        public void SaveToDb()
+        {
+            if (!IsAutohost) return;
+            using (var db = new ZkDataContext())
+            {
+                Autohost autohost = null;
+                bool insert = false;
+                if (dbAutohostIndex.HasValue)
+                {
+                    autohost = db.Autohosts.Where(x => x.AutohostID == dbAutohostIndex).FirstOrDefault();
+                }
+                if (autohost == null)
+                {
+                    insert = true;
+                    autohost = new Autohost();
+                }
+                autohost.MinimumMapSupportLevel = MinimalMapSupportLevelAutohost;
+                autohost.AutohostMode = Mode;
+                autohost.InviteMMPlayers = InviteMMPlayers;
+                autohost.MaxElo = MaxElo;
+                autohost.MinElo = MinElo;
+                autohost.MaxLevel = MaxLevel;
+                autohost.MinLevel = MinLevel;
+                autohost.MaxRank = MaxRank;
+                autohost.MinRank = MinRank;
+                autohost.Title = Title;
+                autohost.MaxPlayers = MaxPlayers;
+                if (insert)
+                {
+                    db.Autohosts.Add(autohost);
+                }
+                db.SaveChanges();
+                dbAutohostIndex = autohost.AutohostID;
+            }
         }
 
         public string GenerateClientScriptPassword(string name)
@@ -190,11 +227,19 @@ namespace ZkLobbyServer
             {
                 IsAutohost = true;
                 FounderName = "Autohost #" + BattleID;
+                SaveToDb();
             }
             else
             {
                 IsAutohost = false;
                 FounderName = founder;
+                if (dbAutohostIndex.HasValue)
+                {
+                    using (var db = new ZkDataContext())
+                    {
+                        db.Autohosts.Remove(db.Autohosts.Where(x => x.AutohostID == dbAutohostIndex).FirstOrDefault());
+                    }
+                }
             }
         }
 
@@ -525,6 +570,7 @@ namespace ZkLobbyServer
             MapName = null;
             ValidateAndFillDetails();
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
+            SaveToDb();
             // do a full update - mode can also change map/players
         }
 
@@ -544,45 +590,54 @@ namespace ZkLobbyServer
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
+            SaveToDb();
         }
         public async Task SwitchInviteMmPlayers(int players)
         {
             InviteMMPlayers = players;
+            SaveToDb();
         }
 
         public async Task SwitchMaxElo(int elo)
         {
             MaxElo = elo;
+            SaveToDb();
         }
 
         public async Task SwitchMinElo(int elo)
         {
             MinElo = elo;
+            SaveToDb();
         }
 
         public async Task SwitchMaxLevel(int lvl)
         {
             MaxLevel = lvl;
+            SaveToDb();
         }
 
         public async Task SwitchMinLevel(int lvl)
         {
             MinLevel = lvl;
+            SaveToDb();
         }
 
         public async Task SwitchMaxRank(int rank)
         {
             MaxRank = rank;
+            SaveToDb();
         }
 
         public async Task SwitchMinRank(int rank)
         {
             MinRank = rank;
+            SaveToDb();
         }
 
         public async Task SwitchMinMapSupportLevel(MapSupportLevel lvl)
         {
             MinimalMapSupportLevelAutohost = lvl;
+            SaveToDb();
         }
 
         public async Task SwitchPassword(string pwd)
@@ -599,6 +654,29 @@ namespace ZkLobbyServer
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Title = Title } });
+            SaveToDb();
+        }
+
+
+        public void UpdateWith(Autohost autohost)
+        {
+            IsAutohost = true;
+            MinimalMapSupportLevelAutohost = autohost.MinimumMapSupportLevel;
+            Mode = autohost.AutohostMode;
+            InviteMMPlayers = autohost.InviteMMPlayers;
+            MaxElo = autohost.MaxElo;
+            MinElo = autohost.MinElo;
+            MaxLevel = autohost.MaxLevel;
+            MinLevel = autohost.MinLevel;
+            MaxRank = autohost.MaxRank;
+            MinRank = autohost.MinRank;
+            Title = autohost.Title;
+            MaxPlayers = autohost.MaxPlayers;
+            dbAutohostIndex = autohost.AutohostID;
+            FounderName = "Autohost #" + BattleID;
+            ValidateAndFillDetails();
+
+            RunCommandDirectly<CmdMap>(null);
         }
 
         public override void UpdateWith(BattleHeader h)

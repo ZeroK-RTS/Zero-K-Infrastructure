@@ -77,6 +77,7 @@
   <ItemGroup>
     <Compile Include="DbCloner.cs" />
     <Compile Include="Ef\AccountRelation.cs" />
+    <Compile Include="Ef\Autohost.cs" />
     <Compile Include="Ef\DynamicConfig.cs" />
     <Compile Include="Ef\LobbyChannelTopic.cs" />
     <Compile Include="Ef\LobbyNews.cs" />
@@ -401,6 +402,10 @@
     <Compile Include="Migrations\201810172106541_UpdateDynamicConfig.cs" />
     <Compile Include="Migrations\201810172106541_UpdateDynamicConfig.Designer.cs">
       <DependentUpon>201810172106541_UpdateDynamicConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201810231530234_StoreAutohostsInDb.cs" />
+    <Compile Include="Migrations\201810231530234_StoreAutohostsInDb.Designer.cs">
+      <DependentUpon>201810231530234_StoreAutohostsInDb.cs</DependentUpon>
     </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
@@ -769,6 +774,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201810172106541_UpdateDynamicConfig.resx">
       <DependentUpon>201810172106541_UpdateDynamicConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810231530234_StoreAutohostsInDb.resx">
+      <DependentUpon>201810231530234_StoreAutohostsInDb.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

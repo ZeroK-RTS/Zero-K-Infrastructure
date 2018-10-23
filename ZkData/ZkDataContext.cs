@@ -92,6 +92,7 @@ namespace ZkData
         public virtual DbSet<SpringBattleBot> SpringBattleBots { get; set; }
         public virtual DbSet<SpringFilesUnitsyncAttempt> SpringFilesUnitsyncAttempts { get; set; }
         public virtual DbSet<DynamicConfig> DynamicConfigs { get; set; }
+        public virtual DbSet<Autohost> Autohosts { get; set; }
 
         public virtual DbSet<LobbyChannelTopic> LobbyChannelTopics { get; set; }
 
