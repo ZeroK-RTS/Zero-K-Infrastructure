@@ -238,6 +238,7 @@ namespace ZkLobbyServer
                     using (var db = new ZkDataContext())
                     {
                         db.Autohosts.Remove(db.Autohosts.Where(x => x.AutohostID == dbAutohostIndex).FirstOrDefault());
+                        db.SaveChanges();
                     }
                 }
             }
