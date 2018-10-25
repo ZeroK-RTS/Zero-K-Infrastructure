@@ -47,7 +47,7 @@ namespace ChobbyLauncher
 
         public string AuthToken { get; private set; }
 
-        public List<ulong> Friends { get; private set; }
+        public List<SteamFriend> Friends { get; private set; }
         public bool IsOnline { get; private set; }
         public ChobbylaLocalListener Listener { get; set; }
 
@@ -85,7 +85,7 @@ namespace ChobbyLauncher
         public ulong? GetLobbyOwner(ulong lobbyID)
         {
             if (IsOnline)
-                foreach (var f in GetFriends())
+                foreach (var f in GetFriendIDs())
                 {
                     FriendGameInfo_t gi;
                     SteamFriends.GetFriendGamePlayed(new CSteamID(f), out gi);
@@ -155,7 +155,7 @@ namespace ChobbyLauncher
                 ulong.TryParse(player.SteamID, out playerSteamID);
 
                 p2pProxies[playerSteamID] = null;
-                SendSteamMessage(playerSteamID, new SteamP2PRequestPrepareProxy() {Channel = steamChannelCounter++});
+                SendSteamMessage(playerSteamID, new SteamP2PRequestPrepareProxy() { Channel = steamChannelCounter++ });
             }
 
             // wait for response
@@ -191,7 +191,7 @@ namespace ChobbyLauncher
                             ScriptPassword = player.ScriptPassword
                         });
                 }
-                
+
                 // send command to start spring to self
                 Listener.SendCommand(new SteamHostGameSuccess() { HostPort = gameHostUdpPort });
             });
@@ -241,7 +241,20 @@ namespace ChobbyLauncher
         }
 
 
-        private List<ulong> GetFriends()
+        private List<SteamFriend> getFriends()
+        {
+            if (IsOnline)
+            {
+                return GetFriendIDs().Select(x => new SteamFriend()
+                {
+                    Name = SteamFriends.GetFriendPersonaName(x),
+                    SteamID = x.ToString()
+                }).ToList();
+            }
+            return null;
+        }
+
+        private List<ulong> GetFriendIDs()
         {
             if (IsOnline)
             {
@@ -274,7 +287,7 @@ namespace ChobbyLauncher
             newConnectionCallback = Callback<P2PSessionRequest_t>.Create(t => SteamNetworking.AcceptP2PSessionWithUser(t.m_steamIDRemote));
             MySteamNameSanitized = Utils.StripInvalidLobbyNameChars(GetMyName());
 
-            
+
             var ev = new EventWaitHandle(false, EventResetMode.ManualReset);
             AuthToken = GetClientAuthTokenHex();
             CreateLobbyAsync((lobbyID) =>
@@ -283,7 +296,7 @@ namespace ChobbyLauncher
                 ev.Set();
             });
             SteamNetworking.AllowP2PPacketRelay(true);
-            Friends = GetFriends();
+            Friends = GetFriendIDs();
             ev.WaitOne(2000);
             SteamOnline?.Invoke();
         }
@@ -323,7 +336,7 @@ namespace ChobbyLauncher
         /// </summary>
         private void ProcessMessage(ulong remoteUser, SteamP2PConfirmCreateProxy cmd)
         {
-            p2pProxies[remoteUser] = new SteamP2PPortProxy(cmd.Channel, new CSteamID(remoteUser), gameHostUdpPort); 
+            p2pProxies[remoteUser] = new SteamP2PPortProxy(cmd.Channel, new CSteamID(remoteUser), gameHostUdpPort);
         }
 
         /// <summary>
@@ -424,5 +437,12 @@ namespace ChobbyLauncher
                 if (!isDisposed) timer?.Start();
             }
         }
+    }
+
+    class SteamFriend
+    {
+
+        public string SteamID;
+        public string Name;
     }
 }

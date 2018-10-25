@@ -15,6 +15,7 @@ using GameAnalyticsSDK.Net;
 using PlasmaDownloader;
 using PlasmaShared;
 using ZkData;
+using static ChobbyLauncher.SteamOnline;
 using Timer = System.Threading.Timer;
 
 namespace ChobbyLauncher
@@ -756,13 +757,13 @@ namespace ChobbyLauncher
             {
                 var friendId = initialConnectLobbyID != 0 ? steam.GetLobbyOwner(initialConnectLobbyID) : null;
 
-                
+
 
                 await
                     SendCommand(new SteamOnline()
                     {
                         AuthToken = steam.AuthToken,
-                        Friends = steam.Friends.Select(x => x.ToString()).ToList(),
+                        Friends = steam.Friends,
                         FriendSteamID = friendId?.ToString(),
                         SuggestedName = steam.MySteamNameSanitized,
                         Dlc = steam.GetDlcList()
