@@ -18,7 +18,7 @@ namespace ZkLobbyServer
         private bool AbsoluteMajorityVote;
         public PollOutcome Outcome { get; private set; }
 
-        public event EventHandler<PollOutcome> PollEnded;
+        public event EventHandler<PollOutcome> PollEnded = (sender, outcome) => { };
 
         public CommandPoll(ServerBattle battle, bool absoluteMajorityVote = true)
         {
