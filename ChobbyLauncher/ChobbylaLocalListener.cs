@@ -48,6 +48,7 @@ namespace ChobbyLauncher
             steam.OverlayActivated += SteamOnOverlayActivated;
             steam.SteamOnline += () => { SendSteamOnline(); };
             steam.SteamOffline += () => { SendSteamOffline(); };
+            steam.FriendListUpdate += (freund) => { SendFriendList(); };
             discordController = new DiscordController(GlobalConst.ZeroKDiscordID, GlobalConst.SteamAppID.ToString());
             discordController.OnJoin += DiscordOnJoinCallback;
             discordController.OnDisconnected += DiscordOnDisconnectedCallback;
@@ -723,6 +724,7 @@ namespace ChobbyLauncher
             try
             {
                 await SendSteamOnline();
+                await SendFriendList();
 
             }
             catch (Exception ex)
@@ -763,13 +765,23 @@ namespace ChobbyLauncher
                     SendCommand(new SteamOnline()
                     {
                         AuthToken = steam.AuthToken,
-                        Friends = steam.Friends,
                         FriendSteamID = friendId?.ToString(),
                         SuggestedName = steam.MySteamNameSanitized,
                         Dlc = steam.GetDlcList()
                     });
 
                 if (friendId != null) steam.SendSteamNotifyJoin(friendId.Value);
+            }
+        }
+
+        private async Task SendFriendList()
+        {
+            if (steam.IsOnline)
+            {
+                await SendCommand(new SteamFriendList()
+                {
+                    Friends = steam.Friends.Values.ToList()
+                });
             }
         }
 
