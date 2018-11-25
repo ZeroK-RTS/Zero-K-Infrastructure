@@ -33,10 +33,20 @@ namespace ZeroKWeb.Controllers
 
 
         [Auth]
-        public ActionResult Create()
+        public ActionResult Create(int id = -1)
         {
-            if (Global.Account.Clan == null || Global.Account.HasClanRight(x => x.RightEditTexts) || Global.IsModerator) return View(Global.Clan ?? new Clan() { FactionID = Global.FactionID });
-            else return Content("You already have clan and you dont have rights to it");
+            if (Global.IsModerator && id != -1)
+            {
+                var db = new ZkDataContext();
+                return View(db.Clans.First(x => x.ClanID == id));
+            }
+
+            if (Global.Account.Clan == null || Global.Account.HasClanRight(x => x.RightEditTexts))
+            {
+                return View(Global.Clan ?? new Clan() { FactionID = Global.FactionID });
+            }
+
+            return Content("You already have clan and you dont have rights to it");
         }
 
         /// <summary>
