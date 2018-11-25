@@ -85,6 +85,13 @@
         <br />
         @Html.ActionLink("Modify clan information", "Create", new { id = c.ClanID })
     }
+    else if (Global.IsModerator)
+    {
+        <br />
+        <span class="admin">
+            @Html.ActionLink("Modify clan information", "Create", new { id = c.ClanID })
+        </span>
+    }
 
     <br />
     @foreach (RoleType rt in new ZkDataContext().RoleTypes.Where(x => x.IsClanOnly && (x.RestrictFactionID == null || x.RestrictFactionID == Model.FactionID)).OrderBy(x => x.DisplayOrder))
