@@ -35,7 +35,7 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult Create()
         {
-            if (Global.Account.Clan == null || Global.Account.HasClanRight(x => x.RightEditTexts)) return View(Global.Clan ?? new Clan() { FactionID = Global.FactionID });
+            if (Global.Account.Clan == null || Global.Account.HasClanRight(x => x.RightEditTexts) || Global.IsModerator) return View(Global.Clan ?? new Clan() { FactionID = Global.FactionID });
             else return Content("You already have clan and you dont have rights to it");
         }
 
@@ -219,7 +219,7 @@ namespace ZeroKWeb.Controllers
 
             if (!created)
             {
-                if (!Global.Account.HasClanRight(x => x.RightEditTexts) || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
+                if (!Global.IsModerator && (!Global.Account.HasClanRight(x => x.RightEditTexts) || clan.ClanID != Global.Account.ClanID)) return Content("Unauthorized");
 
                 // check if our name or shortcut conflicts with existing clans
                 var existingClans = db.Clans.Where(x => ((SqlFunctions.PatIndex(clan.Shortcut, x.Shortcut) > 0 || SqlFunctions.PatIndex(clan.ClanName, x.ClanName) > 0) && x.ClanID != clan.ClanID));
