@@ -191,9 +191,14 @@ namespace ZeroKWeb.Controllers
 
             int clanID = kickee_acc.ClanID.Value;
 
-            if (!Global.IsModerator) {
+            if (!Global.IsModerator)
+            {
                 if (kickee_acc.ClanID != Global.Account.ClanID) return Content("Target not in your clan");
                 if (!Global.Account.HasClanRight(x => x.RightKickPeople)) return Content("You have no kicking rights"); // unclanned people get handled here
+            }
+            else
+            {
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} kicked {1} from clan {2}", Global.Account.Name, kickee_acc.Name, db.Clans.Single(x => x.ClanID == clanID).ClanName));
             }
 
             PerformLeaveClan(accountID);
@@ -245,6 +250,16 @@ namespace ZeroKWeb.Controllers
                 string orgShortcut = orgClan.Shortcut;
                 string newImageUrl = Server.MapPath(clan.GetImageUrl());
                 string newBGImageUrl = Server.MapPath(clan.GetBGImageUrl());
+
+                if (Global.IsModerator)
+                {
+                    Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} edited clan {1} {2}", Global.Account.Name, orgClan.ClanName, Url.Action("Detail", "Clans", new { id = clan.ClanID }, "http")));
+                    if (orgClan.ClanName != clan.ClanName)
+                    {
+                        Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} => {1}", orgClan.ClanName, clan.ClanName));
+                    }
+                }
+
                 orgClan.ClanName = clan.ClanName;
                 orgClan.Shortcut = clan.Shortcut;
                 orgClan.Description = clan.Description;
