@@ -474,14 +474,14 @@ namespace ZkLobbyServer
             return true;
         }
 
-        public async Task StartVote(BattleCommand cmd, Say e, string args, int timeout = PollTimeout, CommandPoll poll = null)
+        public async Task<bool> StartVote(BattleCommand cmd, Say e, string args, int timeout = PollTimeout, CommandPoll poll = null)
         {
             cmd = cmd.Create();
 
             string topic = cmd.Arm(this, e, args);
-            if (topic == null) return;
+            if (topic == null) return false;
             Func<string, string> selector = cmd.GetIneligibilityReasonFunc(this);
-            if (e != null && selector(e.User) != null) return;
+            if (e != null && selector(e.User) != null) return false;
             var options = new List<PollOption>();
             options.Add(new PollOption()
             {
@@ -499,22 +499,27 @@ namespace ZkLobbyServer
                 Action = async () => { }
             });
 
-            await StartVote(selector, options, e, topic);
-            await RegisterVote(e, 1);
+            if (await StartVote(selector, options, e, topic, poll: new CommandPoll(this, true, true)))
+            {
+                await RegisterVote(e, 1);
+                return true;
+            }
+            return false;
         }
 
-        public async Task StartVote(Func<string, string> eligibilitySelector, List<PollOption> options, Say creator, string topic, int timeout = PollTimeout, CommandPoll poll = null)
+        public async Task<bool> StartVote(Func<string, string> eligibilitySelector, List<PollOption> options, Say creator, string topic, int timeout = PollTimeout, CommandPoll poll = null)
         {
             if (ActivePoll != null)
             {
                 await Respond(creator, $"Please wait, another poll already in progress: {ActivePoll.Topic}");
-                return;
+                return false;
             }
             if (poll == null) poll = new CommandPoll(this);
             await poll.Setup(eligibilitySelector, options, creator, topic);
             ActivePoll = poll;
             pollTimer.Interval = timeout * 1000;
             pollTimer.Enabled = true;
+            return true;
         }
 
 
