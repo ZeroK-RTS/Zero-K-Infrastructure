@@ -10,7 +10,7 @@ namespace ZkLobbyServer
     {
         private int winCount;
         private ServerBattle battle;
-        private Dictionary<string, int> userVotes = new Dictionary<string, int>();
+        private Dictionary<string, int> userVotes = new Dictionary<string, int>(); //stores votes, zero indexed
         private Func<string, string> EligiblitySelector; //return null if player is allowed to vote, otherwise reason
         private bool AbsoluteMajorityVote; //if set to yes, at least N/2 players need to vote for an option to be selected. Otherwise the option with the majority of votes wins
         private bool DefaultPoll; //if set to yes, there must be only two options being yes and no.
@@ -68,7 +68,14 @@ namespace ZkLobbyServer
             if (votes[winnerId] >= winCount || timeout && !AbsoluteMajorityVote)
             {
                 Ended = true;
-                await battle.SayBattle($"Poll Ended: {Topic} [Selected {Options[winnerId].Name}]");
+                if (DefaultPoll)
+                {
+                    await battle.SayBattle($"Poll: {Topic} [END:SUCCESS]");
+                }
+                else
+                {
+                    await battle.SayBattle($"Option Poll: {Topic} [END: Selected {Options[winnerId].Name}]");
+                }
                 await Options[winnerId].Action();
                 Outcome = new PollOutcome() { ChosenOption = Options[winnerId] };
                 return true;
@@ -76,7 +83,14 @@ namespace ZkLobbyServer
             else if (timeout)
             {
                 Ended = true;
-                await battle.SayBattle($"Poll Ended: {Topic} [No option achieved absolute majority]");
+                if (DefaultPoll)
+                {
+                    await battle.SayBattle($"Poll: {Topic} [END:FAILED]");
+                }
+                else
+                {
+                    await battle.SayBattle($"Option Poll: {Topic} [END: No option achieved absolute majority]");
+                }
                 Outcome = new PollOutcome() { ChosenOption = null };
                 return true;
             }
@@ -102,8 +116,9 @@ namespace ZkLobbyServer
             if (ineligibilityReason == null && !Ended)
             {
 
-                userVotes[e.User] = vote;
+                userVotes[e.User] = vote - 1;
 
+                if (DefaultPoll) await battle.SayBattle(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Topic, userVotes.Count(x => x.Value == 0), userVotes.Count(x => x.Value == 1), winCount));
                 await battle.server.Broadcast(battle.Users.Keys, GetBattlePoll());
 
                 if (await CheckEnd(false)) return true;
