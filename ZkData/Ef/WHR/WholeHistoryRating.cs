@@ -112,8 +112,8 @@ namespace Ratings
         public List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams, DateTime time)
         {
             var predictions = teams.Select(t =>
-                    SetupGame(t.Select(x => RatingSystems.GetRatingId(x.AccountID)).ToList(),
-                            teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => RatingSystems.GetRatingId(x.AccountID))).ToList(),
+                    SetupGame(t.Select(x => RatingSystems.GetRatingId(x.AccountID)).Distinct().ToList(),
+                            teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => RatingSystems.GetRatingId(x.AccountID))).Distinct().ToList(),
                             true,
                             RatingSystems.ConvertDateToDays(time),
                             -1
@@ -124,8 +124,9 @@ namespace Ratings
 
         public void ProcessBattle(SpringBattle battle, bool removeBattle = false)
         {
-            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).ToList();
-            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).ToList();
+            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).Distinct().ToList();
+            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).Distinct().ToList();
+            if (winners.Intersect(losers).Any()) return;
             int date = RatingSystems.ConvertDateToDays(battle.StartTime);
 
             if (removeBattle)
