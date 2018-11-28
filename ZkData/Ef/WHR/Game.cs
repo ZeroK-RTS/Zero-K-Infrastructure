@@ -35,6 +35,11 @@ namespace Ratings
                 totWeight += w;
                 ret += pd.getElo() * w;
             }
+            if (whiteDays.Count == 0)
+            {
+                Trace.TraceError(whitePlayers.Count + "players, but no white days for B" + id);
+                return 0;
+            }
             //Trace.TraceInformation(totWeight + "\n");
             return ret / totWeight;
         }
@@ -46,6 +51,11 @@ namespace Ratings
                 w = 1;//Math.Max(0.1, Math.Min(10, 1 / pd.uncertainty));
                 totWeight += w;
                 ret += pd.getElo() * w;
+            }
+            if (blackDays.Count == 0)
+            {
+                Trace.TraceError(blackPlayers.Count + "players, but no black days for B" + id);
+                return 0;
             }
             return ret / totWeight;
         }
