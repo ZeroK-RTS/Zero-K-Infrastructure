@@ -41,6 +41,7 @@ namespace Ratings
         public void initGamma(float gamma)
         {
             _r = (float)(Math.Log(gamma));
+            r = _r;
         }
 
         public float getGamma()
