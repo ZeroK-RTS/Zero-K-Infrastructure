@@ -21,6 +21,7 @@ namespace Ratings
             }
             set
             {
+                if (float.IsNaN(value)) return;
                 float delta = value - _r;
                 delta = Math.Max(-Player.MAX_RATING_CHANGE, Math.Min(Player.MAX_RATING_CHANGE, delta));
                 _r = Math.Max(-60, Math.Min(60, _r + delta));

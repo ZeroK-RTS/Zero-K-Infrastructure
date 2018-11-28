@@ -106,7 +106,7 @@ namespace Ratings
             }
             float rval = (float)(Math.Pow(10, (opponentElo / 400.0)));
             if (rval == 0 || float.IsInfinity(rval) || float.IsNaN(rval)) {
-                Trace.TraceError("WHR Failure: Gamma out of bounds");
+                Trace.TraceError("WHR Failure: Gamma out of bounds: " + rval);
                 return 0;
             }
             return rval;
