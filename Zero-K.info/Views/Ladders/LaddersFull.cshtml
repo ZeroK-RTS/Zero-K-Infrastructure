@@ -7,10 +7,10 @@
 @{
     Page.Title = "Award ladders";
 
-    var grid = new UniGrid<Account>(Model.Data, "Zero-K players");
+    var grid = new UniGrid<Account>(Model.Data, "Zero-K Ladders");
     
     grid.AddCol("Name", x => Html.PrintAccount(x)).SetSort(x => x.Name);
-    grid.AddCol("Rating", x => x.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault());
+    grid.AddCol("Rating", x => x.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().Elo);
 
     grid.PageSize = 15;
 }

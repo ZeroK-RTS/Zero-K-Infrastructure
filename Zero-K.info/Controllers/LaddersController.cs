@@ -47,7 +47,7 @@ namespace ZeroKWeb.Controllers
             if (model.LastLoginTo.HasValue) ret = ret.Where(x => x.LastLogin <= model.LastLoginTo);
 
             if (model.LevelFrom.HasValue) ret = ret.Where(x => x.Level >= model.LevelFrom);
-            if (model.LevelTo.HasValue) ret = ret.Where(x => x.Level >= model.LevelTo);
+            if (model.LevelTo.HasValue) ret = ret.Where(x => x.Level <= model.LevelTo);
 
             model.Data = ret.OrderBy(x => x.AccountRatings.Where(r => r.RatingCategory == model.RatingCategory).FirstOrDefault().Rank);
             
