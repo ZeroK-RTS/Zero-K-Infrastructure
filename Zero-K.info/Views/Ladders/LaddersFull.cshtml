@@ -8,11 +8,14 @@
     Page.Title = "Award ladders";
 
     var grid = new UniGrid<Account>(Model.Data, "Zero-K Ladders");
-    
-    grid.AddCol("Name", x => Html.PrintAccount(x)).SetSort(x => x.Name);
-    grid.AddCol("Rating", x => x.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().Elo);
 
-    grid.PageSize = 15;
+    grid.AddCol("Rank", x => string.Format("{0}.",x.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().Rank));
+    grid.AddCol("Player", x => Html.PrintAccount(x));
+    grid.AddCol("Ladder Rating", x => x.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().Elo);
+    grid.AddCol("True Rating", x => string.Format("{0} ± {1}", x.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().RealElo, x.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().Uncertainty));
+    grid.AddCol("History", x => @Html.ActionLink("Show history", "Ratings", "Charts", new { RatingCategory = (int)RatingCategory.Casual, UserId = x.AccountID }, null));
+
+    grid.PageSize = 50;
 }
 
 
@@ -22,7 +25,11 @@
     {
     <table>
         <tr>
-            <td>Name:</td>
+            <td>Rating:</td>
+            <td>@Html.EnumDropDownListFor(x => x.RatingCategory, new { @class = "width-100" })</td>
+        </tr>
+        <tr>
+            <td>Username:</td>
             <td>@Html.TextBoxFor(x => x.Name, new { data_autocomplete = Url.Action("Users", "Autocomplete") })</td>
         </tr>
         <tr>
@@ -38,7 +45,7 @@
             <td>@Html.TextBoxFor(x => x.Country)</td>
         </tr>
         <tr>
-            <td>Level between:</td>
+            <td>Level:</td>
             <td>@Html.TextBoxFor(x => x.LevelFrom) - @Html.TextBoxFor(x => x.LevelTo)</td>
         </tr>
     </table>
