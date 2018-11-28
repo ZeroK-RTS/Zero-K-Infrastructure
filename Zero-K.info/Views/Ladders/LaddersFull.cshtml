@@ -1,0 +1,49 @@
+﻿@using ZeroKWeb
+@using ZeroKWeb.Controllers
+@using ZkData
+@using Ratings
+@using PlasmaShared
+@model LaddersController.LaddersIndexModel
+@{
+    Page.Title = "Award ladders";
+
+    var grid = new UniGrid<Account>(Model.Data, "Zero-K players");
+    
+    grid.AddCol("Name", x => Html.PrintAccount(x)).SetSort(x => x.Name);
+    grid.AddCol("Rating", x => x.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault());
+
+    grid.PageSize = 15;
+}
+
+
+<div id="userIndex">
+
+    @using (Ajax.BeginForm("Full", "Ladders", Global.GetAjaxOptions("userIndex")))
+    {
+    <table>
+        <tr>
+            <td>Name:</td>
+            <td>@Html.TextBoxFor(x => x.Name, new { data_autocomplete = Url.Action("Users", "Autocomplete") })</td>
+        </tr>
+        <tr>
+            <td>Registered:</td>
+            <td>@Html.TextBoxFor(x => x.RegisteredFrom, new { @class = "js_datepicker" }) - @Html.TextBoxFor(x => x.RegisteredTo, new { @class = "js_datepicker" })</td>
+        </tr>
+        <tr>
+            <td>Last login:</td>
+            <td>@Html.TextBoxFor(x => x.LastLoginFrom, new { @class = "js_datepicker" }) - @Html.TextBoxFor(x => x.LastLoginTo, new { @class = "js_datepicker" })</td>
+        </tr>
+        <tr>
+            <td>Country:</td>
+            <td>@Html.TextBoxFor(x => x.Country)</td>
+        </tr>
+        <tr>
+            <td>Level between:</td>
+            <td>@Html.TextBoxFor(x => x.LevelFrom) - @Html.TextBoxFor(x => x.LevelTo)</td>
+        </tr>
+    </table>
+        <input type="submit" value="Show" />
+
+        @GridHelpers.RenderTable(grid)
+    }
+</div>

@@ -139,7 +139,7 @@ namespace ZkData
         public const int MinDurationForPlanetwars = 0;
         public const int MaxDurationForPlanetwars = 60*60*3; // 3 hours
 
-        public const int LadderActivityDays = 30;
+        public static readonly int LadderActivityDays = mode == ModeType.Live ? 30 : int.MaxValue;
         public const int LadderSize = 50; // Amount of players shown on ladders
         public const float MinimumDynamicMaxLadderUncertainty = 100; // uncertainties > this are marked unranked, max age ~ 2-3 months
         public const float EloDecayPerDaySquared = 35; //whr thingie
