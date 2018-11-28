@@ -10,7 +10,7 @@ namespace Ratings
         public int id;
         public List<PlayerDay> days = new List<PlayerDay>();
         public static float w2;
-        const float MAX_RATING_CHANGE = 5;
+        public const float MAX_RATING_CHANGE = 5;
 
         public Player(int id, float w2) {
             this.id = id;
@@ -37,7 +37,7 @@ namespace Ratings
                         if (row > 0) {
                             prior += -1.0f / sigma2[row - 1];
                         }
-                        m[row,col] = days[row].getLogLikelyhoodSecondDerivative() + prior - 0.001f;
+                        m[row,col] = (float)days[row].getLogLikelyhoodSecondDerivative() + prior - 0.001f;
                     } else if (row == col - 1) {
                         m[row,col] = 1.0f / sigma2[row];
                     } else if (row == col + 1) {
@@ -61,7 +61,7 @@ namespace Ratings
                 if (i > 0) {
                     prior += -(r[i] - r[i - 1]) / sigma2[i - 1];
                 }
-                g.Add(days[i].getLogLikelyhoodFirstDerivative() + prior);
+                g.Add((float)days[i].getLogLikelyhoodFirstDerivative() + prior);
             }
             return g;
         }
@@ -273,10 +273,10 @@ namespace Ratings
                 PlayerDay newPDay = new PlayerDay(this, game.day);
                 if (days.Count == 0) {
                     newPDay.isFirstDay = true;
-                    newPDay.setGamma(1);
+                    newPDay.initGamma(1);
                     newPDay.uncertainty = 10;
                 } else {
-                    newPDay.setGamma(days[insertAfterDay].getGamma());
+                    newPDay.initGamma(days[insertAfterDay].getGamma());
                     newPDay.uncertainty = days[insertAfterDay].uncertainty + (float)Math.Sqrt(game.day - days[insertAfterDay].day) * w2;
                 }
                 days.Insert(insertAfterDay + 1, newPDay);
@@ -301,12 +301,12 @@ namespace Ratings
                 if (days.Count == 0)
                 {
                     newPDay.isFirstDay = true;
-                    newPDay.setGamma(1);
+                    newPDay.initGamma(1);
                     newPDay.uncertainty = 10;
                 }
                 else
                 {
-                    newPDay.setGamma(days[insertAfterDay].getGamma());
+                    newPDay.initGamma(days[insertAfterDay].getGamma());
                     newPDay.uncertainty = days[insertAfterDay].uncertainty + (float)Math.Sqrt(game.day - days[insertAfterDay].day) * w2;
                 }
                 d = (newPDay);
