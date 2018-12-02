@@ -10,6 +10,7 @@ namespace Ratings
     {
 
         public ICollection<Game> wonGames, lostGames;
+        public int TotalGames = 0;
         public int day;
         public Player player;
         private float _r = 0;
@@ -156,6 +157,7 @@ namespace Ratings
 
         public void AddGame(Game game)
         {
+            TotalGames++;
             if ((!game.blackWins && game.whitePlayers.Contains(player))
                     || (game.blackWins && game.blackPlayers.Contains(player)))
             {

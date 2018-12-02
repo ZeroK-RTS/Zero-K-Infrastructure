@@ -9,13 +9,17 @@ namespace Ratings
 
         public int id;
         public List<PlayerDay> days = new List<PlayerDay>();
-        public static float w2;
         public const float MAX_RATING_CHANGE = 5;
 
         public Player(int id, float w2) {
             this.id = id;
-            Player.w2 = (float)(Math.Pow(Math.Sqrt(w2) * Math.Log(10) / 400, 2));  // Convert from elo^2 to r^2
 
+        }
+
+        float calcW2(int games)
+        {
+            float w2elo = 7000000 / ((float)games + 3200);
+            return (float)Math.Pow(Math.Sqrt(w2elo) * Math.Log(10) / 400, 2); // Convert from elo^2 to r^2
         }
 
         float[,] __m = new float[10,10];
@@ -84,7 +88,7 @@ namespace Ratings
         public List<float> generateSigma2() {
             List<float> sigma2 = new List<float>();
             for (int i = 0; i < days.Count - 1; i++) {
-                sigma2.Add(Math.Abs(days[i + 1].day - days[i].day) * w2);
+                sigma2.Add(Math.Abs(days[i + 1].day - days[i].day) * calcW2(days[i].TotalGames));
             }
             return sigma2;
         }
@@ -276,8 +280,9 @@ namespace Ratings
                     newPDay.initGamma(1);
                     newPDay.uncertainty = 10;
                 } else {
+                    newPDay.TotalGames = days[insertAfterDay].TotalGames;
                     newPDay.initGamma(days[insertAfterDay].getGamma());
-                    newPDay.uncertainty = days[insertAfterDay].uncertainty + (float)Math.Sqrt(game.day - days[insertAfterDay].day) * w2;
+                    newPDay.uncertainty = days[insertAfterDay].uncertainty + (float)Math.Sqrt(game.day - days[insertAfterDay].day) * calcW2(days[insertAfterDay].TotalGames);
                 }
                 days.Insert(insertAfterDay + 1, newPDay);
                 insertAfterDay++;
@@ -307,7 +312,7 @@ namespace Ratings
                 else
                 {
                     newPDay.initGamma(days[insertAfterDay].getGamma());
-                    newPDay.uncertainty = days[insertAfterDay].uncertainty + (float)Math.Sqrt(game.day - days[insertAfterDay].day) * w2;
+                    newPDay.uncertainty = days[insertAfterDay].uncertainty + (float)Math.Sqrt(game.day - days[insertAfterDay].day) * calcW2(days[insertAfterDay].TotalGames);
                 }
                 d = (newPDay);
             } else {
