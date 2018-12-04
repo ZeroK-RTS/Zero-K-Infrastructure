@@ -39,7 +39,7 @@ namespace ZkData
         
         public PlayerRating ToPlayerRating()
         {
-            return new PlayerRating(Rank, (float)Percentile, (float)RealElo, (float)Uncertainty, 0, 0);
+            return new PlayerRating(Rank, (float)Percentile, (float)RealElo, (float)Uncertainty, 0, 0, 0);
         }
 
         public void UpdateFromRatingSystem(PlayerRating rating)

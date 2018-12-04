@@ -16,7 +16,7 @@ namespace Ratings
 
         }
 
-        float calcW2(int games)
+        public static float CalcDynamicW2(int games)
         {
             float w2elo = 3500000 / ((float)games + 1600);
             return (float)Math.Pow(Math.Sqrt(w2elo) * Math.Log(10) / 400, 2); // Convert from elo^2 to r^2
@@ -88,7 +88,7 @@ namespace Ratings
         public List<float> generateSigma2() {
             List<float> sigma2 = new List<float>();
             for (int i = 0; i < days.Count - 1; i++) {
-                sigma2.Add(Math.Abs(days[i + 1].day - days[i].day) * calcW2(days[i].TotalGames));
+                sigma2.Add(Math.Abs(days[i + 1].day - days[i].day) * CalcDynamicW2(days[i].TotalGames));
             }
             return sigma2;
         }
@@ -282,7 +282,7 @@ namespace Ratings
                 } else {
                     newPDay.TotalGames = days[insertAfterDay].TotalGames;
                     newPDay.initGamma(days[insertAfterDay].getGamma());
-                    newPDay.uncertainty = days[insertAfterDay].uncertainty + (float)Math.Sqrt(game.day - days[insertAfterDay].day) * calcW2(days[insertAfterDay].TotalGames);
+                    newPDay.uncertainty = days[insertAfterDay].uncertainty + (float)Math.Sqrt(game.day - days[insertAfterDay].day) * CalcDynamicW2(days[insertAfterDay].TotalGames);
                 }
                 days.Insert(insertAfterDay + 1, newPDay);
                 insertAfterDay++;
@@ -312,7 +312,7 @@ namespace Ratings
                 else
                 {
                     newPDay.initGamma(days[insertAfterDay].getGamma());
-                    newPDay.uncertainty = days[insertAfterDay].uncertainty + (float)Math.Sqrt(game.day - days[insertAfterDay].day) * calcW2(days[insertAfterDay].TotalGames);
+                    newPDay.uncertainty = days[insertAfterDay].uncertainty + (float)Math.Sqrt(game.day - days[insertAfterDay].day) * CalcDynamicW2(days[insertAfterDay].TotalGames);
                 }
                 d = (newPDay);
             } else {

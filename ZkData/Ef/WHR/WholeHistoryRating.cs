@@ -23,7 +23,7 @@ namespace Ratings
     {
 
         const float RatingOffset = 1500;
-        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, 0, 0);
+        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, 1, 0, 0);
 
         IDictionary<ITopPlayersUpdateListener, int> topPlayersUpdateListeners = new Dictionary<ITopPlayersUpdateListener, int>();
         public event EventHandler<RatingUpdate> RatingsUpdated;
@@ -469,8 +469,8 @@ namespace Ratings
                     }
                     float elo = p.days.Last().getElo() + RatingOffset;
                     float lastUncertainty = p.days.Last().uncertainty * 100;
-                    int lastDay = p.days.Last().day;
-                    playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastUncertainty, lastDay, currentDay);
+                    var lastDay = p.days.Last();
+                    playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastUncertainty, Player.CalcDynamicW2(lastDay.TotalGames), lastDay.day, currentDay);
                     float rating = -playerRatings[p.id].Elo + 0.001f * (float)rand.NextDouble();
                     if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
                     playerKeys[p.id] = rating;
