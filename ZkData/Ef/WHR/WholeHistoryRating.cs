@@ -23,7 +23,7 @@ namespace Ratings
     {
 
         const float RatingOffset = 1500;
-        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, 1, 0, 0);
+        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, Player.CalcDynamicW2(0), 0, 0);
 
         IDictionary<ITopPlayersUpdateListener, int> topPlayersUpdateListeners = new Dictionary<ITopPlayersUpdateListener, int>();
         public event EventHandler<RatingUpdate> RatingsUpdated;
