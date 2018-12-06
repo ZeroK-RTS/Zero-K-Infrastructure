@@ -19,7 +19,7 @@ namespace Ratings
         public static float CalcDynamicW2(int games)
         {
             float w2elo = 1000000 / ((float)games + 400);
-            return (float)Math.Pow(Math.Sqrt(w2elo) * Math.Log(10) / 400, 2); // Convert from elo^2 to r^2
+            return w2elo * (float)Math.Pow(Math.Log(10) / 400, 2); // Convert from elo^2 to r^2
         }
 
         float[,] __m = new float[10,10];

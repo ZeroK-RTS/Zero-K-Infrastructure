@@ -18,7 +18,7 @@ namespace Ratings
         public float Uncertainty {
             get
             {
-                return LastUncertainty + (float)Math.Sqrt((CurrentDate - LastGameDate) * LastW2);
+                return LastUncertainty + (float)Math.Sqrt((CurrentDate - LastGameDate) * LastW2Elo);
             }
         }
         public float Elo {
@@ -31,7 +31,7 @@ namespace Ratings
         [JsonProperty]
         public readonly float LastUncertainty;
         [JsonProperty]
-        public readonly float LastW2;
+        public readonly float LastW2Elo;
         [JsonProperty]
         public readonly int LastGameDate;
         [JsonProperty]
@@ -53,7 +53,7 @@ namespace Ratings
             this.LastUncertainty = LastUncertainty;
             this.LastGameDate = LastGameDate;
             this.CurrentDate = CurrentDate;
-            this.LastW2 = LastW2;
+            this.LastW2Elo = LastW2 / (float)Math.Pow(Math.Log(10) / 400, 2);
         }
     }
 }
