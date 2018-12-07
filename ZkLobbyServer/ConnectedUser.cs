@@ -32,6 +32,7 @@ namespace ZkLobbyServer
             }
         }
         private ZkLobbyServer server;
+        private DateTime chatWait = DateTime.UtcNow;
         public User User = new User();
         public HashSet<string> FriendBy { get; set; }
         public HashSet<string> FriendNames { get; set; }
@@ -317,6 +318,8 @@ namespace ZkLobbyServer
         {
             if (!IsLoggedIn) return;
             if (User.BanMute) return; // block all say for muted
+            if (DateTime.UtcNow < chatWait) return; //block all say for spam
+            chatWait = DateTime.UtcNow.AddMilliseconds(Math.Max(GlobalConst.MinMillisecondsBetweenMessages, GlobalConst.MillisecondsPerCharacter * say.Text.Length));
 
             say.User = Name;
             say.Time = DateTime.UtcNow;
