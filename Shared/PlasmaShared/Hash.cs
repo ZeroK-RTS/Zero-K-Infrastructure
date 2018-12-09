@@ -104,7 +104,6 @@ namespace ZkData
         static byte[] StringToBytes(string s)
         {
             Debug.Assert(s.Length%2 == 0);
-            s.ToUpper();
             var destLen = s.Length/2;
             var res = new byte[destLen];
             var i = 0;

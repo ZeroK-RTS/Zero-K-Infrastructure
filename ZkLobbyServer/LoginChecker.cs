@@ -325,7 +325,7 @@ namespace ZkLobbyServer
                     try
                     {
                         var hostname = Dns.GetHostEntry(ip)?.HostName;
-                        if (blockedHosts.Any(hostname.Contains)) return true;
+                        if (hostname != null && blockedHosts.Any(hostname.Contains)) return true;
                     }
                     catch (SocketException) { }
                 }

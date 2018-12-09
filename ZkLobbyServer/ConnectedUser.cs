@@ -67,7 +67,7 @@ namespace ZkLobbyServer
             }
             catch (Exception ex)
             {
-                Trace.TraceError("{0} error sending {1} : {2}", data, ex);
+                Trace.TraceError("{0} error sending {1} : {2}", data, ex.Message, ex.StackTrace);
             }
         }
 
@@ -278,27 +278,30 @@ namespace ZkLobbyServer
 
         public async Task Process(JoinFactionRequest joinFaction)
         {
-            var db = new ZkDataContext();
-            var acc = db.Accounts.Find(User.AccountID);
-            var fac = db.Factions.First(x => !x.IsDeleted && x.Shortcut == joinFaction.Faction);
-            if (acc.FactionID == null)
+            using (var db = new ZkDataContext())
             {
-                if (acc.Clan != null && acc.Clan.FactionID == null) // if your clan is faction-less join the faciton too
+                var acc = db.Accounts.Find(User.AccountID);
+                var fac = db.Factions.First(x => !x.IsDeleted && x.Shortcut == joinFaction.Faction);
+                if (acc.FactionID == null)
                 {
-                    acc.Clan.FactionID = fac.FactionID;
-                    foreach (Account member in acc.Clan.Accounts) member.FactionID = fac.FactionID;
-                    db.SaveChanges();
-                    db.Events.InsertOnSubmit(server.PlanetWarsEventCreator.CreateEvent("Clan {0} moved to faction {1}", acc.Clan, fac));
-                }
-                acc.FactionID = fac.FactionID;
-            }
-            db.SaveChanges();
-            db.Events.InsertOnSubmit(server.PlanetWarsEventCreator.CreateEvent("{0} joins {1}", acc, fac));
-            db.SaveChanges();
-            await server.PublishAccountUpdate(acc);
-            await server.PublishUserProfileUpdate(acc);
-        }
+                    if (acc.Clan != null && acc.Clan.FactionID == null) // if your clan is faction-less join the faciton too
+                    {
+                        acc.Clan.FactionID = fac.FactionID;
+                        foreach (Account member in acc.Clan.Accounts) member.FactionID = fac.FactionID;
+                        db.SaveChanges();
+                        db.Events.InsertOnSubmit(server.PlanetWarsEventCreator.CreateEvent("Clan {0} moved to faction {1}", acc.Clan, fac));
+                    }
 
+                    acc.FactionID = fac.FactionID;
+                }
+
+                db.SaveChanges();
+                db.Events.InsertOnSubmit(server.PlanetWarsEventCreator.CreateEvent("{0} joins {1}", acc, fac));
+                db.SaveChanges();
+                await server.PublishAccountUpdate(acc);
+                await server.PublishUserProfileUpdate(acc);
+            }
+        }
 
         public async Task Process(RequestConnectSpring connectSpring)
         {

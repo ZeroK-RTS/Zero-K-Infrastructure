@@ -33,16 +33,12 @@ namespace ZkData
         public void PoweredTick(int turn)
         {
             if (IsActive) return;
-            if (!IsActive)
-            {
-                if (ActivationTurnCounter == null) ActivationTurnCounter = 1;
-                else ActivationTurnCounter++;
+            if (ActivationTurnCounter == null) ActivationTurnCounter = 1;
+            else ActivationTurnCounter++;
 
-                var turnsNeeded = TurnsToActivateOverride ?? StructureType.TurnsToActivate;
+            var turnsNeeded = TurnsToActivateOverride ?? StructureType.TurnsToActivate;
 
-                if (turnsNeeded == null || turnsNeeded <= ActivationTurnCounter) IsActive = true;
-            }
-
+            if (turnsNeeded == null || turnsNeeded <= ActivationTurnCounter) IsActive = true;
         }
 
 

@@ -161,9 +161,9 @@ namespace ZeroKLobby
             if (toolTipRenderer == null || !active) return;
             try
             {
-                e.Graphics.TranslateTransform(BorderWidth/2, BorderHeight/2); // border shift
+                e.Graphics.TranslateTransform((float)BorderWidth/2, (float)BorderHeight/2); // border shift
                 toolTipRenderer.Draw(e.Graphics, Font, ForeColor);
-                e.Graphics.TranslateTransform(-BorderWidth / 2, -BorderHeight / 2); // border shift
+                e.Graphics.TranslateTransform((float)-BorderWidth / 2, (float)-BorderHeight / 2); // border shift
             }
             catch (Exception ex)
             {
