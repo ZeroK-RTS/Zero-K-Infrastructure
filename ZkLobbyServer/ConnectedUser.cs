@@ -363,7 +363,7 @@ namespace ZkLobbyServer
             }
 
             if (openBattle.Header.Mode != null 
-                && (openBattle.Header.Mode < AutohostMode.None || openBattle.Header.Mode > AutohostMode.Teams))
+                && !Enum.IsDefined(typeof(AutohostMode), openBattle.Header.Mode))
             {
                 await Respond("Incorrect battle type");
                 return;
@@ -412,7 +412,7 @@ namespace ZkLobbyServer
             }
 
             if (battleUpdate.Header.Mode != null 
-                && (battleUpdate.Header.Mode < AutohostMode.None || battleUpdate.Header.Mode > AutohostMode.Teams))
+                && !Enum.IsDefined(typeof(AutohostMode), battleUpdate.Header.Mode))
             {
                 await Respond("Incorrect battle type");
                 return;
