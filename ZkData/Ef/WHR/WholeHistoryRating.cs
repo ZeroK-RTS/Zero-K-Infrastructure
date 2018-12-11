@@ -498,7 +498,7 @@ namespace Ratings
                 List<int> newTopPlayers = new List<int>();
                 int matched = 0;
                 List<float> newPercentileBrackets = new List<float>();
-                newPercentileBrackets.Add(3000);
+                newPercentileBrackets.Add(playerRatings[sortedPlayers.First().Value].Elo + 420);
                 float percentile;
                 float[] percentilesRev = Ranks.Percentiles.Reverse().ToArray();
                 foreach (var pair in sortedPlayers)
@@ -518,7 +518,7 @@ namespace Ratings
                     }
                 }
                 this.activePlayers = rank;
-                newPercentileBrackets.Add(0);
+                newPercentileBrackets.Add(newPercentileBrackets.Last() - 420);
                 PercentileBrackets = newPercentileBrackets.Select(x => x).Reverse().ToArray();
                 topPlayers = newTopPlayers;
                 laddersCache = new List<Account>();
