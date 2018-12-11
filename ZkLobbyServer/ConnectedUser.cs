@@ -365,6 +365,13 @@ namespace ZkLobbyServer
                 return;
             }
 
+            if (openBattle.Header.Mode != null 
+                && !Enum.IsDefined(typeof(AutohostMode), openBattle.Header.Mode))
+            {
+                await Respond("Incorrect battle type");
+                return;
+            }
+
             openBattle.Header.Title = openBattle.Header.Title.Truncate(200);
             var battle = new ServerBattle(server, Name);
             battle.UpdateWith(openBattle.Header);
@@ -404,6 +411,13 @@ namespace ZkLobbyServer
             if ((bat.FounderName != Name) && !User.IsAdmin)
             {
                 await Respond("You don't have permission to edit this battle");
+                return;
+            }
+
+            if (battleUpdate.Header.Mode != null 
+                && !Enum.IsDefined(typeof(AutohostMode), battleUpdate.Header.Mode))
+            {
+                await Respond("Incorrect battle type");
                 return;
             }
 
