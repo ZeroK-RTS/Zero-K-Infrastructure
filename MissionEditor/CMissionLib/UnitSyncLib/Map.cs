@@ -80,7 +80,7 @@ namespace CMissionLib.UnitSyncLib
 		public static string GetHumanName(string mapName)
 		{
 			if (mapName == null) throw new ArgumentNullException("mapName");
-		    return mapName.Replace('_', ' ');
+			return mapName.Replace('_', ' ').Replace(' ', ' ');
 		}
 
 		public override string ToString()

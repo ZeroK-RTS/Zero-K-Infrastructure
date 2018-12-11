@@ -144,30 +144,27 @@ namespace ZeroKWeb.SpringieInterface
 
         public static IQueryable<Resource> FindResources(ResourceType type, string term, MapSupportLevel minimumSupportLevel = MapSupportLevel.None, bool ignoreExactMatches = false)
         {
-            using (var db = new ZkDataContext())
+            var db = new ZkDataContext();
+            
+            var ret = db.Resources.AsQueryable();
+            ret = ret.Where(x => x.TypeID == type && x.MapSupportLevel >= minimumSupportLevel);
+            
+            var test = ret.Where(x => x.RapidTag == term || x.InternalName == term);
+            if (test.Any() && !ignoreExactMatches) return test.OrderByDescending(x => x.MapSupportLevel).ThenByDescending(x => x.ResourceID);
+
+            int i;
+            var words = term.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (words.Length == 1 && int.TryParse(words[0], out i)) ret = ret.Where(x => x.ResourceID == i);
+            else
             {
-
-                var ret = db.Resources.AsQueryable();
-                ret = ret.Where(x => x.TypeID == type && x.MapSupportLevel >= minimumSupportLevel);
-
-                var test = ret.Where(x => x.RapidTag == term || x.InternalName == term);
-                if (test.Any() && !ignoreExactMatches) return test.OrderByDescending(x => x.MapSupportLevel).ThenByDescending(x => x.ResourceID);
-
-                int i;
-                var words = term.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                if (words.Length == 1 && int.TryParse(words[0], out i)) ret = ret.Where(x => x.ResourceID == i);
-                else
+                foreach (var w in words)
                 {
-                    foreach (var w in words)
-                    {
-                        var w1 = w;
-                        ret = ret.Where(x => SqlFunctions.PatIndex("%" + w1 + "%", x.InternalName) > 0);
-                    }
+                    var w1 = w;
+                    ret = ret.Where(x => SqlFunctions.PatIndex("%" + w1 + "%", x.InternalName) > 0);
                 }
-
-                return ret.OrderByDescending(x => x.MapSupportLevel).ThenByDescending(x => x.InternalName == term || x.RapidTag == term)
-                    .ThenByDescending(x => x.ResourceID);
             }
+
+            return ret.OrderByDescending(x => x.MapSupportLevel).ThenByDescending(x=>x.InternalName == term || x.RapidTag == term).ThenByDescending(x=>x.ResourceID);
         }
     }
 }

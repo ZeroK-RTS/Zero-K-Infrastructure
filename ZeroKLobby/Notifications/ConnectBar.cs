@@ -57,7 +57,7 @@ namespace ZeroKLobby.Notifications
                     {
                         lbState.Text = "Registering a new account";
                         client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
-                    } else LoginWithDialog(string.Format("Login denied: {0} {1}", e.ResultCode.Description(), e));
+                    } else LoginWithDialog(string.Format("Login denied: {0} {1}", e.ResultCode.Description()));
                 } else
                 {
                     LoginWithDialog(
@@ -66,7 +66,7 @@ namespace ZeroKLobby.Notifications
             };
 
             client.RegistrationDenied +=
-                (s, e) => LoginWithDialog(string.Format("Registration denied: {0} {1}", e.ResultCode.Description(), e));
+                (s, e) => LoginWithDialog(string.Format("Registration denied: {0} {1}", e.ResultCode.Description()));
 
             client.RegistrationAccepted += (s, e) => client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
         }

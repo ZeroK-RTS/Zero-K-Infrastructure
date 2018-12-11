@@ -413,7 +413,7 @@ namespace LobbyClient
 
                     case Talker.SpringEventType.PLAYER_DEFEATED:
                         MarkPlayerDead(e.PlayerName, true);
-                        PlayerLost?.Invoke(this, new SpringLogEventArgs(e.PlayerName));
+                        if (PlayerLost != null) PlayerLost(this, new SpringLogEventArgs(e.PlayerName));
                         break;
 
                     case Talker.SpringEventType.SERVER_GAMEOVER:

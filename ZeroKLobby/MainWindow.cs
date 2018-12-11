@@ -156,7 +156,7 @@ namespace ZeroKLobby
             }
             catch (Exception e)
             {
-                Trace.TraceError("MainWindow.GetHoveredControl error: {0}", e);
+                Trace.TraceError("MainWindow.GetHoveredControl error:", e);
                 //random crash with NULL error on line 140, is weird since already have NULL check (high probability in Linux when we changed focus)
             }
             return null;

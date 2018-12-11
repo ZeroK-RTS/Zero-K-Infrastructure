@@ -743,7 +743,7 @@ namespace ChobbyLauncher
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error sending WrapperOnline: {0}", ex);
+                Trace.TraceError("Error sending WrapperOnline", ex);
             }
 
             discordController.Init();

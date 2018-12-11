@@ -76,7 +76,7 @@ namespace ZkLobbyServer
 
         public void PublishResult()
         {
-            PollEnded?.Invoke(this, Outcome);
+            PollEnded(this, Outcome);
         }
 
         public async Task End()
