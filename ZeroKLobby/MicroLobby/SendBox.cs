@@ -165,7 +165,7 @@ namespace ZeroKLobby.MicroLobby
                 if (ss <= 0) return false;
                 var test = Text.Substring(ss - 1, 1);
                 if (test == " " || test == "\t") return false;
-                Text = Text.Remove(ss, 1); //remove the pre-entered TAB
+                Text.Remove(ss, 1); //remove the pre-entered TAB
             }
             else
             {

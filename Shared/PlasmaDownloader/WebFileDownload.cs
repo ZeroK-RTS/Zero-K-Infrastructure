@@ -59,7 +59,7 @@ namespace PlasmaDownloader
         }
         catch
         {
-          Trace.TraceError("Error moving file from {0} to {1}", tempFilePath, targetFilePath);
+          Trace.TraceError("Error moving file from {0} to {0}", tempFilePath, targetFilePath);
           Finish(false);
           return;
         }

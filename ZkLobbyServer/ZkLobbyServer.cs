@@ -412,19 +412,16 @@ namespace ZkLobbyServer
                     Place = SayPlace.MessageBox,
                 });
 
-            using (var db = new ZkDataContext())
+            var db = new ZkDataContext();
+            foreach (var u in ConnectedUsers.Values)
             {
-                foreach (var u in ConnectedUsers.Values)
+                if (u != null && u.IsLoggedIn)
                 {
-                    if (u != null && u.IsLoggedIn)
-                    {
-                        var acc = db.Accounts.Find(u.User.AccountID);
-                        acc.LastLogout = DateTime.UtcNow;
-                    }
+                    var acc = db.Accounts.Find(u.User.AccountID);
+                    acc.LastLogout = DateTime.UtcNow;
                 }
-
-                db.SaveChanges();
             }
+            db.SaveChanges();
 
 
             // close all existing client connections

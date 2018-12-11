@@ -48,7 +48,7 @@ namespace ZkData
                         foreach (Task t in _tasks.GetConsumingEnumerable())
                             base.TryExecuteTask(t);
                     });
-                    _threads[i].Name = $"PriorityScheduler: {i}";
+                    _threads[i].Name = string.Format("PriorityScheduler: ", i);
                     _threads[i].Priority = _priority;
                     _threads[i].IsBackground = true;
                     _threads[i].Start();

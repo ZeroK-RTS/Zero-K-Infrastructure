@@ -25,41 +25,34 @@ namespace Fixer
     {
         public static void GetForumKarmaLadder()
         {
-            using (var db = new ZkDataContext())
-            {
-                var accounts = db.Accounts.Where(x => x.ForumTotalUpvotes > 0 || x.ForumTotalDownvotes > 0)
-                    .OrderByDescending(x => x.ForumTotalUpvotes - x.ForumTotalDownvotes).ToList();
+            ZkDataContext db = new ZkDataContext();
+            var accounts = db.Accounts.Where(x => x.ForumTotalUpvotes > 0 || x.ForumTotalDownvotes > 0).OrderByDescending(x => x.ForumTotalUpvotes - x.ForumTotalDownvotes).ToList();
 
-                foreach (Account ac in accounts)
-                {
-                    System.Console.WriteLine(ac.Name + "\t+" + ac.ForumTotalUpvotes + " / -" + ac.ForumTotalDownvotes);
-                }
+            foreach (Account ac in accounts)
+            {
+                System.Console.WriteLine(ac.Name + "\t+" + ac.ForumTotalUpvotes + " / -" + ac.ForumTotalDownvotes);
             }
         }
 
         public static void GetForumKarmaVotes()
         {
-            using (var db = new ZkDataContext())
-            {
-                var posts = db.ForumPosts.Where(x => x.Upvotes > 0 || x.Downvotes > 0).OrderByDescending(x => x.Upvotes - x.Downvotes).ToList();
+            ZkDataContext db = new ZkDataContext();
+            var posts = db.ForumPosts.Where(x => x.Upvotes > 0 || x.Downvotes > 0).OrderByDescending(x => x.Upvotes - x.Downvotes).ToList();
 
-                foreach (var p in posts)
-                {
-                    System.Console.WriteLine(p.ForumThreadID + "\t+" + p.ForumPostID + "\t+" + p.Upvotes + " / -" + p.Downvotes);
-                }
+            foreach (var p in posts)
+            {
+                System.Console.WriteLine(p.ForumThreadID + "\t+" + p.ForumPostID + "\t+" + p.Upvotes + " / -" + p.Downvotes);
             }
         }
 
         public static void GetForumVotesByVoter(int? accountID, int? threadID)
         {
-            using (var db = new ZkDataContext())
-            {
-                var votes = db.AccountForumVotes.Where(x => (accountID == null || x.AccountID == accountID) && (threadID == null || x.ForumPost.ForumThreadID == threadID)).ToList();
+            ZkDataContext db = new ZkDataContext();
+            var votes = db.AccountForumVotes.Where(x => (accountID == null || x.AccountID == accountID) && (threadID == null || x.ForumPost.ForumThreadID == threadID)).ToList();
 
-                foreach (var v in votes)
-                {
-                    System.Console.WriteLine(v.Account.Name + "\t+" + v.ForumPostID + "\t" + v.Vote);
-                }
+            foreach (var v in votes)
+            {
+                System.Console.WriteLine(v.Account.Name + "\t+" + v.ForumPostID + "\t" + v.Vote);
             }
         }
 
@@ -88,109 +81,89 @@ namespace Fixer
 
         public static void DeleteUserVotes(int accountID, int? threadID, bool? onlyNegative = false)
         {
-            using (var db = new ZkDataContext())
+            ZkDataContext db = new ZkDataContext();
+            var votes = db.AccountForumVotes.Where(x => x.AccountID == accountID && (threadID == null || x.ForumPost.ForumThreadID == threadID)
+                && (onlyNegative == false || x.Vote < 0)).ToList();
+
+            foreach (var v in votes)
             {
-                var votes = db.AccountForumVotes.Where(x =>
-                        x.AccountID == accountID && (threadID == null || x.ForumPost.ForumThreadID == threadID) &&
-                        (onlyNegative == false || x.Vote < 0))
-                    .ToList();
-
-                foreach (var v in votes)
-                {
-                    DeleteUserVote(accountID, v.ForumPostID, db);
-                    System.Console.WriteLine(v.Account.Name + "\t" + v.ForumPostID + "\t" + v.Vote);
-                }
-
-                db.SaveChanges();
+                DeleteUserVote(accountID, v.ForumPostID, db);
+                System.Console.WriteLine(v.Account.Name + "\t" + v.ForumPostID + "\t" + v.Vote);
             }
+            db.SaveChanges();
         }
 
         public static void RecountForumVotes()
         {
-            using (var db = new ZkDataContext())
+            ZkDataContext db = new ZkDataContext();
+            var accounts = db.Accounts.Where(x => x.ForumTotalUpvotes > 0 || x.ForumTotalDownvotes > 0).ToList();
+            foreach (var acc in accounts)
             {
-                var accounts = db.Accounts.Where(x => x.ForumTotalUpvotes > 0 || x.ForumTotalDownvotes > 0).ToList();
-                foreach (var acc in accounts)
-                {
-                    acc.ForumTotalUpvotes = 0;
-                    acc.ForumTotalDownvotes = 0;
-                }
-
-                var votes = db.AccountForumVotes.ToList();
-                foreach (var vote in votes)
-                {
-                    Account poster = vote.ForumPost.Account;
-                    int delta = vote.Vote;
-                    if (delta > 0) poster.ForumTotalUpvotes = poster.ForumTotalUpvotes + delta;
-                    else if (delta < 0) poster.ForumTotalDownvotes = poster.ForumTotalDownvotes - delta;
-                }
-
-                db.SaveChanges();
+                acc.ForumTotalUpvotes = 0;
+                acc.ForumTotalDownvotes = 0;
             }
+
+            var votes = db.AccountForumVotes.ToList();
+            foreach (var vote in votes)
+            {
+                Account poster = vote.ForumPost.Account;
+                int delta = vote.Vote;
+                if (delta > 0) poster.ForumTotalUpvotes = poster.ForumTotalUpvotes + delta;
+                else if (delta < 0) poster.ForumTotalDownvotes = poster.ForumTotalDownvotes - delta;
+            }
+            db.SaveChanges();
         }
 
         public static void GetForumVotesByUser(int voterID, int voteeID)
         {
             int up = 0, down = 0;
-            using (var db = new ZkDataContext())
+            ZkDataContext db = new ZkDataContext();
+            Account voter = db.Accounts.FirstOrDefault(x => x.AccountID == voterID), votee = db.Accounts.FirstOrDefault(x => x.AccountID == voteeID);
+            var votes = db.AccountForumVotes.Where(x => x.AccountID == voterID && x.ForumPost.AuthorAccountID == voteeID).ToList();
+            System.Console.WriteLine(voter.Name + ", " + votee.Name);
+            foreach (var vote in votes)
             {
-                Account voter = db.Accounts.FirstOrDefault(x => x.AccountID == voterID),
-                    votee = db.Accounts.FirstOrDefault(x => x.AccountID == voteeID);
-                var votes = db.AccountForumVotes.Where(x => x.AccountID == voterID && x.ForumPost.AuthorAccountID == voteeID).ToList();
-                System.Console.WriteLine(voter.Name + ", " + votee.Name);
-                foreach (var vote in votes)
-                {
-                    int delta = vote.Vote;
-                    if (delta > 0) up++;
-                    else if (delta < 0) down++;
-                    System.Console.WriteLine(vote.ForumPost.ForumThreadID + ", " + vote.ForumPostID);
+                int delta = vote.Vote;
+                if (delta > 0) up++;
+                else if (delta < 0) down++;
+                System.Console.WriteLine(vote.ForumPost.ForumThreadID + ", " + vote.ForumPostID);
 
-                }
             }
-
             System.Console.WriteLine(string.Format("+{0} / -{1}", up, down));
         }
 
         public static void GetForumVotesByUserVoterAgnostic(int voteeID)
         {
             int up = 0, down = 0;
-            using (var db = new ZkDataContext())
+            ZkDataContext db = new ZkDataContext();
+            Account votee = db.Accounts.FirstOrDefault(x => x.AccountID == voteeID);
+            var votes = db.AccountForumVotes.Where(x => x.ForumPost.AuthorAccountID == voteeID && x.Vote != 0).OrderBy(x => x.Account.Name).ToList();
+            System.Console.WriteLine(votee.Name);
+            foreach (var vote in votes)
             {
-                Account votee = db.Accounts.FirstOrDefault(x => x.AccountID == voteeID);
-                var votes = db.AccountForumVotes.Where(x => x.ForumPost.AuthorAccountID == voteeID && x.Vote != 0).OrderBy(x => x.Account.Name)
-                    .ToList();
-                System.Console.WriteLine(votee.Name);
-                foreach (var vote in votes)
-                {
-                    int delta = vote.Vote;
-                    if (delta > 0) up++;
-                    else if (delta < 0) down++;
-                    System.Console.WriteLine(vote.ForumPost.ForumThreadID + ", " + vote.ForumPostID + ", " + vote.Account.Name);
+                int delta = vote.Vote;
+                if (delta > 0) up++;
+                else if (delta < 0) down++;
+                System.Console.WriteLine(vote.ForumPost.ForumThreadID + ", " + vote.ForumPostID + ", " + vote.Account.Name);
 
-                }
             }
-
             System.Console.WriteLine(string.Format("+{0} / -{1}", up, down));
         }
 
         public static void GetForumVotesByPost(int voteeID)
         {
             int up = 0, down = 0;
-            using (var db = new ZkDataContext())
+            ZkDataContext db = new ZkDataContext();
+            Account votee = db.Accounts.FirstOrDefault(x => x.AccountID == voteeID);
+            var posts = db.ForumPosts.Where(x => x.AuthorAccountID == voteeID && (x.Upvotes > 0 || x.Downvotes > 0)).ToList();
+            System.Console.WriteLine(votee.Name);
+            foreach (var post in posts)
             {
-                Account votee = db.Accounts.FirstOrDefault(x => x.AccountID == voteeID);
-                var posts = db.ForumPosts.Where(x => x.AuthorAccountID == voteeID && (x.Upvotes > 0 || x.Downvotes > 0)).ToList();
-                System.Console.WriteLine(votee.Name);
-                foreach (var post in posts)
-                {
-                    up = up + post.Upvotes;
-                    down = down + post.Downvotes;
-                    System.Console.WriteLine(post.ForumThreadID + ", " + post.ForumPostID +
-                                             String.Format(" ({0}/{1})", post.Upvotes, post.Downvotes));
-                    //System.Console.WriteLine(vote.ForumPost.Text);
-                }
+                up = up + post.Upvotes;
+                down = down + post.Downvotes;
+                System.Console.WriteLine(post.ForumThreadID + ", " + post.ForumPostID + String.Format(" ({0}/{1})", post.Upvotes, post.Downvotes));
+                //System.Console.WriteLine(vote.ForumPost.Text);
             }
-
             System.Console.WriteLine(string.Format("+{0} / -{1}", up, down));
         }
     }

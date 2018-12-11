@@ -24,7 +24,7 @@ namespace ZeroKWeb.Controllers
             Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             if (acc.Faction == null) return Content("Join some faction first");
             Planet planet = db.Planets.Single(x => x.PlanetID == planetID);
-            bool accessible = (useWarp == true) ? planet.CanBombersWarp(acc.Faction) : planet.CanBombersAttack(acc.Faction);
+            bool accessible =(useWarp == true) ? planet.CanBombersWarp(acc.Faction) : planet.CanBombersAttack(acc.Faction);
             if (!accessible) return Content("You cannot attack here");
             if (Global.Server.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot bomb planet");
 
@@ -144,12 +144,12 @@ namespace ZeroKWeb.Controllers
                 acc.SpendMetal(structureType.Cost);
 
                 var newBuilding = new PlanetStructure
-                {
-                    StructureTypeID = structureTypeID,
-                    StructureType = structureType,
-                    PlanetID = planetID,
-                    OwnerAccountID = acc.AccountID,
-                };
+                                  {
+                                      StructureTypeID = structureTypeID,
+                                      StructureType = structureType,
+                                      PlanetID = planetID,
+                                      OwnerAccountID = acc.AccountID,
+                                  };
                 newBuilding.ReactivateAfterBuild();
 
                 db.PlanetStructures.InsertOnSubmit(newBuilding);
@@ -230,18 +230,18 @@ namespace ZeroKWeb.Controllers
             res = res.OrderByDescending(x => x.EventID);
 
             var ret = new EventsResult
-            {
-                PageCount = (res.Count() / pageSize) + 1,
-                Page = page,
-                Events = res.Skip(page * pageSize).Take(pageSize),
-                PlanetID = planetID,
-                AccountID = accountID,
-                SpringBattleID = springBattleID,
-                Filter = filter,
-                ClanID = clanID,
-                Partial = partial,
-                PageSize = pageSize
-            };
+                      {
+                          PageCount = (res.Count() / pageSize) + 1,
+                          Page = page,
+                          Events = res.Skip(page * pageSize).Take(pageSize),
+                          PlanetID = planetID,
+                          AccountID = accountID,
+                          SpringBattleID = springBattleID,
+                          Filter = filter,
+                          ClanID = clanID,
+                          Partial = partial,
+                          PageSize = pageSize
+                      };
 
             return View(ret);
         }
@@ -319,7 +319,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult Index(int? galaxyID = null)
         {
             var db = new ZkDataContext();
-
+            
             Galaxy gal;
             if (galaxyID != null) gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
             else gal = db.Galaxies.Single(x => x.IsDefault);
@@ -336,7 +336,7 @@ namespace ZeroKWeb.Controllers
                     db.SaveChanges();
                 }
             }
-
+            
             return View("Galaxy", gal);
         }
 
@@ -373,7 +373,7 @@ namespace ZeroKWeb.Controllers
             bool accessible = useWarp == true ? planet.CanDropshipsWarp(acc.Faction) : planet.CanDropshipsAttack(acc.Faction);
             if (!accessible) return Content(string.Format("That planet cannot be attacked"));
             if (Global.Server.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot send ships");
-
+            
             int cnt = Math.Max(count, 0);
 
             int capa = acc.GetDropshipCapacity();
@@ -390,8 +390,7 @@ namespace ZeroKWeb.Controllers
                     if (cnt < GlobalConst.DropshipsForFullWarpIPGain) return Content($"You must send at least {GlobalConst.DropshipsForFullWarpIPGain} dropships when warping");
                 }
 
-                if (planet.Account != null)
-                {
+                if (planet.Account != null) {
                     Global.Server.GhostPm(planet.Account.Name, string.Format(
                         "Warning: long range scanners detected fleet of {0} ships inbound to your planet {1} {3}/Planetwars/Planet/{2}",
                         cnt,
@@ -407,13 +406,17 @@ namespace ZeroKWeb.Controllers
                 }
                 pac.Dropships += cnt;
                 pac.DropshipsLastAdded = DateTime.UtcNow;
-                db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} sends {1} {2} dropships to {3} {4} {5}",
-                                                            acc,
-                                                            cnt,
-                                                            acc.Faction,
-                                                            planet.Faction,
-                                                            planet,
-                                                            useWarp == true ? "using warp drives" : ""));
+
+                if (cnt > 0)
+                {
+                    db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} sends {1} {2} dropships to {3} {4} {5}",
+                                                                acc,
+                                                                cnt,
+                                                                acc.Faction,
+                                                                planet.Faction,
+                                                                planet,
+                                                                useWarp == true ? "using warp drives" : ""));
+                }
                 db.SaveChanges();
             }
             return RedirectToAction("Planet", new { id = planetID });
@@ -496,13 +499,13 @@ namespace ZeroKWeb.Controllers
                     }
                 }
                 var entry = new AccountRole
-                {
-                    AccountID = accountID,
-                    Inauguration = DateTime.UtcNow,
-                    Clan = role.IsClanOnly ? myAccount.Clan : null,
-                    Faction = !role.IsClanOnly ? myAccount.Faction : null,
-                    RoleTypeID = roletypeID,
-                };
+                            {
+                                AccountID = accountID,
+                                Inauguration = DateTime.UtcNow,
+                                Clan = role.IsClanOnly ? myAccount.Clan : null,
+                                Faction = !role.IsClanOnly ? myAccount.Faction : null,
+                                RoleTypeID = roletypeID,
+                            };
                 db.AccountRoles.InsertOnSubmit(entry);
                 if (previous != null)
                 {
@@ -591,7 +594,7 @@ namespace ZeroKWeb.Controllers
             {
                 structure.ReactivateAfterBuild();
             }
-
+          
 
             structure.PlanetByTargetPlanetID = target;
             db.Events.InsertOnSubmit(PlanetwarsEventCreator.CreateEvent("{0} of {1} aimed {2} located at {3} to {4} planet {5}", acc, acc.Faction, structure.StructureType, planet, target.Faction, target));
@@ -691,7 +694,7 @@ namespace ZeroKWeb.Controllers
 
             db.PlanetStructures.DeleteAllOnSubmit(structures);
             var residue = db.StructureTypes.First(x => x.Name == "Residue"); // todo not nice use constant instead
-            target.PlanetStructures.Add(new PlanetStructure() { StructureType = residue, IsActive = true });
+            target.PlanetStructures.Add(new PlanetStructure() { StructureType = residue, IsActive = true});
             db.SaveChanges();
 
             return null;
@@ -814,7 +817,7 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult MatchMakerJoin(int planetID)
         {
-            Global.Server.RequestJoinPlanet(Global.Account.Name, planetID);
+            Global.Server.RequestJoinPlanet(Global.Account.Name,  planetID);
             return MatchMaker();
         }
 

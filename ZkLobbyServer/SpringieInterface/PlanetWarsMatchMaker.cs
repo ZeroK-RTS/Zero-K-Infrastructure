@@ -34,45 +34,43 @@ namespace ZeroKWeb
 
         public PlanetWarsMatchMaker(ZkLobbyServer.ZkLobbyServer server)
         {
-
+            
             this.server = server;
             AttackOptions = new List<AttackOption>();
             RunningBattles = new Dictionary<int, AttackOption>();
 
 
-            using (var db = new ZkDataContext())
+            var db = new ZkDataContext();
+
+            var gal = db.Galaxies.FirstOrDefault(x => x.IsDefault);
+            if (gal == null) return;
+
+
+            factions = db.Factions.Where(x => !x.IsDeleted).ToList();
+
+            PlanetWarsMatchMakerState dbState = null;
+            if (gal.MatchMakerState != null)
+                try
+                {
+                    dbState = JsonConvert.DeserializeObject<PlanetWarsMatchMakerState>(gal.MatchMakerState);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.ToString());
+                }
+            if (dbState != null)
             {
-                var gal = db.Galaxies.FirstOrDefault(x => x.IsDefault);
-                if (gal == null) return;
-
-
-                factions = db.Factions.Where(x => !x.IsDeleted).ToList();
-
-                PlanetWarsMatchMakerState dbState = null;
-                if (gal.MatchMakerState != null)
-                    try
-                    {
-                        dbState = JsonConvert.DeserializeObject<PlanetWarsMatchMakerState>(gal.MatchMakerState);
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.TraceError(ex.ToString());
-                    }
-
-                if (dbState != null)
-                {
-                    AttackerSideCounter = dbState.AttackerSideCounter;
-                    AttackOptions = dbState.AttackOptions;
-                    Challenge = dbState.Challenge;
-                    ChallengeTime = dbState.ChallengeTime;
-                    AttackerSideChangeTime = dbState.AttackerSideChangeTime;
-                    RunningBattles = dbState.RunningBattles;
-                }
-                else
-                {
-                    AttackerSideCounter = gal.AttackerSideCounter;
-                    AttackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
-                }
+                AttackerSideCounter = dbState.AttackerSideCounter;
+                AttackOptions = dbState.AttackOptions;
+                Challenge = dbState.Challenge;
+                ChallengeTime = dbState.ChallengeTime;
+                AttackerSideChangeTime = dbState.AttackerSideChangeTime;
+                RunningBattles = dbState.RunningBattles;
+            }
+            else
+            {
+                AttackerSideCounter = gal.AttackerSideCounter;
+                AttackerSideChangeTime = gal.AttackerSideChangeTime ?? DateTime.UtcNow;
             }
 
             timer = new Timer(1045);
@@ -180,7 +178,7 @@ namespace ZeroKWeb
                 {
                     var faction = factions.First(x => x.Shortcut == user.Faction);
                     if (faction == AttackingFaction) await JoinPlanetAttack(planetId, name);
-                    else if ((Challenge != null) && GetDefendingFactions(Challenge).Any(y => y.FactionID == faction.FactionID)) await JoinPlanetDefense(planetId, name);
+                    else if ((Challenge != null) && GetDefendingFactions(Challenge).Any(y=>y.FactionID == faction.FactionID)) await JoinPlanetDefense(planetId, name);
                 }
             }
             catch (Exception ex)
@@ -254,7 +252,7 @@ namespace ZeroKWeb
             return server.ConnectedUsers.Get(player)?.SendCommand(GenerateLobbyCommand());
         }
 
-        private DateTime GetAcceptDeadline()
+        private DateTime GetAcceptDeadline() 
         {
             return ChallengeTime.Value.AddMinutes(GlobalConst.PlanetWarsMinutesToAccept);
         }
@@ -283,9 +281,9 @@ namespace ZeroKWeb
                 using (var db = new ZkDataContext())
                 {
                     var planet = db.Planets.Find(target.PlanetID);
-                    foreach (var of in db.Factions.Where(x => !x.IsDeleted && x.FactionID != target.OwnerFactionID && x.FactionID != AttackingFaction.FactionID))
+                    foreach (var of in db.Factions.Where(x=>!x.IsDeleted && x.FactionID != target.OwnerFactionID && x.FactionID != AttackingFaction.FactionID))
                     {
-                        if (of.GaveTreatyRight(planet, x => x.EffectBalanceSameSide == true)) ret.Add(factions.First(x => x.FactionID == of.FactionID));
+                        if (of.GaveTreatyRight(planet, x=>x.EffectBalanceSameSide == true)) ret.Add(factions.First(x=>x.FactionID == of.FactionID));
                     }
                 }
                 return ret;
@@ -350,23 +348,21 @@ namespace ZeroKWeb
                 var user = conus?.User;
                 if (user != null)
                 {
-                    using (var db = new ZkDataContext())
-                    {
-                        var account = db.Accounts.Find(user.AccountID);
-                        if ((account != null) && GetDefendingFactions(Challenge).Any(y => y.FactionID == account.FactionID) &&
-                            account.CanPlayerPlanetWars())
-                            if (!Challenge.Defenders.Any(y => y == user.Name))
-                            {
-                                Challenge.Defenders.Add(user.Name);
+                    var db = new ZkDataContext();
+                    var account = db.Accounts.Find(user.AccountID);
+                    if ((account != null) && GetDefendingFactions(Challenge).Any(y => y.FactionID == account.FactionID) &&
+                        account.CanPlayerPlanetWars())
+                        if (!Challenge.Defenders.Any(y => y == user.Name))
+                        {
+                            Challenge.Defenders.Add(user.Name);
 
-                                await server.GhostChanSay(user.Faction, $"{userName} joins defense of {Challenge.Name}");
+                            await server.GhostChanSay(user.Faction, $"{userName} joins defense of {Challenge.Name}");
 
-                                await conus.SendCommand(new PwJoinPlanetSuccess() { PlanetID = targetPlanetID });
+                            await conus.SendCommand(new PwJoinPlanetSuccess() { PlanetID = targetPlanetID });
 
-                                if (Challenge.Defenders.Count == Challenge.TeamSize) await AcceptChallenge();
-                                else await UpdateLobby();
-                            }
-                    }
+                            if (Challenge.Defenders.Count == Challenge.TeamSize) await AcceptChallenge();
+                            else await UpdateLobby();
+                        }
                 }
             }
         }
@@ -454,16 +450,14 @@ namespace ZeroKWeb
 
         private void SaveStateToDb()
         {
-            using (var db = new ZkDataContext())
-            {
-                var gal = db.Galaxies.First(x => x.IsDefault);
+            var db = new ZkDataContext();
+            var gal = db.Galaxies.First(x => x.IsDefault);
 
-                gal.MatchMakerState = JsonConvert.SerializeObject((PlanetWarsMatchMakerState)this);
+            gal.MatchMakerState = JsonConvert.SerializeObject((PlanetWarsMatchMakerState)this);
 
-                gal.AttackerSideCounter = AttackerSideCounter;
-                gal.AttackerSideChangeTime = AttackerSideChangeTime;
-                db.SaveChanges();
-            }
+            gal.AttackerSideCounter = AttackerSideCounter;
+            gal.AttackerSideChangeTime = AttackerSideChangeTime;
+            db.SaveChanges();
         }
 
 
