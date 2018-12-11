@@ -204,7 +204,7 @@ namespace LobbyClient
                         if (translated != null) sea.PlayerName = translated;
                     }
 
-                    if (SpringEvent != null) SpringEvent(this, sea);
+                    SpringEvent?.Invoke(this, sea);
                 }
             }
         }

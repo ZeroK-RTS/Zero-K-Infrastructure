@@ -108,146 +108,157 @@ namespace ZeroKWeb.SpringieInterface
                 ret.CanStart = true;
                 ret.Players = b.Players.ToList();
 
-                var db = new ZkDataContext();
-                var nonSpecList = b.Players.Where(y => !y.IsSpectator).Select(y => (int?)y.LobbyID).ToList();
-                var accs = db.Accounts.Where(x => nonSpecList.Contains(x.AccountID)).ToList();
-                if (accs.Count < 1)
+                using (var db = new ZkDataContext())
                 {
-                    ret.CanStart = false;
-                    return ret;
-                }
-                if (teamCount < 1) teamCount = 1;
-                if (teamCount > accs.Count) teamCount = accs.Count;
-                if (teamCount == 1)
-                {
-                    foreach (var p in ret.Players) p.AllyID = 0;
-                    return ret;
-                }
-
-                maxTeamSize = (int)Math.Ceiling(accs.Count / (double)teamCount);
-
-                teams.Clear();
-                for (var i = 0; i < teamCount; i++)
-                {
-                    var team = new BalanceTeam();
-                    teams.Add(team);
-                    if (unmovablePlayers != null && unmovablePlayers.Length > i)
+                    var nonSpecList = b.Players.Where(y => !y.IsSpectator).Select(y => (int?)y.LobbyID).ToList();
+                    var accs = db.Accounts.Where(x => nonSpecList.Contains(x.AccountID)).ToList();
+                    if (accs.Count < 1)
                     {
-                        var unmovables = unmovablePlayers[i];
-                        team.AddItem(new BalanceItem(b.IsMatchMakerGame, unmovablePlayers[i].ToArray()) { CanBeMoved = false });
-                        accs.RemoveAll(x => unmovables.Any(y => y.AccountID == x.AccountID));
+                        ret.CanStart = false;
+                        return ret;
                     }
-                }
 
-                balanceItems = new List<BalanceItem>();
-                if (mode == BalanceMode.Party)
-                {
-                    var clanGroups = accs.GroupBy(x => b.Players.First(p => p.Name == x.Name).PartyID ?? x.AccountID).ToList();
-                    if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
-                    else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
-                }
+                    if (teamCount < 1) teamCount = 1;
+                    if (teamCount > accs.Count) teamCount = accs.Count;
+                    if (teamCount == 1)
+                    {
+                        foreach (var p in ret.Players) p.AllyID = 0;
+                        return ret;
+                    }
 
-                if (mode == BalanceMode.ClanWise)
-                {
-                    var clanGroups = accs.GroupBy(x => b.Players.First(p => p.Name == x.Name).PartyID ?? x.ClanID ?? x.AccountID).ToList();
-                    if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
-                    else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
-                }
-                if (mode == BalanceMode.FactionWise)
-                {
-                    balanceItems.Clear();
-                    var factionGroups = accs.GroupBy(x => x.FactionID ?? x.AccountID).ToList();
-                    balanceItems.AddRange(factionGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
-                }
+                    maxTeamSize = (int)Math.Ceiling(accs.Count / (double)teamCount);
 
-                if (mode == BalanceMode.Normal)
-                {
-                    balanceItems.Clear();
-                    balanceItems.AddRange(accs.Select(x => new BalanceItem(b.IsMatchMakerGame, x)));
-                }
+                    teams.Clear();
+                    for (var i = 0; i < teamCount; i++)
+                    {
+                        var team = new BalanceTeam();
+                        teams.Add(team);
+                        if (unmovablePlayers != null && unmovablePlayers.Length > i)
+                        {
+                            var unmovables = unmovablePlayers[i];
+                            team.AddItem(new BalanceItem(b.IsMatchMakerGame, unmovablePlayers[i].ToArray()) { CanBeMoved = false });
+                            accs.RemoveAll(x => unmovables.Any(y => y.AccountID == x.AccountID));
+                        }
+                    }
 
-                var sw = new Stopwatch();
-                sw.Start();
-                RecursiveBalance(0);
-                sw.Stop();
+                    balanceItems = new List<BalanceItem>();
+                    if (mode == BalanceMode.Party)
+                    {
+                        var clanGroups = accs.GroupBy(x => b.Players.First(p => p.Name == x.Name).PartyID ?? x.AccountID).ToList();
+                        if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
+                        else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
+                    }
 
-                if (bestTeams == null)
-                {
-                    var fallback = new Balancer().LegacyBalance(teamCount, BalanceMode.ClanWise, b, null);
-                    fallback.Message += "\nWarning: STANDARD TEAM BALANCE USED, PlanetWars not possible with those teams, too many from one faction";
-                    return fallback;
-                }
+                    if (mode == BalanceMode.ClanWise)
+                    {
+                        var clanGroups = accs.GroupBy(x => b.Players.First(p => p.Name == x.Name).PartyID ?? x.ClanID ?? x.AccountID).ToList();
+                        if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
+                        else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
+                    }
 
-                var minSize = bestTeams.Min(x => x.Count);
-                var maxSize = bestTeams.Max(x => x.Count);
-                var sizesWrong = maxSize / (double)minSize > MaxTeamSizeDifferenceRatio;
+                    if (mode == BalanceMode.FactionWise)
+                    {
+                        balanceItems.Clear();
+                        var factionGroups = accs.GroupBy(x => x.FactionID ?? x.AccountID).ToList();
+                        balanceItems.AddRange(factionGroups.Select(x => new BalanceItem(b.IsMatchMakerGame, x.ToArray())));
+                    }
 
-                // cbalance failed, rebalance using normal
-                if (mode == BalanceMode.ClanWise && (bestTeams == null || GetTeamsDifference(bestTeams) > MaxCbalanceDifference || sizesWrong)) return new Balancer().LegacyBalance(teamCount, BalanceMode.Normal, b, unmovablePlayers);
-                // cbalance failed, rebalance using normal
+                    if (mode == BalanceMode.Normal)
+                    {
+                        balanceItems.Clear();
+                        balanceItems.AddRange(accs.Select(x => new BalanceItem(b.IsMatchMakerGame, x)));
+                    }
 
-                if (sizesWrong && mode == BalanceMode.FactionWise)
-                {
-                    var fallback = new Balancer().LegacyBalance(teamCount, BalanceMode.ClanWise, b, null);
-                    fallback.Message += "\nWarning: STANDARD TEAM BALANCE USED, PlanetWars not possible with those teams, too many from one faction";
-                    return fallback; // fallback standard balance if PW balance fails
-                    /*ret.CanStart = false;
-                    ret.Message = string.Format("Failed to balance - too many people from same faction");
-                    return ret;*/
-                }
+                    var sw = new Stopwatch();
+                    sw.Start();
+                    RecursiveBalance(0);
+                    sw.Stop();
 
-                if (unmovablePlayers != null && unmovablePlayers.Length > 0)
-                {
-                    var minElo = bestTeams.Min(x => x.EloAvg);
-                    var maxElo = bestTeams.Max(x => x.EloAvg);
-                    if (maxElo - minElo > GlobalConst.MaxPwEloDifference)
+                    if (bestTeams == null)
+                    {
+                        var fallback = new Balancer().LegacyBalance(teamCount, BalanceMode.ClanWise, b, null);
+                        fallback.Message +=
+                            "\nWarning: STANDARD TEAM BALANCE USED, PlanetWars not possible with those teams, too many from one faction";
+                        return fallback;
+                    }
+
+                    var minSize = bestTeams.Min(x => x.Count);
+                    var maxSize = bestTeams.Max(x => x.Count);
+                    var sizesWrong = maxSize / (double)minSize > MaxTeamSizeDifferenceRatio;
+
+                    // cbalance failed, rebalance using normal
+                    if (mode == BalanceMode.ClanWise && (bestTeams == null || GetTeamsDifference(bestTeams) > MaxCbalanceDifference || sizesWrong))
+                        return new Balancer().LegacyBalance(teamCount, BalanceMode.Normal, b, unmovablePlayers);
+                    // cbalance failed, rebalance using normal
+
+                    if (sizesWrong && mode == BalanceMode.FactionWise)
                     {
                         var fallback = new Balancer().LegacyBalance(teamCount, BalanceMode.ClanWise, b, null);
                         fallback.Message +=
                             "\nWarning: STANDARD TEAM BALANCE USED, PlanetWars not possible with those teams, too many from one faction";
                         return fallback; // fallback standard balance if PW balance fails
-                        /*
-                        ret.CanStart = false;
-                        ret.Message = string.Format("Team difference is too big - win chance {0}% - spectate some or wait for more people",
-                                                    Utils.GetWinChancePercent(maxElo - minElo));
+                        /*ret.CanStart = false;
+                        ret.Message = string.Format("Failed to balance - too many people from same faction");
                         return ret;*/
                     }
-                }
 
-                if (bestTeams == null)
-                {
-                    ret.CanStart = false;
-                    ret.Message =
-                        string.Format(
+                    if (unmovablePlayers != null && unmovablePlayers.Length > 0)
+                    {
+                        var minElo = bestTeams.Min(x => x.EloAvg);
+                        var maxElo = bestTeams.Max(x => x.EloAvg);
+                        if (maxElo - minElo > GlobalConst.MaxPwEloDifference)
+                        {
+                            var fallback = new Balancer().LegacyBalance(teamCount, BalanceMode.ClanWise, b, null);
+                            fallback.Message +=
+                                "\nWarning: STANDARD TEAM BALANCE USED, PlanetWars not possible with those teams, too many from one faction";
+                            return fallback; // fallback standard balance if PW balance fails
+                            /*
+                            ret.CanStart = false;
+                            ret.Message = string.Format("Team difference is too big - win chance {0}% - spectate some or wait for more people",
+                                                        Utils.GetWinChancePercent(maxElo - minElo));
+                            return ret;*/
+                        }
+                    }
+
+                    if (bestTeams == null)
+                    {
+                        ret.CanStart = false;
+                        ret.Message = string.Format(
                             "Failed to balance {0} - too many people from same clan or faction (in teams game you can try !random and !forcestart)");
-                    return ret;
+                        return ret;
+                    }
+
+                    if (unmovablePlayers == null || unmovablePlayers.Length == 0)
+                        bestTeams = bestTeams.Shuffle(); // permute when not unmovable players present
+
+                    var text = "( ";
+
+                    var lastTeamElo = 0.0;
+                    var allyNum = 0;
+                    foreach (var team in bestTeams)
+                    {
+                        if (allyNum > 0) text += " : ";
+                        text += string.Format("{0}", (allyNum + 1));
+                        text += string.Format("={0}%)",
+                            (int)Math.Round((1.0 / (1.0 + Math.Pow(10,
+                                                        ((team.EloAvg - bestTeams.Where(x => !x.Equals(team)).Select(x => x.EloAvg).Average())) /
+                                                        400.0))) * 100.0 * 2 / bestTeams.Count));
+                        lastTeamElo = team.EloAvg;
+
+                        foreach (var u in team.Items.SelectMany(x => x.LobbyId)) ret.Players.Single(x => x.LobbyID == u).AllyID = allyNum;
+                        allyNum++;
+                    }
+
+                    text += ")";
+
+                    ret.Message = string.Format("{0} players balanced {2} to {1} teams {3}. {4} combinations checked, spent {5}ms of CPU time",
+                        bestTeams.Sum(x => x.Count),
+                        teamCount,
+                        mode,
+                        text,
+                        iterationsChecked,
+                        sw.ElapsedMilliseconds);
                 }
-                if (unmovablePlayers == null || unmovablePlayers.Length == 0) bestTeams = bestTeams.Shuffle(); // permute when not unmovable players present
-
-                var text = "( ";
-
-                var lastTeamElo = 0.0;
-                var allyNum = 0;
-                foreach (var team in bestTeams)
-                {
-                    if (allyNum > 0) text += " : ";
-                    text += string.Format("{0}", (allyNum + 1));
-                    text += string.Format("={0}%)", (int)Math.Round((1.0 / (1.0 + Math.Pow(10, ((team.EloAvg - bestTeams.Where(x => !x.Equals(team)).Select(x => x.EloAvg).Average())) / 400.0))) * 100.0 * 2 / bestTeams.Count));
-                    lastTeamElo = team.EloAvg;
-
-                    foreach (var u in team.Items.SelectMany(x => x.LobbyId)) ret.Players.Single(x => x.LobbyID == u).AllyID = allyNum;
-                    allyNum++;
-                }
-                text += ")";
-
-                ret.Message = string.Format(
-                    "{0} players balanced {2} to {1} teams {3}. {4} combinations checked, spent {5}ms of CPU time",
-                    bestTeams.Sum(x => x.Count),
-                    teamCount,
-                    mode,
-                    text,
-                    iterationsChecked,
-                    sw.ElapsedMilliseconds);
             }
             catch (Exception ex)
             {

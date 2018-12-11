@@ -52,12 +52,12 @@ namespace LobbyClient
 
         public Task OnConnectionClosed(bool wasRequested)
         {
-            return Task.Run(() => { if (ConnectionClosed != null) ConnectionClosed(this, EventArgs.Empty); });
+            return Task.Run(() => { ConnectionClosed?.Invoke(this, EventArgs.Empty); });
         }
 
         public Task OnConnected()
         {
-            return Task.Run(() => { if (Connected != null) Connected(this, EventArgs.Empty); });
+            return Task.Run(() => { Connected?.Invoke(this, EventArgs.Empty); });
         }
 
         public Task OnLineReceived(string line)
@@ -74,7 +74,7 @@ namespace LobbyClient
                     throw;
                 }
 
-                if (command != null) if (CommandRecieved != null) CommandRecieved(this, command);
+                if (command != null) CommandRecieved?.Invoke(this, command);
             });
         }
 

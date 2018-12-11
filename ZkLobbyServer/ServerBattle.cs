@@ -544,7 +544,7 @@ namespace ZkLobbyServer
             if (ActivePoll != null) await ActivePoll.End();
             if (pollTimer != null) pollTimer.Enabled = false;
             ActivePoll = null;
-            oldPoll.PublishResult();
+            oldPoll?.PublishResult();
         }
 
         public async Task SwitchEngine(string engine)

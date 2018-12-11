@@ -1748,11 +1748,13 @@ namespace DotNetWikiBot
 			}
 
 			watched = true;
-			if (site.watchList == null)
-				site.watchList.FillFromWatchList();
-			if (!site.watchList.Contains(this))
-				site.watchList.Add(this);
-			Console.WriteLine(Bot.Msg("Page \"{0}\" added to watchlist."), title);
+		    if (site.watchList != null)
+		    {
+		        site.watchList.FillFromWatchList();
+		        if (!site.watchList.Contains(this))
+		            site.watchList.Add(this);
+		        Console.WriteLine(Bot.Msg("Page \"{0}\" added to watchlist."), title);
+		    }
 		}
 
 		/// <summary>Removes page from bot account's watchlist.</summary>
