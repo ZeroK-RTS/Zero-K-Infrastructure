@@ -24,7 +24,7 @@ namespace LobbyClient
         private readonly SpringPaths paths;
         private readonly Timer timer = new Timer(20000);
 
-        private Dictionary<string, HashSet<byte> > gamePrivateMessages = new Dictionary<string, HashSet<byte> >();
+        private Dictionary<string, int> gamePrivateMessages = new Dictionary<string, int>();
 
         private Process process;
         private string scriptPath;
@@ -306,10 +306,10 @@ namespace LobbyClient
                 if (string.IsNullOrEmpty(e.Text) || !e.Text.StartsWith("SPRINGIE:")) return;
 
                 int count;
-                if (!gamePrivateMessages.ContainsKey(e.Text))
-                    gamePrivateMessages.Add(new HashSet<byte>());
-                gamePrivateMessages[e.Text].Add(e.PlayerNumber);
-                if (gamePrivateMessages[e.Text].Count() != 2) return; // only send if count matches 2 exactly
+                if (!gamePrivateMessages.TryGetValue(e.Text, out count)) count = 0;
+                count++;
+                gamePrivateMessages[e.Text] = count;
+                if (count != 2) return; // only send if count matches 2 exactly
 
                 var text = e.Text.Substring(9);
                 if (text.StartsWith("READY:"))
@@ -351,7 +351,7 @@ namespace LobbyClient
             arg.Add($"\"{scriptPath}\"");
 
             Context.StartTime = DateTime.UtcNow;
-            gamePrivateMessages = new Dictionary<string, HashSet<byte>>();
+            gamePrivateMessages = new Dictionary<string, int>();
             process.StartInfo.Arguments = string.Join(" ", arg);
             process.Exited += dedicatedProcess_Exited;
 
