@@ -39,9 +39,8 @@
     <ApplicationIcon>ZK_logo_128.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GameAnalytics.Mono, Version=1.0.6235.22073, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\GameAnalytics.Mono.SDK.1.1.6\lib\net45\GameAnalytics.Mono.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="GameAnalytics.Mono, Version=1.0.6953.26690, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GameAnalytics.Mono.SDK.2.1.0\lib\net45\GameAnalytics.Mono.dll</HintPath>
     </Reference>
     <Reference Include="Neo.Lua, Version=5.3.0.0, Culture=neutral, PublicKeyToken=fdb0cd4fe8a6e3b2, processorArchitecture=MSIL">
       <HintPath>..\packages\NeoLua.1.1.5\lib\net45\Neo.Lua.dll</HintPath>
@@ -55,8 +54,7 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.5.4\lib\net45\NLog.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\NLog.4.5.11\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="Octokit, Version=0.29.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Octokit.0.29.0\lib\net45\Octokit.dll</HintPath>
@@ -65,13 +63,17 @@
       <HintPath>..\Libs\Steamworks.NET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite, Version=1.0.102.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\GameAnalytics.Mono.SDK.1.1.6\lib\net45\System.Data.SQLite.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\GameAnalytics.Mono.SDK.2.1.0\lib\net45\System.Data.SQLite.dll</HintPath>
     </Reference>
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Speech" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -191,11 +193,11 @@ copy /Y "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).pdb"
 copy /Y "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"
 </PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\GameAnalytics.Mono.SDK.1.1.6\build\net45\GameAnalytics.Mono.SDK.targets" Condition="Exists('..\packages\GameAnalytics.Mono.SDK.1.1.6\build\net45\GameAnalytics.Mono.SDK.targets')" />
+  <Import Project="..\packages\GameAnalytics.Mono.SDK.2.1.0\build\net45\GameAnalytics.Mono.SDK.targets" Condition="Exists('..\packages\GameAnalytics.Mono.SDK.2.1.0\build\net45\GameAnalytics.Mono.SDK.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\GameAnalytics.Mono.SDK.1.1.6\build\net45\GameAnalytics.Mono.SDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GameAnalytics.Mono.SDK.1.1.6\build\net45\GameAnalytics.Mono.SDK.targets'))" />
+    <Error Condition="!Exists('..\packages\GameAnalytics.Mono.SDK.2.1.0\build\net45\GameAnalytics.Mono.SDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GameAnalytics.Mono.SDK.2.1.0\build\net45\GameAnalytics.Mono.SDK.targets'))" />
   </Target>
 </Project>
