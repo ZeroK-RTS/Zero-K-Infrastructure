@@ -128,8 +128,14 @@ namespace Ratings
             //only count balanced custom matches for elo
             if (battle.Mode == AutohostMode.None && battle.SpringBattlePlayers?.Where(x => !x.IsSpectator).GroupBy(x => x.AllyNumber).Select(x => x.Count()).Distinct().Count() > 1) return;
             if (battle.Duration < GlobalConst.MinDurationForElo) return;
+
+            //don't mark battles for ratings if they can't be rated
+            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).Distinct().ToList();
+            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).Distinct().ToList();
+            if (winners.Count == 0 || losers.Count == 0 || winners.Intersect(losers).Count() != 0) return;
+
             battle.ApplicableRatings |= (RatingCategoryFlags)result.LobbyStartContext.ApplicableRating;
-            //battle.ApplicableRatings |= RatingCategoryFlags.Casual;
+            //Optionally add other flags here, like a casual or overall rating
         }
 
         private static void ProcessBattle(SpringBattle battle, bool reprocessingBattle = false, bool removeBattle = false)
