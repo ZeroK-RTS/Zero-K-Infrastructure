@@ -109,7 +109,16 @@ namespace ZeroKWeb.SpringieInterface
 
             db.SaveChanges();
 
-            if (sb.ApplicableRatings == 0)
+            /* Ideally, updating the ratings would also take care of updating level:
+             *    if (sb.ApplicableRatings == 0 || noElo)
+             * However, sometimes games that are nominally ranked will not actually
+             * touch ratings, leading to level being left unupdated. This can happen
+             * both as a result of the bug where the server never learns a team died,
+             * leading to games with both teams winning or a very rare but legitimate
+             * game draw (eg. when two crawling bombs are left and blow each other),
+             * which the server interprets as a game with two losers. Ideally the
+             * rating system would handle draws and the bug would be fixed but for now
+             * profile updates are sent unconditionally to make sure levels are correct. */
             {
                 try
                 {
