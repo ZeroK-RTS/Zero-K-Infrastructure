@@ -27,7 +27,7 @@ namespace ZkLobbyServer
         public const int DiscussionTime = 35;
         public const int MapVoteTime = 25;
         public const int NumberOfMapChoices = 2;
-        public const int MinimumAutostartPlayers = 2;
+        public const int MinimumAutostartPlayers = 6;
         public static int BattleCounter;
 
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
