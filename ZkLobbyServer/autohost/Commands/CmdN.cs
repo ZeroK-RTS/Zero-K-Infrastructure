@@ -12,6 +12,6 @@ namespace ZkLobbyServer
 
         public override BattleCommand Create() => new CmdN();
         public override string Arm(ServerBattle battle, Say e, string arguments = null) => String.Empty;
-        public override async Task ExecuteArmed(ServerBattle battle, Say e) => await battle.RegisterVote(e, false);
+        public override async Task ExecuteArmed(ServerBattle battle, Say e) => await battle.RegisterVote(e, 2);
     }
 }

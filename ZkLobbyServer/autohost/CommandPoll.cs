@@ -10,65 +10,95 @@ namespace ZkLobbyServer
     {
         private int winCount;
         private ServerBattle battle;
-        private Dictionary<string, bool> userVotes = new Dictionary<string, bool>();
+        private Dictionary<string, int> userVotes = new Dictionary<string, int>(); //stores votes, zero indexed
+        private Func<string, string> EligiblitySelector; //return null if player is allowed to vote, otherwise reason
+        private bool AbsoluteMajorityVote; //if set to yes, at least N/2 players need to vote for an option to be selected. Otherwise the option with the majority of votes wins
+        private bool DefaultPoll; //if set to yes, there must be only two options being yes and no.
+
         public bool Ended { get; private set; } = false;
-        public string question { get; private set; }
+        public string Topic { get; private set; }
+        public List<PollOption> Options;
         public Say Creator { get; private set; }
-        private BattleCommand command;
-        private bool AbsoluteMajorityVote;
         public PollOutcome Outcome { get; private set; }
 
         public event EventHandler<PollOutcome> PollEnded = (sender, outcome) => { };
 
-        public CommandPoll(ServerBattle battle, bool absoluteMajorityVote = true)
+        public CommandPoll(ServerBattle battle, bool absoluteMajorityVote = true, bool defaultPoll = false)
         {
             this.battle = battle;
             this.AbsoluteMajorityVote = absoluteMajorityVote;
+            DefaultPoll = defaultPoll;
         }
 
-        public async Task<bool> Setup(BattleCommand cmd, Say e, string args)
+        public async Task Setup(Func<string, string> eligibilitySelector, List<PollOption> options, Say creator, string Topic)
         {
-            command = cmd.Create();
+            EligiblitySelector = eligibilitySelector;
+            Options = options;
+            Creator = creator;
+            this.Topic = Topic;
 
-            Creator = e;
-            question = command.Arm(battle, e, args);
-            if (question == null) return false;
-            string ignored;
-            winCount = battle.Users.Values.Count(x => command.GetRunPermissions(battle, x.Name, out ignored) >= BattleCommand.RunPermission.Vote && !cmd.IsSpectator(battle, x.Name, x)) / 2 + 1;
+            winCount = battle.Users.Values.Count(x => EligiblitySelector(x.Name) == null) / 2 + 1;
             if (winCount <= 0) winCount = 1;
 
-            if (!await Vote(e, true))
-            {
-                if (e == null) await battle.SayBattle($"Poll: {question} [!y=0/{winCount}, !n=0/{winCount}]");
-            }
-            else
-            {
-                return false;
-            }
+            await battle.server.Broadcast(battle.Users.Keys, GetBattlePoll());
+        }
 
-            return true;
+        public BattlePoll GetBattlePoll()
+        {
+            return new BattlePoll()
+            {
+                Options = Options.Select((o, i) => new BattlePoll.PollOption()
+                {
+                    Id = i + 1,
+                    Name = o.Name,
+                    Votes = userVotes.Count(x => x.Value == i)
+                }).ToList(),
+                Topic = Topic,
+                VotesToWin = winCount,
+                DefaultPoll = DefaultPoll
+            };
         }
 
         private async Task<bool> CheckEnd(bool timeout)
         {
-            var yes = userVotes.Count(x => x.Value == true);
-            var no = userVotes.Count(x => x.Value == false);
 
-            if (yes >= winCount || timeout && !AbsoluteMajorityVote && yes > no)
+            List<int> votes = Options.Select((o, i) => userVotes.Count(x => x.Value == i)).ToList();
+            var winnerId = votes.IndexOf(votes.Max());
+
+            if (votes[winnerId] >= winCount || timeout && !AbsoluteMajorityVote)
             {
                 Ended = true;
-                await battle.SayBattle($"Poll: {question} [END:SUCCESS]");
-                if (command.Access == BattleCommand.AccessType.NotIngame && battle.spring.IsRunning) return true;
-                if (command.Access == BattleCommand.AccessType.Ingame && !battle.spring.IsRunning) return true;
-                await command.ExecuteArmed(battle, Creator);
-                Outcome = new PollOutcome() { Success = true };
+                if (DefaultPoll)
+                {
+                    if (winnerId == 0)
+                    {
+                        await battle.SayBattle($"Poll: {Topic} [END:SUCCESS]"); //Option Yes
+                    }
+                    else
+                    {
+                        await battle.SayBattle($"Poll: {Topic} [END:FAILED]"); //Option No
+                    }
+                }
+                else
+                {
+                    await battle.SayBattle($"Option Poll: {Topic} [END: Selected {Options[winnerId].Name}]");
+                }
+                await Options[winnerId].Action();
+                Outcome = new PollOutcome() { ChosenOption = Options[winnerId] };
                 return true;
             }
-            else if (no >= winCount || timeout)
+            else if (timeout)
             {
                 Ended = true;
-                await battle.SayBattle($"Poll: {question} [END:FAILED]");
-                Outcome = new PollOutcome() { Success = false };
+                if (DefaultPoll)
+                {
+                    await battle.SayBattle($"Poll: {Topic} [END:FAILED]");
+                }
+                else
+                {
+                    await battle.SayBattle($"Option Poll: {Topic} [END: No option achieved absolute majority]");
+                }
+                Outcome = new PollOutcome() { ChosenOption = null };
                 return true;
             }
             return false;
@@ -85,34 +115,38 @@ namespace ZkLobbyServer
         }
 
 
-        public async Task<bool> Vote(Say e, bool vote)
+        //Vote for an option, one-indexed
+        public async Task<bool> Vote(Say e, int vote)
         {
             if (e == null) return false;
-            string reason;
-            if (command.GetRunPermissions(battle, e.User, out reason) >= BattleCommand.RunPermission.Vote && !Ended)
+            string ineligibilityReason = EligiblitySelector(e.User);
+            if (ineligibilityReason == null && !Ended)
             {
-                if (command.IsSpectator(battle, e.User, null)) return false;
 
-                userVotes[e.User] = vote;
+                userVotes[e.User] = vote - 1;
 
-                var yes = userVotes.Count(x => x.Value == true);
-                var no = userVotes.Count(x => x.Value == false);
-                await battle.SayBattle(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", question, yes, no, winCount));
+                if (DefaultPoll) await battle.SayBattle(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Topic, userVotes.Count(x => x.Value == 0), userVotes.Count(x => x.Value == 1), winCount));
+                await battle.server.Broadcast(battle.Users.Keys, GetBattlePoll());
 
                 if (await CheckEnd(false)) return true;
             }
             else
             {
-                await battle.Respond(e, reason);
+                await battle.Respond(e, ineligibilityReason);
                 return false;
             }
             return false;
         }
-    }
 
+    }
+    public class PollOption
+    {
+        public string Name;
+        public Func<Task> Action;
+    }
 
     public class PollOutcome : EventArgs
     {
-        public bool Success { get; set; }
+        public PollOption ChosenOption { get; set; }
     }
 }
