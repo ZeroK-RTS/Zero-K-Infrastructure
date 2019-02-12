@@ -224,10 +224,10 @@ namespace Ratings
             }
             for (int i = 0; i < n; i++)
             {
-                covariance_diagonal.Add(v[i]);
+                covariance_diagonal[i] = (v[i]);
                 if (i < n - 1)
                 {
-                    covariance_subdiagonal.Add(-1 * hessianLU_lowerSubdiagonal[i] * v[i]);
+                    covariance_subdiagonal[i] = (-1 * hessianLU_lowerSubdiagonal[i] * v[i]);
                 }
             }
 
