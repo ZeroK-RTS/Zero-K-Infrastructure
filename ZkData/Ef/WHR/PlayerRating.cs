@@ -24,7 +24,7 @@ namespace Ratings
         public float Elo {
             get
             {
-                return RealElo - Math.Min(200, Math.Max(0, EloStdev - 20)) * 2; //dont reduce value for active players
+                return RealElo - Math.Min(400, Math.Max(0, EloStdev - 0) * GlobalConst.RatingConfidenceSigma); //1100 minimum rating for newb
             }
         }
 

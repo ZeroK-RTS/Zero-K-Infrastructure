@@ -107,6 +107,12 @@ namespace Ratings
             return players[RatingSystems.GetRatingId(AccountID)].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.GetElo() + RatingOffset);
         }
 
+        public Dictionary<DateTime, float> GetPlayerLadderRatingHistory(int AccountID)
+        {
+            if (!players.ContainsKey(RatingSystems.GetRatingId(AccountID))) return new Dictionary<DateTime, float>();
+            return players[RatingSystems.GetRatingId(AccountID)].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.GetElo() + RatingOffset - day.GetEloStdev() * GlobalConst.RatingConfidenceSigma);
+        }
+
         public List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams, DateTime time)
         {
             var predictions = teams.Select(t =>

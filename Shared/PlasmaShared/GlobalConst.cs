@@ -148,6 +148,7 @@ namespace ZkData
         public const float EloToNaturalRatingMultiplierSquared = 0.00003313686f;
         public static float NaturalRatingVariancePerDay(float games) => EloToNaturalRatingMultiplierSquared * 200000 / (games + 400); //whr expected player rating change over time
         public const float NaturalRatingVariancePerGame = EloToNaturalRatingMultiplierSquared * 500; //whr expected player rating change per game played
+        public const float RatingConfidenceSigma = 1.645f; //95% confidence rating
 
         public const int XpForMissionOrBots = 25;
         public const int XpForMissionOrBotsVictory = 50;
