@@ -162,7 +162,8 @@ namespace Ratings
 
         public override bool Equals(Object other)
         {
-            return other is Game game && game.id == id;
+            Game game = other as Game; 
+            return game != null && game.id == id;
         }
     }
 }
