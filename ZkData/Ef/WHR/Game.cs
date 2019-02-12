@@ -6,151 +6,155 @@ using ZkData;
 
 namespace Ratings
 {
-    public class Game {
 
-        public int day;
-        public int id;
+    public class Game
+    {
+        public readonly int day;
+        public readonly int id;
         public ICollection<Player> whitePlayers;
         public ICollection<Player> blackPlayers;
         public bool blackWins;
-        public IDictionary<Player, PlayerDay> whiteDays = new Dictionary<Player, PlayerDay>();
-        public IDictionary<Player, PlayerDay> blackDays = new Dictionary<Player, PlayerDay>();
+        public Dictionary<Player, PlayerDay> whiteDays = new Dictionary<Player, PlayerDay>();
+        public Dictionary<Player, PlayerDay> blackDays = new Dictionary<Player, PlayerDay>();
 
-        public Game(ICollection<Player> black, ICollection<Player> white, bool blackWins, int time_step, int id) { //extras?
-
+        public Game(ICollection<Player> black, ICollection<Player> white, bool blackWins, int time_step, int id)
+        {
+            this.id = id;
             day = time_step;
             whitePlayers = white;
             blackPlayers = black;
             this.blackWins = blackWins;
-            this.id = id;
         }
 
-        private float totWeight;
-        private float getWhiteElo() {
+        private float GetWhiteNaturalRating()
+        {
             float ret = 0;
-            float w; totWeight = 0;
-            foreach (PlayerDay pd in whiteDays.Values) {
-                w = 1; //Math.Max(0.1, Math.Min(10, 1 / pd.uncertainty));
-                       //Trace.TraceInformation(w);
-                totWeight += w;
-                ret += pd.getElo() * w;
-            }
-            if (whiteDays.Count == 0)
+            float w;
+            float totWeight = 0;
+            foreach (PlayerDay pd in whiteDays.Values)
             {
-                Trace.TraceError(whitePlayers.Count + "players, but no white days for B" + id);
-                return 0;
-            }
-            //Trace.TraceInformation(totWeight + "\n");
-            return ret / totWeight;
-        }
-
-        private float getBlackElo() {
-            float ret = 0;
-            float w; totWeight = 0;
-            foreach (PlayerDay pd in blackDays.Values) {
-                w = 1;//Math.Max(0.1, Math.Min(10, 1 / pd.uncertainty));
+                w = GetPlayerWeight(pd.player);
                 totWeight += w;
-                ret += pd.getElo() * w;
-            }
-            if (blackDays.Count == 0)
-            {
-                Trace.TraceError(blackPlayers.Count + "players, but no black days for B" + id);
-                return 0;
+                ret += pd.GetNaturalRating() * w;
             }
             return ret / totWeight;
         }
 
-        public float getPlayerWeight(Player p) {
-            if (whiteDays.ContainsKey(p)) {
-                getWhiteElo();
-                return Math.Max(0.1f, Math.Min(10, 1 / whiteDays[p].uncertainty)) / totWeight;
-            }
-            getBlackElo();
-            return Math.Max(0.1f, Math.Min(10, 1 / blackDays[p].uncertainty)) / totWeight;
-        }
-
-
-        private float getWhiteGamma() {
-            return (float)(Math.Exp(getWhiteElo() * Math.Log(10) / 400.0f));
-        }
-        private float getBlackGamma() {
-            return (float)(Math.Exp(getBlackElo() * Math.Log(10) / 400.0f));
-        }
-        //*/
-        /*
-        private float getWhiteGamma(){
+        private float GetBlackNaturalRating()
+        {
             float ret = 0;
-            for (PlayerDay pd in whiteDays.Values){
-                ret += pd.getGamma();
+            float w;
+            float totWeight = 0;
+            foreach (PlayerDay pd in blackDays.Values)
+            {
+                w = GetPlayerWeight(pd.player);
+                totWeight += w;
+                ret += pd.GetNaturalRating() * w;
             }
-            return ret / whiteDays.Count;
+            return ret / totWeight;
         }
 
-        private float getBlackGamma(){
-            float ret = 0;
-            for (PlayerDay pd in blackDays.Values){
-                ret += pd.getGamma();
-            }
-            return ret / blackDays.Count;
+        public float GetPlayerWeight(Player p)
+        {
+            return 1.0f / GetPlayerTeammates(p).Count;
         }
 
-        private float getWhiteElo(){
-            return Math.Log(getWhiteGamma()) * 400 / Math.Log(10);
+        private float GetWhiteGamma()
+        {
+            return (float)Math.Exp(GetWhiteNaturalRating());
         }
-        private float getBlackElo(){
-            return Math.Log(getBlackGamma()) * 400 / Math.Log(10);
-        }
-    //*/
-        public float getOpponentsAdjustedGamma(Player player) {
 
-            float opponentElo;
-            float blackElo = getBlackElo();
-            float whiteElo = getWhiteElo();
-            if ((whitePlayers.Contains(player))) {
-                opponentElo = blackElo + (-whiteElo + whiteDays[player].getElo())/* / Math.Sqrt(whiteDays.Count)*/;
-            } else if (blackPlayers.Contains(player)) {
-                opponentElo = whiteElo + (-blackElo + blackDays[player].getElo())/* / Math.Sqrt(blackDays.Count)*/;
-            } else {
-                Trace.TraceError("No opponent for player " + player.id + ", since they're not in this game.");
-                return 0;
+        private float GetBlackGamma()
+        {
+            return (float)Math.Exp(GetBlackNaturalRating());
+        }
+
+        public float GetOpponentsAdjustedGamma(Player player)
+        {
+
+            float opponent_naturalrating = 0;
+            float blackNaturalRating = GetBlackNaturalRating();
+            float whiteNaturalRating = GetWhiteNaturalRating();
+            if ((whitePlayers.Contains(player)))
+            {
+                opponent_naturalrating = blackNaturalRating + 0 * (-whiteNaturalRating + whiteDays[player].GetNaturalRating())/* / (float)Math.sqrt(whiteDays.Count)*/;
             }
-            float rval = (float)(Math.Pow(10, (opponentElo / 400.0)));
-            if (rval == 0 || float.IsInfinity(rval) || float.IsNaN(rval)) {
-                Trace.TraceError("WHR Failure: Gamma out of bounds: " + rval);
-                return 0;
+            else
+            {
+                opponent_naturalrating = whiteNaturalRating + 0 * (-blackNaturalRating + blackDays[player].GetNaturalRating())/* / (float)Math.sqrt(blackDays.Count)*/;
+            }
+            float rval = (float)Math.Exp(opponent_naturalrating);
+            if (rval == 0 || float.IsInfinity(rval) || float.IsNaN(rval))
+            {
+                Trace.TraceError("WHR: Gamma out of bounds");
             }
             return rval;
         }
 
-        public ICollection<Player> getPlayerTeammates(Player player) {
-            if ((whitePlayers.Contains(player))) {
+        public float GetAlliesAdjustedGamma(Player player)
+        {
+
+            float ally_naturalrating = 0;
+            float blackNaturalRating = GetBlackNaturalRating();
+            float whiteNaturalRating = GetWhiteNaturalRating();
+            if ((whitePlayers.Contains(player)))
+            {
+                ally_naturalrating = whiteNaturalRating - whiteDays[player].GetNaturalRating() * GetPlayerWeight(player);
+            }
+            else
+            {
+                ally_naturalrating = blackNaturalRating - blackDays[player].GetNaturalRating() * GetPlayerWeight(player);
+            }
+            float rval = (float)Math.Exp(ally_naturalrating);
+            if (rval == 0 || float.IsInfinity(rval) || float.IsNaN(rval))
+            {
+                Trace.TraceError("WHR: Gamma out of bounds");
+            }
+            return rval;
+        }
+
+        public float GetMyAdjustedGamma(Player player)
+        {
+
+            float my_naturalrating = 0;
+            if ((whitePlayers.Contains(player)))
+            {
+                my_naturalrating = whiteDays[player].GetNaturalRating() * GetPlayerWeight(player);
+            }
+            else
+            {
+                my_naturalrating = blackDays[player].GetNaturalRating() * GetPlayerWeight(player);
+            }
+            float rval = (float)Math.Exp(my_naturalrating);
+            if (rval == 0 || float.IsInfinity(rval) || float.IsNaN(rval))
+            {
+                Trace.TraceError("WHR: Gamma out of bounds");
+            }
+            return rval;
+        }
+
+        public ICollection<Player> GetPlayerTeammates(Player player)
+        {
+            if ((whitePlayers.Contains(player)))
+            {
                 return whitePlayers;
-            } else if (blackPlayers.Contains(player)) {
+            }
+            else
+            {
                 return blackPlayers;
-            } else {
-                Trace.TraceInformation("No opponent for player " + player.id + ", since they're not in this gamein.");
-                return null;
             }
         }
 
-        public float getWhiteWinProbability() {
-            if (whiteDays.Count == 0 || blackDays.Count == 0 ) {
-                whitePlayers.ForEach(p=>p.fakeGame(this));
-                blackPlayers.ForEach(p=>p.fakeGame(this));
-            }
-            return getWhiteGamma() / (getWhiteGamma() + getBlackGamma());
-        }
-
-        public float getBlackWinProbability()
+        public float GetBlackWinProbability()
         {
             if (whiteDays.Count == 0 || blackDays.Count == 0)
             {
-                whitePlayers.ForEach(p => p.fakeGame(this));
-                blackPlayers.ForEach(p => p.fakeGame(this));
+                whitePlayers.ForEach(p => p.FakeGame(this));
+                blackPlayers.ForEach(p => p.FakeGame(this));
             }
-            return getBlackGamma() / (getBlackGamma() + getWhiteGamma());
+            return GetBlackGamma() / (GetWhiteGamma() + GetBlackGamma());
         }
-
+        
         public override int GetHashCode()
         {
             return id;
@@ -158,8 +162,7 @@ namespace Ratings
 
         public override bool Equals(Object other)
         {
-            Game game = other as Game;
-            return game != null && game.id == id;
+            return other is Game game && game.id == id;
         }
     }
 }

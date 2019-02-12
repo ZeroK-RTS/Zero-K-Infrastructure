@@ -175,7 +175,6 @@ namespace Ratings
                 if (!factionCache.ContainsKey(factionID) || factionCache[factionID].Item1 != latestBattle)
                 {
                     var maxAge = DateTime.UtcNow.AddDays(-7);
-                    IEnumerable<Account> accounts;
                     var rating = RatingCategory.Planetwars;
                     using (var db = new ZkDataContext())
                     {

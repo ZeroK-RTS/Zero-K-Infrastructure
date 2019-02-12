@@ -144,8 +144,10 @@ namespace ZkData
         public static readonly int LadderActivityDays = mode == ModeType.Live ? 30 : int.MaxValue;
         public const int LadderSize = 50; // Amount of players shown on ladders
         public const float MinimumDynamicMaxLadderUncertainty = 100; // uncertainties > this are marked unranked, max age ~ 2-3 months
-        public const float EloDecayPerDaySquared = 35; //whr thingie
         public const float LadderUpdatePeriod = 1; //Ladder is fully updated every X hours
+        public const float EloToNaturalRatingMultiplierSquared = 0.00003313686f;
+        public static float NaturalRatingVariancePerDay(float games) => EloToNaturalRatingMultiplierSquared * 200000 / (games + 400); //whr expected player rating change over time
+        public const float NaturalRatingVariancePerGame = EloToNaturalRatingMultiplierSquared * 500; //whr expected player rating change per game played
 
         public const int XpForMissionOrBots = 25;
         public const int XpForMissionOrBotsVictory = 50;
