@@ -41,6 +41,8 @@ namespace ZkLobbyServer
             if (winCount <= 0) winCount = 1;
 
             await battle.server.Broadcast(battle.Users.Keys, GetBattlePoll());
+            if (DefaultPoll) await battle.SayBattle(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Topic, userVotes.Count(x => x.Value == 0), userVotes.Count(x => x.Value == 1), winCount));
+
         }
 
         public BattlePoll GetBattlePoll()

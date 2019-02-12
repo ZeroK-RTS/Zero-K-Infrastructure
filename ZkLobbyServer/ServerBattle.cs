@@ -26,8 +26,8 @@ namespace ZkLobbyServer
         public const int PollTimeout = 60;
         public const int DiscussionTime = 35;
         public const int MapVoteTime = 25;
-        public const int NumberOfMapChoices = 4;
-        public const int MinimumAutostartPlayers = 8;
+        public const int NumberOfMapChoices = 2;
+        public const int MinimumAutostartPlayers = 2;
         public static int BattleCounter;
 
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
@@ -880,7 +880,7 @@ namespace ZkLobbyServer
         private void discussionTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             discussionTimer.Stop();
-            var poll = new CommandPoll(this, false);
+            var poll = new CommandPoll(this, false, true);
             poll.PollEnded += MapVoteEnded;
             var options = new List<PollOption>();
             for (int i = 0; i < NumberOfMapChoices; i++)
@@ -907,7 +907,7 @@ namespace ZkLobbyServer
                     }
                 });
             }
-            StartVote(new CmdMap().GetIneligibilityReasonFunc(this), options, null, "Choose the next map", MapVoteTime, poll);
+            StartVote(new CmdMap().GetIneligibilityReasonFunc(this), options, null, string.Format("(Yes) {0} (No) {1}?",options[0].Name, options[1].Name), MapVoteTime, poll);
         }
 
         private void MapVoteEnded(object sender, PollOutcome e)
