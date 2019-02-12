@@ -16,7 +16,7 @@ namespace Ratings
         public readonly Player player;
         public float r;
         public bool isFirstDay;
-        public float uncertainty;
+        public float naturalRatingVariance;
 
         static private List<float> game_terms = new List<float>();
         private const int terms = 4;
@@ -34,7 +34,7 @@ namespace Ratings
 
         public float GetEloStdev()
         {
-            return (float)Math.Sqrt(uncertainty / GlobalConst.EloToNaturalRatingMultiplierSquared);
+            return (float)Math.Sqrt(naturalRatingVariance / GlobalConst.EloToNaturalRatingMultiplierSquared);
         }
 
         public void SetGamma(float gamma)

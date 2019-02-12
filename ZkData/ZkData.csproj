@@ -407,6 +407,10 @@
     <Compile Include="Migrations\201810231530234_StoreAutohostsInDb.Designer.cs">
       <DependentUpon>201810231530234_StoreAutohostsInDb.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902121616218_Rename Rating Uncertainty.cs" />
+    <Compile Include="Migrations\201902121616218_Rename Rating Uncertainty.Designer.cs">
+      <DependentUpon>201902121616218_Rename Rating Uncertainty.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -777,6 +781,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201810231530234_StoreAutohostsInDb.resx">
       <DependentUpon>201810231530234_StoreAutohostsInDb.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902121616218_Rename Rating Uncertainty.resx">
+      <DependentUpon>201902121616218_Rename Rating Uncertainty.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

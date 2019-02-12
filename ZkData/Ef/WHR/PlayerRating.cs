@@ -18,7 +18,7 @@ namespace Ratings
         public float EloStdev {
             get
             {
-                return (float)Math.Sqrt((LastUncertainty + (CurrentDate - LastGameDate) * LastW2) / GlobalConst.EloToNaturalRatingMultiplierSquared);
+                return (float)Math.Sqrt((LastNaturalRatingVar + (CurrentDate - LastGameDate) * NaturalRatingVariancePerDay) / GlobalConst.EloToNaturalRatingMultiplierSquared);
             }
         }
         public float Elo {
@@ -29,9 +29,9 @@ namespace Ratings
         }
 
         [JsonProperty]
-        public readonly float LastUncertainty;
+        public readonly float LastNaturalRatingVar;
         [JsonProperty]
-        public readonly float LastW2;
+        public readonly float NaturalRatingVariancePerDay;
         [JsonProperty]
         public readonly int LastGameDate;
         [JsonProperty]
@@ -45,15 +45,15 @@ namespace Ratings
         }
 
         [JsonConstructor]
-        public PlayerRating(int Rank, float Percentile, float RealElo, float LastUncertainty, float LastW2, int LastGameDate, int CurrentDate)
+        public PlayerRating(int Rank, float Percentile, float RealElo, float LastNaturalRatingVar, float LastW2, int LastGameDate, int CurrentDate)
         {
             this.Percentile = Percentile;
             this.Rank = Rank;
             this.RealElo = RealElo;
-            this.LastUncertainty = LastUncertainty;
+            this.LastNaturalRatingVar = LastNaturalRatingVar;
             this.LastGameDate = LastGameDate;
             this.CurrentDate = CurrentDate;
-            this.LastW2 = LastW2;
+            this.NaturalRatingVariancePerDay = LastW2;
         }
     }
 }

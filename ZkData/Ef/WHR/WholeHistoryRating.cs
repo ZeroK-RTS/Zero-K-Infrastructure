@@ -437,7 +437,7 @@ namespace Ratings
                 debugString +=
                     d.day + ";" +
                     d.GetElo() + ";" +
-                    d.uncertainty * 100 + ";" +
+                    d.naturalRatingVariance * 100 + ";" +
                     d.games[0].Select(g =>
                         g.whitePlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y) + "/" +
                         g.blackPlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y) + "/" +
@@ -465,9 +465,9 @@ namespace Ratings
                         continue;
                     }
                     float elo = p.days.Last().GetElo() + RatingOffset;
-                    float lastUncertainty = p.days.Last().uncertainty;
+                    float lastNaturalRatingVar = p.days.Last().naturalRatingVariance;
                     var lastDay = p.days.Last();
-                    playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastUncertainty, GlobalConst.NaturalRatingVariancePerDay(lastDay.totalWeight), lastDay.day, currentDay);
+                    playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastNaturalRatingVar, GlobalConst.NaturalRatingVariancePerDay(lastDay.totalWeight), lastDay.day, currentDay);
                     float rating = -playerRatings[p.id].Elo + 0.001f * (float)rand.NextDouble();
                     if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
                     playerKeys[p.id] = rating;
@@ -475,7 +475,7 @@ namespace Ratings
                 }
                 float[] playerUncertainties = new float[playerRatings.Count];
                 int index = 0;
-                float DynamicMaxUncertainty = GlobalConst.MinimumDynamicMaxLadderUncertainty;
+                float DynamicMaxEloStdev = GlobalConst.MinimumDynamicMaxLadderEloStdev;
                 int maxAge = GlobalConst.LadderActivityDays;
                 foreach (var pair in playerRatings)
                 {
@@ -489,8 +489,8 @@ namespace Ratings
                     }
                 }
                 Array.Sort(playerUncertainties);
-                DynamicMaxUncertainty = Math.Max(DynamicMaxUncertainty, playerUncertainties[Math.Min(playerUncertainties.Length, GlobalConst.LadderSize) - 1] + 0.01f);
-                int activePlayers = Math.Max(1, ~Array.BinarySearch(playerUncertainties, DynamicMaxUncertainty));
+                DynamicMaxEloStdev = Math.Max(DynamicMaxEloStdev, playerUncertainties[Math.Min(playerUncertainties.Length, GlobalConst.LadderSize) - 1] + 0.01f);
+                int activePlayers = Math.Max(1, ~Array.BinarySearch(playerUncertainties, DynamicMaxEloStdev));
                 int rank = 0;
                 List<int> newTopPlayers = new List<int>();
                 int matched = 0;
@@ -500,7 +500,7 @@ namespace Ratings
                 float[] percentilesRev = Ranks.Percentiles.Reverse().ToArray();
                 foreach (var pair in sortedPlayers)
                 {
-                    if (playerRatings[pair.Value].EloStdev <= DynamicMaxUncertainty && currentDay - playerRatings[pair.Value].LastGameDate <= maxAge)
+                    if (playerRatings[pair.Value].EloStdev <= DynamicMaxEloStdev && currentDay - playerRatings[pair.Value].LastGameDate <= maxAge)
                     {
                         newTopPlayers.Add(pair.Value);
                         if (rank == matched && rank < topPlayers.Count && topPlayers[rank] == pair.Value) matched++;
@@ -519,7 +519,7 @@ namespace Ratings
                 PercentileBrackets = newPercentileBrackets.Select(x => x).Reverse().ToArray();
                 topPlayers = newTopPlayers;
                 laddersCache = new List<Account>();
-                Trace.TraceInformation("WHR " + category + " Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty + " brackets are now: " + string.Join(", ", PercentileBrackets));
+                Trace.TraceInformation("WHR " + category + " Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max elostdev selected: " + DynamicMaxEloStdev + " brackets are now: " + string.Join(", ", PercentileBrackets));
 
                 var playerIds = players.Select(x => x.id).ToList();
                 if (playerIds.Count() < 100)

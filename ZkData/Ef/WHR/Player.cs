@@ -102,7 +102,7 @@ namespace Ratings
             {
                 UpdateByNDimNewton();
             }
-            UpdateUncertainty();
+            UpdateRatingVariance();
         }
 
 
@@ -233,14 +233,14 @@ namespace Ratings
 
         }
 
-        private void UpdateUncertainty()
+        private void UpdateRatingVariance()
         {
             if (days.Count > 0)
             {
                 UpdateCovariance();
                 for (int i = 0; i < days.Count; i++)
                 {
-                    days[i].uncertainty = covariance_diagonal[i];
+                    days[i].naturalRatingVariance = covariance_diagonal[i];
                 }
             }
         }
@@ -255,14 +255,14 @@ namespace Ratings
                     newPDay.isFirstDay = true;
                     newPDay.totalGames = 2;
                     newPDay.SetGamma(1);
-                    newPDay.uncertainty = 10;
+                    newPDay.naturalRatingVariance = 10;
                 }
                 else
                 {
                     newPDay.totalWeight = days[days.Count - 1].totalWeight;
                     newPDay.totalGames = days[days.Count - 1].totalGames;
                     newPDay.SetGamma(days[days.Count - 1].GetGamma());
-                    newPDay.uncertainty = days[days.Count - 1].uncertainty + (float)Math.Sqrt(game.day - days[days.Count - 1].day) * GlobalConst.NaturalRatingVariancePerDay(days[days.Count - 1].totalWeight);
+                    newPDay.naturalRatingVariance = days[days.Count - 1].naturalRatingVariance + (float)Math.Sqrt(game.day - days[days.Count - 1].day) * GlobalConst.NaturalRatingVariancePerDay(days[days.Count - 1].totalWeight);
                 }
                 days.Add(newPDay);
             }
