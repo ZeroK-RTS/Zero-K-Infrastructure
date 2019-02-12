@@ -323,7 +323,9 @@ namespace LobbyClient
                     if (entry != null) entry.IsIngameReady = true;
                 }
 
-                if (gamePrivateMessages[e.Text].Count() == 2 && text == "FORCE") ForceStart();
+                if (gamePrivateMessages[e.Text].Count() != Context.LobbyStartContext.Players.Count() / 2 + 1) return; // only accept messages if count matches N/2+1 exactly
+
+                if (text == "FORCE") ForceStart();
 
                 Context.OutputExtras.Add(text);
             }
