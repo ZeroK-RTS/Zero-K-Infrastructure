@@ -312,7 +312,7 @@ namespace ZeroKWeb.Controllers
         }
 
         public string Name => "ladder_rating_history";
-        public string Title => AccountName + " (95% confidence)";
+        public string Title => AccountName + " (75% confidence)";
     }
 
 
