@@ -441,6 +441,15 @@ namespace ZkLobbyServer
             return proposedBattles;
         }
 
+        public void BanPlayer(string name)
+        {
+
+            var banEntry = bannedPlayers.GetOrAdd(name, (n) => new BanInfo());
+            banEntry.BannedTime = DateTime.UtcNow;
+            banEntry.BanCounter++;
+            banEntry.BanSeconds = Math.Min(BanSecondsMax, BanSecondsIncrease * banEntry.BanCounter);
+        }
+
 
         private async Task<bool> RemoveSingleUser(string name)
         {
@@ -450,10 +459,7 @@ namespace ZkLobbyServer
                 if (entry.InvitedToPlay)
                 {
                     // was invited but he is gone now (whatever reason), ban!
-                    var banEntry = bannedPlayers.GetOrAdd(name, (n) => new BanInfo());
-                    banEntry.BannedTime = DateTime.UtcNow;
-                    banEntry.BanCounter++;
-                    banEntry.BanSeconds = Math.Min(BanSecondsMax, BanSecondsIncrease * banEntry.BanCounter);
+                    BanPlayer(name);
                 }
 
 
