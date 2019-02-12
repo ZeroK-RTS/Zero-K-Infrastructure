@@ -309,13 +309,11 @@ namespace LobbyClient
             {
                 if (string.IsNullOrEmpty(e.Text) || !e.Text.StartsWith("SPRINGIE:")) return;
 
-                int count;
                 if (!gamePrivateMessages.ContainsKey(e.Text))
                 {
                     gamePrivateMessages.Add(e.Text, new HashSet<byte>());
                 }
                 gamePrivateMessages[e.Text].Add(e.PlayerNumber);
-                if (gamePrivateMessages[e.Text].Count() != 2) return; // only send if count matches 2 exactly
 
                 var text = e.Text.Substring(9);
                 if (text.StartsWith("READY:"))
@@ -324,7 +322,8 @@ namespace LobbyClient
                     var entry = Context.ActualPlayers.FirstOrDefault(x => x.Name == name);
                     if (entry != null) entry.IsIngameReady = true;
                 }
-                if (text == "FORCE") ForceStart();
+
+                if (gamePrivateMessages[e.Text].Count() == 2 && text == "FORCE") ForceStart();
 
                 Context.OutputExtras.Add(text);
             }
