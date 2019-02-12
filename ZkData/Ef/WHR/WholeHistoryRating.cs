@@ -465,7 +465,7 @@ namespace Ratings
                         continue;
                     }
                     float elo = p.days.Last().GetElo() + RatingOffset;
-                    float lastUncertainty = p.days.Last().uncertainty * 100;
+                    float lastUncertainty = p.days.Last().uncertainty;
                     var lastDay = p.days.Last();
                     playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastUncertainty, GlobalConst.NaturalRatingVariancePerDay(lastDay.totalWeight), lastDay.day, currentDay);
                     float rating = -playerRatings[p.id].Elo + 0.001f * (float)rand.NextDouble();
@@ -485,7 +485,7 @@ namespace Ratings
                     }
                     else
                     {
-                        playerUncertainties[index++] = (float)pair.Value.Uncertainty;
+                        playerUncertainties[index++] = (float)pair.Value.EloStdev;
                     }
                 }
                 Array.Sort(playerUncertainties);
@@ -500,7 +500,7 @@ namespace Ratings
                 float[] percentilesRev = Ranks.Percentiles.Reverse().ToArray();
                 foreach (var pair in sortedPlayers)
                 {
-                    if (playerRatings[pair.Value].Uncertainty <= DynamicMaxUncertainty && currentDay - playerRatings[pair.Value].LastGameDate <= maxAge)
+                    if (playerRatings[pair.Value].EloStdev <= DynamicMaxUncertainty && currentDay - playerRatings[pair.Value].LastGameDate <= maxAge)
                     {
                         newTopPlayers.Add(pair.Value);
                         if (rank == matched && rank < topPlayers.Count && topPlayers[rank] == pair.Value) matched++;

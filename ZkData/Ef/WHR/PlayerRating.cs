@@ -15,23 +15,23 @@ namespace Ratings
         public float Percentile;
         public int Rank;
         public float RealElo;
-        public float Uncertainty {
+        public float EloStdev {
             get
             {
-                return LastUncertainty + (float)Math.Sqrt((CurrentDate - LastGameDate) * LastW2Elo);
+                return (float)Math.Sqrt((LastUncertainty + (CurrentDate - LastGameDate) * LastW2) / GlobalConst.EloToNaturalRatingMultiplierSquared);
             }
         }
         public float Elo {
             get
             {
-                return RealElo - Math.Min(200, Math.Max(0, Uncertainty - 20)) * 2; //dont reduce value for active players
+                return RealElo - Math.Min(200, Math.Max(0, EloStdev - 20)) * 2; //dont reduce value for active players
             }
         }
 
         [JsonProperty]
         public readonly float LastUncertainty;
         [JsonProperty]
-        public readonly float LastW2Elo;
+        public readonly float LastW2;
         [JsonProperty]
         public readonly int LastGameDate;
         [JsonProperty]
@@ -53,7 +53,7 @@ namespace Ratings
             this.LastUncertainty = LastUncertainty;
             this.LastGameDate = LastGameDate;
             this.CurrentDate = CurrentDate;
-            this.LastW2Elo = LastW2 / (float)Math.Pow(Math.Log(10) / 400, 2);
+            this.LastW2 = LastW2;
         }
     }
 }

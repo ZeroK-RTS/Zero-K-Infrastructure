@@ -12,7 +12,7 @@
     grid.AddCol("Rank", x => string.Format("{0}.",x.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().Rank));
     grid.AddCol("Player", x => Html.PrintAccount(x));
     grid.AddCol("Ladder Rating", x => Math.Round(x.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().Elo));
-    grid.AddCol("True Rating", x => string.Format("{0} ± {1}", Math.Round(x.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().RealElo), Math.Round(x.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().Uncertainty, 1)));
+    grid.AddCol("True Rating", x => string.Format("{0} ± {1}", Math.Round(x.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().RealElo), Math.Round(x.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().EloStdev, 1)));
     grid.AddCol("History", x => @Html.ActionLink("Show history", "Ratings", "Charts", new { RatingCategory = (int)RatingCategory.Casual, UserId = x.AccountID }, null));
 
     grid.PageSize = 50;
