@@ -293,6 +293,13 @@ namespace LobbyClient
                     catch { }
                 }
 
+                if (Context.OutputExtras.Count(x => x != "FORCE" && !x.StartsWith("READY:")) == 0)
+                {
+                    //No awards received, do a strict majority vote on awards
+                    int playersReportingAwards = gamePrivateMessages.Where(x => x.Key != "FORCE" && !x.Key.StartsWith("READY:")).SelectMany(x => x.Value).Distinct().Count();
+                    Context.OutputExtras = gamePrivateMessages.Where(x => x.Value.Count >= playersReportingAwards / 2 + 1).Select(x => x.Key).ToList();
+                }
+
                 DedicatedServerExited?.Invoke(this, Context);
                 AnyDedicatedExited?.Invoke(this, Context);
             }
