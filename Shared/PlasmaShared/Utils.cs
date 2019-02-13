@@ -36,6 +36,11 @@ namespace ZkData
             if (o != null) o.Dispose();
         }
 
+        public static IEnumerable<Indexed<T>> ToIndexedList<T>(this IEnumerable<T> enumeration)
+        {
+            return enumeration.Select((x, i) => new Indexed<T>(x, i));
+        }
+
         public static void ForEach<T>(this IEnumerable<T> enumeration, Action<T> action)
         {
             foreach (T item in enumeration)
@@ -888,6 +893,18 @@ namespace ZkData
             int intval;
             if (int.TryParse(value, out intval)) return intval;
             return null;
+        }
+    }
+
+    public struct Indexed<T>
+    {
+        public readonly T Item;
+        public readonly int Index;
+
+        public Indexed(T item, int index)
+        {
+            Item = item;
+            Index = index;
         }
     }
 }

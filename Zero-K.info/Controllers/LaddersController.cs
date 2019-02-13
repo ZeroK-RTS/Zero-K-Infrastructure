@@ -27,7 +27,7 @@ namespace ZeroKWeb.Controllers
         {
             model = model ?? new LaddersIndexModel();
             var db = new ZkDataContext();
-            var ret = db.Accounts.Where(x => !x.IsDeleted && x.AccountRatings.Any(r => r.RatingCategory == model.RatingCategory && r.Rank < int.MaxValue)).AsQueryable();
+            var ret = db.Accounts.Where(x => !x.IsDeleted && x.AccountRatings.Any(r => r.RatingCategory == model.RatingCategory && r.IsRanked)).AsQueryable();
 
             if (!string.IsNullOrEmpty(model.Name))
             {
@@ -49,7 +49,7 @@ namespace ZeroKWeb.Controllers
             if (model.LevelFrom.HasValue) ret = ret.Where(x => x.Level >= model.LevelFrom);
             if (model.LevelTo.HasValue) ret = ret.Where(x => x.Level <= model.LevelTo);
 
-            model.Data = ret.OrderBy(x => x.AccountRatings.Where(r => r.RatingCategory == model.RatingCategory).FirstOrDefault().Rank);
+            model.Data = ret.OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == model.RatingCategory).FirstOrDefault().Elo).ToIndexedList().AsQueryable();
             
             return View("LaddersFull", model);
         }
@@ -69,7 +69,7 @@ namespace ZeroKWeb.Controllers
             public int? LevelFrom { get; set; } = 0;
             public int? LevelTo { get; set; } = 1000;
 
-            public IQueryable<Account> Data;
+            public IQueryable<Indexed<Account>> Data;
         }
     }
 }

@@ -94,7 +94,7 @@ namespace Ratings
                     {
                         using (var db = new ZkDataContext())
                             return db.AccountRatings.FirstOrDefault(x => x.AccountID == id && x.RatingCategory == category)
-                                           ?.ToPlayerRating() ?? DefaultRating;
+                                           ?.ToUnrankedPlayerRating() ?? DefaultRating;
                     });
             }
             
@@ -417,7 +417,7 @@ namespace Ratings
                             continue;
                         }
                         processedPlayers.Add(accountRating.AccountID);
-                        if (Math.Abs(playerRatings[accountRating.AccountID].Elo - accountRating.Elo) > 1)
+                        if (Math.Abs(playerRatings[accountRating.AccountID].Elo - accountRating.Elo) > 1 || accountRating.IsRanked != (playerRatings[accountRating.AccountID].Rank < int.MaxValue))
                         {
                             accountRating.UpdateFromRatingSystem(playerRatings[accountRating.AccountID]);
                         }
