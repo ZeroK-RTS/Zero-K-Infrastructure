@@ -228,7 +228,7 @@ namespace ZkLobbyServer
             }
 
             //assure people don't rejoin (possibly accidentally) directly after starting a game
-            if (server.Battles.Values.Any(x => x.IsInGame && DateTime.UtcNow.Subtract(x.RunningSince ?? DateTime.UtcNow).TotalMinutes < DynamicConfig.Instance.MmMinimumMinutesBetweenGames && x.spring.LobbyStartContext.Players.Any(p => !p.IsSpectator && p.Name == user.Name)))
+            if (server.Battles.Values.Any(x => x.IsInGame && DateTime.UtcNow.Subtract(x.RunningSince ?? DateTime.UtcNow).TotalMinutes < DynamicConfig.Instance.MmMinimumMinutesBetweenGames && x.spring.LobbyStartContext.Players.Count(p => !p.IsSpectator) > 1 && x.spring.LobbyStartContext.Players.Any(p => !p.IsSpectator && p.Name == user.Name)))
             {
                 await UpdatePlayerStatus(user.Name);
                 await user.Respond($"You have recently started a match. Please play for at least {DynamicConfig.Instance.MmMinimumMinutesBetweenGames} minutes before starting another match");
