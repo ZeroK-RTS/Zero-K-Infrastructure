@@ -25,7 +25,7 @@
                         @:</span><br /><span style="font-size: small">
                         }
                         var acc = acct;
-                        if (rank == GlobalConst.LadderSize && Global.IsAccountAuthorized && Global.Account.GetRating(RatingCategory.MatchMaking)?.Rank > rank)
+                        if (rank == GlobalConst.LadderSize && Global.IsAccountAuthorized && Global.Account.GetRating(RatingCategory.MatchMaking)?.Rank > rank && Global.Account.GetRating(RatingCategory.MatchMaking)?.Rank < int.MaxValue)
                         {
                             rank = Global.Account.GetRating(RatingCategory.MatchMaking).Rank;
                             acc = Global.Account;
@@ -48,7 +48,7 @@
                         @:</span><br /><span style="font-size: small">
                         }
                         var acc = acct;
-                        if (rank == GlobalConst.LadderSize && Global.IsAccountAuthorized && Global.Account.GetRating(RatingCategory.Casual)?.Rank > rank)
+                        if (rank == GlobalConst.LadderSize && Global.IsAccountAuthorized && Global.Account.GetRating(RatingCategory.Casual)?.Rank > rank && Global.Account.GetRating(RatingCategory.Casual)?.Rank < int.MaxValue)
                         {
                             rank = Global.Account.GetRating(RatingCategory.Casual).Rank;
                             acc = Global.Account;
