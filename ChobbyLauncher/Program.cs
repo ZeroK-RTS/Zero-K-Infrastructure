@@ -91,7 +91,7 @@ namespace ChobbyLauncher
 
             try
             {
-                GameAnalytics.OnStop();
+                GameAnalytics.OnQuit();
             }
             catch (Exception ex)
             {

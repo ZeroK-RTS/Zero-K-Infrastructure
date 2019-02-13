@@ -23,7 +23,7 @@ namespace Ratings
     {
 
         const float RatingOffset = 1500;
-        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, 0, 0);
+        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, GlobalConst.NaturalRatingVariancePerDay(0), 0, 0);
 
         IDictionary<ITopPlayersUpdateListener, int> topPlayersUpdateListeners = new Dictionary<ITopPlayersUpdateListener, int>();
         public event EventHandler<RatingUpdate> RatingsUpdated;
@@ -37,7 +37,6 @@ namespace Ratings
         List<int> topPlayers = new List<int>();
         IDictionary<int, float> playerKeys = new Dictionary<int, float>();
         Random rand = new Random();
-        readonly float w2; //elo range expand per day squared
         private Timer ladderRecalculationTimer;
         private int activePlayers = 0;
         private bool lastBattleRanked = false;
@@ -59,7 +58,6 @@ namespace Ratings
         public WholeHistoryRating(RatingCategory category)
         {
             this.category = category;
-            w2 = GlobalConst.EloDecayPerDaySquared;
             ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, this, 15 * 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
 
         }
@@ -106,26 +104,33 @@ namespace Ratings
         public Dictionary<DateTime, float> GetPlayerRatingHistory(int AccountID)
         {
             if (!players.ContainsKey(RatingSystems.GetRatingId(AccountID))) return new Dictionary<DateTime, float>();
-            return players[RatingSystems.GetRatingId(AccountID)].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.getElo() + RatingOffset);
+            return players[RatingSystems.GetRatingId(AccountID)].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.GetElo() + RatingOffset);
+        }
+
+        public Dictionary<DateTime, float> GetPlayerLadderRatingHistory(int AccountID)
+        {
+            if (!players.ContainsKey(RatingSystems.GetRatingId(AccountID))) return new Dictionary<DateTime, float>();
+            return players[RatingSystems.GetRatingId(AccountID)].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.GetElo() + RatingOffset - day.GetEloStdev() * GlobalConst.RatingConfidenceSigma);
         }
 
         public List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams, DateTime time)
         {
             var predictions = teams.Select(t =>
-                    SetupGame(t.Select(x => RatingSystems.GetRatingId(x.AccountID)).ToList(),
-                            teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => RatingSystems.GetRatingId(x.AccountID))).ToList(),
+                    SetupGame(t.Select(x => RatingSystems.GetRatingId(x.AccountID)).Distinct().ToList(),
+                            teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => RatingSystems.GetRatingId(x.AccountID))).Distinct().ToList(),
                             true,
                             RatingSystems.ConvertDateToDays(time),
                             -1
-                    ).getBlackWinProbability()).ToList();
+                    ).GetBlackWinProbability()).ToList();
             return predictions.Select(x => x / predictions.Sum()).ToList();
         }
 
 
         public void ProcessBattle(SpringBattle battle, bool removeBattle = false)
         {
-            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).ToList();
-            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).ToList();
+            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).Distinct().ToList();
+            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).Distinct().ToList();
+            if (winners.Intersect(losers).Any()) return;
             int date = RatingSystems.ConvertDateToDays(battle.StartTime);
 
             if (removeBattle)
@@ -311,8 +316,7 @@ namespace Ratings
                     {
                         Trace.TraceInformation("Updating WHR " + category + " ratings for last Battle: " + latestBattle.SpringBattleID);
                         IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Where(p => !p.IsSpectator).Select(p => getPlayerById(RatingSystems.GetRatingId(p.AccountID)));
-                        players.ForEach(p => p.runOneNewtonIteration());
-                        players.ForEach(p => p.updateUncertainty());
+                        players.ForEach(p => p.RunOneNewtonIteration());
                         UpdateRankings(players);
                     });
                 }
@@ -438,9 +442,9 @@ namespace Ratings
             {
                 debugString +=
                     d.day + ";" +
-                    d.getElo() + ";" +
-                    d.uncertainty * 100 + ";" +
-                    d.wonGames.Select(g =>
+                    d.GetElo() + ";" +
+                    d.naturalRatingVariance * 100 + ";" +
+                    d.games[0].Select(g =>
                         g.whitePlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y) + "/" +
                         g.blackPlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y) + "/" +
                         (g.blackWins ? "Second" : "First") + "/" +
@@ -466,10 +470,10 @@ namespace Ratings
                         Trace.TraceError("WHR " + category + " has invalid player " + p.id + " with no days(games)");
                         continue;
                     }
-                    float elo = p.days.Last().getElo() + RatingOffset;
-                    float lastUncertainty = p.days.Last().uncertainty * 100;
-                    int lastDay = p.days.Last().day;
-                    playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastUncertainty, lastDay, currentDay);
+                    float elo = p.days.Last().GetElo() + RatingOffset;
+                    float lastNaturalRatingVar = p.days.Last().naturalRatingVariance;
+                    var lastDay = p.days.Last();
+                    playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastNaturalRatingVar, GlobalConst.NaturalRatingVariancePerDay(lastDay.totalWeight), lastDay.day, currentDay);
                     float rating = -playerRatings[p.id].Elo + 0.001f * (float)rand.NextDouble();
                     if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
                     playerKeys[p.id] = rating;
@@ -477,7 +481,7 @@ namespace Ratings
                 }
                 float[] playerUncertainties = new float[playerRatings.Count];
                 int index = 0;
-                float DynamicMaxUncertainty = GlobalConst.MinimumDynamicMaxLadderUncertainty;
+                float DynamicMaxEloStdev = GlobalConst.MinimumDynamicMaxLadderEloStdev;
                 int maxAge = GlobalConst.LadderActivityDays;
                 foreach (var pair in playerRatings)
                 {
@@ -487,22 +491,22 @@ namespace Ratings
                     }
                     else
                     {
-                        playerUncertainties[index++] = (float)pair.Value.Uncertainty;
+                        playerUncertainties[index++] = (float)pair.Value.EloStdev;
                     }
                 }
                 Array.Sort(playerUncertainties);
-                DynamicMaxUncertainty = Math.Max(DynamicMaxUncertainty, playerUncertainties[Math.Min(playerUncertainties.Length, GlobalConst.LadderSize) - 1] + 0.01f);
-                int activePlayers = Math.Max(1, ~Array.BinarySearch(playerUncertainties, DynamicMaxUncertainty));
+                DynamicMaxEloStdev = Math.Max(DynamicMaxEloStdev, playerUncertainties[Math.Min(playerUncertainties.Length, GlobalConst.LadderSize) - 1] + 0.01f);
+                int activePlayers = Math.Max(1, ~Array.BinarySearch(playerUncertainties, DynamicMaxEloStdev));
                 int rank = 0;
                 List<int> newTopPlayers = new List<int>();
                 int matched = 0;
                 List<float> newPercentileBrackets = new List<float>();
-                newPercentileBrackets.Add(3000);
+                newPercentileBrackets.Add(playerRatings[sortedPlayers.First().Value].Elo + 420);
                 float percentile;
                 float[] percentilesRev = Ranks.Percentiles.Reverse().ToArray();
                 foreach (var pair in sortedPlayers)
                 {
-                    if (playerRatings[pair.Value].Uncertainty <= DynamicMaxUncertainty && currentDay - playerRatings[pair.Value].LastGameDate <= maxAge)
+                    if (playerRatings[pair.Value].EloStdev <= DynamicMaxEloStdev && currentDay - playerRatings[pair.Value].LastGameDate <= maxAge)
                     {
                         newTopPlayers.Add(pair.Value);
                         if (rank == matched && rank < topPlayers.Count && topPlayers[rank] == pair.Value) matched++;
@@ -517,11 +521,11 @@ namespace Ratings
                     }
                 }
                 this.activePlayers = rank;
-                newPercentileBrackets.Add(0);
+                newPercentileBrackets.Add(newPercentileBrackets.Last() - 420);
                 PercentileBrackets = newPercentileBrackets.Select(x => x).Reverse().ToArray();
                 topPlayers = newTopPlayers;
                 laddersCache = new List<Account>();
-                Trace.TraceInformation("WHR " + category + " Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max uncertainty selected: " + DynamicMaxUncertainty + " brackets are now: " + string.Join(", ", PercentileBrackets));
+                Trace.TraceInformation("WHR " + category + " Ladders updated with " + topPlayers.Count + "/" + this.players.Count + " entries, max elostdev selected: " + DynamicMaxEloStdev + " brackets are now: " + string.Join(", ", PercentileBrackets));
 
                 var playerIds = players.Select(x => x.id).ToList();
                 if (playerIds.Count() < 100)
@@ -590,7 +594,7 @@ namespace Ratings
             {
                 lock (updateLockInternal)
                 {
-                    players.Add(id, new Player(id, w2));
+                    players.Add(id, new Player(id));
                 }
             }
             return players[id];
@@ -643,10 +647,6 @@ namespace Ratings
             {
                 runSingleIteration();
             }
-            foreach (Player p in players.Values)
-            {
-                p.updateUncertainty();
-            }
         }
 
         private void printStats()
@@ -661,7 +661,7 @@ namespace Ratings
                 if (p.days.Count > 0)
                 {
                     total++;
-                    float elo = p.days[p.days.Count - 1].getElo();
+                    float elo = p.days[p.days.Count - 1].GetElo();
                     sum += elo;
                     if (elo > 0) bigger++;
                     lowest = Math.Min(lowest, elo);
@@ -680,7 +680,7 @@ namespace Ratings
         {
             foreach (Player p in players.Values)
             {
-                p.runOneNewtonIteration();
+                p.RunOneNewtonIteration();
             }
         }
     }

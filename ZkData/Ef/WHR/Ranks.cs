@@ -62,7 +62,7 @@ namespace Ratings
                 var rating = ratingSystem.GetPlayerRating(acc.AccountID);
                 if (rating.Rank == int.MaxValue) continue;
                 isActive = true;
-                var stdev = Math.Min(10000, rating.Uncertainty);
+                var stdev = Math.Min(10000, rating.EloStdev);
                 var bracket = ratingSystem.GetPercentileBracket(acc.Rank);
                 var rankCeil = bracket.UpperEloLimit + stdev;
                 var rankFloor = bracket.LowerEloLimit - stdev;

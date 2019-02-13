@@ -509,7 +509,7 @@ namespace ZeroKWeb.Controllers
             var acc = db.Accounts.Find(accountID);
             if (acc == null) return Content("Invalid accountID");
             if (!Account.IsValidLobbyName(newUsername)) return Content("Invalid username");
-            var existing = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == newUsername.ToUpper());
+            var existing = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == newUsername.ToUpper() && x.AccountID != accountID);
             if (existing != null) return Content("Name conflict with user " + existing.AccountID);
             if (Global.Server.Battles.Any(x => x.Value.GetAllUserNames().Contains(acc.Name))) return Content(acc.Name + " is currently fighting in a battle. Rename action not advised.");
             Global.Server.KickFromServer(Global.Account.Name, acc.Name, "Your username has been changed from " + acc.Name + " to " + newUsername + ". Please login using your new username.");

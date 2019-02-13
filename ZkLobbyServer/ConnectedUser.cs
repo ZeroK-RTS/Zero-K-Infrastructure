@@ -32,6 +32,7 @@ namespace ZkLobbyServer
             }
         }
         private ZkLobbyServer server;
+        private DateTime chatWait = DateTime.UtcNow;
         public User User = new User();
         public HashSet<string> FriendBy { get; set; }
         public HashSet<string> FriendNames { get; set; }
@@ -317,6 +318,8 @@ namespace ZkLobbyServer
         {
             if (!IsLoggedIn) return;
             if (User.BanMute) return; // block all say for muted
+            if (DateTime.UtcNow < chatWait) return; //block all say for spam
+            chatWait = DateTime.UtcNow.AddMilliseconds(Math.Max(GlobalConst.MinMillisecondsBetweenMessages, GlobalConst.MillisecondsPerCharacter * say.Text.Length));
 
             say.User = Name;
             say.Time = DateTime.UtcNow;
@@ -362,6 +365,13 @@ namespace ZkLobbyServer
                 return;
             }
 
+            if (openBattle.Header.Mode != null 
+                && !Enum.IsDefined(typeof(AutohostMode), openBattle.Header.Mode))
+            {
+                await Respond("Incorrect battle type");
+                return;
+            }
+
             openBattle.Header.Title = openBattle.Header.Title.Truncate(200);
             var battle = new ServerBattle(server, Name);
             battle.UpdateWith(openBattle.Header);
@@ -401,6 +411,13 @@ namespace ZkLobbyServer
             if ((bat.FounderName != Name) && !User.IsAdmin)
             {
                 await Respond("You don't have permission to edit this battle");
+                return;
+            }
+
+            if (battleUpdate.Header.Mode != null 
+                && !Enum.IsDefined(typeof(AutohostMode), battleUpdate.Header.Mode))
+            {
+                await Respond("Incorrect battle type");
                 return;
             }
 

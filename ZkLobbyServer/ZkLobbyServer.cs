@@ -83,7 +83,7 @@ namespace ZkLobbyServer
             LadderListManager = new LadderListManager(this);
             ForumListManager = new ForumListManager(this);
 
-
+            SpawnAutohosts();
             
             RatingSystems.GetRatingSystems().ForEach(x => x.RatingsUpdated += (sender, data) => 
             {
@@ -95,6 +95,19 @@ namespace ZkLobbyServer
                     PublishUserProfileUpdate(p);
                 });
             });
+        }
+
+        private async Task SpawnAutohosts()
+        {
+            using (var db = new ZkDataContext())
+            {
+                foreach (var autohost in db.Autohosts)
+                {
+                    var battle = new ServerBattle(this, "Autohost");
+                    battle.UpdateWith(autohost);
+                    await AddBattle(battle);
+                }
+            }
         }
 
         /// <summary>

@@ -15,21 +15,23 @@ namespace Ratings
         public float Percentile;
         public int Rank;
         public float RealElo;
-        public float Uncertainty {
+        public float EloStdev {
             get
             {
-                return LastUncertainty + (float)Math.Sqrt((CurrentDate - LastGameDate) * GlobalConst.EloDecayPerDaySquared);
+                return (float)Math.Sqrt((LastNaturalRatingVar + (CurrentDate - LastGameDate) * NaturalRatingVariancePerDay) / GlobalConst.EloToNaturalRatingMultiplierSquared);
             }
         }
         public float Elo {
             get
             {
-                return RealElo - Math.Min(200, Math.Max(0, Uncertainty - 20)) * 2; //dont reduce value for active players
+                return RealElo - Math.Min(400, Math.Max(0, EloStdev - 0) * GlobalConst.RatingConfidenceSigma); //1100 minimum rating for newb
             }
         }
 
         [JsonProperty]
-        public readonly float LastUncertainty;
+        public readonly float LastNaturalRatingVar;
+        [JsonProperty]
+        public readonly float NaturalRatingVariancePerDay;
         [JsonProperty]
         public readonly int LastGameDate;
         [JsonProperty]
@@ -43,14 +45,15 @@ namespace Ratings
         }
 
         [JsonConstructor]
-        public PlayerRating(int Rank, float Percentile, float RealElo, float LastUncertainty, int LastGameDate, int CurrentDate)
+        public PlayerRating(int Rank, float Percentile, float RealElo, float LastNaturalRatingVar, float LastW2, int LastGameDate, int CurrentDate)
         {
             this.Percentile = Percentile;
             this.Rank = Rank;
             this.RealElo = RealElo;
-            this.LastUncertainty = LastUncertainty;
+            this.LastNaturalRatingVar = LastNaturalRatingVar;
             this.LastGameDate = LastGameDate;
             this.CurrentDate = CurrentDate;
+            this.NaturalRatingVariancePerDay = LastW2;
         }
     }
 }

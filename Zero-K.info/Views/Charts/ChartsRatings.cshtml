@@ -102,7 +102,7 @@
             <table>
                 <tr>
                     <td>Current rating: </td>
-                    <td>@rank.CurrentRating.RealElo ± @rank.CurrentRating.Uncertainty</td>
+                    <td>@rank.CurrentRating.RealElo ± @rank.CurrentRating.EloStdev (&omega;<sup>2</sup> = @rank.CurrentRating.NaturalRatingVariancePerDay)</td>
                 </tr>
                 <tr>
                     <td>Ladder rating: </td>
@@ -114,11 +114,11 @@
                 </tr>
                 <tr>
                     <td>Next rank above: </td>
-                    <td>@(rank.Bracket.UpperEloLimit + rank.CurrentRating.Uncertainty)</td>
+                    <td>@(rank.Bracket.UpperEloLimit + rank.CurrentRating.EloStdev)</td>
                 </tr>
                 <tr>
                     <td>Rank loss below: </td>
-                    <td>@(rank.Bracket.LowerEloLimit - rank.CurrentRating.Uncertainty)</td>
+                    <td>@(rank.Bracket.LowerEloLimit - rank.CurrentRating.EloStdev)</td>
                 </tr>
             </table>
             <br />

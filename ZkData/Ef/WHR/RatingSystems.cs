@@ -122,11 +122,20 @@ namespace Ratings
             battle.ApplicableRatings = 0;
             if (battle.HasBots) return;
             if (battle.IsMission) return;
-            if (battle.SpringBattlePlayers?.Select(x => x.AllyNumber).Distinct().Count() < 2) return;
+            if (battle.SpringBattlePlayers?.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Distinct().Count() < 2) return;
             if (battle.ResourceByMapResourceID?.MapIsSpecial == true) return;
+            
+            //only count balanced custom matches for elo
+            if (battle.Mode == AutohostMode.None && battle.SpringBattlePlayers?.Where(x => !x.IsSpectator).GroupBy(x => x.AllyNumber).Select(x => x.Count()).Distinct().Count() > 1) return;
             if (battle.Duration < GlobalConst.MinDurationForElo) return;
+
+            //don't mark battles for ratings if they can't be rated
+            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).Distinct().ToList();
+            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).Distinct().ToList();
+            if (winners.Count == 0 || losers.Count == 0 || winners.Intersect(losers).Count() != 0) return;
+
             battle.ApplicableRatings |= (RatingCategoryFlags)result.LobbyStartContext.ApplicableRating;
-            //battle.ApplicableRatings |= RatingCategoryFlags.Casual;
+            //Optionally add other flags here, like a casual or overall rating
         }
 
         private static void ProcessBattle(SpringBattle battle, bool reprocessingBattle = false, bool removeBattle = false)
@@ -166,7 +175,6 @@ namespace Ratings
                 if (!factionCache.ContainsKey(factionID) || factionCache[factionID].Item1 != latestBattle)
                 {
                     var maxAge = DateTime.UtcNow.AddDays(-7);
-                    IEnumerable<Account> accounts;
                     var rating = RatingCategory.Planetwars;
                     using (var db = new ZkDataContext())
                     {

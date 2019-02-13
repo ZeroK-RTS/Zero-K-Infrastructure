@@ -24,7 +24,7 @@ namespace LobbyClient
         private readonly SpringPaths paths;
         private readonly Timer timer = new Timer(20000);
 
-        private Dictionary<string, int> gamePrivateMessages = new Dictionary<string, int>();
+        private Dictionary<string, HashSet<byte> > gamePrivateMessages = new Dictionary<string, HashSet<byte> >();
 
         private Process process;
         private string scriptPath;
@@ -114,7 +114,7 @@ namespace LobbyClient
             
         }
 
-        public event EventHandler BattleStarted = (sender, args) => { };
+        public event EventHandler<SpringBattleContext> BattleStarted = (sender, args) => { };
 
         //public event EventHandler<> 
         /// <summary>
@@ -152,7 +152,11 @@ namespace LobbyClient
 
         public void ForceStart()
         {
-            if (IsRunning) talker.SendText("/forcestart");
+            if (IsRunning)
+            {
+                talker.SendText("/forcestart");
+                Context.IsForceStarted = true;
+            }
         }
 
         public event EventHandler<SpringLogEventArgs> GameOver; // game has ended
@@ -289,6 +293,13 @@ namespace LobbyClient
                     catch { }
                 }
 
+                if (Context.OutputExtras.Count(x => x.StartsWith("award")) == 0)
+                {
+                    //No awards received, do a strict majority vote on awards
+                    int playersReportingAwards = gamePrivateMessages.Where(x => x.Key.StartsWith("award")).SelectMany(x => x.Value).Distinct().Count();
+                    Context.OutputExtras = gamePrivateMessages.Where(x => x.Value.Count >= playersReportingAwards / 2 + 1).Select(x => x.Key).ToList();
+                }
+
                 DedicatedServerExited?.Invoke(this, Context);
                 AnyDedicatedExited?.Invoke(this, Context);
             }
@@ -305,19 +316,25 @@ namespace LobbyClient
             {
                 if (string.IsNullOrEmpty(e.Text) || !e.Text.StartsWith("SPRINGIE:")) return;
 
-                int count;
-                if (!gamePrivateMessages.TryGetValue(e.Text, out count)) count = 0;
-                count++;
-                gamePrivateMessages[e.Text] = count;
-                if (count != 2) return; // only send if count matches 2 exactly
 
                 var text = e.Text.Substring(9);
+
+
+                if (!gamePrivateMessages.ContainsKey(text))
+                {
+                    gamePrivateMessages.Add(text, new HashSet<byte>());
+                }
+                gamePrivateMessages[text].Add(e.PlayerNumber);
+
                 if (text.StartsWith("READY:"))
                 {
                     var name = text.Substring(6);
                     var entry = Context.ActualPlayers.FirstOrDefault(x => x.Name == name);
                     if (entry != null) entry.IsIngameReady = true;
                 }
+
+                if (gamePrivateMessages[text].Count() != Context.LobbyStartContext.Players.Count() / 2 + 1) return; // only accept messages if count matches N/2+1 exactly
+
                 if (text == "FORCE") ForceStart();
 
                 Context.OutputExtras.Add(text);
@@ -351,7 +368,7 @@ namespace LobbyClient
             arg.Add($"\"{scriptPath}\"");
 
             Context.StartTime = DateTime.UtcNow;
-            gamePrivateMessages = new Dictionary<string, int>();
+            gamePrivateMessages = new Dictionary<string, HashSet<byte>>();
             process.StartInfo.Arguments = string.Join(" ", arg);
             process.Exited += dedicatedProcess_Exited;
 
@@ -457,11 +474,12 @@ namespace LobbyClient
                         Context.ReplayName = e.ReplayFileName;
                         Context.EngineBattleID = e.GameID;
                         Context.IngameStartTime = DateTime.UtcNow;
+                        Context.PlayersUnreadyOnStart = Context.ActualPlayers.Where(x => !x.IsSpectator && !(x.IsIngameReady && x.IsIngame)).Select(x => x.Name).ToList();
                         foreach (var p in Context.ActualPlayers.Where(x => !x.IsSpectator)) p.IsIngameReady = true;
 
                         process.PriorityClass = ProcessPriorityClass.High;
 
-                        BattleStarted(this, EventArgs.Empty);
+                        BattleStarted(this, Context);
                         break;
 
                     case Talker.SpringEventType.SERVER_QUIT:
@@ -481,12 +499,18 @@ namespace LobbyClient
             try
             {
                 var timeSinceStart = DateTime.UtcNow.Subtract(Context.StartTime).TotalSeconds;
-                const int timeToWait = 180; // force start after 180s
-                const int timeToWarn = 120; // warn people after 120s 
+                const int timeToWait = 160; // force start after 180s
+                const int timeToWarn = 100; // warn people after 120s 
 
                 if (Context.IsHosting && IsRunning && (Context.IngameStartTime == null))
-                    if (timeSinceStart > timeToWait) ForceStart();
+                {
+                    if (timeSinceStart > timeToWait)
+                    {
+                        Context.IsTimeoutForceStarted = true;
+                        ForceStart();
+                    }
                     else if (timeSinceStart > timeToWarn) SayGame($"Game will be force started in {Math.Max(20, timeToWait - Math.Round(timeSinceStart))} seconds");
+                }
             }
             catch (Exception ex)
             {

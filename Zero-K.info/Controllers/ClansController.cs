@@ -33,10 +33,20 @@ namespace ZeroKWeb.Controllers
 
 
         [Auth]
-        public ActionResult Create()
+        public ActionResult Create(int id = -1)
         {
-            if (Global.Account.Clan == null || Global.Account.HasClanRight(x => x.RightEditTexts)) return View(Global.Clan ?? new Clan() { FactionID = Global.FactionID });
-            else return Content("You already have clan and you dont have rights to it");
+            if (Global.IsModerator && id != -1)
+            {
+                var db = new ZkDataContext();
+                return View(db.Clans.First(x => x.ClanID == id));
+            }
+
+            if (Global.Account.Clan == null || Global.Account.HasClanRight(x => x.RightEditTexts))
+            {
+                return View(Global.Clan ?? new Clan() { FactionID = Global.FactionID });
+            }
+
+            return Content("You already have clan and you dont have rights to it");
         }
 
         /// <summary>
@@ -181,9 +191,14 @@ namespace ZeroKWeb.Controllers
 
             int clanID = kickee_acc.ClanID.Value;
 
-            if (!Global.IsModerator) {
+            if (!Global.IsModerator)
+            {
                 if (kickee_acc.ClanID != Global.Account.ClanID) return Content("Target not in your clan");
                 if (!Global.Account.HasClanRight(x => x.RightKickPeople)) return Content("You have no kicking rights"); // unclanned people get handled here
+            }
+            else
+            {
+                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} kicked {1} from clan {2}", Global.Account.Name, kickee_acc.Name, db.Clans.Single(x => x.ClanID == clanID).ClanName));
             }
 
             PerformLeaveClan(accountID);
@@ -219,7 +234,7 @@ namespace ZeroKWeb.Controllers
 
             if (!created)
             {
-                if (!Global.Account.HasClanRight(x => x.RightEditTexts) || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
+                if (!Global.IsModerator && (!Global.Account.HasClanRight(x => x.RightEditTexts) || clan.ClanID != Global.Account.ClanID)) return Content("Unauthorized");
 
                 // check if our name or shortcut conflicts with existing clans
                 var existingClans = db.Clans.Where(x => ((SqlFunctions.PatIndex(clan.Shortcut, x.Shortcut) > 0 || SqlFunctions.PatIndex(clan.ClanName, x.ClanName) > 0) && x.ClanID != clan.ClanID));
@@ -235,6 +250,16 @@ namespace ZeroKWeb.Controllers
                 string orgShortcut = orgClan.Shortcut;
                 string newImageUrl = Server.MapPath(clan.GetImageUrl());
                 string newBGImageUrl = Server.MapPath(clan.GetBGImageUrl());
+
+                if (Global.IsModerator)
+                {
+                    Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} edited clan {1} {2}", Global.Account.Name, orgClan.ClanName, Url.Action("Detail", "Clans", new { id = clan.ClanID }, "http")));
+                    if (orgClan.ClanName != clan.ClanName)
+                    {
+                        Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} => {1}", orgClan.ClanName, clan.ClanName));
+                    }
+                }
+
                 orgClan.ClanName = clan.ClanName;
                 orgClan.Shortcut = clan.Shortcut;
                 orgClan.Description = clan.Description;

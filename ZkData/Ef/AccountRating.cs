@@ -35,11 +35,11 @@ namespace ZkData
         [Index]
         public double Elo { get; set; }
         
-        public double Uncertainty { get; set; }
+        public double EloStdev { get; set; }
         
         public PlayerRating ToPlayerRating()
         {
-            return new PlayerRating(Rank, (float)Percentile, (float)RealElo, (float)Uncertainty, 0, 0);
+            return new PlayerRating(Rank, (float)Percentile, (float)RealElo, (float)EloStdev, 0, 0, 0);
         }
 
         public void UpdateFromRatingSystem(PlayerRating rating)
@@ -47,7 +47,7 @@ namespace ZkData
             this.Percentile = rating.Percentile;
             this.Rank = rating.Rank;
             this.RealElo = rating.RealElo;
-            this.Uncertainty = rating.Uncertainty;
+            this.EloStdev = rating.EloStdev;
             this.Elo = rating.Elo;
         }
         

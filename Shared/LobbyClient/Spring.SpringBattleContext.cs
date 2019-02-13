@@ -9,6 +9,7 @@ namespace LobbyClient
     public class SpringBattleContext
     {
         public List<BattlePlayerResult> ActualPlayers = new List<BattlePlayerResult>();
+        public List<string> PlayersUnreadyOnStart = new List<string>();
 
         public int Duration;
         public string EngineBattleID;
@@ -19,6 +20,9 @@ namespace LobbyClient
         public DateTime? IngameStartTime;
 
         public string IpAddress;
+
+        public bool IsTimeoutForceStarted;
+        public bool IsForceStarted;
 
         public bool IsCheating;
 

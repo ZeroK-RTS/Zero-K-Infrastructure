@@ -29,6 +29,12 @@ namespace ZkLobbyServer
                 battle.Respond(e, "Cannot kick the host");
                 return null;
             }
+
+            if (e != null && battle.spring.IsRunning && battle.spring.LobbyStartContext?.Players.Any(x => x.Name == e.User && !x.IsSpectator) == false)
+            {
+                battle.Respond(e, "Only players can invoke this during a game");
+                return null;
+            }
             return $"do you want to kick {target}?";
         }
 
@@ -37,6 +43,24 @@ namespace ZkLobbyServer
         {
             if (battle.spring.IsRunning) battle.spring.Kick(target);
             await battle.KickFromBattle(target, $"by {e?.User}");
+        }
+
+
+
+        public override RunPermission GetRunPermissions(ServerBattle battle, string userName, out string reason)
+        {
+            var ret = base.GetRunPermissions(battle, userName, out reason);
+
+            // only people from same team can vote
+            if (ret >= RunPermission.Vote && battle.spring.IsRunning)
+            {
+                var subject = battle.spring.LobbyStartContext.Players.FirstOrDefault(x => x.Name == target);
+                var entry = battle.spring.LobbyStartContext.Players.FirstOrDefault(x => x.Name == userName);
+                if (subject == null || subject.IsSpectator) return ret;
+                if (entry != null && !entry.IsSpectator && entry.AllyID == subject.AllyID) return ret;
+                return RunPermission.None;
+            }
+            return ret;
         }
     }
 }

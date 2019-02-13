@@ -170,7 +170,7 @@
     <h2>Issue a penalty</h2>
     <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
         @Html.AntiForgeryToken()
-        Reason: @Html.TextBox("reason", "Smurf", new { style="width:50px" })<br />
+        Reason: @Html.TextBox("reason", "Smurf", new { style="width:500px" })<br />
         <br />
 
         Mute: @Html.CheckBox("banMute")<br />

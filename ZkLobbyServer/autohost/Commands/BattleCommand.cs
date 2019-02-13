@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -57,6 +58,16 @@ namespace ZkLobbyServer
             if (Arm(battle, e, arguments) != null) await ExecuteArmed(battle, e);
         }
 
+        public Func<string, string> GetIneligibilityReasonFunc(ServerBattle battle)
+        {
+            return x =>
+            {
+                string reason;
+                if (GetRunPermissions(battle, x, out reason) >= BattleCommand.RunPermission.Vote && !IsSpectator(battle, x, battle.Users[x])) return null;
+                return reason;
+            };
+        }
+
         public bool IsSpectator(ServerBattle battle, string userName, UserBattleStatus user)
         {
             if (user == null)
@@ -84,7 +95,7 @@ namespace ZkLobbyServer
         /// <returns></returns>
         public virtual RunPermission GetRunPermissions(ServerBattle battle, string userName, out string reason)
         {
-            reason = "";
+            reason = "You can't use this command";
             if (Access == AccessType.NoCheck) return RunPermission.Run;
             
             User user = null;

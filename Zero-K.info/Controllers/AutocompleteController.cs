@@ -127,6 +127,7 @@ namespace ZeroKWeb.Controllers
             var acc = db.Accounts.AsQueryable();
             if (threadID != null) acc = db.ForumThreads.Find(threadID).ForumPosts.Select(x => x.Account).Distinct().AsQueryable();
             return acc.Where(x => x.Name.ToLower().Contains(term) && !x.IsDeleted)
+                    .OrderBy(x => x.Name.Length)
                     .Take(autocompleteCount)
                     .ToList()
                     .Select(
