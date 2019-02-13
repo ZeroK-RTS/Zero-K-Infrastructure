@@ -293,10 +293,10 @@ namespace LobbyClient
                     catch { }
                 }
 
-                if (Context.OutputExtras.Count(x => x != "FORCE" && !x.StartsWith("READY:")) == 0)
+                if (Context.OutputExtras.Count(x => x.StartsWith("award")) == 0)
                 {
                     //No awards received, do a strict majority vote on awards
-                    int playersReportingAwards = gamePrivateMessages.Where(x => x.Key != "FORCE" && !x.Key.StartsWith("READY:")).SelectMany(x => x.Value).Distinct().Count();
+                    int playersReportingAwards = gamePrivateMessages.Where(x => x.Key.StartsWith("award")).SelectMany(x => x.Value).Distinct().Count();
                     Context.OutputExtras = gamePrivateMessages.Where(x => x.Value.Count >= playersReportingAwards / 2 + 1).Select(x => x.Key).ToList();
                 }
 
@@ -316,13 +316,16 @@ namespace LobbyClient
             {
                 if (string.IsNullOrEmpty(e.Text) || !e.Text.StartsWith("SPRINGIE:")) return;
 
-                if (!gamePrivateMessages.ContainsKey(e.Text))
-                {
-                    gamePrivateMessages.Add(e.Text, new HashSet<byte>());
-                }
-                gamePrivateMessages[e.Text].Add(e.PlayerNumber);
 
                 var text = e.Text.Substring(9);
+
+
+                if (!gamePrivateMessages.ContainsKey(text))
+                {
+                    gamePrivateMessages.Add(text, new HashSet<byte>());
+                }
+                gamePrivateMessages[text].Add(e.PlayerNumber);
+
                 if (text.StartsWith("READY:"))
                 {
                     var name = text.Substring(6);
@@ -330,7 +333,7 @@ namespace LobbyClient
                     if (entry != null) entry.IsIngameReady = true;
                 }
 
-                if (gamePrivateMessages[e.Text].Count() != Context.LobbyStartContext.Players.Count() / 2 + 1) return; // only accept messages if count matches N/2+1 exactly
+                if (gamePrivateMessages[text].Count() != Context.LobbyStartContext.Players.Count() / 2 + 1) return; // only accept messages if count matches N/2+1 exactly
 
                 if (text == "FORCE") ForceStart();
 
