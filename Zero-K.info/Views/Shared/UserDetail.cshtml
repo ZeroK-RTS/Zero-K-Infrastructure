@@ -412,7 +412,6 @@
     {
         <div class="admin">
             <h3>Admin extras</h3>
-
             <form action="@Url.Action("SetZklsMaxPlayers", "Admin")" method="post">
                 Max lobby server players: @Html.TextBox("maxPlayers", MiscVar.ZklsMaxUsers)
                 <input type="submit" value="set" />
@@ -423,10 +422,11 @@
             <a href="@Url.Action("Index", "Charts")">Charts</a><br />
             <a href="@Url.Action("Index", "PlanetwarsAdmin")">PlanetWars admin</a><br />
             <a href="@Url.Action("EditDynamicConfig", "Admin")">Dynamic config</a><br />
+            <a href="@Url.Action("ForceRatingsUpdate", "Admin")">Force Ratings Update</a><br />
             @if (GlobalConst.Mode == ModeType.Test)
-    {
-        <a href="@Url.Action("ResetDB", "Admin")" class="js_confirm">Reset database (copy from live)</a><br />
-}
+            {
+                <a href="@Url.Action("ResetDB", "Admin")" class="js_confirm">Reset database (copy from live)</a><br />
+            }
             <a href="@Url.Action("Index", "Engines")">Engines</a><br />
             <a href="@Url.Action("ChatHistory", "Lobby")">Lobby chat history</a><br />
             <a href="@Url.Action("TraceLogs", "Admin")">Infrastructure trace logs</a><br />

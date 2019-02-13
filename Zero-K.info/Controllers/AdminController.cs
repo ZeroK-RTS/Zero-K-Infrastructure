@@ -68,6 +68,13 @@ namespace ZeroKWeb.Controllers
         }
 
 
+        [Auth(Role = AdminLevel.Moderator)]
+        public ActionResult ForceRatingsUpdate()
+        {
+            Ratings.RatingSystems.whr.ForEach(x => x.Value.ForceRatingsUpdate());
+            return RedirectToAction("Index", "Home");
+        }
+
         [Auth(Role = AdminLevel.SuperAdmin)]
         public ActionResult EditDynamicConfig()
         {

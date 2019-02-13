@@ -277,6 +277,12 @@ namespace Ratings
         private readonly static object updateLockInternal = new object();
         private readonly object dbLock = new object();
 
+        public void ForceRatingsUpdate()
+        {
+            lastUpdateTime = DateTime.UtcNow.AddHours(-GlobalConst.LadderUpdatePeriod);
+            UpdateRatings();
+        }
+
         public void UpdateRatings()
         {
             if (!RatingSystems.Initialized) return;
@@ -481,7 +487,7 @@ namespace Ratings
                 }
                 float[] playerUncertainties = new float[playerRatings.Count];
                 int index = 0;
-                float DynamicMaxEloStdev = GlobalConst.MinimumDynamicMaxLadderEloStdev;
+                float DynamicMaxEloStdev = DynamicConfig.Instance.MinimumDynamicMaxLadderEloStdev;
                 int maxAge = GlobalConst.LadderActivityDays;
                 foreach (var pair in playerRatings)
                 {

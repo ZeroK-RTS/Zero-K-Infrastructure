@@ -411,6 +411,10 @@
     <Compile Include="Migrations\201902121616218_Rename Rating Uncertainty.Designer.cs">
       <DependentUpon>201902121616218_Rename Rating Uncertainty.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902132215413_AddMaxEloStDevToDynConfing.cs" />
+    <Compile Include="Migrations\201902132215413_AddMaxEloStDevToDynConfing.Designer.cs">
+      <DependentUpon>201902132215413_AddMaxEloStDevToDynConfing.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -784,6 +788,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902121616218_Rename Rating Uncertainty.resx">
       <DependentUpon>201902121616218_Rename Rating Uncertainty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902132215413_AddMaxEloStDevToDynConfing.resx">
+      <DependentUpon>201902132215413_AddMaxEloStDevToDynConfing.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

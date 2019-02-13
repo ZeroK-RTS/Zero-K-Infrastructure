@@ -26,6 +26,8 @@ namespace ZkData
 
         public int MaximumBattlePlayers { get; set; } = 32; //maximum amount of players allowed in rooms that are not autohosts
 
+        public float MinimumDynamicMaxLadderEloStdev { get; set; } = 200; //Maximum Elo StDev to still be on ladders
+
         public static DynamicConfig Instance;
 
         static DynamicConfig()
