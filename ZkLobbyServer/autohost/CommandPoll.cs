@@ -57,7 +57,7 @@ namespace ZkLobbyServer
                 }).ToList(),
                 Topic = Topic,
                 VotesToWin = winCount,
-                DefaultPoll = DefaultPoll
+                YesNoPoll = DefaultPoll
             };
         }
 

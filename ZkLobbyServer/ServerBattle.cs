@@ -26,7 +26,7 @@ namespace ZkLobbyServer
         public const int PollTimeout = 60;
         public const int DiscussionTime = 35;
         public const int MapVoteTime = 25;
-        public const int NumberOfMapChoices = 2;
+        public const int NumberOfMapChoices = 4;
         public const int MinimumAutostartPlayers = 6;
         public static int BattleCounter;
 
@@ -889,7 +889,7 @@ namespace ZkLobbyServer
         private void discussionTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             discussionTimer.Stop();
-            var poll = new CommandPoll(this, false, true);
+            var poll = new CommandPoll(this, false, false);
             poll.PollEnded += MapVoteEnded;
             var options = new List<PollOption>();
             for (int i = 0; i < NumberOfMapChoices; i++)
