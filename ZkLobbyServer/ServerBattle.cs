@@ -587,13 +587,13 @@ namespace ZkLobbyServer
             if (ActivePoll != null) await ActivePoll.End();
             if (pollTimer != null) pollTimer.Enabled = false;
             ActivePoll = null;
-            await oldPoll?.PublishResult();
             await server.Broadcast(Users.Keys, new BattlePoll()
             {
                 Options = null,
                 Topic = null,
                 VotesToWin = -1
             });
+            await oldPoll?.PublishResult();
         }
 
         public async Task SwitchEngine(string engine)
