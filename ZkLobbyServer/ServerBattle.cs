@@ -575,6 +575,7 @@ namespace ZkLobbyServer
 
         public async void StopVote()
         {
+            if (ActivePoll == null) return;
             var oldPoll = ActivePoll;
             if (ActivePoll != null) await ActivePoll.End();
             if (pollTimer != null) pollTimer.Enabled = false;
