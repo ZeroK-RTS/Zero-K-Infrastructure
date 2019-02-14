@@ -868,7 +868,6 @@ namespace ZkLobbyServer
 
             if (IsAutohost)
             {
-                await RunCommandDirectly<CmdMap>(null);
                 discussionTimer.Interval = (DiscussionTime + 1) * 1000;
                 discussionTimer.Start();
             }
