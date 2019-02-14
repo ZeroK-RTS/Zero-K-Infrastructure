@@ -546,7 +546,7 @@ namespace Ratings
                 //check for rank updates
 
                 List<int> playersWithRatingChange = new List<int>();
-                using (var db = new ZkDataContext())
+                using (var db = new ZkDataContext()) 
                 {
                     var lastBattlePlayers = db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).Include(x => x.Account).ToList();
                     if (latestBattle.GetRatingCategory() == category && lastBattleRanked)
