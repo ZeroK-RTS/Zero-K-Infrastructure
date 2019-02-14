@@ -868,8 +868,17 @@ namespace ZkLobbyServer
 
             if (IsAutohost)
             {
-                discussionTimer.Interval = (DiscussionTime + 1) * 1000;
-                discussionTimer.Start();
+                if (!string.IsNullOrEmpty(debriefingMessage.Message))
+                {
+                    //Game was aborted/exited/invalid, allow manual commands
+                    EndedSince = EndedSince.AddSeconds(-DiscussionTime);
+                }
+                else
+                {
+                    //Initiate discussion time, then map vote, then start vote
+                    discussionTimer.Interval = (DiscussionTime + 1) * 1000;
+                    discussionTimer.Start();
+                }
             }
             await CheckCloseBattle();
         }
