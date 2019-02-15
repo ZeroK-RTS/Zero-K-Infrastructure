@@ -50,7 +50,7 @@ namespace LobbyClient
         /// </summary>
         public string Version { get; set; }
 
-        public List<FactionInfo> Factions { get; set;}
+        public List<FactionInfo> Factions { get; set; }
 
         public bool UserCountLimited { get; set; }
 
@@ -209,7 +209,7 @@ namespace LobbyClient
             ResultCode = resultCode;
         }
 
-        public RegisterResponse() {}
+        public RegisterResponse() { }
     }
 
     [Message(Origin.Server)]
@@ -334,7 +334,7 @@ namespace LobbyClient
     }
 
 
-    
+
     [Message(Origin.Server | Origin.Client)]
     public class User
     {
@@ -678,7 +678,7 @@ namespace LobbyClient
         public int PlanetID { get; set; }
     }
 
-    
+
     [Message(Origin.Server)]
     public class PwJoinPlanetSuccess
     {
@@ -701,7 +701,7 @@ namespace LobbyClient
     [Message(Origin.Server)]
     public class PwStatus
     {
-        public PlanetWarsModes PlanetWarsMode {get; set; }
+        public PlanetWarsModes PlanetWarsMode { get; set; }
         public PlanetWarsModes? PlanetWarsNextMode { get; set; }
         public DateTime? PlanetWarsNextModeTime { get; set; }
         public int MinLevel { get; set; }
@@ -821,7 +821,7 @@ namespace LobbyClient
 
         public string PwMetal { get; set; }
         public string PwDropships { get; set; }
-        public string PwBombers { get; set;}
+        public string PwBombers { get; set; }
         public string PwWarpcores { get; set; }
     }
 
@@ -834,11 +834,22 @@ namespace LobbyClient
             public string Name { get; set; }
             public int Id { get; set; }
             public int Votes { get; set; }
+            public string URL { get; set; } //Null if not applicable
         }
 
         public string Topic { get; set; } //Null if there is no poll
         public List<PollOption> Options { get; set; } //Null if there is no poll
         public int VotesToWin { get; set; } //If any single option receives this many votes, it will win instantly. -1 if there is no poll
-        public bool DefaultPoll { get; set; } //Whether this is a simple yes/no vote, with yes being the first option
+        public bool YesNoVote { get; set; } //Is this a vote with two options, yes and no
+        public bool MapSelection { get; set; } //Is this a vote with map options?
+    }
+
+    [Message(Origin.Server)]
+    public class BattlePollOutcome
+    {
+        public BattlePoll.PollOption WinningOption; //null if no winning option
+        public string Topic; //topic of the previous poll
+        public bool YesNoVote { get; set; } //Was this a vote with two options, yes and no
+        public bool MapSelection { get; set; } //Was this a vote with map options?
     }
 }

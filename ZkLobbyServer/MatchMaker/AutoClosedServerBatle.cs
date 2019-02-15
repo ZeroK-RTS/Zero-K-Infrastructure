@@ -32,7 +32,7 @@ namespace ZkLobbyServer
                             .Select(x => x.Process(new JoinChannel() { ChannelName = debriefingMessage.ChatChannel })));
 
 
-                await server.Broadcast(Users.Keys, debriefingMessage);
+                await server.Broadcast(springBattleContext.ActualPlayers.Select(x => x.Name), debriefingMessage);
                 await server.RemoveBattle(this);
             }
             catch (Exception ex)

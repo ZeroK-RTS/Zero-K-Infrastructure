@@ -94,7 +94,7 @@ namespace Ratings
                     {
                         using (var db = new ZkDataContext())
                             return db.AccountRatings.FirstOrDefault(x => x.AccountID == id && x.RatingCategory == category)
-                                           ?.ToPlayerRating() ?? DefaultRating;
+                                           ?.ToUnrankedPlayerRating() ?? DefaultRating;
                     });
             }
             
@@ -277,6 +277,12 @@ namespace Ratings
         private readonly static object updateLockInternal = new object();
         private readonly object dbLock = new object();
 
+        public void ForceRatingsUpdate()
+        {
+            lastUpdateTime = DateTime.UtcNow.AddHours(-GlobalConst.LadderUpdatePeriod);
+            UpdateRatings();
+        }
+
         public void UpdateRatings()
         {
             if (!RatingSystems.Initialized) return;
@@ -411,7 +417,7 @@ namespace Ratings
                             continue;
                         }
                         processedPlayers.Add(accountRating.AccountID);
-                        if (Math.Abs(playerRatings[accountRating.AccountID].Elo - accountRating.Elo) > 1)
+                        if (Math.Abs(playerRatings[accountRating.AccountID].Elo - accountRating.Elo) > 1 || accountRating.IsRanked != (playerRatings[accountRating.AccountID].Rank < int.MaxValue))
                         {
                             accountRating.UpdateFromRatingSystem(playerRatings[accountRating.AccountID]);
                         }
@@ -481,7 +487,7 @@ namespace Ratings
                 }
                 float[] playerUncertainties = new float[playerRatings.Count];
                 int index = 0;
-                float DynamicMaxEloStdev = GlobalConst.MinimumDynamicMaxLadderEloStdev;
+                float DynamicMaxEloStdev = DynamicConfig.Instance.MinimumDynamicMaxLadderEloStdev;
                 int maxAge = GlobalConst.LadderActivityDays;
                 foreach (var pair in playerRatings)
                 {
@@ -540,7 +546,7 @@ namespace Ratings
                 //check for rank updates
 
                 List<int> playersWithRatingChange = new List<int>();
-                using (var db = new ZkDataContext())
+                using (var db = new ZkDataContext()) 
                 {
                     var lastBattlePlayers = db.SpringBattlePlayers.Where(p => p.SpringBattleID == latestBattle.SpringBattleID && !p.IsSpectator).Include(x => x.Account).ToList();
                     if (latestBattle.GetRatingCategory() == category && lastBattleRanked)

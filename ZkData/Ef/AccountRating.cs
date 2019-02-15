@@ -29,7 +29,7 @@ namespace ZkData
 
         public double Percentile { get; set; }
         [Index]
-        public int Rank { get; set; }
+        public bool IsRanked{ get; set; }
         [Index]
         public double RealElo { get; set; }
         [Index]
@@ -37,15 +37,15 @@ namespace ZkData
         
         public double EloStdev { get; set; }
         
-        public PlayerRating ToPlayerRating()
+        public PlayerRating ToUnrankedPlayerRating()
         {
-            return new PlayerRating(Rank, (float)Percentile, (float)RealElo, (float)EloStdev, 0, 0, 0);
+            return new PlayerRating(int.MaxValue, (float)Percentile, (float)RealElo, (float)EloStdev, 0, 0, 0);
         }
 
         public void UpdateFromRatingSystem(PlayerRating rating)
         {
             this.Percentile = rating.Percentile;
-            this.Rank = rating.Rank;
+            this.IsRanked = rating.Rank < int.MaxValue;
             this.RealElo = rating.RealElo;
             this.EloStdev = rating.EloStdev;
             this.Elo = rating.Elo;
