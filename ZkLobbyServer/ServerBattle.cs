@@ -914,6 +914,7 @@ namespace ZkLobbyServer
                 {
                     Name = map.InternalName,
                     URL = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{map.ResourceID}",
+                    ResourceID = map.ResourceID,
                     Action = async () =>
                     {
                         var cmd = new CmdMap().Create();

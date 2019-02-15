@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
+using ZkData;
 using static LobbyClient.BattlePoll;
 
 namespace ZkLobbyServer
@@ -121,6 +122,25 @@ namespace ZkLobbyServer
                 YesNoVote = yesNoVote,
                 WinningOption = GetBattlePoll().Options.FirstOrDefault(x => x.Name == Outcome?.ChosenOption?.Name)
             });
+            if (mapSelection && !yesNoVote)
+            {
+                //store results to DB
+                using (var db = new ZkDataContext())
+                {
+                    var options = Options.Select((o, i) => new MapPollOption()
+                    {
+                        ResourceID = o.ResourceID,
+                        Votes = userVotes.Count(x => x.Value == i)
+                    }).ToList();
+                    db.MapPollOptions.InsertAllOnSubmit(options);
+                    db.SaveChanges();
+                    db.MapPollOutcomes.InsertOnSubmit(new MapPollOutcome()
+                    {
+                        MapPollOptions = options
+                    });
+                    db.SaveChanges();
+                }
+            }
             PollEnded(this, Outcome);
         }
 
@@ -159,6 +179,7 @@ namespace ZkLobbyServer
         public string Name;
         public Func<Task> Action;
         public string URL;
+        public int ResourceID;
     }
 
     public class PollOutcome : EventArgs
