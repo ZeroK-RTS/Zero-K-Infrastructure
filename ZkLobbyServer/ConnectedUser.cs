@@ -319,7 +319,8 @@ namespace ZkLobbyServer
             if (!IsLoggedIn) return;
             if (User.BanMute) return; // block all say for muted
             if (DateTime.UtcNow < chatWait) return; //block all say for spam
-            chatWait = DateTime.UtcNow.AddMilliseconds(Math.Max(GlobalConst.MinMillisecondsBetweenMessages, GlobalConst.MillisecondsPerCharacter * say.Text.Length));
+            if (DateTime.UtcNow.AddMilliseconds(-5 * GlobalConst.MinMillisecondsBetweenMessages) > chatWait) chatWait = DateTime.UtcNow.AddMilliseconds(-5 * GlobalConst.MinMillisecondsBetweenMessages);
+            chatWait = chatWait.AddMilliseconds(Math.Max(GlobalConst.MinMillisecondsBetweenMessages, GlobalConst.MillisecondsPerCharacter * say.Text.Length));
 
             say.User = Name;
             say.Time = DateTime.UtcNow;
