@@ -68,7 +68,7 @@ namespace ZkLobbyServer
         public bool IsAutohost { get; private set; }
 
         public MapSupportLevel MinimalMapSupportLevelAutohost { get; protected set; } = MapSupportLevel.Featured;
-        
+
 
         static ServerBattle()
         {
@@ -212,7 +212,8 @@ namespace ZkLobbyServer
         {
             if (Users.IsEmpty && !spring.IsRunning)
             {
-                if (IsAutohost) {
+                if (IsAutohost)
+                {
                     await RunCommandDirectly<CmdMap>(null);
                 }
                 else
@@ -293,11 +294,11 @@ namespace ZkLobbyServer
             ValidateBattleStatus(ubs);
             user.MyBattle = this;
 
-            
+
             await server.TwoWaySyncUsers(user.Name, Users.Keys); // mutually sync user statuses
-            
+
             await server.SyncUserToAll(user);
-            
+
             await RecalcSpectators();
 
             await
@@ -310,9 +311,9 @@ namespace ZkLobbyServer
                 });
 
             if (ActivePoll != null) await user.SendCommand(ActivePoll.GetBattlePoll());
-            
+
             await server.Broadcast(Users.Keys.Where(x => x != user.Name), ubs.ToUpdateBattleStatus()); // send my UBS to others in battle
-            
+
             if (spring.IsRunning)
             {
                 spring.AddUser(ubs.Name, ubs.ScriptPassword, ubs.LobbyUser);
@@ -349,7 +350,7 @@ namespace ZkLobbyServer
                 NonSpectatorCount = playerCount;
                 if (GlobalConst.LobbyServerUpdateSpectatorsInstantly)
                 {
-                    await server.Broadcast(Users.Keys, new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID , PlayerCount = NonSpectatorCount} });
+                    await server.Broadcast(Users.Keys, new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID, PlayerCount = NonSpectatorCount } });
                 }
             }
         }
@@ -476,7 +477,7 @@ namespace ZkLobbyServer
         public async Task SetModOptions(Dictionary<string, string> options)
         {
             ModOptions = options;
-            await server.Broadcast(Users.Keys, new SetModOptions() {Options = options});
+            await server.Broadcast(Users.Keys, new SetModOptions() { Options = options });
         }
 
 
@@ -519,7 +520,7 @@ namespace ZkLobbyServer
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
 
             // remove all from MM
-            await Task.WhenAll(startSetup.Players.Where(x => !x.IsSpectator).Select(x=>server.MatchMaker.RemoveUser(x.Name, false)));
+            await Task.WhenAll(startSetup.Players.Where(x => !x.IsSpectator).Select(x => server.MatchMaker.RemoveUser(x.Name, false)));
             await server.MatchMaker.UpdateAllPlayerStatuses();
             return true;
         }
@@ -582,18 +583,28 @@ namespace ZkLobbyServer
 
         public async void StopVote()
         {
-            if (ActivePoll == null) return;
-            var oldPoll = ActivePoll;
-            if (ActivePoll != null) await ActivePoll.End();
-            if (pollTimer != null) pollTimer.Enabled = false;
-            ActivePoll = null;
-            await server.Broadcast(Users.Keys, new BattlePoll()
+            try
             {
-                Options = null,
-                Topic = null,
-                VotesToWin = -1
-            });
-            await oldPoll?.PublishResult();
+                Trace.TraceInformation("Stopping vote");
+                if (ActivePoll == null) return;
+                var oldPoll = ActivePoll;
+                if (ActivePoll != null) await ActivePoll.End();
+                if (pollTimer != null) pollTimer.Enabled = false;
+                ActivePoll = null;
+                Trace.TraceInformation("Broadcasting no vote");
+                await server.Broadcast(Users.Keys, new BattlePoll()
+                {
+                    Options = null,
+                    Topic = null,
+                    VotesToWin = -1
+                });
+                Trace.TraceInformation("Publishing vote result");
+                await oldPoll?.PublishResult();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error stopping vote " + ex);
+            }
         }
 
         public async Task SwitchEngine(string engine)
@@ -739,8 +750,8 @@ namespace ZkLobbyServer
             h.SpectatorCount = SpectatorCount;
             h.PlayerCount = NonSpectatorCount;
             h.IsMatchMaker = IsMatchMakerBattle;
-            
-            
+
+
             base.UpdateWith(h);
 
             ValidateAndFillDetails();
@@ -800,15 +811,18 @@ namespace ZkLobbyServer
 
             if (!ubs.IsSpectator)
             {
-                if (Users.Values.Count(x => !x.IsSpectator) > MaxPlayers) {
+                if (Users.Values.Count(x => !x.IsSpectator) > MaxPlayers)
+                {
                     ubs.IsSpectator = true;
                     SayBattle("This battle is full.", ubs.Name);
                 }
-                if (ubs.LobbyUser.EffectiveElo > MaxElo && ubs.LobbyUser.EffectiveMmElo > MaxElo) {
+                if (ubs.LobbyUser.EffectiveElo > MaxElo && ubs.LobbyUser.EffectiveMmElo > MaxElo)
+                {
                     ubs.IsSpectator = true;
                     SayBattle("Your rating (" + Math.Min(ubs.LobbyUser.EffectiveElo, ubs.LobbyUser.EffectiveMmElo) + ") is too high. The maximum rating to play in this battle is " + MaxElo + ".", ubs.Name);
                 }
-                if (ubs.LobbyUser.EffectiveElo < MinElo && ubs.LobbyUser.EffectiveMmElo < MinElo) {
+                if (ubs.LobbyUser.EffectiveElo < MinElo && ubs.LobbyUser.EffectiveMmElo < MinElo)
+                {
                     ubs.IsSpectator = true;
                     SayBattle("Your rating (" + Math.Max(ubs.LobbyUser.EffectiveElo, ubs.LobbyUser.EffectiveMmElo) + ") is too low. The minimum rating to play in this battle is " + MinElo + ".", ubs.Name);
                 }
@@ -865,7 +879,8 @@ namespace ZkLobbyServer
             toNotify.Clear();
 
             var playingEligibleUsers = server.MatchMaker.GetEligibleQuickJoinPlayers(Users.Values.Where(x => !x.LobbyUser.IsAway && !x.IsSpectator).Select(x => server.ConnectedUsers[x.Name]).ToList());
-            if (playingEligibleUsers.Count() >= InviteMMPlayers) { //Make sure there are enough eligible users for a battle to be likely to happen
+            if (playingEligibleUsers.Count() >= InviteMMPlayers)
+            { //Make sure there are enough eligible users for a battle to be likely to happen
 
                 //put all users into MM queue to suggest battles
                 var teamsQueues = server.MatchMaker.PossibleQueues.Where(x => x.Mode == AutohostMode.Teams).ToList();
@@ -908,7 +923,7 @@ namespace ZkLobbyServer
                 }
                 else
                 {
-                    map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Featured) ? MapSupportLevel.Supported : MinimalMapSupportLevel); 
+                    map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Featured) ? MapSupportLevel.Supported : MinimalMapSupportLevel);
                 }
                 options.Add(new PollOption()
                 {
@@ -1058,7 +1073,7 @@ namespace ZkLobbyServer
             {
                 Trace.TraceError("Error processing spring_BattleStarted started: {0}", ex);
             }
-}
+        }
 
 
         private void spring_PlayerSaid(object sender, SpringChatEventArgs e)
@@ -1089,7 +1104,8 @@ namespace ZkLobbyServer
 
                 // relay
                 if (e.Location == SpringChatLocation.Public) server.GhostSay(say, BattleID);
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Trace.TraceError("Error processing spring_PlayerSaid " + ex);
             }
@@ -1103,7 +1119,7 @@ namespace ZkLobbyServer
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error processing dedi server exited: {0}",ex);
+                Trace.TraceError("Error processing dedi server exited: {0}", ex);
             }
         }
 
