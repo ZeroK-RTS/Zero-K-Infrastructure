@@ -585,20 +585,18 @@ namespace ZkLobbyServer
         {
             try
             {
-                Trace.TraceInformation("Stopping vote");
                 if (ActivePoll == null) return;
                 var oldPoll = ActivePoll;
                 if (ActivePoll != null) await ActivePoll.End();
                 if (pollTimer != null) pollTimer.Enabled = false;
                 ActivePoll = null;
-                Trace.TraceInformation("Broadcasting no vote");
                 await server.Broadcast(Users.Keys, new BattlePoll()
                 {
                     Options = null,
                     Topic = null,
-                    VotesToWin = -1
+                    VotesToWin = -1,
+                    YesNoVote = true
                 });
-                Trace.TraceInformation("Publishing vote result");
                 await oldPoll?.PublishResult();
             }
             catch (Exception ex)
