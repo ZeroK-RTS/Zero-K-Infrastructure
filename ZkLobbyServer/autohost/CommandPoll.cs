@@ -90,7 +90,7 @@ namespace ZkLobbyServer
                 }
                 else
                 {
-                    await battle.SayBattle($"Option Poll: {Topic} [END: Selected {Options[winnerId].Name}]");
+                    await battle.SayBattle($"Poll: Choose {Options[winnerId].Name}? [END:SUCCESS]");
                 }
                 await Options[winnerId].Action();
                 Outcome = new PollOutcome() { ChosenOption = Options[winnerId] };
@@ -105,7 +105,7 @@ namespace ZkLobbyServer
                 }
                 else
                 {
-                    await battle.SayBattle($"Option Poll: {Topic} [END: No option achieved absolute majority]");
+                    await battle.SayBattle($"Option Poll: {Topic} [END:FAILED]");
                 }
                 Outcome = new PollOutcome() { ChosenOption = null };
                 return true;
