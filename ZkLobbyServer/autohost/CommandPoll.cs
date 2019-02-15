@@ -127,17 +127,16 @@ namespace ZkLobbyServer
                 //store results to DB
                 using (var db = new ZkDataContext())
                 {
+                    var outcome = new MapPollOutcome();
+                    db.MapPollOutcomes.InsertOnSubmit(outcome);
+                    db.SaveChanges();
                     var options = Options.Select((o, i) => new MapPollOption()
                     {
                         ResourceID = o.ResourceID,
-                        Votes = userVotes.Count(x => x.Value == i)
+                        Votes = userVotes.Count(x => x.Value == i),
+                        MapPollID = outcome.MapPollID
                     }).ToList();
                     db.MapPollOptions.InsertAllOnSubmit(options);
-                    db.SaveChanges();
-                    db.MapPollOutcomes.InsertOnSubmit(new MapPollOutcome()
-                    {
-                        MapPollOptions = options
-                    });
                     db.SaveChanges();
                 }
             }

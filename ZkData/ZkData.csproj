@@ -76,6 +76,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbCloner.cs" />
+    <Compile Include="Ef\MapPollOption.cs" />
+    <Compile Include="Ef\MapPollOutcomes.cs" />
     <Compile Include="Ef\AccountRelation.cs" />
     <Compile Include="Ef\Autohost.cs" />
     <Compile Include="Ef\DynamicConfig.cs" />
@@ -418,6 +420,10 @@
     <Compile Include="Migrations\201902132319178_RemoveRankFromAccountRating.cs" />
     <Compile Include="Migrations\201902132319178_RemoveRankFromAccountRating.Designer.cs">
       <DependentUpon>201902132319178_RemoveRankFromAccountRating.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902151050350_AddMapPolls.cs" />
+    <Compile Include="Migrations\201902151050350_AddMapPolls.Designer.cs">
+      <DependentUpon>201902151050350_AddMapPolls.cs</DependentUpon>
     </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
@@ -798,6 +804,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902132319178_RemoveRankFromAccountRating.resx">
       <DependentUpon>201902132319178_RemoveRankFromAccountRating.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902151050350_AddMapPolls.resx">
+      <DependentUpon>201902151050350_AddMapPolls.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
