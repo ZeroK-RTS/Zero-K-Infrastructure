@@ -59,12 +59,13 @@ namespace ZkLobbyServer
                     Id = i + 1,
                     Name = o.Name,
                     Votes = userVotes.Count(x => x.Value == i),
-                    URL = o.URL
+                    Url = o.URL
                 }).ToList(),
                 Topic = Topic,
                 VotesToWin = winCount,
                 YesNoVote = yesNoVote,
-                MapSelection = mapSelection
+                MapSelection = mapSelection,
+                Url = yesNoVote ? Options[0].URL : null
             };
         }
 
@@ -113,15 +114,23 @@ namespace ZkLobbyServer
             return false;
         }
 
-        public async Task PublishResult()
+        public BattlePollOutcome GetBattlePollOutcome()
         {
-            await battle.server.Broadcast(battle.Users.Keys, new BattlePollOutcome
+            var msg = new BattlePollOutcome
             {
                 Topic = Topic,
                 MapSelection = mapSelection,
                 YesNoVote = yesNoVote,
-                WinningOption = GetBattlePoll().Options.FirstOrDefault(x => x.Name == Outcome?.ChosenOption?.Name)
-            });
+                WinningOption = GetBattlePoll().Options.FirstOrDefault(x => x.Name == Outcome?.ChosenOption?.Name),
+            };
+            msg.Success = yesNoVote ? msg.WinningOption?.Id == 1 : msg.WinningOption != null;
+            msg.Message = yesNoVote ? (msg.Success ? $"Vote passed: {Topic}" : $"Vote failed: {Topic}") : (msg.Success ? $"Vote passed: Selected {msg.WinningOption.Name}." : "Vote failed: No absolute majority achieved.");
+            return msg;
+        }
+
+        public async Task PublishResult()
+        {
+            await battle.server.Broadcast(battle.Users.Keys, GetBattlePollOutcome());
             if (mapSelection && !yesNoVote)
             {
                 //store results to DB

@@ -590,13 +590,6 @@ namespace ZkLobbyServer
                 if (ActivePoll != null) await ActivePoll.End();
                 if (pollTimer != null) pollTimer.Enabled = false;
                 ActivePoll = null;
-                await server.Broadcast(Users.Keys, new BattlePoll()
-                {
-                    Options = null,
-                    Topic = null,
-                    VotesToWin = -1,
-                    YesNoVote = true
-                });
                 await oldPoll?.PublishResult();
             }
             catch (Exception ex)
