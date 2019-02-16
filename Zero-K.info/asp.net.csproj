@@ -1589,6 +1589,9 @@
     <Content Include="Views\PlanetwarsAdmin\PlanetwarsAdminIndex.cshtml" />
     <Content Include="Views\Admin\DynamicConfigDetail.cshtml" />
     <Content Include="Views\Ladders\LaddersFull.cshtml" />
+    <Content Include="Views\Ladders\LaddersMaps.cshtml">
+      <BrowseToURL>~/Ladders/LaddersMaps</BrowseToURL>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

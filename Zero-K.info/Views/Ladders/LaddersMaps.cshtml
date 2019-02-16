@@ -1,0 +1,43 @@
+﻿@using ZeroKWeb
+@using ZeroKWeb.Controllers
+@using ZkData
+@using Ratings
+@using PlasmaShared
+@model LaddersController.LaddersMapsModel
+@{
+    Page.Title = "Map ladders";
+
+    var grid = new UniGrid<MapRatings.Rating>(Model.Data, "Ladders");
+
+    grid.AddCol("Rank", x => string.Format("{0}.",x.Rank + 1));
+    grid.AddCol("Map", x => Html.PrintMap(x.Map.InternalName));
+    grid.AddCol("Rating", x => string.Format("{0} ± {1}", Math.Round(x.Elo), Math.Round(x.EloStdev, 1)));
+
+    grid.PageSize = 50;
+}
+
+
+<div id="userIndex">
+    <h1>Detailed Zero-K Ladders</h1> <br />
+
+    @using (Ajax.BeginForm("Maps", "Ladders", Global.GetAjaxOptions("userIndex")))
+    {
+    <table>
+        <tr>
+            <td>Name:</td>
+            <td>@Html.TextBoxFor(x => x.Name, new { data_autocomplete = Url.Action("Maps", "Autocomplete") })</td>
+        </tr>
+        <tr>
+            <td>Author:</td>
+            <td>@Html.TextBoxFor(x => x.Author)</td>
+        </tr>
+        <tr>
+            <td>Size:</td>
+            <td>@Html.TextBoxFor(x => x.SizeFrom) - @Html.TextBoxFor(x => x.SizeTo)</td>
+        </tr>
+    </table>
+        <input type="submit" value="Show" />
+
+        @GridHelpers.RenderTable(grid)
+    }
+</div>

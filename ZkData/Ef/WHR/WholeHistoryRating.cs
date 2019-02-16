@@ -22,7 +22,7 @@ namespace Ratings
     public class WholeHistoryRating : IRatingSystem
     {
 
-        const float RatingOffset = 1500;
+        public const float RatingOffset = 1500;
         public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, GlobalConst.NaturalRatingVariancePerDay(0), 0, 0);
 
         IDictionary<ITopPlayersUpdateListener, int> topPlayersUpdateListeners = new Dictionary<ITopPlayersUpdateListener, int>();
@@ -322,7 +322,7 @@ namespace Ratings
                     {
                         Trace.TraceInformation("Updating WHR " + category + " ratings for last Battle: " + latestBattle.SpringBattleID);
                         IEnumerable<Player> players = latestBattle.SpringBattlePlayers.Where(p => !p.IsSpectator).Select(p => getPlayerById(RatingSystems.GetRatingId(p.AccountID)));
-                        players.ForEach(p => p.RunOneNewtonIteration());
+                        players.ForEach(p => p.RunOneNewtonIteration(true));
                         UpdateRankings(players);
                     });
                 }
@@ -649,10 +649,11 @@ namespace Ratings
 
         private void runIterations(int count)
         {
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < count - 1; i++)
             {
-                runSingleIteration();
+                players.Values.ForEach(x => x.RunOneNewtonIteration(false));
             }
+            players.Values.ForEach(x => x.RunOneNewtonIteration(true));
         }
 
         private void printStats()
@@ -680,14 +681,6 @@ namespace Ratings
             Trace.TraceInformation("Average eloin " + (sum / total));
             Trace.TraceInformation("Amount > 0in " + bigger);
             Trace.TraceInformation("Amount < 0in " + (total - bigger));
-        }
-
-        private void runSingleIteration()
-        {
-            foreach (Player p in players.Values)
-            {
-                p.RunOneNewtonIteration();
-            }
         }
     }
 
