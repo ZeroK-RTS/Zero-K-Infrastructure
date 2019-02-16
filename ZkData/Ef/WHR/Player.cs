@@ -196,7 +196,7 @@ namespace Ratings
             int n = days.Count;
 
             //a, b, d are taken directly from the update step
-            if (hessianLU_lowerSubdiagonal.Count != n)
+            if (hessianLU_lowerSubdiagonal.Count != n || n == 1)
             {
                 UpdateSigma2();
                 UpdateHessian();
