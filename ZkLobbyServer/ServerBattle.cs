@@ -918,12 +918,12 @@ namespace ZkLobbyServer
                 {
                     for (int i = 0; i < NumberOfMapChoices; i++)
                     {
-                        Resource map;
+                        Resource map = null;
                         if (i < NumberOfMapChoices / 2)
                         {
                             map = MapPicker.GetRecommendedMap(GetContext(), MinimalMapSupportLevel, MapRatings.GetMapRanking().TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).Where(x => !pickedMaps.Contains(x.ResourceID)).AsQueryable()); //choose at least 50% popular maps
                         }
-                        else
+                        if (map == null)
                         {
                             map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Featured) ? MapSupportLevel.Supported : MinimalMapSupportLevel, db.Resources.Where(x => !pickedMaps.Contains(x.ResourceID)));
                         }

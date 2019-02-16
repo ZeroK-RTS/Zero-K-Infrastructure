@@ -126,7 +126,6 @@ namespace ZeroKWeb.SpringieInterface
                 }
                 if (list != null)
                 {
-                    if (!list.Any() && candidates != null) list = candidates.ToList();
                     var r = new Random();
                     if (list.Count > 0)
                     {
