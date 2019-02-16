@@ -24,7 +24,6 @@ namespace ZkLobbyServer
     public class ServerBattle : Battle
     {
         public const int PollTimeout = 60;
-        public const int DiscussionTime = 25;
         public const int MapVoteTime = 25;
         public const int NumberOfMapChoices = 4;
         public const int MinimumAutostartPlayers = 6;
@@ -36,6 +35,8 @@ namespace ZkLobbyServer
         private static object pickPortLock = new object();
         private static string hostingIp;
 
+
+        public int DiscussionTime = 25;
         public readonly List<string> toNotify = new List<string>();
         public Resource HostedMap;
 
@@ -877,6 +878,11 @@ namespace ZkLobbyServer
                 var teamsQueues = server.MatchMaker.PossibleQueues.Where(x => x.Mode == AutohostMode.Teams).ToList();
                 var availableUsers = Users.Values.Where(x => !x.LobbyUser.IsAway).Select(x => server.ConnectedUsers[x.Name]).ToList();
                 await server.MatchMaker.MassJoin(availableUsers, teamsQueues);
+                DiscussionTime = MatchMaker.TimerSeconds + 2;
+            }
+            else
+            {
+                DiscussionTime = 5;
             }
 
 
