@@ -907,37 +907,49 @@ namespace ZkLobbyServer
 
         private void discussionTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            discussionTimer.Stop();
-            var poll = new CommandPoll(this, false, false, true);
-            poll.PollEnded += MapVoteEnded;
-            var options = new List<PollOption>();
-            for (int i = 0; i < NumberOfMapChoices; i++)
+            try
             {
-                Resource map;
-                if (i < NumberOfMapChoices / 2)
+                discussionTimer.Stop();
+                var poll = new CommandPoll(this, false, false, true);
+                poll.PollEnded += MapVoteEnded;
+                var options = new List<PollOption>();
+                List<int> pickedMaps = new List<int>();
+                using (var db = new ZkDataContext())
                 {
-                    map = MapPicker.GetRecommendedMap(GetContext(), MinimalMapSupportLevel, MapRatings.GetMapRanking().TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).AsQueryable()); //choose at least 50% popular maps
-                }
-                else
-                {
-                    map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Featured) ? MapSupportLevel.Supported : MinimalMapSupportLevel);
-                }
-                options.Add(new PollOption()
-                {
-                    Name = map.InternalName,
-                    URL = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{map.ResourceID}",
-                    ResourceID = map.ResourceID,
-                    Action = async () =>
+                    for (int i = 0; i < NumberOfMapChoices; i++)
                     {
-                        var cmd = new CmdMap().Create();
-                        cmd.Arm(this, null, map.ResourceID.ToString());
-                        if (cmd.Access == BattleCommand.AccessType.NotIngame && spring.IsRunning) return;
-                        if (cmd.Access == BattleCommand.AccessType.Ingame && !spring.IsRunning) return;
-                        await cmd.ExecuteArmed(this, null);
+                        Resource map;
+                        if (i < NumberOfMapChoices / 2)
+                        {
+                            map = MapPicker.GetRecommendedMap(GetContext(), MinimalMapSupportLevel, MapRatings.GetMapRanking().TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).Where(x => !pickedMaps.Contains(x.ResourceID)).AsQueryable()); //choose at least 50% popular maps
+                        }
+                        else
+                        {
+                            map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Featured) ? MapSupportLevel.Supported : MinimalMapSupportLevel, db.Resources.Where(x => !pickedMaps.Contains(x.ResourceID)));
+                        }
+                        pickedMaps.Add(map.ResourceID);
+                        options.Add(new PollOption()
+                        {
+                            Name = map.InternalName,
+                            URL = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{map.ResourceID}",
+                            ResourceID = map.ResourceID,
+                            Action = async () =>
+                            {
+                                var cmd = new CmdMap().Create();
+                                cmd.Arm(this, null, map.ResourceID.ToString());
+                                if (cmd.Access == BattleCommand.AccessType.NotIngame && spring.IsRunning) return;
+                                if (cmd.Access == BattleCommand.AccessType.Ingame && !spring.IsRunning) return;
+                                await cmd.ExecuteArmed(this, null);
+                            }
+                        });
                     }
-                });
+                }
+                StartVote(new CmdMap().GetIneligibilityReasonFunc(this), options, null, "Choose the next map", poll, MapVoteTime);
             }
-            StartVote(new CmdMap().GetIneligibilityReasonFunc(this), options, null, "Choose the next map", poll, MapVoteTime);
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error creating map poll: " + ex);
+            }
         }
 
         private void MapVoteEnded(object sender, PollOutcome e)
