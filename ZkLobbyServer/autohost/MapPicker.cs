@@ -42,7 +42,8 @@ namespace ZeroKWeb.SpringieInterface
                 var level = context.IsMatchMakerGame ? MapSupportLevel.MatchMaker : minimumSupportLevel;
 
 
-                switch (mode) {
+                switch (mode)
+                {
                     case AutohostMode.GameChickens:
                         if (!context.Bots.Any(b => b.IsChicken)) mode = AutohostMode.Teams;
                         break;
@@ -65,15 +66,15 @@ namespace ZeroKWeb.SpringieInterface
 
                         ret = ret.Where(
                                 x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIsTeams != false && x.MapIsSpecial != true);
-                        if (humanPlayers > 11) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16);
+                        if (humanPlayers > 11) ret = ret.Where(x => x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth > 16 * 16);
                         else if (humanPlayers > 8)
                             ret =
                                 ret.Where(
                                     x =>
-                                        x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16 &&
-                                        x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 24*24);
-                        else if (humanPlayers > 5) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 24*24 || x.MapIs1v1 == true);
-                        else ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth <= 16*16 || x.MapIs1v1 == true);
+                                        x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth > 16 * 16 &&
+                                        x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth <= 24 * 24);
+                        else if (humanPlayers > 5) ret = ret.Where(x => x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth <= 24 * 24 || x.MapIs1v1 == true);
+                        else ret = ret.Where(x => x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth <= 16 * 16 || x.MapIs1v1 == true);
                         list = ret.ToList();
 
                         break;
@@ -83,7 +84,14 @@ namespace ZeroKWeb.SpringieInterface
                                 x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIs1v1 == true && x.MapIsSpecial != true).ToList();
                         break;
                     case AutohostMode.GameChickens:
-                        if (UseNormalMapForChickens)
+                        if (!UseNormalMapForChickens)
+                        {
+                            ret =
+                            ret.Where(
+                                x =>
+                                    x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIsSpecial != true && x.MapIsChickens == true);
+                        }
+                        if (!ret.Any() || UseNormalMapForChickens)
                         {
                             ret = ret.Where(
                                 x =>
@@ -98,14 +106,8 @@ namespace ZeroKWeb.SpringieInterface
                                             x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth <= 24 * 24);
                             else if (humanPlayers > 2) ret = ret.Where(x => x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth <= 24 * 24 || x.MapIs1v1 == true);
                             else ret = ret.Where(x => x.MapHeight * x.MapHeight + x.MapWidth * x.MapWidth <= 16 * 16 || x.MapIs1v1 == true);
-                        }else
-                        {
-                            ret =
-                            ret.Where(
-                                x =>
-                                    x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIsSpecial != true && x.MapIsChickens == true);
                         }
-                        
+
                         list = ret.ToList();
 
                         break;
@@ -118,9 +120,9 @@ namespace ZeroKWeb.SpringieInterface
                             list =
                                 ret.Where(
                                     x =>
-                                        x.TypeID == ResourceType.Map && x.MapSupportLevel>=level && x.MapIsFfa == true &&
-                                        (humanPlayers%x.MapFFAMaxTeams == 0)).ToList();
-                        if (!list.Any()) list = ret.Where(x => x.TypeID == ResourceType.Map && x.MapSupportLevel>=level && x.MapIsFfa == true).ToList();
+                                        x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIsFfa == true &&
+                                        (humanPlayers % x.MapFFAMaxTeams == 0)).ToList();
+                        if (!list.Any()) list = ret.Where(x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIsFfa == true).ToList();
 
                         break;
                 }
@@ -145,10 +147,10 @@ namespace ZeroKWeb.SpringieInterface
         public static IQueryable<Resource> FindResources(ResourceType type, string term, MapSupportLevel minimumSupportLevel = MapSupportLevel.None, bool ignoreExactMatches = false)
         {
             var db = new ZkDataContext();
-            
+
             var ret = db.Resources.AsQueryable();
             ret = ret.Where(x => x.TypeID == type && x.MapSupportLevel >= minimumSupportLevel);
-            
+
             var test = ret.Where(x => x.RapidTag == term || x.InternalName == term);
             if (test.Any() && !ignoreExactMatches) return test.OrderByDescending(x => x.MapSupportLevel).ThenByDescending(x => x.ResourceID);
 
@@ -164,7 +166,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
             }
 
-            return ret.OrderByDescending(x => x.MapSupportLevel).ThenByDescending(x=>x.InternalName == term || x.RapidTag == term).ThenByDescending(x=>x.ResourceID);
+            return ret.OrderByDescending(x => x.MapSupportLevel).ThenByDescending(x => x.InternalName == term || x.RapidTag == term).ThenByDescending(x => x.ResourceID);
         }
     }
 }
