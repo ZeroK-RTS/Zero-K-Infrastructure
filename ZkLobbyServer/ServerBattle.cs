@@ -908,9 +908,9 @@ namespace ZkLobbyServer
             for (int i = 0; i < NumberOfMapChoices; i++)
             {
                 Resource map;
-                if (i < NumberOfMapChoices / 2 && MinimalMapSupportLevel < MapSupportLevel.Featured)
+                if (i < NumberOfMapChoices / 2)
                 {
-                    map = MapPicker.GetRecommendedMap(GetContext(), MapSupportLevel.Featured); //choose at least 50% featured maps
+                    map = MapPicker.GetRecommendedMap(GetContext(), MinimalMapSupportLevel, MapRatings.GetMapRanking().TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).AsQueryable()); //choose at least 50% popular maps
                 }
                 else
                 {

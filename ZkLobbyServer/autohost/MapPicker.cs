@@ -29,7 +29,7 @@ namespace ZeroKWeb.SpringieInterface
         ///         a multiple of player count
         ///     </para>
         /// </remarks>
-        public static Resource GetRecommendedMap(LobbyHostingContext context, MapSupportLevel minimumSupportLevel = MapSupportLevel.Featured)
+        public static Resource GetRecommendedMap(LobbyHostingContext context, MapSupportLevel minimumSupportLevel = MapSupportLevel.Featured, IQueryable<Resource> candidates = null)
         {
             var mode = context.Mode;
             using (var db = new ZkDataContext())
@@ -57,12 +57,13 @@ namespace ZeroKWeb.SpringieInterface
                         if (humanPlayers == 2 && botPlayers == 0 && allyteams == 2) mode = AutohostMode.Game1v1;
                         break;
                 }
+                var ret = candidates ?? db.Resources.AsQueryable();
                 switch (mode)
                 {
                     case AutohostMode.Teams:
                     case AutohostMode.None:
-                        var ret =
-                            db.Resources.Where(
+
+                        ret = ret.Where(
                                 x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIsTeams != false && x.MapIsSpecial != true);
                         if (humanPlayers > 11) ret = ret.Where(x => x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth > 16*16);
                         else if (humanPlayers > 8)
@@ -78,14 +79,13 @@ namespace ZeroKWeb.SpringieInterface
                         break;
                     case AutohostMode.Game1v1:
                         list =
-                            db.Resources.Where(
+                            ret.Where(
                                 x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIs1v1 == true && x.MapIsSpecial != true).ToList();
                         break;
                     case AutohostMode.GameChickens:
                         if (UseNormalMapForChickens)
                         {
-                            ret =
-                            db.Resources.Where(
+                            ret = ret.Where(
                                 x =>
                                     x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIsSpecial != true &&
                                     (x.MapWaterLevel == 1));
@@ -101,7 +101,7 @@ namespace ZeroKWeb.SpringieInterface
                         }else
                         {
                             ret =
-                            db.Resources.Where(
+                            ret.Where(
                                 x =>
                                     x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIsSpecial != true && x.MapIsChickens == true);
                         }
@@ -111,21 +111,22 @@ namespace ZeroKWeb.SpringieInterface
                         break;
                     case AutohostMode.GameFFA:
                         list =
-                            db.Resources.Where(
+                            ret.Where(
                                 x => x.TypeID == ResourceType.Map && x.MapSupportLevel >= level && x.MapIsFfa == true && x.MapFFAMaxTeams == allyteams)
                                 .ToList();
                         if (!list.Any())
                             list =
-                                db.Resources.Where(
+                                ret.Where(
                                     x =>
                                         x.TypeID == ResourceType.Map && x.MapSupportLevel>=level && x.MapIsFfa == true &&
                                         (humanPlayers%x.MapFFAMaxTeams == 0)).ToList();
-                        if (!list.Any()) list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.MapSupportLevel>=level && x.MapIsFfa == true).ToList();
+                        if (!list.Any()) list = ret.Where(x => x.TypeID == ResourceType.Map && x.MapSupportLevel>=level && x.MapIsFfa == true).ToList();
 
                         break;
                 }
                 if (list != null)
                 {
+                    if (!list.Any() && candidates != null) list = candidates.ToList();
                     var r = new Random();
                     if (list.Count > 0)
                     {
