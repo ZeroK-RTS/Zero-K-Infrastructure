@@ -82,9 +82,10 @@ namespace Ratings
                     var ranks = new List<Rating>();
                     for (int i = 0; i < newRanking.Count; i++)
                     {
-                        var rating = new Rating(newRanking[i].GetElo() + WholeHistoryRating.RatingOffset, newRanking[i].GetEloStdev(), db.Resources.FirstOrDefault(r => r.ResourceID == newRanking[i].player.id), i, i / (float)newRanking.Count);
+                        int id = newRanking[i].player.id;
+                        var rating = new Rating(newRanking[i].GetElo() + WholeHistoryRating.RatingOffset, newRanking[i].GetEloStdev(), db.Resources.FirstOrDefault(r => r.ResourceID == id), i, i / (float)newRanking.Count);
                         ranks.Add(rating);
-                        mapRatings[newRanking[i].player.id] = rating;
+                        mapRatings[id] = rating;
                     }
                     mapRanking = ranks;
                 }
