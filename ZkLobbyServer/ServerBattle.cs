@@ -870,13 +870,13 @@ namespace ZkLobbyServer
 
             toNotify.Clear();
 
-            var playingEligibleUsers = server.MatchMaker.GetEligibleQuickJoinPlayers(Users.Values.Where(x => !x.LobbyUser.IsAway && !x.IsSpectator).Select(x => server.ConnectedUsers[x.Name]).ToList());
+            var playingEligibleUsers = server.MatchMaker.GetEligibleQuickJoinPlayers(Users.Values.Where(x => !x.LobbyUser.IsAway && !x.IsSpectator && x.Name != null).Select(x => server.ConnectedUsers[x.Name]).ToList());
             if (playingEligibleUsers.Count() >= InviteMMPlayers)
             { //Make sure there are enough eligible users for a battle to be likely to happen
 
                 //put all users into MM queue to suggest battles
                 var teamsQueues = server.MatchMaker.PossibleQueues.Where(x => x.Mode == AutohostMode.Teams).ToList();
-                var availableUsers = Users.Values.Where(x => !x.LobbyUser.IsAway).Select(x => server.ConnectedUsers[x.Name]).ToList();
+                var availableUsers = Users.Values.Where(x => !x.LobbyUser.IsAway && x.Name != null).Select(x => server.ConnectedUsers[x.Name]).ToList();
                 await server.MatchMaker.MassJoin(availableUsers, teamsQueues);
                 DiscussionTime = MatchMaker.TimerSeconds + 2;
             }
