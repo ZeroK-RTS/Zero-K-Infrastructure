@@ -45,12 +45,5 @@ namespace ZkLobbyServer
 
             await battle.SayBattle($"forcing {target ?? "AFK"} to spectator");
         }
-
-        public override RunPermission GetRunPermissions(ServerBattle battle, string userName, out string reason)
-        {
-            var ret = base.GetRunPermissions(battle, userName, out reason);
-            if (target == null && ret >= RunPermission.Vote) return RunPermission.Run;
-            return ret;
-        }
     }
 }
