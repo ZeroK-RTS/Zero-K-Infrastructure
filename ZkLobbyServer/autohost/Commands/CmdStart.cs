@@ -23,7 +23,6 @@ namespace ZkLobbyServer
 
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
-            await battle.RunCommandDirectly<CmdSpec>(null);
             await battle.StartGame();
 
         }
