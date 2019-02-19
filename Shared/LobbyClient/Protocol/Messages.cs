@@ -843,6 +843,8 @@ namespace LobbyClient
         public int VotesToWin { get; set; } //If any single option receives this many votes, it will win instantly. -1 if there is no poll
         public bool YesNoVote { get; set; } //Is this a vote with two options, yes and no
         public bool MapSelection { get; set; } //Is this a vote with map options?
+        public bool NotifyPoll { get; set; } //true if users should be notified for this poll (e.g. !start)
+        public string MapName { get; set; } //MapName if yesno map poll, otherwise null
     }
 
     [Message(Origin.Server)]

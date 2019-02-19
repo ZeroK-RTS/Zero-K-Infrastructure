@@ -18,6 +18,8 @@ namespace ZkLobbyServer
         private readonly bool absoluteMajorityVote; //if set to yes, at least N/2 players need to vote for an option to be selected. Otherwise the option with the majority of votes wins
         private bool yesNoVote; //if set to yes, there must be only two options being yes and no.
         private bool mapSelection; //if set to yes, options have an url and represent map resources
+        private bool ring;
+        private string mapName;
 
         public bool Ended { get; private set; } = false;
         public string Topic { get; private set; }
@@ -27,12 +29,14 @@ namespace ZkLobbyServer
 
         public event EventHandler<PollOutcome> PollEnded = (sender, outcome) => { };
 
-        public CommandPoll(ServerBattle battle, bool yesNoVote, bool absoluteMajorityVote = true, bool mapSelection = false)
+        public CommandPoll(ServerBattle battle, bool yesNoVote, bool absoluteMajorityVote = true, bool mapSelection = false, string mapName = null, bool ring = false)
         {
             this.battle = battle;
             this.absoluteMajorityVote = absoluteMajorityVote;
             this.yesNoVote = yesNoVote;
             this.mapSelection = mapSelection;
+            this.mapName = mapName;
+            this.ring = ring;
         }
 
         public async Task Setup(Func<string, string> eligibilitySelector, List<PollOption> options, Say creator, string Topic)
@@ -65,7 +69,9 @@ namespace ZkLobbyServer
                 VotesToWin = winCount,
                 YesNoVote = yesNoVote,
                 MapSelection = mapSelection,
-                Url = yesNoVote ? Options[0].URL : ""
+                Url = yesNoVote ? Options[0].URL : "",
+                MapName = mapName,
+                NotifyPoll = ring
             };
         }
 

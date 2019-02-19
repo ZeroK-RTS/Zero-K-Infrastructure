@@ -56,11 +56,11 @@ namespace ZkLobbyServer
 
             if (Map.MapSupportLevel >= MapSupportLevel.Supported)
             {
-                return $"Change map to {Map.InternalName} {GlobalConst.BaseSiteUrl}/Maps/Detail/{Map.ResourceID} ?";
+                return $"Change map to {Map.InternalName}?";
             }
             else
             {
-                return $"Change to UNSUPPORTED map {Map.InternalName} {GlobalConst.BaseSiteUrl}/Maps/Detail/{Map.ResourceID} ?";
+                return $"Change to UNSUPPORTED map {Map.InternalName}?";
             }
         }
 
@@ -70,7 +70,7 @@ namespace ZkLobbyServer
             if (Map != null)
             {
                 await battle.SwitchMap(Map.InternalName);
-                await battle.SayBattle("changing map to " + Map.InternalName);
+                await battle.SayBattle("Changing map to " + Map.InternalName);
                 if (Map.MapSupportLevel < MapSupportLevel.Supported) await battle.SayBattle($"This map is not officially supported!");
                 if (alternativeMap != null) await battle.SayBattle($"Did you mean {alternativeMap.InternalName} {GlobalConst.BaseSiteUrl}/Maps/Detail/{alternativeMap.ResourceID}?");
             }

@@ -537,11 +537,13 @@ namespace ZkLobbyServer
             var options = new List<PollOption>();
 
             string url = null;
+            string map = null;
             if (cmd is CmdMap)
             {
                 url = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{(cmd as CmdMap).Map.ResourceID}";
+                map = (cmd as CmdMap).Map.InternalName;
             }
-            poll = poll ?? new CommandPoll(this, true, true, cmd is CmdMap);
+            poll = poll ?? new CommandPoll(this, true, true, cmd is CmdMap, map, cmd is CmdStart);
             options.Add(new PollOption()
             {
                 Name = "Yes",

@@ -17,8 +17,8 @@ namespace ZkLobbyServer
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
             pwd=arguments;
-            if (string.IsNullOrEmpty(pwd)) return "remove password?";
-            return $"change password to {pwd} ?";
+            if (string.IsNullOrEmpty(pwd)) return "Remove password?";
+            return $"Change password to {pwd} ?";
         }
 
 

@@ -35,7 +35,7 @@ namespace ZkLobbyServer
                 battle.Respond(e, "Only players can invoke this during a game");
                 return null;
             }
-            return $"do you want to kick {target}?";
+            return $"Do you want to kick {target}?";
         }
 
 

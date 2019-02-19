@@ -14,7 +14,7 @@ namespace ZkLobbyServer
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            return $"do you want to spectate AFK?";
+            return $"Do you want to spectate AFK?";
         }
 
         public override BattleCommand Create() => new CmdSpecAfk();
