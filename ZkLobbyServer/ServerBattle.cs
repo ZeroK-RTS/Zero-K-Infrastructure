@@ -898,7 +898,7 @@ namespace ZkLobbyServer
                 else
                 {
                     //Initiate discussion time, then map vote, then start vote
-                    discussionTimer.Interval = (DiscussionTime + 1) * 1000;
+                    discussionTimer.Interval = (DiscussionTime - 1) * 1000;
                     discussionTimer.Start();
                 }
             }
