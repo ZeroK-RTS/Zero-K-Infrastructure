@@ -834,7 +834,7 @@ namespace LobbyClient
             public string Name { get; set; }
             public int Id { get; set; }
             public int Votes { get; set; }
-            public string Url { get; set; } //Null if not applicable
+            public string Url { get; set; } //Empty if not applicable
         }
         
         public string Topic { get; set; } //Null if there is no poll

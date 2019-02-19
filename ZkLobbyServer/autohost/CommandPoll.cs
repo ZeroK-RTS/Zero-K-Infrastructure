@@ -65,7 +65,7 @@ namespace ZkLobbyServer
                 VotesToWin = winCount,
                 YesNoVote = yesNoVote,
                 MapSelection = mapSelection,
-                Url = yesNoVote ? Options[0].URL : null
+                Url = yesNoVote ? Options[0].URL : ""
             };
         }
 
@@ -186,7 +186,7 @@ namespace ZkLobbyServer
     {
         public string Name;
         public Func<Task> Action;
-        public string URL;
+        public string URL = "";
         public int ResourceID;
     }
 
