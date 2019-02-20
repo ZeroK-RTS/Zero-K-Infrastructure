@@ -280,7 +280,7 @@ namespace ZkLobbyServer
                 PlayerEntry entry;
                 if (players.TryGetValue(users[i].Name, out entry)) entry.SetQuickPlay();
             }
-            await server.UserLogSay($"{users.Count} players have been added to the {wantedQueues.Select(q => q.Name).Aggregate("", (x, y) => x + ", " + y)} queue via Quickplay: {users.Select(q => q.Name).Aggregate("", (x, y) => x + ", " + y)}.");
+            await server.UserLogSay($"{users.Count} players have been added to the {wantedQueues.Select(q => q.Name).StringJoin()} queue via Quickplay: {users.Select(q => q.Name).StringJoin()}.");
 
             // if nobody is invited, we can do tick now to speed up things
             if (invitationBattles?.Any() != true) OnTick();
@@ -366,7 +366,7 @@ namespace ZkLobbyServer
             //if many people are joined simultaneously, wait until join is completed before sending updates or trying to create battles.
             if (massJoin) return;
 
-            await server.UserLogSay($"{user.Name} has joined the following queues: {wantedQueues.Select(q => q.Name).Aggregate("", (x, y) => x + ", " + y)}.");
+            await server.UserLogSay($"{user.Name} has joined the following queues: {wantedQueues.Select(q => q.Name).StringJoin()}.");
 
             // if nobody is invited, we can do tick now to speed up things
             if (invitationBattles?.Any() != true) OnTick();
@@ -532,8 +532,8 @@ namespace ZkLobbyServer
 
             if (toInvite.Count > 0)
             {
-                server.UserLogSay($"{normalInvites.Count} players have been sent pop-up MM invites: {normalInvites.Aggregate("", (x, y) => x + ", " + y)}.");
-                server.UserLogSay($"{quickPlayInvites.Count} players have been sent quickplay MM invites: {quickPlayInvites.Aggregate("", (x, y) => x + ", " + y)}.");
+                server.UserLogSay($"{normalInvites.Count} players have been sent pop-up MM invites: {normalInvites.StringJoin()}.");
+                server.UserLogSay($"{quickPlayInvites.Count} players have been sent quickplay MM invites: {quickPlayInvites.StringJoin()}.");
             }
         }
 
@@ -571,10 +571,10 @@ namespace ZkLobbyServer
             }
             if (lastMatchedUsers.Count > 0)
             {
-                server.UserLogSay($"{nonAccepts.Where(x => !x.QuickPlay).Count()} players have ignored their pop-up MM invites: {nonAccepts.Where(x => !x.QuickPlay).Select(x => x.Name).Aggregate("", (x, y) => x + ", " + y)}.");
-                server.UserLogSay($"{nonAccepts.Where(x => x.QuickPlay).Count()} players have ignored their quickplay MM invites: {nonAccepts.Where(x => x.QuickPlay).Select(x => x.Name).Aggregate("", (x, y) => x + ", " + y)}.");
-                server.UserLogSay($"{readyAndFailed.Where(x => !x.QuickPlay).Count()} players have accepted their pop-up MM invites with no match: {readyAndFailed.Where(x => !x.QuickPlay).Select(x => x.Name).Aggregate("", (x, y) => x + ", " + y)}.");
-                server.UserLogSay($"{readyAndFailed.Where(x => x.QuickPlay).Count()} players have accepted their quickplay MM invites with no match: {readyAndFailed.Where(x => x.QuickPlay).Select(x => x.Name).Aggregate("", (x, y) => x + ", " + y)}.");
+                server.UserLogSay($"{nonAccepts.Where(x => !x.QuickPlay).Count()} players have ignored their pop-up MM invites: {nonAccepts.Where(x => !x.QuickPlay).Select(x => x.Name).StringJoin()}.");
+                server.UserLogSay($"{nonAccepts.Where(x => x.QuickPlay).Count()} players have ignored their quickplay MM invites: {nonAccepts.Where(x => x.QuickPlay).Select(x => x.Name).StringJoin()}.");
+                server.UserLogSay($"{readyAndFailed.Where(x => !x.QuickPlay).Count()} players have accepted their pop-up MM invites with no match: {readyAndFailed.Where(x => !x.QuickPlay).Select(x => x.Name).StringJoin()}.");
+                server.UserLogSay($"{readyAndFailed.Where(x => x.QuickPlay).Count()} players have accepted their quickplay MM invites with no match: {readyAndFailed.Where(x => x.QuickPlay).Select(x => x.Name).StringJoin()}.");
             }
 
             return realBattles;
@@ -597,7 +597,7 @@ namespace ZkLobbyServer
 
         private async Task StartBattle(ProposedBattle bat)
         {
-            await server.UserLogSay($"Match starting with players: {bat.Players.Select(x => x.Name).Aggregate("", (x, y) => x + ", " + y)}.");
+            await server.UserLogSay($"Match starting with players: {bat.Players.Select(x => x.Name).StringJoin()}.");
             var battle = new MatchMakerBattle(server, bat, PickMap(bat.QueueType));
             await server.AddBattle(battle);
 
