@@ -155,9 +155,25 @@ namespace ZkLobbyServer
                     if (response.Ready)
                     {
                         entry.LastReadyResponse = true;
+                        if (entry.QuickPlay)
+                        {
+                            await server.UserLogSay($"{user.Name} accepted his quickplay MM invitation");
+                        }
+                        else
+                        {
+                            await server.UserLogSay($"{user.Name} accepted his pop-up MM invitation");
+                        }
                     }
                     else
                     {
+                        if (entry.QuickPlay)
+                        {
+                            await server.UserLogSay($"{user.Name} rejected his quickplay MM invitation");
+                        }
+                        else
+                        {
+                            await server.UserLogSay($"{user.Name} rejected his pop-up MM invitation");
+                        }
                         lastTimePlayerDeniedMatch[entry.Name] = DateTime.UtcNow; //store that this player is probably not interested in suggestive MM games
                         entry.LastReadyResponse = false;
                         await RemoveUser(user.Name, true);
@@ -167,6 +183,7 @@ namespace ZkLobbyServer
 
                     if (invitedPeople.Count <= 1)
                     {
+                        await server.UserLogSay($"Aborting MM invitations because only {invitedPeople.Count} invitations outstanding.");
                         foreach (var p in invitedPeople) p.LastReadyResponse = true;
                         // if we are doing tick because too few people, make sure we count remaining people as readied to not ban them 
                         OnTick();
@@ -263,6 +280,7 @@ namespace ZkLobbyServer
                 PlayerEntry entry;
                 if (players.TryGetValue(users[i].Name, out entry)) entry.SetQuickPlay();
             }
+            await server.UserLogSay($"{users.Count} players have been added to the {wantedQueues.Select(q => q.Name).Aggregate("", (x, y) => x + ", " + y)} queue via Quickplay: {users.Select(q => q.Name).Aggregate("", (x, y) => x + ", " + y)}.");
 
             // if nobody is invited, we can do tick now to speed up things
             if (invitationBattles?.Any() != true) OnTick();
@@ -315,6 +333,8 @@ namespace ZkLobbyServer
             if (wantedQueues.Count == 0) // delete
             {
                 await RemoveUser(user.Name, true);
+
+                await server.UserLogSay($"{user.Name} has left the matchmaker.");
                 return;
             }
 
@@ -345,6 +365,8 @@ namespace ZkLobbyServer
 
             //if many people are joined simultaneously, wait until join is completed before sending updates or trying to create battles.
             if (massJoin) return;
+
+            await server.UserLogSay($"{user.Name} has joined the following queues: {wantedQueues.Select(q => q.Name).Aggregate("", (x, y) => x + ", " + y)}.");
 
             // if nobody is invited, we can do tick now to speed up things
             if (invitationBattles?.Any() != true) OnTick();
@@ -448,6 +470,8 @@ namespace ZkLobbyServer
             banEntry.BannedTime = DateTime.UtcNow;
             banEntry.BanCounter++;
             banEntry.BanSeconds = Math.Min(BanSecondsMax, BanSecondsIncrease * banEntry.BanCounter);
+
+            server.UserLogSay($"{name} has been banned for {banEntry.BanSeconds} seconds.");
         }
 
 
@@ -488,29 +512,41 @@ namespace ZkLobbyServer
                     usr.LastReadyResponse = false;
                 }
 
+            var normalInvites = toInvite.Where(p => !p.QuickPlay).Select(p => p.Name).ToList();
+            var quickPlayInvites = players.Values.Where(x => x != null && x.QuickPlay).Select(x => x.Name).ToList();
             //send out invites to players in battles
-            server.Broadcast(toInvite.Where(p => !p.QuickPlay).Select(p => p.Name),
+            server.Broadcast(normalInvites,
                 new AreYouReady() {
                     SecondsRemaining = TimerSeconds,
                     MinimumWinChance = -1,
                     QuickPlay = false
                 });
             //send out invites to all QuickPlayers
-            server.Broadcast(players.Values.Where(x => x != null && x.QuickPlay).Select(x => x.Name),
+            server.Broadcast(quickPlayInvites,
                 new AreYouReady()
                 {
                     SecondsRemaining = TimerSeconds,
                     MinimumWinChance = DynamicConfig.Instance.MmTeamsMinimumWinChance,
                     QuickPlay = true
                 });
+
+            if (toInvite.Count > 0)
+            {
+                server.UserLogSay($"{normalInvites.Count} players have been sent pop-up MM invites: {normalInvites.Aggregate("", (x, y) => x + ", " + y)}.");
+                server.UserLogSay($"{quickPlayInvites.Count} players have been sent quickplay MM invites: {quickPlayInvites.Aggregate("", (x, y) => x + ", " + y)}.");
+            }
         }
 
         private List<ProposedBattle> ResolveToRealBattles()
         {
             var lastMatchedUsers = players.Values.Where(x => x?.InvitedToPlay == true).ToList();
-
+            var nonAccepts = lastMatchedUsers.Where(x => !x.LastReadyResponse).ToList();
             // force leave those not ready
-            foreach (var pl in lastMatchedUsers.Where(x => !x.LastReadyResponse)) RemoveUser(pl.Name, false);
+            foreach (var pl in nonAccepts)
+            {
+                pl.InvitedToPlay = !pl.QuickPlay; //don't ban quickplay users
+                RemoveUser(pl.Name, false);
+            }
 
             var readyUsers = lastMatchedUsers.Where(x => x.LastReadyResponse).ToList();
             var realBattles = ProposeBattles(readyUsers, true);
@@ -533,6 +569,13 @@ namespace ZkLobbyServer
                 usr.InvitedToPlay = false; //don't ban
                 RemoveUser(usr.Name, false); //properly remove in case some party members don't use quickplay
             }
+            if (lastMatchedUsers.Count > 0)
+            {
+                server.UserLogSay($"{nonAccepts.Where(x => !x.QuickPlay).Count()} players have ignored their pop-up MM invites: {nonAccepts.Where(x => !x.QuickPlay).Select(x => x.Name).Aggregate("", (x, y) => x + ", " + y)}.");
+                server.UserLogSay($"{nonAccepts.Where(x => x.QuickPlay).Count()} players have ignored their quickplay MM invites: {nonAccepts.Where(x => x.QuickPlay).Select(x => x.Name).Aggregate("", (x, y) => x + ", " + y)}.");
+                server.UserLogSay($"{readyAndFailed.Where(x => !x.QuickPlay).Count()} players have accepted their pop-up MM invites with no match: {readyAndFailed.Where(x => !x.QuickPlay).Select(x => x.Name).Aggregate("", (x, y) => x + ", " + y)}.");
+                server.UserLogSay($"{readyAndFailed.Where(x => x.QuickPlay).Count()} players have accepted their quickplay MM invites with no match: {readyAndFailed.Where(x => x.QuickPlay).Select(x => x.Name).Aggregate("", (x, y) => x + ", " + y)}.");
+            }
 
             return realBattles;
         }
@@ -554,6 +597,7 @@ namespace ZkLobbyServer
 
         private async Task StartBattle(ProposedBattle bat)
         {
+            await server.UserLogSay($"Match starting with players: {bat.Players.Select(x => x.Name).Aggregate("", (x, y) => x + ", " + y)}.");
             var battle = new MatchMakerBattle(server, bat, PickMap(bat.QueueType));
             await server.AddBattle(battle);
 

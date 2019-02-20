@@ -333,6 +333,13 @@ namespace ZkLobbyServer
                 });
         }
 
+        public async Task UserLogSay(string text)
+        {
+            Trace.TraceInformation("UserLog: " + text);
+            var say = new Say() { Place = SayPlace.Channel, Target = GlobalConst.UserLogChannel, Text = text, User = GlobalConst.NightwatchName, Time = DateTime.UtcNow };
+            await GhostSay(say);
+        }
+
         private async Task SyncAndSay(IEnumerable<string> targetNames, Say say)
         {
             var targets = targetNames.Where(x => CanChatTo(say.User, x)).ToList();

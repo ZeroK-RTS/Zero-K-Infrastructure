@@ -1077,6 +1077,7 @@ namespace ZkLobbyServer
                     spring.SayGame(message);
                     Trace.TraceInformation(string.Format("Matchmaker Game {0} aborted because {1}", BattleID, message));
                     RunCommandDirectly<CmdExit>(null);
+                    server.UserLogSay($"Battle aborted because {e.PlayersUnreadyOnStart.Count} players didn't join their MM game: {e.PlayersUnreadyOnStart.Aggregate("", (x, y) => x + ", " + y)}.");
                     e.PlayersUnreadyOnStart.ForEach(x => server.MatchMaker.BanPlayer(x));
                 }
             }
