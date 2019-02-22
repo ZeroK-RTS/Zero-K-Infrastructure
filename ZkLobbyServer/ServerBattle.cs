@@ -1073,11 +1073,11 @@ namespace ZkLobbyServer
                 StopVote();
                 if (IsMatchMakerBattle && e.PlayersUnreadyOnStart.Count > 0 && e.IsTimeoutForceStarted)
                 {
-                    string message = string.Format("Players {0} did not choose a start position. Game will be aborted.", e.PlayersUnreadyOnStart.Aggregate("", (x, y) => x + ", " + y));
+                    string message = string.Format("Players {0} did not choose a start position. Game will be aborted.", e.PlayersUnreadyOnStart.StringJoin());
                     spring.SayGame(message);
                     Trace.TraceInformation(string.Format("Matchmaker Game {0} aborted because {1}", BattleID, message));
                     RunCommandDirectly<CmdExit>(null);
-                    server.UserLogSay($"Battle aborted because {e.PlayersUnreadyOnStart.Count} players didn't join their MM game: {e.PlayersUnreadyOnStart.Aggregate("", (x, y) => x + ", " + y)}.");
+                    server.UserLogSay($"Battle aborted because {e.PlayersUnreadyOnStart.Count} players didn't join their MM game: {e.PlayersUnreadyOnStart.StringJoin()}.");
                     e.PlayersUnreadyOnStart.ForEach(x => server.MatchMaker.BanPlayer(x));
                 }
             }
