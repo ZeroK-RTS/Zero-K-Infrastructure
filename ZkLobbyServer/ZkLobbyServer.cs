@@ -35,13 +35,13 @@ namespace ZkLobbyServer
         public string Game { get; private set; }
         public IPlanetwarsEventCreator PlanetWarsEventCreator { get; private set; }
         public MatchMaker MatchMaker { get; private set; }
-        
+
         public string Version { get; private set; }
 
         public PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
         public SpringPaths SpringPaths { get; private set; }
 
-        public ConcurrentDictionary<string,int> SessionTokens = new ConcurrentDictionary<string, int>();
+        public ConcurrentDictionary<string, int> SessionTokens = new ConcurrentDictionary<string, int>();
 
         private BattleListUpdater battleListUpdater;
 
@@ -58,7 +58,7 @@ namespace ZkLobbyServer
         {
             RatingSystems.Init();
             MapRatings.Init();
-            
+
             PlanetWarsEventCreator = creator;
             var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();
@@ -73,7 +73,7 @@ namespace ZkLobbyServer
 
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
-            chatRelay = new ChatRelay(this, new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai", "zk", "zkmap", "springboard", GlobalConst.ModeratorChannel, GlobalConst.CoreChannel, "off-topic", "support","modding" });
+            chatRelay = new ChatRelay(this, new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai", "zk", "zkmap", "springboard", GlobalConst.ModeratorChannel, GlobalConst.CoreChannel, "off-topic", "support", "modding" });
             textCommands = new ServerTextCommands(this);
             ChannelManager = new ChannelManager(this);
             MatchMaker = new MatchMaker(this);
@@ -85,8 +85,8 @@ namespace ZkLobbyServer
             ForumListManager = new ForumListManager(this);
 
             SpawnAutohosts();
-            
-            RatingSystems.GetRatingSystems().ForEach(x => x.RatingsUpdated += (sender, data) => 
+
+            RatingSystems.GetRatingSystems().ForEach(x => x.RatingsUpdated += (sender, data) =>
             {
                 var db = new ZkDataContext();
                 var updatedUsers = ConnectedUsers.Select(c => c.Value.User.AccountID).Intersect(data.affectedPlayers).ToHashSet();
@@ -183,7 +183,7 @@ namespace ZkLobbyServer
 
         public async Task SyncUserToAll(ConnectedUser changer)
         {
-            await Broadcast(ConnectedUsers.Values.Where(x=>x!=null).Where(x => CanUserSee(x, changer) && !HasSeen(x, changer)), changer.User);
+            await Broadcast(ConnectedUsers.Values.Where(x => x != null).Where(x => CanUserSee(x, changer) && !HasSeen(x, changer)), changer.User);
         }
 
 
@@ -234,7 +234,7 @@ namespace ZkLobbyServer
                             var myEffectiveElo = uWatcher?.User?.EffectiveElo ?? 1200;
 
                             var channelUsersBySkill = chan.Users.Keys.Select(x => ConnectedUsers.Get(x)).Where(x => x != null)
-                                .OrderBy(x => Math.Abs((x.User?.EffectiveMmElo??1200) - myEffectiveElo)).Select(x => x.Name).Take(GlobalConst.DelugeChannelDisplayUsers);
+                                .OrderBy(x => Math.Abs((x.User?.EffectiveMmElo ?? 1200) - myEffectiveElo)).Select(x => x.Name).Take(GlobalConst.DelugeChannelDisplayUsers);
 
                             if (channelUsersBySkill.Contains(uWatched.Name)) return true;
                         }
@@ -364,7 +364,7 @@ namespace ZkLobbyServer
                     break;
                 case SayPlace.User:
                     ConnectedUser connectedUser;
-                    if (ConnectedUsers.TryGetValue(say.Target, out connectedUser)) await SyncAndSay(new List<string>() {say.Target}, say);
+                    if (ConnectedUsers.TryGetValue(say.Target, out connectedUser)) await SyncAndSay(new List<string>() { say.Target }, say);
                     else OfflineMessageHandler.StoreChatHistoryAsync(say);
                     if (say.User != GlobalConst.NightwatchName && ConnectedUsers.TryGetValue(say.User, out connectedUser)) await connectedUser.SendCommand(say);
                     break;
@@ -545,30 +545,34 @@ namespace ZkLobbyServer
                 }
                 catch (Exception ex)
                 {
-                    Trace.TraceWarning("Failed to set channel topic {0} : {1}",  channel, ex);
+                    Trace.TraceWarning("Failed to set channel topic {0} : {1}", channel, ex);
                 }
 
             }
         }
 
         public int GetDiscordUserCount() => chatRelay.DiscordZkUserCount;
+        public event EventHandler<EngineChange> EngineChanged = (a,b) => { };
+        public event EventHandler<GameChange> GameChanged = (a, b) => { };
+        public event EventHandler MapsChanged = (a, b) => { };
 
         public async Task SetEngine(string engine)
         {
             Engine = engine;
             await Broadcast(new DefaultEngineChanged() { Engine = engine });
+            EngineChanged(this, new EngineChange() { engine = engine});
         }
 
         public async Task SetGame(string game)
         {
             Game = game;
             await Broadcast(new DefaultGameChanged() { Game = game });
-            await MatchMaker.OnServerGameChanged(game);
+            GameChanged(this, new GameChange() { game = game });
         }
 
-        public async Task OnServerMapsChanged()
+        public void OnServerMapsChanged()
         {
-            await MatchMaker.OnServerMapsChanged();
+            MapsChanged(this, new EventArgs());
         }
 
         public void RemoveSessionsForAccountID(int accountID)
@@ -580,5 +584,15 @@ namespace ZkLobbyServer
             }
         }
 
+    }
+
+    public class EngineChange : EventArgs
+    {
+        public string engine;
+    }
+
+    public class GameChange : EventArgs
+    {
+        public string game;
     }
 }

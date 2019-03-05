@@ -108,6 +108,9 @@ namespace ZkLobbyServer
             timer.Elapsed += TimerTick;
             timer.Start();
 
+            server.GameChanged += OnServerGameChanged;
+            server.MapsChanged += OnServerMapsChanged;
+
             queuesCounts = CountQueuedPeople(players.Values);
             ingameCounts = CountIngamePeople();
         }
@@ -222,13 +225,13 @@ namespace ZkLobbyServer
             await UpdatePlayerStatus(conus.Name);
         }
 
-        public async Task OnServerGameChanged(string game)
+        public void OnServerGameChanged(object sender, GameChange gameChange)
         {
             UpdateQueues();
-            await server.Broadcast(new MatchMakerSetup() { PossibleQueues = PossibleQueues });
+            server.Broadcast(new MatchMakerSetup() { PossibleQueues = PossibleQueues });
         }
 
-        public async Task OnServerMapsChanged()
+        public void OnServerMapsChanged()
         {
             UpdateQueues();
             await server.Broadcast(new MatchMakerSetup() { PossibleQueues = PossibleQueues });

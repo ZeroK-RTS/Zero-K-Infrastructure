@@ -103,6 +103,16 @@ namespace ZkLobbyServer
             discussionTimer.Elapsed += discussionTimer_Elapsed;
             SetupSpring();
             PickHostingPort();
+
+            server.GameChanged += OnServerGameChanged;
+        }
+
+        private void OnServerGameChanged(object sender, GameChange e)
+        {
+            if (IsAutohost)
+            {
+                SwitchGame(e.game);
+            }
         }
 
         public void SaveToDb()
