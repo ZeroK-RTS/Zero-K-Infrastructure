@@ -13,7 +13,7 @@ namespace Ratings
 {
     public static class MapRatings
     {
-        private static readonly Timer ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, null, 15 * 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
+        private static Timer ladderRecalculationTimer;
 
         private static ConcurrentDictionary<int, Player> maps = new ConcurrentDictionary<int, Player>();
         private static ConcurrentDictionary<int, Rating> mapRatings = new ConcurrentDictionary<int, Rating>();
@@ -28,6 +28,7 @@ namespace Ratings
             {
                 UpdateRatings(true);
             });
+            ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, null, 15 * 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
         }
 
         public static Rating GetMapRating(int ResourceId)
@@ -62,7 +63,7 @@ namespace Ratings
                 {
                     db.MapPollOutcomes.Where(x => x.MapPollID > lastPollId).Include(x => x.MapPollOptions).OrderBy(x => x.MapPollID).AsNoTracking().AsEnumerable().ForEach(poll =>
                     {
-                        var opts = poll.MapPollOptions.OrderByDescending(x => x.Votes).ToList();
+                        var opts = poll.MapPollOptions.DistinctBy(x => x.MapPollOptionID).OrderByDescending(x => x.Votes).ToList();
                         var winners = opts.Where(x => x.Votes == opts[0].Votes);
                         var losers = opts.Where(x => x.Votes != opts[0].Votes);
                         if (losers.Count() > 0)
