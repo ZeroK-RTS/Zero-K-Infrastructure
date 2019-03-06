@@ -453,13 +453,22 @@ namespace ZkLobbyServer
             }
         }
 
+        public void SayGame(string text)
+        {
+            if (spring?.IsRunning != true) return;
+            foreach (var line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                spring.SayGame(line);
+            }
+        }
 
         public async Task SayBattle(string text, string privateUser = null)
         {
             if (!IsNullOrEmpty(text))
+            {
+                if ((privateUser == null)) spring.SayGame(text);
                 foreach (var line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    if ((privateUser == null) && (spring?.IsRunning == true)) spring.SayGame(line);
                     await
                         server.GhostSay(
                             new Say()
@@ -473,6 +482,7 @@ namespace ZkLobbyServer
                             },
                             BattleID);
                 }
+            }
         }
 
         public async Task SetModOptions(Dictionary<string, string> options)

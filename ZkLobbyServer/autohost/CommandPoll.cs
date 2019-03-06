@@ -50,7 +50,7 @@ namespace ZkLobbyServer
             if (winCount <= 0) winCount = 1;
 
             await battle.server.Broadcast(battle.Users.Keys, GetBattlePoll());
-            if (yesNoVote) await battle.SayBattle(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Topic, userVotes.Count(x => x.Value == 0), userVotes.Count(x => x.Value == 1), winCount));
+            if (yesNoVote) battle.SayGame(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Topic, userVotes.Count(x => x.Value == 0), userVotes.Count(x => x.Value == 1), winCount));
 
         }
 
@@ -88,16 +88,16 @@ namespace ZkLobbyServer
                 {
                     if (winnerId == 0)
                     {
-                        await battle.SayBattle($"Poll: {Topic} [END:SUCCESS]"); //Option Yes
+                        battle.SayGame($"Poll: {Topic} [END:SUCCESS]"); //Option Yes
                     }
                     else
                     {
-                        await battle.SayBattle($"Poll: {Topic} [END:FAILED]"); //Option No
+                        battle.SayGame($"Poll: {Topic} [END:FAILED]"); //Option No
                     }
                 }
                 else
                 {
-                    await battle.SayBattle($"Poll: Choose {Options[winnerId].Name}? [END:SUCCESS]");
+                    battle.SayGame($"Poll: Choose {Options[winnerId].Name}? [END:SUCCESS]");
                 }
                 Outcome = new PollOutcome() { ChosenOption = Options[winnerId] };
                 await Options[winnerId].Action();
@@ -108,11 +108,11 @@ namespace ZkLobbyServer
                 Ended = true;
                 if (yesNoVote)
                 {
-                    await battle.SayBattle($"Poll: {Topic} [END:FAILED]");
+                    battle.SayGame($"Poll: {Topic} [END:FAILED]");
                 }
                 else
                 {
-                    await battle.SayBattle($"Option Poll: {Topic} [END:FAILED]");
+                    battle.SayGame($"Option Poll: {Topic} [END:FAILED]");
                 }
                 Outcome = new PollOutcome() { ChosenOption = null };
                 return true;
@@ -174,7 +174,7 @@ namespace ZkLobbyServer
 
                 userVotes[e.User] = vote - 1;
 
-                if (yesNoVote) await battle.SayBattle(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Topic, userVotes.Count(x => x.Value == 0), userVotes.Count(x => x.Value == 1), winCount));
+                if (yesNoVote) battle.SayGame(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Topic, userVotes.Count(x => x.Value == 0), userVotes.Count(x => x.Value == 1), winCount));
                 await battle.server.Broadcast(battle.Users.Keys, GetBattlePoll());
 
                 if (await CheckEnd(false)) return true;
