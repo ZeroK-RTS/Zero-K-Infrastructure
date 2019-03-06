@@ -99,8 +99,8 @@ namespace ZkLobbyServer
                 {
                     await battle.SayBattle($"Poll: Choose {Options[winnerId].Name}? [END:SUCCESS]");
                 }
-                await Options[winnerId].Action();
                 Outcome = new PollOutcome() { ChosenOption = Options[winnerId] };
+                await Options[winnerId].Action();
                 return true;
             }
             else if (timeout)
