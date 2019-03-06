@@ -63,7 +63,7 @@ namespace Ratings
                 {
                     db.MapPollOutcomes.Where(x => x.MapPollID > lastPollId).Include(x => x.MapPollOptions).OrderBy(x => x.MapPollID).AsNoTracking().AsEnumerable().ForEach(poll =>
                     {
-                        var opts = poll.MapPollOptions.DistinctBy(x => x.MapPollOptionID).OrderByDescending(x => x.Votes).ToList();
+                        var opts = poll.MapPollOptions.DistinctBy(x => x.ResourceID).OrderByDescending(x => x.Votes).ToList();
                         var winners = opts.Where(x => x.Votes == opts[0].Votes);
                         var losers = opts.Where(x => x.Votes != opts[0].Votes);
                         if (losers.Count() > 0)
