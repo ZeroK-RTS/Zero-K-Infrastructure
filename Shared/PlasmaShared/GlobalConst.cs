@@ -131,8 +131,8 @@ namespace ZkData
         public const int CommanderProfileCount = 6;
         public const int NumCommanderLevels = 5;
         public const int MaxCommanderNameLength = 20;
-        public const int MillisecondsPerCharacter = 100; //Maximum allowed chat messaging rate before it is considered spam, 80ms is equivalent to 120 WPM, which covers typing speeds of anyone short of a stenographer.
-        public const int MinMillisecondsBetweenMessages = 2000; //Disallow sending more than one message per this interval
+        public const int MillisecondsPerCharacter = 50; //Maximum allowed chat messaging rate before it is considered spam, 80ms is equivalent to 120 WPM, which covers typing speeds of anyone short of a stenographer.
+        public const int MinMillisecondsBetweenMessages = 1000; //Disallow sending more than one message per this interval
 
         public const string DefaultEngineOverride = "104.0.1-287-gf7b0fcc"; // hack for ZKL using tasclient's engine - override here for missions etc
 
@@ -166,6 +166,7 @@ namespace ZkData
         public const string ModeratorChannel = "zkadmin";
         public const string Top20Channel = "zktop20";
         public const string ErrorChannel = "zkerror";
+        public const string UserLogChannel = "zklog";
         public const string CoreChannel = "zkcore";
         
         public const string LobbyAccessCookieName = "zk_lobby";

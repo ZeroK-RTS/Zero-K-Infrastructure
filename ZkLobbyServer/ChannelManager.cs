@@ -96,6 +96,7 @@ namespace ZkLobbyServer
             if (channel.StartsWith(PartyManager.PartyChannelPrefix)) return server.PartyManager.CanJoinChannel(acc.Name, channel);
             else if (channel == GlobalConst.ModeratorChannel) return acc.AdminLevel >= AdminLevel.Moderator;
             else if (channel == GlobalConst.ErrorChannel) return acc.AdminLevel >= AdminLevel.SuperAdmin;
+            else if (channel == GlobalConst.UserLogChannel) return acc.AdminLevel >= AdminLevel.SuperAdmin;
             else if (channel == GlobalConst.Top20Channel) return IsTop20(acc.AccountID);
             else if (channel == GlobalConst.CoreChannel) return acc.DevLevel >= DevLevel.RetiredCoreDeveloper;
             else if (clanChannels.ContainsKey(channel)) return acc.ClanID == clanChannels[channel].ClanID;

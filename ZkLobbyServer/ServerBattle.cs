@@ -24,7 +24,6 @@ namespace ZkLobbyServer
     public class ServerBattle : Battle
     {
         public const int PollTimeout = 60;
-        public const int DiscussionTime = 25;
         public const int MapVoteTime = 25;
         public const int NumberOfMapChoices = 4;
         public const int MinimumAutostartPlayers = 6;
@@ -36,6 +35,8 @@ namespace ZkLobbyServer
         private static object pickPortLock = new object();
         private static string hostingIp;
 
+
+        public int DiscussionTime = 25;
         public readonly List<string> toNotify = new List<string>();
         public Resource HostedMap;
 
@@ -452,13 +453,22 @@ namespace ZkLobbyServer
             }
         }
 
+        public void SayGame(string text)
+        {
+            if (spring?.IsRunning != true) return;
+            foreach (var line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                spring.SayGame(line);
+            }
+        }
 
         public async Task SayBattle(string text, string privateUser = null)
         {
             if (!IsNullOrEmpty(text))
+            {
+                if ((privateUser == null)) spring.SayGame(text);
                 foreach (var line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    if ((privateUser == null) && (spring?.IsRunning == true)) spring.SayGame(line);
                     await
                         server.GhostSay(
                             new Say()
@@ -472,6 +482,7 @@ namespace ZkLobbyServer
                             },
                             BattleID);
                 }
+            }
         }
 
         public async Task SetModOptions(Dictionary<string, string> options)
@@ -536,11 +547,13 @@ namespace ZkLobbyServer
             var options = new List<PollOption>();
 
             string url = null;
+            string map = null;
             if (cmd is CmdMap)
             {
                 url = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{(cmd as CmdMap).Map.ResourceID}";
+                map = (cmd as CmdMap).Map.InternalName;
             }
-            poll = poll ?? new CommandPoll(this, true, true, cmd is CmdMap);
+            poll = poll ?? new CommandPoll(this, true, true, cmd is CmdMap, map, cmd is CmdStart);
             options.Add(new PollOption()
             {
                 Name = "Yes",
@@ -590,13 +603,6 @@ namespace ZkLobbyServer
                 if (ActivePoll != null) await ActivePoll.End();
                 if (pollTimer != null) pollTimer.Enabled = false;
                 ActivePoll = null;
-                await server.Broadcast(Users.Keys, new BattlePoll()
-                {
-                    Options = null,
-                    Topic = null,
-                    VotesToWin = -1,
-                    YesNoVote = true
-                });
                 await oldPoll?.PublishResult();
             }
             catch (Exception ex)
@@ -876,14 +882,19 @@ namespace ZkLobbyServer
 
             toNotify.Clear();
 
-            var playingEligibleUsers = server.MatchMaker.GetEligibleQuickJoinPlayers(Users.Values.Where(x => !x.LobbyUser.IsAway && !x.IsSpectator).Select(x => server.ConnectedUsers[x.Name]).ToList());
+            var playingEligibleUsers = server.MatchMaker.GetEligibleQuickJoinPlayers(Users.Values.Where(x => !x.LobbyUser.IsAway && !x.IsSpectator && x.Name != null).Select(x => server.ConnectedUsers[x.Name]).ToList());
             if (playingEligibleUsers.Count() >= InviteMMPlayers)
             { //Make sure there are enough eligible users for a battle to be likely to happen
 
                 //put all users into MM queue to suggest battles
                 var teamsQueues = server.MatchMaker.PossibleQueues.Where(x => x.Mode == AutohostMode.Teams).ToList();
-                var availableUsers = Users.Values.Where(x => !x.LobbyUser.IsAway).Select(x => server.ConnectedUsers[x.Name]).ToList();
+                var availableUsers = Users.Values.Where(x => !x.LobbyUser.IsAway && x.Name != null).Select(x => server.ConnectedUsers[x.Name]).ToList();
                 await server.MatchMaker.MassJoin(availableUsers, teamsQueues);
+                DiscussionTime = MatchMaker.TimerSeconds + 2;
+            }
+            else
+            {
+                DiscussionTime = 5;
             }
 
 
@@ -897,7 +908,7 @@ namespace ZkLobbyServer
                 else
                 {
                     //Initiate discussion time, then map vote, then start vote
-                    discussionTimer.Interval = (DiscussionTime + 1) * 1000;
+                    discussionTimer.Interval = (DiscussionTime - 1) * 1000;
                     discussionTimer.Start();
                 }
             }
@@ -908,37 +919,49 @@ namespace ZkLobbyServer
 
         private void discussionTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            discussionTimer.Stop();
-            var poll = new CommandPoll(this, false, false, true);
-            poll.PollEnded += MapVoteEnded;
-            var options = new List<PollOption>();
-            for (int i = 0; i < NumberOfMapChoices; i++)
+            try
             {
-                Resource map;
-                if (i < NumberOfMapChoices / 2 && MinimalMapSupportLevel < MapSupportLevel.Featured)
+                discussionTimer.Stop();
+                var poll = new CommandPoll(this, false, false, true);
+                poll.PollEnded += MapVoteEnded;
+                var options = new List<PollOption>();
+                List<int> pickedMaps = new List<int>();
+                using (var db = new ZkDataContext())
                 {
-                    map = MapPicker.GetRecommendedMap(GetContext(), MapSupportLevel.Featured); //choose at least 50% featured maps
-                }
-                else
-                {
-                    map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Featured) ? MapSupportLevel.Supported : MinimalMapSupportLevel);
-                }
-                options.Add(new PollOption()
-                {
-                    Name = map.InternalName,
-                    URL = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{map.ResourceID}",
-                    ResourceID = map.ResourceID,
-                    Action = async () =>
+                    for (int i = 0; i < NumberOfMapChoices; i++)
                     {
-                        var cmd = new CmdMap().Create();
-                        cmd.Arm(this, null, map.ResourceID.ToString());
-                        if (cmd.Access == BattleCommand.AccessType.NotIngame && spring.IsRunning) return;
-                        if (cmd.Access == BattleCommand.AccessType.Ingame && !spring.IsRunning) return;
-                        await cmd.ExecuteArmed(this, null);
+                        Resource map = null;
+                        if (i < NumberOfMapChoices / 2)
+                        {
+                            map = MapPicker.GetRecommendedMap(GetContext(), MinimalMapSupportLevel, MapRatings.GetMapRanking().TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).Where(x => !pickedMaps.Contains(x.ResourceID)).AsQueryable()); //choose at least 50% popular maps
+                        }
+                        if (map == null)
+                        {
+                            map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Featured) ? MapSupportLevel.Supported : MinimalMapSupportLevel, db.Resources.Where(x => !pickedMaps.Contains(x.ResourceID)));
+                        }
+                        pickedMaps.Add(map.ResourceID);
+                        options.Add(new PollOption()
+                        {
+                            Name = map.InternalName,
+                            URL = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{map.ResourceID}",
+                            ResourceID = map.ResourceID,
+                            Action = async () =>
+                            {
+                                var cmd = new CmdMap().Create();
+                                cmd.Arm(this, null, map.ResourceID.ToString());
+                                if (cmd.Access == BattleCommand.AccessType.NotIngame && spring.IsRunning) return;
+                                if (cmd.Access == BattleCommand.AccessType.Ingame && !spring.IsRunning) return;
+                                await cmd.ExecuteArmed(this, null);
+                            }
+                        });
                     }
-                });
+                }
+                StartVote(new CmdMap().GetIneligibilityReasonFunc(this), options, null, "Choose the next map", poll, MapVoteTime);
             }
-            StartVote(new CmdMap().GetIneligibilityReasonFunc(this), options, null, "Choose the next map", poll, MapVoteTime);
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error creating map poll: " + ex);
+            }
         }
 
         private void MapVoteEnded(object sender, PollOutcome e)
@@ -1060,10 +1083,11 @@ namespace ZkLobbyServer
                 StopVote();
                 if (IsMatchMakerBattle && e.PlayersUnreadyOnStart.Count > 0 && e.IsTimeoutForceStarted)
                 {
-                    string message = string.Format("Players {0} did not choose a start position. Game will be aborted.", e.PlayersUnreadyOnStart.Aggregate("", (x, y) => x + ", " + y));
+                    string message = string.Format("Players {0} did not choose a start position. Game will be aborted.", e.PlayersUnreadyOnStart.StringJoin());
                     spring.SayGame(message);
                     Trace.TraceInformation(string.Format("Matchmaker Game {0} aborted because {1}", BattleID, message));
                     RunCommandDirectly<CmdExit>(null);
+                    server.UserLogSay($"Battle aborted because {e.PlayersUnreadyOnStart.Count} players didn't join their MM game: {e.PlayersUnreadyOnStart.StringJoin()}.");
                     e.PlayersUnreadyOnStart.ForEach(x => server.MatchMaker.BanPlayer(x));
                 }
             }

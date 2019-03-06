@@ -18,6 +18,8 @@ namespace ZkLobbyServer
         private readonly bool absoluteMajorityVote; //if set to yes, at least N/2 players need to vote for an option to be selected. Otherwise the option with the majority of votes wins
         private bool yesNoVote; //if set to yes, there must be only two options being yes and no.
         private bool mapSelection; //if set to yes, options have an url and represent map resources
+        private bool ring;
+        private string mapName;
 
         public bool Ended { get; private set; } = false;
         public string Topic { get; private set; }
@@ -27,12 +29,14 @@ namespace ZkLobbyServer
 
         public event EventHandler<PollOutcome> PollEnded = (sender, outcome) => { };
 
-        public CommandPoll(ServerBattle battle, bool yesNoVote, bool absoluteMajorityVote = true, bool mapSelection = false)
+        public CommandPoll(ServerBattle battle, bool yesNoVote, bool absoluteMajorityVote = true, bool mapSelection = false, string mapName = null, bool ring = false)
         {
             this.battle = battle;
             this.absoluteMajorityVote = absoluteMajorityVote;
             this.yesNoVote = yesNoVote;
             this.mapSelection = mapSelection;
+            this.mapName = mapName;
+            this.ring = ring;
         }
 
         public async Task Setup(Func<string, string> eligibilitySelector, List<PollOption> options, Say creator, string Topic)
@@ -46,7 +50,7 @@ namespace ZkLobbyServer
             if (winCount <= 0) winCount = 1;
 
             await battle.server.Broadcast(battle.Users.Keys, GetBattlePoll());
-            if (yesNoVote) await battle.SayBattle(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Topic, userVotes.Count(x => x.Value == 0), userVotes.Count(x => x.Value == 1), winCount));
+            if (yesNoVote) battle.SayGame(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Topic, userVotes.Count(x => x.Value == 0), userVotes.Count(x => x.Value == 1), winCount));
 
         }
 
@@ -59,12 +63,15 @@ namespace ZkLobbyServer
                     Id = i + 1,
                     Name = o.Name,
                     Votes = userVotes.Count(x => x.Value == i),
-                    URL = o.URL
+                    Url = o.URL
                 }).ToList(),
                 Topic = Topic,
                 VotesToWin = winCount,
                 YesNoVote = yesNoVote,
-                MapSelection = mapSelection
+                MapSelection = mapSelection,
+                Url = yesNoVote ? Options[0].URL : "",
+                MapName = mapName,
+                NotifyPoll = ring
             };
         }
 
@@ -81,19 +88,19 @@ namespace ZkLobbyServer
                 {
                     if (winnerId == 0)
                     {
-                        await battle.SayBattle($"Poll: {Topic} [END:SUCCESS]"); //Option Yes
+                        battle.SayGame($"Poll: {Topic} [END:SUCCESS]"); //Option Yes
                     }
                     else
                     {
-                        await battle.SayBattle($"Poll: {Topic} [END:FAILED]"); //Option No
+                        battle.SayGame($"Poll: {Topic} [END:FAILED]"); //Option No
                     }
                 }
                 else
                 {
-                    await battle.SayBattle($"Poll: Choose {Options[winnerId].Name}? [END:SUCCESS]");
+                    battle.SayGame($"Poll: Choose {Options[winnerId].Name}? [END:SUCCESS]");
                 }
-                await Options[winnerId].Action();
                 Outcome = new PollOutcome() { ChosenOption = Options[winnerId] };
+                await Options[winnerId].Action();
                 return true;
             }
             else if (timeout)
@@ -101,11 +108,11 @@ namespace ZkLobbyServer
                 Ended = true;
                 if (yesNoVote)
                 {
-                    await battle.SayBattle($"Poll: {Topic} [END:FAILED]");
+                    battle.SayGame($"Poll: {Topic} [END:FAILED]");
                 }
                 else
                 {
-                    await battle.SayBattle($"Option Poll: {Topic} [END:FAILED]");
+                    battle.SayGame($"Option Poll: {Topic} [END:FAILED]");
                 }
                 Outcome = new PollOutcome() { ChosenOption = null };
                 return true;
@@ -113,15 +120,23 @@ namespace ZkLobbyServer
             return false;
         }
 
-        public async Task PublishResult()
+        public BattlePollOutcome GetBattlePollOutcome()
         {
-            await battle.server.Broadcast(battle.Users.Keys, new BattlePollOutcome
+            var msg = new BattlePollOutcome
             {
                 Topic = Topic,
                 MapSelection = mapSelection,
                 YesNoVote = yesNoVote,
-                WinningOption = GetBattlePoll().Options.FirstOrDefault(x => x.Name == Outcome?.ChosenOption?.Name)
-            });
+                WinningOption = GetBattlePoll().Options.FirstOrDefault(x => x.Name == Outcome?.ChosenOption?.Name),
+            };
+            msg.Success = yesNoVote ? msg.WinningOption?.Id == 1 : msg.WinningOption != null;
+            msg.Message = yesNoVote ? (msg.Success ? $"Vote passed: {Topic}" : $"Vote failed: {Topic}") : (msg.Success ? $"Vote passed: Selected {msg.WinningOption.Name}." : "Vote failed: No absolute majority achieved.");
+            return msg;
+        }
+
+        public async Task PublishResult()
+        {
+            await battle.server.Broadcast(battle.Users.Keys, GetBattlePollOutcome());
             if (mapSelection && !yesNoVote)
             {
                 //store results to DB
@@ -159,7 +174,7 @@ namespace ZkLobbyServer
 
                 userVotes[e.User] = vote - 1;
 
-                if (yesNoVote) await battle.SayBattle(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Topic, userVotes.Count(x => x.Value == 0), userVotes.Count(x => x.Value == 1), winCount));
+                if (yesNoVote) battle.SayGame(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Topic, userVotes.Count(x => x.Value == 0), userVotes.Count(x => x.Value == 1), winCount));
                 await battle.server.Broadcast(battle.Users.Keys, GetBattlePoll());
 
                 if (await CheckEnd(false)) return true;
@@ -177,7 +192,7 @@ namespace ZkLobbyServer
     {
         public string Name;
         public Func<Task> Action;
-        public string URL;
+        public string URL = "";
         public int ResourceID;
     }
 

@@ -13,7 +13,7 @@ namespace ZkLobbyServer
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            return "do you want to enable cheats?";
+            return "Do you want to enable cheats?";
         }
         
         public override async Task ExecuteArmed(ServerBattle battle, Say e)

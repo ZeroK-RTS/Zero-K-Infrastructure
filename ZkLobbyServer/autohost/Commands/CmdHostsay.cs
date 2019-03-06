@@ -15,7 +15,7 @@ namespace ZkLobbyServer
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
             cmd = arguments;
-            return $"do you want to host say {cmd} ?";
+            return $"Do you want to host say {cmd} ?";
         }
         
         public override async Task ExecuteArmed(ServerBattle battle, Say e)

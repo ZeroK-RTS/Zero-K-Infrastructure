@@ -27,6 +27,8 @@ namespace Ratings
 
         private static List<float> gradient = new List<float>();
 
+        private static readonly object whrLock = new object();
+
         private List<float> sigma2 = new List<float>();
         
         static Player()
@@ -87,22 +89,25 @@ namespace Ratings
             gradient[days.Count - 1] = days[days.Count - 1].GetLogLikelyhoodFirstDerivative() - (days[days.Count - 1].r - days[days.Count - 2].r) / sigma2[days.Count - 2];
         }
 
-        public void RunOneNewtonIteration()
+        public void RunOneNewtonIteration(bool updateCovariance)
         {
-            foreach (PlayerDay day in days)
+            lock (whrLock)
             {
-                day.UpdateGameTermsCache();
-            }
+                foreach (PlayerDay day in days)
+                {
+                    day.UpdateGameTermsCache();
+                }
 
-            if (days.Count == 1)
-            {
-                days[0].UpdateByOneDimensionalNewton();
+                if (days.Count == 1)
+                {
+                    days[0].UpdateByOneDimensionalNewton();
+                }
+                else if (days.Count > 1)
+                {
+                    UpdateByNDimNewton();
+                }
+                if (updateCovariance) UpdateRatingVariance();
             }
-            else if (days.Count > 1)
-            {
-                UpdateByNDimNewton();
-            }
-            UpdateRatingVariance();
         }
 
 
@@ -191,7 +196,7 @@ namespace Ratings
             int n = days.Count;
 
             //a, b, d are taken directly from the update step
-            if (hessianLU_lowerSubdiagonal.Count != n)
+            if (hessianLU_lowerSubdiagonal.Count != n || n == 1)
             {
                 UpdateSigma2();
                 UpdateHessian();

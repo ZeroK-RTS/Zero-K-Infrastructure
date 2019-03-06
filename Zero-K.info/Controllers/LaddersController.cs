@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using System.Web.UI;
 using Microsoft.Linq.Translations;
 using PlasmaShared;
+using Ratings;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -70,6 +71,44 @@ namespace ZeroKWeb.Controllers
             public int? LevelTo { get; set; } = 1000;
 
             public IQueryable<Indexed<Account>> Data;
+        }
+
+
+        // GET: /Ladders/Maps
+        public ActionResult Maps(LaddersMapsModel model)
+        {
+            model = model ?? new LaddersMapsModel();
+
+            var ret = MapRatings.GetMapRanking().AsQueryable();
+
+            if (!string.IsNullOrEmpty(model.Name))
+            {
+                var termLower = model.Name.ToLower();
+                ret = ret.Where(x => x.Map.InternalName.ToLower().Contains(termLower));
+            }
+            if (!string.IsNullOrEmpty(model.Author))
+            {
+                var termLower = model.Author.ToLower();
+                ret = ret.Where(x => x.Map.AuthorName.ToLower().Contains(termLower));
+            }
+
+            if (model.SizeFrom.HasValue) ret = ret.Where(x => x.Map.MapWidth >= model.SizeFrom && x.Map.MapHeight >= model.SizeFrom);
+            if (model.SizeTo.HasValue) ret = ret.Where(x => x.Map.MapWidth <= model.SizeTo && x.Map.MapHeight <= model.SizeTo);
+
+            model.Data = ret;
+
+            return View("LaddersMaps", model);
+        }
+
+        public class LaddersMapsModel
+        {
+            public string Name { get; set; }
+            public string Author { get; set; }
+
+            public int? SizeFrom { get; set; } = 0;
+            public int? SizeTo { get; set; } = 1000;
+
+            public IQueryable<MapRatings.Rating> Data;
         }
     }
 }
