@@ -19,7 +19,7 @@
             <tr>
                 <td>Players: </td>
                 <td>@using (var db = new ZkDataContext())
-                {@Html.MultiSelectFor(x => x.UserId, Url.Action("Users", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)));
+                {@Html.MultiSelectFor(x => x.UserId, Url.Action("UsersNoLink", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)));
             }</td>
             </tr>
             <tr>
