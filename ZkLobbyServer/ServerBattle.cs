@@ -67,6 +67,7 @@ namespace ZkLobbyServer
         public CommandPoll ActivePoll { get; private set; }
 
         public bool IsAutohost { get; private set; }
+        public bool IsDefaultGame { get; private set; } = true;
 
         public MapSupportLevel MinimalMapSupportLevelAutohost { get; protected set; } = MapSupportLevel.Featured;
 
@@ -224,11 +225,17 @@ namespace ZkLobbyServer
             }
         }
 
+        public void SwitchDefaultGame(bool useDefaultGame)
+        {
+            IsDefaultGame = useDefaultGame;
+        }
+
         public void SwitchAutohost(bool autohost, string founder)
         {
             if (autohost)
             {
                 IsAutohost = true;
+                IsDefaultGame = true;
                 FounderName = "Autohost #" + BattleID;
                 SaveToDb();
             }

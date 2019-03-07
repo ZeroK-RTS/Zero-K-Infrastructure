@@ -564,6 +564,7 @@ namespace ZkLobbyServer
             Game = game;
             await Broadcast(new DefaultGameChanged() { Game = game });
             await MatchMaker.OnServerGameChanged(game);
+            await Task.WhenAll(Battles.Values.Where(x => x.IsDefaultGame).Select(x => x.SwitchGame(game)));
         }
 
         public async Task OnServerMapsChanged()

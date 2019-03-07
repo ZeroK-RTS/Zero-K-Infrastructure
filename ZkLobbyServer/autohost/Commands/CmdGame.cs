@@ -44,7 +44,9 @@ namespace ZkLobbyServer
             if (game != null)
             {
                 await battle.SwitchGame(game.InternalName);
-                await battle.SayBattle("changing game to " + game.InternalName);
+                await battle.SayBattle("Changing game to " + game.InternalName);
+                battle.SwitchDefaultGame(false);
+                await battle.SayBattle("This host will no longer update its game automatically");
             }
             
         }
