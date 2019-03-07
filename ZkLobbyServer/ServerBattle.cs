@@ -905,7 +905,7 @@ namespace ZkLobbyServer
             }
 
 
-            if (IsAutohost)
+            if (IsAutohost || (!Users.ContainsKey(FounderName) || Users[FounderName].LobbyUser?.IsAway == true) && Mode != AutohostMode.None && Mode != AutohostMode.Planetwars && !IsPassworded)
             {
                 if (!string.IsNullOrEmpty(debriefingMessage.Message))
                 {
