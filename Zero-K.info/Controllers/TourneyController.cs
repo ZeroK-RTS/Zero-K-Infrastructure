@@ -64,6 +64,7 @@ namespace ZeroKWeb.Controllers
                 var tb = new TourneyBattle(Global.Server, new TourneyBattle.TourneyPrototype()
                 {
                     Title = model.Title,
+                    FounderName = Global.Account.Name,
                     TeamPlayers = new List<List<string>>()
                     {
                         model.Team1Ids.Select(x=> db.Accounts.Find(x)?.Name).Where(x=>x!=null).ToList(),

@@ -11,6 +11,7 @@ namespace ZkLobbyServer {
         public class TourneyPrototype
         {
             public string Title;
+            public string FounderName;
             public List<List<string>> TeamPlayers = new List<List<string>>();
 
             public Dictionary<string, string> ModOptions = new Dictionary<string, string>();
@@ -26,7 +27,7 @@ namespace ZkLobbyServer {
             ApplicableRating = RatingCategory.MatchMaking;
             EngineVersion = server.Engine;
             ModName = server.Game;
-            FounderName = $"Tourney #{BattleID}";
+            FounderName = prototype.FounderName ?? $"Tourney #{BattleID}";
             Title =  prototype.Title;
             Mode = prototype.TeamPlayers.Max(x => x.Count) == 1 ? AutohostMode.Game1v1 : AutohostMode.None;
             MaxPlayers = prototype.TeamPlayers.Sum(x=>x.Count);
