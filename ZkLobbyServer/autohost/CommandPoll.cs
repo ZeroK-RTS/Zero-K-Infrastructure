@@ -144,8 +144,8 @@ namespace ZkLobbyServer
                 using (var db = new ZkDataContext())
                 {
                     var cat = MapRatings.Category.Coop;
-                    if (battle.Mode == PlasmaShared.AutohostMode.Teams) cat = MapRatings.Category.CasualTeams;
-                    if (battle.Mode == PlasmaShared.AutohostMode.GameFFA) cat = MapRatings.Category.FFA;
+                    if (battle.Mode == PlasmaShared.AutohostMode.Teams && battle.Users.Values.Count(x => !x.IsSpectator) > 3) cat = MapRatings.Category.CasualTeams;
+                    if (battle.Mode == PlasmaShared.AutohostMode.GameFFA && battle.Users.Values.Count(x => !x.IsSpectator) >= 3) cat = MapRatings.Category.FFA;
                     var outcome = new MapPollOutcome()
                     {
                         Category = cat

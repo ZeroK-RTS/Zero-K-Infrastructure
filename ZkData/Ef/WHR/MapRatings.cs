@@ -82,7 +82,7 @@ namespace Ratings
                         var opts = poll.MapPollOptions.DistinctBy(x => x.ResourceID).OrderByDescending(x => x.Votes).ToList();
                         var winners = opts.Where(x => x.Votes == opts[0].Votes);
                         var losers = opts.Where(x => x.Votes != opts[0].Votes);
-                        if (losers.Count() > 0 && opts.Sum(x => x.Votes) >= 3)
+                        if (losers.Count() > 0)
                         {
                             var game = new Game(winners.Select(x => GetPlayer(x.ResourceID, poll.Category)).ToList(), losers.Select(x => GetPlayer(x.ResourceID, poll.Category)).ToList(), true, 0, poll.MapPollID);
                             game.whitePlayers.ForEach(x => x.AddGame(game));
