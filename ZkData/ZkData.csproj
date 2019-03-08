@@ -426,6 +426,10 @@
     <Compile Include="Migrations\201902151050350_AddMapPolls.Designer.cs">
       <DependentUpon>201902151050350_AddMapPolls.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903072346315_AddMapPollOutcomeCategory.cs" />
+    <Compile Include="Migrations\201903072346315_AddMapPollOutcomeCategory.Designer.cs">
+      <DependentUpon>201903072346315_AddMapPollOutcomeCategory.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -808,6 +812,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902151050350_AddMapPolls.resx">
       <DependentUpon>201902151050350_AddMapPolls.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903072346315_AddMapPollOutcomeCategory.resx">
+      <DependentUpon>201903072346315_AddMapPollOutcomeCategory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

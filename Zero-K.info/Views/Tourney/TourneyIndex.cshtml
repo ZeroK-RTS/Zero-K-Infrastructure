@@ -70,13 +70,13 @@
         <tr>
             <td>Team 1 players</td>
             <td>
-                @Html.MultiSelectFor(x => x.Team1Ids, Url.Action("Users", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)))
+                @Html.MultiSelectFor(x => x.Team1Ids, Url.Action("UsersNoLink", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)))
             </td>
         </tr>
         <tr>
             <td>Team 2 players</td>
             <td>
-                @Html.MultiSelectFor(x => x.Team2Ids, Url.Action("Users", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)))
+                @Html.MultiSelectFor(x => x.Team2Ids, Url.Action("UsersNoLink", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)))
             </td>
         </tr>
         <tr><td colspan="2"><input type="submit"/></td></tr>

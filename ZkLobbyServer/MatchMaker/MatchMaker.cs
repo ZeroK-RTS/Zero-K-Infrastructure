@@ -169,6 +169,7 @@ namespace ZkLobbyServer
                         if (entry.QuickPlay)
                         {
                             await server.UserLogSay($"{user.Name} rejected his quickplay MM invitation");
+                            entry.InvitedToPlay = false; //don't ban quickplayers
                         }
                         else
                         {
@@ -332,9 +333,10 @@ namespace ZkLobbyServer
 
             if (wantedQueues.Count == 0) // delete
             {
+                if (entry?.QueueTypes?.Count > 0 && entry?.QuickPlay == false) await server.UserLogSay($"{user.Name} has left the matchmaker.");
+
                 await RemoveUser(user.Name, true);
 
-                await server.UserLogSay($"{user.Name} has left the matchmaker.");
                 return;
             }
 

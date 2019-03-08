@@ -18,6 +18,8 @@ namespace ZkData
     {
         [Key]
         public int MapPollID { get; set; }
+
+        public MapRatings.Category Category { get; set; }
         
         public virtual List<MapPollOption> MapPollOptions { get; set; }
     }

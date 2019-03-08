@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlasmaShared;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -15,15 +16,22 @@ namespace Ratings
     {
         private static Timer ladderRecalculationTimer;
 
-        private static ConcurrentDictionary<int, Player> maps = new ConcurrentDictionary<int, Player>();
-        private static ConcurrentDictionary<int, Rating> mapRatings = new ConcurrentDictionary<int, Rating>();
-        private static List<Rating> mapRanking = new List<Rating>();
+        private static readonly IEnumerable<Category> categories = Enum.GetValues(typeof(Category)).Cast<Category>();
+        private static ConcurrentDictionary<Category, ConcurrentDictionary<int, Player>> maps = new ConcurrentDictionary<Category, ConcurrentDictionary<int, Player>>();
+        private static ConcurrentDictionary<Category, ConcurrentDictionary<int, Rating>> mapRatings = new ConcurrentDictionary<Category, ConcurrentDictionary<int, Rating>>();
+        private static ConcurrentDictionary<Category,List<Rating>> mapRanking = new ConcurrentDictionary<Category, List<Rating>>();
         private static int lastPollId = -1;
         private static readonly Rating defaultRating = new Rating(WholeHistoryRating.RatingOffset, float.PositiveInfinity, null, int.MaxValue, 1);
 
         public static void Init()
         {
 
+            foreach (Category cat in categories)
+            {
+                maps[cat] = new ConcurrentDictionary<int, Player>();
+                mapRatings[cat] = new ConcurrentDictionary<int, Rating>();
+                mapRanking[cat] = new List<Rating>();
+            }
             Task.Factory.StartNew(() =>
             {
                 UpdateRatings(true);
@@ -31,26 +39,34 @@ namespace Ratings
             ladderRecalculationTimer = new Timer((t) => { UpdateRatings(); }, null, 15 * 60000, (int)(GlobalConst.LadderUpdatePeriod * 3600 * 1000 + 4242));
         }
 
-        public static Rating GetMapRating(int ResourceId)
+        public static Rating GetMapRating(int ResourceId, Category cat)
         {
             Rating rating;
-            if (mapRatings.TryGetValue(ResourceId, out rating)) return rating;
+            if (mapRatings[cat].TryGetValue(ResourceId, out rating)) return rating;
             return defaultRating;
         }
 
-        public static List<Rating> GetMapRanking()
+        public static List<Rating> GetMapRanking(AutohostMode mode)
         {
-            return mapRanking;
+            Category cat = Category.CasualTeams;
+            if (mode == AutohostMode.GameChickens) cat = Category.Coop;
+            if (mode == AutohostMode.GameFFA) cat = Category.FFA;
+            return GetMapRanking(cat);
         }
 
-        private static Player GetPlayer(int id)
+        public static List<Rating> GetMapRanking(Category cat)
+        {
+            return mapRanking[cat];
+        }
+
+        private static Player GetPlayer(int id, Category cat)
         {
             lock (maps)
             {
                 Player player;
-                if (maps.TryGetValue(id, out player)) return player;
+                if (maps[cat].TryGetValue(id, out player)) return player;
                 player = new Player(id);
-                maps.TryAdd(id, player);
+                maps[cat].TryAdd(id, player);
                 return player;
             }
         }
@@ -63,32 +79,36 @@ namespace Ratings
                 {
                     db.MapPollOutcomes.Where(x => x.MapPollID > lastPollId).Include(x => x.MapPollOptions).OrderBy(x => x.MapPollID).AsNoTracking().AsEnumerable().ForEach(poll =>
                     {
-                        var opts = poll.MapPollOptions.DistinctBy(x => x.MapPollOptionID).OrderByDescending(x => x.Votes).ToList();
+                        var opts = poll.MapPollOptions.DistinctBy(x => x.ResourceID).OrderByDescending(x => x.Votes).ToList();
                         var winners = opts.Where(x => x.Votes == opts[0].Votes);
                         var losers = opts.Where(x => x.Votes != opts[0].Votes);
                         if (losers.Count() > 0)
                         {
-                            var game = new Game(winners.Select(x => GetPlayer(x.ResourceID)).ToList(), losers.Select(x => GetPlayer(x.ResourceID)).ToList(), true, 0, poll.MapPollID);
+                            var game = new Game(winners.Select(x => GetPlayer(x.ResourceID, poll.Category)).ToList(), losers.Select(x => GetPlayer(x.ResourceID, poll.Category)).ToList(), true, 0, poll.MapPollID);
                             game.whitePlayers.ForEach(x => x.AddGame(game));
                             game.blackPlayers.ForEach(x => x.AddGame(game));
                         }
                         lastPollId = poll.MapPollID;
                     });
                 }
-                if (init) RunIterations(70);
-                RunIterations(3);
-                using (var db = new ZkDataContext())
+                foreach (Category cat in maps.Keys)
                 {
-                    var newRanking = maps.Values.Select(x => x.days[0]).OrderByDescending(x => x.r).ToList();
-                    var ranks = new List<Rating>();
-                    for (int i = 0; i < newRanking.Count; i++)
+                    if (init) RunIterations(70, cat);
+                    RunIterations(3, cat);
+
+                    using (var db = new ZkDataContext())
                     {
-                        int id = newRanking[i].player.id;
-                        var rating = new Rating(newRanking[i].GetElo() + WholeHistoryRating.RatingOffset, newRanking[i].GetEloStdev(), db.Resources.FirstOrDefault(r => r.ResourceID == id), i, i / (float)newRanking.Count);
-                        ranks.Add(rating);
-                        mapRatings[id] = rating;
+                        var newRanking = maps[cat].Values.Select(x => x.days[0]).OrderByDescending(x => x.r).ToList();
+                        var ranks = new List<Rating>();
+                        for (int i = 0; i < newRanking.Count; i++)
+                        {
+                            int id = newRanking[i].player.id;
+                            var rating = new Rating(newRanking[i].GetElo() + WholeHistoryRating.RatingOffset, newRanking[i].GetEloStdev(), db.Resources.FirstOrDefault(r => r.ResourceID == id), i, i / (float)newRanking.Count);
+                            ranks.Add(rating);
+                            mapRatings[cat][id] = rating;
+                        }
+                        mapRanking[cat] = ranks;
                     }
-                    mapRanking = ranks;
                 }
             }
             catch (Exception ex)
@@ -97,13 +117,20 @@ namespace Ratings
             }
         }
 
-        private static void RunIterations(int count)
+        private static void RunIterations(int count, Category cat)
         {
             for (int i = 0; i < count - 1; i++)
             {
-                maps.Values.ForEach(x => x.RunOneNewtonIteration(false));
+                maps[cat].Values.ForEach(x => x.RunOneNewtonIteration(false));
             }
-            maps.Values.ForEach(x => x.RunOneNewtonIteration(true));
+            maps[cat].Values.ForEach(x => x.RunOneNewtonIteration(true));
+        }
+
+        public enum Category
+        {
+            CasualTeams,
+            Coop,
+            FFA
         }
 
         public class Rating
