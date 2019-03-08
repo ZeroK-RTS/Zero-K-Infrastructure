@@ -24,6 +24,10 @@
     {
     <table>
         <tr>
+            <td>Rating:</td>
+            <td>@Html.EnumDropDownListFor(x => x.Category, new { @class = "width-100" })</td>
+        </tr>
+        <tr>
             <td>Name:</td>
             <td>@Html.TextBoxFor(x => x.Name, new { data_autocomplete = Url.Action("Maps", "Autocomplete") })</td>
         </tr>

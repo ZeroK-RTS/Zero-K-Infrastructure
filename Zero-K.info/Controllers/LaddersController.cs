@@ -79,7 +79,7 @@ namespace ZeroKWeb.Controllers
         {
             model = model ?? new LaddersMapsModel();
 
-            var ret = MapRatings.GetMapRanking().AsQueryable();
+            var ret = MapRatings.GetMapRanking(model.Category).AsQueryable();
 
             if (!string.IsNullOrEmpty(model.Name))
             {
@@ -102,6 +102,7 @@ namespace ZeroKWeb.Controllers
 
         public class LaddersMapsModel
         {
+            public MapRatings.Category Category { get; set; } = MapRatings.Category.CasualTeams;
             public string Name { get; set; }
             public string Author { get; set; }
 

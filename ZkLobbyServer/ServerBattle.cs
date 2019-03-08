@@ -940,7 +940,7 @@ namespace ZkLobbyServer
                         Resource map = null;
                         if (i < NumberOfMapChoices / 2)
                         {
-                            map = MapPicker.GetRecommendedMap(GetContext(), MinimalMapSupportLevel, MapRatings.GetMapRanking().TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).Where(x => !pickedMaps.Contains(x.ResourceID)).AsQueryable()); //choose at least 50% popular maps
+                            map = MapPicker.GetRecommendedMap(GetContext(), MinimalMapSupportLevel, MapRatings.GetMapRanking(Mode).TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).Where(x => !pickedMaps.Contains(x.ResourceID)).AsQueryable()); //choose at least 50% popular maps
                         }
                         if (map == null)
                         {

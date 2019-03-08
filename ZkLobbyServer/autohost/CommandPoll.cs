@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
+using Ratings;
 using ZkData;
 using static LobbyClient.BattlePoll;
 
@@ -142,7 +143,13 @@ namespace ZkLobbyServer
                 //store results to DB
                 using (var db = new ZkDataContext())
                 {
-                    var outcome = new MapPollOutcome();
+                    var cat = MapRatings.Category.Coop;
+                    if (battle.Mode == PlasmaShared.AutohostMode.Teams) cat = MapRatings.Category.CasualTeams;
+                    if (battle.Mode == PlasmaShared.AutohostMode.GameFFA) cat = MapRatings.Category.FFA;
+                    var outcome = new MapPollOutcome()
+                    {
+                        Category = cat
+                    };
                     db.MapPollOutcomes.InsertOnSubmit(outcome);
                     db.SaveChanges();
                     var options = Options.Select((o, i) => new MapPollOption()
