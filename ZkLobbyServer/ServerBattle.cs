@@ -547,6 +547,8 @@ namespace ZkLobbyServer
         {
             cmd = cmd.Create();
 
+            if (cmd is CmdMap && string.IsNullOrEmpty(args)) return await CreateMultiMapPoll();
+
             string topic = cmd.Arm(this, e, args);
             if (topic == null) return false;
             Func<string, string> selector = cmd.GetIneligibilityReasonFunc(this);
@@ -923,47 +925,52 @@ namespace ZkLobbyServer
         }
 
 
+        private async Task<bool> CreateMultiMapPoll()
+        {
+
+            var poll = new CommandPoll(this, false, false, true);
+            poll.PollEnded += MapVoteEnded;
+            var options = new List<PollOption>();
+            List<int> pickedMaps = new List<int>();
+            using (var db = new ZkDataContext())
+            {
+                for (int i = 0; i < NumberOfMapChoices; i++)
+                {
+                    Resource map = null;
+                    if (i < NumberOfMapChoices / 2)
+                    {
+                        map = MapPicker.GetRecommendedMap(GetContext(), MinimalMapSupportLevel, MapRatings.GetMapRanking(Mode).TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).Where(x => !pickedMaps.Contains(x.ResourceID)).AsQueryable()); //choose at least 50% popular maps
+                    }
+                    if (map == null)
+                    {
+                        map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Featured) ? MapSupportLevel.Supported : MinimalMapSupportLevel, db.Resources.Where(x => !pickedMaps.Contains(x.ResourceID)));
+                    }
+                    pickedMaps.Add(map.ResourceID);
+                    options.Add(new PollOption()
+                    {
+                        Name = map.InternalName,
+                        URL = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{map.ResourceID}",
+                        ResourceID = map.ResourceID,
+                        Action = async () =>
+                        {
+                            var cmd = new CmdMap().Create();
+                            cmd.Arm(this, null, map.ResourceID.ToString());
+                            if (cmd.Access == BattleCommand.AccessType.NotIngame && spring.IsRunning) return;
+                            if (cmd.Access == BattleCommand.AccessType.Ingame && !spring.IsRunning) return;
+                            await cmd.ExecuteArmed(this, null);
+                        }
+                    });
+                }
+            }
+            return await StartVote(new CmdMap().GetIneligibilityReasonFunc(this), options, null, "Choose the next map", poll, MapVoteTime);
+        }
 
         private void discussionTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             try
             {
                 discussionTimer.Stop();
-                var poll = new CommandPoll(this, false, false, true);
-                poll.PollEnded += MapVoteEnded;
-                var options = new List<PollOption>();
-                List<int> pickedMaps = new List<int>();
-                using (var db = new ZkDataContext())
-                {
-                    for (int i = 0; i < NumberOfMapChoices; i++)
-                    {
-                        Resource map = null;
-                        if (i < NumberOfMapChoices / 2)
-                        {
-                            map = MapPicker.GetRecommendedMap(GetContext(), MinimalMapSupportLevel, MapRatings.GetMapRanking(Mode).TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).Where(x => !pickedMaps.Contains(x.ResourceID)).AsQueryable()); //choose at least 50% popular maps
-                        }
-                        if (map == null)
-                        {
-                            map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Featured) ? MapSupportLevel.Supported : MinimalMapSupportLevel, db.Resources.Where(x => !pickedMaps.Contains(x.ResourceID)));
-                        }
-                        pickedMaps.Add(map.ResourceID);
-                        options.Add(new PollOption()
-                        {
-                            Name = map.InternalName,
-                            URL = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{map.ResourceID}",
-                            ResourceID = map.ResourceID,
-                            Action = async () =>
-                            {
-                                var cmd = new CmdMap().Create();
-                                cmd.Arm(this, null, map.ResourceID.ToString());
-                                if (cmd.Access == BattleCommand.AccessType.NotIngame && spring.IsRunning) return;
-                                if (cmd.Access == BattleCommand.AccessType.Ingame && !spring.IsRunning) return;
-                                await cmd.ExecuteArmed(this, null);
-                            }
-                        });
-                    }
-                }
-                StartVote(new CmdMap().GetIneligibilityReasonFunc(this), options, null, "Choose the next map", poll, MapVoteTime);
+                CreateMultiMapPoll();
             }
             catch (Exception ex)
             {
