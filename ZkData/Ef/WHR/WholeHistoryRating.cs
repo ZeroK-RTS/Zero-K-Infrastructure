@@ -120,7 +120,8 @@ namespace Ratings
                             teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => RatingSystems.GetRatingId(x.AccountID))).Distinct().ToList(),
                             true,
                             RatingSystems.ConvertDateToDays(time),
-                            -1
+                            -1,
+                            true
                     ).GetBlackWinProbability()).ToList();
             return predictions.Select(x => x / predictions.Sum()).ToList();
         }
@@ -138,7 +139,7 @@ namespace Ratings
                 if (ProcessedBattles.Contains(battle.SpringBattleID) && RatingSystems.Initialized)
                 {
                     Trace.TraceInformation("WHR " + category + " removing battle " + battle.SpringBattleID + " from " + battle.StartTime);
-                    var game = SetupGame(losers, winners, false, date, battle.SpringBattleID);
+                    var game = SetupGame(losers, winners, false, date, battle.SpringBattleID, true);
                     losers.Union(winners).Select(x => getPlayerById(x)).ForEach(x => x.RemoveGame(game));
                     ProcessedBattles.Remove(battle.SpringBattleID);
                     battlesRegistered--;
@@ -165,7 +166,7 @@ namespace Ratings
                 }
                 else
                 {
-                    createGame(losers, winners, false, date, battle.SpringBattleID);
+                    CreateGame(losers, winners, false, date, battle.SpringBattleID);
                     if (RatingSystems.Initialized)
                     {
                         lastBattleRanked = true;
@@ -594,10 +595,11 @@ namespace Ratings
         }
 
 
-        private Player getPlayerById(int id)
+        private Player getPlayerById(int id, bool temporary = false)
         {
             if (!players.ContainsKey(id))
             {
+                if (temporary) return new Player(id);
                 lock (updateLockInternal)
                 {
                     players.Add(id, new Player(id));
@@ -606,7 +608,7 @@ namespace Ratings
             return players[id];
         }
 
-        private Game SetupGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step, int id)
+        private Game SetupGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step, int id, bool temporary)
         {
 
             // Avoid self-played games (no info)
@@ -627,15 +629,15 @@ namespace Ratings
             }
 
 
-            List<Player> white_player = white.Select(p => getPlayerById(p)).ToList();
-            List<Player> black_player = black.Select(p => getPlayerById(p)).ToList();
+            List<Player> white_player = white.Select(p => getPlayerById(p, temporary)).ToList();
+            List<Player> black_player = black.Select(p => getPlayerById(p, temporary)).ToList();
             Game game = new Game(black_player, white_player, blackWins, time_step, id);
             return game;
         }
 
-        private Game createGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step, int id)
+        private Game CreateGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step, int id)
         {
-            Game game = SetupGame(black, white, blackWins, time_step, id);
+            Game game = SetupGame(black, white, blackWins, time_step, id, false);
             return game != null ? AddGame(game) : null;
         }
 
