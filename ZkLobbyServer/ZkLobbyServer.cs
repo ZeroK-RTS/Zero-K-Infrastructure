@@ -137,7 +137,7 @@ namespace ZkLobbyServer
         /// </summary>
         public Task Broadcast<T>(IEnumerable<string> targetUsers, T data)
         {
-            return Broadcast(targetUsers.Select(x =>
+            return Broadcast(targetUsers.Where(x => x != null).Select(x =>
             {
                 ConnectedUser cli;
                 ConnectedUsers.TryGetValue(x, out cli);
