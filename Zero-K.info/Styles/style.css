@@ -571,6 +571,10 @@ div#busy
 	background-color: #077;
 }
 
+.entry__text img {
+    max-width: 100%;
+}
+
 .forumPostText img
 {
 	max-width:100%;
