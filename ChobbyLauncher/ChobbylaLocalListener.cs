@@ -263,7 +263,7 @@ namespace ChobbyLauncher
             try
             {
                 var line = serializer.SerializeToLine(data);
-                Trace.TraceInformation("Chobbyla >> {0}", line);
+                if (!(data is UserActivity)) Trace.TraceInformation("Chobbyla >> {0}", line);
                 await transport.SendLine(line);
             }
             catch (Exception ex)
@@ -723,7 +723,6 @@ namespace ChobbyLauncher
                 await SendSteamOnline();
 
                 idleReport = new Timer((o) => SendCommand(new UserActivity() { IdleSeconds = WindowsApi.IdleTime.TotalSeconds }), this, 5000, 5000);
-
             }
             catch (Exception ex)
             {
