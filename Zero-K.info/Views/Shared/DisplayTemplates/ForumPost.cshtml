@@ -114,7 +114,7 @@
                     </div>
                 </div>
             </div>
-            <div class="entry">
+            <div class="entry" id="@(p.ForumPostID)">
                 <div class="entry__text">
                     <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
                     @if (p.Upvotes - p.Downvotes <= GlobalConst.PostVoteHideThreshold)
