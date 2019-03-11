@@ -56,7 +56,6 @@ namespace ChobbyLauncher
             discordController.OnSpectate += DiscordOnSpectateCallback;
 
             timer = new Timer((o) => OnTimerTick(), this, 500, 500);
-            idleReport = new Timer((o) => SendCommand(new UserActivity() {IdleSeconds = WindowsApi.IdleTime.TotalSeconds }), this, 5000, 5000);
         }
 
 
@@ -723,6 +722,8 @@ namespace ChobbyLauncher
             {
                 await SendSteamOnline();
 
+                idleReport = new Timer((o) => SendCommand(new UserActivity() { IdleSeconds = WindowsApi.IdleTime.TotalSeconds }), this, 5000, 5000);
+
             }
             catch (Exception ex)
             {
@@ -783,6 +784,7 @@ namespace ChobbyLauncher
             Trace.TraceInformation("Chobby closed connection");
             timer.Dispose();
             steam.Dispose();
+            idleReport.Dispose();
             discordController.Dispose();
         }
     }
