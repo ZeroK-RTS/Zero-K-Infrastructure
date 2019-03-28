@@ -310,7 +310,10 @@ namespace PlasmaDownloader.Packages
                             res.ChangedVersions = changes;
                             LastModified = file.DateModified;
 
-                            var targetFolder = Path.Combine(writableRoot, "rapid", new Uri(BaseUrl).Host);
+                            var uri = new Uri(BaseUrl);
+                            var pathString = uri.Host + uri.PathAndQuery + uri.Fragment;
+                            
+                            var targetFolder = Path.Combine(writableRoot, "rapid", pathString);
                             if (!Directory.Exists(targetFolder)) Directory.CreateDirectory(targetFolder);
 
                             var targetPath = Path.Combine(targetFolder, "versions.gz");

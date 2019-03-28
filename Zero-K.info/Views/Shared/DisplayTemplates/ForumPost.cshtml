@@ -65,67 +65,74 @@
     </table>
 } else
 {
-    <table width='100%'>
-        <tr class="forumRow">
-            <td class="forumPostHead" valign="top">
-                <table>
-                    <tr>
-                        <td>
-                            @Html.AccountAvatar(p.Account)<br/>
-                            @Html.PrintBadges(p.Account, 64)
-                        </td>
-                        <td valign='top'>
-                            @Html.PrintAccount(p.Account)<br/>
-                            <small>
-                                <span nicetitle="@p.Created">@p.Created.ToAgoString()</span>
-                                @if (p.ForumPostEdits.Any())
-                                {
-                                    var lastEdit = p.ForumPostEdits.OrderByDescending(x => x.EditTime).First();
-                                    <br/>
-                                    <a nicetitle="@lastEdit.EditTime" href="@Url.Action("Index", "PostHistory", new { id = p.ForumPostID })">
-                                        (edited @lastEdit.EditTime.ToAgoString())
-                                    </a>
-                                }
-                            </small>
-                            <br/>
+    //<div class="forum">
+        <div class="post">
+            <div class="user">
+                <div class="user__main">
+                    <div class="user__avatar">@Html.AccountAvatar(p.Account)</div>
+                    <div class="user__accolades">@Html.PrintBadges(p.Account, 64)</div>
+                </div>
+                <div class="user__details">
+                    <div class="user__name">
+                        <span>@Html.PrintAccount(p.Account)</span>
+                    </div>
+                    <div class="user__posttime">
+                        <small>
+                            <span nicetitle="@p.Created">@p.Created.ToAgoString()</span>
+                            @if (p.ForumPostEdits.Any())
+                            {
+                                var lastEdit = p.ForumPostEdits.OrderByDescending(x => x.EditTime).First();
+                                <br />
+                                <a nicetitle="@lastEdit.EditTime" href="@Url.Action("Index", "PostHistory", new { id = p.ForumPostID })">
+                                    (edited @lastEdit.EditTime.ToAgoString())
+                                </a>
+                            }
+                        </small>
+                    </div>
+                    <div class="user__actions">
+                        <span class="user__actionicon">
                             @if (Model.CanEdit(Global.Account))
                             {
                                 <a nicetitle='Edit the post' href='@Url.Action("NewPost", "Forum", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })'>
-                                    <img src="/img/edit_pencil.png" height="22"/>
+                                    <img src="/img/edit_pencil.png" height="22" />
                                 </a>
                             }
+                        </span>
+                        <span class="user__actionicon">
                             @if (Global.IsModerator)
                             {
                                 <a nicetitle='Delete the post' href='@Url.Action("DeletePostPrompt", "Forum", new { postID = p.ForumPostID })'>
-                                    <img src="/img/delete_trashcan.png" height="22"/>
+                                    <img src="/img/delete_trashcan.png" height="22" />
                                 </a>
                             }
+                        </span>
+                        <span class="user__actionicon">
                             <a nicetitle='Link to this post' href="@linkURL" class="js_clipboard">
-                                <img src="/img/link.png" height="22"/>
+                                <img src="/img/link.png" height="22" />
                             </a>
-                        </td>
-                    </tr>
-
-                </table>
-            </td>
-            <td valign="top" class="forumPostText" id="@p.ForumPostID">
-                <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
-                @if (p.Upvotes - p.Downvotes <= GlobalConst.PostVoteHideThreshold)
-                {
-                    <small class="js_expand" style="color: gray">This post has been downvoted below -5 and collapsed, click here to expand</small>
-                    <div class="collapse width-90">
-                        @Html.BBCodeCached(p)
+                        </span>
                     </div>
-                } else
-                {
-                    @Html.BBCodeCached(p)
-                }
-
-                <br/>
-                <div id="@("ForumPostVoteForm" + p.ForumPostID)" style="float: right; clear: both;">
+                </div>
+            </div>
+            <div class="entry" id="@(p.ForumPostID)">
+                <div class="entry__text">
+                    <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
+                    @if (p.Upvotes - p.Downvotes <= GlobalConst.PostVoteHideThreshold)
+                    {
+                        <small class="js_expand" style="color: gray">This post has been downvoted below -5 and collapsed, click here to expand</small>
+                        <div class="collapse width-90">
+                            @Html.BBCodeCached(p)
+                        </div>
+                    }
+                    else
+                    {
+                        @Html.BBCodeCached(p)
+                    }
+                </div>
+                <div class="entry__rating" id="@("ForumPostVoteForm" + p.ForumPostID)" >
                     @Html.PrintPostRating(p)
                 </div>
-            </td>
-        </tr>
-    </table>
+            </div>
+        </div>
+    //</div>
 }
