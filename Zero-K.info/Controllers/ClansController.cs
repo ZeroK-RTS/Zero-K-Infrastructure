@@ -53,10 +53,14 @@ namespace ZeroKWeb.Controllers
         /// Shows clan page
         /// </summary>
         /// <returns></returns>
-        public ActionResult Detail(int id)
+        public ActionResult Detail(int? id)
         {
+            if (id == null)
+              return RedirectToAction("Index");
             var db = new ZkDataContext();
-            var clan = db.Clans.First(x => x.ClanID == id);
+            var clan = db.Clans.SingleOrDefault(x => x.ClanID == id);
+            if (clan == null)
+              return Content("No such clan");
             if (Global.ClanID == clan.ClanID)
             {
                 if (clan.ForumThread != null)
