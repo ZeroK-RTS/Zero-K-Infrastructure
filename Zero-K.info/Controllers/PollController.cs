@@ -206,10 +206,14 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("UserVotes", new { id = Global.AccountID });
         }
 
-        public ActionResult UserVotes(int id)
+        public ActionResult UserVotes(int? id)
         {
+            if (id == null)
+              return Content("No such user");
             var db = new ZkDataContext();
             var acc = id > 0 ? db.Accounts.Find(id) : null;
+            if (acc == null)
+              return Content("No such user");
             return View("PollUserVotes", acc);
         }
 
