@@ -49,6 +49,10 @@ namespace ZeroKWeb.Controllers
                     break;
 
                 case "push":
+                    if (payload.ref != "/refs/heads/master"
+                    &&  payload.ref != "/refs/heads/stable")
+                        break;
+
                     var sb = new StringBuilder();
                     int count = 0;
                     dynamic commits = payload.commits;
