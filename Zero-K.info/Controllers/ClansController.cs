@@ -251,7 +251,7 @@ namespace ZeroKWeb.Controllers
                 string newImageUrl = Server.MapPath(clan.GetImageUrl());
                 string newBGImageUrl = Server.MapPath(clan.GetBGImageUrl());
 
-                if (Global.IsModerator)
+                if (Global.IsModerator && (!Global.Account.HasClanRight(x => x.RightEditTexts) || clan.ClanID != Global.Account.ClanID))
                 {
                     Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} edited clan {1} {2}", Global.Account.Name, orgClan.ClanName, Url.Action("Detail", "Clans", new { id = clan.ClanID }, "http")));
                     if (orgClan.ClanName != clan.ClanName)
