@@ -49,8 +49,8 @@ namespace ZeroKWeb.Controllers
                     break;
 
                 case "push":
-                    if (payload.ref != "/refs/heads/master"
-                    &&  payload.ref != "/refs/heads/stable")
+                    if (payload["ref"] != "/refs/heads/master"
+                    &&  payload["ref"] != "/refs/heads/stable")
                         break;
 
                     var sb = new StringBuilder();
