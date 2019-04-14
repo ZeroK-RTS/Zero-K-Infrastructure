@@ -870,10 +870,13 @@ namespace ZkLobbyServer
             RunningSince = null;
             EndedSince = DateTime.UtcNow;
 
-            var debriefingMessage = BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server);
-            Debriefings.Add(debriefingMessage);
+            bool result = BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server, (debriefing) =>
+            {
+                Debriefings.Add(debriefing);
+                server.Broadcast(springBattleContext.ActualPlayers.Select(x => x.Name), debriefing);
+                Trace.TraceInformation("Battle ended: Sent out debriefings for B" + debriefing.ServerBattleID);
+            });
 
-            await server.Broadcast(springBattleContext.ActualPlayers.Select(x => x.Name), debriefingMessage);
             await server.Broadcast(server.ConnectedUsers.Keys, new BattleUpdate() { Header = GetHeader() });
 
             foreach (var s in toNotify)
@@ -905,11 +908,12 @@ namespace ZkLobbyServer
             {
                 DiscussionTime = 5;
             }
+            EndedSince = DateTime.UtcNow;
 
 
             if (IsAutohost || (!Users.ContainsKey(FounderName) || Users[FounderName].LobbyUser?.IsAway == true) && Mode != AutohostMode.None && Mode != AutohostMode.Planetwars && !IsPassworded)
             {
-                if (!string.IsNullOrEmpty(debriefingMessage.Message))
+                if (!result)
                 {
                     //Game was aborted/exited/invalid, allow manual commands
                     EndedSince = EndedSince.AddSeconds(-DiscussionTime);

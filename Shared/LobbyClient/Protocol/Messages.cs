@@ -786,11 +786,22 @@ namespace LobbyClient
         {
             public int AllyNumber { get; set; }
             public object Awards { get; set; }
-            public string EloChange { get; set; }
+            public float EloChange { get; set; }
             public bool IsInVictoryTeam { get; set; }
             public bool IsLevelUp { get; set; }
-            public int? LoseTime { get; set; }
-            public int? XpChange { get; set; }
+            public bool IsRankup { get; set; }
+            public bool IsRankdown { get; set; }
+            public float NewElo { get; set; }
+            public float NextRankElo { get; set; }
+            public float PrevRankElo { get; set; }
+            public string RatingCategory { get; set; }
+            public int NewRank { get; set; }
+            public int LoseTime { get; set; }
+            public int XpChange { get; set; }
+            public int NewXp { get; set; }
+            public int NextLevelXp { get; set; }
+            public int PrevLevelXp { get; set; }
+            public int AccountID { get; set; }
         }
     }
 

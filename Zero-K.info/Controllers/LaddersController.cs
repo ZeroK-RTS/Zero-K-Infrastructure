@@ -50,7 +50,7 @@ namespace ZeroKWeb.Controllers
             if (model.LevelFrom.HasValue) ret = ret.Where(x => x.Level >= model.LevelFrom);
             if (model.LevelTo.HasValue) ret = ret.Where(x => x.Level <= model.LevelTo);
 
-            model.Data = ret.OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == model.RatingCategory).FirstOrDefault().Elo).ToIndexedList().AsQueryable();
+            model.Data = ret.OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == model.RatingCategory).FirstOrDefault().LadderElo).ToIndexedList().AsQueryable();
             
             return View("LaddersFull", model);
         }

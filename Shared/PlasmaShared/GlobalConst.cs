@@ -141,13 +141,16 @@ namespace ZkData
         public const int MinDurationForPlanetwars = 0;
         public const int MaxDurationForPlanetwars = 60*60*3; // 3 hours
 
-        public static readonly int LadderActivityDays = mode == ModeType.Live ? 30 : int.MaxValue;
+        public static readonly int LadderActivityDays = mode == ModeType.Live ? 30 : 1000000;
         public const int LadderSize = 50; // Amount of players shown on ladders
         public const float LadderUpdatePeriod = 1; //Ladder is fully updated every X hours
         public const float EloToNaturalRatingMultiplierSquared = 0.00003313686f;
         public static float NaturalRatingVariancePerDay(float games) => EloToNaturalRatingMultiplierSquared * 200000 / (games + 400); //whr expected player rating change over time
         public const float NaturalRatingVariancePerGame = EloToNaturalRatingMultiplierSquared * 500; //whr expected player rating change per game played
         public const float RatingConfidenceSigma = 0.675f; //75% confidence rating
+        public const float LadderEloMaxChange = 50;
+        public const float LadderEloMinChange = 1;
+        public const float LadderEloSmoothingFactor = 0.25f; //1 for change as fast as whr, 0 for no change
 
         public const int XpForMissionOrBots = 25;
         public const int XpForMissionOrBotsVictory = 50;

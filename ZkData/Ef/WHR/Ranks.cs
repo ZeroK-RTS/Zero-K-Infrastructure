@@ -1,7 +1,9 @@
-﻿using System;
+﻿using PlasmaShared;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Linq;
 using ZkData;
 
 namespace Ratings
@@ -52,25 +54,66 @@ namespace Ratings
             return string.Format("/img/rankbg/{0}.png", RankBackgroundImages[rank]);
         }
 
+        public static RankProgress GetRankProgress(Account acc, IRatingSystem ratingSystem)
+        {
+
+            var rating = ratingSystem.GetPlayerRating(acc.AccountID);
+            if (rating.Rank == int.MaxValue) return null;
+            //var stdev = Math.Min(10000, rating.EloStdev);
+            var rank = acc.Rank;
+            var bracket = ratingSystem.GetPercentileBracket(rank);
+            var stdevUp = 1000.0;
+            var stdevDown = 1000.0;
+            var bracketOverlap = 0.2; //sets overlap in next rank: player needs to be at least this amount within the next rank
+            if (ValidateRank(rank + 1)) stdevUp = (ratingSystem.GetPercentileBracket(rank + 1).UpperEloLimit - ratingSystem.GetPercentileBracket(rank + 1).LowerEloLimit) * bracketOverlap;
+            if (ValidateRank(rank - 1)) stdevDown = (ratingSystem.GetPercentileBracket(rank - 1).UpperEloLimit - ratingSystem.GetPercentileBracket(rank - 1).LowerEloLimit) * bracketOverlap;
+            var rankCeil = bracket.UpperEloLimit + stdevUp;
+            var rankFloor = bracket.LowerEloLimit - stdevDown;
+            //Trace.TraceInformation(acc.Name + ": bracket(" + bracket.LowerEloLimit + ", " + bracket.UpperEloLimit + ") requirements (" + rankFloor + ", " + rankCeil + ") current: " + rating.RealElo + " -> progress: " + bestProgress);
+            return new RankProgress()
+            {
+                ProgressRatio = (float)Math.Min(1, (rating.LadderElo - rankFloor) / (rankCeil - rankFloor)),
+                RankCeilElo = (float)rankCeil,
+                RankFloorElo = (float)rankFloor,
+                CurrentElo = rating.LadderElo
+            };
+        }
+
         public static float GetRankProgress(Account acc)
         {
             float bestProgress = 0;
             bool isActive = false;
             foreach (var ratingSystem in RatingSystems.GetRatingSystems())
             {
-                if (ratingSystem.GetActivePlayers() < 50) continue;
-                var rating = ratingSystem.GetPlayerRating(acc.AccountID);
-                if (rating.Rank == int.MaxValue) continue;
-                isActive = true;
-                var stdev = Math.Min(10000, rating.EloStdev);
-                var bracket = ratingSystem.GetPercentileBracket(acc.Rank);
-                var rankCeil = bracket.UpperEloLimit + stdev;
-                var rankFloor = bracket.LowerEloLimit - stdev;
-                bestProgress = Math.Max(bestProgress, Math.Min(1, (rating.RealElo - rankFloor) / (rankCeil - rankFloor)));
-                //Trace.TraceInformation(acc.Name + ": bracket(" + bracket.LowerEloLimit + ", " + bracket.UpperEloLimit + ") requirements (" + rankFloor + ", " + rankCeil + ") current: " + rating.RealElo + " -> progress: " + bestProgress);
+                var progress = GetRankProgress(acc, ratingSystem);
+                if (progress != null) {
+                    isActive = true;
+                    bestProgress = progress.ProgressRatio;
+                }
             }
             if (!isActive) return 0.001f;
             return bestProgress;
+        }
+
+        public static float UpdateLadderRating(Account acc, RatingCategory cat, float targetRating, bool allowGain, bool allowLoss, ZkDataContext db)
+        {
+            var rating = acc.AccountRatings.Where(x => x.RatingCategory == cat).FirstOrDefault();
+            var ladderElo = rating?.LadderElo ?? WholeHistoryRating.DefaultRating.LadderElo;
+            if (!allowLoss && !allowGain) return (float)ladderElo;
+            var delta = targetRating - ladderElo;
+            delta *= GlobalConst.LadderEloSmoothingFactor; //smooth out elo changes
+            delta = Math.Min(GlobalConst.LadderEloMaxChange, delta); //clip rating change to allowed limits
+            delta = Math.Max(-GlobalConst.LadderEloMaxChange, delta);
+            if (!allowGain) delta = Math.Min(-GlobalConst.LadderEloMinChange, delta);
+            if (!allowLoss) delta = Math.Max(GlobalConst.LadderEloMinChange, delta);
+
+            ladderElo += delta;
+            if (rating != null)
+            {
+                rating.LadderElo = ladderElo;
+                db.Entry(rating).State = System.Data.Entity.EntityState.Modified;
+            }
+            return (float)ladderElo;
         }
 
         public static bool UpdateRank(Account acc, bool allowUprank, bool allowDownrank, ZkDataContext db)
@@ -103,6 +146,14 @@ namespace Ratings
                 return true;
             }
             return false;
+        }
+
+        public class RankProgress
+        {
+            public float ProgressRatio;
+            public float RankFloorElo;
+            public float RankCeilElo;
+            public float CurrentElo;
         }
     }
 
