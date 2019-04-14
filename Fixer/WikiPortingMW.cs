@@ -13,6 +13,17 @@ namespace Fixer
     /// <summary>Ports Zero-K wiki pages to the new MediaWiki.</summary>
     public static class WikiPortingMW
     {
+        /*
+         * How to update unit pages using this bot, speedy version:
+         *  Update zk.sdd
+         *  Generate files using SpringRTS-Tools/unitguide/export_units_template.sh
+         *  - Edit the shell file to make the specified paths point to your zk.sdd (and your desired output directory)
+         *  Modify fileDir variable below to output directory
+         *  Run DoStuff() from Fixer's Main() method; by default, it will run UpdatePages() to update wiki pages from output text files
+         *  
+         *  I recommend looking over UpdatePages() before doing anything with this — Hist.
+         */
+
         public const string WIKI_URL = @"https://zero-k.info";
         public static string fileDir = Environment.OSVersion.Platform == PlatformID.Unix ? @"/media/histidine/My Book/zkwiki/" : @"G:\zkwiki\";
         static Site newWiki;
@@ -61,6 +72,8 @@ namespace Fixer
             return text;
         }
 
+        /// <summary>Converts an existing forum wiki page in ZK database to MediaWiki format,
+        /// and saves it on remote mediawiki.</summary>
         public static void ConvertPage(string pageName, string newName, bool overwrite = false)
         {
             var db = new ZkDataContext();
@@ -103,6 +116,7 @@ namespace Fixer
             page.Save(text, "Cleanup by DotNetWikiBot", false);
         }
 
+        /// <summary>Adds a template to the end of a page.</summary>
         public static void AddTemplate(string pageName, string template)
         {
             Page page = new Page(newWiki, pageName);
@@ -110,6 +124,7 @@ namespace Fixer
             AddTemplate(page, template);
         }
 
+        /// <summary>Adds a template to the end of a page.</summary>
         public static void AddTemplate(Page page, string template)
         {
             string text = page.text;
@@ -186,7 +201,6 @@ namespace Fixer
         /// <returns>True if old and new page texts are different and page text was modified, false otherwise.</returns>
         public static bool ReplaceTemplate(this Page page, string templateTitle, string replacement)
         {
-            
             if (string.IsNullOrEmpty(templateTitle))
                 throw new ArgumentNullException("templateTitle");
             templateTitle = Regex.Escape(templateTitle);
@@ -216,11 +230,50 @@ namespace Fixer
             }
         }
 
+        public static string GetExistingTemplate(this Page page, string templateTitle)
+        {
+            if (string.IsNullOrEmpty(templateTitle))
+                throw new ArgumentNullException("templateTitle");
+
+            templateTitle = Regex.Escape(templateTitle);
+            templateTitle = "(" + Char.ToUpper(templateTitle[0]) + "|" +
+                Char.ToLower(templateTitle[0]) + ")" +
+                (templateTitle.Length > 1 ? templateTitle.Substring(1) : "");
+            string currentText = page.text;
+
+            // regex find infobox to replace it
+            string tailTag = @"==\s?Description\s?==";
+            Match match = Regex.Match(currentText, @"(?s)\{\{\s*" + templateTitle +
+                @"(.*?)}}\r?\n?" + tailTag);
+            
+            if (match == null || !match.Success)
+            {
+                // different content ordering (usually manually created page)
+                tailTag = @"\s*The '''";
+                match = Regex.Match(currentText, @"(?s)\{\{\s*" + templateTitle +
+                    @"(.*?)}}\r?\n?" + tailTag);
+            }
+
+            if (match == null || !match.Success)
+                return null;
+
+            string result = match.Value;
+            result = Regex.Replace(result, tailTag, "");
+            return result;
+        }
+
+        /// <summary>Updates a unit page using the contents of the specified file.</summary>
+        /// <param name="filePath">Text file to read from.</param>
+        /// <param name="infoboxOnly">True if we're only replacing the infobox. 
+        /// The unit template exporter can also include the intro sentence
+        /// and unit helptext, in addition to the infobox.</param>
+        /// <returns>True if old and new page texts are different and page text was modified, false otherwise.</returns>
         public static bool UpdateUnitPage(Page page, string filePath, bool infoboxOnly)
         {
             string text = page.text;
             string newText = text;
 
+            // try to isolate the part we want to update
             if (infoboxOnly)
             {
                 bool result = page.ReplaceTemplate("Infobox zkunit", File.ReadAllText(filePath));
@@ -261,6 +314,8 @@ namespace Fixer
             }
         }
 
+        /// <summary>Updates unit name references in a page.</summary>
+        /// <param name="renames">Array of renames. Each entry is a comma-delimited string (oldName, newName).</param>
         public static void ApplyRenamesToPageText(string pageName, string[] renames)
         {
             Page page = new Page(newWiki, pageName);
@@ -281,6 +336,8 @@ namespace Fixer
             }
         }
 
+        /// <summary>Updates unit name references in a navbox.</summary>
+        /// <param name="renames">Array of renames. Each entry is a comma-delimited string (oldName, newName).</param>
         public static void UpdateUnitNavbox(Page navbox, string[] renames)
         {
             navbox.Load();
@@ -307,6 +364,7 @@ namespace Fixer
             UpdateUnitNavbox(buildingBox, renames);
         }
 
+        /// <summary>Updates unit pages, either specified ones or all that were outputted by the unit tempalte exporter.</summary>
         public static void UpdatePages()
         {
             int count = 0;
@@ -317,13 +375,18 @@ namespace Fixer
             else
                 dir = Path.Combine(fileDir, "raw/markup");
 
+            string downloadDir = Path.Combine(fileDir, "raw_infobox/web");
+            Directory.CreateDirectory(downloadDir);
+
             List<string> filesUpdate = new List<string>();
 
-            //filesUpdate = new List<string>(Directory.GetFiles(dir));
-            var filesUpdateTemp = new List<string>(new string[] {
-                "Kodachi", "Reaver", "Blitz", "Ogre", "Pyro", "Grizzly", "Siren", "Dante", "Faraday"
+            // comment this out to not do all the units at once
+            filesUpdate = new List<string>(Directory.GetFiles(dir));
+
+            var filesUpdateManuallySelected = new List<string>(new string[] {
+                //"Kodachi", "Reaver", "Blitz", "Ogre", "Pyro", "Grizzly", "Siren", "Dante", "Faraday"
             });
-            foreach (string path in filesUpdateTemp)
+            foreach (string path in filesUpdateManuallySelected)
             {
                 string newPath = Path.Combine(dir, path + ".txt");
                 filesUpdate.Add(newPath);
@@ -338,20 +401,31 @@ namespace Fixer
                 page.Load();
                 if (page.Exists())
                 {
-                    //Dictionary<string, object> unitData = new Dictionary<string, object>();
-                    //JsonConvert.PopulateObject(File.ReadAllText(path), unitData);
-                    //foreach (KeyValuePair<string, object> kvp in unitData)
-                    //{
-                    //    UpdateTemplate(page, kvp);
-                    //}
+                    // Downloads the existing infoboxes from wiki.
+                    // It is recommended that you do this and then use a merge tool
+                    // to compare with the unit exporter output; some unit infoboxes
+                    // have custom content in them (e.g. Wind/Tidal Generator).
+                    /*
+                    string existingTemplate = page.GetExistingTemplate("Infobox zkunit");
+                    if (existingTemplate != null)
+                    {
+                        String writePath = Path.Combine(downloadDir, Path.GetFileNameWithoutExtension(path) + ".txt");
+                        Console.WriteLine("Saving template to: " + writePath);
+                        File.WriteAllText(writePath, existingTemplate);
+                        count++;
+                    }
+                    */
 
+                    // Actually modify the pages.
                     bool result = UpdateUnitPage(page, path, infoBoxOnly);
                     if (result)
                     {
                         page.Save("Page auto-updated with DotNetWikiBot", true);
+                        //Console.WriteLine("Page " + unitname + " changed");
                         count++;
                     }
-                    if (count >= 5)
+                    // Stop and pause every 10 pages, so that you can review the changes on live wiki (check the Recent changes page).
+                    if (count >= 10)
                     {
                         count = 0;
                         Console.WriteLine("-- INTERMISSION --");
@@ -366,6 +440,7 @@ namespace Fixer
             }
         }
 
+        /// <summary>Update unitpic URLs on unit pages: use manual.zero-k.info instead of packages.springrts.com.</summary>
         public static void ReplaceUnitpics()
         {
             int count = 0;
@@ -388,6 +463,8 @@ namespace Fixer
             }
         }
 
+        /// <summary>Opens all wiki pages with offsite image hosting 
+        /// (other than zero-k.info, github or licho.eu) in browser.</summary>
         public static void FindOffsiteImages()
         {
             var allPages = File.ReadAllLines(Path.Combine(fileDir, "allpages.txt"));
@@ -449,7 +526,6 @@ namespace Fixer
 
             // find pages with offsite images
             //FindOffsiteImages();
-            return;
 
             int count = 0;  // increment this when we actually create a page
             string dir = "";
@@ -486,7 +562,7 @@ namespace Fixer
             //RenameUnits();
 
             // unit page updater
-            //UpdatePages();
+            UpdatePages();
 
             // unitpic replacer
             //ReplaceUnitpics();

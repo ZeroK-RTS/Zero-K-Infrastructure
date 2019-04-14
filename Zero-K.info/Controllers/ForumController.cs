@@ -466,7 +466,14 @@ namespace ZeroKWeb.Controllers
         /// <param name="lastSeen">UNUSED</param>
         /// <param name="postID">A specific <see cref="ForumPost" /> ID to go to</param>
         /// <returns></returns>
-        public ActionResult Thread(int id, int? postID) {
+        public ActionResult Thread(int? id, int? postID) {
+            if (id == null) {
+              if (postID == null)
+                return RedirectToAction("Index");
+              else
+                return RedirectToAction("Post", new { id = postID });
+            }
+
             var db = new ZkDataContext();
             var t = db.ForumThreads.FirstOrDefault(x => x.ForumThreadID == id);
 
