@@ -21,18 +21,17 @@ namespace ZkLobbyServer
                 IsInGame = false;
                 isZombie = true;
 
-                var debriefingMessage = BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server);
-                debriefingMessage.ChatChannel = "debriefing_" + debriefingMessage.ServerBattleID;
-
-                // join people to channel
-                await
+                bool result = BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server, debriefingMessage =>
+                {
+                    debriefingMessage.ChatChannel = "debriefing_" + debriefingMessage.ServerBattleID;
+                    // join people to channel
                     Task.WhenAll(
-                        spring.Context.ActualPlayers.Where(x=>x.Name != null).Select(x => server.ConnectedUsers.Get(x.Name))
+                        spring.Context.ActualPlayers.Where(x => x.Name != null).Select(x => server.ConnectedUsers.Get(x.Name))
                             .Where(x => x != null)
                             .Select(x => x.Process(new JoinChannel() { ChannelName = debriefingMessage.ChatChannel })));
-
-
-                await server.Broadcast(springBattleContext.ActualPlayers.Select(x => x.Name), debriefingMessage);
+                    server.Broadcast(springBattleContext.ActualPlayers.Select(x => x.Name), debriefingMessage);
+                });
+                
                 await server.RemoveBattle(this);
             }
             catch (Exception ex)
