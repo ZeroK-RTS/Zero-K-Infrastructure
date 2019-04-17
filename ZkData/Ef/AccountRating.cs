@@ -35,7 +35,7 @@ namespace ZkData
         [Index]
         public double Elo { get; set; }
         [Index]
-        public double LadderElo { get; set; }
+        public double? LadderElo { get; set; }
 
         public double EloStdev { get; set; }
 

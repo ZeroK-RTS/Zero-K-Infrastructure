@@ -23,7 +23,7 @@ namespace Ratings
     {
 
         public const float RatingOffset = 1500;
-        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, GlobalConst.NaturalRatingVariancePerDay(0), 0, 0, RatingOffset, false);
+        public static readonly PlayerRating DefaultRating = new PlayerRating(int.MaxValue, 1, RatingOffset, float.PositiveInfinity, GlobalConst.NaturalRatingVariancePerDay(0), 0, 0, 1100, false);
 
         IDictionary<ITopPlayersUpdateListener, int> topPlayersUpdateListeners = new Dictionary<ITopPlayersUpdateListener, int>();
         public event EventHandler<RatingUpdate> RatingsUpdated;
@@ -409,7 +409,7 @@ namespace Ratings
                             continue;
                         }
                         processedPlayers.Add(accountRating.AccountID);
-                        if (Math.Abs(playerRatings[accountRating.AccountID].LadderElo - accountRating.LadderElo) > 1 || accountRating.IsRanked != (playerRatings[accountRating.AccountID].Rank < int.MaxValue))
+                        if (Math.Abs(playerRatings[accountRating.AccountID].LadderElo - accountRating.LadderElo ?? 9999) > 1 || accountRating.IsRanked != (playerRatings[accountRating.AccountID].Rank < int.MaxValue))
                         {
                             accountRating.UpdateFromRatingSystem(playerRatings[accountRating.AccountID]);
                         }
@@ -499,11 +499,11 @@ namespace Ratings
                         rank++;
                         percentile = (float)rank / activePlayers;
                         if (newPercentileBrackets.Count <= Ranks.Percentiles.Length && percentile > percentilesRev[newPercentileBrackets.Count - 1]) newPercentileBrackets.Add(playerRatings[pair.Value].LadderElo);
-                        playerRatings[pair.Value].ApplyLadderUpdate(rank, percentile, currentDay);
+                        playerRatings[pair.Value].ApplyLadderUpdate(rank, percentile, currentDay, true);
                     }
                     else if (playerRatings[pair.Value].Rank < int.MaxValue)
                     {
-                        playerRatings[pair.Value].ApplyLadderUpdate(int.MaxValue, 1, currentDay);
+                        playerRatings[pair.Value].ApplyLadderUpdate(int.MaxValue, 1, currentDay, false);
                     }
                 }
                 this.activePlayers = rank;

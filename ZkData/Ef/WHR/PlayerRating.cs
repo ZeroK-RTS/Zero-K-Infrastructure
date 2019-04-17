@@ -39,11 +39,12 @@ namespace Ratings
         [JsonProperty]
         private int CurrentDate;
 
-        public void ApplyLadderUpdate(int Rank, float Percentile, int CurrentDate)
+        public void ApplyLadderUpdate(int Rank, float Percentile, int CurrentDate, bool Ranked)
         {
             this.Rank = Rank;
             this.Percentile = Percentile;
             this.CurrentDate = CurrentDate;
+            this.Ranked = Ranked;
         }
 
         [JsonConstructor]
