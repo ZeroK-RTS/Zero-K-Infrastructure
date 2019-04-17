@@ -201,9 +201,9 @@ namespace ZkLobbyServer
         public async Task KickFromBattle(string name, string reason)
         {
             UserBattleStatus user;
+            kickedPlayers.Add(new KickedPlayer() { Name = name });
             if (Users.TryGetValue(name, out user))
             {
-                kickedPlayers.Add(new KickedPlayer() { Name = name });
                 var client = server.ConnectedUsers[name];
                 await client.Respond($"You were kicked from battle: {reason}");
                 await client.Process(new LeaveBattle() { BattleID = BattleID });
