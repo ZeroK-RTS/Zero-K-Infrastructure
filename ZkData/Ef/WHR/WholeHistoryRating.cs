@@ -46,8 +46,8 @@ namespace Ratings
 
         //private SpringBattle latestBattle, lastUpdate;
         private HashSet<int> ProcessedBattles = new HashSet<int>();
-        private ConcurrentDictionary<int, PendingDebriefing> pendingDebriefings;
-        private ConcurrentDictionary<int, PendingDebriefing> futureDebriefings;
+        private ConcurrentDictionary<int, PendingDebriefing> pendingDebriefings = new ConcurrentDictionary<int, PendingDebriefing>();
+        private ConcurrentDictionary<int, PendingDebriefing> futureDebriefings = new ConcurrentDictionary<int, PendingDebriefing>();
 
         private bool completelyInitialized = false;
 
@@ -78,7 +78,8 @@ namespace Ratings
             laddersCache = new List<Account>();
             
             ProcessedBattles = new HashSet<int>();
-
+            pendingDebriefings = new ConcurrentDictionary<int, PendingDebriefing>();
+            futureDebriefings = new ConcurrentDictionary<int, PendingDebriefing>();
         }
 
         public PlayerRating GetPlayerRating(int accountID)
