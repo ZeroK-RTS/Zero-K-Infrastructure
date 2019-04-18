@@ -8,7 +8,7 @@ namespace Ratings
     public interface IRatingSystem
     {
 
-        void ProcessBattle(SpringBattle battle, bool delete = false);
+        void ProcessBattle(SpringBattle battle);
 
         PlayerRating GetPlayerRating(int accountID);
 

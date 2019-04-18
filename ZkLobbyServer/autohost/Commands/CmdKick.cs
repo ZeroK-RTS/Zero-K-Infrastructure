@@ -23,8 +23,12 @@ namespace ZkLobbyServer
                 return null;
             }
 
-            target = battle.GetAllUserNames().FirstOrDefault(x => x.Contains(arguments));
-            if (target == null) target = arguments;
+            target = battle.GetAllUserNames().FirstOrDefault(x => x.ToLower().Contains(arguments.ToLower()));
+            if (target == null)
+            {
+                battle.Respond(e, "Player " + arguments + " not found!");
+                return null;
+            }
             if (target == battle.FounderName) {
                 battle.Respond(e, "Cannot kick the host");
                 return null;
@@ -52,7 +56,7 @@ namespace ZkLobbyServer
             var ret = base.GetRunPermissions(battle, userName, out reason);
 
             // only people from same team can vote
-            if (ret >= RunPermission.Vote && battle.spring.IsRunning)
+            if (ret == RunPermission.Vote && battle.spring.IsRunning)
             {
                 var subject = battle.spring.LobbyStartContext.Players.FirstOrDefault(x => x.Name == target);
                 var entry = battle.spring.LobbyStartContext.Players.FirstOrDefault(x => x.Name == userName);

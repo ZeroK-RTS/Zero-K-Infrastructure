@@ -15,6 +15,7 @@ namespace Ratings
         public float Percentile;
         public int Rank;
         public float RealElo;
+        public float LadderElo;
         public float EloStdev {
             get
             {
@@ -24,9 +25,10 @@ namespace Ratings
         public float Elo {
             get
             {
-                return RealElo - Math.Min(400, Math.Max(0, EloStdev - 0) * GlobalConst.RatingConfidenceSigma); //1100 minimum rating for newb
+                return RealElo; //todo: implement simplified derating
             }
         }
+        public bool Ranked;
 
         [JsonProperty]
         public readonly float LastNaturalRatingVar;
@@ -37,15 +39,16 @@ namespace Ratings
         [JsonProperty]
         private int CurrentDate;
 
-        public void ApplyLadderUpdate(int Rank, float Percentile, int CurrentDate)
+        public void ApplyLadderUpdate(int Rank, float Percentile, int CurrentDate, bool Ranked)
         {
             this.Rank = Rank;
             this.Percentile = Percentile;
             this.CurrentDate = CurrentDate;
+            this.Ranked = Ranked;
         }
 
         [JsonConstructor]
-        public PlayerRating(int Rank, float Percentile, float RealElo, float LastNaturalRatingVar, float LastW2, int LastGameDate, int CurrentDate)
+        public PlayerRating(int Rank, float Percentile, float RealElo, float LastNaturalRatingVar, float LastW2, int LastGameDate, int CurrentDate, float LadderElo, bool Ranked)
         {
             this.Percentile = Percentile;
             this.Rank = Rank;
@@ -54,6 +57,8 @@ namespace Ratings
             this.LastGameDate = LastGameDate;
             this.CurrentDate = CurrentDate;
             this.NaturalRatingVariancePerDay = LastW2;
+            this.LadderElo = LadderElo;
+            this.Ranked = Ranked;
         }
     }
 }

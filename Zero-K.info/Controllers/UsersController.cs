@@ -107,7 +107,6 @@ namespace ZeroKWeb.Controllers
                                     .Include(x => x.SpringBattleBots);
             battles.Update(x => new SpringBattle() { ApplicableRatings = 0 });
             db.SaveChanges();
-            battles.ToList().ForEach(x => RatingSystems.RemoveResult(x));
 
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }

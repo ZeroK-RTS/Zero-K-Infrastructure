@@ -34,12 +34,15 @@ namespace ZkData
         public double RealElo { get; set; }
         [Index]
         public double Elo { get; set; }
-        
+        [Index]
+        public double? LadderElo { get; set; }
+
         public double EloStdev { get; set; }
+
         
         public PlayerRating ToUnrankedPlayerRating()
         {
-            return new PlayerRating(int.MaxValue, (float)Percentile, (float)RealElo, (float)EloStdev, 0, 0, 0);
+            return new PlayerRating(int.MaxValue, (float)Percentile, (float)RealElo, (float)EloStdev, 0, 0, 0, (float)LadderElo, false);
         }
 
         public void UpdateFromRatingSystem(PlayerRating rating)
@@ -49,6 +52,7 @@ namespace ZkData
             this.RealElo = rating.RealElo;
             this.EloStdev = rating.EloStdev;
             this.Elo = rating.Elo;
+            LadderElo = rating.LadderElo;
         }
         
         public AccountRating(int AccountID, RatingCategory ratingCategory)
