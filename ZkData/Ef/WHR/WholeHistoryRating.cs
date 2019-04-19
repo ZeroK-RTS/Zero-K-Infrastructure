@@ -135,7 +135,7 @@ namespace Ratings
             
             int date = RatingSystems.ConvertDateToDays(battle.StartTime);
             
-            if (!winners.Intersect(losers).Any() && !ProcessedBattles.Contains(battle.SpringBattleID) && winners.Count > 0 && losers.Count > 0 && winners.Intersect(losers).Count() == 0)
+            if (!winners.Intersect(losers).Any() && !ProcessedBattles.Contains(battle.SpringBattleID) && winners.Count > 0 && losers.Count > 0)
             {
 
                 battlesRegistered++;
@@ -147,15 +147,11 @@ namespace Ratings
                 }
                 else
                 {
-                    Task.Factory.StartNew(() => {
-                        lock (updateLockInternal)
-                        {
-                            CreateGame(losers, winners, false, date, battle.SpringBattleID);
-                            futureDebriefings.ForEach(u => pendingDebriefings.TryAdd(u.Key, u.Value));
-                            futureDebriefings.Clear();
-                        }
-                    });
 
+                    CreateGame(losers, winners, false, date, battle.SpringBattleID);
+                    futureDebriefings.ForEach(u => pendingDebriefings.TryAdd(u.Key, u.Value));
+                    futureDebriefings.Clear();
+                 
                     if (RatingSystems.Initialized)
                     {
                         Trace.TraceInformation(battlesRegistered + " battles registered for WHR " + category + ", latest Battle: " + battle.SpringBattleID);
@@ -288,6 +284,7 @@ namespace Ratings
             if (!RatingSystems.Initialized) return;
             if (battlesRegistered == 0)
             {
+                Trace.TraceWarning("No battles registered for WHR " + category);
                 return;
             }
             lock (updateLock)

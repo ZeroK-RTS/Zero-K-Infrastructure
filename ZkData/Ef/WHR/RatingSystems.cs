@@ -26,6 +26,7 @@ namespace Ratings
 
         public static void Init()
         {
+            Trace.TraceInformation("WHR: Initializing Rating Systems..");
             Initialized = false;
             ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating(category));
 
@@ -37,6 +38,7 @@ namespace Ratings
                         UpdateRatingIds();
                         using (ZkDataContext data = new ZkDataContext())
                         {
+                            int battles = 0;
                             data.Database.CommandTimeout = 240;
                             for (int month = 10*12; month > 0; month--)
                             {
@@ -50,9 +52,11 @@ namespace Ratings
                                         .AsNoTracking()
                                         .OrderBy(x => x.StartTime))
                                 {
+                                    battles++;
                                     ProcessBattle(b);
                                 }
                             }
+                            Trace.TraceInformation("WHR: Read " + battles + " battles from database.");
                             Initialized = true;
                             whr.Values.ForEach(w => w.UpdateRatings());
                         }
