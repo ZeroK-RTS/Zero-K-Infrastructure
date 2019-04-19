@@ -134,7 +134,12 @@ namespace Ratings
             ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).Distinct().ToList();
             
             int date = RatingSystems.ConvertDateToDays(battle.StartTime);
-            
+
+            if (winners.Intersect(losers).Any()) Trace.TraceInformation("WHR B" + battle.SpringBattleID + " has winner loser intersection");
+            if (ProcessedBattles.Contains(battle.SpringBattleID)) Trace.TraceInformation("WHR B" + battle.SpringBattleID + " has already been processed");
+            if (winners.Count == 0) Trace.TraceInformation("WHR B" + battle.SpringBattleID + " has no winner");
+            if (losers.Count == 0) Trace.TraceInformation("WHR B" + battle.SpringBattleID + " has no loser");
+
             if (!winners.Intersect(losers).Any() && !ProcessedBattles.Contains(battle.SpringBattleID) && winners.Count > 0 && losers.Count > 0)
             {
 
