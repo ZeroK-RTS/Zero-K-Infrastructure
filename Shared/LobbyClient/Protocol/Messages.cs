@@ -774,6 +774,7 @@ namespace LobbyClient
         public string Message { get; set; }
         public int ServerBattleID { get; set; }
         public string Url { get; set; }
+        public string RatingCategory { get; set; } = "Unrated";
 
         public class DebriefingAward
         {
@@ -794,7 +795,6 @@ namespace LobbyClient
             public float NewElo { get; set; }
             public float NextRankElo { get; set; }
             public float PrevRankElo { get; set; }
-            public string RatingCategory { get; set; }
             public int NewRank { get; set; }
             public int LoseTime { get; set; }
             public int XpChange { get; set; }

@@ -80,7 +80,6 @@ namespace ZeroKWeb.SpringieInterface
                         NewElo = -1,
                         NextRankElo = -1,
                         PrevRankElo = -1,
-                        RatingCategory = "Unrated",
                         NewRank = p.Account.Rank,
                         XpChange = p.XpChange ?? 0,
                         NewXp = p.Account.Xp,

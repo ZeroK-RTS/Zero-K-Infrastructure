@@ -580,6 +580,7 @@ namespace Ratings
                                 Trace.TraceError("Unable to complete debriefing for user " + user.AccountID + ": " + ex);
                             }
                         });
+                        pair.Value.partialDebriefing.RatingCategory = category.ToString();
                         pair.Value.debriefingConsumer.Invoke(pair.Value.partialDebriefing);
                     });
                     RatingsUpdated(this, new RatingUpdate() { affectedPlayers = playersWithRatingChange });

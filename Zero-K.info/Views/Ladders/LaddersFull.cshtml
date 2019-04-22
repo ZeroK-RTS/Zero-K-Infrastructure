@@ -11,7 +11,7 @@
 
     grid.AddCol("Rank", x => string.Format("{0}.",x.Index + 1));
     grid.AddCol("Player", x => Html.PrintAccount(x.Item));
-    grid.AddCol("Ladder Rating", x => Math.Round(x.Item.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().Elo));
+    grid.AddCol("Ladder Rating", x => Math.Round(x.Item.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().LadderElo));
     grid.AddCol("True Rating", x => string.Format("{0} ± {1}", Math.Round(x.Item.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().RealElo), Math.Round(x.Item.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().EloStdev, 1)));
     grid.AddCol("History", x => @Html.ActionLink("Show history", "Ratings", "Charts", new { RatingCategory = (int)RatingCategory.Casual, UserId = x.Item.AccountID }, null));
 
