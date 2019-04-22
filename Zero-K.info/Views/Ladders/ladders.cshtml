@@ -31,7 +31,7 @@
                             acc = Global.Account;
                         }
                         <text>
-                            @(rank) ) @Html.PrintAccount(acc) - @(Math.Round(acc.GetRating(RatingCategory.MatchMaking).Elo)) <br />
+                            @(rank) ) @Html.PrintAccount(acc) - @(Math.Round(acc.GetRating(RatingCategory.MatchMaking).LadderElo)) <br />
                         </text>
                     }
                 }
@@ -51,10 +51,10 @@
                         if (rank == GlobalConst.LadderSize && Global.IsAccountAuthorized && Global.Account.GetRating(RatingCategory.Casual)?.Rank > rank && Global.Account.GetRating(RatingCategory.Casual)?.Rank < int.MaxValue)
                         {
                             rank = Global.Account.GetRating(RatingCategory.Casual).Rank;
-                            acc = Global.Account;
+                            acc = Global.Account;  
                         }
                         <text>
-                            @(rank)) @Html.PrintAccount(acc) - @(Math.Round(acc.GetRating(RatingCategory.Casual).Elo))<br />
+                            @(rank)) @Html.PrintAccount(acc) - @(Math.Round(acc.GetRating(RatingCategory.Casual).LadderElo))<br />
                         </text>
                     }
                 }

@@ -100,6 +100,11 @@ namespace Ratings
             var rating = acc.AccountRatings.Where(x => x.RatingCategory == cat).FirstOrDefault();
             var ladderElo = rating?.LadderElo ?? WholeHistoryRating.DefaultRating.LadderElo;
             if (!allowLoss && !allowGain) return (float)ladderElo;
+            if (double.IsNaN(targetRating))
+            {
+                Trace.TraceWarning("Target rating for player " + acc.Name + "(" + acc.AccountID + ") is NaN");
+                return (float)ladderElo;
+            }
             var delta = targetRating - ladderElo;
             delta *= GlobalConst.LadderEloSmoothingFactor; //smooth out elo changes
             delta = Math.Min(GlobalConst.LadderEloMaxChange, delta); //clip rating change to allowed limits
