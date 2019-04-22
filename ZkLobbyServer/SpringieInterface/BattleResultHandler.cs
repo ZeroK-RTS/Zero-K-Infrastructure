@@ -107,6 +107,7 @@ namespace ZeroKWeb.SpringieInterface
                 });
 
                 Trace.TraceInformation("Battle ended: Server exited for B" + sb.SpringBattleID);
+                db.SaveChanges();
 
                 return true;
             }
