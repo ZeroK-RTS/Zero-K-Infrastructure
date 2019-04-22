@@ -540,11 +540,13 @@ namespace Ratings
                     Dictionary<int, int> oldRanks = new Dictionary<int, int>();
                     Dictionary<int, Account> updatedRanks = new Dictionary<int, Account>();
                     Dictionary<int, Account> involvedAccounts = new Dictionary<int, Account>();
+                    Trace.TraceInformation("WHR Filling in Debriefings for Battles: " + pendingDebriefings.Keys.Select(x => "B" + x).StringJoin());
                     using (var db = new ZkDataContext())
                     {
                         var battleIDs = pendingDebriefings.Keys.ToList();
                         var lastBattlePlayers = db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).Include(x => x.Account).ToList();
                         involvedAccounts = lastBattlePlayers.ToDictionary(p => p.AccountID, p => p.Account);
+                        Trace.TraceInformation("WHR Debriefing players: " + involvedAccounts.Values.Select(x => x.Name).StringJoin());
                         oldRatings = lastBattlePlayers.ToDictionary(p => p.AccountID, p => playerRatings[p.AccountID].LadderElo);
                         oldRanks = lastBattlePlayers.ToDictionary(p => p.AccountID, p => p.Account.Rank);
                         lastBattlePlayers.Select(p => playerRatings[p.AccountID].LadderElo = Ranks.UpdateLadderRating(p.Account, category, this.players[p.AccountID].avgElo, p.IsInVictoryTeam, !p.IsInVictoryTeam, db));

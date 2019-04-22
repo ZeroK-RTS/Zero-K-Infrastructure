@@ -118,6 +118,7 @@ namespace Ratings
                 rating.LadderElo = ladderElo;
                 db.Entry(rating).State = System.Data.Entity.EntityState.Modified;
             }
+            Trace.TraceInformation(string.Format("WHR LadderElo update for player {0} ({1}) from {2} -> {3}, targeting {4}", acc.Name, acc.AccountID, ladderElo - delta, ladderElo, targetRating));
             return (float)ladderElo;
         }
 
