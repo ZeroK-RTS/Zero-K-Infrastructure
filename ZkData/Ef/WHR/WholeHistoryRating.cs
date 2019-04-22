@@ -190,7 +190,7 @@ namespace Ratings
                     laddersCache = db.Accounts
                         .Include(a => a.Clan)
                         .Include(a => a.Faction)
-                        .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault())
+                        .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.LadderElo).DefaultIfEmpty(-1).FirstOrDefault())
                         .Take(count)
                         .ToList();
                 }
@@ -205,7 +205,7 @@ namespace Ratings
                         .Where(a => retIDs.Contains(a.AccountID))
                         .Include(a => a.Clan)
                         .Include(a => a.Faction)
-                        .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.Elo).DefaultIfEmpty(-1).FirstOrDefault())
+                        .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.LadderElo).DefaultIfEmpty(-1).FirstOrDefault())
                         .ToList();
                 }
             }
@@ -466,6 +466,18 @@ namespace Ratings
         {
             try
             {
+                Dictionary<int, float> oldRatings = new Dictionary<int, float>();
+
+                //check for ladder elo updates
+                using (var db = new ZkDataContext())
+                {
+                    var battleIDs = pendingDebriefings.Keys.ToList();
+                    var lastBattlePlayers = db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).Include(x => x.Account).ToList();
+                    oldRatings = lastBattlePlayers.ToDictionary(p => p.AccountID, p => playerRatings[p.AccountID].LadderElo);
+                    lastBattlePlayers.ForEach(p => playerRatings[p.AccountID].LadderElo = Ranks.UpdateLadderRating(p.Account, category, this.players[p.AccountID].avgElo + RatingOffset, p.IsInVictoryTeam, !p.IsInVictoryTeam, db));
+                }
+
+                //update ladders
                 int currentDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow);
                 int playerCount = 0;
                 using (var db = new ZkDataContext())
@@ -484,6 +496,10 @@ namespace Ratings
                         if (playerRatings.ContainsKey(p.id)) ladderElo = playerRatings[p.id].LadderElo;
                         else ladderElo = (float?)db.AccountRatings.Where(x => x.AccountID == p.id && x.RatingCategory == category).FirstOrDefault()?.LadderElo ?? DefaultRating.LadderElo;
                         playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastNaturalRatingVar, GlobalConst.NaturalRatingVariancePerDay(lastDay.totalWeight), lastDay.day, currentDay, ladderElo, !float.IsNaN(p.avgElo));
+                        if (float.IsNaN(p.avgElo))
+                        {
+                            Trace.TraceInformation("Player " + p.id + " is unranked");
+                        }
                         float rating = -playerRatings[p.id].LadderElo + 0.001f * (float)rand.NextDouble();
                         if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
                         playerKeys[p.id] = rating;
@@ -536,7 +552,6 @@ namespace Ratings
                 if (pendingDebriefings.Any())
                 {
                     List<int> playersWithRatingChange = new List<int>();
-                    Dictionary<int, float> oldRatings = new Dictionary<int, float>();
                     Dictionary<int, int> oldRanks = new Dictionary<int, int>();
                     Dictionary<int, Account> updatedRanks = new Dictionary<int, Account>();
                     Dictionary<int, Account> involvedAccounts = new Dictionary<int, Account>();
@@ -547,9 +562,7 @@ namespace Ratings
                         var lastBattlePlayers = db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).Include(x => x.Account).ToList();
                         involvedAccounts = lastBattlePlayers.ToDictionary(p => p.AccountID, p => p.Account);
                         Trace.TraceInformation("WHR Debriefing players: " + involvedAccounts.Values.Select(x => x.Name).StringJoin());
-                        oldRatings = lastBattlePlayers.ToDictionary(p => p.AccountID, p => playerRatings[p.AccountID].LadderElo);
                         oldRanks = lastBattlePlayers.ToDictionary(p => p.AccountID, p => p.Account.Rank);
-                        lastBattlePlayers.ForEach(p => playerRatings[p.AccountID].LadderElo = Ranks.UpdateLadderRating(p.Account, category, this.players[p.AccountID].avgElo + RatingOffset, p.IsInVictoryTeam, !p.IsInVictoryTeam, db));
                         updatedRanks = lastBattlePlayers.Where(p => Ranks.UpdateRank(p.Account, p.IsInVictoryTeam, !p.IsInVictoryTeam, db)).Select(x => x.Account).ToDictionary(p => p.AccountID, p => p);
                         updatedRanks.Values.ForEach(p => db.Entry(p).State = EntityState.Modified);
                         playersWithRatingChange = lastBattlePlayers.Select(x => x.AccountID).ToList();

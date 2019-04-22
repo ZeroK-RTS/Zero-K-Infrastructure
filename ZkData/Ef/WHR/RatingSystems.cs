@@ -181,7 +181,7 @@ namespace Ratings
                             players = db.Accounts.Where(x => x.PwAttackPoints > 0 && x.FactionID == factionID);
                         }
                         count = players.Count();
-                        skill = count > 0 ? (int)Math.Round(players.SelectMany(x => x.AccountRatings).Where(x => x.RatingCategory == rating).Select(x => x.RealElo).Average()) : 1500;
+                        skill = (int)Math.Round(count > 0 ? players.SelectMany(x => x.AccountRatings).Where(x => x.RatingCategory == rating).Select(x => x.RealElo).DefaultIfEmpty(WholeHistoryRating.DefaultRating.RealElo).Average() : WholeHistoryRating.DefaultRating.RealElo);
                         factionCache[factionID] = new Tuple<int, int, int>(latestBattle, count, skill);
                     }
                 }
