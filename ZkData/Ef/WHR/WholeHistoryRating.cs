@@ -549,7 +549,7 @@ namespace Ratings
                         Trace.TraceInformation("WHR Debriefing players: " + involvedAccounts.Values.Select(x => x.Name).StringJoin());
                         oldRatings = lastBattlePlayers.ToDictionary(p => p.AccountID, p => playerRatings[p.AccountID].LadderElo);
                         oldRanks = lastBattlePlayers.ToDictionary(p => p.AccountID, p => p.Account.Rank);
-                        lastBattlePlayers.ForEach(p => playerRatings[p.AccountID].LadderElo = Ranks.UpdateLadderRating(p.Account, category, this.players[p.AccountID].avgElo, p.IsInVictoryTeam, !p.IsInVictoryTeam, db));
+                        lastBattlePlayers.ForEach(p => playerRatings[p.AccountID].LadderElo = Ranks.UpdateLadderRating(p.Account, category, this.players[p.AccountID].avgElo + RatingOffset, p.IsInVictoryTeam, !p.IsInVictoryTeam, db));
                         updatedRanks = lastBattlePlayers.Where(p => Ranks.UpdateRank(p.Account, p.IsInVictoryTeam, !p.IsInVictoryTeam, db)).Select(x => x.Account).ToDictionary(p => p.AccountID, p => p);
                         updatedRanks.Values.ForEach(p => db.Entry(p).State = EntityState.Modified);
                         playersWithRatingChange = lastBattlePlayers.Select(x => x.AccountID).ToList();
