@@ -52,7 +52,8 @@ namespace ZkData
             this.RealElo = rating.RealElo;
             this.EloStdev = rating.EloStdev;
             this.Elo = rating.Elo;
-            LadderElo = rating.LadderElo;
+            if (float.IsNaN(rating.LadderElo)) Trace.TraceWarning("Tried to set LadderElo for " + AccountID + " to NaN");
+            else LadderElo = rating.LadderElo;
         }
         
         public AccountRating(int AccountID, RatingCategory ratingCategory)

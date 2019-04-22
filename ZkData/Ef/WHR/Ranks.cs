@@ -100,7 +100,7 @@ namespace Ratings
             var rating = acc.AccountRatings.Where(x => x.RatingCategory == cat).FirstOrDefault();
             var ladderElo = rating?.LadderElo ?? WholeHistoryRating.DefaultRating.LadderElo;
             if (!allowLoss && !allowGain) return (float)ladderElo;
-            if (double.IsNaN(targetRating))
+            if (float.IsNaN(targetRating))
             {
                 Trace.TraceWarning("Target rating for player " + acc.Name + "(" + acc.AccountID + ") is NaN");
                 return (float)ladderElo;

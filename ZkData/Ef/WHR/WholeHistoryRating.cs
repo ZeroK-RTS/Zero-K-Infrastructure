@@ -132,13 +132,16 @@ namespace Ratings
         {
             ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).Distinct().ToList();
             ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).Distinct().ToList();
-            
+
             int date = RatingSystems.ConvertDateToDays(battle.StartTime);
 
-            if (winners.Intersect(losers).Any()) Trace.TraceInformation("WHR B" + battle.SpringBattleID + " has winner loser intersection");
-            if (ProcessedBattles.Contains(battle.SpringBattleID)) Trace.TraceInformation("WHR B" + battle.SpringBattleID + " has already been processed");
-            if (winners.Count == 0) Trace.TraceInformation("WHR B" + battle.SpringBattleID + " has no winner");
-            if (losers.Count == 0) Trace.TraceInformation("WHR B" + battle.SpringBattleID + " has no loser");
+            if (RatingSystems.Initialized)
+            {
+                if (winners.Intersect(losers).Any()) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has winner loser intersection");
+                if (ProcessedBattles.Contains(battle.SpringBattleID)) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has already been processed");
+                if (winners.Count == 0) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has no winner");
+                if (losers.Count == 0) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has no loser");
+            }
 
             if (!winners.Intersect(losers).Any() && !ProcessedBattles.Contains(battle.SpringBattleID) && winners.Count > 0 && losers.Count > 0)
             {
@@ -464,6 +467,7 @@ namespace Ratings
             try
             {
                 int currentDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow);
+                int playerCount = 0;
                 using (var db = new ZkDataContext())
                 {
                     foreach (var p in players)
@@ -484,8 +488,10 @@ namespace Ratings
                         if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
                         playerKeys[p.id] = rating;
                         sortedPlayers[rating] = p.id;
+                        if (playerRatings[p.id].Ranked) playerCount++;
                     }
                 }
+                this.activePlayers = playerCount;
                 int rank = 0;
                 List<int> newTopPlayers = new List<int>();
                 int matched = 0;
@@ -509,7 +515,6 @@ namespace Ratings
                         playerRatings[pair.Value].ApplyLadderUpdate(int.MaxValue, 1, currentDay, false);
                     }
                 }
-                this.activePlayers = rank;
                 newPercentileBrackets.Add(newPercentileBrackets.Last() - 420);
                 PercentileBrackets = newPercentileBrackets.Select(x => x).Reverse().ToArray();
                 topPlayers = newTopPlayers;
