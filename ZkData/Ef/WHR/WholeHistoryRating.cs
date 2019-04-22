@@ -573,6 +573,7 @@ namespace Ratings
                                 user.IsRankup = updatedRanks.ContainsKey(user.AccountID) && oldRanks[user.AccountID] < updatedRanks[user.AccountID].Rank;
                                 user.IsRankdown = updatedRanks.ContainsKey(user.AccountID) && oldRanks[user.AccountID] > updatedRanks[user.AccountID].Rank;
                                 var prog = Ranks.GetRankProgress(involvedAccounts[user.AccountID], this);
+                                if (prog == null) Trace.TraceWarning("User " + user.AccountID + " is wrongfully unranked");
                                 user.NextRankElo = prog.RankCeilElo;
                                 user.PrevRankElo = prog.RankFloorElo;
                                 user.NewElo = prog.CurrentElo;

@@ -132,6 +132,7 @@ namespace Ratings
             if (progress > 0.99999f && allowUprank)
             {
                 acc.Rank++;
+                Trace.TraceInformation(acc.Name + " has ranked up to " + acc.Rank);
                 if (!ValidateRank(acc.Rank))
                 {
                     Trace.TraceWarning("Correcting invalid rankup for player " + acc.AccountID + ": " + acc.Rank);
@@ -142,6 +143,7 @@ namespace Ratings
             if (progress < 0.00001f && allowDownrank)
             {
                 acc.Rank--;
+                Trace.TraceInformation(acc.Name + " has ranked down to " + acc.Rank);
                 if (!ValidateRank(acc.Rank))
                 {
                     Trace.TraceWarning("Correcting invalid rankdown for player " + acc.AccountID + ": " + acc.Rank);
