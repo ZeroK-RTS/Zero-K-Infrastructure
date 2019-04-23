@@ -243,13 +243,12 @@ namespace ZkData
         
         public static Account AccountByName(ZkDataContext db, string name)
         {
-            return db.Accounts.FirstOrDefault(x => x.Name == name);
+            return db.Accounts.FirstOrDefault(x => x.Name == name) ?? db.Accounts.FirstOrDefault(x => x.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public static Account AccountVerify(ZkDataContext db, string login, string passwordHash)
         {
-            var loginUpper = login?.ToUpper();
-            var acc = db.Accounts.FirstOrDefault(x => x.Name == login && !x.IsDeleted) ?? db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == loginUpper && !x.IsDeleted);
+            var acc = db.Accounts.FirstOrDefault(x => x.Name == login && !x.IsDeleted) ?? db.Accounts.FirstOrDefault(x => x.Name.Equals(login, StringComparison.CurrentCultureIgnoreCase) && !x.IsDeleted);
             if (acc != null && acc.VerifyPassword(passwordHash)) return acc;
             return null;
         }
