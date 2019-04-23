@@ -311,7 +311,7 @@ namespace ZeroKWeb.Controllers
         }
 
         public string Name => "rating_history";
-        public string Title => AccountName + " (Max. likelihood)";
+        public string Title => AccountName ;
     }
 
 
@@ -433,7 +433,7 @@ namespace ZeroKWeb.Controllers
             if (model.UserId != null)
             {
                 providers.AddRange(model.UserId.Select(x => (IGraphDataProvider)new RatingHistory(x, model.RatingCategory)).ToList());
-                providers.AddRange(model.UserId.Select(x => (IGraphDataProvider)new LadderRatingHistory(x, model.RatingCategory)).ToList());
+                //providers.AddRange(model.UserId.Select(x => (IGraphDataProvider)new LadderRatingHistory(x, model.RatingCategory)).ToList()); //75% confidence
             }
 
             var series = new List<GraphSeries>();
