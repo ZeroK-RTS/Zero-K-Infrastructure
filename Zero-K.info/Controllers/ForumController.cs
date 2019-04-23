@@ -455,6 +455,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult Post(int id) {
             var db = new ZkDataContext();
             var post = db.ForumPosts.FirstOrDefault(x => x.ForumPostID == id);
+            if (post == null) return Content("Invalid post id");
             var thread = post.ForumThread;
             return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID= id });
         }
