@@ -61,7 +61,7 @@ namespace ZkLobbyServer
                     if (entry != null && !entry.IsSpectator && (alliance == null || entry.AllyID == alliance)) return ret;
 
                     // if player is dead, he cannot vote
-                    //if (!battle.spring.Context.ActualPlayers.Any(x=>x.Name == userName && x.LoseTime == null)) return RunPermission.None;
+                    if (!battle.spring.Context.ActualPlayers.Any(x=>x.Name == userName && x.LoseTime == null)) return RunPermission.None;
                 }
             }
             return RunPermission.None;
