@@ -360,6 +360,12 @@ namespace ZkLobbyServer
         {
             if (!IsLoggedIn) return;
 
+            if (string.IsNullOrEmpty(openBattle.Header.Password) && User.BanVotes)
+            {
+                await Respond("Your rights have been restricted. You can only open passworded battles. Check your user page for details.");
+                return;
+            }
+
             if (MyBattle != null)
             {
                 await Respond("You are already in a battle");

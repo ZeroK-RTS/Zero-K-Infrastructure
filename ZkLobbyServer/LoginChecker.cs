@@ -233,6 +233,7 @@ namespace ZkLobbyServer
             Interlocked.Increment(ref user.SyncVersion);
 
             user.BanMute = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanMute) != null;
+            user.BanVotes = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanVotes) != null;
             user.BanSpecChat = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanSpecChat) != null;
         }
 

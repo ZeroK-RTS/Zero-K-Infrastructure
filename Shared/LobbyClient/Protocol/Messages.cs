@@ -342,6 +342,7 @@ namespace LobbyClient
         public string Avatar { get; set; }
         public DateTime? AwaySince { get; set; }
         public bool BanMute { get; set; }
+        public bool BanVotes { get; set; }
         public bool BanSpecChat { get; set; }
         public int? BattleID { get; set; }
         public string Clan { get; set; }
@@ -419,6 +420,7 @@ namespace LobbyClient
             IsAdmin = u.IsAdmin;
             IsBot = u.IsBot;
             BanMute = u.BanMute;
+            BanVotes = u.BanVotes;
             BanSpecChat = u.BanSpecChat;
             Level = u.Level;
             Rank = u.Rank;

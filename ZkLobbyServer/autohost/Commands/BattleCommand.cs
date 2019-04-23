@@ -142,11 +142,13 @@ namespace ZkLobbyServer
                 return RunPermission.None;
             }
 
-            var defPerm = hasElevatedRights ? RunPermission.Run : (isSpectator || isAway ? RunPermission.None : RunPermission.Vote);
+            var defPerm = hasElevatedRights ? RunPermission.Run : (isSpectator || isAway || user?.BanVotes == true ? RunPermission.None : RunPermission.Vote);
 
             if (defPerm == RunPermission.None)
             {
                 reason = "This command can't be executed by spectators. Join the game to use this command.";
+                if (isAway) reason = "You can't vote while being AFK.";
+                if (user?.BanVotes == true) reason = "You have been banned from using votes. Check your user page for details.";
                 return RunPermission.None;
             }
             if (defPerm == RunPermission.Vote && count<=1) defPerm = RunPermission.Run;
