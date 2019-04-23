@@ -171,6 +171,32 @@ namespace ZeroKWeb.Controllers
     }
 
 
+    public class DailyUniqueSpec : IGraphDataProvider
+    {
+        public IList<GraphPoint> GetDailyValues(DateTime fromTime, DateTime toTime)
+        {
+            var db = new ZkDataContext();
+            db.Database.CommandTimeout = 600;
+
+            var selected = db.SpringBattlePlayers.Select(x => new { x.AccountID, x.SpringBattle.StartTime }).Where(x => x.StartTime >= fromTime && x.StartTime <= toTime).ToList();
+
+            return (from sb in selected
+                    group sb by sb.StartTime.Date
+                into grp
+                    orderby grp.Key
+                    select
+                    new GraphPoint()
+                    {
+                        Day = grp.Key,
+                        Value = grp.Select(z => z.AccountID).Distinct().Count(),
+                    }).OrderBy(x => x.Day).ToList();
+        }
+
+        public string Name => "daily_unique_spec";
+        public string Title => "daily unique players and spectators";
+    }
+
+
     public class DailyAvgMatchmakerMinutes : IGraphDataProvider
     {
         public IList<GraphPoint> GetDailyValues(DateTime fromTime, DateTime toTime)
@@ -379,6 +405,7 @@ namespace ZeroKWeb.Controllers
                 {
                     new Retention(),
                     new DailyUnique(),
+                    new DailyUniqueSpec(),
                     new DailyNew(),
                     new RetentionLimit(1),
                     new RetentionLimit(3),
