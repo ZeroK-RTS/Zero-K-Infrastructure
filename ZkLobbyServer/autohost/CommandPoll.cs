@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace ZkLobbyServer
     {
         private int winCount;
         private ServerBattle battle;
-        private Dictionary<string, int> userVotes = new Dictionary<string, int>(); //stores votes, zero indexed
+        private ConcurrentDictionary<string, int> userVotes = new ConcurrentDictionary<string, int>(); //stores votes, zero indexed
         private Func<string, string> EligiblitySelector; //return null if player is allowed to vote, otherwise reason
         private readonly bool absoluteMajorityVote; //if set to yes, at least N/2 players need to vote for an option to be selected. Otherwise the option with the majority of votes wins
         private bool yesNoVote; //if set to yes, there must be only two options being yes and no.
