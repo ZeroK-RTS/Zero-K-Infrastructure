@@ -224,6 +224,7 @@ namespace ZeroKWeb.Controllers
                     RealElo = WholeHistoryRating.DefaultRating.RealElo,
                     EloStdev = 1000,
                     Elo = WholeHistoryRating.DefaultRating.Elo,
+                    LadderElo = WholeHistoryRating.DefaultRating.LadderElo,
                 });
             }
             (RatingSystems.GetRatingSystem(RatingCategory.Planetwars) as WholeHistoryRating).ResetAll();

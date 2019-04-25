@@ -90,7 +90,11 @@ namespace AutoRegistrator
                 .ToArray();
             CopyResources(siteBase, paths, GetMapList(campaignMaps), downloader);
 
-            if (!downloader.UpdateMissions(prog).Result) throw new ApplicationException("SteamDepot Error updating missions! " + prog.Status);
+            // don't update missions on test ZK
+            if (GlobalConst.Mode == ModeType.Live)
+            {
+                if (!downloader.UpdateMissions(prog).Result) throw new ApplicationException("SteamDepot Error updating missions! " + prog.Status);
+            }
             if (!downloader.UpdatePublicCommunityInfo(prog)) throw new ApplicationException("SteamDepot Error updating public community info! " + prog.Status);
 
 

@@ -73,8 +73,7 @@ namespace ZkLobbyServer
                     if (info != null) accBySteamID = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.SteamID == info.steamid);
                     if (!string.IsNullOrEmpty(login.Name))
                     {
-                        var loginToUpper = login.Name.ToUpper();
-                        accByLogin = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name) ?? db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name.ToUpper() == loginToUpper);
+                        accByLogin = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name) ?? db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name.Equals(login.Name, StringComparison.CurrentCultureIgnoreCase));
                     }
 
                     if (accBySteamID == null)
@@ -218,8 +217,8 @@ namespace ZkLobbyServer
             user.Avatar = acc.Avatar;
             user.Level = acc.Level;
             user.Rank = acc.Rank;
-            user.EffectiveMmElo = (int)Math.Round(acc.GetRating(RatingCategory.MatchMaking).Elo);
-            user.EffectiveElo = (int)Math.Round(acc.GetRating(RatingCategory.Casual).Elo);
+            user.EffectiveMmElo = (int)Math.Round(Math.Min(acc.GetRating(RatingCategory.MatchMaking).LadderElo, acc.GetRating(RatingCategory.MatchMaking).RealElo));
+            user.EffectiveElo = (int)Math.Round(acc.GetRating(RatingCategory.Casual).LadderElo);
             user.RawMmElo = (int)Math.Round(acc.GetRating(RatingCategory.MatchMaking).RealElo);
             user.SteamID = acc.SteamID?.ToString();
             user.IsAdmin = acc.AdminLevel >= AdminLevel.Moderator;
@@ -234,6 +233,7 @@ namespace ZkLobbyServer
             Interlocked.Increment(ref user.SyncVersion);
 
             user.BanMute = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanMute) != null;
+            user.BanVotes = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanVotes) != null;
             user.BanSpecChat = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanSpecChat) != null;
         }
 

@@ -170,10 +170,11 @@
     <h2>Issue a penalty</h2>
     <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
         @Html.AntiForgeryToken()
-        Reason: @Html.TextBox("reason", "Smurf", new { style="width:500px" })<br />
+        Reason: @Html.TextBox("reason", "Smurf", new { style = "width:500px" })<br />
         <br />
 
         Mute: @Html.CheckBox("banMute")<br />
+        Block Votes: @Html.CheckBox("banVotes")<br />
         Block commanders: @Html.CheckBox("banCommanders")<br />
         Disallow spec chat: @Html.CheckBox("banSpecChat")<br />
         <br />
@@ -182,9 +183,9 @@
         Ban site: @Html.CheckBox("banSite")<br />
         Ban lobby: @Html.CheckBox("banLobby")<br />
         Ban forum: @Html.CheckBox("banForum")<br />
-        Ban hours: @Html.TextBox("banHours", 1)<br />
+        Punishment hours: @Html.TextBox("banHours", 1)<br />
 
-        <input type="submit" value="BAN" class="js_confirm" />
+        <input type="submit" value="PUNISH" class="js_confirm" />
     </form>
     <br />
 

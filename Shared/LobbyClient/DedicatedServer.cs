@@ -348,7 +348,11 @@ namespace LobbyClient
         private void MarkPlayerDead(string name, bool isDead)
         {
             var sp = Context.ActualPlayers.FirstOrDefault(x => x.Name == name);
-            if (sp != null) sp.LoseTime = isDead ? (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds : (int?)null;
+            if (sp != null)
+            {
+                sp.LoseTime = isDead ? (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds : (int?)null;
+                if (sp.QuitTime < sp.LoseTime) sp.LoseTime = sp.QuitTime;
+            }
         }
 
         private void StartDedicated(string script)
@@ -404,8 +408,11 @@ namespace LobbyClient
 
                     case Talker.SpringEventType.PLAYER_LEFT:
                         entry = Context?.GetOrAddPlayer(e.PlayerName);
-                        if (entry != null) entry.IsIngame = false;
-
+                        if (entry != null)
+                        {
+                            entry.IsIngame = false;
+                            entry.QuitTime = (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds;
+                        }
                         if (e.Param == 0) PlayerDisconnected?.Invoke(this, new SpringLogEventArgs(e.PlayerName));
                         PlayerLeft?.Invoke(this, new SpringLogEventArgs(e.PlayerName));
                         break;

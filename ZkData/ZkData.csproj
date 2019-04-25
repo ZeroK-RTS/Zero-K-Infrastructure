@@ -430,6 +430,14 @@
     <Compile Include="Migrations\201903072346315_AddMapPollOutcomeCategory.Designer.cs">
       <DependentUpon>201903072346315_AddMapPollOutcomeCategory.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201904172034522_AddLadderElo.cs" />
+    <Compile Include="Migrations\201904172034522_AddLadderElo.Designer.cs">
+      <DependentUpon>201904172034522_AddLadderElo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904231037123_AddBanVotes.cs" />
+    <Compile Include="Migrations\201904231037123_AddBanVotes.Designer.cs">
+      <DependentUpon>201904231037123_AddBanVotes.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -815,6 +823,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903072346315_AddMapPollOutcomeCategory.resx">
       <DependentUpon>201903072346315_AddMapPollOutcomeCategory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904172034522_AddLadderElo.resx">
+      <DependentUpon>201904172034522_AddLadderElo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904231037123_AddBanVotes.resx">
+      <DependentUpon>201904231037123_AddBanVotes.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

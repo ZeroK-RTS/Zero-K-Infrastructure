@@ -65,6 +65,7 @@ namespace ZeroKWeb.Views.Forum
         public ActionResult RevertTo(int id, bool? isAfter = false) {
             var db = new ZkDataContext();
             var edit = db.ForumPostEdits.Find(id);
+            if (edit == null) return Content("Invalid id");
             var post = edit.ForumPost;
             var thread = post.ForumThread;
             if (edit.ForumPost.CanEdit(Global.Account))

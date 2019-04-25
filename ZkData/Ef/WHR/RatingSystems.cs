@@ -26,6 +26,7 @@ namespace Ratings
 
         public static void Init()
         {
+            Trace.TraceInformation("WHR: Initializing Rating Systems..");
             Initialized = false;
             ratingCategories.ForEach(category => whr[category] = new WholeHistoryRating(category));
 
@@ -37,6 +38,7 @@ namespace Ratings
                         UpdateRatingIds();
                         using (ZkDataContext data = new ZkDataContext())
                         {
+                            int battles = 0;
                             data.Database.CommandTimeout = 240;
                             for (int month = 10*12; month > 0; month--)
                             {
@@ -50,9 +52,11 @@ namespace Ratings
                                         .AsNoTracking()
                                         .OrderBy(x => x.StartTime))
                                 {
+                                    battles++;
                                     ProcessBattle(b);
                                 }
                             }
+                            Trace.TraceInformation("WHR: Read " + battles + " battles from database.");
                             Initialized = true;
                             whr.Values.ForEach(w => w.UpdateRatings());
                         }
@@ -94,27 +98,15 @@ namespace Ratings
         }
 
         private static int latestBattle;
-
-        //Erases old SpringBattle from Rating History
-        public static void RemoveResult(SpringBattle battle)
-        {
-            if (!Initialized) return;
-            ProcessBattle(battle, true, true);
-        }
-
-        //Processes old SpringBattle with predetermined applicable ratings
-        public static void ReprocessResult(SpringBattle battle)
-        {
-            if (!Initialized) return;
-            ProcessBattle(battle, true);
-        }
+        
+        
 
         //Processes new SpringBattle and determines applicable ratings
-        public static void ProcessResult(SpringBattle battle, SpringBattleContext result)
+        public static void ProcessResult(SpringBattle battle, SpringBattleContext result, PendingDebriefing partialDebriefing)
         {
             if (!Initialized) return;
             FillApplicableRatings(battle, result);
-            ProcessBattle(battle);
+            ProcessBattle(battle, debriefing: partialDebriefing);
         }
 
         private static void FillApplicableRatings(SpringBattle battle, SpringBattleContext result)
@@ -138,25 +130,25 @@ namespace Ratings
             //Optionally add other flags here, like a casual or overall rating
         }
 
-        private static void ProcessBattle(SpringBattle battle, bool reprocessingBattle = false, bool removeBattle = false)
+        private static void ProcessBattle(SpringBattle battle, PendingDebriefing debriefing = null)
         {
             lock (processingLock)
             {
+                if (debriefing != null)
+                {
+                    var cat = ratingCategories.Where(c => IsCategory(battle, c));
+                    if (cat.Any()) whr[cat.First()].AttachResultReporting(battle.SpringBattleID, debriefing);
+                    else debriefing.debriefingConsumer.Invoke(debriefing.partialDebriefing);
+                }
+
                 int battleID = -1;
                 try
                 {
                     battleID = battle.SpringBattleID;
-                    if (reprocessingBattle)
-                    {
-                        ratingCategories.ForEach(c => whr[c].ProcessBattle(battle, removeBattle || !IsCategory(battle, c)));
-                    }
-                    else
-                    {
-                        if (processedBattles.Contains(battleID)) return;
-                        processedBattles.Add(battleID);
-                        ratingCategories.Where(c => IsCategory(battle, c)).ForEach(c => whr[c].ProcessBattle(battle));
-                        latestBattle = battleID;
-                    }
+                    if (processedBattles.Contains(battleID)) return;
+                    processedBattles.Add(battleID);
+                    ratingCategories.Where(c => IsCategory(battle, c)).ForEach(c => whr[c].ProcessBattle(battle));
+                    latestBattle = battleID;
                 }
                 catch (Exception ex)
                 {
@@ -189,7 +181,7 @@ namespace Ratings
                             players = db.Accounts.Where(x => x.PwAttackPoints > 0 && x.FactionID == factionID);
                         }
                         count = players.Count();
-                        skill = count > 0 ? (int)Math.Round(players.SelectMany(x => x.AccountRatings).Where(x => x.RatingCategory == rating).Select(x => x.RealElo).Average()) : 1500;
+                        skill = (int)Math.Round(count > 0 ? players.SelectMany(x => x.AccountRatings).Where(x => x.RatingCategory == rating).Select(x => x.RealElo).DefaultIfEmpty(WholeHistoryRating.DefaultRating.RealElo).Average() : WholeHistoryRating.DefaultRating.RealElo);
                         factionCache[factionID] = new Tuple<int, int, int>(latestBattle, count, skill);
                     }
                 }
@@ -237,4 +229,11 @@ namespace Ratings
         }
     }
     
+    public class PendingDebriefing
+    {
+        public Action<BattleDebriefing> debriefingConsumer;
+        public BattleDebriefing partialDebriefing;
+        public SpringBattle battle;
+    }
+
 }

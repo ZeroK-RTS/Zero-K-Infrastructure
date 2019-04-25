@@ -43,7 +43,7 @@ namespace LobbyClient
         public AutohostMode Mode { get; set; }
 
         public DateTime? RunningSince { get; set; }
-        public DateTime EndedSince { get; set; } = DateTime.MinValue;
+        public DateTime BlockPollsUntil { get; set; } = DateTime.MinValue;
 
         public RatingCategory ApplicableRating = RatingCategory.Casual;
         public bool IsMatchMakerBattle { get; protected set; }

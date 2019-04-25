@@ -95,7 +95,7 @@ namespace ZkData
         [StringLength(8000)]
         public string Aliases { get; set; }
         public int WhrAlias { get; set; }
-
+        
         /*public double Elo { get; set; }
         public double EloWeight { get; set; }
         public double EloMm { get; set; }
@@ -243,13 +243,12 @@ namespace ZkData
         
         public static Account AccountByName(ZkDataContext db, string name)
         {
-            return db.Accounts.FirstOrDefault(x => x.Name == name);
+            return db.Accounts.FirstOrDefault(x => x.Name == name) ?? db.Accounts.FirstOrDefault(x => x.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public static Account AccountVerify(ZkDataContext db, string login, string passwordHash)
         {
-            var loginUpper = login?.ToUpper();
-            var acc = db.Accounts.FirstOrDefault(x => x.Name == login && !x.IsDeleted) ?? db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == loginUpper && !x.IsDeleted);
+            var acc = db.Accounts.FirstOrDefault(x => x.Name == login && !x.IsDeleted) ?? db.Accounts.FirstOrDefault(x => x.Name.Equals(login, StringComparison.CurrentCultureIgnoreCase) && !x.IsDeleted);
             if (acc != null && acc.VerifyPassword(passwordHash)) return acc;
             return null;
         }
@@ -265,8 +264,8 @@ namespace ZkData
             var mm = RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetPlayerRating(AccountID);
             var pw = RatingSystems.GetRatingSystem(RatingCategory.Planetwars).GetPlayerRating(AccountID);
 
-            if ((casual.Elo >= mm.Elo || mm.Rank == int.MaxValue) && casual.Rank < int.MaxValue) return casual;
-            if ((mm.Elo >= casual.Elo || casual.Rank == int.MaxValue) && mm.Rank < int.MaxValue) return mm;
+            if ((casual.LadderElo >= mm.LadderElo || mm.Rank == int.MaxValue) && casual.Rank < int.MaxValue) return casual;
+            if ((mm.LadderElo >= casual.LadderElo || casual.Rank == int.MaxValue) && mm.Rank < int.MaxValue) return mm;
             //ignore pw 
 
             return WholeHistoryRating.DefaultRating;
@@ -319,7 +318,7 @@ namespace ZkData
 
         public bool CanPlayerPlanetWars()
         {
-            return FactionID != null && Level >= GlobalConst.MinPlanetWarsLevel && GetBestRating().Elo > GlobalConst.MinPlanetWarsElo;
+            return FactionID != null && Level >= GlobalConst.MinPlanetWarsLevel && GetBestRating().LadderElo > GlobalConst.MinPlanetWarsElo;
         }
 
 
@@ -726,9 +725,9 @@ namespace ZkData
                     AccountBattleAwards.GroupBy(x => x.AwardKey).Select(x => new UserProfile.UserAward() { AwardKey = x.Key, Collected = x.Count() })
                         .ToList(),
                 Badges = GetBadges().Select(x => x.ToString()).ToList(),
-                EffectiveElo = (int)Math.Round(GetRating(RatingCategory.Casual).Elo),
-                EffectivePwElo = (int)Math.Round(GetRating(RatingCategory.Planetwars).Elo),
-                EffectiveMmElo = (int)Math.Round(GetRating(RatingCategory.MatchMaking).Elo),
+                EffectiveElo = (int)Math.Round(GetRating(RatingCategory.Casual).LadderElo),
+                EffectivePwElo = (int)Math.Round(GetRating(RatingCategory.Planetwars).LadderElo),
+                EffectiveMmElo = (int)Math.Round(GetRating(RatingCategory.MatchMaking).LadderElo),
                 Kudos = KudosGained,
                 Level = Level,
                 LevelUpRatio = GetLevelUpRatio().ToString("F2"),

@@ -53,10 +53,14 @@ namespace ZeroKWeb.Controllers
         /// Shows clan page
         /// </summary>
         /// <returns></returns>
-        public ActionResult Detail(int id)
+        public ActionResult Detail(int? id)
         {
+            if (id == null)
+              return RedirectToAction("Index");
             var db = new ZkDataContext();
-            var clan = db.Clans.First(x => x.ClanID == id);
+            var clan = db.Clans.SingleOrDefault(x => x.ClanID == id);
+            if (clan == null)
+              return Content("No such clan");
             if (Global.ClanID == clan.ClanID)
             {
                 if (clan.ForumThread != null)
@@ -251,7 +255,7 @@ namespace ZeroKWeb.Controllers
                 string newImageUrl = Server.MapPath(clan.GetImageUrl());
                 string newBGImageUrl = Server.MapPath(clan.GetBGImageUrl());
 
-                if (Global.IsModerator)
+                if (Global.IsModerator && (!Global.Account.HasClanRight(x => x.RightEditTexts) || clan.ClanID != Global.Account.ClanID))
                 {
                     Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} edited clan {1} {2}", Global.Account.Name, orgClan.ClanName, Url.Action("Detail", "Clans", new { id = clan.ClanID }, "http")));
                     if (orgClan.ClanName != clan.ClanName)

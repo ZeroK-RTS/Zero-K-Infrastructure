@@ -7,6 +7,7 @@ namespace PlasmaShared
         public bool IsSpectator;
         public bool IsVictoryTeam;
         public int? LoseTime;
+        public int? QuitTime;
         public string Name { get; private set; }
 
         public bool IsIngame;

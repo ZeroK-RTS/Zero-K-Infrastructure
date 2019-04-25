@@ -342,6 +342,7 @@ namespace LobbyClient
         public string Avatar { get; set; }
         public DateTime? AwaySince { get; set; }
         public bool BanMute { get; set; }
+        public bool BanVotes { get; set; }
         public bool BanSpecChat { get; set; }
         public int? BattleID { get; set; }
         public string Clan { get; set; }
@@ -419,6 +420,7 @@ namespace LobbyClient
             IsAdmin = u.IsAdmin;
             IsBot = u.IsBot;
             BanMute = u.BanMute;
+            BanVotes = u.BanVotes;
             BanSpecChat = u.BanSpecChat;
             Level = u.Level;
             Rank = u.Rank;
@@ -774,6 +776,7 @@ namespace LobbyClient
         public string Message { get; set; }
         public int ServerBattleID { get; set; }
         public string Url { get; set; }
+        public string RatingCategory { get; set; } = "Unrated";
 
         public class DebriefingAward
         {
@@ -786,11 +789,21 @@ namespace LobbyClient
         {
             public int AllyNumber { get; set; }
             public object Awards { get; set; }
-            public string EloChange { get; set; }
+            public float EloChange { get; set; }
             public bool IsInVictoryTeam { get; set; }
             public bool IsLevelUp { get; set; }
-            public int? LoseTime { get; set; }
-            public int? XpChange { get; set; }
+            public bool IsRankup { get; set; }
+            public bool IsRankdown { get; set; }
+            public float NewElo { get; set; }
+            public float NextRankElo { get; set; }
+            public float PrevRankElo { get; set; }
+            public int NewRank { get; set; }
+            public int LoseTime { get; set; }
+            public int XpChange { get; set; }
+            public int NewXp { get; set; }
+            public int NextLevelXp { get; set; }
+            public int PrevLevelXp { get; set; }
+            public int AccountID { get; set; }
         }
     }
 

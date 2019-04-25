@@ -13,6 +13,9 @@ namespace Ratings
         public readonly List<PlayerDay> days = new List<PlayerDay>();
         const float MAX_RATING_CHANGE = 5;
 
+        public float avgElo = 0f / 0;
+        public float avgEloVar = 0f / 0;
+
         private static List<float> hessian_subdiagonal = new List<float>();
         private static List<float> hessian_diagonal = new List<float>();
         
@@ -150,7 +153,7 @@ namespace Ratings
             {
                 x[i] = (y[i] - hessianLU_upperSuperdiagonal[i] * x[i + 1]) / hessianLU_upperDiagonal[i];
             }
-
+            
             for (int i = 0; i < days.Count; i++)
             {
                 if (float.IsNaN(x[i]))
@@ -162,7 +165,6 @@ namespace Ratings
                     days[i].r -= Math.Max(-MAX_RATING_CHANGE, Math.Min(MAX_RATING_CHANGE, x[i]));
                 }
             }
-
         }
 
         private void UpdateHessianLU()
@@ -235,7 +237,28 @@ namespace Ratings
                     covariance_subdiagonal[i] = (-1 * hessianLU_lowerSubdiagonal[i] * v[i]);
                 }
             }
+        }
 
+        private void UpdateLadderRatings()
+        {
+
+            float avgElo = 0;
+            float weightSum = 0;
+            float varSum = 0;
+            int minDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow) - GlobalConst.LadderActivityDays;
+            for (int i = 0; i < days.Count; i++)
+            {
+                if (days[i].day >= minDay)
+                {
+                    weightSum += days[i].weight;
+                    varSum += days[i].weight * days[i].GetEloStdev() * days[i].GetEloStdev();
+                    avgElo += days[i].GetElo() * days[i].weight;
+                }
+            }
+            avgElo /= weightSum;
+            varSum /= weightSum;
+            this.avgEloVar = varSum;
+            this.avgElo = avgElo;
         }
 
         private void UpdateRatingVariance()
@@ -247,6 +270,7 @@ namespace Ratings
                 {
                     days[i].naturalRatingVariance = covariance_diagonal[i];
                 }
+                UpdateLadderRatings();
             }
         }
 

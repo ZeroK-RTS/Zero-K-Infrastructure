@@ -50,7 +50,7 @@ namespace ZeroKWeb.Controllers
             if (model.LevelFrom.HasValue) ret = ret.Where(x => x.Level >= model.LevelFrom);
             if (model.LevelTo.HasValue) ret = ret.Where(x => x.Level <= model.LevelTo);
 
-            model.Data = ret.OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == model.RatingCategory).FirstOrDefault().Elo).ToIndexedList().AsQueryable();
+            model.Data = ret.OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == model.RatingCategory).FirstOrDefault().LadderElo).ToIndexedList().AsQueryable();
             
             return View("LaddersFull", model);
         }
@@ -95,6 +95,8 @@ namespace ZeroKWeb.Controllers
             if (model.SizeFrom.HasValue) ret = ret.Where(x => x.Map.MapWidth >= model.SizeFrom && x.Map.MapHeight >= model.SizeFrom);
             if (model.SizeTo.HasValue) ret = ret.Where(x => x.Map.MapWidth <= model.SizeTo && x.Map.MapHeight <= model.SizeTo);
 
+            if (model.SupportLevel.HasValue) ret = ret.Where(x => x.Map.MapSupportLevel >= model.SupportLevel);
+
             model.Data = ret;
 
             return View("LaddersMaps", model);
@@ -108,6 +110,8 @@ namespace ZeroKWeb.Controllers
 
             public int? SizeFrom { get; set; } = 0;
             public int? SizeTo { get; set; } = 1000;
+
+            public MapSupportLevel? SupportLevel { get; set; }
 
             public IQueryable<MapRatings.Rating> Data;
         }

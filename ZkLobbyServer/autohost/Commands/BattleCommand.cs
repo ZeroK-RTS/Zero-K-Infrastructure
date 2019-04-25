@@ -142,18 +142,25 @@ namespace ZkLobbyServer
                 return RunPermission.None;
             }
 
-            var defPerm = hasElevatedRights ? RunPermission.Run : (isSpectator || isAway ? RunPermission.None : RunPermission.Vote);
+            var defPerm = hasElevatedRights ? RunPermission.Run : (isSpectator || isAway || user?.BanVotes == true ? RunPermission.None : RunPermission.Vote);
 
             if (defPerm == RunPermission.None)
             {
                 reason = "This command can't be executed by spectators. Join the game to use this command.";
+                if (isAway) reason = "You can't vote while being AFK.";
+                if (user?.BanVotes == true) reason = "You have been banned from using votes. Check your user page for details.";
                 return RunPermission.None;
             }
             if (defPerm == RunPermission.Vote && count<=1) defPerm = RunPermission.Run;
             
             if (Access == AccessType.Anywhere) return defPerm;
 
-            if (Access == AccessType.Ingame || Access == AccessType.IngameVote)
+            if ((Access == AccessType.NotIngameNotAutohost || Access == AccessType.IngameNotAutohost) && battle.IsAutohost && !hasAdminRights)
+            {
+                reason = "This command cannot be used on autohosts, either ask a moderator to change the settings or create your own host.";
+                return RunPermission.None;
+            }
+            if (Access == AccessType.Ingame || Access == AccessType.IngameVote || Access == AccessType.IngameNotAutohost)
             {
                 if (s.IsRunning)
                 {
@@ -165,11 +172,6 @@ namespace ZkLobbyServer
                     reason = "This command can only be used while the game is running. Use !start to start the game.";
                     return RunPermission.None;
                 }
-            }
-            if (Access == AccessType.NotIngameNotAutohost && battle.IsAutohost && !hasAdminRights)
-            {
-                reason = "This command cannot be used on autohosts, either ask a moderator to change the settings or create your own host.";
-                return RunPermission.None;
             }
             if (Access == AccessType.NotIngame || Access == AccessType.NotIngameNotAutohost)
             {
@@ -226,8 +228,14 @@ namespace ZkLobbyServer
             /// <summary>
             /// Can be executed not-ingame by non-spectators (vote) or admins or founder (direct). Unavailable to non-admins on autohosts
             /// </summary>
-            [Description("When game not running, by players, might need a vote")]
+            [Description("When game not running, by players, might need a vote. Unavailable to non-admins on autohosts")]
             NotIngameNotAutohost = 6,
+
+            /// <summary>
+            /// Can be executed ingame by non-spectators (vote) or admins or founder (direct). Unavailable to non-admins on autohosts
+            /// </summary>
+            [Description("When game running, by players, might need a vote. Unavailable to non-admins on autohosts")]
+            IngameNotAutohost = 7,
         }
 
 
