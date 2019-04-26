@@ -90,6 +90,7 @@ namespace ZeroKWeb.Views.Forum
         public ActionResult ViewEntry(int id, bool? isAfter = false) {
             var db = new ZkDataContext();
             var edit = db.ForumPostEdits.Find(id);
+            if (edit == null) return Content("Invalid id");
             return View("ViewEntry", (object)(isAfter == true? edit.NewText : edit.OriginalText));
 
         }
