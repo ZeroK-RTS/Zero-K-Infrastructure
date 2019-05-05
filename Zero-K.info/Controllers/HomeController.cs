@@ -9,6 +9,9 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using Discord;
+using Discord.Rest;
+using Discord.WebSocket;
 using DotNetOpenAuth.Messaging;
 using DotNetOpenAuth.OpenId;
 using DotNetOpenAuth.OpenId.Extensions.SimpleRegistration;
@@ -17,6 +20,8 @@ using LobbyClient;
 using PlasmaShared;
 using Ratings;
 using ZkData;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
 
 namespace ZeroKWeb.Controllers
 {
@@ -228,7 +233,14 @@ namespace ZeroKWeb.Controllers
 	    public ActionResult NotLoggedIn()
 		{
 			return View();
-		}
+        }
+
+
+        public ActionResult DiscordAuth(string code, string state)
+        {
+            Global.Server.DiscordWebApi.LinkAccount(state, code);
+            return View("HomeIndex");
+        }
 
         [AcceptVerbs(HttpVerbs.Post | HttpVerbs.Get)]
         public ActionResult Logon(string login, string password, string referer, string zklogin)

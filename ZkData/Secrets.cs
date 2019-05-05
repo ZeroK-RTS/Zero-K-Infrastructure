@@ -16,5 +16,6 @@ namespace ZkData
         public string GetGlacierSecretKey() => MiscVar.GetValue("GlacierSecretKey");
 
         public string GetNightwatchDiscordToken() => MiscVar.GetValue("NightwatchDiscordToken");
+        public string GetDiscordClientSecret() => MiscVar.GetValue("DiscordClientSecret");
     }
 }
