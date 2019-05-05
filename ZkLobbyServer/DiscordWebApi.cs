@@ -27,7 +27,7 @@ namespace ZkLobbyServer
 
         public string GetAuthenticationURL(int accountId)
         {
-            return string.Format("https://discordapp.com/api/oauth2/authorize?client_id={0}&redirect_uri={1}&response_type=code&scope=identify&state={2}", clientId, GetRedirectURL(), GetAnonymousId(accountId));
+            return string.Format("https://discordapp.com/api/oauth2/authorize?client_id={0}&redirect_uri={1}&response_type=code&scope=identify&state={2}", clientId, Uri.EscapeDataString(GetRedirectURL()), Uri.EscapeDataString(GetAnonymousId(accountId)));
         }
 
         public string GetRedirectURL()

@@ -239,7 +239,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult DiscordAuth(string code, string state)
         {
             Global.Server.DiscordWebApi.LinkAccount(state, code);
-            return View("HomeIndex");
+            return Content("Linking discord account");
         }
 
         [AcceptVerbs(HttpVerbs.Post | HttpVerbs.Get)]
