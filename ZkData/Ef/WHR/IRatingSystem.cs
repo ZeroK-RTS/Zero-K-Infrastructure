@@ -32,6 +32,8 @@ namespace Ratings
 
         int GetActivePlayers();
 
+        bool IsInitialized();
+
         event EventHandler<RatingUpdate> RatingsUpdated;
 
         Dictionary<DateTime, float> GetPlayerLadderRatingHistory(int accountID);

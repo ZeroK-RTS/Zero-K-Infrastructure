@@ -82,6 +82,11 @@ namespace Ratings
             futureDebriefings = new ConcurrentDictionary<int, PendingDebriefing>();
         }
 
+        public bool IsInitialized()
+        {
+            return completelyInitialized;
+        }
+
         public PlayerRating GetPlayerRating(int accountID)
         {
             if (!completelyInitialized)
