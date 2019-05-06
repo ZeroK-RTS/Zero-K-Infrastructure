@@ -183,30 +183,33 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count)
         {
-            if (count > 200)
-            {
-                using (ZkDataContext db = new ZkDataContext())
-                {
-                    laddersCache = db.Accounts
-                        .Include(a => a.Clan)
-                        .Include(a => a.Faction)
-                        .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.LadderElo).DefaultIfEmpty(-1).FirstOrDefault())
-                        .Take(count)
-                        .ToList();
-                }
-            }
             if (laddersCache.Count < count)
             {
-
-                using (ZkDataContext db = new ZkDataContext())
+                if (count > 200 || !completelyInitialized)
                 {
-                    List<int> retIDs = topPlayers.Take(count).ToList();
-                    laddersCache = db.Accounts
-                        .Where(a => retIDs.Contains(a.AccountID))
-                        .Include(a => a.Clan)
-                        .Include(a => a.Faction)
-                        .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.LadderElo).DefaultIfEmpty(-1).FirstOrDefault())
-                        .ToList();
+                    using (ZkDataContext db = new ZkDataContext())
+                    {
+                        laddersCache = db.Accounts
+                            .Include(a => a.Clan)
+                            .Include(a => a.Faction)
+                            .Where(x => !x.IsDeleted && x.AccountRatings.Any(r => r.RatingCategory == category && r.IsRanked))
+                            .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).FirstOrDefault().LadderElo)
+                            .Take(count)
+                            .ToList();
+                    }
+                }
+                else
+                {
+                    using (ZkDataContext db = new ZkDataContext())
+                    {
+                        List<int> retIDs = topPlayers.Take(count).ToList();
+                        laddersCache = db.Accounts
+                            .Where(a => retIDs.Contains(a.AccountID))
+                            .Include(a => a.Clan)
+                            .Include(a => a.Faction)
+                            .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).FirstOrDefault().LadderElo)
+                            .ToList();
+                    }
                 }
             }
             return laddersCache.Take(count).ToList();
