@@ -81,7 +81,9 @@ namespace ZkLobbyServer
         {
 
             List<int> votes = Options.Select((o, i) => userVotes.Count(x => x.Value == i)).ToList();
-            var winnerId = votes.IndexOf(votes.Max());
+            List<int> potentialWinnerIndexes = votes.Where(x => x == votes.Max()).Select((v, i) => i);
+            Random rng = new Random();
+            var winnerId = potentialWinnerIndexes[rng.Next(potentialWinnerIndexes.Count)];
 
             if (votes[winnerId] >= winCount || timeout && !absoluteMajorityVote)
             {
