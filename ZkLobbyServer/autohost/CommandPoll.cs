@@ -81,7 +81,7 @@ namespace ZkLobbyServer
         {
 
             List<int> votes = Options.Select((o, i) => userVotes.Count(x => x.Value == i)).ToList();
-            List<int> potentialWinnerIndexes = votes.Where(x => x == votes.Max()).Select((v, i) => i);
+            List<int> potentialWinnerIndexes = votes.Where(x => x == votes.Max()).Select((v, i) => i).ToList();
             Random rng = new Random();
             var winnerId = potentialWinnerIndexes[rng.Next(potentialWinnerIndexes.Count)];
 
