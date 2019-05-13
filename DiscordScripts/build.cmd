@@ -1,0 +1,1 @@
+dispatch.exe build push 389176180877688832 config.json c:\projekty\zero-k.info\steamworks\tools\ContentBuilder\content

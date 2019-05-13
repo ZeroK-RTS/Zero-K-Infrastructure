@@ -19,19 +19,17 @@
               "install_path": "luaui/config*",
               "attributes": ["user_data"]
             }
-          ],
+          ]
         },
         "storage": {
           "sync": true,
           "roots": [
             {
-              "id": "config",
+              "id": "luaui_config",
               "paths": [
                 {
-                  "path": "luaui/config"
-                },
-                {
-                  "path": "luaui/configs"
+                  "path": "${INSTALLDIR}/luaui/config",
+			      "platform": "windows"
                 }
               ],
               "patterns": ["**/*"]
@@ -43,13 +41,13 @@
             "name": "Zero-K",
             "executable": "Zero-K.exe",
             "arguments": [],
-            "platforms": ["win32", "win64"],
+            "platforms": ["win32", "win64"]
           },
           {
             "name": "Zero-K",
-            "executable": "./Zero-K_linux64.sh",
+            "executable": "Zero-K_linux64.sh",
             "arguments": [],
-            "platforms": ["linux"],
+            "platforms": ["linux"]
           }
         ]
       }
