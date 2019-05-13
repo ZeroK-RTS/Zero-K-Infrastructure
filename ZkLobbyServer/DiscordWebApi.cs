@@ -46,44 +46,52 @@ namespace ZkLobbyServer
 
         public async Task LinkAccount(string state, string code)
         {
-            int accountId;
-            if (!userIds.TryGetValue(state, out accountId)){
-                Trace.TraceWarning("Invalid state " + state);
-                return;
-            }
-
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://discordapp.com/api/oauth2/token");
-            request.Content = new FormUrlEncodedContent(new Dictionary<string, string> {
-                { "client_id", GlobalConst.ZeroKDiscordID },
-                { "client_secret", new Secrets().GetDiscordClientSecret() },
-                { "grant_type", "authorization_code" },
-                { "code", code },
-                { "redirect_uri", GetRedirectURL() },
-                { "scope", "identify" },
-            });
-
-            var response = await new HttpClient().SendAsync(request);
-            response.EnsureSuccessStatusCode();
-
-            var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var token = payload.Value<string>("access_token");
-
-            var discord = new DiscordSocketClient();
-            await discord.StartAsync();
-            await discord.LoginAsync(TokenType.Bearer, token);
-            var discordId = discord.CurrentUser.Id;
-            using (var db = new ZkDataContext())
+            try
             {
-                var existing = db.Accounts.FirstOrDefault(x => x.DiscordID == discordId);
-                if (existing != null)
+                int accountId;
+                if (!userIds.TryGetValue(state, out accountId))
                 {
-                    Trace.TraceInformation("Unlinking discord for Account " + existing.Name);
-                    existing.DiscordID = (decimal?)null;
+                    Trace.TraceWarning("Invalid state " + state);
+                    return;
+                }
+
+                var request = new HttpRequestMessage(HttpMethod.Post, "https://discordapp.com/api/oauth2/token");
+                request.Content = new FormUrlEncodedContent(new Dictionary<string, string> {
+                    { "client_id", GlobalConst.ZeroKDiscordID },
+                    { "client_secret", new Secrets().GetDiscordClientSecret() },
+                    { "grant_type", "authorization_code" },
+                    { "code", code },
+                    { "redirect_uri", GetRedirectURL() },
+                    { "scope", "identify" },
+                });
+
+                var response = await new HttpClient().SendAsync(request);
+                response.EnsureSuccessStatusCode();
+
+                var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
+                var token = payload.Value<string>("access_token");
+
+                var discord = new DiscordSocketClient();
+                await discord.StartAsync();
+                await discord.LoginAsync(TokenType.Bearer, token);
+                var discordId = discord.CurrentUser.Id;
+                using (var db = new ZkDataContext())
+                {
+                    var existing = db.Accounts.FirstOrDefault(x => x.DiscordID == discordId);
+                    if (existing != null)
+                    {
+                        Trace.TraceInformation("Unlinking discord for Account " + existing.Name);
+                        existing.DiscordID = (decimal?)null;
+                        db.SaveChanges();
+                    }
+                    Trace.TraceInformation("Linking discord id " + discordId + " to Account " + existing.Name);
+                    db.Accounts.FirstOrDefault(x => x.AccountID == accountId).DiscordID = discordId;
                     db.SaveChanges();
                 }
-                Trace.TraceInformation("Linking discord id " + discordId + " to Account " + existing.Name);
-                db.Accounts.FirstOrDefault(x => x.AccountID == accountId).DiscordID = discordId;
-                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error linking discord ID " + ex);
             }
         }
     }
