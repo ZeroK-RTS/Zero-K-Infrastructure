@@ -49,6 +49,7 @@ namespace ZkLobbyServer
             try
             {
                 int accountId;
+                Trace.TraceInformation("Linking discord id...");
                 if (!userIds.TryGetValue(state, out accountId))
                 {
                     Trace.TraceWarning("Invalid state " + state);
@@ -68,13 +69,17 @@ namespace ZkLobbyServer
                 var response = await new HttpClient().SendAsync(request);
                 response.EnsureSuccessStatusCode();
 
+                Trace.TraceInformation("Sent discord identify request...");
                 var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
                 var token = payload.Value<string>("access_token");
 
                 var discord = new DiscordSocketClient();
+                Trace.TraceInformation("Starting discord client...");
                 await discord.StartAsync();
+                Trace.TraceInformation("Logging in discord client...");
                 await discord.LoginAsync(TokenType.Bearer, token);
                 var discordId = discord.CurrentUser.Id;
+                Trace.TraceInformation("Got discord id " + discordId);
                 using (var db = new ZkDataContext())
                 {
                     var existing = db.Accounts.FirstOrDefault(x => x.DiscordID == discordId);
