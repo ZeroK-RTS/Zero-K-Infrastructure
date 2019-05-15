@@ -24,6 +24,7 @@ using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Licho.Utils.Web;
 
 namespace ZeroKWeb.Controllers
 {
@@ -240,8 +241,15 @@ namespace ZeroKWeb.Controllers
 
         public async Task<ActionResult> DiscordAuth(string code, string state)
         {
-            await Global.Server.DiscordWebApi.LinkAccount(state, code);
-            return Content("Linking discord account");
+            if (await Global.Server.DiscordWebApi.LinkAccount(state, code))
+            {
+                MessageBox.Show("Discord account linked!");
+            }
+            else
+            {
+                MessageBox.Show("An error occured while linking the Discord account.");
+            }
+            return View("HomeIndex");
         }
 
         [AcceptVerbs(HttpVerbs.Post | HttpVerbs.Get)]

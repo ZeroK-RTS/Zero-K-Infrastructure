@@ -44,12 +44,11 @@ namespace ZkLobbyServer
             return state;
         }
 
-        public async Task LinkAccount(string state, string code)
+        public async Task<bool> LinkAccount(string state, string code)
         {
             try
             {
                 int accountId;
-                Trace.TraceInformation("Linking discord id...");
                 if (!userIds.TryGetValue(state, out accountId))
                 {
                     Trace.TraceWarning("Invalid state " + state);
@@ -69,15 +68,12 @@ namespace ZkLobbyServer
                 var response = await new HttpClient().SendAsync(request);
                 response.EnsureSuccessStatusCode();
 
-                Trace.TraceInformation("Sent discord identify request...");
                 var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
                 var token = payload.Value<string>("access_token");
 
                 var discord = new DiscordRestClient();
-                Trace.TraceInformation("Logging in discord client...");
                 await discord.LoginAsync(TokenType.Bearer, token);
                 var discordId = discord.CurrentUser.Id;
-                Trace.TraceInformation("Got discord id " + discordId);
                 using (var db = new ZkDataContext())
                 {
                     var existing = db.Accounts.FirstOrDefault(x => x.DiscordID == discordId);
@@ -87,7 +83,7 @@ namespace ZkLobbyServer
                         existing.DiscordID = (decimal?)null;
                         db.SaveChanges();
                     }
-                    Trace.TraceInformation("Linking discord id " + discordId + " to Account " + existing.Name);
+                    Trace.TraceInformation("Linking discord id " + discordId + " to Account " + accountId);
                     db.Accounts.FirstOrDefault(x => x.AccountID == accountId).DiscordID = discordId;
                     db.SaveChanges();
                 }
@@ -95,7 +91,9 @@ namespace ZkLobbyServer
             catch (Exception ex)
             {
                 Trace.TraceError("Error linking discord ID " + ex);
+                return false;
             }
+            return true;
         }
     }
 
