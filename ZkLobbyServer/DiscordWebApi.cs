@@ -1,5 +1,5 @@
 using Discord;
-using Discord.WebSocket;
+using Discord.Rest;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
@@ -73,9 +73,7 @@ namespace ZkLobbyServer
                 var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
                 var token = payload.Value<string>("access_token");
 
-                var discord = new DiscordSocketClient();
-                Trace.TraceInformation("Starting discord client...");
-                await discord.StartAsync();
+                var discord = new DiscordRestClient();
                 Trace.TraceInformation("Logging in discord client...");
                 await discord.LoginAsync(TokenType.Bearer, token);
                 var discordId = discord.CurrentUser.Id;

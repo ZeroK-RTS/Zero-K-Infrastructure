@@ -23,6 +23,7 @@ using ZkData;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ZeroKWeb.Controllers
 {
@@ -237,10 +238,9 @@ namespace ZeroKWeb.Controllers
         }
 
 
-        public ActionResult DiscordAuth(string code, string state)
+        public async Task<ActionResult> DiscordAuth(string code, string state)
         {
-            SynchronizationContext.SetSynchronizationContext(null);
-            Global.Server.DiscordWebApi.LinkAccount(state, code);
+            await Global.Server.DiscordWebApi.LinkAccount(state, code);
             return Content("Linking discord account");
         }
 
