@@ -249,7 +249,7 @@ namespace ZeroKWeb.Controllers
             {
                 MessageBox.Show("An error occured while linking the Discord account.");
             }
-            return View("HomeIndex");
+            return Index();
         }
 
         [AcceptVerbs(HttpVerbs.Post | HttpVerbs.Get)]
@@ -336,8 +336,8 @@ namespace ZeroKWeb.Controllers
 	            case AuthenticationStatus.Failed:
 	                return Content("Login failed");
 	        }
-	        return View("HomeIndex");
-	    }
+            return RedirectToAction("Index", "Home");
+        }
 
 	    public ActionResult Logout(string referer)
 		{

@@ -52,7 +52,7 @@ namespace ZkLobbyServer
                 if (!userIds.TryGetValue(state, out accountId))
                 {
                     Trace.TraceWarning("Invalid state " + state);
-                    return;
+                    return false;
                 }
 
                 var request = new HttpRequestMessage(HttpMethod.Post, "https://discordapp.com/api/oauth2/token");

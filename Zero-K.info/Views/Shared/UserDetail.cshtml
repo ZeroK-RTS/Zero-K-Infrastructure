@@ -392,8 +392,14 @@
         <h3 class="js_expand">Account maintenance</h3>
         <div id="accountMaint" class="collapse width-90">
             <h4>Link Discord Account</h4>
+            @if (Global.Account.DiscordID.HasValue)
+            {
+                <div>
+                    Your account is currently linked to Discord ID @(Global.Account.DiscordID).
+                </div><br />
+            }
             <a href="@Global.Server.DiscordWebApi.GetAuthenticationURL(Global.AccountID)">Login with Discord</a> <br/>
-            <br />
+            
             <h4>Change password</h4>
             @if (!string.IsNullOrEmpty(Model.PasswordBcrypt))
             {
@@ -422,6 +428,7 @@
     }
     @if (Global.IsModerator && Global.AccountID == Model.AccountID)
     {
+        <br />
         <div class="admin">
             <h3>Admin extras</h3>
             <form action="@Url.Action("SetZklsMaxPlayers", "Admin")" method="post">
