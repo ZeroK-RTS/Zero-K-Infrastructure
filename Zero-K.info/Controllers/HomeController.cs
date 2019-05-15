@@ -22,6 +22,7 @@ using Ratings;
 using ZkData;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
+using System.Threading;
 
 namespace ZeroKWeb.Controllers
 {
@@ -238,6 +239,7 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult DiscordAuth(string code, string state)
         {
+            SynchronizationContext.SetSynchronizationContext(null);
             Global.Server.DiscordWebApi.LinkAccount(state, code);
             return Content("Linking discord account");
         }
