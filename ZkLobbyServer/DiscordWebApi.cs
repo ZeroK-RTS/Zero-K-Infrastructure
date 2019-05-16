@@ -73,18 +73,25 @@ namespace ZkLobbyServer
 
                 var discord = new DiscordRestClient();
                 await discord.LoginAsync(TokenType.Bearer, token);
-                var discordId = discord.CurrentUser.Id;
+                var discordId = discord.CurrentUser.Id.ToString();
+                var discordName = discord.CurrentUser.Username;
+                var discordDiscriminator = discord.CurrentUser.Discriminator;
                 using (var db = new ZkDataContext())
                 {
                     var existing = db.Accounts.FirstOrDefault(x => x.DiscordID == discordId);
                     if (existing != null)
                     {
                         Trace.TraceInformation("Unlinking discord for Account " + existing.Name);
-                        existing.DiscordID = (decimal?)null;
+                        existing.DiscordID = null;
+                        existing.DiscordName = null;
+                        existing.DiscordDiscriminator = null;
                         db.SaveChanges();
                     }
                     Trace.TraceInformation("Linking discord id " + discordId + " to Account " + accountId);
-                    db.Accounts.FirstOrDefault(x => x.AccountID == accountId).DiscordID = discordId;
+                    var acc = db.Accounts.FirstOrDefault(x => x.AccountID == accountId);
+                    acc.DiscordID = discordId;
+                    acc.DiscordDiscriminator = discordDiscriminator;
+                    acc.DiscordName = discordName;
                     db.SaveChanges();
                 }
             }

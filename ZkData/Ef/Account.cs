@@ -162,7 +162,9 @@ namespace ZkData
 
 
         [Index(IsUnique = true)]
-        public decimal? DiscordID { get; set; }
+        public string DiscordID { get; set; }
+        public string DiscordName { get; set; }
+        public string DiscordDiscriminator { get; set; }
 
         [Index(IsUnique = true)]
         public decimal? SteamID { get; set; }
