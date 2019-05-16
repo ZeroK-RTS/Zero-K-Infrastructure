@@ -7,13 +7,14 @@ namespace ZkData.Migrations
     {
         public override void Up()
         {
-            DropIndex("dbo.Accounts", new[] { "DiscordID" });
-            AddColumn("dbo.Accounts", "DiscordName", c => c.String());
-            AddColumn("dbo.Accounts", "DiscordDiscriminator", c => c.String());
-            AlterColumn("dbo.Accounts", "DiscordID", c => c.String());
             var indexName = "DiscordID";
             var tableName = "dbo.Accounts";
             var columnName = "DiscordID";
+
+            Sql(string.Format(@"DROP INDEX {0} ON {1};", indexName, tableName));
+            AddColumn("dbo.Accounts", "DiscordName", c => c.String(maxLength: 40));
+            AddColumn("dbo.Accounts", "DiscordDiscriminator", c => c.String(maxLength: 10));
+            AlterColumn("dbo.Accounts", "DiscordID", c => c.String(maxLength: 30));
 
             Sql(string.Format(@"CREATE UNIQUE NONCLUSTERED INDEX {0} ON {1}({2}) WHERE {2} IS NOT NULL;", indexName, tableName, columnName));
         }

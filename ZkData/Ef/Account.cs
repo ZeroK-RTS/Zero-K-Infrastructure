@@ -162,8 +162,11 @@ namespace ZkData
 
 
         [Index(IsUnique = true)]
+        [StringLength(30)]
         public string DiscordID { get; set; }
+        [StringLength(40)]
         public string DiscordName { get; set; }
+        [StringLength(10)]
         public string DiscordDiscriminator { get; set; }
 
         [Index(IsUnique = true)]
