@@ -391,14 +391,14 @@
     {
         <h3 class="js_expand">Account maintenance</h3>
         <div id="accountMaint" class="collapse width-90">
-            <h4>Link Discord Account</h4>
-            @if (Global.Account.DiscordID.HasValue)
+            <h4>Linked Discord Account</h4>
+            @if (!String.IsNullOrEmpty(Global.Account.DiscordID))
             {
                 <div>
-                    Your account is currently linked to Discord ID @(Global.Account.DiscordID).
-                </div><br />
+                    Your account is currently linked to @(Model.DiscordName)#@(Model.DiscordDiscriminator).
+                </div>
             }
-            <a href="@Global.Server.DiscordWebApi.GetAuthenticationURL(Global.AccountID)">Login with Discord</a> <br/>
+            <a href="@Global.Server.DiscordWebApi.GetAuthenticationURL(Global.AccountID)">Link Discord Account</a> <br/>
             
             <h4>Change password</h4>
             @if (!string.IsNullOrEmpty(Model.PasswordBcrypt))
@@ -421,6 +421,7 @@
     
     @if (Global.IsTourneyController && Global.AccountID == Model.AccountID)
     {
+        <br />
         <div class="admin">
             <h3>Tourney extras</h3>
             <a href="@Url.Action("Index", "Tourney")">Tourney control</a><br />
