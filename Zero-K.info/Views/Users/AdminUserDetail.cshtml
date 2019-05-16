@@ -9,6 +9,7 @@
 <div class="admin">
     <h1>Administer @Html.PrintAccount(@Model, true, true)</h1>
     AccountID: @Model.AccountID
+    Discord: @(Model.DiscordName)#@Model.DiscordDiscriminator (@(Model.DiscordID)))
     <br />
     Lobby program: @Model.LobbyVersion<br />
     Last Login: @Model.LastLogin<br />
