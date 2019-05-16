@@ -453,6 +453,10 @@
     <Compile Include="Migrations\201905160900304_AddDiscordNameDiscriminatorIDString.Designer.cs">
       <DependentUpon>201905160900304_AddDiscordNameDiscriminatorIDString.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201905160923397_UpdateDiscord.cs" />
+    <Compile Include="Migrations\201905160923397_UpdateDiscord.Designer.cs">
+      <DependentUpon>201905160923397_UpdateDiscord.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -850,6 +854,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201905160900304_AddDiscordNameDiscriminatorIDString.resx">
       <DependentUpon>201905160900304_AddDiscordNameDiscriminatorIDString.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905160923397_UpdateDiscord.resx">
+      <DependentUpon>201905160923397_UpdateDiscord.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
