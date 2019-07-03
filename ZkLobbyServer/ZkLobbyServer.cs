@@ -29,7 +29,6 @@ namespace ZkLobbyServer
         public EventHandler<Say> Said = delegate { };
         public CommandJsonSerializer Serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<MessageAttribute>());
         public SteamWebApi SteamWebApi;
-        public DiscordWebApi DiscordWebApi;
 
         private ServerTextCommands textCommands;
         public string Engine { get; private set; }
@@ -74,7 +73,6 @@ namespace ZkLobbyServer
 
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
-            DiscordWebApi = new DiscordWebApi(GlobalConst.ZeroKDiscordID, new Secrets().GetDiscordClientSecret());
             chatRelay = new ChatRelay(this, new List<string>() { "zkdev", "sy", "ai", "zk", "zkmap", "springboard", GlobalConst.ModeratorChannel, GlobalConst.CoreChannel, "off-topic", "support","modding" });
             textCommands = new ServerTextCommands(this);
             ChannelManager = new ChannelManager(this);

@@ -387,41 +387,22 @@
         }
     }
 
-    @if (Global.AccountID == Model.AccountID)
+    @if (Global.AccountID == Model.AccountID && !string.IsNullOrEmpty(Model.PasswordBcrypt))
     {
         <h3 class="js_expand">Account maintenance</h3>
         <div id="accountMaint" class="collapse width-90">
-            <h4>Linked Discord Account</h4>
-            @if (!String.IsNullOrEmpty(Global.Account.DiscordID))
-            {
-                <div>
-                    Your account is currently linked to @(Model.DiscordName)#@(Model.DiscordDiscriminator).
-                </div>
-            }
-            <a href="@Global.Server.DiscordWebApi.GetAuthenticationURL(Global.AccountID)">Link Discord Account</a> <br/>
-            
             <h4>Change password</h4>
-            @if (!string.IsNullOrEmpty(Model.PasswordBcrypt))
-            {
-                <form method="post" action="@Url.Action("ChangePassword", "Users")">
-                    Old password: @Html.Password("oldPassword")<br />
-                    New password: @Html.Password("newPassword")<br />
-                    Reenter new password: @Html.Password("newPassword2")<br />
-                    <input type="submit" />
-                </form>
-            }
-            else
-            {
-                <div>
-                    The password can't be changed for Steam users. Contact an admin if you would like to login without Steam.<br />
-                </div>
-            }
+            <form method="post" action="@Url.Action("ChangePassword", "Users")">
+                Old password: @Html.Password("oldPassword")<br />
+                New password: @Html.Password("newPassword")<br />
+                Reenter new password: @Html.Password("newPassword2")<br />
+                <input type="submit" />
+            </form>
         </div>
     }
     
     @if (Global.IsTourneyController && Global.AccountID == Model.AccountID)
     {
-        <br />
         <div class="admin">
             <h3>Tourney extras</h3>
             <a href="@Url.Action("Index", "Tourney")">Tourney control</a><br />
@@ -429,7 +410,6 @@
     }
     @if (Global.IsModerator && Global.AccountID == Model.AccountID)
     {
-        <br />
         <div class="admin">
             <h3>Admin extras</h3>
             <form action="@Url.Action("SetZklsMaxPlayers", "Admin")" method="post">

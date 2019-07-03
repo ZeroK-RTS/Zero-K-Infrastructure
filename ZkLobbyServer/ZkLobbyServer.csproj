@@ -159,7 +159,6 @@
     <Compile Include="ChatRelay.cs" />
     <Compile Include="ClientConnection.cs" />
     <Compile Include="DiscordRelaySource.cs" />
-    <Compile Include="DiscordWebApi.cs" />
     <Compile Include="ForumListManager.cs" />
     <Compile Include="IChatRelaySource.cs" />
     <Compile Include="ICommandSender.cs" />
