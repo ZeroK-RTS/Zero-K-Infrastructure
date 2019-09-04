@@ -327,7 +327,7 @@ namespace Ratings
                         Trace.TraceInformation("Updating WHR " + category + " ratings for pending battles: " + pendingDebriefings.Keys.Select(x => "B" + x).StringJoin());
                         IEnumerable<Player> players = pendingDebriefings.Values.SelectMany(x => x.battle.SpringBattlePlayers).Where(p => !p.IsSpectator).Select(p => getPlayerById(RatingSystems.GetRatingId(p.AccountID)));
                         players.ForEach(p => p.RunOneNewtonIteration(true));
-                        UpdateRankings(players);
+                        UpdateRankings(this.players.Values);
                     });
                 }
                 Task.Factory.StartNew(() =>
