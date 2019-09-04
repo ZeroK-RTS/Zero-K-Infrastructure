@@ -195,7 +195,6 @@ namespace ZeroKWeb.Controllers
                 battle.ApplicableRatings = (MatchMaking ? RatingCategoryFlags.MatchMaking : 0) | (Casual ? RatingCategoryFlags.Casual : 0) | (PlanetWars ? RatingCategoryFlags.Planetwars : 0);
                 db.SaveChanges();
             }
-            RatingSystems.ReprocessResult(battle);
             return Detail(BattleID);
         }
     }

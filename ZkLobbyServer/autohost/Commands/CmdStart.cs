@@ -42,6 +42,7 @@ namespace ZkLobbyServer
             if (wait)
             {
                 await battle.SayBattle("Game starting in 10 seconds...");
+                battle.BlockPolls(10);
                 startTimer = new Timer(10000);
                 startTimer.Enabled = true;
                 startTimer.AutoReset = false;

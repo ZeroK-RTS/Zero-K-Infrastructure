@@ -16,9 +16,13 @@ namespace ZeroKWeb.Controllers
         //
         // GET: /Maps/
 
-        public ActionResult Detail(int id) {
+        public ActionResult Detail(int? id) {
+            if (id == null)
+              return RedirectToAction("Index");
             var db = new ZkDataContext();
-            var res = db.Resources.Single(x => x.ResourceID == id);
+            var res = db.Resources.SingleOrDefault(x => x.ResourceID == id);
+            if (res == null)
+              return Content("No such map found");
             var data = GetMapDetailData(res, db);
 
             return View(data);
@@ -30,9 +34,12 @@ namespace ZeroKWeb.Controllers
         /// <param name="name"></param>
         /// <returns></returns>
         public ActionResult DetailName(string name) {
+            if (string.IsNullOrEmpty(name))
+              return RedirectToAction("Index");
             var db = new ZkDataContext();
-            var res = db.Resources.Single(x => x.InternalName == name);
-
+            var res = db.Resources.SingleOrDefault(x => x.InternalName == name);
+            if (res == null)
+              return Content("No such map found");
             return View("Detail", GetMapDetailData(res, db));
         }
 

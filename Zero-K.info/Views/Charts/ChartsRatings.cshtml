@@ -106,11 +106,11 @@
                 </tr>
                 <tr>
                     <td>Ladder rating: </td>
-                    <td>@rank.CurrentRating.Elo</td>
+                    <td>@rank.CurrentRating.LadderElo</td>
                 </tr>
                 <tr>
                     <td>Ladder position: </td>
-                    <td>@(rank.CurrentRating.Rank >= int.MaxValue ? "Unranked" : string.Format("{0}. Top {1}%", rank.CurrentRating.Rank, Math.Round(rank.CurrentRating.Percentile * 1000) / 10f))</td>
+                    <td>@(rank.CurrentRating.Ranked == false ? "Unranked" : string.Format("{0}. Top {1}%", rank.CurrentRating.Rank, Math.Round(rank.CurrentRating.Percentile * 1000) / 10f))</td>
                 </tr>
                 <tr>
                     <td>Next rank above: </td>

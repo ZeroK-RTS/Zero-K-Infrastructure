@@ -11,6 +11,7 @@ namespace Ratings
 
         public List<Game>[] games; //wongames, lostgames
         public float totalWeight = 0;
+        public float weight = 0;
         public int totalGames = 0;
         public readonly int day;
         public readonly Player player;
@@ -162,6 +163,7 @@ namespace Ratings
         public void AddGame(Game game)
         {
             totalWeight += game.GetPlayerWeight(player);
+            weight += game.GetPlayerWeight(player);
             totalGames++;
             if ((game.blackWins == false && game.whitePlayers.Contains(player))
                     || (game.blackWins == true && game.blackPlayers.Contains(player)))

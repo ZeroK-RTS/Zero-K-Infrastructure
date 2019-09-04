@@ -77,6 +77,8 @@ namespace Ratings
             {
                 using (var db = new ZkDataContext())
                 {
+
+                    db.Database.CommandTimeout = 240;
                     db.MapPollOutcomes.Where(x => x.MapPollID > lastPollId).Include(x => x.MapPollOptions).OrderBy(x => x.MapPollID).AsNoTracking().AsEnumerable().ForEach(poll =>
                     {
                         var opts = poll.MapPollOptions.DistinctBy(x => x.ResourceID).OrderByDescending(x => x.Votes).ToList();

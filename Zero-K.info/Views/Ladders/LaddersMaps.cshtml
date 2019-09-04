@@ -39,6 +39,10 @@
             <td>Size:</td>
             <td>@Html.TextBoxFor(x => x.SizeFrom) - @Html.TextBoxFor(x => x.SizeTo)</td>
         </tr>
+        <tr>
+            <td>Support:</td>
+            <td>@Html.EnumDropDownListFor(x => x.SupportLevel, new { @class = "width-100" })</td>
+        </tr>
     </table>
         <input type="submit" value="Show" />
 

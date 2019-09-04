@@ -36,7 +36,7 @@ namespace ZkLobbyServer
         private static string hostingIp;
 
 
-        public int DiscussionTime = 25;
+        public int DiscussionSeconds = 25;
         public readonly List<string> toNotify = new List<string>();
         public Resource HostedMap;
 
@@ -48,7 +48,7 @@ namespace ZkLobbyServer
         private int? dbAutohostIndex;
 
         protected bool isZombie;
-        protected bool IsPostBattleDiscussion => IsAutohost && DateTime.UtcNow.Subtract(EndedSince).TotalSeconds < DiscussionTime;
+        protected bool IsPollsBlocked => IsAutohost && DateTime.UtcNow < BlockPollsUntil;
 
         private List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
         public List<BattleDebriefing> Debriefings { get; private set; } = new List<BattleDebriefing>();
@@ -98,7 +98,7 @@ namespace ZkLobbyServer
             pollTimer.Enabled = false;
             pollTimer.AutoReset = false;
             pollTimer.Elapsed += pollTimer_Elapsed;
-            discussionTimer = new Timer(DiscussionTime * 1000);
+            discussionTimer = new Timer(DiscussionSeconds * 1000);
             discussionTimer.Enabled = false;
             discussionTimer.AutoReset = false;
             discussionTimer.Elapsed += discussionTimer_Elapsed;
@@ -201,9 +201,9 @@ namespace ZkLobbyServer
         public async Task KickFromBattle(string name, string reason)
         {
             UserBattleStatus user;
+            kickedPlayers.Add(new KickedPlayer() { Name = name });
             if (Users.TryGetValue(name, out user))
             {
-                kickedPlayers.Add(new KickedPlayer() { Name = name });
                 var client = server.ConnectedUsers[name];
                 await client.Respond($"You were kicked from battle: {reason}");
                 await client.Process(new LeaveBattle() { BattleID = BattleID });
@@ -427,9 +427,9 @@ namespace ZkLobbyServer
             else if (perm == BattleCommand.RunPermission.Vote)
             {
 
-                if (IsPostBattleDiscussion)
+                if (IsPollsBlocked)
                 {
-                    await Respond(e, "Please wait for a few seconds before starting a poll. Feel free to discuss the last battle.");
+                    await Respond(e, "Please wait for a few seconds before starting a poll.");
                     return false;
                 }
                 await StartVote(cmd, e, arg);
@@ -731,6 +731,12 @@ namespace ZkLobbyServer
             SaveToDb();
         }
 
+        public void BlockPolls(int seconds)
+        {
+            var target = DateTime.UtcNow.AddSeconds(seconds);
+            if (BlockPollsUntil < target) BlockPollsUntil = target;
+        }
+
 
         public void UpdateWith(Autohost autohost)
         {
@@ -868,12 +874,15 @@ namespace ZkLobbyServer
             StopVote();
             IsInGame = false;
             RunningSince = null;
-            EndedSince = DateTime.UtcNow;
+            BlockPollsUntil = DateTime.UtcNow.AddSeconds(DiscussionSeconds);
 
-            var debriefingMessage = BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server);
-            Debriefings.Add(debriefingMessage);
+            bool result = BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server, (debriefing) =>
+            {
+                Debriefings.Add(debriefing);
+                server.Broadcast(springBattleContext.ActualPlayers.Select(x => x.Name), debriefing);
+                Trace.TraceInformation("Battle ended: Sent out debriefings for B" + debriefing.ServerBattleID);
+            });
 
-            await server.Broadcast(springBattleContext.ActualPlayers.Select(x => x.Name), debriefingMessage);
             await server.Broadcast(server.ConnectedUsers.Keys, new BattleUpdate() { Header = GetHeader() });
 
             foreach (var s in toNotify)
@@ -899,25 +908,26 @@ namespace ZkLobbyServer
                 var teamsQueues = server.MatchMaker.PossibleQueues.Where(x => x.Mode == AutohostMode.Teams).ToList();
                 var availableUsers = Users.Values.Where(x => !x.LobbyUser.IsAway && x.Name != null).Select(x => server.ConnectedUsers[x.Name]).ToList();
                 await server.MatchMaker.MassJoin(availableUsers, teamsQueues);
-                DiscussionTime = MatchMaker.TimerSeconds + 2;
+                DiscussionSeconds = MatchMaker.TimerSeconds + 2;
             }
             else
             {
-                DiscussionTime = 5;
+                DiscussionSeconds = 5;
             }
+            BlockPollsUntil = DateTime.UtcNow.AddSeconds(DiscussionSeconds);
 
 
             if (IsAutohost || (!Users.ContainsKey(FounderName) || Users[FounderName].LobbyUser?.IsAway == true) && Mode != AutohostMode.None && Mode != AutohostMode.Planetwars && !IsPassworded)
             {
-                if (!string.IsNullOrEmpty(debriefingMessage.Message))
+                if (!result)
                 {
                     //Game was aborted/exited/invalid, allow manual commands
-                    EndedSince = EndedSince.AddSeconds(-DiscussionTime);
+                    BlockPollsUntil = DateTime.UtcNow;
                 }
                 else
                 {
                     //Initiate discussion time, then map vote, then start vote
-                    discussionTimer.Interval = (DiscussionTime - 1) * 1000;
+                    discussionTimer.Interval = (DiscussionSeconds - 1) * 1000;
                     discussionTimer.Start();
                 }
             }

@@ -107,7 +107,6 @@ namespace ZeroKWeb.Controllers
                                     .Include(x => x.SpringBattleBots);
             battles.Update(x => new SpringBattle() { ApplicableRatings = 0 });
             db.SaveChanges();
-            battles.ToList().ForEach(x => RatingSystems.RemoveResult(x));
 
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
@@ -245,6 +244,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult Punish(int accountID,
                                    string reason,
                                    bool banMute,
+                                   bool banVotes,
                                    bool banCommanders,
                                    bool banSite,
                                    bool banLobby,
@@ -265,6 +265,7 @@ namespace ZeroKWeb.Controllers
                                  Time = DateTime.UtcNow,
                                  Reason = reason,
                                  BanMute = banMute,
+                                 BanVotes = banVotes,
                                  BanCommanders = banCommanders,
                                  BanSite = banSite,
                                  BanLobby = banLobby,
