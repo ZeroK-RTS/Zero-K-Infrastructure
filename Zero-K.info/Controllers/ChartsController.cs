@@ -426,8 +426,6 @@ namespace ZeroKWeb.Controllers
         {
             model = model ?? new ChartsModel();
 
-            if (!RatingSystems.GetRatingSystem(model.RatingCategory).IsInitialized()) return Content("Please wait, the rating system is initializing.");
-
             var to = model.To.Date;
             var from = model.From.Date;
 

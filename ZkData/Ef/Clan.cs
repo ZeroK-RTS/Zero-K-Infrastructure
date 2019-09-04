@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace ZkData
 {
@@ -64,7 +65,7 @@ namespace ZkData
 
         public static bool IsShortcutValid(string text)
         {
-            return text.All(Char.IsLetterOrDigit) && text.Length > 0 && text.Length <= 8;
+            return Regex.IsMatch(text, "^[a-zA-Z0-9]{1,8}$");
         }
 
         
