@@ -498,7 +498,7 @@ namespace Ratings
                             continue;
                         }
                         float elo = p.days.Last().GetElo() + RatingOffset;
-                        float lastNaturalRatingVar = p.avgEloVar * GlobalConst.EloToNaturalRatingMultiplierSquared;
+                        float lastNaturalRatingVar = p.days.Last().naturalRatingVariance;
                         var lastDay = p.days.Last();
                         float ladderElo;
                         if (playerRatings.ContainsKey(p.id)) ladderElo = playerRatings[p.id].LadderElo;
