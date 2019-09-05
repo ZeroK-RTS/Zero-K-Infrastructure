@@ -327,7 +327,7 @@ namespace Ratings
                         Trace.TraceInformation("Updating WHR " + category + " ratings for pending battles: " + pendingDebriefings.Keys.Select(x => "B" + x).StringJoin());
                         IEnumerable<Player> players = pendingDebriefings.Values.SelectMany(x => x.battle.SpringBattlePlayers).Where(p => !p.IsSpectator).Select(p => getPlayerById(RatingSystems.GetRatingId(p.AccountID)));
                         players.ForEach(p => p.RunOneNewtonIteration(true));
-                        UpdateRankings(players);
+                        UpdateRankings(this.players.Values);
                     });
                 }
                 Task.Factory.StartNew(() =>
@@ -490,7 +490,7 @@ namespace Ratings
                             continue;
                         }
                         float elo = p.days.Last().GetElo() + RatingOffset;
-                        float lastNaturalRatingVar = p.avgEloVar * GlobalConst.EloToNaturalRatingMultiplierSquared;
+                        float lastNaturalRatingVar = p.days.Last().naturalRatingVariance;
                         var lastDay = p.days.Last();
                         float ladderElo;
                         if (playerRatings.ContainsKey(p.id)) ladderElo = playerRatings[p.id].LadderElo;
