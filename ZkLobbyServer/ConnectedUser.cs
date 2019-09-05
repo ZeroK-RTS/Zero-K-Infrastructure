@@ -232,6 +232,17 @@ namespace ZkLobbyServer
             }
 
             var added = channel.Users.TryAdd(Name, User);
+            if (!added)
+            {
+                await
+                    SendCommand(new JoinChannelResponse()
+                    {
+                        Success = false,
+                        Reason = "You are already in this channel",
+                        ChannelName = joinChannel.ChannelName
+                    });
+                return;
+            }
             var visibleUsers = !channel.IsDeluge ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(Name, x)).ToList();
             var canSeeMe = !channel.IsDeluge ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(x, Name)).ToList();
 
