@@ -475,6 +475,7 @@ namespace Ratings
                     var lastBattlePlayers = db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).Include(x => x.Account).ToList();
                     oldRatings = lastBattlePlayers.ToDictionary(p => p.AccountID, p => playerRatings[p.AccountID].LadderElo);
                     lastBattlePlayers.ForEach(p => playerRatings[p.AccountID].LadderElo = Ranks.UpdateLadderRating(p.Account, category, this.players[p.AccountID].avgElo + RatingOffset, p.IsInVictoryTeam, !p.IsInVictoryTeam, db));
+                    db.SaveChanges();
                 }
 
                 //update ladders
