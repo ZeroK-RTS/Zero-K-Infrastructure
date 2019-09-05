@@ -78,8 +78,9 @@ namespace Ratings
                 using (var db = new ZkDataContext())
                 {
 
-                    db.Database.CommandTimeout = 240;
-                    db.MapPollOutcomes.Where(x => x.MapPollID > lastPollId).Include(x => x.MapPollOptions).OrderBy(x => x.MapPollID).AsNoTracking().AsEnumerable().ForEach(poll =>
+                    db.Database.CommandTimeout = 300;
+                    var endPollId = lastPollId + 50000;
+                    db.MapPollOutcomes.Where(x => x.MapPollID > lastPollId && x.MapPollID < endPollId).Include(x => x.MapPollOptions).OrderBy(x => x.MapPollID).AsNoTracking().AsEnumerable().ForEach(poll =>
                     {
                         var opts = poll.MapPollOptions.DistinctBy(x => x.ResourceID).OrderByDescending(x => x.Votes).ToList();
                         var winners = opts.Where(x => x.Votes == opts[0].Votes);
@@ -117,6 +118,7 @@ namespace Ratings
             {
                 Trace.TraceError("Error calculating map ratings: " + ex);
             }
+            Trace.TraceInformation("Most recent map poll processed for ratings: " + lastPollId);
         }
 
         private static void RunIterations(int count, Category cat)

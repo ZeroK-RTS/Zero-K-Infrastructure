@@ -47,6 +47,11 @@ namespace Ratings
             this.Ranked = Ranked;
         }
 
+        public PlayerRating(PlayerRating p) : this(p.Rank, p.Percentile, p.RealElo, p.LastNaturalRatingVar, p.NaturalRatingVariancePerDay, p.LastGameDate, p.CurrentDate, p.LadderElo, p.Ranked)
+        {
+
+        }
+
         [JsonConstructor]
         public PlayerRating(int Rank, float Percentile, float RealElo, float LastNaturalRatingVar, float LastW2, int LastGameDate, int CurrentDate, float LadderElo, bool Ranked)
         {
