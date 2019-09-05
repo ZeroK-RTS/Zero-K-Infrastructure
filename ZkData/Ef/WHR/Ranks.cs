@@ -88,7 +88,7 @@ namespace Ratings
                 var progress = GetRankProgress(acc, ratingSystem);
                 if (progress != null) {
                     isActive = true;
-                    bestProgress = progress.ProgressRatio;
+                    bestProgress = Math.Max(bestProgress, progress.ProgressRatio);
                 }
             }
             if (!isActive) return 0.001f;

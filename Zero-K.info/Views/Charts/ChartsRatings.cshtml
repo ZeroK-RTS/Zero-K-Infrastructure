@@ -113,12 +113,12 @@
                     <td>@(rank.CurrentRating.Ranked == false ? "Unranked" : string.Format("{0}. Top {1}%", rank.CurrentRating.Rank, Math.Round(rank.CurrentRating.Percentile * 1000) / 10f))</td>
                 </tr>
                 <tr>
-                    <td>Next rank above: </td>
-                    <td>@(rank.Bracket.UpperEloLimit + rank.CurrentRating.EloStdev)</td>
+                    <td>Next rank bracket: </td>
+                    <td>@(rank.Bracket.UpperEloLimit)</td>
                 </tr>
                 <tr>
-                    <td>Rank loss below: </td>
-                    <td>@(rank.Bracket.LowerEloLimit - rank.CurrentRating.EloStdev)</td>
+                    <td>Previous rank bracket: </td>
+                    <td>@(rank.Bracket.LowerEloLimit)</td>
                 </tr>
             </table>
             <br />
