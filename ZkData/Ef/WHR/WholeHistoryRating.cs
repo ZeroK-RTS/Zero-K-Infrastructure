@@ -415,7 +415,7 @@ namespace Ratings
                             continue;
                         }
                         processedPlayers.Add(accountRating.AccountID);
-                        if (Math.Abs(playerRatings[accountRating.AccountID].LadderElo - accountRating.LadderElo ?? 9999) > 1 || accountRating.IsRanked != (playerRatings[accountRating.AccountID].Rank < int.MaxValue))
+                        if (Math.Abs(playerRatings[accountRating.AccountID].LadderElo - accountRating.LadderElo ?? 9999) > 0.5 || accountRating.IsRanked != (playerRatings[accountRating.AccountID].Rank < int.MaxValue))
                         {
                             accountRating.UpdateFromRatingSystem(playerRatings[accountRating.AccountID]);
                         }
