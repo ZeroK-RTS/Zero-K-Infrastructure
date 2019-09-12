@@ -34,6 +34,21 @@ namespace ZkLobbyServer
                 return null;
             }
 
+            User user = null;
+            UserBattleStatus ubs = null;
+            battle.Users.TryGetValue(target, out ubs);
+            if (ubs != null) {
+                user = ubs.LobbyUser;
+            } else {
+                ConnectedUser con = null;
+                battle.server.ConnectedUsers.TryGetValue(target, out con);
+                user = con?.User;
+            }
+            if (user?.IsAdmin == true) {
+                battle.Respond(e, "Can't kick an admin (spec him or just ask to leave)");
+                return null;
+            }
+
             if (e != null && battle.spring.IsRunning && battle.spring.LobbyStartContext?.Players.Any(x => x.Name == e.User && !x.IsSpectator) == false)
             {
                 battle.Respond(e, "Only players can invoke this during a game");
