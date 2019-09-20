@@ -94,6 +94,7 @@ namespace ZeroKWeb.Controllers
                 {
                     if (name.Length > GlobalConst.MaxCommanderNameLength) name = name.Substring(0, GlobalConst.MaxCommanderNameLength);
                     name = Regex.Replace(name, @"[^\u0000-\u007F]", string.Empty); // remove unicode stuff
+		    name = Regex.Replace(name, @"[""/\\]", string.Empty); // remove stuff that cant go into lua strings hasslefree
                     comm.Name = name;
                 }
 
