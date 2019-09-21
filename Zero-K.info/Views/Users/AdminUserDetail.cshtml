@@ -209,7 +209,7 @@
     </form>
 
     <h3>Delete all forum votes</h3>
-    <form action="@Url.Action("DeleteAllForumVotes", "Forum", new { accountID = Model.AccountID })" method="post">
+    <form action="@Url.Action("DeleteAllForumVotes", "Users", new { accountID = Model.AccountID })" method="post">
         @Html.AntiForgeryToken()
         This will <b>permanently</b> remove <b>all</b> of the user's upvotes/downvotes on forum.<br />
         This action <b>cannot</b> be undone!<br />
