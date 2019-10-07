@@ -498,8 +498,9 @@ namespace Ratings
                         if (playerRatings.ContainsKey(p.id)) ladderElo = playerRatings[p.id].LadderElo;
                         else ladderElo = (float?)db.AccountRatings.Where(x => x.AccountID == p.id && x.RatingCategory == category).FirstOrDefault()?.LadderElo ?? DefaultRating.LadderElo;
                         playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastNaturalRatingVar, GlobalConst.NaturalRatingVariancePerDay(lastDay.totalWeight), lastDay.day, currentDay, ladderElo, !float.IsNaN(p.avgElo));
-                        float rating = -playerRatings[p.id].LadderElo + 0.001f * (float)rand.NextDouble();
+                        float rating = -playerRatings[p.id].LadderElo;
                         if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
+                        while (sortedPlayers.ContainsKey(rating)) rating += 0.01f;
                         playerKeys[p.id] = rating;
                         sortedPlayers[rating] = p.id;
                         if (playerRatings[p.id].Ranked) playerCount++;
@@ -529,7 +530,8 @@ namespace Ratings
                         playerRatings[pair.Value].ApplyLadderUpdate(int.MaxValue, 1, currentDay, false);
                     }
                 }
-                newPercentileBrackets.Add(newPercentileBrackets.Last() - 420);
+                if (rank != playerCount) Trace.TraceWarning("WHR has " + playerCount + " active players, but " + rank + " sorted active players");
+                while (newPercentileBrackets.Count < Ranks.Percentiles.Length + 1) newPercentileBrackets.Add(newPercentileBrackets.Last() - 420);
                 PercentileBrackets = newPercentileBrackets.Select(x => x).Reverse().ToArray();
                 topPlayers = newTopPlayers;
                 laddersCache = new List<Account>();
