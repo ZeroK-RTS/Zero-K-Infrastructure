@@ -225,7 +225,7 @@ namespace ZeroKWeb.SpringieInterface
                                             else decorations.Add(d.Code);
                                         }
 
-                                        commProfile["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length));
+                                        commProfile["name"] = LuaTable.SanitizeString(c.Name.Substring(0, Math.Min(25, c.Name.Length))) ?? "dummy";
                                         commProfile["chassis"] = c.Unlock.Code;
                                         commProfile["decorations"] = decorations;
 
@@ -236,7 +236,7 @@ namespace ZeroKWeb.SpringieInterface
                                         {
                                             var modulesForLevel = new LuaTable();
                                             modules.Add(modulesForLevel);
-                                            var modulesOrdered = c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel == i).ToList();
+                                            //var modulesOrdered = c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel == i).ToList();
                                             var slots = db.CommanderSlots.ToList().Where(x => x.MorphLevel == i && (x.ChassisID == null || (x.ChassisID == c.ChassisUnlockID))).ToList();
                                             slots.Sort(delegate (CommanderSlot x, CommanderSlot y)
                                             {

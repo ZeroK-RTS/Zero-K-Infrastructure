@@ -168,7 +168,13 @@ namespace ZkLobbyServer
             else
             {
                 await SendCommand(ret.LoginResponse);
-                if (ret.LoginResponse.ResultCode == LoginResponse.Code.Banned) transport.RequestClose();
+
+                if (ret.LoginResponse.ResultCode == LoginResponse.Code.Banned)
+                {
+                    await Task.Delay(500); // this is needed because socket writes are async and might not be queued yet
+                    await transport.Flush();
+                    transport.RequestClose();
+                }
             }
         }
 

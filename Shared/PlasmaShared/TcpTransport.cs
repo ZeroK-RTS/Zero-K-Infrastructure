@@ -92,6 +92,11 @@ namespace ZkData
             }
         }
 
+        public Task Flush()
+        {
+            return stream.FlushAsync();
+        }
+
         public async Task ConnectAndRun(Func<string, Task> onLineReceived, Func<Task> onConnected, Func<bool, Task> onConnectionClosed)
         {
             OnCommandReceived = onLineReceived;

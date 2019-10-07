@@ -68,6 +68,18 @@ namespace ZkLobbyServer
             };
         }
 
+        public bool IsAdmin(ServerBattle battle, string userName)
+        {
+            UserBattleStatus ubs = null;
+            battle.Users.TryGetValue(userName, out ubs);
+            if (ubs != null)
+                return ubs.LobbyUser.IsAdmin;
+
+            ConnectedUser con = null;
+            battle.server.ConnectedUsers.TryGetValue(userName, out con);
+            return con?.User?.IsAdmin ?? false;
+        }
+
         public bool IsSpectator(ServerBattle battle, string userName, UserBattleStatus user)
         {
             if (user == null)
