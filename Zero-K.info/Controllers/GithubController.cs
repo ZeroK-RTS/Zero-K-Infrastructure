@@ -40,7 +40,7 @@ namespace ZeroKWeb.Controllers
                     if (payload.action == "labeled"){
                         break;
                     }
-                    if (payload.repository.name="CrashReports"){
+                    if (payload.repository.name == "CrashReports"){
                         channel = "crashreports";
                     }
                     values = new [] {payload.repository.name ,payload.sender.login,  payload.action, payload.issue.title, payload.issue.html_url};
