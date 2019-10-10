@@ -32,13 +32,17 @@ namespace ZeroKWeb.Controllers
             dynamic payload = JObject.Parse(Encoding.UTF8.GetString(data));
 
             string text = null;
-            
+            string channel = "zkdev";
             Object[] values;
 
             switch (eventType) {
                 case "issues":
-                    if (payload.action == "labeled")
+                    if (payload.action == "labeled"){
                         break;
+                    }
+                    if (payload.repository.name="CrashReports"){
+                        channel = "crashreports";
+                    }
                     values = new [] {payload.repository.name ,payload.sender.login,  payload.action, payload.issue.title, payload.issue.html_url};
                     text = string.Format("[{0}] {1} has {2} issue {3} <{4}>",values);
                     break;
@@ -61,7 +65,7 @@ namespace ZeroKWeb.Controllers
                     break;
             }
 
-            if (text != null) Global.Server.GhostChanSay("zkdev", text);
+            if (text != null) Global.Server.GhostChanSay(channel, text);
 
             return Content("");
         }
