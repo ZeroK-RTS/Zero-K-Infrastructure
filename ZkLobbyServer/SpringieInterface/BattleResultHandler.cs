@@ -96,7 +96,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 //send to rating
-                bool noElo = result.OutputExtras.Any(x => x?.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture) == true);
+                bool noElo = result.LobbyStartContext.ModOptions.Any(x => x.Key.ToLower() == "noelo" && x.Value != "0" && x.Value != "false");
 
                 if (!noElo) RatingSystems.ProcessResult(sb, result, new PendingDebriefing()
                 {
