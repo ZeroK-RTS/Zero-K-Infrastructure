@@ -80,7 +80,7 @@ namespace Ratings
 
                     db.Database.CommandTimeout = 300;
                     var endPollId = lastPollId + 50000;
-                    db.MapPollOutcomes.Where(x => x.MapPollID > lastPollId && x.MapPollID < endPollId).Include(x => x.MapPollOptions).OrderBy(x => x.MapPollID).AsNoTracking().AsEnumerable().ForEach(poll =>
+                    db.MapPollOutcomes.Where(x => x.MapPollID > lastPollId && x.MapPollID < endPollId).Include(x => x.MapPollOptions).OrderBy(x => x.MapPollID).AsNoTracking().ForEach(poll =>
                     {
                         var opts = poll.MapPollOptions.DistinctBy(x => x.ResourceID).OrderByDescending(x => x.Votes).ToList();
                         var winners = opts.Where(x => x.Votes == opts[0].Votes);
@@ -94,6 +94,12 @@ namespace Ratings
                         lastPollId = poll.MapPollID;
                     });
                 }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error reading map ratings from db: " + ex);
+            }
+            try {
                 foreach (Category cat in maps.Keys)
                 {
                     if (init) RunIterations(70, cat);
