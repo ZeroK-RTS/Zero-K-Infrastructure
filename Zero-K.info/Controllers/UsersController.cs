@@ -565,30 +565,6 @@ namespace ZeroKWeb.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult SetWhrAlias(int accountID, string alias)
-        {
-            int aliasId;
-            if (!int.TryParse(alias, out aliasId)) return Content("Not a valid number");
-            using (var db = new ZkDataContext())
-            {
-                var aliasAcc = db.Accounts.Find(aliasId);
-                if (aliasAcc == null) return Content("No account found with this id");
-
-                var acc = db.Accounts.Find(accountID);
-                if (acc == null) return Content("Invalid accountID");
-                
-                acc.WhrAlias = aliasId;
-                db.SaveChanges();
-
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} linked {1} WHR to {2}", Global.Account.Name, acc.Name, aliasAcc.Name));
-
-                return Content(string.Format("{0} will play for {1}", acc, aliasAcc));
-            }
-        }
-
-        [HttpPost]
         [Auth]
         public ActionResult ChangePassword(string oldPassword, string newPassword, string newPassword2)
         {

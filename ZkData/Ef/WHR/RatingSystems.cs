@@ -22,8 +22,6 @@ namespace Ratings
 
         private static object processingLock = new object();
 
-        private static Dictionary<int, int> accountAliases = new Dictionary<int, int>();
-
         public static void Init()
         {
             Trace.TraceInformation("WHR: Initializing Rating Systems..");
@@ -35,7 +33,6 @@ namespace Ratings
                 {
                     try
                     {
-                        UpdateRatingIds();
                         using (ZkDataContext data = new ZkDataContext())
                         {
                             int battles = 0;
@@ -67,19 +64,6 @@ namespace Ratings
                     }
                 }
             });
-        }
-
-        public static void UpdateRatingIds()
-        {
-            using (ZkDataContext db = new ZkDataContext())
-            {
-                accountAliases = db.Accounts.Where(x => x.WhrAlias > 0).ToDictionary(x => x.AccountID, x => x.WhrAlias);
-            }
-        }
-
-        public static int GetRatingId(int accountID)
-        {
-            return accountAliases.ContainsKey(accountID) ? accountAliases[accountID] : accountID;
         }
 
         public static IEnumerable<IRatingSystem> GetRatingSystems()
@@ -122,8 +106,8 @@ namespace Ratings
             if (battle.Duration < GlobalConst.MinDurationForElo) return;
 
             //don't mark battles for ratings if they can't be rated
-            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).Distinct().ToList();
-            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).Distinct().ToList();
+            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => (p.AccountID)).Distinct().ToList();
+            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => (p.AccountID)).Distinct().ToList();
             if (winners.Count == 0 || losers.Count == 0 || winners.Intersect(losers).Count() != 0) return;
 
             battle.ApplicableRatings |= (RatingCategoryFlags)result.LobbyStartContext.ApplicableRating;
