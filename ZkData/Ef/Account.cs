@@ -94,7 +94,6 @@ namespace ZkData
 
         [StringLength(8000)]
         public string Aliases { get; set; }
-        public int WhrAlias { get; set; }
         
         /*public double Elo { get; set; }
         public double EloWeight { get; set; }

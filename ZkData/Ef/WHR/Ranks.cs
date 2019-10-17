@@ -119,7 +119,7 @@ namespace Ratings
             ladderElo += delta;
             if (rating != null)
             {
-                rating.LadderElo = ladderElo;
+                rating.UpdateLadderElo(ladderElo);
                 db.Entry(rating).State = System.Data.Entity.EntityState.Modified;
             }
             else
