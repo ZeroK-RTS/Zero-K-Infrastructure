@@ -142,13 +142,6 @@
     }
 
     <br />
-    Set WHR Alias (has to be ID, not nickname):
-    <form method="post" action="@Url.Action("SetWhrAlias", "Users", new { accountID = Model.AccountID })">
-        @Html.AntiForgeryToken()
-        @Html.TextBox("alias", Model.WhrAlias)
-        <input type="submit" />
-    </form>
-    <br />
 
     <h2>Modify user rating</h2>
     <form method="post" action="@Url.Action("DeleteFromRatings", "Users", new { accountID = Model.AccountID })">
