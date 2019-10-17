@@ -45,6 +45,7 @@ namespace ZeroKWeb.Controllers
 
             if (!string.IsNullOrWhiteSpace(alias))
             {
+                if (!isDeleted) return Content("The Account must be deleted to allow battle relinking.");
                 int aliasId;
                 if (int.TryParse(alias, out aliasId)) return Content("Not a valid number");
                 Account target = db.Accounts.SingleOrDefault(x => x.AccountID == aliasId);
