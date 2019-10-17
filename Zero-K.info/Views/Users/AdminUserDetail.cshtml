@@ -186,7 +186,8 @@
     Hide ("delete") account:
     <form method="post" action="@Url.Action("ChangeAccountDeleted", "Users", new { accountID = Model.AccountID })">
         @Html.AntiForgeryToken()
-        @Html.CheckBox("isDeleted")
+        Deleted: @Html.CheckBox("isDeleted") <br />
+        Move all games to account: @Html.TextBox("alias") <br />
         <input type="submit" />
     </form>
     <br />

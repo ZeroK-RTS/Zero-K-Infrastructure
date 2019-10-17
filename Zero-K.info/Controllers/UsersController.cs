@@ -37,11 +37,24 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult ChangeAccountDeleted(int accountID, bool isDeleted)
+        public ActionResult ChangeAccountDeleted(int accountID, bool isDeleted, string alias)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
+
+            if (!string.IsNullOrWhiteSpace(alias))
+            {
+                int aliasId;
+                if (int.TryParse(alias, out aliasId)) return Content("Not a valid number");
+                Account target = db.Accounts.SingleOrDefault(x => x.AccountID == aliasId);
+                if (target == null) return Content("Invalid alias accountID");
+                db.SpringBattlePlayers.Where(x => x.AccountID == accountID).Update(x => new SpringBattlePlayer()
+                {
+                    AccountID = aliasId,
+                    Account = target
+                });
+            }
 
             if (acc.IsDeleted != isDeleted)
             {
