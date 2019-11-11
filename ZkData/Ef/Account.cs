@@ -634,7 +634,7 @@ namespace ZkData
         public int GetIconLevel()
         {
             return System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((-0.12 / Math.Cosh((Level - 61.9) / 7.08) + 1)
-    * 2.93 * Math.Log(Math.Exp(-2.31) * Level + 1) - 0.89 / Math.Cosh((Level - 28.55) / 3.4))));
+    * 2.93 * Math.Log(Math.Exp(-2.31) * Level + 1) - 0.89 / Math.Cosh((Level - 28.55) / 3.4) + 0.002)));
         }
 
         /// <summary>
