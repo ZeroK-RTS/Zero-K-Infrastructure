@@ -132,6 +132,7 @@ namespace LobbyClient
             ModOptions["MaxSpeed"] = "1";
             ModOptions["mutespec"] = "mute";
             ModOptions["mutelobby"] = "mute";
+            // ModOptions["NoHelperAIs"] = "1";
         }
 
         public LobbyHostingContext GetContext()
