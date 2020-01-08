@@ -402,6 +402,7 @@ namespace ZkLobbyServer
             ConnectedUser conus;
             if (ConnectedUsers.TryGetValue(kickeeName, out conus))
             {
+                conus.MyBattle.KickFromBattle(kickeeName, reason);
                 conus.Respond(string.Format("You were kicked for: {0}", reason));
                 conus.RequestCloseAll();
             }
