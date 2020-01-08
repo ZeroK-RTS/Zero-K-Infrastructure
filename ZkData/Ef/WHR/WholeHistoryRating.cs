@@ -416,7 +416,9 @@ namespace Ratings
                             continue;
                         }
                         processedPlayers.Add(accountRating.AccountID);
-                        if (Math.Abs(playerRatings[accountRating.AccountID].LadderElo - accountRating.LadderElo ?? 9999) > 0.5 || accountRating.IsRanked != (playerRatings[accountRating.AccountID].Rank < int.MaxValue))
+                        if (Math.Abs(playerRatings[accountRating.AccountID].LadderElo - accountRating.LadderElo ?? 9999) > 0.5
+                            || Math.Abs(playerRatings[accountRating.AccountID].RealElo - accountRating.RealElo) > 0.5
+                            || accountRating.IsRanked != (playerRatings[accountRating.AccountID].Rank < int.MaxValue))
                         {
                             accountRating.UpdateFromRatingSystem(playerRatings[accountRating.AccountID]);
                         }
@@ -532,7 +534,7 @@ namespace Ratings
                     }
                 }
                 if (rank != playerCount) Trace.TraceWarning("WHR has " + playerCount + " active players, but " + rank + " sorted active players");
-                while (newPercentileBrackets.Count < Ranks.Percentiles.Length + 1) newPercentileBrackets.Add(newPercentileBrackets.Last());
+                while (newPercentileBrackets.Count < Ranks.Percentiles.Length + 1) newPercentileBrackets.Add(playerRatings[sortedPlayers.Last().Value].LadderElo);
                 PercentileBrackets = newPercentileBrackets.Select(x => x).Reverse().ToArray();
                 topPlayers = newTopPlayers;
                 laddersCache = new List<Account>();
