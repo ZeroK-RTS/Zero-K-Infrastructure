@@ -64,10 +64,17 @@ namespace Ratings
             var bracket = ratingSystem.GetPercentileBracket(rank);
             var stdevUp = 0.0;
             var stdevDown = 0.0;
-            var bracketOverlap = 0.2; 
+            var bracketOverlap = 0.2;
             //sets overlap in next rank: player needs to be at least this amount within the next rank
-            if (ValidateRank(rank + 1)) stdevUp = (ratingSystem.GetPercentileBracket(rank + 1).UpperEloLimit - ratingSystem.GetPercentileBracket(rank + 1).LowerEloLimit) * bracketOverlap;
-            if (ValidateRank(rank - 1)) stdevDown = (ratingSystem.GetPercentileBracket(rank - 1).UpperEloLimit - ratingSystem.GetPercentileBracket(rank - 1).LowerEloLimit) * bracketOverlap;
+            var myBracketWidth = ratingSystem.GetPercentileBracket(rank).UpperEloLimit - ratingSystem.GetPercentileBracket(rank).LowerEloLimit;
+            if (ValidateRank(rank + 1)) {
+                var nextBracketWidth = ratingSystem.GetPercentileBracket(rank + 1).UpperEloLimit - ratingSystem.GetPercentileBracket(rank + 1).LowerEloLimit;
+                stdevUp = Math.Min(myBracketWidth, nextBracketWidth)*bracketOverlap;
+            }
+            if (ValidateRank(rank - 1)) {
+                var prevBracketWidth = ratingSystem.GetPercentileBracket(rank - 1).UpperEloLimit - ratingSystem.GetPercentileBracket(rank - 1).LowerEloLimit;
+                stdevDown = Math.Min(myBracketWidth, prevBracketWidth) * bracketOverlap;
+            }
             var rankCeil = bracket.UpperEloLimit + stdevUp;
             var rankFloor = bracket.LowerEloLimit - stdevDown;
             //Trace.TraceInformation(acc.Name + ": bracket(" + bracket.LowerEloLimit + ", " + bracket.UpperEloLimit + ") requirements (" + rankFloor + ", " + rankCeil + ") current: " + rating.RealElo + " -> progress: " + bestProgress);
