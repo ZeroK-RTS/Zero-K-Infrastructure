@@ -512,7 +512,7 @@ namespace Ratings
                 List<int> newTopPlayers = new List<int>();
                 int matched = 0;
                 List<float> newPercentileBrackets = new List<float>();
-                newPercentileBrackets.Add(playerRatings[sortedPlayers.First().Value].LadderElo + 420);
+                newPercentileBrackets.Add(playerRatings[sortedPlayers.First().Value].LadderElo);
                 float percentile;
                 float[] percentilesRev = Ranks.Percentiles.Reverse().ToArray();
                 foreach (var pair in sortedPlayers)
@@ -532,7 +532,7 @@ namespace Ratings
                     }
                 }
                 if (rank != playerCount) Trace.TraceWarning("WHR has " + playerCount + " active players, but " + rank + " sorted active players");
-                while (newPercentileBrackets.Count < Ranks.Percentiles.Length + 1) newPercentileBrackets.Add(newPercentileBrackets.Last() - 420);
+                while (newPercentileBrackets.Count < Ranks.Percentiles.Length + 1) newPercentileBrackets.Add(newPercentileBrackets.Last());
                 PercentileBrackets = newPercentileBrackets.Select(x => x).Reverse().ToArray();
                 topPlayers = newTopPlayers;
                 laddersCache = new List<Account>();
