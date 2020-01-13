@@ -48,13 +48,12 @@ namespace ZeroKWeb.Controllers
             {
                 if (!isDeleted) return Content("The Account must be deleted to allow battle relinking.");
                 int aliasId;
-                if (int.TryParse(alias, out aliasId)) return Content("Not a valid number");
+                if (!int.TryParse(alias, out aliasId)) return Content("Not a valid number");
                 Account target = db.Accounts.SingleOrDefault(x => x.AccountID == aliasId);
                 if (target == null) return Content("Invalid alias accountID");
                 db.SpringBattlePlayers.Where(x => x.AccountID == accountID).Update(x => new SpringBattlePlayer()
                 {
-                    AccountID = aliasId,
-                    Account = target
+                    AccountID = aliasId
                 });
             }
 
