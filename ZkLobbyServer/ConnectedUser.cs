@@ -178,7 +178,7 @@ namespace ZkLobbyServer
                     return;
                 }
 
-                server.KickFromServer(Name, kick.Name, kick.Reason);
+                await server.KickFromServer(Name, kick.Name, kick.Reason);
             }
         }
 
