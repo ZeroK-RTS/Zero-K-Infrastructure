@@ -489,6 +489,7 @@
     <Content Include="Img\flags\gd.png" />
     <Content Include="Img\flags\ge.png" />
     <Content Include="Img\flags\gf.png" />
+    <Content Include="Img\flags\gg.png" />
     <Content Include="Img\flags\gh.png" />
     <Content Include="Img\flags\gi.png" />
     <Content Include="Img\flags\gl.png" />
@@ -542,7 +543,6 @@
     <Content Include="Img\flags\lt.png" />
     <Content Include="Img\flags\lu.png" />
     <Content Include="Img\flags\lv.png" />
-    <Content Include="Img\flags\ly.png" />
     <Content Include="Img\flags\ma.png" />
     <Content Include="Img\flags\mc.png" />
     <Content Include="Img\flags\md.png" />

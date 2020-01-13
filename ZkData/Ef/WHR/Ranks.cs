@@ -38,7 +38,7 @@ namespace Ratings
         public static string[] RankBackgroundImages = new string[] { "infrared", "brown", "red", "orange", "yellow", "blue", "neutron", "black" };
         public static string[] RankNames = new string[] { "Nebulous", "Brown Dwarf", "Red Dwarf", "Subgiant", "Giant", "Supergiant", "Neutron Star", "Singularity", "Space Lobster" };
 
-        private static bool ValidateRank(int rank)
+        public static bool ValidateRank(int rank)
         {
             return rank >= 0 && rank < RankBackgroundImages.Length;
         }
@@ -62,11 +62,19 @@ namespace Ratings
             //var stdev = Math.Min(10000, rating.EloStdev);
             var rank = acc.Rank;
             var bracket = ratingSystem.GetPercentileBracket(rank);
-            var stdevUp = 1000.0;
-            var stdevDown = 1000.0;
-            var bracketOverlap = 0.2; //sets overlap in next rank: player needs to be at least this amount within the next rank
-            if (ValidateRank(rank + 1)) stdevUp = (ratingSystem.GetPercentileBracket(rank + 1).UpperEloLimit - ratingSystem.GetPercentileBracket(rank + 1).LowerEloLimit) * bracketOverlap;
-            if (ValidateRank(rank - 1)) stdevDown = (ratingSystem.GetPercentileBracket(rank - 1).UpperEloLimit - ratingSystem.GetPercentileBracket(rank - 1).LowerEloLimit) * bracketOverlap;
+            var stdevUp = 0.0;
+            var stdevDown = 0.0;
+            var bracketOverlap = 0.2;
+            //sets overlap in next rank: player needs to be at least this amount within the next rank
+            var myBracketWidth = ratingSystem.GetPercentileBracket(rank).UpperEloLimit - ratingSystem.GetPercentileBracket(rank).LowerEloLimit;
+            if (ValidateRank(rank + 1)) {
+                var nextBracketWidth = ratingSystem.GetPercentileBracket(rank + 1).UpperEloLimit - ratingSystem.GetPercentileBracket(rank + 1).LowerEloLimit;
+                stdevUp = Math.Min(myBracketWidth, nextBracketWidth)*bracketOverlap;
+            }
+            if (ValidateRank(rank - 1)) {
+                var prevBracketWidth = ratingSystem.GetPercentileBracket(rank - 1).UpperEloLimit - ratingSystem.GetPercentileBracket(rank - 1).LowerEloLimit;
+                stdevDown = Math.Min(myBracketWidth, prevBracketWidth) * bracketOverlap;
+            }
             var rankCeil = bracket.UpperEloLimit + stdevUp;
             var rankFloor = bracket.LowerEloLimit - stdevDown;
             //Trace.TraceInformation(acc.Name + ": bracket(" + bracket.LowerEloLimit + ", " + bracket.UpperEloLimit + ") requirements (" + rankFloor + ", " + rankCeil + ") current: " + rating.RealElo + " -> progress: " + bestProgress);
@@ -133,7 +141,7 @@ namespace Ratings
         public static bool UpdateRank(Account acc, bool allowUprank, bool allowDownrank, ZkDataContext db)
         {
             var progress = GetRankProgress(acc);
-            if (progress > 0.99999f && allowUprank)
+            if (progress > 0.99999f && allowUprank && ValidateRank(acc.Rank + 1))
             {
                 acc.Rank++;
                 Trace.TraceInformation(acc.Name + " has ranked up to " + acc.Rank);
@@ -144,7 +152,7 @@ namespace Ratings
                 }
                 return true;
             } 
-            if (progress < 0.00001f && allowDownrank)
+            if (progress < 0.00001f && allowDownrank && ValidateRank(acc.Rank - 1))
             {
                 acc.Rank--;
                 Trace.TraceInformation(acc.Name + " has ranked down to " + acc.Rank);

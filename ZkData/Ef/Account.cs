@@ -288,7 +288,15 @@ namespace ZkData
             SetPasswordHashed(Utils.HashLobbyPassword(passwordPlain));
         }
 
-        
+        public IQueryable<Account> GetSmurfs()
+        {
+            var myIPs = AccountIPs.Select(x => x.IP).ToList();
+            var myIDs = AccountUserIDs.Select(x => x.UserID).ToList();
+            var brokenIDs = new List<Int64>() {  };
+            var smurfs = new ZkDataContext().Accounts.Where(x => x.AccountID != AccountID && (x.AccountIPs.Any(y => myIPs.Contains(y.IP) && y.IP != "127.0.0.1" && y.IP != "127.0.1.1" && y.IP != "94.23.170.70" && y.IP != "78.46.100.157")
+                || x.AccountUserIDs.Where(id => !brokenIDs.Contains(id.UserID)).Any(y => myIDs.Contains(y.UserID))));
+            return smurfs;
+        }
 
         public bool CanAppoint(Account targetAccount, RoleType roleType)
         {
@@ -634,7 +642,7 @@ namespace ZkData
         public int GetIconLevel()
         {
             return System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((-0.12 / Math.Cosh((Level - 61.9) / 7.08) + 1)
-    * 2.93 * Math.Log(Math.Exp(-2.31) * Level + 1) - 0.89 / Math.Cosh((Level - 28.55) / 3.4))));
+    * 2.93 * Math.Log(Math.Exp(-2.31) * Level + 1) - 0.89 / Math.Cosh((Level - 28.55) / 3.4) + 0.002)));
         }
 
         /// <summary>

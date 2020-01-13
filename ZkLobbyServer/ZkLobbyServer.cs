@@ -397,12 +397,13 @@ namespace ZkLobbyServer
             return ConnectedUsers.ContainsKey(user);
         }
 
-        public void KickFromServer(string kickerName, string kickeeName, string reason)
+        public async Task KickFromServer(string kickerName, string kickeeName, string reason)
         {
             ConnectedUser conus;
             if (ConnectedUsers.TryGetValue(kickeeName, out conus))
             {
-                conus.Respond(string.Format("You were kicked for: {0}", reason));
+                await conus.MyBattle.KickFromBattle(kickeeName, reason);
+                await conus.Respond(string.Format("You were kicked for: {0}", reason));
                 conus.RequestCloseAll();
             }
         }

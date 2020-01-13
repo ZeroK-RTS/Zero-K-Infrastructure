@@ -200,6 +200,11 @@ namespace ZkLobbyServer
                 LogUserID(db, acc, register.UserID);
                 db.Accounts.Add(acc);
                 db.SaveChanges();
+                var smurfs = acc.GetSmurfs().Where(a => a.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow));
+                if (smurfs.Any())
+                {
+                    await server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Smurf Alert! {0} might be a smurf of {1}. Check https://zero-k.info/Users/AdminUserDetail/{2}", acc.Name, smurfs.OrderByDescending(x => x.Level).First().Name, acc.AccountID));
+                }
             }
             return new RegisterResponse(RegisterResponse.Code.Ok);
         }

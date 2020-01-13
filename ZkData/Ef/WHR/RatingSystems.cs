@@ -93,7 +93,7 @@ namespace Ratings
             ProcessBattle(battle, debriefing: partialDebriefing);
         }
 
-        private static void FillApplicableRatings(SpringBattle battle, SpringBattleContext result)
+        public static void FillApplicableRatings(SpringBattle battle, SpringBattleContext result)
         {
             battle.ApplicableRatings = 0;
             if (battle.HasBots) return;
