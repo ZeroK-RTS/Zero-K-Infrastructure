@@ -81,7 +81,7 @@ namespace Ratings
                 {
 
                     db.Database.CommandTimeout = 300;
-                    var endPollId = lastPollId + 10000;
+                    var endPollId = lastPollId + 1000;
                     outcomes = db.MapPollOutcomes.Where(x => x.MapPollID > lastPollId && x.MapPollID < endPollId).Include(x => x.MapPollOptions).OrderBy(x => x.MapPollID).AsNoTracking().ToList();
                 }
                 outcomes.ForEach(poll =>
