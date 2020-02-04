@@ -54,7 +54,7 @@ namespace ZkLobbyServer
 
 
         private object tickLock = new object();
-        private Timer timer;
+        private System.Timers.Timer timer;
         private int totalQueued;
         private DateTime lastQueueUpdate = DateTime.Now;
 
@@ -104,7 +104,7 @@ namespace ZkLobbyServer
 
             UpdateQueues();
 
-            timer = new Timer(TimerSeconds * 1000);
+            timer = new System.Timers.Timer(TimerSeconds * 1000);
             timer.AutoReset = true;
             timer.Elapsed += TimerTick;
             timer.Start();
