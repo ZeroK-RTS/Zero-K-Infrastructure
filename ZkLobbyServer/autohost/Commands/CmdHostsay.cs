@@ -7,7 +7,7 @@ namespace ZkLobbyServer
     {
         public override string Help => "says something as host, useful for !hostsay /nocost etc";
         public override string Shortcut => "hostsay";
-        public override AccessType Access => AccessType.Ingame;
+        public override AccessType Access => AccessType.IngameNotAutohost;
 
         public override BattleCommand Create() => new CmdHostsay();
 
@@ -15,7 +15,7 @@ namespace ZkLobbyServer
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
             cmd = arguments;
-            return $"do you want to host say {cmd} ?";
+            return $"Do you want to host say {cmd} ?";
         }
         
         public override async Task ExecuteArmed(ServerBattle battle, Say e)

@@ -32,6 +32,7 @@ namespace ZkLobbyServer
             }
         }
         private ZkLobbyServer server;
+        private DateTime chatWait = DateTime.UtcNow;
         public User User = new User();
         public HashSet<string> FriendBy { get; set; }
         public HashSet<string> FriendNames { get; set; }
@@ -177,7 +178,7 @@ namespace ZkLobbyServer
                     return;
                 }
 
-                server.KickFromServer(Name, kick.Name, kick.Reason);
+                await server.KickFromServer(Name, kick.Name, kick.Reason);
             }
         }
 
@@ -231,6 +232,17 @@ namespace ZkLobbyServer
             }
 
             var added = channel.Users.TryAdd(Name, User);
+            if (!added)
+            {
+                await
+                    SendCommand(new JoinChannelResponse()
+                    {
+                        Success = false,
+                        Reason = "You are already in this channel",
+                        ChannelName = joinChannel.ChannelName
+                    });
+                return;
+            }
             var visibleUsers = !channel.IsDeluge ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(Name, x)).ToList();
             var canSeeMe = !channel.IsDeluge ? channel.Users.Keys.ToList() : channel.Users.Keys.Where(x => server.CanUserSee(x, Name)).ToList();
 
@@ -317,6 +329,10 @@ namespace ZkLobbyServer
         {
             if (!IsLoggedIn) return;
             if (User.BanMute) return; // block all say for muted
+            if (DateTime.UtcNow < chatWait) return; //block all say for spam
+            if (say.Text.Length > GlobalConst.LobbyMaxMessageSize) say.Text = say.Text.Substring(0, GlobalConst.LobbyMaxMessageSize);
+            if (DateTime.UtcNow.AddMilliseconds(-5 * GlobalConst.MinMillisecondsBetweenMessages) > chatWait) chatWait = DateTime.UtcNow.AddMilliseconds(-5 * GlobalConst.MinMillisecondsBetweenMessages);
+            chatWait = chatWait.AddMilliseconds(Math.Max(GlobalConst.MinMillisecondsBetweenMessages, GlobalConst.MillisecondsPerCharacter * say.Text.Length));
 
             say.User = Name;
             say.Time = DateTime.UtcNow;
@@ -356,9 +372,22 @@ namespace ZkLobbyServer
         {
             if (!IsLoggedIn) return;
 
+            if (string.IsNullOrEmpty(openBattle.Header.Password) && User.BanVotes)
+            {
+                await Respond("Your rights have been restricted. You can only open passworded battles. Check your user page for details.");
+                return;
+            }
+
             if (MyBattle != null)
             {
                 await Respond("You are already in a battle");
+                return;
+            }
+
+            if (openBattle.Header.Mode != null 
+                && !Enum.IsDefined(typeof(AutohostMode), openBattle.Header.Mode))
+            {
+                await Respond("Incorrect battle type");
                 return;
             }
 
@@ -404,6 +433,13 @@ namespace ZkLobbyServer
                 return;
             }
 
+            if (battleUpdate.Header.Mode != null 
+                && !Enum.IsDefined(typeof(AutohostMode), battleUpdate.Header.Mode))
+            {
+                await Respond("Incorrect battle type");
+                return;
+            }
+
             bat.UpdateWith(h);
             await server.Broadcast(server.ConnectedUsers.Keys, battleUpdate);
         }
@@ -422,10 +458,6 @@ namespace ZkLobbyServer
                 UserBattleStatus ubs;
                 if (bat.Users.TryGetValue(status.Name, out ubs))
                 {
-                    // enfoce player count limit
-                    if ((status.IsSpectator == false) && (bat.Users[status.Name].IsSpectator == true) &&
-                        (bat.Users.Values.Count(x => !x.IsSpectator) >= bat.MaxPlayers)) status.IsSpectator = true;
-
                     ubs.UpdateWith(status);
                     bat.ValidateBattleStatus(ubs);
 
@@ -537,7 +569,7 @@ namespace ZkLobbyServer
             var bat = MyBattle;
             if (bat != null)
             {
-                if ((bat.FounderName != Name) && !User.IsAdmin)
+                if ((bat.FounderName != Name || bat.IsAutohost) && !User.IsAdmin)
                 {
                     await Respond("You don't have permissions to change mod options here");
                     return;

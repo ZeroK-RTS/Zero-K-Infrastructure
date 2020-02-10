@@ -67,12 +67,19 @@ namespace ZeroKWeb.Controllers
             var page = GetPostPage(post);
 
             db.ForumPosts.DeleteOnSubmit(post);
-            if ((thread.ForumPosts.Count() <= 0 || deleteThread) && IsNormalThread(thread))
+            if (thread.ForumPosts.Count() <= 0 || deleteThread)
             {
-                db.ForumThreadLastReads.DeleteAllOnSubmit(db.ForumThreadLastReads.Where(x => x.ForumThreadID == thread.ForumThreadID).ToList());
-                db.ForumThreads.DeleteOnSubmit(thread);
+                if (thread.SpringBattles != null) thread.SpringBattles.ForEach(x => x.ForumThread = null);
+                if (thread.Planets != null) thread.Planets.ForEach(x => x.ForumThread = null);
+                if (thread.Missions != null) thread.Missions.ForEach(x => x.ForumThread = null);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                if (IsNormalThread(thread))
+                {
+                    db.ForumThreadLastReads.DeleteAllOnSubmit(db.ForumThreadLastReads.Where(x => x.ForumThreadID == thread.ForumThreadID).ToList());
+                    db.ForumThreads.DeleteOnSubmit(thread);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
             thread.PostCount -= 1;
             db.SaveChanges();
@@ -448,6 +455,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult Post(int id) {
             var db = new ZkDataContext();
             var post = db.ForumPosts.FirstOrDefault(x => x.ForumPostID == id);
+            if (post == null) return Content("Invalid post id");
             var thread = post.ForumThread;
             return RedirectToAction("Thread", new { id = thread.ForumThreadID, postID= id });
         }
@@ -459,7 +467,14 @@ namespace ZeroKWeb.Controllers
         /// <param name="lastSeen">UNUSED</param>
         /// <param name="postID">A specific <see cref="ForumPost" /> ID to go to</param>
         /// <returns></returns>
-        public ActionResult Thread(int id, int? postID) {
+        public ActionResult Thread(int? id, int? postID) {
+            if (id == null) {
+              if (postID == null)
+                return RedirectToAction("Index");
+              else
+                return RedirectToAction("Post", new { id = postID });
+            }
+
             var db = new ZkDataContext();
             var t = db.ForumThreads.FirstOrDefault(x => x.ForumThreadID == id);
 

@@ -20,6 +20,8 @@ namespace ChobbyLauncher
 
     public class ChobbylaLocalListener
     {
+        public static DateTime LastUserAction;
+
         private CommandJsonSerializer serializer;
         private TcpTransport transport;
         private Chobbyla chobbyla;
@@ -28,10 +30,11 @@ namespace ChobbyLauncher
         private ulong initialConnectLobbyID;
         private Timer timer;
         private DiscordController discordController;
-
+        private Timer idleReport;
 
         public ChobbylaLocalListener(Chobbyla chobbyla, SteamClientHelper steam, ulong initialConnectLobbyID)
         {
+            LastUserAction = DateTime.Now;
             this.chobbyla = chobbyla;
             this.steam = steam;
             steam.Listener = this;
@@ -69,17 +72,18 @@ namespace ChobbyLauncher
                 });
             }
 
-
             discordController.Update();
         }
 
         private void SteamOnOverlayActivated(bool b)
         {
+            LastUserAction = DateTime.Now;
             SendCommand(new SteamOverlayChanged() { IsActive = b });
         }
 
         private void SteamOnJoinFriendRequest(ulong friendSteamID)
         {
+            LastUserAction = DateTime.Now;
             SendCommand(new SteamJoinFriend() { FriendSteamID = friendSteamID.ToString() });
             steam.SendSteamNotifyJoin(friendSteamID);
         }
@@ -92,11 +96,13 @@ namespace ChobbyLauncher
 
         private void DiscordOnJoinCallback(string secret)
         {
+            LastUserAction = DateTime.Now;
             SendCommand(new DiscordOnJoin() { Secret = secret });
         }
 
         private void DiscordOnSpectateCallback(string secret)
         {
+            LastUserAction = DateTime.Now;
             SendCommand(new DiscordOnSpectate { Secret = secret });
         }
 
@@ -145,6 +151,7 @@ namespace ChobbyLauncher
         {
             try
             {
+                LastUserAction = DateTime.Now;
                 MinimizeChobby();
                 System.Diagnostics.Process.Start(args.Url);
             }
@@ -254,7 +261,7 @@ namespace ChobbyLauncher
             try
             {
                 var line = serializer.SerializeToLine(data);
-                Trace.TraceInformation("Chobbyla >> {0}", line);
+                if (!(data is UserActivity)) Trace.TraceInformation("Chobbyla >> {0}", line);
                 await transport.SendLine(line);
             }
             catch (Exception ex)
@@ -609,6 +616,30 @@ namespace ChobbyLauncher
             });
         }
 
+        private async Task Process(DownloadSpring args)
+        {
+            Task.Factory.StartNew(async () =>
+            {
+                try
+                {
+                    if (args.Downloads?.Any() == true)
+                    {
+                        foreach (var x in args.Downloads)
+                        {
+                            DownloadType type;
+                            if (string.IsNullOrEmpty(x.FileType) || !Enum.TryParse(x.FileType, out type)) type = DownloadType.NOTKNOWN;
+                            var result = await chobbyla.downloader.DownloadFile(type, x.Name, null);
+                            if (!result) Trace.TraceWarning("Download of {0} {1} has failed", x.FileType, x.Name);
+                        }
+                    }
+                    if (!await chobbyla.downloader.DownloadFile(DownloadType.ENGINE, args.Engine, null)) Trace.TraceWarning("Download of engine {0} has failed", args.Engine);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error processing DownloadSpring: {0}", ex);
+                }
+            });
+        }
 
         private async Task Process(DiscordUpdatePresence args)
         {
@@ -689,6 +720,7 @@ namespace ChobbyLauncher
             {
                 await SendSteamOnline();
 
+                idleReport = new Timer((o) => SendCommand(new UserActivity() { IdleSeconds = WindowsApi.IdleTime.TotalSeconds }), this, 5000, 5000);
             }
             catch (Exception ex)
             {
@@ -749,6 +781,7 @@ namespace ChobbyLauncher
             Trace.TraceInformation("Chobby closed connection");
             timer.Dispose();
             steam.Dispose();
+            idleReport.Dispose();
             discordController.Dispose();
         }
     }

@@ -66,5 +66,27 @@ namespace ZeroKWeb.Controllers
             MiscVar.ZklsMaxUsers = maxPlayers;
             return RedirectToAction("Index", "Home");
         }
+
+
+        [Auth(Role = AdminLevel.Moderator)]
+        public ActionResult ForceRatingsUpdate()
+        {
+            Ratings.RatingSystems.whr.ForEach(x => x.Value.ForceRatingsUpdate());
+            return RedirectToAction("Index", "Home");
+        }
+
+        [Auth(Role = AdminLevel.SuperAdmin)]
+        public ActionResult EditDynamicConfig()
+        {
+            return View("DynamicConfigDetail", DynamicConfig.Instance);
+        }
+
+        [HttpPost]
+        [Auth(Role =  AdminLevel.SuperAdmin)]
+        public ActionResult EditDynamicConfigSubmit(DynamicConfig config)
+        {
+            DynamicConfig.SaveConfig(config);
+            return RedirectToAction("EditDynamicConfig");
+        }
     }
 }

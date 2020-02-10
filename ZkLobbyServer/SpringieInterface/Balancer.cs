@@ -20,7 +20,7 @@ namespace ZeroKWeb.SpringieInterface
             FactionWise
         }
 
-        const double MaxCbalanceDifference = 70;
+        public const double MaxCbalanceDifference = 70;
         const double MaxTeamSizeDifferenceRatio = 2;
         readonly List<BalanceTeam> teams = new List<BalanceTeam>();
 
@@ -97,7 +97,7 @@ namespace ZeroKWeb.SpringieInterface
         /// <param name="b"></param>
         /// <param name="unmovablePlayers"></param>
         /// <returns></returns>
-        BalanceTeamsResult LegacyBalance(int teamCount, BalanceMode mode, LobbyHostingContext b, params List<Account>[] unmovablePlayers)
+        public BalanceTeamsResult LegacyBalance(int teamCount, BalanceMode mode, LobbyHostingContext b, params List<Account>[] unmovablePlayers)
         {
             var ret = new BalanceTeamsResult();
 
@@ -284,13 +284,23 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     case AutohostMode.None:
                         {
-                            if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == true ? BalanceMode.ClanWise : BalanceMode.Normal, context);
+                            if (!isGameStart)
+                            {
+                                if (allyCount == null || allyCount == 2)
+                                {
+                                    res = PartitionBalance.BalanceInterface(2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                                }
+                                else
+                                {
+                                    res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == true ? BalanceMode.ClanWise : BalanceMode.Normal, context);
+                                }
+                            }
                         }
                         break;
                     case AutohostMode.Teams:
                     case AutohostMode.Game1v1:
                         {
-                            res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                            res = PartitionBalance.BalanceInterface(2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
                             res.DeleteBots = true;
                         }
                         break;

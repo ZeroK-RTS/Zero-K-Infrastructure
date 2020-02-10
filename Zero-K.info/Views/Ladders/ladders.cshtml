@@ -22,10 +22,16 @@
                     {
                         if (rank++ == 20)
                         {
-                            @:</span><br /><span style="font-size: small">
+                        @:</span><br /><span style="font-size: small">
+                        }
+                        var acc = acct;
+                        if (rank == GlobalConst.LadderSize && Global.IsAccountAuthorized && Global.Account.GetRating(RatingCategory.MatchMaking)?.Rank > rank && Global.Account.GetRating(RatingCategory.MatchMaking)?.Rank < int.MaxValue)
+                        {
+                            rank = Global.Account.GetRating(RatingCategory.MatchMaking).Rank;
+                            acc = Global.Account;
                         }
                         <text>
-                            @(rank) ) @Html.PrintAccount(acct) - @(Math.Round(acct.GetRating(RatingCategory.MatchMaking).Elo)) <br />
+                            @(rank) ) @Html.PrintAccount(acc) - @(Math.Round(acc.GetRating(RatingCategory.MatchMaking).LadderElo)) <br />
                         </text>
                     }
                 }
@@ -39,10 +45,16 @@
                     {
                         if (rank++ == 20)
                         {
-                            @:</span><br /><span style="font-size: small">
+                        @:</span><br /><span style="font-size: small">
+                        }
+                        var acc = acct;
+                        if (rank == GlobalConst.LadderSize && Global.IsAccountAuthorized && Global.Account.GetRating(RatingCategory.Casual)?.Rank > rank && Global.Account.GetRating(RatingCategory.Casual)?.Rank < int.MaxValue)
+                        {
+                            rank = Global.Account.GetRating(RatingCategory.Casual).Rank;
+                            acc = Global.Account;  
                         }
                         <text>
-                            @(rank)) @Html.PrintAccount(acct) - @(Math.Round(acct.GetRating(RatingCategory.Casual).Elo))<br />
+                            @(rank)) @Html.PrintAccount(acc) - @(Math.Round(acc.GetRating(RatingCategory.Casual).LadderElo))<br />
                         </text>
                     }
                 }
@@ -51,6 +63,8 @@
     </tr>
 </table>
 
+<br />
+@Html.ActionLink("Show full ladders", "Full", "Ladders")
 <br />
 
 <h2>Awards Hall of Fame - @DateTime.Now.ToString("MMMM")</h2>
@@ -73,16 +87,16 @@
                 {
                     if (!first)
                     {
-                        @:,
-                    }
-                    first = false;
-                    @Html.PrintAccount(collector)
-                }
-                - <span style="color: lightgreen;">@awardItem.TopCollectorCountM</span> collected
+            @:,
+    }
+    first = false;
+    @Html.PrintAccount(collector)
+}
+- <span style="color: lightgreen;">@awardItem.TopCollectorCountM</span> collected
             </div>
-            <div style="font-weight: bold;">
-                Top Score - @Html.PrintAccount(awardItem.TopScoreHolderM) - <span style="color: lightgreen;">@awardItem.TopScoreDescM</span> - @Html.PrintBattle(awardItem.TopScoreBattlePlayerM)
-            </div>
+<div style="font-weight: bold;">
+    Top Score - @Html.PrintAccount(awardItem.TopScoreHolderM) - <span style="color: lightgreen;">@awardItem.TopScoreDescM</span> - @Html.PrintBattle(awardItem.TopScoreBattlePlayerM)
+</div>
         </div>
     </div>
 }

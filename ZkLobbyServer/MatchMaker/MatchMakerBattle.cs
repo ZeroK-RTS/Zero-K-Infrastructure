@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using LobbyClient;
 using PlasmaShared;
+using ZkData;
 
 namespace ZkLobbyServer
 {
@@ -16,8 +19,15 @@ namespace ZkLobbyServer
             EngineVersion = server.Engine;
             ModName = server.Game;
             FounderName = "MatchMaker #" + BattleID;
-            Title = "MatchMaker " + BattleID;
             Mode = bat.QueueType.Mode;
+
+            Title = "MM " + BattleID + ": " + bat.QueueType.Name;
+            try {
+                Title += ", Rank " + Ratings.Ranks.RankNames[bat.Players.Select(x => x.LobbyUser.Rank).Max()];
+            } catch (Exception ex) {
+                Trace.TraceError(ex.ToString());
+            }
+
             MaxPlayers = bat.Size;
             Prototype = bat;
             MapName = mapname;
@@ -26,11 +36,10 @@ namespace ZkLobbyServer
             
             if (ModOptions == null) ModOptions = new Dictionary<string, string>();
 
-            // hacky way to send some extra start setup data
-            if (bat.QueueType.Mode != AutohostMode.GameChickens) ModOptions["mutespec"] = "mute";
+            // proper way to send some extra start setup data
+            if (bat.QueueType.Mode != AutohostMode.GameChickens)
+                SetCompetitiveModoptions();
             ModOptions["MatchMakerType"] = bat.QueueType.Name;
-            ModOptions["MinSpeed"] = "1";
-            ModOptions["MaxSpeed"] = "1";
 
             ValidateAndFillDetails();
         }

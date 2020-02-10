@@ -29,22 +29,40 @@ namespace ZkData
 
         public double Percentile { get; set; }
         [Index]
-        public int Rank { get; set; }
+        public bool IsRanked{ get; set; }
         [Index]
         public double RealElo { get; set; }
         [Index]
         public double Elo { get; set; }
+        [Index]
+        public double? LadderElo { get; set; }
+
+        public double EloStdev { get; set; }
+
         
-        public double Uncertainty { get; set; }
+        public PlayerRating ToUnrankedPlayerRating()
+        {
+            return new PlayerRating(int.MaxValue, (float)Percentile, (float)RealElo, (float)EloStdev, 0, 0, 0, (float)LadderElo, false);
+        }
         
+        public void UpdateLadderElo(double ladderElo)
+        {
+            if (double.IsNaN(ladderElo)) Trace.TraceWarning("Tried to set LadderElo for " + AccountID + " to NaN");
+            else LadderElo = ladderElo;
+        }
 
         public void UpdateFromRatingSystem(PlayerRating rating)
         {
-            this.Percentile = rating.Percentile;
-            this.Rank = rating.Rank;
-            this.RealElo = rating.RealElo;
-            this.Uncertainty = rating.Uncertainty;
-            this.Elo = rating.Elo;
+            if (float.IsNaN(rating.Percentile)) Trace.TraceWarning("Tried to set Percentile for " + AccountID + " to NaN");
+            else this.Percentile = rating.Percentile;
+            this.IsRanked = rating.Rank < int.MaxValue;
+            if (float.IsNaN(rating.RealElo)) Trace.TraceWarning("Tried to set RealElo for " + AccountID + " to NaN");
+            else this.RealElo = rating.RealElo;
+            if (float.IsNaN(rating.EloStdev)) Trace.TraceWarning("Tried to set EloStdev for " + AccountID + " to NaN");
+            else this.EloStdev = rating.EloStdev;
+            if (float.IsNaN(rating.Elo)) Trace.TraceWarning("Tried to set Elo for " + AccountID + " to NaN");
+            else this.Elo = rating.Elo;
+            UpdateLadderElo(rating.LadderElo);
         }
         
         public AccountRating(int AccountID, RatingCategory ratingCategory)

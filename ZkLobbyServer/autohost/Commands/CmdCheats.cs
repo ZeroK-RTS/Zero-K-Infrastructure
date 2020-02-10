@@ -7,13 +7,13 @@ namespace ZkLobbyServer
     {
         public override string Help => "enables/disables cheats in game";
         public override string Shortcut => "cheats";
-        public override AccessType Access => AccessType.Ingame;
+        public override AccessType Access => AccessType.IngameNotAutohost;
 
         public override BattleCommand Create() => new CmdCheats();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            return "do you want to enable cheats?";
+            return "Do you want to enable cheats?";
         }
         
         public override async Task ExecuteArmed(ServerBattle battle, Say e)

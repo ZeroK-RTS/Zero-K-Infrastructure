@@ -18,6 +18,7 @@ namespace ZkData
         public DateTime Time { get; set; }
         public DateTime? BanExpires { get; set; }
         public bool BanMute { get; set; }
+        public bool BanVotes { get; set; }
         public bool BanCommanders { get; set; }
         public bool BanUnlocks { get; set; }
         public bool BanSite { get; set; }

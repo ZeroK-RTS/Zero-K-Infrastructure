@@ -126,7 +126,7 @@ namespace ZkData.Migrations
                 Name = "TestPlayer",
                 NewPasswordPlain = "test",
                 AdminLevel = AdminLevel.SuperAdmin,
-                Kudos = 200,
+                HasKudos = true,
                 Level = 255,
                 Xp = 1325900,
                 Rank = 3,
@@ -134,7 +134,7 @@ namespace ZkData.Migrations
                 Avatar = "amphimpulse",
                 DevLevel = DevLevel.CoreDeveloper,
             },
-            new Account { Name = "test", NewPasswordPlain = "test", AdminLevel = AdminLevel.SuperAdmin, Kudos = 200, Level = 50, Country = "cz" },
+            new Account { Name = "test", NewPasswordPlain = "test", AdminLevel = AdminLevel.SuperAdmin, HasKudos = true, Level = 50, Country = "cz" },
             new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, AdminLevel = AdminLevel.SuperAdmin });
         }
     }

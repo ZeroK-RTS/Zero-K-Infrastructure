@@ -76,12 +76,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbCloner.cs" />
+    <Compile Include="Ef\MapPollOption.cs" />
+    <Compile Include="Ef\MapPollOutcomes.cs" />
     <Compile Include="Ef\AccountRelation.cs" />
+    <Compile Include="Ef\Autohost.cs" />
+    <Compile Include="Ef\DynamicConfig.cs" />
     <Compile Include="Ef\LobbyChannelTopic.cs" />
     <Compile Include="Ef\LobbyNews.cs" />
     <Compile Include="Ef\SpringBattleBot.cs" />
     <Compile Include="Ef\WHR\Game.cs" />
     <Compile Include="Ef\WHR\IRatingSystem.cs" />
+    <Compile Include="Ef\WHR\MapRatings.cs" />
     <Compile Include="Ef\WHR\Ranks.cs" />
     <Compile Include="Ef\WHR\ITopPlayersUpdateListener.cs" />
     <Compile Include="Ef\WHR\Player.cs" />
@@ -372,6 +377,70 @@
     <Compile Include="Migrations\201804060926502_DlcListForAccounts.cs" />
     <Compile Include="Migrations\201804060926502_DlcListForAccounts.Designer.cs">
       <DependentUpon>201804060926502_DlcListForAccounts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804280706043_StoreOnlyKudoExistence.cs" />
+    <Compile Include="Migrations\201804280706043_StoreOnlyKudoExistence.Designer.cs">
+      <DependentUpon>201804280706043_StoreOnlyKudoExistence.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201805012144424_AddDynamicConfig.cs" />
+    <Compile Include="Migrations\201805012144424_AddDynamicConfig.Designer.cs">
+      <DependentUpon>201805012144424_AddDynamicConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201805160732317_DynamicMmPartyWidth.cs" />
+    <Compile Include="Migrations\201805160732317_DynamicMmPartyWidth.Designer.cs">
+      <DependentUpon>201805160732317_DynamicMmPartyWidth.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201805160811134_MmSizeGrowthTime.cs" />
+    <Compile Include="Migrations\201805160811134_MmSizeGrowthTime.Designer.cs">
+      <DependentUpon>201805160811134_MmSizeGrowthTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201807261504544_MmTeamsMinimumWinChance.cs" />
+    <Compile Include="Migrations\201807261504544_MmTeamsMinimumWinChance.Designer.cs">
+      <DependentUpon>201807261504544_MmTeamsMinimumWinChance.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201808181027066_AddTourneyControl.cs" />
+    <Compile Include="Migrations\201808181027066_AddTourneyControl.Designer.cs">
+      <DependentUpon>201808181027066_AddTourneyControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201810172106541_UpdateDynamicConfig.cs" />
+    <Compile Include="Migrations\201810172106541_UpdateDynamicConfig.Designer.cs">
+      <DependentUpon>201810172106541_UpdateDynamicConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201810231530234_StoreAutohostsInDb.cs" />
+    <Compile Include="Migrations\201810231530234_StoreAutohostsInDb.Designer.cs">
+      <DependentUpon>201810231530234_StoreAutohostsInDb.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902121616218_Rename Rating Uncertainty.cs" />
+    <Compile Include="Migrations\201902121616218_Rename Rating Uncertainty.Designer.cs">
+      <DependentUpon>201902121616218_Rename Rating Uncertainty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902132215413_AddMaxEloStDevToDynConfing.cs" />
+    <Compile Include="Migrations\201902132215413_AddMaxEloStDevToDynConfing.Designer.cs">
+      <DependentUpon>201902132215413_AddMaxEloStDevToDynConfing.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902132319178_RemoveRankFromAccountRating.cs" />
+    <Compile Include="Migrations\201902132319178_RemoveRankFromAccountRating.Designer.cs">
+      <DependentUpon>201902132319178_RemoveRankFromAccountRating.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902151050350_AddMapPolls.cs" />
+    <Compile Include="Migrations\201902151050350_AddMapPolls.Designer.cs">
+      <DependentUpon>201902151050350_AddMapPolls.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903072346315_AddMapPollOutcomeCategory.cs" />
+    <Compile Include="Migrations\201903072346315_AddMapPollOutcomeCategory.Designer.cs">
+      <DependentUpon>201903072346315_AddMapPollOutcomeCategory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904172034522_AddLadderElo.cs" />
+    <Compile Include="Migrations\201904172034522_AddLadderElo.Designer.cs">
+      <DependentUpon>201904172034522_AddLadderElo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904231037123_AddBanVotes.cs" />
+    <Compile Include="Migrations\201904231037123_AddBanVotes.Designer.cs">
+      <DependentUpon>201904231037123_AddBanVotes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910161453248_removeWhrAlias.cs" />
+    <Compile Include="Migrations\201910161453248_removeWhrAlias.Designer.cs">
+      <DependentUpon>201910161453248_removeWhrAlias.cs</DependentUpon>
     </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
@@ -719,6 +788,54 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804060926502_DlcListForAccounts.resx">
       <DependentUpon>201804060926502_DlcListForAccounts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804280706043_StoreOnlyKudoExistence.resx">
+      <DependentUpon>201804280706043_StoreOnlyKudoExistence.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805012144424_AddDynamicConfig.resx">
+      <DependentUpon>201805012144424_AddDynamicConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805160732317_DynamicMmPartyWidth.resx">
+      <DependentUpon>201805160732317_DynamicMmPartyWidth.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805160811134_MmSizeGrowthTime.resx">
+      <DependentUpon>201805160811134_MmSizeGrowthTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807261504544_MmTeamsMinimumWinChance.resx">
+      <DependentUpon>201807261504544_MmTeamsMinimumWinChance.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201808181027066_AddTourneyControl.resx">
+      <DependentUpon>201808181027066_AddTourneyControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810172106541_UpdateDynamicConfig.resx">
+      <DependentUpon>201810172106541_UpdateDynamicConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810231530234_StoreAutohostsInDb.resx">
+      <DependentUpon>201810231530234_StoreAutohostsInDb.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902121616218_Rename Rating Uncertainty.resx">
+      <DependentUpon>201902121616218_Rename Rating Uncertainty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902132215413_AddMaxEloStDevToDynConfing.resx">
+      <DependentUpon>201902132215413_AddMaxEloStDevToDynConfing.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902132319178_RemoveRankFromAccountRating.resx">
+      <DependentUpon>201902132319178_RemoveRankFromAccountRating.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902151050350_AddMapPolls.resx">
+      <DependentUpon>201902151050350_AddMapPolls.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903072346315_AddMapPollOutcomeCategory.resx">
+      <DependentUpon>201903072346315_AddMapPollOutcomeCategory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904172034522_AddLadderElo.resx">
+      <DependentUpon>201904172034522_AddLadderElo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904231037123_AddBanVotes.resx">
+      <DependentUpon>201904231037123_AddBanVotes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910161453248_removeWhrAlias.resx">
+      <DependentUpon>201910161453248_removeWhrAlias.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

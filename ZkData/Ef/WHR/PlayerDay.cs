@@ -2,137 +2,186 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using ZkData;
 
 namespace Ratings
 {
+    public class PlayerDay
+    {
 
-    public class PlayerDay {
-
-        public ICollection<Game> wonGames, lostGames;
-        public int day;
-        public Player player;
+        public List<Game>[] games; //wongames, lostgames
+        public float totalWeight = 0;
+        public float weight = 0;
+        public int totalGames = 0;
+        public readonly int day;
+        public readonly Player player;
         public float r;
         public bool isFirstDay;
-        public float uncertainty;
+        public float naturalRatingVariance;
 
-        public PlayerDay(Player player, int day) {
+        static private List<float> game_terms = new List<float>();
+        private const int terms = 4;
+
+
+        public PlayerDay(Player player, int day)
+        {
             this.day = day;
             this.player = player;
             isFirstDay = false;
-            this.wonGames = new List<Game>();
-            this.lostGames = new List<Game>();
+            this.games = new List<Game>[2];
+            this.games[0] = new List<Game>();
+            this.games[1] = new List<Game>();
         }
 
-        public void setGamma(float gamma) {
-            r = (float)(Math.Log(gamma));
+        public float GetEloStdev()
+        {
+            return (float)Math.Sqrt(naturalRatingVariance / GlobalConst.EloToNaturalRatingMultiplierSquared);
         }
 
-        public float getGamma() {
-            return (float)(Math.Exp(r));
+        public void SetGamma(float gamma)
+        {
+            r = (float)Math.Log(gamma);
         }
 
-        public void setElo(float elo) {
-            r = (float)(elo * (Math.Log(10) / 400.0));
+        public float GetGamma()
+        {
+            return (float)Math.Exp(r);
         }
 
-        public float getElo() {
-            return (float)((r * 400.0) / (Math.Log(10)));
+        public float GetNaturalRating()
+        {
+            return r;
         }
 
-        ICollection<float[]> won_game_terms, lost_game_terms;
-
-        public void clearGameTermsCache() {
-            won_game_terms = null;
-            lost_game_terms = null;
+        public void SetElo(float elo)
+        {
+            r = elo * ((float)Math.Log(10) / 400.0f);
         }
 
-        public ICollection<float[]> getWonGameTerms() {
-            if (won_game_terms == null) {
-                won_game_terms = new List<float[]>();
-                foreach (Game g in wonGames) {
-                    float other_gamma = g.getOpponentsAdjustedGamma(player);
-                    won_game_terms.Add(new float[] { 1.0f, 0.0f, 1.0f, other_gamma, 1f / g.getPlayerTeammates(player).Count/*g.getPlayerWeight(player)*/ });
+        public float GetElo()
+        {
+            return (r * 400.0f) / ((float)Math.Log(10));
+        }
+
+
+        public void UpdateGameTermsCache()
+        {
+            UpdateGameTerms();
+        }
+
+        private int GetWonStartIndex()
+        {
+            return (totalGames - games[0].Count - games[1].Count - (isFirstDay ? 2 : 0)) * terms;
+        }
+
+        private int GetLostStartIndex()
+        {
+            return (totalGames - games[1].Count - (isFirstDay ? 1 : 0)) * terms;
+        }
+
+        private int GetWonEndIndex()
+        {
+            return (totalGames - games[1].Count - (isFirstDay ? 1 : 0)) * terms;
+        }
+
+        private int GetLostEndIndex()
+        {
+            return (totalGames) * terms;
+        }
+
+        private void UpdateGameTerms()
+        {
+            while (game_terms.Count < terms * (totalGames))
+            {
+                game_terms.Add(0f);
+            }
+            int i = GetWonStartIndex();
+            for (int wonLost = 0; wonLost < 2; wonLost++)
+            {
+                for (int game = 0; game < games[wonLost].Count; game++)
+                {
+                    game_terms[i++] = games[wonLost][game].GetAlliesAdjustedGamma(player); //allyGamma
+                    game_terms[i++] = games[wonLost][game].GetOpponentsAdjustedGamma(player); //other_gamma
+                    game_terms[i++] = games[wonLost][game].GetMyAdjustedGamma(player); //myGamma
+                    game_terms[i++] = games[wonLost][game].GetPlayerWeight(player); //my weight
                 }
-                if (isFirstDay) {
-                    won_game_terms.Add(new float[] { 1, 0, 1, 1, 1 });
+                if (isFirstDay)
+                {
+                    game_terms[i++] = 1f;
+                    game_terms[i++] = 1f;
+                    game_terms[i++] = GetGamma();
+                    game_terms[i++] = 1f;
                 }
             }
-            return won_game_terms;
         }
 
-        public ICollection<float[]> getLostGameTerms() {
-            if (lost_game_terms == null) {
-                lost_game_terms = new List<float[]>();
-                foreach (Game g in lostGames) {
-                    float other_gamma = g.getOpponentsAdjustedGamma(player);
-                    lost_game_terms.Add(new float[] { 0.0f, other_gamma, 1.0f, other_gamma, 1f / g.getPlayerTeammates(player).Count/*g.getPlayerWeight(player)*/ });
-                }
-                if (isFirstDay) {
-                    lost_game_terms.Add(new float[] { 0, 1, 1, 1, 1 });
+        private float Square(float f) => f * f;
 
-                }
-            }
-            return lost_game_terms;
-        }
-
-        public float getLogLikelyhoodSecondDerivative() {
+        public float GetLogLikelyhoodSecondDerivative()
+        {
             float sum = 0.0f;
-            float gamma = getGamma();
-            foreach (float[] terms in getWonGameTerms()) {
-                sum += terms[4] * (terms[2] * terms[3]) / (float)Math.Pow(terms[2] * gamma + terms[3], 2);
+            int lostEnd = GetLostEndIndex();
+            for (int i = GetWonStartIndex(); i < lostEnd; i += terms)
+            {
+                sum -= (game_terms[i + 3] * game_terms[i + 0] * game_terms[i + 3] * game_terms[i + 1] * game_terms[i + 2]) / Square(game_terms[i + 0] * game_terms[i + 2] + game_terms[i + 1]);
             }
-            foreach (float[] terms in getLostGameTerms()) {
-                sum += terms[4] * (terms[2] * terms[3]) / (float)Math.Pow(terms[2] * gamma + terms[3], 2);
-            }
-            return -1 * gamma * sum;
+            return sum;
         }
 
-        public float getLogLikelyhoodFirstDerivative() {
+        public float GetLogLikelyhoodFirstDerivative()
+        {
             float tally = 0.0f;
-            float gamma = getGamma();
-            float size = 0;
-            foreach (float[] terms in getWonGameTerms()) {
-                tally += terms[4] * terms[2] / (terms[2] * gamma + terms[3]);
-                size += terms[4];
+            int wonEnd = GetWonEndIndex();
+            int lostEnd = GetLostEndIndex();
+            for (int i = GetWonStartIndex() + 3; i < wonEnd; i += terms)
+            {
+                tally += game_terms[i];
             }
-            foreach (float[] terms in getLostGameTerms()) {
-                tally += terms[4] * terms[2] / (terms[2] * gamma + terms[3]);
-            }
-            return size - gamma * tally;
-        }
-
-        public float getLogLikelyhood() {
-            float tally = 0.0f;
-            float gamma = getGamma();
-            foreach (float[] terms in getWonGameTerms()) {
-                tally += terms[4] * (float)Math.Log(terms[0] * gamma);
-                tally -= terms[4] * (float)Math.Log(terms[2] * gamma + terms[3]);
-            }
-            foreach (float[] terms in getLostGameTerms()) {
-                tally += terms[4] * (float)Math.Log(terms[1]);
-                tally -= terms[4] * (float)(Math.Log(terms[2] * gamma + terms[3]));
+            for (int i = GetWonStartIndex(); i < lostEnd; i += terms)
+            {
+                tally -= (game_terms[i + 3] * game_terms[i + 0] * game_terms[i + 2]) / (game_terms[i + 0] * game_terms[i + 2] + game_terms[i + 1]);
             }
             return tally;
         }
 
-        public void AddGame(Game game) {
-            if ((!game.blackWins && game.whitePlayers.Contains(player))
-                    || (game.blackWins && game.blackPlayers.Contains(player))) {
-                wonGames.Add(game);
-            } else if ((game.blackWins && game.whitePlayers.Contains(player))
-                    || (!game.blackWins && game.blackPlayers.Contains(player))) {
-                lostGames.Add(game);
-            } else {
-                Trace.TraceError("Player not part of game");
+        public float GetLogLikelyhood()
+        {
+            float tally = 0.0f;
+            int wonEnd = GetWonEndIndex();
+            int lostEnd = GetLostEndIndex();
+            for (int i = GetWonStartIndex(); i < wonEnd; i += terms)
+            {
+                tally += (float)Math.Log(game_terms[i + 0]) + (float)Math.Log(game_terms[i + 2]) - (float)Math.Log(game_terms[i + 0] * game_terms[i + 2] + game_terms[i + 1]);
             }
-
+            for (int i = GetLostStartIndex(); i < lostEnd; i += terms)
+            {
+                tally += (float)Math.Log(game_terms[i + 1]) - (float)Math.Log(game_terms[i + 0] * game_terms[i + 2] + game_terms[i + 1]);
+            }
+            return tally;
         }
 
-        public void updateBy1DNewton() {
-            float dr = (getLogLikelyhoodFirstDerivative() / getLogLikelyhoodSecondDerivative());
+        public void AddGame(Game game)
+        {
+            totalWeight += game.GetPlayerWeight(player);
+            weight += game.GetPlayerWeight(player);
+            totalGames++;
+            if (game.winnerPlayers.Contains(player))
+            {
+                games[0].Add(game);
+            }
+            else if (game.playerFinder.ContainsKey(player))
+            {
+                games[1].Add(game);
+            }
+        }
+
+        public void UpdateByOneDimensionalNewton()
+        {
+            float dr = (GetLogLikelyhoodFirstDerivative() / GetLogLikelyhoodSecondDerivative());
             float new_r = r - dr;
             r = new_r;
         }
 
     }
+
 }

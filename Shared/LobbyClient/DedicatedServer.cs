@@ -24,7 +24,7 @@ namespace LobbyClient
         private readonly SpringPaths paths;
         private readonly Timer timer = new Timer(20000);
 
-        private Dictionary<string, int> gamePrivateMessages = new Dictionary<string, int>();
+        private Dictionary<string, HashSet<byte> > gamePrivateMessages = new Dictionary<string, HashSet<byte> >();
 
         private Process process;
         private string scriptPath;
@@ -114,7 +114,7 @@ namespace LobbyClient
             
         }
 
-        public event EventHandler BattleStarted = (sender, args) => { };
+        public event EventHandler<SpringBattleContext> BattleStarted = (sender, args) => { };
 
         //public event EventHandler<> 
         /// <summary>
@@ -152,7 +152,11 @@ namespace LobbyClient
 
         public void ForceStart()
         {
-            if (IsRunning) talker.SendText("/forcestart");
+            if (IsRunning)
+            {
+                talker.SendText("/forcestart");
+                Context.IsForceStarted = true;
+            }
         }
 
         public event EventHandler<SpringLogEventArgs> GameOver; // game has ended
@@ -260,32 +264,49 @@ namespace LobbyClient
 
         private void dedicatedProcess_Exited(object sender, EventArgs e)
         {
-            Context.IsCrash = (process.ExitCode != 0) && !Context.WasKilled;
-            process.UnsubscribeEvents(this);
             try
             {
-                if (!process.WaitForExit(2000)) process.Kill();
-            }
-            catch { }
-
-            process = null;
-            talker.UnsubscribeEvents(this);
-            talker?.Close();
-            talker = null;
-            Thread.Sleep(1000);
-
-            if (LobbyStartContext != null) foreach (var p in Context.ActualPlayers) p.IsIngame = false;
-
-            if (File.Exists(scriptPath))
-            {
+                Context.IsCrash = (process.ExitCode != 0) && !Context.WasKilled;
+                process.UnsubscribeEvents(this);
                 try
                 {
-                    File.Delete(scriptPath);
-                } catch { }
-            }
+                    if (!process.WaitForExit(2000)) process.Kill();
+                }
+                catch { }
 
-            DedicatedServerExited?.Invoke(this, Context);
-            AnyDedicatedExited?.Invoke(this, Context);
+                process = null;
+                talker.UnsubscribeEvents(this);
+                talker?.Close();
+                talker = null;
+                Thread.Sleep(1000);
+
+                if (LobbyStartContext != null)
+                    foreach (var p in Context.ActualPlayers)
+                        p.IsIngame = false;
+
+                if (File.Exists(scriptPath))
+                {
+                    try
+                    {
+                        File.Delete(scriptPath);
+                    }
+                    catch { }
+                }
+
+                if (Context.OutputExtras.Count(x => x.StartsWith("award")) == 0)
+                {
+                    //No awards received, do a strict majority vote on awards
+                    int playersReportingAwards = gamePrivateMessages.Where(x => x.Key.StartsWith("award")).SelectMany(x => x.Value).Distinct().Count();
+                    Context.OutputExtras = gamePrivateMessages.Where(x => x.Value.Count >= playersReportingAwards / 2 + 1).Select(x => x.Key).ToList();
+                }
+
+                DedicatedServerExited?.Invoke(this, Context);
+                AnyDedicatedExited?.Invoke(this, Context);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error processing dedicated server exit: {0}", ex);
+            }
         }
 
 
@@ -295,19 +316,25 @@ namespace LobbyClient
             {
                 if (string.IsNullOrEmpty(e.Text) || !e.Text.StartsWith("SPRINGIE:")) return;
 
-                int count;
-                if (!gamePrivateMessages.TryGetValue(e.Text, out count)) count = 0;
-                count++;
-                gamePrivateMessages[e.Text] = count;
-                if (count != 2) return; // only send if count matches 2 exactly
 
                 var text = e.Text.Substring(9);
+
+
+                if (!gamePrivateMessages.ContainsKey(text))
+                {
+                    gamePrivateMessages.Add(text, new HashSet<byte>());
+                }
+                gamePrivateMessages[text].Add(e.PlayerNumber);
+
                 if (text.StartsWith("READY:"))
                 {
                     var name = text.Substring(6);
                     var entry = Context.ActualPlayers.FirstOrDefault(x => x.Name == name);
                     if (entry != null) entry.IsIngameReady = true;
                 }
+
+                if (gamePrivateMessages[text].Count() != Context.LobbyStartContext.Players.Count() / 2 + 1) return; // only accept messages if count matches N/2+1 exactly
+
                 if (text == "FORCE") ForceStart();
 
                 Context.OutputExtras.Add(text);
@@ -321,7 +348,11 @@ namespace LobbyClient
         private void MarkPlayerDead(string name, bool isDead)
         {
             var sp = Context.ActualPlayers.FirstOrDefault(x => x.Name == name);
-            if (sp != null) sp.LoseTime = isDead ? (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds : (int?)null;
+            if (sp != null)
+            {
+                sp.LoseTime = isDead ? (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds : (int?)null;
+                if (sp.QuitTime < sp.LoseTime) sp.LoseTime = sp.QuitTime;
+            }
         }
 
         private void StartDedicated(string script)
@@ -341,7 +372,7 @@ namespace LobbyClient
             arg.Add($"\"{scriptPath}\"");
 
             Context.StartTime = DateTime.UtcNow;
-            gamePrivateMessages = new Dictionary<string, int>();
+            gamePrivateMessages = new Dictionary<string, HashSet<byte>>();
             process.StartInfo.Arguments = string.Join(" ", arg);
             process.Exited += dedicatedProcess_Exited;
 
@@ -377,8 +408,11 @@ namespace LobbyClient
 
                     case Talker.SpringEventType.PLAYER_LEFT:
                         entry = Context?.GetOrAddPlayer(e.PlayerName);
-                        if (entry != null) entry.IsIngame = false;
-
+                        if (entry != null)
+                        {
+                            entry.IsIngame = false;
+                            entry.QuitTime = (int)DateTime.UtcNow.Subtract(Context.IngameStartTime ?? Context.StartTime).TotalSeconds;
+                        }
                         if (e.Param == 0) PlayerDisconnected?.Invoke(this, new SpringLogEventArgs(e.PlayerName));
                         PlayerLeft?.Invoke(this, new SpringLogEventArgs(e.PlayerName));
                         break;
@@ -447,11 +481,12 @@ namespace LobbyClient
                         Context.ReplayName = e.ReplayFileName;
                         Context.EngineBattleID = e.GameID;
                         Context.IngameStartTime = DateTime.UtcNow;
+                        Context.PlayersUnreadyOnStart = Context.ActualPlayers.Where(x => !x.IsSpectator && !(x.IsIngameReady && x.IsIngame)).Select(x => x.Name).ToList();
                         foreach (var p in Context.ActualPlayers.Where(x => !x.IsSpectator)) p.IsIngameReady = true;
 
                         process.PriorityClass = ProcessPriorityClass.High;
 
-                        BattleStarted(this, EventArgs.Empty);
+                        BattleStarted(this, Context);
                         break;
 
                     case Talker.SpringEventType.SERVER_QUIT:
@@ -471,12 +506,18 @@ namespace LobbyClient
             try
             {
                 var timeSinceStart = DateTime.UtcNow.Subtract(Context.StartTime).TotalSeconds;
-                const int timeToWait = 180; // force start after 180s
-                const int timeToWarn = 120; // warn people after 120s 
+                const int timeToWait = 160; // force start after 180s
+                const int timeToWarn = 100; // warn people after 120s 
 
                 if (Context.IsHosting && IsRunning && (Context.IngameStartTime == null))
-                    if (timeSinceStart > timeToWait) ForceStart();
+                {
+                    if (timeSinceStart > timeToWait)
+                    {
+                        Context.IsTimeoutForceStarted = true;
+                        ForceStart();
+                    }
                     else if (timeSinceStart > timeToWarn) SayGame($"Game will be force started in {Math.Max(20, timeToWait - Math.Round(timeSinceStart))} seconds");
+                }
             }
             catch (Exception ex)
             {

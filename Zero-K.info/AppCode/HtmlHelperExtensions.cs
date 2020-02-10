@@ -83,7 +83,7 @@ namespace System.Web.Mvc
         }
 
         public static MvcHtmlString IncludeFile(this HtmlHelper helper, string name) {
-            if (name.StartsWith("http://")) {
+            if (name.StartsWith("http://") || name.StartsWith("https://")) {
                 var ret = new WebClient().DownloadString(name);
                 return new MvcHtmlString(ret);
             }
@@ -154,17 +154,22 @@ namespace System.Web.Mvc
         /// <param name="account">Account to print</param>
         /// <param name="colorize">If true, write the user name in <see cref="Faction"/> color</param>
         /// <param name="ignoreDeleted">If false, just prints "{redacted}" for accounts marked as deleted</param>
-        public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true, bool ignoreDeleted = false) {
+        public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true, bool ignoreDeleted = false, bool makeLinks = true) {
             if (account == null) return new MvcHtmlString("Nobody");
             else if (account.IsDeleted && !ignoreDeleted) return new MvcHtmlString("{redacted}");
             else {
                 var clanStr = "";
                 var url = Global.UrlHelper();
                 if (account.Clan != null) {
-                    clanStr = string.Format("<a href='{1}' nicetitle='$clan${2}'><img src='{0}' width='16'/></a>",
-                                            account.Clan.GetImageUrl(),
+                    clanStr = string.Format("<img src='{0}' width='16'/>",
+                                            account.Clan.GetImageUrl());
+                    if (makeLinks)
+                    {
+                        clanStr = string.Format("<a href='{1}' nicetitle='$clan${2}'>{0}</a>",
+                                            clanStr,
                                             url.Action("Detail", "Clans", new { id = account.ClanID }),
                                             account.ClanID);
+                    }
                 }
                 else if (account.Faction != null) clanStr = string.Format("<img src='{0}' width='16'/>", account.Faction.GetImageUrl());
                 
@@ -174,17 +179,31 @@ namespace System.Web.Mvc
                 string color = Faction.FactionColor(account.Faction, Global.FactionID);
                 if (String.IsNullOrEmpty(color)) color = "#B0D0C0";
 
+                string flag = string.Format(
+                            "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/>",
+                            (account.Country != "??" && !account.HideCountry) ? account.Country : "unknown");
+                string rank = string.Format(
+                            "<img src='/img/ranks/{0}.png'  class='icon16' alt='rank' />",
+                            account.GetIconName());
+                string user = account.Name;
+                if (makeLinks)
+                {
+                    user = string.Format(
+                            "<a href='/Users/Detail/{0}' style='color:{1}' nicetitle='$user${0}'>{2}</a>",
+                            account.AccountID,
+                            colorize ? color : "",
+                            account.Name);
+                }
+
                 return
                     new MvcHtmlString(
                         string.Format(
-                            "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}.png'  class='icon16' alt='rank' />{5}{6}<a href='/Users/Detail/{2}' style='color:{3}' nicetitle='$user${2}'>{4}</a>",
-                            (account.Country != "??" && !account.HideCountry) ? account.Country : "unknown",
-                            account.GetIconName(),
-                            account.AccountID,
-                            colorize ? color : "",
-                            account.Name,
+                            "{0}{1}{2}{3}{4}",
+                            flag,
+                            rank,
                             clanStr,
-                            dudeStr));
+                            dudeStr,
+                            user));
             }
         }
 
@@ -294,7 +313,7 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString PrintBadges(this HtmlHelper helper, Account account, int? maxWidth = null, bool newlines = true)
         {
-            if (account == null) return new MvcHtmlString("");
+            if (account == null || account.IsDeleted) return new MvcHtmlString("");
             var badges = account.GetBadges();
             return new MvcHtmlString(string.Join("\n", badges.Select(x=>$"<img src='/img/badges/{x}.png' nicetitle='{x.Description()}' {(maxWidth != null ? $"style='width:{maxWidth}px;'":"")}/>{(newlines ? "<br/>" : "")}")));
         }
@@ -655,7 +674,21 @@ namespace System.Web.Mvc
             var ratio =  Ratings.Ranks.GetRankProgress(account);
             int percentage = (int)Math.Round(ratio * 100);
             var progressText = string.Format("Progress to the next rank: {0}%", percentage);
-            if (percentage >= 100) progressText = "Rank up on next victory!";
+            if (percentage >= 100)
+            {
+                if (Ratings.Ranks.ValidateRank(account.Rank + 1))
+                {
+                    progressText = "Rank up on next victory!";
+                }
+                else if (Global.IsAccountAuthorized && Global.AccountID == account.AccountID)
+                {
+                    progressText = "Congratulations, you are officially the best Zero-K player!";
+                }
+                else
+                {
+                    progressText = account.Name + " is officially the best Zero-K player.";
+                }
+            }
             var str = new MvcHtmlString(string.Format("Current rank: <img src='/img/ranks/{0}_{1}.png'  class='icon16' alt='rank' /> {2} <br /> <br /> {3}<br /> <br />Win more games to improve your rank!", account.GetIconLevel(), account.Rank, Ratings.Ranks.RankNames[account.Rank], progressText));
             return str;
         }

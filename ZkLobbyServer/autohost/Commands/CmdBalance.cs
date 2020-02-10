@@ -30,7 +30,7 @@ namespace ZkLobbyServer
                 if (int.TryParse(arguments, out tc)) teamCount = tc;
             }
 
-            return $"Do you want to balance {teamCount}";
+            return $"Do you want to balance {teamCount} ?";
         }
 
 

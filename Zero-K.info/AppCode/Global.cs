@@ -85,6 +85,10 @@ namespace ZeroKWeb
             get { return HttpContext.Current.Session["weblobby"] != null; }
         }
 
+        public static bool IsTourneyController
+        {
+            get { return IsAccountAuthorized && (Account?.AdminLevel >= AdminLevel.Moderator || Account?.IsTourneyController == true); }
+        }
         public static bool IsModerator
         {
             get { return IsAccountAuthorized && Account?.AdminLevel>= AdminLevel.Moderator; }

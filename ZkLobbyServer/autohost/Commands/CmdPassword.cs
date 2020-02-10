@@ -10,15 +10,15 @@ namespace ZkLobbyServer
         private string pwd;
         public override string Help => "<newpassword> - sets room password";
         public override string Shortcut => "password";
-        public override AccessType Access => AccessType.NotIngame;
+        public override AccessType Access => AccessType.NotIngameNotAutohost;
 
         public override BattleCommand Create() => new CmdPassword();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
             pwd=arguments;
-            if (string.IsNullOrEmpty(pwd)) return "remove password?";
-            return $"change password to {pwd} ?";
+            if (string.IsNullOrEmpty(pwd)) return "Remove password?";
+            return $"Change password to {pwd} ?";
         }
 
 

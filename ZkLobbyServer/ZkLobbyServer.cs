@@ -57,6 +57,7 @@ namespace ZkLobbyServer
         public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator)
         {
             RatingSystems.Init();
+            MapRatings.Init();
             
             PlanetWarsEventCreator = creator;
             var entry = Assembly.GetExecutingAssembly();
@@ -72,7 +73,7 @@ namespace ZkLobbyServer
 
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
-            chatRelay = new ChatRelay(this, new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai", "zk", "zkmap", "springboard", GlobalConst.ModeratorChannel, GlobalConst.CoreChannel });
+            chatRelay = new ChatRelay(this, new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai", "zk", "zkmap", "springboard", GlobalConst.ModeratorChannel, GlobalConst.CoreChannel, "off-topic", "support","modding", "crashreports" });
             textCommands = new ServerTextCommands(this);
             ChannelManager = new ChannelManager(this);
             MatchMaker = new MatchMaker(this);
@@ -83,7 +84,8 @@ namespace ZkLobbyServer
             LadderListManager = new LadderListManager(this);
             ForumListManager = new ForumListManager(this);
 
-
+            SpawnAutohosts();
+            
             RatingSystems.GetRatingSystems().ForEach(x => x.RatingsUpdated += (sender, data) => 
             {
                 var db = new ZkDataContext();
@@ -94,6 +96,19 @@ namespace ZkLobbyServer
                     PublishUserProfileUpdate(p);
                 });
             });
+        }
+
+        private async Task SpawnAutohosts()
+        {
+            using (var db = new ZkDataContext())
+            {
+                foreach (var autohost in db.Autohosts)
+                {
+                    var battle = new ServerBattle(this, "Autohost");
+                    battle.UpdateWith(autohost);
+                    await AddBattle(battle);
+                }
+            }
         }
 
         /// <summary>
@@ -122,7 +137,7 @@ namespace ZkLobbyServer
         /// </summary>
         public Task Broadcast<T>(IEnumerable<string> targetUsers, T data)
         {
-            return Broadcast(targetUsers.Select(x =>
+            return Broadcast(targetUsers.Where(x => x != null).Select(x =>
             {
                 ConnectedUser cli;
                 ConnectedUsers.TryGetValue(x, out cli);
@@ -214,13 +229,15 @@ namespace ZkLobbyServer
                 {
                     if (chan.IsDeluge)
                     {
-                        var channelUsersBySkill = chan.Users.Keys.Select(x => ConnectedUsers.Get(x))
-                                .Where(x => x != null)
-                                .OrderByDescending(x => x.User?.EffectiveMmElo)
-                                .Select(x => x.Name)
-                                .Take(GlobalConst.DelugeChannelDisplayUsers);
+                        if (GlobalConst.DelugeChannelDisplayUsers > 0)
+                        {
+                            var myEffectiveElo = uWatcher?.User?.EffectiveElo ?? 1200;
 
-                        if (channelUsersBySkill.Contains(uWatched.Name)) return true;
+                            var channelUsersBySkill = chan.Users.Keys.Select(x => ConnectedUsers.Get(x)).Where(x => x != null)
+                                .OrderBy(x => Math.Abs((x.User?.EffectiveMmElo??1200) - myEffectiveElo)).Select(x => x.Name).Take(GlobalConst.DelugeChannelDisplayUsers);
+
+                            if (channelUsersBySkill.Contains(uWatched.Name)) return true;
+                        }
                     }
                     else
                     {
@@ -316,6 +333,13 @@ namespace ZkLobbyServer
                 });
         }
 
+        public async Task UserLogSay(string text)
+        {
+            Trace.TraceInformation("UserLog: " + text);
+            var say = new Say() { Place = SayPlace.Channel, Target = GlobalConst.UserLogChannel, Text = text, User = GlobalConst.NightwatchName, Time = DateTime.UtcNow };
+            await GhostSay(say);
+        }
+
         private async Task SyncAndSay(IEnumerable<string> targetNames, Say say)
         {
             var targets = targetNames.Where(x => CanChatTo(say.User, x)).ToList();
@@ -373,12 +397,13 @@ namespace ZkLobbyServer
             return ConnectedUsers.ContainsKey(user);
         }
 
-        public void KickFromServer(string kickerName, string kickeeName, string reason)
+        public async Task KickFromServer(string kickerName, string kickeeName, string reason)
         {
             ConnectedUser conus;
             if (ConnectedUsers.TryGetValue(kickeeName, out conus))
             {
-                conus.Respond(string.Format("You were kicked for: {0}", reason));
+                if (conus.MyBattle != null) await conus.MyBattle.KickFromBattle(kickeeName, reason);
+                await conus.Respond(string.Format("You were kicked for: {0}", reason));
                 conus.RequestCloseAll();
             }
         }
@@ -540,6 +565,7 @@ namespace ZkLobbyServer
             Game = game;
             await Broadcast(new DefaultGameChanged() { Game = game });
             await MatchMaker.OnServerGameChanged(game);
+            await Task.WhenAll(Battles.Values.Where(x => x.IsDefaultGame).Select(x => x.SwitchGame(game)));
         }
 
         public async Task OnServerMapsChanged()

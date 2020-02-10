@@ -62,11 +62,8 @@
     <br />
 
     @{
-        var myIPs = Model.AccountIPs.Select(x => x.IP).ToList();
-        var myIDs = Model.AccountUserIDs.Select(x => x.UserID).ToList();
         var brokenIDs = new List<Int64>() { 1236934115, 1199297835, -2130083051, 195445522, 1141552226 };
-        var smurfs = new ZkDataContext().Accounts.Where(x => x.AccountID != Model.AccountID && (x.AccountIPs.Any(y => myIPs.Contains(y.IP) && y.IP != "127.0.0.1" && y.IP != "127.0.1.1" && y.IP != "94.23.170.70" && y.IP != "78.46.100.157")
-            || x.AccountUserIDs.Where(id => !brokenIDs.Contains(id.UserID)).Any(y => myIDs.Contains(y.UserID))));
+        var smurfs = Model.GetSmurfs();
 
         Int64? lastUserID = null;
         if (Model.AccountUserIDs.Any())
@@ -130,12 +127,19 @@
         <input type="submit" />
     </form>
     <br />
-    Set WHR Alias:
-    <form method="post" action="@Url.Action("SetWhrAlias", "Users", new { accountID = Model.AccountID })">
-        @Html.AntiForgeryToken()
-        @Html.TextBox("alias", Model.WhrAlias)
-        <input type="submit" />
-    </form>
+
+    @if (Model.SteamID != null)
+    {
+        <span>User IS linked with Steam. Unlink from Steam:</span>
+        <form method="post" action="@Url.Action("UnlinkSteamID", "Users", new { accountID = Model.AccountID })">
+            @Html.AntiForgeryToken()
+            Delete this account's Steam name and ID, allowing the user to link their Steam account to another ZK account.'
+            <input type="submit" class="js_confirm" />
+        </form>
+    } else {
+        <span>User IS NOT linked with Steam. </span>
+    }
+
     <br />
 
     <h2>Modify user rating</h2>
@@ -149,6 +153,7 @@
     <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID })">
         @Html.AntiForgeryToken()
         Zero-K admin: @Html.CheckBox("zkAdmin", Model.AdminLevel >= AdminLevel.Moderator)
+        Tourney Control: @Html.CheckBox("tourneyController", Model.IsTourneyController)
         VPN exception: @Html.CheckBox("vpnException", Model.HasVpnException)
         <input type="submit" />
     </form>
@@ -157,15 +162,12 @@
     <h2>Issue a penalty</h2>
     <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
         @Html.AntiForgeryToken()
-        Reason: @Html.TextBox("reason", "Smurf")<br />
+        Reason: @Html.TextBox("reason", "Smurf", new { style = "width:500px" })<br />
         <br />
 
-        Delete XP: @Html.CheckBox("deleteXP")<br />
-        Delete influence: @Html.CheckBox("deleteInfluence")<br />
-        <br />
         Mute: @Html.CheckBox("banMute")<br />
+        Block Votes: @Html.CheckBox("banVotes")<br />
         Block commanders: @Html.CheckBox("banCommanders")<br />
-        Block unlocks: @Html.CheckBox("banUnlocks")<br />
         Disallow spec chat: @Html.CheckBox("banSpecChat")<br />
         <br />
         IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x => x.LastLogin).Select(x => x.IP).FirstOrDefault())<br />
@@ -173,10 +175,9 @@
         Ban site: @Html.CheckBox("banSite")<br />
         Ban lobby: @Html.CheckBox("banLobby")<br />
         Ban forum: @Html.CheckBox("banForum")<br />
-        Set rights to zero: @Html.CheckBox("setRightsToZero")<br />
-        Ban hours: @Html.TextBox("banHours", 1)<br />
+        Punishment hours: @Html.TextBox("banHours", 1)<br />
 
-        <input type="submit" value="BAN" class="js_confirm" />
+        <input type="submit" value="PUNISH" class="js_confirm" />
     </form>
     <br />
 
@@ -184,7 +185,8 @@
     Hide ("delete") account:
     <form method="post" action="@Url.Action("ChangeAccountDeleted", "Users", new { accountID = Model.AccountID })">
         @Html.AntiForgeryToken()
-        @Html.CheckBox("isDeleted")
+        Deleted: @Html.CheckBox("isDeleted") <br />
+        Move all games to account: @Html.TextBox("alias") <br />
         <input type="submit" />
     </form>
     <br />
@@ -193,6 +195,16 @@
     <form action="@Url.Action("DeleteAllPostsByUser", "Forum", new { accountID = Model.AccountID })" method="post">
         @Html.AntiForgeryToken()
         This will <b>permanently</b> remove <b>all</b> of the user's posts.<br />
+        This action <b>cannot</b> be undone!<br />
+        <br />
+        Enter the target's user name to confirm: @Html.TextBox("accountName")
+        <input type="submit" value="DELETE" class="js_confirm" />
+    </form>
+
+    <h3>Delete all forum votes</h3>
+    <form action="@Url.Action("DeleteAllForumVotes", "Users", new { accountID = Model.AccountID })" method="post">
+        @Html.AntiForgeryToken()
+        This will <b>permanently</b> remove <b>all</b> of the user's upvotes/downvotes on forum.<br />
         This action <b>cannot</b> be undone!<br />
         <br />
         Enter the target's user name to confirm: @Html.TextBox("accountName")

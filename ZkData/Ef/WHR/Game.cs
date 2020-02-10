@@ -6,141 +6,141 @@ using ZkData;
 
 namespace Ratings
 {
-    public class Game {
 
-        public int day;
-        public int id;
-        public ICollection<Player> whitePlayers;
-        public ICollection<Player> blackPlayers;
-        public bool blackWins;
-        public IDictionary<Player, PlayerDay> whiteDays = new Dictionary<Player, PlayerDay>();
-        public IDictionary<Player, PlayerDay> blackDays = new Dictionary<Player, PlayerDay>();
+    public class Game
+    {
+        public readonly int day;
+        public readonly int id;
+        public List<ICollection<Player>> loserPlayers;
+        public ICollection<Player> winnerPlayers;
+        public Dictionary<Player, PlayerDay> loserDays = new Dictionary<Player, PlayerDay>();
+        public Dictionary<Player, PlayerDay> winnerDays = new Dictionary<Player, PlayerDay>();
+        public Dictionary<Player, int> playerFinder = new Dictionary<Player, int>();
 
-        public Game(ICollection<Player> black, ICollection<Player> white, bool blackWins, int time_step, int id) { //extras?
-
-            day = time_step;
-            whitePlayers = white;
-            blackPlayers = black;
-            this.blackWins = blackWins;
+        public Game(ICollection<Player> winner, List<ICollection<Player>> loser, int time_step, int id)
+        {
             this.id = id;
+            day = time_step;
+            loserPlayers = loser;
+            winnerPlayers = winner;
+            for (int i = 0; i < loser.Count; i++)
+            {
+                loser[i].ForEach(p => playerFinder.Add(p, id));
+            }
         }
 
-        private float totWeight;
-        private float getWhiteElo() {
+        private float GetLoserNaturalRating(int team)
+        {
             float ret = 0;
-            float w; totWeight = 0;
-            foreach (PlayerDay pd in whiteDays.Values) {
-                w = 1; //Math.Max(0.1, Math.Min(10, 1 / pd.uncertainty));
-                       //Trace.TraceInformation(w);
-                totWeight += w;
-                ret += pd.getElo() * w;
+            float w;
+            foreach (Player p in loserPlayers[team])
+            {
+                PlayerDay pd = loserDays[p];
+                w = GetPlayerWeight(pd.player);
+                ret += pd.GetNaturalRating() * w;
             }
-            //Trace.TraceInformation(totWeight + "\n");
-            return ret / totWeight;
+            return ret;
         }
 
-        private float getBlackElo() {
+        private float GetBlackNaturalRating()
+        {
             float ret = 0;
-            float w; totWeight = 0;
-            foreach (PlayerDay pd in blackDays.Values) {
-                w = 1;//Math.Max(0.1, Math.Min(10, 1 / pd.uncertainty));
-                totWeight += w;
-                ret += pd.getElo() * w;
+            float w;
+            foreach (PlayerDay pd in winnerDays.Values)
+            {
+                w = GetPlayerWeight(pd.player);
+                ret += pd.GetNaturalRating() * w;
             }
-            return ret / totWeight;
+            return ret;
         }
 
-        public float getPlayerWeight(Player p) {
-            if (whiteDays.ContainsKey(p)) {
-                getWhiteElo();
-                return Math.Max(0.1f, Math.Min(10, 1 / whiteDays[p].uncertainty)) / totWeight;
-            }
-            getBlackElo();
-            return Math.Max(0.1f, Math.Min(10, 1 / blackDays[p].uncertainty)) / totWeight;
+        public float GetPlayerWeight(Player p)
+        {
+            int size = playerFinder.ContainsKey(p) ? loserPlayers[playerFinder[p]].Count : winnerPlayers.Count;
+            return 1.0f / size;
         }
 
-
-        private float getWhiteGamma() {
-            return (float)(Math.Exp(getWhiteElo() * Math.Log(10) / 400.0f));
+        private float GetLoserGamma(int team)
+        {
+            return (float)Math.Exp(GetLoserNaturalRating(team));
         }
-        private float getBlackGamma() {
-            return (float)(Math.Exp(getBlackElo() * Math.Log(10) / 400.0f));
-        }
-        //*/
-        /*
-        private float getWhiteGamma(){
-            float ret = 0;
-            for (PlayerDay pd in whiteDays.Values){
-                ret += pd.getGamma();
-            }
-            return ret / whiteDays.Count;
+        private float GetLosersGamma()
+        {
+            float sum = 0;
+            for (int i = 0; i < loserPlayers.Count; i++) sum += GetLoserGamma(i);
+            return sum;
         }
 
-        private float getBlackGamma(){
-            float ret = 0;
-            for (PlayerDay pd in blackDays.Values){
-                ret += pd.getGamma();
-            }
-            return ret / blackDays.Count;
+        private float GetWinnerGamma()
+        {
+            return (float)Math.Exp(GetBlackNaturalRating());
         }
 
-        private float getWhiteElo(){
-            return Math.Log(getWhiteGamma()) * 400 / Math.Log(10);
-        }
-        private float getBlackElo(){
-            return Math.Log(getBlackGamma()) * 400 / Math.Log(10);
-        }
-    //*/
-        public float getOpponentsAdjustedGamma(Player player) {
-
-            float opponentElo;
-            float blackElo = getBlackElo();
-            float whiteElo = getWhiteElo();
-            if ((whitePlayers.Contains(player))) {
-                opponentElo = blackElo + (-whiteElo + whiteDays[player].getElo())/* / Math.Sqrt(whiteDays.Count)*/;
-            } else if (blackPlayers.Contains(player)) {
-                opponentElo = whiteElo + (-blackElo + blackDays[player].getElo())/* / Math.Sqrt(blackDays.Count)*/;
-            } else {
-                Trace.TraceError("No opponent for player " + player.id + ", since they're not in this game.");
-                return 0;
-            }
-            float rval = (float)(Math.Pow(10, (opponentElo / 400.0)));
-            if (rval == 0 || float.IsInfinity(rval) || float.IsNaN(rval)) {
-                Trace.TraceError("WHR Failure: Gamma out of bounds");
-                return 0;
+        public float GetOpponentsAdjustedGamma(Player player)
+        {
+            
+            float rval = GetWinnerGamma() + GetLosersGamma() - GetAlliesAdjustedGamma(player, false);
+            if (rval == 0 || float.IsInfinity(rval) || float.IsNaN(rval))
+            {
+                Trace.TraceError("WHR: Gamma out of bounds");
             }
             return rval;
         }
 
-        public ICollection<Player> getPlayerTeammates(Player player) {
-            if ((whitePlayers.Contains(player))) {
-                return whitePlayers;
-            } else if (blackPlayers.Contains(player)) {
-                return blackPlayers;
-            } else {
-                Trace.TraceInformation("No opponent for player " + player.id + ", since they're not in this gamein.");
-                return null;
-            }
-        }
-
-        public float getWhiteWinProbability() {
-            if (whiteDays.Count == 0 || blackDays.Count == 0 ) {
-                whitePlayers.ForEach(p=>p.fakeGame(this));
-                blackPlayers.ForEach(p=>p.fakeGame(this));
-            }
-            return getWhiteGamma() / (getWhiteGamma() + getBlackGamma());
-        }
-
-        public float getBlackWinProbability()
+        public float GetAlliesAdjustedGamma(Player player, bool excludeMe = true)
         {
-            if (whiteDays.Count == 0 || blackDays.Count == 0)
+
+            float ally_naturalrating = 0;
+            float blackNaturalRating = GetBlackNaturalRating();
+            if ((playerFinder.ContainsKey(player)))
             {
-                whitePlayers.ForEach(p => p.fakeGame(this));
-                blackPlayers.ForEach(p => p.fakeGame(this));
+                float whiteNaturalRating = GetLoserNaturalRating(playerFinder[player]);
+                ally_naturalrating = whiteNaturalRating ;
+                if (excludeMe) ally_naturalrating -= loserDays[player].GetNaturalRating() * GetPlayerWeight(player);
             }
-            return getBlackGamma() / (getBlackGamma() + getWhiteGamma());
+            else
+            {
+                ally_naturalrating = blackNaturalRating;
+                if (excludeMe) ally_naturalrating -= winnerDays[player].GetNaturalRating() * GetPlayerWeight(player);
+            }
+            float rval = (float)Math.Exp(ally_naturalrating);
+            if (rval == 0 || float.IsInfinity(rval) || float.IsNaN(rval))
+            {
+                Trace.TraceError("WHR: Gamma out of bounds");
+            }
+            return rval;
         }
 
+        public float GetMyAdjustedGamma(Player player)
+        {
+
+            float my_naturalrating = 0;
+            if ((playerFinder.ContainsKey(player)))
+            {
+                my_naturalrating = loserDays[player].GetNaturalRating() * GetPlayerWeight(player);
+            }
+            else
+            {
+                my_naturalrating = winnerDays[player].GetNaturalRating() * GetPlayerWeight(player);
+            }
+            float rval = (float)Math.Exp(my_naturalrating);
+            if (rval == 0 || float.IsInfinity(rval) || float.IsNaN(rval))
+            {
+                Trace.TraceError("WHR: Gamma out of bounds");
+            }
+            return rval;
+        }
+
+        public float GetWinProbability()
+        {
+            if (loserDays.Count == 0 || winnerDays.Count == 0)
+            {
+                loserPlayers.ForEach(t => t.ForEach(p => p.FakeGame(this)));
+                winnerPlayers.ForEach(p => p.FakeGame(this));
+            }
+            return GetWinnerGamma() / (GetLosersGamma() + GetWinnerGamma());
+        }
+        
         public override int GetHashCode()
         {
             return id;
@@ -148,7 +148,7 @@ namespace Ratings
 
         public override bool Equals(Object other)
         {
-            Game game = other as Game;
+            Game game = other as Game; 
             return game != null && game.id == id;
         }
     }

@@ -112,6 +112,7 @@
     <Compile Include="autohost\Commands\CmdBalance.cs" />
     <Compile Include="autohost\Commands\CmdCheats.cs" />
     <Compile Include="autohost\Commands\CmdEndvote.cs" />
+    <Compile Include="autohost\Commands\CmdAutohost.cs" />
     <Compile Include="autohost\Commands\CmdEngine.cs" />
     <Compile Include="autohost\Commands\CmdExit.cs" />
     <Compile Include="autohost\Commands\CmdForce.cs" />
@@ -125,7 +126,15 @@
     <Compile Include="autohost\Commands\CmdGame.cs" />
     <Compile Include="autohost\Commands\CmdListOptions.cs" />
     <Compile Include="autohost\Commands\CmdMap.cs" />
+    <Compile Include="autohost\Commands\CmdInviteMm.cs" />
+    <Compile Include="autohost\Commands\CmdMaxRank.cs" />
+    <Compile Include="autohost\Commands\CmdMinElo.cs" />
+    <Compile Include="autohost\Commands\CmdMinMapSupportLevel.cs" />
+    <Compile Include="autohost\Commands\CmdMinLevel.cs" />
+    <Compile Include="autohost\Commands\CmdMaxLevel.cs" />
+    <Compile Include="autohost\Commands\CmdMaxElo.cs" />
     <Compile Include="autohost\Commands\CmdMaxPlayers.cs" />
+    <Compile Include="autohost\Commands\CmdMinRank.cs" />
     <Compile Include="autohost\Commands\CmdN.cs" />
     <Compile Include="autohost\Commands\CmdNotify.cs" />
     <Compile Include="autohost\Commands\CmdPassword.cs" />
@@ -135,6 +144,7 @@
     <Compile Include="autohost\Commands\CmdResign.cs" />
     <Compile Include="autohost\Commands\CmdRing.cs" />
     <Compile Include="autohost\Commands\CmdSetOptions.cs" />
+    <Compile Include="autohost\Commands\CmdSpecAfk.cs" />
     <Compile Include="autohost\Commands\CmdSpec.cs" />
     <Compile Include="autohost\Commands\CmdStart.cs" />
     <Compile Include="autohost\Commands\CmdTitle.cs" />
@@ -173,6 +183,7 @@
     <Compile Include="ServerTextCommands.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />
     <Compile Include="SpringieInterface\BattleResultHandler.cs" />
+    <Compile Include="SpringieInterface\PartitionBalance.cs" />
     <Compile Include="SpringieInterface\PlanetWarsMatchMakerState.cs" />
     <Compile Include="SpringieInterface\PlanetWarsMatchMaker.cs" />
     <Compile Include="SpringieInterface\PlanetWarsTurnHandler.cs" />

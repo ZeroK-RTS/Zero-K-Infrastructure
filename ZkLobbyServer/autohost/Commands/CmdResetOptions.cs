@@ -8,7 +8,7 @@ namespace ZkLobbyServer
     {
         public override string Help => "sets default game/map options";
         public override string Shortcut => "resetoptions";
-        public override AccessType Access => AccessType.NotIngame;
+        public override AccessType Access => AccessType.NotIngameNotAutohost;
 
         public override BattleCommand Create() => new CmdResetOptions();
 

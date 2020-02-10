@@ -28,8 +28,14 @@ namespace ZeroKWeb.Controllers
             return Json(ret, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult Users(string term, int? threadID) {
+        public ActionResult Users(string term, int? threadID)
+        {
             return Json(CompleteUsers(term, threadID, new ZkDataContext()), JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult UsersNoLink(string term, int? threadID)
+        {
+            return Json(CompleteUsers(term, threadID, new ZkDataContext(), false), JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Maps(string term)
@@ -120,20 +126,21 @@ namespace ZeroKWeb.Controllers
                             });
         }
 
-        IEnumerable<AutocompleteItem> CompleteUsers(string term, int? threadID, ZkDataContext db) {
+        IEnumerable<AutocompleteItem> CompleteUsers(string term, int? threadID, ZkDataContext db, bool makeLinks = true) {
             if (string.IsNullOrEmpty(term)) return new List<AutocompleteItem>();
 
             term = term?.ToLower();
             var acc = db.Accounts.AsQueryable();
             if (threadID != null) acc = db.ForumThreads.Find(threadID).ForumPosts.Select(x => x.Account).Distinct().AsQueryable();
             return acc.Where(x => x.Name.ToLower().Contains(term) && !x.IsDeleted)
+                    .OrderBy(x => x.Name.Length)
                     .Take(autocompleteCount)
                     .ToList()
                     .Select(
                         x =>
                             new AutocompleteItem
                             {
-                                label = HtmlHelperExtensions.PrintAccount(null, x).ToString(),
+                                label = HtmlHelperExtensions.PrintAccount(null, x, makeLinks: makeLinks).ToString(),
                                 url = Url.Action("Detail", "Users", new { id = x.AccountID }),
                                 value = x.Name,
                                 id = x.AccountID

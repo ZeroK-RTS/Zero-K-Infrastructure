@@ -43,7 +43,7 @@ namespace ZkData
             switch (newMode) {
                 case ModeType.Local:
                     BaseSiteUrl = "http://localhost:9739";
-                    ZkDataContextConnectionString = @"Data Source=(localdb)\mssqllocaldb;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000";
+                    ZkDataContextConnectionString = @"Data Source=BRIEFTOP\SQLEXPRESS2;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000";
 
                     LobbyServerHost = "localhost";
                     LobbyServerPort = 8200;
@@ -132,18 +132,23 @@ namespace ZkData
         public const int NumCommanderLevels = 5;
         public const int MaxCommanderNameLength = 20;
 
-        public const string DefaultEngineOverride = "103.0"; // hack for ZKL using tasclient's engine - override here for missions etc
+        public const string DefaultEngineOverride = "104.0.1-287-gf7b0fcc"; // hack for ZKL using tasclient's engine - override here for missions etc
 
         public const int MinDurationForXP = 240;    // seconds
         public const int MinDurationForElo = 60;
         public const int MinDurationForPlanetwars = 0;
         public const int MaxDurationForPlanetwars = 60*60*3; // 3 hours
 
-        public const int LadderActivityDays = 30;
+        public static int LadderActivityDays => mode == ModeType.Live ? 30 : 90;
         public const int LadderSize = 50; // Amount of players shown on ladders
-        public const float MinimumDynamicMaxLadderUncertainty = 100; // uncertainties > this are marked unranked, max age ~ 2-3 months
-        public const float EloDecayPerDaySquared = 35; //whr thingie
         public const float LadderUpdatePeriod = 1; //Ladder is fully updated every X hours
+        public const float EloToNaturalRatingMultiplierSquared = 0.00003313686f;
+        public static float NaturalRatingVariancePerDay(float games) => EloToNaturalRatingMultiplierSquared * 200000 / (games + 400); //whr expected player rating change over time
+        public const float NaturalRatingVariancePerGame = EloToNaturalRatingMultiplierSquared * 500; //whr expected player rating change per game played
+        public const float RatingConfidenceSigma = 0.675f; //75% confidence rating
+        public const float LadderEloMaxChange = 50;
+        public const float LadderEloMinChange = 1;
+        public const float LadderEloSmoothingFactor = 0.25f; //1 for change as fast as whr, 0 for no change
 
         public const int XpForMissionOrBots = 25;
         public const int XpForMissionOrBotsVictory = 50;
@@ -162,6 +167,7 @@ namespace ZkData
         public const string ModeratorChannel = "zkadmin";
         public const string Top20Channel = "zktop20";
         public const string ErrorChannel = "zkerror";
+        public const string UserLogChannel = "zklog";
         public const string CoreChannel = "zkcore";
         
         public const string LobbyAccessCookieName = "zk_lobby";
@@ -233,10 +239,12 @@ namespace ZkData
         public const int TcpLingerStateSeconds = 5;
         public const bool TcpLingerStateEnabled = true;
 
-        public const int DelugeChannelDisplayUsers = 100;
+        public const int DelugeChannelDisplayUsers = 40;
 
         public const int LobbyThrottleBytesPerSecond = 2000;
         public const int LobbyMaxMessageSize = 2000;
+        public const int MillisecondsPerCharacter = 50; //Maximum allowed chat messaging rate before it is considered spam, 80ms is equivalent to 120 WPM, which covers typing speeds of anyone short of a stenographer.
+        public const int MinMillisecondsBetweenMessages = 1000; //Disallow sending more than one message per this interval
 
 
         public static int UdpHostingPortStart;
@@ -246,6 +254,7 @@ namespace ZkData
         public static string[] DefaultDownloadMirrors = {};
         public static string LobbyServerHost;
         public static int LobbyServerPort;
+        public static bool LobbyServerUpdateSpectatorsInstantly = false;
 
         public static bool AutoMigrateDatabase { get; private set; }
         

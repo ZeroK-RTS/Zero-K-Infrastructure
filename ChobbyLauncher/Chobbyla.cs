@@ -91,7 +91,7 @@ namespace ChobbyLauncher
                 else internalName = "Chobby $VERSION";
 
 
-                engine = engine ?? GetSteamEngine() ?? QueryDefaultEngine() ?? ExtractEngineFromLua(ver) ?? GlobalConst.DefaultEngineOverride;
+                engine = engine ?? GetSteamEngine() ?? QueryDefaultEngine() ?? GlobalConst.DefaultEngineOverride;
 
                 try
                 {
@@ -180,21 +180,7 @@ namespace ChobbyLauncher
                 return ret;
             }
         }
-
-
-        private dynamic ExtractEngineFromLua(PackageDownloader.Version ver)
-        {
-            if (ver != null)
-            {
-                var mi = ver.ReadFile(paths, "modinfo.lua");
-                var lua = new Lua();
-                var luaEnv = lua.CreateEnvironment();
-                dynamic result = luaEnv.DoChunk(new StreamReader(mi), "dummy.lua");
-                var engineVersion = result.engine;
-                return engineVersion;
-            }
-            return null;
-        }
+        
 
         private string GetSteamEngine()
         {
@@ -246,7 +232,7 @@ namespace ChobbyLauncher
                 {
                     Trace.TraceWarning("Spring exit code is: {0}, {1}", process.ExitCode, isHangKilled ? "user-killed during hang" : "assuming crash");
                 }
-                tcs.TrySetResult(!isCrash);
+                tcs.TrySetResult(!isCrash || isHangKilled);
             };
             process.EnableRaisingEvents = true;
             process.Start();

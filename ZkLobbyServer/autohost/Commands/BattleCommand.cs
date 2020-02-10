@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -57,6 +58,28 @@ namespace ZkLobbyServer
             if (Arm(battle, e, arguments) != null) await ExecuteArmed(battle, e);
         }
 
+        public Func<string, string> GetIneligibilityReasonFunc(ServerBattle battle)
+        {
+            return x =>
+            {
+                string reason;
+                if (GetRunPermissions(battle, x, out reason) >= BattleCommand.RunPermission.Vote && !IsSpectator(battle, x, battle.Users[x])) return null;
+                return reason;
+            };
+        }
+
+        public bool IsAdmin(ServerBattle battle, string userName)
+        {
+            UserBattleStatus ubs = null;
+            battle.Users.TryGetValue(userName, out ubs);
+            if (ubs != null)
+                return ubs.LobbyUser.IsAdmin;
+
+            ConnectedUser con = null;
+            battle.server.ConnectedUsers.TryGetValue(userName, out con);
+            return con?.User?.IsAdmin ?? false;
+        }
+
         public bool IsSpectator(ServerBattle battle, string userName, UserBattleStatus user)
         {
             if (user == null)
@@ -84,7 +107,7 @@ namespace ZkLobbyServer
         /// <returns></returns>
         public virtual RunPermission GetRunPermissions(ServerBattle battle, string userName, out string reason)
         {
-            reason = "";
+            reason = "You can't use this command";
             if (Access == AccessType.NoCheck) return RunPermission.Run;
             
             User user = null;
@@ -105,7 +128,8 @@ namespace ZkLobbyServer
                 }
             }
 
-            var hasAdminRights = userName == battle.FounderName || user?.IsAdmin == true;
+            var hasAdminRights = user?.IsAdmin == true;
+            var hasElevatedRights = hasAdminRights || userName == battle.FounderName;
 
             var s = battle.spring;
             bool isSpectator = IsSpectator(battle, userName, ubs);
@@ -120,18 +144,35 @@ namespace ZkLobbyServer
                 count = battle.Users.Count(x => !x.Value.IsSpectator);
             }
 
-            var defPerm = hasAdminRights ? RunPermission.Run : (isSpectator || isAway ? RunPermission.None : RunPermission.Vote);
+            if (Access == AccessType.Admin && hasAdminRights)
+            {
+                return RunPermission.Run;
+            }
+            else if (Access == AccessType.Admin)
+            {
+                reason = "This command can only be used by moderators.";
+                return RunPermission.None;
+            }
+
+            var defPerm = hasElevatedRights ? RunPermission.Run : (isSpectator || isAway || user?.BanVotes == true ? RunPermission.None : RunPermission.Vote);
 
             if (defPerm == RunPermission.None)
             {
                 reason = "This command can't be executed by spectators. Join the game to use this command.";
+                if (isAway) reason = "You can't vote while being AFK.";
+                if (user?.BanVotes == true) reason = "You have been banned from using votes. Check your user page for details.";
                 return RunPermission.None;
             }
             if (defPerm == RunPermission.Vote && count<=1) defPerm = RunPermission.Run;
             
             if (Access == AccessType.Anywhere) return defPerm;
 
-            if (Access == AccessType.Ingame || Access == AccessType.IngameVote)
+            if ((Access == AccessType.NotIngameNotAutohost || Access == AccessType.IngameNotAutohost) && battle.IsAutohost && !hasAdminRights)
+            {
+                reason = "This command cannot be used on autohosts, either ask a moderator to change the settings or create your own host.";
+                return RunPermission.None;
+            }
+            if (Access == AccessType.Ingame || Access == AccessType.IngameVote || Access == AccessType.IngameNotAutohost)
             {
                 if (s.IsRunning)
                 {
@@ -144,7 +185,7 @@ namespace ZkLobbyServer
                     return RunPermission.None;
                 }
             }
-            if (Access == AccessType.NotIngame)
+            if (Access == AccessType.NotIngame || Access == AccessType.NotIngameNotAutohost)
             {
                 if (!s.IsRunning)
                 {
@@ -189,6 +230,24 @@ namespace ZkLobbyServer
             /// </summary>
             [Description("When game running, by players, needs vote")]
             IngameVote = 4,
+
+            /// <summary>
+            /// Can be executed ingame/offgame by admins only
+            /// </summary>
+            [Description("At any time, by admins only, no vote needed")]
+            Admin = 5,
+
+            /// <summary>
+            /// Can be executed not-ingame by non-spectators (vote) or admins or founder (direct). Unavailable to non-admins on autohosts
+            /// </summary>
+            [Description("When game not running, by players, might need a vote. Unavailable to non-admins on autohosts")]
+            NotIngameNotAutohost = 6,
+
+            /// <summary>
+            /// Can be executed ingame by non-spectators (vote) or admins or founder (direct). Unavailable to non-admins on autohosts
+            /// </summary>
+            [Description("When game running, by players, might need a vote. Unavailable to non-admins on autohosts")]
+            IngameNotAutohost = 7,
         }
 
 

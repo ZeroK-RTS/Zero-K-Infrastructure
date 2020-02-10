@@ -91,6 +91,10 @@ namespace ZkData
         public virtual DbSet<AccountRelation> AccountRelations { get; set; }
         public virtual DbSet<SpringBattleBot> SpringBattleBots { get; set; }
         public virtual DbSet<SpringFilesUnitsyncAttempt> SpringFilesUnitsyncAttempts { get; set; }
+        public virtual DbSet<DynamicConfig> DynamicConfigs { get; set; }
+        public virtual DbSet<Autohost> Autohosts { get; set; }
+        public virtual DbSet<MapPollOption> MapPollOptions { get; set; }
+        public virtual DbSet<MapPollOutcome> MapPollOutcomes { get; set; }
 
         public virtual DbSet<LobbyChannelTopic> LobbyChannelTopics { get; set; }
 
@@ -288,6 +292,11 @@ namespace ZkData
                 .HasMany(e => e.Ratings)
                 .WithRequired(e => e.Account)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.AccountRatings)
+                .WithRequired(e => e.Account)
+                .WillCascadeOnDelete();
 
             modelBuilder.Entity<Account>()
                 .HasMany(e => e.Resources)
@@ -691,7 +700,6 @@ namespace ZkData
                 .WithRequired(e => e.ResourceByMapResourceID)
                 .HasForeignKey(e => e.MapResourceID)
                 .WillCascadeOnDelete(false);
-
 
             modelBuilder.Entity<ResourceContentFile>()
                 .Property(e => e.Md5)

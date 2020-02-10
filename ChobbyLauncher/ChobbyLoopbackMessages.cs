@@ -59,6 +59,12 @@ namespace ChobbyLauncher
     }
 
     [ChobbyMessage]
+    public class UserActivity
+    {
+        public double IdleSeconds { get; set; }
+    }
+
+    [ChobbyMessage]
     public class DownloadFile
     {
         public string FileType { get; set; }
@@ -266,6 +272,14 @@ namespace ChobbyLauncher
         public string StartDemoName { get; set; }
 
         public string SpringSettings { get; set;  }
+        public string Engine { get; set; }
+
+        public List<DownloadFile> Downloads { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class DownloadSpring
+    {
         public string Engine { get; set; }
 
         public List<DownloadFile> Downloads { get; set; }

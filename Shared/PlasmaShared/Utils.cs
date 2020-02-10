@@ -36,6 +36,11 @@ namespace ZkData
             if (o != null) o.Dispose();
         }
 
+        public static IEnumerable<Indexed<T>> ToIndexedList<T>(this IEnumerable<T> enumeration)
+        {
+            return enumeration.Select((x, i) => new Indexed<T>(x, i));
+        }
+
         public static void ForEach<T>(this IEnumerable<T> enumeration, Action<T> action)
         {
             foreach (T item in enumeration)
@@ -43,6 +48,25 @@ namespace ZkData
                 action(item);
             }
         }
+
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            //from https://stackoverflow.com/questions/489258/linqs-distinct-on-a-particular-property
+            HashSet<TKey> seenKeys = new HashSet<TKey>();
+            foreach (TSource element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                {
+                    yield return element;
+                }
+            }
+        }
+
+        public static string StringJoin(this IEnumerable<string> enumeration)
+        {
+            return string.Join(", ", enumeration);
+        }
+
 
         public static HashSet<T> ToHashSet<T>(this IEnumerable<T> source, IEqualityComparer<T> comparer = null)
         {
@@ -888,6 +912,18 @@ namespace ZkData
             int intval;
             if (int.TryParse(value, out intval)) return intval;
             return null;
+        }
+    }
+
+    public struct Indexed<T>
+    {
+        public readonly T Item;
+        public readonly int Index;
+
+        public Indexed(T item, int index)
+        {
+            Item = item;
+            Index = index;
         }
     }
 }

@@ -93,7 +93,7 @@ namespace ZeroKWeb.Controllers
                 if (!string.IsNullOrEmpty(name))
                 {
                     if (name.Length > GlobalConst.MaxCommanderNameLength) name = name.Substring(0, GlobalConst.MaxCommanderNameLength);
-                    name = Regex.Replace(name, @"[^\u0000-\u007F]", string.Empty); // remove unicode stuff
+                    name = Regex.Replace(name, @"[^\u0020-\u007E]", string.Empty); // remove unicode stuff
                     comm.Name = name;
                 }
 
@@ -280,13 +280,13 @@ namespace ZeroKWeb.Controllers
                 {
                     Unlock unlock = db.Unlocks.FirstOrDefault(x => x.UnlockID == id);
                     if (!useKudos && unlock.IsKudosOnly == true) return Content("That unlock cannot be bought using XP");
+                    if ( useKudos && unlock.KudosCost == null)   return Content("That unlock cannot be bought using Kudos");
 
                     if (useKudos) {
                         var acc = db.Accounts.Find(Global.AccountID);
-                        if (acc.Kudos < unlock.KudosCost) return Content("Not enough kudos to unlock this");
+                        var kudosRemaining = acc.KudosGained - acc.KudosSpent;
+                        if (kudosRemaining < unlock.KudosCost) return Content("Not enough kudos to unlock this");
                         acc.KudosPurchases.Add(new KudosPurchase() {Time = DateTime.UtcNow, Unlock = unlock, Account = acc, KudosValue = unlock.KudosCost??0});
-                        db.SaveChanges();
-                        acc.Kudos = acc.KudosGained - acc.KudosSpent;
                         db.SaveChanges();
                     }
                     
@@ -378,11 +378,13 @@ namespace ZeroKWeb.Controllers
 			maxedUnlockSet.UnionWith(freeUnlocks);
 			anyUnlockSet.UnionWith(freeUnlocks);
 
+		    var kudosRemaining = account.KudosGained - account.KudosSpent;
+
 			var temp =
 				db.Unlocks.Where(
 					x =>
 					x.NeededLevel <= account.Level && !maxedUnlockSet.Contains(x.UnlockID)
-					&& ((x.KudosCost != null && x.KudosCost <= account.Kudos) || ((x.IsKudosOnly != true) && x.XpCost <= account.AvailableXP))
+					&& ((x.KudosCost != null && x.KudosCost <= kudosRemaining) || ((x.IsKudosOnly != true) && x.XpCost <= account.AvailableXP))
 					&& (x.RequiredUnlockID == null || anyUnlockSet.Contains(x.RequiredUnlockID ?? 0))
                     ).OrderBy(x => x.NeededLevel).ThenBy(x => x.XpCost).ThenBy(x => x.UnlockType).ToList();
 			unlocks = temp;

@@ -25,7 +25,7 @@ namespace ZkLobbyServer
         private const int MaxConnectionAttemptsMinutes = 60;
         private static readonly int MaxConcurrentLogins = Environment.ProcessorCount * 2;
 
-        private static string[] ipWhitelist = { "127.0.0.1", "86.61.217.155" };
+        private static string[] ipWhitelist = { "127.0.0.1", "86.61.217.155", "78.45.34.102" };
         private readonly IGeoIP2Provider geoIP;
 
         private readonly ZkLobbyServer server;
@@ -73,8 +73,7 @@ namespace ZkLobbyServer
                     if (info != null) accBySteamID = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.SteamID == info.steamid);
                     if (!string.IsNullOrEmpty(login.Name))
                     {
-                        var loginToUpper = login.Name.ToUpper();
-                        accByLogin = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name) ?? db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name.ToUpper() == loginToUpper);
+                        accByLogin = db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name == login.Name) ?? db.Accounts.Include(x => x.Clan).Include(x => x.Faction).FirstOrDefault(x => x.Name.Equals(login.Name, StringComparison.CurrentCultureIgnoreCase));
                     }
 
                     if (accBySteamID == null)
@@ -201,6 +200,11 @@ namespace ZkLobbyServer
                 LogUserID(db, acc, register.UserID);
                 db.Accounts.Add(acc);
                 db.SaveChanges();
+                var smurfs = acc.GetSmurfs().Where(a => a.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow));
+                if (smurfs.Any())
+                {
+                    await server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Smurf Alert! {0} might be a smurf of {1}. Check https://zero-k.info/Users/AdminUserDetail/{2}", acc.Name, smurfs.OrderByDescending(x => x.Level).First().Name, acc.AccountID));
+                }
             }
             return new RegisterResponse(RegisterResponse.Code.Ok);
         }
@@ -217,8 +221,9 @@ namespace ZkLobbyServer
             user.DisplayName = acc.SteamName;
             user.Avatar = acc.Avatar;
             user.Level = acc.Level;
-            user.EffectiveMmElo = (int)Math.Round(acc.GetRating(RatingCategory.MatchMaking).Elo);
-            user.EffectiveElo = (int)Math.Round(acc.GetRating(RatingCategory.Casual).Elo);
+            user.Rank = acc.Rank;
+            user.EffectiveMmElo = (int)Math.Round(Math.Min(acc.GetRating(RatingCategory.MatchMaking).LadderElo, acc.GetRating(RatingCategory.MatchMaking).RealElo));
+            user.EffectiveElo = (int)Math.Round(acc.GetRating(RatingCategory.Casual).LadderElo);
             user.RawMmElo = (int)Math.Round(acc.GetRating(RatingCategory.MatchMaking).RealElo);
             user.SteamID = acc.SteamID?.ToString();
             user.IsAdmin = acc.AdminLevel >= AdminLevel.Moderator;
@@ -233,6 +238,7 @@ namespace ZkLobbyServer
             Interlocked.Increment(ref user.SyncVersion);
 
             user.BanMute = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanMute) != null;
+            user.BanVotes = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanVotes) != null;
             user.BanSpecChat = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanSpecChat) != null;
         }
 

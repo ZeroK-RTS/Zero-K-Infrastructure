@@ -220,10 +220,11 @@ namespace ZeroKWeb.Controllers
                 db.AccountRatings.Where(x => x.RatingCategory == RatingCategory.Planetwars).Update(x => new AccountRating()
                 {
                     Percentile = WholeHistoryRating.DefaultRating.Percentile,
-                    Rank = WholeHistoryRating.DefaultRating.Rank,
+                    IsRanked = false,
                     RealElo = WholeHistoryRating.DefaultRating.RealElo,
-                    Uncertainty = WholeHistoryRating.DefaultRating.Uncertainty,
+                    EloStdev = 1000,
                     Elo = WholeHistoryRating.DefaultRating.Elo,
+                    LadderElo = WholeHistoryRating.DefaultRating.LadderElo,
                 });
             }
             (RatingSystems.GetRatingSystem(RatingCategory.Planetwars) as WholeHistoryRating).ResetAll();

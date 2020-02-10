@@ -8,7 +8,7 @@ namespace Ratings
     public interface IRatingSystem
     {
 
-        void ProcessBattle(SpringBattle battle, bool delete = false);
+        void ProcessBattle(SpringBattle battle);
 
         PlayerRating GetPlayerRating(int accountID);
 
@@ -33,5 +33,7 @@ namespace Ratings
         int GetActivePlayers();
 
         event EventHandler<RatingUpdate> RatingsUpdated;
+
+        Dictionary<DateTime, float> GetPlayerLadderRatingHistory(int accountID);
     }
 }

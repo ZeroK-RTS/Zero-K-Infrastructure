@@ -13,24 +13,32 @@
 @Html.ActionLink("Back to clan list", "Index", "Clans")
 <div id="clanBlock">
     <h2>@c.ClanName</h2>
-    <table>
+    <table style="width:100%">
         <tr>
             <td style="vertical-align: top">
                 <h3>@Html.PrintClan(c)</h3>
                 <img  src='@c.GetImageUrl()'/><br />
-                <table>
+                <table style="white-space:nowrap">
                     @foreach (Account a in c.Accounts)
                     {
                         <tr>
                             <td>
                                 @Html.PrintAccount(a)
                             </td>
-                            <td>
-                                @if (Global.IsModerator || (isMember && Global.Account.HasClanRight(x => x.RightKickPeople)))
+                            <td style="width:50px">
+                                @if (isMember && Global.Account.HasClanRight(x => x.RightKickPeople))
                                 {
                                     @:&nbsp
-                        string question = String.Format("Expelling {0} will make them sad. Are you sure you want to proceed?", a.Name);
+                                    string question = String.Format("Expelling {0} will make them sad. Are you sure you want to proceed?", a.Name);
                                     @Html.ActionLink("kick", "KickPlayerFromClan", new { accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) })
+                                }
+                                else if (Global.IsModerator)
+                                {
+                                    string question = String.Format("Expelling {0} will make them sad. Are you sure you want to proceed?", a.Name);
+                                    @:&nbsp
+                                    <span class="admin">
+                                        @Html.ActionLink("kick", "KickPlayerFromClan", new { accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) })
+                                    </span>
                                 }
                             </td>
                         </tr>
@@ -50,9 +58,9 @@
                     @Html.BBCode(c.Description)
                 </div>
             </td>
-            <td style="vertical-align: top">
+            <td style="vertical-align: top;max-width: 240px;white-space:nowrap;">
                 @if (File.Exists(Server.MapPath(c.GetBGImageUrl()))) {
-                    <img src="@c.GetBGImageUrl()" style="max-width: 100%" />
+                    <img src="@c.GetBGImageUrl()" style="max-width:100%"/>
                 }
             </td>
         </tr>
@@ -76,6 +84,13 @@
         //has rights
         <br />
         @Html.ActionLink("Modify clan information", "Create", new { id = c.ClanID })
+    }
+    else if (Global.IsModerator)
+    {
+        <br />
+        <span class="admin">
+            @Html.ActionLink("Modify clan information", "Create", new { id = c.ClanID })
+        </span>
     }
 
     <br />

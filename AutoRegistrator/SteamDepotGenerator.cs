@@ -90,7 +90,11 @@ namespace AutoRegistrator
                 .ToArray();
             CopyResources(siteBase, paths, GetMapList(campaignMaps), downloader);
 
-            if (!downloader.UpdateMissions(prog).Result) throw new ApplicationException("SteamDepot Error updating missions! " + prog.Status);
+            // don't update missions on test ZK
+            if (GlobalConst.Mode == ModeType.Live)
+            {
+                if (!downloader.UpdateMissions(prog).Result) throw new ApplicationException("SteamDepot Error updating missions! " + prog.Status);
+            }
             if (!downloader.UpdatePublicCommunityInfo(prog)) throw new ApplicationException("SteamDepot Error updating public community info! " + prog.Status);
 
 
@@ -215,9 +219,9 @@ namespace AutoRegistrator
         private static List<Resource> GetMapList(params string[] extraNames)
         {
             var db = new ZkDataContext();
-            DateTime limit = DateTime.Now.AddMonths(-6);
+            DateTime limit = DateTime.Now.AddMonths(-2);
             
-            var top100 = db.SpringBattles.Where(x => x.StartTime >= limit).GroupBy(x => x.ResourceByMapResourceID).Where(x=>x.Key.MapSupportLevel >= MapSupportLevel.Supported).OrderByDescending(x => x.Sum(y => y.Duration * (y.SpringBattlePlayers.Count))).Select(x=>x.Key.ResourceID).Take(50).ToList();
+            var top100 = db.SpringBattles.Where(x => x.StartTime >= limit).Where(x=>x.ResourceByMapResourceID.MapSupportLevel >= MapSupportLevel.Supported).GroupBy(x => x.ResourceByMapResourceID).OrderByDescending(x => x.Sum(y => y.Duration *  y.SpringBattlePlayers.Count())).Take(50).Select(x=>x.Key.ResourceID).Take(50).ToList();
 
             //var pwMaps = db.Galaxies.Where(x => x.IsDefault).SelectMany(x => x.Planets).Where(x => x.MapResourceID != null).Select(x => x.MapResourceID.Value).ToList();
 

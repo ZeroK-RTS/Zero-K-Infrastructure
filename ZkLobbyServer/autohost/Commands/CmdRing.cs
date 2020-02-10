@@ -32,7 +32,7 @@ namespace ZkLobbyServer
             }
             else userList = battle.GetAllUserNames().Where(x => x.Contains(arguments)).ToList();
 
-            return $"do you want to ring {userList.Count} players?";
+            return $"Do you want to ring {userList.Count} players?";
         }
 
 

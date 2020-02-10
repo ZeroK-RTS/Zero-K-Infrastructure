@@ -360,6 +360,7 @@
     <Content Include="Img\dropship.png" />
     <Content Include="Img\edit_pencil.png" />
     <Content Include="Img\excel.png" />
+    <Content Include="Img\facebook.svg" />
     <Content Include="Img\factions\Ascended.png" />
     <Content Include="Img\factions\Ascended_ship.png" />
     <Content Include="Img\factions\Cybernetic.png" />
@@ -488,6 +489,7 @@
     <Content Include="Img\flags\gd.png" />
     <Content Include="Img\flags\ge.png" />
     <Content Include="Img\flags\gf.png" />
+    <Content Include="Img\flags\gg.png" />
     <Content Include="Img\flags\gh.png" />
     <Content Include="Img\flags\gi.png" />
     <Content Include="Img\flags\gl.png" />
@@ -541,7 +543,6 @@
     <Content Include="Img\flags\lt.png" />
     <Content Include="Img\flags\lu.png" />
     <Content Include="Img\flags\lv.png" />
-    <Content Include="Img\flags\ly.png" />
     <Content Include="Img\flags\ma.png" />
     <Content Include="Img\flags\mc.png" />
     <Content Include="Img\flags\md.png" />
@@ -670,6 +671,7 @@
     <Content Include="Img\galaxies\origin.txt" />
     <Content Include="Img\galaxies\render_19.jpg" />
     <Content Include="Img\galaxies\render_24.jpg" />
+    <Content Include="Img\github.png" />
     <Content Include="Img\help.png" />
     <Content Include="Img\hof\r1_clans.jpg" />
     <Content Include="Img\hof\r1_map.jpg" />
@@ -1212,7 +1214,9 @@
     <Content Include="Img\ranks\level-elo\dot_gold.png" />
     <Content Include="Img\ranks\level-elo\star.png" />
     <Content Include="Img\ranks\level-elo\velvetbacking.jpg" />
+    <Content Include="Img\reddit.png" />
     <Content Include="Img\rss.png" />
+    <Content Include="Img\rss_icon.png" />
     <Content Include="Img\screenshots\airbattle.jpg" />
     <Content Include="Img\screenshots\amphs.jpg" />
     <Content Include="Img\screenshots\assembled.jpg" />
@@ -1269,11 +1273,13 @@
     <Content Include="Img\star_40_bronze.png" />
     <Content Include="Img\star_40_gold.png" />
     <Content Include="Img\star_40_silver.png" />
+    <Content Include="Img\steam.svg" />
     <Content Include="Img\steam_20p.png" />
     <Content Include="Img\steam_logo.png" />
     <Content Include="Img\sticky.png" />
     <Content Include="Img\stickylock.png" />
     <Content Include="Img\structures\artefact.png" />
+    <Content Include="Img\structures\artefact_inactive.png" />
     <Content Include="Img\structures\artefact_r_105.png" />
     <Content Include="Img\structures\artefact_r_87.png" />
     <Content Include="Img\structures\artefact_r_92.png" />
@@ -1393,6 +1399,7 @@
     <Content Include="Img\tut\register2.PNG" />
     <Content Include="Img\tut\register3.PNG" />
     <Content Include="Img\tut\register4.PNG" />
+    <Content Include="Img\twitter.png" />
     <Content Include="Img\unitpics\armsolar.png" />
     <Content Include="Img\unitpics\cormex.png" />
     <Content Include="Img\warpcore.png" />
@@ -1580,6 +1587,11 @@
     <Content Include="Styles\fonts\Xolonium-Regular.woff" />
     <Content Include="Views\Tourney\TourneyIndex.cshtml" />
     <Content Include="Views\PlanetwarsAdmin\PlanetwarsAdminIndex.cshtml" />
+    <Content Include="Views\Admin\DynamicConfigDetail.cshtml" />
+    <Content Include="Views\Ladders\LaddersFull.cshtml" />
+    <Content Include="Views\Ladders\LaddersMaps.cshtml">
+      <BrowseToURL>~/Ladders/LaddersMaps</BrowseToURL>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

@@ -17,7 +17,8 @@ namespace ZeroKWeb.SpringieInterface
     /// </summary>
     public class BattleResultHandler
     {
-        public static BattleDebriefing SubmitSpringBattleResult(SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server)
+        //stores replay, springbattle, processes rating and xp, returns whether battle ended normally
+        public static bool SubmitSpringBattleResult(SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, Action<BattleDebriefing> consumer)
         {
             var ret = new BattleDebriefing();
             try
@@ -25,12 +26,12 @@ namespace ZeroKWeb.SpringieInterface
                 if (!result.GameEndedOk)
                 {
                     ret.Message = "Game didn't end properly";
-                    return ret;
+                    return false;
                 }
                 if (result.IsCheating)
                 {
                     ret.Message = "Cheats were enabled during this game";
-                    return ret;
+                    return false;
                 }
 
                 var db = new ZkDataContext();
@@ -47,7 +48,11 @@ namespace ZeroKWeb.SpringieInterface
 
                 Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
-                ProcessRatingAndXP(result, server, db, sb);
+                //fill in applicable ratings
+                bool noElo = result.LobbyStartContext.ModOptions.Any(x => x.Key.ToLower() == "noelo" && x.Value != "0" && x.Value != "false");
+                if (!noElo) RatingSystems.FillApplicableRatings(sb, result);
+
+                ProcessXP(result, server, db, sb);
 
                 
                 ret.Url = string.Format("{1}/Battles/Detail/{0}", sb.SpringBattleID, GlobalConst.BaseSiteUrl);
@@ -69,11 +74,21 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     ret.DebriefingUsers[p.Account.Name] = new BattleDebriefing.DebriefingUser()
                     {
-                        LoseTime = p.LoseTime,
+                        AccountID = p.AccountID,
+                        LoseTime = p.LoseTime ?? -1,
                         AllyNumber = p.AllyNumber,
                         IsInVictoryTeam = p.IsInVictoryTeam,
-                        EloChange = p.EloChange?.ToString("F2"),
-                        XpChange = p.XpChange,
+                        EloChange = 0,
+                        IsRankdown = false,
+                        IsRankup = false,
+                        NewElo = -1,
+                        NextRankElo = -1,
+                        PrevRankElo = -1,
+                        NewRank = p.Account.Rank,
+                        XpChange = p.XpChange ?? 0,
+                        NewXp = p.Account.Xp,
+                        NextLevelXp = Account.GetXpForLevel(p.Account.Level + 1),
+                        PrevLevelXp = Account.GetXpForLevel(p.Account.Level),
                         IsLevelUp = orgLevels[p.AccountID] < p.Account.Level,
                         Awards = sb.AccountBattleAwards.Where(x=>x.AccountID == p.AccountID).Select(x=> new BattleDebriefing.DebriefingAward()
                         {
@@ -84,40 +99,53 @@ namespace ZeroKWeb.SpringieInterface
                     };
                 }
 
-                return ret;
+                //send to rating
+
+                if (!noElo) RatingSystems.ProcessResult(sb, result, new PendingDebriefing()
+                {
+                    debriefingConsumer = consumer,
+                    partialDebriefing = ret,
+                    battle = sb,
+                });
+
+                Trace.TraceInformation("Battle ended: Server exited for B" + sb.SpringBattleID);
+                db.SaveChanges();
+
+                return true;
             }
             catch (Exception ex)
             {
                 var data = JsonConvert.SerializeObject(result);
                 Trace.TraceError($"{ex}\nData:\n{data}");
                 ret.Message = "Error processing game result: " + ex.Message;
-                return ret;
+                return false;
             }
         }
 
-        private static void ProcessRatingAndXP(SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, ZkDataContext db, SpringBattle sb)
+        private static void ProcessXP(SpringBattleContext result, ZkLobbyServer.ZkLobbyServer server, ZkDataContext db, SpringBattle sb)
         {
-            bool noElo = result.OutputExtras.Any(x => x?.StartsWith("noElo", true, System.Globalization.CultureInfo.CurrentCulture) == true);
-
-            if (!noElo) RatingSystems.ProcessResult(sb, result);
 
             sb.DispenseXP();
 
             foreach (var u in sb.SpringBattlePlayers.Where(x => !x.IsSpectator)) u.Account.CheckLevelUp();
 
+
             db.SaveChanges();
 
-            try
+            if (sb.ApplicableRatings == 0)
             {
-                foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account))
+                try
                 {
-                    server.PublishAccountUpdate(a);
-                    server.PublishUserProfileUpdate(a);
+                    foreach (Account a in sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account))
+                    {
+                        server.PublishAccountUpdate(a);
+                        server.PublishUserProfileUpdate(a);
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("error updating extension data: {0}", ex);
+                catch (Exception ex)
+                {
+                    Trace.TraceError("error updating extension data: {0}", ex);
+                }
             }
         }
 
