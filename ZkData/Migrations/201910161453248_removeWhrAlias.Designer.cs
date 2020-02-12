@@ -7,13 +7,13 @@ namespace ZkData.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class AddAccountDiscordID : IMigrationMetadata
+    public sealed partial class removeWhrAlias : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddAccountDiscordID));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(removeWhrAlias));
         
         string IMigrationMetadata.Id
         {
-            get { return "201905052033337_AddAccountDiscordID"; }
+            get { return "201910161453248_removeWhrAlias"; }
         }
         
         string IMigrationMetadata.Source

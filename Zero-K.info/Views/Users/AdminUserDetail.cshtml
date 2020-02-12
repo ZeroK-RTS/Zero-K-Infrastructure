@@ -8,8 +8,7 @@
 
 <div class="admin">
     <h1>Administer @Html.PrintAccount(@Model, true, true)</h1>
-    AccountID: @Model.AccountID <br />
-    Discord: @(Model.DiscordName)#@Model.DiscordDiscriminator (@(Model.DiscordID)) <br />
+    AccountID: @Model.AccountID
     <br />
     Lobby program: @Model.LobbyVersion<br />
     Last Login: @Model.LastLogin<br />
@@ -63,11 +62,8 @@
     <br />
 
     @{
-        var myIPs = Model.AccountIPs.Select(x => x.IP).ToList();
-        var myIDs = Model.AccountUserIDs.Select(x => x.UserID).ToList();
         var brokenIDs = new List<Int64>() { 1236934115, 1199297835, -2130083051, 195445522, 1141552226 };
-        var smurfs = new ZkDataContext().Accounts.Where(x => x.AccountID != Model.AccountID && (x.AccountIPs.Any(y => myIPs.Contains(y.IP) && y.IP != "127.0.0.1" && y.IP != "127.0.1.1" && y.IP != "94.23.170.70" && y.IP != "78.46.100.157")
-            || x.AccountUserIDs.Where(id => !brokenIDs.Contains(id.UserID)).Any(y => myIDs.Contains(y.UserID))));
+        var smurfs = Model.GetSmurfs();
 
         Int64? lastUserID = null;
         if (Model.AccountUserIDs.Any())
@@ -134,21 +130,16 @@
 
     @if (Model.SteamID != null)
     {
-        <span>Unlink from Steam:</span>
+        <span>User IS linked with Steam. Unlink from Steam:</span>
         <form method="post" action="@Url.Action("UnlinkSteamID", "Users", new { accountID = Model.AccountID })">
             @Html.AntiForgeryToken()
             Delete this account's Steam name and ID, allowing the user to link their Steam account to another ZK account.'
             <input type="submit" class="js_confirm" />
         </form>
+    } else {
+        <span>User IS NOT linked with Steam. </span>
     }
 
-    <br />
-    Set WHR Alias (has to be ID, not nickname):
-    <form method="post" action="@Url.Action("SetWhrAlias", "Users", new { accountID = Model.AccountID })">
-        @Html.AntiForgeryToken()
-        @Html.TextBox("alias", Model.WhrAlias)
-        <input type="submit" />
-    </form>
     <br />
 
     <h2>Modify user rating</h2>
@@ -194,7 +185,8 @@
     Hide ("delete") account:
     <form method="post" action="@Url.Action("ChangeAccountDeleted", "Users", new { accountID = Model.AccountID })">
         @Html.AntiForgeryToken()
-        @Html.CheckBox("isDeleted")
+        Deleted: @Html.CheckBox("isDeleted") <br />
+        Move all games to account: @Html.TextBox("alias") <br />
         <input type="submit" />
     </form>
     <br />
@@ -210,7 +202,7 @@
     </form>
 
     <h3>Delete all forum votes</h3>
-    <form action="@Url.Action("DeleteAllForumVotes", "Forum", new { accountID = Model.AccountID })" method="post">
+    <form action="@Url.Action("DeleteAllForumVotes", "Users", new { accountID = Model.AccountID })" method="post">
         @Html.AntiForgeryToken()
         This will <b>permanently</b> remove <b>all</b> of the user's upvotes/downvotes on forum.<br />
         This action <b>cannot</b> be undone!<br />

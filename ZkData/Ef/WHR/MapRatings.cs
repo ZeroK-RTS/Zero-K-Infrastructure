@@ -73,26 +73,36 @@ namespace Ratings
 
         private static void UpdateRatings(bool init = false)
         {
+            List<MapPollOutcome> outcomes;
+            DateTime start = DateTime.Now;
             try
             {
                 using (var db = new ZkDataContext())
                 {
 
-                    db.Database.CommandTimeout = 240;
-                    db.MapPollOutcomes.Where(x => x.MapPollID > lastPollId).Include(x => x.MapPollOptions).OrderBy(x => x.MapPollID).AsNoTracking().AsEnumerable().ForEach(poll =>
-                    {
-                        var opts = poll.MapPollOptions.DistinctBy(x => x.ResourceID).OrderByDescending(x => x.Votes).ToList();
-                        var winners = opts.Where(x => x.Votes == opts[0].Votes);
-                        var losers = opts.Where(x => x.Votes != opts[0].Votes);
-                        if (losers.Count() > 0)
-                        {
-                            var game = new Game(winners.Select(x => GetPlayer(x.ResourceID, poll.Category)).ToList(), losers.Select(x => GetPlayer(x.ResourceID, poll.Category)).ToList(), true, 0, poll.MapPollID);
-                            game.whitePlayers.ForEach(x => x.AddGame(game));
-                            game.blackPlayers.ForEach(x => x.AddGame(game));
-                        }
-                        lastPollId = poll.MapPollID;
-                    });
+                    db.Database.CommandTimeout = 300;
+                    var endPollId = lastPollId + 1000;
+                    outcomes = db.MapPollOutcomes.Where(x => x.MapPollID > lastPollId && x.MapPollID < endPollId).Include(x => x.MapPollOptions).OrderBy(x => x.MapPollID).AsNoTracking().ToList();
                 }
+                outcomes.ForEach(poll =>
+                {
+                    var opts = poll.MapPollOptions.DistinctBy(x => x.ResourceID).OrderByDescending(x => x.Votes).ToList();
+                    var winners = opts.Where(x => x.Votes == opts[0].Votes);
+                    var losers = opts.Where(x => x.Votes != opts[0].Votes);
+                    if (losers.Count() > 0)
+                    {
+                        var game = new Game(winners.Select(x => GetPlayer(x.ResourceID, poll.Category)).ToList(), losers.Select(x => (ICollection<Player>)new List<Player>() { GetPlayer(x.ResourceID, poll.Category) }).ToList(), 0, poll.MapPollID);
+                        game.loserPlayers.ForEach(t => t.ForEach(x => x.AddGame(game)));
+                        game.winnerPlayers.ForEach(x => x.AddGame(game));
+                    }
+                    lastPollId = poll.MapPollID;
+                });
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error reading map ratings from db: " + ex);
+            }
+            try {
                 foreach (Category cat in maps.Keys)
                 {
                     if (init) RunIterations(70, cat);
@@ -117,6 +127,7 @@ namespace Ratings
             {
                 Trace.TraceError("Error calculating map ratings: " + ex);
             }
+            Trace.TraceInformation("Most recent map poll processed for ratings: " + lastPollId + ". Processing took " + DateTime.Now.Subtract(start).TotalSeconds + " seconds.");
         }
 
         private static void RunIterations(int count, Category cat)

@@ -29,7 +29,6 @@ namespace ZkLobbyServer
         public EventHandler<Say> Said = delegate { };
         public CommandJsonSerializer Serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<MessageAttribute>());
         public SteamWebApi SteamWebApi;
-        public DiscordWebApi DiscordWebApi;
 
         private ServerTextCommands textCommands;
         public string Engine { get; private set; }
@@ -74,8 +73,7 @@ namespace ZkLobbyServer
 
             LoginChecker = new LoginChecker(this, geoIPpath);
             SteamWebApi = new SteamWebApi(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey());
-            DiscordWebApi = new DiscordWebApi(GlobalConst.ZeroKDiscordID, new Secrets().GetDiscordClientSecret());
-            chatRelay = new ChatRelay(this, new List<string>() { "zkdev", "sy", "ai", "zk", "zkmap", "springboard", GlobalConst.ModeratorChannel, GlobalConst.CoreChannel, "off-topic", "support","modding" });
+            chatRelay = new ChatRelay(this, new List<string>() { "zkdev", "sy", "moddev", "weblobbydev", "ai", "zk", "zkmap", "springboard", GlobalConst.ModeratorChannel, GlobalConst.CoreChannel, "off-topic", "support","modding", "crashreports" });
             textCommands = new ServerTextCommands(this);
             ChannelManager = new ChannelManager(this);
             MatchMaker = new MatchMaker(this);
@@ -399,12 +397,13 @@ namespace ZkLobbyServer
             return ConnectedUsers.ContainsKey(user);
         }
 
-        public void KickFromServer(string kickerName, string kickeeName, string reason)
+        public async Task KickFromServer(string kickerName, string kickeeName, string reason)
         {
             ConnectedUser conus;
             if (ConnectedUsers.TryGetValue(kickeeName, out conus))
             {
-                conus.Respond(string.Format("You were kicked for: {0}", reason));
+                if (conus.MyBattle != null) await conus.MyBattle.KickFromBattle(kickeeName, reason);
+                await conus.Respond(string.Format("You were kicked for: {0}", reason));
                 conus.RequestCloseAll();
             }
         }

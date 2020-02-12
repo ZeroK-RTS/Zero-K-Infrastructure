@@ -82,13 +82,9 @@ namespace Ratings
             futureDebriefings = new ConcurrentDictionary<int, PendingDebriefing>();
         }
 
-        public bool IsInitialized()
-        {
-            return completelyInitialized;
-        }
-
         public PlayerRating GetPlayerRating(int accountID)
         {
+            accountID = (accountID);
             if (!completelyInitialized)
             {
                 return cachedDbRatings.GetOrAdd(accountID,
@@ -100,32 +96,31 @@ namespace Ratings
                     });
             }
             
-            return playerRatings.ContainsKey(RatingSystems.GetRatingId(accountID)) ? playerRatings[RatingSystems.GetRatingId(accountID)] : DefaultRating;
+            return playerRatings.ContainsKey(accountID) ? playerRatings[accountID] : DefaultRating;
         }
 
         public Dictionary<DateTime, float> GetPlayerRatingHistory(int AccountID)
         {
-            if (!players.ContainsKey(RatingSystems.GetRatingId(AccountID))) return new Dictionary<DateTime, float>();
-            return players[RatingSystems.GetRatingId(AccountID)].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.GetElo() + RatingOffset);
+            if (!players.ContainsKey((AccountID))) return new Dictionary<DateTime, float>();
+            return players[(AccountID)].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.GetElo() + RatingOffset);
         }
 
         public Dictionary<DateTime, float> GetPlayerLadderRatingHistory(int AccountID)
         {
-            if (!players.ContainsKey(RatingSystems.GetRatingId(AccountID))) return new Dictionary<DateTime, float>();
-            return players[RatingSystems.GetRatingId(AccountID)].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.GetElo() + RatingOffset - day.GetEloStdev() * GlobalConst.RatingConfidenceSigma);
+            if (!players.ContainsKey((AccountID))) return new Dictionary<DateTime, float>();
+            return players[(AccountID)].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.GetElo() + RatingOffset - day.GetEloStdev() * GlobalConst.RatingConfidenceSigma);
         }
 
         public List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams, DateTime time)
         {
             var predictions = teams.Select(t =>
-                    SetupGame(t.Select(x => RatingSystems.GetRatingId(x.AccountID)).Distinct().ToList(),
-                            teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => RatingSystems.GetRatingId(x.AccountID))).Distinct().ToList(),
-                            true,
+                    SetupGame(t.Select(x => (x.AccountID)).Distinct().ToList(),
+                            teams.Where(t2 => !t2.Equals(t)).Select(t2 => (ICollection<int>)t2.Select(x => (x.AccountID)).Distinct().ToList()).ToList(),
                             RatingSystems.ConvertDateToDays(time),
                             -1,
                             true
-                    ).GetBlackWinProbability()).ToList();
-            return predictions.Select(x => x / predictions.Sum()).ToList();
+                    ).GetWinProbability()).ToList();
+            return predictions;
         }
 
         public void AttachResultReporting(int battleID, PendingDebriefing debriefing)
@@ -135,20 +130,28 @@ namespace Ratings
 
         public void ProcessBattle(SpringBattle battle)
         {
-            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).Distinct().ToList();
-            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => RatingSystems.GetRatingId(p.AccountID)).Distinct().ToList();
+            ICollection<int> winners = battle.SpringBattlePlayers
+                .Where(p => p.IsInVictoryTeam && !p.IsSpectator)
+                .Select(p => (p.AccountID))
+                .Distinct()
+                .ToList();
+            ICollection<ICollection<int>> losers = battle.SpringBattlePlayers
+                .Where(p => !p.IsInVictoryTeam && !p.IsSpectator)
+                .GroupBy(p => p.AllyNumber)
+                .Select(t => (ICollection<int>)t.Select(p => p.AccountID).Distinct().ToList())
+                .ToList();
 
             int date = RatingSystems.ConvertDateToDays(battle.StartTime);
 
             if (RatingSystems.Initialized)
             {
-                if (winners.Intersect(losers).Any()) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has winner loser intersection");
+                if (losers.Any(t => winners.Intersect(t).Any())) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has winner loser intersection");
                 if (ProcessedBattles.Contains(battle.SpringBattleID)) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has already been processed");
                 if (winners.Count == 0) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has no winner");
                 if (losers.Count == 0) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has no loser");
             }
 
-            if (!winners.Intersect(losers).Any() && !ProcessedBattles.Contains(battle.SpringBattleID) && winners.Count > 0 && losers.Count > 0)
+            if (!losers.Any(t => winners.Intersect(t).Any()) && !ProcessedBattles.Contains(battle.SpringBattleID) && winners.Count > 0 && losers.Count > 0)
             {
 
                 battlesRegistered++;
@@ -161,7 +164,7 @@ namespace Ratings
                 else
                 {
 
-                    CreateGame(losers, winners, false, date, battle.SpringBattleID);
+                    CreateGame(winners, losers, date, battle.SpringBattleID);
                     futureDebriefings.ForEach(u => pendingDebriefings.TryAdd(u.Key, u.Value));
                     futureDebriefings.Clear();
                  
@@ -188,33 +191,30 @@ namespace Ratings
 
         public List<Account> GetTopPlayers(int count)
         {
+            if (count > 200)
+            {
+                using (ZkDataContext db = new ZkDataContext())
+                {
+                    laddersCache = db.Accounts
+                        .Include(a => a.Clan)
+                        .Include(a => a.Faction)
+                        .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.LadderElo).DefaultIfEmpty(-1).FirstOrDefault())
+                        .Take(count)
+                        .ToList();
+                }
+            }
             if (laddersCache.Count < count)
             {
-                if (count > 200 || !completelyInitialized)
+
+                using (ZkDataContext db = new ZkDataContext())
                 {
-                    using (ZkDataContext db = new ZkDataContext())
-                    {
-                        laddersCache = db.Accounts
-                            .Include(a => a.Clan)
-                            .Include(a => a.Faction)
-                            .Where(x => !x.IsDeleted && x.AccountRatings.Any(r => r.RatingCategory == category && r.IsRanked))
-                            .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).FirstOrDefault().LadderElo)
-                            .Take(count)
-                            .ToList();
-                    }
-                }
-                else
-                {
-                    using (ZkDataContext db = new ZkDataContext())
-                    {
-                        List<int> retIDs = topPlayers.Take(count).ToList();
-                        laddersCache = db.Accounts
-                            .Where(a => retIDs.Contains(a.AccountID))
-                            .Include(a => a.Clan)
-                            .Include(a => a.Faction)
-                            .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).FirstOrDefault().LadderElo)
-                            .ToList();
-                    }
+                    List<int> retIDs = topPlayers.Take(count).ToList();
+                    laddersCache = db.Accounts
+                        .Where(a => retIDs.Contains(a.AccountID))
+                        .Include(a => a.Clan)
+                        .Include(a => a.Faction)
+                        .OrderByDescending(x => x.AccountRatings.Where(r => r.RatingCategory == category).Select(r => r.LadderElo).DefaultIfEmpty(-1).FirstOrDefault())
+                        .ToList();
                 }
             }
             return laddersCache.Take(count).ToList();
@@ -236,7 +236,7 @@ namespace Ratings
                             .Include(a => a.Clan)
                             .Include(a => a.Faction)
                             .FirstOrDefault();
-                        if (playerRatings[RatingSystems.GetRatingId(acc.AccountID)].Rank < int.MaxValue && selector.Invoke(acc))
+                        if (playerRatings[pair.Value].Rank < int.MaxValue && selector.Invoke(acc))
                         {
                             if (counter++ >= count) break;
                             retval.Add(acc);
@@ -260,7 +260,7 @@ namespace Ratings
                 {
                     if (!accounts.ContainsKey(pair.Value)) continue;
                     acc = accounts[pair.Value];
-                    if (playerRatings[RatingSystems.GetRatingId(acc.AccountID)].Rank < int.MaxValue)
+                    if (playerRatings[pair.Value].Rank < int.MaxValue)
                     {
                         if (counter++ >= count) break;
                         retval.Add(acc);
@@ -333,9 +333,9 @@ namespace Ratings
                     updateAction = (() =>
                     {
                         Trace.TraceInformation("Updating WHR " + category + " ratings for pending battles: " + pendingDebriefings.Keys.Select(x => "B" + x).StringJoin());
-                        IEnumerable<Player> players = pendingDebriefings.Values.SelectMany(x => x.battle.SpringBattlePlayers).Where(p => !p.IsSpectator).Select(p => getPlayerById(RatingSystems.GetRatingId(p.AccountID)));
+                        IEnumerable<Player> players = pendingDebriefings.Values.SelectMany(x => x.battle.SpringBattlePlayers).Where(p => !p.IsSpectator).Select(p => getPlayerById((p.AccountID)));
                         players.ForEach(p => p.RunOneNewtonIteration(true));
-                        UpdateRankings(players);
+                        UpdateRankings(this.players.Values);
                     });
                 }
                 Task.Factory.StartNew(() =>
@@ -423,7 +423,9 @@ namespace Ratings
                             continue;
                         }
                         processedPlayers.Add(accountRating.AccountID);
-                        if (Math.Abs(playerRatings[accountRating.AccountID].LadderElo - accountRating.LadderElo ?? 9999) > 1 || accountRating.IsRanked != (playerRatings[accountRating.AccountID].Rank < int.MaxValue))
+                        if (Math.Abs(playerRatings[accountRating.AccountID].LadderElo - accountRating.LadderElo ?? 9999) > 0.5
+                            || Math.Abs(playerRatings[accountRating.AccountID].RealElo - accountRating.RealElo) > 0.5
+                            || accountRating.IsRanked != (playerRatings[accountRating.AccountID].Rank < int.MaxValue))
                         {
                             accountRating.UpdateFromRatingSystem(playerRatings[accountRating.AccountID]);
                         }
@@ -448,18 +450,18 @@ namespace Ratings
         public string DebugPlayer(Account player)
         {
             if (!RatingSystems.Initialized) return "";
-            if (!players.ContainsKey(RatingSystems.GetRatingId(player.AccountID))) return "Unknown player";
+            if (!players.ContainsKey((player.AccountID))) return "Unknown player";
             string debugString = "";
-            foreach (PlayerDay d in players[RatingSystems.GetRatingId(player.AccountID)].days)
+            foreach (PlayerDay d in players[(player.AccountID)].days)
             {
                 debugString +=
                     d.day + ";" +
                     d.GetElo() + ";" +
                     d.naturalRatingVariance * 100 + ";" +
                     d.games[0].Select(g =>
-                        g.whitePlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y) + "/" +
-                        g.blackPlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y) + "/" +
-                        (g.blackWins ? "Second" : "First") + "/" +
+                        g.loserPlayers.Select(t => t.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y)).Aggregate("", (x, y) => x + "/" + y) + "/" +
+                        g.winnerPlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y) + "/" +
+                        ("Last is winner") + "/" +
                         g.id
                     ).Aggregate("", (x, y) => x + "|" + y) + "\r\n";
             }
@@ -480,9 +482,11 @@ namespace Ratings
                 using (var db = new ZkDataContext())
                 {
                     var battleIDs = pendingDebriefings.Keys.ToList();
-                    var lastBattlePlayers = db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).Include(x => x.Account).ToList();
-                    oldRatings = lastBattlePlayers.ToDictionary(p => p.AccountID, p => playerRatings[p.AccountID].LadderElo);
-                    lastBattlePlayers.ForEach(p => playerRatings[p.AccountID].LadderElo = Ranks.UpdateLadderRating(p.Account, category, this.players[p.AccountID].avgElo + RatingOffset, p.IsInVictoryTeam, !p.IsInVictoryTeam, db));
+                    var lastBattlePlayers = db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).Include(x => x.Account).DistinctBy(x => x.AccountID).ToList();
+                    oldRatings = lastBattlePlayers.ToDictionary(p => (p.AccountID), p => GetPlayerRating(p.AccountID).LadderElo);
+                    lastBattlePlayers.Where(p => !playerRatings.ContainsKey((p.AccountID))).ForEach(p => playerRatings[(p.AccountID)] = new PlayerRating(DefaultRating));
+                    lastBattlePlayers.ForEach(p => playerRatings[(p.AccountID)].LadderElo = Ranks.UpdateLadderRating(p.Account, category, getPlayerById((p.AccountID)).avgElo + RatingOffset, p.IsInVictoryTeam, !p.IsInVictoryTeam, db));
+                    db.SaveChanges();
                 }
 
                 //update ladders
@@ -498,14 +502,15 @@ namespace Ratings
                             continue;
                         }
                         float elo = p.days.Last().GetElo() + RatingOffset;
-                        float lastNaturalRatingVar = p.avgEloVar * GlobalConst.EloToNaturalRatingMultiplierSquared;
+                        float lastNaturalRatingVar = p.days.Last().naturalRatingVariance;
                         var lastDay = p.days.Last();
                         float ladderElo;
                         if (playerRatings.ContainsKey(p.id)) ladderElo = playerRatings[p.id].LadderElo;
                         else ladderElo = (float?)db.AccountRatings.Where(x => x.AccountID == p.id && x.RatingCategory == category).FirstOrDefault()?.LadderElo ?? DefaultRating.LadderElo;
                         playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastNaturalRatingVar, GlobalConst.NaturalRatingVariancePerDay(lastDay.totalWeight), lastDay.day, currentDay, ladderElo, !float.IsNaN(p.avgElo));
-                        float rating = -playerRatings[p.id].LadderElo + 0.001f * (float)rand.NextDouble();
+                        float rating = -playerRatings[p.id].LadderElo;
                         if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
+                        while (sortedPlayers.ContainsKey(rating)) rating += 0.01f;
                         playerKeys[p.id] = rating;
                         sortedPlayers[rating] = p.id;
                         if (playerRatings[p.id].Ranked) playerCount++;
@@ -516,7 +521,7 @@ namespace Ratings
                 List<int> newTopPlayers = new List<int>();
                 int matched = 0;
                 List<float> newPercentileBrackets = new List<float>();
-                newPercentileBrackets.Add(playerRatings[sortedPlayers.First().Value].LadderElo + 420);
+                newPercentileBrackets.Add(playerRatings[sortedPlayers.First().Value].LadderElo);
                 float percentile;
                 float[] percentilesRev = Ranks.Percentiles.Reverse().ToArray();
                 foreach (var pair in sortedPlayers)
@@ -535,7 +540,8 @@ namespace Ratings
                         playerRatings[pair.Value].ApplyLadderUpdate(int.MaxValue, 1, currentDay, false);
                     }
                 }
-                newPercentileBrackets.Add(newPercentileBrackets.Last() - 420);
+                if (rank != playerCount) Trace.TraceWarning("WHR has " + playerCount + " active players, but " + rank + " sorted active players");
+                while (newPercentileBrackets.Count < Ranks.Percentiles.Length + 1) newPercentileBrackets.Add(playerRatings[sortedPlayers.Last().Value].LadderElo);
                 PercentileBrackets = newPercentileBrackets.Select(x => x).Reverse().ToArray();
                 topPlayers = newTopPlayers;
                 laddersCache = new List<Account>();
@@ -571,13 +577,13 @@ namespace Ratings
                         updatedRanks.Values.ForEach(p => db.Entry(p).State = EntityState.Modified);
                         playersWithRatingChange = lastBattlePlayers.Select(x => x.AccountID).ToList();
 
-                        lastBattlePlayers.Where(p => playerOldRatings.ContainsKey(RatingSystems.GetRatingId(p.AccountID)) && !p.EloChange.HasValue).ForEach(p =>
+                        lastBattlePlayers.Where(p => playerOldRatings.ContainsKey((p.AccountID)) && !p.EloChange.HasValue).ForEach(p =>
                         {
-                            //p.EloChange = playerRatings[RatingSystems.GetRatingId(p.AccountID)].RealElo - playerOldRatings[RatingSystems.GetRatingId(p.AccountID)].RealElo;
-                            p.EloChange = playerRatings[p.AccountID].LadderElo - oldRatings[p.AccountID];
+                            //p.EloChange = playerRatings[(p.AccountID)].RealElo - playerOldRatings[(p.AccountID)].RealElo;
+                            p.EloChange = playerRatings[(p.AccountID)].LadderElo - oldRatings[(p.AccountID)];
                         });
 
-                        db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).ToList().ForEach(x => playerOldRatings[RatingSystems.GetRatingId(x.AccountID)] = playerRatings[RatingSystems.GetRatingId(x.AccountID)]);
+                        db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).ToList().ForEach(x => playerOldRatings[(x.AccountID)] = playerRatings[(x.AccountID)]);
                         db.SaveChanges();
                     }
                     //Publish new results only after saving new stats to db.
@@ -586,7 +592,7 @@ namespace Ratings
                         pair.Value.partialDebriefing.DebriefingUsers.Values.ForEach(user => {
                             try
                             {
-                                user.EloChange = playerRatings[user.AccountID].LadderElo - oldRatings[user.AccountID];
+                                user.EloChange = playerRatings[(user.AccountID)].LadderElo - oldRatings[(user.AccountID)];
                                 user.IsRankup = updatedRanks.ContainsKey(user.AccountID) && oldRanks[user.AccountID] < updatedRanks[user.AccountID].Rank;
                                 user.IsRankdown = updatedRanks.ContainsKey(user.AccountID) && oldRanks[user.AccountID] > updatedRanks[user.AccountID].Rank;
                                 var prog = Ranks.GetRankProgress(involvedAccounts[user.AccountID], this);
@@ -644,43 +650,43 @@ namespace Ratings
             return players[id];
         }
 
-        private Game SetupGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step, int id, bool temporary)
+        private Game SetupGame(ICollection<int> winners, ICollection<ICollection<int>> losers, int time_step, int id, bool temporary)
         {
 
             // Avoid self-played games (no info)
-            if (black.Equals(white))
+            if (winners.Equals(losers))
             {
                 Trace.TraceError("White == Black");
                 return null;
             }
-            if (white.Count < 1)
+            if (losers.Count < 1)
             {
                 Trace.TraceError("White empty");
                 return null;
             }
-            if (black.Count < 1)
+            if (winners.Count < 1)
             {
                 Trace.TraceError("Black empty");
                 return null;
             }
 
 
-            List<Player> white_player = white.Select(p => getPlayerById(p, temporary)).ToList();
-            List<Player> black_player = black.Select(p => getPlayerById(p, temporary)).ToList();
-            Game game = new Game(black_player, white_player, blackWins, time_step, id);
+            List<ICollection<Player>> white_player = losers.Select(t => (ICollection<Player>)t.Select(p => getPlayerById(p, temporary)).ToList()).ToList();
+            List<Player> black_player = winners.Select(p => getPlayerById(p, temporary)).ToList();
+            Game game = new Game(black_player, white_player, time_step, id);
             return game;
         }
 
-        private Game CreateGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step, int id)
+        private Game CreateGame(ICollection<int> winners, ICollection<ICollection<int>> losers, int time_step, int id)
         {
-            Game game = SetupGame(black, white, blackWins, time_step, id, false);
+            Game game = SetupGame(winners, losers, time_step, id, false);
             return game != null ? AddGame(game) : null;
         }
 
         private Game AddGame(Game game)
         {
-            game.whitePlayers.ForEach(p => p.AddGame(game));
-            game.blackPlayers.ForEach(p => p.AddGame(game));
+            game.loserPlayers.ForEach(t => t.ForEach(p => p.AddGame(game)));
+            game.winnerPlayers.ForEach(p => p.AddGame(game));
             
             return game;
         }

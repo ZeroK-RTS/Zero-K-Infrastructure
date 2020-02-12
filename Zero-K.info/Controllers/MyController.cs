@@ -93,7 +93,7 @@ namespace ZeroKWeb.Controllers
                 if (!string.IsNullOrEmpty(name))
                 {
                     if (name.Length > GlobalConst.MaxCommanderNameLength) name = name.Substring(0, GlobalConst.MaxCommanderNameLength);
-                    name = Regex.Replace(name, @"[^\u0000-\u007F]", string.Empty); // remove unicode stuff
+                    name = Regex.Replace(name, @"[^\u0020-\u007E]", string.Empty); // remove unicode stuff
                     comm.Name = name;
                 }
 

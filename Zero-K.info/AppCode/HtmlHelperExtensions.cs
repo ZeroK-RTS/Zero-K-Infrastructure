@@ -674,7 +674,21 @@ namespace System.Web.Mvc
             var ratio =  Ratings.Ranks.GetRankProgress(account);
             int percentage = (int)Math.Round(ratio * 100);
             var progressText = string.Format("Progress to the next rank: {0}%", percentage);
-            if (percentage >= 100) progressText = "Rank up on next victory!";
+            if (percentage >= 100)
+            {
+                if (Ratings.Ranks.ValidateRank(account.Rank + 1))
+                {
+                    progressText = "Rank up on next victory!";
+                }
+                else if (Global.IsAccountAuthorized && Global.AccountID == account.AccountID)
+                {
+                    progressText = "Congratulations, you are officially the best Zero-K player!";
+                }
+                else
+                {
+                    progressText = account.Name + " is officially the best Zero-K player.";
+                }
+            }
             var str = new MvcHtmlString(string.Format("Current rank: <img src='/img/ranks/{0}_{1}.png'  class='icon16' alt='rank' /> {2} <br /> <br /> {3}<br /> <br />Win more games to improve your rank!", account.GetIconLevel(), account.Rank, Ratings.Ranks.RankNames[account.Rank], progressText));
             return str;
         }

@@ -131,8 +131,6 @@ namespace ZkData
         public const int CommanderProfileCount = 6;
         public const int NumCommanderLevels = 5;
         public const int MaxCommanderNameLength = 20;
-        public const int MillisecondsPerCharacter = 50; //Maximum allowed chat messaging rate before it is considered spam, 80ms is equivalent to 120 WPM, which covers typing speeds of anyone short of a stenographer.
-        public const int MinMillisecondsBetweenMessages = 1000; //Disallow sending more than one message per this interval
 
         public const string DefaultEngineOverride = "104.0.1-287-gf7b0fcc"; // hack for ZKL using tasclient's engine - override here for missions etc
 
@@ -141,7 +139,7 @@ namespace ZkData
         public const int MinDurationForPlanetwars = 0;
         public const int MaxDurationForPlanetwars = 60*60*3; // 3 hours
 
-        public static readonly int LadderActivityDays = mode == ModeType.Live ? 30 : 90;
+        public static int LadderActivityDays => mode == ModeType.Live ? 30 : 90;
         public const int LadderSize = 50; // Amount of players shown on ladders
         public const float LadderUpdatePeriod = 1; //Ladder is fully updated every X hours
         public const float EloToNaturalRatingMultiplierSquared = 0.00003313686f;
@@ -245,6 +243,8 @@ namespace ZkData
 
         public const int LobbyThrottleBytesPerSecond = 2000;
         public const int LobbyMaxMessageSize = 2000;
+        public const int MillisecondsPerCharacter = 50; //Maximum allowed chat messaging rate before it is considered spam, 80ms is equivalent to 120 WPM, which covers typing speeds of anyone short of a stenographer.
+        public const int MinMillisecondsBetweenMessages = 1000; //Disallow sending more than one message per this interval
 
 
         public static int UdpHostingPortStart;
