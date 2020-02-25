@@ -214,7 +214,7 @@ namespace ZkLobbyServer
         {
             if (Users.IsEmpty && !spring.IsRunning)
             {
-                if (IsAutohost)
+                if (!IsAutohost)
                     await server.RemoveBattle(this);
                 else if (Mode != AutohostMode.None) // custom autohosts would typically be themed around a single map
                     await RunCommandDirectly<CmdMap>(null);
