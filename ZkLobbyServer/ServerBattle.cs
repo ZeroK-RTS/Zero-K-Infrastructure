@@ -913,7 +913,7 @@ namespace ZkLobbyServer
             BlockPollsUntil = DateTime.UtcNow.AddSeconds(DiscussionSeconds);
 
 
-            if (IsAutohost || (!Users.ContainsKey(FounderName) || Users[FounderName].LobbyUser?.IsAway == true) && Mode != AutohostMode.None && Mode != AutohostMode.Planetwars && !IsPassworded)
+            if (Mode != AutohostMode.None && (IsAutohost || (!Users.ContainsKey(FounderName) || Users[FounderName].LobbyUser?.IsAway == true) && Mode != AutohostMode.Planetwars && !IsPassworded))
             {
                 if (!result)
                 {
