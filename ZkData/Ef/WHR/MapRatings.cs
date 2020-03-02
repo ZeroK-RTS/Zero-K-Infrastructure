@@ -81,7 +81,7 @@ namespace Ratings
                 {
 
                     db.Database.CommandTimeout = 300;
-                    var endPollId = lastPollId + 10000;
+                    var endPollId = lastPollId + 1000;
                     outcomes = db.MapPollOutcomes.Where(x => x.MapPollID > lastPollId && x.MapPollID < endPollId).Include(x => x.MapPollOptions).OrderBy(x => x.MapPollID).AsNoTracking().ToList();
                 }
                 outcomes.ForEach(poll =>
@@ -91,9 +91,9 @@ namespace Ratings
                     var losers = opts.Where(x => x.Votes != opts[0].Votes);
                     if (losers.Count() > 0)
                     {
-                        var game = new Game(winners.Select(x => GetPlayer(x.ResourceID, poll.Category)).ToList(), losers.Select(x => GetPlayer(x.ResourceID, poll.Category)).ToList(), true, 0, poll.MapPollID);
-                        game.whitePlayers.ForEach(x => x.AddGame(game));
-                        game.blackPlayers.ForEach(x => x.AddGame(game));
+                        var game = new Game(winners.Select(x => GetPlayer(x.ResourceID, poll.Category)).ToList(), losers.Select(x => (ICollection<Player>)new List<Player>() { GetPlayer(x.ResourceID, poll.Category) }).ToList(), 0, poll.MapPollID);
+                        game.loserPlayers.ForEach(t => t.ForEach(x => x.AddGame(game)));
+                        game.winnerPlayers.ForEach(x => x.AddGame(game));
                     }
                     lastPollId = poll.MapPollID;
                 });
