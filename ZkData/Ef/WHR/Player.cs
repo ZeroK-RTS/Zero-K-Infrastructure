@@ -295,13 +295,13 @@ namespace Ratings
                 }
                 days.Add(newPDay);
             }
-            if (game.playerFinder.ContainsKey(this))
+            if (game.whitePlayers.Contains(this))
             {
-                game.loserDays[this] = days[days.Count - 1];
+                game.whiteDays[this] = days[days.Count - 1];
             }
             else
             {
-                game.winnerDays[this] = days[days.Count - 1];
+                game.blackDays[this] = days[days.Count - 1];
             }
 
             days[days.Count - 1].AddGame(game);
@@ -349,13 +349,13 @@ namespace Ratings
             {
                 d = days[insertAfterDay];
             }
-            if (game.playerFinder.ContainsKey(this))
+            if (game.whitePlayers.Contains(this))
             {
-                game.loserDays[this] = d;
+                game.whiteDays[this] = d;
             }
             else
             {
-                game.winnerDays[this] = d;
+                game.blackDays[this] = d;
             }
         }
 

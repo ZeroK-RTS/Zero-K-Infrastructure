@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GameAnalyticsSDK.Net;
+using Neo.IronLua;
 using Newtonsoft.Json;
 using PlasmaDownloader;
 using PlasmaDownloader.Packages;
@@ -107,7 +108,7 @@ namespace ChobbyLauncher
                 else internalName = "Chobby $VERSION";
 
 
-                engine = engine ?? GetSteamEngine() ?? QueryDefaultEngine() ?? GlobalConst.DefaultEngineOverride;
+                engine = engine ?? GetSteamEngine() ?? QueryDefaultEngine() ?? ExtractEngineFromLua(ver) ?? GlobalConst.DefaultEngineOverride;
 
                 try
                 {
@@ -196,7 +197,21 @@ namespace ChobbyLauncher
                 return ret;
             }
         }
-        
+
+
+        private dynamic ExtractEngineFromLua(PackageDownloader.Version ver)
+        {
+            if (ver != null)
+            {
+                var mi = ver.ReadFile(paths, "modinfo.lua");
+                var lua = new Lua();
+                var luaEnv = lua.CreateEnvironment();
+                dynamic result = luaEnv.DoChunk(new StreamReader(mi), "dummy.lua");
+                var engineVersion = result.engine;
+                return engineVersion;
+            }
+            return null;
+        }
 
         private string GetSteamEngine()
         {

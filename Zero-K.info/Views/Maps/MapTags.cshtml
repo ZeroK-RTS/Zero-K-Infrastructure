@@ -5,25 +5,14 @@
 }
 
 @if (m.MapIsFfa == true) {
-  <img src='/img/map_tags/ffa.png' style="width: 32px; height: 32px" title="Suitable for Free For All" />
+  <img src='/img/map_tags/ffa.png' style="width: 32px; height: 32px" title="Free For All" />
 }
-
-@if (m.MapWaterLevel == 1) {
-  <img src='/img/map_tags/sea1.png' style="width:32px; height: 32px" title="Land map, little to no water"/>
-} else if (m.MapWaterLevel == 2) {
-  <img src='/img/map_tags/sea2.png' style="width:32px; height: 32px" title="Mixed sea/land map, decent amounts of water"/>
-} else if (m.MapWaterLevel == 3) {
-  <img src='/img/map_tags/sea3.png' style="width:32px; height: 32px" title="Sea map, lots of water"/>
+@if (m.MapWaterLevel > 0) {
+  <img src='/img/map_tags/sea@(m.MapWaterLevel).png' style="width:32px; height: 32px" title="Sea coverage"/>
 }
-
-@if (m.MapHills == 1) {
-  <img src='/img/map_tags/hill1.png' style="width:32px; height: 32px" title="Flat map, little height variation"/>
-} else if (m.MapHills == 2) {
-  <img src='/img/map_tags/hill2.png' style="width:32px; height: 32px" title="Hilly map, decent height variation"/>
-} else if (m.MapHills == 3) {
-  <img src='/img/map_tags/hill3.png' style="width:32px; height: 32px" title="Mountainous map, high height variation"/>
+@if (m.MapHills > 0) {
+  <img src='/img/map_tags/hill@(m.MapHills).png' style="width:32px; height: 32px" title="Terrain"/>
 }
-
 @if (m.MapIsSpecial == true) {
   <img src='/img/map_tags/special.png' style="width: 32px; height: 32px" title="Map has special features" />
 }

@@ -11,75 +11,79 @@ namespace Ratings
     {
         public readonly int day;
         public readonly int id;
-        public List<ICollection<Player>> loserPlayers;
-        public ICollection<Player> winnerPlayers;
-        public Dictionary<Player, PlayerDay> loserDays = new Dictionary<Player, PlayerDay>();
-        public Dictionary<Player, PlayerDay> winnerDays = new Dictionary<Player, PlayerDay>();
-        public Dictionary<Player, int> playerFinder = new Dictionary<Player, int>();
+        public ICollection<Player> whitePlayers;
+        public ICollection<Player> blackPlayers;
+        public bool blackWins;
+        public Dictionary<Player, PlayerDay> whiteDays = new Dictionary<Player, PlayerDay>();
+        public Dictionary<Player, PlayerDay> blackDays = new Dictionary<Player, PlayerDay>();
 
-        public Game(ICollection<Player> winner, List<ICollection<Player>> loser, int time_step, int id)
+        public Game(ICollection<Player> black, ICollection<Player> white, bool blackWins, int time_step, int id)
         {
             this.id = id;
             day = time_step;
-            loserPlayers = loser;
-            winnerPlayers = winner;
-            for (int i = 0; i < loser.Count; i++)
-            {
-                loser[i].ForEach(p => playerFinder.Add(p, i));
-            }
+            whitePlayers = white;
+            blackPlayers = black;
+            this.blackWins = blackWins;
         }
 
-        private float GetLoserNaturalRating(int team)
+        private float GetWhiteNaturalRating()
         {
             float ret = 0;
             float w;
-            foreach (Player p in loserPlayers[team])
+            float totWeight = 0;
+            foreach (PlayerDay pd in whiteDays.Values)
             {
-                PlayerDay pd = loserDays[p];
                 w = GetPlayerWeight(pd.player);
+                totWeight += w;
                 ret += pd.GetNaturalRating() * w;
             }
-            return ret;
+            return ret / totWeight;
         }
 
         private float GetBlackNaturalRating()
         {
             float ret = 0;
             float w;
-            foreach (PlayerDay pd in winnerDays.Values)
+            float totWeight = 0;
+            foreach (PlayerDay pd in blackDays.Values)
             {
                 w = GetPlayerWeight(pd.player);
+                totWeight += w;
                 ret += pd.GetNaturalRating() * w;
             }
-            return ret;
+            return ret / totWeight;
         }
 
         public float GetPlayerWeight(Player p)
         {
-            int size = playerFinder.ContainsKey(p) ? loserPlayers[playerFinder[p]].Count : winnerPlayers.Count;
-            return 1.0f / size;
+            return 1.0f / GetPlayerTeammates(p).Count;
         }
 
-        private float GetLoserGamma(int team)
+        private float GetWhiteGamma()
         {
-            return (float)Math.Exp(GetLoserNaturalRating(team));
-        }
-        private float GetLosersGamma()
-        {
-            float sum = 0;
-            for (int i = 0; i < loserPlayers.Count; i++) sum += GetLoserGamma(i);
-            return sum;
+            return (float)Math.Exp(GetWhiteNaturalRating());
         }
 
-        private float GetWinnerGamma()
+        private float GetBlackGamma()
         {
             return (float)Math.Exp(GetBlackNaturalRating());
         }
 
         public float GetOpponentsAdjustedGamma(Player player)
         {
-            
-            float rval = GetWinnerGamma() + GetLosersGamma() - GetAlliesAdjustedGamma(player, false);
+
+            float opponent_naturalrating = 0;
+            float blackNaturalRating = GetBlackNaturalRating();
+            float whiteNaturalRating = GetWhiteNaturalRating();
+            if ((whitePlayers.Contains(player)))
+            {
+                opponent_naturalrating = blackNaturalRating + 0 * (-whiteNaturalRating + whiteDays[player].GetNaturalRating())/* / (float)Math.sqrt(whiteDays.Count)*/;
+            }
+            else
+            {
+                opponent_naturalrating = whiteNaturalRating + 0 * (-blackNaturalRating + blackDays[player].GetNaturalRating())/* / (float)Math.sqrt(blackDays.Count)*/;
+            }
+            float rval = (float)Math.Exp(opponent_naturalrating);
             if (rval == 0 || float.IsInfinity(rval) || float.IsNaN(rval))
             {
                 Trace.TraceError("WHR: Gamma out of bounds");
@@ -87,21 +91,19 @@ namespace Ratings
             return rval;
         }
 
-        public float GetAlliesAdjustedGamma(Player player, bool excludeMe = true)
+        public float GetAlliesAdjustedGamma(Player player)
         {
 
             float ally_naturalrating = 0;
             float blackNaturalRating = GetBlackNaturalRating();
-            if ((playerFinder.ContainsKey(player)))
+            float whiteNaturalRating = GetWhiteNaturalRating();
+            if ((whitePlayers.Contains(player)))
             {
-                float whiteNaturalRating = GetLoserNaturalRating(playerFinder[player]);
-                ally_naturalrating = whiteNaturalRating ;
-                if (excludeMe) ally_naturalrating -= loserDays[player].GetNaturalRating() * GetPlayerWeight(player);
+                ally_naturalrating = whiteNaturalRating - whiteDays[player].GetNaturalRating() * GetPlayerWeight(player);
             }
             else
             {
-                ally_naturalrating = blackNaturalRating;
-                if (excludeMe) ally_naturalrating -= winnerDays[player].GetNaturalRating() * GetPlayerWeight(player);
+                ally_naturalrating = blackNaturalRating - blackDays[player].GetNaturalRating() * GetPlayerWeight(player);
             }
             float rval = (float)Math.Exp(ally_naturalrating);
             if (rval == 0 || float.IsInfinity(rval) || float.IsNaN(rval))
@@ -115,13 +117,13 @@ namespace Ratings
         {
 
             float my_naturalrating = 0;
-            if ((playerFinder.ContainsKey(player)))
+            if ((whitePlayers.Contains(player)))
             {
-                my_naturalrating = loserDays[player].GetNaturalRating() * GetPlayerWeight(player);
+                my_naturalrating = whiteDays[player].GetNaturalRating() * GetPlayerWeight(player);
             }
             else
             {
-                my_naturalrating = winnerDays[player].GetNaturalRating() * GetPlayerWeight(player);
+                my_naturalrating = blackDays[player].GetNaturalRating() * GetPlayerWeight(player);
             }
             float rval = (float)Math.Exp(my_naturalrating);
             if (rval == 0 || float.IsInfinity(rval) || float.IsNaN(rval))
@@ -131,14 +133,26 @@ namespace Ratings
             return rval;
         }
 
-        public float GetWinProbability()
+        public ICollection<Player> GetPlayerTeammates(Player player)
         {
-            if (loserDays.Count == 0 || winnerDays.Count == 0)
+            if ((whitePlayers.Contains(player)))
             {
-                loserPlayers.ForEach(t => t.ForEach(p => p.FakeGame(this)));
-                winnerPlayers.ForEach(p => p.FakeGame(this));
+                return whitePlayers;
             }
-            return GetWinnerGamma() / (GetLosersGamma() + GetWinnerGamma());
+            else
+            {
+                return blackPlayers;
+            }
+        }
+
+        public float GetBlackWinProbability()
+        {
+            if (whiteDays.Count == 0 || blackDays.Count == 0)
+            {
+                whitePlayers.ForEach(p => p.FakeGame(this));
+                blackPlayers.ForEach(p => p.FakeGame(this));
+            }
+            return GetBlackGamma() / (GetWhiteGamma() + GetBlackGamma());
         }
         
         public override int GetHashCode()

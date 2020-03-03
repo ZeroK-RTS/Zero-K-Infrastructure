@@ -58,10 +58,8 @@ namespace Ratings
         {
 
             var rating = ratingSystem.GetPlayerRating(acc.AccountID);
-            //if (rating.Rank == int.MaxValue) return null;
-            // ignore inactivity
-            if (ratingSystem.GetActivePlayers() < GlobalConst.LadderSize) return null;
-            // don't count unused rating systems, e.g. planetwars
+            if (rating.Rank == int.MaxValue) return null;
+            //var stdev = Math.Min(10000, rating.EloStdev);
             var rank = acc.Rank;
             var bracket = ratingSystem.GetPercentileBracket(rank);
             var stdevUp = 0.0;

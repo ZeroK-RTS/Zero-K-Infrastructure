@@ -115,12 +115,13 @@ namespace Ratings
         {
             var predictions = teams.Select(t =>
                     SetupGame(t.Select(x => (x.AccountID)).Distinct().ToList(),
-                            teams.Where(t2 => !t2.Equals(t)).Select(t2 => (ICollection<int>)t2.Select(x => (x.AccountID)).Distinct().ToList()).ToList(),
+                            teams.Where(t2 => !t2.Equals(t)).SelectMany(t2 => t2.Select(x => (x.AccountID))).Distinct().ToList(),
+                            true,
                             RatingSystems.ConvertDateToDays(time),
                             -1,
                             true
-                    ).GetWinProbability()).ToList();
-            return predictions;
+                    ).GetBlackWinProbability()).ToList();
+            return predictions.Select(x => x / predictions.Sum()).ToList();
         }
 
         public void AttachResultReporting(int battleID, PendingDebriefing debriefing)
@@ -130,28 +131,20 @@ namespace Ratings
 
         public void ProcessBattle(SpringBattle battle)
         {
-            ICollection<int> winners = battle.SpringBattlePlayers
-                .Where(p => p.IsInVictoryTeam && !p.IsSpectator)
-                .Select(p => (p.AccountID))
-                .Distinct()
-                .ToList();
-            ICollection<ICollection<int>> losers = battle.SpringBattlePlayers
-                .Where(p => !p.IsInVictoryTeam && !p.IsSpectator)
-                .GroupBy(p => p.AllyNumber)
-                .Select(t => (ICollection<int>)t.Select(p => p.AccountID).Distinct().ToList())
-                .ToList();
+            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => (p.AccountID)).Distinct().ToList();
+            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => (p.AccountID)).Distinct().ToList();
 
             int date = RatingSystems.ConvertDateToDays(battle.StartTime);
 
             if (RatingSystems.Initialized)
             {
-                if (losers.Any(t => winners.Intersect(t).Any())) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has winner loser intersection");
+                if (winners.Intersect(losers).Any()) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has winner loser intersection");
                 if (ProcessedBattles.Contains(battle.SpringBattleID)) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has already been processed");
                 if (winners.Count == 0) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has no winner");
                 if (losers.Count == 0) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has no loser");
             }
 
-            if (!losers.Any(t => winners.Intersect(t).Any()) && !ProcessedBattles.Contains(battle.SpringBattleID) && winners.Count > 0 && losers.Count > 0)
+            if (!winners.Intersect(losers).Any() && !ProcessedBattles.Contains(battle.SpringBattleID) && winners.Count > 0 && losers.Count > 0)
             {
 
                 battlesRegistered++;
@@ -164,7 +157,7 @@ namespace Ratings
                 else
                 {
 
-                    CreateGame(winners, losers, date, battle.SpringBattleID);
+                    CreateGame(losers, winners, false, date, battle.SpringBattleID);
                     futureDebriefings.ForEach(u => pendingDebriefings.TryAdd(u.Key, u.Value));
                     futureDebriefings.Clear();
                  
@@ -459,9 +452,9 @@ namespace Ratings
                     d.GetElo() + ";" +
                     d.naturalRatingVariance * 100 + ";" +
                     d.games[0].Select(g =>
-                        g.loserPlayers.Select(t => t.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y)).Aggregate("", (x, y) => x + "/" + y) + "/" +
-                        g.winnerPlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y) + "/" +
-                        ("Last is winner") + "/" +
+                        g.whitePlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y) + "/" +
+                        g.blackPlayers.Select(p => p.id.ToString()).Aggregate("", (x, y) => x + "," + y) + "/" +
+                        (g.blackWins ? "Second" : "First") + "/" +
                         g.id
                     ).Aggregate("", (x, y) => x + "|" + y) + "\r\n";
             }
@@ -482,7 +475,7 @@ namespace Ratings
                 using (var db = new ZkDataContext())
                 {
                     var battleIDs = pendingDebriefings.Keys.ToList();
-                    var lastBattlePlayers = db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).Include(x => x.Account).DistinctBy(x => x.AccountID).ToList();
+                    var lastBattlePlayers = db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).Include(x => x.Account).ToList();
                     oldRatings = lastBattlePlayers.ToDictionary(p => (p.AccountID), p => GetPlayerRating(p.AccountID).LadderElo);
                     lastBattlePlayers.Where(p => !playerRatings.ContainsKey((p.AccountID))).ForEach(p => playerRatings[(p.AccountID)] = new PlayerRating(DefaultRating));
                     lastBattlePlayers.ForEach(p => playerRatings[(p.AccountID)].LadderElo = Ranks.UpdateLadderRating(p.Account, category, getPlayerById((p.AccountID)).avgElo + RatingOffset, p.IsInVictoryTeam, !p.IsInVictoryTeam, db));
@@ -650,43 +643,43 @@ namespace Ratings
             return players[id];
         }
 
-        private Game SetupGame(ICollection<int> winners, ICollection<ICollection<int>> losers, int time_step, int id, bool temporary)
+        private Game SetupGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step, int id, bool temporary)
         {
 
             // Avoid self-played games (no info)
-            if (winners.Equals(losers))
+            if (black.Equals(white))
             {
                 Trace.TraceError("White == Black");
                 return null;
             }
-            if (losers.Count < 1)
+            if (white.Count < 1)
             {
                 Trace.TraceError("White empty");
                 return null;
             }
-            if (winners.Count < 1)
+            if (black.Count < 1)
             {
                 Trace.TraceError("Black empty");
                 return null;
             }
 
 
-            List<ICollection<Player>> white_player = losers.Select(t => (ICollection<Player>)t.Select(p => getPlayerById(p, temporary)).ToList()).ToList();
-            List<Player> black_player = winners.Select(p => getPlayerById(p, temporary)).ToList();
-            Game game = new Game(black_player, white_player, time_step, id);
+            List<Player> white_player = white.Select(p => getPlayerById(p, temporary)).ToList();
+            List<Player> black_player = black.Select(p => getPlayerById(p, temporary)).ToList();
+            Game game = new Game(black_player, white_player, blackWins, time_step, id);
             return game;
         }
 
-        private Game CreateGame(ICollection<int> winners, ICollection<ICollection<int>> losers, int time_step, int id)
+        private Game CreateGame(ICollection<int> black, ICollection<int> white, bool blackWins, int time_step, int id)
         {
-            Game game = SetupGame(winners, losers, time_step, id, false);
+            Game game = SetupGame(black, white, blackWins, time_step, id, false);
             return game != null ? AddGame(game) : null;
         }
 
         private Game AddGame(Game game)
         {
-            game.loserPlayers.ForEach(t => t.ForEach(p => p.AddGame(game)));
-            game.winnerPlayers.ForEach(p => p.AddGame(game));
+            game.whitePlayers.ForEach(p => p.AddGame(game));
+            game.blackPlayers.ForEach(p => p.AddGame(game));
             
             return game;
         }
