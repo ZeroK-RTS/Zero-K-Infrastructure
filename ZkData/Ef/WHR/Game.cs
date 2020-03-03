@@ -25,7 +25,7 @@ namespace Ratings
             winnerPlayers = winner;
             for (int i = 0; i < loser.Count; i++)
             {
-                loser[i].ForEach(p => playerFinder.Add(p, id));
+                loser[i].ForEach(p => playerFinder.Add(p, i));
             }
         }
 
