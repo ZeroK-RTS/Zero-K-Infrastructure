@@ -475,7 +475,7 @@ namespace Ratings
                 using (var db = new ZkDataContext())
                 {
                     var battleIDs = pendingDebriefings.Keys.ToList();
-                    var lastBattlePlayers = db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).Include(x => x.Account).ToList();
+                    var lastBattlePlayers = db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).Include(x => x.Account).DistinctBy(x => x.AccountID).ToList();
                     oldRatings = lastBattlePlayers.ToDictionary(p => (p.AccountID), p => GetPlayerRating(p.AccountID).LadderElo);
                     lastBattlePlayers.Where(p => !playerRatings.ContainsKey((p.AccountID))).ForEach(p => playerRatings[(p.AccountID)] = new PlayerRating(DefaultRating));
                     lastBattlePlayers.ForEach(p => playerRatings[(p.AccountID)].LadderElo = Ranks.UpdateLadderRating(p.Account, category, getPlayerById((p.AccountID)).avgElo + RatingOffset, p.IsInVictoryTeam, !p.IsInVictoryTeam, db));
