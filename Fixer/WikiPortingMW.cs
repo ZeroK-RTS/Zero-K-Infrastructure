@@ -244,14 +244,14 @@ namespace Fixer
             // regex find infobox to replace it
             string tailTag = @"==\s?Description\s?==";
             Match match = Regex.Match(currentText, @"(?s)\{\{\s*" + templateTitle +
-                @"(.*?)}}\r?\n?" + tailTag);
+                @"(.*?)}}\r?\n?\r?\n?" + tailTag);
             
             if (match == null || !match.Success)
             {
                 // different content ordering (usually manually created page)
                 tailTag = @"\s*The '''";
                 match = Regex.Match(currentText, @"(?s)\{\{\s*" + templateTitle +
-                    @"(.*?)}}\r?\n?" + tailTag);
+                    @"(.*?)}}\r?\n?\r?\n?" + tailTag);
             }
 
             if (match == null || !match.Success)
@@ -365,17 +365,13 @@ namespace Fixer
         }
 
         /// <summary>Updates unit pages, either specified ones or all that were outputted by the unit tempalte exporter.</summary>
-        public static void UpdatePages()
+        public static void UpdatePages(bool live)
         {
             int count = 0;
-            string dir = "";
             bool infoBoxOnly = true;
-            if (infoBoxOnly)
-                dir = Path.Combine(fileDir, "raw_infobox/markup");
-            else
-                dir = Path.Combine(fileDir, "raw/markup");
+            String dir = Path.Combine(fileDir, infoBoxOnly ? "raw_infobox" : "raw", "markup");
 
-            string downloadDir = Path.Combine(fileDir, "raw_infobox/web");
+            string downloadDir = Path.Combine(fileDir, infoBoxOnly ? "raw_infobox" : "raw", "current_from_web");
             Directory.CreateDirectory(downloadDir);
 
             List<string> filesUpdate = new List<string>();
@@ -401,31 +397,32 @@ namespace Fixer
                 page.Load();
                 if (page.Exists())
                 {
-                    // Downloads the existing infoboxes from wiki.
+                    // Downloads the existing infoboxes/pages from wiki, when running in non-live mode.
                     // It is recommended that you do this and then use a merge tool
-                    // to compare with the unit exporter output; some unit infoboxes
+                    // to compare with the unit exporter output, as some unit infoboxes
                     // have custom content in them (e.g. Wind/Tidal Generator).
-                    /*
-                    string existingTemplate = page.GetExistingTemplate("Infobox zkunit");
-                    if (existingTemplate != null)
+                    if (!live)
                     {
-                        String writePath = Path.Combine(downloadDir, Path.GetFileNameWithoutExtension(path) + ".txt");
-                        Console.WriteLine("Saving template to: " + writePath);
-                        File.WriteAllText(writePath, existingTemplate);
-                        count++;
+                        string existing = infoBoxOnly ? page.GetExistingTemplate("Infobox zkunit") : page.text;
+                        if (existing != null)
+                        {
+                            String writePath = Path.Combine(downloadDir, Path.GetFileNameWithoutExtension(path) + ".txt");
+                            Console.WriteLine("Saving template to: " + writePath);
+                            File.WriteAllText(writePath, existing);
+                            count++;
+                        }
                     }
-                    */
 
                     // Actually modify the pages.
                     bool result = UpdateUnitPage(page, path, infoBoxOnly);
                     if (result)
                     {
-                        page.Save("Page auto-updated with DotNetWikiBot", true);
+                        if (live) page.Save("Page auto-updated with DotNetWikiBot", true);
                         //Console.WriteLine("Page " + unitname + " changed");
                         count++;
                     }
                     // Stop and pause every 10 pages, so that you can review the changes on live wiki (check the Recent changes page).
-                    if (count >= 10)
+                    if (live && count >= 10)
                     {
                         count = 0;
                         Console.WriteLine("-- INTERMISSION --");
@@ -562,7 +559,7 @@ namespace Fixer
             //RenameUnits();
 
             // unit page updater
-            UpdatePages();
+            UpdatePages(false);
 
             // unitpic replacer
             //ReplaceUnitpics();
