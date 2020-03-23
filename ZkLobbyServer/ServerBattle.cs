@@ -214,14 +214,10 @@ namespace ZkLobbyServer
         {
             if (Users.IsEmpty && !spring.IsRunning)
             {
-                if (IsAutohost)
-                {
-                    await RunCommandDirectly<CmdMap>(null);
-                }
-                else
-                {
+                if (!IsAutohost)
                     await server.RemoveBattle(this);
-                }
+                else if (Mode != AutohostMode.None) // custom autohosts would typically be themed around a single map
+                    await RunCommandDirectly<CmdMap>(null);
             }
         }
 
@@ -917,7 +913,7 @@ namespace ZkLobbyServer
             BlockPollsUntil = DateTime.UtcNow.AddSeconds(DiscussionSeconds);
 
 
-            if (IsAutohost || (!Users.ContainsKey(FounderName) || Users[FounderName].LobbyUser?.IsAway == true) && Mode != AutohostMode.None && Mode != AutohostMode.Planetwars && !IsPassworded)
+            if (Mode != AutohostMode.None && (IsAutohost || (!Users.ContainsKey(FounderName) || Users[FounderName].LobbyUser?.IsAway == true) && Mode != AutohostMode.Planetwars && !IsPassworded))
             {
                 if (!result)
                 {
