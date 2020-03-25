@@ -67,11 +67,23 @@ namespace ZkLobbyServer
 
             queueConfigs.Add(new QueueConfig()
             {
-                Name = "Teams",
-                Description = "Play 2v2 to 4v4 with players of similar skill.",
+                Name = "Sortie",
+                Description = "Play 2v2 or 3v3 with players of similar skill.",
                 MinSize = 4,
-                MaxSize = 8,
-                MaxPartySize = 4,
+                MaxSize = 6,
+                MaxPartySize = 3,
+                EloCutOffExponent = 0.96,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
+
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "Battle",
+                Description = "Play 4v4, 5v5 or 6v6 with players of similar skill.",
+                MinSize = 8,
+                MaxSize = 12,
+                MaxPartySize = 6,
                 EloCutOffExponent = 0.96,
                 Mode = AutohostMode.Teams,
                 MapSelector = IsTeamsMap,
