@@ -467,19 +467,15 @@ namespace Ratings
         //Runs in O(N log(N)) for all players
         private void UpdateRankings(IEnumerable<Player> players)
         {
-            Dictionary<int, float> oldRatings = new Dictionary<int, float>();
-            List<SpringBattlePlayer> lastBattlePlayers;
-            var debriefings = new Dictionary<int, PendingDebriefing>(pendingDebriefings);
-            int matched = 0;
-
             try
             {
-             
+                Dictionary<int, float> oldRatings = new Dictionary<int, float>();
+
                 //check for ladder elo updates
                 using (var db = new ZkDataContext())
                 {
-                    var battleIDs = debriefings.Keys.ToList();
-                    lastBattlePlayers = db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).Include(x => x.Account).DistinctBy(x => x.AccountID).ToList();
+                    var battleIDs = pendingDebriefings.Keys.ToList();
+                    var lastBattlePlayers = db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).Include(x => x.Account).DistinctBy(x => x.AccountID).ToList();
                     oldRatings = lastBattlePlayers.ToDictionary(p => (p.AccountID), p => GetPlayerRating(p.AccountID).LadderElo);
                     lastBattlePlayers.Where(p => !playerRatings.ContainsKey((p.AccountID))).ForEach(p => playerRatings[(p.AccountID)] = new PlayerRating(DefaultRating));
                     lastBattlePlayers.ForEach(p => playerRatings[(p.AccountID)].LadderElo = Ranks.UpdateLadderRating(p.Account, category, getPlayerById((p.AccountID)).avgElo + RatingOffset, p.IsInVictoryTeam, !p.IsInVictoryTeam, db));
@@ -516,6 +512,7 @@ namespace Ratings
                 this.activePlayers = playerCount;
                 int rank = 0;
                 List<int> newTopPlayers = new List<int>();
+                int matched = 0;
                 List<float> newPercentileBrackets = new List<float>();
                 newPercentileBrackets.Add(playerRatings[sortedPlayers.First().Value].LadderElo);
                 float percentile;
@@ -555,24 +552,17 @@ namespace Ratings
 
                 //check for rank updates
 
-                
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError("WHR " + category + ": Failed to update rankings: " + ex);
-                return;
-            }
-            try
-            {
-                if (debriefings.Any())
+                if (pendingDebriefings.Any())
                 {
                     List<int> playersWithRatingChange = new List<int>();
                     Dictionary<int, int> oldRanks = new Dictionary<int, int>();
                     Dictionary<int, Account> updatedRanks = new Dictionary<int, Account>();
                     Dictionary<int, Account> involvedAccounts = new Dictionary<int, Account>();
-                    Trace.TraceInformation("WHR Filling in Debriefings for Battles: " + debriefings.Keys.Select(x => "B" + x).StringJoin());
+                    Trace.TraceInformation("WHR Filling in Debriefings for Battles: " + pendingDebriefings.Keys.Select(x => "B" + x).StringJoin());
                     using (var db = new ZkDataContext())
                     {
+                        var battleIDs = pendingDebriefings.Keys.ToList();
+                        var lastBattlePlayers = db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).Include(x => x.Account).ToList();
                         involvedAccounts = lastBattlePlayers.ToDictionary(p => p.AccountID, p => p.Account);
                         Trace.TraceInformation("WHR Debriefing players: " + involvedAccounts.Values.Select(x => x.Name).StringJoin());
                         oldRanks = lastBattlePlayers.ToDictionary(p => p.AccountID, p => p.Account.Rank);
@@ -580,21 +570,19 @@ namespace Ratings
                         updatedRanks.Values.ForEach(p => db.Entry(p).State = EntityState.Modified);
                         playersWithRatingChange = lastBattlePlayers.Select(x => x.AccountID).ToList();
 
-                        lastBattlePlayers.Where(p => /*playerOldRatings.ContainsKey((p.AccountID)) && */ !p.EloChange.HasValue).ForEach(p =>
+                        lastBattlePlayers.Where(p => playerOldRatings.ContainsKey((p.AccountID)) && !p.EloChange.HasValue).ForEach(p =>
                         {
                             //p.EloChange = playerRatings[(p.AccountID)].RealElo - playerOldRatings[(p.AccountID)].RealElo;
                             p.EloChange = playerRatings[(p.AccountID)].LadderElo - oldRatings[(p.AccountID)];
-                            db.Entry(p).State = EntityState.Modified;
                         });
 
-                        lastBattlePlayers.ForEach(x => playerOldRatings[x.AccountID] = playerRatings[x.AccountID]);
+                        db.SpringBattlePlayers.Where(p => battleIDs.Contains(p.SpringBattleID) && !p.IsSpectator).ToList().ForEach(x => playerOldRatings[(x.AccountID)] = playerRatings[(x.AccountID)]);
                         db.SaveChanges();
                     }
                     //Publish new results only after saving new stats to db.
-                    debriefings.ForEach(pair =>
+                    pendingDebriefings.ForEach(pair =>
                     {
-                        pair.Value.partialDebriefing.DebriefingUsers.Values.ForEach(user =>
-                        {
+                        pair.Value.partialDebriefing.DebriefingUsers.Values.ForEach(user => {
                             try
                             {
                                 user.EloChange = playerRatings[(user.AccountID)].LadderElo - oldRatings[(user.AccountID)];
@@ -606,7 +594,7 @@ namespace Ratings
                                 user.PrevRankElo = prog.RankFloorElo;
                                 user.NewElo = prog.CurrentElo;
                             }
-                            catch (Exception ex)
+                            catch(Exception ex)
                             {
                                 Trace.TraceError("Unable to complete debriefing for user " + user.AccountID + ": " + ex);
                             }
@@ -615,9 +603,9 @@ namespace Ratings
                         pair.Value.debriefingConsumer.Invoke(pair.Value.partialDebriefing);
                     });
                     RatingsUpdated(this, new RatingUpdate() { affectedPlayers = playersWithRatingChange });
-                    debriefings.ForEach(x => pendingDebriefings.TryRemove(x.Key, out _));
-
+                    pendingDebriefings.Clear();
                 }
+                
 
                 //check for topX updates
                 GetTopPlayers(GlobalConst.LadderSize);
@@ -632,7 +620,12 @@ namespace Ratings
             }
             catch (Exception ex)
             {
-                Trace.TraceError("WHR " + category + ": Failed to process battles for rankings: " + ex);
+                string dbg = "WHR " + category + ": Failed to update rankings " + ex + "\nPlayers: ";
+                foreach (var p in players)
+                {
+                    dbg += p.id + " (" + p.days.Count + " days), ";
+                }
+                Trace.TraceError(dbg);
             }
         }
 
