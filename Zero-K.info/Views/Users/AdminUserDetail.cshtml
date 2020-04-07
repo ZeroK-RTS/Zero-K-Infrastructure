@@ -74,7 +74,7 @@
     <h2>Smurfs</h2>
     @foreach (var ac in smurfs)
     {
-        <span>@Html.PrintAccount(ac)  -  @Html.ActionLink("admin", "AdminUserDetail", new { id = ac.AccountID })</span>
+        <span>@Html.PrintAccount(ac, true, true)  -  @Html.ActionLink("admin", "AdminUserDetail", new { id = ac.AccountID })</span>
         if (ac.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby))
         {
             <font color="#FF0000"><b>(BANNED)</b></font>
@@ -87,7 +87,7 @@
         <tbody style="vertical-align:top; background-color:#222">
             @foreach (var a in Model.AbuseReportsByAccountID)
             {
-                <tr><td>@a.Time</td><td>@Html.PrintAccount(a.AccountByReporterAccountID)</td><td style="padding-bottom:25px;">@Html.BBCode(a.Text)</td></tr>
+                <tr><td>@a.Time</td><td>@Html.PrintAccount(a.AccountByReporterAccountID, true, true)</td><td style="padding-bottom:25px;">@Html.BBCode(a.Text)</td></tr>
             }
         </tbody>
     </table>

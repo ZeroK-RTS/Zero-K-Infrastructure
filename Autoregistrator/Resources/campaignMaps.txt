@@ -16,7 +16,7 @@ Violence_4.2
 IsisDelta_v02
 Tombstone Desert V2
 Archers_Valley_v6
-Otago 1.1
+Otago 1.4
 Iced Coffee v4.3
 TheBeachBeta
 Onyx Cauldron 1.9
@@ -55,7 +55,7 @@ StormSiege_v3
 Downs_of_Destruction_Fix
 Melt_V2
 Craterv01
-SapphireShores_Dry_V2.1
+SapphireShores_Dry_V2.2
 Valiant_Saltscape
 Rage_v1
 Lost_v2

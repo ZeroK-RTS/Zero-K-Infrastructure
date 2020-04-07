@@ -364,9 +364,6 @@ namespace LobbyClient
         public bool IsInBattleRoom => BattleID != null;
         public bool IsInGame => InGameSince != null;
 
-
-
-
         [JsonIgnore]
         public string IpAddress;
 
@@ -377,14 +374,10 @@ namespace LobbyClient
         public int SyncVersion; //sync version for updating user statuses
 
         [JsonIgnore]
-        public int EffectiveMmElo { get; set; }
-
-        [JsonIgnore]
         public int RawMmElo { get; set; }
 
-        [JsonIgnore]
+        public int EffectiveMmElo { get; set; }
         public int EffectiveElo { get; set; }
-
         public int Level { get; set; }
         public int Rank { get; set; }
 
