@@ -79,7 +79,7 @@ namespace AutoRegistrator {
         ///IsisDelta_v02
         ///Tombstone Desert V2
         ///Archers_Valley_v6
-        ///Otago 1.1
+        ///Otago 1.4
         ///Iced Coffee v4.3
         ///TheBeachBeta
         ///Onyx Cauldron 1.9
