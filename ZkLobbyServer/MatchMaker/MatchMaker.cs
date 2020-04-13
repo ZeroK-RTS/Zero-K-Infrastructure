@@ -92,7 +92,7 @@ namespace ZkLobbyServer
             queueConfigs.Add(new QueueConfig()
             {
                 Name = "Coop",
-                Description = "Play together, against AI or chickens",
+                Description = "Play together, against AI or chickens.",
                 MinSize = 2,
                 MaxSize = 5,
                 MaxPartySize = 5,
@@ -104,7 +104,7 @@ namespace ZkLobbyServer
             queueConfigs.Add(new QueueConfig()
             {
                 Name = "1v1",
-                Description = "1v1 with opponent of similar skill",
+                Description = "1v1 with opponent of similar skill.",
                 MinSize = 2,
                 MaxSize = 2,
                 EloCutOffExponent = 0.97,
