@@ -131,54 +131,54 @@ namespace Ratings
 
         public void ProcessBattle(SpringBattle battle)
         {
-            //ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => (p.AccountID)).Distinct().ToList();
-            //ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => (p.AccountID)).Distinct().ToList();
-			//
-            //int date = RatingSystems.ConvertDateToDays(battle.StartTime);
-			//
-            //if (RatingSystems.Initialized)
-            //{
-            //    if (winners.Intersect(losers).Any()) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has winner loser intersection");
-            //    if (ProcessedBattles.Contains(battle.SpringBattleID)) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has already been processed");
-            //    if (winners.Count == 0) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has no winner");
-            //    if (losers.Count == 0) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has no loser");
-            //}
-			//
-            //if (!winners.Intersect(losers).Any() && !ProcessedBattles.Contains(battle.SpringBattleID) && winners.Count > 0 && losers.Count > 0)
-            //{
-			//
-            //    battlesRegistered++;
-            //    ProcessedBattles.Add(battle.SpringBattleID);
-            //    
-            //    if (date > RatingSystems.ConvertDateToDays(DateTime.UtcNow))
-            //    {
-            //        Trace.TraceWarning("WHR " + category + ": Tried to register battle " + battle.SpringBattleID + " which is from the future " + (date) + " > " + RatingSystems.ConvertDateToDays(DateTime.UtcNow));
-            //    }
-            //    else
-            //    {
-			//
-            //        CreateGame(losers, winners, false, date, battle.SpringBattleID);
-            //        futureDebriefings.ForEach(u => pendingDebriefings.TryAdd(u.Key, u.Value));
-            //        futureDebriefings.Clear();
-            //     
-            //        if (RatingSystems.Initialized)
-            //        {
-            //            Trace.TraceInformation(battlesRegistered + " battles registered for WHR " + category + ", latest Battle: " + battle.SpringBattleID);
-            //            UpdateRatings();
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    PendingDebriefing debriefing;
-            //    futureDebriefings.TryGetValue(battle.SpringBattleID, out debriefing);
-            //    if (debriefing == null) pendingDebriefings.TryGetValue(battle.SpringBattleID, out debriefing);
-            //    if (debriefing != null)
-            //    {
-            //        Trace.TraceWarning("Battle " + battle.SpringBattleID + " was processed before attaching pending report");
-            //        debriefing.debriefingConsumer.Invoke(debriefing.partialDebriefing);
-            //    }
-            //}
+            ICollection<int> winners = battle.SpringBattlePlayers.Where(p => p.IsInVictoryTeam && !p.IsSpectator).Select(p => (p.AccountID)).Distinct().ToList();
+            ICollection<int> losers = battle.SpringBattlePlayers.Where(p => !p.IsInVictoryTeam && !p.IsSpectator).Select(p => (p.AccountID)).Distinct().ToList();
+
+            int date = RatingSystems.ConvertDateToDays(battle.StartTime);
+
+            if (RatingSystems.Initialized)
+            {
+                if (winners.Intersect(losers).Any()) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has winner loser intersection");
+                if (ProcessedBattles.Contains(battle.SpringBattleID)) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has already been processed");
+                if (winners.Count == 0) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has no winner");
+                if (losers.Count == 0) Trace.TraceWarning("WHR B" + battle.SpringBattleID + " has no loser");
+            }
+
+            if (!winners.Intersect(losers).Any() && !ProcessedBattles.Contains(battle.SpringBattleID) && winners.Count > 0 && losers.Count > 0)
+            {
+
+                battlesRegistered++;
+                ProcessedBattles.Add(battle.SpringBattleID);
+                
+                if (date > RatingSystems.ConvertDateToDays(DateTime.UtcNow))
+                {
+                    Trace.TraceWarning("WHR " + category + ": Tried to register battle " + battle.SpringBattleID + " which is from the future " + (date) + " > " + RatingSystems.ConvertDateToDays(DateTime.UtcNow));
+                }
+                else
+                {
+
+                    CreateGame(losers, winners, false, date, battle.SpringBattleID);
+                    futureDebriefings.ForEach(u => pendingDebriefings.TryAdd(u.Key, u.Value));
+                    futureDebriefings.Clear();
+                 
+                    if (RatingSystems.Initialized)
+                    {
+                        Trace.TraceInformation(battlesRegistered + " battles registered for WHR " + category + ", latest Battle: " + battle.SpringBattleID);
+                        UpdateRatings();
+                    }
+                }
+            }
+            else
+            {
+                PendingDebriefing debriefing;
+                futureDebriefings.TryGetValue(battle.SpringBattleID, out debriefing);
+                if (debriefing == null) pendingDebriefings.TryGetValue(battle.SpringBattleID, out debriefing);
+                if (debriefing != null)
+                {
+                    Trace.TraceWarning("Battle " + battle.SpringBattleID + " was processed before attaching pending report");
+                    debriefing.debriefingConsumer.Invoke(debriefing.partialDebriefing);
+                }
+            }
         }
 
 

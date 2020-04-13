@@ -116,29 +116,29 @@ namespace Ratings
 
         private static void ProcessBattle(SpringBattle battle, PendingDebriefing debriefing = null)
         {
-            //lock (processingLock)
-            //{
-            //    if (debriefing != null)
-            //    {
-            //        var cat = ratingCategories.Where(c => IsCategory(battle, c));
-            //        if (cat.Any()) whr[cat.First()].AttachResultReporting(battle.SpringBattleID, debriefing);
-            //        else debriefing.debriefingConsumer.Invoke(debriefing.partialDebriefing);
-            //    }
-			//
-            //    int battleID = -1;
-            //    try
-            //    {
-            //        battleID = battle.SpringBattleID;
-            //        if (processedBattles.Contains(battleID)) return;
-            //        processedBattles.Add(battleID);
-            //        ratingCategories.Where(c => IsCategory(battle, c)).ForEach(c => whr[c].ProcessBattle(battle));
-            //        latestBattle = battleID;
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Trace.TraceError("WHR: Error processing battle (B" + battleID + ")" + ex);
-            //    }
-            //}
+            lock (processingLock)
+            {
+                if (debriefing != null)
+                {
+                    var cat = ratingCategories.Where(c => IsCategory(battle, c));
+                    if (cat.Any()) whr[cat.First()].AttachResultReporting(battle.SpringBattleID, debriefing);
+                    else debriefing.debriefingConsumer.Invoke(debriefing.partialDebriefing);
+                }
+
+                int battleID = -1;
+                try
+                {
+                    battleID = battle.SpringBattleID;
+                    if (processedBattles.Contains(battleID)) return;
+                    processedBattles.Add(battleID);
+                    ratingCategories.Where(c => IsCategory(battle, c)).ForEach(c => whr[c].ProcessBattle(battle));
+                    latestBattle = battleID;
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("WHR: Error processing battle (B" + battleID + ")" + ex);
+                }
+            }
         }
 
         private static Dictionary<int, Tuple<int, int, int>> factionCache = new Dictionary<int, Tuple<int, int, int>>();
