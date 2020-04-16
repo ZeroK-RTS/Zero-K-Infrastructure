@@ -95,7 +95,7 @@ namespace ZeroKWeb.Controllers
             if (model.SizeFrom.HasValue) ret = ret.Where(x => x.Map.MapWidth >= model.SizeFrom && x.Map.MapHeight >= model.SizeFrom);
             if (model.SizeTo.HasValue) ret = ret.Where(x => x.Map.MapWidth <= model.SizeTo && x.Map.MapHeight <= model.SizeTo);
 
-            if (model.SupportLevel.HasValue) ret = ret.Where(x => x.Map.MapSupportLevel >= model.SupportLevel);
+            ret = ret.Where(x => x.Map.MapSupportLevel >= (model.SupportLevel.HasValue ? model.SupportLevel : MapSupportLevel.Supported))
 
             model.Data = ret;
 
