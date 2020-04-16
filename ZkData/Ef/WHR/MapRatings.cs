@@ -110,7 +110,7 @@ namespace Ratings
 
                     using (var db = new ZkDataContext())
                     {
-                        var newRanking = maps[cat].Values.Select(x => x.days[0]).OrderByDescending(x => x.r).ToList();
+                        var newRanking = maps[cat].Values.Where(x => db.Resources.First(y => y.ResourceID == x.player.id).MapSupportLevel != MapSupportLevel.None).Select(x => x.days[0]).OrderByDescending(x => x.r).ToList();
                         var ranks = new List<Rating>();
                         for (int i = 0; i < newRanking.Count; i++)
                         {
