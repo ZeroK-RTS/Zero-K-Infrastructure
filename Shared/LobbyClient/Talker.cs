@@ -15,7 +15,7 @@ using ZkData;
 
 namespace LobbyClient
 {
-    class Talker: IDisposable
+    public class Talker: IDisposable
     {
         public const int TO_ALLIES = 252;
         public const int TO_EVERYONE = 254;

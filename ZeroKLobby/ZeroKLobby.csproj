@@ -22,7 +22,7 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <TargetZone>Custom</TargetZone>
     <SignAssembly>false</SignAssembly>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <StartupObject>ZeroKLobby.Program</StartupObject>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
