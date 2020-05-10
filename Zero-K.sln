@@ -46,8 +46,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MigrateDatabase", "MigrateD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChobbyLauncher", "ChobbyLauncher\ChobbyLauncher.csproj", "{37034FCF-F0CD-4069-8FD2-8D18E9794AD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DediRunner", "DediRunner\DediRunner.csproj", "{92C77A38-F679-4F0A-A0C4-9392832C011F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -184,14 +182,6 @@ Global
 		{37034FCF-F0CD-4069-8FD2-8D18E9794AD6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{37034FCF-F0CD-4069-8FD2-8D18E9794AD6}.Release|x86.ActiveCfg = Release|Any CPU
 		{37034FCF-F0CD-4069-8FD2-8D18E9794AD6}.Release|x86.Build.0 = Release|Any CPU
-		{92C77A38-F679-4F0A-A0C4-9392832C011F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{92C77A38-F679-4F0A-A0C4-9392832C011F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{92C77A38-F679-4F0A-A0C4-9392832C011F}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{92C77A38-F679-4F0A-A0C4-9392832C011F}.Debug|x86.Build.0 = Debug|Any CPU
-		{92C77A38-F679-4F0A-A0C4-9392832C011F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{92C77A38-F679-4F0A-A0C4-9392832C011F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{92C77A38-F679-4F0A-A0C4-9392832C011F}.Release|x86.ActiveCfg = Release|Any CPU
-		{92C77A38-F679-4F0A-A0C4-9392832C011F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
