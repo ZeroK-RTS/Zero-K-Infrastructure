@@ -95,7 +95,6 @@ namespace ZeroKWeb.Controllers
             var acc = db.Accounts.Single(x => x.AccountID == accountID);
             var clan = acc.Clan;
             if (clan == null) return null; // Person not in a clan
-            if (clan.Accounts.Count() > GlobalConst.ClanLeaveLimit) return null; // "This clan is too big to leave";
 
             RoleType leader = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople && x.IsClanOnly);
             bool isLeader = acc.AccountRolesByAccountID.Any(x => x.RoleType == leader);
