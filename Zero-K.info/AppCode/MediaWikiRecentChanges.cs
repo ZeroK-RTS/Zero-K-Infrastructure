@@ -35,7 +35,7 @@ namespace ZeroKWeb
 			catch (Exception ex)
 			{
 				Trace.TraceError("Error generating MediaWiki recent changes: {0}", ex);
-				throw ex;
+				// HACK disabled for migration throw ex;
 			}
 
 			cache = edits;
