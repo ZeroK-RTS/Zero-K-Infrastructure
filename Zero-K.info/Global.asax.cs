@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
@@ -133,7 +134,9 @@ namespace ZeroKWeb
 
         protected void Application_Start()
         {
-            System.Net.ServicePointManager.DefaultConnectionLimit = 200;
+            ServicePointManager.DefaultConnectionLimit = 200;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; // neded for paypal
+            
             ViewEngines.Engines.Clear();
             ViewEngines.Engines.Add(new RazorViewEngine() { FileExtensions = new[] { "cshtml" } }); // this should speed up rendering a bit
 
