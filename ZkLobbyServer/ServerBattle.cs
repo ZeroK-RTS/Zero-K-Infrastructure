@@ -546,7 +546,12 @@ namespace ZkLobbyServer
             if (topic == null) return false;
 
             var unwrappedCmd = cmd;
-            if (cmd is CmdPoll) unwrappedCmd = (cmd as CmdPoll).InternalCommand;
+            if (cmd is CmdPoll)
+            {
+                var split = args.Split(new[] { ' ' }, 2);
+                args = split.Length > 1 ? split[1] : "";
+                unwrappedCmd = (cmd as CmdPoll).InternalCommand;
+            }
 
             if (unwrappedCmd is CmdMap && string.IsNullOrEmpty(args)) return await CreateMultiMapPoll();
 
