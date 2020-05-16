@@ -548,7 +548,7 @@ namespace ZeroKWeb.Controllers
             var acc = db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
             var votes = acc.AccountForumVotes;
 
-            foreach (var vote in votes)
+            foreach (var vote in votes.ToList())
             {
                 var post = vote.ForumPost;
                 var author = post.Account;
