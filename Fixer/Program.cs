@@ -1008,6 +1008,7 @@ namespace Fixer
                 if (acc != null)
                 {
                     int? userID = banID ? (int?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                    string installID = banID ? acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().InstallID : null;
                     string userIP = banIP ? acc.AccountIPs.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
                     System.Console.WriteLine(acc.Name, userID, userIP);
                     Punishment punishment = new Punishment
@@ -1020,6 +1021,7 @@ namespace Fixer
                         BanIP = userIP,
                         CreatedAccountID = 5806,
                         UserID = userID,
+                        InstallID = installID,
                     };
                     acc.PunishmentsByAccountID.Add(punishment);
                 }

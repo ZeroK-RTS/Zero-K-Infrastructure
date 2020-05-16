@@ -438,6 +438,10 @@
     <Compile Include="Migrations\201910161453248_removeWhrAlias.Designer.cs">
       <DependentUpon>201910161453248_removeWhrAlias.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202005161704591_installID.cs" />
+    <Compile Include="Migrations\202005161704591_installID.Designer.cs">
+      <DependentUpon>202005161704591_installID.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -831,6 +835,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201910161453248_removeWhrAlias.resx">
       <DependentUpon>201910161453248_removeWhrAlias.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005161704591_installID.resx">
+      <DependentUpon>202005161704591_installID.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

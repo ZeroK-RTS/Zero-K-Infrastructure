@@ -122,7 +122,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams["LobbyID"] = user.AccountID.ToString();
                         userParams["CountryCode"] = user.HideCountry ? "??" : user.Country;
 
-                        var userBanMuted = Punishment.GetActivePunishment(user.AccountID, null, null, x => x.BanMute) != null;
+                        var userBanMuted = Punishment.GetActivePunishment(user.AccountID, null, null, null, x => x.BanMute) != null;
                         if (userBanMuted) userParams["muted"] = "1";
                         userParams["faction"] = user.Faction != null ? user.Faction.Shortcut : "";
                         userParams["clan"] = user.Clan != null ? user.Clan.Shortcut : "";
@@ -146,7 +146,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams["room_boss"] = p.Name == context.FounderName ? "1" : "0";
                         if (p.PartyID.HasValue) userParams["PartyID"] = p.PartyID.ToString();
 
-                        var userSpecChatBlocked = Punishment.GetActivePunishment(user.AccountID, null, null, x => x.BanSpecChat) != null; ;
+                        var userSpecChatBlocked = Punishment.GetActivePunishment(user.AccountID, null, null, null, x => x.BanSpecChat) != null; ;
                         userParams["can_spec_chat"] = userSpecChatBlocked ? "0" : "1";
 
                         userParams["ignored"] = string.Join(",", user.RelalationsByOwner.Where(x => x.Relation == Relation.Ignore).Select(x => x.Target.Name));
@@ -177,7 +177,7 @@ namespace ZeroKWeb.SpringieInterface
                             if (accountIDsWithExtraComms.ContainsKey(user.AccountID)) userParams["extracomm"] = accountIDsWithExtraComms[user.AccountID].ToString();
 
                             var commProfileIDs = new LuaTable();
-                            var userCommandersBanned = Punishment.GetActivePunishment(user.AccountID, null, null, x => x.BanCommanders) != null;
+                            var userCommandersBanned = Punishment.GetActivePunishment(user.AccountID, null, null, null, x => x.BanCommanders) != null;
                             if (!userCommandersBanned)
                             {
                                 // set up commander data

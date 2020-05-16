@@ -50,6 +50,7 @@ namespace ZkLobbyServer
             try
             {
                 var userID = login.UserID;
+                var installID = login.InstallID;
                 var lobbyVersion = login.LobbyVersion;
 
                 using (var db = new ZkDataContext())
@@ -119,13 +120,13 @@ namespace ZkLobbyServer
 
                     UpdateUserFromAccount(user, acc);
                     LogIP(db, acc, ip);
-                    LogUserID(db, acc, userID);
+                    LogUserID(db, acc, userID, installID);
 
                     db.SaveChanges();
 
                     ret.LoginResponse.SessionToken = Guid.NewGuid().ToString(); // create session token
 
-                    var banPenalty = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanLobby);
+                    var banPenalty = Punishment.GetActivePunishment(acc.AccountID, ip, userID, installID, x => x.BanLobby);
 
                     if (banPenalty != null)
                         return
@@ -133,9 +134,10 @@ namespace ZkLobbyServer
                                 $"Banned until {banPenalty.BanExpires} (match to {banPenalty.AccountByAccountID.Name}), reason: {banPenalty.Reason}",
                                 acc,
                                 ip,
-                                userID);
+                                userID,
+                                installID);
 
-                    if (!acc.HasVpnException && GlobalConst.VpnCheckEnabled) if (HasVpn(ip, acc, db)) return BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, userID);
+                    if (!acc.HasVpnException && GlobalConst.VpnCheckEnabled) if (HasVpn(ip, acc, db)) return BlockLogin("Connection using proxy or VPN is not allowed! (You can ask for exception)", acc, ip, userID, installID);
 
                     return ret;
                 }
@@ -156,7 +158,7 @@ namespace ZkLobbyServer
 
             if (!VerifyIp(ip)) return new RegisterResponse(RegisterResponse.Code.BannedTooManyAttempts);
 
-            var banPenalty = Punishment.GetActivePunishment(null, ip, register.UserID, x => x.BanLobby);
+            var banPenalty = Punishment.GetActivePunishment(null, ip, register.UserID, register.InstallID, x => x.BanLobby);
             if (banPenalty != null) return new RegisterResponse(RegisterResponse.Code.Banned) {BanReason =  banPenalty.Reason};
 
             SteamWebApi.PlayerInfo info = null;
@@ -197,7 +199,7 @@ namespace ZkLobbyServer
                     return new RegisterResponse(RegisterResponse.Code.InvalidPassword);
                 }
                 LogIP(db, acc, ip);
-                LogUserID(db, acc, register.UserID);
+                LogUserID(db, acc, register.UserID, register.InstallID);
                 db.Accounts.Add(acc);
                 db.SaveChanges();
                 var smurfs = acc.GetSmurfs().Where(a => a.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow));
@@ -237,9 +239,9 @@ namespace ZkLobbyServer
             if (user.Badges.Count == 0) user.Badges = null; // slight optimization for data transfer
             Interlocked.Increment(ref user.SyncVersion);
 
-            user.BanMute = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanMute) != null;
-            user.BanVotes = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanVotes) != null;
-            user.BanSpecChat = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, x => x.BanSpecChat) != null;
+            user.BanMute = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, null, x => x.BanMute) != null;
+            user.BanVotes = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, null, x => x.BanVotes) != null;
+            user.BanSpecChat = Punishment.GetActivePunishment(acc.AccountID, user.IpAddress, 0, null, x => x.BanSpecChat) != null;
         }
 
         public bool VerifyIp(string ip)
@@ -262,10 +264,10 @@ namespace ZkLobbyServer
         }
 
 
-        private LoginCheckerResponse BlockLogin(string reason, Account acc, string ip, long user_id)
+        private LoginCheckerResponse BlockLogin(string reason, Account acc, string ip, long user_id, string installID)
         {
             LogIpFailure(ip);
-            var str = $"Login denied for {acc.Name} IP:{ip} ID:{user_id} reason: {reason}";
+            var str = $"Login denied for {acc.Name} IP:{ip} UserID:{user_id} InstallID:{installID} reason: {reason}";
             Talk(str);
             Trace.TraceInformation(str);
             
@@ -393,14 +395,14 @@ namespace ZkLobbyServer
             entry.LastLogin = DateTime.UtcNow;
         }
 
-        private static void LogUserID(ZkDataContext db, Account acc, long user_id)
+        private static void LogUserID(ZkDataContext db, Account acc, long user_id, string installID)
         {
             if (user_id != 0)
             {
-                var entry = acc.AccountUserIDs.FirstOrDefault(x => x.UserID == user_id);
+                var entry = acc.AccountUserIDs.FirstOrDefault(x => x.UserID == user_id && x.InstallID == installID);
                 if (entry == null)
                 {
-                    entry = new AccountUserID { AccountID = acc.AccountID, UserID = user_id, FirstLogin = DateTime.UtcNow };
+                    entry = new AccountUserID { AccountID = acc.AccountID, UserID = user_id, FirstLogin = DateTime.UtcNow, InstallID = installID };
                     db.AccountUserIDs.InsertOnSubmit(entry);
                 }
                 entry.LoginCount++;

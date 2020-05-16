@@ -133,6 +133,8 @@ namespace LobbyClient
 
         public long UserID { get; set; }
 
+        public string InstallID { get; set; }
+
         public List<ulong> Dlc { get; set; }
     }
 
@@ -156,6 +158,7 @@ namespace LobbyClient
         public string Email { get; set; }
 
         public long UserID { get; set; }
+        public string InstallID { get; set; }
     }
 
     [Message(Origin.Server)]

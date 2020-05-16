@@ -41,7 +41,8 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
+                <th>UserID</th>
+                <th>InstallID</th>
                 <th>Count</th>
                 <th>First</th>
                 <th>Last</th>
@@ -50,12 +51,13 @@
         <tbody>
             @foreach (AccountUserID x in Model.AccountUserIDs.OrderByDescending(x => x.LastLogin))
             {
-                <tr>
-                    <td>@x.UserID</td>
-                    <td>@x.LoginCount</td>
-                    <td>@x.FirstLogin</td>
-                    <td>@x.LastLogin</td>
-                </tr>
+            <tr>
+                <td>@x.UserID</td>
+                <td>@x.InstallID</td>
+                <td>@x.LoginCount</td>
+                <td>@x.FirstLogin</td>
+                <td>@x.LastLogin</td>
+            </tr>
             }
         </tbody>
     </table>
@@ -69,6 +71,11 @@
         if (Model.AccountUserIDs.Any())
         {
             lastUserID = Model.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID;
+        }
+        string lastInstallID = null;
+        if (Model.AccountUserIDs.Any())
+        {
+            lastInstallID = Model.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().InstallID;
         }
     }
     <h2>Smurfs</h2>
@@ -172,6 +179,7 @@
         <br />
         IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x => x.LastLogin).Select(x => x.IP).FirstOrDefault())<br />
         UserID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
+        InstallID: @Html.TextBox("installID", lastInstallID)<br />
         Ban site: @Html.CheckBox("banSite")<br />
         Ban lobby: @Html.CheckBox("banLobby")<br />
         Ban forum: @Html.CheckBox("banForum")<br />

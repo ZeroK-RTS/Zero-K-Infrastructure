@@ -195,7 +195,7 @@ namespace ZeroKWeb.Controllers
             var res = new NewPostResult();
             var db = new ZkDataContext();
 
-            var penalty = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, x => x.BanForum);
+            var penalty = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, null, x => x.BanForum);
             if (penalty != null)
             {
                 return
@@ -268,7 +268,7 @@ namespace ZeroKWeb.Controllers
                 forumPostID == null && string.IsNullOrWhiteSpace(title)) return Content("Cannot post new thread with blank title");
             if (string.IsNullOrWhiteSpace(text)) return Content("Please type some text :)");
 
-            var penalty = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, x => x.BanForum);
+            var penalty = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, null, x => x.BanForum);
             if (penalty != null)
             {
                 return
@@ -526,7 +526,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var myAcc = Global.Account;
 
-            var penalty = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, x => x.BanForum);
+            var penalty = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, null, x => x.BanForum);
             if (penalty != null)
                 return Content(string.Format("You cannot vote while banned from forum!\nExpires: {0} UTC\nReason: {1}", penalty.BanExpires, penalty.Reason));
 

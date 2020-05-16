@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace ZeroKWeb.Controllers
 {
-    public class UsersController: Controller
+    public class UsersController : Controller
     {
         //
         // GET: /Users/
@@ -86,7 +86,7 @@ namespace ZeroKWeb.Controllers
                 // FIXME needs to also terminate forbidden clan/faction subscriptions
                 Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Moderator status: {0} -> {1}", curAdmin, zkAdmin));
                 acc.AdminLevel = zkAdmin ? AdminLevel.Moderator : AdminLevel.None;
-                
+
             }
             if (acc.HasVpnException != vpnException)
             {
@@ -101,7 +101,7 @@ namespace ZeroKWeb.Controllers
             db.SaveChanges();
 
             Global.Server.PublishAccountUpdate(acc);
-            
+
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
@@ -134,9 +134,9 @@ namespace ZeroKWeb.Controllers
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
             Account adminAcc = Global.Account;
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{2} unlinked Steam account for {0} {1} (name {3})", 
-                                                                                   acc.Name, 
-                                                                                   Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), 
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{2} unlinked Steam account for {0} {1} (name {3})",
+                                                                                   acc.Name,
+                                                                                   Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"),
                                                                                    adminAcc.Name,
                                                                                    acc.SteamName
                                                                                   ));
@@ -157,7 +157,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult ReportLog ()
+        public ActionResult ReportLog()
         {
             return View("ReportLog");
         }
@@ -194,7 +194,8 @@ namespace ZeroKWeb.Controllers
 
 
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult Index(UsersIndexModel model) {
+        public ActionResult Index(UsersIndexModel model)
+        {
             model = model ?? new UsersIndexModel();
             var db = new ZkDataContext();
             var ret = db.Accounts.Where(x => !x.IsDeleted).AsQueryable();
@@ -223,7 +224,7 @@ namespace ZeroKWeb.Controllers
 
             if (model.IsAdmin) ret = ret.Where(x => x.AdminLevel >= AdminLevel.Moderator);
 
-            model.Data = ret.OrderByDescending(x=>x.AccountID);
+            model.Data = ret.OrderByDescending(x => x.AccountID);
 
             return View("UsersIndex", model);
         }
@@ -266,6 +267,7 @@ namespace ZeroKWeb.Controllers
                                    bool banForum,
                                    string banIP,
                                    long? banUserID,
+                                   string installID,
                                    double banHours)
         {
             ZkDataContext db = new ZkDataContext();
@@ -275,24 +277,25 @@ namespace ZeroKWeb.Controllers
             if (banHours > MaxBanHours) banHours = MaxBanHours; // todo show some notification 
 
             Punishment punishment = new Punishment
-                             {
-                                 Time = DateTime.UtcNow,
-                                 Reason = reason,
-                                 BanMute = banMute,
-                                 BanVotes = banVotes,
-                                 BanCommanders = banCommanders,
-                                 BanSite = banSite,
-                                 BanLobby = banLobby,
-                                 BanExpires = DateTime.UtcNow.AddHours(banHours),
-                                 BanUnlocks = false,
-                                 BanSpecChat = banSpecChat,
-                                 BanIP = banIP,
-                                 BanForum = banForum,
-                                 DeleteXP = false,
-                                 DeleteInfluence = false,
-                                 CreatedAccountID = Global.AccountID,
-                                 UserID = banUserID
-                             };
+            {
+                Time = DateTime.UtcNow,
+                Reason = reason,
+                BanMute = banMute,
+                BanVotes = banVotes,
+                BanCommanders = banCommanders,
+                BanSite = banSite,
+                BanLobby = banLobby,
+                BanExpires = DateTime.UtcNow.AddHours(banHours),
+                BanUnlocks = false,
+                BanSpecChat = banSpecChat,
+                BanIP = banIP,
+                BanForum = banForum,
+                DeleteXP = false,
+                DeleteInfluence = false,
+                CreatedAccountID = Global.AccountID,
+                InstallID = installID,
+                UserID = banUserID
+            };
             acc.PunishmentsByAccountID.Add(punishment);
             db.SaveChanges();
 
@@ -302,16 +305,18 @@ namespace ZeroKWeb.Controllers
                 await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
                 await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - reason: {0} ", reason));
                 await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - duration: {0}h ", banHours));
-                
-                if (banLobby == true) {
+
+                if (banLobby == true)
+                {
                     await Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
                     await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - lobby banned");
                 }
-                if (banMute == true) {
+                if (banMute == true)
+                {
                     await Global.Server.PublishAccountUpdate(acc);
                     await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - muted");
                 }
-                
+
                 if (banForum == true) await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - forum banned");
                 if (banSpecChat == true) await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - spec chat muted");
 
@@ -353,34 +358,35 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(accountID);
             if (acc == null) return Content("Invalid accountID");
-            
+
             db.AbuseReports.InsertOnSubmit(new AbuseReport()
-                                           {
-                                               AccountID = acc.AccountID,
-                                               ReporterAccountID = Global.AccountID,
-                                               Time = DateTime.UtcNow,
-                                               Text = text
-                                           });
+            {
+                AccountID = acc.AccountID,
+                ReporterAccountID = Global.AccountID,
+                Time = DateTime.UtcNow,
+                Text = text
+            });
             db.SaveChanges();
 
             string str;
             if (Global.AccountID != accountID)
-                str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name, 
-                    Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), 
-                    acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), 
+                str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name,
+                    Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"),
+                    acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"),
                     text);
             else
-                str = string.Format("{0} {1} contacts admins : {2}", Global.Account.Name, 
+                str = string.Format("{0} {1} contacts admins : {2}", Global.Account.Name,
                     Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), text);
 
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str, isRing:true);
+            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str, isRing: true);
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult RemovePunishment(int punishmentID) {
+        public ActionResult RemovePunishment(int punishmentID)
+        {
             var db = new ZkDataContext();
             var todel = db.Punishments.FirstOrDefault(x => x.PunishmentID == punishmentID);
             if (todel == null) return Content("Invalid punishmentID");
@@ -424,6 +430,7 @@ namespace ZeroKWeb.Controllers
                 {
                     firstAccID = firstAccID ?? acc.AccountID;
                     long? userID = banID ? (uint?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                    string installID = banID ? acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().InstallID : null;
                     string userIP = banIP ? acc.AccountIPs.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
                     System.Console.WriteLine(acc.Name, userID, userIP);
                     Punishment punishment = new Punishment
@@ -436,6 +443,7 @@ namespace ZeroKWeb.Controllers
                         BanIP = userIP,
                         CreatedAccountID = Global.AccountID,
                         UserID = userID,
+                        InstallID = installID,
                     };
                     acc.PunishmentsByAccountID.Add(punishment);
 
@@ -453,7 +461,7 @@ namespace ZeroKWeb.Controllers
             await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {4} for user series {0} ({1} - {2}): {3}",
                 name, startIndex, endIndex, Url.Action("Detail", "Users", new { id = firstAccID }, "http"), Global.Account.Name));
 
-            return Index(new UsersIndexModel() {Name = name});
+            return Index(new UsersIndexModel() { Name = name });
         }
 
         [HttpPost]
@@ -463,10 +471,11 @@ namespace ZeroKWeb.Controllers
         {
             ZkDataContext db = new ZkDataContext();
             if (banHours > MaxBanHours) banHours = MaxBanHours;
-            DateTime firstLoginAfter = maxAge != null? DateTime.UtcNow.AddHours(-(double)maxAge) : DateTime.MinValue; 
-            foreach (Account acc in db.Accounts.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID) && (maxAge == null || x.FirstLogin > firstLoginAfter) ))
+            DateTime firstLoginAfter = maxAge != null ? DateTime.UtcNow.AddHours(-(double)maxAge) : DateTime.MinValue;
+            foreach (Account acc in db.Accounts.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID) && (maxAge == null || x.FirstLogin > firstLoginAfter)))
             {
                 long? punishmentUserID = banID ? (uint?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                string installID = banID ? acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().InstallID : null;
                 string userIP = banIP ? acc.AccountIPs.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
                 System.Console.WriteLine(acc.Name, userID, userIP);
                 Punishment punishment = new Punishment
@@ -479,6 +488,7 @@ namespace ZeroKWeb.Controllers
                     BanIP = userIP,
                     CreatedAccountID = Global.AccountID,
                     UserID = punishmentUserID,
+                    InstallID = installID,
                 };
                 acc.PunishmentsByAccountID.Add(punishment);
 
@@ -528,11 +538,11 @@ namespace ZeroKWeb.Controllers
             if (existing != null) return Content("Name conflict with user " + existing.AccountID);
             if (Global.Server.Battles.Any(x => x.Value.GetAllUserNames().Contains(acc.Name))) return Content(acc.Name + " is currently fighting in a battle. Rename action not advised.");
             await Global.Server.KickFromServer(Global.Account.Name, acc.Name, "Your username has been changed from " + acc.Name + " to " + newUsername + ". Please login using your new username.");
-            
+
             var oldName = acc.Name;
             acc.SetName(newUsername);
             db.SaveChanges();
-            
+
             await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} renamed by {1}", Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
             await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" {0} -> {1}", oldName, newUsername));
 
@@ -591,7 +601,7 @@ namespace ZeroKWeb.Controllers
                 Trace.TraceWarning("Failed password check for {0} on attempted password change", Global.Account.Name);
                 Global.Server.LoginChecker.LogIpFailure(Request.UserHostAddress);
                 return Content("Invalid password");
-            } 
+            }
             if (newPassword != newPassword2) return Content("New passwords do not match");
             if (string.IsNullOrWhiteSpace(newPassword)) return Content("New password cannot be blank");
             acc.SetPasswordPlain(newPassword);
