@@ -938,6 +938,7 @@ namespace ZkLobbyServer
             poll.PollEnded += MapVoteEnded;
             var options = new List<PollOption>();
             List<int> pickedMaps = new List<int>();
+            pickedMaps.Add(HostedMap?.ResourceID ?? 0);
             using (var db = new ZkDataContext())
             {
                 for (int i = 0; i < NumberOfMapChoices; i++)
