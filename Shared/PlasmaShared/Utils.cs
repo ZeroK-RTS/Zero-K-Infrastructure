@@ -847,7 +847,9 @@ namespace ZkData
         public static string GetMyInstallID()
         {
 
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "chobbyla", "id.txt");
+            var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "chobbyla");
+            var path = Path.Combine(dir, "id.txt");
+            System.IO.Directory.CreateDirectory(dir);
             if (!File.Exists(path))
             {
                 string guid = Guid.NewGuid().ToString();
