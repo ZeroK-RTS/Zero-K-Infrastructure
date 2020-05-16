@@ -622,7 +622,8 @@ namespace Ratings
                         pair.Value.debriefingConsumer.Invoke(pair.Value.partialDebriefing);
                     });
                     RatingsUpdated(this, new RatingUpdate() { affectedPlayers = playersWithRatingChange });
-                    debriefings.ForEach(x => pendingDebriefings.TryRemove(x.Key, out _));
+                    PendingDebriefing discard;
+                    debriefings.ForEach(x => pendingDebriefings.TryRemove(x.Key, out discard));
 
                 }
 
