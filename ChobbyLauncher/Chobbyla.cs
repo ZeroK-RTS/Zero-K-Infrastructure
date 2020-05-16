@@ -48,7 +48,7 @@ namespace ChobbyLauncher
 
         public Chobbyla(string rootPath, string chobbyTagOverride, string engineOverride)
         {
-            paths = new SpringPaths(rootPath, false, false);
+            paths = new SpringPaths(rootPath, false, true);
             chobbyTag = chobbyTagOverride ?? GlobalConst.DefaultChobbyTag;
             isDev = (chobbyTag == "dev") || (chobbyTag == "chobby:dev") || (chobbyTag == "zkmenu:dev");
             IsSteamFolder = File.Exists(Path.Combine(paths.WritableDirectory, "steamfolder.txt"));
