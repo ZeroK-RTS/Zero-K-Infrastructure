@@ -39,11 +39,11 @@ namespace ZeroKWeb
         }
 
         private static string GetKey(ForumPost p) {
-            return "p" + p.ForumPostID;
+            return "p" + p.ForumPostID + "#" + Global.IsModerator;
         }
 
         private static string GetKey(News n) {
-            return "n" + n.NewsID;
+            return "n" + n.NewsID + "#" + Global.IsModerator;
         }
 
         public MvcHtmlString GetCachedHtml(ForumPost post, HtmlHelper html) {
