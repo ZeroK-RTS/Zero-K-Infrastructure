@@ -156,7 +156,7 @@ namespace System.Web.Mvc
         /// <param name="ignoreDeleted">If false, just prints "{redacted}" for accounts marked as deleted</param>
         public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true, bool ignoreDeleted = false, bool makeLinks = true) {
             if (account == null) return new MvcHtmlString("Nobody");
-            else if (account.IsDeleted && !ignoreDeleted) return new MvcHtmlString("{redacted}");
+            else if (account.IsDeleted && !ignoreDeleted && !Global.IsModerator) return new MvcHtmlString("{redacted}");
             else {
                 var clanStr = "";
                 var url = Global.UrlHelper();
@@ -185,14 +185,16 @@ namespace System.Web.Mvc
                 string rank = string.Format(
                             "<img src='/img/ranks/{0}.png'  class='icon16' alt='rank' />",
                             account.GetIconName());
-                string user = account.Name;
+                string name = account.Name;
+                if (account.IsDeleted) name += "(REDACTED)";
+                string user = name;
                 if (makeLinks)
                 {
                     user = string.Format(
                             "<a href='/Users/Detail/{0}' style='color:{1}' nicetitle='$user${0}'>{2}</a>",
                             account.AccountID,
                             colorize ? color : "",
-                            account.Name);
+                            name);
                 }
 
                 return
