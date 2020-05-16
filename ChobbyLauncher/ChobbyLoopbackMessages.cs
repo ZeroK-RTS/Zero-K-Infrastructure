@@ -139,6 +139,7 @@ namespace ChobbyLauncher
     public class WrapperOnline
     {
         public string UserID { get; set;}
+        public string InstallID { get; set; }
         public string DefaultServerHost { get; set; }
         public int DefaultServerPort { get; set; }
         public bool IsSteamFolder { get; set; }
