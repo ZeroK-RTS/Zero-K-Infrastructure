@@ -542,23 +542,26 @@ namespace ZkLobbyServer
         public async Task<bool> StartVote(BattleCommand cmd, Say e, string args, int timeout = PollTimeout, CommandPoll poll = null)
         {
             cmd = cmd.Create();
-
-            if (cmd is CmdMap && string.IsNullOrEmpty(args)) return await CreateMultiMapPoll();
-
             string topic = cmd.Arm(this, e, args);
             if (topic == null) return false;
+
+            var unwrappedCmd = cmd;
+            if (cmd is CmdPoll) unwrappedCmd = (cmd as CmdPoll).InternalCommand;
+
+            if (unwrappedCmd is CmdMap && string.IsNullOrEmpty(args)) return await CreateMultiMapPoll();
+
             Func<string, string> selector = cmd.GetIneligibilityReasonFunc(this);
             if (e != null && selector(e.User) != null) return false;
             var options = new List<PollOption>();
 
             string url = null;
             string map = null;
-            if (cmd is CmdMap)
+            if (unwrappedCmd is CmdMap)
             {
-                url = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{(cmd as CmdMap).Map.ResourceID}";
-                map = (cmd as CmdMap).Map.InternalName;
+                url = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{(unwrappedCmd as CmdMap).Map.ResourceID}";
+                map = (unwrappedCmd as CmdMap).Map.InternalName;
             }
-            poll = poll ?? new CommandPoll(this, true, true, cmd is CmdMap, map, cmd is CmdStart);
+            poll = poll ?? new CommandPoll(this, true, true, unwrappedCmd is CmdMap, map, unwrappedCmd is CmdStart);
             options.Add(new PollOption()
             {
                 Name = "Yes",

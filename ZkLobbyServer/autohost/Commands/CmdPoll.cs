@@ -13,6 +13,8 @@ namespace ZkLobbyServer
 
         private BattleCommand commandToRun;
 
+        public BattleCommand InternalCommand { get { return commandToRun; } }
+        
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
             if (string.IsNullOrEmpty(arguments))
