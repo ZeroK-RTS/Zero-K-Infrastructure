@@ -172,6 +172,7 @@
     </Compile>
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AutocompleteController.cs" />
+    <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\ChartsController.cs" />
     <Compile Include="Controllers\ClansController.cs" />
     <Compile Include="Controllers\EnginesController.cs" />
@@ -1573,6 +1574,7 @@
     <Content Include="Views\Ladders\LaddersMaps.cshtml">
       <BrowseToURL>~/Ladders/LaddersMaps</BrowseToURL>
     </Content>
+    <Content Include="Views\Download\DownloadIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
