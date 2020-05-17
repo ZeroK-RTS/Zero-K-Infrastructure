@@ -669,6 +669,7 @@ namespace ZkLobbyServer
                     {
                         var acc = await db.Accounts.FindAsync(accountID);
                         acc.LastLogout = DateTime.UtcNow;
+                        acc.LastChatRead = DateTime.UtcNow;
                         await db.SaveChangesAsync();
                     }
                 }

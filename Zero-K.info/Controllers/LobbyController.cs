@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -150,6 +151,99 @@ namespace ZeroKWeb.Controllers
             model.Data = ret.OrderByDescending(x => x.Time);
 
             return View("LobbyChatHistory", model);
+        }
+
+        public class ChatModel
+        {
+            public string Channel { get; set; }
+            public string User { get; set; }
+            public string Message { get; set; }
+            public IQueryable<LobbyChatHistory> Data = new List<LobbyChatHistory>().AsQueryable();
+        }
+
+        [Auth]
+        public ActionResult ChatNotification(ChatModel model)
+        {
+            model = model ?? new ChatModel();
+
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Where(x => x.AccountID == Global.AccountID).First();
+            var ret = db.LobbyChatHistories.AsQueryable();
+            ret = ret.Where(x => x.Target == Global.Account.Name && x.SayPlace == SayPlace.User && x.Time > acc.LastChatRead);
+            model.Data = ret.OrderByDescending(x => x.Time).ToList().AsQueryable();
+            model.Channel = "";
+            acc.LastChatRead = DateTime.UtcNow;
+            db.SaveChanges();
+
+            return PartialView("ChatNotification", model);
+        }
+        [Auth]
+        public async Task<ActionResult> ChatMessages(ChatModel model)
+        {
+            model = model ?? new ChatModel();
+
+            var db = new ZkDataContext();
+            var ret = db.LobbyChatHistories.AsQueryable();
+            bool isMuted = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, null, x => x.BanMute) != null;
+            if (!string.IsNullOrEmpty(model.Channel))
+            {
+                // only show allowed channels
+                if (!Global.Server.ChannelManager.CanJoin(Global.Account, model.Channel)) return PartialView("LobbyChatMessages", model);
+                if (!String.IsNullOrEmpty(model.Message) && !isMuted)
+                {
+                    await Global.Server.GhostSay(new Say()
+                    {
+                        IsEmote = false,
+                        Place = SayPlace.Channel,
+                        Ring = false,
+                        Source = SaySource.Zk,
+                        Target = model.Channel,
+                        Text = model.Message,
+                        Time = DateTime.UtcNow,
+                        User = Global.Account.Name,
+                    });
+                }
+                ret = ret
+                    .Where(x => x.Target == model.Channel && x.SayPlace == SayPlace.Channel)
+                    .OrderByDescending(x => x.Time).Take(200);
+            }
+            else if (!string.IsNullOrEmpty(model.User))
+            {
+                if (!String.IsNullOrEmpty(model.Message) && !isMuted)
+                {
+                    await Global.Server.GhostSay(new Say()
+                    {
+                        IsEmote = false,
+                        Place = SayPlace.User,
+                        Ring = false,
+                        Source = SaySource.Zk,
+                        Target = model.User,
+                        Text = model.Message,
+                        Time = DateTime.UtcNow,
+                        User = Global.Account.Name,
+                    });
+                }
+                //Users can abuse rename to gain access to other users PMs, it's a feature
+                ret = ret
+                    .Where(x => (x.User == model.User && x.Target == Global.Account.Name || x.User == Global.Account.Name && x.Target == model.User) && x.SayPlace == SayPlace.User)
+                    .OrderByDescending(x => x.Time);
+            }
+            else
+            {
+                return PartialView("LobbyChatMessages", model);
+            }
+
+            model.Data = ret;
+            model.Message = "";
+
+            return PartialView("LobbyChatMessages", model);
+        }
+        [Auth]
+        public ActionResult Chat(ChatModel model)
+        {
+            model = model ?? new ChatModel();
+
+            return View("LobbyChat", model);
         }
 
     }

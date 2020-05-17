@@ -1,94 +1,106 @@
 ﻿@using ZeroKWeb
-  <table>
-      <tr>
-          <td>
-              <ul class="menu">
-                  <li><a href="@Url.Action("Index", "Home")">Home</a>
-                      <ul>
-                          <li><a href="@Url.Action("Index", "Home")">Home</a></li>
-                          <li><a href="@Url.Action("UnlockList", "My")">Unlocks</a></li>
-                          <li><a href="@Url.Action("Commanders", "My")">Commanders</a></li>
-                          <li><a href="@Url.Action("UserVotes", "Poll", new{id = Global.AccountID})">Polls</a></li>
-                      </ul>
-                  </li>
-              </ul>
-          </td>
-          <td>
-              <ul class="menu">
-                  <li><a href="/Wiki/Download">Play</a>
-                      <ul>
-                          <li><a href="@Url.Action("Index", "Download")">Download Zero-K<span>Download the game, it's free! :)</span></a></li>
-                          <!--<li><a href="Url.Action("Index", "Missions")">Missions<span>Single player missions</span></a></li>-->
-                          <!--Mission hidden until Chobby supports them-->
-                          <li><a href="@Url.Action("Index", "Maps")">Maps<span>Thousands of maps to pick</span></a></li>
-                          <li><a href="@Url.Action("Index", "Battles")">Replays<span>All your past victories, stored here!</span></a></li>
-                      </ul>
-                  </li>
-              </ul>
-          </td>
-          <td>
-              <ul class="menu">
-                  <li><a href="/Wiki/Media">Media</a>
-                      <ul>
-                          <li><a href="/Wiki/Media#Screenshots">Screenshots</a></li>
-                          <li><a href="/Wiki/Media#Videos">Videos</a></li>
-                          <li><a href="http://presskit.zero-k.info/">Presskit</a></li>
-                      </ul>
-                  </li>
-              </ul>
-          </td>
-          <td>
-              <ul class="menu">
-                  <li><a href="/mediawiki/index.php?title=Manual">Wiki</a>
-                      <ul>
-                          <li><a href="/mediawiki/index.php?title=Manual">Index</a></li>
-                          <li><a href="/mediawiki/index.php?title=Newbie_Guide">Newbie guide<span>Don't know where to begin? Click here.</span></a></li>
-                          <li><a href="/mediawiki/index.php?title=Video_tutorials">Video tutorials<span>Demonstrating both basic and advanced features</span></a></li>
-                          <li><a href="/mediawiki/index.php?title=Units">Units</a></li>
-                          <li><a href="/mediawiki/index.php?title=Economy_Guide">Economy</a></li>
-                          <li><a href="/mediawiki/index.php?title=Terraform">Terraforming<span>Let's go play in the dirt!</span></a></li>
-                          <li><a href="/mediawiki/index.php?title=FAQ">FAQ<span>Frequently Asked Questions</span></a></li>
-                      </ul>
-                  </li>
-              </ul>
-          </td>
-          <td>
-              <ul class="menu">
-                  <li><a href="@Url.Action("Index", "Planetwars")">PlanetWars</a>
-                      <ul>
-                          <li><a href="@Url.Action("Index", "Planetwars")">PlanetWars<span>Multiplayer online campaign</span></a></li>
-                          <li><a href="@Url.Action("Ladder", "Planetwars")">Ladder</a></li>
-                          <li><a href="@Url.Action("Index", "Factions")">Factions<span>The mighty factions controlling huge sectors of galaxy</span></a></li>
-                      </ul>
-                  </li>
-              </ul>
-          </td>
-          <td>
-              <ul class="menu">
-                  <li><a href="@Url.Action("Index", "Forum")">Community</a>
-                      <ul>
-                          <li><a href="@Url.Action("Index", "Forum")">Forum<span>Discuss, ask for help, have fun!</span></a></li>
-                          <li><a href="@Url.Action("Index", "Clans")">Clans<span>Play with your friends or make friends while playing :)</span></a></li>
-                          <li><a href="@Url.Action("Index", "Ladders")">Ladders</a></li>
-                          <li><a href="@Url.Action("Ratings", "Charts")">Statistics</a></li>
-                          <li><a href="/mediawiki/index.php?title=Zero-K:Code_of_Conduct">Code of Conduct<span>Be nice, have fun!</span></a></li>
-                          <li><a href="/mediawiki/index.php?title=Zero-K:Developing">Develop<span>Make the game with us</span></a></li>
-                          <li><a href="/mediawiki/index.php?title=Zero-K:Privacy_policy">Privacy Policy</a></li>
-                          <li><a href="/mediawiki/index.php?title=Zero-K:Contact">Contact<span>Contact the Zero-K team</span></a></li>
-                          <li><a href="/mediawiki/index.php?title=Credits">Credits<span>Makers of Zero-K</span></a></li>
-                      </ul>
-                  </li>
-              </ul>
-          </td>
-          <td>
-              <ul class="menu">
-                  <li><a href="@Url.Action("Index","Contributions")">Donate<span>Help cover the server costs!</span></a>
-                  </li>
-              </ul>
-          </td>
-          
-          <td width="100%">
-              @{ Html.RenderPartial("SiteSearch"); }
-          </td>
-      </tr>
-  </table>
+
+@if (Global.IsAccountAuthorized)
+{
+    Html.RenderAction("ChatNotification", "Lobby");
+}
+<table>
+    <tr>
+        <td>
+            <ul class="menu">
+                <li>
+                    <a href="@Url.Action("Index", "Home")">Home</a>
+                    <ul>
+                        <li><a href="@Url.Action("Index", "Home")">Home</a></li>
+                        <li><a href="@Url.Action("UnlockList", "My")">Unlocks</a></li>
+                        <li><a href="@Url.Action("Commanders", "My")">Commanders</a></li>
+                        <li><a href="@Url.Action("UserVotes", "Poll", new{id = Global.AccountID})">Polls</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </td>
+        <td>
+            <ul class="menu">
+                <li>
+                    <a href="/Wiki/Download">Play</a>
+                    <ul>
+                        <li><a href="@Url.Action("Index", "Download")">Download Zero-K<span>Download the game, it's free! :)</span></a></li>
+                        <!--<li><a href="Url.Action("Index", "Missions")">Missions<span>Single player missions</span></a></li>-->
+                        <!--Mission hidden until Chobby supports them-->
+                        <li><a href="@Url.Action("Index", "Maps")">Maps<span>Thousands of maps to pick</span></a></li>
+                        <li><a href="@Url.Action("Index", "Battles")">Replays<span>All your past victories, stored here!</span></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </td>
+        <td>
+            <ul class="menu">
+                <li>
+                    <a href="/Wiki/Media">Media</a>
+                    <ul>
+                        <li><a href="/Wiki/Media#Screenshots">Screenshots</a></li>
+                        <li><a href="/Wiki/Media#Videos">Videos</a></li>
+                        <li><a href="http://presskit.zero-k.info/">Presskit</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </td>
+        <td>
+            <ul class="menu">
+                <li>
+                    <a href="/mediawiki/index.php?title=Manual">Wiki</a>
+                    <ul>
+                        <li><a href="/mediawiki/index.php?title=Manual">Index</a></li>
+                        <li><a href="/mediawiki/index.php?title=Newbie_Guide">Newbie guide<span>Don't know where to begin? Click here.</span></a></li>
+                        <li><a href="/mediawiki/index.php?title=Video_tutorials">Video tutorials<span>Demonstrating both basic and advanced features</span></a></li>
+                        <li><a href="/mediawiki/index.php?title=Units">Units</a></li>
+                        <li><a href="/mediawiki/index.php?title=Economy_Guide">Economy</a></li>
+                        <li><a href="/mediawiki/index.php?title=Terraform">Terraforming<span>Let's go play in the dirt!</span></a></li>
+                        <li><a href="/mediawiki/index.php?title=FAQ">FAQ<span>Frequently Asked Questions</span></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </td>
+        <td>
+            <ul class="menu">
+                <li>
+                    <a href="@Url.Action("Index", "Planetwars")">PlanetWars</a>
+                    <ul>
+                        <li><a href="@Url.Action("Index", "Planetwars")">PlanetWars<span>Multiplayer online campaign</span></a></li>
+                        <li><a href="@Url.Action("Ladder", "Planetwars")">Ladder</a></li>
+                        <li><a href="@Url.Action("Index", "Factions")">Factions<span>The mighty factions controlling huge sectors of galaxy</span></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </td>
+        <td>
+            <ul class="menu">
+                <li>
+                    <a href="@Url.Action("Index", "Forum")">Community</a>
+                    <ul>
+                        <li><a href="@Url.Action("Index", "Forum")">Forum<span>Discuss, ask for help, have fun!</span></a></li>
+                        <li><a href="@Url.Action("Index", "Clans")">Clans<span>Play with your friends or make friends while playing :)</span></a></li>
+                        <li><a href="@Url.Action("Index", "Ladders")">Ladders</a></li>
+                        <li><a href="@Url.Action("Ratings", "Charts")">Statistics</a></li>
+                        <li><a href="/mediawiki/index.php?title=Zero-K:Code_of_Conduct">Code of Conduct<span>Be nice, have fun!</span></a></li>
+                        <li><a href="/mediawiki/index.php?title=Zero-K:Developing">Develop<span>Make the game with us</span></a></li>
+                        <li><a href="/mediawiki/index.php?title=Zero-K:Privacy_policy">Privacy Policy</a></li>
+                        <li><a href="/mediawiki/index.php?title=Zero-K:Contact">Contact<span>Contact the Zero-K team</span></a></li>
+                        <li><a href="/mediawiki/index.php?title=Credits">Credits<span>Makers of Zero-K</span></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </td>
+        <td>
+            <ul class="menu">
+                <li>
+                    <a href="@Url.Action("Index","Contributions")">Donate<span>Help cover the server costs!</span></a>
+                </li>
+            </ul>
+        </td>
+
+        <td width="100%">
+            @{ Html.RenderPartial("SiteSearch"); }
+        </td>
+    </tr>
+</table>

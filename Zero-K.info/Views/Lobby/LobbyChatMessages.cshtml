@@ -1,0 +1,45 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZeroKWeb.Controllers.LobbyController.ChatModel
+
+@{
+    string gridTitle = "Private Messages";
+    if (!String.IsNullOrEmpty(Model.User))
+    {
+        gridTitle = "@" + Model.User;
+    }
+    if (!String.IsNullOrEmpty(Model.Channel))
+    {
+        gridTitle = "#" + Model.Channel;
+    }
+    var chatGrid = new UniGrid<LobbyChatHistory>(Model.Data, gridTitle, "chatgrid");
+    chatGrid.AddCol("Time", x => Html.PrintDate(x.Time)).SetSort(x => x.Time).SetWidth("120px");
+    chatGrid.AddCol("User", UserChatCol).SetSort(x => x.User).SetWidth("200px");
+    chatGrid.AddCol("Text", TxtChatCol).SetSort(x => x.Text);
+}
+
+@helper TxtChatCol(LobbyChatHistory x)
+{
+    if (x.IsEmote)
+    {
+        <span style="color: violet">@x.Text</span>
+    }
+    else
+    {
+        <span>@x.Text</span>
+    }
+}
+
+@helper UserChatCol(LobbyChatHistory x)
+{
+    var acc = Account.AccountByName(new ZkDataContext(), x.User);
+    if (acc != null)
+    {
+        @Html.PrintAccount(acc)
+    }
+    else
+    {
+        <span>@x.User</span>
+    }
+}
+@GridHelpers.RenderTable(chatGrid)

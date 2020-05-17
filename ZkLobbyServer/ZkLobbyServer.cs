@@ -428,6 +428,7 @@ namespace ZkLobbyServer
                 {
                     var acc = db.Accounts.Find(u.User.AccountID);
                     acc.LastLogout = DateTime.UtcNow;
+                    acc.LastChatRead = DateTime.UtcNow;
                 }
             }
             db.SaveChanges();

@@ -37,14 +37,6 @@ namespace ZkLobbyServer
                                 .OrderByDescending(x => x.Time)
                                 .Take(maxCount)
                                 .OrderBy(x => x.Time)) await sender.SendCommand(entry.ToSay());
-
-                        if (place == SayPlace.User)
-                        {
-                            // don't keep PMs longer than needed
-                            db.LobbyChatHistories.DeleteAllOnSubmit(
-                                db.LobbyChatHistories.Where(x => (x.Target == target) && (x.SayPlace == SayPlace.User)).ToList());
-                            db.SaveChanges();
-                        }
                     }
                 }
                 catch (Exception ex)

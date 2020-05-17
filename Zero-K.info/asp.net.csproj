@@ -1575,6 +1575,9 @@
       <BrowseToURL>~/Ladders/LaddersMaps</BrowseToURL>
     </Content>
     <Content Include="Views\Download\DownloadIndex.cshtml" />
+    <Content Include="Views\Lobby\LobbyChat.cshtml" />
+    <Content Include="Views\Lobby\LobbyChatMessages.cshtml" />
+    <Content Include="Views\Shared\ChatNotification.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

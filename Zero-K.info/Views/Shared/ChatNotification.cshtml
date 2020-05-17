@@ -1,0 +1,9 @@
+@using ZeroKWeb
+@using ZkData
+@model ZeroKWeb.Controllers.LobbyController.ChatModel
+@if (Model.Data.Count() > 0)
+{
+    <div class="js_dialog" title="You have unread messages">
+        @Html.Partial("LobbyChatMessages")
+    </div>
+}
