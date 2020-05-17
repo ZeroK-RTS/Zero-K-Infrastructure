@@ -11,6 +11,7 @@ namespace ZkData
         public int LobbyChatHistoryID { get; set; }
         public bool Ring { get; set; }
 
+        [Index]
         public SayPlace SayPlace { get; set; }
 
         [MaxLength(255)]
