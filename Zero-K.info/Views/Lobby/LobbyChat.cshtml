@@ -19,7 +19,7 @@
             <td>Channel</td>
             <td>@Html.TextBoxFor(x => x.Channel)</td>
         </tr>
-        <tr><td>User</td><td>@Html.TextBoxFor(x => x.User, new { data_autocomplete = Url.Action("Users", "Autocomplete"), data_autocomplete_action = "submit" })</td></tr>
+        <tr><td>User</td><td>@Html.TextBoxFor(x => x.User, new { data_autocomplete = Url.Action("UsersNoLink", "Autocomplete"), data_autocomplete_action = "submit" })</td></tr>
     </table>
     <input type="submit" />
 
