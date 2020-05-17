@@ -5,5 +5,7 @@
 {
     <div class="js_dialog" title="You have unread messages">
         @Html.Partial("LobbyChatMessages")
+        <br />
+        <a href="@Url.Action("Chat", "Lobby")">Go to online chat</a>
     </div>
 }

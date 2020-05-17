@@ -229,11 +229,16 @@ namespace ZeroKWeb.Controllers
                 //Users can abuse rename to gain access to other users PMs, it's a feature
                 model.Data = db.LobbyChatHistories
                     .Where(x => (x.User == otherName && x.Target == myName || x.User == myName && x.Target == otherName) && x.SayPlace == SayPlace.User)
-                    .OrderByDescending(x => x.Time);
+                    .OrderByDescending(x => x.Time).Take(30)
+                    .ToList().OrderBy(x => x.Time).AsQueryable();
             }
             else
             {
-                return PartialView("LobbyChatMessages", model);
+                string myName = Global.Account.Name;
+                model.Data = db.LobbyChatHistories
+                    .Where(x => x.Target == myName && x.SayPlace == SayPlace.User)
+                    .OrderByDescending(x => x.Time).Take(30)
+                    .ToList().OrderBy(x => x.Time).AsQueryable();
             }
 
             model.Message = "";
