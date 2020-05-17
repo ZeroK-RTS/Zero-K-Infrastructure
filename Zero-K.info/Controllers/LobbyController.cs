@@ -205,7 +205,7 @@ namespace ZeroKWeb.Controllers
                 }
                 ret = ret
                     .Where(x => x.Target == model.Channel && x.SayPlace == SayPlace.Channel)
-                    .OrderByDescending(x => x.Time).Take(200);
+                    .OrderByDescending(x => x.LobbyChatHistoryID).Take(200);
             }
             else if (!string.IsNullOrEmpty(model.User))
             {
@@ -226,7 +226,7 @@ namespace ZeroKWeb.Controllers
                 //Users can abuse rename to gain access to other users PMs, it's a feature
                 ret = ret
                     .Where(x => (x.User == model.User && x.Target == Global.Account.Name || x.User == Global.Account.Name && x.Target == model.User) && x.SayPlace == SayPlace.User)
-                    .OrderByDescending(x => x.Time);
+                    .OrderByDescending(x => x.LobbyChatHistoryID);
             }
             else
             {

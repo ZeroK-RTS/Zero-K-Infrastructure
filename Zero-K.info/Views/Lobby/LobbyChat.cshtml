@@ -41,7 +41,7 @@
         if (document.getElementById('chatbox').value == '') {
             $('form#form').trigger('submit');
         }
+        setTimeout(updateChat, 5000);
     }
-    setInterval(updateChat, 5000);
     updateChat();
 </script>
