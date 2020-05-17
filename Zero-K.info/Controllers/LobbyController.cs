@@ -183,7 +183,6 @@ namespace ZeroKWeb.Controllers
             model = model ?? new ChatModel();
 
             var db = new ZkDataContext();
-            var ret = db.LobbyChatHistories.AsQueryable();
             bool isMuted = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, null, x => x.BanMute) != null;
             if (!string.IsNullOrEmpty(model.Channel))
             {
@@ -203,9 +202,11 @@ namespace ZeroKWeb.Controllers
                         User = Global.Account.Name,
                     });
                 }
-                ret = ret
-                    .Where(x => x.Target == model.Channel && x.SayPlace == SayPlace.Channel)
-                    .OrderByDescending(x => x.LobbyChatHistoryID).Take(200);
+                string channelName = model.Channel;
+                model.Data = db.LobbyChatHistories
+                    .SqlQuery("SELECT TOP 30 * FROM [dbo].[LobbyChatHistories] WHERE [Target] = {0} AND [SayPlace] = {1} AND [Time] > {2} ORDER BY [Time] DESC", channelName, SayPlace.Channel, DateTime.UtcNow.AddDays(-30))
+                    .ToList().OrderBy(x => x.Time).AsQueryable();
+                //Note if using Take(), it will be slow for uncommon channels like zktourney when ordering by Time and slow for common channels like zk if ordering by ID
             }
             else if (!string.IsNullOrEmpty(model.User))
             {
@@ -223,17 +224,18 @@ namespace ZeroKWeb.Controllers
                         User = Global.Account.Name,
                     });
                 }
+                string otherName = model.User;
+                string myName = Global.Account.Name;
                 //Users can abuse rename to gain access to other users PMs, it's a feature
-                ret = ret
-                    .Where(x => (x.User == model.User && x.Target == Global.Account.Name || x.User == Global.Account.Name && x.Target == model.User) && x.SayPlace == SayPlace.User)
-                    .OrderByDescending(x => x.LobbyChatHistoryID);
+                model.Data = db.LobbyChatHistories
+                    .Where(x => (x.User == otherName && x.Target == myName || x.User == myName && x.Target == otherName) && x.SayPlace == SayPlace.User)
+                    .OrderByDescending(x => x.Time);
             }
             else
             {
                 return PartialView("LobbyChatMessages", model);
             }
 
-            model.Data = ret;
             model.Message = "";
 
             return PartialView("LobbyChatMessages", model);
