@@ -231,7 +231,7 @@ namespace ZeroKWeb.Controllers
                 string myName = Global.Account.Name;
                 //Users can abuse rename to gain access to other users PMs, it's a feature
                 model.Data = db.LobbyChatHistories
-                    .Where(x => (x.User == otherName && x.Target == myName || x.User == myName && x.Target == otherName) && x.SayPlace == SayPlace.User)
+                    .Where(x => (x.User == otherName && x.Target == myName || x.User == myName && x.Target == otherName) && x.SayPlace == SayPlace.User && x.Time > DateTime.UtcNow.AddDays(-30))
                     .OrderByDescending(x => x.Time).Take(30)
                     .ToList().OrderBy(x => x.Time).AsQueryable();
             }
@@ -242,7 +242,7 @@ namespace ZeroKWeb.Controllers
                 var ignoredIds = db.AccountRelations.Where(x => (x.Relation == Relation.Ignore) && (x.OwnerAccountID == Global.AccountID)).Select(x => x.TargetAccountID).ToList();
                 var ignoredNames = db.Accounts.Where(x => ignoredIds.Contains(x.AccountID)).Select(x => x.Name).ToHashSet();
                 model.Data = db.LobbyChatHistories
-                    .Where(x => x.Target == myName && x.SayPlace == SayPlace.User)
+                    .Where(x => x.Target == myName && x.SayPlace == SayPlace.User && x.Time > DateTime.UtcNow.AddDays(-30))
                     .OrderByDescending(x => x.Time).Take(30)
                     .ToList()
                     .Where(x => !ignoredNames.Contains(x.User))
