@@ -187,6 +187,7 @@ namespace ZeroKWeb.Controllers
 
             var db = new ZkDataContext();
             bool isMuted = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, null, x => x.BanMute) != null;
+            var minTime = DateTime.UtcNow.AddDays(-30);
             if (!string.IsNullOrEmpty(model.Channel))
             {
                 // only show allowed channels
@@ -207,7 +208,7 @@ namespace ZeroKWeb.Controllers
                 }
                 string channelName = model.Channel;
                 model.Data = db.LobbyChatHistories
-                    .SqlQuery("SELECT TOP 30 * FROM [dbo].[LobbyChatHistories] WHERE [Target] = {0} AND [SayPlace] = {1} AND [Time] > {2} ORDER BY [Time] DESC", channelName, SayPlace.Channel, DateTime.UtcNow.AddDays(-30))
+                    .SqlQuery("SELECT TOP 30 * FROM [dbo].[LobbyChatHistories] WHERE [Target] = {0} AND [SayPlace] = {1} AND [Time] > {2} ORDER BY [Time] DESC", channelName, SayPlace.Channel, minTime)
                     .ToList().OrderBy(x => x.Time).AsQueryable();
                 //Note if using Take(), it will be slow for uncommon channels like zktourney when ordering by Time and slow for common channels like zk if ordering by ID
             }
@@ -231,7 +232,7 @@ namespace ZeroKWeb.Controllers
                 string myName = Global.Account.Name;
                 //Users can abuse rename to gain access to other users PMs, it's a feature
                 model.Data = db.LobbyChatHistories
-                    .Where(x => (x.User == otherName && x.Target == myName || x.User == myName && x.Target == otherName) && x.SayPlace == SayPlace.User && x.Time > DateTime.UtcNow.AddDays(-30))
+                    .Where(x => (x.User == otherName && x.Target == myName || x.User == myName && x.Target == otherName) && x.SayPlace == SayPlace.User && x.Time > minTime)
                     .OrderByDescending(x => x.Time).Take(30)
                     .ToList().OrderBy(x => x.Time).AsQueryable();
             }
@@ -242,7 +243,7 @@ namespace ZeroKWeb.Controllers
                 var ignoredIds = db.AccountRelations.Where(x => (x.Relation == Relation.Ignore) && (x.OwnerAccountID == Global.AccountID)).Select(x => x.TargetAccountID).ToList();
                 var ignoredNames = db.Accounts.Where(x => ignoredIds.Contains(x.AccountID)).Select(x => x.Name).ToHashSet();
                 model.Data = db.LobbyChatHistories
-                    .Where(x => x.Target == myName && x.SayPlace == SayPlace.User && x.Time > DateTime.UtcNow.AddDays(-30))
+                    .Where(x => x.Target == myName && x.SayPlace == SayPlace.User && x.Time > minTime)
                     .OrderByDescending(x => x.Time).Take(30)
                     .ToList()
                     .Where(x => !ignoredNames.Contains(x.User))
