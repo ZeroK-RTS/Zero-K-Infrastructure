@@ -69,7 +69,7 @@
     {
         @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID }, new { @class = "delete" })<br />
     }
-    @if (isMember && Model.Accounts.Count() <= GlobalConst.ClanLeaveLimit)
+    @if (isMember)
     {
         @Html.ActionLink("leave this clan", "LeaveClan", null, new { @class = "delete" })<br />
     }

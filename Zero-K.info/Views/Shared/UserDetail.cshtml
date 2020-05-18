@@ -67,9 +67,19 @@
             <table>
                 <tr>
                     <td>
-                        @if (Model.AccountID != Global.AccountID)
+                        @if (Model.AccountID != Global.AccountID && Global.Server.IsLobbyConnected(Global.Account.Name))
                         {
                             <a href="@Html.PrintSpringLink("chat/user/" + Model.Name)" nicetitle="Chat with @Model.Name in the lobby"><img src="/img/chat.png" height="32" /></a><br />
+                        }
+                    </td>
+                    <td>
+                        @if (Model.AccountID != Global.AccountID)
+                        {
+                            <a href="@Url.Action("Chat", "Lobby", new { User = Model.Name })" nicetitle="Chat with @Model.Name online"><img src="/img/chat.png" height="32" /></a><br />
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Chat", "Lobby", new { Channel = "zk" })" nicetitle="Go to online chat"><img src="/img/chat.png" height="32" /></a><br />
                         }
                     </td>
                     <td>

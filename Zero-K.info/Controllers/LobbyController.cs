@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -150,6 +151,116 @@ namespace ZeroKWeb.Controllers
             model.Data = ret.OrderByDescending(x => x.Time);
 
             return View("LobbyChatHistory", model);
+        }
+
+        public class ChatModel
+        {
+            public string Channel { get; set; }
+            public string User { get; set; }
+            public string Message { get; set; }
+            public IQueryable<LobbyChatHistory> Data = new List<LobbyChatHistory>().AsQueryable();
+        }
+
+        [Auth]
+        public ActionResult ChatNotification(ChatModel model)
+        {
+            model = model ?? new ChatModel();
+
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Where(x => x.AccountID == Global.AccountID).First();
+            var ret = db.LobbyChatHistories.AsQueryable();
+            ret = ret.Where(x => x.Target == Global.Account.Name && x.SayPlace == SayPlace.User && x.Time > acc.LastChatRead);
+            if (ret.Count() == 0) return PartialView("ChatNotification", model);
+            var ignoredIds = db.AccountRelations.Where(x => (x.Relation == Relation.Ignore) && (x.OwnerAccountID == acc.AccountID)).Select(x => x.TargetAccountID).ToList();
+            var ignoredNames = db.Accounts.Where(x => ignoredIds.Contains(x.AccountID)).Select(x => x.Name).ToHashSet();
+            model.Data = ret.OrderByDescending(x => x.Time).ToList().Where(x => !ignoredNames.Contains(x.User)).AsQueryable();
+            model.Channel = "";
+            acc.LastChatRead = DateTime.UtcNow;
+            db.SaveChanges();
+
+            return PartialView("ChatNotification", model);
+        }
+        [Auth]
+        public async Task<ActionResult> ChatMessages(ChatModel model)
+        {
+            model = model ?? new ChatModel();
+
+            var db = new ZkDataContext();
+            bool isMuted = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, null, x => x.BanMute) != null;
+            var minTime = DateTime.UtcNow.AddDays(-30);
+            if (!string.IsNullOrEmpty(model.Channel))
+            {
+                // only show allowed channels
+                if (!Global.Server.ChannelManager.CanJoin(Global.Account, model.Channel)) return PartialView("LobbyChatMessages", model);
+                if (!String.IsNullOrEmpty(model.Message) && !isMuted)
+                {
+                    await Global.Server.GhostSay(new Say()
+                    {
+                        IsEmote = false,
+                        Place = SayPlace.Channel,
+                        Ring = false,
+                        Source = SaySource.Zk,
+                        Target = model.Channel,
+                        Text = model.Message,
+                        Time = DateTime.UtcNow,
+                        User = Global.Account.Name,
+                    });
+                }
+                string channelName = model.Channel;
+                model.Data = db.LobbyChatHistories
+                    .SqlQuery("SELECT TOP 30 * FROM [dbo].[LobbyChatHistories] WHERE [Target] = {0} AND [SayPlace] = {1} AND [Time] > {2} ORDER BY [Time] DESC", channelName, SayPlace.Channel, minTime)
+                    .ToList().OrderBy(x => x.Time).AsQueryable();
+                //Note if using Take(), it will be slow for uncommon channels like zktourney when ordering by Time and slow for common channels like zk if ordering by ID
+            }
+            else if (!string.IsNullOrEmpty(model.User))
+            {
+                if (!String.IsNullOrEmpty(model.Message) && !isMuted)
+                {
+                    await Global.Server.GhostSay(new Say()
+                    {
+                        IsEmote = false,
+                        Place = SayPlace.User,
+                        Ring = false,
+                        Source = SaySource.Zk,
+                        Target = model.User,
+                        Text = model.Message,
+                        Time = DateTime.UtcNow,
+                        User = Global.Account.Name,
+                    });
+                }
+                string otherName = model.User;
+                string myName = Global.Account.Name;
+                //Users can abuse rename to gain access to other users PMs, it's a feature
+                model.Data = db.LobbyChatHistories
+                    .Where(x => (x.User == otherName && x.Target == myName || x.User == myName && x.Target == otherName) && x.SayPlace == SayPlace.User && x.Time > minTime)
+                    .OrderByDescending(x => x.Time).Take(30)
+                    .ToList().OrderBy(x => x.Time).AsQueryable();
+            }
+            else
+            {
+                string myName = Global.Account.Name;
+
+                var ignoredIds = db.AccountRelations.Where(x => (x.Relation == Relation.Ignore) && (x.OwnerAccountID == Global.AccountID)).Select(x => x.TargetAccountID).ToList();
+                var ignoredNames = db.Accounts.Where(x => ignoredIds.Contains(x.AccountID)).Select(x => x.Name).ToHashSet();
+                model.Data = db.LobbyChatHistories
+                    .Where(x => x.Target == myName && x.SayPlace == SayPlace.User && x.Time > minTime)
+                    .OrderByDescending(x => x.Time).Take(30)
+                    .ToList()
+                    .Where(x => !ignoredNames.Contains(x.User))
+                    .OrderBy(x => x.Time)
+                    .AsQueryable();
+            }
+
+            model.Message = "";
+
+            return PartialView("LobbyChatMessages", model);
+        }
+        [Auth]
+        public ActionResult Chat(ChatModel model)
+        {
+            model = model ?? new ChatModel();
+
+            return View("LobbyChat", model);
         }
 
     }

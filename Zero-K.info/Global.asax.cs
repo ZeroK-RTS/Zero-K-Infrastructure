@@ -182,7 +182,8 @@ namespace ZeroKWeb
                 var ip = Request.UserHostAddress;
 				var lastLogin = acc.AccountUserIDs.OrderByDescending (x => x.LastLogin).FirstOrDefault();
 				var userID = lastLogin?.UserID;
-				var penalty = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanSite);
+                var installID = lastLogin?.InstallID;
+                var penalty = Punishment.GetActivePunishment(acc.AccountID, ip, userID, installID, x => x.BanSite);
                 if (penalty != null)
                 {
                     Response.Write(string.Format("You are banned! (IP match to account {0})\n", penalty.AccountByAccountID.Name));

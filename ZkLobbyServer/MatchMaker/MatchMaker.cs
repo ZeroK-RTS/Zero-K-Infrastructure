@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using LobbyClient;
@@ -53,7 +54,7 @@ namespace ZkLobbyServer
 
 
         private object tickLock = new object();
-        private Timer timer;
+        private System.Timers.Timer timer;
         private int totalQueued;
         private DateTime lastQueueUpdate = DateTime.Now;
 
@@ -115,7 +116,7 @@ namespace ZkLobbyServer
 
             UpdateQueues();
 
-            timer = new Timer(TimerSeconds * 1000);
+            timer = new System.Timers.Timer(TimerSeconds * 1000);
             timer.AutoReset = true;
             timer.Elapsed += TimerTick;
             timer.Start();
@@ -201,7 +202,11 @@ namespace ZkLobbyServer
                         // if we are doing tick because too few people, make sure we count remaining people as readied to not ban them 
                         OnTick();
                     }
-                    else if (invitedPeople.All(x => x.LastReadyResponse)) OnTick();
+                    else if (invitedPeople.All(x => x.LastReadyResponse))
+                    {
+                        await server.UserLogSay($"All {invitedPeople.Count} invitations have been accepted, doing tick.");
+                        OnTick();
+                    }
                     else
                     {
                         var readyCounts = CountQueuedPeople(invitedPeople.Where(x => x.LastReadyResponse));
@@ -432,7 +437,7 @@ namespace ZkLobbyServer
 
         private void OnTick()
         {
-            lock (tickLock)
+            if (Monitor.TryEnter(tickLock))
             {
                 try
                 {
@@ -452,7 +457,12 @@ namespace ZkLobbyServer
                 finally
                 {
                     timer.Start();
+                    Monitor.Exit(tickLock);
                 }
+            }
+            else
+            {
+                server.UserLogSay($"Simultaneous tick attempt ignored");
             }
         }
 
@@ -624,6 +634,7 @@ namespace ZkLobbyServer
 
         private void TimerTick(object sender, ElapsedEventArgs elapsedEventArgs)
         {
+            server.UserLogSay($"Timer tick");
             OnTick();
         }
 

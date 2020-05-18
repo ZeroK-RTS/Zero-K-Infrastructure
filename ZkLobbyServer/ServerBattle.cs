@@ -542,23 +542,31 @@ namespace ZkLobbyServer
         public async Task<bool> StartVote(BattleCommand cmd, Say e, string args, int timeout = PollTimeout, CommandPoll poll = null)
         {
             cmd = cmd.Create();
-
-            if (cmd is CmdMap && string.IsNullOrEmpty(args)) return await CreateMultiMapPoll();
-
             string topic = cmd.Arm(this, e, args);
             if (topic == null) return false;
+
+            var unwrappedCmd = cmd;
+            if (cmd is CmdPoll)
+            {
+                var split = args.Split(new[] { ' ' }, 2);
+                args = split.Length > 1 ? split[1] : "";
+                unwrappedCmd = (cmd as CmdPoll).InternalCommand;
+            }
+
+            if (unwrappedCmd is CmdMap && string.IsNullOrEmpty(args)) return await CreateMultiMapPoll();
+
             Func<string, string> selector = cmd.GetIneligibilityReasonFunc(this);
             if (e != null && selector(e.User) != null) return false;
             var options = new List<PollOption>();
 
             string url = null;
             string map = null;
-            if (cmd is CmdMap)
+            if (unwrappedCmd is CmdMap)
             {
-                url = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{(cmd as CmdMap).Map.ResourceID}";
-                map = (cmd as CmdMap).Map.InternalName;
+                url = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{(unwrappedCmd as CmdMap).Map.ResourceID}";
+                map = (unwrappedCmd as CmdMap).Map.InternalName;
             }
-            poll = poll ?? new CommandPoll(this, true, true, cmd is CmdMap, map, cmd is CmdStart);
+            poll = poll ?? new CommandPoll(this, true, true, unwrappedCmd is CmdMap, map, unwrappedCmd is CmdStart);
             options.Add(new PollOption()
             {
                 Name = "Yes",
@@ -938,6 +946,7 @@ namespace ZkLobbyServer
             poll.PollEnded += MapVoteEnded;
             var options = new List<PollOption>();
             List<int> pickedMaps = new List<int>();
+            pickedMaps.Add(HostedMap?.ResourceID ?? 0);
             using (var db = new ZkDataContext())
             {
                 for (int i = 0; i < NumberOfMapChoices; i++)
@@ -945,7 +954,7 @@ namespace ZkLobbyServer
                     Resource map = null;
                     if (i < NumberOfMapChoices / 2)
                     {
-                        map = MapPicker.GetRecommendedMap(GetContext(), MinimalMapSupportLevel, MapRatings.GetMapRanking(Mode).TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).Where(x => !pickedMaps.Contains(x.ResourceID)).AsQueryable()); //choose at least 50% popular maps
+                        map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Supported) ? MapSupportLevel.Supported : MinimalMapSupportLevel, MapRatings.GetMapRanking(Mode).TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).Where(x => !pickedMaps.Contains(x.ResourceID)).AsQueryable()); //choose at least 50% popular maps
                     }
                     if (map == null)
                     {

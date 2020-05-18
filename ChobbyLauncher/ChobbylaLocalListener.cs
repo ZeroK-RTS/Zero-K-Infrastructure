@@ -737,6 +737,7 @@ namespace ChobbyLauncher
                         DefaultServerHost = GlobalConst.LobbyServerHost,
                         DefaultServerPort = GlobalConst.LobbyServerPort,
                         UserID = Utils.GetMyUserID().ToString(),
+                        InstallID = Utils.GetMyInstallID(),
                         IsSteamFolder = chobbyla.IsSteamFolder
 
                     });

@@ -43,7 +43,7 @@ namespace ZkData
             switch (newMode) {
                 case ModeType.Local:
                     BaseSiteUrl = "http://localhost:9739";
-                    ZkDataContextConnectionString = @"Data Source=BRIEFTOP\SQLEXPRESS2;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000";
+                    ZkDataContextConnectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000";
 
                     LobbyServerHost = "localhost";
                     LobbyServerPort = 8200;
@@ -131,8 +131,6 @@ namespace ZkData
         public const int CommanderProfileCount = 6;
         public const int NumCommanderLevels = 5;
         public const int MaxCommanderNameLength = 20;
-        public const int MillisecondsPerCharacter = 50; //Maximum allowed chat messaging rate before it is considered spam, 80ms is equivalent to 120 WPM, which covers typing speeds of anyone short of a stenographer.
-        public const int MinMillisecondsBetweenMessages = 1000; //Disallow sending more than one message per this interval
 
         public const string DefaultEngineOverride = "104.0.1-287-gf7b0fcc"; // hack for ZKL using tasclient's engine - override here for missions etc
 
@@ -198,7 +196,6 @@ namespace ZkData
         public const int AttackPointsForVictory = 2;
         public const int AttackPointsForDefeat = 1;
         public static readonly int? MaxClanSkilledSize = null;
-        public const int ClanLeaveLimit = 100;
         public const int FactionChannelMinLevel = 2;
         public const bool RotatePWMaps = false;
         public const bool RequireWormholeToTravel = true;
@@ -245,6 +242,8 @@ namespace ZkData
 
         public const int LobbyThrottleBytesPerSecond = 2000;
         public const int LobbyMaxMessageSize = 2000;
+        public const int MillisecondsPerCharacter = 50; //Maximum allowed chat messaging rate before it is considered spam, 80ms is equivalent to 120 WPM, which covers typing speeds of anyone short of a stenographer.
+        public const int MinMillisecondsBetweenMessages = 1000; //Disallow sending more than one message per this interval
 
 
         public static int UdpHostingPortStart;

@@ -24,6 +24,7 @@ namespace ZkData
             FirstLogin = DateTime.UtcNow;
             LastLogin = DateTime.UtcNow;
             LastLogout = DateTime.UtcNow;
+            LastChatRead = DateTime.UtcNow;
             Country = "??";
 
             AbuseReportsByAccountID = new HashSet<AbuseReport>();
@@ -91,6 +92,7 @@ namespace ZkData
         public DateTime FirstLogin { get; set; }
         public DateTime LastLogin { get; set; }
         public DateTime LastLogout { get; set; }
+        public DateTime LastChatRead { get; set; }
 
         [StringLength(8000)]
         public string Aliases { get; set; }
@@ -631,7 +633,7 @@ namespace ZkData
             donator_2 = 4,
             [Description("Diamond donator")]
             donator_3 = 8,
-            [Description("External developer")]
+            [Description("Content contributor")]
             dev_content =  5,
             [Description("Game developer")]
             dev_game = 6,

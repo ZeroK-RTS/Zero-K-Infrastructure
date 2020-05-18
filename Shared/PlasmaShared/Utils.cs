@@ -438,7 +438,7 @@ namespace ZkData
             return Path.Combine(directories);
         }
 
-     
+
         public static string PrintByteLength(long bytes)
         {
             if (bytes < 1024) return bytes.ToString();
@@ -517,7 +517,7 @@ namespace ZkData
             return val;
         }
 
-        
+
         public static List<T> Shuffle<T>(this IEnumerable<T> source)
         {
             var list = source.ToList();
@@ -576,7 +576,7 @@ namespace ZkData
                 });
         }
 
-     
+
 
         public static byte[] ToBytes(this Image image, int size)
         {
@@ -595,7 +595,7 @@ namespace ZkData
             return stream.ToArray();
         }
 
-  
+
 
         /// <summary>
         /// Hash password with default hash used by remote server
@@ -628,7 +628,7 @@ namespace ZkData
             }
             catch { }
         }
-        
+
 
         public static string ToHex(this byte[] array)
         {
@@ -700,22 +700,26 @@ namespace ZkData
             var ms = new MemoryStream();
             var wc = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
             var ret = new FileResponse<byte[]>();
-            
+
             if (ifModifiedSince != null) wc.IfModifiedSince = ifModifiedSince.Value;
 
-            try {
-                using (var response = (HttpWebResponse)await wc.GetResponseAsync().ConfigureAwait(false)) {
+            try
+            {
+                using (var response = (HttpWebResponse)await wc.GetResponseAsync().ConfigureAwait(false))
+                {
                     ret.WasModified = true;
                     ret.DateModified = response.LastModified;
 
-                    using (var stream = response.GetResponseStream()) {
+                    using (var stream = response.GetResponseStream())
+                    {
                         await stream.CopyToAsync(ms).ConfigureAwait(false);
                         ret.Content = ms.ToArray();
                         return ret;
                     }
                 }
             }
-            catch (WebException e) {
+            catch (WebException e)
+            {
                 if (e.Response != null && ((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.NotModified) return ret;
                 throw;
             }
@@ -724,7 +728,8 @@ namespace ZkData
         public static async Task<FileResponse<string>> DownloadStringAsync(string url, DateTime? ifModifiedSince = null)
         {
             var file = await DownloadFileAsync(url, ifModifiedSince).ConfigureAwait(false);
-            return new FileResponse<string>() {
+            return new FileResponse<string>()
+            {
                 WasModified = file.WasModified,
                 DateModified = file.DateModified,
                 Content = file.Content != null ? Encoding.UTF8.GetString(file.Content) : null
@@ -754,10 +759,10 @@ namespace ZkData
         public static IEnumerable<Type> GetAllTypesWithAttribute<T>()
         {
             return from a in AppDomain.CurrentDomain.GetAssemblies().AsParallel()
-                from t in a.GetLoadableTypes()
-                let attributes = t.GetCustomAttributes(typeof(T), true)
-                where attributes != null && attributes.Length > 0
-                select t;
+                   from t in a.GetLoadableTypes()
+                   let attributes = t.GetCustomAttributes(typeof(T), true)
+                   where attributes != null && attributes.Length > 0
+                   select t;
         }
 
         /// <summary>
@@ -821,7 +826,8 @@ namespace ZkData
             return input.Substring(0, length);
         }
 
-        public static bool ValidLobbyNameCharacter(char c) {
+        public static bool ValidLobbyNameCharacter(char c)
+        {
             if (c >= 'a' && c <= 'z') return true;
             if (c >= 'A' && c <= 'Z') return true;
             if (c >= '0' && c <= '9') return true;
@@ -830,11 +836,26 @@ namespace ZkData
             return false;
         }
 
-        public static string StripInvalidLobbyNameChars(string name) {
+        public static string StripInvalidLobbyNameChars(string name)
+        {
             if (String.IsNullOrEmpty(name)) return name;
             var sb = new StringBuilder();
             foreach (var c in name.Where(Utils.ValidLobbyNameCharacter)) sb.Append(c);
             return sb.ToString();
+        }
+
+        public static string GetMyInstallID()
+        {
+
+            var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "chobbyla");
+            var path = Path.Combine(dir, "id.txt");
+            System.IO.Directory.CreateDirectory(dir);
+            if (!File.Exists(path))
+            {
+                string guid = Guid.NewGuid().ToString();
+                File.WriteAllText(path, guid);
+            }
+            return File.ReadAllText(path);
         }
 
         public static long GetMyUserID()
@@ -854,7 +875,7 @@ namespace ZkData
             }
             catch (Exception ex)
             {
-                Trace.TraceWarning("Failed to get the userID: {0}",ex);
+                Trace.TraceWarning("Failed to get the userID: {0}", ex);
             }
             return 0;
         }
@@ -899,7 +920,7 @@ namespace ZkData
             return reader.ReadBytes(Marshal.SizeOf(typeof(T))).ToStruct<T>();
         }
 
-        public static DateTime  UnixToDateTime(this UInt64 secondsFrom1970)
+        public static DateTime UnixToDateTime(this UInt64 secondsFrom1970)
         {
             var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds(secondsFrom1970).ToLocalTime();

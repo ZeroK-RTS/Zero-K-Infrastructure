@@ -28,6 +28,7 @@ namespace ZkData
         public string BanIP { get; set; }
         public bool BanForum { get; set; }
         public long? UserID { get; set; }
+        public string InstallID { get; set; }
         public int? CreatedAccountID { get; set; }
         public bool DeleteInfluence { get; set; }
         public bool DeleteXP { get; set; }
@@ -46,7 +47,7 @@ namespace ZkData
         /// <param name="filter">additional filtering to punishments</param>
         /// <param name="db">db context to use</param>
         /// <returns></returns>
-        public static Punishment GetActivePunishment(int? accountID, string ip, long? userID, Expression<Func<Punishment, bool>> filter = null)
+        public static Punishment GetActivePunishment(int? accountID, string ip, long? userID, string installID, Expression<Func<Punishment, bool>> filter = null)
         {
             if (ip == "") ip = null;
             if (accountID == 0) accountID = null;
@@ -59,7 +60,7 @@ namespace ZkData
 
             ret =
                 ret.Where(
-                    x => (accountID != null && x.AccountID == accountID) || (userID != null && x.UserID == userID) || (ip != null && x.BanIP == ip));
+                    x => (accountID != null && x.AccountID == accountID) || (userID != null && x.UserID == userID) || (!String.IsNullOrEmpty(installID) && x.InstallID == installID) || (ip != null && x.BanIP == ip));
             return ret.OrderByDescending(x => x.BanExpires).FirstOrDefault();
         }
 

@@ -19,7 +19,7 @@ namespace AutoRegistrator {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class RegistratorRes {
@@ -79,7 +79,7 @@ namespace AutoRegistrator {
         ///IsisDelta_v02
         ///Tombstone Desert V2
         ///Archers_Valley_v6
-        ///Otago 1.1
+        ///Otago 1.4
         ///Iced Coffee v4.3
         ///TheBeachBeta
         ///Onyx Cauldron 1.9

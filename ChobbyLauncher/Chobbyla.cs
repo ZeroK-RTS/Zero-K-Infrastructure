@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GameAnalyticsSDK.Net;
-using Neo.IronLua;
 using Newtonsoft.Json;
 using PlasmaDownloader;
 using PlasmaDownloader.Packages;
@@ -48,7 +47,7 @@ namespace ChobbyLauncher
 
         public Chobbyla(string rootPath, string chobbyTagOverride, string engineOverride)
         {
-            paths = new SpringPaths(rootPath, false, false);
+            paths = new SpringPaths(rootPath, false, true);
             chobbyTag = chobbyTagOverride ?? GlobalConst.DefaultChobbyTag;
             isDev = (chobbyTag == "dev") || (chobbyTag == "chobby:dev") || (chobbyTag == "zkmenu:dev");
             IsSteamFolder = File.Exists(Path.Combine(paths.WritableDirectory, "steamfolder.txt"));
@@ -108,7 +107,7 @@ namespace ChobbyLauncher
                 else internalName = "Chobby $VERSION";
 
 
-                engine = engine ?? GetSteamEngine() ?? QueryDefaultEngine() ?? ExtractEngineFromLua(ver) ?? GlobalConst.DefaultEngineOverride;
+                engine = engine ?? GetSteamEngine() ?? QueryDefaultEngine() ?? GlobalConst.DefaultEngineOverride;
 
                 try
                 {
@@ -196,21 +195,6 @@ namespace ChobbyLauncher
                 var ret = LaunchChobby(paths, internalName, engine, loopbackPort, writer).Result;
                 return ret;
             }
-        }
-
-
-        private dynamic ExtractEngineFromLua(PackageDownloader.Version ver)
-        {
-            if (ver != null)
-            {
-                var mi = ver.ReadFile(paths, "modinfo.lua");
-                var lua = new Lua();
-                var luaEnv = lua.CreateEnvironment();
-                dynamic result = luaEnv.DoChunk(new StreamReader(mi), "dummy.lua");
-                var engineVersion = result.engine;
-                return engineVersion;
-            }
-            return null;
         }
 
         private string GetSteamEngine()

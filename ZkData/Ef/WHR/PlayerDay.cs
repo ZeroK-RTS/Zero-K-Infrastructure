@@ -165,13 +165,11 @@ namespace Ratings
             totalWeight += game.GetPlayerWeight(player);
             weight += game.GetPlayerWeight(player);
             totalGames++;
-            if ((game.blackWins == false && game.whitePlayers.Contains(player))
-                    || (game.blackWins == true && game.blackPlayers.Contains(player)))
+            if (game.winnerPlayers.Contains(player))
             {
                 games[0].Add(game);
             }
-            else if ((game.blackWins == true && game.whitePlayers.Contains(player))
-                  || (game.blackWins == false && game.blackPlayers.Contains(player)))
+            else if (game.playerFinder.ContainsKey(player))
             {
                 games[1].Add(game);
             }

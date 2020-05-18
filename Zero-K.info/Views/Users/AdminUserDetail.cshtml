@@ -6,206 +6,219 @@
     Page.Title = Model.Name + " user administration";
 }           
 
-<div class="admin">
-    <h1>Administer @Html.PrintAccount(@Model, true, true)</h1>
-    AccountID: @Model.AccountID
-    <br />
-    Lobby program: @Model.LobbyVersion<br />
-    Last Login: @Model.LastLogin<br />
-    Last Logout: @Model.LastLogout<br />
-    IP:
-    <table>
-        <thead>
-            <tr>
-                <th>IP</th>
-                <th>Count</th>
-                <th>First</th>
-                <th>Last</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (AccountIP x in Model.AccountIPs.OrderByDescending(x => x.LastLogin))
-            {
+    <div class="admin">
+        <h1>Administer @Html.PrintAccount(@Model, true, true)</h1>
+        AccountID: @Model.AccountID
+        <br />
+        Lobby program: @Model.LobbyVersion<br />
+        Last Login: @Model.LastLogin<br />
+        Last Logout: @Model.LastLogout<br />
+        Last Chat Read: @Model.LastChatRead<br />
+        IP:
+        <table>
+            <thead>
                 <tr>
-                    <td>@x.IP</td>
-                    <td>@x.LoginCount</td>
-                    <td>@x.FirstLogin</td>
-                    <td>@x.LastLogin</td>
-                    <td><a target="_blank" href="http://whatismyipaddress.com/ip/@x.IP">Lookup IP for VPN or such</a> </td>
+                    <th>IP</th>
+                    <th>Count</th>
+                    <th>First</th>
+                    <th>Last</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-    <br />
-    UserID:
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Count</th>
-                <th>First</th>
-                <th>Last</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (AccountUserID x in Model.AccountUserIDs.OrderByDescending(x => x.LastLogin))
-            {
+            </thead>
+            <tbody>
+                @foreach (AccountIP x in Model.AccountIPs.OrderByDescending(x => x.LastLogin))
+                {
+                    <tr>
+                        <td>@x.IP</td>
+                        <td>@x.LoginCount</td>
+                        <td>@x.FirstLogin</td>
+                        <td>@x.LastLogin</td>
+                        <td><a target="_blank" href="http://whatismyipaddress.com/ip/@x.IP">Lookup IP for VPN or such</a> </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+        UserID:
+        <table>
+            <thead>
                 <tr>
-                    <td>@x.UserID</td>
-                    <td>@x.LoginCount</td>
-                    <td>@x.FirstLogin</td>
-                    <td>@x.LastLogin</td>
+                    <th>UserID</th>
+                    <th>InstallID</th>
+                    <th>Count</th>
+                    <th>First</th>
+                    <th>Last</th>
                 </tr>
+            </thead>
+            <tbody>
+                @foreach (AccountUserID x in Model.AccountUserIDs.OrderByDescending(x => x.LastLogin))
+                {
+                    <tr>
+                        <td>@x.UserID</td>
+                        <td>@x.InstallID</td>
+                        <td>@x.LoginCount</td>
+                        <td>@x.FirstLogin</td>
+                        <td>@x.LastLogin</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+
+        @{
+            var brokenIDs = new List<Int64>() { 1236934115, 1199297835, -2130083051, 195445522, 1141552226 };
+            var smurfs = Model.GetSmurfs();
+
+            Int64? lastUserID = null;
+            if (Model.AccountUserIDs.Any())
+            {
+                lastUserID = Model.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID;
             }
-        </tbody>
-    </table>
-    <br />
-
-    @{
-        var brokenIDs = new List<Int64>() { 1236934115, 1199297835, -2130083051, 195445522, 1141552226 };
-        var smurfs = Model.GetSmurfs();
-
-        Int64? lastUserID = null;
-        if (Model.AccountUserIDs.Any())
-        {
-            lastUserID = Model.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID;
+            string lastInstallID = null;
+            if (Model.AccountUserIDs.Any())
+            {
+                lastInstallID = Model.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().InstallID;
+            }
         }
-    }
-    <h2>Smurfs</h2>
-    @foreach (var ac in smurfs)
-    {
-        <span>@Html.PrintAccount(ac, true, true)  -  @Html.ActionLink("admin", "AdminUserDetail", new { id = ac.AccountID })</span>
-        if (ac.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby))
+        <h2>Smurfs</h2>
+        @foreach (var ac in smurfs)
         {
-            <font color="#FF0000"><b>(BANNED)</b></font>
+            <span>@Html.PrintAccount(ac, true, true)  -  @Html.ActionLink("admin", "AdminUserDetail", new { id = ac.AccountID })</span>
+            if (ac.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby))
+            {
+                <font color="#FF0000"><b>(BANNED)</b></font>
+            }
+            <br />
         }
         <br />
-    }
-    <br />
-    <h2>Abuse reports</h2>
-    <table>
-        <tbody style="vertical-align:top; background-color:#222">
-            @foreach (var a in Model.AbuseReportsByAccountID)
-            {
-                <tr><td>@a.Time</td><td>@Html.PrintAccount(a.AccountByReporterAccountID, true, true)</td><td style="padding-bottom:25px;">@Html.BBCode(a.Text)</td></tr>
-            }
-        </tbody>
-    </table>
+        <h2>Abuse reports</h2>
+        <table>
+            <tbody style="vertical-align:top; background-color:#222">
+                @foreach (var a in Model.AbuseReportsByAccountID)
+                {
+                    <tr><td>@a.Time</td><td>@Html.PrintAccount(a.AccountByReporterAccountID, true, true)</td><td style="padding-bottom:25px;">@Html.BBCode(a.Text)</td></tr>
+                }
+            </tbody>
+        </table>
 
-    @if (Model.PunishmentsByAccountID.Any())
-    {
-        <br />
-        <h2>Old penalties</h2>
-        foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.IsExpired))
+        @if (Model.PunishmentsByAccountID.Any())
         {
-            @Html.DisplayFor(x => p)
+            <br />
+            <h2>Old penalties</h2>
+            foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.IsExpired))
+            {
+                @Html.DisplayFor(x => p)
+            }
         }
-    }
 
-    <br />
-    <h2>Modify user settings</h2>
-    Hide country flag:
-    <form method="post" action="@Url.Action("ChangeHideCountry", "Users", new { accountID = Model.AccountID })">
-        @Html.AntiForgeryToken()
-        @Html.CheckBox("hideCountry", Model.HideCountry)
-        <input type="submit" />
-    </form>
-    <br />
-    Password reset:
-    <form method="post" action="@Url.Action("SetPassword", "Users", new { accountID = Model.AccountID })">
-        @Html.AntiForgeryToken()
-        @Html.TextBox("newPassword")
-        <input type="submit" />
-    </form>
-    <br />
-
-    <br />
-    Rename user:
-    <form method="post" action="@Url.Action("SetUsername", "Users", new { accountID = Model.AccountID })">
-        @Html.AntiForgeryToken()
-        @Html.TextBox("newUsername", "Lobster")
-        <input type="submit" />
-    </form>
-    <br />
-
-    @if (Model.SteamID != null)
-    {
-        <span>Unlink from Steam:</span>
-        <form method="post" action="@Url.Action("UnlinkSteamID", "Users", new { accountID = Model.AccountID })">
+        <br />
+        <h2>Modify user settings</h2>
+        Hide country flag:
+        <form method="post" action="@Url.Action("ChangeHideCountry", "Users", new { accountID = Model.AccountID })">
             @Html.AntiForgeryToken()
-            Delete this account's Steam name and ID, allowing the user to link their Steam account to another ZK account.'
-            <input type="submit" class="js_confirm" />
+            @Html.CheckBox("hideCountry", Model.HideCountry)
+            <input type="submit" />
         </form>
-    }
-
-    <br />
-
-    <h2>Modify user rating</h2>
-    <form method="post" action="@Url.Action("DeleteFromRatings", "Users", new { accountID = Model.AccountID })">
-        @Html.AntiForgeryToken()
-        Remove every game this user participated in from ratings. This will impact every person this user played with and cannot be undone without rolling back the database!
-        <input type="submit" value="DELETE" />
-    </form>
-
-    <h2>Modify user permissions</h2>
-    <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID })">
-        @Html.AntiForgeryToken()
-        Zero-K admin: @Html.CheckBox("zkAdmin", Model.AdminLevel >= AdminLevel.Moderator)
-        Tourney Control: @Html.CheckBox("tourneyController", Model.IsTourneyController)
-        VPN exception: @Html.CheckBox("vpnException", Model.HasVpnException)
-        <input type="submit" />
-    </form>
-
-    <br />
-    <h2>Issue a penalty</h2>
-    <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
-        @Html.AntiForgeryToken()
-        Reason: @Html.TextBox("reason", "Smurf", new { style = "width:500px" })<br />
+        <br />
+        Password reset:
+        <form method="post" action="@Url.Action("SetPassword", "Users", new { accountID = Model.AccountID })">
+            @Html.AntiForgeryToken()
+            @Html.TextBox("newPassword")
+            <input type="submit" />
+        </form>
         <br />
 
-        Mute: @Html.CheckBox("banMute")<br />
-        Block Votes: @Html.CheckBox("banVotes")<br />
-        Block commanders: @Html.CheckBox("banCommanders")<br />
-        Disallow spec chat: @Html.CheckBox("banSpecChat")<br />
         <br />
-        IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x => x.LastLogin).Select(x => x.IP).FirstOrDefault())<br />
-        UserID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
-        Ban site: @Html.CheckBox("banSite")<br />
-        Ban lobby: @Html.CheckBox("banLobby")<br />
-        Ban forum: @Html.CheckBox("banForum")<br />
-        Punishment hours: @Html.TextBox("banHours", 1)<br />
-
-        <input type="submit" value="PUNISH" class="js_confirm" />
-    </form>
-    <br />
-
-    <h2>Special functions</h2>
-    Hide ("delete") account:
-    <form method="post" action="@Url.Action("ChangeAccountDeleted", "Users", new { accountID = Model.AccountID })">
-        @Html.AntiForgeryToken()
-        Deleted: @Html.CheckBox("isDeleted") <br />
-        Move all games to account: @Html.TextBox("alias") <br />
-        <input type="submit" />
-    </form>
-    <br />
-
-    <h3>Delete all posts</h3>
-    <form action="@Url.Action("DeleteAllPostsByUser", "Forum", new { accountID = Model.AccountID })" method="post">
-        @Html.AntiForgeryToken()
-        This will <b>permanently</b> remove <b>all</b> of the user's posts.<br />
-        This action <b>cannot</b> be undone!<br />
+        Rename user:
+        <form method="post" action="@Url.Action("SetUsername", "Users", new { accountID = Model.AccountID })">
+            @Html.AntiForgeryToken()
+            @Html.TextBox("newUsername", "Lobster")
+            <input type="submit" />
+        </form>
         <br />
-        Enter the target's user name to confirm: @Html.TextBox("accountName")
-        <input type="submit" value="DELETE" class="js_confirm" />
-    </form>
 
-    <h3>Delete all forum votes</h3>
-    <form action="@Url.Action("DeleteAllForumVotes", "Users", new { accountID = Model.AccountID })" method="post">
-        @Html.AntiForgeryToken()
-        This will <b>permanently</b> remove <b>all</b> of the user's upvotes/downvotes on forum.<br />
-        This action <b>cannot</b> be undone!<br />
+        @if (Model.SteamID != null)
+        {
+            <span>User IS linked with Steam. Unlink from Steam:</span>
+            <form method="post" action="@Url.Action("UnlinkSteamID", "Users", new { accountID = Model.AccountID })">
+                @Html.AntiForgeryToken()
+                Delete this account's Steam name and ID, allowing the user to link their Steam account to another ZK account.'
+                <input type="submit" class="js_confirm" />
+            </form>
+        }
+        else
+        {
+            <span>User IS NOT linked with Steam. </span>
+        }
+
         <br />
-        Enter the target's user name to confirm: @Html.TextBox("accountName")
-        <input type="submit" value="DELETE" class="js_confirm" />
-    </form>
-</div>
+
+        <h2>Modify user rating</h2>
+        <form method="post" action="@Url.Action("DeleteFromRatings", "Users", new { accountID = Model.AccountID })">
+            @Html.AntiForgeryToken()
+            Remove every game this user participated in from ratings. This will impact every person this user played with and cannot be undone without rolling back the database!
+            <input type="submit" value="DELETE" />
+        </form>
+
+        <h2>Modify user permissions</h2>
+        <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID })">
+            @Html.AntiForgeryToken()
+            Zero-K admin: @Html.CheckBox("zkAdmin", Model.AdminLevel >= AdminLevel.Moderator)
+            Tourney Control: @Html.CheckBox("tourneyController", Model.IsTourneyController)
+            VPN exception: @Html.CheckBox("vpnException", Model.HasVpnException)
+            <input type="submit" />
+        </form>
+
+        <br />
+        <h2>Issue a penalty</h2>
+        <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
+            @Html.AntiForgeryToken()
+            Reason: @Html.TextBox("reason", "Smurf", new { style = "width:500px" })<br />
+            <br />
+
+            Mute: @Html.CheckBox("banMute")<br />
+            Block Votes: @Html.CheckBox("banVotes")<br />
+            Block commanders: @Html.CheckBox("banCommanders")<br />
+            Disallow spec chat: @Html.CheckBox("banSpecChat")<br />
+            <br />
+            IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x => x.LastLogin).Select(x => x.IP).FirstOrDefault())<br />
+            UserID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
+            InstallID: @Html.TextBox("installID", lastInstallID)<br />
+            Ban site: @Html.CheckBox("banSite")<br />
+            Ban lobby: @Html.CheckBox("banLobby")<br />
+            Ban forum: @Html.CheckBox("banForum")<br />
+            Punishment hours: @Html.TextBox("banHours", 1)<br />
+
+            <input type="submit" value="PUNISH" class="js_confirm" />
+        </form>
+        <br />
+
+        <h2>Special functions</h2>
+        Hide ("delete") account:
+        <form method="post" action="@Url.Action("ChangeAccountDeleted", "Users", new { accountID = Model.AccountID })">
+            @Html.AntiForgeryToken()
+            Deleted: @Html.CheckBox("isDeleted") <br />
+            Move all games to account: @Html.TextBox("alias") <br />
+            <input type="submit" />
+        </form>
+        <br />
+
+        <h3>Delete all posts</h3>
+        <form action="@Url.Action("DeleteAllPostsByUser", "Forum", new { accountID = Model.AccountID })" method="post">
+            @Html.AntiForgeryToken()
+            This will <b>permanently</b> remove <b>all</b> of the user's posts.<br />
+            This action <b>cannot</b> be undone!<br />
+            <br />
+            Enter the target's user name to confirm: @Html.TextBox("accountName")
+            <input type="submit" value="DELETE" class="js_confirm" />
+        </form>
+
+        <h3>Delete all forum votes</h3>
+        <form action="@Url.Action("DeleteAllForumVotes", "Users", new { accountID = Model.AccountID })" method="post">
+            @Html.AntiForgeryToken()
+            This will <b>permanently</b> remove <b>all</b> of the user's upvotes/downvotes on forum.<br />
+            This action <b>cannot</b> be undone!<br />
+            <br />
+            Enter the target's user name to confirm: @Html.TextBox("accountName")
+            <input type="submit" value="DELETE" class="js_confirm" />
+        </form>
+    </div>
