@@ -170,7 +170,10 @@ namespace ZeroKWeb.Controllers
             var acc = db.Accounts.Where(x => x.AccountID == Global.AccountID).First();
             var ret = db.LobbyChatHistories.AsQueryable();
             ret = ret.Where(x => x.Target == Global.Account.Name && x.SayPlace == SayPlace.User && x.Time > acc.LastChatRead);
-            model.Data = ret.OrderByDescending(x => x.Time).ToList().AsQueryable();
+            if (ret.Count() == 0) return PartialView("ChatNotification", model);
+            var ignoredIds = db.AccountRelations.Where(x => (x.Relation == Relation.Ignore) && (x.OwnerAccountID == acc.AccountID)).Select(x => x.TargetAccountID).ToList();
+            var ignoredNames = db.Accounts.Where(x => ignoredIds.Contains(x.AccountID)).Select(x => x.Name).ToHashSet();
+            model.Data = ret.OrderByDescending(x => x.Time).ToList().Where(x => !ignoredNames.Contains(x.User)).AsQueryable();
             model.Channel = "";
             acc.LastChatRead = DateTime.UtcNow;
             db.SaveChanges();
@@ -235,10 +238,16 @@ namespace ZeroKWeb.Controllers
             else
             {
                 string myName = Global.Account.Name;
+
+                var ignoredIds = db.AccountRelations.Where(x => (x.Relation == Relation.Ignore) && (x.OwnerAccountID == Global.AccountID)).Select(x => x.TargetAccountID).ToList();
+                var ignoredNames = db.Accounts.Where(x => ignoredIds.Contains(x.AccountID)).Select(x => x.Name).ToHashSet();
                 model.Data = db.LobbyChatHistories
                     .Where(x => x.Target == myName && x.SayPlace == SayPlace.User)
                     .OrderByDescending(x => x.Time).Take(30)
-                    .ToList().OrderBy(x => x.Time).AsQueryable();
+                    .ToList()
+                    .Where(x => !ignoredNames.Contains(x.User))
+                    .OrderBy(x => x.Time)
+                    .AsQueryable();
             }
 
             model.Message = "";
