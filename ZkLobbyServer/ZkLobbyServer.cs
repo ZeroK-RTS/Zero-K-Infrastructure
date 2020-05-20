@@ -360,12 +360,12 @@ namespace ZkLobbyServer
                 case SayPlace.Channel:
                     Channel channel;
                     if (Channels.TryGetValue(say.Target, out channel)) await SyncAndSay(channel.Users.Keys, say);
-                    OfflineMessageHandler.StoreChatHistoryAsync(say);
+                    await OfflineMessageHandler.StoreChatHistoryAsync(say);
                     break;
                 case SayPlace.User:
                     ConnectedUser connectedUser;
                     if (ConnectedUsers.TryGetValue(say.Target, out connectedUser)) await SyncAndSay(new List<string>() {say.Target}, say);
-                    else OfflineMessageHandler.StoreChatHistoryAsync(say);
+                    await OfflineMessageHandler.StoreChatHistoryAsync(say);
                     if (say.User != GlobalConst.NightwatchName && ConnectedUsers.TryGetValue(say.User, out connectedUser)) await connectedUser.SendCommand(say);
                     break;
                 case SayPlace.Battle:
@@ -374,7 +374,7 @@ namespace ZkLobbyServer
                     {
                         await SyncAndSay(battle.Users.Keys, say);
                         await battle.ProcessBattleSay(say);
-                        OfflineMessageHandler.StoreChatHistoryAsync(say);
+                        await OfflineMessageHandler.StoreChatHistoryAsync(say);
                     }
                     break;
 

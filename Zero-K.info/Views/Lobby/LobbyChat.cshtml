@@ -10,7 +10,7 @@
 <br />
 @{
     var ajaxOptions = Global.GetAjaxOptions("grid");
-    ajaxOptions.OnSuccess += ";document.getElementById('chatbox').value = ''";
+    ajaxOptions.OnSuccess += ";if (isManualSubmit) {document.getElementById('chatbox').value = '';} isManualSubmit = true;";
 }
 @using (Ajax.BeginForm("ChatMessages", "Lobby", null, ajaxOptions, new { id = "form" }))
 {
@@ -37,8 +37,10 @@
 }
 
 <script type="text/javascript">
+    var isManualSubmit = true;
     function updateChat() {
         if (document.getElementById('chatbox').value == '') {
+            isManualSubmit = false;
             $('form#form').trigger('submit');
         }
         setTimeout(updateChat, 5000);

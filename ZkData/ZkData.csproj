@@ -446,6 +446,10 @@
     <Compile Include="Migrations\202005171432012_AddAccountLastChatRead.Designer.cs">
       <DependentUpon>202005171432012_AddAccountLastChatRead.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202005200811157_FixNonUniqueInstallIDs.cs" />
+    <Compile Include="Migrations\202005200811157_FixNonUniqueInstallIDs.Designer.cs">
+      <DependentUpon>202005200811157_FixNonUniqueInstallIDs.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -845,6 +849,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202005171432012_AddAccountLastChatRead.resx">
       <DependentUpon>202005171432012_AddAccountLastChatRead.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005200811157_FixNonUniqueInstallIDs.resx">
+      <DependentUpon>202005200811157_FixNonUniqueInstallIDs.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

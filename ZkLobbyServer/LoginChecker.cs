@@ -399,6 +399,7 @@ namespace ZkLobbyServer
         {
             if (user_id != 0)
             {
+                installID = installID ?? "";
                 var entry = acc.AccountUserIDs.FirstOrDefault(x => x.UserID == user_id && x.InstallID == installID);
                 if (entry == null)
                 {
