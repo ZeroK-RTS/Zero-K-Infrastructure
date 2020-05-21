@@ -156,7 +156,7 @@ namespace System.Web.Mvc
         /// <param name="ignoreDeleted">If false, just prints "{redacted}" for accounts marked as deleted</param>
         public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true, bool ignoreDeleted = false, bool makeLinks = true) {
             if (account == null) return new MvcHtmlString("Nobody");
-            else if (account.IsDeleted && !ignoreDeleted && !Global.IsModerator) return new MvcHtmlString("{redacted}");
+            else if (account.IsDeleted && !ignoreDeleted && !Global.IsModerator) return new MvcHtmlString(account.Name);
             else {
                 var clanStr = "";
                 var url = Global.UrlHelper();
