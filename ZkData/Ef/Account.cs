@@ -182,6 +182,7 @@ namespace ZkData
         public virtual ICollection<AccountCampaignVar> AccountCampaignVars { get; set; }
         public virtual ICollection<AccountForumVote> AccountForumVotes { get; set; }
         public virtual ICollection<AccountIP> AccountIPs { get; set; }
+        public virtual ICollection<AccountMapBan> AccountMapBans { get; set; }
         public virtual ICollection<AccountRole> AccountRolesByAccountID { get; set; }
         public virtual ICollection<AccountUnlock> AccountUnlocks { get; set; }
         public virtual ICollection<AccountUserID> AccountUserIDs { get; set; }

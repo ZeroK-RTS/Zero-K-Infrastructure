@@ -22,7 +22,7 @@ namespace ZeroKWeb.Controllers
                 ret.AddRange(CompleteUsers(term, null, db));
                 ret.AddRange(CompleteThreads(term, null, db));
                 ret.AddRange(CompleteMissions(term, db));
-                ret.AddRange(CompleteMaps(term, db));
+                ret.AddRange(CompleteMaps(term, null, db));
             }
 
             return Json(ret, JsonRequestBehavior.AllowGet);
@@ -40,7 +40,12 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult Maps(string term)
         {
-            return Json(CompleteMaps(term, new ZkDataContext()), JsonRequestBehavior.AllowGet);
+            return Json(CompleteMaps(term, null, new ZkDataContext()), JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult MatchMakerMaps(string term)
+        {
+            return Json(CompleteMaps(term, MapSupportLevel.MatchMaker, new ZkDataContext()), JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Missions(string term)
@@ -108,11 +113,17 @@ namespace ZeroKWeb.Controllers
                             });
         }
 
-        IEnumerable<AutocompleteItem> CompleteMaps(string term, ZkDataContext db) {
+        IEnumerable<AutocompleteItem> CompleteMaps(string term, MapSupportLevel? mapSupportLevel, ZkDataContext db) {
             if (string.IsNullOrEmpty(term)) return new List<AutocompleteItem>();
-            return
-                db.Resources.Where(x => x.InternalName.Contains(term) && x.TypeID == ResourceType.Map)
+            var maps = db.Resources.AsQueryable();
+            if (mapSupportLevel != null)
+            {
+                maps = maps.Where(x => x.MapSupportLevel == mapSupportLevel);
+            }
+
+            return maps.Where(x => x.InternalName.Contains(term) && x.TypeID == ResourceType.Map)
                     .OrderByDescending(x => x.MapSupportLevel)
+                    .ThenBy(x => x.InternalName)
                     .Take(autocompleteCount)
                     .ToList()
                     .Select(
