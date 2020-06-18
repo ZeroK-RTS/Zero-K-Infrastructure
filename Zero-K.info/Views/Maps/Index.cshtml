@@ -10,8 +10,8 @@
         <option>Any</option>
         <option value='0'>Unsupported</option>
         <option value='1'>Supported</option>
-        <option value='2' selected="selected">Featured</option>
-        <option value='3'>MatchMaker</option>
+        <option value='2' selected="!@Model.OnlyShowMatchmakerMaps">Featured</option>
+        <option value='3' selected="@Model.OnlyShowMatchmakerMaps">MatchMaker</option>
     </select>
     Size:
     <select name="size">
