@@ -24,7 +24,7 @@ namespace ZkLobbyServer
                 if (filteredCandidates.Count == 0)
                 {
                     Server.UserLogSay($"Warning: could not find one valid candidate after bans for game with {Battle.Size} players. " +
-                        $"The map pool should either be increased or the number of bans per player decreased. Ignoring bans for this battle."); ;
+                        $"This really should not happen, ignoring bans for this game."); ;
                     return candidates[r.Next(candidates.Count)];
                 } else
                 {
@@ -35,9 +35,14 @@ namespace ZkLobbyServer
 
             private List<string> CandidatesAfterBans(List<string> candidates, IEnumerable<IGrouping<int, AccountMapBan>> bans) {
                 var bannedMaps = new HashSet<string>();
-                int bansPerPlayer = MapBanConfig.GetPlayerBanCount(Battle.Size);
 
-                // For each player in the battle, go through their map bans and add the first X bans not already used by another player.
+                // Ban up to X% of all maps in the pool, and distribute those bans evenly across all players, rounding down.
+                // This could be static configuration on the queue itself but the map ban logic may take into account the actual
+                // ban distribution of each player in the future and this keeps all the banning logic outside the main MatchMaker class.
+                var maximumBans = GlobalConst.MaximumPercentageOfBannedMaps * candidates.Count;
+                var bansPerPlayer = Math.Truncate(maximumBans / Battle.Size);
+
+                // For each player in the battle, go through their bans and add the first X bans not already used by another player.
                 // For team games, this does not always result in the most amount of bans possible depending on the order player bans
                 // are processed, but still guarantees every player will not see at least X of the maps they have banned.
                 foreach (var userBans in bans)

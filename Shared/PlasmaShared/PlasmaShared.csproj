@@ -71,7 +71,6 @@
   <ItemGroup>
     <Compile Include="AuthTools.cs" />
     <Compile Include="ChangeEventArgs.cs" />
-    <Compile Include="MapBanConfig.cs" />
     <Compile Include="CommandJsonSerializer.cs" />
     <Compile Include="Crc.cs" />
     <Compile Include="Diagrams\Diagram.cs" />

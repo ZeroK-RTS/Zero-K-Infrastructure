@@ -19,12 +19,20 @@ namespace ZeroKWeb.Controllers
             List<Resource> bannedMaps = db.AccountMapBans
                 .Where(x => x.AccountID == Global.AccountID)
                 .OrderBy(x => x.Rank)
-                .ToList()
                 .Select(x => x.Resource)
                 .ToList();
 
-            var unusedBans = MapBanConfig.GetMaxBanCount() - bannedMaps.Count;
-            bannedMaps.AddRange(Enumerable.Repeat(new Resource(), unusedBans));
+            var unusedBans = GlobalConst.MapBansPerPlayer - bannedMaps.Count;
+            if (unusedBans > 0)
+            {
+                // Add one blank resource for each ban the user has not applied yet to display in the view
+                bannedMaps.AddRange(Enumerable.Repeat(new Resource(), unusedBans));
+            } else if (unusedBans < 0)
+            {
+                // The user has more bans than currently allowed, likely because the global maximum was lowered
+                // after they saved their bans, so truncate the extra ones.
+                bannedMaps = bannedMaps.Take(GlobalConst.MapBansPerPlayer).ToList();
+            }
 
             return View("MapBansIndex", bannedMaps);
         }
