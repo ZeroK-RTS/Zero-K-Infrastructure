@@ -181,6 +181,7 @@
     <Compile Include="Controllers\GithubController.cs" />
     <Compile Include="Controllers\LobbyController.cs" />
     <Compile Include="Controllers\LobbyNewsController.cs" />
+    <Compile Include="Controllers\MapBansController.cs" />
     <Compile Include="Controllers\PlanetwarsAdminController.cs" />
     <Compile Include="Controllers\ReplaysController.cs" />
     <Compile Include="Controllers\TourneyController.cs" />
@@ -1578,6 +1579,7 @@
     <Content Include="Views\Lobby\LobbyChat.cshtml" />
     <Content Include="Views\Lobby\LobbyChatMessages.cshtml" />
     <Content Include="Views\Shared\ChatNotification.cshtml" />
+    <Content Include="Views\MapBans\MapBansIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

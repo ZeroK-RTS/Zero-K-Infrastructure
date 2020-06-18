@@ -1,0 +1,26 @@
+﻿@using ZeroKWeb.Controllers
+@model MapBansViewModel
+@{
+    Page.Title = "Map bans";
+}
+
+<h2>Map bans</h2>
+
+<p>You may select up to @(Model.maxBans) maps to ban from your matchmaking games. 
+    Remove an existing ban by clearing the box and hitting Save. </p>
+    
+<p> For 1v1 games, all your bans will be used. 
+    For team games, your first few unique bans will be used depending on the size of the game. </p> 
+
+<form action="@Url.Action("Update")" method="post">
+    @for (int i = 0; i < Model.maxBans; i++)
+    {
+        String mapName = i < Model.accountBans.Count ? Model.accountBans[i].Resource.InternalName : null;
+
+        <div style="margin-bottom:10px">
+            <span style="padding-right:10px;">Ban @(i+1):</span>
+            <span>@Html.TextBox("mapName", mapName, new { data_autocomplete = Url.Action("MatchMakerMaps", "Autocomplete")})</span>
+        </div>
+    }
+    <input type="submit" value="Save Bans" />
+</form>

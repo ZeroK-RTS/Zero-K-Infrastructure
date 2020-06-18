@@ -604,9 +604,10 @@ namespace ZkLobbyServer
             return realBattles;
         }
 
-        private string PickMap(MatchMakerSetup.Queue queue)
+        private string PickMap(ProposedBattle bat)
         {
-            Random r = new Random();
+            var vetoer = new MatchMaker.MapVetoer { Server = server, Battle = bat };
+            var queue = bat.QueueType;
             List<string> candidates;
             if (DateTime.Now.Subtract(lastQueueUpdate).TotalSeconds > MapModChangePauseSeconds)
             {
@@ -616,13 +617,13 @@ namespace ZkLobbyServer
             {
                 candidates = queue.SafeMaps;
             }
-            return candidates.Count == 0 ? "" : candidates[r.Next(candidates.Count)];
+            return candidates.Count == 0 ? "" : vetoer.SelectMap(candidates);
         }
 
         private async Task StartBattle(ProposedBattle bat)
         {
             await server.UserLogSay($"Match starting with players: {bat.Players.Select(x => x.Name).StringJoin()}.");
-            var battle = new MatchMakerBattle(server, bat, PickMap(bat.QueueType));
+            var battle = new MatchMakerBattle(server, bat, PickMap(bat));
             await server.AddBattle(battle);
 
             // also join in lobby

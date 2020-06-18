@@ -62,6 +62,7 @@ namespace ZkData
         public virtual ICollection<ResourceDependency> ResourceDependencies { get; set; } = new HashSet<ResourceDependency>();
         public virtual ICollection<SpringBattle> SpringBattlesByModID { get; set; } = new HashSet<SpringBattle>();
         public virtual ICollection<SpringBattle> SpringBattlesByMapResourceID { get; set; } = new HashSet<SpringBattle>();
+        public virtual ICollection<AccountMapBan> BansByAccountID { get; set; } = new HashSet<AccountMapBan>();
 
 
         [NotMapped]

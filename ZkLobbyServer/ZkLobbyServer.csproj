@@ -161,6 +161,7 @@
     <Compile Include="Main.cs" />
     <Compile Include="MatchMaker\AutoClosedServerBatle.cs" />
     <Compile Include="MatchMaker\MatchMaker.cs" />
+    <Compile Include="MatchMaker\MatchMaker.MapVetoer.cs" />
     <Compile Include="MatchMaker\MatchMaker.PlayerEntry.cs" />
     <Compile Include="MatchMaker\MatchMaker.ProposedBattle.cs" />
     <Compile Include="MatchMaker\MatchMakerBattle.cs" />

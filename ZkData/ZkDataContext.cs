@@ -22,6 +22,7 @@ namespace ZkData
         public virtual DbSet<AccountCampaignVar> AccountCampaignVars { get; set; }
         public virtual DbSet<AccountForumVote> AccountForumVotes { get; set; }
         public virtual DbSet<AccountIP> AccountIPs { get; set; }
+        public virtual DbSet<AccountMapBan> AccountMapBans { get; set; }
         public virtual DbSet<AccountRating> AccountRatings { get; set; }
         public virtual DbSet<AccountPlanet> AccountPlanets { get; set; }
         public virtual DbSet<AccountRole> AccountRoles { get; set; }
@@ -330,6 +331,15 @@ namespace ZkData
                 .WithRequired(e => e.Account)
                 .HasForeignKey(e => e.AuthorAccountID)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Account>()
+               .HasMany(e => e.AccountMapBans)
+               .WithRequired(e => e.Account)
+               .HasForeignKey(e => e.AccountID)
+               .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<AccountMapBan>()
+               .HasRequired(e => e.Resource);
 
             modelBuilder.Entity<AccountBattleAward>()
                 .Property(e => e.AwardKey)
@@ -699,6 +709,12 @@ namespace ZkData
                 .HasMany(e => e.SpringBattlesByMapResourceID)
                 .WithRequired(e => e.ResourceByMapResourceID)
                 .HasForeignKey(e => e.MapResourceID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Resource>()
+                .HasMany(e => e.BansByAccountID)
+                .WithRequired(e => e.Resource)
+                .HasForeignKey(e => e.BannedMapResourceID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<ResourceContentFile>()
