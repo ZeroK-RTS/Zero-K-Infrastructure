@@ -41,6 +41,7 @@ namespace ZkLobbyServer
                 // ban distribution of each player in the future and this keeps all the banning logic outside the main MatchMaker class.
                 var maximumBans = GlobalConst.MaximumPercentageOfBannedMaps * candidates.Count;
                 var bansPerPlayer = Math.Truncate(maximumBans / Battle.Size);
+                Server.UserLogSay($"Banning {bansPerPlayer} maps for each of {Battle.Size} plyers.");
 
                 // For each player in the battle, go through their bans and add the first X bans not already used by another player.
                 // For team games, this does not always result in the most amount of bans possible depending on the order player bans
