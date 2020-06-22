@@ -150,6 +150,9 @@ namespace ZkData
         public const float LadderEloMinChange = 1;
         public const float LadderEloSmoothingFactor = 0.25f; //1 for change as fast as whr, 0 for no change
 
+        public const int MapBansPerPlayer = 6; // Allow users to enter this many bans in UI
+        public const float MaximumPercentageOfBannedMaps = 0.75f; // Do not ban more than 75% of all maps regardless of player or ban count
+
         public const int XpForMissionOrBots = 25;
         public const int XpForMissionOrBotsVictory = 50;
 

@@ -81,10 +81,13 @@ namespace ZeroKWeb.Controllers
                                 out ret);
 
             if (!offset.HasValue) {
+                // Allow to open maps page with the matchmaking option already set so it can be used in links
+                var onlyShowMatchmakerMaps = mapSupportLevel == MapSupportLevel.MatchMaker;
                 return
                     View(new MapIndexData
                     {
-                        Title = "Latest maps",
+                        Title = onlyShowMatchmakerMaps ? "Matchmaking maps" : "Latest maps",
+                        OnlyShowMatchmakerMaps = onlyShowMatchmakerMaps,
                         Latest = ret,
                         LastComments =
                             db.Resources.Where(x => x.TypeID == ResourceType.Map && x.ForumThreadID != null)
@@ -399,6 +402,7 @@ namespace ZeroKWeb.Controllers
             public IQueryable<Resource> Latest;
             public IQueryable<Resource> MostDownloads;
             public string Title;
+            public Boolean OnlyShowMatchmakerMaps;
             public IQueryable<Resource> TopRated;
         }
 

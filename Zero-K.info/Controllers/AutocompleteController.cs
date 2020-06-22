@@ -118,7 +118,7 @@ namespace ZeroKWeb.Controllers
             var maps = db.Resources.AsQueryable();
             if (mapSupportLevel != null)
             {
-                maps = maps.Where(x => x.MapSupportLevel == mapSupportLevel);
+                maps = maps.Where(x => x.MapSupportLevel >= mapSupportLevel);
             }
 
             return maps.Where(x => x.InternalName.Contains(term) && x.TypeID == ResourceType.Map)
