@@ -11,7 +11,7 @@
     }
 }
 <div id="gposts">
-    @if (!Model.Thread.IsLocked && Model.Thread.ForumCategory.ForumMode != ForumMode.Maps && Model.Thread.ForumCategory.ForumMode != ForumMode.Missions && Model.Thread.ForumCategory.ForumMode != ForumMode.SpringBattles && Model.Thread.ForumCategory.ForumMode != ForumMode.Clans && Model.Thread.ForumCategory.ForumMode != ForumMode.Planets)
+    @if (!Model.DisablePostComment)
     {
         <span class="textbutton" id="@grid.PagerPrefixID">
             @Html.ActionLink("Post comment", "NewPost", new { threadID = Model.ThreadID })
