@@ -171,7 +171,8 @@ namespace ZeroKWeb.Controllers
 
             if (!model.DisablePostComment)
             {
-                model.DisablePostComment = thread.IsLocked || thread.ForumCategory.ForumMode == ForumMode.Maps || thread.ForumCategory.ForumMode == ForumMode.Missions || thread.ForumCategory.ForumMode == ForumMode.SpringBattles|| thread.ForumCategory.ForumMode == ForumMode.Clans || thread.ForumCategory.ForumMode == ForumMode.Planets;
+                var mode = thread.ForumCategory.ForumMode;
+                model.DisablePostComment = thread.IsLocked || mode == ForumMode.Maps || mode == ForumMode.Missions || mode == ForumMode.SpringBattles|| mode == ForumMode.Clans || mode == ForumMode.Planets;
             }
 
             return View("PostList", model);
