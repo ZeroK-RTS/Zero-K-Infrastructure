@@ -122,6 +122,10 @@ namespace ZkData
             }
             return s;
         }
+        public string MapNameWithDimensions()
+        {
+            return $"{InternalName.Trim()} ({MapWidth}x{MapHeight})";
+        }
 
         [NotMapped]
         public string ThumbnailName

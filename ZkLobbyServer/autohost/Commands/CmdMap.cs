@@ -53,7 +53,6 @@ namespace ZkLobbyServer
                 alternativeMap = MapPicker.FindResources(ResourceType.Map, arguments, MapSupportLevel.Supported, true).FirstOrDefault();
             }
 
-
             if (Map.MapSupportLevel >= MapSupportLevel.Supported)
             {
                 return $"Change map to {Map.InternalName}?";
@@ -70,7 +69,7 @@ namespace ZkLobbyServer
             if (Map != null)
             {
                 await battle.SwitchMap(Map.InternalName);
-                await battle.SayBattle("Changing map to " + Map.InternalName);
+                await battle.SayBattle($"Changing map to {Map.MapNameWithDimensions()}");
                 if (Map.MapSupportLevel < MapSupportLevel.Supported) await battle.SayBattle($"This map is not officially supported!");
                 if (alternativeMap != null) await battle.SayBattle($"Did you mean {alternativeMap.InternalName} {GlobalConst.BaseSiteUrl}/Maps/Detail/{alternativeMap.ResourceID}?");
             }
