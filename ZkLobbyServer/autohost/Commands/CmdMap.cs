@@ -55,11 +55,11 @@ namespace ZkLobbyServer
 
             if (Map.MapSupportLevel >= MapSupportLevel.Supported)
             {
-                return $"Change map to {Map.InternalName}?";
+                return $"Change map to {Map.MapNameWithDimensions()}?";
             }
             else
             {
-                return $"Change to UNSUPPORTED map {Map.InternalName}?";
+                return $"Change to UNSUPPORTED map {Map.MapNameWithDimensions()}?";
             }
         }
 
