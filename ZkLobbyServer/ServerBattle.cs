@@ -68,6 +68,7 @@ namespace ZkLobbyServer
 
         public bool IsAutohost { get; private set; }
         public bool IsDefaultGame { get; private set; } = true;
+        public bool IsCbalEnabled { get; private set; } = true;
 
         public MapSupportLevel MinimalMapSupportLevelAutohost { get; protected set; } = MapSupportLevel.Featured;
 
@@ -133,6 +134,7 @@ namespace ZkLobbyServer
                 autohost.MinRank = MinRank;
                 autohost.Title = Title;
                 autohost.MaxPlayers = MaxPlayers;
+                autohost.CbalEnabled = IsCbalEnabled;
                 if (insert)
                 {
                     db.Autohosts.Add(autohost);
@@ -445,6 +447,7 @@ namespace ZkLobbyServer
             {
                 var context = GetContext();
                 context.Mode = Mode;
+                if (!IsCbalEnabled) clanWise = false;
                 var balance = Balancer.BalanceTeams(context, isGameStart, allyTeams, clanWise);
                 await ApplyBalanceResults(balance);
                 return balance.CanStart;
@@ -507,7 +510,11 @@ namespace ZkLobbyServer
             var context = GetContext();
             if (Mode != AutohostMode.None)
             {
-                var balance = Balancer.BalanceTeams(context, true, null, null);
+                BalanceTeamsResult balance;
+
+                if (IsCbalEnabled) balance = Balancer.BalanceTeams(context, true, null, null);
+                else balance = Balancer.BalanceTeams(context, true, null, false);
+
                 if (!IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
                 if (!balance.CanStart) return false;
                 context.ApplyBalance(balance);
@@ -718,6 +725,12 @@ namespace ZkLobbyServer
             SaveToDb();
         }
 
+        public void SwitchCbal(bool cbalEnabled)
+        {
+            IsCbalEnabled = cbalEnabled;
+            SaveToDb();
+        }
+
         public async Task SwitchPassword(string pwd)
         {
             Password = pwd ?? "";
@@ -756,6 +769,7 @@ namespace ZkLobbyServer
             MinRank = autohost.MinRank;
             Title = autohost.Title;
             MaxPlayers = autohost.MaxPlayers;
+            IsCbalEnabled = autohost.CbalEnabled;
             dbAutohostIndex = autohost.AutohostID;
             FounderName = "Autohost #" + BattleID;
             ValidateAndFillDetails();

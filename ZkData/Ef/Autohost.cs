@@ -23,6 +23,7 @@ namespace ZkData
         public int MaxRank { get; set; } = int.MaxValue;
         public int MinRank { get; set; } = int.MinValue;
         public int MaxPlayers { get; set; }
+        public bool CbalEnabled { get; set; } = true;
 
         [StringLength(200)]
         public string Title { get; set; }

@@ -57,7 +57,8 @@ namespace ZkLobbyServer
                             break;
 
                         case PlasmaShared.AutohostMode.Teams:
-                            teams = PartitionBalance.Balance(Balancer.BalanceMode.ClanWise, b.Users.Values.Where(u => !u.IsSpectator).Select(x => x.LobbyUser).Select(x => new PartitionBalance.PlayerItem(x.AccountID, x.EffectiveElo, x.Clan, x.PartyID)).ToList())
+                            Balancer.BalanceMode bmode = battle.IsCbalEnabled ? Balancer.BalanceMode.ClanWise : Balancer.BalanceMode.Normal;
+                            teams = PartitionBalance.Balance(bmode, b.Users.Values.Where(u => !u.IsSpectator).Select(x => x.LobbyUser).Select(x => new PartitionBalance.PlayerItem(x.AccountID, x.EffectiveElo, x.Clan, x.PartyID)).ToList())
                                 .Players
                                 .GroupBy(u => u.AllyID)
                                 .Select(x => x.Select(p => db.Accounts.Where(a => a.AccountID == p.LobbyID).FirstOrDefault())).ToList();
