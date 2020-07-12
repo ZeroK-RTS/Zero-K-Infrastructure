@@ -50,6 +50,7 @@ namespace LobbyClient
         /// </summary>
         public string Version { get; set; }
 
+        public List<string> Blacklist { get; set; } = new List<string>();
         public List<FactionInfo> Factions { get; set; }
 
         public bool UserCountLimited { get; set; }

@@ -29,6 +29,7 @@ namespace ZkLobbyServer
         public string RemoteEndpointIP => transport.RemoteEndpointAddress;
 
         static List<Welcome.FactionInfo> cachedFactions = new List<Welcome.FactionInfo>();
+        static List<string> blacklist = new List<string>() { "dakeys", "xtrasauce" };
 
         static ClientConnection()
         {
@@ -72,7 +73,7 @@ namespace ZkLobbyServer
         public async Task OnConnected()
         {
             //Trace.TraceInformation("{0} connected", this);
-            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Version = server.Version, UserCount = server.ConnectedUsers.Count, Factions = cachedFactions, UserCountLimited = MiscVar.ZklsMaxUsers > 0});
+            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Blacklist = blacklist, Version = server.Version, UserCount = server.ConnectedUsers.Count, Factions = cachedFactions, UserCountLimited = MiscVar.ZklsMaxUsers > 0});
         }
 
 
