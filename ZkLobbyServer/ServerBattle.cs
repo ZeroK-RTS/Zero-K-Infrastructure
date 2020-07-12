@@ -510,10 +510,7 @@ namespace ZkLobbyServer
             var context = GetContext();
             if (Mode != AutohostMode.None)
             {
-                BalanceTeamsResult balance;
-
-                if (IsCbalEnabled) balance = Balancer.BalanceTeams(context, true, null, null);
-                else balance = Balancer.BalanceTeams(context, true, null, false);
+                var balance = IsCbalEnabled ? Balancer.BalanceTeams(context, true, null, null) : Balancer.BalanceTeams(context, true, null, false);
 
                 if (!IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
                 if (!balance.CanStart) return false;
