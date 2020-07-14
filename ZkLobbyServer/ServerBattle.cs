@@ -963,7 +963,8 @@ namespace ZkLobbyServer
                     pickedMaps.Add(map.ResourceID);
                     options.Add(new PollOption()
                     {
-                        Name = map.MapNameWithDimensions(),
+                        Name = map.InternalName,
+                        DisplayName = map.MapNameWithDimensions(),
                         URL = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{map.ResourceID}",
                         ResourceID = map.ResourceID,
                         Action = async () =>
