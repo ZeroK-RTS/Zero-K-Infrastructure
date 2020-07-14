@@ -64,6 +64,7 @@ namespace ZkLobbyServer
                 {
                     Id = i + 1,
                     Name = o.Name,
+                    DisplayName = String.IsNullOrEmpty(o.DisplayName) ? o.Name : o.DisplayName,
                     Votes = userVotes.Count(x => x.Value == i),
                     Url = o.URL
                 }).ToList(),
@@ -202,6 +203,7 @@ namespace ZkLobbyServer
     public class PollOption
     {
         public string Name;
+        public string DisplayName;
         public Func<Task> Action;
         public string URL = "";
         public int ResourceID;

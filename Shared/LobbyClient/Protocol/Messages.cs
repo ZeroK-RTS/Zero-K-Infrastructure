@@ -842,6 +842,7 @@ namespace LobbyClient
         public class PollOption
         {
             public string Name { get; set; }
+            public string DisplayName { get; set; }
             public int Id { get; set; }
             public int Votes { get; set; }
             public string Url { get; set; } //Empty if not applicable
