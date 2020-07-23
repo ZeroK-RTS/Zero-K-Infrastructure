@@ -148,7 +148,7 @@ namespace ChobbyLauncher
                 {
                     var state = (EItemState)SteamUGC.GetItemState(item);
 
-                    if (state == EItemState.k_EItemStateSubscribed || state== EItemState.k_EItemStateNeedsUpdate)
+                    if (state == EItemState.k_EItemStateSubscribed || (state & EItemState.k_EItemStateNeedsUpdate) > 0)
                     {
                         SteamUGC.DownloadItem(item, true);    
                     } else if ((state & EItemState.k_EItemStateInstalled) > 0)
