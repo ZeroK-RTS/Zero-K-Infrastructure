@@ -192,6 +192,9 @@ namespace ChobbyLauncher
                 var chobyl = new ChobbylaLocalListener(this, steam, initialConnectLobbyID);
                 var loopbackPort = chobyl.StartListening();
 
+                var workshopItems = steam.GetWorkshopItems();
+                paths.AddDataDirectories(workshopItems.Select(x=>x.Folder).ToList());
+                
                 var ret = LaunchChobby(paths, internalName, engine, loopbackPort, writer).Result;
                 return ret;
             }
