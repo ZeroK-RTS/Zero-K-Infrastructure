@@ -79,6 +79,7 @@ namespace AutoRegistrator
                         }
 
                     }
+                    unitsync.Reset();
                 }
 
                 return results;
