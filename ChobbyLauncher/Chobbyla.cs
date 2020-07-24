@@ -193,7 +193,7 @@ namespace ChobbyLauncher
                 var loopbackPort = chobyl.StartListening();
 
                 var workshopItems = steam.GetWorkshopItems();
-                paths.AddDataDirectories(workshopItems.Select(x=>x.Folder).ToList());
+                paths.AddDataDirectories(workshopItems.OrderByDescending(x=>x.ItemID).Select(x=>x.Folder).ToList());
                 
                 var ret = LaunchChobby(paths, internalName, engine, loopbackPort, writer).Result;
                 return ret;
