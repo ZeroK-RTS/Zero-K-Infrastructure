@@ -153,7 +153,11 @@ namespace ChobbyLauncher
                         SteamUGC.DownloadItem(item, true);    
                     } else if ((state & EItemState.k_EItemStateInstalled) > 0)
                     {
-                        SteamUGC.GetItemInstallInfo(item, out var size, out var folder, 65535, out var timestamp);
+                        ulong size;
+                        string folder;
+                        uint timestamp;
+                        
+                        SteamUGC.GetItemInstallInfo(item, out size, out folder, 65535, out timestamp);
                         ret.Add(new WorkshopItem()
                         {
                             ItemID = item.m_PublishedFileId,
