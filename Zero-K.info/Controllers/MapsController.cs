@@ -436,11 +436,27 @@ namespace ZeroKWeb.Controllers
                 var model = new List<RegistrationResult>();
                 foreach (var res in results)
                 {
-                    if (res.Status == UnitSyncer.ResourceFileStatus.Registered)
+                    if (res.Status != UnitSyncer.ResourceFileStatus.RegistrationError)
                     {
-                        var contentFolder = Path.Combine(Server.MapPath("~/content"), (res.ResourceInfo is Map) ? "maps": "games");
+                        // copy to content subfolder
+                        var subfolder = (res.ResourceInfo is Map) ? "maps" : "games";
+                        var contentFolder = Path.Combine(Server.MapPath("~/content"), subfolder);
                         if (!Directory.Exists(contentFolder)) Directory.CreateDirectory(contentFolder);
-                        System.IO.File.Copy(tmp, Path.Combine(contentFolder, res.ResourceInfo.ArchiveName));
+
+                        var destFile = Path.Combine(contentFolder, res.ResourceInfo.ArchiveName);
+                        if (!System.IO.File.Exists(destFile)) System.IO.File.Copy(tmp, destFile);
+
+                        
+                        // register as mirror
+                        using (var db = new ZkDataContext())
+                        {
+                            var resource = db.Resources.FirstOrDefault(x => x.InternalName == res.ResourceInfo.Name);
+                            var contentFile = resource.ResourceContentFiles.FirstOrDefault(x => x.FileName == file.FileName);
+                            contentFile.Links = $"{GlobalConst.BaseSiteUrl}/content/{subfolder}/{file.FileName}";
+                            contentFile.LinkCount = 1;
+                            db.SaveChanges();
+                        }
+                        
                     }
                     
                     // note this is needed because of some obscure binding issue in asp.net
