@@ -3,14 +3,26 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using System.Xml.Serialization;
+using AutoRegistrator;
 using ZkData.UnitSyncLib;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
+    public class RegistrationResult
+    {
+        public string FileName;
+        public string InternalName;
+        public string Status;
+        public string Url;
+        public string Author;
+    }
+    
     public class MapsController: Controller
     {
         //
@@ -411,6 +423,51 @@ namespace ZeroKWeb.Controllers
             public int IconSize;
             public List<string> Icons;
             public int ResourceID;
+        }
+
+        [Auth]
+        public ActionResult UploadResource(HttpPostedFileBase file)
+        {
+            var tmp = Path.Combine(Global.AutoRegistrator.Paths.WritableDirectory, "maps", file.FileName);
+            try
+            {
+                file.SaveAs(tmp);
+                var results = Global.AutoRegistrator.UnitSyncer.Scan()?.Where(x=>x.ResourceInfo?.ArchiveName == file.FileName)?.ToList();
+                var model = new List<RegistrationResult>();
+                foreach (var res in results)
+                {
+                    if (res.Status == UnitSyncer.ResourceFileStatus.Registered)
+                    {
+                        var contentFolder = Path.Combine(Server.MapPath("~/content"), (res.ResourceInfo is Map) ? "maps": "games");
+                        if (!Directory.Exists(contentFolder)) Directory.CreateDirectory(contentFolder);
+                        System.IO.File.Copy(tmp, Path.Combine(contentFolder, res.ResourceInfo.ArchiveName));
+                    }
+                    
+                    // note this is needed because of some obscure binding issue in asp.net
+                    model.Add(new RegistrationResult()
+                    {
+                        Status = res.Status.ToString(),
+                        FileName = file.FileName,
+                        InternalName = res.ResourceInfo?.Name,
+                        Author = res.ResourceInfo?.Author,
+                        Url = Url.Action("Detail", new {id = new ZkDataContext().Resources.FirstOrDefault(x => x.InternalName == res.ResourceInfo.Name)?.ResourceID})
+                    });
+                    
+                }
+                return View("UploadResourceResult", model);
+            }
+            finally
+            {
+                Task.Run(async () =>
+                {
+                    await Task.Delay(10000);
+                    try
+                    {
+                        System.IO.File.Delete(tmp);
+                    }
+                    catch { }
+                });
+            }
         }
     }
 }

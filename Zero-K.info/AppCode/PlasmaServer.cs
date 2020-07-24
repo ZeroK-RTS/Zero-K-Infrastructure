@@ -228,7 +228,9 @@ namespace ZeroKWeb
                                   byte[] metalMap,
                                   byte[] heightMap)
         {
-            var file = String.Format("{0}/{1}", Global.MapPath("~/Resources"), resource.InternalName.EscapePath());
+            var resPath = Global.MapPath("~/Resources");
+            if (!Directory.Exists(resPath)) Directory.CreateDirectory(resPath);
+            var file = String.Format("{0}/{1}", resPath, resource.InternalName.EscapePath());
 
             resource.LastChange = DateTime.UtcNow;
 
