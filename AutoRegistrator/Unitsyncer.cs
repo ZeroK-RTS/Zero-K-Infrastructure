@@ -20,6 +20,20 @@ namespace AutoRegistrator
         public string Engine { get; private set; }
         public SpringPaths Paths { get; private set; }
 
+        public class ScanResult
+        {
+            public ResourceInfo ResourceInfo { get; set; }
+            public ResourceFileStatus Status { get; set; }
+        }
+
+        public enum ResourceFileStatus
+        {
+            AlreadyExists = 0,
+            Registered = 1,
+            RegistrationError= 2
+        }
+        
+        
         public UnitSyncer(SpringPaths npaths, string nengine)
         {
             Paths = npaths;
@@ -33,8 +47,11 @@ namespace AutoRegistrator
         }
 
 
-        public void Scan()
+        
+        
+        public List<ScanResult> Scan()
         {
+            var results = new List<ScanResult>();
             using (var unitsync = new UnitSync(Paths, Engine))
             {
                 unitsync.ReInit();
@@ -42,18 +59,40 @@ namespace AutoRegistrator
                 using (var db = new ZkDataContext())
                 {
                     var registered = db.Resources.Select(x => x.InternalName).ToDictionary(x => x, x => true);
-                    foreach (var archive in archiveCache.Archives) if (!registered.ContainsKey(archive.Name) && !UnitSync.DependencyExceptions.Contains(archive.Name)) Register(unitsync, archive);
+                    foreach (var archive in archiveCache.Archives)
+                    {
+                        if (!UnitSync.DependencyExceptions.Contains(archive.Name))
+                        {
+                            if (registered.ContainsKey(archive.Name))
+                            {
+                                results.Add(new ScanResult() { ResourceInfo = archive, Status = ResourceFileStatus.AlreadyExists, });
+                            }
+                            else
+                            {
+                                var fullInfo = Register(unitsync, archive);
+                                results.Add(new ScanResult()
+                                {
+                                    ResourceInfo = fullInfo ?? archive,
+                                    Status = fullInfo != null ? ResourceFileStatus.Registered : ResourceFileStatus.RegistrationError
+                                });
+                            }
+                        }
+
+                    }
                 }
+
+                return results;
             }
         }
 
 
-        private static void Register(UnitSync unitsync, ResourceInfo resource)
+        private static ResourceInfo Register(UnitSync unitsync, ResourceInfo resource)
         {
             Trace.TraceInformation("UnitSyncer: registering {0}", resource.Name);
+            ResourceInfo info = null;
             try
             {
-                var info = unitsync.GetResourceFromFileName(resource.ArchivePath);
+                info = unitsync.GetResourceFromFileName(resource.ArchivePath);
 
                 if (info != null)
                 {
@@ -101,7 +140,7 @@ namespace AutoRegistrator
                     catch (Exception ex)
                     {
                         Trace.TraceError("UnitSyncer: Error uploading data to server: {0}", ex);
-                        return;
+                        return null;
                     }
 
                     if (e != ReturnValue.Ok) Trace.TraceWarning("UnitSyncer: Resource registering failed: {0}", e);
@@ -110,7 +149,10 @@ namespace AutoRegistrator
             catch (Exception ex)
             {
                 Trace.TraceError("Error registering resource {0} : {1}", resource.ArchivePath, ex);
+                return null;
             }
+
+            return info;
         }
     }
 }
