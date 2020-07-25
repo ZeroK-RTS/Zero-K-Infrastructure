@@ -53,6 +53,11 @@ namespace ZkData
             MakeFolders();
         }
 
+        public void AddDataDirectories(IEnumerable<string> extraDataDirectories)
+        {
+            dataDirectories.AddRange(extraDataDirectories);
+        }
+
         public string Cache { get; private set; }
         public ReadOnlyCollection<string> DataDirectories => dataDirectories.AsReadOnly();
 

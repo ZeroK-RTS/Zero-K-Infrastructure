@@ -1491,6 +1491,7 @@
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <None Include="SM.eot" />
     <None Include="SM.ttf" />
+    <Content Include="Views\Maps\UploadResourceResult.cshtml" />
     <Content Include="Views\Planetwars\Index.cshtml" />
     <Content Include="Views\Planetwars\Galaxy.cshtml" />
     <Content Include="Web.config">
@@ -1719,7 +1720,7 @@
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>9739</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:9738/</IISUrl>
+          <IISUrl>http://localhost:9739/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
