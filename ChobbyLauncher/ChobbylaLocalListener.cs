@@ -15,6 +15,7 @@ using GameAnalyticsSDK.Net;
 using PlasmaDownloader;
 using PlasmaShared;
 using ZkData;
+using static ChobbyLauncher.SteamOnline;
 using Timer = System.Threading.Timer;
 
 namespace ChobbyLauncher
@@ -47,6 +48,7 @@ namespace ChobbyLauncher
             steam.OverlayActivated += SteamOnOverlayActivated;
             steam.SteamOnline += () => { SendSteamOnline(); };
             steam.SteamOffline += () => { SendSteamOffline(); };
+            steam.FriendListUpdate += (freund) => { SendFriendList(); };
             discordController = new DiscordController(GlobalConst.ZeroKDiscordID, GlobalConst.SteamAppID.ToString());
             discordController.OnJoin += DiscordOnJoinCallback;
             discordController.OnDisconnected += DiscordOnDisconnectedCallback;
@@ -721,6 +723,7 @@ namespace ChobbyLauncher
             try
             {
                 await SendSteamOnline();
+                await SendFriendList();
 
                 idleReport = new Timer((o) => SendCommand(new UserActivity() { IdleSeconds = WindowsApi.IdleTime.TotalSeconds }), this, 5000, 5000);
             }
@@ -757,19 +760,29 @@ namespace ChobbyLauncher
             {
                 var friendId = initialConnectLobbyID != 0 ? steam.GetLobbyOwner(initialConnectLobbyID) : null;
 
-                
+
 
                 await
                     SendCommand(new SteamOnline()
                     {
                         AuthToken = steam.AuthToken,
-                        Friends = steam.Friends.Select(x => x.ToString()).ToList(),
                         FriendSteamID = friendId?.ToString(),
                         SuggestedName = steam.MySteamNameSanitized,
                         Dlc = steam.GetDlcList()
                     });
 
                 if (friendId != null) steam.SendSteamNotifyJoin(friendId.Value);
+            }
+        }
+
+        private async Task SendFriendList()
+        {
+            if (steam.IsOnline)
+            {
+                await SendCommand(new SteamFriendList()
+                {
+                    Friends = steam.Friends.Values.ToList()
+                });
             }
         }
 

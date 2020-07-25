@@ -14,6 +14,11 @@ using Steamworks;
 using ZkData;
 using System.Net.NetworkInformation;
 using Timer = System.Timers.Timer;
+using System.IO;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Drawing.Imaging;
+using Newtonsoft.Json;
 
 namespace ChobbyLauncher
 {
@@ -36,6 +41,7 @@ namespace ChobbyLauncher
 
         private bool isDisposed;
 
+        private Callback<PersonaStateChange_t> friendStateChangeCallback;
         private Callback<GameLobbyJoinRequested_t> lobbyJoinRequestCallback;
         private Callback<P2PSessionRequest_t> newConnectionCallback;
         private Callback<GameOverlayActivated_t> overlayActivatedCallback;
@@ -47,7 +53,7 @@ namespace ChobbyLauncher
 
         public string AuthToken { get; private set; }
 
-        public List<ulong> Friends { get; private set; }
+        public ConcurrentDictionary<ulong, SteamFriend> Friends { get; private set; }
         public bool IsOnline { get; private set; }
         public ChobbylaLocalListener Listener { get; set; }
 
@@ -55,6 +61,12 @@ namespace ChobbyLauncher
 
         public string MySteamNameSanitized { get; set; }
 
+        private Chobbyla chobbyla;
+
+        public SteamClientHelper(Chobbyla chobbyla)
+        {
+            this.chobbyla = chobbyla;
+        }
 
         public class WorkshopItem
         {
@@ -93,11 +105,11 @@ namespace ChobbyLauncher
         public ulong? GetLobbyOwner(ulong lobbyID)
         {
             if (IsOnline)
-                foreach (var f in GetFriends())
+                foreach (var f in GetFriendIDs())
                 {
                     FriendGameInfo_t gi;
-                    SteamFriends.GetFriendGamePlayed(new CSteamID(f), out gi);
-                    if (gi.m_steamIDLobby.m_SteamID == lobbyID) return f;
+                    SteamFriends.GetFriendGamePlayed(f, out gi);
+                    if (gi.m_steamIDLobby.m_SteamID == lobbyID) return f.m_SteamID;
                 }
             return null;
         }
@@ -125,6 +137,9 @@ namespace ChobbyLauncher
         {
             if (IsOnline) SteamMatchmaking.InviteUserToLobby(new CSteamID(lobbyID), new CSteamID(friendID));
         }
+
+
+        public event Action<SteamFriend> FriendListUpdate = (freund) => { };
 
         public event Action<ulong> JoinFriendRequest = (steamID) => { };
 
@@ -202,7 +217,7 @@ namespace ChobbyLauncher
                 ulong.TryParse(player.SteamID, out playerSteamID);
 
                 p2pProxies[playerSteamID] = null;
-                SendSteamMessage(playerSteamID, new SteamP2PRequestPrepareProxy() {Channel = steamChannelCounter++});
+                SendSteamMessage(playerSteamID, new SteamP2PRequestPrepareProxy() { Channel = steamChannelCounter++ });
             }
 
             // wait for response
@@ -238,7 +253,7 @@ namespace ChobbyLauncher
                             ScriptPassword = player.ScriptPassword
                         });
                 }
-                
+
                 // send command to start spring to self
                 Listener.SendCommand(new SteamHostGameSuccess() { HostPort = gameHostUdpPort });
             });
@@ -288,13 +303,34 @@ namespace ChobbyLauncher
         }
 
 
-        private List<ulong> GetFriends()
+        private ConcurrentDictionary<ulong, SteamFriend> GetFriends()
         {
             if (IsOnline)
             {
-                var ret = new List<ulong>();
+                var dic = new ConcurrentDictionary<ulong, SteamFriend>(GetFriendIDs().ToDictionary(x => x.m_SteamID, x => new SteamFriend()
+                {
+                    Name = SteamFriends.GetFriendPersonaName(x),
+                    CSteamID = x
+                }));
+                dic.ForEach(freund =>
+                {
+                    var state = SteamFriends.GetFriendPersonaState(freund.Value.CSteamID);
+                    freund.Value.IsOnline = state.HasFlag(EPersonaState.k_EPersonaStateOnline);
+                    FriendGameInfo_t game;
+                    freund.Value.IsPlaying = SteamFriends.GetFriendGamePlayed(freund.Value.CSteamID, out game) && (game.m_gameID.AppID().m_AppId == GlobalConst.SteamAppID);
+                });
+                return dic;
+            }
+            return null;
+        }
+
+        private List<CSteamID> GetFriendIDs()
+        {
+            if (IsOnline)
+            {
+                var ret = new List<CSteamID>();
                 var cnt = SteamFriends.GetFriendCount(EFriendFlags.k_EFriendFlagImmediate);
-                for (var i = 0; i < cnt; i++) ret.Add(SteamFriends.GetFriendByIndex(i, EFriendFlags.k_EFriendFlagImmediate).m_SteamID);
+                for (var i = 0; i < cnt; i++) ret.Add(SteamFriends.GetFriendByIndex(i, EFriendFlags.k_EFriendFlagImmediate));
                 return ret;
             }
             return null;
@@ -312,6 +348,44 @@ namespace ChobbyLauncher
             return 0;
         }
 
+        private void DownloadAvatars(ICollection<CSteamID> users)
+        {
+            using (var wc = new WebClient())
+            {
+                var targetDir = Path.Combine(chobbyla.paths.WritableDirectory, "LuaUI", "Configs", "SteamAvatars");
+                if (!Directory.Exists(targetDir)) Directory.CreateDirectory(targetDir);
+                foreach (var user in users)
+                {
+                    //download image via steamfriends
+                    int handle = SteamFriends.GetMediumFriendAvatar(user);
+                    uint imgW, imgH;
+                    SteamUtils.GetImageSize(handle, out imgW, out imgH);
+                    byte[] imgBuffer = new byte[4 * imgW * imgH];
+                    GCHandle pinnedArray = GCHandle.Alloc(imgBuffer, GCHandleType.Pinned); //please make a better implementation of this
+                    IntPtr pointer = pinnedArray.AddrOfPinnedObject();
+                    SteamUtils.GetImageRGBA(handle, imgBuffer, imgBuffer.Length);
+                    var bitmap = new Bitmap((int)imgW, (int)imgH, 4 * (int)imgW, PixelFormat.Format32bppArgb, pointer);
+
+                    var path = Path.Combine(targetDir, string.Format("{0}.png", user.m_SteamID));
+                    if (File.Exists(path)) File.Delete(path);
+                    bitmap.Save(path, ImageFormat.Png);
+
+                    pinnedArray.Free();
+                }
+            }
+        }
+
+        private void OnFriendStateUpdate(PersonaStateChange_t u)
+        {
+            if (!Friends.ContainsKey(u.m_ulSteamID)) return; //Needed because this method is called for the player himself (not part of friend list)
+            var freund = Friends[u.m_ulSteamID];
+            if (u.m_nChangeFlags.HasFlag(EPersonaChange.k_EPersonaChangeComeOnline)) freund.IsOnline = true;
+            if (u.m_nChangeFlags.HasFlag(EPersonaChange.k_EPersonaChangeGoneOffline)) freund.IsOnline = false;
+            FriendGameInfo_t game;
+            freund.IsPlaying = SteamFriends.GetFriendGamePlayed(new CSteamID(u.m_ulSteamID), out game) && (game.m_gameID.AppID().m_AppId == GlobalConst.SteamAppID);
+            FriendListUpdate?.Invoke(freund);
+        }
+
         private void OnSteamOnline()
         {
             Trace.TraceInformation("Steam online");
@@ -319,9 +393,10 @@ namespace ChobbyLauncher
             lobbyJoinRequestCallback = new Callback<GameLobbyJoinRequested_t>(t => { JoinFriendRequest(t.m_steamIDFriend.m_SteamID); });
             overlayActivatedCallback = new Callback<GameOverlayActivated_t>(t => { OverlayActivated(t.m_bActive != 0); });
             newConnectionCallback = Callback<P2PSessionRequest_t>.Create(t => SteamNetworking.AcceptP2PSessionWithUser(t.m_steamIDRemote));
+            friendStateChangeCallback = new Callback<PersonaStateChange_t>(t => OnFriendStateUpdate(t));
             MySteamNameSanitized = Utils.StripInvalidLobbyNameChars(GetMyName());
 
-            
+
             var ev = new EventWaitHandle(false, EventResetMode.ManualReset);
             AuthToken = GetClientAuthTokenHex();
             CreateLobbyAsync((lobbyID) =>
@@ -331,8 +406,10 @@ namespace ChobbyLauncher
             });
             SteamNetworking.AllowP2PPacketRelay(true);
             Friends = GetFriends();
+            Task.Factory.StartNew(() => DownloadAvatars(Friends.Values.Select(x => x.CSteamID).ToList()));
             ev.WaitOne(2000);
             SteamOnline?.Invoke();
+            FriendListUpdate?.Invoke(null);
         }
 
         private void ProcessMessage(ulong remoteUser, Dummy cmd)
@@ -370,7 +447,7 @@ namespace ChobbyLauncher
         /// </summary>
         private void ProcessMessage(ulong remoteUser, SteamP2PConfirmCreateProxy cmd)
         {
-            p2pProxies[remoteUser] = new SteamP2PPortProxy(cmd.Channel, new CSteamID(remoteUser), gameHostUdpPort); 
+            p2pProxies[remoteUser] = new SteamP2PPortProxy(cmd.Channel, new CSteamID(remoteUser), gameHostUdpPort);
         }
 
         /// <summary>
@@ -471,5 +548,17 @@ namespace ChobbyLauncher
                 if (!isDisposed) timer?.Start();
             }
         }
+    }
+
+    public class SteamFriend
+    {
+        private CSteamID _cSteamID;
+
+        [JsonIgnore]
+        public CSteamID CSteamID { get { return _cSteamID; } set { _cSteamID = value; SteamID = value.m_SteamID; } }
+        public ulong SteamID { get; private set; }
+        public string Name;
+        public bool IsOnline;
+        public bool IsPlaying; //whether friend is playing zk right now
     }
 }

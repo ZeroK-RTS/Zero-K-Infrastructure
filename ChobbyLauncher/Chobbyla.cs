@@ -184,7 +184,7 @@ namespace ChobbyLauncher
         public bool Run(ulong initialConnectLobbyID, TextWriter writer)
         {
             Status = "Connecting to steam API";
-            using (var steam = new SteamClientHelper())
+            using (var steam = new SteamClientHelper(this))
             {
                 steam.ConnectToSteam();
 

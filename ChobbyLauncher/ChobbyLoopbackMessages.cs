@@ -121,11 +121,18 @@ namespace ChobbyLauncher
     [ChobbyMessage]
     public class SteamOnline
     {
+
         public string AuthToken { get; set; }
-        public List<string> Friends { get; set; }
         public string FriendSteamID { get; set; }
         public string SuggestedName { get; set; }
         public List<ulong> Dlc { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class SteamFriendList
+    {
+        
+        public List<SteamFriend> Friends { get; set; }
     }
 
     [ChobbyMessage]
