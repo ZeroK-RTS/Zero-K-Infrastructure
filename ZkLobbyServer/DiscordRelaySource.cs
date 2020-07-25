@@ -22,6 +22,11 @@ namespace ZkLobbyServer
             return user.Username + "#" + user.Discriminator;
         }
 
+        private static string ReplaceMention(string message, MatchEvaluator replace)
+        {
+            return Regex.Replace(message, "<@!{0,1}([0-9]+)>", replace);
+        }
+
         public DiscordRelaySource(DiscordSocketClient client, ulong serverID, SaySource source)
         {
             discord = client;
@@ -50,13 +55,25 @@ namespace ZkLobbyServer
             }
         }
 
-
         public void SendMessage(ChatRelayMessage m)
         {
             try
             {
                 if (m.Source != source)
                 {
+                    //Translate mentions of nicknames to discord mentions
+                    var userIdsByNickname = discord.GetGuild(serverID).Users.ToDictionary(x => x.Nickname, x => x.Id.ToString(), StringComparer.OrdinalIgnoreCase);
+                    m.Message = Regex.Replace(m.Message, "(\\w+)", match => userIdsByNickname.ContainsKey(match.Groups[1].Value) ? 
+                            string.Format("<@{0}>", userIdsByNickname[match.Groups[1].Value]) : match.Groups[1].Value);
+
+                    //Block any mentions of an entire role via ID
+                    var roleIds = discord.GetGuild(serverID).Roles.Select(x => x.Id.ToString()).ToList();
+                    m.Message = ReplaceMention(m.Message, match => roleIds.Contains(match.Groups[1].Value) ? "" : match.Groups[1].Value);
+
+                    //Block any mentions of an entire role via Name
+                    var roleNames = discord.GetGuild(serverID).Roles.Select(x => x.Name).ToList();
+                    roleNames.ForEach(role => m.Message = m.Message.Replace(string.Format("@{0}", role), string.Format(" {0}", role)));
+
                     if (m.User != GlobalConst.NightwatchName) GetChannel(m.Channel)?.SendMessageAsync($"<{m.User}> {m.Message}");
                     // don't relay extra "nightwatch" if it is self relay
                     else GetChannel(m.Channel)?.SendMessageAsync(m.Message);
@@ -81,18 +98,18 @@ namespace ZkLobbyServer
         }
 
 
-        private static string TranslateMentions(SocketMessage msg)
+        private string TranslateMentions(SocketMessage msg)
         {
             var text = msg.Content;
             if (string.IsNullOrEmpty(text)) return string.Empty;
 
-            return Regex.Replace(text, "<@([0-9]+)>",
+            return ReplaceMention(text,
                 m =>
                 {
                     var mentionedId = m.Groups[1].Value;
 
                     var user = msg.MentionedUsers.FirstOrDefault(x => x.Id.ToString() == mentionedId);
-                    if (user != null) return user.Username;
+                    if (user != null) return discord.GetGuild(serverID).Users.FirstOrDefault(x => x.Id == user.Id)?.Nickname ?? user.Username;
 
                     var channel = msg.MentionedChannels.FirstOrDefault(x => x.Id.ToString() == mentionedId);
                     if (channel != null) return channel.Name;
