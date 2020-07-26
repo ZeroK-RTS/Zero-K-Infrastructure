@@ -497,6 +497,7 @@ namespace LobbyClient
         public DateTime? RunningSince { get; set; }
         public int? SpectatorCount { get; set; }
         public string Title { get; set; }
+        public bool TimeQueueEnabled { get; set; }
     }
 
     [Message(Origin.Server)]

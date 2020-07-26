@@ -459,6 +459,10 @@
     <Compile Include="Migrations\202007120615466_AddCbalanceToggle.Designer.cs">
       <DependentUpon>202007120615466_AddCbalanceToggle.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202007260832015_TimeQueueSwitch.cs" />
+    <Compile Include="Migrations\202007260832015_TimeQueueSwitch.Designer.cs">
+      <DependentUpon>202007260832015_TimeQueueSwitch.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -867,6 +871,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202007120615466_AddCbalanceToggle.resx">
       <DependentUpon>202007120615466_AddCbalanceToggle.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007260832015_TimeQueueSwitch.resx">
+      <DependentUpon>202007260832015_TimeQueueSwitch.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
