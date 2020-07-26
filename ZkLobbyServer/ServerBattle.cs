@@ -59,6 +59,7 @@ namespace ZkLobbyServer
         public ZkLobbyServer server;
         public DedicatedServer spring;
         public string battleInstanceGuid;
+        PlayerTeam startGameStatus;
 
         public int InviteMMPlayers { get; protected set; } = int.MaxValue; //will invite players to MM after each battle if more than X players
 
@@ -178,7 +179,7 @@ namespace ZkLobbyServer
             return null;
         }
 
-        public ConnectSpring GetConnectSpringStructure(string scriptPassword)
+        public ConnectSpring GetConnectSpringStructure(string scriptPassword, bool isSpectator)
         {
             return new ConnectSpring()
             {
@@ -189,7 +190,8 @@ namespace ZkLobbyServer
                 Game = ModName,
                 ScriptPassword = scriptPassword,
                 Mode = Mode,
-                Title = Title
+                Title = Title,
+                IsSpectator = isSpectator,
             };
         }
 
@@ -380,7 +382,9 @@ namespace ZkLobbyServer
         {
             UserBattleStatus ubs;
 
-            if (!Users.TryGetValue(conus.Name, out ubs) && !(IsInGame && spring.LobbyStartContext.Players.Any(x => x.Name == conus.Name)))
+            startGameStatus = spring.LobbyStartContext.Players.FirstOrDefault(x => x.Name == conus.Name);
+            
+            if (!Users.TryGetValue(conus.Name, out ubs) && !(IsInGame && startGameStatus != null))
                 if (IsPassworded && (Password != joinPassword))
                 {
                     await conus.Respond("Invalid password");
@@ -394,7 +398,7 @@ namespace ZkLobbyServer
                 await ProcessPlayerJoin(conus, joinPassword);
             }
 
-            await conus.SendCommand(GetConnectSpringStructure(pwd));
+            await conus.SendCommand(GetConnectSpringStructure(pwd, startGameStatus?.IsSpectator != false));
         }
 
 
@@ -545,7 +549,7 @@ namespace ZkLobbyServer
                 if (us != null)
                 {
                     ConnectedUser user;
-                    if (server.ConnectedUsers.TryGetValue(us.Name, out user)) await user.SendCommand(GetConnectSpringStructure(us.ScriptPassword));
+                    if (server.ConnectedUsers.TryGetValue(us.Name, out user)) await user.SendCommand(GetConnectSpringStructure(us.ScriptPassword, startSetup?.Players.FirstOrDefault(x=>x.Name == us.Name)?.IsSpectator != false));
                 }
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
 

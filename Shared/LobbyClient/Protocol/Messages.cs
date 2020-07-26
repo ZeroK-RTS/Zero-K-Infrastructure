@@ -731,6 +731,7 @@ namespace LobbyClient
         public string ScriptPassword { get; set; }
         public AutohostMode Mode { get; set; }
         public string Title { get; set; }
+        public bool IsSpectator { get; set; }
     }
 
     [Message(Origin.Server)]
