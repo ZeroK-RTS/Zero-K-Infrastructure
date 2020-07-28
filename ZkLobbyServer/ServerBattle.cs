@@ -59,6 +59,7 @@ namespace ZkLobbyServer
         public ZkLobbyServer server;
         public DedicatedServer spring;
         public string battleInstanceGuid;
+        PlayerTeam startGameStatus;
 
         public int InviteMMPlayers { get; protected set; } = int.MaxValue; //will invite players to MM after each battle if more than X players
 
@@ -69,6 +70,8 @@ namespace ZkLobbyServer
         public bool IsAutohost { get; private set; }
         public bool IsDefaultGame { get; private set; } = true;
         public bool IsCbalEnabled { get; private set; } = true;
+
+        public bool TimeQueueEnabled => DynamicConfig.Instance.TimeQueueEnabled && (Mode == AutohostMode.Teams || Mode == AutohostMode.Game1v1 || Mode == AutohostMode.GameFFA);
 
         public MapSupportLevel MinimalMapSupportLevelAutohost { get; protected set; } = MapSupportLevel.Featured;
 
@@ -176,7 +179,7 @@ namespace ZkLobbyServer
             return null;
         }
 
-        public ConnectSpring GetConnectSpringStructure(string scriptPassword)
+        public ConnectSpring GetConnectSpringStructure(string scriptPassword, bool isSpectator)
         {
             return new ConnectSpring()
             {
@@ -187,7 +190,8 @@ namespace ZkLobbyServer
                 Game = ModName,
                 ScriptPassword = scriptPassword,
                 Mode = Mode,
-                Title = Title
+                Title = Title,
+                IsSpectator = isSpectator,
             };
         }
 
@@ -378,7 +382,9 @@ namespace ZkLobbyServer
         {
             UserBattleStatus ubs;
 
-            if (!Users.TryGetValue(conus.Name, out ubs) && !(IsInGame && spring.LobbyStartContext.Players.Any(x => x.Name == conus.Name)))
+            startGameStatus = spring.LobbyStartContext.Players.FirstOrDefault(x => x.Name == conus.Name);
+            
+            if (!Users.TryGetValue(conus.Name, out ubs) && !(IsInGame && startGameStatus != null))
                 if (IsPassworded && (Password != joinPassword))
                 {
                     await conus.Respond("Invalid password");
@@ -392,7 +398,7 @@ namespace ZkLobbyServer
                 await ProcessPlayerJoin(conus, joinPassword);
             }
 
-            await conus.SendCommand(GetConnectSpringStructure(pwd));
+            await conus.SendCommand(GetConnectSpringStructure(pwd, startGameStatus?.IsSpectator != false));
         }
 
 
@@ -508,6 +514,16 @@ namespace ZkLobbyServer
         public async Task<bool> StartGame()
         {
             var context = GetContext();
+
+            if (TimeQueueEnabled) // spectate beyond max players
+            {
+                foreach (var plr in context.Players.Where(x=>!x.IsSpectator).OrderBy(x => x.JoinTime).Skip(MaxPlayers))
+                {
+                    plr.IsSpectator = true;
+                }
+            }
+            
+            
             if (Mode != AutohostMode.None)
             {
                 var balance = IsCbalEnabled ? Balancer.BalanceTeams(context, true, null, null) : Balancer.BalanceTeams(context, true, null, false);
@@ -533,7 +549,7 @@ namespace ZkLobbyServer
                 if (us != null)
                 {
                     ConnectedUser user;
-                    if (server.ConnectedUsers.TryGetValue(us.Name, out user)) await user.SendCommand(GetConnectSpringStructure(us.ScriptPassword));
+                    if (server.ConnectedUsers.TryGetValue(us.Name, out user)) await user.SendCommand(GetConnectSpringStructure(us.ScriptPassword, startSetup?.Players.FirstOrDefault(x=>x.Name == us.Name)?.IsSpectator != false));
                 }
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
 
@@ -845,7 +861,7 @@ namespace ZkLobbyServer
 
             if (!ubs.IsSpectator)
             {
-                if (Users.Values.Count(x => !x.IsSpectator) > MaxPlayers)
+                if (!TimeQueueEnabled && Users.Values.Count(x => !x.IsSpectator) > MaxPlayers)
                 {
                     ubs.IsSpectator = true;
                     SayBattle("This battle is full.", ubs.Name);

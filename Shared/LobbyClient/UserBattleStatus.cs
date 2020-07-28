@@ -21,7 +21,6 @@ namespace LobbyClient
 		public int AllyNumber;
 		public bool IsSpectator;
         
-        [JsonIgnore]
         public DateTime JoinTime = DateTime.Now;
 
 		public string Name;
@@ -122,6 +121,7 @@ namespace LobbyClient
                 Clan = this.LobbyUser?.Clan,
                 Faction = this.LobbyUser?.Faction,
                 PartyID = this.LobbyUser?.PartyID,
+                JoinTime = this.JoinTime
 	        };
 	    }
 	} ;

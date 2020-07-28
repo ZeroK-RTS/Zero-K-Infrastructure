@@ -497,6 +497,7 @@ namespace LobbyClient
         public DateTime? RunningSince { get; set; }
         public int? SpectatorCount { get; set; }
         public string Title { get; set; }
+        public bool TimeQueueEnabled { get; set; }
     }
 
     [Message(Origin.Server)]
@@ -730,6 +731,7 @@ namespace LobbyClient
         public string ScriptPassword { get; set; }
         public AutohostMode Mode { get; set; }
         public string Title { get; set; }
+        public bool IsSpectator { get; set; }
     }
 
     [Message(Origin.Server)]
