@@ -548,6 +548,8 @@ namespace LobbyClient
         public bool? IsSpectator { get; set; }
         public string Name { get; set; }
         public SyncStatuses? Sync { get; set; }
+        
+        public DateTime? JoinTime { get; set; }
     }
 
 
