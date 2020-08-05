@@ -742,9 +742,14 @@ namespace ChobbyLauncher
                     InstallID = Utils.GetMyInstallID(),
                     IsSteamFolder = chobbyla.IsSteamFolder
                 };
-                var sanitized = wrapperOnline;
-                sanitized.UserID = "REDACTED";
-                sanitized.InstallID = "REDACTED";
+                var sanitized = new WrapperOnline()
+                {
+                    DefaultServerHost = wrapperOnline.DefaultServerHost,
+                    DefaultServerPort = wrapperOnline.DefaultServerPort,
+                    UserID = "REDACTED",
+                    InstallID = "REDACTED",
+                    IsSteamFolder = wrapperOnline.IsSteamFolder
+                };
                 await SendCommand(wrapperOnline, sanitized);
             }
             catch (Exception ex)
