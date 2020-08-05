@@ -1,3 +1,5 @@
+using System;
+
 namespace PlasmaShared
 {
     public class PlayerTeam
@@ -10,6 +12,6 @@ namespace PlasmaShared
         public string Clan;
         public string Faction;
         public int? PartyID;
-
+        public DateTime JoinTime;
     }
 }

@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbCloner.cs" />
+    <Compile Include="Ef\AccountMapBan.cs" />
     <Compile Include="Ef\MapPollOption.cs" />
     <Compile Include="Ef\MapPollOutcomes.cs" />
     <Compile Include="Ef\AccountRelation.cs" />
@@ -449,6 +450,18 @@
     <Compile Include="Migrations\202005200811157_FixNonUniqueInstallIDs.cs" />
     <Compile Include="Migrations\202005200811157_FixNonUniqueInstallIDs.Designer.cs">
       <DependentUpon>202005200811157_FixNonUniqueInstallIDs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006162227037_AddAccountMapBans.cs" />
+    <Compile Include="Migrations\202006162227037_AddAccountMapBans.Designer.cs">
+      <DependentUpon>202006162227037_AddAccountMapBans.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007120615466_AddCbalanceToggle.cs" />
+    <Compile Include="Migrations\202007120615466_AddCbalanceToggle.Designer.cs">
+      <DependentUpon>202007120615466_AddCbalanceToggle.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007260832015_TimeQueueSwitch.cs" />
+    <Compile Include="Migrations\202007260832015_TimeQueueSwitch.Designer.cs">
+      <DependentUpon>202007260832015_TimeQueueSwitch.cs</DependentUpon>
     </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
@@ -852,6 +865,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202005200811157_FixNonUniqueInstallIDs.resx">
       <DependentUpon>202005200811157_FixNonUniqueInstallIDs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006162227037_AddAccountMapBans.resx">
+      <DependentUpon>202006162227037_AddAccountMapBans.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007120615466_AddCbalanceToggle.resx">
+      <DependentUpon>202007120615466_AddCbalanceToggle.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007260832015_TimeQueueSwitch.resx">
+      <DependentUpon>202007260832015_TimeQueueSwitch.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

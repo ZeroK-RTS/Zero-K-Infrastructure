@@ -1,0 +1,50 @@
+﻿@model System.Collections.Generic.List<ZeroKWeb.Controllers.RegistrationResult>
+
+@{
+    ViewBag.Title = "Resource upload results";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (Model?.Any() != true)
+{
+    <h3>No valid map/game found in the uploaded file</h3>
+}
+else
+{
+    <h3>Registration results</h3>
+
+    <table>
+        <thead>
+        <tr>
+            <td>File name</td>
+            <td>Name</td>
+            <td>Author</td>
+            <td>Status</td>
+            <td>Link</td>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var ri in Model)
+        {
+            <tr>
+                <td>
+                    @ri.FileName
+                </td>
+                <td>
+                    @ri.InternalName
+                </td>
+                <td>
+                    @ri.Author
+                </td>
+                <td>
+                    @ri.Status
+                </td>
+                <td>
+                    <a href="@ri.Url">Link</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

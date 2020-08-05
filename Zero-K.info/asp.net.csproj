@@ -181,6 +181,7 @@
     <Compile Include="Controllers\GithubController.cs" />
     <Compile Include="Controllers\LobbyController.cs" />
     <Compile Include="Controllers\LobbyNewsController.cs" />
+    <Compile Include="Controllers\MapBansController.cs" />
     <Compile Include="Controllers\PlanetwarsAdminController.cs" />
     <Compile Include="Controllers\ReplaysController.cs" />
     <Compile Include="Controllers\TourneyController.cs" />
@@ -1490,6 +1491,7 @@
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <None Include="SM.eot" />
     <None Include="SM.ttf" />
+    <Content Include="Views\Maps\UploadResourceResult.cshtml" />
     <Content Include="Views\Planetwars\Index.cshtml" />
     <Content Include="Views\Planetwars\Galaxy.cshtml" />
     <Content Include="Web.config">
@@ -1578,6 +1580,7 @@
     <Content Include="Views\Lobby\LobbyChat.cshtml" />
     <Content Include="Views\Lobby\LobbyChatMessages.cshtml" />
     <Content Include="Views\Shared\ChatNotification.cshtml" />
+    <Content Include="Views\MapBans\MapBansIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
@@ -1717,7 +1720,7 @@
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>9739</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:9738/</IISUrl>
+          <IISUrl>http://localhost:9739/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

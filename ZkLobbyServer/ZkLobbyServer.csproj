@@ -101,6 +101,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="autohost\Commands\CmdToggleCbal.cs" />
     <Compile Include="autohost\Commands\CmdBalance.cs" />
     <Compile Include="autohost\Commands\CmdCheats.cs" />
     <Compile Include="autohost\Commands\CmdEndvote.cs" />
@@ -161,6 +162,7 @@
     <Compile Include="Main.cs" />
     <Compile Include="MatchMaker\AutoClosedServerBatle.cs" />
     <Compile Include="MatchMaker\MatchMaker.cs" />
+    <Compile Include="MatchMaker\MatchMaker.MapVetoer.cs" />
     <Compile Include="MatchMaker\MatchMaker.PlayerEntry.cs" />
     <Compile Include="MatchMaker\MatchMaker.ProposedBattle.cs" />
     <Compile Include="MatchMaker\MatchMakerBattle.cs" />

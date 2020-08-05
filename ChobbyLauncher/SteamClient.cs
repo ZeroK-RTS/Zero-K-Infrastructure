@@ -56,6 +56,14 @@ namespace ChobbyLauncher
         public string MySteamNameSanitized { get; set; }
 
 
+        public class WorkshopItem
+        {
+            public ulong ItemID;
+            public string Folder;
+            public ulong Size;
+            public uint Timestamp;
+        }
+        
         public void Dispose()
         {
             try
@@ -123,6 +131,45 @@ namespace ChobbyLauncher
         public void OpenOverlaySection(OverlayOption option)
         {
             if (IsOnline) SteamFriends.ActivateGameOverlay(option.ToString());
+        }
+
+        public List<WorkshopItem> GetWorkshopItems()
+        {
+            var ret = new List<WorkshopItem>();
+            if (IsOnline)
+            {
+                var itemCount = SteamUGC.GetNumSubscribedItems();
+
+                PublishedFileId_t[] workshopItems = new PublishedFileId_t[itemCount];
+                SteamUGC.GetSubscribedItems(workshopItems, itemCount);
+
+
+                foreach (var item in workshopItems)
+                {
+                    var state = (EItemState)SteamUGC.GetItemState(item);
+
+                    if (state == EItemState.k_EItemStateSubscribed || (state & EItemState.k_EItemStateNeedsUpdate) > 0 || (state & EItemState.k_EItemStateDownloadPending) > 0)
+                    {
+                        SteamUGC.DownloadItem(item, true);    
+                    } else if ((state & EItemState.k_EItemStateInstalled) > 0)
+                    {
+                        ulong size;
+                        string folder;
+                        uint timestamp;
+                        
+                        SteamUGC.GetItemInstallInfo(item, out size, out folder, 65535, out timestamp);
+                        ret.Add(new WorkshopItem()
+                        {
+                            ItemID = item.m_PublishedFileId,
+                            Folder = folder,
+                            Size = size,
+                            Timestamp = timestamp
+                        }); // to get details use https://partner.steamgames.com/doc/api/ISteamUGC#CreateQueryUGCDetailsRequest async
+                    }
+                }
+            }
+
+            return ret;
         }
 
         public void OpenOverlayWebsite(string url)

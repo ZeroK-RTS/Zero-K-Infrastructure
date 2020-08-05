@@ -50,6 +50,7 @@ namespace LobbyClient
         /// </summary>
         public string Version { get; set; }
 
+        public List<string> Blacklist { get; set; } = new List<string>();
         public List<FactionInfo> Factions { get; set; }
 
         public bool UserCountLimited { get; set; }
@@ -496,6 +497,7 @@ namespace LobbyClient
         public DateTime? RunningSince { get; set; }
         public int? SpectatorCount { get; set; }
         public string Title { get; set; }
+        public bool TimeQueueEnabled { get; set; }
     }
 
     [Message(Origin.Server)]
@@ -546,6 +548,8 @@ namespace LobbyClient
         public bool? IsSpectator { get; set; }
         public string Name { get; set; }
         public SyncStatuses? Sync { get; set; }
+        
+        public DateTime? JoinTime { get; set; }
     }
 
 
@@ -729,6 +733,7 @@ namespace LobbyClient
         public string ScriptPassword { get; set; }
         public AutohostMode Mode { get; set; }
         public string Title { get; set; }
+        public bool IsSpectator { get; set; }
     }
 
     [Message(Origin.Server)]
@@ -841,6 +846,7 @@ namespace LobbyClient
         public class PollOption
         {
             public string Name { get; set; }
+            public string DisplayName { get; set; }
             public int Id { get; set; }
             public int Votes { get; set; }
             public string Url { get; set; } //Empty if not applicable
