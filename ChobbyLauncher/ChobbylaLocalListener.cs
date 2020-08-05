@@ -256,14 +256,17 @@ namespace ChobbyLauncher
             }
         }
 
-
-
         public async Task SendCommand<T>(T data)
+        {
+            await SendCommand(data, data);
+        }
+
+        public async Task SendCommand<T>(T data, T logSanitizedData)
         {
             try
             {
                 var line = serializer.SerializeToLine(data);
-                if (!(data is UserActivity)) Trace.TraceInformation("Chobbyla >> {0}", line);
+                if (logSanitizedData != null) Trace.TraceInformation("Chobbyla >> {0}", serializer.SerializeToLine(logSanitizedData));
                 await transport.SendLine(line);
             }
             catch (Exception ex)
@@ -722,7 +725,7 @@ namespace ChobbyLauncher
             {
                 await SendSteamOnline();
 
-                idleReport = new Timer((o) => SendCommand(new UserActivity() { IdleSeconds = WindowsApi.IdleTime.TotalSeconds }), this, 5000, 5000);
+                idleReport = new Timer((o) => SendCommand(new UserActivity() { IdleSeconds = WindowsApi.IdleTime.TotalSeconds }, null), this, 5000, 5000);
             }
             catch (Exception ex)
             {
@@ -731,16 +734,18 @@ namespace ChobbyLauncher
 
             try
             {
-                await
-                    SendCommand(new WrapperOnline()
-                    {
-                        DefaultServerHost = GlobalConst.LobbyServerHost,
-                        DefaultServerPort = GlobalConst.LobbyServerPort,
-                        UserID = Utils.GetMyUserID().ToString(),
-                        InstallID = Utils.GetMyInstallID(),
-                        IsSteamFolder = chobbyla.IsSteamFolder
-
-                    });
+                var wrapperOnline = new WrapperOnline()
+                {
+                    DefaultServerHost = GlobalConst.LobbyServerHost,
+                    DefaultServerPort = GlobalConst.LobbyServerPort,
+                    UserID = Utils.GetMyUserID().ToString(),
+                    InstallID = Utils.GetMyInstallID(),
+                    IsSteamFolder = chobbyla.IsSteamFolder
+                };
+                var sanitized = wrapperOnline;
+                sanitized.UserID = "REDACTED";
+                sanitized.InstallID = "REDACTED";
+                await SendCommand(wrapperOnline, sanitized);
             }
             catch (Exception ex)
             {
