@@ -261,12 +261,16 @@ namespace ChobbyLauncher
             await SendCommand(data, data);
         }
 
-        public async Task SendCommand<T>(T data, T logSanitizedData)
+        public async Task SendCommand<T>(T data, T logSanitizedData) where T:class
         {
             try
             {
                 var line = serializer.SerializeToLine(data);
-                if (logSanitizedData != null) Trace.TraceInformation("Chobbyla >> {0}", serializer.SerializeToLine(logSanitizedData));
+                if (!(data is UserActivity))
+                {
+                    Trace.TraceInformation("Chobbyla >> {0}", serializer.SerializeToLine(logSanitizedData ?? data));
+                }
+
                 await transport.SendLine(line);
             }
             catch (Exception ex)
