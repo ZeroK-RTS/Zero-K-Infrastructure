@@ -41,6 +41,7 @@ namespace LobbyClient
                 if (u.AllyNumber.HasValue) AllyNumber = u.AllyNumber.Value;
                 if (u.IsSpectator.HasValue) IsSpectator = u.IsSpectator.Value;
                 if (u.Sync.HasValue) SyncStatus = u.Sync.Value;
+                if (u.JoinTime.HasValue) JoinTime = u.JoinTime.Value;
 	        }
 	    }
 
@@ -51,6 +52,7 @@ namespace LobbyClient
 	            AllyNumber = AllyNumber,
 	            IsSpectator = IsSpectator,
 	            Sync = SyncStatus,
+	            JoinTime = JoinTime
 	        };
 	    }
 
