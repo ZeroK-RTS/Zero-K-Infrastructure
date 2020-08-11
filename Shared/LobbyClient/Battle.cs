@@ -48,6 +48,7 @@ namespace LobbyClient
         public RatingCategory ApplicableRating = RatingCategory.Casual;
         public bool IsMatchMakerBattle { get; protected set; }
 
+        public virtual bool TimeQueueEnabled { get; protected set; }
 
         public ConcurrentDictionary<string, UserBattleStatus> Users { get; set; }
 
@@ -57,6 +58,7 @@ namespace LobbyClient
         public int MinLevel { get; protected set; } = int.MinValue;
         public int MaxRank { get; protected set; } = int.MaxValue;
         public int MinRank { get; protected set; } = int.MinValue;
+        
 
         public Battle()
         {
@@ -83,6 +85,7 @@ namespace LobbyClient
             if (h.RunningSince != null) RunningSince = h.RunningSince;
             if (h.IsRunning != null) IsInGame = h.IsRunning.Value;
             if (h.IsMatchMaker != null) IsMatchMakerBattle = h.IsMatchMaker.Value;
+            if (h.TimeQueueEnabled != null) TimeQueueEnabled = h.TimeQueueEnabled.Value;
         }
 
         public virtual BattleHeader GetHeader()
@@ -103,7 +106,8 @@ namespace LobbyClient
                 Mode = b.Mode,
                 IsRunning = b.IsInGame,
                 RunningSince = b.IsInGame ? b.RunningSince : null,
-                IsMatchMaker = b.IsMatchMakerBattle
+                IsMatchMaker = b.IsMatchMakerBattle,
+                TimeQueueEnabled = b.TimeQueueEnabled
             };
         }
 

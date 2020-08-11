@@ -71,7 +71,7 @@ namespace ZkLobbyServer
         public bool IsDefaultGame { get; private set; } = true;
         public bool IsCbalEnabled { get; private set; } = true;
 
-        public bool TimeQueueEnabled => DynamicConfig.Instance.TimeQueueEnabled && (Mode == AutohostMode.Teams || Mode == AutohostMode.Game1v1 || Mode == AutohostMode.GameFFA);
+        public override bool TimeQueueEnabled => DynamicConfig.Instance.TimeQueueEnabled && (Mode == AutohostMode.Teams || Mode == AutohostMode.Game1v1 || Mode == AutohostMode.GameFFA);
 
         public MapSupportLevel MinimalMapSupportLevelAutohost { get; protected set; } = MapSupportLevel.Featured;
 
