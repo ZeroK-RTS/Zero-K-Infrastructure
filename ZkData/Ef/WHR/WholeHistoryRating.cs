@@ -584,12 +584,16 @@ namespace Ratings
                         Trace.TraceInformation("WHR Debriefing players: " + involvedAccounts.Values.Select(x => x.Name).StringJoin());
                         oldRanks = lastBattlePlayers.ToDictionary(p => p.AccountID, p => p.Account.Rank);
                         updatedRanks = lastBattlePlayers.Where(p => Ranks.UpdateRank(p.Account, p.IsInVictoryTeam, !p.IsInVictoryTeam, db)).Select(x => x.Account).ToDictionary(p => p.AccountID, p => p);
-                        updatedRanks.Values.ForEach(p => db.Entry(p).Property(x => x.Rank).IsModified = true);
+                        updatedRanks.Values.ForEach(p => {
+                            db.Accounts.Attach(p);
+                            db.Entry(p).Property(x => x.Rank).IsModified = true;
+                        });
                         playersWithRatingChange = lastBattlePlayers.Select(x => x.AccountID).ToList();
 
                         lastBattlePlayers.Where(p => !p.EloChange.HasValue).ForEach(p =>
                         {
                             p.EloChange = playerRatings[(p.AccountID)].LadderElo - oldRatings[(p.AccountID)];
+                            db.SpringBattlePlayers.Attach(p);
                             db.Entry(p).Property(x => x.EloChange).IsModified = true;
                         });
 
