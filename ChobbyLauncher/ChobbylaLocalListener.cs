@@ -86,7 +86,8 @@ namespace ChobbyLauncher
         private void SteamOnJoinFriendRequest(ulong friendSteamID)
         {
             LastUserAction = DateTime.Now;
-            SendCommand(new SteamJoinFriend() { FriendSteamID = friendSteamID.ToString() });
+            SendCommand(new SteamJoinFriend() { FriendSteamID = friendSteamID.ToString() }, 
+                new SteamJoinFriend() { FriendSteamID = "REDACTED"});
             steam.SendSteamNotifyJoin(friendSteamID);
         }
 
@@ -266,7 +267,8 @@ namespace ChobbyLauncher
             try
             {
                 var line = serializer.SerializeToLine(data);
-                if (logSanitizedData != null) Trace.TraceInformation("Chobbyla >> {0}", serializer.SerializeToLine(logSanitizedData));
+                if (GlobalConst.Mode != ModeType.Live) Trace.TraceInformation("Chobbyla >> {0}", line);
+                else if (logSanitizedData != null) Trace.TraceInformation("Chobbyla >> {0}", serializer.SerializeToLine(logSanitizedData));
                 await transport.SendLine(line);
             }
             catch (Exception ex)
@@ -769,15 +771,14 @@ namespace ChobbyLauncher
 
                 
 
-                await
-                    SendCommand(new SteamOnline()
-                    {
-                        AuthToken = steam.AuthToken,
-                        Friends = steam.Friends.Select(x => x.ToString()).ToList(),
-                        FriendSteamID = friendId?.ToString(),
-                        SuggestedName = steam.MySteamNameSanitized,
-                        Dlc = steam.GetDlcList()
-                    });
+                await SendCommand(new SteamOnline()
+                {
+                    AuthToken = steam.AuthToken,
+                    Friends = steam.Friends.Select(x => x.ToString()).ToList(),
+                    FriendSteamID = friendId?.ToString(),
+                    SuggestedName = steam.MySteamNameSanitized,
+                    Dlc = steam.GetDlcList()
+                }, new SteamOnline());
 
                 if (friendId != null) steam.SendSteamNotifyJoin(friendId.Value);
             }
