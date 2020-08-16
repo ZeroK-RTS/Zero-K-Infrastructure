@@ -302,6 +302,8 @@ namespace ZeroKWeb.Controllers
             // notify lobby of changes and post log message
             try
             {
+                string pmAction = "";
+                
                 await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
                 await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - reason: {0} ", reason));
                 await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - duration: {0}h ", banHours));
@@ -310,17 +312,49 @@ namespace ZeroKWeb.Controllers
                 {
                     await Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
                     await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - lobby banned");
+                    pmAction = pmAction + "Lobby banned, ";
                 }
                 if (banMute == true)
                 {
                     await Global.Server.PublishAccountUpdate(acc);
                     await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - muted");
+                    pmAction = pmAction + "Muted, ";
                 }
-
-                if (banForum == true) await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - forum banned");
-                if (banSpecChat == true) await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - spec chat muted");
-
-                await Global.Server.GhostPm(acc.Name, string.Format("Your account has received moderator action: {0}", reason));
+                if (banForum == true) 
+                {
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - forum banned");
+                    pmAction = pmAction + "Forum banned, ";
+                }
+                if (banSpecChat == true) 
+                {
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - spec chat muted");
+                    pmAction = pmAction + "Spectator all-chat muted, ";
+                }
+                if (banVotes == true)
+                {
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - vote banned");
+                    pmAction = pmAction + "Vote powers restricted, ";
+                }
+                if (banCommanders == true)
+                {
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - commander banned");
+                    pmAction = pmAction + "Custom commanders restricted, ";
+                }                    
+                if (banSite == true) 
+                {
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - site banned");
+                    pmAction = pmAction + "Site banned, ";
+                }
+                await Global.Server.GhostPm(acc.Name, string.Format("Your account has received moderator action: {0}", reason, banHours));
+                if (banLobby || banMute || banForum || banSpecChat || banVotes || banCommanders || banSite)
+                {
+                    pmAction = pmAction.Substring(0,Math.Max(0,pmAction.Length - 2)); // removes trailing comma and space
+                    await Global.Server.GhostPm(acc.Name, string.Format("Action taken: {0}", pmAction)); 
+                    await Global.Server.GhostPm(acc.Name, string.Format("Total duration: {0} hours", banHours));
+                } else {
+                    await Global.Server.GhostPm(acc.Name, string.Format("Action taken: Warning"));
+                }
+                
             }
             catch (Exception ex)
             {

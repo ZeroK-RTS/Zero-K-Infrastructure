@@ -5,73 +5,83 @@
     TimeSpan timeRemaining = (TimeSpan)(Model.BanExpires - DateTime.UtcNow);
     int daysRemain = (int)timeRemaining.TotalDays;
     int hoursRemain = Math.Abs(timeRemaining.Hours);
+    bool isWarning = true;
 }
-<div>
-    <h3>PENALTY: @p.Reason</h3>
-    @if (p.DeleteInfluence)
-    {
-        <span>PlanetWars influence deleted</span><br />
-    }
-    @if (p.DeleteXP)
-    {
-        <span>XP deleted</span><br />
-    }
-    @if (p.BanCommanders)
-    {
-        <span>Commanders blocked</span><br />
-    }
-    @if (p.BanUnlocks)
-    {
-        <span>Unlocks blocked</span><br />
-    }
-    @if (p.BanSpecChat)
-    {
-        <span>Cannot spectator chat</span><br />
-    }
-    @if (p.BanMute)
-    {
-        <span>Muted</span><br />
-    }
-    @if (p.BanSite)
-    {
-        <span>Site blocked</span><br />
-    }
-    @if (p.BanForum)
-    {
-        <span>Forum blocked</span><br />
-    }    
-    @if (p.BanLobby)
-    {
-        <span>Lobby blocked</span><br />
-    }
-    @if (p.SegregateHost)
-    {
-        <span>Segregated to troll host</span><br />
-    }
-    @if (Global.IsModerator)
-    {
-        <div class="admin">
-            <span>IP block: @p.BanIP</span><br />
-            <span>UserID block: @p.UserID</span><br />
-            <span>InstallID block: @p.InstallID</span><br />
-            <span>Issued by: @Html.PrintAccount(p.AccountByCreatedAccountID)</span><br />
-        </div>
-    }
-    Issued on: @p.Time (@p.Time.ToAgoString())<br />
-    Expires on: @p.BanExpires
-    @if (!p.IsExpired && timeRemaining < TimeSpan.FromDays(7))
-    {
-        <span> (@(daysRemain)d @(hoursRemain)h remaining)</span>
-    }
-    <br/>
-    @if (Global.IsModerator) {
-        <div class="admin">
-            <form action="@Url.Action("RemovePunishment", "Users")" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="punishmentID" value="@p.PunishmentID" />
-                <input type="submit" value="Remove punishment" class="js_confirm" />
-            </form>
-        </div>
-    }
-</div>
+    <div>
+        <h3>PENALTY: @p.Reason</h3>
+        @if (p.DeleteInfluence)
+        {
+            <span>PlanetWars influence deleted</span><br />
+        }
+        @if (p.DeleteXP)
+        {
+            <span>XP deleted</span><br />
+        }
+        @if (p.BanCommanders)
+        {
+            <span>Commanders blocked</span><br />
+        }
+        @if (p.BanUnlocks)
+        {
+            <span>Unlocks blocked</span><br />
+        }
+        @if (p.BanSpecChat)
+        {
+            <span>Cannot spectator chat</span><br />
+        }
+        @if (p.BanMute)
+        {
+            <span>Muted</span><br />
+        }
+        @if (p.BanSite)
+        {
+            <span>Site blocked</span><br />
+        }
+        @if (p.BanForum)
+        {
+            <span>Forum blocked</span><br />
+        }
+        @if (p.BanLobby)
+        {
+            <span>Lobby blocked</span><br />
+        }
+        @if (p.SegregateHost)
+        {
+            <span>Segregated to troll host</span><br />
+        }
+        @if (p.BanVotes)
+        {
+            <span>Vote powers restricted</span><br />
+        }
+        @if (!p.DeleteInfluence && !p.DeleteXP && !p.BanCommanders && !p.BanUnlocks && !p.BanSpecChat && !p.BanMute && !p.BanSite && !p.BanForum && !p.BanLobby && !p.SegregateHost && !p.BanVotes)
+        {
+            <span>Warning</span><br />
+        }
+        @if (Global.IsModerator)
+        {
+            <div class="admin">
+                <span>IP block: @p.BanIP</span><br />
+                <span>UserID block: @p.UserID</span><br />
+                <span>InstallID block: @p.InstallID</span><br />
+                <span>Issued by: @Html.PrintAccount(p.AccountByCreatedAccountID)</span><br />
+            </div>
+        }
+        Issued on: @p.Time (@p.Time.ToAgoString())<br />
+        Expires on: @p.BanExpires
+        @if (!p.IsExpired && timeRemaining < TimeSpan.FromDays(7))
+        {
+            <span> (@(daysRemain)d @(hoursRemain)h remaining)</span>
+        }
+        <br />
+        @if (Global.IsModerator)
+        {
+            <div class="admin">
+                <form action="@Url.Action("RemovePunishment", "Users")" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="punishmentID" value="@p.PunishmentID" />
+                    <input type="submit" value="Remove punishment" class="js_confirm" />
+                </form>
+            </div>
+        }
+    </div>
 
