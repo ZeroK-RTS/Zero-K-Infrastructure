@@ -5,57 +5,70 @@
     TimeSpan timeRemaining = (TimeSpan)(Model.BanExpires - DateTime.UtcNow);
     int daysRemain = (int)timeRemaining.TotalDays;
     int hoursRemain = Math.Abs(timeRemaining.Hours);
-    bool isWarning = true;
+    bool noPenalty = false;
 }
     <div>
-        <h3>PENALTY: @p.Reason</h3>
-        @if (p.DeleteInfluence)
-        {
-            <span>PlanetWars influence deleted</span><br />
-        }
-        @if (p.DeleteXP)
-        {
-            <span>XP deleted</span><br />
-        }
-        @if (p.BanCommanders)
-        {
-            <span>Commanders blocked</span><br />
-        }
-        @if (p.BanUnlocks)
-        {
-            <span>Unlocks blocked</span><br />
-        }
-        @if (p.BanSpecChat)
-        {
-            <span>Cannot spectator chat</span><br />
-        }
-        @if (p.BanMute)
-        {
-            <span>Muted</span><br />
-        }
-        @if (p.BanSite)
-        {
-            <span>Site blocked</span><br />
-        }
-        @if (p.BanForum)
-        {
-            <span>Forum blocked</span><br />
-        }
-        @if (p.BanLobby)
-        {
-            <span>Lobby blocked</span><br />
-        }
-        @if (p.SegregateHost)
-        {
-            <span>Segregated to troll host</span><br />
-        }
-        @if (p.BanVotes)
-        {
-            <span>Vote powers restricted</span><br />
-        }
+    
         @if (!p.DeleteInfluence && !p.DeleteXP && !p.BanCommanders && !p.BanUnlocks && !p.BanSpecChat && !p.BanMute && !p.BanSite && !p.BanForum && !p.BanLobby && !p.SegregateHost && !p.BanVotes)
         {
-            <span>Warning</span><br />
+            noPenalty = true;
+        }
+    
+        @if (p.MessageOnly && noPenalty)
+        {
+        <h3>Message received from moderators, click @Html.ActionLink("here", "Chat", "Lobby", new { User = "Nightwatch" }, null) to see it</h3>
+        }
+        else
+        {
+            <h3>PENALTY: @p.Reason</h3>
+            if (p.DeleteInfluence)
+            {
+                <span>PlanetWars influence deleted</span><br />
+            }
+            if (p.DeleteXP)
+            {
+                <span>XP deleted</span><br />
+            }
+            if (p.BanCommanders)
+            {
+                <span>Commanders blocked</span><br />
+            }
+            if (p.BanUnlocks)
+            {
+                <span>Unlocks blocked</span><br />
+            }
+            if (p.BanSpecChat)
+            {
+                <span>Cannot spectator chat</span><br />
+            }
+            if (p.BanMute)
+            {
+                <span>Muted</span><br />
+            }
+            if (p.BanSite)
+            {
+                <span>Site blocked</span><br />
+            }
+            if (p.BanForum)
+            {
+                <span>Forum blocked</span><br />
+            }
+            if (p.BanLobby)
+            {
+                <span>Lobby blocked</span><br />
+            }
+            if (p.SegregateHost)
+            {
+                <span>Segregated to troll host</span><br />
+            }
+            if (p.BanVotes)
+            {
+                <span>Vote powers restricted</span><br />
+            }
+            if (noPenalty)
+            {
+                <span>Warning</span><br />
+            }
         }
         @if (Global.IsModerator)
         {

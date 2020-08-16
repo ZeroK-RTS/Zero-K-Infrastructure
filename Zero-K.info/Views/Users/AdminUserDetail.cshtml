@@ -174,18 +174,20 @@
             @Html.AntiForgeryToken()
             Reason: @Html.TextBox("reason", "Smurf", new { style = "width:500px" })<br />
             <br />
-
             Mute: @Html.CheckBox("banMute")<br />
             Block Votes: @Html.CheckBox("banVotes")<br />
             Block commanders: @Html.CheckBox("banCommanders")<br />
             Disallow spec chat: @Html.CheckBox("banSpecChat")<br />
+            Message only, not a penalty: @Html.CheckBox("messageOnly")<br />
             <br />
             IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x => x.LastLogin).Select(x => x.IP).FirstOrDefault())<br />
             UserID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
             InstallID: @Html.TextBox("installID", lastInstallID)<br />
+            <br />
             Ban site: @Html.CheckBox("banSite")<br />
             Ban lobby: @Html.CheckBox("banLobby")<br />
             Ban forum: @Html.CheckBox("banForum")<br />
+            <br />
             Punishment hours: @Html.TextBox("banHours", 1)<br />
 
             <input type="submit" value="PUNISH" class="js_confirm" />
