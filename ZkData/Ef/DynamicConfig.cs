@@ -25,12 +25,13 @@ namespace ZkData
         public double MmMinimumMinutesBetweenSuggestions { get; set; } = 600.0; //if somebody declined a MM suggestion, don't annoy them for at least X minutes
 
         public int MaximumBattlePlayers { get; set; } = 32; //maximum amount of players allowed in rooms that are not autohosts
-
-        public float MinimumDynamicMaxLadderEloStdev { get; set; } = 200; //Maximum Elo StDev to still be on ladders
         
         public bool TimeQueueEnabled { get; set; }
 
-        
+        public int MinimumPlayersForStdevBalance { get; set; } = 32; // minimum number of players to enable balance that optimizes for stdev
+        public double StdevBalanceWeight { get; set; } = 0.01; // weight of stdev difference between teams during balance, elo difference has weight 1
+
+
         public static DynamicConfig Instance;
 
         static DynamicConfig()
