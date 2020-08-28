@@ -378,7 +378,7 @@ namespace ZeroKWeb.Controllers
                 str = string.Format("{0} {1} contacts admins : {2}", Global.Account.Name,
                     Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), text);
 
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str, isRing: true);
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str, isRing: true);
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
 
