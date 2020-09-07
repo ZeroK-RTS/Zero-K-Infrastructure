@@ -30,6 +30,7 @@ namespace ZkData
 
         public int MinimumPlayersForStdevBalance { get; set; } = 32; // minimum number of players to enable balance that optimizes for stdev
         public double StdevBalanceWeight { get; set; } = 0.01; // weight of stdev difference between teams during balance, elo difference has weight 1
+        public double MmEloBonusMultiplier { get; set; } = 0; // elo bonus multiplier to even out matches
 
 
         public static DynamicConfig Instance;
