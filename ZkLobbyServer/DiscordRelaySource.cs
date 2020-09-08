@@ -57,9 +57,16 @@ namespace ZkLobbyServer
             {
                 if (m.Source != source)
                 {
-                    if (m.User != GlobalConst.NightwatchName) GetChannel(m.Channel)?.SendMessageAsync($"<{m.User}> {m.Message}");
-                    // don't relay extra "nightwatch" if it is self relay
-                    else GetChannel(m.Channel)?.SendMessageAsync(m.Message);
+                    if (m.User != GlobalConst.NightwatchName)
+                    {
+                        GetChannel(m.Channel)?.SendMessageAsync($"<{m.User}> {m.Message}");
+                    }
+                    else
+                    {
+                        // don't relay extra "nightwatch" if it is self relay
+                        Trace.TraceInformation($"Relaying NW message {m.Message} to {m.Channel}");
+                        GetChannel(m.Channel)?.SendMessageAsync(m.Message);
+                    }
                 }
             }
             catch (Exception ex)

@@ -265,6 +265,7 @@ namespace ZeroKWeb.Controllers
                                    bool banLobby,
                                    bool banSpecChat,
                                    bool banForum,
+                                   bool messageOnly,
                                    string banIP,
                                    long? banUserID,
                                    string installID,
@@ -288,6 +289,7 @@ namespace ZeroKWeb.Controllers
                 BanExpires = DateTime.UtcNow.AddHours(banHours),
                 BanUnlocks = false,
                 BanSpecChat = banSpecChat,
+                MessageOnly = messageOnly,
                 BanIP = banIP,
                 BanForum = banForum,
                 DeleteXP = false,
@@ -302,25 +304,69 @@ namespace ZeroKWeb.Controllers
             // notify lobby of changes and post log message
             try
             {
-                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
-                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - reason: {0} ", reason));
-                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - duration: {0}h ", banHours));
-
-                if (banLobby == true)
+                string pmAction = "";
+                
+                bool activePenalty = banLobby || banMute || banForum || banSpecChat || banVotes || banCommanders || banSite;
+                
+                if (messageOnly && !activePenalty)
                 {
-                    await Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
-                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - lobby banned");
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Message sent to {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - message: {0} ", reason));
+                    
+                    await Global.Server.GhostPm(acc.Name, string.Format("A moderator has sent you a message: {0}", reason));
                 }
-                if (banMute == true)
+                else
                 {
-                    await Global.Server.PublishAccountUpdate(acc);
-                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - muted");
+
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - reason: {0} ", reason));
+                    await Global.Server.GhostPm(acc.Name, string.Format("Your account has received moderator action, reason: {0}", reason));
+
+                    if (banLobby == true)
+                    {
+                        await Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
+                        
+                        pmAction += "Lobby banned, ";
+                    }
+                    if (banMute == true)
+                    {
+                        await Global.Server.PublishAccountUpdate(acc);
+                        pmAction += "Muted, ";
+                    }
+                    if (banForum == true) 
+                    {
+                        pmAction += "Forum banned, ";
+                    }
+                    if (banSpecChat == true) 
+                    {
+                        pmAction += "Spectator all-chat muted, ";
+                    }
+                    if (banVotes == true)
+                    {
+                        pmAction += "Vote powers restricted, ";
+                    }
+                    if (banCommanders == true)
+                    {
+                        pmAction += "Custom commanders restricted, ";
+                    }                    
+                    if (banSite == true) 
+                    {
+                        pmAction += "Site banned, ";
+                    }
+                    
+                    if (activePenalty)
+                    {
+                        pmAction = pmAction.Substring(0,Math.Max(0,pmAction.Length - 2)); // removes trailing comma and space
+                        await Global.Server.GhostPm(acc.Name, string.Format("Action taken: {0}", pmAction)); 
+                        await Global.Server.GhostPm(acc.Name, string.Format("Total duration: {0} hours", banHours));
+
+                        await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - duration: {0}h ", banHours));
+                        await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - penalty type: {0}", pmAction));
+                    } else {
+                        await Global.Server.GhostPm(acc.Name, "Action taken: Warning");
+                        await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - penalty type: Warning");
+                    }
                 }
-
-                if (banForum == true) await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - forum banned");
-                if (banSpecChat == true) await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - spec chat muted");
-
-                await Global.Server.GhostPm(acc.Name, string.Format("Your account has received moderator action: {0}", reason));
             }
             catch (Exception ex)
             {
@@ -353,7 +399,7 @@ namespace ZeroKWeb.Controllers
 
         [Auth]
         [ValidateInput(false)]
-        public ActionResult ReportToAdminSubmit(int accountID, string text)
+        public async Task<ActionResult> ReportToAdminSubmit(int accountID, string text)
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(accountID);
@@ -378,14 +424,14 @@ namespace ZeroKWeb.Controllers
                 str = string.Format("{0} {1} contacts admins : {2}", Global.Account.Name,
                     Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), text);
 
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str, isRing: true);
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str, isRing: true);
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult RemovePunishment(int punishmentID)
+        public async Task<ActionResult> RemovePunishment(int punishmentID)
         {
             var db = new ZkDataContext();
             var todel = db.Punishments.FirstOrDefault(x => x.PunishmentID == punishmentID);
@@ -403,8 +449,8 @@ namespace ZeroKWeb.Controllers
             db.Punishments.DeleteOnSubmit(todel);
             db.SaveChanges();
 
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName));
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason));
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName));
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason));
 
             return RedirectToAction("Detail", "Users", new { id = todel.AccountID });
         }
