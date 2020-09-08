@@ -463,6 +463,10 @@
     <Compile Include="Migrations\202007260832015_TimeQueueSwitch.Designer.cs">
       <DependentUpon>202007260832015_TimeQueueSwitch.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202008160401244_Modaction-Message-Only.cs" />
+    <Compile Include="Migrations\202008160401244_Modaction-Message-Only.Designer.cs">
+      <DependentUpon>202008160401244_Modaction-Message-Only.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\202008240904460_AddStdevBalanceOptions.cs" />
     <Compile Include="Migrations\202008240904460_AddStdevBalanceOptions.Designer.cs">
       <DependentUpon>202008240904460_AddStdevBalanceOptions.cs</DependentUpon>
@@ -882,6 +886,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202007260832015_TimeQueueSwitch.resx">
       <DependentUpon>202007260832015_TimeQueueSwitch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008160401244_Modaction-Message-Only.resx">
+      <DependentUpon>202008160401244_Modaction-Message-Only.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202008240904460_AddStdevBalanceOptions.resx">
       <DependentUpon>202008240904460_AddStdevBalanceOptions.cs</DependentUpon>
