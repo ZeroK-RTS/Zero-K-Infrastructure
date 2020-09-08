@@ -39,7 +39,7 @@ namespace ZkLobbyServer
                 float recentWinChance = RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetAverageRecentWinChance(user.AccountID);
                 double bonusElo = -400 * Math.Log(1 / recentWinChance - 1) / Math.Log(10);
                 MinConsideredElo = (int)Math.Round(LobbyUser.EffectiveMmElo + DynamicConfig.Instance.MmEloBonusMultiplier * bonusElo);
-                Trace.TraceInformation($"Player {user.AccountID} with recent win chance {recentWinChance} receives {DynamicConfig.Instance.MmEloBonusMultiplier} * {bonusElo} bonusElo => {MinConsideredElo} Effective Elo");
+                //Trace.TraceInformation($"Player {user.AccountID} with recent win chance {recentWinChance} receives {DynamicConfig.Instance.MmEloBonusMultiplier} * {bonusElo} bonusElo => {MinConsideredElo} Effective Elo");
             }
 
             //override elo width growth to find matches instantly
