@@ -475,6 +475,10 @@
     <Compile Include="Migrations\202009072122520_AddMMBonusElo.Designer.cs">
       <DependentUpon>202009072122520_AddMMBonusElo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202009081051101_MergeAdminInterfaceImprovements.cs" />
+    <Compile Include="Migrations\202009081051101_MergeAdminInterfaceImprovements.Designer.cs">
+      <DependentUpon>202009081051101_MergeAdminInterfaceImprovements.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -895,6 +899,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009072122520_AddMMBonusElo.resx">
       <DependentUpon>202009072122520_AddMMBonusElo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009081051101_MergeAdminInterfaceImprovements.resx">
+      <DependentUpon>202009081051101_MergeAdminInterfaceImprovements.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
