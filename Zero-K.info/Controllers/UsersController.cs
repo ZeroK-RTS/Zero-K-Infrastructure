@@ -21,13 +21,13 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult ChangeHideCountry(int accountID, bool hideCountry)
+        public async Task<ActionResult> ChangeHideCountry(int accountID, bool hideCountry)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
 
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} changed {1} hide country to {2}", Global.Account.Name, acc.Name, hideCountry));
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} changed {1} hide country to {2}", Global.Account.Name, acc.Name, hideCountry));
             acc.HideCountry = hideCountry;
             // TODO reimplement ? Global.Nightwatch.Tas.SetHideCountry(acc.Name, hideCountry);
             db.SaveChanges();
@@ -38,7 +38,7 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult ChangeAccountDeleted(int accountID, bool isDeleted, string alias)
+        public async Task<ActionResult> ChangeAccountDeleted(int accountID, bool isDeleted, string alias)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
@@ -59,8 +59,8 @@ namespace ZeroKWeb.Controllers
 
             if (acc.IsDeleted != isDeleted)
             {
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} {1} deletion status changed by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - {0} -> {1}", acc.IsDeleted, isDeleted));
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} {1} deletion status changed by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - {0} -> {1}", acc.IsDeleted, isDeleted));
                 acc.IsDeleted = isDeleted;
             }
             db.SaveChanges();
@@ -71,36 +71,36 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [Auth(Role = AdminLevel.SuperAdmin)]
         [ValidateAntiForgeryToken]
-        public ActionResult ChangePermissions(int accountID, bool zkAdmin, bool tourneyController, bool vpnException)
+        public async Task<ActionResult> ChangePermissions(int accountID, bool zkAdmin, bool tourneyController, bool vpnException)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
             Account adminAcc = Global.Account;
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
 
             var curAdmin = acc.AdminLevel > AdminLevel.None;
             if (curAdmin != zkAdmin)
             {
                 //reset chat priviledges to 2 if removing adminhood; remove NW subsciption to admin channel
                 // FIXME needs to also terminate forbidden clan/faction subscriptions
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Moderator status: {0} -> {1}", curAdmin, zkAdmin));
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Moderator status: {0} -> {1}", curAdmin, zkAdmin));
                 acc.AdminLevel = zkAdmin ? AdminLevel.Moderator : AdminLevel.None;
 
             }
             if (acc.HasVpnException != vpnException)
             {
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - VPN exception: {0} -> {1}", acc.HasVpnException, vpnException));
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - VPN exception: {0} -> {1}", acc.HasVpnException, vpnException));
                 acc.HasVpnException = vpnException;
             }
             if (acc.IsTourneyController != tourneyController)
             {
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Tourney Control: {0} -> {1}", acc.IsTourneyController, tourneyController));
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Tourney Control: {0} -> {1}", acc.IsTourneyController, tourneyController));
                 acc.IsTourneyController = tourneyController;
             }
             db.SaveChanges();
 
-            Global.Server.PublishAccountUpdate(acc);
+            await Global.Server.PublishAccountUpdate(acc);
 
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
@@ -108,13 +108,13 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult DeleteFromRatings(int accountID)
+        public async Task<ActionResult> DeleteFromRatings(int accountID)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
             Account adminAcc = Global.Account;
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Ratings deleted for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Ratings deleted for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
             var battles = db.SpringBattles.Where(x => x.SpringBattlePlayers.Where(p => !p.IsSpectator).Any(p => p.AccountID == accountID))
                                     .Include(x => x.ResourceByMapResourceID)
                                     .Include(x => x.SpringBattlePlayers)
@@ -128,13 +128,13 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult UnlinkSteamID(int accountID)
+        public async Task<ActionResult> UnlinkSteamID(int accountID)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
             Account adminAcc = Global.Account;
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{2} unlinked Steam account for {0} {1} (name {3})",
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{2} unlinked Steam account for {0} {1} (name {3})",
                                                                                    acc.Name,
                                                                                    Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"),
                                                                                    adminAcc.Name,
@@ -557,7 +557,7 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult SetPassword(int accountID, string newPassword)
+        public async Task<ActionResult> SetPassword(int accountID, string newPassword)
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(accountID);
@@ -566,7 +566,7 @@ namespace ZeroKWeb.Controllers
             acc.SetPasswordPlain(newPassword);
             if (!string.IsNullOrEmpty(newPassword)) acc.SteamID = null;
             db.SaveChanges();
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} changed {1} password", Global.Account.Name, acc.Name));
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} changed {1} password", Global.Account.Name, acc.Name));
             return Content(string.Format("{0} password set to {1}", acc.Name, newPassword));
         }
 
@@ -598,7 +598,7 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult DeleteAllForumVotes(int accountID)
+        public async Task<ActionResult> DeleteAllForumVotes(int accountID)
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
@@ -629,7 +629,7 @@ namespace ZeroKWeb.Controllers
                 db.AccountForumVotes.DeleteOnSubmit(vote);
             }
             db.SaveChanges();
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} forum votes deleted by {1}", Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} forum votes deleted by {1}", Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
 
             return Content(string.Format("Deleted all forum votes of {0}", acc.Name));
         }

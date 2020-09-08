@@ -4,6 +4,7 @@ using System.Data.Entity.SqlServer;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
@@ -184,7 +185,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult KickPlayerFromClan(int accountID)
+        public async Task<ActionResult> KickPlayerFromClan(int accountID)
         {
             var db = new ZkDataContext();
 
@@ -201,13 +202,13 @@ namespace ZeroKWeb.Controllers
             }
             else
             {
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} kicked {1} from clan {2}", Global.Account.Name, kickee_acc.Name, db.Clans.Single(x => x.ClanID == clanID).ClanName));
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} kicked {1} from clan {2}", Global.Account.Name, kickee_acc.Name, db.Clans.Single(x => x.ClanID == clanID).ClanName));
             }
 
             PerformLeaveClan(accountID);
             db.SaveChanges();
             PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator());
-            Global.Server.PublishAccountUpdate(kickee_acc);
+            await Global.Server.PublishAccountUpdate(kickee_acc);
             return RedirectToAction("Detail", new { id = clanID });
         }
 
@@ -215,7 +216,7 @@ namespace ZeroKWeb.Controllers
         /// Creates a clan and redirects to the new clan page
         /// </summary>
         [Auth]
-        public ActionResult SubmitCreate(Clan clan, HttpPostedFileBase image, HttpPostedFileBase bgimage, bool noFaction = false)
+        public async Task<ActionResult> SubmitCreate(Clan clan, HttpPostedFileBase image, HttpPostedFileBase bgimage, bool noFaction = false)
         {
             //using (var scope = new TransactionScope())
             //{
@@ -256,10 +257,10 @@ namespace ZeroKWeb.Controllers
 
                 if (Global.IsModerator && (!Global.Account.HasClanRight(x => x.RightEditTexts) || clan.ClanID != Global.Account.ClanID))
                 {
-                    Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} edited clan {1} {2}", Global.Account.Name, orgClan.ClanName, Url.Action("Detail", "Clans", new { id = clan.ClanID }, "http")));
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} edited clan {1} {2}", Global.Account.Name, orgClan.ClanName, Url.Action("Detail", "Clans", new { id = clan.ClanID }, "http")));
                     if (orgClan.ClanName != clan.ClanName)
                     {
-                        Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} => {1}", orgClan.ClanName, clan.ClanName));
+                        await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} => {1}", orgClan.ClanName, clan.ClanName));
                     }
                 }
 
@@ -382,23 +383,11 @@ namespace ZeroKWeb.Controllers
                 db.SaveChanges();
             }
 
-            Global.Server.PublishAccountUpdate(acc);
-            //scope.Complete();
-            Global.Server.ChannelManager.AddClanChannel(clan);;
-            Global.Server.SetTopic(clan.GetClanChannel(), clan.SecretTopic, Global.Account.Name);
-            //}
+            await Global.Server.PublishAccountUpdate(acc);
+            Global.Server.ChannelManager.AddClanChannel(clan);
+            await Global.Server.SetTopic(clan.GetClanChannel(), clan.SecretTopic, Global.Account.Name);
             return RedirectToAction("Detail", new { id = clan.ClanID });
         }
-
-        /*
-        public ActionResult JsonJoinClan(string login, string password, int clanID)
-        {
-            var db = new ZkDataContext();
-            var clan = db.Clans.First(x => x.ClanID == clanID && x.Password == null);
-            var acc = db.Accounts.First(x=>x.AccountID == AuthServiceClient.VerifyAccountPlain(login, password).AccountID);
-            PerformLeaveClan(acc.AccountID, db);
-            return Json(db.Clans.Where(x => !x.IsDeleted).ToList(), JsonRequestBehavior.AllowGet);
-        }*/
 
     }
 }
