@@ -353,7 +353,7 @@ namespace ZeroKWeb.Controllers
 
         [Auth]
         [ValidateInput(false)]
-        public ActionResult ReportToAdminSubmit(int accountID, string text)
+        public async Task<ActionResult> ReportToAdminSubmit(int accountID, string text)
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(accountID);
@@ -378,14 +378,14 @@ namespace ZeroKWeb.Controllers
                 str = string.Format("{0} {1} contacts admins : {2}", Global.Account.Name,
                     Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), text);
 
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str, isRing: true);
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str, isRing: true);
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult RemovePunishment(int punishmentID)
+        public async Task<ActionResult> RemovePunishment(int punishmentID)
         {
             var db = new ZkDataContext();
             var todel = db.Punishments.FirstOrDefault(x => x.PunishmentID == punishmentID);
@@ -403,8 +403,8 @@ namespace ZeroKWeb.Controllers
             db.Punishments.DeleteOnSubmit(todel);
             db.SaveChanges();
 
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName));
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason));
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName));
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason));
 
             return RedirectToAction("Detail", "Users", new { id = todel.AccountID });
         }
