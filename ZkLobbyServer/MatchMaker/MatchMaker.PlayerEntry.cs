@@ -38,6 +38,7 @@ namespace ZkLobbyServer
                 LobbyUser = user;
                 float recentWinChance = RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetAverageRecentWinChance(user.AccountID);
                 double bonusElo = -400 * Math.Log(1 / recentWinChance - 1) / Math.Log(10);
+                bonusElo = Math.Min(300, Math.Max(-300, bonusElo));
                 MinConsideredElo = (int)Math.Round(LobbyUser.EffectiveMmElo + DynamicConfig.Instance.MmEloBonusMultiplier * bonusElo);
                 //Trace.TraceInformation($"Player {user.AccountID} with recent win chance {recentWinChance} receives {DynamicConfig.Instance.MmEloBonusMultiplier} * {bonusElo} bonusElo => {MinConsideredElo} Effective Elo");
             }
