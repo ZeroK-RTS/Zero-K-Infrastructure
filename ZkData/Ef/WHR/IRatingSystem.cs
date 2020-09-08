@@ -14,6 +14,8 @@ namespace Ratings
 
         Dictionary<DateTime, float> GetPlayerRatingHistory(int accountID);
 
+        float GetAverageRecentWinChance(int AccountID);
+
         List<Account> GetTopPlayers(int count);
 
         List<Account> GetTopPlayers(int count, Func<Account, bool> selector);

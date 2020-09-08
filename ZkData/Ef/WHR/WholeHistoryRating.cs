@@ -111,6 +111,23 @@ namespace Ratings
             return players[(AccountID)].days.ToDictionary(day => RatingSystems.ConvertDaysToDate(day.day), day => day.GetElo() + RatingOffset - day.GetEloStdev() * GlobalConst.RatingConfidenceSigma);
         }
 
+        public float GetAverageRecentWinChance(int AccountID)
+        {
+            if (!players.ContainsKey((AccountID))) return 0.4f;
+            var recentGames = players[AccountID].days
+                .Where(day => day.day >= RatingSystems.ConvertDateToDays(DateTime.UtcNow.AddDays(-1)))
+                .SelectMany(day => day.games.SelectMany(g => g))
+                .OrderByDescending(g => g.id)
+                .Take(5);
+            float recentWinChance = 0.4f;
+            if (recentGames.Count() > 0)
+            {
+                recentWinChance = recentGames.Select(x => x.winnerPlayers.Contains(players[AccountID]) ? x.GetWinProbability() : (1 - x.GetWinProbability())).Average();
+            }
+            Trace.TraceInformation($"The {recentGames.Count()} most recent games for {AccountID} are {string.Join(", ", recentGames.Select(x => x.id))}, the average win chance is {recentWinChance}.");
+            return recentWinChance;
+        }
+
         public List<float> PredictOutcome(IEnumerable<IEnumerable<Account>> teams, DateTime time)
         {
             var predictions = teams.Select(t =>

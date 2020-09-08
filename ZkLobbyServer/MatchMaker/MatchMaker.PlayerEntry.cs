@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using LobbyClient;
 using PlasmaShared;
+using Ratings;
 using ZkData;
 
 namespace ZkLobbyServer
@@ -15,8 +17,8 @@ namespace ZkLobbyServer
             public bool LastReadyResponse;
 
             public int EloWidth => (int)(DynamicConfig.Instance.MmStartingWidth + WaitRatio * DynamicConfig.Instance.MmWidthGrowth);
-            public int MinConsideredElo => LobbyUser.EffectiveMmElo;
-            public int MaxConsideredElo => (int)(LobbyUser.EffectiveMmElo + (Math.Max(1500, LobbyUser.RawMmElo) - LobbyUser.EffectiveMmElo) * WaitRatio);
+            public int MinConsideredElo;
+            public int MaxConsideredElo => (int)(MinConsideredElo + (Math.Max(1500, LobbyUser.RawMmElo) - MinConsideredElo) * WaitRatio);
 
             public double WaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / DynamicConfig.Instance.MmWidthGrowthTime));
             public double SizeWaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / DynamicConfig.Instance.MmSizeGrowthTime));
@@ -34,6 +36,10 @@ namespace ZkLobbyServer
                 Party = party;
                 QueueTypes = queueTypes;
                 LobbyUser = user;
+                float recentWinChance = RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetAverageRecentWinChance(user.AccountID);
+                double bonusElo = -400 * Math.Log(1 / recentWinChance - 1) / Math.Log(10);
+                MinConsideredElo = (int)Math.Round(LobbyUser.EffectiveMmElo + DynamicConfig.Instance.MmEloBonusMultiplier * bonusElo);
+                Trace.TraceInformation($"Player {user.AccountID} with recent win chance {recentWinChance} receives {DynamicConfig.Instance.MmEloBonusMultiplier} * {bonusElo} bonusElo => {MinConsideredElo} Effective Elo");
             }
 
             //override elo width growth to find matches instantly
