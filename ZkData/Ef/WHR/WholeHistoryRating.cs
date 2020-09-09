@@ -124,7 +124,7 @@ namespace Ratings
             {
                 recentWinChance = recentGames.Select(x => x.winnerPlayers.Contains(players[AccountID]) ? x.GetWinProbability() : (1 - x.GetWinProbability())).Average();
             }
-            Trace.TraceInformation($"The {recentGames.Count()} most recent games for {AccountID} are {string.Join(", ", recentGames.Select(x => x.id))}, the average win chance is {recentWinChance}.");
+            //Trace.TraceInformation($"The {recentGames.Count()} most recent games for {AccountID} are {string.Join(", ", recentGames.Select(x => x.id))}, the average win chance is {recentWinChance}.");
             return recentWinChance;
         }
 

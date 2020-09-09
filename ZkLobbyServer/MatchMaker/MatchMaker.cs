@@ -310,7 +310,7 @@ namespace ZkLobbyServer
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public async Task RemoveUser(string name, bool broadcastChanges)
+        public async Task<bool> RemoveUser(string name, bool broadcastChanges)
         {
             var party = server.PartyManager.GetParty(name);
             var anyRemoved = false;
@@ -324,6 +324,7 @@ namespace ZkLobbyServer
                 anyRemoved = await RemoveSingleUser(name);
             }
             if (broadcastChanges && anyRemoved) await UpdateAllPlayerStatuses();
+            return anyRemoved;
         }
 
         public async Task UpdateAllPlayerStatuses()

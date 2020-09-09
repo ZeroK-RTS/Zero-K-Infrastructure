@@ -109,7 +109,7 @@
 <br class="clearfloat" />
 <div>
     @{
-        var allPlayers = Model.SpringBattlePlayers.Where(x => !x.IsSpectator).ToList();
+        var allPlayers = Model.SpringBattlePlayers.Where(x => !x.IsSpectator).OrderByDescending(x => x.Account.GetIconLevel()).OrderByDescending(x => x.Account.Rank).ToList();
         var allBots = Model.SpringBattleBots.ToList();
         var allAllyIDs = Model.GetAllyteamIds();
         var allWinChances = Model.GetAllyteamWinChances();

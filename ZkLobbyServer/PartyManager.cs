@@ -161,7 +161,14 @@ namespace ZkLobbyServer
 
             var ps = new OnPartyStatus() { PartyID = party.PartyID, UserNames = party.UserNames };
 
-            if (isChange) await server.MatchMaker.RemoveUser(names.First(), true); // remove all people from this party from mm 
+            if (isChange)
+            {
+                // remove all people from this party from mm 
+                if (await server.MatchMaker.RemoveUser(names.First(), true))
+                {
+                    await server.UserLogSay($"Removed {names.First()}'s party from MM because someone joined the party");
+                }
+            }
 
             
             await server.Broadcast(AddFriendsBy(party.UserNames), ps);
@@ -171,7 +178,11 @@ namespace ZkLobbyServer
         {
             if (party.UserNames.Count == 2 && names.Any(x => party.UserNames.Contains(x))) names = party.UserNames.ToArray(); // party has just two people and we remove one of them -> remove all
 
-            await server.MatchMaker.RemoveUser(names.First(), true); // removing user before changing party removes all party users
+            // removing user before changing party removes all party users
+            if (await server.MatchMaker.RemoveUser(names.First(), true))
+            {
+                await server.UserLogSay($"Removed {names.First()}'s party from MM because someone left the party");
+            }
             
             var broadcastNames = party.UserNames.ToList();
             foreach (var n in names)

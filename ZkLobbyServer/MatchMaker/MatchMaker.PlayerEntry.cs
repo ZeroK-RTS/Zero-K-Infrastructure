@@ -18,7 +18,7 @@ namespace ZkLobbyServer
 
             public int EloWidth => (int)(DynamicConfig.Instance.MmStartingWidth + WaitRatio * DynamicConfig.Instance.MmWidthGrowth);
             public int MinConsideredElo;
-            public int MaxConsideredElo => (int)(MinConsideredElo + (Math.Max(1500, LobbyUser.RawMmElo) - MinConsideredElo) * WaitRatio);
+            public int MaxConsideredElo => (int)(MinConsideredElo + (Math.Max(1500, LobbyUser.RawMmElo) - LobbyUser.EffectiveMmElo) * WaitRatio);
 
             public double WaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / DynamicConfig.Instance.MmWidthGrowthTime));
             public double SizeWaitRatio => Math.Max(0, Math.Min(1.0, DateTime.UtcNow.Subtract(JoinedTime).TotalSeconds / DynamicConfig.Instance.MmSizeGrowthTime));
@@ -38,8 +38,9 @@ namespace ZkLobbyServer
                 LobbyUser = user;
                 float recentWinChance = RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetAverageRecentWinChance(user.AccountID);
                 double bonusElo = -400 * Math.Log(1 / recentWinChance - 1) / Math.Log(10);
+                bonusElo = Math.Min(300, Math.Max(-300, bonusElo));
                 MinConsideredElo = (int)Math.Round(LobbyUser.EffectiveMmElo + DynamicConfig.Instance.MmEloBonusMultiplier * bonusElo);
-                Trace.TraceInformation($"Player {user.AccountID} with recent win chance {recentWinChance} receives {DynamicConfig.Instance.MmEloBonusMultiplier} * {bonusElo} bonusElo => {MinConsideredElo} Effective Elo");
+                //Trace.TraceInformation($"Player {user.AccountID} with recent win chance {recentWinChance} receives {DynamicConfig.Instance.MmEloBonusMultiplier} * {bonusElo} bonusElo => {MinConsideredElo} Effective Elo");
             }
 
             //override elo width growth to find matches instantly
