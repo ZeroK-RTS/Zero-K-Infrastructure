@@ -648,7 +648,10 @@ namespace ZkLobbyServer
                 }
 
 
-                await server.MatchMaker.RemoveUser(Name, true);
+                if (await server.MatchMaker.RemoveUser(Name, true))
+                {
+                    await server.UserLogSay($"{Name} disconnected, removing from MM.");
+                }
                 await server.PartyManager.OnUserDisconnected(Name);
                 await server.PlanetWarsMatchMaker.OnUserDisconnected(Name);
                 server.ForumListManager.OnUserDisconnected(User.AccountID);

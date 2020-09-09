@@ -463,6 +463,10 @@
     <Compile Include="Migrations\202007260832015_TimeQueueSwitch.Designer.cs">
       <DependentUpon>202007260832015_TimeQueueSwitch.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202008160401244_Modaction-Message-Only.cs" />
+    <Compile Include="Migrations\202008160401244_Modaction-Message-Only.Designer.cs">
+      <DependentUpon>202008160401244_Modaction-Message-Only.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\202008240904460_AddStdevBalanceOptions.cs" />
     <Compile Include="Migrations\202008240904460_AddStdevBalanceOptions.Designer.cs">
       <DependentUpon>202008240904460_AddStdevBalanceOptions.cs</DependentUpon>
@@ -470,6 +474,10 @@
     <Compile Include="Migrations\202009072122520_AddMMBonusElo.cs" />
     <Compile Include="Migrations\202009072122520_AddMMBonusElo.Designer.cs">
       <DependentUpon>202009072122520_AddMMBonusElo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009081051101_MergeAdminInterfaceImprovements.cs" />
+    <Compile Include="Migrations\202009081051101_MergeAdminInterfaceImprovements.Designer.cs">
+      <DependentUpon>202009081051101_MergeAdminInterfaceImprovements.cs</DependentUpon>
     </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
@@ -883,11 +891,17 @@
     <EmbeddedResource Include="Migrations\202007260832015_TimeQueueSwitch.resx">
       <DependentUpon>202007260832015_TimeQueueSwitch.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008160401244_Modaction-Message-Only.resx">
+      <DependentUpon>202008160401244_Modaction-Message-Only.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202008240904460_AddStdevBalanceOptions.resx">
       <DependentUpon>202008240904460_AddStdevBalanceOptions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009072122520_AddMMBonusElo.resx">
       <DependentUpon>202009072122520_AddMMBonusElo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009081051101_MergeAdminInterfaceImprovements.resx">
+      <DependentUpon>202009081051101_MergeAdminInterfaceImprovements.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

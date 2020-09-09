@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using LobbyClient;
 using Microsoft.Ajax.Utilities;
@@ -14,7 +15,7 @@ namespace ZeroKWeb.Controllers
     public class GithubController : Controller
     {
         [HttpPost]
-        public ActionResult Hook()
+        public async Task<ActionResult> Hook()
         {
             var eventType = Request.Headers["X-Github-Event"];
             var signature = Request.Headers["X-Hub-Signature"].Substring(5);
@@ -69,7 +70,7 @@ namespace ZeroKWeb.Controllers
                     break;
             }
 
-            if (text != null) Global.Server.GhostChanSay(channel, text);
+            if (text != null) await Global.Server.GhostChanSay(channel, text);
 
             return Content("");
         }
