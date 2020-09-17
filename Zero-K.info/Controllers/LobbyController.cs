@@ -126,6 +126,9 @@ namespace ZeroKWeb.Controllers
             public DateTime? TimeFrom { get; set; }
             public DateTime? TimeTo { get; set; }
             public string User { get; set; }
+            public string User2 { get; set; }
+            public string User3 { get; set; }
+            public string User4 { get; set; }
             public string Text { get; set; }
             public IQueryable<LobbyChatHistory> Data;
         }
@@ -143,7 +146,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var ret = db.LobbyChatHistories.Where(x=>x.SayPlace == model.Place).AsQueryable();
             if (!string.IsNullOrEmpty(model.Channel)) ret = ret.Where(x => x.Target == model.Channel);
-            if (!string.IsNullOrEmpty(model.User)) ret = ret.Where(x => x.User == model.User);
+            if (!string.IsNullOrEmpty(model.User) || !string.IsNullOrEmpty(model.User2) || !string.IsNullOrEmpty(model.User3) || !string.IsNullOrEmpty(model.User4)) ret = ret.Where(x => (x.User == model.User || x.User == model.User2 || x.User == model.User3 || x.User == model.User4));
             if (model.TimeFrom.HasValue) ret = ret.Where(x => x.Time >= model.TimeFrom);
             if (model.TimeTo.HasValue) ret = ret.Where(x => x.Time <= model.TimeTo);
             if (!string.IsNullOrEmpty(model.Text)) ret = ret.Where(x => x.Text.Contains(model.Text));
