@@ -126,7 +126,7 @@ namespace ZeroKWeb.Controllers
             public DateTime? TimeFrom { get; set; }
             public DateTime? TimeTo { get; set; }
             public string User { get; set; }
-            public string User2 { get; set; }
+            public string User2 { get; set; } // "dumb" multi-user search because the "proper" one doesnt support discord names, only ZKLS
             public string User3 { get; set; }
             public string User4 { get; set; }
             public string Text { get; set; }
