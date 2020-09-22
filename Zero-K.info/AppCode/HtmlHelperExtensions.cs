@@ -171,7 +171,7 @@ namespace System.Web.Mvc
         /// <param name="colorize"></param>
         /// <param name="ignoreDeleted"></param>
         /// <returns></returns>
-        public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true, bool ignoreDeleted = false) {
+        public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true, bool ignoreDeleted = false, bool makeLinks = false) {
             return PrintAccount(account);
         }
 
@@ -461,12 +461,36 @@ namespace System.Web.Mvc
         }
 
 
+        //public static MvcHtmlString PrintRankProgress(this HtmlHelper helper, Account account)
+        //{
+        //    var ratio =  Ratings.Ranks.GetRankProgress(account);
+        //    int percentage = (int)Math.Round(ratio * 100);
+        //    var progressText = string.Format("Progress to the next rank: {0}%", percentage);
+        //    if (percentage >= 100) progressText = "Rank up on next victory!";
+        //    var str = new MvcHtmlString(string.Format("Current rank: <img src='/img/ranks/{0}_{1}.png'  class='icon16' alt='rank' /> {2} <br /> <br /> {3}<br /> <br />Win more games to improve your rank!", account.GetIconLevel(), account.Rank, Ratings.Ranks.RankNames[account.Rank], progressText));
+        //    return str;
+        //}
+
         public static MvcHtmlString PrintRankProgress(this HtmlHelper helper, Account account)
         {
-            var ratio =  Ratings.Ranks.GetRankProgress(account);
+            var ratio = Ratings.Ranks.GetRankProgress(account);
             int percentage = (int)Math.Round(ratio * 100);
             var progressText = string.Format("Progress to the next rank: {0}%", percentage);
-            if (percentage >= 100) progressText = "Rank up on next victory!";
+            if (percentage >= 100)
+            {
+                if (Ratings.Ranks.ValidateRank(account.Rank + 1))
+                {
+                    progressText = "Rank up on next victory!";
+                }
+                else if (Global.IsAccountAuthorized && Global.AccountID == account.AccountID)
+                {
+                    progressText = "Congratulations, you are officially the best Zero-K player!";
+                }
+                else
+                {
+                    progressText = account.Name + " is officially the best Zero-K player.";
+                }
+            }
             var str = new MvcHtmlString(string.Format("Current rank: <img src='/img/ranks/{0}_{1}.png'  class='icon16' alt='rank' /> {2} <br /> <br /> {3}<br /> <br />Win more games to improve your rank!", account.GetIconLevel(), account.Rank, Ratings.Ranks.RankNames[account.Rank], progressText));
             return str;
         }
@@ -541,54 +565,6 @@ namespace System.Web.Mvc
         public static MvcHtmlString BBCodeCached(this HtmlHelper helper, News news)
         {
             return Global.ForumPostCache.GetCachedHtml(news, helper);
-        }
-
-        /// <summary>
-        /// Used for boolean dropdown selections on the site; e.g. map search filter
-        /// </summary>
-        /// <param name="helper"></param>
-        /// <param name="name">Value tag; e.g. "is1v1" or "chickens" for maps</param>
-        /// <param name="selected"></param>
-        /// <param name="anyItem">If true, allows an "any" option (indicated by an ?)</param>
-        /// <returns></returns>
-        public static MvcHtmlString BoolSelect(this HtmlHelper helper, string name, bool? selected, string anyItem)
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormat("<select name='{0}'>", helper.Encode(name));
-            if (anyItem != null) sb.AppendFormat("<option {1}>{0}</option>", helper.Encode(anyItem), selected == null ? "selected" : "");
-            sb.AppendFormat("<option value='True' {0}>Yes</option>", selected == true ? "selected" : "");
-            sb.AppendFormat("<option value='False' {0}>No</option>", selected == false ? "selected" : "");
-
-            sb.Append("</select>");
-            return new MvcHtmlString(sb.ToString());
-        }
-
-        public static IEnumerable<SelectListItem> GetFactionItems(this HtmlHelper html, int factionID, Expression<Func<Faction, bool>> filter = null)
-        {
-            var ret = new ZkDataContext().Factions.AsQueryable().Where(x => !x.IsDeleted);
-            if (filter != null) ret = ret.Where(filter);
-            return ret.Select(x => new SelectListItem { Text = x.Name, Value = x.FactionID.ToString(), Selected = x.FactionID == factionID });
-        }
-
-        public static MvcHtmlString IncludeFile(this HtmlHelper helper, string name)
-        {
-            if (name.StartsWith("http://"))
-            {
-                var ret = new WebClient().DownloadString(name);
-                return new MvcHtmlString(ret);
-            }
-            else
-            {
-                var path = Global.MapPath(name);
-                return new MvcHtmlString(File.ReadAllText(path));
-            }
-        }
-
-        public static MvcHtmlString IncludeWiki(this HtmlHelper helper, string node)
-        {
-            var post = new ZkDataContext().ForumThreads.FirstOrDefault(x => x.WikiKey == node)?.ForumPosts.OrderBy(x => x.ForumPostID).FirstOrDefault();
-            if (post == null) return null;
-            return Global.ForumPostCache.GetCachedHtml(post, helper);
         }
 
         /// <summary>
@@ -834,30 +810,6 @@ namespace System.Web.Mvc
                     ));
         }
 
-
-        public static MvcHtmlString PrintRankProgress(this HtmlHelper helper, Account account)
-        {
-            var ratio =  Ratings.Ranks.GetRankProgress(account);
-            int percentage = (int)Math.Round(ratio * 100);
-            var progressText = string.Format("Progress to the next rank: {0}%", percentage);
-            if (percentage >= 100)
-            {
-                if (Ratings.Ranks.ValidateRank(account.Rank + 1))
-                {
-                    progressText = "Rank up on next victory!";
-                }
-                else if (Global.IsAccountAuthorized && Global.AccountID == account.AccountID)
-                {
-                    progressText = "Congratulations, you are officially the best Zero-K player!";
-                }
-                else
-                {
-                    progressText = account.Name + " is officially the best Zero-K player.";
-                }
-            }
-            var str = new MvcHtmlString(string.Format("Current rank: <img src='/img/ranks/{0}_{1}.png'  class='icon16' alt='rank' /> {2} <br /> <br /> {3}<br /> <br />Win more games to improve your rank!", account.GetIconLevel(), account.Rank, Ratings.Ranks.RankNames[account.Rank], progressText));
-            return str;
-        }
 
         /// <summary>
         /// <para>Converts strings preceded with an @ to a printed <see cref="Account"/>, <see cref="SpringBattle"/>, etc. as appropriate</para>
