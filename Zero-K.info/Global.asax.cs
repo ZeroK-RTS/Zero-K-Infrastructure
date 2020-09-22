@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
@@ -133,7 +134,9 @@ namespace ZeroKWeb
 
         protected void Application_Start()
         {
-            System.Net.ServicePointManager.DefaultConnectionLimit = 200;
+            ServicePointManager.DefaultConnectionLimit = 200;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; // neded for paypal
+            
             ViewEngines.Engines.Clear();
             ViewEngines.Engines.Add(new RazorViewEngine() { FileExtensions = new[] { "cshtml" } }); // this should speed up rendering a bit
             ViewEngines.Engines.Add(new Models.PartialViewEngine());
@@ -180,7 +183,8 @@ namespace ZeroKWeb
                 var ip = Request.UserHostAddress;
 				var lastLogin = acc.AccountUserIDs.OrderByDescending (x => x.LastLogin).FirstOrDefault();
 				var userID = lastLogin?.UserID;
-				var penalty = Punishment.GetActivePunishment(acc.AccountID, ip, userID, x => x.BanSite);
+                var installID = lastLogin?.InstallID;
+                var penalty = Punishment.GetActivePunishment(acc.AccountID, ip, userID, installID, x => x.BanSite);
                 if (penalty != null)
                 {
                     Response.Write(string.Format("You are banned! (IP match to account {0})\n", penalty.AccountByAccountID.Name));

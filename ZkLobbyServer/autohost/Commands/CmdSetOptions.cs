@@ -13,7 +13,7 @@ namespace ZkLobbyServer
         private string optionsAsString;
         public override string Help => "<name>=<value>[,<name>=<value>] - applies game/map options";
         public override string Shortcut => "setoptions";
-        public override AccessType Access => AccessType.NotIngame;
+        public override AccessType Access => AccessType.NotIngameNotAutohost;
 
         public override BattleCommand Create() => new CmdSetOptions();
 

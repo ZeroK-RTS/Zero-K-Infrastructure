@@ -20,13 +20,13 @@ namespace ZkLobbyServer
 
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
-            battle.StopVote(e);
+            battle.StopVote();
             await battle.SayBattle("poll cancelled");
         }
 
         public override RunPermission GetRunPermissions(ServerBattle battle, string userName, out string reason)
         {
-            reason = "";
+            reason = "You can't use this command";
             if (battle.ActivePoll?.Creator?.User == userName) return RunPermission.Run; // can end own poll
             var ret = base.GetRunPermissions(battle, userName, out reason);
             if (ret == RunPermission.Vote) return RunPermission.None; // do not allow vote (ever)

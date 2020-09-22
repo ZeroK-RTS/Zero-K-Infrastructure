@@ -10,8 +10,7 @@ namespace ZkLobbyServer
         public override string Shortcut => "poll";
         public override AccessType Access => AccessType.NoCheck;
         public override BattleCommand Create() => new CmdPoll();
-
-        private BattleCommand commandToRun;
+        public BattleCommand InternalCommand { get; private set; }
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
@@ -23,11 +22,11 @@ namespace ZkLobbyServer
             var parts = arguments.Split(new[] { ' ' }, 2);
             var commandName = parts[0] ?? "";
             var commandArgs = parts.Length > 1 ? parts[1] : null;
-            commandToRun = battle.GetCommandByName(commandName);
+            InternalCommand = battle.GetCommandByName(commandName);
             string reason;
-            if (commandToRun.GetRunPermissions(battle, e.User, out reason) >= RunPermission.Vote && commandToRun.Access != AccessType.NoCheck)
+            if (InternalCommand.GetRunPermissions(battle, e.User, out reason) >= RunPermission.Vote && InternalCommand.Access != AccessType.NoCheck && InternalCommand.Access != AccessType.Admin && !(InternalCommand.Access == AccessType.NotIngameNotAutohost && battle.IsAutohost))
             {
-                return commandToRun.Arm(battle, e, commandArgs);
+                return InternalCommand.Arm(battle, e, commandArgs);
             }
             battle.Respond(e, reason);
             return null;
@@ -36,13 +35,13 @@ namespace ZkLobbyServer
 
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
-            await commandToRun.ExecuteArmed(battle, e);
+            await InternalCommand.ExecuteArmed(battle, e);
         }
 
         public override RunPermission GetRunPermissions(ServerBattle battle, string userName, out string reason)
         {
-            if (commandToRun == null) return base.GetRunPermissions(battle, userName, out reason) >= RunPermission.Vote ? RunPermission.Vote : RunPermission.None;
-            return commandToRun.GetRunPermissions(battle, userName, out reason);
+            if (InternalCommand == null) return base.GetRunPermissions(battle, userName, out reason) >= RunPermission.Vote ? RunPermission.Vote : RunPermission.None;
+            return InternalCommand.GetRunPermissions(battle, userName, out reason);
         }
     }
 }

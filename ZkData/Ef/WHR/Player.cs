@@ -2,236 +2,309 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using ZkData;
 
 namespace Ratings
 {
-    public class Player {
+    public class Player
+    {
 
-        public int id;
-        public List<PlayerDay> days = new List<PlayerDay>();
-        public static float w2;
+        public readonly int id;
+        public readonly List<PlayerDay> days = new List<PlayerDay>();
         const float MAX_RATING_CHANGE = 5;
 
-        public Player(int id, float w2) {
-            this.id = id;
-            Player.w2 = (float)(Math.Pow(Math.Sqrt(w2) * Math.Log(10) / 400, 2));  // Convert from elo^2 to r^2
+        public float avgElo = 0f / 0;
+        public float avgEloVar = 0f / 0;
 
-        }
+        private static List<float> hessian_subdiagonal = new List<float>();
+        private static List<float> hessian_diagonal = new List<float>();
+        
+        private static List<float>[] helperLists = new List<float>[4];
+        
+        private static List<float> covariance_diagonal = new List<float>();
+        private static List<float> covariance_subdiagonal = new List<float>();
 
-        float[,] __m = new float[10,10];
+        private static List<float> hessianLU_lowerSubdiagonal = new List<float>();
+        private static List<float> hessianLU_upperDiagonal = new List<float>();
+        private static List<float> hessianLU_upperSuperdiagonal = new List<float>();
 
-        public float[,] generateHessian(List<PlayerDay> days, List<float> sigma2) {
+        private static List<float> gradient = new List<float>();
 
-            int n = days.Count;
-            if (__m.GetLength(0) < n + 1) {
-                __m = new float[n + 10, n + 10];
-            }
-            float[,] m = __m;
-            for (int row = 0; row < n; row++) {
-                for (int col = 0; col < n; col++) {
-                    if (row == col) {
-                        float prior = 0;
-                        if (row < (n - 1)) {
-                            prior += -1.0f / sigma2[row];
-                        }
-                        if (row > 0) {
-                            prior += -1.0f / sigma2[row - 1];
-                        }
-                        m[row,col] = days[row].getLogLikelyhoodSecondDerivative() + prior - 0.001f;
-                    } else if (row == col - 1) {
-                        m[row,col] = 1.0f / sigma2[row];
-                    } else if (row == col + 1) {
-                        m[row,col] = 1.0f / sigma2[col];
-                    } else {
-                        m[row,col] = 0;
-                    }
-                }
-            }
-            return m;
-        }
+        private static readonly object whrLock = new object();
 
-        public List<float> generateGradient(List<float> r, List<PlayerDay> days, List<float> sigma2) {
-            List<float> g = new List<float>();
-            int n = days.Count;
-            for (int i = 0; i < days.Count; i++) {
-                float prior = 0;
-                if (i < (n - 1)) {
-                    prior += -(r[i] - r[i + 1]) / sigma2[i];
-                }
-                if (i > 0) {
-                    prior += -(r[i] - r[i - 1]) / sigma2[i - 1];
-                }
-                g.Add(days[i].getLogLikelyhoodFirstDerivative() + prior);
-            }
-            return g;
-        }
-
-        public void runOneNewtonIteration() {
-            foreach (PlayerDay day in days) {
-                day.clearGameTermsCache();
-            }
-
-            if (days.Count == 1) {
-                days[0].updateBy1DNewton();
-            } else if (days.Count > 1) {
-                updateByNDimNewton();
-            }else
+        private List<float> sigma2 = new List<float>();
+        
+        static Player()
+        {
+            for (int i = 0; i < helperLists.Length; i++)
             {
-                //Trace.TraceWarning("No rating days for player " + this.id);
+                helperLists[i] = new List<float>();
+            }
+        }
+        
+        public Player(int id)
+        {
+            this.id = id;
+        }
+
+        private void UpdateHessian()
+        {
+
+            while (hessian_diagonal.Count < days.Count)
+            {
+                hessian_diagonal.Add(0f);
+                hessian_subdiagonal.Add(0f);
+            }
+            if (days.Count <= 1)
+            {
+                hessian_diagonal[0] = days[0].GetLogLikelyhoodSecondDerivative() - 0.001f;
+                return;
+            }
+            for (int i = 1; i < days.Count - 1; i++)
+            {
+                hessian_diagonal[i] = days[i].GetLogLikelyhoodSecondDerivative() - 1.0f / sigma2[i - 1] - 1.0f / sigma2[i] - 0.001f;
+            }
+            hessian_diagonal[0] = days[0].GetLogLikelyhoodSecondDerivative() - 1.0f / sigma2[0] - 0.001f;
+            hessian_diagonal[days.Count - 1] = days[days.Count - 1].GetLogLikelyhoodSecondDerivative() - 1.0f / sigma2[days.Count - 2] - 0.001f;
+            for (int i = 0; i < days.Count - 1; i++)
+            {
+                hessian_subdiagonal[i] = 1.0f / sigma2[i];
             }
         }
 
-        public List<float> generateSigma2() {
-            List<float> sigma2 = new List<float>();
-            for (int i = 0; i < days.Count - 1; i++) {
-                sigma2.Add(Math.Abs(days[i + 1].day - days[i].day) * w2);
+
+        private void UpdateGradient()
+        {
+            while (gradient.Count < days.Count)
+            {
+                gradient.Add(0f);
             }
-            return sigma2;
+            if (days.Count <= 1)
+            {
+                gradient[0] = days[0].GetLogLikelyhoodFirstDerivative();
+                return;
+            }
+            for (int i = 1; i < days.Count - 1; i++)
+            {
+                gradient[i] = days[i].GetLogLikelyhoodFirstDerivative() - (days[i].r - days[i - 1].r) / sigma2[i - 1] - (days[i].r - days[i + 1].r) / sigma2[i];
+            }
+            gradient[0] = days[0].GetLogLikelyhoodFirstDerivative() - (days[0].r - days[1].r) / sigma2[0];
+            gradient[days.Count - 1] = days[days.Count - 1].GetLogLikelyhoodFirstDerivative() - (days[days.Count - 1].r - days[days.Count - 2].r) / sigma2[days.Count - 2];
         }
 
-        private List<float> makeList(int size) {
-            List<float> temp = new List<float>();
-            for (int i = 0; i < size; i++) {
-                temp.Add(0f);
+        public void RunOneNewtonIteration(bool updateCovariance)
+        {
+            lock (whrLock)
+            {
+                foreach (PlayerDay day in days)
+                {
+                    day.UpdateGameTermsCache();
+                }
+
+                if (days.Count == 1)
+                {
+                    days[0].UpdateByOneDimensionalNewton();
+                }
+                else if (days.Count > 1)
+                {
+                    UpdateByNDimNewton();
+                }
+                if (updateCovariance) UpdateRatingVariance();
             }
-            return temp;
         }
 
-        public void updateByNDimNewton() {
-            List<float> r = new List<float>();
-            foreach (PlayerDay day in days) {
-                r.Add(day.r);
-            }
 
-            if (false) {/*
-                Trace.TraceInformation("namein " + id);
-                for (PlayerDay day in days) {
-                    Trace.TraceInformation("day[#" + day.day + "] r = " + day.r);
-                    Trace.TraceInformation("day[#" + day.day + "] win terms = #" + Arrays.deepTostring(day.getWonGameTerms().toArray()) + "");
-                    Trace.TraceInformation("day[#" + day.day + "] win games = #" + Arrays.tostring(day.wonGames.toArray()) + "");
-                    Trace.TraceInformation("day[#" + day.day + "] lose terms = #" + Arrays.deepTostring(day.getLostGameTerms().toArray()) + "");
-                    Trace.TraceInformation("day[#" + day.day + "] lost games = #" + Arrays.tostring(day.lostGames.toArray()) + "");
-                    Trace.TraceInformation("day[#" + day.day + "] Log(p) = #" + (day.getLogLikelyhood()) + "");
-                    Trace.TraceInformation("day[#" + day.day + "] dlp = #" + (day.getLogLikelyhoodFirstDerivative()) + "");
-                    Trace.TraceInformation("day[#" + day.day + "] dlp2 = #" + (day.getLogLikelyhoodSecondDerivative()) + "");
-                }*/
+        private void UpdateSigma2()
+        {
+
+            if (sigma2.Count > 0)
+            {
+                sigma2[sigma2.Count - 1] = Math.Abs(days[sigma2.Count].day - days[sigma2.Count - 1].day) * GlobalConst.NaturalRatingVariancePerDay(days[sigma2.Count - 1].totalWeight) + GlobalConst.NaturalRatingVariancePerGame * (days[sigma2.Count].totalWeight - days[sigma2.Count - 1].totalWeight);
             }
+            for (int i = sigma2.Count; i < days.Count - 1; i++)
+            {
+                sigma2.Add(Math.Abs(days[i + 1].day - days[i].day) * GlobalConst.NaturalRatingVariancePerDay(days[i].totalWeight) + GlobalConst.NaturalRatingVariancePerGame * (days[i + 1].totalWeight - days[i].totalWeight));
+            }
+        }
+
+
+        private void UpdateByNDimNewton()
+        {
             // sigma squared (used in the prior)
-            List<float> sigma2 = generateSigma2();
+            UpdateSigma2();
 
-            float[,] h = generateHessian(days, sigma2);
-            List<float> g = generateGradient(r, days, sigma2);
+            UpdateHessian();
+            UpdateGradient();
 
-            int n = r.Count;
+            int n = days.Count;
 
-            List<float> a = makeList(n);
-            List<float> d = makeList(n);
-            List<float> b = makeList(n);
-            d[0] = h[0,0];
-            b[0] = h[0,1];
+            UpdateHessianLU();
 
-            for (int i = 1; i < n; i++) {
-                a[i] = ( h[i,i - 1] / d[i - 1]);
-                d[i] = ( h[i,i] - a[i] * b[i - 1]);
-                b[i] = ( h[i,i + 1]);
+            List<float> y = helperLists[0];
+            y[0] = gradient[0];
+            for (int i = 1; i < n; i++)
+            {
+                y[i] = gradient[i] - hessianLU_lowerSubdiagonal[i] * y[i - 1];
             }
 
-            List<float> y = makeList(n);
-            y[0] = g[0];
-            for (int i = 1; i < n; i++) {
-                y[i] = ( g[i] - a[i] * y[i - 1]);
+            List<float> x = helperLists[1];
+            x[n - 1] = y[n - 1] / hessianLU_upperDiagonal[n - 1];
+            for (int i = n - 2; i >= 0; i--)
+            {
+                x[i] = (y[i] - hessianLU_upperSuperdiagonal[i] * x[i + 1]) / hessianLU_upperDiagonal[i];
             }
-
-            List<float> x = makeList(n);
-            x[n - 1] = y[n - 1] / d[n - 1];
-            for (int i = n - 2; i >= 0; i--) {
-                x[i] = ( (y[i] - b[i] * x[i + 1]) / d[i]);
-            }
-
-
-            for (int i = 0; i < n; i++) {
-                if (Math.Abs(x[i]) > _maxChg) {
-                    _maxChg = Math.Abs(x[i]);
-                    Trace.TraceWarning("WHR diverging: New max change of " + _maxChg + " for player " + id);
+            
+            for (int i = 0; i < days.Count; i++)
+            {
+                if (float.IsNaN(x[i]))
+                {
+                    Trace.TraceError("WHR: NaN rating change for player " + id);
+                }
+                else
+                {
+                    days[i].r -= Math.Max(-MAX_RATING_CHANGE, Math.Min(MAX_RATING_CHANGE, x[i]));
                 }
             }
-
-            for (int i = 0; i < days.Count; i++) {
-                days[i].r -= Math.Max(-MAX_RATING_CHANGE, Math.Min(MAX_RATING_CHANGE, x[i]));
-            }
-
-        }
-        static float _maxChg = 3;
-
-        float[,] __cov = new float[10,10];
-
-        public float[,] generateCovariance() {
-            List<float> r = new List<float>();
-            foreach (PlayerDay day in days) {
-                r.Add(day.r);
-            }
-
-            List<float> sigma2 = generateSigma2();
-            float[,] h = generateHessian(days, sigma2);
-            List<float> g = generateGradient(r, days, sigma2);
-
-            int n = r.Count;
-
-            List<float> a = makeList(n);
-            List<float> d = makeList(n);
-            List<float> b = makeList(n);
-            d[0] = h[0, 0];
-            b[0] = h[0, 1];
-
-            for (int i = 1; i < n; i++) {
-                a[i] = ( h[i,i - 1] / d[i - 1]);
-                d[i] = ( h[i,i] - a[i] * b[i - 1]);
-                b[i] = ( h[i,i + 1]);
-            }
-
-            List<float> dp = makeList(n);
-            dp[n - 1] = (h[n - 1,n - 1]);
-            List<float> bp = makeList(n);
-            bp[n - 1] = (n >= 2 ? h[n - 1,n - 2] : 0);
-            List<float> ap = makeList(n);
-            for (int i = n - 2; i >= 0; i--) {
-                ap[i] = ( h[i,i + 1] / dp[i + 1]);
-                dp[i] = ( h[i,i] - ap[i] * bp[i + 1]);
-                bp[i] = ( i > 0 ? h[i,i - 1] : 0);
-            }
-
-            List<float> v = makeList(n);
-            for (int i = 0; i < n - 1; i++) {
-                v[i] = ( dp[i + 1] / (b[i] * bp[i + 1] - d[i] * dp[i + 1]));
-            }
-            v[n - 1] = (-1 / d[n - 1]);
-
-            if (__cov.GetLength(0) < n + 1) {
-                __cov = new float[n + 10,n + 10];
-            }
-            float[,] cov = __cov;
-
-            for (int row = 0; row < n; row++) {
-                for (int col = 0; col < n; col++) {
-                    if (row == col) {
-                        cov[row,col] = v[row];
-                    } else if (row == col - 1) {
-                        cov[row,col] = -1 * a[col] * v[col];
-                    } else {
-                        cov[row,col] = 0;
-                    }
-                }
-            }
-            return cov;
         }
 
-        public void updateUncertainty() {
-            if (days.Count > 0) {
-                float[,] c = generateCovariance();
-                for (int i = 0; i < days.Count; i++) {
-                    days[i].uncertainty = c[i,i];
+        private void UpdateHessianLU()
+        {
+
+            while (hessianLU_lowerSubdiagonal.Count < days.Count)
+            {
+                hessianLU_lowerSubdiagonal.Add(0f);
+                hessianLU_upperSuperdiagonal.Add(0f);
+                hessianLU_upperDiagonal.Add(0f);
+                for (int i = 0; i < helperLists.Length; i++)
+                {
+                    helperLists[i].Add(0f);
                 }
             }
+            hessianLU_upperDiagonal[0] = hessian_diagonal[0];
+            hessianLU_upperSuperdiagonal[0] = hessian_subdiagonal[0];
+
+            for (int i = 1; i < days.Count; i++)
+            {
+                hessianLU_lowerSubdiagonal[i] = hessian_subdiagonal[i - 1] / hessianLU_upperDiagonal[i - 1];
+                hessianLU_upperDiagonal[i] = hessian_diagonal[i] - hessianLU_lowerSubdiagonal[i] * hessianLU_upperSuperdiagonal[i - 1];
+                hessianLU_upperSuperdiagonal[i] = hessian_subdiagonal[i];
+            }
+        }
+
+
+        private void UpdateCovariance()
+        {
+
+            int n = days.Count;
+
+            //a, b, d are taken directly from the update step
+            if (hessianLU_lowerSubdiagonal.Count != n || n == 1)
+            {
+                UpdateSigma2();
+                UpdateHessian();
+                UpdateHessianLU();
+            }
+
+            List<float> dp = helperLists[0];
+            dp[n - 1] = hessian_diagonal[n - 1];
+            List<float> bp = helperLists[1];
+            bp[n - 1] = n >= 2 ? hessian_subdiagonal[n - 2] : 0;
+            List<float> ap = helperLists[2];
+            for (int i = n - 2; i >= 0; i--)
+            {
+                ap[i] = hessian_diagonal[i] / dp[i + 1];
+                dp[i] = hessian_diagonal[i] - ap[i] * bp[i + 1];
+                bp[i] = i > 0 ? hessian_subdiagonal[i - 1] : 0;
+            }
+
+            List<float> v = helperLists[3];
+            for (int i = 0; i < n - 1; i++)
+            {
+                v[i] = dp[i + 1] / (hessianLU_upperSuperdiagonal[i] * bp[i + 1] - hessianLU_upperDiagonal[i] * dp[i + 1]);
+            }
+            v[n - 1] = -1 / hessianLU_upperDiagonal[n - 1];
+
+            while (covariance_diagonal.Count < n)
+            {
+                covariance_diagonal.Add(0f);
+                covariance_subdiagonal.Add(0f);
+            }
+            for (int i = 0; i < n; i++)
+            {
+                covariance_diagonal[i] = (v[i]);
+                if (i < n - 1)
+                {
+                    covariance_subdiagonal[i] = (-1 * hessianLU_lowerSubdiagonal[i] * v[i]);
+                }
+            }
+        }
+
+        private void UpdateLadderRatings()
+        {
+
+            float avgElo = 0;
+            float weightSum = 0;
+            float varSum = 0;
+            int minDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow) - GlobalConst.LadderActivityDays;
+            for (int i = 0; i < days.Count; i++)
+            {
+                if (days[i].day >= minDay)
+                {
+                    weightSum += days[i].weight;
+                    varSum += days[i].weight * days[i].GetEloStdev() * days[i].GetEloStdev();
+                    avgElo += days[i].GetElo() * days[i].weight;
+                }
+            }
+            avgElo /= weightSum;
+            varSum /= weightSum;
+            this.avgEloVar = varSum;
+            this.avgElo = avgElo;
+        }
+
+        private void UpdateRatingVariance()
+        {
+            if (days.Count > 0)
+            {
+                UpdateCovariance();
+                for (int i = 0; i < days.Count; i++)
+                {
+                    days[i].naturalRatingVariance = covariance_diagonal[i];
+                }
+                UpdateLadderRatings();
+            }
+        }
+
+        public void AddGame(Game game)
+        {
+            if (days.Count == 0 || days[days.Count - 1].day != game.day)
+            {
+                PlayerDay newPDay = new PlayerDay(this, game.day);
+                if (days.Count == 0)
+                {
+                    newPDay.isFirstDay = true;
+                    newPDay.totalGames = 2;
+                    newPDay.SetGamma(1);
+                    newPDay.naturalRatingVariance = 10;
+                }
+                else
+                {
+                    newPDay.totalWeight = days[days.Count - 1].totalWeight;
+                    newPDay.totalGames = days[days.Count - 1].totalGames;
+                    newPDay.SetGamma(days[days.Count - 1].GetGamma());
+                    newPDay.naturalRatingVariance = days[days.Count - 1].naturalRatingVariance + (float)Math.Sqrt(game.day - days[days.Count - 1].day) * GlobalConst.NaturalRatingVariancePerDay(days[days.Count - 1].totalWeight);
+                }
+                days.Add(newPDay);
+            }
+            if (game.playerFinder.ContainsKey(this))
+            {
+                game.loserDays[this] = days[days.Count - 1];
+            }
+            else
+            {
+                game.winnerDays[this] = days[days.Count - 1];
+            }
+
+            days[days.Count - 1].AddGame(game);
         }
 
         private int FindDayBefore(int date)
@@ -245,7 +318,8 @@ namespace Ratings
                 if (days[mid].day <= date)
                 {
                     min = mid;
-                }else
+                }
+                else
                 {
                     max = mid;
                 }
@@ -253,73 +327,48 @@ namespace Ratings
             return min;
         }
 
-        public void RemoveGame(Game game)
+        public void FakeGame(Game game)
         {
-            int dayIndex = FindDayBefore(game.day);
-            if (days[dayIndex].day != game.day || !(days[dayIndex].wonGames.Contains(game) || days[dayIndex].lostGames.Contains(game)))
-            {
-                Trace.TraceError("Couldn't find game to remove for player " + id);
-                return;
-            }
-            days[dayIndex].wonGames.Remove(game);
-            days[dayIndex].lostGames.Remove(game);
-            if (!days[dayIndex].isFirstDay && days[dayIndex].wonGames.Count + days[dayIndex].lostGames.Count == 0) days.RemoveAt(dayIndex);
-        }
-
-        public void AddGame(Game game)
-        {
-            int insertAfterDay = days.Count == 0 ? -1 : ((days[days.Count - 1].day <= game.day) ? (days.Count - 1) : FindDayBefore(game.day));
-            if (days.Count == 0 || days[insertAfterDay].day != game.day) {
-                PlayerDay newPDay = new PlayerDay(this, game.day);
-                if (days.Count == 0) {
-                    newPDay.isFirstDay = true;
-                    newPDay.setGamma(1);
-                    newPDay.uncertainty = 10;
-                } else {
-                    newPDay.setGamma(days[insertAfterDay].getGamma());
-                    newPDay.uncertainty = days[insertAfterDay].uncertainty + (float)Math.Sqrt(game.day - days[insertAfterDay].day) * w2;
-                }
-                days.Insert(insertAfterDay + 1, newPDay);
-                insertAfterDay++;
-            }
-            if (game.whitePlayers.Contains(this)) {
-                game.whiteDays.Add(this, days[insertAfterDay]);
-            } else {
-                game.blackDays.Add(this, days[insertAfterDay]);
-            }
-
-            days[insertAfterDay].AddGame(game);
-        }
-
-
-        public void fakeGame(Game game) {
             PlayerDay d;
             int insertAfterDay = FindDayBefore(game.day);
             if (days.Count == 0 || days[insertAfterDay].day != game.day)
             {
-                PlayerDay newPDay = new PlayerDay(this, game.day);
+                PlayerDay new_pday = new PlayerDay(this, game.day);
                 if (days.Count == 0)
                 {
-                    newPDay.isFirstDay = true;
-                    newPDay.setGamma(1);
-                    newPDay.uncertainty = 10;
+                    new_pday.isFirstDay = true;
+                    new_pday.SetGamma(1);
                 }
                 else
                 {
-                    newPDay.setGamma(days[insertAfterDay].getGamma());
-                    newPDay.uncertainty = days[insertAfterDay].uncertainty + (float)Math.Sqrt(game.day - days[insertAfterDay].day) * w2;
+                    new_pday.SetGamma(days[insertAfterDay].GetGamma());
                 }
-                d = (newPDay);
-            } else {
+                d = (new_pday);
+            }
+            else
+            {
                 d = days[insertAfterDay];
             }
-            if (game.whitePlayers.Contains(this)) {
-                game.whiteDays.Add(this, d);
-            } else {
-                game.blackDays.Add(this, d);
+            if (game.playerFinder.ContainsKey(this))
+            {
+                game.loserDays[this] = d;
+            }
+            else
+            {
+                game.winnerDays[this] = d;
             }
         }
 
+        public void RemoveGame(Game game)
+        {
+            int dayIndex = FindDayBefore(game.day);
+            if (days[dayIndex].day != game.day || !(days[dayIndex].games[0].Contains(game) || days[dayIndex].games[1].Contains(game)))
+            {
+                Trace.TraceError("Couldn't find game to remove for player " + id);
+                return;
+            }
+            days[dayIndex].games.ForEach(x => x.Remove(game));
+            if (!days[dayIndex].isFirstDay && days[dayIndex].games[0].Count + days[dayIndex].games[1].Count == 0) days.RemoveAt(dayIndex);
+        }
     }
-
 }

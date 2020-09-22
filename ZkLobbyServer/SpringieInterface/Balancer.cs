@@ -15,12 +15,12 @@ namespace ZeroKWeb.SpringieInterface
         public enum BalanceMode
         {
             Normal,
-            Party, 
+            Party,
             ClanWise,
             FactionWise
         }
 
-        const double MaxCbalanceDifference = 70;
+        public const double MaxCbalanceDifference = 70;
         const double MaxTeamSizeDifferenceRatio = 2;
         readonly List<BalanceTeam> teams = new List<BalanceTeam>();
 
@@ -69,10 +69,9 @@ namespace ZeroKWeb.SpringieInterface
 
         public static double GetTeamsDifference(List<BalanceTeam> t)
         {
-            //Trace.TraceInformation("trying teams: " + string.Join(" | ", t.Select(x => string.Join(" ; ", x.Items.Select(y => string.Join(" , ", y.EloElements.Select(z => z.ToString())))))));
-            //Trace.TraceInformation("elo averages/stdevs: " + string.Join(" | ", t.Select(x => x.EloAvg + " +- " + x.EloStdev)));
-            if (t.Count == 2) {
-                return (t[0].EloAvg - t[1].EloAvg) * (t[0].EloAvg - t[1].EloAvg) + 0.01 * (t[0].EloStdev - t[1].EloStdev) * (t[0].EloStdev - t[1].EloStdev);
+            if (t.Count == 2)
+            {
+                return (t[0].EloAvg - t[1].EloAvg) * (t[0].EloAvg - t[1].EloAvg) + DynamicConfig.Instance.StdevBalanceWeight * (t[0].EloStdev - t[1].EloStdev) * (t[0].EloStdev - t[1].EloStdev);
             }
             double minElo = double.MaxValue;
             double maxElo = double.MinValue;
@@ -85,7 +84,7 @@ namespace ZeroKWeb.SpringieInterface
                 if (team.EloStdev > maxVar) maxVar = team.EloStdev;
                 if (team.EloStdev < minVar) minVar = team.EloStdev;
             }
-            return (maxElo - minElo) * (maxElo - minElo) + 0.01 * (maxVar - minVar) * (maxVar - minVar);
+            return (maxElo - minElo) * (maxElo - minElo) + DynamicConfig.Instance.StdevBalanceWeight * (maxVar - minVar) * (maxVar - minVar);
         }
 
 
@@ -97,12 +96,12 @@ namespace ZeroKWeb.SpringieInterface
         /// <param name="b"></param>
         /// <param name="unmovablePlayers"></param>
         /// <returns></returns>
-        BalanceTeamsResult LegacyBalance(int teamCount, BalanceMode mode, LobbyHostingContext b, params List<Account>[] unmovablePlayers)
+        public BalanceTeamsResult LegacyBalance(int teamCount, BalanceMode mode, LobbyHostingContext b, params List<Account>[] unmovablePlayers)
         {
             var ret = new BalanceTeamsResult();
 
             if (b.IsMatchMakerGame) mode = BalanceMode.Party; // override, for matchmaker mode is always party
-            
+
             try
             {
                 ret.CanStart = true;
@@ -284,17 +283,34 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     case AutohostMode.None:
                         {
-                            if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == true ? BalanceMode.ClanWise : BalanceMode.Normal, context);
+                            if (!isGameStart)
+                            {
+                                if ((allyCount == null || allyCount == 2) && context.Players.Where(x => !x.IsSpectator).Count() < DynamicConfig.Instance.MinimumPlayersForStdevBalance)
+                                {
+                                    res = PartitionBalance.BalanceInterface(2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                                }
+                                else
+                                {
+                                    res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == true ? BalanceMode.ClanWise : BalanceMode.Normal, context);
+                                }
+                            }
                         }
                         break;
                     case AutohostMode.Teams:
                     case AutohostMode.Game1v1:
                         {
-                            res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                            if (context.Players.Where(x => !x.IsSpectator).Count() >= DynamicConfig.Instance.MinimumPlayersForStdevBalance)
+                            {
+                                res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == true ? BalanceMode.ClanWise : BalanceMode.Normal, context);
+                            }
+                            else
+                            {
+                                res = PartitionBalance.BalanceInterface(2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                            }
                             res.DeleteBots = true;
                         }
                         break;
-                    
+
                     case AutohostMode.GameChickens:
                         {
                             res.Players = context.Players.ToList();
@@ -317,7 +333,7 @@ namespace ZeroKWeb.SpringieInterface
                                 if (map?.MapIsChickens == true) res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "default_Chicken", BotAI = "Chicken: Normal", });
                                 else
                                 {
-                                    for (int i =1; i<= res.Players.Where(x => !x.IsSpectator).Count(); i++) res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "cai" + i, BotAI = "CAI", });
+                                    for (int i = 1; i <= res.Players.Where(x => !x.IsSpectator).Count(); i++) res.Bots.Add(new BotTeam() { AllyID = 1, BotName = "cai" + i, BotAI = "CAI", });
                                 }
                                 res.Message = "Adding computer AI player for you";
                             }
@@ -373,12 +389,12 @@ namespace ZeroKWeb.SpringieInterface
                     res.Message += "This planet is infested by aliens, fight for your survival";
                     return res;
                 }
-                
+
                 return res;
             }
         }
 
-      
+
         /// <summary>
         ///     Gets the best balance (lowest standard deviation between teams)
         /// </summary>
@@ -459,7 +475,7 @@ namespace ZeroKWeb.SpringieInterface
             public BalanceItem(bool isMatchMaker, params Account[] accounts)
             {
                 LobbyId = accounts.Select(x => x.AccountID).ToList();
-                
+
                 RatingCategory category = isMatchMaker ? RatingCategory.MatchMaking : RatingCategory.Casual;
                 EloElements = accounts.Select(x => (double)x.GetRating(category).Elo).ToList();
             }
@@ -475,11 +491,12 @@ namespace ZeroKWeb.SpringieInterface
             public double EloVar { get; private set; }
             private double EloVarSum { get; set; }
 
-            
+
             public void AddItem(BalanceItem item)
             {
                 Items.Add(item);
-                item.EloElements.ForEach(x => {
+                item.EloElements.ForEach(x =>
+                {
                     double oldAvg = EloAvg;
                     EloSum += x;
                     EloAvg = EloSum / ++Count;
@@ -504,14 +521,16 @@ namespace ZeroKWeb.SpringieInterface
             public void RemoveItem(BalanceItem item)
             {
                 Items.Remove(item);
-                item.EloElements.ForEach(x => {
+                item.EloElements.ForEach(x =>
+                {
                     if (Count > 1)
                     {
                         double oldAvg = EloAvg;
                         EloSum -= x;
                         EloAvg = EloSum / --Count;
                         EloVarSum -= (x - oldAvg) * (x - EloAvg);
-                    }else
+                    }
+                    else
                     {
                         EloSum = EloVarSum = EloAvg = Count = 0;
                     }

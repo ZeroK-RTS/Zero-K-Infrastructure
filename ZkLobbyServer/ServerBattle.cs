@@ -12,17 +12,21 @@ using System.Timers;
 using LobbyClient;
 using PlasmaDownloader;
 using PlasmaShared;
+using Ratings;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 using ZkData.UnitSyncLib;
 using static System.String;
 using Timer = System.Timers.Timer;
-
+ 
 namespace ZkLobbyServer
 {
     public class ServerBattle : Battle
     {
         public const int PollTimeout = 60;
+        public const int MapVoteTime = 25;
+        public const int NumberOfMapChoices = 4;
+        public const int MinimumAutostartPlayers = 6;
         public static int BattleCounter;
 
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
@@ -31,6 +35,8 @@ namespace ZkLobbyServer
         private static object pickPortLock = new object();
         private static string hostingIp;
 
+
+        public int DiscussionSeconds = 25;
         public readonly List<string> toNotify = new List<string>();
         public Resource HostedMap;
 
@@ -39,21 +45,36 @@ namespace ZkLobbyServer
         public Mod HostedModInfo;
 
         private int hostingPort;
+        private int? dbAutohostIndex;
 
         protected bool isZombie;
+        protected bool IsPollsBlocked => IsAutohost && DateTime.UtcNow < BlockPollsUntil;
 
         private List<KickedPlayer> kickedPlayers = new List<KickedPlayer>();
         public List<BattleDebriefing> Debriefings { get; private set; } = new List<BattleDebriefing>();
 
         private Timer pollTimer;
+        private Timer discussionTimer;
 
         public ZkLobbyServer server;
         public DedicatedServer spring;
         public string battleInstanceGuid;
+        PlayerTeam startGameStatus;
 
-        public MapSupportLevel MinimalMapSupportLevel => IsPassworded ? MapSupportLevel.None : MapSupportLevel.Supported;
+        public int InviteMMPlayers { get; protected set; } = int.MaxValue; //will invite players to MM after each battle if more than X players
+
+        public MapSupportLevel MinimalMapSupportLevel => IsAutohost ? MinimalMapSupportLevelAutohost : (IsPassworded ? MapSupportLevel.None : MapSupportLevel.Supported);
 
         public CommandPoll ActivePoll { get; private set; }
+
+        public bool IsAutohost { get; private set; }
+        public bool IsDefaultGame { get; private set; } = true;
+        public bool IsCbalEnabled { get; private set; } = true;
+
+        public override bool TimeQueueEnabled => DynamicConfig.Instance.TimeQueueEnabled && (Mode == AutohostMode.Teams || Mode == AutohostMode.Game1v1 || Mode == AutohostMode.GameFFA);
+
+        public MapSupportLevel MinimalMapSupportLevelAutohost { get; protected set; } = MapSupportLevel.Featured;
+
 
         static ServerBattle()
         {
@@ -81,8 +102,49 @@ namespace ZkLobbyServer
             pollTimer.Enabled = false;
             pollTimer.AutoReset = false;
             pollTimer.Elapsed += pollTimer_Elapsed;
+            discussionTimer = new Timer(DiscussionSeconds * 1000);
+            discussionTimer.Enabled = false;
+            discussionTimer.AutoReset = false;
+            discussionTimer.Elapsed += discussionTimer_Elapsed;
             SetupSpring();
             PickHostingPort();
+        }
+
+        public void SaveToDb()
+        {
+            if (!IsAutohost) return;
+            using (var db = new ZkDataContext())
+            {
+                Autohost autohost = null;
+                bool insert = false;
+                if (dbAutohostIndex.HasValue)
+                {
+                    autohost = db.Autohosts.Where(x => x.AutohostID == dbAutohostIndex).FirstOrDefault();
+                }
+                if (autohost == null)
+                {
+                    insert = true;
+                    autohost = new Autohost();
+                }
+                autohost.MinimumMapSupportLevel = MinimalMapSupportLevelAutohost;
+                autohost.AutohostMode = Mode;
+                autohost.InviteMMPlayers = InviteMMPlayers;
+                autohost.MaxElo = MaxElo;
+                autohost.MinElo = MinElo;
+                autohost.MaxLevel = MaxLevel;
+                autohost.MinLevel = MinLevel;
+                autohost.MaxRank = MaxRank;
+                autohost.MinRank = MinRank;
+                autohost.Title = Title;
+                autohost.MaxPlayers = MaxPlayers;
+                autohost.CbalEnabled = IsCbalEnabled;
+                if (insert)
+                {
+                    db.Autohosts.Add(autohost);
+                }
+                db.SaveChanges();
+                dbAutohostIndex = autohost.AutohostID;
+            }
         }
 
         public string GenerateClientScriptPassword(string name)
@@ -96,6 +158,9 @@ namespace ZkLobbyServer
             if (pollTimer != null) pollTimer.Enabled = false;
             pollTimer?.Dispose();
             pollTimer = null;
+            if (discussionTimer != null) discussionTimer.Enabled = false;
+            discussionTimer?.Dispose();
+            discussionTimer = null;
             spring = null;
             ActivePoll = null;
         }
@@ -114,7 +179,7 @@ namespace ZkLobbyServer
             return null;
         }
 
-        public ConnectSpring GetConnectSpringStructure(string scriptPassword)
+        public ConnectSpring GetConnectSpringStructure(string scriptPassword, bool isSpectator)
         {
             return new ConnectSpring()
             {
@@ -125,7 +190,8 @@ namespace ZkLobbyServer
                 Game = ModName,
                 ScriptPassword = scriptPassword,
                 Mode = Mode,
-                Title = Title
+                Title = Title,
+                IsSpectator = isSpectator,
             };
         }
 
@@ -141,9 +207,9 @@ namespace ZkLobbyServer
         public async Task KickFromBattle(string name, string reason)
         {
             UserBattleStatus user;
+            kickedPlayers.Add(new KickedPlayer() { Name = name });
             if (Users.TryGetValue(name, out user))
             {
-                kickedPlayers.Add(new KickedPlayer() { Name = name });
                 var client = server.ConnectedUsers[name];
                 await client.Respond($"You were kicked from battle: {reason}");
                 await client.Process(new LeaveBattle() { BattleID = BattleID });
@@ -154,7 +220,39 @@ namespace ZkLobbyServer
         {
             if (Users.IsEmpty && !spring.IsRunning)
             {
-                await server.RemoveBattle(this);
+                if (!IsAutohost)
+                    await server.RemoveBattle(this);
+                else if (Mode != AutohostMode.None) // custom autohosts would typically be themed around a single map
+                    await RunCommandDirectly<CmdMap>(null);
+            }
+        }
+
+        public void SwitchDefaultGame(bool useDefaultGame)
+        {
+            IsDefaultGame = useDefaultGame;
+        }
+
+        public void SwitchAutohost(bool autohost, string founder)
+        {
+            if (autohost)
+            {
+                IsAutohost = true;
+                IsDefaultGame = true;
+                FounderName = "Autohost #" + BattleID;
+                SaveToDb();
+            }
+            else
+            {
+                IsAutohost = false;
+                FounderName = founder;
+                if (dbAutohostIndex.HasValue)
+                {
+                    using (var db = new ZkDataContext())
+                    {
+                        db.Autohosts.Remove(db.Autohosts.Where(x => x.AutohostID == dbAutohostIndex).FirstOrDefault());
+                        db.SaveChanges();
+                    }
+                }
             }
         }
 
@@ -206,11 +304,11 @@ namespace ZkLobbyServer
             ValidateBattleStatus(ubs);
             user.MyBattle = this;
 
-            
+
             await server.TwoWaySyncUsers(user.Name, Users.Keys); // mutually sync user statuses
-            
+
             await server.SyncUserToAll(user);
-            
+
             await RecalcSpectators();
 
             await
@@ -221,10 +319,11 @@ namespace ZkLobbyServer
                     Bots = Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList(),
                     Options = ModOptions
                 });
-            
-            
+
+            if (ActivePoll != null) await user.SendCommand(ActivePoll.GetBattlePoll());
+
             await server.Broadcast(Users.Keys.Where(x => x != user.Name), ubs.ToUpdateBattleStatus()); // send my UBS to others in battle
-            
+
             if (spring.IsRunning)
             {
                 spring.AddUser(ubs.Name, ubs.ScriptPassword, ubs.LobbyUser);
@@ -261,20 +360,19 @@ namespace ZkLobbyServer
                 NonSpectatorCount = playerCount;
                 if (GlobalConst.LobbyServerUpdateSpectatorsInstantly)
                 {
-                    await server.Broadcast(Users.Keys, new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID , PlayerCount = NonSpectatorCount} });
+                    await server.Broadcast(Users.Keys, new BattleUpdate() { Header = new BattleHeader() { SpectatorCount = specCount, BattleID = BattleID, PlayerCount = NonSpectatorCount } });
                 }
             }
         }
 
 
-        public async Task RegisterVote(Say e, bool vote)
+        public async Task RegisterVote(Say e, int vote)
         {
             if (ActivePoll != null)
             {
                 if (await ActivePoll.Vote(e, vote))
                 {
-                    pollTimer.Enabled = false;
-                    ActivePoll = null;
+                    StopVote();
                 }
             }
             else await Respond(e, "There is no poll going on, start some first");
@@ -284,7 +382,9 @@ namespace ZkLobbyServer
         {
             UserBattleStatus ubs;
 
-            if (!Users.TryGetValue(conus.Name, out ubs) && !(IsInGame && spring.LobbyStartContext.Players.Any(x => x.Name == conus.Name)))
+            startGameStatus = spring.LobbyStartContext.Players.FirstOrDefault(x => x.Name == conus.Name);
+            
+            if (!Users.TryGetValue(conus.Name, out ubs) && !(IsInGame && startGameStatus != null))
                 if (IsPassworded && (Password != joinPassword))
                 {
                     await conus.Respond("Invalid password");
@@ -298,7 +398,7 @@ namespace ZkLobbyServer
                 await ProcessPlayerJoin(conus, joinPassword);
             }
 
-            await conus.SendCommand(GetConnectSpringStructure(pwd));
+            await conus.SendCommand(GetConnectSpringStructure(pwd, startGameStatus?.IsSpectator != false));
         }
 
 
@@ -308,10 +408,10 @@ namespace ZkLobbyServer
         }
 
 
-        public void RunCommandDirectly<T>(Say e, string args = null) where T : BattleCommand, new()
+        public async Task RunCommandDirectly<T>(Say e, string args = null) where T : BattleCommand, new()
         {
             var t = new T();
-            t.Run(this, e, args);
+            await t.Run(this, e, args);
         }
 
 
@@ -328,7 +428,16 @@ namespace ZkLobbyServer
             var perm = cmd.GetRunPermissions(this, e.User, out reason);
 
             if (perm == BattleCommand.RunPermission.Run) await cmd.Run(this, e, arg);
-            else if (perm == BattleCommand.RunPermission.Vote) await StartVote(cmd, e, arg);
+            else if (perm == BattleCommand.RunPermission.Vote)
+            {
+
+                if (IsPollsBlocked)
+                {
+                    await Respond(e, "Please wait for a few seconds before starting a poll.");
+                    return false;
+                }
+                await StartVote(cmd, e, arg);
+            }
             else
             {
                 await Respond(e, reason);
@@ -344,6 +453,7 @@ namespace ZkLobbyServer
             {
                 var context = GetContext();
                 context.Mode = Mode;
+                if (!IsCbalEnabled) clanWise = false;
                 var balance = Balancer.BalanceTeams(context, isGameStart, allyTeams, clanWise);
                 await ApplyBalanceResults(balance);
                 return balance.CanStart;
@@ -355,13 +465,22 @@ namespace ZkLobbyServer
             }
         }
 
+        public void SayGame(string text)
+        {
+            if (spring?.IsRunning != true) return;
+            foreach (var line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                spring.SayGame(line);
+            }
+        }
 
         public async Task SayBattle(string text, string privateUser = null)
         {
             if (!IsNullOrEmpty(text))
+            {
+                if ((privateUser == null)) spring.SayGame(text);
                 foreach (var line in text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    if ((privateUser == null) && (spring?.IsRunning == true)) spring.SayGame(line);
                     await
                         server.GhostSay(
                             new Say()
@@ -375,12 +494,13 @@ namespace ZkLobbyServer
                             },
                             BattleID);
                 }
+            }
         }
 
         public async Task SetModOptions(Dictionary<string, string> options)
         {
             ModOptions = options;
-            await server.Broadcast(Users.Keys, new SetModOptions() {Options = options});
+            await server.Broadcast(Users.Keys, new SetModOptions() { Options = options });
         }
 
 
@@ -394,9 +514,20 @@ namespace ZkLobbyServer
         public async Task<bool> StartGame()
         {
             var context = GetContext();
+
+            if (TimeQueueEnabled) // spectate beyond max players
+            {
+                foreach (var plr in context.Players.Where(x=>!x.IsSpectator).OrderBy(x => x.JoinTime).Skip(MaxPlayers))
+                {
+                    plr.IsSpectator = true;
+                }
+            }
+            
+            
             if (Mode != AutohostMode.None)
             {
-                var balance = Balancer.BalanceTeams(context, true, null, null);
+                var balance = IsCbalEnabled ? Balancer.BalanceTeams(context, true, null, null) : Balancer.BalanceTeams(context, true, null, false);
+
                 if (!IsNullOrEmpty(balance.Message)) await SayBattle(balance.Message);
                 if (!balance.CanStart) return false;
                 context.ApplyBalance(balance);
@@ -418,39 +549,104 @@ namespace ZkLobbyServer
                 if (us != null)
                 {
                     ConnectedUser user;
-                    if (server.ConnectedUsers.TryGetValue(us.Name, out user)) await user.SendCommand(GetConnectSpringStructure(us.ScriptPassword));
+                    if (server.ConnectedUsers.TryGetValue(us.Name, out user)) await user.SendCommand(GetConnectSpringStructure(us.ScriptPassword, startSetup?.Players.FirstOrDefault(x=>x.Name == us.Name)?.IsSpectator != false));
                 }
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
 
             // remove all from MM
-            await Task.WhenAll(startSetup.Players.Where(x => !x.IsSpectator).Select(x=>server.MatchMaker.RemoveUser(x.Name, false)));
+            foreach (var player in startSetup.Players.Where(x => !x.IsSpectator)) {
+                if (await server.MatchMaker.RemoveUser(player.Name, false))
+                {
+                    await server.UserLogSay($"Removing {player.Name} from MM since their custom battle just started.");
+                }
+            }
             await server.MatchMaker.UpdateAllPlayerStatuses();
             return true;
         }
 
+        public async Task<bool> StartVote(BattleCommand cmd, Say e, string args, int timeout = PollTimeout, CommandPoll poll = null)
+        {
+            cmd = cmd.Create();
+            string topic = cmd.Arm(this, e, args);
+            if (topic == null) return false;
 
-        public async Task StartVote(BattleCommand command, Say e, string args)
+            var unwrappedCmd = cmd;
+            if (cmd is CmdPoll)
+            {
+                var split = args.Split(new[] { ' ' }, 2);
+                args = split.Length > 1 ? split[1] : "";
+                unwrappedCmd = (cmd as CmdPoll).InternalCommand;
+            }
+
+            if (unwrappedCmd is CmdMap && string.IsNullOrEmpty(args)) return await CreateMultiMapPoll();
+
+            Func<string, string> selector = cmd.GetIneligibilityReasonFunc(this);
+            if (e != null && selector(e.User) != null) return false;
+            var options = new List<PollOption>();
+
+            string url = null;
+            string map = null;
+            if (unwrappedCmd is CmdMap)
+            {
+                url = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{(unwrappedCmd as CmdMap).Map.ResourceID}";
+                map = (unwrappedCmd as CmdMap).Map.InternalName;
+            }
+            poll = poll ?? new CommandPoll(this, true, true, unwrappedCmd is CmdMap, map, unwrappedCmd is CmdStart);
+            options.Add(new PollOption()
+            {
+                Name = "Yes",
+                URL = url,
+                Action = async () =>
+                {
+                    if (cmd.Access == BattleCommand.AccessType.NotIngame && spring.IsRunning) return;
+                    if (cmd.Access == BattleCommand.AccessType.Ingame && !spring.IsRunning) return;
+                    await cmd.ExecuteArmed(this, e);
+                }
+            });
+            options.Add(new PollOption()
+            {
+                Name = "No",
+                Action = async () => { }
+            });
+
+            if (await StartVote(selector, options, e, topic, poll))
+            {
+                await RegisterVote(e, 1);
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> StartVote(Func<string, string> eligibilitySelector, List<PollOption> options, Say creator, string topic, CommandPoll poll, int timeout = PollTimeout)
         {
             if (ActivePoll != null)
             {
-                await Respond(e, "Another poll already in progress, please wait");
-                return;
+                await Respond(creator, $"Please wait, another poll already in progress: {ActivePoll.Topic}");
+                return false;
             }
-            var poll = new CommandPoll(this);
-            if (await poll.Setup(command, e, args))
-            {
-                ActivePoll = poll;
-                pollTimer.Interval = PollTimeout * 1000;
-                pollTimer.Enabled = true;
-            }
+            await poll.Setup(eligibilitySelector, options, creator, topic);
+            ActivePoll = poll;
+            pollTimer.Interval = timeout * 1000;
+            pollTimer.Enabled = true;
+            return true;
         }
 
 
-        public async void StopVote(Say e = null)
+        public async void StopVote()
         {
-            if (ActivePoll != null) await ActivePoll.End();
-            if (pollTimer != null) pollTimer.Enabled = false;
-            ActivePoll = null;
+            try
+            {
+                if (ActivePoll == null) return;
+                var oldPoll = ActivePoll;
+                if (ActivePoll != null) await ActivePoll.End();
+                if (pollTimer != null) pollTimer.Enabled = false;
+                ActivePoll = null;
+                await oldPoll?.PublishResult();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error stopping vote " + ex);
+            }
         }
 
         public async Task SwitchEngine(string engine)
@@ -477,6 +673,7 @@ namespace ZkLobbyServer
             MapName = null;
             ValidateAndFillDetails();
             await server.Broadcast(server.ConnectedUsers.Values, new BattleUpdate() { Header = GetHeader() });
+            SaveToDb();
             // do a full update - mode can also change map/players
         }
 
@@ -496,6 +693,60 @@ namespace ZkLobbyServer
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
+            SaveToDb();
+        }
+        public async Task SwitchInviteMmPlayers(int players)
+        {
+            InviteMMPlayers = players;
+            SaveToDb();
+        }
+
+        public async Task SwitchMaxElo(int elo)
+        {
+            MaxElo = elo;
+            SaveToDb();
+        }
+
+        public async Task SwitchMinElo(int elo)
+        {
+            MinElo = elo;
+            SaveToDb();
+        }
+
+        public async Task SwitchMaxLevel(int lvl)
+        {
+            MaxLevel = lvl;
+            SaveToDb();
+        }
+
+        public async Task SwitchMinLevel(int lvl)
+        {
+            MinLevel = lvl;
+            SaveToDb();
+        }
+
+        public async Task SwitchMaxRank(int rank)
+        {
+            MaxRank = rank;
+            SaveToDb();
+        }
+
+        public async Task SwitchMinRank(int rank)
+        {
+            MinRank = rank;
+            SaveToDb();
+        }
+
+        public async Task SwitchMinMapSupportLevel(MapSupportLevel lvl)
+        {
+            MinimalMapSupportLevelAutohost = lvl;
+            SaveToDb();
+        }
+
+        public void SwitchCbal(bool cbalEnabled)
+        {
+            IsCbalEnabled = cbalEnabled;
+            SaveToDb();
         }
 
         public async Task SwitchPassword(string pwd)
@@ -512,6 +763,36 @@ namespace ZkLobbyServer
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Title = Title } });
+            SaveToDb();
+        }
+
+        public void BlockPolls(int seconds)
+        {
+            var target = DateTime.UtcNow.AddSeconds(seconds);
+            if (BlockPollsUntil < target) BlockPollsUntil = target;
+        }
+
+
+        public void UpdateWith(Autohost autohost)
+        {
+            IsAutohost = true;
+            MinimalMapSupportLevelAutohost = autohost.MinimumMapSupportLevel;
+            Mode = autohost.AutohostMode;
+            InviteMMPlayers = autohost.InviteMMPlayers;
+            MaxElo = autohost.MaxElo;
+            MinElo = autohost.MinElo;
+            MaxLevel = autohost.MaxLevel;
+            MinLevel = autohost.MinLevel;
+            MaxRank = autohost.MaxRank;
+            MinRank = autohost.MinRank;
+            Title = autohost.Title;
+            MaxPlayers = autohost.MaxPlayers;
+            IsCbalEnabled = autohost.CbalEnabled;
+            dbAutohostIndex = autohost.AutohostID;
+            FounderName = "Autohost #" + BattleID;
+            ValidateAndFillDetails();
+
+            RunCommandDirectly<CmdMap>(null);
         }
 
         public override void UpdateWith(BattleHeader h)
@@ -524,8 +805,8 @@ namespace ZkLobbyServer
             h.SpectatorCount = SpectatorCount;
             h.PlayerCount = NonSpectatorCount;
             h.IsMatchMaker = IsMatchMakerBattle;
-            
-            
+
+
             base.UpdateWith(h);
 
             ValidateAndFillDetails();
@@ -558,7 +839,7 @@ namespace ZkLobbyServer
                     if (MaxPlayers == 0) MaxPlayers = 16;
                     break;
             }
-            if (MaxPlayers > 32) MaxPlayers = 32;
+            if (MaxPlayers > DynamicConfig.Instance.MaximumBattlePlayers && !IsAutohost) MaxPlayers = DynamicConfig.Instance.MaximumBattlePlayers;
 
             HostedMod = MapPicker.FindResources(ResourceType.Mod, ModName ?? server.Game ?? GlobalConst.DefaultZkTag).FirstOrDefault();
             HostedMap = MapName != null
@@ -585,10 +866,41 @@ namespace ZkLobbyServer
 
             if (!ubs.IsSpectator)
             {
-                var cnt = Users.Values.Count(x => !x.IsSpectator);
-                var isPresent = Users.ContainsKey(ubs.Name);
-                if (isPresent && (cnt > MaxPlayers)) ubs.IsSpectator = true;
-                if (!isPresent && (cnt >= MaxPlayers)) ubs.IsSpectator = true;
+                if (!TimeQueueEnabled && Users.Values.Count(x => !x.IsSpectator) > MaxPlayers)
+                {
+                    ubs.IsSpectator = true;
+                    SayBattle("This battle is full.", ubs.Name);
+                }
+                if (ubs.LobbyUser.EffectiveElo > MaxElo && ubs.LobbyUser.EffectiveMmElo > MaxElo)
+                {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your rating (" + Math.Min(ubs.LobbyUser.EffectiveElo, ubs.LobbyUser.EffectiveMmElo) + ") is too high. The maximum rating to play in this battle is " + MaxElo + ".", ubs.Name);
+                }
+                if (ubs.LobbyUser.EffectiveElo < MinElo && ubs.LobbyUser.EffectiveMmElo < MinElo)
+                {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your rating (" + Math.Max(ubs.LobbyUser.EffectiveElo, ubs.LobbyUser.EffectiveMmElo) + ") is too low. The minimum rating to play in this battle is " + MinElo + ".", ubs.Name);
+                }
+                if (ubs.LobbyUser.Level > MaxLevel)
+                {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your level (" + ubs.LobbyUser.Level + ") is too high. The maximum level to play in this battle is " + MaxLevel + ".", ubs.Name);
+                }
+                if (ubs.LobbyUser.Level < MinLevel)
+                {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your level (" + ubs.LobbyUser.Level + ") is too low. The minimum level to play in this battle is " + MinLevel + ".", ubs.Name);
+                }
+                if (ubs.LobbyUser.Rank > MaxRank)
+                {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your Rank (" + Ranks.RankNames[ubs.LobbyUser.Rank] + ") is too high. The maximum Rank to play in this battle is " + Ranks.RankNames[MaxRank] + ".", ubs.Name);
+                }
+                if (ubs.LobbyUser.Rank < MinRank)
+                {
+                    ubs.IsSpectator = true;
+                    SayBattle("Your Rank (" + Ranks.RankNames[ubs.LobbyUser.Rank] + ") is too low. The minimum Rank to play in this battle is " + Ranks.RankNames[MinRank] + ".", ubs.Name);
+                }
             }
         }
 
@@ -598,11 +910,15 @@ namespace ZkLobbyServer
             StopVote();
             IsInGame = false;
             RunningSince = null;
+            BlockPollsUntil = DateTime.UtcNow.AddSeconds(DiscussionSeconds);
 
-            var debriefingMessage = BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server);
-            Debriefings.Add(debriefingMessage);
+            bool result = BattleResultHandler.SubmitSpringBattleResult(springBattleContext, server, (debriefing) =>
+            {
+                Debriefings.Add(debriefing);
+                server.Broadcast(springBattleContext.ActualPlayers.Select(x => x.Name), debriefing);
+                Trace.TraceInformation("Battle ended: Sent out debriefings for B" + debriefing.ServerBattleID);
+            });
 
-            await server.Broadcast(Users.Keys, debriefingMessage);
             await server.Broadcast(server.ConnectedUsers.Keys, new BattleUpdate() { Header = GetHeader() });
 
             foreach (var s in toNotify)
@@ -619,7 +935,100 @@ namespace ZkLobbyServer
                     });
 
             toNotify.Clear();
+
+            var playingEligibleUsers = server.MatchMaker.GetEligibleQuickJoinPlayers(Users.Values.Where(x => !x.LobbyUser.IsAway && !x.IsSpectator && x.Name != null).Select(x => server.ConnectedUsers[x.Name]).ToList());
+            if (playingEligibleUsers.Count() >= InviteMMPlayers)
+            { //Make sure there are enough eligible users for a battle to be likely to happen
+
+                //put all users into MM queue to suggest battles
+                var teamsQueues = server.MatchMaker.PossibleQueues.Where(x => x.Mode == AutohostMode.Teams).ToList();
+                var availableUsers = Users.Values.Where(x => !x.LobbyUser.IsAway && x.Name != null).Select(x => server.ConnectedUsers[x.Name]).ToList();
+                await server.MatchMaker.MassJoin(availableUsers, teamsQueues);
+                DiscussionSeconds = MatchMaker.TimerSeconds + 2;
+            }
+            else
+            {
+                DiscussionSeconds = 5;
+            }
+            BlockPollsUntil = DateTime.UtcNow.AddSeconds(DiscussionSeconds);
+
+
+            if (Mode != AutohostMode.None && (IsAutohost || (!Users.ContainsKey(FounderName) || Users[FounderName].LobbyUser?.IsAway == true) && Mode != AutohostMode.Planetwars && !IsPassworded))
+            {
+                if (!result)
+                {
+                    //Game was aborted/exited/invalid, allow manual commands
+                    BlockPollsUntil = DateTime.UtcNow;
+                }
+                else
+                {
+                    //Initiate discussion time, then map vote, then start vote
+                    discussionTimer.Interval = (DiscussionSeconds - 1) * 1000;
+                    discussionTimer.Start();
+                }
+            }
             await CheckCloseBattle();
+        }
+
+
+        private async Task<bool> CreateMultiMapPoll()
+        {
+
+            var poll = new CommandPoll(this, false, false, true);
+            poll.PollEnded += MapVoteEnded;
+            var options = new List<PollOption>();
+            List<int> pickedMaps = new List<int>();
+            pickedMaps.Add(HostedMap?.ResourceID ?? 0);
+            using (var db = new ZkDataContext())
+            {
+                for (int i = 0; i < NumberOfMapChoices; i++)
+                {
+                    Resource map = null;
+                    if (i < NumberOfMapChoices / 2)
+                    {
+                        map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Supported) ? MapSupportLevel.Supported : MinimalMapSupportLevel, MapRatings.GetMapRanking(Mode).TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).Where(x => !pickedMaps.Contains(x.ResourceID)).AsQueryable()); //choose at least 50% popular maps
+                    }
+                    if (map == null)
+                    {
+                        map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Featured) ? MapSupportLevel.Supported : MinimalMapSupportLevel, db.Resources.Where(x => !pickedMaps.Contains(x.ResourceID)));
+                    }
+                    pickedMaps.Add(map.ResourceID);
+                    options.Add(new PollOption()
+                    {
+                        Name = map.InternalName,
+                        DisplayName = map.MapNameWithDimensions(),
+                        URL = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{map.ResourceID}",
+                        ResourceID = map.ResourceID,
+                        Action = async () =>
+                        {
+                            var cmd = new CmdMap().Create();
+                            cmd.Arm(this, null, map.ResourceID.ToString());
+                            if (cmd.Access == BattleCommand.AccessType.NotIngame && spring.IsRunning) return;
+                            if (cmd.Access == BattleCommand.AccessType.Ingame && !spring.IsRunning) return;
+                            await cmd.ExecuteArmed(this, null);
+                        }
+                    });
+                }
+            }
+            return await StartVote(new CmdMap().GetIneligibilityReasonFunc(this), options, null, "Choose the next map", poll, MapVoteTime);
+        }
+
+        private void discussionTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            try
+            {
+                discussionTimer.Stop();
+                CreateMultiMapPoll();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error creating map poll: " + ex);
+            }
+        }
+
+        private void MapVoteEnded(object sender, PollOutcome e)
+        {
+            if (Users.Values.Count(x => !x.IsSpectator) >= MinimumAutostartPlayers) StartVote(new CmdStart(), null, "", MapVoteTime);
         }
 
         private async Task ApplyBalanceResults(BalanceTeamsResult balance)
@@ -729,38 +1138,61 @@ namespace ZkLobbyServer
             spring.BattleStarted += spring_BattleStarted;
         }
 
-        private void spring_BattleStarted(object sender, EventArgs e)
+        private void spring_BattleStarted(object sender, SpringBattleContext e)
         {
-            StopVote();
+            try
+            {
+                StopVote();
+                if (IsMatchMakerBattle && e.PlayersUnreadyOnStart.Count > 0 && e.IsTimeoutForceStarted)
+                {
+                    string message = string.Format("Players {0} did not choose a start position. Game will be aborted.", e.PlayersUnreadyOnStart.StringJoin());
+                    spring.SayGame(message);
+                    Trace.TraceInformation(string.Format("Matchmaker Game {0} aborted because {1}", BattleID, message));
+                    RunCommandDirectly<CmdExit>(null);
+                    server.UserLogSay($"Battle aborted because {e.PlayersUnreadyOnStart.Count} players didn't join their MM game: {e.PlayersUnreadyOnStart.StringJoin()}.");
+                    e.PlayersUnreadyOnStart.ForEach(x => server.MatchMaker.BanPlayer(x));
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error processing spring_BattleStarted started: {0}", ex);
+            }
         }
 
 
         private void spring_PlayerSaid(object sender, SpringChatEventArgs e)
         {
-            ConnectedUser user;
-
-            Say say = new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle, AllowRelay = false };
-
-            //dont broadcast commands
-            if (CheckSayForCommand(say).Result) return;
-
-            var isPlayer = spring.Context.ActualPlayers.Any(x => x.Name == e.Username && !x.IsSpectator);
-            
-            // block spectator chat in FFA and non chicken MM
-            if (!isPlayer)
+            try
             {
-                if (spring.LobbyStartContext.Mode == AutohostMode.GameFFA ||
-                    (spring.LobbyStartContext.IsMatchMakerGame && spring.LobbyStartContext.Mode != AutohostMode.GameChickens)) return;
-            }
+                ConnectedUser user;
 
-            // check bans
-            if (!server.ConnectedUsers.TryGetValue(e.Username, out user) || user.User.BanMute || (user.User.BanSpecChat && !isPlayer))
-            {
-                return;
+                Say say = new Say() { User = e.Username, Text = e.Line, Place = SayPlace.Battle, AllowRelay = false };
+
+                //dont broadcast commands
+                if (CheckSayForCommand(say).Result) return;
+
+                var isPlayer = spring.Context.ActualPlayers.Any(x => x.Name == e.Username && !x.IsSpectator);
+
+                // block spectator chat in FFA and non chicken MM
+                if (!isPlayer)
+                {
+                    if (spring.LobbyStartContext.Mode == AutohostMode.GameFFA ||
+                        (spring.LobbyStartContext.IsMatchMakerGame && spring.LobbyStartContext.Mode != AutohostMode.GameChickens)) return;
+                }
+
+                // check bans
+                if (!server.ConnectedUsers.TryGetValue(e.Username, out user) || user.User.BanMute || (user.User.BanSpecChat && !isPlayer))
+                {
+                    return;
+                }
+
+                // relay
+                if (e.Location == SpringChatLocation.Public) server.GhostSay(say, BattleID);
             }
-                
-            // relay
-            if (e.Location == SpringChatLocation.Public) server.GhostSay(say, BattleID);
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error processing spring_PlayerSaid " + ex);
+            }
         }
 
         private async void DedicatedServerExited(object sender, SpringBattleContext springBattleContext)
@@ -771,18 +1203,25 @@ namespace ZkLobbyServer
             }
             catch (Exception ex)
             {
-                Trace.TraceError("Error processing dedi server exited: {0}",ex);
+                Trace.TraceError("Error processing dedi server exited: {0}", ex);
             }
         }
 
         private void DedicatedServerStarted(object sender, EventArgs e)
         {
-            StopVote();
-
-            if (HostedMod?.Mission != null)
+            try
             {
-                var service = GlobalConst.GetContentService();
-                foreach (var u in spring.LobbyStartContext.Players.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, HostedMod.Mission.Name);
+                StopVote();
+
+                if (HostedMod?.Mission != null)
+                {
+                    var service = GlobalConst.GetContentService();
+                    foreach (var u in spring.LobbyStartContext.Players.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, HostedMod.Mission.Name);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error processing dedi server started: {0}", ex);
             }
         }
 

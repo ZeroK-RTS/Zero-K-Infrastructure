@@ -10,22 +10,24 @@ using System.Data.Entity.SqlServer;
 using EntityFramework.Extensions;
 using System.Data.Entity;
 using Ratings;
+using System.Threading.Tasks;
 
 namespace ZeroKWeb.Controllers
 {
-    public class UsersController: Controller
+    public class UsersController : Controller
     {
         //
         // GET: /Users/
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult ChangeHideCountry(int accountID, bool hideCountry)
+        public async Task<ActionResult> ChangeHideCountry(int accountID, bool hideCountry)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
 
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} changed {1} hide country to {2}", Global.Account.Name, acc.Name, hideCountry));
             acc.HideCountry = hideCountry;
             // TODO reimplement ? Global.Nightwatch.Tas.SetHideCountry(acc.Name, hideCountry);
             db.SaveChanges();
@@ -36,16 +38,29 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult ChangeAccountDeleted(int accountID, bool isDeleted)
+        public async Task<ActionResult> ChangeAccountDeleted(int accountID, bool isDeleted, string alias)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
 
+            if (!string.IsNullOrWhiteSpace(alias))
+            {
+                if (!isDeleted) return Content("The Account must be deleted to allow battle relinking.");
+                int aliasId;
+                if (!int.TryParse(alias, out aliasId)) return Content("Not a valid number");
+                Account target = db.Accounts.SingleOrDefault(x => x.AccountID == aliasId);
+                if (target == null) return Content("Invalid alias accountID");
+                db.SpringBattlePlayers.Where(x => x.AccountID == accountID).Update(x => new SpringBattlePlayer()
+                {
+                    AccountID = aliasId
+                });
+            }
+
             if (acc.IsDeleted != isDeleted)
             {
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} {1} deletion status changed by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - {0} -> {1}", acc.IsDeleted, isDeleted));
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} {1} deletion status changed by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - {0} -> {1}", acc.IsDeleted, isDeleted));
                 acc.IsDeleted = isDeleted;
             }
             db.SaveChanges();
@@ -56,52 +71,56 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [Auth(Role = AdminLevel.SuperAdmin)]
         [ValidateAntiForgeryToken]
-        public ActionResult ChangePermissions(int accountID, bool zkAdmin, bool vpnException)
+        public async Task<ActionResult> ChangePermissions(int accountID, bool zkAdmin, bool tourneyController, bool vpnException)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
             Account adminAcc = Global.Account;
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Permissions changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
 
             var curAdmin = acc.AdminLevel > AdminLevel.None;
             if (curAdmin != zkAdmin)
             {
                 //reset chat priviledges to 2 if removing adminhood; remove NW subsciption to admin channel
                 // FIXME needs to also terminate forbidden clan/faction subscriptions
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Moderator status: {0} -> {1}", curAdmin, zkAdmin));
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Moderator status: {0} -> {1}", curAdmin, zkAdmin));
                 acc.AdminLevel = zkAdmin ? AdminLevel.Moderator : AdminLevel.None;
-                
+
             }
             if (acc.HasVpnException != vpnException)
             {
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - VPN exception: {0} -> {1}", acc.HasVpnException, vpnException));
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - VPN exception: {0} -> {1}", acc.HasVpnException, vpnException));
                 acc.HasVpnException = vpnException;
+            }
+            if (acc.IsTourneyController != tourneyController)
+            {
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Tourney Control: {0} -> {1}", acc.IsTourneyController, tourneyController));
+                acc.IsTourneyController = tourneyController;
             }
             db.SaveChanges();
 
-            Global.Server.PublishAccountUpdate(acc);
-            
+            await Global.Server.PublishAccountUpdate(acc);
+
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult DeleteFromRatings(int accountID)
+        public async Task<ActionResult> DeleteFromRatings(int accountID)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
             Account adminAcc = Global.Account;
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Ratings deleted for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Ratings deleted for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
             var battles = db.SpringBattles.Where(x => x.SpringBattlePlayers.Where(p => !p.IsSpectator).Any(p => p.AccountID == accountID))
                                     .Include(x => x.ResourceByMapResourceID)
                                     .Include(x => x.SpringBattlePlayers)
                                     .Include(x => x.SpringBattleBots);
             battles.Update(x => new SpringBattle() { ApplicableRatings = 0 });
             db.SaveChanges();
-            battles.ToList().ForEach(x => RatingSystems.RemoveResult(x));
 
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
@@ -109,15 +128,15 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult UnlinkSteamID(int accountID)
+        public async Task<ActionResult> UnlinkSteamID(int accountID)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
             if (acc == null) return Content("Invalid accountID");
             Account adminAcc = Global.Account;
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{2} unlinked Steam account for {0} {1} (name {3})", 
-                                                                                   acc.Name, 
-                                                                                   Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), 
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{2} unlinked Steam account for {0} {1} (name {3})",
+                                                                                   acc.Name,
+                                                                                   Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"),
                                                                                    adminAcc.Name,
                                                                                    acc.SteamName
                                                                                   ));
@@ -138,7 +157,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult ReportLog ()
+        public ActionResult ReportLog()
         {
             return View("ReportLog");
         }
@@ -175,7 +194,8 @@ namespace ZeroKWeb.Controllers
 
 
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult Index(UsersIndexModel model) {
+        public ActionResult Index(UsersIndexModel model)
+        {
             model = model ?? new UsersIndexModel();
             var db = new ZkDataContext();
             var ret = db.Accounts.Where(x => !x.IsDeleted).AsQueryable();
@@ -204,7 +224,7 @@ namespace ZeroKWeb.Controllers
 
             if (model.IsAdmin) ret = ret.Where(x => x.AdminLevel >= AdminLevel.Moderator);
 
-            model.Data = ret.OrderByDescending(x=>x.AccountID);
+            model.Data = ret.OrderByDescending(x => x.AccountID);
 
             return View("UsersIndex", model);
         }
@@ -236,20 +256,19 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult Punish(int accountID,
+        public async Task<ActionResult> Punish(int accountID,
                                    string reason,
-                                   bool deleteXP,
-                                   bool deleteInfluence,
                                    bool banMute,
+                                   bool banVotes,
                                    bool banCommanders,
                                    bool banSite,
                                    bool banLobby,
-                                   bool banUnlocks,
                                    bool banSpecChat,
                                    bool banForum,
-                                   bool setRightsToZero,            
+                                   bool messageOnly,
                                    string banIP,
                                    long? banUserID,
+                                   string installID,
                                    double banHours)
         {
             ZkDataContext db = new ZkDataContext();
@@ -259,40 +278,100 @@ namespace ZeroKWeb.Controllers
             if (banHours > MaxBanHours) banHours = MaxBanHours; // todo show some notification 
 
             Punishment punishment = new Punishment
-                             {
-                                 Time = DateTime.UtcNow,
-                                 Reason = reason,
-                                 BanMute = banMute,
-                                 BanCommanders = banCommanders,
-                                 BanSite = banSite,
-                                 BanLobby = banLobby,
-                                 BanExpires = DateTime.UtcNow.AddHours(banHours),
-                                 BanUnlocks = banUnlocks,
-                                 BanSpecChat = banSpecChat,
-                                 BanIP = banIP,
-                                 BanForum = banForum,
-                                 DeleteXP = deleteXP,
-                                 DeleteInfluence = deleteInfluence,
-                                 CreatedAccountID = Global.AccountID,
-                                 UserID = banUserID
-                             };
+            {
+                Time = DateTime.UtcNow,
+                Reason = reason,
+                BanMute = banMute,
+                BanVotes = banVotes,
+                BanCommanders = banCommanders,
+                BanSite = banSite,
+                BanLobby = banLobby,
+                BanExpires = DateTime.UtcNow.AddHours(banHours),
+                BanUnlocks = false,
+                BanSpecChat = banSpecChat,
+                MessageOnly = messageOnly,
+                BanIP = banIP,
+                BanForum = banForum,
+                DeleteXP = false,
+                DeleteInfluence = false,
+                CreatedAccountID = Global.AccountID,
+                InstallID = installID,
+                UserID = banUserID
+            };
             acc.PunishmentsByAccountID.Add(punishment);
             db.SaveChanges();
 
             // notify lobby of changes and post log message
             try
             {
-                if (banLobby == true) Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
-                if (banMute == true) Global.Server.PublishAccountUpdate(acc);
+                string pmAction = "";
+                
+                bool activePenalty = banLobby || banMute || banForum || banSpecChat || banVotes || banCommanders || banSite;
+                
+                if (messageOnly && !activePenalty)
+                {
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Message sent to {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - message: {0} ", reason));
+                    
+                    await Global.Server.GhostPm(acc.Name, string.Format("A moderator has sent you a message: {0}", reason));
+                }
+                else
+                {
 
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Reason: {0} ", reason));
-                Global.Server.GhostPm(acc.Name, string.Format("Your account has received moderator action: {0}", reason));
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - reason: {0} ", reason));
+                    await Global.Server.GhostPm(acc.Name, string.Format("Your account has received moderator action, reason: {0}", reason));
+
+                    if (banLobby == true)
+                    {
+                        await Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
+                        
+                        pmAction += "Lobby banned, ";
+                    }
+                    if (banMute == true)
+                    {
+                        await Global.Server.PublishAccountUpdate(acc);
+                        pmAction += "Muted, ";
+                    }
+                    if (banForum == true) 
+                    {
+                        pmAction += "Forum banned, ";
+                    }
+                    if (banSpecChat == true) 
+                    {
+                        pmAction += "Spectator all-chat muted, ";
+                    }
+                    if (banVotes == true)
+                    {
+                        pmAction += "Vote powers restricted, ";
+                    }
+                    if (banCommanders == true)
+                    {
+                        pmAction += "Custom commanders restricted, ";
+                    }                    
+                    if (banSite == true) 
+                    {
+                        pmAction += "Site banned, ";
+                    }
+                    
+                    if (activePenalty)
+                    {
+                        pmAction = pmAction.Substring(0,Math.Max(0,pmAction.Length - 2)); // removes trailing comma and space
+                        await Global.Server.GhostPm(acc.Name, string.Format("Action taken: {0}", pmAction)); 
+                        await Global.Server.GhostPm(acc.Name, string.Format("Total duration: {0} hours", banHours));
+
+                        await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - duration: {0}h ", banHours));
+                        await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - penalty type: {0}", pmAction));
+                    } else {
+                        await Global.Server.GhostPm(acc.Name, "Action taken: Warning");
+                        await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - penalty type: Warning");
+                    }
+                }
             }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.ToString());
-                Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, ex.ToString());
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, ex.ToString());
             }
             return RedirectToAction("Detail", new { id = accountID });
         }
@@ -320,39 +399,40 @@ namespace ZeroKWeb.Controllers
 
         [Auth]
         [ValidateInput(false)]
-        public ActionResult ReportToAdminSubmit(int accountID, string text)
+        public async Task<ActionResult> ReportToAdminSubmit(int accountID, string text)
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(accountID);
             if (acc == null) return Content("Invalid accountID");
-            
+
             db.AbuseReports.InsertOnSubmit(new AbuseReport()
-                                           {
-                                               AccountID = acc.AccountID,
-                                               ReporterAccountID = Global.AccountID,
-                                               Time = DateTime.UtcNow,
-                                               Text = text
-                                           });
+            {
+                AccountID = acc.AccountID,
+                ReporterAccountID = Global.AccountID,
+                Time = DateTime.UtcNow,
+                Text = text
+            });
             db.SaveChanges();
 
             string str;
             if (Global.AccountID != accountID)
-                str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name, 
-                    Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), 
-                    acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), 
+                str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name,
+                    Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"),
+                    acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"),
                     text);
             else
-                str = string.Format("{0} {1} contacts admins : {2}", Global.Account.Name, 
+                str = string.Format("{0} {1} contacts admins : {2}", Global.Account.Name,
                     Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), text);
 
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str, isRing:true);
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str, isRing: true);
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult RemovePunishment(int punishmentID) {
+        public async Task<ActionResult> RemovePunishment(int punishmentID)
+        {
             var db = new ZkDataContext();
             var todel = db.Punishments.FirstOrDefault(x => x.PunishmentID == punishmentID);
             if (todel == null) return Content("Invalid punishmentID");
@@ -369,8 +449,8 @@ namespace ZeroKWeb.Controllers
             db.Punishments.DeleteOnSubmit(todel);
             db.SaveChanges();
 
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName));
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason));
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} removed a punishment given by {1} ", Global.Account.Name, punisherName));
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("to {0} for: {1} ", acc.Name, todel.Reason));
 
             return RedirectToAction("Detail", "Users", new { id = todel.AccountID });
         }
@@ -384,7 +464,7 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult MassBanSubmit(string name, int startIndex, int endIndex, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
+        public async Task<ActionResult> MassBanSubmit(string name, int startIndex, int endIndex, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
         {
             ZkDataContext db = new ZkDataContext();
             int? firstAccID = null;
@@ -396,6 +476,7 @@ namespace ZeroKWeb.Controllers
                 {
                     firstAccID = firstAccID ?? acc.AccountID;
                     long? userID = banID ? (uint?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                    string installID = banID ? acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().InstallID : null;
                     string userIP = banIP ? acc.AccountIPs.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
                     System.Console.WriteLine(acc.Name, userID, userIP);
                     Punishment punishment = new Punishment
@@ -408,12 +489,13 @@ namespace ZeroKWeb.Controllers
                         BanIP = userIP,
                         CreatedAccountID = Global.AccountID,
                         UserID = userID,
+                        InstallID = installID,
                     };
                     acc.PunishmentsByAccountID.Add(punishment);
 
                     try
                     {
-                        Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
+                        await Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
                     }
                     catch (Exception ex)
                     {
@@ -422,23 +504,24 @@ namespace ZeroKWeb.Controllers
                 }
             }
             db.SaveChanges();
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {4} for user series {0} ({1} - {2}): {3}",
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {4} for user series {0} ({1} - {2}): {3}",
                 name, startIndex, endIndex, Url.Action("Detail", "Users", new { id = firstAccID }, "http"), Global.Account.Name));
 
-            return Index(new UsersIndexModel() {Name = name});
+            return Index(new UsersIndexModel() { Name = name });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult MassBanByUserIDSubmit(long userID, double? maxAge, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
+        public async Task<ActionResult> MassBanByUserIDSubmit(long userID, double? maxAge, string reason, int banHours, bool banSite = false, bool banLobby = true, bool banIP = false, bool banID = false)
         {
             ZkDataContext db = new ZkDataContext();
             if (banHours > MaxBanHours) banHours = MaxBanHours;
-            DateTime firstLoginAfter = maxAge != null? DateTime.UtcNow.AddHours(-(double)maxAge) : DateTime.MinValue; 
-            foreach (Account acc in db.Accounts.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID) && (maxAge == null || x.FirstLogin > firstLoginAfter) ))
+            DateTime firstLoginAfter = maxAge != null ? DateTime.UtcNow.AddHours(-(double)maxAge) : DateTime.MinValue;
+            foreach (Account acc in db.Accounts.Where(x => x.AccountUserIDs.Any(y => y.UserID == userID) && (maxAge == null || x.FirstLogin > firstLoginAfter)))
             {
                 long? punishmentUserID = banID ? (uint?)acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().UserID : null;
+                string installID = banID ? acc.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().InstallID : null;
                 string userIP = banIP ? acc.AccountIPs.OrderByDescending(x => x.LastLogin).FirstOrDefault().IP : null;
                 System.Console.WriteLine(acc.Name, userID, userIP);
                 Punishment punishment = new Punishment
@@ -451,12 +534,13 @@ namespace ZeroKWeb.Controllers
                     BanIP = userIP,
                     CreatedAccountID = Global.AccountID,
                     UserID = punishmentUserID,
+                    InstallID = installID,
                 };
                 acc.PunishmentsByAccountID.Add(punishment);
 
                 try
                 {
-                    Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
+                    await Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
                 }
                 catch (Exception ex)
                 {
@@ -464,7 +548,7 @@ namespace ZeroKWeb.Controllers
                 }
             }
             db.SaveChanges();
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {2} for userID {0} (max age {1})",
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Mass ban executed by {2} for userID {0} (max age {1})",
                 userID, maxAge, Global.Account.Name));
 
             return RedirectToAction("Index");
@@ -473,7 +557,7 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult SetPassword(int accountID, string newPassword)
+        public async Task<ActionResult> SetPassword(int accountID, string newPassword)
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(accountID);
@@ -482,6 +566,7 @@ namespace ZeroKWeb.Controllers
             acc.SetPasswordPlain(newPassword);
             if (!string.IsNullOrEmpty(newPassword)) acc.SteamID = null;
             db.SaveChanges();
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} changed {1} password", Global.Account.Name, acc.Name));
             return Content(string.Format("{0} password set to {1}", acc.Name, newPassword));
         }
 
@@ -489,23 +574,23 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult SetUsername(int accountID, string newUsername)
+        public async Task<ActionResult> SetUsername(int accountID, string newUsername)
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(accountID);
             if (acc == null) return Content("Invalid accountID");
             if (!Account.IsValidLobbyName(newUsername)) return Content("Invalid username");
-            var existing = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == newUsername.ToUpper());
+            var existing = db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == newUsername.ToUpper() && x.AccountID != accountID);
             if (existing != null) return Content("Name conflict with user " + existing.AccountID);
             if (Global.Server.Battles.Any(x => x.Value.GetAllUserNames().Contains(acc.Name))) return Content(acc.Name + " is currently fighting in a battle. Rename action not advised.");
-            Global.Server.KickFromServer(Global.Account.Name, acc.Name, "Your username has been changed from " + acc.Name + " to " + newUsername + ". Please login using your new username.");
-            
+            await Global.Server.KickFromServer(Global.Account.Name, acc.Name, "Your username has been changed from " + acc.Name + " to " + newUsername + ". Please login using your new username.");
+
             var oldName = acc.Name;
             acc.SetName(newUsername);
             db.SaveChanges();
-            
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} renamed by {1}", Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
-            Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" {0} -> {1}", oldName, newUsername));
+
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} renamed by {1}", Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" {0} -> {1}", oldName, newUsername));
 
             return Content(string.Format("{0} renamed to {1}", oldName, newUsername));
         }
@@ -513,23 +598,40 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult SetWhrAlias(int accountID, string alias)
+        public async Task<ActionResult> DeleteAllForumVotes(int accountID)
         {
-            int aliasId;
-            if (!int.TryParse(alias, out aliasId)) return Content("Not a valid number");
-            using (var db = new ZkDataContext())
-            {
-                var aliasAcc = db.Accounts.Find(aliasId);
-                if (aliasAcc == null) return Content("No account found with this id");
+            var db = new ZkDataContext();
+            var acc = db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
+            var votes = acc.AccountForumVotes;
 
-                var acc = db.Accounts.Find(accountID);
-                if (acc == null) return Content("Invalid accountID");
-                
-                acc.WhrAlias = aliasId;
-                db.SaveChanges();
-                
-                return Content(string.Format("{0} will play for {1}", acc, aliasAcc));
+            foreach (var vote in votes.ToList())
+            {
+                var post = vote.ForumPost;
+                var author = post.Account;
+                var oldDelta = vote.Vote;
+
+                /*
+                Console.WriteLine("Purging vote on post " + post.ForumPostID + " by author " + author.Name + ": " + oldDelta);
+                Console.ReadLine();
+                */
+
+                // reverse vote effects
+                if (oldDelta > 0)
+                {
+                    author.ForumTotalUpvotes = author.ForumTotalUpvotes - oldDelta;
+                    post.Upvotes = post.Upvotes - oldDelta;
+                }
+                else if (oldDelta < 0)
+                {
+                    author.ForumTotalDownvotes = author.ForumTotalDownvotes + oldDelta;
+                    post.Downvotes = post.Downvotes + oldDelta;
+                }
+                db.AccountForumVotes.DeleteOnSubmit(vote);
             }
+            db.SaveChanges();
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Account {0} forum votes deleted by {1}", Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), Global.Account.Name));
+
+            return Content(string.Format("Deleted all forum votes of {0}", acc.Name));
         }
 
         [HttpPost]
@@ -545,7 +647,7 @@ namespace ZeroKWeb.Controllers
                 Trace.TraceWarning("Failed password check for {0} on attempted password change", Global.Account.Name);
                 Global.Server.LoginChecker.LogIpFailure(Request.UserHostAddress);
                 return Content("Invalid password");
-            } 
+            }
             if (newPassword != newPassword2) return Content("New passwords do not match");
             if (string.IsNullOrWhiteSpace(newPassword)) return Content("New password cannot be blank");
             acc.SetPasswordPlain(newPassword);

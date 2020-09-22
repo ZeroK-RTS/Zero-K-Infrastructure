@@ -109,7 +109,7 @@
 <br class="clearfloat" />
 <div>
     @{
-        var allPlayers = Model.SpringBattlePlayers.Where(x => !x.IsSpectator).ToList();
+        var allPlayers = Model.SpringBattlePlayers.Where(x => !x.IsSpectator).OrderByDescending(x => x.Account.GetIconLevel()).OrderByDescending(x => x.Account.Rank).ToList();
         var allBots = Model.SpringBattleBots.ToList();
         var allAllyIDs = Model.GetAllyteamIds();
         var allWinChances = Model.GetAllyteamWinChances();
@@ -141,7 +141,9 @@
                         @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToReadableTime() : "")
                         if ((Global.IsModerator) && u.EloChange.HasValue)
                         {
-                            @:Rank: @u.EloChange.Value.ToString("F1")
+                            <span class="admin" style="margin:0px">
+                            Rank: @u.EloChange.Value.ToString("F1")
+                            </span>
                         }
                         foreach (var award in Model.AccountBattleAwards.Where(x => x.AccountID == u.AccountID))
                         {
@@ -178,7 +180,6 @@
 @if (Global.IsModerator)
 {
     <div class="admin">
-        Logs: @Html.ActionLink("Logs", "Logs", "Battles", new { id = Model.SpringBattleID }, null) <br />
         <form action="@Url.Action("SetApplicableRatings", new { BattleID = Model.SpringBattleID })" method="post">
             @Html.AntiForgeryToken()
             Counts for competitive skill rating: @Html.CheckBox("MatchMaking", Model.ApplicableRatings.HasFlag(RatingCategoryFlags.MatchMaking)) <br />

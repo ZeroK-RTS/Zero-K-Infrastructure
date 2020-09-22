@@ -8,7 +8,7 @@ namespace ZkLobbyServer
 {
     public class CmdMap : BattleCommand
     {
-        private Resource map;
+        public Resource Map { get; private set; }
         private Resource alternativeMap;
         public override string Help => "[<filters>..] - changes map, e.g. !map altor div changes map to Altored Divide";
         public override string Shortcut => "map";
@@ -18,40 +18,59 @@ namespace ZkLobbyServer
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            map = string.IsNullOrEmpty(arguments)
-                ? MapPicker.GetRecommendedMap(battle.GetContext())
-                : MapPicker.FindResources(ResourceType.Map, arguments, battle.MinimalMapSupportLevel).FirstOrDefault();
+            Map = string.IsNullOrEmpty(arguments)
+                ? MapPicker.GetRecommendedMap(battle.GetContext(), (battle.MinimalMapSupportLevel > MapSupportLevel.Featured) ? battle.MinimalMapSupportLevel : MapSupportLevel.Featured)
+                : MapPicker.FindResources(ResourceType.Map, arguments, battle.MinimalMapSupportLevel, true).FirstOrDefault();
 
 
-            if (map == null)
+            if (Map == null)
             {
-                battle.Respond(e, "Cannot find such map.");
+                var unsupportedMap = MapPicker.FindResources(ResourceType.Map, arguments, MapSupportLevel.None).FirstOrDefault();
+                if (unsupportedMap != null)
+                {
+                    if (battle.IsAutohost)
+                    {
+                        battle.Respond(e, $"The map {unsupportedMap.InternalName} {GlobalConst.BaseSiteUrl}/Maps/Detail/{unsupportedMap.ResourceID} is not available on this autohost. Play it in a player hosted battle.");
+                    }
+                    else
+                    {
+                        battle.Respond(e, $"The map {unsupportedMap.InternalName} {GlobalConst.BaseSiteUrl}/Maps/Detail/{unsupportedMap.ResourceID} is not supported. Unsupported maps can only be played on passworded hosts.");
+                    }
+                }
+                else
+                {
+                    battle.Respond(e, "Cannot find such a map.");
+                }
                 return null;
             }
-            else if (!string.IsNullOrEmpty(arguments) && map.MapSupportLevel < MapSupportLevel.Supported)
+            else if (Map.InternalName == battle.MapName)
             {
-                alternativeMap = MapPicker.FindResources(ResourceType.Map, arguments, MapSupportLevel.Supported).FirstOrDefault();
+                battle.Respond(e, "Already on this map.");
+                return null;
+            }
+            else if (!string.IsNullOrEmpty(arguments) && Map.MapSupportLevel < MapSupportLevel.Supported)
+            {
+                alternativeMap = MapPicker.FindResources(ResourceType.Map, arguments, MapSupportLevel.Supported, true).FirstOrDefault();
             }
 
-
-            if (map.MapSupportLevel >= MapSupportLevel.Supported)
+            if (Map.MapSupportLevel >= MapSupportLevel.Supported)
             {
-                return $"Change map to {map.InternalName} {GlobalConst.BaseSiteUrl}/Maps/Detail/{map.ResourceID} ?";
+                return $"Change map to {Map.MapNameWithDimensions()}?";
             }
             else
             {
-                return $"Change to UNSUPPORTED map {map.InternalName} {GlobalConst.BaseSiteUrl}/Maps/Detail/{map.ResourceID} ?";
+                return $"Change to UNSUPPORTED map {Map.MapNameWithDimensions()}?";
             }
         }
 
 
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
-            if (map != null)
+            if (Map != null)
             {
-                await battle.SwitchMap(map.InternalName);
-                await battle.SayBattle("changing map to " + map.InternalName);
-                if (map.MapSupportLevel < MapSupportLevel.Supported) await battle.SayBattle($"This map is not officially supported!");
+                await battle.SwitchMap(Map.InternalName);
+                await battle.SayBattle($"Changing map to {Map.MapNameWithDimensions()}");
+                if (Map.MapSupportLevel < MapSupportLevel.Supported) await battle.SayBattle($"This map is not officially supported!");
                 if (alternativeMap != null) await battle.SayBattle($"Did you mean {alternativeMap.InternalName} {GlobalConst.BaseSiteUrl}/Maps/Detail/{alternativeMap.ResourceID}?");
             }
             

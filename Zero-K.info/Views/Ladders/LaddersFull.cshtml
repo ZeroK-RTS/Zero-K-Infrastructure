@@ -1,0 +1,57 @@
+﻿@using ZeroKWeb
+@using ZeroKWeb.Controllers
+@using ZkData
+@using Ratings
+@using PlasmaShared
+@model LaddersController.LaddersIndexModel
+@{
+    Page.Title = "Award ladders";
+
+    var grid = new UniGrid<Indexed<Account>>(Model.Data, "Ladders");
+
+    grid.AddCol("Rank", x => string.Format("{0}.",x.Index + 1));
+    grid.AddCol("Player", x => Html.PrintAccount(x.Item));
+    grid.AddCol("Ladder Rating", x => Math.Round(x.Item.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().LadderElo ?? WholeHistoryRating.DefaultRating.LadderElo));
+    grid.AddCol("True Rating", x => string.Format("{0} ± {1}", Math.Round(x.Item.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().RealElo), Math.Round(x.Item.AccountRatings.Where(r => r.RatingCategory == Model.RatingCategory).FirstOrDefault().EloStdev, 1)));
+    grid.AddCol("History", x => @Html.ActionLink("Show history", "Ratings", "Charts", new { RatingCategory = (int)RatingCategory.Casual, UserId = x.Item.AccountID }, null));
+
+    grid.PageSize = 50;
+}
+
+
+<div id="userIndex">
+    <h1>Detailed Zero-K Ladders</h1> <br />
+
+    @using (Ajax.BeginForm("Full", "Ladders", Global.GetAjaxOptions("userIndex")))
+    {
+    <table>
+        <tr>
+            <td>Rating:</td>
+            <td>@Html.EnumDropDownListFor(x => x.RatingCategory, new { @class = "width-100" })</td>
+        </tr>
+        <tr>
+            <td>Username:</td>
+            <td>@Html.TextBoxFor(x => x.Name, new { data_autocomplete = Url.Action("Users", "Autocomplete") })</td>
+        </tr>
+        <tr>
+            <td>Registered:</td>
+            <td>@Html.TextBoxFor(x => x.RegisteredFrom, new { @class = "js_datepicker" }) - @Html.TextBoxFor(x => x.RegisteredTo, new { @class = "js_datepicker" })</td>
+        </tr>
+        <tr>
+            <td>Last login:</td>
+            <td>@Html.TextBoxFor(x => x.LastLoginFrom, new { @class = "js_datepicker" }) - @Html.TextBoxFor(x => x.LastLoginTo, new { @class = "js_datepicker" })</td>
+        </tr>
+        <tr>
+            <td>Country Code:</td>
+            <td>@Html.TextBoxFor(x => x.Country)</td>
+        </tr>
+        <tr>
+            <td>Level:</td>
+            <td>@Html.TextBoxFor(x => x.LevelFrom) - @Html.TextBoxFor(x => x.LevelTo)</td>
+        </tr>
+    </table>
+        <input type="submit" value="Show" />
+
+        @GridHelpers.RenderTable(grid)
+    }
+</div>

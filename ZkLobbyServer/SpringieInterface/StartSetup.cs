@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
@@ -24,11 +24,11 @@ namespace ZeroKWeb.SpringieInterface
             {
                 var mode = context.Mode;
 
-               var commProfiles = new LuaTable();
+                var commProfiles = new LuaTable();
                 var db = new ZkDataContext();
 
                 // calculate to whom to send extra comms
-                var accountIDsWithExtraComms = new List<int>();
+                var accountIDsWithExtraComms = new Dictionary<int, int>();
                 if (mode == AutohostMode.Planetwars || mode == AutohostMode.GameFFA || mode == AutohostMode.Teams)
                 {
                     var groupedByTeam = context.Players.Where(x => !x.IsSpectator).GroupBy(x => x.AllyID).OrderByDescending(x => x.Count());
@@ -40,10 +40,23 @@ namespace ZeroKWeb.SpringieInterface
                             var cnt = biggest.Count() - other.Count();
                             if (cnt > 0)
                             {
-                                foreach (var a in
-                                    other.Select(x => db.Accounts.First(y => y.AccountID == x.LobbyID))
-                                        .OrderByDescending(x => x.GetRating(RatingCategory.Casual).Elo)
-                                        .Take(cnt)) accountIDsWithExtraComms.Add(a.AccountID);
+                                // example case: 3 players on this team, 8 players on largest team
+                                // 5 bonus comms to dole out to this team
+                                // per_player = 1 (integer result of 5/3)
+                                // remainder: 2, so now cnt = 2
+                                // iterate over all players in this team
+                                //  first player: cnt == 2, >0 so we give him a second extra comm
+                                //  second player: cnt == 1, >0 so same deal
+                                //  from now on cnt <= 0 so the last player only gets the one extra comm
+                                int per_player = cnt / other.Count();
+                                cnt = cnt % other.Count();
+                                foreach (var a in other
+                                    .Select(x => db.Accounts.First(y => y.AccountID == x.LobbyID))
+                                    .OrderByDescending(x => x.GetRating(RatingCategory.Casual).Elo))
+                                {
+                                    accountIDsWithExtraComms.Add(a.AccountID, per_player + (cnt > 0 ? 1 : 0));
+                                    cnt--;
+                                }
                             }
                         }
                     }
@@ -100,7 +113,7 @@ namespace ZeroKWeb.SpringieInterface
                 // write player custom keys (level, elo, is muted, etc.)
                 foreach (var p in context.Players)
                 {
-                    var user = db.Accounts.Where(x=>x.AccountID == p.LobbyID).Include(x=>x.RelalationsByOwner).FirstOrDefault();
+                    var user = db.Accounts.Where(x => x.AccountID == p.LobbyID).Include(x => x.RelalationsByOwner).FirstOrDefault();
                     if (user != null)
                     {
                         var userParams = new Dictionary<string, string>();
@@ -109,7 +122,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams["LobbyID"] = user.AccountID.ToString();
                         userParams["CountryCode"] = user.HideCountry ? "??" : user.Country;
 
-                        var userBanMuted = Punishment.GetActivePunishment(user.AccountID, null, null, x => x.BanMute) != null;
+                        var userBanMuted = Punishment.GetActivePunishment(user.AccountID, null, null, null, x => x.BanMute) != null;
                         if (userBanMuted) userParams["muted"] = "1";
                         userParams["faction"] = user.Faction != null ? user.Faction.Shortcut : "";
                         userParams["clan"] = user.Clan != null ? user.Clan.Shortcut : "";
@@ -119,13 +132,13 @@ namespace ZeroKWeb.SpringieInterface
                         //userParams["mm_elo"] = Math.Round(user.EffectiveMmElo).ToString();
                         //userParams["casual_elo"] = Math.Round(user.EffectiveElo).ToString();
 
-                        userParams["elo"] = Math.Round(user.GetBestRating().Elo).ToString();
+                        userParams["elo"] = Math.Round(user.GetRating(context.ApplicableRating).Elo).ToString();
                         userParams["elo_order"] = context.Players.Where(x => !x.IsSpectator)
                             .Select(x => db.Accounts.First(y => y.AccountID == x.LobbyID))
-                            .Where(x => x.GetBestRating().Elo > user.GetBestRating().Elo)
+                            .Where(x => x.GetRating(context.ApplicableRating).Elo > user.GetRating(context.ApplicableRating).Elo)
                             .Count()
                             .ToString();
-                        
+
                         userParams["icon"] = user.GetIconName();
                         userParams["avatar"] = user.Avatar;
                         userParams["badges"] = string.Join(",", user.GetBadges());
@@ -133,12 +146,12 @@ namespace ZeroKWeb.SpringieInterface
                         userParams["room_boss"] = p.Name == context.FounderName ? "1" : "0";
                         if (p.PartyID.HasValue) userParams["PartyID"] = p.PartyID.ToString();
 
-                        var userSpecChatBlocked = Punishment.GetActivePunishment(user.AccountID, null, null, x => x.BanSpecChat) != null; ;
+                        var userSpecChatBlocked = Punishment.GetActivePunishment(user.AccountID, null, null, null, x => x.BanSpecChat) != null; ;
                         userParams["can_spec_chat"] = userSpecChatBlocked ? "0" : "1";
 
-                        userParams["ignored"] = string.Join(",", user.RelalationsByOwner.Where(x => x.Relation == Relation.Ignore).Select(x=>x.Target.Name));
-                        userParams["friends"] = string.Join(",", user.RelalationsByOwner.Where(x => x.Relation == Relation.Friend).Select(x=>x.Target.Name));
-                        
+                        userParams["ignored"] = string.Join(",", user.RelalationsByOwner.Where(x => x.Relation == Relation.Ignore).Select(x => x.Target.Name));
+                        userParams["friends"] = string.Join(",", user.RelalationsByOwner.Where(x => x.Relation == Relation.Friend).Select(x => x.Target.Name));
+
                         if (!p.IsSpectator)
                         {
                             // set valid PW structure attackers
@@ -147,7 +160,7 @@ namespace ZeroKWeb.SpringieInterface
                                 userParams["pwRank"] = (user.AccountRolesByAccountID.Where(
                                             x =>
                                                 !x.RoleType.IsClanOnly &&
-                                                (x.RoleType.RestrictFactionID == null || x.RoleType.RestrictFactionID == user.FactionID)).OrderBy(x=>x.RoleType.DisplayOrder).Select(x => (int?)x.RoleType.DisplayOrder).FirstOrDefault() ?? 999).ToString();
+                                                (x.RoleType.RestrictFactionID == null || x.RoleType.RestrictFactionID == user.FactionID)).OrderBy(x => x.RoleType.DisplayOrder).Select(x => (int?)x.RoleType.DisplayOrder).FirstOrDefault() ?? 999).ToString();
 
 
                                 var allied = user.Faction != null && defender != null && user.Faction != defender &&
@@ -161,10 +174,10 @@ namespace ZeroKWeb.SpringieInterface
                                 userParams["pwInstructions"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(GetPwInstructions(planet, user, db, attacker)));
                             }
 
-                            if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams["extracomm"] = "1";
+                            if (accountIDsWithExtraComms.ContainsKey(user.AccountID)) userParams["extracomm"] = accountIDsWithExtraComms[user.AccountID].ToString();
 
                             var commProfileIDs = new LuaTable();
-                            var userCommandersBanned = Punishment.GetActivePunishment(user.AccountID, null, null, x => x.BanCommanders) != null; 
+                            var userCommandersBanned = Punishment.GetActivePunishment(user.AccountID, null, null, null, x => x.BanCommanders) != null;
                             if (!userCommandersBanned)
                             {
                                 // set up commander data
@@ -212,7 +225,7 @@ namespace ZeroKWeb.SpringieInterface
                                             else decorations.Add(d.Code);
                                         }
 
-                                        commProfile["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length));
+                                        commProfile["name"] = LuaTable.SanitizeString(c.Name.Substring(0, Math.Min(25, c.Name.Length))) ?? "dummy";
                                         commProfile["chassis"] = c.Unlock.Code;
                                         commProfile["decorations"] = decorations;
 
@@ -223,7 +236,7 @@ namespace ZeroKWeb.SpringieInterface
                                         {
                                             var modulesForLevel = new LuaTable();
                                             modules.Add(modulesForLevel);
-                                            var modulesOrdered = c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel == i).ToList();
+                                            //var modulesOrdered = c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel == i).ToList();
                                             var slots = db.CommanderSlots.ToList().Where(x => x.MorphLevel == i && (x.ChassisID == null || (x.ChassisID == c.ChassisUnlockID))).ToList();
                                             slots.Sort(delegate (CommanderSlot x, CommanderSlot y)
                                             {
@@ -304,7 +317,7 @@ namespace ZeroKWeb.SpringieInterface
             var ipBase = GlobalConst.BaseInfluencePerBattle;
             var ipShips = planet.GetEffectiveShipIpBonus(attacker);
             var ipDefs = planet.GetEffectiveIpDefense();
-            var attackerWinLoseCc = (ipShips + ipBase - ipDefs)*GlobalConst.PlanetWarsAttackerWinLoseCcMultiplier;
+            var attackerWinLoseCc = (ipShips + ipBase - ipDefs) * GlobalConst.PlanetWarsAttackerWinLoseCcMultiplier;
             var attackerLoseKillCc = (ipShips + ipBase - ipDefs) * GlobalConst.PlanetWarsDefenderWinKillCcMultiplier;
 
             attackerWinLoseCc = Math.Max(attackerWinLoseCc, 0);
@@ -360,7 +373,7 @@ namespace ZeroKWeb.SpringieInterface
                     ipBase + ipShips - ipDefs,
                     ipBase,
                     ipShips,
-                    ipDefs, 
+                    ipDefs,
                     attacker?.Shortcut,
                     attackerWinLoseCc);
 

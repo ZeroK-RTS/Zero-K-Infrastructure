@@ -29,6 +29,7 @@ namespace ZkLobbyServer
         public string RemoteEndpointIP => transport.RemoteEndpointAddress;
 
         static List<Welcome.FactionInfo> cachedFactions = new List<Welcome.FactionInfo>();
+        static List<string> blacklist = new List<string>() { "dakeys", "xtrasauce" };
 
         static ClientConnection()
         {
@@ -52,12 +53,6 @@ namespace ZkLobbyServer
         {
             try
             {
-                var sw = Stopwatch.StartNew();
-                if (line.Length > GlobalConst.LobbyMaxMessageSize)
-                {
-                    Trace.TraceWarning("{0} too long message: {1}",this,line);
-                    return;
-                }
 
                 dynamic obj = server.Serializer.DeserializeLine(line);
                 if (obj is Login || obj is Register) await Process(obj);
@@ -66,8 +61,6 @@ namespace ZkLobbyServer
                     await connectedUser.Throttle(line.Length);
                     await connectedUser.Process(obj);
                 }
-                var delay = sw.ElapsedMilliseconds;
-                if (delay > GlobalConst.ProcessTimeMinDelayMilliseconds) DelayLogger.ReportDelay(sw.ElapsedMilliseconds, line.Trim().Split(' ')[0]);
             }
             catch (Exception ex)
             {
@@ -80,7 +73,7 @@ namespace ZkLobbyServer
         public async Task OnConnected()
         {
             //Trace.TraceInformation("{0} connected", this);
-            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Version = server.Version, UserCount = server.ConnectedUsers.Count, Factions = cachedFactions, UserCountLimited = MiscVar.ZklsMaxUsers > 0});
+            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Blacklist = blacklist, Version = server.Version, UserCount = server.ConnectedUsers.Count, Factions = cachedFactions, UserCountLimited = MiscVar.ZklsMaxUsers > 0});
         }
 
 
@@ -171,7 +164,13 @@ namespace ZkLobbyServer
             else
             {
                 await SendCommand(ret.LoginResponse);
-                if (ret.LoginResponse.ResultCode == LoginResponse.Code.Banned) transport.RequestClose();
+
+                if (ret.LoginResponse.ResultCode == LoginResponse.Code.Banned)
+                {
+                    await Task.Delay(500); // this is needed because socket writes are async and might not be queued yet
+                    await transport.Flush();
+                    transport.RequestClose();
+                }
             }
         }
 

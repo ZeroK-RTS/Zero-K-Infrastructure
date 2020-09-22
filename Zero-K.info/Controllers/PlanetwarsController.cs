@@ -777,7 +777,7 @@ namespace ZeroKWeb.Controllers
                                         Faction = x.Key,
                                         Top10 =
                                             x.OrderByDescending(y => y.PwAttackPoints)
-                                                .ThenByDescending(y => y.AccountRatings.Where(r => r.RatingCategory == RatingCategory.Planetwars).Select(r => r.Elo).DefaultIfEmpty(WholeHistoryRating.DefaultRating.RealElo).FirstOrDefault())
+                                                .ThenByDescending(y => y.AccountRatings.Where(r => r.RatingCategory == RatingCategory.Planetwars).Select(r => r.LadderElo).DefaultIfEmpty(WholeHistoryRating.DefaultRating.RealElo).FirstOrDefault())
                                                 .Take(10)
                                                 .ToList()
                                     })

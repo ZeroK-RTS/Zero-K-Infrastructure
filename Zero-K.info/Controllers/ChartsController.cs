@@ -51,12 +51,13 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var selected = (from sbp in db.SpringBattlePlayers.Where(x=>!x.IsSpectator)
-                join sb in db.SpringBattles on sbp.SpringBattleID equals sb.SpringBattleID select new { sb,sbp}).GroupBy(x => x.sbp.AccountID).Select(x => new
-            {
-                FirstLogin = x.Min(y=>y.sb.StartTime),
-                LastLogin = x.Max(y=>y.sb.StartTime)
-            }).Where(x => (x.FirstLogin >= fromTime) && (x.FirstLogin <= toTime)).ToList();
+            var selected = (from sbp in db.SpringBattlePlayers.Where(x => !x.IsSpectator)
+                            join sb in db.SpringBattles on sbp.SpringBattleID equals sb.SpringBattleID
+                            select new { sb, sbp }).GroupBy(x => x.sbp.AccountID).Select(x => new
+                            {
+                                FirstLogin = x.Min(y => y.sb.StartTime),
+                                LastLogin = x.Max(y => y.sb.StartTime)
+                            }).Where(x => (x.FirstLogin >= fromTime) && (x.FirstLogin <= toTime)).ToList();
 
             return (from acc in selected
                     group acc by acc.FirstLogin.Date
@@ -81,7 +82,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var selected = (from sbp in db.SpringBattlePlayers.Where(x=>!x.IsSpectator)
+            var selected = (from sbp in db.SpringBattlePlayers.Where(x => !x.IsSpectator)
                             join sb in db.SpringBattles on sbp.SpringBattleID equals sb.SpringBattleID
                             select new { sb, sbp }).GroupBy(x => x.sbp.AccountID).Select(x => new
                             {
@@ -119,7 +120,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var selected = (from sbp in db.SpringBattlePlayers.Where(x=>!x.IsSpectator)
+            var selected = (from sbp in db.SpringBattlePlayers.Where(x => !x.IsSpectator)
                             join sb in db.SpringBattles on sbp.SpringBattleID equals sb.SpringBattleID
                             select new { sb, sbp }).GroupBy(x => x.sbp.AccountID).Select(x => new
                             {
@@ -151,8 +152,8 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             db.Database.CommandTimeout = 600;
 
-            var selected = db.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => new { x.AccountID, x.SpringBattle.StartTime }).Where(x=>x.StartTime >= fromTime && x.StartTime <= toTime).ToList();
-            
+            var selected = db.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => new { x.AccountID, x.SpringBattle.StartTime }).Where(x => x.StartTime >= fromTime && x.StartTime <= toTime).ToList();
+
             return (from sb in selected
                     group sb by sb.StartTime.Date
                 into grp
@@ -162,13 +163,61 @@ namespace ZeroKWeb.Controllers
                     {
                         Day = grp.Key,
                         Value = grp.Select(z => z.AccountID).Distinct().Count(),
-                    }).OrderBy(x=>x.Day).ToList();
+                    }).OrderBy(x => x.Day).ToList();
         }
 
         public string Name => "daily_unique";
         public string Title => "daily unique players";
     }
 
+
+    public class DailyUniqueSpec : IGraphDataProvider
+    {
+        public IList<GraphPoint> GetDailyValues(DateTime fromTime, DateTime toTime)
+        {
+            var db = new ZkDataContext();
+            db.Database.CommandTimeout = 600;
+
+            var selected = db.SpringBattlePlayers.Select(x => new { x.AccountID, x.SpringBattle.StartTime }).Where(x => x.StartTime >= fromTime && x.StartTime <= toTime).ToList();
+
+            return (from sb in selected
+                    group sb by sb.StartTime.Date
+                into grp
+                    orderby grp.Key
+                    select
+                    new GraphPoint()
+                    {
+                        Day = grp.Key,
+                        Value = grp.Select(z => z.AccountID).Distinct().Count(),
+                    }).OrderBy(x => x.Day).ToList();
+        }
+
+        public string Name => "daily_unique_spec";
+        public string Title => "daily unique players and spectators";
+    }
+
+
+    public class DailyAvgMatchmakerMinutes : IGraphDataProvider
+    {
+        public IList<GraphPoint> GetDailyValues(DateTime fromTime, DateTime toTime)
+        {
+            var db = new ZkDataContext();
+            db.Database.CommandTimeout = 600;
+
+            var selected = db.SpringBattlePlayers.Where(x => !x.IsSpectator && x.SpringBattle.IsMatchMaker).Select(x => new { x.AccountID, x.SpringBattle.StartTime, x.SpringBattle.Duration }).Where(x => x.StartTime >= fromTime && x.StartTime <= toTime).ToList();
+
+
+            return (from sb in selected
+                    group sb by sb.StartTime.Date
+                into grp
+                    orderby grp.Key
+                    let players = grp.Select(y => y.AccountID).Distinct().Count()
+                    select new GraphPoint() { Day = grp.Key, Value = grp.Sum(y => y.Duration) / 60 / players, }).OrderBy(x => x.Day).ToList();
+        }
+
+        public string Name => "matchmaker_minutes";
+        public string Title => "avg. matchmaker minutes per player";
+    }
 
     public class DailyAvgMinutes : IGraphDataProvider
     {
@@ -190,6 +239,27 @@ namespace ZeroKWeb.Controllers
 
         public string Name => "player_minutes";
         public string Title => "avg. player minutes per player";
+    }
+
+    public class AverageGameSize : IGraphDataProvider
+    {
+        public IList<GraphPoint> GetDailyValues(DateTime fromTime, DateTime toTime)
+        {
+            var db = new ZkDataContext();
+            db.Database.CommandTimeout = 600;
+
+            var selected = db.SpringBattles.Select(x => new { x.PlayerCount, x.StartTime, x.Duration }).Where(x => x.StartTime >= fromTime && x.StartTime <= toTime).ToList();
+
+            return (from sb in selected
+                    group sb by sb.StartTime.Date
+                into grp
+                    orderby grp.Key
+                    let playtime = grp.Sum(y => y.PlayerCount * y.Duration)
+                    select new GraphPoint() { Day = grp.Key, Value = (double)grp.Sum(y => y.PlayerCount * y.PlayerCount * y.Duration) / playtime }).OrderBy(x => x.Day).ToList();
+        }
+
+        public string Name => "average_game_size";
+        public string Title => "avg. game size by playtime";
     }
 
 
@@ -245,6 +315,34 @@ namespace ZeroKWeb.Controllers
     }
 
 
+    public class LadderRatingHistory : IGraphDataProvider
+    {
+        public readonly int AccountID;
+        public readonly RatingCategory Category;
+        public readonly string AccountName;
+
+        public LadderRatingHistory(int accountID, RatingCategory category)
+        {
+            this.AccountID = accountID;
+            this.Category = category;
+            using (var db = new ZkDataContext())
+            {
+                AccountName = db.Accounts.Where(x => x.AccountID == accountID).FirstOrDefault().Name;
+            }
+        }
+
+        public IList<GraphPoint> GetDailyValues(DateTime fromTime, DateTime toTime)
+        {
+            Dictionary<DateTime, float> ratings = RatingSystems.GetRatingSystem(Category).GetPlayerLadderRatingHistory(AccountID);
+            return ratings.Where(x => x.Key >= fromTime && x.Key <= toTime).Select(x => new GraphPoint() { Day = x.Key, Value = x.Value, }).ToList();
+        }
+
+        public string Name => "ladder_rating_history";
+        public string Title => AccountName + " (75% confidence)";
+    }
+
+
+
 
     public class ChartsController : Controller
     {
@@ -289,7 +387,7 @@ namespace ZeroKWeb.Controllers
 
                     foreach (var d in s.Data) d.Value = 100.0 * (d.Value - min) / (max - min);
                 }
-            
+
             model.GraphingData = series;
             return View("ChartsIndex", model);
         }
@@ -307,12 +405,15 @@ namespace ZeroKWeb.Controllers
                 {
                     new Retention(),
                     new DailyUnique(),
+                    new DailyUniqueSpec(),
                     new DailyNew(),
                     new RetentionLimit(1),
                     new RetentionLimit(3),
                     new RetentionLimit(7),
                     new RetentionLimit(30),
                     new DailyAvgMinutes(),
+                    new DailyAvgMatchmakerMinutes(),
+                    new AverageGameSize(),
                     new Leaving()
                 });
             }
@@ -331,7 +432,8 @@ namespace ZeroKWeb.Controllers
             var providers = new List<IGraphDataProvider>();
             if (model.UserId != null)
             {
-                providers = model.UserId.Select(x => (IGraphDataProvider)new RatingHistory(x, model.RatingCategory)).ToList();
+                providers.AddRange(model.UserId.Select(x => (IGraphDataProvider)new RatingHistory(x, model.RatingCategory)).ToList());
+                //providers.AddRange(model.UserId.Select(x => (IGraphDataProvider)new LadderRatingHistory(x, model.RatingCategory)).ToList()); //75% confidence
             }
 
             var series = new List<GraphSeries>();
@@ -343,8 +445,10 @@ namespace ZeroKWeb.Controllers
 
             model.GraphingData = series;
 
-            if (model.UserId != null) {
-                using (var db = new ZkDataContext()) {
+            if (model.UserId != null)
+            {
+                using (var db = new ZkDataContext())
+                {
                     model.UserStats = model.UserId.Select(id => new UserStats()
                     {
                         Account = db.Accounts.Where(x => x.AccountID == id).Include(x => x.Faction).Include(x => x.Clan).FirstOrDefault(),
@@ -391,7 +495,7 @@ namespace ZeroKWeb.Controllers
 
             public IList<GraphSeries> GraphingData;
 
-            public String[] Colors = {"e6194b", "3cb44b", "ffe119", "0082c8", "f58231", "911eb4", "46f0f0", "f032e6", "d2f53c", "fabebe", "008080", "e6beff", "aa6e28","fffac8", "800000", "aaffc3", "808000", "ffd8b1", "000080", "808080", "FFFFFF", "000000"};
+            public String[] Colors = { "e6194b", "3cb44b", "ffe119", "0082c8", "f58231", "911eb4", "46f0f0", "f032e6", "d2f53c", "fabebe", "008080", "e6beff", "aa6e28", "fffac8", "800000", "aaffc3", "808000", "ffd8b1", "000080", "808080", "FFFFFF", "000000" };
         }
 
         public class UserStats

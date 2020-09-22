@@ -26,7 +26,7 @@ namespace ZkLobbyServer
                 battle.Respond(e, "Player not found");
                 return null;
             }
-            return $"do you want to spectate {target}?";
+            return $"Do you want to spectate {target}?";
         }
 
         public override BattleCommand Create() => new CmdSpec();

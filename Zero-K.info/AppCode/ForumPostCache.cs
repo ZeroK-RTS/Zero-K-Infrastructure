@@ -26,24 +26,26 @@ namespace ZeroKWeb
             if (post != null)
             {
                 MvcHtmlString dummy;
-                cache.TryRemove(GetKey(post), out dummy);
+                cache.TryRemove(GetKey(post, true), out dummy);
+                cache.TryRemove(GetKey(post, false), out dummy);
             } else
             {
                 var news = dbEntityEntry.Entity as News;
                 if (news != null)
                 {
                     MvcHtmlString dummy;
-                    cache.TryRemove(GetKey(news), out dummy);
+                    cache.TryRemove(GetKey(news, true), out dummy);
+                    cache.TryRemove(GetKey(news, false), out dummy);
                 }
             }
         }
 
-        private static string GetKey(ForumPost p) {
-            return "p" + p.ForumPostID;
+        private static string GetKey(ForumPost p, bool? overrideModerator = null) {
+            return "p" + p.ForumPostID + "#" + (overrideModerator ?? Global.IsModerator);
         }
 
-        private static string GetKey(News n) {
-            return "n" + n.NewsID;
+        private static string GetKey(News n, bool? overrideModerator = null) {
+            return "n" + n.NewsID + "#" + (overrideModerator ?? Global.IsModerator);
         }
 
         public MvcHtmlString GetCachedHtml(ForumPost post, HtmlHelper html) {

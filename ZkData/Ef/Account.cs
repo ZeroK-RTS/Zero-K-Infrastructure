@@ -24,6 +24,7 @@ namespace ZkData
             FirstLogin = DateTime.UtcNow;
             LastLogin = DateTime.UtcNow;
             LastLogout = DateTime.UtcNow;
+            LastChatRead = DateTime.UtcNow;
             Country = "??";
 
             AbuseReportsByAccountID = new HashSet<AbuseReport>();
@@ -73,6 +74,7 @@ namespace ZkData
 
         }
         
+        public bool IsTourneyController { get; set; }
         public DevLevel DevLevel { get; set; }
         [StringLength(200)]
         public string SpecialNote { get; set; }
@@ -90,11 +92,11 @@ namespace ZkData
         public DateTime FirstLogin { get; set; }
         public DateTime LastLogin { get; set; }
         public DateTime LastLogout { get; set; }
+        public DateTime LastChatRead { get; set; }
 
         [StringLength(8000)]
         public string Aliases { get; set; }
-        public int WhrAlias { get; set; }
-
+        
         /*public double Elo { get; set; }
         public double EloWeight { get; set; }
         public double EloMm { get; set; }
@@ -180,6 +182,7 @@ namespace ZkData
         public virtual ICollection<AccountCampaignVar> AccountCampaignVars { get; set; }
         public virtual ICollection<AccountForumVote> AccountForumVotes { get; set; }
         public virtual ICollection<AccountIP> AccountIPs { get; set; }
+        public virtual ICollection<AccountMapBan> AccountMapBans { get; set; }
         public virtual ICollection<AccountRole> AccountRolesByAccountID { get; set; }
         public virtual ICollection<AccountUnlock> AccountUnlocks { get; set; }
         public virtual ICollection<AccountUserID> AccountUserIDs { get; set; }
@@ -235,17 +238,19 @@ namespace ZkData
         public int KudosGained { get { return ContributionsByAccountID.Sum(x =>  (int?)x.KudosValue) ?? 0; } }
 
         [NotMapped]
+        public int KudosDonated { get { return ContributionsByAccountID.Where(x => x.ManuallyAddedAccountID == null).Sum(x =>  (int?)x.KudosValue) ?? 0; } }
+
+        [NotMapped]
         public int KudosSpent { get { return KudosPurchases.Sum(x => (int?)x.KudosValue) ?? 0; } }
         
         public static Account AccountByName(ZkDataContext db, string name)
         {
-            return db.Accounts.FirstOrDefault(x => x.Name == name);
+            return db.Accounts.FirstOrDefault(x => x.Name == name) ?? db.Accounts.FirstOrDefault(x => x.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public static Account AccountVerify(ZkDataContext db, string login, string passwordHash)
         {
-            var loginUpper = login?.ToUpper();
-            var acc = db.Accounts.FirstOrDefault(x => x.Name == login && !x.IsDeleted) ?? db.Accounts.FirstOrDefault(x => x.Name.ToUpper() == loginUpper && !x.IsDeleted);
+            var acc = db.Accounts.FirstOrDefault(x => x.Name == login && !x.IsDeleted) ?? db.Accounts.FirstOrDefault(x => x.Name.Equals(login, StringComparison.CurrentCultureIgnoreCase) && !x.IsDeleted);
             if (acc != null && acc.VerifyPassword(passwordHash)) return acc;
             return null;
         }
@@ -261,8 +266,8 @@ namespace ZkData
             var mm = RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetPlayerRating(AccountID);
             var pw = RatingSystems.GetRatingSystem(RatingCategory.Planetwars).GetPlayerRating(AccountID);
 
-            if ((casual.Elo >= mm.Elo || mm.Rank == int.MaxValue) && casual.Rank < int.MaxValue) return casual;
-            if ((mm.Elo >= casual.Elo || casual.Rank == int.MaxValue) && mm.Rank < int.MaxValue) return mm;
+            if ((casual.LadderElo >= mm.LadderElo || mm.Rank == int.MaxValue) && casual.Rank < int.MaxValue) return casual;
+            if ((mm.LadderElo >= casual.LadderElo || casual.Rank == int.MaxValue) && mm.Rank < int.MaxValue) return mm;
             //ignore pw 
 
             return WholeHistoryRating.DefaultRating;
@@ -286,7 +291,17 @@ namespace ZkData
             SetPasswordHashed(Utils.HashLobbyPassword(passwordPlain));
         }
 
-        
+        public IQueryable<Account> GetSmurfs()
+        {
+            var myIPs = AccountIPs.Select(x => x.IP).ToList();
+            var myIDs = AccountUserIDs.Select(x => x.UserID).ToList();
+            var myInstallIDs = AccountUserIDs.Select(x => x.InstallID).ToList();
+            var brokenIDs = new List<Int64>() {  };
+            var smurfs = new ZkDataContext().Accounts.Where(x => x.AccountID != AccountID && (x.AccountIPs.Any(y => myIPs.Contains(y.IP) && y.IP != "127.0.0.1" && y.IP != "127.0.1.1" && y.IP != "94.23.170.70" && y.IP != "78.46.100.157")
+                || x.AccountUserIDs.Where(id => !brokenIDs.Contains(id.UserID)).Any(y => myIDs.Contains(y.UserID))
+                || x.AccountUserIDs.Where(id => !String.IsNullOrEmpty(id.InstallID)).Any(y => myInstallIDs.Contains(y.InstallID))));
+            return smurfs;
+        }
 
         public bool CanAppoint(Account targetAccount, RoleType roleType)
         {
@@ -315,7 +330,7 @@ namespace ZkData
 
         public bool CanPlayerPlanetWars()
         {
-            return FactionID != null && Level >= GlobalConst.MinPlanetWarsLevel && GetBestRating().Elo > GlobalConst.MinPlanetWarsElo;
+            return FactionID != null && Level >= GlobalConst.MinPlanetWarsLevel && GetBestRating().LadderElo > GlobalConst.MinPlanetWarsElo;
         }
 
 
@@ -621,7 +636,7 @@ namespace ZkData
             donator_2 = 4,
             [Description("Diamond donator")]
             donator_3 = 8,
-            [Description("External developer")]
+            [Description("Content contributor")]
             dev_content =  5,
             [Description("Game developer")]
             dev_game = 6,
@@ -632,7 +647,7 @@ namespace ZkData
         public int GetIconLevel()
         {
             return System.Math.Max(0, System.Math.Min(7, (int)System.Math.Floor((-0.12 / Math.Cosh((Level - 61.9) / 7.08) + 1)
-    * 2.93 * Math.Log(Math.Exp(-2.31) * Level + 1) - 0.89 / Math.Cosh((Level - 28.55) / 3.4))));
+    * 2.93 * Math.Log(Math.Exp(-2.31) * Level + 1) - 0.89 / Math.Cosh((Level - 28.55) / 3.4) + 0.002)));
         }
 
         /// <summary>
@@ -653,7 +668,7 @@ namespace ZkData
             var ret = new List<BadgeType>();
             if (Level > 200) ret.Add(BadgeType.player_level); 
             if ((GetRating(RatingCategory.MatchMaking).Rank <= 3 || GetRating(RatingCategory.Casual).Rank <= 3)) ret.Add(BadgeType.player_elo); 
-            var total = HasKudos ? KudosGained : 0;
+            var total = HasKudos ? KudosDonated : 0;
 
             if (total >= GlobalConst.KudosForDiamond) ret.Add(BadgeType.donator_3);
             else if (total >= GlobalConst.KudosForGold) ret.Add(BadgeType.donator_2);
@@ -722,9 +737,9 @@ namespace ZkData
                     AccountBattleAwards.GroupBy(x => x.AwardKey).Select(x => new UserProfile.UserAward() { AwardKey = x.Key, Collected = x.Count() })
                         .ToList(),
                 Badges = GetBadges().Select(x => x.ToString()).ToList(),
-                EffectiveElo = (int)Math.Round(GetRating(RatingCategory.Casual).Elo),
-                EffectivePwElo = (int)Math.Round(GetRating(RatingCategory.Planetwars).Elo),
-                EffectiveMmElo = (int)Math.Round(GetRating(RatingCategory.MatchMaking).Elo),
+                EffectiveElo = (int)Math.Round(GetRating(RatingCategory.Casual).LadderElo),
+                EffectivePwElo = (int)Math.Round(GetRating(RatingCategory.Planetwars).LadderElo),
+                EffectiveMmElo = (int)Math.Round(GetRating(RatingCategory.MatchMaking).LadderElo),
                 Kudos = KudosGained,
                 Level = Level,
                 LevelUpRatio = GetLevelUpRatio().ToString("F2"),

@@ -11,7 +11,7 @@ namespace ZkLobbyServer
     {
         public override string Help => "<exact name> - changes to any rapid accessible third party game, exact name needed";
         public override string Shortcut => "forcegame";
-        public override AccessType Access => AccessType.NotIngame;
+        public override AccessType Access => AccessType.NotIngameNotAutohost;
 
         public override BattleCommand Create() => new CmdForceGame();
 
@@ -20,7 +20,7 @@ namespace ZkLobbyServer
         {
             this.gameName = arguments;
 
-            if ((battle.Mode != AutohostMode.None || !battle.IsPassworded) && arguments != "zk:stable")
+            if ((battle.Mode != AutohostMode.None || !battle.IsPassworded) && arguments != "zk:stable" && !battle.IsAutohost)
             {
                 battle.Respond(e, $"You can only do this on custom passworded hosts.");
                 return null;
@@ -40,7 +40,9 @@ namespace ZkLobbyServer
             if (gameName != null)
             {
                 await battle.SwitchGame(gameName);
-                await battle.SayBattle("changing game to " + gameName);
+                await battle.SayBattle("Changing game to " + gameName);
+                battle.SwitchDefaultGame(false);
+                await battle.SayBattle("This host will no longer update its game automatically");
             }
             
         }

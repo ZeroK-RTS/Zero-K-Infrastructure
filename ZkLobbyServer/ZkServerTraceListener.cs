@@ -56,7 +56,7 @@ namespace ZkLobbyServer
 
             // write error and critical logs to server
             if (type == TraceEventType.Error || type == TraceEventType.Critical) { 
-                var say = new Say() { Place = SayPlace.Channel, Target = "zkerror", Text = text, User = GlobalConst.NightwatchName, Time=DateTime.UtcNow};
+                var say = new Say() { Place = SayPlace.Channel, Target = GlobalConst.ErrorChannel, Text = text, User = GlobalConst.NightwatchName, Time=DateTime.UtcNow};
 
                 if (ZkLobbyServer != null) {
                     // server runnin, flush queue and add new say

@@ -43,13 +43,22 @@ namespace LobbyClient
         public AutohostMode Mode { get; set; }
 
         public DateTime? RunningSince { get; set; }
+        public DateTime BlockPollsUntil { get; set; } = DateTime.MinValue;
 
         public RatingCategory ApplicableRating = RatingCategory.Casual;
         public bool IsMatchMakerBattle { get; protected set; }
 
+        public virtual bool TimeQueueEnabled { get; protected set; }
 
         public ConcurrentDictionary<string, UserBattleStatus> Users { get; set; }
 
+        public int MaxElo { get; protected set; } = int.MaxValue;
+        public int MinElo { get; protected set; } = int.MinValue;
+        public int MaxLevel { get; protected set; } = int.MaxValue;
+        public int MinLevel { get; protected set; } = int.MinValue;
+        public int MaxRank { get; protected set; } = int.MaxValue;
+        public int MinRank { get; protected set; } = int.MinValue;
+        
 
         public Battle()
         {
@@ -76,6 +85,7 @@ namespace LobbyClient
             if (h.RunningSince != null) RunningSince = h.RunningSince;
             if (h.IsRunning != null) IsInGame = h.IsRunning.Value;
             if (h.IsMatchMaker != null) IsMatchMakerBattle = h.IsMatchMaker.Value;
+            if (h.TimeQueueEnabled != null) TimeQueueEnabled = h.TimeQueueEnabled.Value;
         }
 
         public virtual BattleHeader GetHeader()
@@ -96,7 +106,8 @@ namespace LobbyClient
                 Mode = b.Mode,
                 IsRunning = b.IsInGame,
                 RunningSince = b.IsInGame ? b.RunningSince : null,
-                IsMatchMaker = b.IsMatchMakerBattle
+                IsMatchMaker = b.IsMatchMakerBattle,
+                TimeQueueEnabled = b.TimeQueueEnabled
             };
         }
 
@@ -119,7 +130,14 @@ namespace LobbyClient
             return $"{ModName} {MapName} ({NonSpectatorCount}+{SpectatorCount}/{MaxPlayers})";
         }
 
-
+        public void SetCompetitiveModoptions()
+        {
+            ModOptions["MinSpeed"] = "1";
+            ModOptions["MaxSpeed"] = "1";
+            ModOptions["mutespec"] = "mute";
+            ModOptions["mutelobby"] = "mute";
+            // ModOptions["NoHelperAIs"] = "1";
+        }
 
         public LobbyHostingContext GetContext()
         {

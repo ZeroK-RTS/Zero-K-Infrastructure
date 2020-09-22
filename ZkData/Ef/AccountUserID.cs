@@ -14,6 +14,12 @@ namespace ZkData
         [Column(Order = 1)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long UserID { get; set; }
+        [Key]
+        [Column(Order = 2)]
+        [StringLength(50)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string InstallID { get; set; }
+
         public int LoginCount { get; set; }
         public DateTime FirstLogin { get; set; }
         public DateTime LastLogin { get; set; }

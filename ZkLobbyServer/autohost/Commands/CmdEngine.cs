@@ -13,7 +13,7 @@ namespace ZkLobbyServer
         private string engine;
         public override string Help => "[<filters>..] - changes game engine, e.g. !engine 103.0";
         public override string Shortcut => "engine";
-        public override AccessType Access => AccessType.NotIngame;
+        public override AccessType Access => AccessType.NotIngameNotAutohost;
 
         public override BattleCommand Create() => new CmdEngine();
 
@@ -21,7 +21,7 @@ namespace ZkLobbyServer
         {
             engine = string.IsNullOrEmpty(arguments) ? battle.server.Engine : arguments;
 
-            if ((battle.Mode != AutohostMode.None || !battle.IsPassworded) && engine != battle.server.Engine)
+            if ((battle.Mode != AutohostMode.None || !battle.IsPassworded) && engine != battle.server.Engine && !battle.IsAutohost)
             {
                 battle.Respond(e, $"You cannot change engine to version other than {battle.server.Engine} here, use custom passworded room");
                 return null;

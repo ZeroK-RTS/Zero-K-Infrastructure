@@ -20,6 +20,18 @@ namespace ZkData
         public double MmWidthGrowthTime { get; set; } = 120.0;
         public double MmWidthReductionForParties { get; set; } = 0.7;
         public double MmSizeGrowthTime { get; set; } = 40.0;
+        public double MmTeamsMinimumWinChance { get; set; } = 0.0; //every team needs to have a chance of at least x = [0, 0.5) to win for a game to be made. 0 to disable
+        public double MmMinimumMinutesBetweenGames { get; set; } = 5.0; //you can't join MM if you started a game less than X minutes ago and it's still ongoing
+        public double MmMinimumMinutesBetweenSuggestions { get; set; } = 600.0; //if somebody declined a MM suggestion, don't annoy them for at least X minutes
+
+        public int MaximumBattlePlayers { get; set; } = 32; //maximum amount of players allowed in rooms that are not autohosts
+        
+        public bool TimeQueueEnabled { get; set; }
+
+        public int MinimumPlayersForStdevBalance { get; set; } = 32; // minimum number of players to enable balance that optimizes for stdev
+        public double StdevBalanceWeight { get; set; } = 0.01; // weight of stdev difference between teams during balance, elo difference has weight 1
+        public double MmEloBonusMultiplier { get; set; } = 0; // elo bonus multiplier to even out matches
+
 
         public static DynamicConfig Instance;
 

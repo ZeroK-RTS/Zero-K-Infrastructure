@@ -60,6 +60,12 @@ namespace ChobbyLauncher
     }
 
     [ChobbyMessage]
+    public class UserActivity
+    {
+        public double IdleSeconds { get; set; }
+    }
+
+    [ChobbyMessage]
     public class DownloadFile
     {
         public string FileType { get; set; }
@@ -133,6 +139,7 @@ namespace ChobbyLauncher
     public class WrapperOnline
     {
         public string UserID { get; set;}
+        public string InstallID { get; set; }
         public string DefaultServerHost { get; set; }
         public int DefaultServerPort { get; set; }
         public bool IsSteamFolder { get; set; }
@@ -267,6 +274,14 @@ namespace ChobbyLauncher
         public string StartDemoName { get; set; }
 
         public string SpringSettings { get; set;  }
+        public string Engine { get; set; }
+
+        public List<DownloadFile> Downloads { get; set; }
+    }
+
+    [ChobbyMessage]
+    public class DownloadSpring
+    {
         public string Engine { get; set; }
 
         public List<DownloadFile> Downloads { get; set; }

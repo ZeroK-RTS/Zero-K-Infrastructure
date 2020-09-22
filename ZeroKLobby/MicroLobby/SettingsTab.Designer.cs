@@ -22,8 +22,8 @@
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -77,9 +77,9 @@
             // 
             // splitContainerAtMid
             // 
-            this.splitContainerAtMid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainerAtMid.Anchor =
+                ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) |
+                                                       System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainerAtMid.BackColor = System.Drawing.Color.DimGray;
             this.splitContainerAtMid.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.splitContainerAtMid.ForeColor = System.Drawing.Color.White;
@@ -457,10 +457,7 @@
             // 
             this.cbWindowed.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbWindowed.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.cbWindowed.Items.AddRange(new object[] {
-            "Windowed",
-            "Borderless",
-            "Fullscreen"});
+            this.cbWindowed.Items.AddRange(new object[] { "Windowed", "Borderless", "Fullscreen" });
             this.cbWindowed.Location = new System.Drawing.Point(30, 71);
             this.cbWindowed.Name = "cbWindowed";
             this.cbWindowed.Size = new System.Drawing.Size(106, 26);
@@ -517,7 +514,8 @@
             this.propertyGrid1.Name = "propertyGrid1";
             this.propertyGrid1.Size = new System.Drawing.Size(815, 396);
             this.propertyGrid1.TabIndex = 0;
-            this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
+            this.propertyGrid1.PropertyValueChanged +=
+                new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
             // 
             // SettingsTab
             // 
@@ -535,7 +533,6 @@
             this.splitContainerAtMid.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
-
         }
 
         #endregion
@@ -552,23 +549,22 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.PropertyGrid propertyGrid1;
         private System.Windows.Forms.Panel panel1;
-        private BitmapButton btnDisplay;
-        private BitmapButton btnDefaults;
-        private BitmapButton helpButton;
-        private BitmapButton btnRestart;
-        private BitmapButton lobbyLogButton;
-        private BitmapButton gameLogButton;
-        private BitmapButton btnRapid;
-        private BitmapButton button1;
-        private BitmapButton button2;
-        private BitmapButton button3;
-        private BitmapButton button4;
-        private BitmapButton button5;
-        private BitmapButton btnBrowse;
-        private BitmapButton btnBenchmarker;
-        private BitmapButton btnCustom;
-        private BitmapButton developmentButton;
-        private BitmapButton btnServerSocket;
-
+        private ZeroKLobby.BitmapButton btnServerSocket;
+        private ZeroKLobby.BitmapButton developmentButton;
+        private ZeroKLobby.BitmapButton btnCustom;
+        private ZeroKLobby.BitmapButton btnBenchmarker;
+        private ZeroKLobby.BitmapButton btnBrowse;
+        private ZeroKLobby.BitmapButton button5;
+        private ZeroKLobby.BitmapButton button4;
+        private ZeroKLobby.BitmapButton button3;
+        private ZeroKLobby.BitmapButton button2;
+        private ZeroKLobby.BitmapButton button1;
+        private ZeroKLobby.BitmapButton btnRapid;
+        private ZeroKLobby.BitmapButton gameLogButton;
+        private ZeroKLobby.BitmapButton lobbyLogButton;
+        private ZeroKLobby.BitmapButton btnRestart;
+        private ZeroKLobby.BitmapButton helpButton;
+        private ZeroKLobby.BitmapButton btnDefaults;
+        private ZeroKLobby.BitmapButton btnDisplay;
     }
 }

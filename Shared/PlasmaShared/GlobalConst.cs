@@ -43,7 +43,7 @@ namespace ZkData
             switch (newMode) {
                 case ModeType.Local:
                     BaseSiteUrl = "http://localhost:9739";
-                    ZkDataContextConnectionString = @"Data Source=(localdb)\mssqllocaldb;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000";
+                    ZkDataContextConnectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000";
 
                     LobbyServerHost = "localhost";
                     LobbyServerPort = 8200;
@@ -139,11 +139,19 @@ namespace ZkData
         public const int MinDurationForPlanetwars = 0;
         public const int MaxDurationForPlanetwars = 60*60*3; // 3 hours
 
-        public const int LadderActivityDays = 30;
+        public static int LadderActivityDays => mode == ModeType.Live ? 30 : 90;
         public const int LadderSize = 50; // Amount of players shown on ladders
-        public const float MinimumDynamicMaxLadderUncertainty = 100; // uncertainties > this are marked unranked, max age ~ 2-3 months
-        public const float EloDecayPerDaySquared = 35; //whr thingie
         public const float LadderUpdatePeriod = 1; //Ladder is fully updated every X hours
+        public const float EloToNaturalRatingMultiplierSquared = 0.00003313686f;
+        public static float NaturalRatingVariancePerDay(float games) => EloToNaturalRatingMultiplierSquared * 200000 / (games + 400); //whr expected player rating change over time
+        public const float NaturalRatingVariancePerGame = EloToNaturalRatingMultiplierSquared * 500; //whr expected player rating change per game played
+        public const float RatingConfidenceSigma = 0.675f; //75% confidence rating
+        public const float LadderEloMaxChange = 50;
+        public const float LadderEloMinChange = 1;
+        public const float LadderEloSmoothingFactor = 0.25f; //1 for change as fast as whr, 0 for no change
+
+        public const int MapBansPerPlayer = 6; // Allow users to enter this many bans in UI
+        public const float MaximumPercentageOfBannedMaps = 0.75f; // Do not ban more than 75% of all maps regardless of player or ban count
 
         public const int XpForMissionOrBots = 25;
         public const int XpForMissionOrBotsVictory = 50;
@@ -162,13 +170,14 @@ namespace ZkData
         public const string ModeratorChannel = "zkadmin";
         public const string Top20Channel = "zktop20";
         public const string ErrorChannel = "zkerror";
+        public const string UserLogChannel = "zklog";
         public const string CoreChannel = "zkcore";
         
         public const string LobbyAccessCookieName = "zk_lobby";
 
         public const double PlanetMetalPerTurn = 1;
         public const double PlanetWarsEnergyToMetalRatio = 0.0;
-        public const double PlanetWarsMaximumIP = 123.0; //maximum IP on each planet
+        public const double PlanetWarsMaximumIP = 100.0; //maximum IP on each planet
         public const int PlanetWarsVictoryPointsToWin = 100;
         public const int VictoryPointDecay = 1;
         public const int BaseInfluencePerBattle = 35;
@@ -190,7 +199,6 @@ namespace ZkData
         public const int AttackPointsForVictory = 2;
         public const int AttackPointsForDefeat = 1;
         public static readonly int? MaxClanSkilledSize = null;
-        public const int ClanLeaveLimit = 100;
         public const int FactionChannelMinLevel = 2;
         public const bool RotatePWMaps = false;
         public const bool RequireWormholeToTravel = true;
@@ -230,8 +238,6 @@ namespace ZkData
 
         public const int WikiEditLevel = 20;
 
-        public const int ProcessTimeLoggingIntervalSeconds = 300;
-        public const int ProcessTimeMinDelayMilliseconds = 1000;
         public const int TcpLingerStateSeconds = 5;
         public const bool TcpLingerStateEnabled = true;
 
@@ -239,6 +245,8 @@ namespace ZkData
 
         public const int LobbyThrottleBytesPerSecond = 2000;
         public const int LobbyMaxMessageSize = 2000;
+        public const int MillisecondsPerCharacter = 50; //Maximum allowed chat messaging rate before it is considered spam, 80ms is equivalent to 120 WPM, which covers typing speeds of anyone short of a stenographer.
+        public const int MinMillisecondsBetweenMessages = 1000; //Disallow sending more than one message per this interval
 
 
         public static int UdpHostingPortStart;

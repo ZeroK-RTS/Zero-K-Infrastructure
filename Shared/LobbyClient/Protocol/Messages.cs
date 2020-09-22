@@ -50,7 +50,8 @@ namespace LobbyClient
         /// </summary>
         public string Version { get; set; }
 
-        public List<FactionInfo> Factions { get; set;}
+        public List<string> Blacklist { get; set; } = new List<string>();
+        public List<FactionInfo> Factions { get; set; }
 
         public bool UserCountLimited { get; set; }
 
@@ -133,6 +134,8 @@ namespace LobbyClient
 
         public long UserID { get; set; }
 
+        public string InstallID { get; set; }
+
         public List<ulong> Dlc { get; set; }
     }
 
@@ -156,6 +159,7 @@ namespace LobbyClient
         public string Email { get; set; }
 
         public long UserID { get; set; }
+        public string InstallID { get; set; }
     }
 
     [Message(Origin.Server)]
@@ -209,7 +213,7 @@ namespace LobbyClient
             ResultCode = resultCode;
         }
 
-        public RegisterResponse() {}
+        public RegisterResponse() { }
     }
 
     [Message(Origin.Server)]
@@ -334,7 +338,7 @@ namespace LobbyClient
     }
 
 
-    
+
     [Message(Origin.Server | Origin.Client)]
     public class User
     {
@@ -342,6 +346,7 @@ namespace LobbyClient
         public string Avatar { get; set; }
         public DateTime? AwaySince { get; set; }
         public bool BanMute { get; set; }
+        public bool BanVotes { get; set; }
         public bool BanSpecChat { get; set; }
         public int? BattleID { get; set; }
         public string Clan { get; set; }
@@ -363,9 +368,6 @@ namespace LobbyClient
         public bool IsInBattleRoom => BattleID != null;
         public bool IsInGame => InGameSince != null;
 
-
-
-
         [JsonIgnore]
         public string IpAddress;
 
@@ -376,15 +378,12 @@ namespace LobbyClient
         public int SyncVersion; //sync version for updating user statuses
 
         [JsonIgnore]
-        public int EffectiveMmElo { get; set; }
-
-        [JsonIgnore]
         public int RawMmElo { get; set; }
 
-        [JsonIgnore]
+        public int EffectiveMmElo { get; set; }
         public int EffectiveElo { get; set; }
-
         public int Level { get; set; }
+        public int Rank { get; set; }
 
         public User Clone()
         {
@@ -418,8 +417,10 @@ namespace LobbyClient
             IsAdmin = u.IsAdmin;
             IsBot = u.IsBot;
             BanMute = u.BanMute;
+            BanVotes = u.BanVotes;
             BanSpecChat = u.BanSpecChat;
             Level = u.Level;
+            Rank = u.Rank;
             LobbyVersion = u.LobbyVersion;
             DisplayName = u.DisplayName;
             BattleID = u.BattleID;
@@ -496,6 +497,7 @@ namespace LobbyClient
         public DateTime? RunningSince { get; set; }
         public int? SpectatorCount { get; set; }
         public string Title { get; set; }
+        public bool? TimeQueueEnabled { get; set; }
     }
 
     [Message(Origin.Server)]
@@ -546,6 +548,8 @@ namespace LobbyClient
         public bool? IsSpectator { get; set; }
         public string Name { get; set; }
         public SyncStatuses? Sync { get; set; }
+        
+        public DateTime? JoinTime { get; set; }
     }
 
 
@@ -676,7 +680,7 @@ namespace LobbyClient
         public int PlanetID { get; set; }
     }
 
-    
+
     [Message(Origin.Server)]
     public class PwJoinPlanetSuccess
     {
@@ -699,7 +703,7 @@ namespace LobbyClient
     [Message(Origin.Server)]
     public class PwStatus
     {
-        public PlanetWarsModes PlanetWarsMode {get; set; }
+        public PlanetWarsModes PlanetWarsMode { get; set; }
         public PlanetWarsModes? PlanetWarsNextMode { get; set; }
         public DateTime? PlanetWarsNextModeTime { get; set; }
         public int MinLevel { get; set; }
@@ -729,6 +733,7 @@ namespace LobbyClient
         public string ScriptPassword { get; set; }
         public AutohostMode Mode { get; set; }
         public string Title { get; set; }
+        public bool IsSpectator { get; set; }
     }
 
     [Message(Origin.Server)]
@@ -772,6 +777,7 @@ namespace LobbyClient
         public string Message { get; set; }
         public int ServerBattleID { get; set; }
         public string Url { get; set; }
+        public string RatingCategory { get; set; } = "Unrated";
 
         public class DebriefingAward
         {
@@ -784,11 +790,21 @@ namespace LobbyClient
         {
             public int AllyNumber { get; set; }
             public object Awards { get; set; }
-            public string EloChange { get; set; }
+            public float EloChange { get; set; }
             public bool IsInVictoryTeam { get; set; }
             public bool IsLevelUp { get; set; }
-            public int? LoseTime { get; set; }
-            public int? XpChange { get; set; }
+            public bool IsRankup { get; set; }
+            public bool IsRankdown { get; set; }
+            public float NewElo { get; set; }
+            public float NextRankElo { get; set; }
+            public float PrevRankElo { get; set; }
+            public int NewRank { get; set; }
+            public int LoseTime { get; set; }
+            public int XpChange { get; set; }
+            public int NewXp { get; set; }
+            public int NextLevelXp { get; set; }
+            public int PrevLevelXp { get; set; }
+            public int AccountID { get; set; }
         }
     }
 
@@ -819,7 +835,41 @@ namespace LobbyClient
 
         public string PwMetal { get; set; }
         public string PwDropships { get; set; }
-        public string PwBombers { get; set;}
+        public string PwBombers { get; set; }
         public string PwWarpcores { get; set; }
+    }
+
+
+    [Message(Origin.Server)]
+    public class BattlePoll
+    {
+        public class PollOption
+        {
+            public string Name { get; set; }
+            public string DisplayName { get; set; }
+            public int Id { get; set; }
+            public int Votes { get; set; }
+            public string Url { get; set; } //Empty if not applicable
+        }
+        
+        public string Topic { get; set; } //Null if there is no poll
+        public string Url { get; set; } //Url of the Yes option if Yes/No Vote
+        public List<PollOption> Options { get; set; } //Null if there is no poll
+        public int VotesToWin { get; set; } //If any single option receives this many votes, it will win instantly. -1 if there is no poll
+        public bool YesNoVote { get; set; } //Is this a vote with two options, yes and no
+        public bool MapSelection { get; set; } //Is this a vote with map options?
+        public bool NotifyPoll { get; set; } //true if users should be notified for this poll (e.g. !start)
+        public string MapName { get; set; } //MapName if yesno map poll, otherwise null
+    }
+
+    [Message(Origin.Server)]
+    public class BattlePollOutcome
+    {
+        public BattlePoll.PollOption WinningOption; //null if no winning option
+        public string Topic; //topic of the previous poll
+        public string Message; //message to display for the outcome
+        public bool Success; //whether there was a winning option and if it was yes in case of yes/no vote
+        public bool YesNoVote { get; set; } //Was this a vote with two options, yes and no
+        public bool MapSelection { get; set; } //Was this a vote with map options?
     }
 }

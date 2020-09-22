@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ZkData</RootNamespace>
     <AssemblyName>ZkData</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -35,25 +35,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BCrypt.Net, Version=0.1.5073.29922, Culture=neutral, PublicKeyToken=6bcd409ee6bc9292, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\BCrypt-Official.0.1.109\lib\BCrypt.Net.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework.Extended">
       <HintPath>..\packages\EntityFramework.Extended.6.1.0.168\lib\net45\EntityFramework.Extended.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>..\Libs\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Linq.Translations, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Linq.Translations.1.0.1\lib\net40\Microsoft.Linq.Translations.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -76,13 +72,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbCloner.cs" />
+    <Compile Include="Ef\AccountMapBan.cs" />
+    <Compile Include="Ef\MapPollOption.cs" />
+    <Compile Include="Ef\MapPollOutcomes.cs" />
     <Compile Include="Ef\AccountRelation.cs" />
+    <Compile Include="Ef\Autohost.cs" />
     <Compile Include="Ef\DynamicConfig.cs" />
     <Compile Include="Ef\LobbyChannelTopic.cs" />
     <Compile Include="Ef\LobbyNews.cs" />
     <Compile Include="Ef\SpringBattleBot.cs" />
     <Compile Include="Ef\WHR\Game.cs" />
     <Compile Include="Ef\WHR\IRatingSystem.cs" />
+    <Compile Include="Ef\WHR\MapRatings.cs" />
     <Compile Include="Ef\WHR\Ranks.cs" />
     <Compile Include="Ef\WHR\ITopPlayersUpdateListener.cs" />
     <Compile Include="Ef\WHR\Player.cs" />
@@ -390,6 +391,94 @@
     <Compile Include="Migrations\201805160811134_MmSizeGrowthTime.Designer.cs">
       <DependentUpon>201805160811134_MmSizeGrowthTime.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201807261504544_MmTeamsMinimumWinChance.cs" />
+    <Compile Include="Migrations\201807261504544_MmTeamsMinimumWinChance.Designer.cs">
+      <DependentUpon>201807261504544_MmTeamsMinimumWinChance.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201808181027066_AddTourneyControl.cs" />
+    <Compile Include="Migrations\201808181027066_AddTourneyControl.Designer.cs">
+      <DependentUpon>201808181027066_AddTourneyControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201810172106541_UpdateDynamicConfig.cs" />
+    <Compile Include="Migrations\201810172106541_UpdateDynamicConfig.Designer.cs">
+      <DependentUpon>201810172106541_UpdateDynamicConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201810231530234_StoreAutohostsInDb.cs" />
+    <Compile Include="Migrations\201810231530234_StoreAutohostsInDb.Designer.cs">
+      <DependentUpon>201810231530234_StoreAutohostsInDb.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902121616218_Rename Rating Uncertainty.cs" />
+    <Compile Include="Migrations\201902121616218_Rename Rating Uncertainty.Designer.cs">
+      <DependentUpon>201902121616218_Rename Rating Uncertainty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902132215413_AddMaxEloStDevToDynConfing.cs" />
+    <Compile Include="Migrations\201902132215413_AddMaxEloStDevToDynConfing.Designer.cs">
+      <DependentUpon>201902132215413_AddMaxEloStDevToDynConfing.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902132319178_RemoveRankFromAccountRating.cs" />
+    <Compile Include="Migrations\201902132319178_RemoveRankFromAccountRating.Designer.cs">
+      <DependentUpon>201902132319178_RemoveRankFromAccountRating.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902151050350_AddMapPolls.cs" />
+    <Compile Include="Migrations\201902151050350_AddMapPolls.Designer.cs">
+      <DependentUpon>201902151050350_AddMapPolls.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903072346315_AddMapPollOutcomeCategory.cs" />
+    <Compile Include="Migrations\201903072346315_AddMapPollOutcomeCategory.Designer.cs">
+      <DependentUpon>201903072346315_AddMapPollOutcomeCategory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904172034522_AddLadderElo.cs" />
+    <Compile Include="Migrations\201904172034522_AddLadderElo.Designer.cs">
+      <DependentUpon>201904172034522_AddLadderElo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904231037123_AddBanVotes.cs" />
+    <Compile Include="Migrations\201904231037123_AddBanVotes.Designer.cs">
+      <DependentUpon>201904231037123_AddBanVotes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910161453248_removeWhrAlias.cs" />
+    <Compile Include="Migrations\201910161453248_removeWhrAlias.Designer.cs">
+      <DependentUpon>201910161453248_removeWhrAlias.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202005161704591_installID.cs" />
+    <Compile Include="Migrations\202005161704591_installID.Designer.cs">
+      <DependentUpon>202005161704591_installID.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202005171432012_AddAccountLastChatRead.cs" />
+    <Compile Include="Migrations\202005171432012_AddAccountLastChatRead.Designer.cs">
+      <DependentUpon>202005171432012_AddAccountLastChatRead.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202005200811157_FixNonUniqueInstallIDs.cs" />
+    <Compile Include="Migrations\202005200811157_FixNonUniqueInstallIDs.Designer.cs">
+      <DependentUpon>202005200811157_FixNonUniqueInstallIDs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006162227037_AddAccountMapBans.cs" />
+    <Compile Include="Migrations\202006162227037_AddAccountMapBans.Designer.cs">
+      <DependentUpon>202006162227037_AddAccountMapBans.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007120615466_AddCbalanceToggle.cs" />
+    <Compile Include="Migrations\202007120615466_AddCbalanceToggle.Designer.cs">
+      <DependentUpon>202007120615466_AddCbalanceToggle.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007260832015_TimeQueueSwitch.cs" />
+    <Compile Include="Migrations\202007260832015_TimeQueueSwitch.Designer.cs">
+      <DependentUpon>202007260832015_TimeQueueSwitch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202008160401244_Modaction-Message-Only.cs" />
+    <Compile Include="Migrations\202008160401244_Modaction-Message-Only.Designer.cs">
+      <DependentUpon>202008160401244_Modaction-Message-Only.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202008240904460_AddStdevBalanceOptions.cs" />
+    <Compile Include="Migrations\202008240904460_AddStdevBalanceOptions.Designer.cs">
+      <DependentUpon>202008240904460_AddStdevBalanceOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009072122520_AddMMBonusElo.cs" />
+    <Compile Include="Migrations\202009072122520_AddMMBonusElo.Designer.cs">
+      <DependentUpon>202009072122520_AddMMBonusElo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009081051101_MergeAdminInterfaceImprovements.cs" />
+    <Compile Include="Migrations\202009081051101_MergeAdminInterfaceImprovements.Designer.cs">
+      <DependentUpon>202009081051101_MergeAdminInterfaceImprovements.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -509,7 +598,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201412312111372_Init.resx">
@@ -749,6 +837,72 @@
     <EmbeddedResource Include="Migrations\201805160811134_MmSizeGrowthTime.resx">
       <DependentUpon>201805160811134_MmSizeGrowthTime.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807261504544_MmTeamsMinimumWinChance.resx">
+      <DependentUpon>201807261504544_MmTeamsMinimumWinChance.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201808181027066_AddTourneyControl.resx">
+      <DependentUpon>201808181027066_AddTourneyControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810172106541_UpdateDynamicConfig.resx">
+      <DependentUpon>201810172106541_UpdateDynamicConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810231530234_StoreAutohostsInDb.resx">
+      <DependentUpon>201810231530234_StoreAutohostsInDb.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902121616218_Rename Rating Uncertainty.resx">
+      <DependentUpon>201902121616218_Rename Rating Uncertainty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902132215413_AddMaxEloStDevToDynConfing.resx">
+      <DependentUpon>201902132215413_AddMaxEloStDevToDynConfing.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902132319178_RemoveRankFromAccountRating.resx">
+      <DependentUpon>201902132319178_RemoveRankFromAccountRating.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902151050350_AddMapPolls.resx">
+      <DependentUpon>201902151050350_AddMapPolls.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903072346315_AddMapPollOutcomeCategory.resx">
+      <DependentUpon>201903072346315_AddMapPollOutcomeCategory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904172034522_AddLadderElo.resx">
+      <DependentUpon>201904172034522_AddLadderElo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904231037123_AddBanVotes.resx">
+      <DependentUpon>201904231037123_AddBanVotes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910161453248_removeWhrAlias.resx">
+      <DependentUpon>201910161453248_removeWhrAlias.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005161704591_installID.resx">
+      <DependentUpon>202005161704591_installID.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005171432012_AddAccountLastChatRead.resx">
+      <DependentUpon>202005171432012_AddAccountLastChatRead.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005200811157_FixNonUniqueInstallIDs.resx">
+      <DependentUpon>202005200811157_FixNonUniqueInstallIDs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006162227037_AddAccountMapBans.resx">
+      <DependentUpon>202006162227037_AddAccountMapBans.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007120615466_AddCbalanceToggle.resx">
+      <DependentUpon>202007120615466_AddCbalanceToggle.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007260832015_TimeQueueSwitch.resx">
+      <DependentUpon>202007260832015_TimeQueueSwitch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008160401244_Modaction-Message-Only.resx">
+      <DependentUpon>202008160401244_Modaction-Message-Only.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008240904460_AddStdevBalanceOptions.resx">
+      <DependentUpon>202008240904460_AddStdevBalanceOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009072122520_AddMMBonusElo.resx">
+      <DependentUpon>202009072122520_AddMMBonusElo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009081051101_MergeAdminInterfaceImprovements.resx">
+      <DependentUpon>202009081051101_MergeAdminInterfaceImprovements.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ZkDataResources.Designer.cs</LastGenOutput>
@@ -769,8 +923,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LICENSE.txt" />
+    <None Include="packages.config" />
     <None Include="Resources\wikiIndex.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LICENSE.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

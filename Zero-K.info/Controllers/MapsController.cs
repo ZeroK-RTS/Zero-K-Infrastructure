@@ -3,22 +3,38 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using System.Xml.Serialization;
+using AutoRegistrator;
 using ZkData.UnitSyncLib;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
+    public class RegistrationResult
+    {
+        public string FileName;
+        public string InternalName;
+        public string Status;
+        public string Url;
+        public string Author;
+    }
+    
     public class MapsController: Controller
     {
         //
         // GET: /Maps/
 
-        public ActionResult Detail(int id) {
+        public ActionResult Detail(int? id) {
+            if (id == null)
+              return RedirectToAction("Index");
             var db = new ZkDataContext();
-            var res = db.Resources.Single(x => x.ResourceID == id);
+            var res = db.Resources.SingleOrDefault(x => x.ResourceID == id);
+            if (res == null)
+              return Content("No such map found");
             var data = GetMapDetailData(res, db);
 
             return View(data);
@@ -30,9 +46,12 @@ namespace ZeroKWeb.Controllers
         /// <param name="name"></param>
         /// <returns></returns>
         public ActionResult DetailName(string name) {
+            if (string.IsNullOrEmpty(name))
+              return RedirectToAction("Index");
             var db = new ZkDataContext();
-            var res = db.Resources.Single(x => x.InternalName == name);
-
+            var res = db.Resources.SingleOrDefault(x => x.InternalName == name);
+            if (res == null)
+              return Content("No such map found");
             return View("Detail", GetMapDetailData(res, db));
         }
 
@@ -74,10 +93,13 @@ namespace ZeroKWeb.Controllers
                                 out ret);
 
             if (!offset.HasValue) {
+                // Allow to open maps page with the matchmaking option already set so it can be used in links
+                var onlyShowMatchmakerMaps = mapSupportLevel == MapSupportLevel.MatchMaker;
                 return
                     View(new MapIndexData
                     {
-                        Title = "Latest maps",
+                        Title = onlyShowMatchmakerMaps ? "Matchmaking maps" : "Latest maps",
+                        OnlyShowMatchmakerMaps = onlyShowMatchmakerMaps,
                         Latest = ret,
                         LastComments =
                             db.Resources.Where(x => x.TypeID == ResourceType.Map && x.ForumThreadID != null)
@@ -236,7 +258,7 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult Tag(int id,
+        public async Task<ActionResult> Tag(int id,
                                 int? sea,
                                 int? hills,
                                 bool? assymetrical,
@@ -251,6 +273,10 @@ namespace ZeroKWeb.Controllers
                                 MapSupportLevel mapSupportLevel) {
             var db = new ZkDataContext();
             var r = db.Resources.Single(x => x.ResourceID == id);
+
+            if (r.MapSupportLevel != mapSupportLevel)
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} has changed level of map {1} from {2} to {3}", Global.Account.Name, r.InternalName, r.MapSupportLevel, mapSupportLevel));
+
             r.TaggedByAccountID = Global.AccountID;
             r.MapIsSpecial = special;
             r.MapWaterLevel = sea;
@@ -265,7 +291,7 @@ namespace ZeroKWeb.Controllers
             r.MapFFAMaxTeams = ffaTeams;
             r.MapSpringieCommands = springieCommands;
             db.SaveChanges();
-            Global.Server.OnServerMapsChanged();
+            await Global.Server.OnServerMapsChanged();
             return RedirectToAction("Detail", new { id = id });
         }
 
@@ -388,6 +414,7 @@ namespace ZeroKWeb.Controllers
             public IQueryable<Resource> Latest;
             public IQueryable<Resource> MostDownloads;
             public string Title;
+            public Boolean OnlyShowMatchmakerMaps;
             public IQueryable<Resource> TopRated;
         }
 
@@ -396,6 +423,67 @@ namespace ZeroKWeb.Controllers
             public int IconSize;
             public List<string> Icons;
             public int ResourceID;
+        }
+
+        [Auth]
+        public ActionResult UploadResource(HttpPostedFileBase file)
+        {
+            var tmp = Path.Combine(Global.AutoRegistrator.Paths.WritableDirectory, "maps", file.FileName);
+            try
+            {
+                file.SaveAs(tmp);
+                var results = Global.AutoRegistrator.UnitSyncer.Scan()?.Where(x=>x.ResourceInfo?.ArchiveName == file.FileName)?.ToList();
+                var model = new List<RegistrationResult>();
+                foreach (var res in results)
+                {
+                    if (res.Status != UnitSyncer.ResourceFileStatus.RegistrationError)
+                    {
+                        // copy to content subfolder
+                        var subfolder = (res.ResourceInfo is Map) ? "maps" : "games";
+                        var contentFolder = Path.Combine(Server.MapPath("~/content"), subfolder);
+                        if (!Directory.Exists(contentFolder)) Directory.CreateDirectory(contentFolder);
+
+                        var destFile = Path.Combine(contentFolder, res.ResourceInfo.ArchiveName);
+                        if (!System.IO.File.Exists(destFile)) System.IO.File.Copy(tmp, destFile);
+
+                        
+                        // register as mirror
+                        using (var db = new ZkDataContext())
+                        {
+                            var resource = db.Resources.FirstOrDefault(x => x.InternalName == res.ResourceInfo.Name);
+                            var contentFile = resource.ResourceContentFiles.FirstOrDefault(x => x.FileName == file.FileName);
+                            contentFile.Links = $"{GlobalConst.BaseSiteUrl}/content/{subfolder}/{file.FileName}";
+                            contentFile.LinkCount = 1;
+                            db.SaveChanges();
+                        }
+                        
+                    }
+                    
+                    // note this is needed because of some obscure binding issue in asp.net
+                    model.Add(new RegistrationResult()
+                    {
+                        Status = res.Status.ToString(),
+                        FileName = file.FileName,
+                        InternalName = res.ResourceInfo?.Name,
+                        Author = res.ResourceInfo?.Author,
+                        Url = Url.Action("Detail", new {id = new ZkDataContext().Resources.FirstOrDefault(x => x.InternalName == res.ResourceInfo.Name)?.ResourceID})
+                    });
+                    
+                }
+                return View("UploadResourceResult", model);
+            }
+            finally
+            {
+                Task.Run(async () =>
+                {
+                    await Task.Delay(10000);
+                    try
+                    {
+                        System.IO.File.Delete(tmp);
+                    }
+                    catch { }
+                });
+            }
         }
     }
 }

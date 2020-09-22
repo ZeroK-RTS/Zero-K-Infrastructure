@@ -1,4 +1,4 @@
-Battle for PlanetXVII-v01
+Battle for PlanetXVII-v01r
 Adamantine Mountain 2
 Avalanche v3.1
 Wanderlust v03
@@ -16,7 +16,7 @@ Violence_4.2
 IsisDelta_v02
 Tombstone Desert V2
 Archers_Valley_v6
-Otago 1.1
+Otago 1.4
 Iced Coffee v4.3
 TheBeachBeta
 Onyx Cauldron 1.9
@@ -53,9 +53,8 @@ SailAway
 SiberianDivide 1.1
 StormSiege_v3
 Downs_of_Destruction_Fix
-Melt_V2
 Craterv01
-SapphireShores_Dry_V2.1
+SapphireShores_Dry_V2.2
 Valiant_Saltscape
 Rage_v1
 Lost_v2
@@ -68,4 +67,5 @@ FolsomDamDeluxeV4
 La Isla Bonita v1.1
 Living Lands 4.1
 Obsidian_1.5
-TitanDuel 2.2
+Rogues River v1.2
+Conquest_of_Paradise_v1

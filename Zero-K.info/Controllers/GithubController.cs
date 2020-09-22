@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using LobbyClient;
 using Microsoft.Ajax.Utilities;
@@ -14,7 +15,7 @@ namespace ZeroKWeb.Controllers
     public class GithubController : Controller
     {
         [HttpPost]
-        public ActionResult Hook()
+        public async Task<ActionResult> Hook()
         {
             var eventType = Request.Headers["X-Github-Event"];
             var signature = Request.Headers["X-Hub-Signature"].Substring(5);
@@ -32,13 +33,17 @@ namespace ZeroKWeb.Controllers
             dynamic payload = JObject.Parse(Encoding.UTF8.GetString(data));
 
             string text = null;
-            
+            string channel = "zkdev";
             Object[] values;
 
             switch (eventType) {
                 case "issues":
-                    if (payload.action == "labeled")
+                    if (payload.action == "labeled"){
                         break;
+                    }
+                    if (payload.repository.name == "CrashReports"){
+                        channel = "crashreports";
+                    }
                     values = new [] {payload.repository.name ,payload.sender.login,  payload.action, payload.issue.title, payload.issue.html_url};
                     text = string.Format("[{0}] {1} has {2} issue {3} <{4}>",values);
                     break;
@@ -49,6 +54,10 @@ namespace ZeroKWeb.Controllers
                     break;
 
                 case "push":
+                    if (payload["ref"] != "refs/heads/master"
+                    &&  payload["ref"] != "refs/heads/stable")
+                        break;
+
                     var sb = new StringBuilder();
                     int count = 0;
                     dynamic commits = payload.commits;
@@ -61,7 +70,7 @@ namespace ZeroKWeb.Controllers
                     break;
             }
 
-            if (text != null) Global.Server.GhostChanSay("zkdev", text);
+            if (text != null) await Global.Server.GhostChanSay(channel, text);
 
             return Content("");
         }

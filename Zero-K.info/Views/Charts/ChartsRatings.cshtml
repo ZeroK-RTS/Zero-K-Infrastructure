@@ -19,7 +19,7 @@
             <tr>
                 <td>Players: </td>
                 <td>@using (var db = new ZkDataContext())
-                {@Html.MultiSelectFor(x => x.UserId, Url.Action("Users", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)));
+                {@Html.MultiSelectFor(x => x.UserId, Url.Action("UsersNoLink", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)));
             }</td>
             </tr>
             <tr>
@@ -102,23 +102,23 @@
             <table>
                 <tr>
                     <td>Current rating: </td>
-                    <td>@rank.CurrentRating.RealElo ± @rank.CurrentRating.Uncertainty</td>
+                    <td>@rank.CurrentRating.RealElo ± @rank.CurrentRating.EloStdev (&omega;<sup>2</sup> = @rank.CurrentRating.NaturalRatingVariancePerDay)</td>
                 </tr>
                 <tr>
                     <td>Ladder rating: </td>
-                    <td>@rank.CurrentRating.Elo</td>
+                    <td>@rank.CurrentRating.LadderElo</td>
                 </tr>
                 <tr>
                     <td>Ladder position: </td>
-                    <td>@(rank.CurrentRating.Rank >= int.MaxValue ? "Unranked" : string.Format("{0}. Top {1}%", rank.CurrentRating.Rank, Math.Round(rank.CurrentRating.Percentile * 1000) / 10f))</td>
+                    <td>@(rank.CurrentRating.Ranked == false ? "Unranked" : string.Format("{0}. Top {1}%", rank.CurrentRating.Rank, Math.Round(rank.CurrentRating.Percentile * 1000) / 10f))</td>
                 </tr>
                 <tr>
-                    <td>Next rank above: </td>
-                    <td>@(rank.Bracket.UpperEloLimit + rank.CurrentRating.Uncertainty)</td>
+                    <td>Next rank bracket: </td>
+                    <td>@(rank.Bracket.UpperEloLimit)</td>
                 </tr>
                 <tr>
-                    <td>Rank loss below: </td>
-                    <td>@(rank.Bracket.LowerEloLimit - rank.CurrentRating.Uncertainty)</td>
+                    <td>Previous rank bracket: </td>
+                    <td>@(rank.Bracket.LowerEloLimit)</td>
                 </tr>
             </table>
             <br />

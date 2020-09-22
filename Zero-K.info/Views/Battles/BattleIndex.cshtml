@@ -12,7 +12,7 @@
         <tr>
             <td>Players: </td>
             <td>
-                @using (var db = new ZkDataContext()) { @Html.MultiSelectFor(x => x.UserId, Url.Action("Users", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x))); } 
+                @using (var db = new ZkDataContext()) { @Html.MultiSelectFor(x => x.UserId, Url.Action("UsersNoLink", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x))); } 
             </td>
             <td>Player count: </td><td> @Html.TextBoxFor(x => x.PlayersFrom) - @Html.TextBoxFor(x => x.PlayersTo)</td>
         </tr>
@@ -24,7 +24,7 @@
                 Mission: @Html.EnumDropDownListFor(x => x.Mission)
                 Bots: @Html.EnumDropDownListFor(x => x.Bots)
                 Rank: @Html.EnumDropDownListFor(x => x.Rank)
-                Victory: @Html.EnumDropDownListFor(x => x.Victory);
+                Victory: @Html.EnumDropDownListFor(x => x.Victory)
                 <input name="sa" value="Search" alt="Search" type="image" src="/img/search_img.png" style="border: none; vertical-align: middle;" />
             </td>
         </tr>

@@ -157,6 +157,13 @@
           <li><span title='$map$@r.ResourceID'>@Html.ActionLink(r.InternalName, "Detail", new { id = r.ResourceID })</span></li>
         }
       </ul>
+      @if (Global.Account != null)
+      {
+        <form action="@Url.Action("UploadResource")" enctype="multipart/form-data" method="post">
+          Upload map or game (sd7 or sdz): <input type="file" name="file" accept=".sd7,.sdz"> <input type="submit" value="Upload"/>
+        </form>
+      }
+      
     </td>
   </tr>
 </table>

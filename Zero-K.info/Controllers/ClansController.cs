@@ -4,6 +4,7 @@ using System.Data.Entity.SqlServer;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
@@ -33,20 +34,34 @@ namespace ZeroKWeb.Controllers
 
 
         [Auth]
-        public ActionResult Create()
+        public ActionResult Create(int id = -1)
         {
-            if (Global.Account.Clan == null || Global.Account.HasClanRight(x => x.RightEditTexts)) return View(Global.Clan ?? new Clan() { FactionID = Global.FactionID });
-            else return Content("You already have clan and you dont have rights to it");
+            if (Global.IsModerator && id != -1)
+            {
+                var db = new ZkDataContext();
+                return View(db.Clans.First(x => x.ClanID == id));
+            }
+
+            if (Global.Account.Clan == null || Global.Account.HasClanRight(x => x.RightEditTexts))
+            {
+                return View(Global.Clan ?? new Clan() { FactionID = Global.FactionID });
+            }
+
+            return Content("You already have clan and you dont have rights to it");
         }
 
         /// <summary>
         /// Shows clan page
         /// </summary>
         /// <returns></returns>
-        public ActionResult Detail(int id)
+        public ActionResult Detail(int? id)
         {
+            if (id == null)
+              return RedirectToAction("Index");
             var db = new ZkDataContext();
-            var clan = db.Clans.First(x => x.ClanID == id);
+            var clan = db.Clans.SingleOrDefault(x => x.ClanID == id);
+            if (clan == null)
+              return Content("No such clan");
             if (Global.ClanID == clan.ClanID)
             {
                 if (clan.ForumThread != null)
@@ -81,7 +96,6 @@ namespace ZeroKWeb.Controllers
             var acc = db.Accounts.Single(x => x.AccountID == accountID);
             var clan = acc.Clan;
             if (clan == null) return null; // Person not in a clan
-            if (clan.Accounts.Count() > GlobalConst.ClanLeaveLimit) return null; // "This clan is too big to leave";
 
             RoleType leader = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople && x.IsClanOnly);
             bool isLeader = acc.AccountRolesByAccountID.Any(x => x.RoleType == leader);
@@ -171,7 +185,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult KickPlayerFromClan(int accountID)
+        public async Task<ActionResult> KickPlayerFromClan(int accountID)
         {
             var db = new ZkDataContext();
 
@@ -181,15 +195,20 @@ namespace ZeroKWeb.Controllers
 
             int clanID = kickee_acc.ClanID.Value;
 
-            if (!Global.IsModerator) {
+            if (!Global.IsModerator)
+            {
                 if (kickee_acc.ClanID != Global.Account.ClanID) return Content("Target not in your clan");
                 if (!Global.Account.HasClanRight(x => x.RightKickPeople)) return Content("You have no kicking rights"); // unclanned people get handled here
+            }
+            else
+            {
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} kicked {1} from clan {2}", Global.Account.Name, kickee_acc.Name, db.Clans.Single(x => x.ClanID == clanID).ClanName));
             }
 
             PerformLeaveClan(accountID);
             db.SaveChanges();
             PlanetWarsTurnHandler.SetPlanetOwners(new PlanetwarsEventCreator());
-            Global.Server.PublishAccountUpdate(kickee_acc);
+            await Global.Server.PublishAccountUpdate(kickee_acc);
             return RedirectToAction("Detail", new { id = clanID });
         }
 
@@ -197,7 +216,7 @@ namespace ZeroKWeb.Controllers
         /// Creates a clan and redirects to the new clan page
         /// </summary>
         [Auth]
-        public ActionResult SubmitCreate(Clan clan, HttpPostedFileBase image, HttpPostedFileBase bgimage, bool noFaction = false)
+        public async Task<ActionResult> SubmitCreate(Clan clan, HttpPostedFileBase image, HttpPostedFileBase bgimage, bool noFaction = false)
         {
             //using (var scope = new TransactionScope())
             //{
@@ -219,7 +238,7 @@ namespace ZeroKWeb.Controllers
 
             if (!created)
             {
-                if (!Global.Account.HasClanRight(x => x.RightEditTexts) || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
+                if (!Global.IsModerator && (!Global.Account.HasClanRight(x => x.RightEditTexts) || clan.ClanID != Global.Account.ClanID)) return Content("Unauthorized");
 
                 // check if our name or shortcut conflicts with existing clans
                 var existingClans = db.Clans.Where(x => ((SqlFunctions.PatIndex(clan.Shortcut, x.Shortcut) > 0 || SqlFunctions.PatIndex(clan.ClanName, x.ClanName) > 0) && x.ClanID != clan.ClanID));
@@ -235,6 +254,16 @@ namespace ZeroKWeb.Controllers
                 string orgShortcut = orgClan.Shortcut;
                 string newImageUrl = Server.MapPath(clan.GetImageUrl());
                 string newBGImageUrl = Server.MapPath(clan.GetBGImageUrl());
+
+                if (Global.IsModerator && (!Global.Account.HasClanRight(x => x.RightEditTexts) || clan.ClanID != Global.Account.ClanID))
+                {
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} edited clan {1} {2}", Global.Account.Name, orgClan.ClanName, Url.Action("Detail", "Clans", new { id = clan.ClanID }, "http")));
+                    if (orgClan.ClanName != clan.ClanName)
+                    {
+                        await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} => {1}", orgClan.ClanName, clan.ClanName));
+                    }
+                }
+
                 orgClan.ClanName = clan.ClanName;
                 orgClan.Shortcut = clan.Shortcut;
                 orgClan.Description = clan.Description;
@@ -354,23 +383,11 @@ namespace ZeroKWeb.Controllers
                 db.SaveChanges();
             }
 
-            Global.Server.PublishAccountUpdate(acc);
-            //scope.Complete();
-            Global.Server.ChannelManager.AddClanChannel(clan);;
-            Global.Server.SetTopic(clan.GetClanChannel(), clan.SecretTopic, Global.Account.Name);
-            //}
+            await Global.Server.PublishAccountUpdate(acc);
+            Global.Server.ChannelManager.AddClanChannel(clan);
+            await Global.Server.SetTopic(clan.GetClanChannel(), clan.SecretTopic, Global.Account.Name);
             return RedirectToAction("Detail", new { id = clan.ClanID });
         }
-
-        /*
-        public ActionResult JsonJoinClan(string login, string password, int clanID)
-        {
-            var db = new ZkDataContext();
-            var clan = db.Clans.First(x => x.ClanID == clanID && x.Password == null);
-            var acc = db.Accounts.First(x=>x.AccountID == AuthServiceClient.VerifyAccountPlain(login, password).AccountID);
-            PerformLeaveClan(acc.AccountID, db);
-            return Json(db.Clans.Where(x => !x.IsDeleted).ToList(), JsonRequestBehavior.AllowGet);
-        }*/
 
     }
 }

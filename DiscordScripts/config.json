@@ -1,0 +1,56 @@
+{
+  "application": {
+    "id": 389176180877688832,
+    "manifests": [
+      {
+        "label": "test",
+        "platforms": ["win32", "win64"],
+        "locales": [],
+        "local_root": "./",
+        "file_rules": {
+          "mappings": [
+            {
+              "local_path": ".",
+              "install_path": "."
+            }
+          ],
+          "properties": [
+            {
+              "install_path": "luaui/config*",
+              "attributes": ["user_data"]
+            }
+          ]
+        },
+        "storage": {
+          "sync": true,
+          "roots": [
+            {
+              "id": "luaui_config",
+              "paths": [
+                {
+                  "path": "${INSTALLDIR}/luaui/config",
+			      "platform": "windows"
+                }
+              ],
+              "patterns": ["**/*"]
+            }
+          ]
+        },
+        "launch_options": [
+          {
+            "name": "Zero-K",
+            "executable": "Zero-K.exe",
+            "arguments": [],
+            "platforms": ["win32", "win64"]
+          },
+          {
+            "name": "Zero-K",
+            "executable": "Zero-K_linux64.sh",
+            "arguments": [],
+            "platforms": ["linux"]
+          }
+        ]
+      }
+    ]
+  }
+}
