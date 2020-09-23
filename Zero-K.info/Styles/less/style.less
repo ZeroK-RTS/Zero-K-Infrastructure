@@ -9,6 +9,7 @@
 
 /* fixes some of the modern browser buggery */
 * {
+    box-sizing: border-box;
     padding: 0;
     margin: 0;
 }
@@ -33,6 +34,8 @@ hr {
     width: 80%;
     border: 1px solid @highlight;
     margin: 2em;
+    margin-left: auto;
+    margin-right: auto;
     clear: both;
 }
 
@@ -40,7 +43,7 @@ hr {
     background: #ff0000;
 }
 
-input, textarea {
+input, textarea, button {
     display: block;
     background: @background;
     color: white;
@@ -56,6 +59,12 @@ input:focus, textarea:focus {
 
 input[type=checkbox] {
     display: inline-block;
+}
+
+input[type=button]:hover, input[type=submit]:hover, button:hover {
+    background: @highlight;
+    border: 1px solid @highlight;
+    cursor: pointer;
 }
 
 // site layout

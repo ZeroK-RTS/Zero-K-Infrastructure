@@ -28,7 +28,7 @@ nav {
         position: absolute;
         top: 100%;
         left: -1px;
-        width: 10em;
+        width: 12em;
         background: @navigation-bg;
         color: @navigation;
         padding: .5em;
@@ -52,7 +52,7 @@ nav {
             position: absolute;
             top: 2.5em;
             left: -1px;
-            width: 10em;
+            width: 12em;
             font-family: OpenSans, sans-serif;
             text-align: left;
             padding: .5em;
@@ -159,10 +159,16 @@ nav {
             label {
                 color: @navigation;
             }
-        }
-        // change width of login menu
-        .nav-text + .submenu {
-            width: 15em;
+
+            input {
+                width: 100%;
+            }
+
+            hr {
+                margin: 0;
+                margin-left: auto;
+                margin-right: auto;
+            }
         }
     }
 
@@ -172,13 +178,12 @@ nav {
         .submenu {
             left: inherit;
             right: 0;
-            width: 15em;
+            width: 17em;
+            padding-left: 1em;
 
             input {
                 display: inline-block;
                 width: 14em;
-                margin-left: auto;
-                margin-right: auto;
             }
 
             button {

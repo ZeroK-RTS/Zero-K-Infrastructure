@@ -184,6 +184,7 @@ namespace ZkData.Migrations
                 FactionID = even.FactionID,
                 AdminLevel = AdminLevel.Moderator,
                 DevLevel = DevLevel.Developer,
+                Rank = 5
             },
             new Account
             {
@@ -194,6 +195,7 @@ namespace ZkData.Migrations
                 FactionID = odd.FactionID,
                 AdminLevel = AdminLevel.SuperAdmin,
                 DevLevel = DevLevel.CoreDeveloper,
+                Rank = 6,
                 Level = 50,
                 Xp = 10000,
             },

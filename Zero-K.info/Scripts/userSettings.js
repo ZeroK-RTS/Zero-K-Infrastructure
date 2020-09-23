@@ -4,15 +4,16 @@
     var moduleOrder = $.cookie("moduleOrder");
     console.log("module order", moduleOrder);
     if (moduleOrder != null && moduleOrder != "" && moduleOrder != "null") {
-        //var modules = JSON.parse(moduleOrder);
-        var modules = moduleOrder.split(",");
+        var modules = moduleOrder.split(",").filter(Boolean);
         console.log("loading modules", modules);
 
         // TODO: support multiple columns
 
         // insert modules in order
         for (var i = 1; i < modules.length; i++) {
-            $("#" + modules[i]).insertAfter("#" + modules[i - 1]);
+            var newModule = modules[i];
+            var oldModule = modules[i - 1];
+            $("#" + newModule).insertAfter("#" + oldModule);
         }
     }
 

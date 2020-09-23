@@ -2,7 +2,6 @@
 
 #userdetail {
     position: relative;
-    min-height: 300px;
     border-bottom: 2px solid @highlight;
     h1 {
         font-size: 200%;
@@ -14,11 +13,20 @@
         right: 0;
         top: 0;
         width: 100%;
-        z-index: -1;
+        max-width: 800px;
+        min-width: 420px;
+        margin-left: auto;
+        margin-right: auto;
+        /*z-index: -1;*/
+    }
+    .progress-container {
+        position: relative;
+        width: 100%;
+        padding-top: 42%;
     }
     .progressbars {
         position: absolute;
-        bottom: 2em;
+        bottom: 1em;
         width: 100%;
     }
 }

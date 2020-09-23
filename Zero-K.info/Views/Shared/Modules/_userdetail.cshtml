@@ -52,6 +52,8 @@
     }
         *@
 
+<div class="progress-container">
+
     <div class="progressbars">
         <br class="clearfloat" />
         @{ double ratio = Model.GetLevelUpRatio(); }
@@ -71,6 +73,7 @@
             </div>
         </div>
         <br class="clearfloat" />
+        <br />
         @{ ratio = Ratings.Ranks.GetRankProgress(Model); }
         <div title="@Html.PrintRankProgress(Model)">
             <div class="progress_wrapper_left">
@@ -83,10 +86,11 @@
             </div>
             <div class="progress_wrapper_right">
                 <div class="progress_end"></div>
-                <div class="progress_text techfont"> @Ratings.Ranks.RankNames[Model.Rank + 1] </div>
+                <div class="progress_text techfont">  @Ratings.Ranks.RankNames[Model.Rank + 1] </div>
             </div>
         </div>
     </div>
+</div>
     
     <img class="rankbg" src="@Ratings.Ranks.GetRankBackgroundImagePath(Model)" />
 </div>
