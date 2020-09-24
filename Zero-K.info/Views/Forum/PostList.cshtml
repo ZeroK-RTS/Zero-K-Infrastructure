@@ -13,7 +13,8 @@
     grid.PrepareRenderData();
 }
 
-<div id="gposts" class="forum">
+<div id="gposts" class="">
+    POSTLIST
     @using (Ajax.BeginForm("GetPostList", "Forum", new { threadID = Model.ThreadID }, Global.GetAjaxOptions("gposts")))
     {
         <div class="filter-section filter-posts">

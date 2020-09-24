@@ -5,6 +5,7 @@
 }
 
 <div class="forum thread-detail">
+    THREAD
     <div class="infoCell">
         @{Html.RenderPartial("ForumPath", Model.Path);}
         @Model.CurrentThread.Title
@@ -16,8 +17,6 @@
     }
 
     <div>@string.Format("{0} posts, {1} views", Model.CurrentThread.PostCount, Model.CurrentThread.ViewCount)</div>
-
-    @Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })
 
     @if (Global.IsModerator)
     {
@@ -54,5 +53,9 @@
     }
 
     @Html.Action("GetPostList", new { threadID = Model.CurrentThread.ForumThreadID, GoToPost = Model.GoToPost })
+
+
+    @Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })
+
 
 </div>

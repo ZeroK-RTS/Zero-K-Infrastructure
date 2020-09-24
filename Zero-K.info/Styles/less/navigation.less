@@ -117,27 +117,6 @@ nav {
         margin-left: 4px;
     }
 
-    .donate {
-        display: inline-block;
-        cursor: auto;
-
-        a {
-            color: @navigation;
-            padding: .5em;
-        }
-
-        a:hover {
-            background: @navigation-bg;
-            color: @highlight;
-
-            span {
-                display: block;
-                left: inherit;
-                right: 0;
-            }
-        }
-    }
-
     .login {
         .submenu {
             cursor: auto;
@@ -173,9 +152,9 @@ nav {
     }
 
     .search {
-        cursor: auto;
         // element is on the right of the screen, change anchor to the right
         .submenu {
+            cursor: auto;
             left: inherit;
             right: 0;
             width: 17em;
@@ -272,7 +251,7 @@ nav.nav-affixed {
 }
 
 // shrink menu when screen is small
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 800px) {
     nav {
 
         .menu {

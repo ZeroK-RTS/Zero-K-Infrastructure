@@ -63,12 +63,12 @@
 .progress_wrapper_left{
     width: 150px;
     float: left;
+    text-align: right;
 }
 .progress_wrapper_right{
     width: 150px;
     float: right;
-    text-align: right;
-
+    text-align: left;
 }
 .user_buttons{
     float: right; 

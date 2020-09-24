@@ -11,9 +11,10 @@
 .module {
     position: relative;
     background: rgba(0,0,0,.75);
-    /*min-height: 7em;*/
-    overflow: hidden;
+    min-width: 400px;
     padding: 1em;
+    overflow: hidden;
+    font-family: 'OpenSans', sans-serif;
 
     h1, h2, h3 {
         margin-top: 0;
@@ -25,7 +26,10 @@
     }
 
     .handle {
+        position: relative;
         cursor: move;
+        border-bottom: 1px solid @highlight;
+        z-index: 1;
     }
 
     .handle:hover {
@@ -42,9 +46,12 @@
 }
 
 .module-column {
-    display: inline-block;
+    /*display: inline-block;*/
     background: rgba(0,0,0,.1);
     width: 100%;
-    float: left;
+    max-width: 1000px;
+    /*float: left;*/
     padding-bottom: 7em;
+    margin-left: auto;
+    margin-right: auto;
 }

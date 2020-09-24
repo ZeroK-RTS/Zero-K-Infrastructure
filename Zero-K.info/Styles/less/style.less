@@ -48,8 +48,8 @@ input, textarea, button {
     background: @background;
     color: white;
     padding: .5em;
-    border: 1px solid white;
-    border-radius: .5em;
+    border: 1px solid #666;
+    /*border-radius: .5em;*/
     margin-bottom: 1em;
 }
 
@@ -79,10 +79,12 @@ input[type=button]:hover, input[type=submit]:hover, button:hover {
 
 #render-body {
     margin-top: 5em;
+    padding: 2em;
 }
 
-#content {
+.content {
     padding: 1em;
+    background: rgba(0, 0, 0, 0.5);
 }
 
 #busy {

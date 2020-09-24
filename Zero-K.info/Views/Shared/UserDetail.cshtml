@@ -8,7 +8,7 @@
     else
     {
         if (Global.IsModerator) { Page.Title = Model.Name + " (hidden) user page"; }
-        else { Page.Title = "Redacted user account"; }
+        else { Page.Title = "Deleted user account"; }
     }
 }
 
@@ -48,26 +48,24 @@
 }
 
 @* User Profile Page! *@
-<div>
-    @if (Model.IsDeleted)
-    {
-        <h3>Account has been lost to the depths of space and time</h3>
-    }
-    @if (!Model.IsDeleted || Global.IsModerator)
-    {
-        <div class="module-column">
-            @{ Html.RenderPartial("_intro", Model); }
-            @{ Html.RenderPartial("_userdetail", Model); }
-            @{ Html.RenderPartial("_trophies", Model); }
-            @{ Html.RenderPartial("_admin", Model); }
-            @{ Html.RenderPartial("_commanders", Model); }
-            @{ Html.RenderPartial("_battles", Model); }
-            @{ Html.RenderPartial("_playerforum", Model); }
-            @{ Html.RenderPartial("_polls", Model); }
-            @{ Html.RenderPartial("_serverstats", Model); }
-            @{ Html.RenderPartial("_planetwars", Model); }
-            @{ Html.RenderPartial("_settings", Model); }
-        </div>
-    }
-    
-</div>
+
+@if (Model.IsDeleted)
+{
+    <h3>This sentient entity has gone dark</h3>
+}
+@if (!Model.IsDeleted || Global.IsModerator)
+{
+    <div class="module-column">
+        @{ Html.RenderPartial("_intro", Model); }
+        @{ Html.RenderPartial("_userdetail", Model); }
+        @{ Html.RenderPartial("_trophies", Model); }
+        @{ Html.RenderPartial("_admin", Model); }
+        @{ Html.RenderPartial("_commanders", Model); }
+        @{ Html.RenderPartial("_battles", Model); }
+        @{ Html.RenderPartial("_playerforum", Model); }
+        @{ Html.RenderPartial("_polls", Model); }
+        @{ Html.RenderPartial("_serverstats", Model); }
+        @{ Html.RenderPartial("_planetwars", Model); }
+        @{ Html.RenderPartial("_settings", Model); }
+    </div>
+}

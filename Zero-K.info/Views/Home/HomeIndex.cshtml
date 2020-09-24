@@ -1,18 +1,17 @@
 @using ZeroKWeb
 @model ZeroKWeb.Controllers.HomeController.IndexResult
 
-<div id="content">
-    @if (Global.IsAccountAuthorized)
-    {
-        Html.RenderPartial("UserDetail", Global.Account);
-    }
-    <div class="module-column">
-        @{ Html.RenderPartial("_headlines", Model.Headlines); }
-        @{ Html.RenderPartial("_news", Model.News); }
-        @{ Html.RenderPartial("_unitspotlight", Model.Spotlight); }
-        @{ Html.RenderPartial("_social"); }
-        @{ Html.RenderPartial("_forum", Model.NewThreads); }
-        @{ Html.RenderPartial("_wiki", Model.WikiRecentChanges); }
-        @{ Html.RenderPartial("_rankings", Model.Top10Players); }
-    </div>
+@if (Global.IsAccountAuthorized)
+{
+    Html.RenderPartial("UserDetail", Global.Account);
+}
+
+<div class="module-column">
+    @{ Html.RenderPartial("_headlines", Model.Headlines); }
+    @{ Html.RenderPartial("_news", Model.News); }
+    @{ Html.RenderPartial("_unitspotlight", Model.Spotlight); }
+    @{ Html.RenderPartial("_social"); }
+    @{ Html.RenderPartial("_forum", Model.NewThreads); }
+    @{ Html.RenderPartial("_wiki", Model.WikiRecentChanges); }
+    @{ Html.RenderPartial("_rankings", Model.Top10Players); }
 </div>

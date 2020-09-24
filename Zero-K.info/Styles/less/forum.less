@@ -1,11 +1,22 @@
 ﻿@import "colors.less";
 
 .forum {
-    background: rgba(0, 100, 0, .5);
+    background: rgba(0, 0, 0, .5);
+    font-family: 'OpenSans', sans-serif;
     padding: 1em;
 
     a {
         color: @highlight-nonfaction;
+    }
+
+    .infoCell {
+        /*forum navigation*/
+        border-bottom: 1px solid @highlight;
+    }
+
+    .filter-section {
+        border-bottom: 1px solid @highlight;
+        margin: 1em 0em;
     }
 
     .forum-post {
