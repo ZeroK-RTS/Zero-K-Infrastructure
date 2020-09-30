@@ -151,6 +151,7 @@ namespace ZkData.Migrations
                 Name = "player1",
                 NewPasswordPlain = "player1",
                 Country = "??",
+                Avatar = "commassault",
                 FactionID = odd.FactionID,
                 Rank = 1,
                 Level = 5,
@@ -161,6 +162,7 @@ namespace ZkData.Migrations
                 Name = "player2",
                 NewPasswordPlain = "player2",
                 Country = "??",
+                Avatar = "amphimpulse",
                 FactionID = even.FactionID,
                 Rank = 2,
                 Level = 10,
@@ -171,6 +173,7 @@ namespace ZkData.Migrations
                 Name = "pro",
                 NewPasswordPlain = "pro",
                 Country = "SE",
+                Avatar = "commweapon_areashield",
                 Rank = 7,
                 Level = 135,
                 Xp = 100000

@@ -2,28 +2,37 @@
 @using ZkData
 @model ZkData.ForumThread
 
+@* This is the view for an item in the list of threads in the forum
+    TODO: move the file to be with the rest of the forum related files, its location keeps tripping me up
+*@
+
 @{
     var t = Model;
     string alreadyRead = t.ForumThreadLastReads?.FirstOrDefault(x => x.AccountID == Global.AccountID)?.LastRead?.ToAgoString() == null ? "" : "read";
+    string pinned = t.IsPinned ? "pinned" : "";
 }
 
 @helper StickyMark(ForumThread t)
+{
+    if (t.IsLocked)
     {
-        if (t.IsLocked && t.IsPinned)
+        <i class="fa fa-lock"></i>
+    }
+    else if (Global.Account != null)
+    {
+        var threadLastRead = Global.Account.ForumThreadLastReads.FirstOrDefault(x => x.ForumThreadID == t.ForumThreadID);
+        if (threadLastRead != null)
         {
-            <img src="~/img/stickylock.png" class="thread-status" />
+            <i class="fa fa-envelope-open"></i>
         }
-        else if (t.IsLocked)
+        else
         {
-            <img src="~/img/lock.png" class="thread-status" />
+            <i class="fa fa-envelope"></i>
         }
-        else if (t.IsPinned)
-        {
-            <img src="~/img/sticky.png" class="thread-status" />
-        }
+    }
 }
 
-<div id="thread@(t.ForumThreadID)" class="thread @alreadyRead">
+<div id="thread@(t.ForumThreadID)" class="thread @alreadyRead @pinned">
     <div class="thread-status">
         @StickyMark(t)
     </div>

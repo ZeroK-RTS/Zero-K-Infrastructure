@@ -514,6 +514,7 @@
     <Content Include="Styles\less\modules\social.less" />
     <Content Include="Styles\less\modules\forum.less" />
     <Content Include="Views\Shared\DisplayTemplates\ForumThread.cshtml" />
+    <Content Include="Views\Home\Splash.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
@@ -593,7 +594,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Img\avatars\" />
     <Folder Include="Img\awards\" />
     <Folder Include="Img\news\" />
     <Folder Include="Resources\" />

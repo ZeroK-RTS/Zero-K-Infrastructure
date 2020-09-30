@@ -103,6 +103,11 @@ namespace ZeroKWeb.Controllers
 
 			var db = new ZkDataContext();
 
+            if(!Global.IsAccountAuthorized)
+            {
+                return View("Splash");
+            }
+
             // TODO: randomized backgrounds move here
             var result = new IndexResult
             {

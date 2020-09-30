@@ -137,30 +137,32 @@ namespace System.Web.Mvc
 
             string forumLinkContent = $"<span class='wiki-key'>{thread.WikiKey}</span>{HttpUtility.HtmlEncode(thread.Title)}";
             string forumURL = url.Action("Thread", "Forum", new { id = thread.ForumThreadID, page });
-            string forumIMG, forumReadStatus;
+            string forumIMG, forumReadStatus, faIcon;
             
             if (lastRead != null && lastRead >= thread.LastPost)
             {
                 // forum has been read more recently than the last post
+                faIcon = "fa-envelope-open";
                 forumIMG = "/img/mail/mail-read.png";
                 forumReadStatus = "mail-read";
             }
             else if (threadLastRead?.LastPosted != null)
             {
                 // forum has been posted to before
+                faIcon = "fa-envelope-o";
                 forumIMG = "/img/mail/mail-new.png";
                 forumReadStatus = "mail-new";
             }
             else
             {
+                faIcon = "fa-envelope";
                 forumIMG = "/img/mail/mail-unread.png";
                 forumReadStatus = "mail-unread";
             }
 
-            string forumLink = $"<a href='{forumURL}' class='forum-link {forumReadStatus}' title='$thread${thread.ForumThreadID}'><img src='{forumIMG}' />{forumLinkContent}</a>";
-
+            string forumLink = $"<a href='{forumURL}' class='forum-link {forumReadStatus}' title='$thread${thread.ForumThreadID}'><i class='fa {faIcon}'></i> {forumLinkContent}</a>";
+            
             return new MvcHtmlString(forumLink);
-            //return new MvcHtmlString(string.Format(format, link, title));
         }
 
         /// <summary>
@@ -425,39 +427,24 @@ namespace System.Web.Mvc
             bool upvoted = (previousVote != null && previousVote.Vote > 0);
             bool downvoted = (previousVote != null && previousVote.Vote < 0);
             bool votersVisible = (!GlobalConst.OnlyAdminsSeePostVoters || (Global.Account?.AdminLevel >= AdminLevel.Moderator));
-            /*
-            return new MvcHtmlString(string.Format("<input type='' name='upvote' value='{3}{0}{4}' title='Upvote'> / <input type='submit' name='downvote' value='{5}{1}{6}'> {2}",
-                    string.Format("<font {0}>+{1}</font>", post.Upvotes > 0 ? "color='LawnGreen'" : "", post.Upvotes),
-                    string.Format("<font {0}>-{1}</font>", post.Downvotes > 0 ? "color='Tomato'" : "", post.Downvotes),
-                    previousVote != null ? string.Format("(<input type='submit' name='clearvote' value='clear'>)") : "",
-                    upvoted ? "<strong>" : "",
-                    upvoted ? "</strong>" : "",
-                    downvoted ? "<strong>" : "",
-                    downvoted ? "</strong>" : ""));
-            */
+            string upvoteAction = url.Action("VotePost", "Forum", new { forumPostID = post.ForumPostID, delta = 1 });
+            string downvoteAction = url.Action("VotePost", "Forum", new { forumPostID = post.ForumPostID, delta = -1 });
+            string cancelAction = url.Action("CancelVotePost", "Forum", new { forumPostID = post.ForumPostID });
+            string plusAction = upvoted ? cancelAction : upvoteAction;
+            string minusAction = downvoted ? cancelAction : downvoteAction;
+            string nicetitle = votersVisible ? string.Format("nicetitle='$forumVotes${0}'", post.ForumPostID) : "";
+            string upvoteLink = string.Format("<a href='{0}' class='upvote {2}'>+{1}</a>", plusAction, post.Upvotes, upvoted ? "voted" : "");
+            string downvoteLink = string.Format("<a href='{0}' class='downvote {2}'>-{1}</a>", minusAction, post.Downvotes, downvoted ? "voted" : "");
 
-            string upvote = string.Format("<{0} nicetitle='{1}'>{2}{3}{4}{5}",
-                !noLink? string.Format("a href='{0}'", url.Action("VotePost", "Forum", new { forumPostID = post.ForumPostID, delta = 1 })) : "span",
-                votersVisible? string.Format("$forumVotes${0}", post.ForumPostID) : "Upvote",
-                upvoted ? "<strong>" : "",
-                string.Format("<font {0}>+{1}</font>", post.Upvotes > 0 ? "color='LawnGreen'" : "", post.Upvotes),
-                upvoted ? "</strong>" : "",
-                !noLink? "</a>" : "</span>"
-            );
-            string downvote = string.Format("<{0} nicetitle='{1}'>{2}{3}{4}{5}",
-                !noLink? string.Format("a href='{0}'", url.Action("VotePost", "Forum", new { forumPostID = post.ForumPostID, delta = -1 })) : "span",
-                votersVisible? string.Format("$forumVotes${0}", post.ForumPostID) : "Downvote",
-                downvoted ? "<strong>" : "",
-                string.Format("<font {0}>-{1}</font>", post.Downvotes > 0 ? "color='Tomato'" : "", post.Downvotes),
-                downvoted ? "</strong>" : "",
-                !noLink? "</a>" : "</span>"
-            );
+            if (noLink)
+            {
+                return new MvcHtmlString(string.Format("<div class='votes' {0}>+{1} / -{2}</div>", nicetitle, post.Upvotes, post.Downvotes));
+            }
+            else
+            {
+                return new MvcHtmlString(string.Format("<div class='votes' {0}>{1} / {2}</div>", nicetitle, upvoteLink, downvoteLink));
+            }
 
-            return new MvcHtmlString(string.Format("{0} / {1} {2}",
-                    upvote,
-                    downvote,
-                    previousVote != null ? string.Format("(<a href='{0}'>cancel</a>)", url.Action("CancelVotePost", "Forum", new {forumPostID = post.ForumPostID})) : ""
-                    ));
         }
 
 

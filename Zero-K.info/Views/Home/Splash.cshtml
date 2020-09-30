@@ -1,0 +1,154 @@
+﻿
+@{
+    //Layout = "~/Views/Shared/_SiteLayout.cshtml";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Zero-K</title>
+    <link rel="icon" href='@Href("~/img/favicon.png")' />
+    <link rel="stylesheet/less" type="text/css" href="~/Styles/less/style.less" />
+    @System.Web.Optimization.Styles.Render("~/bundles/maincss")
+    @System.Web.Optimization.Scripts.Render("~/bundles/main")
+</head>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    ul, li {
+        padding: 0.5em;
+        padding-left: 1em;
+        margin: 0;
+        list-style: none;
+    }
+
+    .splash {
+        background: rgba(0,0,0,0.75);
+        padding: 3em;
+        padding-top: 5em;
+        font-family: "OpenSans", sans-serif;
+    }
+
+    .pancake {
+        position: relative;
+        background: radial-gradient(circle, rgba(0,16,32,0.25) 35%, rgba(0,0,0,0.5) 100%);
+        padding: 0em;
+        margin-bottom: 2em;
+        vertical-align: top;
+    }
+    .pancake br {
+        clear: both;
+    }
+
+    .butter {
+        display: inline-block;
+        width: 40%;
+        padding: 2em;
+        float: left;
+    }
+    .odd .butter {
+        float: right;
+    }
+
+    .syrup {
+        display: inline-block;
+        background: rgba(0,0,0,0.75);
+        width: 60%;
+        min-height: 300px;
+        padding: 2em;
+    }
+    .odd .syrup {
+        float: left;
+    }
+
+    h1 {
+        font-family: "Xonotic", sans-serif;
+    }
+    .odd h1 {
+        /*text-align: right;*/
+    }
+
+    .download h1 {
+        text-align: center;
+    }
+</style>
+
+<body>
+
+    @Html.Partial("Navigation")
+
+    <div class="splash">
+        <div class="pancake">
+            <div class="butter">
+                <h1>DOMINATE</h1>
+                <h4>Dominate the Battlefield</h4>
+                <ul>
+                    <li>huge multiplayer games
+                    <li>expansive singleplayer campaign
+                    <li>unlimited units, terraform
+                </ul>
+            </div>
+            <div class="syrup">
+                [video snippets of large battles, terraformed defenses, campaign scenarios, etc.]
+            </div>
+            <br />
+        </div>
+        <div class="pancake odd">
+            <div class="syrup">
+                [video snippets of fun stuff: lobster, space laser, placeholder, etc.]
+            </div>
+            <div class="butter">
+                <h1>STAND OUT</h1>
+                <h4>Units are Unique and Useful</h4>
+                <ul>
+                    <li>units don't become obsolete
+                    <li>no hidden bonuses on stats
+                    <li>wide variety of weapons, mobility, and special skills
+                </ul>
+            </div>
+            <br />
+        </div>
+        <div class="pancake">
+            <div class="butter">
+                <h1>CONTROL</h1>
+                <h4>Powerful and Intuitive Interface</h4>
+                <ul>
+                    <li>automatic skirmishing AI, control groups
+                    <li>custom line movement, formations
+                    <li>configurable interface, hotkeys
+                </ul>
+            </div>
+            <div class="syrup">
+                [video snippets of raiders dodging shots, custom formations, fiddling with interface/widgets]
+            </div>
+            <br />
+        </div>
+        <div class="pancake odd">
+            <div class="syrup">
+                [video snippets of dominatrix, rezzed enemy units, quotes from players]
+            </div>
+            <div class="butter">
+                <h1>JOIN US</h1>
+                <h4>Made BY Players, FOR Players</h4>
+                <ul>
+                    <li>free to play in the best way possible
+                    <li>no bad business practices; labor of love
+                    <li>long term commitments to the community
+                    <li>developers that actively respond to feedback
+                </ul>
+            </div>
+            <br />
+        </div>
+        <div class="download">
+            <h1>DOWNLOAD</h1>
+            <div>
+                [call to action, ultimate purpose of page, direct link - no redirects to wiki/discord/anywhere unless its after the download starts]
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -7,7 +7,7 @@
 <div id="playerforum" class="module">
     <h2 class="handle">Posted Threads</h2>
     <div>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</div>
-    @Html.ActionLink("Posted threads", "Index", "Forum", new { User = Model.Name }, null)
+    @Html.ActionLink("My Posts", "Index", "Forum", new { User = Model.Name }, null)
     @foreach (ForumThread t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Where(x => x != null).Distinct().Take(10))
     {
         <div>@Html.Print(t)</div>

@@ -27,14 +27,27 @@
         padding: 0;
         border: 0;
         margin: 0;
-        margin-bottom: 1em;
+        margin-bottom: 0.5em;
 
-        .time, .edit, .votes, .upvote, .downvote {
+        .avatar {
             display: inline-block;
         }
 
-        .time {
-            font-size: small;
+        .whoen, .edit, .votes {
+            top: 0.5em;
+            position: absolute;
+        }
+
+        .whoen {
+            div {
+                padding-left: 1.5em;
+                display: inline-block;
+            }
+
+            .time {
+                padding-left: 0.5em;
+                font-size: small;
+            }
         }
 
         .edit {
@@ -53,7 +66,7 @@
 
         .header {
             background: rgba(0,0,0,.1);
-            padding: 1em;
+            padding: 0.5em;
             border-bottom: 1px solid @highlight-nonfaction;
         }
 
@@ -76,14 +89,11 @@
             border: 0;
             margin: 0;
 
-            img.thread-status {
-                width: 100%;
-            }
-
             div.thread-status {
                 display: inline-block;
-                width: 32px;
+                width: 2em;
                 vertical-align: top;
+                text-align: center;
             }
 
             .thread-details {
@@ -98,12 +108,18 @@
             background: @background-alt;
         }
 
+        .thread.pinned {
+            /*background: rgba(0,0,0,1);*/
+            margin-bottom: 0.5em;
+            border-left: 3px solid @highlight;
+            border-right: 3px solid @highlight;
+        }
+
         .read {
             color: @link-read;
 
             a {
                 color: @link-read;
-                text-decoration: underline;
             }
         }
     }

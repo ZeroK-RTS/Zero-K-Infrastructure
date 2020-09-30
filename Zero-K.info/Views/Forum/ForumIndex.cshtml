@@ -29,8 +29,8 @@
 
         if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)
         {
-            <span class="textbutton" id="@grid.PagerPrefixID">
-                @Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
+            <span id="@grid.PagerPrefixID">
+                <button>@Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</button>
             </span>
         }
 

@@ -17,10 +17,9 @@
     }
 }
 
-
-
 <div id="post@(p.ForumPostID)" class="forum-post @(highlight)">
     <div class="header">
+        @Html.AccountAvatar(p.Account)
         @if (isWikiMain)
         {
             // get the list of wiki edits
@@ -40,11 +39,10 @@
                 </div>
             }
         }
-        else
-        {
+        <div class="whoen">
             @Html.PrintAccount(p.Account)
-        }
-        <div class="time" title="@p.Created">@p.Created.ToAgoString()</div>
+            <div class="time" title="@p.Created">@p.Created.ToAgoString()</div>
+        </div>
         <div class="edit">
             @if (p.CanEdit(Global.Account))
             {
@@ -60,12 +58,9 @@
             }
             <a title="Link to this post"
                href="@(Url.Action("Post", "Forum", new { id = p.ForumPostID },
-                                 Request?.Url?.Scheme ?? "http") + "#" + p.ForumPostID)"><i class="fa fa-link"></i></a>
+                                     Request?.Url?.Scheme ?? "http") + "#" + p.ForumPostID)"><i class="fa fa-link"></i></a>
         </div>
-        <div class="votes">
-            <div class="upvote">+@p.Upvotes</div>
-            <div class="downvote">-@p.Downvotes</div>
-        </div>
+        @Html.PrintPostRating(p)
     </div>
     <div class="post-content">
         @Html.BBCodeCached(p)
