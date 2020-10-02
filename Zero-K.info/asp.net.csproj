@@ -515,6 +515,8 @@
     <Content Include="Styles\less\modules\forum.less" />
     <Content Include="Views\Shared\DisplayTemplates\ForumThread.cshtml" />
     <Content Include="Views\Home\Splash.cshtml" />
+    <Content Include="Styles\less\toggleswitch.less" />
+    <Content Include="Styles\less\ternaryswitch.less" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

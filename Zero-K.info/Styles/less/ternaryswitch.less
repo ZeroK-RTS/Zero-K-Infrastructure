@@ -1,0 +1,65 @@
+﻿
+@import "colors.less";
+
+.switch3 {
+    display: block;
+    background: @background;
+    position: relative;
+    height: 1.5em;
+    width: 3em;
+    margin: 0.5em;
+    margin-left: 6em;
+    margin-right: 6em;
+    border-radius: 1em;
+    cursor: pointer;
+
+    .slider {
+        background: gray;
+        position: absolute;
+        width: 1em;
+        height: 1em;
+        top: 0.25em;
+        left: 1em;
+        border-radius: 1em;
+        transition: 0.5s;
+    }
+
+    .clickable {
+        display: flex;
+        position: absolute;
+        width: 10em;
+        height: 1.5em;
+        justify-content: center;
+        align-items: center;
+        transition: 0.5s;
+        /*opacity: 0.5;*/
+    }
+
+    .clickable.left {
+        /*background: magenta;*/
+        right: 1.5em;
+    }
+
+    .clickable.right {
+        /*background: cyan;*/
+        left: 1.5em;
+    }
+
+    .slider.left {
+        background: @highlight;
+        transform: translateX(-0.75em);
+    }
+
+    .slider.left ~ .left {
+        color: @highlight;
+    }
+
+    .slider.right {
+        background: @highlight;
+        transform: translateX(0.75em);
+    }
+
+    .slider.right ~ .right {
+        color: @highlight;
+    }
+}

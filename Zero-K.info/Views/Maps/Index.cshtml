@@ -4,7 +4,95 @@
 @{
   Page.Title = "Maps";
 }
+
+<script>
+    $(document).ready(function () {
+        $(".clickable").click(function (self) {
+            var slider = $(this).parent().children(".slider");
+            if ($(this).hasClass("left")) {
+                slider.toggleClass("left");
+            } else if ($(this).hasClass("right")) {
+                slider.toggleClass("right");
+            }
+            if (slider.hasClass("left") && slider.hasClass("right")) {
+                slider.removeClass("left");
+                slider.removeClass("right");
+            }
+        });
+    });
+</script>
 <div id="mapfilters">
+    <div class="buttonfilters">
+
+        <div class="filter">
+            <label>Size</label>
+            <button>Any</button>
+            <button>Small</button>
+            <button>Medium</button>
+            <button>Large</button>
+        </div>
+        <div class="filter">
+            <label>Water</label>
+            <button>Any</button>
+            <button>Land</button>
+            <button>Sea</button>
+            <button>Mixed</button>
+        </div>
+        <div class="filter">
+            <label>Terrain</label>
+            <button>Any</button>
+            <button>Flat</button>
+            <button>Hills</button>
+            <button>Cliffs</button>
+        </div>
+        <div class="filter">
+            <label>Support</label>
+            <button>Featured</button>
+            <button>Matchmaker</button>
+            <button>Supported</button>
+            <button>Unsupported</button>
+        </div>
+    </div>
+    <div class="sliderfilters">
+        <div class="filtergroup">
+            <div class="filter switch3">
+                <div class="slider"></div>
+                <div class="clickable left"><span>Long</span></div>
+                <div class="clickable right"><span>Square</span></div>
+            </div>
+            <div class="filter switch3">
+                <div class="slider"></div>
+                <div class="clickable left"><span>Asymmetric</span></div>
+                <div class="clickable right"><span>Symmetric</span></div>
+            </div>
+            <div class="filter switch3">
+                <div class="slider"></div>
+                <div class="clickable left"><span>Non Teams</span></div>
+                <div class="clickable right"><span>Teams Only</span></div>
+            </div>
+            <div class="filter switch3">
+                <div class="slider"></div>
+                <div class="clickable left"><span>Non 1v1</span></div>
+                <div class="clickable right"><span>1v1 Only</span></div>
+            </div>
+            <div class="filter switch3">
+                <div class="slider"></div>
+                <div class="clickable left"><span>Non FFA</span></div>
+                <div class="clickable right"><span>FFA Only</span></div>
+            </div>
+            <div class="filter switch3">
+                <div class="slider"></div>
+                <div class="clickable left"><span>Non Chicken</span></div>
+                <div class="clickable right"><span>Chicken Only</span></div>
+            </div>
+            <div class="filter switch3">
+                <div class="slider"></div>
+                <div class="clickable left"><span>Non Special</span></div>
+                <div class="clickable right"><span>Special Only</span></div>
+            </div>
+        </div>
+    </div>
+
     <form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
         <div class="filter-section">
             <label for="mapSize">Size:</label>

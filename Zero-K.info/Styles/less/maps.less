@@ -2,6 +2,7 @@
 
 #mapfilters {
     background: @map-bg;
+    font-family: "Xolonium", sans-serif;
     padding: 1em;
 
     label {
@@ -18,6 +19,38 @@
         option:hover {
             background-color: @highlight;
             color: black;
+        }
+    }
+
+    .buttonfilters {
+        background: rgba(0,0,0,0.5);
+        width: 18em;
+        padding: 1em;
+        border: 2px solid black;
+
+        .filter {
+            display: flex;
+            justify-content: space-between;
+        }
+    }
+
+    .sliderfilters {
+        background: rgba(0,0,0,0.5);
+        width: 18em;
+        padding: 1em;
+        border: 2px solid black;
+
+        .switch3 {
+            margin-bottom: 1em;
+        }
+    }
+
+    .filtergroup {
+        button {
+            display: inline-block;
+            background: rgba(0,0,0,0.5);
+            color: gray;
+            border: 1px solid black;
         }
     }
 }
