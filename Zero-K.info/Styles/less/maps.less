@@ -1,51 +1,51 @@
 ﻿@import "colors.less";
 
-#mapfilters {
+#maps {
     background: @map-bg;
     font-family: "Xolonium", sans-serif;
     padding: 1em;
 
-    label {
-        display: none;
+    br {
+        clear: both;
     }
 
-    select {
-        min-width: 120px;
-        border: 1px solid @highlight;
-        border-radius: .5em;
-        /*-moz-appearance: none;
-        appearance: none;*/
-        /*background: url('/img/sort_down_green.png') no-repeat right;*/
-        option:hover {
-            background-color: @highlight;
-            color: black;
+    select, input {
+        width: 100%;
+    }
+
+    .maplist {
+        .map-link {
+            float: left;
+            margin: 0.5em;
         }
     }
 
-    .buttonfilters {
+    #mapfilters {
         background: rgba(0,0,0,0.5);
-        width: 18em;
+        width: 20em;
         padding: 1em;
         border: 2px solid black;
+        margin-bottom: 1em;
+        float: left;
 
-        .filter {
-            display: flex;
-            justify-content: space-between;
+        h1, h2, h3 {
+            margin-bottom: 0.5em;
+            text-align: center;
         }
-    }
-
-    .sliderfilters {
-        background: rgba(0,0,0,0.5);
-        width: 18em;
-        padding: 1em;
-        border: 2px solid black;
 
         .switch3 {
             margin-bottom: 1em;
+            margin-left: auto;
+            margin-right: auto;
         }
     }
 
     .filtergroup {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+
         button {
             display: inline-block;
             background: rgba(0,0,0,0.5);

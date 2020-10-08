@@ -25,7 +25,7 @@ namespace ZkLobbyServer
 
             if (Map == null)
             {
-                var unsupportedMap = MapPicker.FindResources(ResourceType.Map, arguments, MapSupportLevel.None).FirstOrDefault();
+                var unsupportedMap = MapPicker.FindResources(ResourceType.Map, arguments, MapSupportLevel.Unsupported).FirstOrDefault();
                 if (unsupportedMap != null)
                 {
                     if (battle.IsAutohost)

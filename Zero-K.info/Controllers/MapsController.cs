@@ -14,19 +14,55 @@ using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
-    public class RegistrationResult
-    {
-        public string FileName;
-        public string InternalName;
-        public string Status;
-        public string Url;
-        public string Author;
-    }
-    
     public class MapsController: Controller
     {
-        //
-        // GET: /Maps/
+        #region sub classes
+
+        public class MapDetailData
+        {
+            public Map MapInfo;
+            public MapRating MyRating;
+            public Resource Resource;
+        }
+
+        public class MapIndexData
+        {
+            public IQueryable<Resource> LastComments;
+            public IQueryable<Resource> Latest;
+            public IQueryable<Resource> MostDownloads;
+            public string Title;
+            public Boolean OnlyShowMatchmakerMaps;
+            public IQueryable<Resource> TopRated;
+        }
+
+        public class PlanetImageSelectData
+        {
+            public int IconSize;
+            public List<string> Icons;
+            public int ResourceID;
+        }
+
+        public class RegistrationResult
+        {
+            public string FileName;
+            public string InternalName;
+            public string Status;
+            public string Url;
+            public string Author;
+        }
+
+        public class EnableCORSAttribute : ActionFilterAttribute
+        {
+            public override void OnActionExecuting(ActionExecutingContext filterContext)
+            {
+                filterContext.RequestContext.HttpContext.Response.AddHeader("Access-Control-Allow-Origin", "*");
+                base.OnActionExecuting(filterContext);
+            }
+        }
+
+        #endregion
+
+        #region /Maps/
 
         public ActionResult Detail(int? id) {
             if (id == null)
@@ -114,15 +150,6 @@ namespace ZeroKWeb.Controllers
             else {
                 if (ret.Any()) return View("MapTileList", ret);
                 else return Content("");
-            }
-        }
-
-        public class EnableCORSAttribute : ActionFilterAttribute
-        {
-            public override void OnActionExecuting(ActionExecutingContext filterContext)
-            {
-                filterContext.RequestContext.HttpContext.Response.AddHeader("Access-Control-Allow-Origin", "*");
-                base.OnActionExecuting(filterContext);
             }
         }
 
@@ -255,6 +282,67 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", new { id = res.ResourceID });
         }
 
+        [Auth]
+        public ActionResult UploadResource(HttpPostedFileBase file)
+        {
+            var tmp = Path.Combine(Global.AutoRegistrator.Paths.WritableDirectory, "maps", file.FileName);
+            try
+            {
+                file.SaveAs(tmp);
+                var results = Global.AutoRegistrator.UnitSyncer.Scan()?.Where(x => x.ResourceInfo?.ArchiveName == file.FileName)?.ToList();
+                var model = new List<RegistrationResult>();
+                foreach (var res in results)
+                {
+                    if (res.Status != UnitSyncer.ResourceFileStatus.RegistrationError)
+                    {
+                        // copy to content subfolder
+                        var subfolder = (res.ResourceInfo is Map) ? "maps" : "games";
+                        var contentFolder = Path.Combine(Server.MapPath("~/content"), subfolder);
+                        if (!Directory.Exists(contentFolder)) Directory.CreateDirectory(contentFolder);
+
+                        var destFile = Path.Combine(contentFolder, res.ResourceInfo.ArchiveName);
+                        if (!System.IO.File.Exists(destFile)) System.IO.File.Copy(tmp, destFile);
+
+
+                        // register as mirror
+                        using (var db = new ZkDataContext())
+                        {
+                            var resource = db.Resources.FirstOrDefault(x => x.InternalName == res.ResourceInfo.Name);
+                            var contentFile = resource.ResourceContentFiles.FirstOrDefault(x => x.FileName == file.FileName);
+                            contentFile.Links = $"{GlobalConst.BaseSiteUrl}/content/{subfolder}/{file.FileName}";
+                            contentFile.LinkCount = 1;
+                            db.SaveChanges();
+                        }
+
+                    }
+
+                    // note this is needed because of some obscure binding issue in asp.net
+                    model.Add(new RegistrationResult()
+                    {
+                        Status = res.Status.ToString(),
+                        FileName = file.FileName,
+                        InternalName = res.ResourceInfo?.Name,
+                        Author = res.ResourceInfo?.Author,
+                        Url = Url.Action("Detail", new { id = new ZkDataContext().Resources.FirstOrDefault(x => x.InternalName == res.ResourceInfo.Name)?.ResourceID })
+                    });
+
+                }
+                return View("UploadResourceResult", model);
+            }
+            finally
+            {
+                Task.Run(async () =>
+                {
+                    await Task.Delay(10000);
+                    try
+                    {
+                        System.IO.File.Delete(tmp);
+                    }
+                    catch { }
+                });
+            }
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
@@ -294,7 +382,9 @@ namespace ZeroKWeb.Controllers
             await Global.Server.OnServerMapsChanged();
             return RedirectToAction("Detail", new { id = id });
         }
+        #endregion
 
+        #region helper methods
         static ZkDataContext FilterMaps(string search,
                                         int? offset,
                                         bool? assymetrical,
@@ -400,90 +490,6 @@ namespace ZeroKWeb.Controllers
             return data;
         }
 
-
-        public class MapDetailData
-        {
-            public Map MapInfo;
-            public MapRating MyRating;
-            public Resource Resource;
-        }
-
-        public class MapIndexData
-        {
-            public IQueryable<Resource> LastComments;
-            public IQueryable<Resource> Latest;
-            public IQueryable<Resource> MostDownloads;
-            public string Title;
-            public Boolean OnlyShowMatchmakerMaps;
-            public IQueryable<Resource> TopRated;
-        }
-
-        public class PlanetImageSelectData
-        {
-            public int IconSize;
-            public List<string> Icons;
-            public int ResourceID;
-        }
-
-        [Auth]
-        public ActionResult UploadResource(HttpPostedFileBase file)
-        {
-            var tmp = Path.Combine(Global.AutoRegistrator.Paths.WritableDirectory, "maps", file.FileName);
-            try
-            {
-                file.SaveAs(tmp);
-                var results = Global.AutoRegistrator.UnitSyncer.Scan()?.Where(x=>x.ResourceInfo?.ArchiveName == file.FileName)?.ToList();
-                var model = new List<RegistrationResult>();
-                foreach (var res in results)
-                {
-                    if (res.Status != UnitSyncer.ResourceFileStatus.RegistrationError)
-                    {
-                        // copy to content subfolder
-                        var subfolder = (res.ResourceInfo is Map) ? "maps" : "games";
-                        var contentFolder = Path.Combine(Server.MapPath("~/content"), subfolder);
-                        if (!Directory.Exists(contentFolder)) Directory.CreateDirectory(contentFolder);
-
-                        var destFile = Path.Combine(contentFolder, res.ResourceInfo.ArchiveName);
-                        if (!System.IO.File.Exists(destFile)) System.IO.File.Copy(tmp, destFile);
-
-                        
-                        // register as mirror
-                        using (var db = new ZkDataContext())
-                        {
-                            var resource = db.Resources.FirstOrDefault(x => x.InternalName == res.ResourceInfo.Name);
-                            var contentFile = resource.ResourceContentFiles.FirstOrDefault(x => x.FileName == file.FileName);
-                            contentFile.Links = $"{GlobalConst.BaseSiteUrl}/content/{subfolder}/{file.FileName}";
-                            contentFile.LinkCount = 1;
-                            db.SaveChanges();
-                        }
-                        
-                    }
-                    
-                    // note this is needed because of some obscure binding issue in asp.net
-                    model.Add(new RegistrationResult()
-                    {
-                        Status = res.Status.ToString(),
-                        FileName = file.FileName,
-                        InternalName = res.ResourceInfo?.Name,
-                        Author = res.ResourceInfo?.Author,
-                        Url = Url.Action("Detail", new {id = new ZkDataContext().Resources.FirstOrDefault(x => x.InternalName == res.ResourceInfo.Name)?.ResourceID})
-                    });
-                    
-                }
-                return View("UploadResourceResult", model);
-            }
-            finally
-            {
-                Task.Run(async () =>
-                {
-                    await Task.Delay(10000);
-                    try
-                    {
-                        System.IO.File.Delete(tmp);
-                    }
-                    catch { }
-                });
-            }
-        }
+        #endregion
     }
 }

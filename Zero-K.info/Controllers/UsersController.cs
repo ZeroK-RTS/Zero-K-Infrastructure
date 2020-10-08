@@ -71,6 +71,82 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [Auth(Role = AdminLevel.SuperAdmin)]
         [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangeAdminLevel(int accountID, bool zkAdmin)
+        {
+            var db = new ZkDataContext();
+            Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+            if (acc == null) return Content("Invalid accountID");
+            Account adminAcc = Global.Account;
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Admin level changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
+
+            var curAdmin = acc.AdminLevel > AdminLevel.None;
+            if (curAdmin != zkAdmin)
+            {
+                //reset chat priviledges to 2 if removing adminhood; remove NW subsciption to admin channel
+                // FIXME needs to also terminate forbidden clan/faction subscriptions
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Moderator status: {0} -> {1}", curAdmin, zkAdmin));
+                acc.AdminLevel = zkAdmin ? AdminLevel.Moderator : AdminLevel.None;
+
+            }
+
+            db.SaveChanges();
+
+            await Global.Server.PublishAccountUpdate(acc);
+
+            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
+        }
+
+        [HttpPost]
+        [Auth(Role = AdminLevel.SuperAdmin)]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangeTourneyController(int accountID, bool tourneyController)
+        {
+            var db = new ZkDataContext();
+            Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+            if (acc == null) return Content("Invalid accountID");
+            Account adminAcc = Global.Account;
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Tourney controller changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
+
+            if (acc.IsTourneyController != tourneyController)
+            {
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Tourney Control: {0} -> {1}", acc.IsTourneyController, tourneyController));
+                acc.IsTourneyController = tourneyController;
+            }
+
+            db.SaveChanges();
+
+            await Global.Server.PublishAccountUpdate(acc);
+
+            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
+        }
+
+        [HttpPost]
+        [Auth(Role = AdminLevel.SuperAdmin)]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangeVPNException(int accountID, bool vpnException)
+        {
+            var db = new ZkDataContext();
+            Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+            if (acc == null) return Content("Invalid accountID");
+            Account adminAcc = Global.Account;
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("VPN exception changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
+
+            if (acc.HasVpnException != vpnException)
+            {
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - VPN exception: {0} -> {1}", acc.HasVpnException, vpnException));
+                acc.HasVpnException = vpnException;
+            }
+
+            db.SaveChanges();
+
+            await Global.Server.PublishAccountUpdate(acc);
+
+            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
+        }
+
+        [HttpPost]
+        [Auth(Role = AdminLevel.SuperAdmin)]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePermissions(int accountID, bool zkAdmin, bool tourneyController, bool vpnException)
         {
             var db = new ZkDataContext();

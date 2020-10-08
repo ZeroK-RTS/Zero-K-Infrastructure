@@ -517,6 +517,8 @@
     <Content Include="Views\Home\Splash.cshtml" />
     <Content Include="Styles\less\toggleswitch.less" />
     <Content Include="Styles\less\ternaryswitch.less" />
+    <Content Include="Views\Lobby\LobbyChat.cshtml" />
+    <Content Include="Views\Lobby\LobbyChatMessages.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

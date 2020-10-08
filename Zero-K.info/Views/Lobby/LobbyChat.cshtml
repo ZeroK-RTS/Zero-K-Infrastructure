@@ -4,38 +4,35 @@
 
 @{
     Page.Title = "Chat";
-}
-
-<h1>@Page.Title</h1>
-<br />
-@{
     var ajaxOptions = Global.GetAjaxOptions("grid");
     ajaxOptions.OnSuccess += ";if (isManualSubmit) {document.getElementById('chatbox').value = '';} isManualSubmit = true;";
 }
-@using (Ajax.BeginForm("ChatMessages", "Lobby", null, ajaxOptions, new { id = "form" }))
-{
-    <table>
-        <tr>
-            <td>Channel</td>
-            <td>@Html.TextBoxFor(x => x.Channel)</td>
-        </tr>
-        <tr><td>User</td><td>@Html.TextBoxFor(x => x.User, new { data_autocomplete = Url.Action("UsersNoLink", "Autocomplete"), data_autocomplete_action = "submit" })</td></tr>
-    </table>
-    <input type="submit" />
+<style>
+    #chatbox {
+        width: 100%;
+    }
+</style>
+<div class="content">
+    <h1>Chat</h1>
+    @using (Ajax.BeginForm("ChatMessages", "Lobby", null, ajaxOptions, new { id = "form" }))
+    {
+        <table>
+            <tr>
+                <td>Channel</td>
+                <td>@Html.TextBoxFor(x => x.Channel)</td>
+            </tr>
+            <tr><td>User</td><td>@Html.TextBoxFor(x => x.User, new { data_autocomplete = Url.Action("UsersNoLink", "Autocomplete"), data_autocomplete_action = "submit" })</td></tr>
+        </table>
+        <input type="submit" value="fixme"/>
 
-    <div id="grid">
-        Loading chat messages...
-    </div>
-    <table class="width-100">
-        <tr>
-            <td>
-                @Html.TextBoxFor(x => x.Message, new { Class = "width-100", Id = "chatbox", Style = "box-sizing: border-box;padding: 5px;" })
-            </td>
-        </tr>
-    </table>
-    <br />
-}
+        <h3>this needs an overhaul</h3>
+        <div id="grid">
+            Loading chat messages...
+        </div>
+        <input type="text" id="chatbox" name="Message" />
+    }
 
+</div>
 <script type="text/javascript">
     var isManualSubmit = true;
     function updateChat() {

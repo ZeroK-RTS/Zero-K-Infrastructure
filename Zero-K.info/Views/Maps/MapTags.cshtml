@@ -1,32 +1,40 @@
 ﻿@model ZkData.Resource
 @{
-  var m = Model;
-  Layout = "";
+    var m = Model;
+    Layout = "";
 }
 
-@if (m.MapIsFfa == true) {
-  <img src='/img/map_tags/ffa.png' style="width: 32px; height: 32px" title="Suitable for Free For All" />
+<div class="tag">@m.MapWidth x @m.MapHeight</div>
+
+@if (m.MapSupportLevel != ZkData.MapSupportLevel.Supported)
+{
+    // supported should be standard and not need a special tag
+    <div class="tag">@m.MapSupportLevel.ToString()</div>
 }
 
-@if (m.MapWaterLevel == 1) {
-  <img src='/img/map_tags/sea1.png' style="width:32px; height: 32px" title="Land map, little to no water"/>
-} else if (m.MapWaterLevel == 2) {
-  <img src='/img/map_tags/sea2.png' style="width:32px; height: 32px" title="Mixed sea/land map, decent amounts of water"/>
-} else if (m.MapWaterLevel == 3) {
-  <img src='/img/map_tags/sea3.png' style="width:32px; height: 32px" title="Sea map, lots of water"/>
-}
+@if (m.MapWaterLevel == 1)
+{<div class="tag">Land</div> }
+else if (m.MapWaterLevel == 2)
+{ <div class="tag">Coastal</div> }
+else if (m.MapWaterLevel == 3)
+{ <div class="tag">Water</div>}
 
-@if (m.MapHills == 1) {
-  <img src='/img/map_tags/hill1.png' style="width:32px; height: 32px" title="Flat map, little height variation"/>
-} else if (m.MapHills == 2) {
-  <img src='/img/map_tags/hill2.png' style="width:32px; height: 32px" title="Hilly map, decent height variation"/>
-} else if (m.MapHills == 3) {
-  <img src='/img/map_tags/hill3.png' style="width:32px; height: 32px" title="Mountainous map, high height variation"/>
-}
+@if (m.MapHills == 1)
+{<div class="tag">Plains</div> }
+else if (m.MapHills == 2)
+{ <div class="tag">Hills</div> }
+else if (m.MapHills == 3)
+{ <div class="tag">Cliffs</div>}
 
-@if (m.MapIsSpecial == true) {
-  <img src='/img/map_tags/special.png' style="width: 32px; height: 32px" title="Map has special features" />
-}
-@if (m.MapIsAssymetrical == true) {
-  <img src='/img/map_tags/assymetrical.png' style="width: 32px; height: 32px" title="Map layout is asymmetrical" />
-}
+@if (m.MapIsFfa == true)
+{<div class="tag">FFA</div>}
+@if (m.MapIs1v1 == true)
+{<div class="tag">1v1</div>}
+@if (m.MapIsTeams == true)
+{<div class="tag">Teams</div>}
+@if (m.MapIsSpecial == true)
+{<div class="tag">Special</div>}
+@if (m.MapIsChickens == true)
+{<div class="tag">Chickens</div>}
+@if (m.MapIsAssymetrical == true)
+{<div class="tag">Assymetic</div>}
