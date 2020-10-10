@@ -8,24 +8,29 @@
 <script>
     $(document).ready(function () {
         $(".clickable").click(function (self) {
-            var slider = $(this).parent().children(".slider");
+            var parent = $(this).parent();
+            var input = parent.children("input");
+            var slider = parent.children(".slider");
+
             if ($(this).hasClass("left")) {
                 slider.toggleClass("left");
+                input.val("false");
             } else if ($(this).hasClass("right")) {
                 slider.toggleClass("right");
+                input.val("true");
             }
             if (slider.hasClass("left") && slider.hasClass("right")) {
                 slider.removeClass("left");
                 slider.removeClass("right");
+                input.val("");
             }
         });
     });
 </script>
 <div id="maps" class="content">
+    <div class="maplist">
 
-    <div id="ajaxScrollTarget" class="maplist">
-
-        <div id="mapfilters">
+        <form id="ajaxScrollForm" class="mapfilters" method="post" action="@Url.Action("Index")">
             <h2>Map Search</h2>
             <div>
                 <input type="text" id="search" name="search" class="ui-autocomplete-input" placeholder="Search for Map or Author"
@@ -34,26 +39,10 @@
             <div class="filtergroup">
                 <label for="mapSize">Size:</label>
                 <select id="mapSize" name="size">
-                    <option>Any Size</option>
+                    <option value="">Any Size</option>
                     <option value='1'>Small</option>
                     <option value='2'>Medium</option>
                     <option value='3'>Big</option>
-                </select>
-
-                <label for="mapSeaAmount">Water Ratio:</label>
-                <select id="mapSeaAmount" name="sea">
-                    <option>Any Water</option>
-                    <option value="1">Land</option>
-                    <option value="2">Land &amp; Sea</option>
-                    <option value="3">Sea</option>
-                </select>
-
-                <label for="mapTerrain">Terrain Type:</label>
-                <select id="mapTerrain" name="hills">
-                    <option>Any Terrain</option>
-                    <option value="1">Flat</option>
-                    <option value="2">Hills</option>
-                    <option value="3">Cliffs</option>
                 </select>
 
                 <label for="mapSupportLevel">Support:</label>
@@ -63,56 +52,88 @@
                     <option value='2' selected="selected">Featured</option>
                     <option value='3'>MatchMaker</option>
                 </select>
+
+                <label for="mapSeaAmount">Water Ratio:</label>
+                <select id="mapSeaAmount" name="sea">
+                    <option value="">Any Water</option>
+                    <option value="1">Land</option>
+                    <option value="2">Land &amp; Sea</option>
+                    <option value="3">Sea</option>
+                </select>
+
+                <label for="mapTerrain">Terrain Type:</label>
+                <select id="mapTerrain" name="hills">
+                    <option value="">Any Terrain</option>
+                    <option value="1">Flat</option>
+                    <option value="2">Hills</option>
+                    <option value="3">Cliffs</option>
+                </select>
             </div>
             <div class="filtergroup">
                 <div class="filter switch3">
-                    <div class="slider"></div>
-                    <div class="clickable left"><span>Oblong</span></div>
-                    <div class="clickable right"><span>Square</span></div>
-                </div>
-                <div class="filter switch3">
-                    <div class="slider"></div>
-                    <div class="clickable left"><span>Asymmetric</span></div>
-                    <div class="clickable right"><span>Symmetric</span></div>
-                </div>
-                <div class="filter switch3">
-                    <div class="slider"></div>
-                    <div class="clickable left"><span>Non Teams</span></div>
-                    <div class="clickable right"><span>Teams Only</span></div>
-                </div>
-                <div class="filter switch3">
+                    <input name="is1v1" />
                     <div class="slider"></div>
                     <div class="clickable left"><span>Non 1v1</span></div>
                     <div class="clickable right"><span>1v1 Only</span></div>
                 </div>
                 <div class="filter switch3">
+                    <input name="ffa" />
                     <div class="slider"></div>
                     <div class="clickable left"><span>Non FFA</span></div>
                     <div class="clickable right"><span>FFA Only</span></div>
                 </div>
                 <div class="filter switch3">
+                    <input name="isTeams" />
+                    <div class="slider"></div>
+                    <div class="clickable left"><span>Non Teams</span></div>
+                    <div class="clickable right"><span>Teams Only</span></div>
+                </div>
+                <div class="filter switch3">
+                    <input name="chicken" />
                     <div class="slider"></div>
                     <div class="clickable left"><span>Non Chicken</span></div>
                     <div class="clickable right"><span>Chicken Only</span></div>
                 </div>
                 <div class="filter switch3">
+                    <input name="special" />
                     <div class="slider"></div>
                     <div class="clickable left"><span>Non Special</span></div>
                     <div class="clickable right"><span>Special Only</span></div>
+                </div>
+                <div class="filter switch3">
+                    <input name="assymetrical" />
+                    <div class="slider"></div>
+                    <div class="clickable left"><span>Asymmetric</span></div>
+                    <div class="clickable right"><span>Symmetric</span></div>
+                </div>
+                <div class="filter switch3">
+                    <input name="elongated" />
+                    <div class="slider"></div>
+                    <div class="clickable left"><span>Oblong</span></div>
+                    <div class="clickable right"><span>Square</span></div>
                 </div>
             </div>
             <div>
                 <input type="submit" id="submit" value="Search" />
             </div>
-        </div>
+        </form>
 
-        @{Html.RenderPartial("MapTileList", Model.Latest);}
+        <div id="ajaxScrollTarget">
+            @{Html.RenderPartial("MapTileList", Model.Latest);}
+        </div>
 
         <br />
     </div>
+    @if (Global.Account != null)
+    {
+        <form action="@Url.Action("UploadResource")" enctype="multipart/form-data" method="post">
+            Upload map or game (sd7 or sdz): <input type="file" name="file" accept=".sd7,.sdz"> <input type="submit" value="Upload" />
+        </form>
+    }
+
 </div>
 
-<form action="@Url.Action("Index")" id='ajaxScrollForm' method="post" style="display: none;">
+@*<form action="@Url.Action("Index")" id='ajaxScrollForm' method="post" style="display: none;">
     <div class="filter-section">
 
         <label for="mapDimensions">Aspect Ratio:</label>
@@ -248,4 +269,4 @@
 
         </td>
     </tr>
-</table>
+</table>*@

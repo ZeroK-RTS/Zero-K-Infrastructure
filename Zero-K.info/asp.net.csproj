@@ -519,6 +519,7 @@
     <Content Include="Styles\less\ternaryswitch.less" />
     <Content Include="Views\Lobby\LobbyChat.cshtml" />
     <Content Include="Views\Lobby\LobbyChatMessages.cshtml" />
+    <Content Include="Views\Shared\_rating.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

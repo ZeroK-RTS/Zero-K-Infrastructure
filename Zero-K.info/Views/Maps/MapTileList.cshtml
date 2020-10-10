@@ -5,12 +5,18 @@
 }
 
 <style>
-    .map-link {
+    #ajaxScrollTarget {
         display: flex;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+        flex-direction: row;
+    }
+    .map-link {
         color: white;
         position: relative;
         width: 256px;
         height: 256px;
+        border: 2px solid black;
         font-family: "OpenSans", sans-serif;
         overflow: hidden;
     }
@@ -33,6 +39,13 @@
         margin-bottom: 0.2em;
         grid-gap: 5px;
     }
+    .map-rating {
+        display: none;
+        padding-bottom: 1em;
+    }
+    .map-link:hover .map-rating {
+        display: block;
+    }
     .map-details {
         position: absolute;
         background: rgba(0,0,0,0.75);
@@ -48,91 +61,81 @@
     .map-author {
         font-size: 12px;
     }
+    .map-support {
+        position: absolute;
+        right: 0.5em;
+        bottom: 0.5em;
+    }
+
+    .matchmaker {
+        animation: matchmaker-blink 5s ease infinite;
+    }
+    @@keyframes matchmaker-blink {
+        0% {color: rgba(255, 255, 64, 1);}
+        50% {color: rgba(255, 255, 32, 1);}
+        100% {color: rgba(255, 255, 64, 1);}
+    }
+    .featured {
+        color: rgba(0, 255, 64, 1);
+        /*animation: feature-blink 5s ease-in-out infinite;*/
+    }
+    @@keyframes feature-blink {
+        0% {color: rgba(0, 255, 64, 0.5);}
+        50% {color: rgba(0, 255, 64, 1);}
+        100% {color: rgba(0, 255, 64, 0.5);}
+    }
+    .unsupported {
+        animation: unsupported-blink 5s ease-out infinite;
+    }
+    @@keyframes unsupported-blink {
+        0% {color: rgba(255, 0, 0, 0.5);}
+        50% {color: rgba(255, 0, 0, 1);}
+        100% {color: rgba(255, 0, 0, 0.5);}
+    }
 </style>
 
 @foreach (var m in Model)
 {
-    string featureTag;
-    string featureColor;
-    if (m.MapSupportLevel >= MapSupportLevel.MatchMaker)
-    {
-        featureTag = "Matchmaker";
-        featureColor = "green";
-    }
-    else if (m.MapSupportLevel >= MapSupportLevel.Featured)
-    {
-        featureTag = "Featured";
-        featureColor = "gold";
-    }
-    else if (m.MapSupportLevel >= MapSupportLevel.Supported)
-    {
-        featureTag = "Supported";
-        featureColor = "rgba(0,0,0,1)";
-    }
-    else
-    {
-        featureTag = "Unsupported";
-        featureColor = "red";
-    }
+    int mapsize = 256;
+    float maxdim = Math.Max((int)m.MapHeight, (int)m.MapWidth);
+    int width = (int)Math.Truncate(mapsize * (int)m.MapWidth / maxdim);
+    int height = (int)Math.Truncate(mapsize * (int)m.MapHeight / maxdim);
+
     <a class="map-link" href="@Url.Action("Detail", new { id = m.ResourceID })" 
-       style="background: url('/Resources/@m.ThumbnailName'); background-size: 256px 256px;">
+       style="background: rgba(0,0,0,0.25) url('/Resources/@m.ThumbnailName') no-repeat center; background-size: @(width)px @(height)px;">
         <div class="map-tags">
             @{Html.RenderPartial("MapTags", m);}
         </div>
         <div class="map-details">
+            <div class="map-rating">
+                @*@Html.Stars(StarType.GreenStarSmall, m.MapRating)*@
+                @{Html.RenderPartial("_rating", m);}
+            </div>
             <div class="map-name">@m.InternalName</div>
             <div class="map-author">@m.AuthorName</div>
-            <div class="map-rating">
-                @Html.Stars(StarType.GreenStarSmall, m.MapRating)
-            </div>
         </div>
-	    @*<div class='mission fleft'>
-          <b>@m.InternalName</b>
-          @if (m.MapSupportLevel >= MapSupportLevel.MatchMaker) { 
-            <img src="@Url.Content("~/img/star_40_gold.png")" title="Matchmaking pool" alt="Matchmaking pool" style='float:right' />
-          } else if (m.MapSupportLevel >= MapSupportLevel.Featured) {
-            <img src="@Url.Content("~/img/star_40_silver.png")" title="Featured" alt="Featured" style='float:right' />
-          } else if (m.MapSupportLevel >= MapSupportLevel.Supported) {
-            <img src="@Url.Content("~/img/star_40_bronze.png")" title="Supported" alt="Supported" style='float:right' />
-          }
-          <br />
-          @m.AuthorName<br />
-          <table width="100%">
-            <tr>
-              <td valign='top'>
-                <span style="margin: 0; padding: 0; border: 1px dashed gray; display: table-cell;
-                  text-align: center; vertical-align: middle; width: 96px; height: 96px;">
-                  <img src='/Resources/@m.ThumbnailName' style="margin:0px;padding:0px;"/>
-                </span>
-              </td>
-              <td valign='top'>
-                <table>
-                  <tr>
-                    <td>
-                      Rating:
-                    </td>
-                    <td>@Html.Stars(StarType.GreenStarSmall, m.MapRating)
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      Size:
-                    </td>
-                    <td>@m.MapWidth x @m.MapHeight
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colspan='2'>
-                      <small>
-                        @{Html.RenderPartial("MapTags", m);}
-                      </small>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </div>*@
-
+        <div class="map-support">
+            @if (m.MapSupportLevel >= MapSupportLevel.MatchMaker)
+            {
+                <i class="matchmaker fa fa-star"></i>
+                @*<i class="matchmaker fa fa-certificate"></i>*@
+                @*<i class="matchmaker fa fa-moon-o"></i>*@
+            }
+            else if (m.MapSupportLevel >= MapSupportLevel.Featured)
+            {
+                @*<i class="featured fa fa-bookmark"></i>*@
+                @*<i class="featured fa fa-thumb-tack"></i>*@
+                @*<i class="featured fa fa-star"></i>*@
+                <i class="featured fa fa-certificate"></i>
+            }
+            else if (m.MapSupportLevel >= MapSupportLevel.Supported)
+            {
+                // standard -- no icon
+            }
+            else
+            {
+                <i class="unsupported fa fa-exclamation-triangle"></i>
+            }
+        </div>
 	</a>
 }

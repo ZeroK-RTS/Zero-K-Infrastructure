@@ -1,4 +1,5 @@
-﻿@model ZkData.Resource
+﻿@using ZkData
+@model ZkData.Resource
 @{
     var m = Model;
     Layout = "";
@@ -6,35 +7,76 @@
 
 <div class="tag">@m.MapWidth x @m.MapHeight</div>
 
+@*supported should be standard and not need a special tag*@
 @if (m.MapSupportLevel != ZkData.MapSupportLevel.Supported)
 {
-    // supported should be standard and not need a special tag
-    <div class="tag">@m.MapSupportLevel.ToString()</div>
+    string featureClass;
+    if (m.MapSupportLevel >= MapSupportLevel.MatchMaker)
+    {
+        featureClass = "matchmaker";
+    }
+    else if (m.MapSupportLevel >= MapSupportLevel.Featured)
+    {
+        featureClass = "featured";
+    }
+    else if (m.MapSupportLevel >= MapSupportLevel.Supported)
+    {
+        featureClass = "supported";
+    }
+    else
+    {
+        featureClass = "unsupported";
+    }
+    <div class="tag @featureClass">@m.MapSupportLevel.ToString()</div>
 }
 
 @if (m.MapWaterLevel == 1)
-{<div class="tag">Land</div> }
+{
+    <div class="tag">Land</div>
+}
 else if (m.MapWaterLevel == 2)
-{ <div class="tag">Coastal</div> }
+{
+    <div class="tag">Coastal</div>
+}
 else if (m.MapWaterLevel == 3)
-{ <div class="tag">Water</div>}
+{
+    <div class="tag">Water</div>
+}
 
 @if (m.MapHills == 1)
-{<div class="tag">Plains</div> }
+{
+    <div class="tag">Plains</div>
+}
 else if (m.MapHills == 2)
-{ <div class="tag">Hills</div> }
+{
+    <div class="tag">Hills</div>
+}
 else if (m.MapHills == 3)
-{ <div class="tag">Cliffs</div>}
+{
+    <div class="tag">Cliffs</div>
+}
 
-@if (m.MapIsFfa == true)
-{<div class="tag">FFA</div>}
 @if (m.MapIs1v1 == true)
-{<div class="tag">1v1</div>}
+{
+    <div class="tag">1v1</div>
+}
+@if (m.MapIsFfa == true)
+{
+    <div class="tag">FFA</div>
+}
 @if (m.MapIsTeams == true)
-{<div class="tag">Teams</div>}
-@if (m.MapIsSpecial == true)
-{<div class="tag">Special</div>}
+{
+    <div class="tag">Teams</div>
+}
 @if (m.MapIsChickens == true)
-{<div class="tag">Chickens</div>}
+{
+    <div class="tag">Chickens</div>
+}
+@if (m.MapIsSpecial == true)
+{
+    <div class="tag">Special</div>
+}
 @if (m.MapIsAssymetrical == true)
-{<div class="tag">Assymetic</div>}
+{
+    <div class="tag">Assymetic</div>
+}

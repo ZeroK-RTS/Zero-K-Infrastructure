@@ -14,6 +14,15 @@ using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
+    public class RegistrationResult
+    {
+        public string FileName;
+        public string InternalName;
+        public string Status;
+        public string Url;
+        public string Author;
+    }
+
     public class MapsController: Controller
     {
         #region sub classes
@@ -40,15 +49,6 @@ namespace ZeroKWeb.Controllers
             public int IconSize;
             public List<string> Icons;
             public int ResourceID;
-        }
-
-        public class RegistrationResult
-        {
-            public string FileName;
-            public string InternalName;
-            public string Status;
-            public string Url;
-            public string Author;
         }
 
         public class EnableCORSAttribute : ActionFilterAttribute
@@ -95,25 +95,26 @@ namespace ZeroKWeb.Controllers
         /// Map list; params are for filter
         /// </summary>
         public ActionResult Index(string search,
-                                  int? offset,
-                                  bool? assymetrical,
-                                  int? sea,
-                                  int? hills,
-                                  int? size,
-                                  bool? elongated,
-                                  bool? needsTagging,
-                                  bool? isTeams,
-                                  bool? is1v1,
-                                  bool? ffa,
-                                  bool? chicken,
-                                  int? isDownloadable = 1,
-                                  int? special = 0,
-                                  MapSupportLevel? mapSupportLevel = null
-                                  ) {
+                                int order,
+                                int? offset,
+                                int? sea,
+                                int? hills,
+                                int? size,
+                                bool? elongated,
+                                bool? needsTagging,
+                                bool? isTeams,
+                                bool? is1v1,
+                                bool? ffa,
+                                bool? chicken,
+                                bool? special,
+                                bool? assymetrical,
+                                int? isDownloadable,
+                                MapSupportLevel? mapSupportLevel = null) 
+        {
             IQueryable<Resource> ret;
             var db = FilterMaps(search,
+                                order,
                                 offset,
-                                assymetrical,
                                 sea,
                                 hills,
                                 size,
@@ -123,56 +124,59 @@ namespace ZeroKWeb.Controllers
                                 is1v1,
                                 ffa,
                                 chicken,
-                                isDownloadable,
                                 special,
+                                assymetrical,
+                                isDownloadable,
                                 mapSupportLevel,
                                 out ret);
 
-            if (!offset.HasValue) {
-                // Allow to open maps page with the matchmaking option already set so it can be used in links
-                var onlyShowMatchmakerMaps = mapSupportLevel == MapSupportLevel.MatchMaker;
-                return
-                    View(new MapIndexData
-                    {
-                        Title = onlyShowMatchmakerMaps ? "Matchmaking maps" : "Latest maps",
-                        OnlyShowMatchmakerMaps = onlyShowMatchmakerMaps,
-                        Latest = ret,
-                        LastComments =
-                            db.Resources.Where(x => x.TypeID == ResourceType.Map && x.ForumThreadID != null)
-                              .OrderByDescending(x => x.ForumThread.LastPost),
-                        TopRated =
-                            db.Resources.Where(x => x.TypeID == ResourceType.Map && x.MapRatingCount > 0)
-                              .OrderByDescending(x => x.MapRatingSum/x.MapRatingCount),
-                        MostDownloads = db.Resources.Where(x => x.TypeID == ResourceType.Map).OrderByDescending(x => x.DownloadCount)
-                    });
-            }
-
-            else {
+            // TODO: not entirely sure what this accomplishes
+            if (offset.HasValue)
+            {
                 if (ret.Any()) return View("MapTileList", ret);
                 else return Content("");
             }
+
+            // Allow to open maps page with the matchmaking option already set so it can be used in links
+            var onlyShowMatchmakerMaps = mapSupportLevel == MapSupportLevel.MatchMaker;
+
+            // TODO: we don't need to include all these other maps -- move them to partial views?
+            var viewModel = new MapIndexData
+            {
+                Title = onlyShowMatchmakerMaps ? "Matchmaking maps" : "Latest maps",
+                OnlyShowMatchmakerMaps = onlyShowMatchmakerMaps,
+                Latest = ret,
+                LastComments = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.ForumThreadID != null).OrderByDescending(x => x.ForumThread.LastPost),
+                TopRated = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.MapRatingCount > 0).OrderByDescending(x => x.MapRatingSum / x.MapRatingCount),
+                MostDownloads = db.Resources.Where(x => x.TypeID == ResourceType.Map).OrderByDescending(x => x.DownloadCount)
+            };
+
+            return View(viewModel);
+
         }
 
+        // TODO: nothing appears to use this. remove?
         [EnableCORS]
         public JsonResult JsonSearch(string search,
-                                       int? offset,
-                                       bool? assymetrical,
-                                       int? sea,
-                                       int? hills,
-                                       int? size,
-                                       bool? elongated,
-                                       bool? needsTagging,
-                                       bool? isTeams,
-                                       bool? is1v1,
-                                       bool? ffa,
-                                       bool? chicken,
-                                       int? isDownloadable = 1,
-                                       int? special = 0,
-                                       MapSupportLevel? mapSupportLevel = null) {
+                                    int order,
+                                    int? offset,
+                                    int? sea,
+                                    int? hills,
+                                    int? size,
+                                    bool? elongated,
+                                    bool? needsTagging,
+                                    bool? isTeams,
+                                    bool? is1v1,
+                                    bool? ffa,
+                                    bool? chicken,
+                                    bool? special,
+                                    bool? assymetrical,
+                                    int? isDownloadable = 1,
+                                    MapSupportLevel? mapSupportLevel = null) {
             IQueryable<Resource> ret;
             var db = FilterMaps(search,
+                                order,
                                 offset,
-                                assymetrical,
                                 sea,
                                 hills,
                                 size,
@@ -182,8 +186,9 @@ namespace ZeroKWeb.Controllers
                                 is1v1,
                                 ffa,
                                 chicken,
-                                isDownloadable,
                                 special,
+                                assymetrical,
+                                isDownloadable,
                                 mapSupportLevel,
                                 out ret);
             var retval =
@@ -385,9 +390,10 @@ namespace ZeroKWeb.Controllers
         #endregion
 
         #region helper methods
+
         static ZkDataContext FilterMaps(string search,
+                                        int order,
                                         int? offset,
-                                        bool? assymetrical,
                                         int? sea,
                                         int? hills,
                                         int? size,
@@ -397,60 +403,91 @@ namespace ZeroKWeb.Controllers
                                         bool? is1v1,
                                         bool? ffa,
                                         bool? chicken,
+                                        bool? special,
+                                        bool? assymetrical,
                                         int? isDownloadable,
-                                        int? special,
                                         MapSupportLevel? mapSupportLevel,
                                         out IQueryable<Resource> ret) {
             var db = new ZkDataContext();
 
+            // filter only maps
             ret = db.Resources.Where(x => x.TypeID == ResourceType.Map);
+
+            // TODO: why would we allow undownloadable maps?
+            if (isDownloadable == 1) ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
+            else if (isDownloadable == 0) ret = ret.Where(x => x.ResourceContentFiles.All(y => y.LinkCount <= 0));
+
+            // filter by search string
             if (!string.IsNullOrEmpty(search)) {
                 foreach (var word in search.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)) {
-                    var w = word;
-                    ret = ret.Where(x => x.InternalName.Contains(w) || x.AuthorName.Contains(w));
+                    ret = ret.Where(x => x.InternalName.Contains(word) || x.AuthorName.Contains(word));
                 }
             }
 
+            // filter by maps that need tagging
             if (needsTagging == true) {
-                ret =
-                    ret.Where(
-                        x =>
-                        x.MapIsFfa == null || x.MapIsAssymetrical == null || x.MapIsSpecial == null || x.AuthorName == null || x.MapHills == null ||
-                        x.MapWaterLevel == null);
+                ret = ret.Where(x => x.AuthorName == null || x.MapHills == null || x.MapWaterLevel == null ||
+                                     x.MapIsFfa == null || x.MapIsAssymetrical == null || x.MapIsSpecial == null);
             }
 
+            // filter by support level
             if (mapSupportLevel != null)
-            {   // unsupported == only unsupported; anything else also selects maps with higher support level
-                if (mapSupportLevel == 0) ret = ret.Where(x => x.MapSupportLevel == mapSupportLevel);
-                ret = ret.Where(x => x.MapSupportLevel >= mapSupportLevel);
+            {
+                if (mapSupportLevel == MapSupportLevel.Unsupported)
+                    ret = ret.Where(x => x.MapSupportLevel == mapSupportLevel);
+                else
+                    // any supported search will also include more highly supported maps
+                    ret = ret.Where(x => x.MapSupportLevel >= mapSupportLevel);
             }
-            if (isDownloadable == 1) ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
-            else if (isDownloadable == 0) ret = ret.Where(x => x.ResourceContentFiles.All(y => y.LinkCount <= 0));
-            if (special != -1) ret = ret.Where(x => x.MapIsSpecial == (special == 1));
-            
-            if (sea.HasValue) ret = ret.Where(x => x.MapWaterLevel == sea);
-            if (hills.HasValue) ret = ret.Where(x => x.MapHills == hills);
-            if (assymetrical.HasValue) ret = ret.Where(x => x.MapIsAssymetrical == assymetrical);
-            if (elongated == true) ret = ret.Where(x => x.MapSizeRatio <= 0.5 || x.MapSizeRatio >= 2);
-            else if (elongated == false) ret = ret.Where(x => x.MapSizeRatio > 0.5 && x.MapSizeRatio < 2);
+
             // Diagonal of a map used to determine size; 16 and below are considered small, bigger than 24 is large
             if (size == 1) ret = ret.Where(x => (x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) <= 16*16);
             else if (size == 2) {
-                ret =
-                    ret.Where(
-                        x =>
+                ret = ret.Where(x =>
                         (x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) > 16*16 &&
                         (x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) <= 24*24);
             }
             else if (size == 3) ret = ret.Where(x =>(x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) > 24*24);
+
+            // filter by various criteria
+            if (sea.HasValue) ret = ret.Where(x => x.MapWaterLevel == sea);
+            if (hills.HasValue) ret = ret.Where(x => x.MapHills == hills);
+            if (special.HasValue) ret = ret.Where(x => x.MapIsSpecial == special);
+            if (assymetrical.HasValue) ret = ret.Where(x => x.MapIsAssymetrical == assymetrical);
             if (isTeams.HasValue) ret = ret.Where(x => x.MapIsTeams == isTeams);
             if (is1v1.HasValue) ret = ret.Where(x => x.MapIs1v1 == is1v1);
             if (chicken.HasValue) ret = ret.Where(x => x.MapIsChickens == chicken);
             if (ffa.HasValue) ret = ret.Where(x => x.MapIsFfa == ffa);
+            if (elongated == true) ret = ret.Where(x => x.MapSizeRatio <= 0.5 || x.MapSizeRatio >= 2);
+            else if (elongated == false) ret = ret.Where(x => x.MapSizeRatio > 0.5 && x.MapSizeRatio < 2);
 
-            //if (featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x => x.ResourceID);
-            //else ret = ret.OrderByDescending(x => x.ResourceID);
-            ret = ret.OrderByDescending(x => x.MapSupportLevel).ThenByDescending(x=>x.ResourceID);
+            if (order == 1)
+            {
+                // rating
+                ret = ret.Where(x => x.MapRatingCount > 0).OrderByDescending(x => x.MapRating);
+            }
+            else if (order == 4)
+            {
+                // TODO: sort by most picked
+                //ret = ret.Where(x => x.)
+            }
+            else if (order == 2)
+            {
+                // download count, then by latest
+                ret = ret.OrderByDescending(x => x.DownloadCount).ThenByDescending(x => x.ResourceID);
+            }
+            else if (order == 3)
+            {
+                // latest comments
+                ret = ret.Where(x => x.ForumThread != null).OrderByDescending(x => x.ForumThread.LastPost);
+            }
+            else
+            {
+                // support level, then by latest
+                ret = ret.OrderByDescending(x => x.MapSupportLevel).ThenByDescending(x => x.ResourceID);
+            }
+
+            // return relevant chunk of data
             if (offset != null) ret = ret.Skip(offset.Value);
             ret = ret.Take(Global.AjaxScrollCount);
             return db;

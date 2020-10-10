@@ -1,0 +1,33 @@
+﻿@using ZkData
+@model ZkData.Resource
+@{
+    var m = Model;
+    Layout = "";
+}
+
+<style>
+    .rating {
+        width: 100%;
+        margin-bottom: 1em;
+    }
+    .rating-star {
+        display: inline-block;
+        width: 20%;
+        text-align: center;
+    }
+</style>
+
+<div class="rating">
+    @* no space between divs to fix modern browser buggery *@
+    <div class="rating-star">
+        <i class="fa fa-heart"></i>
+    </div><div class="rating-star">
+        <i class="fa fa-heart"></i>
+    </div><div class="rating-star">
+        <i class="fa fa-heart"></i>
+    </div><div class="rating-star">
+        <i class="fa fa-heart"></i>
+    </div><div class="rating-star">
+        <i class="fa fa-heart"></i>
+    </div>
+</div>
