@@ -5,28 +5,17 @@
     font-family: "Xolonium", sans-serif;
     padding: 1em;
 
-    br {
-        clear: both;
-    }
-
     select, input {
         width: 100%;
     }
-/*
-    .maplist {
-        .map-link {
-            float: left;
-            margin: 0.5em;
-        }
-    }*/
 
     .mapfilters {
+        display: flex;
+        justify-content: space-around;
         background: rgba(0,0,0,0.5);
-        width: 20em;
         padding: 1em;
-        border: 2px solid black;
+        border: 2px solid @highlight;
         margin-bottom: 1em;
-        float: left;
 
         h1, h2, h3 {
             margin-bottom: 0.5em;
@@ -41,9 +30,7 @@
     }
 
     .filtergroup {
-        width: 100%;
-        margin-left: auto;
-        margin-right: auto;
+        width: 20em;
         text-align: center;
 
         button {

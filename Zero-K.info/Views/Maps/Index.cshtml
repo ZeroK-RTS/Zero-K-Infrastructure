@@ -6,6 +6,7 @@
 }
 
 <script>
+    var ratingHover = false;
     $(document).ready(function () {
         $(".clickable").click(function (self) {
             var parent = $(this).parent();
@@ -25,49 +26,86 @@
                 input.val("");
             }
         });
+
+        $(".rating .level").hover(
+            function () {
+                if (ratingHover) return;
+                ratingHover = true;
+                // over
+                var parent = $(this).parent();
+                var current = $(this);
+
+                if (current.hasClass("l1")) {
+                    parent.children(".l1").addClass("hover");
+                } else if (current.hasClass("l2")) {
+                    parent.children(".l2").addClass("hover");
+                } else if (current.hasClass("l3")) {
+                    parent.children(".l3").addClass("hover");
+                } else if (current.hasClass("l4")) {
+                    parent.children(".l4").addClass("hover");
+                } else if (current.hasClass("l5")) {
+                    parent.children(".l5").addClass("hover");
+                } 
+            },
+            function () {
+                // out
+                var parent = $(this).parent();
+                parent.children(".level").removeClass("hover");
+                ratingHover = false;
+            }
+        );
     });
 </script>
 <div id="maps" class="content">
     <div class="maplist">
 
         <form id="ajaxScrollForm" class="mapfilters" method="post" action="@Url.Action("Index")">
-            <h2>Map Search</h2>
-            <div>
-                <input type="text" id="search" name="search" class="ui-autocomplete-input" placeholder="Search for Map or Author"
-                       autocomplete="off" data-autocomplete="/Autocomplete/Maps" data-autocomplete-action="submit" />
-            </div>
             <div class="filtergroup">
-                <label for="mapSize">Size:</label>
-                <select id="mapSize" name="size">
-                    <option value="">Any Size</option>
-                    <option value='1'>Small</option>
-                    <option value='2'>Medium</option>
-                    <option value='3'>Big</option>
-                </select>
 
-                <label for="mapSupportLevel">Support:</label>
+                @*<label for="mapSupportLevel">Support:</label>*@
                 <select id="mapSupportLevel" name="mapSupportLevel">
                     <option value='0'>Unsupported</option>
-                    <option value='1'>Supported</option>
-                    <option value='2' selected="selected">Featured</option>
-                    <option value='3'>MatchMaker</option>
+                    <option value='1'>Supported at Least</option>
+                    <option value='2' selected="selected">Featured &amp; MatchMaker</option>
+                    <option value='3'>MatchMaker Only</option>
                 </select>
 
-                <label for="mapSeaAmount">Water Ratio:</label>
+                <label for="mapSize">@*Size:*@</label>
+                <select id="mapSize" name="size">
+                    <option value="">Any Size</option>
+                    <option value='1'>Small Only</option>
+                    <option value='2'>Medium Only</option>
+                    <option value='3'>Large Only</option>
+                </select>
+
+                @*<label for="mapSeaAmount">Water Ratio:</label>*@
                 <select id="mapSeaAmount" name="sea">
                     <option value="">Any Water</option>
-                    <option value="1">Land</option>
-                    <option value="2">Land &amp; Sea</option>
-                    <option value="3">Sea</option>
+                    <option value="1">Land Only</option>
+                    <option value="2">Both Land &amp; Sea</option>
+                    <option value="3">Sea Only</option>
                 </select>
 
-                <label for="mapTerrain">Terrain Type:</label>
+                @*<label for="mapTerrain">Terrain Type:</label>*@
                 <select id="mapTerrain" name="hills">
                     <option value="">Any Terrain</option>
-                    <option value="1">Flat</option>
-                    <option value="2">Hills</option>
-                    <option value="3">Cliffs</option>
+                    <option value="1">Flat Only</option>
+                    <option value="2">Hills Only</option>
+                    <option value="3">Cliffs Only</option>
                 </select>
+
+                @*<label for="orderBy">Sort By:</label>*@
+                <select id="order" name="order">
+                    <option value="0">Sort by Latest</option>
+                    <option value="1">Sort by Rating</option>
+                    <option value="2">Sort by Downloads</option>
+                    <option value="3">Sort by Latest Comments</option>
+                </select>
+
+                <input type="text" id="search" name="search" class="ui-autocomplete-input" placeholder="Specific Map or Author"
+                       autocomplete="off" data-autocomplete="/Autocomplete/Maps" data-autocomplete-action="submit" />
+
+                <input type="submit" id="submit" value="Search" />
             </div>
             <div class="filtergroup">
                 <div class="filter switch3">
@@ -112,9 +150,6 @@
                     <div class="clickable left"><span>Oblong</span></div>
                     <div class="clickable right"><span>Square</span></div>
                 </div>
-            </div>
-            <div>
-                <input type="submit" id="submit" value="Search" />
             </div>
         </form>
 

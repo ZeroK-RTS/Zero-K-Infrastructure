@@ -204,6 +204,7 @@ nav.nav-affixed {
 
     .nav-logo {
         display: inline-block;
+        margin-right: 0.5em;
 
         img {
             position: absolute;
@@ -215,11 +216,13 @@ nav.nav-affixed {
 
             @keyframes logoslide {
                 0% {
-                    left: -1000px;
+                    /*left: -1000px;*/
+                    opacity: 0;
                 }
 
                 100% {
-                    left: 0;
+                    /*left: 0;*/
+                    opacity: 1;
                 }
             }
         }

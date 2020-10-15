@@ -14,139 +14,252 @@
     @System.Web.Optimization.Styles.Render("~/bundles/maincss")
     @System.Web.Optimization.Scripts.Render("~/bundles/main")
 </head>
-<style>
-    * {
-        box-sizing: border-box;
-    }
-
-    ul, li {
-        padding: 0.5em;
-        padding-left: 1em;
-        margin: 0;
-        list-style: none;
-    }
-
-    .splash {
-        background: rgba(0,0,0,0.75);
-        padding: 3em;
-        padding-top: 5em;
-        font-family: "OpenSans", sans-serif;
-    }
-
-    .pancake {
-        position: relative;
-        background: radial-gradient(circle, rgba(0,16,32,0.25) 35%, rgba(0,0,0,0.5) 100%);
-        padding: 0em;
-        margin-bottom: 2em;
-        vertical-align: top;
-    }
-    .pancake br {
-        clear: both;
-    }
-
-    .butter {
-        display: inline-block;
-        width: 40%;
-        padding: 2em;
-        float: left;
-    }
-    .odd .butter {
-        float: right;
-    }
-
-    .syrup {
-        display: inline-block;
-        background: rgba(0,0,0,0.75);
-        width: 60%;
-        min-height: 300px;
-        padding: 2em;
-    }
-    .odd .syrup {
-        float: left;
-    }
-
-    h1 {
-        font-family: "Xonotic", sans-serif;
-    }
-    .odd h1 {
-        /*text-align: right;*/
-    }
-
-    .download h1 {
-        text-align: center;
-    }
-</style>
-
 <body>
+    <script>
+        var mouse_pos = {x: 0, y: 0};
+        $(document).ready(function () {
+            initCanvas("starlayer1", 10, 300);
+            initCanvas("starlayer2", 50, 150);
+        });
+        $(document).mousemove(function (e) {
+            mouse_pos = { x: e.pageX, y: e.pageY };
+            positionCanvas("starlayer1", 10);
+            positionCanvas("starlayer2", 50);
+
+            //console.log(e.pageX, e.pageY,
+            //    $(window).height(), $(window).width(),
+            //    $(document).height(), $(document).width()
+            //);
+        });
+
+        function getRandom(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // generates starfield pattern on the provided canvas element
+        function initCanvas(id, offset = 32, stars = 300) {
+
+            // initialize canvas
+            var c = $("#" + id)[0];
+            var context = c.getContext("2d");
+            c.width = c.offsetWidth;
+            c.height = c.offsetHeight;
+            positionCanvas(id, offset);
+
+            // paint stars
+            var colorrange = [0, 60, 240];
+            for (var i = 0; i < stars; i++) {
+                var x = Math.random() * c.offsetWidth,
+                    y = Math.random() * c.offsetHeight,
+                    radius = Math.random() * 1.2,
+                    hue = colorrange[getRandom(0, colorrange.length - 1)],
+                    sat = getRandom(50, 100);
+                context.beginPath();
+                context.arc(x, y, radius, 0, 360);
+                context.fillStyle = "hsl(" + hue + ", " + sat + "%, 88%)";
+                context.fill();
+            }
+
+        }
+
+        // position canvas based on window size / mouse position
+        function positionCanvas(id, offset = 32) {
+            //var dh = $(document).height();
+            //var dw = $(document).width();
+            var wh = $(window).height();
+            var ww = $(window).width();
+            var dx = -offset * mouse_pos.x / ww;
+            var dy = -offset * mouse_pos.y / wh;
+            $("#" + id).css("width", ww + offset).css("left", dx).css("height", wh + offset).css("top", dy);
+        }
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        nav {
+            position: fixed;
+            z-index: 1000;
+        }
+
+        h1 {
+            font-family: "Xolonium", sans-serif;
+            margin-bottom: 1em;
+        }
+
+        ul, li {
+            padding: 0.5em;
+            padding-left: 1em;
+            margin: 0;
+            list-style: none;
+        }
+
+        .splash {
+            background: rgba(0,0,0,0.75);
+            padding-top: 3em;
+            font-family: "OpenSans", sans-serif;
+        }
+
+        .hero {
+            position: relative;
+            background: black;
+            height: 80vh;
+            overflow: hidden;
+        }
+        .hero img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 60%;
+        }
+        .hero canvas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .stack {
+            background: linear-gradient(black, transparent 20%);
+            padding: 3em;
+        }
+
+        .pancake {
+            display: flex;
+            position: relative;
+            background: radial-gradient(circle, rgba(0,16,32,0.25) 35%, rgba(0,0,0,0.5) 100%);
+            padding: 0em;
+            margin-bottom: 2em;
+            vertical-align: top;
+        }
+        .pancake.odd {
+            flex-flow: row-reverse;
+        }
+
+        .butter {
+            padding: 2em;
+        }
+
+        .syrup {
+            background: rgba(0,0,0,0.75);
+            min-height: 350px;
+            padding: 2em;
+        }
+
+        .download {
+            background: radial-gradient(circle, rgba(0,16,32,0.25) 35%, rgba(0,0,0,0.5) 100%);
+            max-width: 50%;
+            padding: 2em;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .download h1 {
+            text-align: center;
+        }
+        .hero .download {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            bottom: 2em;
+            right: 2em;
+            font-family: "Xoloniuum", sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        @@media only screen and (max-width: 800px) 
+        {
+            .pancake, .pancake.odd {
+                flex-flow: column-reverse;
+            }
+            .butter {
+                text-align: center;
+            }
+            .syrup {
+                max-height: 200px;
+                min-height: 200px;
+            }
+            .download {
+                max-width: 100%;
+            }
+        }
+    </style>
 
     @Html.Partial("Navigation")
-
     <div class="splash">
-        <div class="pancake">
-            <div class="butter">
-                <h1>DOMINATE</h1>
-                <h4>Dominate the Battlefield</h4>
-                <ul>
-                    <li>huge multiplayer games
-                    <li>expansive singleplayer campaign
-                    <li>unlimited units, terraform
-                </ul>
+        <div class="hero">
+            <canvas id="starlayer0"></canvas>
+            <canvas id="starlayer1"></canvas>
+            <canvas id="starlayer2"></canvas>
+            <img src="~/img/zk_logo_orig.png" />
+            <div class="download">
+                Download Now
             </div>
-            <div class="syrup">
-                [video snippets of large battles, terraformed defenses, campaign scenarios, etc.]
-            </div>
-            <br />
         </div>
-        <div class="pancake odd">
-            <div class="syrup">
-                [video snippets of fun stuff: lobster, space laser, placeholder, etc.]
+        <div class="stack">
+            <div class="pancake">
+                <div class="butter">
+                    <h1>DOMINATE</h1>
+                    <h4>Dominate the Battlefield</h4>
+                    <ul>
+                        <li>Huge multiplayer games
+                        <li>Expansive singleplayer campaign
+                        <li>Unlimited armies, giant mechs
+                        <li>Terraform walls, ramps, and more
+                    </ul>
+                </div>
+                <div class="syrup">
+                    [video snippets of large battles, terraformed defenses, campaign scenarios, etc.]
+                </div>
             </div>
-            <div class="butter">
-                <h1>STAND OUT</h1>
-                <h4>Units are Unique and Useful</h4>
-                <ul>
-                    <li>units don't become obsolete
-                    <li>no hidden bonuses on stats
-                    <li>wide variety of weapons, mobility, and special skills
-                </ul>
+            <div class="pancake odd">
+                <div class="butter">
+                    <h1>STAND OUT</h1>
+                    <h4>Units are Unique and Useful</h4>
+                    <ul>
+                        <li>Units don't become obsolete</li>
+                        <li>No hidden stat bonuses or penalties</li>
+                        <li>Massive variety of weapons, abilities, and movement types</li>
+                    </ul>
+                </div>
+                <div class="syrup">
+                    [video snippets of fun stuff: lobster, space laser, placeholder, etc.]
+                </div>
             </div>
-            <br />
-        </div>
-        <div class="pancake">
-            <div class="butter">
-                <h1>CONTROL</h1>
-                <h4>Powerful and Intuitive Interface</h4>
-                <ul>
-                    <li>automatic skirmishing AI, control groups
-                    <li>custom line movement, formations
-                    <li>configurable interface, hotkeys
-                </ul>
+            <div class="pancake">
+                <div class="butter">
+                    <h1>CONTROL</h1>
+                    <h4>Powerful and Intuitive Interface</h4>
+                    <ul>
+                        <li>Skirmishing AI, auto groups, area commands, and more</li>
+                        <li>Unique line move for perfect formations</li>
+                        <li>Highly configurable interface</li>
+                        <li>Set Hotkeys to your heart's content</li>
+                    </ul>
+                </div>
+                <div class="syrup">
+                    [video snippets of raiders dodging shots, custom formations, fiddling with interface/widgets]
+                </div>
             </div>
-            <div class="syrup">
-                [video snippets of raiders dodging shots, custom formations, fiddling with interface/widgets]
+            <div class="pancake odd">
+                <div class="butter">
+                    <h1>JOIN US</h1>
+                    <h4>Made BY Players, FOR Players</h4>
+                    <ul>
+                        <li>No shady business practices</li>
+                        <li>Labor of love from volunteers around the world</li>
+                        <li>Developers actively respond to feedback</li>
+                        <li>Free to play in the best way possible</li>
+                    </ul>
+                </div>
+                <div class="syrup">
+                    [video snippets of dominatrix, rezzed enemy units, quotes from players]
+                </div>
             </div>
-            <br />
-        </div>
-        <div class="pancake odd">
-            <div class="syrup">
-                [video snippets of dominatrix, rezzed enemy units, quotes from players]
-            </div>
-            <div class="butter">
-                <h1>JOIN US</h1>
-                <h4>Made BY Players, FOR Players</h4>
-                <ul>
-                    <li>free to play in the best way possible
-                    <li>no bad business practices; labor of love
-                    <li>long term commitments to the community
-                    <li>developers that actively respond to feedback
-                </ul>
-            </div>
-            <br />
-        </div>
-        <div class="download">
-            <h1>DOWNLOAD</h1>
-            <div>
-                [call to action, ultimate purpose of page, direct link - no redirects to wiki/discord/anywhere unless its after the download starts]
+            <div class="download">
+                <h1>DOWNLOAD</h1>
+                <div>
+                    [call to action, ultimate purpose of page, direct link - no redirects to wiki/discord/anywhere unless its after the download starts]
+                </div>
             </div>
         </div>
     </div>

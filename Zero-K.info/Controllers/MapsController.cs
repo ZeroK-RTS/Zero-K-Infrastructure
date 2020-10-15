@@ -95,7 +95,7 @@ namespace ZeroKWeb.Controllers
         /// Map list; params are for filter
         /// </summary>
         public ActionResult Index(string search,
-                                int order,
+                                int? order,
                                 int? offset,
                                 int? sea,
                                 int? hills,
@@ -158,7 +158,7 @@ namespace ZeroKWeb.Controllers
         // TODO: nothing appears to use this. remove?
         [EnableCORS]
         public JsonResult JsonSearch(string search,
-                                    int order,
+                                    int? order,
                                     int? offset,
                                     int? sea,
                                     int? hills,
@@ -392,7 +392,7 @@ namespace ZeroKWeb.Controllers
         #region helper methods
 
         static ZkDataContext FilterMaps(string search,
-                                        int order,
+                                        int? order,
                                         int? offset,
                                         int? sea,
                                         int? hills,
