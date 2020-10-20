@@ -701,6 +701,15 @@ namespace ZkLobbyServer
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
             SaveToDb();
         }
+        public async Task SwitchMaxEvenPlayers(int cnt)
+        {
+            MaxEvenPlayers = cnt;
+            ValidateAndFillDetails();
+            await
+                server.Broadcast(server.ConnectedUsers.Values,
+                    new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
+            SaveToDb();
+        }
         public async Task SwitchInviteMmPlayers(int players)
         {
             InviteMMPlayers = players;
@@ -852,6 +861,7 @@ namespace ZkLobbyServer
                     break;
             }
             if (MaxPlayers > DynamicConfig.Instance.MaximumBattlePlayers && !IsAutohost) MaxPlayers = DynamicConfig.Instance.MaximumBattlePlayers;
+            if (MaxEvenPlayers > MaxPlayers) MaxEvenPlayers = MaxPlayers;
 
             HostedMod = MapPicker.FindResources(ResourceType.Mod, ModName ?? server.Game ?? GlobalConst.DefaultZkTag).FirstOrDefault();
             HostedMap = MapName != null
