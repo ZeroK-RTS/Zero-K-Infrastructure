@@ -4,20 +4,20 @@ using ZkData;
 
 namespace ZkLobbyServer
 {
-    public class CmdMaxPlayers : BattleCommand
+    public class CmdMaxEvenPlayers : BattleCommand
     {
         private int cnt;
-        public override string Help => "count - changes room size, e.g. !maxplayers 10";
-        public override string Shortcut => "maxplayers";
+        public override string Help => "count - if there are <= maxeven players in a room, even balance will be enforced, e.g. !maxevenplayers 10";
+        public override string Shortcut => "maxevenplayers";
         public override AccessType Access => AccessType.NotIngameNotAutohost;
 
-        public override BattleCommand Create() => new CmdMaxPlayers();
+        public override BattleCommand Create() => new CmdMaxEvenPlayers();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
             if (int.TryParse(arguments, out cnt) && cnt > 1)
             {
-                return $"Change max players to {cnt}?";
+                return $"Change max even players to {cnt}?";
             }
             else return null;
         }
@@ -27,8 +27,8 @@ namespace ZkLobbyServer
         {
             if (cnt > 0)
             {
-                await battle.SwitchMaxPlayers(cnt);
-                await battle.SayBattle("Max players changed to " + cnt);
+                await battle.SwitchMaxEvenPlayers(cnt);
+                await battle.SayBattle("Max even players changed to " + cnt);
             }
 
         }

@@ -28,6 +28,7 @@ namespace ZkLobbyServer
         public const int NumberOfMapChoices = 4;
         public const int MinimumAutostartPlayers = 6;
         public static int BattleCounter;
+        public int QueueCounter = 0;
 
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
 
@@ -518,11 +519,11 @@ namespace ZkLobbyServer
             if (TimeQueueEnabled) // spectate beyond max players
             {
                 int allowedPlayers = MaxPlayers;
-                if (context.Players.Count <= DynamicConfig.Instance.MaximumEvenlyBalancedPlayers)
+                if (context.Players.Count <= MaxEvenPlayers)
                 {
                     allowedPlayers = context.Players.Where(x => !x.IsSpectator).Count() & ~0x1;
                 }
-                foreach (var plr in context.Players.Where(x=>!x.IsSpectator).OrderBy(x => x.JoinTime).Skip(allowedPlayers))
+                foreach (var plr in context.Players.Where(x=>!x.IsSpectator).OrderBy(x => x.QueueOrder).Skip(allowedPlayers))
                 {
                     plr.IsSpectator = true;
                 }
@@ -915,6 +916,11 @@ namespace ZkLobbyServer
                         SayBattle("Your Rank (" + Ranks.RankNames[ubs.LobbyUser.Rank] + ") is too low. The minimum Rank to play in this battle is " + Ranks.RankNames[MinRank] + ".", ubs.Name);
                     }
                 }
+                if (ubs.QueueOrder <= 0) ubs.QueueOrder = ++QueueCounter;
+            }
+            else
+            {
+                ubs.QueueOrder = -1;
             }
         }
 

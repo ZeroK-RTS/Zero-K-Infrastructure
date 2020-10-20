@@ -498,6 +498,7 @@ namespace LobbyClient
         public int? SpectatorCount { get; set; }
         public string Title { get; set; }
         public bool? TimeQueueEnabled { get; set; }
+        public int? MaxEvenPlayers { get; set; }
     }
 
     [Message(Origin.Server)]
@@ -546,6 +547,7 @@ namespace LobbyClient
     {
         public int? AllyNumber { get; set; }
         public bool? IsSpectator { get; set; }
+        public int? QueueOrder { get; set; }
         public string Name { get; set; }
         public SyncStatuses? Sync { get; set; }
         
