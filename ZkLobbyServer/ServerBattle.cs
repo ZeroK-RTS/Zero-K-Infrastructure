@@ -139,6 +139,7 @@ namespace ZkLobbyServer
                 autohost.Title = Title;
                 autohost.MaxPlayers = MaxPlayers;
                 autohost.CbalEnabled = IsCbalEnabled;
+                autohost.MaxEvenPlayers = MaxEvenPlayers;
                 if (insert)
                 {
                     db.Autohosts.Add(autohost);
@@ -810,6 +811,7 @@ namespace ZkLobbyServer
             MaxPlayers = autohost.MaxPlayers;
             IsCbalEnabled = autohost.CbalEnabled;
             dbAutohostIndex = autohost.AutohostID;
+            MaxEvenPlayers = autohost.MaxEvenPlayers;
             FounderName = "Autohost #" + BattleID;
             ValidateAndFillDetails();
 
