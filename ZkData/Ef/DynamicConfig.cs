@@ -32,6 +32,9 @@ namespace ZkData
         public double StdevBalanceWeight { get; set; } = 0.01; // weight of stdev difference between teams during balance, elo difference has weight 1
         public double MmEloBonusMultiplier { get; set; } = 0; // elo bonus multiplier to even out matches
 
+        public int MaximumStatLimitedBattlePlayers { get; set; } // if a battle has more than this number of players, maxelo/minelo, maxrank/minrank and maxleve/minlevel are disabled
+        public int MaximumEvenlyBalancedPlayers { get; set; } // if a battle has less than this number of players, it will try to keep team even
+
 
         public static DynamicConfig Instance;
 

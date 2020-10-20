@@ -10,7 +10,7 @@ namespace ZkLobbyServer
         private int rank;
         public override string Help => "rank - changes rank limit for players, e.g. !minrank 5";
         public override string Shortcut => "minrank";
-        public override AccessType Access => AccessType.Admin;
+        public override AccessType Access => AccessType.NotIngameNotAutohost;
 
         public override BattleCommand Create() => new CmdMinRank();
 
@@ -30,6 +30,7 @@ namespace ZkLobbyServer
             {
                 await battle.SwitchMinRank(rank);
                 await battle.SayBattle("Min rank changed to " + Ranks.RankNames[rank]);
+                await battle.SayBattle($"Warning: This command will have no effect if there are more than {DynamicConfig.Instance.MaximumStatLimitedBattlePlayers} players in the room!");
             }
         }
     }
