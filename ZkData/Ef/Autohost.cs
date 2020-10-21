@@ -25,6 +25,7 @@ namespace ZkData
         public int MaxPlayers { get; set; }
         public int MaxEvenPlayers { get; set; }
         public bool CbalEnabled { get; set; } = true;
+        public RatingCategory ApplicableRating { get; set; } = RatingCategory.Casual;
 
         [StringLength(200)]
         public string Title { get; set; }

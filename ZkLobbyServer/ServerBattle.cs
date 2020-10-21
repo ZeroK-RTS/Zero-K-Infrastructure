@@ -140,6 +140,7 @@ namespace ZkLobbyServer
                 autohost.MaxPlayers = MaxPlayers;
                 autohost.CbalEnabled = IsCbalEnabled;
                 autohost.MaxEvenPlayers = MaxEvenPlayers;
+                autohost.ApplicableRating = ApplicableRating;
                 if (insert)
                 {
                     db.Autohosts.Add(autohost);
@@ -504,6 +505,10 @@ namespace ZkLobbyServer
             ModOptions = options;
             await server.Broadcast(Users.Keys, new SetModOptions() { Options = options });
         }
+        public void SetApplicableRating(RatingCategory rating)
+        {
+            ApplicableRating = rating;
+        }
 
 
         public async Task Spectate(string name)
@@ -822,6 +827,7 @@ namespace ZkLobbyServer
             IsCbalEnabled = autohost.CbalEnabled;
             dbAutohostIndex = autohost.AutohostID;
             MaxEvenPlayers = autohost.MaxEvenPlayers;
+            ApplicableRating = autohost.ApplicableRating;
             FounderName = "Autohost #" + BattleID;
             ValidateAndFillDetails();
 
@@ -905,7 +911,7 @@ namespace ZkLobbyServer
                     ubs.IsSpectator = true;
                     SayBattle("This battle is full.", ubs.Name);
                 }
-                if (Users.Values.Count(x => !x.IsSpectator) <= DynamicConfig.Instance.MaximumStatLimitedBattlePlayers)
+                if (Users.Values.Count(x => !x.IsSpectator) <= DynamicConfig.Instance.MaximumStatLimitedBattlePlayers || IsAutohost)
                 {
                     if (ubs.LobbyUser.EffectiveElo > MaxElo && ubs.LobbyUser.EffectiveMmElo > MaxElo)
                     {
