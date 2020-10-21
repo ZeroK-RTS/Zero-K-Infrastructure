@@ -504,6 +504,10 @@ namespace ZkLobbyServer
             ModOptions = options;
             await server.Broadcast(Users.Keys, new SetModOptions() { Options = options });
         }
+        public void SetApplicableRating(RatingCategory rating)
+        {
+            ApplicableRating = rating;
+        }
 
 
         public async Task Spectate(string name)
