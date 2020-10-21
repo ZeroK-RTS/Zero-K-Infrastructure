@@ -905,7 +905,7 @@ namespace ZkLobbyServer
                     ubs.IsSpectator = true;
                     SayBattle("This battle is full.", ubs.Name);
                 }
-                if (Users.Values.Count(x => !x.IsSpectator) <= DynamicConfig.Instance.MaximumStatLimitedBattlePlayers)
+                if (Users.Values.Count(x => !x.IsSpectator) <= DynamicConfig.Instance.MaximumStatLimitedBattlePlayers || IsAutohost)
                 {
                     if (ubs.LobbyUser.EffectiveElo > MaxElo && ubs.LobbyUser.EffectiveMmElo > MaxElo)
                     {
