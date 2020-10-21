@@ -9,7 +9,7 @@ namespace ZkLobbyServer
         private int elo;
         public override string Help => "elo - changes elo limit for players, e.g. !maxelo 1600";
         public override string Shortcut => "maxelo";
-        public override AccessType Access => AccessType.Admin;
+        public override AccessType Access => AccessType.NotIngameNotAutohost;
 
         public override BattleCommand Create() => new CmdMaxElo();
 
@@ -27,6 +27,7 @@ namespace ZkLobbyServer
         {
             await battle.SwitchMaxElo(elo);
             await battle.SayBattle("Max elo changed to " + elo);
+            await battle.SayBattle($"Warning: This command will have no effect if there are more than {DynamicConfig.Instance.MaximumStatLimitedBattlePlayers} players in the room!");
 
         }
     }

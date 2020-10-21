@@ -1,6 +1,7 @@
 #region using
 
 using System;
+using System.Collections;
 using System.Net;
 using Newtonsoft.Json;
 using PlasmaShared;
@@ -20,6 +21,7 @@ namespace LobbyClient
 	{
 		public int AllyNumber;
 		public bool IsSpectator;
+		public int QueueOrder;
         
         public DateTime JoinTime = DateTime.Now;
 
@@ -42,6 +44,7 @@ namespace LobbyClient
                 if (u.IsSpectator.HasValue) IsSpectator = u.IsSpectator.Value;
                 if (u.Sync.HasValue) SyncStatus = u.Sync.Value;
                 if (u.JoinTime.HasValue) JoinTime = u.JoinTime.Value;
+				if (u.QueueOrder.HasValue) QueueOrder = u.QueueOrder.Value;
 	        }
 	    }
 
@@ -52,7 +55,8 @@ namespace LobbyClient
 	            AllyNumber = AllyNumber,
 	            IsSpectator = IsSpectator,
 	            Sync = SyncStatus,
-	            JoinTime = JoinTime
+	            JoinTime = JoinTime,
+				QueueOrder = QueueOrder
 	        };
 	    }
 
@@ -123,7 +127,8 @@ namespace LobbyClient
                 Clan = this.LobbyUser?.Clan,
                 Faction = this.LobbyUser?.Faction,
                 PartyID = this.LobbyUser?.PartyID,
-                JoinTime = this.JoinTime
+                JoinTime = this.JoinTime,
+				QueueOrder = this.QueueOrder
 	        };
 	    }
 	} ;
