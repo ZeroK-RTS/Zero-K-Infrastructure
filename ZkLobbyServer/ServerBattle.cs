@@ -708,7 +708,7 @@ namespace ZkLobbyServer
             ValidateAndFillDetails();
             await
                 server.Broadcast(server.ConnectedUsers.Values,
-                    new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
+                    new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxEvenPlayers = MaxEvenPlayers } });
             SaveToDb();
         }
         public async Task SwitchInviteMmPlayers(int players)
@@ -717,46 +717,56 @@ namespace ZkLobbyServer
             SaveToDb();
         }
 
+        public async Task ValidateAllBattleStatuses()
+        {
+            foreach (var ubs in Users.Values)
+            {
+                ValidateBattleStatus(ubs);
+                await server.Broadcast(Users.Keys, ubs.ToUpdateBattleStatus());
+            }
+            await RecalcSpectators();
+        }
+
         public async Task SwitchMaxElo(int elo)
         {
             MaxElo = elo;
             SaveToDb();
-            Users.Values.ForEach(x => ValidateBattleStatus(x));
+            await ValidateAllBattleStatuses();
         }
 
         public async Task SwitchMinElo(int elo)
         {
             MinElo = elo;
             SaveToDb();
-            Users.Values.ForEach(x => ValidateBattleStatus(x));
+            await ValidateAllBattleStatuses();
         }
 
         public async Task SwitchMaxLevel(int lvl)
         {
             MaxLevel = lvl;
             SaveToDb();
-            Users.Values.ForEach(x => ValidateBattleStatus(x));
+            await ValidateAllBattleStatuses();
         }
 
         public async Task SwitchMinLevel(int lvl)
         {
             MinLevel = lvl;
             SaveToDb();
-            Users.Values.ForEach(x => ValidateBattleStatus(x));
+            await ValidateAllBattleStatuses();
         }
 
         public async Task SwitchMaxRank(int rank)
         {
             MaxRank = rank;
             SaveToDb();
-            Users.Values.ForEach(x => ValidateBattleStatus(x));
+            await ValidateAllBattleStatuses();
         }
 
         public async Task SwitchMinRank(int rank)
         {
             MinRank = rank;
             SaveToDb();
-            Users.Values.ForEach(x => ValidateBattleStatus(x));
+            await ValidateAllBattleStatuses();
         }
 
         public async Task SwitchMinMapSupportLevel(MapSupportLevel lvl)
