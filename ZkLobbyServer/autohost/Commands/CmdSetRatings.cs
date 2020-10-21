@@ -16,7 +16,7 @@ namespace ZkLobbyServer
         public override string Shortcut => "setratings";
         public override AccessType Access => AccessType.Admin;
 
-        public override BattleCommand Create() => new CmdSetOptions();
+        public override BattleCommand Create() => new CmdSetRatings();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
