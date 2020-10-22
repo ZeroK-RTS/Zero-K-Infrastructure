@@ -1,0 +1,63 @@
+﻿
+.punishment {
+    position: relative;
+    background: rgba(100, 0, 0, 0.25);
+    padding: 0.5em;
+    margin: 0.5em;
+
+    h3 {
+        margin: 0.55em 0em;
+    }
+
+    .consequences {
+        /*margin-top: 3em;*/
+        .consequence {
+            display: inline-block;
+            background: rgba(0,0,0,0.2);
+            padding: 0.5em;
+            border: 1px solid rgba(0,0,0,0.5);
+            margin: 0.25em;
+        }
+    }
+
+    .timeframe {
+        position: absolute;
+        top: 0.5em;
+        right: 0.5em;
+        font-size: small;
+        font-style: italic;
+
+        .staticdate {
+            display: none;
+        }
+    }
+
+    .punishdetails {
+        padding: 1em;
+
+        .blocker {
+            display: inline-block;
+            padding: 0.5em;
+            border: 1px solid red;
+            margin: 0.25em;
+        }
+    }
+}
+
+// rearrange when screen is small
+@media only screen and (max-width: 800px) {
+    .punishment {
+        .timeframe {
+            position: relative;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+
+            .issue, .expire {
+                display: inline-block;
+                margin: 1em;
+            }
+        }
+    }
+}

@@ -17,10 +17,15 @@ nav {
         background: @navigation-bg;
         color: @highlight;
         cursor: pointer;
+        transition: 0.5s;
     }
 
     .menu:hover > .submenu {
         display: block;
+    }
+
+    .menu > i {
+        margin-right: 0;
     }
 
     span {

@@ -74,6 +74,10 @@
         }
     </script>
     <style>
+        .todo {
+            display: none;
+        }
+
         * {
             box-sizing: border-box;
         }
@@ -150,8 +154,10 @@
             background: radial-gradient(circle, rgba(0,16,32,0.25) 35%, rgba(0,0,0,0.5) 100%);
             max-width: 50%;
             padding: 2em;
+            border: 1px solid transparent;
             margin-left: auto;
             margin-right: auto;
+            cursor: pointer;
         }
         .download h1 {
             text-align: center;
@@ -163,7 +169,9 @@
             right: 2em;
             font-family: "Xoloniuum", sans-serif;
             font-weight: bold;
-            cursor: pointer;
+        }
+        .download:hover {
+            border: 1px solid magenta;
         }
 
         @@media only screen and (max-width: 800px) 
@@ -195,11 +203,18 @@
                 Download Now
             </div>
         </div>
+        <div class="todo">
+            steal all the cool stuff from:
+            https://www.beyondallreason.info/
+            https://robertsspaceindustries.com/
+            https://www.klei.com/
+
+        </div>
         <div class="stack">
             <div class="pancake">
                 <div class="butter">
                     <h1>DOMINATE</h1>
-                    <h4>Dominate the Battlefield</h4>
+                    <h3>Rule the Battlefield</h3>
                     <ul>
                         <li>Huge multiplayer games
                         <li>Expansive singleplayer campaign
@@ -214,7 +229,7 @@
             <div class="pancake odd">
                 <div class="butter">
                     <h1>STAND OUT</h1>
-                    <h4>Units are Unique and Useful</h4>
+                    <h3>Units are Unique and Useful</h3>
                     <ul>
                         <li>Units don't become obsolete</li>
                         <li>No hidden stat bonuses or penalties</li>
@@ -228,12 +243,12 @@
             <div class="pancake">
                 <div class="butter">
                     <h1>CONTROL</h1>
-                    <h4>Powerful and Intuitive Interface</h4>
+                    <h3>Powerful and Intuitive Interface</h3>
                     <ul>
                         <li>Skirmishing AI, auto groups, area commands, and more</li>
                         <li>Unique line move for perfect formations</li>
                         <li>Highly configurable interface</li>
-                        <li>Set Hotkeys to your heart's content</li>
+                        <li>Set hotkeys to your heart's content</li>
                     </ul>
                 </div>
                 <div class="syrup">
@@ -243,7 +258,7 @@
             <div class="pancake odd">
                 <div class="butter">
                     <h1>JOIN US</h1>
-                    <h4>Made BY Players, FOR Players</h4>
+                    <h3>Made BY Players, FOR Players</h3>
                     <ul>
                         <li>No shady business practices</li>
                         <li>Labor of love from volunteers around the world</li>
@@ -258,7 +273,7 @@
             <div class="download">
                 <h1>DOWNLOAD</h1>
                 <div>
-                    [call to action, ultimate purpose of page, direct link - no redirects to wiki/discord/anywhere unless its after the download starts]
+                    Hmm... maybe in this section we could have the player sign up / link with steam and build out their first custom commander. Give a glimpse at customization options and unlocks to entice them further.
                 </div>
             </div>
         </div>

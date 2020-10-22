@@ -25,6 +25,13 @@
     body {
         font-family: "OpenSans", sans-serif;
     }
+    h1 {
+        margin-bottom: 1em;
+    }
+    form {
+        border: 1px dotted magenta;
+        margin: 1em;
+    }
     .group {
         background: rgba(0,0,0,0.5);
         padding: 1em;
@@ -49,10 +56,9 @@
     }
 </style>
 
-<div class="content admin">
-    <h1>@Html.PrintAccount(@Model, true, true) User Administration</h1>
+<div class="">
     <div class="group user-info">
-        <h2>User Info</h2>
+        <h1>Administration: @Html.PrintAccount(@Model, true, true)</h1>
         <div><span class="infokey">Account Id:</span> <span class="infovalue">@Model.AccountID</span></div>
         <div>
             <span class="infokey">Steam Id:</span>
@@ -144,7 +150,7 @@
         </div>
     </div>
     <div class="group abuse-reports">
-        <h2>Abuse reports</h2>
+        <h1>Abuse reports</h1>
         <table>
             <tbody style="vertical-align:top; background-color:#222">
                 @foreach (var a in Model.AbuseReportsByAccountID)
@@ -154,8 +160,17 @@
             </tbody>
         </table>
     </div>
-    <div class="group old-penalties">
-        <h2>Old penalties</h2>
+    <div class="group penalties">
+        <h1>Penalties</h1>
+        @if (Model.PunishmentsByAccountID.Any())
+        {
+            foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => !x.IsExpired))
+            {
+                @Html.DisplayFor(x => p)
+            }
+        }
+        <hr />
+        <h2>Expired</h2>
         @if (Model.PunishmentsByAccountID.Any())
         {
             foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.IsExpired))
@@ -165,13 +180,14 @@
         }
     </div>
     <div class="group actions">
-        <h2>Actions</h2>
+        <h1>Actions</h1>
         <div>
             <form method="post" action="@Url.Action("SetPassword", "Users", new { accountID = Model.AccountID })">
                 @Html.AntiForgeryToken()
-                <label for="newPassword">Set Password:</label>
+                <label for="newPassword">Set (Temporary) Password:</label>
                 <input type="text" id="newPassword" name="newPassword" value="" />
                 <input type="submit" value="Change Password" />
+                <div>TODO: make this value set a flag on the account to have player forcibly update it themselves to something different.</div>
             </form>
 
             <form method="post" action="@Url.Action("SetUsername", "Users", new { accountID = Model.AccountID })">
@@ -191,16 +207,49 @@
             <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID })">
                 @Html.AntiForgeryToken()
                 TODO: this only available to superadmin? hide otherwise <br />
-                Zero-K admin: @Html.CheckBox("zkAdmin", Model.AdminLevel >= AdminLevel.Moderator)
-                Tourney Control: @Html.CheckBox("tourneyController", Model.IsTourneyController)
-                VPN exception: @Html.CheckBox("vpnException", Model.HasVpnException)
+                <label for="zkAdmin">Zero-K Admin</label>
+                <label class="switch">
+                    @*@Html.CheckBox("zkAdmin", Model.AdminLevel >= AdminLevel.Moderator)*@
+                    <input id="zkAdmin" name="zkAdmin" type="checkbox" />
+                    <span class="slider"></span>
+                </label>
+                <label for="tourneyController">Tourney Control</label>
+                @Html.CheckBox("tourneyController", Model.IsTourneyController)
+                <label for="vpnException">VPN Exception</label>
+                @Html.CheckBox("vpnException", Model.HasVpnException)
                 <input type="submit" value="Modify User" />
             </form>
 
         </div>
     </div>
+    <div class="group penalties">
+        <h1>Penalties</h1>
+
+        <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
+            @Html.AntiForgeryToken()
+            Reason: @Html.TextBox("reason", "Smurf", new { style = "width:500px" })<br />
+            Message only, not a penalty: @Html.CheckBox("messageOnly")<br />
+
+            Punishment hours: @Html.TextBox("banHours", 1)<br />
+            <br />
+            Mute: @Html.CheckBox("banMute")<br />
+            Block Votes: @Html.CheckBox("banVotes")<br />
+            Block commanders: @Html.CheckBox("banCommanders")<br />
+            Disallow spec chat: @Html.CheckBox("banSpecChat")<br />
+            <br />
+            Ban site: @Html.CheckBox("banSite")<br />
+            Ban lobby: @Html.CheckBox("banLobby")<br />
+            Ban forum: @Html.CheckBox("banForum")<br />
+            <br />
+            IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x => x.LastLogin).Select(x => x.IP).FirstOrDefault())<br />
+            User ID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
+            Install ID: @Html.TextBox("installID", lastInstallID)<br />
+
+            <input type="submit" value="PUNISH" class="js_confirm" />
+        </form>
+    </div>
     <div class="group purge">
-        <h2>Purge</h2>
+        <h1>Purge</h1>
         <form method="post" action="@Url.Action("DeleteFromRatings", "Users", new { accountID = Model.AccountID })">
             @Html.AntiForgeryToken()
             <input type="submit" value="Delete User Rating" />
@@ -232,32 +281,6 @@
             <br />
             Enter the target's user name to confirm: @Html.TextBox("accountName")
             <input type="submit" value="Delete Forum Votes" class="js_confirm" />
-        </form>
-    </div>
-    <div class="group penalties">
-        <h2>Penalties</h2>
-
-        <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
-            @Html.AntiForgeryToken()
-            Reason: @Html.TextBox("reason", "Smurf", new { style = "width:500px" })<br />
-            Message only, not a penalty: @Html.CheckBox("messageOnly")<br />
-
-            Punishment hours: @Html.TextBox("banHours", 1)<br />
-            <br />
-            Mute: @Html.CheckBox("banMute")<br />
-            Block Votes: @Html.CheckBox("banVotes")<br />
-            Block commanders: @Html.CheckBox("banCommanders")<br />
-            Disallow spec chat: @Html.CheckBox("banSpecChat")<br />
-            <br />
-            Ban site: @Html.CheckBox("banSite")<br />
-            Ban lobby: @Html.CheckBox("banLobby")<br />
-            Ban forum: @Html.CheckBox("banForum")<br />
-            <br />
-            IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x => x.LastLogin).Select(x => x.IP).FirstOrDefault())<br />
-            User ID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
-            Install ID: @Html.TextBox("installID", lastInstallID)<br />
-
-            <input type="submit" value="PUNISH" class="js_confirm" />
         </form>
     </div>
 </div>

@@ -10,6 +10,8 @@ namespace ZkData
 {
     public class Punishment :IEntityAfterChange
     {
+        #region Mapped properties
+
         public int PunishmentID { get; set; }
         public int AccountID { get; set; }
         [Required]
@@ -38,6 +40,36 @@ namespace ZkData
         public virtual Account AccountByAccountID { get; set; }
         public virtual Account AccountByCreatedAccountID { get; set; }
 
+        #endregion
+
+        #region Unmapped
+
+        [NotMapped]
+        public bool IsExpired
+        {
+            get
+            {
+                return BanExpires < DateTime.UtcNow;
+            }
+        }
+        [NotMapped]
+        public bool hasConsequences
+        {
+            get
+            {
+                return DeleteInfluence ||
+                    DeleteXP ||
+                    BanCommanders ||
+                    BanUnlocks ||
+                    BanSpecChat ||
+                    BanMute ||
+                    BanSite ||
+                    BanForum ||
+                    BanLobby ||
+                    SegregateHost ||
+                    BanVotes;
+            }
+        }
 
         /// <summary>
         /// Finds active punishment
@@ -65,6 +97,11 @@ namespace ZkData
             return ret.OrderByDescending(x => x.BanExpires).FirstOrDefault();
         }
 
+        public void AfterChange(ZkDataContext.EntityEntry entry)
+        {
+            if (entry.State == EntityState.Added || entry.State == EntityState.Deleted || entry.State == EntityState.Modified) CachePunishments();
+        }
+
 
         static object punishmentsLock = new object();
 
@@ -72,23 +109,13 @@ namespace ZkData
         {
             lock (punishmentsLock)
             {
-                using (var db = new ZkDataContext()) punishments = db.Punishments.Where(x => x.BanExpires > DateTime.UtcNow).Include(x=>x.AccountByAccountID).Include(x=>x.AccountByCreatedAccountID).ToList();
+                using (var db = new ZkDataContext()) punishments = db.Punishments.Where(x => x.BanExpires > DateTime.UtcNow).Include(x => x.AccountByAccountID).Include(x => x.AccountByCreatedAccountID).ToList();
             }
         }
 
         private static List<Punishment> punishments = null;
 
-        [NotMapped]
-        public bool IsExpired
-        {
-            get
-            {
-                return BanExpires < DateTime.UtcNow;
-            }
-        }
-        public void AfterChange(ZkDataContext.EntityEntry entry)
-        {
-            if (entry.State == EntityState.Added || entry.State == EntityState.Deleted || entry.State == EntityState.Modified) CachePunishments();
-        }
+        #endregion
+
     }
 }

@@ -520,6 +520,7 @@
     <Content Include="Views\Lobby\LobbyChat.cshtml" />
     <Content Include="Views\Lobby\LobbyChatMessages.cshtml" />
     <Content Include="Views\Shared\_rating.cshtml" />
+    <Content Include="Styles\less\administration.less" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

@@ -93,4 +93,14 @@
     </div>
 
     <img class="rankbg" src="@Ratings.Ranks.GetRankBackgroundImagePath(Model)" />
+
+    <div class="punishments">
+        @if (Model.PunishmentsByAccountID.Any())
+        {
+            foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => !x.IsExpired))
+            {
+                @Html.DisplayFor(x => p)
+            }
+        }
+    </div>
 </div>
