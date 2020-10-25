@@ -79,15 +79,10 @@ nav {
                     font-style: italic;
                 }
             }
-            // overwrite JQuery UI defaults
-            button {
-                display: block;
-                background: @navigation-bg;
-                color: @navigation;
-                width: 100%;
-                border: 1px solid transparent;
-                margin: 1em 0;
 
+            button {
+                margin: 1em 0;
+                // why does JQuery UI inject a span?!? this fixes settings from nav/span
                 span {
                     display: block;
                     position: relative;
@@ -95,15 +90,8 @@ nav {
                     color: @navigation;
                     padding: 0;
                     border: 0;
-                    margin-left: auto;
-                    margin-right: auto;
-                    white-space: nowrap;
+                    margin: 0;
                 }
-            }
-
-            button:hover {
-                background: @highlight;
-                border: 1px solid transparent;
             }
         }
     }
@@ -195,88 +183,72 @@ nav.nav-affixed {
     padding: 0;
     margin: 0;
     z-index: 1000;
-    animation: navanim 500ms ease;
-
-    @keyframes navanim {
-        0% {
-            padding: 1em;
-        }
-
-        100% {
-            padding: 0;
-        }
-    }
+    transition: 1s;
 
     .nav-logo {
-        display: inline-block;
+        display: none;
         margin-right: 0.5em;
 
         img {
             position: absolute;
-            top: -.4em;
+            top: .4em;
             left: 0;
             bottom: 0;
             height: 2em;
-            animation: logoslide 1000ms ease;
-
-            @keyframes logoslide {
-                0% {
-                    /*left: -1000px;*/
-                    opacity: 0;
-                }
-
-                100% {
-                    /*left: 0;*/
-                    opacity: 1;
-                }
-            }
         }
 
         @media only screen and (max-width: 1000px) {
             display: none;
         }
     }
-
-    div.nav-affixed {
-        padding: 0em .5em .5em .5em;
-
-        .submenu {
-            top: 1.6em;
-        }
-
-        animation: divanim 1000ms ease;
-
-        @keyframes divanim {
-            0% {
-                padding: .5em;
-            }
-
-            100% {
-                padding: 0em .5em .5em .5em;
-            }
-        }
-    }
 }
 
 // shrink menu when screen is small
+@media only screen and (max-width: 1000px) {
+    .search .nav-text {
+        display: none;
+    }
+}
+@media only screen and (max-width: 900px) {
+    .media .nav-text {
+        display: none;
+    }
+}
 @media only screen and (max-width: 800px) {
+    .wiki .nav-text {
+        display: none;
+    }
+}
+@media only screen and (max-width: 750px) {
+    .planetwars .nav-text {
+        display: none;
+    }
+}
+@media only screen and (max-width: 700px) {
+    .community .nav-text {
+        display: none;
+    }
+}
+@media only screen and (max-width: 650px) {
+    .play .nav-text {
+        display: none;
+    }
+}
+@media handheld, screen and (max-width: 600px) {
+    .login .nav-text {
+        display: none;
+    }
     nav {
-
         .menu {
-            padding-left: .5em;
-            padding-right: .5em;
+            width: 14%;
             margin: 0;
-        }
-
-        .nav-text {
-            width: 0;
-            overflow: hidden;
         }
 
         .username-container {
             * {
                 display: none;
             }
+
             .rank {
                 display: inline-block;
             }

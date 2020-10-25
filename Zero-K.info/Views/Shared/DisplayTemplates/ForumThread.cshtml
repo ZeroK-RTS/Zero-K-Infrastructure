@@ -34,19 +34,22 @@
 
 <div id="thread@(t.ForumThreadID)" class="thread @alreadyRead @pinned">
     <div class="thread-status">
-        @StickyMark(t)
+        <div>@StickyMark(t)</div>
+        <div class="alt-postcount">
+            @(t.ForumPosts.Count)
+        </div>
     </div>
-    <div class="inline">
+    <div class="thread-content">
         <h3 class="thread-title"><a href="@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })">@t.Title</a></h3>
         <div class="">
             by @Html.PrintAccount(t.AccountByCreatedAccountID) @t.Created.ToAgoString()
         </div>
         <div class="thread-details">
-            <div>
+            <div class="postcount">
                 @t.ForumPosts.Count Posts
             </div>
-            <div>
-                Last post: @t.LastPost.Value.ToAgoString()
+            <div class="lastactive">
+                Latest: @Html.PrintAccount(t.AccountByLastPostAccountID) @t.LastPost.Value.ToAgoString()
                 @*Last read: @(t.ForumThreadLastReads?.FirstOrDefault(x => x.AccountID == Global.AccountID)?.LastRead.ToAgoString() ?? "unread")*@
             </div>
         </div>

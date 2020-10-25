@@ -5,8 +5,9 @@
     font-family: 'OpenSans', sans-serif;
     padding: 1em;
 
-    a {
-        color: @highlight-nonfaction;
+    .category-link {
+        display: inline-block;
+        padding: 0.5em;
     }
 
     .infoCell {
@@ -15,7 +16,12 @@
     }
 
     .filter-section {
+        display: none;
         border-bottom: 1px solid @highlight;
+        margin: 1em 0em;
+    }
+
+    .grid_pager {
         margin: 1em 0em;
     }
 
@@ -29,45 +35,46 @@
         margin: 0;
         margin-bottom: 0.5em;
 
-        .avatar {
-            display: inline-block;
-        }
-
-        .whoen, .edit, .votes {
-            top: 0.5em;
-            position: absolute;
-        }
-
-        .whoen {
-            div {
-                padding-left: 1.5em;
-                display: inline-block;
-            }
-
-            .time {
-                padding-left: 0.5em;
-                font-size: small;
-            }
-        }
-
-        .edit {
-            position: absolute;
-            right: 4em;
-
-            a {
-                padding: .5em;
-            }
-        }
-
-        .votes {
-            position: absolute;
-            right: 1em;
-        }
-
         .header {
+            display: flex;
             background: rgba(0,0,0,.1);
+            width: 100%;
             padding: 0.5em;
             border-bottom: 1px solid @highlight-nonfaction;
+
+            .header-info {
+                width: 100%;
+            }
+
+            .whoen, .edit, .votes {
+                top: 0.5em;
+                /*position: absolute;*/
+            }
+
+            .whoen {
+                div {
+                    padding-left: 1.5em;
+                    display: inline-block;
+                }
+
+                .time {
+                    padding-left: 0.5em;
+                    font-size: small;
+                }
+            }
+
+            .edit {
+                /*position: absolute;*/
+                /*right: 4em;*/
+                a {
+                    padding: .5em;
+                }
+            }
+
+            .votes {
+                /*position: absolute;*/
+                right: 1em;
+            }
         }
 
         .post-content {
@@ -89,11 +96,20 @@
             border: 0;
             margin: 0;
 
-            div.thread-status {
+            .thread-status {
                 display: inline-block;
-                width: 2em;
+                min-width: 2em;
                 vertical-align: top;
                 text-align: center;
+
+                i {
+                    display: block;
+                    width: 100%;
+                }
+            }
+
+            .thread-content {
+                display: inline-block;
             }
 
             .thread-details {
@@ -101,6 +117,30 @@
                 top: 1em;
                 right: 1em;
                 text-align: right;
+            }
+
+            .alt-postcount {
+                display: none;
+            }
+
+            @media only screen and (max-width: 800px) {
+                .thread-details {
+                    position: relative;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    text-align: left;
+
+                    .postcount {
+                        display: none;
+                    }
+                }
+
+                .alt-postcount {
+                    display: block;
+                    margin-top: 0.5em;
+                }
             }
         }
 
@@ -116,15 +156,18 @@
         }
 
         .read {
-            color: @link-read;
+            color: darken(@copy, 20%);
 
             a {
                 color: @link-read;
             }
         }
     }
-
-
+    /*.threads.index {
+        .thread.pinned {
+            margin-bottom: 0;
+        }
+    }*/
     .faction-odds {
         .header {
             border-bottom: 1px solid @highlight-odds;

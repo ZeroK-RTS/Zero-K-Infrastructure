@@ -2,11 +2,11 @@
 @using ZkData
 @model ZeroKWeb.Controllers.ForumController.IndexResult
 @{
-	Page.Title = "Forum " + string.Join(" > ", Model.Path.Select(x => x.Title));
+    Page.Title = "Forum " + string.Join(" > ", Model.Path.Select(x => x.Title));
 
-	var grid = new UniGrid<ForumThread>(Model.Threads);
-	grid.AddCol("sort", x => Html.DisplayFor(m => x)).SetSort(x => x.ForumThreadID).SetWidth("100%");
-	grid.PrepareRenderData();
+    var grid = new UniGrid<ForumThread>(Model.Threads);
+    grid.AddCol("sort", x => Html.DisplayFor(m => x)).SetSort(x => x.ForumThreadID).SetWidth("100%");
+    grid.PrepareRenderData();
 }
 
 <div id="page" class="forum">
@@ -17,9 +17,7 @@
 
         @foreach (var cat in Model.Categories)
         {
-            <span>
-                <b>@Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID })</b>
-            </span>
+            @Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID }, new { @class = "category-link" })
         }
     </div>
 

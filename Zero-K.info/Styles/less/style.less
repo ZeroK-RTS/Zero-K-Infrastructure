@@ -31,7 +31,7 @@ a {
 }
 
 a:hover {
-    color: white;
+    color: white !important;
 }
 
 i {
@@ -48,16 +48,17 @@ hr {
 }
 
 *::selection {
-    background: #ff0000;
+    background: @highlight;
 }
 
 input, textarea, button, select {
     display: block;
-    background: @background;
+    background: fadeout(darken(@highlight, 45%), 10%);
     color: white;
-    padding: .5em;
-    border: 1px solid @background;
-    border-bottom: 1px solid @highlight;
+    width: 100%;
+    padding: 1em;
+    border: 1px solid transparent;
+    border-bottom: 1px solid fadeout(@highlight, 50%);
     margin-bottom: 1em;
     transition: 0.5s;
 }
@@ -72,8 +73,31 @@ input[type=checkbox] {
 
 input[type=button]:hover, input[type=submit]:hover, button:hover {
     background: @highlight;
+    /*background: linear-gradient(45deg, @highlight, black);*/
+    /*background-size: 200% 200%;*/
     border: 1px solid @highlight;
     cursor: pointer;
+    /*-moz-animation: hover_anim 3s ease infinite;
+    animation: hover_anim 3s ease infinite;*/
+}
+
+@-moz-keyframes hover_anim {
+    0% {
+        background-position: 29% 0%
+    }
+
+    50% {
+        background-position: 72% 100%
+    }
+
+    100% {
+        background-position: 29% 0%
+    }
+}
+@keyframes hover_anim {
+    0% {background-position: 0% 0%}
+    30% {background-position: 100% 50%}
+    100% {background-position: 0% 0%}
 }
 
 // site layout
@@ -89,6 +113,11 @@ input[type=button]:hover, input[type=submit]:hover, button:hover {
 #render-body {
     margin-top: 5em;
     padding: 2em;
+}
+@media handheld, screen and (max-width: 650px) {
+    #render-body {
+        padding: 0em;
+    }
 }
 
 .content {

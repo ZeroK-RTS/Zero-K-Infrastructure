@@ -33,7 +33,7 @@
         margin: 1em;
     }
     .group {
-        background: rgba(0,0,0,0.5);
+        background: rgba(0,0,0,0.75);
         padding: 1em;
         margin: 1em;
     }
@@ -199,24 +199,44 @@
 
             <form method="post" action="@Url.Action("ChangeHideCountry", "Users", new { accountID = Model.AccountID })">
                 @Html.AntiForgeryToken()
-                <label for="hideCountry">Hide Country:</label>
-                @Html.CheckBox("hideCountry", Model.HideCountry)
+                <div class="permission">
+                    <label class="switch">
+                        @* @Html.CheckBox("hideCountry", Model.HideCountry) *@
+                        <input id="hideCountry" name="hideCountry" type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <label for="hideCountry">Hide Country:</label>
+                </div>
                 <input type="submit" value="Apply" />
             </form>
 
             <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID })">
                 @Html.AntiForgeryToken()
-                TODO: this only available to superadmin? hide otherwise <br />
-                <label for="zkAdmin">Zero-K Admin</label>
-                <label class="switch">
-                    @*@Html.CheckBox("zkAdmin", Model.AdminLevel >= AdminLevel.Moderator)*@
-                    <input id="zkAdmin" name="zkAdmin" type="checkbox" />
-                    <span class="slider"></span>
-                </label>
-                <label for="tourneyController">Tourney Control</label>
-                @Html.CheckBox("tourneyController", Model.IsTourneyController)
-                <label for="vpnException">VPN Exception</label>
-                @Html.CheckBox("vpnException", Model.HasVpnException)
+                <div>TODO: this only available to superadmin? hide otherwise</div>
+                <div class="permission">
+                    <label class="switch">
+                        @* @Html.CheckBox("zkAdmin", Model.AdminLevel >= AdminLevel.Moderator) *@
+                        <input id="zkAdmin" name="zkAdmin" type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <label for="zkAdmin">Zero-K Admin</label>
+                </div>
+                <div class="permission">
+                    <label class="switch">
+                        @* @Html.CheckBox("tourneyController", Model.IsTourneyController) *@
+                        <input id="tourneyController" name="tourneyController" type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <label for="tourneyController">Tourney Control</label>
+                </div>
+                <div class="permission">
+                    <label class="switch">
+                        @* @Html.CheckBox("vpnException", Model.HasVpnException) *@
+                        <input id="vpnException" name="vpnException" type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <label for="vpnException">VPN Exception</label>
+                </div>
                 <input type="submit" value="Modify User" />
             </form>
 
@@ -224,28 +244,197 @@
     </div>
     <div class="group penalties">
         <h1>Penalties</h1>
+        <style>
+            #punish > div {
+                background: rgba(0,0,0,0.3);
+                padding: 1em;
+                margin-top: 1em;
+            }
+            .inline {
+                display: inline-block;
+            }
+            .indent-1 {
+                padding-left: 1em;
+            }
+            .indent-2 {
+                padding-left: 2em;
+            }
+        </style>
+        <script>
 
-        <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
+            function addPunishmentHours(hours) {
+                hours = parseInt(hours);
+                if (!hours) hours = 0;
+
+                var oldHours = parseInt($("#banHours").val());
+                if (!oldHours) oldHours = 0;
+
+                var newHours = oldHours + hours;
+                $("#banHours").val(newHours).change();
+            }
+
+            $(document).ready(function () {
+                $("#punishTeamKill").click(function () {
+                    $("#reason").val("Team Killing");
+                    $("#banLobby").prop("checked", true);
+                    addPunishmentHours(24);
+                });
+                $("#punishBanDodge").click(function () {
+                    $("#reason").val("Ban Dodging");
+                    $("#banLobby").prop("checked", true);
+                    addPunishmentHours(24 * 7);
+                });
+                $("#punishBadChat").click(function () {
+                    $("#reason").val("Offensive Chat");
+                    $("#banMute").prop("checked", true);
+                    addPunishmentHours(24);
+                });
+                $("#punishBadPost").click(function () {
+                    $("#reason").val("Offensive Post");
+                    $("#banForum").prop("checked", true);
+                    addPunishmentHours(24);
+                });
+
+                $("#addDay").click(function () {
+                    addPunishmentHours(24);
+                });
+                $("#addWeek").click(function () {
+                    addPunishmentHours(24 * 7);
+                });
+                $("#addMonth").click(function () {
+                    addPunishmentHours(24 * 30);
+                });
+                $("#banHours").change(function () {
+                    var newHours = parseInt($("#banHours").val());
+                    if (!newHours) {
+                        $("#hourConversion").html("");
+                        return;
+                    }
+
+                    var expireDate = new Date();
+                    expireDate.setHours(expireDate.getHours() + newHours);
+                    $("#hourConversion").html("Expires on " + expireDate.toLocaleString());
+                });
+
+                $("#resetPunishments").click(function () {
+                    $("#reason").val("");
+                    $("#banHours").val("").change();
+                    $(".consequence input").prop("checked", false);
+                });
+            });
+        </script>
+        <form id="punish" action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
             @Html.AntiForgeryToken()
-            Reason: @Html.TextBox("reason", "Smurf", new { style = "width:500px" })<br />
-            Message only, not a penalty: @Html.CheckBox("messageOnly")<br />
+            @*Message only, not a penalty: @Html.CheckBox("messageOnly")<br />*@
+            @*<br />
+        Mute: @Html.CheckBox("banMute")<br />
+        Block Votes: @Html.CheckBox("banVotes")<br />
+        Block commanders: @Html.CheckBox("banCommanders")<br />
+        Disallow spec chat: @Html.CheckBox("banSpecChat")<br />
+        <br />
+        Ban site: @Html.CheckBox("banSite")<br />
+        Ban lobby: @Html.CheckBox("banLobby")<br />
+        Ban forum: @Html.CheckBox("banForum")<br />*@
 
-            Punishment hours: @Html.TextBox("banHours", 1)<br />
-            <br />
-            Mute: @Html.CheckBox("banMute")<br />
-            Block Votes: @Html.CheckBox("banVotes")<br />
-            Block commanders: @Html.CheckBox("banCommanders")<br />
-            Disallow spec chat: @Html.CheckBox("banSpecChat")<br />
-            <br />
-            Ban site: @Html.CheckBox("banSite")<br />
-            Ban lobby: @Html.CheckBox("banLobby")<br />
-            Ban forum: @Html.CheckBox("banForum")<br />
-            <br />
-            IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x => x.LastLogin).Select(x => x.IP).FirstOrDefault())<br />
-            User ID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
-            Install ID: @Html.TextBox("installID", lastInstallID)<br />
+            @*<br />
+        IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x => x.LastLogin).Select(x => x.IP).FirstOrDefault())<br />
+        User ID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
+        Install ID: @Html.TextBox("installID", lastInstallID)<br />*@
 
-            <input type="submit" value="PUNISH" class="js_confirm" />
+            <div class="who">
+                TODO: fields to deal with smurf accounts
+            </div>
+
+            <div class="why">
+                <input type="text" id="reason" name="reason" placeholder="Reason" style="width: 100%;" />
+                <input type="button" id="submitMessage" class="inline" value="NIGHTWATCH MESSAGE" />
+                <input type="button" id="submitWarning" class="inline" value="WARNING" />
+                <input type="button" id="punishTeamKill" class="inline" value="+ Teamkilling" />
+                <input type="button" id="punishBanDodge" class="inline" value="+ Ban Dodging" />
+                <input type="button" id="punishBadChat" class="inline" value="+ Offensive Chat" />
+                <input type="button" id="punishBadPost" class="inline" value="+ Offensive Post" />
+            </div>
+
+            <div class="when">
+                <input type="text" id="banHours" name="banHours" class="inline" placeholder="Ban Duration (hours)" />
+                <span id="hourConversion"></span>
+                <br />
+                <input type="button" id="addDay" class="inline" value="+ 1 day" />
+                <input type="button" id="addWeek" class="inline" value="+ 1 week" />
+                <input type="button" id="addMonth" class="inline" value="+ 1 month" />
+            </div>
+
+            <div class="what">
+                <div class="consequence">
+                    <label class="switch">
+                        <input id="banLobby" name="banLobby" type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <label for="banLobby">Ban Lobby</label>
+                </div>
+                <div class="consequence indent-1">
+                    <label class="switch">
+                        <input id="banVotes" name="banVotes" type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <label for="banVotes">Block Votes</label>
+                </div>
+                <div class="consequence indent-1">
+                    <label class="switch">
+                        <input id="banCommanders" name="banCommanders" type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <label for="banCommanders">Block Commanders</label>
+                </div>
+                <div class="consequence indent-1">
+                    <label class="switch">
+                        <input id="banMute" name="banMute" type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <label for="banMute">Mute</label>
+                </div>
+                <div class="consequence indent-2">
+                    <label class="switch">
+                        <input id="banSpecChat" name="banSpecChat" type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <label for="banSpecChat">Spectator Mute</label>
+                </div>
+                <div class="consequence">
+                    <label class="switch">
+                        <input id="banSite" name="banSite" type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <label for="banSite">Ban Site</label>
+                </div>
+                <div class="consequence indent-1">
+                    <label class="switch">
+                        <input id="banForum" name="banForum" type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <label for="banForum">Ban Forum</label>
+                </div>
+            </div>
+
+            <div class="how">
+                <div class="inline">
+                    <label for="banIP">Block IP Address</label>
+                    <input id="banIP" name="banIP" type="text" placeholder="IP Address" value="">
+                </div>
+                <div class="inline">
+                    <label for="banUserID">Block User ID</label>
+                    <input id="banUserID" name="banUserID" type="text" placeholder="User ID" value="">
+                </div>
+                <div class="inline">
+                    <label for="installID">Block Install ID</label>
+                    <input id="installID" name="installID" type="text" placeholder="Install ID" value="">
+                </div>
+            </div>
+
+            <div>
+                <input type="button" id="resetPunishments" class="inline" value="RESET" />
+                <input type="submit" class="inline js_confirm" value="PUNISH" />
+            </div>
         </form>
     </div>
     <div class="group purge">

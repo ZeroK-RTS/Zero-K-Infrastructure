@@ -19,48 +19,56 @@
 
 <div id="post@(p.ForumPostID)" class="forum-post @(highlight)">
     <div class="header">
-        @Html.AccountAvatar(p.Account)
-        @if (isWikiMain)
-        {
-            // get the list of wiki edits
-            var edits = Model.ForumPostEdits.Select(x => new { x.Account, x.EditTime }).ToList();
-            // add "edit" for initial creator
-            edits.Insert(0, new { p.Account, EditTime = p.Created });
-            // list contributors (oldest first)
-            foreach (var contributor in edits.GroupBy(x => x.Account).OrderBy(x => x.Max(y => y.EditTime)))
+        <div class="avatar">
+            @Html.AccountAvatar(p.Account)
+        </div>
+        <div class="header-info">
+            @if (isWikiMain)
             {
-                <div class="wiki-contributor">
-                    @Html.PrintAccount(contributor.Key)
-                    <div class="wiki-contributor-edits">
-                        <div>Edits: @contributor.Count()</div>
-                        <div title="@contributor.Min(x => x.EditTime)">First: @contributor.Min(x => x.EditTime).ToAgoString()</div>
-                        <div title="@contributor.Max(x => x.EditTime)">Last:  @contributor.Max(x => x.EditTime).ToAgoString()</div>
+                // get the list of wiki edits
+                var edits = Model.ForumPostEdits.Select(x => new { x.Account, x.EditTime }).ToList();
+                // add "edit" for initial creator
+                edits.Insert(0, new { p.Account, EditTime = p.Created });
+                // list contributors (oldest first)
+                foreach (var contributor in edits.GroupBy(x => x.Account).OrderBy(x => x.Max(y => y.EditTime)))
+                {
+                    <div class="wiki-contributor">
+                        @Html.PrintAccount(contributor.Key)
+                        <div class="wiki-contributor-edits">
+                            <div>Edits: @contributor.Count()</div>
+                            <div title="@contributor.Min(x => x.EditTime)">First: @contributor.Min(x => x.EditTime).ToAgoString()</div>
+                            <div title="@contributor.Max(x => x.EditTime)">Last:  @contributor.Max(x => x.EditTime).ToAgoString()</div>
+                        </div>
                     </div>
-                </div>
+                }
             }
-        }
-        <div class="whoen">
-            @Html.PrintAccount(p.Account)
-            <div class="time" title="@p.Created">@p.Created.ToAgoString()</div>
-        </div>
-        <div class="edit">
-            @if (p.CanEdit(Global.Account))
-            {
-                <a title="Edit this post" href="@Url.Action("NewPost", "Forum", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })"><i class="fa fa-edit"></i></a>
-            }
-            @if (p.ForumPostEdits.Any())
-            {
-                <a title="View post history" href="@Url.Action("Index", "PostHistory", new { id = p.ForumPostID })"><i class="fa fa-history"></i></a>
-            }
-            @if (Global.IsModerator)
-            {
-                <a title="Delete this post" href="@Url.Action("DeletePostPrompt", "Forum", new { postID = p.ForumPostID })"><i class="fa fa-remove"></i></a>
-            }
-            <a title="Link to this post"
-               href="@(Url.Action("Post", "Forum", new { id = p.ForumPostID },
+            <div class="whoen">
+                @Html.PrintAccount(p.Account)
+                <div class="time" title="@p.Created">@p.Created.ToAgoString()</div>
+            </div>
+            <div class="edit">
+                @if (Global.IsAccountAuthorized)
+                {
+                    <a title="Quote this post" href=""><i class="fa fa-quote-left"></i></a>
+                }
+                @if (p.CanEdit(Global.Account))
+                {
+                    <a title="Edit this post" href="@Url.Action("NewPost", "Forum", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })"><i class="fa fa-pencil"></i></a>
+                }
+                @if (p.ForumPostEdits.Any())
+                {
+                    <a title="View post history" href="@Url.Action("Index", "PostHistory", new { id = p.ForumPostID })"><i class="fa fa-calendar"></i></a>
+                }
+                @if (Global.IsModerator)
+                {
+                    <a title="Delete this post" href="@Url.Action("DeletePostPrompt", "Forum", new { postID = p.ForumPostID })"><i class="fa fa-remove"></i></a>
+                }
+                <a title="Link to this post"
+                   href="@(Url.Action("Post", "Forum", new { id = p.ForumPostID },
                                      Request?.Url?.Scheme ?? "http") + "#" + p.ForumPostID)"><i class="fa fa-link"></i></a>
+            </div>
+            @Html.PrintPostRating(p)
         </div>
-        @Html.PrintPostRating(p)
     </div>
     <div class="post-content">
         @Html.BBCodeCached(p)

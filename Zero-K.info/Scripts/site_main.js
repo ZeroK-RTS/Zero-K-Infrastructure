@@ -158,17 +158,12 @@ function GlobalPageInit(root) {
     if (s == null) s = $(document);
 
     // navigation transitions
-    var transition;
     $(window).on('scroll', function () {
         // get position of top of viewport
         var top = Math.round($(window).scrollTop());
+        var transition_point = $("#navtransition").offset().top;
 
-        // get position of transition point
-        if (!transition) transition = $("#navtransition").offset().top - $("#menu").height();
-
-        //console.log(top, transition);
-
-        if (top > transition) {
+        if (top > transition_point) {
             // affix nav to top of screen
             $("#menu").addClass("nav-affixed");
             $("#menu > div").addClass("nav-affixed");

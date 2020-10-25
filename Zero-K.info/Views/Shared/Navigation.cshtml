@@ -9,15 +9,16 @@
     </div><div class="login menu">
     @if (!Global.IsAccountAuthorized)
     {
-        <i class="fa fa-lock"></i><div class="nav-text">Login</div>
+        <i class="fa fa-user-circle"></i><div class="nav-text">Login</div>
         <div class="submenu">
             <form id="login" method="post" action="@Url.Action("Logon", "Home")">
-                <input id="username" type="text" name="username" placeholder="Username" />
+                <input id="username" type="text" name="username" placeholder="Username" autocomplete="off" />
                 <input id="password" type="password" name="password" placeholder="Password" />
                 <input type="submit" value="Login" />
                 <hr />
+                @* TODO: fix jquery ui breaking styles :'( *@
                 <button type="submit">
-                    <img src="~/img/steam-icon.png" /> Login with STEAM
+                    <i class="fa fa-steam"></i> Login with STEAM
                 </button>
                 <input type="hidden" name="referer" value="@(Request["ReturnUrl"] ?? Request.Url?.ToString())" />
             </form>
@@ -57,7 +58,7 @@
               <a href="@logoutUrl"><i class="fa fa-sign-out"></i> Logout<span>You'll be back for more sooner or later...</span></a>
           </div>
     }
-</div><div class="menu">
+    </div><div class="play menu">
         <i class="fa fa-play"></i><div class="nav-text">Play</div>
         <div class="submenu">
             <a href="/Wiki/Download"><i class="fa fa-download"></i> Download Zero-K<span>Download the game! It's Free!</span></a>
@@ -68,32 +69,7 @@
             <a href="@Url.Action("Index", "Ladders")"><i class="fa fa-line-chart"></i> Ladders<span>Do you want to be the very best, like noone ever was?</span></a>
             <a href="@Url.Action("Ratings", "Charts")"><i class="fa fa-pie-chart"></i> Statistics<span>For all the number crunchers out there</span></a>
         </div>
-    </div><div class="menu">
-        <i class="fa fa-video-camera"></i><div class="nav-text">Media</div>
-        <div class="submenu">
-            <a href="/Wiki/Media#Screenshots"><i class="fa fa-camera"></i> Screenshots<span>A picture may have a thousand units, vying for victory</span></a>
-            <a href="/Wiki/Media#Videos"><i class="fa fa-video-camera"></i> Videos<span>Sit back with some popcorn to fully enjoy the explosions</span></a>
-            <a href="/Wiki/Fanart"><i class="fa fa-paint-brush"></i> Fanart<span>Show the world your favorite game</span></a>
-        </div>
-    </div><div class="menu">
-        <i class="fa fa-info-circle"></i><div class="nav-text">Wiki</div>
-        <div class="submenu">
-            <a href="/mediawiki/index.php?title=Manual" target="_blank"><i class="fa fa-file"></i> Index</a>
-            <a href="/mediawiki/index.php?title=Newbie_Guide" target="_blank"><i class="fa fa-book"></i> Newbie guide<span>Just starting out? This should rev up your engines</span></a>
-            <a href="/mediawiki/index.php?title=Units" target="_blank"><i class="fa fa-star"></i> Units<span>A comprehensive collection of the many units available</span></a>
-            <a href="/mediawiki/index.php?title=Economy_Guide" target="_blank"><i class="fa fa-money"></i> Economy<span>Learn how to fuel your massive robot armies</span></a>
-            <a href="/mediawiki/index.php?title=Terraform" target="_blank"><i class="fa fa-road"></i> Terraforming<span>Let's go play in the dirt!</span></a>
-            <a href="/mediawiki/index.php?title=FAQ" target="_blank"><i class="fa fa-question"></i> FAQ<span>Frequently Asked Questions</span></a>
-        </div>
-    </div><div class="menu">
-        <i class="fa fa-crosshairs"></i><div class="nav-text">PlanetWars</div>
-        <div class="submenu">
-            <a href="@Url.Action("Index", "Planetwars")"><i class="fa fa-moon-o"></i> PlanetWars<span>Multiplayer online campaign</span></a>
-            <a href="@Url.Action("Ladder", "Planetwars")"><i class="fa fa-line-chart"></i> Ladder<span>The bravest heros and devious villians in the fight for galactic dominance</span></a>
-            <a href="@Url.Action("Index", "Factions")"><i class="fa fa-university"></i> Factions<span>The mighty factions controlling huge sectors of galaxy</span></a>
-            <a href="@Url.Action("Index", "Clans")"><i class="fa fa-users"></i> Clans<span>Play with your friends or make new ones</span></a>
-        </div>
-    </div><div class="menu">
+    </div><div class="community menu">
         <i class="fa fa-comment"></i><div class="nav-text">Community</div>
         <div class="submenu">
             <a href="@Url.Action("Chat", "Lobby")"><i class="fa fa-comments"></i> Web Chat<span>Keep in touch from anywhere - no downloads required</span></a>
@@ -102,13 +78,38 @@
             <a href="/mediawiki/index.php?title=Zero-K:Privacy_policy" target="_blank"><i class="fa fa-user-secret"></i> Privacy Policy</a>
             <a href="/mediawiki/index.php?title=Zero-K:Contact" target="_blank"><i class="fa fa-envelope"></i> Contact<span>Contact the Zero-K team</span></a>
             <a href="/mediawiki/index.php?title=Credits" target="_blank"><i class="fa fa-address-book"></i> Credits<span>Makers of Zero-K</span></a>
-            <a href="/mediawiki/index.php?title=Zero-K:Developing" target="_blank"><i class="fa fa-code-fork"></i> Develop<span>Help make the game with us</span></a>
+            <a href="/mediawiki/index.php?title=Zero-K:Developing" target="_blank"><i class="fa fa-bug"></i> Develop<span>Help make the game with us</span></a>
+        </div>
+    </div><div class="planetwars menu">
+        <i class="fa fa-crosshairs"></i><div class="nav-text">PlanetWars</div>
+        <div class="submenu">
+            <a href="@Url.Action("Index", "Planetwars")"><i class="fa fa-moon-o"></i> PlanetWars<span>Multiplayer online campaign</span></a>
+            <a href="@Url.Action("Ladder", "Planetwars")"><i class="fa fa-line-chart"></i> Ladder<span>The bravest heros and devious villians in the fight for galactic dominance</span></a>
+            <a href="@Url.Action("Index", "Factions")"><i class="fa fa-university"></i> Factions<span>The mighty factions controlling huge sectors of galaxy</span></a>
+            <a href="@Url.Action("Index", "Clans")"><i class="fa fa-users"></i> Clans<span>Play with your friends or make new ones</span></a>
+        </div>
+    </div><div class="wiki menu">
+        <i class="fa fa-info-circle"></i><div class="nav-text">Wiki</div>
+        <div class="submenu">
+            <a href="/mediawiki/index.php?title=Manual" target="_blank"><i class="fa fa-wikipedia-w"></i> Wiki Index</a>
+            <a href="/mediawiki/index.php?title=Newbie_Guide" target="_blank"><i class="fa fa-book"></i> Newbie guide<span>Just starting out? This should rev up your engines</span></a>
+            <a href="/mediawiki/index.php?title=Units" target="_blank"><i class="fa fa-star"></i> Units<span>A comprehensive collection of the many units available</span></a>
+            <a href="/mediawiki/index.php?title=Economy_Guide" target="_blank"><i class="fa fa-btc"></i> Economy<span>Learn how to fuel your massive robot armies</span></a>
+            <a href="/mediawiki/index.php?title=Terraform" target="_blank"><i class="fa fa-tree"></i> Terraforming<span>Let's go play in the dirt!</span></a>
+            <a href="/mediawiki/index.php?title=FAQ" target="_blank"><i class="fa fa-question"></i> FAQ<span>Frequently Asked Questions</span></a>
+        </div>
+    </div><div class="media menu">
+        <i class="fa fa-video-camera"></i><div class="nav-text">Media</div>
+        <div class="submenu">
+            <a href="/Wiki/Media#Screenshots"><i class="fa fa-camera"></i> Screenshots<span>A picture may have a thousand units, vying for victory</span></a>
+            <a href="/Wiki/Media#Videos"><i class="fa fa-video-camera"></i> Videos<span>Sit back with some popcorn to fully enjoy the explosions</span></a>
+            <a href="/Wiki/Fanart"><i class="fa fa-paint-brush"></i> Fanart<span>Show the world your favorite game</span></a>
         </div>
     </div><div class="search menu">
         <i class="fa fa-search"></i><div class="nav-text">Search</div>
         <div class="submenu">
             <form action="@Url.Action("SubmitSearch","Forum")" method="POST">
-                <input type="text" name="keywords" id="keywords" data-autocomplete="@Url.Action("Index", "Autocomplete")" data-autocomplete-action="goto" />
+                <input type="text" name="keywords" id="keywords" placeholder="Search" data-autocomplete="@Url.Action("Index", "Autocomplete")" data-autocomplete-action="goto" />
                 <button type="submit">
                     <i class="fa fa-search"></i>
                 </button>

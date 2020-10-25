@@ -9,6 +9,8 @@
 
 <head>
     <title>Zero-K</title>
+    <meta name="description" content="Zero-K is a FREE multiplatform, open-source RTS game which aims to be dynamic and action-packed." />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href='@Href("~/img/favicon.png")' />
     <link rel="stylesheet/less" type="text/css" href="~/Styles/less/style.less" />
     @System.Web.Optimization.Styles.Render("~/bundles/maincss")
@@ -76,6 +78,9 @@
     <style>
         .todo {
             display: none;
+            position: absolute;
+            background: rgba(0,0,0,0.5);
+            padding: 2em;
         }
 
         * {
@@ -147,7 +152,11 @@
         .syrup {
             background: rgba(0,0,0,0.75);
             min-height: 350px;
-            padding: 2em;
+            /*padding: 2em;*/
+        }
+        iframe {
+            height: 350px;
+            width: 480px;
         }
 
         .download {
@@ -186,6 +195,10 @@
                 max-height: 200px;
                 min-height: 200px;
             }
+            iframe {
+                height: 200px;
+                width: 100%;
+            }
             .download {
                 max-width: 100%;
             }
@@ -199,9 +212,7 @@
             <canvas id="starlayer1"></canvas>
             <canvas id="starlayer2"></canvas>
             <img src="~/img/zk_logo_orig.png" />
-            <div class="download">
-                Download Now
-            </div>
+            <input type="button" class="download" value="Download Now" />
         </div>
         <div class="todo">
             steal all the cool stuff from:
@@ -223,7 +234,8 @@
                     </ul>
                 </div>
                 <div class="syrup">
-                    [video snippets of large battles, terraformed defenses, campaign scenarios, etc.]
+                    <span class="todo">[video snippets of large battles, terraformed defenses, campaign scenarios, etc.]</span>
+                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?mute=1;autoplay=1" frameborder="0"></iframe>
                 </div>
             </div>
             <div class="pancake odd">
@@ -237,7 +249,8 @@
                     </ul>
                 </div>
                 <div class="syrup">
-                    [video snippets of fun stuff: lobster, space laser, placeholder, etc.]
+                    <span class="todo">[video snippets of fun stuff: lobster, space laser, placeholder, etc.]</span>
+                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?mute=1;autoplay=1" frameborder="0"></iframe>
                 </div>
             </div>
             <div class="pancake">
@@ -252,7 +265,8 @@
                     </ul>
                 </div>
                 <div class="syrup">
-                    [video snippets of raiders dodging shots, custom formations, fiddling with interface/widgets]
+                    <span class="todo">[video snippets of raiders dodging shots, custom formations, fiddling with interface/widgets]</span>
+                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?mute=1;autoplay=1" frameborder="0"></iframe>
                 </div>
             </div>
             <div class="pancake odd">
@@ -267,7 +281,8 @@
                     </ul>
                 </div>
                 <div class="syrup">
-                    [video snippets of dominatrix, rezzed enemy units, quotes from players]
+                    <span class="todo">[video snippets of dominatrix, rezzed enemy units, quotes from players]</span>
+                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?mute=1;autoplay=1" frameborder="0"></iframe>
                 </div>
             </div>
             <div class="download">

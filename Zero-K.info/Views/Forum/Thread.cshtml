@@ -8,15 +8,12 @@
     THREAD
     <div class="infoCell">
         @{Html.RenderPartial("ForumPath", Model.Path);}
-        @Model.CurrentThread.Title
     </div>
 
     @if (!string.IsNullOrEmpty(Model.CurrentThread.WikiKey))
     {
         <h2><a href="@Url.Action("Index", "Wiki", new { node = Model.CurrentThread.WikiKey })">@("[" + Model.CurrentThread.WikiKey + "]")</a></h2>
     }
-
-    <div>@string.Format("{0} posts, {1} views", Model.CurrentThread.PostCount, Model.CurrentThread.ViewCount)</div>
 
     @if (Global.IsModerator)
     {
@@ -38,12 +35,20 @@
                     </select>
                 </div>
                 <div class="inline">
-                    <label for="isPinned">Pinned:</label>
-                    @Html.CheckBox("isPinned", Model.CurrentThread.IsPinned)
+                    <label class="switch">
+                        <input id="isPinned" name="isPinned" type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <label for="isPinned">Pinned</label>
+                    @*@Html.CheckBox("isPinned", Model.CurrentThread.IsPinned)*@
                 </div>
                 <div class="inline">
-                    <label for="isLocked">Locked:</label>
-                    @Html.CheckBox("isLocked", Model.CurrentThread.IsLocked)
+                    <label class="switch">
+                        <input id="isLocked" name="isLocked" type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                    <label for="isLocked">Locked</label>
+                    @*@Html.CheckBox("isLocked", Model.CurrentThread.IsLocked)*@
                 </div>
                 <div class="inline">
                     <input type="submit" value="Save" />
@@ -52,8 +57,9 @@
         </div>
     }
 
+    <h1>@Model.CurrentThread.Title</h1>
+    <div>@Model.CurrentThread.PostCount posts, @Model.CurrentThread.ViewCount views</div>
     @Html.Action("GetPostList", new { threadID = Model.CurrentThread.ForumThreadID, GoToPost = Model.GoToPost })
-
 
     @Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })
 
