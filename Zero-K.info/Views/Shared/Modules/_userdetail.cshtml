@@ -3,7 +3,36 @@
 @model ZkData.Account
 
 <div id="userdetail" class="module">
-    <h2 class="handle">@HtmlHelperExtensions.PrintAccount(Model)</h2>
+    <h2 class="handle">
+        @HtmlHelperExtensions.PrintAccount(Model)
+        <span class="adminuser">
+            @if (Global.AccountID == Model.AccountID)
+            {
+                if (Global.IsModerator)
+                {
+                    // nothing required here
+                }
+                else
+                {
+                    // contact admins
+                    <a href=""><i class="fa fa-suitcase" style="color: inherit;"></i></a>
+                }
+            }
+            else
+            {
+                if (Global.IsModerator)
+                {
+                    // admin user
+                    <a href="/Users/AdminUserDetail/@(Model.AccountID)"><i class="fa fa-gavel"></i></a>
+                }
+                else
+                {
+                    // report user
+                    <a href=""><i class="fa fa-flag"></i></a>
+                }
+            }
+        </span>
+    </h2>
 
     @*@{
                 MvcHtmlString ranks = new MvcHtmlString(Ratings.Ranks.RankBackgroundImages.Select((x, i) => (string)("<img class='icon16' src='/img/ranks/" + Model.GetIconLevel() + "_" + i + ".png'>")).Aggregate((x, y) => x + y));
@@ -94,13 +123,4 @@
 
     <img class="rankbg" src="@Ratings.Ranks.GetRankBackgroundImagePath(Model)" />
 
-    <div class="punishments">
-        @if (Model.PunishmentsByAccountID.Any())
-        {
-            foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => !x.IsExpired))
-            {
-                @Html.DisplayFor(x => p)
-            }
-        }
-    </div>
 </div>

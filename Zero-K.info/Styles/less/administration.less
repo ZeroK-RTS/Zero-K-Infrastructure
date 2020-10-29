@@ -1,31 +1,71 @@
 ﻿
+@import "colors.less";
+
+.warning {
+    color: yellow;
+}
+
 .punishment {
+    color: red;
+}
+
+.playerreports {
+    color: orange;
+}
+
+
+.admin-extra:hover {
+    background: fadein(@background-pop, 20%);
+    cursor: pointer;
+}
+
+.modal div {
+    margin-bottom: 1em;
+}
+
+.moderator-action {
     position: relative;
-    background: rgba(100, 0, 0, 0.25);
+    background: @background-pop;
     padding: 0.5em;
+    border-left: 3px solid;
+    border-right: 3px solid;
     margin: 0.5em;
 
     h3 {
+        color: @copy;
         margin: 0.55em 0em;
     }
 
+    .header {
+        display: flex;
+        flex-direction: row;
+
+        h3 {
+            width: 100%;
+        }
+    }
+
     .consequences {
-        /*margin-top: 3em;*/
+        color: @copy;
+
         .consequence {
-            display: inline-block;
-            background: rgba(0,0,0,0.2);
+            display: block;
+            background: @background-pop;
             padding: 0.5em;
-            border: 1px solid rgba(0,0,0,0.5);
+            border: 1px solid darken(@background-pop, 20%);
             margin: 0.25em;
         }
     }
 
     .timeframe {
-        position: absolute;
-        top: 0.5em;
-        right: 0.5em;
+        color: @copy;
         font-size: small;
         font-style: italic;
+        text-align: right;
+
+        .issue, .expire {
+            width: 15em;
+        }
 
         .staticdate {
             display: none;
@@ -33,10 +73,22 @@
     }
 
     .punishdetails {
-        padding: 1em;
+        color: @copy;
+
+        form {
+            display: inline-block;
+
+            input {
+                width: inherit;
+            }
+        }
+
+        .issuedby {
+            display: inline-block;
+        }
 
         .blocker {
-            display: inline-block;
+            display: block;
             padding: 0.5em;
             border: 1px solid red;
             margin: 0.25em;
@@ -44,19 +96,19 @@
     }
 }
 
+
 // rearrange when screen is small
 @media only screen and (max-width: 800px) {
-    .punishment {
+    .moderator-action {
+        .header {
+            display: block;
+        }
         .timeframe {
-            position: relative;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            text-align: left;
 
             .issue, .expire {
                 display: inline-block;
-                margin: 1em;
+                width: 15em;
             }
         }
     }

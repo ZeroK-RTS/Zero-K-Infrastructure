@@ -21,27 +21,50 @@
         }
         displayExpiry = $"Expires in {timeRemain} <span class='staticdate'>{p.BanExpires}</span>";
     }
+    string modactionclass = "message";
+    if (p.hasConsequences)
+    {
+        modactionclass = "punishment";
+    }
+    else if (!p.MessageOnly)
+    {
+        modactionclass = "warning";
+    }
 }
-<div class="punishment">
+<div class="moderator-action @modactionclass @(Global.IsModerator ? "admin-extra" : "")" 
+     onclick="ToggleExtra('admin-extra-@p.PunishmentID')">
+    <div class="header">
+        @if (p.MessageOnly)
+        {
+            if (Global.AccountID == p.AccountID)
+            {
+                @*<h4>Message received from moderators, click @Html.ActionLink("here", "Chat", "Lobby", new { User = ZkData.GlobalConst.NightwatchName }, null) to see it</h4>*@
+                <h3><i class="fa fa-moon-o"></i> MESSAGE: @p.Reason</h3>
+            }
+            else
+            {
+                <h3><i class="fa fa-moon-o"></i> MESSAGE: Message recieved from Nightwatch. Sign in to read it.</h3>
+            }
+        }
+        else if (p.hasConsequences)
+        {
+            <h3><span class="punishment"><i class="fa fa-gavel"></i> PENALTY:</span> @p.Reason</h3>
+        }
+        else
+        {
+            <h3><span class="warning"><i class="fa fa-warning"></i> WARNING:</span> @p.Reason</h3>
+        }
 
-    @if (p.MessageOnly && !p.hasConsequences)
-    {
-        <h4>Message received from moderators, click @Html.ActionLink("here", "Chat", "Lobby", new { User = ZkData.GlobalConst.NightwatchName }, null) to see it</h4>
-    }
-    else
-    {
-        <h3>@(p.hasConsequences ? "PENALTY:" : "WARNING:") @p.Reason</h3>
-    }
-
-    <div class="timeframe">
-        <div class="issue">@Html.Raw(displayIssued)</div>
-        <div class="expire">@Html.Raw(displayExpiry)</div>
+        <div class="timeframe">
+            <div class="issue">@Html.Raw(displayIssued)</div>
+            <div class="expire">@Html.Raw(displayExpiry)</div>
+        </div>
     </div>
 
     <div class="consequences">
         @if (!p.hasConsequences && !p.MessageOnly)
         {
-            <span class="consequence"><i class="fa fa-warning"></i> Warning</span>
+            <span class="consequence"><i class="fa fa-hourglass-end"></i> Future violations will be less lenient</span>
         }
         @if (p.DeleteInfluence)
         {
@@ -91,8 +114,13 @@
 
     @if (Global.IsModerator)
     {
-        <div class="admin punishdetails">
+        <div id="admin-extra-@p.PunishmentID" class="punishdetails hidden">
             <div class="issuedby">Issued by: @Html.PrintAccount(p.AccountByCreatedAccountID)</div>
+            <form action="@Url.Action("RemovePunishment", "Users")" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="punishmentID" value="@p.PunishmentID" />
+                <input type="submit" value="Remove Punishment" class="js_confirm" />
+            </form>
             @if (!string.IsNullOrEmpty(p.BanIP))
             {
                 <div class="blocker">IP block: @p.BanIP</div>
@@ -105,11 +133,6 @@
             {
                 <div class="blocker">InstallID block: @p.InstallID</div>
             }
-            <form action="@Url.Action("RemovePunishment", "Users")" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="punishmentID" value="@p.PunishmentID" />
-                <input type="submit" value="Remove punishment" class="js_confirm" />
-            </form>
         </div>
     }
 </div>

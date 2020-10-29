@@ -2,22 +2,19 @@
 @using ZkData
 @model ZkData.Account
 
-@if (Global.IsModerator)
+@if (Global.IsModerator && Global.AccountID == Model.AccountID)
 {
 <div id="admin" class="module admin">
     <h2 class="handle">Admin extras</h2>
-
-    @Html.ActionLink("Admin user", "AdminUserDetail", "Users", new { id = Model.AccountID }, null)
-
-    @if (Global.AccountID == Model.AccountID)
-    {
+    
         <form action="@Url.Action("SetZklsMaxPlayers", "Admin")" method="post">
-            Max lobby server players: @Html.TextBox("maxPlayers", MiscVar.ZklsMaxUsers)
+            <label for="maxPlayers">Max lobby server players: </label>
+            @Html.TextBox("maxPlayers", MiscVar.ZklsMaxUsers)
             <input type="submit" value="set" />
         </form>
-
-        <a href="@Url.Action("Index", "Tourney")">Tourney control</a>
+    
         <a href="@Url.Action("Index", "LobbyNews")">Lobby news</a>
+        <a href="@Url.Action("Index", "Tourney")">Tourney control</a>
         <a href="@Url.Action("Index", "Users")">User list</a>
         <a href="@Url.Action("Index", "Charts")">Charts</a>
         <a href="@Url.Action("Index", "PlanetwarsAdmin")">PlanetWars admin</a>
@@ -29,12 +26,14 @@
         <a href="@Url.Action("BlockedVPNs", "Lobby")">Blocked VPNs</a>
         <a href="@Url.Action("ReportLog", "Users")">Abuse report log</a>
 
-        if (GlobalConst.Mode == ModeType.Test)
+        @if (GlobalConst.Mode == ModeType.Test)
         {
             <a href="@Url.Action("ResetDB", "Admin")" class="js_confirm">Reset database (copy from live)</a>
         }
 
-        @Html.Partial("/Views/News/NewsDetail.cshtml", new News() { Created = DateTime.UtcNow, HeadlineUntil = DateTime.UtcNow.AddDays(7) })
-    }
+        <!--<div class="news" style="padding: 1em; border: 1px solid blue;">-->
+            
+        @*@Html.Partial("/Views/News/NewsDetail.cshtml", new News() { Created = DateTime.UtcNow, HeadlineUntil = DateTime.UtcNow.AddDays(7) })*@
+        <!--</div>-->
 </div>
 }

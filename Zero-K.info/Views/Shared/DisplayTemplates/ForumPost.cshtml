@@ -44,12 +44,12 @@
             }
             <div class="whoen">
                 @Html.PrintAccount(p.Account)
-                <div class="time" title="@p.Created">@p.Created.ToAgoString()</div>
+                <span class="time" title="@p.Created">@p.Created.ToAgoString()</span>
             </div>
             <div class="edit">
-                @if (Global.IsAccountAuthorized)
+                @if (Global.IsModerator)
                 {
-                    <a title="Quote this post" href=""><i class="fa fa-quote-left"></i></a>
+                    <a title="Delete this post" href="@Url.Action("DeletePostPrompt", "Forum", new { postID = p.ForumPostID })"><i class="fa fa-remove"></i></a>
                 }
                 @if (p.CanEdit(Global.Account))
                 {
@@ -57,17 +57,19 @@
                 }
                 @if (p.ForumPostEdits.Any())
                 {
-                    <a title="View post history" href="@Url.Action("Index", "PostHistory", new { id = p.ForumPostID })"><i class="fa fa-calendar"></i></a>
+                    <a title="View post history" href="@Url.Action("Index", "PostHistory", new { id = p.ForumPostID })"><i class="fa fa-clock-o"></i></a>
                 }
-                @if (Global.IsModerator)
+                @if (Global.IsAccountAuthorized)
                 {
-                    <a title="Delete this post" href="@Url.Action("DeletePostPrompt", "Forum", new { postID = p.ForumPostID })"><i class="fa fa-remove"></i></a>
+                    // TODO: start new post with quoted text / append quote to existing post if already opened
+                    <a title="Quote this post" href=""><i class="fa fa-quote-left"></i></a>
                 }
                 <a title="Link to this post"
                    href="@(Url.Action("Post", "Forum", new { id = p.ForumPostID },
                                      Request?.Url?.Scheme ?? "http") + "#" + p.ForumPostID)"><i class="fa fa-link"></i></a>
+
+                @Html.PrintPostRating(p)
             </div>
-            @Html.PrintPostRating(p)
         </div>
     </div>
     <div class="post-content">

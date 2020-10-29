@@ -220,7 +220,7 @@ namespace System.Web.Mvc
             
             // moderator icon
             string moderatorIcon = "";
-            if (account.AdminLevel >= AdminLevel.Moderator) moderatorIcon = "<img src='/img/police.png'  class='moderator icon16' alt='Admin' />";
+            if (account.AdminLevel >= AdminLevel.Moderator) moderatorIcon = "<i class='username fa fa-heartbeat'></i>"; // "<img src='/img/police.png'  class='moderator icon16' alt='Admin' />";
 
             // user name
             // nicetitle='$user${account.AccountID}'

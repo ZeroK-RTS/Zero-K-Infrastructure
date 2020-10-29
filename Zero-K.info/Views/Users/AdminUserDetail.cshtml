@@ -8,6 +8,24 @@
     var brokenIDs = new List<Int64>() { 1236934115, 1199297835, -2130083051, 195445522, 1141552226 };
     var smurfs = Model.GetSmurfs();
 
+    // TODO: move this to account property or get reference to linq?
+    int totalWarnings = 0;
+    foreach (var p in Model.PunishmentsByAccountID)
+    {
+        if (!p.hasConsequences && !p.MessageOnly)
+        {
+            totalWarnings++;
+        }
+    }
+    int totalPunishments = 0;
+    foreach (var p in Model.PunishmentsByAccountID)
+    {
+        if (p.hasConsequences)
+        {
+            totalPunishments++;
+        }
+    }
+
     Int64? lastUserID = null;
     if (Model.AccountUserIDs.Any())
     {
@@ -19,46 +37,67 @@
     {
         lastInstallID = Model.AccountUserIDs.OrderByDescending(x => x.LastLogin).FirstOrDefault().InstallID;
     }
-}           
+}
 
 <style>
-    body {
-        font-family: "OpenSans", sans-serif;
-    }
-    h1 {
-        margin-bottom: 1em;
-    }
-    form {
-        border: 1px dotted magenta;
-        margin: 1em;
-    }
+
     .group {
         background: rgba(0,0,0,0.75);
         padding: 1em;
         margin: 1em;
     }
+
     .infokey {
         display: inline-block;
         width: 10em;
         font-weight: bold;
     }
+
     .infovalue, .infovalue form {
         display: inline-block;
     }
-    .infovalue form input {
-        margin: 0;
-        margin-left: 2em;
-    }
+
+        .infovalue form input {
+            margin: 0;
+            margin-left: 2em;
+        }
+
     .purge form {
         background: rgba(0,0,0,0.5);
         padding: 1em;
         margin: 1em;
     }
+
+    #summarytransition {
+        height: 4em;
+    }
+
+    .page-summary {
+        background: rgba(0,0,0,0.8);
+        width: 100%;
+        padding: 1em;
+    }
+
+    .summary-affixed {
+        position: fixed;
+        left: 0;
+        right: 0;
+        z-index: 999;
+    }
+
 </style>
 
+<div id="summarytransition">
+    <div class="page-summary">
+        Administration: @Html.PrintAccount(Model, true, true)
+        <span class="playerreports"><i class="fa fa-flag"></i>@Model.AbuseReportsByAccountID.Count</span>
+        <span class="warning"><i class="fa fa-warning"></i>@totalWarnings</span>
+        <span class="punishment"><i class="fa fa-gavel"></i>@totalPunishments</span>
+    </div>
+</div>
 <div class="">
     <div class="group user-info">
-        <h1>Administration: @Html.PrintAccount(@Model, true, true)</h1>
+        <h1>User Info</h1>
         <div><span class="infokey">Account Id:</span> <span class="infovalue">@Model.AccountID</span></div>
         <div>
             <span class="infokey">Steam Id:</span>
@@ -69,7 +108,7 @@
                 }
                 else
                 {
-                    <span>@Model.SteamID</span>
+                    <span>@Model.SteamID (@Model.SteamName)</span>
                     <form method="post" action="@Url.Action("UnlinkSteamID", "Users", new { accountID = Model.AccountID })">
                         @Html.AntiForgeryToken()
                         <input type="submit" value="Unlink Steam Account" class="js_confirm" />
@@ -150,7 +189,7 @@
         </div>
     </div>
     <div class="group abuse-reports">
-        <h1>Abuse reports</h1>
+        <h1>Abuse reports <span class="playerreports"><i class="fa fa-flag"></i>@Model.AbuseReportsByAccountID.Count</span></h1>
         <table>
             <tbody style="vertical-align:top; background-color:#222">
                 @foreach (var a in Model.AbuseReportsByAccountID)
@@ -161,10 +200,14 @@
         </table>
     </div>
     <div class="group penalties">
-        <h1>Penalties</h1>
+        <h1>
+            Penalties
+            <span class="warning"><i class="fa fa-warning"></i>@totalWarnings</span>
+            <span class="punishment"><i class="fa fa-gavel"></i>@totalPunishments</span>
+        </h1>
         @if (Model.PunishmentsByAccountID.Any())
         {
-            foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => !x.IsExpired))
+            foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => !x.IsExpired).OrderByDescending(x => x.Time))
             {
                 @Html.DisplayFor(x => p)
             }
@@ -173,7 +216,7 @@
         <h2>Expired</h2>
         @if (Model.PunishmentsByAccountID.Any())
         {
-            foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.IsExpired))
+            foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.IsExpired).OrderByDescending(x => x.Time))
             {
                 @Html.DisplayFor(x => p)
             }
@@ -242,24 +285,8 @@
 
         </div>
     </div>
-    <div class="group penalties">
-        <h1>Penalties</h1>
-        <style>
-            #punish > div {
-                background: rgba(0,0,0,0.3);
-                padding: 1em;
-                margin-top: 1em;
-            }
-            .inline {
-                display: inline-block;
-            }
-            .indent-1 {
-                padding-left: 1em;
-            }
-            .indent-2 {
-                padding-left: 2em;
-            }
-        </style>
+    <div class="group punish">
+        <h1>Banhammer Time</h1>
         <script>
 
             function addPunishmentHours(hours) {
@@ -274,6 +301,7 @@
             }
 
             $(document).ready(function () {
+                // common ban configurations
                 $("#punishTeamKill").click(function () {
                     $("#reason").val("Team Killing");
                     $("#banLobby").prop("checked", true);
@@ -295,6 +323,7 @@
                     addPunishmentHours(24);
                 });
 
+                // duration events
                 $("#addDay").click(function () {
                     addPunishmentHours(24);
                 });
@@ -303,6 +332,9 @@
                 });
                 $("#addMonth").click(function () {
                     addPunishmentHours(24 * 30);
+                });
+                $("#addYear").click(function () {
+                    addPunishmentHours(24 * 365);
                 });
                 $("#banHours").change(function () {
                     var newHours = parseInt($("#banHours").val());
@@ -316,100 +348,195 @@
                     $("#hourConversion").html("Expires on " + expireDate.toLocaleString());
                 });
 
+                // when punishment selected, change hidden inputs for MVC to bind properly
+                $(".consequence input[type=checkbox]").change(function () {
+                    var checked = $(this).prop("checked");
+                    var hidden = $(".msft-workaround input[name=" + $(this).attr("name") + "]");
+                    $(this).val(checked);
+                    hidden.val(checked);
+                    console.log("checkbox changed", checked, hidden.val(), hidden, this);
+                });
+
+                // automatically submits a nightwatch message
+                $("#submitMessage").click(function () {
+                    // enable message only option
+                    $("#messageOnly").val(true);
+
+                    // ensure a duration is provided -- defaults to a week
+                    var warningDuration = parseInt($("#banHours").val());
+                    if (!warningDuration) warningDuration = 24 * 7;
+                    $("#banHours").val(warningDuration).change();
+
+                    // clear out punishments
+                    $(".consequence input").prop("checked", false).change();
+
+                    // click submit to generate a message
+                    $("#submitPunishments").click();
+                });
+
+                // automaticaly submits a warning
+                $("#submitWarning").click(function () {
+                    // ensure a duration is provided -- defaults to a week
+                    var warningDuration = parseInt($("#banHours").val());
+                    if (!warningDuration) warningDuration = 24 * 7;
+                    $("#banHours").val(warningDuration).change();
+
+                    // ensure no punishments are selected
+                    $(".consequence input").prop("checked", false).change();
+
+                    // click submit to generate a warning
+                    $("#submitPunishments").click();
+                })
+
+                // clears out all form options
                 $("#resetPunishments").click(function () {
                     $("#reason").val("");
                     $("#banHours").val("").change();
-                    $(".consequence input").prop("checked", false);
+                    $(".consequence input").prop("checked", false).change();
                 });
             });
         </script>
+        <style>
+            #punish > div {
+                background: rgba(0,0,0,0.3);
+                padding: 1em;
+                margin-top: 1em;
+            }
+
+            #banHours {
+                display: inline-block;
+                width: inherit;
+            }
+
+            .flex div, .flex input {
+                width: inherit;
+                flex-grow: 1;
+            }
+
+            .indent-1 {
+                padding-left: 1em;
+            }
+
+            .indent-2 {
+                padding-left: 2em;
+            }
+
+            .what {
+                float: left;
+            }
+
+            .how {
+                float: right;
+            }
+        </style>
         <form id="punish" action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
             @Html.AntiForgeryToken()
-            @*Message only, not a penalty: @Html.CheckBox("messageOnly")<br />*@
-            @*<br />
-        Mute: @Html.CheckBox("banMute")<br />
-        Block Votes: @Html.CheckBox("banVotes")<br />
-        Block commanders: @Html.CheckBox("banCommanders")<br />
-        Disallow spec chat: @Html.CheckBox("banSpecChat")<br />
-        <br />
-        Ban site: @Html.CheckBox("banSite")<br />
-        Ban lobby: @Html.CheckBox("banLobby")<br />
-        Ban forum: @Html.CheckBox("banForum")<br />*@
-
-            @*<br />
-        IP: @Html.TextBox("banIP", Model.AccountIPs.OrderByDescending(x => x.LastLogin).Select(x => x.IP).FirstOrDefault())<br />
-        User ID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
-        Install ID: @Html.TextBox("installID", lastInstallID)<br />*@
 
             <div class="who">
-                TODO: fields to deal with smurf accounts
+                <select>
+                    <option>TODO: pull smurf list</option>
+                </select>
+                <label class="switch">
+                    <input id="smurfBan" name="smurfBan" type="checkbox" />
+                    <span class="slider"></span>
+                </label>
+                <label for="smurfBan">Ban Smurf(s)</label>
+
+                <label class="switch">
+                    <input id="smurfTransfer" name="smurfTransfer" type="checkbox" />
+                    <span class="slider"></span>
+                </label>
+                <label for="smurfTransfer">Transfer game data to @Model.Name</label>
             </div>
 
             <div class="why">
-                <input type="text" id="reason" name="reason" placeholder="Reason" style="width: 100%;" />
-                <input type="button" id="submitMessage" class="inline" value="NIGHTWATCH MESSAGE" />
-                <input type="button" id="submitWarning" class="inline" value="WARNING" />
-                <input type="button" id="punishTeamKill" class="inline" value="+ Teamkilling" />
-                <input type="button" id="punishBanDodge" class="inline" value="+ Ban Dodging" />
-                <input type="button" id="punishBadChat" class="inline" value="+ Offensive Chat" />
-                <input type="button" id="punishBadPost" class="inline" value="+ Offensive Post" />
+                <input type="text" id="reason" name="reason" placeholder="Message" />
+                <div class="flex">
+                    <input type="button" id="submitMessage" value="SEND NIGHTWATCH MESSAGE" />
+                    <input type="button" id="submitWarning" value="GIVE WARNING ONLY" />
+                </div>
+                <h3>Common Reasons</h3>
+                <div class="flex">
+                    <input type="button" id="punishTeamKill" value="+ Teamkilling" />
+                    <input type="button" id="punishBanDodge" value="+ Ban Dodging" />
+                    <input type="button" id="punishBadChat" value="+ Offensive Chat" />
+                    <input type="button" id="punishBadPost" value="+ Offensive Post" />
+                </div>
             </div>
 
             <div class="when">
-                <input type="text" id="banHours" name="banHours" class="inline" placeholder="Ban Duration (hours)" />
-                <span id="hourConversion"></span>
-                <br />
-                <input type="button" id="addDay" class="inline" value="+ 1 day" />
-                <input type="button" id="addWeek" class="inline" value="+ 1 week" />
-                <input type="button" id="addMonth" class="inline" value="+ 1 month" />
+                <div>
+                    <input type="text" id="banHours" name="banHours" placeholder="Ban Duration (hours)" />
+                    <span id="hourConversion"></span>
+                </div>
+                <div class="flex">
+                    <input type="button" id="addDay" value="+ 1 day" />
+                    <input type="button" id="addWeek" value="+ 1 week" />
+                    <input type="button" id="addMonth" value="+ 1 month" />
+                    <input type="button" id="addYear" value="+ 1 year" />
+                </div>
             </div>
 
+            @*
+                https://stackoverflow.com/questions/220020/how-to-handle-checkboxes-in-asp-net-mvc-forms
+                wtf M$FT why do you make things so $#@!ing difficult?!?
+            *@
             <div class="what">
+                <div class="msft-workaround">
+                    <input type="hidden" name="messageOnly" id="messageOnly" value="false" />
+                    <input type="hidden" name="banLobby" value="false" />
+                    <input type="hidden" name="banVotes" value="false" />
+                    <input type="hidden" name="banCommanders" value="false" />
+                    <input type="hidden" name="banMute" value="false" />
+                    <input type="hidden" name="banSpecChat" value="false" />
+                    <input type="hidden" name="banSite" value="false" />
+                    <input type="hidden" name="banForum" value="false" />
+                </div>
                 <div class="consequence">
                     <label class="switch">
-                        <input id="banLobby" name="banLobby" type="checkbox" />
+                        <input id="banLobby" name="banLobby" type="checkbox" value="false" />
                         <span class="slider"></span>
                     </label>
                     <label for="banLobby">Ban Lobby</label>
                 </div>
                 <div class="consequence indent-1">
                     <label class="switch">
-                        <input id="banVotes" name="banVotes" type="checkbox" />
+                        <input id="banVotes" name="banVotes" type="checkbox" value="false" />
                         <span class="slider"></span>
                     </label>
                     <label for="banVotes">Block Votes</label>
                 </div>
                 <div class="consequence indent-1">
                     <label class="switch">
-                        <input id="banCommanders" name="banCommanders" type="checkbox" />
+                        <input id="banCommanders" name="banCommanders" type="checkbox" value="false" />
                         <span class="slider"></span>
                     </label>
                     <label for="banCommanders">Block Commanders</label>
                 </div>
                 <div class="consequence indent-1">
                     <label class="switch">
-                        <input id="banMute" name="banMute" type="checkbox" />
+                        <input id="banMute" name="banMute" type="checkbox" value="false" />
                         <span class="slider"></span>
                     </label>
                     <label for="banMute">Mute</label>
                 </div>
                 <div class="consequence indent-2">
                     <label class="switch">
-                        <input id="banSpecChat" name="banSpecChat" type="checkbox" />
+                        <input id="banSpecChat" name="banSpecChat" type="checkbox" value="false" />
                         <span class="slider"></span>
                     </label>
                     <label for="banSpecChat">Spectator Mute</label>
                 </div>
                 <div class="consequence">
                     <label class="switch">
-                        <input id="banSite" name="banSite" type="checkbox" />
+                        <input id="banSite" name="banSite" type="checkbox" value="false" />
                         <span class="slider"></span>
                     </label>
                     <label for="banSite">Ban Site</label>
                 </div>
                 <div class="consequence indent-1">
                     <label class="switch">
-                        <input id="banForum" name="banForum" type="checkbox" />
+                        <input id="banForum" name="banForum" type="checkbox" value="false" />
                         <span class="slider"></span>
                     </label>
                     <label for="banForum">Ban Forum</label>
@@ -417,59 +544,78 @@
             </div>
 
             <div class="how">
-                <div class="inline">
-                    <label for="banIP">Block IP Address</label>
-                    <input id="banIP" name="banIP" type="text" placeholder="IP Address" value="">
-                </div>
-                <div class="inline">
-                    <label for="banUserID">Block User ID</label>
-                    <input id="banUserID" name="banUserID" type="text" placeholder="User ID" value="">
-                </div>
-                <div class="inline">
-                    <label for="installID">Block Install ID</label>
-                    <input id="installID" name="installID" type="text" placeholder="Install ID" value="">
+                <div class="flex">
+                    <div>
+                        <label for="banIP">Block IP Address</label>
+                        <input id="banIP" name="banIP" type="text" placeholder="IP Address" value="" />
+                    </div>
+                    <div>
+                        <label for="banUserID">Block User ID @*(hash of first NIC's MAC)*@</label>
+                        <input id="banUserID" name="banUserID" type="text" placeholder="User ID" value="" />
+                    </div>
+                    <div>
+                        <label for="installID">Block Install ID @*(OS ID for Windows)*@</label>
+                        <input id="installID" name="installID" type="text" placeholder="Install ID" value="" />
+                    </div>
                 </div>
             </div>
 
-            <div>
-                <input type="button" id="resetPunishments" class="inline" value="RESET" />
-                <input type="submit" class="inline js_confirm" value="PUNISH" />
+            <br class="clearfloat" />
+
+            <div class="flex">
+                <input type="button" id="resetPunishments" value="RESET FORM" />
+                <input type="submit" id="submitPunishments" class="inline js_confirm" value="PUNISH @Model.Name.ToUpper()" />
             </div>
         </form>
     </div>
     <div class="group purge">
         <h1>Purge</h1>
-        <form method="post" action="@Url.Action("DeleteFromRatings", "Users", new { accountID = Model.AccountID })">
-            @Html.AntiForgeryToken()
-            <input type="submit" value="Delete User Rating" />
-            This will remove every game this user participated in from the ratings. <br />
-            It will impact every person this user played with and cannot be undone without rolling back the database!
-        </form>
+        <input type="button" class="modal-open" data-modal="purgeAccount" value="Delete (Hide/Transfer) Account" />
+        <div id="purgeAccount" class="modal">
+            <form method="post" action="@Url.Action("ChangeAccountDeleted", "Users", new { accountID = Model.AccountID })">
+                @Html.AntiForgeryToken()
+                <label for="isDeleted">Hide Account</label>
+                @Html.CheckBox("isDeleted")
+                <label for="alias">Move all games to account:</label>
+                @Html.TextBox("alias")
+                <input type="submit" value="do the thing" />
+            </form>
+        </div>
+        <input type="button" class="modal-open" data-modal="purgeRating" value="Delete User Rating" />
+        <div id="purgeRating" class="modal">
+            <form method="post" action="@Url.Action("DeleteFromRatings", "Users", new { accountID = Model.AccountID })">
+                @Html.AntiForgeryToken()
+                <h1 class="center warning"><i class="fa fa-warning"></i></h1>
+                <div class="center warning">This action cannot be undone!</div>
+                <div class="center warning">Affects all players who played with @Model.Name</div>
+                <div>This will remove every game this user participated in from the ratings.</div>
+                <input type="submit" value="Delete User Rating" />
+            </form>
+        </div>
+        <input type="button" class="modal-open" data-modal="purgePosts" value="Delete Forum Posts" />
+        <div id="purgePosts" class="modal">
+            <form method="post" action="@Url.Action("DeleteAllPostsByUser", "Forum", new { accountID = Model.AccountID })">
+                @Html.AntiForgeryToken()
+                <h1 class="center warning"><i class="fa fa-warning"></i></h1>
+                <div class="center warning">This action cannot be undone!</div>
+                <div>This will permanently remove all of the user's posts. </div>
+                <label for="accountName">Enter the target's user name to confirm:</label>
+                @Html.TextBox("accountName")
+                <input type="submit" class="js_confirm" value="Delete Forum Posts" />
+            </form>
+        </div>
+        <input type="button" class="modal-open" data-modal="purgeVotes" value="Delete Forum Votes" />
+        <div id="purgeVotes" class="modal">
+            <form method="post" action="@Url.Action("DeleteAllForumVotes", "Users", new { accountID = Model.AccountID })">
+                @Html.AntiForgeryToken()
+                <h1 class="center warning"><i class="fa fa-warning"></i></h1>
+                <div class="center warning">This action cannot be undone!</div>
+                <div>This will permanently remove all of the user's up/down votes on the forum.</div>
+                <label for="accountName">Enter the target's user name to confirm:</label>
+                @Html.TextBox("accountName")
+                <input type="submit" class="js_confirm" value="Delete Forum Votes" />
+            </form>
+        </div>
 
-        <form method="post" action="@Url.Action("ChangeAccountDeleted", "Users", new { accountID = Model.AccountID })">
-            @Html.AntiForgeryToken()
-            <label for="isDeleted">Hide (Delete) Account</label>
-            Deleted: @Html.CheckBox("isDeleted") <br />
-            Move all games to account: @Html.TextBox("alias") <br />
-            <input type="submit" />
-        </form>
-
-        <form method="post" action="@Url.Action("DeleteAllPostsByUser", "Forum", new { accountID = Model.AccountID })">
-            @Html.AntiForgeryToken()
-            This will <b>permanently</b> remove <b>all</b> of the user's posts.<br />
-            This action <b>cannot</b> be undone!<br />
-            <br />
-            Enter the target's user name to confirm: @Html.TextBox("accountName")
-            <input type="submit" value="Delete Forum Posts" class="js_confirm" />
-        </form>
-
-        <form method="post" action="@Url.Action("DeleteAllForumVotes", "Users", new { accountID = Model.AccountID })">
-            @Html.AntiForgeryToken()
-            This will <b>permanently</b> remove <b>all</b> of the user's upvotes/downvotes on forum.<br />
-            This action <b>cannot</b> be undone!<br />
-            <br />
-            Enter the target's user name to confirm: @Html.TextBox("accountName")
-            <input type="submit" value="Delete Forum Votes" class="js_confirm" />
-        </form>
     </div>
 </div>

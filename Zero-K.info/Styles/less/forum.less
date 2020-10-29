@@ -43,19 +43,13 @@
             border-bottom: 1px solid @highlight-nonfaction;
 
             .header-info {
+                display: flex;
+                flex-direction: column-reverse;
                 width: 100%;
             }
 
-            .whoen, .edit, .votes {
-                top: 0.5em;
-                /*position: absolute;*/
-            }
-
             .whoen {
-                div {
-                    padding-left: 1.5em;
-                    display: inline-block;
-                }
+                padding-left: 0.5em;
 
                 .time {
                     padding-left: 0.5em;
@@ -64,16 +58,16 @@
             }
 
             .edit {
-                /*position: absolute;*/
-                /*right: 4em;*/
+                height: 100%;
+                text-align: right;
+
                 a {
                     padding: .5em;
                 }
             }
 
             .votes {
-                /*position: absolute;*/
-                right: 1em;
+                display: inline-block;
             }
         }
 

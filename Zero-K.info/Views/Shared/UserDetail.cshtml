@@ -55,6 +55,15 @@
 }
 @if (!Model.IsDeleted || Global.IsModerator)
 {
+    if (Model.PunishmentsByAccountID.Any())
+    {
+        <div class="content punishments">
+            @foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => !x.IsExpired).OrderByDescending(x => x.Time))
+            {
+                @Html.DisplayFor(x => p)
+            }
+        </div>
+    }
     <div class="module-column">
         @{ Html.RenderPartial("_intro", Model); }
         @{ Html.RenderPartial("_userdetail", Model); }
