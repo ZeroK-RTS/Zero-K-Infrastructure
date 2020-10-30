@@ -383,10 +383,17 @@ namespace ZeroKWeb.Controllers
                 string pmAction = "";
                 
                 bool activePenalty = banLobby || banMute || banForum || banSpecChat || banVotes || banCommanders || banSite;
-                
+
+                string punisherName = "<unknown>";
+                if (punishment.CreatedAccountID != null)
+                {
+                    Account adminAcc = db.Accounts.Find((int)punishment.CreatedAccountID);
+                    if (adminAcc != null) punisherName = adminAcc.Name;
+                }
+
                 if (messageOnly && !activePenalty)
                 {
-                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Message sent to {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Message sent to {0} {1} by {2} ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), punisherName));
                     await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - message: {0} ", reason));
                     
                     await Global.Server.GhostPm(acc.Name, string.Format("A moderator has sent you a message: {0}", reason));
@@ -394,7 +401,7 @@ namespace ZeroKWeb.Controllers
                 else
                 {
 
-                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")));
+                    await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("New penalty for {0} {1} issued by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), punisherName));
                     await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - reason: {0} ", reason));
                     await Global.Server.GhostPm(acc.Name, string.Format("Your account has received moderator action, reason: {0}", reason));
 

@@ -9,7 +9,7 @@ namespace ZkLobbyServer
         private int lvl;
         public override string Help => "level - changes level limit for players, e.g. !maxlevel 50";
         public override string Shortcut => "maxlevel";
-        public override AccessType Access => AccessType.Admin;
+        public override AccessType Access => AccessType.NotIngameNotAutohost;
 
         public override BattleCommand Create() => new CmdMaxLevel();
 
@@ -27,6 +27,7 @@ namespace ZkLobbyServer
         {
             await battle.SwitchMaxLevel(lvl);
             await battle.SayBattle("Max level changed to " + lvl);
+            await battle.SayBattle($"Warning: This command will have no effect if there are more than {DynamicConfig.Instance.MaximumStatLimitedBattlePlayers} players in the room!");
 
         }
     }

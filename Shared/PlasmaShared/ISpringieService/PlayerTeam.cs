@@ -12,6 +12,7 @@ namespace PlasmaShared
         public string Clan;
         public string Faction;
         public int? PartyID;
+        public int QueueOrder;
         public DateTime JoinTime;
     }
 }

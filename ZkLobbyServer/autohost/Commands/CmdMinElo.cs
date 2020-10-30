@@ -9,7 +9,7 @@ namespace ZkLobbyServer
         private int elo;
         public override string Help => "elo - changes elo limit for players, e.g. !minelo 1600";
         public override string Shortcut => "minelo";
-        public override AccessType Access => AccessType.Admin;
+        public override AccessType Access => AccessType.NotIngameNotAutohost;
 
         public override BattleCommand Create() => new CmdMinElo();
 
@@ -27,6 +27,7 @@ namespace ZkLobbyServer
         {
             await battle.SwitchMinElo(elo);
             await battle.SayBattle("Min Elo changed to " + elo);
+            await battle.SayBattle($"Warning: This command will have no effect if there are more than {DynamicConfig.Instance.MaximumStatLimitedBattlePlayers} players in the room!");
 
         }
     }

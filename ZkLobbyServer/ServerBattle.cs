@@ -28,6 +28,7 @@ namespace ZkLobbyServer
         public const int NumberOfMapChoices = 4;
         public const int MinimumAutostartPlayers = 6;
         public static int BattleCounter;
+        public int QueueCounter = 0;
 
         public static readonly Dictionary<string, BattleCommand> Commands = new Dictionary<string, BattleCommand>();
 
@@ -138,6 +139,8 @@ namespace ZkLobbyServer
                 autohost.Title = Title;
                 autohost.MaxPlayers = MaxPlayers;
                 autohost.CbalEnabled = IsCbalEnabled;
+                autohost.MaxEvenPlayers = MaxEvenPlayers;
+                autohost.ApplicableRating = ApplicableRating;
                 if (insert)
                 {
                     db.Autohosts.Add(autohost);
@@ -502,6 +505,10 @@ namespace ZkLobbyServer
             ModOptions = options;
             await server.Broadcast(Users.Keys, new SetModOptions() { Options = options });
         }
+        public void SetApplicableRating(RatingCategory rating)
+        {
+            ApplicableRating = rating;
+        }
 
 
         public async Task Spectate(string name)
@@ -517,7 +524,12 @@ namespace ZkLobbyServer
 
             if (TimeQueueEnabled) // spectate beyond max players
             {
-                foreach (var plr in context.Players.Where(x=>!x.IsSpectator).OrderBy(x => x.JoinTime).Skip(MaxPlayers))
+                int allowedPlayers = MaxPlayers;
+                if (context.Players.Count <= MaxEvenPlayers)
+                {
+                    allowedPlayers = context.Players.Where(x => !x.IsSpectator).Count() & ~0x1;
+                }
+                foreach (var plr in context.Players.Where(x=>!x.IsSpectator).OrderBy(x => x.QueueOrder).Skip(allowedPlayers))
                 {
                     plr.IsSpectator = true;
                 }
@@ -695,46 +707,71 @@ namespace ZkLobbyServer
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxPlayers = MaxPlayers } });
             SaveToDb();
         }
+        public async Task SwitchMaxEvenPlayers(int cnt)
+        {
+            MaxEvenPlayers = cnt;
+            ValidateAndFillDetails();
+            await
+                server.Broadcast(server.ConnectedUsers.Values,
+                    new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, MaxEvenPlayers = MaxEvenPlayers } });
+            SaveToDb();
+        }
         public async Task SwitchInviteMmPlayers(int players)
         {
             InviteMMPlayers = players;
             SaveToDb();
         }
 
+        public async Task ValidateAllBattleStatuses()
+        {
+            foreach (var ubs in Users.Values)
+            {
+                ValidateBattleStatus(ubs);
+                await server.Broadcast(Users.Keys, ubs.ToUpdateBattleStatus());
+            }
+            await RecalcSpectators();
+        }
+
         public async Task SwitchMaxElo(int elo)
         {
             MaxElo = elo;
             SaveToDb();
+            await ValidateAllBattleStatuses();
         }
 
         public async Task SwitchMinElo(int elo)
         {
             MinElo = elo;
             SaveToDb();
+            await ValidateAllBattleStatuses();
         }
 
         public async Task SwitchMaxLevel(int lvl)
         {
             MaxLevel = lvl;
             SaveToDb();
+            await ValidateAllBattleStatuses();
         }
 
         public async Task SwitchMinLevel(int lvl)
         {
             MinLevel = lvl;
             SaveToDb();
+            await ValidateAllBattleStatuses();
         }
 
         public async Task SwitchMaxRank(int rank)
         {
             MaxRank = rank;
             SaveToDb();
+            await ValidateAllBattleStatuses();
         }
 
         public async Task SwitchMinRank(int rank)
         {
             MinRank = rank;
             SaveToDb();
+            await ValidateAllBattleStatuses();
         }
 
         public async Task SwitchMinMapSupportLevel(MapSupportLevel lvl)
@@ -789,6 +826,8 @@ namespace ZkLobbyServer
             MaxPlayers = autohost.MaxPlayers;
             IsCbalEnabled = autohost.CbalEnabled;
             dbAutohostIndex = autohost.AutohostID;
+            MaxEvenPlayers = autohost.MaxEvenPlayers;
+            ApplicableRating = autohost.ApplicableRating;
             FounderName = "Autohost #" + BattleID;
             ValidateAndFillDetails();
 
@@ -840,6 +879,7 @@ namespace ZkLobbyServer
                     break;
             }
             if (MaxPlayers > DynamicConfig.Instance.MaximumBattlePlayers && !IsAutohost) MaxPlayers = DynamicConfig.Instance.MaximumBattlePlayers;
+            if (MaxEvenPlayers > MaxPlayers) MaxEvenPlayers = MaxPlayers;
 
             HostedMod = MapPicker.FindResources(ResourceType.Mod, ModName ?? server.Game ?? GlobalConst.DefaultZkTag).FirstOrDefault();
             HostedMap = MapName != null
@@ -871,36 +911,44 @@ namespace ZkLobbyServer
                     ubs.IsSpectator = true;
                     SayBattle("This battle is full.", ubs.Name);
                 }
-                if (ubs.LobbyUser.EffectiveElo > MaxElo && ubs.LobbyUser.EffectiveMmElo > MaxElo)
+                if (Users.Values.Count(x => !x.IsSpectator) <= DynamicConfig.Instance.MaximumStatLimitedBattlePlayers || IsAutohost)
                 {
-                    ubs.IsSpectator = true;
-                    SayBattle("Your rating (" + Math.Min(ubs.LobbyUser.EffectiveElo, ubs.LobbyUser.EffectiveMmElo) + ") is too high. The maximum rating to play in this battle is " + MaxElo + ".", ubs.Name);
+                    if (ubs.LobbyUser.EffectiveElo > MaxElo && ubs.LobbyUser.EffectiveMmElo > MaxElo)
+                    {
+                        ubs.IsSpectator = true;
+                        SayBattle("Your rating (" + Math.Min(ubs.LobbyUser.EffectiveElo, ubs.LobbyUser.EffectiveMmElo) + ") is too high. The maximum rating to play in this battle is " + MaxElo + ".", ubs.Name);
+                    }
+                    if (ubs.LobbyUser.EffectiveElo < MinElo && ubs.LobbyUser.EffectiveMmElo < MinElo)
+                    {
+                        ubs.IsSpectator = true;
+                        SayBattle("Your rating (" + Math.Max(ubs.LobbyUser.EffectiveElo, ubs.LobbyUser.EffectiveMmElo) + ") is too low. The minimum rating to play in this battle is " + MinElo + ".", ubs.Name);
+                    }
+                    if (ubs.LobbyUser.Level > MaxLevel)
+                    {
+                        ubs.IsSpectator = true;
+                        SayBattle("Your level (" + ubs.LobbyUser.Level + ") is too high. The maximum level to play in this battle is " + MaxLevel + ".", ubs.Name);
+                    }
+                    if (ubs.LobbyUser.Level < MinLevel)
+                    {
+                        ubs.IsSpectator = true;
+                        SayBattle("Your level (" + ubs.LobbyUser.Level + ") is too low. The minimum level to play in this battle is " + MinLevel + ".", ubs.Name);
+                    }
+                    if (ubs.LobbyUser.Rank > MaxRank)
+                    {
+                        ubs.IsSpectator = true;
+                        SayBattle("Your Rank (" + Ranks.RankNames[ubs.LobbyUser.Rank] + ") is too high. The maximum Rank to play in this battle is " + Ranks.RankNames[MaxRank] + ".", ubs.Name);
+                    }
+                    if (ubs.LobbyUser.Rank < MinRank)
+                    {
+                        ubs.IsSpectator = true;
+                        SayBattle("Your Rank (" + Ranks.RankNames[ubs.LobbyUser.Rank] + ") is too low. The minimum Rank to play in this battle is " + Ranks.RankNames[MinRank] + ".", ubs.Name);
+                    }
                 }
-                if (ubs.LobbyUser.EffectiveElo < MinElo && ubs.LobbyUser.EffectiveMmElo < MinElo)
-                {
-                    ubs.IsSpectator = true;
-                    SayBattle("Your rating (" + Math.Max(ubs.LobbyUser.EffectiveElo, ubs.LobbyUser.EffectiveMmElo) + ") is too low. The minimum rating to play in this battle is " + MinElo + ".", ubs.Name);
-                }
-                if (ubs.LobbyUser.Level > MaxLevel)
-                {
-                    ubs.IsSpectator = true;
-                    SayBattle("Your level (" + ubs.LobbyUser.Level + ") is too high. The maximum level to play in this battle is " + MaxLevel + ".", ubs.Name);
-                }
-                if (ubs.LobbyUser.Level < MinLevel)
-                {
-                    ubs.IsSpectator = true;
-                    SayBattle("Your level (" + ubs.LobbyUser.Level + ") is too low. The minimum level to play in this battle is " + MinLevel + ".", ubs.Name);
-                }
-                if (ubs.LobbyUser.Rank > MaxRank)
-                {
-                    ubs.IsSpectator = true;
-                    SayBattle("Your Rank (" + Ranks.RankNames[ubs.LobbyUser.Rank] + ") is too high. The maximum Rank to play in this battle is " + Ranks.RankNames[MaxRank] + ".", ubs.Name);
-                }
-                if (ubs.LobbyUser.Rank < MinRank)
-                {
-                    ubs.IsSpectator = true;
-                    SayBattle("Your Rank (" + Ranks.RankNames[ubs.LobbyUser.Rank] + ") is too low. The minimum Rank to play in this battle is " + Ranks.RankNames[MinRank] + ".", ubs.Name);
-                }
+                if (ubs.QueueOrder <= 0) ubs.QueueOrder = ++QueueCounter;
+            }
+            else
+            {
+                ubs.QueueOrder = -1;
             }
         }
 

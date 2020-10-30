@@ -29,6 +29,7 @@ namespace LobbyClient
         public string MapName { get; set; }
 
         public int MaxPlayers { get; set; }
+        public int MaxEvenPlayers { get; set; }
 
         public string ModName { get; set; }
         public Dictionary<string, string> ModOptions { get; set; }
@@ -86,6 +87,7 @@ namespace LobbyClient
             if (h.IsRunning != null) IsInGame = h.IsRunning.Value;
             if (h.IsMatchMaker != null) IsMatchMakerBattle = h.IsMatchMaker.Value;
             if (h.TimeQueueEnabled != null) TimeQueueEnabled = h.TimeQueueEnabled.Value;
+            if (h.MaxEvenPlayers != null) MaxEvenPlayers = h.MaxEvenPlayers.Value;
         }
 
         public virtual BattleHeader GetHeader()
@@ -107,7 +109,8 @@ namespace LobbyClient
                 IsRunning = b.IsInGame,
                 RunningSince = b.IsInGame ? b.RunningSince : null,
                 IsMatchMaker = b.IsMatchMakerBattle,
-                TimeQueueEnabled = b.TimeQueueEnabled
+                TimeQueueEnabled = b.TimeQueueEnabled,
+                MaxEvenPlayers = b.MaxEvenPlayers
             };
         }
 

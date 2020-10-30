@@ -479,6 +479,14 @@
     <Compile Include="Migrations\202009081051101_MergeAdminInterfaceImprovements.Designer.cs">
       <DependentUpon>202009081051101_MergeAdminInterfaceImprovements.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202010201228531_AddAutohostMaxEvenPlayers.cs" />
+    <Compile Include="Migrations\202010201228531_AddAutohostMaxEvenPlayers.Designer.cs">
+      <DependentUpon>202010201228531_AddAutohostMaxEvenPlayers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202010211325096_AddAutohostApplicableRating.cs" />
+    <Compile Include="Migrations\202010211325096_AddAutohostApplicableRating.Designer.cs">
+      <DependentUpon>202010211325096_AddAutohostApplicableRating.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -902,6 +910,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009081051101_MergeAdminInterfaceImprovements.resx">
       <DependentUpon>202009081051101_MergeAdminInterfaceImprovements.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202010201228531_AddAutohostMaxEvenPlayers.resx">
+      <DependentUpon>202010201228531_AddAutohostMaxEvenPlayers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202010211325096_AddAutohostApplicableRating.resx">
+      <DependentUpon>202010211325096_AddAutohostApplicableRating.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

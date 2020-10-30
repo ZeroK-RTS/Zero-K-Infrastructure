@@ -7,7 +7,7 @@ using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
-    public class ForumController: Controller
+    public class ForumController : Controller
     {
         public const int PageSize = GlobalConst.ForumPostsPerPage;
 

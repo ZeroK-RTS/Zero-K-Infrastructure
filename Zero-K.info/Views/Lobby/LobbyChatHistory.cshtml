@@ -55,7 +55,7 @@ var acc = Account.AccountByName(new ZkDataContext(), x.User);
                 <td>Channel</td>
                 <td>@Html.TextBoxFor(x => x.Channel)</td>
             </tr>
-            <tr><td>User</td><td>@Html.TextBoxFor(x => x.User, new { data_autocomplete = Url.Action("UsersNoLink", "Autocomplete"), data_autocomplete_action = "submit" })</td></tr>
+            <tr><td>Users</td><td>@Html.TextBoxFor(x => x.User, new { data_autocomplete = Url.Action("UsersNoLink", "Autocomplete"), data_autocomplete_action = "submit" }) @Html.TextBoxFor(x => x.User2, new { data_autocomplete = Url.Action("UsersNoLink", "Autocomplete"), data_autocomplete_action = "submit" }) @Html.TextBoxFor(x => x.User3, new { data_autocomplete = Url.Action("UsersNoLink", "Autocomplete"), data_autocomplete_action = "submit" }) @Html.TextBoxFor(x => x.User4, new { data_autocomplete = Url.Action("UsersNoLink", "Autocomplete"), data_autocomplete_action = "submit" })</td></tr>
             <tr><td>Time</td><td>@Html.TextBoxFor(x => x.TimeFrom, new { @class = "js_datepicker" }) - @Html.TextBoxFor(x => x.TimeTo, new { @class = "js_datepicker" })</td></tr>
             <tr><td>Text</td><td>@Html.EditorFor(x=>x.Text)</td></tr>
         </table>
