@@ -165,6 +165,19 @@ function ToggleExtra(id) {
     }
 }
 
+function openModal(id) {
+    var modal = $("#" + id);
+    console.log("open modal", id, modal);
+    if (!modal || !$(modal).hasClass("modal")) return;
+    modal.fadeIn();
+    $("#modal-overlay").fadeIn();
+}
+
+function closeModal() {
+    $(".modal:visible").fadeOut();
+    $("#modal-overlay").fadeOut();
+}
+
 function GlobalPageInit(root) {
 
     // navigation transitions
@@ -201,13 +214,10 @@ function GlobalPageInit(root) {
 
     $(".modal-open").click(function () {
         var modalID = $(this).data("modal");
-        $("#" + modalID).fadeIn();
-        $("#modal-overlay").fadeIn();
+        openModal(modalID);
     });
-    $("#modal-overlay").click(function () {
-        $(".modal:visible").fadeOut();
-        $("#modal-overlay").fadeOut();
-    });
+    $(".modal-close").click(closeModal)
+    $("#modal-overlay").click(closeModal);
 
     var s = root;
     if (s == null) s = $(document);

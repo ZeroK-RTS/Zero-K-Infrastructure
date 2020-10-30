@@ -32,7 +32,7 @@ a {
 }
 
 a:hover {
-    color: white !important;
+    color: white;
 }
 
 br {
@@ -132,12 +132,15 @@ input[type=button]:hover, input[type=submit]:hover, button:hover {
 }
 
 #render-body {
+    background: @background;
     margin-top: 5em;
-    padding: 2em;
+    margin-left: 2em;
+    margin-right: 2em;
 }
 @media handheld, screen and (max-width: 650px) {
     #render-body {
-        padding: 0em;
+        margin-left: 0em;
+        margin-right: 0em;
     }
 }
 
@@ -172,7 +175,7 @@ input[type=button]:hover, input[type=submit]:hover, button:hover {
 
 .content {
     padding: 1em;
-    background: @background;
+    /*background: @background;*/
 }
 
 .flex {
@@ -201,10 +204,28 @@ input[type=button]:hover, input[type=submit]:hover, button:hover {
     top: 20%;
     left: 25%;
     right: 25%;
+    padding: 1em;
     border: 1px solid @background-alt;
     border-radius: 1em;
     box-shadow: 0 0 10px @highlight;
     z-index: 1002;
+
+    .modal-close {
+        position: absolute;
+        color: @copy;
+        top: 1em;
+        right: 1em;
+        cursor: pointer;
+        transition: 0.5s;
+    }
+}
+.modal:hover {
+    .modal-close {
+        color: @highlight;
+    }
+    .modal-close:hover {
+        color: @copy;
+    }
 }
 
 // TODO: move to forum style

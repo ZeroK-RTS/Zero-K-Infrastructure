@@ -643,7 +643,25 @@ namespace ZeroKWeb.Controllers
             if (!string.IsNullOrEmpty(newPassword)) acc.SteamID = null;
             db.SaveChanges();
             await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} changed {1} password", Global.Account.Name, acc.Name));
-            return Content(string.Format("{0} password set to {1}", acc.Name, newPassword));
+            if (!string.IsNullOrEmpty(newPassword))
+            {
+                await Global.Server.GhostPm(acc.Name, $"Your password has been set to {newPassword}. You may now login and change it to something memorable.");
+                return Content($"{acc.Name} password set to {newPassword}");
+            }
+            else
+            {
+                if (acc.SteamID == null)
+                {
+                    // no steam link, no password, no login?
+                    return Content($"Password has been removed. There is no Steam account linked. Login is now impossible!");
+                }
+                else
+                {
+                    await Global.Server.GhostPm(acc.Name, $"Your password has been removed. You can now only login with your Steam account.");
+                    return Content($"Password is now blank. {acc.Name} must now login with Steam.");
+                }
+                
+            }
         }
 
 

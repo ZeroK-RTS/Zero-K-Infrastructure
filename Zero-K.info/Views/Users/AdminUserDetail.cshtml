@@ -62,12 +62,6 @@
             margin-left: 2em;
         }
 
-    .purge form {
-        background: rgba(0,0,0,0.5);
-        padding: 1em;
-        margin: 1em;
-    }
-
     #summarytransition {
         height: 4em;
     }
@@ -224,22 +218,33 @@
     </div>
     <div class="group actions">
         <h1>Actions</h1>
-        <div>
+
+        <input type="button" class="modal-open" data-modal="resetPassword" value="Reset Password" />
+        <div id="resetPassword" class="modal">
+            <i class="fa fa-close modal-close"></i>
             <form method="post" action="@Url.Action("SetPassword", "Users", new { accountID = Model.AccountID })">
                 @Html.AntiForgeryToken()
-                <label for="newPassword">Set (Temporary) Password:</label>
-                <input type="text" id="newPassword" name="newPassword" value="" />
+                @*<div>TODO: make this value set a flag on the account to have player forcibly update it themselves to something different.</div>*@
+                <label for="newPassword">Set a temporary password:</label>
+                <input type="text" id="newPassword" name="newPassword" value="ChangeMe123" />
                 <input type="submit" value="Change Password" />
-                <div>TODO: make this value set a flag on the account to have player forcibly update it themselves to something different.</div>
             </form>
+        </div>
 
+        <input type="button" class="modal-open" data-modal="changeUsername" value="Change Username" />
+        <div id="changeUsername" class="modal">
+            <i class="fa fa-close modal-close"></i>
             <form method="post" action="@Url.Action("SetUsername", "Users", new { accountID = Model.AccountID })">
                 @Html.AntiForgeryToken()
                 <label for="newUsername">Set Username:</label>
                 <input type="text" id="newUsername" name="newUsername" value="Lobster" />
                 <input type="submit" value="Change Username" />
             </form>
+        </div>
 
+        <input type="button" class="modal-open" data-modal="accountSettings" value="Modify Account Settings" />
+        <div id="accountSettings" class="modal">
+            <i class="fa fa-close modal-close"></i>
             <form method="post" action="@Url.Action("ChangeHideCountry", "Users", new { accountID = Model.AccountID })">
                 @Html.AntiForgeryToken()
                 <div class="permission">
@@ -248,14 +253,19 @@
                         <input id="hideCountry" name="hideCountry" type="checkbox" />
                         <span class="slider"></span>
                     </label>
-                    <label for="hideCountry">Hide Country:</label>
+                    <label for="hideCountry">Hide Country</label>
                 </div>
-                <input type="submit" value="Apply" />
+                <input type="submit" class="hidden" value="Apply" />
             </form>
 
             <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID })">
                 @Html.AntiForgeryToken()
-                <div>TODO: this only available to superadmin? hide otherwise</div>
+                <div class="msft-workaround">
+                    <input type="hidden" name="zkAdmin" value="false" />
+                    <input type="hidden" name="tourneyController" value="false" />
+                    <input type="hidden" name="vpnException" value="false" />
+                </div>
+                <div>@*TODO: this only available to superadmin? hide otherwise*@</div>
                 <div class="permission">
                     <label class="switch">
                         @* @Html.CheckBox("zkAdmin", Model.AdminLevel >= AdminLevel.Moderator) *@
@@ -280,10 +290,64 @@
                     </label>
                     <label for="vpnException">VPN Exception</label>
                 </div>
-                <input type="submit" value="Modify User" />
+                <input type="submit" class="hidden" value="Modify User" />
             </form>
-
         </div>
+
+        <input type="button" class="modal-open" data-modal="purgeAccount" value="Hide/Transfer Account" />
+        <div id="purgeAccount" class="modal">
+            <i class="fa fa-close modal-close"></i>
+            <form method="post" action="@Url.Action("ChangeAccountDeleted", "Users", new { accountID = Model.AccountID })">
+                @Html.AntiForgeryToken()
+                <label for="isDeleted">Hide Account</label>
+                @Html.CheckBox("isDeleted")
+                <label for="alias">Move all games to account:</label>
+                @Html.TextBox("alias")
+                <input type="submit" value="Hide / Transfer Account" />
+            </form>
+        </div>
+
+        <input type="button" class="modal-open" data-modal="purgeRating" value="Delete User Rating" />
+        <div id="purgeRating" class="modal">
+            <i class="fa fa-close modal-close"></i>
+            <form method="post" action="@Url.Action("DeleteFromRatings", "Users", new { accountID = Model.AccountID })">
+                @Html.AntiForgeryToken()
+                <h1 class="center warning"><i class="fa fa-warning"></i></h1>
+                <div class="center warning">This action cannot be undone!</div>
+                <div class="center warning">Affects all players who played with @Model.Name</div>
+                <div>This will remove every game this user participated in from the ratings.</div>
+                <input type="submit" value="Delete User Rating" />
+            </form>
+        </div>
+
+        <input type="button" class="modal-open" data-modal="purgePosts" value="Delete Forum Posts" />
+        <div id="purgePosts" class="modal">
+            <i class="fa fa-close modal-close"></i>
+            <form method="post" action="@Url.Action("DeleteAllPostsByUser", "Forum", new { accountID = Model.AccountID })">
+                @Html.AntiForgeryToken()
+                <h1 class="center warning"><i class="fa fa-warning"></i></h1>
+                <div class="center warning">This action cannot be undone!</div>
+                <div>This will permanently remove all of the user's posts. </div>
+                <label for="accountName">Enter the target's user name to confirm:</label>
+                @Html.TextBox("accountName")
+                <input type="submit" class="js_confirm" value="Delete Forum Posts" />
+            </form>
+        </div>
+
+        <input type="button" class="modal-open" data-modal="purgeVotes" value="Delete Forum Votes" />
+        <div id="purgeVotes" class="modal">
+            <i class="fa fa-close modal-close"></i>
+            <form method="post" action="@Url.Action("DeleteAllForumVotes", "Users", new { accountID = Model.AccountID })">
+                @Html.AntiForgeryToken()
+                <h1 class="center warning"><i class="fa fa-warning"></i></h1>
+                <div class="center warning">This action cannot be undone!</div>
+                <div>This will permanently remove all of the user's up/down votes on the forum.</div>
+                <label for="accountName">Enter the target's user name to confirm:</label>
+                @Html.TextBox("accountName")
+                <input type="submit" class="js_confirm" value="Delete Forum Votes" />
+            </form>
+        </div>
+
     </div>
     <div class="group punish">
         <h1>Banhammer Time</h1>
@@ -567,55 +631,5 @@
                 <input type="submit" id="submitPunishments" class="inline js_confirm" value="PUNISH @Model.Name.ToUpper()" />
             </div>
         </form>
-    </div>
-    <div class="group purge">
-        <h1>Purge</h1>
-        <input type="button" class="modal-open" data-modal="purgeAccount" value="Delete (Hide/Transfer) Account" />
-        <div id="purgeAccount" class="modal">
-            <form method="post" action="@Url.Action("ChangeAccountDeleted", "Users", new { accountID = Model.AccountID })">
-                @Html.AntiForgeryToken()
-                <label for="isDeleted">Hide Account</label>
-                @Html.CheckBox("isDeleted")
-                <label for="alias">Move all games to account:</label>
-                @Html.TextBox("alias")
-                <input type="submit" value="do the thing" />
-            </form>
-        </div>
-        <input type="button" class="modal-open" data-modal="purgeRating" value="Delete User Rating" />
-        <div id="purgeRating" class="modal">
-            <form method="post" action="@Url.Action("DeleteFromRatings", "Users", new { accountID = Model.AccountID })">
-                @Html.AntiForgeryToken()
-                <h1 class="center warning"><i class="fa fa-warning"></i></h1>
-                <div class="center warning">This action cannot be undone!</div>
-                <div class="center warning">Affects all players who played with @Model.Name</div>
-                <div>This will remove every game this user participated in from the ratings.</div>
-                <input type="submit" value="Delete User Rating" />
-            </form>
-        </div>
-        <input type="button" class="modal-open" data-modal="purgePosts" value="Delete Forum Posts" />
-        <div id="purgePosts" class="modal">
-            <form method="post" action="@Url.Action("DeleteAllPostsByUser", "Forum", new { accountID = Model.AccountID })">
-                @Html.AntiForgeryToken()
-                <h1 class="center warning"><i class="fa fa-warning"></i></h1>
-                <div class="center warning">This action cannot be undone!</div>
-                <div>This will permanently remove all of the user's posts. </div>
-                <label for="accountName">Enter the target's user name to confirm:</label>
-                @Html.TextBox("accountName")
-                <input type="submit" class="js_confirm" value="Delete Forum Posts" />
-            </form>
-        </div>
-        <input type="button" class="modal-open" data-modal="purgeVotes" value="Delete Forum Votes" />
-        <div id="purgeVotes" class="modal">
-            <form method="post" action="@Url.Action("DeleteAllForumVotes", "Users", new { accountID = Model.AccountID })">
-                @Html.AntiForgeryToken()
-                <h1 class="center warning"><i class="fa fa-warning"></i></h1>
-                <div class="center warning">This action cannot be undone!</div>
-                <div>This will permanently remove all of the user's up/down votes on the forum.</div>
-                <label for="accountName">Enter the target's user name to confirm:</label>
-                @Html.TextBox("accountName")
-                <input type="submit" class="js_confirm" value="Delete Forum Votes" />
-            </form>
-        </div>
-
     </div>
 </div>
