@@ -315,35 +315,6 @@ namespace ZeroKWeb.Controllers
     }
 
 
-    public class LadderRatingHistory : IGraphDataProvider
-    {
-        public readonly int AccountID;
-        public readonly RatingCategory Category;
-        public readonly string AccountName;
-
-        public LadderRatingHistory(int accountID, RatingCategory category)
-        {
-            this.AccountID = accountID;
-            this.Category = category;
-            using (var db = new ZkDataContext())
-            {
-                AccountName = db.Accounts.Where(x => x.AccountID == accountID).FirstOrDefault().Name;
-            }
-        }
-
-        public IList<GraphPoint> GetDailyValues(DateTime fromTime, DateTime toTime)
-        {
-            Dictionary<DateTime, float> ratings = RatingSystems.GetRatingSystem(Category).GetPlayerLadderRatingHistory(AccountID);
-            return ratings.Where(x => x.Key >= fromTime && x.Key <= toTime).Select(x => new GraphPoint() { Day = x.Key, Value = x.Value, }).ToList();
-        }
-
-        public string Name => "ladder_rating_history";
-        public string Title => AccountName + " (75% confidence)";
-    }
-
-
-
-
     public class ChartsController : Controller
     {
 

@@ -364,7 +364,7 @@ namespace ChobbyLauncher
                 else
                 {
                     MinimizeChobby();
-                    System.Diagnostics.Process.Start(args.Url);
+                    System.Diagnostics.Process.Start(Uri.EscapeUriString(args.Url));
                 }
             }
             catch (Exception ex)

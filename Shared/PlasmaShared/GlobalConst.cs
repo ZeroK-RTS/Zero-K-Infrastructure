@@ -145,10 +145,11 @@ namespace ZkData
         public const float EloToNaturalRatingMultiplierSquared = 0.00003313686f;
         public static float NaturalRatingVariancePerDay(float games) => EloToNaturalRatingMultiplierSquared * 200000 / (games + 400); //whr expected player rating change over time
         public const float NaturalRatingVariancePerGame = EloToNaturalRatingMultiplierSquared * 500; //whr expected player rating change per game played
-        public const float RatingConfidenceSigma = 0.675f; //75% confidence rating
         public const float LadderEloMaxChange = 50;
         public const float LadderEloMinChange = 1;
-        public const float LadderEloSmoothingFactor = 0.25f; //1 for change as fast as whr, 0 for no change
+        public const float LadderEloClassicEloWeight = 0.5f; //Weight of classic elo change compared to WHR change
+        public const float LadderEloClassicEloK = 32f; //K value of classic elo
+        public const float LadderEloSmoothingFactor = 0.8f; //1 for change as fast as whr, 0 for no change
 
         public const int MapBansPerPlayer = 6; // Allow users to enter this many bans in UI
         public const float MaximumPercentageOfBannedMaps = 0.75f; // Do not ban more than 75% of all maps regardless of player or ban count

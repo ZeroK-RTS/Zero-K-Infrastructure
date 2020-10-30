@@ -105,7 +105,7 @@ namespace Ratings
             return bestProgress;
         }
 
-        public static float UpdateLadderRating(Account acc, RatingCategory cat, float targetRating, bool allowGain, bool allowLoss, ZkDataContext db)
+        public static float UpdateLadderRating(Account acc, RatingCategory cat, float targetRating, bool allowGain, bool allowLoss, float classicEloChange, ZkDataContext db)
         {
             var rating = acc.AccountRatings.Where(x => x.RatingCategory == cat).FirstOrDefault();
             var ladderElo = rating?.LadderElo ?? WholeHistoryRating.DefaultRating.LadderElo;
@@ -126,7 +126,8 @@ namespace Ratings
             if (!allowGain) delta = Math.Min(-GlobalConst.LadderEloMinChange, delta);
             if (!allowLoss) delta = Math.Max(GlobalConst.LadderEloMinChange, delta);
 
-            ladderElo += delta;
+            double ladderEloBefore = ladderElo;
+            ladderElo += delta * (1 - GlobalConst.LadderEloClassicEloWeight) + GlobalConst.LadderEloClassicEloWeight * classicEloChange;
             if (rating != null)
             {
                 rating.UpdateLadderElo(ladderElo);
@@ -136,7 +137,7 @@ namespace Ratings
             {
                 Trace.TraceInformation(string.Format("WHR LadderElo update for player {0} not directly saved to db", acc.Name));
             }
-            Trace.TraceInformation(string.Format("WHR LadderElo update for player {0} ({1}) from {2} -> {3}, targeting {4}", acc.Name, acc.AccountID, ladderElo - delta, ladderElo, targetRating));
+            Trace.TraceInformation(string.Format("WHR LadderElo update for player {0} ({1}) from {2} -> {3}, targeting {4}. WHR Change: {5}, Elo Change: {6}", acc.Name, acc.AccountID, ladderEloBefore, ladderElo, targetRating, delta, classicEloChange));
             return (float)ladderElo;
         }
 

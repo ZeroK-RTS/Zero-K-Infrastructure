@@ -8,19 +8,27 @@
     bool noPenalty = false;
 }
     <div>
-    
+
         @if (!p.DeleteInfluence && !p.DeleteXP && !p.BanCommanders && !p.BanUnlocks && !p.BanSpecChat && !p.BanMute && !p.BanSite && !p.BanForum && !p.BanLobby && !p.SegregateHost && !p.BanVotes)
         {
             noPenalty = true;
         }
-    
+
         @if (p.MessageOnly && noPenalty)
         {
-        <h3>Message received from moderators, click @Html.ActionLink("here", "Chat", "Lobby", new { User = ZkData.GlobalConst.NightwatchName }, null) to see it</h3>
+            <h3>Message received from moderators, click @Html.ActionLink("here", "Chat", "Lobby", new { User = ZkData.GlobalConst.NightwatchName }, null) to see it</h3>
         }
         else
         {
-            <h3>PENALTY: @p.Reason</h3>
+            if (noPenalty)
+            {
+                <h3>WARNING: @p.Reason</h3>
+            }
+            else
+            {
+                <h3>PENALTY: @p.Reason</h3>
+            }
+
             if (p.DeleteInfluence)
             {
                 <span>PlanetWars influence deleted</span><br />
@@ -65,10 +73,6 @@
             {
                 <span>Vote powers restricted</span><br />
             }
-            if (noPenalty)
-            {
-                <span>Warning</span><br />
-            }
         }
         @if (Global.IsModerator)
         {
@@ -77,6 +81,10 @@
                 <span>UserID block: @p.UserID</span><br />
                 <span>InstallID block: @p.InstallID</span><br />
                 <span>Issued by: @Html.PrintAccount(p.AccountByCreatedAccountID)</span><br />
+                @if (p.MessageOnly && noPenalty)
+                {
+                    <span>Message: @p.Reason</span><br />
+                }
             </div>
         }
         Issued on: @p.Time (@p.Time.ToAgoString())<br />
