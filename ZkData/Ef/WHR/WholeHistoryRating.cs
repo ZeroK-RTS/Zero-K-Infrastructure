@@ -482,7 +482,6 @@ namespace Ratings
         //Runs in O(N log(N)) for all players
         private void UpdateRankings(IEnumerable<Player> players)
         {
-            //List<SpringBattlePlayer> lastBattlePlayers;
             var debriefings = new Dictionary<int, PendingDebriefing>(pendingDebriefings);
             int matched = 0;
 
