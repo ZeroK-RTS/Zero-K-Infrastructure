@@ -126,6 +126,7 @@ namespace Ratings
             if (!allowGain) delta = Math.Min(-GlobalConst.LadderEloMinChange, delta);
             if (!allowLoss) delta = Math.Max(GlobalConst.LadderEloMinChange, delta);
 
+            double ladderEloBefore = ladderElo;
             ladderElo += delta * (1 - GlobalConst.LadderEloClassicEloWeight) + GlobalConst.LadderEloClassicEloWeight * classicEloChange;
             if (rating != null)
             {
@@ -136,7 +137,7 @@ namespace Ratings
             {
                 Trace.TraceInformation(string.Format("WHR LadderElo update for player {0} not directly saved to db", acc.Name));
             }
-            Trace.TraceInformation(string.Format("WHR LadderElo update for player {0} ({1}) from {2} -> {3}, targeting {4}. WHR Change: {5}, Elo Change: {6}", acc.Name, acc.AccountID, ladderElo - delta, ladderElo, targetRating, delta, classicEloChange));
+            Trace.TraceInformation(string.Format("WHR LadderElo update for player {0} ({1}) from {2} -> {3}, targeting {4}. WHR Change: {5}, Elo Change: {6}", acc.Name, acc.AccountID, ladderEloBefore, ladderElo, targetRating, delta, classicEloChange));
             return (float)ladderElo;
         }
 
