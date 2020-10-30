@@ -15,7 +15,7 @@ namespace ZkLobbyServer
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
-            if (int.TryParse(arguments, out cnt) && cnt > 1)
+            if (int.TryParse(arguments, out cnt) && cnt >= 0)
             {
                 return $"Change max even players to {cnt}?";
             }
@@ -25,7 +25,7 @@ namespace ZkLobbyServer
 
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
-            if (cnt > 0)
+            if (cnt >= 0)
             {
                 await battle.SwitchMaxEvenPlayers(cnt);
                 await battle.SayBattle("Max even players changed to " + cnt);
