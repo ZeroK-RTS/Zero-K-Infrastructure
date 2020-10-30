@@ -9,52 +9,62 @@ else
 	Page.Title = "Edit post";
 }
 
-@{ Html.RenderPartial("ForumPath", Model.Path); }
+<div class="content forum">
+    NEWPOST
 
-@if (Model.CurrentThread != null)
-{
-    <h1 style="word-break: break-all;">@Model.CurrentThread.Title</h1>
-    if (!string.IsNullOrEmpty(Model.CurrentThread.WikiKey))
-    {
-        <h2><a href="@Url.Action("Index", "Wiki", new { node = Model.CurrentThread.WikiKey })">@("[" + Model.CurrentThread.WikiKey + "]")</a></h2>
-    }
-}
-else
-{
-    <h3>Post new topic</h3>
-}
+    <div class="border infoCell">
+        @{ Html.RenderPartial("ForumPath", Model.Path); }
+    </div>
 
-<form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = Model.CurrentThread != null ? (int?)Model.CurrentThread.ForumThreadID : null, categoryID = Model.CurrentCategory.ForumCategoryID, forumPostID = Model.EditedPost != null ? (int?)Model.EditedPost.ForumPostID : null })">
-    <table>
-        @if (Model.CanSetTopic)
+    <div class="border">
+        @if (Model.CurrentThread != null)
         {
-            <tr>
-                <td>Title:</td><td>
-                    <input type="text" name="title" style="width: 300px" value="@(Model.EditedPost != null ? Model.EditedPost.ForumThread.Title : null)"/>
-                </td>
-            </tr>
+            <h1 style="word-break: break-all;">@Model.CurrentThread.Title</h1>
+            if (!string.IsNullOrEmpty(Model.CurrentThread.WikiKey))
+            {
+                <h2><a href="@Url.Action("Index", "Wiki", new { node = Model.CurrentThread.WikiKey })">@("[" + Model.CurrentThread.WikiKey + "]")</a></h2>
+            }
+            if (Model.LastPosts != null)
+            {
+                @Html.Action("GetPostList", new { threadID = Model.CurrentThread.ForumThreadID })
+            }
         }
-        @if (Model.CanSetTopic && Model.CurrentCategory.ForumMode == ForumMode.Wiki)
+        else
         {
-            <tr>
-                <td>Wiki Key:</td><td>
-                    <input type="text" name="wikiKey" style="width: 150px" value="@(Model.WikiKey ?? (Model.EditedPost != null ? Model.EditedPost.ForumThread.WikiKey : null))"/>
-                </td>
-            </tr>
+            <h3>Post new topic</h3>
         }
-    </table>
-    <textarea name="text" style="height: 50vh; width: 100%;">@(Model.EditedPost != null ? Model.EditedPost.Text : null)</textarea><br/>
-    <input class="textbutton" type="submit" value="Submit Post"/>
-    <span class="textbutton" data-preview="text">Preview</span>
-    @if (Model.EditedPost != null)
-    {
-        <input type="checkbox" name="isMinorEdit" value="true"/><span>Minor edit (does not bump thread)</span>
-    }
-    <a href="~/Wiki/formatting" target="_blank" style="float: right">Forum and Wiki formatting guide</a>
-</form>
 
-@if (Model.LastPosts != null && Model.CurrentThread != null)
-{
-    @Html.Action("GetPostList", new { threadID = Model.CurrentThread.ForumThreadID, DisablePostComment = true })
-}
+        <form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = Model.CurrentThread != null ? (int?)Model.CurrentThread.ForumThreadID : null, categoryID = Model.CurrentCategory.ForumCategoryID, forumPostID = Model.EditedPost != null ? (int?)Model.EditedPost.ForumPostID : null })">
+            <table>
+                @if (Model.CanSetTopic)
+                {
+                    <tr>
+                        <td>Title:</td>
+                        <td>
+                            <input type="text" name="title" style="width: 300px" value="@(Model.EditedPost != null ? Model.EditedPost.ForumThread.Title : null)" />
+                        </td>
+                    </tr>
+                }
+                @if (Model.CanSetTopic && Model.CurrentCategory.ForumMode == ForumMode.Wiki)
+                {
+                    <tr>
+                        <td>Wiki Key:</td>
+                        <td>
+                            <input type="text" name="wikiKey" style="width: 150px" value="@(Model.WikiKey ?? (Model.EditedPost != null ? Model.EditedPost.ForumThread.WikiKey : null))" />
+                        </td>
+                    </tr>
+                }
+            </table>
+            <textarea name="text" style="height: 50vh; width: 100%;">@(Model.EditedPost != null ? Model.EditedPost.Text : null)</textarea><br />
+            <input class="textbutton" type="submit" value="Submit Post" />
+            <span class="textbutton" data-preview="text">Preview</span>
+            @if (Model.EditedPost != null)
+            {
+                <input type="checkbox" name="isMinorEdit" value="true" /><span>Minor edit (does not bump thread)</span>
+            }
+            <a href="~/Wiki/formatting" target="_blank" style="float: right">Forum and Wiki formatting guide</a>
+        </form>
 
+    </div>
+
+</div>

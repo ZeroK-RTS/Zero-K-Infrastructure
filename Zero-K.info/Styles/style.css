@@ -1,8 +1,8 @@
-.js_tabs {}
+/*.js_tabs {}
 
 html
 {
-	/*background: #000 url("/img/bg_bluehex.gif") fixed;*/
+	background: #000 url("/img/bg_bluehex.gif") fixed;
 	background: #000;
     background-size: cover;
 	color: #ede;
@@ -103,7 +103,7 @@ div#simplestyle
 
 div#busy
 {
-	background: #190c02; /*bgcolor of load.gif*/
+	background: #190c02; bgcolor of load.gif
 	position: fixed;
 	display: none;
 	top: 40%;
@@ -111,6 +111,7 @@ div#busy
 	right: 40%;
 	padding: 20px;
 	text-align: center;
+    bottom: 0;
 	font-weight: bold;
 	z-index: 100;
 }
@@ -146,7 +147,7 @@ div#busy
 	border: 1px solid #38bfec;
 }
 
-/* Download-Button on Homepage */
+ Download-Button on Homepage 
 .buttonSpan
 {
 	height: 45px;
@@ -243,14 +244,14 @@ div#busy
     box-shadow: 0 0 2px 2px #cbd3d4;
 }
 
-/* Share */
+ Share 
 #shares 
 {
 	vertical-align:middle;
 }
 
-/* galaxy map
-----------------------------------------------*/
+ galaxy map
+----------------------------------------------
 .sectorgrid
 {
 	position: relative; 
@@ -277,8 +278,8 @@ div#busy
 }
 
 
-/* Single Player missions
-----------------------------------------------*/
+ Single Player missions
+----------------------------------------------
 .mission
 {
 	display: block;
@@ -349,8 +350,8 @@ div#busy
 	margin:0;
 }
 
-/* Battle detail
------------------------------------------------------------*/
+ Battle detail
+-----------------------------------------------------------
 
 .battle_winner
 {
@@ -381,8 +382,8 @@ div#busy
 	border-radius: 5px;
 }
 
-/* Map detail
------------------------------------------------------------*/
+ Map detail
+-----------------------------------------------------------
 .rating_all
 {
 	display: block;
@@ -409,8 +410,8 @@ div#busy
 	display: none;
 }
 
-/* Styles for validation helpers
------------------------------------------------------------*/
+ Styles for validation helpers
+-----------------------------------------------------------
 .field-validation-error
 {
 	color: #ff0000;
@@ -438,15 +439,15 @@ div#busy
 	display: none;
 }
 
-/* google wiki */
+ google wiki 
 .section_anchor 
 {
 	display:none;
 	color: Black;
 }
 
-/* Styles for unitguide
------------------------------------------------------------*/
+ Styles for unitguide
+-----------------------------------------------------------
 
 .infoCell
 {
@@ -584,7 +585,6 @@ div#busy
 	max-width:100%;
 }
 
-/* planetwars */
 .planetname
 {
 	text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
@@ -640,4 +640,4 @@ div#busy
 
 .video-container {
     max-width: 100%;
-}
+}*/

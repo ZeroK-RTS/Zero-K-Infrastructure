@@ -1,0 +1,60 @@
+﻿@using ZkData
+@model ZkData.Resource
+@{
+    var m = Model;
+    Layout = "";
+}
+
+<style>
+    .rating {
+        width: 100%;
+        margin-bottom: 1em;
+
+    }
+
+    .level {
+        display: inline-block;
+        width: 20%;
+        text-align: center;
+    }
+
+    .level .fa-heart {
+        display: none !important;
+        color: hotpink;
+    }
+    .level.selected .fa-heart {
+        display: inherit !important;
+    }
+    .level.selected .fa-heart-o {
+        display: none;
+    }
+
+    .hover > .fa-heart-o {
+        display: inherit !important;
+        color: red !important;
+    }
+    .hover > .fa-heart {
+        display: none !important;
+    }
+
+</style>
+
+<div class="rating">
+    @* no space between divs to fix modern browser buggery *@
+    <div class="level l1 l2 l3 l4 l5">
+        <i class="fa fa-heart-o"></i>
+        <i class="fa fa-heart"></i>
+    </div><div class="level l2 l3 l4 l5">
+        <i class="fa fa-heart-o"></i>
+        <i class="fa fa-heart"></i>
+    </div><div class="level l3 l4 l5">
+        <i class="fa fa-heart-o"></i>
+        <i class="fa fa-heart"></i>
+    </div><div class="level l4 l5">
+        <i class="fa fa-heart-o"></i>
+        <i class="fa fa-heart"></i>
+    </div><div class="level l5">
+        <i class="fa fa-heart-o"></i>
+        <i class="fa fa-heart"></i>
+    </div>
+</div>

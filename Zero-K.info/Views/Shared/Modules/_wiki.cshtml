@@ -1,0 +1,11 @@
+﻿@using ZeroKWeb
+@model IEnumerable<MediaWikiRecentChanges.MediaWikiEdit>
+
+<div id="wiki" class="module">
+    <h2 class="handle">Recently on the Wiki</h2>
+    <a href='//zero-k.info/mediawiki/index.php?title=Special:RecentChanges'>Go to Wiki</a>
+    @foreach (var edit in Model)
+    {
+        @Html.PrintMediaWikiEdit(edit)<br />
+    }
+</div>

@@ -1,0 +1,30 @@
+﻿#unitspotlight {
+
+    img {
+        float: left;
+        height: 150px;
+        margin: 1em;
+    }
+/*
+    #manual {
+        display: block;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        margin: 1em;
+    }
+*/
+    // small layout
+    @media only screen and (max-width: 1000px ) {
+        img {
+            width: 64px;
+            height: 64px;
+            float: right;
+        }
+        #manual {
+            display: block;
+            position: relative;
+            margin: 0;
+        }
+    }
+}

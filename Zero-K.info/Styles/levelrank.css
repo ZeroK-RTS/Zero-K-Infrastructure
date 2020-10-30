@@ -1,9 +1,9 @@
-#levelrank
+/*#levelrank
 {
 	position: relative;
 	background: transparent;
 	height: 250px;
-	width: 120px; /*2.5 aspect ratio*/
+	width: 120px; // 2.5 aspect ratio
 	margin: 5px;
 }
 
@@ -54,7 +54,7 @@
 }
 
 
-/* each element is scaled properly to any box (ie. its container) with a 2.5 to 1 ratio of height to width */
+ each element is scaled properly to any box (ie. its container) with a 2.5 to 1 ratio of height to width 
 
 .star
 {
@@ -96,7 +96,7 @@
 }
 
 
-/* each bar is 8% of the total height of the box */
+ each bar is 8% of the total height of the box 
 .bar-1
 {
 	top: 50%;
@@ -118,7 +118,7 @@
 	top: 82%;
 }
 
-/* the width of the chevron bar is the same as the flat bar so increment is the same */
+ the width of the chevron bar is the same as the flat bar so increment is the same 
 .chev-1
 {
 	bottom: 50%;
@@ -134,5 +134,5 @@
 .chev-4
 {
 	bottom: 74%;
-}
+}*/
 

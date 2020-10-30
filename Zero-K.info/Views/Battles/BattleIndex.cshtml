@@ -3,40 +3,48 @@
 @{
     Page.Title = "Replay Search";
 }
-<form action="@Url.Action("Index")" id="ajaxScrollForm" method="post">
-    <table class="inputTable">
-        <tr>
-            <td>Title: </td><td>@Html.TextBoxFor(x => x.Title)</td>
-            <td>Map: </td><td>@Html.TextBoxFor(x => x.Map, new { data_autocomplete = Url.Action("Maps", "Autocomplete"), data_autocomplete_action = "submit" })</td>
-        </tr>
-        <tr>
-            <td>Players: </td>
-            <td>
-                @using (var db = new ZkDataContext()) { @Html.MultiSelectFor(x => x.UserId, Url.Action("UsersNoLink", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x))); } 
-            </td>
-            <td>Player count: </td><td> @Html.TextBoxFor(x => x.PlayersFrom) - @Html.TextBoxFor(x => x.PlayersTo)</td>
-        </tr>
-        <tr>
-        </tr>
-        <tr>
-            <td colspan="4">
+<script>
+    $(document).ready(function () {
+        $("#playercount").slider({
+            range: true,
+            min: 0,
+            max: 32,
+            values: [0, 32],
+            slide: function (e, ui) {
+                console.log("slider", e, ui);
+            }
+        });
+    });
+</script>
+<div class="content">
+    <form action="@Url.Action("Index")" id="ajaxScrollForm" method="post">
+        <div>
+            <input id="Title" name="Title" type="text" placeholder="Room Title" />
+            <input id="Map" name="Map" type="text" placeholder="Map" class="ui-autocomplete-input" autocomplete="off" data-autocomplete="/Autocomplete/Maps" data-autocomplete-action="submit" />
+            <input id="PlayersFrom" name="PlayersFrom" type="text" class="hidden" />
+            <input id="PlayersTo" name="PlayersTo" type="text" class="hidden" />
+            <div id="playercount"></div>
+
+            @using (var db = new ZkDataContext())
+            {
+                @Html.MultiSelectFor(x => x.UserId, Url.Action("UsersNoLink", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)));
+            }
+            @*<input id="UserId" name="" type="text" placeholder="Players" class="ui-autocomplete-input" autocomplete="off" data-autocomplete="/Autocomplete/UsersNoLink" data-autocomplete-action="add" />
+                <div id="UserIdplayers"></div>*@
+            <div class="shovelware">
                 Age: @Html.EnumDropDownListFor(x => x.Age)
                 Mission: @Html.EnumDropDownListFor(x => x.Mission)
                 Bots: @Html.EnumDropDownListFor(x => x.Bots)
                 Rank: @Html.EnumDropDownListFor(x => x.Rank)
                 Victory: @Html.EnumDropDownListFor(x => x.Victory)
                 <input name="sa" value="Search" alt="Search" type="image" src="/img/search_img.png" style="border: none; vertical-align: middle;" />
-            </td>
-        </tr>
-    </table>
-    @if (Model.UserId != null) { Html.Raw(string.Concat(Model.UserId.Select(x => Html.Hidden("UserId", x)).ToList())); }
-</form>
-<table>
-    <tr>
-        <td>
-            <div id="ajaxScrollTarget">
-                @{ Html.RenderPartial("BattleTileList", Model); }
             </div>
-        </td>
-    </tr>
-</table>
+
+            @if (Model.UserId != null) { Html.Raw(string.Concat(Model.UserId.Select(x => Html.Hidden("UserId", x)).ToList())); }
+        </div>
+    </form>
+
+    <div id="ajaxScrollTarget">
+        @{ Html.RenderPartial("BattleTileList", Model); }
+    </div>
+</div>

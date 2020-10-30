@@ -1,0 +1,52 @@
+﻿@import "colors.less";
+
+#maps {
+    background: rgba(0,0,0,0.9);
+    font-family: "Xolonium", sans-serif;
+    padding: 1em;
+
+    select, input {
+        width: 100%;
+    }
+
+    .mapfilters {
+        display: flex;
+        justify-content: space-around;
+        background: rgba(0,0,0,0.5);
+        padding: 1em;
+        border: 2px solid @highlight;
+        margin-bottom: 1em;
+
+        h1, h2, h3 {
+            margin-bottom: 0.5em;
+            text-align: center;
+        }
+
+        .switch3 {
+            margin-bottom: 1em;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    .filtergroup {
+        width: 20em;
+        text-align: center;
+
+        button {
+            display: inline-block;
+            background: rgba(0,0,0,0.5);
+            color: gray;
+            border: 1px solid black;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .mapfilters {
+            flex-direction: column-reverse;
+            .filtergroup {
+                width: 100%;
+            }
+        }
+    }
+}

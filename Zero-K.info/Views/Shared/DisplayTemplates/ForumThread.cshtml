@@ -1,0 +1,57 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZkData.ForumThread
+
+@* This is the view for an item in the list of threads in the forum
+    TODO: move the file to be with the rest of the forum related files, its location keeps tripping me up
+*@
+
+@{
+    var t = Model;
+    string alreadyRead = t.ForumThreadLastReads?.FirstOrDefault(x => x.AccountID == Global.AccountID)?.LastRead?.ToAgoString() == null ? "" : "read";
+    string pinned = t.IsPinned ? "pinned" : "";
+}
+
+@helper StickyMark(ForumThread t)
+{
+    if (t.IsLocked)
+    {
+        <i class="fa fa-lock"></i>
+    }
+    else if (Global.Account != null)
+    {
+        var threadLastRead = Global.Account.ForumThreadLastReads.FirstOrDefault(x => x.ForumThreadID == t.ForumThreadID);
+        if (threadLastRead != null)
+        {
+            <i class="fa fa-envelope-open"></i>
+        }
+        else
+        {
+            <i class="fa fa-envelope"></i>
+        }
+    }
+}
+
+<div id="thread@(t.ForumThreadID)" class="thread @alreadyRead @pinned">
+    <div class="thread-status">
+        <div>@StickyMark(t)</div>
+        <div class="alt-postcount">
+            @(t.ForumPosts.Count)
+        </div>
+    </div>
+    <div class="thread-content">
+        <h3 class="thread-title"><a href="@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })">@t.Title</a></h3>
+        <div class="">
+            by @Html.PrintAccount(t.AccountByCreatedAccountID) @t.Created.ToAgoString()
+        </div>
+        <div class="thread-details">
+            <div class="postcount">
+                @t.ForumPosts.Count Posts
+            </div>
+            <div class="lastactive">
+                Latest: @Html.PrintAccount(t.AccountByLastPostAccountID) @t.LastPost.Value.ToAgoString()
+                @*Last read: @(t.ForumThreadLastReads?.FirstOrDefault(x => x.AccountID == Global.AccountID)?.LastRead.ToAgoString() ?? "unread")*@
+            </div>
+        </div>
+    </div>
+</div>

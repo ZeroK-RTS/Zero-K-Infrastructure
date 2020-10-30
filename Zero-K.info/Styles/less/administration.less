@@ -1,0 +1,115 @@
+﻿
+@import "colors.less";
+
+.warning {
+    color: yellow;
+}
+
+.punishment {
+    color: red;
+}
+
+.playerreports {
+    color: orange;
+}
+
+
+.admin-extra:hover {
+    background: fadein(@background-pop, 20%);
+    cursor: pointer;
+}
+
+.modal div {
+    margin-bottom: 1em;
+}
+
+.moderator-action {
+    position: relative;
+    background: @background-pop;
+    padding: 0.5em;
+    border-left: 3px solid;
+    border-right: 3px solid;
+    margin: 0.5em;
+
+    h3 {
+        color: @copy;
+        margin: 0.55em 0em;
+    }
+
+    .header {
+        display: flex;
+        flex-direction: row;
+
+        h3 {
+            width: 100%;
+        }
+    }
+
+    .consequences {
+        color: @copy;
+
+        .consequence {
+            display: block;
+            background: @background-pop;
+            padding: 0.5em;
+            border: 1px solid darken(@background-pop, 20%);
+            margin: 0.25em;
+        }
+    }
+
+    .timeframe {
+        color: @copy;
+        font-size: small;
+        font-style: italic;
+        text-align: right;
+
+        .issue, .expire {
+            width: 15em;
+        }
+
+        .staticdate {
+            display: none;
+        }
+    }
+
+    .punishdetails {
+        color: @copy;
+
+        form {
+            display: inline-block;
+
+            input {
+                width: inherit;
+            }
+        }
+
+        .issuedby {
+            display: inline-block;
+        }
+
+        .blocker {
+            display: block;
+            padding: 0.5em;
+            border: 1px solid red;
+            margin: 0.25em;
+        }
+    }
+}
+
+
+// rearrange when screen is small
+@media only screen and (max-width: 800px) {
+    .moderator-action {
+        .header {
+            display: block;
+        }
+        .timeframe {
+            text-align: left;
+
+            .issue, .expire {
+                display: inline-block;
+                width: 15em;
+            }
+        }
+    }
+}

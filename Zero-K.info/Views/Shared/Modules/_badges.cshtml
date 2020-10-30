@@ -1,0 +1,10 @@
+﻿@using ZeroKWeb
+@using ZkData
+@using PlasmaShared
+@model ZkData.Account
+
+<div id="badges" class="module">
+    <h2 class="handle">Badges</h2>
+    @* TODO: take out of HTMLHelper *@
+    @Html.PrintBadges(Model, 64, false)
+</div>

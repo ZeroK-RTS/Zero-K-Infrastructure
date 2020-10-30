@@ -71,6 +71,82 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [Auth(Role = AdminLevel.SuperAdmin)]
         [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangeAdminLevel(int accountID, bool zkAdmin)
+        {
+            var db = new ZkDataContext();
+            Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+            if (acc == null) return Content("Invalid accountID");
+            Account adminAcc = Global.Account;
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Admin level changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
+
+            var curAdmin = acc.AdminLevel > AdminLevel.None;
+            if (curAdmin != zkAdmin)
+            {
+                //reset chat priviledges to 2 if removing adminhood; remove NW subsciption to admin channel
+                // FIXME needs to also terminate forbidden clan/faction subscriptions
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Moderator status: {0} -> {1}", curAdmin, zkAdmin));
+                acc.AdminLevel = zkAdmin ? AdminLevel.Moderator : AdminLevel.None;
+
+            }
+
+            db.SaveChanges();
+
+            await Global.Server.PublishAccountUpdate(acc);
+
+            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
+        }
+
+        [HttpPost]
+        [Auth(Role = AdminLevel.SuperAdmin)]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangeTourneyController(int accountID, bool tourneyController)
+        {
+            var db = new ZkDataContext();
+            Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+            if (acc == null) return Content("Invalid accountID");
+            Account adminAcc = Global.Account;
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Tourney controller changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
+
+            if (acc.IsTourneyController != tourneyController)
+            {
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - Tourney Control: {0} -> {1}", acc.IsTourneyController, tourneyController));
+                acc.IsTourneyController = tourneyController;
+            }
+
+            db.SaveChanges();
+
+            await Global.Server.PublishAccountUpdate(acc);
+
+            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
+        }
+
+        [HttpPost]
+        [Auth(Role = AdminLevel.SuperAdmin)]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangeVPNException(int accountID, bool vpnException)
+        {
+            var db = new ZkDataContext();
+            Account acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+            if (acc == null) return Content("Invalid accountID");
+            Account adminAcc = Global.Account;
+            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("VPN exception changed for {0} {1} by {2}", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), adminAcc.Name));
+
+            if (acc.HasVpnException != vpnException)
+            {
+                await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - VPN exception: {0} -> {1}", acc.HasVpnException, vpnException));
+                acc.HasVpnException = vpnException;
+            }
+
+            db.SaveChanges();
+
+            await Global.Server.PublishAccountUpdate(acc);
+
+            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
+        }
+
+        [HttpPost]
+        [Auth(Role = AdminLevel.SuperAdmin)]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePermissions(int accountID, bool zkAdmin, bool tourneyController, bool vpnException)
         {
             var db = new ZkDataContext();
@@ -574,7 +650,25 @@ namespace ZeroKWeb.Controllers
             if (!string.IsNullOrEmpty(newPassword)) acc.SteamID = null;
             db.SaveChanges();
             await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} changed {1} password", Global.Account.Name, acc.Name));
-            return Content(string.Format("{0} password set to {1}", acc.Name, newPassword));
+            if (!string.IsNullOrEmpty(newPassword))
+            {
+                await Global.Server.GhostPm(acc.Name, $"Your password has been set to {newPassword}. You may now login and change it to something memorable.");
+                return Content($"{acc.Name} password set to {newPassword}");
+            }
+            else
+            {
+                if (acc.SteamID == null)
+                {
+                    // no steam link, no password, no login?
+                    return Content($"Password has been removed. There is no Steam account linked. Login is now impossible!");
+                }
+                else
+                {
+                    await Global.Server.GhostPm(acc.Name, $"Your password has been removed. You can now only login with your Steam account.");
+                    return Content($"Password is now blank. {acc.Name} must now login with Steam.");
+                }
+                
+            }
         }
 
 

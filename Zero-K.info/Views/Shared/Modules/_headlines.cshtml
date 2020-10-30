@@ -1,0 +1,18 @@
+﻿@using ZkData
+@model IEnumerable<News>
+
+<div id="headlines" class="module">
+    <h2 class="handle">Headlines</h2>
+    @foreach (var news in Model.Take(1))
+    {
+        <div class="js_dialog" title="News headlines">
+            <h1>@news.Title</h1>
+            @if (news.ImageRelativeUrl != null)
+            {
+                <img src="@news.ImageRelativeUrl" style="float:left; width:800px; margin: 6px;" />
+            }
+            <div>@Html.BBCodeCached(news)</div>
+            <small>Posted by @Html.PrintAccount(news.Account) @news.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = news.ForumThreadID }, null)</small>
+        </div>
+    }
+</div>

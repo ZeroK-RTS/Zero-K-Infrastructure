@@ -1,0 +1,46 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZkData.Account
+
+<style>
+    .commander-slider {
+        display: inline-flex;
+        width: 100%;
+        padding: 1em;
+        overflow-x: auto;
+    }
+    .commander {
+        padding: 0.5em;
+        margin: 0.5em;
+        text-align: center;
+    }
+    .commander img {
+        width: 10em;
+    }
+</style>
+
+<div id="commanders" class="module">
+    <h2 class="handle">Commanders</h2>
+
+    <div class="commander-slider">
+        @for (var i = 0; i < 6; i++)
+        {
+            <div class="commander">
+                <div>Commander #@(i + 1)</div>
+                <img src="~/img/avatars/commander-placeholder.png" alt="commander name" title="commander name" />
+                
+            </div>
+        }
+    </div>
+    <!--div>
+        @*@Html.Partial("UnlockedTechnologies", Model.AccountUnlocks)*@
+    </div-->
+    @*@foreach (Commander comm in Model.Commanders)
+    {
+        <span class="fleft border"><center><img src='@comm.Unlock.ImageUrl' alt="unlock" title='$commander$@comm.CommanderID' /><br />@HttpContext.Current.Server.HtmlEncode(comm.Name)</center></span>
+    }
+    @if (Model.AccountID == Global.AccountID)
+    {
+        <span class="fleft border"><center><a href='@Url.Action("Commanders", "My")'><img src='/img/avatars/module_autorepair.png' alt="unlock" nicetitle="Configure Commanders<br><br>You can create presets for your commander to use in-game. Give your commander a unique name " /><br />Add/Edit</a></center></span>
+    }*@
+</div>

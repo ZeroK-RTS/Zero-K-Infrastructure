@@ -99,7 +99,7 @@
 
 @if (MiscVar.PlanetWarsNextModeTime != null)
 {
-    <h3>PlanetWars will switch to @(MiscVar.PlanetWarsNextMode?.Description()) in (@MiscVar.PlanetWarsNextModeTime.Value.Subtract(DateTime.UtcNow).ToNiceString())</h3>
+    <h3>PlanetWars will switch to @(MiscVar.PlanetWarsNextMode?.Description()) in (@MiscVar.PlanetWarsNextModeTime.Value.Subtract(DateTime.UtcNow).ToReadableTime())</h3>
 }
 
 @Html.Partial("FactionList")

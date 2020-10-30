@@ -2,107 +2,138 @@
 @model ZkData.Punishment
 @{
     var p = Model;
+
     TimeSpan timeRemaining = (TimeSpan)(Model.BanExpires - DateTime.UtcNow);
-    int daysRemain = (int)timeRemaining.TotalDays;
-    int hoursRemain = Math.Abs(timeRemaining.Hours);
-    bool noPenalty = false;
+    string displayIssued = $"Issued {p.Time.ToAgoString()} <span class='staticdate'>{p.Time}</span>";
+    string displayExpiry = $"Expires on {p.BanExpires.Value.ToString("d")}";
+    if (p.IsExpired)
+    {
+        displayExpiry = $"Expired {p.BanExpires.ToAgoString()} <span class='staticdate'>{p.BanExpires}</span>";
+    }
+    else if (timeRemaining < TimeSpan.FromDays(14))
+    {
+        int daysRemain = (int)timeRemaining.TotalDays;
+        int hoursRemain = Math.Abs(timeRemaining.Hours);
+        string timeRemain = $"{daysRemain} days, {hoursRemain} hours";
+        if (timeRemaining < TimeSpan.FromDays(1))
+        {
+            timeRemain = $"{hoursRemain} hours";
+        }
+        displayExpiry = $"Expires in {timeRemain} <span class='staticdate'>{p.BanExpires}</span>";
+    }
+    string modactionclass = "message";
+    if (p.hasConsequences)
+    {
+        modactionclass = "punishment";
+    }
+    else if (!p.MessageOnly)
+    {
+        modactionclass = "warning";
+    }
 }
-    <div>
-
-        @if (!p.DeleteInfluence && !p.DeleteXP && !p.BanCommanders && !p.BanUnlocks && !p.BanSpecChat && !p.BanMute && !p.BanSite && !p.BanForum && !p.BanLobby && !p.SegregateHost && !p.BanVotes)
+<div class="moderator-action @modactionclass @(Global.IsModerator ? "admin-extra" : "")" 
+     onclick="ToggleExtra('admin-extra-@p.PunishmentID')">
+    <div class="header">
+        @if (p.MessageOnly)
         {
-            noPenalty = true;
-        }
-
-        @if (p.MessageOnly && noPenalty)
-        {
-            <h3>Message received from moderators, click @Html.ActionLink("here", "Chat", "Lobby", new { User = ZkData.GlobalConst.NightwatchName }, null) to see it</h3>
-        }
-        else
-        {
-            if (noPenalty)
+            if (Global.AccountID == p.AccountID)
             {
-                <h3>WARNING: @p.Reason</h3>
+                @*<h4>Message received from moderators, click @Html.ActionLink("here", "Chat", "Lobby", new { User = ZkData.GlobalConst.NightwatchName }, null) to see it</h4>*@
+                <h3><i class="fa fa-moon-o"></i> MESSAGE: @p.Reason</h3>
             }
             else
             {
-                <h3>PENALTY: @p.Reason</h3>
+                <h3><i class="fa fa-moon-o"></i> MESSAGE: Message recieved from Nightwatch. Sign in to read it.</h3>
             }
+        }
+        else if (p.hasConsequences)
+        {
+            <h3><span class="punishment"><i class="fa fa-gavel"></i> PENALTY:</span> @p.Reason</h3>
+        }
+        else
+        {
+            <h3><span class="warning"><i class="fa fa-warning"></i> WARNING:</span> @p.Reason</h3>
+        }
 
-            if (p.DeleteInfluence)
-            {
-                <span>PlanetWars influence deleted</span><br />
-            }
-            if (p.DeleteXP)
-            {
-                <span>XP deleted</span><br />
-            }
-            if (p.BanCommanders)
-            {
-                <span>Commanders blocked</span><br />
-            }
-            if (p.BanUnlocks)
-            {
-                <span>Unlocks blocked</span><br />
-            }
-            if (p.BanSpecChat)
-            {
-                <span>Cannot spectator chat</span><br />
-            }
-            if (p.BanMute)
-            {
-                <span>Muted</span><br />
-            }
-            if (p.BanSite)
-            {
-                <span>Site blocked</span><br />
-            }
-            if (p.BanForum)
-            {
-                <span>Forum blocked</span><br />
-            }
-            if (p.BanLobby)
-            {
-                <span>Lobby blocked</span><br />
-            }
-            if (p.SegregateHost)
-            {
-                <span>Segregated to troll host</span><br />
-            }
-            if (p.BanVotes)
-            {
-                <span>Vote powers restricted</span><br />
-            }
-        }
-        @if (Global.IsModerator)
+        <div class="timeframe">
+            <div class="issue">@Html.Raw(displayIssued)</div>
+            <div class="expire">@Html.Raw(displayExpiry)</div>
+        </div>
+    </div>
+
+    <div class="consequences">
+        @if (!p.hasConsequences && !p.MessageOnly)
         {
-            <div class="admin">
-                <span>IP block: @p.BanIP</span><br />
-                <span>UserID block: @p.UserID</span><br />
-                <span>InstallID block: @p.InstallID</span><br />
-                <span>Issued by: @Html.PrintAccount(p.AccountByCreatedAccountID)</span><br />
-                @if (p.MessageOnly && noPenalty)
-                {
-                    <span>Message: @p.Reason</span><br />
-                }
-            </div>
+            <span class="consequence"><i class="fa fa-hourglass-end"></i> Future violations will be less lenient</span>
         }
-        Issued on: @p.Time (@p.Time.ToAgoString())<br />
-        Expires on: @p.BanExpires
-        @if (!p.IsExpired && timeRemaining < TimeSpan.FromDays(7))
+        @if (p.DeleteInfluence)
         {
-            <span> (@(daysRemain)d @(hoursRemain)h remaining)</span>
+            <span class="consequence"><i class="fa fa-moon-o"></i> PlanetWars influence deleted</span>
         }
-        <br />
-        @if (Global.IsModerator)
+        @if (p.DeleteXP)
         {
-            <div class="admin">
-                <form action="@Url.Action("RemovePunishment", "Users")" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="punishmentID" value="@p.PunishmentID" />
-                    <input type="submit" value="Remove punishment" class="js_confirm" />
-                </form>
-            </div>
+            <span class="consequence"><i class="fa fa-graduation-cap" XP deleted</span>
+        }
+        @if (p.BanCommanders)
+        {
+            <span class="consequence"><i class="fa fa-male"></i> Commanders blocked</span>
+        }
+        @if (p.BanUnlocks)
+        {
+            <span class="consequence"><i class="fa fa-lock"></i> Unlocks blocked</span>
+        }
+        @if (p.BanSpecChat)
+        {
+            <span class="consequence"><i class="fa fa-commenting"></i> Cannot spectator chat</span>
+        }
+        @if (p.BanMute)
+        {
+            <span class="consequence"><i class="fa fa-microphone-slash"></i> Muted</span>
+        }
+        @if (p.BanSite)
+        {
+            <span class="consequence"><i class="fa fa-sitemap"></i> Site blocked</span>
+        }
+        @if (p.BanForum)
+        {
+            <span class="consequence"><i class="fa fa-quote-left"></i> Forum blocked</span>
+        }
+        @if (p.BanLobby)
+        {
+            <span class="consequence"><i class="fa fa-gamepad"></i> Lobby blocked</span>
+        }
+        @if (p.SegregateHost)
+        {
+            <span class="consequence"><i class="fa fa-trash"></i> Segregated to troll host</span>
+        }
+        @if (p.BanVotes)
+        {
+            <span class="consequence"><i class="fa fa-thumbs-up"></i> Vote powers restricted</span>
         }
     </div>
+
+    @if (Global.IsModerator)
+    {
+        <div id="admin-extra-@p.PunishmentID" class="punishdetails hidden">
+            <div class="issuedby">Issued by: @Html.PrintAccount(p.AccountByCreatedAccountID)</div>
+            <form action="@Url.Action("RemovePunishment", "Users")" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="punishmentID" value="@p.PunishmentID" />
+                <input type="submit" value="Remove Punishment" class="js_confirm" />
+            </form>
+            @if (!string.IsNullOrEmpty(p.BanIP))
+            {
+                <div class="blocker">IP block: @p.BanIP</div>
+            }
+            @if (p.UserID != null)
+            {
+                <div class="blocker">UserID block: @p.UserID</div>
+            }
+            @if (!string.IsNullOrEmpty(p.InstallID))
+            {
+                <div class="blocker">InstallID block: @p.InstallID</div>
+            }
+        </div>
+    }
+</div>
 

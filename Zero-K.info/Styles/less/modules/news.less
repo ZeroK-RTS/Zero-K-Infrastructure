@@ -1,0 +1,28 @@
+﻿@import "../colors.less";
+
+#news {
+    position: relative;
+
+    .news-item {
+        position: relative;
+        border: 1px dotted @highlight;
+        padding: 1em;
+        overflow: hidden;
+
+        .news-image {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+
+            img {
+                max-width: 100%;
+            }
+        }
+    }
+
+    .news-content {
+        height: 15em;
+        overflow-y: scroll;
+    }
+}

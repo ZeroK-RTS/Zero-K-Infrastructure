@@ -1,0 +1,258 @@
+﻿@import "colors.less";
+
+nav {
+    background: @navigation-bg;
+    color: @navigation;
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: 'Xolonium', sans-serif;
+    padding: 0;
+    border: 1px solid @navigation-bg;
+    border-bottom: 1px solid @highlight;
+    margin: 0;
+
+    .menu:hover {
+        background: @navigation-bg;
+        color: @highlight;
+        cursor: pointer;
+        transition: 0.5s;
+    }
+
+    .menu:hover > .submenu {
+        display: block;
+        color: @highlight;
+    }
+
+    .menu > i {
+        margin-right: 0;
+    }
+
+    span {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: -1px;
+        width: 12em;
+        background: @navigation-bg;
+        color: @navigation;
+        padding: .5em;
+        border: 1px solid transparent;
+        margin-top: 1px;
+        white-space: normal;
+    }
+
+    div {
+        display: inline-block;
+        position: relative;
+        padding: 1em;
+        border: 1px solid transparent;
+        margin-left: auto;
+        margin-right: auto;
+        white-space: nowrap;
+
+        .submenu {
+            display: none;
+            background: @navigation-bg;
+            position: absolute;
+            top: 2.5em;
+            left: -1px;
+            width: 12em;
+            font-family: OpenSans, sans-serif;
+            text-align: left;
+            padding: .5em;
+            border-bottom: 1px solid @highlight;
+            margin: 0;
+            z-index: 10;
+
+            a {
+                display: block;
+                color: @navigation;
+                padding: .5em;
+            }
+
+            a:hover {
+                color: @highlight;
+
+                span {
+                    display: block;
+                    font-style: italic;
+                }
+            }
+
+            button {
+                margin: 1em 0;
+                // why does JQuery UI inject a span?!? this fixes settings from nav/span
+                span {
+                    display: block;
+                    position: relative;
+                    background: none;
+                    color: @navigation;
+                    padding: 0;
+                    border: 0;
+                    margin: 0;
+                }
+            }
+        }
+    }
+
+    .nav-logo {
+        display: none;
+        position: relative;
+        width: 5em;
+        background: none;
+    }
+
+    .nav-text, .username-container {
+        padding: 0;
+        border: 0;
+        margin: 0;
+        margin-left: 4px;
+    }
+
+    .login {
+        .submenu {
+            cursor: auto;
+            // fix username spacing issues
+            .username-container {
+                display: inline-block;
+                position: relative;
+                padding: 0;
+                border: 0;
+                margin: 0;
+            }
+            // inline steam icon
+            img {
+                display: inline-block;
+                height: 2em;
+                vertical-align: middle;
+            }
+            // don't want too much highlight
+            label {
+                color: @navigation;
+            }
+
+            input {
+                width: 100%;
+            }
+
+            hr {
+                margin: 0;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+    }
+
+    .search {
+        // element is on the right of the screen, change anchor to the right
+        .submenu {
+            cursor: auto;
+            left: inherit;
+            right: 0;
+            width: 17em;
+            padding-left: 1em;
+
+            input {
+                display: inline-block;
+                width: 14em;
+            }
+
+            button {
+                display: inline-block;
+                width: auto;
+                padding-left: 1em;
+                padding-right: 1em;
+                border: 1px solid transparent;
+                margin-left: auto;
+                margin-right: auto;
+
+                span {
+                    width: auto;
+                }
+            }
+        }
+    }
+}
+
+// affix menu after scrolling down
+nav.nav-affixed {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    z-index: 1000;
+    transition: 1s;
+
+    .nav-logo {
+        display: none;
+        margin-right: 0.5em;
+
+        img {
+            position: absolute;
+            top: .4em;
+            left: 0;
+            bottom: 0;
+            height: 2em;
+        }
+
+        @media only screen and (max-width: 1000px) {
+            display: none;
+        }
+    }
+}
+
+// shrink menu when screen is small
+@media only screen and (max-width: 1000px) {
+    .search .nav-text {
+        display: none;
+    }
+}
+@media only screen and (max-width: 900px) {
+    .media .nav-text {
+        display: none;
+    }
+}
+@media only screen and (max-width: 800px) {
+    .wiki .nav-text {
+        display: none;
+    }
+}
+@media only screen and (max-width: 750px) {
+    .planetwars .nav-text {
+        display: none;
+    }
+}
+@media only screen and (max-width: 700px) {
+    .community .nav-text {
+        display: none;
+    }
+}
+@media only screen and (max-width: 650px) {
+    .play .nav-text {
+        display: none;
+    }
+}
+@media handheld, screen and (max-width: 600px) {
+    .login .nav-text {
+        display: none;
+    }
+    nav {
+        .menu {
+            width: 14%;
+            margin: 0;
+        }
+
+        .username-container {
+            * {
+                display: none;
+            }
+
+            .rank {
+                display: inline-block;
+            }
+        }
+    }
+}

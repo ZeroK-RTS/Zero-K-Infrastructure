@@ -2,144 +2,306 @@
 @using ZeroKWeb
 @using ZkData
 @{
-  Page.Title = "Maps";
+    Page.Title = "Maps";
 }
-<form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
-  Support:
-  <select name="mapSupportLevel">
-    <option>Any</option>
-    <option value='0'>Unsupported</option>
-    <option value='1'>Supported</option>
-    <option value='2' selected="!@Model.OnlyShowMatchmakerMaps">Featured</option>
-    <option value='3' selected="@Model.OnlyShowMatchmakerMaps">MatchMaker</option>
-  </select>
-  Size:
-  <select name="size">
-    <option>Any</option>
-    <option value='1'>Small</option>
-    <option value='2'>Medium</option>
-    <option value='3'>Big</option>
-  </select>
-  Sea:
-  <select name="sea">
-    <option>Any</option>
-    <option value="1">Land</option>
-    <option value="2">Mixed</option>
-    <option value="3">Sea</option>
-  </select>
-  Hills:
-  <select name="hills">
-    <option>Any</option>
-    <option value="1">Flat</option>
-    <option value="2">Hills</option>
-    <option value="3">Mountains</option>
-  </select>
-  Dimensions:
-  <select name="elongated">
-    <option>Any</option>
-    <option value='false'>Square-like</option>
-    <option value='true'>Elongated</option>
-  </select>
-  Asymmetrical:
-  <select name="assymetrical">
-    <option>Any</option>
-    <option value="false">Symmetrical</option>
-    <option value="true">Asymmetrical</option>
-  </select>
-  <span title='Maps with special features, speedmetal, duck, greenfields etc' style='white-space: nowrap'>
-    Special:
-    <select name="special">
-      <option value="-1">Any</option>
-      <option value="0" selected>Normal</option>
-      <option value="1">Special</option>
-    </select>
-  </span>
-  <span title='Maps suitable for team games' style='white-space: nowrap'>
-    Team:
-    <select name="isTeams">
-      <option>Any</option>
-      <option value="true">Teams</option>
-      <option value="false">No teams</option>
-    </select>
-  </span>
-  <span title='Maps suitable for 1v1 games' style='white-space: nowrap'>
-    1v1:
-    <select name="is1v1">
-      <option>Any</option>
-      <option value="true">1v1</option>
-      <option value="false">No 1v1</option>
-    </select>
-  </span>
-  <span title='Maps suitable for Free-For-All games - multiple teams' style='white-space: nowrap'>
-    FFA:
-    <select name="ffa">
-      <option>Any</option>
-      <option value='false'>Normal</option>
-      <option value='true'>FFA</option>
-    </select>
-  </span>
-  <span title='Maps suitable for chicken games?' style='white-space: nowrap'>
-    Chickens:
-    <select name="chicken">
-      <option>Any</option>
-      <option value="true">Chickens</option>
-      <option value="false">No chickens</option>
-    </select>
-  </span>
 
-  Download: <select name="isDownloadable">
-    <option value='-1'>Any</option>
-    <option value='1' selected>Downloadable</option>
-    <option value='0'>Not verified</option>
-  </select>
-  <br/>
+<script>
+    var ratingHover = false;
+    $(document).ready(function () {
+        $(".clickable").click(function (self) {
+            var parent = $(this).parent();
+            var input = parent.children("input");
+            var slider = parent.children(".slider");
 
-  <span title='Show maps that need to be manually tagged (sea, terrain, FFA etc diagnosed)' style='white-space: nowrap'>
-    Needs tagging: @Html.CheckBox("needsTagging")
-  </span>
-  <br/>
-  Name or author: @Html.TextBox("search", null, new { data_autocomplete = Url.Action("Maps", "Autocomplete"), data_autocomplete_action = "submit" })
-  <input type="submit" id="submit" value="Search"/>
-</form>
+            if ($(this).hasClass("left")) {
+                slider.toggleClass("left");
+                input.val("false");
+            } else if ($(this).hasClass("right")) {
+                slider.toggleClass("right");
+                input.val("true");
+            }
+            if (slider.hasClass("left") && slider.hasClass("right")) {
+                slider.removeClass("left");
+                slider.removeClass("right");
+                input.val("");
+            }
+        });
 
+        $(".rating .level").hover(
+            function () {
+                if (ratingHover) return;
+                ratingHover = true;
+                // over
+                var parent = $(this).parent();
+                var current = $(this);
 
-<table width='100%'>
-  <tr>
-    <td valign="top">
-      <div id='ajaxScrollTarget'>
-        <b>@Model.Title</b><br />
-        @{Html.RenderPartial("MapTileList", Model.Latest);}
-      </div>
-    </td>
-    <td width="250" valign="top" align="left">
-      <h3>
-        Highest rated</h3>
-      <ul>
-        @foreach (var r in Model.TopRated.Take(15)) {
-          <li><span title='$map$@r.ResourceID'>@Html.ActionLink(r.InternalName, "Detail", new { id = r.ResourceID })</span></li>
-        }
-      </ul>
-      <h3>
-        Last comments</h3>
-      <ul>
-        @foreach (var r in Model.LastComments.Take(15)) {
-          <li><span title='$map$@r.ResourceID'>@Html.ActionLink(r.InternalName, "Detail", new { id = r.ResourceID })</span></li>
-        }
-      </ul>
-      <h3>
-        Most downloads</h3>
-      <ul>
-        @foreach (var r in Model.MostDownloads.Take(15)) {
-          <li><span title='$map$@r.ResourceID'>@Html.ActionLink(r.InternalName, "Detail", new { id = r.ResourceID })</span></li>
-        }
-      </ul>
-      @if (Global.Account != null)
-      {
-        <form action="@Url.Action("UploadResource")" enctype="multipart/form-data" method="post">
-          Upload map or game (sd7 or sdz): <input type="file" name="file" accept=".sd7,.sdz"> <input type="submit" value="Upload"/>
+                if (current.hasClass("l1")) {
+                    parent.children(".l1").addClass("hover");
+                } else if (current.hasClass("l2")) {
+                    parent.children(".l2").addClass("hover");
+                } else if (current.hasClass("l3")) {
+                    parent.children(".l3").addClass("hover");
+                } else if (current.hasClass("l4")) {
+                    parent.children(".l4").addClass("hover");
+                } else if (current.hasClass("l5")) {
+                    parent.children(".l5").addClass("hover");
+                } 
+            },
+            function () {
+                // out
+                var parent = $(this).parent();
+                parent.children(".level").removeClass("hover");
+                ratingHover = false;
+            }
+        );
+    });
+</script>
+<div id="maps" class="content">
+    <div class="maplist">
+        @* TODO: for handheld devices, replace hover effects with double tap *@
+        <form id="ajaxScrollForm" class="mapfilters" method="post" action="@Url.Action("Index")">
+            <div class="filtergroup">
+
+                @*<label for="mapSupportLevel">Support:</label>*@
+                <select id="mapSupportLevel" name="mapSupportLevel">
+                    <option value='0'>Unsupported</option>
+                    <option value='1'>Supported at Least</option>
+                    <option value='2' selected="selected">Featured &amp; MatchMaker</option>
+                    <option value='3'>MatchMaker Only</option>
+                </select>
+
+                <label for="mapSize">@*Size:*@</label>
+                <select id="mapSize" name="size">
+                    <option value="">Any Size</option>
+                    <option value='1'>Small Only</option>
+                    <option value='2'>Medium Only</option>
+                    <option value='3'>Large Only</option>
+                </select>
+
+                @*<label for="mapSeaAmount">Water Ratio:</label>*@
+                <select id="mapSeaAmount" name="sea">
+                    <option value="">Any Water</option>
+                    <option value="1">Land Only</option>
+                    <option value="2">Both Land &amp; Sea</option>
+                    <option value="3">Sea Only</option>
+                </select>
+
+                @*<label for="mapTerrain">Terrain Type:</label>*@
+                <select id="mapTerrain" name="hills">
+                    <option value="">Any Terrain</option>
+                    <option value="1">Flat Only</option>
+                    <option value="2">Hills Only</option>
+                    <option value="3">Cliffs Only</option>
+                </select>
+
+                @*<label for="orderBy">Sort By:</label>*@
+                <select id="order" name="order">
+                    <option value="0">Sort by Latest</option>
+                    <option value="1">Sort by Rating</option>
+                    <option value="2">Sort by Downloads</option>
+                    <option value="3">Sort by Latest Comments</option>
+                </select>
+
+                <input type="text" id="search" name="search" class="ui-autocomplete-input" placeholder="Specific Map or Author"
+                       autocomplete="off" data-autocomplete="/Autocomplete/Maps" data-autocomplete-action="submit" />
+
+                <input type="submit" id="submit" value="Search" />
+            </div>
+            <div class="filtergroup">
+                <div class="filter switch3">
+                    <input name="is1v1" />
+                    <div class="slider"></div>
+                    <div class="clickable left"><span>Non 1v1</span></div>
+                    <div class="clickable right"><span>1v1 Only</span></div>
+                </div>
+                <div class="filter switch3">
+                    <input name="ffa" />
+                    <div class="slider"></div>
+                    <div class="clickable left"><span>Non FFA</span></div>
+                    <div class="clickable right"><span>FFA Only</span></div>
+                </div>
+                <div class="filter switch3">
+                    <input name="isTeams" />
+                    <div class="slider"></div>
+                    <div class="clickable left"><span>Non Teams</span></div>
+                    <div class="clickable right"><span>Teams Only</span></div>
+                </div>
+                <div class="filter switch3">
+                    <input name="chicken" />
+                    <div class="slider"></div>
+                    <div class="clickable left"><span>Non Chicken</span></div>
+                    <div class="clickable right"><span>Chicken Only</span></div>
+                </div>
+                <div class="filter switch3">
+                    <input name="special" />
+                    <div class="slider"></div>
+                    <div class="clickable left"><span>Non Special</span></div>
+                    <div class="clickable right"><span>Special Only</span></div>
+                </div>
+                <div class="filter switch3">
+                    <input name="assymetrical" />
+                    <div class="slider"></div>
+                    <div class="clickable left"><span>Asymmetric</span></div>
+                    <div class="clickable right"><span>Symmetric</span></div>
+                </div>
+                <div class="filter switch3">
+                    <input name="elongated" />
+                    <div class="slider"></div>
+                    <div class="clickable left"><span>Oblong</span></div>
+                    <div class="clickable right"><span>Square</span></div>
+                </div>
+            </div>
         </form>
-      }
-      
-    </td>
-  </tr>
-</table>
+
+        <div id="ajaxScrollTarget">
+            @{Html.RenderPartial("MapTileList", Model.Latest);}
+        </div>
+
+        <br />
+    </div>
+    @if (Global.Account != null)
+    {
+        <form action="@Url.Action("UploadResource")" enctype="multipart/form-data" method="post">
+            Upload map or game (sd7 or sdz): <input type="file" name="file" accept=".sd7,.sdz"> <input type="submit" value="Upload" />
+        </form>
+    }
+
+</div>
+
+@*<form action="@Url.Action("Index")" id='ajaxScrollForm' method="post" style="display: none;">
+    <div class="filter-section">
+
+        <label for="mapDimensions">Aspect Ratio:</label>
+        <select id="mapDimensions" name="elongated">
+            <option>Any Aspect Ratio</option>
+            <option value='false'>Square-like</option>
+            <option value='true'>Elongated</option>
+        </select>
+
+        <label for="mapSymmetry">Symmetry:</label>
+        <select id="mapSymmetry" name="assymetrical">
+            <option>Any Symmetry</option>
+            <option value="false">Symmetrical</option>
+            <option value="true">Asymmetrical</option>
+        </select>
+    </div>
+    <div class="filter-section">
+        <label for="mapSupportsTeams">
+            Team:
+            <span title='Maps suitable for team games'></span>
+        </label>
+        <select id="mapSupportsTeams" name="isTeams">
+            <option>Can be for Teams</option>
+            <option value="false">Non Teams</option>
+            <option value="true">Teams Only</option>
+        </select>
+
+        <label for="mapSupports1v1">
+            1v1:
+            <span title='Maps suitable for 1v1 games'></span>
+        </label>
+        <select id="mapSupports1v1" name="is1v1">
+            <option>Can be for 1v1</option>
+            <option value="false">Non 1v1</option>
+            <option value="true">1v1 Only</option>
+        </select>
+
+        <label for="mapSupportsFFA">
+            FFA:
+            <span title='Maps suitable for Free-For-All games - multiple teams'></span>
+        </label>
+        <select id="mapSupportsFFA" name="ffa">
+            <option>Can be for FFA</option>
+            <option value='false'>Non FFA</option>
+            <option value='true'>FFA Only</option>
+        </select>
+
+        <label for="mapSupportsChickens">
+            Chickens:
+            <span title='Maps suitable for chicken games?'></span>
+        </label>
+        <select id="mapSupportsChickens" name="chicken">
+            <option>Can be for Chickens</option>
+            <option value="false">Non Chicken</option>
+            <option value="true">For Chickens Only</option>
+        </select>
+
+        <label for="mapIsSpecial">
+            Special:
+            <span title='Maps with special features, speedmetal, duck, greenfields etc'></span>
+        </label>
+        <select id="mapIsSpecial" name="special">
+            <option value="-1">Can be Special</option>
+            <option value="0" selected>Only Standard Maps</option>
+            <option value="1">Special Only</option>
+        </select>
+
+    </div>
+    <div class="filter-section">
+        <label for="mapSupportLevel">Support:</label>
+        <select id="mapSupportLevel" name="mapSupportLevel">
+            <option value='0'>Unsupported</option>
+            <option value='1'>Supported</option>
+            <option value='2' selected="selected">Featured</option>
+            <option value='3'>MatchMaker</option>
+        </select>
+
+        <label for="mapIsDownloadable">Download:</label>
+        <select id="mapIsDownloadable" name="isDownloadable">
+            <option value='-1'>Any Download Status</option>
+            <option value='1' selected>Downloadable</option>
+            <option value='0'>Download Not Verified</option>
+        </select>
+
+        <label for="needsTagging">
+            Needs tagging:
+            <span title='Show maps that need to be manually tagged (sea, terrain, FFA etc diagnosed)'></span>
+        </label>
+        <input id="needsTagging" name="needsTagging" value="true" type="checkbox">
+    </div>
+
+    <label for="search">Name or Author:</label>
+    <input data-autocomplete="/Autocomplete/Maps" data-autocomplete-action="submit" id="search" name="search" value="" class="ui-autocomplete-input" autocomplete="off" type="text">
+
+    <input type="submit" id="submit" value="Search" />
+</form>
+<table width='100%'>
+    <tr>
+        <td width="250" valign="top" align="left">
+            <h3>
+                Highest rated
+            </h3>
+            <ul>
+                @foreach (var r in Model.TopRated.Take(15))
+                {
+                    <li><span title='$map$@r.ResourceID'>@Html.ActionLink(r.InternalName, "Detail", new { id = r.ResourceID })</span></li>
+                }
+            </ul>
+            <h3>
+                Last comments
+            </h3>
+            <ul>
+                @foreach (var r in Model.LastComments.Take(15))
+                {
+                    <li><span title='$map$@r.ResourceID'>@Html.ActionLink(r.InternalName, "Detail", new { id = r.ResourceID })</span></li>
+                }
+            </ul>
+            <h3>
+                Most downloads
+            </h3>
+            <ul>
+                @foreach (var r in Model.MostDownloads.Take(15))
+                {
+                    <li><span title='$map$@r.ResourceID'>@Html.ActionLink(r.InternalName, "Detail", new { id = r.ResourceID })</span></li>
+                }
+            </ul>
+            @if (Global.Account != null)
+            {
+                <form action="@Url.Action("UploadResource")" enctype="multipart/form-data" method="post">
+                    Upload map or game (sd7 or sdz): <input type="file" name="file" accept=".sd7,.sdz"> <input type="submit" value="Upload" />
+                </form>
+            }
+
+        </td>
+    </tr>
+</table>*@

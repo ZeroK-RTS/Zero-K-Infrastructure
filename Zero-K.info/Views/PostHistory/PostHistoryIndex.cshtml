@@ -20,7 +20,7 @@
      @Html.ActionLink("revert", "RevertTo", "PostHistory", new { id = e.ForumPostEditID, isAfter = true }, new { @class = "textbutton js_confirm" })
  }}
 
-<div id="gridder">
+<div id="gridder" class="content">
     <h2>@ViewBag.Title</h2>
     <h3>@Html.Print(Model.ForumThread)</h3>
 

@@ -1,0 +1,63 @@
+﻿@model ZkData.Account
+@using ZeroKWeb
+@using ZkData
+@using PlasmaShared
+
+<style>
+    .award-slider {
+        display: inline-flex;
+        width: 100%;
+        padding: 1em;
+        overflow-x: auto;
+    }
+
+    .award {
+        position: relative;
+        width: 4em;
+        padding: 1em;
+        text-align: center;
+    }
+
+    .award > img {
+        display: block;
+        height: 4em;
+    }
+    .no-awards {
+        width: 100%;
+        text-align: center;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //$('.award-slider').flumen({
+        //    'arrows': true,
+        //    'margin': 5,
+        //    'events': {
+        //        'init': function (event, o) {
+        //            console.log('KURAC');
+        //        }
+        //    }
+        //});
+    });
+
+</script>
+
+
+<div id="trophies" class="module">
+    <h2 class="handle">Awards</h2>
+    <div class="award-slider">
+        @foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count()))
+        {
+            <div class="award">
+                <img src="~/img/Awards/trophy_@(award.Key).png" alt="@award.Key" title="@award.First().AwardDescription.Split(',').First()" />
+                <div>@award.Count()</div>
+            </div>
+        }
+        @if (Model.AccountBattleAwards.Count == 0)
+        {
+            <div class="no-awards">
+                Your trophy case seems a bit empty. Play more games to start winning some awards!
+            </div>
+        }
+    </div>
+</div>

@@ -5,87 +5,73 @@
     Page.Title = "Forum " + string.Join(" > ", Model.Path.Select(x => x.Title));
 
     var grid = new UniGrid<ForumThread>(Model.Threads);
-    grid.AddCol("", StickyMark).SetSort(x => x.IsPinned).SetWidth("25px");
-    grid.AddCol("Title", x => Html.Print(x)).SetSort(x => x.Title);
-    grid.AddCol("Author", x => Html.PrintAccount(x.AccountByCreatedAccountID)).SetSort(x => x.AccountByCreatedAccountID.Name).SetWidth("200px");
-    grid.AddCol("Posts", x => x.PostCount).SetSort(x => x.PostCount).SetWidth("70px");
-    grid.AddCol("Last", x => Html.PrintDate(x.LastPost)).SetWidth("150px").SetSort(x => x.LastPost);
+    grid.AddCol("sort", x => Html.DisplayFor(m => x)).SetSort(x => x.ForumThreadID).SetWidth("100%");
+    grid.PrepareRenderData();
 }
 
-@helper StickyMark(ForumThread t) {
-    if (t.IsLocked && t.IsPinned)
-    {
-        <img src="~/img/stickylock.png" class="icon16"/>
-    } else if (t.IsLocked)
-    {
-        <img src="~/img/lock.png" class="icon16"/>
-    } else if (t.IsPinned)
-    {
-        <img src="~/img/sticky.png" class="icon16"/>
-    }
-}
+<div id="page" class="forum">
+    FORUMINDEX
+    @* forum navigation. TODO: make this a bottom aligned navigation similar to global *@
+    <div class="infoCell">
+        @Html.Partial("ForumPath", Model.Path)
 
-<div id="page">
+        @foreach (var cat in Model.Categories)
+        {
+            @Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID }, new { @class = "category-link" })
+        }
+    </div>
+
     @using (Ajax.BeginForm("Index", Global.GetAjaxOptions("page")))
     {
         @Html.HiddenFor(x => x.CategoryID)
-        <div class="infoCell">
-            @Html.Partial("ForumPath", Model.Path)
 
-            <span>
-                @foreach (var cat in Model.Categories)
-                {
-                    <span>
-                        <b>@Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID })</b>
-                        &nbsp; &nbsp;
-                    </span>
-                }
+        if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)
+        {
+            <span id="@grid.PagerPrefixID">
+                <button>@Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</button>
             </span>
-        </div>
-
-        <br/>
-        <br/>
+        }
 
         if (Model.Threads.Any())
         {
-            <div>
-                <span>
-                    &nbsp;Filter: @Html.TextBoxFor(x => x.Search, new { data_autocomplete = Url.Action("Threads", "Autocomplete", new { categoryID = Model.CategoryID }), data_autocomplete_action = "goto" })
-                    @if (Global.IsAccountAuthorized)
-                    {
-                        <label>
-                            @Html.EditorFor(x => x.OnlyUnread)<span>only unread</span>
-                        </label>
-                    }
-                    &nbsp; Player: @Html.TextBoxFor(x => x.User, new { data_autocomplete = Url.Action("Users", "Autocomplete"), data_autocomplete_action = "submit" })
-                    <button type="submit">Search</button>
-                </span>
-                <br/>
-
-                @if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)
+            <div class="filter-section filter-threads">
+                <div class="inline">
+                    <label for="Search">Search threads for:</label>
+                    <input type="text" id="Search" name="Search" class="ui-autocomplete-input" data-autocomplete="@Url.Action("Threads", "Autocomplete")" data-autocomplete-action="goto" autocomplete="off" />
+                </div>
+                <div class="inline">
+                    <label for="User">Posts from specific User:</label>
+                    <input type="text" id="User" name="User" class="ui-autocomplete-input"
+                           autocomplete="off" data-autocomplete-action="submit" data-autocomplete="@Url.Action("Users", "Autocomplete")" />
+                </div>
+                @if (Global.IsAccountAuthorized)
                 {
-                    <span class="textbutton" id="@grid.PagerPrefixID">
-                        @Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
-                    </span>
+                    <div class="inline">
+                        <label for="unread">Only Unread</label>
+                        <input type="checkbox" id="unread" name="OnlyUnread" />
+                    </div>
                 }
-
+                <div class="inline">
+                    <input type="submit" value="Search" />
+                </div>
                 @if (Global.Account != null)
                 {
-                    <span class="textbutton" style="float: right;" id="@grid.PagerSuffixID">@Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })</span>
+                    @Html.ActionLink("Mark all as read", "MarkAllAsRead", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
                 }
             </div>
 
-            <div>
-                @GridHelpers.RenderTable(grid)
-            </div>
-        } else
-        {
-            if (Model.CurrentCategory == null || !Model.CurrentCategory.IsLocked)
-            {
-                <span class="textbutton" id="@grid.PagerPrefixID">
-                    @Html.ActionLink("Post new topic", "NewPost", new { categoryID = Model.CurrentCategory?.ForumCategoryID })
-                </span>
-            }
         }
+
+        <div id="@grid.ID" class="threads">
+            <div class="grid_title">@grid.Title</div>
+            @GridHelpers.GridJs(grid)
+            @GridHelpers.Pager(grid)
+            @GridHelpers.Hidden(grid)
+            @GridHelpers.TableData(grid)
+            @GridHelpers.Pager(grid)
+        </div>
     }
+
+
+
 </div>

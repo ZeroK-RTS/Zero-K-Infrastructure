@@ -1,0 +1,57 @@
+﻿@import "admin.less";
+@import "forum.less";
+@import "news.less";
+@import "social.less";
+@import "unitspotlight.less";
+@import "userdetail.less";
+
+
+@import "../colors.less";
+
+.module {
+    position: relative;
+    background: rgba(0,0,0,.75);
+    min-width: 400px;
+    padding: 1em;
+    overflow: hidden;
+    font-family: 'OpenSans', sans-serif;
+
+    h1, h2, h3 {
+        margin-top: 0;
+        font-family: 'Xolonium', sans-serif;
+    }
+
+    img {
+        vertical-align: middle;
+    }
+
+    .handle {
+        position: relative;
+        cursor: move;
+        border-bottom: 1px solid @highlight;
+        z-index: 1;
+    }
+
+    .handle:hover {
+        background: rgba(0,0,0,.2);
+    }
+}
+
+.module-placeholder {
+    background: rgba(0,0,0,.5);
+    height: 6em;
+    border: 1px dashed @highlight;
+    border-radius: 1em;
+    margin: .5em;
+}
+
+.module-column {
+    /*display: inline-block;*/
+    background: rgba(0,0,0,.1);
+    width: 100%;
+    max-width: 1000px;
+    /*float: left;*/
+    padding-bottom: 7em;
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -11,40 +11,6 @@ namespace ZeroKWeb.Controllers
     {
         public const int PageSize = GlobalConst.ForumPostsPerPage;
 
-        /// <summary>
-        ///     Returns false for <see cref="News" /> posts and comment threads on <see cref="Clan" />s, <see cref="Mission" />s,
-        ///     PlanetWars <see cref="Planet" />s and <see cref="SpringBattle" />s; true otherwise
-        /// </summary>
-        /// <param name="thread"></param>
-        /// <returns></returns>
-        bool IsNormalThread(ForumThread thread) {
-            if (thread.Clans != null && thread.Clans.Count > 0) return false;
-            if (thread.Missions != null && thread.Missions.Count > 0) return false;
-            if (thread.Planets != null && thread.Planets.Count > 0) return false;
-            if (thread.SpringBattles != null && thread.SpringBattles.Count > 0) return false;
-            if (thread.News != null && thread.News.Count > 0) return false;
-            return true;
-        }
-
-        /// <summary>
-        ///     Set the last post time of the thread to current time (includes edits)
-        /// </summary>
-        void ResetThreadLastPostTime(int threadID) {
-            var db = new ZkDataContext();
-            var thread = db.ForumThreads.FirstOrDefault(x => x.ForumThreadID == threadID);
-            var lastPost = thread.Created;
-            foreach (var p in thread.ForumPosts.Reverse())
-            {
-                if (p.ForumPostEdits.Count > 0)
-                {
-                    var lastEdit = p.ForumPostEdits.Last().EditTime;
-                    if (lastEdit > lastPost) lastPost = lastEdit;
-                } else if (p.Created > lastPost) lastPost = p.Created;
-            }
-            thread.LastPost = lastPost;
-            db.SaveChanges();
-        }
-
         public ActionResult DeletePostPrompt(int? postID)
         {
             var db = new ZkDataContext();
@@ -125,14 +91,14 @@ namespace ZeroKWeb.Controllers
             }
             if (filterAccountID.HasValue) threads = threads.Where(x => x.CreatedAccountID == filterAccountID || x.ForumPosts.Any(y => y.AuthorAccountID == filterAccountID));
 
-
+            
             if (model.OnlyUnread && Global.IsAccountAuthorized)
             {
                 threads = from t in threads
-                          let read = t.ForumThreadLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID)
-                          let readForum = t.ForumCategory.ForumLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID)
-                          where (read == null || t.LastPost > read.LastRead) && (readForum == null || t.LastPost > readForum.LastRead)
-                          select t;
+                    let read = t.ForumThreadLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID)
+                    let readForum = t.ForumCategory.ForumLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID)
+                    where (read == null || t.LastPost > read.LastRead) && (readForum == null || t.LastPost > readForum.LastRead)
+                    select t;
             }
 
             if (!string.IsNullOrEmpty(model.Search))
@@ -146,8 +112,7 @@ namespace ZeroKWeb.Controllers
 
             return View("ForumIndex", model);
         }
-
-
+        
         public ActionResult GetPostList(PostListModel model) {
             var db = new ZkDataContext();
             model = model ?? new PostListModel();
@@ -166,27 +131,10 @@ namespace ZeroKWeb.Controllers
                 if (filterAccountID.HasValue) posts = posts.Where(x => x.AuthorAccountID == filterAccountID);
             }
 
-            model.Data = posts.OrderBy(x => x.ForumPostID);
+            model.Posts = posts.OrderBy(x=>x.ForumPostID);
             model.Thread = thread;
 
-            if (!model.DisablePostComment)
-            {
-                var mode = thread.ForumCategory.ForumMode;
-                model.DisablePostComment = thread.IsLocked || mode == ForumMode.Maps || mode == ForumMode.Missions || mode == ForumMode.SpringBattles|| mode == ForumMode.Clans || mode == ForumMode.Planets;
-            }
-
             return View("PostList", model);
-        }
-
-        public class PostListModel
-        {
-            public int ThreadID { get; set; }
-            public string Search { get; set; }
-            public int GoToPost { get; set; }
-            public string User { get; set; }
-            public Boolean DisablePostComment{ get; set; }
-            public ForumThread Thread;
-            public IQueryable<ForumPost> Data;
         }
 
 
@@ -616,12 +564,6 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Thread", new { id = post.ForumThreadID, postID = forumPostID });
         }
 
-        public static int GetPostPage(ForumPost post) {
-            if (post == null) return 0;
-            var index = post.ForumThread.ForumPosts.Count(x => x.ForumPostID < post.ForumPostID);
-            return index/PageSize;
-        }
-
         public ActionResult Search() {
             return View("Search");
         }
@@ -686,6 +628,72 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index", new { categoryID });
         }
 
+        [ValidateInput(false)]
+        public ActionResult Preview(string text)
+        {
+            return View("Preview", (object)text);
+        }
+
+
+        /// <summary>
+        ///     Returns false for <see cref="News" /> posts and comment threads on <see cref="Clan" />s, <see cref="Mission" />s,
+        ///     PlanetWars <see cref="Planet" />s and <see cref="SpringBattle" />s; true otherwise
+        /// </summary>
+        /// <param name="thread"></param>
+        /// <returns></returns>
+        bool IsNormalThread(ForumThread thread)
+        {
+            if (thread.Clans != null && thread.Clans.Count > 0) return false;
+            if (thread.Missions != null && thread.Missions.Count > 0) return false;
+            if (thread.Planets != null && thread.Planets.Count > 0) return false;
+            if (thread.SpringBattles != null && thread.SpringBattles.Count > 0) return false;
+            if (thread.News != null && thread.News.Count > 0) return false;
+            return true;
+        }
+
+        /// <summary>
+        ///     Set the last post time of the thread to current time (includes edits)
+        /// </summary>
+        void ResetThreadLastPostTime(int threadID)
+        {
+            var db = new ZkDataContext();
+            var thread = db.ForumThreads.FirstOrDefault(x => x.ForumThreadID == threadID);
+            var lastPost = thread.Created;
+            foreach (var p in thread.ForumPosts.Reverse())
+            {
+                if (p.ForumPostEdits.Count > 0)
+                {
+                    var lastEdit = p.ForumPostEdits.Last().EditTime;
+                    if (lastEdit > lastPost) lastPost = lastEdit;
+                }
+                else if (p.Created > lastPost) lastPost = p.Created;
+            }
+            thread.LastPost = lastPost;
+            db.SaveChanges();
+        }
+
+        /// <summary>
+        /// Returns the page the given forum post is on
+        /// </summary>
+        /// <param name="post"></param>
+        /// <returns></returns>
+        public static int GetPostPage(ForumPost post)
+        {
+            if (post == null) return 0;
+            var index = post.ForumThread.ForumPosts.Count(x => x.ForumPostID < post.ForumPostID);
+            return index / PageSize;
+        }
+        
+        public class PostListModel
+        {
+            public int ThreadID { get; set; }
+            public string Search { get; set; }
+            public int GoToPost { get; set; }
+            public string User { get; set; }
+            public ForumThread Thread;
+            public IQueryable<ForumPost> Posts;
+        }
+
         public class IndexResult
         {
             public IEnumerable<ForumCategory> Categories;
@@ -722,10 +730,5 @@ namespace ZeroKWeb.Controllers
             public List<ForumPost> Posts;
         }
 
-
-        [ValidateInput(false)]
-        public ActionResult Preview(string text) {
-            return View("Preview",(object)text);
-        }
     }
 }

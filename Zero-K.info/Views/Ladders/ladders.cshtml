@@ -10,93 +10,95 @@
 }
 
 
+<div class="content">
 
-<table style="width: 100%">
-    <tr><td><h2>Top 50 Competitive (MatchMaker)</h2></td><td><h2>Top 50 Casual (Custom)</h2></td></tr>
-    <tr>
-        <td>
-            <span>
-                @{
-                    int rank = 0;
-                    foreach (Account acct in RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetTopPlayers(GlobalConst.LadderSize))
-                    {
-                        if (rank++ == 20)
+    <table style="width: 100%">
+        <tr><td><h2>Top 50 Competitive (MatchMaker)</h2></td><td><h2>Top 50 Casual (Custom)</h2></td></tr>
+        <tr>
+            <td>
+                <span>
+                    @{
+                        int rank = 0;
+                        foreach (Account acct in RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetTopPlayers(GlobalConst.LadderSize))
                         {
-                        @:</span><br /><span style="font-size: small">
+                            if (rank++ == 20)
+                            {
+                            @:</span><br /><span style="font-size: small">
+                            }
+                            var acc = acct;
+                            if (rank == GlobalConst.LadderSize && Global.IsAccountAuthorized && Global.Account.GetRating(RatingCategory.MatchMaking)?.Rank > rank && Global.Account.GetRating(RatingCategory.MatchMaking)?.Rank < int.MaxValue)
+                            {
+                                rank = Global.Account.GetRating(RatingCategory.MatchMaking).Rank;
+                                acc = Global.Account;
+                            }
+                            <text>
+                                @(rank) ) @Html.PrintAccount(acc) - @(Math.Round(acc.GetRating(RatingCategory.MatchMaking).LadderElo)) <br />
+                            </text>
                         }
-                        var acc = acct;
-                        if (rank == GlobalConst.LadderSize && Global.IsAccountAuthorized && Global.Account.GetRating(RatingCategory.MatchMaking)?.Rank > rank && Global.Account.GetRating(RatingCategory.MatchMaking)?.Rank < int.MaxValue)
-                        {
-                            rank = Global.Account.GetRating(RatingCategory.MatchMaking).Rank;
-                            acc = Global.Account;
-                        }
-                        <text>
-                            @(rank) ) @Html.PrintAccount(acc) - @(Math.Round(acc.GetRating(RatingCategory.MatchMaking).LadderElo)) <br />
-                        </text>
                     }
-                }
-            </span>
-        </td>
-        <td>
-            <span>
-                @{
-                    rank = 0;
-                    foreach (Account acct in RatingSystems.GetRatingSystem(RatingCategory.Casual).GetTopPlayers(GlobalConst.LadderSize))
-                    {
-                        if (rank++ == 20)
+                </span>
+            </td>
+            <td>
+                <span>
+                    @{
+                        rank = 0;
+                        foreach (Account acct in RatingSystems.GetRatingSystem(RatingCategory.Casual).GetTopPlayers(GlobalConst.LadderSize))
                         {
-                        @:</span><br /><span style="font-size: small">
+                            if (rank++ == 20)
+                            {
+                            @:</span><br /><span style="font-size: small">
+                            }
+                            var acc = acct;
+                            if (rank == GlobalConst.LadderSize && Global.IsAccountAuthorized && Global.Account.GetRating(RatingCategory.Casual)?.Rank > rank && Global.Account.GetRating(RatingCategory.Casual)?.Rank < int.MaxValue)
+                            {
+                                rank = Global.Account.GetRating(RatingCategory.Casual).Rank;
+                                acc = Global.Account;
+                            }
+                            <text>
+                                @(rank)) @Html.PrintAccount(acc) - @(Math.Round(acc.GetRating(RatingCategory.Casual).LadderElo))<br />
+                            </text>
                         }
-                        var acc = acct;
-                        if (rank == GlobalConst.LadderSize && Global.IsAccountAuthorized && Global.Account.GetRating(RatingCategory.Casual)?.Rank > rank && Global.Account.GetRating(RatingCategory.Casual)?.Rank < int.MaxValue)
-                        {
-                            rank = Global.Account.GetRating(RatingCategory.Casual).Rank;
-                            acc = Global.Account;  
-                        }
-                        <text>
-                            @(rank)) @Html.PrintAccount(acc) - @(Math.Round(acc.GetRating(RatingCategory.Casual).LadderElo))<br />
-                        </text>
                     }
-                }
-            </span>
-        </td>
-    </tr>
-</table>
+                </span>
+            </td>
+        </tr>
+    </table>
 
-<br />
-@Html.ActionLink("Show full ladders", "Full", "Ladders")
-<br />
+    <br />
+    @Html.ActionLink("Show full ladders", "Full", "Ladders")
+    <br />
 
-<h2>Awards Hall of Fame - @DateTime.Now.ToString("MMMM")</h2>
-<br />
+    <h2>Awards Hall of Fame - @DateTime.Now.ToString("MMMM")</h2>
+    <br />
 
-@foreach (AwardCalculator.AwardItem awardItem in awardItems)
-{
-    <div style="height: 80px;">
-        <div style="position: absolute; width: 60px;">
-            <span title="@awardItem.AwardTitle">
-                <img src="/img/Awards/trophy_@(awardItem.AwardType).png" height="30" alt="@awardItem.AwardType" />
-            </span>
-        </div>
-
-        <div style="left: 70px; position: absolute;">
-            <div style="font-weight: bold;">
-                Top Collector(s) -
-                @{ bool first = true; }
-                @foreach (Account collector in awardItem.TopCollectorsM)
-                {
-                    if (!first)
-                    {
-            @:,
-    }
-    first = false;
-    @Html.PrintAccount(collector)
-}
-- <span style="color: lightgreen;">@awardItem.TopCollectorCountM</span> collected
+    @foreach (AwardCalculator.AwardItem awardItem in awardItems)
+    {
+        <div style="height: 80px;">
+            <div style="position: absolute; width: 60px;">
+                <span title="@awardItem.AwardTitle">
+                    <img src="/img/Awards/trophy_@(awardItem.AwardType).png" height="30" alt="@awardItem.AwardType" />
+                </span>
             </div>
-<div style="font-weight: bold;">
-    Top Score - @Html.PrintAccount(awardItem.TopScoreHolderM) - <span style="color: lightgreen;">@awardItem.TopScoreDescM</span> - @Html.PrintBattle(awardItem.TopScoreBattlePlayerM)
-</div>
+
+            <div style="left: 70px; position: absolute;">
+                <div style="font-weight: bold;">
+                    Top Collector(s) -
+                    @{ bool first = true; }
+                    @foreach (Account collector in awardItem.TopCollectorsM)
+                    {
+                        if (!first)
+                        {
+                            @:,
+                        }
+                        first = false;
+                        @Html.PrintAccount(collector)
+                    }
+                    - <span style="color: lightgreen;">@awardItem.TopCollectorCountM</span> collected
+                </div>
+                <div style="font-weight: bold;">
+                    Top Score - @Html.PrintAccount(awardItem.TopScoreHolderM) - <span style="color: lightgreen;">@awardItem.TopScoreDescM</span> - @Html.PrintBattle(awardItem.TopScoreBattlePlayerM)
+                </div>
+            </div>
         </div>
-    </div>
-}
+    }
+</div>

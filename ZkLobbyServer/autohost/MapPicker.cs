@@ -144,7 +144,7 @@ namespace ZeroKWeb.SpringieInterface
             return FindResources(type, string.Join(" ", words));
         }
 
-        public static IQueryable<Resource> FindResources(ResourceType type, string term, MapSupportLevel minimumSupportLevel = MapSupportLevel.None, bool ignoreExactMatches = false)
+        public static IQueryable<Resource> FindResources(ResourceType type, string term, MapSupportLevel minimumSupportLevel = MapSupportLevel.Unsupported, bool ignoreExactMatches = false)
         {
             var db = new ZkDataContext();
 

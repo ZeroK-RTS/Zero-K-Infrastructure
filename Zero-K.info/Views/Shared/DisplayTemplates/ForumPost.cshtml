@@ -4,135 +4,75 @@
 @{
     var p = Model;
     var linkURL = Url.Action("Post", "Forum", new { id = p.ForumPostID }, Request?.Url?.Scheme ?? "http") + "#" + p.ForumPostID;
-    var isWikiMain = Model.ForumThread.ForumCategory.ForumMode == ForumMode.Wiki && Model.ForumThread.ForumPosts.OrderBy(x => x.ForumPostID).First().ForumPostID == Model.ForumPostID;
+    var isWikiMain = Model.ForumThread.ForumCategory.ForumMode == ForumMode.Wiki
+        && Model.ForumThread.ForumPosts.OrderBy(x => x.ForumPostID).First().ForumPostID == Model.ForumPostID;
+    var highlight = "";
+    if (p.Account.Faction != null)
+    {
+        highlight = "faction-"+p.Account.Faction.Name.ToLower();
+    }
+    if (Global.AccountID == p.AuthorAccountID)
+    {
+        highlight += " personal";
+    }
 }
 
-@if (isWikiMain)
-{
-    <table width="100%">
-        <tr class="forumRow">
-            <td class="forumPostText">
-                @Html.BBCodeCached(p)
-                <br/>
-
-                @if (p.CanEdit(Global.Account))
+<div id="post@(p.ForumPostID)" class="forum-post @(highlight)">
+    <div class="header">
+        <div class="avatar">
+            @Html.AccountAvatar(p.Account)
+        </div>
+        <div class="header-info">
+            @if (isWikiMain)
+            {
+                // get the list of wiki edits
+                var edits = Model.ForumPostEdits.Select(x => new { x.Account, x.EditTime }).ToList();
+                // add "edit" for initial creator
+                edits.Insert(0, new { p.Account, EditTime = p.Created });
+                // list contributors (oldest first)
+                foreach (var contributor in edits.GroupBy(x => x.Account).OrderBy(x => x.Max(y => y.EditTime)))
                 {
-                    <a class="textbutton" href='@Url.Action("NewPost", "Forum", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })'>
-                        Edit <img src="/img/edit_pencil.png" class="icon16"/>
-                    </a>
+                    <div class="wiki-contributor">
+                        @Html.PrintAccount(contributor.Key)
+                        <div class="wiki-contributor-edits">
+                            <div>Edits: @contributor.Count()</div>
+                            <div title="@contributor.Min(x => x.EditTime)">First: @contributor.Min(x => x.EditTime).ToAgoString()</div>
+                            <div title="@contributor.Max(x => x.EditTime)">Last:  @contributor.Max(x => x.EditTime).ToAgoString()</div>
+                        </div>
+                    </div>
                 }
-                <a href="@Url.Action("Index", "PostHistory", new { id = p.ForumPostID })">view edit history</a>
+            }
+            <div class="whoen">
+                @Html.PrintAccount(p.Account)
+                <span class="time" title="@p.Created">@p.Created.ToAgoString()</span>
+            </div>
+            <div class="edit">
                 @if (Global.IsModerator)
                 {
-                    <a class="textbutton" href='@Url.Action("DeletePostPrompt", "Forum", new { postID = p.ForumPostID })'>
-                        Delete <img src="/img/delete_trashcan.png" class="icon16" />
-                    </a>
+                    <a title="Delete this post" href="@Url.Action("DeletePostPrompt", "Forum", new { postID = p.ForumPostID })"><i class="fa fa-remove"></i></a>
                 }
-
-                <div id="@("ForumPostVoteForm" + p.ForumPostID)" style="float: right; clear: both;">
-                    @Html.PrintPostRating(p)
-                </div>
-
-                <div style="clear: both"></div>
-                @{
-                    var edits = Model.ForumPostEdits.Select(x => new { x.Account, x.EditTime }).ToList();
-                    edits.Insert(0, new { p.Account, EditTime = p.Created });
-                }
-                @foreach (var contrib in edits.GroupBy(x => x.Account).OrderBy(x=>x.Max(y=>y.EditTime)))
+                @if (p.CanEdit(Global.Account))
                 {
-                    var count = contrib.Count();
-                    var first = contrib.Min(x => x.EditTime);
-                    var last = contrib.Max(x => x.EditTime);
-                    <table style="float: left; margin-right: 10px; opacity: 0.5;">
-                        <tr>
-                            <td>
-                                @Html.AccountAvatar(contrib.Key)
-                            </td>
-                            <td valign='top'>
-                                @Html.PrintAccount(contrib.Key)<br/>
-                                <small>
-                                    Edits: @count<br/>
-                                    First: <span nicetitle="@first">@first.ToAgoString()</span><br/>
-                                    Last: <span nicetitle="@last">@last.ToAgoString()</span>
-                                </small>
-                            </td>
-                        </tr>
-
-                    </table>
+                    <a title="Edit this post" href="@Url.Action("NewPost", "Forum", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })"><i class="fa fa-pencil"></i></a>
                 }
-            </td>
-        </tr>
-    </table>
-} else
-{
-    //<div class="forum">
-        <div class="post">
-            <div class="user">
-                <div class="user__main">
-                    <div class="user__avatar">@Html.AccountAvatar(p.Account)</div>
-                    <div class="user__accolades">@Html.PrintBadges(p.Account, 64)</div>
-                </div>
-                <div class="user__details">
-                    <div class="user__name">
-                        <span>@Html.PrintAccount(p.Account)</span>
-                    </div>
-                    <div class="user__posttime">
-                        <small>
-                            <span nicetitle="@p.Created">@p.Created.ToAgoString()</span>
-                            @if (p.ForumPostEdits.Any())
-                            {
-                                var lastEdit = p.ForumPostEdits.OrderByDescending(x => x.EditTime).First();
-                                <br />
-                                <a nicetitle="@lastEdit.EditTime" href="@Url.Action("Index", "PostHistory", new { id = p.ForumPostID })">
-                                    (edited @lastEdit.EditTime.ToAgoString())
-                                </a>
-                            }
-                        </small>
-                    </div>
-                    <div class="user__actions">
-                        <span class="user__actionicon">
-                            @if (Model.CanEdit(Global.Account))
-                            {
-                                <a nicetitle='Edit the post' href='@Url.Action("NewPost", "Forum", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })'>
-                                    <img src="/img/edit_pencil.png" height="22" />
-                                </a>
-                            }
-                        </span>
-                        <span class="user__actionicon">
-                            @if (Global.IsModerator)
-                            {
-                                <a nicetitle='Delete the post' href='@Url.Action("DeletePostPrompt", "Forum", new { postID = p.ForumPostID })'>
-                                    <img src="/img/delete_trashcan.png" height="22" />
-                                </a>
-                            }
-                        </span>
-                        <span class="user__actionicon">
-                            <a nicetitle='Link to this post' href="@linkURL" class="js_clipboard">
-                                <img src="/img/link.png" height="22" />
-                            </a>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="entry" id="@(p.ForumPostID)">
-                <div class="entry__text">
-                    <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
-                    @if (p.Upvotes - p.Downvotes <= GlobalConst.PostVoteHideThreshold)
-                    {
-                        <small class="js_expand" style="color: gray">This post has been downvoted below -5 and collapsed, click here to expand</small>
-                        <div class="collapse width-90">
-                            @Html.BBCodeCached(p)
-                        </div>
-                    }
-                    else
-                    {
-                        @Html.BBCodeCached(p)
-                    }
-                </div>
-                <div class="entry__rating" id="@("ForumPostVoteForm" + p.ForumPostID)" >
-                    @Html.PrintPostRating(p)
-                </div>
+                @if (p.ForumPostEdits.Any())
+                {
+                    <a title="View post history" href="@Url.Action("Index", "PostHistory", new { id = p.ForumPostID })"><i class="fa fa-clock-o"></i></a>
+                }
+                @if (Global.IsAccountAuthorized)
+                {
+                    // TODO: start new post with quoted text / append quote to existing post if already opened
+                    <a title="Quote this post" href=""><i class="fa fa-quote-left"></i></a>
+                }
+                <a title="Link to this post"
+                   href="@(Url.Action("Post", "Forum", new { id = p.ForumPostID },
+                                     Request?.Url?.Scheme ?? "http") + "#" + p.ForumPostID)"><i class="fa fa-link"></i></a>
+
+                @Html.PrintPostRating(p)
             </div>
         </div>
-    //</div>
-}
+    </div>
+    <div class="post-content">
+        @Html.BBCodeCached(p)
+    </div>
+</div>

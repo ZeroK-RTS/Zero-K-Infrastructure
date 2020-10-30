@@ -1,0 +1,64 @@
+﻿
+@import "colors.less";
+
+/*
+    styled switches need to have the following markup:
+
+    <label for="test">Optional "Real" Label</label>
+    <label class="switch">
+        <input id="test" name="test" type="checkbox" />
+        <span class="slider"></span>
+    </label>
+*/
+
+.switch {
+    display: inline-block !important;
+    position: relative;
+    height: 1.5em;
+    width: 2.5em;
+    margin: 0.5em;
+
+    input {
+        /*display: none;*/
+        opacity: 0;
+        height: 0;
+        width: 0 !important;
+    }
+
+    .slider {
+        display: inline-block !important;
+        position: absolute;
+        background: @background;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 1em;
+        cursor: pointer;
+        transition: 0.5s;
+    }
+
+    .slider:before {
+        background: #333;
+        position: absolute;
+        height: 1em;
+        width: 1em;
+        left: 0.25em;
+        bottom: 0.25em;
+        border-radius: 1em;
+        transition: 0.5s;
+        content: "";
+    }
+
+    input:checked + .slider:before {
+        background: @highlight;
+        transform: translateX(1em);
+    }
+
+}
+.switch + label {
+    display: inline-block;
+    height: 100%;
+    margin-right: 1em;
+    vertical-align: super;
+}

@@ -1,0 +1,20 @@
+﻿@using ZeroKWeb
+@using ZkData
+@using PlasmaShared
+@model IEnumerable<Account>
+
+<div id="rankings" class="module">
+    <h2 class="handle">Top Players</h2>
+    <a href='@Url.Action("Index","Ladders")'>Go to Ladder</a>
+    @{
+        int rank = 0;
+        foreach (var acct in Model.Take(10))
+        {
+            <div>
+                <span class="ranking-position">@(++rank)</span>
+                @Html.PrintAccount(acct)
+                <span class="ranking-elo">@(Math.Round(acct.GetRating(RatingCategory.MatchMaking).Elo))</span>
+            </div>
+        }
+    }
+</div>

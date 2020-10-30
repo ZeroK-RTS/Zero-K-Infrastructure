@@ -8,19 +8,22 @@
 <script src="/Scripts/moment.min.js"></script>
 <script src="/Scripts/Chart.min.js"></script>
 
-<div class="fleft width-100" style="padding: 5px;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;">
-    <h1>Zero-K Player Rating History</h1> <br />
-    <form action="@Url.Action("Ratings")">
-        <table class="inputTable">
-            <tr>
-                <td>Rating:</td>
-                <td>@Html.EnumDropDownListFor(x => x.RatingCategory, new { @class = "width-100" })</td>
-            </tr>
-            <tr>
-                <td>Players: </td>
-                <td>@using (var db = new ZkDataContext())
-                {@Html.MultiSelectFor(x => x.UserId, Url.Action("UsersNoLink", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)));
-            }</td>
+<div class="content">
+    <div class="fleft width-100" style="padding: 5px;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;">
+        <h1>Zero-K Player Rating History</h1> <br />
+        <form action="@Url.Action("Ratings")">
+            <table class="inputTable">
+                <tr>
+                    <td>Rating:</td>
+                    <td>@Html.EnumDropDownListFor(x => x.RatingCategory, new { @class = "width-100" })</td>
+                </tr>
+                <tr>
+                    <td>Players: </td>
+                    <td>
+                        @using (var db = new ZkDataContext())
+                        {@Html.MultiSelectFor(x => x.UserId, Url.Action("UsersNoLink", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)));
+                    }
+                </td>
             </tr>
             <tr>
                 <td></td>
@@ -126,6 +129,7 @@
     }
     <br />
     @Html.IncludeWiki("Ratings")
-    
+
 </div>
 <br class="clearfloat" />
+</div>

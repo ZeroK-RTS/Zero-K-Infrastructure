@@ -1,0 +1,35 @@
+﻿@using ZeroKWeb
+@using ZkData
+@using PlasmaShared
+@model ZkData.Account
+
+<div id="serverstats" class="module">
+    <h2 class="handle">Statistics: </h2>
+    <div>
+        <b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
+    </div>
+
+    @{
+
+        /*
+         *
+        var casual = Model.GetRating(RatingCategory.Casual);
+        var mm = Model.GetRating(RatingCategory.MatchMaking);
+        var pw = Model.GetRating(RatingCategory.Planetwars);
+        <b>Competitive rank:</b> @(mm.Rank == int.MaxValue ? $"Unranked, estimated {Math.Round(mm.Elo)} ± {Math.Round(mm.Uncertainty)} " : $"{mm.Rank}. ({Math.Round(mm.Elo)} ± {Math.Round(mm.Uncertainty)}, Top {Math.Round(mm.Percentile * 1000) / 10f}%) ")
+        @Html.ActionLink("Plot graph", "Ratings", "Charts", new { RatingCategory = (int)RatingCategory.MatchMaking, UserId = Model.AccountID }, null)
+        <br />
+        <b>Casual rank:</b> @(casual.Rank == int.MaxValue ? $"Unranked, estimated {Math.Round(casual.Elo)} ± {Math.Round(casual.Uncertainty)} " : $"{casual.Rank}. ({Math.Round(casual.Elo)} ± {Math.Round(casual.Uncertainty)}, Top {Math.Round(casual.Percentile * 1000) / 10f}%) ")
+        @Html.ActionLink("Plot graph", "Ratings", "Charts", new { RatingCategory = (int)RatingCategory.Casual, UserId = Model.AccountID }, null)
+        <br />
+        <b>Planetwars rank:</b> @(pw.Rank == int.MaxValue ? $"Unranked, estimated {Math.Round(pw.Elo)} ± {Math.Round(pw.Uncertainty)} " : $"{pw.Rank}. ({Math.Round(pw.Elo)} ± {Math.Round(pw.Uncertainty)}, Top {Math.Round(pw.Percentile * 1000) / 10f}%) ")
+        @Html.ActionLink("Plot graph", "Ratings", "Charts", new { RatingCategory = (int)RatingCategory.Planetwars, UserId = Model.AccountID }, null)
+        <br />
+        */
+    }
+    <div>
+        <b>Forum karma:</b> @Html.PrintTotalPostRating(Model)
+    </div>
+
+    @Html.ActionLink("Show rating statistics", "Ratings", "Charts", new { RatingCategory = (int)RatingCategory.Casual, UserId = Model.AccountID }, null)
+</div>

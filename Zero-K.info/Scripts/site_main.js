@@ -1,4 +1,11 @@
-﻿(function ($) {
+﻿
+var isBusy = false;
+var ajaxScrollCount = 40;
+var ajaxScrollOffset = 40;
+var ajaxScrollEnabled = true;
+
+
+(function ($) {
     /**
      * returns object with url variables
      * hash parameters take precedence over search
@@ -147,13 +154,71 @@ function CopyToClipboard(elem) {
     return succeed;
 }
 
-var isBusy = false;
-var ajaxScrollCount = 40;
-var ajaxScrollOffset = 40;
-var ajaxScrollEnabled = true;
+function ToggleExtra(id) {
+    var element = $("#" + id);
+    if (!element) return;
 
+    if (element.is(":visible")) {
+        element.slideUp();
+    } else {
+        element.slideDown();
+    }
+}
+
+function openModal(id) {
+    var modal = $("#" + id);
+    console.log("open modal", id, modal);
+    if (!modal || !$(modal).hasClass("modal")) return;
+    modal.fadeIn();
+    $("#modal-overlay").fadeIn();
+}
+
+function closeModal() {
+    $(".modal:visible").fadeOut();
+    $("#modal-overlay").fadeOut();
+}
 
 function GlobalPageInit(root) {
+
+    // navigation transitions
+    $(window).on('scroll', function () {
+        // get position of top of viewport
+        var top = Math.round($(window).scrollTop());
+        var transition_point = $("#navtransition").offset().top;
+
+        if (top > transition_point) {
+            // affix nav to top of screen
+            $("#menu").addClass("nav-affixed");
+            $("#menu > div").addClass("nav-affixed");
+        } else {
+            // reset nav back to static position
+            $("#menu").removeClass("nav-affixed");
+            $("#menu > div").removeClass("nav-affixed");
+        }
+
+        // optional secondary transition
+        var secondary_element = $("#summarytransition");
+        if (secondary_element && secondary_element.length > 0) {
+            var secondary_transition = secondary_element.offset().top - $("#menu").height();
+
+            if (top > secondary_transition) {
+                // affix secondary section to top of screen
+                $(".page-summary").addClass("summary-affixed").css("top", $("#menu").height());
+            } else {
+                // reset secondary section back to static position
+                $(".page-summary").removeClass("summary-affixed").css("top", 0);
+            }
+        }
+        // ಠ_ಠ I know what you're thinking. Don't add another layer.
+    });
+
+    $(".modal-open").click(function () {
+        var modalID = $(this).data("modal");
+        openModal(modalID);
+    });
+    $(".modal-close").click(closeModal)
+    $("#modal-overlay").click(closeModal);
+
     var s = root;
     if (s == null) s = $(document);
 
@@ -168,16 +233,6 @@ function GlobalPageInit(root) {
             }
         }
     });
-    /*
-    s.find(".js_tabs").each(function () {
-        var tabval = $.getUrlVars().tab;
-        if (tabval) {
-            $(this).tabs("option", "selected",parseInt(tabval));
-
-         //   $(this).tabs("load", parseInt($.getUrlVars().tab));
-        }
-    });*/
-
 
     s.find(".js_confirm").click(function() {
         var answer = confirm("Do you really want to do it?");
@@ -387,6 +442,7 @@ function GlobalPageInit(root) {
     SetupGrid(s);
 
 
+    // OBSOLETE
     $(".qtip").remove(); // remove all floating tooltips - breaks autorefresh with init
 }
 

@@ -1,0 +1,25 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZkData.Account
+
+@if (MiscVar.PlanetWarsMode == PlanetWarsModes.Running)
+{
+<div id="planetwars" class="module">
+    <h2 class="handle">PlanetWars</h2>
+    @if (Model.Planets.Any())
+    {
+        <h3>Planets owned</h3>
+        <table>
+            @foreach (Planet p in Model.Planets)
+            {
+                <tr>
+                    <td>@Html.PrintPlanet(p) </td>
+                </tr>
+            }
+        </table>
+    }
+    <h3>PlanetWars events</h3>
+    @Html.Action("Events", "Planetwars", new { accountID = Model.AccountID, partial = true })
+    <span style="color: #222; font-size: 500%; opacity: .75; position: absolute; right: 5%; top: 5%; z-index: -20">PlanetWars</span>
+</div>
+}

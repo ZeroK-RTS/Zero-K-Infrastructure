@@ -120,22 +120,95 @@ namespace ZkData.Migrations
             if (!db.MiscVars.Any(y => y.VarName == "GlacierSecretKey"))
                 db.MiscVars.AddOrUpdate(x => x.VarName, new MiscVar { VarName = "GlacierSecretKey", VarValue = "secret" });
 
+            Faction odd = new Faction
+            {
+                Name = "Odds",
+                Shortcut = "Federation",
+                Color = "green"
+            };
+
+            Faction even = new Faction
+            {
+                Name = "Evens",
+                Shortcut = "Ascended",
+                Color = "blue"
+            };
+
+            // add factions
+            db.Factions.AddOrUpdate(x => x.Name, odd, even);
+
+            // add some test accounts
             db.Accounts.AddOrUpdate(x => x.Name,
             new Account
             {
-                Name = "TestPlayer",
-                NewPasswordPlain = "test",
-                AdminLevel = AdminLevel.SuperAdmin,
-                HasKudos = true,
-                Level = 255,
-                Xp = 1325900,
-                Rank = 3,
-                Country = "cz",
-                Avatar = "amphimpulse",
-                DevLevel = DevLevel.CoreDeveloper,
+                Name = "newbie",
+                NewPasswordPlain = "newbie",
+                Country = "us",
+                Avatar = "amphimpulse"
             },
-            new Account { Name = "test", NewPasswordPlain = "test", AdminLevel = AdminLevel.SuperAdmin, HasKudos = true, Level = 50, Country = "cz" },
-            new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, AdminLevel = AdminLevel.SuperAdmin });
+            new Account
+            {
+                Name = "player1",
+                NewPasswordPlain = "player1",
+                Country = "??",
+                Avatar = "commassault",
+                FactionID = odd.FactionID,
+                Rank = 1,
+                Level = 5,
+                Xp = 100
+            },
+            new Account
+            {
+                Name = "player2",
+                NewPasswordPlain = "player2",
+                Country = "??",
+                Avatar = "amphimpulse",
+                FactionID = even.FactionID,
+                Rank = 2,
+                Level = 10,
+                Xp = 1000
+            },
+            new Account
+            {
+                Name = "pro",
+                NewPasswordPlain = "pro",
+                Country = "SE",
+                Avatar = "commweapon_areashield",
+                Rank = 7,
+                Level = 135,
+                Xp = 100000
+            },
+            new Account
+            {
+                Name = "test",
+                NewPasswordPlain = "test",
+                Country = "us",
+                Avatar = "chickenr",
+                FactionID = even.FactionID,
+                AdminLevel = AdminLevel.Moderator,
+                DevLevel = DevLevel.Developer,
+                Rank = 5
+            },
+            new Account
+            {
+                Name = "admin",
+                NewPasswordPlain = "admin",
+                Country = "cz",
+                Avatar = null,
+                FactionID = odd.FactionID,
+                AdminLevel = AdminLevel.SuperAdmin,
+                DevLevel = DevLevel.CoreDeveloper,
+                Rank = 6,
+                Level = 50,
+                Xp = 10000,
+            },
+            new Account
+            {
+                Name = GlobalConst.NightwatchName,
+                NewPasswordPlain = "dummy",
+                IsBot = true,
+                AdminLevel = AdminLevel.SuperAdmin
+            });
         }
     }
 }

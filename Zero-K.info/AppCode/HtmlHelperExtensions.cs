@@ -34,6 +34,7 @@ namespace System.Web.Mvc
     /// </summary>
     public static class HtmlHelperExtensions
     {
+
         public static MvcHtmlString AccountAvatar(this HtmlHelper helper, Account account) {
             if (account.IsDeleted) return null;
             return new MvcHtmlString(string.Format("<img src='/img/avatars/{0}.png' class='avatar'>", account.Avatar));
@@ -49,11 +50,6 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString BBCodeCached(this HtmlHelper helper, ForumPost post) {
             return Global.ForumPostCache.GetCachedHtml(post, helper);
-        }
-
-        public static MvcHtmlString BBCodeCached(this HtmlHelper helper, News news)
-        {
-            return Global.ForumPostCache.GetCachedHtml(news, helper);
         }
 
 
@@ -109,126 +105,130 @@ namespace System.Web.Mvc
         public static MvcHtmlString Print(this HtmlHelper helper, ForumThread thread) {
             var url = Global.UrlHelper();
 
-            ForumThreadLastRead lastRead = null;
-            ForumLastRead lastReadForum = null;
-            DateTime? lastTime = null;
+            ForumThreadLastRead threadLastRead = null;
+            ForumLastRead forumLastRead = null;
+            DateTime? lastRead = null;
+            int page = 0;
+
+            // get lastRead stats
             if (Global.Account != null)
             {
-                lastRead = Global.Account.ForumThreadLastReads.FirstOrDefault(x => x.ForumThreadID == thread.ForumThreadID);
-                lastReadForum = Global.Account.ForumLastReads.FirstOrDefault(x => x.ForumCategoryID == thread.ForumCategoryID);
-                if (lastReadForum != null) lastTime = lastReadForum.LastRead;
-            }
-            if (lastRead != null && (lastTime == null || lastRead.LastRead > lastTime)) lastTime = lastRead.LastRead;
-            ForumPost post = null;
-            if (lastTime != null) post = thread.ForumPosts.FirstOrDefault(x => x.Created > lastTime);
-            int page = post != null ? ZeroKWeb.Controllers.ForumController.GetPostPage(post) : (thread.PostCount-1)/GlobalConst.ForumPostsPerPage;
+                threadLastRead = Global.Account.ForumThreadLastReads.FirstOrDefault(x => x.ForumThreadID == thread.ForumThreadID);
+                forumLastRead = Global.Account.ForumLastReads.FirstOrDefault(x => x.ForumCategoryID == thread.ForumCategoryID);
 
-            string link;
-            if (page > 0) link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID, page = page});
-            else link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID });
-            link = string.Format("<a href='{0}' title='$thread${1}' style='word-break:break-all;'>", link, thread.ForumThreadID);
+                // if the forum was read, update lastRead
+                if (forumLastRead != null)
+                    lastRead = forumLastRead.LastRead;
 
-            string format;
+                // if the thread was read more recently than the forum, update lastRead
+                if (threadLastRead != null && (lastRead == null || threadLastRead.LastRead > lastRead))
+                    lastRead = threadLastRead.LastRead;
 
-            if (lastTime == null) format = "<span>{0}<img src='/img/mail/mail-unread.png' height='15' /><i>{1}</i></a></span>";
-            else {
-                if (lastTime >= thread.LastPost) format = "<span>{0}<img src='/img/mail/mail-read.png' height='15' />{1}</a></span>";
-                else {
-                    if (lastRead != null && lastRead.LastPosted != null) format = "<span>{0}<img src='/img/mail/mail-new.png' height='15' /><b>{1}</b></a></span>";
-                    else format = "<span>{0}<img src='/img/mail/mail-unread.png' height='15' />{1}</a></span>";
-                }
             }
 
-            string title = HttpUtility.HtmlEncode(thread.Title);
-            if (!string.IsNullOrEmpty(thread.WikiKey))
+            // get forum post page
+            if (lastRead != null)
             {
-                title = string.Format("<span style='color:lightblue'>[{0}]</span> {1}", thread.WikiKey, title);
+                ForumPost post = thread.ForumPosts.FirstOrDefault(x => x.Created > lastRead);
+                page = ZeroKWeb.Controllers.ForumController.GetPostPage(post);
             }
 
-            return new MvcHtmlString(string.Format(format, link, title));
+
+
+            string forumLinkContent = $"<span class='wiki-key'>{thread.WikiKey}</span>{HttpUtility.HtmlEncode(thread.Title)}";
+            string forumURL = url.Action("Thread", "Forum", new { id = thread.ForumThreadID, page });
+            string forumIMG, forumReadStatus, faIcon;
+            
+            if (lastRead != null && lastRead >= thread.LastPost)
+            {
+                // forum has been read more recently than the last post
+                faIcon = "fa-envelope-open";
+                forumIMG = "/img/mail/mail-read.png";
+                forumReadStatus = "mail-read";
+            }
+            else if (threadLastRead?.LastPosted != null)
+            {
+                // forum has been posted to before
+                faIcon = "fa-envelope-o";
+                forumIMG = "/img/mail/mail-new.png";
+                forumReadStatus = "mail-new";
+            }
+            else
+            {
+                faIcon = "fa-envelope";
+                forumIMG = "/img/mail/mail-unread.png";
+                forumReadStatus = "mail-unread";
+            }
+
+            string forumLink = $"<a href='{forumURL}' class='forum-link {forumReadStatus}' title='$thread${thread.ForumThreadID}'><i class='fa {faIcon}'></i> {forumLinkContent}</a>";
+            
+            return new MvcHtmlString(forumLink);
+        }
+
+        /// <summary>
+        /// TODO: replace all instances of this function with simpler implementation
+        /// </summary>
+        /// <param name="helper"></param>
+        /// <param name="account"></param>
+        /// <param name="colorize"></param>
+        /// <param name="ignoreDeleted"></param>
+        /// <returns></returns>
+        public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true, bool ignoreDeleted = false, bool makeLinks = false) {
+            return PrintAccount(account);
         }
 
         /// <summary>
         /// Returns an appropriately formatted link with username and relevant user icons leading to an account page
         /// </summary>
         /// <param name="account">Account to print</param>
-        /// <param name="colorize">If true, write the user name in <see cref="Faction"/> color</param>
-        /// <param name="ignoreDeleted">If false, just prints "{redacted}" for accounts marked as deleted</param>
-        public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true, bool ignoreDeleted = false, bool makeLinks = true) {
-            if (account == null) return new MvcHtmlString("Nobody");
-            else if (account.IsDeleted && !ignoreDeleted && !Global.IsModerator) return new MvcHtmlString(account.Name);
-            else {
-                var clanStr = "";
-                var url = Global.UrlHelper();
-                if (account.Clan != null) {
-                    clanStr = string.Format("<img src='{0}' width='16'/>",
-                                            account.Clan.GetImageUrl());
-                    if (makeLinks)
-                    {
-                        clanStr = string.Format("<a href='{1}' nicetitle='$clan${2}'>{0}</a>",
-                                            clanStr,
-                                            url.Action("Detail", "Clans", new { id = account.ClanID }),
-                                            account.ClanID);
-                    }
-                }
-                else if (account.Faction != null) clanStr = string.Format("<img src='{0}' width='16'/>", account.Faction.GetImageUrl());
-                
-                var dudeStr = "";
-                if (account.AdminLevel >= AdminLevel.Moderator) dudeStr = "<img src='/img/police.png'  class='icon16' alt='Admin' />";
-                
-                string color = Faction.FactionColor(account.Faction, Global.FactionID);
-                if (String.IsNullOrEmpty(color)) color = "#B0D0C0";
-
-                string flag = string.Format(
-                            "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/>",
-                            (account.Country != "??" && !account.HideCountry) ? account.Country : "unknown");
-                string rank = string.Format(
-                            "<img src='/img/ranks/{0}.png'  class='icon16' alt='rank' />",
-                            account.GetIconName());
-                string name = account.Name;
-                if (account.IsDeleted) name += "(REDACTED)";
-                string user = name;
-                if (makeLinks)
-                {
-                    user = string.Format(
-                            "<a href='/Users/Detail/{0}' style='color:{1}' nicetitle='$user${0}'>{2}</a>",
-                            account.AccountID,
-                            colorize ? color : "",
-                            name);
-                }
-
-                return
-                    new MvcHtmlString(
-                        string.Format(
-                            "{0}{1}{2}{3}{4}",
-                            flag,
-                            rank,
-                            clanStr,
-                            dudeStr,
-                            user));
-            }
-        }
-
-        public static MvcHtmlString PrintDate(this HtmlHelper helper, DateTime? dateTime) {
-            return new MvcHtmlString($"<span nicetitle=\"{dateTime}\">{dateTime.ToAgoString()}</span>");    
-        }
-
-        public static MvcHtmlString PrintSeconds(this HtmlHelper helper, int? seconds)
+        public static MvcHtmlString PrintAccount(Account account)
         {
-            if (seconds != null) return new MvcHtmlString($"<span nicetitle=\"{seconds}\">{TimeSpan.FromSeconds(seconds.Value).ToNiceString()}</span>");
-            else return new MvcHtmlString("");
-        }
+            if (account == null) return new MvcHtmlString("Account does not exist");
+            if (account.IsDeleted && Global.Account.AdminLevel < AdminLevel.Moderator) return new MvcHtmlString("{redacted}");
 
-        /// <summary>
-        /// <para>Returns an appropriately formatted link with battle ID, player count, map and icons leading to the battle page</para>
-        /// <para>e.g. [Multiplayer icon] B360800 10 on Coagulation Marsh 0.6</para>
-        /// </summary>
-        /// <param name="helper"></param>
-        /// <param name="battlePlayer">If specified player is in the battle, draw a win/lose icon as appropriate; else draw the spectator icon</param>
-        /// <returns></returns>
-        public static MvcHtmlString PrintBattle(this HtmlHelper helper, SpringBattlePlayer battlePlayer) {
-            if (battlePlayer == null) return null;
-            return PrintBattle(helper, battlePlayer.SpringBattle, battlePlayer.IsSpectator ? null : (bool?)battlePlayer.IsInVictoryTeam);
+            // flag icon
+            string flagIcon = "";
+            if (!account.HideCountry)
+                flagIcon = $"<img src='/img/flags/{(account.Country == "??" ? "unknown" : account.Country)}.png' class='flag' alt='{account.Country}' />";
+
+            // rank icon
+            string rankIcon = $"<img src='/img/ranks/{account.GetIconName()}.png' class='rank icon16' alt='rank{account.Rank}' />";
+
+            // clan or faction icon
+            // nicetitle='$clan${account.ClanID}'
+            string clanIcon = "";
+            string clanUrl = Global.UrlHelper().Action("Detail", "Clans", new { id = account.ClanID });
+            if (account.Clan != null)
+            {
+                clanIcon = $"<a href='{clanUrl}' ><img src='{account.Clan.GetImageUrl()}' class='clan icon16' alt='{account.Clan.ClanName}' /></a>";
+            }
+            else if (account.Faction != null)
+            {
+                clanIcon = $"<img src='{account.Faction.GetImageUrl()}' class='faction icon16' alt='{account.Faction.Name}' />";
+            }
+
+            // apply class for appropriate highlight color
+            string highlight = "";
+            if (account.Faction != null)
+            {
+                highlight = "faction-" + account.Faction.Name.ToLower();
+            }
+            if (Global.AccountID == account.AccountID)
+            {
+                highlight += " personal";
+            }
+            
+            // moderator icon
+            string moderatorIcon = "";
+            if (account.AdminLevel >= AdminLevel.Moderator) moderatorIcon = "<i class='username fa fa-heartbeat'></i>"; // "<img src='/img/police.png'  class='moderator icon16' alt='Admin' />";
+
+            // user name
+            // nicetitle='$user${account.AccountID}'
+            string displayName = $"<a href='/Users/Detail/{account.AccountID}' class='username {(Global.AccountID == account.AccountID ? "personal" : "")}' >{(account.Name + (account.IsDeleted ? " (redacted)" : ""))}</a>";
+
+            // fully fleshed out username view
+            return new MvcHtmlString($"<div class='username-container {highlight}'>{flagIcon}{rankIcon}{clanIcon}{moderatorIcon}{displayName}</div>");
+
         }
 
         public static MvcHtmlString PrintBattle(this HtmlHelper helper, SpringBattle battle, bool? isVictory = null) {
@@ -253,31 +253,6 @@ namespace System.Web.Mvc
                                                 battle.PlayerCount,
                                                 PrintMap(helper, battle.ResourceByMapResourceID?.InternalName),
                                                 icon));
-        }
-
-        /// <summary>
-        /// Returns the specified number followed by the PlanetWars bomber icon
-        /// </summary>
-        public static MvcHtmlString PrintBombers(this HtmlHelper helper, double? count) {
-            return new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", count ?? 0, GlobalConst.BomberIcon));
-        }
-
-        /// <summary>
-        /// <para>Returns the PlanetWars bomber icon, the number of bombers available to the specified account, and the number of bombers the faction as a whole has</para>
-        /// <para>e.g. [bomber icon]0 / 31</para>
-        /// </summary>
-        public static MvcHtmlString PrintBombers(this HtmlHelper helper, Account account) {
-            if (account != null && account.Faction != null) {
-                var ownShips = account.GetBombersAvailable();
-                var factionShips = account.Faction.Bombers;
-                return
-                    new MvcHtmlString(
-                        string.Format("<span nicetitle='Bombers available to you/owned by faction'><img src='{0}' class='icon20'/>{1} / {2}</span>",
-                                      GlobalConst.BomberIcon,
-                                      Math.Floor(ownShips),
-                                      Math.Floor(factionShips)));
-            }
-            else return null;
         }
 
         /// <summary>
@@ -318,40 +293,6 @@ namespace System.Web.Mvc
             if (account == null || account.IsDeleted) return new MvcHtmlString("");
             var badges = account.GetBadges();
             return new MvcHtmlString(string.Join("\n", badges.Select(x=>$"<img src='/img/badges/{x}.png' nicetitle='{x.Description()}' {(maxWidth != null ? $"style='width:{maxWidth}px;'":"")}/>{(newlines ? "<br/>" : "")}")));
-        }
-
-        /// <summary>
-        /// Returns the specified number followed by the PlanetWars dropship icon
-        /// </summary>
-        public static MvcHtmlString PrintDropships(this HtmlHelper helper, double? count, Faction faction) {
-            return
-                new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", Math.Floor(count ?? 0), faction.GetShipImageUrl()));
-        }
-
-        /// <summary>
-        /// <para>Returns the PlanetWars dropship icon, the number of dropships available to the specified account, and the number of dropships the faction as a whole has</para>
-        /// <para>e.g. [dropship icon]0 / 11 </para>
-        /// </summary>
-        public static MvcHtmlString PrintDropships(this HtmlHelper helper, Account account) {
-            if (account != null && account.Faction != null) {
-                var ownShips = account.GetDropshipsAvailable();
-                var factionShips = account.Faction.Dropships;
-                return
-                    new MvcHtmlString(
-                        string.Format(
-                            "<span nicetitle='Dropships available to you/owned by faction'><img src='{0}' class='icon20'/>{1} / {2}</span>",
-                            account.Faction.GetShipImageUrl(),
-                            Math.Floor(ownShips),
-                            Math.Floor(factionShips)));
-            }
-            else return null;
-        }
-
-        /// <summary>
-        /// Returns the specified number followed by the PlanetWars energy icon
-        /// </summary>
-        public static MvcHtmlString PrintEnergy(this HtmlHelper helper, double? count) {
-            return new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", Math.Floor(count ?? 0), GlobalConst.EnergyIcon));
         }
 
         /// <summary>
@@ -400,68 +341,9 @@ namespace System.Web.Mvc
         }
 
 
-        public static MvcHtmlString PrintInfluence(this HtmlHelper helper, PlanetFaction planetFaction) {
-            return PrintInfluence(helper, planetFaction.Faction, planetFaction.Influence);
-        }
-
-        /// <summary>
-        /// Returns a string of the % influence the specified <see cref="Faction"/> has on the <see cref="Planet"/>
-        /// </summary>
-        /// <param name="fac">The faction whose influence should be printed</param>
-        /// <returns></returns>
-        public static MvcHtmlString PrintInfluence(this HtmlHelper helper, Faction fac, double influence) {
-            var formattedString = string.Format("<span style='color:{0}'>{1:0.#} ({2:0.#}%)</span>", Faction.FactionColor(fac, Global.FactionID), influence, 100 * influence / GlobalConst.PlanetWarsMaximumIP);
-            return new MvcHtmlString(formattedString);
-        }
-
-        public static MvcHtmlString PrintInfluence(this HtmlHelper helper, Faction faction, int influence, int shadowInfluence) {
-            var formatString = "<span style='color:{0}'>{1}</span>";
-            if (shadowInfluence > 0) formatString += "&nbsp({2}&nbsp+&nbsp<span style='color:gray'>{3}</span>)";
-            var formattedString = string.Format(formatString, faction.Color, influence + shadowInfluence, influence, shadowInfluence);
-            return new MvcHtmlString(formattedString);
-        }
-
-        public static MvcHtmlString PrintLines(this HtmlHelper helper, string text) {
-            return new MvcHtmlString(helper.Encode(text).Replace("\n", "<br/>"));
-        }
-
-        public static MvcHtmlString PrintLines(this HtmlHelper helper, IEnumerable<object> lines) {
-            var sb = new StringBuilder();
-            foreach (var line in lines) sb.AppendFormat("{0}<br/>", line);
-            return new MvcHtmlString(sb.ToString());
-        }
-
         public static MvcHtmlString PrintMap(this HtmlHelper helper, string name) {
             var url = Global.UrlHelper();
             return new MvcHtmlString(string.Format("<a href='{0}' title='$map${1}'>{1}</a>", url.Action("DetailName", "Maps", new { name }), name));
-        }
-
-        /// <summary>
-        /// Returns the PlanetWars metal icon, the amount of metal available to the specified account, and the amount of metal the faction as a whole has
-        /// </summary>
-        public static MvcHtmlString PrintMetal(this HtmlHelper helper, Account account) {
-            if (account != null && account.Faction != null) {
-                var ownMetal = account.GetMetalAvailable();
-                var factionMetal = Math.Floor(account.Faction.Metal);
-                return
-                    new MvcHtmlString(
-                        string.Format(
-                            "<span style='color:#00FFFF' nicetitle='Metal available to you/owned by faction'><img src='{0}' width='20' height='20'/>{1} / {2}</span>",
-                            GlobalConst.MetalIcon,
-                            Math.Floor(ownMetal),
-                            Math.Floor(factionMetal)));
-            }
-            else return null;
-        }
-
-        /// <summary>
-        /// Returns the specified number followed by the PlanetWars metal icon
-        /// </summary>
-        public static MvcHtmlString PrintMetal(this HtmlHelper helper, double? cost) {
-            return
-                new MvcHtmlString(string.Format("<span style='color:#00FFFF;'>{0}<img src='{1}' class='icon20'/></span>",
-                                                Math.Floor(cost ?? 0),
-                                                GlobalConst.MetalIcon));
         }
 
         /// <summary>
@@ -517,54 +399,8 @@ namespace System.Web.Mvc
                                                 rt.Name + "&nbsp"));
         }
 
-        /// <summary>
-        /// Returns the printed <see cref="Account"/>s that hold specified <see cref="RoleType"/> in the <see cref="Faction"/>
-        /// </summary>
-        /// <param name="rt">The <see cref="RoleType"/> whose holders should be printed</param>
-        /// <param name="f">The <see cref="Faction"/> whose role holders should be printed</param>
-        public static MvcHtmlString PrintFactionRoleHolders(this HtmlHelper helper, RoleType rt, Faction f) {
-            List<MvcHtmlString> holders = new List<MvcHtmlString>();
-            foreach (AccountRole acc in rt.AccountRoles.Where(x=>x.Account.FactionID == f.FactionID)) 
-            {
-                holders.Add(PrintAccount(helper, acc.Account));
-            }
-            return new MvcHtmlString(String.Join(", ", holders));
-        }
-
-        /// <summary>
-        /// Returns the printed <see cref="Account"/>s that hold specified <see cref="RoleType"/> in the <see cref="Clan"/>
-        /// </summary>
-        /// <param name="rt">The <see cref="RoleType"/> whose holders should be printed</param>
-        /// <param name="c">The <see cref="Clan"/> whose role holders should be printed</param>
-        public static MvcHtmlString PrintClanRoleHolders(this HtmlHelper helper, RoleType rt, Clan c)
-        {
-            List<MvcHtmlString> holders = new List<MvcHtmlString>();
-            foreach (AccountRole acc in rt.AccountRoles.Where(x => x.Account.ClanID == c.ClanID))
-            {
-                holders.Add(PrintAccount(helper, acc.Account));
-            }
-            return new MvcHtmlString(String.Join(", ", holders));
-        }
-
         public static MvcHtmlString PrintSpringLink(this HtmlHelper helper, string link) {
            return new MvcHtmlString(string.Format("javascript:SendLobbyCommand('{0}');void(0);",link));
-        }
-
-        /// <summary>
-        /// Returns a colored string that says whether the specified <see cref="PlanetStructure"/> is ACTIVE, DISABLED or POWERING
-        /// </summary>
-        /// <param name="s">The <see cref="PlanetStructure"/> whose status should be printed</param>
-        public static MvcHtmlString PrintStructureState(this HtmlHelper helper, PlanetStructure s) {
-            var url = Global.UrlHelper();
-            var state = "";
-            if (!s.IsActive) {
-                if (s.ActivationTurnCounter == null) state = "<span style='color:red'>DISABLED</span>";
-                if (s.ActivationTurnCounter >= 0) {
-                    state = string.Format(" <span style='color:orange'>POWERING {0} turns left</span>", (s.TurnsToActivateOverride ?? s.StructureType.TurnsToActivate) - s.ActivationTurnCounter);
-                }
-            }
-            else state = "<span style='color:green'>ACTIVE</span>";
-            return new MvcHtmlString(state);
         }
 
         /// <summary>
@@ -575,43 +411,6 @@ namespace System.Web.Mvc
             var url = Global.UrlHelper();
             if (stype != null) return new MvcHtmlString(string.Format("<span nicetitle='$structuretype${0}'>{1}</span>", stype.StructureTypeID, stype.Name));
             else return new MvcHtmlString("");
-        }
-
-        /// <summary>
-        /// Returns the specified number followed by the PlanetWars warp core icon
-        /// </summary>
-        public static MvcHtmlString PrintWarps(this HtmlHelper helper, double? count) {
-            return new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", count ?? 0, GlobalConst.WarpIcon));
-        }
-
-        /// <summary>
-        /// <para>Returns the PlanetWars warp core icon, the number of warp cores available to the specified account, and the number of warp cores the faction as a whole has</para>
-        /// <para>e.g. [warp core icon]0 / 17</para>
-        /// </summary>
-        public static MvcHtmlString PrintWarps(this HtmlHelper helper, Account account) {
-            if (account != null && account.Faction != null) {
-                var ownWarps = account.GetWarpAvailable();
-                var factionWarps = account.Faction.Warps;
-                return
-                    new MvcHtmlString(
-                        string.Format(
-                            "<span nicetitle='Warp cores available to you/owned by faction'><img src='{0}' class='icon20'/>{1} / {2}</span>",
-                            GlobalConst.WarpIcon,
-                            Math.Floor(ownWarps),
-                            Math.Floor(factionWarps)));
-            }
-            else return null;
-        }
-
-        /// <summary>
-        /// Returns the sum of the + and - votes on all the specified <see cref="Account"/>'s forum posts
-        /// </summary>
-        public static MvcHtmlString PrintTotalPostRating(this HtmlHelper helper, Account account)
-        {
-            return new MvcHtmlString(string.Format("{0} / {1}",
-                    string.Format("<font color='LawnGreen'>+{0}</font>", account.ForumTotalUpvotes),
-                    string.Format("<font color='Tomato'>-{0}</font>", account.ForumTotalDownvotes)
-                    ));
         }
 
         /// <summary>
@@ -628,52 +427,40 @@ namespace System.Web.Mvc
             bool upvoted = (previousVote != null && previousVote.Vote > 0);
             bool downvoted = (previousVote != null && previousVote.Vote < 0);
             bool votersVisible = (!GlobalConst.OnlyAdminsSeePostVoters || (Global.Account?.AdminLevel >= AdminLevel.Moderator));
-            /*
-            return new MvcHtmlString(string.Format("<input type='' name='upvote' value='{3}{0}{4}' title='Upvote'> / <input type='submit' name='downvote' value='{5}{1}{6}'> {2}",
-                    string.Format("<font {0}>+{1}</font>", post.Upvotes > 0 ? "color='LawnGreen'" : "", post.Upvotes),
-                    string.Format("<font {0}>-{1}</font>", post.Downvotes > 0 ? "color='Tomato'" : "", post.Downvotes),
-                    previousVote != null ? string.Format("(<input type='submit' name='clearvote' value='clear'>)") : "",
-                    upvoted ? "<strong>" : "",
-                    upvoted ? "</strong>" : "",
-                    downvoted ? "<strong>" : "",
-                    downvoted ? "</strong>" : ""));
-            */
+            string upvoteAction = url.Action("VotePost", "Forum", new { forumPostID = post.ForumPostID, delta = 1 });
+            string downvoteAction = url.Action("VotePost", "Forum", new { forumPostID = post.ForumPostID, delta = -1 });
+            string cancelAction = url.Action("CancelVotePost", "Forum", new { forumPostID = post.ForumPostID });
+            string plusAction = upvoted ? cancelAction : upvoteAction;
+            string minusAction = downvoted ? cancelAction : downvoteAction;
+            string nicetitle = votersVisible ? string.Format("nicetitle='$forumVotes${0}'", post.ForumPostID) : "";
+            string upvoteLink = string.Format("<a href='{0}' class='upvote {2}'>+{1}</a>", plusAction, post.Upvotes, upvoted ? "voted" : "");
+            string downvoteLink = string.Format("<a href='{0}' class='downvote {2}'>-{1}</a>", minusAction, post.Downvotes, downvoted ? "voted" : "");
 
-            string upvote = string.Format("<{0} nicetitle='{1}'>{2}{3}{4}{5}",
-                !noLink? string.Format("a href='{0}'", url.Action("VotePost", "Forum", new { forumPostID = post.ForumPostID, delta = 1 })) : "span",
-                votersVisible? string.Format("$forumVotes${0}", post.ForumPostID) : "Upvote",
-                upvoted ? "<strong>" : "",
-                string.Format("<font {0}>+{1}</font>", post.Upvotes > 0 ? "color='LawnGreen'" : "", post.Upvotes),
-                upvoted ? "</strong>" : "",
-                !noLink? "</a>" : "</span>"
-            );
-            string downvote = string.Format("<{0} nicetitle='{1}'>{2}{3}{4}{5}",
-                !noLink? string.Format("a href='{0}'", url.Action("VotePost", "Forum", new { forumPostID = post.ForumPostID, delta = -1 })) : "span",
-                votersVisible? string.Format("$forumVotes${0}", post.ForumPostID) : "Downvote",
-                downvoted ? "<strong>" : "",
-                string.Format("<font {0}>-{1}</font>", post.Downvotes > 0 ? "color='Tomato'" : "", post.Downvotes),
-                downvoted ? "</strong>" : "",
-                !noLink? "</a>" : "</span>"
-            );
+            if (noLink)
+            {
+                return new MvcHtmlString(string.Format("<div class='votes' {0}>+{1} / -{2}</div>", nicetitle, post.Upvotes, post.Downvotes));
+            }
+            else
+            {
+                return new MvcHtmlString(string.Format("<div class='votes' {0}>{1} / {2}</div>", nicetitle, upvoteLink, downvoteLink));
+            }
 
-            return new MvcHtmlString(string.Format("{0} / {1} {2}",
-                    upvote,
-                    downvote,
-                    previousVote != null ? string.Format("(<a href='{0}'>cancel</a>)", url.Action("CancelVotePost", "Forum", new {forumPostID = post.ForumPostID})) : ""
-                    ));
         }
 
-        public static MvcHtmlString PrintMediaWikiEdit(this HtmlHelper helper, MediaWikiRecentChanges.MediaWikiEdit edit)
-        {
-            return new MvcHtmlString(string.Format("<a href=\"//zero-k.info/mediawiki/index.php?title={0}\">{0}</a> by {1} <small>{2}</small>",
-                    edit.Title, edit.Username, edit.AgoString
-                    ));
-        }
 
+        //public static MvcHtmlString PrintRankProgress(this HtmlHelper helper, Account account)
+        //{
+        //    var ratio =  Ratings.Ranks.GetRankProgress(account);
+        //    int percentage = (int)Math.Round(ratio * 100);
+        //    var progressText = string.Format("Progress to the next rank: {0}%", percentage);
+        //    if (percentage >= 100) progressText = "Rank up on next victory!";
+        //    var str = new MvcHtmlString(string.Format("Current rank: <img src='/img/ranks/{0}_{1}.png'  class='icon16' alt='rank' /> {2} <br /> <br /> {3}<br /> <br />Win more games to improve your rank!", account.GetIconLevel(), account.Rank, Ratings.Ranks.RankNames[account.Rank], progressText));
+        //    return str;
+        //}
 
         public static MvcHtmlString PrintRankProgress(this HtmlHelper helper, Account account)
         {
-            var ratio =  Ratings.Ranks.GetRankProgress(account);
+            var ratio = Ratings.Ranks.GetRankProgress(account);
             int percentage = (int)Math.Round(ratio * 100);
             var progressText = string.Format("Progress to the next rank: {0}%", percentage);
             if (percentage >= 100)
@@ -695,66 +482,6 @@ namespace System.Web.Mvc
             return str;
         }
 
-        /// <summary>
-        /// <para>Converts strings preceded with an @ to a printed <see cref="Account"/>, <see cref="SpringBattle"/>, etc. as appropriate</para>
-        /// <para>e.g. @KingRaptor becomes the printed account for user KingRaptor</para>
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        public static string ProcessAtSignTags(string str) {
-            var db = new ZkDataContext();
-            str = Regex.Replace(str,
-                                @"@([\w\[\]]+)",
-                                m =>
-                                    {
-                                        var val = m.Groups[1].Value;
-                                        var acc = Account.AccountByName(db, val);
-                                        if (acc != null) return PrintAccount(null, acc).ToString();
-                                        var clan = db.Clans.FirstOrDefault(x => x.Shortcut == val);
-                                        if (clan != null) return PrintClan(null, clan).ToString();
-                                        var fac = db.Factions.FirstOrDefault(x => x.Shortcut == val);
-                                        if (fac != null) return PrintFaction(null, fac, false).ToString();
-
-                                        if (val.StartsWith("b", StringComparison.InvariantCultureIgnoreCase)) {
-                                            var bid = 0;
-                                            if (int.TryParse(val.Substring(1), out bid)) {
-                                                var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == bid);
-                                                if (bat != null) return PrintBattle(null, bat).ToString();
-                                            }
-                                        }
-                                        return "@" + val;
-                                    });
-            return str;
-        }
-
-
-        public static MvcHtmlString Select(this HtmlHelper helper, string name, Type etype, int? selected, string anyItem) {
-            var sb = new StringBuilder();
-            sb.AppendFormat("<select name='{0}'>", helper.Encode(name));
-            var names = Enum.GetNames(etype);
-            var values = (int[])Enum.GetValues(etype);
-            if (anyItem != null) sb.AppendFormat("<option {1}>{0}</option>", helper.Encode(anyItem), selected == null ? "selected" : "");
-            for (var i = 0; i < names.Length; i++)
-                sb.AppendFormat("<option value='{0}' {2}>{1}</option>",
-                                helper.Encode(values[i]),
-                                helper.Encode(names[i]),
-                                selected == values[i] ? "selected" : "");
-            sb.Append("</select>");
-            return new MvcHtmlString(sb.ToString());
-        }
-
-
-        public static MvcHtmlString Select(this HtmlHelper helper, string name, IEnumerable<SelectOption> items, string selected) {
-            var sb = new StringBuilder();
-            sb.AppendFormat("<select name='{0}'>", helper.Encode(name));
-            foreach (var item in items)
-                sb.AppendFormat("<option value='{0}' {2}>{1}</option>",
-                                helper.Encode(item.Value),
-                                helper.Encode(item.Name),
-                                selected == item.Value ? "selected" : "");
-            sb.Append("</select>");
-            return new MvcHtmlString(sb.ToString());
-        }
 
         /// <summary>
         /// Returns the star rating of a map, mission, etc.
@@ -779,6 +506,18 @@ namespace System.Web.Mvc
             }
         }
 
+        #region time helpers
+
+        public static MvcHtmlString PrintDate(this HtmlHelper helper, DateTime? dateTime)
+        {
+            return new MvcHtmlString($"<span nicetitle=\"{dateTime}\">{dateTime.ToAgoString()}</span>");
+        }
+
+        public static MvcHtmlString PrintSeconds(this HtmlHelper helper, int? seconds)
+        {
+            if (seconds != null) return new MvcHtmlString($"<span nicetitle=\"{seconds}\">{TimeSpan.FromSeconds(seconds.Value).ToReadableTime()}</span>");
+            else return new MvcHtmlString("");
+        }
 
         public static string ToAgoString(this DateTime? utcDate) {
             if (utcDate.HasValue) return ToAgoString(DateTime.UtcNow.Subtract(utcDate.Value));
@@ -790,14 +529,14 @@ namespace System.Web.Mvc
         }
 
         public static string ToAgoString(this TimeSpan timeSpan) {
-            if (timeSpan.TotalSeconds > 0) return string.Format("{0} ago", timeSpan.Duration().ToNiceString());
-            else return string.Format("in {0}", timeSpan.Duration().ToNiceString());
+            if (timeSpan.TotalSeconds > 0) return string.Format("{0} ago", timeSpan.Duration().ToReadableTime());
+            else return string.Format("in {0}", timeSpan.Duration().ToReadableTime());
         }
 
         /// <summary>
-        /// Converts a <see cref="TimeSpan"/> to "X seconds/minutes/hours/days/months ago"
+        /// Converts a <see cref="TimeSpan"/> to "X seconds/minutes/hours/days/months"
         /// </summary>
-        public static string ToNiceString(this TimeSpan timeSpan) {
+        public static string ToReadableTime(this TimeSpan timeSpan) {
             if (timeSpan.TotalMinutes < 2) return string.Format("{0} seconds", (int)timeSpan.TotalSeconds);
             if (timeSpan.TotalHours < 2) return string.Format("{0} minutes", (int)timeSpan.TotalMinutes);
             if (timeSpan.TotalDays < 2) return string.Format("{0} hours", (int)timeSpan.TotalHours);
@@ -806,6 +545,322 @@ namespace System.Web.Mvc
             return string.Format("{0} years", (int)(timeSpan.TotalDays/365));
         }
 
+        #endregion
+
+        #region unused
+
+        public static MvcHtmlString BBCodeCached(this HtmlHelper helper, News news)
+        {
+            return Global.ForumPostCache.GetCachedHtml(news, helper);
+        }
+
+        /// <summary>
+        /// <para>Returns an appropriately formatted link with battle ID, player count, map and icons leading to the battle page</para>
+        /// <para>e.g. [Multiplayer icon] B360800 10 on Coagulation Marsh 0.6</para>
+        /// </summary>
+        /// <param name="helper"></param>
+        /// <param name="battlePlayer">If specified player is in the battle, draw a win/lose icon as appropriate; else draw the spectator icon</param>
+        /// <returns></returns>
+        public static MvcHtmlString PrintBattle(this HtmlHelper helper, SpringBattlePlayer battlePlayer)
+        {
+            if (battlePlayer == null) return null;
+            return PrintBattle(helper, battlePlayer.SpringBattle, battlePlayer.IsSpectator ? null : (bool?)battlePlayer.IsInVictoryTeam);
+        }
+
+        /// <summary>
+        /// Returns the specified number followed by the PlanetWars bomber icon
+        /// </summary>
+        public static MvcHtmlString PrintBombers(this HtmlHelper helper, double? count)
+        {
+            return new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", count ?? 0, GlobalConst.BomberIcon));
+        }
+
+        /// <summary>
+        /// <para>Returns the PlanetWars bomber icon, the number of bombers available to the specified account, and the number of bombers the faction as a whole has</para>
+        /// <para>e.g. [bomber icon]0 / 31</para>
+        /// </summary>
+        public static MvcHtmlString PrintBombers(this HtmlHelper helper, Account account)
+        {
+            if (account != null && account.Faction != null)
+            {
+                var ownShips = account.GetBombersAvailable();
+                var factionShips = account.Faction.Bombers;
+                return
+                    new MvcHtmlString(
+                        string.Format("<span nicetitle='Bombers available to you/owned by faction'><img src='{0}' class='icon20'/>{1} / {2}</span>",
+                                      GlobalConst.BomberIcon,
+                                      Math.Floor(ownShips),
+                                      Math.Floor(factionShips)));
+            }
+            else return null;
+        }
+
+        /// <summary>
+        /// Returns the specified number followed by the PlanetWars dropship icon
+        /// </summary>
+        public static MvcHtmlString PrintDropships(this HtmlHelper helper, double? count, Faction faction)
+        {
+            return
+                new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", Math.Floor(count ?? 0), faction.GetShipImageUrl()));
+        }
+
+        /// <summary>
+        /// <para>Returns the PlanetWars dropship icon, the number of dropships available to the specified account, and the number of dropships the faction as a whole has</para>
+        /// <para>e.g. [dropship icon]0 / 11 </para>
+        /// </summary>
+        public static MvcHtmlString PrintDropships(this HtmlHelper helper, Account account)
+        {
+            if (account != null && account.Faction != null)
+            {
+                var ownShips = account.GetDropshipsAvailable();
+                var factionShips = account.Faction.Dropships;
+                return
+                    new MvcHtmlString(
+                        string.Format(
+                            "<span nicetitle='Dropships available to you/owned by faction'><img src='{0}' class='icon20'/>{1} / {2}</span>",
+                            account.Faction.GetShipImageUrl(),
+                            Math.Floor(ownShips),
+                            Math.Floor(factionShips)));
+            }
+            else return null;
+        }
+
+        /// <summary>
+        /// Returns the specified number followed by the PlanetWars energy icon
+        /// </summary>
+        public static MvcHtmlString PrintEnergy(this HtmlHelper helper, double? count)
+        {
+            return new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", Math.Floor(count ?? 0), GlobalConst.EnergyIcon));
+        }
+
+        public static MvcHtmlString PrintInfluence(this HtmlHelper helper, Faction faction, int influence, int shadowInfluence)
+        {
+            var formatString = "<span style='color:{0}'>{1}</span>";
+            if (shadowInfluence > 0) formatString += "&nbsp({2}&nbsp+&nbsp<span style='color:gray'>{3}</span>)";
+            var formattedString = string.Format(formatString, faction.Color, influence + shadowInfluence, influence, shadowInfluence);
+            return new MvcHtmlString(formattedString);
+        }
+
+        public static MvcHtmlString PrintInfluence(this HtmlHelper helper, PlanetFaction planetFaction)
+        {
+            return PrintInfluence(helper, planetFaction.Faction, planetFaction.Influence);
+        }
+
+        /// <summary>
+        /// Returns a string of the % influence the specified <see cref="Faction"/> has on the <see cref="Planet"/>
+        /// </summary>
+        /// <param name="fac">The faction whose influence should be printed</param>
+        /// <returns></returns>
+        public static MvcHtmlString PrintInfluence(this HtmlHelper helper, Faction fac, double influence)
+        {
+            var formattedString = string.Format("<span style='color:{0}'>{1:0.#} ({2:0.#}%)</span>", Faction.FactionColor(fac, Global.FactionID), influence, 100 * influence / GlobalConst.PlanetWarsMaximumIP);
+            return new MvcHtmlString(formattedString);
+        }
+
+        public static MvcHtmlString PrintLines(this HtmlHelper helper, string text)
+        {
+            return new MvcHtmlString(helper.Encode(text).Replace("\n", "<br/>"));
+        }
+
+        public static MvcHtmlString PrintLines(this HtmlHelper helper, IEnumerable<object> lines)
+        {
+            var sb = new StringBuilder();
+            foreach (var line in lines) sb.AppendFormat("{0}<br/>", line);
+            return new MvcHtmlString(sb.ToString());
+        }
+
+        /// <summary>
+        /// Returns the PlanetWars metal icon, the amount of metal available to the specified account, and the amount of metal the faction as a whole has
+        /// </summary>
+        public static MvcHtmlString PrintMetal(this HtmlHelper helper, Account account)
+        {
+            if (account != null && account.Faction != null)
+            {
+                var ownMetal = account.GetMetalAvailable();
+                var factionMetal = Math.Floor(account.Faction.Metal);
+                return
+                    new MvcHtmlString(
+                        string.Format(
+                            "<span style='color:#00FFFF' nicetitle='Metal available to you/owned by faction'><img src='{0}' width='20' height='20'/>{1} / {2}</span>",
+                            GlobalConst.MetalIcon,
+                            Math.Floor(ownMetal),
+                            Math.Floor(factionMetal)));
+            }
+            else return null;
+        }
+
+        /// <summary>
+        /// Returns the specified number followed by the PlanetWars metal icon
+        /// </summary>
+        public static MvcHtmlString PrintMetal(this HtmlHelper helper, double? cost)
+        {
+            return
+                new MvcHtmlString(string.Format("<span style='color:#00FFFF;'>{0}<img src='{1}' class='icon20'/></span>",
+                                                Math.Floor(cost ?? 0),
+                                                GlobalConst.MetalIcon));
+        }
+
+        /// <summary>
+        /// Returns the printed <see cref="Account"/>s that hold specified <see cref="RoleType"/> in the <see cref="Faction"/>
+        /// </summary>
+        /// <param name="rt">The <see cref="RoleType"/> whose holders should be printed</param>
+        /// <param name="f">The <see cref="Faction"/> whose role holders should be printed</param>
+        public static MvcHtmlString PrintFactionRoleHolders(this HtmlHelper helper, RoleType rt, Faction f)
+        {
+            List<MvcHtmlString> holders = new List<MvcHtmlString>();
+            foreach (AccountRole acc in rt.AccountRoles.Where(x => x.Account.FactionID == f.FactionID))
+            {
+                holders.Add(PrintAccount(helper, acc.Account));
+            }
+            return new MvcHtmlString(String.Join(", ", holders));
+        }
+
+        /// <summary>
+        /// Returns the printed <see cref="Account"/>s that hold specified <see cref="RoleType"/> in the <see cref="Clan"/>
+        /// </summary>
+        /// <param name="rt">The <see cref="RoleType"/> whose holders should be printed</param>
+        /// <param name="c">The <see cref="Clan"/> whose role holders should be printed</param>
+        public static MvcHtmlString PrintClanRoleHolders(this HtmlHelper helper, RoleType rt, Clan c)
+        {
+            List<MvcHtmlString> holders = new List<MvcHtmlString>();
+            foreach (AccountRole acc in rt.AccountRoles.Where(x => x.Account.ClanID == c.ClanID))
+            {
+                holders.Add(PrintAccount(helper, acc.Account));
+            }
+            return new MvcHtmlString(String.Join(", ", holders));
+        }
+
+        /// <summary>
+        /// Returns a colored string that says whether the specified <see cref="PlanetStructure"/> is ACTIVE, DISABLED or POWERING
+        /// </summary>
+        /// <param name="s">The <see cref="PlanetStructure"/> whose status should be printed</param>
+        public static MvcHtmlString PrintStructureState(this HtmlHelper helper, PlanetStructure s)
+        {
+            var url = Global.UrlHelper();
+            var state = "";
+            if (!s.IsActive)
+            {
+                if (s.ActivationTurnCounter == null) state = "<span style='color:red'>DISABLED</span>";
+                if (s.ActivationTurnCounter >= 0)
+                {
+                    state = string.Format(" <span style='color:orange'>POWERING {0} turns left</span>", (s.TurnsToActivateOverride ?? s.StructureType.TurnsToActivate) - s.ActivationTurnCounter);
+                }
+            }
+            else state = "<span style='color:green'>ACTIVE</span>";
+            return new MvcHtmlString(state);
+        }
+
+        /// <summary>
+        /// Returns the specified number followed by the PlanetWars warp core icon
+        /// </summary>
+        public static MvcHtmlString PrintWarps(this HtmlHelper helper, double? count)
+        {
+            return new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", count ?? 0, GlobalConst.WarpIcon));
+        }
+
+        /// <summary>
+        /// <para>Returns the PlanetWars warp core icon, the number of warp cores available to the specified account, and the number of warp cores the faction as a whole has</para>
+        /// <para>e.g. [warp core icon]0 / 17</para>
+        /// </summary>
+        public static MvcHtmlString PrintWarps(this HtmlHelper helper, Account account)
+        {
+            if (account != null && account.Faction != null)
+            {
+                var ownWarps = account.GetWarpAvailable();
+                var factionWarps = account.Faction.Warps;
+                return
+                    new MvcHtmlString(
+                        string.Format(
+                            "<span nicetitle='Warp cores available to you/owned by faction'><img src='{0}' class='icon20'/>{1} / {2}</span>",
+                            GlobalConst.WarpIcon,
+                            Math.Floor(ownWarps),
+                            Math.Floor(factionWarps)));
+            }
+            else return null;
+        }
+
+        /// <summary>
+        /// Returns the sum of the + and - votes on all the specified <see cref="Account"/>'s forum posts
+        /// </summary>
+        public static MvcHtmlString PrintTotalPostRating(this HtmlHelper helper, Account account)
+        {
+            return new MvcHtmlString(string.Format("{0} / {1}",
+                    string.Format("<font color='LawnGreen'>+{0}</font>", account.ForumTotalUpvotes),
+                    string.Format("<font color='Tomato'>-{0}</font>", account.ForumTotalDownvotes)
+                    ));
+        }
+
+        public static MvcHtmlString PrintMediaWikiEdit(this HtmlHelper helper, MediaWikiRecentChanges.MediaWikiEdit edit)
+        {
+            return new MvcHtmlString(string.Format("<a href=\"//zero-k.info/mediawiki/index.php?title={0}\">{0}</a> by {1} <small>{2}</small>",
+                    edit.Title, edit.Username, edit.AgoString
+                    ));
+        }
+
+
+        /// <summary>
+        /// <para>Converts strings preceded with an @ to a printed <see cref="Account"/>, <see cref="SpringBattle"/>, etc. as appropriate</para>
+        /// <para>e.g. @KingRaptor becomes the printed account for user KingRaptor</para>
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string ProcessAtSignTags(string str)
+        {
+            var db = new ZkDataContext();
+            str = Regex.Replace(str,
+                                @"@([\w\[\]]+)",
+                                m =>
+                                {
+                                    var val = m.Groups[1].Value;
+                                    var acc = Account.AccountByName(db, val);
+                                    if (acc != null) return PrintAccount(null, acc).ToString();
+                                    var clan = db.Clans.FirstOrDefault(x => x.Shortcut == val);
+                                    if (clan != null) return PrintClan(null, clan).ToString();
+                                    var fac = db.Factions.FirstOrDefault(x => x.Shortcut == val);
+                                    if (fac != null) return PrintFaction(null, fac, false).ToString();
+
+                                    if (val.StartsWith("b", StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        var bid = 0;
+                                        if (int.TryParse(val.Substring(1), out bid))
+                                        {
+                                            var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == bid);
+                                            if (bat != null) return PrintBattle(null, bat).ToString();
+                                        }
+                                    }
+                                    return "@" + val;
+                                });
+            return str;
+        }
+
+        public static MvcHtmlString Select(this HtmlHelper helper, string name, Type etype, int? selected, string anyItem)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormat("<select name='{0}'>", helper.Encode(name));
+            var names = Enum.GetNames(etype);
+            var values = (int[])Enum.GetValues(etype);
+            if (anyItem != null) sb.AppendFormat("<option {1}>{0}</option>", helper.Encode(anyItem), selected == null ? "selected" : "");
+            for (var i = 0; i < names.Length; i++)
+                sb.AppendFormat("<option value='{0}' {2}>{1}</option>",
+                                helper.Encode(values[i]),
+                                helper.Encode(names[i]),
+                                selected == values[i] ? "selected" : "");
+            sb.Append("</select>");
+            return new MvcHtmlString(sb.ToString());
+        }
+
+        public static MvcHtmlString Select(this HtmlHelper helper, string name, IEnumerable<SelectOption> items, string selected)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormat("<select name='{0}'>", helper.Encode(name));
+            foreach (var item in items)
+                sb.AppendFormat("<option value='{0}' {2}>{1}</option>",
+                                helper.Encode(item.Value),
+                                helper.Encode(item.Name),
+                                selected == item.Value ? "selected" : "");
+            sb.Append("</select>");
+            return new MvcHtmlString(sb.ToString());
+        }
 
         public static MvcHtmlString EnumCheckboxesFor<TModel, TEnum>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, IList<TEnum>>> expression, IList<TEnum> hideList = null)
         {
@@ -827,7 +882,6 @@ namespace System.Web.Mvc
 
             return new MvcHtmlString(sb.ToString());
         }
-
 
         public static MvcHtmlString MultiSelectFor<TModel, TEnum>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, IList<TEnum>>> expression, string autocompleteAction, Func<TEnum, MvcHtmlString> objectRenderer)
         {
@@ -852,12 +906,7 @@ namespace System.Web.Mvc
             return new MvcHtmlString(sb.ToString());
         }
 
-
-        public static Account CurrentAccount(this ZkDataContext db)
-        {
-            if (Global.AccountID > 0 && Global.IsAccountAuthorized) return db.Accounts.Find(Global.AccountID);
-            else return null;
-        }
+        #endregion
 
     }
 }

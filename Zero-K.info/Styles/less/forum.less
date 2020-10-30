@@ -1,0 +1,224 @@
+﻿@import "colors.less";
+
+.forum {
+    background: rgba(0, 0, 0, .5);
+    font-family: 'OpenSans', sans-serif;
+    padding: 1em;
+
+    .category-link {
+        display: inline-block;
+        padding: 0.5em;
+    }
+
+    .infoCell {
+        /*forum navigation*/
+        border-bottom: 1px solid @highlight;
+    }
+
+    .filter-section {
+        display: none;
+        border-bottom: 1px solid @highlight;
+        margin: 1em 0em;
+    }
+
+    .grid_pager {
+        margin: 1em 0em;
+    }
+
+    .forum-post {
+        position: relative;
+        display: block;
+        background: @background;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        margin: 0;
+        margin-bottom: 0.5em;
+
+        .header {
+            display: flex;
+            background: rgba(0,0,0,.1);
+            width: 100%;
+            padding: 0.5em;
+            border-bottom: 1px solid @highlight-nonfaction;
+
+            .header-info {
+                display: flex;
+                flex-direction: column-reverse;
+                width: 100%;
+            }
+
+            .whoen {
+                padding-left: 0.5em;
+
+                .time {
+                    padding-left: 0.5em;
+                    font-size: small;
+                }
+            }
+
+            .edit {
+                height: 100%;
+                text-align: right;
+
+                a {
+                    padding: .5em;
+                }
+            }
+
+            .votes {
+                display: inline-block;
+            }
+        }
+
+        .post-content {
+            padding: 1em;
+            text-indent: 2em;
+        }
+    }
+
+    .forum-post:nth-child(even) {
+        background: @background-alt;
+    }
+
+    .threads {
+        .thread {
+            position: relative;
+            display: block;
+            background: @background;
+            padding: 1em;
+            border: 0;
+            margin: 0;
+
+            .thread-status {
+                display: inline-block;
+                min-width: 2em;
+                vertical-align: top;
+                text-align: center;
+
+                i {
+                    display: block;
+                    width: 100%;
+                }
+            }
+
+            .thread-content {
+                display: inline-block;
+            }
+
+            .thread-details {
+                position: absolute;
+                top: 1em;
+                right: 1em;
+                text-align: right;
+            }
+
+            .alt-postcount {
+                display: none;
+            }
+
+            @media only screen and (max-width: 800px) {
+                .thread-details {
+                    position: relative;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    text-align: left;
+
+                    .postcount {
+                        display: none;
+                    }
+                }
+
+                .alt-postcount {
+                    display: block;
+                    margin-top: 0.5em;
+                }
+            }
+        }
+
+        .thread:nth-child(even) {
+            background: @background-alt;
+        }
+
+        .thread.pinned {
+            /*background: rgba(0,0,0,1);*/
+            margin-bottom: 0.5em;
+            border-left: 3px solid @highlight;
+            border-right: 3px solid @highlight;
+        }
+
+        .read {
+            color: darken(@copy, 20%);
+
+            a {
+                color: @link-read;
+            }
+        }
+    }
+    /*.threads.index {
+        .thread.pinned {
+            margin-bottom: 0;
+        }
+    }*/
+    .faction-odds {
+        .header {
+            border-bottom: 1px solid @highlight-odds;
+
+            a {
+                color: @highlight-odds;
+            }
+        }
+    }
+
+    .faction-evens {
+        .header {
+            border-bottom: 1px solid @highlight-evens;
+
+            a {
+                color: @highlight-evens;
+            }
+        }
+    }
+
+    .faction-empire {
+        .header {
+            border-bottom: 1px solid @highlight-empire;
+
+            a {
+                color: @highlight-empire;
+            }
+        }
+    }
+
+    .faction-dynasty {
+        .header {
+            border-bottom: 1px solid @highlight-dynasty;
+
+            a {
+                color: @highlight-dynasty;
+            }
+        }
+    }
+
+    .faction-federation {
+        .header {
+            border-bottom: 1px solid @highlight-federation;
+
+            a {
+                color: @highlight-federation;
+            }
+        }
+    }
+
+    .personal {
+        .header {
+            border-bottom: 1px solid @highlight;
+
+            a {
+                color: @highlight;
+            }
+        }
+    }
+}

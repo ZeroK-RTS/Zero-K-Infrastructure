@@ -1,11 +1,11 @@
 
 
-.username{
+/*.username{
     text-align: center;
     letter-spacing: 0.3px;
     margin-left: 150px;
     margin-right: 150px;
-}
+}*/
 
 .progress_filler{
     
@@ -63,12 +63,12 @@
 .progress_wrapper_left{
     width: 150px;
     float: left;
+    text-align: right;
 }
 .progress_wrapper_right{
     width: 150px;
     float: right;
-    text-align: right;
-
+    text-align: left;
 }
 .user_buttons{
     float: right; 
