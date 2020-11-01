@@ -113,7 +113,6 @@
         var allBots = Model.SpringBattleBots.ToList();
         var allAllyIDs = Model.GetAllyteamIds();
         var allWinChances = Model.GetAllyteamWinChances();
-        int teamId = 0;
     }
     @foreach (var allyID in allAllyIDs)
     {
@@ -124,7 +123,7 @@
             <span style="font-size: 130%">Team @(allyID + 1) @label</span><br />
             @if (Model.IsRatedMatch())
             {
-                <small>Chance of victory: @(((int)Math.Round(1000 * allWinChances[teamId++])) / 10.0)%</small>
+                <small>Chance of victory: @(((int)Math.Round(1000 * allWinChances[allyID])) / 10.0)%</small>
                 <br />
             }
             @if (ViewBag.ShowWinners)

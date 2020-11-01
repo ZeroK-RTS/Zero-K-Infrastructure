@@ -497,7 +497,7 @@ namespace Ratings
                         List<SpringBattlePlayer> lastBattlePlayers = db.SpringBattlePlayers.Where(p => p.SpringBattleID == battleId && !p.IsSpectator).Include(x => x.Account).DistinctBy(x => x.AccountID).ToList();
                         Dictionary<int, float> oldRatings = lastBattlePlayers.ToDictionary(p => (p.AccountID), p => GetPlayerRating(p.AccountID).LadderElo);
                         lastBattlePlayers.Where(p => !playerRatings.ContainsKey((p.AccountID))).ForEach(p => playerRatings[(p.AccountID)] = new PlayerRating(DefaultRating));
-                        List<float> winChances = db.SpringBattles.Where(p => p.SpringBattleID == battleId).First().GetAllyteamWinChances();
+                        Dictionary<int, float> winChances = db.SpringBattles.Where(p => p.SpringBattleID == battleId).First().GetAllyteamWinChances();
                         lastBattlePlayers.ForEach(p => {
                             float eloChange = (p.IsInVictoryTeam ? (1f - winChances[p.AllyNumber]) : (-winChances[p.AllyNumber])) * GlobalConst.LadderEloClassicEloK / lastBattlePlayers.Count(x => x.AllyNumber == p.AllyNumber);
                             playerRatings[p.AccountID].LadderElo = Ranks.UpdateLadderRating(p.Account, category, getPlayerById(p.AccountID).avgElo + RatingOffset, p.IsInVictoryTeam, !p.IsInVictoryTeam, eloChange, db);
