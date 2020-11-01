@@ -51,7 +51,6 @@ namespace AutoRegistrator
             Utils.CheckPath(targetFolder);
             try
             {
-                Directory.Delete(Path.Combine(targetFolder, "packages"), true);
                 Directory.Delete(Path.Combine(targetFolder, "maps"), true);
                 Directory.Delete(Path.Combine(targetFolder, "pool"), true);
                 Directory.Delete(Path.Combine(targetFolder, "packages"), true);
