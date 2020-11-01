@@ -7,7 +7,7 @@ using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
-    public class ForumController: Controller
+    public class ForumController : Controller
     {
         public const int PageSize = GlobalConst.ForumPostsPerPage;
 
@@ -125,14 +125,14 @@ namespace ZeroKWeb.Controllers
             }
             if (filterAccountID.HasValue) threads = threads.Where(x => x.CreatedAccountID == filterAccountID || x.ForumPosts.Any(y => y.AuthorAccountID == filterAccountID));
 
-            
+
             if (model.OnlyUnread && Global.IsAccountAuthorized)
             {
                 threads = from t in threads
-                    let read = t.ForumThreadLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID)
-                    let readForum = t.ForumCategory.ForumLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID)
-                    where (read == null || t.LastPost > read.LastRead) && (readForum == null || t.LastPost > readForum.LastRead)
-                    select t;
+                          let read = t.ForumThreadLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID)
+                          let readForum = t.ForumCategory.ForumLastReads.FirstOrDefault(x => x.AccountID == Global.AccountID)
+                          where (read == null || t.LastPost > read.LastRead) && (readForum == null || t.LastPost > readForum.LastRead)
+                          select t;
             }
 
             if (!string.IsNullOrEmpty(model.Search))
@@ -166,8 +166,14 @@ namespace ZeroKWeb.Controllers
                 if (filterAccountID.HasValue) posts = posts.Where(x => x.AuthorAccountID == filterAccountID);
             }
 
-            model.Data = posts.OrderBy(x=>x.ForumPostID);
+            model.Data = posts.OrderBy(x => x.ForumPostID);
             model.Thread = thread;
+
+            if (!model.DisablePostComment)
+            {
+                var mode = thread.ForumCategory.ForumMode;
+                model.DisablePostComment = thread.IsLocked || mode == ForumMode.Maps || mode == ForumMode.Missions || mode == ForumMode.SpringBattles|| mode == ForumMode.Clans || mode == ForumMode.Planets;
+            }
 
             return View("PostList", model);
         }
@@ -178,6 +184,7 @@ namespace ZeroKWeb.Controllers
             public string Search { get; set; }
             public int GoToPost { get; set; }
             public string User { get; set; }
+            public Boolean DisablePostComment{ get; set; }
             public ForumThread Thread;
             public IQueryable<ForumPost> Data;
         }

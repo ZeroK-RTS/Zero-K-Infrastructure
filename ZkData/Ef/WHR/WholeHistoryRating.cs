@@ -497,7 +497,7 @@ namespace Ratings
                         List<SpringBattlePlayer> lastBattlePlayers = db.SpringBattlePlayers.Where(p => p.SpringBattleID == battleId && !p.IsSpectator).Include(x => x.Account).DistinctBy(x => x.AccountID).ToList();
                         Dictionary<int, float> oldRatings = lastBattlePlayers.ToDictionary(p => (p.AccountID), p => GetPlayerRating(p.AccountID).LadderElo);
                         lastBattlePlayers.Where(p => !playerRatings.ContainsKey((p.AccountID))).ForEach(p => playerRatings[(p.AccountID)] = new PlayerRating(DefaultRating));
-                        List<float> winChances = db.SpringBattles.Where(p => p.SpringBattleID == battleId).First().GetAllyteamWinChances();
+                        Dictionary<int, float> winChances = db.SpringBattles.Where(p => p.SpringBattleID == battleId).First().GetAllyteamWinChances();
                         lastBattlePlayers.ForEach(p => {
                             float eloChange = (p.IsInVictoryTeam ? (1f - winChances[p.AllyNumber]) : (-winChances[p.AllyNumber])) * GlobalConst.LadderEloClassicEloK / lastBattlePlayers.Count(x => x.AllyNumber == p.AllyNumber);
                             playerRatings[p.AccountID].LadderElo = Ranks.UpdateLadderRating(p.Account, category, getPlayerById(p.AccountID).avgElo + RatingOffset, p.IsInVictoryTeam, !p.IsInVictoryTeam, eloChange, db);
@@ -579,17 +579,17 @@ namespace Ratings
                     SaveToDB();
                 }
 
-                //check for rank updates
-
-
             }
             catch (Exception ex)
             {
                 Trace.TraceError("WHR " + category + ": Failed to update rankings: " + ex);
+                PendingDebriefing discard2;
+                debriefings.ForEach(x => pendingDebriefings.TryRemove(x.Key, out discard2));
                 return;
             }
             try
             {
+                //check for rank updates
                 if (debriefings.Any())
                 {
                     Trace.TraceInformation("WHR Filling in Debriefings for Battles: " + debriefings.Keys.Select(x => "B" + x).StringJoin());
@@ -635,9 +635,6 @@ namespace Ratings
                             RatingsUpdated(this, new RatingUpdate() { affectedPlayers = playersWithRatingChange });
                         }
                     }
-                    PendingDebriefing discard;
-                    debriefings.ForEach(x => pendingDebriefings.TryRemove(x.Key, out discard));
-
                 }
 
                 //check for topX updates
@@ -649,12 +646,13 @@ namespace Ratings
                         listener.Key.TopPlayersUpdated(GetTopPlayers(listener.Value));
                     }
                 }
-
             }
             catch (Exception ex)
             {
                 Trace.TraceError("WHR " + category + ": Failed to process battles for rankings: " + ex);
             }
+            PendingDebriefing discard;
+            debriefings.ForEach(x => pendingDebriefings.TryRemove(x.Key, out discard));
         }
 
 

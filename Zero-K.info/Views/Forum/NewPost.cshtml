@@ -55,6 +55,6 @@ else
 
 @if (Model.LastPosts != null && Model.CurrentThread != null)
 {
-    @Html.Action("GetPostList", new { threadID = Model.CurrentThread.ForumThreadID })
+    @Html.Action("GetPostList", new { threadID = Model.CurrentThread.ForumThreadID, DisablePostComment = true })
 }
 

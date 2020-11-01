@@ -142,20 +142,22 @@ namespace ZkData
             return allPlayers.Select(x => x.AllyNumber).Union(allBots.Select(x => x.AllyNumber)).OrderBy(x => x).ToList();
         }
 
-        public List<float> GetAllyteamWinChances()
+        public Dictionary<int, float> GetAllyteamWinChances()
         {
+            var allyteams = SpringBattlePlayers.Where(x => !x.IsSpectator).OrderBy(x => x.AllyNumber).Select(x => x.AllyNumber).Distinct().ToList();
             try
             {
                 if (IsRatedMatch())
                 {
-                    return RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(SpringBattlePlayers.Where(x => !x.IsSpectator).OrderBy(x => x.AllyNumber).GroupBy(x => x.AllyNumber).Select(x => x.Select(y => y.Account).ToList()).ToList(), StartTime);
+                    var chances = RatingSystems.GetRatingSystem(GetRatingCategory()).PredictOutcome(SpringBattlePlayers.Where(x => !x.IsSpectator).OrderBy(x => x.AllyNumber).GroupBy(x => x.AllyNumber).Select(x => x.Select(y => y.Account).ToList()).ToList(), StartTime);
+                    return allyteams.Zip(chances, (k, v) => new { k, v }).ToDictionary(x => x.k, x => x.v);
                 }
             }
             catch (Exception ex)
             {
                 Trace.TraceWarning("Invalid rating settings for B" + SpringBattleID + ", unable to calculate win chances. \n" + ex);
             }
-            return new List<float>(new float[GetAllyteamIds().Count]);
+            return allyteams.ToDictionary(x => x, x => 1f / allyteams.Count);
         }
 
 
