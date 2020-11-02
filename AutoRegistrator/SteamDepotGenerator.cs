@@ -52,7 +52,6 @@ namespace AutoRegistrator
             try
             {
                 Directory.Delete(Path.Combine(targetFolder, "maps"), true);
-                Directory.Delete(Path.Combine(targetFolder, "pool"), true);
                 Directory.Delete(Path.Combine(targetFolder, "packages"), true);
                 Directory.Delete(Path.Combine(targetFolder, "engine"), true);
                 Directory.Delete(Path.Combine(targetFolder, "games"), true);
