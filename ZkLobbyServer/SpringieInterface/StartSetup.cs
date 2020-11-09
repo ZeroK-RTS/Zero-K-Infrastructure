@@ -277,6 +277,8 @@ namespace ZeroKWeb.SpringieInterface
                 }
                 ret.ModOptions["commanderTypes"] = commProfiles.ToBase64String();
 
+                ret.ModOptions["isZKLS"] = "1"; // so that clients know e.g. cheats require "!hostsay /x" instead of just "/x" etc.
+
                 // set PW structures
                 if (mode == AutohostMode.Planetwars)
                 {
