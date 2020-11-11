@@ -508,6 +508,7 @@ namespace ZkLobbyServer
         public void SetApplicableRating(RatingCategory rating)
         {
             ApplicableRating = rating;
+            SaveToDb();
         }
 
 

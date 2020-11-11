@@ -848,6 +848,10 @@ namespace ZkData
         {
 
             var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "chobbyla");
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "chobbyla"); 
+            }
             var path = Path.Combine(dir, "id.txt");
             System.IO.Directory.CreateDirectory(dir);
             if (!File.Exists(path))

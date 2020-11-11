@@ -122,6 +122,11 @@ namespace ZkLobbyServer
                     LogIP(db, acc, ip);
                     LogUserID(db, acc, userID, installID);
 
+                    if (String.IsNullOrEmpty(installID) && !acc.HasVpnException)
+                    {
+                        await server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("{0} just logged in with an unsupported lobby https://zero-k.info/Users/AdminUserDetail/{1}", acc.Name, acc.AccountID));
+                    }
+
                     db.SaveChanges();
 
                     ret.LoginResponse.SessionToken = Guid.NewGuid().ToString(); // create session token
