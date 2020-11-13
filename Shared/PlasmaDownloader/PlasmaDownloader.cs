@@ -92,6 +92,12 @@ namespace PlasmaDownloader
         [CanBeNull]
         public Download GetResource(DownloadType type, string name)
         {
+            if (name.StartsWith("rapid://")) // note this is not super clean as supplied name might be used for tracking.
+            {
+                name = name.Substring(8);
+                type = DownloadType.RAPID;
+            }
+            
             if (name == "zk:dev" || name == "Zero-K $VERSION") return null;
             lock (locker)
             {
