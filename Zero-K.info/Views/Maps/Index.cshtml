@@ -135,9 +135,11 @@
       </ul>
       @if (Global.Account != null)
       {
-        <form action="@Url.Action("UploadResource")" enctype="multipart/form-data" method="post">
-          Upload map or game (sd7 or sdz): <input type="file" name="file" accept=".sd7,.sdz"> <input type="submit" value="Upload"/>
-        </form>
+    <form action="@Url.Action("UploadResource")" enctype="multipart/form-data" method="post">
+        Upload map or game (sd7 or sdz): <input type="file" name="file" accept=".sd7,.sdz">
+        Special map (no-elo): @Html.CheckBox("specialMap")<br />
+        <input type="submit" value="Upload" />
+    </form>
       }
       
     </td>

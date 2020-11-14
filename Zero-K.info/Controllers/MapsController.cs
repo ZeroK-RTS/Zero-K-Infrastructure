@@ -426,7 +426,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult UploadResource(HttpPostedFileBase file)
+        public ActionResult UploadResource(HttpPostedFileBase file, bool specialMap)
         {
             var tmp = Path.Combine(Global.AutoRegistrator.Paths.WritableDirectory, "maps", file.FileName);
             try
@@ -454,6 +454,13 @@ namespace ZeroKWeb.Controllers
                             var contentFile = resource.ResourceContentFiles.FirstOrDefault(x => x.FileName == file.FileName);
                             contentFile.Links = $"{GlobalConst.BaseSiteUrl}/content/{subfolder}/{file.FileName}";
                             contentFile.LinkCount = 1;
+
+                            // tag as special if required
+                            if (res.Status == UnitSyncer.ResourceFileStatus.Registered && specialMap)
+                            {
+                                resource.MapIsSpecial = true;
+                            }
+
                             db.SaveChanges();
                         }
                         
