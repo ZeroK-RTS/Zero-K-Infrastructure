@@ -674,6 +674,12 @@ namespace ZkLobbyServer
         public async Task SwitchGame(string internalName)
         {
             ModName = internalName;
+            if (ModName != server.Game)
+            {
+                ModOptions["noelo"] = "1";
+                await SayBattle("Ratings are disabled, since this game is not vanilla ZK");
+                await server.Broadcast(Users.Keys, new SetModOptions() { Options = ModOptions });
+            }
             ValidateAndFillDetails();
             await
                 server.Broadcast(server.ConnectedUsers.Values,
@@ -848,6 +854,7 @@ namespace ZkLobbyServer
 
 
             base.UpdateWith(h);
+            SwitchGame(h.Game);
 
             ValidateAndFillDetails();
         }
