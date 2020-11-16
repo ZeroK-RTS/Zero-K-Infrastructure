@@ -526,7 +526,7 @@ namespace ZkLobbyServer
             if (TimeQueueEnabled) // spectate beyond max players
             {
                 int allowedPlayers = MaxPlayers;
-                if (context.Players.Count <= MaxEvenPlayers)
+                if (context.Players.Where(x => !x.IsSpectator).Count() <= MaxEvenPlayers)
                 {
                     allowedPlayers = context.Players.Where(x => !x.IsSpectator).Count() & ~0x1;
                 }
