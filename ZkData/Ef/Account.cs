@@ -260,6 +260,11 @@ namespace ZkData
             return RatingSystems.GetRatingSystem(category).GetPlayerRating(AccountID);
         }
 
+        public float GetBalancerRating(RatingCategory category)
+        {
+            return GetRating(category).Elo - Math.Max(GlobalConst.MaxLevelForMalus - Level, 0) * GlobalConst.MaxMalus / GlobalConst.MaxLevelForMalus;
+        }
+
         public PlayerRating GetBestRating()
         {
             var casual = RatingSystems.GetRatingSystem(RatingCategory.Casual).GetPlayerRating(AccountID);

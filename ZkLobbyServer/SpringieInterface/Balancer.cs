@@ -477,7 +477,7 @@ namespace ZeroKWeb.SpringieInterface
                 LobbyId = accounts.Select(x => x.AccountID).ToList();
 
                 RatingCategory category = isMatchMaker ? RatingCategory.MatchMaking : RatingCategory.Casual;
-                EloElements = accounts.Select(x => (double)x.GetRating(category).Elo).ToList();
+                EloElements = accounts.Select(x => (double)x.GetBalancerRating(category)).ToList();
             }
         }
 

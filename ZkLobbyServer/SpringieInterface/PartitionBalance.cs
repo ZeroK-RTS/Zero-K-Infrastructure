@@ -264,7 +264,7 @@ namespace ZeroKWeb.SpringieInterface
                         ret.CanStart = false;
                         return ret;
                     }
-                    players = b.Players.Where(y => !y.IsSpectator).Select(x => new PlayerItem(x.LobbyID, accs.First(a => a.AccountID == x.LobbyID).GetRating(b.ApplicableRating).Elo, x.Clan, x.PartyID)).ToList();
+                    players = b.Players.Where(y => !y.IsSpectator).Select(x => new PlayerItem(x.LobbyID, accs.First(a => a.AccountID == x.LobbyID).GetBalancerRating(b.ApplicableRating), x.Clan, x.PartyID)).ToList();
                 }
 
                 var dualResult = Balance(mode, players);
