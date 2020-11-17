@@ -83,7 +83,6 @@ namespace Ratings
 
         public PlayerRating GetPlayerRating(int accountID)
         {
-            accountID = (accountID);
             if (!completelyInitialized)
             {
                 return cachedDbRatings.GetOrAdd(accountID,
@@ -94,7 +93,6 @@ namespace Ratings
                                            ?.ToUnrankedPlayerRating() ?? DefaultRating;
                     });
             }
-
             return playerRatings.ContainsKey(accountID) ? playerRatings[accountID] : DefaultRating;
         }
 

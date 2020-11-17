@@ -526,7 +526,7 @@ namespace ZkLobbyServer
             if (TimeQueueEnabled) // spectate beyond max players
             {
                 int allowedPlayers = MaxPlayers;
-                if (context.Players.Count <= MaxEvenPlayers)
+                if (context.Players.Where(x => !x.IsSpectator).Count() <= MaxEvenPlayers)
                 {
                     allowedPlayers = context.Players.Where(x => !x.IsSpectator).Count() & ~0x1;
                 }
@@ -674,6 +674,12 @@ namespace ZkLobbyServer
         public async Task SwitchGame(string internalName)
         {
             ModName = internalName;
+            if (ModName != server.Game)
+            {
+                ModOptions["noelo"] = "1";
+                await SayBattle("Ratings are disabled, since this game is not vanilla ZK");
+                await server.Broadcast(Users.Keys, new SetModOptions() { Options = ModOptions });
+            }
             ValidateAndFillDetails();
             await
                 server.Broadcast(server.ConnectedUsers.Values,
@@ -848,6 +854,7 @@ namespace ZkLobbyServer
 
 
             base.UpdateWith(h);
+            SwitchGame(h.Game);
 
             ValidateAndFillDetails();
         }

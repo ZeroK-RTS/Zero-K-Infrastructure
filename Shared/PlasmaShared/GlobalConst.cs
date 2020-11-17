@@ -150,6 +150,8 @@ namespace ZkData
         public const float LadderEloClassicEloWeight = 0.5f; //Weight of classic elo change compared to WHR change
         public const float LadderEloClassicEloK = 32f; //K value of classic elo
         public const float LadderEloSmoothingFactor = 0.8f; //1 for change as fast as whr, 0 for no change
+        public const int MaxLevelForMalus = 5;
+        public const float MaxMalus = 400;
 
         public const int MapBansPerPlayer = 6; // Allow users to enter this many bans in UI
         public const float MaximumPercentageOfBannedMaps = 0.75f; // Do not ban more than 75% of all maps regardless of player or ban count

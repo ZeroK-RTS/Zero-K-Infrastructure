@@ -277,6 +277,19 @@ namespace ZeroKWeb.SpringieInterface
                 }
                 ret.ModOptions["commanderTypes"] = commProfiles.ToBase64String();
 
+                /* General-purpose identifier.
+                 * Prefer the more specific ones below when possible */
+                ret.ModOptions["serverType"] = "ZKLS";
+
+                /* Access to commands normally accessible only by the host.
+                 * Lua calls prepend the / on their own, but not the autohost,
+                 * so /say doesn't need it, but the cheat command does */
+                ret.ModOptions["cheatCommandPrefix"] = "say !hostsay /";
+
+                /* The server is listening for SPRINGIE strings (the game can skip those otherwise).
+                 * See https://github.com/ZeroK-RTS/Zero-K-Infrastructure/blob/master/Shared/LobbyClient/DedicatedServer.cs#L317 */
+                ret.ModOptions["sendSpringieData"] = "1";
+
                 // set PW structures
                 if (mode == AutohostMode.Planetwars)
                 {
