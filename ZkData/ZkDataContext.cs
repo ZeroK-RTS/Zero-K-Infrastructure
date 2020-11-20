@@ -100,6 +100,8 @@ namespace ZkData
         public virtual DbSet<LobbyChannelTopic> LobbyChannelTopics { get; set; }
 
         public virtual DbSet<LobbyNews> LobbyNews { get; set; }
+        
+        public virtual DbSet<GameMode> GameModes { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

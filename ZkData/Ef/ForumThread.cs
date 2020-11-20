@@ -58,6 +58,8 @@ namespace ZkData
         public virtual ICollection<SpringBattle> SpringBattles { get; set; }
         public virtual ICollection<ForumPost> ForumPosts { get; set; }
 
+        [InverseProperty("ForumThread")]
+        public virtual ICollection<GameMode> GameMode { get; set; } = new List<GameMode>();
 
         public int UpdateLastRead(int accountID, bool isPost, DateTime? time = null)
         {
