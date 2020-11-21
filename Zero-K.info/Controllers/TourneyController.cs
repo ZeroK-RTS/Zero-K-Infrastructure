@@ -42,6 +42,28 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult RemoveMultipleBattles(double gameThreshold)
+        {
+            if (!Global.IsTourneyController) return DenyAccess();
+            var db = new ZkDataContext();
+            var tourneyBattles = Global.Server.Battles.Values.Where(x => x != null).OfType<TourneyBattle>().ToList();
+            foreach (var tBat in tourneyBattles)
+            {
+                int batCount = 0;
+                foreach (var deb in tBat.Debriefings)
+                {
+                    var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == deb.ServerBattleID);
+                    if (bat != null) { batCount++; }
+                }
+                if (batCount >= gameThreshold)
+                {
+                    // delete this room, all the required games have been played
+                    Global.Server.RemoveBattle(tBat);
+                }
+            }
+            return RedirectToAction("Index");
+        }
+
         public ActionResult ForceJoinPlayers(int battleid)
         {
             if (!Global.IsTourneyController) return DenyAccess();
@@ -55,7 +77,32 @@ namespace ZeroKWeb.Controllers
             }
             return RedirectToAction("Index");
         }
-        
+
+        public ActionResult ForceJoinMultiple()
+        {
+            if (!Global.IsTourneyController) return DenyAccess();
+            var db = new ZkDataContext();
+            var tourneyBattles = Global.Server.Battles.Values.Where(x => x != null).OfType<TourneyBattle>().ToList();
+            foreach (var tBat in tourneyBattles)
+            {
+                int batCount = 0;
+                foreach (var deb in tBat.Debriefings)
+                {
+                    var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == deb.ServerBattleID);
+                    if (bat != null) { batCount++; }
+                }
+                if (batCount == 0)
+                {
+                    // games unplayed here, force players into room
+                    foreach (var p in tBat.Prototype.TeamPlayers.SelectMany(x => x))
+                    {
+                        Global.Server.ForceJoinBattle(p, tBat);
+                    }
+                }
+            }
+            return RedirectToAction("Index");
+        }
+
         public ActionResult AddBattle(TourneyModel model)
         {
             if (!Global.IsTourneyController) return DenyAccess();
@@ -74,6 +121,111 @@ namespace ZeroKWeb.Controllers
                 Global.Server.AddBattle(tb);
             }
             return RedirectToAction("Index");
+        }
+
+        public ActionResult AddMultipleBattles(string battleList)
+        {
+            if (!Global.IsTourneyController) return DenyAccess();
+            var db = new ZkDataContext();
+
+            string[] splitters = { "//" };
+            string[] battleSpecs = battleList.Split(splitters, System.StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var bSpec in battleSpecs)
+            {
+                bool validBattle = true;
+                string[] bItems = bSpec.Split(',');
+                string bName = bItems[0];
+                // must have an even number of players; the first N/2 are assigned to the first team
+                if (bItems.Length % 2 == 0) { validBattle = false; };
+                int playersPerTeam = (bItems.Length - 1) / 2;
+                List<int> team1Ids = new List<int>();
+                List<int> team2Ids = new List<int>();
+                // if any of the remaining entries are not ints or account names the battle is invalid
+                for (int i = 1; i <= playersPerTeam; i++)
+                {
+                    Account tryAcc = Account.AccountByName(db, bItems[i]);
+                    if (tryAcc != null)
+                    {
+                        team1Ids.Add(tryAcc.AccountID);
+                    }
+                    else
+                    {
+                        try { team1Ids.Add(Int32.Parse(bItems[i])); }
+                        catch (FormatException) { validBattle = false; }
+                    }
+                }
+                for (int i = playersPerTeam + 1; i < bItems.Length; i++)
+                {
+                    Account tryAcc = Account.AccountByName(db, bItems[i]);
+                    if (tryAcc != null)
+                    {
+                        team2Ids.Add(tryAcc.AccountID);
+                    }
+                    else
+                    {
+                        try { team2Ids.Add(Int32.Parse(bItems[i])); }
+                        catch (FormatException) { validBattle = false; }
+                    }
+                }
+
+                if (validBattle)
+                {
+                    var tb = new TourneyBattle(Global.Server, new TourneyBattle.TourneyPrototype()
+                    {
+                        Title = bName,
+                        FounderName = Global.Account.Name,
+                        TeamPlayers = new List<List<string>>()
+                    {
+                        team1Ids.Select(x=> db.Accounts.Find(x)?.Name).Where(x=>x!=null).ToList(),
+                        team2Ids.Select(x=> db.Accounts.Find(x)?.Name).Where(x=>x!=null).ToList()
+                    }
+                    });
+                    Global.Server.AddBattle(tb);
+                }
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult GetReplayList()
+        {
+            if (!Global.IsTourneyController) return DenyAccess();
+            var db = new ZkDataContext();
+            List<string> replayList = new List<string>();
+            var tourneyBattles = Global.Server.Battles.Values.Where(x => x != null).OfType<TourneyBattle>().ToList();
+            foreach (var tBat in tourneyBattles)
+            {
+                string line = string.Format("");
+                foreach (var team in tBat.Prototype.TeamPlayers)
+                {
+                    foreach(var p in team)
+                    {
+                        line += "@U" + Account.AccountByName(db, p).AccountID + ", ";
+                    }
+                    line = line.Remove(line.Length - 2);
+                    line += " vs ";
+                }
+                line = line.Remove(line.Length - 4);
+                line += ": ";
+
+                int batCount = 0;
+                foreach (var deb in tBat.Debriefings)
+                {
+                    var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == deb.ServerBattleID);
+                    if (bat != null) {
+                        batCount++;
+                        line += "@B" + deb.ServerBattleID + ", ";
+                    }
+                    
+                }
+                line = line.Remove(line.Length - 2);
+                if (batCount > 0)
+                {
+                    replayList.Add(line);
+                }
+            }
+            return Content(string.Join("<br />", replayList));
         }
 
         private ActionResult DenyAccess()
