@@ -730,8 +730,6 @@ namespace ZkData
 
             PurchasedDlc = string.Join(",", dlcList);
         }
-
-
         
         public UserProfile ToUserProfile()
         {

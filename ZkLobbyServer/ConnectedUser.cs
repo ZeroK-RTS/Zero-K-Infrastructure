@@ -579,6 +579,21 @@ namespace ZkLobbyServer
         }
 
 
+        public async Task Process(UserReport report)
+        {
+            if (!IsLoggedIn) return;
+
+            if (string.IsNullOrEmpty(report.Username) && string.IsNullOrEmpty(report.Text)) return;
+
+            using (var db = new ZkDataContext())
+            {
+                var acc = db.Accounts.FirstOrDefault(x => x.Name == report.Username);
+                if (acc == null) return;
+
+                await server.ReportUser(db, acc, report.Text);
+            }
+        }
+
         public async Task Process(SetAccountRelation rel)
         {
             if (!IsLoggedIn) return;
