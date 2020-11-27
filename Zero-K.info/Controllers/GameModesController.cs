@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using ZkData;
@@ -10,7 +11,7 @@ namespace ZeroKWeb.Controllers
         public class GameModesModel
         {
             public string SearchName { get; set; }
-            public bool? IsFeaturedFilter { get; set; }
+            public bool? IsFeaturedFilter { get; set; } = true;
 
             public IQueryable<GameMode> Data;
         }
@@ -23,6 +24,90 @@ namespace ZeroKWeb.Controllers
             
             
             return View("GameModesIndex", model);
+        }
+
+        [Auth]
+        public ActionResult Edit(int? id)
+        {
+            var db = new ZkDataContext();
+            var mode = new GameMode()
+            {
+                MaintainerAccountID = Global.AccountID,
+            };
+            if (id != null) mode = db.GameModes.FirstOrDefault(x=>x.GameModeID == id);
+
+
+            return View("GameModeEdit", mode);
+        }
+
+        [Auth]
+        public ActionResult EditSubmit(GameMode newGameMode)
+        {
+            if (!Global.IsModerator && newGameMode.MaintainerAccountID != Global.AccountID)
+            {
+                return RedirectToAction("NotLoggedIn", "Home"); // access denied
+            }
+
+            if (string.IsNullOrEmpty(newGameMode.DisplayName) || string.IsNullOrEmpty(newGameMode.ShortName) || string.IsNullOrEmpty(newGameMode.GameModeJson))
+            {
+                ViewBag.Error = "Please fill the fields properly";
+                return View("GameModeEdit", newGameMode);
+            }
+
+            if (!Account.IsValidLobbyName(newGameMode.ShortName))
+            {
+                ViewBag.Error = "Please use only valid account name characters for game mode name";
+                return View("GameModeEdit", newGameMode);
+            }
+
+            if (newGameMode.DisplayName.Length > 250)
+            {
+                ViewBag.Error = "Shorten the name please";
+                return View("GameModeEdit", newGameMode);
+            }
+            
+            
+            if (newGameMode.GameModeID == 0) // create new game mode
+            {
+                using (var db = new ZkDataContext())
+                {
+                    if (db.GameModes.Any(x =>
+                        x.ShortName.ToLower() == newGameMode.ShortName.ToLower() || x.DisplayName.ToLower() == newGameMode.DisplayName.ToLower()))
+                    {
+                        ViewBag.Error = "This game mode already exist, edit it instead";
+                        return View("GameModeEdit", newGameMode);
+                    }
+
+                    db.Entry(newGameMode).State = EntityState.Added;
+                    newGameMode.Created = DateTime.UtcNow;
+                    newGameMode.LastModified = DateTime.UtcNow;
+                    if (!Global.IsModerator) newGameMode.IsFeatured = false;
+
+
+                    db.SaveChanges();
+                    return RedirectToAction("Index"); 
+                }
+            }
+            else
+            {  // edit existing game mode
+
+                using (var db = new ZkDataContext())
+                {
+                    var existingMode = db.GameModes.First(x => x.GameModeID == newGameMode.GameModeID);
+
+                    if (!Global.IsModerator && existingMode.MaintainerAccountID != Global.AccountID) return RedirectToAction("NotLoggedIn", "Home");
+
+                    existingMode.DisplayName = newGameMode.DisplayName;
+                    existingMode.ShortName = newGameMode.ShortName;
+                    existingMode.GameModeJson = newGameMode.GameModeJson;
+                    existingMode.LastModified = DateTime.UtcNow;
+
+                    if (Global.IsModerator) existingMode.MaintainerAccountID = newGameMode.MaintainerAccountID;
+
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                } 
+            }
         }
     }
 }
