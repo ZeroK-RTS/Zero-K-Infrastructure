@@ -47,7 +47,31 @@ namespace ZkLobbyServer
 
             if (battle.IsAutohost)
             {
-                battle.server.GhostChanSay(ZkData.GlobalConst.ModeratorChannel, string.Format("{0} started a kick vote against {1} in {2}", e?.User, target, battle.Title));
+                string ptype;
+                bool isspec;
+                string gtype;
+                if (battle.spring.IsRunning)
+                {
+                    gtype = "in game";
+                    PlasmaShared.BattlePlayerResult res = battle.spring.Context.GetOrAddPlayer(target);
+                    isspec = res.IsSpectator;
+                }
+                else
+                {
+                    gtype = "not in game";
+                    UserBattleStatus user;
+                    battle.Users.TryGetValue(target, out user);
+                    isspec = user.IsSpectator;
+                }
+                if (isspec)
+                {
+                    ptype = "spectator";
+                }
+                else
+                {
+                    ptype = "player";
+                }
+                battle.server.GhostChanSay(ZkData.GlobalConst.ModeratorChannel, string.Format("{0} started a kick vote against {1} ({2}, {3}) in {4}", e?.User, target, ptype, gtype, battle.Title));
             }
 
             return $"Do you want to kick {target}?";
@@ -56,12 +80,40 @@ namespace ZkLobbyServer
 
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
-            if (battle.spring.IsRunning) battle.spring.Kick(target);
-            await battle.KickFromBattle(target, $"by {e?.User}");
+
             if (battle.IsAutohost)
             {
-                await battle.server.GhostChanSay(ZkData.GlobalConst.ModeratorChannel, string.Format("{0} (and possibly others) kicked {1} from {2}", e?.User, target, battle.Title));
+                string ptype;
+                bool isspec;
+                string gtype;
+                if (battle.spring.IsRunning)
+                {
+                    gtype = "in game";
+                    PlasmaShared.BattlePlayerResult res = battle.spring.Context.GetOrAddPlayer(target);
+                    isspec = res.IsSpectator;
+                }
+                else
+                {
+                    gtype = "not in game";
+                    UserBattleStatus user;
+                    battle.Users.TryGetValue(target, out user);
+                    isspec = user.IsSpectator;
+                }
+                if (isspec)
+                {
+                    ptype = "spectator";
+                }
+                else
+                {
+                    ptype = "player";
+                }
+                await battle.server.GhostChanSay(ZkData.GlobalConst.ModeratorChannel, string.Format("{0} (and possibly others) kicked {1} ({2}, {3}) from {4}", e?.User, target, ptype, gtype, battle.Title));
             }
+            if (battle.spring.IsRunning)
+            {
+                battle.spring.Kick(target);
+            }
+            await battle.KickFromBattle(target, $"by {e?.User}");
         }
 
 
