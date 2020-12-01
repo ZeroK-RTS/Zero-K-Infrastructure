@@ -44,6 +44,12 @@ namespace ZkLobbyServer
                 battle.Respond(e, "Only players can invoke this during a game");
                 return null;
             }
+
+            if (battle.IsAutohost)
+            {
+                battle.server.GhostChanSay(ZkData.GlobalConst.ModeratorChannel, string.Format("{0} started a kick vote against {1} in {2}", e?.User, target, battle.Title));
+            }
+
             return $"Do you want to kick {target}?";
         }
 
@@ -52,6 +58,10 @@ namespace ZkLobbyServer
         {
             if (battle.spring.IsRunning) battle.spring.Kick(target);
             await battle.KickFromBattle(target, $"by {e?.User}");
+            if (battle.IsAutohost)
+            {
+                await battle.server.GhostChanSay(ZkData.GlobalConst.ModeratorChannel, string.Format("{0} (and possibly others) kicked {1} from {2}", e?.User, target, battle.Title));
+            }
         }
 
 
