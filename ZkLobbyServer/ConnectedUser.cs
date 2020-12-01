@@ -587,10 +587,11 @@ namespace ZkLobbyServer
 
             using (var db = new ZkDataContext())
             {
-                var acc = db.Accounts.FirstOrDefault(x => x.Name == report.Username);
-                if (acc == null) return;
+                var reporter = db.Accounts.FirstOrDefault(x => x.AccountID == User.AccountID);
+                var reported = db.Accounts.FirstOrDefault(x => x.Name == report.Username);
+                if (reported == null || reporter == null) return;
 
-                await server.ReportUser(db, acc, report.Text);
+                await server.ReportUser(db, reporter, reported, report.Text);
             }
         }
 

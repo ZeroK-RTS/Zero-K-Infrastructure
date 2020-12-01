@@ -583,29 +583,33 @@ namespace ZkLobbyServer
             }
         }
 
-        public async Task ReportUser(ZkDataContext db, Account user, string report)
+        public async Task ReportUser(ZkDataContext db, Account reporter, Account reported, string report)
         {
 
             db.AbuseReports.InsertOnSubmit(new AbuseReport()
             {
-                AccountID = acc.AccountID,
-                ReporterAccountID = Global.AccountID,
+                AccountID = reported.AccountID,
+                ReporterAccountID = reporter.AccountID,
                 Time = DateTime.UtcNow,
-                Text = text
+                Text = report
             });
             db.SaveChanges();
 
             string str;
-            if (Global.AccountID != accountID)
-                str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name,
-                    Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"),
-                    acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"),
-                    text);
+            if (reporter.AccountID != reported.AccountID)
+                str = string.Format("{0} https://zero-k.info/Users/Detail/{1} reports abuse by {2} https://zero-k.info/Users/Detail/{3} : {4}", 
+                    reporter.Name,
+                    reporter.AccountID,
+                    reported.Name, 
+                    reported.AccountID,
+                    report);
             else
-                str = string.Format("{0} {1} contacts admins : {2}", Global.Account.Name,
-                    Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), text);
+                str = string.Format("{0} https://zero-k.info/Users/Detail/{1} contacts admins : {2}", 
+                    reporter.Name,
+                    reporter.AccountID, 
+                    report);
 
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str, isRing: true);
+            await GhostChanSay(GlobalConst.ModeratorChannel, str, isRing: true);
         }
     }
 }

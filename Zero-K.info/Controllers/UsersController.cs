@@ -415,7 +415,7 @@ namespace ZeroKWeb.Controllers
                 var acc = db.Accounts.Find(accountID);
                 if (acc == null) return Content("Invalid accountID");
 
-                await Global.Server.ReportUser(db, acc, text);
+                await Global.Server.ReportUser(db, Global.Account, acc, text);
             }
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
