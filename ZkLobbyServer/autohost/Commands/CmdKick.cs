@@ -44,17 +44,24 @@ namespace ZkLobbyServer
                 battle.Respond(e, "Only players can invoke this during a game");
                 return null;
             }
+
+            NotifyAdminChannel(battle, e, false);
+
             return $"Do you want to kick {target}?";
         }
 
 
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
-            if (battle.spring.IsRunning) battle.spring.Kick(target);
+            // Do this first so we can still query whether the kicked person is a player/spectator...
+            NotifyAdminChannel(battle, e, true);
+
+            if (battle.spring.IsRunning)
+            {
+                battle.spring.Kick(target);
+            }
             await battle.KickFromBattle(target, $"by {e?.User}");
         }
-
-
 
         public override RunPermission GetRunPermissions(ServerBattle battle, string userName, out string reason)
         {
@@ -70,6 +77,46 @@ namespace ZkLobbyServer
                 return RunPermission.None;
             }
             return ret;
+        }
+
+        private bool NotifyAdminChannel(ServerBattle battle, Say e, bool isActualKick)
+        {
+            if (battle.IsAutohost)
+            {
+                string ptype;
+                bool isspec;
+                string gtype;
+                if (battle.spring.IsRunning)
+                {
+                    gtype = "in game";
+                    PlasmaShared.BattlePlayerResult res = battle.spring.Context.GetOrAddPlayer(target);
+                    isspec = res.IsSpectator;
+                }
+                else
+                {
+                    gtype = "not in game";
+                    UserBattleStatus user;
+                    battle.Users.TryGetValue(target, out user);
+                    isspec = user.IsSpectator;
+                }
+                if (isspec)
+                {
+                    ptype = "spectator";
+                }
+                else
+                {
+                    ptype = "player";
+                }
+                if (isActualKick)
+                {
+                    battle.server.GhostChanSay(ZkData.GlobalConst.ModeratorChannel, string.Format("{0} (and possibly others) kicked {1} ({2}, {3}) from {4}", e?.User, target, ptype, gtype, battle.Title));
+                }
+                else
+                {
+                    battle.server.GhostChanSay(ZkData.GlobalConst.ModeratorChannel, string.Format("{0} started a kick vote against {1} ({2}, {3}) in {4}", e?.User, target, ptype, gtype, battle.Title));
+                }
+            }
+            return true;
         }
     }
 }
