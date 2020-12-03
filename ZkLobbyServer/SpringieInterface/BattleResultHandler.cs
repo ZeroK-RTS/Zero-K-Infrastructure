@@ -23,15 +23,16 @@ namespace ZeroKWeb.SpringieInterface
             var ret = new BattleDebriefing();
             try
             {
+                bool isValidGame = true;
                 if (!result.GameEndedOk)
                 {
                     ret.Message = "Game didn't end properly";
-                    return false;
+                    isValidGame = false;
                 }
                 if (result.IsCheating)
                 {
                     ret.Message = "Cheats were enabled during this game";
-                    return false;
+                    isValidGame = false;
                 }
 
                 var db = new ZkDataContext();
@@ -39,9 +40,11 @@ namespace ZeroKWeb.SpringieInterface
 
                 var sb = SaveSpringBattle(result, db);
 
-
-
-                ProcessExtras(result.OutputExtras, sb, db);
+                if (isValidGame)
+                {
+                    StoreAwards(result.OutputExtras, sb, db);
+                }
+                StoreLogs(result.OutputExtras, sb, db);
 
                 if (result.LobbyStartContext.Mode == AutohostMode.Planetwars) ProcessPlanetWars(result, server, sb, db, text);
 
@@ -49,10 +52,13 @@ namespace ZeroKWeb.SpringieInterface
                 Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
                 //fill in applicable ratings
-                bool noElo = result.LobbyStartContext.ModOptions.Any(x => x.Key.ToLower() == "noelo" && x.Value != "0" && x.Value != "false");
+                bool noElo = !isValidGame || result.LobbyStartContext.ModOptions.Any(x => x.Key.ToLower() == "noelo" && x.Value != "0" && x.Value != "false");
                 if (!noElo) RatingSystems.FillApplicableRatings(sb, result);
 
-                ProcessXP(result, server, db, sb);
+                if (isValidGame)
+                {
+                    ProcessXP(result, server, db, sb);
+                }
 
                 
                 ret.Url = string.Format("{1}/Battles/Detail/{0}", sb.SpringBattleID, GlobalConst.BaseSiteUrl);
@@ -233,9 +239,8 @@ namespace ZeroKWeb.SpringieInterface
             return db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == sb.SpringBattleID); // reselect from db to get proper lazy proxies
         }
 
-        private static void ProcessExtras(List<string> extras, SpringBattle sb, ZkDataContext db)
+        private static void StoreAwards(List<string> extras, SpringBattle sb, ZkDataContext db)
         {
-            // awards
             foreach (string line in extras.Where(x => x?.StartsWith("award") == true))
             {
                 string[] partsSpace = line.Substring(6).Split(new[] { ' ' }, 3);
@@ -260,7 +265,9 @@ namespace ZeroKWeb.SpringieInterface
                     });
                 }
             }
-
+        }
+        private static void StoreLogs(List<string> extras, SpringBattle sb, ZkDataContext db)
+        {
             // chatlogs
             foreach (string line in extras.Where(x => x?.StartsWith("CHATLOG") == true))
             {
