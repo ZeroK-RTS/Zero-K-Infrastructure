@@ -651,7 +651,7 @@ namespace ZkLobbyServer
             {
                 if (ActivePoll == null) return;
                 var oldPoll = ActivePoll;
-                if (ActivePoll != null) await ActivePoll.End();
+                if (ActivePoll != null) await ActivePoll.End(false);
                 if (pollTimer != null) pollTimer.Enabled = false;
                 ActivePoll = null;
                 await oldPoll?.PublishResult();
@@ -1170,7 +1170,7 @@ namespace ZkLobbyServer
             try
             {
                 pollTimer.Stop();
-                if (ActivePoll != null) ActivePoll.End();
+                if (ActivePoll != null) ActivePoll.End(true);
                 StopVote();
             }
             catch { }
