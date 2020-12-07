@@ -56,7 +56,7 @@ namespace ZeroKWeb.Controllers
 
             if (!Account.IsValidLobbyName(newGameMode.ShortName))
             {
-                ViewBag.Error = "Please use only valid account name characters for game mode name";
+                ViewBag.Error = "Please use only sane characters for game mode short name";
                 return View("GameModeEdit", newGameMode);
             }
 

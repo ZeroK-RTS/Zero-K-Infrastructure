@@ -19,7 +19,7 @@ namespace ZkData
         
         public DateTime LastModified { get; set; }
 
-        public int ForumThreadID { get; set; }
+        public int? ForumThreadID { get; set; }
         
         [ForeignKey(nameof(ForumThreadID))]
         public virtual ForumThread ForumThread { get; set; }
