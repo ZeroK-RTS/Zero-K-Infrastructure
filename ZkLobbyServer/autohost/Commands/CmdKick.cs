@@ -88,13 +88,13 @@ namespace ZkLobbyServer
                 string gtype;
                 if (battle.spring.IsRunning)
                 {
-                    gtype = "in game";
+                    gtype = "game running";
                     PlasmaShared.BattlePlayerResult res = battle.spring.Context.GetOrAddPlayer(target);
                     isspec = res.IsSpectator;
                 }
                 else
                 {
-                    gtype = "not in game";
+                    gtype = "game not running";
                     UserBattleStatus user;
                     battle.Users.TryGetValue(target, out user);
                     isspec = user.IsSpectator;
