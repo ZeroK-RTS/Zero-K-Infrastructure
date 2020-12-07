@@ -41,19 +41,26 @@
     {
         <input type="checkbox" onclick="gridToggleRows('@grid.ID', $(this))"/>
     }
-    <a href="#" onclick="gridSetSort('@grid.ID', '@col.ID');return false;">
-        @(new MvcHtmlString(col.Description))
-        @if (!string.IsNullOrEmpty(grid.OrderColumn) && col.ID == grid.OrderColumn)
-        {
-            if (grid.OrderIsDescending)
+    if (col.AllowsSort)
+    {
+        <a href="#" onclick="gridSetSort('@grid.ID', '@col.ID');return false;">
+            @(new MvcHtmlString(col.Description))
+            @if (!string.IsNullOrEmpty(grid.OrderColumn) && col.ID == grid.OrderColumn)
             {
-                <img class="icon16" src="~/img/sort_up_green.png"/>
-            } else
-            {
-                <img class="icon16" src="~/img/sort_down_green.png"/>
+                if (grid.OrderIsDescending)
+                {
+                    <img class="icon16" src="~/img/sort_up_green.png"/>
+                } else
+                {
+                    <img class="icon16" src="~/img/sort_down_green.png"/>
+                }
             }
-        }
-    </a>
+        </a>
+    }
+    else
+    {
+        <span>@(new MvcHtmlString(col.Description))</span>
+    } 
 }
 @helper Pager(IUniGrid grid) {
     <div class="@(grid.ID)_pager grid_pager">
