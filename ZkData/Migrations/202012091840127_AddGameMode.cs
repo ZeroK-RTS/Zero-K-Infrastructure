@@ -13,7 +13,7 @@
                     {
                         GameModeID = c.Int(nullable: false, identity: true),
                         IsFeatured = c.Boolean(nullable: false),
-                        ShortName = c.String(),
+                        ShortName = c.String(maxLength: 64),
                         DisplayName = c.String(),
                         Created = c.DateTime(nullable: false),
                         LastModified = c.DateTime(nullable: false),
@@ -24,6 +24,7 @@
                 .PrimaryKey(t => t.GameModeID)
                 .ForeignKey("dbo.Accounts", t => t.MaintainerAccountID, cascadeDelete: true)
                 .ForeignKey("dbo.ForumThreads", t => t.ForumThreadID)
+                .Index(t => t.ShortName)
                 .Index(t => t.ForumThreadID)
                 .Index(t => t.MaintainerAccountID);
             
@@ -35,6 +36,7 @@
             DropForeignKey("dbo.GameModes", "MaintainerAccountID", "dbo.Accounts");
             DropIndex("dbo.GameModes", new[] { "MaintainerAccountID" });
             DropIndex("dbo.GameModes", new[] { "ForumThreadID" });
+            DropIndex("dbo.GameModes", new[] { "ShortName" });
             DropTable("dbo.GameModes");
         }
     }
