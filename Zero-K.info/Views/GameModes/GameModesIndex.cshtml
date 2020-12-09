@@ -7,7 +7,7 @@
     
     var grid = new UniGrid<GameMode>(Model.Data, "Game modes","modesGrid");
     grid.AddCol("Shortcut", x => x.ShortName).SetSort(x=>x.ShortName);
-    grid.AddCol("Name", x => x.DisplayName).SetSort(x=>x.DisplayName);
+    grid.AddCol("Name", x => @Html.ActionLink(x.DisplayName, "Detail", "GameModes", new {id = x.GameModeID}, null)).SetSort(x=>x.DisplayName);
     grid.AddCol("Maintainer", x => Html.PrintAccount(x.Maintainer)).SetSort(x=>x.Maintainer.Name);
     grid.AddCol("Created", x => x.Created).SetSort(x=>x.Created);
     grid.AddCol("Modified", x => x.LastModified).SetSort(x=>x.LastModified);

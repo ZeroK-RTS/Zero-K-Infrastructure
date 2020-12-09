@@ -17,13 +17,13 @@
                         DisplayName = c.String(),
                         Created = c.DateTime(nullable: false),
                         LastModified = c.DateTime(nullable: false),
-                        ForumThreadID = c.Int(nullable: false),
+                        ForumThreadID = c.Int(),
                         MaintainerAccountID = c.Int(nullable: false),
                         GameModeJson = c.String(),
                     })
                 .PrimaryKey(t => t.GameModeID)
                 .ForeignKey("dbo.Accounts", t => t.MaintainerAccountID, cascadeDelete: true)
-                .ForeignKey("dbo.ForumThreads", t => t.ForumThreadID, cascadeDelete: true)
+                .ForeignKey("dbo.ForumThreads", t => t.ForumThreadID)
                 .Index(t => t.ForumThreadID)
                 .Index(t => t.MaintainerAccountID);
             

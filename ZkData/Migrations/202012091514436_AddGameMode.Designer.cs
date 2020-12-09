@@ -13,7 +13,7 @@ namespace ZkData.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "202011201450062_AddGameMode"; }
+            get { return "202012091514436_AddGameMode"; }
         }
         
         string IMigrationMetadata.Source

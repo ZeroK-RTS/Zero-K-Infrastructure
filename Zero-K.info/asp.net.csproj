@@ -353,6 +353,7 @@
     <Content Include="Styles\nicetitle.css" />
     <Content Include="Styles\stars.css" />
     <Content Include="Styles\style.css" />
+    <Content Include="Views\GameModes\GameModeDetail.cshtml" />
     <Content Include="Views\GameModes\GameModeEdit.cshtml" />
     <Content Include="Views\GameModes\GameModesIndex.cshtml" />
     <Content Include="Views\Maps\PlanetImageSelect.cshtml" />

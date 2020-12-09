@@ -109,5 +109,12 @@ namespace ZeroKWeb.Controllers
                 } 
             }
         }
+
+        public ActionResult Detail(int id)
+        {
+            var db = new ZkDataContext();
+            var gameMode = db.GameModes.Find(id);
+            return View("GameModeDetail", gameMode);
+        }
     }
 }
