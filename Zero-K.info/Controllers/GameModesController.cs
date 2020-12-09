@@ -114,7 +114,11 @@ namespace ZeroKWeb.Controllers
                     existingMode.GameModeJson = newGameMode.GameModeJson;
                     existingMode.LastModified = DateTime.UtcNow;
 
-                    if (Global.IsModerator) existingMode.MaintainerAccountID = newGameMode.MaintainerAccountID;
+                    if (Global.IsModerator)
+                    {
+                        existingMode.MaintainerAccountID = newGameMode.MaintainerAccountID;
+                        existingMode.IsFeatured = newGameMode.IsFeatured;
+                    }
 
                     db.SaveChanges();
                     return RedirectToAction("Index");
