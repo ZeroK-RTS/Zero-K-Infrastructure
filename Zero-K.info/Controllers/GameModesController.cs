@@ -14,6 +14,16 @@ namespace ZeroKWeb.Controllers
             public bool? IsFeaturedFilter { get; set; } = true;
 
             public IQueryable<GameMode> Data;
+
+            public void FillData(IQueryable<GameMode> source)
+            {
+                Data = source;
+
+                if (!string.IsNullOrEmpty(SearchName)) Data = Data.Where(x => x.DisplayName.Contains(SearchName) || x.ShortName.Contains(SearchName));
+                if (IsFeaturedFilter != null) Data = Data.Where(x => x.IsFeatured == IsFeaturedFilter);
+
+                Data = Data.OrderByDescending(x => x.GameModeID);
+            }
         }
         
         
@@ -22,6 +32,8 @@ namespace ZeroKWeb.Controllers
         {
             model = model ?? new GameModesModel();
             
+            var db = new ZkDataContext();
+            model.FillData(db.GameModes.AsQueryable());
             
             return View("GameModesIndex", model);
         }

@@ -5,6 +5,8 @@
     ViewBag.Title = Model.DisplayName;
 }
 
+@Html.ActionLink("Back to List", "Index")
+
 <h2>@ViewBag.Title</h2>
 
 <span>@Model.ShortName</span><br/>
@@ -17,6 +19,8 @@
     <div class="admin">
         @Html.ActionLink("Edit", "Edit", "GameModes", new {id=Model.GameModeID}, null)
     </div>
+    <br/>
 }
+
 
 @{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new { gameModeID = Model.GameModeID, threadID = Model.ForumThreadID } });}
