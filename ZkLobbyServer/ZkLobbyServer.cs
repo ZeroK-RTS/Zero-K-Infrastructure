@@ -583,5 +583,33 @@ namespace ZkLobbyServer
             }
         }
 
+        public async Task ReportUser(ZkDataContext db, Account reporter, Account reported, string report)
+        {
+
+            db.AbuseReports.InsertOnSubmit(new AbuseReport()
+            {
+                AccountID = reported.AccountID,
+                ReporterAccountID = reporter.AccountID,
+                Time = DateTime.UtcNow,
+                Text = report
+            });
+            db.SaveChanges();
+
+            string str;
+            if (reporter.AccountID != reported.AccountID)
+                str = string.Format("{0} https://zero-k.info/Users/Detail/{1} reports abuse by {2} https://zero-k.info/Users/Detail/{3} : {4}", 
+                    reporter.Name,
+                    reporter.AccountID,
+                    reported.Name, 
+                    reported.AccountID,
+                    report);
+            else
+                str = string.Format("{0} https://zero-k.info/Users/Detail/{1} contacts admins : {2}", 
+                    reporter.Name,
+                    reporter.AccountID, 
+                    report);
+
+            await GhostChanSay(GlobalConst.ModeratorChannel, str, isRing: true);
+        }
     }
 }

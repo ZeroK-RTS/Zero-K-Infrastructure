@@ -651,7 +651,7 @@ namespace ZkLobbyServer
             {
                 if (ActivePoll == null) return;
                 var oldPoll = ActivePoll;
-                if (ActivePoll != null) await ActivePoll.End();
+                if (ActivePoll != null) await ActivePoll.End(false);
                 if (pollTimer != null) pollTimer.Enabled = false;
                 ActivePoll = null;
                 await oldPoll?.PublishResult();
@@ -674,13 +674,13 @@ namespace ZkLobbyServer
         public async Task SwitchGame(string internalName)
         {
             ModName = internalName;
+            ValidateAndFillDetails();
             if (ModName != server.Game)
             {
                 ModOptions["noelo"] = "1";
                 await SayBattle("Ratings are disabled, since this game is not vanilla ZK");
                 await server.Broadcast(Users.Keys, new SetModOptions() { Options = ModOptions });
             }
-            ValidateAndFillDetails();
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Game = ModName } });
@@ -1170,7 +1170,7 @@ namespace ZkLobbyServer
             try
             {
                 pollTimer.Stop();
-                if (ActivePoll != null) ActivePoll.End();
+                if (ActivePoll != null) ActivePoll.End(true);
                 StopVote();
             }
             catch { }

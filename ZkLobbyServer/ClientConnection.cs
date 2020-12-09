@@ -141,6 +141,7 @@ namespace ZkLobbyServer
                     if (s.LobbyStartContext.Players.Any(x => !x.IsSpectator && x.Name == Name) && !s.Context.ActualPlayers.Any(x=>x.Name == Name && x.LoseTime != null))
                     {
                         await SendCommand(new RejoinOption() { BattleID = bat.BattleID });
+                        await bat.ProcessPlayerJoin(connectedUser, bat.Password);
                     }
                 }
 

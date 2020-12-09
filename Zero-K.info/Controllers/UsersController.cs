@@ -305,7 +305,7 @@ namespace ZeroKWeb.Controllers
             try
             {
                 string pmAction = "";
-                
+
                 bool activePenalty = banLobby || banMute || banForum || banSpecChat || banVotes || banCommanders || banSite;
 
                 string punisherName = "<unknown>";
@@ -319,7 +319,7 @@ namespace ZeroKWeb.Controllers
                 {
                     await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format("Message sent to {0} {1} by {2} ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), punisherName));
                     await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - message: {0} ", reason));
-                    
+
                     await Global.Server.GhostPm(acc.Name, string.Format("A moderator has sent you a message: {0}", reason));
                 }
                 else
@@ -332,7 +332,7 @@ namespace ZeroKWeb.Controllers
                     if (banLobby == true)
                     {
                         await Global.Server.KickFromServer(Global.Account.Name, acc.Name, reason);
-                        
+
                         pmAction += "Lobby banned, ";
                     }
                     if (banMute == true)
@@ -340,11 +340,11 @@ namespace ZeroKWeb.Controllers
                         await Global.Server.PublishAccountUpdate(acc);
                         pmAction += "Muted, ";
                     }
-                    if (banForum == true) 
+                    if (banForum == true)
                     {
                         pmAction += "Forum banned, ";
                     }
-                    if (banSpecChat == true) 
+                    if (banSpecChat == true)
                     {
                         pmAction += "Spectator all-chat muted, ";
                     }
@@ -355,21 +355,23 @@ namespace ZeroKWeb.Controllers
                     if (banCommanders == true)
                     {
                         pmAction += "Custom commanders restricted, ";
-                    }                    
-                    if (banSite == true) 
+                    }
+                    if (banSite == true)
                     {
                         pmAction += "Site banned, ";
                     }
-                    
+
                     if (activePenalty)
                     {
-                        pmAction = pmAction.Substring(0,Math.Max(0,pmAction.Length - 2)); // removes trailing comma and space
-                        await Global.Server.GhostPm(acc.Name, string.Format("Action taken: {0}", pmAction)); 
+                        pmAction = pmAction.Substring(0, Math.Max(0, pmAction.Length - 2)); // removes trailing comma and space
+                        await Global.Server.GhostPm(acc.Name, string.Format("Action taken: {0}", pmAction));
                         await Global.Server.GhostPm(acc.Name, string.Format("Total duration: {0} hours", banHours));
 
                         await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - duration: {0}h ", banHours));
                         await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, string.Format(" - penalty type: {0}", pmAction));
-                    } else {
+                    }
+                    else
+                    {
                         await Global.Server.GhostPm(acc.Name, "Action taken: Warning");
                         await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, " - penalty type: Warning");
                     }
@@ -408,30 +410,13 @@ namespace ZeroKWeb.Controllers
         [ValidateInput(false)]
         public async Task<ActionResult> ReportToAdminSubmit(int accountID, string text)
         {
-            var db = new ZkDataContext();
-            var acc = db.Accounts.Find(accountID);
-            if (acc == null) return Content("Invalid accountID");
-
-            db.AbuseReports.InsertOnSubmit(new AbuseReport()
+            using (var db = new ZkDataContext())
             {
-                AccountID = acc.AccountID,
-                ReporterAccountID = Global.AccountID,
-                Time = DateTime.UtcNow,
-                Text = text
-            });
-            db.SaveChanges();
+                var acc = db.Accounts.Find(accountID);
+                if (acc == null) return Content("Invalid accountID");
 
-            string str;
-            if (Global.AccountID != accountID)
-                str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name,
-                    Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"),
-                    acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"),
-                    text);
-            else
-                str = string.Format("{0} {1} contacts admins : {2}", Global.Account.Name,
-                    Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), text);
-
-            await Global.Server.GhostChanSay(GlobalConst.ModeratorChannel, str, isRing: true);
+                await Global.Server.ReportUser(db, Global.Account, acc, text);
+            }
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
 

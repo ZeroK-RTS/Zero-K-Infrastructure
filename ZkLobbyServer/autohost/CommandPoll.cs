@@ -78,7 +78,7 @@ namespace ZkLobbyServer
             };
         }
 
-        private async Task<bool> CheckEnd(bool timeout)
+        private async Task<bool> CheckEnd(bool timeout, bool forceEnd)
         {
 
             List<int> votes = Options.Select((o, i) => userVotes.Count(x => x.Value == i)).ToList();
@@ -109,7 +109,7 @@ namespace ZkLobbyServer
                 await Options[winnerId].Action();
                 return true;
             }
-            else if (timeout)
+            else if (timeout || forceEnd)
             {
                 Ended = true;
                 if (yesNoVote)
@@ -170,9 +170,9 @@ namespace ZkLobbyServer
             PollEnded(this, Outcome);
         }
 
-        public async Task End()
+        public async Task End(bool timeout)
         {
-            if (!Ended) await CheckEnd(true);
+            if (!Ended) await CheckEnd(timeout, true);
         }
 
 
@@ -189,7 +189,7 @@ namespace ZkLobbyServer
                 if (yesNoVote) battle.SayGame(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Topic, userVotes.Count(x => x.Value == 0), userVotes.Count(x => x.Value == 1), winCount));
                 await battle.server.Broadcast(battle.Users.Keys, GetBattlePoll());
 
-                if (await CheckEnd(false)) return true;
+                if (await CheckEnd(false, false)) return true;
             }
             else
             {

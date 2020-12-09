@@ -874,4 +874,11 @@ namespace LobbyClient
         public bool YesNoVote { get; set; } //Was this a vote with two options, yes and no
         public bool MapSelection { get; set; } //Was this a vote with map options?
     }
+
+    [Message(Origin.Client)]
+    public class UserReport
+    {
+        public string Username;
+        public string Text;
+    }
 }

@@ -402,7 +402,11 @@ namespace LobbyClient
                 {
                     case Talker.SpringEventType.PLAYER_JOINED:
                         var entry = Context?.GetOrAddPlayer(e.PlayerName);
-                        if (entry != null) entry.IsIngame = true;
+                        if (entry != null)
+                        {
+                            entry.IsIngame = true;
+                            entry.QuitTime = null;
+                        }
                         PlayerJoined?.Invoke(this, new SpringLogEventArgs(e.PlayerName));
                         break;
 
