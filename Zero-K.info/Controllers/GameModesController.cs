@@ -110,12 +110,12 @@ namespace ZeroKWeb.Controllers
                     if (!Global.IsModerator && existingMode.MaintainerAccountID != Global.AccountID) return RedirectToAction("NotLoggedIn", "Home");
 
                     existingMode.DisplayName = newGameMode.DisplayName;
-                    existingMode.ShortName = newGameMode.ShortName;
                     existingMode.GameModeJson = newGameMode.GameModeJson;
                     existingMode.LastModified = DateTime.UtcNow;
 
                     if (Global.IsModerator)
                     {
+                        existingMode.ShortName = newGameMode.ShortName;
                         existingMode.MaintainerAccountID = newGameMode.MaintainerAccountID;
                         existingMode.IsFeatured = newGameMode.IsFeatured;
                     }

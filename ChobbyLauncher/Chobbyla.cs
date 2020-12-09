@@ -129,13 +129,13 @@ namespace ChobbyLauncher
                         Trace.TraceWarning("Mission update has failed");
                         Status = "Error updating missions";
                     }
+                    
+                    downloader.UpdateFeaturedCustomGameModes(Progress);
                 }
                 else
                 {
                     ClearSdp();
                 }
-
-                
 
                 downloader.UpdatePublicCommunityInfo(Progress);
                 
