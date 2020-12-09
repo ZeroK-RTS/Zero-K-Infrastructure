@@ -881,4 +881,20 @@ namespace LobbyClient
         public string Username;
         public string Text;
     }
+    
+    
+    [Message(Origin.Client)]
+    public class GetCustomGameMode
+    {
+        public string ShortName;
+    }
+
+    [Message(Origin.Server)]
+    public class CustomGameModeResponse
+    {
+        public string ShortName;
+        public string DisplayName;
+        public string GameModeJson;
+    }
+    
 }

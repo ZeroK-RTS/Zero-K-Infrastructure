@@ -9,6 +9,8 @@
 
 <h2>@ViewBag.Title</h2>
 
+<h3 class="textbutton"><a href="@Html.PrintSpringLink("chat/battle@select_customGameMode:"+ Model.ShortName)">PLAY THIS GAME MODE</a></h3><br />
+
 <span>@Model.ShortName</span><br/>
 <span>Maintained by @Html.PrintAccount(Model.Maintainer)</span><br/>
 <span>Last updated @Html.PrintDate(Model.LastModified)</span><br/>

@@ -594,6 +594,29 @@ namespace ZkLobbyServer
                 await server.ReportUser(db, reporter, reported, report.Text);
             }
         }
+        
+       
+        public async Task Process(GetCustomGameMode modeRequest)
+        {
+            using (var db = new ZkDataContext())
+            {
+                var mode  = db.GameModes.FirstOrDefault(x => x.ShortName == modeRequest.ShortName);
+                if (mode == null)
+                {
+                    await SendCommand(new CustomGameModeResponse() { ShortName = modeRequest.ShortName });
+                }
+                else
+                {
+                    await SendCommand(new CustomGameModeResponse()
+                    {
+                        ShortName = mode.ShortName,
+                        DisplayName = mode.DisplayName,
+                        GameModeJson = mode.GameModeJson
+                    });
+                }
+            }
+        }
+        
 
         public async Task Process(SetAccountRelation rel)
         {

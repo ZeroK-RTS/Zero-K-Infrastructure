@@ -10,6 +10,7 @@ namespace ZkData
          
         public bool IsFeatured { get; set; }
         
+        [Index]
         public string ShortName { get; set; }
         
         public string DisplayName { get; set; }
