@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using ZkData;
 
@@ -131,6 +132,13 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var gameMode = db.GameModes.Find(id);
             return View("GameModeDetail", gameMode);
+        }
+
+        public ActionResult Download(int id)
+        {
+            var db = new ZkDataContext();
+            var gameMode = db.GameModes.Find(id);
+            return File(Encoding.UTF8.GetBytes(gameMode.GameModeJson), "application/json", $"{gameMode.ShortName}.json");
         }
     }
 }
