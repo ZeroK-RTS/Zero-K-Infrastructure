@@ -85,6 +85,14 @@ namespace PlasmaShared
         public string Title { get; set; }
     }
 
+    public class CustomGameModeInfo
+    {
+        public string DisplayName { get; set; }
+        public string FileName { get; set; }
+        
+        public string FileContent { get; set; }
+    }
+
 
     [ServiceContract]
     public interface IContentService
@@ -150,6 +158,10 @@ namespace PlasmaShared
 
         [OperationContract]
         PublicCommunityInfo GetPublicCommunityInfo();
+        
+        [OperationContract]
+        List<CustomGameModeInfo> GetFeaturedCustomGameModes();
+
 
         [OperationContract]
         SpringBattleInfo GetSpringBattleInfo(string gameid);

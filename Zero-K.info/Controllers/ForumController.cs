@@ -22,6 +22,7 @@ namespace ZeroKWeb.Controllers
             if (thread.Missions != null && thread.Missions.Count > 0) return false;
             if (thread.Planets != null && thread.Planets.Count > 0) return false;
             if (thread.SpringBattles != null && thread.SpringBattles.Count > 0) return false;
+            if (thread.GameMode != null && thread.GameMode.Count > 0) return false;
             if (thread.News != null && thread.News.Count > 0) return false;
             return true;
         }
@@ -72,6 +73,7 @@ namespace ZeroKWeb.Controllers
                 if (thread.SpringBattles != null) thread.SpringBattles.ForEach(x => x.ForumThread = null);
                 if (thread.Planets != null) thread.Planets.ForEach(x => x.ForumThread = null);
                 if (thread.Missions != null) thread.Missions.ForEach(x => x.ForumThread = null);
+                if (thread.GameMode != null) thread.GameMode.ForEach(x => x.ForumThread = null);
                 db.SaveChanges();
                 if (IsNormalThread(thread))
                 {
@@ -172,7 +174,7 @@ namespace ZeroKWeb.Controllers
             if (!model.DisablePostComment)
             {
                 var mode = thread.ForumCategory.ForumMode;
-                model.DisablePostComment = thread.IsLocked || mode == ForumMode.Maps || mode == ForumMode.Missions || mode == ForumMode.SpringBattles|| mode == ForumMode.Clans || mode == ForumMode.Planets;
+                model.DisablePostComment = thread.IsLocked || mode == ForumMode.Maps || mode == ForumMode.Missions || mode == ForumMode.SpringBattles|| mode == ForumMode.Clans || mode == ForumMode.Planets || mode == ForumMode.GameModes;
             }
 
             return View("PostList", model);
@@ -266,13 +268,14 @@ namespace ZeroKWeb.Controllers
             int? springBattleID,
             int? clanID,
             int? planetID,
+            int? gameModeID,
             string text,
             string title,
             string wikiKey,
             int? forumPostID,
             bool? isMinorEdit) {
             if (threadID == null && missionID == null && resourceID == null && springBattleID == null && clanID == null && planetID == null &&
-                forumPostID == null && string.IsNullOrWhiteSpace(title)) return Content("Cannot post new thread with blank title");
+                forumPostID == null && gameModeID == null && string.IsNullOrWhiteSpace(title)) return Content("Cannot post new thread with blank title");
             if (string.IsNullOrWhiteSpace(text)) return Content("Please type some text :)");
 
             var penalty = Punishment.GetActivePunishment(Global.AccountID, Request.UserHostAddress, 0, null, x => x.BanForum);
@@ -317,6 +320,12 @@ namespace ZeroKWeb.Controllers
                 {
                     var map = db.Resources.Single(x => x.ResourceID == resourceID);
                     thread.Title = "Map " + map.InternalName;
+                }
+
+                if (thread != null && gameModeID != null)
+                {
+                    var gameMode = db.GameModes.Find(gameModeID);
+                    thread.Title = "Game mode " + gameMode.DisplayName;
                 }
 
                 if (threadID == null && category != null) // new thread
@@ -400,6 +409,21 @@ namespace ZeroKWeb.Controllers
                     db.ForumThreads.InsertOnSubmit(thread);
                 }
 
+                if (thread == null && gameModeID != null)
+                {
+                    var gameMode = db.GameModes.Single(x => x.GameModeID == gameModeID);
+                    if (gameMode.ForumThread != null) return Content("Double post");
+                    thread = new ForumThread
+                    {
+                        Title = "Game mode " + gameMode.DisplayName,
+                        CreatedAccountID = Global.AccountID,
+                        LastPostAccountID = Global.AccountID
+                    };
+                    thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.ForumMode == ForumMode.GameModes);
+                    gameMode.ForumThread = thread;
+                    db.ForumThreads.InsertOnSubmit(thread);
+                }
+
 
                 if (thread == null) return Content("Thread not found");
                 if (thread.IsLocked && Global.Account.AdminLevel < AdminLevel.Moderator) return Content("Thread is locked");
@@ -451,6 +475,7 @@ namespace ZeroKWeb.Controllers
                 if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
                 if (clanID.HasValue) return RedirectToAction("Detail", "Clans", new { id = clanID });
                 if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
+                if (gameModeID.HasValue) return RedirectToAction("Detail", "Mods", new { id = gameModeID });
                 if (forumPostID.HasValue) return RedirectToAction("Thread","Forum", new { id = thread.ForumThreadID, postID = forumPostID });
                 return RedirectToAction("Thread", "Forum", new { id = thread.ForumThreadID, postID = gotoPostId });
             }
@@ -497,6 +522,8 @@ namespace ZeroKWeb.Controllers
                 if (cat.ForumMode == ForumMode.SpringBattles && t.SpringBattles.Any()) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.First().SpringBattleID });
                 if (cat.ForumMode == ForumMode.Clans && t.Clan!=null) return RedirectToAction("Detail", "Clans", new { id = t.RestrictedClanID });
                 if (cat.ForumMode == ForumMode.Planets && t.Planets.Any()) return RedirectToAction("Planet", "Planetwars", new { id = t.Planets.First().PlanetID });
+                if (cat.ForumMode == ForumMode.GameModes && t.GameMode.Any())
+                    return RedirectToAction("Detail", "Mods", new { id = t.GameMode.First().GameModeID });
             }
 
             var res = new ThreadResult();

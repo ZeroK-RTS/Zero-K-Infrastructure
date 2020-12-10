@@ -14,6 +14,7 @@ namespace ZkData
         Planets = 6,
         Wiki = 7,
         Archive = 8,
+        GameModes= 9,
     }
     public class ForumCategory
     {

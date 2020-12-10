@@ -1,0 +1,39 @@
+﻿@using ZeroKWeb
+@model ZkData.GameMode
+
+@{
+    ViewBag.Title = Model.DisplayName;
+}
+
+@Html.ActionLink("Back to List", "Index")
+
+<h2>@ViewBag.Title</h2>
+
+<h3 class="textbutton"><a href="@Html.PrintSpringLink("chat/battle@select_customGameMode:"+ Model.ShortName)">PLAY THIS MOD</a></h3><br />
+
+<span>Maintained by @Html.PrintAccount(Model.Maintainer)</span><br/>
+<span>Last updated @Html.PrintDate(Model.LastModified)</span><br/>
+<span>Created at @Html.PrintDate(Model.Created)</span><br/>
+<span><a href="@Url.Action("Download","Mods", new {id=Model.GameModeID})">download sources of @Model.ShortName</a></span><br/>
+
+@if (Global.IsModerator || Global.AccountID == Model.MaintainerAccountID)
+{
+    <div class="admin">
+        @Html.ActionLink("Edit", "Edit", "Mods", new {id=Model.GameModeID}, null)
+    </div>
+    <br/>
+}
+
+@if (Model.ForumThread != null)
+{
+    var authorPost = Model.ForumThread.ForumPosts.Where(x => x.AuthorAccountID == Model.MaintainerAccountID).OrderBy(x => x.ForumPostID).FirstOrDefault();
+    if (authorPost != null)
+    {
+        <div>
+            @Html.BBCodeCached(authorPost)
+        </div><br/>
+    }
+} 
+
+
+@{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new { gameModeID = Model.GameModeID, threadID = Model.ForumThreadID } });}

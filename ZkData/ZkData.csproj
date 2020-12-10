@@ -73,6 +73,7 @@
   <ItemGroup>
     <Compile Include="DbCloner.cs" />
     <Compile Include="Ef\AccountMapBan.cs" />
+    <Compile Include="Ef\GameMode.cs" />
     <Compile Include="Ef\MapPollOption.cs" />
     <Compile Include="Ef\MapPollOutcomes.cs" />
     <Compile Include="Ef\AccountRelation.cs" />
@@ -486,6 +487,10 @@
     <Compile Include="Migrations\202010211325096_AddAutohostApplicableRating.cs" />
     <Compile Include="Migrations\202010211325096_AddAutohostApplicableRating.Designer.cs">
       <DependentUpon>202010211325096_AddAutohostApplicableRating.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012091840127_AddGameMode.cs" />
+    <Compile Include="Migrations\202012091840127_AddGameMode.Designer.cs">
+      <DependentUpon>202012091840127_AddGameMode.cs</DependentUpon>
     </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
@@ -916,6 +921,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202010211325096_AddAutohostApplicableRating.resx">
       <DependentUpon>202010211325096_AddAutohostApplicableRating.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012091840127_AddGameMode.resx">
+      <DependentUpon>202012091840127_AddGameMode.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

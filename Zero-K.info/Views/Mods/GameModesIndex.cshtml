@@ -1,0 +1,34 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZeroKWeb.Controllers.ModsController.GameModesModel
+
+@{
+    ViewBag.Title = "Game mods";
+    
+    var grid = new UniGrid<GameMode>(Model.Data, "Game mods","modesGrid");
+    grid.AddCol("Shortcut", x => @Html.ActionLink(x.ShortName, "Detail", "Mods", new {id = x.GameModeID}, null)).SetSort(x=>x.ShortName);
+    grid.AddCol("Name", x => @Html.ActionLink(x.DisplayName, "Detail", "Mods", new {id = x.GameModeID}, null)).SetSort(x=>x.DisplayName);
+    grid.AddCol("Maintainer", x => Html.PrintAccount(x.Maintainer)).SetSort(x=>x.Maintainer.Name);
+    grid.AddCol("Created", x => x.Created).SetSort(x=>x.Created);
+    grid.AddCol("Modified", x => x.LastModified).SetSort(x=>x.LastModified);
+    grid.AddCol("Featured", x => x.IsFeatured).SetSort(x=>x.IsFeatured);
+}
+
+<div id="gameMods">
+    <h2>@ViewBag.Title</h2>
+    
+    @using (Ajax.BeginForm(Global.GetAjaxOptions("gameMods")))
+    {
+        <span>
+            Name: @Html.EditorFor(x=>x.SearchName) &nbsp;&nbsp;&nbsp;
+            Featured: @Html.EditorFor(x=>x.IsFeaturedFilter)
+            <input type="submit" id="submit" value="Search"/>
+        </span>
+
+
+        @GridHelpers.RenderTable(grid);
+    }
+
+    
+    <a href="@Url.Action("Edit")">Upload new game mode</a>
+</div>

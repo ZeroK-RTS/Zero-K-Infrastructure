@@ -79,6 +79,7 @@ namespace ZeroKWeb.Views.Forum
                     null,
                     null,
                     null,
+                    null,
                     isAfter == true?  edit.NewText: edit.OriginalText,
                     thread.Title,
                     thread.WikiKey,

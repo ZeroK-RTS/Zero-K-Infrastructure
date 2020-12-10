@@ -282,6 +282,19 @@ namespace ZeroKWeb
             return info;
         }
 
+        public List<CustomGameModeInfo> GetFeaturedCustomGameModes()
+        {
+            using (var db = new ZkDataContext())
+            {
+                var ret = db.GameModes.Where(x => x.IsFeatured).Select(x => new CustomGameModeInfo()
+                {
+                    DisplayName = x.DisplayName, FileContent = x.GameModeJson, FileName = x.ShortName
+                }).ToList();
+
+                return ret;
+            }
+        }
+
         public SpringBattleInfo GetSpringBattleInfo(string gameid)
         {
             using (var db = new ZkDataContext())

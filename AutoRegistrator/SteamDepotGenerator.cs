@@ -97,6 +97,8 @@ namespace AutoRegistrator
                 if (!downloader.UpdateMissions(prog).Result) throw new ApplicationException("SteamDepot Error updating missions! " + prog.Status);
             }
             if (!downloader.UpdatePublicCommunityInfo(prog)) throw new ApplicationException("SteamDepot Error updating public community info! " + prog.Status);
+            
+            if (!downloader.UpdateFeaturedCustomGameModes(prog)) throw new ApplicationException("SteamDepot Error updating custom game modes! " + prog.Status);
 
 
             CopyLobbyProgram();

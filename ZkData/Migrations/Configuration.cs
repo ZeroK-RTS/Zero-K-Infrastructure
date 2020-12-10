@@ -60,9 +60,10 @@ namespace ZkData.Migrations
                 new ForumCategory { Title = "News", ForumMode = ForumMode.News, IsLocked = true, SortOrder = 9},
                 new ForumCategory { Title = "Wiki", ForumMode = ForumMode.Wiki, IsLocked = true, SortOrder = 10 },
                 new ForumCategory { Title = "Maps", ForumMode = ForumMode.Maps, IsLocked = true, SortOrder = 18 },
-                new ForumCategory { Title = "Missions", ForumMode = ForumMode.Missions, IsLocked = true, SortOrder = 18 },
-                new ForumCategory { Title = "Battles", ForumMode = ForumMode.SpringBattles, IsLocked = true, SortOrder = 19 },
-                new ForumCategory { Title = "Off topic", ForumMode = ForumMode.General, SortOrder = 20 });
+                new ForumCategory { Title = "Missions", ForumMode = ForumMode.Missions, IsLocked = true, SortOrder = 28 },
+                new ForumCategory { Title = "Battles", ForumMode = ForumMode.SpringBattles, IsLocked = true, SortOrder = 30 },
+                new ForumCategory { Title = "Game modes", ForumMode = ForumMode.GameModes, IsLocked = true, SortOrder = 35 },
+                new ForumCategory { Title = "Off topic", ForumMode = ForumMode.General, SortOrder = 40 });
 
             db.SaveChanges();
 
@@ -96,6 +97,8 @@ namespace ZkData.Migrations
                 new ForumCategory { Title = "Notes", ForumMode = ForumMode.Wiki, IsLocked = false, SortOrder = 15, ParentForumCategoryID = wikiId },
                 new ForumCategory { Title = "Site", ForumMode = ForumMode.Wiki, IsLocked = false, SortOrder = 16, ParentForumCategoryID = wikiId });
 
+           
+            
             db.ForumCategories.AddOrUpdate(
                 x => x.Title,
                 new ForumCategory { Title = "Asylum", ForumMode = ForumMode.Archive, IsLocked = false, SortOrder = 21, ParentForumCategoryID = offtopic });

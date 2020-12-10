@@ -1,0 +1,38 @@
+﻿@using ZeroKWeb
+@model ZkData.GameMode
+
+@{
+    ViewBag.Title = Model.GameModeID > 0 ? "Edit game mod " + Model.ShortName : "New game mod";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<form action="@Url.Action("EditSubmit")" method="post">
+    @Html.HiddenFor(x => x.GameModeID)
+    <table>
+        <tr>
+            <td>Shortcut<br/>(file name)</td>
+            <td>@Html.EditorFor(x => x.ShortName)</td>
+        </tr>
+        <tr>
+            <td>Display name</td>
+            <td>@Html.EditorFor(x => x.DisplayName)</td>
+        </tr>
+        <tr>
+            <td>Game mode JSON</td>
+            <td>@Html.TextAreaFor(x => x.GameModeJson, 10, 120, null)</td>
+        </tr>
+        @if (Global.IsModerator)
+        {
+            <tr>
+                <td class="admin">Maintainer</td>
+                <td>@Html.EditorFor(x => x.MaintainerAccountID) @Html.PrintAccount(Model.Maintainer)</td>
+            </tr>
+            <tr>
+                <td class="admin">Featured</td>
+                <td>@Html.EditorFor(x => x.IsFeatured)</td>
+            </tr>
+        }
+    </table>
+    <input type="submit" value="Save"/>
+</form>

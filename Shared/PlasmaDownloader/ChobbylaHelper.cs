@@ -84,6 +84,29 @@ namespace PlasmaDownloader
                 return false;
             }
         }
+        
+        public static bool UpdateFeaturedCustomGameModes(this PlasmaDownloader downloader, IChobbylaProgress progress)
+        {
+            try
+            {
+                progress.Status = "Loading custom game modes";
+                var folder = Path.Combine(downloader.SpringPaths.WritableDirectory, "CustomModes");
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+                var modes = GlobalConst.GetContentService().GetFeaturedCustomGameModes();
+                foreach (var mode in modes)
+                {    
+                    File.WriteAllText(Path.Combine(folder, $"{mode.FileName}.json"), mode.FileContent);    
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Loading custom game modes failed: {0}", ex);
+                progress.Status = "Loading custom game modes failed";
+                return false;
+            }
+        }
+        
 
 
         public static async Task<bool> UpdateMissions(this PlasmaDownloader downloader, IChobbylaProgress progress)
