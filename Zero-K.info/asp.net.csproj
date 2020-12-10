@@ -178,7 +178,7 @@
     <Compile Include="Controllers\EnginesController.cs" />
     <Compile Include="Controllers\FactionsController.cs" />
     <Compile Include="Controllers\ContributionsController.cs" />
-    <Compile Include="Controllers\GameModesController.cs" />
+    <Compile Include="Controllers\ModsController.cs" />
     <Compile Include="Controllers\GithubController.cs" />
     <Compile Include="Controllers\LobbyController.cs" />
     <Compile Include="Controllers\LobbyNewsController.cs" />
@@ -353,9 +353,9 @@
     <Content Include="Styles\nicetitle.css" />
     <Content Include="Styles\stars.css" />
     <Content Include="Styles\style.css" />
-    <Content Include="Views\GameModes\GameModeDetail.cshtml" />
-    <Content Include="Views\GameModes\GameModeEdit.cshtml" />
-    <Content Include="Views\GameModes\GameModesIndex.cshtml" />
+    <Content Include="Views\Mods\GameModeDetail.cshtml" />
+    <Content Include="Views\Mods\GameModeEdit.cshtml" />
+    <Content Include="Views\Mods\GameModesIndex.cshtml" />
     <Content Include="Views\Maps\PlanetImageSelect.cshtml" />
     <Content Include="App_Code\GridHelpers.cshtml" />
     <None Include="AppCode\ModStatsDb.dbml">

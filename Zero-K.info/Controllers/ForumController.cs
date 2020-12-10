@@ -475,7 +475,7 @@ namespace ZeroKWeb.Controllers
                 if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
                 if (clanID.HasValue) return RedirectToAction("Detail", "Clans", new { id = clanID });
                 if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
-                if (gameModeID.HasValue) return RedirectToAction("Detail", "GameModes", new { id = gameModeID });
+                if (gameModeID.HasValue) return RedirectToAction("Detail", "Mods", new { id = gameModeID });
                 if (forumPostID.HasValue) return RedirectToAction("Thread","Forum", new { id = thread.ForumThreadID, postID = forumPostID });
                 return RedirectToAction("Thread", "Forum", new { id = thread.ForumThreadID, postID = gotoPostId });
             }
@@ -523,7 +523,7 @@ namespace ZeroKWeb.Controllers
                 if (cat.ForumMode == ForumMode.Clans && t.Clan!=null) return RedirectToAction("Detail", "Clans", new { id = t.RestrictedClanID });
                 if (cat.ForumMode == ForumMode.Planets && t.Planets.Any()) return RedirectToAction("Planet", "Planetwars", new { id = t.Planets.First().PlanetID });
                 if (cat.ForumMode == ForumMode.GameModes && t.GameMode.Any())
-                    return RedirectToAction("Detail", "GameModes", new { id = t.GameMode.First().GameModeID });
+                    return RedirectToAction("Detail", "Mods", new { id = t.GameMode.First().GameModeID });
             }
 
             var res = new ThreadResult();

@@ -7,7 +7,7 @@ using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
-    public class GameModesController: Controller
+    public class ModsController: Controller
     {
         public class GameModesModel
         {
