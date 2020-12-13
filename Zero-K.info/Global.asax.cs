@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -140,6 +141,7 @@ namespace ZeroKWeb
             ViewEngines.Engines.Clear();
             ViewEngines.Engines.Add(new RazorViewEngine() { FileExtensions = new[] { "cshtml" } }); // this should speed up rendering a bit
 
+            GlobalConfiguration.Configure(WebApiConfig.Register);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AreaRegistration.RegisterAllAreas();
             RegisterRoutes(RouteTable.Routes);

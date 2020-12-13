@@ -96,6 +96,11 @@ namespace Ratings
             return playerRatings.ContainsKey(accountID) ? playerRatings[accountID] : DefaultRating;
         }
 
+        public PlayerDay GetInternalRating(int accountID, DateTime time)
+        {
+            return players[accountID].days.Find(x=> x.day == RatingSystems.ConvertDateToDays(time));
+        }
+
         public Dictionary<DateTime, float> GetPlayerRatingHistory(int AccountID)
         {
             if (!players.ContainsKey((AccountID))) return new Dictionary<DateTime, float>();
