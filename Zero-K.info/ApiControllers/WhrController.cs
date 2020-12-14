@@ -1,7 +1,9 @@
 ﻿using LobbyClient;
+using PlasmaShared;
 using Ratings;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -16,8 +18,9 @@ namespace ZeroKWeb.Controllers
         [Route("api/whr/battles")]
         public IEnumerable<BattleModel> Get([FromBody]BattleRequest request)
         {
-            using (var db = new ZkDataContext()) {
-                return db.SpringBattles.Where(x => request.battleIds.Contains(x.SpringBattleID)).Select(bat => new BattleModel(bat)).ToList();
+            using (var db = new ZkDataContext())
+            {
+                return db.SpringBattles.Where(x => request.battleIds.Contains(x.SpringBattleID)).Include(x => x.SpringBattlePlayers).ToList().Select(bat => new BattleModel(bat)).ToList();
             }
         }
 
@@ -25,6 +28,7 @@ namespace ZeroKWeb.Controllers
         {
             public int[] battleIds { get; set; }
         }
+
         public class BattleModel
         {
             public class PlayerModel
