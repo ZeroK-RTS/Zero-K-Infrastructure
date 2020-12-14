@@ -1,4 +1,5 @@
-﻿using Ratings;
+﻿using LobbyClient;
+using Ratings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace ZeroKWeb.Controllers
         public IEnumerable<BattleModel> Get([FromBody]BattleRequest request)
         {
             using (var db = new ZkDataContext()) {
-                return request.battleIds.Select(id => new BattleModel(db.SpringBattles.First(x => x.SpringBattleID == id))).ToList();
+                return db.SpringBattles.Where(x => request.battleIds.Contains(x.SpringBattleID)).Select(bat => new BattleModel(bat)).ToList();
             }
         }
 
@@ -33,6 +34,7 @@ namespace ZeroKWeb.Controllers
             }
 
             public List<PlayerModel> players { get; set; }
+            public int id { get; set; }
 
             public BattleModel(SpringBattle bat)
             {
@@ -40,8 +42,9 @@ namespace ZeroKWeb.Controllers
                 players = bat.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(player => new PlayerModel()
                 {
                     rating = whr.GetInternalRating(player.AccountID, bat.StartTime)?.GetElo() + WholeHistoryRating.RatingOffset,
-                    stdev = whr.GetInternalRating(player.AccountID, bat.StartTime)?.GetEloStdev()
+                    stdev = whr.GetInternalRating(player.AccountID, bat.StartTime)?.GetEloStdev(),
                 }).ToList();
+                id = bat.SpringBattleID;
             }
         }
     }
