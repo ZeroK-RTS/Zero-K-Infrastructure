@@ -31,6 +31,7 @@ namespace ZeroKWeb.Controllers
             {
                 public float? rating { get; set; }
                 public float? stdev { get; set; }
+                public int accountId { get; set; }
             }
 
             public List<PlayerModel> players { get; set; }
@@ -43,6 +44,7 @@ namespace ZeroKWeb.Controllers
                 {
                     rating = whr.GetInternalRating(player.AccountID, bat.StartTime)?.GetElo() + WholeHistoryRating.RatingOffset,
                     stdev = whr.GetInternalRating(player.AccountID, bat.StartTime)?.GetEloStdev(),
+                    accountId = player.AccountID,
                 }).ToList();
                 id = bat.SpringBattleID;
             }
