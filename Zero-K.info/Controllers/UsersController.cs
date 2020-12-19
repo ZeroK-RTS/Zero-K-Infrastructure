@@ -633,12 +633,18 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var acc = db.Accounts.Find(Global.AccountID);
             if (acc == null) return Content("Invalid accountID");
-            if (string.IsNullOrEmpty(acc.PasswordBcrypt)) return Content("Your account is password-less, use steam");
-            if (AuthServiceClient.VerifyAccountPlain(acc.Name, oldPassword) == null)
+
+            // Consider whether this should return in some form after the Steam login problems are resolved.
+            // if (string.IsNullOrEmpty(acc.PasswordBcrypt)) return Content("Your account is password-less, use steam");
+
+            if (!string.IsNullOrEmpty(acc.PasswordBcrypt)) // Consider whether this should be removed after Steam login problems are resolved.
             {
-                Trace.TraceWarning("Failed password check for {0} on attempted password change", Global.Account.Name);
-                Global.Server.LoginChecker.LogIpFailure(Request.UserHostAddress);
-                return Content("Invalid password");
+                if (AuthServiceClient.VerifyAccountPlain(acc.Name, oldPassword) == null)
+                {
+                    Trace.TraceWarning("Failed password check for {0} on attempted password change", Global.Account.Name);
+                    Global.Server.LoginChecker.LogIpFailure(Request.UserHostAddress);
+                    return Content("Invalid password");
+                }
             }
             if (newPassword != newPassword2) return Content("New passwords do not match");
             if (string.IsNullOrWhiteSpace(newPassword)) return Content("New password cannot be blank");
