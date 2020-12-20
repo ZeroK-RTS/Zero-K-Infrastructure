@@ -49,7 +49,18 @@ namespace LobbyClient
         ///     Lobby server version
         /// </summary>
         public string Version { get; set; }
-
+        
+        /// <summary>
+        /// RSA challenge token, sign it with priv key of client to prove identity
+        /// </summary>
+        public string ChallengeToken { get; set; }
+        
+        /// <summary>
+        /// Server pub key, use to encrypt sensitive data
+        /// </summary>
+        public string ServerPubKey { get; set; }
+        
+        
         public List<string> Blacklist { get; set; } = new List<string>();
         public List<FactionInfo> Factions { get; set; }
 
@@ -135,6 +146,12 @@ namespace LobbyClient
         public long UserID { get; set; }
 
         public string InstallID { get; set; }
+        
+        
+        public string ClientPubKey { get; set; }
+        public string SignedChallengeToken { get; set; }
+        
+        public string EncryptedPasswordHash { get; set; }
 
         public List<ulong> Dlc { get; set; }
     }
@@ -153,6 +170,9 @@ namespace LobbyClient
         ///     base64(md5(password))
         /// </summary>
         public string PasswordHash { get; set; }
+        
+        public string EncryptedPasswordHash { get; set; }
+        
 
         public string SteamAuthToken { get; set; }
 
