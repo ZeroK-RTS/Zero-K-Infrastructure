@@ -67,6 +67,7 @@
     <Compile Include="EngineDownloadTests.cs" />
     <Compile Include="PaypalTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestRsa.cs" />
     <Compile Include="WhoisTests.cs" />
   </ItemGroup>
   <ItemGroup>
