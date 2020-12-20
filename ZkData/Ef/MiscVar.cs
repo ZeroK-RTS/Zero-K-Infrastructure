@@ -14,11 +14,11 @@ namespace ZkData
         public static string LastRegisteredZkVersion { get { return GetValue("zkVersion"); } set { SetValue("zkVersion", value); } }
         public static string LastRegisteredChobbyVersion { get { return GetValue("chobbyVersion"); } set { SetValue("chobbyVersion", value); } }
         
-        public static string ServerPubKey { get => GetValue("serverPubKey"); set => SetValue("serverPubKey", value); }        
-        
-        public static string ServerPrivKey { get => GetValue("serverPrivKey"); set => SetValue("serverPrivKey", value); }
-        
-        
+        public static string ServerPubKey { get { return GetValue("serverPubKey"); } set { SetValue("serverPubKey", value); } }
+
+        public static string ServerPrivKey { get { return GetValue("serverPrivKey"); } set { SetValue("serverPrivKey", value); } }
+
+
         public static bool IsZklsLimited => ZklsMaxUsers > 0;
 
         public static int ZklsMaxUsers
