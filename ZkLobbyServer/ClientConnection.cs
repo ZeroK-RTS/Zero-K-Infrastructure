@@ -31,6 +31,8 @@ namespace ZkLobbyServer
         static List<Welcome.FactionInfo> cachedFactions = new List<Welcome.FactionInfo>();
         static List<string> blacklist = new List<string>() { "dakeys", "xtrasauce" };
 
+        string challengeToken;
+
         static ClientConnection()
         {
             using (var db = new ZkDataContext())
@@ -45,6 +47,8 @@ namespace ZkLobbyServer
             this.server = server;
             number = Interlocked.Increment(ref server.ClientCounter);
             this.transport = transport;
+
+            challengeToken = Guid.NewGuid().ToString(); // generate random challenge token
 
             transport.ConnectAndRun(OnCommandReceived, OnConnected, OnConnectionClosed).ConfigureAwait(false);
         }
@@ -73,7 +77,7 @@ namespace ZkLobbyServer
         public async Task OnConnected()
         {
             //Trace.TraceInformation("{0} connected", this);
-            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Blacklist = blacklist, Version = server.Version, UserCount = server.ConnectedUsers.Count, Factions = cachedFactions, UserCountLimited = MiscVar.ZklsMaxUsers > 0});
+            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Blacklist = blacklist, Version = server.Version, UserCount = server.ConnectedUsers.Count, Factions = cachedFactions, UserCountLimited = MiscVar.ZklsMaxUsers > 0, ChallengeToken = challengeToken, ServerPubKey = MiscVar.ServerPubKey});
         }
 
 
@@ -87,7 +91,7 @@ namespace ZkLobbyServer
 
         public async Task Process(Login login)
         {
-            var ret = await Task.Run(() => server.LoginChecker.DoLogin(login, RemoteEndpointIP, login.Dlc));
+            var ret = await Task.Run(() => server.LoginChecker.DoLogin(login, RemoteEndpointIP, login.Dlc, challengeToken));
             if (ret.LoginResponse.ResultCode == LoginResponse.Code.Ok)
             {
                 var user = ret.User;

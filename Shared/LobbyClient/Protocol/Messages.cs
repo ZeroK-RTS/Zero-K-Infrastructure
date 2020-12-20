@@ -266,7 +266,14 @@ namespace LobbyClient
             SteamLinkedToDifferentAccount = 8,
 
             [Description("sorry, the server is full, please retry later")]
-            ServerFull = 9
+            ServerFull = 9,
+            
+            [Description("invalid RSA signature")]
+            InvalidRsaSignature = 10,
+            
+            [Description("RSA signature could not be verified (pub key not known)")]
+            RsaSignatureCouldNotBeVerified = 11            
+            
         }
 
         public string Name { get; set; }

@@ -171,7 +171,12 @@ namespace ZkData
 
         [Obsolete("Do not use")]
         public int? LobbyID { get; set; }
-
+        
+        /// <summary>
+        /// Store last pub key of this account's client
+        /// </summary>
+        public string LastPubKey { get; set; } 
+        
         public virtual ICollection<AbuseReport> AbuseReportsByAccountID { get; set; }
         public virtual ICollection<AbuseReport> AbuseReportsByReporterAccountID { get; set; }
         public virtual Faction Faction { get; set; }
