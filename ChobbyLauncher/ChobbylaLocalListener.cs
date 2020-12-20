@@ -721,7 +721,7 @@ namespace ChobbyLauncher
         private async Task Process(GenerateKeysRequest args)
         {
             var keys = RsaSignatures.GenerateKeys();
-            SendCommand(new GenerateKeysDone() { PrivKey = keys.privKey, PubKey = keys.pubKey });
+            SendCommand(new GenerateKeysDone() { PrivKey = keys.PrivKey, PubKey = keys.PubKey });
         }
         
         private async Task Process(SignStringRequest args)

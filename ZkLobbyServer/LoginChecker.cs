@@ -47,8 +47,8 @@ namespace ZkLobbyServer
             if (string.IsNullOrEmpty(MiscVar.ServerPrivKey))
             {
                 var keys = RsaSignatures.GenerateKeys();
-                MiscVar.ServerPrivKey = keys.privKey;
-                MiscVar.ServerPubKey = keys.pubKey;
+                MiscVar.ServerPrivKey = keys.PrivKey;
+                MiscVar.ServerPubKey = keys.PubKey;
             }
             passwordDecryptor = new RsaSignatures(MiscVar.ServerPrivKey);
         }
