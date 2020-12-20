@@ -37,6 +37,7 @@ namespace ZkLobbyServer
         private SemaphoreSlim semaphore = new SemaphoreSlim(MaxConcurrentLogins);
         
         RsaSignatures passwordDecryptor;
+        string serverPubKey;
         
 
         public LoginChecker(ZkLobbyServer server, string geoipPath)
@@ -44,13 +45,9 @@ namespace ZkLobbyServer
             this.server = server;
             geoIP = new DatabaseReader(Path.Combine(geoipPath, "GeoLite2-Country.mmdb"), FileAccessMode.Memory);
             
-            if (string.IsNullOrEmpty(MiscVar.ServerPrivKey))
-            {
-                var keys = RsaSignatures.GenerateKeys();
-                MiscVar.ServerPrivKey = keys.PrivKey;
-                MiscVar.ServerPubKey = keys.PubKey;
-            }
-            passwordDecryptor = new RsaSignatures(MiscVar.ServerPrivKey);
+            var keys = RsaSignatures.GenerateKeys();
+            serverPubKey = keys.PubKey;
+            passwordDecryptor = new RsaSignatures(keys.PrivKey);
         }
 
         public async Task<LoginCheckerResponse> DoLogin(Login login, string ip, List<ulong> dlc, string challengeToken)
