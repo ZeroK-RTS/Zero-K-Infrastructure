@@ -77,7 +77,7 @@ namespace ZkLobbyServer
         public async Task OnConnected()
         {
             //Trace.TraceInformation("{0} connected", this);
-            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Blacklist = blacklist, Version = server.Version, UserCount = server.ConnectedUsers.Count, Factions = cachedFactions, UserCountLimited = MiscVar.ZklsMaxUsers > 0, ChallengeToken = challengeToken, ServerPubKey = MiscVar.ServerPubKey});
+            await SendCommand(new Welcome() { Engine = server.Engine, Game = server.Game, Blacklist = blacklist, Version = server.Version, UserCount = server.ConnectedUsers.Count, Factions = cachedFactions, UserCountLimited = MiscVar.ZklsMaxUsers > 0, ChallengeToken = challengeToken, ServerPubKey = server.LoginChecker.ServerPubKey});
         }
 
 
