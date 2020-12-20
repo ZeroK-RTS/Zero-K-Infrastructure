@@ -70,7 +70,7 @@ namespace ZkLobbyServer
 
                     if (!string.IsNullOrEmpty(login.ClientPubKey) || !string.IsNullOrEmpty(login.SignedChallengeToken))
                     {
-                        if (!RsaSignatures.VerifySignature(login.SignedChallengeToken, login.SignedChallengeToken, login.ClientPubKey))
+                        if (!RsaSignatures.VerifySignature(challengeToken, login.SignedChallengeToken, login.ClientPubKey))
                         {
                             return new LoginCheckerResponse(LoginResponse.Code.InvalidRsaSignature);
                         }
@@ -87,11 +87,7 @@ namespace ZkLobbyServer
                     {
                         info = await server.SteamWebApi.VerifyAndGetAccountInformation(login.SteamAuthToken);
 
-                        if (info == null)
-                        {
-                            LogIpFailure(ip);
-                            return new LoginCheckerResponse(LoginResponse.Code.InvalidSteamToken);
-                        }
+                        if (info == null) Trace.TraceWarning("Failed to verify steam token {0} for account {1}", login.SteamAuthToken, login.Name); // we ignore it and wait RSA check below
                     }
 
                     Account accBySteamID = null;
