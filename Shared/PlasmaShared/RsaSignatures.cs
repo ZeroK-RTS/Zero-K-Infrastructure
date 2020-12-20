@@ -7,6 +7,12 @@ namespace PlasmaShared
 {
    public class RsaSignatures
     {
+        public class KeyPair
+        {
+            public string PrivKey;
+            public string PubKey;
+        }
+        
         private RSA rsa;
 
         public RsaSignatures(string key)
@@ -15,12 +21,12 @@ namespace PlasmaShared
             rsa.FromXmlString(key.Base64Decode());
         }
         
-        public static (string privKey, string pubKey) GenerateKeys()
+        public static KeyPair GenerateKeys()
         {
             var rsa = RSA.Create();
             var privKey = rsa.ToXmlString(true).Base64Encode();
             var pubKey = rsa.ToXmlString(false).Base64Encode();
-            return (privKey, pubKey);
+            return new KeyPair() {PrivKey = privKey, PubKey = pubKey};
         }
 
 
