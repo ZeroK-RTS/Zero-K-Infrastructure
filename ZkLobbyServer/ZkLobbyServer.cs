@@ -53,12 +53,13 @@ namespace ZkLobbyServer
         public LadderListManager LadderListManager { get; private set; }
         public ForumListManager ForumListManager { get; private set; }
 
-
+        
         public ZkLobbyServer(string geoIPpath, IPlanetwarsEventCreator creator)
         {
             RatingSystems.Init();
             MapRatings.Init();
-            
+
+           
             PlanetWarsEventCreator = creator;
             var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();
@@ -83,7 +84,7 @@ namespace ZkLobbyServer
             NewsListManager = new NewsListManager(this);
             LadderListManager = new LadderListManager(this);
             ForumListManager = new ForumListManager(this);
-
+            
             SpawnAutohosts();
             
             RatingSystems.GetRatingSystems().ForEach(x => x.RatingsUpdated += (sender, data) => 

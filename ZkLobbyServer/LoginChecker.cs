@@ -35,14 +35,24 @@ namespace ZkLobbyServer
 
 
         private SemaphoreSlim semaphore = new SemaphoreSlim(MaxConcurrentLogins);
+        
+        RsaSignatures passwordDecryptor;
+        public string ServerPubKey { get; private set; }
+        
 
         public LoginChecker(ZkLobbyServer server, string geoipPath)
         {
             this.server = server;
             geoIP = new DatabaseReader(Path.Combine(geoipPath, "GeoLite2-Country.mmdb"), FileAccessMode.Memory);
+            
+            var keys = RsaSignatures.GenerateKeys();
+            ServerPubKey = keys.PubKey;
+            passwordDecryptor = new RsaSignatures(keys.PrivKey);
         }
 
-        public async Task<LoginCheckerResponse> DoLogin(Login login, string ip, List<ulong> dlc)
+
+
+        public async Task<LoginCheckerResponse> DoLogin(Login login, string ip, List<ulong> dlc, string challengeToken)
         {
             var limit = MiscVar.ZklsMaxUsers;
             if (limit > 0 && server.ConnectedUsers.Count >= limit) return new LoginCheckerResponse(LoginResponse.Code.ServerFull);
@@ -57,16 +67,26 @@ namespace ZkLobbyServer
                 {
                     if (!VerifyIp(ip)) return new LoginCheckerResponse(LoginResponse.Code.BannedTooManyConnectionAttempts);
 
+                    if (!string.IsNullOrEmpty(login.ClientPubKey) || !string.IsNullOrEmpty(login.SignedChallengeToken))
+                    {
+                        if (!RsaSignatures.VerifySignature(challengeToken, login.SignedChallengeToken, login.ClientPubKey))
+                        {
+                            return new LoginCheckerResponse(LoginResponse.Code.InvalidRsaSignature);
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(login.EncryptedPasswordHash))
+                    {
+                        login.PasswordHash = passwordDecryptor.Decrypt(login.EncryptedPasswordHash); // a bit hacky but preserves other code 
+                    }
+                    
+                    
                     SteamWebApi.PlayerInfo info = null;
                     if (!string.IsNullOrEmpty(login.SteamAuthToken))
                     {
                         info = await server.SteamWebApi.VerifyAndGetAccountInformation(login.SteamAuthToken);
 
-                        if (info == null)
-                        {
-                            LogIpFailure(ip);
-                            return new LoginCheckerResponse(LoginResponse.Code.InvalidSteamToken);
-                        }
+                        if (info == null) Trace.TraceWarning("Failed to verify steam token {0} for account {1}", login.SteamAuthToken, login.Name); // we ignore it and wait RSA check below
                     }
 
                     Account accBySteamID = null;
@@ -86,7 +106,16 @@ namespace ZkLobbyServer
                             else return new LoginCheckerResponse(LoginResponse.Code.SteamNotLinkedAndLoginMissing);
                         }
 
-                        if (string.IsNullOrEmpty(login.PasswordHash) || !accByLogin.VerifyPassword(login.PasswordHash))
+
+                        // here we have account by login, but no verified steam
+                        if (string.IsNullOrEmpty(login.PasswordHash))  // login attempted but with no password, check RSA signature
+                        {
+                            if (string.IsNullOrEmpty(accByLogin.LastPubKey) || accByLogin.LastPubKey != login.ClientPubKey)
+                            {
+                                return new LoginCheckerResponse(LoginResponse.Code.RsaSignatureCouldNotBeVerified);
+                            }   
+                        }
+                        else if (!accByLogin.VerifyPassword(login.PasswordHash))
                         {
                             LogIpFailure(ip);
                             return new LoginCheckerResponse(LoginResponse.Code.InvalidPassword);
@@ -102,6 +131,8 @@ namespace ZkLobbyServer
                     if ((acc.Country == null) || string.IsNullOrEmpty(acc.Country)) acc.Country = "??";
                     acc.LobbyVersion = lobbyVersion;
                     acc.LastLogin = DateTime.UtcNow;
+                    acc.LastPubKey = login.ClientPubKey;
+                    
                     if (info != null)
                     {
                         if (db.Accounts.Any(x => x.SteamID == info.steamid && x.Name != acc.Name))
@@ -158,6 +189,9 @@ namespace ZkLobbyServer
             if (!Account.IsValidLobbyName(register.Name)) return new RegisterResponse(RegisterResponse.Code.NameHasInvalidCharacters);
 
             if (server.ConnectedUsers.ContainsKey(register.Name)) return new RegisterResponse(RegisterResponse.Code.AlreadyConnected);
+
+
+            if (!string.IsNullOrEmpty(register.EncryptedPasswordHash)) register.PasswordHash = passwordDecryptor.Decrypt(register.EncryptedPasswordHash); // a bit hacky but preserves most other code
 
             if (string.IsNullOrEmpty(register.PasswordHash) && string.IsNullOrEmpty(register.SteamAuthToken)) return new RegisterResponse(RegisterResponse.Code.MissingBothPasswordAndToken);
 

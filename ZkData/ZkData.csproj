@@ -492,6 +492,10 @@
     <Compile Include="Migrations\202012091840127_AddGameMode.Designer.cs">
       <DependentUpon>202012091840127_AddGameMode.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202012201235077_AddAccountPubKey.cs" />
+    <Compile Include="Migrations\202012201235077_AddAccountPubKey.Designer.cs">
+      <DependentUpon>202012201235077_AddAccountPubKey.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -924,6 +928,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202012091840127_AddGameMode.resx">
       <DependentUpon>202012091840127_AddGameMode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012201235077_AddAccountPubKey.resx">
+      <DependentUpon>202012201235077_AddAccountPubKey.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

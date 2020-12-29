@@ -442,4 +442,50 @@ namespace ChobbyLauncher
         public string Title { get; set; }
         public string Description { get; set; }
     }
+    
+    
+    [ChobbyMessage]
+    public class GenerateKeysRequest
+    {
+    }
+    
+    [ChobbyMessage]
+    public class GenerateKeysDone
+    {
+        public string PrivKey { get; set; }
+        public string PubKey { get; set; }
+    }
+    
+    [ChobbyMessage]
+    public class SignStringRequest
+    {
+        public string PrivKey { get; set; }
+        public string StringToSign { get; set; }
+    }
+    
+    [ChobbyMessage]
+    public class SignStringDone
+    {
+        public string StringToSign { get; set; }
+       
+        public string SignedString { get; set; }
+    }
+    
+    
+    [ChobbyMessage]
+    public class EncryptStringRequest
+    {
+        public string ServerPubKey { get; set; }
+        public string StringToEncrypt { get; set; }
+    }
+    
+    [ChobbyMessage]
+    public class EncryptStringDone
+    {
+        public string StringToEncrypt { get; set; }
+       
+        public string EncryptedString { get; set; }
+    }    
+    
+    
 }

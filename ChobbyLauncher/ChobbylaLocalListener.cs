@@ -716,10 +716,25 @@ namespace ChobbyLauncher
                     Trace.TraceWarning("Error sending bug report {0}", ex);
                 }
             });
-
         }
-
-
+        
+        private async Task Process(GenerateKeysRequest args)
+        {
+            var keys = RsaSignatures.GenerateKeys();
+            SendCommand(new GenerateKeysDone() { PrivKey = keys.PrivKey, PubKey = keys.PubKey });
+        }
+        
+        private async Task Process(SignStringRequest args)
+        {
+            SendCommand(new SignStringDone() { StringToSign = args.StringToSign, SignedString = RsaSignatures.Sign(args.StringToSign, args.PrivKey)});
+        }
+        
+        private async Task Process(EncryptStringRequest args)
+        {
+            SendCommand(new EncryptStringDone() { StringToEncrypt = args.StringToEncrypt, EncryptedString = RsaSignatures.Encrypt(args.StringToEncrypt, args.ServerPubKey)});
+        }        
+        
+        
         private async Task OnConnected()
         {
             Trace.TraceInformation("Chobby connected to wrapper");
