@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -169,17 +170,31 @@ namespace ZeroKWeb.Controllers
         {
             model = model ?? new ChatModel();
 
-            var db = new ZkDataContext();
-            var acc = db.Accounts.Where(x => x.AccountID == Global.AccountID).First();
-            var ret = db.LobbyChatHistories.AsQueryable();
-            ret = ret.Where(x => x.Target == Global.Account.Name && x.SayPlace == SayPlace.User && x.Time > acc.LastChatRead);
-            if (ret.Count() == 0) return PartialView("ChatNotification", model);
-            var ignoredIds = db.AccountRelations.Where(x => (x.Relation == Relation.Ignore) && (x.OwnerAccountID == acc.AccountID)).Select(x => x.TargetAccountID).ToList();
-            var ignoredNames = db.Accounts.Where(x => ignoredIds.Contains(x.AccountID)).Select(x => x.Name).ToHashSet();
-            model.Data = ret.OrderByDescending(x => x.Time).ToList().Where(x => !ignoredNames.Contains(x.User)).AsQueryable();
-            model.Channel = "";
-            acc.LastChatRead = DateTime.UtcNow;
-            db.SaveChanges();
+            try
+            {
+                using (var db = new ZkDataContext())
+                {
+                    db.Database.CommandTimeout = 5;
+                    var acc = db.Accounts.Where(x => x.AccountID == Global.AccountID).First();
+                    var ret = db.LobbyChatHistories.AsQueryable();
+                    ret = ret.Where(x => x.Target == Global.Account.Name && x.SayPlace == SayPlace.User && x.Time > acc.LastChatRead);
+                    if (ret.Count() != 0)
+                    {
+                        var ignoredIds = db.AccountRelations.Where(x => (x.Relation == Relation.Ignore) && (x.OwnerAccountID == acc.AccountID)).Select(x => x.TargetAccountID).ToList();
+                        var ignoredNames = db.Accounts.Where(x => ignoredIds.Contains(x.AccountID)).Select(x => x.Name).ToHashSet();
+                        model.Data = ret.OrderByDescending(x => x.Time).ToList().Where(x => !ignoredNames.Contains(x.User)).AsQueryable();
+                        model.Channel = "";
+                    }
+                }
+            } catch (Exception ex) {
+                Trace.TraceError($"Error loading chat notifications for {Global.Account.Name}: {ex.Message}\n{ex.StackTrace}");
+            }
+            using (var db = new ZkDataContext())
+            {
+                var acc = db.Accounts.Where(x => x.AccountID == Global.AccountID).First();
+                acc.LastChatRead = DateTime.UtcNow;
+                db.SaveChanges();
+            }
 
             return PartialView("ChatNotification", model);
         }
