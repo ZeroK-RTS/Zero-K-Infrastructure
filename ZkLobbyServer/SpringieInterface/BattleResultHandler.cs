@@ -23,6 +23,12 @@ namespace ZeroKWeb.SpringieInterface
             var ret = new BattleDebriefing();
             try
             {
+                if (string.IsNullOrEmpty(result.ReplayName))
+                {
+                    ret.Message = "Game didn't start";
+                    return false;
+                }
+
                 bool isValidGame = true;
                 if (!result.GameEndedOk)
                 {
