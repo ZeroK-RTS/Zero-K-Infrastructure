@@ -137,7 +137,7 @@ namespace ZkData.Migrations
                 Avatar = "amphimpulse",
                 DevLevel = DevLevel.CoreDeveloper,
             },
-            new Account { Name = "test", NewPasswordPlain = "test", AdminLevel = AdminLevel.SuperAdmin, HasKudos = true, Level = 50, Country = "cz" },
+            new Account { Name = "test", NewPasswordPlain = "test", AdminLevel = AdminLevel.None, HasKudos = true, Level = 50, Country = "cz" },
             new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, AdminLevel = AdminLevel.SuperAdmin });
         }
     }

@@ -113,6 +113,7 @@ namespace ZeroKWeb.Controllers
                     existingMode.DisplayName = newGameMode.DisplayName;
                     existingMode.GameModeJson = newGameMode.GameModeJson;
                     existingMode.LastModified = DateTime.UtcNow;
+                    existingMode.ShortName = newGameMode.ShortName;
 
                     if (Global.IsModerator)
                     {

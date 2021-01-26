@@ -11,7 +11,7 @@ namespace ZkData
          
         public bool IsFeatured { get; set; }
         
-        [Index]
+        [Index(IsUnique = true)]
         [MaxLength(64)]
         public string ShortName { get; set; }
         
