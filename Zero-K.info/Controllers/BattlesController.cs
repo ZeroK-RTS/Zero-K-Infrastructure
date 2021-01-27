@@ -47,7 +47,7 @@ namespace ZeroKWeb.Controllers
             public YesNoAny Bots { get; set; }
             public YesNoAny Victory { get; set; }
             public YesNoAny Matchmaker { get; set; }
-            public RatingOption Rating { get; set; }
+            public RatingSearchOption Rating { get; set; }
             public RankSelector Rank { get; set; } = RankSelector.Undefined;
             public int? offset { get; set; }
             public List<BattleQuickInfo> Data;
@@ -68,15 +68,6 @@ namespace ZeroKWeb.Controllers
             ThisWeek = 2,
             [Description("This month")]
             ThisMonth = 3
-        }
-
-        public enum RatingOption
-        {
-            Any = 0,
-            Casual = 1,
-            Competitive = 2,
-            Planetwars = 3,
-            None = 4
         }
 
         /// <summary>
@@ -155,25 +146,24 @@ namespace ZeroKWeb.Controllers
                 q = q.Where(b => b.IsMatchMaker == bval);
             }
 
-            if (model.Rating != RatingOption.Any)
+            if (model.Rating != RatingSearchOption.Any)
             {
                 switch (model.Rating)
                 {
-                    case RatingOption.Competitive:
-                        //q = q.Where(b => b.IsRatedMatch() && b.GetRatingCategory() == RatingCategory.MatchMaking);
+                    case RatingSearchOption.Competitive:
                         q = q.Where(b => b.ApplicableRatings.HasFlag(RatingCategoryFlags.MatchMaking));
                         break;
-                    case RatingOption.Casual:
-                        //q = q.Where(b => b.IsRatedMatch() && b.GetRatingCategory() == RatingCategory.Casual);
+                    case RatingSearchOption.Casual:
                         q = q.Where(b => b.ApplicableRatings.HasFlag(RatingCategoryFlags.Casual));
                         break;
-                    case RatingOption.Planetwars:
-                        //q = q.Where(b => b.IsRatedMatch() && b.GetRatingCategory() == RatingCategory.Planetwars);
+                    case RatingSearchOption.Planetwars:
                         q = q.Where(b => b.ApplicableRatings.HasFlag(RatingCategoryFlags.Planetwars));
                         break;
-                    case RatingOption.None:
-                        //q = q.Where(b => !b.IsRatedMatch());
+                    case RatingSearchOption.None:
                         q = q.Where(b => b.ApplicableRatings == 0);
+                        break;
+                    default:
+                        // The default case being no filtering should be safe enough.
                         break;
                 }
             }
