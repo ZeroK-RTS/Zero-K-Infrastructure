@@ -13,6 +13,6 @@ namespace PlasmaShared
     }
     public enum RatingSearchOption
     {
-        Any = 0, Casual = 1, Competitive = 2, Planetwars = 3, None = 4
+        Any = 0, None = 1, Casual = 2, Competitive = 3, Planetwars = 4 
     }
 }
