@@ -222,9 +222,9 @@ namespace AutoRegistrator
         private static List<Resource> GetMapList(params string[] extraNames)
         {
             var db = new ZkDataContext();
-            DateTime limit = DateTime.Now.AddMonths(-2);
+            DateTime limit = DateTime.Now.AddMonths(-1);
             
-            var top100 = db.SpringBattles.Where(x => x.StartTime >= limit).Where(x=>x.ResourceByMapResourceID.MapSupportLevel >= MapSupportLevel.Supported).GroupBy(x => x.ResourceByMapResourceID).OrderByDescending(x => x.Sum(y => y.Duration *  y.SpringBattlePlayers.Count())).Take(50).Select(x=>x.Key.ResourceID).Take(50).ToList();
+            var top100 = db.SpringBattles.Where(x => x.StartTime >= limit).Where(x=>x.ResourceByMapResourceID.MapSupportLevel >= MapSupportLevel.Supported).GroupBy(x => x.ResourceByMapResourceID).OrderByDescending(x => x.Count()).Take(50).Select(x=>x.Key.ResourceID).Take(50).ToList();
 
             //var pwMaps = db.Galaxies.Where(x => x.IsDefault).SelectMany(x => x.Planets).Where(x => x.MapResourceID != null).Select(x => x.MapResourceID.Value).ToList();
 
