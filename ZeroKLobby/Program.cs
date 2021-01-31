@@ -39,7 +39,7 @@ namespace ZeroKLobby
         public static ModStore ModStore { get; private set; }
         public static NotifySection NotifySection { get { return MainWindow.NotifySection; } }
         public static SayCommandHandler SayCommandHandler { get; private set; }
-        public static SelfUpdater SelfUpdater { get; set; }
+        public static SelfChecker SelfChecker { get; set; }
         public static ServerImagesHandler ServerImages { get; private set; }
         public static SpringPaths SpringPaths { get; private set; }
 
@@ -123,7 +123,7 @@ namespace ZeroKLobby
 
                 IsSteamFolder = File.Exists(Path.Combine(StartupPath, "steamfolder.txt"));
 
-                SelfUpdater = new SelfUpdater("Zero-K");
+                SelfChecker = new SelfChecker("Zero-K");
 
                 StartupArgs = args;
 
@@ -156,7 +156,7 @@ namespace ZeroKLobby
 
 
                 //HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-                Trace.TraceInformation("Starting with version {0}", SelfUpdater.CurrentVersion);
+                Trace.TraceInformation("Starting with version {0}", SelfChecker.CurrentVersion);
 
                 WebRequest.DefaultWebProxy = null;
                 ThreadPool.SetMaxThreads(500, 2000);
@@ -181,13 +181,7 @@ namespace ZeroKLobby
 
                 if (!SpringPaths.IsDirectoryWritable(StartupPath))
                 {
-                    var newTarget = Path.Combine(contentDir, "Zero-K.exe");
-                    if (SelfUpdater.CheckForUpdate(newTarget, true))
-                    {
-                        Conf.Save(Path.Combine(contentDir, Config.ConfigFileName));
-                        Process.Start(newTarget);
-                        return;
-                    } MessageBox.Show(new Form { TopMost = true }, "Move failed, please copy Zero-K.exe to a writable folder");
+                    MessageBox.Show(new Form { TopMost = true }, "Please copy Zero-K.exe to a writable folder or run with elevated rights (as admin)");
                     return;
                 }
 
@@ -279,7 +273,7 @@ namespace ZeroKLobby
                 //Downloader.GetResource(DownloadType.ENGINE, GlobalConst.DefaultEngineOverride);
 
                 var isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
-                TasClient = new TasClient(string.Format("ZK {0}{1}", SelfUpdater.CurrentVersion, isLinux ? " linux" : ""));
+                TasClient = new TasClient(string.Format("ZK {0}{1}", SelfChecker.CurrentVersion, isLinux ? " linux" : ""));
 
                 SayCommandHandler = new SayCommandHandler(TasClient);
 
@@ -350,12 +344,13 @@ namespace ZeroKLobby
                 PwBar = new PwBar();
                 MatchMakerBar = new MatchMakerBar(TasClient);
 
-                SelfUpdater.ProgramUpdated += s =>
+                if (!Debugger.IsAttached && !Conf.DisableAutoUpdate && !IsSteamFolder)
                 {
-                    Program.MainWindow.InvokeFunc(
-                        () => WarningBar.DisplayWarning($"New version of Zero-K launcher downloaded, restart it to apply changes", "Restart", Restart));
-                };
-                if (!Debugger.IsAttached && !Conf.DisableAutoUpdate && !IsSteamFolder) SelfUpdater.StartChecking();
+                    if (SelfChecker.CheckForUpdate())
+                    {
+                        WarningBar.DisplayWarning($"New version of Zero-K launcher downloaded, restart it to apply changes", "Restart", Restart);
+                    }
+                }
 
                 if (GlobalConst.Mode != ModeType.Local) SteamHandler.Connect();
                 Application.Run(MainWindow);
