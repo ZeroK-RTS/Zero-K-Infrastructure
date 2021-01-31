@@ -35,7 +35,7 @@ namespace ZkData
             if (!string.IsNullOrEmpty(LatestVersion) && LatestVersion != CurrentVersion) {
                 Trace.TraceInformation("{0} updated to {1}", urlUpdateName, LatestVersion);
                 return true;
-            } else return true; // no failure
+            } else return false; // no update
         }
 
 
