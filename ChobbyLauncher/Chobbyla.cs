@@ -71,7 +71,7 @@ namespace ChobbyLauncher
                         var selfUpdater = new SelfChecker("Zero-K");
                         if (selfUpdater.CheckForUpdate())
                         {
-                            MessageBox.Show("New version of Zero-K is available");
+                            MessageBox.Show($"New version of Zero-K is available - your version {selfUpdater.CurrentVersion}, server version {selfUpdater.LatestVersion}");
                         };
                     }
 
