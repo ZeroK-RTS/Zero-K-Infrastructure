@@ -68,15 +68,11 @@ namespace ChobbyLauncher
                     if (!Debugger.IsAttached && !IsSteamFolder)
                     {
                         Status = "Checking for self-upgrade";
-                        var selfUpdater = new SelfUpdater("Zero-K");
-                        selfUpdater.ProgramUpdated += delegate
+                        var selfUpdater = new SelfChecker("Zero-K");
+                        if (selfUpdater.CheckForUpdate())
                         {
-                            Process.Start(Application.ExecutablePath, string.Join(" ", Environment.GetCommandLineArgs().Skip(1)));
-                            Environment.Exit(0);
+                            MessageBox.Show("New version of Zero-K is available");
                         };
-                        var task = new Task<bool>(() => selfUpdater.CheckForUpdate());
-                        task.Start();
-                        await task;
                     }
 
                     if (!IsSteamFolder)
