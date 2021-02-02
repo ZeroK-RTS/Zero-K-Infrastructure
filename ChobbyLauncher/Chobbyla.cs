@@ -65,6 +65,15 @@ namespace ChobbyLauncher
 
                 if (!isDev)
                 {
+                    if (!Debugger.IsAttached && !IsSteamFolder)
+                    {
+                        Status = "Checking for self-upgrade";
+                        var selfUpdater = new SelfChecker("Zero-K");
+                        if (selfUpdater.CheckForUpdate())
+                        {
+                            MessageBox.Show($"New version of Zero-K is available - your version {selfUpdater.CurrentVersion}, server version {selfUpdater.LatestVersion}");
+                        };
+                    }
 
                     if (!IsSteamFolder)
                     {

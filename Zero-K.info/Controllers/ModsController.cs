@@ -139,6 +139,8 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var gameMode = db.GameModes.Find(id);
+            gameMode?.ForumThread?.UpdateLastRead(Global.AccountID, false);
+            db.SaveChanges();
             return File(Encoding.UTF8.GetBytes(gameMode.GameModeJson), "application/json", $"{gameMode.ShortName}.json");
         }
     }
