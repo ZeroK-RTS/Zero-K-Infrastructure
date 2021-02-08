@@ -1,5 +1,5 @@
 #!/bin/sh
-
+TERM=xterm
 if [ -f /lib/x86_64-linux-gnu/libc.so.6 ]; then
     ln -fs /lib/x86_64-linux-gnu/libc.so.6 linux64/libc.so
 elif [ -f /lib64/libc.so.6 ]; then
