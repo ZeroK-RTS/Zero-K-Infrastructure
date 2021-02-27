@@ -119,6 +119,16 @@ namespace LobbyClient
             var startboxes = new StringBuilder();
             startboxes.Append("return { ");
             script.AppendLine();
+            
+            /* Fill all slots, not just those that are used (i.e. don't do
+             * something like "foreach allyteam in LobbyStartContext...").
+             * This is because Spring will squash allyTeamIDs so that they
+             * start from 0, which can ruin specific setups on FFA maps.
+             * For example if you want to play Mordor vs Gondor on Mearth, 
+             * you need to skip allyteam 0, which is Shire, and have players
+             * on allyteams 1 and 2; but if there is no "fake" allyteam 0
+             * then Spring will squash the 1/2 into 0/1 (which will result
+             * in the Mordor team playing as Shire, and Gondor as Mordor). */
             for (var allyNumber = 0; allyNumber < MaxAllies; allyNumber++) {
                 script.AppendFormat("[ALLYTEAM{0}]\n", allyNumber);
                 script.AppendLine("{");
