@@ -604,7 +604,10 @@ namespace ZkLobbyServer
                 url = $"{GlobalConst.BaseSiteUrl}/Maps/Detail/{(unwrappedCmd as CmdMap).Map.ResourceID}";
                 map = (unwrappedCmd as CmdMap).Map.InternalName;
             }
-            poll = poll ?? new CommandPoll(this, true, true, unwrappedCmd is CmdMap, map, unwrappedCmd is CmdStart);
+
+            var voteMargin = unwrappedCmd is CmdResign ? (unwrappedCmd as CmdResign).RequiredWinMargin : 1;
+
+            poll = poll ?? new CommandPoll(this, true, true, unwrappedCmd is CmdMap, map, unwrappedCmd is CmdStart, voteMargin);
             options.Add(new PollOption()
             {
                 Name = "Yes",
