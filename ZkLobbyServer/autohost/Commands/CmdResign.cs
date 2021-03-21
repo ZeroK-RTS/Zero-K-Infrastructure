@@ -17,6 +17,10 @@ namespace ZkLobbyServer
         public override string Shortcut => "resign";
         public override AccessType Access => AccessType.IngameVote;
 
+        // We might want different logic to determine the success of a resign vote based on the number of players.
+        // For now just require one more vote than needed for all game sizes, this requires a unanimous vote for up to 4v4 inclusive.
+        public int RequiredWinMargin = 2;
+
         public override BattleCommand Create() => new CmdResign();
 
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
