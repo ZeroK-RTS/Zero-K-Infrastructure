@@ -101,6 +101,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="autohost\Commands\CmdFlip.cs" />
+    <Compile Include="autohost\Commands\CmdRoll.cs" />
     <Compile Include="autohost\Commands\CmdMaxEvenPlayers.cs" />
     <Compile Include="autohost\Commands\CmdSetRatings.cs" />
     <Compile Include="autohost\Commands\CmdToggleCbal.cs" />
