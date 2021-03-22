@@ -22,9 +22,9 @@ namespace ZkLobbyServer
 
         public override async Task ExecuteArmed(ServerBattle battle, Say e)
         {
-            if (maximum >= 1)
+            if (maximum > 1)
             {
-                var result = new Random().Next(1, maximum);
+                var result = new Random().Next(maximum) + 1;
                 await battle.SayBattle($"Rolled 1d{maximum}, got {result}");
             }
         }
