@@ -8,7 +8,7 @@ namespace ZkLobbyServer
     {
         public override string Help => "<N> - rolls a 1dN sided die";
         public override string Shortcut => "roll";
-        public override AccessType Access => AccessType.NotIngame;
+        public override AccessType Access => AccessType.NoCheck;
 
         private int maximum;
 

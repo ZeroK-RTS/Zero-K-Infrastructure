@@ -8,7 +8,7 @@ namespace ZkLobbyServer
     {
         public override string Help => "Flips a coin";
         public override string Shortcut => "flip";
-        public override AccessType Access => AccessType.NotIngame;
+        public override AccessType Access => AccessType.NoCheck;
 
         public override BattleCommand Create() => new CmdFlip();
 
