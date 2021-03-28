@@ -141,6 +141,8 @@ namespace ZkLobbyServer
                 autohost.CbalEnabled = IsCbalEnabled;
                 autohost.MaxEvenPlayers = MaxEvenPlayers;
                 autohost.ApplicableRating = ApplicableRating;
+                autohost.ModName = HostedMod?.InternalName ?? ModName;
+                autohost.MapName = HostedMap?.InternalName ?? MapName;
                 if (insert)
                 {
                     db.Autohosts.Add(autohost);
@@ -840,6 +842,8 @@ namespace ZkLobbyServer
             ApplicableRating = autohost.ApplicableRating;
             FounderName = "Autohost #" + BattleID;
             ValidateAndFillDetails();
+            SwitchGame(autohost.ModName);
+            SwitchMap(autohost.MapName);
 
             RunCommandDirectly<CmdMap>(null);
         }
