@@ -100,6 +100,17 @@ namespace ZkLobbyServer
         }
 
         /// <summary>
+        /// Determines the required margin for a majority vote to pass
+        /// </summary>
+        /// <param name="battle"></param>
+        /// <param name="numVoters"></param>
+        /// <returns>number of extra votes to pass, defaults to 1</returns>
+        public virtual int GetPollWinMargin(ServerBattle battle, int numVoters)
+        {
+            return 1;
+        }
+
+        /// <summary>
         /// Determines command permissions
         /// </summary>
         /// <param name="battle"></param>

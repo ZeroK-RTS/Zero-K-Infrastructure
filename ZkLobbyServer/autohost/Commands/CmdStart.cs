@@ -54,6 +54,17 @@ namespace ZkLobbyServer
             }
 
         }
+        public override int GetPollWinMargin(ServerBattle battle, int numVoters)
+        {
+            // Require one more vote to start a game with uneven teams so at least one player in the smaller
+            // team needs to agree to start the game. This is particularly relevant for the 2v1 case.
+            if (battle.Mode == PlasmaShared.AutohostMode.Teams) {
+                return 1 + numVoters % 2;
+            } else
+            {
+                return base.GetPollWinMargin(battle, numVoters);
+            }
+        }
 
         private async Task StartGame(ServerBattle battle)
         {
