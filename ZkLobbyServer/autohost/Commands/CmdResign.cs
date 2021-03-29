@@ -69,9 +69,14 @@ namespace ZkLobbyServer
 
         public override int GetPollWinMargin(ServerBattle battle, int numVoters)
         {
-            // We might want different logic to determine the success of a resign vote based on the number of players.
-            // For now just require one more vote than needed for all game sizes, this requires a unanimous vote for up to 4v4 inclusive.
-            return 2;
+            // Require unanimous vote for resigning up to 4v4 inclusive
+            if (numVoters > 4)
+            {
+                return base.GetPollWinMargin(battle, numVoters);
+            } else
+            {
+                return 2;
+            }
         }
     }
 }
