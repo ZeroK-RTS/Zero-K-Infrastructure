@@ -69,8 +69,8 @@ namespace ZkLobbyServer
 
         public override int GetPollWinMargin(ServerBattle battle, int numVoters)
         {
-            // Require unanimous vote for resigning up to 4v4 inclusive
-            if (numVoters > 4)
+            // Require unanimous vote for resigning up to 3v3 inclusive
+            if (numVoters > 3)
             {
                 return base.GetPollWinMargin(battle, numVoters);
             } else
