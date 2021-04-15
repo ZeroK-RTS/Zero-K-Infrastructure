@@ -607,7 +607,8 @@ namespace ZkLobbyServer
                 map = (unwrappedCmd as CmdMap).Map.InternalName;
             }
 
-            var voteMargin = unwrappedCmd is CmdResign ? (unwrappedCmd as CmdResign).RequiredWinMargin : 1;
+            var numVoters = Users.Values.Count(x => selector(x.Name) == null);
+            var voteMargin = unwrappedCmd.GetPollWinMargin(this, numVoters);
 
             poll = poll ?? new CommandPoll(this, true, true, unwrappedCmd is CmdMap, map, unwrappedCmd is CmdStart, voteMargin);
             options.Add(new PollOption()
