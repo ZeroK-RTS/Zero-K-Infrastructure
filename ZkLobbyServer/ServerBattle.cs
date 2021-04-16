@@ -607,7 +607,12 @@ namespace ZkLobbyServer
                 map = (unwrappedCmd as CmdMap).Map.InternalName;
             }
 
-            var numVoters = Users.Values.Count(x => selector(x.Name) == null);
+            // Players in the waiting list are in a limbo between spectating and not. The lobby is responsible
+            // for determining who gets to play and it is not trivial to have the server know who should be
+            // allowed to participate in polls when a wait list is involved in sync with the lobby.
+            // For now, ensure that a poll does not require more voters than there are active players.
+            // TODO: Prevent waiting list players from starting or participating in polls
+            var numVoters = Math.Min(MaxPlayers, Users.Values.Count(x => selector(x.Name) == null));
             var voteMargin = unwrappedCmd.GetPollWinMargin(this, numVoters);
 
             poll = poll ?? new CommandPoll(this, true, true, unwrappedCmd is CmdMap, map, unwrappedCmd is CmdStart, voteMargin);
