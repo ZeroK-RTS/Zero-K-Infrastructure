@@ -262,10 +262,9 @@ namespace ZkData
         public static bool LobbyServerUpdateSpectatorsInstantly = false;
 
         public static bool AutoMigrateDatabase { get; private set; }
-        
-        private const string tokenPart = "af27e9e18e";
 
-        public static string CrashReportGithubToken = "fffb24b" + "91a758"+"a6a4e7a"+ "7a7eafb1a9" + tokenPart;
+        const string tokenPart = "iRPn1vmrKw";
+        public static string CrashReportGithubToken = "ghp_uUj2Ab"+"H3aRbD0XxKApSWIoZotC" + tokenPart;
 
         public static string GameAnalyticsGameKey = "5197842fb91cbc18a7291436337232af";
         private const string tokenPart2 = "68b318aa1f701165";
