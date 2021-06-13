@@ -263,8 +263,9 @@ namespace ZkData
 
         public static bool AutoMigrateDatabase { get; private set; }
 
-        const string tokenPart = "iRPn1vmrKw";
-        public static string CrashReportGithubToken = "ghp_uUj2Ab"+"H3aRbD0XxKApSWIoZotC" + tokenPart;
+        const string tokenPart = "9wqN1H1ojO";
+
+        public static string CrashReportGithubToken = "ghp_LN6hibzKlqv8UOWUAf8SWgjsMn" + tokenPart;
 
         public static string GameAnalyticsGameKey = "5197842fb91cbc18a7291436337232af";
         private const string tokenPart2 = "68b318aa1f701165";
