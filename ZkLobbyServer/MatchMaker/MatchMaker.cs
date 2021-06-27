@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using LobbyClient;
 using PlasmaShared;
+using ZeroKWeb.SpringieInterface;
 using ZkData;
 
 namespace ZkLobbyServer
@@ -646,7 +647,7 @@ namespace ZkLobbyServer
             return candidates.Count == 0 ? "" : vetoer.SelectMap(candidates);
         }
 
-        private string WantHandicap(ProposedBattle bat)
+        private bool WantHandicap(ProposedBattle bat)
         {
             var queue = bat.QueueType;
             if (!queue.UseHandicap)
@@ -660,8 +661,9 @@ namespace ZkLobbyServer
 
                 if (minimumWinChance <= 0.01) return false;
 
-                var players = bat.Players.Select(x => x.LobbyUser).Select(x => new PlayerItem(x.AccountID, x.EffectiveMmElo, x.Clan, x.PartyID)).ToList();
-                return Balance(ZeroKWeb.SpringieInterface.Balancer.BalanceMode.Party, players).LowestWinChance <= minimumWinChance;
+                var players = bat.Players.Select(x => x.LobbyUser).Select(x => new PartitionBalance.PlayerItem(x.AccountID, x.EffectiveMmElo, x.Clan, x.PartyID)).ToList();
+                
+                return PartitionBalance.Balance(Balancer.BalanceMode.Party, players).LowestWinChance <= minimumWinChance;
             }
             catch (Exception ex)
             {
