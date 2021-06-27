@@ -164,6 +164,8 @@ namespace ZkLobbyServer
                     var oldmaps = queue.Maps;
                     queue.Name = x.Name;
                     queue.Description = x.Description;
+                    queue.UseWinChanceLimit = x.UseWinChanceLimit;
+                    queue.UseHandicap = x.UseHandicap;
                     queue.MinSize = x.MinSize;
                     queue.MaxSize = x.MaxSize;
                     queue.MaxPartySize = x.MaxPartySize;

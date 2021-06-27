@@ -19,7 +19,11 @@ namespace LobbyClient
             public string Game { get; set; }
 
             public int MaxPartySize { get; set; }
+
+            [JsonIgnore]
             public bool UseWinChanceLimit { get; set; }
+
+            [JsonIgnore]
             public bool UseHandicap { get; set; }
 
             [JsonIgnore]
