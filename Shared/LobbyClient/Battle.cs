@@ -142,6 +142,12 @@ namespace LobbyClient
             // ModOptions["NoHelperAIs"] = "1";
         }
 
+        public void SetHandicapModoptions()
+        {
+            ModOptions["noelo"] = "1";
+            ModOptions["autohandicap"] = "1";
+        }
+
         public LobbyHostingContext GetContext()
         {
             var ret = new LobbyHostingContext();

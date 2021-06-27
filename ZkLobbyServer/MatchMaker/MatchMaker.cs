@@ -646,10 +646,34 @@ namespace ZkLobbyServer
             return candidates.Count == 0 ? "" : vetoer.SelectMap(candidates);
         }
 
+        private string WantHandicap(ProposedBattle bat)
+        {
+            var queue = bat.QueueType;
+            if (!queue.UseHandicap)
+                return false;
+            try
+            {
+                var minimumWinChance = DynamicConfig.Instance.MmTeamsMinimumWinChance;
+                if (queue.Mode != AutohostMode.Teams)
+                    // This should be Mm1v1MinimumWinChance but idk how to add to the db
+                    minimumWinChance = DynamicConfig.Instance.MmTeamsMinimumWinChance;
+
+                if (minimumWinChance <= 0.01) return false;
+
+                var players = bat.Players.Select(x => x.LobbyUser).Select(x => new PlayerItem(x.AccountID, x.EffectiveMmElo, x.Clan, x.PartyID)).ToList();
+                return Balance(ZeroKWeb.SpringieInterface.Balancer.BalanceMode.Party, players).LowestWinChance <= minimumWinChance;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("MatchMaker error checking balance: \n{0}", ex);
+                return false;
+            }
+        }
+
         private async Task StartBattle(ProposedBattle bat)
         {
             await server.UserLogSay($"Match starting with players: {bat.Players.Select(x => x.Name).StringJoin()}.");
-            var battle = new MatchMakerBattle(server, bat, PickMap(bat));
+            var battle = new MatchMakerBattle(server, bat, PickMap(bat), WantHandicap(bat));
             await server.AddBattle(battle);
 
             // also join in lobby
