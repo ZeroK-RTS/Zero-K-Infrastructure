@@ -47,6 +47,10 @@ namespace ZeroKWeb.Controllers
             public YesNoAny Bots { get; set; }
             public YesNoAny Victory { get; set; }
             public RankSelector Rank { get; set; } = RankSelector.Undefined;
+            
+            public int? MinLength { get; set; }
+            
+            public int? MaxLength { get; set; }
             public int? offset { get; set; }
             public List<BattleQuickInfo> Data;
         }
@@ -101,6 +105,9 @@ namespace ZeroKWeb.Controllers
 
             if (model.PlayersFrom.HasValue) q = q.Where(b => b.SpringBattlePlayers.Count(p => !p.IsSpectator) >= model.PlayersFrom);
             if (model.PlayersTo.HasValue) q = q.Where(b => b.SpringBattlePlayers.Count(p => !p.IsSpectator) <= model.PlayersTo);
+
+            if (model.MinLength > 0) q = q.Where(b => b.Duration >= model.MinLength);
+            if (model.MaxLength > 0) q = q.Where(b => b.Duration <= model.MaxLength);
             
             if (model.Age != AgeOption.Any)
             {
