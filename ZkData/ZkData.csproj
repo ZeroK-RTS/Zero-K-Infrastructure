@@ -504,6 +504,10 @@
     <Compile Include="Migrations\202103281022280_StoreModAndMapInAutohosts.Designer.cs">
       <DependentUpon>202103281022280_StoreModAndMapInAutohosts.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202107011039589_AddDynConfMm1v1MinimumWinChance.cs" />
+    <Compile Include="Migrations\202107011039589_AddDynConfMm1v1MinimumWinChance.Designer.cs">
+      <DependentUpon>202107011039589_AddDynConfMm1v1MinimumWinChance.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -945,6 +949,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202103281022280_StoreModAndMapInAutohosts.resx">
       <DependentUpon>202103281022280_StoreModAndMapInAutohosts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202107011039589_AddDynConfMm1v1MinimumWinChance.resx">
+      <DependentUpon>202107011039589_AddDynConfMm1v1MinimumWinChance.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
