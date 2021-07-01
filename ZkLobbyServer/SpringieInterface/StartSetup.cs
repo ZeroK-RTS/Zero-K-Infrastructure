@@ -132,6 +132,7 @@ namespace ZeroKWeb.SpringieInterface
                         //userParams["mm_elo"] = Math.Round(user.EffectiveMmElo).ToString();
                         //userParams["casual_elo"] = Math.Round(user.EffectiveElo).ToString();
 
+                        userParams["real_elo"] = Math.Round(user.GetRating(context.ApplicableRating).RealElo).ToString();
                         userParams["elo"] = Math.Round(user.GetRating(context.ApplicableRating).Elo).ToString();
                         userParams["elo_order"] = context.Players.Where(x => !x.IsSpectator)
                             .Select(x => db.Accounts.First(y => y.AccountID == x.LobbyID))
