@@ -114,7 +114,7 @@ namespace ZkLobbyServer
             queueConfigs.Add(new QueueConfig()
             {
                 Name = "1v1",
-                Description = "1v1 with an opponent of similar skill. Matches outside the range of '1v1 Narrow' have bonuses for the lower rated player and do not count for rating.",
+                Description = "Play 1v1 with an opponent of similar skill. Games beyond the matching range of '1v1 Narrow' are unranked and have a handicap for the lower ranked player.",
                 UseWinChanceLimit = false,
                 UseHandicap = true,
                 MinSize = 2,
@@ -127,8 +127,21 @@ namespace ZkLobbyServer
             queueConfigs.Add(new QueueConfig()
             {
                 Name = "1v1 Narrow",
-                Description = "1v1 with a closely matched opponent but in a small search range.",
+                Description = "Play 1v1 with a closely matched opponent.",
                 UseWinChanceLimit = true,
+                UseHandicap = false,
+                MinSize = 2,
+                MaxSize = 2,
+                EloCutOffExponent = 0.97,
+                MaxPartySize = 1,
+                Mode = AutohostMode.Game1v1,
+                MapSelector = Is1v1Map,
+            });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "1v1 Wide",
+                Description = "Play 1v1 with a potentially not-so-closely matched opponent. The matching range is the same as standard '1v1'.",
+                UseWinChanceLimit = false,
                 UseHandicap = false,
                 MinSize = 2,
                 MaxSize = 2,
