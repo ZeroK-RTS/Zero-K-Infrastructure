@@ -668,9 +668,8 @@ namespace ZkLobbyServer
             try
             {
                 var minimumWinChance = DynamicConfig.Instance.MmTeamsMinimumWinChance;
-                if (queue.Mode != AutohostMode.Teams)
-                    // This should be Mm1v1MinimumWinChance but idk how to add to the db
-                    minimumWinChance = DynamicConfig.Instance.MmTeamsMinimumWinChance;
+                if (queue.Mode == AutohostMode.Game1v1)
+                    minimumWinChance = DynamicConfig.Instance.Mm1v1MinimumWinChance;
 
                 if (minimumWinChance <= 0.01) return false;
 
