@@ -57,9 +57,15 @@ namespace ZeroKWeb.SpringieInterface
 
                 Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
-                //fill in applicable ratings
-                bool noElo = !isValidGame || result.LobbyStartContext.ModOptions.Any(x => x.Key.ToLower() == "noelo" && x.Value != "0" && x.Value != "false");
-                if (!noElo) RatingSystems.FillApplicableRatings(sb, result);
+                // check for noelo
+                if (!isValidGame || result.LobbyStartContext.ModOptions.Any(x => x.Key.ToLower() == "noelo" && x.Value != "0" && x.Value != "false"))
+                {
+                    sb.ApplicableRatings = 0;
+                }
+                else
+                {
+                    RatingSystems.FillApplicableRatings(sb, result);
+                }
 
                 if (isValidGame)
                 {
@@ -112,8 +118,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 //send to rating
-
-                if (!noElo) RatingSystems.ProcessResult(sb, result, new PendingDebriefing()
+                RatingSystems.ProcessResult(sb, result, new PendingDebriefing()
                 {
                     debriefingConsumer = consumer,
                     partialDebriefing = ret,
