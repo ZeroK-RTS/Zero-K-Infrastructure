@@ -114,7 +114,7 @@ namespace ZkLobbyServer
             queueConfigs.Add(new QueueConfig()
             {
                 Name = "1v1",
-                Description = "Play 1v1 with an opponent of similar skill. Games beyond the matching range of '1v1 Narrow' are unranked and have a handicap for the lower ranked player.",
+                Description = "Play 1v1 with an opponent of similar skill. Games beyond the matching range of '1v1 Narrow' are unranked and hav a bonus for the lower ranked player.",
                 UseWinChanceLimit = false,
                 UseHandicap = true,
                 MinSize = 2,
