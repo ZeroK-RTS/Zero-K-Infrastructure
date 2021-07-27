@@ -15,7 +15,7 @@
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>ZeroKexeKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -148,16 +148,6 @@
     <None Include="ZeroKexeKey.snk" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Shared\PlasmaDownloader\PlasmaDownloader.csproj">
-      <Project>{f3f74776-46a9-4415-b76e-ceec771c2aba}</Project>
-      <Name>PlasmaDownloader</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Shared\PlasmaShared\PlasmaShared.csproj">
-      <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
-      <Name>PlasmaShared</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\exit.png" />
     <Content Include="Resources\Shraka\E.png" />
     <Content Include="Resources\Shraka\N.png" />
@@ -169,7 +159,16 @@
     <Content Include="Resources\Shraka\W.png" />
     <Content Include="ZK_logo_128.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\PlasmaDownloader\PlasmaDownloader.csproj">
+      <Project>{f3f74776-46a9-4415-b76e-ceec771c2aba}</Project>
+      <Name>PlasmaDownloader</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Shared\PlasmaShared\PlasmaShared.csproj">
+      <Project>{b24e7fb3-a3fb-4b67-a499-721f9b34a404}</Project>
+      <Name>PlasmaShared</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>

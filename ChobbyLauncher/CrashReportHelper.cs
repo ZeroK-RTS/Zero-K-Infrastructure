@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using GameAnalyticsSDK.Net;
 using Octokit;
 using ZkData;
 using FileMode = System.IO.FileMode;
@@ -120,6 +121,76 @@ namespace ChobbyLauncher
                 infolog = string.Join("\r\n", firstPart) + "\r\n" + string.Join("\r\n", lastPart);
             }
             return infolog;
+        }
+        
+        public static void CheckAndReportErrors(string logStr, bool springRunOk, string bugReportTitle, string bugReportDescription, string engineVersion)
+        {
+            var syncError = CrashReportHelper.IsDesyncMessage(logStr);
+            if (syncError) Trace.TraceWarning("Sync error detected");
+
+            var openGlFail = logStr.Contains("No OpenGL drivers installed.") ||
+                             logStr.Contains("This stack trace indicates a problem with your graphic card driver") ||
+                             logStr.Contains("Please go to your GPU vendor's website and download their drivers.") ||
+                             logStr.Contains("minimum required OpenGL version not supported, aborting") ||
+                             logStr.Contains("Update your graphic-card driver!");
+
+            if (openGlFail)
+            {
+                Trace.TraceWarning("Outdated OpenGL detected");
+
+                if (Environment.OSVersion.Platform == PlatformID.Unix)
+                {
+                    if (MessageBox.Show(
+                        "You have outdated graphics card drivers!\r\nPlease try finding ones for your graphics card and updating them. \r\n\r\nWould you like to see our Linux graphics driver guide?",
+                        "Outdated graphics card driver detected",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Warning) == DialogResult.Yes)
+                    {
+                        Process.Start("http://zero-k.info/mediawiki/index.php?title=Optimized_Graphics_Linux");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("You have outdated graphics card drivers!\r\nPlease try finding ones for your graphics card and updating them.",
+                        "Outdated graphics card driver detected",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
+            }
+
+            var luaErr = logStr.Contains("LUA_ERRRUN");
+
+            if ((!springRunOk && !openGlFail) || syncError || luaErr || !string.IsNullOrEmpty(bugReportTitle)) // crash has occured
+            {
+                if (MessageBox.Show("We would like to send crash/desync data to Zero-K repository, it can contain chat. Do you agree?",
+                    "Automated crash report",
+                    MessageBoxButtons.OKCancel) == DialogResult.OK)
+                {
+                    var crashType = syncError ? CrashType.Desync : luaErr ? CrashType.LuaError : CrashType.Crash;
+                    if (!string.IsNullOrEmpty(bugReportTitle)) crashType = CrashType.UserReport;
+
+                    var ret = CrashReportHelper.ReportCrash(logStr,
+                        crashType,
+                        engineVersion,
+                        bugReportTitle,
+                        bugReportDescription);
+                    if (ret != null)
+                        try
+                        {
+                            Process.Start(ret.HtmlUrl.ToString());
+                        }
+                        catch { }
+                }
+
+                try
+                {
+                    GameAnalytics.AddErrorEvent(EGAErrorSeverity.Critical, "Spring crash");
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError("Error adding GA error event: {0}", ex);
+                }
+            }
         }
     }
 }

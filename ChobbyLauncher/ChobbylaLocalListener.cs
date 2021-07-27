@@ -8,6 +8,7 @@ using System.Media;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -614,7 +615,32 @@ namespace ChobbyLauncher
                     }
 
                     process.StartInfo.Arguments = $"\"{startFilePath}\" --config \"{configFilePath}\"";
+
+                    var logs = new StringBuilder();
+                    
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
+
+                    process.OutputDataReceived += (sender, l) => { lock (logs) logs.AppendLine(l.Data); };
+                    process.ErrorDataReceived += (sender, l) => { lock (logs) logs.AppendLine(l.Data); };
+
+                    var tcs = new TaskCompletionSource<bool>();
+                    process.Exited += (sender, l) =>
+                    {
+                        var isCrash = process.ExitCode != 0;
+                        var isHangKilled = (process.ExitCode == -805306369); // hanged, drawn and quartered
+                        if (isCrash)
+                        {
+                            Trace.TraceWarning("Spring exit code is: {0}, {1}", process.ExitCode, isHangKilled ? "user-killed during hang" : "assuming crash");
+                        }
+                        bool isOk =  !isCrash || isHangKilled;
+                        
+                        CrashReportHelper.CheckAndReportErrors(logs.ToString(), isOk, "Externally launched spring crashed", null, args.Engine);          
+                    };
+                    process.EnableRaisingEvents = true;
                     process.Start();
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
                 }
                 catch (Exception ex)
                 {
