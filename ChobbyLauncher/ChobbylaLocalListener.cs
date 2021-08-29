@@ -635,7 +635,18 @@ namespace ChobbyLauncher
                         }
                         bool isOk =  !isCrash || isHangKilled;
                         
-                        CrashReportHelper.CheckAndReportErrors(logs.ToString(), isOk, "Externally launched spring crashed", null, args.Engine);          
+
+                        SendCommand(new NewSpringExited()
+                        {
+                            Engine = args.Engine,
+                            CustomId = args.CustomId,
+                            IsCrash = !isOk,
+                            SpringSettings = args.SpringSettings,
+                            StartDemoName = args.StartDemoName,
+                            StartScriptContent = args.StartScriptContent
+                        });
+                        
+                        CrashReportHelper.CheckAndReportErrors(logs.ToString(), isOk, "Externally launched spring crashed", null, args.Engine);
                     };
                     process.EnableRaisingEvents = true;
                     process.Start();
