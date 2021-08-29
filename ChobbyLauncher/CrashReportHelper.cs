@@ -159,14 +159,14 @@ namespace ChobbyLauncher
             }
 
             var luaErr = logStr.Contains("LUA_ERRRUN");
-            const bool crashOccured = (!springRunOk && !openGlFail) || syncError || luaErr;
-            const bool isUserReport = !string.IsNullOrEmpty(bugReportTitle);
+            bool crashOccured = (!springRunOk && !openGlFail) || syncError || luaErr;
+            bool isUserReport = !string.IsNullOrEmpty(bugReportTitle);
 
             if (crashOccured || isUserReport)
             {
                 /* Don't make a popup for user reports since the user already agreed by clicking the report button earlier.
                  * NB: benchmarks via Chobby also work by creating a user report. */
-                if (isBugReport || MessageBox.Show("We would like to send crash/desync data to Zero-K repository, it can contain chatlogs. Do you agree?",
+                if (isUserReport || MessageBox.Show("We would like to send crash/desync data to Zero-K repository, it can contain chatlogs. Do you agree?",
                     "Automated crash report",
                     MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
