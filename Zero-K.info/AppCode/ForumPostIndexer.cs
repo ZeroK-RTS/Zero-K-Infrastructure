@@ -73,7 +73,7 @@ namespace ZeroKWeb
                 var dbPost = db.ForumPosts.Find(post.ForumPostID);
                 dbPost.ForumPostWords.Clear();
 
-                foreach (var grp in words.GroupBy(x => x)) dbPost.ForumPostWords.Add(new ForumPostWord { Count = grp.Count(), WordID = GetWordID(grp.Key) });
+                foreach (var grp in words.GroupBy(x => x?.ToLower())) dbPost.ForumPostWords.Add(new ForumPostWord { Count = grp.Count(), WordID = GetWordID(grp.Key) });
                 db.SaveChanges();
             }
         }
