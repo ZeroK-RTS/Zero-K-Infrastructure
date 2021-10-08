@@ -657,6 +657,8 @@ namespace ZkData
             var ms = new MemoryStream();
             var wc = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
             var ret = new FileResponse<byte[]>();
+            
+            wc.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
             if (ifModifiedSince != null) wc.IfModifiedSince = ifModifiedSince.Value;
 
@@ -701,6 +703,9 @@ namespace ZkData
             var wc = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
             var ret = new FileResponse<byte[]>();
 
+            
+            wc.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+            
             if (ifModifiedSince != null) wc.IfModifiedSince = ifModifiedSince.Value;
 
             try

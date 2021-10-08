@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using JetBrains.Annotations;
 using PlasmaDownloader.Packages;
 using PlasmaDownloader.Torrents;
@@ -80,6 +81,8 @@ namespace PlasmaDownloader
             this.scanner = checker;
             //torrentDownloader = new TorrentDownloader(this);
             packageDownloader = new PackageDownloader(this);
+
+            ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true;
         }
 
         public void Dispose()
