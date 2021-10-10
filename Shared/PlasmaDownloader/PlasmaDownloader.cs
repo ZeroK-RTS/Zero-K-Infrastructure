@@ -83,6 +83,7 @@ namespace PlasmaDownloader
             packageDownloader = new PackageDownloader(this);
 
             ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; 
         }
 
         public void Dispose()
