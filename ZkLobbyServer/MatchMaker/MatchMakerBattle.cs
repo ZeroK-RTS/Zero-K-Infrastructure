@@ -14,7 +14,7 @@ namespace ZkLobbyServer
 
         public MatchMakerBattle(ZkLobbyServer server, MatchMaker.ProposedBattle bat, string mapname, bool applyHandicap) : base(server, null)
         {
-            ApplicableRating = RatingCategory.MatchMaking;
+            ApplicableRating = RatingCategory.MatchMaking | RatingCategory.Ladder;
             IsMatchMakerBattle = true;
             EngineVersion = server.Engine;
             ModName = server.Game;
