@@ -15,7 +15,11 @@ namespace ZkLobbyServer
         public MatchMakerBattle(ZkLobbyServer server, MatchMaker.ProposedBattle bat, string mapname, bool applyHandicap) : base(server, null)
         {
             bool isLadder = DynamicConfig.Instance.LadderSeasonOngoing && bat.Size == 2; // only 1v1
-            ApplicableRating = isLadder ? RatingCategory.Ladder : RatingCategory.MatchMaking; // FIXME should be both if season ongoing, but accepts only 1 AFAICS
+
+            /* FIXME should be both if season ongoing, but accepts only oneAFAICS.
+             * See also the ugly workaround in ` ZkData/Ef/WHR/RatingSystems.cs` */
+            ApplicableRating = isLadder ? RatingCategory.Ladder : RatingCategory.MatchMaking;
+
             IsMatchMakerBattle = true;
             EngineVersion = server.Engine;
             ModName = server.Game;
