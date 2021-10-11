@@ -12,35 +12,12 @@
 
 
 <table style="width: 100%">
-    <tr><td><h2>Top 50 Matchmaking (lifetime)</h2></td><td><h2>Top 50 Ladder (seasonal)</h2></td></tr>
+    <tr><td><h2>Top 50 Ladder (seasonal MM)</h2></td><td><h2>Top 50 Casual (custom)</h2></td></tr>
     <tr>
         <td>
             <span>
                 @{
                     int rank = 0;
-                    foreach (Account acct in RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetTopPlayers(GlobalConst.LadderSize))
-                    {
-                        if (rank++ == 20)
-                        {
-                        @:</span><br /><span style="font-size: small">
-                        }
-                        var acc = acct;
-                        if (rank == GlobalConst.LadderSize && Global.IsAccountAuthorized && Global.Account.GetRating(RatingCategory.MatchMaking)?.Rank > rank && Global.Account.GetRating(RatingCategory.MatchMaking)?.Rank < int.MaxValue)
-                        {
-                            rank = Global.Account.GetRating(RatingCategory.MatchMaking).Rank;
-                            acc = Global.Account;
-                        }
-                        <text>
-                            @(rank) ) @Html.PrintAccount(acc) - @(Math.Round(acc.GetRating(RatingCategory.MatchMaking).LadderElo)) <br />
-                        </text>
-                    }
-                }
-            </span>
-        </td>
-        <td>
-            <span>
-                @{
-                    rank = 0;
                     foreach (Account acct in RatingSystems.GetRatingSystem(RatingCategory.Ladder).GetTopPlayers(GlobalConst.LadderSize))
                     {
                         if (rank++ == 20)
@@ -51,10 +28,33 @@
                         if (rank == GlobalConst.LadderSize && Global.IsAccountAuthorized && Global.Account.GetRating(RatingCategory.Ladder)?.Rank > rank && Global.Account.GetRating(RatingCategory.Ladder)?.Rank < int.MaxValue)
                         {
                             rank = Global.Account.GetRating(RatingCategory.Ladder).Rank;
+                            acc = Global.Account;
+                        }
+                        <text>
+                            @(rank) ) @Html.PrintAccount(acc) - @(Math.Round(acc.GetRating(RatingCategory.Ladder).LadderElo)) <br />
+                        </text>
+                    }
+                }
+            </span>
+        </td>
+        <td>
+            <span>
+                @{
+                    rank = 0;
+                    foreach (Account acct in RatingSystems.GetRatingSystem(RatingCategory.Casual).GetTopPlayers(GlobalConst.LadderSize))
+                    {
+                        if (rank++ == 20)
+                        {
+                        @:</span><br /><span style="font-size: small">
+                        }
+                        var acc = acct;
+                        if (rank == GlobalConst.LadderSize && Global.IsAccountAuthorized && Global.Account.GetRating(RatingCategory.Casual)?.Rank > rank && Global.Account.GetRating(RatingCategory.Casual)?.Rank < int.MaxValue)
+                        {
+                            rank = Global.Account.GetRating(RatingCategory.Casual).Rank;
                             acc = Global.Account;  
                         }
                         <text>
-                            @(rank)) @Html.PrintAccount(acc) - @(Math.Round(acc.GetRating(RatingCategory.Ladder).LadderElo))<br />
+                            @(rank)) @Html.PrintAccount(acc) - @(Math.Round(acc.GetRating(RatingCategory.Casual).LadderElo))<br />
                         </text>
                     }
                 }
