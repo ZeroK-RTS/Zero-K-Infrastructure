@@ -110,6 +110,11 @@ namespace Ratings
             if (winners.Count == 0 || losers.Count == 0 || winners.Intersect(losers).Count() != 0) return;
 
             battle.ApplicableRatings |= (RatingCategoryFlags)result.LobbyStartContext.ApplicableRating;
+            
+            // Ugly hack: battles have only 1 rating (not flags), but Ladder implies MM
+            if (result.LobbyStartContext.ApplicableRating == RatingCategory.Ladder)
+                battle.ApplicableRatings |= RatingCategoryFlags.MatchMaking.
+            
             //Optionally add other flags here, like a casual or overall rating
         }
 
