@@ -35,7 +35,7 @@ namespace ZkData
 
         public int MaximumStatLimitedBattlePlayers { get; set; } // if a battle has more than this number of players, maxelo/minelo, maxrank/minrank and maxleve/minlevel are disabled
 
-        public int PublicCompetitiveRatingType { get; set; } // 2 or 8 (MM or Ladder), depending on whether ladder is running at the time or not
+        public bool LadderSeasonOngoing { get; set; }
 
         public static DynamicConfig Instance;
 
