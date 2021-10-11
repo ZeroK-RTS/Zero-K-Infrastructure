@@ -18,7 +18,7 @@ namespace ZkLobbyServer {
         {
             server = zkLobbyServer;
             RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).AddTopPlayerUpdateListener(this, LadderListLength);
-            TopPlayersUpdated(RatingSystems.GetRatingSystem(DynamicConfig.Instance.LadderSeasonOngoing ? RatingCategory.Ladder : RatingCaregory.MatchMaker).GetTopPlayers(LadderListLength)); //make sure ladderlist is never null
+            TopPlayersUpdated(RatingSystems.GetRatingSystem(DynamicConfig.Instance.LadderSeasonOngoing ? RatingCategory.Ladder : RatingCaregory.MatchMaking).GetTopPlayers(LadderListLength)); //make sure ladderlist is never null
         }
 
         public LadderList GetCurrentLadderList() => cachedLadderList;
