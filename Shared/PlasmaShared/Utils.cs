@@ -654,6 +654,8 @@ namespace ZkData
 
         public static FileResponse<byte[]> DownloadFile(string url, DateTime? ifModifiedSince = null)
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
             var ms = new MemoryStream();
             var wc = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
             var ret = new FileResponse<byte[]>();
