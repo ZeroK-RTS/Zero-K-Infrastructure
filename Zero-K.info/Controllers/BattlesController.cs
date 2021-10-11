@@ -188,7 +188,7 @@ namespace ZeroKWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Auth(Role = AdminLevel.Moderator)]
-        public ActionResult SetApplicableRatings(int BattleID, bool MatchMaking, bool Casual, bool PlanetWars)
+        public ActionResult SetApplicableRatings(int BattleID, bool MatchMaking, bool Casual, bool PlanetWars, bool Ladder)
         {
             SpringBattle battle;
             using (var db = new ZkDataContext())
@@ -199,7 +199,7 @@ namespace ZeroKWeb.Controllers
                                         .Include(x => x.SpringBattleBots)
                                         .FirstOrDefault();
                 if (battle.HasBots || battle.SpringBattlePlayers.Select(x => x.AllyNumber).Distinct().Count() < 2) return Content("Battle type currently not supported for ratings");
-                battle.ApplicableRatings = (MatchMaking ? RatingCategoryFlags.MatchMaking : 0) | (Casual ? RatingCategoryFlags.Casual : 0) | (PlanetWars ? RatingCategoryFlags.Planetwars : 0);
+                battle.ApplicableRatings = (MatchMaking ? RatingCategoryFlags.MatchMaking : 0) | (Casual ? RatingCategoryFlags.Casual : 0) | (PlanetWars ? RatingCategoryFlags.Planetwars : 0) | (Ladder ? RatingCategoryFlags.Ladder : 0);
                 db.SaveChanges();
             }
             return Detail(BattleID);
