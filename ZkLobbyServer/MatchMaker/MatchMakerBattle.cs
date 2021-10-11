@@ -16,7 +16,7 @@ namespace ZkLobbyServer
         {
             bool isLadder = DynamicConfig.Instance.LadderSeasonOngoing && bat.Size == 2; // only 1v1
 
-            /* FIXME should be both if season ongoing, but accepts only oneAFAICS.
+            /* FIXME should be both if season ongoing, but accepts only one AFAICS.
              * See also the ugly workaround in ` ZkData/Ef/WHR/RatingSystems.cs` */
             ApplicableRating = isLadder ? RatingCategory.Ladder : RatingCategory.MatchMaking;
 
