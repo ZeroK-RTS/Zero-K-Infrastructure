@@ -14,7 +14,8 @@ namespace ZkLobbyServer
 
         public MatchMakerBattle(ZkLobbyServer server, MatchMaker.ProposedBattle bat, string mapname, bool applyHandicap) : base(server, null)
         {
-            ApplicableRating = RatingCategory.MatchMaking | RatingCategory.Ladder;
+            // FIXME should be both if season ongoing, but accepts only 1 AFAICS
+            ApplicableRating = DynamicConfig.Instance.LadderSeasonOngoing ? RatingCategory.Ladder : RatingCategory.MatchMaking;
             IsMatchMakerBattle = true;
             EngineVersion = server.Engine;
             ModName = server.Game;
