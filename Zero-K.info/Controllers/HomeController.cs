@@ -181,7 +181,7 @@ namespace ZeroKWeb.Controllers
             var result = new IndexResult()
 			             {
 			             	Spotlight = SpotlightHandler.GetRandom(),
-			             	Top10Players = RatingSystems.GetRatingSystem(RatingCategory.MatchMaking).GetTopPlayers(10),
+			             	Top10Players = RatingSystems.GetRatingSystem(RatingCategory.Ladder).GetTopPlayers(10),
                             WikiRecentChanges = MediaWikiRecentChanges.LoadRecentChanges()
                         };
 
