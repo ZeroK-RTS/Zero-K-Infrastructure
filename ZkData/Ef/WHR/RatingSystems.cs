@@ -202,6 +202,8 @@ namespace Ratings
                         return battle.ApplicableRatings.HasFlag(RatingCategoryFlags.MatchMaking);
                     case RatingCategory.Planetwars:
                         return battle.ApplicableRatings.HasFlag(RatingCategoryFlags.Planetwars);
+                    case RatingCategory.Ladder:
+                        return battle.ApplicableRatings.HasFlag(RatingCategoryFlags.Ladder);
                 }
             }
             catch (Exception ex)
