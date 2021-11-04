@@ -88,7 +88,7 @@ namespace ZkLobbyServer
                 string gtype;
                 if (battle.spring.IsRunning)
                 {
-                    gtype = "game running";
+                    gtype = string.Format("game {0} on map {1}", battle.BattleID, battle.MapName);
                     PlasmaShared.BattlePlayerResult res = battle.spring.Context.GetOrAddPlayer(target);
                     isspec = res.IsSpectator;
                 }
