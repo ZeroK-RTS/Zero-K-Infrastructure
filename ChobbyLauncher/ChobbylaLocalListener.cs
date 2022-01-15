@@ -646,7 +646,7 @@ namespace ChobbyLauncher
                             StartScriptContent = args.StartScriptContent
                         });
                         
-                        CrashReportHelper.CheckAndReportErrors(logs.ToString(), isOk, "Externally launched spring crashed", null, args.Engine);
+                        CrashReportHelper.CheckAndReportErrors(logs.ToString(), isOk, "Externally launched spring crashed with code " + process.ExitCode, null, args.Engine);
                     };
                     process.EnableRaisingEvents = true;
                     process.Start();
