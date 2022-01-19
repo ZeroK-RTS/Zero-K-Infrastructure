@@ -199,7 +199,11 @@ namespace Ratings
                     case RatingCategory.Casual:
                         return battle.ApplicableRatings.HasFlag(RatingCategoryFlags.Casual);
                     case RatingCategory.MatchMaking:
-                        return battle.ApplicableRatings.HasFlag(RatingCategoryFlags.MatchMaking);
+                        if (battle.ApplicableRatings.HasFlag(RatingCategoryFlags.MatchMaking))
+                        {
+                            int date = ConvertDateToDays(battle.StartTime);
+                            return (date > (new DateTime(2022, 1, 1, 0, 0, 0, DateTimeKind.Utc)));
+                        }
                     case RatingCategory.Planetwars:
                         return battle.ApplicableRatings.HasFlag(RatingCategoryFlags.Planetwars);
                 }
