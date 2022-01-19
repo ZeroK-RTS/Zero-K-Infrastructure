@@ -113,7 +113,7 @@ namespace Ratings
             
             // Ugly hack: battles have only 1 rating (not flags), but Ladder implies MM
             if (result.LobbyStartContext.ApplicableRating == RatingCategory.Ladder)
-                battle.ApplicableRatings |= RatingCategoryFlags.MatchMaking.
+                battle.ApplicableRatings |= RatingCategoryFlags.MatchMaking;
             
             //Optionally add other flags here, like a casual or overall rating
         }
