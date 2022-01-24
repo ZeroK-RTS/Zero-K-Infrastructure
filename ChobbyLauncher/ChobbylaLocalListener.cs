@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -158,6 +159,10 @@ namespace ChobbyLauncher
                 LastUserAction = DateTime.Now;
                 MinimizeChobby();
                 System.Diagnostics.Process.Start(args.Url);
+            }
+            catch (Win32Exception)
+            {
+                System.Diagnostics.Process.Start("xdg-open", args.Url);
             }
             catch (Exception ex)
             {
