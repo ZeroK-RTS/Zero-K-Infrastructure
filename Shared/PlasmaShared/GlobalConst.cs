@@ -86,7 +86,6 @@ namespace ZkData
             BaseImageUrl = string.Format("{0}/img/", BaseSiteUrl);
             SelfUpdaterBaseUrl = string.Format("{0}/lobby", BaseSiteUrl);
 
-            contentServiceFactory = new ChannelFactory<IContentService>(CreateBasicHttpBinding(), $"{BaseSiteUrl}/ContentService.svc");
             mode = newMode;
         }
 
@@ -94,22 +93,6 @@ namespace ZkData
         public static int OldSpringLobbyPort;
         
 
-        public static BasicHttpBinding CreateBasicHttpBinding()
-        {
-            var binding = new BasicHttpBinding();
-            binding.ReceiveTimeout = TimeSpan.FromHours(1);
-            binding.OpenTimeout = TimeSpan.FromHours(1);
-            binding.CloseTimeout = TimeSpan.FromHours(1);
-            binding.SendTimeout = TimeSpan.FromHours(1);
-            binding.MaxBufferSize = 6553600;
-            binding.MaxBufferPoolSize = 6553600;
-            binding.MaxReceivedMessageSize = 6553600;
-            binding.ReaderQuotas.MaxArrayLength = 1638400;
-            binding.ReaderQuotas.MaxStringContentLength = 819200;
-            binding.ReaderQuotas.MaxBytesPerRead = 409600;
-            binding.Security.Mode = BasicHttpSecurityMode.None;
-            return binding;
-        }
 
         public static string ZkDataContextConnectionString;
 
@@ -277,12 +260,9 @@ namespace ZkData
         public const string ZeroKDiscordID = "389176180877688832";
 
 
-
-        static ChannelFactory<IContentService> contentServiceFactory;
-
-        public static IContentService GetContentService()
+        public static ContentServiceClient GetContentService()
         {
-            return contentServiceFactory.CreateChannel();
+            return new ContentServiceClient(BaseSiteUrl + "/ContentService");
         }
 
         public static string UnitSyncEngine = "unitsync";

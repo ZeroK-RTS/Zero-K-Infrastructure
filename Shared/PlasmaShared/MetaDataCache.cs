@@ -41,7 +41,7 @@ namespace ZkData
         public List<ResourceData> FindResourceData(string[] words, ResourceType? type)
         {
             var cs = GlobalConst.GetContentService();
-            return cs.FindResourceData(words, type);
+            return cs.Query(new FindResourceDataRequest() { Words = words, Type = type }).Result.Resources;
         }
 
         public string GetHeightmapPath(string name)

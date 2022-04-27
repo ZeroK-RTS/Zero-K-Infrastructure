@@ -57,5 +57,12 @@ namespace PlasmaShared
             var send = JsonConvert.SerializeObject(value, settings);
             return send;
         }
+        
+        public T DeserializeContentOnly<T>(string serialized)
+        {
+            var ret = JsonConvert.DeserializeObject<T>(serialized, settings);
+            return ret;
+        }
+        
     }
 }

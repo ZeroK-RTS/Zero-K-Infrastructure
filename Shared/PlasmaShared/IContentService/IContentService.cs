@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.ServiceModel;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Services;
 using ZkData;
 
@@ -148,6 +150,33 @@ namespace PlasmaShared
         public string FileContent { get; set; }
     }
 
+
+    public class ContentServiceClient
+    {
+        static CommandJsonSerializer serializer;
+        string url;
+
+        static ContentServiceClient()
+        {
+            serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<ApiMessageAttribute>());
+        }
+
+        public ContentServiceClient(string url)
+        {
+            this.url = url;
+        }
+
+        public async Task<T> Query<T>(ApiRequest<T> request) where T: ApiResponse, new()
+        {
+            var line = serializer.SerializeToLine(request);
+            var cli = new HttpClient();
+            var response = await cli.PostAsync(url, new StringContent(line));
+            var responseString = await response.Content.ReadAsStringAsync();
+            return serializer.DeserializeContentOnly<T>(responseString);
+        }
+        
+    }
+    
 
     [ServiceContract]
     public interface IContentService
