@@ -18,6 +18,10 @@ namespace PlasmaShared
         }
 
 
+        /// <summary>
+        /// Deserializes a command from a JSON string in a format "CommandName JsonSerializedCommandContent"
+        /// </summary>
+
         public object DeserializeLine(string line)
         {
             if (!string.IsNullOrEmpty(line))
@@ -36,9 +40,21 @@ namespace PlasmaShared
             foreach (var t in types) knownTypes[t.Name] = t;
         }
 
+        /// <summary>
+        /// Returns name of the class and content of the object in a single line
+        /// </summary>
         public string SerializeToLine<T>(T value)
         {
-            var send = $"{typeof(T).Name} {JsonConvert.SerializeObject(value, settings)}\n";
+            var send = $"{typeof(T).Name} {SerializeContentOnly(value)}\n";
+            return send;
+        }
+        
+        /// <summary>
+        /// Returns just the serialized json content of response
+        /// </summary>
+        public string SerializeContentOnly<T>(T value)
+        {
+            var send = JsonConvert.SerializeObject(value, settings);
             return send;
         }
     }

@@ -55,7 +55,7 @@ namespace PlasmaDownloader.Torrents
 
 
             Task.Factory.StartNew(() => {
-                DownloadFileResult e;
+                DownloadFileResponse e;
                 try {
                     e = plasmaService.DownloadFile(name);
                 } catch (Exception ex) {
@@ -124,7 +124,7 @@ namespace PlasmaDownloader.Torrents
 
         public string[] GetFileDependencies(string name)
         {
-            DownloadFileResult e;
+            DownloadFileResponse e;
             try {
                 e = plasmaService.DownloadFile(name);
                 return e.dependencies.ToArray();

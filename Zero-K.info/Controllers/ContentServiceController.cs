@@ -1,70 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Data.Entity.SqlServer;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using LobbyClient;
-using Microsoft.Linq.Translations;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http;
+using System.Web.Mvc;
 using PlasmaDownloader;
 using PlasmaShared;
 using ZkData;
 
-namespace ZeroKWeb
+namespace ZeroKWeb.Controllers
 {
-    // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "ContentService" in code, svc and config file together.
-    // NOTE: In order to launch WCF Test Client for testing this service, please select ContentService.svc or ContentService.svc.cs at the Solution Explorer and start debugging.
-    public class ContentService : IContentService
-    {
-        
-        public DownloadFileResponse DownloadFile(string internalName)
-        {
-            return PlasmaServer.DownloadFile(internalName);
-        }
 
-        public List<string> GetEngineList(string platform)
-        {
-            var comparer = new EngineDownload.VersionNumberComparer();
-            var list = new DirectoryInfo(Path.Combine(Global.MapPath("~"), "engine", platform ?? "win32")).GetFiles().Select(x => x.Name).Select(Path.GetFileNameWithoutExtension).OrderBy(x => x, comparer).ToList();
-            return list;
-        }
-
-        public string GetDefaultEngine()
-        {
-            return MiscVar.DefaultEngine ?? GlobalConst.DefaultEngineOverride;
-        }
-
-
-
-        public List<ResourceData> FindResourceData(string[] words, ResourceType? type = null)
-        {
-            var db = new ZkDataContext();
-            var ret = db.Resources.AsQueryable();
-            if (type == ResourceType.Map) ret = ret.Where(x => x.TypeID == ResourceType.Map);
-            if (type == ResourceType.Mod) ret = ret.Where(x => x.TypeID == ResourceType.Mod);
-            string joinedWords = string.Join(" ", words);
-            var test = ret.Where(x => x.InternalName == joinedWords);
-            if (test.Any()) return test.OrderByDescending(x => x.MapSupportLevel).AsEnumerable().Select(PlasmaServer.ToResourceData).ToList();
-            int i;
-            if (words.Length == 1 && int.TryParse(words[0], out i)) ret = ret.Where(x => x.ResourceID == i);
-            else
-            {
-                foreach (var w in words)
-                {
-                    var w1 = w;
-                    ret = ret.Where(x => SqlFunctions.PatIndex("%" + w1 + "%", x.InternalName) > 0);
-                }
-            }
-            ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
-            return ret.OrderByDescending(x => x.MapSupportLevel).Take(400).ToList().Select(PlasmaServer.ToResourceData).ToList();
-        }
-
-
-        
-
-
-
+/*  
 
         /// <summary>
         /// Finds resource by either md5 or internal name
@@ -310,8 +260,98 @@ namespace ZeroKWeb
                     Title = sb.Title
                 };
             }
+        }*/
+    
+
+    
+
+
+    public class ContentServiceListener
+    {
+        CommandJsonSerializer serializer;
+
+        public ContentServiceListener()
+        {
+            serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<ApiMessageAttribute>());
         }
+
+
+        public async Task<string> Process(string request)
+        {
+            var req = serializer.DeserializeLine(request);
+            var response = await Process(req);
+            return serializer.SerializeContentOnly(response);
+            
+        }
+        
+        public async Task<ApiResponse> Process(object request)
+        {
+            dynamic req = request;
+            var response = await Process(req);
+            return response;
+        }
+
+        public async Task<DownloadFileResponse> Process(DownloadFileRequest request)
+        {
+            return PlasmaServer.DownloadFile(request.InternalName);
+        }
+        
+        public async Task<GetEngineListResponse> Process(GetEngineListRequest request)
+        {
+            var comparer = new EngineDownload.VersionNumberComparer();
+            var list = new DirectoryInfo(Path.Combine(Global.MapPath("~"), "engine", request.Platform ?? "win32")).GetFiles().Select(x => x.Name).Select(Path.GetFileNameWithoutExtension).OrderBy(x => x, comparer).ToList();
+            return new GetEngineListResponse() { Engines = list };
+        }
+
+        public async Task<GetDefaultEngineResponse> Process(GetDefaultEngineRequest request)
+        {
+              var ver = MiscVar.DefaultEngine ?? GlobalConst.DefaultEngineOverride;
+              return new GetDefaultEngineResponse() { DefaultEngine = ver };
+        }
+        
+        public async Task<FindResourceDataResponse> Process(FindResourceDataRequest request)
+        {
+            var words = request.Words;
+            var type = request.Type;
+            
+            var db = new ZkDataContext();
+            var ret = db.Resources.AsQueryable();
+            if (type == ResourceType.Map) ret = ret.Where(x => x.TypeID == ResourceType.Map);
+            if (type == ResourceType.Mod) ret = ret.Where(x => x.TypeID == ResourceType.Mod);
+            string joinedWords = string.Join(" ", words);
+            var test = ret.Where(x => x.InternalName == joinedWords);
+            if (test.Any()) new FindResourceDataResponse() { Resources = test.OrderByDescending(x => x.MapSupportLevel).AsEnumerable().Select(PlasmaServer.ToResourceData).ToList() };
+            int i;
+            if (words.Length == 1 && int.TryParse(words[0], out i)) ret = ret.Where(x => x.ResourceID == i);
+            else
+            {
+                foreach (var w in words)
+                {
+                    var w1 = w;
+                    ret = ret.Where(x => SqlFunctions.PatIndex("%" + w1 + "%", x.InternalName) > 0);
+                }
+            }
+
+            ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
+            return new FindResourceDataResponse() { Resources = ret.OrderByDescending(x => x.MapSupportLevel).Take(400).ToList().Select(PlasmaServer.ToResourceData).ToList() };
+        }
+
+        
     }
-
-
+    
+    
+    public class ContentServiceController: AsyncController
+    {
+        static ContentServiceListener listener = new ContentServiceListener();
+        
+        [System.Web.Mvc.HttpPost]
+        public async Task<ActionResult> Index()
+        {
+            var sr = new StreamReader(Request.InputStream);
+            var line = await sr.ReadToEndAsync();
+            var response = await listener.Process(line);
+            return Content(response, "application/json");
+        } 
+        
+    }
 }

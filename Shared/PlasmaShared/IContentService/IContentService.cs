@@ -8,7 +8,24 @@ using ZkData;
 
 namespace PlasmaShared
 {
-    public class DownloadFileResult
+    [AttributeUsage(AttributeTargets.Class, Inherited = true)]
+    public class ApiMessageAttribute : Attribute {}
+
+    
+    [ApiMessage]
+    public abstract class ApiRequest<T> where T : ApiResponse
+    {
+    }
+    
+    [ApiMessage]
+    public abstract class ApiResponse {}
+
+
+    public class DownloadFileRequest: ApiRequest<DownloadFileResponse> {
+        public string InternalName;
+    }
+
+    public class DownloadFileResponse: ApiResponse
     {
         public List<string> links;
         public byte[] torrent;
@@ -16,6 +33,35 @@ namespace PlasmaShared
         public ResourceType resourceType;
         public string torrentFileName;
     }
+
+    public class GetEngineListRequest: ApiRequest<GetEngineListResponse>
+    {
+        public string Platform;
+    }
+
+    public class GetEngineListResponse: ApiResponse
+    {
+        public List<string> Engines;
+    }
+
+    public class GetDefaultEngineRequest: ApiRequest<GetDefaultEngineResponse> { }
+
+    public class GetDefaultEngineResponse: ApiResponse
+    {
+        public string DefaultEngine;
+    }
+    
+    public class FindResourceDataRequest:ApiRequest<FindResourceDataResponse>
+    {
+        public string[] Words;
+        public ResourceType? Type;
+    }
+
+    public class FindResourceDataResponse: ApiResponse
+    {
+        public List<ResourceData> Resources;
+    }
+
 
     public class NewsItem
     {
@@ -98,7 +144,7 @@ namespace PlasmaShared
     public interface IContentService
     {
         [OperationContract]
-        DownloadFileResult DownloadFile(string internalName);
+        DownloadFileResponse DownloadFile(string internalName);
 
 
         [OperationContract]

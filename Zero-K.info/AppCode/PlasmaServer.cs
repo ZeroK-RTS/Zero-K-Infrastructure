@@ -49,7 +49,7 @@ namespace ZeroKWeb
         }
 
 
-        public static DownloadFileResult DownloadFile(string internalName)
+        public static DownloadFileResponse DownloadFile(string internalName)
         {
             List<string> links;
             byte[] torrent;
@@ -63,7 +63,7 @@ namespace ZeroKWeb
                                                            out resourceType,
                                                            out torrentFileName);
             if (ok) {
-                return new DownloadFileResult() {
+                return new DownloadFileResponse() {
                     links = links,
                     torrent = torrent,
                     dependencies = dependencies,
