@@ -13,22 +13,7 @@ using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
-
 /*  
-
-        /// <summary>
-        /// Finds resource by either md5 or internal name
-        /// </summary>
-        /// <param name="md5"></param>
-        /// <param name="internalName"></param>
-        /// <returns></returns>
-        
-        public ResourceData GetResourceData(string md5, string internalName)
-        {
-            return PlasmaServer.GetResourceData(md5, internalName);
-        }
-
-        
         public ResourceData GetResourceDataByInternalName(string internalName)
         {
             var db = new ZkDataContext();
@@ -334,6 +319,11 @@ namespace ZeroKWeb.Controllers
 
             ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
             return new FindResourceDataResponse() { Resources = ret.OrderByDescending(x => x.MapSupportLevel).Take(400).ToList().Select(PlasmaServer.ToResourceData).ToList() };
+        }
+
+        public async Task<ResourceData> Process(GetResourceDataRequest request)
+        {
+            return PlasmaServer.GetResourceData(request.Md5, request.InternalName);
         }
 
         

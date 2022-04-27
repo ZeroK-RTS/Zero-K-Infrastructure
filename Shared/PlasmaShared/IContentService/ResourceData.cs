@@ -3,7 +3,7 @@ using ZkData;
 
 namespace PlasmaShared
 {
-    public class ResourceData
+    public class ResourceData: ApiResponse
     {
         public List<string> Dependencies;
         public string InternalName;

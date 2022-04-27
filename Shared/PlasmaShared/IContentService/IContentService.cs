@@ -61,6 +61,15 @@ namespace PlasmaShared
     {
         public List<ResourceData> Resources;
     }
+    
+    /// <summary>
+    /// Finds resource by either md5 or internal name
+    /// </summary>
+    public class GetResourceDataRequest:ApiRequest<ResourceData>
+    {
+        public string Md5;
+        public string InternalName;
+    }
 
 
     public class NewsItem
