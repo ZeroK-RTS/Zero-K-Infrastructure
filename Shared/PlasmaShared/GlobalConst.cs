@@ -259,11 +259,17 @@ namespace ZkData
 
         public const string ZeroKDiscordID = "389176180877688832";
 
-
-        public static ContentServiceClient GetContentService()
+        private static IContentServiceClient contentServiceClientOverride;
+        public static IContentServiceClient GetContentService()
         {
-            return new ContentServiceClient(BaseSiteUrl + "/ContentService");
+            return contentServiceClientOverride ?? new ContentServiceClient(BaseSiteUrl + "/ContentService");
         }
+        
+        public static void OverrideContentServiceClient(IContentServiceClient client)
+        {
+            contentServiceClientOverride = client;
+        }
+        
 
         public static string UnitSyncEngine = "unitsync";
 
@@ -274,6 +280,22 @@ namespace ZkData
         public static bool IsLongAfterSteam => DateTime.UtcNow.Subtract(SteamRelease).TotalDays > 14;
         public static bool IsAfterSteam => DateTime.UtcNow.Subtract(SteamRelease).TotalMilliseconds > 0;
 
+        public static BasicHttpBinding CreateBasicHttpBinding()
+        {
+            var binding = new BasicHttpBinding();
+            binding.ReceiveTimeout = TimeSpan.FromHours(1);
+            binding.OpenTimeout = TimeSpan.FromHours(1);
+            binding.CloseTimeout = TimeSpan.FromHours(1);
+            binding.SendTimeout = TimeSpan.FromHours(1);
+            binding.MaxBufferSize = 6553600;
+            binding.MaxBufferPoolSize = 6553600;
+            binding.MaxReceivedMessageSize = 6553600;
+            binding.ReaderQuotas.MaxArrayLength = 1638400;
+            binding.ReaderQuotas.MaxStringContentLength = 819200;
+            binding.ReaderQuotas.MaxBytesPerRead = 409600;
+            binding.Security.Mode = BasicHttpSecurityMode.None;
+            return binding;
+        }
     }
 
     public enum PlanetWarsModes

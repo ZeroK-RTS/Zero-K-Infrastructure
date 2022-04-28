@@ -247,7 +247,8 @@ namespace PlasmaShared
     }
 
 
-    public class ContentServiceClient
+
+    public class ContentServiceClient: IContentServiceClient
     {
         static CommandJsonSerializer serializer;
         string url;
@@ -278,6 +279,12 @@ namespace PlasmaShared
         }
         
         
+    }
+    
+    public interface IContentServiceClient
+    {
+        Task<T> QueryAsync<T>(ApiRequest<T> request) where T: ApiResponse, new();
+        T Query<T>(ApiRequest<T> request) where T: ApiResponse, new();
     }
     
 
