@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Mono.Unix.Native;
+using PlasmaShared;
 using SharpCompress.Archive;
 using SharpCompress.Common;
 using ZkData;
@@ -29,7 +30,7 @@ namespace PlasmaDownloader
         public static List<string> GetEngineList()
         {
             var srv = GlobalConst.GetContentService();
-            return srv.GetEngineList(null);
+            return srv.Query(new GetEngineListRequest()).Engines;
         }
 
         public void Start()

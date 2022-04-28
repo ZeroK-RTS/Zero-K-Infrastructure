@@ -1280,7 +1280,8 @@ namespace ZkLobbyServer
                 if (HostedMod?.Mission != null)
                 {
                     var service = GlobalConst.GetContentService();
-                    foreach (var u in spring.LobbyStartContext.Players.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, HostedMod.Mission.Name);
+                    foreach (var u in spring.LobbyStartContext.Players.Where(x => !x.IsSpectator))
+                        service.Query(new NotifyMissionRun() { Login = u.Name, MissionName = HostedMod.Mission.Name });
                 }
             }
             catch (Exception ex)

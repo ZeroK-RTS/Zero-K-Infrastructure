@@ -15,6 +15,7 @@ using System.Web.Routing;
 using AutoRegistrator;
 using JetBrains.Annotations;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 using ZkLobbyServer;
 using Ratings;
@@ -125,6 +126,8 @@ namespace ZeroKWeb
 
         public static void StartApplication(MvcApplication mvcApplication)
         {
+            GlobalConst.OverrideContentServiceClient(new ContentServiceImplementation()); // set to directly call content service instead going through json web request
+            
             if (Interlocked.Exchange(ref isStarted, 1) == 1) return; // prevent double start
 
             var listener = new ZkServerTraceListener();

@@ -41,7 +41,7 @@ namespace ZkData
         public List<ResourceData> FindResourceData(string[] words, ResourceType? type)
         {
             var cs = GlobalConst.GetContentService();
-            return cs.FindResourceData(words, type);
+            return cs.Query(new FindResourceDataRequest() { Words = words, Type = type }).Resources;
         }
 
         public string GetHeightmapPath(string name)
@@ -241,19 +241,6 @@ namespace ZkData
         public void GetModAsync(string modName, Action<Mod> callback, Action<Exception> errorCallback)
         {
             Utils.StartAsync(() => GetMod(modName, callback, errorCallback));
-        }
-
-        public ResourceData GetResourceDataByInternalName(string name)
-        {
-            try {
-                var cs = GlobalConst.GetContentService();
-                return cs.GetResourceDataByInternalName(name);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceWarning(string.Format("Error getting data for resource {0} : {1}", name, ex));
-                return null;
-            }
         }
 
 
