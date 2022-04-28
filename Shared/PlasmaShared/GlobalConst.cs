@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ServiceModel;
 using PlasmaShared;
 
 namespace ZkData
@@ -280,22 +279,6 @@ namespace ZkData
         public static bool IsLongAfterSteam => DateTime.UtcNow.Subtract(SteamRelease).TotalDays > 14;
         public static bool IsAfterSteam => DateTime.UtcNow.Subtract(SteamRelease).TotalMilliseconds > 0;
 
-        public static BasicHttpBinding CreateBasicHttpBinding()
-        {
-            var binding = new BasicHttpBinding();
-            binding.ReceiveTimeout = TimeSpan.FromHours(1);
-            binding.OpenTimeout = TimeSpan.FromHours(1);
-            binding.CloseTimeout = TimeSpan.FromHours(1);
-            binding.SendTimeout = TimeSpan.FromHours(1);
-            binding.MaxBufferSize = 6553600;
-            binding.MaxBufferPoolSize = 6553600;
-            binding.MaxReceivedMessageSize = 6553600;
-            binding.ReaderQuotas.MaxArrayLength = 1638400;
-            binding.ReaderQuotas.MaxStringContentLength = 819200;
-            binding.ReaderQuotas.MaxBytesPerRead = 409600;
-            binding.Security.Mode = BasicHttpSecurityMode.None;
-            return binding;
-        }
     }
 
     public enum PlanetWarsModes
