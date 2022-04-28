@@ -11,20 +11,25 @@ using ZkData;
 
 namespace ZeroKWeb
 {
-    public class ContentServiceImplementation
+    public class ContentServiceImplementation: IContentServiceClient
     {
-        CommandJsonSerializer serializer;
+        static CommandJsonSerializer serializer;
 
-        public ContentServiceImplementation()
+        static ContentServiceImplementation()
         {
             serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<ApiMessageAttribute>());
         }
 
 
-        public async Task<T> Query<T>(ApiRequest<T> request) where T: ApiResponse, new()
+        public async Task<T> QueryAsync<T>(ApiRequest<T> request) where T: ApiResponse, new()
         {
             var ret = await Process(request) as T;
             return ret;
+        }
+        
+        public T Query<T>(ApiRequest<T> request) where T: ApiResponse, new()
+        {
+            return QueryAsync(request).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         public async Task<string> Process(string request)

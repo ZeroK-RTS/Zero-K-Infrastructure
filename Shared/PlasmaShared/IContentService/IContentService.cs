@@ -251,11 +251,14 @@ namespace PlasmaShared
     public class ContentServiceClient: IContentServiceClient
     {
         static CommandJsonSerializer serializer;
+        static HttpClient httpClient;
+        
         string url;
 
         static ContentServiceClient()
         {
             serializer = new CommandJsonSerializer(Utils.GetAllTypesWithAttribute<ApiMessageAttribute>());
+            httpClient = new HttpClient();
         }
 
         public ContentServiceClient(string url)
@@ -265,10 +268,8 @@ namespace PlasmaShared
 
         public async Task<T> QueryAsync<T>(ApiRequest<T> request) where T: ApiResponse, new()
         {
-            
             var line = serializer.SerializeToLine(request);
-            var cli = new HttpClient();
-            var response = await cli.PostAsync(url, new StringContent(line));
+            var response = await httpClient.PostAsync(url, new StringContent(line));
             var responseString = await response.Content.ReadAsStringAsync();
             return serializer.DeserializeContentOnly<T>(responseString);
         }
