@@ -282,6 +282,7 @@ namespace PlasmaShared
     
 
     [ServiceContract]
+    [Obsolete("Use ContentServiceClient instead")]
     public interface IContentService
     {
         [OperationContract]
@@ -306,12 +307,6 @@ namespace PlasmaShared
         /// <returns></returns>
         [OperationContract]
         ResourceData GetResourceData(string md5, string internalName);
-
-        [OperationContract]
-        ResourceData GetResourceDataByInternalName(string internalName);
-
-        [OperationContract]
-        ResourceData GetResourceDataByResourceID(int resourceID);
 
         [OperationContract]
         List<ResourceData> GetResourceList(DateTime? lastChange, out DateTime currentTime);

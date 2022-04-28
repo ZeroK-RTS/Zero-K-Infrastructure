@@ -156,6 +156,7 @@
   <ItemGroup>
     <Compile Include="AppCode\Auth.cs" />
     <Compile Include="AppCode\AuthServiceClient.cs" />
+    <Compile Include="AppCode\ContentServiceImplementation.cs" />
     <Compile Include="AppCode\DosProtector.cs" />
     <Compile Include="AppCode\ForumPostCache.cs" />
     <Compile Include="AppCode\ForumPostIndexer.cs" />
