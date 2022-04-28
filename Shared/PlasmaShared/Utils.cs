@@ -762,10 +762,11 @@ namespace ZkData
             }
         }
 
+        public static readonly string[] SupportedAssemblies = new[] {"PlasmaShared", "PlasmaDownloader", "ChobbyLauncher"};
 
         public static IEnumerable<Type> GetAllTypesWithAttribute<T>()
         {
-            return from a in AppDomain.CurrentDomain.GetAssemblies().AsParallel()
+            return from a in AppDomain.CurrentDomain.GetAssemblies().Where(x=> SupportedAssemblies.Contains(x.GetName().Name)).ToList().AsParallel()
                    from t in a.GetLoadableTypes()
                    let attributes = t.GetCustomAttributes(typeof(T), true)
                    where attributes != null && attributes.Length > 0
