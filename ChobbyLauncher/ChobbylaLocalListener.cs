@@ -725,12 +725,12 @@ namespace ChobbyLauncher
 
         private async Task Process(GetSpringBattleInfo args)
         {
-            Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(async () =>
             {
                 try
                 {
                     var serv = GlobalConst.GetContentService();
-                    var sbi = serv.GetSpringBattleInfo(args.GameID);
+                    var sbi = await serv.QueryAsync(new PlasmaShared.GetSpringBattleInfo(){GameID = args.GameID});
                     SendCommand(new GetSpringBattleInfoDone()
                     {
                         GameID = args.GameID,

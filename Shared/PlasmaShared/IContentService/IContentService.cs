@@ -75,7 +75,7 @@ namespace PlasmaShared
 
     public class GetScriptMissionDataRequest: ApiRequest<ScriptMissionData>
     {
-        public string Name;
+        public string MissionName;
     }
 
     public class NotifyMissionRun: ApiRequest<NotifyMissionRunResponse>
@@ -101,14 +101,74 @@ namespace PlasmaShared
         public byte[] MetalMap;
         public byte[] HeightMap;
         public byte[] TorrentData;
+
+        public RegisterResourceRequest() { }
+
+        public RegisterResourceRequest(int apiVersion, string springVersion, string md5, int length, ResourceType resourceType,
+            string archiveName,
+            string internalName,
+            byte[] serializedData,
+            List<string> dependencies,
+            byte[] minimap,
+            byte[] metalMap,
+            byte[] heightMap,
+            byte[] torrentData)
+        {
+            ApiVersion = apiVersion;
+            SpringVersion = springVersion;
+            Md5 = md5;
+            Length = length;
+            ResourceType = resourceType;
+            ArchiveName = archiveName;
+            InternalName = internalName;
+            SerializedData = serializedData;
+            Dependencies = dependencies;
+            Minimap = minimap;
+            MetalMap = metalMap;
+            HeightMap = heightMap;
+            TorrentData = torrentData;
+        }
     }
+
+    public class GetDefaultMissionsRequest: ApiRequest<GetDefaultMissionsResponse> { }
+
+    public class GetDefaultMissionsResponse: ApiResponse
+    {
+        public List<ClientMissionInfo> Missions;
+    }
+    
+    public class GetPublicCommunityInfo: ApiRequest<PublicCommunityInfo>{}
+
 
     public class RegisterResourceResponse: ApiResponse
     {
         public ReturnValue ReturnValue;
     }
-
     
+    public class SubmitMissionScoreRequest: ApiRequest<SubmitMissionScoreResponse>
+    {
+        public string Login;
+        public string PasswordHash;
+        public string MissionName;
+        public int Score;
+        public int GameSeconds;
+        public string MissionVars;
+    }
+
+    public class SubmitMissionScoreResponse: ApiResponse { }
+
+
+    public class GetFeaturedCustomGameModes: ApiRequest<FeaturedCustomGameModesResponse> {}
+
+    public class FeaturedCustomGameModesResponse: ApiResponse
+    {
+        public List<CustomGameModeInfo> CustomGameModes;
+    }
+
+    public class GetSpringBattleInfo: ApiRequest<SpringBattleInfo>
+    {
+        public string GameID;
+    }
 
     public class NewsItem
     {
@@ -161,7 +221,7 @@ namespace PlasmaShared
     }
 
     
-    public class PublicCommunityInfo
+    public class PublicCommunityInfo: ApiResponse
     {
         public List<NewsItem> NewsItems { get; set; } = new List<NewsItem>();
         public List<LadderItem> LadderItems { get; set; } = new List<LadderItem>();
@@ -170,7 +230,7 @@ namespace PlasmaShared
         public bool UserCountLimited { get; set; }
     }
 
-    public class SpringBattleInfo
+    public class SpringBattleInfo: ApiResponse
     {
         public int SpringBattleID { get; set; }
         public AutohostMode AutohostMode { get; set; }
@@ -202,7 +262,7 @@ namespace PlasmaShared
             this.url = url;
         }
 
-        public async Task<T> Query<T>(ApiRequest<T> request) where T: ApiResponse, new()
+        public async Task<T> QueryAsync<T>(ApiRequest<T> request) where T: ApiResponse, new()
         {
             
             var line = serializer.SerializeToLine(request);
@@ -211,6 +271,12 @@ namespace PlasmaShared
             var responseString = await response.Content.ReadAsStringAsync();
             return serializer.DeserializeContentOnly<T>(responseString);
         }
+        
+        public T Query<T>(ApiRequest<T> request) where T: ApiResponse, new()
+        {
+            return QueryAsync(request).ConfigureAwait(false).GetAwaiter().GetResult();
+        }
+        
         
     }
     

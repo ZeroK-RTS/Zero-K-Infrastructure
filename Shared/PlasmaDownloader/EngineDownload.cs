@@ -30,7 +30,7 @@ namespace PlasmaDownloader
         public static List<string> GetEngineList()
         {
             var srv = GlobalConst.GetContentService();
-            return srv.Query(new GetEngineListRequest()).Result.Engines;
+            return srv.Query(new GetEngineListRequest()).Engines;
         }
 
         public void Start()

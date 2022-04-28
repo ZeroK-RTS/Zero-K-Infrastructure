@@ -261,7 +261,7 @@ namespace ChobbyLauncher
             Status = "Querying default engine";
             try
             {
-                return GlobalConst.GetContentService().Query(new GetDefaultEngineRequest()).Result.DefaultEngine;
+                return GlobalConst.GetContentService().Query(new GetDefaultEngineRequest()).DefaultEngine;
             }
             catch (Exception ex)
             {
