@@ -152,19 +152,7 @@ namespace ZeroKWeb
                                                          byte[] heightMap,
                                                          byte[] torrentData)
         {
-            return PlasmaServer.RegisterResource(apiVersion,
-                                                 springVersion,
-                                                 md5,
-                                                 length,
-                                                 resourceType,
-                                                 archiveName,
-                                                 internalName,
-                                                 serializedData,
-                                                 dependencies,
-                                                 minimap,
-                                                 metalMap,
-                                                 heightMap,
-                                                 torrentData);
+            return PlasmaServer.RegisterResource(new RegisterResourceRequest(apiVersion, springVersion, md5, length, resourceType, archiveName, internalName, serializedData, dependencies, minimap, metalMap, heightMap, torrentData));
         }
 
         

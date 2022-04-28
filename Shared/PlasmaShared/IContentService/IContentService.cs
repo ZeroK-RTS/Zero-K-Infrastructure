@@ -73,6 +73,42 @@ namespace PlasmaShared
         public string InternalName;
     }
 
+    public class GetScriptMissionDataRequest: ApiRequest<ScriptMissionData>
+    {
+        public string Name;
+    }
+
+    public class NotifyMissionRun: ApiRequest<NotifyMissionRunResponse>
+    {
+        public string Login;
+        public string MissionName;
+    }
+
+    public class NotifyMissionRunResponse: ApiResponse { }
+
+    public class RegisterResourceRequest:ApiRequest<RegisterResourceResponse>
+    {
+        public int ApiVersion;
+        public string SpringVersion;
+        public string Md5;
+        public int Length;
+        public ResourceType ResourceType;
+        public string ArchiveName;
+        public string InternalName;
+        public byte[] SerializedData;
+        public List<string> Dependencies;
+        public byte[] Minimap;
+        public byte[] MetalMap;
+        public byte[] HeightMap;
+        public byte[] TorrentData;
+    }
+
+    public class RegisterResourceResponse: ApiResponse
+    {
+        public ReturnValue ReturnValue;
+    }
+
+    
 
     public class NewsItem
     {
@@ -168,6 +204,7 @@ namespace PlasmaShared
 
         public async Task<T> Query<T>(ApiRequest<T> request) where T: ApiResponse, new()
         {
+            
             var line = serializer.SerializeToLine(request);
             var cli = new HttpClient();
             var response = await cli.PostAsync(url, new StringContent(line));

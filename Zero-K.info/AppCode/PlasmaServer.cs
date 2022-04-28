@@ -121,56 +121,44 @@ namespace ZeroKWeb
             return GetTorrentPath(cf.Resource.InternalName, cf.Md5);
         }
 
-        public static ReturnValue RegisterResource(int apiVersion,
-                                                   string springVersion,
-                                                   string md5,
-                                                   int length,
-                                                   ResourceType resourceType,
-                                                   string archiveName,
-                                                   string internalName,
-                                                   byte[] serializedData,
-                                                   List<string> dependencies,
-                                                   byte[] minimap,
-                                                   byte[] metalMap,
-                                                   byte[] heightMap,
-                                                   byte[] torrentData)
+        public static ReturnValue RegisterResource(RegisterResourceRequest req)
         {
-            if (md5 == null) throw new ArgumentNullException("md5");
-            if (archiveName == null) throw new ArgumentNullException("archiveName");
-            if (internalName == null) throw new ArgumentNullException("internalName");
-            if (serializedData == null) throw new ArgumentNullException("serializedData");
-            if (torrentData == null) throw new ArgumentNullException("torrentData");
-            if (PlasmaServerApiVersion > apiVersion) throw new Exception("Obsolete PlasmaServer Client");
-            if (dependencies == null) dependencies = new List<string>();
+            if (req.Md5 == null) throw new ArgumentNullException("md5");
+            if (req.ArchiveName == null) throw new ArgumentNullException("archiveName");
+            if (req.InternalName == null) throw new ArgumentNullException("internalName");
+            if (req.SerializedData == null) throw new ArgumentNullException("serializedData");
+            if (req.TorrentData == null) throw new ArgumentNullException("torrentData");
+            if (PlasmaServerApiVersion > req.ApiVersion) throw new Exception("Obsolete PlasmaServer Client");
+            if (req.Dependencies == null) req.Dependencies = new List<string>();
 
             var db = new ZkDataContext();
 
 
-            var contentFile = db.ResourceContentFiles.FirstOrDefault(x => x.Md5 == md5);
+            var contentFile = db.ResourceContentFiles.FirstOrDefault(x => x.Md5 == req.Md5);
             if (contentFile != null)
             {
                 // content file already stored
-                if (contentFile.Resource.InternalName != internalName) return ReturnValue.Md5AlreadyExistsWithDifferentName;
+                if (contentFile.Resource.InternalName != req.InternalName) return ReturnValue.Md5AlreadyExistsWithDifferentName;
 
                 // new spring version we add its hash
-                StoreMetadata(md5, contentFile.Resource, serializedData, torrentData, minimap, metalMap, heightMap);
+                StoreMetadata(req.Md5, contentFile.Resource, req.SerializedData, req.TorrentData, req.Minimap, req.MetalMap, req.HeightMap);
                 db.SaveChanges();
                 return ReturnValue.Ok;
             }
 
-            var resource = db.Resources.Where(x => x.InternalName == internalName).SingleOrDefault();
+            var resource = db.Resources.Where(x => x.InternalName == req.InternalName).SingleOrDefault();
 
             if (resource == null)
             {
-                resource = new Resource { InternalName = internalName, TypeID = resourceType };
+                resource = new Resource { InternalName = req.InternalName, TypeID = req.ResourceType };
                 db.Resources.Add(resource);
-                StoreMetadata(md5, resource, serializedData, torrentData, minimap, metalMap, heightMap);
+                StoreMetadata(req.Md5, resource, req.SerializedData, req.TorrentData, req.Minimap, req.MetalMap, req.HeightMap);
             }
 
-            if (!resource.ResourceDependencies.Select(x => x.NeedsInternalName).Except(dependencies).Any())
+            if (!resource.ResourceDependencies.Select(x => x.NeedsInternalName).Except(req.Dependencies).Any())
             {
                 // new dependencies are superset
-                foreach (var depend in dependencies)
+                foreach (var depend in req.Dependencies)
                 {
                     // add missing dependencies
                     var s = depend;
@@ -178,16 +166,16 @@ namespace ZeroKWeb
                 }
             }
 
-            if (resource.ResourceContentFiles.Any(x => x.Length == length && x.Md5 != md5))
+            if (resource.ResourceContentFiles.Any(x => x.Length == req.Length && x.Md5 != req.Md5))
             {
                 return ReturnValue.Md5AlreadyExistsWithDifferentName;
                 // add proper message - file exists with different md5 and same size - cant register cant detect mirrors 
             }
 
-            var newContentFile = new ResourceContentFile { FileName = archiveName, Length = length, Md5 = md5, Resource = resource};
+            var newContentFile = new ResourceContentFile { FileName = req.ArchiveName, Length = req.Length, Md5 = req.Md5, Resource = resource};
             resource.ResourceContentFiles.Add(newContentFile);
             ResourceLinkProvider.UpdateLinks(newContentFile);
-            File.WriteAllBytes(GetTorrentPath(internalName, md5), torrentData); // add new torrent file
+            File.WriteAllBytes(GetTorrentPath(req.InternalName, req.Md5), req.TorrentData); // add new torrent file
 
             db.SaveChanges();
 

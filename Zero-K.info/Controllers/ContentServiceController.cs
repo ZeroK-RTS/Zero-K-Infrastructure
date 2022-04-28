@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.SqlServer;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
+using LobbyClient;
 using PlasmaDownloader;
 using PlasmaShared;
 using ZkData;
@@ -14,93 +16,11 @@ using ZkData;
 namespace ZeroKWeb.Controllers
 {
 /*  
-        public ResourceData GetResourceDataByInternalName(string internalName)
-        {
-            var db = new ZkDataContext();
-            var entry = db.Resources.SingleOrDefault(x => x.InternalName == internalName);
-            if (entry != null) return PlasmaServer.ToResourceData(entry);
-            else return null;
-        }
-
-        
-        public ResourceData GetResourceDataByResourceID(int resourceID)
-        {
-            var db = new ZkDataContext();
-            return PlasmaServer.ToResourceData(db.Resources.Single(x => x.ResourceID == resourceID));
-        }
-
-
-        
         public List<ResourceData> GetResourceList(DateTime? lastChange, out DateTime currentTime)
         {
             return PlasmaServer.GetResourceList(lastChange, out currentTime);
         }
 
-
-        
-        public ScriptMissionData GetScriptMissionData(string name)
-        {
-            using (var db = new ZkDataContext())
-            {
-                var m = db.Missions.Single(x => x.Name == name && x.IsScriptMission);
-                var mod =
-                    db.Resources.Where(x => x.TypeID == ResourceType.Mod && x.RapidTag == m.ModRapidTag)
-                        .OrderByDescending(x => x.ResourceID)
-                        .FirstOrDefault();
-                return new ScriptMissionData()
-                {
-                    MapName = m.Map,
-                    ModName = mod?.InternalName ?? m.ModRapidTag,
-                    StartScript = m.Script,
-                    ManualDependencies = m.ManualDependencies != null ? new List<string>(m.ManualDependencies.Split('\n')) : null,
-                    Name = m.Name
-                };
-            }
-        }
-
-
-        
-        public void NotifyMissionRun(string login, string missionName)
-        {
-            missionName = Mission.GetNameWithoutVersion(missionName);
-            using (var db = new ZkDataContext())
-            {
-                db.Missions.Single(x => x.Name == missionName).MissionRunCount++;
-                Account.AccountByName(db, login).MissionRunCount++;
-                db.SaveChanges();
-            }
-        }
-
-
-        
-        public ReturnValue RegisterResource(int apiVersion,
-                                                         string springVersion,
-                                                         string md5,
-                                                         int length,
-                                                         ResourceType resourceType,
-                                                         string archiveName,
-                                                         string internalName,
-                                                         byte[] serializedData,
-                                                         List<string> dependencies,
-                                                         byte[] minimap,
-                                                         byte[] metalMap,
-                                                         byte[] heightMap,
-                                                         byte[] torrentData)
-        {
-            return PlasmaServer.RegisterResource(apiVersion,
-                                                 springVersion,
-                                                 md5,
-                                                 length,
-                                                 resourceType,
-                                                 archiveName,
-                                                 internalName,
-                                                 serializedData,
-                                                 dependencies,
-                                                 minimap,
-                                                 metalMap,
-                                                 heightMap,
-                                                 torrentData);
-        }
 
         
         public void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds, string missionVars = "")
@@ -246,12 +166,22 @@ namespace ZeroKWeb.Controllers
                 };
             }
         }*/
-    
-
-    
 
 
-    public class ContentServiceListener
+public class SubmitMissionScoreRequest: ApiRequest<SubmitMissionScoreResponse>
+{
+    public string Login;
+    public string PasswordHash;
+    public string MissionName;
+    public int Score;
+    public int GameSeconds;
+    public string MissionVars;
+}
+
+public class SubmitMissionScoreResponse: ApiResponse { }
+
+
+public class ContentServiceListener
     {
         CommandJsonSerializer serializer;
 
@@ -261,6 +191,12 @@ namespace ZeroKWeb.Controllers
         }
 
 
+        public async Task<T> Query<T>(ApiRequest<T> request) where T: ApiResponse, new()
+        {
+            var ret = await Process(request) as T;
+            return ret;
+        }
+
         public async Task<string> Process(string request)
         {
             var req = serializer.DeserializeLine(request);
@@ -268,33 +204,33 @@ namespace ZeroKWeb.Controllers
             return serializer.SerializeContentOnly(response);
             
         }
-        
-        public async Task<ApiResponse> Process(object request)
+
+        async Task<ApiResponse> Process(object request)
         {
             dynamic req = request;
             var response = await Process(req);
             return response;
         }
 
-        public async Task<DownloadFileResponse> Process(DownloadFileRequest request)
+        async Task<DownloadFileResponse> Process(DownloadFileRequest request)
         {
             return PlasmaServer.DownloadFile(request.InternalName);
         }
-        
-        public async Task<GetEngineListResponse> Process(GetEngineListRequest request)
+
+        async Task<GetEngineListResponse> Process(GetEngineListRequest request)
         {
             var comparer = new EngineDownload.VersionNumberComparer();
             var list = new DirectoryInfo(Path.Combine(Global.MapPath("~"), "engine", request.Platform ?? "win32")).GetFiles().Select(x => x.Name).Select(Path.GetFileNameWithoutExtension).OrderBy(x => x, comparer).ToList();
             return new GetEngineListResponse() { Engines = list };
         }
 
-        public async Task<GetDefaultEngineResponse> Process(GetDefaultEngineRequest request)
+        async Task<GetDefaultEngineResponse> Process(GetDefaultEngineRequest request)
         {
               var ver = MiscVar.DefaultEngine ?? GlobalConst.DefaultEngineOverride;
               return new GetDefaultEngineResponse() { DefaultEngine = ver };
         }
-        
-        public async Task<FindResourceDataResponse> Process(FindResourceDataRequest request)
+
+        async Task<FindResourceDataResponse> Process(FindResourceDataRequest request)
         {
             var words = request.Words;
             var type = request.Type;
@@ -321,15 +257,117 @@ namespace ZeroKWeb.Controllers
             return new FindResourceDataResponse() { Resources = ret.OrderByDescending(x => x.MapSupportLevel).Take(400).ToList().Select(PlasmaServer.ToResourceData).ToList() };
         }
 
-        public async Task<ResourceData> Process(GetResourceDataRequest request)
+        async Task<ResourceData> Process(GetResourceDataRequest request)
         {
             return PlasmaServer.GetResourceData(request.Md5, request.InternalName);
         }
+        
+        async Task<ScriptMissionData> Process(GetScriptMissionDataRequest request)
+        {
+            using (var db = new ZkDataContext())
+            {
+                var m = db.Missions.Single(x => x.Name == request.Name && x.IsScriptMission);
+                var mod =
+                    db.Resources.Where(x => x.TypeID == ResourceType.Mod && x.RapidTag == m.ModRapidTag)
+                        .OrderByDescending(x => x.ResourceID)
+                        .FirstOrDefault();
+                return new ScriptMissionData()
+                {
+                    MapName = m.Map,
+                    ModName = mod?.InternalName ?? m.ModRapidTag,
+                    StartScript = m.Script,
+                    ManualDependencies = m.ManualDependencies != null ? new List<string>(m.ManualDependencies.Split('\n')) : null,
+                    Name = m.Name
+                };
+            }
+        }
 
+        async Task<NotifyMissionRunResponse> Process(NotifyMissionRun request)
+        {
+            var missionName = Mission.GetNameWithoutVersion(request.MissionName);
+            using (var db = new ZkDataContext())
+            {
+                db.Missions.Single(x => x.Name == missionName).MissionRunCount++;
+                Account.AccountByName(db, request.Login).MissionRunCount++;
+                db.SaveChanges();
+            }
+
+            return new NotifyMissionRunResponse();
+        }
+
+        async Task<RegisterResourceResponse> Process(RegisterResourceRequest request)
+        {
+            
+            var ret = PlasmaServer.RegisterResource(request);
+            return new RegisterResourceResponse(){ReturnValue=ret};
+        }
+
+        async Task<SubmitMissionScoreResponse> Process(SubmitMissionScoreRequest request)
+        {
+        public void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds, string missionVars = "")
+        {
+            missionName = Mission.GetNameWithoutVersion(missionName);
+
+            using (var db = new ZkDataContext())
+            {
+                var acc = AuthServiceClient.VerifyAccountHashed(login, passwordHash);
+                if (acc == null)
+                {
+                    Trace.TraceWarning("Invalid login attempt for {0}" , login);
+                    System.Threading.Thread.Sleep(new Random().Next(2000));
+                }
+
+                acc.Xp += GlobalConst.XpForMissionOrBots;
+
+                var mission = db.Missions.Single(x => x.Name == missionName);
+
+                if (score != 0 || mission.RequiredForMultiplayer)
+                {
+                    var scoreEntry = mission.MissionScores.FirstOrDefault(x => x.AccountID == acc.AccountID);
+                    if (scoreEntry == null)
+                    {
+                        scoreEntry = new MissionScore() { MissionID = mission.MissionID, AccountID = acc.AccountID, Score = int.MinValue };
+                        mission.MissionScores.Add(scoreEntry);
+                    }
+
+                    if (score > scoreEntry.Score)
+                    {
+                        var max = mission.MissionScores.Max(x => (int?)x.Score);
+                        if (max == null || max <= score)
+                        {
+                            mission.TopScoreLine = login;
+                            acc.Xp += 150; // 150 for getting top score
+                        }
+                        scoreEntry.Score = score;
+                        scoreEntry.Time = DateTime.UtcNow;
+                        scoreEntry.MissionRevision = mission.Revision;
+                        scoreEntry.GameSeconds = gameSeconds;
+                    }
+                }
+
+                acc.CheckLevelUp();
+                db.SaveChanges();
+
+                if (!acc.CanPlayMultiplayer)
+                {
+                    if (
+                        db.Missions.Where(x => x.RequiredForMultiplayer)
+                            .All(y => y.MissionScores.Any(z => z.AccountID == acc.AccountID)))
+                    {
+                        acc.CanPlayMultiplayer = true;
+                        db.SaveChanges();
+                        Global.Server.PublishAccountUpdate(acc);
+                        Global.Server.GhostPm(acc.Name, "Congratulations! You are now authorized to play MultiPlayer games!");
+                    }
+                }
+            }
+        }
+            
+        }
         
     }
-    
-    
+
+
     public class ContentServiceController: AsyncController
     {
         static ContentServiceListener listener = new ContentServiceListener();
