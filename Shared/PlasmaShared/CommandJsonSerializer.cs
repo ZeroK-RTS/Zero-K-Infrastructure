@@ -52,24 +52,9 @@ namespace PlasmaShared
         /// </summary>
         public string SerializeToLine(object value)
         {
-            var send = $"{GetTypeNameWithoutGenericArity(value.GetType())} {SerializeContentOnly(value)}\n";
+            var send1 = JsonConvert.SerializeObject(value, settings);
+            var send = $"{GetTypeNameWithoutGenericArity(value.GetType())} {send1}\n";
             return send;
         }
-        
-        /// <summary>
-        /// Returns just the serialized json content of response
-        /// </summary>
-        public string SerializeContentOnly(object value)
-        {
-            var send = JsonConvert.SerializeObject(value, settings);
-            return send;
-        }
-        
-        public T DeserializeContentOnly<T>(string serialized)
-        {
-            var ret = JsonConvert.DeserializeObject<T>(serialized, settings);
-            return ret;
-        }
-        
     }
 }

@@ -271,7 +271,7 @@ namespace PlasmaShared
             var line = serializer.SerializeToLine(request);
             var response = await httpClient.PostAsync(url, new StringContent(line));
             var responseString = await response.Content.ReadAsStringAsync();
-            return serializer.DeserializeContentOnly<T>(responseString);
+            return serializer.DeserializeLine(responseString) as T;
         }
         
         public T Query<T>(ApiRequest<T> request) where T: ApiResponse, new()

@@ -36,7 +36,7 @@ namespace ZeroKWeb
         {
             var req = serializer.DeserializeLine(request);
             var response = await Process(req);
-            return serializer.SerializeContentOnly(response);
+            return serializer.SerializeToLine(response);
         }
 
         async Task<ApiResponse> Process(object request)
