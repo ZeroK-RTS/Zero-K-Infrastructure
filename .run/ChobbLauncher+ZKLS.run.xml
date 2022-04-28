@@ -1,0 +1,7 @@
+﻿<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ChobbLauncher+ZKLS" type="CompoundRunConfigurationType">
+    <toRun name="ChobbyLauncher" type="DotNetProject" />
+    <toRun name="asp.net" type="DotNetProject" />
+    <method v="2" />
+  </configuration>
+</component>

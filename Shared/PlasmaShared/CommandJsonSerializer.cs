@@ -11,6 +11,13 @@ namespace PlasmaShared
         //   NetJSONSettings ns = new NetJSONSettings() {DateFormat = NetJSONDateFormat.ISO, UseEnumString = false};
         private JsonSerializerSettings settings = new JsonSerializerSettings() { Formatting = Formatting.None, NullValueHandling = NullValueHandling.Ignore};
 
+        public static string GetTypeNameWithoutGenericArity(Type t)
+        {
+            string name = t.Name;
+            int index = name.IndexOf('`');
+            return index == -1 ? name : name.Substring(0, index);
+        }        
+        
         public CommandJsonSerializer(IEnumerable<Type> types)
         {
             //NetJSON.NetJSON.IncludeFields = false;
@@ -37,22 +44,22 @@ namespace PlasmaShared
 
         public void RegisterTypes(params Type[] types)
         {
-            foreach (var t in types) knownTypes[t.Name] = t;
+            foreach (var t in types) knownTypes[GetTypeNameWithoutGenericArity(t)] = t;
         }
 
         /// <summary>
         /// Returns name of the class and content of the object in a single line
         /// </summary>
-        public string SerializeToLine<T>(T value)
+        public string SerializeToLine(object value)
         {
-            var send = $"{typeof(T).Name} {SerializeContentOnly(value)}\n";
+            var send = $"{GetTypeNameWithoutGenericArity(value.GetType())} {SerializeContentOnly(value)}\n";
             return send;
         }
         
         /// <summary>
         /// Returns just the serialized json content of response
         /// </summary>
-        public string SerializeContentOnly<T>(T value)
+        public string SerializeContentOnly(object value)
         {
             var send = JsonConvert.SerializeObject(value, settings);
             return send;
