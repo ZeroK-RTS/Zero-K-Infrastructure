@@ -5,6 +5,7 @@ using System.Data.Entity.SqlServer;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.ServiceModel;
 using LobbyClient;
 using Microsoft.Linq.Translations;
 using PlasmaDownloader;
@@ -13,6 +14,75 @@ using ZkData;
 
 namespace ZeroKWeb
 {
+    [ServiceContract]
+    [Obsolete("Use ContentServiceClient instead")]
+    public interface IContentService
+    {
+        [OperationContract]
+        DownloadFileResponse DownloadFile(string internalName);
+
+
+        [OperationContract]
+        List<string> GetEngineList(string platform);
+
+        [OperationContract]
+        string GetDefaultEngine();
+
+
+        [OperationContract]
+        List<ResourceData> FindResourceData(string[] words, ResourceType? type = null);
+
+        /// <summary>
+        /// Finds resource by either md5 or internal name
+        /// </summary>
+        /// <param name="md5"></param>
+        /// <param name="internalName"></param>
+        /// <returns></returns>
+        [OperationContract]
+        ResourceData GetResourceData(string md5, string internalName);
+
+        [OperationContract]
+        List<ResourceData> GetResourceList(DateTime? lastChange, out DateTime currentTime);
+
+        [OperationContract]
+        ScriptMissionData GetScriptMissionData(string name);
+
+        [OperationContract(IsOneWay = true)]
+        void NotifyMissionRun(string login, string missionName);
+
+        [OperationContract]
+        ReturnValue RegisterResource(int apiVersion,
+                                                                  string springVersion,
+                                                                  string md5,
+                                                                  int length,
+                                                                  ResourceType resourceType,
+                                                                  string archiveName,
+                                                                  string internalName,
+                                                                  byte[] serializedData,
+                                                                  List<string> dependencies,
+                                                                  byte[] minimap,
+                                                                  byte[] metalMap,
+                                                                  byte[] heightMap,
+                                                                  byte[] torrentData);
+
+        [OperationContract]
+        void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds, string missionVars = "");
+
+        [OperationContract]
+        List<ClientMissionInfo> GetDefaultMissions();
+
+        [OperationContract]
+        PublicCommunityInfo GetPublicCommunityInfo();
+        
+        [OperationContract]
+        List<CustomGameModeInfo> GetFeaturedCustomGameModes();
+
+
+        [OperationContract]
+        SpringBattleInfo GetSpringBattleInfo(string gameid);
+    }
+
+    
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "ContentService" in code, svc and config file together.
     // NOTE: In order to launch WCF Test Client for testing this service, please select ContentService.svc or ContentService.svc.cs at the Solution Explorer and start debugging.
     [Obsolete("Use ContenServiceClient instead!")]
