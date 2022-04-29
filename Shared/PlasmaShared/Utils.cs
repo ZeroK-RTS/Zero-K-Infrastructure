@@ -969,22 +969,19 @@ namespace ZkData
             }
             catch
             {
-                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-                {
-                    url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-                }
-                else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+                
+                if (Environment.OSVersion.Platform == PlatformID.Unix)
                 {
                     Process.Start("xdg-open", url);
                 }
-                else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
+                else if (Environment.OSVersion.Platform ==PlatformID.MacOSX)
                 {
                     Process.Start("open", url);
                 }
-                else
+                else 
                 {
-                    throw;
+                    url = url.Replace("&", "^&");
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
                 }
             }
         }        
