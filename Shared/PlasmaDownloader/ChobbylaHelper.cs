@@ -73,7 +73,7 @@ namespace PlasmaDownloader
                 progress.Status = "Loading community news";
                 var folder = Path.Combine(downloader.SpringPaths.WritableDirectory, "news");
                 if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-                var info = GlobalConst.GetContentService().GetPublicCommunityInfo();
+                var info = GlobalConst.GetContentService().Query(new GetPublicCommunityInfo());
                 File.WriteAllText(Path.Combine(folder, "community.json"), JsonConvert.SerializeObject(info));
                 return true;
             }
@@ -92,7 +92,7 @@ namespace PlasmaDownloader
                 progress.Status = "Loading custom game modes";
                 var folder = Path.Combine(downloader.SpringPaths.WritableDirectory, "CustomModes");
                 if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-                var modes = GlobalConst.GetContentService().GetFeaturedCustomGameModes();
+                var modes = GlobalConst.GetContentService().Query(new GetFeaturedCustomGameModes()).CustomGameModes;
                 foreach (var mode in modes)
                 {    
                     File.WriteAllText(Path.Combine(folder, $"{mode.FileName}.json"), mode.FileContent);    
@@ -114,7 +114,7 @@ namespace PlasmaDownloader
             try
             {
                 progress.Status = "Downloading missions";
-                var missions = GlobalConst.GetContentService().GetDefaultMissions();
+                var missions = GlobalConst.GetContentService().Query(new GetDefaultMissionsRequest()).Missions;
 
                 var missionsFolder = Path.Combine(downloader.SpringPaths.WritableDirectory, "missions");
                 if (!Directory.Exists(missionsFolder)) Directory.CreateDirectory(missionsFolder);

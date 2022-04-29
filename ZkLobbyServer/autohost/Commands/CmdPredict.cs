@@ -42,9 +42,18 @@ namespace ZkLobbyServer
             {
                 if (battle.IsInGame)
                 {
-                    teams = b.spring.LobbyStartContext?.Players.Where(u => !u.IsSpectator)
-                        .GroupBy(u => u.AllyID)
-                        .Select(x => x.Select(p => Account.AccountByName(db, p.Name))).ToList();
+                    /* The following can be used to get the ingame players, but note that this
+                     * works off the initial conditions which will have rapidly changed during
+                     * the game. If somebody really needs to know, they can make a widget to
+                     * display it locally without the psychological effect of a public announcement.
+                     *
+                     * teams = b.spring.LobbyStartContext?.Players.Where(u => !u.IsSpectator)
+                     *  .GroupBy(u => u.AllyID)
+                     *  .Select(x => x.Select(p => Account.AccountByName(db, p.Name))).ToList();
+                     */
+
+                    await battle.SayBattle($"!predict cannot be used ingame");
+                    return;
                 }
                 else
                 {

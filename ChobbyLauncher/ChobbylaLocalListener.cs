@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -158,6 +159,10 @@ namespace ChobbyLauncher
                 LastUserAction = DateTime.Now;
                 MinimizeChobby();
                 System.Diagnostics.Process.Start(args.Url);
+            }
+            catch (Win32Exception)
+            {
+                System.Diagnostics.Process.Start("xdg-open", args.Url);
             }
             catch (Exception ex)
             {
@@ -646,7 +651,7 @@ namespace ChobbyLauncher
                             StartScriptContent = args.StartScriptContent
                         });
                         
-                        CrashReportHelper.CheckAndReportErrors(logs.ToString(), isOk, "Externally launched spring crashed", null, args.Engine);
+                        CrashReportHelper.CheckAndReportErrors(logs.ToString(), isOk, "Externally launched spring crashed with code " + process.ExitCode, null, args.Engine);
                     };
                     process.EnableRaisingEvents = true;
                     process.Start();
@@ -720,12 +725,12 @@ namespace ChobbyLauncher
 
         private async Task Process(GetSpringBattleInfo args)
         {
-            Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(async () =>
             {
                 try
                 {
                     var serv = GlobalConst.GetContentService();
-                    var sbi = serv.GetSpringBattleInfo(args.GameID);
+                    var sbi = await serv.QueryAsync(new PlasmaShared.GetSpringBattleInfo(){GameID = args.GameID});
                     SendCommand(new GetSpringBattleInfoDone()
                     {
                         GameID = args.GameID,

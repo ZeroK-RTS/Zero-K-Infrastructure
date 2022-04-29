@@ -1,12 +1,13 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PlasmaShared;
 
 namespace Tests
 {
-    [TestFixture]
+    [TestClass]
     public class TestRsa
     {
-        [Test]
+        [TestMethod]
+        [TestCategory("Basic")]
         public void TestRsaSignatures() {
             var keys = RsaSignatures.GenerateKeys();
             

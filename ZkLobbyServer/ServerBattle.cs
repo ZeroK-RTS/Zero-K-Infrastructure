@@ -278,7 +278,7 @@ namespace ZkLobbyServer
             if (!say.IsEmote && (say.Text?.Length > 1) && say.Text.StartsWith("!"))
             {
                 var parts = say.Text.Substring(1).Split(new[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
-                return await RunCommandWithPermissionCheck(say, parts[0], parts.Skip(1).FirstOrDefault());
+                return await RunCommandWithPermissionCheck(say, parts[0]?.ToLower(), parts.Skip(1).FirstOrDefault());
             }
             return false;
         }
@@ -1280,7 +1280,8 @@ namespace ZkLobbyServer
                 if (HostedMod?.Mission != null)
                 {
                     var service = GlobalConst.GetContentService();
-                    foreach (var u in spring.LobbyStartContext.Players.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, HostedMod.Mission.Name);
+                    foreach (var u in spring.LobbyStartContext.Players.Where(x => !x.IsSpectator))
+                        service.Query(new NotifyMissionRun() { Login = u.Name, MissionName = HostedMod.Mission.Name });
                 }
             }
             catch (Exception ex)
