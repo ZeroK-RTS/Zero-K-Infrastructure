@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -146,7 +147,7 @@ namespace ChobbyLauncher
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Warning) == DialogResult.Yes)
                     {
-                        Process.Start("http://zero-k.info/mediawiki/index.php?title=Optimized_Graphics_Linux");
+                        Utils.OpenUrl("http://zero-k.info/mediawiki/index.php?title=Optimized_Graphics_Linux");
                     }
                 }
                 else
@@ -175,7 +176,7 @@ namespace ChobbyLauncher
                                   : luaErr       ? CrashType.LuaError
                                                  : CrashType.Crash;
 
-                    var ret = CrashReportHelper.ReportCrash(logStr,
+                    var ret = ReportCrash(logStr,
                         crashType,
                         engineVersion,
                         bugReportTitle,
@@ -183,7 +184,7 @@ namespace ChobbyLauncher
                     if (ret != null)
                         try
                         {
-                            Process.Start(ret.HtmlUrl.ToString());
+                            Utils.OpenUrl(ret.HtmlUrl);
                         }
                         catch { }
                 }

@@ -762,10 +762,11 @@ namespace ZkData
             }
         }
 
+        public static readonly string[] SupportedAssemblies = new[] {"PlasmaShared", "PlasmaDownloader", "ChobbyLauncher"};
 
         public static IEnumerable<Type> GetAllTypesWithAttribute<T>()
         {
-            return from a in AppDomain.CurrentDomain.GetAssemblies().AsParallel()
+            return from a in AppDomain.CurrentDomain.GetAssemblies().Where(x=> SupportedAssemblies.Contains(x.GetName().Name)).ToList().AsParallel()
                    from t in a.GetLoadableTypes()
                    let attributes = t.GetCustomAttributes(typeof(T), true)
                    where attributes != null && attributes.Length > 0
@@ -958,6 +959,35 @@ namespace ZkData
             return Encoding.UTF8.GetString(base64EncodedBytes);
         }
         
+        
+
+        public static void OpenUrl(string url)
+        {
+            try
+            {
+                Process.Start(url);
+            }
+            catch
+            {
+                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+                {
+                    url = url.Replace("&", "^&");
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                }
+                else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+                {
+                    Process.Start("xdg-open", url);
+                }
+                else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
+                {
+                    Process.Start("open", url);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }        
     }
 
     public struct Indexed<T>

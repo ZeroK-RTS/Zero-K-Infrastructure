@@ -17,7 +17,7 @@ namespace PlasmaDownloader.Torrents
     {
         readonly string incomingFolder;
         PlasmaDownloader plasmaDownloader;
-        readonly IContentService plasmaService = GlobalConst.GetContentService();
+        readonly IContentServiceClient plasmaService = GlobalConst.GetContentService();
 
         public TorrentDownloader(PlasmaDownloader plasmaDownloader)
         {
@@ -55,9 +55,10 @@ namespace PlasmaDownloader.Torrents
 
 
             Task.Factory.StartNew(() => {
-                DownloadFileResult e;
-                try {
-                    e = plasmaService.DownloadFile(name);
+                DownloadFileResponse e;
+                try
+                {
+                    e = plasmaService.Query(new DownloadFileRequest() { InternalName = name });
                 } catch (Exception ex) {
                     Trace.TraceError("Error downloading {0}: {1}", down.Name, ex);
                     down.Finish(false);
@@ -124,9 +125,10 @@ namespace PlasmaDownloader.Torrents
 
         public string[] GetFileDependencies(string name)
         {
-            DownloadFileResult e;
-            try {
-                e = plasmaService.DownloadFile(name);
+            DownloadFileResponse e;
+            try
+            {
+                e = plasmaService.Query(new DownloadFileRequest() { InternalName = name });
                 return e.dependencies.ToArray();
             } catch (Exception ex) {
                 Trace.TraceError("Error fetching information for {0}: {1}", name, ex);

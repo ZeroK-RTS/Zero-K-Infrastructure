@@ -38,7 +38,7 @@ namespace ZeroKWeb.Controllers
             if (!string.IsNullOrEmpty(model.Country))
             {
                 var termLower = model.Country.ToLower();
-                ret = ret.Where(x => x.Country.ToLower().Contains(termLower));
+                ret = ret.Where(x => x.Country.ToLower().Contains(termLower) && !x.HideCountry);
             }
 
             if (model.RegisteredFrom.HasValue) ret = ret.Where(x => x.FirstLogin >= model.RegisteredFrom);

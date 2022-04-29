@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ZkData;
 
 namespace Tests
 {
-    [TestFixture]
+    [TestClass]
     public class WhoisTests
     {
-        [Test]
+        [TestMethod]
         public async Task RunQuery() {
             var whois = new Whois();
             var data = whois.QueryByIp("31.7.187.232");
-            Assert.AreEqual("PRIVAX-LTD", data["netname"]);
+            Assert.AreEqual("OXYGEM", data["netname"]);
 
             data = whois.QueryByIp("62.233.34.238");
-            Assert.AreEqual("info@hidemyass.com", data["abuse-mailbox"]);
+            Assert.AreEqual("info@cloudnovi.com", data["abuse-mailbox"]);
         }
 
     }

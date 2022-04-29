@@ -124,19 +124,20 @@ namespace AutoRegistrator
                     try
                     {
                         var service = GlobalConst.GetContentService();
-                        e = service.RegisterResource(PlasmaServiceVersion,
-                            null,
-                            hash.ToString(),
-                            (int)length,
-                            info.ResourceType,
-                            resource.ArchiveName,
-                            info.Name,
-                            serializedData,
-                            info.Dependencies,
-                            minimap,
-                            metalMap,
-                            heightMap,
-                            ms.ToArray());
+                        e = service.Query(new RegisterResourceRequest()
+                        {
+                            Md5 = hash.ToString(),
+                            Length = (int)length,
+                            ResourceType = info.ResourceType,
+                            ArchiveName = resource.ArchiveName,
+                            InternalName = info.Name,
+                            SerializedData = serializedData,
+                            Dependencies = info.Dependencies,
+                            Minimap = minimap,
+                            MetalMap = metalMap,
+                            HeightMap = heightMap,
+                            TorrentData = ms.ToArray()
+                        }).ReturnValue;
                     }
                     catch (Exception ex)
                     {

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace PlasmaShared
 {
-    public class ClientMissionInfo
+    public class ClientMissionInfo: ApiResponse
     {
         public string Author { get; set; }
         public string OtherDependencies { get; set; }

@@ -11,12 +11,23 @@ namespace PlasmaShared
         //   NetJSONSettings ns = new NetJSONSettings() {DateFormat = NetJSONDateFormat.ISO, UseEnumString = false};
         private JsonSerializerSettings settings = new JsonSerializerSettings() { Formatting = Formatting.None, NullValueHandling = NullValueHandling.Ignore};
 
+        public static string GetTypeNameWithoutGenericArity(Type t)
+        {
+            string name = t.Name;
+            int index = name.IndexOf('`');
+            return index == -1 ? name : name.Substring(0, index);
+        }        
+        
         public CommandJsonSerializer(IEnumerable<Type> types)
         {
             //NetJSON.NetJSON.IncludeFields = false;
             RegisterTypes(types.ToArray());
         }
 
+
+        /// <summary>
+        /// Deserializes a command from a JSON string in a format "CommandName JsonSerializedCommandContent"
+        /// </summary>
 
         public object DeserializeLine(string line)
         {
@@ -33,12 +44,16 @@ namespace PlasmaShared
 
         public void RegisterTypes(params Type[] types)
         {
-            foreach (var t in types) knownTypes[t.Name] = t;
+            foreach (var t in types) knownTypes[GetTypeNameWithoutGenericArity(t)] = t;
         }
 
-        public string SerializeToLine<T>(T value)
+        /// <summary>
+        /// Returns name of the class and content of the object in a single line
+        /// </summary>
+        public string SerializeToLine(object value)
         {
-            var send = $"{typeof(T).Name} {JsonConvert.SerializeObject(value, settings)}\n";
+            var send1 = JsonConvert.SerializeObject(value, settings);
+            var send = $"{GetTypeNameWithoutGenericArity(value.GetType())} {send1}\n";
             return send;
         }
     }
