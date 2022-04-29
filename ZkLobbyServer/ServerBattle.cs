@@ -278,7 +278,7 @@ namespace ZkLobbyServer
             if (!say.IsEmote && (say.Text?.Length > 1) && say.Text.StartsWith("!"))
             {
                 var parts = say.Text.Substring(1).Split(new[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
-                return await RunCommandWithPermissionCheck(say, parts[0].ToLower(), parts.Skip(1).FirstOrDefault());
+                return await RunCommandWithPermissionCheck(say, parts[0]?.ToLower(), parts.Skip(1).FirstOrDefault());
             }
             return false;
         }
