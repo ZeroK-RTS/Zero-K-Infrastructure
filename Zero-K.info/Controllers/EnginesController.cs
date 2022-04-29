@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
-using SharpCompress.Archive;
+using SharpCompress.Archives;
 using SharpCompress.Common;
 using ZkData;
 

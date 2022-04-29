@@ -10,8 +10,6 @@ using System.Net;
 using System.Security.Principal;
 using System.Threading;
 using Ionic.Zip;
-using SharpCompress.Archive;
-using SharpCompress.Archive.Zip;
 using SharpCompress.Common;
 using ZkData;
 using CompressionLevel = Ionic.Zlib.CompressionLevel;

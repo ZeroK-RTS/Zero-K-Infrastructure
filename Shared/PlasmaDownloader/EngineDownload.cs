@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Mono.Unix.Native;
 using PlasmaShared;
-using SharpCompress.Archive;
+using SharpCompress.Archives;
 using SharpCompress.Common;
 using ZkData;
 
@@ -159,7 +159,7 @@ namespace PlasmaDownloader
                         IndividualProgress = 90 + (10 * done / totalSize);
                     };
 
-                archive.WriteToDirectory(targetDir, ExtractOptions.ExtractFullPath | ExtractOptions.Overwrite);
+                archive.WriteToDirectory(targetDir, new ExtractionOptions() {ExtractFullPath = true, Overwrite = true});
             }
         }
 
