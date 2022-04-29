@@ -22,10 +22,12 @@ jobs:
     runs-on: zk
 
     steps:
-      - name: Setup MSBuild Path
-        uses: microsoft/setup-msbuild@v1.1  
-        with:
-          msbuild-architecture: x64
+      #- name: Setup MSBuild Path
+       # uses: microsoft/setup-msbuild@v1.1  
+       # with:
+       #   msbuild-architecture: x64
+      - name: Try set up path
+        run: echo "c:\Program Files (x86)\MSBuild\14.0\Bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.5        
@@ -41,7 +43,7 @@ jobs:
       - name: Restore NuGet Packages
         run: nuget restore Zero-K.sln
  
-      - name: Build entire ZenID
+      - name: Build entire Zero-K
         run: >
           msbuild /t:Rebuild /p:Configuration=Release /p:Platform=x86 
           /p:DeployOnBuild=true /p:PublishProfile=Profile1
@@ -51,7 +53,6 @@ jobs:
           Zero-K.sln
 
       - name: Run VSTest
-        if: success() || failure()
         run: vstest.console.exe /Platform:x86 /Framework:Framework45 /TestCaseFilter:TestCategory=Basic /Parallel /Logger:trx;LogFileName=test-results.trx ./Tests/bin/Tests.dll
         shell: cmd
         
