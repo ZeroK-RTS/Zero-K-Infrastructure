@@ -690,6 +690,7 @@ namespace ZkLobbyServer
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Game = ModName } });
+            SaveToDb();
         }
 
         public async Task SwitchGameType(AutohostMode type)
@@ -709,6 +710,7 @@ namespace ZkLobbyServer
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = MapName } });
+            SaveToDb();
         }
 
         public async Task SwitchMaxPlayers(int cnt)
