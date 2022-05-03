@@ -51,7 +51,7 @@ jobs:
           Zero-K.sln
 
       - name: Run VSTest
-        run: vstest.console.exe /Platform:x86 /Framework:Framework45 /TestCaseFilter:TestCategory=Basic /Parallel /Logger:trx;LogFileName=test-results.trx ./Tests/bin/Tests.dll
+        run: vstest.console.exe /Platform:x86 /Framework:Framework45 /TestCaseFilter:TestCategory=Basic /Parallel /Logger:trx;LogFileName=test-results.trx ./Tests/bin/net48/Tests.dll
         shell: cmd
         
       - name: Test Report C#
