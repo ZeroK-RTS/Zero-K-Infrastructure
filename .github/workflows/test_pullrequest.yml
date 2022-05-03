@@ -22,18 +22,16 @@ jobs:
     runs-on: zk
 
     steps:
-      #- name: Setup MSBuild Path
-       # uses: microsoft/setup-msbuild@v1.1  
-       # with:
-       #   msbuild-architecture: x64
-      - name: Try set up path
-        run: echo "c:\Program Files (x86)\MSBuild\14.0\Bin;c:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\CommonExtensions\Microsoft\TestWindow" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Setup MSBuild Path
+        uses: microsoft/setup-msbuild@v1.1  
+        with:
+          msbuild-architecture: x64
         
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.5        
         
-#      - name: Setup VSTest.console.exe
- #       uses: darenm/Setup-VSTest@v1        
+      - name: Setup VSTest.console.exe
+        uses: darenm/Setup-VSTest@v1        
 
       - name: Checkout
         uses: actions/checkout@v2
