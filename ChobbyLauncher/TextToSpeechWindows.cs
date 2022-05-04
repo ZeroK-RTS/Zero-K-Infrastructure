@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Speech.Synthesis;
 using System.Text.RegularExpressions;
+using PlasmaShared;
 using ZkData;
 
 namespace ChobbyLauncher

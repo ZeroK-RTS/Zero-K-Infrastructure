@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 using ZkData.UnitSyncLib;
 

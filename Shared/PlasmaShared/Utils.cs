@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -19,12 +18,11 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using PlasmaShared;
 using Encoder = System.Drawing.Imaging.Encoder;
 
 #endregion
 
-namespace ZkData
+namespace PlasmaShared
 {
     /// <summary>
     /// General purpose static functions here

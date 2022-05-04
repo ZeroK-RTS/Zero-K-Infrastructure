@@ -80,6 +80,7 @@
     <Compile Include="EventArgs.cs" />
     <Compile Include="EventExtensions.cs" />
     <Compile Include="GlobalConst.cs" />
+    <Compile Include="IpHelpers.cs" />
     <Compile Include="ISpringieService\RatingCategory.cs" />
     <Compile Include="PriorityScheduler.cs" />
     <Compile Include="Hash.cs" />

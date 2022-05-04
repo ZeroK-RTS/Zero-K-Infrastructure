@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
+using PlasmaShared;
 using ZeroKWeb.ForumParser;
 using ZkData;
 

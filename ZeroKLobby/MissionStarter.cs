@@ -115,7 +115,7 @@ namespace ZeroKLobby
                             service.Query(new SubmitMissionScoreRequest()
                             {
                                 Login = Program.Conf.LobbyPlayerName,
-                                PasswordHash = ZkData.Utils.HashLobbyPassword(Program.Conf.LobbyPlayerPassword),
+                                PasswordHash = PlasmaShared.Utils.HashLobbyPassword(Program.Conf.LobbyPlayerPassword),
                                 MissionName = modInfo.Name,
                                 Score = spring.Context.MissionScore ?? 0,
                                 GameSeconds = spring.Context.MissionFrame/30,

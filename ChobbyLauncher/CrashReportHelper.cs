@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GameAnalyticsSDK.Net;
 using Octokit;
+using PlasmaShared;
 using ZkData;
 using FileMode = System.IO.FileMode;
 

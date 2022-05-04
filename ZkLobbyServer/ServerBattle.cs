@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -87,9 +88,7 @@ namespace ZkLobbyServer
                     .Cast<BattleCommand>()
                     .ToDictionary(x => x.Shortcut, x => x);
 
-            hostingIp =
-                Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString() ??
-                "127.0.0.1";
+            hostingIp = IpHelpers.GetMyIpAddress();
         }
 
         public ServerBattle(ZkLobbyServer server, string founder)

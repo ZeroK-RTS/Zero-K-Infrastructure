@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ionic.Zip;
 using Ionic.Zlib;
+using PlasmaShared;
 using ZkData;
 
 namespace PlasmaDownloader.Packages

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Speech.Synthesis;
 using System.Text.RegularExpressions;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKLobby
