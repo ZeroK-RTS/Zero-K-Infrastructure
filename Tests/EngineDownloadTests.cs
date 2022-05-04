@@ -11,7 +11,6 @@ namespace Tests
     public class EngineDownloadTests
     {
         [TestMethod]
-        [TestCategory("Basic")]
         public void GetDevelopList() {
             var list = EngineDownload.GetEngineList();
             Assert.IsTrue(list.Count > 1);
