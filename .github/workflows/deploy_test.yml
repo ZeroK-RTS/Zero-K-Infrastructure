@@ -50,7 +50,7 @@ jobs:
         shell: cmd
         
       - name: Copy steam pipeline files
-        run: >
+        run: |
           robocopy SteamRoot c:\projekty\test.zero-k.info\steamworks\tools\ContentBuilder\content /e
           robocopy SteamScripts c:\projekty\test.zero-k.info\steamworks\tools\ContentBuilder\scripts /e
           if errorlevel 1 exit 0
@@ -62,8 +62,9 @@ jobs:
         run: MigrateDatabase\bin\release\MigrateDatabase.exe
         
       - name: Deploy website
-        run: >
+        run: |
           robocopy zero-k.info\Deploy c:\projekty\test.zero-k.info\www /e
+          if errorlevel 1 exit 0
           
       - name: Start IIS 
         if: success() || failure()    # run this step even if previous step failed
@@ -75,7 +76,7 @@ jobs:
           copy /Y ChobbyLauncher\bin\release\Zero-K.version.txt c:\projekty\test.zero-k.info\www\lobby
           
       - name: Deploy presskit
-        run: > 
+        run: | 
           robocopy presskit c:\projekty\test.zero-k.info\presskit /e        
           if errorlevel 1 exit 0
           
