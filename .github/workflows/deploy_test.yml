@@ -73,7 +73,7 @@ jobs:
         run: c:\Windows\System32\inetsrv\appcmd.exe start apppool test.zero-k.info
         
       - name: Deploy ZKL
-        run: >
+        run: |
           copy /Y ChobbyLauncher\bin\release\Zero-K.exe c:\projekty\test.zero-k.info\www\lobby
           copy /Y ChobbyLauncher\bin\release\Zero-K.version.txt c:\projekty\test.zero-k.info\www\lobby
           
