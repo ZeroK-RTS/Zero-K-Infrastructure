@@ -80,8 +80,11 @@ namespace PlasmaShared
         {
             var options = Dns.GetHostEntry(Dns.GetHostName()).AddressList.ToList();
             var interfaces = NetworkInterface.GetAllNetworkInterfaces();
-            foreach (var iface in interfaces)
+            foreach (var iface in interfaces.Where(x=>x.OperationalStatus == OperationalStatus.Up && x.NetworkInterfaceType != NetworkInterfaceType.Loopback))
             {
+                var gws = iface.GetIPProperties().GatewayAddresses;
+                if (gws.Count == 0) continue;
+                
                 var properties = iface.GetIPProperties();
                 foreach (var ifAddr in properties.UnicastAddresses)
                     if (ifAddr.Address.AddressFamily == AddressFamily.InterNetwork) options.Add(ifAddr.Address);
