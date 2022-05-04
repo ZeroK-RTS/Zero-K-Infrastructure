@@ -9,15 +9,20 @@ namespace ZeroKWeb.Controllers
 {
     public class ContentServiceController: AsyncController
     {
+        public ContentServiceController()
+        {
+            TempDataProvider = new NullTempDataProvider(); // this disable session state upkeep
+        }
+
         static ContentServiceImplementation implementation = new ContentServiceImplementation();
 
         [ValidateInput(false)]
-        [System.Web.Mvc.HttpGet]
-        [System.Web.Mvc.HttpPost]
         public async Task<ActionResult> Index()
         {
             var sr = new StreamReader(Request.InputStream);
             var line = await sr.ReadToEndAsync();
+            if (string.IsNullOrEmpty(line))
+                return Content("Please send request in POST body in command line format:ClassName JsonSerializedClassContent");
             var response = await implementation.Process(line);
             return Content(response, "application/json");
         }

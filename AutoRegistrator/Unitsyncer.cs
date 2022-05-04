@@ -126,6 +126,7 @@ namespace AutoRegistrator
                         var service = GlobalConst.GetContentService();
                         e = service.Query(new RegisterResourceRequest()
                         {
+                            ApiVersion = PlasmaServiceVersion,
                             Md5 = hash.ToString(),
                             Length = (int)length,
                             ResourceType = info.ResourceType,
