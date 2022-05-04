@@ -46,8 +46,16 @@ namespace PlasmaShared
 
         public static string GetMyIpAddress()
         {
-            return Dns.GetHostEntry(Dns.GetHostName()).AddressList
-                .FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork && !IsLanIP(ip.ToString()))?.ToString() ?? "127.0.0.1";
+            var options = Dns.GetHostEntry(Dns.GetHostName()).AddressList.ToList();
+            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (var iface in interfaces)
+            {
+                var properties = iface.GetIPProperties();
+                foreach (var ifAddr in properties.UnicastAddresses)
+                    if (ifAddr.Address.AddressFamily == AddressFamily.InterNetwork) options.Add(ifAddr.Address);
+            }
+            
+            return options.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork && !IsLanIP(ip.ToString()))?.ToString() ?? "127.0.0.1";
         }
 
     }
