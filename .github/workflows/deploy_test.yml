@@ -76,7 +76,8 @@ jobs:
         run: |
           copy /Y ChobbyLauncher\bin\release\Zero-K.exe c:\projekty\test.zero-k.info\www\lobby
           copy /Y ChobbyLauncher\bin\release\Zero-K.version.txt c:\projekty\test.zero-k.info\www\lobby
-          
+        shell: cmd        
+        
       - name: Deploy presskit
         run: | 
           robocopy presskit c:\projekty\test.zero-k.info\presskit /e        
