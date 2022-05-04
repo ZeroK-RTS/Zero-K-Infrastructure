@@ -53,7 +53,9 @@ jobs:
         run: |
           robocopy SteamRoot c:\projekty\test.zero-k.info\steamworks\tools\ContentBuilder\content /e
           robocopy SteamScripts c:\projekty\test.zero-k.info\steamworks\tools\ContentBuilder\scripts /e
-          if errorlevel 1 (exit 0)
+          if errorlevel 1 (
+            exit 0
+          )
           
       - name: Stop IIS
         run: c:\Windows\System32\inetsrv\appcmd.exe stop apppool test.zero-k.info
@@ -64,7 +66,9 @@ jobs:
       - name: Deploy website
         run: |
           robocopy zero-k.info\Deploy c:\projekty\test.zero-k.info\www /e
-          if errorlevel 1 (exit 0)
+          if errorlevel 1 (
+            exit 0
+          )
           
       - name: Start IIS 
         if: success() || failure()    # run this step even if previous step failed
@@ -78,6 +82,8 @@ jobs:
       - name: Deploy presskit
         run: | 
           robocopy presskit c:\projekty\test.zero-k.info\presskit /e        
-          if errorlevel 1 (exit 0)
+          if errorlevel 1 (
+            exit 0
+          )
           
         
