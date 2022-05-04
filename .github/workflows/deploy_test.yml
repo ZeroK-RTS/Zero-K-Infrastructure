@@ -1,20 +1,19 @@
-name: Test pull request
+name: Deploy test
 
 on:
-  pull_request:
+  push:
     branches: [ master ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch: 
   
-
 concurrency: 
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
-    name: Build and test Zero-K
+    name: Build TEST
     runs-on: zk
 
     steps:
@@ -50,11 +49,34 @@ jobs:
         run: vstest.console.exe /Platform:x86 /Framework:Framework45 /TestCaseFilter:TestCategory=Basic /Parallel /Logger:trx;LogFileName=test-results.trx ./Tests/bin/net48/Tests.dll
         shell: cmd
         
-      - name: Test Report C#
-        uses: dorny/test-reporter@v1
+      - name: Copy steam pipeline files
+        run: >
+          robocopy SteamRoot c:\projekty\test.zero-k.info\steamworks\tools\ContentBuilder\content /e
+          robocopy SteamScripts c:\projekty\test.zero-k.info\steamworks\tools\ContentBuilder\scripts /e
+          if errorlevel 1 exit 0
+          
+      - name: Stop IIS
+        run: c:\Windows\System32\inetsrv\appcmd.exe stop apppool test.zero-k.info
+        
+      - name: Migrate database
+        run: MigrateDatabase\bin\release\MigrateDatabase.exe
+        
+      - name: Deploy website
+        run: >
+          robocopy zero-k.info\Deploy c:\projekty\test.zero-k.info\www /e
+          
+      - name: Start IIS 
         if: success() || failure()    # run this step even if previous step failed
-        with:
-          name: Test results C#           # Name of the check run which will be created
-          path: TestResults/test-results.trx
-          reporter: dotnet-trx
-
+        run: c:\Windows\System32\inetsrv\appcmd.exe start apppool test.zero-k.info
+        
+      - name: Deploy ZKL
+        run: >
+          copy /Y ChobbyLauncher\bin\release\Zero-K.exe c:\projekty\test.zero-k.info\www\lobby
+          copy /Y ChobbyLauncher\bin\release\Zero-K.version.txt c:\projekty\test.zero-k.info\www\lobby
+          
+      - name: Deploy presskit
+        run: > 
+          robocopy presskit c:\projekty\test.zero-k.info\presskit /e        
+          if errorlevel 1 exit 0
+          
+        
