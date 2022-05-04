@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -7,6 +8,34 @@ namespace PlasmaShared
 {
     public static class IpHelpers
     {
+        public const string CidrPrivateAddressBlockA = "10.0.0.0/8";
+        public const string CidrPrivateAddressBlockB = "172.16.0.0/12";
+        public const string CidrPrivateAddressBlockC = "192.168.0.0/16";
+
+        static bool IsInCidrRange(string ipAddress, string cidrMask)
+        {
+            string[] parts = cidrMask.Split('/');
+
+            int IP_addr = BitConverter.ToInt32(IPAddress.Parse(ipAddress).GetAddressBytes(), 0);
+            int CIDR_addr = BitConverter.ToInt32(IPAddress.Parse(parts[0]).GetAddressBytes(), 0);
+            int CIDR_mask = IPAddress.HostToNetworkOrder(-1 << (32 - int.Parse(parts[1])));
+
+            return ((IP_addr & CIDR_mask) == (CIDR_addr & CIDR_mask));
+        }
+
+        /// <summary>
+        /// Returns true if ip address is local address (10.x, 172.x etc)
+        /// </summary>
+        public static bool IsPrivateAddressSpace(string ipAddress)
+        {
+            var inPrivateBlockA = IsInCidrRange(ipAddress, CidrPrivateAddressBlockA);
+            var inPrivateBlockB = IsInCidrRange(ipAddress, CidrPrivateAddressBlockB);
+            var inPrivateBlockC = IsInCidrRange(ipAddress, CidrPrivateAddressBlockC);
+
+            return inPrivateBlockA || inPrivateBlockB || inPrivateBlockC;
+        }
+        
+        
         private static bool CheckMask(IPAddress address, IPAddress mask, IPAddress target)
         {
             if (mask == null) return false;
@@ -30,7 +59,10 @@ namespace PlasmaShared
             return true;
         }
 
-        public static bool IsLanIP(string ip)
+        /// <summary>
+        /// Returns whether IP belongs to LAN networks according to my interfaces IPs and masks
+        /// </summary>
+        public static bool IsMyLanIp(string ip)
         {
             var address = IPAddress.Parse(ip);
             var interfaces = NetworkInterface.GetAllNetworkInterfaces();
@@ -55,7 +87,7 @@ namespace PlasmaShared
                     if (ifAddr.Address.AddressFamily == AddressFamily.InterNetwork) options.Add(ifAddr.Address);
             }
             
-            return options.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork && !IsLanIP(ip.ToString()))?.ToString() ?? "127.0.0.1";
+            return options.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork && !IsPrivateAddressSpace(ip.ToString()))?.ToString() ?? "127.0.0.1";
         }
 
     }

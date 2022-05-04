@@ -387,7 +387,7 @@ namespace ZkLobbyServer
 
         private static void LogIP(ZkDataContext db, Account acc, string ip)
         {
-            if (IpHelpers.IsLanIP(ip)) return;
+            if (IpHelpers.IsMyLanIp(ip) || IpHelpers.IsPrivateAddressSpace(ip)) return;
             var entry = acc.AccountIPs.FirstOrDefault(x => x.IP == ip);
             if (entry == null)
             {
@@ -416,7 +416,7 @@ namespace ZkLobbyServer
 
         private string ResolveCountry(string ip)
         {
-            if (IpHelpers.IsLanIP(ip)) return "CZ";
+            if (IpHelpers.IsMyLanIp(ip)) return "CZ";
             else
                 try
                 {
