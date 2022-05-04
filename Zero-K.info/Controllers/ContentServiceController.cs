@@ -11,6 +11,8 @@ namespace ZeroKWeb.Controllers
     {
         static ContentServiceImplementation implementation = new ContentServiceImplementation();
 
+        [ValidateInput(false)]
+        [System.Web.Mvc.HttpGet]
         [System.Web.Mvc.HttpPost]
         public async Task<ActionResult> Index()
         {
