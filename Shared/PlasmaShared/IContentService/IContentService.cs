@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.ServiceModel;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Services;
 using ZkData;
@@ -268,6 +269,7 @@ namespace PlasmaShared
 
         public async Task<T> QueryAsync<T>(ApiRequest<T> request) where T: ApiResponse, new()
         {
+            SynchronizationContext.SetSynchronizationContext(null);
             var line = serializer.SerializeToLine(request);
             var response = await httpClient.PostAsync(url, new StringContent(line));
             var responseString = await response.Content.ReadAsStringAsync();
