@@ -1,8 +1,8 @@
-name: Deploy test
+name: Deploy LIVE STABLE
 
 on:
   push:
-    branches: [ master ]
+    branches: [ stable ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch: 
@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build TEST
+    name: Build LIVE STABLE
     runs-on: zk
 
     steps:
@@ -42,7 +42,7 @@ jobs:
           /p:DeployOnBuild=true /p:PublishProfile=Profile1
           /p:DefineConstants="RELEASE"
           /p:DefineConstants="TRACE" 
-          /p:DefineConstants="TEST" 
+          /p:DefineConstants="LIVE" 
           Zero-K.sln
 
       - name: Run VSTest
@@ -51,36 +51,42 @@ jobs:
         
       - name: Copy steam pipeline files
         run: |
-          robocopy SteamRoot c:\projekty\test.zero-k.info\steamworks\tools\ContentBuilder\content /e
-          robocopy SteamScripts c:\projekty\test.zero-k.info\steamworks\tools\ContentBuilder\scripts /e
+          robocopy SteamRoot c:\projekty\zero-k.info\steamworks\tools\ContentBuilder\content /e
+          robocopy SteamScripts c:\projekty\zero-k.info\steamworks\tools\ContentBuilder\scripts /e
           if ErrorLevel 8 (exit /B 1) else (exit /B 0)
         shell: cmd
           
       - name: Stop IIS
-        run: c:\Windows\System32\inetsrv\appcmd.exe stop apppool test.zero-k.info
+        run: c:\Windows\System32\inetsrv\appcmd.exe stop apppool zero-k.info
         
       - name: Migrate database
         run: MigrateDatabase\bin\release\MigrateDatabase.exe
         
       - name: Deploy website
         run: |
-          robocopy zero-k.info\Deploy c:\projekty\test.zero-k.info\www /e
+          robocopy zero-k.info\Deploy c:\projekty\zero-k.info\www /e
           if ErrorLevel 8 (exit /B 1) else (exit /B 0)
-        shell: cmd  
-
+        shell: cmd
+        
       - name: Deploy ZKL
         run: |
-          copy /Y ChobbyLauncher\bin\release\Zero-K.exe c:\projekty\test.zero-k.info\www\lobby
-          copy /Y ChobbyLauncher\bin\release\Zero-K.version.txt c:\projekty\test.zero-k.info\www\lobby
-        shell: cmd        
-          
+          copy /Y ChobbyLauncher\bin\release\Zero-K.exe c:\projekty\zero-k.info\www\lobby
+          copy /Y ChobbyLauncher\bin\release\Zero-K.version.txt c:\projekty\zero-k.info\www\lobby
+        shell: cmd
+            
       - name: Start IIS 
         if: success() || failure()    # run this step even if previous step failed
-        run: c:\Windows\System32\inetsrv\appcmd.exe start apppool test.zero-k.info
+        run: c:\Windows\System32\inetsrv\appcmd.exe start apppool zero-k.info
         
       - name: Deploy presskit
         run: | 
-          robocopy presskit c:\projekty\test.zero-k.info\presskit /e        
+          robocopy presskit c:\projekty\zero-k.info\presskit /e        
           if ErrorLevel 8 (exit /B 1) else (exit /B 0)
         shell: cmd          
-          
+        
+      - name: Copy resources to test environment
+        run: | 
+          c:\projekty\zero-k.info\www\resources c:\projekty\test.zero-k.info\www\resources /e
+          if ErrorLevel 8 (exit /B 1) else (exit /B 0)
+        shell: cmd          
+        
