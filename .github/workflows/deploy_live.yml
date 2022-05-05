@@ -86,7 +86,7 @@ jobs:
         
       - name: Copy resources to test environment
         run: | 
-          c:\projekty\zero-k.info\www\resources c:\projekty\test.zero-k.info\www\resources /e
+          robocopy c:\projekty\zero-k.info\www\resources c:\projekty\test.zero-k.info\www\resources /e
           if ErrorLevel 8 (exit /B 1) else (exit /B 0)
         shell: cmd          
         
