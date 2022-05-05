@@ -15,7 +15,7 @@ concurrency:
 jobs:
   build:
     name: Build and test Zero-K
-    runs-on: zk
+    runs-on: windows
 
     steps:
       - name: Setup MSBuild Path
