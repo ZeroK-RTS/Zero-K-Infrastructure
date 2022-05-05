@@ -40,10 +40,9 @@ jobs:
         run: >
           msbuild /t:Rebuild /p:Configuration=Release /p:Platform=x86 
           /p:DeployOnBuild=true /p:PublishProfile=Profile1
-          /p:DefineConstants="RELEASE"
-          /p:DefineConstants="TRACE" 
-          /p:DefineConstants="TEST" 
+          /p:DefineConstants="RELEASE;TRACE;TEST"
           Zero-K.sln
+        shell: cmd
 
       - name: Run VSTest
         run: vstest.console.exe /Platform:x86 /Framework:Framework45 /TestCaseFilter:TestCategory=Basic /Parallel /Logger:trx;LogFileName=test-results.trx ./Tests/bin/net48/Tests.dll
