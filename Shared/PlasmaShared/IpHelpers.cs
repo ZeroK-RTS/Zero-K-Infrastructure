@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -78,7 +79,7 @@ namespace PlasmaShared
 
         public static string GetMyIpAddress()
         {
-            var options = Dns.GetHostEntry(Dns.GetHostName()).AddressList.ToList();
+            var options = new List<IPAddress>();
             var interfaces = NetworkInterface.GetAllNetworkInterfaces();
             foreach (var iface in interfaces.Where(x=>x.OperationalStatus == OperationalStatus.Up && x.NetworkInterfaceType != NetworkInterfaceType.Loopback))
             {
@@ -89,6 +90,7 @@ namespace PlasmaShared
                 foreach (var ifAddr in properties.UnicastAddresses)
                     if (ifAddr.Address.AddressFamily == AddressFamily.InterNetwork) options.Add(ifAddr.Address);
             }
+            options.AddRange(Dns.GetHostEntry(Dns.GetHostName()).AddressList);            
             
             return options.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork && !IsPrivateAddressSpace(ip.ToString()))?.ToString() ?? "127.0.0.1";
         }
