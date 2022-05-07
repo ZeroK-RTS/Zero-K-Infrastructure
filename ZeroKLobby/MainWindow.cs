@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using LobbyClient;
 using NAudio.Wave;
 using PlasmaDownloader;
+using PlasmaShared;
 using SpringDownloader.Notifications;
 using ZeroKLobby.Controls;
 using ZeroKLobby.MicroLobby;

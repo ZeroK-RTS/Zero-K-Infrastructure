@@ -27,8 +27,8 @@ namespace ChobbyLauncher
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-
-            if (!Debugger.IsAttached) Trace.Listeners.Add(new ConsoleTraceListener());
+            
+            Trace.Listeners.Add(new ConsoleTraceListener());
 
             var logStringBuilder = new StringBuilder();
             var threadSafeWriter = TextWriter.Synchronized(new StringWriter(logStringBuilder));
@@ -91,7 +91,7 @@ namespace ChobbyLauncher
 
             try
             {
-                GameAnalytics.OnStop();
+                GameAnalytics.OnQuit();
             }
             catch (Exception ex)
             {

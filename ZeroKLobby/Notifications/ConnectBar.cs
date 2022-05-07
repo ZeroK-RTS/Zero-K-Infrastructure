@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using LobbyClient;
+using PlasmaShared;
 using ZeroKLobby.MicroLobby;
 using ZkData;
 

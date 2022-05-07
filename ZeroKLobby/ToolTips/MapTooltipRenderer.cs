@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using PlasmaShared;
 using ZkData;
 using ZkData.UnitSyncLib;
 

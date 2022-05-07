@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using Newtonsoft.Json;
+using PlasmaShared;
 using ZkData;
 using ZkData.UnitSyncLib;
 using Timer = System.Timers.Timer;

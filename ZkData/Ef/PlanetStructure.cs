@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
+using PlasmaShared;
 
 namespace ZkData
 {

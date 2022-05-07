@@ -1,0 +1,60 @@
+name: Test pull request
+
+on:
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch: 
+  
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and test Zero-K
+    runs-on: zk
+
+    steps:
+      - name: Setup MSBuild Path
+        uses: microsoft/setup-msbuild@v1.1  
+        with:
+          msbuild-architecture: x64
+        
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1.0.5        
+        
+      - name: Setup VSTest.console.exe
+        uses: darenm/Setup-VSTest@v1        
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with: 
+          clean: false
+      
+      - name: Restore NuGet Packages
+        run: nuget restore Zero-K.sln
+ 
+      - name: Build entire Zero-K
+        run: >
+          msbuild /t:Rebuild /p:Configuration=Release /p:Platform=x86 
+          /p:DeployOnBuild=true /p:PublishProfile=Profile1
+          /p:DefineConstants="RELEASE"
+          /p:DefineConstants="TRACE" 
+          /p:DefineConstants="TEST" 
+          Zero-K.sln
+
+      - name: Run VSTest
+        run: vstest.console.exe /Platform:x86 /Framework:Framework45 /TestCaseFilter:TestCategory=Basic /Parallel /Logger:trx;LogFileName=test-results.trx ./Tests/bin/net48/Tests.dll
+        shell: cmd
+        
+      - name: Test Report C#
+        uses: dorny/test-reporter@v1
+        if: success() || failure()    # run this step even if previous step failed
+        with:
+          name: Test results C#           # Name of the check run which will be created
+          path: TestResults/test-results.trx
+          reporter: dotnet-trx
+

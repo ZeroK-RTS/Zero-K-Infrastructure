@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -87,9 +88,7 @@ namespace ZkLobbyServer
                     .Cast<BattleCommand>()
                     .ToDictionary(x => x.Shortcut, x => x);
 
-            hostingIp =
-                Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString() ??
-                "127.0.0.1";
+            hostingIp = IpHelpers.GetMyIpAddress();
         }
 
         public ServerBattle(ZkLobbyServer server, string founder)
@@ -278,7 +277,7 @@ namespace ZkLobbyServer
             if (!say.IsEmote && (say.Text?.Length > 1) && say.Text.StartsWith("!"))
             {
                 var parts = say.Text.Substring(1).Split(new[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
-                return await RunCommandWithPermissionCheck(say, parts[0], parts.Skip(1).FirstOrDefault());
+                return await RunCommandWithPermissionCheck(say, parts[0]?.ToLower(), parts.Skip(1).FirstOrDefault());
             }
             return false;
         }
@@ -690,6 +689,7 @@ namespace ZkLobbyServer
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Game = ModName } });
+            SaveToDb();
         }
 
         public async Task SwitchGameType(AutohostMode type)
@@ -709,6 +709,7 @@ namespace ZkLobbyServer
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = MapName } });
+            SaveToDb();
         }
 
         public async Task SwitchMaxPlayers(int cnt)
@@ -1280,7 +1281,8 @@ namespace ZkLobbyServer
                 if (HostedMod?.Mission != null)
                 {
                     var service = GlobalConst.GetContentService();
-                    foreach (var u in spring.LobbyStartContext.Players.Where(x => !x.IsSpectator)) service.NotifyMissionRun(u.Name, HostedMod.Mission.Name);
+                    foreach (var u in spring.LobbyStartContext.Players.Where(x => !x.IsSpectator))
+                        service.Query(new NotifyMissionRun() { Login = u.Name, MissionName = HostedMod.Mission.Name });
                 }
             }
             catch (Exception ex)

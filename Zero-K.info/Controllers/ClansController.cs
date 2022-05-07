@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.Controllers

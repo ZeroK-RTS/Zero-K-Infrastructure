@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using LobbyClient;
 using Microsoft.Ajax.Utilities;
 using Newtonsoft.Json.Linq;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.Controllers

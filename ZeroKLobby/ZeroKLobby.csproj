@@ -85,6 +85,10 @@
     <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JetBrains.Annotations, Version=4242.42.42.42, Culture=neutral, PublicKeyToken=1010a0d8d6380325">
+      <HintPath>..\packages\JetBrains.Annotations.2022.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
@@ -1692,6 +1696,10 @@
   <PropertyGroup>
     <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">if /i $(ConfigurationName) NEQ Release exit 0
 "$(ProjectDir)\..\packages\ilmerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetDir)$(TargetName).exe" "$(TargetDir)*.dll" /target:exe "/targetplatform:v4.5,%25ProgramFiles%25\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.1" /wildcards /t:winexe
+copy /Y "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).pdb"
+copy /Y "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"</PostBuildEvent>
+    <PostBuildEvent>if /i $(ConfigurationName) NEQ Release exit 0
+"$(ProjectDir)\..\packages\ilrepack.2.0.18\tools\ILRepack.exe" /target:winexe /wildcards /targetplatform:v4 /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetDir)$(TargetName).exe" "$(TargetDir)*.dll" &gt; nul 
 copy /Y "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).pdb"
 copy /Y "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"</PostBuildEvent>
   </PropertyGroup>

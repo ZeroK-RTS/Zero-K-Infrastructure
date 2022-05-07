@@ -699,7 +699,6 @@ namespace ZkLobbyServer
 
         private void TimerTick(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            server.UserLogSay($"Timer tick");
             OnTick();
         }
 

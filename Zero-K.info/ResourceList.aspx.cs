@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.UI.WebControls;
 using Licho.Utils.Web;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb

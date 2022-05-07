@@ -10,6 +10,7 @@ using Discord.Rest;
 using Discord.Rpc;
 using Discord.WebSocket;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ZkLobbyServer

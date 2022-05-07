@@ -9,6 +9,7 @@ using System.Net;
 using JetBrains.Annotations;
 using PlasmaDownloader.Packages;
 using PlasmaDownloader.Torrents;
+using PlasmaShared;
 using ZkData;
 
 #endregion

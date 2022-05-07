@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LobbyClient;
+using PlasmaShared;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 
@@ -20,7 +21,7 @@ namespace ZkLobbyServer
         public override string Arm(ServerBattle battle, Say e, string arguments = null)
         {
             var serv = GlobalConst.GetContentService(); // TODO this can be done directly, we are in server
-            engines = serv.GetEngineList(null);
+            engines = serv.Query(new GetEngineListRequest()).Engines;
             if (!string.IsNullOrEmpty(arguments)) engines = engines.Where(x => x.Contains(arguments)).ToList();
             return String.Empty;
         }

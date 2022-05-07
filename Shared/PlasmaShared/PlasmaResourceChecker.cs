@@ -61,7 +61,7 @@ namespace ZkData
         /// </summary>
         private readonly List<FileSystemWatcher> packagesWatchers = new List<FileSystemWatcher>();
 
-        private readonly IContentService service = GlobalConst.GetContentService();
+        private readonly IContentServiceClient service = GlobalConst.GetContentService();
 
         /// <summary>
         ///     queue of items to process
@@ -291,7 +291,7 @@ namespace ZkData
             ResourceData result = null;
             try
             {
-                result = service.GetResourceData(work.CacheItem.Md5.ToString(), work.CacheItem.InternalName);
+                result = service.Query(new GetResourceDataRequest() {Md5 = work.CacheItem.Md5.ToString(), InternalName = work.CacheItem.InternalName});
             }
             catch (Exception ex)
             {

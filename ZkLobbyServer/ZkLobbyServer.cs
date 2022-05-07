@@ -374,6 +374,7 @@ namespace ZkLobbyServer
                     if (Battles.TryGetValue(battleID ?? 0, out battle))
                     {
                         await SyncAndSay(battle.Users.Keys, say);
+                        say.Target = battle.ToString();
                         await battle.ProcessBattleSay(say);
                         await OfflineMessageHandler.StoreChatHistoryAsync(say);
                     }
