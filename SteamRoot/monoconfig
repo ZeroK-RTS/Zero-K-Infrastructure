@@ -9,8 +9,8 @@
 	<dllmap dll="System.Native" target="__Internal" os="linux"/>
 	<dllmap dll="System.Net.Security.Native" target="__Internal" os="linux"/>
 	<dllmap dll="libmono-btls-shared" target="linux64/libmono-btls-shared.so" os="linux"/>
-	<dllmap dll="gdiplus" target="linux64/libgdiplus.so.0" os="linux"/>
-	<dllmap dll="gdiplus.dll" target="linux64/libgdiplus.so.0"  os="linux"/>
-	<dllmap dll="gdi32" target="linux64/libgdiplus.so.0" os="linux"/>
-	<dllmap dll="gdi32.dll" target="linux64/libgdiplus.so.0" os="linux"/>
+	<dllmap dll="gdiplus" target="linux64/libgdiplus.so" os="linux"/>
+	<dllmap dll="gdiplus.dll" target="linux64/libgdiplus.so"  os="linux"/>
+	<dllmap dll="gdi32" target="linux64/libgdiplus.so" os="linux"/>
+	<dllmap dll="gdi32.dll" target="linux64/libgdiplus.so" os="linux"/>
 </configuration>
