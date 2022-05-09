@@ -64,6 +64,8 @@ namespace ZkLobbyServer
             var entry = Assembly.GetExecutingAssembly();
             Version = entry.GetName().Version.ToString();
             Engine = MiscVar.DefaultEngine;
+            
+            Trace.TraceInformation("ZKLS starting with engine {0}", Engine);
 
             SpringPaths = new SpringPaths(GlobalConst.SpringieDataDir, false, false);
             Downloader = new PlasmaDownloader.PlasmaDownloader(null, SpringPaths);
