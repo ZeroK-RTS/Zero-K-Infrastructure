@@ -28,23 +28,6 @@ namespace ZeroKWeb
         {
         }
 
-
-        public static List<string> GetJobjolMirrorLinks(string fileName, string springName)
-        {
-            var ret = new List<string>();
-            try
-            {
-                var rpc = XmlRpcProxyGen.Create<ISpringFilesRpc>();
-                foreach (var res in rpc.Search(new SearchParams() { FileName = fileName, SpringName = springName })) ret.AddRange(res.mirrors);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceWarning("Error getting mirros from springfiles: {0}", ex);
-            }
-            return ret;
-
-        }
-
         public static bool GetLinksAndTorrent(string internalName,
                                               out List<string> links,
                                               out byte[] torrent,
@@ -195,9 +178,6 @@ namespace ZeroKWeb
                 }
             }
 
-            // get mirror list from jobjol
-            foreach (var link in GetJobjolMirrorLinks(content.FileName, content.Resource.InternalName)) if (!valids.Contains(link)) valids.Add(link);
-
             // combine with hardcoded mirrors
             foreach (var url in Mirrors)
             {
@@ -219,13 +199,6 @@ namespace ZeroKWeb
             }
         }
 
-        [XmlRpcUrl("http://api.springfiles.com/xmlrpc.php")]
-        public interface ISpringFilesRpc
-        {
-            [XmlRpcMethod("springfiles.search")]
-            SearchResult[] Search(SearchParams data);
-        }
-
         class RequestData
         {
             public ResourceContentFile ContentFile;
@@ -236,26 +209,6 @@ namespace ZeroKWeb
             {
                 ResourceID = resourceID;
             }
-        }
-
-        public class SearchParams
-        {
-            [XmlRpcMember("filename")]
-            public string FileName;
-            [XmlRpcMember("logical")]
-            public string Logical = "or";
-
-            [XmlRpcMember("springname")]
-            public string SpringName;
-        }
-
-        public class SearchResult
-        {
-            public string category;
-            public string filename;
-            public string md5;
-            public string[] mirrors;
-            public string springname;
         }
     }
 }
