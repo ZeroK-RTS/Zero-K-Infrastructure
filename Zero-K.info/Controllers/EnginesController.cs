@@ -126,12 +126,13 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult MakeDefault(string engine)
         {
+            Trace.TraceInformation("Trying to change engine to {0}", engine);
             if (new ContentService().GetEngineList(null).Contains(engine))
             {
                 MiscVar.DefaultEngine = engine;
                 Global.SteamDepotGenerator.RunAll();
                 Global.Server.SetEngine(engine);
-            }
+            } else Trace.TraceWarning("Engine {0} not found in the list", engine);
             return RedirectToAction("Index");
         }
     }
