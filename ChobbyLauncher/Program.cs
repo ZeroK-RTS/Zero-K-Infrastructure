@@ -142,21 +142,19 @@ namespace ChobbyLauncher
 
         private static void RunWrapper(Chobbyla chobbyla, ulong connectLobbyID, TextWriter logWriter, StringBuilder logSb)
         {
-            var winformsWorks = true;
-            try
+            if (!chobbyla.IsSteamFolder) // not steam, show gui
             {
-                Application.EnableVisualStyles();
-            }
-            catch (Exception ex)
-            {
-                winformsWorks = false;
-                Trace.TraceWarning("WinForms doesn't work, consider launching with 'mono Zero-K.exe' - wrapper GUI off: {0}", ex.Message);
-            }
-            
-            if (!chobbyla.IsSteamFolder && winformsWorks) // not steam, show gui
-            {
-                var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
-                if (cf.ShowDialog() != DialogResult.OK) return;
+                try
+                {
+                    Application.EnableVisualStyles();
+                    var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
+                    if (cf.ShowDialog() != DialogResult.OK) return;
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("WinForms doesn't work, consider launching with 'mono Zero-K.exe' - wrapper GUI off: {0}", ex.Message);                    
+                    if (!chobbyla.Prepare().Result) return; // in case of gui crash just do simple prepare, no gui   
+                }
             }
             else if (!chobbyla.Prepare().Result) return; // otherwise just do simple prepare, no gui
 
