@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using GameAnalyticsSDK.Net;
 using LumiSoft.Net.STUN.Client;
@@ -152,11 +153,13 @@ namespace ChobbyLauncher
                 }
                 catch (Exception ex)
                 {
-                    Trace.TraceWarning("WinForms doesn't work, consider launching with 'mono Zero-K.exe' - wrapper GUI off: {0}", ex.Message);                    
-                    if (!chobbyla.Prepare().ConfigureAwait(false).GetAwaiter().GetResult()) return; // in case of gui crash just do simple prepare, no gui   
+                    Trace.TraceWarning("WinForms doesn't work, consider launching with 'mono Zero-K.exe' - wrapper GUI off: {0}", ex.Message);
+                    
+                    // in case of gui crash just do simple prepare, no gui
+                    if (!PrepareWithoutGui(chobbyla).ConfigureAwait(false).GetAwaiter().GetResult()) return;    
                 }
             }
-            else if (!chobbyla.Prepare().ConfigureAwait(false).GetAwaiter().GetResult()) return; // otherwise just do simple prepare, no gui
+            else if (!PrepareWithoutGui(chobbyla).ConfigureAwait(false).GetAwaiter().GetResult()) return;// otherwise just do simple prepare, no gui
 
             var springRunOk = chobbyla.Run(connectLobbyID, logWriter);
             Trace.TraceInformation("Spring exited");
@@ -168,6 +171,28 @@ namespace ChobbyLauncher
             CrashReportHelper.CheckAndReportErrors(logStr, springRunOk, chobbyla.BugReportTitle, chobbyla.BugReportDescription, chobbyla.engine);
         }
 
-        
+        static async Task<bool> PrepareWithoutGui(Chobbyla chobbyla)
+        {
+            string lastStatus = "";
+            var prepTask = chobbyla.Prepare();
+            while (!prepTask.IsCompleted)
+            {
+                await Task.WhenAny(Task.Delay(5000), prepTask);
+
+                var prog = chobbyla.Progress;
+                if (prog.Status != lastStatus)
+                {
+                    Console.WriteLine(prog.Status);
+                    lastStatus = prog.Status;
+                }
+                var cd = prog.Download;
+                if (cd != null)
+                {
+                    Console.WriteLine($"Downloading {Math.Round(cd.TotalProgress)}% {cd.Name}  {cd.CurrentSpeed / 1024}kB/s  ETA: {cd.TimeRemaining}");
+                }
+            }
+
+            return prepTask.Result;
+        }
     }
 }
