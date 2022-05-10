@@ -146,17 +146,17 @@ namespace ChobbyLauncher
             {
                 try
                 {
-                    Application.EnableVisualStyles();
+                    Trace.TraceInformation("Trying to start with GUI");
                     var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
                     if (cf.ShowDialog() != DialogResult.OK) return;
                 }
                 catch (Exception ex)
                 {
                     Trace.TraceWarning("WinForms doesn't work, consider launching with 'mono Zero-K.exe' - wrapper GUI off: {0}", ex.Message);                    
-                    if (!chobbyla.Prepare().Result) return; // in case of gui crash just do simple prepare, no gui   
+                    if (!chobbyla.Prepare().ConfigureAwait(false).GetAwaiter().GetResult()) return; // in case of gui crash just do simple prepare, no gui   
                 }
             }
-            else if (!chobbyla.Prepare().Result) return; // otherwise just do simple prepare, no gui
+            else if (!chobbyla.Prepare().ConfigureAwait(false).GetAwaiter().GetResult()) return; // otherwise just do simple prepare, no gui
 
             var springRunOk = chobbyla.Run(connectLobbyID, logWriter);
             Trace.TraceInformation("Spring exited");
