@@ -117,7 +117,11 @@ namespace ZkLobbyServer
         {
             try
             {
-                if (discord.GetGuild(serverID).GetChannel(msg.Channel.Id) != null) if (!msg.Author.IsBot && msg.Author.Username != GlobalConst.NightwatchName) OnChatRelayMessage?.Invoke(this, new ChatRelayMessage(msg.Channel.Name, GetName(msg.Author), TranslateMentions(msg), source, false));
+                if (msg?.Channel == null || msg.Author == null || discord == null) return;
+                
+                if (discord.GetGuild(serverID).GetChannel(msg.Channel.Id) != null) 
+                    if (!msg.Author.IsBot && msg.Author.Username != GlobalConst.NightwatchName) 
+                        OnChatRelayMessage?.Invoke(this, new ChatRelayMessage(msg.Channel.Name, GetName(msg.Author), TranslateMentions(msg), source, false));
 
                 
             }

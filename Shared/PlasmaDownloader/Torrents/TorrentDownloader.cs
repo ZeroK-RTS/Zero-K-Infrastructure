@@ -105,7 +105,12 @@ namespace PlasmaDownloader.Torrents
                         }
                     }
 
-                    var wd = new WebMultiDownload(e.links.Shuffle(), GetDestPath(down.TypeOfResource, down.FileName), incomingFolder, tor);
+                    // uses non torrent downloader 
+                    var wd = new WebFileDownload(e.links.OrderByDescending(x => x.Contains("zero-k.info")).FirstOrDefault(),
+                        GetDestPath(down.TypeOfResource, down.FileName), incomingFolder);
+                    //var wd = new WebMultiDownload(e.links.Shuffle(), GetDestPath(down.TypeOfResource, down.FileName), incomingFolder, tor);
+                    
+                    
                     down.AddNeededDownload(wd);
                     down.Finish(true); // mark current torrent dl as complete - will wait for dependency
                     wd.Start(); // start dependent download
