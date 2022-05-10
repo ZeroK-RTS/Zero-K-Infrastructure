@@ -53,12 +53,12 @@
 		<dllentry dll="__Internal" name="MoveMemory" target="mono_win32_compat_MoveMemory"/>
 		<dllentry dll="__Internal" name="ZeroMemory" target="mono_win32_compat_ZeroMemory"/>
 	</dllmap>
-	<dllmap dll="gdiplus" target="libgdiplus.so.0" os="linux"/>
+	<dllmap dll="gdiplus" target="libgdiplus.so" os="linux"/>
 	<dllmap dll="gdiplus" target="libgdiplus.0.dylib" os="osx"/>
-	<dllmap dll="gdiplus.dll" target="libgdiplus.so.0"  os="linux"/>
+	<dllmap dll="gdiplus.dll" target="libgdiplus.so"  os="linux"/>
 	<dllmap dll="gdiplus.dll" target="libgdiplus.0.dylib"  os="osx"/>
-	<dllmap dll="gdi32" target="libgdiplus.so.0" os="linux"/>
+	<dllmap dll="gdi32" target="libgdiplus.so" os="linux"/>
 	<dllmap dll="gdi32" target="libgdiplus.0.dylib" os="osx"/>
-	<dllmap dll="gdi32.dll" target="libgdiplus.so.0" os="linux"/>
+	<dllmap dll="gdi32.dll" target="libgdiplus.so" os="linux"/>
 	<dllmap dll="gdi32.dll" target="libgdiplus.0.dylib" os="osx"/>
 </configuration>
