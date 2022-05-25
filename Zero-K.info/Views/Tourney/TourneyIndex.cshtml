@@ -1,4 +1,4 @@
-﻿@using LobbyClient
+@using LobbyClient
 @using ZeroKWeb
 @using ZkData
 @model ZeroKWeb.Controllers.TourneyController.TourneyModel
@@ -17,6 +17,14 @@
 <form action="@Url.Action("AddMultipleBattles")" method="post">
     @Html.TextBox("battleList", "TitleA,Player1,Player2//TitleB,Player1A,Player1B,Player2A,Player2B//...", new { style = "width:750px" })<br />
     <input type="submit" value="Create Battles" class="js_confirm" />
+</form>
+<br />
+<span>Convert from Challonge printer-friendly page:</span><br />
+<span>To get string, click and drag from the number of the final game of next round to the last player in the first game, then copy text</span>
+<form action="@Url.Action("ConvertFromChallonge")" method="post">
+    Prefix: @Html.TextBox("prefix", "[T] R1:", new { style = "width:150px" }) Randomise player order: @Html.CheckBox("randorder", true)<br />
+    @Html.TextArea("challongeString", "5\nPlayer1\nPlayer2\n4\nPlayer1A & Player1B\nPlayer2A & Player2B\n...", 8, 60, null)<br />
+    <input type="submit" value="Convert String" />
 </form>
 <br />
 <span>Mass remove rooms with X or more games played:</span>
@@ -40,47 +48,47 @@
 
     @foreach (var b in Model.Battles)
     {
-        <tr>
-            <td>
-                <span>
-                    <h3>@b.Title</h3><br />
-                    @foreach (var team in b.Prototype.TeamPlayers)
+    <tr>
+        <td>
+            <span>
+                <h3>@b.Title</h3><br />
+                @foreach (var team in b.Prototype.TeamPlayers)
                     {
                         foreach (var p in team)
                         {
-                            @Html.PrintAccount(Account.AccountByName(db, p))
+                @Html.PrintAccount(Account.AccountByName(db, p))
                             if (b.Users.Values.Any(x => x.Name == p))
                             {
-                                <span style="color:green">&nbsp;&nbsp;IN</span>
+                <span style="color:green">&nbsp;&nbsp;IN</span>
                             }
-                            <br />
+                <br />
                         }
-                        <br />
+                <br />
                     }
-                </span>
-            </td>
-            <td>
-                <span>@b.NonSpectatorCount / @b.MaxPlayers (+@b.SpectatorCount)</span><br />
-                @Html.ActionLink("Join", "JoinBattle", new { battleHost = b.FounderName })
-            </td>
-            <td>
-                @foreach (var deb in b.Debriefings)
+            </span>
+        </td>
+        <td>
+            <span>@b.NonSpectatorCount / @b.MaxPlayers (+@b.SpectatorCount)</span><br />
+            @Html.ActionLink("Join", "JoinBattle", new { battleHost = b.FounderName })
+        </td>
+        <td>
+            @foreach (var deb in b.Debriefings)
                 {
 
                     var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == deb.ServerBattleID);
                     if (bat != null)
                     {
-                        @Html.PrintBattle(bat)<br />
+            @Html.PrintBattle(bat)<br />
                     }
                 }
-            </td>
+        </td>
 
-            <td>
-                @Html.ActionLink("Force join", "ForceJoinPlayers", new { battleID = b.BattleID }) <br />
-                @Html.ActionLink("Delete", "RemoveBattle", new { battleID = b.BattleID }, new { @class = "js_confirm" })
-            </td>
-        </tr>
-        <tr><td>&nbsp;<br /></td></tr>
+        <td>
+            @Html.ActionLink("Force join", "ForceJoinPlayers", new { battleID = b.BattleID }) <br />
+            @Html.ActionLink("Delete", "RemoveBattle", new { battleID = b.BattleID }, new { @class = "js_confirm" })
+        </td>
+    </tr>
+    <tr><td>&nbsp;<br /></td></tr>
     }
 </table>
 
