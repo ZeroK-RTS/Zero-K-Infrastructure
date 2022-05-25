@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -187,6 +187,48 @@ namespace ZeroKWeb.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        public ActionResult ConvertFromChallonge(string challongeString, string prefix, bool randorder)
+        {
+            if (!Global.IsTourneyController) return DenyAccess();
+            var db = new ZkDataContext();
+
+            List<string> formatList = new List<string>();
+
+            string[] splitters = { "\n" };
+            string[] splitString = challongeString.Split(splitters, System.StringSplitOptions.RemoveEmptyEntries);
+
+            Random rnd = new Random();
+
+            int tcount = 0;
+            string[] teamsplit = { " ", "\t", "\n", "&" };
+            string[] team = { "", "" };
+            string[] teamlist = { "", "" };
+
+            foreach(var str in splitString)
+            {
+                string trimstr = str.Trim();
+
+                int i = 0;
+                bool isInt = int.TryParse(trimstr, out i);
+
+                if (!isInt)
+                {
+                    team[tcount] = trimstr;
+                    teamlist[tcount] = string.Join(",", team[tcount].Split(teamsplit, StringSplitOptions.RemoveEmptyEntries));
+                    tcount++;
+
+                    if (tcount == 2)
+                    {
+                        tcount = 0;
+                        int j = randorder ? rnd.Next(2) : 0;
+                        formatList.Add(prefix + " " + team[j] + " vs " + team[1-j] + "," + teamlist[j] + "," + teamlist[1-j]);
+                    }
+                }
+            }
+
+            return Content(string.Join("//", formatList));
         }
 
         public ActionResult GetReplayList()
