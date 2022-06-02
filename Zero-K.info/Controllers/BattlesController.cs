@@ -34,6 +34,26 @@ namespace ZeroKWeb.Controllers
 
             return View("BattleDetail", bat);
         }
+        
+        /// <summary>
+        ///     Returns the page of the <see cref="SpringBattle" /> with the specified engine-generated GameID (not the numerical ZKLS ID)
+        /// </summary>
+        public ActionResult EngineDetail(string id, bool showWinners = false) {
+            var db = new ZkDataContext();
+            ViewBag.ShowWinners = showWinners;
+            var bat = db.SpringBattles.FirstOrDefault(x => x.EngineGameID == id);
+            if (bat == null) return Content("No such battle exists");
+
+            if (bat.ForumThread != null)
+            {
+                bat.ForumThread.UpdateLastRead(Global.AccountID, false);
+                db.SaveChanges();
+            }
+
+            if (Global.AccountID != 0 && !showWinners && bat.SpringBattlePlayers.Any(y => y.AccountID == Global.AccountID && !y.IsSpectator)) ViewBag.ShowWinners = true; // show winners if player played thatbattle
+
+            return View("BattleDetail", bat);
+        }
 
         public class BattleSearchModel
         {
