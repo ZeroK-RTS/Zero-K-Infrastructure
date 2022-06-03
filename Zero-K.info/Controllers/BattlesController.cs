@@ -15,7 +15,7 @@ namespace ZeroKWeb.Controllers
         //
         // GET: /Battles/
 
-        private ActionResult DetailFromSpringBattle(SpringBattle? bat, ZkDataContext db, bool showWinners) {
+        private ActionResult DetailFromSpringBattle(SpringBattle bat, ZkDataContext db, bool showWinners) {
             if (bat == null) {
                 return Content("No such battle exists");
             }
