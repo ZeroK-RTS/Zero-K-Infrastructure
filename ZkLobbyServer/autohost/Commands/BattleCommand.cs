@@ -165,6 +165,16 @@ namespace ZkLobbyServer
                 return RunPermission.None;
             }
 
+            if (Access == AccessType.AdminOrRoomFounder && hasElevatedRights)
+            {
+                return RunPermission.Run;
+            }
+            else if (Access == AccessType.AdminOrRoomFounder)
+            {
+                reason = "This command can only be used by the room founder and moderators.";
+                return RunPermission.None;
+            }
+
             var defPerm = hasElevatedRights ? RunPermission.Run : (isSpectator || isAway || user?.BanVotes == true ? RunPermission.None : RunPermission.Vote);
 
             if (defPerm == RunPermission.None)
@@ -259,6 +269,12 @@ namespace ZkLobbyServer
             /// </summary>
             [Description("When game running, by players, might need a vote. Unavailable to non-admins on autohosts")]
             IngameNotAutohost = 7,
+
+            /// <summary>
+            /// Can be executed ingame/offgame by admins or room founder only
+            /// </summary>
+            [Description("At any time, by admins and room founder only, no vote needed")]
+            AdminOrRoomFounder = 8,
         }
 
 
