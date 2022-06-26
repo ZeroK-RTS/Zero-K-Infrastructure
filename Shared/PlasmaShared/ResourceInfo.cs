@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 using ZkData.UnitSyncLib;
 
 namespace ZkData
@@ -23,6 +24,7 @@ namespace ZkData
         public uint CheckSum { get; set; }
         public int ModType { get; set; }
         public string Mutator { get; set; }
+        
         public string ArchivePath => Path.Combine(ArchiveFolder, ArchiveName);
         public string ArchiveFolder { get; set; }
 

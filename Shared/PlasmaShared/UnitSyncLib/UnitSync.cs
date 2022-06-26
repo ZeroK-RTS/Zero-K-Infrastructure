@@ -344,7 +344,7 @@ namespace ZkData.UnitSyncLib
         }
 
 
-        private Map GetMap(ResourceInfo ae)
+        public Map GetMap(ResourceInfo ae)
         {
             var map = GetMapNoBitmaps(ae);
             if (map == null) return map;
