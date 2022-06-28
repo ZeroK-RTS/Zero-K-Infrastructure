@@ -17,6 +17,7 @@ namespace PlasmaShared
         public RatingCategory ApplicableRating;
         public AutohostMode Mode = AutohostMode.None;
         public Dictionary<string, string> ModOptions = new Dictionary<string, string>();
+        public Dictionary<string, string> MapOptions = new Dictionary<string, string>();
         public Dictionary<string,Dictionary<string,string>> UserParameters = new Dictionary<string, Dictionary<string, string>>();
         public int BattleID { get; set; }
 
