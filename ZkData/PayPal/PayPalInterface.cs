@@ -192,7 +192,7 @@ namespace ZkData
                     else jar = db.ContributionJars.FirstOrDefault(x => x.ContributionJarID == jarID);
 
                     if (jar == null) {
-                        Trace.TraceError("jarID was invalid? {0}", jarID ?: "null");
+                        Trace.TraceError("jarID was invalid? {0}", jarID ?? "null");
                         jar = db.ContributionJars.FirstOrDefault(x => x.IsDefault);
                     }
 
