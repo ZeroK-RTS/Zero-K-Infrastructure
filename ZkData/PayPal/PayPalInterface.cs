@@ -191,6 +191,11 @@ namespace ZkData
                     if (jarID == null) jar = db.ContributionJars.FirstOrDefault(x => x.IsDefault);
                     else jar = db.ContributionJars.FirstOrDefault(x => x.ContributionJarID == jarID);
 
+                    if (jar == null) {
+                        Trace.TraceError("jarID was invalid? {0}", jarID ?: "null");
+                        jar = db.ContributionJars.FirstOrDefault(x => x.IsDefault);
+                    }
+
                     if (accountID != null) acc = db.Accounts.Find(accountID.Value);
 
                     if (!string.IsNullOrEmpty(parsed.TransactionID) && db.Contributions.Any(x => x.PayPalTransactionID == parsed.TransactionID)) return null; // contribution already exists
