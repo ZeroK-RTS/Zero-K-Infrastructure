@@ -141,8 +141,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="autohost\Commands\CmdFlip.cs" />
+    <Compile Include="autohost\Commands\CmdListMapOptions.cs" />
+    <Compile Include="autohost\Commands\CmdResetMapOptions.cs" />
     <Compile Include="autohost\Commands\CmdRoll.cs" />
     <Compile Include="autohost\Commands\CmdMaxEvenPlayers.cs" />
+    <Compile Include="autohost\Commands\CmdSetMapOptions.cs" />
     <Compile Include="autohost\Commands\CmdSetRatings.cs" />
     <Compile Include="autohost\Commands\CmdToggleCbal.cs" />
     <Compile Include="autohost\Commands\CmdBalance.cs" />

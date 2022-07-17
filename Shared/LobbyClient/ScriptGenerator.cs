@@ -144,13 +144,20 @@ namespace LobbyClient
 
             script.AppendFormat("    startboxes={0};\n", startboxes.ToString());
 
-
             // write final options to script
             foreach (var kvp in setup?.LobbyStartContext?.ModOptions) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
-
+            
             script.AppendLine("  }");
 
-            script.AppendLine("}");
+
+            // write map options to script
+            script.AppendLine("  [MAPOPTIONS]");
+            script.AppendLine("  {");
+            foreach (var kvp in setup?.LobbyStartContext?.MapOptions) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
+            script.AppendLine("  }");
+
+            
+            script.AppendLine("}");            
         }
 
 
