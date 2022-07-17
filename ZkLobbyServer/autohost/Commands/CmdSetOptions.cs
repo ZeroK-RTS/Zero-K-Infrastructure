@@ -11,7 +11,7 @@ namespace ZkLobbyServer
     {
         private Dictionary<string, string> options;
         private string optionsAsString;
-        public override string Help => "<name>=<value>[,<name>=<value>] - applies game/map options";
+        public override string Help => "<name>=<value>[,<name>=<value>] - applies game options";
         public override string Shortcut => "setoptions";
         public override AccessType Access => AccessType.NotIngameNotAutohost;
 
@@ -26,7 +26,7 @@ namespace ZkLobbyServer
             }
 
             optionsAsString = arguments;
-            options = GetOptionsDictionary(battle, e, arguments);
+            options = GetParsedOptionsDictionary(battle, e, arguments, battle.HostedModInfo?.Options);
             if (options.Count == 0) return null;
             return $"Set options {arguments} ?";
         }
@@ -38,10 +38,10 @@ namespace ZkLobbyServer
             await battle.SayBattle($"options changed {optionsAsString}");
         }
 
-        private static Dictionary<string, string> GetOptionsDictionary(ServerBattle battle, Say e, string s)
+        internal static Dictionary<string, string> GetParsedOptionsDictionary(ServerBattle battle, Say e, string s, IEnumerable<Option> possibleOptions)
         {
+            if (possibleOptions == null || !possibleOptions.Any()) return new Dictionary<string, string>();
             var ret = new Dictionary<string, string>();
-            if (battle.HostedModInfo == null) return ret;
 
             var pairs = s.Split(new[] { ',' });
             if (pairs.Length == 0 || pairs[0].Length == 0)
@@ -61,8 +61,7 @@ namespace ZkLobbyServer
                 var val = parts[1].Trim();
 
                 var found = false;
-                var mod = battle.HostedModInfo;
-                foreach (var o in mod.Options)
+                foreach (var o in possibleOptions)
                 {
                     if (o.Key == key)
                     {
