@@ -554,6 +554,7 @@ namespace LobbyClient
         public List<UpdateBotStatus> Bots { get; set; }
         public Dictionary<string, string> Options { get; set; } = new Dictionary<string, string>();
         public List<UpdateUserBattleStatus> Players { get; set; }
+        public Dictionary<string, string> MapOptions { get; set; } = new Dictionary<string, string>();
     }
 
     [Message(Origin.Client)]
@@ -610,6 +611,13 @@ namespace LobbyClient
     {
         public Dictionary<string, string> Options { get; set; } = new Dictionary<string, string>();
     }
+
+    [Message(Origin.Client | Origin.Server)]
+    public class SetMapOptions
+    {
+        public Dictionary<string, string> Options { get; set; } = new Dictionary<string, string>();
+    }    
+    
 
     [Message(Origin.Client)]
     public class KickFromBattle

@@ -24,7 +24,12 @@ namespace ZkLobbyServer
             var commandArgs = parts.Length > 1 ? parts[1] : null;
             InternalCommand = battle.GetCommandByName(commandName);
             string reason;
-            if (InternalCommand.GetRunPermissions(battle, e.User, out reason) >= RunPermission.Vote && InternalCommand.Access != AccessType.NoCheck && InternalCommand.Access != AccessType.Admin && !(InternalCommand.Access == AccessType.NotIngameNotAutohost && battle.IsAutohost))
+
+            if (InternalCommand.GetRunPermissions(battle, e.User, out reason) >= RunPermission.Vote
+            && InternalCommand.Access != AccessType.NoCheck
+            && InternalCommand.Access != AccessType.Admin
+            && InternalCommand.Access != AccessType.AdminOrRoomFounder
+            && !(InternalCommand.Access == AccessType.NotIngameNotAutohost && battle.IsAutohost))
             {
                 return InternalCommand.Arm(battle, e, commandArgs);
             }

@@ -17,7 +17,7 @@ namespace LobbyClient
     public class Battle
     {
         public int BattleID { get; set; }
-        public ConcurrentDictionary<string, BotBattleStatus> Bots { get; set; }
+        public ConcurrentDictionary<string, BotBattleStatus> Bots { get; set; } = new ConcurrentDictionary<string, BotBattleStatus>();
 
         public string FounderName { get; set; }
 
@@ -32,7 +32,9 @@ namespace LobbyClient
         public int MaxEvenPlayers { get; set; }
 
         public string ModName { get; set; }
-        public Dictionary<string, string> ModOptions { get; set; }
+        public Dictionary<string, string> ModOptions { get; set; } = new Dictionary<string, string>();
+
+        public Dictionary<string, string> MapOptions { get; set; } = new Dictionary<string, string>();
 
         public virtual int NonSpectatorCount { get; set; }
 
@@ -51,7 +53,7 @@ namespace LobbyClient
 
         public virtual bool TimeQueueEnabled { get; protected set; }
 
-        public ConcurrentDictionary<string, UserBattleStatus> Users { get; set; }
+        public ConcurrentDictionary<string, UserBattleStatus> Users { get; set; } = new ConcurrentDictionary<string, UserBattleStatus>();
 
         public int MaxElo { get; protected set; } = int.MaxValue;
         public int MinElo { get; protected set; } = int.MinValue;
@@ -61,12 +63,7 @@ namespace LobbyClient
         public int MinRank { get; protected set; } = int.MinValue;
         
 
-        public Battle()
-        {
-            Bots = new ConcurrentDictionary<string, BotBattleStatus>();
-            ModOptions = new Dictionary<string, string>();
-            Users = new ConcurrentDictionary<string, UserBattleStatus>();
-        }
+        public Battle() { }
 
        
         
@@ -160,6 +157,7 @@ namespace LobbyClient
             ret.Players = Users.Values.Where(x=>x!=null).Select(x => x.ToPlayerTeam()).ToList();
             ret.Bots = Bots.Values.Where(x=>x!=null).Select(x => x.ToBotTeam()).ToList();
             ret.ModOptions = new Dictionary<string, string>(ModOptions);
+            ret.MapOptions = new Dictionary<string, string>(MapOptions);
             ret.Mode = Mode;    
             ret.IsMatchMakerGame = IsMatchMakerBattle;
             ret.ApplicableRating = ApplicableRating;
@@ -167,12 +165,15 @@ namespace LobbyClient
             return ret;
         }
 
+        
+
         public Battle Clone()
         {
             var clone = (Battle)this.MemberwiseClone();
             clone.Users = new ConcurrentDictionary<string, UserBattleStatus>(this.Users);
             clone.Bots = new ConcurrentDictionary<string, BotBattleStatus>(this.Bots);
             clone.ModOptions = new Dictionary<string, string>(ModOptions);
+            clone.MapOptions = new Dictionary<string, string>(MapOptions);
             return clone;
         }
     }

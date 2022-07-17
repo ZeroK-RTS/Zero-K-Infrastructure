@@ -45,6 +45,7 @@ namespace ZkLobbyServer
         public Resource HostedMod;
 
         public Mod HostedModInfo;
+        public Map HostedMapInfo;
 
         private int hostingPort;
         private int? dbAutohostIndex;
@@ -321,7 +322,8 @@ namespace ZkLobbyServer
                     BattleID = BattleID,
                     Players = Users.Values.Select(x => x.ToUpdateBattleStatus()).ToList(),
                     Bots = Bots.Values.Select(x => x.ToUpdateBotStatus()).ToList(),
-                    Options = ModOptions
+                    Options = ModOptions,
+                    MapOptions = MapOptions
                 });
 
             if (ActivePoll != null) await user.SendCommand(ActivePoll.GetBattlePoll());
@@ -506,6 +508,14 @@ namespace ZkLobbyServer
             ModOptions = options;
             await server.Broadcast(Users.Keys, new SetModOptions() { Options = options });
         }
+        
+        
+        public async Task SetMapOptions(Dictionary<string, string> options)
+        {
+            MapOptions = options;
+            await server.Broadcast(Users.Keys, new SetMapOptions() { Options = options });
+        }
+        
         public void SetApplicableRating(RatingCategory rating)
         {
             ApplicableRating = rating;
@@ -705,10 +715,18 @@ namespace ZkLobbyServer
         public async Task SwitchMap(string internalName)
         {
             MapName = internalName;
+
             ValidateAndFillDetails();
             await
                 server.Broadcast(server.ConnectedUsers.Values,
                     new BattleUpdate() { Header = new BattleHeader() { BattleID = BattleID, Map = MapName } });
+            
+            if (MapOptions.Any())
+            {
+                MapOptions = new Dictionary<string, string>();
+                await server.Broadcast(Users.Keys, new SetMapOptions() { Options = MapOptions });
+            }
+
             SaveToDb();
         }
 
@@ -915,8 +933,21 @@ namespace ZkLobbyServer
                 {
                     Trace.TraceWarning("Error loading mod metadata for {0} : {1}", HostedMod.InternalName, ex);
                 }
+
+            if (!string.IsNullOrEmpty(MapName))
+            {
+                try
+                {
+                    HostedMapInfo = MetaDataCache.ServerGetMap(MapName);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("Error loading map metadata for {0} : {1}", MapName, ex);
+                }
+            }
         }
 
+        
         public virtual void ValidateBattleStatus(UserBattleStatus ubs)
         {
             if (Mode != AutohostMode.None) ubs.AllyNumber = 0;
@@ -1297,4 +1328,6 @@ namespace ZkLobbyServer
             public DateTime TimeOfKicked = DateTime.UtcNow;
         }
     }
+
+
 }
