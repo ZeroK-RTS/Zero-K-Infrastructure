@@ -8,7 +8,9 @@ using System.Linq;
 using System.Media;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -782,41 +784,40 @@ namespace ChobbyLauncher
 
 
         Lazy<UnitSync> unitSyncLazy;
+
         private async Task Process(GetResourceInfo args)
         {
-            Task.Run(() =>
-            {
-                try
-                {
-                    var unitSync = unitSyncLazy.Value;
-                    ResourceInfo ri = null;
-                    if (!string.IsNullOrEmpty(args.ArchiveName)) ri = unitSync.GetResourceFromFileName(args.ArchiveName);
-                    if (!string.IsNullOrEmpty(args.InternalName)) ri = ri ?? unitSync.GetArchiveEntryByInternalName(args.InternalName);
+            Task.Run(() => { GetResourceInfo(args); });
+        }
 
-                    if (ri.ModType == 0 || ri.ModType == 1) ri = unitSync.GetMod(ri);
-                    else if (ri.ModType == 3) ri = unitSync.GetMap(ri);
-                    
-                    SendCommand(new GetResourceInfoDone()
-                    {
-                        InternalName = args.InternalName ?? ri?.Name,
-                        ArchiveName = args.ArchiveName ?? ri?.ArchiveName,
-                        Data = JsonConvert.SerializeObject(ri)
-                    });
-                }
-                catch (Exception ex)
+        [HandleProcessCorruptedStateExceptions]
+        void GetResourceInfo(GetResourceInfo args)
+        {
+            try
+            {
+                var unitSync = unitSyncLazy.Value;
+                ResourceInfo ri = null;
+                if (!string.IsNullOrEmpty(args.ArchiveName)) ri = unitSync.GetResourceFromFileName(args.ArchiveName);
+                if (!string.IsNullOrEmpty(args.InternalName)) ri = ri ?? unitSync.GetArchiveEntryByInternalName(args.InternalName);
+
+                if (ri.ModType == 0 || ri.ModType == 1) ri = unitSync.GetMod(ri);
+                else if (ri.ModType == 3) ri = unitSync.GetMap(ri);
+
+                SendCommand(new GetResourceInfoDone()
                 {
-                    Trace.TraceError("Error running unitsync for {0} {1} : {2}", args.InternalName, args.ArchiveName, ex);
-                    SendCommand(new GetResourceInfoDone()
-                    {
-                        InternalName = args.InternalName,
-                        ArchiveName = args.ArchiveName,
-                    });
-                }
-            });
-        }        
-        
-        
-        
+                    InternalName = args.InternalName ?? ri?.Name,
+                    ArchiveName = args.ArchiveName ?? ri?.ArchiveName,
+                    Data = JsonConvert.SerializeObject(ri)
+                });
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error running unitsync for {0} {1} : {2}", args.InternalName, args.ArchiveName, ex);
+                SendCommand(new GetResourceInfoDone() { InternalName = args.InternalName, ArchiveName = args.ArchiveName, });
+            }
+        }
+
+
         private async Task OnConnected()
         {
             Trace.TraceInformation("Chobby connected to wrapper");
