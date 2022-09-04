@@ -323,7 +323,7 @@ namespace Ratings
                     updateAction = (() =>
                     {
                         Trace.TraceInformation("Initializing WHR " + category + " ratings for " + battlesRegistered + " battles, this will take some time..");
-                        runIterations(75);
+                        runIterations(150);
                         UpdateRankings(players.Values);
                         completelyInitialized = true;
                         cachedDbRatings.Clear();
