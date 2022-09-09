@@ -184,6 +184,7 @@
             Counts for competitive skill rating: @Html.CheckBox("MatchMaking", Model.ApplicableRatings.HasFlag(RatingCategoryFlags.MatchMaking)) <br />
             Counts for casual skill rating: @Html.CheckBox("Casual", Model.ApplicableRatings.HasFlag(RatingCategoryFlags.Casual)) <br />
             Counts for planetwars skill rating: @Html.CheckBox("PlanetWars", Model.ApplicableRatings.HasFlag(RatingCategoryFlags.Planetwars)) <br />
+            Counts for ladder rating: @Html.CheckBox("Ladder", Model.ApplicableRatings.HasFlag(RatingCategoryFlags.Ladder)) <br />
             <input type="submit" />
         </form>
     </div>

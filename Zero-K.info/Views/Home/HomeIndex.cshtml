@@ -296,7 +296,7 @@
                     <tr>
                         <td>@(++rank)</td>
                         <td><small>@Html.PrintAccount(acct)</small></td>
-                        <td>@(Math.Round(acct.GetRating(RatingCategory.MatchMaking).LadderElo))</td>
+                        <td>@(Math.Round(acct.GetRating(DynamicConfig.Instance.LadderSeasonOngoing ? RatingCategory.Ladder : RatingCategory.MatchMaking).LadderElo))</td>
                     </tr>
                 }
             }

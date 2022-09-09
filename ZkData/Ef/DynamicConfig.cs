@@ -35,6 +35,8 @@ namespace ZkData
 
         public int MaximumStatLimitedBattlePlayers { get; set; } // if a battle has more than this number of players, maxelo/minelo, maxrank/minrank and maxleve/minlevel are disabled
 
+        public bool LadderSeasonOngoing { get; set; }
+
         public static DynamicConfig Instance;
 
         static DynamicConfig()
