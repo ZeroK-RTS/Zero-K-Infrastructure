@@ -45,7 +45,7 @@ jobs:
         shell: cmd
         
       - name: Run VSTest
-        run: vstest.console.exe /Platform:x64 /Framework:Framework45 /TestCaseFilter:TestCategory=Basic /Parallel /Logger:trx;LogFileName=test-results.trx ./Tests/bin/net48/Tests.dll
+        run: vstest.console.exe /Platform:x64 /Framework:Framework45 /TestCaseFilter:TestCategory=Basic /Parallel /Logger:trx;LogFileName=test-results.trx ./Tests/bin/release/net48/Tests.dll
         shell: cmd
         
       - name: Copy steam pipeline files
