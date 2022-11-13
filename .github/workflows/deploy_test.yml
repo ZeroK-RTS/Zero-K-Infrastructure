@@ -38,14 +38,14 @@ jobs:
  
       - name: Build entire Zero-K
         run: >
-          msbuild /t:Rebuild /p:Configuration=Release /p:Platform=x86 
+          msbuild /t:Rebuild /p:Configuration=Release /p:Platform=x64 
           /p:DeployOnBuild=true /p:PublishProfile=Profile1
           /p:DefineConstants="RELEASE;TRACE;TEST"
           Zero-K.sln
         shell: cmd
 
       - name: Run VSTest
-        run: vstest.console.exe /Platform:x86 /Framework:Framework45 /TestCaseFilter:TestCategory=Basic /Parallel /Logger:trx;LogFileName=test-results.trx ./Tests/bin/net48/Tests.dll
+        run: vstest.console.exe /Platform:x64 /Framework:Framework45 /TestCaseFilter:TestCategory=Basic /Parallel /Logger:trx;LogFileName=test-results.trx ./Tests/bin/net48/Tests.dll
         shell: cmd
         
       - name: Copy steam pipeline files
