@@ -31,21 +31,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with: 
-          clean: false
+          clean: true
       
       - name: Restore NuGet Packages
         run: nuget restore Zero-K.sln
  
       - name: Build entire Zero-K
         run: >
-          msbuild /t:Rebuild /p:Configuration=Release /p:Platform=x86 
+          msbuild /t:Rebuild /p:Configuration=Release /p:Platform=x64 
           /p:DeployOnBuild=true /p:PublishProfile=Profile1
           /p:DefineConstants="RELEASE;TRACE;LIVE"
           Zero-K.sln
         shell: cmd
         
       - name: Run VSTest
-        run: vstest.console.exe /Platform:x86 /Framework:Framework45 /TestCaseFilter:TestCategory=Basic /Parallel /Logger:trx;LogFileName=test-results.trx ./Tests/bin/net48/Tests.dll
+        run: vstest.console.exe /Platform:x64 /Framework:Framework45 /TestCaseFilter:TestCategory=Basic /Parallel /Logger:trx;LogFileName=test-results.trx ./Tests/bin/release/net48/Tests.dll
         shell: cmd
         
       - name: Copy steam pipeline files

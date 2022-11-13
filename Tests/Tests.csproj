@@ -5,14 +5,18 @@
         <Nullable>disable</Nullable>
 
         <IsPackable>false</IsPackable>
+
+        <Configurations>Debug;Release</Configurations>
+
+        <Platforms>x64</Platforms>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <OutputPath>bin</OutputPath>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+      <OutputPath>bin\Debug\</OutputPath>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <OutputPath>bin</OutputPath>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+      <OutputPath>bin\Release\</OutputPath>
     </PropertyGroup>
 
     <ItemGroup>
