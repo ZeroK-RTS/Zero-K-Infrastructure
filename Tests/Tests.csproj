@@ -5,14 +5,10 @@
         <Nullable>disable</Nullable>
 
         <IsPackable>false</IsPackable>
-    </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <OutputPath>bin</OutputPath>
-    </PropertyGroup>
+        <Configurations>Debug;Release</Configurations>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <OutputPath>bin</OutputPath>
+        <Platforms>x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
