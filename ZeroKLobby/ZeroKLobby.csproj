@@ -1695,12 +1695,9 @@
   </Target>
   <PropertyGroup>
     <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">if /i $(ConfigurationName) NEQ Release exit 0
-"$(ProjectDir)\..\packages\ilmerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetDir)$(TargetName).exe" "$(TargetDir)*.dll" /target:exe "/targetplatform:v4.5,%25ProgramFiles%25\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.1" /wildcards /t:winexe
-copy /Y "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).pdb"
-copy /Y "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"</PostBuildEvent>
-    <PostBuildEvent>if /i $(ConfigurationName) NEQ Release exit 0
-"$(ProjectDir)\..\packages\ilrepack.2.0.18\tools\ILRepack.exe" /target:winexe /wildcards /targetplatform:v4 /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetDir)$(TargetName).exe" "$(TargetDir)*.dll" &gt; nul 
-copy /Y "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).pdb"
-copy /Y "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"</PostBuildEvent>
+        "$(ProjectDir)\..\packages\ilmerge.3.0.41\tools\net452\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetDir)$(TargetName).exe" "$(TargetDir)*.dll" /target:exe "/targetplatform:v4.5,c:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8" /wildcards /t:winexe /allowdup
+        copy /Y "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).pdb"
+        copy /Y "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
