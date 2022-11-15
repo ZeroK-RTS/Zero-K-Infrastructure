@@ -13,7 +13,7 @@
 
 <span>Maintained by @Html.PrintAccount(Model.Maintainer)</span><br/>
 <span>Last updated @Html.PrintDate(Model.LastModified)</span><br/>
-<span>Created at @Html.PrintDate(Model.Created)</span><br/>
+<span>Created @Html.PrintDate(Model.Created)</span><br/>
 <span><a href="@Url.Action("Download","Mods", new {id=Model.GameModeID})">download JSON metadata of @Model.ShortName</a></span><br/>
 
 @if (Global.IsModerator || Global.AccountID == Model.MaintainerAccountID)
