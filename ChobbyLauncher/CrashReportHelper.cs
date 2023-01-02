@@ -25,7 +25,7 @@ namespace ChobbyLauncher
     public static class CrashReportHelper
     {
         private const string TruncatedString = "------- TRUNCATED -------";
-        private const int MaxInfologSize = 250000;
+        private const int MaxInfologSize = 62000;
         public static Issue ReportCrash(string infolog, CrashType type, string engine, string bugReportTitle, string bugReportDescription)
         {
             try
