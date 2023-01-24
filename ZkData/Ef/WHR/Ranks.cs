@@ -105,7 +105,7 @@ namespace Ratings
             return bestProgress;
         }
 
-        public static float UpdateLadderRating(Account acc, RatingCategory cat, float targetRating, int allyCount, bool allowGain, bool allowLoss, float classicEloChange, ZkDataContext db)
+        public static float UpdateLadderRating(Account acc, RatingCategory cat, float targetRating, float allyCount, bool allowGain, bool allowLoss, float classicEloChange, ZkDataContext db)
         {
             var rating = acc.AccountRatings.Where(x => x.RatingCategory == cat).FirstOrDefault();
             var ladderElo = rating?.LadderElo ?? WholeHistoryRating.DefaultRating.LadderElo;
