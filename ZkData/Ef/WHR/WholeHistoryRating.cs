@@ -502,8 +502,9 @@ namespace Ratings
                         lastBattlePlayers.Where(p => !playerRatings.ContainsKey((p.AccountID))).ForEach(p => playerRatings[(p.AccountID)] = new PlayerRating(DefaultRating));
                         Dictionary<int, float> winChances = db.SpringBattles.Where(p => p.SpringBattleID == battleId).First().GetAllyteamWinChances();
                         lastBattlePlayers.ForEach(p => {
-                            float eloChange = (p.IsInVictoryTeam ? (1f - winChances[p.AllyNumber]) : (-winChances[p.AllyNumber])) * GlobalConst.LadderEloClassicEloK / lastBattlePlayers.Count(x => x.AllyNumber == p.AllyNumber);
-                            playerRatings[p.AccountID].LadderElo = Ranks.UpdateLadderRating(p.Account, category, getPlayerById(p.AccountID).avgElo + RatingOffset, p.IsInVictoryTeam, !p.IsInVictoryTeam, eloChange, db);
+                            var allyCount = (float)lastBattlePlayers.Count(x => x.AllyNumber == p.AllyNumber)
+                            float eloChange = (p.IsInVictoryTeam ? (1f - winChances[p.AllyNumber]) : (-winChances[p.AllyNumber])) * GlobalConst.LadderEloClassicEloK / allyCount;
+                            playerRatings[p.AccountID].LadderElo = Ranks.UpdateLadderRating(p.Account, category, getPlayerById(p.AccountID).avgElo + RatingOffset, allyCount, p.IsInVictoryTeam, !p.IsInVictoryTeam, eloChange, db);
                         });
                         lastBattlePlayers.Where(p => !p.EloChange.HasValue).ForEach(p =>
                         {
