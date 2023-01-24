@@ -120,7 +120,7 @@ namespace Ratings
                 return (float)ladderElo;
             }
             var delta = targetRating - ladderElo;
-            float classicWeight = 1 - Math.Abs(delta) / (25 + Math.Abs(delta));
+            float classicWeight = 1 - Math.Abs(delta) / (30 + Math.Abs(delta));
             delta *= GlobalConst.LadderEloSmoothingFactor; //smooth out elo changes.
             delta = Math.Min(GlobalConst.LadderEloMaxChange, delta); //clip rating change to allowed limits
             delta = Math.Max(-GlobalConst.LadderEloMaxChange, delta);
