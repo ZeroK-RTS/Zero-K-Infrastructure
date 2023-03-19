@@ -508,6 +508,10 @@
     <Compile Include="Migrations\202107011039589_AddDynConfMm1v1MinimumWinChance.Designer.cs">
       <DependentUpon>202107011039589_AddDynConfMm1v1MinimumWinChance.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202303191424586_RemoveGlacierId.cs" />
+    <Compile Include="Migrations\202303191424586_RemoveGlacierId.Designer.cs">
+      <DependentUpon>202303191424586_RemoveGlacierId.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -952,6 +956,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202107011039589_AddDynConfMm1v1MinimumWinChance.resx">
       <DependentUpon>202107011039589_AddDynConfMm1v1MinimumWinChance.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202303191424586_RemoveGlacierId.resx">
+      <DependentUpon>202303191424586_RemoveGlacierId.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
