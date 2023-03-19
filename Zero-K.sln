@@ -38,8 +38,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoRegistrator", "AutoRegi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetWikiBot", "DotNetWikiBot\DotNetWikiBot.csproj", "{016C2B52-AFD5-4A3A-A960-E9FB51C014BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoCleaner", "DemoCleaner\DemoCleaner.csproj", "{74AEBEB6-3861-4484-8008-9EDD100CD635}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MigrateDatabase", "MigrateDatabase\MigrateDatabase.csproj", "{D60C746C-9968-420C-A6CE-66B7A1D8C33C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChobbyLauncher", "ChobbyLauncher\ChobbyLauncher.csproj", "{37034FCF-F0CD-4069-8FD2-8D18E9794AD6}"
@@ -68,10 +66,6 @@ Global
 		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Release|x64.Build.0 = Release|x64
 		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Debug|x64.ActiveCfg = Debug|x64
 		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Debug|x64.Build.0 = Debug|x64
-		{74AEBEB6-3861-4484-8008-9EDD100CD635}.Release|x64.ActiveCfg = Release|x64
-		{74AEBEB6-3861-4484-8008-9EDD100CD635}.Release|x64.Build.0 = Release|x64
-		{74AEBEB6-3861-4484-8008-9EDD100CD635}.Debug|x64.ActiveCfg = Debug|x64
-		{74AEBEB6-3861-4484-8008-9EDD100CD635}.Debug|x64.Build.0 = Debug|x64
 		{016C2B52-AFD5-4A3A-A960-E9FB51C014BB}.Release|x64.ActiveCfg = Release|x64
 		{016C2B52-AFD5-4A3A-A960-E9FB51C014BB}.Release|x64.Build.0 = Release|x64
 		{016C2B52-AFD5-4A3A-A960-E9FB51C014BB}.Debug|x64.ActiveCfg = Debug|x64

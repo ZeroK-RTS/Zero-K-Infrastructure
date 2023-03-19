@@ -569,10 +569,6 @@
       <Project>{01FAEBBC-02E0-42FE-972C-F17045BA3807}</Project>
       <Name>Autoregistrator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DemoCleaner\DemoCleaner.csproj">
-      <Project>{74aebeb6-3861-4484-8008-9edd100cd635}</Project>
-      <Name>DemoCleaner</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
       <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>
       <Name>LobbyClient</Name>

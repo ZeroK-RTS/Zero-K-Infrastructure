@@ -102,7 +102,6 @@ namespace ZkData
         public static string DefaultChobbyTag => Mode == ModeType.Live ? "zkmenu:stable" : "zkmenu:test";
 
 
-        public const string InfologPathFormat = @"C:\projekty\springie_spring\infolog_{0}.txt";
         public static string SiteDiskPath = @"c:\projekty\zero-k.info\www";
 
 
@@ -252,9 +251,6 @@ namespace ZkData
         public static string GameAnalyticsGameKey = "5197842fb91cbc18a7291436337232af";
         private const string tokenPart2 = "68b318aa1f701165";
         public static string GameAnalyticsToken = "9a815450a" + "0058bc6" + "4812a4d9" + tokenPart2;
-
-
-        public static string[] ReplaysPossiblePaths = { @"c:\projekty\springie_spring\demos-server"};
 
         public const string ZeroKDiscordID = "389176180877688832";
 
