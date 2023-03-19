@@ -469,13 +469,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Img\news\" />
     <Folder Include="Resources\" />
     <Folder Include="Views\Autocomplete\" />
     <Folder Include="Views\Github\" />
     <Folder Include="Views\LobbyService\" />
-    <Folder Include="Weblobby\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\News\Index.cshtml" />
@@ -509,7 +507,7 @@
     <PackageReference Include="Microsoft.AspNet.WebPages" Version="3.2.3" />
     <PackageReference Include="Microsoft.Bcl" Version="1.1.7" />
     <PackageReference Include="Microsoft.Bcl.Build" Version="1.0.14" />
-    <PackageReference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform" Version="1.0.1" />
+    <PackageReference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform" Version="3.6.0" />
     <PackageReference Include="Microsoft.jQuery.Unobtrusive.Ajax" Version="3.2.3" />
     <PackageReference Include="Microsoft.Linq.Translations" Version="1.0.1" />
     <PackageReference Include="Microsoft.Net.Compilers" Version="1.0.0">
@@ -524,7 +522,8 @@
     <PackageReference Include="System.Buffers" Version="4.5.1" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" />
+    <PackageReference Include="System.Runtime" Version="4.3.1" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
     <PackageReference Include="Validation" Version="2.0.2.13022" />
     <PackageReference Include="WebGrease" Version="1.6.0" />
