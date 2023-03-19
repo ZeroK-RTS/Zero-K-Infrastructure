@@ -64,6 +64,11 @@ namespace ZkData
             }
             set { SetValue("planetWarsNextModeTime", value?.ToString()); }
         }
+        
+        
+        public static string ReplaysConnectionString { get { return GetValue("replaysConnectionString"); } }
+        
+        public static string ReplaysContainerName { get { return GetValue("replaysContainerName"); } }
 
 
 

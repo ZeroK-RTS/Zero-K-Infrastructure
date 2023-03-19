@@ -4,9 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using ZkData;
+using ZkLobbyServer;
 
 namespace ZeroKWeb.Controllers
 {
@@ -197,8 +200,8 @@ namespace ZeroKWeb.Controllers
             using (var db = new ZkDataContext())
             {
                 var bat = db.SpringBattles.Single(x => x.SpringBattleID == id);
-                return Content(System.IO.File.ReadAllText(string.Format(GlobalConst.InfologPathFormat, bat.EngineGameID)), "text/plain");
-                    //,string.Format("infolog_{0}.txt", bat.SpringBattleID)
+                var content = ReplayStorage.Instance.GetFileContent($"infolog_{bat.EngineGameID}.txt").ConfigureAwait(false).GetAwaiter().GetResult();
+                return Content(Encoding.UTF8.GetString(content), "text/plain");
             }
         }
 
