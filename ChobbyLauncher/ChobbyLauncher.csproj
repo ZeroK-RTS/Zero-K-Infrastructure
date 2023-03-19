@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\ILMerge.3.0.41\build\ILMerge.props" Condition="Exists('..\packages\ILMerge.3.0.41\build\ILMerge.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -44,37 +43,13 @@
     <ApplicationIcon>ZK_logo_128.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GameAnalytics.Mono, Version=1.0.8074.30490, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\GameAnalytics.Mono.SDK.3.3.5\lib\net45\GameAnalytics.Mono.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="Neo.Lua, Version=5.3.0.0, Culture=neutral, PublicKeyToken=fdb0cd4fe8a6e3b2">
-      <HintPath>..\packages\NeoLua.1.3.14\lib\net47\Neo.Lua.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
-      <HintPath>..\packages\NLog.4.7.15\lib\net45\NLog.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Octokit, Version=0.51.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Octokit.0.51.0\lib\net46\Octokit.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Steamworks.NET">
       <HintPath>..\Libs\Steamworks.NET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite, Version=1.0.102.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139">
-      <HintPath>..\packages\GameAnalytics.Mono.SDK.3.3.5\lib\net45\System.Data.SQLite.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net" />
     <Reference Include="System.Runtime.Serialization.Primitives, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -148,7 +123,6 @@
       <LastGenOutput>Shraka.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -182,6 +156,15 @@
       <Name>PlasmaShared</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="GameAnalytics.Mono.SDK" Version="3.3.5" />
+    <PackageReference Include="ILMerge" Version="3.0.41" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
+    <PackageReference Include="NeoLua" Version="1.3.14" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="NLog" Version="4.7.15" />
+    <PackageReference Include="Octokit" Version="0.51.0" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
   </Target>
@@ -202,12 +185,4 @@ copy /Y "$(TargetDir)$(TargetName).all.pdb" "$(TargetName).pdb"
 copy /Y "$(TargetDir)$(TargetName).all.exe" "$(TargetName).exe"
 </PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\GameAnalytics.Mono.SDK.3.3.5\build\net45\GameAnalytics.Mono.SDK.targets" Condition="Exists('..\packages\GameAnalytics.Mono.SDK.3.3.5\build\net45\GameAnalytics.Mono.SDK.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\GameAnalytics.Mono.SDK.3.3.5\build\net45\GameAnalytics.Mono.SDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GameAnalytics.Mono.SDK.3.3.5\build\net45\GameAnalytics.Mono.SDK.targets'))" />
-    <Error Condition="!Exists('..\packages\ILMerge.3.0.41\build\ILMerge.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILMerge.3.0.41\build\ILMerge.props'))" />
-  </Target>
 </Project>
