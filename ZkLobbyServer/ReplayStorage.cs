@@ -64,5 +64,22 @@ namespace ZkLobbyServer
             return stream.ToArray();
         }
         
+        public async Task MigrateReplays()
+        {
+            // replays themselves
+            var files = Directory.GetFiles(@"c:\Projekty\springie_spring\demos-server");
+            foreach (var fi in files)
+            {
+                await UploadAndDeleteFileAsync(fi);
+            }
+            
+            // infologs
+            files = Directory.GetFiles(@"c:\Projekty\springie_spring","infolog_*.txt");
+            foreach (var fi in files)
+            {
+                await UploadAndDeleteFileAsync(fi);
+            }
+        }
+        
     }
 }
