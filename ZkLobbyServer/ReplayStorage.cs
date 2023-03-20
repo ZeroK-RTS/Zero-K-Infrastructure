@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
@@ -35,9 +37,8 @@ namespace ZkLobbyServer
                 if (await blobClient.ExistsAsync()) return false;
 
 
-                // upload to azure storage and set access tier to archive
-                var options = new BlobUploadOptions() { AccessTier = AccessTier.Archive };
-                await blobClient.UploadAsync(path, options);
+                // upload to azure storage
+                await blobClient.UploadAsync(path);
                 
                 File.Delete(path);
                 return true;
@@ -78,6 +79,17 @@ namespace ZkLobbyServer
             foreach (var fi in files)
             {
                 await UploadAndDeleteFileAsync(fi);
+            }
+        }
+
+
+        public void RehydrateAll()
+        {
+            // set all blobs to cool
+            foreach (var blob in azureContainer.GetBlobs())
+            {
+                var blobClient = azureContainer.GetBlobClient(blob.Name);
+                blobClient.SetAccessTierAsync(AccessTier.Cool);
             }
         }
         
