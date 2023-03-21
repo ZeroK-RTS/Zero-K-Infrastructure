@@ -82,16 +82,5 @@ namespace ZkLobbyServer
             }
         }
 
-
-        public void RehydrateAll()
-        {
-            // set all blobs to cool
-            foreach (var blob in azureContainer.GetBlobs())
-            {
-                var blobClient = azureContainer.GetBlobClient(blob.Name);
-                blobClient.SetAccessTierAsync(AccessTier.Cool);
-            }
-        }
-        
     }
 }
