@@ -16,6 +16,7 @@ namespace Ratings
 
         public float avgElo = 0f / 0;
         public float avgEloVar = 0f / 0;
+        public bool onLadder = false;
 
         private static List<float> hessian_subdiagonal = new List<float>();
         private static List<float> hessian_diagonal = new List<float>();
@@ -246,10 +247,15 @@ namespace Ratings
             float avgElo = 0;
             float weightSum = 0;
             float varSum = 0;
-            int minDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow) - GlobalConst.LadderActivityDays;
+            int minAveDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow) - GlobalConst.LadderAverageDays;
+            int minActiveDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow) - GlobalConst.LadderActivityDays;
             for (int i = 0; i < days.Count; i++)
             {
-                if (days[i].day >= minDay)
+                if (days[i].weight > 0 && days[i].day >= minAveDay) // if any game played that day
+                {
+                    this.onLadder = true;
+                }
+                if (days[i].day >= minAveDay)
                 {
                     weightSum += days[i].weight;
                     varSum += days[i].weight * days[i].GetEloStdev() * days[i].GetEloStdev();

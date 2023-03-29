@@ -532,15 +532,30 @@ namespace Ratings
                         float lastNaturalRatingVar = p.days.Last().naturalRatingVariance;
                         var lastDay = p.days.Last();
                         float ladderElo;
-                        if (playerRatings.ContainsKey(p.id)) ladderElo = playerRatings[p.id].LadderElo;
-                        else ladderElo = (float?)db.AccountRatings.Where(x => x.AccountID == p.id && x.RatingCategory == category).FirstOrDefault()?.LadderElo ?? DefaultRating.LadderElo;
-                        playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastNaturalRatingVar, GlobalConst.NaturalRatingVariancePerDay(lastDay.totalWeight), lastDay.day, currentDay, ladderElo, !float.IsNaN(p.avgElo));
+                        if (playerRatings.ContainsKey(p.id))
+                        {
+                            ladderElo = playerRatings[p.id].LadderElo;
+                        }
+                        else
+                        {
+                            ladderElo = (float?)db.AccountRatings.Where(x => x.AccountID == p.id && x.RatingCategory == category).FirstOrDefault()?.LadderElo ?? DefaultRating.LadderElo;
+                        }
+                        playerRatings[p.id] = new PlayerRating(int.MaxValue, 1, elo, lastNaturalRatingVar, GlobalConst.NaturalRatingVariancePerDay(lastDay.totalWeight), lastDay.day, currentDay, ladderElo, p.onLadder);
                         float rating = -playerRatings[p.id].LadderElo;
-                        if (playerKeys.ContainsKey(p.id)) sortedPlayers.Remove(playerKeys[p.id]);
-                        while (sortedPlayers.ContainsKey(rating)) rating += 0.01f;
+                        if (playerKeys.ContainsKey(p.id))
+                        {
+                            sortedPlayers.Remove(playerKeys[p.id]);
+                        }
+                        while (sortedPlayers.ContainsKey(rating))
+                        {
+                            rating += 0.01f;
+                        }
                         playerKeys[p.id] = rating;
                         sortedPlayers[rating] = p.id;
-                        if (playerRatings[p.id].Ranked) playerCount++;
+                        if (playerRatings[p.id].Ranked)
+                        {
+                            playerCount++;
+                        }
                     }
                 }
                 this.activePlayers = playerCount;
