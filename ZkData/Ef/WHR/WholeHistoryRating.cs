@@ -679,10 +679,10 @@ namespace Ratings
         {
             if (!players.ContainsKey(id))
             {
-                if (temporary) return new Player(id);
+                if (temporary) return new Player(id, category);
                 lock (updateLockInternal)
                 {
-                    players.Add(id, new Player(id));
+                    players.Add(id, new Player(id, category));
                 }
             }
             return players[id];

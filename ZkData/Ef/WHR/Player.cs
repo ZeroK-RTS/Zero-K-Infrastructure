@@ -11,6 +11,8 @@ namespace Ratings
     {
 
         public readonly int id;
+        private readonly RatingCategory category;
+
         public readonly List<PlayerDay> days = new List<PlayerDay>();
         const float MAX_RATING_CHANGE = 5;
 
@@ -43,10 +45,17 @@ namespace Ratings
                 helperLists[i] = new List<float>();
             }
         }
-        
+
         public Player(int id)
         {
             this.id = id;
+            this.category = RatingCategory.Casual; // Maps are casual apparently. CBA to make the two different category enums used for rating system (battle type and map type) make sense.
+        }
+
+        public Player(int id, RatingCategory category)
+        {
+            this.id = id;
+            this.category = category;
         }
 
         private void UpdateHessian()
@@ -249,6 +258,10 @@ namespace Ratings
             float varSum = 0;
             int minAveDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow) - GlobalConst.LadderAverageDays;
             int minActiveDay = RatingSystems.ConvertDateToDays(DateTime.UtcNow) - GlobalConst.LadderActivityDays;
+            if (this.category != RatingCategory.MatchMaking)
+            {
+                minAveDay = minActiveDay;
+            }
             for (int i = 0; i < days.Count; i++)
             {
                 if (days[i].weight > 0 && days[i].day >= minAveDay) // if any game played that day
