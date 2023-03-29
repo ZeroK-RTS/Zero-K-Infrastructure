@@ -99,6 +99,9 @@ namespace ZkLobbyServer
                     PublishUserProfileUpdate(p);
                 });
             });
+            
+            Trace.TraceInformation("Starting migration of old replays"); // NOTE this can be deleted later
+            Task.Factory.StartNew(()=>ReplayStorage.Instance.MigrateReplays(), TaskCreationOptions.LongRunning);
         }
 
         private async Task SpawnAutohosts()

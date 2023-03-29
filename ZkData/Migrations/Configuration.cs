@@ -3,9 +3,9 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using EntityFramework.Extensions;
 using PlasmaShared;
 using Ratings;
+using Z.EntityFramework.Plus;
 
 namespace ZkData.Migrations
 {

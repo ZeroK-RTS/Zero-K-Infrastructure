@@ -140,11 +140,9 @@ namespace PlasmaDownloader
 
                 if (type == DownloadType.DEMO)
                 {
-                    var target = new Uri(name);
-                    var targetName = target.Segments.Last();
-                    var filePath = Utils.MakePath(SpringPaths.WritableDirectory, "demos", targetName);
+                    var filePath = Utils.MakePath(SpringPaths.WritableDirectory, "demos", name);
                     if (File.Exists(filePath)) return null;
-                    var down = new WebFileDownload(name, filePath, null);
+                    var down = new WebFileDownload("https://zero-k.info/replays/"+ name, filePath, null, name);
                     down.DownloadType = type;
                     downloads[down.Name] = down;
                     DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down)); //create download bar (handled by MainWindow.cs)

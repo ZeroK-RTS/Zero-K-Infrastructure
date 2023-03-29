@@ -15,9 +15,9 @@ namespace PlasmaDownloader
     readonly string url;
     WebClient wc;
 
-    public WebFileDownload(string url, string targetFilePath, string tempFolder)
+    public WebFileDownload(string url, string targetFilePath, string tempFolder, string name = null)
     {
-      Name = url;
+      Name = name ?? url;
       this.url = url;
       this.targetFilePath = targetFilePath;
       if (tempFolder != null) tempFilePath = Utils.MakePath(tempFolder, Path.GetFileName(targetFilePath));
