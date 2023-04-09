@@ -81,6 +81,7 @@ namespace ZkLobbyServer
 
                     if (minimumWinChance <= 0.01) return true;
                     if (!QueueType.UseWinChanceLimit) return true;
+                    minimumWinChance = minimumWinChance * QueueType.MinWinChanceMult;
 
                     var players = Players.Select(x => x.LobbyUser).Select(x => new PlayerItem(x.AccountID, x.EffectiveMmElo, x.Clan, x.PartyID)).ToList();
                     return Balance(ZeroKWeb.SpringieInterface.Balancer.BalanceMode.Party, players).LowestWinChance > minimumWinChance;

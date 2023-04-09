@@ -27,6 +27,7 @@ namespace ZkLobbyServer
         {
             public string Name, Description;
             public bool UseWinChanceLimit;
+            public double MinWinChanceMult;
             public bool UseHandicap;
             public Func<Resource, bool> MapSelector;
             public int MaxPartySize, MaxSize, MinSize;
@@ -74,6 +75,7 @@ namespace ZkLobbyServer
                 Name = "Sortie",
                 Description = "Play 2v2 or 3v3 with players of similar skill.",
                 UseWinChanceLimit = true,
+                MinWinChanceMult = 1.0,
                 UseHandicap = false,
                 MinSize = 4,
                 MaxSize = 6,
@@ -86,7 +88,8 @@ namespace ZkLobbyServer
             {
                 Name = "Sortie Wide",
                 Description = "Play 2v2 or 3v3 with anyone.",
-                UseWinChanceLimit = false,
+                UseWinChanceLimit = true,
+                MinWinChanceMult = 0.6,
                 UseHandicap = false,
                 MinSize = 4,
                 MaxSize = 6,
@@ -101,6 +104,7 @@ namespace ZkLobbyServer
                 Name = "Battle",
                 Description = "Play 4v4, 5v5 or 6v6 with players of similar skill.",
                 UseWinChanceLimit = true,
+                MinWinChanceMult = 1.0,
                 UseHandicap = false,
                 MinSize = 8,
                 MaxSize = 12,
@@ -113,7 +117,8 @@ namespace ZkLobbyServer
             {
                 Name = "Battle Wide",
                 Description = "Play 4v4, 5v5 or 6v6 with anyone.",
-                UseWinChanceLimit = false,
+                UseWinChanceLimit = true,
+                MinWinChanceMult = 0.6,
                 UseHandicap = false,
                 MinSize = 8,
                 MaxSize = 12,
@@ -128,6 +133,7 @@ namespace ZkLobbyServer
                 Name = "Coop",
                 Description = "Play together, against AI or chickens.",
                 UseWinChanceLimit = false,
+                MinWinChanceMult = 1.0,
                 UseHandicap = false,
                 MinSize = 2,
                 MaxSize = 5,
@@ -142,6 +148,7 @@ namespace ZkLobbyServer
                 Name = "1v1",
                 Description = "Play 1v1 with an opponent of similar skill. Games beyond the matching range of '1v1 Narrow' are unranked and have a bonus for the lower ranked player.",
                 UseWinChanceLimit = false,
+                MinWinChanceMult = 1.0,
                 UseHandicap = true,
                 MinSize = 2,
                 MaxSize = 2,
@@ -155,6 +162,7 @@ namespace ZkLobbyServer
                 Name = "1v1 Narrow",
                 Description = "Play 1v1 with a closely matched opponent.",
                 UseWinChanceLimit = true,
+                MinWinChanceMult = 1.0,
                 UseHandicap = false,
                 MinSize = 2,
                 MaxSize = 2,
@@ -168,6 +176,7 @@ namespace ZkLobbyServer
                 Name = "1v1 Wide",
                 Description = "Play 1v1 with a potentially not-so-closely matched opponent. The matching range is the same as standard '1v1'.",
                 UseWinChanceLimit = false,
+                MinWinChanceMult = 1.0,
                 UseHandicap = false,
                 MinSize = 2,
                 MaxSize = 2,
@@ -205,6 +214,7 @@ namespace ZkLobbyServer
                     queue.Name = x.Name;
                     queue.Description = x.Description;
                     queue.UseWinChanceLimit = x.UseWinChanceLimit;
+                    queue.MinWinChanceMult = x.MinWinChanceMult;
                     queue.UseHandicap = x.UseHandicap;
                     queue.MinSize = x.MinSize;
                     queue.MaxSize = x.MaxSize;
