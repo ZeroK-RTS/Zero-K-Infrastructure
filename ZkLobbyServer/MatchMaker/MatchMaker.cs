@@ -82,6 +82,19 @@ namespace ZkLobbyServer
                 Mode = AutohostMode.Teams,
                 MapSelector = IsTeamsMap,
             });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "Sortie Wide",
+                Description = "Play 2v2 or 3v3 with anyone.",
+                UseWinChanceLimit = false,
+                UseHandicap = false,
+                MinSize = 4,
+                MaxSize = 6,
+                MaxPartySize = 3,
+                EloCutOffExponent = 0,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
 
             queueConfigs.Add(new QueueConfig()
             {
@@ -93,6 +106,19 @@ namespace ZkLobbyServer
                 MaxSize = 12,
                 MaxPartySize = 6,
                 EloCutOffExponent = 0.96,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "Battle Wide",
+                Description = "Play 4v4, 5v5 or 6v6 with anyone.",
+                UseWinChanceLimit = false,
+                UseHandicap = false,
+                MinSize = 8,
+                MaxSize = 12,
+                MaxPartySize = 6,
+                EloCutOffExponent = 0,
                 Mode = AutohostMode.Teams,
                 MapSelector = IsTeamsMap,
             });
