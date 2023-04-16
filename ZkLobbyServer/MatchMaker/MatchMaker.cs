@@ -197,8 +197,9 @@ namespace ZkLobbyServer
             queueConfigs.Add(new QueueConfig()
             {
                 Name = "2v2+",
-                Description = "Play balanced 2v2 or larger with anyone.",
+                Description = "Play a casual 2v2 or larger with anyone.",
                 UseWinChanceLimit = true,
+                UseCasualElo = true,
                 MinWinChanceMult = 0.0,
                 MinWinChanceOffset = 0.45,
                 UseHandicap = false,
@@ -212,8 +213,9 @@ namespace ZkLobbyServer
             queueConfigs.Add(new QueueConfig()
             {
                 Name = "3v3+",
-                Description = "Play balanced 3v3 or larger with anyone.",
+                Description = "Play a casual 3v3 or larger with anyone.",
                 UseWinChanceLimit = true,
+                UseCasualElo = true,
                 MinWinChanceMult = 0.0,
                 MinWinChanceOffset = 0.45,
                 UseHandicap = false,
@@ -227,8 +229,9 @@ namespace ZkLobbyServer
             queueConfigs.Add(new QueueConfig()
             {
                 Name = "4v4+",
-                Description = "Play balanced 4v4 or larger with anyone.",
+                Description = "Play a casual 4v4 or larger with anyone.",
                 UseWinChanceLimit = true,
+                UseCasualElo = true,
                 MinWinChanceMult = 0.0,
                 MinWinChanceOffset = 0.45,
                 UseHandicap = false,
@@ -242,8 +245,9 @@ namespace ZkLobbyServer
             queueConfigs.Add(new QueueConfig()
             {
                 Name = "5v5+",
-                Description = "Play balanced 5v5 or larger with anyone.",
+                Description = "Play a casual 5v5 or larger with anyone.",
                 UseWinChanceLimit = true,
+                UseCasualElo = true,
                 MinWinChanceMult = 0.0,
                 MinWinChanceOffset = 0.45,
                 UseHandicap = false,
@@ -257,8 +261,9 @@ namespace ZkLobbyServer
             queueConfigs.Add(new QueueConfig()
             {
                 Name = "6v6+",
-                Description = "Play balanced 6v6 or larger with anyone.",
+                Description = "Play a casual 6v6 or larger with anyone.",
                 UseWinChanceLimit = true,
+                UseCasualElo = true,
                 MinWinChanceMult = 0.0,
                 MinWinChanceOffset = 0.45,
                 UseHandicap = false,
@@ -272,8 +277,9 @@ namespace ZkLobbyServer
             queueConfigs.Add(new QueueConfig()
             {
                 Name = "7v7+",
-                Description = "Play balanced 7v7 or larger with anyone.",
+                Description = "Play a casual 7v7 or larger with anyone.",
                 UseWinChanceLimit = true,
+                UseCasualElo = true,
                 MinWinChanceMult = 0.0,
                 MinWinChanceOffset = 0.45,
                 UseHandicap = false,
@@ -287,8 +293,9 @@ namespace ZkLobbyServer
             queueConfigs.Add(new QueueConfig()
             {
                 Name = "8v8+",
-                Description = "Play balanced 8v8 or larger with anyone.",
+                Description = "Play a casual 8v8 or larger with anyone.",
                 UseWinChanceLimit = true,
+                UseCasualElo = true,
                 MinWinChanceMult = 0.0,
                 MinWinChanceOffset = 0.45,
                 UseHandicap = false,
@@ -302,8 +309,9 @@ namespace ZkLobbyServer
             queueConfigs.Add(new QueueConfig()
             {
                 Name = "9v9+",
-                Description = "Play balanced 9v9 or larger with anyone.",
+                Description = "Play a casual 9v9 or larger with anyone.",
                 UseWinChanceLimit = true,
+                UseCasualElo = true,
                 MinWinChanceMult = 0.0,
                 MinWinChanceOffset = 0.45,
                 UseHandicap = false,
@@ -317,8 +325,9 @@ namespace ZkLobbyServer
             queueConfigs.Add(new QueueConfig()
             {
                 Name = "10v10+",
-                Description = "Play balanced 10v10 or larger with anyone.",
+                Description = "Play a casual 10v10 or larger with anyone.",
                 UseWinChanceLimit = true,
+                UseCasualElo = true,
                 MinWinChanceMult = 0.0,
                 MinWinChanceOffset = 0.45,
                 UseHandicap = false,
@@ -868,7 +877,7 @@ namespace ZkLobbyServer
         private async Task StartBattle(ProposedBattle bat)
         {
             await server.UserLogSay($"Match starting with players: {bat.Players.Select(x => x.Name).StringJoin()}.");
-            var battle = new MatchMakerBattle(server, bat, PickMap(bat), WantHandicap(bat));
+            var battle = new MatchMakerBattle(server, bat, PickMap(bat), WantHandicap(bat), !bat.QueueType.UseCasualElo);
             await server.AddBattle(battle);
 
             // also join in lobby

@@ -84,6 +84,10 @@ namespace ZkLobbyServer
                     minimumWinChance = minimumWinChance * QueueType.MinWinChanceMult + QueueType.MinWinChanceOffset;
 
                     var players = Players.Select(x => x.LobbyUser).Select(x => new PlayerItem(x.AccountID, x.EffectiveMmElo, x.Clan, x.PartyID)).ToList();
+                    if (QueueType.UseCasualElo)
+					{
+						players = Players.Select(x => x.LobbyUser).Select(x => new PlayerItem(x.AccountID, x.EffectiveElo, x.Clan, x.PartyID)).ToList();
+					}
                     return Balance(ZeroKWeb.SpringieInterface.Balancer.BalanceMode.Party, players).LowestWinChance > minimumWinChance;
                 }
                 catch (Exception ex)
