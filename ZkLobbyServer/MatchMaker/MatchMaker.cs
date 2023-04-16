@@ -27,6 +27,7 @@ namespace ZkLobbyServer
         {
             public string Name, Description;
             public bool UseWinChanceLimit;
+            public bool UseCasualElo;
             public double MinWinChanceMult;
             public double MinWinChanceOffset;
             public bool UseHandicap;
