@@ -376,6 +376,7 @@ namespace ZkLobbyServer
                     queue.Name = x.Name;
                     queue.Description = x.Description;
                     queue.UseWinChanceLimit = x.UseWinChanceLimit;
+                    queue.UseCasualElo = x.UseCasualElo;
                     queue.MinWinChanceMult = x.MinWinChanceMult;
                     queue.MinWinChanceOffset = x.MinWinChanceOffset;
                     queue.UseHandicap = x.UseHandicap;
