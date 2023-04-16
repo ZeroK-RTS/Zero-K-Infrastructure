@@ -29,6 +29,9 @@ namespace LobbyClient
             public double MinWinChanceMult { get; set; }
 
             [JsonIgnore]
+            public double MinWinChanceOffset { get; set; }
+
+            [JsonIgnore]
             public bool UseHandicap { get; set; }
 
             [JsonIgnore]
