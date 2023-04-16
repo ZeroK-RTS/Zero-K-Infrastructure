@@ -23,6 +23,9 @@ namespace LobbyClient
             public bool UseWinChanceLimit { get; set; }
 
             [JsonIgnore]
+            public bool UseCasualElo { get; set; }
+
+            [JsonIgnore]
             public double MinWinChanceMult { get; set; }
 
             [JsonIgnore]
