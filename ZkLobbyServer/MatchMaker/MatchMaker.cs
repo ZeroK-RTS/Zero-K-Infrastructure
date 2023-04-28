@@ -27,6 +27,9 @@ namespace ZkLobbyServer
         {
             public string Name, Description;
             public bool UseWinChanceLimit;
+            public bool UseCasualElo;
+            public double MinWinChanceMult;
+            public double MinWinChanceOffset;
             public bool UseHandicap;
             public Func<Resource, bool> MapSelector;
             public int MaxPartySize, MaxSize, MinSize;
@@ -74,11 +77,30 @@ namespace ZkLobbyServer
                 Name = "Sortie",
                 Description = "Play 2v2 or 3v3 with players of similar skill.",
                 UseWinChanceLimit = true,
+                UseCasualElo = false,
+                MinWinChanceMult = 1.0,
+                MinWinChanceOffset = 0.0,
                 UseHandicap = false,
                 MinSize = 4,
                 MaxSize = 6,
                 MaxPartySize = 3,
                 EloCutOffExponent = 0.96,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "Sortie Wide",
+                Description = "Play 2v2 or 3v3 with anyone.",
+                UseWinChanceLimit = true,
+                UseCasualElo = false,
+                MinWinChanceMult = 0.6,
+                MinWinChanceOffset = 0.0,
+                UseHandicap = false,
+                MinSize = 4,
+                MaxSize = 6,
+                MaxPartySize = 3,
+                EloCutOffExponent = 0,
                 Mode = AutohostMode.Teams,
                 MapSelector = IsTeamsMap,
             });
@@ -88,11 +110,30 @@ namespace ZkLobbyServer
                 Name = "Battle",
                 Description = "Play 4v4, 5v5 or 6v6 with players of similar skill.",
                 UseWinChanceLimit = true,
+                UseCasualElo = false,
+                MinWinChanceMult = 1.0,
+                MinWinChanceOffset = 0.0,
                 UseHandicap = false,
                 MinSize = 8,
                 MaxSize = 12,
                 MaxPartySize = 6,
                 EloCutOffExponent = 0.96,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "Battle Wide",
+                Description = "Play 4v4, 5v5 or 6v6 with anyone.",
+                UseWinChanceLimit = true,
+                UseCasualElo = false,
+                MinWinChanceMult = 0.6,
+                MinWinChanceOffset = 0.0,
+                UseHandicap = false,
+                MinSize = 8,
+                MaxSize = 12,
+                MaxPartySize = 6,
+                EloCutOffExponent = 0,
                 Mode = AutohostMode.Teams,
                 MapSelector = IsTeamsMap,
             });
@@ -102,6 +143,9 @@ namespace ZkLobbyServer
                 Name = "Coop",
                 Description = "Play together, against AI or chickens.",
                 UseWinChanceLimit = false,
+                UseCasualElo = false,
+                MinWinChanceMult = 1.0,
+                MinWinChanceOffset = 0.0,
                 UseHandicap = false,
                 MinSize = 2,
                 MaxSize = 5,
@@ -116,6 +160,9 @@ namespace ZkLobbyServer
                 Name = "1v1",
                 Description = "Play 1v1 with an opponent of similar skill. Games beyond the matching range of '1v1 Narrow' are unranked and have a bonus for the lower ranked player.",
                 UseWinChanceLimit = false,
+                UseCasualElo = false,
+                MinWinChanceMult = 1.0,
+                MinWinChanceOffset = 0.0,
                 UseHandicap = true,
                 MinSize = 2,
                 MaxSize = 2,
@@ -129,6 +176,9 @@ namespace ZkLobbyServer
                 Name = "1v1 Narrow",
                 Description = "Play 1v1 with a closely matched opponent.",
                 UseWinChanceLimit = true,
+                UseCasualElo = false,
+                MinWinChanceMult = 1.0,
+                MinWinChanceOffset = 0.0,
                 UseHandicap = false,
                 MinSize = 2,
                 MaxSize = 2,
@@ -142,6 +192,9 @@ namespace ZkLobbyServer
                 Name = "1v1 Wide",
                 Description = "Play 1v1 with a potentially not-so-closely matched opponent. The matching range is the same as standard '1v1'.",
                 UseWinChanceLimit = false,
+                UseCasualElo = false,
+                MinWinChanceMult = 1.0,
+                MinWinChanceOffset = 0.0,
                 UseHandicap = false,
                 MinSize = 2,
                 MaxSize = 2,
@@ -149,6 +202,150 @@ namespace ZkLobbyServer
                 MaxPartySize = 1,
                 Mode = AutohostMode.Game1v1,
                 MapSelector = Is1v1Map,
+            });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "2v2+",
+                Description = "Play a casual 2v2 or larger with anyone.",
+                UseWinChanceLimit = true,
+                UseCasualElo = true,
+                MinWinChanceMult = 0.0,
+                MinWinChanceOffset = 0.45,
+                UseHandicap = false,
+                MinSize = 4,
+                MaxSize = 32,
+                MaxPartySize = 6,
+                EloCutOffExponent = 0,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "3v3+",
+                Description = "Play a casual 3v3 or larger with anyone.",
+                UseWinChanceLimit = true,
+                UseCasualElo = true,
+                MinWinChanceMult = 0.0,
+                MinWinChanceOffset = 0.45,
+                UseHandicap = false,
+                MinSize = 6,
+                MaxSize = 32,
+                MaxPartySize = 6,
+                EloCutOffExponent = 0,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "4v4+",
+                Description = "Play a casual 4v4 or larger with anyone.",
+                UseWinChanceLimit = true,
+                UseCasualElo = true,
+                MinWinChanceMult = 0.0,
+                MinWinChanceOffset = 0.45,
+                UseHandicap = false,
+                MinSize = 8,
+                MaxSize = 32,
+                MaxPartySize = 6,
+                EloCutOffExponent = 0,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "5v5+",
+                Description = "Play a casual 5v5 or larger with anyone.",
+                UseWinChanceLimit = true,
+                UseCasualElo = true,
+                MinWinChanceMult = 0.0,
+                MinWinChanceOffset = 0.45,
+                UseHandicap = false,
+                MinSize = 10,
+                MaxSize = 32,
+                MaxPartySize = 6,
+                EloCutOffExponent = 0,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "6v6+",
+                Description = "Play a casual 6v6 or larger with anyone.",
+                UseWinChanceLimit = true,
+                UseCasualElo = true,
+                MinWinChanceMult = 0.0,
+                MinWinChanceOffset = 0.45,
+                UseHandicap = false,
+                MinSize = 12,
+                MaxSize = 32,
+                MaxPartySize = 6,
+                EloCutOffExponent = 0,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "7v7+",
+                Description = "Play a casual 7v7 or larger with anyone.",
+                UseWinChanceLimit = true,
+                UseCasualElo = true,
+                MinWinChanceMult = 0.0,
+                MinWinChanceOffset = 0.45,
+                UseHandicap = false,
+                MinSize = 14,
+                MaxSize = 32,
+                MaxPartySize = 6,
+                EloCutOffExponent = 0,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "8v8+",
+                Description = "Play a casual 8v8 or larger with anyone.",
+                UseWinChanceLimit = true,
+                UseCasualElo = true,
+                MinWinChanceMult = 0.0,
+                MinWinChanceOffset = 0.45,
+                UseHandicap = false,
+                MinSize = 16,
+                MaxSize = 32,
+                MaxPartySize = 6,
+                EloCutOffExponent = 0,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "9v9+",
+                Description = "Play a casual 9v9 or larger with anyone.",
+                UseWinChanceLimit = true,
+                UseCasualElo = true,
+                MinWinChanceMult = 0.0,
+                MinWinChanceOffset = 0.45,
+                UseHandicap = false,
+                MinSize = 18,
+                MaxSize = 32,
+                MaxPartySize = 6,
+                EloCutOffExponent = 0,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
+            });
+            queueConfigs.Add(new QueueConfig()
+            {
+                Name = "10v10+",
+                Description = "Play a casual 10v10 or larger with anyone.",
+                UseWinChanceLimit = true,
+                UseCasualElo = true,
+                MinWinChanceMult = 0.0,
+                MinWinChanceOffset = 0.45,
+                UseHandicap = false,
+                MinSize = 20,
+                MaxSize = 32,
+                MaxPartySize = 6,
+                EloCutOffExponent = 0,
+                Mode = AutohostMode.Teams,
+                MapSelector = IsTeamsMap,
             });
 
             UpdateQueues();
@@ -179,6 +376,9 @@ namespace ZkLobbyServer
                     queue.Name = x.Name;
                     queue.Description = x.Description;
                     queue.UseWinChanceLimit = x.UseWinChanceLimit;
+                    queue.UseCasualElo = x.UseCasualElo;
+                    queue.MinWinChanceMult = x.MinWinChanceMult;
+                    queue.MinWinChanceOffset = x.MinWinChanceOffset;
                     queue.UseHandicap = x.UseHandicap;
                     queue.MinSize = x.MinSize;
                     queue.MaxSize = x.MaxSize;
@@ -687,7 +887,7 @@ namespace ZkLobbyServer
         private async Task StartBattle(ProposedBattle bat)
         {
             await server.UserLogSay($"Match starting with players: {bat.Players.Select(x => x.Name).StringJoin()}.");
-            var battle = new MatchMakerBattle(server, bat, PickMap(bat), WantHandicap(bat));
+            var battle = new MatchMakerBattle(server, bat, PickMap(bat), WantHandicap(bat), !bat.QueueType.UseCasualElo);
             await server.AddBattle(battle);
 
             // also join in lobby
