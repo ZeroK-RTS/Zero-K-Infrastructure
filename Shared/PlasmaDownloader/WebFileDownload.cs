@@ -30,7 +30,7 @@ namespace PlasmaDownloader
       wc = newWebClient;
       newWebClient.DownloadProgressChanged += wc_ProgressChanged;
       newWebClient.DownloadFileCompleted += wc_DownloadFileCompleted;
-      newWebClient.DownloadFileAsync(new Uri(url), tempFilePath, this);
+      newWebClient.DownloadFileAsync(new Uri(url, UriKind.Absolute), tempFilePath, this);
     }
 
     public override void Abort()
