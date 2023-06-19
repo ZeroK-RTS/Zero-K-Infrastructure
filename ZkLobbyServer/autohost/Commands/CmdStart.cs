@@ -38,7 +38,7 @@ namespace ZkLobbyServer
             if (unready.Any())
             {
                 wait = true;
-                await battle.SayBattle("The following users are still downloading the map: " + unready.Select(x => x.Name).StringJoin());
+                await battle.SayBattle("The following users are still downloading the map, please click Rejoin ASAP because you're playing: " + unready.Select(x => x.Name).StringJoin());
             }
             if (wait)
             {
