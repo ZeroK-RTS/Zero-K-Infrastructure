@@ -92,9 +92,37 @@
         @Model.IsMission
 </td>
 </tr>
+<tr>
+    <td>
+        Rating:
+    </td>
+    <td>
+        @{
+            if (Model.IsRatedMatch())
+            {
+                switch (Model.GetRatingCategory())
+                {
+                    case RatingCategory.MatchMaking:
+                        <text>Competitive</text>
+                        break;
+                    case RatingCategory.Casual:
+                        <text>Casual</text>
+                        break;
+                    case RatingCategory.Planetwars:
+                        <text>Planetwars</text>
+                        break;
+                }
+            }
+            else
+            {
+                <text>None</text>
+            }
+        }
+    </td>
+</tr>
 </table>
 @if (!string.IsNullOrEmpty(Model.ReplayFileName))
-{
+                {
     <a href="@Html.PrintSpringLink(string.Format("@start_replay:{0},{1},{2},{3}", GlobalConst.BaseSiteUrl+ "/replays/" + Path.GetFileName(Model.ReplayFileName), Model.ResourceByModResourceID.InternalName, Model.ResourceByMapResourceID.InternalName, Model.EngineVersion, Model.SpringBattleID))">
         <span class="textbutton" style="font-size: 130%">Watch Replay Now</span>
     </a>
@@ -104,7 +132,7 @@
         <a href='/replays/@Model.ReplayFileName'>Manual download</a>
         <br />
     }
-}
+        }
 </div>
 <br class="clearfloat" />
 <div>

@@ -6,18 +6,22 @@
 <form action="@Url.Action("Index")" id="ajaxScrollForm" method="post">
     <table class="inputTable">
         <tr>
-            <td>Title: </td><td>@Html.TextBoxFor(x => x.Title)</td>
-            <td>Map: </td><td>@Html.TextBoxFor(x => x.Map, new { data_autocomplete = Url.Action("Maps", "Autocomplete"), data_autocomplete_action = "submit" })</td>
+            <td>Title: </td>
+            <td>@Html.TextBoxFor(x => x.Title)</td>
+            <td>Map: </td>
+            <td>@Html.TextBoxFor(x => x.Map, new { data_autocomplete = Url.Action("Maps", "Autocomplete"), data_autocomplete_action = "submit" })</td>
         </tr>
         <tr>
             <td>Players: </td>
             <td>
-                @using (var db = new ZkDataContext()) { @Html.MultiSelectFor(x => x.UserId, Url.Action("UsersNoLink", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x))); } 
+                @using (var db = new ZkDataContext())
+                {@Html.MultiSelectFor(x => x.UserId, Url.Action("UsersNoLink", "Autocomplete"), x => Html.PrintAccount(db.Accounts.Find(x)));
+            }
             </td>
-            <td>Player count: </td><td> @Html.TextBoxFor(x => x.PlayersFrom) - @Html.TextBoxFor(x => x.PlayersTo)</td>
+            <td>Player count: </td>
+            <td> @Html.TextBoxFor(x => x.PlayersFrom) - @Html.TextBoxFor(x => x.PlayersTo)</td>
         </tr>
-        <tr>
-        </tr>
+        <tr></tr>
         <tr>
             <td>Age:</td>
             <td>@Html.EnumDropDownListFor(x => x.Age)</td>
@@ -30,6 +34,8 @@
                 Bots: @Html.EnumDropDownListFor(x => x.Bots)
                 Rank: @Html.EnumDropDownListFor(x => x.Rank)
                 Victory: @Html.EnumDropDownListFor(x => x.Victory)
+                MM: @Html.EnumDropDownListFor(x => x.Matchmaker)
+                Rating: @Html.EnumDropDownListFor(x => x.Rating)
                 <input name="sa" value="Search" alt="Search" type="image" src="/img/search_img.png" style="border: none; vertical-align: middle;" />
             </td>
         </tr>
