@@ -167,7 +167,7 @@ namespace ZkLobbyServer
                     if (banPenalty != null)
                         return
                             BlockLogin(
-                                $"Banned until {banPenalty.BanExpires} (match to {banPenalty.AccountByAccountID.Name}), reason: {banPenalty.Reason}",
+                                $"Banned until {banPenalty.BanExpires} UTC, reason: {banPenalty.Reason}",
                                 acc,
                                 ip,
                                 userID,
