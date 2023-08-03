@@ -105,7 +105,7 @@ namespace Ratings
             return bestProgress;
         }
 
-        public static float UpdateLadderRating(Account acc, RatingCategory cat, float targetRating, bool allowGain, bool allowLoss, float classicEloChange, ZkDataContext db)
+        public static float UpdateLadderRating(Account acc, RatingCategory cat, float targetRating, float allyCount, bool allowGain, bool allowLoss, float classicEloChange, ZkDataContext db)
         {
             var rating = acc.AccountRatings.Where(x => x.RatingCategory == cat).FirstOrDefault();
             var ladderElo = rating?.LadderElo ?? WholeHistoryRating.DefaultRating.LadderElo;
@@ -120,14 +120,16 @@ namespace Ratings
                 return (float)ladderElo;
             }
             var delta = targetRating - ladderElo;
-            delta *= GlobalConst.LadderEloSmoothingFactor; //smooth out elo changes
+            var classicWeight = 1 - Math.Abs(delta) / (30 + Math.Abs(delta));
+            delta *= GlobalConst.LadderEloSmoothingFactor; //smooth out elo changes.
             delta = Math.Min(GlobalConst.LadderEloMaxChange, delta); //clip rating change to allowed limits
             delta = Math.Max(-GlobalConst.LadderEloMaxChange, delta);
             if (!allowGain) delta = Math.Min(-GlobalConst.LadderEloMinChange, delta);
             if (!allowLoss) delta = Math.Max(GlobalConst.LadderEloMinChange, delta);
 
             double ladderEloBefore = ladderElo;
-            ladderElo += delta * (1 - GlobalConst.LadderEloClassicEloWeight) + GlobalConst.LadderEloClassicEloWeight * classicEloChange;
+            delta /= allyCount; // Scale WHR leashing with classic elo rate of change.
+            ladderElo += delta * (1 - classicWeight) + classicWeight * classicEloChange;
             if (rating != null)
             {
                 rating.UpdateLadderElo(ladderElo);

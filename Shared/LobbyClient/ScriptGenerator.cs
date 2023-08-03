@@ -56,6 +56,9 @@ namespace LobbyClient
                 script.AppendFormat("  GameType={0};\n", context.LobbyStartContext.Mod);
                 script.AppendFormat("  ModHash=1;\n");
                 script.AppendFormat("  MapHash=1;\n");
+                
+                // send desync to server
+                script.AppendFormat("  DumpGameStateOnDesync=1;\n");
 
                 if (loopbackListenPort >0) script.AppendFormat("  AutohostPort={0};\n", loopbackListenPort);
                 script.AppendLine();
