@@ -184,7 +184,7 @@
             UserID: @Html.TextBox("banUserID", lastUserID != null && !brokenIDs.Contains((int)lastUserID) ? lastUserID.ToString() : "")<br />
             InstallID: @Html.TextBox("installID", lastInstallID)<br />
             <br />
-            Ban site: @Html.CheckBox("banSite")<br />
+            Ban site (always IP based): @Html.CheckBox("banSite")<br />
             Ban lobby: @Html.CheckBox("banLobby")<br />
             Ban forum: @Html.CheckBox("banForum")<br />
             <br />
