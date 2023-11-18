@@ -14,6 +14,7 @@ namespace ZkData
     {
         private int steamAppID;
         private string webApiKey;
+        const string lichoSteamId = "76561197962341674";
 
         public SteamWebApi():this(GlobalConst.SteamAppID, new Secrets().GetSteamWebApiKey()) { }
 
@@ -59,8 +60,9 @@ namespace ZkData
             nvc["appid"] = steamAppID.ToString();
             nvc["buildid"] = buildid.ToString();
             nvc["betakey"] = branch;
+            nvc["steamid"] = lichoSteamId;
 
-            var response = Encoding.UTF8.GetString(wc.UploadValues($"https://api.steampowered.com/ISteamApps/SetAppBuildLive/v001/", nvc));
+            var response = Encoding.UTF8.GetString(wc.UploadValues($"https://partner.steam-api.com/ISteamApps/SetAppBuildLive/v2/", nvc));
         }
 
 
