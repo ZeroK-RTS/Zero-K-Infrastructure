@@ -1079,15 +1079,7 @@ namespace ZkLobbyServer
             {
                 for (int i = 0; i < NumberOfMapChoices; i++)
                 {
-                    Resource map = null;
-                    if (i < NumberOfMapChoices / 2)
-                    {
-                        map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Supported) ? MapSupportLevel.Supported : MinimalMapSupportLevel, MapRatings.GetMapRanking(Mode).TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).Where(x => !pickedMaps.Contains(x.ResourceID)).AsQueryable()); //choose at least 50% popular maps
-                    }
-                    if (map == null)
-                    {
-                        map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Featured) ? MapSupportLevel.Supported : MinimalMapSupportLevel, db.Resources.Where(x => !pickedMaps.Contains(x.ResourceID)));
-                    }
+                    Resource map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Featured) ? MapSupportLevel.Featured : MinimalMapSupportLevel, db.Resources.Where(x => !pickedMaps.Contains(x.ResourceID)));
                     pickedMaps.Add(map.ResourceID);
                     options.Add(new PollOption()
                     {
