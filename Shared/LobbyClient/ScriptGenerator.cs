@@ -60,6 +60,9 @@ namespace LobbyClient
                 // send desync to server
                 script.AppendFormat("  DumpGameStateOnDesync=1;\n");
 
+                // set the "connecting to: xyz" message during early engine load
+                script.AppendFormat("  ShowServerName={0};\n", context.LobbyStartContext.Title.Replace(';', ' '));
+
                 if (loopbackListenPort >0) script.AppendFormat("  AutohostPort={0};\n", loopbackListenPort);
                 script.AppendLine();
                 script.AppendFormat("  HostIP={0};\n", context.IpAddress);
