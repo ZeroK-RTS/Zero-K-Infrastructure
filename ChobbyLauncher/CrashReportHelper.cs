@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -26,6 +28,8 @@ namespace ChobbyLauncher
         private const string CrashReportsRepoName = "CrashReports";
 
         private const int MaxInfologSize = 62000;
+        private const int IssuesPerRelease = 250;
+
         private const string InfoLogLineStartPattern = @"(^\[t=\d+:\d+:\d+\.\d+\]\[f=-?\d+\] )";
         private const string InfoLogLineEndPattern = @"(\r?\n|\Z)";
         private sealed class GameFromLog
@@ -153,6 +157,81 @@ namespace ChobbyLauncher
 
             return result;
         }
+        //See https://github.com/beyond-all-reason/spring/blob/f3ba23635e1462ae2084f10bf9ba777467d16090/rts/System/Sync/DumpState.cpp#L155
+        private static readonly Regex GameStateFileRegex = new Regex(@"\A(Server|Client)GameState--?\d+-\[-?\d+--?\d+\]\.txt\z", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.ExplicitCapture, TimeSpan.FromSeconds(30));
+
+        private static (Stream, List<string>) CreateZipArchiveFromFiles(string writableDirectory, string[] fileNames, (string, string)[] extraFiles)
+        {
+            var outStream = new MemoryStream();
+            var fullPathWritableDirectory = Path.GetFullPath(writableDirectory + Path.DirectorySeparatorChar.ToString());
+            var archiveManifest = new List<string>(fileNames.Length);
+            try
+            {
+                using (var archive = new ZipArchive(outStream, ZipArchiveMode.Create, leaveOpen: true))
+                {
+                    foreach (
+                        var fileName in
+                            fileNames
+                                .Select(f => Path.GetFullPath(Path.Combine(writableDirectory, f)))
+                                .Distinct(StringComparer.OrdinalIgnoreCase))
+                    {
+                        if (!fileName.StartsWith(fullPathWritableDirectory, StringComparison.Ordinal))
+                        {
+                            //Only upload files that are in WritableDirectory.
+                            //This avoids inadvertent directory traversal, which could
+                            //upload private data from the player's computer.
+                            Trace.TraceWarning("[CrashReportHelper] Tried to upload file that is not in WritableDirectory: {0}", fileName);
+                            continue;
+                        }
+                        var relativePath = fileName.Remove(0, fullPathWritableDirectory.Length);
+                        if (!GameStateFileRegex.IsMatch(relativePath))
+                        {
+                            //Only upload files that we expect to upload. Currently, we only upload GameState files.
+                            Trace.TraceWarning("[CrashReportHelper] Tried to upload unexpected file: {0}", relativePath);
+                            continue;
+                        }
+                        var entryPath = Path.Combine("zk", relativePath);
+                        var entry = archive.CreateEntry(entryPath, CompressionLevel.Optimal);
+                        FileStream fsPre;
+                        try
+                        {
+                            fsPre = new FileStream(fileName, System.IO.FileMode.Open, FileAccess.Read);
+                        }
+                        catch
+                        {
+                            Trace.TraceWarning("[CrashReportHelper] Could not read file to add to archive: {0}", relativePath);
+                            continue;
+                        }
+                        //Errors from here onwards could corrupt the ZipArchive; so do not continue.
+                        using (var fs = fsPre)
+                        using (var entryStream = entry.Open())
+                        {
+                            fs.CopyTo(entryStream);
+                        }
+                        archiveManifest.Add(entryPath);
+                    }
+                    foreach (var extra in extraFiles)
+                    {
+                        var entryPath = Path.Combine("ex", extra.Item1);
+                        var entry = archive.CreateEntry(entryPath, CompressionLevel.Optimal);
+                        using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(extra.Item2)))
+                        using (var entryStream = entry.Open())
+                        {
+                            ms.CopyTo(entryStream);
+                        }
+                        archiveManifest.Add(entryPath);
+                    }
+                }
+                outStream.Position = 0;
+                return (archiveManifest.Count != 0 ? outStream : null, archiveManifest);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceWarning("[CrashReportHelper] Could not create archive: {0}", ex);
+                outStream.Dispose();
+                return (null, null);
+            }
+        }
 
         private static string EscapeMarkdownTableCell(string str) => str.Replace("\r", "").Replace("\n", " ").Replace("|", @"\|");
         private static string MakeDesyncGameTable(GameFromLogCollection gamesFromLog)
@@ -205,7 +284,19 @@ namespace ChobbyLauncher
             }
         }
 
-        private static async Task<Issue> ReportCrash(string infolog, CrashType type, string engine, string bugReportTitle, string bugReportDescription, GameFromLogCollection gamesFromLog)
+        private static string MakeArchiveManifestTable(IEnumerable<string> archiveManifest)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("\n\n|Contents|");
+            sb.AppendLine("|-|");
+            foreach (var f in archiveManifest)
+            {
+                sb.AppendLine($"|{EscapeMarkdownTableCell(f)}|");
+            }
+            return sb.ToString();
+        }
+
+        private static async Task<Issue> ReportCrash(string infolog, CrashType type, string engine, SpringPaths paths, string bugReportTitle, string bugReportDescription, GameFromLogCollection gamesFromLog)
         {
             try
             {
@@ -246,6 +337,40 @@ namespace ChobbyLauncher
                 var createdIssue = await client.Issue.Create(CrashReportsRepoOwner, CrashReportsRepoName, newIssueRequest);
 
                 await client.Issue.Comment.Create(CrashReportsRepoOwner, CrashReportsRepoName, createdIssue.Number, $"infolog_full.txt (truncated):\n\n```{infologTruncated}```");
+
+
+                var releaseNumber = (createdIssue.Number - 1) / IssuesPerRelease;
+                var issueRangeString = $"{releaseNumber * IssuesPerRelease + 1}-{(releaseNumber + 1) * IssuesPerRelease}";
+
+                var releaseName = $"FilesForIssues-{issueRangeString}";
+                Release releaseForUpload;
+                try
+                {
+                    releaseForUpload = await client.Repository.Release.Create(CrashReportsRepoOwner, CrashReportsRepoName, new NewRelease(releaseName) { TargetCommitish = "main", Prerelease = true, Name = $"Files for Issues {issueRangeString}", Body = $"Files for Issues {issueRangeString}" });
+                }
+                catch (ApiValidationException ex)
+                {
+                    if (!(ex.ApiError.Errors.Count == 1 && ex.ApiError.Errors[0].Code == "already_exists")) throw;
+                    //Release already exists
+                    releaseForUpload = await client.Repository.Release.Get(CrashReportsRepoOwner, CrashReportsRepoName, releaseName);
+                }
+
+                var zar =
+                    CreateZipArchiveFromFiles(
+                        paths.WritableDirectory,
+                        gamesFromLog.Games.SelectMany(g => g.GameStateFileNames ?? Enumerable.Empty<string>()).ToArray(),
+                        new[] { ("infolog_full.txt", infolog) });
+
+                if (zar.Item1 != null)
+                {
+                    using (var zipArchive = zar.Item1)
+                    {
+                        var upload = await client.Repository.Release.UploadAsset(releaseForUpload, new ReleaseAssetUpload($"FilesForIssue-{createdIssue.Number}.zip", "application/zip", zipArchive, timeout: null));
+
+                        var archiveManifestTable = MakeArchiveManifestTable(zar.Item2);
+                        var comment = await client.Issue.Comment.Create(CrashReportsRepoOwner, CrashReportsRepoName, createdIssue.Number, $"See {upload.BrowserDownloadUrl}{archiveManifestTable}");
+                    }
+                }
 
                 return createdIssue;
             }
@@ -293,7 +418,7 @@ namespace ChobbyLauncher
                     Regex
                         .Matches(
                             logStr,
-                            $@"(?<={InfoLogLineStartPattern})\[DumpState\] using dump-file ""(?<d>[^{Regex.Escape(System.IO.Path.DirectorySeparatorChar.ToString())}{Regex.Escape(System.IO.Path.AltDirectorySeparatorChar.ToString())}""]+)""{InfoLogLineEndPattern}",
+                            $@"(?<={InfoLogLineStartPattern})\[DumpState\] using dump-file ""(?<d>[^{Regex.Escape(Path.DirectorySeparatorChar.ToString())}{Regex.Escape(Path.AltDirectorySeparatorChar.ToString())}""]+)""{InfoLogLineEndPattern}",
                             RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.Multiline,
                             TimeSpan.FromSeconds(30))
                         .Cast<Match>().Select(m => (m.Index, m.Groups["d"].Value)).Distinct()
@@ -353,7 +478,7 @@ namespace ChobbyLauncher
             }
         }
 
-        public static void CheckAndReportErrors(string logStr, bool springRunOk, string bugReportTitle, string bugReportDescription, string engineVersion)
+        public static void CheckAndReportErrors(string logStr, bool springRunOk, SpringPaths paths, string bugReportTitle, string bugReportDescription, string engineVersion)
         {
             var gamesFromLog = new GameFromLogCollection(ReadGameReloads(logStr));
 
@@ -416,6 +541,7 @@ namespace ChobbyLauncher
                             logStr,
                             crashType,
                             engineVersion,
+                            paths,
                             bugReportTitle,
                             bugReportDescription,
                             gamesFromLog)
