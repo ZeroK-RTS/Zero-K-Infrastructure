@@ -173,6 +173,37 @@ namespace ChobbyLauncher
             }
             return tableEmpty ? string.Empty : sb.ToString();
         }
+        private static string MakeGameStateLabel(string gameID) => $"GameStateFor-{gameID}";
+
+        private static string MakeDesyncIssueLinksTable(IEnumerable<string> gamesWithGameStateFiles, IEnumerable<IEnumerable<int>> existingIssues)
+        {
+            var hasLinkedIssue = false;
+            var sb = new StringBuilder();
+            sb.AppendLine("\n\nIssues with GameStates for same Game(s):\n\n|GameID|Issue|");
+            sb.AppendLine("|-|-|");
+            foreach (var game in gamesWithGameStateFiles.Zip(existingIssues, (gameID, issues) => new { gameID, issues }))
+            {
+                var gameIDString = EscapeMarkdownTableCell(game.gameID);
+                foreach (var issueNumber in game.issues)
+                {
+                    hasLinkedIssue = true;
+                    sb.AppendLine($"|{gameIDString}|#{issueNumber}|");
+                }
+            }
+            return hasLinkedIssue ? sb.ToString() : string.Empty;
+        }
+        private static void FillIssueLabels(System.Collections.ObjectModel.Collection<string> labels, string[] gamesWithGameStateFiles, bool hasLinkedIssue)
+        {
+            labels.Add("HasDesyncGameState");
+            if (hasLinkedIssue)
+            {
+                labels.Add("HasLinkedDesyncIssue");
+            }
+            foreach (var gameID in gamesWithGameStateFiles)
+            {
+                labels.Add(MakeGameStateLabel(gameID));
+            }
+        }
 
         private static async Task<Issue> ReportCrash(string infolog, CrashType type, string engine, string bugReportTitle, string bugReportDescription, GameFromLogCollection gamesFromLog)
         {
@@ -185,12 +216,33 @@ namespace ChobbyLauncher
 
                 var infologTruncated = TextTruncator.Truncate(infolog, MaxInfologSize, MakeRegionsOfInterest(infolog.Length, gamesFromLog.Games.Where(g => g.HasDesync).Select(g => g.FirstDesyncIdxInLog.Value), gamesFromLog.AsGameStartReadOnlyList()));
 
+                var gamesWithGameStateFiles = gamesFromLog.Games.Where(g => g.HasDesync && g.GameStateFileNames != null && g.GameStateFileNames.Count > 0 && g.GameID != null).Select(g => g.GameID).Distinct().ToArray();
+
+
+                var existingIssues = new List<int[]>(gamesWithGameStateFiles.Length);
+                foreach (var gameID in gamesWithGameStateFiles)
+                {
+                    var rir = new RepositoryIssueRequest
+                    {
+                        Filter = IssueFilter.All,
+                        State = ItemStateFilter.All
+                    };
+                    rir.Labels.Add(MakeGameStateLabel(gameID));
+
+                    var issues = await client.Issue.GetAllForRepository(CrashReportsRepoOwner, CrashReportsRepoName, rir);
+
+                    existingIssues.Add(issues.Select(i => i.Number).ToArray());
+                }
+
+                var desyncIssueLinks = MakeDesyncIssueLinksTable(gamesWithGameStateFiles, existingIssues);
                 var desyncDebugInfo = MakeDesyncGameTable(gamesFromLog);
 
                 var newIssueRequest = new NewIssue($"Spring {type} [{engine}] {bugReportTitle}")
                 {
-                    Body = $"{bugReportDescription}{desyncDebugInfo}"
+                    Body = $"{bugReportDescription}{desyncDebugInfo}{desyncIssueLinks}"
                 };
+                FillIssueLabels(newIssueRequest.Labels, gamesWithGameStateFiles, hasLinkedIssue: desyncIssueLinks.Length != 0);
+
                 var createdIssue = await client.Issue.Create(CrashReportsRepoOwner, CrashReportsRepoName, newIssueRequest);
 
                 await client.Issue.Comment.Create(CrashReportsRepoOwner, CrashReportsRepoName, createdIssue.Number, $"infolog_full.txt (truncated):\n\n```{infologTruncated}```");
