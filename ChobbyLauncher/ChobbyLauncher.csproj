@@ -84,6 +84,7 @@
     <Compile Include="STUN\Message\STUN_MessageType.cs" />
     <Compile Include="STUN\Message\STUN_t_ChangeRequest.cs" />
     <Compile Include="STUN\Message\STUN_t_ErrorCode.cs" />
+    <Compile Include="TextTruncator.cs" />
     <Compile Include="TextToSpeechLinux.cs" />
     <Compile Include="TextToSpeechWindows.cs" />
     <Compile Include="Chobbyla.cs" />
