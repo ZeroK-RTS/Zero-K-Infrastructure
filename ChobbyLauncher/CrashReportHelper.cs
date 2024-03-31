@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GameAnalyticsSDK.Net;
@@ -24,8 +25,9 @@ namespace ChobbyLauncher
 
     public static class CrashReportHelper
     {
-        private const string TruncatedString = "------- TRUNCATED -------";
         private const int MaxInfologSize = 62000;
+        private const string InfoLogLineStartPattern = @"(^\[t=\d+:\d+:\d+\.\d+\]\[f=-?\d+\] )";
+        private const string InfoLogLineEndPattern = @"(\r?\n|\Z)";
         public static Issue ReportCrash(string infolog, CrashType type, string engine, string bugReportTitle, string bugReportDescription)
         {
             try
@@ -33,7 +35,6 @@ namespace ChobbyLauncher
                 var client = new GitHubClient(new ProductHeaderValue("chobbyla"));
                 client.Credentials = new Credentials(GlobalConst.CrashReportGithubToken);
 
-                
                 infolog = Truncate(infolog, MaxInfologSize);
 
                 var createdIssue =
@@ -48,86 +49,47 @@ namespace ChobbyLauncher
             }
             return null;
         }
-
-        public static bool IsDesyncMessage(string msg)
+        public static int FindFirstDesyncMessage(string logStr)
         {
-            return !string.IsNullOrEmpty(msg) && msg.Contains(" Sync error for ") && msg.Contains(" in frame ") && msg.Contains(" correct is ");
-        }
+            //[t=00:22:43.533864][f=0003461] Sync error for mankarse in frame 3451 (got 927a6f33, correct is 6b550dd1)
+            try
+            {
+                //See ZkData.Account.IsValidLobbyName
+                var accountNamePattern = @"[_[\]a-zA-Z0-9]{1,25}";
+                var match =
+                    Regex.Match(
+                        logStr,
+                        $@"Sync error for(?<={InfoLogLineStartPattern}Sync error for) {accountNamePattern} in frame \d+ \(got [a-z0-9]+, correct is [a-z0-9]+\){InfoLogLineEndPattern}",
+                        RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.Multiline,
+                        TimeSpan.FromSeconds(30));
 
+                return match.Success ? match.Index : -1;
+            }
+            catch(RegexMatchTimeoutException)
+            {
+                Trace.TraceError("[CrashReportHelper] RegexMatchTimeoutException in FindFirstDesyncMessage");
+                return -1;
+            }
+        }
 
         private static string Truncate(string infolog, int maxSize)
         {
-            if (infolog.Length > maxSize) // truncate infolog in middle
+            var firstDesync = FindFirstDesyncMessage(infolog);
+            var regionsOfInterest = new List<TextTruncator.RegionOfInterest>(firstDesync == -1 ? 2 : 3);
+
+            regionsOfInterest.Add(new TextTruncator.RegionOfInterest { PointOfInterest = 0, StartLimit = 0, EndLimit = infolog.Length });
+            if (firstDesync != -1)
             {
-                var lines = infolog.Lines();
-                var firstPart = new List<string>();
-                var lastPart = new List<string>();
-                int desyncFirst = -1;
-
-                for (int a = 0; a < lines.Length;a++)
-                    if (IsDesyncMessage(lines[a]))
-                    {
-                        desyncFirst = a;
-                        break;
-                    }
-
-                if (desyncFirst != -1)
-                {
-                    var sumSize = 0;
-                    var firstIndex = desyncFirst;
-                    var lastIndex = desyncFirst + 1;
-                    do
-                    {
-                        if (firstIndex >= 0)
-                        {
-                            firstPart.Add(lines[firstIndex]);
-                            sumSize += lines[firstIndex].Length;
-                        }
-                        if (lastIndex < lines.Length)
-                        {
-                            lastPart.Add(lines[lastIndex]);
-                            sumSize += lines[lastIndex].Length;
-                        }
-
-                        firstIndex--;
-                        lastIndex++;
-
-                    } while (sumSize < MaxInfologSize && (firstIndex > 0 || lastIndex < lines.Length));
-                    if (lastIndex < lines.Length) lastPart.Add(TruncatedString);
-                    if (firstIndex > 0) firstPart.Add(TruncatedString);
-                    firstPart.Reverse();
-                }
-                else
-                {
-
-                    var sumSize = 0;
-
-                    for (int i = 0; i < lines.Length; i++)
-                    {
-                        int index = i%2 == 0 ? i/2 : lines.Length - i/2 - 1;
-                        if (sumSize + lines[index].Length < maxSize)
-                        {
-                            if (i%2 == 0) firstPart.Add(lines[index]);
-                            else lastPart.Add(lines[index]);
-                        }
-                        else
-                        {
-                            firstPart.Add(TruncatedString);
-                            break;
-                        }
-                        sumSize += lines[index].Length;
-                    }
-                    lastPart.Reverse();
-                }
-
-                infolog = string.Join("\r\n", firstPart) + "\r\n" + string.Join("\r\n", lastPart);
+                regionsOfInterest.Add(new TextTruncator.RegionOfInterest { PointOfInterest = firstDesync, StartLimit = 0, EndLimit = infolog.Length });
             }
-            return infolog;
+            regionsOfInterest.Add(new TextTruncator.RegionOfInterest { PointOfInterest = infolog.Length, StartLimit = 0, EndLimit = infolog.Length });
+
+            return TextTruncator.Truncate(infolog, maxSize, regionsOfInterest);
         }
-        
+
         public static void CheckAndReportErrors(string logStr, bool springRunOk, string bugReportTitle, string bugReportDescription, string engineVersion)
         {
-            var syncError = CrashReportHelper.IsDesyncMessage(logStr);
+            var syncError = FindFirstDesyncMessage(logStr) != -1;
             if (syncError) Trace.TraceWarning("Sync error detected");
 
             var openGlFail = logStr.Contains("No OpenGL drivers installed.") ||
