@@ -67,6 +67,8 @@ namespace ZeroKWeb.Controllers
             public YesNoAny Mission { get; set; }
             public YesNoAny Bots { get; set; }
             public YesNoAny Victory { get; set; }
+            public YesNoAny Matchmaker { get; set; }
+            public RatingSearchOption Rating { get; set; }
             public RankSelector Rank { get; set; } = RankSelector.Undefined;
             
             public int? MinLength { get; set; }
@@ -164,6 +166,34 @@ namespace ZeroKWeb.Controllers
             {
                 int rank = (int)model.Rank;
                 q = q.Where(b => b.Rank == rank);
+            }
+
+            if (model.Matchmaker != YesNoAny.Any)
+            {
+                var bval = model.Matchmaker == YesNoAny.Yes;
+                q = q.Where(b => b.IsMatchMaker == bval);
+            }
+
+            if (model.Rating != RatingSearchOption.Any)
+            {
+                switch (model.Rating)
+                {
+                    case RatingSearchOption.Competitive:
+                        q = q.Where(b => b.ApplicableRatings.HasFlag(RatingCategoryFlags.MatchMaking));
+                        break;
+                    case RatingSearchOption.Casual:
+                        q = q.Where(b => b.ApplicableRatings.HasFlag(RatingCategoryFlags.Casual));
+                        break;
+                    case RatingSearchOption.Planetwars:
+                        q = q.Where(b => b.ApplicableRatings.HasFlag(RatingCategoryFlags.Planetwars));
+                        break;
+                    case RatingSearchOption.None:
+                        q = q.Where(b => b.ApplicableRatings == 0);
+                        break;
+                    default:
+                        // The default case being no filtering should be safe enough.
+                        break;
+                }
             }
 
             q = q.OrderByDescending(b => b.StartTime);
