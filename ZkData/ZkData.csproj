@@ -491,6 +491,10 @@
     <Compile Include="Migrations\202303191424586_RemoveGlacierId.Designer.cs">
       <DependentUpon>202303191424586_RemoveGlacierId.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202404060935038_AddPopularMapsFraction.cs" />
+    <Compile Include="Migrations\202404060935038_AddPopularMapsFraction.Designer.cs">
+      <DependentUpon>202404060935038_AddPopularMapsFraction.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -938,6 +942,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202303191424586_RemoveGlacierId.resx">
       <DependentUpon>202303191424586_RemoveGlacierId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202404060935038_AddPopularMapsFraction.resx">
+      <DependentUpon>202404060935038_AddPopularMapsFraction.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
