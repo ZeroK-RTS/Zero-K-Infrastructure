@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
@@ -34,6 +35,10 @@ namespace ZkData
         public double MmEloBonusMultiplier { get; set; } = 0; // elo bonus multiplier to even out matches
 
         public int MaximumStatLimitedBattlePlayers { get; set; } // if a battle has more than this number of players, maxelo/minelo, maxrank/minrank and maxleve/minlevel are disabled
+
+        [Description("Map vote always tries to include some of the most popular maps (precentile <0.2), this value controls how big fraction of offers is most popular maps.")]
+        public double MapVoteFractionOfPopularMaps { get; set; } = 0.5;
+        
 
         public static DynamicConfig Instance;
 

@@ -1077,12 +1077,14 @@ namespace ZkLobbyServer
             pickedMaps.Add(HostedMap?.ResourceID ?? 0);
             using (var db = new ZkDataContext())
             {
+                var popularMapCount = Math.Round(NumberOfMapChoices * DynamicConfig.Instance.MapVoteFractionOfPopularMaps).Clamp(0, NumberOfMapChoices - 1);
+                
                 for (int i = 0; i < NumberOfMapChoices; i++)
                 {
                     Resource map = null;
-                    if (i < NumberOfMapChoices / 2)
+                    if (i < popularMapCount)
                     {
-                        map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Supported) ? MapSupportLevel.Supported : MinimalMapSupportLevel, MapRatings.GetMapRanking(Mode).TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).Where(x => !pickedMaps.Contains(x.ResourceID)).AsQueryable()); //choose at least 50% popular maps
+                        map = MapPicker.GetRecommendedMap(GetContext(), (MinimalMapSupportLevel < MapSupportLevel.Supported) ? MapSupportLevel.Supported : MinimalMapSupportLevel, MapRatings.GetMapRanking(Mode).TakeWhile(x => x.Percentile < 0.2).Select(x => x.Map).Where(x => !pickedMaps.Contains(x.ResourceID)).AsQueryable()); //choose the popular maps
                     }
                     if (map == null)
                     {
