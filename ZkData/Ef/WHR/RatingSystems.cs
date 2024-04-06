@@ -89,7 +89,6 @@ namespace Ratings
         public static void ProcessResult(SpringBattle battle, SpringBattleContext result, PendingDebriefing partialDebriefing)
         {
             if (!Initialized) return;
-            FillApplicableRatings(battle, result);
             ProcessBattle(battle, debriefing: partialDebriefing);
         }
 

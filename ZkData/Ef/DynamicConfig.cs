@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
@@ -21,6 +22,7 @@ namespace ZkData
         public double MmWidthReductionForParties { get; set; } = 0.7;
         public double MmSizeGrowthTime { get; set; } = 40.0;
         public double MmTeamsMinimumWinChance { get; set; } = 0.0; //every team needs to have a chance of at least x = [0, 0.5) to win for a game to be made. 0 to disable
+        public double Mm1v1MinimumWinChance { get; set; } = 0.0; //every team needs to have a chance of at least x = [0, 0.5) to win for a game to be made. 0 to disable
         public double MmMinimumMinutesBetweenGames { get; set; } = 5.0; //you can't join MM if you started a game less than X minutes ago and it's still ongoing
         public double MmMinimumMinutesBetweenSuggestions { get; set; } = 600.0; //if somebody declined a MM suggestion, don't annoy them for at least X minutes
 
@@ -33,6 +35,10 @@ namespace ZkData
         public double MmEloBonusMultiplier { get; set; } = 0; // elo bonus multiplier to even out matches
 
         public int MaximumStatLimitedBattlePlayers { get; set; } // if a battle has more than this number of players, maxelo/minelo, maxrank/minrank and maxleve/minlevel are disabled
+
+        [Description("Map vote always tries to include some of the most popular maps (precentile <0.2), this value controls how big fraction of offers is most popular maps.")]
+        public double MapVoteFractionOfPopularMaps { get; set; } = 0.5;
+        
 
         public static DynamicConfig Instance;
 

@@ -277,7 +277,21 @@ namespace ChobbyLauncher
         public string Engine { get; set; }
 
         public List<DownloadFile> Downloads { get; set; }
+        
+        public string CustomId { get; set;  } // for chobby's internal use
     }
+    
+    [ChobbyMessage]
+    public class NewSpringExited
+    {
+        public string StartScriptContent { get; set; }
+        public string StartDemoName { get; set; }
+        public string SpringSettings { get; set;  }
+        public string Engine { get; set; }
+        public string CustomId { get; set;  } 
+        public bool IsCrash { get; set; }
+    }
+    
 
     [ChobbyMessage]
     public class DownloadSpring
@@ -485,7 +499,23 @@ namespace ChobbyLauncher
         public string StringToEncrypt { get; set; }
        
         public string EncryptedString { get; set; }
-    }    
+    }
+
+
+    [ChobbyMessage]
+    public class GetResourceInfo
+    {
+        public string InternalName;
+        public string ArchiveName;
+    }
+
+    [ChobbyMessage]
+    public class GetResourceInfoDone
+    {
+        public string InternalName;
+        public string ArchiveName;
+        public string Data;
+    }
     
     
 }

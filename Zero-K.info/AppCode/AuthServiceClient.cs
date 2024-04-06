@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 using ZeroKWeb;
 

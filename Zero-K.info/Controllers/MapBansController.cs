@@ -58,6 +58,11 @@ namespace ZeroKWeb.Controllers
                 return Content("The same map cannot be banned multiple times.");
             }
 
+            if (resources.Count > GlobalConst.MapBansPerPlayer)
+            {
+                return Content(String.Format("Cannot ban more than {0} maps, got {1} bans.", GlobalConst.MapBansPerPlayer, resources.Count));
+            }
+
             // Fetch the actual resources to sanity check user input and populate IDs for newly selected maps.
             // Filter against current matchmaker to remove any existing bans for a map that has been removed from the MM pool.
             var db = new ZkDataContext();

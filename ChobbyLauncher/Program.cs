@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using GameAnalyticsSDK.Net;
 using LumiSoft.Net.STUN.Client;
@@ -17,18 +18,18 @@ using ZkData;
 
 namespace ChobbyLauncher
 {
-    internal static class Program
+    public static class Program
     {
         /// <summary>
         ///     The main entry point for the application.
         /// </summary>
         [STAThread]
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-
-            if (!Debugger.IsAttached) Trace.Listeners.Add(new ConsoleTraceListener());
+            
+            Trace.Listeners.Add(new ConsoleTraceListener());
 
             var logStringBuilder = new StringBuilder();
             var threadSafeWriter = TextWriter.Synchronized(new StringWriter(logStringBuilder));
@@ -68,8 +69,6 @@ namespace ChobbyLauncher
                 return;
             }
 
-            Application.EnableVisualStyles();
-
             try
             {
                 var chobbyla = new Chobbyla(startupPath, chobbyTag, engineOverride);
@@ -91,7 +90,7 @@ namespace ChobbyLauncher
 
             try
             {
-                GameAnalytics.OnStop();
+                GameAnalytics.OnQuit();
             }
             catch (Exception ex)
             {
@@ -146,10 +145,21 @@ namespace ChobbyLauncher
         {
             if (!chobbyla.IsSteamFolder) // not steam, show gui
             {
-                var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
-                if (cf.ShowDialog() != DialogResult.OK) return;
+                try
+                {
+                    Trace.TraceInformation("Trying to start with GUI");
+                    var cf = new ChobbylaForm(chobbyla) { StartPosition = FormStartPosition.CenterScreen };
+                    if (cf.ShowDialog() != DialogResult.OK) return;
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceWarning("WinForms doesn't work, consider launching with 'mono Zero-K.exe' - wrapper GUI off: {0}", ex.Message);
+                    
+                    // in case of gui crash just do simple prepare, no gui
+                    if (!PrepareWithoutGui(chobbyla).ConfigureAwait(false).GetAwaiter().GetResult()) return;    
+                }
             }
-            else if (!chobbyla.Prepare().Result) return; // otherwise just do simple prepare, no gui
+            else if (!PrepareWithoutGui(chobbyla).ConfigureAwait(false).GetAwaiter().GetResult()) return;// otherwise just do simple prepare, no gui
 
             var springRunOk = chobbyla.Run(connectLobbyID, logWriter);
             Trace.TraceInformation("Spring exited");
@@ -158,70 +168,31 @@ namespace ChobbyLauncher
             logWriter.Flush();
             var logStr = logSb.ToString();
 
-            var syncError = CrashReportHelper.IsDesyncMessage(logStr);
-            if (syncError) Trace.TraceWarning("Sync error detected");
+            CrashReportHelper.CheckAndReportErrors(logStr, springRunOk, chobbyla.BugReportTitle, chobbyla.BugReportDescription, chobbyla.engine);
+        }
 
-            var openGlFail = logStr.Contains("No OpenGL drivers installed.") ||
-                logStr.Contains("This stack trace indicates a problem with your graphic card driver") ||
-                logStr.Contains("Please go to your GPU vendor's website and download their drivers.") ||
-                logStr.Contains("minimum required OpenGL version not supported, aborting") ||
-                logStr.Contains("Update your graphic-card driver!");
-            
-
-            if (openGlFail)
+        static async Task<bool> PrepareWithoutGui(Chobbyla chobbyla)
+        {
+            string lastStatus = "";
+            var prepTask = chobbyla.Prepare();
+            while (!prepTask.IsCompleted)
             {
-                Trace.TraceWarning("Outdated OpenGL detected");
+                await Task.WhenAny(Task.Delay(5000), prepTask);
 
-                if (Environment.OSVersion.Platform == PlatformID.Unix)
+                var prog = chobbyla.Progress;
+                if (prog.Status != lastStatus)
                 {
-                    if (MessageBox.Show("You have outdated graphics card drivers!\r\nPlease try finding ones for your graphics card and updating them. \r\n\r\nWould you like to see our Linux graphics driver guide?", "Outdated graphics card driver detected", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-                    {
-                        Process.Start("http://zero-k.info/mediawiki/index.php?title=Optimized_Graphics_Linux");
-                    }
+                    Console.WriteLine(prog.Status);
+                    lastStatus = prog.Status;
                 }
-                else
+                var cd = prog.Download;
+                if (cd != null)
                 {
-                    MessageBox.Show("You have outdated graphics card drivers!\r\nPlease try finding ones for your graphics card and updating them.", "Outdated graphics card driver detected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-
-                    
-            }
-
-            var luaErr = logStr.Contains("LUA_ERRRUN");
-            
-
-
-            if ((!springRunOk && !openGlFail) || syncError || luaErr || !string.IsNullOrEmpty(chobbyla.BugReportTitle)) // crash has occured
-            {
-                
-                if (
-                    MessageBox.Show("We would like to send crash/desync data to Zero-K repository, it can contain chat. Do you agree?",
-                        "Automated crash report",
-                        MessageBoxButtons.OKCancel) == DialogResult.OK)
-                {
-                    var crashType = syncError ? CrashType.Desync : luaErr ? CrashType.LuaError : CrashType.Crash;
-                    if (!string.IsNullOrEmpty(chobbyla.BugReportTitle)) crashType = CrashType.UserReport;
-
-                    var ret = CrashReportHelper.ReportCrash(logSb.ToString(), crashType, chobbyla.engine, chobbyla.BugReportTitle, chobbyla.BugReportDescription);
-                    if (ret != null)
-                        try
-                        {
-                            Process.Start(ret.HtmlUrl.ToString());
-                        }
-                        catch { }
-                }
-
-                try
-                {
-                    GameAnalytics.AddErrorEvent(EGAErrorSeverity.Critical, "Spring crash");
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError("Error adding GA error event: {0}", ex);
+                    Console.WriteLine($"Downloading {Math.Round(cd.TotalProgress)}% {cd.Name}  {cd.CurrentSpeed / 1024}kB/s  ETA: {cd.TimeRemaining}");
                 }
             }
 
-
+            return prepTask.Result;
         }
     }
 }

@@ -23,8 +23,13 @@
         </tr>
         <tr></tr>
         <tr>
+            <td>Age:</td>
+            <td>@Html.EnumDropDownListFor(x => x.Age)</td>
+            <td nicetitle="How long the battle was">Duration:</td>
+            <td>@Html.EditorFor(x=>x.MinLength) - @Html.EditorFor(x=>x.MaxLength)</td>
+        </tr>
+        <tr>
             <td colspan="4">
-                Age: @Html.EnumDropDownListFor(x => x.Age)
                 Mission: @Html.EnumDropDownListFor(x => x.Mission)
                 Bots: @Html.EnumDropDownListFor(x => x.Bots)
                 Rank: @Html.EnumDropDownListFor(x => x.Rank)

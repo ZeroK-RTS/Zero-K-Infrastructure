@@ -17,8 +17,22 @@ namespace LobbyClient
             public string Description { get; set; }
             public List<string> Maps { get; set; } = new List<string>();
             public string Game { get; set; }
-
             public int MaxPartySize { get; set; }
+
+            [JsonIgnore]
+            public bool UseWinChanceLimit { get; set; }
+
+            [JsonIgnore]
+            public bool UseCasualElo { get; set; }
+
+            [JsonIgnore]
+            public double MinWinChanceMult { get; set; }
+
+            [JsonIgnore]
+            public double MinWinChanceOffset { get; set; }
+
+            [JsonIgnore]
+            public bool UseHandicap { get; set; }
 
             [JsonIgnore]
             public int MaxSize { get; set; }

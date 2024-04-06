@@ -25,6 +25,10 @@ namespace ZkData
         public int MaxPlayers { get; set; }
         public int MaxEvenPlayers { get; set; }
         public bool CbalEnabled { get; set; } = true;
+        [StringLength(255)]
+        public string ModName { get; set; }
+        [StringLength(255)]
+        public string MapName { get; set; }
         public RatingCategory ApplicableRating { get; set; } = RatingCategory.Casual;
 
         [StringLength(200)]

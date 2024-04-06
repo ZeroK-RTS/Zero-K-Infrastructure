@@ -5,9 +5,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using JetBrains.Annotations;
 using PlasmaDownloader.Packages;
 using PlasmaDownloader.Torrents;
+using PlasmaShared;
 using ZkData;
 
 #endregion
@@ -80,6 +82,9 @@ namespace PlasmaDownloader
             this.scanner = checker;
             //torrentDownloader = new TorrentDownloader(this);
             packageDownloader = new PackageDownloader(this);
+
+            ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; 
         }
 
         public void Dispose()
@@ -135,11 +140,9 @@ namespace PlasmaDownloader
 
                 if (type == DownloadType.DEMO)
                 {
-                    var target = new Uri(name);
-                    var targetName = target.Segments.Last();
-                    var filePath = Utils.MakePath(SpringPaths.WritableDirectory, "demos", targetName);
+                    var filePath = Utils.MakePath(SpringPaths.WritableDirectory, "demos", name);
                     if (File.Exists(filePath)) return null;
-                    var down = new WebFileDownload(name, filePath, null);
+                    var down = new WebFileDownload("https://zero-k.info/replays/"+ name, filePath, null, name);
                     down.DownloadType = type;
                     downloads[down.Name] = down;
                     DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down)); //create download bar (handled by MainWindow.cs)

@@ -4,7 +4,7 @@
 @if (Model.Data.Count() > 0)
 {
     <div class="js_dialog" title="You have unread messages">
-        @Html.Partial("LobbyChatMessages")
+        @Html.Partial("~/Views/Lobby/LobbyChatMessages.cshtml", Model)
         <br />
         <a href="@Url.Action("Chat", "Lobby")">Go to online chat</a>
     </div>

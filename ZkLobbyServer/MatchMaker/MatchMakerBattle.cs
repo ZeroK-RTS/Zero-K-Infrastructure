@@ -12,10 +12,10 @@ namespace ZkLobbyServer
     {
         public MatchMaker.ProposedBattle Prototype { get; private set; }
 
-        public MatchMakerBattle(ZkLobbyServer server, MatchMaker.ProposedBattle bat, string mapname) : base(server, null)
+        public MatchMakerBattle(ZkLobbyServer server, MatchMaker.ProposedBattle bat, string mapname, bool applyHandicap, bool isMatchmaker) : base(server, null)
         {
             ApplicableRating = RatingCategory.MatchMaking;
-            IsMatchMakerBattle = true;
+            IsMatchMakerBattle = isMatchmaker;
             EngineVersion = server.Engine;
             ModName = server.Game;
             FounderName = "MatchMaker #" + BattleID;
@@ -39,6 +39,8 @@ namespace ZkLobbyServer
             // proper way to send some extra start setup data
             if (bat.QueueType.Mode != AutohostMode.GameChickens)
                 SetCompetitiveModoptions();
+            if (applyHandicap)
+                SetHandicapModoptions();
             ModOptions["MatchMakerType"] = bat.QueueType.Name;
 
             ValidateAndFillDetails();

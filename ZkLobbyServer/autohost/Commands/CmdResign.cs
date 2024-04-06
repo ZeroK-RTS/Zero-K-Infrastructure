@@ -66,5 +66,17 @@ namespace ZkLobbyServer
             }
             return RunPermission.None;
         }
+
+        public override int GetPollWinMargin(ServerBattle battle, int numVoters)
+        {
+            // Require unanimous vote for resigning up to 3v3 inclusive
+            if (numVoters > 3)
+            {
+                return base.GetPollWinMargin(battle, numVoters);
+            } else
+            {
+                return 2;
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using PlasmaShared;
 
 namespace ChobbyLauncher
 {
@@ -35,7 +36,7 @@ namespace ChobbyLauncher
             {
                 if (haveXprintIdle)
                 {
-                    var ret = ZkData.Utils.ExecuteConsoleCommand("xprintidle");
+                    var ret = Utils.ExecuteConsoleCommand("xprintidle");
                     if (ret != null)
                     {
                         int ms;

@@ -15,46 +15,25 @@
     <RestorePackages>true</RestorePackages>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <OutputPath>bin\Debug\</OutputPath>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\Release\</OutputPath>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <OutputPath>bin\Release\</OutputPath>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BCrypt.Net, Version=0.1.5073.29922, Culture=neutral, PublicKeyToken=6bcd409ee6bc9292, processorArchitecture=MSIL">
-      <HintPath>..\packages\BCrypt-Official.0.1.109\lib\BCrypt.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.Extended">
-      <HintPath>..\packages\EntityFramework.Extended.6.1.0.168\lib\net45\EntityFramework.Extended.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip.Reduced">
-      <HintPath>..\Libs\Ionic.Zip.Reduced.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Linq.Translations, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Linq.Translations.1.0.1\lib\net40\Microsoft.Linq.Translations.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -496,6 +475,26 @@
     <Compile Include="Migrations\202012201235077_AddAccountPubKey.Designer.cs">
       <DependentUpon>202012201235077_AddAccountPubKey.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202101261500014_AddGameModeShortcutUniqueIndex.cs" />
+    <Compile Include="Migrations\202101261500014_AddGameModeShortcutUniqueIndex.Designer.cs">
+      <DependentUpon>202101261500014_AddGameModeShortcutUniqueIndex.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202103281022280_StoreModAndMapInAutohosts.cs" />
+    <Compile Include="Migrations\202103281022280_StoreModAndMapInAutohosts.Designer.cs">
+      <DependentUpon>202103281022280_StoreModAndMapInAutohosts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202107011039589_AddDynConfMm1v1MinimumWinChance.cs" />
+    <Compile Include="Migrations\202107011039589_AddDynConfMm1v1MinimumWinChance.Designer.cs">
+      <DependentUpon>202107011039589_AddDynConfMm1v1MinimumWinChance.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202303191424586_RemoveGlacierId.cs" />
+    <Compile Include="Migrations\202303191424586_RemoveGlacierId.Designer.cs">
+      <DependentUpon>202303191424586_RemoveGlacierId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202404060935038_AddPopularMapsFraction.cs" />
+    <Compile Include="Migrations\202404060935038_AddPopularMapsFraction.Designer.cs">
+      <DependentUpon>202404060935038_AddPopularMapsFraction.cs</DependentUpon>
+    </Compile>
     <Compile Include="SpringFilesUnitsyncAttempt.cs" />
     <Compile Include="SteamWebApi.cs" />
     <Compile Include="UserLanguageNoteAttribute.cs" />
@@ -932,6 +931,21 @@
     <EmbeddedResource Include="Migrations\202012201235077_AddAccountPubKey.resx">
       <DependentUpon>202012201235077_AddAccountPubKey.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101261500014_AddGameModeShortcutUniqueIndex.resx">
+      <DependentUpon>202101261500014_AddGameModeShortcutUniqueIndex.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103281022280_StoreModAndMapInAutohosts.resx">
+      <DependentUpon>202103281022280_StoreModAndMapInAutohosts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202107011039589_AddDynConfMm1v1MinimumWinChance.resx">
+      <DependentUpon>202107011039589_AddDynConfMm1v1MinimumWinChance.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202303191424586_RemoveGlacierId.resx">
+      <DependentUpon>202303191424586_RemoveGlacierId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202404060935038_AddPopularMapsFraction.resx">
+      <DependentUpon>202404060935038_AddPopularMapsFraction.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ZkDataResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ZkDataResources.Designer.cs</LastGenOutput>
@@ -952,11 +966,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Resources\wikiIndex.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LICENSE.txt" />
+    <PackageReference Include="BCrypt-Official" Version="0.1.109" />
+    <PackageReference Include="EntityFramework" Version="6.1.3" />
+    <PackageReference Include="Microsoft.Linq.Translations" Version="1.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="Z.EntityFramework.Plus.EF6" Version="7.19.0" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

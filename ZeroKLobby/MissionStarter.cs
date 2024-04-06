@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
+using PlasmaShared;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZkData;
@@ -66,7 +67,7 @@ namespace ZeroKLobby
             var spring = new Spring(Program.SpringPaths);
             spring.RunLocalScriptGame(modInfo.MissionScript, Program.TasClient.ServerWelcome.Engine ?? GlobalConst.DefaultEngineOverride);
             var cs = GlobalConst.GetContentService();
-            cs.NotifyMissionRun(Program.Conf.LobbyPlayerName, missionName);
+            cs.Query(new NotifyMissionRun() {Login = Program.Conf.LobbyPlayerName, MissionName = missionName});
             spring.SpringExited += (o, args) => RecordMissionResult(spring, modInfo);
             Program.MainWindow.InvokeFunc(() => Program.NotifySection.RemoveBar(this));
         }
@@ -74,7 +75,7 @@ namespace ZeroKLobby
         public void StartScriptMission(string missionName)
         {
             var serv = GlobalConst.GetContentService();
-            var profile = serv.GetScriptMissionData(missionName);
+            var profile = serv.Query(new GetScriptMissionDataRequest() { MissionName = missionName });
             var downloads = new List<Download>();
             downloads.Add(Program.Downloader.GetResource(DownloadType.RAPID, profile.ModName));
             downloads.Add(Program.Downloader.GetResource(DownloadType.MAP, profile.MapName));
@@ -96,7 +97,7 @@ namespace ZeroKLobby
             spring.RunLocalScriptGame(
                 profile.StartScript.Replace("%MOD%", profile.ModName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name),
                 Program.TasClient.ServerWelcome.Engine ?? GlobalConst.DefaultEngineOverride);
-            serv.NotifyMissionRun(name, profile.Name);
+            serv.Query(new NotifyMissionRun() {Login = name, MissionName = profile.Name});
         }
 
         private static void RecordMissionResult(Spring spring, Mod modInfo)
@@ -111,12 +112,15 @@ namespace ZeroKLobby
                     {
                         try
                         {
-                            service.SubmitMissionScore(Program.Conf.LobbyPlayerName,
-                                ZkData.Utils.HashLobbyPassword(Program.Conf.LobbyPlayerPassword),
-                                modInfo.Name,
-                                spring.Context.MissionScore ?? 0,
-                                spring.Context.MissionFrame/30,
-                                spring.Context.MissionVars);
+                            service.Query(new SubmitMissionScoreRequest()
+                            {
+                                Login = Program.Conf.LobbyPlayerName,
+                                PasswordHash = PlasmaShared.Utils.HashLobbyPassword(Program.Conf.LobbyPlayerPassword),
+                                MissionName = modInfo.Name,
+                                Score = spring.Context.MissionScore ?? 0,
+                                GameSeconds = spring.Context.MissionFrame/30,
+                                MissionVars = spring.Context.MissionVars
+                            });
                         }
                         catch (Exception ex)
                         {

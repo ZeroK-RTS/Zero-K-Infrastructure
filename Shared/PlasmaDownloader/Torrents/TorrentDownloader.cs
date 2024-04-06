@@ -17,7 +17,7 @@ namespace PlasmaDownloader.Torrents
     {
         readonly string incomingFolder;
         PlasmaDownloader plasmaDownloader;
-        readonly IContentService plasmaService = GlobalConst.GetContentService();
+        readonly IContentServiceClient plasmaService = GlobalConst.GetContentService();
 
         public TorrentDownloader(PlasmaDownloader plasmaDownloader)
         {
@@ -55,9 +55,10 @@ namespace PlasmaDownloader.Torrents
 
 
             Task.Factory.StartNew(() => {
-                DownloadFileResult e;
-                try {
-                    e = plasmaService.DownloadFile(name);
+                DownloadFileResponse e;
+                try
+                {
+                    e = plasmaService.Query(new DownloadFileRequest() { InternalName = name });
                 } catch (Exception ex) {
                     Trace.TraceError("Error downloading {0}: {1}", down.Name, ex);
                     down.Finish(false);
@@ -104,7 +105,12 @@ namespace PlasmaDownloader.Torrents
                         }
                     }
 
-                    var wd = new WebMultiDownload(e.links.Shuffle(), GetDestPath(down.TypeOfResource, down.FileName), incomingFolder, tor);
+                    // uses non torrent downloader 
+                    var wd = new WebFileDownload(e.links.OrderByDescending(x => x.Contains("zero-k.info")).FirstOrDefault(),
+                        GetDestPath(down.TypeOfResource, down.FileName), incomingFolder);
+                    //var wd = new WebMultiDownload(e.links.Shuffle(), GetDestPath(down.TypeOfResource, down.FileName), incomingFolder, tor);
+                    
+                    
                     down.AddNeededDownload(wd);
                     down.Finish(true); // mark current torrent dl as complete - will wait for dependency
                     wd.Start(); // start dependent download
@@ -124,9 +130,10 @@ namespace PlasmaDownloader.Torrents
 
         public string[] GetFileDependencies(string name)
         {
-            DownloadFileResult e;
-            try {
-                e = plasmaService.DownloadFile(name);
+            DownloadFileResponse e;
+            try
+            {
+                e = plasmaService.Query(new DownloadFileRequest() { InternalName = name });
                 return e.dependencies.ToArray();
             } catch (Exception ex) {
                 Trace.TraceError("Error fetching information for {0}: {1}", name, ex);

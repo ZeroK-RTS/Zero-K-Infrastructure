@@ -41,7 +41,7 @@ namespace ZkData
         public List<ResourceData> FindResourceData(string[] words, ResourceType? type)
         {
             var cs = GlobalConst.GetContentService();
-            return cs.FindResourceData(words, type);
+            return cs.Query(new FindResourceDataRequest() { Words = words, Type = type }).Resources;
         }
 
         public string GetHeightmapPath(string name)
@@ -243,19 +243,6 @@ namespace ZkData
             Utils.StartAsync(() => GetMod(modName, callback, errorCallback));
         }
 
-        public ResourceData GetResourceDataByInternalName(string name)
-        {
-            try {
-                var cs = GlobalConst.GetContentService();
-                return cs.GetResourceDataByInternalName(name);
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceWarning(string.Format("Error getting data for resource {0} : {1}", name, ex));
-                return null;
-            }
-        }
-
 
         public bool HasEntry(string name)
         {
@@ -356,5 +343,13 @@ namespace ZkData
             if (File.Exists(file)) return GetModMetadata(File.ReadAllBytes(file));
             return null;
         }
+        
+        public static Map ServerGetMap(string internalName)
+        {
+            var file = Path.Combine(GlobalConst.SiteDiskPath, "resources", $"{internalName.EscapePath()}.metadata.xml.gz");
+            if (File.Exists(file)) return GetMapMetadata(File.ReadAllBytes(file));
+            return null;
+        }
+        
     }
 }

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Timers;
 using LobbyClient;
+using PlasmaShared;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 
@@ -37,22 +38,38 @@ namespace ZkLobbyServer
             if (unready.Any())
             {
                 wait = true;
-                await battle.SayBattle("The following users are still downloading the map: " + unready.Select(x => x.Name).StringJoin());
+                await battle.SayBattle("The following users are still downloading the map, please click Rejoin ASAP because you're playing: " + unready.Select(x => x.Name).StringJoin());
             }
             if (wait)
             {
-                await battle.SayBattle("Game starting in 10 seconds...");
                 battle.BlockPolls(10);
+                await battle.SayBattle("Game starting in 10 seconds...");
                 startTimer = new Timer(10000);
-                startTimer.Enabled = true;
                 startTimer.AutoReset = false;
-                startTimer.Elapsed += (t, s) => { StartGame(battle); };
+                startTimer.Enabled = true;
+                startTimer.Elapsed += (t, s) => { 
+                    startTimer.Enabled = false; 
+                    StartGame(battle); 
+                };
             }
             else
             {
                 await StartGame(battle);
             }
 
+        }
+        public override int GetPollWinMargin(ServerBattle battle, int numVoters)
+        {
+            // Require one more vote to start a game with uneven teams so at least one player in the smaller
+            // team needs to agree to start the game. This is particularly relevant for the 2v1 case.
+            if (battle.Mode == PlasmaShared.AutohostMode.Teams)
+            {
+                return base.GetPollWinMargin(battle, numVoters) + numVoters % 2;
+            }
+            else
+            {
+                return base.GetPollWinMargin(battle, numVoters);
+            }
         }
 
         private async Task StartGame(ServerBattle battle)

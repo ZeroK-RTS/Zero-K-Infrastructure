@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using PlasmaDownloader;
 using ZkData;
 using System.Threading;
+using PlasmaShared;
 
 namespace ChobbyLauncher
 {

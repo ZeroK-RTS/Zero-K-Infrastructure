@@ -26,7 +26,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
 			this.OnResize(new EventArgs()); //to fix control not filling the whole window at start
 			Paint -= EnterLocalReplay_Event;
 			
-			ZkData.Utils.StartAsync(ScanDemoFiles);
+			PlasmaShared.Utils.StartAsync(ScanDemoFiles);
 
 			listBoxDemoList.SelectedIndexChanged += listBoxDemoList_SelectedIndexChanged;
 			listBoxDemoList.KeyDown += listBoxDemoList_KeyDown;
@@ -450,7 +450,7 @@ namespace ZeroKLobby.MicroLobby.ExtrasTab
         }
         void ButtonRefreshClick(object sender, EventArgs e)
         {
-            ZkData.Utils.StartAsync(ScanDemoFiles);
+            PlasmaShared.Utils.StartAsync(ScanDemoFiles);
         }
 	}
 }

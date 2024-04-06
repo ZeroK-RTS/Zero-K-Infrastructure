@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Mvc.Html;
 using System.Web.WebPages;
+using PlasmaShared;
 using ZeroKWeb;
 using ZeroKWeb.ForumParser;
 using ZkData;

@@ -578,6 +578,21 @@ namespace ZkLobbyServer
             }
         }
 
+        public async Task Process(SetMapOptions options)
+        {
+            if (!IsLoggedIn) return;
+
+            var bat = MyBattle;
+            if (bat != null)
+            {
+                if ((bat.FounderName != Name || bat.IsAutohost) && !User.IsAdmin)
+                {
+                    await Respond("You don't have permissions to change mod options here");
+                    return;
+                }
+                await bat.SetMapOptions(options.Options);
+            }
+        }
 
         public async Task Process(UserReport report)
         {

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.Controllers

@@ -113,6 +113,7 @@ namespace ZeroKWeb.Controllers
                     existingMode.DisplayName = newGameMode.DisplayName;
                     existingMode.GameModeJson = newGameMode.GameModeJson;
                     existingMode.LastModified = DateTime.UtcNow;
+                    existingMode.ShortName = newGameMode.ShortName;
 
                     if (Global.IsModerator)
                     {
@@ -131,6 +132,8 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var gameMode = db.GameModes.Find(id);
+            gameMode?.ForumThread?.UpdateLastRead(Global.AccountID, false);
+            db.SaveChanges();
             return View("GameModeDetail", gameMode);
         }
 

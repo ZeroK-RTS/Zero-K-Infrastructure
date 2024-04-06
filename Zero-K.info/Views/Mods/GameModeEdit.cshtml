@@ -33,6 +33,10 @@
                 <td>@Html.EditorFor(x => x.IsFeatured)</td>
             </tr>
         }
+        else
+        {
+            @Html.HiddenFor(x=>x.MaintainerAccountID)
+        }
     </table>
     <input type="submit" value="Save"/>
 </form>

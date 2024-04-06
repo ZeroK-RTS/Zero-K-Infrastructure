@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ServiceModel;
 using PlasmaShared;
 
 namespace ZkData
@@ -42,7 +41,7 @@ namespace ZkData
         {
             switch (newMode) {
                 case ModeType.Local:
-                    BaseSiteUrl = "http://localhost:9739";
+                    BaseSiteUrl = "https://localhost:44301";
                     ZkDataContextConnectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=zero-k_local;Integrated Security=True;MultipleActiveResultSets=true;Min Pool Size=5;Max Pool Size=2000";
 
                     LobbyServerHost = "localhost";
@@ -86,7 +85,6 @@ namespace ZkData
             BaseImageUrl = string.Format("{0}/img/", BaseSiteUrl);
             SelfUpdaterBaseUrl = string.Format("{0}/lobby", BaseSiteUrl);
 
-            contentServiceFactory = new ChannelFactory<IContentService>(CreateBasicHttpBinding(), $"{BaseSiteUrl}/ContentService.svc");
             mode = newMode;
         }
 
@@ -94,22 +92,6 @@ namespace ZkData
         public static int OldSpringLobbyPort;
         
 
-        public static BasicHttpBinding CreateBasicHttpBinding()
-        {
-            var binding = new BasicHttpBinding();
-            binding.ReceiveTimeout = TimeSpan.FromHours(1);
-            binding.OpenTimeout = TimeSpan.FromHours(1);
-            binding.CloseTimeout = TimeSpan.FromHours(1);
-            binding.SendTimeout = TimeSpan.FromHours(1);
-            binding.MaxBufferSize = 6553600;
-            binding.MaxBufferPoolSize = 6553600;
-            binding.MaxReceivedMessageSize = 6553600;
-            binding.ReaderQuotas.MaxArrayLength = 1638400;
-            binding.ReaderQuotas.MaxStringContentLength = 819200;
-            binding.ReaderQuotas.MaxBytesPerRead = 409600;
-            binding.Security.Mode = BasicHttpSecurityMode.None;
-            return binding;
-        }
 
         public static string ZkDataContextConnectionString;
 
@@ -120,7 +102,6 @@ namespace ZkData
         public static string DefaultChobbyTag => Mode == ModeType.Live ? "zkmenu:stable" : "zkmenu:test";
 
 
-        public const string InfologPathFormat = @"C:\projekty\springie_spring\infolog_{0}.txt";
         public static string SiteDiskPath = @"c:\projekty\zero-k.info\www";
 
 
@@ -139,6 +120,7 @@ namespace ZkData
         public const int MinDurationForPlanetwars = 0;
         public const int MaxDurationForPlanetwars = 60*60*3; // 3 hours
 
+        public static int LadderAverageDays = 3;
         public static int LadderActivityDays => mode == ModeType.Live ? 30 : 90;
         public const int LadderSize = 50; // Amount of players shown on ladders
         public const float LadderUpdatePeriod = 1; //Ladder is fully updated every X hours
@@ -147,7 +129,6 @@ namespace ZkData
         public const float NaturalRatingVariancePerGame = EloToNaturalRatingMultiplierSquared * 500; //whr expected player rating change per game played
         public const float LadderEloMaxChange = 50;
         public const float LadderEloMinChange = 1;
-        public const float LadderEloClassicEloWeight = 0.5f; //Weight of classic elo change compared to WHR change
         public const float LadderEloClassicEloK = 32f; //K value of classic elo
         public const float LadderEloSmoothingFactor = 0.8f; //1 for change as fast as whr, 0 for no change
         public const int MaxLevelForMalus = 5;
@@ -262,28 +243,28 @@ namespace ZkData
         public static bool LobbyServerUpdateSpectatorsInstantly = false;
 
         public static bool AutoMigrateDatabase { get; private set; }
-        
-        private const string tokenPart = "af27e9e18e";
 
-        public static string CrashReportGithubToken = "fffb24b" + "91a758"+"a6a4e7a"+ "7a7eafb1a9" + tokenPart;
+        const string tokenPart = "9wqN1H1ojO";
+
+        public static string CrashReportGithubToken = "ghp_LN6hibzKlqv8UOWUAf8SWgjsMn" + tokenPart;
 
         public static string GameAnalyticsGameKey = "5197842fb91cbc18a7291436337232af";
         private const string tokenPart2 = "68b318aa1f701165";
         public static string GameAnalyticsToken = "9a815450a" + "0058bc6" + "4812a4d9" + tokenPart2;
 
-
-        public static string[] ReplaysPossiblePaths = { @"c:\projekty\springie_spring\demos-server"};
-
         public const string ZeroKDiscordID = "389176180877688832";
 
-
-
-        static ChannelFactory<IContentService> contentServiceFactory;
-
-        public static IContentService GetContentService()
+        private static IContentServiceClient contentServiceClientOverride;
+        public static IContentServiceClient GetContentService()
         {
-            return contentServiceFactory.CreateChannel();
+            return contentServiceClientOverride ?? new ContentServiceClient(BaseSiteUrl + "/ContentService");
         }
+        
+        public static void OverrideContentServiceClient(IContentServiceClient client)
+        {
+            contentServiceClientOverride = client;
+        }
+        
 
         public static string UnitSyncEngine = "unitsync";
 

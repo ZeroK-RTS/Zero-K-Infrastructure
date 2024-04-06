@@ -71,15 +71,23 @@ namespace ZkLobbyServer
 
             }
 
-            public bool VerifyBalance(double minimumWinChance)
+            public bool VerifyBalance(double minimumTeamWinChance, double minimum1v1WinChance)
             {
                 try
                 {
-                    if (minimumWinChance <= 0.01) return true;
+                    var minimumWinChance = minimumTeamWinChance;
+                    if (QueueType.Mode != AutohostMode.Teams)
+                        minimumWinChance = minimum1v1WinChance;
 
-                    if (QueueType.Mode != AutohostMode.Teams) return true;
+                    if (minimumWinChance <= 0.01) return true;
+                    if (!QueueType.UseWinChanceLimit) return true;
+                    minimumWinChance = minimumWinChance * QueueType.MinWinChanceMult + QueueType.MinWinChanceOffset;
 
                     var players = Players.Select(x => x.LobbyUser).Select(x => new PlayerItem(x.AccountID, x.EffectiveMmElo, x.Clan, x.PartyID)).ToList();
+                    if (QueueType.UseCasualElo)
+                    {
+                        players = Players.Select(x => x.LobbyUser).Select(x => new PlayerItem(x.AccountID, x.EffectiveElo, x.Clan, x.PartyID)).ToList();
+                    }
                     return Balance(ZeroKWeb.SpringieInterface.Balancer.BalanceMode.Party, players).LowestWinChance > minimumWinChance;
                 }
                 catch (Exception ex)

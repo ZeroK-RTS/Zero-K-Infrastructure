@@ -211,4 +211,26 @@ Zero-K.info/img/missions/169.png
 .vs
 
 Thumbs.db
-/.idea/.idea.Zero-K/.idea/contentModel.xml
+
+# User specific
+**/.idea/**
+**/.idea/**/tasks.xml
+**/.idea/shelf/*
+**/.idea/dictionaries
+**/.idea/httpRequests/
+**/.idea/copilot/**
+
+# Sensitive or high-churn files
+**/.idea/**/dataSources/
+**/.idea/**/dataSources.ids
+**/.idea/**/dataSources.xml
+**/.idea/**/dataSources.local.xml
+**/.idea/**/sqlDataSources.xml
+**/.idea/**/dynamic.xml
+
+# Rider
+# Rider auto-generates .iml files, and contentModel.xml
+**/.idea/**/*.iml
+**/.idea/**/contentModel.xml
+**/.idea/**/modules.xml
+**/.idea/**/indexLayout.xml

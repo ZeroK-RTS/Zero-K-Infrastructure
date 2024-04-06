@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -7,14 +8,19 @@ using System.Linq;
 using System.Media;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
+using System.Security;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GameAnalyticsSDK.Net;
+using Newtonsoft.Json;
 using PlasmaDownloader;
 using PlasmaShared;
 using ZkData;
+using ZkData.UnitSyncLib;
 using Timer = System.Threading.Timer;
 
 namespace ChobbyLauncher
@@ -56,6 +62,7 @@ namespace ChobbyLauncher
             discordController.OnSpectate += DiscordOnSpectateCallback;
 
             timer = new Timer((o) => OnTimerTick(), this, 500, 500);
+            unitSyncLazy = new Lazy<UnitSync>(() => new UnitSync(chobbyla.paths, chobbyla.engine), LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
 
@@ -157,6 +164,10 @@ namespace ChobbyLauncher
                 LastUserAction = DateTime.Now;
                 MinimizeChobby();
                 System.Diagnostics.Process.Start(args.Url);
+            }
+            catch (Win32Exception)
+            {
+                System.Diagnostics.Process.Start("xdg-open", args.Url);
             }
             catch (Exception ex)
             {
@@ -614,7 +625,43 @@ namespace ChobbyLauncher
                     }
 
                     process.StartInfo.Arguments = $"\"{startFilePath}\" --config \"{configFilePath}\"";
+
+                    var logs = new StringBuilder();
+                    
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
+
+                    process.OutputDataReceived += (sender, l) => { lock (logs) logs.AppendLine(l.Data); };
+                    process.ErrorDataReceived += (sender, l) => { lock (logs) logs.AppendLine(l.Data); };
+
+                    var tcs = new TaskCompletionSource<bool>();
+                    process.Exited += (sender, l) =>
+                    {
+                        var isCrash = process.ExitCode != 0;
+                        var isHangKilled = (process.ExitCode == -805306369); // hanged, drawn and quartered
+                        if (isCrash)
+                        {
+                            Trace.TraceWarning("Spring exit code is: {0}, {1}", process.ExitCode, isHangKilled ? "user-killed during hang" : "assuming crash");
+                        }
+                        bool isOk =  !isCrash || isHangKilled;
+                        
+
+                        SendCommand(new NewSpringExited()
+                        {
+                            Engine = args.Engine,
+                            CustomId = args.CustomId,
+                            IsCrash = !isOk,
+                            SpringSettings = args.SpringSettings,
+                            StartDemoName = args.StartDemoName,
+                            StartScriptContent = args.StartScriptContent
+                        });
+                        
+                        CrashReportHelper.CheckAndReportErrors(logs.ToString(), isOk, "Externally launched spring crashed with code " + process.ExitCode, null, args.Engine);
+                    };
+                    process.EnableRaisingEvents = true;
                     process.Start();
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
                 }
                 catch (Exception ex)
                 {
@@ -683,12 +730,12 @@ namespace ChobbyLauncher
 
         private async Task Process(GetSpringBattleInfo args)
         {
-            Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(async () =>
             {
                 try
                 {
                     var serv = GlobalConst.GetContentService();
-                    var sbi = serv.GetSpringBattleInfo(args.GameID);
+                    var sbi = await serv.QueryAsync(new PlasmaShared.GetSpringBattleInfo(){GameID = args.GameID});
                     SendCommand(new GetSpringBattleInfoDone()
                     {
                         GameID = args.GameID,
@@ -732,9 +779,45 @@ namespace ChobbyLauncher
         private async Task Process(EncryptStringRequest args)
         {
             SendCommand(new EncryptStringDone() { StringToEncrypt = args.StringToEncrypt, EncryptedString = RsaSignatures.Encrypt(args.StringToEncrypt, args.ServerPubKey)});
-        }        
-        
-        
+        }
+
+
+
+        Lazy<UnitSync> unitSyncLazy;
+
+        private async Task Process(GetResourceInfo args)
+        {
+            Task.Run(() => { GetResourceInfo(args); });
+        }
+
+        [HandleProcessCorruptedStateExceptions]
+        void GetResourceInfo(GetResourceInfo args)
+        {
+            try
+            {
+                var unitSync = unitSyncLazy.Value;
+                ResourceInfo ri = null;
+                if (!string.IsNullOrEmpty(args.ArchiveName)) ri = unitSync.GetResourceFromFileName(args.ArchiveName);
+                if (!string.IsNullOrEmpty(args.InternalName)) ri = ri ?? unitSync.GetArchiveEntryByInternalName(args.InternalName);
+
+                if (ri.ModType == 0 || ri.ModType == 1) ri = unitSync.GetMod(ri);
+                else if (ri.ModType == 3) ri = unitSync.GetMap(ri);
+
+                SendCommand(new GetResourceInfoDone()
+                {
+                    InternalName = args.InternalName ?? ri?.Name,
+                    ArchiveName = args.ArchiveName ?? ri?.ArchiveName,
+                    Data = JsonConvert.SerializeObject(ri)
+                });
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error running unitsync for {0} {1} : {2}", args.InternalName, args.ArchiveName, ex);
+                SendCommand(new GetResourceInfoDone() { InternalName = args.InternalName, ArchiveName = args.ArchiveName, });
+            }
+        }
+
+
         private async Task OnConnected()
         {
             Trace.TraceInformation("Chobby connected to wrapper");

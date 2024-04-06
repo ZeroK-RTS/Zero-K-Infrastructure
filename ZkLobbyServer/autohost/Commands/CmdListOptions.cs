@@ -8,7 +8,7 @@ namespace ZkLobbyServer
 {
     public class CmdListOptions : BattleCommand
     {
-        public override string Help => "lists all game/map options";
+        public override string Help => "lists all game options";
         public override string Shortcut => "listoptions";
         public override AccessType Access => AccessType.NoCheck;
 

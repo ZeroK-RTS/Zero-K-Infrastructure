@@ -88,7 +88,7 @@ namespace ZkLobbyServer
                 string gtype;
                 if (battle.spring.IsRunning)
                 {
-                    gtype = "game running";
+                    gtype = string.Format("game on map {0}", battle.MapName);
                     PlasmaShared.BattlePlayerResult res = battle.spring.Context.GetOrAddPlayer(target);
                     isspec = res.IsSpectator;
                 }
@@ -109,11 +109,11 @@ namespace ZkLobbyServer
                 }
                 if (isActualKick)
                 {
-                    battle.server.GhostChanSay(ZkData.GlobalConst.ModeratorChannel, string.Format("{0} (and possibly others) kicked {1} ({2}, {3}) from {4}", e?.User, target, ptype, gtype, battle.Title));
+                    battle.server.GhostChanSay(ZkData.GlobalConst.ModeratorChannel, string.Format("`{0}` (and possibly others) kicked `{1}` ({2}, {3}) from {4}", e?.User, target, ptype, gtype, battle.Title));
                 }
                 else
                 {
-                    battle.server.GhostChanSay(ZkData.GlobalConst.ModeratorChannel, string.Format("{0} started a kick vote against {1} ({2}, {3}) in {4}", e?.User, target, ptype, gtype, battle.Title));
+                    battle.server.GhostChanSay(ZkData.GlobalConst.ModeratorChannel, string.Format("`{0}` started a kick vote against `{1}` ({2}, {3}) in {4}", e?.User, target, ptype, gtype, battle.Title));
                 }
             }
             return true;

@@ -3,9 +3,9 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using EntityFramework.Extensions;
 using PlasmaShared;
 using Ratings;
+using Z.EntityFramework.Plus;
 
 namespace ZkData.Migrations
 {
@@ -137,7 +137,7 @@ namespace ZkData.Migrations
                 Avatar = "amphimpulse",
                 DevLevel = DevLevel.CoreDeveloper,
             },
-            new Account { Name = "test", NewPasswordPlain = "test", AdminLevel = AdminLevel.SuperAdmin, HasKudos = true, Level = 50, Country = "cz" },
+            new Account { Name = "test", NewPasswordPlain = "test", AdminLevel = AdminLevel.None, HasKudos = true, Level = 50, Country = "cz" },
             new Account { Name = GlobalConst.NightwatchName, NewPasswordPlain = "dummy", IsBot = true, AdminLevel = AdminLevel.SuperAdmin });
         }
     }

@@ -1,4 +1,5 @@
  @model ZeroKWeb.Controllers.MapsController.MapDetailData
+@using PlasmaShared
 @using ZkData;
 @{
 	var m = Model.Resource;
@@ -98,7 +99,7 @@
     @if (Model.Resource.SpringBattlesByMapResourceID.Any())
     {
         <div class="fleft border">
-            <h3>@Html.ActionLink("Last battles","Index","Battles")</h3>
+            <h3>@Html.ActionLink("Last battles","Index","Battles", new { Map = m.InternalName }, null) </h3>
             @foreach (var b in Model.Resource.SpringBattlesByMapResourceID.OrderByDescending(x => x.SpringBattleID).Take(10))
             {
                 <small>@Html.PrintBattle(b)</small><br />

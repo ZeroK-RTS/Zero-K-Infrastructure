@@ -30,7 +30,7 @@ namespace ZkLobbyServer
             if (!battle.server.SpringPaths.HasEngineVersion(engine))
             {
                 var serv = GlobalConst.GetContentService(); // TODO this can be done directly, we are in server
-                if (!serv.GetEngineList(null).Any(x => x == engine))
+                if (!serv.Query(new GetEngineListRequest()).Engines.Any(x => x == engine))
                 {
                     battle.Respond(e, "Engine not found");
                     return null;

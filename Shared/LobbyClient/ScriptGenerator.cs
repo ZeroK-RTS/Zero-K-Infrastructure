@@ -56,6 +56,12 @@ namespace LobbyClient
                 script.AppendFormat("  GameType={0};\n", context.LobbyStartContext.Mod);
                 script.AppendFormat("  ModHash=1;\n");
                 script.AppendFormat("  MapHash=1;\n");
+                
+                // send desync to server
+                script.AppendFormat("  DumpGameStateOnDesync=1;\n");
+
+                // set the "connecting to: xyz" message during early engine load
+                script.AppendFormat("  ShowServerName={0};\n", context.LobbyStartContext.Title.Replace(';', ' '));
 
                 if (loopbackListenPort >0) script.AppendFormat("  AutohostPort={0};\n", loopbackListenPort);
                 script.AppendLine();
@@ -119,6 +125,16 @@ namespace LobbyClient
             var startboxes = new StringBuilder();
             startboxes.Append("return { ");
             script.AppendLine();
+            
+            /* Fill all slots, not just those that are used (i.e. don't do
+             * something like "foreach allyteam in LobbyStartContext...").
+             * This is because Spring will squash allyTeamIDs so that they
+             * start from 0, which can ruin specific setups on FFA maps.
+             * For example if you want to play Mordor vs Gondor on Mearth, 
+             * you need to skip allyteam 0, which is Shire, and have players
+             * on allyteams 1 and 2; but if there is no "fake" allyteam 0
+             * then Spring will squash the 1/2 into 0/1 (which will result
+             * in the Mordor team playing as Shire, and Gondor as Mordor). */
             for (var allyNumber = 0; allyNumber < MaxAllies; allyNumber++) {
                 script.AppendFormat("[ALLYTEAM{0}]\n", allyNumber);
                 script.AppendLine("{");
@@ -134,13 +150,20 @@ namespace LobbyClient
 
             script.AppendFormat("    startboxes={0};\n", startboxes.ToString());
 
-
             // write final options to script
             foreach (var kvp in setup?.LobbyStartContext?.ModOptions) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
-
+            
             script.AppendLine("  }");
 
-            script.AppendLine("}");
+
+            // write map options to script
+            script.AppendLine("  [MAPOPTIONS]");
+            script.AppendLine("  {");
+            foreach (var kvp in setup?.LobbyStartContext?.MapOptions) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
+            script.AppendLine("  }");
+
+            
+            script.AppendLine("}");            
         }
 
 

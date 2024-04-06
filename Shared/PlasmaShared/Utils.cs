@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -19,12 +18,11 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using PlasmaShared;
 using Encoder = System.Drawing.Imaging.Encoder;
 
 #endregion
 
-namespace ZkData
+namespace PlasmaShared
 {
     /// <summary>
     /// General purpose static functions here
@@ -202,6 +200,35 @@ namespace ZkData
         }
 
 
+        public static int LowerBoundIndex<T>(this IReadOnlyList<T> list, T value) where T : IComparable<T>
+        {
+            //Requires:
+            //  list is sorted
+
+            //Returns:
+            //  Smallest value of i for which: !(list[i] < value)
+            //  or list.Count, if there is no such value.
+
+            int first = 0;
+            int len = list.Count;
+
+            while (len > 0)
+            {
+                var half = len / 2;
+                var mid = first + half;
+                if (list[mid].CompareTo(value) < 0)
+                {
+                    first = mid + 1;
+                    len = len - half - 1;
+                }
+                else
+                {
+                    len = half;
+                }
+            }
+
+            return first;
+        }
 
 
         public static bool CanRead(string filename)
@@ -654,9 +681,13 @@ namespace ZkData
 
         public static FileResponse<byte[]> DownloadFile(string url, DateTime? ifModifiedSince = null)
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
             var ms = new MemoryStream();
             var wc = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
             var ret = new FileResponse<byte[]>();
+            
+            wc.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
             if (ifModifiedSince != null) wc.IfModifiedSince = ifModifiedSince.Value;
 
@@ -701,6 +732,9 @@ namespace ZkData
             var wc = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
             var ret = new FileResponse<byte[]>();
 
+            
+            wc.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+            
             if (ifModifiedSince != null) wc.IfModifiedSince = ifModifiedSince.Value;
 
             try
@@ -755,10 +789,16 @@ namespace ZkData
             }
         }
 
-
         public static IEnumerable<Type> GetAllTypesWithAttribute<T>()
         {
-            return from a in AppDomain.CurrentDomain.GetAssemblies().AsParallel()
+            var allowedAssemblies = new string[]
+            {
+                typeof(T).Assembly.GetName().Name,
+                Assembly.GetEntryAssembly()?.GetName().Name, Assembly.GetExecutingAssembly().GetName().Name,
+                Assembly.GetCallingAssembly().GetName().Name
+            };
+            
+            return from a in AppDomain.CurrentDomain.GetAssemblies().Where(x=> allowedAssemblies.Contains(x.GetName().Name)).ToList().AsParallel()
                    from t in a.GetLoadableTypes()
                    let attributes = t.GetCustomAttributes(typeof(T), true)
                    where attributes != null && attributes.Length > 0
@@ -951,6 +991,32 @@ namespace ZkData
             return Encoding.UTF8.GetString(base64EncodedBytes);
         }
         
+        
+
+        public static void OpenUrl(string url)
+        {
+            try
+            {
+                Process.Start(url);
+            }
+            catch
+            {
+                
+                if (Environment.OSVersion.Platform == PlatformID.Unix)
+                {
+                    Process.Start("xdg-open", url);
+                }
+                else if (Environment.OSVersion.Platform ==PlatformID.MacOSX)
+                {
+                    Process.Start("open", url);
+                }
+                else 
+                {
+                    url = url.Replace("&", "^&");
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                }
+            }
+        }        
     }
 
     public struct Indexed<T>

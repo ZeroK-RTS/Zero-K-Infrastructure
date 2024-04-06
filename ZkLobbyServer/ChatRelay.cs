@@ -10,6 +10,7 @@ using Discord.Rest;
 using Discord.Rpc;
 using Discord.WebSocket;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ZkLobbyServer
@@ -31,7 +32,6 @@ namespace ZkLobbyServer
         private DiscordRelaySource discordSpringRelay;
         private Timer timer;
         private string lastZkTopic;
-        private SpringRelaySource springRelay;
         private ZklsRelaySource zklsRelay;
         private DiscordSocketClient discord;
 
@@ -46,8 +46,6 @@ namespace ZkLobbyServer
             discord = new DiscordSocketClient();
             
 
-            springRelay = new SpringRelaySource(channels);
-            sources.Add(springRelay);
             zklsRelay = new ZklsRelaySource(zkServer);
             sources.Add(zklsRelay);
             
