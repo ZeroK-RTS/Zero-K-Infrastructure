@@ -604,14 +604,14 @@ namespace ZkLobbyServer
 
             string str;
             if (reporter.AccountID != reported.AccountID)
-                str = string.Format("{0} https://zero-k.info/Users/Detail/{1} reports abuse by {2} https://zero-k.info/Users/Detail/{3} : {4}", 
+                str = string.Format("`{0}` https://zero-k.info/Users/Detail/{1} reports abuse by `{2}` https://zero-k.info/Users/Detail/{3} : {4}", 
                     reporter.Name,
                     reporter.AccountID,
                     reported.Name, 
                     reported.AccountID,
                     report);
             else
-                str = string.Format("{0} https://zero-k.info/Users/Detail/{1} contacts admins : {2}", 
+                str = string.Format("`{0}` https://zero-k.info/Users/Detail/{1} contacts admins : {2}", 
                     reporter.Name,
                     reporter.AccountID, 
                     report);
