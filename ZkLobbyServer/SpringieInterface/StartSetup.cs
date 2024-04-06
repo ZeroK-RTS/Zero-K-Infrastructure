@@ -120,7 +120,9 @@ namespace ZeroKWeb.SpringieInterface
                         ret.UserParameters[p.Name] = userParams;
 
                         userParams["LobbyID"] = user.AccountID.ToString();
-                        userParams["CountryCode"] = user.HideCountry ? "??" : user.Country;
+
+                        // use XX for more convenient handling of flag etc (cannot have '?' in filenames)
+                        userParams["CountryCode"] = (user.HideCountry || user.Country == "??") ? "XX" : user.Country;
 
                         var userBanMuted = Punishment.GetActivePunishment(user.AccountID, null, null, null, x => x.BanMute) != null;
                         if (userBanMuted) userParams["muted"] = "1";

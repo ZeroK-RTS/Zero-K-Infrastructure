@@ -213,11 +213,12 @@ Zero-K.info/img/missions/169.png
 Thumbs.db
 
 # User specific
-**/.idea/**/workspace.xml
+**/.idea/**
 **/.idea/**/tasks.xml
 **/.idea/shelf/*
 **/.idea/dictionaries
 **/.idea/httpRequests/
+**/.idea/copilot/**
 
 # Sensitive or high-churn files
 **/.idea/**/dataSources/
